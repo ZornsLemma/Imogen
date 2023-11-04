@@ -32,7 +32,7 @@ expr(0x3c23, make_hi("some_data_low_TODO"))
 comment(0x3c28, "TODO: branch never taken?", inline=True)
 comment(0x3c4e, "TODO: branch always taken?", inline=True)
 comment(0x3c58, "TODO: branch never taken?", inline=True)
-comment(0x3c3a, "Copy &2A00 bytes from &1234 to &1103. TODO: I think? If this is right, label this up nicely and use constants etc later.")
+comment(0x3c3a, "Copy &2A00 bytes from &1234 to &1103. TODO: I think? If this is right, label this up nicely and use constants etc later. TODO: I have a suspicion this is done more for obfuscation than any real requirement - surely we could have just loaded at &1103 in the first place? I suspect some routines - eg &16DC? - have 'real' versions and 'trap' versions to cause confusion. This is just speculation at this point.")
 
 label(0x3eff, "drive_0_command")
 label(0x3f07, "dir_dollar_command")
@@ -46,6 +46,8 @@ expr(0x3dba, "vdu_define_text_window")
 expr(0x3dd3, "vdu_set_text_colour")
 expr(0x3ddd, "vdu_set_text_colour")
 expr(0x3de7, "vdu_set_graphics_colour")
+
+entry(0x395e, "define_envelope")
 
 go()
 

@@ -2523,7 +2523,7 @@ l38c3
     !text "s9`"                                                       ; 3a8c: 73 39 60    s9` :395b[1]
 
 ; $3a8f referenced 3 times by $3d41, $3d48, $3d4f
-sub_c395e
+define_envelope
     pha                                                               ; 3a8f: 48          H   :395e[1]
     lda #osword_envelope                                              ; 3a90: a9 08       ..  :395f[1]
     jsr osword                                                        ; 3a92: 20 f1 ff     .. :3961[1]   ; ENVELOPE command
@@ -2648,7 +2648,10 @@ c3afb
     dex                                                               ; 3c37: ca          .
     bne c3c2c                                                         ; 3c38: d0 f2       ..
 ; Copy &2A00 bytes from &1234 to &1103. TODO: I think? If this is right, label this up
-; nicely and use constants etc later.
+; nicely and use constants etc later. TODO: I have a suspicion this is done more for
+; obfuscation than any real requirement - surely we could have just loaded at &1103 in
+; the first place? I suspect some routines - eg &16DC? - have 'real' versions and
+; 'trap' versions to cause confusion. This is just speculation at this point.
     lda #$34 ; '4'                                                    ; 3c3a: a9 34       .4
     sta l0070                                                         ; 3c3c: 85 70       .p
     lda #$12                                                          ; 3c3e: a9 12       ..
@@ -2784,13 +2787,13 @@ loop_c3cfc
     jsr osbyte                                                        ; 3d3a: 20 f4 ff     ..            ; Disable ADC channel sampling (X=0)
     ldx #$ac                                                          ; 3d3d: a2 ac       ..
     ldy #$38 ; '8'                                                    ; 3d3f: a0 38       .8
-    jsr sub_c395e                                                     ; 3d41: 20 5e 39     ^9
+    jsr define_envelope                                               ; 3d41: 20 5e 39     ^9
     ldx #$c2                                                          ; 3d44: a2 c2       ..
     ldy #$38 ; '8'                                                    ; 3d46: a0 38       .8
-    jsr sub_c395e                                                     ; 3d48: 20 5e 39     ^9
+    jsr define_envelope                                               ; 3d48: 20 5e 39     ^9
     ldx #$d8                                                          ; 3d4b: a2 d8       ..
     ldy #$38 ; '8'                                                    ; 3d4d: a0 38       .8
-    jsr sub_c395e                                                     ; 3d4f: 20 5e 39     ^9
+    jsr define_envelope                                               ; 3d4f: 20 5e 39     ^9
     ldy #7                                                            ; 3d52: a0 07       ..
 ; $3d54 referenced 1 time by $3d5f
 loop_c3d54
@@ -4048,7 +4051,6 @@ pydis_end
 ;     sub_c3872
 ;     sub_c387c
 ;     sub_c388d
-;     sub_c395e
 ;     sub_c3ec9
 ;     sub_c3ed5
 ;     sub_c3f6f
