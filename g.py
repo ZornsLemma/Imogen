@@ -49,6 +49,17 @@ expr(0x3de7, "vdu_set_graphics_colour")
 
 entry(0x395e, "define_envelope")
 
+constant(39, "screen_width_minus_one")
+expr(0x3dc9, "screen_width_minus_one")
+
+comment(0x3db9, "TODO: A lot of this code looks - I haven't checked yet - similar to initialisation code in the IMOGEN file. It should be annotated but I won't bother yet as it may be I can copy this from the IMOGEN code. Is it possible that what I thought was copy protection regarding VDU 21 status is in fact just a way to make the G file self-contained if it's run directly from the command line during development, instead of from IMOGEN?")
+
+# TODO: This is just a guess - but the code looks as though it's doing OSFILE but wrapping in some error checking and temporary changes to BRKV
+entry(0x16dc, "osfile_wrapper")
+
+label(0x1980, "filename")
+stringcr(0x1980)
+
 go()
 
 # vi: tw=100

@@ -20,6 +20,7 @@ osbyte_set_cursor_editing                       = 4
 osbyte_set_printer_ignore                       = 6
 osbyte_tv                                       = 144
 osword_envelope                                 = 8
+screen_width_minus_one                          = 39
 vdu_define_character                            = 23
 vdu_define_text_window                          = 28
 vdu_enable                                      = 6
@@ -224,7 +225,7 @@ loop_c114f
     ldx #$d5                                                          ; 1291: a2 d5       ..  :1160[1]
     ldy #$3a ; ':'                                                    ; 1293: a0 3a       .:  :1162[1]
     lda #$ff                                                          ; 1295: a9 ff       ..  :1164[1]
-    jsr c16dc                                                         ; 1297: 20 dc 16     .. :1166[1]
+    jsr osfile_wrapper                                                ; 1297: 20 dc 16     .. :1166[1]
     beq c1171                                                         ; 129a: f0 06       ..  :1169[1]
     jsr sub_c3617                                                     ; 129c: 20 17 36     .6 :116b[1]
     jmp loop_c114f                                                    ; 129f: 4c 4f 11    LO. :116e[1]
@@ -1047,7 +1048,7 @@ c16ce
     !byte $a0,   0, $b1, $fd, $85,   2, $4c, $13, $17                 ; 1804: a0 00 b1... ... :16d3[1]
 
 ; $180d referenced 4 times by $1166, $197d, $3e69, $3e9b
-c16dc
+osfile_wrapper
     stx l0072                                                         ; 180d: 86 72       .r  :16dc[1]
     sty l0073                                                         ; 180f: 84 73       .s  :16de[1]
     ldx #0                                                            ; 1811: a2 00       ..  :16e0[1]
@@ -1240,12 +1241,13 @@ sub_c196f
     ldx l0054                                                         ; 1aa8: a6 54       .T  :1977[1]
     ldy l0055                                                         ; 1aaa: a4 55       .U  :1979[1]
     lda #$ff                                                          ; 1aac: a9 ff       ..  :197b[1]
-    jmp c16dc                                                         ; 1aae: 4c dc 16    L.. :197d[1]
+    jmp osfile_wrapper                                                ; 1aae: 4c dc 16    L.. :197d[1]
 
-    !text "sprdata"                                                   ; 1ab1: 73 70 72... spr :1980[1]
-    !byte $0d, $8d, $0f, $1a, $8a, $48, $98, $48, $ad, $2b, $13, $f0  ; 1ab8: 0d 8d 0f... ... :1987[1]
-    !byte $51, $a5, $30, $cd, $ba, $1a, $d0, $47, $20, $fa, $1e, $c9  ; 1ac4: 51 a5 30... Q.0 :1993[1]
-    !byte   3, $f0, $17, $a9,   3, $20, $bb, $1e, $c8, $a9            ; 1ad0: 03 f0 17... ... :199f[1]
+filename
+    !text "sprdata", $0d                                              ; 1ab1: 73 70 72... spr :1980[1]
+    !byte $8d, $0f, $1a, $8a, $48, $98, $48, $ad, $2b, $13, $f0, $51  ; 1ab9: 8d 0f 1a... ... :1988[1]
+    !byte $a5, $30, $cd, $ba, $1a, $d0, $47, $20, $fa, $1e, $c9,   3  ; 1ac5: a5 30 cd... .0. :1994[1]
+    !byte $f0, $17, $a9,   3, $20, $bb, $1e, $c8, $a9                 ; 1ad1: f0 17 a9... ... :19a0[1]
     !text ": L"                                                       ; 1ada: 3a 20 4c    : L :19a9[1]
     !byte $1f, $88, $e8, $ad, $0f, $1a, $20, $5d, $1f, $a9,   1, $d0  ; 1add: 1f 88 e8... ... :19ac[1]
     !byte $1b, $ca, $a9,   3, $20, $bb, $1e, $e8, $a9, $ff, $85, $1d  ; 1ae9: 1b ca a9... ... :19b8[1]
@@ -2852,6 +2854,12 @@ c3dae
     inc l0071                                                         ; 3db3: e6 71       .q
     cpx l0071                                                         ; 3db5: e4 71       .q
     bne c3dae                                                         ; 3db7: d0 f5       ..
+; TODO: A lot of this code looks - I haven't checked yet - similar to initialisation
+; code in the IMOGEN file. It should be annotated but I won't bother yet as it may be I
+; can copy this from the IMOGEN code. Is it possible that what I thought was copy
+; protection regarding VDU 21 status is in fact just a way to make the G file self-
+; contained if it's run directly from the command line during development, instead of
+; from IMOGEN?
 ; $3db9 referenced 1 time by $3da0
 c3db9
     lda #vdu_define_text_window                                       ; 3db9: a9 1c       ..
@@ -2860,7 +2868,7 @@ c3db9
     jsr oswrch                                                        ; 3dc0: 20 ee ff     ..            ; Write character 1
     lda #$1f                                                          ; 3dc3: a9 1f       ..
     jsr oswrch                                                        ; 3dc5: 20 ee ff     ..            ; Write character 31
-    lda #$27 ; '''                                                    ; 3dc8: a9 27       .'
+    lda #screen_width_minus_one                                       ; 3dc8: a9 27       .'
     jsr oswrch                                                        ; 3dca: 20 ee ff     ..            ; Write character 39
     lda #0                                                            ; 3dcd: a9 00       ..
     jsr oswrch                                                        ; 3dcf: 20 ee ff     ..            ; Write character 0
@@ -2933,7 +2941,7 @@ loop_c3e52
     lda #$19                                                          ; 3e63: a9 19       ..
     sta l0071                                                         ; 3e65: 85 71       .q
     lda #5                                                            ; 3e67: a9 05       ..
-    jsr c16dc                                                         ; 3e69: 20 dc 16     ..
+    jsr osfile_wrapper                                                ; 3e69: 20 dc 16     ..
     lda #$c0                                                          ; 3e6c: a9 c0       ..
     sec                                                               ; 3e6e: 38          8
     sbc l007a                                                         ; 3e6f: e5 7a       .z
@@ -2958,7 +2966,7 @@ loop_c3e52
     lda #$3f ; '?'                                                    ; 3e95: a9 3f       .?
     sta l0071                                                         ; 3e97: 85 71       .q
     lda #$ff                                                          ; 3e99: a9 ff       ..
-    jsr c16dc                                                         ; 3e9b: 20 dc 16     ..
+    jsr osfile_wrapper                                                ; 3e9b: 20 dc 16     ..
     jmp c3f0d                                                         ; 3e9e: 4c 0d 3f    L.?
 
 ; $3ea1 referenced 2 times by $3e8f, $3ebe
@@ -3424,7 +3432,7 @@ pydis_end
 ;     sub_c1699:                         1
 ;     c16a5:                             1
 ;     sub_c16ba:                         1
-;     c16dc:                             1
+;     osfile_wrapper:                    1
 ;     l16f4:                             1
 ;     sub_c1724:                         1
 ;     l1754:                             1
@@ -3607,7 +3615,6 @@ pydis_end
 ;     c16bf
 ;     c16cd
 ;     c16ce
-;     c16dc
 ;     c16f7
 ;     c174c
 ;     c178a
@@ -4164,6 +4171,9 @@ pydis_end
 }
 !if (osword_envelope) != $08 {
     !error "Assertion failed: osword_envelope == $08"
+}
+!if (screen_width_minus_one) != $27 {
+    !error "Assertion failed: screen_width_minus_one == $27"
 }
 !if (vdu_define_character) != $17 {
     !error "Assertion failed: vdu_define_character == $17"
