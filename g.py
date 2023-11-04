@@ -146,6 +146,9 @@ expr(0x1163, make_hi("level_data"))
 expr(0x1350, make_lo("level_data"))
 expr(0x1357, make_hi("level_data"))
 
+label(0x1377, "power_of_2_table")
+hexadecimal(0x1377, 8)
+
 go()
 
 # vi: tw=100
