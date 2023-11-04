@@ -18,6 +18,7 @@ osbyte_set_cursor_editing                       = 4
 osbyte_set_printer_ignore                       = 6
 osbyte_tv                                       = 144
 osword_envelope                                 = 8
+vdu_define_character                            = 23
 vdu_enable                                      = 6
 vdu_set_mode                                    = 22
 
@@ -80,6 +81,7 @@ l00c9                   = &00c9
 l0131                   = &0131
 brkv                    = &0202
 irq1v                   = &0204
+some_data_low_TODO      = &0400
 l040a                   = &040a
 l0453                   = &0453
 l09a8                   = &09a8
@@ -1912,7 +1914,7 @@ l3850 = c384f+1
 ; The loader will have executed VDU 21 to disable VDU output. Record the current
 ; disable state before re-enabling it, so we can check it later as part of a copy
 ; protection scheme.
-.start
+.execution_start
     lda #osbyte_read_vdu_status                                       ; 3c06: a9 75       .u
     jsr osbyte                                                        ; 3c08: 20 f4 ff     ..            ; Read VDU status byte
 
@@ -1930,16 +1932,17 @@ l3850 = c384f+1
     sta initial_screen_disabled_flag                                  ; 3c0e: 8d 6e 3f    .n?
     lda #vdu_enable                                                   ; 3c11: a9 06       ..
     jsr oswrch                                                        ; 3c13: 20 ee ff     ..            ; Write character 6
-    lda #&ff                                                          ; 3c16: a9 ff       ..
+; Copy 512 bytes from &40FF to &400. TODO: I THINK?
+    lda #<some_data_high_copy_TODO                                    ; 3c16: a9 ff       ..
     sta l0070                                                         ; 3c18: 85 70       .p
-    lda #&40 ; '@'                                                    ; 3c1a: a9 40       .@
+    lda #>some_data_high_copy_TODO                                    ; 3c1a: a9 40       .@
     sta l0071                                                         ; 3c1c: 85 71       .q
-    lda #0                                                            ; 3c1e: a9 00       ..
+    lda #<some_data_low_TODO                                          ; 3c1e: a9 00       ..
     sta l0072                                                         ; 3c20: 85 72       .r
-    lda #4                                                            ; 3c22: a9 04       ..
+    lda #>some_data_low_TODO                                          ; 3c22: a9 04       ..
     sta l0073                                                         ; 3c24: 85 73       .s
     ldx #2                                                            ; 3c26: a2 02       ..
-    beq c3c3a                                                         ; 3c28: f0 10       ..
+    beq c3c3a                                                         ; 3c28: f0 10       ..             ; TODO: branch never taken?
     ldy #0                                                            ; 3c2a: a0 00       ..
 ; &3c2c referenced 2 times by &3c31, &3c38
 .c3c2c
@@ -1951,6 +1954,8 @@ l3850 = c384f+1
     inc l0073                                                         ; 3c35: e6 73       .s
     dex                                                               ; 3c37: ca          .
     bne c3c2c                                                         ; 3c38: d0 f2       ..
+; Copy &2A00 bytes from &1234 to &1103. TODO: I think? If this is right, label this up
+; nicely and use constants etc later.
 ; &3c3a referenced 1 time by &3c28
 .c3c3a
     lda #&34 ; '4'                                                    ; 3c3a: a9 34       .4
@@ -1963,14 +1968,14 @@ l3850 = c384f+1
     sta l0073                                                         ; 3c48: 85 73       .s
     lda l0071                                                         ; 3c4a: a5 71       .q
     cmp l0073                                                         ; 3c4c: c5 73       .s
-    bne c3c56                                                         ; 3c4e: d0 06       ..
+    bne c3c56                                                         ; 3c4e: d0 06       ..             ; TODO: branch always taken?
     lda l0070                                                         ; 3c50: a5 70       .p
     cmp l0072                                                         ; 3c52: c5 72       .r
     beq c3c6a                                                         ; 3c54: f0 14       ..
 ; &3c56 referenced 1 time by &3c4e
 .c3c56
     ldx #&2a ; '*'                                                    ; 3c56: a2 2a       .*
-    beq c3c6a                                                         ; 3c58: f0 10       ..
+    beq c3c6a                                                         ; 3c58: f0 10       ..             ; TODO: branch never taken?
     ldy #0                                                            ; 3c5a: a0 00       ..
 ; &3c5c referenced 2 times by &3c61, &3c68
 .c3c5c
@@ -2014,11 +2019,11 @@ l3850 = c384f+1
     sta l3f05                                                         ; 3c98: 8d 05 3f    ..?
 ; &3c9b referenced 1 time by &3c94
 .c3c9b
-    ldx #<(l3eff)                                                     ; 3c9b: a2 ff       ..
-    ldy #>(l3eff)                                                     ; 3c9d: a0 3e       .>
+    ldx #<(drive_0_command)                                           ; 3c9b: a2 ff       ..
+    ldy #>(drive_0_command)                                           ; 3c9d: a0 3e       .>
     jsr oscli                                                         ; 3c9f: 20 f7 ff     ..
-    ldx #<(l3f07)                                                     ; 3ca2: a2 07       ..
-    ldy #>(l3f07)                                                     ; 3ca4: a0 3f       .?
+    ldx #<(dir_dollar_command)                                        ; 3ca2: a2 07       ..
+    ldy #>(dir_dollar_command)                                        ; 3ca4: a0 3f       .?
     jsr oscli                                                         ; 3ca6: 20 f7 ff     ..
     lda #osbyte_close_spool_exec                                      ; 3ca9: a9 77       .w
     jsr osbyte                                                        ; 3cab: 20 f4 ff     ..            ; Close any *SPOOL and *EXEC files
@@ -2048,14 +2053,14 @@ l3850 = c384f+1
     sta l0ab5                                                         ; 3ce7: 8d b5 0a    ...
     lda irq1v+1                                                       ; 3cea: ad 05 02    ...
     sta l0ab6                                                         ; 3ced: 8d b6 0a    ...
-    lda #&17                                                          ; 3cf0: a9 17       ..
+    lda #vdu_define_character                                         ; 3cf0: a9 17       ..
     jsr oswrch                                                        ; 3cf2: 20 ee ff     ..            ; Write character 23
     lda #&fe                                                          ; 3cf5: a9 fe       ..
     jsr oswrch                                                        ; 3cf7: 20 ee ff     ..            ; Write character 254
     ldx #0                                                            ; 3cfa: a2 00       ..
 ; &3cfc referenced 1 time by &3d05
 .loop_c3cfc
-    lda l3f66,x                                                       ; 3cfc: bd 66 3f    .f?
+    lda character_fe_bitmap,x                                         ; 3cfc: bd 66 3f    .f?
     jsr oswrch                                                        ; 3cff: 20 ee ff     ..            ; Write character
     inx                                                               ; 3d02: e8          .
     cpx #8                                                            ; 3d03: e0 08       ..
@@ -2315,12 +2320,12 @@ l3850 = c384f+1
 ; &3efe referenced 1 time by &3eb4
 .l3efe
     equb 0                                                            ; 3efe: 00          .
-.l3eff
+.drive_0_command
     equs "DRIVE "                                                     ; 3eff: 44 52 49... DRI
 ; &3f05 referenced 1 time by &3c98
 .l3f05
     equb &30, &0d                                                     ; 3f05: 30 0d       0.
-.l3f07
+.dir_dollar_command
     equs "DIR $"                                                      ; 3f07: 44 49 52... DIR
     equb &0d                                                          ; 3f0c: 0d          .
 
@@ -2372,10 +2377,15 @@ l3850 = c384f+1
     equs "icodata"                                                    ; 3f5e: 69 63 6f... ico
     equb &0d                                                          ; 3f65: 0d          .
 ; &3f66 referenced 1 time by &3cfc
-.l3f66
-    equb   8, &14                                                     ; 3f66: 08 14       ..
-    equs '"', "A", '"'                                                ; 3f68: 22 41 22    "A"
-    equb &14,   8,   0                                                ; 3f6b: 14 08 00    ...
+.character_fe_bitmap
+    equb %00001000                                                    ; 3f66: 08          .
+    equb %00010100                                                    ; 3f67: 14          .
+    equb %00100010                                                    ; 3f68: 22          "
+    equb %01000001                                                    ; 3f69: 41          A
+    equb %00100010                                                    ; 3f6a: 22          "
+    equb %00010100                                                    ; 3f6b: 14          .
+    equb %00001000                                                    ; 3f6c: 08          .
+    equb %00000000                                                    ; 3f6d: 00          .
 ; &3f6e referenced 2 times by &3c0e, &3d91
 .initial_screen_disabled_flag
     equb 0                                                            ; 3f6e: 00          .
@@ -2464,9 +2474,10 @@ l3850 = c384f+1
     equs "8i% "                                                       ; 40e6: 38 69 25... 8i%
     equb &ee, &ff, &a9,   6, &20, &ee, &ff, &b5                       ; 40ea: ee ff a9... ...
     equs "\ f"                                                        ; 40f2: 5c 20 66    \ f
-    equb &18, &ca, &e0, &ff, &d0, &da, &68, &aa, &68, &60, &ae,   6   ; 40f5: 18 ca e0... ...
-    equb &11, &ac,   7, &11, &4c, &91, &17, &12, &20,   0,   4, &a5   ; 4101: 11 ac 07... ...
-    equb   4, &f0                                                     ; 410d: 04 f0       ..
+    equb &18, &ca, &e0, &ff, &d0, &da, &68, &aa, &68, &60             ; 40f5: 18 ca e0... ...
+.some_data_high_copy_TODO
+    equb &ae,   6, &11, &ac,   7, &11, &4c, &91, &17, &12, &20,   0   ; 40ff: ae 06 11... ...
+    equb   4, &a5,   4, &f0                                           ; 410b: 04 a5 04... ...
     equs ") c8"                                                       ; 410f: 29 20 63... ) c
     equb &a2, &ff, &86, &3e, &e8, &86, &3f, &a9, &a9, &85, &40, &a9   ; 4113: a2 ff 86... ...
     equb &0a, &85, &41, &e8, &86, &42, &a0,   1, &ad,   9,   4, &38   ; 411f: 0a 85 41... ..A
@@ -2732,7 +2743,7 @@ l3850 = c384f+1
 ;     l3f05:                             1
 ;     loop_c3f18:                        1
 ;     c3f2d:                             1
-;     l3f66:                             1
+;     character_fe_bitmap:               1
 ;     sub_c3f6f:                         1
 ;     loop_c3f7b:                        1
 ;     loop_c3f87:                        1
@@ -2952,10 +2963,7 @@ l3850 = c384f+1
 ;     l3ef2
 ;     l3ef4
 ;     l3efe
-;     l3eff
 ;     l3f05
-;     l3f07
-;     l3f66
 ;     l3fbb
 ;     l3fcb
 ;     l402c
@@ -3005,16 +3013,20 @@ l3850 = c384f+1
 ;     sub_c3ec9
 ;     sub_c3ed5
 ;     sub_c3f6f
+    assert <(dir_dollar_command) == &07
+    assert <(drive_0_command) == &ff
     assert <(l3ee1) == &e1
     assert <(l3eea) == &ea
     assert <(l3ef4) == &f4
-    assert <(l3eff) == &ff
-    assert <(l3f07) == &07
+    assert <some_data_high_copy_TODO == &ff
+    assert <some_data_low_TODO == &00
+    assert >(dir_dollar_command) == &3f
+    assert >(drive_0_command) == &3e
     assert >(l3ee1) == &3e
     assert >(l3eea) == &3e
     assert >(l3ef4) == &3e
-    assert >(l3eff) == &3e
-    assert >(l3f07) == &3f
+    assert >some_data_high_copy_TODO == &40
+    assert >some_data_low_TODO == &04
     assert crtc_cursor_start == &0a
     assert crtc_interlace_delay == &08
     assert crtc_screen_start_high == &0c
@@ -3034,6 +3046,7 @@ l3850 = c384f+1
     assert osbyte_set_printer_ignore == &06
     assert osbyte_tv == &90
     assert osword_envelope == &08
+    assert vdu_define_character == &17
     assert vdu_enable == &06
     assert vdu_set_mode == &16
 
