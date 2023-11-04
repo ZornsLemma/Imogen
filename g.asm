@@ -2985,7 +2985,7 @@ c3ea1
     ldx #<(osword_7f_block)                                           ; 3ead: a2 f4       ..
     ldy #>(osword_7f_block)                                           ; 3eaf: a0 3e       .>
     jsr osword                                                        ; 3eb1: 20 f1 ff     ..            ; Single track single density FDC command (see https://beebwiki.mdfs.net/OSWORDs)
-    lda l3efe                                                         ; 3eb4: ad fe 3e    ..>
+    lda osword_7f_result                                              ; 3eb4: ad fe 3e    ..>
     beq c3ec1                                                         ; 3eb7: f0 08       ..
     lda #0                                                            ; 3eb9: a9 00       ..
     jsr sub_c3ec9                                                     ; 3ebb: 20 c9 3e     .>
@@ -2999,10 +2999,10 @@ c3ec1
 
 ; $3ec9 referenced 2 times by $3ea3, $3ebb
 sub_c3ec9
-    sta l3ee8                                                         ; 3ec9: 8d e8 3e    ..>
+    sta osword_7f_result2                                             ; 3ec9: 8d e8 3e    ..>
     lda #$7f                                                          ; 3ecc: a9 7f       ..
-    ldx #<(l3ee1)                                                     ; 3ece: a2 e1       ..
-    ldy #>(l3ee1)                                                     ; 3ed0: a0 3e       .>
+    ldx #<(osword_7f_block2)                                          ; 3ece: a2 e1       ..
+    ldy #>(osword_7f_block2)                                          ; 3ed0: a0 3e       .>
     jmp osword                                                        ; 3ed2: 4c f1 ff    L..            ; Single track single density FDC command (see https://beebwiki.mdfs.net/OSWORDs)
 
 ; $3ed5 referenced 2 times by $3ea8, $3ec3
@@ -3013,11 +3013,15 @@ sub_c3ed5
     ldy #>(l3eea)                                                     ; 3edc: a0 3e       .>
     jmp osword                                                        ; 3ede: 4c f1 ff    L..            ; Single track single density FDC command (see https://beebwiki.mdfs.net/OSWORDs)
 
-l3ee1
-    !byte   0, $ff, $ff,   0,   0,   1, $69                           ; 3ee1: 00 ff ff... ...
+osword_7f_block2
+    !byte 0                                                           ; 3ee1: 00          .              ; drive
+    !word $ffff,     0                                                ; 3ee2: ff ff 00... ...            ; data address
+    !byte 1                                                           ; 3ee6: 01          .              ; number of parameters
+    !byte $69                                                         ; 3ee7: 69          i
 ; $3ee8 referenced 1 time by $3ec9
-l3ee8
-    !byte 0, 0                                                        ; 3ee8: 00 00       ..
+osword_7f_result2
+    !byte 0                                                           ; 3ee8: 00          .
+    !byte 0                                                           ; 3ee9: 00          .
 l3eea
     !byte   0, $ff, $ff,   0,   0,   2, $7a, $12                      ; 3eea: 00 ff ff... ...
 ; $3ef2 referenced 1 time by $3ed5
@@ -3032,7 +3036,7 @@ osword_7f_block
     !byte $7d                                                         ; 3efc: 7d          }              ; sector
     !byte $23                                                         ; 3efd: 23          #              ; size+count ($23=3 256 byte sectors)
 ; $3efe referenced 1 time by $3eb4
-l3efe
+osword_7f_result
     !byte 0                                                           ; 3efe: 00          .
 drive_0_command
     !text "DRIVE "                                                    ; 3eff: 44 52 49... DRI
@@ -3544,9 +3548,9 @@ pydis_end
 ;     c3db9:                             1
 ;     loop_c3e52:                        1
 ;     c3ec1:                             1
-;     l3ee8:                             1
+;     osword_7f_result2:                 1
 ;     l3ef2:                             1
-;     l3efe:                             1
+;     osword_7f_result:                  1
 ;     l3f05:                             1
 ;     loop_c3f18:                        1
 ;     c3f2d:                             1
@@ -3971,11 +3975,8 @@ pydis_end
 ;     l3c09
 ;     l3c0f
 ;     l3c10
-;     l3ee1
-;     l3ee8
 ;     l3eea
 ;     l3ef2
-;     l3efe
 ;     l3f05
 ;     l3fbb
 ;     l3fcb
@@ -4080,14 +4081,14 @@ pydis_end
 !if (<(l0070)) != $70 {
     !error "Assertion failed: <(l0070) == $70"
 }
-!if (<(l3ee1)) != $e1 {
-    !error "Assertion failed: <(l3ee1) == $e1"
-}
 !if (<(l3eea)) != $ea {
     !error "Assertion failed: <(l3eea) == $ea"
 }
 !if (<(osword_7f_block)) != $f4 {
     !error "Assertion failed: <(osword_7f_block) == $f4"
+}
+!if (<(osword_7f_block2)) != $e1 {
+    !error "Assertion failed: <(osword_7f_block2) == $e1"
 }
 !if (<icodata) != $ff {
     !error "Assertion failed: <icodata == $ff"
@@ -4113,14 +4114,14 @@ pydis_end
 !if (>(l0070)) != $00 {
     !error "Assertion failed: >(l0070) == $00"
 }
-!if (>(l3ee1)) != $3e {
-    !error "Assertion failed: >(l3ee1) == $3e"
-}
 !if (>(l3eea)) != $3e {
     !error "Assertion failed: >(l3eea) == $3e"
 }
 !if (>(osword_7f_block)) != $3e {
     !error "Assertion failed: >(osword_7f_block) == $3e"
+}
+!if (>(osword_7f_block2)) != $3e {
+    !error "Assertion failed: >(osword_7f_block2) == $3e"
 }
 !if (>icodata) != $40 {
     !error "Assertion failed: >icodata == $40"

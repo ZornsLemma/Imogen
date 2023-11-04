@@ -86,19 +86,27 @@ expr(0x3e9a, "osfile_load")
 
 expr(0x172e, "vdu_bell")
 
+def do_osword_7f_block_partial(addr):
+    byte(addr)
+    comment(addr, "drive", inline=True)
+    word(addr+1, 2)
+    for i in range(memory[addr+5]+1):
+        byte(addr+6+i)
+    comment(addr+1, "data address", inline=True)
+    comment(addr+5, "number of parameters", inline=True)
+
 label(0x3ef4, "osword_7f_block")
-byte(0x3ef4)
-comment(0x3ef4, "drive", inline=True)
-word(0x3ef5, 2)
+do_osword_7f_block_partial(0x3ef4)
 expr(0x3ef5, "icodata")
-for i in range(4):
-    byte(0x3efa+i)
-comment(0x3ef5, "data address", inline=True)
-comment(0x3ef9, "number of parameters", inline=True)
 comment(0x3efa, "command ($53=read data)", inline=True)
 comment(0x3efb, "track", inline=True)
 comment(0x3efc, "sector", inline=True)
 comment(0x3efd, "size+count ($23=3 256 byte sectors)", inline=True)
+label(0x3efe, "osword_7f_result")
+
+label(0x3ee1, "osword_7f_block2") # TODO: poor name
+do_osword_7f_block_partial(0x3ee1)
+label(0x3ee8, "osword_7f_result2") # TODO: poor name
 
 # TODO: Poor name
 entry(0x132c, "set_yx_based_on_a")
