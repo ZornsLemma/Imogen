@@ -4,6 +4,7 @@ acorn.bbc()
 
 constant(6, "vdu_enable")
 constant(7, "vdu_bell")
+constant(13, "vdu_cr")
 constant(17, "vdu_set_text_colour")
 constant(18, "vdu_set_graphics_colour")
 constant(22, "vdu_set_mode")
@@ -150,6 +151,8 @@ label(0x1377, "power_of_2_table")
 hexadecimal(0x1377, 8)
 
 label(0x387c, "inkey")
+label(0x362e, "wait_for_return")
+expr(0x3632, "vdu_cr")
 
 go()
 

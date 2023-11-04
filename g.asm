@@ -24,6 +24,7 @@ osfile_read_catalogue_info                      = 5
 osword_envelope                                 = 8
 screen_width_minus_one                          = 39
 vdu_bell                                        = 7
+vdu_cr                                          = 13
 vdu_define_character                            = 23
 vdu_define_text_window                          = 28
 vdu_enable                                      = 6
@@ -2320,10 +2321,10 @@ sub_c3617
     jsr sub_c381c                                                     ; 3759: 20 1c 38     .8 :3628[1]
     jsr sub_c3872                                                     ; 375c: 20 72 38     r8 :362b[1]
 ; $375f referenced 1 time by $3633
-loop_c362e
+wait_for_return
     jsr inkey                                                         ; 375f: 20 7c 38     |8 :362e[1]
-    cmp #$0d                                                          ; 3762: c9 0d       ..  :3631[1]
-    bne loop_c362e                                                    ; 3764: d0 f9       ..  :3633[1]
+    cmp #vdu_cr                                                       ; 3762: c9 0d       ..  :3631[1]
+    bne wait_for_return                                               ; 3764: d0 f9       ..  :3633[1]
     rts                                                               ; 3766: 60          `   :3635[1]
 
     !byte $a9, $12, $8d,   9,   4, $a5,   4, $d0, $13, $20, $0a,   4  ; 3767: a9 12 8d... ... :3636[1]
@@ -4006,7 +4007,6 @@ pydis_end
 ;     loop_c29c9
 ;     loop_c2bc6
 ;     loop_c2c58
-;     loop_c362e
 ;     loop_c37f9
 ;     loop_c3814
 ;     loop_c383a
@@ -4229,6 +4229,9 @@ pydis_end
 }
 !if (vdu_bell) != $07 {
     !error "Assertion failed: vdu_bell == $07"
+}
+!if (vdu_cr) != $0d {
+    !error "Assertion failed: vdu_cr == $0d"
 }
 !if (vdu_define_character) != $17 {
     !error "Assertion failed: vdu_define_character == $17"
