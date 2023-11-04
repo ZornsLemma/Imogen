@@ -25,7 +25,13 @@ expr(0x1240, make_hi("drive_0_command"))
 expr(0x1242, make_lo("dir_dollar_command"))
 expr(0x1244, make_hi("dir_dollar_command"))
 
+comment(0x1251, "Set up a reduced-height mode 4 screen with 24 character lines starting at address &6200, respecting the user's current vertical shift as set by *TV.")
+constant(0x6200, "screen_start")
+constant(24, "screen_height_characters")
 expr(0x1260, "vdu_set_mode")
+expr(0x128a, make_lo(make_divide("screen_start", 8)))
+expr(0x1294, make_hi(make_divide("screen_start", 8)))
+expr(0x129e, "screen_height_characters")
 
 go()
 
