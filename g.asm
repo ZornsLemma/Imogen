@@ -2966,7 +2966,7 @@ loop_c3e52
     sty l0055                                                         ; 3e88: 84 55       .U
     lda l1103                                                         ; 3e8a: ad 03 11    ...
     and #4                                                            ; 3e8d: 29 04       ).
-    bne c3ea1                                                         ; 3e8f: d0 10       ..
+    bne read_icodata_using_osword_7f                                  ; 3e8f: d0 10       ..
     lda #<icodata_filename                                            ; 3e91: a9 5e       .^
     sta l0070                                                         ; 3e93: 85 70       .p
     lda #>icodata_filename                                            ; 3e95: a9 3f       .?
@@ -2976,59 +2976,69 @@ loop_c3e52
     jmp c3f0d                                                         ; 3e9e: 4c 0d 3f    L.?
 
 ; $3ea1 referenced 2 times by $3e8f, $3ebe
-c3ea1
+read_icodata_using_osword_7f
     lda #$27 ; '''                                                    ; 3ea1: a9 27       .'
-    jsr sub_c3ec9                                                     ; 3ea3: 20 c9 3e     .>
+    jsr seek_track_a                                                  ; 3ea3: 20 c9 3e     .>
     lda #$7f                                                          ; 3ea6: a9 7f       ..
-    jsr sub_c3ed5                                                     ; 3ea8: 20 d5 3e     .>
+    jsr set_track_special_register_to_a                               ; 3ea8: 20 d5 3e     .>
     lda #$7f                                                          ; 3eab: a9 7f       ..
-    ldx #<(osword_7f_block)                                           ; 3ead: a2 f4       ..
-    ldy #>(osword_7f_block)                                           ; 3eaf: a0 3e       .>
+    ldx #<(osword_7f_block_read)                                      ; 3ead: a2 f4       ..
+    ldy #>(osword_7f_block_read)                                      ; 3eaf: a0 3e       .>
     jsr osword                                                        ; 3eb1: 20 f1 ff     ..            ; Single track single density FDC command (see https://beebwiki.mdfs.net/OSWORDs)
-    lda osword_7f_result                                              ; 3eb4: ad fe 3e    ..>
+    lda osword_7f_read_result                                         ; 3eb4: ad fe 3e    ..>
     beq c3ec1                                                         ; 3eb7: f0 08       ..
     lda #0                                                            ; 3eb9: a9 00       ..
-    jsr sub_c3ec9                                                     ; 3ebb: 20 c9 3e     .>
-    jmp c3ea1                                                         ; 3ebe: 4c a1 3e    L.>
+    jsr seek_track_a                                                  ; 3ebb: 20 c9 3e     .>
+    jmp read_icodata_using_osword_7f                                  ; 3ebe: 4c a1 3e    L.>
 
 ; $3ec1 referenced 1 time by $3eb7
 c3ec1
     lda #$27 ; '''                                                    ; 3ec1: a9 27       .'
-    jsr sub_c3ed5                                                     ; 3ec3: 20 d5 3e     .>
+    jsr set_track_special_register_to_a                               ; 3ec3: 20 d5 3e     .>
     jmp c3f0d                                                         ; 3ec6: 4c 0d 3f    L.?
 
 ; $3ec9 referenced 2 times by $3ea3, $3ebb
-sub_c3ec9
-    sta osword_7f_block2_track                                        ; 3ec9: 8d e8 3e    ..>
+seek_track_a
+    sta osword_7f_block_seek_track                                    ; 3ec9: 8d e8 3e    ..>
     lda #$7f                                                          ; 3ecc: a9 7f       ..
-    ldx #<(osword_7f_block2)                                          ; 3ece: a2 e1       ..
-    ldy #>(osword_7f_block2)                                          ; 3ed0: a0 3e       .>
+    ldx #<(osword_7f_block_seek)                                      ; 3ece: a2 e1       ..
+    ldy #>(osword_7f_block_seek)                                      ; 3ed0: a0 3e       .>
     jmp osword                                                        ; 3ed2: 4c f1 ff    L..            ; Single track single density FDC command (see https://beebwiki.mdfs.net/OSWORDs)
 
 ; $3ed5 referenced 2 times by $3ea8, $3ec3
-sub_c3ed5
-    sta l3ef2                                                         ; 3ed5: 8d f2 3e    ..>
+set_track_special_register_to_a
+    sta osword_7f_block_write_special_register_track                  ; 3ed5: 8d f2 3e    ..>
     lda #$7f                                                          ; 3ed8: a9 7f       ..
-    ldx #<(l3eea)                                                     ; 3eda: a2 ea       ..
-    ldy #>(l3eea)                                                     ; 3edc: a0 3e       .>
+    ldx #<(osword_7f_block_write_special_register)                    ; 3eda: a2 ea       ..
+    ldy #>(osword_7f_block_write_special_register)                    ; 3edc: a0 3e       .>
     jmp osword                                                        ; 3ede: 4c f1 ff    L..            ; Single track single density FDC command (see https://beebwiki.mdfs.net/OSWORDs)
 
-osword_7f_block2
+osword_7f_block_seek
     !byte 0                                                           ; 3ee1: 00          .              ; drive
     !word $ffff,     0                                                ; 3ee2: ff ff 00... ...            ; data address
     !byte 1                                                           ; 3ee6: 01          .              ; number of parameters
     !byte $69                                                         ; 3ee7: 69          i              ; command ($69=seek)
 ; $3ee8 referenced 1 time by $3ec9
-osword_7f_block2_track
+osword_7f_block_seek_track
     !byte 0                                                           ; 3ee8: 00          .
-osword_7f_result2
+osword_7f_seek_result
     !byte 0                                                           ; 3ee9: 00          .
-l3eea
-    !byte   0, $ff, $ff,   0,   0,   2, $7a, $12                      ; 3eea: 00 ff ff... ...
+osword_7f_block_write_special_register
+    !byte 0                                                           ; 3eea: 00          .              ; drive
+    !word $ffff,     0                                                ; 3eeb: ff ff 00... ...            ; data address
+    !byte 2                                                           ; 3eef: 02          .              ; number of parameters
+    !byte $7a                                                         ; 3ef0: 7a          z              ; command ($7a=write special register)
+    !byte $12                                                         ; 3ef1: 12          .              ; special register ($12=track)
 ; $3ef2 referenced 1 time by $3ed5
-l3ef2
-    !byte 0, 0                                                        ; 3ef2: 00 00       ..
-osword_7f_block
+osword_7f_block_write_special_register_track
+    !byte 0                                                           ; 3ef2: 00          .
+osword_7f_write_special_register_result
+    !byte 0                                                           ; 3ef3: 00          .
+; TODO: I think the track and sector values in this block are logical tracks and rely
+; on the previous step operation, but I'm not sure. I suspect this is done entirely for
+; obfuscation and has been converted to file operations in this version, but I haven't
+; actually checked that.
+osword_7f_block_read
     !byte 0                                                           ; 3ef4: 00          .              ; drive
     !word icodata,       0                                            ; 3ef5: ff 40 00... .@.            ; data address
     !byte 3                                                           ; 3ef9: 03          .              ; number of parameters
@@ -3037,7 +3047,7 @@ osword_7f_block
     !byte $7d                                                         ; 3efc: 7d          }              ; sector
     !byte $23                                                         ; 3efd: 23          #              ; size+count ($23=3 256 byte sectors)
 ; $3efe referenced 1 time by $3eb4
-osword_7f_result
+osword_7f_read_result
     !byte 0                                                           ; 3efe: 00          .
 drive_0_command
     !text "DRIVE "                                                    ; 3eff: 44 52 49... DRI
@@ -3227,352 +3237,352 @@ icodata
 pydis_end
 
 ; Label references by decreasing frequency:
-;     l0070:                            42
-;     l0072:                            28
-;     l0073:                            27
-;     oswrch:                           25
-;     l0071:                            24
-;     l0080:                            19
-;     osbyte:                           19
-;     l004c:                            17
-;     l007d:                            14
-;     l0085:                            14
-;     l0015:                            11
-;     l0031:                            10
-;     l0074:                             9
-;     l0079:                             9
-;     l0016:                             8
-;     l0030:                             8
-;     l007b:                             8
-;     l007c:                             8
-;     l0019:                             7
-;     l0075:                             7
-;     l0078:                             7
-;     sub_c14be:                         7
-;     l0018:                             6
-;     l001a:                             6
-;     l001b:                             6
-;     l001d:                             6
-;     l0029:                             6
-;     l002e:                             6
-;     l0054:                             6
-;     l0055:                             6
-;     l0081:                             6
-;     l0088:                             6
-;     l1648:                             6
-;     l173d:                             6
-;     l2a8d:                             6
-;     crtc_address_register:             6
-;     crtc_address_write:                6
-;     l007a:                             5
-;     l007e:                             5
-;     l0082:                             5
-;     l09ef:                             5
-;     pydis_start:                       5
-;     l003b:                             4
-;     l0045:                             4
-;     l0058:                             4
-;     l0076:                             4
-;     l0083:                             4
-;     l0086:                             4
-;     l0087:                             4
-;     l14b0:                             4
-;     l16c4:                             4
-;     l17ff:                             4
-;     l180d:                             4
-;     osword:                            4
-;     l0002:                             3
-;     l0006:                             3
-;     l0008:                             3
-;     l000a:                             3
-;     l0037:                             3
-;     l003a:                             3
-;     l0059:                             3
-;     l005f:                             3
-;     l0077:                             3
-;     l0084:                             3
-;     brkv:                              3
-;     brkv+1:                            3
-;     l0ab3:                             3
-;     l0ab4:                             3
-;     l0c00:                             3
-;     l145d:                             3
-;     sub_c14a7:                         3
-;     sub_c15b7:                         3
-;     sub_c15b8:                         3
-;     sub_c15e8:                         3
-;     l165a:                             3
-;     sub_c174f:                         3
-;     l17c7:                             3
-;     l2b0e:                             3
-;     l2d77:                             3
-;     c3a8f:                             3
-;     l0003:                             2
-;     l0004:                             2
-;     l0007:                             2
-;     l0009:                             2
-;     l0028:                             2
-;     l002a:                             2
-;     l0039:                             2
-;     l0043:                             2
-;     l0051:                             2
-;     l005a:                             2
-;     l0131:                             2
-;     l0409:                             2
-;     l040a:                             2
-;     l0950:                             2
-;     l0966:                             2
-;     l097c:                             2
-;     l0992:                             2
-;     l09a8:                             2
-;     l09b3:                             2
-;     l09be:                             2
-;     l0ab1:                             2
-;     l0ab2:                             2
-;     l0ab7:                             2
-;     l1235:                             2
-;     l123b:                             2
-;     sub_c13cc:                         2
-;     l14a8:                             2
-;     sub_c159f:                         2
-;     l15a8:                             2
-;     l15b9:                             2
-;     sub_c15ba:                         2
-;     sub_c15cd:                         2
-;     l167b:                             2
-;     sub_c16b2:                         2
-;     l17fe:                             2
-;     l187d:                             2
-;     l188e:                             2
-;     l1890:                             2
-;     l1891:                             2
-;     l18bc:                             2
-;     l1a97:                             2
-;     l1f3c:                             2
-;     l209d:                             2
-;     l20b5:                             2
-;     l2a9f:                             2
-;     l2aa0:                             2
-;     l2ab1:                             2
-;     l2ad2:                             2
-;     l2ad9:                             2
-;     l2b08:                             2
-;     l2b1c:                             2
-;     l2b48:                             2
-;     l2d0e:                             2
-;     l394d:                             2
-;     l397f:                             2
-;     l3980:                             2
-;     l39be:                             2
-;     l39dd:                             2
-;     l39f3:                             2
-;     c3bc0:                             2
-;     l3c10:                             2
-;     c3c11:                             2
-;     c3c2c:                             2
-;     c3c5c:                             2
-;     c3c6a:                             2
-;     c3dae:                             2
-;     c3ea1:                             2
-;     sub_c3ec9:                         2
-;     sub_c3ed5:                         2
-;     c3f0d:                             2
-;     initial_screen_disabled_flag:      2
-;     oscli:                             2
-;     l0000:                             1
-;     l0005:                             1
-;     l0014:                             1
-;     l003e:                             1
-;     l0042:                             1
-;     l0048:                             1
-;     l004d:                             1
-;     l0050:                             1
-;     l0052:                             1
-;     l005b:                             1
-;     l005c:                             1
-;     l005d:                             1
-;     l005e:                             1
-;     l007f:                             1
-;     irq1v:                             1
-;     irq1v+1:                           1
-;     l09a9:                             1
-;     l09b4:                             1
-;     l09d4:                             1
-;     l09d5:                             1
-;     l09df:                             1
-;     l09ea:                             1
-;     l09ec:                             1
-;     l09ed:                             1
-;     l09ee:                             1
-;     l0a6f:                             1
-;     l0a7e:                             1
-;     l0a7f:                             1
-;     l0aa1:                             1
-;     l0aa9:                             1
-;     l0ab5:                             1
-;     l0ab6:                             1
-;     l0ad4:                             1
-;     l0aef:                             1
-;     l0b00:                             1
-;     sub_c123c:                         1
-;     l123d:                             1
-;     l1271:                             1
-;     l1280:                             1
-;     sub_c12a2:                         1
-;     l12a6:                             1
-;     l12b7:                             1
-;     l130e:                             1
-;     l1329:                             1
-;     sub_c133a:                         1
-;     sub_c1344:                         1
-;     sub_c1365:                         1
-;     l13a7:                             1
-;     l13a9:                             1
-;     l148e:                             1
-;     l14dd:                             1
-;     l14e6:                             1
-;     l14f0:                             1
-;     sub_c14f7:                         1
-;     sub_c1509:                         1
-;     l1558:                             1
-;     l1577:                             1
-;     l1597:                             1
-;     l15a2:                             1
-;     sub_c15af:                         1
-;     sub_c15c9:                         1
-;     l15d6:                             1
-;     sub_c15de:                         1
-;     l15f9:                             1
-;     sub_c162f:                         1
-;     l1671:                             1
-;     sub_c1682:                         1
-;     l168f:                             1
-;     sub_c1699:                         1
-;     c16a5:                             1
-;     sub_c16ba:                         1
-;     osfile_wrapper:                    1
-;     l16f4:                             1
-;     sub_c1724:                         1
-;     l1754:                             1
-;     l1759:                             1
-;     l1760:                             1
-;     sub_c176e:                         1
-;     sub_c1771:                         1
-;     l178f:                             1
-;     l17a1:                             1
-;     l17bb:                             1
-;     l17d6:                             1
-;     l17db:                             1
-;     l17e6:                             1
-;     l17f0:                             1
-;     l1828:                             1
-;     l188f:                             1
-;     l1892:                             1
-;     l1896:                             1
-;     l1897:                             1
-;     sub_c18bb:                         1
-;     l19d7:                             1
-;     l19da:                             1
-;     l1a9e:                             1
-;     l1a9f:                             1
-;     l1aa0:                             1
-;     l1f25:                             1
-;     l1f28:                             1
-;     l207d:                             1
-;     l208e:                             1
-;     l209e:                             1
-;     l20c7:                             1
-;     l20d1:                             1
-;     l20e8:                             1
-;     l20f2:                             1
-;     l2564:                             1
-;     l2a9e:                             1
-;     l2ab9:                             1
-;     l2ac3:                             1
-;     l2adb:                             1
-;     l2af2:                             1
-;     l2afa:                             1
-;     l2b05:                             1
-;     l2b0f:                             1
-;     l2b1b:                             1
-;     l2b43:                             1
-;     l2b64:                             1
-;     l2cee:                             1
-;     l2cf7:                             1
-;     l2d07:                             1
-;     l2d3d:                             1
-;     l2d66:                             1
-;     l2d6e:                             1
-;     l2d89:                             1
-;     l2d90:                             1
-;     l2d93:                             1
-;     l2fe7:                             1
-;     l2fe8:                             1
-;     l301a:                             1
-;     l3308:                             1
-;     l3748:                             1
-;     l375f:                             1
-;     l3924:                             1
-;     l392a:                             1
-;     l3935:                             1
-;     l3945:                             1
-;     l394b:                             1
-;     l3969:                             1
-;     l396b:                             1
-;     l3979:                             1
-;     l397e:                             1
-;     l3981:                             1
-;     l39a3:                             1
-;     l39ad:                             1
-;     l39bb:                             1
-;     l39c3:                             1
-;     l39de:                             1
-;     l39f4:                             1
-;     l3aa0:                             1
-;     l3b09:                             1
-;     l3bd1:                             1
-;     l3bd2:                             1
-;     c3c06:                             1
-;     l3c07:                             1
-;     c3c08:                             1
-;     l3c09:                             1
-;     c3c0e:                             1
-;     l3c0f:                             1
-;     c3c56:                             1
-;     loop_c3c6c:                        1
-;     loop_c3c79:                        1
-;     loop_c3c84:                        1
-;     c3c9b:                             1
-;     loop_c3cfc:                        1
-;     loop_c3d54:                        1
-;     initial_screen_disabled_flag_ok:   1
-;     c3db9:                             1
-;     loop_c3e52:                        1
-;     c3ec1:                             1
-;     osword_7f_block2_track:            1
-;     l3ef2:                             1
-;     osword_7f_result:                  1
-;     l3f05:                             1
-;     loop_c3f18:                        1
-;     c3f2d:                             1
-;     character_fe_bitmap:               1
-;     sub_c3f6f:                         1
-;     loop_c3f7b:                        1
-;     loop_c3f87:                        1
-;     c3fba:                             1
-;     l3fbb:                             1
-;     l3fcb:                             1
-;     l402c:                             1
-;     l4088:                             1
-;     l40d0:                             1
-;     l8000:                             1
-;     lbe00:                             1
-;     lbf00:                             1
-;     user_via_t1c_l:                    1
-;     user_via_t1c_h:                    1
-;     user_via_t2c_l:                    1
-;     user_via_t2c_h:                    1
-;     osfile:                            1
+;     l0070:                                         42
+;     l0072:                                         28
+;     l0073:                                         27
+;     oswrch:                                        25
+;     l0071:                                         24
+;     l0080:                                         19
+;     osbyte:                                        19
+;     l004c:                                         17
+;     l007d:                                         14
+;     l0085:                                         14
+;     l0015:                                         11
+;     l0031:                                         10
+;     l0074:                                          9
+;     l0079:                                          9
+;     l0016:                                          8
+;     l0030:                                          8
+;     l007b:                                          8
+;     l007c:                                          8
+;     l0019:                                          7
+;     l0075:                                          7
+;     l0078:                                          7
+;     sub_c14be:                                      7
+;     l0018:                                          6
+;     l001a:                                          6
+;     l001b:                                          6
+;     l001d:                                          6
+;     l0029:                                          6
+;     l002e:                                          6
+;     l0054:                                          6
+;     l0055:                                          6
+;     l0081:                                          6
+;     l0088:                                          6
+;     l1648:                                          6
+;     l173d:                                          6
+;     l2a8d:                                          6
+;     crtc_address_register:                          6
+;     crtc_address_write:                             6
+;     l007a:                                          5
+;     l007e:                                          5
+;     l0082:                                          5
+;     l09ef:                                          5
+;     pydis_start:                                    5
+;     l003b:                                          4
+;     l0045:                                          4
+;     l0058:                                          4
+;     l0076:                                          4
+;     l0083:                                          4
+;     l0086:                                          4
+;     l0087:                                          4
+;     l14b0:                                          4
+;     l16c4:                                          4
+;     l17ff:                                          4
+;     l180d:                                          4
+;     osword:                                         4
+;     l0002:                                          3
+;     l0006:                                          3
+;     l0008:                                          3
+;     l000a:                                          3
+;     l0037:                                          3
+;     l003a:                                          3
+;     l0059:                                          3
+;     l005f:                                          3
+;     l0077:                                          3
+;     l0084:                                          3
+;     brkv:                                           3
+;     brkv+1:                                         3
+;     l0ab3:                                          3
+;     l0ab4:                                          3
+;     l0c00:                                          3
+;     l145d:                                          3
+;     sub_c14a7:                                      3
+;     sub_c15b7:                                      3
+;     sub_c15b8:                                      3
+;     sub_c15e8:                                      3
+;     l165a:                                          3
+;     sub_c174f:                                      3
+;     l17c7:                                          3
+;     l2b0e:                                          3
+;     l2d77:                                          3
+;     c3a8f:                                          3
+;     l0003:                                          2
+;     l0004:                                          2
+;     l0007:                                          2
+;     l0009:                                          2
+;     l0028:                                          2
+;     l002a:                                          2
+;     l0039:                                          2
+;     l0043:                                          2
+;     l0051:                                          2
+;     l005a:                                          2
+;     l0131:                                          2
+;     l0409:                                          2
+;     l040a:                                          2
+;     l0950:                                          2
+;     l0966:                                          2
+;     l097c:                                          2
+;     l0992:                                          2
+;     l09a8:                                          2
+;     l09b3:                                          2
+;     l09be:                                          2
+;     l0ab1:                                          2
+;     l0ab2:                                          2
+;     l0ab7:                                          2
+;     l1235:                                          2
+;     l123b:                                          2
+;     sub_c13cc:                                      2
+;     l14a8:                                          2
+;     sub_c159f:                                      2
+;     l15a8:                                          2
+;     l15b9:                                          2
+;     sub_c15ba:                                      2
+;     sub_c15cd:                                      2
+;     l167b:                                          2
+;     sub_c16b2:                                      2
+;     l17fe:                                          2
+;     l187d:                                          2
+;     l188e:                                          2
+;     l1890:                                          2
+;     l1891:                                          2
+;     l18bc:                                          2
+;     l1a97:                                          2
+;     l1f3c:                                          2
+;     l209d:                                          2
+;     l20b5:                                          2
+;     l2a9f:                                          2
+;     l2aa0:                                          2
+;     l2ab1:                                          2
+;     l2ad2:                                          2
+;     l2ad9:                                          2
+;     l2b08:                                          2
+;     l2b1c:                                          2
+;     l2b48:                                          2
+;     l2d0e:                                          2
+;     l394d:                                          2
+;     l397f:                                          2
+;     l3980:                                          2
+;     l39be:                                          2
+;     l39dd:                                          2
+;     l39f3:                                          2
+;     c3bc0:                                          2
+;     l3c10:                                          2
+;     c3c11:                                          2
+;     c3c2c:                                          2
+;     c3c5c:                                          2
+;     c3c6a:                                          2
+;     c3dae:                                          2
+;     read_icodata_using_osword_7f:                   2
+;     seek_track_a:                                   2
+;     set_track_special_register_to_a:                2
+;     c3f0d:                                          2
+;     initial_screen_disabled_flag:                   2
+;     oscli:                                          2
+;     l0000:                                          1
+;     l0005:                                          1
+;     l0014:                                          1
+;     l003e:                                          1
+;     l0042:                                          1
+;     l0048:                                          1
+;     l004d:                                          1
+;     l0050:                                          1
+;     l0052:                                          1
+;     l005b:                                          1
+;     l005c:                                          1
+;     l005d:                                          1
+;     l005e:                                          1
+;     l007f:                                          1
+;     irq1v:                                          1
+;     irq1v+1:                                        1
+;     l09a9:                                          1
+;     l09b4:                                          1
+;     l09d4:                                          1
+;     l09d5:                                          1
+;     l09df:                                          1
+;     l09ea:                                          1
+;     l09ec:                                          1
+;     l09ed:                                          1
+;     l09ee:                                          1
+;     l0a6f:                                          1
+;     l0a7e:                                          1
+;     l0a7f:                                          1
+;     l0aa1:                                          1
+;     l0aa9:                                          1
+;     l0ab5:                                          1
+;     l0ab6:                                          1
+;     l0ad4:                                          1
+;     l0aef:                                          1
+;     l0b00:                                          1
+;     sub_c123c:                                      1
+;     l123d:                                          1
+;     l1271:                                          1
+;     l1280:                                          1
+;     sub_c12a2:                                      1
+;     l12a6:                                          1
+;     l12b7:                                          1
+;     l130e:                                          1
+;     l1329:                                          1
+;     sub_c133a:                                      1
+;     sub_c1344:                                      1
+;     sub_c1365:                                      1
+;     l13a7:                                          1
+;     l13a9:                                          1
+;     l148e:                                          1
+;     l14dd:                                          1
+;     l14e6:                                          1
+;     l14f0:                                          1
+;     sub_c14f7:                                      1
+;     sub_c1509:                                      1
+;     l1558:                                          1
+;     l1577:                                          1
+;     l1597:                                          1
+;     l15a2:                                          1
+;     sub_c15af:                                      1
+;     sub_c15c9:                                      1
+;     l15d6:                                          1
+;     sub_c15de:                                      1
+;     l15f9:                                          1
+;     sub_c162f:                                      1
+;     l1671:                                          1
+;     sub_c1682:                                      1
+;     l168f:                                          1
+;     sub_c1699:                                      1
+;     c16a5:                                          1
+;     sub_c16ba:                                      1
+;     osfile_wrapper:                                 1
+;     l16f4:                                          1
+;     sub_c1724:                                      1
+;     l1754:                                          1
+;     l1759:                                          1
+;     l1760:                                          1
+;     sub_c176e:                                      1
+;     sub_c1771:                                      1
+;     l178f:                                          1
+;     l17a1:                                          1
+;     l17bb:                                          1
+;     l17d6:                                          1
+;     l17db:                                          1
+;     l17e6:                                          1
+;     l17f0:                                          1
+;     l1828:                                          1
+;     l188f:                                          1
+;     l1892:                                          1
+;     l1896:                                          1
+;     l1897:                                          1
+;     sub_c18bb:                                      1
+;     l19d7:                                          1
+;     l19da:                                          1
+;     l1a9e:                                          1
+;     l1a9f:                                          1
+;     l1aa0:                                          1
+;     l1f25:                                          1
+;     l1f28:                                          1
+;     l207d:                                          1
+;     l208e:                                          1
+;     l209e:                                          1
+;     l20c7:                                          1
+;     l20d1:                                          1
+;     l20e8:                                          1
+;     l20f2:                                          1
+;     l2564:                                          1
+;     l2a9e:                                          1
+;     l2ab9:                                          1
+;     l2ac3:                                          1
+;     l2adb:                                          1
+;     l2af2:                                          1
+;     l2afa:                                          1
+;     l2b05:                                          1
+;     l2b0f:                                          1
+;     l2b1b:                                          1
+;     l2b43:                                          1
+;     l2b64:                                          1
+;     l2cee:                                          1
+;     l2cf7:                                          1
+;     l2d07:                                          1
+;     l2d3d:                                          1
+;     l2d66:                                          1
+;     l2d6e:                                          1
+;     l2d89:                                          1
+;     l2d90:                                          1
+;     l2d93:                                          1
+;     l2fe7:                                          1
+;     l2fe8:                                          1
+;     l301a:                                          1
+;     l3308:                                          1
+;     l3748:                                          1
+;     l375f:                                          1
+;     l3924:                                          1
+;     l392a:                                          1
+;     l3935:                                          1
+;     l3945:                                          1
+;     l394b:                                          1
+;     l3969:                                          1
+;     l396b:                                          1
+;     l3979:                                          1
+;     l397e:                                          1
+;     l3981:                                          1
+;     l39a3:                                          1
+;     l39ad:                                          1
+;     l39bb:                                          1
+;     l39c3:                                          1
+;     l39de:                                          1
+;     l39f4:                                          1
+;     l3aa0:                                          1
+;     l3b09:                                          1
+;     l3bd1:                                          1
+;     l3bd2:                                          1
+;     c3c06:                                          1
+;     l3c07:                                          1
+;     c3c08:                                          1
+;     l3c09:                                          1
+;     c3c0e:                                          1
+;     l3c0f:                                          1
+;     c3c56:                                          1
+;     loop_c3c6c:                                     1
+;     loop_c3c79:                                     1
+;     loop_c3c84:                                     1
+;     c3c9b:                                          1
+;     loop_c3cfc:                                     1
+;     loop_c3d54:                                     1
+;     initial_screen_disabled_flag_ok:                1
+;     c3db9:                                          1
+;     loop_c3e52:                                     1
+;     c3ec1:                                          1
+;     osword_7f_block_seek_track:                     1
+;     osword_7f_block_write_special_register_track:   1
+;     osword_7f_read_result:                          1
+;     l3f05:                                          1
+;     loop_c3f18:                                     1
+;     c3f2d:                                          1
+;     character_fe_bitmap:                            1
+;     sub_c3f6f:                                      1
+;     loop_c3f7b:                                     1
+;     loop_c3f87:                                     1
+;     c3fba:                                          1
+;     l3fbb:                                          1
+;     l3fcb:                                          1
+;     l402c:                                          1
+;     l4088:                                          1
+;     l40d0:                                          1
+;     l8000:                                          1
+;     lbe00:                                          1
+;     lbf00:                                          1
+;     user_via_t1c_l:                                 1
+;     user_via_t1c_h:                                 1
+;     user_via_t2c_l:                                 1
+;     user_via_t2c_h:                                 1
+;     osfile:                                         1
 
 ; Automatically generated labels:
 ;     c110c
@@ -3678,7 +3688,6 @@ pydis_end
 ;     c3c9b
 ;     c3dae
 ;     c3db9
-;     c3ea1
 ;     c3ec1
 ;     c3f0d
 ;     c3f2d
@@ -3976,8 +3985,6 @@ pydis_end
 ;     l3c09
 ;     l3c0f
 ;     l3c10
-;     l3eea
-;     l3ef2
 ;     l3f05
 ;     l3fbb
 ;     l3fcb
@@ -4070,8 +4077,6 @@ pydis_end
 ;     sub_c3872
 ;     sub_c387c
 ;     sub_c388d
-;     sub_c3ec9
-;     sub_c3ed5
 ;     sub_c3f6f
 !if (<(dir_dollar_command)) != $07 {
     !error "Assertion failed: <(dir_dollar_command) == $07"
@@ -4082,14 +4087,14 @@ pydis_end
 !if (<(l0070)) != $70 {
     !error "Assertion failed: <(l0070) == $70"
 }
-!if (<(l3eea)) != $ea {
-    !error "Assertion failed: <(l3eea) == $ea"
+!if (<(osword_7f_block_read)) != $f4 {
+    !error "Assertion failed: <(osword_7f_block_read) == $f4"
 }
-!if (<(osword_7f_block)) != $f4 {
-    !error "Assertion failed: <(osword_7f_block) == $f4"
+!if (<(osword_7f_block_seek)) != $e1 {
+    !error "Assertion failed: <(osword_7f_block_seek) == $e1"
 }
-!if (<(osword_7f_block2)) != $e1 {
-    !error "Assertion failed: <(osword_7f_block2) == $e1"
+!if (<(osword_7f_block_write_special_register)) != $ea {
+    !error "Assertion failed: <(osword_7f_block_write_special_register) == $ea"
 }
 !if (<icodata) != $ff {
     !error "Assertion failed: <icodata == $ff"
@@ -4115,14 +4120,14 @@ pydis_end
 !if (>(l0070)) != $00 {
     !error "Assertion failed: >(l0070) == $00"
 }
-!if (>(l3eea)) != $3e {
-    !error "Assertion failed: >(l3eea) == $3e"
+!if (>(osword_7f_block_read)) != $3e {
+    !error "Assertion failed: >(osword_7f_block_read) == $3e"
 }
-!if (>(osword_7f_block)) != $3e {
-    !error "Assertion failed: >(osword_7f_block) == $3e"
+!if (>(osword_7f_block_seek)) != $3e {
+    !error "Assertion failed: >(osword_7f_block_seek) == $3e"
 }
-!if (>(osword_7f_block2)) != $3e {
-    !error "Assertion failed: >(osword_7f_block2) == $3e"
+!if (>(osword_7f_block_write_special_register)) != $3e {
+    !error "Assertion failed: >(osword_7f_block_write_special_register) == $3e"
 }
 !if (>icodata) != $40 {
     !error "Assertion failed: >icodata == $40"

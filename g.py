@@ -86,6 +86,8 @@ expr(0x3e9a, "osfile_load")
 
 expr(0x172e, "vdu_bell")
 
+entry(0x3ec9, "seek_track_a")
+
 def do_osword_7f_block_partial(addr):
     byte(addr)
     comment(addr, "drive", inline=True)
@@ -95,20 +97,31 @@ def do_osword_7f_block_partial(addr):
     comment(addr+1, "data address", inline=True)
     comment(addr+5, "number of parameters", inline=True)
 
-label(0x3ef4, "osword_7f_block")
+comment(0x3ef4, "TODO: I think the track and sector values in this block are logical tracks and rely on the previous step operation, but I'm not sure. I suspect this is done entirely for obfuscation and has been converted to file operations in this version, but I haven't actually checked that.")
+label(0x3ef4, "osword_7f_block_read")
 do_osword_7f_block_partial(0x3ef4)
 expr(0x3ef5, "icodata")
 comment(0x3efa, "command ($53=read data)", inline=True)
 comment(0x3efb, "track", inline=True)
 comment(0x3efc, "sector", inline=True)
 comment(0x3efd, "size+count ($23=3 256 byte sectors)", inline=True)
-label(0x3efe, "osword_7f_result")
+label(0x3efe, "osword_7f_read_result")
 
-label(0x3ee1, "osword_7f_block2") # TODO: poor name
+label(0x3ee1, "osword_7f_block_seek") # TODO: poor name
 do_osword_7f_block_partial(0x3ee1)
 comment(0x3ee7, "command ($69=seek)", inline=True)
-label(0x3ee8, "osword_7f_block2_track")
-label(0x3ee9, "osword_7f_result2") # TODO: poor name
+label(0x3ee8, "osword_7f_block_seek_track")
+label(0x3ee9, "osword_7f_seek_result") # TODO: poor name
+
+label(0x3eea, "osword_7f_block_write_special_register") # TODO: poor name
+do_osword_7f_block_partial(0x3eea)
+comment(0x3ef0, "command ($7a=write special register)", inline=True)
+comment(0x3ef1, "special register ($12=track)", inline=True)
+label(0x3ef2, "osword_7f_block_write_special_register_track")
+label(0x3ef3, "osword_7f_write_special_register_result")
+
+entry(0x3ed5, "set_track_special_register_to_a")
+entry(0x3ea1, "read_icodata_using_osword_7f")
 
 # TODO: Poor name
 entry(0x132c, "set_yx_based_on_a")
