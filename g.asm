@@ -1236,19 +1236,16 @@ l196e = sub_c196c+2
 ; $1a9e referenced 1 time by $1966
 ; $1a9f referenced 1 time by $1969
 ; $1aa0 referenced 1 time by $3e79
-sub_c196f
-    lda #<sprdata                                                     ; 1aa0: a9 80       ..  :196f[1]
+load_sprdata_to_addr_at_l0054
+    lda #<sprdata_filename                                            ; 1aa0: a9 80       ..  :196f[1]
     sta l0070                                                         ; 1aa2: 85 70       .p  :1971[1]
-    lda #>sprdata                                                     ; 1aa4: a9 19       ..  :1973[1]
+    lda #>sprdata_filename                                            ; 1aa4: a9 19       ..  :1973[1]
     sta l0071                                                         ; 1aa6: 85 71       .q  :1975[1]
     ldx l0054                                                         ; 1aa8: a6 54       .T  :1977[1]
     ldy l0055                                                         ; 1aaa: a4 55       .U  :1979[1]
     lda #osfile_load                                                  ; 1aac: a9 ff       ..  :197b[1]
     jmp osfile_wrapper                                                ; 1aae: 4c dc 16    L.. :197d[1]
 
-; The filename and (TODO: guess) code located here are overwritten with the contents of
-; the 'sprdata' file at runtime.
-sprdata
 sprdata_filename
     !text "sprdata", $0d                                              ; 1ab1: 73 70 72... spr :1980[1]
     !byte $8d, $0f, $1a, $8a, $48, $98, $48, $ad, $2b, $13, $f0, $51  ; 1ab9: 8d 0f 1a... ... :1988[1]
@@ -2948,7 +2945,8 @@ loop_c3e52
     sta l0071                                                         ; 3e65: 85 71       .q
     lda #osfile_read_catalogue_info                                   ; 3e67: a9 05       ..
     jsr osfile_wrapper                                                ; 3e69: 20 dc 16     ..
-; TODO: Set $54/55 to $5bc0-length_of_sprdata!?
+; Load 'sprdata' file into memory so it ends just below $5bc0. TODO: used named
+; constant
     lda #$c0                                                          ; 3e6c: a9 c0       ..
     sec                                                               ; 3e6e: 38          8
     sbc l007a                                                         ; 3e6f: e5 7a       .z
@@ -2956,14 +2954,15 @@ loop_c3e52
     lda #$5b ; '['                                                    ; 3e73: a9 5b       .[
     sbc l007b                                                         ; 3e75: e5 7b       .{
     sta l0055                                                         ; 3e77: 85 55       .U
-    jsr sub_c196f                                                     ; 3e79: 20 6f 19     o.
+    jsr load_sprdata_to_addr_at_l0054                                 ; 3e79: 20 6f 19     o.
     lda l0054                                                         ; 3e7c: a5 54       .T
     pha                                                               ; 3e7e: 48          H
     lda l0055                                                         ; 3e7f: a5 55       .U
     pha                                                               ; 3e81: 48          H
-    ldx #$ff                                                          ; 3e82: a2 ff       ..
+; Load 'icodata' file into memory at icodata
+    ldx #<icodata                                                     ; 3e82: a2 ff       ..
     stx l0054                                                         ; 3e84: 86 54       .T
-    ldy #$40 ; '@'                                                    ; 3e86: a0 40       .@
+    ldy #>icodata                                                     ; 3e86: a0 40       .@
     sty l0055                                                         ; 3e88: 84 55       .U
     lda l1103                                                         ; 3e8a: ad 03 11    ...
     and #4                                                            ; 3e8d: 29 04       ).
@@ -2983,8 +2982,8 @@ c3ea1
     lda #$7f                                                          ; 3ea6: a9 7f       ..
     jsr sub_c3ed5                                                     ; 3ea8: 20 d5 3e     .>
     lda #$7f                                                          ; 3eab: a9 7f       ..
-    ldx #<(l3ef4)                                                     ; 3ead: a2 f4       ..
-    ldy #>(l3ef4)                                                     ; 3eaf: a0 3e       .>
+    ldx #<(osword_7f_block)                                           ; 3ead: a2 f4       ..
+    ldy #>(osword_7f_block)                                           ; 3eaf: a0 3e       .>
     jsr osword                                                        ; 3eb1: 20 f1 ff     ..            ; Single track single density FDC command (see https://beebwiki.mdfs.net/OSWORDs)
     lda l3efe                                                         ; 3eb4: ad fe 3e    ..>
     beq c3ec1                                                         ; 3eb7: f0 08       ..
@@ -3024,8 +3023,14 @@ l3eea
 ; $3ef2 referenced 1 time by $3ed5
 l3ef2
     !byte 0, 0                                                        ; 3ef2: 00 00       ..
-l3ef4
-    !byte   0, $ff, $40,   0,   0,   3, $53, $7f, $7d, $23            ; 3ef4: 00 ff 40... ..@
+osword_7f_block
+    !byte 0                                                           ; 3ef4: 00          .              ; drive
+    !word icodata,       0                                            ; 3ef5: ff 40 00... .@.            ; data address
+    !byte 3                                                           ; 3ef9: 03          .              ; number of parameters
+    !byte $53                                                         ; 3efa: 53          S              ; command ($53=read data)
+    !byte $7f                                                         ; 3efb: 7f          .              ; track
+    !byte $7d                                                         ; 3efc: 7d          }              ; sector
+    !byte $23                                                         ; 3efd: 23          #              ; size+count ($23=3 256 byte sectors)
 ; $3efe referenced 1 time by $3eb4
 l3efe
     !byte 0                                                           ; 3efe: 00          .
@@ -3185,6 +3190,7 @@ l40d0
     !text $5c, " f"                                                   ; 40f2: 5c 20 66    \ f
     !byte $18, $ca, $e0, $ff, $d0, $da, $68, $aa, $68, $60            ; 40f5: 18 ca e0... ...
 some_data_high_copy_TODO
+icodata
     !byte $ae,   6, $11, $ac,   7, $11, $4c, $91, $17, $12, $20,   0  ; 40ff: ae 06 11... ...
     !byte   4, $a5,   4, $f0                                          ; 410b: 04 a5 04... ...
     !text ") c8"                                                      ; 410f: 29 20 63... ) c
@@ -3969,7 +3975,6 @@ pydis_end
 ;     l3ee8
 ;     l3eea
 ;     l3ef2
-;     l3ef4
 ;     l3efe
 ;     l3f05
 ;     l3fbb
@@ -4042,7 +4047,6 @@ pydis_end
 ;     sub_c18a6
 ;     sub_c18bb
 ;     sub_c196c
-;     sub_c196f
 ;     sub_c1df4
 ;     sub_c1f4c
 ;     sub_c1f6d
@@ -4082,8 +4086,11 @@ pydis_end
 !if (<(l3eea)) != $ea {
     !error "Assertion failed: <(l3eea) == $ea"
 }
-!if (<(l3ef4)) != $f4 {
-    !error "Assertion failed: <(l3ef4) == $f4"
+!if (<(osword_7f_block)) != $f4 {
+    !error "Assertion failed: <(osword_7f_block) == $f4"
+}
+!if (<icodata) != $ff {
+    !error "Assertion failed: <icodata == $ff"
 }
 !if (<icodata_filename) != $5e {
     !error "Assertion failed: <icodata_filename == $5e"
@@ -4093,9 +4100,6 @@ pydis_end
 }
 !if (<some_data_low_TODO) != $00 {
     !error "Assertion failed: <some_data_low_TODO == $00"
-}
-!if (<sprdata) != $80 {
-    !error "Assertion failed: <sprdata == $80"
 }
 !if (<sprdata_filename) != $80 {
     !error "Assertion failed: <sprdata_filename == $80"
@@ -4115,8 +4119,11 @@ pydis_end
 !if (>(l3eea)) != $3e {
     !error "Assertion failed: >(l3eea) == $3e"
 }
-!if (>(l3ef4)) != $3e {
-    !error "Assertion failed: >(l3ef4) == $3e"
+!if (>(osword_7f_block)) != $3e {
+    !error "Assertion failed: >(osword_7f_block) == $3e"
+}
+!if (>icodata) != $40 {
+    !error "Assertion failed: >icodata == $40"
 }
 !if (>icodata_filename) != $3f {
     !error "Assertion failed: >icodata_filename == $3f"
@@ -4126,9 +4133,6 @@ pydis_end
 }
 !if (>some_data_low_TODO) != $04 {
     !error "Assertion failed: >some_data_low_TODO == $04"
-}
-!if (>sprdata) != $19 {
-    !error "Assertion failed: >sprdata == $19"
 }
 !if (>sprdata_filename) != $19 {
     !error "Assertion failed: >sprdata_filename == $19"
@@ -4150,6 +4154,9 @@ pydis_end
 }
 !if (crtc_vert_sync_pos) != $07 {
     !error "Assertion failed: crtc_vert_sync_pos == $07"
+}
+!if (icodata) != $40ff {
+    !error "Assertion failed: icodata == $40ff"
 }
 !if (osbyte_close_spool_exec) != $77 {
     !error "Assertion failed: osbyte_close_spool_exec == $77"

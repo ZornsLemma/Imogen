@@ -61,19 +61,21 @@ comment(0x3db9, "TODO: A lot of this code looks - I haven't checked yet - simila
 # TODO: This is just a guess - but the code looks as though it's doing OSFILE but wrapping in some error checking and temporary changes to BRKV
 entry(0x16dc, "osfile_wrapper")
 
-comment(0x1980, "The filename and (TODO: guess) code located here are overwritten with the contents of the 'sprdata' file at runtime.")
-label(0x1980, "sprdata")
-expr(0x1970, make_lo("sprdata"))
-expr(0x1974, make_hi("sprdata"))
 expr(0x197c, "osfile_load")
 label(0x1980, "sprdata_filename")
+expr(0x1970, make_lo("sprdata_filename"))
+expr(0x1974, make_hi("sprdata_filename"))
 stringcr(0x1980)
 expr(0x3e60, make_lo("sprdata_filename"))
 expr(0x3e64, make_hi("sprdata_filename"))
+entry(0x196f, "load_sprdata_to_addr_at_l0054")
 
-comment(0x3e6c, "TODO: Set $54/55 to $5bc0-length_of_sprdata!?")
+comment(0x3e6c, "Load 'sprdata' file into memory so it ends just below $5bc0. TODO: used named constant")
 
-
+comment(0x3e82, "Load 'icodata' file into memory at icodata")
+label(0x40ff, "icodata")
+expr(0x3e83, make_lo("icodata"))
+expr(0x3e87, make_hi("icodata"))
 label(0x3f5e, "icodata_filename")
 stringcr(0x3f5e)
 expr(0x3e92, make_lo("icodata_filename"))
@@ -83,6 +85,20 @@ expr(0x3e68, "osfile_read_catalogue_info")
 expr(0x3e9a, "osfile_load")
 
 expr(0x172e, "vdu_bell")
+
+label(0x3ef4, "osword_7f_block")
+byte(0x3ef4)
+comment(0x3ef4, "drive", inline=True)
+word(0x3ef5, 2)
+expr(0x3ef5, "icodata")
+for i in range(4):
+    byte(0x3efa+i)
+comment(0x3ef5, "data address", inline=True)
+comment(0x3ef9, "number of parameters", inline=True)
+comment(0x3efa, "command ($53=read data)", inline=True)
+comment(0x3efb, "track", inline=True)
+comment(0x3efc, "sector", inline=True)
+comment(0x3efd, "size+count ($23=3 256 byte sectors)", inline=True)
 
 # TODO: Poor name
 entry(0x132c, "set_yx_based_on_a")
