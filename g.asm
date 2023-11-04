@@ -18,6 +18,8 @@ osbyte_set_cursor_editing                       = 4
 osbyte_set_printer_ignore                       = 6
 osbyte_tv                                       = 144
 osword_envelope                                 = 8
+vdu_enable                                      = 6
+vdu_set_mode                                    = 22
 
 ; Memory locations
 l0002                   = &0002
@@ -1907,6 +1909,10 @@ l3850 = c384f+1
     equb &85, &20, &85, &2c, &85, &2d, &60,   0,   0,   0,   0,   0   ; 3bf1: 85 20 85... . .
     equb &a0, &ff, &a9, &81, &20, &f4, &ff, &8a, &60                  ; 3bfd: a0 ff a9... ...
 
+; The loader will have executed VDU 21 to disable VDU output. Record the current
+; disable state before re-enabling it, so we can check it later as part of a copy
+; protection scheme.
+.start
     lda #osbyte_read_vdu_status                                       ; 3c06: a9 75       .u
     jsr osbyte                                                        ; 3c08: 20 f4 ff     ..            ; Read VDU status byte
 
@@ -1921,8 +1927,8 @@ l3850 = c384f+1
     ;     bit 7=screen disabled via VDU 21
     txa                                                               ; 3c0b: 8a          .
     and #&80                                                          ; 3c0c: 29 80       ).
-    sta l3f6e                                                         ; 3c0e: 8d 6e 3f    .n?
-    lda #6                                                            ; 3c11: a9 06       ..
+    sta initial_screen_disabled_flag                                  ; 3c0e: 8d 6e 3f    .n?
+    lda #vdu_enable                                                   ; 3c11: a9 06       ..
     jsr oswrch                                                        ; 3c13: 20 ee ff     ..            ; Write character 6
     lda #&ff                                                          ; 3c16: a9 ff       ..
     sta l0070                                                         ; 3c18: 85 70       .p
@@ -2118,16 +2124,21 @@ l3850 = c384f+1
     sta l000a                                                         ; 3d8b: 85 0a       ..
     lda #&62 ; 'b'                                                    ; 3d8d: a9 62       .b
     sta l004c                                                         ; 3d8f: 85 4c       .L
-    lda l3f6e                                                         ; 3d91: ad 6e 3f    .n?
-    bne c3da3                                                         ; 3d94: d0 0d       ..
-    lda #&16                                                          ; 3d96: a9 16       ..
+; Presumably as part of a copy protection scheme, we check to see if VDU output was
+; disabled (VDU 21) when we first started to execute, before we re-enabled output (VDU
+; 6) ourselves.
+    lda initial_screen_disabled_flag                                  ; 3d91: ad 6e 3f    .n?
+    bne initial_screen_disabled_flag_ok                               ; 3d94: d0 0d       ..
+; VDU output wasn't disabled when we started to execute. Do some stuff (TODO: what?) to
+; break things.
+    lda #vdu_set_mode                                                 ; 3d96: a9 16       ..
     jsr oswrch                                                        ; 3d98: 20 ee ff     ..            ; Write character 22
     lda #4                                                            ; 3d9b: a9 04       ..
     jsr oswrch                                                        ; 3d9d: 20 ee ff     ..            ; Write character 4
     jmp c3db9                                                         ; 3da0: 4c b9 3d    L.=
 
 ; &3da3 referenced 1 time by &3d94
-.c3da3
+.initial_screen_disabled_flag_ok
     lda #0                                                            ; 3da3: a9 00       ..
     sta l0070                                                         ; 3da5: 85 70       .p
     tay                                                               ; 3da7: a8          .
@@ -2366,7 +2377,7 @@ l3850 = c384f+1
     equs '"', "A", '"'                                                ; 3f68: 22 41 22    "A"
     equb &14,   8,   0                                                ; 3f6b: 14 08 00    ...
 ; &3f6e referenced 2 times by &3c0e, &3d91
-.l3f6e
+.initial_screen_disabled_flag
     equb 0                                                            ; 3f6e: 00          .
 
 ; &3f6f referenced 1 time by &3f2d
@@ -2485,263 +2496,263 @@ l3850 = c384f+1
 .pydis_end
 
 ; Label references by decreasing frequency:
-;     l0070:                  21
-;     oswrch:                 20
-;     l0072:                  17
-;     osbyte:                 15
-;     l0071:                  13
-;     l0073:                  13
-;     l0080:                  12
-;     l004c:                   6
-;     crtc_address_register:   6
-;     crtc_address_write:      6
-;     l007a:                   5
-;     l007b:                   5
-;     l007d:                   5
-;     l09df:                   5
-;     l0054:                   4
-;     l0055:                   4
-;     l0079:                   4
-;     l1103:                   4
-;     c16dc:                   4
-;     c173d:                   4
-;     c3497:                   4
-;     c38ab:                   4
-;     osword:                  4
-;     l0015:                   3
-;     l0045:                   3
-;     l0078:                   3
-;     l007c:                   3
-;     l007e:                   3
-;     l0082:                   3
-;     l0085:                   3
-;     l0088:                   3
-;     c16c4:                   3
-;     c174f:                   3
-;     sub_c1f4c:               3
-;     c3426:                   3
-;     c3867:                   3
-;     sub_c395e:               3
-;     l0004:                   2
-;     l0005:                   2
-;     l001d:                   2
-;     l0030:                   2
-;     l0031:                   2
-;     l003c:                   2
-;     l003d:                   2
-;     l0056:                   2
-;     l0083:                   2
-;     l0084:                   2
-;     l040a:                   2
-;     l0453:                   2
-;     l09be:                   2
-;     l09ea:                   2
-;     l09ef:                   2
-;     l1104:                   2
-;     l110c:                   2
-;     l1486:                   2
-;     l1487:                   2
-;     c1581:                   2
-;     c159f:                   2
-;     l160c:                   2
-;     c167b:                   2
-;     l196f:                   2
-;     sub_c1ebb:               2
-;     c1efa:                   2
-;     c3462:                   2
-;     l34d7:                   2
-;     sub_c3617:               2
-;     c3665:                   2
-;     l36da:                   2
-;     c377a:                   2
-;     c377d:                   2
-;     l381c:                   2
-;     c3827:                   2
-;     l3850:                   2
-;     sub_c385d:               2
-;     c3872:                   2
-;     sub_c388d:               2
-;     sub_c3a8f:               2
-;     c3c2c:                   2
-;     c3c5c:                   2
-;     c3c6a:                   2
-;     c3dae:                   2
-;     c3ea1:                   2
-;     sub_c3ec9:               2
-;     sub_c3ed5:               2
-;     c3f0d:                   2
-;     l3f6e:                   2
-;     oscli:                   2
-;     l0002:                   1
-;     l0006:                   1
-;     l0007:                   1
-;     l0008:                   1
-;     l0009:                   1
-;     l000a:                   1
-;     l001e:                   1
-;     l0028:                   1
-;     l002e:                   1
-;     l0032:                   1
-;     l0037:                   1
-;     l003a:                   1
-;     l003b:                   1
-;     l0043:                   1
-;     l005b:                   1
-;     l005c:                   1
-;     l005d:                   1
-;     l005e:                   1
-;     l005f:                   1
-;     l0077:                   1
-;     l007f:                   1
-;     l0081:                   1
-;     l0087:                   1
-;     l00a0:                   1
-;     l0131:                   1
-;     brkv:                    1
-;     brkv+1:                  1
-;     irq1v:                   1
-;     irq1v+1:                 1
-;     l09a8:                   1
-;     l09d4:                   1
-;     l09eb:                   1
-;     l0a7e:                   1
-;     l0a90:                   1
-;     l0aa1:                   1
-;     l0aa9:                   1
-;     l0ab1:                   1
-;     l0ab2:                   1
-;     l0ab3:                   1
-;     l0ab4:                   1
-;     l0ab5:                   1
-;     l0ab6:                   1
-;     l0ab7:                   1
-;     l0ac3:                   1
-;     l0ad4:                   1
-;     l0b00:                   1
-;     l0c00:                   1
-;     l0e1a:                   1
-;     l110b:                   1
-;     l1140:                   1
-;     sub_c132c:               1
-;     l1377:                   1
-;     c137f:                   1
-;     l1488:                   1
-;     l1489:                   1
-;     c1517:                   1
-;     c1568:                   1
-;     c1577:                   1
-;     l1589:                   1
-;     l1593:                   1
-;     c1597:                   1
-;     loop_c1671:              1
-;     c1682:                   1
-;     c168f:                   1
-;     c16a5:                   1
-;     c16f4:                   1
-;     c1724:                   1
-;     sub_c1728:               1
-;     loop_c1754:              1
-;     c1759:                   1
-;     c175d:                   1
-;     l175f:                   1
-;     l1761:                   1
-;     sub_c1866:               1
-;     sub_c18a6:               1
-;     loop_c1961:              1
-;     c1966:                   1
-;     l1e16:                   1
-;     l1e1a:                   1
-;     c1f17:                   1
-;     c1f19:                   1
-;     c1f21:                   1
-;     c1f5e:                   1
-;     c1f64:                   1
-;     c1f6e:                   1
-;     c1f74:                   1
-;     l2200:                   1
-;     sub_c2248:               1
-;     l24d0:                   1
-;     l24d1:                   1
-;     sub_c25f5:               1
-;     l288f:                   1
-;     l2890:                   1
-;     sub_c2980:               1
-;     sub_c29a8:               1
-;     loop_c29af:              1
-;     c29bd:                   1
-;     l31d7:                   1
-;     l3316:                   1
-;     c340d:                   1
-;     c3447:                   1
-;     c344f:                   1
-;     c348c:                   1
-;     c363f:                   1
-;     c36c7:                   1
-;     c36cc:                   1
-;     c36db:                   1
-;     c36ed:                   1
-;     c3706:                   1
-;     c3713:                   1
-;     c371e:                   1
-;     sub_c37f3:               1
-;     c3803:                   1
-;     c380c:                   1
-;     c3824:                   1
-;     sub_c384d:               1
-;     l384e:                   1
-;     c384f:                   1
-;     sub_c3863:               1
-;     c3875:                   1
-;     l388a:                   1
-;     c38ac:                   1
-;     c38ad:                   1
-;     l38c2:                   1
-;     l38c3:                   1
-;     loop_c396b:              1
-;     c3979:                   1
-;     l3ac7:                   1
-;     l3ac9:                   1
-;     l3adf:                   1
-;     l3ae0:                   1
-;     c3c3a:                   1
-;     c3c56:                   1
-;     loop_c3c6c:              1
-;     loop_c3c79:              1
-;     loop_c3c84:              1
-;     c3c9b:                   1
-;     loop_c3cfc:              1
-;     loop_c3d54:              1
-;     c3da3:                   1
-;     c3db9:                   1
-;     loop_c3e52:              1
-;     c3ec1:                   1
-;     l3ee8:                   1
-;     l3ef2:                   1
-;     l3efe:                   1
-;     l3f05:                   1
-;     loop_c3f18:              1
-;     c3f2d:                   1
-;     l3f66:                   1
-;     sub_c3f6f:               1
-;     loop_c3f7b:              1
-;     loop_c3f87:              1
-;     c3fba:                   1
-;     l3fbb:                   1
-;     l3fcb:                   1
-;     l402c:                   1
-;     l4088:                   1
-;     l40d0:                   1
-;     l8000:                   1
-;     l8d17:                   1
-;     l9d09:                   1
-;     la9ff:                   1
-;     lbe00:                   1
-;     lbf00:                   1
-;     video_ula_palette:       1
-;     user_via_t1c_l:          1
-;     user_via_t1c_h:          1
-;     user_via_t2c_l:          1
-;     user_via_t2c_h:          1
+;     l0070:                            21
+;     oswrch:                           20
+;     l0072:                            17
+;     osbyte:                           15
+;     l0071:                            13
+;     l0073:                            13
+;     l0080:                            12
+;     l004c:                             6
+;     crtc_address_register:             6
+;     crtc_address_write:                6
+;     l007a:                             5
+;     l007b:                             5
+;     l007d:                             5
+;     l09df:                             5
+;     l0054:                             4
+;     l0055:                             4
+;     l0079:                             4
+;     l1103:                             4
+;     c16dc:                             4
+;     c173d:                             4
+;     c3497:                             4
+;     c38ab:                             4
+;     osword:                            4
+;     l0015:                             3
+;     l0045:                             3
+;     l0078:                             3
+;     l007c:                             3
+;     l007e:                             3
+;     l0082:                             3
+;     l0085:                             3
+;     l0088:                             3
+;     c16c4:                             3
+;     c174f:                             3
+;     sub_c1f4c:                         3
+;     c3426:                             3
+;     c3867:                             3
+;     sub_c395e:                         3
+;     l0004:                             2
+;     l0005:                             2
+;     l001d:                             2
+;     l0030:                             2
+;     l0031:                             2
+;     l003c:                             2
+;     l003d:                             2
+;     l0056:                             2
+;     l0083:                             2
+;     l0084:                             2
+;     l040a:                             2
+;     l0453:                             2
+;     l09be:                             2
+;     l09ea:                             2
+;     l09ef:                             2
+;     l1104:                             2
+;     l110c:                             2
+;     l1486:                             2
+;     l1487:                             2
+;     c1581:                             2
+;     c159f:                             2
+;     l160c:                             2
+;     c167b:                             2
+;     l196f:                             2
+;     sub_c1ebb:                         2
+;     c1efa:                             2
+;     c3462:                             2
+;     l34d7:                             2
+;     sub_c3617:                         2
+;     c3665:                             2
+;     l36da:                             2
+;     c377a:                             2
+;     c377d:                             2
+;     l381c:                             2
+;     c3827:                             2
+;     l3850:                             2
+;     sub_c385d:                         2
+;     c3872:                             2
+;     sub_c388d:                         2
+;     sub_c3a8f:                         2
+;     c3c2c:                             2
+;     c3c5c:                             2
+;     c3c6a:                             2
+;     c3dae:                             2
+;     c3ea1:                             2
+;     sub_c3ec9:                         2
+;     sub_c3ed5:                         2
+;     c3f0d:                             2
+;     initial_screen_disabled_flag:      2
+;     oscli:                             2
+;     l0002:                             1
+;     l0006:                             1
+;     l0007:                             1
+;     l0008:                             1
+;     l0009:                             1
+;     l000a:                             1
+;     l001e:                             1
+;     l0028:                             1
+;     l002e:                             1
+;     l0032:                             1
+;     l0037:                             1
+;     l003a:                             1
+;     l003b:                             1
+;     l0043:                             1
+;     l005b:                             1
+;     l005c:                             1
+;     l005d:                             1
+;     l005e:                             1
+;     l005f:                             1
+;     l0077:                             1
+;     l007f:                             1
+;     l0081:                             1
+;     l0087:                             1
+;     l00a0:                             1
+;     l0131:                             1
+;     brkv:                              1
+;     brkv+1:                            1
+;     irq1v:                             1
+;     irq1v+1:                           1
+;     l09a8:                             1
+;     l09d4:                             1
+;     l09eb:                             1
+;     l0a7e:                             1
+;     l0a90:                             1
+;     l0aa1:                             1
+;     l0aa9:                             1
+;     l0ab1:                             1
+;     l0ab2:                             1
+;     l0ab3:                             1
+;     l0ab4:                             1
+;     l0ab5:                             1
+;     l0ab6:                             1
+;     l0ab7:                             1
+;     l0ac3:                             1
+;     l0ad4:                             1
+;     l0b00:                             1
+;     l0c00:                             1
+;     l0e1a:                             1
+;     l110b:                             1
+;     l1140:                             1
+;     sub_c132c:                         1
+;     l1377:                             1
+;     c137f:                             1
+;     l1488:                             1
+;     l1489:                             1
+;     c1517:                             1
+;     c1568:                             1
+;     c1577:                             1
+;     l1589:                             1
+;     l1593:                             1
+;     c1597:                             1
+;     loop_c1671:                        1
+;     c1682:                             1
+;     c168f:                             1
+;     c16a5:                             1
+;     c16f4:                             1
+;     c1724:                             1
+;     sub_c1728:                         1
+;     loop_c1754:                        1
+;     c1759:                             1
+;     c175d:                             1
+;     l175f:                             1
+;     l1761:                             1
+;     sub_c1866:                         1
+;     sub_c18a6:                         1
+;     loop_c1961:                        1
+;     c1966:                             1
+;     l1e16:                             1
+;     l1e1a:                             1
+;     c1f17:                             1
+;     c1f19:                             1
+;     c1f21:                             1
+;     c1f5e:                             1
+;     c1f64:                             1
+;     c1f6e:                             1
+;     c1f74:                             1
+;     l2200:                             1
+;     sub_c2248:                         1
+;     l24d0:                             1
+;     l24d1:                             1
+;     sub_c25f5:                         1
+;     l288f:                             1
+;     l2890:                             1
+;     sub_c2980:                         1
+;     sub_c29a8:                         1
+;     loop_c29af:                        1
+;     c29bd:                             1
+;     l31d7:                             1
+;     l3316:                             1
+;     c340d:                             1
+;     c3447:                             1
+;     c344f:                             1
+;     c348c:                             1
+;     c363f:                             1
+;     c36c7:                             1
+;     c36cc:                             1
+;     c36db:                             1
+;     c36ed:                             1
+;     c3706:                             1
+;     c3713:                             1
+;     c371e:                             1
+;     sub_c37f3:                         1
+;     c3803:                             1
+;     c380c:                             1
+;     c3824:                             1
+;     sub_c384d:                         1
+;     l384e:                             1
+;     c384f:                             1
+;     sub_c3863:                         1
+;     c3875:                             1
+;     l388a:                             1
+;     c38ac:                             1
+;     c38ad:                             1
+;     l38c2:                             1
+;     l38c3:                             1
+;     loop_c396b:                        1
+;     c3979:                             1
+;     l3ac7:                             1
+;     l3ac9:                             1
+;     l3adf:                             1
+;     l3ae0:                             1
+;     c3c3a:                             1
+;     c3c56:                             1
+;     loop_c3c6c:                        1
+;     loop_c3c79:                        1
+;     loop_c3c84:                        1
+;     c3c9b:                             1
+;     loop_c3cfc:                        1
+;     loop_c3d54:                        1
+;     initial_screen_disabled_flag_ok:   1
+;     c3db9:                             1
+;     loop_c3e52:                        1
+;     c3ec1:                             1
+;     l3ee8:                             1
+;     l3ef2:                             1
+;     l3efe:                             1
+;     l3f05:                             1
+;     loop_c3f18:                        1
+;     c3f2d:                             1
+;     l3f66:                             1
+;     sub_c3f6f:                         1
+;     loop_c3f7b:                        1
+;     loop_c3f87:                        1
+;     c3fba:                             1
+;     l3fbb:                             1
+;     l3fcb:                             1
+;     l402c:                             1
+;     l4088:                             1
+;     l40d0:                             1
+;     l8000:                             1
+;     l8d17:                             1
+;     l9d09:                             1
+;     la9ff:                             1
+;     lbe00:                             1
+;     lbf00:                             1
+;     video_ula_palette:                 1
+;     user_via_t1c_l:                    1
+;     user_via_t1c_h:                    1
+;     user_via_t2c_l:                    1
+;     user_via_t2c_h:                    1
 
 ; Automatically generated labels:
 ;     c137f
@@ -2809,7 +2820,6 @@ l3850 = c384f+1
 ;     c3c5c
 ;     c3c6a
 ;     c3c9b
-;     c3da3
 ;     c3dae
 ;     c3db9
 ;     c3ea1
@@ -2946,7 +2956,6 @@ l3850 = c384f+1
 ;     l3f05
 ;     l3f07
 ;     l3f66
-;     l3f6e
 ;     l3fbb
 ;     l3fcb
 ;     l402c
@@ -3025,5 +3034,7 @@ l3850 = c384f+1
     assert osbyte_set_printer_ignore == &06
     assert osbyte_tv == &90
     assert osword_envelope == &08
+    assert vdu_enable == &06
+    assert vdu_set_mode == &16
 
 save pydis_start, pydis_end
