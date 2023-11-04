@@ -225,8 +225,8 @@ loop_c114f
     sta l0070                                                         ; 128b: 85 70       .p  :115a[1]
     lda #>data_filename                                               ; 128d: a9 12       ..  :115c[1]
     sta l0071                                                         ; 128f: 85 71       .q  :115e[1]
-    ldx #$d5                                                          ; 1291: a2 d5       ..  :1160[1]
-    ldy #$3a ; ':'                                                    ; 1293: a0 3a       .:  :1162[1]
+    ldx #<level_data                                                  ; 1291: a2 d5       ..  :1160[1]
+    ldy #>level_data                                                  ; 1293: a0 3a       .:  :1162[1]
     lda #osfile_load                                                  ; 1295: a9 ff       ..  :1164[1]
     jsr osfile_wrapper                                                ; 1297: 20 dc 16     .. :1166[1]
     beq c1171                                                         ; 129a: f0 06       ..  :1169[1]
@@ -441,12 +441,12 @@ set_yx_based_on_a
     bcc c135d                                                         ; 147b: 90 11       ..  :134a[1]
     sbc #$c8                                                          ; 147d: e9 c8       ..  :134c[1]
     pha                                                               ; 147f: 48          H   :134e[1]
-    lda #$d5                                                          ; 1480: a9 d5       ..  :134f[1]
+    lda #<level_data                                                  ; 1480: a9 d5       ..  :134f[1]
     clc                                                               ; 1482: 18          .   :1351[1]
-    adc execution_start                                               ; 1483: 6d d5 3a    m.: :1352[1]
+    adc level_data                                                    ; 1483: 6d d5 3a    m.: :1352[1]
     tax                                                               ; 1486: aa          .   :1355[1]
-    lda #$3a ; ':'                                                    ; 1487: a9 3a       .:  :1356[1]
-    adc l3ad6                                                         ; 1489: 6d d6 3a    m.: :1358[1]
+    lda #>level_data                                                  ; 1487: a9 3a       .:  :1356[1]
+    adc level_data + 1                                                ; 1489: 6d d6 3a    m.: :1358[1]
     tay                                                               ; 148c: a8          .   :135b[1]
     pla                                                               ; 148d: 68          h   :135c[1]
 ; $148e referenced 1 time by $134a
@@ -2595,9 +2595,10 @@ l3aa1
 ; The loader will have executed VDU 21 to disable VDU output. Record the current
 ; disable state before re-enabling it, so we can check it later as part of a copy
 ; protection scheme.
+; This initialisation code gets overwritten by level data later on.
 ; $3c06 referenced 1 time by $1352
+level_data
 execution_start
-l3ad6 = execution_start+1
     lda #osbyte_read_vdu_status                                       ; 3c06: a9 75       .u  :3ad5[1]
 ; $3c07 referenced 1 time by $1358
 ; $3c08 referenced 1 time by $1219
@@ -3973,7 +3974,6 @@ pydis_end
 ;     l39f4
 ;     l3aa0
 ;     l3aa1
-;     l3ad6
 ;     l3ad8
 ;     l3ade
 ;     l3adf
@@ -4103,6 +4103,9 @@ pydis_end
 !if (<icodata_filename) != $5e {
     !error "Assertion failed: <icodata_filename == $5e"
 }
+!if (<level_data) != $d5 {
+    !error "Assertion failed: <level_data == $d5"
+}
 !if (<some_data_high_copy_TODO) != $ff {
     !error "Assertion failed: <some_data_high_copy_TODO == $ff"
 }
@@ -4138,6 +4141,9 @@ pydis_end
 }
 !if (>icodata_filename) != $3f {
     !error "Assertion failed: >icodata_filename == $3f"
+}
+!if (>level_data) != $3a {
+    !error "Assertion failed: >level_data == $3a"
 }
 !if (>some_data_high_copy_TODO) != $40 {
     !error "Assertion failed: >some_data_high_copy_TODO == $40"

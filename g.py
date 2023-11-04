@@ -138,6 +138,13 @@ stringcr(0x1276)
 expr(0x1159, make_lo("data_filename"))
 expr(0x115d, make_hi("data_filename"))
 expr(0x1165, "osfile_load")
+comment(0x3ad5, "This initialisation code gets overwritten by level data later on.")
+label(0x3ad5, "level_data")
+expr_label(0x3ad6, make_add("level_data", "1"))
+expr(0x1161, make_lo("level_data"))
+expr(0x1163, make_hi("level_data"))
+expr(0x1350, make_lo("level_data"))
+expr(0x1357, make_hi("level_data"))
 
 go()
 
