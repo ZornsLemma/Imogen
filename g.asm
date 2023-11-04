@@ -2321,7 +2321,7 @@ sub_c3617
     jsr sub_c3872                                                     ; 375c: 20 72 38     r8 :362b[1]
 ; $375f referenced 1 time by $3633
 loop_c362e
-    jsr sub_c387c                                                     ; 375f: 20 7c 38     |8 :362e[1]
+    jsr inkey                                                         ; 375f: 20 7c 38     |8 :362e[1]
     cmp #$0d                                                          ; 3762: c9 0d       ..  :3631[1]
     bne loop_c362e                                                    ; 3764: d0 f9       ..  :3633[1]
     rts                                                               ; 3766: 60          `   :3635[1]
@@ -2472,7 +2472,7 @@ sub_c3872
     jmp osbyte                                                        ; 39aa: 4c f4 ff    L.. :3879[1]   ; Flush all buffers (X=0), or just input buffers (X non-zero)
 
 ; $39ad referenced 1 time by $362e
-sub_c387c
+inkey
     lda #osbyte_inkey                                                 ; 39ad: a9 81       ..  :387c[1]
     ldx #0                                                            ; 39af: a2 00       ..  :387e[1]
     ldy #0                                                            ; 39b1: a0 00       ..  :3880[1]
@@ -4072,7 +4072,6 @@ pydis_end
 ;     sub_c384d
 ;     sub_c3850
 ;     sub_c3872
-;     sub_c387c
 ;     sub_c388d
 ;     sub_c3f6f
 !if (<(dir_dollar_command)) != $07 {

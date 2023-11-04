@@ -149,6 +149,8 @@ expr(0x1357, make_hi("level_data"))
 label(0x1377, "power_of_2_table")
 hexadecimal(0x1377, 8)
 
+label(0x387c, "inkey")
+
 go()
 
 # vi: tw=100
