@@ -421,7 +421,7 @@ c129b
     !byte   0, $8d, $8b, $17, $60,   0                                ; 1457: 00 8d 8b... ... :1326[1]
 
 ; $145d referenced 3 times by $1394, $13a3, $3f0f
-sub_c132c
+set_yx_based_on_a
     ldx #$11                                                          ; 145d: a2 11       ..  :132c[1]
     ldy #$0b                                                          ; 145f: a0 0b       ..  :132e[1]
     cmp #$c7                                                          ; 1461: c9 c7       ..  :1330[1]
@@ -494,14 +494,14 @@ sub_c138d
     tya                                                               ; 14c1: 98          .   :1390[1]
     pha                                                               ; 14c2: 48          H   :1391[1]
     lda l0016                                                         ; 14c3: a5 16       ..  :1392[1]
-    jsr sub_c132c                                                     ; 14c5: 20 2c 13     ,. :1394[1]
+    jsr set_yx_based_on_a                                             ; 14c5: 20 2c 13     ,. :1394[1]
     stx l0070                                                         ; 14c8: 86 70       .p  :1397[1]
     sty l0071                                                         ; 14ca: 84 71       .q  :1399[1]
     lda l0015                                                         ; 14cc: a5 15       ..  :139b[1]
     and #1                                                            ; 14ce: 29 01       ).  :139d[1]
     beq c13b5                                                         ; 14d0: f0 14       ..  :139f[1]
     lda l0014                                                         ; 14d2: a5 14       ..  :13a1[1]
-    jsr sub_c132c                                                     ; 14d4: 20 2c 13     ,. :13a3[1]
+    jsr set_yx_based_on_a                                             ; 14d4: 20 2c 13     ,. :13a3[1]
     stx l007e                                                         ; 14d7: 86 7e       .~  :13a6[1]
     sty l007f                                                         ; 14d9: 84 7f       ..  :13a8[1]
     ldy #3                                                            ; 14db: a0 03       ..  :13aa[1]
@@ -1237,15 +1237,18 @@ l196e = sub_c196c+2
 ; $1a9f referenced 1 time by $1969
 ; $1aa0 referenced 1 time by $3e79
 sub_c196f
-    lda #$80                                                          ; 1aa0: a9 80       ..  :196f[1]
+    lda #<sprdata                                                     ; 1aa0: a9 80       ..  :196f[1]
     sta l0070                                                         ; 1aa2: 85 70       .p  :1971[1]
-    lda #$19                                                          ; 1aa4: a9 19       ..  :1973[1]
+    lda #>sprdata                                                     ; 1aa4: a9 19       ..  :1973[1]
     sta l0071                                                         ; 1aa6: 85 71       .q  :1975[1]
     ldx l0054                                                         ; 1aa8: a6 54       .T  :1977[1]
     ldy l0055                                                         ; 1aaa: a4 55       .U  :1979[1]
-    lda #$ff                                                          ; 1aac: a9 ff       ..  :197b[1]
+    lda #osfile_load                                                  ; 1aac: a9 ff       ..  :197b[1]
     jmp osfile_wrapper                                                ; 1aae: 4c dc 16    L.. :197d[1]
 
+; The filename and (TODO: guess) code located here are overwritten with the contents of
+; the 'sprdata' file at runtime.
+sprdata
 sprdata_filename
     !text "sprdata", $0d                                              ; 1ab1: 73 70 72... spr :1980[1]
     !byte $8d, $0f, $1a, $8a, $48, $98, $48, $ad, $2b, $13, $f0, $51  ; 1ab9: 8d 0f 1a... ... :1988[1]
@@ -2945,6 +2948,7 @@ loop_c3e52
     sta l0071                                                         ; 3e65: 85 71       .q
     lda #osfile_read_catalogue_info                                   ; 3e67: a9 05       ..
     jsr osfile_wrapper                                                ; 3e69: 20 dc 16     ..
+; TODO: Set $54/55 to $5bc0-length_of_sprdata!?
     lda #$c0                                                          ; 3e6c: a9 c0       ..
     sec                                                               ; 3e6e: 38          8
     sbc l007a                                                         ; 3e6f: e5 7a       .z
@@ -3037,7 +3041,7 @@ dir_dollar_command
 ; $3f0d referenced 2 times by $3e9e, $3ec6
 c3f0d
     lda #0                                                            ; 3f0d: a9 00       ..
-    jsr sub_c132c                                                     ; 3f0f: 20 2c 13     ,.
+    jsr set_yx_based_on_a                                             ; 3f0f: 20 2c 13     ,.
     stx l0070                                                         ; 3f12: 86 70       .p
     sty l0071                                                         ; 3f14: 84 71       .q
     ldy #$11                                                          ; 3f16: a0 11       ..
@@ -4007,7 +4011,6 @@ pydis_end
 ;     sub_c123c
 ;     sub_c1278
 ;     sub_c12a2
-;     sub_c132c
 ;     sub_c133a
 ;     sub_c1344
 ;     sub_c1365
@@ -4091,6 +4094,9 @@ pydis_end
 !if (<some_data_low_TODO) != $00 {
     !error "Assertion failed: <some_data_low_TODO == $00"
 }
+!if (<sprdata) != $80 {
+    !error "Assertion failed: <sprdata == $80"
+}
 !if (<sprdata_filename) != $80 {
     !error "Assertion failed: <sprdata_filename == $80"
 }
@@ -4120,6 +4126,9 @@ pydis_end
 }
 !if (>some_data_low_TODO) != $04 {
     !error "Assertion failed: >some_data_low_TODO == $04"
+}
+!if (>sprdata) != $19 {
+    !error "Assertion failed: >sprdata == $19"
 }
 !if (>sprdata_filename) != $19 {
     !error "Assertion failed: >sprdata_filename == $19"

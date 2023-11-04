@@ -10,6 +10,9 @@ constant(22, "vdu_set_mode")
 constant(23, "vdu_define_character")
 constant(28, "vdu_define_text_window")
 
+constant(5, "osfile_read_catalogue_info")
+constant(0xff, "osfile_load")
+
 load(0x1234, "tmp/g.dat", "6502", "ac5feeac5c32a306d4a73ba393677385")
 move_id = move(0x1103, 0x1234, 0x2a00)
 
@@ -58,22 +61,31 @@ comment(0x3db9, "TODO: A lot of this code looks - I haven't checked yet - simila
 # TODO: This is just a guess - but the code looks as though it's doing OSFILE but wrapping in some error checking and temporary changes to BRKV
 entry(0x16dc, "osfile_wrapper")
 
+comment(0x1980, "The filename and (TODO: guess) code located here are overwritten with the contents of the 'sprdata' file at runtime.")
+label(0x1980, "sprdata")
+expr(0x1970, make_lo("sprdata"))
+expr(0x1974, make_hi("sprdata"))
+expr(0x197c, "osfile_load")
 label(0x1980, "sprdata_filename")
 stringcr(0x1980)
 expr(0x3e60, make_lo("sprdata_filename"))
 expr(0x3e64, make_hi("sprdata_filename"))
+
+comment(0x3e6c, "TODO: Set $54/55 to $5bc0-length_of_sprdata!?")
+
 
 label(0x3f5e, "icodata_filename")
 stringcr(0x3f5e)
 expr(0x3e92, make_lo("icodata_filename"))
 expr(0x3e96, make_hi("icodata_filename"))
 
-constant(5, "osfile_read_catalogue_info")
 expr(0x3e68, "osfile_read_catalogue_info")
-constant(0xff, "osfile_load")
 expr(0x3e9a, "osfile_load")
 
 expr(0x172e, "vdu_bell")
+
+# TODO: Poor name
+entry(0x132c, "set_yx_based_on_a")
 
 go()
 
