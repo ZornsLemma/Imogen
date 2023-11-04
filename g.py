@@ -106,7 +106,9 @@ label(0x3efe, "osword_7f_result")
 
 label(0x3ee1, "osword_7f_block2") # TODO: poor name
 do_osword_7f_block_partial(0x3ee1)
-label(0x3ee8, "osword_7f_result2") # TODO: poor name
+comment(0x3ee7, "command ($69=seek)", inline=True)
+label(0x3ee8, "osword_7f_block2_track")
+label(0x3ee9, "osword_7f_result2") # TODO: poor name
 
 # TODO: Poor name
 entry(0x132c, "set_yx_based_on_a")

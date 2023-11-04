@@ -2999,7 +2999,7 @@ c3ec1
 
 ; $3ec9 referenced 2 times by $3ea3, $3ebb
 sub_c3ec9
-    sta osword_7f_result2                                             ; 3ec9: 8d e8 3e    ..>
+    sta osword_7f_block2_track                                        ; 3ec9: 8d e8 3e    ..>
     lda #$7f                                                          ; 3ecc: a9 7f       ..
     ldx #<(osword_7f_block2)                                          ; 3ece: a2 e1       ..
     ldy #>(osword_7f_block2)                                          ; 3ed0: a0 3e       .>
@@ -3017,10 +3017,11 @@ osword_7f_block2
     !byte 0                                                           ; 3ee1: 00          .              ; drive
     !word $ffff,     0                                                ; 3ee2: ff ff 00... ...            ; data address
     !byte 1                                                           ; 3ee6: 01          .              ; number of parameters
-    !byte $69                                                         ; 3ee7: 69          i
+    !byte $69                                                         ; 3ee7: 69          i              ; command ($69=seek)
 ; $3ee8 referenced 1 time by $3ec9
-osword_7f_result2
+osword_7f_block2_track
     !byte 0                                                           ; 3ee8: 00          .
+osword_7f_result2
     !byte 0                                                           ; 3ee9: 00          .
 l3eea
     !byte   0, $ff, $ff,   0,   0,   2, $7a, $12                      ; 3eea: 00 ff ff... ...
@@ -3548,7 +3549,7 @@ pydis_end
 ;     c3db9:                             1
 ;     loop_c3e52:                        1
 ;     c3ec1:                             1
-;     osword_7f_result2:                 1
+;     osword_7f_block2_track:            1
 ;     l3ef2:                             1
 ;     osword_7f_result:                  1
 ;     l3f05:                             1
