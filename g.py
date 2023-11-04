@@ -70,7 +70,7 @@ expr(0x3e60, make_lo("sprdata_filename"))
 expr(0x3e64, make_hi("sprdata_filename"))
 entry(0x196f, "load_sprdata_to_addr_at_l0054")
 
-comment(0x3e6c, "Load 'sprdata' file into memory so it ends just below $5bc0. TODO: used named constant")
+comment(0x3e6c, "Load 'sprdata' file into memory so it ends just below $5bc0. TODO: use named constant")
 
 comment(0x3e82, "Load 'icodata' file into memory at icodata")
 label(0x40ff, "icodata")
@@ -123,8 +123,21 @@ label(0x3ef3, "osword_7f_write_special_register_result")
 entry(0x3ed5, "set_track_special_register_to_a")
 entry(0x3ea1, "read_icodata_using_osword_7f")
 
+# TODO: Poor-ish name. I am guessing this is some kind of data
+# encryption/decryption; it could potentially be an RNG, but I don't think the
+# game is random.
+label(0x18a6, "mix_a_with_state")
+
 # TODO: Poor name
 entry(0x132c, "set_yx_based_on_a")
+
+label(0x1272, "data_filename")
+label(0x1276, "data_filename_variable_letter")
+string(0x1272, 4)
+stringcr(0x1276)
+expr(0x1159, make_lo("data_filename"))
+expr(0x115d, make_hi("data_filename"))
+expr(0x1165, "osfile_load")
 
 go()
 

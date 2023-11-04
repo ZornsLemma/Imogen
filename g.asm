@@ -220,14 +220,14 @@ loop_c114f
     lda l0031                                                         ; 1280: a5 31       .1  :114f[1]
     cmp l0037                                                         ; 1282: c5 37       .7  :1151[1]
     beq c1175                                                         ; 1284: f0 20       .   :1153[1]
-    sta l1276                                                         ; 1286: 8d 76 12    .v. :1155[1]
-    lda #$72 ; 'r'                                                    ; 1289: a9 72       .r  :1158[1]
+    sta data_filename_variable_letter                                 ; 1286: 8d 76 12    .v. :1155[1]
+    lda #<data_filename                                               ; 1289: a9 72       .r  :1158[1]
     sta l0070                                                         ; 128b: 85 70       .p  :115a[1]
-    lda #$12                                                          ; 128d: a9 12       ..  :115c[1]
+    lda #>data_filename                                               ; 128d: a9 12       ..  :115c[1]
     sta l0071                                                         ; 128f: 85 71       .q  :115e[1]
     ldx #$d5                                                          ; 1291: a2 d5       ..  :1160[1]
     ldy #$3a ; ':'                                                    ; 1293: a0 3a       .:  :1162[1]
-    lda #$ff                                                          ; 1295: a9 ff       ..  :1164[1]
+    lda #osfile_load                                                  ; 1295: a9 ff       ..  :1164[1]
     jsr osfile_wrapper                                                ; 1297: 20 dc 16     .. :1166[1]
     beq c1171                                                         ; 129a: f0 06       ..  :1169[1]
     jsr sub_c3617                                                     ; 129c: 20 17 36     .6 :116b[1]
@@ -361,10 +361,11 @@ loop_c1213
     tay                                                               ; 139f: a8          .   :126e[1]
     jmp c1966                                                         ; 13a0: 4c 66 19    Lf. :126f[1]
 
+data_filename
     !text "data"                                                      ; 13a3: 64 61 74... dat :1272[1]
 ; $13a7 referenced 1 time by $1155
-l1276
-    !byte $41, $0d                                                    ; 13a7: 41 0d       A.  :1276[1]
+data_filename_variable_letter
+    !text "A", $0d                                                    ; 13a7: 41 0d       A.  :1276[1]
 
 ; $13a9 referenced 1 time by $11e3
 sub_c1278
@@ -1185,7 +1186,7 @@ l178b
     !byte $ff                                                         ; 19d6: ff          .   :18a5[1]
 
 ; $19d7 referenced 1 time by $3f56
-sub_c18a6
+mix_a_with_state
     sta l0039                                                         ; 19d7: 85 39       .9  :18a6[1]
     pha                                                               ; 19d9: 48          H   :18a8[1]
 ; $19da referenced 1 time by $18bd
@@ -2945,8 +2946,7 @@ loop_c3e52
     sta l0071                                                         ; 3e65: 85 71       .q
     lda #osfile_read_catalogue_info                                   ; 3e67: a9 05       ..
     jsr osfile_wrapper                                                ; 3e69: 20 dc 16     ..
-; Load 'sprdata' file into memory so it ends just below $5bc0. TODO: used named
-; constant
+; Load 'sprdata' file into memory so it ends just below $5bc0. TODO: use named constant
     lda #$c0                                                          ; 3e6c: a9 c0       ..
     sec                                                               ; 3e6e: 38          8
     sbc l007a                                                         ; 3e6f: e5 7a       .z
@@ -3099,7 +3099,7 @@ c3f2d
     pla                                                               ; 3f51: 68          h
     sta l0054                                                         ; 3f52: 85 54       .T
     lda #3                                                            ; 3f54: a9 03       ..
-    jsr sub_c18a6                                                     ; 3f56: 20 a6 18     ..
+    jsr mix_a_with_state                                              ; 3f56: 20 a6 18     ..
     sta l005f                                                         ; 3f59: 85 5f       ._
     jmp c110c                                                         ; 3f5b: 4c 0c 11    L..
 
@@ -3809,7 +3809,6 @@ pydis_end
 ;     l123b
 ;     l123d
 ;     l1271
-;     l1276
 ;     l1280
 ;     l12a6
 ;     l12b7
@@ -4053,7 +4052,6 @@ pydis_end
 ;     sub_c1766
 ;     sub_c176e
 ;     sub_c1771
-;     sub_c18a6
 ;     sub_c18bb
 ;     sub_c196c
 ;     sub_c1df4
@@ -4096,6 +4094,9 @@ pydis_end
 !if (<(osword_7f_block_write_special_register)) != $ea {
     !error "Assertion failed: <(osword_7f_block_write_special_register) == $ea"
 }
+!if (<data_filename) != $72 {
+    !error "Assertion failed: <data_filename == $72"
+}
 !if (<icodata) != $ff {
     !error "Assertion failed: <icodata == $ff"
 }
@@ -4128,6 +4129,9 @@ pydis_end
 }
 !if (>(osword_7f_block_write_special_register)) != $3e {
     !error "Assertion failed: >(osword_7f_block_write_special_register) == $3e"
+}
+!if (>data_filename) != $12 {
+    !error "Assertion failed: >data_filename == $12"
 }
 !if (>icodata) != $40 {
     !error "Assertion failed: >icodata == $40"
