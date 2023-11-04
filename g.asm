@@ -19,8 +19,11 @@ osbyte_set_printer_ignore                       = 6
 osbyte_tv                                       = 144
 osword_envelope                                 = 8
 vdu_define_character                            = 23
+vdu_define_text_window                          = 28
 vdu_enable                                      = 6
+vdu_set_graphics_colour                         = 18
 vdu_set_mode                                    = 22
+vdu_set_text_colour                             = 17
 
 ; Memory locations
 l0002                   = &0002
@@ -2160,7 +2163,7 @@ l3850 = c384f+1
     bne c3dae                                                         ; 3db7: d0 f5       ..
 ; &3db9 referenced 1 time by &3da0
 .c3db9
-    lda #&1c                                                          ; 3db9: a9 1c       ..
+    lda #vdu_define_text_window                                       ; 3db9: a9 1c       ..
     jsr oswrch                                                        ; 3dbb: 20 ee ff     ..            ; Write character 28
     lda #1                                                            ; 3dbe: a9 01       ..
     jsr oswrch                                                        ; 3dc0: 20 ee ff     ..            ; Write character 1
@@ -2170,15 +2173,15 @@ l3850 = c384f+1
     jsr oswrch                                                        ; 3dca: 20 ee ff     ..            ; Write character 39
     lda #0                                                            ; 3dcd: a9 00       ..
     jsr oswrch                                                        ; 3dcf: 20 ee ff     ..            ; Write character 0
-    lda #&11                                                          ; 3dd2: a9 11       ..
+    lda #vdu_set_text_colour                                          ; 3dd2: a9 11       ..
     jsr oswrch                                                        ; 3dd4: 20 ee ff     ..            ; Write character 17
     lda #&81                                                          ; 3dd7: a9 81       ..
     jsr oswrch                                                        ; 3dd9: 20 ee ff     ..            ; Write character 129
-    lda #&11                                                          ; 3ddc: a9 11       ..
+    lda #vdu_set_text_colour                                          ; 3ddc: a9 11       ..
     jsr oswrch                                                        ; 3dde: 20 ee ff     ..            ; Write character 17
     lda #0                                                            ; 3de1: a9 00       ..
     jsr oswrch                                                        ; 3de3: 20 ee ff     ..            ; Write character 0
-    lda #&12                                                          ; 3de6: a9 12       ..
+    lda #vdu_set_graphics_colour                                      ; 3de6: a9 12       ..
     jsr oswrch                                                        ; 3de8: 20 ee ff     ..            ; Write character 18
     lda #0                                                            ; 3deb: a9 00       ..
     jsr oswrch                                                        ; 3ded: 20 ee ff     ..            ; Write character 0
@@ -3047,7 +3050,10 @@ l3850 = c384f+1
     assert osbyte_tv == &90
     assert osword_envelope == &08
     assert vdu_define_character == &17
+    assert vdu_define_text_window == &1c
     assert vdu_enable == &06
+    assert vdu_set_graphics_colour == &12
     assert vdu_set_mode == &16
+    assert vdu_set_text_colour == &11
 
 save pydis_start, pydis_end
