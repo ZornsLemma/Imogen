@@ -2,8 +2,10 @@ from commands import *
 import acorn
 acorn.bbc()
 
+constant(21, "vdu_disable")
 constant(22, "vdu_set_mode")
 constant(31, "vdu_goto_xy")
+constant(0xffdd, "osfile")
 
 # This code is loaded at &3900 at the end of the BASIC loader, but it is relocated down to &1200.
 # It's cleaner for the disassembly to pretend it's just loaded directly at &1200.
@@ -39,6 +41,21 @@ expr(0x12ff, "vdu_goto_xy")
 label(0x13a9, "written_by_string")
 label(0x13c5, "copyright_string")
 label(0x13e8, "TODO1")
+
+expr(0x131e, "vdu_disable")
+comment(0x1322, "Obfuscated code to load the 'G' file and transfer control to its execution address, relying on the fact that OSFILE &FF will have filled in the execution address at &76 after loading the file.")
+constant(0x20, "jsr_opcode")
+expr(0x1323, "jsr_opcode")
+expr(0x1327, make_lo("osfile"))
+expr(0x132b, make_hi("osfile"))
+constant(0x6c, "jmp_indirect_opcode")
+expr(0x132f, "jmp_indirect_opcode")
+#entry(0x1307, "post_osfile_load")
+comment(0x1342, "Set A=&FF for OSFILE to load a file. We also store this at &76, which is byte 6 of the control block, telling OSFILE to load at the file's own load address.")
+label(0x13a7, "osfile_load_filename")
+stringcr(0x13a7)
+expr(0x133b, make_lo("osfile_load_filename"))
+expr(0x133f, make_hi("osfile_load_filename"))
 
 go()
 
