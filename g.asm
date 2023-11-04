@@ -19,8 +19,11 @@ osbyte_select_adc_channels                      = 16
 osbyte_set_cursor_editing                       = 4
 osbyte_set_printer_ignore                       = 6
 osbyte_tv                                       = 144
+osfile_load                                     = 255
+osfile_read_catalogue_info                      = 5
 osword_envelope                                 = 8
 screen_width_minus_one                          = 39
+vdu_bell                                        = 7
 vdu_define_character                            = 23
 vdu_define_text_window                          = 28
 vdu_enable                                      = 6
@@ -1090,7 +1093,7 @@ c16f7
     beq c174c                                                         ; 1857: f0 24       .$  :1726[1]
     lda l110a                                                         ; 1859: ad 0a 11    ... :1728[1]
     beq c174c                                                         ; 185c: f0 1f       ..  :172b[1]
-    lda #7                                                            ; 185e: a9 07       ..  :172d[1]
+    lda #vdu_bell                                                     ; 185e: a9 07       ..  :172d[1]
     jsr oswrch                                                        ; 1860: 20 ee ff     .. :172f[1]   ; Write character 7
     lda #$12                                                          ; 1863: a9 12       ..  :1732[1]
     sta l0409                                                         ; 1865: 8d 09 04    ... :1734[1]
@@ -1243,7 +1246,7 @@ sub_c196f
     lda #$ff                                                          ; 1aac: a9 ff       ..  :197b[1]
     jmp osfile_wrapper                                                ; 1aae: 4c dc 16    L.. :197d[1]
 
-filename
+sprdata_filename
     !text "sprdata", $0d                                              ; 1ab1: 73 70 72... spr :1980[1]
     !byte $8d, $0f, $1a, $8a, $48, $98, $48, $ad, $2b, $13, $f0, $51  ; 1ab9: 8d 0f 1a... ... :1988[1]
     !byte $a5, $30, $cd, $ba, $1a, $d0, $47, $20, $fa, $1e, $c9,   3  ; 1ac5: a5 30 cd... .0. :1994[1]
@@ -2936,11 +2939,11 @@ loop_c3e52
     dey                                                               ; 3e5b: 88          .
     dey                                                               ; 3e5c: 88          .
     bpl loop_c3e52                                                    ; 3e5d: 10 f3       ..
-    lda #$80                                                          ; 3e5f: a9 80       ..
+    lda #<sprdata_filename                                            ; 3e5f: a9 80       ..
     sta l0070                                                         ; 3e61: 85 70       .p
-    lda #$19                                                          ; 3e63: a9 19       ..
+    lda #>sprdata_filename                                            ; 3e63: a9 19       ..
     sta l0071                                                         ; 3e65: 85 71       .q
-    lda #5                                                            ; 3e67: a9 05       ..
+    lda #osfile_read_catalogue_info                                   ; 3e67: a9 05       ..
     jsr osfile_wrapper                                                ; 3e69: 20 dc 16     ..
     lda #$c0                                                          ; 3e6c: a9 c0       ..
     sec                                                               ; 3e6e: 38          8
@@ -2961,11 +2964,11 @@ loop_c3e52
     lda l1103                                                         ; 3e8a: ad 03 11    ...
     and #4                                                            ; 3e8d: 29 04       ).
     bne c3ea1                                                         ; 3e8f: d0 10       ..
-    lda #$5e ; '^'                                                    ; 3e91: a9 5e       .^
+    lda #<icodata_filename                                            ; 3e91: a9 5e       .^
     sta l0070                                                         ; 3e93: 85 70       .p
-    lda #$3f ; '?'                                                    ; 3e95: a9 3f       .?
+    lda #>icodata_filename                                            ; 3e95: a9 3f       .?
     sta l0071                                                         ; 3e97: 85 71       .q
-    lda #$ff                                                          ; 3e99: a9 ff       ..
+    lda #osfile_load                                                  ; 3e99: a9 ff       ..
     jsr osfile_wrapper                                                ; 3e9b: 20 dc 16     ..
     jmp c3f0d                                                         ; 3e9e: 4c 0d 3f    L.?
 
@@ -3076,8 +3079,8 @@ c3f2d
     sta l005f                                                         ; 3f59: 85 5f       ._
     jmp c110c                                                         ; 3f5b: 4c 0c 11    L..
 
-    !text "icodata"                                                   ; 3f5e: 69 63 6f... ico
-    !byte $0d                                                         ; 3f65: 0d          .
+icodata_filename
+    !text "icodata", $0d                                              ; 3f5e: 69 63 6f... ico
 ; $3f66 referenced 1 time by $3cfc
 character_fe_bitmap
     !byte %....#...                                                   ; 3f66: 08          .
@@ -4079,11 +4082,17 @@ pydis_end
 !if (<(l3ef4)) != $f4 {
     !error "Assertion failed: <(l3ef4) == $f4"
 }
+!if (<icodata_filename) != $5e {
+    !error "Assertion failed: <icodata_filename == $5e"
+}
 !if (<some_data_high_copy_TODO) != $ff {
     !error "Assertion failed: <some_data_high_copy_TODO == $ff"
 }
 !if (<some_data_low_TODO) != $00 {
     !error "Assertion failed: <some_data_low_TODO == $00"
+}
+!if (<sprdata_filename) != $80 {
+    !error "Assertion failed: <sprdata_filename == $80"
 }
 !if (>(dir_dollar_command)) != $3f {
     !error "Assertion failed: >(dir_dollar_command) == $3f"
@@ -4103,11 +4112,17 @@ pydis_end
 !if (>(l3ef4)) != $3e {
     !error "Assertion failed: >(l3ef4) == $3e"
 }
+!if (>icodata_filename) != $3f {
+    !error "Assertion failed: >icodata_filename == $3f"
+}
 !if (>some_data_high_copy_TODO) != $40 {
     !error "Assertion failed: >some_data_high_copy_TODO == $40"
 }
 !if (>some_data_low_TODO) != $04 {
     !error "Assertion failed: >some_data_low_TODO == $04"
+}
+!if (>sprdata_filename) != $19 {
+    !error "Assertion failed: >sprdata_filename == $19"
 }
 !if (crtc_cursor_start) != $0a {
     !error "Assertion failed: crtc_cursor_start == $0a"
@@ -4169,11 +4184,20 @@ pydis_end
 !if (osbyte_tv) != $90 {
     !error "Assertion failed: osbyte_tv == $90"
 }
+!if (osfile_load) != $ff {
+    !error "Assertion failed: osfile_load == $ff"
+}
+!if (osfile_read_catalogue_info) != $05 {
+    !error "Assertion failed: osfile_read_catalogue_info == $05"
+}
 !if (osword_envelope) != $08 {
     !error "Assertion failed: osword_envelope == $08"
 }
 !if (screen_width_minus_one) != $27 {
     !error "Assertion failed: screen_width_minus_one == $27"
+}
+!if (vdu_bell) != $07 {
+    !error "Assertion failed: vdu_bell == $07"
 }
 !if (vdu_define_character) != $17 {
     !error "Assertion failed: vdu_define_character == $17"

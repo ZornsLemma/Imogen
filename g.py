@@ -3,6 +3,7 @@ import acorn
 acorn.bbc()
 
 constant(6, "vdu_enable")
+constant(7, "vdu_bell")
 constant(17, "vdu_set_text_colour")
 constant(18, "vdu_set_graphics_colour")
 constant(22, "vdu_set_mode")
@@ -57,8 +58,22 @@ comment(0x3db9, "TODO: A lot of this code looks - I haven't checked yet - simila
 # TODO: This is just a guess - but the code looks as though it's doing OSFILE but wrapping in some error checking and temporary changes to BRKV
 entry(0x16dc, "osfile_wrapper")
 
-label(0x1980, "filename")
+label(0x1980, "sprdata_filename")
 stringcr(0x1980)
+expr(0x3e60, make_lo("sprdata_filename"))
+expr(0x3e64, make_hi("sprdata_filename"))
+
+label(0x3f5e, "icodata_filename")
+stringcr(0x3f5e)
+expr(0x3e92, make_lo("icodata_filename"))
+expr(0x3e96, make_hi("icodata_filename"))
+
+constant(5, "osfile_read_catalogue_info")
+expr(0x3e68, "osfile_read_catalogue_info")
+constant(0xff, "osfile_load")
+expr(0x3e9a, "osfile_load")
+
+expr(0x172e, "vdu_bell")
 
 go()
 
