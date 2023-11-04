@@ -10,6 +10,8 @@ constant(23, "vdu_define_character")
 constant(28, "vdu_define_text_window")
 
 load(0x1234, "tmp/g.dat", "6502", "ac5feeac5c32a306d4a73ba393677385")
+move_id = move(0x1103, 0x1234, 0x2a00)
+
 entry(0x3c06, "execution_start")
 
 expr(0x3c12, "vdu_enable")
