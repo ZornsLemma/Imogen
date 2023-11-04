@@ -3,6 +3,7 @@ import acorn
 acorn.bbc()
 
 constant(22, "vdu_set_mode")
+constant(31, "vdu_goto_xy")
 
 # This code is loaded at &3900 at the end of the BASIC loader, but it is relocated down to &1200.
 # It's cleaner for the disassembly to pretend it's just loaded directly at &1200.
@@ -32,6 +33,12 @@ expr(0x1260, "vdu_set_mode")
 expr(0x128a, make_lo(make_divide("screen_start", 8)))
 expr(0x1294, make_hi(make_divide("screen_start", 8)))
 expr(0x129e, "screen_height_characters")
+
+expr(0x12e0, "vdu_goto_xy")
+expr(0x12ff, "vdu_goto_xy")
+label(0x13a9, "written_by_string")
+label(0x13c5, "copyright_string")
+label(0x13e8, "TODO1")
 
 go()
 
