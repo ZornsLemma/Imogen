@@ -179,7 +179,7 @@ label(0x4088+0x48, "clear_128_bytes_at_l09ef_high_copy_end")
 expr(0x3c74, make_subtract("clear_128_bytes_at_l09ef_high_copy_end", "clear_128_bytes_at_l09ef_high_copy_start"))
 
 entry(0x4094, "something6_TODO")
-entry(0x40a5, "something7_TODO")
+entry(0x40a5, "convert_level_number_to_letter") # TODO: guesswork but something like this
 entry(0x40c0, "something8_TODO")
 
 # TODO: From a py8dis POV, this code feels wrong/confusing. entry() and label() behave different with how the label is placed. This works, but I am not sure it's by design. Maybe it is, it's been a while and I haven't had any coffee yet...
@@ -212,6 +212,12 @@ label(0x1175, "level_already_loaded")
 comment(0x3f78, "TODO: I suspect the following code is copy protection related - writing data to the sideways ROM region feels wrong.")
 
 label(0x1103, "copy_protection_flag")
+
+constant(0x41, "first_level") # TODO: would be nice to use 'A' as constant
+constant(0x51, "last_level") # TODO: would be nice to use 'Q' as constant
+expr(0xaf0, "last_level")
+expr(0xaf7, "first_level")
+expr(0xae9, "first_level")
 
 go()
 

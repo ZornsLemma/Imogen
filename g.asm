@@ -6,6 +6,8 @@ crtc_screen_start_high                          = 12
 crtc_screen_start_low                           = 13
 crtc_vert_displayed                             = 6
 crtc_vert_sync_pos                              = 7
+first_level                                     = 65
+last_level                                      = 81
 osbyte_close_spool_exec                         = 119
 osbyte_flush_buffer                             = 21
 osbyte_flush_buffer_class                       = 15
@@ -1232,7 +1234,7 @@ sub_c1766
     lda l1765                                                         ; 189f: ad 65 17    .e. :176e[1]
     beq c178a                                                         ; 18a2: f0 17       ..  :1771[1]
     ldy l0031                                                         ; 18a4: a4 31       .1  :1773[1]
-    jsr something7_TODO                                               ; 18a6: 20 d4 0a     .. :1775[1]
+    jsr convert_level_number_to_letter                                ; 18a6: 20 d4 0a     .. :1775[1]
     tya                                                               ; 18a9: 98          .   :1778[1]
     sec                                                               ; 18aa: 38          8   :1779[1]
     sbc #$41 ; 'A'                                                    ; 18ab: e9 41       .A  :177a[1]
@@ -5924,7 +5926,7 @@ c378e
     ldy #$37 ; '7'                                                    ; 38c8: a0 37       .7  :3797[1]
     jsr c381c                                                         ; 38ca: 20 1c 38     .8 :3799[1]
     ldy l0031                                                         ; 38cd: a4 31       .1  :379c[1]
-    jsr something7_TODO                                               ; 38cf: 20 d4 0a     .. :379e[1]
+    jsr convert_level_number_to_letter                                ; 38cf: 20 d4 0a     .. :379e[1]
     tya                                                               ; 38d2: 98          .   :37a1[1]
     jsr sub_c1866                                                     ; 38d3: 20 66 18     f. :37a2[1]
     jsr sub_c3850                                                     ; 38d6: 20 50 38     P8 :37a5[1]
@@ -6288,7 +6290,7 @@ loop_c39d2
 ; $3b11 referenced 1 time by $39d7
 c39e0
     ldy l0031                                                         ; 3b11: a4 31       .1  :39e0[1]
-    jsr something7_TODO                                               ; 3b13: 20 d4 0a     .. :39e2[1]
+    jsr convert_level_number_to_letter                                ; 3b13: 20 d4 0a     .. :39e2[1]
     iny                                                               ; 3b16: c8          .   :39e5[1]
     cpy #$51 ; 'Q'                                                    ; 3b17: c0 51       .Q  :39e6[1]
     bcc c39ec                                                         ; 3b19: 90 02       ..  :39e8[1]
@@ -7171,7 +7173,7 @@ loop_c0ac6
     rts                                                               ; 40a4: 60          `   :0ad3[5]
 
 ; $40a5 referenced 3 times by $1775, $379e, $39e2
-something7_TODO
+convert_level_number_to_letter
     cpy #$51 ; 'Q'                                                    ; 40a5: c0 51       .Q  :0ad4[5]
     beq c0afe                                                         ; 40a7: f0 26       .&  :0ad6[5]
     pha                                                               ; 40a9: 48          H   :0ad8[5]
@@ -7189,7 +7191,7 @@ loop_c0ade
 c0ae6
     txa                                                               ; 40b7: 8a          .   :0ae6[5]
     clc                                                               ; 40b8: 18          .   :0ae7[5]
-    adc #$41 ; 'A'                                                    ; 40b9: 69 41       iA  :0ae8[5]
+    adc #first_level                                                  ; 40b9: 69 41       iA  :0ae8[5]
     tay                                                               ; 40bb: a8          .   :0aea[5]
     pla                                                               ; 40bc: 68          h   :0aeb[5]
     tax                                                               ; 40bd: aa          .   :0aec[5]
@@ -7198,12 +7200,12 @@ c0ae6
 
 ; $40c0 referenced 3 times by $113d, $37c5, $39ee
 something8_TODO
-    cpy #$51 ; 'Q'                                                    ; 40c0: c0 51       .Q  :0aef[5]
+    cpy #last_level                                                   ; 40c0: c0 51       .Q  :0aef[5]
     beq c0afe                                                         ; 40c2: f0 0b       ..  :0af1[5]
     pha                                                               ; 40c4: 48          H   :0af3[5]
     tya                                                               ; 40c5: 98          .   :0af4[5]
     sec                                                               ; 40c6: 38          8   :0af5[5]
-    sbc #$41 ; 'A'                                                    ; 40c7: e9 41       .A  :0af6[5]
+    sbc #first_level                                                  ; 40c7: e9 41       .A  :0af6[5]
     tay                                                               ; 40c9: a8          .   :0af8[5]
     lda l0a80,y                                                       ; 40ca: b9 80 0a    ... :0af9[5]
     tay                                                               ; 40cd: a8          .   :0afc[5]
@@ -9922,8 +9924,14 @@ pydis_end
 !if (crtc_vert_sync_pos) != $07 {
     !error "Assertion failed: crtc_vert_sync_pos == $07"
 }
+!if (first_level) != $41 {
+    !error "Assertion failed: first_level == $41"
+}
 !if (icodata) != $40ff {
     !error "Assertion failed: icodata == $40ff"
+}
+!if (last_level) != $51 {
+    !error "Assertion failed: last_level == $51"
 }
 !if (osbyte_close_spool_exec) != $77 {
     !error "Assertion failed: osbyte_close_spool_exec == $77"
