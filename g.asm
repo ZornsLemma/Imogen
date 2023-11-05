@@ -6121,21 +6121,21 @@ loop_c3892
 
     !text "auxcode"                                                   ; 39cd: 61 75 78... aux :389c[1]
     !byte $0d, $10,   0, $f4, $ff,   2,   0,   1,   0                 ; 39d4: 0d 10 00... ... :38a3[1]
+; The envelope definitions get overwritten after initialisation - this is harmless as
+; they will have been copied into the OS workspace when they were defined.
 ; $39dd referenced 5 times by $11a1, $1a5e, $2177, $21c1, $3d63
 envelope_1
-    !byte 1                                                           ; 39dd: 01          .   :38ac[1]
+l38ad = envelope_1+1
+    !byte  1,  3,  0,  0,  0,  0,  0,  0,  3,  0,  0,  0, 64,  0      ; 39dd: 01 03 00... ... :38ac[1]
 ; $39de referenced 1 time by $3d68
-envelope_1_step_length
-    !byte  3,  0,  0,  0,  0,  0,  0,  3,  0,  0,  0, 64,  0          ; 39de: 03 00 00... ... :38ad[1]
 some_data1_TODO
     !byte $10,   0,   1,   0,   7,   0, $64,   0                      ; 39eb: 10 00 01... ... :38ba[1]
 ; $39f3 referenced 6 times by $11a4, $2002, $2040, $2054, $20ab, $3d6d
 envelope_2
-    !byte 2                                                           ; 39f3: 02          .   :38c2[1]
+l38c3 = envelope_2+1
+    !byte   2, 134,   1,   3,   5,  10,  10,  16,   0,   0,   0,   0  ; 39f3: 02 86 01... ... :38c2[1]
+    !byte   0,   0                                                    ; 39ff: 00 00       ..  :38ce[1]
 ; $39f4 referenced 1 time by $3d72
-envelope_2_step_length
-    !byte 134,   1,   3,   5,  10,  10,  16,   0,   0,   0,   0,   0  ; 39f4: 86 01 03... ... :38c3[1]
-    !byte   0                                                         ; 3a00: 00          .   :38cf[1]
 some_data2_TODO
     !byte $11,   0,   2,   0, $b4,   0, $64,   0                      ; 3a01: 11 00 02... ... :38d0[1]
 ; $3a09 referenced 15 times by $2392, $25fa, $26b7, $26bc, $26dc, $26e1, $2742, $2747, $2767, $276c, $2dda, $2e7c, $2e94, $2e9a, $303a
@@ -6700,11 +6700,11 @@ loop_c3d54
     lda #$c7                                                          ; 3d61: a9 c7       ..
     sta envelope_1                                                    ; 3d63: 8d ac 38    ..8
     lda #$c6                                                          ; 3d66: a9 c6       ..
-    sta envelope_1_step_length                                        ; 3d68: 8d ad 38    ..8
+    sta l38ad                                                         ; 3d68: 8d ad 38    ..8
     lda #$80                                                          ; 3d6b: a9 80       ..
     sta envelope_2                                                    ; 3d6d: 8d c2 38    ..8
     lda #$7f                                                          ; 3d70: a9 7f       ..
-    sta envelope_2_step_length                                        ; 3d72: 8d c3 38    ..8
+    sta l38c3                                                         ; 3d72: 8d c3 38    ..8
     lda user_via_t1c_l                                                ; 3d75: ad 64 fe    .d.
     sta l0006                                                         ; 3d78: 85 06       ..
     lda user_via_t1c_h                                                ; 3d7a: ad 65 fe    .e.
@@ -7878,7 +7878,7 @@ pydis_end
 ;     sub_c3827:                                      2
 ;     l382d:                                          2
 ;     l3865:                                          2
-;     envelope_1_step_length:                         2
+;     l38ad:                                          2
 ;     l38f4:                                          2
 ;     sub_c3924:                                      2
 ;     l397f:                                          2
@@ -9353,9 +9353,11 @@ pydis_end
 ;     l3881
 ;     l389c
 ;     l38ab
+;     l38ad
 ;     l38ae
 ;     l38af
 ;     l38bf
+;     l38c3
 ;     l38eb
 ;     l38f4
 ;     l390b
