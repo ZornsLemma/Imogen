@@ -203,7 +203,10 @@ comment(0x1df4, "TODO: Is this code deliberately trashing the code at something3
 comment(0x1e80, "TODO: What's going on with the modification to something3_TODO here? Is it copy protection/obfuscation or is there something else going on?")
 comment(0x1ebb, "TODO: What's going on with the modification to something3_TODO here? Is it copy protection/obfuscation or is there something else going on?")
 
-entry(0x402c, "something4_TODO")
+entry(0x402c, "quit_to_basic")
+for i in range(5):
+    char(0x406a+i*4)
+expr(0x407e, "vdu_cr")
 
 entry(0x4088, "clear_128_bytes_at_l09ef") # TODO: improve name as things become clearer
 label(0x4088, "clear_128_bytes_at_l09ef_high_copy_start")

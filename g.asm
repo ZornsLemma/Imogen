@@ -7018,7 +7018,7 @@ loop_c3f7b
     ldy #0                                                            ; 3f85: a0 00       ..
 ; $3f87 referenced 1 time by $3f94
 loop_c3f87
-    lda something4_TODO,y                                             ; 3f87: b9 2c 40    .,@
+    lda quit_to_basic,y                                               ; 3f87: b9 2c 40    .,@
     sta lbe00,y                                                       ; 3f8a: 99 00 be    ...
     lda l0b00,y                                                       ; 3f8d: b9 00 0b    ...
     sta lbf00,y                                                       ; 3f90: 99 00 bf    ...
@@ -7099,7 +7099,7 @@ something3_TODO
 }
 
 ; $402c referenced 1 time by $3f87
-something4_TODO
+quit_to_basic
 ; $402c referenced 1 time by $3f87
     sei                                                               ; 402c: 78          x
     lda old_irq1v                                                     ; 402d: ad b5 0a    ...
@@ -7128,17 +7128,17 @@ something4_TODO
     sta l0287                                                         ; 4064: 8d 87 02    ...
     pla                                                               ; 4067: 68          h
     pla                                                               ; 4068: 68          h
-    lda #$42 ; 'B'                                                    ; 4069: a9 42       .B
+    lda #'B'                                                          ; 4069: a9 42       .B
     sta l0070                                                         ; 406b: 85 70       .p
-    lda #$41 ; 'A'                                                    ; 406d: a9 41       .A
+    lda #'A'                                                          ; 406d: a9 41       .A
     sta l0071                                                         ; 406f: 85 71       .q
-    lda #$53 ; 'S'                                                    ; 4071: a9 53       .S
+    lda #'S'                                                          ; 4071: a9 53       .S
     sta l0072                                                         ; 4073: 85 72       .r
-    lda #$49 ; 'I'                                                    ; 4075: a9 49       .I
+    lda #'I'                                                          ; 4075: a9 49       .I
     sta l0073                                                         ; 4077: 85 73       .s
-    lda #$43 ; 'C'                                                    ; 4079: a9 43       .C
+    lda #'C'                                                          ; 4079: a9 43       .C
     sta l0074                                                         ; 407b: 85 74       .t
-    lda #$0d                                                          ; 407d: a9 0d       ..
+    lda #vdu_cr                                                       ; 407d: a9 0d       ..
     sta l0075                                                         ; 407f: 85 75       .u
     ldx #<(l0070)                                                     ; 4081: a2 70       .p
     ldy #>(l0070)                                                     ; 4083: a0 00       ..
@@ -8325,7 +8325,7 @@ pydis_end
 ;     loop_c3f87:                                     1
 ;     c3fba:                                          1
 ;     l3fbb:                                          1
-;     something4_TODO:                                1
+;     quit_to_basic:                                  1
 ;     c408b:                                          1
 ;     c4097:                                          1
 ;     c40af:                                          1
