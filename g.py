@@ -4,6 +4,7 @@ acorn.bbc()
 
 constant(6, "vdu_enable")
 constant(7, "vdu_bell")
+constant(8, "vdu_left")
 constant(10, "vdu_lf")
 constant(13, "vdu_cr")
 constant(17, "vdu_set_text_colour")
@@ -169,6 +170,8 @@ char(0x3711)
 char(0x3715)
 char(0x3719)
 char(0x3721)
+char(0x375a)
+expr(0x375f, "vdu_left")
 expr(0x3725, "'9' + 1") # TODO: not assembler independent
 char(0x372b)
 expr(0x372f, "'Z' + 1") # TODO: not assembler independent

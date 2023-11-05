@@ -38,6 +38,7 @@ vdu_define_text_window                          = 28
 vdu_delete                                      = 127
 vdu_enable                                      = 6
 vdu_goto_xy                                     = 31
+vdu_left                                        = 8
 vdu_lf                                          = 10
 vdu_set_graphics_colour                         = 18
 vdu_set_mode                                    = 22
@@ -5881,9 +5882,9 @@ c3750
     beq c377a                                                         ; 3883: f0 26       .&  :3752[1]
     lda #8                                                            ; 3885: a9 08       ..  :3754[1]
     jsr oswrch                                                        ; 3887: 20 ee ff     .. :3756[1]   ; Write character 8
-    lda #$20 ; ' '                                                    ; 388a: a9 20       .   :3759[1]
+    lda #' '                                                          ; 388a: a9 20       .   :3759[1]
     jsr oswrch                                                        ; 388c: 20 ee ff     .. :375b[1]   ; Write character 32
-    lda #8                                                            ; 388f: a9 08       ..  :375e[1]
+    lda #vdu_left                                                     ; 388f: a9 08       ..  :375e[1]
     jsr oswrch                                                        ; 3891: 20 ee ff     .. :3760[1]   ; Write character 8
     dec l0005                                                         ; 3894: c6 05       ..  :3763[1]
     jsr sub_c385d                                                     ; 3896: 20 5d 38     ]8 :3765[1]
@@ -10034,6 +10035,9 @@ pydis_end
 }
 !if (vdu_goto_xy) != $1f {
     !error "Assertion failed: vdu_goto_xy == $1f"
+}
+!if (vdu_left) != $08 {
+    !error "Assertion failed: vdu_left == $08"
 }
 !if (vdu_lf) != $0a {
     !error "Assertion failed: vdu_lf == $0a"
