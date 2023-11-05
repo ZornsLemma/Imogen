@@ -4103,7 +4103,7 @@ l296d
 l296e
     !byte 9                                                           ; 2a9f: 09          .   :296e[1]
 ; $2aa0 referenced 2 times by $29ad, $2c26
-l296f
+seventeen_entry_table2
     !byte 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0           ; 2aa0: 00 00 00... ... :296f[1]
 
 ; $2ab1 referenced 2 times by $1200, $3f35
@@ -4142,7 +4142,7 @@ sub_c29a8
 ; $2adb referenced 1 time by $29da
 c29aa
     lda seventeen_entry_table1,x                                      ; 2adb: bd 5c 29    .\) :29aa[1]
-    cmp l296f,x                                                       ; 2ade: dd 6f 29    .o) :29ad[1]
+    cmp seventeen_entry_table2,x                                      ; 2ade: dd 6f 29    .o) :29ad[1]
     beq c29d7                                                         ; 2ae1: f0 25       .%  :29b0[1]
     lda #0                                                            ; 2ae3: a9 00       ..  :29b2[1]
     sta l29dd                                                         ; 2ae5: 8d dd 29    ..) :29b4[1]
@@ -4547,7 +4547,7 @@ sub_c2c0c
     lda #1                                                            ; 2d50: a9 01       ..  :2c1f[1]
     sta l0016                                                         ; 2d52: 85 16       ..  :2c21[1]
     lda seventeen_entry_table1,x                                      ; 2d54: bd 5c 29    .\) :2c23[1]
-    sta l296f,x                                                       ; 2d57: 9d 6f 29    .o) :2c26[1]
+    sta seventeen_entry_table2,x                                      ; 2d57: 9d 6f 29    .o) :2c26[1]
     bne c2c35                                                         ; 2d5a: d0 0a       ..  :2c29[1]
     lda #2                                                            ; 2d5c: a9 02       ..  :2c2b[1]
     sta l0015                                                         ; 2d5e: 85 15       ..  :2c2d[1]
@@ -9190,7 +9190,6 @@ pydis_end
 ;     l295d
 ;     l296d
 ;     l296e
-;     l296f
 ;     l2972
 ;     l298a
 ;     l29af
