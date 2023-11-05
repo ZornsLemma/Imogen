@@ -346,8 +346,8 @@ c1186
     lda #1                                                            ; 12cb: a9 01       ..  :119a[1]
     sta l09be,y                                                       ; 12cd: 99 be 09    ... :119c[1]
     lda #$ff                                                          ; 12d0: a9 ff       ..  :119f[1]
-    sta l38ac,y                                                       ; 12d2: 99 ac 38    ..8 :11a1[1]
-    sta l38c2,y                                                       ; 12d5: 99 c2 38    ..8 :11a4[1]
+    sta envelope_1,y                                                  ; 12d2: 99 ac 38    ..8 :11a1[1]
+    sta envelope_2,y                                                  ; 12d5: 99 c2 38    ..8 :11a4[1]
     iny                                                               ; 12d8: c8          .   :11a7[1]
     cpy #$0b                                                          ; 12d9: c0 0b       ..  :11a8[1]
     bcc c1186                                                         ; 12db: 90 da       ..  :11aa[1]
@@ -1712,7 +1712,7 @@ something14_TODO
 c1a59
     ldx l1aae                                                         ; 1b8a: ae ae 1a    ... :1a59[1]
     lda #$c5                                                          ; 1b8d: a9 c5       ..  :1a5c[1]
-    sta l38ac,x                                                       ; 1b8f: 9d ac 38    ..8 :1a5e[1]
+    sta envelope_1,x                                                  ; 1b8f: 9d ac 38    ..8 :1a5e[1]
     lda #0                                                            ; 1b92: a9 00       ..  :1a61[1]
     sta l09a8,x                                                       ; 1b94: 9d a8 09    ... :1a63[1]
     lda desired_level                                                 ; 1b97: a5 31       .1  :1a66[1]
@@ -2595,7 +2595,7 @@ loop_c1ff5
     lda l09a8,x                                                       ; 212b: bd a8 09    ... :1ffa[1]
     ora l09b3,x                                                       ; 212e: 1d b3 09    ... :1ffd[1]
     beq c200d                                                         ; 2131: f0 0b       ..  :2000[1]
-    lda l38c2,x                                                       ; 2133: bd c2 38    ..8 :2002[1]
+    lda envelope_2,x                                                  ; 2133: bd c2 38    ..8 :2002[1]
     cmp l0061                                                         ; 2136: c5 61       .a  :2005[1]
     bcc c200d                                                         ; 2138: 90 04       ..  :2007[1]
     sta l0061                                                         ; 213a: 85 61       .a  :2009[1]
@@ -2636,7 +2636,7 @@ c2039
     ldx l0063                                                         ; 216a: a6 63       .c  :2039[1]
     ldy l0100,x                                                       ; 216c: bc 00 01    ... :203b[1]
     sty l0060                                                         ; 216f: 84 60       .`  :203e[1]
-    lda l38c2,y                                                       ; 2171: b9 c2 38    ..8 :2040[1]
+    lda envelope_2,y                                                  ; 2171: b9 c2 38    ..8 :2040[1]
     sta l0061                                                         ; 2174: 85 61       .a  :2043[1]
     ldx #0                                                            ; 2176: a2 00       ..  :2045[1]
 ; $2178 referenced 1 time by $2090
@@ -2650,7 +2650,7 @@ loop_c204a
     iny                                                               ; 2180: c8          .   :204f[1]
     cpy l0062                                                         ; 2181: c4 62       .b  :2050[1]
     bcc loop_c204a                                                    ; 2183: 90 f6       ..  :2052[1]
-    lda l38c2,x                                                       ; 2185: bd c2 38    ..8 :2054[1]
+    lda envelope_2,x                                                  ; 2185: bd c2 38    ..8 :2054[1]
     cmp l0061                                                         ; 2188: c5 61       .a  :2057[1]
     bcc c2061                                                         ; 218a: 90 06       ..  :2059[1]
     bne c208d                                                         ; 218c: d0 30       .0  :205b[1]
@@ -2705,7 +2705,7 @@ c209e
 loop_c20a6
     ldy l0100,x                                                       ; 21d7: bc 00 01    ... :20a6[1]
     bmi c20be                                                         ; 21da: 30 13       0.  :20a9[1]
-    lda l38c2,y                                                       ; 21dc: b9 c2 38    ..8 :20ab[1]
+    lda envelope_2,y                                                  ; 21dc: b9 c2 38    ..8 :20ab[1]
     cmp l0061                                                         ; 21df: c5 61       .a  :20ae[1]
     bcc c20b8                                                         ; 21e1: 90 06       ..  :20b0[1]
     bne c20be                                                         ; 21e3: d0 0a       ..  :20b2[1]
@@ -2815,7 +2815,7 @@ sub_c2157
     sta l001b                                                         ; 22a1: 85 1b       ..  :2170[1]
     lda l09c9,x                                                       ; 22a3: bd c9 09    ... :2172[1]
     sta l001d                                                         ; 22a6: 85 1d       ..  :2175[1]
-    lda l38ac,x                                                       ; 22a8: bd ac 38    ..8 :2177[1]
+    lda envelope_1,x                                                  ; 22a8: bd ac 38    ..8 :2177[1]
     beq c2184                                                         ; 22ab: f0 08       ..  :217a[1]
     cmp #$ff                                                          ; 22ad: c9 ff       ..  :217c[1]
     beq c218b                                                         ; 22af: f0 0b       ..  :217e[1]
@@ -2859,7 +2859,7 @@ sub_c219a
     sta l0016                                                         ; 22ec: 85 16       ..  :21bb[1]
     lda #0                                                            ; 22ee: a9 00       ..  :21bd[1]
     sta l0015                                                         ; 22f0: 85 15       ..  :21bf[1]
-    lda l38ac,x                                                       ; 22f2: bd ac 38    ..8 :21c1[1]
+    lda envelope_1,x                                                  ; 22f2: bd ac 38    ..8 :21c1[1]
     beq c21d0                                                         ; 22f5: f0 0a       ..  :21c4[1]
     cmp #$ff                                                          ; 22f7: c9 ff       ..  :21c6[1]
     beq c21d0                                                         ; 22f9: f0 06       ..  :21c8[1]
@@ -3168,7 +3168,7 @@ sub_c236b
     bpl c23a8                                                         ; 24c1: 10 16       ..  :2390[1]
 ; $24c3 referenced 1 time by $2386
 c2392
-    lda l38d8                                                         ; 24c3: ad d8 38    ..8 :2392[1]
+    lda envelope_3                                                    ; 24c3: ad d8 38    ..8 :2392[1]
     and #2                                                            ; 24c6: 29 02       ).  :2395[1]
     beq c23a8                                                         ; 24c8: f0 0f       ..  :2397[1]
     lda #2                                                            ; 24ca: a9 02       ..  :2399[1]
@@ -3567,7 +3567,7 @@ sub_c25f5
     sta l0053                                                         ; 2726: 85 53       .S  :25f5[1]
     tax                                                               ; 2728: aa          .   :25f7[1]
     lda #0                                                            ; 2729: a9 00       ..  :25f8[1]
-    sta l38d8,x                                                       ; 272b: 9d d8 38    ..8 :25fa[1]
+    sta envelope_3,x                                                  ; 272b: 9d d8 38    ..8 :25fa[1]
     lda #$ff                                                          ; 272e: a9 ff       ..  :25fd[1]
     sta l0044                                                         ; 2730: 85 44       .D  :25ff[1]
     lda #1                                                            ; 2732: a9 01       ..  :2601[1]
@@ -3677,9 +3677,9 @@ sub_c2693
     lda #0                                                            ; 27e0: a9 00       ..  :26af[1]
     adc l0966,x                                                       ; 27e2: 7d 66 09    }f. :26b1[1]
     sta l0966,x                                                       ; 27e5: 9d 66 09    .f. :26b4[1]
-    lda l38d8,x                                                       ; 27e8: bd d8 38    ..8 :26b7[1]
+    lda envelope_3,x                                                  ; 27e8: bd d8 38    ..8 :26b7[1]
     ora #1                                                            ; 27eb: 09 01       ..  :26ba[1]
-    sta l38d8,x                                                       ; 27ed: 9d d8 38    ..8 :26bc[1]
+    sta envelope_3,x                                                  ; 27ed: 9d d8 38    ..8 :26bc[1]
     jmp c26e4                                                         ; 27f0: 4c e4 26    L.& :26bf[1]
 
 ; $27f3 referenced 1 time by $269b
@@ -3696,9 +3696,9 @@ c26c2
     lda l0966,x                                                       ; 2805: bd 66 09    .f. :26d4[1]
     sbc #0                                                            ; 2808: e9 00       ..  :26d7[1]
     sta l0966,x                                                       ; 280a: 9d 66 09    .f. :26d9[1]
-    lda l38d8,x                                                       ; 280d: bd d8 38    ..8 :26dc[1]
+    lda envelope_3,x                                                  ; 280d: bd d8 38    ..8 :26dc[1]
     ora #4                                                            ; 2810: 09 04       ..  :26df[1]
-    sta l38d8,x                                                       ; 2812: 9d d8 38    ..8 :26e1[1]
+    sta envelope_3,x                                                  ; 2812: 9d d8 38    ..8 :26e1[1]
 ; $2815 referenced 2 times by $2699, $26bf
 c26e4
     rts                                                               ; 2815: 60          `   :26e4[1]
@@ -3764,9 +3764,9 @@ sub_c271e
     lda #0                                                            ; 286b: a9 00       ..  :273a[1]
     adc l0992,x                                                       ; 286d: 7d 92 09    }.. :273c[1]
     sta l0992,x                                                       ; 2870: 9d 92 09    ... :273f[1]
-    lda l38d8,x                                                       ; 2873: bd d8 38    ..8 :2742[1]
+    lda envelope_3,x                                                  ; 2873: bd d8 38    ..8 :2742[1]
     ora #8                                                            ; 2876: 09 08       ..  :2745[1]
-    sta l38d8,x                                                       ; 2878: 9d d8 38    ..8 :2747[1]
+    sta envelope_3,x                                                  ; 2878: 9d d8 38    ..8 :2747[1]
     jmp c276f                                                         ; 287b: 4c 6f 27    Lo' :274a[1]
 
 ; $287e referenced 1 time by $2726
@@ -3783,9 +3783,9 @@ c274d
     lda l0992,x                                                       ; 2890: bd 92 09    ... :275f[1]
     sbc #0                                                            ; 2893: e9 00       ..  :2762[1]
     sta l0992,x                                                       ; 2895: 9d 92 09    ... :2764[1]
-    lda l38d8,x                                                       ; 2898: bd d8 38    ..8 :2767[1]
+    lda envelope_3,x                                                  ; 2898: bd d8 38    ..8 :2767[1]
     ora #2                                                            ; 289b: 09 02       ..  :276a[1]
-    sta l38d8,x                                                       ; 289d: 9d d8 38    ..8 :276c[1]
+    sta envelope_3,x                                                  ; 289d: 9d d8 38    ..8 :276c[1]
 ; $28a0 referenced 2 times by $2724, $274a
 c276f
     rts                                                               ; 28a0: 60          `   :276f[1]
@@ -4727,7 +4727,7 @@ c2dca
     bne c2de4                                                         ; 2f05: d0 0e       ..  :2dd4[1]
     lda #4                                                            ; 2f07: a9 04       ..  :2dd6[1]
     ora #1                                                            ; 2f09: 09 01       ..  :2dd8[1]
-    and l38d8                                                         ; 2f0b: 2d d8 38    -.8 :2dda[1]
+    and envelope_3                                                    ; 2f0b: 2d d8 38    -.8 :2dda[1]
     beq c2de4                                                         ; 2f0e: f0 05       ..  :2ddd[1]
     lda #$80                                                          ; 2f10: a9 80       ..  :2ddf[1]
     sta l2433                                                         ; 2f12: 8d 33 24    .3$ :2de1[1]
@@ -4814,7 +4814,7 @@ c2e5f
     jsr sub_c2eb8                                                     ; 2fa5: 20 b8 2e     .. :2e74[1]
     lda #0                                                            ; 2fa8: a9 00       ..  :2e77[1]
     jsr sub_c25f5                                                     ; 2faa: 20 f5 25     .% :2e79[1]
-    lda l38d8                                                         ; 2fad: ad d8 38    ..8 :2e7c[1]
+    lda envelope_3                                                    ; 2fad: ad d8 38    ..8 :2e7c[1]
     sta l2eb5                                                         ; 2fb0: 8d b5 2e    ... :2e7f[1]
 ; $2fb3 referenced 1 time by $2e69
 c2e82
@@ -4825,9 +4825,9 @@ c2e82
     jsr sub_c2eb8                                                     ; 2fbd: 20 b8 2e     .. :2e8c[1]
     lda #0                                                            ; 2fc0: a9 00       ..  :2e8f[1]
     jsr sub_c25f5                                                     ; 2fc2: 20 f5 25     .% :2e91[1]
-    lda l38d8                                                         ; 2fc5: ad d8 38    ..8 :2e94[1]
+    lda envelope_3                                                    ; 2fc5: ad d8 38    ..8 :2e94[1]
     ora l2eb5                                                         ; 2fc8: 0d b5 2e    ... :2e97[1]
-    sta l38d8                                                         ; 2fcb: 8d d8 38    ..8 :2e9a[1]
+    sta envelope_3                                                    ; 2fcb: 8d d8 38    ..8 :2e9a[1]
     lda l2eb6                                                         ; 2fce: ad b6 2e    ... :2e9d[1]
     sta l2eb7                                                         ; 2fd1: 8d b7 2e    ... :2ea0[1]
     ldx #0                                                            ; 2fd4: a2 00       ..  :2ea3[1]
@@ -4975,7 +4975,7 @@ c302a
     bne c3044                                                         ; 3165: d0 0e       ..  :3034[1]
     lda #4                                                            ; 3167: a9 04       ..  :3036[1]
     ora #1                                                            ; 3169: 09 01       ..  :3038[1]
-    and l38d8                                                         ; 316b: 2d d8 38    -.8 :303a[1]
+    and envelope_3                                                    ; 316b: 2d d8 38    -.8 :303a[1]
     beq c3044                                                         ; 316e: f0 05       ..  :303d[1]
     lda #$80                                                          ; 3170: a9 80       ..  :303f[1]
     sta l2433                                                         ; 3172: 8d 33 24    .3$ :3041[1]
@@ -6114,24 +6114,29 @@ loop_c3892
     !text "auxcode"                                                   ; 39cd: 61 75 78... aux :389c[1]
     !byte $0d, $10,   0, $f4, $ff,   2,   0,   1,   0                 ; 39d4: 0d 10 00... ... :38a3[1]
 ; $39dd referenced 5 times by $11a1, $1a5e, $2177, $21c1, $3d63
-l38ac
+envelope_1
     !byte 1                                                           ; 39dd: 01          .   :38ac[1]
 ; $39de referenced 1 time by $3d68
-l38ad
-    !byte   3,   0,   0,   0,   0,   0,   0,   3,   0,   0,   0, $40  ; 39de: 03 00 00... ... :38ad[1]
-    !byte   0, $10,   0,   1,   0,   7,   0, $64,   0                 ; 39ea: 00 10 00... ... :38b9[1]
+envelope_1_step_length
+    !byte  3,  0,  0,  0,  0,  0,  0,  3,  0,  0,  0, 64,  0          ; 39de: 03 00 00... ... :38ad[1]
+some_data1_TODO
+    !byte $10,   0,   1,   0,   7,   0, $64,   0                      ; 39eb: 10 00 01... ... :38ba[1]
 ; $39f3 referenced 6 times by $11a4, $2002, $2040, $2054, $20ab, $3d6d
-l38c2
+envelope_2
     !byte 2                                                           ; 39f3: 02          .   :38c2[1]
 ; $39f4 referenced 1 time by $3d72
-l38c3
-    !byte $86,   1,   3,   5, $0a, $0a, $10,   0,   0,   0,   0,   0  ; 39f4: 86 01 03... ... :38c3[1]
-    !byte   0, $11,   0,   2,   0, $b4,   0, $64,   0                 ; 3a00: 00 11 00... ... :38cf[1]
+envelope_2_step_length
+    !byte 134,   1,   3,   5,  10,  10,  16,   0,   0,   0,   0,   0  ; 39f4: 86 01 03... ... :38c3[1]
+    !byte   0                                                         ; 3a00: 00          .   :38cf[1]
+some_data2_TODO
+    !byte $11,   0,   2,   0, $b4,   0, $64,   0                      ; 3a01: 11 00 02... ... :38d0[1]
 ; $3a09 referenced 15 times by $2392, $25fa, $26b7, $26bc, $26dc, $26e1, $2742, $2747, $2767, $276c, $2dda, $2e7c, $2e94, $2e9a, $303a
-l38d8
-    !byte   3,   1,   0,   0,   0,   0,   0,   0, $64,   0,   0, $f8  ; 3a09: 03 01 00... ... :38d8[1]
-    !byte $7e,   0, $10,   0,   3,   0,   3,   0,   1,   0, $11,   0  ; 3a15: 7e 00 10... ~.. :38e4[1]
-    !byte   0,   0, $28,   0,   1,   0                                ; 3a21: 00 00 28... ..( :38f0[1]
+envelope_3
+    !byte   3,   1,   0,   0,   0,   0,   0,   0, 100,   0,   0, 248  ; 3a09: 03 01 00... ... :38d8[1]
+    !byte 126,   0                                                    ; 3a15: 7e 00       ~.  :38e4[1]
+some_data3_TODO
+    !byte $10,   0,   3,   0,   3,   0,   1,   0, $11,   0,   0,   0  ; 3a17: 10 00 03... ... :38e6[1]
+    !byte $28,   0,   1,   0                                          ; 3a23: 28 00 01... (.. :38f2[1]
 
 ; $3a27 referenced 5 times by $234d, $2354, $23b4, $23bb, $2b11
 sub_c38f6
@@ -6666,14 +6671,14 @@ define_character_fe_loop
     lda #osbyte_select_adc_channels                                   ; 3d36: a9 10       ..
     ldx #0                                                            ; 3d38: a2 00       ..
     jsr osbyte                                                        ; 3d3a: 20 f4 ff     ..            ; Disable ADC channel sampling (X=0)
-    ldx #$ac                                                          ; 3d3d: a2 ac       ..
-    ldy #$38 ; '8'                                                    ; 3d3f: a0 38       .8
+    ldx #<envelope_1                                                  ; 3d3d: a2 ac       ..
+    ldy #>envelope_1                                                  ; 3d3f: a0 38       .8
     jsr define_envelope                                               ; 3d41: 20 5e 39     ^9
-    ldx #$c2                                                          ; 3d44: a2 c2       ..
-    ldy #$38 ; '8'                                                    ; 3d46: a0 38       .8
+    ldx #<envelope_2                                                  ; 3d44: a2 c2       ..
+    ldy #>envelope_2                                                  ; 3d46: a0 38       .8
     jsr define_envelope                                               ; 3d48: 20 5e 39     ^9
-    ldx #$d8                                                          ; 3d4b: a2 d8       ..
-    ldy #$38 ; '8'                                                    ; 3d4d: a0 38       .8
+    ldx #<envelope_3                                                  ; 3d4b: a2 d8       ..
+    ldy #>envelope_3                                                  ; 3d4d: a0 38       .8
     jsr define_envelope                                               ; 3d4f: 20 5e 39     ^9
     ldy #7                                                            ; 3d52: a0 07       ..
 ; $3d54 referenced 1 time by $3d5f
@@ -6685,13 +6690,13 @@ loop_c3d54
     dey                                                               ; 3d5e: 88          .
     bpl loop_c3d54                                                    ; 3d5f: 10 f3       ..
     lda #$c7                                                          ; 3d61: a9 c7       ..
-    sta l38ac                                                         ; 3d63: 8d ac 38    ..8
+    sta envelope_1                                                    ; 3d63: 8d ac 38    ..8
     lda #$c6                                                          ; 3d66: a9 c6       ..
-    sta l38ad                                                         ; 3d68: 8d ad 38    ..8
+    sta envelope_1_step_length                                        ; 3d68: 8d ad 38    ..8
     lda #$80                                                          ; 3d6b: a9 80       ..
-    sta l38c2                                                         ; 3d6d: 8d c2 38    ..8
+    sta envelope_2                                                    ; 3d6d: 8d c2 38    ..8
     lda #$7f                                                          ; 3d70: a9 7f       ..
-    sta l38c3                                                         ; 3d72: 8d c3 38    ..8
+    sta envelope_2_step_length                                        ; 3d72: 8d c3 38    ..8
     lda user_via_t1c_l                                                ; 3d75: ad 64 fe    .d.
     sta l0006                                                         ; 3d78: 85 06       ..
     lda user_via_t1c_h                                                ; 3d7a: ad 65 fe    .e.
@@ -7865,7 +7870,7 @@ pydis_end
 ;     sub_c3827:                                      2
 ;     l382d:                                          2
 ;     l3865:                                          2
-;     l38ad:                                          2
+;     envelope_1_step_length:                         2
 ;     l38f4:                                          2
 ;     sub_c3924:                                      2
 ;     l397f:                                          2
@@ -9343,14 +9348,9 @@ pydis_end
 ;     l3881
 ;     l389c
 ;     l38ab
-;     l38ac
-;     l38ad
 ;     l38ae
 ;     l38af
 ;     l38bf
-;     l38c2
-;     l38c3
-;     l38d8
 ;     l38eb
 ;     l38f4
 ;     l390b
@@ -9833,6 +9833,15 @@ pydis_end
 !if (<data_filename) != $72 {
     !error "Assertion failed: <data_filename == $72"
 }
+!if (<envelope_1) != $ac {
+    !error "Assertion failed: <envelope_1 == $ac"
+}
+!if (<envelope_2) != $c2 {
+    !error "Assertion failed: <envelope_2 == $c2"
+}
+!if (<envelope_3) != $d8 {
+    !error "Assertion failed: <envelope_3 == $d8"
+}
 !if (<icodata) != $ff {
     !error "Assertion failed: <icodata == $ff"
 }
@@ -9874,6 +9883,15 @@ pydis_end
 }
 !if (>data_filename) != $12 {
     !error "Assertion failed: >data_filename == $12"
+}
+!if (>envelope_1) != $38 {
+    !error "Assertion failed: >envelope_1 == $38"
+}
+!if (>envelope_2) != $38 {
+    !error "Assertion failed: >envelope_2 == $38"
+}
+!if (>envelope_3) != $38 {
+    !error "Assertion failed: >envelope_3 == $38"
 }
 !if (>icodata) != $40 {
     !error "Assertion failed: >icodata == $40"
