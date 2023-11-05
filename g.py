@@ -366,6 +366,12 @@ expr(0x3f1b, make_subtract("sixteen_entry_table", 1))
 label(0x295c, "seventeen_entry_table1") # sub_c2980 initialises elements 9 inclusive to $11 exclusive, but elsewhere we do access lower elements
 label(0x296f, "seventeen_entry_table2") # see code at c29aa which pairs this with seventeen_entry_table1
 
+# TODO: Poor names - based on use with 17 element table (16 real levels plus Q) and code at $29de
+label(0x29, "new_level_index")
+label(0x2e, "current_level_index")
+entry(0x29de, "apply_new_level_index")
+entry(0x29ea, "apply_new_level_index_rts")
+
 entry(0x3f6f, "probably_copy_protection_TODO")
 
 go()
