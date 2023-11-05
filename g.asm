@@ -207,7 +207,6 @@ l0ac3                   = $0ac3
 l0ad4                   = $0ad4
 l0aef                   = $0aef
 l0b00                   = $0b00
-l0c00                   = $0c00
 l3b09                   = $3b09
 c3c2c                   = $3c2c
 l53c0                   = $53c0
@@ -265,10 +264,10 @@ l1108
 ; $123a referenced 1 time by $17d2
 l1109
     !byte $27                                                         ; 123a: 27          '   :1109[1]
-; $123b referenced 3 times by $11f0, $1728, $3fcd
+; $123b referenced 3 times by $0c02, $11f0, $1728
 l110a
     !byte 0                                                           ; 123b: 00          .   :110a[1]
-; $123c referenced 2 times by $3e17, $4007
+; $123c referenced 2 times by $0c3c, $3e17
 l110b
     !byte 0                                                           ; 123c: 00          .   :110b[1]
 
@@ -387,7 +386,7 @@ loop_c11dd
     sta l0ab4                                                         ; 131e: 8d b4 0a    ... :11ed[1]
     lda l110a                                                         ; 1321: ad 0a 11    ... :11f0[1]
     bne c11f8                                                         ; 1324: d0 03       ..  :11f3[1]
-    jsr l0c00                                                         ; 1326: 20 00 0c     .. :11f5[1]
+    jsr something3_TODO                                               ; 1326: 20 00 0c     .. :11f5[1]
 ; $1329 referenced 1 time by $11f3
 c11f8
     lda #0                                                            ; 1329: a9 00       ..  :11f8[1]
@@ -1210,16 +1209,16 @@ c174c
     rts                                                               ; 1882: 60          `   :1751[1]
 
     !byte $8f, $a2, $b8, $a0, $eb, $ae, $b9, $b9, $a4, $b9, $c6       ; 1883: 8f a2 b8... ... :1752[1]
-; $188e referenced 3 times by $1768, $1782, $3fd0
+; $188e referenced 3 times by $0c05, $1768, $1782
 l175d
     !byte 0                                                           ; 188e: 00          .   :175d[1]
-; $188f referenced 3 times by $11fa, $17df, $3fd3
+; $188f referenced 3 times by $0c08, $11fa, $17df
 l175e
     !byte 0                                                           ; 188f: 00          .   :175e[1]
-; $1890 referenced 3 times by $176b, $1787, $3fd6
+; $1890 referenced 3 times by $0c0b, $176b, $1787
 l175f
     !byte 0                                                           ; 1890: 00          .   :175f[1]
-; $1891 referenced 4 times by $11fd, $123c, $1808, $3fd9
+; $1891 referenced 4 times by $0c0e, $11fd, $123c, $1808
 l1760
     !byte 0                                                           ; 1891: 00          .   :1760[1]
 ; $1892 referenced 1 time by $177f
@@ -1255,7 +1254,7 @@ c178a
 l178b
     !byte 0                                                           ; 18bc: 00          .   :178b[1]
 
-; $18bd referenced 4 times by $1839, $2ab7, $3ffc, $3fff
+; $18bd referenced 4 times by $0c31, $0c34, $1839, $2ab7
 sub_c178c
     lda #osbyte_vsync                                                 ; 18bd: a9 13       ..  :178c[1]
     jmp osbyte                                                        ; 18bf: 4c f4 ff    L.. :178e[1]   ; Wait for vertical sync
@@ -1377,8 +1376,10 @@ something11_TODO
     jsr sub_c178c                                                     ; 196a: 20 8c 17     .. :1839[1]
     jsr some_data_low_TODO                                            ; 196d: 20 00 04     .. :183c[1]
     jsr sub_c1845                                                     ; 1970: 20 45 18     E. :183f[1]
-    jmp l0c00                                                         ; 1973: 4c 00 0c    L.. :1842[1]
+    jmp something3_TODO                                               ; 1973: 4c 00 0c    L.. :1842[1]
 
+; TODO: Is this code deliberately trashing the code at something3_TODO? I can't think
+; of any genuine reason for the game to copy anything from ROM into RAM.
 ; $1976 referenced 1 time by $183f
 sub_c1845
     sei                                                               ; 1976: 78          x   :1845[1]
@@ -1388,7 +1389,7 @@ sub_c1845
 ; $197e referenced 1 time by $185a
 loop_c184d
     lda lbe00,y                                                       ; 197e: b9 00 be    ... :184d[1]
-    sta l0c00,y                                                       ; 1981: 99 00 0c    ... :1850[1]
+    sta something3_TODO,y                                             ; 1981: 99 00 0c    ... :1850[1]
     lda lbf00,y                                                       ; 1984: b9 00 bf    ... :1853[1]
     sta l0b00,y                                                       ; 1987: 99 00 0b    ... :1856[1]
     iny                                                               ; 198a: c8          .   :1859[1]
@@ -2213,13 +2214,14 @@ c1d16
     !byte $e5, $b0, $0a, $a9, $0a, $20, $4c, $1f, $a9,   2, $20, $bb  ; 1f14: e5 b0 0a... ... :1de3[1]
     !byte $1e, $68, $a8, $68, $60                                     ; 1f20: 1e 68 a8... .h. :1def[1]
 
+; TODO: Is this code deliberately trashing the code at something3_TODO?
 ; $1f25 referenced 1 time by $1242
 sub_c1df4
     lda #0                                                            ; 1f25: a9 00       ..  :1df4[1]
     tay                                                               ; 1f27: a8          .   :1df6[1]
 ; $1f28 referenced 1 time by $1dfd
 loop_c1df7
-    sta l0c00,y                                                       ; 1f28: 99 00 0c    ... :1df7[1]
+    sta something3_TODO,y                                             ; 1f28: 99 00 0c    ... :1df7[1]
     iny                                                               ; 1f2b: c8          .   :1dfa[1]
     cpy #$f0                                                          ; 1f2c: c0 f0       ..  :1dfb[1]
     bne loop_c1df7                                                    ; 1f2e: d0 f8       ..  :1dfd[1]
@@ -2318,12 +2320,14 @@ c1e6a
     ldx l0074                                                         ; 1fab: a6 74       .t  :1e7a[1]
     sta l0074                                                         ; 1fad: 85 74       .t  :1e7c[1]
     sty l0075                                                         ; 1faf: 84 75       .u  :1e7e[1]
+; TODO: What's going on with the modification to something3_TODO here? Is it copy
+; protection/obfuscation or is there something else going on?
 ; $1fb1 referenced 1 time by $1e91
 loop_c1e80
-    lda l0c00,y                                                       ; 1fb1: b9 00 0c    ... :1e80[1]
+    lda something3_TODO,y                                             ; 1fb1: b9 00 0c    ... :1e80[1]
     and l1ea7,x                                                       ; 1fb4: 3d a7 1e    =.. :1e83[1]
     ora l0074                                                         ; 1fb7: 05 74       .t  :1e86[1]
-    sta l0c00,y                                                       ; 1fb9: 99 00 0c    ... :1e88[1]
+    sta something3_TODO,y                                             ; 1fb9: 99 00 0c    ... :1e88[1]
     tya                                                               ; 1fbc: 98          .   :1e8b[1]
     adc #$0a                                                          ; 1fbd: 69 0a       i.  :1e8c[1]
     tay                                                               ; 1fbf: a8          .   :1e8e[1]
@@ -2354,6 +2358,8 @@ l1eab
     !byte   0,   0,   0,   0, $40, $10,   4,   1, $80, $20,   8,   2  ; 1fdc: 00 00 00... ... :1eab[1]
     !byte $c0, $30, $0c,   3                                          ; 1fe8: c0 30 0c... .0. :1eb7[1]
 
+; TODO: What's going on with the modification to something3_TODO here? Is it copy
+; protection/obfuscation or is there something else going on?
 ; $1fec referenced 2 times by $19a4, $19bc
 sub_c1ebb
     and #3                                                            ; 1fec: 29 03       ).  :1ebb[1]
@@ -2386,10 +2392,10 @@ sub_c1ebb
     lda l1eab,x                                                       ; 2012: bd ab 1e    ... :1ee1[1]
     ldx l004a                                                         ; 2015: a6 4a       .J  :1ee4[1]
     sta l004a                                                         ; 2017: 85 4a       .J  :1ee6[1]
-    lda l0c00,y                                                       ; 2019: b9 00 0c    ... :1ee8[1]
+    lda something3_TODO,y                                             ; 2019: b9 00 0c    ... :1ee8[1]
     and l1ea7,x                                                       ; 201c: 3d a7 1e    =.. :1eeb[1]
     ora l004a                                                         ; 201f: 05 4a       .J  :1eee[1]
-    sta l0c00,y                                                       ; 2021: 99 00 0c    ... :1ef0[1]
+    sta something3_TODO,y                                             ; 2021: 99 00 0c    ... :1ef0[1]
     pla                                                               ; 2024: 68          h   :1ef3[1]
     tay                                                               ; 2025: a8          .   :1ef4[1]
     pla                                                               ; 2026: 68          h   :1ef5[1]
@@ -2423,7 +2429,7 @@ c1f06
     txa                                                               ; 2048: 8a          .   :1f17[1]
     and #3                                                            ; 2049: 29 03       ).  :1f18[1]
     tax                                                               ; 204b: aa          .   :1f1a[1]
-    lda l0c00,y                                                       ; 204c: b9 00 0c    ... :1f1b[1]
+    lda something3_TODO,y                                             ; 204c: b9 00 0c    ... :1f1b[1]
     jmp c1f23                                                         ; 204f: 4c 23 1f    L#. :1f1e[1]
 
 ; $2052 referenced 1 time by $1f24
@@ -6572,8 +6578,8 @@ loop_c3c6c
     ldy #0                                                            ; 3c77: a0 00       ..
 ; $3c79 referenced 1 time by $3c80
 loop_c3c79
-    lda something3_TODO,y                                             ; 3c79: b9 cb 3f    ..?
-    sta l0c00,y                                                       ; 3c7c: 99 00 0c    ...
+    lda something3_high_copy_start,y                                  ; 3c79: b9 cb 3f    ..?
+    sta something3_TODO,y                                             ; 3c7c: 99 00 0c    ...
     iny                                                               ; 3c7f: c8          .
     bne loop_c3c79                                                    ; 3c80: d0 f7       ..
     ldy #0                                                            ; 3c82: a0 00       ..
@@ -7039,51 +7045,59 @@ c3fba
 l3fbb
     !byte $4c,   8, $80, $4c,   8, $80,   0, $0a, $60,   0,   0,   0  ; 3fbb: 4c 08 80... L..
     !byte   0,   0,   0,   0                                          ; 3fc7: 00 00 00... ...
+; $3fcb referenced 11 times by $11f5, $1842, $1850, $1df7, $1e80, $1e88, $1ee8, $1ef0, $1f1b, $3c79, $3c7c
+something3_high_copy_start
+; $3fcb referenced 11 times by $11f5, $1842, $1850, $1df7, $1e80, $1e88, $1ee8, $1ef0, $1f1b, $3c79, $3c7c
 
-; $3fcb referenced 1 time by $3c79
+!pseudopc $0c00 {
+; $3fcb referenced 11 times by $11f5, $1842, $1850, $1df7, $1e80, $1e88, $1ee8, $1ef0, $1f1b, $3c79, $3c7c
 something3_TODO
-    lda #$ff                                                          ; 3fcb: a9 ff       ..
-    sta l110a                                                         ; 3fcd: 8d 0a 11    ...
-    lda l175d                                                         ; 3fd0: ad 5d 17    .].
-    sta l175e                                                         ; 3fd3: 8d 5e 17    .^.
-    lda l175f                                                         ; 3fd6: ad 5f 17    ._.
-    sta l1760                                                         ; 3fd9: 8d 60 17    .`.
-    sei                                                               ; 3fdc: 78          x
-    lda #$7f                                                          ; 3fdd: a9 7f       ..
-    sta user_via_ier                                                  ; 3fdf: 8d 6e fe    .n.
-    lda #$c0                                                          ; 3fe2: a9 c0       ..
-    sta system_via_acr                                                ; 3fe4: 8d 4b fe    .K.
-    lda #$ff                                                          ; 3fe7: a9 ff       ..
-    sta system_via_t2c_l                                              ; 3fe9: 8d 48 fe    .H.
-    lda #$3c ; '<'                                                    ; 3fec: a9 3c       .<
-    sta system_via_ier                                                ; 3fee: 8d 4e fe    .N.
-    lda #$a0                                                          ; 3ff1: a9 a0       ..
-    sta irq1v                                                         ; 3ff3: 8d 04 02    ...
-    lda #$17                                                          ; 3ff6: a9 17       ..
-    sta irq1v+1                                                       ; 3ff8: 8d 05 02    ...
-    cli                                                               ; 3ffb: 58          X
-    jsr sub_c178c                                                     ; 3ffc: 20 8c 17     ..
-    jsr sub_c178c                                                     ; 3fff: 20 8c 17     ..
-    lda #crtc_vert_sync_pos                                           ; 4002: a9 07       ..
-    sta crtc_address_register                                         ; 4004: 8d 00 fe    ...
-    lda l110b                                                         ; 4007: ad 0b 11    ...
-    sta crtc_address_write                                            ; 400a: 8d 01 fe    ...
-    lda #crtc_screen_start_low                                        ; 400d: a9 0d       ..
-    sta crtc_address_register                                         ; 400f: 8d 00 fe    ...
-    lda #$78 ; 'x'                                                    ; 4012: a9 78       .x
-    sta crtc_address_write                                            ; 4014: 8d 01 fe    ...
-    lda #crtc_screen_start_high                                       ; 4017: a9 0c       ..
-    sta crtc_address_register                                         ; 4019: 8d 00 fe    ...
-    lda #$0b                                                          ; 401c: a9 0b       ..
-    sta crtc_address_write                                            ; 401e: 8d 01 fe    ...
-    lda #crtc_vert_displayed                                          ; 4021: a9 06       ..
-    sta crtc_address_register                                         ; 4023: 8d 00 fe    ...
-    lda #$1d                                                          ; 4026: a9 1d       ..
-    sta crtc_address_write                                            ; 4028: 8d 01 fe    ...
-    rts                                                               ; 402b: 60          `
+    lda #$ff                                                          ; 3fcb: a9 ff       ..  :0c00[4]
+    sta l110a                                                         ; 3fcd: 8d 0a 11    ... :0c02[4]
+    lda l175d                                                         ; 3fd0: ad 5d 17    .]. :0c05[4]
+    sta l175e                                                         ; 3fd3: 8d 5e 17    .^. :0c08[4]
+    lda l175f                                                         ; 3fd6: ad 5f 17    ._. :0c0b[4]
+    sta l1760                                                         ; 3fd9: 8d 60 17    .`. :0c0e[4]
+    sei                                                               ; 3fdc: 78          x   :0c11[4]
+    lda #$7f                                                          ; 3fdd: a9 7f       ..  :0c12[4]
+    sta user_via_ier                                                  ; 3fdf: 8d 6e fe    .n. :0c14[4]
+    lda #$c0                                                          ; 3fe2: a9 c0       ..  :0c17[4]
+    sta system_via_acr                                                ; 3fe4: 8d 4b fe    .K. :0c19[4]
+    lda #$ff                                                          ; 3fe7: a9 ff       ..  :0c1c[4]
+    sta system_via_t2c_l                                              ; 3fe9: 8d 48 fe    .H. :0c1e[4]
+    lda #$3c ; '<'                                                    ; 3fec: a9 3c       .<  :0c21[4]
+    sta system_via_ier                                                ; 3fee: 8d 4e fe    .N. :0c23[4]
+    lda #$a0                                                          ; 3ff1: a9 a0       ..  :0c26[4]
+    sta irq1v                                                         ; 3ff3: 8d 04 02    ... :0c28[4]
+    lda #$17                                                          ; 3ff6: a9 17       ..  :0c2b[4]
+    sta irq1v+1                                                       ; 3ff8: 8d 05 02    ... :0c2d[4]
+    cli                                                               ; 3ffb: 58          X   :0c30[4]
+    jsr sub_c178c                                                     ; 3ffc: 20 8c 17     .. :0c31[4]
+    jsr sub_c178c                                                     ; 3fff: 20 8c 17     .. :0c34[4]
+    lda #crtc_vert_sync_pos                                           ; 4002: a9 07       ..  :0c37[4]
+    sta crtc_address_register                                         ; 4004: 8d 00 fe    ... :0c39[4]
+    lda l110b                                                         ; 4007: ad 0b 11    ... :0c3c[4]
+    sta crtc_address_write                                            ; 400a: 8d 01 fe    ... :0c3f[4]
+    lda #crtc_screen_start_low                                        ; 400d: a9 0d       ..  :0c42[4]
+    sta crtc_address_register                                         ; 400f: 8d 00 fe    ... :0c44[4]
+    lda #$78 ; 'x'                                                    ; 4012: a9 78       .x  :0c47[4]
+    sta crtc_address_write                                            ; 4014: 8d 01 fe    ... :0c49[4]
+    lda #crtc_screen_start_high                                       ; 4017: a9 0c       ..  :0c4c[4]
+    sta crtc_address_register                                         ; 4019: 8d 00 fe    ... :0c4e[4]
+    lda #$0b                                                          ; 401c: a9 0b       ..  :0c51[4]
+    sta crtc_address_write                                            ; 401e: 8d 01 fe    ... :0c53[4]
+    lda #crtc_vert_displayed                                          ; 4021: a9 06       ..  :0c56[4]
+    sta crtc_address_register                                         ; 4023: 8d 00 fe    ... :0c58[4]
+    lda #$1d                                                          ; 4026: a9 1d       ..  :0c5b[4]
+    sta crtc_address_write                                            ; 4028: 8d 01 fe    ... :0c5d[4]
+    rts                                                               ; 402b: 60          `   :0c60[4]
+
+; $402c referenced 1 time by $3f87
+}
 
 ; $402c referenced 1 time by $3f87
 something4_TODO
+; $402c referenced 1 time by $3f87
     sei                                                               ; 402c: 78          x
     lda l0ab5                                                         ; 402d: ad b5 0a    ...
     sta irq1v                                                         ; 4030: 8d 04 02    ...
@@ -7209,7 +7223,7 @@ c0136
     cmp l005c,x                                                       ; 40d8: d5 5c       .\  :0139[3]
     beq c0157                                                         ; 40da: f0 1a       ..  :013b[3]
     sta l005c,x                                                       ; 40dc: 95 5c       .\  :013d[3]
-    lda #$1f                                                          ; 40de: a9 1f       ..  :013f[3]
+    lda #vdu_goto_xy                                                  ; 40de: a9 1f       ..  :013f[3]
     jsr oswrch                                                        ; 40e0: 20 ee ff     .. :0141[3]   ; Write character 31
     txa                                                               ; 40e3: 8a          .   :0144[3]
     eor #$ff                                                          ; 40e4: 49 ff       I.  :0145[3]
@@ -7483,11 +7497,11 @@ pydis_end
 ;     l0062:                                         11
 ;     pydis_start:                                   11
 ;     sub_c14be:                                     11
+;     something3_high_copy_start:                    11
 ;     crtc_address_register:                         11
 ;     crtc_address_write:                            11
 ;     l0049:                                         10
 ;     l0061:                                         10
-;     l0c00:                                         10
 ;     sub_c2682:                                     10
 ;     sub_c4109:                                     10
 ;     l0019:                                          9
@@ -8296,7 +8310,6 @@ pydis_end
 ;     loop_c3f87:                                     1
 ;     c3fba:                                          1
 ;     l3fbb:                                          1
-;     something3_TODO:                                1
 ;     something4_TODO:                                1
 ;     something5_TODO:                                1
 ;     loop_c408b:                                     1
@@ -8950,7 +8963,6 @@ pydis_end
 ;     l0ad4
 ;     l0aef
 ;     l0b00
-;     l0c00
 ;     l1103
 ;     l1104
 ;     l1105

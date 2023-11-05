@@ -19,6 +19,7 @@ load(0x1234, "orig/g.dat", "6502", "ac5feeac5c32a306d4a73ba393677385")
 move_id = move(0x1103, 0x1234, 0x2a00)
 move_id2 = move(0x400, 0x40ff, 295) # code copies 512 bytes, but we only have 295 bytes of actual data
 move(0x131, 0x40d0, 0x2f)
+move(0xc00, 0x3fcb, 0x402c-0x3fcb) # code copies 256 bytes, but this is what we actually care about
 
 entry(0x3c06, "execution_start")
 
@@ -161,7 +162,14 @@ expr(0x445, "vdu_goto_xy")
 
 entry(0x453, "something_TODO")
 # TODO: DELETE? entry(0x3fbb, "something2_TODO")
+
 entry(0x3fcb, "something3_TODO")
+label(0x3fcb, "something3_high_copy_start")
+comment(0x1845, "TODO: Is this code deliberately trashing the code at something3_TODO? I can't think of any genuine reason for the game to copy anything from ROM into RAM.")
+comment(0x1df4, "TODO: Is this code deliberately trashing the code at something3_TODO?")
+comment(0x1e80, "TODO: What's going on with the modification to something3_TODO here? Is it copy protection/obfuscation or is there something else going on?")
+comment(0x1ebb, "TODO: What's going on with the modification to something3_TODO here? Is it copy protection/obfuscation or is there something else going on?")
+
 entry(0x402c, "something4_TODO")
 entry(0x4088, "something5_TODO")
 entry(0x4094, "something6_TODO")
@@ -173,6 +181,7 @@ entry(0x40d0, "something9_TODO")
 label(0x40d0, "something9_high_copy_start")
 label(0x40d0+0x2f, "something9_high_copy_end")
 expr(0x3c8c, make_subtract("something9_high_copy_end", "something9_high_copy_start"))
+expr(0x140, "vdu_goto_xy")
 
 entry(0x17a0, "something10_TODO")
 entry(0x1839, "something11_TODO")
