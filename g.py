@@ -171,6 +171,7 @@ char(0x3715)
 char(0x3719)
 char(0x3721)
 char(0x375a)
+char(0x3813)
 expr(0x3755, "vdu_left")
 expr(0x375f, "vdu_left")
 expr(0x3725, "'9' + 1") # TODO: not assembler independent

@@ -6003,7 +6003,7 @@ c3804
     lsr                                                               ; 393f: 4a          J   :380e[1]
     tay                                                               ; 3940: a8          .   :380f[1]
     beq c381a                                                         ; 3941: f0 08       ..  :3810[1]
-    lda #$20 ; ' '                                                    ; 3943: a9 20       .   :3812[1]
+    lda #' '                                                          ; 3943: a9 20       .   :3812[1]
 ; $3945 referenced 1 time by $3818
 loop_c3814
     jsr oswrch                                                        ; 3945: 20 ee ff     .. :3814[1]   ; Write character 32
