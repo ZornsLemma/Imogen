@@ -179,6 +179,9 @@ entry(0x1fd7, "something16_TODO")
 entry(0x2200, "something17_TODO")
 entry(0x2248, "something18_TODO")
 entry(0x22cd, "something19_TODO")
+entry(0x2a38, "something20_TODO")
+entry(0x2b87, "something21_TODO")
+entry(0x2be0, "something22_TODO")
 
 go()
 
