@@ -158,6 +158,8 @@ expr(0x1357, make_hi("level_data"))
 label(0x1377, "power_of_2_table")
 hexadecimal(0x1377, 8)
 
+entry(0x3814, "print_y_spaces_loop")
+
 entry(0x36fc, "string_input") # TODO: Something like this
 char(0x3475)
 char(0x3479)

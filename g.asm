@@ -6005,10 +6005,10 @@ c3804
     beq c381a                                                         ; 3941: f0 08       ..  :3810[1]
     lda #' '                                                          ; 3943: a9 20       .   :3812[1]
 ; $3945 referenced 1 time by $3818
-loop_c3814
+print_y_spaces_loop
     jsr oswrch                                                        ; 3945: 20 ee ff     .. :3814[1]   ; Write character 32
     dey                                                               ; 3948: 88          .   :3817[1]
-    bne loop_c3814                                                    ; 3949: d0 fa       ..  :3818[1]
+    bne print_y_spaces_loop                                           ; 3949: d0 fa       ..  :3818[1]
 ; $394b referenced 1 time by $3810
 c381a
     ldy l0071                                                         ; 394b: a4 71       .q  :381a[1]
@@ -9492,7 +9492,6 @@ pydis_end
 ;     loop_c36c7
 ;     loop_c36f9
 ;     loop_c37f9
-;     loop_c3814
 ;     loop_c383a
 ;     loop_c3892
 ;     loop_c39d2
