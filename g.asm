@@ -269,7 +269,7 @@ l110b
 
 ; $123d referenced 2 times by $36f3, $3f5b
 c110c
-    jsr something5_TODO                                               ; 123d: 20 b7 0a     .. :110c[1]
+    jsr clear_128_bytes_at_l09ef                                      ; 123d: 20 b7 0a     .. :110c[1]
     lda #$ff                                                          ; 1240: a9 ff       ..  :110f[1]
     sta l0031                                                         ; 1242: 85 31       .1  :1111[1]
     lda #osbyte_flush_buffer_class                                    ; 1244: a9 0f       ..  :1113[1]
@@ -6566,10 +6566,10 @@ c3c6a
     ldx #0                                                            ; 3c6a: a2 00       ..
 ; $3c6c referenced 1 time by $3c75
 loop_c3c6c
-    lda something5_high_copy_start,x                                  ; 3c6c: bd 88 40    ..@
-    sta something5_TODO,x                                             ; 3c6f: 9d b7 0a    ...
+    lda clear_128_bytes_at_l09ef_high_copy_start,x                    ; 3c6c: bd 88 40    ..@
+    sta clear_128_bytes_at_l09ef,x                                    ; 3c6f: 9d b7 0a    ...
     inx                                                               ; 3c72: e8          .
-    cpx #something5_high_copy_end - something5_high_copy_start        ; 3c73: e0 48       .H
+    cpx #clear_128_bytes_at_l09ef_high_copy_end - clear_128_bytes_at_l09ef_high_copy_start; 3c73: e0 48       .H
     bcc loop_c3c6c                                                    ; 3c75: 90 f5       ..
     ldy #0                                                            ; 3c77: a0 00       ..
 ; $3c79 referenced 1 time by $3c80
@@ -7140,12 +7140,12 @@ something4_TODO
     jmp oscli                                                         ; 4085: 4c f7 ff    L..
 
 ; $4088 referenced 3 times by $110c, $3c6c, $3c6f
-something5_high_copy_start
+clear_128_bytes_at_l09ef_high_copy_start
 ; $4088 referenced 3 times by $110c, $3c6c, $3c6f
 
 !pseudopc $0ab7 {
 ; $4088 referenced 3 times by $110c, $3c6c, $3c6f
-something5_TODO
+clear_128_bytes_at_l09ef
     lda #0                                                            ; 4088: a9 00       ..  :0ab7[5]
     tax                                                               ; 408a: aa          .   :0ab9[5]
 ; $408b referenced 1 time by $0ac0
@@ -7216,7 +7216,7 @@ c0afe
 }
 
 ; $40d0 referenced 4 times by $1206, $2b5e, $3c84, $3c87
-something5_high_copy_end
+clear_128_bytes_at_l09ef_high_copy_end
 something9_high_copy_start
 ; $40d0 referenced 4 times by $1206, $2b5e, $3c84, $3c87
 
@@ -7646,7 +7646,7 @@ pydis_end
 ;     sub_c3994:                                      4
 ;     c3b39:                                          4
 ;     c3bc0:                                          4
-;     something5_high_copy_end:                       4
+;     clear_128_bytes_at_l09ef_high_copy_end:         4
 ;     some_data_high_copy_TODO:                       4
 ;     l0002:                                          3
 ;     l0006:                                          3
@@ -7730,7 +7730,7 @@ pydis_end
 ;     l398e:                                          3
 ;     c3a8f:                                          3
 ;     l3aa4:                                          3
-;     something5_high_copy_start:                     3
+;     clear_128_bytes_at_l09ef_high_copy_start:       3
 ;     sub_c40a5:                                      3
 ;     sub_c40c0:                                      3
 ;     l4217:                                          3
@@ -9901,6 +9901,9 @@ pydis_end
 !if (buffer_sound_channel_0) != $04 {
     !error "Assertion failed: buffer_sound_channel_0 == $04"
 }
+!if (clear_128_bytes_at_l09ef_high_copy_end - clear_128_bytes_at_l09ef_high_copy_start) != $48 {
+    !error "Assertion failed: clear_128_bytes_at_l09ef_high_copy_end - clear_128_bytes_at_l09ef_high_copy_start == $48"
+}
 !if (crtc_cursor_start) != $0a {
     !error "Assertion failed: crtc_cursor_start == $0a"
 }
@@ -9987,9 +9990,6 @@ pydis_end
 }
 !if (screen_width_minus_one) != $27 {
     !error "Assertion failed: screen_width_minus_one == $27"
-}
-!if (something5_high_copy_end - something5_high_copy_start) != $48 {
-    !error "Assertion failed: something5_high_copy_end - something5_high_copy_start == $48"
 }
 !if (something9_high_copy_end - something9_high_copy_start) != $2f {
     !error "Assertion failed: something9_high_copy_end - something9_high_copy_start == $2f"

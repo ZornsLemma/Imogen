@@ -173,10 +173,10 @@ comment(0x1ebb, "TODO: What's going on with the modification to something3_TODO 
 
 entry(0x402c, "something4_TODO")
 
-entry(0x4088, "something5_TODO")
-label(0x4088, "something5_high_copy_start")
-label(0x4088+0x48, "something5_high_copy_end")
-expr(0x3c74, make_subtract("something5_high_copy_end", "something5_high_copy_start"))
+entry(0x4088, "clear_128_bytes_at_l09ef") # TODO: improve name as things become clearer
+label(0x4088, "clear_128_bytes_at_l09ef_high_copy_start")
+label(0x4088+0x48, "clear_128_bytes_at_l09ef_high_copy_end")
+expr(0x3c74, make_subtract("clear_128_bytes_at_l09ef_high_copy_end", "clear_128_bytes_at_l09ef_high_copy_start"))
 
 entry(0x4094, "something6_TODO")
 entry(0x40a5, "something7_TODO")
