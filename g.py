@@ -202,6 +202,10 @@ entry(0x2be0, "something22_TODO")
 label(0x37, "currently_loaded_level")
 label(0x1175, "level_already_loaded")
 
+comment(0x3f78, "TODO: I suspect the following code is copy protection related - writing data to the sideways ROM region feels wrong.")
+
+label(0x1103, "copy_protection_flag")
+
 go()
 
 # vi: tw=100

@@ -244,7 +244,7 @@ pydis_start
 
 !pseudopc $1103 {
 ; $1234 referenced 11 times by $1291, $17e5, $180e, $2a4b, $2aa9, $367a, $3698, $3c8f, $3e8a, $3f2a, $3f6f
-l1103
+copy_protection_flag
     !byte 0                                                           ; 1234: 00          .   :1103[1]
 ; $1235 referenced 4 times by $17c0, $2a38, $3e52, $3e58
 l1104
@@ -472,7 +472,7 @@ sub_c1278
     bne c129b                                                         ; 13bb: d0 0f       ..  :128a[1]
     lda c3add                                                         ; 13bd: ad dd 3a    ..: :128c[1]
     sta l0030                                                         ; 13c0: 85 30       .0  :128f[1]
-    lda l1103                                                         ; 13c2: ad 03 11    ... :1291[1]
+    lda copy_protection_flag                                          ; 13c2: ad 03 11    ... :1291[1]
     bpl c129b                                                         ; 13c5: 10 05       ..  :1294[1]
     lda l3ade                                                         ; 13c7: ad de 3a    ..: :1296[1]
     sta l0030                                                         ; 13ca: 85 30       .0  :1299[1]
@@ -1310,7 +1310,7 @@ sub_c17b9
     ldx #1                                                            ; 190e: a2 01       ..  :17dd[1]
     ldy l175e                                                         ; 1910: ac 5e 17    .^. :17df[1]
     jsr sub_c1825                                                     ; 1913: 20 25 18     %. :17e2[1]
-    lda l1103                                                         ; 1916: ad 03 11    ... :17e5[1]
+    lda copy_protection_flag                                          ; 1916: ad 03 11    ... :17e5[1]
     bpl c17f1                                                         ; 1919: 10 07       ..  :17e8[1]
     ldx #0                                                            ; 191b: a2 00       ..  :17ea[1]
     ldy #5                                                            ; 191d: a0 05       ..  :17ec[1]
@@ -1334,7 +1334,7 @@ sub_c17fa
     ldx #1                                                            ; 1937: a2 01       ..  :1806[1]
     ldy l1760                                                         ; 1939: ac 60 17    .`. :1808[1]
     jsr sub_c1825                                                     ; 193c: 20 25 18     %. :180b[1]
-    lda l1103                                                         ; 193f: ad 03 11    ... :180e[1]
+    lda copy_protection_flag                                          ; 193f: ad 03 11    ... :180e[1]
     bpl c181a                                                         ; 1942: 10 07       ..  :1811[1]
     ldx #0                                                            ; 1944: a2 00       ..  :1813[1]
     ldy #0                                                            ; 1946: a0 00       ..  :1815[1]
@@ -4241,7 +4241,7 @@ something20_TODO
     jsr c3a8f                                                         ; 2b75: 20 8f 3a     .: :2a44[1]
     lda l005b                                                         ; 2b78: a5 5b       .[  :2a47[1]
     beq c2a60                                                         ; 2b7a: f0 15       ..  :2a49[1]
-    lda l1103                                                         ; 2b7c: ad 03 11    ... :2a4b[1]
+    lda copy_protection_flag                                          ; 2b7c: ad 03 11    ... :2a4b[1]
     and #1                                                            ; 2b7f: 29 01       ).  :2a4e[1]
     beq c2a60                                                         ; 2b81: f0 0e       ..  :2a50[1]
     ldx #$8f                                                          ; 2b83: a2 8f       ..  :2a52[1]
@@ -4294,7 +4294,7 @@ c2aa0
     jsr some_data_low_TODO                                            ; 2bd1: 20 00 04     .. :2aa0[1]
     jsr sub_c3664                                                     ; 2bd4: 20 64 36     d6 :2aa3[1]
     jsr sub_c344b                                                     ; 2bd7: 20 4b 34     K4 :2aa6[1]
-    lda l1103                                                         ; 2bda: ad 03 11    ... :2aa9[1]
+    lda copy_protection_flag                                          ; 2bda: ad 03 11    ... :2aa9[1]
     and #1                                                            ; 2bdd: 29 01       ).  :2aac[1]
     beq c2ab7                                                         ; 2bdf: f0 07       ..  :2aae[1]
     ldx #$ff                                                          ; 2be1: a2 ff       ..  :2ab0[1]
@@ -5731,7 +5731,7 @@ sub_c3664
     jsr sub_c36fc                                                     ; 37a4: 20 fc 36     .6 :3673[1]
     ldy l0005                                                         ; 37a7: a4 05       ..  :3676[1]
     beq c3698                                                         ; 37a9: f0 1e       ..  :3678[1]
-    lda l1103                                                         ; 37ab: ad 03 11    ... :367a[1]
+    lda copy_protection_flag                                          ; 37ab: ad 03 11    ... :367a[1]
     and #1                                                            ; 37ae: 29 01       ).  :367d[1]
     beq c36a8                                                         ; 37b0: f0 27       .'  :367f[1]
     cpy #2                                                            ; 37b2: c0 02       ..  :3681[1]
@@ -5748,7 +5748,7 @@ sub_c3664
 
 ; $37c9 referenced 1 time by $3678
 c3698
-    lda l1103                                                         ; 37c9: ad 03 11    ... :3698[1]
+    lda copy_protection_flag                                          ; 37c9: ad 03 11    ... :3698[1]
     and #1                                                            ; 37cc: 29 01       ).  :369b[1]
     beq c36a7                                                         ; 37ce: f0 08       ..  :369d[1]
     jsr something_TODO                                                ; 37d0: 20 53 04     S. :369f[1]
@@ -6590,7 +6590,7 @@ loop_c3c84
     iny                                                               ; 3c8a: c8          .
     cpy #something9_high_copy_end - something9_high_copy_start        ; 3c8b: c0 2f       ./
     bne loop_c3c84                                                    ; 3c8d: d0 f5       ..
-    lda l1103                                                         ; 3c8f: ad 03 11    ...
+    lda copy_protection_flag                                          ; 3c8f: ad 03 11    ...
     and #8                                                            ; 3c92: 29 08       ).
     beq c3c9b                                                         ; 3c94: f0 05       ..
     lda #$32 ; '2'                                                    ; 3c96: a9 32       .2
@@ -6842,7 +6842,7 @@ loop_c3e52
     stx l0054                                                         ; 3e84: 86 54       .T
     ldy #>icodata                                                     ; 3e86: a0 40       .@
     sty l0055                                                         ; 3e88: 84 55       .U
-    lda l1103                                                         ; 3e8a: ad 03 11    ...
+    lda copy_protection_flag                                          ; 3e8a: ad 03 11    ...
     and #4                                                            ; 3e8d: 29 04       ).
     bne read_icodata_using_osword_7f                                  ; 3e8f: d0 10       ..
     lda #<icodata_filename                                            ; 3e91: a9 5e       .^
@@ -6954,7 +6954,7 @@ loop_c3f18
     beq c3f2d                                                         ; 3f24: f0 07       ..
     lda (l0070),y                                                     ; 3f26: b1 70       .p
     and #$bf                                                          ; 3f28: 29 bf       ).
-    sta l1103                                                         ; 3f2a: 8d 03 11    ...
+    sta copy_protection_flag                                          ; 3f2a: 8d 03 11    ...
 ; $3f2d referenced 1 time by $3f24
 c3f2d
     jsr sub_c3f6f                                                     ; 3f2d: 20 6f 3f     o?
@@ -6999,10 +6999,12 @@ initial_screen_disabled_flag
 
 ; $3f6f referenced 1 time by $3f2d
 sub_c3f6f
-    lda l1103                                                         ; 3f6f: ad 03 11    ...
+    lda copy_protection_flag                                          ; 3f6f: ad 03 11    ...
     and #1                                                            ; 3f72: 29 01       ).
     sta l005b                                                         ; 3f74: 85 5b       .[
     beq c3fba                                                         ; 3f76: f0 42       .B
+; TODO: I suspect the following code is copy protection related - writing data to the
+; sideways ROM region feels wrong.
     ldy #$0f                                                          ; 3f78: a0 0f       ..
     sei                                                               ; 3f7a: 78          x
 ; $3f7b referenced 1 time by $3f82
@@ -8963,7 +8965,6 @@ pydis_end
 ;     l0ad4
 ;     l0aef
 ;     l0b00
-;     l1103
 ;     l1104
 ;     l1105
 ;     l1106
