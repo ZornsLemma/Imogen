@@ -1,5 +1,6 @@
 ; Constants
 buffer_sound_channel_0                          = 4
+caps_mask                                       = 223
 crtc_cursor_start                               = 10
 crtc_interlace_delay                            = 8
 crtc_screen_start_high                          = 12
@@ -36,6 +37,7 @@ vdu_define_character                            = 23
 vdu_define_text_window                          = 28
 vdu_enable                                      = 6
 vdu_goto_xy                                     = 31
+vdu_lf                                          = 10
 vdu_set_graphics_colour                         = 18
 vdu_set_mode                                    = 22
 vdu_set_text_colour                             = 17
@@ -4243,7 +4245,7 @@ something20_TODO
     and #1                                                            ; 2b7f: 29 01       ).  :2a4e[1]
     beq c2a60                                                         ; 2b81: f0 0e       ..  :2a50[1]
     ldx #$8f                                                          ; 2b83: a2 8f       ..  :2a52[1]
-    jsr sub_c3acc                                                     ; 2b85: 20 cc 3a     .: :2a54[1]
+    jsr negative_inkey                                                ; 2b85: 20 cc 3a     .: :2a54[1]
     beq c2a60                                                         ; 2b88: f0 07       ..  :2a57[1]
     pla                                                               ; 2b8a: 68          h   :2a59[1]
     pla                                                               ; 2b8b: 68          h   :2a5a[1]
@@ -4296,7 +4298,7 @@ c2aa0
     and #1                                                            ; 2bdd: 29 01       ).  :2aac[1]
     beq c2ab7                                                         ; 2bdf: f0 07       ..  :2aae[1]
     ldx #$ff                                                          ; 2be1: a2 ff       ..  :2ab0[1]
-    jsr sub_c3acc                                                     ; 2be3: 20 cc 3a     .: :2ab2[1]
+    jsr negative_inkey                                                ; 2be3: 20 cc 3a     .: :2ab2[1]
     bne c2abd                                                         ; 2be6: d0 06       ..  :2ab5[1]
 ; $2be8 referenced 1 time by $2aae
 c2ab7
@@ -5483,8 +5485,8 @@ c3467
 c346a
     lda #0                                                            ; 359b: a9 00       ..  :346a[1]
     sta l3497                                                         ; 359d: 8d 97 34    ..4 :346c[1]
-    jsr inkey                                                         ; 35a0: 20 7c 38     |8 :346f[1]
-    and #$df                                                          ; 35a3: 29 df       ).  :3472[1]
+    jsr inkey_0                                                       ; 35a0: 20 7c 38     |8 :346f[1]
+    and #caps_mask                                                    ; 35a3: 29 df       ).  :3472[1]
     cmp #$53 ; 'S'                                                    ; 35a5: c9 53       .S  :3474[1]
     beq c347f                                                         ; 35a7: f0 07       ..  :3476[1]
     cmp #$4c ; 'L'                                                    ; 35a9: c9 4c       .L  :3478[1]
@@ -5549,7 +5551,7 @@ l34db
 
 ; $3632 referenced 1 time by $3467
 c3501
-    jsr inkey                                                         ; 3632: 20 7c 38     |8 :3501[1]
+    jsr inkey_0                                                       ; 3632: 20 7c 38     |8 :3501[1]
     cmp #$34 ; '4'                                                    ; 3635: c9 34       .4  :3504[1]
     bcs c3534                                                         ; 3637: b0 2c       .,  :3506[1]
     cmp #$30 ; '0'                                                    ; 3639: c9 30       .0  :3508[1]
@@ -5584,11 +5586,11 @@ c3534
 
 ; $3688 referenced 1 time by $3464
 c3557
-    jsr inkey                                                         ; 3688: 20 7c 38     |8 :3557[1]
-    cmp #$0d                                                          ; 368b: c9 0d       ..  :355a[1]
+    jsr inkey_0                                                       ; 3688: 20 7c 38     |8 :3557[1]
+    cmp #vdu_cr                                                       ; 368b: c9 0d       ..  :355a[1]
     bne c3534                                                         ; 368d: d0 d6       ..  :355c[1]
     jsr sub_c040a                                                     ; 368f: 20 0a 04     .. :355e[1]
-    lda #$0a                                                          ; 3692: a9 0a       ..  :3561[1]
+    lda #vdu_lf                                                       ; 3692: a9 0a       ..  :3561[1]
     jsr oswrch                                                        ; 3694: 20 ee ff     .. :3563[1]   ; Write character 10
     ldx #$f7                                                          ; 3697: a2 f7       ..  :3566[1]
     ldy #$35 ; '5'                                                    ; 3699: a0 35       .5  :3568[1]
@@ -5689,7 +5691,7 @@ sub_c3617
     jsr c3872                                                         ; 375c: 20 72 38     r8 :362b[1]
 ; $375f referenced 1 time by $3633
 wait_for_return
-    jsr inkey                                                         ; 375f: 20 7c 38     |8 :362e[1]
+    jsr inkey_0                                                       ; 375f: 20 7c 38     |8 :362e[1]
     cmp #vdu_cr                                                       ; 3762: c9 0d       ..  :3631[1]
     bne wait_for_return                                               ; 3764: d0 f9       ..  :3633[1]
     rts                                                               ; 3766: 60          `   :3635[1]
@@ -5825,9 +5827,9 @@ loop_c36f9
 ; $382d referenced 2 times by $34a9, $3673
 sub_c36fc
     sta l377d                                                         ; 382d: 8d 7d 37    .}7 :36fc[1]
-    jsr inkey                                                         ; 3830: 20 7c 38     |8 :36ff[1]
+    jsr inkey_0                                                       ; 3830: 20 7c 38     |8 :36ff[1]
     ldy l0005                                                         ; 3833: a4 05       ..  :3702[1]
-    cmp #$0d                                                          ; 3835: c9 0d       ..  :3704[1]
+    cmp #vdu_cr                                                       ; 3835: c9 0d       ..  :3704[1]
     beq c376b                                                         ; 3837: f0 63       .c  :3706[1]
     cmp #$7f                                                          ; 3839: c9 7f       ..  :3708[1]
     beq c3750                                                         ; 383b: f0 44       .D  :370a[1]
@@ -5847,7 +5849,7 @@ c3720
     bcc c377a                                                         ; 3853: 90 56       .V  :3722[1]
     cmp #$3a ; ':'                                                    ; 3855: c9 3a       .:  :3724[1]
     bcc c3736                                                         ; 3857: 90 0e       ..  :3726[1]
-    and #$df                                                          ; 3859: 29 df       ).  :3728[1]
+    and #caps_mask                                                    ; 3859: 29 df       ).  :3728[1]
     cmp #$41 ; 'A'                                                    ; 385b: c9 41       .A  :372a[1]
     bcc c377a                                                         ; 385d: 90 4c       .L  :372c[1]
     cmp #$5b ; '['                                                    ; 385f: c9 5b       .[  :372e[1]
@@ -6085,7 +6087,7 @@ c3872
     jmp osbyte                                                        ; 39aa: 4c f4 ff    L.. :3879[1]   ; Flush all buffers (X=0), or just input buffers (X non-zero)
 
 ; $39ad referenced 5 times by $346f, $3501, $3557, $362e, $36ff
-inkey
+inkey_0
     lda #osbyte_inkey                                                 ; 39ad: a9 81       ..  :387c[1]
     ldx #0                                                            ; 39af: a2 00       ..  :387e[1]
     ldy #0                                                            ; 39b1: a0 00       ..  :3880[1]
@@ -6322,16 +6324,16 @@ c3a08
 ; $3b43 referenced 2 times by $181d, $2ad7
 sub_c3a12
     ldx #$b6                                                          ; 3b43: a2 b6       ..  :3a12[1]
-    jsr sub_c3acc                                                     ; 3b45: 20 cc 3a     .: :3a14[1]
+    jsr negative_inkey                                                ; 3b45: 20 cc 3a     .: :3a14[1]
     ora l0046                                                         ; 3b48: 05 46       .F  :3a17[1]
     sta l0046                                                         ; 3b4a: 85 46       .F  :3a19[1]
     ldx #$9e                                                          ; 3b4c: a2 9e       ..  :3a1b[1]
-    jsr sub_c3acc                                                     ; 3b4e: 20 cc 3a     .: :3a1d[1]
+    jsr negative_inkey                                                ; 3b4e: 20 cc 3a     .: :3a1d[1]
     sta l3a8d                                                         ; 3b51: 8d 8d 3a    ..: :3a20[1]
     ora l002c                                                         ; 3b54: 05 2c       .,  :3a23[1]
     sta l002c                                                         ; 3b56: 85 2c       .,  :3a25[1]
     ldx #$bd                                                          ; 3b58: a2 bd       ..  :3a27[1]
-    jsr sub_c3acc                                                     ; 3b5a: 20 cc 3a     .: :3a29[1]
+    jsr negative_inkey                                                ; 3b5a: 20 cc 3a     .: :3a29[1]
     pha                                                               ; 3b5d: 48          H   :3a2c[1]
     ora l002d                                                         ; 3b5e: 05 2d       .-  :3a2d[1]
     sta l002d                                                         ; 3b60: 85 2d       .-  :3a2f[1]
@@ -6353,7 +6355,7 @@ c3a41
 ; $3b78 referenced 1 time by $1820
 sub_c3a47
     ldx #$9d                                                          ; 3b78: a2 9d       ..  :3a47[1]
-    jsr sub_c3acc                                                     ; 3b7a: 20 cc 3a     .: :3a49[1]
+    jsr negative_inkey                                                ; 3b7a: 20 cc 3a     .: :3a49[1]
     cmp l002b                                                         ; 3b7d: c5 2b       .+  :3a4c[1]
     sta l002b                                                         ; 3b7f: 85 2b       .+  :3a4e[1]
     bne c3a54                                                         ; 3b81: d0 02       ..  :3a50[1]
@@ -6363,10 +6365,10 @@ c3a54
     ora l002a                                                         ; 3b85: 05 2a       .*  :3a54[1]
     sta l002a                                                         ; 3b87: 85 2a       .*  :3a56[1]
     ldx #$e6                                                          ; 3b89: a2 e6       ..  :3a58[1]
-    jsr sub_c3acc                                                     ; 3b8b: 20 cc 3a     .: :3a5a[1]
+    jsr negative_inkey                                                ; 3b8b: 20 cc 3a     .: :3a5a[1]
     sta l3a8d                                                         ; 3b8e: 8d 8d 3a    ..: :3a5d[1]
     ldx #$86                                                          ; 3b91: a2 86       ..  :3a60[1]
-    jsr sub_c3acc                                                     ; 3b93: 20 cc 3a     .: :3a62[1]
+    jsr negative_inkey                                                ; 3b93: 20 cc 3a     .: :3a62[1]
     cmp l3a8d                                                         ; 3b96: cd 8d 3a    ..: :3a65[1]
     beq c3a73                                                         ; 3b99: f0 09       ..  :3a68[1]
     lda l3a8d                                                         ; 3b9b: ad 8d 3a    ..: :3a6a[1]
@@ -6456,7 +6458,7 @@ l3acb
     !byte 0                                                           ; 3bfc: 00          .   :3acb[1]
 
 ; $3bfd referenced 8 times by $2a54, $2ab2, $3a14, $3a1d, $3a29, $3a49, $3a5a, $3a62
-sub_c3acc
+negative_inkey
     ldy #$ff                                                          ; 3bfd: a0 ff       ..  :3acc[1]
     lda #osbyte_inkey                                                 ; 3bff: a9 81       ..  :3ace[1]
     jsr osbyte                                                        ; 3c01: 20 f4 ff     .. :3ad0[1]   ; Read a specific key (or read machine type)
@@ -9802,7 +9804,6 @@ pydis_end
 ;     sub_c3aa2
 ;     sub_c3aa5
 ;     sub_c3ab7
-;     sub_c3acc
 ;     sub_c3ae7
 ;     sub_c3b43
 ;     sub_c3b78
@@ -9901,6 +9902,9 @@ pydis_end
 }
 !if (buffer_sound_channel_0) != $04 {
     !error "Assertion failed: buffer_sound_channel_0 == $04"
+}
+!if (caps_mask) != $df {
+    !error "Assertion failed: caps_mask == $df"
 }
 !if (clear_128_bytes_at_l09ef_high_copy_end - clear_128_bytes_at_l09ef_high_copy_start) != $48 {
     !error "Assertion failed: clear_128_bytes_at_l09ef_high_copy_end - clear_128_bytes_at_l09ef_high_copy_start == $48"
@@ -10021,6 +10025,9 @@ pydis_end
 }
 !if (vdu_goto_xy) != $1f {
     !error "Assertion failed: vdu_goto_xy == $1f"
+}
+!if (vdu_lf) != $0a {
+    !error "Assertion failed: vdu_lf == $0a"
 }
 !if (vdu_set_graphics_colour) != $12 {
     !error "Assertion failed: vdu_set_graphics_colour == $12"

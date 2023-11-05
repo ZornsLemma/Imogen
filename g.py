@@ -4,6 +4,7 @@ acorn.bbc()
 
 constant(6, "vdu_enable")
 constant(7, "vdu_bell")
+constant(10, "vdu_lf")
 constant(13, "vdu_cr")
 constant(17, "vdu_set_text_colour")
 constant(18, "vdu_set_graphics_colour")
@@ -155,9 +156,18 @@ expr(0x1357, make_hi("level_data"))
 label(0x1377, "power_of_2_table")
 hexadecimal(0x1377, 8)
 
-label(0x387c, "inkey")
+# TODO: Does py8dis support character constants? If not add it? This would presumably be a formatter hint like decimal() or picture_binary().
+label(0x387c, "inkey_0")
+label(0x3acc, "negative_inkey")
 label(0x362e, "wait_for_return")
 expr(0x3632, "vdu_cr")
+constant(0xdf, "caps_mask")
+expr(0x3473, "caps_mask")
+expr(0x3729, "caps_mask")
+expr(0x355b, "vdu_cr")
+expr(0x3562, "vdu_lf")
+expr(0x3705, "vdu_cr")
+
 
 expr(0x445, "vdu_goto_xy")
 
