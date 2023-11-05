@@ -206,6 +206,7 @@ entry(0x2b87, "something21_TODO")
 entry(0x2be0, "something22_TODO")
 # TODO: DELETE entry(0x35f7, "something23_TODO")
 
+label(0x31, "desired_level") # TODO: This is not right but let's go with it for now - the way this is used it clearly contains *a* level (as a letter, I think), but I am not quite sure what it's used for
 label(0x37, "currently_loaded_level")
 label(0x1175, "level_already_loaded")
 
@@ -220,6 +221,10 @@ expr(0xaf7, "first_level_letter")
 expr(0xae9, "first_level_letter")
 expr(0x37c2, "first_level_letter")
 expr(0x37cb, "first_level_letter")
+expr(0x1226, "first_level_letter")
+expr(0x124d, "first_level_letter")
+expr(0x127c, "first_level_letter")
+expr(0x1a4a, "first_level_letter")
 
 go()
 

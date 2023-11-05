@@ -71,7 +71,7 @@ l002c                   = $2c
 l002d                   = $2d
 l002e                   = $2e
 l0030                   = $30
-l0031                   = $31
+desired_level           = $31
 currently_loaded_level  = $37
 l0039                   = $39
 l003a                   = $3a
@@ -273,7 +273,7 @@ l110b
 c110c
     jsr clear_128_bytes_at_l09ef                                      ; 123d: 20 b7 0a     .. :110c[1]
     lda #$ff                                                          ; 1240: a9 ff       ..  :110f[1]
-    sta l0031                                                         ; 1242: 85 31       .1  :1111[1]
+    sta desired_level                                                 ; 1242: 85 31       .1  :1111[1]
     lda #osbyte_flush_buffer_class                                    ; 1244: a9 0f       ..  :1113[1]
     ldx #0                                                            ; 1246: a2 00       ..  :1115[1]
     jsr osbyte                                                        ; 1248: 20 f4 ff     .. :1117[1]   ; Flush all buffers (X=0)
@@ -299,14 +299,14 @@ c110c
 c1140
     lda l0030                                                         ; 1271: a5 30       .0  :1140[1]
     sta l0050                                                         ; 1273: 85 50       .P  :1142[1]
-    lda l0031                                                         ; 1275: a5 31       .1  :1144[1]
+    lda desired_level                                                 ; 1275: a5 31       .1  :1144[1]
     sta l0051                                                         ; 1277: 85 51       .Q  :1146[1]
     stx l0030                                                         ; 1279: 86 30       .0  :1148[1]
-    sty l0031                                                         ; 127b: 84 31       .1  :114a[1]
+    sty desired_level                                                 ; 127b: 84 31       .1  :114a[1]
     sty l09ea                                                         ; 127d: 8c ea 09    ... :114c[1]
 ; $1280 referenced 1 time by $116e
 loop_c114f
-    lda l0031                                                         ; 1280: a5 31       .1  :114f[1]
+    lda desired_level                                                 ; 1280: a5 31       .1  :114f[1]
     cmp currently_loaded_level                                        ; 1282: c5 37       .7  :1151[1]
     beq level_already_loaded                                          ; 1284: f0 20       .   :1153[1]
     sta data_filename_variable_letter                                 ; 1286: 8d 76 12    .v. :1155[1]
@@ -324,7 +324,7 @@ loop_c114f
 
 ; $12a2 referenced 1 time by $1169
 c1171
-    lda l0031                                                         ; 12a2: a5 31       .1  :1171[1]
+    lda desired_level                                                 ; 12a2: a5 31       .1  :1171[1]
     sta currently_loaded_level                                        ; 12a4: 85 37       .7  :1173[1]
 ; $12a6 referenced 1 time by $1153
 level_already_loaded
@@ -352,7 +352,7 @@ c1186
     iny                                                               ; 12d8: c8          .   :11a7[1]
     cpy #$0b                                                          ; 12d9: c0 0b       ..  :11a8[1]
     bcc c1186                                                         ; 12db: 90 da       ..  :11aa[1]
-    lda l0031                                                         ; 12dd: a5 31       .1  :11ac[1]
+    lda desired_level                                                 ; 12dd: a5 31       .1  :11ac[1]
     cmp l0051                                                         ; 12df: c5 51       .Q  :11ae[1]
     beq c1209                                                         ; 12e1: f0 57       .W  :11b0[1]
     lda #0                                                            ; 12e3: a9 00       ..  :11b2[1]
@@ -407,9 +407,9 @@ loop_c1213
     ldx c3ad7                                                         ; 134a: ae d7 3a    ..: :1219[1]
     ldy l3ad8                                                         ; 134d: ac d8 3a    ..: :121c[1]
     jsr c1966                                                         ; 1350: 20 66 19     f. :121f[1]
-    lda l0031                                                         ; 1353: a5 31       .1  :1222[1]
+    lda desired_level                                                 ; 1353: a5 31       .1  :1222[1]
     sec                                                               ; 1355: 38          8   :1224[1]
-    sbc #$41 ; 'A'                                                    ; 1356: e9 41       .A  :1225[1]
+    sbc #first_level_letter                                           ; 1356: e9 41       .A  :1225[1]
     tax                                                               ; 1358: aa          .   :1227[1]
     lda l09ef,x                                                       ; 1359: bd ef 09    ... :1228[1]
     and #$80                                                          ; 135c: 29 80       ).  :122b[1]
@@ -426,9 +426,9 @@ loop_c1213
     jsr sub_c1df4                                                     ; 1373: 20 f4 1d     .. :1242[1]
     lda #0                                                            ; 1376: a9 00       ..  :1245[1]
     sta l0004                                                         ; 1378: 85 04       ..  :1247[1]
-    lda l0031                                                         ; 137a: a5 31       .1  :1249[1]
+    lda desired_level                                                 ; 137a: a5 31       .1  :1249[1]
     sec                                                               ; 137c: 38          8   :124b[1]
-    sbc #$41 ; 'A'                                                    ; 137d: e9 41       .A  :124c[1]
+    sbc #first_level_letter                                           ; 137d: e9 41       .A  :124c[1]
     tax                                                               ; 137f: aa          .   :124e[1]
     lda l09ef,x                                                       ; 1380: bd ef 09    ... :124f[1]
     and #$f8                                                          ; 1383: 29 f8       ).  :1252[1]
@@ -458,9 +458,9 @@ data_filename_variable_letter
 
 ; $13a9 referenced 1 time by $11e3
 sub_c1278
-    lda l0031                                                         ; 13a9: a5 31       .1  :1278[1]
+    lda desired_level                                                 ; 13a9: a5 31       .1  :1278[1]
     sec                                                               ; 13ab: 38          8   :127a[1]
-    sbc #$41 ; 'A'                                                    ; 13ac: e9 41       .A  :127b[1]
+    sbc #first_level_letter                                           ; 13ac: e9 41       .A  :127b[1]
     tax                                                               ; 13ae: aa          .   :127d[1]
     lda l09ef,x                                                       ; 13af: bd ef 09    ... :127e[1]
     and #7                                                            ; 13b2: 29 07       ).  :1281[1]
@@ -1233,7 +1233,7 @@ sub_c1766
     sta l175f                                                         ; 189c: 8d 5f 17    ._. :176b[1]
     lda l1765                                                         ; 189f: ad 65 17    .e. :176e[1]
     beq c178a                                                         ; 18a2: f0 17       ..  :1771[1]
-    ldy l0031                                                         ; 18a4: a4 31       .1  :1773[1]
+    ldy desired_level                                                 ; 18a4: a4 31       .1  :1773[1]
     jsr convert_level_number_to_letter                                ; 18a6: 20 d4 0a     .. :1775[1]
     tya                                                               ; 18a9: 98          .   :1778[1]
     sec                                                               ; 18aa: 38          8   :1779[1]
@@ -1700,9 +1700,9 @@ something14_TODO
     ldy #$0b                                                          ; 1b70: a0 0b       ..  :1a3f[1]
     jsr sub_c28e2                                                     ; 1b72: 20 e2 28     .( :1a41[1]
     beq c1a59                                                         ; 1b75: f0 13       ..  :1a44[1]
-    lda l0031                                                         ; 1b77: a5 31       .1  :1a46[1]
+    lda desired_level                                                 ; 1b77: a5 31       .1  :1a46[1]
     sec                                                               ; 1b79: 38          8   :1a48[1]
-    sbc #$41 ; 'A'                                                    ; 1b7a: e9 41       .A  :1a49[1]
+    sbc #first_level_letter                                           ; 1b7a: e9 41       .A  :1a49[1]
     tay                                                               ; 1b7c: a8          .   :1a4b[1]
     lda l09ef,y                                                       ; 1b7d: b9 ef 09    ... :1a4c[1]
     ora #$80                                                          ; 1b80: 09 80       ..  :1a4f[1]
@@ -1716,7 +1716,7 @@ c1a59
     sta l38ac,x                                                       ; 1b8f: 9d ac 38    ..8 :1a5e[1]
     lda #0                                                            ; 1b92: a9 00       ..  :1a61[1]
     sta l09a8,x                                                       ; 1b94: 9d a8 09    ... :1a63[1]
-    lda l0031                                                         ; 1b97: a5 31       .1  :1a66[1]
+    lda desired_level                                                 ; 1b97: a5 31       .1  :1a66[1]
     sec                                                               ; 1b99: 38          8   :1a68[1]
     sbc #$41 ; 'A'                                                    ; 1b9a: e9 41       .A  :1a69[1]
     tay                                                               ; 1b9c: a8          .   :1a6b[1]
@@ -5668,7 +5668,7 @@ c35e2
 ; $371e referenced 1 time by $35e8
 c35ed
     lda #$ff                                                          ; 371e: a9 ff       ..  :35ed[1]
-    sta l0031                                                         ; 3720: 85 31       .1  :35ef[1]
+    sta desired_level                                                 ; 3720: 85 31       .1  :35ef[1]
     lda l09ea                                                         ; 3722: ad ea 09    ... :35f1[1]
     jmp c36db                                                         ; 3725: 4c db 36    L.6 :35f4[1]
 
@@ -5796,7 +5796,7 @@ l36da
 c36db
     cmp #1                                                            ; 380c: c9 01       ..  :36db[1]
     beq c36f6                                                         ; 380e: f0 17       ..  :36dd[1]
-    cmp l0031                                                         ; 3810: c5 31       .1  :36df[1]
+    cmp desired_level                                                 ; 3810: c5 31       .1  :36df[1]
     beq c36f6                                                         ; 3812: f0 13       ..  :36e1[1]
     tay                                                               ; 3814: a8          .   :36e3[1]
     pla                                                               ; 3815: 68          h   :36e4[1]
@@ -5925,7 +5925,7 @@ c378e
     ldx #$b1                                                          ; 38c6: a2 b1       ..  :3795[1]
     ldy #$37 ; '7'                                                    ; 38c8: a0 37       .7  :3797[1]
     jsr c381c                                                         ; 38ca: 20 1c 38     .8 :3799[1]
-    ldy l0031                                                         ; 38cd: a4 31       .1  :379c[1]
+    ldy desired_level                                                 ; 38cd: a4 31       .1  :379c[1]
     jsr convert_level_number_to_letter                                ; 38cf: 20 d4 0a     .. :379e[1]
     tya                                                               ; 38d2: 98          .   :37a1[1]
     jsr sub_c1866                                                     ; 38d3: 20 66 18     f. :37a2[1]
@@ -6289,7 +6289,7 @@ loop_c39d2
     bne c39ec                                                         ; 3b0f: d0 0c       ..  :39de[1]
 ; $3b11 referenced 1 time by $39d7
 c39e0
-    ldy l0031                                                         ; 3b11: a4 31       .1  :39e0[1]
+    ldy desired_level                                                 ; 3b11: a4 31       .1  :39e0[1]
     jsr convert_level_number_to_letter                                ; 3b13: 20 d4 0a     .. :39e2[1]
     iny                                                               ; 3b16: c8          .   :39e5[1]
     cpy #$51 ; 'Q'                                                    ; 3b17: c0 51       .Q  :39e6[1]
@@ -7491,7 +7491,7 @@ pydis_end
 ;     l0016:                                         17
 ;     l004a:                                         17
 ;     l0015:                                         16
-;     l0031:                                         16
+;     desired_level:                                 16
 ;     l0992:                                         16
 ;     l007e:                                         15
 ;     l3a09:                                         15
@@ -8841,7 +8841,6 @@ pydis_end
 ;     l002d
 ;     l002e
 ;     l0030
-;     l0031
 ;     l0039
 ;     l003a
 ;     l003b
