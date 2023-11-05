@@ -2,6 +2,7 @@ from commands import *
 import acorn
 acorn.bbc()
 
+constant(3, "vdu_printer_off")
 constant(6, "vdu_enable")
 constant(7, "vdu_bell")
 constant(8, "vdu_left")
@@ -17,6 +18,8 @@ constant(127, "vdu_delete")
 
 constant(5, "osfile_read_catalogue_info")
 constant(0xff, "osfile_load")
+
+label(0x287, "first_byte_break_intercept")
 
 load(0x1234, "orig/g.dat", "6502", "ac5feeac5c32a306d4a73ba393677385")
 move_id = move(0x1103, 0x1234, 0x2a00)
@@ -207,6 +210,8 @@ entry(0x402c, "quit_to_basic")
 for i in range(5):
     char(0x406a+i*4)
 expr(0x407e, "vdu_cr")
+expr(0x4040, "vdu_set_mode")
+expr(0x403b, "vdu_printer_off")
 
 entry(0x4088, "clear_128_bytes_at_l09ef") # TODO: improve name as things become clearer
 label(0x4088, "clear_128_bytes_at_l09ef_high_copy_start")

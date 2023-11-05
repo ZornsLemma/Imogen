@@ -40,203 +40,204 @@ vdu_enable                                      = 6
 vdu_goto_xy                                     = 31
 vdu_left                                        = 8
 vdu_lf                                          = 10
+vdu_printer_off                                 = 3
 vdu_set_graphics_colour                         = 18
 vdu_set_mode                                    = 22
 vdu_set_text_colour                             = 17
 
 ; Memory locations
-l0000                   = $00
-l0002                   = $02
-l0003                   = $03
-l0004                   = $04
-l0005                   = $05
-l0006                   = $06
-l0007                   = $07
-l0008                   = $08
-l0009                   = $09
-l000a                   = $0a
-l0014                   = $14
-l0015                   = $15
-l0016                   = $16
-l0018                   = $18
-l0019                   = $19
-l001a                   = $1a
-l001b                   = $1b
-l001d                   = $1d
-l0020                   = $20
-l0025                   = $25
-l0026                   = $26
-l0027                   = $27
-l0028                   = $28
-l0029                   = $29
-l002a                   = $2a
-l002b                   = $2b
-l002c                   = $2c
-l002d                   = $2d
-l002e                   = $2e
-l0030                   = $30
-desired_level           = $31
-currently_loaded_level  = $37
-l0039                   = $39
-l003a                   = $3a
-l003b                   = $3b
-l003c                   = $3c
-l003d                   = $3d
-l003e                   = $3e
-l003f                   = $3f
-l0040                   = $40
-l0041                   = $41
-l0042                   = $42
-l0043                   = $43
-l0044                   = $44
-l0045                   = $45
-l0046                   = $46
-l0048                   = $48
-l0049                   = $49
-l004a                   = $4a
-l004b                   = $4b
-l004c                   = $4c
-l004d                   = $4d
-l0050                   = $50
-l0051                   = $51
-l0052                   = $52
-l0053                   = $53
-l0054                   = $54
-l0055                   = $55
-l0058                   = $58
-l0059                   = $59
-l005a                   = $5a
-l005b                   = $5b
-l005c                   = $5c
-l005d                   = $5d
-l005e                   = $5e
-l005f                   = $5f
-l0060                   = $60
-l0061                   = $61
-l0062                   = $62
-l0063                   = $63
-l0064                   = $64
-l0065                   = $65
-l0066                   = $66
-l0067                   = $67
-l0068                   = $68
-l0070                   = $70
-l0071                   = $71
-l0072                   = $72
-l0073                   = $73
-l0074                   = $74
-l0075                   = $75
-l0076                   = $76
-l0077                   = $77
-l0078                   = $78
-l0079                   = $79
-l007a                   = $7a
-l007b                   = $7b
-l007c                   = $7c
-l007d                   = $7d
-l007e                   = $7e
-l007f                   = $7f
-l0080                   = $80
-l0081                   = $81
-l0082                   = $82
-l0083                   = $83
-l0084                   = $84
-l0085                   = $85
-l0086                   = $86
-l0087                   = $87
-l0088                   = $88
-romsel_copy             = $f4
-l00fc                   = $fc
-l0100                   = $0100
-l010b                   = $010b
-l0116                   = $0116
-l0121                   = $0121
-l0122                   = $0122
-l0123                   = $0123
-l0124                   = $0124
-l0125                   = $0125
-l0126                   = $0126
-l0127                   = $0127
-l0128                   = $0128
-l0129                   = $0129
-l012a                   = $012a
-l012b                   = $012b
-l012c                   = $012c
-l012d                   = $012d
-l012e                   = $012e
-brkv                    = $0202
-irq1v                   = $0204
-l0287                   = $0287
-l0950                   = $0950
-l0951                   = $0951
-l095b                   = $095b
-l0966                   = $0966
-l0967                   = $0967
-l0971                   = $0971
-l097c                   = $097c
-l097d                   = $097d
-l0987                   = $0987
-l0992                   = $0992
-l0993                   = $0993
-l099d                   = $099d
-l09a8                   = $09a8
-l09a9                   = $09a9
-l09b3                   = $09b3
-l09b4                   = $09b4
-l09be                   = $09be
-l09bf                   = $09bf
-l09c9                   = $09c9
-l09d4                   = $09d4
-l09d5                   = $09d5
-l09df                   = $09df
-l09ea                   = $09ea
-l09eb                   = $09eb
-l09ec                   = $09ec
-l09ed                   = $09ed
-l09ee                   = $09ee
-l09ef                   = $09ef
-l0a6f                   = $0a6f
-l0a7e                   = $0a7e
-l0a7f                   = $0a7f
-l0a80                   = $0a80
-l0a90                   = $0a90
-l0aa1                   = $0aa1
-l0aa9                   = $0aa9
-l0ab1                   = $0ab1
-l0ab2                   = $0ab2
-l0ab3                   = $0ab3
-l0ab4                   = $0ab4
-old_irq1v               = $0ab5
-l0b00                   = $0b00
-l3b09                   = $3b09
-c3c2c                   = $3c2c
-l53c0                   = $53c0
-l8000                   = $8000
-lbe00                   = $be00
-lbf00                   = $bf00
-crtc_address_register   = $fe00
-crtc_address_write      = $fe01
-video_ula_palette       = $fe21
-romsel                  = $fe30
-system_via_t1c_l        = $fe44
-system_via_t1c_h        = $fe45
-system_via_t1l_l        = $fe46
-system_via_t1l_h        = $fe47
-system_via_t2c_l        = $fe48
-system_via_t2c_h        = $fe49
-system_via_acr          = $fe4b
-system_via_ifr          = $fe4d
-system_via_ier          = $fe4e
-user_via_t1c_l          = $fe64
-user_via_t1c_h          = $fe65
-user_via_t2c_l          = $fe68
-user_via_t2c_h          = $fe69
-user_via_ier            = $fe6e
-osfile                  = $ffdd
-oswrch                  = $ffee
-osword                  = $fff1
-osbyte                  = $fff4
-oscli                   = $fff7
+l0000                       = $00
+l0002                       = $02
+l0003                       = $03
+l0004                       = $04
+l0005                       = $05
+l0006                       = $06
+l0007                       = $07
+l0008                       = $08
+l0009                       = $09
+l000a                       = $0a
+l0014                       = $14
+l0015                       = $15
+l0016                       = $16
+l0018                       = $18
+l0019                       = $19
+l001a                       = $1a
+l001b                       = $1b
+l001d                       = $1d
+l0020                       = $20
+l0025                       = $25
+l0026                       = $26
+l0027                       = $27
+l0028                       = $28
+l0029                       = $29
+l002a                       = $2a
+l002b                       = $2b
+l002c                       = $2c
+l002d                       = $2d
+l002e                       = $2e
+l0030                       = $30
+desired_level               = $31
+currently_loaded_level      = $37
+l0039                       = $39
+l003a                       = $3a
+l003b                       = $3b
+l003c                       = $3c
+l003d                       = $3d
+l003e                       = $3e
+l003f                       = $3f
+l0040                       = $40
+l0041                       = $41
+l0042                       = $42
+l0043                       = $43
+l0044                       = $44
+l0045                       = $45
+l0046                       = $46
+l0048                       = $48
+l0049                       = $49
+l004a                       = $4a
+l004b                       = $4b
+l004c                       = $4c
+l004d                       = $4d
+l0050                       = $50
+l0051                       = $51
+l0052                       = $52
+l0053                       = $53
+l0054                       = $54
+l0055                       = $55
+l0058                       = $58
+l0059                       = $59
+l005a                       = $5a
+l005b                       = $5b
+l005c                       = $5c
+l005d                       = $5d
+l005e                       = $5e
+l005f                       = $5f
+l0060                       = $60
+l0061                       = $61
+l0062                       = $62
+l0063                       = $63
+l0064                       = $64
+l0065                       = $65
+l0066                       = $66
+l0067                       = $67
+l0068                       = $68
+l0070                       = $70
+l0071                       = $71
+l0072                       = $72
+l0073                       = $73
+l0074                       = $74
+l0075                       = $75
+l0076                       = $76
+l0077                       = $77
+l0078                       = $78
+l0079                       = $79
+l007a                       = $7a
+l007b                       = $7b
+l007c                       = $7c
+l007d                       = $7d
+l007e                       = $7e
+l007f                       = $7f
+l0080                       = $80
+l0081                       = $81
+l0082                       = $82
+l0083                       = $83
+l0084                       = $84
+l0085                       = $85
+l0086                       = $86
+l0087                       = $87
+l0088                       = $88
+romsel_copy                 = $f4
+l00fc                       = $fc
+l0100                       = $0100
+l010b                       = $010b
+l0116                       = $0116
+l0121                       = $0121
+l0122                       = $0122
+l0123                       = $0123
+l0124                       = $0124
+l0125                       = $0125
+l0126                       = $0126
+l0127                       = $0127
+l0128                       = $0128
+l0129                       = $0129
+l012a                       = $012a
+l012b                       = $012b
+l012c                       = $012c
+l012d                       = $012d
+l012e                       = $012e
+brkv                        = $0202
+irq1v                       = $0204
+first_byte_break_intercept  = $0287
+l0950                       = $0950
+l0951                       = $0951
+l095b                       = $095b
+l0966                       = $0966
+l0967                       = $0967
+l0971                       = $0971
+l097c                       = $097c
+l097d                       = $097d
+l0987                       = $0987
+l0992                       = $0992
+l0993                       = $0993
+l099d                       = $099d
+l09a8                       = $09a8
+l09a9                       = $09a9
+l09b3                       = $09b3
+l09b4                       = $09b4
+l09be                       = $09be
+l09bf                       = $09bf
+l09c9                       = $09c9
+l09d4                       = $09d4
+l09d5                       = $09d5
+l09df                       = $09df
+l09ea                       = $09ea
+l09eb                       = $09eb
+l09ec                       = $09ec
+l09ed                       = $09ed
+l09ee                       = $09ee
+l09ef                       = $09ef
+l0a6f                       = $0a6f
+l0a7e                       = $0a7e
+l0a7f                       = $0a7f
+l0a80                       = $0a80
+l0a90                       = $0a90
+l0aa1                       = $0aa1
+l0aa9                       = $0aa9
+l0ab1                       = $0ab1
+l0ab2                       = $0ab2
+l0ab3                       = $0ab3
+l0ab4                       = $0ab4
+old_irq1v                   = $0ab5
+l0b00                       = $0b00
+l3b09                       = $3b09
+c3c2c                       = $3c2c
+l53c0                       = $53c0
+l8000                       = $8000
+lbe00                       = $be00
+lbf00                       = $bf00
+crtc_address_register       = $fe00
+crtc_address_write          = $fe01
+video_ula_palette           = $fe21
+romsel                      = $fe30
+system_via_t1c_l            = $fe44
+system_via_t1c_h            = $fe45
+system_via_t1l_l            = $fe46
+system_via_t1l_h            = $fe47
+system_via_t2c_l            = $fe48
+system_via_t2c_h            = $fe49
+system_via_acr              = $fe4b
+system_via_ifr              = $fe4d
+system_via_ier              = $fe4e
+user_via_t1c_l              = $fe64
+user_via_t1c_h              = $fe65
+user_via_t2c_l              = $fe68
+user_via_t2c_h              = $fe69
+user_via_ier                = $fe6e
+osfile                      = $ffdd
+oswrch                      = $ffee
+osword                      = $fff1
+osbyte                      = $fff4
+oscli                       = $fff7
 
     * = $1234
 
@@ -1398,7 +1399,7 @@ loop_c184d
     lda romsel_copy                                                   ; 198d: a5 f4       ..  :185c[1]
     sta romsel                                                        ; 198f: 8d 30 fe    .0. :185e[1]
     cli                                                               ; 1992: 58          X   :1861[1]
-    sty l0287                                                         ; 1993: 8c 87 02    ... :1862[1]
+    sty first_byte_break_intercept                                    ; 1993: 8c 87 02    ... :1862[1]
     rts                                                               ; 1996: 60          `   :1865[1]
 
 ; $1997 referenced 4 times by $0154, $3748, $37a2, $37da
@@ -7107,9 +7108,9 @@ quit_to_basic
     lda old_irq1v+1                                                   ; 4033: ad b6 0a    ...
     sta irq1v+1                                                       ; 4036: 8d 05 02    ...
     cli                                                               ; 4039: 58          X
-    lda #3                                                            ; 403a: a9 03       ..
+    lda #vdu_printer_off                                              ; 403a: a9 03       ..
     jsr oswrch                                                        ; 403c: 20 ee ff     ..            ; Write character 3
-    lda #$16                                                          ; 403f: a9 16       ..
+    lda #vdu_set_mode                                                 ; 403f: a9 16       ..
     jsr oswrch                                                        ; 4041: 20 ee ff     ..            ; Write character 22
     lda #7                                                            ; 4044: a9 07       ..
     jsr oswrch                                                        ; 4046: 20 ee ff     ..            ; Write character 7
@@ -7125,7 +7126,7 @@ quit_to_basic
     ldx #0                                                            ; 405d: a2 00       ..
     jsr osbyte                                                        ; 405f: 20 f4 ff     ..            ; Flush all buffers (X=0)
     lda #0                                                            ; 4062: a9 00       ..
-    sta l0287                                                         ; 4064: 8d 87 02    ...
+    sta first_byte_break_intercept                                    ; 4064: 8d 87 02    ...
     pla                                                               ; 4067: 68          h
     pla                                                               ; 4068: 68          h
     lda #'B'                                                          ; 4069: a9 42       .B
@@ -7756,7 +7757,7 @@ pydis_end
 ;     l012a:                                          2
 ;     l012b:                                          2
 ;     l012c:                                          2
-;     l0287:                                          2
+;     first_byte_break_intercept:                     2
 ;     l09eb:                                          2
 ;     l0a80:                                          2
 ;     l0ab1:                                          2
@@ -8930,7 +8931,6 @@ pydis_end
 ;     l012c
 ;     l012d
 ;     l012e
-;     l0287
 ;     l0409
 ;     l0515
 ;     l0517
@@ -10036,6 +10036,9 @@ pydis_end
 }
 !if (vdu_lf) != $0a {
     !error "Assertion failed: vdu_lf == $0a"
+}
+!if (vdu_printer_off) != $03 {
+    !error "Assertion failed: vdu_printer_off == $03"
 }
 !if (vdu_set_graphics_colour) != $12 {
     !error "Assertion failed: vdu_set_graphics_colour == $12"
