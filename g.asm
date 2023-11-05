@@ -5880,7 +5880,7 @@ c3744
 c3750
     cpy #0                                                            ; 3881: c0 00       ..  :3750[1]
     beq c377a                                                         ; 3883: f0 26       .&  :3752[1]
-    lda #8                                                            ; 3885: a9 08       ..  :3754[1]
+    lda #vdu_left                                                     ; 3885: a9 08       ..  :3754[1]
     jsr oswrch                                                        ; 3887: 20 ee ff     .. :3756[1]   ; Write character 8
     lda #' '                                                          ; 388a: a9 20       .   :3759[1]
     jsr oswrch                                                        ; 388c: 20 ee ff     .. :375b[1]   ; Write character 32
