@@ -201,12 +201,11 @@ l09eb                               = $09eb
 current_transformations_remaining   = $09ec
 byte_per_level_table1               = $09ef
 l0a6f                               = $0a6f
-l0a7e                               = $0a7e
-l0a7f                               = $0a7f
+sixteen_entry_table                 = $0a7f
 l0a80                               = $0a80
 l0a90                               = $0a90
-l0aa1                               = $0aa1
-l0aa9                               = $0aa9
+eight_entry_table1                  = $0aa1
+eight_entry_table2                  = $0aa9
 old_brkv1                           = $0ab1
 old_brkv2                           = $0ab3
 old_irq1v                           = $0ab5
@@ -251,7 +250,7 @@ pydis_start
 copy_protection_flag
     !byte 0                                                           ; 1234: 00          .   :1103[1]
 ; $1235 referenced 4 times by $17c0, $2a38, $3e52, $3e58
-l1104
+four_entry_table1
     !byte $47                                                         ; 1235: 47          G   :1104[1]
 ; $1236 referenced 2 times by $17c6, $2a3b
 l1105
@@ -291,7 +290,7 @@ c110c
     lda #'1'                                                          ; 1255: a9 31       .1  :1124[1]
     sta current_transformations_remaining+2                           ; 1257: 8d ee 09    ... :1126[1]
     ldx #0                                                            ; 125a: a2 00       ..  :1129[1]
-    ldy l0a7f                                                         ; 125c: ac 7f 0a    ... :112b[1]
+    ldy sixteen_entry_table                                           ; 125c: ac 7f 0a    ... :112b[1]
     cpy #last_level_letter+1                                          ; 125f: c0 52       .R  :112e[1]
     bne initialise_level                                              ; 1261: d0 0e       ..  :1130[1]
     inc l005f                                                         ; 1263: e6 5f       ._  :1132[1]
@@ -1302,7 +1301,7 @@ sub_c17b9
     lda #2                                                            ; 18ea: a9 02       ..  :17b9[1]
     bit system_via_ifr                                                ; 18ec: 2c 4d fe    ,M. :17bb[1]
     beq c17f9                                                         ; 18ef: f0 39       .9  :17be[1]
-    lda l1104                                                         ; 18f1: ad 04 11    ... :17c0[1]
+    lda four_entry_table1                                             ; 18f1: ad 04 11    ... :17c0[1]
     sta system_via_t1c_l                                              ; 18f4: 8d 44 fe    .D. :17c3[1]
     lda l1105                                                         ; 18f7: ad 05 11    ... :17c6[1]
     sta system_via_t1c_h                                              ; 18fa: 8d 45 fe    .E. :17c9[1]
@@ -4239,7 +4238,7 @@ c2a33
 
 ; $2b69 referenced 1 time by $2aba
 something20_TODO
-    ldx l1104                                                         ; 2b69: ae 04 11    ... :2a38[1]
+    ldx four_entry_table1                                             ; 2b69: ae 04 11    ... :2a38[1]
     ldy l1105                                                         ; 2b6c: ac 05 11    ... :2a3b[1]
     jsr c1791                                                         ; 2b6f: 20 91 17     .. :2a3e[1]
     jsr sub_c29a1                                                     ; 2b72: 20 a1 29     .) :2a41[1]
@@ -6692,9 +6691,9 @@ define_character_fe_loop
 ; $3d54 referenced 1 time by $3d5f
 loop_c3d54
     lda #0                                                            ; 3d54: a9 00       ..
-    sta l0aa1,y                                                       ; 3d56: 99 a1 0a    ...
+    sta eight_entry_table1,y                                          ; 3d56: 99 a1 0a    ...
     lda #$ff                                                          ; 3d59: a9 ff       ..
-    sta l0aa9,y                                                       ; 3d5b: 99 a9 0a    ...
+    sta eight_entry_table2,y                                          ; 3d5b: 99 a9 0a    ...
     dey                                                               ; 3d5e: 88          .
     bpl loop_c3d54                                                    ; 3d5f: 10 f3       ..
     lda #$c7                                                          ; 3d61: a9 c7       ..
@@ -6821,10 +6820,10 @@ c3db9
     ldy #3                                                            ; 3e50: a0 03       ..
 ; $3e52 referenced 1 time by $3e5d
 loop_c3e52
-    lda l1104,y                                                       ; 3e52: b9 04 11    ...
+    lda four_entry_table1,y                                           ; 3e52: b9 04 11    ...
     sec                                                               ; 3e55: 38          8
     sbc l0070                                                         ; 3e56: e5 70       .p
-    sta l1104,y                                                       ; 3e58: 99 04 11    ...
+    sta four_entry_table1,y                                           ; 3e58: 99 04 11    ...
     dey                                                               ; 3e5b: 88          .
     dey                                                               ; 3e5c: 88          .
     bpl loop_c3e52                                                    ; 3e5d: 10 f3       ..
@@ -6956,7 +6955,7 @@ c3f0d
 ; $3f18 referenced 1 time by $3f1e
 loop_c3f18
     lda (l0070),y                                                     ; 3f18: b1 70       .p
-    sta l0a7e,y                                                       ; 3f1a: 99 7e 0a    .~.
+    sta sixteen_entry_table - 1,y                                     ; 3f1a: 99 7e 0a    .~.
     dey                                                               ; 3f1d: 88          .
     bne loop_c3f18                                                    ; 3f1e: d0 f8       ..
     lda (l0070),y                                                     ; 3f20: b1 70       .p
@@ -7940,9 +7939,9 @@ pydis_end
 ;     l09bf:                                          1
 ;     l0a6f:                                          1
 ;     l0a7e:                                          1
-;     l0a7f:                                          1
-;     l0aa1:                                          1
-;     l0aa9:                                          1
+;     sixteen_entry_table:                            1
+;     eight_entry_table1:                             1
+;     eight_entry_table2:                             1
 ;     l1237:                                          1
 ;     sub_c1238:                                      1
 ;     l1239:                                          1
@@ -8973,13 +8972,9 @@ pydis_end
 ;     l09eb
 ;     l0a6f
 ;     l0a7e
-;     l0a7f
 ;     l0a80
 ;     l0a90
-;     l0aa1
-;     l0aa9
 ;     l0b00
-;     l1104
 ;     l1105
 ;     l1106
 ;     l1107
@@ -10046,6 +10041,9 @@ pydis_end
 }
 !if (screen_width_minus_one) != $27 {
     !error "Assertion failed: screen_width_minus_one == $27"
+}
+!if (sixteen_entry_table - 1) != $0a7e {
+    !error "Assertion failed: sixteen_entry_table - 1 == $0a7e"
 }
 !if (update_displayed_transformations_remaining_high_copy_end - update_displayed_transformations_remaining_high_copy_start) != $2f {
     !error "Assertion failed: update_displayed_transformations_remaining_high_copy_end - update_displayed_transformations_remaining_high_copy_start == $2f"

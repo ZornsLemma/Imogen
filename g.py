@@ -356,6 +356,13 @@ expr(0x3d47, make_hi("envelope_2"))
 expr(0x3d4c, make_lo("envelope_3"))
 expr(0x3d4e, make_hi("envelope_3"))
 
+# TODO: Temporary names, of course
+label(0xaa1, "eight_entry_table1")
+label(0xaa9, "eight_entry_table2")
+label(0x1104,"four_entry_table1") # TODO: might just be four bytes which share init code??
+label(0xa7f, "sixteen_entry_table")
+expr(0x3f1b, make_subtract("sixteen_entry_table", 1))
+
 go()
 
 # vi: tw=100
