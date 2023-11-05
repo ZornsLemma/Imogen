@@ -417,6 +417,17 @@ entry(0x2c88, "no_menu_motion")
 entry(0x2c7e, "menu_left_pending")
 entry(0x2c70, "menu_right_pending")
 comment(0x2c7c, "always branch", inline=True)
+entry(0x29eb, "unplot_menu_pointer") # TODO: plausible guess
+entry(0x2a17, "plot_menu_pointer") # TODO: plausible guess
+
+# TODO: Lots of guesswork here...
+# TODO: A/l0015=2 on entry for plot, A=0 on entry for unplot?
+# TODO: l0016=sprite id?
+# TODO: l0014 is an input if l0015 has bit 0 set on entry
+entry(0x138d, "sprite_op")
+comment(0x2c52, "TODO: Self-modifying code here? If so we haven't found the code that modifies it as we have no labels")
+comment(0x13c1, "TODO: Self-modifying code here? If so we haven't found the code that modifies it as we have no labels")
+entry(0x2c46, "something_to_do_with_incrementing_by_20_pixels_x_maybe")
 
 
 go()

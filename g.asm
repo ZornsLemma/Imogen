@@ -586,7 +586,7 @@ c137f
     rts                                                               ; 14bd: 60          `   :138c[1]
 
 ; $14be referenced 11 times by $1f51, $2194, $21d0, $21fc, $2a01, $2a0c, $2a2d, $2b30, $2c2f, $2c35, $2c3a
-sub_c138d
+sprite_op
     pha                                                               ; 14be: 48          H   :138d[1]
     txa                                                               ; 14bf: 8a          .   :138e[1]
     pha                                                               ; 14c0: 48          H   :138f[1]
@@ -621,6 +621,8 @@ c13b5
 ; $14f0 referenced 1 time by $13bb
 c13bf
     ldx #0                                                            ; 14f0: a2 00       ..  :13bf[1]
+; TODO: Self-modifying code here? If so we haven't found the code that modifies it as
+; we have no labels
     ora #0                                                            ; 14f2: 09 00       ..  :13c1[1]
     bpl c13c6                                                         ; 14f4: 10 01       ..  :13c3[1]
     dex                                                               ; 14f6: ca          .   :13c5[1]
@@ -2473,7 +2475,7 @@ c1f2d
 sub_c1f4c
     sta l0016                                                         ; 207d: 85 16       ..  :1f4c[1]
     jsr sub_c1f84                                                     ; 207f: 20 84 1f     .. :1f4e[1]
-    jsr sub_c138d                                                     ; 2082: 20 8d 13     .. :1f51[1]
+    jsr sprite_op                                                     ; 2082: 20 8d 13     .. :1f51[1]
     lda l0016                                                         ; 2085: a5 16       ..  :1f54[1]
     rts                                                               ; 2087: 60          `   :1f56[1]
 
@@ -2841,7 +2843,7 @@ c218b
 c2190
     sta l0016                                                         ; 22c1: 85 16       ..  :2190[1]
     sty l0015                                                         ; 22c3: 84 15       ..  :2192[1]
-    jsr sub_c138d                                                     ; 22c5: 20 8d 13     .. :2194[1]
+    jsr sprite_op                                                     ; 22c5: 20 8d 13     .. :2194[1]
 ; $22c8 referenced 1 time by $215c
 c2197
     pla                                                               ; 22c8: 68          h   :2197[1]
@@ -2875,7 +2877,7 @@ sub_c219a
     sta l0015                                                         ; 22ff: 85 15       ..  :21ce[1]
 ; $2301 referenced 2 times by $21c4, $21c8
 c21d0
-    jsr sub_c138d                                                     ; 2301: 20 8d 13     .. :21d0[1]
+    jsr sprite_op                                                     ; 2301: 20 8d 13     .. :21d0[1]
     cpx #1                                                            ; 2304: e0 01       ..  :21d3[1]
     bne c21ff                                                         ; 2306: d0 28       .(  :21d5[1]
     lda current_player_character                                      ; 2308: a5 48       .H  :21d7[1]
@@ -2897,7 +2899,7 @@ c21ef
     sta l0015                                                         ; 2327: 85 15       ..  :21f6[1]
     lda #$37 ; '7'                                                    ; 2329: a9 37       .7  :21f8[1]
     sta l0016                                                         ; 232b: 85 16       ..  :21fa[1]
-    jsr sub_c138d                                                     ; 232d: 20 8d 13     .. :21fc[1]
+    jsr sprite_op                                                     ; 232d: 20 8d 13     .. :21fc[1]
 ; $2330 referenced 4 times by $219d, $21d5, $21db, $21ed
 c21ff
     rts                                                               ; 2330: 60          `   :21ff[1]
@@ -4150,7 +4152,7 @@ c29aa
     cpx current_menu_index                                            ; 2ae8: e4 2e       ..  :29b7[1]
     bne c29c1                                                         ; 2aea: d0 06       ..  :29b9[1]
     dec l29dd                                                         ; 2aec: ce dd 29    ..) :29bb[1]
-    jsr sub_c29eb                                                     ; 2aef: 20 eb 29     .) :29be[1]
+    jsr unplot_menu_pointer                                           ; 2aef: 20 eb 29     .) :29be[1]
 ; $2af2 referenced 1 time by $29b9
 c29c1
     jsr sub_c2c0c                                                     ; 2af2: 20 0c 2c     ., :29c1[1]
@@ -4165,7 +4167,7 @@ loop_c29c9
     bne loop_c29c9                                                    ; 2b03: d0 f5       ..  :29d2[1]
 ; $2b05 referenced 1 time by $29ce
 c29d4
-    jsr sub_c2a17                                                     ; 2b05: 20 17 2a     .* :29d4[1]
+    jsr plot_menu_pointer                                             ; 2b05: 20 17 2a     .* :29d4[1]
 ; $2b08 referenced 2 times by $29b0, $29c7
 c29d7
     inx                                                               ; 2b08: e8          .   :29d7[1]
@@ -4182,31 +4184,31 @@ apply_new_menu_index
     lda new_menu_index                                                ; 2b0f: a5 29       .)  :29de[1]
     cmp current_menu_index                                            ; 2b11: c5 2e       ..  :29e0[1]
     beq apply_new_menu_index_rts                                      ; 2b13: f0 06       ..  :29e2[1]
-    jsr sub_c29eb                                                     ; 2b15: 20 eb 29     .) :29e4[1]
-    jsr sub_c2a17                                                     ; 2b18: 20 17 2a     .* :29e7[1]
+    jsr unplot_menu_pointer                                           ; 2b15: 20 eb 29     .) :29e4[1]
+    jsr plot_menu_pointer                                             ; 2b18: 20 17 2a     .* :29e7[1]
 ; $2b1b referenced 1 time by $29e2
 apply_new_menu_index_rts
     rts                                                               ; 2b1b: 60          `   :29ea[1]
 
 ; $2b1c referenced 2 times by $29be, $29e4
-sub_c29eb
+unplot_menu_pointer
     ldx current_menu_index                                            ; 2b1c: a6 2e       ..  :29eb[1]
     bmi c2a12                                                         ; 2b1e: 30 23       0#  :29ed[1]
     lda l004c                                                         ; 2b20: a5 4c       .L  :29ef[1]
     pha                                                               ; 2b22: 48          H   :29f1[1]
     lda #$58 ; 'X'                                                    ; 2b23: a9 58       .X  :29f2[1]
     sta l004c                                                         ; 2b25: 85 4c       .L  :29f4[1]
-    jsr sub_c2c46                                                     ; 2b27: 20 46 2c     F, :29f6[1]
+    jsr something_to_do_with_incrementing_by_20_pixels_x_maybe        ; 2b27: 20 46 2c     F, :29f6[1]
     lda #$1d                                                          ; 2b2a: a9 1d       ..  :29f9[1]
     sta l0016                                                         ; 2b2c: 85 16       ..  :29fb[1]
     lda #2                                                            ; 2b2e: a9 02       ..  :29fd[1]
     sta l0015                                                         ; 2b30: 85 15       ..  :29ff[1]
-    jsr sub_c138d                                                     ; 2b32: 20 8d 13     .. :2a01[1]
+    jsr sprite_op                                                     ; 2b32: 20 8d 13     .. :2a01[1]
     lda #$1e                                                          ; 2b35: a9 1e       ..  :2a04[1]
     sta l0016                                                         ; 2b37: 85 16       ..  :2a06[1]
     lda #0                                                            ; 2b39: a9 00       ..  :2a08[1]
     sta l0015                                                         ; 2b3b: 85 15       ..  :2a0a[1]
-    jsr sub_c138d                                                     ; 2b3d: 20 8d 13     .. :2a0c[1]
+    jsr sprite_op                                                     ; 2b3d: 20 8d 13     .. :2a0c[1]
     pla                                                               ; 2b40: 68          h   :2a0f[1]
     sta l004c                                                         ; 2b41: 85 4c       .L  :2a10[1]
 ; $2b43 referenced 1 time by $29ed
@@ -4216,19 +4218,19 @@ c2a12
     rts                                                               ; 2b47: 60          `   :2a16[1]
 
 ; $2b48 referenced 2 times by $29d4, $29e7
-sub_c2a17
+plot_menu_pointer
     ldx new_menu_index                                                ; 2b48: a6 29       .)  :2a17[1]
     bmi c2a33                                                         ; 2b4a: 30 18       0.  :2a19[1]
     lda l004c                                                         ; 2b4c: a5 4c       .L  :2a1b[1]
     pha                                                               ; 2b4e: 48          H   :2a1d[1]
     lda #$58 ; 'X'                                                    ; 2b4f: a9 58       .X  :2a1e[1]
     sta l004c                                                         ; 2b51: 85 4c       .L  :2a20[1]
-    jsr sub_c2c46                                                     ; 2b53: 20 46 2c     F, :2a22[1]
+    jsr something_to_do_with_incrementing_by_20_pixels_x_maybe        ; 2b53: 20 46 2c     F, :2a22[1]
     lda #$1d                                                          ; 2b56: a9 1d       ..  :2a25[1]
     sta l0016                                                         ; 2b58: 85 16       ..  :2a27[1]
     lda #0                                                            ; 2b5a: a9 00       ..  :2a29[1]
     sta l0015                                                         ; 2b5c: 85 15       ..  :2a2b[1]
-    jsr sub_c138d                                                     ; 2b5e: 20 8d 13     .. :2a2d[1]
+    jsr sprite_op                                                     ; 2b5e: 20 8d 13     .. :2a2d[1]
     pla                                                               ; 2b61: 68          h   :2a30[1]
     sta l004c                                                         ; 2b62: 85 4c       .L  :2a31[1]
 ; $2b64 referenced 1 time by $2a19
@@ -4366,7 +4368,7 @@ c2afc
 
 ; $2c30 referenced 1 time by $2aef
 c2aff
-    jsr sub_c2c46                                                     ; 2c30: 20 46 2c     F, :2aff[1]
+    jsr something_to_do_with_incrementing_by_20_pixels_x_maybe        ; 2c30: 20 46 2c     F, :2aff[1]
     lda l3966                                                         ; 2c33: ad 66 39    .f9 :2b02[1]
     pha                                                               ; 2c36: 48          H   :2b05[1]
     lda #$ff                                                          ; 2c37: a9 ff       ..  :2b06[1]
@@ -4391,7 +4393,7 @@ c2aff
 ; $2c5f referenced 1 time by $2b2a
 c2b2e
     sta l0015                                                         ; 2c5f: 85 15       ..  :2b2e[1]
-    jsr sub_c138d                                                     ; 2c61: 20 8d 13     .. :2b30[1]
+    jsr sprite_op                                                     ; 2c61: 20 8d 13     .. :2b30[1]
     pla                                                               ; 2c64: 68          h   :2b33[1]
     sta l004c                                                         ; 2c65: 85 4c       .L  :2b34[1]
     rts                                                               ; 2c67: 60          `   :2b36[1]
@@ -4542,7 +4544,7 @@ sub_c2c0c
     pha                                                               ; 2d44: 48          H   :2c13[1]
     lda #$58 ; 'X'                                                    ; 2d45: a9 58       .X  :2c14[1]
     sta l004c                                                         ; 2d47: 85 4c       .L  :2c16[1]
-    jsr sub_c2c46                                                     ; 2d49: 20 46 2c     F, :2c18[1]
+    jsr something_to_do_with_incrementing_by_20_pixels_x_maybe        ; 2d49: 20 46 2c     F, :2c18[1]
     lda #0                                                            ; 2d4c: a9 00       ..  :2c1b[1]
     sta l0015                                                         ; 2d4e: 85 15       ..  :2c1d[1]
     lda #1                                                            ; 2d50: a9 01       ..  :2c1f[1]
@@ -4552,14 +4554,14 @@ sub_c2c0c
     bne c2c35                                                         ; 2d5a: d0 0a       ..  :2c29[1]
     lda #2                                                            ; 2d5c: a9 02       ..  :2c2b[1]
     sta l0015                                                         ; 2d5e: 85 15       ..  :2c2d[1]
-    jsr sub_c138d                                                     ; 2d60: 20 8d 13     .. :2c2f[1]
+    jsr sprite_op                                                     ; 2d60: 20 8d 13     .. :2c2f[1]
     jmp c2c3d                                                         ; 2d63: 4c 3d 2c    L=, :2c32[1]
 
 ; $2d66 referenced 1 time by $2c29
 c2c35
-    jsr sub_c138d                                                     ; 2d66: 20 8d 13     .. :2c35[1]
+    jsr sprite_op                                                     ; 2d66: 20 8d 13     .. :2c35[1]
     sta l0016                                                         ; 2d69: 85 16       ..  :2c38[1]
-    jsr sub_c138d                                                     ; 2d6b: 20 8d 13     .. :2c3a[1]
+    jsr sprite_op                                                     ; 2d6b: 20 8d 13     .. :2c3a[1]
 ; $2d6e referenced 1 time by $2c32
 c2c3d
     pla                                                               ; 2d6e: 68          h   :2c3d[1]
@@ -4572,7 +4574,7 @@ c2c3d
     rts                                                               ; 2d76: 60          `   :2c45[1]
 
 ; $2d77 referenced 4 times by $29f6, $2a22, $2aff, $2c18
-sub_c2c46
+something_to_do_with_incrementing_by_20_pixels_x_maybe
     txa                                                               ; 2d77: 8a          .   :2c46[1]
     pha                                                               ; 2d78: 48          H   :2c47[1]
     lda #$25 ; '%'                                                    ; 2d79: a9 25       .%  :2c48[1]
@@ -4580,6 +4582,8 @@ sub_c2c46
     lda #0                                                            ; 2d7d: a9 00       ..  :2c4c[1]
     sta l0019                                                         ; 2d7f: 85 19       ..  :2c4e[1]
     sta l001b                                                         ; 2d81: 85 1b       ..  :2c50[1]
+; TODO: Self-modifying code here? If so we haven't found the code that modifies it as
+; we have no labels
     lda #0                                                            ; 2d83: a9 00       ..  :2c52[1]
     cpx #0                                                            ; 2d85: e0 00       ..  :2c54[1]
     beq c2c62                                                         ; 2d87: f0 0a       ..  :2c56[1]
@@ -9484,7 +9488,6 @@ pydis_end
 ;     sub_c133a
 ;     sub_c1344
 ;     sub_c1365
-;     sub_c138d
 ;     sub_c13cc
 ;     sub_c145c
 ;     sub_c14a7
@@ -9676,8 +9679,6 @@ pydis_end
 ;     sub_c29a1
 ;     sub_c29a8
 ;     sub_c29c4
-;     sub_c29eb
-;     sub_c2a17
 ;     sub_c2a76
 ;     sub_c2a8d
 ;     sub_c2a9e
@@ -9699,7 +9700,6 @@ pydis_end
 ;     sub_c2c0c
 ;     sub_c2c26
 ;     sub_c2c2d
-;     sub_c2c46
 ;     sub_c2c96
 ;     sub_c2cc1
 ;     sub_c2d89
