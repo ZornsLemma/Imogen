@@ -46,198 +46,198 @@ vdu_set_mode                                    = 22
 vdu_set_text_colour                             = 17
 
 ; Memory locations
-l0000                       = $00
-l0002                       = $02
-l0003                       = $03
-l0004                       = $04
-l0005                       = $05
-l0006                       = $06
-l0007                       = $07
-l0008                       = $08
-l0009                       = $09
-l000a                       = $0a
-l0014                       = $14
-l0015                       = $15
-l0016                       = $16
-l0018                       = $18
-l0019                       = $19
-l001a                       = $1a
-l001b                       = $1b
-l001d                       = $1d
-l0020                       = $20
-l0025                       = $25
-l0026                       = $26
-l0027                       = $27
-l0028                       = $28
-l0029                       = $29
-l002a                       = $2a
-l002b                       = $2b
-l002c                       = $2c
-l002d                       = $2d
-l002e                       = $2e
-l0030                       = $30
-desired_level               = $31
-currently_loaded_level      = $37
-l0039                       = $39
-l003a                       = $3a
-l003b                       = $3b
-l003c                       = $3c
-l003d                       = $3d
-l003e                       = $3e
-l003f                       = $3f
-l0040                       = $40
-l0041                       = $41
-l0042                       = $42
-l0043                       = $43
-l0044                       = $44
-l0045                       = $45
-l0046                       = $46
-l0048                       = $48
-l0049                       = $49
-l004a                       = $4a
-l004b                       = $4b
-l004c                       = $4c
-l004d                       = $4d
-l0050                       = $50
-l0051                       = $51
-l0052                       = $52
-l0053                       = $53
-l0054                       = $54
-l0055                       = $55
-l0058                       = $58
-l0059                       = $59
-l005a                       = $5a
-l005b                       = $5b
-l005c                       = $5c
-l005d                       = $5d
-l005e                       = $5e
-l005f                       = $5f
-l0060                       = $60
-l0061                       = $61
-l0062                       = $62
-l0063                       = $63
-l0064                       = $64
-l0065                       = $65
-l0066                       = $66
-l0067                       = $67
-l0068                       = $68
-l0070                       = $70
-l0071                       = $71
-l0072                       = $72
-l0073                       = $73
-l0074                       = $74
-l0075                       = $75
-l0076                       = $76
-l0077                       = $77
-l0078                       = $78
-l0079                       = $79
-l007a                       = $7a
-l007b                       = $7b
-l007c                       = $7c
-l007d                       = $7d
-l007e                       = $7e
-l007f                       = $7f
-l0080                       = $80
-l0081                       = $81
-l0082                       = $82
-l0083                       = $83
-l0084                       = $84
-l0085                       = $85
-l0086                       = $86
-l0087                       = $87
-l0088                       = $88
-romsel_copy                 = $f4
-l00fc                       = $fc
-l0100                       = $0100
-l010b                       = $010b
-l0116                       = $0116
-l0121                       = $0121
-l0122                       = $0122
-l0123                       = $0123
-l0124                       = $0124
-l0125                       = $0125
-l0126                       = $0126
-l0127                       = $0127
-l0128                       = $0128
-l0129                       = $0129
-l012a                       = $012a
-l012b                       = $012b
-l012c                       = $012c
-l012d                       = $012d
-l012e                       = $012e
-brkv                        = $0202
-irq1v                       = $0204
-first_byte_break_intercept  = $0287
-l0950                       = $0950
-l0951                       = $0951
-l095b                       = $095b
-l0966                       = $0966
-l0967                       = $0967
-l0971                       = $0971
-l097c                       = $097c
-l097d                       = $097d
-l0987                       = $0987
-l0992                       = $0992
-l0993                       = $0993
-l099d                       = $099d
-l09a8                       = $09a8
-l09a9                       = $09a9
-l09b3                       = $09b3
-l09b4                       = $09b4
-l09be                       = $09be
-l09bf                       = $09bf
-l09c9                       = $09c9
-l09d4                       = $09d4
-l09d5                       = $09d5
-l09df                       = $09df
-l09ea                       = $09ea
-l09eb                       = $09eb
-l09ec                       = $09ec
-l09ed                       = $09ed
-l09ee                       = $09ee
-l09ef                       = $09ef
-l0a6f                       = $0a6f
-l0a7e                       = $0a7e
-l0a7f                       = $0a7f
-l0a80                       = $0a80
-l0a90                       = $0a90
-l0aa1                       = $0aa1
-l0aa9                       = $0aa9
-l0ab1                       = $0ab1
-l0ab2                       = $0ab2
-l0ab3                       = $0ab3
-l0ab4                       = $0ab4
-old_irq1v                   = $0ab5
-l0b00                       = $0b00
-l3b09                       = $3b09
-c3c2c                       = $3c2c
-l53c0                       = $53c0
-l8000                       = $8000
-lbe00                       = $be00
-lbf00                       = $bf00
-crtc_address_register       = $fe00
-crtc_address_write          = $fe01
-video_ula_palette           = $fe21
-romsel                      = $fe30
-system_via_t1c_l            = $fe44
-system_via_t1c_h            = $fe45
-system_via_t1l_l            = $fe46
-system_via_t1l_h            = $fe47
-system_via_t2c_l            = $fe48
-system_via_t2c_h            = $fe49
-system_via_acr              = $fe4b
-system_via_ifr              = $fe4d
-system_via_ier              = $fe4e
-user_via_t1c_l              = $fe64
-user_via_t1c_h              = $fe65
-user_via_t2c_l              = $fe68
-user_via_t2c_h              = $fe69
-user_via_ier                = $fe6e
-osfile                      = $ffdd
-oswrch                      = $ffee
-osword                      = $fff1
-osbyte                      = $fff4
-oscli                       = $fff7
+l0000                               = $00
+l0002                               = $02
+l0003                               = $03
+l0004                               = $04
+l0005                               = $05
+l0006                               = $06
+l0007                               = $07
+l0008                               = $08
+l0009                               = $09
+l000a                               = $0a
+l0014                               = $14
+l0015                               = $15
+l0016                               = $16
+l0018                               = $18
+l0019                               = $19
+l001a                               = $1a
+l001b                               = $1b
+l001d                               = $1d
+l0020                               = $20
+l0025                               = $25
+l0026                               = $26
+l0027                               = $27
+l0028                               = $28
+l0029                               = $29
+l002a                               = $2a
+l002b                               = $2b
+l002c                               = $2c
+l002d                               = $2d
+l002e                               = $2e
+l0030                               = $30
+desired_level                       = $31
+currently_loaded_level              = $37
+l0039                               = $39
+l003a                               = $3a
+l003b                               = $3b
+l003c                               = $3c
+l003d                               = $3d
+l003e                               = $3e
+l003f                               = $3f
+l0040                               = $40
+l0041                               = $41
+l0042                               = $42
+l0043                               = $43
+l0044                               = $44
+l0045                               = $45
+l0046                               = $46
+l0048                               = $48
+l0049                               = $49
+l004a                               = $4a
+l004b                               = $4b
+l004c                               = $4c
+l004d                               = $4d
+l0050                               = $50
+l0051                               = $51
+l0052                               = $52
+l0053                               = $53
+l0054                               = $54
+l0055                               = $55
+l0058                               = $58
+l0059                               = $59
+l005a                               = $5a
+l005b                               = $5b
+displayed_transformations_remaining = $5c
+l005d                               = $5d
+l005e                               = $5e
+l005f                               = $5f
+l0060                               = $60
+l0061                               = $61
+l0062                               = $62
+l0063                               = $63
+l0064                               = $64
+l0065                               = $65
+l0066                               = $66
+l0067                               = $67
+l0068                               = $68
+l0070                               = $70
+l0071                               = $71
+l0072                               = $72
+l0073                               = $73
+l0074                               = $74
+l0075                               = $75
+l0076                               = $76
+l0077                               = $77
+l0078                               = $78
+l0079                               = $79
+l007a                               = $7a
+l007b                               = $7b
+l007c                               = $7c
+l007d                               = $7d
+l007e                               = $7e
+l007f                               = $7f
+l0080                               = $80
+l0081                               = $81
+l0082                               = $82
+l0083                               = $83
+l0084                               = $84
+l0085                               = $85
+l0086                               = $86
+l0087                               = $87
+l0088                               = $88
+romsel_copy                         = $f4
+l00fc                               = $fc
+l0100                               = $0100
+l010b                               = $010b
+l0116                               = $0116
+l0121                               = $0121
+l0122                               = $0122
+l0123                               = $0123
+l0124                               = $0124
+l0125                               = $0125
+l0126                               = $0126
+l0127                               = $0127
+l0128                               = $0128
+l0129                               = $0129
+l012a                               = $012a
+l012b                               = $012b
+l012c                               = $012c
+l012d                               = $012d
+l012e                               = $012e
+brkv                                = $0202
+irq1v                               = $0204
+first_byte_break_intercept          = $0287
+l0950                               = $0950
+l0951                               = $0951
+l095b                               = $095b
+l0966                               = $0966
+l0967                               = $0967
+l0971                               = $0971
+l097c                               = $097c
+l097d                               = $097d
+l0987                               = $0987
+l0992                               = $0992
+l0993                               = $0993
+l099d                               = $099d
+l09a8                               = $09a8
+l09a9                               = $09a9
+l09b3                               = $09b3
+l09b4                               = $09b4
+l09be                               = $09be
+l09bf                               = $09bf
+l09c9                               = $09c9
+l09d4                               = $09d4
+l09d5                               = $09d5
+l09df                               = $09df
+l09ea                               = $09ea
+l09eb                               = $09eb
+current_transformations_remaining   = $09ec
+l09ed                               = $09ed
+l09ee                               = $09ee
+l09ef                               = $09ef
+l0a6f                               = $0a6f
+l0a7e                               = $0a7e
+l0a7f                               = $0a7f
+l0a80                               = $0a80
+l0a90                               = $0a90
+l0aa1                               = $0aa1
+l0aa9                               = $0aa9
+l0ab1                               = $0ab1
+l0ab2                               = $0ab2
+l0ab3                               = $0ab3
+l0ab4                               = $0ab4
+old_irq1v                           = $0ab5
+l0b00                               = $0b00
+l3b09                               = $3b09
+c3c2c                               = $3c2c
+l53c0                               = $53c0
+l8000                               = $8000
+lbe00                               = $be00
+lbf00                               = $bf00
+crtc_address_register               = $fe00
+crtc_address_write                  = $fe01
+video_ula_palette                   = $fe21
+romsel                              = $fe30
+system_via_t1c_l                    = $fe44
+system_via_t1c_h                    = $fe45
+system_via_t1l_l                    = $fe46
+system_via_t1l_h                    = $fe47
+system_via_t2c_l                    = $fe48
+system_via_t2c_h                    = $fe49
+system_via_acr                      = $fe4b
+system_via_ifr                      = $fe4d
+system_via_ier                      = $fe4e
+user_via_t1c_l                      = $fe64
+user_via_t1c_h                      = $fe65
+user_via_t2c_l                      = $fe68
+user_via_t2c_h                      = $fe69
+user_via_ier                        = $fe6e
+osfile                              = $ffdd
+oswrch                              = $ffee
+osword                              = $fff1
+osbyte                              = $fff4
+oscli                               = $fff7
 
     * = $1234
 
@@ -282,7 +282,7 @@ c110c
     ldx #0                                                            ; 1246: a2 00       ..  :1115[1]
     jsr osbyte                                                        ; 1248: 20 f4 ff     .. :1117[1]   ; Flush all buffers (X=0)
     lda #$30 ; '0'                                                    ; 124b: a9 30       .0  :111a[1]
-    sta l09ec                                                         ; 124d: 8d ec 09    ... :111c[1]
+    sta current_transformations_remaining                             ; 124d: 8d ec 09    ... :111c[1]
     lda #$35 ; '5'                                                    ; 1250: a9 35       .5  :111f[1]
     sta l09ed                                                         ; 1252: 8d ed 09    ... :1121[1]
     lda #$31 ; '1'                                                    ; 1255: a9 31       .1  :1124[1]
@@ -396,7 +396,7 @@ c11f8
     sta l1760                                                         ; 132e: 8d 60 17    .`. :11fd[1]
     jsr sub_c2980                                                     ; 1331: 20 80 29     .) :1200[1]
     jsr sub_c29a1                                                     ; 1334: 20 a1 29     .) :1203[1]
-    jsr something9_TODO                                               ; 1337: 20 31 01     1. :1206[1]
+    jsr update_displayed_transformations_remaining                    ; 1337: 20 31 01     1. :1206[1]
 ; $133a referenced 1 time by $11b0
 c1209
     jsr sub_c1766                                                     ; 133a: 20 66 17     f. :1209[1]
@@ -1403,8 +1403,8 @@ loop_c184d
     rts                                                               ; 1996: 60          `   :1865[1]
 
 ; $1997 referenced 4 times by $0154, $3748, $37a2, $37da
-sub_c1866
-    cmp #$21 ; '!'                                                    ; 1997: c9 21       .!  :1866[1]
+print_italic
+    cmp #'!'                                                          ; 1997: c9 21       .!  :1866[1]
     bcc c18a3                                                         ; 1999: 90 39       .9  :1868[1]
     cmp #$7f                                                          ; 199b: c9 7f       ..  :186a[1]
     bcs c18a3                                                         ; 199d: b0 35       .5  :186c[1]
@@ -1422,18 +1422,18 @@ sub_c1866
     asl l0066                                                         ; 19b2: 06 66       .f  :1881[1]
     asl l0067                                                         ; 19b4: 06 67       .g  :1883[1]
     asl l0068                                                         ; 19b6: 06 68       .h  :1885[1]
-    lda #$17                                                          ; 19b8: a9 17       ..  :1887[1]
+    lda #vdu_define_character                                         ; 19b8: a9 17       ..  :1887[1]
     jsr oswrch                                                        ; 19ba: 20 ee ff     .. :1889[1]   ; Write character 23
     lda #$ff                                                          ; 19bd: a9 ff       ..  :188c[1]
     jsr oswrch                                                        ; 19bf: 20 ee ff     .. :188e[1]   ; Write character 255
     ldx #0                                                            ; 19c2: a2 00       ..  :1891[1]
 ; $19c4 referenced 1 time by $189b
-loop_c1893
+define_character_ff_loop
     lda l0061,x                                                       ; 19c4: b5 61       .a  :1893[1]
     jsr oswrch                                                        ; 19c6: 20 ee ff     .. :1895[1]   ; Write character
     inx                                                               ; 19c9: e8          .   :1898[1]
     cpx #8                                                            ; 19ca: e0 08       ..  :1899[1]
-    bcc loop_c1893                                                    ; 19cc: 90 f6       ..  :189b[1]
+    bcc define_character_ff_loop                                      ; 19cc: 90 f6       ..  :189b[1]
     pla                                                               ; 19ce: 68          h   :189d[1]
     tay                                                               ; 19cf: a8          .   :189e[1]
     pla                                                               ; 19d0: 68          h   :189f[1]
@@ -4412,7 +4412,7 @@ sub_c2b37
     beq c2b64                                                         ; 2c88: f0 0b       ..  :2b57[1]
     jsr sub_c2c8c                                                     ; 2c8a: 20 8c 2c     ., :2b59[1]
     bcc c2b64                                                         ; 2c8d: 90 06       ..  :2b5c[1]
-    jsr something9_TODO                                               ; 2c8f: 20 31 01     1. :2b5e[1]
+    jsr update_displayed_transformations_remaining                    ; 2c8f: 20 31 01     1. :2b5e[1]
     jsr sub_c2337                                                     ; 2c92: 20 37 23     7# :2b61[1]
 ; $2c95 referenced 6 times by $2b3c, $2b41, $2b47, $2b4c, $2b57, $2b5c
 c2b64
@@ -4627,18 +4627,18 @@ c2c88
 ; $2dbd referenced 1 time by $2b59
 sub_c2c8c
     pha                                                               ; 2dbd: 48          H   :2c8c[1]
-    lda l09ec                                                         ; 2dbe: ad ec 09    ... :2c8d[1]
+    lda current_transformations_remaining                             ; 2dbe: ad ec 09    ... :2c8d[1]
     clc                                                               ; 2dc1: 18          .   :2c90[1]
     adc l09ed                                                         ; 2dc2: 6d ed 09    m.. :2c91[1]
     cmp #$50 ; 'P'                                                    ; 2dc5: c9 50       .P  :2c94[1]
     clc                                                               ; 2dc7: 18          .   :2c96[1]
     beq c2cd5                                                         ; 2dc8: f0 3c       .<  :2c97[1]
-    dec l09ec                                                         ; 2dca: ce ec 09    ... :2c99[1]
-    lda l09ec                                                         ; 2dcd: ad ec 09    ... :2c9c[1]
+    dec current_transformations_remaining                             ; 2dca: ce ec 09    ... :2c99[1]
+    lda current_transformations_remaining                             ; 2dcd: ad ec 09    ... :2c9c[1]
     cmp #$30 ; '0'                                                    ; 2dd0: c9 30       .0  :2c9f[1]
     bcs c2cd4                                                         ; 2dd2: b0 31       .1  :2ca1[1]
     lda #$39 ; '9'                                                    ; 2dd4: a9 39       .9  :2ca3[1]
-    sta l09ec                                                         ; 2dd6: 8d ec 09    ... :2ca5[1]
+    sta current_transformations_remaining                             ; 2dd6: 8d ec 09    ... :2ca5[1]
     dec l09ed                                                         ; 2dd9: ce ed 09    ... :2ca8[1]
     lda l09ed                                                         ; 2ddc: ad ed 09    ... :2cab[1]
     cmp #$30 ; '0'                                                    ; 2ddf: c9 30       .0  :2cae[1]
@@ -5872,7 +5872,7 @@ c3736
 c3744
     dey                                                               ; 3875: 88          .   :3744[1]
     sta l0a90,y                                                       ; 3876: 99 90 0a    ... :3745[1]
-    jsr sub_c1866                                                     ; 3879: 20 66 18     f. :3748[1]
+    jsr print_italic                                                  ; 3879: 20 66 18     f. :3748[1]
     inc l0005                                                         ; 387c: e6 05       ..  :374b[1]
     jmp c377a                                                         ; 387e: 4c 7a 37    Lz7 :374d[1]
 
@@ -5932,7 +5932,7 @@ c378e
     ldy desired_level                                                 ; 38cd: a4 31       .1  :379c[1]
     jsr convert_level_number_to_letter                                ; 38cf: 20 d4 0a     .. :379e[1]
     tya                                                               ; 38d2: 98          .   :37a1[1]
-    jsr sub_c1866                                                     ; 38d3: 20 66 18     f. :37a2[1]
+    jsr print_italic                                                  ; 38d3: 20 66 18     f. :37a2[1]
     jsr sub_c3850                                                     ; 38d6: 20 50 38     P8 :37a5[1]
     ldx c3adb                                                         ; 38d9: ae db 3a    ..: :37a8[1]
     ldy l3adc                                                         ; 38dc: ac dc 3a    ..: :37ab[1]
@@ -5964,7 +5964,7 @@ c37c3
     lda #$fe                                                          ; 3909: a9 fe       ..  :37d8[1]
 ; $390b referenced 1 time by $37d6
 c37da
-    jsr sub_c1866                                                     ; 390b: 20 66 18     f. :37da[1]
+    jsr print_italic                                                  ; 390b: 20 66 18     f. :37da[1]
     cpx #$50 ; 'P'                                                    ; 390e: e0 50       .P  :37dd[1]
     beq c37f2                                                         ; 3910: f0 11       ..  :37df[1]
     lda #9                                                            ; 3912: a9 09       ..  :37e1[1]
@@ -6587,10 +6587,10 @@ loop_c3c79
     ldy #0                                                            ; 3c82: a0 00       ..
 ; $3c84 referenced 1 time by $3c8d
 loop_c3c84
-    lda something9_high_copy_start,y                                  ; 3c84: b9 d0 40    ..@
-    sta something9_TODO,y                                             ; 3c87: 99 31 01    .1.
+    lda update_displayed_transformations_remaining_high_copy_start,y  ; 3c84: b9 d0 40    ..@
+    sta update_displayed_transformations_remaining,y                  ; 3c87: 99 31 01    .1.
     iny                                                               ; 3c8a: c8          .
-    cpy #something9_high_copy_end - something9_high_copy_start        ; 3c8b: c0 2f       ./
+    cpy #update_displayed_transformations_remaining_high_copy_end - update_displayed_transformations_remaining_high_copy_start; 3c8b: c0 2f       ./
     bne loop_c3c84                                                    ; 3c8d: d0 f5       ..
     lda copy_protection_flag                                          ; 3c8f: ad 03 11    ...
     and #8                                                            ; 3c92: 29 08       ).
@@ -6639,12 +6639,12 @@ c3c9b
     jsr oswrch                                                        ; 3cf7: 20 ee ff     ..            ; Write character 254
     ldx #0                                                            ; 3cfa: a2 00       ..
 ; $3cfc referenced 1 time by $3d05
-loop_c3cfc
+define_character_fe_loop
     lda character_fe_bitmap,x                                         ; 3cfc: bd 66 3f    .f?
     jsr oswrch                                                        ; 3cff: 20 ee ff     ..            ; Write character
     inx                                                               ; 3d02: e8          .
     cpx #8                                                            ; 3d03: e0 08       ..
-    bcc loop_c3cfc                                                    ; 3d05: 90 f5       ..
+    bcc define_character_fe_loop                                      ; 3d05: 90 f5       ..
     lda #osbyte_set_printer_ignore                                    ; 3d07: a9 06       ..
     ldx #0                                                            ; 3d09: a2 00       ..
     jsr osbyte                                                        ; 3d0b: 20 f4 ff     ..            ; Set printer ignore character to X=0
@@ -6655,7 +6655,7 @@ loop_c3cfc
     lda #$ff                                                          ; 3d16: a9 ff       ..
     sta l002e                                                         ; 3d18: 85 2e       ..
     lda #$20 ; ' '                                                    ; 3d1a: a9 20       .
-    sta l005c                                                         ; 3d1c: 85 5c       .\
+    sta displayed_transformations_remaining                           ; 3d1c: 85 5c       .\
     sta l005d                                                         ; 3d1e: 85 5d       .]
     sta l005e                                                         ; 3d20: 85 5e       .^
     lda #$cb                                                          ; 3d22: a9 cb       ..
@@ -7218,43 +7218,55 @@ convert_level_letter_to_number
 c0afe
     rts                                                               ; 40cf: 60          `   :0afe[5]
 
+; Update the transformation count on screen at text position (35-37, 6). This takes
+; care to update as few digits on screen as possible, probably to reduce flicker and to
+; offset the relatively slow implementation of print_italic.
 ; $40d0 referenced 4 times by $1206, $2b5e, $3c84, $3c87
 }
 
+; Update the transformation count on screen at text position (35-37, 6). This takes
+; care to update as few digits on screen as possible, probably to reduce flicker and to
+; offset the relatively slow implementation of print_italic.
 ; $40d0 referenced 4 times by $1206, $2b5e, $3c84, $3c87
 clear_128_bytes_at_l09ef_high_copy_end
-something9_high_copy_start
+update_displayed_transformations_remaining_high_copy_start
+; Update the transformation count on screen at text position (35-37, 6). This takes
+; care to update as few digits on screen as possible, probably to reduce flicker and to
+; offset the relatively slow implementation of print_italic.
 ; $40d0 referenced 4 times by $1206, $2b5e, $3c84, $3c87
 
 !pseudopc $0131 {
+; Update the transformation count on screen at text position (35-37, 6). This takes
+; care to update as few digits on screen as possible, probably to reduce flicker and to
+; offset the relatively slow implementation of print_italic.
 ; $40d0 referenced 4 times by $1206, $2b5e, $3c84, $3c87
-something9_TODO
+update_displayed_transformations_remaining
     pha                                                               ; 40d0: 48          H   :0131[3]
     txa                                                               ; 40d1: 8a          .   :0132[3]
     pha                                                               ; 40d2: 48          H   :0133[3]
     ldx #2                                                            ; 40d3: a2 02       ..  :0134[3]
 ; $40d5 referenced 1 time by $015a
-c0136
-    lda l09ec,x                                                       ; 40d5: bd ec 09    ... :0136[3]
-    cmp l005c,x                                                       ; 40d8: d5 5c       .\  :0139[3]
-    beq c0157                                                         ; 40da: f0 1a       ..  :013b[3]
-    sta l005c,x                                                       ; 40dc: 95 5c       .\  :013d[3]
+digit_loop
+    lda current_transformations_remaining,x                           ; 40d5: bd ec 09    ... :0136[3]
+    cmp displayed_transformations_remaining,x                         ; 40d8: d5 5c       .\  :0139[3]
+    beq digit_unchanged                                               ; 40da: f0 1a       ..  :013b[3]
+    sta displayed_transformations_remaining,x                         ; 40dc: 95 5c       .\  :013d[3]
     lda #vdu_goto_xy                                                  ; 40de: a9 1f       ..  :013f[3]
     jsr oswrch                                                        ; 40e0: 20 ee ff     .. :0141[3]   ; Write character 31
     txa                                                               ; 40e3: 8a          .   :0144[3]
     eor #$ff                                                          ; 40e4: 49 ff       I.  :0145[3]
     sec                                                               ; 40e6: 38          8   :0147[3]
-    adc #$25 ; '%'                                                    ; 40e7: 69 25       i%  :0148[3]
+    adc #37                                                           ; 40e7: 69 25       i%  :0148[3]
     jsr oswrch                                                        ; 40e9: 20 ee ff     .. :014a[3]   ; Write character
     lda #6                                                            ; 40ec: a9 06       ..  :014d[3]
     jsr oswrch                                                        ; 40ee: 20 ee ff     .. :014f[3]   ; Write character 6
-    lda l005c,x                                                       ; 40f1: b5 5c       .\  :0152[3]
-    jsr sub_c1866                                                     ; 40f3: 20 66 18     f. :0154[3]
+    lda displayed_transformations_remaining,x                         ; 40f1: b5 5c       .\  :0152[3]
+    jsr print_italic                                                  ; 40f3: 20 66 18     f. :0154[3]
 ; $40f6 referenced 1 time by $013b
-c0157
+digit_unchanged
     dex                                                               ; 40f6: ca          .   :0157[3]
     cpx #$ff                                                          ; 40f7: e0 ff       ..  :0158[3]
-    bne c0136                                                         ; 40f9: d0 da       ..  :015a[3]
+    bne digit_loop                                                    ; 40f9: d0 da       ..  :015a[3]
     pla                                                               ; 40fb: 68          h   :015c[3]
     tax                                                               ; 40fc: aa          .   :015d[3]
     pla                                                               ; 40fd: 68          h   :015e[3]
@@ -7266,7 +7278,7 @@ c0157
 ; $40ff referenced 4 times by $040a, $0457, $183c, $2aa0
 some_data_high_copy_TODO
 icodata
-something9_high_copy_end
+update_displayed_transformations_remaining_high_copy_end
 ; $40ff referenced 4 times by $040a, $0457, $183c, $2aa0
 
 !pseudopc $0400 {
@@ -7559,7 +7571,7 @@ pydis_end
 ;     l0088:                                          6
 ;     l0100:                                          6
 ;     l0116:                                          6
-;     l09ec:                                          6
+;     current_transformations_remaining:              6
 ;     l09ed:                                          6
 ;     l1648:                                          6
 ;     l173d:                                          6
@@ -7612,7 +7624,7 @@ pydis_end
 ;     l0045:                                          4
 ;     l0046:                                          4
 ;     l0058:                                          4
-;     l005c:                                          4
+;     displayed_transformations_remaining:            4
 ;     l0083:                                          4
 ;     l0086:                                          4
 ;     l0087:                                          4
@@ -8308,7 +8320,7 @@ pydis_end
 ;     loop_c3c79:                                     1
 ;     loop_c3c84:                                     1
 ;     c3c9b:                                          1
-;     loop_c3cfc:                                     1
+;     define_character_fe_loop:                       1
 ;     loop_c3d54:                                     1
 ;     initial_screen_disabled_flag_ok:                1
 ;     c3db9:                                          1
@@ -8364,8 +8376,6 @@ pydis_end
 ;     osfile:                                         1
 
 ; Automatically generated labels:
-;     c0136
-;     c0157
 ;     c043a
 ;     c0444
 ;     c0473
@@ -8875,7 +8885,6 @@ pydis_end
 ;     l0059
 ;     l005a
 ;     l005b
-;     l005c
 ;     l005d
 ;     l005e
 ;     l005f
@@ -8959,7 +8968,6 @@ pydis_end
 ;     l09df
 ;     l09ea
 ;     l09eb
-;     l09ec
 ;     l09ed
 ;     l09ee
 ;     l09ef
@@ -9443,7 +9451,6 @@ pydis_end
 ;     loop_c179a
 ;     loop_c1830
 ;     loop_c184d
-;     loop_c1893
 ;     loop_c18a9
 ;     loop_c190b
 ;     loop_c1921
@@ -9495,7 +9502,6 @@ pydis_end
 ;     loop_c3c6c
 ;     loop_c3c79
 ;     loop_c3c84
-;     loop_c3cfc
 ;     loop_c3d54
 ;     loop_c3e52
 ;     loop_c3f18
@@ -9549,7 +9555,6 @@ pydis_end
 ;     sub_c1828
 ;     sub_c1845
 ;     sub_c1859
-;     sub_c1866
 ;     sub_c187d
 ;     sub_c188e
 ;     sub_c1891
@@ -10004,11 +10009,11 @@ pydis_end
 !if (screen_width_minus_one) != $27 {
     !error "Assertion failed: screen_width_minus_one == $27"
 }
-!if (something9_high_copy_end - something9_high_copy_start) != $2f {
-    !error "Assertion failed: something9_high_copy_end - something9_high_copy_start == $2f"
+!if (update_displayed_transformations_remaining_high_copy_end - update_displayed_transformations_remaining_high_copy_start) != $2f {
+    !error "Assertion failed: update_displayed_transformations_remaining_high_copy_end - update_displayed_transformations_remaining_high_copy_start == $2f"
 }
-!if (something9_high_copy_start) != $40d0 {
-    !error "Assertion failed: something9_high_copy_start == $40d0"
+!if (update_displayed_transformations_remaining_high_copy_start) != $40d0 {
+    !error "Assertion failed: update_displayed_transformations_remaining_high_copy_start == $40d0"
 }
 !if (vdu_bell) != $07 {
     !error "Assertion failed: vdu_bell == $07"

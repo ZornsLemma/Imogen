@@ -57,6 +57,7 @@ expr(0x3cf1, "vdu_define_character")
 label(0x3f66, "character_fe_bitmap")
 byte(0x3f66, 8, 1)
 picture_binary(0x3f66, 8)
+entry(0x3cfc, "define_character_fe_loop")
 
 expr(0x3dba, "vdu_define_text_window")
 expr(0x3dd3, "vdu_set_text_colour")
@@ -222,13 +223,26 @@ entry(0x4094, "something6_TODO")
 entry(0x40a5, "convert_level_number_to_letter") # TODO: guesswork but something like this - probably not right though
 entry(0x40c0, "convert_level_letter_to_number") # TODO: guesswork but something like this - probably not right though
 
+comment(0x40d0, "Update the transformation count on screen at text position (35-37, 6). This takes care to update as few digits on screen as possible, probably to reduce flicker and to offset the relatively slow implementation of print_italic.")
+label(0x9ec, "current_transformations_remaining")
+label(0x5c, "displayed_transformations_remaining")
+decimal(0x149)
 # TODO: From a py8dis POV, this code feels wrong/confusing. entry() and label() behave different with how the label is placed. This works, but I am not sure it's by design. Maybe it is, it's been a while and I haven't had any coffee yet...
-entry(0x40d0, "something9_TODO")
-label(0x40d0, "something9_high_copy_start")
-label(0x40d0+0x2f, "something9_high_copy_end")
-expr(0x3c8c, make_subtract("something9_high_copy_end", "something9_high_copy_start"))
+entry(0x40d0, "update_displayed_transformations_remaining")
+label(0x40d0, "update_displayed_transformations_remaining_high_copy_start")
+label(0x40d0+0x2f, "update_displayed_transformations_remaining_high_copy_end")
+expr(0x3c8c, make_subtract("update_displayed_transformations_remaining_high_copy_end", "update_displayed_transformations_remaining_high_copy_start"))
 expr(0x140, "vdu_goto_xy")
-expr(0x3c85, "something9_high_copy_start")
+expr(0x3c85, "update_displayed_transformations_remaining_high_copy_start")
+entry(0x136, "digit_loop")
+entry(0x157, "digit_unchanged")
+
+entry(0x1866, "print_italic")
+char(0x1867)
+expr(0x186a, "vdu_delete")
+expr(0x1888, "vdu_define_character")
+label(0x1893, "define_character_ff_loop")
+# TODO: Could use a named constant for character $ff - ditto character $fe I guess
 
 entry(0x17a0, "something10_TODO")
 entry(0x1839, "something11_TODO")
