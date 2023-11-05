@@ -4637,32 +4637,32 @@ sub_c2c8c
     beq c2cd5                                                         ; 2dc8: f0 3c       .<  :2c97[1]
     dec current_transformations_remaining                             ; 2dca: ce ec 09    ... :2c99[1]
     lda current_transformations_remaining                             ; 2dcd: ad ec 09    ... :2c9c[1]
-    cmp #$30 ; '0'                                                    ; 2dd0: c9 30       .0  :2c9f[1]
-    bcs c2cd4                                                         ; 2dd2: b0 31       .1  :2ca1[1]
-    lda #$39 ; '9'                                                    ; 2dd4: a9 39       .9  :2ca3[1]
+    cmp #'0'                                                          ; 2dd0: c9 30       .0  :2c9f[1]
+    bcs decrement_tranformations_remaining_no_borrow                  ; 2dd2: b0 31       .1  :2ca1[1]
+    lda #'9'                                                          ; 2dd4: a9 39       .9  :2ca3[1]
     sta current_transformations_remaining                             ; 2dd6: 8d ec 09    ... :2ca5[1]
     dec current_transformations_remaining+1                           ; 2dd9: ce ed 09    ... :2ca8[1]
     lda current_transformations_remaining+1                           ; 2ddc: ad ed 09    ... :2cab[1]
-    cmp #$30 ; '0'                                                    ; 2ddf: c9 30       .0  :2cae[1]
+    cmp #'0'                                                          ; 2ddf: c9 30       .0  :2cae[1]
     beq c2cca                                                         ; 2de1: f0 18       ..  :2cb0[1]
-    bcs c2cd4                                                         ; 2de3: b0 20       .   :2cb2[1]
-    lda #$39 ; '9'                                                    ; 2de5: a9 39       .9  :2cb4[1]
+    bcs decrement_tranformations_remaining_no_borrow                  ; 2de3: b0 20       .   :2cb2[1]
+    lda #'9'                                                          ; 2de5: a9 39       .9  :2cb4[1]
     sta current_transformations_remaining+1                           ; 2de7: 8d ed 09    ... :2cb6[1]
     dec current_transformations_remaining+2                           ; 2dea: ce ee 09    ... :2cb9[1]
     lda current_transformations_remaining+2                           ; 2ded: ad ee 09    ... :2cbc[1]
-    cmp #$30 ; '0'                                                    ; 2df0: c9 30       .0  :2cbf[1]
-    bne c2cd4                                                         ; 2df2: d0 11       ..  :2cc1[1]
-    lda #$20 ; ' '                                                    ; 2df4: a9 20       .   :2cc3[1]
+    cmp #'0'                                                          ; 2df0: c9 30       .0  :2cbf[1]
+    bne decrement_tranformations_remaining_no_borrow                  ; 2df2: d0 11       ..  :2cc1[1]
+    lda #' '                                                          ; 2df4: a9 20       .   :2cc3[1]
     sta current_transformations_remaining+2                           ; 2df6: 8d ee 09    ... :2cc5[1]
-    bne c2cd4                                                         ; 2df9: d0 0a       ..  :2cc8[1]
+    bne decrement_tranformations_remaining_no_borrow                  ; 2df9: d0 0a       ..  :2cc8[1]
 ; $2dfb referenced 1 time by $2cb0
 c2cca
     lda current_transformations_remaining+2                           ; 2dfb: ad ee 09    ... :2cca[1]
-    cmp #$20 ; ' '                                                    ; 2dfe: c9 20       .   :2ccd[1]
-    bne c2cd4                                                         ; 2e00: d0 03       ..  :2ccf[1]
+    cmp #' '                                                          ; 2dfe: c9 20       .   :2ccd[1]
+    bne decrement_tranformations_remaining_no_borrow                  ; 2e00: d0 03       ..  :2ccf[1]
     sta current_transformations_remaining+1                           ; 2e02: 8d ed 09    ... :2cd1[1]
 ; $2e05 referenced 5 times by $2ca1, $2cb2, $2cc1, $2cc8, $2ccf
-c2cd4
+decrement_tranformations_remaining_no_borrow
     sec                                                               ; 2e05: 38          8   :2cd4[1]
 ; $2e06 referenced 1 time by $2c97
 c2cd5
@@ -8639,7 +8639,6 @@ pydis_end
 ;     c2c7e
 ;     c2c88
 ;     c2cca
-;     c2cd4
 ;     c2cd5
 ;     c2d87
 ;     c2da6
