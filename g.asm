@@ -6,8 +6,8 @@ crtc_screen_start_high                          = 12
 crtc_screen_start_low                           = 13
 crtc_vert_displayed                             = 6
 crtc_vert_sync_pos                              = 7
-first_level                                     = 65
-last_level                                      = 81
+first_level_letter                              = 65
+last_level_letter                               = 81
 osbyte_close_spool_exec                         = 119
 osbyte_flush_buffer                             = 21
 osbyte_flush_buffer_class                       = 15
@@ -294,7 +294,7 @@ c110c
     asl                                                               ; 126a: 0a          .   :1139[1]
     adc #$41 ; 'A'                                                    ; 126b: 69 41       iA  :113a[1]
     tay                                                               ; 126d: a8          .   :113c[1]
-    jsr something8_TODO                                               ; 126e: 20 ef 0a     .. :113d[1]
+    jsr convert_level_letter_to_number                                ; 126e: 20 ef 0a     .. :113d[1]
 ; $1271 referenced 3 times by $1130, $36f0, $39f1
 c1140
     lda l0030                                                         ; 1271: a5 30       .0  :1140[1]
@@ -5941,15 +5941,15 @@ c37ba
     jsr sub_c040a                                                     ; 38eb: 20 0a 04     .. :37ba[1]
     lda #2                                                            ; 38ee: a9 02       ..  :37bd[1]
     sta l0004                                                         ; 38f0: 85 04       ..  :37bf[1]
-    ldx #$41 ; 'A'                                                    ; 38f2: a2 41       .A  :37c1[1]
+    ldx #first_level_letter                                           ; 38f2: a2 41       .A  :37c1[1]
 ; $38f4 referenced 2 times by $37ea, $37ef
 c37c3
     txa                                                               ; 38f4: 8a          .   :37c3[1]
     tay                                                               ; 38f5: a8          .   :37c4[1]
-    jsr something8_TODO                                               ; 38f6: 20 ef 0a     .. :37c5[1]
+    jsr convert_level_letter_to_number                                ; 38f6: 20 ef 0a     .. :37c5[1]
     tya                                                               ; 38f9: 98          .   :37c8[1]
     sec                                                               ; 38fa: 38          8   :37c9[1]
-    sbc #$41 ; 'A'                                                    ; 38fb: e9 41       .A  :37ca[1]
+    sbc #first_level_letter                                           ; 38fb: e9 41       .A  :37ca[1]
     tay                                                               ; 38fd: a8          .   :37cc[1]
     lda l09ef,y                                                       ; 38fe: b9 ef 09    ... :37cd[1]
     and #$80                                                          ; 3901: 29 80       ).  :37d0[1]
@@ -6298,7 +6298,7 @@ c39e0
 ; $3b1d referenced 2 times by $39de, $39e8
 c39ec
     ldx #0                                                            ; 3b1d: a2 00       ..  :39ec[1]
-    jsr something8_TODO                                               ; 3b1f: 20 ef 0a     .. :39ee[1]
+    jsr convert_level_letter_to_number                                ; 3b1f: 20 ef 0a     .. :39ee[1]
     jmp c1140                                                         ; 3b22: 4c 40 11    L@. :39f1[1]
 
 ; $3b25 referenced 1 time by $39c3
@@ -7191,7 +7191,7 @@ loop_c0ade
 c0ae6
     txa                                                               ; 40b7: 8a          .   :0ae6[5]
     clc                                                               ; 40b8: 18          .   :0ae7[5]
-    adc #first_level                                                  ; 40b9: 69 41       iA  :0ae8[5]
+    adc #first_level_letter                                           ; 40b9: 69 41       iA  :0ae8[5]
     tay                                                               ; 40bb: a8          .   :0aea[5]
     pla                                                               ; 40bc: 68          h   :0aeb[5]
     tax                                                               ; 40bd: aa          .   :0aec[5]
@@ -7199,13 +7199,13 @@ c0ae6
     rts                                                               ; 40bf: 60          `   :0aee[5]
 
 ; $40c0 referenced 3 times by $113d, $37c5, $39ee
-something8_TODO
-    cpy #last_level                                                   ; 40c0: c0 51       .Q  :0aef[5]
+convert_level_letter_to_number
+    cpy #last_level_letter                                            ; 40c0: c0 51       .Q  :0aef[5]
     beq c0afe                                                         ; 40c2: f0 0b       ..  :0af1[5]
     pha                                                               ; 40c4: 48          H   :0af3[5]
     tya                                                               ; 40c5: 98          .   :0af4[5]
     sec                                                               ; 40c6: 38          8   :0af5[5]
-    sbc #first_level                                                  ; 40c7: e9 41       .A  :0af6[5]
+    sbc #first_level_letter                                           ; 40c7: e9 41       .A  :0af6[5]
     tay                                                               ; 40c9: a8          .   :0af8[5]
     lda l0a80,y                                                       ; 40ca: b9 80 0a    ... :0af9[5]
     tay                                                               ; 40cd: a8          .   :0afc[5]
@@ -9924,14 +9924,14 @@ pydis_end
 !if (crtc_vert_sync_pos) != $07 {
     !error "Assertion failed: crtc_vert_sync_pos == $07"
 }
-!if (first_level) != $41 {
-    !error "Assertion failed: first_level == $41"
+!if (first_level_letter) != $41 {
+    !error "Assertion failed: first_level_letter == $41"
 }
 !if (icodata) != $40ff {
     !error "Assertion failed: icodata == $40ff"
 }
-!if (last_level) != $51 {
-    !error "Assertion failed: last_level == $51"
+!if (last_level_letter) != $51 {
+    !error "Assertion failed: last_level_letter == $51"
 }
 !if (osbyte_close_spool_exec) != $77 {
     !error "Assertion failed: osbyte_close_spool_exec == $77"
