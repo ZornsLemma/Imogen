@@ -297,6 +297,8 @@ expr(0x39eb, "first_level_letter")
 expr(0x113b, "first_level_letter")
 expr(0x112f, "last_level_letter+1")
 
+entry(0x1140, "initialise_level") # TODO: guessing, but seems plausible
+
 label(0xab5, "old_irq1v")
 expr_label(0xab6, "old_irq1v+1")
 

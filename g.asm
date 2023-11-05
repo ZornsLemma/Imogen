@@ -285,7 +285,7 @@ c110c
     ldx #0                                                            ; 125a: a2 00       ..  :1129[1]
     ldy l0a7f                                                         ; 125c: ac 7f 0a    ... :112b[1]
     cpy #last_level_letter+1                                          ; 125f: c0 52       .R  :112e[1]
-    bne c1140                                                         ; 1261: d0 0e       ..  :1130[1]
+    bne initialise_level                                              ; 1261: d0 0e       ..  :1130[1]
     inc l005f                                                         ; 1263: e6 5f       ._  :1132[1]
     lda l005f                                                         ; 1265: a5 5f       ._  :1134[1]
     and #3                                                            ; 1267: 29 03       ).  :1136[1]
@@ -295,7 +295,7 @@ c110c
     tay                                                               ; 126d: a8          .   :113c[1]
     jsr convert_level_letter_to_number                                ; 126e: 20 ef 0a     .. :113d[1]
 ; $1271 referenced 3 times by $1130, $36f0, $39f1
-c1140
+initialise_level
     lda l0030                                                         ; 1271: a5 30       .0  :1140[1]
     sta l0050                                                         ; 1273: 85 50       .P  :1142[1]
     lda desired_level                                                 ; 1275: a5 31       .1  :1144[1]
@@ -5807,7 +5807,7 @@ c36db
     cpy #$ff                                                          ; 381b: c0 ff       ..  :36ea[1]
     beq c36f3                                                         ; 381d: f0 05       ..  :36ec[1]
     ldx #0                                                            ; 381f: a2 00       ..  :36ee[1]
-    jmp c1140                                                         ; 3821: 4c 40 11    L@. :36f0[1]
+    jmp initialise_level                                              ; 3821: 4c 40 11    L@. :36f0[1]
 
 ; $3824 referenced 1 time by $36ec
 c36f3
@@ -6303,7 +6303,7 @@ c39e0
 c39ec
     ldx #0                                                            ; 3b1d: a2 00       ..  :39ec[1]
     jsr convert_level_letter_to_number                                ; 3b1f: 20 ef 0a     .. :39ee[1]
-    jmp c1140                                                         ; 3b22: 4c 40 11    L@. :39f1[1]
+    jmp initialise_level                                              ; 3b22: 4c 40 11    L@. :39f1[1]
 
 ; $3b25 referenced 1 time by $39c3
 c39f4
@@ -8388,7 +8388,6 @@ pydis_end
 ;     c0ae6
 ;     c0afe
 ;     c110c
-;     c1140
 ;     c1171
 ;     c1186
 ;     c11f8
