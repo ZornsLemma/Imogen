@@ -10,12 +10,14 @@ constant(18, "vdu_set_graphics_colour")
 constant(22, "vdu_set_mode")
 constant(23, "vdu_define_character")
 constant(28, "vdu_define_text_window")
+constant(31, "vdu_goto_xy")
 
 constant(5, "osfile_read_catalogue_info")
 constant(0xff, "osfile_load")
 
 load(0x1234, "tmp/g.dat", "6502", "ac5feeac5c32a306d4a73ba393677385")
 move_id = move(0x1103, 0x1234, 0x2a00)
+move_id2 = move(0x400, 0x40ff, 295) # code copies 512 bytes, but we only have 295 bytes of actual data
 
 entry(0x3c06, "execution_start")
 
@@ -153,6 +155,8 @@ hexadecimal(0x1377, 8)
 label(0x387c, "inkey")
 label(0x362e, "wait_for_return")
 expr(0x3632, "vdu_cr")
+
+expr(0x445, "vdu_goto_xy")
 
 go()
 
