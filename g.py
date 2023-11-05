@@ -168,6 +168,18 @@ entry(0x40a5, "something7_TODO")
 entry(0x40c0, "something8_TODO")
 entry(0x40d0, "something9_TODO")
 
+entry(0x17a0, "something10_TODO")
+entry(0x1839, "something11_TODO")
+entry(0x18c3, "something12_TODO")
+entry(0x1988, "something13_TODO")
+entry(0x1a10, "something14_TODO")
+entry(0x1b8a, "something15_TODO")
+# TODO: DELETE? entry(0x1d99, "something16_TODO")
+entry(0x1fd7, "something16_TODO")
+entry(0x2200, "something17_TODO")
+entry(0x2248, "something18_TODO")
+entry(0x22cd, "something19_TODO")
+
 go()
 
 # vi: tw=100
