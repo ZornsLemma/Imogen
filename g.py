@@ -225,6 +225,9 @@ expr(0x1226, "first_level_letter")
 expr(0x124d, "first_level_letter")
 expr(0x127c, "first_level_letter")
 expr(0x1a4a, "first_level_letter")
+expr(0x39dd, "last_level_letter")
+expr(0x39e7, "last_level_letter")
+expr(0x39eb, "first_level_letter")
 
 go()
 

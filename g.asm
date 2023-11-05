@@ -6285,16 +6285,16 @@ loop_c39d2
 ; $3b09 referenced 1 time by $3af7
     dey                                                               ; 3b0a: 88          .   :39d9[1]
     bpl loop_c39d2                                                    ; 3b0b: 10 f6       ..  :39da[1]
-    ldy #$51 ; 'Q'                                                    ; 3b0d: a0 51       .Q  :39dc[1]
+    ldy #last_level_letter                                            ; 3b0d: a0 51       .Q  :39dc[1]
     bne c39ec                                                         ; 3b0f: d0 0c       ..  :39de[1]
 ; $3b11 referenced 1 time by $39d7
 c39e0
     ldy desired_level                                                 ; 3b11: a4 31       .1  :39e0[1]
     jsr convert_level_number_to_letter                                ; 3b13: 20 d4 0a     .. :39e2[1]
     iny                                                               ; 3b16: c8          .   :39e5[1]
-    cpy #$51 ; 'Q'                                                    ; 3b17: c0 51       .Q  :39e6[1]
+    cpy #last_level_letter                                            ; 3b17: c0 51       .Q  :39e6[1]
     bcc c39ec                                                         ; 3b19: 90 02       ..  :39e8[1]
-    ldy #$41 ; 'A'                                                    ; 3b1b: a0 41       .A  :39ea[1]
+    ldy #first_level_letter                                           ; 3b1b: a0 41       .A  :39ea[1]
 ; $3b1d referenced 2 times by $39de, $39e8
 c39ec
     ldx #0                                                            ; 3b1d: a2 00       ..  :39ec[1]
