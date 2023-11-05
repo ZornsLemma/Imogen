@@ -20,6 +20,7 @@ move_id = move(0x1103, 0x1234, 0x2a00)
 move_id2 = move(0x400, 0x40ff, 295) # code copies 512 bytes, but we only have 295 bytes of actual data
 move(0x131, 0x40d0, 0x2f)
 move(0xc00, 0x3fcb, 0x402c-0x3fcb) # code copies 256 bytes, but this is what we actually care about
+move(0xab7, 0x4088, 0x48)
 
 entry(0x3c06, "execution_start")
 
@@ -171,7 +172,12 @@ comment(0x1e80, "TODO: What's going on with the modification to something3_TODO 
 comment(0x1ebb, "TODO: What's going on with the modification to something3_TODO here? Is it copy protection/obfuscation or is there something else going on?")
 
 entry(0x402c, "something4_TODO")
+
 entry(0x4088, "something5_TODO")
+label(0x4088, "something5_high_copy_start")
+label(0x4088+0x48, "something5_high_copy_end")
+expr(0x3c74, make_subtract("something5_high_copy_end", "something5_high_copy_start"))
+
 entry(0x4094, "something6_TODO")
 entry(0x40a5, "something7_TODO")
 entry(0x40c0, "something8_TODO")

@@ -202,10 +202,6 @@ l0ab3                   = $0ab3
 l0ab4                   = $0ab4
 l0ab5                   = $0ab5
 l0ab6                   = $0ab6
-l0ab7                   = $0ab7
-l0ac3                   = $0ac3
-l0ad4                   = $0ad4
-l0aef                   = $0aef
 l0b00                   = $0b00
 l3b09                   = $3b09
 c3c2c                   = $3c2c
@@ -273,7 +269,7 @@ l110b
 
 ; $123d referenced 2 times by $36f3, $3f5b
 c110c
-    jsr l0ab7                                                         ; 123d: 20 b7 0a     .. :110c[1]
+    jsr something5_TODO                                               ; 123d: 20 b7 0a     .. :110c[1]
     lda #$ff                                                          ; 1240: a9 ff       ..  :110f[1]
     sta l0031                                                         ; 1242: 85 31       .1  :1111[1]
     lda #osbyte_flush_buffer_class                                    ; 1244: a9 0f       ..  :1113[1]
@@ -296,7 +292,7 @@ c110c
     asl                                                               ; 126a: 0a          .   :1139[1]
     adc #$41 ; 'A'                                                    ; 126b: 69 41       iA  :113a[1]
     tay                                                               ; 126d: a8          .   :113c[1]
-    jsr l0aef                                                         ; 126e: 20 ef 0a     .. :113d[1]
+    jsr something8_TODO                                               ; 126e: 20 ef 0a     .. :113d[1]
 ; $1271 referenced 3 times by $1130, $36f0, $39f1
 c1140
     lda l0030                                                         ; 1271: a5 30       .0  :1140[1]
@@ -1236,7 +1232,7 @@ sub_c1766
     lda l1765                                                         ; 189f: ad 65 17    .e. :176e[1]
     beq c178a                                                         ; 18a2: f0 17       ..  :1771[1]
     ldy l0031                                                         ; 18a4: a4 31       .1  :1773[1]
-    jsr l0ad4                                                         ; 18a6: 20 d4 0a     .. :1775[1]
+    jsr something7_TODO                                               ; 18a6: 20 d4 0a     .. :1775[1]
     tya                                                               ; 18a9: 98          .   :1778[1]
     sec                                                               ; 18aa: 38          8   :1779[1]
     sbc #$41 ; 'A'                                                    ; 18ab: e9 41       .A  :177a[1]
@@ -5626,7 +5622,7 @@ c359b
 
 ; $36cf referenced 1 time by $3581
 c359e
-    jsr l0ac3                                                         ; 36cf: 20 c3 0a     .. :359e[1]
+    jsr something6_TODO                                               ; 36cf: 20 c3 0a     .. :359e[1]
     sta l09eb                                                         ; 36d2: 8d eb 09    ... :35a1[1]
     ldx #0                                                            ; 36d5: a2 00       ..  :35a4[1]
     ldy #0                                                            ; 36d7: a0 00       ..  :35a6[1]
@@ -5647,7 +5643,7 @@ c35bc
     lda l3497                                                         ; 36f1: ad 97 34    ..4 :35c0[1]
     jsr osfile_wrapper                                                ; 36f4: 20 dc 16     .. :35c3[1]
     bne c359b                                                         ; 36f7: d0 d3       ..  :35c6[1]
-    jsr l0ac3                                                         ; 36f9: 20 c3 0a     .. :35c8[1]
+    jsr something6_TODO                                               ; 36f9: 20 c3 0a     .. :35c8[1]
     cmp l09eb                                                         ; 36fc: cd eb 09    ... :35cb[1]
     beq c35d5                                                         ; 36ff: f0 05       ..  :35ce[1]
     lda #$ff                                                          ; 3701: a9 ff       ..  :35d0[1]
@@ -5928,7 +5924,7 @@ c378e
     ldy #$37 ; '7'                                                    ; 38c8: a0 37       .7  :3797[1]
     jsr c381c                                                         ; 38ca: 20 1c 38     .8 :3799[1]
     ldy l0031                                                         ; 38cd: a4 31       .1  :379c[1]
-    jsr l0ad4                                                         ; 38cf: 20 d4 0a     .. :379e[1]
+    jsr something7_TODO                                               ; 38cf: 20 d4 0a     .. :379e[1]
     tya                                                               ; 38d2: 98          .   :37a1[1]
     jsr sub_c1866                                                     ; 38d3: 20 66 18     f. :37a2[1]
     jsr sub_c3850                                                     ; 38d6: 20 50 38     P8 :37a5[1]
@@ -5948,7 +5944,7 @@ c37ba
 c37c3
     txa                                                               ; 38f4: 8a          .   :37c3[1]
     tay                                                               ; 38f5: a8          .   :37c4[1]
-    jsr l0aef                                                         ; 38f6: 20 ef 0a     .. :37c5[1]
+    jsr something8_TODO                                               ; 38f6: 20 ef 0a     .. :37c5[1]
     tya                                                               ; 38f9: 98          .   :37c8[1]
     sec                                                               ; 38fa: 38          8   :37c9[1]
     sbc #$41 ; 'A'                                                    ; 38fb: e9 41       .A  :37ca[1]
@@ -6292,7 +6288,7 @@ loop_c39d2
 ; $3b11 referenced 1 time by $39d7
 c39e0
     ldy l0031                                                         ; 3b11: a4 31       .1  :39e0[1]
-    jsr l0ad4                                                         ; 3b13: 20 d4 0a     .. :39e2[1]
+    jsr something7_TODO                                               ; 3b13: 20 d4 0a     .. :39e2[1]
     iny                                                               ; 3b16: c8          .   :39e5[1]
     cpy #$51 ; 'Q'                                                    ; 3b17: c0 51       .Q  :39e6[1]
     bcc c39ec                                                         ; 3b19: 90 02       ..  :39e8[1]
@@ -6300,7 +6296,7 @@ c39e0
 ; $3b1d referenced 2 times by $39de, $39e8
 c39ec
     ldx #0                                                            ; 3b1d: a2 00       ..  :39ec[1]
-    jsr l0aef                                                         ; 3b1f: 20 ef 0a     .. :39ee[1]
+    jsr something8_TODO                                               ; 3b1f: 20 ef 0a     .. :39ee[1]
     jmp c1140                                                         ; 3b22: 4c 40 11    L@. :39f1[1]
 
 ; $3b25 referenced 1 time by $39c3
@@ -6570,10 +6566,10 @@ c3c6a
     ldx #0                                                            ; 3c6a: a2 00       ..
 ; $3c6c referenced 1 time by $3c75
 loop_c3c6c
-    lda something5_TODO,x                                             ; 3c6c: bd 88 40    ..@
-    sta l0ab7,x                                                       ; 3c6f: 9d b7 0a    ...
+    lda something5_high_copy_start,x                                  ; 3c6c: bd 88 40    ..@
+    sta something5_TODO,x                                             ; 3c6f: 9d b7 0a    ...
     inx                                                               ; 3c72: e8          .
-    cpx #$48 ; 'H'                                                    ; 3c73: e0 48       .H
+    cpx #something5_high_copy_end - something5_high_copy_start        ; 3c73: e0 48       .H
     bcc loop_c3c6c                                                    ; 3c75: 90 f5       ..
     ldy #0                                                            ; 3c77: a0 00       ..
 ; $3c79 referenced 1 time by $3c80
@@ -6585,7 +6581,7 @@ loop_c3c79
     ldy #0                                                            ; 3c82: a0 00       ..
 ; $3c84 referenced 1 time by $3c8d
 loop_c3c84
-    lda something9_high_copy_start,y                                  ; 3c84: b9 d0 40    ..@
+    lda something5_high_copy_end,y                                    ; 3c84: b9 d0 40    ..@
     sta something9_TODO,y                                             ; 3c87: 99 31 01    .1.
     iny                                                               ; 3c8a: c8          .
     cpy #something9_high_copy_end - something9_high_copy_start        ; 3c8b: c0 2f       ./
@@ -7143,72 +7139,84 @@ something4_TODO
     ldy #>(l0070)                                                     ; 4083: a0 00       ..
     jmp oscli                                                         ; 4085: 4c f7 ff    L..
 
-; $4088 referenced 1 time by $3c6c
+; $4088 referenced 3 times by $110c, $3c6c, $3c6f
+something5_high_copy_start
+; $4088 referenced 3 times by $110c, $3c6c, $3c6f
+
+!pseudopc $0ab7 {
+; $4088 referenced 3 times by $110c, $3c6c, $3c6f
 something5_TODO
-    lda #0                                                            ; 4088: a9 00       ..
-    tax                                                               ; 408a: aa          .
-; $408b referenced 1 time by $4091
-loop_c408b
-    sta l09ef,x                                                       ; 408b: 9d ef 09    ...
-    inx                                                               ; 408e: e8          .
-    cpx #$80                                                          ; 408f: e0 80       ..
-    bcc loop_c408b                                                    ; 4091: 90 f8       ..
-    rts                                                               ; 4093: 60          `
+    lda #0                                                            ; 4088: a9 00       ..  :0ab7[5]
+    tax                                                               ; 408a: aa          .   :0ab9[5]
+; $408b referenced 1 time by $0ac0
+loop_c0aba
+    sta l09ef,x                                                       ; 408b: 9d ef 09    ... :0aba[5]
+    inx                                                               ; 408e: e8          .   :0abd[5]
+    cpx #$80                                                          ; 408f: e0 80       ..  :0abe[5]
+    bcc loop_c0aba                                                    ; 4091: 90 f8       ..  :0ac0[5]
+    rts                                                               ; 4093: 60          `   :0ac2[5]
 
+; $4094 referenced 2 times by $359e, $35c8
 something6_TODO
-    lda #0                                                            ; 4094: a9 00       ..
-    tax                                                               ; 4096: aa          .
-; $4097 referenced 1 time by $409d
-loop_c4097
-    eor l09ef,x                                                       ; 4097: 5d ef 09    ]..
-    inx                                                               ; 409a: e8          .
-    cpx #$80                                                          ; 409b: e0 80       ..
-    bcc loop_c4097                                                    ; 409d: 90 f8       ..
-    eor l09ea                                                         ; 409f: 4d ea 09    M..
-    eor #$ff                                                          ; 40a2: 49 ff       I.
-    rts                                                               ; 40a4: 60          `
+    lda #0                                                            ; 4094: a9 00       ..  :0ac3[5]
+    tax                                                               ; 4096: aa          .   :0ac5[5]
+; $4097 referenced 1 time by $0acc
+loop_c0ac6
+    eor l09ef,x                                                       ; 4097: 5d ef 09    ].. :0ac6[5]
+    inx                                                               ; 409a: e8          .   :0ac9[5]
+    cpx #$80                                                          ; 409b: e0 80       ..  :0aca[5]
+    bcc loop_c0ac6                                                    ; 409d: 90 f8       ..  :0acc[5]
+    eor l09ea                                                         ; 409f: 4d ea 09    M.. :0ace[5]
+    eor #$ff                                                          ; 40a2: 49 ff       I.  :0ad1[5]
+    rts                                                               ; 40a4: 60          `   :0ad3[5]
 
+; $40a5 referenced 3 times by $1775, $379e, $39e2
 something7_TODO
-    cpy #$51 ; 'Q'                                                    ; 40a5: c0 51       .Q
-    beq c40cf                                                         ; 40a7: f0 26       .&
-    pha                                                               ; 40a9: 48          H
-    txa                                                               ; 40aa: 8a          .
-    pha                                                               ; 40ab: 48          H
-    tya                                                               ; 40ac: 98          .
-    ldx #$0f                                                          ; 40ad: a2 0f       ..
-; $40af referenced 1 time by $40b5
-loop_c40af
-    cmp l0a80,x                                                       ; 40af: dd 80 0a    ...
-    beq c40b7                                                         ; 40b2: f0 03       ..
-    dex                                                               ; 40b4: ca          .
-    bpl loop_c40af                                                    ; 40b5: 10 f8       ..
-; $40b7 referenced 1 time by $40b2
-c40b7
-    txa                                                               ; 40b7: 8a          .
-    clc                                                               ; 40b8: 18          .
-    adc #$41 ; 'A'                                                    ; 40b9: 69 41       iA
-    tay                                                               ; 40bb: a8          .
-    pla                                                               ; 40bc: 68          h
-    tax                                                               ; 40bd: aa          .
-    pla                                                               ; 40be: 68          h
-    rts                                                               ; 40bf: 60          `
+    cpy #$51 ; 'Q'                                                    ; 40a5: c0 51       .Q  :0ad4[5]
+    beq c0afe                                                         ; 40a7: f0 26       .&  :0ad6[5]
+    pha                                                               ; 40a9: 48          H   :0ad8[5]
+    txa                                                               ; 40aa: 8a          .   :0ad9[5]
+    pha                                                               ; 40ab: 48          H   :0ada[5]
+    tya                                                               ; 40ac: 98          .   :0adb[5]
+    ldx #$0f                                                          ; 40ad: a2 0f       ..  :0adc[5]
+; $40af referenced 1 time by $0ae4
+loop_c0ade
+    cmp l0a80,x                                                       ; 40af: dd 80 0a    ... :0ade[5]
+    beq c0ae6                                                         ; 40b2: f0 03       ..  :0ae1[5]
+    dex                                                               ; 40b4: ca          .   :0ae3[5]
+    bpl loop_c0ade                                                    ; 40b5: 10 f8       ..  :0ae4[5]
+; $40b7 referenced 1 time by $0ae1
+c0ae6
+    txa                                                               ; 40b7: 8a          .   :0ae6[5]
+    clc                                                               ; 40b8: 18          .   :0ae7[5]
+    adc #$41 ; 'A'                                                    ; 40b9: 69 41       iA  :0ae8[5]
+    tay                                                               ; 40bb: a8          .   :0aea[5]
+    pla                                                               ; 40bc: 68          h   :0aeb[5]
+    tax                                                               ; 40bd: aa          .   :0aec[5]
+    pla                                                               ; 40be: 68          h   :0aed[5]
+    rts                                                               ; 40bf: 60          `   :0aee[5]
 
+; $40c0 referenced 3 times by $113d, $37c5, $39ee
 something8_TODO
-    cpy #$51 ; 'Q'                                                    ; 40c0: c0 51       .Q
-    beq c40cf                                                         ; 40c2: f0 0b       ..
-    pha                                                               ; 40c4: 48          H
-    tya                                                               ; 40c5: 98          .
-    sec                                                               ; 40c6: 38          8
-    sbc #$41 ; 'A'                                                    ; 40c7: e9 41       .A
-    tay                                                               ; 40c9: a8          .
-    lda l0a80,y                                                       ; 40ca: b9 80 0a    ...
-    tay                                                               ; 40cd: a8          .
-    pla                                                               ; 40ce: 68          h
-; $40cf referenced 2 times by $40a7, $40c2
-c40cf
-    rts                                                               ; 40cf: 60          `
+    cpy #$51 ; 'Q'                                                    ; 40c0: c0 51       .Q  :0aef[5]
+    beq c0afe                                                         ; 40c2: f0 0b       ..  :0af1[5]
+    pha                                                               ; 40c4: 48          H   :0af3[5]
+    tya                                                               ; 40c5: 98          .   :0af4[5]
+    sec                                                               ; 40c6: 38          8   :0af5[5]
+    sbc #$41 ; 'A'                                                    ; 40c7: e9 41       .A  :0af6[5]
+    tay                                                               ; 40c9: a8          .   :0af8[5]
+    lda l0a80,y                                                       ; 40ca: b9 80 0a    ... :0af9[5]
+    tay                                                               ; 40cd: a8          .   :0afc[5]
+    pla                                                               ; 40ce: 68          h   :0afd[5]
+; $40cf referenced 2 times by $0ad6, $0af1
+c0afe
+    rts                                                               ; 40cf: 60          `   :0afe[5]
 
 ; $40d0 referenced 4 times by $1206, $2b5e, $3c84, $3c87
+}
+
+; $40d0 referenced 4 times by $1206, $2b5e, $3c84, $3c87
+something5_high_copy_end
 something9_high_copy_start
 ; $40d0 referenced 4 times by $1206, $2b5e, $3c84, $3c87
 
@@ -7638,7 +7646,7 @@ pydis_end
 ;     sub_c3994:                                      4
 ;     c3b39:                                          4
 ;     c3bc0:                                          4
-;     something9_high_copy_start:                     4
+;     something5_high_copy_end:                       4
 ;     some_data_high_copy_TODO:                       4
 ;     l0002:                                          3
 ;     l0006:                                          3
@@ -7666,8 +7674,6 @@ pydis_end
 ;     l0ab3:                                          3
 ;     l0ab4:                                          3
 ;     l0ab5:                                          3
-;     l0ad4:                                          3
-;     l0aef:                                          3
 ;     l123b:                                          3
 ;     l1271:                                          3
 ;     sub_c14a7:                                      3
@@ -7724,6 +7730,9 @@ pydis_end
 ;     l398e:                                          3
 ;     c3a8f:                                          3
 ;     l3aa4:                                          3
+;     something5_high_copy_start:                     3
+;     sub_c40a5:                                      3
+;     sub_c40c0:                                      3
 ;     l4217:                                          3
 ;     oscli:                                          3
 ;     l0003:                                          2
@@ -7748,8 +7757,6 @@ pydis_end
 ;     l0ab1:                                          2
 ;     l0ab2:                                          2
 ;     l0ab6:                                          2
-;     l0ab7:                                          2
-;     l0ac3:                                          2
 ;     l0b00:                                          2
 ;     sub_c1236:                                      2
 ;     sub_c123c:                                      2
@@ -7876,6 +7883,7 @@ pydis_end
 ;     set_track_special_register_to_a:                2
 ;     c3f0d:                                          2
 ;     initial_screen_disabled_flag:                   2
+;     sub_c4094:                                      2
 ;     c40cf:                                          2
 ;     c418f:                                          2
 ;     c4204:                                          2
@@ -8313,10 +8321,9 @@ pydis_end
 ;     c3fba:                                          1
 ;     l3fbb:                                          1
 ;     something4_TODO:                                1
-;     something5_TODO:                                1
-;     loop_c408b:                                     1
-;     loop_c4097:                                     1
-;     loop_c40af:                                     1
+;     c408b:                                          1
+;     c4097:                                          1
+;     c40af:                                          1
 ;     c40b7:                                          1
 ;     c40d5:                                          1
 ;     c40f6:                                          1
@@ -8362,6 +8369,8 @@ pydis_end
 ;     c04b4
 ;     c04ca
 ;     c0505
+;     c0ae6
+;     c0afe
 ;     c110c
 ;     c1140
 ;     c1171
@@ -8781,6 +8790,9 @@ pydis_end
 ;     c3f0d
 ;     c3f2d
 ;     c3fba
+;     c408b
+;     c4097
+;     c40af
 ;     c40b7
 ;     c40cf
 ;     c40d5
@@ -8960,10 +8972,6 @@ pydis_end
 ;     l0ab4
 ;     l0ab5
 ;     l0ab6
-;     l0ab7
-;     l0ac3
-;     l0ad4
-;     l0aef
 ;     l0b00
 ;     l1104
 ;     l1105
@@ -9420,6 +9428,9 @@ pydis_end
 ;     lbf00
 ;     loop_c0492
 ;     loop_c04f9
+;     loop_c0aba
+;     loop_c0ac6
+;     loop_c0ade
 ;     loop_c114f
 ;     loop_c11dd
 ;     loop_c1213
@@ -9489,9 +9500,6 @@ pydis_end
 ;     loop_c3f18
 ;     loop_c3f7b
 ;     loop_c3f87
-;     loop_c408b
-;     loop_c4097
-;     loop_c40af
 ;     sub_c040a
 ;     sub_c0474
 ;     sub_c04cb
@@ -9800,6 +9808,9 @@ pydis_end
 ;     sub_c3bd3
 ;     sub_c3bfd
 ;     sub_c3f6f
+;     sub_c4094
+;     sub_c40a5
+;     sub_c40c0
 ;     sub_c4109
 ;     sub_c4173
 ;     sub_c41ca
@@ -9976,6 +9987,9 @@ pydis_end
 }
 !if (screen_width_minus_one) != $27 {
     !error "Assertion failed: screen_width_minus_one == $27"
+}
+!if (something5_high_copy_end - something5_high_copy_start) != $48 {
+    !error "Assertion failed: something5_high_copy_end - something5_high_copy_start == $48"
 }
 !if (something9_high_copy_end - something9_high_copy_start) != $2f {
     !error "Assertion failed: something9_high_copy_end - something9_high_copy_start == $2f"
