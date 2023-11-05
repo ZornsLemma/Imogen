@@ -407,6 +407,14 @@ entry(0x29ea, "apply_new_level_index_rts")
 
 entry(0x3f6f, "probably_copy_protection_TODO")
 
+entry(0x3a75, "menu_x_step_in_a")
+comment(0x3a75, "TODO: This looks like a manual implementation of an auto-repeat delay, so if you hold down left/right a fraction of a second too long it doesn't zip all the way to the left or right.")
+# TODO: Not yet clear exactly why we have two versions of these flags
+label(0x2a, "space_flag")
+label(0x3aa0, "space_flag2")
+label(0x28, "left_right_flag")
+label(0x3aa1, "left_right_flag2")
+
 go()
 
 # vi: tw=100

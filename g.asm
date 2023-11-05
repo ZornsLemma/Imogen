@@ -76,9 +76,9 @@ l0020                               = $20
 l0025                               = $25
 l0026                               = $26
 l0027                               = $27
-l0028                               = $28
+left_right_flag                     = $28
 new_level_index                     = $29
-l002a                               = $2a
+space_flag                          = $2a
 l002b                               = $2b
 l002c                               = $2c
 l002d                               = $2d
@@ -4271,7 +4271,7 @@ c2a60
 
 ; $2ba4 referenced 1 time by $2a6b
 c2a73
-    lda l3aa0                                                         ; 2ba4: ad a0 3a    ..: :2a73[1]
+    lda space_flag2                                                   ; 2ba4: ad a0 3a    ..: :2a73[1]
     beq c2a81                                                         ; 2ba7: f0 09       ..  :2a76[1]
     jsr sub_c2adb                                                     ; 2ba9: 20 db 2a     .* :2a78[1]
     jsr sub_c2b37                                                     ; 2bac: 20 37 2b     7+ :2a7b[1]
@@ -4603,7 +4603,7 @@ c2c62
 ; $2d98 referenced 1 time by $2a64
 sub_c2c67
     ldx new_level_index                                               ; 2d98: a6 29       .)  :2c67[1]
-    lda l3aa1                                                         ; 2d9a: ad a1 3a    ..: :2c69[1]
+    lda left_right_flag2                                              ; 2d9a: ad a1 3a    ..: :2c69[1]
     beq c2c88                                                         ; 2d9d: f0 1a       ..  :2c6c[1]
     bmi c2c7e                                                         ; 2d9f: 30 0e       0.  :2c6e[1]
 ; $2da1 referenced 1 time by $2c78
@@ -6376,8 +6376,8 @@ sub_c3a47
     lda #0                                                            ; 3b83: a9 00       ..  :3a52[1]
 ; $3b85 referenced 1 time by $3a50
 c3a54
-    ora l002a                                                         ; 3b85: 05 2a       .*  :3a54[1]
-    sta l002a                                                         ; 3b87: 85 2a       .*  :3a56[1]
+    ora space_flag                                                    ; 3b85: 05 2a       .*  :3a54[1]
+    sta space_flag                                                    ; 3b87: 85 2a       .*  :3a56[1]
     ldx #inkey_key_left                                               ; 3b89: a2 e6       ..  :3a58[1]
     jsr negative_inkey                                                ; 3b8b: 20 cc 3a     .: :3a5a[1]
     sta l3a8d                                                         ; 3b8e: 8d 8d 3a    ..: :3a5d[1]
@@ -6386,14 +6386,17 @@ c3a54
     cmp l3a8d                                                         ; 3b96: cd 8d 3a    ..: :3a65[1]
     beq c3a73                                                         ; 3b99: f0 09       ..  :3a68[1]
     lda l3a8d                                                         ; 3b9b: ad 8d 3a    ..: :3a6a[1]
-    bmi c3a75                                                         ; 3b9e: 30 06       0.  :3a6d[1]
+    bmi menu_x_step_in_a                                              ; 3b9e: 30 06       0.  :3a6d[1]
     lda #1                                                            ; 3ba0: a9 01       ..  :3a6f[1]
-    bpl c3a75                                                         ; 3ba2: 10 02       ..  :3a71[1]
+    bpl menu_x_step_in_a                                              ; 3ba2: 10 02       ..  :3a71[1]
 ; $3ba4 referenced 1 time by $3a68
 c3a73
     lda #0                                                            ; 3ba4: a9 00       ..  :3a73[1]
+; TODO: This looks like a manual implementation of an auto-repeat delay, so if you hold
+; down left/right a fraction of a second too long it doesn't zip all the way to the
+; left or right.
 ; $3ba6 referenced 2 times by $3a6d, $3a71
-c3a75
+menu_x_step_in_a
     cmp l0027                                                         ; 3ba6: c5 27       .'  :3a75[1]
     sta l0027                                                         ; 3ba8: 85 27       .'  :3a77[1]
     bne c3a83                                                         ; 3baa: d0 08       ..  :3a79[1]
@@ -6407,8 +6410,8 @@ c3a83
     stx l0026                                                         ; 3bb7: 86 26       .&  :3a86[1]
 ; $3bb9 referenced 1 time by $3a7f
 c3a88
-    ora l0028                                                         ; 3bb9: 05 28       .(  :3a88[1]
-    sta l0028                                                         ; 3bbb: 85 28       .(  :3a8a[1]
+    ora left_right_flag                                               ; 3bb9: 05 28       .(  :3a88[1]
+    sta left_right_flag                                               ; 3bbb: 85 28       .(  :3a8a[1]
     rts                                                               ; 3bbd: 60          `   :3a8c[1]
 
 ; $3bbe referenced 6 times by $3a20, $3a34, $3a3a, $3a5d, $3a65, $3a6a
@@ -6420,20 +6423,20 @@ l3a8e
 
 ; $3bc0 referenced 4 times by $174c, $2a44, $35e2, $3899
 c3a8f
-    lda l002a                                                         ; 3bc0: a5 2a       .*  :3a8f[1]
-    sta l3aa0                                                         ; 3bc2: 8d a0 3a    ..: :3a91[1]
-    lda l0028                                                         ; 3bc5: a5 28       .(  :3a94[1]
-    sta l3aa1                                                         ; 3bc7: 8d a1 3a    ..: :3a96[1]
+    lda space_flag                                                    ; 3bc0: a5 2a       .*  :3a8f[1]
+    sta space_flag2                                                   ; 3bc2: 8d a0 3a    ..: :3a91[1]
+    lda left_right_flag                                               ; 3bc5: a5 28       .(  :3a94[1]
+    sta left_right_flag2                                              ; 3bc7: 8d a1 3a    ..: :3a96[1]
     lda #0                                                            ; 3bca: a9 00       ..  :3a99[1]
-    sta l002a                                                         ; 3bcc: 85 2a       .*  :3a9b[1]
-    sta l0028                                                         ; 3bce: 85 28       .(  :3a9d[1]
+    sta space_flag                                                    ; 3bcc: 85 2a       .*  :3a9b[1]
+    sta left_right_flag                                               ; 3bce: 85 28       .(  :3a9d[1]
     rts                                                               ; 3bd0: 60          `   :3a9f[1]
 
 ; $3bd1 referenced 2 times by $2a73, $3a91
-l3aa0
+space_flag2
     !byte 0                                                           ; 3bd1: 00          .   :3aa0[1]
 ; $3bd2 referenced 2 times by $2c69, $3a96
-l3aa1
+left_right_flag2
     !byte 0                                                           ; 3bd2: 00          .   :3aa1[1]
 
 ; $3bd3 referenced 2 times by $2abd, $2ad4
@@ -7622,11 +7625,11 @@ pydis_end
 ;     l39dd:                                                5
 ;     sub_c3a27:                                            5
 ;     l3a97:                                                5
-;     l3aa0:                                                5
+;     space_flag2:                                          5
 ;     l0020:                                                4
 ;     l0025:                                                4
-;     l0028:                                                4
-;     l002a:                                                4
+;     left_right_flag:                                      4
+;     space_flag:                                           4
 ;     l002c:                                                4
 ;     l002d:                                                4
 ;     l003c:                                                4
@@ -8303,7 +8306,7 @@ pydis_end
 ;     c39f4:                                                1
 ;     l3a63:                                                1
 ;     sub_c3a6d:                                            1
-;     l3aa1:                                                1
+;     left_right_flag2:                                     1
 ;     sub_c3ab7:                                            1
 ;     l3ac8:                                                1
 ;     sub_c3ae7:                                            1
@@ -8775,7 +8778,6 @@ pydis_end
 ;     c3a41
 ;     c3a54
 ;     c3a73
-;     c3a75
 ;     c3a83
 ;     c3a88
 ;     c3a8f
@@ -8853,8 +8855,6 @@ pydis_end
 ;     l0025
 ;     l0026
 ;     l0027
-;     l0028
-;     l002a
 ;     l002b
 ;     l002c
 ;     l002d
@@ -9368,8 +9368,6 @@ pydis_end
 ;     l3a97
 ;     l3a98
 ;     l3a9c
-;     l3aa0
-;     l3aa1
 ;     l3aa4
 ;     l3ac7
 ;     l3ac8
