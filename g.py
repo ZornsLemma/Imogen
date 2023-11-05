@@ -261,6 +261,9 @@ expr(0x39dd, "last_level_letter")
 expr(0x39e7, "last_level_letter")
 expr(0x39eb, "first_level_letter")
 
+label(0xab5, "old_irq1v")
+expr_label(0xab6, "old_irq1v+1")
+
 go()
 
 # vi: tw=100

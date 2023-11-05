@@ -206,8 +206,7 @@ l0ab1                   = $0ab1
 l0ab2                   = $0ab2
 l0ab3                   = $0ab3
 l0ab4                   = $0ab4
-l0ab5                   = $0ab5
-l0ab6                   = $0ab6
+old_irq1v               = $0ab5
 l0b00                   = $0b00
 l3b09                   = $3b09
 c3c2c                   = $3c2c
@@ -1292,7 +1291,7 @@ something10_TODO
     pla                                                               ; 18e3: 68          h   :17b2[1]
     sta l00fc                                                         ; 18e4: 85 fc       ..  :17b3[1]
     pla                                                               ; 18e6: 68          h   :17b5[1]
-    jmp (l0ab5)                                                       ; 18e7: 6c b5 0a    l.. :17b6[1]
+    jmp (old_irq1v)                                                   ; 18e7: 6c b5 0a    l.. :17b6[1]
 
 ; $18ea referenced 1 time by $17a8
 sub_c17b9
@@ -6630,9 +6629,9 @@ c3c9b
     sta l0ab2                                                         ; 3cde: 8d b2 0a    ...
     sta l0ab4                                                         ; 3ce1: 8d b4 0a    ...
     lda irq1v                                                         ; 3ce4: ad 04 02    ...
-    sta l0ab5                                                         ; 3ce7: 8d b5 0a    ...
+    sta old_irq1v                                                     ; 3ce7: 8d b5 0a    ...
     lda irq1v+1                                                       ; 3cea: ad 05 02    ...
-    sta l0ab6                                                         ; 3ced: 8d b6 0a    ...
+    sta old_irq1v+1                                                   ; 3ced: 8d b6 0a    ...
     lda #vdu_define_character                                         ; 3cf0: a9 17       ..
     jsr oswrch                                                        ; 3cf2: 20 ee ff     ..            ; Write character 23
     lda #$fe                                                          ; 3cf5: a9 fe       ..
@@ -7103,9 +7102,9 @@ something3_TODO
 something4_TODO
 ; $402c referenced 1 time by $3f87
     sei                                                               ; 402c: 78          x
-    lda l0ab5                                                         ; 402d: ad b5 0a    ...
+    lda old_irq1v                                                     ; 402d: ad b5 0a    ...
     sta irq1v                                                         ; 4030: 8d 04 02    ...
-    lda l0ab6                                                         ; 4033: ad b6 0a    ...
+    lda old_irq1v+1                                                   ; 4033: ad b6 0a    ...
     sta irq1v+1                                                       ; 4036: 8d 05 02    ...
     cli                                                               ; 4039: 58          X
     lda #3                                                            ; 403a: a9 03       ..
@@ -7679,7 +7678,7 @@ pydis_end
 ;     l09d5:                                          3
 ;     l0ab3:                                          3
 ;     l0ab4:                                          3
-;     l0ab5:                                          3
+;     old_irq1v:                                      3
 ;     l123b:                                          3
 ;     l1271:                                          3
 ;     sub_c14a7:                                      3
@@ -7762,7 +7761,7 @@ pydis_end
 ;     l0a80:                                          2
 ;     l0ab1:                                          2
 ;     l0ab2:                                          2
-;     l0ab6:                                          2
+;     old_irq1v+1:                                    2
 ;     l0b00:                                          2
 ;     sub_c1236:                                      2
 ;     sub_c123c:                                      2
@@ -8975,8 +8974,6 @@ pydis_end
 ;     l0ab2
 ;     l0ab3
 ;     l0ab4
-;     l0ab5
-;     l0ab6
 ;     l0b00
 ;     l1104
 ;     l1105
