@@ -400,6 +400,7 @@ label(0x9c9, "x_entry_table11")
 label(0x38ac, "x_entry_table12") # TODO: Re-uses envelope_1, need to resolve label clash
 
 # TODO: Poor names - based on use with 17 element table (16 real levels plus Q) and code at $29de
+# TODO: I think (see $2c67) these are actually menu position indexes - it's just coincidence there are 17?
 label(0x29, "new_level_index")
 label(0x2e, "current_level_index")
 entry(0x29de, "apply_new_level_index")
@@ -414,6 +415,11 @@ label(0x2a, "space_flag")
 label(0x3aa0, "space_flag2")
 label(0x28, "left_right_flag")
 label(0x3aa1, "left_right_flag2")
+entry(0x2c88, "no_menu_motion")
+entry(0x2c7e, "menu_left_pending")
+entry(0x2c70, "menu_right_pending")
+comment(0x2c7c, "always branch", inline=True)
+
 
 go()
 

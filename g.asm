@@ -4604,26 +4604,26 @@ c2c62
 sub_c2c67
     ldx new_level_index                                               ; 2d98: a6 29       .)  :2c67[1]
     lda left_right_flag2                                              ; 2d9a: ad a1 3a    ..: :2c69[1]
-    beq c2c88                                                         ; 2d9d: f0 1a       ..  :2c6c[1]
-    bmi c2c7e                                                         ; 2d9f: 30 0e       0.  :2c6e[1]
+    beq no_menu_motion                                                ; 2d9d: f0 1a       ..  :2c6c[1]
+    bmi menu_left_pending                                             ; 2d9f: 30 0e       0.  :2c6e[1]
 ; $2da1 referenced 1 time by $2c78
-loop_c2c70
+menu_right_pending
     inx                                                               ; 2da1: e8          .   :2c70[1]
     cpx #$11                                                          ; 2da2: e0 11       ..  :2c71[1]
-    bcs c2c88                                                         ; 2da4: b0 13       ..  :2c73[1]
+    bcs no_menu_motion                                                ; 2da4: b0 13       ..  :2c73[1]
     lda seventeen_entry_table1,x                                      ; 2da6: bd 5c 29    .\) :2c75[1]
-    beq loop_c2c70                                                    ; 2da9: f0 f6       ..  :2c78[1]
+    beq menu_right_pending                                            ; 2da9: f0 f6       ..  :2c78[1]
     stx new_level_index                                               ; 2dab: 86 29       .)  :2c7a[1]
-    bne c2c88                                                         ; 2dad: d0 0a       ..  :2c7c[1]
+    bne no_menu_motion                                                ; 2dad: d0 0a       ..  :2c7c[1]   ; always branch
 ; $2daf referenced 2 times by $2c6e, $2c84
-c2c7e
+menu_left_pending
     dex                                                               ; 2daf: ca          .   :2c7e[1]
-    bmi c2c88                                                         ; 2db0: 30 07       0.  :2c7f[1]
+    bmi no_menu_motion                                                ; 2db0: 30 07       0.  :2c7f[1]
     lda seventeen_entry_table1,x                                      ; 2db2: bd 5c 29    .\) :2c81[1]
-    beq c2c7e                                                         ; 2db5: f0 f8       ..  :2c84[1]
+    beq menu_left_pending                                             ; 2db5: f0 f8       ..  :2c84[1]
     stx new_level_index                                               ; 2db7: 86 29       .)  :2c86[1]
 ; $2db9 referenced 4 times by $2c6c, $2c73, $2c7c, $2c7f
-c2c88
+no_menu_motion
     jsr apply_new_level_index                                         ; 2db9: 20 de 29     .) :2c88[1]
     rts                                                               ; 2dbc: 60          `   :2c8b[1]
 
@@ -8644,8 +8644,6 @@ pydis_end
 ;     c2c3d
 ;     c2c5f
 ;     c2c62
-;     c2c7e
-;     c2c88
 ;     c2d87
 ;     c2da6
 ;     c2dc0
@@ -9458,7 +9456,6 @@ pydis_end
 ;     loop_c2bc6
 ;     loop_c2be9
 ;     loop_c2c58
-;     loop_c2c70
 ;     loop_c2ec9
 ;     loop_c34b2
 ;     loop_c36c7
