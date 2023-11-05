@@ -35,6 +35,7 @@ vdu_bell                                        = 7
 vdu_cr                                          = 13
 vdu_define_character                            = 23
 vdu_define_text_window                          = 28
+vdu_delete                                      = 127
 vdu_enable                                      = 6
 vdu_goto_xy                                     = 31
 vdu_lf                                          = 10
@@ -5487,9 +5488,9 @@ c346a
     sta l3497                                                         ; 359d: 8d 97 34    ..4 :346c[1]
     jsr inkey_0                                                       ; 35a0: 20 7c 38     |8 :346f[1]
     and #caps_mask                                                    ; 35a3: 29 df       ).  :3472[1]
-    cmp #$53 ; 'S'                                                    ; 35a5: c9 53       .S  :3474[1]
+    cmp #'S'                                                          ; 35a5: c9 53       .S  :3474[1]
     beq c347f                                                         ; 35a7: f0 07       ..  :3476[1]
-    cmp #$4c ; 'L'                                                    ; 35a9: c9 4c       .L  :3478[1]
+    cmp #'L'                                                          ; 35a9: c9 4c       .L  :3478[1]
     bne c3496                                                         ; 35ab: d0 1a       ..  :347a[1]
     dec l3497                                                         ; 35ad: ce 97 34    ..4 :347c[1]
 ; $35b0 referenced 1 time by $3476
@@ -5516,7 +5517,7 @@ l3497
 ; $35d8 referenced 1 time by $345e
 c34a7
     lda #7                                                            ; 35d8: a9 07       ..  :34a7[1]
-    jsr sub_c36fc                                                     ; 35da: 20 fc 36     .6 :34a9[1]
+    jsr string_input                                                  ; 35da: 20 fc 36     .6 :34a9[1]
     ldy l0005                                                         ; 35dd: a4 05       ..  :34ac[1]
     beq c3496                                                         ; 35df: f0 e6       ..  :34ae[1]
     ldy #6                                                            ; 35e1: a0 06       ..  :34b0[1]
@@ -5552,13 +5553,13 @@ l34db
 ; $3632 referenced 1 time by $3467
 c3501
     jsr inkey_0                                                       ; 3632: 20 7c 38     |8 :3501[1]
-    cmp #$34 ; '4'                                                    ; 3635: c9 34       .4  :3504[1]
+    cmp #'4'                                                          ; 3635: c9 34       .4  :3504[1]
     bcs c3534                                                         ; 3637: b0 2c       .,  :3506[1]
-    cmp #$30 ; '0'                                                    ; 3639: c9 30       .0  :3508[1]
+    cmp #'0'                                                          ; 3639: c9 30       .0  :3508[1]
     bcs c3516                                                         ; 363b: b0 0a       ..  :350a[1]
-    cmp #$24 ; '$'                                                    ; 363d: c9 24       .$  :350c[1]
+    cmp #'$'                                                          ; 363d: c9 24       .$  :350c[1]
     bcs c3534                                                         ; 363f: b0 24       .$  :350e[1]
-    cmp #$21 ; '!'                                                    ; 3641: c9 21       .!  :3510[1]
+    cmp #'!'                                                          ; 3641: c9 21       .!  :3510[1]
     bcc c3534                                                         ; 3643: 90 20       .   :3512[1]
     adc #$0f                                                          ; 3645: 69 0f       i.  :3514[1]
 ; $3647 referenced 1 time by $350a
@@ -5728,7 +5729,7 @@ sub_c3664
     lda l0004                                                         ; 379e: a5 04       ..  :366d[1]
     beq c36a7                                                         ; 37a0: f0 36       .6  :366f[1]
     lda #$10                                                          ; 37a2: a9 10       ..  :3671[1]
-    jsr sub_c36fc                                                     ; 37a4: 20 fc 36     .6 :3673[1]
+    jsr string_input                                                  ; 37a4: 20 fc 36     .6 :3673[1]
     ldy l0005                                                         ; 37a7: a4 05       ..  :3676[1]
     beq c3698                                                         ; 37a9: f0 1e       ..  :3678[1]
     lda copy_protection_flag                                          ; 37ab: ad 03 11    ... :367a[1]
@@ -5825,34 +5826,34 @@ loop_c36f9
     jmp c377a                                                         ; 382a: 4c 7a 37    Lz7 :36f9[1]
 
 ; $382d referenced 2 times by $34a9, $3673
-sub_c36fc
+string_input
     sta l377d                                                         ; 382d: 8d 7d 37    .}7 :36fc[1]
     jsr inkey_0                                                       ; 3830: 20 7c 38     |8 :36ff[1]
     ldy l0005                                                         ; 3833: a4 05       ..  :3702[1]
     cmp #vdu_cr                                                       ; 3835: c9 0d       ..  :3704[1]
     beq c376b                                                         ; 3837: f0 63       .c  :3706[1]
-    cmp #$7f                                                          ; 3839: c9 7f       ..  :3708[1]
+    cmp #vdu_delete                                                   ; 3839: c9 7f       ..  :3708[1]
     beq c3750                                                         ; 383b: f0 44       .D  :370a[1]
-    cmp #$2d ; '-'                                                    ; 383d: c9 2d       .-  :370c[1]
+    cmp #'-'                                                          ; 383d: c9 2d       .-  :370c[1]
     beq c3734                                                         ; 383f: f0 24       .$  :370e[1]
-    cmp #$3d ; '='                                                    ; 3841: c9 3d       .=  :3710[1]
+    cmp #'='                                                          ; 3841: c9 3d       .=  :3710[1]
     beq c3734                                                         ; 3843: f0 20       .   :3712[1]
-    cmp #$21 ; '!'                                                    ; 3845: c9 21       .!  :3714[1]
+    cmp #'!'                                                          ; 3845: c9 21       .!  :3714[1]
     bcc loop_c36f9                                                    ; 3847: 90 e1       ..  :3716[1]
-    cmp #$2a ; '*'                                                    ; 3849: c9 2a       .*  :3718[1]
+    cmp #'*'                                                          ; 3849: c9 2a       .*  :3718[1]
     bcs c3720                                                         ; 384b: b0 04       ..  :371a[1]
     adc #$10                                                          ; 384d: 69 10       i.  :371c[1]
     bne c3736                                                         ; 384f: d0 16       ..  :371e[1]
 ; $3851 referenced 1 time by $371a
 c3720
-    cmp #$30 ; '0'                                                    ; 3851: c9 30       .0  :3720[1]
+    cmp #'0'                                                          ; 3851: c9 30       .0  :3720[1]
     bcc c377a                                                         ; 3853: 90 56       .V  :3722[1]
-    cmp #$3a ; ':'                                                    ; 3855: c9 3a       .:  :3724[1]
+    cmp #'9' + 1                                                      ; 3855: c9 3a       .:  :3724[1]
     bcc c3736                                                         ; 3857: 90 0e       ..  :3726[1]
     and #caps_mask                                                    ; 3859: 29 df       ).  :3728[1]
-    cmp #$41 ; 'A'                                                    ; 385b: c9 41       .A  :372a[1]
+    cmp #'A'                                                          ; 385b: c9 41       .A  :372a[1]
     bcc c377a                                                         ; 385d: 90 4c       .L  :372c[1]
-    cmp #$5b ; '['                                                    ; 385f: c9 5b       .[  :372e[1]
+    cmp #'Z' + 1                                                      ; 385f: c9 5b       .[  :372e[1]
     bcc c3736                                                         ; 3861: 90 04       ..  :3730[1]
     bcs c377a                                                         ; 3863: b0 46       .F  :3732[1]
 ; $3865 referenced 2 times by $370e, $3712
@@ -9770,7 +9771,6 @@ pydis_end
 ;     sub_c36a4
 ;     sub_c36cc
 ;     sub_c36cf
-;     sub_c36fc
 ;     sub_c3706
 ;     sub_c371e
 ;     sub_c3748
@@ -9816,6 +9816,12 @@ pydis_end
 ;     sub_c4109
 ;     sub_c4173
 ;     sub_c41ca
+!if ('9' + 1) != $3a {
+    !error "Assertion failed: '9' + 1 == $3a"
+}
+!if ('Z' + 1) != $5b {
+    !error "Assertion failed: 'Z' + 1 == $5b"
+}
 !if (<(dir_dollar_command)) != $07 {
     !error "Assertion failed: <(dir_dollar_command) == $07"
 }
@@ -10019,6 +10025,9 @@ pydis_end
 }
 !if (vdu_define_text_window) != $1c {
     !error "Assertion failed: vdu_define_text_window == $1c"
+}
+!if (vdu_delete) != $7f {
+    !error "Assertion failed: vdu_delete == $7f"
 }
 !if (vdu_enable) != $06 {
     !error "Assertion failed: vdu_enable == $06"

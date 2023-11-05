@@ -12,6 +12,7 @@ constant(22, "vdu_set_mode")
 constant(23, "vdu_define_character")
 constant(28, "vdu_define_text_window")
 constant(31, "vdu_goto_xy")
+constant(127, "vdu_delete")
 
 constant(5, "osfile_read_catalogue_info")
 constant(0xff, "osfile_load")
@@ -156,18 +157,32 @@ expr(0x1357, make_hi("level_data"))
 label(0x1377, "power_of_2_table")
 hexadecimal(0x1377, 8)
 
-# TODO: Does py8dis support character constants? If not add it? This would presumably be a formatter hint like decimal() or picture_binary().
+entry(0x36fc, "string_input") # TODO: Something like this
+char(0x3475)
+char(0x3479)
+char(0x3505)
+char(0x3509)
+char(0x350d)
+char(0x3511)
+char(0x370d)
+char(0x3711)
+char(0x3715)
+char(0x3719)
+char(0x3721)
+expr(0x3725, "'9' + 1") # TODO: not assembler independent
+char(0x372b)
+expr(0x372f, "'Z' + 1") # TODO: not assembler independent
 label(0x387c, "inkey_0")
 label(0x3acc, "negative_inkey")
 label(0x362e, "wait_for_return")
 expr(0x3632, "vdu_cr")
+expr(0x3709, "vdu_delete")
 constant(0xdf, "caps_mask")
 expr(0x3473, "caps_mask")
 expr(0x3729, "caps_mask")
 expr(0x355b, "vdu_cr")
 expr(0x3562, "vdu_lf")
 expr(0x3705, "vdu_cr")
-
 
 expr(0x445, "vdu_goto_xy")
 
