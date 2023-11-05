@@ -184,6 +184,9 @@ entry(0x2b87, "something21_TODO")
 entry(0x2be0, "something22_TODO")
 # TODO: DELETE entry(0x35f7, "something23_TODO")
 
+label(0x37, "currently_loaded_level")
+label(0x1175, "level_already_loaded")
+
 go()
 
 # vi: tw=100

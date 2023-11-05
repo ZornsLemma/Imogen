@@ -70,7 +70,7 @@ l002d                   = $2d
 l002e                   = $2e
 l0030                   = $30
 l0031                   = $31
-l0037                   = $37
+currently_loaded_level  = $37
 l0039                   = $39
 l003a                   = $3a
 l003b                   = $3b
@@ -311,8 +311,8 @@ c1140
 ; $1280 referenced 1 time by $116e
 loop_c114f
     lda l0031                                                         ; 1280: a5 31       .1  :114f[1]
-    cmp l0037                                                         ; 1282: c5 37       .7  :1151[1]
-    beq c1175                                                         ; 1284: f0 20       .   :1153[1]
+    cmp currently_loaded_level                                        ; 1282: c5 37       .7  :1151[1]
+    beq level_already_loaded                                          ; 1284: f0 20       .   :1153[1]
     sta data_filename_variable_letter                                 ; 1286: 8d 76 12    .v. :1155[1]
     lda #<data_filename                                               ; 1289: a9 72       .r  :1158[1]
     sta l0070                                                         ; 128b: 85 70       .p  :115a[1]
@@ -329,9 +329,9 @@ loop_c114f
 ; $12a2 referenced 1 time by $1169
 c1171
     lda l0031                                                         ; 12a2: a5 31       .1  :1171[1]
-    sta l0037                                                         ; 12a4: 85 37       .7  :1173[1]
+    sta currently_loaded_level                                        ; 12a4: 85 37       .7  :1173[1]
 ; $12a6 referenced 1 time by $1153
-c1175
+level_already_loaded
     lda #osbyte_flush_buffer_class                                    ; 12a6: a9 0f       ..  :1175[1]
     ldx #0                                                            ; 12a8: a2 00       ..  :1177[1]
     jsr osbyte                                                        ; 12aa: 20 f4 ff     .. :1179[1]   ; Flush all buffers (X=0)
@@ -6642,7 +6642,7 @@ loop_c3cfc
     ldx #0                                                            ; 3d09: a2 00       ..
     jsr osbyte                                                        ; 3d0b: 20 f4 ff     ..            ; Set printer ignore character to X=0
     lda #$fe                                                          ; 3d0e: a9 fe       ..
-    sta l0037                                                         ; 3d10: 85 37       .7
+    sta currently_loaded_level                                        ; 3d10: 85 37       .7
     lda #0                                                            ; 3d12: a9 00       ..
     sta l0004                                                         ; 3d14: 85 04       ..
     lda #$ff                                                          ; 3d16: a9 ff       ..
@@ -7620,7 +7620,7 @@ pydis_end
 ;     l0008:                                          3
 ;     l000a:                                          3
 ;     l0027:                                          3
-;     l0037:                                          3
+;     currently_loaded_level:                         3
 ;     l003f:                                          3
 ;     l0059:                                          3
 ;     l005f:                                          3
@@ -8341,7 +8341,6 @@ pydis_end
 ;     c110c
 ;     c1140
 ;     c1171
-;     c1175
 ;     c1186
 ;     c11f8
 ;     c1209
@@ -8805,7 +8804,6 @@ pydis_end
 ;     l002e
 ;     l0030
 ;     l0031
-;     l0037
 ;     l0039
 ;     l003a
 ;     l003b
