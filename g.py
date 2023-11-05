@@ -264,6 +264,8 @@ expr(0x39eb, "first_level_letter")
 label(0xab5, "old_irq1v")
 expr_label(0xab6, "old_irq1v+1")
 
+entry(0x178c, "wait_for_vsync")
+
 go()
 
 # vi: tw=100

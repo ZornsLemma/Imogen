@@ -1256,7 +1256,7 @@ l178b
     !byte 0                                                           ; 18bc: 00          .   :178b[1]
 
 ; $18bd referenced 4 times by $0c31, $0c34, $1839, $2ab7
-sub_c178c
+wait_for_vsync
     lda #osbyte_vsync                                                 ; 18bd: a9 13       ..  :178c[1]
     jmp osbyte                                                        ; 18bf: 4c f4 ff    L.. :178e[1]   ; Wait for vertical sync
 
@@ -1374,7 +1374,7 @@ loop_c1830
 
 ; $196a referenced 1 time by $2a5d
 something11_TODO
-    jsr sub_c178c                                                     ; 196a: 20 8c 17     .. :1839[1]
+    jsr wait_for_vsync                                                ; 196a: 20 8c 17     .. :1839[1]
     jsr some_data_low_TODO                                            ; 196d: 20 00 04     .. :183c[1]
     jsr sub_c1845                                                     ; 1970: 20 45 18     E. :183f[1]
     jmp something3_TODO                                               ; 1973: 4c 00 0c    L.. :1842[1]
@@ -4303,7 +4303,7 @@ c2aa0
     bne c2abd                                                         ; 2be6: d0 06       ..  :2ab5[1]
 ; $2be8 referenced 1 time by $2aae
 c2ab7
-    jsr sub_c178c                                                     ; 2be8: 20 8c 17     .. :2ab7[1]
+    jsr wait_for_vsync                                                ; 2be8: 20 8c 17     .. :2ab7[1]
     jmp something20_TODO                                              ; 2beb: 4c 38 2a    L8* :2aba[1]
 
 ; $2bee referenced 1 time by $2ab5
@@ -7075,8 +7075,8 @@ something3_TODO
     lda #$17                                                          ; 3ff6: a9 17       ..  :0c2b[4]
     sta irq1v+1                                                       ; 3ff8: 8d 05 02    ... :0c2d[4]
     cli                                                               ; 3ffb: 58          X   :0c30[4]
-    jsr sub_c178c                                                     ; 3ffc: 20 8c 17     .. :0c31[4]
-    jsr sub_c178c                                                     ; 3fff: 20 8c 17     .. :0c34[4]
+    jsr wait_for_vsync                                                ; 3ffc: 20 8c 17     .. :0c31[4]
+    jsr wait_for_vsync                                                ; 3fff: 20 8c 17     .. :0c34[4]
     lda #crtc_vert_sync_pos                                           ; 4002: a9 07       ..  :0c37[4]
     sta crtc_address_register                                         ; 4004: 8d 00 fe    ... :0c39[4]
     lda l110b                                                         ; 4007: ad 0b 11    ... :0c3c[4]
@@ -9540,7 +9540,6 @@ pydis_end
 ;     sub_c1766
 ;     sub_c176e
 ;     sub_c1771
-;     sub_c178c
 ;     sub_c17a1
 ;     sub_c17b9
 ;     sub_c17bb
