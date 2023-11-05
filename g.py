@@ -15,7 +15,7 @@ constant(31, "vdu_goto_xy")
 constant(5, "osfile_read_catalogue_info")
 constant(0xff, "osfile_load")
 
-load(0x1234, "tmp/g.dat", "6502", "ac5feeac5c32a306d4a73ba393677385")
+load(0x1234, "orig/g.dat", "6502", "ac5feeac5c32a306d4a73ba393677385")
 move_id = move(0x1103, 0x1234, 0x2a00)
 move_id2 = move(0x400, 0x40ff, 295) # code copies 512 bytes, but we only have 295 bytes of actual data
 
