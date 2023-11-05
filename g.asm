@@ -4121,7 +4121,7 @@ loop_c2988
     ldx #3                                                            ; 2ac1: a2 03       ..  :2990[1]
 ; $2ac3 referenced 1 time by $2996
 loop_c2992
-    sta l2ee9,x                                                       ; 2ac3: 9d e9 2e    ... :2992[1]
+    sta four_entry_table2,x                                           ; 2ac3: 9d e9 2e    ... :2992[1]
     dex                                                               ; 2ac6: ca          .   :2995[1]
     bpl loop_c2992                                                    ; 2ac7: 10 fa       ..  :2996[1]
     lda l296d                                                         ; 2ac9: ad 6d 29    .m) :2998[1]
@@ -4894,7 +4894,7 @@ c2ee4
 l2ee8
     !byte 0                                                           ; 3019: 00          .   :2ee8[1]
 ; $301a referenced 1 time by $2992
-l2ee9
+four_entry_table2
     !byte 0, 0, 0, 0                                                  ; 301a: 00 00 00... ... :2ee9[1]
 ; $301e referenced 2 times by $1a25, $2ee1
 l2eed
@@ -9251,7 +9251,6 @@ pydis_end
 ;     l2eb6
 ;     l2eb7
 ;     l2ee8
-;     l2ee9
 ;     l2eed
 ;     l2ef1
 ;     l2ef2
