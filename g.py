@@ -159,6 +159,14 @@ expr(0x3632, "vdu_cr")
 expr(0x445, "vdu_goto_xy")
 
 entry(0x453, "something_TODO")
+# TODO: DELETE? entry(0x3fbb, "something2_TODO")
+entry(0x3fcb, "something3_TODO")
+entry(0x402c, "something4_TODO")
+entry(0x4088, "something5_TODO")
+entry(0x4094, "something6_TODO")
+entry(0x40a5, "something7_TODO")
+entry(0x40c0, "something8_TODO")
+entry(0x40d0, "something9_TODO")
 
 go()
 

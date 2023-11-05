@@ -19,9 +19,11 @@ osbyte_select_adc_channels                      = 16
 osbyte_set_cursor_editing                       = 4
 osbyte_set_printer_ignore                       = 6
 osbyte_tv                                       = 144
+osbyte_vsync                                    = 19
 osfile_load                                     = 255
 osfile_read_catalogue_info                      = 5
 osword_envelope                                 = 8
+osword_read_char                                = 10
 screen_width_minus_one                          = 39
 vdu_bell                                        = 7
 vdu_cr                                          = 13
@@ -90,6 +92,12 @@ l005c                   = $5c
 l005d                   = $5d
 l005e                   = $5e
 l005f                   = $5f
+l0060                   = $60
+l0061                   = $61
+l0062                   = $62
+l0066                   = $66
+l0067                   = $67
+l0068                   = $68
 l0070                   = $70
 l0071                   = $71
 l0072                   = $72
@@ -118,6 +126,7 @@ l0088                   = $88
 l0131                   = $0131
 brkv                    = $0202
 irq1v                   = $0204
+l0287                   = $0287
 l0950                   = $0950
 l0966                   = $0966
 l097c                   = $097c
@@ -138,6 +147,7 @@ l09ef                   = $09ef
 l0a6f                   = $0a6f
 l0a7e                   = $0a7e
 l0a7f                   = $0a7f
+l0a80                   = $0a80
 l0aa1                   = $0aa1
 l0aa9                   = $0aa9
 l0ab1                   = $0ab1
@@ -158,11 +168,15 @@ lbe00                   = $be00
 lbf00                   = $bf00
 crtc_address_register   = $fe00
 crtc_address_write      = $fe01
+system_via_t2c_l        = $fe48
 system_via_t2c_h        = $fe49
+system_via_acr          = $fe4b
+system_via_ier          = $fe4e
 user_via_t1c_l          = $fe64
 user_via_t1c_h          = $fe65
 user_via_t2c_l          = $fe68
 user_via_t2c_h          = $fe69
+user_via_ier            = $fe6e
 osfile                  = $ffdd
 oswrch                  = $ffee
 osword                  = $fff1
@@ -187,10 +201,10 @@ l1106
 ; $1238 referenced 1 time by $0403
 l1107
     !byte $1d, $10, $27                                               ; 1238: 1d 10 27    ..' :1107[1]
-; $123b referenced 2 times by $11f0, $1728
+; $123b referenced 3 times by $11f0, $1728, $3fcd
 l110a
     !byte 0                                                           ; 123b: 00          .   :110a[1]
-; $123c referenced 1 time by $3e17
+; $123c referenced 2 times by $3e17, $4007
 l110b
     !byte 0                                                           ; 123c: 00          .   :110b[1]
 
@@ -1127,16 +1141,16 @@ c174c
     rts                                                               ; 1882: 60          `   :1751[1]
 
     !byte $8f, $a2, $b8, $a0, $eb, $ae, $b9, $b9, $a4, $b9, $c6       ; 1883: 8f a2 b8... ... :1752[1]
-; $188e referenced 2 times by $1768, $1782
+; $188e referenced 3 times by $1768, $1782, $3fd0
 l175d
     !byte 0                                                           ; 188e: 00          .   :175d[1]
-; $188f referenced 1 time by $11fa
+; $188f referenced 2 times by $11fa, $3fd3
 l175e
     !byte 0                                                           ; 188f: 00          .   :175e[1]
-; $1890 referenced 2 times by $176b, $1787
+; $1890 referenced 3 times by $176b, $1787, $3fd6
 l175f
     !byte 0                                                           ; 1890: 00          .   :175f[1]
-; $1891 referenced 2 times by $11fd, $123c
+; $1891 referenced 3 times by $11fd, $123c, $3fd9
 l1760
     !byte 0                                                           ; 1891: 00          .   :1760[1]
 ; $1892 referenced 1 time by $177f
@@ -1170,7 +1184,12 @@ c178a
 
 ; $18bc referenced 2 times by $388f, $3892
 l178b
-    !byte   0, $a9, $13, $4c, $f4, $ff                                ; 18bc: 00 a9 13... ... :178b[1]
+    !byte 0                                                           ; 18bc: 00          .   :178b[1]
+
+; $18bd referenced 2 times by $3ffc, $3fff
+sub_c178c
+    lda #osbyte_vsync                                                 ; 18bd: a9 13       ..  :178c[1]
+    jmp osbyte                                                        ; 18bf: 4c f4 ff    L.. :178e[1]   ; Wait for vertical sync
 
 ; $18c2 referenced 1 time by $0406
 c1791
@@ -1204,14 +1223,48 @@ loop_c179a
     !byte $20,   0,   4, $20, $45, $18, $4c,   0, $0c, $78, $a9, $0c  ; 196d: 20 00 04...  .. :183c[1]
     !byte $8d, $30, $fe, $a0,   0, $b9,   0, $be, $99,   0, $0c, $b9  ; 1979: 8d 30 fe... .0. :1848[1]
     !byte   0, $bf, $99,   0, $0b, $c8, $d0, $f1, $a5, $f4, $8d, $30  ; 1985: 00 bf 99... ... :1854[1]
-    !byte $fe, $58, $8c, $87,   2, $60, $c9, $21, $90, $39, $c9, $7f  ; 1991: fe 58 8c... .X. :1860[1]
-    !byte $b0, $35, $85, $60, $8a, $48, $98, $48, $a9, $0a, $a2, $60  ; 199d: b0 35 85... .5. :186c[1]
-    !byte $a0,   0, $20, $f1, $ff                                     ; 19a9: a0 00 20... ..  :1878[1]
-    !text "FaFb"                                                      ; 19ae: 46 61 46... FaF :187d[1]
-    !byte   6, $66,   6, $67,   6, $68, $a9, $17, $20, $ee, $ff, $a9  ; 19b2: 06 66 06... .f. :1881[1]
-    !byte $ff, $20, $ee, $ff, $a2,   0, $b5, $61, $20, $ee, $ff, $e8  ; 19be: ff 20 ee... . . :188d[1]
-    !byte $e0,   8, $90, $f6, $68, $a8, $68, $aa, $a9, $ff, $4c, $ee  ; 19ca: e0 08 90... ... :1899[1]
-    !byte $ff                                                         ; 19d6: ff          .   :18a5[1]
+    !byte $fe, $58, $8c, $87,   2, $60                                ; 1991: fe 58 8c... .X. :1860[1]
+
+; $1997 referenced 1 time by $40f3
+sub_c1866
+    cmp #$21 ; '!'                                                    ; 1997: c9 21       .!  :1866[1]
+    bcc c18a3                                                         ; 1999: 90 39       .9  :1868[1]
+    cmp #$7f                                                          ; 199b: c9 7f       ..  :186a[1]
+    bcs c18a3                                                         ; 199d: b0 35       .5  :186c[1]
+    sta l0060                                                         ; 199f: 85 60       .`  :186e[1]
+    txa                                                               ; 19a1: 8a          .   :1870[1]
+    pha                                                               ; 19a2: 48          H   :1871[1]
+    tya                                                               ; 19a3: 98          .   :1872[1]
+    pha                                                               ; 19a4: 48          H   :1873[1]
+    lda #osword_read_char                                             ; 19a5: a9 0a       ..  :1874[1]
+    ldx #<(l0060)                                                     ; 19a7: a2 60       .`  :1876[1]
+    ldy #>(l0060)                                                     ; 19a9: a0 00       ..  :1878[1]
+    jsr osword                                                        ; 19ab: 20 f1 ff     .. :187a[1]   ; Read character definition
+    lsr l0061                                                         ; 19ae: 46 61       Fa  :187d[1]
+    lsr l0062                                                         ; 19b0: 46 62       Fb  :187f[1]
+    asl l0066                                                         ; 19b2: 06 66       .f  :1881[1]
+    asl l0067                                                         ; 19b4: 06 67       .g  :1883[1]
+    asl l0068                                                         ; 19b6: 06 68       .h  :1885[1]
+    lda #$17                                                          ; 19b8: a9 17       ..  :1887[1]
+    jsr oswrch                                                        ; 19ba: 20 ee ff     .. :1889[1]   ; Write character 23
+    lda #$ff                                                          ; 19bd: a9 ff       ..  :188c[1]
+    jsr oswrch                                                        ; 19bf: 20 ee ff     .. :188e[1]   ; Write character 255
+    ldx #0                                                            ; 19c2: a2 00       ..  :1891[1]
+; $19c4 referenced 1 time by $189b
+loop_c1893
+    lda l0061,x                                                       ; 19c4: b5 61       .a  :1893[1]
+    jsr oswrch                                                        ; 19c6: 20 ee ff     .. :1895[1]   ; Write character
+    inx                                                               ; 19c9: e8          .   :1898[1]
+    cpx #8                                                            ; 19ca: e0 08       ..  :1899[1]
+    bcc loop_c1893                                                    ; 19cc: 90 f6       ..  :189b[1]
+    pla                                                               ; 19ce: 68          h   :189d[1]
+    tay                                                               ; 19cf: a8          .   :189e[1]
+    pla                                                               ; 19d0: 68          h   :189f[1]
+    tax                                                               ; 19d1: aa          .   :18a0[1]
+    lda #$ff                                                          ; 19d2: a9 ff       ..  :18a1[1]
+; $19d4 referenced 2 times by $1868, $186c
+c18a3
+    jmp oswrch                                                        ; 19d4: 4c ee ff    L.. :18a3[1]   ; Write character 255
 
 ; $19d7 referenced 2 times by $1af2, $3f56
 mix_a_with_state
@@ -2952,7 +3005,7 @@ c3c6a
     ldx #0                                                            ; 3c6a: a2 00       ..
 ; $3c6c referenced 1 time by $3c75
 loop_c3c6c
-    lda l4088,x                                                       ; 3c6c: bd 88 40    ..@
+    lda something5_TODO,x                                             ; 3c6c: bd 88 40    ..@
     sta l0ab7,x                                                       ; 3c6f: 9d b7 0a    ...
     inx                                                               ; 3c72: e8          .
     cpx #$48 ; 'H'                                                    ; 3c73: e0 48       .H
@@ -2960,14 +3013,14 @@ loop_c3c6c
     ldy #0                                                            ; 3c77: a0 00       ..
 ; $3c79 referenced 1 time by $3c80
 loop_c3c79
-    lda l3fcb,y                                                       ; 3c79: b9 cb 3f    ..?
+    lda something3_TODO,y                                             ; 3c79: b9 cb 3f    ..?
     sta l0c00,y                                                       ; 3c7c: 99 00 0c    ...
     iny                                                               ; 3c7f: c8          .
     bne loop_c3c79                                                    ; 3c80: d0 f7       ..
     ldy #0                                                            ; 3c82: a0 00       ..
 ; $3c84 referenced 1 time by $3c8d
 loop_c3c84
-    lda l40d0,y                                                       ; 3c84: b9 d0 40    ..@
+    lda something9_TODO,y                                             ; 3c84: b9 d0 40    ..@
     sta l0131,y                                                       ; 3c87: 99 31 01    .1.
     iny                                                               ; 3c8a: c8          .
     cpy #$2f ; '/'                                                    ; 3c8b: c0 2f       ./
@@ -3397,7 +3450,7 @@ loop_c3f7b
     ldy #0                                                            ; 3f85: a0 00       ..
 ; $3f87 referenced 1 time by $3f94
 loop_c3f87
-    lda l402c,y                                                       ; 3f87: b9 2c 40    .,@
+    lda something4_TODO,y                                             ; 3f87: b9 2c 40    .,@
     sta lbe00,y                                                       ; 3f8a: 99 00 be    ...
     lda l0b00,y                                                       ; 3f8d: b9 00 0b    ...
     sta lbf00,y                                                       ; 3f90: 99 00 bf    ...
@@ -3427,43 +3480,192 @@ c3fba
 l3fbb
     !byte $4c,   8, $80, $4c,   8, $80,   0, $0a, $60,   0,   0,   0  ; 3fbb: 4c 08 80... L..
     !byte   0,   0,   0,   0                                          ; 3fc7: 00 00 00... ...
+
 ; $3fcb referenced 1 time by $3c79
-l3fcb
-    !byte $a9, $ff, $8d, $0a, $11, $ad, $5d, $17, $8d, $5e, $17, $ad  ; 3fcb: a9 ff 8d... ...
-    !byte $5f, $17, $8d, $60, $17, $78, $a9, $7f, $8d, $6e, $fe, $a9  ; 3fd7: 5f 17 8d... _..
-    !byte $c0, $8d, $4b, $fe, $a9, $ff, $8d, $48, $fe, $a9, $3c, $8d  ; 3fe3: c0 8d 4b... ..K
-    !byte $4e, $fe, $a9, $a0, $8d,   4,   2, $a9, $17, $8d,   5,   2  ; 3fef: 4e fe a9... N..
-    !byte $58, $20, $8c, $17, $20, $8c, $17, $a9,   7, $8d,   0, $fe  ; 3ffb: 58 20 8c... X .
-    !byte $ad, $0b, $11, $8d,   1, $fe, $a9, $0d, $8d,   0, $fe, $a9  ; 4007: ad 0b 11... ...
-    !byte $78, $8d,   1, $fe, $a9, $0c, $8d,   0, $fe, $a9, $0b, $8d  ; 4013: 78 8d 01... x..
-    !byte   1, $fe, $a9,   6, $8d,   0, $fe, $a9, $1d, $8d,   1, $fe  ; 401f: 01 fe a9... ...
-    !byte $60                                                         ; 402b: 60          `
+something3_TODO
+    lda #$ff                                                          ; 3fcb: a9 ff       ..
+    sta l110a                                                         ; 3fcd: 8d 0a 11    ...
+    lda l175d                                                         ; 3fd0: ad 5d 17    .].
+    sta l175e                                                         ; 3fd3: 8d 5e 17    .^.
+    lda l175f                                                         ; 3fd6: ad 5f 17    ._.
+    sta l1760                                                         ; 3fd9: 8d 60 17    .`.
+    sei                                                               ; 3fdc: 78          x
+    lda #$7f                                                          ; 3fdd: a9 7f       ..
+    sta user_via_ier                                                  ; 3fdf: 8d 6e fe    .n.
+    lda #$c0                                                          ; 3fe2: a9 c0       ..
+    sta system_via_acr                                                ; 3fe4: 8d 4b fe    .K.
+    lda #$ff                                                          ; 3fe7: a9 ff       ..
+    sta system_via_t2c_l                                              ; 3fe9: 8d 48 fe    .H.
+    lda #$3c ; '<'                                                    ; 3fec: a9 3c       .<
+    sta system_via_ier                                                ; 3fee: 8d 4e fe    .N.
+    lda #$a0                                                          ; 3ff1: a9 a0       ..
+    sta irq1v                                                         ; 3ff3: 8d 04 02    ...
+    lda #$17                                                          ; 3ff6: a9 17       ..
+    sta irq1v+1                                                       ; 3ff8: 8d 05 02    ...
+    cli                                                               ; 3ffb: 58          X
+    jsr sub_c178c                                                     ; 3ffc: 20 8c 17     ..
+    jsr sub_c178c                                                     ; 3fff: 20 8c 17     ..
+    lda #crtc_vert_sync_pos                                           ; 4002: a9 07       ..
+    sta crtc_address_register                                         ; 4004: 8d 00 fe    ...
+    lda l110b                                                         ; 4007: ad 0b 11    ...
+    sta crtc_address_write                                            ; 400a: 8d 01 fe    ...
+    lda #crtc_screen_start_low                                        ; 400d: a9 0d       ..
+    sta crtc_address_register                                         ; 400f: 8d 00 fe    ...
+    lda #$78 ; 'x'                                                    ; 4012: a9 78       .x
+    sta crtc_address_write                                            ; 4014: 8d 01 fe    ...
+    lda #crtc_screen_start_high                                       ; 4017: a9 0c       ..
+    sta crtc_address_register                                         ; 4019: 8d 00 fe    ...
+    lda #$0b                                                          ; 401c: a9 0b       ..
+    sta crtc_address_write                                            ; 401e: 8d 01 fe    ...
+    lda #crtc_vert_displayed                                          ; 4021: a9 06       ..
+    sta crtc_address_register                                         ; 4023: 8d 00 fe    ...
+    lda #$1d                                                          ; 4026: a9 1d       ..
+    sta crtc_address_write                                            ; 4028: 8d 01 fe    ...
+    rts                                                               ; 402b: 60          `
+
 ; $402c referenced 1 time by $3f87
-l402c
-    !byte $78, $ad, $b5, $0a, $8d,   4,   2, $ad, $b6, $0a, $8d,   5  ; 402c: 78 ad b5... x..
-    !byte   2, $58, $a9,   3, $20, $ee, $ff, $a9, $16, $20, $ee, $ff  ; 4038: 02 58 a9... .X.
-    !byte $a9,   7, $20, $ee, $ff, $a9,   4, $a2,   0, $a0,   0, $20  ; 4044: a9 07 20... ..
-    !byte $f4, $ff, $a9, $c8, $a2,   0, $a0,   0, $20, $f4, $ff, $a9  ; 4050: f4 ff a9... ...
-    !byte $0f, $a2,   0, $20, $f4, $ff, $a9,   0, $8d, $87,   2, $68  ; 405c: 0f a2 00... ...
-    !byte $68, $a9, $42, $85, $70, $a9, $41, $85, $71, $a9, $53, $85  ; 4068: 68 a9 42... h.B
-    !byte $72, $a9, $49, $85, $73, $a9, $43, $85, $74, $a9, $0d, $85  ; 4074: 72 a9 49... r.I
-    !byte $75, $a2, $70, $a0,   0, $4c, $f7, $ff                      ; 4080: 75 a2 70... u.p
+something4_TODO
+    sei                                                               ; 402c: 78          x
+    lda l0ab5                                                         ; 402d: ad b5 0a    ...
+    sta irq1v                                                         ; 4030: 8d 04 02    ...
+    lda l0ab6                                                         ; 4033: ad b6 0a    ...
+    sta irq1v+1                                                       ; 4036: 8d 05 02    ...
+    cli                                                               ; 4039: 58          X
+    lda #3                                                            ; 403a: a9 03       ..
+    jsr oswrch                                                        ; 403c: 20 ee ff     ..            ; Write character 3
+    lda #$16                                                          ; 403f: a9 16       ..
+    jsr oswrch                                                        ; 4041: 20 ee ff     ..            ; Write character 22
+    lda #7                                                            ; 4044: a9 07       ..
+    jsr oswrch                                                        ; 4046: 20 ee ff     ..            ; Write character 7
+    lda #osbyte_set_cursor_editing                                    ; 4049: a9 04       ..
+    ldx #0                                                            ; 404b: a2 00       ..
+    ldy #0                                                            ; 404d: a0 00       ..
+    jsr osbyte                                                        ; 404f: 20 f4 ff     ..            ; Enable cursor editing (X=0)
+    lda #osbyte_read_write_escape_break_effect                        ; 4052: a9 c8       ..
+    ldx #0                                                            ; 4054: a2 00       ..
+    ldy #0                                                            ; 4056: a0 00       ..
+    jsr osbyte                                                        ; 4058: 20 f4 ff     ..            ; Write Set normal ESCAPE action, set normal BREAK action, value X=0
+    lda #osbyte_flush_buffer_class                                    ; 405b: a9 0f       ..
+    ldx #0                                                            ; 405d: a2 00       ..
+    jsr osbyte                                                        ; 405f: 20 f4 ff     ..            ; Flush all buffers (X=0)
+    lda #0                                                            ; 4062: a9 00       ..
+    sta l0287                                                         ; 4064: 8d 87 02    ...
+    pla                                                               ; 4067: 68          h
+    pla                                                               ; 4068: 68          h
+    lda #$42 ; 'B'                                                    ; 4069: a9 42       .B
+    sta l0070                                                         ; 406b: 85 70       .p
+    lda #$41 ; 'A'                                                    ; 406d: a9 41       .A
+    sta l0071                                                         ; 406f: 85 71       .q
+    lda #$53 ; 'S'                                                    ; 4071: a9 53       .S
+    sta l0072                                                         ; 4073: 85 72       .r
+    lda #$49 ; 'I'                                                    ; 4075: a9 49       .I
+    sta l0073                                                         ; 4077: 85 73       .s
+    lda #$43 ; 'C'                                                    ; 4079: a9 43       .C
+    sta l0074                                                         ; 407b: 85 74       .t
+    lda #$0d                                                          ; 407d: a9 0d       ..
+    sta l0075                                                         ; 407f: 85 75       .u
+    ldx #<(l0070)                                                     ; 4081: a2 70       .p
+    ldy #>(l0070)                                                     ; 4083: a0 00       ..
+    jmp oscli                                                         ; 4085: 4c f7 ff    L..
+
 ; $4088 referenced 1 time by $3c6c
-l4088
-    !byte $a9,   0, $aa, $9d, $ef,   9, $e8, $e0, $80, $90, $f8, $60  ; 4088: a9 00 aa... ...
-    !byte $a9,   0, $aa, $5d, $ef,   9, $e8, $e0, $80, $90, $f8, $4d  ; 4094: a9 00 aa... ...
-    !byte $ea,   9, $49, $ff, $60, $c0, $51, $f0, $26, $48, $8a, $48  ; 40a0: ea 09 49... ..I
-    !byte $98, $a2, $0f, $dd, $80, $0a, $f0,   3, $ca, $10, $f8, $8a  ; 40ac: 98 a2 0f... ...
-    !byte $18, $69, $41, $a8, $68, $aa, $68, $60, $c0, $51, $f0, $0b  ; 40b8: 18 69 41... .iA
-    !byte $48, $98, $38, $e9, $41, $a8, $b9, $80, $0a, $a8, $68, $60  ; 40c4: 48 98 38... H.8
+something5_TODO
+    lda #0                                                            ; 4088: a9 00       ..
+    tax                                                               ; 408a: aa          .
+; $408b referenced 1 time by $4091
+loop_c408b
+    sta l09ef,x                                                       ; 408b: 9d ef 09    ...
+    inx                                                               ; 408e: e8          .
+    cpx #$80                                                          ; 408f: e0 80       ..
+    bcc loop_c408b                                                    ; 4091: 90 f8       ..
+    rts                                                               ; 4093: 60          `
+
+something6_TODO
+    lda #0                                                            ; 4094: a9 00       ..
+    tax                                                               ; 4096: aa          .
+; $4097 referenced 1 time by $409d
+loop_c4097
+    eor l09ef,x                                                       ; 4097: 5d ef 09    ]..
+    inx                                                               ; 409a: e8          .
+    cpx #$80                                                          ; 409b: e0 80       ..
+    bcc loop_c4097                                                    ; 409d: 90 f8       ..
+    eor l09ea                                                         ; 409f: 4d ea 09    M..
+    eor #$ff                                                          ; 40a2: 49 ff       I.
+    rts                                                               ; 40a4: 60          `
+
+something7_TODO
+    cpy #$51 ; 'Q'                                                    ; 40a5: c0 51       .Q
+    beq c40cf                                                         ; 40a7: f0 26       .&
+    pha                                                               ; 40a9: 48          H
+    txa                                                               ; 40aa: 8a          .
+    pha                                                               ; 40ab: 48          H
+    tya                                                               ; 40ac: 98          .
+    ldx #$0f                                                          ; 40ad: a2 0f       ..
+; $40af referenced 1 time by $40b5
+loop_c40af
+    cmp l0a80,x                                                       ; 40af: dd 80 0a    ...
+    beq c40b7                                                         ; 40b2: f0 03       ..
+    dex                                                               ; 40b4: ca          .
+    bpl loop_c40af                                                    ; 40b5: 10 f8       ..
+; $40b7 referenced 1 time by $40b2
+c40b7
+    txa                                                               ; 40b7: 8a          .
+    clc                                                               ; 40b8: 18          .
+    adc #$41 ; 'A'                                                    ; 40b9: 69 41       iA
+    tay                                                               ; 40bb: a8          .
+    pla                                                               ; 40bc: 68          h
+    tax                                                               ; 40bd: aa          .
+    pla                                                               ; 40be: 68          h
+    rts                                                               ; 40bf: 60          `
+
+something8_TODO
+    cpy #$51 ; 'Q'                                                    ; 40c0: c0 51       .Q
+    beq c40cf                                                         ; 40c2: f0 0b       ..
+    pha                                                               ; 40c4: 48          H
+    tya                                                               ; 40c5: 98          .
+    sec                                                               ; 40c6: 38          8
+    sbc #$41 ; 'A'                                                    ; 40c7: e9 41       .A
+    tay                                                               ; 40c9: a8          .
+    lda l0a80,y                                                       ; 40ca: b9 80 0a    ...
+    tay                                                               ; 40cd: a8          .
+    pla                                                               ; 40ce: 68          h
+; $40cf referenced 2 times by $40a7, $40c2
+c40cf
+    rts                                                               ; 40cf: 60          `
+
 ; $40d0 referenced 1 time by $3c84
-l40d0
-    !byte $48, $8a, $48, $a2,   2, $bd, $ec,   9, $d5, $5c, $f0, $1a  ; 40d0: 48 8a 48... H.H
-    !byte $95, $5c, $a9, $1f, $20, $ee, $ff, $8a, $49, $ff            ; 40dc: 95 5c a9... .\.
-    !text "8i% "                                                      ; 40e6: 38 69 25... 8i%
-    !byte $ee, $ff, $a9,   6, $20, $ee, $ff, $b5                      ; 40ea: ee ff a9... ...
-    !text $5c, " f"                                                   ; 40f2: 5c 20 66    \ f
-    !byte $18, $ca, $e0, $ff, $d0, $da, $68, $aa, $68, $60            ; 40f5: 18 ca e0... ...
+something9_TODO
+    pha                                                               ; 40d0: 48          H
+    txa                                                               ; 40d1: 8a          .
+    pha                                                               ; 40d2: 48          H
+    ldx #2                                                            ; 40d3: a2 02       ..
+; $40d5 referenced 1 time by $40f9
+c40d5
+    lda l09ec,x                                                       ; 40d5: bd ec 09    ...
+    cmp l005c,x                                                       ; 40d8: d5 5c       .\
+    beq c40f6                                                         ; 40da: f0 1a       ..
+    sta l005c,x                                                       ; 40dc: 95 5c       .\
+    lda #$1f                                                          ; 40de: a9 1f       ..
+    jsr oswrch                                                        ; 40e0: 20 ee ff     ..            ; Write character 31
+    txa                                                               ; 40e3: 8a          .
+    eor #$ff                                                          ; 40e4: 49 ff       I.
+    sec                                                               ; 40e6: 38          8
+    adc #$25 ; '%'                                                    ; 40e7: 69 25       i%
+    jsr oswrch                                                        ; 40e9: 20 ee ff     ..            ; Write character
+    lda #6                                                            ; 40ec: a9 06       ..
+    jsr oswrch                                                        ; 40ee: 20 ee ff     ..            ; Write character 6
+    lda l005c,x                                                       ; 40f1: b5 5c       .\
+    jsr sub_c1866                                                     ; 40f3: 20 66 18     f.
+; $40f6 referenced 1 time by $40da
+c40f6
+    dex                                                               ; 40f6: ca          .
+    cpx #$ff                                                          ; 40f7: e0 ff       ..
+    bne c40d5                                                         ; 40f9: d0 da       ..
+    pla                                                               ; 40fb: 68          h
+    tax                                                               ; 40fc: aa          .
+    pla                                                               ; 40fd: 68          h
+    rts                                                               ; 40fe: 60          `
+
 ; $40ff referenced 2 times by $040a, $0457
 some_data_high_copy_TODO
 icodata
@@ -3663,18 +3865,18 @@ l0518
 pydis_end
 
 ; Label references by decreasing frequency:
-;     l0070:                                         47
-;     l0073:                                         33
-;     l0072:                                         32
-;     oswrch:                                        29
-;     l0071:                                         28
-;     l0074:                                         20
+;     l0070:                                         48
+;     oswrch:                                        39
+;     l0073:                                         34
+;     l0072:                                         33
+;     l0071:                                         29
+;     osbyte:                                        23
+;     l0074:                                         21
 ;     l004c:                                         19
 ;     l0076:                                         19
 ;     l0080:                                         19
-;     osbyte:                                        19
 ;     l007d:                                         17
-;     l0075:                                         15
+;     l0075:                                         16
 ;     l007b:                                         15
 ;     l0085:                                         14
 ;     l0077:                                         13
@@ -3682,15 +3884,16 @@ pydis_end
 ;     l0015:                                         11
 ;     l0079:                                         11
 ;     l007c:                                         11
+;     crtc_address_register:                         11
+;     crtc_address_write:                            11
 ;     l0031:                                         10
 ;     l007e:                                         10
 ;     l0078:                                          9
 ;     l0016:                                          8
 ;     l0030:                                          8
 ;     l0019:                                          7
+;     l09ef:                                          7
 ;     sub_c14be:                                      7
-;     crtc_address_register:                          7
-;     crtc_address_write:                             7
 ;     l0004:                                          6
 ;     l0018:                                          6
 ;     l001a:                                          6
@@ -3709,9 +3912,9 @@ pydis_end
 ;     l4108:                                          6
 ;     l0042:                                          5
 ;     l0082:                                          5
-;     l09ef:                                          5
 ;     l0c00:                                          5
 ;     pydis_start:                                    5
+;     osword:                                         5
 ;     l003b:                                          4
 ;     l003c:                                          4
 ;     l003d:                                          4
@@ -3720,6 +3923,7 @@ pydis_end
 ;     l0045:                                          4
 ;     l004a:                                          4
 ;     l0058:                                          4
+;     l005c:                                          4
 ;     l0083:                                          4
 ;     l0086:                                          4
 ;     l0087:                                          4
@@ -3727,7 +3931,6 @@ pydis_end
 ;     l16c4:                                          4
 ;     l17ff:                                          4
 ;     l180d:                                          4
-;     osword:                                         4
 ;     l0002:                                          3
 ;     l0006:                                          3
 ;     l0008:                                          3
@@ -3741,8 +3944,11 @@ pydis_end
 ;     l0084:                                          3
 ;     brkv:                                           3
 ;     brkv+1:                                         3
+;     irq1v:                                          3
+;     irq1v+1:                                        3
 ;     l0ab3:                                          3
 ;     l0ab4:                                          3
+;     l123b:                                          3
 ;     l145d:                                          3
 ;     sub_c14a7:                                      3
 ;     sub_c15b7:                                      3
@@ -3751,11 +3957,15 @@ pydis_end
 ;     l165a:                                          3
 ;     sub_c174f:                                      3
 ;     l17c7:                                          3
+;     sub_c188e:                                      3
+;     l1890:                                          3
+;     sub_c1891:                                      3
 ;     l1c45:                                          3
 ;     l2b0e:                                          3
 ;     l2d77:                                          3
 ;     c3a8f:                                          3
 ;     l4217:                                          3
+;     oscli:                                          3
 ;     l0003:                                          2
 ;     l0007:                                          2
 ;     l0009:                                          2
@@ -3766,6 +3976,7 @@ pydis_end
 ;     l004b:                                          2
 ;     l0051:                                          2
 ;     l005a:                                          2
+;     l0061:                                          2
 ;     l0131:                                          2
 ;     l0950:                                          2
 ;     l0966:                                          2
@@ -3774,11 +3985,16 @@ pydis_end
 ;     l09a8:                                          2
 ;     l09b3:                                          2
 ;     l09be:                                          2
+;     l09ea:                                          2
+;     l09ec:                                          2
+;     l0a80:                                          2
 ;     l0ab1:                                          2
 ;     l0ab2:                                          2
+;     l0ab5:                                          2
+;     l0ab6:                                          2
 ;     l0ab7:                                          2
 ;     l1235:                                          2
-;     l123b:                                          2
+;     sub_c123c:                                      2
 ;     sub_c13cc:                                      2
 ;     l14a8:                                          2
 ;     sub_c159f:                                      2
@@ -3789,11 +4005,11 @@ pydis_end
 ;     l167b:                                          2
 ;     sub_c16b2:                                      2
 ;     l17fe:                                          2
-;     l187d:                                          2
-;     l188e:                                          2
-;     l1890:                                          2
-;     l1891:                                          2
+;     sub_c187d:                                      2
+;     l188f:                                          2
 ;     l18bc:                                          2
+;     sub_c18bd:                                      2
+;     l19d4:                                          2
 ;     l19d7:                                          2
 ;     l1a97:                                          2
 ;     l1bec:                                          2
@@ -3831,11 +4047,11 @@ pydis_end
 ;     set_track_special_register_to_a:                2
 ;     c3f0d:                                          2
 ;     initial_screen_disabled_flag:                   2
+;     c40cf:                                          2
 ;     some_data_high_copy_TODO:                       2
 ;     sub_c4109:                                      2
 ;     c418f:                                          2
 ;     c4204:                                          2
-;     oscli:                                          2
 ;     l0000:                                          1
 ;     l0005:                                          1
 ;     l0014:                                          1
@@ -3844,19 +4060,20 @@ pydis_end
 ;     l0050:                                          1
 ;     l0052:                                          1
 ;     l005b:                                          1
-;     l005c:                                          1
 ;     l005d:                                          1
 ;     l005e:                                          1
+;     l0060:                                          1
+;     l0062:                                          1
+;     l0066:                                          1
+;     l0067:                                          1
+;     l0068:                                          1
 ;     l007f:                                          1
-;     irq1v:                                          1
-;     irq1v+1:                                        1
+;     l0287:                                          1
 ;     l09a9:                                          1
 ;     l09b4:                                          1
 ;     l09d4:                                          1
 ;     l09d5:                                          1
 ;     l09df:                                          1
-;     l09ea:                                          1
-;     l09ec:                                          1
 ;     l09ed:                                          1
 ;     l09ee:                                          1
 ;     l0a6f:                                          1
@@ -3864,14 +4081,11 @@ pydis_end
 ;     l0a7f:                                          1
 ;     l0aa1:                                          1
 ;     l0aa9:                                          1
-;     l0ab5:                                          1
-;     l0ab6:                                          1
 ;     l0ad4:                                          1
 ;     l0aef:                                          1
 ;     l0b00:                                          1
 ;     l1237:                                          1
 ;     sub_c1238:                                      1
-;     sub_c123c:                                      1
 ;     l123d:                                          1
 ;     l1271:                                          1
 ;     l1280:                                          1
@@ -3923,13 +4137,14 @@ pydis_end
 ;     l17e6:                                          1
 ;     l17f0:                                          1
 ;     l1828:                                          1
-;     l188f:                                          1
 ;     l1892:                                          1
 ;     l1896:                                          1
 ;     l1897:                                          1
 ;     sub_c18bb:                                      1
 ;     sub_c18c2:                                      1
 ;     l18cb:                                          1
+;     l1997:                                          1
+;     l19c4:                                          1
 ;     l19da:                                          1
 ;     l1a9e:                                          1
 ;     l1a9f:                                          1
@@ -4039,10 +4254,16 @@ pydis_end
 ;     loop_c3f87:                                     1
 ;     c3fba:                                          1
 ;     l3fbb:                                          1
-;     l3fcb:                                          1
-;     l402c:                                          1
-;     l4088:                                          1
-;     l40d0:                                          1
+;     something3_TODO:                                1
+;     something4_TODO:                                1
+;     something5_TODO:                                1
+;     loop_c408b:                                     1
+;     loop_c4097:                                     1
+;     loop_c40af:                                     1
+;     c40b7:                                          1
+;     something9_TODO:                                1
+;     c40d5:                                          1
+;     c40f6:                                          1
 ;     c4139:                                          1
 ;     c4143:                                          1
 ;     c4172:                                          1
@@ -4059,11 +4280,15 @@ pydis_end
 ;     l8000:                                          1
 ;     lbe00:                                          1
 ;     lbf00:                                          1
+;     system_via_t2c_l:                               1
 ;     system_via_t2c_h:                               1
+;     system_via_acr:                                 1
+;     system_via_ier:                                 1
 ;     user_via_t1c_l:                                 1
 ;     user_via_t1c_h:                                 1
 ;     user_via_t2c_l:                                 1
 ;     user_via_t2c_h:                                 1
+;     user_via_ier:                                   1
 ;     osfile:                                         1
 
 ; Automatically generated labels:
@@ -4138,6 +4363,7 @@ pydis_end
 ;     c174c
 ;     c178a
 ;     c1791
+;     c18a3
 ;     c1966
 ;     c1abb
 ;     c1add
@@ -4203,6 +4429,10 @@ pydis_end
 ;     c3f0d
 ;     c3f2d
 ;     c3fba
+;     c40b7
+;     c40cf
+;     c40d5
+;     c40f6
 ;     c4139
 ;     c4143
 ;     c4172
@@ -4270,6 +4500,12 @@ pydis_end
 ;     l005d
 ;     l005e
 ;     l005f
+;     l0060
+;     l0061
+;     l0062
+;     l0066
+;     l0067
+;     l0068
 ;     l0070
 ;     l0071
 ;     l0072
@@ -4296,6 +4532,7 @@ pydis_end
 ;     l0087
 ;     l0088
 ;     l0131
+;     l0287
 ;     l0409
 ;     l0515
 ;     l0517
@@ -4320,6 +4557,7 @@ pydis_end
 ;     l0a6f
 ;     l0a7e
 ;     l0a7f
+;     l0a80
 ;     l0aa1
 ;     l0aa9
 ;     l0ab1
@@ -4397,11 +4635,8 @@ pydis_end
 ;     l17ff
 ;     l180d
 ;     l1828
-;     l187d
-;     l188e
 ;     l188f
 ;     l1890
-;     l1891
 ;     l1892
 ;     l1896
 ;     l1897
@@ -4409,6 +4644,9 @@ pydis_end
 ;     l18cb
 ;     l196d
 ;     l196e
+;     l1997
+;     l19c4
+;     l19d4
 ;     l19d7
 ;     l19da
 ;     l1a97
@@ -4541,10 +4779,6 @@ pydis_end
 ;     l3c10
 ;     l3f05
 ;     l3fbb
-;     l3fcb
-;     l402c
-;     l4088
-;     l40d0
 ;     l4108
 ;     l4214
 ;     l4216
@@ -4562,6 +4796,7 @@ pydis_end
 ;     loop_c1540
 ;     loop_c1623
 ;     loop_c179a
+;     loop_c1893
 ;     loop_c18a9
 ;     loop_c1df7
 ;     loop_c1e80
@@ -4583,6 +4818,9 @@ pydis_end
 ;     loop_c3f18
 ;     loop_c3f7b
 ;     loop_c3f87
+;     loop_c408b
+;     loop_c4097
+;     loop_c40af
 ;     sub_c040a
 ;     sub_c0474
 ;     sub_c04cb
@@ -4618,7 +4856,13 @@ pydis_end
 ;     sub_c1766
 ;     sub_c176e
 ;     sub_c1771
+;     sub_c178c
+;     sub_c1866
+;     sub_c187d
+;     sub_c188e
+;     sub_c1891
 ;     sub_c18bb
+;     sub_c18bd
 ;     sub_c18c2
 ;     sub_c196c
 ;     sub_c1b66
@@ -4662,6 +4906,9 @@ pydis_end
 !if (<(drive_0_command)) != $ff {
     !error "Assertion failed: <(drive_0_command) == $ff"
 }
+!if (<(l0060)) != $60 {
+    !error "Assertion failed: <(l0060) == $60"
+}
 !if (<(l0070)) != $70 {
     !error "Assertion failed: <(l0070) == $70"
 }
@@ -4700,6 +4947,9 @@ pydis_end
 }
 !if (>(drive_0_command)) != $3e {
     !error "Assertion failed: >(drive_0_command) == $3e"
+}
+!if (>(l0060)) != $00 {
+    !error "Assertion failed: >(l0060) == $00"
 }
 !if (>(l0070)) != $00 {
     !error "Assertion failed: >(l0070) == $00"
@@ -4797,6 +5047,9 @@ pydis_end
 !if (osbyte_tv) != $90 {
     !error "Assertion failed: osbyte_tv == $90"
 }
+!if (osbyte_vsync) != $13 {
+    !error "Assertion failed: osbyte_vsync == $13"
+}
 !if (osfile_load) != $ff {
     !error "Assertion failed: osfile_load == $ff"
 }
@@ -4805,6 +5058,9 @@ pydis_end
 }
 !if (osword_envelope) != $08 {
     !error "Assertion failed: osword_envelope == $08"
+}
+!if (osword_read_char) != $0a {
+    !error "Assertion failed: osword_read_char == $0a"
 }
 !if (screen_width_minus_one) != $27 {
     !error "Assertion failed: screen_width_minus_one == $27"
