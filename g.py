@@ -296,6 +296,10 @@ expr(0x39e7, "last_level_letter")
 expr(0x39eb, "first_level_letter")
 expr(0x113b, "first_level_letter")
 expr(0x112f, "last_level_letter+1")
+expr(0x1a6a, "first_level_letter")
+
+# TODO: Don't know what the byte means yet, but the code structure makes it clear this is indexed by level number
+label(0x9ef, "byte_per_level_table1")
 
 entry(0x1140, "initialise_level") # TODO: guessing, but seems plausible
 

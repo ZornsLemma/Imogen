@@ -191,7 +191,7 @@ l09df                               = $09df
 l09ea                               = $09ea
 l09eb                               = $09eb
 current_transformations_remaining   = $09ec
-l09ef                               = $09ef
+byte_per_level_table1               = $09ef
 l0a6f                               = $0a6f
 l0a7e                               = $0a7e
 l0a7f                               = $0a7f
@@ -410,7 +410,7 @@ loop_c1213
     sec                                                               ; 1355: 38          8   :1224[1]
     sbc #first_level_letter                                           ; 1356: e9 41       .A  :1225[1]
     tax                                                               ; 1358: aa          .   :1227[1]
-    lda l09ef,x                                                       ; 1359: bd ef 09    ... :1228[1]
+    lda byte_per_level_table1,x                                       ; 1359: bd ef 09    ... :1228[1]
     and #$80                                                          ; 135c: 29 80       ).  :122b[1]
     beq pydis_start                                                   ; 135e: f0 05       ..  :122d[1]
     lda #$21 ; '!'                                                    ; 1360: a9 21       .!  :122f[1]
@@ -429,11 +429,11 @@ loop_c1213
     sec                                                               ; 137c: 38          8   :124b[1]
     sbc #first_level_letter                                           ; 137d: e9 41       .A  :124c[1]
     tax                                                               ; 137f: aa          .   :124e[1]
-    lda l09ef,x                                                       ; 1380: bd ef 09    ... :124f[1]
+    lda byte_per_level_table1,x                                       ; 1380: bd ef 09    ... :124f[1]
     and #$f8                                                          ; 1383: 29 f8       ).  :1252[1]
     ora l0030                                                         ; 1385: 05 30       .0  :1254[1]
     ora #$40 ; '@'                                                    ; 1387: 09 40       .@  :1256[1]
-    sta l09ef,x                                                       ; 1389: 9d ef 09    ... :1258[1]
+    sta byte_per_level_table1,x                                       ; 1389: 9d ef 09    ... :1258[1]
     lda l0030                                                         ; 138c: a5 30       .0  :125b[1]
     asl                                                               ; 138e: 0a          .   :125d[1]
     tay                                                               ; 138f: a8          .   :125e[1]
@@ -461,10 +461,10 @@ sub_c1278
     sec                                                               ; 13ab: 38          8   :127a[1]
     sbc #first_level_letter                                           ; 13ac: e9 41       .A  :127b[1]
     tax                                                               ; 13ae: aa          .   :127d[1]
-    lda l09ef,x                                                       ; 13af: bd ef 09    ... :127e[1]
+    lda byte_per_level_table1,x                                       ; 13af: bd ef 09    ... :127e[1]
     and #7                                                            ; 13b2: 29 07       ).  :1281[1]
     sta l0030                                                         ; 13b4: 85 30       .0  :1283[1]
-    lda l09ef,x                                                       ; 13b6: bd ef 09    ... :1285[1]
+    lda byte_per_level_table1,x                                       ; 13b6: bd ef 09    ... :1285[1]
     and #$40 ; '@'                                                    ; 13b9: 29 40       )@  :1288[1]
     bne c129b                                                         ; 13bb: d0 0f       ..  :128a[1]
     lda c3add                                                         ; 13bd: ad dd 3a    ..: :128c[1]
@@ -1703,9 +1703,9 @@ something14_TODO
     sec                                                               ; 1b79: 38          8   :1a48[1]
     sbc #first_level_letter                                           ; 1b7a: e9 41       .A  :1a49[1]
     tay                                                               ; 1b7c: a8          .   :1a4b[1]
-    lda l09ef,y                                                       ; 1b7d: b9 ef 09    ... :1a4c[1]
+    lda byte_per_level_table1,y                                       ; 1b7d: b9 ef 09    ... :1a4c[1]
     ora #$80                                                          ; 1b80: 09 80       ..  :1a4f[1]
-    sta l09ef,y                                                       ; 1b82: 99 ef 09    ... :1a51[1]
+    sta byte_per_level_table1,y                                       ; 1b82: 99 ef 09    ... :1a51[1]
     lda #$21 ; '!'                                                    ; 1b85: a9 21       .!  :1a54[1]
     jsr sub_c2bbd                                                     ; 1b87: 20 bd 2b     .+ :1a56[1]
 ; $1b8a referenced 2 times by $1a3a, $1a44
@@ -1717,9 +1717,9 @@ c1a59
     sta l09a8,x                                                       ; 1b94: 9d a8 09    ... :1a63[1]
     lda desired_level                                                 ; 1b97: a5 31       .1  :1a66[1]
     sec                                                               ; 1b99: 38          8   :1a68[1]
-    sbc #$41 ; 'A'                                                    ; 1b9a: e9 41       .A  :1a69[1]
+    sbc #first_level_letter                                           ; 1b9a: e9 41       .A  :1a69[1]
     tay                                                               ; 1b9c: a8          .   :1a6b[1]
-    lda l09ef,y                                                       ; 1b9d: b9 ef 09    ... :1a6c[1]
+    lda byte_per_level_table1,y                                       ; 1b9d: b9 ef 09    ... :1a6c[1]
     and #$80                                                          ; 1ba0: 29 80       ).  :1a6f[1]
     bne c1a9e                                                         ; 1ba2: d0 2b       .+  :1a71[1]
     lda #1                                                            ; 1ba4: a9 01       ..  :1a73[1]
@@ -5950,7 +5950,7 @@ c37c3
     sec                                                               ; 38fa: 38          8   :37c9[1]
     sbc #first_level_letter                                           ; 38fb: e9 41       .A  :37ca[1]
     tay                                                               ; 38fd: a8          .   :37cc[1]
-    lda l09ef,y                                                       ; 38fe: b9 ef 09    ... :37cd[1]
+    lda byte_per_level_table1,y                                       ; 38fe: b9 ef 09    ... :37cd[1]
     and #$80                                                          ; 3901: 29 80       ).  :37d0[1]
     tay                                                               ; 3903: a8          .   :37d2[1]
     txa                                                               ; 3904: 8a          .   :37d3[1]
@@ -6283,7 +6283,7 @@ c39c1
     ldy #$0f                                                          ; 3b01: a0 0f       ..  :39d0[1]
 ; $3b03 referenced 1 time by $39da
 loop_c39d2
-    lda l09ef,y                                                       ; 3b03: b9 ef 09    ... :39d2[1]
+    lda byte_per_level_table1,y                                       ; 3b03: b9 ef 09    ... :39d2[1]
     and #$80                                                          ; 3b06: 29 80       ).  :39d5[1]
     beq c39e0                                                         ; 3b08: f0 07       ..  :39d7[1]
 ; $3b09 referenced 1 time by $3af7
@@ -7156,7 +7156,7 @@ clear_128_bytes_at_l09ef
     tax                                                               ; 408a: aa          .   :0ab9[5]
 ; $408b referenced 1 time by $0ac0
 loop_c0aba
-    sta l09ef,x                                                       ; 408b: 9d ef 09    ... :0aba[5]
+    sta byte_per_level_table1,x                                       ; 408b: 9d ef 09    ... :0aba[5]
     inx                                                               ; 408e: e8          .   :0abd[5]
     cpx #$80                                                          ; 408f: e0 80       ..  :0abe[5]
     bcc loop_c0aba                                                    ; 4091: 90 f8       ..  :0ac0[5]
@@ -7168,7 +7168,7 @@ something6_TODO
     tax                                                               ; 4096: aa          .   :0ac5[5]
 ; $4097 referenced 1 time by $0acc
 loop_c0ac6
-    eor l09ef,x                                                       ; 4097: 5d ef 09    ].. :0ac6[5]
+    eor byte_per_level_table1,x                                       ; 4097: 5d ef 09    ].. :0ac6[5]
     inx                                                               ; 409a: e8          .   :0ac9[5]
     cpx #$80                                                          ; 409b: e0 80       ..  :0aca[5]
     bcc loop_c0ac6                                                    ; 409d: 90 f8       ..  :0acc[5]
@@ -7519,7 +7519,7 @@ pydis_end
 ;     l0053:                                         13
 ;     l2564:                                         13
 ;     l0030:                                         12
-;     l09ef:                                         12
+;     byte_per_level_table1:                         12
 ;     sub_c394d:                                     12
 ;     l0060:                                         11
 ;     l0062:                                         11
@@ -8963,7 +8963,6 @@ pydis_end
 ;     l09df
 ;     l09ea
 ;     l09eb
-;     l09ef
 ;     l0a6f
 ;     l0a7e
 ;     l0a7f
