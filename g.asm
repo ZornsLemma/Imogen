@@ -2710,7 +2710,7 @@ sub_c3850
 
     !byte $48, $a9, $67, $48, $d0,   4                                ; 398e: 48 a9 67... H.g :385d[1]
 
-; $3994 referenced 1 time by $0411
+; $3994 referenced 2 times by $0411, $045a
 sub_c3863
     pha                                                               ; 3994: 48          H   :3863[1]
     lda #$20 ; ' '                                                    ; 3995: a9 20       .   :3864[1]
@@ -3464,13 +3464,13 @@ l40d0
     !byte $ee, $ff, $a9,   6, $20, $ee, $ff, $b5                      ; 40ea: ee ff a9... ...
     !text $5c, " f"                                                   ; 40f2: 5c 20 66    \ f
     !byte $18, $ca, $e0, $ff, $d0, $da, $68, $aa, $68, $60            ; 40f5: 18 ca e0... ...
-; $40ff referenced 1 time by $040a
+; $40ff referenced 2 times by $040a, $0457
 some_data_high_copy_TODO
 icodata
-; $40ff referenced 1 time by $040a
+; $40ff referenced 2 times by $040a, $0457
 
 !pseudopc $0400 {
-; $40ff referenced 1 time by $040a
+; $40ff referenced 2 times by $040a, $0457
 some_data_low_TODO
     ldx l1106                                                         ; 40ff: ae 06 11    ... :0400[2]
     ldy l1107                                                         ; 4102: ac 07 11    ... :0403[2]
@@ -3521,10 +3521,26 @@ c0444
     lda #9                                                            ; 414d: a9 09       ..  :044e[2]
     jmp oswrch                                                        ; 414f: 4c ee ff    L.. :0450[2]   ; Write character 9
 
-    !byte $a5,   4, $f0, $1c, $20,   0,   4                           ; 4152: a5 04 f0... ... :0453[2]
-    !text " c8"                                                       ; 4159: 20 63 38     c8 :045a[2]
-    !byte $a2, $ff, $86, $3e, $86, $42, $e8, $86,   4, $86, $3f, $a9  ; 415c: a2 ff 86... ... :045d[2]
-    !byte $30, $85, $40, $a9,   5, $85, $41, $4c,   5,   5, $60       ; 4168: 30 85 40... 0.@ :0469[2]
+something_TODO
+    lda l0004                                                         ; 4152: a5 04       ..  :0453[2]
+    beq c0473                                                         ; 4154: f0 1c       ..  :0455[2]
+    jsr some_data_low_TODO                                            ; 4156: 20 00 04     .. :0457[2]
+    jsr sub_c3863                                                     ; 4159: 20 63 38     c8 :045a[2]
+    ldx #$ff                                                          ; 415c: a2 ff       ..  :045d[2]
+    stx l003e                                                         ; 415e: 86 3e       .>  :045f[2]
+    stx l0042                                                         ; 4160: 86 42       .B  :0461[2]
+    inx                                                               ; 4162: e8          .   :0463[2]
+    stx l0004                                                         ; 4163: 86 04       ..  :0464[2]
+    stx l003f                                                         ; 4165: 86 3f       .?  :0466[2]
+    lda #$30 ; '0'                                                    ; 4167: a9 30       .0  :0468[2]
+    sta l0040                                                         ; 4169: 85 40       .@  :046a[2]
+    lda #5                                                            ; 416b: a9 05       ..  :046c[2]
+    sta l0041                                                         ; 416d: 85 41       .A  :046e[2]
+    jmp c0505                                                         ; 416f: 4c 05 05    L.. :0470[2]
+
+; $4172 referenced 1 time by $0455
+c0473
+    rts                                                               ; 4172: 60          `   :0473[2]
 
 ; $4173 referenced 1 time by $043e
 sub_c0474
@@ -3600,7 +3616,7 @@ sub_c04cb
     sta l0041                                                         ; 41da: 85 41       .A  :04db[2]
     inx                                                               ; 41dc: e8          .   :04dd[2]
     stx l0042                                                         ; 41dd: 86 42       .B  :04de[2]
-    jsr sub_c0505                                                     ; 41df: 20 05 05     .. :04e0[2]
+    jsr c0505                                                         ; 41df: 20 05 05     .. :04e0[2]
     lda l0409                                                         ; 41e2: ad 09 04    ... :04e3[2]
     asl                                                               ; 41e5: 0a          .   :04e6[2]
     asl                                                               ; 41e6: 0a          .   :04e7[2]
@@ -3622,8 +3638,8 @@ loop_c04f9
     bcc loop_c04f9                                                    ; 4201: 90 f5       ..  :0502[2]
     rts                                                               ; 4203: 60          `   :0504[2]
 
-; $4204 referenced 1 time by $04e0
-sub_c0505
+; $4204 referenced 2 times by $0470, $04e0
+c0505
     ldx #0                                                            ; 4204: a2 00       ..  :0505[2]
     ldy #0                                                            ; 4206: a0 00       ..  :0507[2]
     lda l0409                                                         ; 4208: ad 09 04    ... :0509[2]
@@ -3675,12 +3691,14 @@ pydis_end
 ;     sub_c14be:                                      7
 ;     crtc_address_register:                          7
 ;     crtc_address_write:                             7
+;     l0004:                                          6
 ;     l0018:                                          6
 ;     l001a:                                          6
 ;     l001b:                                          6
 ;     l001d:                                          6
 ;     l0029:                                          6
 ;     l002e:                                          6
+;     l003e:                                          6
 ;     l0054:                                          6
 ;     l0055:                                          6
 ;     l0081:                                          6
@@ -3689,16 +3707,16 @@ pydis_end
 ;     l173d:                                          6
 ;     l2a8d:                                          6
 ;     l4108:                                          6
-;     l003e:                                          5
+;     l0042:                                          5
 ;     l0082:                                          5
 ;     l09ef:                                          5
 ;     l0c00:                                          5
 ;     pydis_start:                                    5
-;     l0004:                                          4
 ;     l003b:                                          4
 ;     l003c:                                          4
 ;     l003d:                                          4
-;     l0042:                                          4
+;     l0040:                                          4
+;     l0041:                                          4
 ;     l0045:                                          4
 ;     l004a:                                          4
 ;     l0058:                                          4
@@ -3716,8 +3734,7 @@ pydis_end
 ;     l000a:                                          3
 ;     l0037:                                          3
 ;     l003a:                                          3
-;     l0040:                                          3
-;     l0041:                                          3
+;     l003f:                                          3
 ;     l0049:                                          3
 ;     l0059:                                          3
 ;     l005f:                                          3
@@ -3745,7 +3762,6 @@ pydis_end
 ;     l0028:                                          2
 ;     l002a:                                          2
 ;     l0039:                                          2
-;     l003f:                                          2
 ;     l0043:                                          2
 ;     l004b:                                          2
 ;     l0051:                                          2
@@ -3799,6 +3815,7 @@ pydis_end
 ;     l394d:                                          2
 ;     l397f:                                          2
 ;     l3980:                                          2
+;     l3994:                                          2
 ;     l39be:                                          2
 ;     l39dd:                                          2
 ;     l39f3:                                          2
@@ -3814,8 +3831,10 @@ pydis_end
 ;     set_track_special_register_to_a:                2
 ;     c3f0d:                                          2
 ;     initial_screen_disabled_flag:                   2
+;     some_data_high_copy_TODO:                       2
 ;     sub_c4109:                                      2
 ;     c418f:                                          2
+;     c4204:                                          2
 ;     oscli:                                          2
 ;     l0000:                                          1
 ;     l0005:                                          1
@@ -3981,7 +4000,6 @@ pydis_end
 ;     l3979:                                          1
 ;     l397e:                                          1
 ;     l3981:                                          1
-;     l3994:                                          1
 ;     l39a3:                                          1
 ;     l39ad:                                          1
 ;     l39bb:                                          1
@@ -4025,9 +4043,9 @@ pydis_end
 ;     l402c:                                          1
 ;     l4088:                                          1
 ;     l40d0:                                          1
-;     some_data_high_copy_TODO:                       1
 ;     c4139:                                          1
 ;     c4143:                                          1
+;     c4172:                                          1
 ;     sub_c4173:                                      1
 ;     c418c:                                          1
 ;     c4191:                                          1
@@ -4036,7 +4054,6 @@ pydis_end
 ;     c41c9:                                          1
 ;     sub_c41ca:                                      1
 ;     c41f8:                                          1
-;     sub_c4204:                                      1
 ;     l4214:                                          1
 ;     l4216:                                          1
 ;     l8000:                                          1
@@ -4052,11 +4069,13 @@ pydis_end
 ; Automatically generated labels:
 ;     c043a
 ;     c0444
+;     c0473
 ;     c048d
 ;     c0490
 ;     c04a4
 ;     c04b4
 ;     c04ca
+;     c0505
 ;     c110c
 ;     c1140
 ;     c1171
@@ -4186,6 +4205,7 @@ pydis_end
 ;     c3fba
 ;     c4139
 ;     c4143
+;     c4172
 ;     c418c
 ;     c418f
 ;     c4191
@@ -4193,6 +4213,7 @@ pydis_end
 ;     c41b3
 ;     c41c9
 ;     c41f8
+;     c4204
 ;     l0000
 ;     l0002
 ;     l0003
@@ -4565,7 +4586,6 @@ pydis_end
 ;     sub_c040a
 ;     sub_c0474
 ;     sub_c04cb
-;     sub_c0505
 ;     sub_c1238
 ;     sub_c123c
 ;     sub_c1278
@@ -4636,7 +4656,6 @@ pydis_end
 ;     sub_c4109
 ;     sub_c4173
 ;     sub_c41ca
-;     sub_c4204
 !if (<(dir_dollar_command)) != $07 {
     !error "Assertion failed: <(dir_dollar_command) == $07"
 }

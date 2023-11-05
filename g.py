@@ -158,6 +158,8 @@ expr(0x3632, "vdu_cr")
 
 expr(0x445, "vdu_goto_xy")
 
+entry(0x453, "something_TODO")
+
 go()
 
 # vi: tw=100
