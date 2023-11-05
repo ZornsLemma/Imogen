@@ -1405,9 +1405,9 @@ loop_c184d
 ; $1997 referenced 4 times by $0154, $3748, $37a2, $37da
 print_italic
     cmp #'!'                                                          ; 1997: c9 21       .!  :1866[1]
-    bcc c18a3                                                         ; 1999: 90 39       .9  :1868[1]
+    bcc print_italic_rts                                              ; 1999: 90 39       .9  :1868[1]
     cmp #$7f                                                          ; 199b: c9 7f       ..  :186a[1]
-    bcs c18a3                                                         ; 199d: b0 35       .5  :186c[1]
+    bcs print_italic_rts                                              ; 199d: b0 35       .5  :186c[1]
     sta l0060                                                         ; 199f: 85 60       .`  :186e[1]
     txa                                                               ; 19a1: 8a          .   :1870[1]
     pha                                                               ; 19a2: 48          H   :1871[1]
@@ -1440,7 +1440,7 @@ define_character_ff_loop
     tax                                                               ; 19d1: aa          .   :18a0[1]
     lda #$ff                                                          ; 19d2: a9 ff       ..  :18a1[1]
 ; $19d4 referenced 2 times by $1868, $186c
-c18a3
+print_italic_rts
     jmp oswrch                                                        ; 19d4: 4c ee ff    L.. :18a3[1]   ; Write character 255
 
 ; $19d7 referenced 3 times by $19dc, $1af2, $3f56
@@ -8452,7 +8452,6 @@ pydis_end
 ;     c17f9
 ;     c181a
 ;     c1823
-;     c18a3
 ;     c18d1
 ;     c1906
 ;     c1909

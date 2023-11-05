@@ -242,6 +242,7 @@ char(0x1867)
 expr(0x186a, "vdu_delete")
 expr(0x1888, "vdu_define_character")
 label(0x1893, "define_character_ff_loop")
+entry(0x18a3, "print_italic_rts")
 # TODO: Could use a named constant for character $ff - ditto character $fe I guess
 
 entry(0x17a0, "something10_TODO")
