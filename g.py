@@ -305,6 +305,7 @@ expr_label(0xab2, "old_brkv1+1")
 label(0xab3, "old_brkv2")
 expr_label(0xab4, "old_brkv2+1")
 
+# TODO: I suspect the definitions of envelope_[12]_step_length are wrong/confusing. It looks like once the envelopes are defined and the data copied into the OS workspace, this memory is re-used.
 label(0x38ac, "envelope_1")
 label(0x38ad, "envelope_1_step_length")
 byte(0x38ad, 13)
