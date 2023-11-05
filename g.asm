@@ -3124,8 +3124,9 @@ c2334
     lda #0                                                            ; 2465: a9 00       ..  :2334[1]
     rts                                                               ; 2467: 60          `   :2336[1]
 
+; Transform the player into a new form.
 ; $2468 referenced 2 times by $2b61, $2e3c
-sub_c2337
+transform
     sta l004d                                                         ; 2468: 85 4d       .M  :2337[1]
     lda #0                                                            ; 246a: a9 00       ..  :2339[1]
     sta l2433                                                         ; 246c: 8d 33 24    .3$ :233b[1]
@@ -4413,9 +4414,9 @@ sub_c2b37
     cmp l0048                                                         ; 2c86: c5 48       .H  :2b55[1]
     beq c2b64                                                         ; 2c88: f0 0b       ..  :2b57[1]
     jsr decrement_current_transformations_remaining                   ; 2c8a: 20 8c 2c     ., :2b59[1]
-    bcc c2b64                                                         ; 2c8d: 90 06       ..  :2b5c[1]
+    bcc c2b64                                                         ; 2c8d: 90 06       ..  :2b5c[1]   ; branch if no transformations remaining before decrement
     jsr update_displayed_transformations_remaining                    ; 2c8f: 20 31 01     1. :2b5e[1]
-    jsr sub_c2337                                                     ; 2c92: 20 37 23     7# :2b61[1]
+    jsr transform                                                     ; 2c92: 20 37 23     7# :2b61[1]
 ; $2c95 referenced 6 times by $2b3c, $2b41, $2b47, $2b4c, $2b57, $2b5c
 c2b64
     rts                                                               ; 2c95: 60          `   :2b64[1]
@@ -4789,7 +4790,7 @@ c2e1b
     cmp #$21 ; '!'                                                    ; 2f67: c9 21       .!  :2e36[1]
     bne c2e44                                                         ; 2f69: d0 0a       ..  :2e38[1]
     lda #0                                                            ; 2f6b: a9 00       ..  :2e3a[1]
-    jsr sub_c2337                                                     ; 2f6d: 20 37 23     7# :2e3c[1]
+    jsr transform                                                     ; 2f6d: 20 37 23     7# :2e3c[1]
     jmp c2d87                                                         ; 2f70: 4c 87 2d    L.- :2e3f[1]
 
 ; $2f73 referenced 2 times by $2e25, $2e29
@@ -9625,7 +9626,6 @@ pydis_end
 ;     sub_c22ee
 ;     sub_c2301
 ;     sub_c2320
-;     sub_c2337
 ;     sub_c234d
 ;     sub_c2354
 ;     sub_c2358
