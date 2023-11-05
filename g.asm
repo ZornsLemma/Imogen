@@ -99,7 +99,7 @@ l004b                               = $4b
 l004c                               = $4c
 l004d                               = $4d
 l0050                               = $50
-l0051                               = $51
+maybe_current_level                 = $51
 l0052                               = $52
 l0053                               = $53
 l0054                               = $54
@@ -284,14 +284,14 @@ c110c
     sta current_transformations_remaining+2                           ; 1257: 8d ee 09    ... :1126[1]
     ldx #0                                                            ; 125a: a2 00       ..  :1129[1]
     ldy l0a7f                                                         ; 125c: ac 7f 0a    ... :112b[1]
-    cpy #$52 ; 'R'                                                    ; 125f: c0 52       .R  :112e[1]
+    cpy #last_level_letter+1                                          ; 125f: c0 52       .R  :112e[1]
     bne c1140                                                         ; 1261: d0 0e       ..  :1130[1]
     inc l005f                                                         ; 1263: e6 5f       ._  :1132[1]
     lda l005f                                                         ; 1265: a5 5f       ._  :1134[1]
     and #3                                                            ; 1267: 29 03       ).  :1136[1]
     asl                                                               ; 1269: 0a          .   :1138[1]
     asl                                                               ; 126a: 0a          .   :1139[1]
-    adc #$41 ; 'A'                                                    ; 126b: 69 41       iA  :113a[1]
+    adc #first_level_letter                                           ; 126b: 69 41       iA  :113a[1]
     tay                                                               ; 126d: a8          .   :113c[1]
     jsr convert_level_letter_to_number                                ; 126e: 20 ef 0a     .. :113d[1]
 ; $1271 referenced 3 times by $1130, $36f0, $39f1
@@ -299,7 +299,7 @@ c1140
     lda l0030                                                         ; 1271: a5 30       .0  :1140[1]
     sta l0050                                                         ; 1273: 85 50       .P  :1142[1]
     lda desired_level                                                 ; 1275: a5 31       .1  :1144[1]
-    sta l0051                                                         ; 1277: 85 51       .Q  :1146[1]
+    sta maybe_current_level                                           ; 1277: 85 51       .Q  :1146[1]
     stx l0030                                                         ; 1279: 86 30       .0  :1148[1]
     sty desired_level                                                 ; 127b: 84 31       .1  :114a[1]
     sty l09ea                                                         ; 127d: 8c ea 09    ... :114c[1]
@@ -352,7 +352,7 @@ c1186
     cpy #$0b                                                          ; 12d9: c0 0b       ..  :11a8[1]
     bcc c1186                                                         ; 12db: 90 da       ..  :11aa[1]
     lda desired_level                                                 ; 12dd: a5 31       .1  :11ac[1]
-    cmp l0051                                                         ; 12df: c5 51       .Q  :11ae[1]
+    cmp maybe_current_level                                           ; 12df: c5 51       .Q  :11ae[1]
     beq c1209                                                         ; 12e1: f0 57       .W  :11b0[1]
     lda #0                                                            ; 12e3: a9 00       ..  :11b2[1]
     sta l2433                                                         ; 12e5: 8d 33 24    .3$ :11b4[1]
@@ -7761,7 +7761,7 @@ pydis_end
 ;     l002b:                                          2
 ;     l0039:                                          2
 ;     l0043:                                          2
-;     l0051:                                          2
+;     maybe_current_level:                            2
 ;     l005a:                                          2
 ;     l005b:                                          2
 ;     l0065:                                          2
@@ -8875,7 +8875,6 @@ pydis_end
 ;     l004c
 ;     l004d
 ;     l0050
-;     l0051
 ;     l0052
 ;     l0053
 ;     l0054
@@ -9946,6 +9945,9 @@ pydis_end
 }
 !if (last_level_letter) != $51 {
     !error "Assertion failed: last_level_letter == $51"
+}
+!if (last_level_letter+1) != $52 {
+    !error "Assertion failed: last_level_letter+1 == $52"
 }
 !if (osbyte_close_spool_exec) != $77 {
     !error "Assertion failed: osbyte_close_spool_exec == $77"

@@ -273,6 +273,7 @@ entry(0x2be0, "something22_TODO")
 
 label(0x31, "desired_level") # TODO: This is not right but let's go with it for now - the way this is used it clearly contains *a* level (as a letter, I think), but I am not quite sure what it's used for
 label(0x37, "currently_loaded_level")
+label(0x51, "maybe_current_level") # TODO: not clear yet, but looks like some kind of level indicator
 label(0x1175, "level_already_loaded")
 
 comment(0x3f78, "TODO: I suspect the following code is copy protection related - writing data to the sideways ROM region feels wrong.")
@@ -293,6 +294,8 @@ expr(0x1a4a, "first_level_letter")
 expr(0x39dd, "last_level_letter")
 expr(0x39e7, "last_level_letter")
 expr(0x39eb, "first_level_letter")
+expr(0x113b, "first_level_letter")
+expr(0x112f, "last_level_letter+1")
 
 label(0xab5, "old_irq1v")
 expr_label(0xab6, "old_irq1v+1")
