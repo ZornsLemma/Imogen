@@ -8,6 +8,11 @@ crtc_screen_start_low                           = 13
 crtc_vert_displayed                             = 6
 crtc_vert_sync_pos                              = 7
 first_level_letter                              = 65
+inkey_escape                                    = 143
+inkey_return                                    = 182
+inkey_shift                                     = 255
+inkey_x                                         = 189
+inkey_z                                         = 158
 last_level_letter                               = 81
 osbyte_close_spool_exec                         = 119
 osbyte_flush_buffer                             = 21
@@ -4241,7 +4246,7 @@ something20_TODO
     lda copy_protection_flag                                          ; 2b7c: ad 03 11    ... :2a4b[1]
     and #1                                                            ; 2b7f: 29 01       ).  :2a4e[1]
     beq c2a60                                                         ; 2b81: f0 0e       ..  :2a50[1]
-    ldx #$8f                                                          ; 2b83: a2 8f       ..  :2a52[1]
+    ldx #inkey_escape                                                 ; 2b83: a2 8f       ..  :2a52[1]
     jsr negative_inkey                                                ; 2b85: 20 cc 3a     .: :2a54[1]
     beq c2a60                                                         ; 2b88: f0 07       ..  :2a57[1]
     pla                                                               ; 2b8a: 68          h   :2a59[1]
@@ -4294,7 +4299,7 @@ c2aa0
     lda copy_protection_flag                                          ; 2bda: ad 03 11    ... :2aa9[1]
     and #1                                                            ; 2bdd: 29 01       ).  :2aac[1]
     beq c2ab7                                                         ; 2bdf: f0 07       ..  :2aae[1]
-    ldx #$ff                                                          ; 2be1: a2 ff       ..  :2ab0[1]
+    ldx #inkey_shift                                                  ; 2be1: a2 ff       ..  :2ab0[1]
     jsr negative_inkey                                                ; 2be3: 20 cc 3a     .: :2ab2[1]
     bne c2abd                                                         ; 2be6: d0 06       ..  :2ab5[1]
 ; $2be8 referenced 1 time by $2aae
@@ -6325,16 +6330,16 @@ c3a08
 
 ; $3b43 referenced 2 times by $181d, $2ad7
 sub_c3a12
-    ldx #$b6                                                          ; 3b43: a2 b6       ..  :3a12[1]
+    ldx #inkey_return                                                 ; 3b43: a2 b6       ..  :3a12[1]
     jsr negative_inkey                                                ; 3b45: 20 cc 3a     .: :3a14[1]
     ora l0046                                                         ; 3b48: 05 46       .F  :3a17[1]
     sta l0046                                                         ; 3b4a: 85 46       .F  :3a19[1]
-    ldx #$9e                                                          ; 3b4c: a2 9e       ..  :3a1b[1]
+    ldx #inkey_z                                                      ; 3b4c: a2 9e       ..  :3a1b[1]
     jsr negative_inkey                                                ; 3b4e: 20 cc 3a     .: :3a1d[1]
     sta l3a8d                                                         ; 3b51: 8d 8d 3a    ..: :3a20[1]
     ora l002c                                                         ; 3b54: 05 2c       .,  :3a23[1]
     sta l002c                                                         ; 3b56: 85 2c       .,  :3a25[1]
-    ldx #$bd                                                          ; 3b58: a2 bd       ..  :3a27[1]
+    ldx #inkey_x                                                      ; 3b58: a2 bd       ..  :3a27[1]
     jsr negative_inkey                                                ; 3b5a: 20 cc 3a     .: :3a29[1]
     pha                                                               ; 3b5d: 48          H   :3a2c[1]
     ora l002d                                                         ; 3b5e: 05 2d       .-  :3a2d[1]
@@ -9940,6 +9945,21 @@ pydis_end
 }
 !if (icodata) != $40ff {
     !error "Assertion failed: icodata == $40ff"
+}
+!if (inkey_escape) != $8f {
+    !error "Assertion failed: inkey_escape == $8f"
+}
+!if (inkey_return) != $b6 {
+    !error "Assertion failed: inkey_return == $b6"
+}
+!if (inkey_shift) != $ff {
+    !error "Assertion failed: inkey_shift == $ff"
+}
+!if (inkey_x) != $bd {
+    !error "Assertion failed: inkey_x == $bd"
+}
+!if (inkey_z) != $9e {
+    !error "Assertion failed: inkey_z == $9e"
 }
 !if (last_level_letter) != $51 {
     !error "Assertion failed: last_level_letter == $51"

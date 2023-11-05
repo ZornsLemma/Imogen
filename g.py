@@ -298,6 +298,21 @@ expr(0x113b, "first_level_letter")
 expr(0x112f, "last_level_letter+1")
 expr(0x1a6a, "first_level_letter")
 
+# TODO: Not completely sure I've interpreted these righty et
+def negative_constant(c, s):
+    assert c < 0
+    constant(c & 0xff, s)
+negative_constant(-113, "inkey_escape")
+negative_constant(-1, "inkey_shift")
+negative_constant(-74, "inkey_return")
+negative_constant(-98, "inkey_z")
+negative_constant(-67, "inkey_x")
+expr(0x2a53, "inkey_escape")
+expr(0x2ab1, "inkey_shift")
+expr(0x3a13, "inkey_return")
+expr(0x3a1c, "inkey_z")
+expr(0x3a28, "inkey_x")
+
 # TODO: Don't know what the byte means yet, but the code structure makes it clear this is indexed by level number
 label(0x9ef, "byte_per_level_table1")
 
