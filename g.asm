@@ -109,8 +109,6 @@ l0059                               = $59
 l005a                               = $5a
 l005b                               = $5b
 displayed_transformations_remaining = $5c
-l005d                               = $5d
-l005e                               = $5e
 l005f                               = $5f
 l0060                               = $60
 l0061                               = $61
@@ -193,8 +191,6 @@ l09df                               = $09df
 l09ea                               = $09ea
 l09eb                               = $09eb
 current_transformations_remaining   = $09ec
-l09ed                               = $09ed
-l09ee                               = $09ee
 l09ef                               = $09ef
 l0a6f                               = $0a6f
 l0a7e                               = $0a7e
@@ -281,12 +277,13 @@ c110c
     lda #osbyte_flush_buffer_class                                    ; 1244: a9 0f       ..  :1113[1]
     ldx #0                                                            ; 1246: a2 00       ..  :1115[1]
     jsr osbyte                                                        ; 1248: 20 f4 ff     .. :1117[1]   ; Flush all buffers (X=0)
-    lda #$30 ; '0'                                                    ; 124b: a9 30       .0  :111a[1]
+; Initialise the number of remaining transformations to 150.
+    lda #'0'                                                          ; 124b: a9 30       .0  :111a[1]
     sta current_transformations_remaining                             ; 124d: 8d ec 09    ... :111c[1]
-    lda #$35 ; '5'                                                    ; 1250: a9 35       .5  :111f[1]
-    sta l09ed                                                         ; 1252: 8d ed 09    ... :1121[1]
-    lda #$31 ; '1'                                                    ; 1255: a9 31       .1  :1124[1]
-    sta l09ee                                                         ; 1257: 8d ee 09    ... :1126[1]
+    lda #'5'                                                          ; 1250: a9 35       .5  :111f[1]
+    sta current_transformations_remaining+1                           ; 1252: 8d ed 09    ... :1121[1]
+    lda #'1'                                                          ; 1255: a9 31       .1  :1124[1]
+    sta current_transformations_remaining+2                           ; 1257: 8d ee 09    ... :1126[1]
     ldx #0                                                            ; 125a: a2 00       ..  :1129[1]
     ldy l0a7f                                                         ; 125c: ac 7f 0a    ... :112b[1]
     cpy #$52 ; 'R'                                                    ; 125f: c0 52       .R  :112e[1]
@@ -4629,7 +4626,7 @@ sub_c2c8c
     pha                                                               ; 2dbd: 48          H   :2c8c[1]
     lda current_transformations_remaining                             ; 2dbe: ad ec 09    ... :2c8d[1]
     clc                                                               ; 2dc1: 18          .   :2c90[1]
-    adc l09ed                                                         ; 2dc2: 6d ed 09    m.. :2c91[1]
+    adc current_transformations_remaining+1                           ; 2dc2: 6d ed 09    m.. :2c91[1]
     cmp #$50 ; 'P'                                                    ; 2dc5: c9 50       .P  :2c94[1]
     clc                                                               ; 2dc7: 18          .   :2c96[1]
     beq c2cd5                                                         ; 2dc8: f0 3c       .<  :2c97[1]
@@ -4639,26 +4636,26 @@ sub_c2c8c
     bcs c2cd4                                                         ; 2dd2: b0 31       .1  :2ca1[1]
     lda #$39 ; '9'                                                    ; 2dd4: a9 39       .9  :2ca3[1]
     sta current_transformations_remaining                             ; 2dd6: 8d ec 09    ... :2ca5[1]
-    dec l09ed                                                         ; 2dd9: ce ed 09    ... :2ca8[1]
-    lda l09ed                                                         ; 2ddc: ad ed 09    ... :2cab[1]
+    dec current_transformations_remaining+1                           ; 2dd9: ce ed 09    ... :2ca8[1]
+    lda current_transformations_remaining+1                           ; 2ddc: ad ed 09    ... :2cab[1]
     cmp #$30 ; '0'                                                    ; 2ddf: c9 30       .0  :2cae[1]
     beq c2cca                                                         ; 2de1: f0 18       ..  :2cb0[1]
     bcs c2cd4                                                         ; 2de3: b0 20       .   :2cb2[1]
     lda #$39 ; '9'                                                    ; 2de5: a9 39       .9  :2cb4[1]
-    sta l09ed                                                         ; 2de7: 8d ed 09    ... :2cb6[1]
-    dec l09ee                                                         ; 2dea: ce ee 09    ... :2cb9[1]
-    lda l09ee                                                         ; 2ded: ad ee 09    ... :2cbc[1]
+    sta current_transformations_remaining+1                           ; 2de7: 8d ed 09    ... :2cb6[1]
+    dec current_transformations_remaining+2                           ; 2dea: ce ee 09    ... :2cb9[1]
+    lda current_transformations_remaining+2                           ; 2ded: ad ee 09    ... :2cbc[1]
     cmp #$30 ; '0'                                                    ; 2df0: c9 30       .0  :2cbf[1]
     bne c2cd4                                                         ; 2df2: d0 11       ..  :2cc1[1]
     lda #$20 ; ' '                                                    ; 2df4: a9 20       .   :2cc3[1]
-    sta l09ee                                                         ; 2df6: 8d ee 09    ... :2cc5[1]
+    sta current_transformations_remaining+2                           ; 2df6: 8d ee 09    ... :2cc5[1]
     bne c2cd4                                                         ; 2df9: d0 0a       ..  :2cc8[1]
 ; $2dfb referenced 1 time by $2cb0
 c2cca
-    lda l09ee                                                         ; 2dfb: ad ee 09    ... :2cca[1]
+    lda current_transformations_remaining+2                           ; 2dfb: ad ee 09    ... :2cca[1]
     cmp #$20 ; ' '                                                    ; 2dfe: c9 20       .   :2ccd[1]
     bne c2cd4                                                         ; 2e00: d0 03       ..  :2ccf[1]
-    sta l09ed                                                         ; 2e02: 8d ed 09    ... :2cd1[1]
+    sta current_transformations_remaining+1                           ; 2e02: 8d ed 09    ... :2cd1[1]
 ; $2e05 referenced 5 times by $2ca1, $2cb2, $2cc1, $2cc8, $2ccf
 c2cd4
     sec                                                               ; 2e05: 38          8   :2cd4[1]
@@ -6654,10 +6651,10 @@ define_character_fe_loop
     sta l0004                                                         ; 3d14: 85 04       ..
     lda #$ff                                                          ; 3d16: a9 ff       ..
     sta l002e                                                         ; 3d18: 85 2e       ..
-    lda #$20 ; ' '                                                    ; 3d1a: a9 20       .
+    lda #' '                                                          ; 3d1a: a9 20       .
     sta displayed_transformations_remaining                           ; 3d1c: 85 5c       .\
-    sta l005d                                                         ; 3d1e: 85 5d       .]
-    sta l005e                                                         ; 3d20: 85 5e       .^
+    sta displayed_transformations_remaining+1                         ; 3d1e: 85 5d       .]
+    sta displayed_transformations_remaining+2                         ; 3d20: 85 5e       .^
     lda #$cb                                                          ; 3d22: a9 cb       ..
     sta l0045                                                         ; 3d24: 85 45       .E
     lda #$ff                                                          ; 3d26: a9 ff       ..
@@ -7572,7 +7569,7 @@ pydis_end
 ;     l0100:                                          6
 ;     l0116:                                          6
 ;     current_transformations_remaining:              6
-;     l09ed:                                          6
+;     current_transformations_remaining+1:            6
 ;     l1648:                                          6
 ;     l173d:                                          6
 ;     sub_c2286:                                      6
@@ -7594,7 +7591,7 @@ pydis_end
 ;     l0082:                                          5
 ;     l0987:                                          5
 ;     l099d:                                          5
-;     l09ee:                                          5
+;     current_transformations_remaining+2:            5
 ;     l145d:                                          5
 ;     l1cf4:                                          5
 ;     l241e:                                          5
@@ -7912,8 +7909,8 @@ pydis_end
 ;     system_via_ifr:                                 2
 ;     l0000:                                          1
 ;     l0050:                                          1
-;     l005d:                                          1
-;     l005e:                                          1
+;     displayed_transformations_remaining+1:          1
+;     displayed_transformations_remaining+2:          1
 ;     l0066:                                          1
 ;     l0067:                                          1
 ;     l0068:                                          1
@@ -8884,8 +8881,6 @@ pydis_end
 ;     l0059
 ;     l005a
 ;     l005b
-;     l005d
-;     l005e
 ;     l005f
 ;     l0060
 ;     l0061
@@ -8967,8 +8962,6 @@ pydis_end
 ;     l09df
 ;     l09ea
 ;     l09eb
-;     l09ed
-;     l09ee
 ;     l09ef
 ;     l0a6f
 ;     l0a7e

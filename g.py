@@ -225,7 +225,11 @@ entry(0x40c0, "convert_level_letter_to_number") # TODO: guesswork but something 
 
 comment(0x40d0, "Update the transformation count on screen at text position (35-37, 6). This takes care to update as few digits on screen as possible, probably to reduce flicker and to offset the relatively slow implementation of print_italic.")
 label(0x9ec, "current_transformations_remaining")
+expr_label(0x9ed, "current_transformations_remaining+1")
+expr_label(0x9ee, "current_transformations_remaining+2")
 label(0x5c, "displayed_transformations_remaining")
+expr_label(0x5d, "displayed_transformations_remaining+1")
+expr_label(0x5e, "displayed_transformations_remaining+2")
 decimal(0x149)
 # TODO: From a py8dis POV, this code feels wrong/confusing. entry() and label() behave different with how the label is placed. This works, but I am not sure it's by design. Maybe it is, it's been a while and I haven't had any coffee yet...
 entry(0x40d0, "update_displayed_transformations_remaining")
@@ -236,6 +240,12 @@ expr(0x140, "vdu_goto_xy")
 expr(0x3c85, "update_displayed_transformations_remaining_high_copy_start")
 entry(0x136, "digit_loop")
 entry(0x157, "digit_unchanged")
+char(0x3d1b)
+
+comment(0x111a, "Initialise the number of remaining transformations to 150.")
+char(0x111b)
+char(0x1120)
+char(0x1125)
 
 entry(0x1866, "print_italic")
 char(0x1867)
