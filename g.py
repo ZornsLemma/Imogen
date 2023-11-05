@@ -299,6 +299,12 @@ expr_label(0xab6, "old_irq1v+1")
 
 entry(0x178c, "wait_for_vsync")
 
+# TODO: Why are there two copies of BRKV? These can probably be renamed once their use becomes clearer.
+label(0xab1, "old_brkv1")
+expr_label(0xab2, "old_brkv1+1")
+label(0xab3, "old_brkv2")
+expr_label(0xab4, "old_brkv2+1")
+
 go()
 
 # vi: tw=100

@@ -199,10 +199,8 @@ l0a80                               = $0a80
 l0a90                               = $0a90
 l0aa1                               = $0aa1
 l0aa9                               = $0aa9
-l0ab1                               = $0ab1
-l0ab2                               = $0ab2
-l0ab3                               = $0ab3
-l0ab4                               = $0ab4
+old_brkv1                           = $0ab1
+old_brkv2                           = $0ab3
 old_irq1v                           = $0ab5
 l0b00                               = $0b00
 l3b09                               = $3b09
@@ -380,9 +378,9 @@ loop_c11dd
     bpl loop_c11dd                                                    ; 1312: 10 fa       ..  :11e1[1]
     jsr sub_c1278                                                     ; 1314: 20 78 12     x. :11e3[1]
     lda #$d3                                                          ; 1317: a9 d3       ..  :11e6[1]
-    sta l0ab3                                                         ; 1319: 8d b3 0a    ... :11e8[1]
+    sta old_brkv2                                                     ; 1319: 8d b3 0a    ... :11e8[1]
     lda #$16                                                          ; 131c: a9 16       ..  :11eb[1]
-    sta l0ab4                                                         ; 131e: 8d b4 0a    ... :11ed[1]
+    sta old_brkv2+1                                                   ; 131e: 8d b4 0a    ... :11ed[1]
     lda l110a                                                         ; 1321: ad 0a 11    ... :11f0[1]
     bne c11f8                                                         ; 1324: d0 03       ..  :11f3[1]
     jsr something3_TODO                                               ; 1326: 20 00 0c     .. :11f5[1]
@@ -1167,18 +1165,18 @@ c16f7
     tsx                                                               ; 182c: ba          .   :16fb[1]
     stx l0003                                                         ; 182d: 86 03       ..  :16fc[1]
     sei                                                               ; 182f: 78          x   :16fe[1]
-    ldx l0ab3                                                         ; 1830: ae b3 0a    ... :16ff[1]
+    ldx old_brkv2                                                     ; 1830: ae b3 0a    ... :16ff[1]
     stx brkv                                                          ; 1833: 8e 02 02    ... :1702[1]
-    ldx l0ab4                                                         ; 1836: ae b4 0a    ... :1705[1]
+    ldx old_brkv2+1                                                   ; 1836: ae b4 0a    ... :1705[1]
     stx brkv+1                                                        ; 1839: 8e 03 02    ... :1708[1]
     cli                                                               ; 183c: 58          X   :170b[1]
     ldx #<(l0070)                                                     ; 183d: a2 70       .p  :170c[1]
     ldy #>(l0070)                                                     ; 183f: a0 00       ..  :170e[1]
     jsr osfile                                                        ; 1841: 20 dd ff     .. :1710[1]
     sei                                                               ; 1844: 78          x   :1713[1]
-    ldx l0ab1                                                         ; 1845: ae b1 0a    ... :1714[1]
+    ldx old_brkv1                                                     ; 1845: ae b1 0a    ... :1714[1]
     stx brkv                                                          ; 1848: 8e 02 02    ... :1717[1]
-    ldx l0ab2                                                         ; 184b: ae b2 0a    ... :171a[1]
+    ldx old_brkv1+1                                                   ; 184b: ae b2 0a    ... :171a[1]
     stx brkv+1                                                        ; 184e: 8e 03 02    ... :171d[1]
     cli                                                               ; 1851: 58          X   :1720[1]
     ldx l0003                                                         ; 1852: a6 03       ..  :1721[1]
@@ -6621,11 +6619,11 @@ c3c9b
     ldy #0                                                            ; 3ccd: a0 00       ..
     jsr osbyte                                                        ; 3ccf: 20 f4 ff     ..            ; Disable cursor editing (edit keys give ASCII 135-139) (X=1)
     lda brkv                                                          ; 3cd2: ad 02 02    ...
-    sta l0ab1                                                         ; 3cd5: 8d b1 0a    ...
-    sta l0ab3                                                         ; 3cd8: 8d b3 0a    ...
+    sta old_brkv1                                                     ; 3cd5: 8d b1 0a    ...
+    sta old_brkv2                                                     ; 3cd8: 8d b3 0a    ...
     lda brkv+1                                                        ; 3cdb: ad 03 02    ...
-    sta l0ab2                                                         ; 3cde: 8d b2 0a    ...
-    sta l0ab4                                                         ; 3ce1: 8d b4 0a    ...
+    sta old_brkv1+1                                                   ; 3cde: 8d b2 0a    ...
+    sta old_brkv2+1                                                   ; 3ce1: 8d b4 0a    ...
     lda irq1v                                                         ; 3ce4: ad 04 02    ...
     sta old_irq1v                                                     ; 3ce7: 8d b5 0a    ...
     lda irq1v+1                                                       ; 3cea: ad 05 02    ...
@@ -7686,8 +7684,8 @@ pydis_end
 ;     l09a9:                                          3
 ;     l09c9:                                          3
 ;     l09d5:                                          3
-;     l0ab3:                                          3
-;     l0ab4:                                          3
+;     old_brkv2:                                      3
+;     old_brkv2+1:                                    3
 ;     old_irq1v:                                      3
 ;     l123b:                                          3
 ;     l1271:                                          3
@@ -7769,8 +7767,8 @@ pydis_end
 ;     first_byte_break_intercept:                     2
 ;     l09eb:                                          2
 ;     l0a80:                                          2
-;     l0ab1:                                          2
-;     l0ab2:                                          2
+;     old_brkv1:                                      2
+;     old_brkv1+1:                                    2
 ;     old_irq1v+1:                                    2
 ;     l0b00:                                          2
 ;     sub_c1236:                                      2
@@ -8970,10 +8968,6 @@ pydis_end
 ;     l0a90
 ;     l0aa1
 ;     l0aa9
-;     l0ab1
-;     l0ab2
-;     l0ab3
-;     l0ab4
 ;     l0b00
 ;     l1104
 ;     l1105
