@@ -100,12 +100,12 @@ l0043                               = $43
 l0044                               = $44
 l0045                               = $45
 l0046                               = $46
-l0048                               = $48
+current_player_character            = $48
 l0049                               = $49
 l004a                               = $4a
 l004b                               = $4b
 l004c                               = $4c
-l004d                               = $4d
+new_player_character                = $4d
 l0050                               = $50
 maybe_current_level                 = $51
 l0052                               = $52
@@ -363,8 +363,8 @@ c1186
     beq c1209                                                         ; 12e1: f0 57       .W  :11b0[1]
     lda #0                                                            ; 12e3: a9 00       ..  :11b2[1]
     sta l2433                                                         ; 12e5: 8d 33 24    .3$ :11b4[1]
-    sta l0048                                                         ; 12e8: 85 48       .H  :11b7[1]
-    sta l004d                                                         ; 12ea: 85 4d       .M  :11b9[1]
+    sta current_player_character                                      ; 12e8: 85 48       .H  :11b7[1]
+    sta new_player_character                                          ; 12ea: 85 4d       .M  :11b9[1]
     sta l09a8                                                         ; 12ec: 8d a8 09    ... :11bb[1]
     sta l0052                                                         ; 12ef: 85 52       .R  :11be[1]
     sta l2eb6                                                         ; 12f1: 8d b6 2e    ... :11c0[1]
@@ -2878,7 +2878,7 @@ c21d0
     jsr sub_c138d                                                     ; 2301: 20 8d 13     .. :21d0[1]
     cpx #1                                                            ; 2304: e0 01       ..  :21d3[1]
     bne c21ff                                                         ; 2306: d0 28       .(  :21d5[1]
-    lda l0048                                                         ; 2308: a5 48       .H  :21d7[1]
+    lda current_player_character                                      ; 2308: a5 48       .H  :21d7[1]
     cmp #4                                                            ; 230a: c9 04       ..  :21d9[1]
     bne c21ff                                                         ; 230c: d0 22       ."  :21db[1]
     stx l0065                                                         ; 230e: 86 65       .e  :21dd[1]
@@ -3041,7 +3041,7 @@ c22c4
 
 ; $23fe referenced 2 times by $2322, $39be
 something19_TODO
-    lda l0048                                                         ; 23fe: a5 48       .H  :22cd[1]
+    lda current_player_character                                      ; 23fe: a5 48       .H  :22cd[1]
     beq c22e0                                                         ; 2400: f0 0f       ..  :22cf[1]
     cmp #4                                                            ; 2402: c9 04       ..  :22d1[1]
     beq c22e3                                                         ; 2404: f0 0e       ..  :22d3[1]
@@ -3102,15 +3102,15 @@ c2309
     lda #0                                                            ; 2447: a9 00       ..  :2316[1]
     sta l09df                                                         ; 2449: 8d df 09    ... :2318[1]
     sta l09d4                                                         ; 244c: 8d d4 09    ... :231b[1]
-    sta l0048                                                         ; 244f: 85 48       .H  :231e[1]
+    sta current_player_character                                      ; 244f: 85 48       .H  :231e[1]
     pla                                                               ; 2451: 68          h   :2320[1]
     pla                                                               ; 2452: 68          h   :2321[1]
     jmp something19_TODO                                              ; 2453: 4c cd 22    L." :2322[1]
 
 ; $2456 referenced 1 time by $230f
 c2325
-    lda l0048                                                         ; 2456: a5 48       .H  :2325[1]
-    cmp l004d                                                         ; 2458: c5 4d       .M  :2327[1]
+    lda current_player_character                                      ; 2456: a5 48       .H  :2325[1]
+    cmp new_player_character                                          ; 2458: c5 4d       .M  :2327[1]
     beq c2334                                                         ; 245a: f0 09       ..  :2329[1]
     ldy l22ed                                                         ; 245c: ac ed 22    .." :232b[1]
     sty l09df                                                         ; 245f: 8c df 09    ... :232e[1]
@@ -3127,7 +3127,7 @@ c2334
 ; Transform the player into a new form.
 ; $2468 referenced 2 times by $2b61, $2e3c
 transform
-    sta l004d                                                         ; 2468: 85 4d       .M  :2337[1]
+    sta new_player_character                                          ; 2468: 85 4d       .M  :2337[1]
     lda #0                                                            ; 246a: a9 00       ..  :2339[1]
     sta l2433                                                         ; 246c: 8d 33 24    .3$ :233b[1]
     sta l0052                                                         ; 246f: 85 52       .R  :233e[1]
@@ -4403,15 +4403,15 @@ sub_c2b37
     bcc c2b64                                                         ; 2c6d: 90 26       .&  :2b3c[1]
     cpx l296e                                                         ; 2c6f: ec 6e 29    .n) :2b3e[1]
     bcs c2b64                                                         ; 2c72: b0 21       .!  :2b41[1]
-    lda l0048                                                         ; 2c74: a5 48       .H  :2b43[1]
-    cmp l004d                                                         ; 2c76: c5 4d       .M  :2b45[1]
+    lda current_player_character                                      ; 2c74: a5 48       .H  :2b43[1]
+    cmp new_player_character                                          ; 2c76: c5 4d       .M  :2b45[1]
     bne c2b64                                                         ; 2c78: d0 1b       ..  :2b47[1]
     lda l09df                                                         ; 2c7a: ad df 09    ... :2b49[1]
     beq c2b64                                                         ; 2c7d: f0 16       ..  :2b4c[1]
     lda #0                                                            ; 2c7f: a9 00       ..  :2b4e[1]
     sta l0052                                                         ; 2c81: 85 52       .R  :2b50[1]
     lda seventeen_entry_table1,x                                      ; 2c83: bd 5c 29    .\) :2b52[1]
-    cmp l0048                                                         ; 2c86: c5 48       .H  :2b55[1]
+    cmp current_player_character                                      ; 2c86: c5 48       .H  :2b55[1]
     beq c2b64                                                         ; 2c88: f0 0b       ..  :2b57[1]
     jsr decrement_current_transformations_remaining                   ; 2c8a: 20 8c 2c     ., :2b59[1]
     bcc c2b64                                                         ; 2c8d: 90 06       ..  :2b5c[1]   ; branch if no transformations remaining before decrement
@@ -4426,10 +4426,10 @@ sub_c2b65
     ldx new_level_index                                               ; 2c96: a6 29       .)  :2b65[1]
     cpx l296e                                                         ; 2c98: ec 6e 29    .n) :2b67[1]
     bcc c2b86                                                         ; 2c9b: 90 1a       ..  :2b6a[1]
-    lda l0048                                                         ; 2c9d: a5 48       .H  :2b6c[1]
+    lda current_player_character                                      ; 2c9d: a5 48       .H  :2b6c[1]
     cmp #4                                                            ; 2c9f: c9 04       ..  :2b6e[1]
     bne c2b86                                                         ; 2ca1: d0 14       ..  :2b70[1]
-    cmp l004d                                                         ; 2ca3: c5 4d       .M  :2b72[1]
+    cmp new_player_character                                          ; 2ca3: c5 4d       .M  :2b72[1]
     bne c2b86                                                         ; 2ca5: d0 10       ..  :2b74[1]
     lda l09df                                                         ; 2ca7: ad df 09    ... :2b76[1]
     beq c2b86                                                         ; 2caa: f0 0b       ..  :2b79[1]
@@ -6261,8 +6261,8 @@ c3997
     bne c39c1                                                         ; 3acb: d0 25       .%  :399a[1]
     tya                                                               ; 3acd: 98          .   :399c[1]
     bne c3a08                                                         ; 3ace: d0 69       .i  :399d[1]
-    lda l004d                                                         ; 3ad0: a5 4d       .M  :399f[1]
-    sta l0048                                                         ; 3ad2: 85 48       .H  :39a1[1]
+    lda new_player_character                                          ; 3ad0: a5 4d       .M  :399f[1]
+    sta current_player_character                                      ; 3ad2: 85 48       .H  :39a1[1]
     bne c39b6                                                         ; 3ad4: d0 11       ..  :39a3[1]
     ldy #$0b                                                          ; 3ad6: a0 0b       ..  :39a5[1]
     sty l09df                                                         ; 3ad8: 8c df 09    ... :39a7[1]
@@ -7544,7 +7544,7 @@ pydis_end
 ;     sub_c2682:                                           10
 ;     sub_c4109:                                           10
 ;     l0019:                                                9
-;     l0048:                                                9
+;     current_player_character:                             9
 ;     l09b3:                                                9
 ;     c207d:                                                9
 ;     sub_c2603:                                            9
@@ -7576,7 +7576,7 @@ pydis_end
 ;     current_level_index:                                  6
 ;     l003e:                                                6
 ;     l004b:                                                6
-;     l004d:                                                6
+;     new_player_character:                                 6
 ;     l0054:                                                6
 ;     l0055:                                                6
 ;     l0088:                                                6
@@ -8872,12 +8872,10 @@ pydis_end
 ;     l0044
 ;     l0045
 ;     l0046
-;     l0048
 ;     l0049
 ;     l004a
 ;     l004b
 ;     l004c
-;     l004d
 ;     l0050
 ;     l0052
 ;     l0053

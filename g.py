@@ -257,6 +257,9 @@ comment(0x2b5c, "branch if no transformations remaining before decrement", inlin
 comment(0x2337, "Transform the player into a new form.")
 entry(0x2337, "transform")
 
+label(0x48, "current_player_character")
+label(0x4d, "new_player_character")
+
 comment(0x111a, "Initialise the number of remaining transformations to 150.")
 char(0x111b)
 char(0x1120)
