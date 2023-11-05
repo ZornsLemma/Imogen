@@ -77,12 +77,12 @@ l0025                               = $25
 l0026                               = $26
 l0027                               = $27
 left_right_flag                     = $28
-new_level_index                     = $29
+new_menu_index                      = $29
 space_flag                          = $2a
 l002b                               = $2b
 l002c                               = $2c
 l002d                               = $2d
-current_level_index                 = $2e
+current_menu_index                  = $2e
 l0030                               = $30
 desired_level                       = $31
 currently_loaded_level              = $37
@@ -3131,7 +3131,7 @@ transform
     lda #0                                                            ; 246a: a9 00       ..  :2339[1]
     sta l2433                                                         ; 246c: 8d 33 24    .3$ :233b[1]
     sta l0052                                                         ; 246f: 85 52       .R  :233e[1]
-    lda new_level_index                                               ; 2471: a5 29       .)  :2340[1]
+    lda new_menu_index                                                ; 2471: a5 29       .)  :2340[1]
     cmp l296d                                                         ; 2473: cd 6d 29    .m) :2342[1]
     bcc c2357                                                         ; 2476: 90 10       ..  :2345[1]
     lda #$ff                                                          ; 2478: a9 ff       ..  :2347[1]
@@ -4128,13 +4128,13 @@ loop_c2992
     lda l296d                                                         ; 2ac9: ad 6d 29    .m) :2998[1]
     clc                                                               ; 2acc: 18          .   :299b[1]
     adc #2                                                            ; 2acd: 69 02       i.  :299c[1]
-    sta new_level_index                                               ; 2acf: 85 29       .)  :299e[1]
+    sta new_menu_index                                                ; 2acf: 85 29       .)  :299e[1]
     rts                                                               ; 2ad1: 60          `   :29a0[1]
 
 ; $2ad2 referenced 3 times by $1203, $123f, $2a41
 sub_c29a1
     jsr sub_c29a8                                                     ; 2ad2: 20 a8 29     .) :29a1[1]
-    jsr apply_new_level_index                                         ; 2ad5: 20 de 29     .) :29a4[1]
+    jsr apply_new_menu_index                                          ; 2ad5: 20 de 29     .) :29a4[1]
     rts                                                               ; 2ad8: 60          `   :29a7[1]
 
 ; $2ad9 referenced 2 times by $29a1, $3f38
@@ -4147,7 +4147,7 @@ c29aa
     beq c29d7                                                         ; 2ae1: f0 25       .%  :29b0[1]
     lda #0                                                            ; 2ae3: a9 00       ..  :29b2[1]
     sta l29dd                                                         ; 2ae5: 8d dd 29    ..) :29b4[1]
-    cpx current_level_index                                           ; 2ae8: e4 2e       ..  :29b7[1]
+    cpx current_menu_index                                            ; 2ae8: e4 2e       ..  :29b7[1]
     bne c29c1                                                         ; 2aea: d0 06       ..  :29b9[1]
     dec l29dd                                                         ; 2aec: ce dd 29    ..) :29bb[1]
     jsr sub_c29eb                                                     ; 2aef: 20 eb 29     .) :29be[1]
@@ -4158,10 +4158,10 @@ c29c1
     beq c29d7                                                         ; 2af8: f0 0e       ..  :29c7[1]
 ; $2afa referenced 1 time by $29d2
 loop_c29c9
-    ldy new_level_index                                               ; 2afa: a4 29       .)  :29c9[1]
+    ldy new_menu_index                                                ; 2afa: a4 29       .)  :29c9[1]
     lda seventeen_entry_table1,y                                      ; 2afc: b9 5c 29    .\) :29cb[1]
     bne c29d4                                                         ; 2aff: d0 04       ..  :29ce[1]
-    dec new_level_index                                               ; 2b01: c6 29       .)  :29d0[1]
+    dec new_menu_index                                                ; 2b01: c6 29       .)  :29d0[1]
     bne loop_c29c9                                                    ; 2b03: d0 f5       ..  :29d2[1]
 ; $2b05 referenced 1 time by $29ce
 c29d4
@@ -4178,19 +4178,19 @@ l29dd
     !byte 0                                                           ; 2b0e: 00          .   :29dd[1]
 
 ; $2b0f referenced 2 times by $29a4, $2c88
-apply_new_level_index
-    lda new_level_index                                               ; 2b0f: a5 29       .)  :29de[1]
-    cmp current_level_index                                           ; 2b11: c5 2e       ..  :29e0[1]
-    beq apply_new_level_index_rts                                     ; 2b13: f0 06       ..  :29e2[1]
+apply_new_menu_index
+    lda new_menu_index                                                ; 2b0f: a5 29       .)  :29de[1]
+    cmp current_menu_index                                            ; 2b11: c5 2e       ..  :29e0[1]
+    beq apply_new_menu_index_rts                                      ; 2b13: f0 06       ..  :29e2[1]
     jsr sub_c29eb                                                     ; 2b15: 20 eb 29     .) :29e4[1]
     jsr sub_c2a17                                                     ; 2b18: 20 17 2a     .* :29e7[1]
 ; $2b1b referenced 1 time by $29e2
-apply_new_level_index_rts
+apply_new_menu_index_rts
     rts                                                               ; 2b1b: 60          `   :29ea[1]
 
 ; $2b1c referenced 2 times by $29be, $29e4
 sub_c29eb
-    ldx current_level_index                                           ; 2b1c: a6 2e       ..  :29eb[1]
+    ldx current_menu_index                                            ; 2b1c: a6 2e       ..  :29eb[1]
     bmi c2a12                                                         ; 2b1e: 30 23       0#  :29ed[1]
     lda l004c                                                         ; 2b20: a5 4c       .L  :29ef[1]
     pha                                                               ; 2b22: 48          H   :29f1[1]
@@ -4212,12 +4212,12 @@ sub_c29eb
 ; $2b43 referenced 1 time by $29ed
 c2a12
     lda #$ff                                                          ; 2b43: a9 ff       ..  :2a12[1]
-    sta current_level_index                                           ; 2b45: 85 2e       ..  :2a14[1]
+    sta current_menu_index                                            ; 2b45: 85 2e       ..  :2a14[1]
     rts                                                               ; 2b47: 60          `   :2a16[1]
 
 ; $2b48 referenced 2 times by $29d4, $29e7
 sub_c2a17
-    ldx new_level_index                                               ; 2b48: a6 29       .)  :2a17[1]
+    ldx new_menu_index                                                ; 2b48: a6 29       .)  :2a17[1]
     bmi c2a33                                                         ; 2b4a: 30 18       0.  :2a19[1]
     lda l004c                                                         ; 2b4c: a5 4c       .L  :2a1b[1]
     pha                                                               ; 2b4e: 48          H   :2a1d[1]
@@ -4233,8 +4233,8 @@ sub_c2a17
     sta l004c                                                         ; 2b62: 85 4c       .L  :2a31[1]
 ; $2b64 referenced 1 time by $2a19
 c2a33
-    lda new_level_index                                               ; 2b64: a5 29       .)  :2a33[1]
-    sta current_level_index                                           ; 2b66: 85 2e       ..  :2a35[1]
+    lda new_menu_index                                                ; 2b64: a5 29       .)  :2a33[1]
+    sta current_menu_index                                            ; 2b66: 85 2e       ..  :2a35[1]
     rts                                                               ; 2b68: 60          `   :2a37[1]
 
 ; $2b69 referenced 1 time by $2aba
@@ -4260,10 +4260,10 @@ something20_TODO
 
 ; $2b91 referenced 3 times by $2a49, $2a50, $2a57
 c2a60
-    lda new_level_index                                               ; 2b91: a5 29       .)  :2a60[1]
+    lda new_menu_index                                                ; 2b91: a5 29       .)  :2a60[1]
     sta l0025                                                         ; 2b93: 85 25       .%  :2a62[1]
-    jsr sub_c2c67                                                     ; 2b95: 20 67 2c     g, :2a64[1]
-    lda new_level_index                                               ; 2b98: a5 29       .)  :2a67[1]
+    jsr apply_pending_menu_motion                                     ; 2b95: 20 67 2c     g, :2a64[1]
+    lda new_menu_index                                                ; 2b98: a5 29       .)  :2a67[1]
     cmp l0025                                                         ; 2b9a: c5 25       .%  :2a69[1]
     beq c2a73                                                         ; 2b9c: f0 06       ..  :2a6b[1]
     jsr something_TODO                                                ; 2b9e: 20 53 04     S. :2a6d[1]
@@ -4278,7 +4278,7 @@ c2a73
     jsr sub_c2b65                                                     ; 2baf: 20 65 2b     e+ :2a7e[1]
 ; $2bb2 referenced 2 times by $2a70, $2a76
 c2a81
-    lda new_level_index                                               ; 2bb2: a5 29       .)  :2a81[1]
+    lda new_menu_index                                                ; 2bb2: a5 29       .)  :2a81[1]
     cmp l296d                                                         ; 2bb4: cd 6d 29    .m) :2a83[1]
     bcs c2acd                                                         ; 2bb7: b0 45       .E  :2a86[1]
     lda l0025                                                         ; 2bb9: a5 25       .%  :2a88[1]
@@ -4336,7 +4336,7 @@ c2ada
 
 ; $2c0c referenced 1 time by $2a78
 sub_c2adb
-    ldx new_level_index                                               ; 2c0c: a6 29       .)  :2adb[1]
+    ldx new_menu_index                                                ; 2c0c: a6 29       .)  :2adb[1]
     cpx l296d                                                         ; 2c0e: ec 6d 29    .m) :2add[1]
     bcs c2af5                                                         ; 2c11: b0 13       ..  :2ae0[1]
     lda seventeen_entry_table1,x                                      ; 2c13: bd 5c 29    .\) :2ae2[1]
@@ -4398,7 +4398,7 @@ c2b2e
 
 ; $2c68 referenced 1 time by $2a7b
 sub_c2b37
-    ldx new_level_index                                               ; 2c68: a6 29       .)  :2b37[1]
+    ldx new_menu_index                                                ; 2c68: a6 29       .)  :2b37[1]
     cpx l296d                                                         ; 2c6a: ec 6d 29    .m) :2b39[1]
     bcc c2b64                                                         ; 2c6d: 90 26       .&  :2b3c[1]
     cpx l296e                                                         ; 2c6f: ec 6e 29    .n) :2b3e[1]
@@ -4423,7 +4423,7 @@ c2b64
 
 ; $2c96 referenced 1 time by $2a7e
 sub_c2b65
-    ldx new_level_index                                               ; 2c96: a6 29       .)  :2b65[1]
+    ldx new_menu_index                                                ; 2c96: a6 29       .)  :2b65[1]
     cpx l296e                                                         ; 2c98: ec 6e 29    .n) :2b67[1]
     bcc c2b86                                                         ; 2c9b: 90 1a       ..  :2b6a[1]
     lda current_player_character                                      ; 2c9d: a5 48       .H  :2b6c[1]
@@ -4601,8 +4601,8 @@ c2c62
     rts                                                               ; 2d97: 60          `   :2c66[1]
 
 ; $2d98 referenced 1 time by $2a64
-sub_c2c67
-    ldx new_level_index                                               ; 2d98: a6 29       .)  :2c67[1]
+apply_pending_menu_motion
+    ldx new_menu_index                                                ; 2d98: a6 29       .)  :2c67[1]
     lda left_right_flag2                                              ; 2d9a: ad a1 3a    ..: :2c69[1]
     beq no_menu_motion                                                ; 2d9d: f0 1a       ..  :2c6c[1]
     bmi menu_left_pending                                             ; 2d9f: 30 0e       0.  :2c6e[1]
@@ -4613,7 +4613,7 @@ menu_right_pending
     bcs no_menu_motion                                                ; 2da4: b0 13       ..  :2c73[1]
     lda seventeen_entry_table1,x                                      ; 2da6: bd 5c 29    .\) :2c75[1]
     beq menu_right_pending                                            ; 2da9: f0 f6       ..  :2c78[1]
-    stx new_level_index                                               ; 2dab: 86 29       .)  :2c7a[1]
+    stx new_menu_index                                                ; 2dab: 86 29       .)  :2c7a[1]
     bne no_menu_motion                                                ; 2dad: d0 0a       ..  :2c7c[1]   ; always branch
 ; $2daf referenced 2 times by $2c6e, $2c84
 menu_left_pending
@@ -4621,10 +4621,10 @@ menu_left_pending
     bmi no_menu_motion                                                ; 2db0: 30 07       0.  :2c7f[1]
     lda seventeen_entry_table1,x                                      ; 2db2: bd 5c 29    .\) :2c81[1]
     beq menu_left_pending                                             ; 2db5: f0 f8       ..  :2c84[1]
-    stx new_level_index                                               ; 2db7: 86 29       .)  :2c86[1]
+    stx new_menu_index                                                ; 2db7: 86 29       .)  :2c86[1]
 ; $2db9 referenced 4 times by $2c6c, $2c73, $2c7c, $2c7f
 no_menu_motion
-    jsr apply_new_level_index                                         ; 2db9: 20 de 29     .) :2c88[1]
+    jsr apply_new_menu_index                                          ; 2db9: 20 de 29     .) :2c88[1]
     rts                                                               ; 2dbc: 60          `   :2c8b[1]
 
 ; Decrement current_transformations_remaining by one, unless it's already zero. Leading
@@ -5471,7 +5471,7 @@ c3428
 
 ; $357c referenced 1 time by $2aa6
 sub_c344b
-    ldy new_level_index                                               ; 357c: a4 29       .)  :344b[1]
+    ldy new_menu_index                                                ; 357c: a4 29       .)  :344b[1]
     lda seventeen_entry_table1,y                                      ; 357e: b9 5c 29    .\) :344d[1]
     cmp #3                                                            ; 3581: c9 03       ..  :3450[1]
     bne c3496                                                         ; 3583: d0 42       .B  :3452[1]
@@ -5729,7 +5729,7 @@ c3652
 
 ; $3795 referenced 1 time by $2aa3
 sub_c3664
-    ldy new_level_index                                               ; 3795: a4 29       .)  :3664[1]
+    ldy new_menu_index                                                ; 3795: a4 29       .)  :3664[1]
     lda seventeen_entry_table1,y                                      ; 3797: b9 5c 29    .\) :3666[1]
     cmp #8                                                            ; 379a: c9 08       ..  :3669[1]
     bne c36a7                                                         ; 379c: d0 3a       .:  :366b[1]
@@ -6668,7 +6668,7 @@ define_character_fe_loop
     lda #0                                                            ; 3d12: a9 00       ..
     sta l0004                                                         ; 3d14: 85 04       ..
     lda #$ff                                                          ; 3d16: a9 ff       ..
-    sta current_level_index                                           ; 3d18: 85 2e       ..
+    sta current_menu_index                                            ; 3d18: 85 2e       ..
     lda #' '                                                          ; 3d1a: a9 20       .
     sta displayed_transformations_remaining                           ; 3d1c: 85 5c       .\
     sta displayed_transformations_remaining+1                         ; 3d1e: 85 5d       .]
@@ -7515,7 +7515,7 @@ pydis_end
 ;     l0078:                                               22
 ;     x_entry_table5:                                      21
 ;     sub_c2a8d:                                           20
-;     new_level_index:                                     18
+;     new_menu_index:                                      18
 ;     l007c:                                               18
 ;     l202b:                                               18
 ;     l0004:                                               17
@@ -7577,7 +7577,7 @@ pydis_end
 ;     l2602:                                                7
 ;     l2710:                                                7
 ;     sub_c3462:                                            7
-;     current_level_index:                                  6
+;     current_menu_index:                                   6
 ;     l003e:                                                6
 ;     l004b:                                                6
 ;     new_player_character:                                 6
@@ -9700,7 +9700,6 @@ pydis_end
 ;     sub_c2c26
 ;     sub_c2c2d
 ;     sub_c2c46
-;     sub_c2c67
 ;     sub_c2c96
 ;     sub_c2cc1
 ;     sub_c2d89
