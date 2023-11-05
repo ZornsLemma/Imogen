@@ -362,6 +362,9 @@ label(0xaa9, "eight_entry_table2")
 label(0x1104,"four_entry_table1") # TODO: might just be four bytes which share init code??
 label(0xa7f, "sixteen_entry_table")
 expr(0x3f1b, make_subtract("sixteen_entry_table", 1))
+label(0x295c, "seventeen_entry_table1") # sub_c2980 initialises elements 9 inclusive to $11 exclusive, but elsewhere we do access lower elements
+
+entry(0x3f6f, "probably_copy_protection_TODO")
 
 go()
 

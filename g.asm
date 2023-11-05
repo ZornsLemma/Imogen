@@ -4091,7 +4091,7 @@ c2945
 l295b
     !byte 0                                                           ; 2a8c: 00          .   :295b[1]
 ; $2a8d referenced 20 times by $2988, $29aa, $29cb, $2ae2, $2b52, $2b7b, $2b90, $2b9f, $2ba7, $2bb5, $2bc6, $2bd8, $2be9, $2bfa, $2c04, $2c23, $2c75, $2c81, $344d, $3666
-l295c
+seventeen_entry_table1
     !byte 3                                                           ; 2a8d: 03          .   :295c[1]
 ; $2a8e referenced 1 time by $2bf7
 l295d
@@ -4114,7 +4114,7 @@ sub_c2980
     lda #0                                                            ; 2ab7: a9 00       ..  :2986[1]
 ; $2ab9 referenced 1 time by $298e
 loop_c2988
-    sta l295c,x                                                       ; 2ab9: 9d 5c 29    .\) :2988[1]
+    sta seventeen_entry_table1,x                                      ; 2ab9: 9d 5c 29    .\) :2988[1]
     inx                                                               ; 2abc: e8          .   :298b[1]
     cpx #$11                                                          ; 2abd: e0 11       ..  :298c[1]
     bcc loop_c2988                                                    ; 2abf: 90 f8       ..  :298e[1]
@@ -4141,7 +4141,7 @@ sub_c29a8
     ldx #0                                                            ; 2ad9: a2 00       ..  :29a8[1]
 ; $2adb referenced 1 time by $29da
 c29aa
-    lda l295c,x                                                       ; 2adb: bd 5c 29    .\) :29aa[1]
+    lda seventeen_entry_table1,x                                      ; 2adb: bd 5c 29    .\) :29aa[1]
     cmp l296f,x                                                       ; 2ade: dd 6f 29    .o) :29ad[1]
     beq c29d7                                                         ; 2ae1: f0 25       .%  :29b0[1]
     lda #0                                                            ; 2ae3: a9 00       ..  :29b2[1]
@@ -4158,7 +4158,7 @@ c29c1
 ; $2afa referenced 1 time by $29d2
 loop_c29c9
     ldy l0029                                                         ; 2afa: a4 29       .)  :29c9[1]
-    lda l295c,y                                                       ; 2afc: b9 5c 29    .\) :29cb[1]
+    lda seventeen_entry_table1,y                                      ; 2afc: b9 5c 29    .\) :29cb[1]
     bne c29d4                                                         ; 2aff: d0 04       ..  :29ce[1]
     dec l0029                                                         ; 2b01: c6 29       .)  :29d0[1]
     bne loop_c29c9                                                    ; 2b03: d0 f5       ..  :29d2[1]
@@ -4338,7 +4338,7 @@ sub_c2adb
     ldx l0029                                                         ; 2c0c: a6 29       .)  :2adb[1]
     cpx l296d                                                         ; 2c0e: ec 6d 29    .m) :2add[1]
     bcs c2af5                                                         ; 2c11: b0 13       ..  :2ae0[1]
-    lda l295c,x                                                       ; 2c13: bd 5c 29    .\) :2ae2[1]
+    lda seventeen_entry_table1,x                                      ; 2c13: bd 5c 29    .\) :2ae2[1]
     cmp #7                                                            ; 2c16: c9 07       ..  :2ae5[1]
     beq c2af6                                                         ; 2c18: f0 0d       ..  :2ae7[1]
     cmp #8                                                            ; 2c1a: c9 08       ..  :2ae9[1]
@@ -4409,7 +4409,7 @@ sub_c2b37
     beq c2b64                                                         ; 2c7d: f0 16       ..  :2b4c[1]
     lda #0                                                            ; 2c7f: a9 00       ..  :2b4e[1]
     sta l0052                                                         ; 2c81: 85 52       .R  :2b50[1]
-    lda l295c,x                                                       ; 2c83: bd 5c 29    .\) :2b52[1]
+    lda seventeen_entry_table1,x                                      ; 2c83: bd 5c 29    .\) :2b52[1]
     cmp l0048                                                         ; 2c86: c5 48       .H  :2b55[1]
     beq c2b64                                                         ; 2c88: f0 0b       ..  :2b57[1]
     jsr sub_c2c8c                                                     ; 2c8a: 20 8c 2c     ., :2b59[1]
@@ -4432,7 +4432,7 @@ sub_c2b65
     bne c2b86                                                         ; 2ca5: d0 10       ..  :2b74[1]
     lda l09df                                                         ; 2ca7: ad df 09    ... :2b76[1]
     beq c2b86                                                         ; 2caa: f0 0b       ..  :2b79[1]
-    lda l295c,x                                                       ; 2cac: bd 5c 29    .\) :2b7b[1]
+    lda seventeen_entry_table1,x                                      ; 2cac: bd 5c 29    .\) :2b7b[1]
     cmp l0052                                                         ; 2caf: c5 52       .R  :2b7e[1]
     bne c2b84                                                         ; 2cb1: d0 02       ..  :2b80[1]
     lda #0                                                            ; 2cb3: a9 00       ..  :2b82[1]
@@ -4450,25 +4450,25 @@ something21_TODO
     ldx l296d                                                         ; 2cbe: ae 6d 29    .m) :2b8d[1]
 ; $2cc1 referenced 1 time by $2b9b
 loop_c2b90
-    lda l295c,x                                                       ; 2cc1: bd 5c 29    .\) :2b90[1]
+    lda seventeen_entry_table1,x                                      ; 2cc1: bd 5c 29    .\) :2b90[1]
     cmp l0070                                                         ; 2cc4: c5 70       .p  :2b93[1]
     beq c2bba                                                         ; 2cc6: f0 23       .#  :2b95[1]
     inx                                                               ; 2cc8: e8          .   :2b97[1]
     cpx l296e                                                         ; 2cc9: ec 6e 29    .n) :2b98[1]
     bcc loop_c2b90                                                    ; 2ccc: 90 f3       ..  :2b9b[1]
     ldx #$10                                                          ; 2cce: a2 10       ..  :2b9d[1]
-    lda l295c,x                                                       ; 2cd0: bd 5c 29    .\) :2b9f[1]
+    lda seventeen_entry_table1,x                                      ; 2cd0: bd 5c 29    .\) :2b9f[1]
     bne c2bba                                                         ; 2cd3: d0 16       ..  :2ba2[1]
 ; $2cd5 referenced 1 time by $2bae
 loop_c2ba4
     lda l295b,x                                                       ; 2cd5: bd 5b 29    .[) :2ba4[1]
-    sta l295c,x                                                       ; 2cd8: 9d 5c 29    .\) :2ba7[1]
+    sta seventeen_entry_table1,x                                      ; 2cd8: 9d 5c 29    .\) :2ba7[1]
     dex                                                               ; 2cdb: ca          .   :2baa[1]
     cpx l296e                                                         ; 2cdc: ec 6e 29    .n) :2bab[1]
     bcs loop_c2ba4                                                    ; 2cdf: b0 f4       ..  :2bae[1]
     inc l296e                                                         ; 2ce1: ee 6e 29    .n) :2bb0[1]
     lda l0070                                                         ; 2ce4: a5 70       .p  :2bb3[1]
-    sta l295c,x                                                       ; 2ce6: 9d 5c 29    .\) :2bb5[1]
+    sta seventeen_entry_table1,x                                      ; 2ce6: 9d 5c 29    .\) :2bb5[1]
     dec l0071                                                         ; 2ce9: c6 71       .q  :2bb8[1]
 ; $2ceb referenced 2 times by $2b95, $2ba2
 c2bba
@@ -4483,7 +4483,7 @@ sub_c2bbd
     ldx l296e                                                         ; 2cf4: ae 6e 29    .n) :2bc3[1]
 ; $2cf7 referenced 1 time by $2bd2
 loop_c2bc6
-    lda l295c,x                                                       ; 2cf7: bd 5c 29    .\) :2bc6[1]
+    lda seventeen_entry_table1,x                                      ; 2cf7: bd 5c 29    .\) :2bc6[1]
     beq c2bd6                                                         ; 2cfa: f0 0b       ..  :2bc9[1]
     cmp l0070                                                         ; 2cfc: c5 70       .p  :2bcb[1]
     beq c2bdd                                                         ; 2cfe: f0 0e       ..  :2bcd[1]
@@ -4494,7 +4494,7 @@ loop_c2bc6
 ; $2d07 referenced 1 time by $2bc9
 c2bd6
     lda l0070                                                         ; 2d07: a5 70       .p  :2bd6[1]
-    sta l295c,x                                                       ; 2d09: 9d 5c 29    .\) :2bd8[1]
+    sta seventeen_entry_table1,x                                      ; 2d09: 9d 5c 29    .\) :2bd8[1]
     dec l0071                                                         ; 2d0c: c6 71       .q  :2bdb[1]
 ; $2d0e referenced 2 times by $2bcd, $2bd4
 c2bdd
@@ -4508,7 +4508,7 @@ something22_TODO
     ldx l296e                                                         ; 2d17: ae 6e 29    .n) :2be6[1]
 ; $2d1a referenced 1 time by $2bf3
 loop_c2be9
-    lda l295c,x                                                       ; 2d1a: bd 5c 29    .\) :2be9[1]
+    lda seventeen_entry_table1,x                                      ; 2d1a: bd 5c 29    .\) :2be9[1]
     cmp l0070                                                         ; 2d1d: c5 70       .p  :2bec[1]
     beq c2bf7                                                         ; 2d1f: f0 07       ..  :2bee[1]
     inx                                                               ; 2d21: e8          .   :2bf0[1]
@@ -4518,12 +4518,12 @@ loop_c2be9
 ; $2d28 referenced 2 times by $2bee, $2c00
 c2bf7
     lda l295d,x                                                       ; 2d28: bd 5d 29    .]) :2bf7[1]
-    sta l295c,x                                                       ; 2d2b: 9d 5c 29    .\) :2bfa[1]
+    sta seventeen_entry_table1,x                                      ; 2d2b: 9d 5c 29    .\) :2bfa[1]
     inx                                                               ; 2d2e: e8          .   :2bfd[1]
     cpx #$10                                                          ; 2d2f: e0 10       ..  :2bfe[1]
     bcc c2bf7                                                         ; 2d31: 90 f5       ..  :2c00[1]
     lda #0                                                            ; 2d33: a9 00       ..  :2c02[1]
-    sta l295c,x                                                       ; 2d35: 9d 5c 29    .\) :2c04[1]
+    sta seventeen_entry_table1,x                                      ; 2d35: 9d 5c 29    .\) :2c04[1]
     dec l0071                                                         ; 2d38: c6 71       .q  :2c07[1]
 ; $2d3a referenced 1 time by $2bf5
 c2c09
@@ -4546,7 +4546,7 @@ sub_c2c0c
     sta l0015                                                         ; 2d4e: 85 15       ..  :2c1d[1]
     lda #1                                                            ; 2d50: a9 01       ..  :2c1f[1]
     sta l0016                                                         ; 2d52: 85 16       ..  :2c21[1]
-    lda l295c,x                                                       ; 2d54: bd 5c 29    .\) :2c23[1]
+    lda seventeen_entry_table1,x                                      ; 2d54: bd 5c 29    .\) :2c23[1]
     sta l296f,x                                                       ; 2d57: 9d 6f 29    .o) :2c26[1]
     bne c2c35                                                         ; 2d5a: d0 0a       ..  :2c29[1]
     lda #2                                                            ; 2d5c: a9 02       ..  :2c2b[1]
@@ -4610,7 +4610,7 @@ loop_c2c70
     inx                                                               ; 2da1: e8          .   :2c70[1]
     cpx #$11                                                          ; 2da2: e0 11       ..  :2c71[1]
     bcs c2c88                                                         ; 2da4: b0 13       ..  :2c73[1]
-    lda l295c,x                                                       ; 2da6: bd 5c 29    .\) :2c75[1]
+    lda seventeen_entry_table1,x                                      ; 2da6: bd 5c 29    .\) :2c75[1]
     beq loop_c2c70                                                    ; 2da9: f0 f6       ..  :2c78[1]
     stx l0029                                                         ; 2dab: 86 29       .)  :2c7a[1]
     bne c2c88                                                         ; 2dad: d0 0a       ..  :2c7c[1]
@@ -4618,7 +4618,7 @@ loop_c2c70
 c2c7e
     dex                                                               ; 2daf: ca          .   :2c7e[1]
     bmi c2c88                                                         ; 2db0: 30 07       0.  :2c7f[1]
-    lda l295c,x                                                       ; 2db2: bd 5c 29    .\) :2c81[1]
+    lda seventeen_entry_table1,x                                      ; 2db2: bd 5c 29    .\) :2c81[1]
     beq c2c7e                                                         ; 2db5: f0 f8       ..  :2c84[1]
     stx l0029                                                         ; 2db7: 86 29       .)  :2c86[1]
 ; $2db9 referenced 4 times by $2c6c, $2c73, $2c7c, $2c7f
@@ -5468,7 +5468,7 @@ c3428
 ; $357c referenced 1 time by $2aa6
 sub_c344b
     ldy l0029                                                         ; 357c: a4 29       .)  :344b[1]
-    lda l295c,y                                                       ; 357e: b9 5c 29    .\) :344d[1]
+    lda seventeen_entry_table1,y                                      ; 357e: b9 5c 29    .\) :344d[1]
     cmp #3                                                            ; 3581: c9 03       ..  :3450[1]
     bne c3496                                                         ; 3583: d0 42       .B  :3452[1]
     lda l0004                                                         ; 3585: a5 04       ..  :3454[1]
@@ -5726,7 +5726,7 @@ c3652
 ; $3795 referenced 1 time by $2aa3
 sub_c3664
     ldy l0029                                                         ; 3795: a4 29       .)  :3664[1]
-    lda l295c,y                                                       ; 3797: b9 5c 29    .\) :3666[1]
+    lda seventeen_entry_table1,y                                      ; 3797: b9 5c 29    .\) :3666[1]
     cmp #8                                                            ; 379a: c9 08       ..  :3669[1]
     bne c36a7                                                         ; 379c: d0 3a       .:  :366b[1]
     lda l0004                                                         ; 379e: a5 04       ..  :366d[1]
@@ -6966,7 +6966,7 @@ loop_c3f18
     sta copy_protection_flag                                          ; 3f2a: 8d 03 11    ...
 ; $3f2d referenced 1 time by $3f24
 c3f2d
-    jsr sub_c3f6f                                                     ; 3f2d: 20 6f 3f     o?
+    jsr probably_copy_protection_TODO                                 ; 3f2d: 20 6f 3f     o?
     lda #osbyte_reset_soft_keys                                       ; 3f30: a9 12       ..
     jsr osbyte                                                        ; 3f32: 20 f4 ff     ..            ; Reset function keys
     jsr sub_c2980                                                     ; 3f35: 20 80 29     .)
@@ -7007,7 +7007,7 @@ initial_screen_disabled_flag
     !byte 0                                                           ; 3f6e: 00          .
 
 ; $3f6f referenced 1 time by $3f2d
-sub_c3f6f
+probably_copy_protection_TODO
     lda copy_protection_flag                                          ; 3f6f: ad 03 11    ...
     and #1                                                            ; 3f72: 29 01       ).
     sta l005b                                                         ; 3f74: 85 5b       .[
@@ -8340,7 +8340,7 @@ pydis_end
 ;     loop_c3f18:                                     1
 ;     c3f2d:                                          1
 ;     character_fe_bitmap:                            1
-;     sub_c3f6f:                                      1
+;     probably_copy_protection_TODO:                  1
 ;     loop_c3f7b:                                     1
 ;     loop_c3f87:                                     1
 ;     c3fba:                                          1
@@ -9187,7 +9187,6 @@ pydis_end
 ;     l292f
 ;     l294e
 ;     l295b
-;     l295c
 ;     l295d
 ;     l296d
 ;     l296e
@@ -9798,7 +9797,6 @@ pydis_end
 ;     sub_c3b78
 ;     sub_c3bd3
 ;     sub_c3bfd
-;     sub_c3f6f
 ;     sub_c4094
 ;     sub_c40a5
 ;     sub_c40c0
