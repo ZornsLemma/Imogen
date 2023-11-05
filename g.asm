@@ -4647,7 +4647,7 @@ decrement_current_transformations_remaining
     dec current_transformations_remaining+1                           ; 2dd9: ce ed 09    ... :2ca8[1]
     lda current_transformations_remaining+1                           ; 2ddc: ad ed 09    ... :2cab[1]
     cmp #'0'                                                          ; 2ddf: c9 30       .0  :2cae[1]
-    beq c2cca                                                         ; 2de1: f0 18       ..  :2cb0[1]
+    beq decrement_current_tranformations_remaining_middle_digit_now_zero; 2de1: f0 18       ..  :2cb0[1]
     bcs decrement_current_tranformations_remaining_no_borrow          ; 2de3: b0 20       .   :2cb2[1]
     lda #'9'                                                          ; 2de5: a9 39       .9  :2cb4[1]
     sta current_transformations_remaining+1                           ; 2de7: 8d ed 09    ... :2cb6[1]
@@ -4659,7 +4659,7 @@ decrement_current_transformations_remaining
     sta current_transformations_remaining+2                           ; 2df6: 8d ee 09    ... :2cc5[1]
     bne decrement_current_tranformations_remaining_no_borrow          ; 2df9: d0 0a       ..  :2cc8[1]
 ; $2dfb referenced 1 time by $2cb0
-c2cca
+decrement_current_tranformations_remaining_middle_digit_now_zero
     lda current_transformations_remaining+2                           ; 2dfb: ad ee 09    ... :2cca[1]
     cmp #' '                                                          ; 2dfe: c9 20       .   :2ccd[1]
     bne decrement_current_tranformations_remaining_no_borrow          ; 2e00: d0 03       ..  :2ccf[1]
@@ -8641,7 +8641,6 @@ pydis_end
 ;     c2c62
 ;     c2c7e
 ;     c2c88
-;     c2cca
 ;     c2d87
 ;     c2da6
 ;     c2dc0

@@ -245,6 +245,7 @@ comment(0x2c8c, "Decrement current_transformations_remaining by one, unless it's
 entry(0x2c8c, "decrement_current_transformations_remaining")
 expr(0x2c95, "' ' + '0'") # TODO: not portable
 label(0x2cd5, "decrement_current_tranformations_remaining_pla_rts")
+label(0x2cca, "decrement_current_tranformations_remaining_middle_digit_now_zero")
 char(0x2ca0)
 char(0x2ca4)
 char(0x2caf)
