@@ -188,6 +188,7 @@ label(0x40d0, "something9_high_copy_start")
 label(0x40d0+0x2f, "something9_high_copy_end")
 expr(0x3c8c, make_subtract("something9_high_copy_end", "something9_high_copy_start"))
 expr(0x140, "vdu_goto_xy")
+expr(0x3c85, "something9_high_copy_start")
 
 entry(0x17a0, "something10_TODO")
 entry(0x1839, "something11_TODO")

@@ -6581,7 +6581,7 @@ loop_c3c79
     ldy #0                                                            ; 3c82: a0 00       ..
 ; $3c84 referenced 1 time by $3c8d
 loop_c3c84
-    lda something5_high_copy_end,y                                    ; 3c84: b9 d0 40    ..@
+    lda something9_high_copy_start,y                                  ; 3c84: b9 d0 40    ..@
     sta something9_TODO,y                                             ; 3c87: 99 31 01    .1.
     iny                                                               ; 3c8a: c8          .
     cpy #something9_high_copy_end - something9_high_copy_start        ; 3c8b: c0 2f       ./
@@ -9993,6 +9993,9 @@ pydis_end
 }
 !if (something9_high_copy_end - something9_high_copy_start) != $2f {
     !error "Assertion failed: something9_high_copy_end - something9_high_copy_start == $2f"
+}
+!if (something9_high_copy_start) != $40d0 {
+    !error "Assertion failed: something9_high_copy_start == $40d0"
 }
 !if (vdu_bell) != $07 {
     !error "Assertion failed: vdu_bell == $07"
