@@ -25,9 +25,9 @@ pydis_start
     ldy #0                                                            ; 53c0: a0 00       ..
     sty l0005                                                         ; 53c2: 84 05       ..
     sty l0072                                                         ; 53c4: 84 72       .r
-    lda #<something1                                                  ; 53c6: a9 4f       .O
+    lda #<level_name_ptr_table                                        ; 53c6: a9 4f       .O
     sta l0070                                                         ; 53c8: 85 70       .p
-    lda #>something1                                                  ; 53ca: a9 54       .T
+    lda #>level_name_ptr_table                                        ; 53ca: a9 54       .T
     sta l0071                                                         ; 53cc: 85 71       .q
 c53ce
     lda (l0070),y                                                     ; 53ce: b1 70       .p
@@ -42,6 +42,8 @@ c53ce
     iny                                                               ; 53df: c8          .
     lda (l0070),y                                                     ; 53e0: b1 70       .p
     tay                                                               ; 53e2: a8          .
+; TODO: At this point we have the level pointer for the successfully matched password
+; in YX
     lda l0072                                                         ; 53e3: a5 72       .r
     pha                                                               ; 53e5: 48          H
     txa                                                               ; 53e6: 8a          .
@@ -105,36 +107,56 @@ c544e
 ; SAXOPHOBIA\r^\x9e
 ; TIME-FLIES\r^\x9e
 ; So it looks like this is a table of level names, probably CR-terminated with a 16-bit
-; pointer following each. '^' is $5e.
-something1
-    !byte $98, $8a, $93, $84, $9b, $83, $84, $89, $82, $8a, $c6, $95  ; 544f: 98 8a 93... ...
-    !byte $55, $9f, $82, $86, $8e, $e6, $8d, $87, $82, $8e, $98, $c6  ; 545b: 55 9f 82... U..
-    !byte $95, $55, $8d, $82, $99, $8e, $e6, $9c, $84, $99, $80, $98  ; 5467: 95 55 8d... .U.
-    !byte $c6, $95, $55, $8c, $85, $9e, $e6, $9b, $99, $84, $89, $87  ; 5473: c6 95 55... ..U
-    !byte $8e, $86, $c6, $95, $55, $8f, $9e, $88, $80, $e6, $8e, $8c  ; 547f: 8e 86 c6... ...
-    !byte $8c, $e6, $89, $87, $9e, $8e, $98, $c6, $95, $55, $8d, $84  ; 548b: 8c e6 89... ...
-    !byte $87, $87, $84, $9c, $e6, $86, $8e, $c6, $95, $55, $89, $8a  ; 5497: 87 87 84... ...
-    !byte $87, $87, $84, $84, $85, $8a, $88, $92, $c6, $95, $55, $8a  ; 54a3: 87 87 84... ...
-    !byte $9b, $9b, $87, $8e, $98, $84, $9e, $99, $88, $8e, $c6, $95  ; 54af: 9b 9b 87... ...
-    !byte $55, $98, $8e, $8e, $e6, $98, $9c, $84, $99, $8f, $c6, $95  ; 54bb: 55 98 8e... U..
-    !byte $55, $89, $8a, $89, $89, $84, $84, $85, $8a, $88, $92, $c6  ; 54c7: 55 89 8a... U..
-    !byte $95, $55, $8f, $99, $82, $9b, $9b, $82, $85, $8c, $e6, $98  ; 54d3: 95 55 8f... .U.
-    !byte $9f, $9e, $8d, $8d, $c6, $95, $55, $9c, $83, $82, $9b, $e6  ; 54df: 9f 9e 8d... ...
-    !byte $82, $9f, $c6, $95, $55, $83, $8a, $86, $98, $9f, $8e, $99  ; 54eb: 82 9f c6... ...
-    !byte $e6, $81, $8a, $86, $c6, $95, $55, $9b, $8a, $9d, $87, $84  ; 54f7: e6 81 8a... ...
-    !byte $9d, $e6, $9c, $8a, $98, $e6, $83, $8e, $99, $8e, $c6, $95  ; 5503: 9d e6 9c... ...
-    !byte $55, $8f, $84, $9c, $85, $e6, $8a, $85, $8f, $e6, $84, $9e  ; 550f: 55 8f 84... U..
-    !byte $9f, $c6, $95, $55, $9f, $8e, $85, $8f, $8e, $99, $e6, $83  ; 551b: 9f c6 95... ...
-    !byte $84, $84, $80, $98, $c6, $95, $55, $8e, $9b, $82, $87, $84  ; 5527: 84 84 80... ...
-    !byte $8c, $9e, $8e, $c6, $9b, $55, $8f, $9e, $86, $9b, $c6, $42  ; 5533: 8c 9e 8e... ...
-    !byte $56, $86, $84, $85, $84, $c6, $ea, $55, $88, $84, $87, $84  ; 553f: 56 86 84... V..
-    !byte $9e, $99, $c6,   3, $56, $9a, $9e, $82, $9f, $c6, $aa, $55  ; 554b: 9e 99 c6... ...
-    !byte $85, $84, $99, $86, $8a, $87, $e6, $86, $84, $8f, $8e, $c6  ; 5557: 85 84 99... ...
-    !byte $af, $55, $99, $8e, $9d, $82, $8e, $9c, $e6, $86, $84, $8f  ; 5563: af 55 99... .U.
-    !byte $8e, $c6, $b4, $55, $9f, $8e, $98, $9f, $e6, $86, $84, $8f  ; 556f: 8e c6 b4... ...
-    !byte $8e, $c6, $b9, $55, $8f, $8e, $89, $9e, $8c, $e6, $86, $84  ; 557b: 8e c6 b9... ...
-    !byte $8f, $8e, $c6, $be, $55, $8c, $82, $86, $86, $8e, $c6, $1c  ; 5587: 8f 8e c6... ...
-    !byte $56, $cb, $18                                               ; 5593: 56 cb 18    V..
+; pointer following each. '^' is $5e. Actually I suspect the pointers should *not* be
+; EOR-ed, just the text. Note that \r EOR $cb is $c6, so it's easy-ish to pick the
+; pointers out of the raw data by eye.
+level_name_ptr_table
+    !byte $98, $8a, $93, $84, $9b, $83, $84, $89, $82, $8a, $c6       ; 544f: 98 8a 93... ...            ;  ; EOR-encrypted: 'SAXOPHOBIA'
+    !word $5595                                                       ; 545a: 95 55       .U
+    !byte $9f, $82, $86, $8e, $e6, $8d, $87, $82, $8e, $98, $c6       ; 545c: 9f 82 86... ...            ;  ; EOR-encrypted: 'TIME-FLIES'
+    !word $5595                                                       ; 5467: 95 55       .U
+    !byte $8d, $82, $99, $8e, $e6, $9c, $84, $99, $80, $98, $c6       ; 5469: 8d 82 99... ...            ;  ; EOR-encrypted: 'FIRE-WORKS'
+    !word $5595                                                       ; 5474: 95 55       .U
+    !byte $8c, $85, $9e, $e6, $9b, $99, $84, $89, $87, $8e, $86, $c6  ; 5476: 8c 85 9e... ...            ;  ; EOR-encrypted: 'GNU-PROBLEM'
+    !word $5595                                                       ; 5482: 95 55       .U
+    !byte $8f, $9e, $88, $80, $e6, $8e, $8c, $8c, $e6, $89, $87, $9e  ; 5484: 8f 9e 88... ...            ;  ; EOR-encrypted: 'DUCK-EGG-BLUES'
+    !byte $8e, $98, $c6                                               ; 5490: 8e 98 c6    ...
+    !word $5595                                                       ; 5493: 95 55       .U
+    !byte $8d, $84, $87, $87, $84, $9c, $e6, $86, $8e, $c6            ; 5495: 8d 84 87... ...            ;  ; EOR-encrypted: 'FOLLOW-ME'
+    !word $5595                                                       ; 549f: 95 55       .U
+    !byte $89, $8a, $87, $87, $84, $84, $85, $8a, $88, $92, $c6       ; 54a1: 89 8a 87... ...            ;  ; EOR-encrypted: 'BALLOONACY'
+    !word $5595                                                       ; 54ac: 95 55       .U
+    !byte $8a, $9b, $9b, $87, $8e, $98, $84, $9e, $99, $88, $8e, $c6  ; 54ae: 8a 9b 9b... ...            ;  ; EOR-encrypted: 'APPLESOURCE'
+    !word $5595                                                       ; 54ba: 95 55       .U
+    !byte $98, $8e, $8e, $e6, $98, $9c, $84, $99, $8f, $c6            ; 54bc: 98 8e 8e... ...            ;  ; EOR-encrypted: 'SEE-SWORD'
+    !word $5595                                                       ; 54c6: 95 55       .U
+    !byte $89, $8a, $89, $89, $84, $84, $85, $8a, $88, $92, $c6       ; 54c8: 89 8a 89... ...            ;  ; EOR-encrypted: 'BABBOONACY'
+    !word $5595                                                       ; 54d3: 95 55       .U
+    !byte $8f, $99, $82, $9b, $9b, $82, $85, $8c, $e6, $98, $9f, $9e  ; 54d5: 8f 99 82... ...            ;  ; EOR-encrypted: 'DRIPPING-STUFF'
+    !byte $8d, $8d, $c6                                               ; 54e1: 8d 8d c6    ...
+    !word $5595                                                       ; 54e4: 95 55       .U
+    !byte $9c, $83, $82, $9b, $e6, $82, $9f, $c6                      ; 54e6: 9c 83 82... ...            ;  ; EOR-encrypted: 'WHIP-IT'
+    !word $5595                                                       ; 54ee: 95 55       .U
+    !byte $83, $8a, $86, $98, $9f, $8e, $99, $e6, $81, $8a, $86, $c6  ; 54f0: 83 8a 86... ...            ;  ; EOR-encrypted: 'HAMSTER-JAM'
+    !word $5595                                                       ; 54fc: 95 55       .U
+    !byte $9b, $8a, $9d, $87, $84, $9d, $e6, $9c, $8a, $98, $e6, $83  ; 54fe: 9b 8a 9d... ...            ;  ; EOR-encrypted: 'PAVLOV-WAS-HERE'
+    !byte $8e, $99, $8e, $c6                                          ; 550a: 8e 99 8e... ...
+    !word $5595                                                       ; 550e: 95 55       .U
+    !byte $8f, $84, $9c, $85, $e6, $8a, $85, $8f, $e6, $84, $9e, $9f  ; 5510: 8f 84 9c... ...            ;  ; EOR-encrypted: 'DOWN-AND-OUT'
+    !byte $c6                                                         ; 551c: c6          .
+    !word $5595                                                       ; 551d: 95 55       .U
+    !byte $9f, $8e, $85, $8f, $8e, $99, $e6, $83, $84, $84, $80, $98  ; 551f: 9f 8e 85... ...            ;  ; EOR-encrypted: 'TENDER-HOOKS'
+    !byte $c6                                                         ; 552b: c6          .
+    !word $5595                                                       ; 552c: 95 55       .U
+    !byte $8e, $9b, $82, $87, $84, $8c, $9e, $8e, $c6, $9b, $55, $8f  ; 552e: 8e 9b 82... ...
+    !byte $9e, $86, $9b, $c6, $42, $56, $86, $84, $85, $84, $c6, $ea  ; 553a: 9e 86 9b... ...
+    !byte $55, $88, $84, $87, $84, $9e, $99, $c6,   3, $56, $9a, $9e  ; 5546: 55 88 84... U..
+    !byte $82, $9f, $c6, $aa, $55, $85, $84, $99, $86, $8a, $87, $e6  ; 5552: 82 9f c6... ...
+    !byte $86, $84, $8f, $8e, $c6, $af, $55, $99, $8e, $9d, $82, $8e  ; 555e: 86 84 8f... ...
+    !byte $9c, $e6, $86, $84, $8f, $8e, $c6, $b4, $55, $9f, $8e, $98  ; 556a: 9c e6 86... ...
+    !byte $9f, $e6, $86, $84, $8f, $8e, $c6, $b9, $55, $8f, $8e, $89  ; 5576: 9f e6 86... ...
+    !byte $9e, $8c, $e6, $86, $84, $8f, $8e, $c6, $be, $55, $8c, $82  ; 5582: 9e 8c e6... ...
+    !byte $86, $86, $8e, $c6, $1c, $56, $cb, $18                      ; 558e: 86 86 8e... ...
     !text "iALNT"                                                     ; 5596: 69 41 4c... iAL
     !byte $a2, $51, $ad,   3, $11, $29,   2, $d0,   2, $a2,   1, $8a  ; 559b: a2 51 ad... .Q.
     !text "LNT"                                                       ; 55a7: 4c 4e 54    LNT
@@ -205,14 +227,14 @@ pydis_end
 ;     l37f3
 ;     l388d
 ;     loop_c5410
-!if (<something1) != $4f {
-    !error "Assertion failed: <something1 == $4f"
+!if (<level_name_ptr_table) != $4f {
+    !error "Assertion failed: <level_name_ptr_table == $4f"
 }
 !if (<unknown_encrypted_string) != $46 {
     !error "Assertion failed: <unknown_encrypted_string == $46"
 }
-!if (>something1) != $54 {
-    !error "Assertion failed: >something1 == $54"
+!if (>level_name_ptr_table) != $54 {
+    !error "Assertion failed: >level_name_ptr_table == $54"
 }
 !if (>unknown_encrypted_string) != $54 {
     !error "Assertion failed: >unknown_encrypted_string == $54"
