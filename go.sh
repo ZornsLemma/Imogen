@@ -11,5 +11,3 @@ cmp orig/g.dat g.out || echo g.asm rebuild failed
 python3 auxcode.py --acme > auxcode.asm
 acme -o auxcode.out --report auxcode.lst auxcode.asm
 cmp orig/auxcode.dat auxcode.out || echo auxcode.asm rebuild failed
-
-# TODO: Move the extracted original binaries into a non-tmp directory and check in?
