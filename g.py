@@ -694,6 +694,10 @@ expr(0x3826, make_hi("print_italic"))
 expr(0x382f, make_lo("oswrch"))
 expr(0x3834, make_hi("oswrch"))
 
+comment(0x381c, "Print the CR-terminated string at YX. Print in italics iff l0043 is non-0. Each byte of the string is EORed with l0045 before printing/checking for CR.")
+entry(0x381c, "print_eored_string_at_yx")
+label(0x45, "eor_key") # TODO: Is this *always* $cb in practice?
+
 # TODO: Mention l0005 in name until we know why
 entry(0x3872, "flush_input_buffers_and_zero_l0005")
 

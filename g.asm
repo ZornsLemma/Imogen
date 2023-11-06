@@ -97,7 +97,7 @@ l0041                               = $41
 l0042                               = $42
 l0043                               = $43
 l0044                               = $44
-l0045                               = $45
+eor_key                             = $45
 return_key_pressed_pending          = $46
 current_player_character            = $48
 l0049                               = $49
@@ -5030,11 +5030,11 @@ c340d
     sta l0004                                                         ; 3543: 85 04       ..  :3412[1]
     ldx #$2b ; '+'                                                    ; 3545: a2 2b       .+  :3414[1]
     ldy #$34 ; '4'                                                    ; 3547: a0 34       .4  :3416[1]
-    jsr c381c                                                         ; 3549: 20 1c 38     .8 :3418[1]
+    jsr print_eored_string_at_yx                                      ; 3549: 20 1c 38     .8 :3418[1]
     jsr print_2xlf_cr                                                 ; 354c: 20 50 38     P8 :341b[1]
     ldx #$3b ; ';'                                                    ; 354f: a2 3b       .;  :341e[1]
     ldy #$34 ; '4'                                                    ; 3551: a0 34       .4  :3420[1]
-    jsr c381c                                                         ; 3553: 20 1c 38     .8 :3422[1]
+    jsr print_eored_string_at_yx                                      ; 3553: 20 1c 38     .8 :3422[1]
     jmp flush_input_buffers_and_zero_l0005                            ; 3556: 4c 72 38    Lr8 :3425[1]
 
 c3428
@@ -5078,7 +5078,7 @@ c347f
     sta l0004                                                         ; 35b5: 85 04       ..  :3484[1]
     ldx #$98                                                          ; 35b7: a2 98       ..  :3486[1]
     ldy #$34 ; '4'                                                    ; 35b9: a0 34       .4  :3488[1]
-    jsr c381c                                                         ; 35bb: 20 1c 38     .8 :348a[1]
+    jsr print_eored_string_at_yx                                      ; 35bb: 20 1c 38     .8 :348a[1]
     jsr print_2xlf_cr                                                 ; 35be: 20 50 38     P8 :348d[1]
     jsr turn_cursor_on                                                ; 35c1: 20 5d 38     ]8 :3490[1]
     jmp flush_input_buffers_and_zero_l0005                            ; 35c4: 4c 72 38    Lr8 :3493[1]
@@ -5106,11 +5106,11 @@ loop_c34b2
     sta l0004                                                         ; 35f1: 85 04       ..  :34c0[1]
     ldx #<save_block                                                  ; 35f3: a2 e3       ..  :34c2[1]
     ldy #>save_block                                                  ; 35f5: a0 34       .4  :34c4[1]
-    jsr c381c                                                         ; 35f7: 20 1c 38     .8 :34c6[1]
+    jsr print_eored_string_at_yx                                      ; 35f7: 20 1c 38     .8 :34c6[1]
     jsr print_2xlf_cr                                                 ; 35fa: 20 50 38     P8 :34c9[1]
     ldx #<save_block2                                                 ; 35fd: a2 f0       ..  :34cc[1]
     ldy #>save_block2                                                 ; 35ff: a0 34       .4  :34ce[1]
-    jsr c381c                                                         ; 3601: 20 1c 38     .8 :34d0[1]
+    jsr print_eored_string_at_yx                                      ; 3601: 20 1c 38     .8 :34d0[1]
     jmp flush_input_buffers_and_zero_l0005                            ; 3604: 4c 72 38    Lr8 :34d3[1]
 
 save_full_filename
@@ -5144,11 +5144,11 @@ c3516
     sta l0004                                                         ; 364f: 85 04       ..  :351e[1]
     ldx #$35 ; '5'                                                    ; 3651: a2 35       .5  :3520[1]
     ldy #$35 ; '5'                                                    ; 3653: a0 35       .5  :3522[1]
-    jsr c381c                                                         ; 3655: 20 1c 38     .8 :3524[1]
+    jsr print_eored_string_at_yx                                      ; 3655: 20 1c 38     .8 :3524[1]
     jsr print_2xlf_cr                                                 ; 3658: 20 50 38     P8 :3527[1]
     ldx #$46 ; 'F'                                                    ; 365b: a2 46       .F  :352a[1]
     ldy #$35 ; '5'                                                    ; 365d: a0 35       .5  :352c[1]
-    jsr c381c                                                         ; 365f: 20 1c 38     .8 :352e[1]
+    jsr print_eored_string_at_yx                                      ; 365f: 20 1c 38     .8 :352e[1]
     jmp flush_input_buffers_and_zero_l0005                            ; 3662: 4c 72 38    Lr8 :3531[1]
 
 return23
@@ -5247,11 +5247,11 @@ sub_c3617
     jsr sub_c040a                                                     ; 3748: 20 0a 04     .. :3617[1]
     ldx #6                                                            ; 374b: a2 06       ..  :361a[1]
     ldy #$36 ; '6'                                                    ; 374d: a0 36       .6  :361c[1]
-    jsr c381c                                                         ; 374f: 20 1c 38     .8 :361e[1]
+    jsr print_eored_string_at_yx                                      ; 374f: 20 1c 38     .8 :361e[1]
     jsr print_2xlf_cr                                                 ; 3752: 20 50 38     P8 :3621[1]
     ldx #$46 ; 'F'                                                    ; 3755: a2 46       .F  :3624[1]
     ldy #$35 ; '5'                                                    ; 3757: a0 35       .5  :3626[1]
-    jsr c381c                                                         ; 3759: 20 1c 38     .8 :3628[1]
+    jsr print_eored_string_at_yx                                      ; 3759: 20 1c 38     .8 :3628[1]
     jsr flush_input_buffers_and_zero_l0005                            ; 375c: 20 72 38     r8 :362b[1]
 wait_for_return
     jsr inkey_0                                                       ; 375f: 20 7c 38     |8 :362e[1]
@@ -5268,7 +5268,7 @@ c363f
     jsr sub_c040a                                                     ; 3770: 20 0a 04     .. :363f[1]
     ldx #$55 ; 'U'                                                    ; 3773: a2 55       .U  :3642[1]
     ldy #$36 ; '6'                                                    ; 3775: a0 36       .6  :3644[1]
-    jsr c381c                                                         ; 3777: 20 1c 38     .8 :3646[1]
+    jsr print_eored_string_at_yx                                      ; 3777: 20 1c 38     .8 :3646[1]
     jsr print_2xlf_cr                                                 ; 377a: 20 50 38     P8 :3649[1]
     jsr turn_cursor_on                                                ; 377d: 20 5d 38     ]8 :364c[1]
     jmp flush_input_buffers_and_zero_l0005                            ; 3780: 4c 72 38    Lr8 :364f[1]
@@ -5462,7 +5462,7 @@ c378e
     sta l0004                                                         ; 38c4: 85 04       ..  :3793[1]
     ldx #$b1                                                          ; 38c6: a2 b1       ..  :3795[1]
     ldy #$37 ; '7'                                                    ; 38c8: a0 37       .7  :3797[1]
-    jsr c381c                                                         ; 38ca: 20 1c 38     .8 :3799[1]
+    jsr print_eored_string_at_yx                                      ; 38ca: 20 1c 38     .8 :3799[1]
     ldy desired_level                                                 ; 38cd: a4 31       .1  :379c[1]
     jsr convert_level_number_to_letter                                ; 38cf: 20 d4 0a     .. :379e[1]
     tya                                                               ; 38d2: 98          .   :37a1[1]
@@ -5470,7 +5470,7 @@ c378e
     jsr print_2xlf_cr                                                 ; 38d6: 20 50 38     P8 :37a5[1]
     ldx c3adb                                                         ; 38d9: ae db 3a    ..: :37a8[1]
     ldy l3adc                                                         ; 38dc: ac dc 3a    ..: :37ab[1]
-    jmp c381c                                                         ; 38df: 4c 1c 38    L.8 :37ae[1]
+    jmp print_eored_string_at_yx                                      ; 38df: 4c 1c 38    L.8 :37ae[1]
 
     !byte $98, $ae, $a8, $bf, $a2, $a4, $a5, $eb, $c6                 ; 38e2: 98 ae a8... ... :37b1[1]
 
@@ -5516,7 +5516,7 @@ sub_c37f3
     ldy #0                                                            ; 3928: a0 00       ..  :37f7[1]
 loop_c37f9
     lda (address_low),y                                               ; 392a: b1 70       .p  :37f9[1]
-    eor l0045                                                         ; 392c: 45 45       EE  :37fb[1]
+    eor eor_key                                                       ; 392c: 45 45       EE  :37fb[1]
     cmp #$0d                                                          ; 392e: c9 0d       ..  :37fd[1]
     beq c3804                                                         ; 3930: f0 03       ..  :37ff[1]
     iny                                                               ; 3932: c8          .   :3801[1]
@@ -5537,7 +5537,9 @@ print_y_spaces_loop
     bne print_y_spaces_loop                                           ; 3949: d0 fa       ..  :3818[1]
 c381a
     ldy address_high                                                  ; 394b: a4 71       .q  :381a[1]
-c381c
+; Print the CR-terminated string at YX. Print in italics iff l0043 is non-0. Each byte
+; of the string is EORed with l0045 before printing/checking for CR.
+print_eored_string_at_yx
     stx address_low                                                   ; 394d: 86 70       .p  :381c[1]
     sty address_high                                                  ; 394f: 84 71       .q  :381e[1]
     lda #<print_italic                                                ; 3951: a9 66       .f  :3820[1]
@@ -5554,7 +5556,7 @@ c3838
     ldy #0                                                            ; 3969: a0 00       ..  :3838[1]
 loop_c383a
     lda (address_low),y                                               ; 396b: b1 70       .p  :383a[1]
-    eor l0045                                                         ; 396d: 45 45       EE  :383c[1]
+    eor eor_key                                                       ; 396d: 45 45       EE  :383c[1]
     cmp #vdu_cr                                                       ; 396f: c9 0d       ..  :383e[1]
     beq c3848                                                         ; 3971: f0 06       ..  :3840[1]
     jsr jmp_print_char                                                ; 3973: 20 4d 38     M8 :3842[1]
@@ -5562,7 +5564,7 @@ loop_c383a
     bne loop_c383a                                                    ; 3977: d0 f2       ..  :3846[1]
 c3848
     lda #$cb                                                          ; 3979: a9 cb       ..  :3848[1]
-    sta l0045                                                         ; 397b: 85 45       .E  :384a[1]
+    sta eor_key                                                       ; 397b: 85 45       .E  :384a[1]
     rts                                                               ; 397d: 60          `   :384c[1]
 
 ; Print the character in A. This is patched at runtime to switch between normal and
@@ -6123,7 +6125,7 @@ define_character_fe_loop
     sta displayed_transformations_remaining+1                         ; 3d1e: 85 5d       .]
     sta displayed_transformations_remaining+2                         ; 3d20: 85 5e       .^
     lda #$cb                                                          ; 3d22: a9 cb       ..
-    sta l0045                                                         ; 3d24: 85 45       .E
+    sta eor_key                                                       ; 3d24: 85 45       .E
     lda #$ff                                                          ; 3d26: a9 ff       ..
     sta l0043                                                         ; 3d28: 85 43       .C
     lda #0                                                            ; 3d2a: a9 00       ..
@@ -7221,7 +7223,6 @@ pydis_end
 ;     c37da
 ;     c3804
 ;     c381a
-;     c381c
 ;     c3838
 ;     c3848
 ;     c3867
@@ -7273,7 +7274,6 @@ pydis_end
 ;     l0042
 ;     l0043
 ;     l0044
-;     l0045
 ;     l0049
 ;     l004a
 ;     l004b
