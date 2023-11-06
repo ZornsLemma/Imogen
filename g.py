@@ -438,7 +438,7 @@ entry(0x2a17, "plot_menu_pointer") # TODO: plausible guess - ditto
 # TODO: A/l0015=2 on entry for plot, A=0 on entry for unplot? (or the other way round?)
 # TODO: l0016=sprite id? (this is $1d for menu pointer, maybe)
 # TODO: l0014 is an input if l0015 has bit 0 set on entry - I suspect (given the two calls to set_yx_based_on_a in sprite_op) that l0014 is something like a mask or backing slot to store whatever's underneath the sprite
-# TODO: This suggests that the menu pointer sprite *might* start at offset $528 in sprdata, and occupy 52 bytes (since the entry at 0x1d*2 is $528 and the next is $5c5)
+# TODO: This suggests that the menu pointer sprite *might* start at offset $528 in sprdata, and occupy 52 bytes (since the entry at 0x1d*2 is $528 and the next is $5c5) - sprites may have a four byte header, which would perhaps work as then there'd be 52-4=48 bytes of sprite data, which would be 6 character cell's worth (but this is just an assumption)
 entry(0x138d, "sprite_op")
 comment(0x2c52, "TODO: Self-modifying code here? If so we haven't found the code that modifies it as we have no labels")
 comment(0x13c1, "TODO: Self-modifying code here? If so we haven't found the code that modifies it as we have no labels")
