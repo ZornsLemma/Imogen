@@ -695,6 +695,8 @@ expr(0x34a8, "max_filename_len")
 # s="$9b, $b9, $ae, $b8, $b8, $eb, $fb, $e7, $fa, $e7, $f9, $eb, $a4, $b9, $eb, $f8, $c6"
 # [chr(0xcb ^ int(x.strip()[1:],16)) for x in s.split(",")]
 
+# SFTODO: c3404 is probably the save/load code which starts by prompting for S or L, and the encrypted strings which need decrypting are probably the "Press S" and "Press L" text
+
 
 comment(0x384d, "Print the character in A. This is patched at runtime to switch between normal and italic text.")
 entry(0x384d, "jmp_print_char")
