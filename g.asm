@@ -172,7 +172,7 @@ l012e                               = $012e
 brkv                                = $0202
 irq1v                               = $0204
 first_byte_break_intercept          = $0287
-l0950                               = $0950
+x_entry_table13                     = $0950
 l0951                               = $0951
 x_entry_table2                      = $095b
 x_entry_table5                      = $0966
@@ -344,7 +344,7 @@ c1186
     lda #0                                                            ; 12b7: a9 00       ..  :1186[1]
     sta x_entry_table9,y                                              ; 12b9: 99 a8 09    ... :1188[1]
     sta x_entry_table1,y                                              ; 12bc: 99 b3 09    ... :118b[1]
-    sta l0950,y                                                       ; 12bf: 99 50 09    .P. :118e[1]
+    sta x_entry_table13,y                                             ; 12bf: 99 50 09    .P. :118e[1]
     sta x_entry_table5,y                                              ; 12c2: 99 66 09    .f. :1191[1]
     sta x_entry_table6,y                                              ; 12c5: 99 7c 09    .|. :1194[1]
     sta x_entry_table7,y                                              ; 12c8: 99 92 09    ... :1197[1]
@@ -1475,7 +1475,7 @@ something12_TODO
     lda x_entry_table5                                                ; 19f4: ad 66 09    .f. :18c3[1]
     bmi c1909                                                         ; 19f7: 30 41       0A  :18c6[1]
     beq c18d1                                                         ; 19f9: f0 07       ..  :18c8[1]
-    lda l0950                                                         ; 19fb: ad 50 09    .P. :18ca[1]
+    lda x_entry_table13                                               ; 19fb: ad 50 09    .P. :18ca[1]
     cmp #$40 ; '@'                                                    ; 19fe: c9 40       .@  :18cd[1]
     bcs c191f                                                         ; 1a00: b0 4e       .N  :18cf[1]
 ; $1a02 referenced 1 time by $18c8
@@ -1517,10 +1517,10 @@ c1909
     ldx #1                                                            ; 1a3a: a2 01       ..  :1909[1]
 ; $1a3c referenced 1 time by $191a
 loop_c190b
-    lda l0950,x                                                       ; 1a3c: bd 50 09    .P. :190b[1]
+    lda x_entry_table13,x                                             ; 1a3c: bd 50 09    .P. :190b[1]
     clc                                                               ; 1a3f: 18          .   :190e[1]
     adc #$40 ; '@'                                                    ; 1a40: 69 40       i@  :190f[1]
-    sta l0950,x                                                       ; 1a42: 9d 50 09    .P. :1911[1]
+    sta x_entry_table13,x                                             ; 1a42: 9d 50 09    .P. :1911[1]
     lda #1                                                            ; 1a45: a9 01       ..  :1914[1]
     sta x_entry_table5,x                                              ; 1a47: 9d 66 09    .f. :1916[1]
     dex                                                               ; 1a4a: ca          .   :1919[1]
@@ -1533,10 +1533,10 @@ c191f
     ldx #1                                                            ; 1a50: a2 01       ..  :191f[1]
 ; $1a52 referenced 1 time by $1932
 loop_c1921
-    lda l0950,x                                                       ; 1a52: bd 50 09    .P. :1921[1]
+    lda x_entry_table13,x                                             ; 1a52: bd 50 09    .P. :1921[1]
     sec                                                               ; 1a55: 38          8   :1924[1]
     sbc #$40 ; '@'                                                    ; 1a56: e9 40       .@  :1925[1]
-    sta l0950,x                                                       ; 1a58: 9d 50 09    .P. :1927[1]
+    sta x_entry_table13,x                                             ; 1a58: 9d 50 09    .P. :1927[1]
     lda #0                                                            ; 1a5b: a9 00       ..  :192a[1]
     sbc #0                                                            ; 1a5d: e9 00       ..  :192c[1]
     sta x_entry_table5,x                                              ; 1a5f: 9d 66 09    .f. :192e[1]
@@ -2500,7 +2500,7 @@ l1f6c
 sub_c1f6d
     pha                                                               ; 209e: 48          H   :1f6d[1]
     lda l0018                                                         ; 209f: a5 18       ..  :1f6e[1]
-    sta l0950,x                                                       ; 20a1: 9d 50 09    .P. :1f70[1]
+    sta x_entry_table13,x                                             ; 20a1: 9d 50 09    .P. :1f70[1]
     lda l0019                                                         ; 20a4: a5 19       ..  :1f73[1]
     sta x_entry_table5,x                                              ; 20a6: 9d 66 09    .f. :1f75[1]
     lda l001a                                                         ; 20a9: a5 1a       ..  :1f78[1]
@@ -2764,7 +2764,7 @@ loop_c20e7
 ; $2228 referenced 2 times by $201d, $20ee
 sub_c20f7
     pha                                                               ; 2228: 48          H   :20f7[1]
-    lda l0950,x                                                       ; 2229: bd 50 09    .P. :20f8[1]
+    lda x_entry_table13,x                                             ; 2229: bd 50 09    .P. :20f8[1]
     sta x_entry_table2,x                                              ; 222c: 9d 5b 09    .[. :20fb[1]
     lda x_entry_table5,x                                              ; 222f: bd 66 09    .f. :20fe[1]
     sta x_entry_table3,x                                              ; 2232: 9d 71 09    .q. :2101[1]
@@ -2783,7 +2783,7 @@ sub_c20f7
 sub_c211e
     lda #$ff                                                          ; 224f: a9 ff       ..  :211e[1]
     pha                                                               ; 2251: 48          H   :2120[1]
-    lda l0950,x                                                       ; 2252: bd 50 09    .P. :2121[1]
+    lda x_entry_table13,x                                             ; 2252: bd 50 09    .P. :2121[1]
     cmp x_entry_table2,x                                              ; 2255: dd 5b 09    .[. :2124[1]
     bne c2155                                                         ; 2258: d0 2c       .,  :2127[1]
     lda x_entry_table5,x                                              ; 225a: bd 66 09    .f. :2129[1]
@@ -2855,7 +2855,7 @@ c2197
 sub_c219a
     lda x_entry_table9,x                                              ; 22cb: bd a8 09    ... :219a[1]
     beq c21ff                                                         ; 22ce: f0 60       .`  :219d[1]
-    lda l0950,x                                                       ; 22d0: bd 50 09    .P. :219f[1]
+    lda x_entry_table13,x                                             ; 22d0: bd 50 09    .P. :219f[1]
     sta l0018                                                         ; 22d3: 85 18       ..  :21a2[1]
     lda x_entry_table5,x                                              ; 22d5: bd 66 09    .f. :21a4[1]
     sta l0019                                                         ; 22d8: 85 19       ..  :21a7[1]
@@ -2930,8 +2930,8 @@ c221c
 ; $2354 referenced 1 time by $2220
 c2223
     clc                                                               ; 2354: 18          .   :2223[1]
-    adc l0950                                                         ; 2355: 6d 50 09    mP. :2224[1]
-    sta l0950                                                         ; 2358: 8d 50 09    .P. :2227[1]
+    adc x_entry_table13                                               ; 2355: 6d 50 09    mP. :2224[1]
+    sta x_entry_table13                                               ; 2358: 8d 50 09    .P. :2227[1]
     txa                                                               ; 235b: 8a          .   :222a[1]
     adc x_entry_table5                                                ; 235c: 6d 66 09    mf. :222b[1]
     sta x_entry_table5                                                ; 235f: 8d 66 09    .f. :222e[1]
@@ -2993,7 +2993,7 @@ c2284
 ; $23bc referenced 1 time by $2288
 c228b
     clc                                                               ; 23bc: 18          .   :228b[1]
-    adc l0950                                                         ; 23bd: 6d 50 09    mP. :228c[1]
+    adc x_entry_table13                                               ; 23bd: 6d 50 09    mP. :228c[1]
     sta l0951                                                         ; 23c0: 8d 51 09    .Q. :228f[1]
     txa                                                               ; 23c3: 8a          .   :2292[1]
     adc x_entry_table5                                                ; 23c4: 6d 66 09    mf. :2293[1]
@@ -3259,8 +3259,8 @@ c2404
 loop_c2406
     lda l2433                                                         ; 2537: ad 33 24    .3$ :2406[1]
     clc                                                               ; 253a: 18          .   :2409[1]
-    adc l0950,x                                                       ; 253b: 7d 50 09    }P. :240a[1]
-    sta l0950,x                                                       ; 253e: 9d 50 09    .P. :240d[1]
+    adc x_entry_table13,x                                             ; 253b: 7d 50 09    }P. :240a[1]
+    sta x_entry_table13,x                                             ; 253e: 9d 50 09    .P. :240d[1]
     tya                                                               ; 2541: 98          .   :2410[1]
     adc x_entry_table5,x                                              ; 2542: 7d 66 09    }f. :2411[1]
     sta x_entry_table5,x                                              ; 2545: 9d 66 09    .f. :2414[1]
@@ -3312,7 +3312,7 @@ c244d
 ; $2585 referenced 1 time by $2451
 c2454
     clc                                                               ; 2585: 18          .   :2454[1]
-    adc l0950,x                                                       ; 2586: 7d 50 09    }P. :2455[1]
+    adc x_entry_table13,x                                             ; 2586: 7d 50 09    }P. :2455[1]
     sta l0070                                                         ; 2589: 85 70       .p  :2458[1]
     tya                                                               ; 258b: 98          .   :245a[1]
     adc x_entry_table5,x                                              ; 258c: 7d 66 09    }f. :245b[1]
@@ -3683,8 +3683,8 @@ sub_c2693
     sec                                                               ; 27d6: 38          8   :26a5[1]
     sbc l0080                                                         ; 27d7: e5 80       ..  :26a6[1]
     clc                                                               ; 27d9: 18          .   :26a8[1]
-    adc l0950,x                                                       ; 27da: 7d 50 09    }P. :26a9[1]
-    sta l0950,x                                                       ; 27dd: 9d 50 09    .P. :26ac[1]
+    adc x_entry_table13,x                                             ; 27da: 7d 50 09    }P. :26a9[1]
+    sta x_entry_table13,x                                             ; 27dd: 9d 50 09    .P. :26ac[1]
     lda #0                                                            ; 27e0: a9 00       ..  :26af[1]
     adc x_entry_table5,x                                              ; 27e2: 7d 66 09    }f. :26b1[1]
     sta x_entry_table5,x                                              ; 27e5: 9d 66 09    .f. :26b4[1]
@@ -3700,10 +3700,10 @@ c26c2
     clc                                                               ; 27f7: 18          .   :26c6[1]
     adc #1                                                            ; 27f8: 69 01       i.  :26c7[1]
     sta l0080                                                         ; 27fa: 85 80       ..  :26c9[1]
-    lda l0950,x                                                       ; 27fc: bd 50 09    .P. :26cb[1]
+    lda x_entry_table13,x                                             ; 27fc: bd 50 09    .P. :26cb[1]
     sec                                                               ; 27ff: 38          8   :26ce[1]
     sbc l0080                                                         ; 2800: e5 80       ..  :26cf[1]
-    sta l0950,x                                                       ; 2802: 9d 50 09    .P. :26d1[1]
+    sta x_entry_table13,x                                             ; 2802: 9d 50 09    .P. :26d1[1]
     lda x_entry_table5,x                                              ; 2805: bd 66 09    .f. :26d4[1]
     sbc #0                                                            ; 2808: e9 00       ..  :26d7[1]
     sta x_entry_table5,x                                              ; 280a: 9d 66 09    .f. :26d9[1]
@@ -5380,7 +5380,7 @@ sub_c336e
 c3399
     lda x_entry_table10                                               ; 34ca: ad be 09    ... :3399[1]
     bmi c33b5                                                         ; 34cd: 30 17       0.  :339c[1]
-    lda l0950                                                         ; 34cf: ad 50 09    .P. :339e[1]
+    lda x_entry_table13                                               ; 34cf: ad 50 09    .P. :339e[1]
     clc                                                               ; 34d2: 18          .   :33a1[1]
     adc l3403                                                         ; 34d3: 6d 03 34    m.4 :33a2[1]
     sta l0070                                                         ; 34d6: 85 70       .p  :33a5[1]
@@ -5393,7 +5393,7 @@ c3399
 
 ; $34e6 referenced 1 time by $339c
 c33b5
-    lda l0950                                                         ; 34e6: ad 50 09    .P. :33b5[1]
+    lda x_entry_table13                                               ; 34e6: ad 50 09    .P. :33b5[1]
     sec                                                               ; 34e9: 38          8   :33b8[1]
     sbc l3403                                                         ; 34ea: ed 03 34    ..4 :33b9[1]
     sta l0070                                                         ; 34ed: 85 70       .p  :33bc[1]
@@ -5424,7 +5424,7 @@ c33cb
 ; $351b referenced 1 time by $33db
 c33ea
     lda l0072                                                         ; 351b: a5 72       .r  :33ea[1]
-    sta l0950                                                         ; 351d: 8d 50 09    .P. :33ec[1]
+    sta x_entry_table13                                               ; 351d: 8d 50 09    .P. :33ec[1]
     lda l0073                                                         ; 3520: a5 73       .s  :33ef[1]
     sta x_entry_table5                                                ; 3522: 8d 66 09    .f. :33f1[1]
     lda #$ff                                                          ; 3525: a9 ff       ..  :33f4[1]
@@ -7513,7 +7513,7 @@ pydis_end
 ;     l007d:                                               24
 ;     x_entry_table9:                                      24
 ;     l0077:                                               23
-;     l0950:                                               23
+;     x_entry_table13:                                     23
 ;     x_entry_table6:                                      23
 ;     l004c:                                               22
 ;     l0075:                                               22
@@ -8934,7 +8934,6 @@ pydis_end
 ;     l0515
 ;     l0517
 ;     l0518
-;     l0950
 ;     l0951
 ;     l0967
 ;     l097d

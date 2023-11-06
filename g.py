@@ -398,6 +398,7 @@ label(0x9a8, "x_entry_table9")
 label(0x9be, "x_entry_table10")
 label(0x9c9, "x_entry_table11")
 label(0x38ac, "x_entry_table12") # TODO: Re-uses envelope_1, need to resolve label clash
+label(0x950, "x_entry_table13")
 
 entry(0x3f6f, "probably_copy_protection_TODO")
 
