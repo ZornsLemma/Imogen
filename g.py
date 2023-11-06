@@ -625,6 +625,10 @@ label(0x950, "x_entry_table13")
 
 entry(0x3f6f, "probably_copy_protection_TODO")
 
+constant(3, "menu_action_file") # TODO: plausible guess
+expr(0x3451, "menu_action_file")
+expr(0x2af2, "menu_action_file")
+
 label(0x29, "new_menu_index")
 label(0x2e, "current_menu_index")
 label(0x25, "another_menu_index")
@@ -668,6 +672,8 @@ entry(0x3863, "turn_cursor_off")
 label(0x3c, "some_word")
 expr_label(0x3d, make_add("some_word", "1"))
 
+label(0x34a7, "get_filename_and_print_drive_number_prompt")
+# This string will be used for save and loads, but I'll use "save" here as a noun to refer to the file on disc.
 label(0x34d6, "save_full_filename")
 string(0x34d6, 1)
 label(0x34d7, "save_drive_number")

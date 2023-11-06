@@ -18,6 +18,7 @@ inkey_key_x                                     = 189
 inkey_key_z                                     = 158
 last_level_letter                               = 81
 max_filename_len                                = 7
+menu_action_file                                = 3
 osbyte_close_spool_exec                         = 119
 osbyte_flush_buffer                             = 21
 osbyte_flush_buffer_class                       = 15
@@ -4035,7 +4036,7 @@ sub_c2adb
     beq c2af9                                                         ; 2c1c: f0 0c       ..  :2aeb[1]
     cmp #2                                                            ; 2c1e: c9 02       ..  :2aed[1]
     beq c2aff                                                         ; 2c20: f0 0e       ..  :2aef[1]
-    cmp #3                                                            ; 2c22: c9 03       ..  :2af1[1]
+    cmp #menu_action_file                                             ; 2c22: c9 03       ..  :2af1[1]
     beq c2afc                                                         ; 2c24: f0 07       ..  :2af3[1]
 return19
     rts                                                               ; 2c26: 60          `   :2af5[1]
@@ -5047,14 +5048,14 @@ c3428
 sub_c344b
     ldy new_menu_index                                                ; 357c: a4 29       .)  :344b[1]
     lda menu_slots1,y                                                 ; 357e: b9 5c 29    .\) :344d[1]
-    cmp #3                                                            ; 3581: c9 03       ..  :3450[1]
+    cmp #menu_action_file                                             ; 3581: c9 03       ..  :3450[1]
     bne return22                                                      ; 3583: d0 42       .B  :3452[1]
     lda l0004                                                         ; 3585: a5 04       ..  :3454[1]
     beq return22                                                      ; 3587: f0 3e       .>  :3456[1]
     cmp #1                                                            ; 3589: c9 01       ..  :3458[1]
     beq c346a                                                         ; 358b: f0 0e       ..  :345a[1]
     cmp #2                                                            ; 358d: c9 02       ..  :345c[1]
-    beq c34a7                                                         ; 358f: f0 47       .G  :345e[1]
+    beq get_filename_and_print_drive_number_prompt                    ; 358f: f0 47       .G  :345e[1]
     cmp #3                                                            ; 3591: c9 03       ..  :3460[1]
     beq c3467                                                         ; 3593: f0 03       ..  :3462[1]
     jmp c3557                                                         ; 3595: 4c 57 35    LW5 :3464[1]
@@ -5090,7 +5091,7 @@ l3497
     !byte   0, $8e, $a5, $bf, $ae, $b9, $eb, $ad, $a2, $a7, $ae, $a5  ; 35c8: 00 8e a5... ... :3497[1]
     !byte $aa, $a6, $ae, $c6                                          ; 35d4: aa a6 ae... ... :34a3[1]
 
-c34a7
+get_filename_and_print_drive_number_prompt
     lda #max_filename_len                                             ; 35d8: a9 07       ..  :34a7[1]
     jsr string_input                                                  ; 35da: 20 fc 36     .6 :34a9[1]
     ldy l0005                                                         ; 35dd: a4 05       ..  :34ac[1]
@@ -7189,7 +7190,6 @@ pydis_end
 ;     c3467
 ;     c346a
 ;     c347f
-;     c34a7
 ;     c3501
 ;     c3516
 ;     c3557
@@ -7805,6 +7805,9 @@ pydis_end
 }
 !if (max_filename_len) != $07 {
     !error "Assertion failed: max_filename_len == $07"
+}
+!if (menu_action_file) != $03 {
+    !error "Assertion failed: menu_action_file == $03"
 }
 !if (osbyte_close_spool_exec) != $77 {
     !error "Assertion failed: osbyte_close_spool_exec == $77"
