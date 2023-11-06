@@ -1,6 +1,7 @@
 from commands import *
 import acorn
 import re
+from common import *
 acorn.bbc()
 
 config.set_label_references(False)
@@ -21,14 +22,6 @@ constant(127, "vdu_delete")
 
 constant(5, "osfile_read_catalogue_info")
 constant(0xff, "osfile_load")
-
-# TODO: See mono_handler and colour_handler in auxcode.asm
-# TODO: Copies of these in both g.py and auxcode.py
-label(0x1765, "allow_colour_variation")
-label(0x175d, "pending_toolbar_colour")
-label(0x175e, "toolbar_colour")
-label(0x175f, "pending_gameplay_area_colour")
-label(0x1760, "gameplay_area_colour")
 
 substitute_labels = {
     (0x114f,0x1297): {
