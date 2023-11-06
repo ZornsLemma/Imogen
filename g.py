@@ -608,22 +608,23 @@ expr(0x3f1b, make_subtract("sixteen_entry_table", 1))
 label(0x295c, "menu_slots1") # sub_c2980 initialises elements 9 inclusive to $11 exclusive, but elsewhere we do access lower elements
 label(0x296f, "menu_slots2") # see code at c29aa which pairs this with menu_slots1
 # sub_c2157 uses all of these tables in parallel, so presumably they share the same size - represented here by 'x'
-label(0x9b3, "x_entry_table1")
-label(0x95b, "x_entry_table2")
-label(0x971, "x_entry_table3")
-label(0x987, "x_entry_table4")
-label(0x966, "x_entry_table5")
-label(0x97c, "x_entry_table6")
-label(0x992, "x_entry_table7")
-label(0x99d, "x_entry_table8")
-label(0x9a8, "x_entry_table9")
-label(0x9be, "x_entry_table10")
-label(0x9c9, "x_entry_table11")
+# TODO: These tables seem to occur in pairs (copy or cp) so I've renamed them to use a/b names to try to tie the pairs together.
+label(0x9b3, "x_entry_table9b")
+label(0x95b, "x_entry_table2b")
+label(0x971, "x_entry_table5b")
+label(0x987, "x_entry_table6b")
+label(0x966, "x_entry_table5a")
+label(0x97c, "x_entry_table6a")
+label(0x992, "x_entry_table7a")
+label(0x99d, "x_entry_table7b")
+label(0x9a8, "x_entry_table9a")
+label(0x9be, "x_entry_table10a")
+label(0x9c9, "x_entry_table10b")
 label(0x38ac, "x_entry_table12") # TODO: Re-uses envelope_1, need to resolve label clash
 label(0x38ac, "envelope_1")
 label(0x38c2, "envelope_2")
 label(0x38d8, "envelope_3")
-label(0x950, "x_entry_table13")
+label(0x950, "x_entry_table2a")
 
 entry(0x3f6f, "probably_copy_protection_TODO")
 
