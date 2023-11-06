@@ -1183,7 +1183,7 @@ sub_c1728
     jsr oswrch                                                        ; 1860: 20 ee ff     .. :172f[1]   ; Write character 7
     lda #$12                                                          ; 1863: a9 12       ..  :1732[1]
     sta l0409                                                         ; 1865: 8d 09 04    ... :1734[1]
-    jsr save_or_restore_under_dialog_box                              ; 1868: 20 0a 04     .. :1737[1]
+    jsr save_or_restore_screen_under_dialog_box                       ; 1868: 20 0a 04     .. :1737[1]
     lda #$0a                                                          ; 186b: a9 0a       ..  :173a[1]
     jsr oswrch                                                        ; 186d: 20 ee ff     .. :173c[1]   ; Write character 10
     ldx #<data_TODO                                                   ; 1870: a2 52       .R  :173f[1]
@@ -1342,7 +1342,7 @@ loop_c1830
 
 something11_TODO
     jsr wait_for_vsync                                                ; 196a: 20 8c 17     .. :1839[1]
-    jsr wait_for_timer_2_using_l1106_l1107                            ; 196d: 20 00 04     .. :183c[1]
+    jsr wait_for_timingB                                              ; 196d: 20 00 04     .. :183c[1]
     jsr sub_c1845                                                     ; 1970: 20 45 18     E. :183f[1]
     jmp something3_TODO                                               ; 1973: 4c 00 0c    L.. :1842[1]
 
@@ -3992,7 +3992,7 @@ loop_c2a9a
     dex                                                               ; 2bce: ca          .   :2a9d[1]
     bpl loop_c2a9a                                                    ; 2bcf: 10 fa       ..  :2a9e[1]
 c2aa0
-    jsr wait_for_timer_2_using_l1106_l1107                            ; 2bd1: 20 00 04     .. :2aa0[1]
+    jsr wait_for_timingB                                              ; 2bd1: 20 00 04     .. :2aa0[1]
     jsr sub_c3664                                                     ; 2bd4: 20 64 36     d6 :2aa3[1]
     jsr sub_c344b                                                     ; 2bd7: 20 4b 34     K4 :2aa6[1]
     lda copy_protection_flag                                          ; 2bda: ad 03 11    ... :2aa9[1]
@@ -5026,7 +5026,7 @@ c3404
     lda l0004                                                         ; 353a: a5 04       ..  :3409[1]
     bne c3428                                                         ; 353c: d0 1b       ..  :340b[1]
 c340d
-    jsr save_or_restore_under_dialog_box                              ; 353e: 20 0a 04     .. :340d[1]
+    jsr save_or_restore_screen_under_dialog_box                       ; 353e: 20 0a 04     .. :340d[1]
     lda #1                                                            ; 3541: a9 01       ..  :3410[1]
     sta l0004                                                         ; 3543: 85 04       ..  :3412[1]
     ldx #<press_s_to_save_encrypted_string                            ; 3545: a2 2b       .+  :3414[1]
@@ -5079,7 +5079,7 @@ c346a
     bne return22                                                      ; 35ab: d0 1a       ..  :347a[1]
     dec l3497                                                         ; 35ad: ce 97 34    ..4 :347c[1]
 c347f
-    jsr save_or_restore_under_dialog_box                              ; 35b0: 20 0a 04     .. :347f[1]
+    jsr save_or_restore_screen_under_dialog_box                       ; 35b0: 20 0a 04     .. :347f[1]
     lda #2                                                            ; 35b3: a9 02       ..  :3482[1]
     sta l0004                                                         ; 35b5: 85 04       ..  :3484[1]
     ldx #$98                                                          ; 35b7: a2 98       ..  :3486[1]
@@ -5107,7 +5107,7 @@ loop_c34b2
     sta save_leaf_filename,y                                          ; 35e6: 99 db 34    ..4 :34b5[1]
     dey                                                               ; 35e9: 88          .   :34b8[1]
     bpl loop_c34b2                                                    ; 35ea: 10 f7       ..  :34b9[1]
-    jsr save_or_restore_under_dialog_box                              ; 35ec: 20 0a 04     .. :34bb[1]
+    jsr save_or_restore_screen_under_dialog_box                       ; 35ec: 20 0a 04     .. :34bb[1]
     lda #3                                                            ; 35ef: a9 03       ..  :34be[1]
     sta l0004                                                         ; 35f1: 85 04       ..  :34c0[1]
     ldx #<which_drive_encrypted_string                                ; 35f3: a2 e3       ..  :34c2[1]
@@ -5147,7 +5147,7 @@ c3501
     adc #$0f                                                          ; 3645: 69 0f       i.  :3514[1]
 c3516
     sta save_drive_number                                             ; 3647: 8d d7 34    ..4 :3516[1]
-    jsr save_or_restore_under_dialog_box                              ; 364a: 20 0a 04     .. :3519[1]
+    jsr save_or_restore_screen_under_dialog_box                       ; 364a: 20 0a 04     .. :3519[1]
     lda #4                                                            ; 364d: a9 04       ..  :351c[1]
     sta l0004                                                         ; 364f: 85 04       ..  :351e[1]
     ldx #$35 ; '5'                                                    ; 3651: a2 35       .5  :3520[1]
@@ -5170,7 +5170,7 @@ c3557
     jsr inkey_0                                                       ; 3688: 20 7c 38     |8 :3557[1]
     cmp #vdu_cr                                                       ; 368b: c9 0d       ..  :355a[1]
     bne return23                                                      ; 368d: d0 d6       ..  :355c[1]
-    jsr save_or_restore_under_dialog_box                              ; 368f: 20 0a 04     .. :355e[1]
+    jsr save_or_restore_screen_under_dialog_box                       ; 368f: 20 0a 04     .. :355e[1]
     lda #vdu_lf                                                       ; 3692: a9 0a       ..  :3561[1]
     jsr oswrch                                                        ; 3694: 20 ee ff     .. :3563[1]   ; Write character 10
     ldx #$f7                                                          ; 3697: a2 f7       ..  :3566[1]
@@ -5252,7 +5252,7 @@ c35ed
     !byte $a6, $ae, $eb, $af, $a2, $b8, $a0, $c6                      ; 3740: a6 ae eb... ... :360f[1]
 
 sub_c3617
-    jsr save_or_restore_under_dialog_box                              ; 3748: 20 0a 04     .. :3617[1]
+    jsr save_or_restore_screen_under_dialog_box                       ; 3748: 20 0a 04     .. :3617[1]
     ldx #6                                                            ; 374b: a2 06       ..  :361a[1]
     ldy #$36 ; '6'                                                    ; 374d: a0 36       .6  :361c[1]
     jsr print_encrypted_string_at_yx                                  ; 374f: 20 1c 38     .8 :361e[1]
@@ -5273,7 +5273,7 @@ c3636
     lda l0004                                                         ; 376c: a5 04       ..  :363b[1]
     bne c3652                                                         ; 376e: d0 13       ..  :363d[1]
 c363f
-    jsr save_or_restore_under_dialog_box                              ; 3770: 20 0a 04     .. :363f[1]
+    jsr save_or_restore_screen_under_dialog_box                       ; 3770: 20 0a 04     .. :363f[1]
     ldx #$55 ; 'U'                                                    ; 3773: a2 55       .U  :3642[1]
     ldy #$36 ; '6'                                                    ; 3775: a0 36       .6  :3644[1]
     jsr print_encrypted_string_at_yx                                  ; 3777: 20 1c 38     .8 :3646[1]
@@ -5465,7 +5465,7 @@ c377e
     jmp something_TODO                                                ; 38bc: 4c 53 04    LS. :378b[1]
 
 c378e
-    jsr save_or_restore_under_dialog_box                              ; 38bf: 20 0a 04     .. :378e[1]
+    jsr save_or_restore_screen_under_dialog_box                       ; 38bf: 20 0a 04     .. :378e[1]
     lda #1                                                            ; 38c2: a9 01       ..  :3791[1]
     sta l0004                                                         ; 38c4: 85 04       ..  :3793[1]
     ldx #$b1                                                          ; 38c6: a2 b1       ..  :3795[1]
@@ -5483,7 +5483,7 @@ c378e
     !byte $98, $ae, $a8, $bf, $a2, $a4, $a5, $eb, $c6                 ; 38e2: 98 ae a8... ... :37b1[1]
 
 c37ba
-    jsr save_or_restore_under_dialog_box                              ; 38eb: 20 0a 04     .. :37ba[1]
+    jsr save_or_restore_screen_under_dialog_box                       ; 38eb: 20 0a 04     .. :37ba[1]
     lda #2                                                            ; 38ee: a9 02       ..  :37bd[1]
     sta l0004                                                         ; 38f0: 85 04       ..  :37bf[1]
     ldx #first_level_letter                                           ; 38f2: a2 41       .A  :37c1[1]
@@ -5979,9 +5979,9 @@ execution_start
     sta address_low                                                   ; 3c18: 85 70       .p
     lda #>some_code_high_copy_TODO                                    ; 3c1a: a9 40       .@
     sta address_high                                                  ; 3c1c: 85 71       .q
-    lda #<wait_for_timer_2_using_l1106_l1107                          ; 3c1e: a9 00       ..
+    lda #<wait_for_timingB                                            ; 3c1e: a9 00       ..
     sta l0072                                                         ; 3c20: 85 72       .r
-    lda #>wait_for_timer_2_using_l1106_l1107                          ; 3c22: a9 04       ..
+    lda #>wait_for_timingB                                            ; 3c22: a9 04       ..
     sta l0073                                                         ; 3c24: 85 73       .s
     ldx #2                                                            ; 3c26: a2 02       ..
     beq relocation2                                                   ; 3c28: f0 10       ..             ; TODO: branch never taken?
@@ -6702,7 +6702,7 @@ icodata
 update_displayed_transformations_remaining_high_copy_end
 
 !pseudopc $0400 {
-wait_for_timer_2_using_l1106_l1107
+wait_for_timingB
     ldx timingB_counter_low                                           ; 40ff: ae 06 11    ... :0400[2]
     ldy timingB_counter_high                                          ; 4102: ac 07 11    ... :0403[2]
     jmp wait_for_timer_2_using_yx                                     ; 4105: 4c 91 17    L.. :0406[2]
@@ -6710,8 +6710,8 @@ wait_for_timer_2_using_l1106_l1107
 l0409
     !byte $12                                                         ; 4108: 12          .   :0409[2]
 
-save_or_restore_under_dialog_box
-    jsr wait_for_timer_2_using_l1106_l1107                            ; 4109: 20 00 04     .. :040a[2]
+save_or_restore_screen_under_dialog_box
+    jsr wait_for_timingB                                              ; 4109: 20 00 04     .. :040a[2]
     lda l0004                                                         ; 410c: a5 04       ..  :040d[2]
     beq c043a                                                         ; 410e: f0 29       .)  :040f[2]
     jsr turn_cursor_off                                               ; 4110: 20 63 38     c8 :0411[2]
@@ -6751,7 +6751,7 @@ vdu_goto_0_9
 something_TODO
     lda l0004                                                         ; 4152: a5 04       ..  :0453[2]
     beq return29                                                      ; 4154: f0 1c       ..  :0455[2]
-    jsr wait_for_timer_2_using_l1106_l1107                            ; 4156: 20 00 04     .. :0457[2]
+    jsr wait_for_timingB                                              ; 4156: 20 00 04     .. :0457[2]
     jsr turn_cursor_off                                               ; 4159: 20 63 38     c8 :045a[2]
     ldx #$ff                                                          ; 415c: a2 ff       ..  :045d[2]
     stx l003e                                                         ; 415e: 86 3e       .>  :045f[2]
@@ -7632,8 +7632,8 @@ pydis_end
 !if (<start_of_screen_memory) != $c0 {
     !error "Assertion failed: <start_of_screen_memory == $c0"
 }
-!if (<wait_for_timer_2_using_l1106_l1107) != $00 {
-    !error "Assertion failed: <wait_for_timer_2_using_l1106_l1107 == $00"
+!if (<wait_for_timingB) != $00 {
+    !error "Assertion failed: <wait_for_timingB == $00"
 }
 !if (<which_drive_encrypted_string) != $e3 {
     !error "Assertion failed: <which_drive_encrypted_string == $e3"
@@ -7725,8 +7725,8 @@ pydis_end
 !if (>start_of_screen_memory) != $5b {
     !error "Assertion failed: >start_of_screen_memory == $5b"
 }
-!if (>wait_for_timer_2_using_l1106_l1107) != $04 {
-    !error "Assertion failed: >wait_for_timer_2_using_l1106_l1107 == $04"
+!if (>wait_for_timingB) != $04 {
+    !error "Assertion failed: >wait_for_timingB == $04"
 }
 !if (>which_drive_encrypted_string) != $34 {
     !error "Assertion failed: >which_drive_encrypted_string == $34"
