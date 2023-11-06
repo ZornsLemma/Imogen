@@ -291,6 +291,7 @@ c5635
 l563a
     !byte   1,   2,   4,   8, $10, $20, $40, $80                      ; 563a: 01 02 04... ...
 
+; TODO: Presumably a screen dump routine for Epson-compatible printers
 dump_handler
     lda l1103                                                         ; 5642: ad 03 11    ...
     and #2                                                            ; 5645: 29 02       ).

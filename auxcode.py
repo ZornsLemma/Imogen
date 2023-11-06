@@ -74,6 +74,8 @@ byte(pc)
 comment(pc, "0 EOR $CB marks the end of the table", inline=True)
 comment(0x552e, "TODO: Some intriguing secret passwords here. Now I see this, I have a vague recollection of The Micro User or Acorn User printing some/all of these, but still cool to find them for myself. :-)")
 
+comment(0x5642, "TODO: Presumably a screen dump routine for Epson-compatible printers")
+
 entry(0x561c, "gimme_handler")
 expr(0x5592, "gimme_handler")
 
