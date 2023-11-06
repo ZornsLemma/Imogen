@@ -5045,7 +5045,7 @@ c3428
 press_s_to_save_encrypted_string
     !byte $9b, $b9, $ae, $b8, $b8, $eb, $98, $eb, $bf, $a4, $eb, $b8  ; 355c: 9b b9 ae... ... :342b[1]
     !byte $aa, $bd, $ae, $c6                                          ; 3568: aa bd ae... ... :3437[1]
-; 'Press L to load\r' EOR_encrypted with $cb
+; 'Press L to load\r' EOR-encrypted with $cb
 press_l_to_load_encrypted_string
     !byte $9b, $b9, $ae, $b8, $b8, $eb, $87, $eb, $bf, $a4, $eb, $a7  ; 356c: 9b b9 ae... ... :343b[1]
     !byte $a4, $aa, $af, $c6                                          ; 3578: a4 aa af... ... :3447[1]
@@ -6733,14 +6733,14 @@ sub_c040a
     lda #3                                                            ; 412f: a9 03       ..  :0430[2]
     sta some_word + 1                                                 ; 4131: 85 3d       .=  :0432[2]
     jsr c1abb                                                         ; 4133: 20 bb 1a     .. :0434[2]
-    jmp c0444                                                         ; 4136: 4c 44 04    LD. :0437[2]
+    jmp vdu_goto_0_9                                                  ; 4136: 4c 44 04    LD. :0437[2]
 
 c043a
     lda #$ff                                                          ; 4139: a9 ff       ..  :043a[2]
     sta l0004                                                         ; 413b: 85 04       ..  :043c[2]
     jsr sub_c0474                                                     ; 413d: 20 74 04     t. :043e[2]
     jsr sub_c04cb                                                     ; 4140: 20 cb 04     .. :0441[2]
-c0444
+vdu_goto_0_9
     lda #vdu_goto_xy                                                  ; 4143: a9 1f       ..  :0444[2]
     jsr oswrch                                                        ; 4145: 20 ee ff     .. :0446[2]   ; Write character 31
     lda #0                                                            ; 4148: a9 00       ..  :0449[2]
@@ -6877,7 +6877,6 @@ pydis_end
 
 ; Automatically generated labels:
 ;     c043a
-;     c0444
 ;     c048d
 ;     c0490
 ;     c04a4
