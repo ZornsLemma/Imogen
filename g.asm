@@ -89,8 +89,7 @@ currently_loaded_level              = $37
 l0039                               = $39
 l003a                               = $3a
 l003b                               = $3b
-l003c                               = $3c
-l003d                               = $3d
+some_word                           = $3c
 l003e                               = $3e
 l003f                               = $3f
 l0040                               = $40
@@ -2251,13 +2250,13 @@ c1e0b
 sub_c1e17
     stx l0070                                                         ; 1f48: 86 70       .p  :1e17[1]
     sty l0071                                                         ; 1f4a: 84 71       .q  :1e19[1]
-    lda l003c                                                         ; 1f4c: a5 3c       .<  :1e1b[1]
+    lda some_word                                                     ; 1f4c: a5 3c       .<  :1e1b[1]
     sta l0072                                                         ; 1f4e: 85 72       .r  :1e1d[1]
-    lda l003d                                                         ; 1f50: a5 3d       .=  :1e1f[1]
+    lda some_word + 1                                                 ; 1f50: a5 3d       .=  :1e1f[1]
     sta l0073                                                         ; 1f52: 85 73       .s  :1e21[1]
     txa                                                               ; 1f54: 8a          .   :1e23[1]
     clc                                                               ; 1f55: 18          .   :1e24[1]
-    adc l003c                                                         ; 1f56: 65 3c       e<  :1e25[1]
+    adc some_word                                                     ; 1f56: 65 3c       e<  :1e25[1]
     bcs c1e2d                                                         ; 1f58: b0 04       ..  :1e27[1]
     cmp #$29 ; ')'                                                    ; 1f5a: c9 29       .)  :1e29[1]
     bcc c1e33                                                         ; 1f5c: 90 06       ..  :1e2b[1]
@@ -2270,7 +2269,7 @@ c1e2d
 c1e33
     tya                                                               ; 1f64: 98          .   :1e33[1]
     clc                                                               ; 1f65: 18          .   :1e34[1]
-    adc l003d                                                         ; 1f66: 65 3d       e=  :1e35[1]
+    adc some_word + 1                                                 ; 1f66: 65 3d       e=  :1e35[1]
     bcs c1e3d                                                         ; 1f68: b0 04       ..  :1e37[1]
     cmp #$19                                                          ; 1f6a: c9 19       ..  :1e39[1]
     bcc c1e43                                                         ; 1f6c: 90 06       ..  :1e3b[1]
@@ -7331,9 +7330,9 @@ sub_c040a
     lda l0409                                                         ; 4127: ad 09 04    ... :0428[2]
     sec                                                               ; 412a: 38          8   :042b[2]
     sbc #2                                                            ; 412b: e9 02       ..  :042c[2]
-    sta l003c                                                         ; 412d: 85 3c       .<  :042e[2]
+    sta some_word                                                     ; 412d: 85 3c       .<  :042e[2]
     lda #3                                                            ; 412f: a9 03       ..  :0430[2]
-    sta l003d                                                         ; 4131: 85 3d       .=  :0432[2]
+    sta some_word + 1                                                 ; 4131: 85 3d       .=  :0432[2]
     jsr c1abb                                                         ; 4133: 20 bb 1a     .. :0434[2]
     jmp c0444                                                         ; 4136: 4c 44 04    LD. :0437[2]
 
@@ -7475,9 +7474,9 @@ c0505
     ldx #0                                                            ; 4204: a2 00       ..  :0505[2]
     ldy #0                                                            ; 4206: a0 00       ..  :0507[2]
     lda l0409                                                         ; 4208: ad 09 04    ... :0509[2]
-    sta l003c                                                         ; 420b: 85 3c       .<  :050c[2]
+    sta some_word                                                     ; 420b: 85 3c       .<  :050c[2]
     lda #5                                                            ; 420d: a9 05       ..  :050e[2]
-    sta l003d                                                         ; 420f: 85 3d       .=  :0510[2]
+    sta some_word + 1                                                 ; 420f: 85 3d       .=  :0510[2]
     jmp c1abb                                                         ; 4211: 4c bb 1a    L.. :0512[2]
 
 ; $4214 referenced 1 time by $04f9
@@ -7636,8 +7635,8 @@ pydis_end
 ;     space_flag:                                           4
 ;     l002c:                                                4
 ;     l002d:                                                4
-;     l003c:                                                4
-;     l003d:                                                4
+;     some_word:                                            4
+;     some_word + 1:                                        4
 ;     l0040:                                                4
 ;     l0041:                                                4
 ;     l0045:                                                4
@@ -8862,8 +8861,6 @@ pydis_end
 ;     l0039
 ;     l003a
 ;     l003b
-;     l003c
-;     l003d
 ;     l003e
 ;     l003f
 ;     l0040

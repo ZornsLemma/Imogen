@@ -436,6 +436,9 @@ entry(0x1791, "wait_for_timer_2_using_yx")
 entry(0x385d, "turn_cursor_on")
 entry(0x3863, "turn_cursor_off")
 
+# This seems to be a 16-bit word.
+label(0x3c, "some_word")
+expr_label(0x3d, make_add("some_word", "1"))
 
 go()
 
