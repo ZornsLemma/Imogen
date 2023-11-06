@@ -608,7 +608,7 @@ expr(0x3f1b, make_subtract("sixteen_entry_table", 1))
 label(0x295c, "menu_slots1") # sub_c2980 initialises elements 9 inclusive to $11 exclusive, but elsewhere we do access lower elements
 label(0x296f, "menu_slots2") # see code at c29aa which pairs this with menu_slots1
 # sub_c2157 uses all of these tables in parallel, so presumably they share the same size - represented here by 'x'
-# TODO: These tables seem to occur in pairs (copy or cp) so I've renamed them to use a/b names to try to tie the pairs together.
+# TODO: These tables seem to occur in pairs (copy or cmp) so I've renamed them to use a/b names to try to tie the pairs together.
 label(0x9b3, "x_entry_table9b")
 label(0x95b, "x_entry_table2b")
 label(0x971, "x_entry_table5b")
