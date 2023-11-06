@@ -72,7 +72,7 @@ l0019                               = $19
 l001a                               = $1a
 l001b                               = $1b
 l001d                               = $1d
-l0020                               = $20
+player_x_movement_direction         = $20
 another_menu_index                  = $25
 l0026                               = $26
 left_right_repeat_flag              = $27
@@ -4756,7 +4756,7 @@ c2de4
 
 ; $2f24 referenced 1 time by $2dcd
 c2df3
-    ldx l3ac9                                                         ; 2f24: ae c9 3a    ..: :2df3[1]
+    ldx player_x_movement_direction2                                  ; 2f24: ae c9 3a    ..: :2df3[1]
     beq c2e1b                                                         ; 2f27: f0 23       .#  :2df6[1]
     lda #$36 ; '6'                                                    ; 2f29: a9 36       .6  :2df8[1]
     cpx x_entry_table10                                               ; 2f2b: ec be 09    ... :2dfa[1]
@@ -4802,7 +4802,7 @@ c2e42
 ; $2f75 referenced 5 times by $2e12, $2e18, $2e2e, $2e32, $2e38
 c2e44
     ldx #0                                                            ; 2f75: a2 00       ..  :2e44[1]
-    lda l3ac9                                                         ; 2f77: ad c9 3a    ..: :2e46[1]
+    lda player_x_movement_direction2                                  ; 2f77: ad c9 3a    ..: :2e46[1]
     beq c2e4c                                                         ; 2f7a: f0 01       ..  :2e49[1]
     inx                                                               ; 2f7c: e8          .   :2e4b[1]
 ; $2f7d referenced 1 time by $2e49
@@ -4956,7 +4956,7 @@ c2fe7
     bne c3023                                                         ; 312c: d0 26       .&  :2ffb[1]
     cpy #$45 ; 'E'                                                    ; 312e: c0 45       .E  :2ffd[1]
     bne c300e                                                         ; 3130: d0 0d       ..  :2fff[1]
-    lda l3ac9                                                         ; 3132: ad c9 3a    ..: :3001[1]
+    lda player_x_movement_direction2                                  ; 3132: ad c9 3a    ..: :3001[1]
     cmp x_entry_table10                                               ; 3135: cd be 09    ... :3004[1]
     bne c3023                                                         ; 3138: d0 1a       ..  :3007[1]
     ldy #$58 ; 'X'                                                    ; 313a: a0 58       .X  :3009[1]
@@ -5004,7 +5004,7 @@ c3044
 
 ; $3184 referenced 1 time by $302d
 c3053
-    ldx l3ac9                                                         ; 3184: ae c9 3a    ..: :3053[1]
+    ldx player_x_movement_direction2                                  ; 3184: ae c9 3a    ..: :3053[1]
     beq c3074                                                         ; 3187: f0 1c       ..  :3056[1]
     lda #$36 ; '6'                                                    ; 3189: a9 36       .6  :3058[1]
     cpx x_entry_table10                                               ; 318b: ec be 09    ... :305a[1]
@@ -5038,7 +5038,7 @@ c3088
 ; $31bb referenced 4 times by $306b, $3071, $3079, $3086
 c308a
     ldx #0                                                            ; 31bb: a2 00       ..  :308a[1]
-    lda l3ac9                                                         ; 31bd: ad c9 3a    ..: :308c[1]
+    lda player_x_movement_direction2                                  ; 31bd: ad c9 3a    ..: :308c[1]
     beq c3092                                                         ; 31c0: f0 01       ..  :308f[1]
     inx                                                               ; 31c2: e8          .   :3091[1]
 ; $31c3 referenced 1 time by $308f
@@ -5177,7 +5177,7 @@ c3247
 ; $337d referenced 1 time by $322c
 c324c
     ldx #$58 ; 'X'                                                    ; 337d: a2 58       .X  :324c[1]
-    lda l3ac9                                                         ; 337f: ad c9 3a    ..: :324e[1]
+    lda player_x_movement_direction2                                  ; 337f: ad c9 3a    ..: :324e[1]
     cmp x_entry_table10                                               ; 3382: cd be 09    ... :3251[1]
     beq c325f                                                         ; 3385: f0 09       ..  :3254[1]
     ldx #$49 ; 'I'                                                    ; 3387: a2 49       .I  :3256[1]
@@ -5252,7 +5252,7 @@ c32b1
 
 ; $33f9 referenced 1 time by $32af
 c32c8
-    ldx l3ac9                                                         ; 33f9: ae c9 3a    ..: :32c8[1]
+    ldx player_x_movement_direction2                                  ; 33f9: ae c9 3a    ..: :32c8[1]
     bne c32de                                                         ; 33fc: d0 11       ..  :32cb[1]
     lda return_flag2                                                  ; 33fe: ad c7 3a    ..: :32cd[1]
     beq c3301                                                         ; 3401: f0 2f       ./  :32d0[1]
@@ -5299,7 +5299,7 @@ c3311
 ; $3447 referenced 4 times by $32f8, $32fe, $330f, $3313
 c3316
     ldx #0                                                            ; 3447: a2 00       ..  :3316[1]
-    lda l3ac9                                                         ; 3449: ad c9 3a    ..: :3318[1]
+    lda player_x_movement_direction2                                  ; 3449: ad c9 3a    ..: :3318[1]
     beq c331e                                                         ; 344c: f0 01       ..  :331b[1]
     inx                                                               ; 344e: e8          .   :331d[1]
 ; $344f referenced 1 time by $331b
@@ -6365,8 +6365,8 @@ sub_c3a12
 ; $3b72 referenced 2 times by $3a37, $3a3d
 c3a41
     txa                                                               ; 3b72: 8a          .   :3a41[1]
-    ora l0020                                                         ; 3b73: 05 20       .   :3a42[1]
-    sta l0020                                                         ; 3b75: 85 20       .   :3a44[1]
+    ora player_x_movement_direction                                   ; 3b73: 05 20       .   :3a42[1]
+    sta player_x_movement_direction                                   ; 3b75: 85 20       .   :3a44[1]
     rts                                                               ; 3b77: 60          `   :3a46[1]
 
 ; $3b78 referenced 1 time by $1820
@@ -6448,15 +6448,15 @@ sub_c3aa2
     sta return_flag3                                                  ; 3bd6: 8d c8 3a    ..: :3aa5[1]
     lda return_flag                                                   ; 3bd9: a5 46       .F  :3aa8[1]
     sta return_flag2                                                  ; 3bdb: 8d c7 3a    ..: :3aaa[1]
-    lda l0020                                                         ; 3bde: a5 20       .   :3aad[1]
-    sta l3ac9                                                         ; 3be0: 8d c9 3a    ..: :3aaf[1]
+    lda player_x_movement_direction                                   ; 3bde: a5 20       .   :3aad[1]
+    sta player_x_movement_direction2                                  ; 3be0: 8d c9 3a    ..: :3aaf[1]
     lda z_flag                                                        ; 3be3: a5 2c       .,  :3ab2[1]
     sta z_flag2                                                       ; 3be5: 8d ca 3a    ..: :3ab4[1]
     lda x_flag                                                        ; 3be8: a5 2d       .-  :3ab7[1]
     sta x_flag2                                                       ; 3bea: 8d cb 3a    ..: :3ab9[1]
     lda #0                                                            ; 3bed: a9 00       ..  :3abc[1]
     sta return_flag                                                   ; 3bef: 85 46       .F  :3abe[1]
-    sta l0020                                                         ; 3bf1: 85 20       .   :3ac0[1]
+    sta player_x_movement_direction                                   ; 3bf1: 85 20       .   :3ac0[1]
     sta z_flag                                                        ; 3bf3: 85 2c       .,  :3ac2[1]
     sta x_flag                                                        ; 3bf5: 85 2d       .-  :3ac4[1]
     rts                                                               ; 3bf7: 60          `   :3ac6[1]
@@ -6468,7 +6468,7 @@ return_flag2
 return_flag3
     !byte 0                                                           ; 3bf9: 00          .   :3ac8[1]
 ; $3bfa referenced 9 times by $2df3, $2e46, $3001, $3053, $308c, $324e, $32c8, $3318, $3aaf
-l3ac9
+player_x_movement_direction2
     !byte 0                                                           ; 3bfa: 00          .   :3ac9[1]
 ; $3bfb referenced 2 times by $323f, $3ab4
 z_flag2
@@ -7629,7 +7629,7 @@ pydis_end
 ;     sub_c3a27:                                            5
 ;     l3a97:                                                5
 ;     space_flag2:                                          5
-;     l0020:                                                4
+;     player_x_movement_direction:                          4
 ;     another_menu_index:                                   4
 ;     left_right_flag:                                      4
 ;     space_flag:                                           4
@@ -8851,7 +8851,6 @@ pydis_end
 ;     l001a
 ;     l001b
 ;     l001d
-;     l0020
 ;     l0026
 ;     l0030
 ;     l0039
@@ -9360,7 +9359,6 @@ pydis_end
 ;     l3a98
 ;     l3a9c
 ;     l3aa4
-;     l3ac9
 ;     l3ad8
 ;     l3adc
 ;     l3ade
