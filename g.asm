@@ -5540,15 +5540,15 @@ c381a
 c381c
     stx address_low                                                   ; 394d: 86 70       .p  :381c[1]
     sty address_high                                                  ; 394f: 84 71       .q  :381e[1]
-    lda #$66 ; 'f'                                                    ; 3951: a9 66       .f  :3820[1]
+    lda #<print_italic                                                ; 3951: a9 66       .f  :3820[1]
     sta l384e                                                         ; 3953: 8d 4e 38    .N8 :3822[1]
-    lda #$18                                                          ; 3956: a9 18       ..  :3825[1]
+    lda #>print_italic                                                ; 3956: a9 18       ..  :3825[1]
     sta l384f                                                         ; 3958: 8d 4f 38    .O8 :3827[1]
     lda l0043                                                         ; 395b: a5 43       .C  :382a[1]
     bne c3838                                                         ; 395d: d0 0a       ..  :382c[1]
-    lda #$ee                                                          ; 395f: a9 ee       ..  :382e[1]
+    lda #<oswrch                                                      ; 395f: a9 ee       ..  :382e[1]
     sta l384e                                                         ; 3961: 8d 4e 38    .N8 :3830[1]
-    lda #$ff                                                          ; 3964: a9 ff       ..  :3833[1]
+    lda #>oswrch                                                      ; 3964: a9 ff       ..  :3833[1]
     sta l384f                                                         ; 3966: 8d 4f 38    .O8 :3835[1]
 c3838
     ldy #0                                                            ; 3969: a0 00       ..  :3838[1]
@@ -5565,7 +5565,7 @@ c3848
     sta l0045                                                         ; 397b: 85 45       .E  :384a[1]
     rts                                                               ; 397d: 60          `   :384c[1]
 
-; TODO: I suspect this is patched at runtime so we can use different output routines
+; This is patched at runtime to vary the output routine used.
 jmp_write_char
 l384e = jmp_write_char+1
 l384f = jmp_write_char+2
@@ -7614,6 +7614,12 @@ pydis_end
 !if (<level_data) != $d5 {
     !error "Assertion failed: <level_data == $d5"
 }
+!if (<oswrch) != $ee {
+    !error "Assertion failed: <oswrch == $ee"
+}
+!if (<print_italic) != $66 {
+    !error "Assertion failed: <print_italic == $66"
+}
 !if (<save_block) != $e3 {
     !error "Assertion failed: <save_block == $e3"
 }
@@ -7694,6 +7700,12 @@ pydis_end
 }
 !if (>level_data) != $3a {
     !error "Assertion failed: >level_data == $3a"
+}
+!if (>oswrch) != $ff {
+    !error "Assertion failed: >oswrch == $ff"
+}
+!if (>print_italic) != $18 {
+    !error "Assertion failed: >print_italic == $18"
 }
 !if (>save_block) != $34 {
     !error "Assertion failed: >save_block == $34"
