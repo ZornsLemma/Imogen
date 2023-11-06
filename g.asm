@@ -226,6 +226,7 @@ c3ade                               = $3ade
 c3adf                               = $3adf
 l3ae0                               = $3ae0
 auxcode                             = $53c0
+check_password                      = $53c0
 start_of_screen_memory              = $5bc0
 l8000                               = $8000
 lbe00                               = $be00
@@ -5338,7 +5339,7 @@ c36a8
     jmp c36a8                                                         ; 37ef: 4c a8 36    L.6 :36be[1]
 
 c36c1
-    jsr auxcode                                                       ; 37f2: 20 c0 53     .S :36c1[1]
+    jsr check_password                                                ; 37f2: 20 c0 53     .S :36c1[1]
     sta l36da                                                         ; 37f5: 8d da 36    ..6 :36c4[1]
 loop_c36c7
     jsr load_sprdata                                                  ; 37f8: 20 6f 19     o. :36c7[1]
@@ -7744,6 +7745,9 @@ pydis_end
 }
 !if (caps_mask) != $df {
     !error "Assertion failed: caps_mask == $df"
+}
+!if (check_password) != $53c0 {
+    !error "Assertion failed: check_password == $53c0"
 }
 !if (clear_128_bytes_at_l09ef_high_copy_end - clear_128_bytes_at_l09ef_high_copy_start) != $48 {
     !error "Assertion failed: clear_128_bytes_at_l09ef_high_copy_end - clear_128_bytes_at_l09ef_high_copy_start == $48"

@@ -39,6 +39,8 @@ osbyte                      = $fff4
 ; TODO: This is comparing an eor-encrypted string - probably a level 'password' -
 ; against the string buffer. Not quite clear yet how this matches against multiple
 ; correct passwords.
+auxcode
+check_password
 pydis_start
     ldy #0                                                            ; 53c0: a0 00       ..
     sty l0005                                                         ; 53c2: 84 05       ..
