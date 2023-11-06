@@ -603,8 +603,8 @@ label(0x2ee9, "four_entry_table2") # TODO: write only, at least in 'g' itself?
 label(0x396f, "four_entry_table3_maybe_sound") # TODO: possibly something to do with sound??
 label(0xa7f, "sixteen_entry_table")
 expr(0x3f1b, make_subtract("sixteen_entry_table", 1))
-label(0x295c, "seventeen_entry_table1") # sub_c2980 initialises elements 9 inclusive to $11 exclusive, but elsewhere we do access lower elements
-label(0x296f, "seventeen_entry_table2") # see code at c29aa which pairs this with seventeen_entry_table1
+label(0x295c, "menu_slots1") # sub_c2980 initialises elements 9 inclusive to $11 exclusive, but elsewhere we do access lower elements
+label(0x296f, "menu_slots2") # see code at c29aa which pairs this with menu_slots1
 # sub_c2157 uses all of these tables in parallel, so presumably they share the same size - represented here by 'x'
 label(0x9b3, "x_entry_table1")
 label(0x95b, "x_entry_table2")
