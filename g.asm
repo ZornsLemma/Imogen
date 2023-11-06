@@ -210,6 +210,9 @@ old_brkv1                           = $0ab1
 old_brkv2                           = $0ab3
 old_irq1v                           = $0ab5
 l0b00                               = $0b00
+sprite_199                          = $0b11
+sprite_198                          = $0b93
+sprite_197                          = $0bc5
 l3ad7                               = $3ad7
 c3ad8                               = $3ad8
 l3ad9                               = $3ad9
@@ -540,37 +543,46 @@ c131e
 l132b
     !byte 0                                                           ; 145c: 00          .   :132b[1]
 
-set_yx_based_on_a
-    ldx #$11                                                          ; 145d: a2 11       ..  :132c[1]
-    ldy #$0b                                                          ; 145f: a0 0b       ..  :132e[1]
-    cmp #$c7                                                          ; 1461: c9 c7       ..  :1330[1]
+; Get sprite address for sprite A
+; 
+; Sprites 0-196: stored in sprdata
+; Sprite 197: is stored at $0bc5
+; Sprite 198: is stored at $0b93
+; Sprite 199: is stored at $0b11
+; Sprite 200+: stored in level data
+; 
+get_address_of_sprite_a
+    ldx #<sprite_199                                                  ; 145d: a2 11       ..  :132c[1]
+    ldy #>sprite_199                                                  ; 145f: a0 0b       ..  :132e[1]
+    cmp #199                                                          ; 1461: c9 c7       ..  :1330[1]
     beq return2                                                       ; 1463: f0 42       .B  :1332[1]
-    ldx #$93                                                          ; 1465: a2 93       ..  :1334[1]
-    ldy #$0b                                                          ; 1467: a0 0b       ..  :1336[1]
-    cmp #$c6                                                          ; 1469: c9 c6       ..  :1338[1]
+    ldx #<sprite_198                                                  ; 1465: a2 93       ..  :1334[1]
+    ldy #>sprite_198                                                  ; 1467: a0 0b       ..  :1336[1]
+    cmp #198                                                          ; 1469: c9 c6       ..  :1338[1]
     beq return2                                                       ; 146b: f0 3a       .:  :133a[1]
-    ldx #$c5                                                          ; 146d: a2 c5       ..  :133c[1]
-    ldy #$0b                                                          ; 146f: a0 0b       ..  :133e[1]
-    cmp #$c5                                                          ; 1471: c9 c5       ..  :1340[1]
+    ldx #<sprite_197                                                  ; 146d: a2 c5       ..  :133c[1]
+    ldy #>sprite_197                                                  ; 146f: a0 0b       ..  :133e[1]
+    cmp #197                                                          ; 1471: c9 c5       ..  :1340[1]
     beq return2                                                       ; 1473: f0 32       .2  :1342[1]
     ldx sprdata_ptr                                                   ; 1475: a6 54       .T  :1344[1]
     ldy sprdata_ptr + 1                                               ; 1477: a4 55       .U  :1346[1]
-    cmp #$c8                                                          ; 1479: c9 c8       ..  :1348[1]
-    bcc c135d                                                         ; 147b: 90 11       ..  :134a[1]
-    sbc #$c8                                                          ; 147d: e9 c8       ..  :134c[1]
-    pha                                                               ; 147f: 48          H   :134e[1]
+    cmp #200                                                          ; 1479: c9 c8       ..  :1348[1]
+    bcc get_sprite_address_from_sprite_table                          ; 147b: 90 11       ..  :134a[1]
+    sbc #200                                                          ; 147d: e9 c8       ..  :134c[1]
+; The first two bytes of the level data is the offset to the sprite table
+    pha                                                               ; 147f: 48          H   :134e[1]   ; remember sprite number
     lda #<level_data                                                  ; 1480: a9 d5       ..  :134f[1]
     clc                                                               ; 1482: 18          .   :1351[1]
-    adc level_data                                                    ; 1483: 6d d5 3a    m.: :1352[1]
+    adc level_data                                                    ; 1483: 6d d5 3a    m.: :1352[1]   ; add offset to sprite table (low)
     tax                                                               ; 1486: aa          .   :1355[1]
     lda #>level_data                                                  ; 1487: a9 3a       .:  :1356[1]
-    adc level_data + 1                                                ; 1489: 6d d6 3a    m.: :1358[1]
+    adc level_data + 1                                                ; 1489: 6d d6 3a    m.: :1358[1]   ; add offset to sprite table (high)
     tay                                                               ; 148c: a8          .   :135b[1]
-    pla                                                               ; 148d: 68          h   :135c[1]
-; TODO: Looks like this is looking at the the 16-bit word at (&58),(2*A) and setting YX
-; to be that value plus the address at &58, i.e. the table starts with 16-bit word
-; offsets into the table, with &58 pointing to the base of the table
-c135d
+    pla                                                               ; 148d: 68          h   :135c[1]   ; recall sprite number
+; The sprite table starts with a table of 16 bit addresses, one for each sprite.
+; Look up the address of the sprite by reading this table.
+; Set ($58) to point to the base of the table.
+get_sprite_address_from_sprite_table
     stx l0058                                                         ; 148e: 86 58       .X  :135d[1]
     sty l0059                                                         ; 1490: 84 59       .Y  :135f[1]
     asl                                                               ; 1492: 0a          .   :1361[1]
@@ -611,14 +623,14 @@ sprite_op
     tya                                                               ; 14c1: 98          .   :1390[1]
     pha                                                               ; 14c2: 48          H   :1391[1]
     lda l0016                                                         ; 14c3: a5 16       ..  :1392[1]
-    jsr set_yx_based_on_a                                             ; 14c5: 20 2c 13     ,. :1394[1]
+    jsr get_address_of_sprite_a                                       ; 14c5: 20 2c 13     ,. :1394[1]
     stx address_low                                                   ; 14c8: 86 70       .p  :1397[1]
     sty address_high                                                  ; 14ca: 84 71       .q  :1399[1]
     lda l0015                                                         ; 14cc: a5 15       ..  :139b[1]
     and #1                                                            ; 14ce: 29 01       ).  :139d[1]
     beq c13b5                                                         ; 14d0: f0 14       ..  :139f[1]
     lda l0014                                                         ; 14d2: a5 14       ..  :13a1[1]
-    jsr set_yx_based_on_a                                             ; 14d4: 20 2c 13     ,. :13a3[1]
+    jsr get_address_of_sprite_a                                       ; 14d4: 20 2c 13     ,. :13a3[1]
     stx l007e                                                         ; 14d7: 86 7e       .~  :13a6[1]
     sty l007f                                                         ; 14d9: 84 7f       ..  :13a8[1]
     ldy #3                                                            ; 14db: a0 03       ..  :13aa[1]
@@ -3063,7 +3075,7 @@ sub_c2434
     txa                                                               ; 2565: 8a          .   :2434[1]
     pha                                                               ; 2566: 48          H   :2435[1]
     lda x_entry_table9,x                                              ; 2567: bd a8 09    ... :2436[1]
-    jsr set_yx_based_on_a                                             ; 256a: 20 2c 13     ,. :2439[1]
+    jsr get_address_of_sprite_a                                       ; 256a: 20 2c 13     ,. :2439[1]
     stx l0080                                                         ; 256d: 86 80       ..  :243c[1]
     sty l0081                                                         ; 256f: 84 81       ..  :243e[1]
     pla                                                               ; 2571: 68          h   :2440[1]
@@ -3161,7 +3173,7 @@ sub_c24d2
     txa                                                               ; 2603: 8a          .   :24d2[1]
     pha                                                               ; 2604: 48          H   :24d3[1]
     lda x_entry_table9,x                                              ; 2605: bd a8 09    ... :24d4[1]
-    jsr set_yx_based_on_a                                             ; 2608: 20 2c 13     ,. :24d7[1]
+    jsr get_address_of_sprite_a                                       ; 2608: 20 2c 13     ,. :24d7[1]
     stx l0080                                                         ; 260b: 86 80       ..  :24da[1]
     sty l0081                                                         ; 260d: 84 81       ..  :24dc[1]
     pla                                                               ; 260f: 68          h   :24de[1]
@@ -6376,7 +6388,7 @@ dir_dollar_command
 
 c3f0d
     lda #0                                                            ; 3f0d: a9 00       ..
-    jsr set_yx_based_on_a                                             ; 3f0f: 20 2c 13     ,.
+    jsr get_address_of_sprite_a                                       ; 3f0f: 20 2c 13     ,.
     stx address_low                                                   ; 3f12: 86 70       .p
     sty address_high                                                  ; 3f14: 84 71       .q
     ldy #$11                                                          ; 3f16: a0 11       ..
@@ -6864,7 +6876,6 @@ pydis_end
 ;     c12fc
 ;     c1306
 ;     c131e
-;     c135d
 ;     c137f
 ;     c13b5
 ;     c13bf
@@ -7590,6 +7601,15 @@ pydis_end
 !if (<sprdata_filename) != $80 {
     !error "Assertion failed: <sprdata_filename == $80"
 }
+!if (<sprite_197) != $c5 {
+    !error "Assertion failed: <sprite_197 == $c5"
+}
+!if (<sprite_198) != $93 {
+    !error "Assertion failed: <sprite_198 == $93"
+}
+!if (<sprite_199) != $11 {
+    !error "Assertion failed: <sprite_199 == $11"
+}
 !if (<start_of_screen_memory) != $c0 {
     !error "Assertion failed: <start_of_screen_memory == $c0"
 }
@@ -7655,6 +7675,15 @@ pydis_end
 }
 !if (>sprdata_filename) != $19 {
     !error "Assertion failed: >sprdata_filename == $19"
+}
+!if (>sprite_197) != $0b {
+    !error "Assertion failed: >sprite_197 == $0b"
+}
+!if (>sprite_198) != $0b {
+    !error "Assertion failed: >sprite_198 == $0b"
+}
+!if (>sprite_199) != $0b {
+    !error "Assertion failed: >sprite_199 == $0b"
 }
 !if (>start_of_screen_memory) != $5b {
     !error "Assertion failed: >start_of_screen_memory == $5b"

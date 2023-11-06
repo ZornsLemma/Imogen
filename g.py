@@ -331,8 +331,35 @@ label(0x3ef3, "osword_7f_write_special_register_result")
 entry(0x3ed5, "set_track_special_register_to_a")
 entry(0x3ea1, "read_icodata_using_osword_7f")
 
-# TODO: Poor name
-entry(0x132c, "set_yx_based_on_a")
+comment(0x132c, """Get sprite address for sprite A
+
+Sprites 0-196: stored in sprdata
+Sprite 197: is stored at $0bc5
+Sprite 198: is stored at $0b93
+Sprite 199: is stored at $0b11
+Sprite 200+: stored in level data
+""")
+label(0x0b11, "sprite_199")
+label(0x0b93, "sprite_198")
+label(0x0bc5, "sprite_197")
+expr(0x132d, make_lo("sprite_199"))
+expr(0x132f, make_hi("sprite_199"))
+decimal(0x1331)
+expr(0x1335, make_lo("sprite_198"))
+expr(0x1337, make_hi("sprite_198"))
+decimal(0x1339)
+expr(0x133d, make_lo("sprite_197"))
+expr(0x133f, make_hi("sprite_197"))
+decimal(0x1341)
+decimal(0x1349)
+entry(0x132c, "get_address_of_sprite_a")
+label(0x135d, "get_sprite_address_from_sprite_table")
+comment(0x134e, "The first two bytes of the level data is the offset to the sprite table")
+comment(0x134e, "remember sprite number", inline=True)
+comment(0x1352, "add offset to sprite table (low)", inline=True)
+comment(0x1358, "add offset to sprite table (high)", inline=True)
+comment(0x135c, "recall sprite number", inline=True)
+decimal(0x134d)
 
 label(0x1272, "data_filename")
 label(0x1276, "data_filename_variable_letter")
@@ -625,7 +652,7 @@ entry(0x138d, "sprite_op")
 comment(0x2c52, "TODO: Self-modifying code here? If so we haven't found the code that modifies it as we have no labels")
 comment(0x13c1, "TODO: Self-modifying code here? If so we haven't found the code that modifies it as we have no labels")
 entry(0x2c46, "something_to_do_with_incrementing_by_20_pixels_x_maybe")
-comment(0x135d, "TODO: Looks like this is looking at the the 16-bit word at (&58),(2*A) and setting YX to be that value plus the address at &58, i.e. the table starts with 16-bit word offsets into the table, with &58 pointing to the base of the table")
+comment(0x135d, "The sprite table starts with a table of 16 bit addresses, one for each sprite.\nLook up the address of the sprite by reading this table.\nSet ($58) to point to the base of the table.")
 label(0x54, "sprdata_ptr")
 expr_label(0x55, make_add("sprdata_ptr", "1"))
 
