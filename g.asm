@@ -5030,7 +5030,7 @@ c340d
     ldx #$2b ; '+'                                                    ; 3545: a2 2b       .+  :3414[1]
     ldy #$34 ; '4'                                                    ; 3547: a0 34       .4  :3416[1]
     jsr c381c                                                         ; 3549: 20 1c 38     .8 :3418[1]
-    jsr sub_c3850                                                     ; 354c: 20 50 38     P8 :341b[1]
+    jsr print_2xlf_cr                                                 ; 354c: 20 50 38     P8 :341b[1]
     ldx #$3b ; ';'                                                    ; 354f: a2 3b       .;  :341e[1]
     ldy #$34 ; '4'                                                    ; 3551: a0 34       .4  :3420[1]
     jsr c381c                                                         ; 3553: 20 1c 38     .8 :3422[1]
@@ -5078,7 +5078,7 @@ c347f
     ldx #$98                                                          ; 35b7: a2 98       ..  :3486[1]
     ldy #$34 ; '4'                                                    ; 35b9: a0 34       .4  :3488[1]
     jsr c381c                                                         ; 35bb: 20 1c 38     .8 :348a[1]
-    jsr sub_c3850                                                     ; 35be: 20 50 38     P8 :348d[1]
+    jsr print_2xlf_cr                                                 ; 35be: 20 50 38     P8 :348d[1]
     jsr turn_cursor_on                                                ; 35c1: 20 5d 38     ]8 :3490[1]
     jmp c3872                                                         ; 35c4: 4c 72 38    Lr8 :3493[1]
 
@@ -5103,10 +5103,10 @@ loop_c34b2
     jsr sub_c040a                                                     ; 35ec: 20 0a 04     .. :34bb[1]
     lda #3                                                            ; 35ef: a9 03       ..  :34be[1]
     sta l0004                                                         ; 35f1: 85 04       ..  :34c0[1]
-    ldx #$e3                                                          ; 35f3: a2 e3       ..  :34c2[1]
-    ldy #$34 ; '4'                                                    ; 35f5: a0 34       .4  :34c4[1]
+    ldx #<save_block                                                  ; 35f3: a2 e3       ..  :34c2[1]
+    ldy #>save_block                                                  ; 35f5: a0 34       .4  :34c4[1]
     jsr c381c                                                         ; 35f7: 20 1c 38     .8 :34c6[1]
-    jsr sub_c3850                                                     ; 35fa: 20 50 38     P8 :34c9[1]
+    jsr print_2xlf_cr                                                 ; 35fa: 20 50 38     P8 :34c9[1]
     ldx #$f0                                                          ; 35fd: a2 f0       ..  :34cc[1]
     ldy #$34 ; '4'                                                    ; 35ff: a0 34       .4  :34ce[1]
     jsr c381c                                                         ; 3601: 20 1c 38     .8 :34d0[1]
@@ -5118,6 +5118,7 @@ save_drive_number
     !text "0.I."                                                      ; 3608: 30 2e 49... 0.I :34d7[1]
 save_leaf_filename
     !text ".......", $0d                                              ; 360c: 2e 2e 2e... ... :34db[1]
+save_block
     !byte $9c, $a3, $a2, $a8, $a3, $eb, $af, $b9, $a2, $bd, $ae, $f4  ; 3614: 9c a3 a2... ... :34e3[1]
     !byte $c6, $9b, $b9, $ae, $b8, $b8, $eb, $fb, $e7, $fa, $e7, $f9  ; 3620: c6 9b b9... ... :34ef[1]
     !byte $eb, $a4, $b9, $eb, $f8, $c6                                ; 362c: eb a4 b9... ... :34fb[1]
@@ -5141,7 +5142,7 @@ c3516
     ldx #$35 ; '5'                                                    ; 3651: a2 35       .5  :3520[1]
     ldy #$35 ; '5'                                                    ; 3653: a0 35       .5  :3522[1]
     jsr c381c                                                         ; 3655: 20 1c 38     .8 :3524[1]
-    jsr sub_c3850                                                     ; 3658: 20 50 38     P8 :3527[1]
+    jsr print_2xlf_cr                                                 ; 3658: 20 50 38     P8 :3527[1]
     ldx #$46 ; 'F'                                                    ; 365b: a2 46       .F  :352a[1]
     ldy #$35 ; '5'                                                    ; 365d: a0 35       .5  :352c[1]
     jsr c381c                                                         ; 365f: 20 1c 38     .8 :352e[1]
@@ -5244,7 +5245,7 @@ sub_c3617
     ldx #6                                                            ; 374b: a2 06       ..  :361a[1]
     ldy #$36 ; '6'                                                    ; 374d: a0 36       .6  :361c[1]
     jsr c381c                                                         ; 374f: 20 1c 38     .8 :361e[1]
-    jsr sub_c3850                                                     ; 3752: 20 50 38     P8 :3621[1]
+    jsr print_2xlf_cr                                                 ; 3752: 20 50 38     P8 :3621[1]
     ldx #$46 ; 'F'                                                    ; 3755: a2 46       .F  :3624[1]
     ldy #$35 ; '5'                                                    ; 3757: a0 35       .5  :3626[1]
     jsr c381c                                                         ; 3759: 20 1c 38     .8 :3628[1]
@@ -5265,7 +5266,7 @@ c363f
     ldx #$55 ; 'U'                                                    ; 3773: a2 55       .U  :3642[1]
     ldy #$36 ; '6'                                                    ; 3775: a0 36       .6  :3644[1]
     jsr c381c                                                         ; 3777: 20 1c 38     .8 :3646[1]
-    jsr sub_c3850                                                     ; 377a: 20 50 38     P8 :3649[1]
+    jsr print_2xlf_cr                                                 ; 377a: 20 50 38     P8 :3649[1]
     jsr turn_cursor_on                                                ; 377d: 20 5d 38     ]8 :364c[1]
     jmp c3872                                                         ; 3780: 4c 72 38    Lr8 :364f[1]
 
@@ -5463,7 +5464,7 @@ c378e
     jsr convert_level_number_to_letter                                ; 38cf: 20 d4 0a     .. :379e[1]
     tya                                                               ; 38d2: 98          .   :37a1[1]
     jsr print_italic                                                  ; 38d3: 20 66 18     f. :37a2[1]
-    jsr sub_c3850                                                     ; 38d6: 20 50 38     P8 :37a5[1]
+    jsr print_2xlf_cr                                                 ; 38d6: 20 50 38     P8 :37a5[1]
     ldx c3adb                                                         ; 38d9: ae db 3a    ..: :37a8[1]
     ldy l3adc                                                         ; 38dc: ac dc 3a    ..: :37ab[1]
     jmp c381c                                                         ; 38df: 4c 1c 38    L.8 :37ae[1]
@@ -5500,7 +5501,7 @@ c37da
     inx                                                               ; 3918: e8          .   :37e7[1]
     cmp #$48 ; 'H'                                                    ; 3919: c9 48       .H  :37e8[1]
     bne c37c3                                                         ; 391b: d0 d7       ..  :37ea[1]
-    jsr sub_c3850                                                     ; 391d: 20 50 38     P8 :37ec[1]
+    jsr print_2xlf_cr                                                 ; 391d: 20 50 38     P8 :37ec[1]
     jmp c37c3                                                         ; 3920: 4c c3 37    L.7 :37ef[1]
 
 return26
@@ -5551,9 +5552,9 @@ c3838
 loop_c383a
     lda (address_low),y                                               ; 396b: b1 70       .p  :383a[1]
     eor l0045                                                         ; 396d: 45 45       EE  :383c[1]
-    cmp #$0d                                                          ; 396f: c9 0d       ..  :383e[1]
+    cmp #vdu_cr                                                       ; 396f: c9 0d       ..  :383e[1]
     beq c3848                                                         ; 3971: f0 06       ..  :3840[1]
-    jsr sub_c384d                                                     ; 3973: 20 4d 38     M8 :3842[1]
+    jsr jmp_write_char                                                ; 3973: 20 4d 38     M8 :3842[1]
     iny                                                               ; 3976: c8          .   :3845[1]
     bne loop_c383a                                                    ; 3977: d0 f2       ..  :3846[1]
 c3848
@@ -5561,12 +5562,13 @@ c3848
     sta l0045                                                         ; 397b: 85 45       .E  :384a[1]
     rts                                                               ; 397d: 60          `   :384c[1]
 
-sub_c384d
-l384e = sub_c384d+1
-l384f = sub_c384d+2
+; TODO: I suspect this is patched at runtime so we can use different output routines
+jmp_write_char
+l384e = jmp_write_char+1
+l384f = jmp_write_char+2
     jmp oswrch                                                        ; 397e: 4c ee ff    L.. :384d[1]   ; Write character
 
-sub_c3850
+print_2xlf_cr
     lda #$0a                                                          ; 3981: a9 0a       ..  :3850[1]
     jsr oswrch                                                        ; 3983: 20 ee ff     .. :3852[1]   ; Write character 10
     jsr oswrch                                                        ; 3986: 20 ee ff     .. :3855[1]   ; Write character
@@ -7541,8 +7543,6 @@ pydis_end
 ;     sub_c3617
 ;     sub_c3664
 ;     sub_c37f3
-;     sub_c384d
-;     sub_c3850
 ;     sub_c388d
 ;     sub_c38f6
 ;     sub_c3aa2
@@ -7611,6 +7611,9 @@ pydis_end
 }
 !if (<level_data) != $d5 {
     !error "Assertion failed: <level_data == $d5"
+}
+!if (<save_block) != $e3 {
+    !error "Assertion failed: <save_block == $e3"
 }
 !if (<some_code_high_copy_TODO) != $ff {
     !error "Assertion failed: <some_code_high_copy_TODO == $ff"
@@ -7686,6 +7689,9 @@ pydis_end
 }
 !if (>level_data) != $3a {
     !error "Assertion failed: >level_data == $3a"
+}
+!if (>save_block) != $34 {
+    !error "Assertion failed: >save_block == $34"
 }
 !if (>some_code_high_copy_TODO) != $40 {
     !error "Assertion failed: >some_code_high_copy_TODO == $40"

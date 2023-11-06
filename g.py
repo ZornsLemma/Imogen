@@ -674,6 +674,14 @@ label(0x34d7, "save_drive_number")
 string(0x34d7, 4)
 label(0x34db, "save_leaf_filename")
 stringcr(0x34db)
+label(0x34e3, "save_block")
+expr(0x34c3, make_lo("save_block"))
+expr(0x34c5, make_hi("save_block"))
+expr(0x383f, "vdu_cr")
+
+comment(0x384d, "TODO: I suspect this is patched at runtime so we can use different output routines")
+entry(0x384d, "jmp_write_char")
+entry(0x3850, "print_2xlf_cr")
 
 go()
 
