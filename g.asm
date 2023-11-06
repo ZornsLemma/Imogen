@@ -5943,17 +5943,9 @@ negative_inkey
     txa                                                               ; 3c04: 8a          .   :3ad3[1]
     rts                                                               ; 3c05: 60          `   :3ad4[1]
 
-; The loader will have executed VDU 21 to disable VDU output. Record the current
-; disable state before re-enabling it, so we can check it later as part of a copy
-; protection scheme.
-; This initialisation code gets overwritten by level data later on.
 level_data
 }
 
-; The loader will have executed VDU 21 to disable VDU output. Record the current
-; disable state before re-enabling it, so we can check it later as part of a copy
-; protection scheme.
-; This initialisation code gets overwritten by level data later on.
 execution_start
 ; The loader will have executed VDU 21 to disable VDU output. Record the current
 ; disable state before re-enabling it, so we can check it later as part of a copy
@@ -6659,19 +6651,10 @@ convert_level_letter_to_number
 return28
     rts                                                               ; 40cf: 60          `   :0afe[5]
 
-; Update the transformation count on screen at text position (35-37, 6). This takes
-; care to update as few digits on screen as possible, probably to reduce flicker and to
-; offset the relatively slow implementation of print_italic.
 }
 
-; Update the transformation count on screen at text position (35-37, 6). This takes
-; care to update as few digits on screen as possible, probably to reduce flicker and to
-; offset the relatively slow implementation of print_italic.
 clear_128_bytes_at_l09ef_high_copy_end
 update_displayed_transformations_remaining_high_copy_start
-; Update the transformation count on screen at text position (35-37, 6). This takes
-; care to update as few digits on screen as possible, probably to reduce flicker and to
-; offset the relatively slow implementation of print_italic.
 
 !pseudopc $0131 {
 ; Update the transformation count on screen at text position (35-37, 6). This takes
