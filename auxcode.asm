@@ -79,13 +79,15 @@ c5414
     jsr l040a                                                         ; 542f: 20 0a 04     ..
     lda #$0a                                                          ; 5432: a9 0a       ..
     jsr oswrch                                                        ; 5434: 20 ee ff     ..            ; Write character 10
-    ldx #$46 ; 'F'                                                    ; 5437: a2 46       .F
-    ldy #$54 ; 'T'                                                    ; 5439: a0 54       .T
+    ldx #<unknown_encrypted_string                                    ; 5437: a2 46       .F
+    ldy #>unknown_encrypted_string                                    ; 5439: a0 54       .T
     jsr l37f3                                                         ; 543b: 20 f3 37     .7
     jsr l388d                                                         ; 543e: 20 8d 38     .8
     lda #0                                                            ; 5441: a9 00       ..
     jmp c544e                                                         ; 5443: 4c 4e 54    LNT
 
+; 'Unknown\r' EOR-encrypted with $cb
+unknown_encrypted_string
     !byte $9e, $a5, $a0, $a5, $a4, $bc, $a5, $c6                      ; 5446: 9e a5 a0... ...
 
 c544e
@@ -190,3 +192,9 @@ pydis_end
 ;     l37f3
 ;     l388d
 ;     loop_c5410
+!if (<unknown_encrypted_string) != $46 {
+    !error "Assertion failed: <unknown_encrypted_string == $46"
+}
+!if (>unknown_encrypted_string) != $54 {
+    !error "Assertion failed: >unknown_encrypted_string == $54"
+}

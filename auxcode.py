@@ -23,6 +23,11 @@ set_label_maker_hook(my_label_maker)
 load(0x53c0, "orig/auxcode.dat", "6502", "4bb0d6da344653209ba062a544cf0e9c")
 entry(0x53c0)
 
+comment(0x5446, "'Unknown\\r' EOR-encrypted with $cb")
+label(0x5446, "unknown_encrypted_string")
+expr(0x5438, make_lo("unknown_encrypted_string"))
+expr(0x543a, make_hi("unknown_encrypted_string"))
+
 go()
 
 # vi: tw=100
