@@ -413,6 +413,7 @@ expr(0x355b, "vdu_cr")
 expr(0x3562, "vdu_lf")
 expr(0x3705, "vdu_cr")
 
+entry(0x40a, "save_or_restore_screen_under_dialog_box") # TODO: guesswork
 entry(0x444, "vdu_goto_0_9")
 expr(0x445, "vdu_goto_xy")
 
@@ -721,6 +722,8 @@ label(0x45, "eor_key") # TODO: Is this *always* $cb in practice?
 # TODO: Mention l0005 in name until we know why
 entry(0x3872, "flush_input_buffers_and_zero_l0005")
 
+# TODO: Not probing deeper as this may be sprite-related
+entry(0x474, "stash_data_pointed_to_by_l0076_at_530_maybe")
 
 go()
 
