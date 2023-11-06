@@ -5030,11 +5030,11 @@ c340d
     sta l0004                                                         ; 3543: 85 04       ..  :3412[1]
     ldx #$2b ; '+'                                                    ; 3545: a2 2b       .+  :3414[1]
     ldy #$34 ; '4'                                                    ; 3547: a0 34       .4  :3416[1]
-    jsr print_eored_string_at_yx                                      ; 3549: 20 1c 38     .8 :3418[1]
+    jsr print_encrypted_string_at_yx                                  ; 3549: 20 1c 38     .8 :3418[1]
     jsr print_2xlf_cr                                                 ; 354c: 20 50 38     P8 :341b[1]
     ldx #$3b ; ';'                                                    ; 354f: a2 3b       .;  :341e[1]
     ldy #$34 ; '4'                                                    ; 3551: a0 34       .4  :3420[1]
-    jsr print_eored_string_at_yx                                      ; 3553: 20 1c 38     .8 :3422[1]
+    jsr print_encrypted_string_at_yx                                  ; 3553: 20 1c 38     .8 :3422[1]
     jmp flush_input_buffers_and_zero_l0005                            ; 3556: 4c 72 38    Lr8 :3425[1]
 
 c3428
@@ -5078,7 +5078,7 @@ c347f
     sta l0004                                                         ; 35b5: 85 04       ..  :3484[1]
     ldx #$98                                                          ; 35b7: a2 98       ..  :3486[1]
     ldy #$34 ; '4'                                                    ; 35b9: a0 34       .4  :3488[1]
-    jsr print_eored_string_at_yx                                      ; 35bb: 20 1c 38     .8 :348a[1]
+    jsr print_encrypted_string_at_yx                                  ; 35bb: 20 1c 38     .8 :348a[1]
     jsr print_2xlf_cr                                                 ; 35be: 20 50 38     P8 :348d[1]
     jsr turn_cursor_on                                                ; 35c1: 20 5d 38     ]8 :3490[1]
     jmp flush_input_buffers_and_zero_l0005                            ; 35c4: 4c 72 38    Lr8 :3493[1]
@@ -5104,13 +5104,13 @@ loop_c34b2
     jsr sub_c040a                                                     ; 35ec: 20 0a 04     .. :34bb[1]
     lda #3                                                            ; 35ef: a9 03       ..  :34be[1]
     sta l0004                                                         ; 35f1: 85 04       ..  :34c0[1]
-    ldx #<save_block                                                  ; 35f3: a2 e3       ..  :34c2[1]
-    ldy #>save_block                                                  ; 35f5: a0 34       .4  :34c4[1]
-    jsr print_eored_string_at_yx                                      ; 35f7: 20 1c 38     .8 :34c6[1]
+    ldx #<which_drive_encrypted_string                                ; 35f3: a2 e3       ..  :34c2[1]
+    ldy #>which_drive_encrypted_string                                ; 35f5: a0 34       .4  :34c4[1]
+    jsr print_encrypted_string_at_yx                                  ; 35f7: 20 1c 38     .8 :34c6[1]
     jsr print_2xlf_cr                                                 ; 35fa: 20 50 38     P8 :34c9[1]
-    ldx #<save_block2                                                 ; 35fd: a2 f0       ..  :34cc[1]
-    ldy #>save_block2                                                 ; 35ff: a0 34       .4  :34ce[1]
-    jsr print_eored_string_at_yx                                      ; 3601: 20 1c 38     .8 :34d0[1]
+    ldx #<press_012_or_3_encrypted_string                             ; 35fd: a2 f0       ..  :34cc[1]
+    ldy #>press_012_or_3_encrypted_string                             ; 35ff: a0 34       .4  :34ce[1]
+    jsr print_encrypted_string_at_yx                                  ; 3601: 20 1c 38     .8 :34d0[1]
     jmp flush_input_buffers_and_zero_l0005                            ; 3604: 4c 72 38    Lr8 :34d3[1]
 
 save_full_filename
@@ -5119,10 +5119,12 @@ save_drive_number
     !text "0.I."                                                      ; 3608: 30 2e 49... 0.I :34d7[1]
 save_leaf_filename
     !text ".......", $0d                                              ; 360c: 2e 2e 2e... ... :34db[1]
-save_block
+; 'Which drive?\r' EOR-encrypted with $cb
+which_drive_encrypted_string
     !byte $9c, $a3, $a2, $a8, $a3, $eb, $af, $b9, $a2, $bd, $ae, $f4  ; 3614: 9c a3 a2... ... :34e3[1]
     !byte $c6                                                         ; 3620: c6          .   :34ef[1]
-save_block2
+; 'Press 0,1,2 or 3\r' EOR-encrypted with $cb
+press_012_or_3_encrypted_string
     !byte $9b, $b9, $ae, $b8, $b8, $eb, $fb, $e7, $fa, $e7, $f9, $eb  ; 3621: 9b b9 ae... ... :34f0[1]
     !byte $a4, $b9, $eb, $f8, $c6                                     ; 362d: a4 b9 eb... ... :34fc[1]
 
@@ -5144,11 +5146,11 @@ c3516
     sta l0004                                                         ; 364f: 85 04       ..  :351e[1]
     ldx #$35 ; '5'                                                    ; 3651: a2 35       .5  :3520[1]
     ldy #$35 ; '5'                                                    ; 3653: a0 35       .5  :3522[1]
-    jsr print_eored_string_at_yx                                      ; 3655: 20 1c 38     .8 :3524[1]
+    jsr print_encrypted_string_at_yx                                  ; 3655: 20 1c 38     .8 :3524[1]
     jsr print_2xlf_cr                                                 ; 3658: 20 50 38     P8 :3527[1]
     ldx #$46 ; 'F'                                                    ; 365b: a2 46       .F  :352a[1]
     ldy #$35 ; '5'                                                    ; 365d: a0 35       .5  :352c[1]
-    jsr print_eored_string_at_yx                                      ; 365f: 20 1c 38     .8 :352e[1]
+    jsr print_encrypted_string_at_yx                                  ; 365f: 20 1c 38     .8 :352e[1]
     jmp flush_input_buffers_and_zero_l0005                            ; 3662: 4c 72 38    Lr8 :3531[1]
 
 return23
@@ -5247,11 +5249,11 @@ sub_c3617
     jsr sub_c040a                                                     ; 3748: 20 0a 04     .. :3617[1]
     ldx #6                                                            ; 374b: a2 06       ..  :361a[1]
     ldy #$36 ; '6'                                                    ; 374d: a0 36       .6  :361c[1]
-    jsr print_eored_string_at_yx                                      ; 374f: 20 1c 38     .8 :361e[1]
+    jsr print_encrypted_string_at_yx                                  ; 374f: 20 1c 38     .8 :361e[1]
     jsr print_2xlf_cr                                                 ; 3752: 20 50 38     P8 :3621[1]
     ldx #$46 ; 'F'                                                    ; 3755: a2 46       .F  :3624[1]
     ldy #$35 ; '5'                                                    ; 3757: a0 35       .5  :3626[1]
-    jsr print_eored_string_at_yx                                      ; 3759: 20 1c 38     .8 :3628[1]
+    jsr print_encrypted_string_at_yx                                  ; 3759: 20 1c 38     .8 :3628[1]
     jsr flush_input_buffers_and_zero_l0005                            ; 375c: 20 72 38     r8 :362b[1]
 wait_for_return
     jsr inkey_0                                                       ; 375f: 20 7c 38     |8 :362e[1]
@@ -5268,7 +5270,7 @@ c363f
     jsr sub_c040a                                                     ; 3770: 20 0a 04     .. :363f[1]
     ldx #$55 ; 'U'                                                    ; 3773: a2 55       .U  :3642[1]
     ldy #$36 ; '6'                                                    ; 3775: a0 36       .6  :3644[1]
-    jsr print_eored_string_at_yx                                      ; 3777: 20 1c 38     .8 :3646[1]
+    jsr print_encrypted_string_at_yx                                  ; 3777: 20 1c 38     .8 :3646[1]
     jsr print_2xlf_cr                                                 ; 377a: 20 50 38     P8 :3649[1]
     jsr turn_cursor_on                                                ; 377d: 20 5d 38     ]8 :364c[1]
     jmp flush_input_buffers_and_zero_l0005                            ; 3780: 4c 72 38    Lr8 :364f[1]
@@ -5462,7 +5464,7 @@ c378e
     sta l0004                                                         ; 38c4: 85 04       ..  :3793[1]
     ldx #$b1                                                          ; 38c6: a2 b1       ..  :3795[1]
     ldy #$37 ; '7'                                                    ; 38c8: a0 37       .7  :3797[1]
-    jsr print_eored_string_at_yx                                      ; 38ca: 20 1c 38     .8 :3799[1]
+    jsr print_encrypted_string_at_yx                                  ; 38ca: 20 1c 38     .8 :3799[1]
     ldy desired_level                                                 ; 38cd: a4 31       .1  :379c[1]
     jsr convert_level_number_to_letter                                ; 38cf: 20 d4 0a     .. :379e[1]
     tya                                                               ; 38d2: 98          .   :37a1[1]
@@ -5470,7 +5472,7 @@ c378e
     jsr print_2xlf_cr                                                 ; 38d6: 20 50 38     P8 :37a5[1]
     ldx c3adb                                                         ; 38d9: ae db 3a    ..: :37a8[1]
     ldy l3adc                                                         ; 38dc: ac dc 3a    ..: :37ab[1]
-    jmp print_eored_string_at_yx                                      ; 38df: 4c 1c 38    L.8 :37ae[1]
+    jmp print_encrypted_string_at_yx                                  ; 38df: 4c 1c 38    L.8 :37ae[1]
 
     !byte $98, $ae, $a8, $bf, $a2, $a4, $a5, $eb, $c6                 ; 38e2: 98 ae a8... ... :37b1[1]
 
@@ -5537,9 +5539,9 @@ print_y_spaces_loop
     bne print_y_spaces_loop                                           ; 3949: d0 fa       ..  :3818[1]
 c381a
     ldy address_high                                                  ; 394b: a4 71       .q  :381a[1]
-; Print the CR-terminated string at YX. Print in italics iff l0043 is non-0. Each byte
-; of the string is EORed with l0045 before printing/checking for CR.
-print_eored_string_at_yx
+; Print the EOR-encrypted (with eor_key) CR-terminated string at YX. Print in italics
+; iff l0043 is non-0.
+print_encrypted_string_at_yx
     stx address_low                                                   ; 394d: 86 70       .p  :381c[1]
     sty address_high                                                  ; 394f: 84 71       .q  :381e[1]
     lda #<print_italic                                                ; 3951: a9 66       .f  :3820[1]
@@ -7615,14 +7617,11 @@ pydis_end
 !if (<oswrch) != $ee {
     !error "Assertion failed: <oswrch == $ee"
 }
+!if (<press_012_or_3_encrypted_string) != $f0 {
+    !error "Assertion failed: <press_012_or_3_encrypted_string == $f0"
+}
 !if (<print_italic) != $66 {
     !error "Assertion failed: <print_italic == $66"
-}
-!if (<save_block) != $e3 {
-    !error "Assertion failed: <save_block == $e3"
-}
-!if (<save_block2) != $f0 {
-    !error "Assertion failed: <save_block2 == $f0"
 }
 !if (<some_code_high_copy_TODO) != $ff {
     !error "Assertion failed: <some_code_high_copy_TODO == $ff"
@@ -7644,6 +7643,9 @@ pydis_end
 }
 !if (<wait_for_timer_2_using_l1106_l1107) != $00 {
     !error "Assertion failed: <wait_for_timer_2_using_l1106_l1107 == $00"
+}
+!if (<which_drive_encrypted_string) != $e3 {
+    !error "Assertion failed: <which_drive_encrypted_string == $e3"
 }
 !if (>(address_low)) != $00 {
     !error "Assertion failed: >(address_low) == $00"
@@ -7702,14 +7704,11 @@ pydis_end
 !if (>oswrch) != $ff {
     !error "Assertion failed: >oswrch == $ff"
 }
+!if (>press_012_or_3_encrypted_string) != $34 {
+    !error "Assertion failed: >press_012_or_3_encrypted_string == $34"
+}
 !if (>print_italic) != $18 {
     !error "Assertion failed: >print_italic == $18"
-}
-!if (>save_block) != $34 {
-    !error "Assertion failed: >save_block == $34"
-}
-!if (>save_block2) != $34 {
-    !error "Assertion failed: >save_block2 == $34"
 }
 !if (>some_code_high_copy_TODO) != $40 {
     !error "Assertion failed: >some_code_high_copy_TODO == $40"
@@ -7731,6 +7730,9 @@ pydis_end
 }
 !if (>wait_for_timer_2_using_l1106_l1107) != $04 {
     !error "Assertion failed: >wait_for_timer_2_using_l1106_l1107 == $04"
+}
+!if (>which_drive_encrypted_string) != $34 {
+    !error "Assertion failed: >which_drive_encrypted_string == $34"
 }
 !if (buffer_sound_channel_0) != $04 {
     !error "Assertion failed: buffer_sound_channel_0 == $04"

@@ -674,15 +674,21 @@ label(0x34d7, "save_drive_number")
 string(0x34d7, 4)
 label(0x34db, "save_leaf_filename")
 stringcr(0x34db)
-label(0x34e3, "save_block")
-expr(0x34c3, make_lo("save_block"))
-expr(0x34c5, make_hi("save_block"))
-label(0x34f0, "save_block2")
-expr(0x34cd, make_lo("save_block2"))
-expr(0x34cf, make_hi("save_block2"))
+comment(0x34e3, "'Which drive?\\r' EOR-encrypted with $cb")
+label(0x34e3, "which_drive_encrypted_string")
+expr(0x34c3, make_lo("which_drive_encrypted_string"))
+expr(0x34c5, make_hi("which_drive_encrypted_string"))
+comment(0x34f0, "'Press 0,1,2 or 3\\r' EOR-encrypted with $cb")
+label(0x34f0, "press_012_or_3_encrypted_string")
+expr(0x34cd, make_lo("press_012_or_3_encrypted_string"))
+expr(0x34cf, make_hi("press_012_or_3_encrypted_string"))
 expr(0x383f, "vdu_cr")
 constant(7, "max_filename_len")
 expr(0x34a8, "max_filename_len")
+# TODO: Temp reference code for EOR-decrypting in Python:
+# s="$9b, $b9, $ae, $b8, $b8, $eb, $fb, $e7, $fa, $e7, $f9, $eb, $a4, $b9, $eb, $f8, $c6"
+# [chr(0xcb ^ int(x.strip()[1:],16)) for x in s.split(",")]
+
 
 comment(0x384d, "Print the character in A. This is patched at runtime to switch between normal and italic text.")
 entry(0x384d, "jmp_print_char")
@@ -694,8 +700,8 @@ expr(0x3826, make_hi("print_italic"))
 expr(0x382f, make_lo("oswrch"))
 expr(0x3834, make_hi("oswrch"))
 
-comment(0x381c, "Print the CR-terminated string at YX. Print in italics iff l0043 is non-0. Each byte of the string is EORed with l0045 before printing/checking for CR.")
-entry(0x381c, "print_eored_string_at_yx")
+comment(0x381c, "Print the EOR-encrypted (with eor_key) CR-terminated string at YX. Print in italics iff l0043 is non-0.")
+entry(0x381c, "print_encrypted_string_at_yx")
 label(0x45, "eor_key") # TODO: Is this *always* $cb in practice?
 
 # TODO: Mention l0005 in name until we know why
