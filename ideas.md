@@ -4,6 +4,8 @@
 
 * It would be nice to be able to create new levels - ideally (pipedream) with a graphical editor, although even being able to do it by hand-writing a bit of custom assembler and throwing it with some graphics and level designs into a Python script would still be cool.
 
+* ADFS/Econet-friendly build, e.g. saving in current directory on launch instead of :0.I?
+
 # Hacks
 
 * Could the duck be made more widely available?

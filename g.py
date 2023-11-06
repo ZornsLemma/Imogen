@@ -677,11 +677,19 @@ stringcr(0x34db)
 label(0x34e3, "save_block")
 expr(0x34c3, make_lo("save_block"))
 expr(0x34c5, make_hi("save_block"))
+label(0x34f0, "save_block2")
+expr(0x34cd, make_lo("save_block2"))
+expr(0x34cf, make_hi("save_block2"))
 expr(0x383f, "vdu_cr")
+constant(7, "max_filename_len")
+expr(0x34a8, "max_filename_len")
 
 comment(0x384d, "TODO: I suspect this is patched at runtime so we can use different output routines")
 entry(0x384d, "jmp_write_char")
 entry(0x3850, "print_2xlf_cr")
+
+# TODO: Mention l0005 in name until we know why
+entry(0x3872, "flush_input_buffers_and_zero_l0005")
 
 go()
 

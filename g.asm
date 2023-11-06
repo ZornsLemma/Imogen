@@ -17,6 +17,7 @@ inkey_key_space                                 = 157
 inkey_key_x                                     = 189
 inkey_key_z                                     = 158
 last_level_letter                               = 81
+max_filename_len                                = 7
 osbyte_close_spool_exec                         = 119
 osbyte_flush_buffer                             = 21
 osbyte_flush_buffer_class                       = 15
@@ -5034,7 +5035,7 @@ c340d
     ldx #$3b ; ';'                                                    ; 354f: a2 3b       .;  :341e[1]
     ldy #$34 ; '4'                                                    ; 3551: a0 34       .4  :3420[1]
     jsr c381c                                                         ; 3553: 20 1c 38     .8 :3422[1]
-    jmp c3872                                                         ; 3556: 4c 72 38    Lr8 :3425[1]
+    jmp flush_input_buffers_and_zero_l0005                            ; 3556: 4c 72 38    Lr8 :3425[1]
 
 c3428
     jmp something_TODO                                                ; 3559: 4c 53 04    LS. :3428[1]
@@ -5080,7 +5081,7 @@ c347f
     jsr c381c                                                         ; 35bb: 20 1c 38     .8 :348a[1]
     jsr print_2xlf_cr                                                 ; 35be: 20 50 38     P8 :348d[1]
     jsr turn_cursor_on                                                ; 35c1: 20 5d 38     ]8 :3490[1]
-    jmp c3872                                                         ; 35c4: 4c 72 38    Lr8 :3493[1]
+    jmp flush_input_buffers_and_zero_l0005                            ; 35c4: 4c 72 38    Lr8 :3493[1]
 
 return22
     rts                                                               ; 35c7: 60          `   :3496[1]
@@ -5090,7 +5091,7 @@ l3497
     !byte $aa, $a6, $ae, $c6                                          ; 35d4: aa a6 ae... ... :34a3[1]
 
 c34a7
-    lda #7                                                            ; 35d8: a9 07       ..  :34a7[1]
+    lda #max_filename_len                                             ; 35d8: a9 07       ..  :34a7[1]
     jsr string_input                                                  ; 35da: 20 fc 36     .6 :34a9[1]
     ldy l0005                                                         ; 35dd: a4 05       ..  :34ac[1]
     beq return22                                                      ; 35df: f0 e6       ..  :34ae[1]
@@ -5107,10 +5108,10 @@ loop_c34b2
     ldy #>save_block                                                  ; 35f5: a0 34       .4  :34c4[1]
     jsr c381c                                                         ; 35f7: 20 1c 38     .8 :34c6[1]
     jsr print_2xlf_cr                                                 ; 35fa: 20 50 38     P8 :34c9[1]
-    ldx #$f0                                                          ; 35fd: a2 f0       ..  :34cc[1]
-    ldy #$34 ; '4'                                                    ; 35ff: a0 34       .4  :34ce[1]
+    ldx #<save_block2                                                 ; 35fd: a2 f0       ..  :34cc[1]
+    ldy #>save_block2                                                 ; 35ff: a0 34       .4  :34ce[1]
     jsr c381c                                                         ; 3601: 20 1c 38     .8 :34d0[1]
-    jmp c3872                                                         ; 3604: 4c 72 38    Lr8 :34d3[1]
+    jmp flush_input_buffers_and_zero_l0005                            ; 3604: 4c 72 38    Lr8 :34d3[1]
 
 save_full_filename
     !text ":"                                                         ; 3607: 3a          :   :34d6[1]
@@ -5120,8 +5121,10 @@ save_leaf_filename
     !text ".......", $0d                                              ; 360c: 2e 2e 2e... ... :34db[1]
 save_block
     !byte $9c, $a3, $a2, $a8, $a3, $eb, $af, $b9, $a2, $bd, $ae, $f4  ; 3614: 9c a3 a2... ... :34e3[1]
-    !byte $c6, $9b, $b9, $ae, $b8, $b8, $eb, $fb, $e7, $fa, $e7, $f9  ; 3620: c6 9b b9... ... :34ef[1]
-    !byte $eb, $a4, $b9, $eb, $f8, $c6                                ; 362c: eb a4 b9... ... :34fb[1]
+    !byte $c6                                                         ; 3620: c6          .   :34ef[1]
+save_block2
+    !byte $9b, $b9, $ae, $b8, $b8, $eb, $fb, $e7, $fa, $e7, $f9, $eb  ; 3621: 9b b9 ae... ... :34f0[1]
+    !byte $a4, $b9, $eb, $f8, $c6                                     ; 362d: a4 b9 eb... ... :34fc[1]
 
 c3501
     jsr inkey_0                                                       ; 3632: 20 7c 38     |8 :3501[1]
@@ -5146,7 +5149,7 @@ c3516
     ldx #$46 ; 'F'                                                    ; 365b: a2 46       .F  :352a[1]
     ldy #$35 ; '5'                                                    ; 365d: a0 35       .5  :352c[1]
     jsr c381c                                                         ; 365f: 20 1c 38     .8 :352e[1]
-    jmp c3872                                                         ; 3662: 4c 72 38    Lr8 :3531[1]
+    jmp flush_input_buffers_and_zero_l0005                            ; 3662: 4c 72 38    Lr8 :3531[1]
 
 return23
     rts                                                               ; 3665: 60          `   :3534[1]
@@ -5249,7 +5252,7 @@ sub_c3617
     ldx #$46 ; 'F'                                                    ; 3755: a2 46       .F  :3624[1]
     ldy #$35 ; '5'                                                    ; 3757: a0 35       .5  :3626[1]
     jsr c381c                                                         ; 3759: 20 1c 38     .8 :3628[1]
-    jsr c3872                                                         ; 375c: 20 72 38     r8 :362b[1]
+    jsr flush_input_buffers_and_zero_l0005                            ; 375c: 20 72 38     r8 :362b[1]
 wait_for_return
     jsr inkey_0                                                       ; 375f: 20 7c 38     |8 :362e[1]
     cmp #vdu_cr                                                       ; 3762: c9 0d       ..  :3631[1]
@@ -5268,7 +5271,7 @@ c363f
     jsr c381c                                                         ; 3777: 20 1c 38     .8 :3646[1]
     jsr print_2xlf_cr                                                 ; 377a: 20 50 38     P8 :3649[1]
     jsr turn_cursor_on                                                ; 377d: 20 5d 38     ]8 :364c[1]
-    jmp c3872                                                         ; 3780: 4c 72 38    Lr8 :364f[1]
+    jmp flush_input_buffers_and_zero_l0005                            ; 3780: 4c 72 38    Lr8 :364f[1]
 
 c3652
     jmp something_TODO                                                ; 3783: 4c 53 04    LS. :3652[1]
@@ -5592,7 +5595,7 @@ c3867
     pla                                                               ; 39a1: 68          h   :3870[1]
     rts                                                               ; 39a2: 60          `   :3871[1]
 
-c3872
+flush_input_buffers_and_zero_l0005
     ldx #0                                                            ; 39a3: a2 00       ..  :3872[1]
     stx l0005                                                         ; 39a5: 86 05       ..  :3874[1]
     lda #osbyte_flush_buffer_class                                    ; 39a7: a9 0f       ..  :3876[1]
@@ -7222,7 +7225,6 @@ pydis_end
 ;     c3838
 ;     c3848
 ;     c3867
-;     c3872
 ;     c388a
 ;     c3932
 ;     c393c
@@ -7615,6 +7617,9 @@ pydis_end
 !if (<save_block) != $e3 {
     !error "Assertion failed: <save_block == $e3"
 }
+!if (<save_block2) != $f0 {
+    !error "Assertion failed: <save_block2 == $f0"
+}
 !if (<some_code_high_copy_TODO) != $ff {
     !error "Assertion failed: <some_code_high_copy_TODO == $ff"
 }
@@ -7692,6 +7697,9 @@ pydis_end
 }
 !if (>save_block) != $34 {
     !error "Assertion failed: >save_block == $34"
+}
+!if (>save_block2) != $34 {
+    !error "Assertion failed: >save_block2 == $34"
 }
 !if (>some_code_high_copy_TODO) != $40 {
     !error "Assertion failed: >some_code_high_copy_TODO == $40"
@@ -7782,6 +7790,9 @@ pydis_end
 }
 !if (last_level_letter+1) != $52 {
     !error "Assertion failed: last_level_letter+1 == $52"
+}
+!if (max_filename_len) != $07 {
+    !error "Assertion failed: max_filename_len == $07"
 }
 !if (osbyte_close_spool_exec) != $77 {
     !error "Assertion failed: osbyte_close_spool_exec == $77"
