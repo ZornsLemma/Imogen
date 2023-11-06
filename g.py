@@ -81,7 +81,7 @@ expr(0x1974, make_hi("sprdata_filename"))
 stringcr(0x1980)
 expr(0x3e60, make_lo("sprdata_filename"))
 expr(0x3e64, make_hi("sprdata_filename"))
-entry(0x196f, "load_sprdata_to_addr_at_l0054")
+entry(0x196f, "load_sprdata")
 
 comment(0x3e6c, "Load 'sprdata' file into memory so it ends just below $5bc0. TODO: use named constant")
 

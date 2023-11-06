@@ -1591,7 +1591,7 @@ l196e = sub_c196c+2
 ; $1a9e referenced 1 time by $1966
 ; $1a9f referenced 1 time by $1969
 ; $1aa0 referenced 2 times by $36c7, $3e79
-load_sprdata_to_addr_at_l0054
+load_sprdata
     lda #<sprdata_filename                                            ; 1aa0: a9 80       ..  :196f[1]
     sta l0070                                                         ; 1aa2: 85 70       .p  :1971[1]
     lda #>sprdata_filename                                            ; 1aa4: a9 19       ..  :1973[1]
@@ -5792,7 +5792,7 @@ c36c1
     sta l36da                                                         ; 37f5: 8d da 36    ..6 :36c4[1]
 ; $37f8 referenced 1 time by $36cf
 loop_c36c7
-    jsr load_sprdata_to_addr_at_l0054                                 ; 37f8: 20 6f 19     o. :36c7[1]
+    jsr load_sprdata                                                  ; 37f8: 20 6f 19     o. :36c7[1]
     beq c36d2                                                         ; 37fb: f0 06       ..  :36ca[1]
     jsr sub_c3617                                                     ; 37fd: 20 17 36     .6 :36cc[1]
     jmp loop_c36c7                                                    ; 3800: 4c c7 36    L.6 :36cf[1]
@@ -6854,7 +6854,7 @@ loop_c3e52
     lda #$5b ; '['                                                    ; 3e73: a9 5b       .[
     sbc l007b                                                         ; 3e75: e5 7b       .{
     sta sprdata_ptr + 1                                               ; 3e77: 85 55       .U
-    jsr load_sprdata_to_addr_at_l0054                                 ; 3e79: 20 6f 19     o.
+    jsr load_sprdata                                                  ; 3e79: 20 6f 19     o.
     lda sprdata_ptr                                                   ; 3e7c: a5 54       .T
     pha                                                               ; 3e7e: 48          H
     lda sprdata_ptr + 1                                               ; 3e7f: a5 55       .U
