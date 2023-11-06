@@ -198,6 +198,7 @@ expr(0x0c2c, make_hi("irq1_routine"))
 
 
 expr(0x3c12, "vdu_enable")
+# SFTODO: I am seeing this comment duplicated, but it isn't in Toby's g.asm. Is my py8dis outdated? Ditto the "update the transformation count..." comment.
 comment(0x3c06, "The loader will have executed VDU 21 to disable VDU output. Record the current disable state before re-enabling it, so we can check it later as part of a copy protection scheme.")
 comment(0x3c06, "This initialisation code gets overwritten by level data later on.")
 comment(0x3d91, "Check to see if VDU output was disabled (VDU 21) when we first started to execute, before we re-enabled output (VDU 6) ourselves.")
@@ -208,6 +209,7 @@ expr(0x3e74, make_hi("start_of_screen_memory"))
 label(0x3f6e, "initial_screen_disabled_flag")
 expr(0x3d97, "vdu_set_mode")
 label(0x3da3, "clear_toolbar_part_of_screen")
+# SF: I haven't analysed the code and this may well be right, but clearing up to $d200 seems weird (copy protection?) and screen memory won't go that high, so I'd expect the toolbar to end at (making this up) $6200-ish not $d200. Is there a typo here?
 comment(0x3da3, "Clear memory from $5b00 to $d200. This clears the toolbar area of the screen. The toolbar lives in screen memory from $5bc0 to $d200, so this routine clears a little before the start of screen memory, but this is OK as we are just about to load sprite data there anyway")
 comment(0x3da3, "set start address to $5b00", inline=True)
 label(0x3dae, "clear_toolbar_part_of_screen_loop")
@@ -652,7 +654,7 @@ entry(0x138d, "sprite_op")
 comment(0x2c52, "TODO: Self-modifying code here? If so we haven't found the code that modifies it as we have no labels")
 comment(0x13c1, "TODO: Self-modifying code here? If so we haven't found the code that modifies it as we have no labels")
 entry(0x2c46, "something_to_do_with_incrementing_by_20_pixels_x_maybe")
-comment(0x135d, "The sprite table starts with a table of 16 bit addresses, one for each sprite.\nLook up the address of the sprite by reading this table.\nSet ($58) to point to the base of the table.")
+comment(0x135d, "The sprite table starts with a table of 16 bit addresses, one for each sprite.\nLook up the address of the sprite by reading this table.\nSet ($58) to point to the base of the table.\nSet YX to point to the base of the sprite.")
 label(0x54, "sprdata_ptr")
 expr_label(0x55, make_add("sprdata_ptr", "1"))
 
