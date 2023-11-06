@@ -78,14 +78,6 @@ comment(0x552e, "TODO: Some intriguing secret passwords here. Now I see this, I 
 
 comment(0x5642, "TODO: Presumably a screen dump routine for Epson-compatible printers")
 
-entry(0x561c, "gimme_handler")
-expr(0x5592, "gimme_handler")
-
-
-
-# TODO: Some of these labels/constants are common with g.py and might benefit from factoring out into a shared file eventually
-label(0xa90, "string_input_buffer")
-
 comment(0x53c0, "TODO: This is comparing an eor-encrypted string - probably a level 'password' - against the string buffer. Not quite clear yet how this matches against multiple correct passwords.")
 
 go()

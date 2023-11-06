@@ -6,3 +6,5 @@ label(0x175d, "pending_toolbar_colour")
 label(0x175e, "toolbar_colour")
 label(0x175f, "pending_gameplay_area_colour")
 label(0x1760, "gameplay_area_colour")
+
+label(0xa90, "string_input_buffer")
