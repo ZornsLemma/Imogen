@@ -4,35 +4,38 @@ vdu_cr          = 13
 vdu_lf          = 10
 
 ; Memory locations
-l0005   = $05
-l0070   = $70
-l0071   = $71
-l0072   = $72
-l040a   = $040a
-l0453   = $0453
-l0a90   = $0a90
-l1966   = $1966
-l37f3   = $37f3
-l388d   = $388d
-oswrch  = $ffee
+l0005               = $05
+l0070               = $70
+l0071               = $71
+l0072               = $72
+l040a               = $040a
+l0453               = $0453
+string_input_buffer = $0a90
+l1966               = $1966
+l37f3               = $37f3
+l388d               = $388d
+oswrch              = $ffee
 
     * = $53c0
 
+; TODO: This is comparing an eor-encrypted string - probably a level 'password' -
+; against the string buffer. Not quite clear yet how this matches against multiple
+; correct passwords.
 pydis_start
     ldy #0                                                            ; 53c0: a0 00       ..
     sty l0005                                                         ; 53c2: 84 05       ..
     sty l0072                                                         ; 53c4: 84 72       .r
-    lda #$4f ; 'O'                                                    ; 53c6: a9 4f       .O
+    lda #<something1                                                  ; 53c6: a9 4f       .O
     sta l0070                                                         ; 53c8: 85 70       .p
-    lda #$54 ; 'T'                                                    ; 53ca: a9 54       .T
+    lda #>something1                                                  ; 53ca: a9 54       .T
     sta l0071                                                         ; 53cc: 85 71       .q
 c53ce
     lda (l0070),y                                                     ; 53ce: b1 70       .p
     eor #$cb                                                          ; 53d0: 49 cb       I.
-    cmp l0a90,y                                                       ; 53d2: d9 90 0a    ...
+    cmp string_input_buffer,y                                         ; 53d2: d9 90 0a    ...
     bne c5414                                                         ; 53d5: d0 3d       .=
     iny                                                               ; 53d7: c8          .
-    cmp #$0d                                                          ; 53d8: c9 0d       ..
+    cmp #vdu_cr                                                       ; 53d8: c9 0d       ..
     bne c53ce                                                         ; 53da: d0 f2       ..
     lda (l0070),y                                                     ; 53dc: b1 70       .p
     tax                                                               ; 53de: aa          .
@@ -98,6 +101,12 @@ unknown_encrypted_string
 c544e
     rts                                                               ; 544e: 60          `
 
+; TODO: Needs properly decoding, but this EOR-$CB encrypted data starts:
+; SAXOPHOBIA\r^\x9e
+; TIME-FLIES\r^\x9e
+; So it looks like this is a table of level names, probably CR-terminated with a 16-bit
+; pointer following each. '^' is $5e.
+something1
     !byte $98, $8a, $93, $84, $9b, $83, $84, $89, $82, $8a, $c6, $95  ; 544f: 98 8a 93... ...
     !byte $55, $9f, $82, $86, $8e, $e6, $8d, $87, $82, $8e, $98, $c6  ; 545b: 55 9f 82... U..
     !byte $95, $55, $8d, $82, $99, $8e, $e6, $9c, $84, $99, $80, $98  ; 5467: 95 55 8d... .U.
@@ -192,13 +201,18 @@ pydis_end
 ;     l0072
 ;     l040a
 ;     l0453
-;     l0a90
 ;     l1966
 ;     l37f3
 ;     l388d
 ;     loop_c5410
+!if (<something1) != $4f {
+    !error "Assertion failed: <something1 == $4f"
+}
 !if (<unknown_encrypted_string) != $46 {
     !error "Assertion failed: <unknown_encrypted_string == $46"
+}
+!if (>something1) != $54 {
+    !error "Assertion failed: >something1 == $54"
 }
 !if (>unknown_encrypted_string) != $54 {
     !error "Assertion failed: >unknown_encrypted_string == $54"

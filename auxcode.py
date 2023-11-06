@@ -36,6 +36,17 @@ expr(0x5433, "vdu_lf")
 expr(0x5413, "fixed_eor_key")
 expr(0x542c, "fixed_eor_key")
 
+comment(0x544f, "TODO: Needs properly decoding, but this EOR-$CB encrypted data starts:\nSAXOPHOBIA\\r^\\x9e\nTIME-FLIES\\r^\\x9e\nSo it looks like this is a table of level names, probably CR-terminated with a 16-bit pointer following each. '^' is $5e.")
+label(0x544f, "something1")
+expr(0x53c7, make_lo("something1"))
+expr(0x53cb, make_hi("something1"))
+expr(0x53d9, "vdu_cr")
+
+# TODO: Some of these labels/constants are common with g.py and might benefit from factoring out into a shared file eventually
+label(0xa90, "string_input_buffer")
+
+comment(0x53c0, "TODO: This is comparing an eor-encrypted string - probably a level 'password' - against the string buffer. Not quite clear yet how this matches against multiple correct passwords.")
+
 go()
 
 # vi: tw=100

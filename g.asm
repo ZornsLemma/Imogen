@@ -205,7 +205,7 @@ byte_per_level_table1               = $09ef
 l0a6f                               = $0a6f
 sixteen_entry_table                 = $0a7f
 l0a80                               = $0a80
-l0a90                               = $0a90
+string_input_buffer                 = $0a90
 eight_entry_table1                  = $0aa1
 eight_entry_table2                  = $0aa9
 old_brkv1                           = $0ab1
@@ -5103,7 +5103,7 @@ get_filename_and_print_drive_number_prompt
     beq return22                                                      ; 35df: f0 e6       ..  :34ae[1]
     ldy #6                                                            ; 35e1: a0 06       ..  :34b0[1]
 loop_c34b2
-    lda l0a90,y                                                       ; 35e3: b9 90 0a    ... :34b2[1]
+    lda string_input_buffer,y                                         ; 35e3: b9 90 0a    ... :34b2[1]
     sta save_leaf_filename,y                                          ; 35e6: 99 db 34    ..4 :34b5[1]
     dey                                                               ; 35e9: 88          .   :34b8[1]
     bpl loop_c34b2                                                    ; 35ea: 10 f7       ..  :34b9[1]
@@ -5303,7 +5303,7 @@ sub_c3664
     beq c36a8                                                         ; 37b0: f0 27       .'  :367f[1]
     cpy #2                                                            ; 37b2: c0 02       ..  :3681[1]
     bne c36a8                                                         ; 37b4: d0 23       .#  :3683[1]
-    lda l0a90                                                         ; 37b6: ad 90 0a    ... :3685[1]
+    lda string_input_buffer                                           ; 37b6: ad 90 0a    ... :3685[1]
     cmp #$41 ; 'A'                                                    ; 37b9: c9 41       .A  :3688[1]
     bcc c36a8                                                         ; 37bb: 90 1c       ..  :368a[1]
     cmp #$52 ; 'R'                                                    ; 37bd: c9 52       .R  :368c[1]
@@ -5420,7 +5420,7 @@ c3736
     jsr turn_cursor_off                                               ; 3872: 20 63 38     c8 :3741[1]
 c3744
     dey                                                               ; 3875: 88          .   :3744[1]
-    sta l0a90,y                                                       ; 3876: 99 90 0a    ... :3745[1]
+    sta string_input_buffer,y                                         ; 3876: 99 90 0a    ... :3745[1]
     jsr print_italic                                                  ; 3879: 20 66 18     f. :3748[1]
     inc l0005                                                         ; 387c: e6 05       ..  :374b[1]
     jmp c377a                                                         ; 387e: 4c 7a 37    Lz7 :374d[1]
@@ -5441,7 +5441,7 @@ c3750
 c376b
     cpy #0                                                            ; 389c: c0 00       ..  :376b[1]
     beq return25                                                      ; 389e: f0 0d       ..  :376d[1]
-    sta l0a90,y                                                       ; 38a0: 99 90 0a    ... :376f[1]
+    sta string_input_buffer,y                                         ; 38a0: 99 90 0a    ... :376f[1]
     inc l0005                                                         ; 38a3: e6 05       ..  :3772[1]
     jsr turn_cursor_off                                               ; 38a5: 20 63 38     c8 :3774[1]
     jmp return25                                                      ; 38a8: 4c 7c 37    L|7 :3777[1]
@@ -7344,7 +7344,6 @@ pydis_end
 ;     l09eb
 ;     l0a6f
 ;     l0a80
-;     l0a90
 ;     l0b00
 ;     l110a
 ;     l132b

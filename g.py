@@ -391,6 +391,7 @@ hexadecimal(0x1377, 8)
 
 entry(0x3814, "print_y_spaces_loop")
 
+label(0xa90, "string_input_buffer")
 entry(0x36fc, "string_input") # TODO: Something like this
 char(0x3475)
 char(0x3479)
