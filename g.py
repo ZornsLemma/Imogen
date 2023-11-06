@@ -22,6 +22,14 @@ constant(127, "vdu_delete")
 constant(5, "osfile_read_catalogue_info")
 constant(0xff, "osfile_load")
 
+# TODO: See mono_handler and colour_handler in auxcode.asm
+# TODO: Copies of these in both g.py and auxcode.py
+label(0x1765, "allow_colour_variation")
+label(0x175d, "pending_toolbar_colour")
+label(0x175e, "toolbar_colour")
+label(0x175f, "pending_gameplay_area_colour")
+label(0x1760, "gameplay_area_colour")
+
 substitute_labels = {
     (0x114f,0x1297): {
         "address_low": "filename_low",
@@ -84,8 +92,6 @@ label(0x00fc, "interrupt_accumulator")
 label(0x17b9, "if_vsync_elapsed_then_set_toolbar_area_palette")
 comment(0x17bb, "check for vsync interrupt", inline=True)
 comment(0x17c0, "reset timers")
-label(0x175e, "toolbar_colour")
-label(0x1760, "gameplay_area_colour")
 label(0x17fa, "if_timer1_elapsed_then_set_main_area_palette")
 comment(0x17fc, "check for timer1 elapsed", inline=True)
 label(0x18a6, "get_random_number_up_to_a")

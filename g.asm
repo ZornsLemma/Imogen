@@ -510,9 +510,9 @@ something24_TODO
     jsr something16_TODO                                              ; 140b: 20 d7 1f     .. :12da[1]
     lda gameplay_area_colour                                          ; 140e: ad 60 17    .`. :12dd[1]
     bne c12fc                                                         ; 1411: d0 1a       ..  :12e0[1]
-    lda l175d                                                         ; 1413: ad 5d 17    .]. :12e2[1]
+    lda pending_toolbar_colour                                        ; 1413: ad 5d 17    .]. :12e2[1]
     sta toolbar_colour                                                ; 1416: 8d 5e 17    .^. :12e5[1]
-    lda l175f                                                         ; 1419: ad 5f 17    ._. :12e8[1]
+    lda pending_gameplay_area_colour                                  ; 1419: ad 5f 17    ._. :12e8[1]
     sta gameplay_area_colour                                          ; 141c: 8d 60 17    .`. :12eb[1]
     jsr wait_for_vsync                                                ; 141f: 20 8c 17     .. :12ee[1]
     lda #0                                                            ; 1422: a9 00       ..  :12f1[1]
@@ -1198,24 +1198,24 @@ c174c
 
 data_TODO
     !byte $8f, $a2, $b8, $a0, $eb, $ae, $b9, $b9, $a4, $b9, $c6       ; 1883: 8f a2 b8... ... :1752[1]
-l175d
+pending_toolbar_colour
     !byte 0                                                           ; 188e: 00          .   :175d[1]
 toolbar_colour
     !byte 0                                                           ; 188f: 00          .   :175e[1]
-l175f
+pending_gameplay_area_colour
     !byte 0                                                           ; 1890: 00          .   :175f[1]
 gameplay_area_colour
     !byte 0                                                           ; 1891: 00          .   :1760[1]
 l1761
     !byte 3, 2, 7, 1                                                  ; 1892: 03 02 07... ... :1761[1]
-l1765
+allow_colour_variation
     !byte $ff                                                         ; 1896: ff          .   :1765[1]
 
 sub_c1766
     lda #7                                                            ; 1897: a9 07       ..  :1766[1]
-    sta l175d                                                         ; 1899: 8d 5d 17    .]. :1768[1]
-    sta l175f                                                         ; 189c: 8d 5f 17    ._. :176b[1]
-    lda l1765                                                         ; 189f: ad 65 17    .e. :176e[1]
+    sta pending_toolbar_colour                                        ; 1899: 8d 5d 17    .]. :1768[1]
+    sta pending_gameplay_area_colour                                  ; 189c: 8d 5f 17    ._. :176b[1]
+    lda allow_colour_variation                                        ; 189f: ad 65 17    .e. :176e[1]
     beq return4                                                       ; 18a2: f0 17       ..  :1771[1]
     ldy desired_level                                                 ; 18a4: a4 31       .1  :1773[1]
     jsr convert_level_number_to_letter                                ; 18a6: 20 d4 0a     .. :1775[1]
@@ -1225,9 +1225,9 @@ sub_c1766
     and #3                                                            ; 18ad: 29 03       ).  :177c[1]
     tax                                                               ; 18af: aa          .   :177e[1]
     lda l1761,x                                                       ; 18b0: bd 61 17    .a. :177f[1]
-    sta l175d                                                         ; 18b3: 8d 5d 17    .]. :1782[1]
+    sta pending_toolbar_colour                                        ; 18b3: 8d 5d 17    .]. :1782[1]
     lda #6                                                            ; 18b6: a9 06       ..  :1785[1]
-    sta l175f                                                         ; 18b8: 8d 5f 17    ._. :1787[1]
+    sta pending_gameplay_area_colour                                  ; 18b8: 8d 5f 17    ._. :1787[1]
 return4
     rts                                                               ; 18bb: 60          `   :178a[1]
 
@@ -6511,9 +6511,9 @@ something3_high_copy_start
 something3_TODO
     lda #$ff                                                          ; 3fcb: a9 ff       ..  :0c00[4]
     sta l110a                                                         ; 3fcd: 8d 0a 11    ... :0c02[4]
-    lda l175d                                                         ; 3fd0: ad 5d 17    .]. :0c05[4]
+    lda pending_toolbar_colour                                        ; 3fd0: ad 5d 17    .]. :0c05[4]
     sta toolbar_colour                                                ; 3fd3: 8d 5e 17    .^. :0c08[4]
-    lda l175f                                                         ; 3fd6: ad 5f 17    ._. :0c0b[4]
+    lda pending_gameplay_area_colour                                  ; 3fd6: ad 5f 17    ._. :0c0b[4]
     sta gameplay_area_colour                                          ; 3fd9: 8d 60 17    .`. :0c0e[4]
     sei                                                               ; 3fdc: 78          x   :0c11[4]
     lda #$7f                                                          ; 3fdd: a9 7f       ..  :0c12[4]
@@ -7349,10 +7349,7 @@ pydis_end
 ;     l132b
 ;     l1487
 ;     l1489
-;     l175d
-;     l175f
 ;     l1761
-;     l1765
 ;     l178b
 ;     l1824
 ;     l1a0f

@@ -8,6 +8,16 @@ config.set_label_references(False)
 constant(10, "vdu_lf")
 constant(13, "vdu_cr")
 
+# TODO: See mono_handler and colour_handler in auxcode.asm
+# TODO: Copies of these in both g.py and auxcode.py
+# TODO: "pending" is a guess
+label(0x1765, "allow_colour_variation")
+label(0x175d, "pending_toolbar_colour")
+label(0x175e, "toolbar_colour")
+label(0x175f, "pending_gameplay_area_colour")
+label(0x1760, "gameplay_area_colour")
+
+
 substitute_labels = {
 }
 

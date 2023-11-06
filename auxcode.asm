@@ -7,32 +7,32 @@ vdu_cr                                         = 13
 vdu_lf                                         = 10
 
 ; Memory locations
-l0005               = $05
-l004c               = $4c
-l005b               = $5b
-l0070               = $70
-l0071               = $71
-l0072               = $72
-l0073               = $73
-l0074               = $74
-l040a               = $040a
-l0453               = $0453
-l09ef               = $09ef
-string_input_buffer = $0a90
-l1103               = $1103
-l175d               = $175d
-l175e               = $175e
-l175f               = $175f
-l1760               = $1760
-l1765               = $1765
-l1766               = $1766
-l1966               = $1966
-l2bbd               = $2bbd
-l37f3               = $37f3
-l388d               = $388d
-l3a8f               = $3a8f
-oswrch              = $ffee
-osbyte              = $fff4
+l0005                       = $05
+l004c                       = $4c
+l005b                       = $5b
+l0070                       = $70
+l0071                       = $71
+l0072                       = $72
+l0073                       = $73
+l0074                       = $74
+l040a                       = $040a
+l0453                       = $0453
+l09ef                       = $09ef
+string_input_buffer         = $0a90
+l1103                       = $1103
+pending_toolbar_colour      = $175d
+toolbar_colour              = $175e
+pending_gameplay_area_colour = $175f
+gameplay_area_colour        = $1760
+allow_colour_variation      = $1765
+l1766                       = $1766
+l1966                       = $1966
+l2bbd                       = $2bbd
+l37f3                       = $37f3
+l388d                       = $388d
+l3a8f                       = $3a8f
+oswrch                      = $ffee
+osbyte                      = $fff4
 
     * = $53c0
 
@@ -251,23 +251,23 @@ c55d3
 
 mono_handler
     lda #0                                                            ; 55ea: a9 00       ..
-    sta l1765                                                         ; 55ec: 8d 65 17    .e.
+    sta allow_colour_variation                                        ; 55ec: 8d 65 17    .e.
     jsr l1766                                                         ; 55ef: 20 66 17     f.
-    lda l175d                                                         ; 55f2: ad 5d 17    .].
-    sta l175e                                                         ; 55f5: 8d 5e 17    .^.
-    lda l175f                                                         ; 55f8: ad 5f 17    ._.
-    sta l1760                                                         ; 55fb: 8d 60 17    .`.
+    lda pending_toolbar_colour                                        ; 55f2: ad 5d 17    .].
+    sta toolbar_colour                                                ; 55f5: 8d 5e 17    .^.
+    lda pending_gameplay_area_colour                                  ; 55f8: ad 5f 17    ._.
+    sta gameplay_area_colour                                          ; 55fb: 8d 60 17    .`.
     lda #1                                                            ; 55fe: a9 01       ..
     jmp c544e                                                         ; 5600: 4c 4e 54    LNT
 
 colour_handler
     lda #$ff                                                          ; 5603: a9 ff       ..
-    sta l1765                                                         ; 5605: 8d 65 17    .e.
+    sta allow_colour_variation                                        ; 5605: 8d 65 17    .e.
     jsr l1766                                                         ; 5608: 20 66 17     f.
-    lda l175d                                                         ; 560b: ad 5d 17    .].
-    sta l175e                                                         ; 560e: 8d 5e 17    .^.
-    lda l175f                                                         ; 5611: ad 5f 17    ._.
-    sta l1760                                                         ; 5614: 8d 60 17    .`.
+    lda pending_toolbar_colour                                        ; 560b: ad 5d 17    .].
+    sta toolbar_colour                                                ; 560e: 8d 5e 17    .^.
+    lda pending_gameplay_area_colour                                  ; 5611: ad 5f 17    ._.
+    sta gameplay_area_colour                                          ; 5614: 8d 60 17    .`.
     lda #1                                                            ; 5617: a9 01       ..
     jmp c544e                                                         ; 5619: 4c 4e 54    LNT
 
@@ -474,11 +474,6 @@ pydis_end
 ;     l0453
 ;     l09ef
 ;     l1103
-;     l175d
-;     l175e
-;     l175f
-;     l1760
-;     l1765
 ;     l1766
 ;     l1966
 ;     l2bbd
