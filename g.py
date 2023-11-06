@@ -691,12 +691,17 @@ expr(0x34cf, make_hi("press_012_or_3_encrypted_string"))
 expr(0x383f, "vdu_cr")
 constant(7, "max_filename_len")
 expr(0x34a8, "max_filename_len")
+comment(0x342b, "'Press S to save\\r' EOR-encrypted with $cb")
+label(0x342b, "press_s_to_save_encrypted_string")
+comment(0x343b, "'Press L to load\\r' EOR-encrypted with $cb")
+label(0x343b, "press_l_to_load_encrypted_string")
+expr(0x3415, make_lo("press_s_to_save_encrypted_string"))
+expr(0x3417, make_hi("press_s_to_save_encrypted_string"))
+expr(0x341f, make_lo("press_l_to_load_encrypted_string"))
+expr(0x3421, make_hi("press_l_to_load_encrypted_string"))
 # TODO: Temp reference code for EOR-decrypting in Python:
 # s="$9b, $b9, $ae, $b8, $b8, $eb, $fb, $e7, $fa, $e7, $f9, $eb, $a4, $b9, $eb, $f8, $c6"
 # [chr(0xcb ^ int(x.strip()[1:],16)) for x in s.split(",")]
-
-# SFTODO: c3404 is probably the save/load code which starts by prompting for S or L, and the encrypted strings which need decrypting are probably the "Press S" and "Press L" text
-
 
 comment(0x384d, "Print the character in A. This is patched at runtime to switch between normal and italic text.")
 entry(0x384d, "jmp_print_char")

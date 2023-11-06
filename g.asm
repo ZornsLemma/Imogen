@@ -5029,21 +5029,26 @@ c340d
     jsr sub_c040a                                                     ; 353e: 20 0a 04     .. :340d[1]
     lda #1                                                            ; 3541: a9 01       ..  :3410[1]
     sta l0004                                                         ; 3543: 85 04       ..  :3412[1]
-    ldx #$2b ; '+'                                                    ; 3545: a2 2b       .+  :3414[1]
-    ldy #$34 ; '4'                                                    ; 3547: a0 34       .4  :3416[1]
+    ldx #<press_s_to_save_encrypted_string                            ; 3545: a2 2b       .+  :3414[1]
+    ldy #>press_s_to_save_encrypted_string                            ; 3547: a0 34       .4  :3416[1]
     jsr print_encrypted_string_at_yx                                  ; 3549: 20 1c 38     .8 :3418[1]
     jsr print_2xlf_cr                                                 ; 354c: 20 50 38     P8 :341b[1]
-    ldx #$3b ; ';'                                                    ; 354f: a2 3b       .;  :341e[1]
-    ldy #$34 ; '4'                                                    ; 3551: a0 34       .4  :3420[1]
+    ldx #<press_l_to_load_encrypted_string                            ; 354f: a2 3b       .;  :341e[1]
+    ldy #>press_l_to_load_encrypted_string                            ; 3551: a0 34       .4  :3420[1]
     jsr print_encrypted_string_at_yx                                  ; 3553: 20 1c 38     .8 :3422[1]
     jmp flush_input_buffers_and_zero_l0005                            ; 3556: 4c 72 38    Lr8 :3425[1]
 
 c3428
     jmp something_TODO                                                ; 3559: 4c 53 04    LS. :3428[1]
 
+; 'Press S to save\r' EOR-encrypted with $cb
+press_s_to_save_encrypted_string
     !byte $9b, $b9, $ae, $b8, $b8, $eb, $98, $eb, $bf, $a4, $eb, $b8  ; 355c: 9b b9 ae... ... :342b[1]
-    !byte $aa, $bd, $ae, $c6, $9b, $b9, $ae, $b8, $b8, $eb, $87, $eb  ; 3568: aa bd ae... ... :3437[1]
-    !byte $bf, $a4, $eb, $a7, $a4, $aa, $af, $c6                      ; 3574: bf a4 eb... ... :3443[1]
+    !byte $aa, $bd, $ae, $c6                                          ; 3568: aa bd ae... ... :3437[1]
+; 'Press L to load\r' EOR_encrypted with $cb
+press_l_to_load_encrypted_string
+    !byte $9b, $b9, $ae, $b8, $b8, $eb, $87, $eb, $bf, $a4, $eb, $a7  ; 356c: 9b b9 ae... ... :343b[1]
+    !byte $a4, $aa, $af, $c6                                          ; 3578: a4 aa af... ... :3447[1]
 
 sub_c344b
     ldy new_menu_index                                                ; 357c: a4 29       .)  :344b[1]
@@ -7603,6 +7608,12 @@ pydis_end
 !if (<press_012_or_3_encrypted_string) != $f0 {
     !error "Assertion failed: <press_012_or_3_encrypted_string == $f0"
 }
+!if (<press_l_to_load_encrypted_string) != $3b {
+    !error "Assertion failed: <press_l_to_load_encrypted_string == $3b"
+}
+!if (<press_s_to_save_encrypted_string) != $2b {
+    !error "Assertion failed: <press_s_to_save_encrypted_string == $2b"
+}
 !if (<print_italic) != $66 {
     !error "Assertion failed: <print_italic == $66"
 }
@@ -7689,6 +7700,12 @@ pydis_end
 }
 !if (>press_012_or_3_encrypted_string) != $34 {
     !error "Assertion failed: >press_012_or_3_encrypted_string == $34"
+}
+!if (>press_l_to_load_encrypted_string) != $34 {
+    !error "Assertion failed: >press_l_to_load_encrypted_string == $34"
+}
+!if (>press_s_to_save_encrypted_string) != $34 {
+    !error "Assertion failed: >press_s_to_save_encrypted_string == $34"
 }
 !if (>print_italic) != $18 {
     !error "Assertion failed: >print_italic == $18"
