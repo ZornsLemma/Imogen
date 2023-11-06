@@ -73,7 +73,7 @@ l001a                               = $1a
 l001b                               = $1b
 l001d                               = $1d
 l0020                               = $20
-l0025                               = $25
+another_menu_index                  = $25
 l0026                               = $26
 l0027                               = $27
 left_right_flag                     = $28
@@ -1266,7 +1266,7 @@ wait_for_vsync
     jmp osbyte                                                        ; 18bf: 4c f4 ff    L.. :178e[1]   ; Wait for vertical sync
 
 ; $18c2 referenced 2 times by $0406, $2a3e
-c1791
+wait_for_timer_2_using_yx
     txa                                                               ; 18c2: 8a          .   :1791[1]
     clc                                                               ; 18c3: 18          .   :1792[1]
     adc #$ff                                                          ; 18c4: 69 ff       i.  :1793[1]
@@ -1380,7 +1380,7 @@ loop_c1830
 ; $196a referenced 1 time by $2a5d
 something11_TODO
     jsr wait_for_vsync                                                ; 196a: 20 8c 17     .. :1839[1]
-    jsr some_data_low_TODO                                            ; 196d: 20 00 04     .. :183c[1]
+    jsr wait_for_timer_2_using_l1106_l1107                            ; 196d: 20 00 04     .. :183c[1]
     jsr sub_c1845                                                     ; 1970: 20 45 18     E. :183f[1]
     jmp something3_TODO                                               ; 1973: 4c 00 0c    L.. :1842[1]
 
@@ -4243,7 +4243,7 @@ c2a33
 something20_TODO
     ldx four_entry_table1                                             ; 2b69: ae 04 11    ... :2a38[1]
     ldy l1105                                                         ; 2b6c: ac 05 11    ... :2a3b[1]
-    jsr c1791                                                         ; 2b6f: 20 91 17     .. :2a3e[1]
+    jsr wait_for_timer_2_using_yx                                     ; 2b6f: 20 91 17     .. :2a3e[1]
     jsr sub_c29a1                                                     ; 2b72: 20 a1 29     .) :2a41[1]
     jsr c3a8f                                                         ; 2b75: 20 8f 3a     .: :2a44[1]
     lda l005b                                                         ; 2b78: a5 5b       .[  :2a47[1]
@@ -4263,10 +4263,10 @@ something20_TODO
 ; $2b91 referenced 3 times by $2a49, $2a50, $2a57
 c2a60
     lda new_menu_index                                                ; 2b91: a5 29       .)  :2a60[1]
-    sta l0025                                                         ; 2b93: 85 25       .%  :2a62[1]
+    sta another_menu_index                                            ; 2b93: 85 25       .%  :2a62[1]
     jsr apply_pending_menu_motion                                     ; 2b95: 20 67 2c     g, :2a64[1]
     lda new_menu_index                                                ; 2b98: a5 29       .)  :2a67[1]
-    cmp l0025                                                         ; 2b9a: c5 25       .%  :2a69[1]
+    cmp another_menu_index                                            ; 2b9a: c5 25       .%  :2a69[1]
     beq c2a73                                                         ; 2b9c: f0 06       ..  :2a6b[1]
     jsr something_TODO                                                ; 2b9e: 20 53 04     S. :2a6d[1]
     jmp c2a81                                                         ; 2ba1: 4c 81 2a    L.* :2a70[1]
@@ -4283,7 +4283,7 @@ c2a81
     lda new_menu_index                                                ; 2bb2: a5 29       .)  :2a81[1]
     cmp l296d                                                         ; 2bb4: cd 6d 29    .m) :2a83[1]
     bcs c2acd                                                         ; 2bb7: b0 45       .E  :2a86[1]
-    lda l0025                                                         ; 2bb9: a5 25       .%  :2a88[1]
+    lda another_menu_index                                            ; 2bb9: a5 25       .%  :2a88[1]
     cmp l296d                                                         ; 2bbb: cd 6d 29    .m) :2a8a[1]
     bcc c2aa0                                                         ; 2bbe: 90 11       ..  :2a8d[1]
     lda #osbyte_flush_buffer_class                                    ; 2bc0: a9 0f       ..  :2a8f[1]
@@ -4298,7 +4298,7 @@ loop_c2a9a
     bpl loop_c2a9a                                                    ; 2bcf: 10 fa       ..  :2a9e[1]
 ; $2bd1 referenced 1 time by $2a8d
 c2aa0
-    jsr some_data_low_TODO                                            ; 2bd1: 20 00 04     .. :2aa0[1]
+    jsr wait_for_timer_2_using_l1106_l1107                            ; 2bd1: 20 00 04     .. :2aa0[1]
     jsr sub_c3664                                                     ; 2bd4: 20 64 36     d6 :2aa3[1]
     jsr sub_c344b                                                     ; 2bd7: 20 4b 34     K4 :2aa6[1]
     lda copy_protection_flag                                          ; 2bda: ad 03 11    ... :2aa9[1]
@@ -4327,7 +4327,7 @@ c2ac4
 
 ; $2bfe referenced 1 time by $2a86
 c2acd
-    lda l0025                                                         ; 2bfe: a5 25       .%  :2acd[1]
+    lda another_menu_index                                            ; 2bfe: a5 25       .%  :2acd[1]
     cmp l296d                                                         ; 2c00: cd 6d 29    .m) :2acf[1]
     bcs c2ada                                                         ; 2c03: b0 06       ..  :2ad2[1]
     jsr sub_c3aa2                                                     ; 2c05: 20 a2 3a     .: :2ad4[1]
@@ -5513,7 +5513,7 @@ c347f
     ldy #$34 ; '4'                                                    ; 35b9: a0 34       .4  :3488[1]
     jsr c381c                                                         ; 35bb: 20 1c 38     .8 :348a[1]
     jsr sub_c3850                                                     ; 35be: 20 50 38     P8 :348d[1]
-    jsr sub_c385d                                                     ; 35c1: 20 5d 38     ]8 :3490[1]
+    jsr turn_cursor_on                                                ; 35c1: 20 5d 38     ]8 :3490[1]
     jmp c3872                                                         ; 35c4: 4c 72 38    Lr8 :3493[1]
 
 ; $35c7 referenced 4 times by $3452, $3456, $347a, $34ae
@@ -5721,7 +5721,7 @@ c363f
     ldy #$36 ; '6'                                                    ; 3775: a0 36       .6  :3644[1]
     jsr c381c                                                         ; 3777: 20 1c 38     .8 :3646[1]
     jsr sub_c3850                                                     ; 377a: 20 50 38     P8 :3649[1]
-    jsr sub_c385d                                                     ; 377d: 20 5d 38     ]8 :364c[1]
+    jsr turn_cursor_on                                                ; 377d: 20 5d 38     ]8 :364c[1]
     jmp c3872                                                         ; 3780: 4c 72 38    Lr8 :364f[1]
 
 ; $3783 referenced 1 time by $363d
@@ -5877,7 +5877,7 @@ c3736
     iny                                                               ; 386c: c8          .   :373b[1]
     cpy l377d                                                         ; 386d: cc 7d 37    .}7 :373c[1]
     bne c3744                                                         ; 3870: d0 03       ..  :373f[1]
-    jsr sub_c3863                                                     ; 3872: 20 63 38     c8 :3741[1]
+    jsr turn_cursor_off                                               ; 3872: 20 63 38     c8 :3741[1]
 ; $3875 referenced 1 time by $373f
 c3744
     dey                                                               ; 3875: 88          .   :3744[1]
@@ -5897,7 +5897,7 @@ c3750
     lda #vdu_left                                                     ; 388f: a9 08       ..  :375e[1]
     jsr oswrch                                                        ; 3891: 20 ee ff     .. :3760[1]   ; Write character 8
     dec l0005                                                         ; 3894: c6 05       ..  :3763[1]
-    jsr sub_c385d                                                     ; 3896: 20 5d 38     ]8 :3765[1]
+    jsr turn_cursor_on                                                ; 3896: 20 5d 38     ]8 :3765[1]
     jmp c377a                                                         ; 3899: 4c 7a 37    Lz7 :3768[1]
 
 ; $389c referenced 1 time by $3706
@@ -5906,7 +5906,7 @@ c376b
     beq c377c                                                         ; 389e: f0 0d       ..  :376d[1]
     sta l0a90,y                                                       ; 38a0: 99 90 0a    ... :376f[1]
     inc l0005                                                         ; 38a3: e6 05       ..  :3772[1]
-    jsr sub_c3863                                                     ; 38a5: 20 63 38     c8 :3774[1]
+    jsr turn_cursor_off                                               ; 38a5: 20 63 38     c8 :3774[1]
     jmp c377c                                                         ; 38a8: 4c 7c 37    L|7 :3777[1]
 
 ; $38ab referenced 8 times by $36f9, $3722, $372c, $3732, $3739, $374d, $3752, $3768
@@ -6071,13 +6071,13 @@ sub_c3850
     jmp oswrch                                                        ; 398b: 4c ee ff    L.. :385a[1]   ; Write character 13
 
 ; $398e referenced 3 times by $3490, $364c, $3765
-sub_c385d
+turn_cursor_on
     pha                                                               ; 398e: 48          H   :385d[1]
     lda #$67 ; 'g'                                                    ; 398f: a9 67       .g  :385e[1]
     pha                                                               ; 3991: 48          H   :3860[1]
     bne c3867                                                         ; 3992: d0 04       ..  :3861[1]
 ; $3994 referenced 4 times by $0411, $045a, $3741, $3774
-sub_c3863
+turn_cursor_off
     pha                                                               ; 3994: 48          H   :3863[1]
     lda #$20 ; ' '                                                    ; 3995: a9 20       .   :3864[1]
     pha                                                               ; 3997: 48          H   :3866[1]
@@ -6531,9 +6531,9 @@ c3ae0
     sta l0070                                                         ; 3c18: 85 70       .p  :3ae7[1]
     lda #>some_data_high_copy_TODO                                    ; 3c1a: a9 40       .@  :3ae9[1]
     sta l0071                                                         ; 3c1c: 85 71       .q  :3aeb[1]
-    lda #<some_data_low_TODO                                          ; 3c1e: a9 00       ..  :3aed[1]
+    lda #<wait_for_timer_2_using_l1106_l1107                          ; 3c1e: a9 00       ..  :3aed[1]
     sta l0072                                                         ; 3c20: 85 72       .r  :3aef[1]
-    lda #>some_data_low_TODO                                          ; 3c22: a9 04       ..  :3af1[1]
+    lda #>wait_for_timer_2_using_l1106_l1107                          ; 3c22: a9 04       ..  :3af1[1]
     sta l0073                                                         ; 3c24: 85 73       .s  :3af3[1]
     ldx #2                                                            ; 3c26: a2 02       ..  :3af5[1]
     beq l3b09                                                         ; 3c28: f0 10       ..  :3af7[1]   ; TODO: branch never taken?
@@ -7302,10 +7302,10 @@ update_displayed_transformations_remaining_high_copy_end
 
 !pseudopc $0400 {
 ; $40ff referenced 4 times by $040a, $0457, $183c, $2aa0
-some_data_low_TODO
+wait_for_timer_2_using_l1106_l1107
     ldx l1106                                                         ; 40ff: ae 06 11    ... :0400[2]
     ldy l1107                                                         ; 4102: ac 07 11    ... :0403[2]
-    jmp c1791                                                         ; 4105: 4c 91 17    L.. :0406[2]
+    jmp wait_for_timer_2_using_yx                                     ; 4105: 4c 91 17    L.. :0406[2]
 
 ; $4108 referenced 9 times by $0428, $048d, $04e3, $0509, $1734, $3406, $3638, $3780, $3806
 l0409
@@ -7313,10 +7313,10 @@ l0409
 
 ; $4109 referenced 10 times by $1737, $340d, $347f, $34bb, $3519, $355e, $3617, $363f, $378e, $37ba
 sub_c040a
-    jsr some_data_low_TODO                                            ; 4109: 20 00 04     .. :040a[2]
+    jsr wait_for_timer_2_using_l1106_l1107                            ; 4109: 20 00 04     .. :040a[2]
     lda l0004                                                         ; 410c: a5 04       ..  :040d[2]
     beq c043a                                                         ; 410e: f0 29       .)  :040f[2]
-    jsr sub_c3863                                                     ; 4110: 20 63 38     c8 :0411[2]
+    jsr turn_cursor_off                                               ; 4110: 20 63 38     c8 :0411[2]
     ldx #$ff                                                          ; 4113: a2 ff       ..  :0414[2]
     stx l003e                                                         ; 4115: 86 3e       .>  :0416[2]
     inx                                                               ; 4117: e8          .   :0418[2]
@@ -7356,8 +7356,8 @@ c0444
 something_TODO
     lda l0004                                                         ; 4152: a5 04       ..  :0453[2]
     beq c0473                                                         ; 4154: f0 1c       ..  :0455[2]
-    jsr some_data_low_TODO                                            ; 4156: 20 00 04     .. :0457[2]
-    jsr sub_c3863                                                     ; 4159: 20 63 38     c8 :045a[2]
+    jsr wait_for_timer_2_using_l1106_l1107                            ; 4156: 20 00 04     .. :0457[2]
+    jsr turn_cursor_off                                               ; 4159: 20 63 38     c8 :045a[2]
     ldx #$ff                                                          ; 415c: a2 ff       ..  :045d[2]
     stx l003e                                                         ; 415e: 86 3e       .>  :045f[2]
     stx l0042                                                         ; 4160: 86 42       .B  :0461[2]
@@ -7631,7 +7631,7 @@ pydis_end
 ;     l3a97:                                                5
 ;     space_flag2:                                          5
 ;     l0020:                                                4
-;     l0025:                                                4
+;     another_menu_index:                                   4
 ;     left_right_flag:                                      4
 ;     space_flag:                                           4
 ;     l002c:                                                4
@@ -8465,7 +8465,6 @@ pydis_end
 ;     c16f7
 ;     c174c
 ;     c178a
-;     c1791
 ;     c17f1
 ;     c17f9
 ;     c181a
@@ -8854,7 +8853,6 @@ pydis_end
 ;     l001b
 ;     l001d
 ;     l0020
-;     l0025
 ;     l0026
 ;     l0027
 ;     l002b
@@ -9746,8 +9744,6 @@ pydis_end
 ;     sub_c382a
 ;     sub_c384d
 ;     sub_c3850
-;     sub_c385d
-;     sub_c3863
 ;     sub_c388d
 ;     sub_c38f6
 ;     sub_c3924
@@ -9831,11 +9827,11 @@ pydis_end
 !if (<some_data_high_copy_TODO) != $ff {
     !error "Assertion failed: <some_data_high_copy_TODO == $ff"
 }
-!if (<some_data_low_TODO) != $00 {
-    !error "Assertion failed: <some_data_low_TODO == $00"
-}
 !if (<sprdata_filename) != $80 {
     !error "Assertion failed: <sprdata_filename == $80"
+}
+!if (<wait_for_timer_2_using_l1106_l1107) != $00 {
+    !error "Assertion failed: <wait_for_timer_2_using_l1106_l1107 == $00"
 }
 !if (>(dir_dollar_command)) != $3f {
     !error "Assertion failed: >(dir_dollar_command) == $3f"
@@ -9882,11 +9878,11 @@ pydis_end
 !if (>some_data_high_copy_TODO) != $40 {
     !error "Assertion failed: >some_data_high_copy_TODO == $40"
 }
-!if (>some_data_low_TODO) != $04 {
-    !error "Assertion failed: >some_data_low_TODO == $04"
-}
 !if (>sprdata_filename) != $19 {
     !error "Assertion failed: >sprdata_filename == $19"
+}
+!if (>wait_for_timer_2_using_l1106_l1107) != $04 {
+    !error "Assertion failed: >wait_for_timer_2_using_l1106_l1107 == $04"
 }
 !if (buffer_sound_channel_0) != $04 {
     !error "Assertion failed: buffer_sound_channel_0 == $04"

@@ -40,11 +40,11 @@ comment(0x3d96, "VDU output wasn't disabled when we started to execute. Do some 
 
 comment(0x3c16, "Copy 512 bytes from &40FF to &400. TODO: I THINK?")
 label(0x40ff, "some_data_high_copy_TODO")
-label(0x400, "some_data_low_TODO")
+label(0x400, "wait_for_timer_2_using_l1106_l1107")
 expr(0x3c17, make_lo("some_data_high_copy_TODO"))
 expr(0x3c1b, make_hi("some_data_high_copy_TODO"))
-expr(0x3c1f, make_lo("some_data_low_TODO"))
-expr(0x3c23, make_hi("some_data_low_TODO"))
+expr(0x3c1f, make_lo("wait_for_timer_2_using_l1106_l1107"))
+expr(0x3c23, make_hi("wait_for_timer_2_using_l1106_l1107"))
 comment(0x3c28, "TODO: branch never taken?", inline=True)
 comment(0x3c4e, "TODO: branch always taken?", inline=True)
 comment(0x3c58, "TODO: branch never taken?", inline=True)
@@ -403,6 +403,7 @@ entry(0x3f6f, "probably_copy_protection_TODO")
 
 label(0x29, "new_menu_index")
 label(0x2e, "current_menu_index")
+label(0x25, "another_menu_index")
 entry(0x29de, "apply_new_menu_index")
 entry(0x29ea, "apply_new_menu_index_rts")
 entry(0x3a75, "menu_x_step_in_a")
@@ -417,8 +418,8 @@ entry(0x2c88, "no_menu_motion")
 entry(0x2c7e, "menu_left_pending")
 entry(0x2c70, "menu_right_pending")
 comment(0x2c7c, "always branch", inline=True)
-entry(0x29eb, "unplot_menu_pointer") # TODO: plausible guess
-entry(0x2a17, "plot_menu_pointer") # TODO: plausible guess
+entry(0x29eb, "unplot_menu_pointer") # TODO: plausible guess - hmm, losing faith in this
+entry(0x2a17, "plot_menu_pointer") # TODO: plausible guess - ditto
 
 # TODO: Lots of guesswork here...
 # TODO: A/l0015=2 on entry for plot, A=0 on entry for unplot?
@@ -428,6 +429,12 @@ entry(0x138d, "sprite_op")
 comment(0x2c52, "TODO: Self-modifying code here? If so we haven't found the code that modifies it as we have no labels")
 comment(0x13c1, "TODO: Self-modifying code here? If so we haven't found the code that modifies it as we have no labels")
 entry(0x2c46, "something_to_do_with_incrementing_by_20_pixels_x_maybe")
+
+# TODO: Possibly something to do with trying to avoid flicker as sprites update? Doesn't obviously look like palette change code.
+entry(0x1791, "wait_for_timer_2_using_yx")
+
+entry(0x385d, "turn_cursor_on")
+entry(0x3863, "turn_cursor_off")
 
 
 go()
