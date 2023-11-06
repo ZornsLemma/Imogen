@@ -43,6 +43,10 @@ expr(0x53c7, make_lo("level_name_ptr_table"))
 expr(0x53cb, make_hi("level_name_ptr_table"))
 expr(0x53d9, "vdu_cr")
 comment(0x53e3, "TODO: At this point we have the level pointer for the successfully matched password in YX")
+entry(0x5410, "skip_rest_of_entry")
+entry(0x5414, "this_entry_doesnt_match")
+comment(0x541b, "effectively adds l0070+1 as cmp # above set Z and thus C: TODO: correct?", inline=True)
+comment(0x542f, "None of the passwords in the table matched.")
 
 def decode_level_name_ptr(addr):
     cr_addr = addr
@@ -51,13 +55,27 @@ def decode_level_name_ptr(addr):
     ptr_addr = cr_addr + 1
     byte(addr, ptr_addr - addr)
     decoded_name = "".join(chr(memory[x] ^ fixed_eor_key) for x in range(addr, cr_addr))
-    comment(addr, " ; EOR-encrypted: '%s'" % decoded_name, inline=True)
+    comment(addr, "EOR-encrypted string: '%s'" % decoded_name, inline=True)
     word(ptr_addr)
+    ptr_value = get_u16_binary(ptr_addr)
+    if ptr_value == 0x5595:
+        expr(ptr_addr, "normal_level_handler")
+    else:
+        handler_name = decoded_name.lower().replace("-", "_") + "_handler"
+        expr(ptr_addr, handler_name)
+        entry(ptr_value, handler_name)
     return ptr_addr + 2
 
+entry(0x5595, "normal_level_handler")
 pc = 0x544f
-for i in range(16):
+while memory[pc] != fixed_eor_key:
     pc = decode_level_name_ptr(pc)
+byte(pc)
+comment(pc, "0 EOR $CB marks the end of the table", inline=True)
+comment(0x552e, "TODO: Some intriguing secret passwords here. Now I see this, I have a vague recollection of The Micro User or Acorn User printing some/all of these, but still cool to find them for myself. :-)")
+
+entry(0x561c, "gimme_handler")
+expr(0x5592, "gimme_handler")
 
 
 
