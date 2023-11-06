@@ -8,5 +8,8 @@ cmp orig/imogen-trailing-mc-3900.dat imogen.out || echo imogen.asm rebuild faile
 python3 g.py --acme > g.asm
 acme -o g.out --report g.lst g.asm
 cmp orig/g.dat g.out || echo g.asm rebuild failed
+python3 auxcode.py --acme > auxcode.asm
+acme -o auxcode.out --report auxcode.lst auxcode.asm
+cmp orig/auxcode.dat auxcode.out || echo auxcode.asm rebuild failed
 
 # TODO: Move the extracted original binaries into a non-tmp directory and check in?
