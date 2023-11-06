@@ -225,7 +225,7 @@ l3add                               = $3add
 c3ade                               = $3ade
 c3adf                               = $3adf
 l3ae0                               = $3ae0
-l53c0                               = $53c0
+auxcode                             = $53c0
 start_of_screen_memory              = $5bc0
 l8000                               = $8000
 lbe00                               = $be00
@@ -5329,8 +5329,8 @@ c36a8
     sta address_low                                                   ; 37db: 85 70       .p  :36aa[1]
     lda #>auxcode_filename                                            ; 37dd: a9 38       .8  :36ac[1]
     sta address_high                                                  ; 37df: 85 71       .q  :36ae[1]
-    ldx #$c0                                                          ; 37e1: a2 c0       ..  :36b0[1]
-    ldy #$53 ; 'S'                                                    ; 37e3: a0 53       .S  :36b2[1]
+    ldx #<auxcode                                                     ; 37e1: a2 c0       ..  :36b0[1]
+    ldy #>auxcode                                                     ; 37e3: a0 53       .S  :36b2[1]
     lda #osfile_load                                                  ; 37e5: a9 ff       ..  :36b4[1]
     jsr osfile_wrapper                                                ; 37e7: 20 dc 16     .. :36b6[1]
     beq c36c1                                                         ; 37ea: f0 06       ..  :36b9[1]
@@ -5338,7 +5338,7 @@ c36a8
     jmp c36a8                                                         ; 37ef: 4c a8 36    L.6 :36be[1]
 
 c36c1
-    jsr l53c0                                                         ; 37f2: 20 c0 53     .S :36c1[1]
+    jsr auxcode                                                       ; 37f2: 20 c0 53     .S :36c1[1]
     sta l36da                                                         ; 37f5: 8d da 36    ..6 :36c4[1]
 loop_c36c7
     jsr load_sprdata                                                  ; 37f8: 20 6f 19     o. :36c7[1]
@@ -7411,7 +7411,6 @@ pydis_end
 ;     l3add
 ;     l3ae0
 ;     l3fbb
-;     l53c0
 ;     l8000
 ;     lbe00
 ;     lbf00
@@ -7570,6 +7569,9 @@ pydis_end
 !if (<(osword_7f_block_write_special_register)) != $ea {
     !error "Assertion failed: <(osword_7f_block_write_special_register) == $ea"
 }
+!if (<auxcode) != $c0 {
+    !error "Assertion failed: <auxcode == $c0"
+}
 !if (<auxcode_filename) != $9c {
     !error "Assertion failed: <auxcode_filename == $9c"
 }
@@ -7665,6 +7667,9 @@ pydis_end
 }
 !if (>(osword_7f_block_write_special_register)) != $3e {
     !error "Assertion failed: >(osword_7f_block_write_special_register) == $3e"
+}
+!if (>auxcode) != $53 {
+    !error "Assertion failed: >auxcode == $53"
 }
 !if (>auxcode_filename) != $38 {
     !error "Assertion failed: >auxcode_filename == $38"
