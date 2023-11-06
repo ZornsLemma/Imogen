@@ -75,11 +75,11 @@ l001d                               = $1d
 l0020                               = $20
 another_menu_index                  = $25
 l0026                               = $26
-l0027                               = $27
+left_right_repeat_flag              = $27
 left_right_flag                     = $28
 new_menu_index                      = $29
 space_flag                          = $2a
-l002b                               = $2b
+space_repeat_flag                   = $2b
 z_flag                              = $2c
 x_flag                              = $2d
 current_menu_index                  = $2e
@@ -6373,8 +6373,8 @@ c3a41
 sub_c3a47
     ldx #inkey_key_space                                              ; 3b78: a2 9d       ..  :3a47[1]
     jsr negative_inkey                                                ; 3b7a: 20 cc 3a     .: :3a49[1]
-    cmp l002b                                                         ; 3b7d: c5 2b       .+  :3a4c[1]
-    sta l002b                                                         ; 3b7f: 85 2b       .+  :3a4e[1]
+    cmp space_repeat_flag                                             ; 3b7d: c5 2b       .+  :3a4c[1]
+    sta space_repeat_flag                                             ; 3b7f: 85 2b       .+  :3a4e[1]
     bne c3a54                                                         ; 3b81: d0 02       ..  :3a50[1]
     lda #0                                                            ; 3b83: a9 00       ..  :3a52[1]
 ; $3b85 referenced 1 time by $3a50
@@ -6400,13 +6400,13 @@ c3a73
 ; left or right.
 ; $3ba6 referenced 2 times by $3a6d, $3a71
 menu_x_step_in_a
-    cmp l0027                                                         ; 3ba6: c5 27       .'  :3a75[1]
-    sta l0027                                                         ; 3ba8: 85 27       .'  :3a77[1]
+    cmp left_right_repeat_flag                                        ; 3ba6: c5 27       .'  :3a75[1]
+    sta left_right_repeat_flag                                        ; 3ba8: 85 27       .'  :3a77[1]
     bne c3a83                                                         ; 3baa: d0 08       ..  :3a79[1]
     lda #0                                                            ; 3bac: a9 00       ..  :3a7b[1]
     dec l0026                                                         ; 3bae: c6 26       .&  :3a7d[1]
     bpl c3a88                                                         ; 3bb0: 10 07       ..  :3a7f[1]
-    lda l0027                                                         ; 3bb2: a5 27       .'  :3a81[1]
+    lda left_right_repeat_flag                                        ; 3bb2: a5 27       .'  :3a81[1]
 ; $3bb4 referenced 1 time by $3a79
 c3a83
     ldx l3a8e                                                         ; 3bb4: ae 8e 3a    ..: :3a83[1]
@@ -7688,7 +7688,7 @@ pydis_end
 ;     l0006:                                                3
 ;     l0008:                                                3
 ;     l000a:                                                3
-;     l0027:                                                3
+;     left_right_repeat_flag:                               3
 ;     currently_loaded_level:                               3
 ;     l003f:                                                3
 ;     l0059:                                                3
@@ -7776,7 +7776,7 @@ pydis_end
 ;     l0009:                                                2
 ;     l0014:                                                2
 ;     l0026:                                                2
-;     l002b:                                                2
+;     space_repeat_flag:                                    2
 ;     l0039:                                                2
 ;     l0043:                                                2
 ;     maybe_current_level:                                  2
@@ -8853,8 +8853,6 @@ pydis_end
 ;     l001d
 ;     l0020
 ;     l0026
-;     l0027
-;     l002b
 ;     l0030
 ;     l0039
 ;     l003a
