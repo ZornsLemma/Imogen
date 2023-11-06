@@ -1,3 +1,8 @@
+; Constants
+fixed_eor_key   = 203
+vdu_cr          = 13
+vdu_lf          = 10
+
 ; Memory locations
 l0005   = $05
 l0070   = $70
@@ -59,10 +64,10 @@ c53ce
 
 loop_c5410
     lda (l0070),y                                                     ; 5410: b1 70       .p
-    eor #$cb                                                          ; 5412: 49 cb       I.
+    eor #fixed_eor_key                                                ; 5412: 49 cb       I.
 c5414
     iny                                                               ; 5414: c8          .
-    cmp #$0d                                                          ; 5415: c9 0d       ..
+    cmp #vdu_cr                                                       ; 5415: c9 0d       ..
     bne loop_c5410                                                    ; 5417: d0 f7       ..
     iny                                                               ; 5419: c8          .
     tya                                                               ; 541a: 98          .
@@ -74,10 +79,10 @@ c5414
     inc l0072                                                         ; 5425: e6 72       .r
     ldy #0                                                            ; 5427: a0 00       ..
     lda (l0070),y                                                     ; 5429: b1 70       .p
-    eor #$cb                                                          ; 542b: 49 cb       I.
+    eor #fixed_eor_key                                                ; 542b: 49 cb       I.
     bne c53ce                                                         ; 542d: d0 9f       ..
     jsr l040a                                                         ; 542f: 20 0a 04     ..
-    lda #$0a                                                          ; 5432: a9 0a       ..
+    lda #vdu_lf                                                       ; 5432: a9 0a       ..
     jsr oswrch                                                        ; 5434: 20 ee ff     ..            ; Write character 10
     ldx #<unknown_encrypted_string                                    ; 5437: a2 46       .F
     ldy #>unknown_encrypted_string                                    ; 5439: a0 54       .T
@@ -197,4 +202,13 @@ pydis_end
 }
 !if (>unknown_encrypted_string) != $54 {
     !error "Assertion failed: >unknown_encrypted_string == $54"
+}
+!if (fixed_eor_key) != $cb {
+    !error "Assertion failed: fixed_eor_key == $cb"
+}
+!if (vdu_cr) != $0d {
+    !error "Assertion failed: vdu_cr == $0d"
+}
+!if (vdu_lf) != $0a {
+    !error "Assertion failed: vdu_lf == $0a"
 }
