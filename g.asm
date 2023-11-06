@@ -5325,13 +5325,13 @@ return24
     rts                                                               ; 37d8: 60          `   :36a7[1]
 
 c36a8
-    lda #$9c                                                          ; 37d9: a9 9c       ..  :36a8[1]
+    lda #<auxcode_filename                                            ; 37d9: a9 9c       ..  :36a8[1]
     sta address_low                                                   ; 37db: 85 70       .p  :36aa[1]
-    lda #$38 ; '8'                                                    ; 37dd: a9 38       .8  :36ac[1]
+    lda #>auxcode_filename                                            ; 37dd: a9 38       .8  :36ac[1]
     sta address_high                                                  ; 37df: 85 71       .q  :36ae[1]
     ldx #$c0                                                          ; 37e1: a2 c0       ..  :36b0[1]
     ldy #$53 ; 'S'                                                    ; 37e3: a0 53       .S  :36b2[1]
-    lda #$ff                                                          ; 37e5: a9 ff       ..  :36b4[1]
+    lda #osfile_load                                                  ; 37e5: a9 ff       ..  :36b4[1]
     jsr osfile_wrapper                                                ; 37e7: 20 dc 16     .. :36b6[1]
     beq c36c1                                                         ; 37ea: f0 06       ..  :36b9[1]
     jsr sub_c3617                                                     ; 37ec: 20 17 36     .6 :36bb[1]
@@ -7570,6 +7570,9 @@ pydis_end
 !if (<(osword_7f_block_write_special_register)) != $ea {
     !error "Assertion failed: <(osword_7f_block_write_special_register) == $ea"
 }
+!if (<auxcode_filename) != $9c {
+    !error "Assertion failed: <auxcode_filename == $9c"
+}
 !if (<brk_handler) != $d3 {
     !error "Assertion failed: <brk_handler == $d3"
 }
@@ -7662,6 +7665,9 @@ pydis_end
 }
 !if (>(osword_7f_block_write_special_register)) != $3e {
     !error "Assertion failed: >(osword_7f_block_write_special_register) == $3e"
+}
+!if (>auxcode_filename) != $38 {
+    !error "Assertion failed: >auxcode_filename == $38"
 }
 !if (>brk_handler) != $16 {
     !error "Assertion failed: >brk_handler == $16"
