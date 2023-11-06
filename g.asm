@@ -54,16 +54,15 @@ vdu_set_mode                                    = 22
 vdu_set_text_colour                             = 17
 
 ; Memory locations
-l0000                               = $00
 l0002                               = $02
 l0003                               = $03
 l0004                               = $04
 l0005                               = $05
-l0006                               = $06
-l0007                               = $07
-l0008                               = $08
-l0009                               = $09
-l000a                               = $0a
+rnd0                                = $06
+rnd1                                = $07
+rnd2                                = $08
+rnd3                                = $09
+rnd4                                = $0a
 l0014                               = $14
 l0015                               = $15
 l0016                               = $16
@@ -72,16 +71,16 @@ l0019                               = $19
 l001a                               = $1a
 l001b                               = $1b
 l001d                               = $1d
-player_x_movement_direction         = $20
+valid_direction_pending             = $20
 another_menu_index                  = $25
 l0026                               = $26
 left_right_repeat_flag              = $27
 left_right_flag                     = $28
 new_menu_index                      = $29
-space_flag                          = $2a
-space_repeat_flag                   = $2b
-z_flag                              = $2c
-x_flag                              = $2d
+space_bar_press_pending             = $2a
+space_bar_pressed                   = $2b
+z_key_pressed_pending               = $2c
+x_key_pressed_pending               = $2d
 current_menu_index                  = $2e
 l0030                               = $30
 desired_level                       = $31
@@ -98,7 +97,7 @@ l0042                               = $42
 l0043                               = $43
 l0044                               = $44
 l0045                               = $45
-return_flag                         = $46
+return_key_pressed_event_pending    = $46
 current_player_character            = $48
 l0049                               = $49
 l004a                               = $4a
@@ -151,7 +150,8 @@ l0086                               = $86
 l0087                               = $87
 l0088                               = $88
 romsel_copy                         = $f4
-l00fc                               = $fc
+interrupt_accumulator               = $fc
+l00fd                               = $fd
 l0100                               = $0100
 l010b                               = $010b
 l0116                               = $0116
@@ -208,9 +208,18 @@ old_brkv1                           = $0ab1
 old_brkv2                           = $0ab3
 old_irq1v                           = $0ab5
 l0b00                               = $0b00
-l3b09                               = $3b09
-c3c2c                               = $3c2c
+l3ad7                               = $3ad7
+c3ad8                               = $3ad8
+l3ad9                               = $3ad9
+l3ada                               = $3ada
+c3adb                               = $3adb
+l3adc                               = $3adc
+l3add                               = $3add
+c3ade                               = $3ade
+c3adf                               = $3adf
+l3ae0                               = $3ae0
 l53c0                               = $53c0
+start_of_screen_memory              = $5bc0
 l8000                               = $8000
 lbe00                               = $be00
 lbf00                               = $bf00
@@ -240,7 +249,6 @@ oscli                               = $fff7
 
     * = $1234
 
-; $1234 referenced 11 times by $1291, $17e5, $180e, $2a4b, $2aa9, $367a, $3698, $3c8f, $3e8a, $3f2a, $3f6f
 pydis_start
 
 !pseudopc $1103 {
@@ -248,28 +256,28 @@ pydis_start
 copy_protection_flag
     !byte 0                                                           ; 1234: 00          .   :1103[1]
 ; $1235 referenced 4 times by $17c0, $2a38, $3e52, $3e58
-four_entry_table1
+timingA_counter_low
     !byte $47                                                         ; 1235: 47          G   :1104[1]
 ; $1236 referenced 2 times by $17c6, $2a3b
-l1105
+timingA_counter_high
     !byte $11                                                         ; 1236: 11          .   :1105[1]
 ; $1237 referenced 1 time by $0400
-l1106
+timingB_counter_low
     !byte $0b                                                         ; 1237: 0b          .   :1106[1]
 ; $1238 referenced 1 time by $0403
-l1107
+timingB_counter_high
     !byte $1d                                                         ; 1238: 1d          .   :1107[1]
 ; $1239 referenced 1 time by $17cc
-l1108
+timing_latch_low
     !byte $10                                                         ; 1239: 10          .   :1108[1]
 ; $123a referenced 1 time by $17d2
-l1109
+timing_latch_high
     !byte $27                                                         ; 123a: 27          '   :1109[1]
 ; $123b referenced 3 times by $0c02, $11f0, $1728
 l110a
     !byte 0                                                           ; 123b: 00          .   :110a[1]
 ; $123c referenced 2 times by $0c3c, $3e17
-l110b
+vertical_sync_amount_for_crtc_register
     !byte 0                                                           ; 123c: 00          .   :110b[1]
 
 ; $123d referenced 2 times by $36f3, $3f5b
@@ -392,8 +400,8 @@ loop_c11dd
 ; $1329 referenced 1 time by $11f3
 c11f8
     lda #0                                                            ; 1329: a9 00       ..  :11f8[1]
-    sta l175e                                                         ; 132b: 8d 5e 17    .^. :11fa[1]
-    sta l1760                                                         ; 132e: 8d 60 17    .`. :11fd[1]
+    sta toolbar_colour                                                ; 132b: 8d 5e 17    .^. :11fa[1]
+    sta gameplay_area_colour                                          ; 132e: 8d 60 17    .`. :11fd[1]
     jsr sub_c2980                                                     ; 1331: 20 80 29     .) :1200[1]
     jsr sub_c29a1                                                     ; 1334: 20 a1 29     .) :1203[1]
     jsr update_displayed_transformations_remaining                    ; 1337: 20 31 01     1. :1206[1]
@@ -408,9 +416,9 @@ loop_c1213
     sta four_entry_table3_maybe_sound,x                               ; 1344: 9d 6f 39    .o9 :1213[1]
     dex                                                               ; 1347: ca          .   :1216[1]
     bpl loop_c1213                                                    ; 1348: 10 fa       ..  :1217[1]
-    ldx c3ad7                                                         ; 134a: ae d7 3a    ..: :1219[1]
-    ldy l3ad8                                                         ; 134d: ac d8 3a    ..: :121c[1]
-    jsr c1966                                                         ; 1350: 20 66 19     f. :121f[1]
+    ldx l3ad7                                                         ; 134a: ae d7 3a    ..: :1219[1]
+    ldy c3ad8                                                         ; 134d: ac d8 3a    ..: :121c[1]
+    jsr jmp_xy                                                        ; 1350: 20 66 19     f. :121f[1]
     lda desired_level                                                 ; 1353: a5 31       .1  :1222[1]
     sec                                                               ; 1355: 38          8   :1224[1]
     sbc #first_level_letter                                           ; 1356: e9 41       .A  :1225[1]
@@ -425,7 +433,7 @@ loop_c1213
     sta l003e                                                         ; 1367: 85 3e       .>  :1236[1]
     lda #0                                                            ; 1369: a9 00       ..  :1238[1]
     sta l0042                                                         ; 136b: 85 42       .B  :123a[1]
-    sta l1760                                                         ; 136d: 8d 60 17    .`. :123c[1]
+    sta gameplay_area_colour                                          ; 136d: 8d 60 17    .`. :123c[1]
     jsr sub_c29a1                                                     ; 1370: 20 a1 29     .) :123f[1]
     jsr sub_c1df4                                                     ; 1373: 20 f4 1d     .. :1242[1]
     lda #0                                                            ; 1376: a9 00       ..  :1245[1]
@@ -442,8 +450,8 @@ loop_c1213
     lda l0030                                                         ; 138c: a5 30       .0  :125b[1]
     asl                                                               ; 138e: 0a          .   :125d[1]
     tay                                                               ; 138f: a8          .   :125e[1]
-    ldx l3adf,y                                                       ; 1390: be df 3a    ..: :125f[1]
-    lda c3ae0,y                                                       ; 1393: b9 e0 3a    ..: :1262[1]
+    ldx c3adf,y                                                       ; 1390: be df 3a    ..: :125f[1]
+    lda l3ae0,y                                                       ; 1393: b9 e0 3a    ..: :1262[1]
     tay                                                               ; 1396: a8          .   :1265[1]
     txa                                                               ; 1397: 8a          .   :1266[1]
     clc                                                               ; 1398: 18          .   :1267[1]
@@ -452,7 +460,7 @@ loop_c1213
     tya                                                               ; 139c: 98          .   :126b[1]
     adc #0                                                            ; 139d: 69 00       i.  :126c[1]
     tay                                                               ; 139f: a8          .   :126e[1]
-    jmp c1966                                                         ; 13a0: 4c 66 19    Lf. :126f[1]
+    jmp jmp_xy                                                        ; 13a0: 4c 66 19    Lf. :126f[1]
 
 data_filename
     !text "data"                                                      ; 13a3: 64 61 74... dat :1272[1]
@@ -472,20 +480,20 @@ sub_c1278
     lda byte_per_level_table1,x                                       ; 13b6: bd ef 09    ... :1285[1]
     and #$40 ; '@'                                                    ; 13b9: 29 40       )@  :1288[1]
     bne c129b                                                         ; 13bb: d0 0f       ..  :128a[1]
-    lda c3add                                                         ; 13bd: ad dd 3a    ..: :128c[1]
+    lda l3add                                                         ; 13bd: ad dd 3a    ..: :128c[1]
     sta l0030                                                         ; 13c0: 85 30       .0  :128f[1]
     lda copy_protection_flag                                          ; 13c2: ad 03 11    ... :1291[1]
     bpl c129b                                                         ; 13c5: 10 05       ..  :1294[1]
-    lda l3ade                                                         ; 13c7: ad de 3a    ..: :1296[1]
+    lda c3ade                                                         ; 13c7: ad de 3a    ..: :1296[1]
     sta l0030                                                         ; 13ca: 85 30       .0  :1299[1]
 ; $13cc referenced 2 times by $128a, $1294
 c129b
     lda l0030                                                         ; 13cc: a5 30       .0  :129b[1]
     asl                                                               ; 13ce: 0a          .   :129d[1]
     tay                                                               ; 13cf: a8          .   :129e[1]
-    lda l3adf,y                                                       ; 13d0: b9 df 3a    ..: :129f[1]
+    lda c3adf,y                                                       ; 13d0: b9 df 3a    ..: :129f[1]
     sta l0070                                                         ; 13d3: 85 70       .p  :12a2[1]
-    lda c3ae0,y                                                       ; 13d5: b9 e0 3a    ..: :12a4[1]
+    lda l3ae0,y                                                       ; 13d5: b9 e0 3a    ..: :12a4[1]
     sta l0071                                                         ; 13d8: 85 71       .q  :12a7[1]
     ldy #0                                                            ; 13da: a0 00       ..  :12a9[1]
     lda (l0070),y                                                     ; 13dc: b1 70       .p  :12ab[1]
@@ -498,22 +506,63 @@ c129b
     lda #0                                                            ; 13e7: a9 00       ..  :12b6[1]
     jmp c1f5d                                                         ; 13e9: 4c 5d 1f    L]. :12b8[1]
 
-    !byte $a9, $ff, $8d, $2b, $13, $ae, $d9, $3a, $ac, $da            ; 13ec: a9 ff 8d... ... :12bb[1]
-    !text ": f"                                                       ; 13f6: 3a 20 66    : f :12c5[1]
-    !byte $19, $a9,   0, $8d, $2b, $13, $a5, $31, $c5, $51, $f0,   5  ; 13f9: 19 a9 00... ... :12c8[1]
-    !byte $a9,   4                                                    ; 1405: a9 04       ..  :12d4[1]
-    !text " 7#` "                                                     ; 1407: 20 37 23...  7# :12d6[1]
-    !byte $d7, $1f, $ad, $60, $17, $d0, $1a, $ad, $5d, $17, $8d, $5e  ; 140c: d7 1f ad... ... :12db[1]
-    !byte $17, $ad, $5f, $17, $8d, $60, $17, $20, $8c, $17, $a9,   0  ; 1418: 17 ad 5f... .._ :12e7[1]
-    !byte $8d, $8b, $17, $20, $8f, $3a, $20, $a2, $3a, $ad, $8b, $17  ; 1424: 8d 8b 17... ... :12f3[1]
-    !byte $c9,   4, $b0,   3, $20, $8c, $17                           ; 1430: c9 04 b0... ... :12ff[1]
-    !text " 8* "                                                      ; 1437: 20 38 2a...  8* :1306[1]
-    !byte $1e, $13, $20, $a2, $3a, $20, $cd, $22, $ae, $d9, $3a, $ac  ; 143b: 1e 13 20... ..  :130a[1]
-    !byte $da                                                         ; 1447: da          .   :1316[1]
-    !text ": f"                                                       ; 1448: 3a 20 66    : f :1317[1]
-    !byte $19, $4c, $c3, $18, $ad, $8b, $17, $c9,   5, $90, $f9, $a9  ; 144b: 19 4c c3... .L. :131a[1]
-    !byte   0, $8d, $8b, $17, $60                                     ; 1457: 00 8d 8b... ... :1326[1]
-; $145c referenced 2 times by $198f, $1a37
+something23_TODO
+    lda #$ff                                                          ; 13ec: a9 ff       ..  :12bb[1]
+    sta l132b                                                         ; 13ee: 8d 2b 13    .+. :12bd[1]
+    ldx l3ad9                                                         ; 13f1: ae d9 3a    ..: :12c0[1]
+    ldy l3ada                                                         ; 13f4: ac da 3a    ..: :12c3[1]
+    jsr jmp_xy                                                        ; 13f7: 20 66 19     f. :12c6[1]
+    lda #0                                                            ; 13fa: a9 00       ..  :12c9[1]
+    sta l132b                                                         ; 13fc: 8d 2b 13    .+. :12cb[1]
+    lda desired_level                                                 ; 13ff: a5 31       .1  :12ce[1]
+    cmp maybe_current_level                                           ; 1401: c5 51       .Q  :12d0[1]
+    beq return1                                                       ; 1403: f0 05       ..  :12d2[1]
+    lda #4                                                            ; 1405: a9 04       ..  :12d4[1]
+    jsr transform                                                     ; 1407: 20 37 23     7# :12d6[1]
+; $140a referenced 1 time by $12d2
+return1
+    rts                                                               ; 140a: 60          `   :12d9[1]
+
+something24_TODO
+    jsr something16_TODO                                              ; 140b: 20 d7 1f     .. :12da[1]
+    lda gameplay_area_colour                                          ; 140e: ad 60 17    .`. :12dd[1]
+    bne c12fc                                                         ; 1411: d0 1a       ..  :12e0[1]
+    lda l175d                                                         ; 1413: ad 5d 17    .]. :12e2[1]
+    sta toolbar_colour                                                ; 1416: 8d 5e 17    .^. :12e5[1]
+    lda l175f                                                         ; 1419: ad 5f 17    ._. :12e8[1]
+    sta gameplay_area_colour                                          ; 141c: 8d 60 17    .`. :12eb[1]
+    jsr wait_for_vsync                                                ; 141f: 20 8c 17     .. :12ee[1]
+    lda #0                                                            ; 1422: a9 00       ..  :12f1[1]
+    sta l178b                                                         ; 1424: 8d 8b 17    ... :12f3[1]
+    jsr c3a8f                                                         ; 1427: 20 8f 3a     .: :12f6[1]
+    jsr sub_c3aa2                                                     ; 142a: 20 a2 3a     .: :12f9[1]
+; $142d referenced 1 time by $12e0
+c12fc
+    lda l178b                                                         ; 142d: ad 8b 17    ... :12fc[1]
+    cmp #4                                                            ; 1430: c9 04       ..  :12ff[1]
+    bcs c1306                                                         ; 1432: b0 03       ..  :1301[1]
+    jsr wait_for_vsync                                                ; 1434: 20 8c 17     .. :1303[1]
+; $1437 referenced 1 time by $1301
+c1306
+    jsr something20_TODO                                              ; 1437: 20 38 2a     8* :1306[1]
+    jsr c131e                                                         ; 143a: 20 1e 13     .. :1309[1]
+    jsr sub_c3aa2                                                     ; 143d: 20 a2 3a     .: :130c[1]
+    jsr something19_TODO                                              ; 1440: 20 cd 22     ." :130f[1]
+    ldx l3ad9                                                         ; 1443: ae d9 3a    ..: :1312[1]
+    ldy l3ada                                                         ; 1446: ac da 3a    ..: :1315[1]
+    jsr jmp_xy                                                        ; 1449: 20 66 19     f. :1318[1]
+    jmp something12_TODO                                              ; 144c: 4c c3 18    L.. :131b[1]
+
+; $144f referenced 2 times by $1309, $1323
+c131e
+    lda l178b                                                         ; 144f: ad 8b 17    ... :131e[1]
+    cmp #5                                                            ; 1452: c9 05       ..  :1321[1]
+    bcc c131e                                                         ; 1454: 90 f9       ..  :1323[1]
+    lda #0                                                            ; 1456: a9 00       ..  :1325[1]
+    sta l178b                                                         ; 1458: 8d 8b 17    ... :1327[1]
+    rts                                                               ; 145b: 60          `   :132a[1]
+
+; $145c referenced 4 times by $12bd, $12cb, $198f, $1a37
 l132b
     !byte 0                                                           ; 145c: 00          .   :132b[1]
 
@@ -522,15 +571,15 @@ set_yx_based_on_a
     ldx #$11                                                          ; 145d: a2 11       ..  :132c[1]
     ldy #$0b                                                          ; 145f: a0 0b       ..  :132e[1]
     cmp #$c7                                                          ; 1461: c9 c7       ..  :1330[1]
-    beq c1376                                                         ; 1463: f0 42       .B  :1332[1]
+    beq return2                                                       ; 1463: f0 42       .B  :1332[1]
     ldx #$93                                                          ; 1465: a2 93       ..  :1334[1]
     ldy #$0b                                                          ; 1467: a0 0b       ..  :1336[1]
     cmp #$c6                                                          ; 1469: c9 c6       ..  :1338[1]
-    beq c1376                                                         ; 146b: f0 3a       .:  :133a[1]
+    beq return2                                                       ; 146b: f0 3a       .:  :133a[1]
     ldx #$c5                                                          ; 146d: a2 c5       ..  :133c[1]
     ldy #$0b                                                          ; 146f: a0 0b       ..  :133e[1]
     cmp #$c5                                                          ; 1471: c9 c5       ..  :1340[1]
-    beq c1376                                                         ; 1473: f0 32       .2  :1342[1]
+    beq return2                                                       ; 1473: f0 32       .2  :1342[1]
     ldx sprdata_ptr                                                   ; 1475: a6 54       .T  :1344[1]
     ldy sprdata_ptr + 1                                               ; 1477: a4 55       .U  :1346[1]
     cmp #$c8                                                          ; 1479: c9 c8       ..  :1348[1]
@@ -566,7 +615,7 @@ c135d
     adc l005a                                                         ; 14a4: 65 5a       eZ  :1373[1]
     tay                                                               ; 14a6: a8          .   :1375[1]
 ; $14a7 referenced 3 times by $1332, $133a, $1342
-c1376
+return2
     rts                                                               ; 14a7: 60          `   :1376[1]
 
 ; $14a8 referenced 2 times by $1519, $160e
@@ -1061,7 +1110,7 @@ c1640
     lda l0085                                                         ; 1784: a5 85       ..  :1653[1]
     bmi c165e                                                         ; 1786: 30 07       0.  :1655[1]
     cmp #$28 ; '('                                                    ; 1788: c9 28       .(  :1657[1]
-    bcc c16cd                                                         ; 178a: 90 72       .r  :1659[1]
+    bcc return3                                                       ; 178a: 90 72       .r  :1659[1]
     jmp c16ce                                                         ; 178c: 4c ce 16    L.. :165b[1]
 
 ; $178f referenced 1 time by $1655
@@ -1081,7 +1130,7 @@ c1670
     lda l0085                                                         ; 17a1: a5 85       ..  :1670[1]
     bmi c16ce                                                         ; 17a3: 30 5a       0Z  :1672[1]
     cmp #$28 ; '('                                                    ; 17a5: c9 28       .(  :1674[1]
-    bcc c16cd                                                         ; 17a7: 90 55       .U  :1676[1]
+    bcc return3                                                       ; 17a7: 90 55       .U  :1676[1]
     lda l0074                                                         ; 17a9: a5 74       .t  :1678[1]
     sbc #$3f ; '?'                                                    ; 17ab: e9 3f       .?  :167a[1]
     sta l0086                                                         ; 17ad: 85 86       ..  :167c[1]
@@ -1141,7 +1190,7 @@ c16bf
     stx l0087                                                         ; 17fa: 86 87       ..  :16c9[1]
     sty l0079                                                         ; 17fc: 84 79       .y  :16cb[1]
 ; $17fe referenced 2 times by $1659, $1676
-c16cd
+return3
     rts                                                               ; 17fe: 60          `   :16cd[1]
 
 ; $17ff referenced 4 times by $163d, $165b, $1672, $168e
@@ -1150,7 +1199,11 @@ c16ce
     pla                                                               ; 1800: 68          h   :16cf[1]
     jmp c137f                                                         ; 1801: 4c 7f 13    L.. :16d0[1]
 
-    !byte $a0,   0, $b1, $fd, $85,   2, $4c, $13, $17                 ; 1804: a0 00 b1... ... :16d3[1]
+something25_TODO
+    ldy #0                                                            ; 1804: a0 00       ..  :16d3[1]
+    lda (l00fd),y                                                     ; 1806: b1 fd       ..  :16d5[1]
+    sta l0002                                                         ; 1808: 85 02       ..  :16d7[1]
+    jmp c1713                                                         ; 180a: 4c 13 17    L.. :16d9[1]
 
 ; $180d referenced 7 times by $1166, $197d, $3585, $35c3, $36b6, $3e69, $3e9b
 osfile_wrapper
@@ -1183,6 +1236,8 @@ c16f7
     ldx #<(l0070)                                                     ; 183d: a2 70       .p  :170c[1]
     ldy #>(l0070)                                                     ; 183f: a0 00       ..  :170e[1]
     jsr osfile                                                        ; 1841: 20 dd ff     .. :1710[1]
+; $1844 referenced 1 time by $16d9
+c1713
     sei                                                               ; 1844: 78          x   :1713[1]
     ldx old_brkv1                                                     ; 1845: ae b1 0a    ... :1714[1]
     stx brkv                                                          ; 1848: 8e 02 02    ... :1717[1]
@@ -1204,8 +1259,8 @@ sub_c1728
     jsr sub_c040a                                                     ; 1868: 20 0a 04     .. :1737[1]
     lda #$0a                                                          ; 186b: a9 0a       ..  :173a[1]
     jsr oswrch                                                        ; 186d: 20 ee ff     .. :173c[1]   ; Write character 10
-    ldx #$52 ; 'R'                                                    ; 1870: a2 52       .R  :173f[1]
-    ldy #$17                                                          ; 1872: a0 17       ..  :1741[1]
+    ldx #<data_TODO                                                   ; 1870: a2 52       .R  :173f[1]
+    ldy #>data_TODO                                                   ; 1872: a0 17       ..  :1741[1]
     jsr sub_c37f3                                                     ; 1874: 20 f3 37     .7 :1743[1]
     jsr sub_c388d                                                     ; 1877: 20 8d 38     .8 :1746[1]
     jsr sub_c388d                                                     ; 187a: 20 8d 38     .8 :1749[1]
@@ -1215,18 +1270,19 @@ c174c
     lda l0002                                                         ; 1880: a5 02       ..  :174f[1]
     rts                                                               ; 1882: 60          `   :1751[1]
 
+data_TODO
     !byte $8f, $a2, $b8, $a0, $eb, $ae, $b9, $b9, $a4, $b9, $c6       ; 1883: 8f a2 b8... ... :1752[1]
-; $188e referenced 3 times by $0c05, $1768, $1782
+; $188e referenced 4 times by $0c05, $12e2, $1768, $1782
 l175d
     !byte 0                                                           ; 188e: 00          .   :175d[1]
-; $188f referenced 3 times by $0c08, $11fa, $17df
-l175e
+; $188f referenced 4 times by $0c08, $11fa, $12e5, $17df
+toolbar_colour
     !byte 0                                                           ; 188f: 00          .   :175e[1]
-; $1890 referenced 3 times by $0c0b, $176b, $1787
+; $1890 referenced 4 times by $0c0b, $12e8, $176b, $1787
 l175f
     !byte 0                                                           ; 1890: 00          .   :175f[1]
-; $1891 referenced 4 times by $0c0e, $11fd, $123c, $1808
-l1760
+; $1891 referenced 6 times by $0c0e, $11fd, $123c, $12dd, $12eb, $1808
+gameplay_area_colour
     !byte 0                                                           ; 1891: 00          .   :1760[1]
 ; $1892 referenced 1 time by $177f
 l1761
@@ -1241,7 +1297,7 @@ sub_c1766
     sta l175d                                                         ; 1899: 8d 5d 17    .]. :1768[1]
     sta l175f                                                         ; 189c: 8d 5f 17    ._. :176b[1]
     lda l1765                                                         ; 189f: ad 65 17    .e. :176e[1]
-    beq c178a                                                         ; 18a2: f0 17       ..  :1771[1]
+    beq return4                                                       ; 18a2: f0 17       ..  :1771[1]
     ldy desired_level                                                 ; 18a4: a4 31       .1  :1773[1]
     jsr convert_level_number_to_letter                                ; 18a6: 20 d4 0a     .. :1775[1]
     tya                                                               ; 18a9: 98          .   :1778[1]
@@ -1254,14 +1310,14 @@ sub_c1766
     lda #6                                                            ; 18b6: a9 06       ..  :1785[1]
     sta l175f                                                         ; 18b8: 8d 5f 17    ._. :1787[1]
 ; $18bb referenced 1 time by $1771
-c178a
+return4
     rts                                                               ; 18bb: 60          `   :178a[1]
 
-; $18bc referenced 3 times by $17f6, $388f, $3892
+; $18bc referenced 7 times by $12f3, $12fc, $131e, $1327, $17f6, $388f, $3892
 l178b
     !byte 0                                                           ; 18bc: 00          .   :178b[1]
 
-; $18bd referenced 4 times by $0c31, $0c34, $1839, $2ab7
+; $18bd referenced 6 times by $0c31, $0c34, $12ee, $1303, $1839, $2ab7
 wait_for_vsync
     lda #osbyte_vsync                                                 ; 18bd: a9 13       ..  :178c[1]
     jmp osbyte                                                        ; 18bf: 4c f4 ff    L.. :178e[1]   ; Wait for vertical sync
@@ -1275,84 +1331,85 @@ wait_for_timer_2_using_yx
     adc #0                                                            ; 18c7: 69 00       i.  :1796[1]
     eor #$ff                                                          ; 18c9: 49 ff       I.  :1798[1]
 ; $18cb referenced 1 time by $179d
-loop_c179a
+delay_loop
     cmp system_via_t2c_h                                              ; 18cb: cd 49 fe    .I. :179a[1]
-    bcc loop_c179a                                                    ; 18ce: 90 fb       ..  :179d[1]
+    bcc delay_loop                                                    ; 18ce: 90 fb       ..  :179d[1]
     rts                                                               ; 18d0: 60          `   :179f[1]
 
-something10_TODO
+irq1_routine
     pha                                                               ; 18d1: 48          H   :17a0[1]
-    lda l00fc                                                         ; 18d2: a5 fc       ..  :17a1[1]
+    lda interrupt_accumulator                                         ; 18d2: a5 fc       ..  :17a1[1]
     pha                                                               ; 18d4: 48          H   :17a3[1]
     txa                                                               ; 18d5: 8a          .   :17a4[1]
     pha                                                               ; 18d6: 48          H   :17a5[1]
     tya                                                               ; 18d7: 98          .   :17a6[1]
     pha                                                               ; 18d8: 48          H   :17a7[1]
-    jsr sub_c17b9                                                     ; 18d9: 20 b9 17     .. :17a8[1]
-    jsr sub_c17fa                                                     ; 18dc: 20 fa 17     .. :17ab[1]
+    jsr if_vsync_elapsed_then_set_toolbar_area_palette                ; 18d9: 20 b9 17     .. :17a8[1]
+    jsr if_timer1_elapsed_then_set_main_area_palette                  ; 18dc: 20 fa 17     .. :17ab[1]
     pla                                                               ; 18df: 68          h   :17ae[1]
     tay                                                               ; 18e0: a8          .   :17af[1]
     pla                                                               ; 18e1: 68          h   :17b0[1]
     tax                                                               ; 18e2: aa          .   :17b1[1]
     pla                                                               ; 18e3: 68          h   :17b2[1]
-    sta l00fc                                                         ; 18e4: 85 fc       ..  :17b3[1]
+    sta interrupt_accumulator                                         ; 18e4: 85 fc       ..  :17b3[1]
     pla                                                               ; 18e6: 68          h   :17b5[1]
     jmp (old_irq1v)                                                   ; 18e7: 6c b5 0a    l.. :17b6[1]
 
 ; $18ea referenced 1 time by $17a8
-sub_c17b9
+if_vsync_elapsed_then_set_toolbar_area_palette
     lda #2                                                            ; 18ea: a9 02       ..  :17b9[1]
-    bit system_via_ifr                                                ; 18ec: 2c 4d fe    ,M. :17bb[1]
-    beq c17f9                                                         ; 18ef: f0 39       .9  :17be[1]
-    lda four_entry_table1                                             ; 18f1: ad 04 11    ... :17c0[1]
+    bit system_via_ifr                                                ; 18ec: 2c 4d fe    ,M. :17bb[1]   ; check for vsync interrupt
+    beq return5                                                       ; 18ef: f0 39       .9  :17be[1]
+; reset timers
+    lda timingA_counter_low                                           ; 18f1: ad 04 11    ... :17c0[1]
     sta system_via_t1c_l                                              ; 18f4: 8d 44 fe    .D. :17c3[1]
-    lda l1105                                                         ; 18f7: ad 05 11    ... :17c6[1]
+    lda timingA_counter_high                                          ; 18f7: ad 05 11    ... :17c6[1]
     sta system_via_t1c_h                                              ; 18fa: 8d 45 fe    .E. :17c9[1]
-    lda l1108                                                         ; 18fd: ad 08 11    ... :17cc[1]
+    lda timing_latch_low                                              ; 18fd: ad 08 11    ... :17cc[1]
     sta system_via_t1l_l                                              ; 1900: 8d 46 fe    .F. :17cf[1]
-    lda l1109                                                         ; 1903: ad 09 11    ... :17d2[1]
+    lda timing_latch_high                                             ; 1903: ad 09 11    ... :17d2[1]
     sta system_via_t1l_h                                              ; 1906: 8d 47 fe    .G. :17d5[1]
     lda #$ff                                                          ; 1909: a9 ff       ..  :17d8[1]
     sta system_via_t2c_h                                              ; 190b: 8d 49 fe    .I. :17da[1]
     ldx #1                                                            ; 190e: a2 01       ..  :17dd[1]
-    ldy l175e                                                         ; 1910: ac 5e 17    .^. :17df[1]
-    jsr sub_c1825                                                     ; 1913: 20 25 18     %. :17e2[1]
+    ldy toolbar_colour                                                ; 1910: ac 5e 17    .^. :17df[1]
+    jsr change_palette_logical_colour_x_to_y                          ; 1913: 20 25 18     %. :17e2[1]
     lda copy_protection_flag                                          ; 1916: ad 03 11    ... :17e5[1]
     bpl c17f1                                                         ; 1919: 10 07       ..  :17e8[1]
     ldx #0                                                            ; 191b: a2 00       ..  :17ea[1]
     ldy #5                                                            ; 191d: a0 05       ..  :17ec[1]
-    jsr sub_c1825                                                     ; 191f: 20 25 18     %. :17ee[1]
+    jsr change_palette_logical_colour_x_to_y                          ; 191f: 20 25 18     %. :17ee[1]
 ; $1922 referenced 1 time by $17e8
 c17f1
     lda #0                                                            ; 1922: a9 00       ..  :17f1[1]
     sta l1824                                                         ; 1924: 8d 24 18    .$. :17f3[1]
     inc l178b                                                         ; 1927: ee 8b 17    ... :17f6[1]
 ; $192a referenced 1 time by $17be
-c17f9
+return5
     rts                                                               ; 192a: 60          `   :17f9[1]
 
 ; $192b referenced 1 time by $17ab
-sub_c17fa
+if_timer1_elapsed_then_set_main_area_palette
     lda #$40 ; '@'                                                    ; 192b: a9 40       .@  :17fa[1]
-    bit system_via_ifr                                                ; 192d: 2c 4d fe    ,M. :17fc[1]
-    beq c1823                                                         ; 1930: f0 22       ."  :17ff[1]
+    bit system_via_ifr                                                ; 192d: 2c 4d fe    ,M. :17fc[1]   ; check for timer1 elapsed
+    beq return6                                                       ; 1930: f0 22       ."  :17ff[1]
     lda l1824                                                         ; 1932: ad 24 18    .$. :1801[1]
-    bne c1823                                                         ; 1935: d0 1d       ..  :1804[1]
+    bne return6                                                       ; 1935: d0 1d       ..  :1804[1]
     ldx #1                                                            ; 1937: a2 01       ..  :1806[1]
-    ldy l1760                                                         ; 1939: ac 60 17    .`. :1808[1]
-    jsr sub_c1825                                                     ; 193c: 20 25 18     %. :180b[1]
+    ldy gameplay_area_colour                                          ; 1939: ac 60 17    .`. :1808[1]
+    jsr change_palette_logical_colour_x_to_y                          ; 193c: 20 25 18     %. :180b[1]
     lda copy_protection_flag                                          ; 193f: ad 03 11    ... :180e[1]
     bpl c181a                                                         ; 1942: 10 07       ..  :1811[1]
     ldx #0                                                            ; 1944: a2 00       ..  :1813[1]
     ldy #0                                                            ; 1946: a0 00       ..  :1815[1]
-    jsr sub_c1825                                                     ; 1948: 20 25 18     %. :1817[1]
+    jsr change_palette_logical_colour_x_to_y                          ; 1948: 20 25 18     %. :1817[1]
 ; $194b referenced 1 time by $1811
 c181a
     inc l1824                                                         ; 194b: ee 24 18    .$. :181a[1]
-    jsr sub_c3a12                                                     ; 194e: 20 12 3a     .: :181d[1]
-    jsr sub_c3a47                                                     ; 1951: 20 47 3a     G: :1820[1]
+    jsr update_main_keys                                              ; 194e: 20 12 3a     .: :181d[1]
+    jsr update_space_etc_keys                                         ; 1951: 20 47 3a     G: :1820[1]
 ; $1954 referenced 2 times by $17ff, $1804
-c1823
+return6
     rts                                                               ; 1954: 60          `   :1823[1]
 
 ; $1955 referenced 3 times by $17f3, $1801, $181a
@@ -1360,7 +1417,7 @@ l1824
     !byte 0                                                           ; 1955: 00          .   :1824[1]
 
 ; $1956 referenced 4 times by $17e2, $17ee, $180b, $1817
-sub_c1825
+change_palette_logical_colour_x_to_y
     txa                                                               ; 1956: 8a          .   :1825[1]
     lsr                                                               ; 1957: 4a          J   :1826[1]
     php                                                               ; 1958: 08          .   :1827[1]
@@ -1448,29 +1505,34 @@ define_character_ff_loop
 print_italic_rts
     jmp oswrch                                                        ; 19d4: 4c ee ff    L.. :18a3[1]   ; Write character 255
 
+; Random Number Generator
+; 
+; On Entry: A must be one less than a power of two, a mask to fill in with random bits
+; On Exit: A holds a random number up to the value of A on entry
 ; $19d7 referenced 3 times by $19dc, $1af2, $3f56
-mix_a_with_state
-    sta l0039                                                         ; 19d7: 85 39       .9  :18a6[1]
-    pha                                                               ; 19d9: 48          H   :18a8[1]
+get_random_number_up_to_a
+    sta l0039                                                         ; 19d7: 85 39       .9  :18a6[1]   ; store loop variable, all 1s in the lowest bits
+    pha                                                               ; 19d9: 48          H   :18a8[1]   ; remember mask
 ; $19da referenced 1 time by $18bd
-loop_c18a9
-    lda l0008                                                         ; 19da: a5 08       ..  :18a9[1]
+generate_random_bits_loop
+    lda rnd2                                                          ; 19da: a5 08       ..  :18a9[1]
     lsr                                                               ; 19dc: 4a          J   :18ab[1]
     lsr                                                               ; 19dd: 4a          J   :18ac[1]
     lsr                                                               ; 19de: 4a          J   :18ad[1]
-    eor l000a                                                         ; 19df: 45 0a       E.  :18ae[1]
+    eor rnd4                                                          ; 19df: 45 0a       E.  :18ae[1]
     ror                                                               ; 19e1: 6a          j   :18b0[1]
-    rol l0006                                                         ; 19e2: 26 06       &.  :18b1[1]
-    rol l0007                                                         ; 19e4: 26 07       &.  :18b3[1]
-    rol l0008                                                         ; 19e6: 26 08       &.  :18b5[1]
-    rol l0009                                                         ; 19e8: 26 09       &.  :18b7[1]
-    rol l000a                                                         ; 19ea: 26 0a       &.  :18b9[1]
-    lsr l0039                                                         ; 19ec: 46 39       F9  :18bb[1]
-    bne loop_c18a9                                                    ; 19ee: d0 ea       ..  :18bd[1]
-    pla                                                               ; 19f0: 68          h   :18bf[1]
-    and l0006                                                         ; 19f1: 25 06       %.  :18c0[1]
+    rol rnd0                                                          ; 19e2: 26 06       &.  :18b1[1]
+    rol rnd1                                                          ; 19e4: 26 07       &.  :18b3[1]
+    rol rnd2                                                          ; 19e6: 26 08       &.  :18b5[1]
+    rol rnd3                                                          ; 19e8: 26 09       &.  :18b7[1]
+    rol rnd4                                                          ; 19ea: 26 0a       &.  :18b9[1]
+    lsr l0039                                                         ; 19ec: 46 39       F9  :18bb[1]   ; update loop variable by shifting right
+    bne generate_random_bits_loop                                     ; 19ee: d0 ea       ..  :18bd[1]   ; loop back until enough random bits are generated
+    pla                                                               ; 19f0: 68          h   :18bf[1]   ; recall mask
+    and rnd0                                                          ; 19f1: 25 06       %.  :18c0[1]   ; AND the mask with the random bits
     rts                                                               ; 19f3: 60          `   :18c2[1]
 
+; $19f4 referenced 1 time by $131b
 something12_TODO
     lda x_entry_table5                                                ; 19f4: ad 66 09    .f. :18c3[1]
     bmi c1909                                                         ; 19f7: 30 41       0A  :18c6[1]
@@ -1579,14 +1641,13 @@ loop_c1957
     lda #2                                                            ; 1a94: a9 02       ..  :1963[1]
     rts                                                               ; 1a96: 60          `   :1965[1]
 
-; $1a97 referenced 2 times by $121f, $126f
-c1966
-    stx l196d                                                         ; 1a97: 8e 6d 19    .m. :1966[1]
-    sty l196e                                                         ; 1a9a: 8c 6e 19    .n. :1969[1]
-sub_c196c
-l196d = sub_c196c+1
-l196e = sub_c196c+2
-    jmp l0000                                                         ; 1a9d: 4c 00 00    L.. :196c[1]
+; use the value stored in the X,Y registers as an address to jump to
+; $1a97 referenced 4 times by $121f, $126f, $12c6, $1318
+jmp_xy
+    stx jmp_instruction+1                                             ; 1a97: 8e 6d 19    .m. :1966[1]
+    sty jmp_instruction+2                                             ; 1a9a: 8c 6e 19    .n. :1969[1]
+jmp_instruction
+    jmp 0                                                             ; 1a9d: 4c 00 00    L.. :196c[1]
 
 ; $1a9e referenced 1 time by $1966
 ; $1a9f referenced 1 time by $1969
@@ -1650,7 +1711,7 @@ c19d4
     ldx l1a0f                                                         ; 1b05: ae 0f 1a    ... :19d4[1]
     sta x_entry_table10,x                                             ; 1b08: 9d be 09    ... :19d7[1]
     lda #7                                                            ; 1b0b: a9 07       ..  :19da[1]
-    jsr mix_a_with_state                                              ; 1b0d: 20 a6 18     .. :19dc[1]
+    jsr get_random_number_up_to_a                                     ; 1b0d: 20 a6 18     .. :19dc[1]
     sta l09d4,x                                                       ; 1b10: 9d d4 09    ... :19df[1]
 ; $1b13 referenced 1 time by $1999
 c19e2
@@ -1817,7 +1878,7 @@ c1ae3
     clc                                                               ; 1c1e: 18          .   :1aed[1]
     beq c1b28                                                         ; 1c1f: f0 38       .8  :1aee[1]
     sbc #0                                                            ; 1c21: e9 00       ..  :1af0[1]
-    jsr mix_a_with_state                                              ; 1c23: 20 a6 18     .. :1af2[1]
+    jsr get_random_number_up_to_a                                     ; 1c23: 20 a6 18     .. :1af2[1]
     jmp c1b14                                                         ; 1c26: 4c 14 1b    L.. :1af5[1]
 
 ; $1c29 referenced 1 time by $1ae9
@@ -1933,8 +1994,10 @@ something15_TODO
 c1b8d
     jmp c1c9d                                                         ; 1cbe: 4c 9d 1c    L.. :1b8d[1]
 
-    !byte $a9,   3, $85, $44, $a0, $17                                ; 1cc1: a9 03 85... ... :1b90[1]
-
+something26_TODO
+    lda #3                                                            ; 1cc1: a9 03       ..  :1b90[1]
+    sta l0044                                                         ; 1cc3: 85 44       .D  :1b92[1]
+    ldy #$17                                                          ; 1cc5: a0 17       ..  :1b94[1]
 ; $1cc7 referenced 1 time by $1bc7
 c1b96
     ldx #$27 ; '''                                                    ; 1cc7: a2 27       .'  :1b96[1]
@@ -2274,14 +2337,14 @@ c1e33
     adc some_word + 1                                                 ; 1f66: 65 3d       e=  :1e35[1]
     bcs c1e3d                                                         ; 1f68: b0 04       ..  :1e37[1]
     cmp #$19                                                          ; 1f6a: c9 19       ..  :1e39[1]
-    bcc c1e43                                                         ; 1f6c: 90 06       ..  :1e3b[1]
+    bcc return7                                                       ; 1f6c: 90 06       ..  :1e3b[1]
 ; $1f6e referenced 1 time by $1e37
 c1e3d
     lda #$18                                                          ; 1f6e: a9 18       ..  :1e3d[1]
     sbc l0071                                                         ; 1f70: e5 71       .q  :1e3f[1]
     sta l0073                                                         ; 1f72: 85 73       .s  :1e41[1]
 ; $1f74 referenced 1 time by $1e3b
-c1e43
+return7
     rts                                                               ; 1f74: 60          `   :1e43[1]
 
 ; $1f75 referenced 1 time by $1b61
@@ -2451,13 +2514,13 @@ c1f23
     ldy l004b                                                         ; 2059: a4 4b       .K  :1f28[1]
     and #3                                                            ; 205b: 29 03       ).  :1f2a[1]
 ; $205d referenced 1 time by $1f2f
-loop_c1f2c
+return8
     rts                                                               ; 205d: 60          `   :1f2c[1]
 
 ; $205e referenced 2 times by $1efc, $1f00
 c1f2d
     lda l0044                                                         ; 205e: a5 44       .D  :1f2d[1]
-    bpl loop_c1f2c                                                    ; 2060: 10 fb       ..  :1f2f[1]
+    bpl return8                                                       ; 2060: 10 fb       ..  :1f2f[1]
     stx l004a                                                         ; 2062: 86 4a       .J  :1f31[1]
     sty l004b                                                         ; 2064: 84 4b       .K  :1f33[1]
     ldx #0                                                            ; 2066: a2 00       ..  :1f35[1]
@@ -2577,6 +2640,7 @@ c1fc1
     pla                                                               ; 2106: 68          h   :1fd5[1]
     rts                                                               ; 2107: 60          `   :1fd6[1]
 
+; $2108 referenced 1 time by $12da
 something16_TODO
     lda l0052                                                         ; 2108: a5 52       .R  :1fd7[1]
     pha                                                               ; 210a: 48          H   :1fd9[1]
@@ -2854,7 +2918,7 @@ c2197
 ; $22cb referenced 1 time by $20eb
 sub_c219a
     lda x_entry_table9,x                                              ; 22cb: bd a8 09    ... :219a[1]
-    beq c21ff                                                         ; 22ce: f0 60       .`  :219d[1]
+    beq return9                                                       ; 22ce: f0 60       .`  :219d[1]
     lda x_entry_table13,x                                             ; 22d0: bd 50 09    .P. :219f[1]
     sta l0018                                                         ; 22d3: 85 18       ..  :21a2[1]
     lda x_entry_table5,x                                              ; 22d5: bd 66 09    .f. :21a4[1]
@@ -2880,10 +2944,10 @@ sub_c219a
 c21d0
     jsr sprite_op                                                     ; 2301: 20 8d 13     .. :21d0[1]
     cpx #1                                                            ; 2304: e0 01       ..  :21d3[1]
-    bne c21ff                                                         ; 2306: d0 28       .(  :21d5[1]
+    bne return9                                                       ; 2306: d0 28       .(  :21d5[1]
     lda current_player_character                                      ; 2308: a5 48       .H  :21d7[1]
     cmp #4                                                            ; 230a: c9 04       ..  :21d9[1]
-    bne c21ff                                                         ; 230c: d0 22       ."  :21db[1]
+    bne return9                                                       ; 230c: d0 22       ."  :21db[1]
     stx l0065                                                         ; 230e: 86 65       .e  :21dd[1]
     ldx #0                                                            ; 2310: a2 00       ..  :21df[1]
     jsr sub_c211e                                                     ; 2312: 20 1e 21     .! :21e1[1]
@@ -2891,7 +2955,7 @@ c21d0
     ora #0                                                            ; 2317: 09 00       ..  :21e6[1]
     beq c21ef                                                         ; 2319: f0 05       ..  :21e8[1]
     lda l0116                                                         ; 231b: ad 16 01    ... :21ea[1]
-    beq c21ff                                                         ; 231e: f0 10       ..  :21ed[1]
+    beq return9                                                       ; 231e: f0 10       ..  :21ed[1]
 ; $2320 referenced 1 time by $21e8
 c21ef
     lda x_entry_table10,x                                             ; 2320: bd be 09    ... :21ef[1]
@@ -2902,7 +2966,7 @@ c21ef
     sta l0016                                                         ; 232b: 85 16       ..  :21fa[1]
     jsr sprite_op                                                     ; 232d: 20 8d 13     .. :21fc[1]
 ; $2330 referenced 4 times by $219d, $21d5, $21db, $21ed
-c21ff
+return9
     rts                                                               ; 2330: 60          `   :21ff[1]
 
 ; $2331 referenced 3 times by $2e89, $30ad, $333e
@@ -3042,7 +3106,7 @@ c22c4
     tay                                                               ; 23fc: a8          .   :22cb[1]
     rts                                                               ; 23fd: 60          `   :22cc[1]
 
-; $23fe referenced 2 times by $2322, $39be
+; $23fe referenced 3 times by $130f, $2322, $39be
 something19_TODO
     lda current_player_character                                      ; 23fe: a5 48       .H  :22cd[1]
     beq c22e0                                                         ; 2400: f0 0f       ..  :22cf[1]
@@ -3052,7 +3116,7 @@ something19_TODO
     beq c22e6                                                         ; 2408: f0 0d       ..  :22d7[1]
     cmp #6                                                            ; 240a: c9 06       ..  :22d9[1]
     beq c22e9                                                         ; 240c: f0 0c       ..  :22db[1]
-    jmp c22ec                                                         ; 240e: 4c ec 22    L." :22dd[1]
+    jmp return10                                                      ; 240e: 4c ec 22    L." :22dd[1]
 
 ; $2411 referenced 1 time by $22cf
 c22e0
@@ -3071,7 +3135,7 @@ c22e9
     jmp c31d8                                                         ; 241a: 4c d8 31    L.1 :22e9[1]
 
 ; $241d referenced 1 time by $22dd
-c22ec
+return10
     rts                                                               ; 241d: 60          `   :22ec[1]
 
 ; $241e referenced 5 times by $230c, $232b, $2d89, $2fca, $31da
@@ -3128,7 +3192,7 @@ c2334
     rts                                                               ; 2467: 60          `   :2336[1]
 
 ; Transform the player into a new form.
-; $2468 referenced 2 times by $2b61, $2e3c
+; $2468 referenced 3 times by $12d6, $2b61, $2e3c
 transform
     sta new_player_character                                          ; 2468: 85 4d       .M  :2337[1]
     lda #0                                                            ; 246a: a9 00       ..  :2339[1]
@@ -3136,7 +3200,7 @@ transform
     sta l0052                                                         ; 246f: 85 52       .R  :233e[1]
     lda new_menu_index                                                ; 2471: a5 29       .)  :2340[1]
     cmp l296d                                                         ; 2473: cd 6d 29    .m) :2342[1]
-    bcc c2357                                                         ; 2476: 90 10       ..  :2345[1]
+    bcc return11                                                      ; 2476: 90 10       ..  :2345[1]
     lda #$ff                                                          ; 2478: a9 ff       ..  :2347[1]
     ldx #$d0                                                          ; 247a: a2 d0       ..  :2349[1]
     ldy #$38 ; '8'                                                    ; 247c: a0 38       .8  :234b[1]
@@ -3145,7 +3209,7 @@ transform
     ldy #$38 ; '8'                                                    ; 2483: a0 38       .8  :2352[1]
     jsr sub_c38f6                                                     ; 2485: 20 f6 38     .8 :2354[1]
 ; $2488 referenced 1 time by $2345
-c2357
+return11
     rts                                                               ; 2488: 60          `   :2357[1]
 
 ; $2489 referenced 2 times by $2306, $39c9
@@ -3163,12 +3227,12 @@ sub_c2358
 sub_c236b
     lda x_entry_table9                                                ; 249c: ad a8 09    ... :236b[1]
     and x_entry_table1                                                ; 249f: 2d b3 09    -.. :236e[1]
-    beq c23a8                                                         ; 24a2: f0 35       .5  :2371[1]
+    beq return12                                                      ; 24a2: f0 35       .5  :2371[1]
     lda #2                                                            ; 24a4: a9 02       ..  :2373[1]
     sta l2551                                                         ; 24a6: 8d 51 25    .Q% :2375[1]
     lda #0                                                            ; 24a9: a9 00       ..  :2378[1]
     jsr sub_c2894                                                     ; 24ab: 20 94 28     .( :237a[1]
-    beq c23a8                                                         ; 24ae: f0 29       .)  :237d[1]
+    beq return12                                                      ; 24ae: f0 29       .)  :237d[1]
     lda x_entry_table4                                                ; 24b0: ad 87 09    ... :237f[1]
     sec                                                               ; 24b3: 38          8   :2382[1]
     sbc x_entry_table6                                                ; 24b4: ed 7c 09    .|. :2383[1]
@@ -3176,22 +3240,22 @@ sub_c236b
     lda x_entry_table8                                                ; 24b9: ad 9d 09    ... :2388[1]
     sbc x_entry_table7                                                ; 24bc: ed 92 09    ... :238b[1]
     bmi c23a5                                                         ; 24bf: 30 15       0.  :238e[1]
-    bpl c23a8                                                         ; 24c1: 10 16       ..  :2390[1]
+    bpl return12                                                      ; 24c1: 10 16       ..  :2390[1]
 ; $24c3 referenced 1 time by $2386
 c2392
     lda envelope_3                                                    ; 24c3: ad d8 38    ..8 :2392[1]
     and #2                                                            ; 24c6: 29 02       ).  :2395[1]
-    beq c23a8                                                         ; 24c8: f0 0f       ..  :2397[1]
+    beq return12                                                      ; 24c8: f0 0f       ..  :2397[1]
     lda #2                                                            ; 24ca: a9 02       ..  :2399[1]
     sta l2551                                                         ; 24cc: 8d 51 25    .Q% :239b[1]
     lda #$0b                                                          ; 24cf: a9 0b       ..  :239e[1]
     jsr sub_c2894                                                     ; 24d1: 20 94 28     .( :23a0[1]
-    bne c23a8                                                         ; 24d4: d0 03       ..  :23a3[1]
+    bne return12                                                      ; 24d4: d0 03       ..  :23a3[1]
 ; $24d6 referenced 1 time by $238e
 c23a5
     jsr sub_c23a9                                                     ; 24d6: 20 a9 23     .# :23a5[1]
 ; $24d9 referenced 5 times by $2371, $237d, $2390, $2397, $23a3
-c23a8
+return12
     rts                                                               ; 24d9: 60          `   :23a8[1]
 
 ; $24da referenced 1 time by $23a5
@@ -3620,11 +3684,11 @@ c2626
 ; $2780 referenced 1 time by $263a
 c264f
     lda l0053                                                         ; 2780: a5 53       .S  :264f[1]
-    bne c2659                                                         ; 2782: d0 06       ..  :2651[1]
+    bne return13                                                      ; 2782: d0 06       ..  :2651[1]
     jsr sub_c2eb8                                                     ; 2784: 20 b8 2e     .. :2653[1]
     jsr sub_c236b                                                     ; 2787: 20 6b 23     k# :2656[1]
 ; $278a referenced 1 time by $2651
-c2659
+return13
     rts                                                               ; 278a: 60          `   :2659[1]
 
 ; $278b referenced 3 times by $2614, $2649, $28a9
@@ -3660,13 +3724,13 @@ c2676
 loop_c2684
     jsr sub_c1efa                                                     ; 27b5: 20 fa 1e     .. :2684[1]
     cmp #3                                                            ; 27b8: c9 03       ..  :2687[1]
-    beq c2692                                                         ; 27ba: f0 07       ..  :2689[1]
+    beq return14                                                      ; 27ba: f0 07       ..  :2689[1]
     dey                                                               ; 27bc: 88          .   :268b[1]
     dec l0080                                                         ; 27bd: c6 80       ..  :268c[1]
     bpl loop_c2684                                                    ; 27bf: 10 f4       ..  :268e[1]
     inc l007d                                                         ; 27c1: e6 7d       .}  :2690[1]
 ; $27c3 referenced 1 time by $2689
-c2692
+return14
     rts                                                               ; 27c3: 60          `   :2692[1]
 
 ; $27c4 referenced 1 time by $264c
@@ -3674,7 +3738,7 @@ sub_c2693
     ldx l0053                                                         ; 27c4: a6 53       .S  :2693[1]
     lda l007c                                                         ; 27c6: a5 7c       .|  :2695[1]
     cmp l007d                                                         ; 27c8: c5 7d       .}  :2697[1]
-    beq c26e4                                                         ; 27ca: f0 49       .I  :2699[1]
+    beq return15                                                      ; 27ca: f0 49       .I  :2699[1]
     bcc c26c2                                                         ; 27cc: 90 25       .%  :269b[1]
     lda l0070                                                         ; 27ce: a5 70       .p  :269d[1]
     and #7                                                            ; 27d0: 29 07       ).  :269f[1]
@@ -3691,7 +3755,7 @@ sub_c2693
     lda envelope_3,x                                                  ; 27e8: bd d8 38    ..8 :26b7[1]
     ora #1                                                            ; 27eb: 09 01       ..  :26ba[1]
     sta envelope_3,x                                                  ; 27ed: 9d d8 38    ..8 :26bc[1]
-    jmp c26e4                                                         ; 27f0: 4c e4 26    L.& :26bf[1]
+    jmp return15                                                      ; 27f0: 4c e4 26    L.& :26bf[1]
 
 ; $27f3 referenced 1 time by $269b
 c26c2
@@ -3711,7 +3775,7 @@ c26c2
     ora #4                                                            ; 2810: 09 04       ..  :26df[1]
     sta envelope_3,x                                                  ; 2812: 9d d8 38    ..8 :26e1[1]
 ; $2815 referenced 2 times by $2699, $26bf
-c26e4
+return15
     rts                                                               ; 2815: 60          `   :26e4[1]
 
 ; $2816 referenced 3 times by $2630, $2787, $28ac
@@ -3747,13 +3811,13 @@ c2701
 loop_c270f
     jsr sub_c1efa                                                     ; 2840: 20 fa 1e     .. :270f[1]
     cmp #3                                                            ; 2843: c9 03       ..  :2712[1]
-    beq c271d                                                         ; 2845: f0 07       ..  :2714[1]
+    beq return16                                                      ; 2845: f0 07       ..  :2714[1]
     dex                                                               ; 2847: ca          .   :2716[1]
     dec l0080                                                         ; 2848: c6 80       ..  :2717[1]
     bpl loop_c270f                                                    ; 284a: 10 f4       ..  :2719[1]
     inc l007f                                                         ; 284c: e6 7f       ..  :271b[1]
 ; $284e referenced 1 time by $2714
-c271d
+return16
     rts                                                               ; 284e: 60          `   :271d[1]
 
 ; $284f referenced 1 time by $2633
@@ -3761,7 +3825,7 @@ sub_c271e
     ldx l0053                                                         ; 284f: a6 53       .S  :271e[1]
     lda l007e                                                         ; 2851: a5 7e       .~  :2720[1]
     cmp l007f                                                         ; 2853: c5 7f       ..  :2722[1]
-    beq c276f                                                         ; 2855: f0 49       .I  :2724[1]
+    beq return17                                                      ; 2855: f0 49       .I  :2724[1]
     bcc c274d                                                         ; 2857: 90 25       .%  :2726[1]
     lda l0074                                                         ; 2859: a5 74       .t  :2728[1]
     and #7                                                            ; 285b: 29 07       ).  :272a[1]
@@ -3778,7 +3842,7 @@ sub_c271e
     lda envelope_3,x                                                  ; 2873: bd d8 38    ..8 :2742[1]
     ora #8                                                            ; 2876: 09 08       ..  :2745[1]
     sta envelope_3,x                                                  ; 2878: 9d d8 38    ..8 :2747[1]
-    jmp c276f                                                         ; 287b: 4c 6f 27    Lo' :274a[1]
+    jmp return17                                                      ; 287b: 4c 6f 27    Lo' :274a[1]
 
 ; $287e referenced 1 time by $2726
 c274d
@@ -3798,7 +3862,7 @@ c274d
     ora #2                                                            ; 289b: 09 02       ..  :276a[1]
     sta envelope_3,x                                                  ; 289d: 9d d8 38    ..8 :276c[1]
 ; $28a0 referenced 2 times by $2724, $274a
-c276f
+return17
     rts                                                               ; 28a0: 60          `   :276f[1]
 
 ; $28a1 referenced 1 time by $23ca
@@ -4240,10 +4304,10 @@ c2a33
     sta current_menu_index                                            ; 2b66: 85 2e       ..  :2a35[1]
     rts                                                               ; 2b68: 60          `   :2a37[1]
 
-; $2b69 referenced 1 time by $2aba
+; $2b69 referenced 2 times by $1306, $2aba
 something20_TODO
-    ldx four_entry_table1                                             ; 2b69: ae 04 11    ... :2a38[1]
-    ldy l1105                                                         ; 2b6c: ac 05 11    ... :2a3b[1]
+    ldx timingA_counter_low                                           ; 2b69: ae 04 11    ... :2a38[1]
+    ldy timingA_counter_high                                          ; 2b6c: ac 05 11    ... :2a3b[1]
     jsr wait_for_timer_2_using_yx                                     ; 2b6f: 20 91 17     .. :2a3e[1]
     jsr sub_c29a1                                                     ; 2b72: 20 a1 29     .) :2a41[1]
     jsr c3a8f                                                         ; 2b75: 20 8f 3a     .: :2a44[1]
@@ -4324,24 +4388,24 @@ c2ac4
     bne c2ac4                                                         ; 2bf6: d0 fd       ..  :2ac5[1]
     dex                                                               ; 2bf8: ca          .   :2ac7[1]
     bne c2ac4                                                         ; 2bf9: d0 fa       ..  :2ac8[1]
-    jmp c2ada                                                         ; 2bfb: 4c da 2a    L.* :2aca[1]
+    jmp return18                                                      ; 2bfb: 4c da 2a    L.* :2aca[1]
 
 ; $2bfe referenced 1 time by $2a86
 c2acd
     lda another_menu_index                                            ; 2bfe: a5 25       .%  :2acd[1]
     cmp l296d                                                         ; 2c00: cd 6d 29    .m) :2acf[1]
-    bcs c2ada                                                         ; 2c03: b0 06       ..  :2ad2[1]
+    bcs return18                                                      ; 2c03: b0 06       ..  :2ad2[1]
     jsr sub_c3aa2                                                     ; 2c05: 20 a2 3a     .: :2ad4[1]
-    jsr sub_c3a12                                                     ; 2c08: 20 12 3a     .: :2ad7[1]
+    jsr update_main_keys                                              ; 2c08: 20 12 3a     .: :2ad7[1]
 ; $2c0b referenced 2 times by $2aca, $2ad2
-c2ada
+return18
     rts                                                               ; 2c0b: 60          `   :2ada[1]
 
 ; $2c0c referenced 1 time by $2a78
 sub_c2adb
     ldx new_menu_index                                                ; 2c0c: a6 29       .)  :2adb[1]
     cpx l296d                                                         ; 2c0e: ec 6d 29    .m) :2add[1]
-    bcs c2af5                                                         ; 2c11: b0 13       ..  :2ae0[1]
+    bcs return19                                                      ; 2c11: b0 13       ..  :2ae0[1]
     lda seventeen_entry_table1,x                                      ; 2c13: bd 5c 29    .\) :2ae2[1]
     cmp #7                                                            ; 2c16: c9 07       ..  :2ae5[1]
     beq c2af6                                                         ; 2c18: f0 0d       ..  :2ae7[1]
@@ -4352,7 +4416,7 @@ sub_c2adb
     cmp #3                                                            ; 2c22: c9 03       ..  :2af1[1]
     beq c2afc                                                         ; 2c24: f0 07       ..  :2af3[1]
 ; $2c26 referenced 1 time by $2ae0
-c2af5
+return19
     rts                                                               ; 2c26: 60          `   :2af5[1]
 
 ; $2c27 referenced 1 time by $2ae7
@@ -4403,39 +4467,39 @@ c2b2e
 sub_c2b37
     ldx new_menu_index                                                ; 2c68: a6 29       .)  :2b37[1]
     cpx l296d                                                         ; 2c6a: ec 6d 29    .m) :2b39[1]
-    bcc c2b64                                                         ; 2c6d: 90 26       .&  :2b3c[1]
+    bcc return20                                                      ; 2c6d: 90 26       .&  :2b3c[1]
     cpx l296e                                                         ; 2c6f: ec 6e 29    .n) :2b3e[1]
-    bcs c2b64                                                         ; 2c72: b0 21       .!  :2b41[1]
+    bcs return20                                                      ; 2c72: b0 21       .!  :2b41[1]
     lda current_player_character                                      ; 2c74: a5 48       .H  :2b43[1]
     cmp new_player_character                                          ; 2c76: c5 4d       .M  :2b45[1]
-    bne c2b64                                                         ; 2c78: d0 1b       ..  :2b47[1]
+    bne return20                                                      ; 2c78: d0 1b       ..  :2b47[1]
     lda l09df                                                         ; 2c7a: ad df 09    ... :2b49[1]
-    beq c2b64                                                         ; 2c7d: f0 16       ..  :2b4c[1]
+    beq return20                                                      ; 2c7d: f0 16       ..  :2b4c[1]
     lda #0                                                            ; 2c7f: a9 00       ..  :2b4e[1]
     sta l0052                                                         ; 2c81: 85 52       .R  :2b50[1]
     lda seventeen_entry_table1,x                                      ; 2c83: bd 5c 29    .\) :2b52[1]
     cmp current_player_character                                      ; 2c86: c5 48       .H  :2b55[1]
-    beq c2b64                                                         ; 2c88: f0 0b       ..  :2b57[1]
+    beq return20                                                      ; 2c88: f0 0b       ..  :2b57[1]
     jsr decrement_current_transformations_remaining                   ; 2c8a: 20 8c 2c     ., :2b59[1]
-    bcc c2b64                                                         ; 2c8d: 90 06       ..  :2b5c[1]   ; branch if no transformations remaining before decrement
+    bcc return20                                                      ; 2c8d: 90 06       ..  :2b5c[1]   ; branch if no transformations remaining before decrement
     jsr update_displayed_transformations_remaining                    ; 2c8f: 20 31 01     1. :2b5e[1]
     jsr transform                                                     ; 2c92: 20 37 23     7# :2b61[1]
 ; $2c95 referenced 6 times by $2b3c, $2b41, $2b47, $2b4c, $2b57, $2b5c
-c2b64
+return20
     rts                                                               ; 2c95: 60          `   :2b64[1]
 
 ; $2c96 referenced 1 time by $2a7e
 sub_c2b65
     ldx new_menu_index                                                ; 2c96: a6 29       .)  :2b65[1]
     cpx l296e                                                         ; 2c98: ec 6e 29    .n) :2b67[1]
-    bcc c2b86                                                         ; 2c9b: 90 1a       ..  :2b6a[1]
+    bcc return21                                                      ; 2c9b: 90 1a       ..  :2b6a[1]
     lda current_player_character                                      ; 2c9d: a5 48       .H  :2b6c[1]
     cmp #4                                                            ; 2c9f: c9 04       ..  :2b6e[1]
-    bne c2b86                                                         ; 2ca1: d0 14       ..  :2b70[1]
+    bne return21                                                      ; 2ca1: d0 14       ..  :2b70[1]
     cmp new_player_character                                          ; 2ca3: c5 4d       .M  :2b72[1]
-    bne c2b86                                                         ; 2ca5: d0 10       ..  :2b74[1]
+    bne return21                                                      ; 2ca5: d0 10       ..  :2b74[1]
     lda l09df                                                         ; 2ca7: ad df 09    ... :2b76[1]
-    beq c2b86                                                         ; 2caa: f0 0b       ..  :2b79[1]
+    beq return21                                                      ; 2caa: f0 0b       ..  :2b79[1]
     lda seventeen_entry_table1,x                                      ; 2cac: bd 5c 29    .\) :2b7b[1]
     cmp l0052                                                         ; 2caf: c5 52       .R  :2b7e[1]
     bne c2b84                                                         ; 2cb1: d0 02       ..  :2b80[1]
@@ -4444,7 +4508,7 @@ sub_c2b65
 c2b84
     sta l0052                                                         ; 2cb5: 85 52       .R  :2b84[1]
 ; $2cb7 referenced 4 times by $2b6a, $2b70, $2b74, $2b79
-c2b86
+return21
     rts                                                               ; 2cb7: 60          `   :2b86[1]
 
 something21_TODO
@@ -4758,13 +4822,13 @@ c2de4
 
 ; $2f24 referenced 1 time by $2dcd
 c2df3
-    ldx player_x_movement_direction2                                  ; 2f24: ae c9 3a    ..: :2df3[1]
+    ldx player_move_direction_requested                               ; 2f24: ae c9 3a    ..: :2df3[1]
     beq c2e1b                                                         ; 2f27: f0 23       .#  :2df6[1]
     lda #$36 ; '6'                                                    ; 2f29: a9 36       .6  :2df8[1]
     cpx x_entry_table10                                               ; 2f2b: ec be 09    ... :2dfa[1]
     bne c2e0f                                                         ; 2f2e: d0 10       ..  :2dfd[1]
     lda #$29 ; ')'                                                    ; 2f30: a9 29       .)  :2dff[1]
-    ldx return_flag2                                                  ; 2f32: ae c7 3a    ..: :2e01[1]
+    ldx jump_requested                                                ; 2f32: ae c7 3a    ..: :2e01[1]
     beq c2e0f                                                         ; 2f35: f0 09       ..  :2e04[1]
     ldx l09df                                                         ; 2f37: ae df 09    ... :2e06[1]
     cpx #$96                                                          ; 2f3a: e0 96       ..  :2e09[1]
@@ -4787,7 +4851,7 @@ c2e1b
     beq c2e42                                                         ; 2f56: f0 1b       ..  :2e25[1]
     cmp #$36 ; '6'                                                    ; 2f58: c9 36       .6  :2e27[1]
     beq c2e42                                                         ; 2f5a: f0 17       ..  :2e29[1]
-    lda return_flag2                                                  ; 2f5c: ad c7 3a    ..: :2e2b[1]
+    lda jump_requested                                                ; 2f5c: ad c7 3a    ..: :2e2b[1]
     beq c2e44                                                         ; 2f5f: f0 14       ..  :2e2e[1]
     lda l0052                                                         ; 2f61: a5 52       .R  :2e30[1]
     beq c2e44                                                         ; 2f63: f0 10       ..  :2e32[1]
@@ -4804,7 +4868,7 @@ c2e42
 ; $2f75 referenced 5 times by $2e12, $2e18, $2e2e, $2e32, $2e38
 c2e44
     ldx #0                                                            ; 2f75: a2 00       ..  :2e44[1]
-    lda player_x_movement_direction2                                  ; 2f77: ad c9 3a    ..: :2e46[1]
+    lda player_move_direction_requested                               ; 2f77: ad c9 3a    ..: :2e46[1]
     beq c2e4c                                                         ; 2f7a: f0 01       ..  :2e49[1]
     inx                                                               ; 2f7c: e8          .   :2e4b[1]
 ; $2f7d referenced 1 time by $2e49
@@ -4958,7 +5022,7 @@ c2fe7
     bne c3023                                                         ; 312c: d0 26       .&  :2ffb[1]
     cpy #$45 ; 'E'                                                    ; 312e: c0 45       .E  :2ffd[1]
     bne c300e                                                         ; 3130: d0 0d       ..  :2fff[1]
-    lda player_x_movement_direction2                                  ; 3132: ad c9 3a    ..: :3001[1]
+    lda player_move_direction_requested                               ; 3132: ad c9 3a    ..: :3001[1]
     cmp x_entry_table10                                               ; 3135: cd be 09    ... :3004[1]
     bne c3023                                                         ; 3138: d0 1a       ..  :3007[1]
     ldy #$58 ; 'X'                                                    ; 313a: a0 58       .X  :3009[1]
@@ -5006,13 +5070,13 @@ c3044
 
 ; $3184 referenced 1 time by $302d
 c3053
-    ldx player_x_movement_direction2                                  ; 3184: ae c9 3a    ..: :3053[1]
+    ldx player_move_direction_requested                               ; 3184: ae c9 3a    ..: :3053[1]
     beq c3074                                                         ; 3187: f0 1c       ..  :3056[1]
     lda #$36 ; '6'                                                    ; 3189: a9 36       .6  :3058[1]
     cpx x_entry_table10                                               ; 318b: ec be 09    ... :305a[1]
     bne c3068                                                         ; 318e: d0 09       ..  :305d[1]
     lda #$29 ; ')'                                                    ; 3190: a9 29       .)  :305f[1]
-    ldx return_flag2                                                  ; 3192: ae c7 3a    ..: :3061[1]
+    ldx jump_requested                                                ; 3192: ae c7 3a    ..: :3061[1]
     beq c3068                                                         ; 3195: f0 02       ..  :3064[1]
     lda #$45 ; 'E'                                                    ; 3197: a9 45       .E  :3066[1]
 ; $3199 referenced 2 times by $305d, $3064
@@ -5040,7 +5104,7 @@ c3088
 ; $31bb referenced 4 times by $306b, $3071, $3079, $3086
 c308a
     ldx #0                                                            ; 31bb: a2 00       ..  :308a[1]
-    lda player_x_movement_direction2                                  ; 31bd: ad c9 3a    ..: :308c[1]
+    lda player_move_direction_requested                               ; 31bd: ad c9 3a    ..: :308c[1]
     beq c3092                                                         ; 31c0: f0 01       ..  :308f[1]
     inx                                                               ; 31c2: e8          .   :3091[1]
 ; $31c3 referenced 1 time by $308f
@@ -5145,7 +5209,7 @@ c31ff
     beq c3222                                                         ; 3339: f0 18       ..  :3208[1]
     cmp #$45 ; 'E'                                                    ; 333b: c9 45       .E  :320a[1]
     beq c3222                                                         ; 333d: f0 14       ..  :320c[1]
-    lda return_flag2                                                  ; 333f: ad c7 3a    ..: :320e[1]
+    lda jump_requested                                                ; 333f: ad c7 3a    ..: :320e[1]
     beq c3276                                                         ; 3342: f0 63       .c  :3211[1]
     jsr sub_c336e                                                     ; 3344: 20 6e 33     n3 :3213[1]
     beq c3276                                                         ; 3347: f0 5e       .^  :3216[1]
@@ -5159,7 +5223,7 @@ c3222
     ldx #$d4                                                          ; 3353: a2 d4       ..  :3222[1]
     jsr sub_c336e                                                     ; 3355: 20 6e 33     n3 :3224[1]
     beq c325f                                                         ; 3358: f0 36       .6  :3227[1]
-    lda return_flag2                                                  ; 335a: ad c7 3a    ..: :3229[1]
+    lda jump_requested                                                ; 335a: ad c7 3a    ..: :3229[1]
     beq c324c                                                         ; 335d: f0 1e       ..  :322c[1]
     dec l2550                                                         ; 335f: ce 50 25    .P% :322e[1]
     lda #0                                                            ; 3362: a9 00       ..  :3231[1]
@@ -5168,8 +5232,8 @@ c3222
     ldx #$51 ; 'Q'                                                    ; 3369: a2 51       .Q  :3238[1]
     lda l31d7                                                         ; 336b: ad d7 31    ..1 :323a[1]
     bne c3247                                                         ; 336e: d0 08       ..  :323d[1]
-    lda z_flag2                                                       ; 3370: ad ca 3a    ..: :323f[1]
-    ora x_flag2                                                       ; 3373: 0d cb 3a    ..: :3242[1]
+    lda move_left_requested                                           ; 3370: ad ca 3a    ..: :323f[1]
+    ora move_right_requested                                          ; 3373: 0d cb 3a    ..: :3242[1]
     beq c3269                                                         ; 3376: f0 22       ."  :3245[1]
 ; $3378 referenced 2 times by $3236, $323d
 c3247
@@ -5179,7 +5243,7 @@ c3247
 ; $337d referenced 1 time by $322c
 c324c
     ldx #$58 ; 'X'                                                    ; 337d: a2 58       .X  :324c[1]
-    lda player_x_movement_direction2                                  ; 337f: ad c9 3a    ..: :324e[1]
+    lda player_move_direction_requested                               ; 337f: ad c9 3a    ..: :324e[1]
     cmp x_entry_table10                                               ; 3382: cd be 09    ... :3251[1]
     beq c325f                                                         ; 3385: f0 09       ..  :3254[1]
     ldx #$49 ; 'I'                                                    ; 3387: a2 49       .I  :3256[1]
@@ -5254,9 +5318,9 @@ c32b1
 
 ; $33f9 referenced 1 time by $32af
 c32c8
-    ldx player_x_movement_direction2                                  ; 33f9: ae c9 3a    ..: :32c8[1]
+    ldx player_move_direction_requested                               ; 33f9: ae c9 3a    ..: :32c8[1]
     bne c32de                                                         ; 33fc: d0 11       ..  :32cb[1]
-    lda return_flag2                                                  ; 33fe: ad c7 3a    ..: :32cd[1]
+    lda jump_requested                                                ; 33fe: ad c7 3a    ..: :32cd[1]
     beq c3301                                                         ; 3401: f0 2f       ./  :32d0[1]
     lda l09df                                                         ; 3403: ad df 09    ... :32d2[1]
     cmp #$d4                                                          ; 3406: c9 d4       ..  :32d5[1]
@@ -5270,7 +5334,7 @@ c32de
     cpx x_entry_table10                                               ; 3411: ec be 09    ... :32e0[1]
     bne c32f5                                                         ; 3414: d0 10       ..  :32e3[1]
     lda #$29 ; ')'                                                    ; 3416: a9 29       .)  :32e5[1]
-    ldx return_flag2                                                  ; 3418: ae c7 3a    ..: :32e7[1]
+    ldx jump_requested                                                ; 3418: ae c7 3a    ..: :32e7[1]
     beq c32f5                                                         ; 341b: f0 09       ..  :32ea[1]
     ldx l09df                                                         ; 341d: ae df 09    ... :32ec[1]
     cpx #$d4                                                          ; 3420: e0 d4       ..  :32ef[1]
@@ -5301,7 +5365,7 @@ c3311
 ; $3447 referenced 4 times by $32f8, $32fe, $330f, $3313
 c3316
     ldx #0                                                            ; 3447: a2 00       ..  :3316[1]
-    lda player_x_movement_direction2                                  ; 3449: ad c9 3a    ..: :3318[1]
+    lda player_move_direction_requested                               ; 3449: ad c9 3a    ..: :3318[1]
     beq c331e                                                         ; 344c: f0 01       ..  :331b[1]
     inx                                                               ; 344e: e8          .   :331d[1]
 ; $344f referenced 1 time by $331b
@@ -5479,9 +5543,9 @@ sub_c344b
     ldy new_menu_index                                                ; 357c: a4 29       .)  :344b[1]
     lda seventeen_entry_table1,y                                      ; 357e: b9 5c 29    .\) :344d[1]
     cmp #3                                                            ; 3581: c9 03       ..  :3450[1]
-    bne c3496                                                         ; 3583: d0 42       .B  :3452[1]
+    bne return22                                                      ; 3583: d0 42       .B  :3452[1]
     lda l0004                                                         ; 3585: a5 04       ..  :3454[1]
-    beq c3496                                                         ; 3587: f0 3e       .>  :3456[1]
+    beq return22                                                      ; 3587: f0 3e       .>  :3456[1]
     cmp #1                                                            ; 3589: c9 01       ..  :3458[1]
     beq c346a                                                         ; 358b: f0 0e       ..  :345a[1]
     cmp #2                                                            ; 358d: c9 02       ..  :345c[1]
@@ -5503,7 +5567,7 @@ c346a
     cmp #'S'                                                          ; 35a5: c9 53       .S  :3474[1]
     beq c347f                                                         ; 35a7: f0 07       ..  :3476[1]
     cmp #'L'                                                          ; 35a9: c9 4c       .L  :3478[1]
-    bne c3496                                                         ; 35ab: d0 1a       ..  :347a[1]
+    bne return22                                                      ; 35ab: d0 1a       ..  :347a[1]
     dec l3497                                                         ; 35ad: ce 97 34    ..4 :347c[1]
 ; $35b0 referenced 1 time by $3476
 c347f
@@ -5518,7 +5582,7 @@ c347f
     jmp c3872                                                         ; 35c4: 4c 72 38    Lr8 :3493[1]
 
 ; $35c7 referenced 4 times by $3452, $3456, $347a, $34ae
-c3496
+return22
     rts                                                               ; 35c7: 60          `   :3496[1]
 
 ; $35c8 referenced 6 times by $346c, $347c, $356a, $357e, $35c0, $35e5
@@ -5531,7 +5595,7 @@ c34a7
     lda #7                                                            ; 35d8: a9 07       ..  :34a7[1]
     jsr string_input                                                  ; 35da: 20 fc 36     .6 :34a9[1]
     ldy l0005                                                         ; 35dd: a4 05       ..  :34ac[1]
-    beq c3496                                                         ; 35df: f0 e6       ..  :34ae[1]
+    beq return22                                                      ; 35df: f0 e6       ..  :34ae[1]
     ldy #6                                                            ; 35e1: a0 06       ..  :34b0[1]
 ; $35e3 referenced 1 time by $34b9
 loop_c34b2
@@ -5566,13 +5630,13 @@ l34db
 c3501
     jsr inkey_0                                                       ; 3632: 20 7c 38     |8 :3501[1]
     cmp #'4'                                                          ; 3635: c9 34       .4  :3504[1]
-    bcs c3534                                                         ; 3637: b0 2c       .,  :3506[1]
+    bcs return23                                                      ; 3637: b0 2c       .,  :3506[1]
     cmp #'0'                                                          ; 3639: c9 30       .0  :3508[1]
     bcs c3516                                                         ; 363b: b0 0a       ..  :350a[1]
     cmp #'$'                                                          ; 363d: c9 24       .$  :350c[1]
-    bcs c3534                                                         ; 363f: b0 24       .$  :350e[1]
+    bcs return23                                                      ; 363f: b0 24       .$  :350e[1]
     cmp #'!'                                                          ; 3641: c9 21       .!  :3510[1]
-    bcc c3534                                                         ; 3643: 90 20       .   :3512[1]
+    bcc return23                                                      ; 3643: 90 20       .   :3512[1]
     adc #$0f                                                          ; 3645: 69 0f       i.  :3514[1]
 ; $3647 referenced 1 time by $350a
 c3516
@@ -5590,7 +5654,7 @@ c3516
     jmp c3872                                                         ; 3662: 4c 72 38    Lr8 :3531[1]
 
 ; $3665 referenced 4 times by $3506, $350e, $3512, $355c
-c3534
+return23
     rts                                                               ; 3665: 60          `   :3534[1]
 
     !byte $82, $a5, $b8, $ae, $b9, $bf, $eb, $b8, $aa, $bd, $ae, $eb  ; 3666: 82 a5 b8... ... :3535[1]
@@ -5601,7 +5665,7 @@ c3534
 c3557
     jsr inkey_0                                                       ; 3688: 20 7c 38     |8 :3557[1]
     cmp #vdu_cr                                                       ; 368b: c9 0d       ..  :355a[1]
-    bne c3534                                                         ; 368d: d0 d6       ..  :355c[1]
+    bne return23                                                      ; 368d: d0 d6       ..  :355c[1]
     jsr sub_c040a                                                     ; 368f: 20 0a 04     .. :355e[1]
     lda #vdu_lf                                                       ; 3692: a9 0a       ..  :3561[1]
     jsr oswrch                                                        ; 3694: 20 ee ff     .. :3563[1]   ; Write character 10
@@ -5737,9 +5801,9 @@ sub_c3664
     ldy new_menu_index                                                ; 3795: a4 29       .)  :3664[1]
     lda seventeen_entry_table1,y                                      ; 3797: b9 5c 29    .\) :3666[1]
     cmp #8                                                            ; 379a: c9 08       ..  :3669[1]
-    bne c36a7                                                         ; 379c: d0 3a       .:  :366b[1]
+    bne return24                                                      ; 379c: d0 3a       .:  :366b[1]
     lda l0004                                                         ; 379e: a5 04       ..  :366d[1]
-    beq c36a7                                                         ; 37a0: f0 36       .6  :366f[1]
+    beq return24                                                      ; 37a0: f0 36       .6  :366f[1]
     lda #$10                                                          ; 37a2: a9 10       ..  :3671[1]
     jsr string_input                                                  ; 37a4: 20 fc 36     .6 :3673[1]
     ldy l0005                                                         ; 37a7: a4 05       ..  :3676[1]
@@ -5763,13 +5827,13 @@ sub_c3664
 c3698
     lda copy_protection_flag                                          ; 37c9: ad 03 11    ... :3698[1]
     and #1                                                            ; 37cc: 29 01       ).  :369b[1]
-    beq c36a7                                                         ; 37ce: f0 08       ..  :369d[1]
+    beq return24                                                      ; 37ce: f0 08       ..  :369d[1]
     jsr something_TODO                                                ; 37d0: 20 53 04     S. :369f[1]
     lda #$ff                                                          ; 37d3: a9 ff       ..  :36a2[1]
     jmp c36db                                                         ; 37d5: 4c db 36    L.6 :36a4[1]
 
 ; $37d8 referenced 3 times by $366b, $366f, $369d
-c36a7
+return24
     rts                                                               ; 37d8: 60          `   :36a7[1]
 
 ; $37d9 referenced 5 times by $367f, $3683, $368a, $368e, $36be
@@ -5904,18 +5968,18 @@ c3750
 ; $389c referenced 1 time by $3706
 c376b
     cpy #0                                                            ; 389c: c0 00       ..  :376b[1]
-    beq c377c                                                         ; 389e: f0 0d       ..  :376d[1]
+    beq return25                                                      ; 389e: f0 0d       ..  :376d[1]
     sta l0a90,y                                                       ; 38a0: 99 90 0a    ... :376f[1]
     inc l0005                                                         ; 38a3: e6 05       ..  :3772[1]
     jsr turn_cursor_off                                               ; 38a5: 20 63 38     c8 :3774[1]
-    jmp c377c                                                         ; 38a8: 4c 7c 37    L|7 :3777[1]
+    jmp return25                                                      ; 38a8: 4c 7c 37    L|7 :3777[1]
 
 ; $38ab referenced 8 times by $36f9, $3722, $372c, $3732, $3739, $374d, $3752, $3768
 c377a
     pla                                                               ; 38ab: 68          h   :377a[1]
     pla                                                               ; 38ac: 68          h   :377b[1]
 ; $38ad referenced 2 times by $376d, $3777
-c377c
+return25
     rts                                                               ; 38ad: 60          `   :377c[1]
 
 ; $38ae referenced 3 times by $36fc, $3736, $373c
@@ -5977,7 +6041,7 @@ c37c3
 c37da
     jsr print_italic                                                  ; 390b: 20 66 18     f. :37da[1]
     cpx #$50 ; 'P'                                                    ; 390e: e0 50       .P  :37dd[1]
-    beq c37f2                                                         ; 3910: f0 11       ..  :37df[1]
+    beq return26                                                      ; 3910: f0 11       ..  :37df[1]
     lda #9                                                            ; 3912: a9 09       ..  :37e1[1]
     jsr oswrch                                                        ; 3914: 20 ee ff     .. :37e3[1]   ; Write character 9
     txa                                                               ; 3917: 8a          .   :37e6[1]
@@ -5988,7 +6052,7 @@ c37da
     jmp c37c3                                                         ; 3920: 4c c3 37    L.7 :37ef[1]
 
 ; $3923 referenced 1 time by $37df
-c37f2
+return26
     rts                                                               ; 3923: 60          `   :37f2[1]
 
 ; $3924 referenced 2 times by $1743, $3573
@@ -6270,12 +6334,23 @@ c3997
     lda new_player_character                                          ; 3ad0: a5 4d       .M  :399f[1]
     sta current_player_character                                      ; 3ad2: 85 48       .H  :39a1[1]
     bne c39b6                                                         ; 3ad4: d0 11       ..  :39a3[1]
+; $3ad5 referenced 1 time by $1352
+; $3ad6 referenced 1 time by $1358
     ldy #$0b                                                          ; 3ad6: a0 0b       ..  :39a5[1]
+; $3ad7 referenced 1 time by $1219
+; $3ad8 referenced 1 time by $121c
     sty l09df                                                         ; 3ad8: 8c df 09    ... :39a7[1]
-
+; $3ad9 referenced 2 times by $12c0, $1312
+; $3ada referenced 2 times by $12c3, $1315
+; $3adb referenced 1 time by $37a8
     lda x_entry_table6                                                ; 3adb: ad 7c 09    .|. :39aa[1]
+; $3adc referenced 1 time by $37ab
+; $3add referenced 1 time by $128c
+; $3ade referenced 1 time by $1296
     clc                                                               ; 3ade: 18          .   :39ad[1]
+; $3adf referenced 2 times by $125f, $129f
     adc #2                                                            ; 3adf: 69 02       i.  :39ae[1]
+; $3ae0 referenced 2 times by $1262, $12a4
     sta x_entry_table6                                                ; 3ae1: 8d 7c 09    .|. :39b0[1]
     jmp c3a08                                                         ; 3ae4: 4c 08 3a    L.: :39b3[1]
 
@@ -6303,7 +6378,6 @@ loop_c39d2
     lda byte_per_level_table1,y                                       ; 3b03: b9 ef 09    ... :39d2[1]
     and #$80                                                          ; 3b06: 29 80       ).  :39d5[1]
     beq c39e0                                                         ; 3b08: f0 07       ..  :39d7[1]
-; $3b09 referenced 1 time by $3af7
     dey                                                               ; 3b0a: 88          .   :39d9[1]
     bpl loop_c39d2                                                    ; 3b0b: 10 f6       ..  :39da[1]
     ldy #last_level_letter                                            ; 3b0d: a0 51       .Q  :39dc[1]
@@ -6341,61 +6415,61 @@ c3a08
     rts                                                               ; 3b42: 60          `   :3a11[1]
 
 ; $3b43 referenced 2 times by $181d, $2ad7
-sub_c3a12
+update_main_keys
     ldx #inkey_key_return                                             ; 3b43: a2 b6       ..  :3a12[1]
     jsr negative_inkey                                                ; 3b45: 20 cc 3a     .: :3a14[1]
-    ora return_flag                                                   ; 3b48: 05 46       .F  :3a17[1]
-    sta return_flag                                                   ; 3b4a: 85 46       .F  :3a19[1]
+    ora return_key_pressed_event_pending                              ; 3b48: 05 46       .F  :3a17[1]
+    sta return_key_pressed_event_pending                              ; 3b4a: 85 46       .F  :3a19[1]
     ldx #inkey_key_z                                                  ; 3b4c: a2 9e       ..  :3a1b[1]
     jsr negative_inkey                                                ; 3b4e: 20 cc 3a     .: :3a1d[1]
-    sta temp_left_or_z_flag                                           ; 3b51: 8d 8d 3a    ..: :3a20[1]
-    ora z_flag                                                        ; 3b54: 05 2c       .,  :3a23[1]
-    sta z_flag                                                        ; 3b56: 85 2c       .,  :3a25[1]
+    sta z_key_pressed                                                 ; 3b51: 8d 8d 3a    ..: :3a20[1]
+    ora z_key_pressed_pending                                         ; 3b54: 05 2c       .,  :3a23[1]
+    sta z_key_pressed_pending                                         ; 3b56: 85 2c       .,  :3a25[1]
     ldx #inkey_key_x                                                  ; 3b58: a2 bd       ..  :3a27[1]
     jsr negative_inkey                                                ; 3b5a: 20 cc 3a     .: :3a29[1]
     pha                                                               ; 3b5d: 48          H   :3a2c[1]
-    ora x_flag                                                        ; 3b5e: 05 2d       .-  :3a2d[1]
-    sta x_flag                                                        ; 3b60: 85 2d       .-  :3a2f[1]
+    ora x_key_pressed_pending                                         ; 3b5e: 05 2d       .-  :3a2d[1]
+    sta x_key_pressed_pending                                         ; 3b60: 85 2d       .-  :3a2f[1]
     pla                                                               ; 3b62: 68          h   :3a31[1]
     ldx #0                                                            ; 3b63: a2 00       ..  :3a32[1]
-    eor temp_left_or_z_flag                                           ; 3b65: 4d 8d 3a    M.: :3a34[1]
-    beq c3a41                                                         ; 3b68: f0 08       ..  :3a37[1]
+    eor z_key_pressed                                                 ; 3b65: 4d 8d 3a    M.: :3a34[1]
+    beq store_x_as_valid_direction_keypress_pending                   ; 3b68: f0 08       ..  :3a37[1]
     dex                                                               ; 3b6a: ca          .   :3a39[1]
-    lda temp_left_or_z_flag                                           ; 3b6b: ad 8d 3a    ..: :3a3a[1]
-    bmi c3a41                                                         ; 3b6e: 30 02       0.  :3a3d[1]
+    lda z_key_pressed                                                 ; 3b6b: ad 8d 3a    ..: :3a3a[1]
+    bmi store_x_as_valid_direction_keypress_pending                   ; 3b6e: 30 02       0.  :3a3d[1]
     ldx #1                                                            ; 3b70: a2 01       ..  :3a3f[1]
 ; $3b72 referenced 2 times by $3a37, $3a3d
-c3a41
+store_x_as_valid_direction_keypress_pending
     txa                                                               ; 3b72: 8a          .   :3a41[1]
-    ora player_x_movement_direction                                   ; 3b73: 05 20       .   :3a42[1]
-    sta player_x_movement_direction                                   ; 3b75: 85 20       .   :3a44[1]
+    ora valid_direction_pending                                       ; 3b73: 05 20       .   :3a42[1]
+    sta valid_direction_pending                                       ; 3b75: 85 20       .   :3a44[1]
     rts                                                               ; 3b77: 60          `   :3a46[1]
 
 ; $3b78 referenced 1 time by $1820
-sub_c3a47
+update_space_etc_keys
     ldx #inkey_key_space                                              ; 3b78: a2 9d       ..  :3a47[1]
     jsr negative_inkey                                                ; 3b7a: 20 cc 3a     .: :3a49[1]
-    cmp space_repeat_flag                                             ; 3b7d: c5 2b       .+  :3a4c[1]
-    sta space_repeat_flag                                             ; 3b7f: 85 2b       .+  :3a4e[1]
-    bne c3a54                                                         ; 3b81: d0 02       ..  :3a50[1]
+    cmp space_bar_pressed                                             ; 3b7d: c5 2b       .+  :3a4c[1]
+    sta space_bar_pressed                                             ; 3b7f: 85 2b       .+  :3a4e[1]
+    bne save_space_bar_state_change_pending                           ; 3b81: d0 02       ..  :3a50[1]
     lda #0                                                            ; 3b83: a9 00       ..  :3a52[1]
 ; $3b85 referenced 1 time by $3a50
-c3a54
-    ora space_flag                                                    ; 3b85: 05 2a       .*  :3a54[1]
-    sta space_flag                                                    ; 3b87: 85 2a       .*  :3a56[1]
+save_space_bar_state_change_pending
+    ora space_bar_press_pending                                       ; 3b85: 05 2a       .*  :3a54[1]
+    sta space_bar_press_pending                                       ; 3b87: 85 2a       .*  :3a56[1]
     ldx #inkey_key_left                                               ; 3b89: a2 e6       ..  :3a58[1]
     jsr negative_inkey                                                ; 3b8b: 20 cc 3a     .: :3a5a[1]
-    sta temp_left_or_z_flag                                           ; 3b8e: 8d 8d 3a    ..: :3a5d[1]
+    sta z_key_pressed                                                 ; 3b8e: 8d 8d 3a    ..: :3a5d[1]
     ldx #inkey_key_right                                              ; 3b91: a2 86       ..  :3a60[1]
     jsr negative_inkey                                                ; 3b93: 20 cc 3a     .: :3a62[1]
-    cmp temp_left_or_z_flag                                           ; 3b96: cd 8d 3a    ..: :3a65[1]
-    beq c3a73                                                         ; 3b99: f0 09       ..  :3a68[1]
-    lda temp_left_or_z_flag                                           ; 3b9b: ad 8d 3a    ..: :3a6a[1]
+    cmp z_key_pressed                                                 ; 3b96: cd 8d 3a    ..: :3a65[1]
+    beq no_valid_direction                                            ; 3b99: f0 09       ..  :3a68[1]
+    lda z_key_pressed                                                 ; 3b9b: ad 8d 3a    ..: :3a6a[1]
     bmi menu_x_step_in_a                                              ; 3b9e: 30 06       0.  :3a6d[1]
     lda #1                                                            ; 3ba0: a9 01       ..  :3a6f[1]
-    bpl menu_x_step_in_a                                              ; 3ba2: 10 02       ..  :3a71[1]
+    bpl menu_x_step_in_a                                              ; 3ba2: 10 02       ..  :3a71[1]   ; ALWAYS branch
 ; $3ba4 referenced 1 time by $3a68
-c3a73
+no_valid_direction
     lda #0                                                            ; 3ba4: a9 00       ..  :3a73[1]
 ; TODO: This looks like a manual implementation of an auto-repeat delay, so if you hold
 ; down left/right a fraction of a second too long it doesn't zip all the way to the
@@ -6420,20 +6494,20 @@ c3a88
     rts                                                               ; 3bbd: 60          `   :3a8c[1]
 
 ; $3bbe referenced 6 times by $3a20, $3a34, $3a3a, $3a5d, $3a65, $3a6a
-temp_left_or_z_flag
+z_key_pressed
     !byte 0                                                           ; 3bbe: 00          .   :3a8d[1]
 ; $3bbf referenced 1 time by $3a83
 l3a8e
     !byte $10                                                         ; 3bbf: 10          .   :3a8e[1]
 
-; $3bc0 referenced 4 times by $174c, $2a44, $35e2, $3899
+; $3bc0 referenced 5 times by $12f6, $174c, $2a44, $35e2, $3899
 c3a8f
-    lda space_flag                                                    ; 3bc0: a5 2a       .*  :3a8f[1]
+    lda space_bar_press_pending                                       ; 3bc0: a5 2a       .*  :3a8f[1]
     sta space_flag2                                                   ; 3bc2: 8d a0 3a    ..: :3a91[1]
     lda left_right_flag                                               ; 3bc5: a5 28       .(  :3a94[1]
     sta left_right_flag2                                              ; 3bc7: 8d a1 3a    ..: :3a96[1]
     lda #0                                                            ; 3bca: a9 00       ..  :3a99[1]
-    sta space_flag                                                    ; 3bcc: 85 2a       .*  :3a9b[1]
+    sta space_bar_press_pending                                       ; 3bcc: 85 2a       .*  :3a9b[1]
     sta left_right_flag                                               ; 3bce: 85 28       .(  :3a9d[1]
     rts                                                               ; 3bd0: 60          `   :3a9f[1]
 
@@ -6444,39 +6518,40 @@ space_flag2
 left_right_flag2
     !byte 0                                                           ; 3bd2: 00          .   :3aa1[1]
 
-; $3bd3 referenced 2 times by $2abd, $2ad4
+; $3bd3 referenced 4 times by $12f9, $130c, $2abd, $2ad4
 sub_c3aa2
-    lda return_flag2                                                  ; 3bd3: ad c7 3a    ..: :3aa2[1]
-    sta return_flag3                                                  ; 3bd6: 8d c8 3a    ..: :3aa5[1]
-    lda return_flag                                                   ; 3bd9: a5 46       .F  :3aa8[1]
-    sta return_flag2                                                  ; 3bdb: 8d c7 3a    ..: :3aaa[1]
-    lda player_x_movement_direction                                   ; 3bde: a5 20       .   :3aad[1]
-    sta player_x_movement_direction2                                  ; 3be0: 8d c9 3a    ..: :3aaf[1]
-    lda z_flag                                                        ; 3be3: a5 2c       .,  :3ab2[1]
-    sta z_flag2                                                       ; 3be5: 8d ca 3a    ..: :3ab4[1]
-    lda x_flag                                                        ; 3be8: a5 2d       .-  :3ab7[1]
-    sta x_flag2                                                       ; 3bea: 8d cb 3a    ..: :3ab9[1]
+    lda jump_requested                                                ; 3bd3: ad c7 3a    ..: :3aa2[1]
+    sta jump_requested_previous_tick                                  ; 3bd6: 8d c8 3a    ..: :3aa5[1]
+    lda return_key_pressed_event_pending                              ; 3bd9: a5 46       .F  :3aa8[1]
+    sta jump_requested                                                ; 3bdb: 8d c7 3a    ..: :3aaa[1]
+    lda valid_direction_pending                                       ; 3bde: a5 20       .   :3aad[1]
+    sta player_move_direction_requested                               ; 3be0: 8d c9 3a    ..: :3aaf[1]
+    lda z_key_pressed_pending                                         ; 3be3: a5 2c       .,  :3ab2[1]
+    sta move_left_requested                                           ; 3be5: 8d ca 3a    ..: :3ab4[1]
+    lda x_key_pressed_pending                                         ; 3be8: a5 2d       .-  :3ab7[1]
+    sta move_right_requested                                          ; 3bea: 8d cb 3a    ..: :3ab9[1]
     lda #0                                                            ; 3bed: a9 00       ..  :3abc[1]
-    sta return_flag                                                   ; 3bef: 85 46       .F  :3abe[1]
-    sta player_x_movement_direction                                   ; 3bf1: 85 20       .   :3ac0[1]
-    sta z_flag                                                        ; 3bf3: 85 2c       .,  :3ac2[1]
-    sta x_flag                                                        ; 3bf5: 85 2d       .-  :3ac4[1]
+    sta return_key_pressed_event_pending                              ; 3bef: 85 46       .F  :3abe[1]
+    sta valid_direction_pending                                       ; 3bf1: 85 20       .   :3ac0[1]
+    sta z_key_pressed_pending                                         ; 3bf3: 85 2c       .,  :3ac2[1]
+    sta x_key_pressed_pending                                         ; 3bf5: 85 2d       .-  :3ac4[1]
     rts                                                               ; 3bf7: 60          `   :3ac6[1]
 
 ; $3bf8 referenced 9 times by $2e01, $2e2b, $3061, $320e, $3229, $32cd, $32e7, $3aa2, $3aaa
-return_flag2
+jump_requested
     !byte 0                                                           ; 3bf8: 00          .   :3ac7[1]
 ; $3bf9 referenced 1 time by $3aa5
-return_flag3
+jump_requested_previous_tick
     !byte 0                                                           ; 3bf9: 00          .   :3ac8[1]
+; $ff for left, $01 for right, $00 for none
 ; $3bfa referenced 9 times by $2df3, $2e46, $3001, $3053, $308c, $324e, $32c8, $3318, $3aaf
-player_x_movement_direction2
+player_move_direction_requested
     !byte 0                                                           ; 3bfa: 00          .   :3ac9[1]
 ; $3bfb referenced 2 times by $323f, $3ab4
-z_flag2
+move_left_requested
     !byte 0                                                           ; 3bfb: 00          .   :3aca[1]
 ; $3bfc referenced 2 times by $3242, $3ab9
-x_flag2
+move_right_requested
     !byte 0                                                           ; 3bfc: 00          .   :3acb[1]
 
 ; $3bfd referenced 8 times by $2a54, $2ab2, $3a14, $3a1d, $3a29, $3a49, $3a5a, $3a62
@@ -6487,20 +6562,17 @@ negative_inkey
     txa                                                               ; 3c04: 8a          .   :3ad3[1]
     rts                                                               ; 3c05: 60          `   :3ad4[1]
 
+level_data
+}
+
+execution_start
 ; The loader will have executed VDU 21 to disable VDU output. Record the current
 ; disable state before re-enabling it, so we can check it later as part of a copy
 ; protection scheme.
 ; This initialisation code gets overwritten by level data later on.
-; $3c06 referenced 1 time by $1352
-level_data
-execution_start
-    lda #osbyte_read_vdu_status                                       ; 3c06: a9 75       .u  :3ad5[1]
-; $3c07 referenced 1 time by $1358
-; $3c08 referenced 1 time by $1219
-c3ad7
-l3ad8 = c3ad7+1
-    jsr osbyte                                                        ; 3c08: 20 f4 ff     .. :3ad7[1]   ; Read VDU status byte
-; $3c09 referenced 1 time by $121c
+    lda #osbyte_read_vdu_status                                       ; 3c06: a9 75       .u
+    jsr osbyte                                                        ; 3c08: 20 f4 ff     ..            ; Read VDU status byte
+
     ; X is VDU status byte:
     ;     bit 0=printer output enabled by a VDU 2
     ;     bit 1=scrolling disabled (cursor editing)
@@ -6510,54 +6582,42 @@ l3ad8 = c3ad7+1
     ;     bit 5=text at graphics cursor (VDU 5)
     ;     bit 6=two cursor editing mode
     ;     bit 7=screen disabled via VDU 21
-    txa                                                               ; 3c0b: 8a          .   :3ada[1]
-; $3c0c referenced 1 time by $37a8
-c3adb
-l3adc = c3adb+1
-    and #$80                                                          ; 3c0c: 29 80       ).  :3adb[1]
-; $3c0d referenced 1 time by $37ab
-; $3c0e referenced 1 time by $128c
-c3add
-l3ade = c3add+1
-l3adf = c3add+2
-    sta initial_screen_disabled_flag                                  ; 3c0e: 8d 6e 3f    .n? :3add[1]
-; $3c0f referenced 1 time by $1296
-; $3c10 referenced 2 times by $125f, $129f
-; $3c11 referenced 2 times by $1262, $12a4
-c3ae0
-    lda #vdu_enable                                                   ; 3c11: a9 06       ..  :3ae0[1]
-    jsr oswrch                                                        ; 3c13: 20 ee ff     .. :3ae2[1]   ; Write character 6
-; Copy 512 bytes from &40FF to &400. TODO: I THINK?
-    lda #<some_data_high_copy_TODO                                    ; 3c16: a9 ff       ..  :3ae5[1]
-    sta l0070                                                         ; 3c18: 85 70       .p  :3ae7[1]
-    lda #>some_data_high_copy_TODO                                    ; 3c1a: a9 40       .@  :3ae9[1]
-    sta l0071                                                         ; 3c1c: 85 71       .q  :3aeb[1]
-    lda #<wait_for_timer_2_using_l1106_l1107                          ; 3c1e: a9 00       ..  :3aed[1]
-    sta l0072                                                         ; 3c20: 85 72       .r  :3aef[1]
-    lda #>wait_for_timer_2_using_l1106_l1107                          ; 3c22: a9 04       ..  :3af1[1]
-    sta l0073                                                         ; 3c24: 85 73       .s  :3af3[1]
-    ldx #2                                                            ; 3c26: a2 02       ..  :3af5[1]
-    beq l3b09                                                         ; 3c28: f0 10       ..  :3af7[1]   ; TODO: branch never taken?
-    ldy #0                                                            ; 3c2a: a0 00       ..  :3af9[1]
-; $3c2c referenced 2 times by $3b00, $3c38
-c3afb
-    lda (l0070),y                                                     ; 3c2c: b1 70       .p  :3afb[1]
-    sta (l0072),y                                                     ; 3c2e: 91 72       .r  :3afd[1]
-    iny                                                               ; 3c30: c8          .   :3aff[1]
-    bne c3afb                                                         ; 3c31: d0 f9       ..  :3b00[1]
-    !byte $e6                                                         ; 3c33: e6          .   :3b02[1]
-}
+    txa                                                               ; 3c0b: 8a          .
+    and #$80                                                          ; 3c0c: 29 80       ).
+    sta initial_screen_disabled_flag                                  ; 3c0e: 8d 6e 3f    .n?
+    lda #vdu_enable                                                   ; 3c11: a9 06       ..
+    jsr oswrch                                                        ; 3c13: 20 ee ff     ..            ; Write character 6
 
-    !byte $71                                                         ; 3c34: 71          q
-
+; Relocation 1: Copy 512 bytes of code from &40FF to &400
+    lda #<some_code_high_copy_TODO                                    ; 3c16: a9 ff       ..
+    sta l0070                                                         ; 3c18: 85 70       .p
+    lda #>some_code_high_copy_TODO                                    ; 3c1a: a9 40       .@
+    sta l0071                                                         ; 3c1c: 85 71       .q
+    lda #<wait_for_timer_2_using_l1106_l1107                          ; 3c1e: a9 00       ..
+    sta l0072                                                         ; 3c20: 85 72       .r
+    lda #>wait_for_timer_2_using_l1106_l1107                          ; 3c22: a9 04       ..
+    sta l0073                                                         ; 3c24: 85 73       .s
+    ldx #2                                                            ; 3c26: a2 02       ..
+    beq relocation2                                                   ; 3c28: f0 10       ..             ; TODO: branch never taken?
+    ldy #0                                                            ; 3c2a: a0 00       ..
+; $3c2c referenced 2 times by $3c31, $3c38
+relocation1_loop
+    lda (l0070),y                                                     ; 3c2c: b1 70       .p
+    sta (l0072),y                                                     ; 3c2e: 91 72       .r
+    iny                                                               ; 3c30: c8          .
+    bne relocation1_loop                                              ; 3c31: d0 f9       ..
+    inc l0071                                                         ; 3c33: e6 71       .q
     inc l0073                                                         ; 3c35: e6 73       .s
     dex                                                               ; 3c37: ca          .
-    bne c3c2c                                                         ; 3c38: d0 f2       ..
-; Copy &2A00 bytes from &1234 to &1103. TODO: I think? If this is right, label this up
-; nicely and use constants etc later. TODO: I have a suspicion this is done more for
-; obfuscation than any real requirement - surely we could have just loaded at &1103 in
-; the first place? I suspect some routines - eg &16DC? - have 'real' versions and
-; 'trap' versions to cause confusion. This is just speculation at this point.
+    bne relocation1_loop                                              ; 3c38: d0 f2       ..
+
+; Relocation 2: Copy &2A00 bytes from &1234 to &1103. This is done more for obfuscation
+; than any real requirement - we could have just loaded at &1103 in the first place.
+; 
+; TODO: I suspect some routines - eg &16DC? - have 'real' versions and 'trap' versions
+; to cause confusion. This is just speculation at this point.
+; $3c3a referenced 1 time by $3c28
+relocation2
     lda #$34 ; '4'                                                    ; 3c3a: a9 34       .4
     sta l0070                                                         ; 3c3c: 85 70       .p
     lda #$12                                                          ; 3c3e: a9 12       ..
@@ -6571,54 +6631,61 @@ c3afb
     bne c3c56                                                         ; 3c4e: d0 06       ..             ; TODO: branch always taken?
     lda l0070                                                         ; 3c50: a5 70       .p
     cmp l0072                                                         ; 3c52: c5 72       .r
-    beq c3c6a                                                         ; 3c54: f0 14       ..
+    beq relocation3                                                   ; 3c54: f0 14       ..
 ; $3c56 referenced 1 time by $3c4e
 c3c56
     ldx #$2a ; '*'                                                    ; 3c56: a2 2a       .*
-    beq c3c6a                                                         ; 3c58: f0 10       ..             ; TODO: branch never taken?
+    beq relocation3                                                   ; 3c58: f0 10       ..             ; TODO: branch never taken?
     ldy #0                                                            ; 3c5a: a0 00       ..
 ; $3c5c referenced 2 times by $3c61, $3c68
-c3c5c
+relocation2_loop
     lda (l0070),y                                                     ; 3c5c: b1 70       .p
     sta (l0072),y                                                     ; 3c5e: 91 72       .r
     iny                                                               ; 3c60: c8          .
-    bne c3c5c                                                         ; 3c61: d0 f9       ..
+    bne relocation2_loop                                              ; 3c61: d0 f9       ..
     inc l0071                                                         ; 3c63: e6 71       .q
     inc l0073                                                         ; 3c65: e6 73       .s
     dex                                                               ; 3c67: ca          .
-    bne c3c5c                                                         ; 3c68: d0 f2       ..
+    bne relocation2_loop                                              ; 3c68: d0 f2       ..
+
+; Relocation 3: Copy $48 bytes of code from $4088 to $0ab7
 ; $3c6a referenced 2 times by $3c54, $3c58
-c3c6a
+relocation3
     ldx #0                                                            ; 3c6a: a2 00       ..
 ; $3c6c referenced 1 time by $3c75
-loop_c3c6c
+relocation3_loop
     lda clear_128_bytes_at_l09ef_high_copy_start,x                    ; 3c6c: bd 88 40    ..@
     sta clear_128_bytes_at_l09ef,x                                    ; 3c6f: 9d b7 0a    ...
     inx                                                               ; 3c72: e8          .
     cpx #clear_128_bytes_at_l09ef_high_copy_end - clear_128_bytes_at_l09ef_high_copy_start; 3c73: e0 48       .H
-    bcc loop_c3c6c                                                    ; 3c75: 90 f5       ..
+    bcc relocation3_loop                                              ; 3c75: 90 f5       ..
+
+; Relocation 4: Copy $100 bytes of code from $3fcb to $0c00
     ldy #0                                                            ; 3c77: a0 00       ..
 ; $3c79 referenced 1 time by $3c80
-loop_c3c79
+relocation4_loop
     lda something3_high_copy_start,y                                  ; 3c79: b9 cb 3f    ..?
     sta something3_TODO,y                                             ; 3c7c: 99 00 0c    ...
     iny                                                               ; 3c7f: c8          .
-    bne loop_c3c79                                                    ; 3c80: d0 f7       ..
+    bne relocation4_loop                                              ; 3c80: d0 f7       ..
+
+; Relocation 5: Copy $2f bytes of data from $40d0 to $0131
     ldy #0                                                            ; 3c82: a0 00       ..
 ; $3c84 referenced 1 time by $3c8d
-loop_c3c84
+relocation5_loop
     lda update_displayed_transformations_remaining_high_copy_start,y  ; 3c84: b9 d0 40    ..@
     sta update_displayed_transformations_remaining,y                  ; 3c87: 99 31 01    .1.
     iny                                                               ; 3c8a: c8          .
     cpy #update_displayed_transformations_remaining_high_copy_end - update_displayed_transformations_remaining_high_copy_start; 3c8b: c0 2f       ./
-    bne loop_c3c84                                                    ; 3c8d: d0 f5       ..
+    bne relocation5_loop                                              ; 3c8d: d0 f5       ..
+; Relocation finished
     lda copy_protection_flag                                          ; 3c8f: ad 03 11    ...
     and #8                                                            ; 3c92: 29 08       ).
-    beq c3c9b                                                         ; 3c94: f0 05       ..
-    lda #$32 ; '2'                                                    ; 3c96: a9 32       .2
-    sta l3f05                                                         ; 3c98: 8d 05 3f    ..?
+    beq set_drive_and_directory                                       ; 3c94: f0 05       ..
+    lda #'2'                                                          ; 3c96: a9 32       .2
+    sta drive_number                                                  ; 3c98: 8d 05 3f    ..?
 ; $3c9b referenced 1 time by $3c94
-c3c9b
+set_drive_and_directory
     ldx #<(drive_0_command)                                           ; 3c9b: a2 ff       ..
     ldy #>(drive_0_command)                                           ; 3c9d: a0 3e       .>
     jsr oscli                                                         ; 3c9f: 20 f7 ff     ..
@@ -6643,6 +6710,7 @@ c3c9b
     ldx #1                                                            ; 3ccb: a2 01       ..
     ldy #0                                                            ; 3ccd: a0 00       ..
     jsr osbyte                                                        ; 3ccf: 20 f4 ff     ..            ; Disable cursor editing (edit keys give ASCII 135-139) (X=1)
+; remember brk and irq vectors
     lda brkv                                                          ; 3cd2: ad 02 02    ...
     sta old_brkv1                                                     ; 3cd5: 8d b1 0a    ...
     sta old_brkv2                                                     ; 3cd8: 8d b3 0a    ...
@@ -6653,6 +6721,7 @@ c3c9b
     sta old_irq1v                                                     ; 3ce7: 8d b5 0a    ...
     lda irq1v+1                                                       ; 3cea: ad 05 02    ...
     sta old_irq1v+1                                                   ; 3ced: 8d b6 0a    ...
+; redefine character 254 as a diamond shape
     lda #vdu_define_character                                         ; 3cf0: a9 17       ..
     jsr oswrch                                                        ; 3cf2: 20 ee ff     ..            ; Write character 23
     lda #$fe                                                          ; 3cf5: a9 fe       ..
@@ -6674,6 +6743,7 @@ define_character_fe_loop
     sta l0004                                                         ; 3d14: 85 04       ..
     lda #$ff                                                          ; 3d16: a9 ff       ..
     sta current_menu_index                                            ; 3d18: 85 2e       ..
+; clear the display of remaining transformations
     lda #' '                                                          ; 3d1a: a9 20       .
     sta displayed_transformations_remaining                           ; 3d1c: 85 5c       .\
     sta displayed_transformations_remaining+1                         ; 3d1e: 85 5d       .]
@@ -6691,6 +6761,7 @@ define_character_fe_loop
     lda #osbyte_select_adc_channels                                   ; 3d36: a9 10       ..
     ldx #0                                                            ; 3d38: a2 00       ..
     jsr osbyte                                                        ; 3d3a: 20 f4 ff     ..            ; Disable ADC channel sampling (X=0)
+; define envelopes
     ldx #<envelope_1                                                  ; 3d3d: a2 ac       ..
     ldy #>envelope_1                                                  ; 3d3f: a0 38       .8
     jsr define_envelope                                               ; 3d41: 20 5e 39     ^9
@@ -6700,6 +6771,7 @@ define_character_fe_loop
     ldx #<envelope_3                                                  ; 3d4b: a2 d8       ..
     ldy #>envelope_3                                                  ; 3d4d: a0 38       .8
     jsr define_envelope                                               ; 3d4f: 20 5e 39     ^9
+; loop eight times resetting data in the printer buffer
     ldy #7                                                            ; 3d52: a0 07       ..
 ; $3d54 referenced 1 time by $3d5f
 loop_c3d54
@@ -6709,6 +6781,7 @@ loop_c3d54
     sta eight_entry_table2,y                                          ; 3d5b: 99 a9 0a    ...
     dey                                                               ; 3d5e: 88          .
     bpl loop_c3d54                                                    ; 3d5f: 10 f3       ..
+; store something else now that envelopes have already been defined above?
     lda #$c7                                                          ; 3d61: a9 c7       ..
     sta envelope_1                                                    ; 3d63: 8d ac 38    ..8
     lda #$c6                                                          ; 3d66: a9 c6       ..
@@ -6717,56 +6790,55 @@ loop_c3d54
     sta envelope_2                                                    ; 3d6d: 8d c2 38    ..8
     lda #$7f                                                          ; 3d70: a9 7f       ..
     sta l38c3                                                         ; 3d72: 8d c3 38    ..8
+; seed random number generation by reading the User VIA timers
     lda user_via_t1c_l                                                ; 3d75: ad 64 fe    .d.
-    sta l0006                                                         ; 3d78: 85 06       ..
+    sta rnd0                                                          ; 3d78: 85 06       ..
     lda user_via_t1c_h                                                ; 3d7a: ad 65 fe    .e.
-    sta l0007                                                         ; 3d7d: 85 07       ..
+    sta rnd1                                                          ; 3d7d: 85 07       ..
     lda user_via_t2c_l                                                ; 3d7f: ad 68 fe    .h.
-    sta l0008                                                         ; 3d82: 85 08       ..
+    sta rnd2                                                          ; 3d82: 85 08       ..
     lda user_via_t2c_h                                                ; 3d84: ad 69 fe    .i.
-    sta l0009                                                         ; 3d87: 85 09       ..
+    sta rnd3                                                          ; 3d87: 85 09       ..
     lda #1                                                            ; 3d89: a9 01       ..
-    sta l000a                                                         ; 3d8b: 85 0a       ..
+    sta rnd4                                                          ; 3d8b: 85 0a       ..
     lda #$62 ; 'b'                                                    ; 3d8d: a9 62       .b
     sta l004c                                                         ; 3d8f: 85 4c       .L
-; Presumably as part of a copy protection scheme, we check to see if VDU output was
-; disabled (VDU 21) when we first started to execute, before we re-enabled output (VDU
-; 6) ourselves.
+; Check to see if VDU output was disabled (VDU 21) when we first started to execute,
+; before we re-enabled output (VDU 6) ourselves.
+; TODO: Is this to make the G file self-contained if it's run directly from the command
+; line during development, instead of from IMOGEN?
     lda initial_screen_disabled_flag                                  ; 3d91: ad 6e 3f    .n?
-    bne initial_screen_disabled_flag_ok                               ; 3d94: d0 0d       ..
-; VDU output wasn't disabled when we started to execute. Do some stuff (TODO: what?) to
-; break things.
+    bne clear_toolbar_part_of_screen                                  ; 3d94: d0 0d       ..
+; VDU output wasn't disabled when we started to execute. Change to MODE 4.
     lda #vdu_set_mode                                                 ; 3d96: a9 16       ..
     jsr oswrch                                                        ; 3d98: 20 ee ff     ..            ; Write character 22
     lda #4                                                            ; 3d9b: a9 04       ..
     jsr oswrch                                                        ; 3d9d: 20 ee ff     ..            ; Write character 4
-    jmp c3db9                                                         ; 3da0: 4c b9 3d    L.=
+    jmp define_text_window                                            ; 3da0: 4c b9 3d    L.=
 
+; Clear memory from $5b00 to $d200. This clears the toolbar area of the screen. The
+; toolbar lives in screen memory from $5bc0 to $d200, so this routine clears a little
+; before the start of screen memory, but this is OK as we are just about to load sprite
+; data there anyway
 ; $3da3 referenced 1 time by $3d94
-initial_screen_disabled_flag_ok
-    lda #0                                                            ; 3da3: a9 00       ..
+clear_toolbar_part_of_screen
+    lda #0                                                            ; 3da3: a9 00       ..             ; set start address to $5b00
     sta l0070                                                         ; 3da5: 85 70       .p
     tay                                                               ; 3da7: a8          .
     ldx #$5b ; '['                                                    ; 3da8: a2 5b       .[
     stx l0071                                                         ; 3daa: 86 71       .q
     ldx l004c                                                         ; 3dac: a6 4c       .L
 ; $3dae referenced 2 times by $3db1, $3db7
-c3dae
+clear_toolbar_part_of_screen_loop
     sta (l0070),y                                                     ; 3dae: 91 70       .p
     iny                                                               ; 3db0: c8          .
-    bne c3dae                                                         ; 3db1: d0 fb       ..
+    bne clear_toolbar_part_of_screen_loop                             ; 3db1: d0 fb       ..
     inc l0071                                                         ; 3db3: e6 71       .q
     cpx l0071                                                         ; 3db5: e4 71       .q
-    bne c3dae                                                         ; 3db7: d0 f5       ..
-; TODO: A lot of this code looks - I haven't checked yet - similar to initialisation
-; code in the IMOGEN file. It should be annotated but I won't bother yet as it may be I
-; can copy this from the IMOGEN code. Is it possible that what I thought was copy
-; protection regarding VDU 21 status is in fact just a way to make the G file self-
-; contained if it's run directly from the command line during development, instead of
-; from IMOGEN?
+    bne clear_toolbar_part_of_screen_loop                             ; 3db7: d0 f5       ..
 ; $3db9 referenced 1 time by $3da0
-c3db9
-    lda #vdu_define_text_window                                       ; 3db9: a9 1c       ..
+define_text_window
+    lda #vdu_define_text_window                                       ; 3db9: a9 1c       ..             ; Define text window that excludes the leftmost column (left 1, bottom 31, right: 39, top: 0)
     jsr oswrch                                                        ; 3dbb: 20 ee ff     ..            ; Write character 28
     lda #1                                                            ; 3dbe: a9 01       ..
     jsr oswrch                                                        ; 3dc0: 20 ee ff     ..            ; Write character 1
@@ -6776,38 +6848,45 @@ c3db9
     jsr oswrch                                                        ; 3dca: 20 ee ff     ..            ; Write character 39
     lda #0                                                            ; 3dcd: a9 00       ..
     jsr oswrch                                                        ; 3dcf: 20 ee ff     ..            ; Write character 0
+; set background text colour to 1
     lda #vdu_set_text_colour                                          ; 3dd2: a9 11       ..
     jsr oswrch                                                        ; 3dd4: 20 ee ff     ..            ; Write character 17
     lda #$81                                                          ; 3dd7: a9 81       ..
     jsr oswrch                                                        ; 3dd9: 20 ee ff     ..            ; Write character 129
+; set foreground text colour to 0
     lda #vdu_set_text_colour                                          ; 3ddc: a9 11       ..
     jsr oswrch                                                        ; 3dde: 20 ee ff     ..            ; Write character 17
     lda #0                                                            ; 3de1: a9 00       ..
     jsr oswrch                                                        ; 3de3: 20 ee ff     ..            ; Write character 0
+; set graphics foreground colour to 0
     lda #vdu_set_graphics_colour                                      ; 3de6: a9 12       ..
     jsr oswrch                                                        ; 3de8: 20 ee ff     ..            ; Write character 18
     lda #0                                                            ; 3deb: a9 00       ..
     jsr oswrch                                                        ; 3ded: 20 ee ff     ..            ; Write character 0
     jsr oswrch                                                        ; 3df0: 20 ee ff     ..            ; Write character
+; read *TV shift setting
     ldx #0                                                            ; 3df3: a2 00       ..
     ldy #0                                                            ; 3df5: a0 00       ..
     lda #osbyte_tv                                                    ; 3df7: a9 90       ..
     jsr osbyte                                                        ; 3df9: 20 f4 ff     ..            ; *TV 0,0 turn interlace on
+; remember *TV shift setting
     stx l0070                                                         ; 3dfc: 86 70       .p             ; X is the previous screen shift setting
-    jsr osbyte                                                        ; 3dfe: 20 f4 ff     ..
+    jsr osbyte                                                        ; 3dfe: 20 f4 ff     ..            ; restore previous *TV setting (since we changed it in the process of reading it)
+; Set CRTC registers
     lda #crtc_cursor_start                                            ; 3e01: a9 0a       ..
     sta crtc_address_register                                         ; 3e03: 8d 00 fe    ...
     lda #$20 ; ' '                                                    ; 3e06: a9 20       .
     sta crtc_address_write                                            ; 3e08: 8d 01 fe    ...
-    lda #$0b                                                          ; 3e0b: a9 0b       ..
-    lda #0                                                            ; 3e0d: a9 00       ..
+    lda #$0b                                                          ; 3e0b: a9 0b       ..             ; redundant
+    lda #0                                                            ; 3e0d: a9 00       ..             ; redundant
+; Calculate 34+tv shift and store in vertical_sync_amount_for_crtc_register
     lda #$23 ; '#'                                                    ; 3e0f: a9 23       .#
     clc                                                               ; 3e11: 18          .
     adc l0070                                                         ; 3e12: 65 70       ep
     sec                                                               ; 3e14: 38          8
     sbc #1                                                            ; 3e15: e9 01       ..
-    sta l110b                                                         ; 3e17: 8d 0b 11    ...
-    sec                                                               ; 3e1a: 38          8
+    sta vertical_sync_amount_for_crtc_register                        ; 3e17: 8d 0b 11    ...
+    sec                                                               ; 3e1a: 38          8              ; subtract five
     sbc #5                                                            ; 3e1b: e9 05       ..
     tax                                                               ; 3e1d: aa          .
     lda #crtc_vert_sync_pos                                           ; 3e1e: a9 07       ..
@@ -6829,32 +6908,35 @@ c3db9
     sta crtc_address_register                                         ; 3e46: 8d 00 fe    ...
     lda #0                                                            ; 3e49: a9 00       ..
     sta crtc_address_write                                            ; 3e4b: 8d 01 fe    ...
-    asl l0070                                                         ; 3e4e: 06 70       .p
-    ldy #3                                                            ; 3e50: a0 03       ..
+    asl l0070                                                         ; 3e4e: 06 70       .p             ; Double the *TV shift amount
+; Adjust two timing counters depending on the *TV shift amount
+    ldy #3                                                            ; 3e50: a0 03       ..             ; Loop counter, goes twice around the loop (Y is decremented twice each time)
 ; $3e52 referenced 1 time by $3e5d
-loop_c3e52
-    lda four_entry_table1,y                                           ; 3e52: b9 04 11    ...
+adjust_timing_variable_loop
+    lda timingA_counter_low,y                                         ; 3e52: b9 04 11    ...
     sec                                                               ; 3e55: 38          8
-    sbc l0070                                                         ; 3e56: e5 70       .p
-    sta four_entry_table1,y                                           ; 3e58: 99 04 11    ...
+    sbc l0070                                                         ; 3e56: e5 70       .p             ; subtract twice the *TV shift amount
+    sta timingA_counter_low,y                                         ; 3e58: 99 04 11    ...
     dey                                                               ; 3e5b: 88          .
     dey                                                               ; 3e5c: 88          .
-    bpl loop_c3e52                                                    ; 3e5d: 10 f3       ..
+    bpl adjust_timing_variable_loop                                   ; 3e5d: 10 f3       ..
+; Load sprites
     lda #<sprdata_filename                                            ; 3e5f: a9 80       ..
     sta l0070                                                         ; 3e61: 85 70       .p
     lda #>sprdata_filename                                            ; 3e63: a9 19       ..
     sta l0071                                                         ; 3e65: 85 71       .q
     lda #osfile_read_catalogue_info                                   ; 3e67: a9 05       ..
     jsr osfile_wrapper                                                ; 3e69: 20 dc 16     ..
-; Load 'sprdata' file into memory so it ends just below $5bc0. TODO: use named constant
-    lda #$c0                                                          ; 3e6c: a9 c0       ..
+; Load 'sprdata' file into memory so it ends just before screen memory at $5bc0.
+    lda #<start_of_screen_memory                                      ; 3e6c: a9 c0       ..
     sec                                                               ; 3e6e: 38          8
     sbc l007a                                                         ; 3e6f: e5 7a       .z
     sta sprdata_ptr                                                   ; 3e71: 85 54       .T
-    lda #$5b ; '['                                                    ; 3e73: a9 5b       .[
+    lda #>start_of_screen_memory                                      ; 3e73: a9 5b       .[
     sbc l007b                                                         ; 3e75: e5 7b       .{
     sta sprdata_ptr + 1                                               ; 3e77: 85 55       .U
     jsr load_sprdata                                                  ; 3e79: 20 6f 19     o.
+; remember where sprite data is loaded
     lda sprdata_ptr                                                   ; 3e7c: a5 54       .T
     pha                                                               ; 3e7e: 48          H
     lda sprdata_ptr + 1                                               ; 3e7f: a5 55       .U
@@ -6952,8 +7034,8 @@ osword_7f_read_result
 drive_0_command
     !text "DRIVE "                                                    ; 3eff: 44 52 49... DRI
 ; $3f05 referenced 1 time by $3c98
-l3f05
-    !byte $30, $0d                                                    ; 3f05: 30 0d       0.
+drive_number
+    !byte '0', $0d                                                    ; 3f05: 30 0d       0.
 dir_dollar_command
     !text "DIR $"                                                     ; 3f07: 44 49 52... DIR
     !byte $0d                                                         ; 3f0c: 0d          .
@@ -6999,7 +7081,7 @@ c3f2d
     pla                                                               ; 3f51: 68          h
     sta sprdata_ptr                                                   ; 3f52: 85 54       .T
     lda #3                                                            ; 3f54: a9 03       ..
-    jsr mix_a_with_state                                              ; 3f56: 20 a6 18     ..
+    jsr get_random_number_up_to_a                                     ; 3f56: 20 a6 18     ..
     sta l005f                                                         ; 3f59: 85 5f       ._
     jmp c110c                                                         ; 3f5b: 4c 0c 11    L..
 
@@ -7015,7 +7097,7 @@ character_fe_bitmap
     !byte %...#.#..                                                   ; 3f6b: 14          .
     !byte %....#...                                                   ; 3f6c: 08          .
     !byte %........                                                   ; 3f6d: 00          .
-; $3f6e referenced 2 times by $3add, $3d91
+; $3f6e referenced 2 times by $3c0e, $3d91
 initial_screen_disabled_flag
     !byte 0                                                           ; 3f6e: 00          .
 
@@ -7024,7 +7106,7 @@ probably_copy_protection_TODO
     lda copy_protection_flag                                          ; 3f6f: ad 03 11    ...
     and #1                                                            ; 3f72: 29 01       ).
     sta l005b                                                         ; 3f74: 85 5b       .[
-    beq c3fba                                                         ; 3f76: f0 42       .B
+    beq return27                                                      ; 3f76: f0 42       .B
 ; TODO: I suspect the following code is copy protection related - writing data to the
 ; sideways ROM region feels wrong.
     ldy #$0f                                                          ; 3f78: a0 0f       ..
@@ -7062,16 +7144,14 @@ loop_c3f87
     ldy #0                                                            ; 3fb5: a0 00       ..
     jsr osbyte                                                        ; 3fb7: 20 f4 ff     ..            ; Write reset intercept code (operand high), value X=24
 ; $3fba referenced 1 time by $3f76
-c3fba
+return27
     rts                                                               ; 3fba: 60          `
 
 ; $3fbb referenced 1 time by $3f7b
 l3fbb
     !byte $4c,   8, $80, $4c,   8, $80,   0, $0a, $60,   0,   0,   0  ; 3fbb: 4c 08 80... L..
     !byte   0,   0,   0,   0                                          ; 3fc7: 00 00 00... ...
-; $3fcb referenced 11 times by $11f5, $1842, $1850, $1df7, $1e80, $1e88, $1ee8, $1ef0, $1f1b, $3c79, $3c7c
 something3_high_copy_start
-; $3fcb referenced 11 times by $11f5, $1842, $1850, $1df7, $1e80, $1e88, $1ee8, $1ef0, $1f1b, $3c79, $3c7c
 
 !pseudopc $0c00 {
 ; $3fcb referenced 11 times by $11f5, $1842, $1850, $1df7, $1e80, $1e88, $1ee8, $1ef0, $1f1b, $3c79, $3c7c
@@ -7079,9 +7159,9 @@ something3_TODO
     lda #$ff                                                          ; 3fcb: a9 ff       ..  :0c00[4]
     sta l110a                                                         ; 3fcd: 8d 0a 11    ... :0c02[4]
     lda l175d                                                         ; 3fd0: ad 5d 17    .]. :0c05[4]
-    sta l175e                                                         ; 3fd3: 8d 5e 17    .^. :0c08[4]
+    sta toolbar_colour                                                ; 3fd3: 8d 5e 17    .^. :0c08[4]
     lda l175f                                                         ; 3fd6: ad 5f 17    ._. :0c0b[4]
-    sta l1760                                                         ; 3fd9: 8d 60 17    .`. :0c0e[4]
+    sta gameplay_area_colour                                          ; 3fd9: 8d 60 17    .`. :0c0e[4]
     sei                                                               ; 3fdc: 78          x   :0c11[4]
     lda #$7f                                                          ; 3fdd: a9 7f       ..  :0c12[4]
     sta user_via_ier                                                  ; 3fdf: 8d 6e fe    .n. :0c14[4]
@@ -7091,16 +7171,16 @@ something3_TODO
     sta system_via_t2c_l                                              ; 3fe9: 8d 48 fe    .H. :0c1e[4]
     lda #$3c ; '<'                                                    ; 3fec: a9 3c       .<  :0c21[4]
     sta system_via_ier                                                ; 3fee: 8d 4e fe    .N. :0c23[4]
-    lda #$a0                                                          ; 3ff1: a9 a0       ..  :0c26[4]
+    lda #<irq1_routine                                                ; 3ff1: a9 a0       ..  :0c26[4]
     sta irq1v                                                         ; 3ff3: 8d 04 02    ... :0c28[4]
-    lda #$17                                                          ; 3ff6: a9 17       ..  :0c2b[4]
+    lda #>irq1_routine                                                ; 3ff6: a9 17       ..  :0c2b[4]
     sta irq1v+1                                                       ; 3ff8: 8d 05 02    ... :0c2d[4]
     cli                                                               ; 3ffb: 58          X   :0c30[4]
     jsr wait_for_vsync                                                ; 3ffc: 20 8c 17     .. :0c31[4]
     jsr wait_for_vsync                                                ; 3fff: 20 8c 17     .. :0c34[4]
     lda #crtc_vert_sync_pos                                           ; 4002: a9 07       ..  :0c37[4]
     sta crtc_address_register                                         ; 4004: 8d 00 fe    ... :0c39[4]
-    lda l110b                                                         ; 4007: ad 0b 11    ... :0c3c[4]
+    lda vertical_sync_amount_for_crtc_register                        ; 4007: ad 0b 11    ... :0c3c[4]
     sta crtc_address_write                                            ; 400a: 8d 01 fe    ... :0c3f[4]
     lda #crtc_screen_start_low                                        ; 400d: a9 0d       ..  :0c42[4]
     sta crtc_address_register                                         ; 400f: 8d 00 fe    ... :0c44[4]
@@ -7116,10 +7196,8 @@ something3_TODO
     sta crtc_address_write                                            ; 4028: 8d 01 fe    ... :0c5d[4]
     rts                                                               ; 402b: 60          `   :0c60[4]
 
-; $402c referenced 1 time by $3f87
 }
 
-; $402c referenced 1 time by $3f87
 quit_to_basic
 ; $402c referenced 1 time by $3f87
     sei                                                               ; 402c: 78          x
@@ -7165,9 +7243,7 @@ quit_to_basic
     ldy #>(l0070)                                                     ; 4083: a0 00       ..
     jmp oscli                                                         ; 4085: 4c f7 ff    L..
 
-; $4088 referenced 3 times by $110c, $3c6c, $3c6f
 clear_128_bytes_at_l09ef_high_copy_start
-; $4088 referenced 3 times by $110c, $3c6c, $3c6f
 
 !pseudopc $0ab7 {
 ; $4088 referenced 3 times by $110c, $3c6c, $3c6f
@@ -7199,7 +7275,7 @@ loop_c0ac6
 ; $40a5 referenced 3 times by $1775, $379e, $39e2
 convert_level_number_to_letter
     cpy #$51 ; 'Q'                                                    ; 40a5: c0 51       .Q  :0ad4[5]
-    beq c0afe                                                         ; 40a7: f0 26       .&  :0ad6[5]
+    beq return28                                                      ; 40a7: f0 26       .&  :0ad6[5]
     pha                                                               ; 40a9: 48          H   :0ad8[5]
     txa                                                               ; 40aa: 8a          .   :0ad9[5]
     pha                                                               ; 40ab: 48          H   :0ada[5]
@@ -7225,7 +7301,7 @@ c0ae6
 ; $40c0 referenced 3 times by $113d, $37c5, $39ee
 convert_level_letter_to_number
     cpy #last_level_letter                                            ; 40c0: c0 51       .Q  :0aef[5]
-    beq c0afe                                                         ; 40c2: f0 0b       ..  :0af1[5]
+    beq return28                                                      ; 40c2: f0 0b       ..  :0af1[5]
     pha                                                               ; 40c4: 48          H   :0af3[5]
     tya                                                               ; 40c5: 98          .   :0af4[5]
     sec                                                               ; 40c6: 38          8   :0af5[5]
@@ -7235,25 +7311,13 @@ convert_level_letter_to_number
     tay                                                               ; 40cd: a8          .   :0afc[5]
     pla                                                               ; 40ce: 68          h   :0afd[5]
 ; $40cf referenced 2 times by $0ad6, $0af1
-c0afe
+return28
     rts                                                               ; 40cf: 60          `   :0afe[5]
 
-; Update the transformation count on screen at text position (35-37, 6). This takes
-; care to update as few digits on screen as possible, probably to reduce flicker and to
-; offset the relatively slow implementation of print_italic.
-; $40d0 referenced 4 times by $1206, $2b5e, $3c84, $3c87
 }
 
-; Update the transformation count on screen at text position (35-37, 6). This takes
-; care to update as few digits on screen as possible, probably to reduce flicker and to
-; offset the relatively slow implementation of print_italic.
-; $40d0 referenced 4 times by $1206, $2b5e, $3c84, $3c87
 clear_128_bytes_at_l09ef_high_copy_end
 update_displayed_transformations_remaining_high_copy_start
-; Update the transformation count on screen at text position (35-37, 6). This takes
-; care to update as few digits on screen as possible, probably to reduce flicker and to
-; offset the relatively slow implementation of print_italic.
-; $40d0 referenced 4 times by $1206, $2b5e, $3c84, $3c87
 
 !pseudopc $0131 {
 ; Update the transformation count on screen at text position (35-37, 6). This takes
@@ -7292,20 +7356,17 @@ digit_unchanged
     pla                                                               ; 40fd: 68          h   :015e[3]
     rts                                                               ; 40fe: 60          `   :015f[3]
 
-; $40ff referenced 4 times by $040a, $0457, $183c, $2aa0
 }
 
-; $40ff referenced 4 times by $040a, $0457, $183c, $2aa0
-some_data_high_copy_TODO
+some_code_high_copy_TODO
 icodata
 update_displayed_transformations_remaining_high_copy_end
-; $40ff referenced 4 times by $040a, $0457, $183c, $2aa0
 
 !pseudopc $0400 {
 ; $40ff referenced 4 times by $040a, $0457, $183c, $2aa0
 wait_for_timer_2_using_l1106_l1107
-    ldx l1106                                                         ; 40ff: ae 06 11    ... :0400[2]
-    ldy l1107                                                         ; 4102: ac 07 11    ... :0403[2]
+    ldx timingB_counter_low                                           ; 40ff: ae 06 11    ... :0400[2]
+    ldy timingB_counter_high                                          ; 4102: ac 07 11    ... :0403[2]
     jmp wait_for_timer_2_using_yx                                     ; 4105: 4c 91 17    L.. :0406[2]
 
 ; $4108 referenced 9 times by $0428, $048d, $04e3, $0509, $1734, $3406, $3638, $3780, $3806
@@ -7356,7 +7417,7 @@ c0444
 ; $4152 referenced 8 times by $2a6d, $3428, $35ea, $3652, $3691, $369f, $36f6, $378b
 something_TODO
     lda l0004                                                         ; 4152: a5 04       ..  :0453[2]
-    beq c0473                                                         ; 4154: f0 1c       ..  :0455[2]
+    beq return29                                                      ; 4154: f0 1c       ..  :0455[2]
     jsr wait_for_timer_2_using_l1106_l1107                            ; 4156: 20 00 04     .. :0457[2]
     jsr turn_cursor_off                                               ; 4159: 20 63 38     c8 :045a[2]
     ldx #$ff                                                          ; 415c: a2 ff       ..  :045d[2]
@@ -7372,7 +7433,7 @@ something_TODO
     jmp c0505                                                         ; 416f: 4c 05 05    L.. :0470[2]
 
 ; $4172 referenced 1 time by $0455
-c0473
+return29
     rts                                                               ; 4172: 60          `   :0473[2]
 
 ; $4173 referenced 1 time by $043e
@@ -7422,7 +7483,7 @@ c04a4
 ; $41b3 referenced 1 time by $04a5
 c04b4
     dec l0073                                                         ; 41b3: c6 73       .s  :04b4[2]
-    beq c04ca                                                         ; 41b5: f0 12       ..  :04b6[2]
+    beq return30                                                      ; 41b5: f0 12       ..  :04b6[2]
     lda l0074                                                         ; 41b7: a5 74       .t  :04b8[2]
     adc #$40 ; '@'                                                    ; 41b9: 69 40       i@  :04ba[2]
     sta l0074                                                         ; 41bb: 85 74       .t  :04bc[2]
@@ -7433,7 +7494,7 @@ c04b4
     sta l0077                                                         ; 41c5: 85 77       .w  :04c6[2]
     bcc c048d                                                         ; 41c7: 90 c3       ..  :04c8[2]
 ; $41c9 referenced 1 time by $04b6
-c04ca
+return30
     rts                                                               ; 41c9: 60          `   :04ca[2]
 
 ; $41ca referenced 1 time by $0441
@@ -7525,9 +7586,9 @@ pydis_end
 ;     l202b:                                               18
 ;     l0004:                                               17
 ;     l0016:                                               17
+;     desired_level:                                       17
 ;     l004a:                                               17
 ;     l0015:                                               16
-;     desired_level:                                       16
 ;     x_entry_table7:                                      16
 ;     l007e:                                               15
 ;     l3a09:                                               15
@@ -7577,6 +7638,7 @@ pydis_end
 ;     l0063:                                                7
 ;     l007f:                                                7
 ;     l180d:                                                7
+;     l18bc:                                                7
 ;     l1b40:                                                7
 ;     sub_c2601:                                            7
 ;     l2602:                                                7
@@ -7584,6 +7646,7 @@ pydis_end
 ;     sub_c3462:                                            7
 ;     current_menu_index:                                   6
 ;     l003e:                                                6
+;     l0044:                                                6
 ;     l004b:                                                6
 ;     new_player_character:                                 6
 ;     sprdata_ptr:                                          6
@@ -7595,6 +7658,8 @@ pydis_end
 ;     current_transformations_remaining+1:                  6
 ;     l1648:                                                6
 ;     l173d:                                                6
+;     sub_c1891:                                            6
+;     sub_c18bd:                                            6
 ;     sub_c2286:                                            6
 ;     c29c1:                                                6
 ;     l29c3:                                                6
@@ -7609,7 +7674,6 @@ pydis_end
 ;     l003a:                                                5
 ;     l003b:                                                5
 ;     l0042:                                                5
-;     l0044:                                                5
 ;     l0064:                                                5
 ;     l0082:                                                5
 ;     x_entry_table4:                                       5
@@ -7624,25 +7688,27 @@ pydis_end
 ;     l2f75:                                                5
 ;     l2f90:                                                5
 ;     l31d6:                                                5
-;     c3534:                                                5
+;     return23:                                             5
 ;     l37d9:                                                5
-;     sub_c39ad:                                            5
+;     c39ad:                                                5
 ;     l39dd:                                                5
 ;     sub_c3a27:                                            5
 ;     l3a97:                                                5
 ;     space_flag2:                                          5
-;     player_x_movement_direction:                          4
+;     c3bc0:                                                5
+;     l0002:                                                4
+;     valid_direction_pending:                              4
 ;     another_menu_index:                                   4
 ;     left_right_flag:                                      4
-;     space_flag:                                           4
-;     z_flag:                                               4
-;     x_flag:                                               4
+;     space_bar_press_pending:                              4
+;     z_key_pressed_pending:                                4
+;     x_key_pressed_pending:                                4
 ;     some_word:                                            4
 ;     some_word + 1:                                        4
 ;     l0040:                                                4
 ;     l0041:                                                4
 ;     l0045:                                                4
-;     return_flag:                                          4
+;     return_key_pressed_event_pending:                     4
 ;     l0058:                                                4
 ;     displayed_transformations_remaining:                  4
 ;     l0083:                                                4
@@ -7653,13 +7719,16 @@ pydis_end
 ;     l09ea:                                                4
 ;     l0a90:                                                4
 ;     l1235:                                                4
+;     sub_c145c:                                            4
 ;     l14b0:                                                4
 ;     l16c4:                                                4
 ;     sub_c17ff:                                            4
-;     sub_c1891:                                            4
-;     sub_c18bd:                                            4
+;     sub_c188e:                                            4
+;     l188f:                                                4
+;     l1890:                                                4
 ;     l1956:                                                4
 ;     l1997:                                                4
+;     l1a97:                                                4
 ;     l1bdf:                                                4
 ;     sub_c1beb:                                            4
 ;     l1c97:                                                4
@@ -7683,16 +7752,16 @@ pydis_end
 ;     sub_c380c:                                            4
 ;     sub_c3994:                                            4
 ;     c3b39:                                                4
-;     c3bc0:                                                4
+;     sub_c3bd3:                                            4
 ;     clear_128_bytes_at_l09ef_high_copy_end:               4
-;     some_data_high_copy_TODO:                             4
-;     l0002:                                                3
-;     l0006:                                                3
-;     l0008:                                                3
-;     l000a:                                                3
+;     some_code_high_copy_TODO:                             4
+;     rnd0:                                                 3
+;     rnd2:                                                 3
+;     rnd4:                                                 3
 ;     left_right_repeat_flag:                               3
 ;     currently_loaded_level:                               3
 ;     l003f:                                                3
+;     maybe_current_level:                                  3
 ;     l0059:                                                3
 ;     l005f:                                                3
 ;     l0084:                                                3
@@ -7721,10 +7790,6 @@ pydis_end
 ;     l165a:                                                3
 ;     sub_c174f:                                            3
 ;     l17c7:                                                3
-;     sub_c188e:                                            3
-;     l188f:                                                3
-;     l1890:                                                3
-;     l18bc:                                                3
 ;     sub_c1955:                                            3
 ;     sub_c19d7:                                            3
 ;     sub_c1a37:                                            3
@@ -7737,7 +7802,9 @@ pydis_end
 ;     c2331:                                                3
 ;     l2379:                                                3
 ;     l2398:                                                3
+;     l23fe:                                                3
 ;     sub_c241f:                                            3
+;     l2468:                                                3
 ;     sub_c24f5:                                            3
 ;     sub_c255c:                                            3
 ;     sub_c2565:                                            3
@@ -7774,18 +7841,17 @@ pydis_end
 ;     l4217:                                                3
 ;     oscli:                                                3
 ;     l0003:                                                2
-;     l0007:                                                2
-;     l0009:                                                2
+;     rnd1:                                                 2
+;     rnd3:                                                 2
 ;     l0014:                                                2
 ;     l0026:                                                2
-;     space_repeat_flag:                                    2
+;     space_bar_pressed:                                    2
 ;     l0039:                                                2
 ;     l0043:                                                2
-;     maybe_current_level:                                  2
 ;     l005a:                                                2
 ;     l005b:                                                2
 ;     l0065:                                                2
-;     l00fc:                                                2
+;     interrupt_accumulator:                                2
 ;     l012a:                                                2
 ;     l012b:                                                2
 ;     l012c:                                                2
@@ -7800,7 +7866,7 @@ pydis_end
 ;     sub_c123c:                                            2
 ;     l123d:                                                2
 ;     sub_c13cc:                                            2
-;     sub_c145c:                                            2
+;     l144f:                                                2
 ;     l14a8:                                                2
 ;     sub_c159f:                                            2
 ;     l15a8:                                                2
@@ -7814,7 +7880,6 @@ pydis_end
 ;     sub_c18c2:                                            2
 ;     l1954:                                                2
 ;     c19d4:                                                2
-;     l1a97:                                                2
 ;     sub_c1aa0:                                            2
 ;     l1b23:                                                2
 ;     something15_TODO:                                     2
@@ -7841,9 +7906,7 @@ pydis_end
 ;     l224f:                                                2
 ;     sub_c22c1:                                            2
 ;     sub_c2301:                                            2
-;     l23fe:                                                2
 ;     sub_c2462:                                            2
-;     l2468:                                                2
 ;     sub_c2489:                                            2
 ;     l254b:                                                2
 ;     sub_c2815:                                            2
@@ -7859,6 +7922,7 @@ pydis_end
 ;     sub_c2b0f:                                            2
 ;     sub_c2b1c:                                            2
 ;     l2b48:                                                2
+;     l2b69:                                                2
 ;     l2bb2:                                                2
 ;     sub_c2bf5:                                            2
 ;     sub_c2c0b:                                            2
@@ -7901,21 +7965,22 @@ pydis_end
 ;     l3a98:                                                2
 ;     l3a9c:                                                2
 ;     sub_c3aa5:                                            2
+;     l3ad9:                                                2
+;     l3ada:                                                2
+;     c3adf:                                                2
+;     l3ae0:                                                2
 ;     c3b1d:                                                2
 ;     sub_c3b43:                                            2
 ;     c3b72:                                                2
 ;     c3ba6:                                                2
 ;     l3bd1:                                                2
 ;     l3bd2:                                                2
-;     sub_c3bd3:                                            2
 ;     l3bfb:                                                2
 ;     l3bfc:                                                2
-;     l3c10:                                                2
-;     c3c11:                                                2
-;     c3c2c:                                                2
-;     c3c5c:                                                2
-;     c3c6a:                                                2
-;     c3dae:                                                2
+;     relocation1_loop:                                     2
+;     relocation2_loop:                                     2
+;     relocation3:                                          2
+;     clear_toolbar_part_of_screen_loop:                    2
 ;     read_icodata_using_osword_7f:                         2
 ;     seek_track_a:                                         2
 ;     set_track_special_register_to_a:                      2
@@ -7938,6 +8003,7 @@ pydis_end
 ;     l0067:                                                1
 ;     l0068:                                                1
 ;     romsel_copy:                                          1
+;     l00fd:                                                1
 ;     l0123:                                                1
 ;     l0124:                                                1
 ;     l0125:                                                1
@@ -7970,6 +8036,9 @@ pydis_end
 ;     sub_c1365:                                            1
 ;     l13a7:                                                1
 ;     l13a9:                                                1
+;     l140a:                                                1
+;     l142d:                                                1
+;     sub_c1437:                                            1
 ;     l148e:                                                1
 ;     l14dd:                                                1
 ;     l14e6:                                                1
@@ -7997,7 +8066,7 @@ pydis_end
 ;     sub_c1724:                                            1
 ;     l1754:                                                1
 ;     l1759:                                                1
-;     l1760:                                                1
+;     gameplay_area_colour:                                 1
 ;     sub_c176e:                                            1
 ;     sub_c1771:                                            1
 ;     l178f:                                                1
@@ -8008,6 +8077,7 @@ pydis_end
 ;     l17e6:                                                1
 ;     l17f0:                                                1
 ;     sub_c1828:                                            1
+;     l1844:                                                1
 ;     sub_c1859:                                            1
 ;     l1892:                                                1
 ;     l1896:                                                1
@@ -8025,6 +8095,7 @@ pydis_end
 ;     l197e:                                                1
 ;     sub_c19c4:                                            1
 ;     sub_c19da:                                            1
+;     sub_c19f4:                                            1
 ;     sub_c1a02:                                            1
 ;     sub_c1a3a:                                            1
 ;     sub_c1a3c:                                            1
@@ -8087,6 +8158,7 @@ pydis_end
 ;     sub_c20d1:                                            1
 ;     l20e8:                                                1
 ;     sub_c20f2:                                            1
+;     l2108:                                                1
 ;     l2112:                                                1
 ;     l2126:                                                1
 ;     sub_c2149:                                            1
@@ -8184,8 +8256,7 @@ pydis_end
 ;     sub_c2b05:                                            1
 ;     l2b1b:                                                1
 ;     sub_c2b43:                                            1
-;     c2b64:                                                1
-;     l2b69:                                                1
+;     return20:                                             1
 ;     loop_c2ba4:                                           1
 ;     sub_c2bcb:                                            1
 ;     l2bd1:                                                1
@@ -8282,7 +8353,7 @@ pydis_end
 ;     sub_c3783:                                            1
 ;     sub_c3795:                                            1
 ;     sub_c37c9:                                            1
-;     c37f2:                                                1
+;     return26:                                             1
 ;     l37f8:                                                1
 ;     l3803:                                                1
 ;     l3824:                                                1
@@ -8313,11 +8384,18 @@ pydis_end
 ;     sub_c3a6d:                                            1
 ;     left_right_flag2:                                     1
 ;     sub_c3ab7:                                            1
-;     return_flag3:                                         1
-;     sub_c3ae7:                                            1
-;     l3af2:                                                1
+;     jump_requested_previous_tick:                         1
+;     level_data:                                           1
+;     level_data + 1:                                       1
+;     l3ad7:                                                1
+;     c3ad8:                                                1
+;     c3adb:                                                1
+;     l3adc:                                                1
+;     l3add:                                                1
+;     c3ade:                                                1
+;     c3ae7:                                                1
+;     c3af2:                                                1
 ;     c3b03:                                                1
-;     l3b09:                                                1
 ;     c3b11:                                                1
 ;     c3b25:                                                1
 ;     sub_c3b78:                                            1
@@ -8327,36 +8405,29 @@ pydis_end
 ;     c3bb9:                                                1
 ;     l3bbf:                                                1
 ;     l3bf9:                                                1
-;     c3c06:                                                1
-;     l3c07:                                                1
-;     c3c08:                                                1
-;     l3c09:                                                1
-;     c3c0c:                                                1
-;     l3c0d:                                                1
-;     c3c0e:                                                1
-;     l3c0f:                                                1
+;     relocation2:                                          1
 ;     c3c56:                                                1
-;     loop_c3c6c:                                           1
-;     loop_c3c79:                                           1
-;     loop_c3c84:                                           1
-;     c3c9b:                                                1
+;     relocation3_loop:                                     1
+;     relocation4_loop:                                     1
+;     relocation5_loop:                                     1
+;     set_drive_and_directory:                              1
 ;     define_character_fe_loop:                             1
 ;     loop_c3d54:                                           1
-;     initial_screen_disabled_flag_ok:                      1
-;     c3db9:                                                1
-;     loop_c3e52:                                           1
+;     clear_toolbar_part_of_screen:                         1
+;     define_text_window:                                   1
+;     adjust_timing_variable_loop:                          1
 ;     c3ec1:                                                1
 ;     osword_7f_block_seek_track:                           1
 ;     osword_7f_block_write_special_register_track:         1
 ;     osword_7f_read_result:                                1
-;     l3f05:                                                1
+;     drive_number:                                         1
 ;     loop_c3f18:                                           1
 ;     c3f2d:                                                1
 ;     character_fe_bitmap:                                  1
 ;     probably_copy_protection_TODO:                        1
 ;     loop_c3f7b:                                           1
 ;     loop_c3f87:                                           1
-;     c3fba:                                                1
+;     return27:                                             1
 ;     l3fbb:                                                1
 ;     quit_to_basic:                                        1
 ;     c408b:                                                1
@@ -8398,23 +8469,22 @@ pydis_end
 ; Automatically generated labels:
 ;     c043a
 ;     c0444
-;     c0473
 ;     c048d
 ;     c0490
 ;     c04a4
 ;     c04b4
-;     c04ca
 ;     c0505
 ;     c0ae6
-;     c0afe
 ;     c110c
 ;     c1171
 ;     c1186
 ;     c11f8
 ;     c1209
 ;     c129b
+;     c12fc
+;     c1306
+;     c131e
 ;     c135d
-;     c1376
 ;     c137f
 ;     c13b5
 ;     c13bf
@@ -8461,22 +8531,18 @@ pydis_end
 ;     c16aa
 ;     c16b5
 ;     c16bf
-;     c16cd
 ;     c16ce
 ;     c16f7
+;     c1713
 ;     c174c
-;     c178a
 ;     c17f1
-;     c17f9
 ;     c181a
-;     c1823
 ;     c18d1
 ;     c1906
 ;     c1909
 ;     c191f
 ;     c1937
 ;     c1951
-;     c1966
 ;     c19b9
 ;     c19d4
 ;     c19e2
@@ -8518,7 +8584,6 @@ pydis_end
 ;     c1e2d
 ;     c1e33
 ;     c1e3d
-;     c1e43
 ;     c1e4e
 ;     c1e6a
 ;     c1e9b
@@ -8550,7 +8615,6 @@ pydis_end
 ;     c2197
 ;     c21d0
 ;     c21ef
-;     c21ff
 ;     c221c
 ;     c2223
 ;     c2231
@@ -8565,16 +8629,13 @@ pydis_end
 ;     c22e3
 ;     c22e6
 ;     c22e9
-;     c22ec
 ;     c22fe
 ;     c2309
 ;     c2325
 ;     c2331
 ;     c2334
-;     c2357
 ;     c2392
 ;     c23a5
-;     c23a8
 ;     c23e2
 ;     c23e7
 ;     c23fa
@@ -8597,15 +8658,10 @@ pydis_end
 ;     c25d6
 ;     c2626
 ;     c264f
-;     c2659
 ;     c2676
-;     c2692
 ;     c26c2
-;     c26e4
 ;     c2701
-;     c271d
 ;     c274d
-;     c276f
 ;     c279c
 ;     c27fe
 ;     c281d
@@ -8629,16 +8685,12 @@ pydis_end
 ;     c2abd
 ;     c2ac4
 ;     c2acd
-;     c2ada
-;     c2af5
 ;     c2af6
 ;     c2af9
 ;     c2afc
 ;     c2aff
 ;     c2b2e
-;     c2b64
 ;     c2b84
-;     c2b86
 ;     c2bba
 ;     c2bd6
 ;     c2bdd
@@ -8718,11 +8770,9 @@ pydis_end
 ;     c3467
 ;     c346a
 ;     c347f
-;     c3496
 ;     c34a7
 ;     c3501
 ;     c3516
-;     c3534
 ;     c3557
 ;     c3573
 ;     c3598
@@ -8736,7 +8786,6 @@ pydis_end
 ;     c363f
 ;     c3652
 ;     c3698
-;     c36a7
 ;     c36a8
 ;     c36c1
 ;     c36d2
@@ -8750,13 +8799,11 @@ pydis_end
 ;     c3750
 ;     c376b
 ;     c377a
-;     c377c
 ;     c377e
 ;     c378e
 ;     c37ba
 ;     c37c3
 ;     c37da
-;     c37f2
 ;     c3804
 ;     c381a
 ;     c381c
@@ -8771,23 +8818,22 @@ pydis_end
 ;     c3954
 ;     c3986
 ;     c3997
+;     c39ad
 ;     c39b6
 ;     c39c1
 ;     c39e0
 ;     c39ec
 ;     c39f4
 ;     c3a08
-;     c3a41
-;     c3a54
-;     c3a73
 ;     c3a83
 ;     c3a88
 ;     c3a8f
-;     c3ad7
+;     c3ad8
 ;     c3adb
-;     c3add
-;     c3ae0
-;     c3afb
+;     c3ade
+;     c3adf
+;     c3ae7
+;     c3af2
 ;     c3b03
 ;     c3b11
 ;     c3b1d
@@ -8800,22 +8846,10 @@ pydis_end
 ;     c3bb4
 ;     c3bb9
 ;     c3bc0
-;     c3c06
-;     c3c08
-;     c3c0c
-;     c3c0e
-;     c3c11
-;     c3c2c
 ;     c3c56
-;     c3c5c
-;     c3c6a
-;     c3c9b
-;     c3dae
-;     c3db9
 ;     c3ec1
 ;     c3f0d
 ;     c3f2d
-;     c3fba
 ;     c408b
 ;     c4097
 ;     c40af
@@ -8840,11 +8874,6 @@ pydis_end
 ;     l0003
 ;     l0004
 ;     l0005
-;     l0006
-;     l0007
-;     l0008
-;     l0009
-;     l000a
 ;     l0014
 ;     l0015
 ;     l0016
@@ -8912,7 +8941,7 @@ pydis_end
 ;     l0086
 ;     l0087
 ;     l0088
-;     l00fc
+;     l00fd
 ;     l0100
 ;     l010b
 ;     l0116
@@ -8951,13 +8980,7 @@ pydis_end
 ;     l0a80
 ;     l0a90
 ;     l0b00
-;     l1105
-;     l1106
-;     l1107
-;     l1108
-;     l1109
 ;     l110a
-;     l110b
 ;     l1235
 ;     l1237
 ;     l1239
@@ -8972,6 +8995,9 @@ pydis_end
 ;     l132b
 ;     l13a7
 ;     l13a9
+;     l140a
+;     l142d
+;     l144f
 ;     l145d
 ;     l1487
 ;     l1489
@@ -9000,9 +9026,7 @@ pydis_end
 ;     l1754
 ;     l1759
 ;     l175d
-;     l175e
 ;     l175f
-;     l1760
 ;     l1761
 ;     l1765
 ;     l178b
@@ -9015,6 +9039,7 @@ pydis_end
 ;     l17fe
 ;     l180d
 ;     l1824
+;     l1844
 ;     l188f
 ;     l1890
 ;     l1892
@@ -9027,8 +9052,6 @@ pydis_end
 ;     l1954
 ;     l1956
 ;     l196a
-;     l196d
-;     l196e
 ;     l1976
 ;     l197e
 ;     l1997
@@ -9091,6 +9114,7 @@ pydis_end
 ;     l209d
 ;     l20b5
 ;     l20e8
+;     l2108
 ;     l2112
 ;     l211a
 ;     l2126
@@ -9358,12 +9382,12 @@ pydis_end
 ;     l3a98
 ;     l3a9c
 ;     l3aa4
-;     l3ad8
+;     l3ad7
+;     l3ad9
+;     l3ada
 ;     l3adc
-;     l3ade
-;     l3adf
-;     l3af2
-;     l3b09
+;     l3add
+;     l3ae0
 ;     l3bbe
 ;     l3bbf
 ;     l3bd1
@@ -9373,12 +9397,6 @@ pydis_end
 ;     l3bfa
 ;     l3bfb
 ;     l3bfc
-;     l3c07
-;     l3c09
-;     l3c0d
-;     l3c0f
-;     l3c10
-;     l3f05
 ;     l3fbb
 ;     l4108
 ;     l4214
@@ -9400,10 +9418,8 @@ pydis_end
 ;     loop_c1471
 ;     loop_c1540
 ;     loop_c1623
-;     loop_c179a
 ;     loop_c1830
 ;     loop_c184d
-;     loop_c18a9
 ;     loop_c190b
 ;     loop_c1921
 ;     loop_c193d
@@ -9416,7 +9432,6 @@ pydis_end
 ;     loop_c1df7
 ;     loop_c1e80
 ;     loop_c1f21
-;     loop_c1f2c
 ;     loop_c1fe1
 ;     loop_c1ff5
 ;     loop_c2018
@@ -9450,11 +9465,7 @@ pydis_end
 ;     loop_c383a
 ;     loop_c3892
 ;     loop_c39d2
-;     loop_c3c6c
-;     loop_c3c79
-;     loop_c3c84
 ;     loop_c3d54
-;     loop_c3e52
 ;     loop_c3f18
 ;     loop_c3f7b
 ;     loop_c3f87
@@ -9471,6 +9482,7 @@ pydis_end
 ;     sub_c1344
 ;     sub_c1365
 ;     sub_c13cc
+;     sub_c1437
 ;     sub_c145c
 ;     sub_c14a7
 ;     sub_c14be
@@ -9497,11 +9509,8 @@ pydis_end
 ;     sub_c176e
 ;     sub_c1771
 ;     sub_c17a1
-;     sub_c17b9
 ;     sub_c17bb
-;     sub_c17fa
 ;     sub_c17ff
-;     sub_c1825
 ;     sub_c1828
 ;     sub_c1845
 ;     sub_c1859
@@ -9516,10 +9525,10 @@ pydis_end
 ;     sub_c194b
 ;     sub_c1955
 ;     sub_c1961
-;     sub_c196c
 ;     sub_c19c4
 ;     sub_c19d7
 ;     sub_c19da
+;     sub_c19f4
 ;     sub_c1a02
 ;     sub_c1a37
 ;     sub_c1a3a
@@ -9734,19 +9743,15 @@ pydis_end
 ;     sub_c394d
 ;     sub_c3994
 ;     sub_c39a3
-;     sub_c39ad
 ;     sub_c39bb
 ;     sub_c39be
 ;     sub_c39c3
 ;     sub_c39de
-;     sub_c3a12
 ;     sub_c3a27
-;     sub_c3a47
 ;     sub_c3a6d
 ;     sub_c3aa2
 ;     sub_c3aa5
 ;     sub_c3ab7
-;     sub_c3ae7
 ;     sub_c3b43
 ;     sub_c3b78
 ;     sub_c3bd3
@@ -9765,6 +9770,9 @@ pydis_end
 }
 !if ('Z' + 1) != $5b {
     !error "Assertion failed: 'Z' + 1 == $5b"
+}
+!if (0) != $00 {
+    !error "Assertion failed: 0 == $00"
 }
 !if (<(dir_dollar_command)) != $07 {
     !error "Assertion failed: <(dir_dollar_command) == $07"
@@ -9787,6 +9795,9 @@ pydis_end
 !if (<(osword_7f_block_write_special_register)) != $ea {
     !error "Assertion failed: <(osword_7f_block_write_special_register) == $ea"
 }
+!if (<data_TODO) != $52 {
+    !error "Assertion failed: <data_TODO == $52"
+}
 !if (<data_filename) != $72 {
     !error "Assertion failed: <data_filename == $72"
 }
@@ -9805,14 +9816,20 @@ pydis_end
 !if (<icodata_filename) != $5e {
     !error "Assertion failed: <icodata_filename == $5e"
 }
+!if (<irq1_routine) != $a0 {
+    !error "Assertion failed: <irq1_routine == $a0"
+}
 !if (<level_data) != $d5 {
     !error "Assertion failed: <level_data == $d5"
 }
-!if (<some_data_high_copy_TODO) != $ff {
-    !error "Assertion failed: <some_data_high_copy_TODO == $ff"
+!if (<some_code_high_copy_TODO) != $ff {
+    !error "Assertion failed: <some_code_high_copy_TODO == $ff"
 }
 !if (<sprdata_filename) != $80 {
     !error "Assertion failed: <sprdata_filename == $80"
+}
+!if (<start_of_screen_memory) != $c0 {
+    !error "Assertion failed: <start_of_screen_memory == $c0"
 }
 !if (<wait_for_timer_2_using_l1106_l1107) != $00 {
     !error "Assertion failed: <wait_for_timer_2_using_l1106_l1107 == $00"
@@ -9838,6 +9855,9 @@ pydis_end
 !if (>(osword_7f_block_write_special_register)) != $3e {
     !error "Assertion failed: >(osword_7f_block_write_special_register) == $3e"
 }
+!if (>data_TODO) != $17 {
+    !error "Assertion failed: >data_TODO == $17"
+}
 !if (>data_filename) != $12 {
     !error "Assertion failed: >data_filename == $12"
 }
@@ -9856,14 +9876,20 @@ pydis_end
 !if (>icodata_filename) != $3f {
     !error "Assertion failed: >icodata_filename == $3f"
 }
+!if (>irq1_routine) != $17 {
+    !error "Assertion failed: >irq1_routine == $17"
+}
 !if (>level_data) != $3a {
     !error "Assertion failed: >level_data == $3a"
 }
-!if (>some_data_high_copy_TODO) != $40 {
-    !error "Assertion failed: >some_data_high_copy_TODO == $40"
+!if (>some_code_high_copy_TODO) != $40 {
+    !error "Assertion failed: >some_code_high_copy_TODO == $40"
 }
 !if (>sprdata_filename) != $19 {
     !error "Assertion failed: >sprdata_filename == $19"
+}
+!if (>start_of_screen_memory) != $5b {
+    !error "Assertion failed: >start_of_screen_memory == $5b"
 }
 !if (>wait_for_timer_2_using_l1106_l1107) != $04 {
     !error "Assertion failed: >wait_for_timer_2_using_l1106_l1107 == $04"
@@ -9924,6 +9950,12 @@ pydis_end
 }
 !if (inkey_key_z) != $9e {
     !error "Assertion failed: inkey_key_z == $9e"
+}
+!if (jmp_instruction+1) != $196d {
+    !error "Assertion failed: jmp_instruction+1 == $196d"
+}
+!if (jmp_instruction+2) != $196e {
+    !error "Assertion failed: jmp_instruction+2 == $196e"
 }
 !if (last_level_letter) != $51 {
     !error "Assertion failed: last_level_letter == $51"
