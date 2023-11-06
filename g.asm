@@ -80,8 +80,8 @@ left_right_flag                     = $28
 new_menu_index                      = $29
 space_flag                          = $2a
 l002b                               = $2b
-l002c                               = $2c
-l002d                               = $2d
+z_flag                              = $2c
+x_flag                              = $2d
 current_menu_index                  = $2e
 l0030                               = $30
 desired_level                       = $31
@@ -98,7 +98,7 @@ l0042                               = $42
 l0043                               = $43
 l0044                               = $44
 l0045                               = $45
-l0046                               = $46
+return_flag                         = $46
 current_player_character            = $48
 l0049                               = $49
 l004a                               = $4a
@@ -4762,7 +4762,7 @@ c2df3
     cpx x_entry_table10                                               ; 2f2b: ec be 09    ... :2dfa[1]
     bne c2e0f                                                         ; 2f2e: d0 10       ..  :2dfd[1]
     lda #$29 ; ')'                                                    ; 2f30: a9 29       .)  :2dff[1]
-    ldx l3ac7                                                         ; 2f32: ae c7 3a    ..: :2e01[1]
+    ldx return_flag2                                                  ; 2f32: ae c7 3a    ..: :2e01[1]
     beq c2e0f                                                         ; 2f35: f0 09       ..  :2e04[1]
     ldx l09df                                                         ; 2f37: ae df 09    ... :2e06[1]
     cpx #$96                                                          ; 2f3a: e0 96       ..  :2e09[1]
@@ -4785,7 +4785,7 @@ c2e1b
     beq c2e42                                                         ; 2f56: f0 1b       ..  :2e25[1]
     cmp #$36 ; '6'                                                    ; 2f58: c9 36       .6  :2e27[1]
     beq c2e42                                                         ; 2f5a: f0 17       ..  :2e29[1]
-    lda l3ac7                                                         ; 2f5c: ad c7 3a    ..: :2e2b[1]
+    lda return_flag2                                                  ; 2f5c: ad c7 3a    ..: :2e2b[1]
     beq c2e44                                                         ; 2f5f: f0 14       ..  :2e2e[1]
     lda l0052                                                         ; 2f61: a5 52       .R  :2e30[1]
     beq c2e44                                                         ; 2f63: f0 10       ..  :2e32[1]
@@ -5010,7 +5010,7 @@ c3053
     cpx x_entry_table10                                               ; 318b: ec be 09    ... :305a[1]
     bne c3068                                                         ; 318e: d0 09       ..  :305d[1]
     lda #$29 ; ')'                                                    ; 3190: a9 29       .)  :305f[1]
-    ldx l3ac7                                                         ; 3192: ae c7 3a    ..: :3061[1]
+    ldx return_flag2                                                  ; 3192: ae c7 3a    ..: :3061[1]
     beq c3068                                                         ; 3195: f0 02       ..  :3064[1]
     lda #$45 ; 'E'                                                    ; 3197: a9 45       .E  :3066[1]
 ; $3199 referenced 2 times by $305d, $3064
@@ -5143,7 +5143,7 @@ c31ff
     beq c3222                                                         ; 3339: f0 18       ..  :3208[1]
     cmp #$45 ; 'E'                                                    ; 333b: c9 45       .E  :320a[1]
     beq c3222                                                         ; 333d: f0 14       ..  :320c[1]
-    lda l3ac7                                                         ; 333f: ad c7 3a    ..: :320e[1]
+    lda return_flag2                                                  ; 333f: ad c7 3a    ..: :320e[1]
     beq c3276                                                         ; 3342: f0 63       .c  :3211[1]
     jsr sub_c336e                                                     ; 3344: 20 6e 33     n3 :3213[1]
     beq c3276                                                         ; 3347: f0 5e       .^  :3216[1]
@@ -5157,7 +5157,7 @@ c3222
     ldx #$d4                                                          ; 3353: a2 d4       ..  :3222[1]
     jsr sub_c336e                                                     ; 3355: 20 6e 33     n3 :3224[1]
     beq c325f                                                         ; 3358: f0 36       .6  :3227[1]
-    lda l3ac7                                                         ; 335a: ad c7 3a    ..: :3229[1]
+    lda return_flag2                                                  ; 335a: ad c7 3a    ..: :3229[1]
     beq c324c                                                         ; 335d: f0 1e       ..  :322c[1]
     dec l2550                                                         ; 335f: ce 50 25    .P% :322e[1]
     lda #0                                                            ; 3362: a9 00       ..  :3231[1]
@@ -5166,8 +5166,8 @@ c3222
     ldx #$51 ; 'Q'                                                    ; 3369: a2 51       .Q  :3238[1]
     lda l31d7                                                         ; 336b: ad d7 31    ..1 :323a[1]
     bne c3247                                                         ; 336e: d0 08       ..  :323d[1]
-    lda l3aca                                                         ; 3370: ad ca 3a    ..: :323f[1]
-    ora l3acb                                                         ; 3373: 0d cb 3a    ..: :3242[1]
+    lda z_flag2                                                       ; 3370: ad ca 3a    ..: :323f[1]
+    ora x_flag2                                                       ; 3373: 0d cb 3a    ..: :3242[1]
     beq c3269                                                         ; 3376: f0 22       ."  :3245[1]
 ; $3378 referenced 2 times by $3236, $323d
 c3247
@@ -5254,7 +5254,7 @@ c32b1
 c32c8
     ldx l3ac9                                                         ; 33f9: ae c9 3a    ..: :32c8[1]
     bne c32de                                                         ; 33fc: d0 11       ..  :32cb[1]
-    lda l3ac7                                                         ; 33fe: ad c7 3a    ..: :32cd[1]
+    lda return_flag2                                                  ; 33fe: ad c7 3a    ..: :32cd[1]
     beq c3301                                                         ; 3401: f0 2f       ./  :32d0[1]
     lda l09df                                                         ; 3403: ad df 09    ... :32d2[1]
     cmp #$d4                                                          ; 3406: c9 d4       ..  :32d5[1]
@@ -5268,7 +5268,7 @@ c32de
     cpx x_entry_table10                                               ; 3411: ec be 09    ... :32e0[1]
     bne c32f5                                                         ; 3414: d0 10       ..  :32e3[1]
     lda #$29 ; ')'                                                    ; 3416: a9 29       .)  :32e5[1]
-    ldx l3ac7                                                         ; 3418: ae c7 3a    ..: :32e7[1]
+    ldx return_flag2                                                  ; 3418: ae c7 3a    ..: :32e7[1]
     beq c32f5                                                         ; 341b: f0 09       ..  :32ea[1]
     ldx l09df                                                         ; 341d: ae df 09    ... :32ec[1]
     cpx #$d4                                                          ; 3420: e0 d4       ..  :32ef[1]
@@ -6342,24 +6342,24 @@ c3a08
 sub_c3a12
     ldx #inkey_key_return                                             ; 3b43: a2 b6       ..  :3a12[1]
     jsr negative_inkey                                                ; 3b45: 20 cc 3a     .: :3a14[1]
-    ora l0046                                                         ; 3b48: 05 46       .F  :3a17[1]
-    sta l0046                                                         ; 3b4a: 85 46       .F  :3a19[1]
+    ora return_flag                                                   ; 3b48: 05 46       .F  :3a17[1]
+    sta return_flag                                                   ; 3b4a: 85 46       .F  :3a19[1]
     ldx #inkey_key_z                                                  ; 3b4c: a2 9e       ..  :3a1b[1]
     jsr negative_inkey                                                ; 3b4e: 20 cc 3a     .: :3a1d[1]
-    sta l3a8d                                                         ; 3b51: 8d 8d 3a    ..: :3a20[1]
-    ora l002c                                                         ; 3b54: 05 2c       .,  :3a23[1]
-    sta l002c                                                         ; 3b56: 85 2c       .,  :3a25[1]
+    sta temp_left_or_z_flag                                           ; 3b51: 8d 8d 3a    ..: :3a20[1]
+    ora z_flag                                                        ; 3b54: 05 2c       .,  :3a23[1]
+    sta z_flag                                                        ; 3b56: 85 2c       .,  :3a25[1]
     ldx #inkey_key_x                                                  ; 3b58: a2 bd       ..  :3a27[1]
     jsr negative_inkey                                                ; 3b5a: 20 cc 3a     .: :3a29[1]
     pha                                                               ; 3b5d: 48          H   :3a2c[1]
-    ora l002d                                                         ; 3b5e: 05 2d       .-  :3a2d[1]
-    sta l002d                                                         ; 3b60: 85 2d       .-  :3a2f[1]
+    ora x_flag                                                        ; 3b5e: 05 2d       .-  :3a2d[1]
+    sta x_flag                                                        ; 3b60: 85 2d       .-  :3a2f[1]
     pla                                                               ; 3b62: 68          h   :3a31[1]
     ldx #0                                                            ; 3b63: a2 00       ..  :3a32[1]
-    eor l3a8d                                                         ; 3b65: 4d 8d 3a    M.: :3a34[1]
+    eor temp_left_or_z_flag                                           ; 3b65: 4d 8d 3a    M.: :3a34[1]
     beq c3a41                                                         ; 3b68: f0 08       ..  :3a37[1]
     dex                                                               ; 3b6a: ca          .   :3a39[1]
-    lda l3a8d                                                         ; 3b6b: ad 8d 3a    ..: :3a3a[1]
+    lda temp_left_or_z_flag                                           ; 3b6b: ad 8d 3a    ..: :3a3a[1]
     bmi c3a41                                                         ; 3b6e: 30 02       0.  :3a3d[1]
     ldx #1                                                            ; 3b70: a2 01       ..  :3a3f[1]
 ; $3b72 referenced 2 times by $3a37, $3a3d
@@ -6383,12 +6383,12 @@ c3a54
     sta space_flag                                                    ; 3b87: 85 2a       .*  :3a56[1]
     ldx #inkey_key_left                                               ; 3b89: a2 e6       ..  :3a58[1]
     jsr negative_inkey                                                ; 3b8b: 20 cc 3a     .: :3a5a[1]
-    sta l3a8d                                                         ; 3b8e: 8d 8d 3a    ..: :3a5d[1]
+    sta temp_left_or_z_flag                                           ; 3b8e: 8d 8d 3a    ..: :3a5d[1]
     ldx #inkey_key_right                                              ; 3b91: a2 86       ..  :3a60[1]
     jsr negative_inkey                                                ; 3b93: 20 cc 3a     .: :3a62[1]
-    cmp l3a8d                                                         ; 3b96: cd 8d 3a    ..: :3a65[1]
+    cmp temp_left_or_z_flag                                           ; 3b96: cd 8d 3a    ..: :3a65[1]
     beq c3a73                                                         ; 3b99: f0 09       ..  :3a68[1]
-    lda l3a8d                                                         ; 3b9b: ad 8d 3a    ..: :3a6a[1]
+    lda temp_left_or_z_flag                                           ; 3b9b: ad 8d 3a    ..: :3a6a[1]
     bmi menu_x_step_in_a                                              ; 3b9e: 30 06       0.  :3a6d[1]
     lda #1                                                            ; 3ba0: a9 01       ..  :3a6f[1]
     bpl menu_x_step_in_a                                              ; 3ba2: 10 02       ..  :3a71[1]
@@ -6418,7 +6418,7 @@ c3a88
     rts                                                               ; 3bbd: 60          `   :3a8c[1]
 
 ; $3bbe referenced 6 times by $3a20, $3a34, $3a3a, $3a5d, $3a65, $3a6a
-l3a8d
+temp_left_or_z_flag
     !byte 0                                                           ; 3bbe: 00          .   :3a8d[1]
 ; $3bbf referenced 1 time by $3a83
 l3a8e
@@ -6444,37 +6444,37 @@ left_right_flag2
 
 ; $3bd3 referenced 2 times by $2abd, $2ad4
 sub_c3aa2
-    lda l3ac7                                                         ; 3bd3: ad c7 3a    ..: :3aa2[1]
-    sta l3ac8                                                         ; 3bd6: 8d c8 3a    ..: :3aa5[1]
-    lda l0046                                                         ; 3bd9: a5 46       .F  :3aa8[1]
-    sta l3ac7                                                         ; 3bdb: 8d c7 3a    ..: :3aaa[1]
+    lda return_flag2                                                  ; 3bd3: ad c7 3a    ..: :3aa2[1]
+    sta return_flag3                                                  ; 3bd6: 8d c8 3a    ..: :3aa5[1]
+    lda return_flag                                                   ; 3bd9: a5 46       .F  :3aa8[1]
+    sta return_flag2                                                  ; 3bdb: 8d c7 3a    ..: :3aaa[1]
     lda l0020                                                         ; 3bde: a5 20       .   :3aad[1]
     sta l3ac9                                                         ; 3be0: 8d c9 3a    ..: :3aaf[1]
-    lda l002c                                                         ; 3be3: a5 2c       .,  :3ab2[1]
-    sta l3aca                                                         ; 3be5: 8d ca 3a    ..: :3ab4[1]
-    lda l002d                                                         ; 3be8: a5 2d       .-  :3ab7[1]
-    sta l3acb                                                         ; 3bea: 8d cb 3a    ..: :3ab9[1]
+    lda z_flag                                                        ; 3be3: a5 2c       .,  :3ab2[1]
+    sta z_flag2                                                       ; 3be5: 8d ca 3a    ..: :3ab4[1]
+    lda x_flag                                                        ; 3be8: a5 2d       .-  :3ab7[1]
+    sta x_flag2                                                       ; 3bea: 8d cb 3a    ..: :3ab9[1]
     lda #0                                                            ; 3bed: a9 00       ..  :3abc[1]
-    sta l0046                                                         ; 3bef: 85 46       .F  :3abe[1]
+    sta return_flag                                                   ; 3bef: 85 46       .F  :3abe[1]
     sta l0020                                                         ; 3bf1: 85 20       .   :3ac0[1]
-    sta l002c                                                         ; 3bf3: 85 2c       .,  :3ac2[1]
-    sta l002d                                                         ; 3bf5: 85 2d       .-  :3ac4[1]
+    sta z_flag                                                        ; 3bf3: 85 2c       .,  :3ac2[1]
+    sta x_flag                                                        ; 3bf5: 85 2d       .-  :3ac4[1]
     rts                                                               ; 3bf7: 60          `   :3ac6[1]
 
 ; $3bf8 referenced 9 times by $2e01, $2e2b, $3061, $320e, $3229, $32cd, $32e7, $3aa2, $3aaa
-l3ac7
+return_flag2
     !byte 0                                                           ; 3bf8: 00          .   :3ac7[1]
 ; $3bf9 referenced 1 time by $3aa5
-l3ac8
+return_flag3
     !byte 0                                                           ; 3bf9: 00          .   :3ac8[1]
 ; $3bfa referenced 9 times by $2df3, $2e46, $3001, $3053, $308c, $324e, $32c8, $3318, $3aaf
 l3ac9
     !byte 0                                                           ; 3bfa: 00          .   :3ac9[1]
 ; $3bfb referenced 2 times by $323f, $3ab4
-l3aca
+z_flag2
     !byte 0                                                           ; 3bfb: 00          .   :3aca[1]
 ; $3bfc referenced 2 times by $3242, $3ab9
-l3acb
+x_flag2
     !byte 0                                                           ; 3bfc: 00          .   :3acb[1]
 
 ; $3bfd referenced 8 times by $2a54, $2ab2, $3a14, $3a1d, $3a29, $3a49, $3a5a, $3a62
@@ -7633,14 +7633,14 @@ pydis_end
 ;     another_menu_index:                                   4
 ;     left_right_flag:                                      4
 ;     space_flag:                                           4
-;     l002c:                                                4
-;     l002d:                                                4
+;     z_flag:                                               4
+;     x_flag:                                               4
 ;     some_word:                                            4
 ;     some_word + 1:                                        4
 ;     l0040:                                                4
 ;     l0041:                                                4
 ;     l0045:                                                4
-;     l0046:                                                4
+;     return_flag:                                          4
 ;     l0058:                                                4
 ;     displayed_transformations_remaining:                  4
 ;     l0083:                                                4
@@ -8311,7 +8311,7 @@ pydis_end
 ;     sub_c3a6d:                                            1
 ;     left_right_flag2:                                     1
 ;     sub_c3ab7:                                            1
-;     l3ac8:                                                1
+;     return_flag3:                                         1
 ;     sub_c3ae7:                                            1
 ;     l3af2:                                                1
 ;     c3b03:                                                1
@@ -8855,8 +8855,6 @@ pydis_end
 ;     l0026
 ;     l0027
 ;     l002b
-;     l002c
-;     l002d
 ;     l0030
 ;     l0039
 ;     l003a
@@ -8869,7 +8867,6 @@ pydis_end
 ;     l0043
 ;     l0044
 ;     l0045
-;     l0046
 ;     l0049
 ;     l004a
 ;     l004b
@@ -9360,17 +9357,12 @@ pydis_end
 ;     l3a63
 ;     l3a7c
 ;     l3a85
-;     l3a8d
 ;     l3a8e
 ;     l3a97
 ;     l3a98
 ;     l3a9c
 ;     l3aa4
-;     l3ac7
-;     l3ac8
 ;     l3ac9
-;     l3aca
-;     l3acb
 ;     l3ad8
 ;     l3adc
 ;     l3ade
