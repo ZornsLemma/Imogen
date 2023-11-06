@@ -5636,8 +5636,9 @@ loop_c3892
     bcc loop_c3892                                                    ; 39c8: 90 f9       ..  :3897[1]
     jmp c3a8f                                                         ; 39ca: 4c 8f 3a    L.: :3899[1]
 
-    !text "auxcode"                                                   ; 39cd: 61 75 78... aux :389c[1]
-    !byte $0d, $10,   0, $f4, $ff,   2,   0,   1,   0                 ; 39d4: 0d 10 00... ... :38a3[1]
+auxcode_filename
+    !text "auxcode", $0d                                              ; 39cd: 61 75 78... aux :389c[1]
+    !byte $10,   0, $f4, $ff,   2,   0,   1,   0                      ; 39d5: 10 00 f4... ... :38a4[1]
 ; The envelope definitions get overwritten after initialisation - this is harmless as
 ; they will have been copied into the OS workspace when they were defined.
 x_entry_table12

@@ -291,6 +291,9 @@ stringcr(0x3f5e)
 expr(0x3e92, make_lo("icodata_filename"))
 expr(0x3e96, make_hi("icodata_filename"))
 
+label(0x389c, "auxcode_filename")
+stringcr(0x389c)
+
 expr(0x3e68, "osfile_read_catalogue_info")
 expr(0x3e9a, "osfile_load")
 
