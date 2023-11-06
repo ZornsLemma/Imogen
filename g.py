@@ -668,6 +668,13 @@ entry(0x3863, "turn_cursor_off")
 label(0x3c, "some_word")
 expr_label(0x3d, make_add("some_word", "1"))
 
+label(0x34d6, "save_full_filename")
+string(0x34d6, 1)
+label(0x34d7, "save_drive_number")
+string(0x34d7, 4)
+label(0x34db, "save_leaf_filename")
+stringcr(0x34db)
+
 go()
 
 # vi: tw=100

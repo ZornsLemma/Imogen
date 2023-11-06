@@ -5097,7 +5097,7 @@ c34a7
     ldy #6                                                            ; 35e1: a0 06       ..  :34b0[1]
 loop_c34b2
     lda l0a90,y                                                       ; 35e3: b9 90 0a    ... :34b2[1]
-    sta l34db,y                                                       ; 35e6: 99 db 34    ..4 :34b5[1]
+    sta save_leaf_filename,y                                          ; 35e6: 99 db 34    ..4 :34b5[1]
     dey                                                               ; 35e9: 88          .   :34b8[1]
     bpl loop_c34b2                                                    ; 35ea: 10 f7       ..  :34b9[1]
     jsr sub_c040a                                                     ; 35ec: 20 0a 04     .. :34bb[1]
@@ -5112,14 +5112,15 @@ loop_c34b2
     jsr c381c                                                         ; 3601: 20 1c 38     .8 :34d0[1]
     jmp c3872                                                         ; 3604: 4c 72 38    Lr8 :34d3[1]
 
-    !byte $3a                                                         ; 3607: 3a          :   :34d6[1]
-l34d7
+save_full_filename
+    !text ":"                                                         ; 3607: 3a          :   :34d6[1]
+save_drive_number
     !text "0.I."                                                      ; 3608: 30 2e 49... 0.I :34d7[1]
-l34db
-    !text "......."                                                   ; 360c: 2e 2e 2e... ... :34db[1]
-    !byte $0d, $9c, $a3, $a2, $a8, $a3, $eb, $af, $b9, $a2, $bd, $ae  ; 3613: 0d 9c a3... ... :34e2[1]
-    !byte $f4, $c6, $9b, $b9, $ae, $b8, $b8, $eb, $fb, $e7, $fa, $e7  ; 361f: f4 c6 9b... ... :34ee[1]
-    !byte $f9, $eb, $a4, $b9, $eb, $f8, $c6                           ; 362b: f9 eb a4... ... :34fa[1]
+save_leaf_filename
+    !text ".......", $0d                                              ; 360c: 2e 2e 2e... ... :34db[1]
+    !byte $9c, $a3, $a2, $a8, $a3, $eb, $af, $b9, $a2, $bd, $ae, $f4  ; 3614: 9c a3 a2... ... :34e3[1]
+    !byte $c6, $9b, $b9, $ae, $b8, $b8, $eb, $fb, $e7, $fa, $e7, $f9  ; 3620: c6 9b b9... ... :34ef[1]
+    !byte $eb, $a4, $b9, $eb, $f8, $c6                                ; 362c: eb a4 b9... ... :34fb[1]
 
 c3501
     jsr inkey_0                                                       ; 3632: 20 7c 38     |8 :3501[1]
@@ -5133,7 +5134,7 @@ c3501
     bcc return23                                                      ; 3643: 90 20       .   :3512[1]
     adc #$0f                                                          ; 3645: 69 0f       i.  :3514[1]
 c3516
-    sta l34d7                                                         ; 3647: 8d d7 34    ..4 :3516[1]
+    sta save_drive_number                                             ; 3647: 8d d7 34    ..4 :3516[1]
     jsr sub_c040a                                                     ; 364a: 20 0a 04     .. :3519[1]
     lda #4                                                            ; 364d: a9 04       ..  :351c[1]
     sta l0004                                                         ; 364f: 85 04       ..  :351e[1]
@@ -5216,7 +5217,7 @@ c35bc
     lda #$ff                                                          ; 3701: a9 ff       ..  :35d0[1]
     sta l09ea                                                         ; 3703: 8d ea 09    ... :35d2[1]
 c35d5
-    lda l34d7                                                         ; 3706: ad d7 34    ..4 :35d5[1]
+    lda save_drive_number                                             ; 3706: ad d7 34    ..4 :35d5[1]
     sec                                                               ; 3709: 38          8   :35d8[1]
     sbc #$30 ; '0'                                                    ; 370a: e9 30       .0  :35d9[1]
     and #1                                                            ; 370c: 29 01       ).  :35db[1]
@@ -7398,8 +7399,6 @@ pydis_end
 ;     l31d7
 ;     l3403
 ;     l3497
-;     l34d7
-;     l34db
 ;     l36da
 ;     l377d
 ;     l384e
