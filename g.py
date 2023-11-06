@@ -1,8 +1,9 @@
 from commands import *
 import acorn
+import re
 acorn.bbc()
 
-#config.set_label_references(False)
+config.set_label_references(False)
 
 constant(3, "vdu_printer_off")
 constant(6, "vdu_enable")
@@ -21,6 +22,33 @@ constant(127, "vdu_delete")
 constant(5, "osfile_read_catalogue_info")
 constant(0xff, "osfile_load")
 
+substitute_labels = {
+    (0x114f,0x1297): {
+        "address_low": "filename_low",
+        "address_high": "filename_high",
+    },
+    (0x183d, 0x1841): {
+        "address_low": "filename_low",
+        "address_high": "filename_high",
+    },
+    (0x1aa0, 0x1aae): {
+        "address_low": "filename_low",
+        "address_high": "filename_high",
+    },
+}
+
+def my_label_maker(addr, context, suggestion):
+    for pair in substitute_labels:
+        if context in range(pair[0], pair[1]):
+            dict = substitute_labels[pair]
+            if suggestion[0] in dict:
+                return dict[suggestion[0]]
+
+    return suggestion
+
+set_label_maker_hook(my_label_maker)
+
+
 label(0x287, "first_byte_break_intercept")
 
 load(0x1234, "orig/g.dat", "6502", "ac5feeac5c32a306d4a73ba393677385")
@@ -38,6 +66,8 @@ label(0x0007, "rnd1")
 label(0x0008, "rnd2")
 label(0x0009, "rnd3")
 label(0x000a, "rnd4")
+label(0x0070, "address_low")
+label(0x0071, "address_high")
 
 # Keypresses are checked in the IRQ routine every vsync.
 # Because the main game loop can be slow, multiple vsyncs can occur, so keypresses are accumulated and stored in "pending" variables
@@ -47,7 +77,7 @@ label(0x002a, "space_bar_press_pending")
 label(0x002b, "space_bar_pressed")
 label(0x002c, "z_key_pressed_pending")
 label(0x002d, "x_key_pressed_pending")
-label(0x0046, "return_key_pressed_event_pending")
+label(0x0046, "return_key_pressed_pending")
 
 label(0x00fc, "interrupt_accumulator")
 
@@ -74,10 +104,14 @@ expr(0x1967, "jmp_instruction+1")
 expr(0x196a, "jmp_instruction+2")
 expr(0x196d, "0")
 label(0x1966, "jmp_xy")
+expr(0x11e7, make_lo("brk_handler"))
+expr(0x11ec, make_hi("brk_handler"))
+comment(0x16ff, "set brk handler")
+comment(0x1714, "set brk handler")
 
 label(0x3a12, "update_main_keys")
-label(0x3a41, "store_x_as_valid_direction_keypress_pending")
-label(0x3a47, "update_space_etc_keys")
+label(0x3a41, "store_x_as_valid_direction_pending")
+label(0x3a47, "update_space_etc_keys") # TODO: Why does it check the left and right keys again?
 label(0x3a54, "save_space_bar_state_change_pending")
 label(0x3a73, "no_valid_direction")
 
@@ -118,7 +152,7 @@ char(0x3f05)
 
 entry(0x12bb, "something23_TODO")
 entry(0x12da, "something24_TODO")
-entry(0x16d3, "something25_TODO")
+entry(0x16d3, "brk_handler")
 entry(0x1b90, "something26_TODO")
 
 label(0x1752, "data_TODO")
@@ -511,15 +545,12 @@ label(0xab3, "old_brkv2")
 expr_label(0xab4, "old_brkv2+1")
 
 comment(0x38ac, "The envelope definitions get overwritten after initialisation - this is harmless as they will have been copied into the OS workspace when they were defined.")
-label(0x38ac, "envelope_1")
 byte(0x38ac, 14)
 decimal(0x38ac, 14)
 label(0x38ac+14, "some_data1_TODO")
-label(0x38c2, "envelope_2")
 byte(0x38c2, 14)
 decimal(0x38c2, 14)
 label(0x38c2+14, "some_data2_TODO")
-label(0x38d8, "envelope_3")
 byte(0x38d8, 14)
 decimal(0x38d8, 14)
 label(0x38d8+14, "some_data3_TODO")
@@ -558,6 +589,9 @@ label(0x9a8, "x_entry_table9")
 label(0x9be, "x_entry_table10")
 label(0x9c9, "x_entry_table11")
 label(0x38ac, "x_entry_table12") # TODO: Re-uses envelope_1, need to resolve label clash
+label(0x38ac, "envelope_1")
+label(0x38c2, "envelope_2")
+label(0x38d8, "envelope_3")
 label(0x950, "x_entry_table13")
 
 entry(0x3f6f, "probably_copy_protection_TODO")
