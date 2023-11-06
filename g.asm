@@ -109,8 +109,7 @@ l0050                               = $50
 maybe_current_level                 = $51
 l0052                               = $52
 l0053                               = $53
-l0054                               = $54
-l0055                               = $55
+sprdata_ptr                         = $54
 l0058                               = $58
 l0059                               = $59
 l005a                               = $5a
@@ -532,8 +531,8 @@ set_yx_based_on_a
     ldy #$0b                                                          ; 146f: a0 0b       ..  :133e[1]
     cmp #$c5                                                          ; 1471: c9 c5       ..  :1340[1]
     beq c1376                                                         ; 1473: f0 32       .2  :1342[1]
-    ldx l0054                                                         ; 1475: a6 54       .T  :1344[1]
-    ldy l0055                                                         ; 1477: a4 55       .U  :1346[1]
+    ldx sprdata_ptr                                                   ; 1475: a6 54       .T  :1344[1]
+    ldy sprdata_ptr + 1                                               ; 1477: a4 55       .U  :1346[1]
     cmp #$c8                                                          ; 1479: c9 c8       ..  :1348[1]
     bcc c135d                                                         ; 147b: 90 11       ..  :134a[1]
     sbc #$c8                                                          ; 147d: e9 c8       ..  :134c[1]
@@ -546,6 +545,9 @@ set_yx_based_on_a
     adc level_data + 1                                                ; 1489: 6d d6 3a    m.: :1358[1]
     tay                                                               ; 148c: a8          .   :135b[1]
     pla                                                               ; 148d: 68          h   :135c[1]
+; TODO: Looks like this is looking at the the 16-bit word at (&58),(2*A) and setting YX
+; to be that value plus the address at &58, i.e. the table starts with 16-bit word
+; offsets into the table, with &58 pointing to the base of the table
 ; $148e referenced 1 time by $134a
 c135d
     stx l0058                                                         ; 148e: 86 58       .X  :135d[1]
@@ -1594,8 +1596,8 @@ load_sprdata_to_addr_at_l0054
     sta l0070                                                         ; 1aa2: 85 70       .p  :1971[1]
     lda #>sprdata_filename                                            ; 1aa4: a9 19       ..  :1973[1]
     sta l0071                                                         ; 1aa6: 85 71       .q  :1975[1]
-    ldx l0054                                                         ; 1aa8: a6 54       .T  :1977[1]
-    ldy l0055                                                         ; 1aaa: a4 55       .U  :1979[1]
+    ldx sprdata_ptr                                                   ; 1aa8: a6 54       .T  :1977[1]
+    ldy sprdata_ptr + 1                                               ; 1aaa: a4 55       .U  :1979[1]
     lda #osfile_load                                                  ; 1aac: a9 ff       ..  :197b[1]
     jmp osfile_wrapper                                                ; 1aae: 4c dc 16    L.. :197d[1]
 
@@ -6848,20 +6850,20 @@ loop_c3e52
     lda #$c0                                                          ; 3e6c: a9 c0       ..
     sec                                                               ; 3e6e: 38          8
     sbc l007a                                                         ; 3e6f: e5 7a       .z
-    sta l0054                                                         ; 3e71: 85 54       .T
+    sta sprdata_ptr                                                   ; 3e71: 85 54       .T
     lda #$5b ; '['                                                    ; 3e73: a9 5b       .[
     sbc l007b                                                         ; 3e75: e5 7b       .{
-    sta l0055                                                         ; 3e77: 85 55       .U
+    sta sprdata_ptr + 1                                               ; 3e77: 85 55       .U
     jsr load_sprdata_to_addr_at_l0054                                 ; 3e79: 20 6f 19     o.
-    lda l0054                                                         ; 3e7c: a5 54       .T
+    lda sprdata_ptr                                                   ; 3e7c: a5 54       .T
     pha                                                               ; 3e7e: 48          H
-    lda l0055                                                         ; 3e7f: a5 55       .U
+    lda sprdata_ptr + 1                                               ; 3e7f: a5 55       .U
     pha                                                               ; 3e81: 48          H
 ; Load 'icodata' file into memory at icodata
     ldx #<icodata                                                     ; 3e82: a2 ff       ..
-    stx l0054                                                         ; 3e84: 86 54       .T
+    stx sprdata_ptr                                                   ; 3e84: 86 54       .T
     ldy #>icodata                                                     ; 3e86: a0 40       .@
-    sty l0055                                                         ; 3e88: 84 55       .U
+    sty sprdata_ptr + 1                                               ; 3e88: 84 55       .U
     lda copy_protection_flag                                          ; 3e8a: ad 03 11    ...
     and #4                                                            ; 3e8d: 29 04       ).
     bne read_icodata_using_osword_7f                                  ; 3e8f: d0 10       ..
@@ -6993,9 +6995,9 @@ c3f2d
     pla                                                               ; 3f4b: 68          h
     sta l004c                                                         ; 3f4c: 85 4c       .L
     pla                                                               ; 3f4e: 68          h
-    sta l0055                                                         ; 3f4f: 85 55       .U
+    sta sprdata_ptr + 1                                               ; 3f4f: 85 55       .U
     pla                                                               ; 3f51: 68          h
-    sta l0054                                                         ; 3f52: 85 54       .T
+    sta sprdata_ptr                                                   ; 3f52: 85 54       .T
     lda #3                                                            ; 3f54: a9 03       ..
     jsr mix_a_with_state                                              ; 3f56: 20 a6 18     ..
     sta l005f                                                         ; 3f59: 85 5f       ._
@@ -7584,8 +7586,8 @@ pydis_end
 ;     l003e:                                                6
 ;     l004b:                                                6
 ;     new_player_character:                                 6
-;     l0054:                                                6
-;     l0055:                                                6
+;     sprdata_ptr:                                          6
+;     sprdata_ptr + 1:                                      6
 ;     l0088:                                                6
 ;     l0100:                                                6
 ;     l0116:                                                6
@@ -8871,8 +8873,6 @@ pydis_end
 ;     l0050
 ;     l0052
 ;     l0053
-;     l0054
-;     l0055
 ;     l0058
 ;     l0059
 ;     l005a

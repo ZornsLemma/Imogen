@@ -434,13 +434,17 @@ entry(0x29eb, "unplot_menu_pointer") # TODO: plausible guess - hmm, losing faith
 entry(0x2a17, "plot_menu_pointer") # TODO: plausible guess - ditto
 
 # TODO: Lots of guesswork here...
-# TODO: A/l0015=2 on entry for plot, A=0 on entry for unplot?
-# TODO: l0016=sprite id?
+# TODO: A/l0015=2 on entry for plot, A=0 on entry for unplot? (or the other way round?)
+# TODO: l0016=sprite id? (this is $1d for menu pointer, maybe)
 # TODO: l0014 is an input if l0015 has bit 0 set on entry
+# TODO: This suggests that the menu pointer sprite *might* start at offset $528 in sprdata, and occupy 52 bytes (since the entry at 0x1d*2 is $528 and the next is $5c5)
 entry(0x138d, "sprite_op")
 comment(0x2c52, "TODO: Self-modifying code here? If so we haven't found the code that modifies it as we have no labels")
 comment(0x13c1, "TODO: Self-modifying code here? If so we haven't found the code that modifies it as we have no labels")
 entry(0x2c46, "something_to_do_with_incrementing_by_20_pixels_x_maybe")
+comment(0x135d, "TODO: Looks like this is looking at the the 16-bit word at (&58),(2*A) and setting YX to be that value plus the address at &58, i.e. the table starts with 16-bit word offsets into the table, with &58 pointing to the base of the table")
+label(0x54, "sprdata_ptr")
+expr_label(0x55, make_add("sprdata_ptr", "1"))
 
 # TODO: Possibly something to do with trying to avoid flicker as sprites update? Doesn't obviously look like palette change code.
 entry(0x1791, "wait_for_timer_2_using_yx")
