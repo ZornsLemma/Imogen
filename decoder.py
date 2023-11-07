@@ -77,9 +77,9 @@ def decode(infile, outfile, level_flag):
 
                         if not sprite_bit:
                             if mask_bit:
-                                lines[y] += '#'
-                            else:
                                 lines[y] += '.'
+                            else:
+                                lines[y] += '#'
                         else:
                             lines[y] += ' '
                             if mask_bit:
