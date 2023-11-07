@@ -17,3 +17,5 @@
 # Other versions
 
 * The Micro User review (June 1986, p33) says Imogen was available on cassette. Did this load individual levels from tape or did they load in batches?
+
+* https://www.retrovideogamer.co.uk/imogen-reviewed-bbc-micro-acorn-electron/ mentions a "slimmed down" version for the Electron.
