@@ -411,7 +411,7 @@ c11f8
     sta toolbar_colour                                                ; 132b: 8d 5e 17    .^. :11fa[1]
     sta gameplay_area_colour                                          ; 132e: 8d 60 17    .`. :11fd[1]
     jsr sub_c2980                                                     ; 1331: 20 80 29     .) :1200[1]
-    jsr sub_c29a1                                                     ; 1334: 20 a1 29     .) :1203[1]
+    jsr draw_toolbar                                                  ; 1334: 20 a1 29     .) :1203[1]
     jsr update_displayed_transformations_remaining                    ; 1337: 20 31 01     1. :1206[1]
 c1209
     jsr set_toolbar_and_gameplay_area_colours                         ; 133a: 20 66 17     f. :1209[1]
@@ -436,10 +436,10 @@ loop_c1213
     jsr sub_c2bbd                                                     ; 1362: 20 bd 2b     .+ :1231[1]
     lda #3                                                            ; 1365: a9 03       ..  :1234[1]
     sta l003e                                                         ; 1367: 85 3e       .>  :1236[1]
-    lda #0                                                            ; 1369: a9 00       ..  :1238[1]
+    lda #black                                                        ; 1369: a9 00       ..  :1238[1]
     sta l0042                                                         ; 136b: 85 42       .B  :123a[1]
     sta gameplay_area_colour                                          ; 136d: 8d 60 17    .`. :123c[1]
-    jsr sub_c29a1                                                     ; 1370: 20 a1 29     .) :123f[1]
+    jsr draw_toolbar                                                  ; 1370: 20 a1 29     .) :123f[1]
     jsr sub_c1df4                                                     ; 1373: 20 f4 1d     .. :1242[1]
     lda #0                                                            ; 1376: a9 00       ..  :1245[1]
     sta l0004                                                         ; 1378: 85 04       ..  :1247[1]
@@ -3892,7 +3892,7 @@ loop_c2992
     sta new_menu_index                                                ; 2acf: 85 29       .)  :299e[1]
     rts                                                               ; 2ad1: 60          `   :29a0[1]
 
-sub_c29a1
+draw_toolbar
     jsr sub_c29a8                                                     ; 2ad2: 20 a8 29     .) :29a1[1]
     jsr apply_new_menu_index                                          ; 2ad5: 20 de 29     .) :29a4[1]
     rts                                                               ; 2ad8: 60          `   :29a7[1]
@@ -3988,7 +3988,7 @@ something20_TODO
     ldx timingA_counter_low                                           ; 2b69: ae 04 11    ... :2a38[1]
     ldy timingA_counter_high                                          ; 2b6c: ac 05 11    ... :2a3b[1]
     jsr wait_for_timer_2_using_yx                                     ; 2b6f: 20 91 17     .. :2a3e[1]
-    jsr sub_c29a1                                                     ; 2b72: 20 a1 29     .) :2a41[1]
+    jsr draw_toolbar                                                  ; 2b72: 20 a1 29     .) :2a41[1]
     jsr c3a8f                                                         ; 2b75: 20 8f 3a     .: :2a44[1]
     lda l005b                                                         ; 2b78: a5 5b       .[  :2a47[1]
     beq c2a60                                                         ; 2b7a: f0 15       ..  :2a49[1]
@@ -7485,7 +7485,6 @@ pydis_end
 ;     sub_c2894
 ;     sub_c28e2
 ;     sub_c2980
-;     sub_c29a1
 ;     sub_c29a8
 ;     sub_c2adb
 ;     sub_c2b37
