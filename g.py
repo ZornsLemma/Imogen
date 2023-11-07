@@ -547,7 +547,7 @@ expr(0x112f, "last_level_letter+1")
 expr(0x1a6a, "first_level_letter")
 expr(0x177b, "first_level_letter")
 
-comment(0x1766, "Set the toolbar and gameplay area colours. In mono mode both are white. In colour mode the gameplay area is cyan and the toolbar colour is toolbar_colour_choices[level_letter & 3].")
+comment(0x1766, "Set the toolbar and gameplay area colours. In mono mode both are white. In colour mode the gameplay area is cyan and the toolbar colour is toolbar_colour_choices[(level_letter - 'A') & 3].")
 entry(0x1766, "set_toolbar_and_gameplay_area_colours")
 label(0x1761, "toolbar_colour_choices")
 constant(1, "red")

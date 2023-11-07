@@ -1219,7 +1219,7 @@ use_colour_flag
 
 ; Set the toolbar and gameplay area colours. In mono mode both are white. In colour
 ; mode the gameplay area is cyan and the toolbar colour is
-; toolbar_colour_choices[level_letter & 3].
+; toolbar_colour_choices[(level_letter - 'A') & 3].
 set_toolbar_and_gameplay_area_colours
     lda #white                                                        ; 1897: a9 07       ..  :1766[1]
     sta pending_toolbar_colour                                        ; 1899: 8d 5d 17    .]. :1768[1]
