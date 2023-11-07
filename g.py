@@ -669,12 +669,15 @@ entry(0x2b87, "something21_TODO")
 entry(0x2be0, "something22_TODO")
 # TODO: DELETE entry(0x35f7, "something23_TODO")
 
-label(0x31, "desired_level") # TODO: This is not right but let's go with it for now - the way this is used it clearly contains *a* level (as a letter, I think), but I am not quite sure what it's used for
+label(0x31, "desired_level") # TODO: This is not right but let's go with it for now - the way this is used it clearly contains *a* level (as a letter, I think), but I am not quite sure what it's used for - the use at 36df suggests this is more like "current level" actually - or maybe it's more like "level_to_load"
 label(0x37, "currently_loaded_level")
-label(0x51, "maybe_current_level") # TODO: not clear yet, but looks like some kind of level indicator
+label(0x51, "previous_level") # TODO: see use at initialise_level
 label(0x1175, "level_already_loaded")
 label(0x36da, "check_password_level")
 entry(0x36db, "select_level_a")
+comment(0x114f, "TODO: Why do we check desired_level against currently_loaded_level in this loop? The loop kind of makes sense as a retry if disc error sort of thing, but I don't see why we'd ever have the wrong level loaded or something like that. It still doesn't feel quite right, but could this maybe be some leftover hint of a tape version?")
+entry(0x1186, "level_reset_loop")
+entry(0x11dd, "clear_sixteen_entry_table1")
 
 comment(0x3f78, "TODO: I suspect the following code is copy protection related - writing data to the sideways ROM region feels wrong.")
 
@@ -777,8 +780,9 @@ label(0x1108, "timing_latch_low")
 label(0x1109, "timing_latch_high")
 label(0x2ee9, "four_entry_table2") # TODO: write only, at least in 'g' itself?
 label(0x396f, "four_entry_table3_maybe_sound") # TODO: possibly something to do with sound??
-label(0xa7f, "sixteen_entry_table")
-expr(0x3f1b, make_subtract("sixteen_entry_table", 1))
+label(0xa6f, "sixteen_entry_table1")
+label(0xa7f, "sixteen_entry_table2")
+expr(0x3f1b, make_subtract("sixteen_entry_table2", 1))
 label(0x295c, "menu_slots1") # sub_c2980 initialises elements 9 inclusive to $11 exclusive, but elsewhere we do access lower elements
 label(0x296f, "menu_slots2") # see code at c29aa which pairs this with menu_slots1
 # sub_c2157 uses all of these tables in parallel, so presumably they share the same size - represented here by 'x'

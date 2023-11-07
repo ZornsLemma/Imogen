@@ -112,7 +112,7 @@ l004b                               = $4b
 screen_base_address_high            = $4c
 new_player_character                = $4d
 l0050                               = $50
-maybe_current_level                 = $51
+previous_level                      = $51
 l0052                               = $52
 l0053                               = $53
 sprdata_ptr                         = $54
@@ -211,8 +211,8 @@ l09ea                               = $09ea
 l09eb                               = $09eb
 current_transformations_remaining   = $09ec
 byte_per_level_table1               = $09ef
-l0a6f                               = $0a6f
-sixteen_entry_table                 = $0a7f
+sixteen_entry_table1                = $0a6f
+sixteen_entry_table2                = $0a7f
 l0a80                               = $0a80
 string_input_buffer                 = $0a90
 eight_entry_table1                  = $0aa1
@@ -303,7 +303,7 @@ c110c
     lda #'1'                                                          ; 1255: a9 31       .1  :1124[1]
     sta current_transformations_remaining+2                           ; 1257: 8d ee 09    ... :1126[1]
     ldx #0                                                            ; 125a: a2 00       ..  :1129[1]
-    ldy sixteen_entry_table                                           ; 125c: ac 7f 0a    ... :112b[1]
+    ldy sixteen_entry_table2                                          ; 125c: ac 7f 0a    ... :112b[1]
     cpy #last_level_letter+1                                          ; 125f: c0 52       .R  :112e[1]
     bne initialise_level                                              ; 1261: d0 0e       ..  :1130[1]
     inc l005f                                                         ; 1263: e6 5f       ._  :1132[1]
@@ -318,10 +318,14 @@ initialise_level
     lda l0030                                                         ; 1271: a5 30       .0  :1140[1]
     sta l0050                                                         ; 1273: 85 50       .P  :1142[1]
     lda desired_level                                                 ; 1275: a5 31       .1  :1144[1]
-    sta maybe_current_level                                           ; 1277: 85 51       .Q  :1146[1]
+    sta previous_level                                                ; 1277: 85 51       .Q  :1146[1]
     stx l0030                                                         ; 1279: 86 30       .0  :1148[1]
     sty desired_level                                                 ; 127b: 84 31       .1  :114a[1]
     sty l09ea                                                         ; 127d: 8c ea 09    ... :114c[1]
+; TODO: Why do we check desired_level against currently_loaded_level in this loop? The
+; loop kind of makes sense as a retry if disc error sort of thing, but I don't see why
+; we'd ever have the wrong level loaded or something like that. It still doesn't feel
+; quite right, but could this maybe be some leftover hint of a tape version?
 loop_c114f
     lda desired_level                                                 ; 1280: a5 31       .1  :114f[1]
     cmp currently_loaded_level                                        ; 1282: c5 37       .7  :1151[1]
@@ -350,7 +354,7 @@ level_already_loaded
     sta x_entry_table9b                                               ; 12af: 8d b3 09    ... :117e[1]
     sta l09b4                                                         ; 12b2: 8d b4 09    ... :1181[1]
     ldy #2                                                            ; 12b5: a0 02       ..  :1184[1]
-c1186
+level_reset_loop
     lda #0                                                            ; 12b7: a9 00       ..  :1186[1]
     sta x_entry_table9a,y                                             ; 12b9: 99 a8 09    ... :1188[1]
     sta x_entry_table9b,y                                             ; 12bc: 99 b3 09    ... :118b[1]
@@ -365,9 +369,9 @@ c1186
     sta envelope_2,y                                                  ; 12d5: 99 c2 38    ..8 :11a4[1]
     iny                                                               ; 12d8: c8          .   :11a7[1]
     cpy #$0b                                                          ; 12d9: c0 0b       ..  :11a8[1]
-    bcc c1186                                                         ; 12db: 90 da       ..  :11aa[1]
+    bcc level_reset_loop                                              ; 12db: 90 da       ..  :11aa[1]
     lda desired_level                                                 ; 12dd: a5 31       .1  :11ac[1]
-    cmp maybe_current_level                                           ; 12df: c5 51       .Q  :11ae[1]
+    cmp previous_level                                                ; 12df: c5 51       .Q  :11ae[1]
     beq c1209                                                         ; 12e1: f0 57       .W  :11b0[1]
     lda #0                                                            ; 12e3: a9 00       ..  :11b2[1]
     sta l2433                                                         ; 12e5: 8d 33 24    .3$ :11b4[1]
@@ -386,10 +390,10 @@ c1186
     sta x_entry_table10a                                              ; 1307: 8d be 09    ... :11d6[1]
     lda #0                                                            ; 130a: a9 00       ..  :11d9[1]
     ldy #$0f                                                          ; 130c: a0 0f       ..  :11db[1]
-loop_c11dd
-    sta l0a6f,y                                                       ; 130e: 99 6f 0a    .o. :11dd[1]
+clear_sixteen_entry_table1
+    sta sixteen_entry_table1,y                                        ; 130e: 99 6f 0a    .o. :11dd[1]
     dey                                                               ; 1311: 88          .   :11e0[1]
-    bpl loop_c11dd                                                    ; 1312: 10 fa       ..  :11e1[1]
+    bpl clear_sixteen_entry_table1                                    ; 1312: 10 fa       ..  :11e1[1]
     jsr sub_c1278                                                     ; 1314: 20 78 12     x. :11e3[1]
     lda #<brk_handler                                                 ; 1317: a9 d3       ..  :11e6[1]
     sta old_brkv2                                                     ; 1319: 8d b3 0a    ... :11e8[1]
@@ -509,7 +513,7 @@ something23_TODO
     lda #0                                                            ; 13fa: a9 00       ..  :12c9[1]
     sta l132b                                                         ; 13fc: 8d 2b 13    .+. :12cb[1]
     lda desired_level                                                 ; 13ff: a5 31       .1  :12ce[1]
-    cmp maybe_current_level                                           ; 1401: c5 51       .Q  :12d0[1]
+    cmp previous_level                                                ; 1401: c5 51       .Q  :12d0[1]
     beq return1                                                       ; 1403: f0 05       ..  :12d2[1]
     lda #4                                                            ; 1405: a9 04       ..  :12d4[1]
     jsr transform                                                     ; 1407: 20 37 23     7# :12d6[1]
@@ -6448,7 +6452,7 @@ c3f0d
     ldy #$11                                                          ; 3f16: a0 11       ..
 loop_c3f18
     lda (address1_low),y                                              ; 3f18: b1 70       .p
-    sta sixteen_entry_table - 1,y                                     ; 3f1a: 99 7e 0a    .~.
+    sta sixteen_entry_table2 - 1,y                                    ; 3f1a: 99 7e 0a    .~.
     dey                                                               ; 3f1d: 88          .
     bne loop_c3f18                                                    ; 3f1e: d0 f8       ..
     lda (address1_low),y                                              ; 3f20: b1 70       .p
@@ -6922,7 +6926,6 @@ pydis_end
 ;     c0ae6
 ;     c110c
 ;     c1171
-;     c1186
 ;     c11f8
 ;     c1209
 ;     c129b
@@ -7316,7 +7319,6 @@ pydis_end
 ;     l09df
 ;     l09ea
 ;     l09eb
-;     l0a6f
 ;     l0a80
 ;     l0b00
 ;     l110a
@@ -7388,7 +7390,6 @@ pydis_end
 ;     loop_c0ac6
 ;     loop_c0ade
 ;     loop_c114f
-;     loop_c11dd
 ;     loop_c1213
 ;     loop_c1471
 ;     loop_c1540
@@ -7865,8 +7866,8 @@ pydis_end
 !if (screen_width_minus_one) != $27 {
     !error "Assertion failed: screen_width_minus_one == $27"
 }
-!if (sixteen_entry_table - 1) != $0a7e {
-    !error "Assertion failed: sixteen_entry_table - 1 == $0a7e"
+!if (sixteen_entry_table2 - 1) != $0a7e {
+    !error "Assertion failed: sixteen_entry_table2 - 1 == $0a7e"
 }
 !if (update_displayed_transformations_remaining_high_copy_end - update_displayed_transformations_remaining_high_copy_start) != $2f {
     !error "Assertion failed: update_displayed_transformations_remaining_high_copy_end - update_displayed_transformations_remaining_high_copy_start == $2f"
