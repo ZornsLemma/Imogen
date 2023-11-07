@@ -732,9 +732,9 @@ expr(0x3421, make_hi("press_l_to_load_encrypted_string"))
 # [chr(0xcb ^ int(x.strip()[1:],16)) for x in s.split(",")]
 
 comment(0x384d, "Print the character in A. This is patched at runtime to switch between normal and italic text.")
-entry(0x384d, "jmp_print_char")
-label(0x384e, "jmp_print_char_target")
-expr_label(0x384f, make_add("jmp_print_char_target", "1"))
+entry(0x384d, "print_char")
+label(0x384e, "print_char_target")
+expr_label(0x384f, make_add("print_char_target", "1"))
 entry(0x3850, "print_2xlf_cr")
 expr(0x3821, make_lo("print_italic"))
 expr(0x3826, make_hi("print_italic"))

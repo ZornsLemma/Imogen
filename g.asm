@@ -5560,15 +5560,15 @@ print_encrypted_string_at_yx
     stx address_low                                                   ; 394d: 86 70       .p  :381c[1]
     sty address_high                                                  ; 394f: 84 71       .q  :381e[1]
     lda #<print_italic                                                ; 3951: a9 66       .f  :3820[1]
-    sta jmp_print_char_target                                         ; 3953: 8d 4e 38    .N8 :3822[1]
+    sta print_char_target                                             ; 3953: 8d 4e 38    .N8 :3822[1]
     lda #>print_italic                                                ; 3956: a9 18       ..  :3825[1]
-    sta jmp_print_char_target + 1                                     ; 3958: 8d 4f 38    .O8 :3827[1]
+    sta print_char_target + 1                                         ; 3958: 8d 4f 38    .O8 :3827[1]
     lda l0043                                                         ; 395b: a5 43       .C  :382a[1]
     bne c3838                                                         ; 395d: d0 0a       ..  :382c[1]
     lda #<oswrch                                                      ; 395f: a9 ee       ..  :382e[1]
-    sta jmp_print_char_target                                         ; 3961: 8d 4e 38    .N8 :3830[1]
+    sta print_char_target                                             ; 3961: 8d 4e 38    .N8 :3830[1]
     lda #>oswrch                                                      ; 3964: a9 ff       ..  :3833[1]
-    sta jmp_print_char_target + 1                                     ; 3966: 8d 4f 38    .O8 :3835[1]
+    sta print_char_target + 1                                         ; 3966: 8d 4f 38    .O8 :3835[1]
 c3838
     ldy #0                                                            ; 3969: a0 00       ..  :3838[1]
 loop_c383a
@@ -5576,7 +5576,7 @@ loop_c383a
     eor eor_key                                                       ; 396d: 45 45       EE  :383c[1]
     cmp #vdu_cr                                                       ; 396f: c9 0d       ..  :383e[1]
     beq c3848                                                         ; 3971: f0 06       ..  :3840[1]
-    jsr jmp_print_char                                                ; 3973: 20 4d 38     M8 :3842[1]
+    jsr print_char                                                    ; 3973: 20 4d 38     M8 :3842[1]
     iny                                                               ; 3976: c8          .   :3845[1]
     bne loop_c383a                                                    ; 3977: d0 f2       ..  :3846[1]
 c3848
@@ -5586,8 +5586,8 @@ c3848
 
 ; Print the character in A. This is patched at runtime to switch between normal and
 ; italic text.
-jmp_print_char
-jmp_print_char_target = jmp_print_char+1
+print_char
+print_char_target = print_char+1
     jmp oswrch                                                        ; 397e: 4c ee ff    L.. :384d[1]   ; Write character
 
 print_2xlf_cr
