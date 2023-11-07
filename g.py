@@ -678,6 +678,7 @@ entry(0x36db, "select_level_a")
 comment(0x114f, "TODO: Why do we check desired_level against currently_loaded_level in this loop? The loop kind of makes sense as a retry if disc error sort of thing, but I don't see why we'd ever have the wrong level loaded or something like that. It still doesn't feel quite right, but could this maybe be some leftover hint of a tape version?")
 entry(0x1186, "level_reset_loop")
 entry(0x11dd, "clear_sixteen_entry_table1")
+comment(0x11f8, "Blank the whole screen temporarily. TODO: Note that when flipping from screen to screen during play, the toolbar is not blanked, but it is here. Is this just cosmetic or is there a technical reason for this?")
 
 comment(0x3f78, "TODO: I suspect the following code is copy protection related - writing data to the sideways ROM region feels wrong.")
 
@@ -703,6 +704,7 @@ expr(0x177b, "first_level_letter")
 comment(0x1766, "Set the toolbar and gameplay area colours. In mono mode both are white. In colour mode the gameplay area is cyan and the toolbar colour is toolbar_colour_choices[(level_letter - 'A') & 3].")
 entry(0x1766, "set_toolbar_and_gameplay_area_colours")
 label(0x1761, "toolbar_colour_choices")
+constant(0, "black")
 constant(1, "red")
 constant(2, "green")
 constant(3, "yellow")
@@ -714,6 +716,7 @@ expr(0x1763, "white")
 expr(0x1764, "red")
 expr(0x1767, "white")
 expr(0x1786, "cyan")
+expr(0x11f9, "black")
 
 def negative_constant(c, s):
     assert c < 0

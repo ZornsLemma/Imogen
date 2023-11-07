@@ -1,4 +1,5 @@
 ; Constants
+black                                           = 0
 buffer_sound_channel_0                          = 4
 caps_mask                                       = 223
 crtc_cursor_start                               = 10
@@ -402,8 +403,11 @@ clear_sixteen_entry_table1
     lda l110a                                                         ; 1321: ad 0a 11    ... :11f0[1]
     bne c11f8                                                         ; 1324: d0 03       ..  :11f3[1]
     jsr something3_TODO                                               ; 1326: 20 00 0c     .. :11f5[1]
+; Blank the whole screen temporarily. TODO: Note that when flipping from screen to
+; screen during play, the toolbar is not blanked, but it is here. Is this just cosmetic
+; or is there a technical reason for this?
 c11f8
-    lda #0                                                            ; 1329: a9 00       ..  :11f8[1]
+    lda #black                                                        ; 1329: a9 00       ..  :11f8[1]
     sta toolbar_colour                                                ; 132b: 8d 5e 17    .^. :11fa[1]
     sta gameplay_area_colour                                          ; 132e: 8d 60 17    .`. :11fd[1]
     jsr sub_c2980                                                     ; 1331: 20 80 29     .) :1200[1]
@@ -7712,6 +7716,9 @@ pydis_end
 }
 !if (>which_drive_encrypted_string) != $34 {
     !error "Assertion failed: >which_drive_encrypted_string == $34"
+}
+!if (black) != $00 {
+    !error "Assertion failed: black == $00"
 }
 !if (buffer_sound_channel_0) != $04 {
     !error "Assertion failed: buffer_sound_channel_0 == $04"
