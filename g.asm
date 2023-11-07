@@ -7,7 +7,9 @@ crtc_screen_start_high                          = 12
 crtc_screen_start_low                           = 13
 crtc_vert_displayed                             = 6
 crtc_vert_sync_pos                              = 7
+cyan                                            = 6
 first_level_letter                              = 65
+green                                           = 2
 inkey_key_escape                                = 143
 inkey_key_left                                  = 230
 inkey_key_return                                = 182
@@ -40,6 +42,7 @@ osfile_read_catalogue_info                      = 5
 osword_envelope                                 = 8
 osword_read_char                                = 10
 osword_sound                                    = 7
+red                                             = 1
 screen_width_minus_one                          = 39
 vdu_bell                                        = 7
 vdu_cr                                          = 13
@@ -54,6 +57,8 @@ vdu_printer_off                                 = 3
 vdu_set_graphics_colour                         = 18
 vdu_set_mode                                    = 22
 vdu_set_text_colour                             = 17
+white                                           = 7
+yellow                                          = 3
 
 ; Memory locations
 l0002                               = $02
@@ -397,7 +402,7 @@ c11f8
     jsr sub_c29a1                                                     ; 1334: 20 a1 29     .) :1203[1]
     jsr update_displayed_transformations_remaining                    ; 1337: 20 31 01     1. :1206[1]
 c1209
-    jsr sub_c1766                                                     ; 133a: 20 66 17     f. :1209[1]
+    jsr set_toolbar_and_gameplay_area_colours                         ; 133a: 20 66 17     f. :1209[1]
     lda #0                                                            ; 133d: a9 00       ..  :120c[1]
     sta l31d7                                                         ; 133f: 8d d7 31    ..1 :120e[1]
     ldx #3                                                            ; 1342: a2 03       ..  :1211[1]
@@ -1207,13 +1212,16 @@ pending_gameplay_area_colour
     !byte 0                                                           ; 1890: 00          .   :175f[1]
 gameplay_area_colour
     !byte 0                                                           ; 1891: 00          .   :1760[1]
-l1761
-    !byte 3, 2, 7, 1                                                  ; 1892: 03 02 07... ... :1761[1]
+toolbar_colour_choices
+    !byte yellow,  green,  white,    red                              ; 1892: 03 02 07... ... :1761[1]
 allow_colour_variation
     !byte $ff                                                         ; 1896: ff          .   :1765[1]
 
-sub_c1766
-    lda #7                                                            ; 1897: a9 07       ..  :1766[1]
+; Set the toolbar and gameplay area colours. In mono mode both are white. In colour
+; mode the gameplay area is cyan and the toolbar colour is the
+; toolbar_colour_choices[level letter as ASCII & 3.
+set_toolbar_and_gameplay_area_colours
+    lda #white                                                        ; 1897: a9 07       ..  :1766[1]
     sta pending_toolbar_colour                                        ; 1899: 8d 5d 17    .]. :1768[1]
     sta pending_gameplay_area_colour                                  ; 189c: 8d 5f 17    ._. :176b[1]
     lda allow_colour_variation                                        ; 189f: ad 65 17    .e. :176e[1]
@@ -1222,12 +1230,12 @@ sub_c1766
     jsr convert_level_number_to_letter                                ; 18a6: 20 d4 0a     .. :1775[1]
     tya                                                               ; 18a9: 98          .   :1778[1]
     sec                                                               ; 18aa: 38          8   :1779[1]
-    sbc #$41 ; 'A'                                                    ; 18ab: e9 41       .A  :177a[1]
+    sbc #first_level_letter                                           ; 18ab: e9 41       .A  :177a[1]
     and #3                                                            ; 18ad: 29 03       ).  :177c[1]
     tax                                                               ; 18af: aa          .   :177e[1]
-    lda l1761,x                                                       ; 18b0: bd 61 17    .a. :177f[1]
+    lda toolbar_colour_choices,x                                      ; 18b0: bd 61 17    .a. :177f[1]
     sta pending_toolbar_colour                                        ; 18b3: 8d 5d 17    .]. :1782[1]
-    lda #6                                                            ; 18b6: a9 06       ..  :1785[1]
+    lda #cyan                                                         ; 18b6: a9 06       ..  :1785[1]
     sta pending_gameplay_area_colour                                  ; 18b8: 8d 5f 17    ._. :1787[1]
 return4
     rts                                                               ; 18bb: 60          `   :178a[1]
@@ -7350,7 +7358,6 @@ pydis_end
 ;     l132b
 ;     l1487
 ;     l1489
-;     l1761
 ;     l178b
 ;     l1824
 ;     l1a0f
@@ -7478,7 +7485,6 @@ pydis_end
 ;     sub_c1278
 ;     sub_c162f
 ;     sub_c1728
-;     sub_c1766
 ;     sub_c1845
 ;     sub_c1b66
 ;     sub_c1cf3
@@ -7770,8 +7776,14 @@ pydis_end
 !if (crtc_vert_sync_pos) != $07 {
     !error "Assertion failed: crtc_vert_sync_pos == $07"
 }
+!if (cyan) != $06 {
+    !error "Assertion failed: cyan == $06"
+}
 !if (first_level_letter) != $41 {
     !error "Assertion failed: first_level_letter == $41"
+}
+!if (green) != $02 {
+    !error "Assertion failed: green == $02"
 }
 !if (icodata) != $40ff {
     !error "Assertion failed: icodata == $40ff"
@@ -7881,6 +7893,9 @@ pydis_end
 !if (osword_sound) != $07 {
     !error "Assertion failed: osword_sound == $07"
 }
+!if (red) != $01 {
+    !error "Assertion failed: red == $01"
+}
 !if (screen_width_minus_one) != $27 {
     !error "Assertion failed: screen_width_minus_one == $27"
 }
@@ -7931,4 +7946,10 @@ pydis_end
 }
 !if (vdu_set_text_colour) != $11 {
     !error "Assertion failed: vdu_set_text_colour == $11"
+}
+!if (white) != $07 {
+    !error "Assertion failed: white == $07"
+}
+!if (yellow) != $03 {
+    !error "Assertion failed: yellow == $03"
 }

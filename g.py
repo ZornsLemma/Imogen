@@ -545,6 +545,22 @@ expr(0x39eb, "first_level_letter")
 expr(0x113b, "first_level_letter")
 expr(0x112f, "last_level_letter+1")
 expr(0x1a6a, "first_level_letter")
+expr(0x177b, "first_level_letter")
+
+comment(0x1766, "Set the toolbar and gameplay area colours. In mono mode both are white. In colour mode the gameplay area is cyan and the toolbar colour is the toolbar_colour_choices[level letter as ASCII & 3.")
+entry(0x1766, "set_toolbar_and_gameplay_area_colours")
+label(0x1761, "toolbar_colour_choices")
+constant(1, "red")
+constant(2, "green")
+constant(3, "yellow")
+constant(6, "cyan")
+constant(7, "white")
+expr(0x1761, "yellow")
+expr(0x1762, "green")
+expr(0x1763, "white")
+expr(0x1764, "red")
+expr(0x1767, "white")
+expr(0x1786, "cyan")
 
 def negative_constant(c, s):
     assert c < 0
