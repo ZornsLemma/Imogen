@@ -1,1 +1,4 @@
-tmp
+tmp/
+__pycache__/
+*.lst
+*.out
