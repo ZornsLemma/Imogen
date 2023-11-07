@@ -1214,7 +1214,7 @@ gameplay_area_colour
     !byte 0                                                           ; 1891: 00          .   :1760[1]
 toolbar_colour_choices
     !byte yellow,  green,  white,    red                              ; 1892: 03 02 07... ... :1761[1]
-allow_colour_variation
+use_colour_flag
     !byte $ff                                                         ; 1896: ff          .   :1765[1]
 
 ; Set the toolbar and gameplay area colours. In mono mode both are white. In colour
@@ -1224,7 +1224,7 @@ set_toolbar_and_gameplay_area_colours
     lda #white                                                        ; 1897: a9 07       ..  :1766[1]
     sta pending_toolbar_colour                                        ; 1899: 8d 5d 17    .]. :1768[1]
     sta pending_gameplay_area_colour                                  ; 189c: 8d 5f 17    ._. :176b[1]
-    lda allow_colour_variation                                        ; 189f: ad 65 17    .e. :176e[1]
+    lda use_colour_flag                                               ; 189f: ad 65 17    .e. :176e[1]
     beq return4                                                       ; 18a2: f0 17       ..  :1771[1]
     ldy desired_level                                                 ; 18a4: a4 31       .1  :1773[1]
     jsr convert_level_number_to_letter                                ; 18a6: 20 d4 0a     .. :1775[1]

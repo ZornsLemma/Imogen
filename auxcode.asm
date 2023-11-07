@@ -24,7 +24,7 @@ pending_toolbar_colour      = $175d
 toolbar_colour              = $175e
 pending_gameplay_area_colour = $175f
 gameplay_area_colour        = $1760
-allow_colour_variation      = $1765
+use_colour_flag             = $1765
 l1766                       = $1766
 l1966                       = $1966
 l2bbd                       = $2bbd
@@ -246,7 +246,7 @@ c55d3
 
 mono_handler
     lda #0                                                            ; 55ea: a9 00       ..
-    sta allow_colour_variation                                        ; 55ec: 8d 65 17    .e.
+    sta use_colour_flag                                               ; 55ec: 8d 65 17    .e.
     jsr l1766                                                         ; 55ef: 20 66 17     f.
     lda pending_toolbar_colour                                        ; 55f2: ad 5d 17    .].
     sta toolbar_colour                                                ; 55f5: 8d 5e 17    .^.
@@ -257,7 +257,7 @@ mono_handler
 
 colour_handler
     lda #$ff                                                          ; 5603: a9 ff       ..
-    sta allow_colour_variation                                        ; 5605: 8d 65 17    .e.
+    sta use_colour_flag                                               ; 5605: 8d 65 17    .e.
     jsr l1766                                                         ; 5608: 20 66 17     f.
     lda pending_toolbar_colour                                        ; 560b: ad 5d 17    .].
     sta toolbar_colour                                                ; 560e: 8d 5e 17    .^.
