@@ -682,7 +682,17 @@ comment(0x11f8, "Blank the whole screen temporarily. TODO: Note that when flippi
 
 entry(0x29a1, "draw_toolbar") # TODO: plausible guess
 # TODO: barking up wrong tree entry(0x1df4, "draw_gameplay_area") # TODO: plausible guess
-
+# TODO: Inconsistent use of "toolbar" and "menu", fix up eventually - "toolbar" is probably better, but not thought much yet - also some inconsistency between "icon" and "slot", although these are arguably distinct (even if the disassembly doesn't respect it), a slot can be blank or have an icon in it - also maybe "slot" vs "index" is a bit sloppy
+entry(0x29a8, "draw_menu_icons")
+entry(0x29d7, "draw_next_menu_slot")
+label(0x29dd, "redraw_menu_pointer_flag")
+entry(0x29c1, "menu_pointer_not_present_on_slot")
+comment(0x29c9, "If there's a blank under the pointer in the new menu, bump the pointer left until we find a non-blank slot.")
+entry(0x29c9, "find_valid_menu_slot_loop")
+entry(0x29d4, "new_menu_index_valid")
+constant(0x11, "menu_slot_count") # numbered 0-$10 inclusive
+expr(0x29d9, "menu_slot_count")
+entry(0x29aa, "draw_menu_icon_loop")
 
 comment(0x3f78, "TODO: I suspect the following code is copy protection related - writing data to the sideways ROM region feels wrong.")
 
@@ -791,8 +801,8 @@ label(0x396f, "four_entry_table3_maybe_sound") # TODO: possibly something to do 
 label(0xa6f, "sixteen_entry_table1")
 label(0xa7f, "sixteen_entry_table2")
 expr(0x3f1b, make_subtract("sixteen_entry_table2", 1))
-label(0x295c, "menu_slots1") # sub_c2980 initialises elements 9 inclusive to $11 exclusive, but elsewhere we do access lower elements
-label(0x296f, "menu_slots2") # see code at c29aa which pairs this with menu_slots1
+label(0x295c, "desired_menu_slots") # sub_c2980 initialises elements 9 inclusive to $11 exclusive, but elsewhere we do access lower elements
+label(0x296f, "displayed_menu_slots") # see code at c29aa which pairs this with menu_slots1
 # sub_c2157 uses all of these tables in parallel, so presumably they share the same size - represented here by 'x'
 # TODO: These tables seem to occur in pairs (copy or cmp) so I've renamed them to use a/b names to try to tie the pairs together.
 label(0x9b3, "x_entry_table9b")

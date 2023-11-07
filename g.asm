@@ -22,6 +22,7 @@ inkey_key_z                                     = 158
 last_level_letter                               = 81
 max_filename_len                                = 7
 menu_action_file                                = 3
+menu_slot_count                                 = 17
 osbyte_close_spool_exec                         = 119
 osbyte_flush_buffer                             = 21
 osbyte_flush_buffer_class                       = 15
@@ -3860,7 +3861,7 @@ c2945
 
 l295b
     !byte 0                                                           ; 2a8c: 00          .   :295b[1]
-menu_slots1
+desired_menu_slots
     !byte 3                                                           ; 2a8d: 03          .   :295c[1]
 l295d
     !byte 2, 8, 7, 0, 5, 6, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0              ; 2a8e: 02 08 07... ... :295d[1]
@@ -3868,7 +3869,7 @@ l296d
     !byte 5                                                           ; 2a9e: 05          .   :296d[1]
 l296e
     !byte 9                                                           ; 2a9f: 09          .   :296e[1]
-menu_slots2
+displayed_menu_slots
     !byte 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0           ; 2aa0: 00 00 00... ... :296f[1]
 
 sub_c2980
@@ -3877,7 +3878,7 @@ sub_c2980
     dex                                                               ; 2ab6: ca          .   :2985[1]
     lda #0                                                            ; 2ab7: a9 00       ..  :2986[1]
 loop_c2988
-    sta menu_slots1,x                                                 ; 2ab9: 9d 5c 29    .\) :2988[1]
+    sta desired_menu_slots,x                                          ; 2ab9: 9d 5c 29    .\) :2988[1]
     inx                                                               ; 2abc: e8          .   :298b[1]
     cpx #$11                                                          ; 2abd: e0 11       ..  :298c[1]
     bcc loop_c2988                                                    ; 2abf: 90 f8       ..  :298e[1]
@@ -3893,41 +3894,43 @@ loop_c2992
     rts                                                               ; 2ad1: 60          `   :29a0[1]
 
 draw_toolbar
-    jsr sub_c29a8                                                     ; 2ad2: 20 a8 29     .) :29a1[1]
+    jsr draw_menu_icons                                               ; 2ad2: 20 a8 29     .) :29a1[1]
     jsr apply_new_menu_index                                          ; 2ad5: 20 de 29     .) :29a4[1]
     rts                                                               ; 2ad8: 60          `   :29a7[1]
 
-sub_c29a8
+draw_menu_icons
     ldx #0                                                            ; 2ad9: a2 00       ..  :29a8[1]
-c29aa
-    lda menu_slots1,x                                                 ; 2adb: bd 5c 29    .\) :29aa[1]
-    cmp menu_slots2,x                                                 ; 2ade: dd 6f 29    .o) :29ad[1]
-    beq c29d7                                                         ; 2ae1: f0 25       .%  :29b0[1]
+draw_menu_icon_loop
+    lda desired_menu_slots,x                                          ; 2adb: bd 5c 29    .\) :29aa[1]
+    cmp displayed_menu_slots,x                                        ; 2ade: dd 6f 29    .o) :29ad[1]
+    beq draw_next_menu_slot                                           ; 2ae1: f0 25       .%  :29b0[1]
     lda #0                                                            ; 2ae3: a9 00       ..  :29b2[1]
-    sta l29dd                                                         ; 2ae5: 8d dd 29    ..) :29b4[1]
+    sta redraw_menu_pointer_flag                                      ; 2ae5: 8d dd 29    ..) :29b4[1]
     cpx current_menu_index                                            ; 2ae8: e4 2e       ..  :29b7[1]
-    bne c29c1                                                         ; 2aea: d0 06       ..  :29b9[1]
-    dec l29dd                                                         ; 2aec: ce dd 29    ..) :29bb[1]
+    bne menu_pointer_not_present_on_slot                              ; 2aea: d0 06       ..  :29b9[1]
+    dec redraw_menu_pointer_flag                                      ; 2aec: ce dd 29    ..) :29bb[1]
     jsr unplot_menu_pointer                                           ; 2aef: 20 eb 29     .) :29be[1]
-c29c1
+menu_pointer_not_present_on_slot
     jsr sub_c2c0c                                                     ; 2af2: 20 0c 2c     ., :29c1[1]
-    lda l29dd                                                         ; 2af5: ad dd 29    ..) :29c4[1]
-    beq c29d7                                                         ; 2af8: f0 0e       ..  :29c7[1]
-loop_c29c9
+    lda redraw_menu_pointer_flag                                      ; 2af5: ad dd 29    ..) :29c4[1]
+    beq draw_next_menu_slot                                           ; 2af8: f0 0e       ..  :29c7[1]
+; If there's a blank under the pointer in the new menu, bump the pointer left until we
+; find a non-blank slot.
+find_valid_menu_slot_loop
     ldy new_menu_index                                                ; 2afa: a4 29       .)  :29c9[1]
-    lda menu_slots1,y                                                 ; 2afc: b9 5c 29    .\) :29cb[1]
-    bne c29d4                                                         ; 2aff: d0 04       ..  :29ce[1]
+    lda desired_menu_slots,y                                          ; 2afc: b9 5c 29    .\) :29cb[1]
+    bne new_menu_index_valid                                          ; 2aff: d0 04       ..  :29ce[1]
     dec new_menu_index                                                ; 2b01: c6 29       .)  :29d0[1]
-    bne loop_c29c9                                                    ; 2b03: d0 f5       ..  :29d2[1]
-c29d4
+    bne find_valid_menu_slot_loop                                     ; 2b03: d0 f5       ..  :29d2[1]
+new_menu_index_valid
     jsr plot_menu_pointer                                             ; 2b05: 20 17 2a     .* :29d4[1]
-c29d7
+draw_next_menu_slot
     inx                                                               ; 2b08: e8          .   :29d7[1]
-    cpx #$11                                                          ; 2b09: e0 11       ..  :29d8[1]
-    bcc c29aa                                                         ; 2b0b: 90 ce       ..  :29da[1]
+    cpx #menu_slot_count                                              ; 2b09: e0 11       ..  :29d8[1]
+    bcc draw_menu_icon_loop                                           ; 2b0b: 90 ce       ..  :29da[1]
     rts                                                               ; 2b0d: 60          `   :29dc[1]
 
-l29dd
+redraw_menu_pointer_flag
     !byte 0                                                           ; 2b0e: 00          .   :29dd[1]
 
 apply_new_menu_index
@@ -4074,7 +4077,7 @@ sub_c2adb
     ldx new_menu_index                                                ; 2c0c: a6 29       .)  :2adb[1]
     cpx l296d                                                         ; 2c0e: ec 6d 29    .m) :2add[1]
     bcs return19                                                      ; 2c11: b0 13       ..  :2ae0[1]
-    lda menu_slots1,x                                                 ; 2c13: bd 5c 29    .\) :2ae2[1]
+    lda desired_menu_slots,x                                          ; 2c13: bd 5c 29    .\) :2ae2[1]
     cmp #7                                                            ; 2c16: c9 07       ..  :2ae5[1]
     beq c2af6                                                         ; 2c18: f0 0d       ..  :2ae7[1]
     cmp #8                                                            ; 2c1a: c9 08       ..  :2ae9[1]
@@ -4138,7 +4141,7 @@ sub_c2b37
     beq return20                                                      ; 2c7d: f0 16       ..  :2b4c[1]
     lda #0                                                            ; 2c7f: a9 00       ..  :2b4e[1]
     sta l0052                                                         ; 2c81: 85 52       .R  :2b50[1]
-    lda menu_slots1,x                                                 ; 2c83: bd 5c 29    .\) :2b52[1]
+    lda desired_menu_slots,x                                          ; 2c83: bd 5c 29    .\) :2b52[1]
     cmp current_player_character                                      ; 2c86: c5 48       .H  :2b55[1]
     beq return20                                                      ; 2c88: f0 0b       ..  :2b57[1]
     jsr decrement_current_transformations_remaining                   ; 2c8a: 20 8c 2c     ., :2b59[1]
@@ -4159,7 +4162,7 @@ sub_c2b65
     bne return21                                                      ; 2ca5: d0 10       ..  :2b74[1]
     lda l09df                                                         ; 2ca7: ad df 09    ... :2b76[1]
     beq return21                                                      ; 2caa: f0 0b       ..  :2b79[1]
-    lda menu_slots1,x                                                 ; 2cac: bd 5c 29    .\) :2b7b[1]
+    lda desired_menu_slots,x                                          ; 2cac: bd 5c 29    .\) :2b7b[1]
     cmp l0052                                                         ; 2caf: c5 52       .R  :2b7e[1]
     bne c2b84                                                         ; 2cb1: d0 02       ..  :2b80[1]
     lda #0                                                            ; 2cb3: a9 00       ..  :2b82[1]
@@ -4174,24 +4177,24 @@ something21_TODO
     sta address1_high                                                 ; 2cbc: 85 71       .q  :2b8b[1]
     ldx l296d                                                         ; 2cbe: ae 6d 29    .m) :2b8d[1]
 loop_c2b90
-    lda menu_slots1,x                                                 ; 2cc1: bd 5c 29    .\) :2b90[1]
+    lda desired_menu_slots,x                                          ; 2cc1: bd 5c 29    .\) :2b90[1]
     cmp address1_low                                                  ; 2cc4: c5 70       .p  :2b93[1]
     beq c2bba                                                         ; 2cc6: f0 23       .#  :2b95[1]
     inx                                                               ; 2cc8: e8          .   :2b97[1]
     cpx l296e                                                         ; 2cc9: ec 6e 29    .n) :2b98[1]
     bcc loop_c2b90                                                    ; 2ccc: 90 f3       ..  :2b9b[1]
     ldx #$10                                                          ; 2cce: a2 10       ..  :2b9d[1]
-    lda menu_slots1,x                                                 ; 2cd0: bd 5c 29    .\) :2b9f[1]
+    lda desired_menu_slots,x                                          ; 2cd0: bd 5c 29    .\) :2b9f[1]
     bne c2bba                                                         ; 2cd3: d0 16       ..  :2ba2[1]
 loop_c2ba4
     lda l295b,x                                                       ; 2cd5: bd 5b 29    .[) :2ba4[1]
-    sta menu_slots1,x                                                 ; 2cd8: 9d 5c 29    .\) :2ba7[1]
+    sta desired_menu_slots,x                                          ; 2cd8: 9d 5c 29    .\) :2ba7[1]
     dex                                                               ; 2cdb: ca          .   :2baa[1]
     cpx l296e                                                         ; 2cdc: ec 6e 29    .n) :2bab[1]
     bcs loop_c2ba4                                                    ; 2cdf: b0 f4       ..  :2bae[1]
     inc l296e                                                         ; 2ce1: ee 6e 29    .n) :2bb0[1]
     lda address1_low                                                  ; 2ce4: a5 70       .p  :2bb3[1]
-    sta menu_slots1,x                                                 ; 2ce6: 9d 5c 29    .\) :2bb5[1]
+    sta desired_menu_slots,x                                          ; 2ce6: 9d 5c 29    .\) :2bb5[1]
     dec address1_high                                                 ; 2ce9: c6 71       .q  :2bb8[1]
 c2bba
     lda address1_high                                                 ; 2ceb: a5 71       .q  :2bba[1]
@@ -4203,7 +4206,7 @@ sub_c2bbd
     sta address1_high                                                 ; 2cf2: 85 71       .q  :2bc1[1]
     ldx l296e                                                         ; 2cf4: ae 6e 29    .n) :2bc3[1]
 loop_c2bc6
-    lda menu_slots1,x                                                 ; 2cf7: bd 5c 29    .\) :2bc6[1]
+    lda desired_menu_slots,x                                          ; 2cf7: bd 5c 29    .\) :2bc6[1]
     beq c2bd6                                                         ; 2cfa: f0 0b       ..  :2bc9[1]
     cmp address1_low                                                  ; 2cfc: c5 70       .p  :2bcb[1]
     beq c2bdd                                                         ; 2cfe: f0 0e       ..  :2bcd[1]
@@ -4213,7 +4216,7 @@ loop_c2bc6
     bcs c2bdd                                                         ; 2d05: b0 07       ..  :2bd4[1]
 c2bd6
     lda address1_low                                                  ; 2d07: a5 70       .p  :2bd6[1]
-    sta menu_slots1,x                                                 ; 2d09: 9d 5c 29    .\) :2bd8[1]
+    sta desired_menu_slots,x                                          ; 2d09: 9d 5c 29    .\) :2bd8[1]
     dec address1_high                                                 ; 2d0c: c6 71       .q  :2bdb[1]
 c2bdd
     lda address1_high                                                 ; 2d0e: a5 71       .q  :2bdd[1]
@@ -4225,7 +4228,7 @@ something22_TODO
     sta address1_high                                                 ; 2d15: 85 71       .q  :2be4[1]
     ldx l296e                                                         ; 2d17: ae 6e 29    .n) :2be6[1]
 loop_c2be9
-    lda menu_slots1,x                                                 ; 2d1a: bd 5c 29    .\) :2be9[1]
+    lda desired_menu_slots,x                                          ; 2d1a: bd 5c 29    .\) :2be9[1]
     cmp address1_low                                                  ; 2d1d: c5 70       .p  :2bec[1]
     beq c2bf7                                                         ; 2d1f: f0 07       ..  :2bee[1]
     inx                                                               ; 2d21: e8          .   :2bf0[1]
@@ -4234,12 +4237,12 @@ loop_c2be9
     bcs c2c09                                                         ; 2d26: b0 12       ..  :2bf5[1]
 c2bf7
     lda l295d,x                                                       ; 2d28: bd 5d 29    .]) :2bf7[1]
-    sta menu_slots1,x                                                 ; 2d2b: 9d 5c 29    .\) :2bfa[1]
+    sta desired_menu_slots,x                                          ; 2d2b: 9d 5c 29    .\) :2bfa[1]
     inx                                                               ; 2d2e: e8          .   :2bfd[1]
     cpx #$10                                                          ; 2d2f: e0 10       ..  :2bfe[1]
     bcc c2bf7                                                         ; 2d31: 90 f5       ..  :2c00[1]
     lda #0                                                            ; 2d33: a9 00       ..  :2c02[1]
-    sta menu_slots1,x                                                 ; 2d35: 9d 5c 29    .\) :2c04[1]
+    sta desired_menu_slots,x                                          ; 2d35: 9d 5c 29    .\) :2c04[1]
     dec address1_high                                                 ; 2d38: c6 71       .q  :2c07[1]
 c2c09
     lda address1_high                                                 ; 2d3a: a5 71       .q  :2c09[1]
@@ -4260,8 +4263,8 @@ sub_c2c0c
     sta sprite_op_flags                                               ; 2d4e: 85 15       ..  :2c1d[1]
     lda #1                                                            ; 2d50: a9 01       ..  :2c1f[1]
     sta sprite_number                                                 ; 2d52: 85 16       ..  :2c21[1]
-    lda menu_slots1,x                                                 ; 2d54: bd 5c 29    .\) :2c23[1]
-    sta menu_slots2,x                                                 ; 2d57: 9d 6f 29    .o) :2c26[1]
+    lda desired_menu_slots,x                                          ; 2d54: bd 5c 29    .\) :2c23[1]
+    sta displayed_menu_slots,x                                        ; 2d57: 9d 6f 29    .o) :2c26[1]
     bne c2c35                                                         ; 2d5a: d0 0a       ..  :2c29[1]
     lda #2                                                            ; 2d5c: a9 02       ..  :2c2b[1]
     sta sprite_op_flags                                               ; 2d5e: 85 15       ..  :2c2d[1]
@@ -4316,14 +4319,14 @@ menu_right_pending
     inx                                                               ; 2da1: e8          .   :2c70[1]
     cpx #$11                                                          ; 2da2: e0 11       ..  :2c71[1]
     bcs no_menu_motion                                                ; 2da4: b0 13       ..  :2c73[1]
-    lda menu_slots1,x                                                 ; 2da6: bd 5c 29    .\) :2c75[1]
+    lda desired_menu_slots,x                                          ; 2da6: bd 5c 29    .\) :2c75[1]
     beq menu_right_pending                                            ; 2da9: f0 f6       ..  :2c78[1]
     stx new_menu_index                                                ; 2dab: 86 29       .)  :2c7a[1]
     bne no_menu_motion                                                ; 2dad: d0 0a       ..  :2c7c[1]   ; always branch
 menu_left_pending
     dex                                                               ; 2daf: ca          .   :2c7e[1]
     bmi no_menu_motion                                                ; 2db0: 30 07       0.  :2c7f[1]
-    lda menu_slots1,x                                                 ; 2db2: bd 5c 29    .\) :2c81[1]
+    lda desired_menu_slots,x                                          ; 2db2: bd 5c 29    .\) :2c81[1]
     beq menu_left_pending                                             ; 2db5: f0 f8       ..  :2c84[1]
     stx new_menu_index                                                ; 2db7: 86 29       .)  :2c86[1]
 no_menu_motion
@@ -5095,7 +5098,7 @@ press_l_to_load_encrypted_string
 
 sub_c344b
     ldy new_menu_index                                                ; 357c: a4 29       .)  :344b[1]
-    lda menu_slots1,y                                                 ; 357e: b9 5c 29    .\) :344d[1]
+    lda desired_menu_slots,y                                          ; 357e: b9 5c 29    .\) :344d[1]
     cmp #menu_action_file                                             ; 3581: c9 03       ..  :3450[1]
     bne return22                                                      ; 3583: d0 42       .B  :3452[1]
     lda l0004                                                         ; 3585: a5 04       ..  :3454[1]
@@ -5332,7 +5335,7 @@ c3652
 
 sub_c3664
     ldy new_menu_index                                                ; 3795: a4 29       .)  :3664[1]
-    lda menu_slots1,y                                                 ; 3797: b9 5c 29    .\) :3666[1]
+    lda desired_menu_slots,y                                          ; 3797: b9 5c 29    .\) :3666[1]
     cmp #8                                                            ; 379a: c9 08       ..  :3669[1]
     bne return24                                                      ; 379c: d0 3a       .:  :366b[1]
     lda l0004                                                         ; 379e: a5 04       ..  :366d[1]
@@ -6470,7 +6473,7 @@ c3f2d
     lda #osbyte_reset_soft_keys                                       ; 3f30: a9 12       ..
     jsr osbyte                                                        ; 3f32: 20 f4 ff     ..            ; Reset function keys
     jsr sub_c2980                                                     ; 3f35: 20 80 29     .)
-    jsr sub_c29a8                                                     ; 3f38: 20 a8 29     .)
+    jsr draw_menu_icons                                               ; 3f38: 20 a8 29     .)
     lda screen_base_address_high                                      ; 3f3b: a5 4c       .L
     pha                                                               ; 3f3d: 48          H
     lda #$58 ; 'X'                                                    ; 3f3e: a9 58       .X
@@ -7093,10 +7096,6 @@ pydis_end
 ;     c287e
 ;     c288c
 ;     c2945
-;     c29aa
-;     c29c1
-;     c29d4
-;     c29d7
 ;     c2a12
 ;     c2a33
 ;     c2a60
@@ -7357,7 +7356,6 @@ pydis_end
 ;     l295d
 ;     l296d
 ;     l296e
-;     l29dd
 ;     l2ced
 ;     l2eb5
 ;     l2eb6
@@ -7429,7 +7427,6 @@ pydis_end
 ;     loop_c28fd
 ;     loop_c2988
 ;     loop_c2992
-;     loop_c29c9
 ;     loop_c2a9a
 ;     loop_c2b90
 ;     loop_c2ba4
@@ -7485,7 +7482,6 @@ pydis_end
 ;     sub_c2894
 ;     sub_c28e2
 ;     sub_c2980
-;     sub_c29a8
 ;     sub_c2adb
 ;     sub_c2b37
 ;     sub_c2b65
@@ -7802,6 +7798,9 @@ pydis_end
 }
 !if (menu_action_file) != $03 {
     !error "Assertion failed: menu_action_file == $03"
+}
+!if (menu_slot_count) != $11 {
+    !error "Assertion failed: menu_slot_count == $11"
 }
 !if (osbyte_close_spool_exec) != $77 {
     !error "Assertion failed: osbyte_close_spool_exec == $77"
