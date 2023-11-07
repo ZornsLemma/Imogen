@@ -6,6 +6,8 @@
 
 * ADFS/Econet-friendly build, e.g. saving in current directory on launch instead of :0.I?
 
+* Use non-slashed zero when showing the number of transformations remaining?
+
 # Hacks
 
 * Could the duck be made more widely available?
