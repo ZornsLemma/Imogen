@@ -635,6 +635,7 @@ label(0x38d8, "envelope_3")
 label(0x950, "x_entry_table2a")
 
 entry(0x3f6f, "probably_copy_protection_TODO")
+# TODO: DELETE? expr(0x3f73, "game_state_flag_have_spell")
 
 constant(3, "menu_action_file") # TODO: plausible guess
 expr(0x3451, "menu_action_file")

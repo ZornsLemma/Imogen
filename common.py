@@ -11,3 +11,7 @@ label(0xa90, "string_input_buffer")
 
 label(0x53c0, "auxcode")
 label(0x53c0, "check_password")
+
+# TODO: barking up the wrong tree, I think
+#label(0x1103, "game_state_flags")
+#constant(1, "game_state_flag_have_spell")

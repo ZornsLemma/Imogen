@@ -36,9 +36,9 @@ osbyte                      = $fff4
 
     * = $53c0
 
-; TODO: This is comparing an eor-encrypted string - probably a level 'password' -
-; against the string buffer. Not quite clear yet how this matches against multiple
-; correct passwords.
+; Check a password entered by the user at string_buffer against the list of EOR-
+; encrypted paswords at level_name_ptr_table and invoke the corresponding handler if a
+; match is found. Otherwise generate an error.
 auxcode
 check_password
 pydis_start
@@ -124,13 +124,6 @@ unknown_encrypted_string
 c544e
     rts                                                               ; 544e: 60          `
 
-; TODO: Needs properly decoding, but this EOR-$CB encrypted data starts:
-; SAXOPHOBIA\r^\x9e
-; TIME-FLIES\r^\x9e
-; So it looks like this is a table of level names, probably CR-terminated with a 16-bit
-; pointer following each. '^' is $5e. Actually I suspect the pointers should *not* be
-; EOR-ed, just the text. Note that \r EOR $cb is $c6, so it's easy-ish to pick the
-; pointers out of the raw data by eye.
 level_name_ptr_table
     !byte $98, $8a, $93, $84, $9b, $83, $84, $89, $82, $8a, $c6       ; 544f: 98 8a 93... ...            ; EOR-encrypted string: 'SAXOPHOBIA'
     !word normal_level_handler                                        ; 545a: 95 55       .U

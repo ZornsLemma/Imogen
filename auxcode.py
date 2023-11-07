@@ -39,7 +39,6 @@ expr(0x5433, "vdu_lf")
 expr(0x5413, "fixed_eor_key")
 expr(0x542c, "fixed_eor_key")
 
-comment(0x544f, "TODO: Needs properly decoding, but this EOR-$CB encrypted data starts:\nSAXOPHOBIA\\r^\\x9e\nTIME-FLIES\\r^\\x9e\nSo it looks like this is a table of level names, probably CR-terminated with a 16-bit pointer following each. '^' is $5e. Actually I suspect the pointers should *not* be EOR-ed, just the text. Note that \\r EOR $cb is $c6, so it's easy-ish to pick the pointers out of the raw data by eye.")
 label(0x544f, "level_name_ptr_table")
 expr(0x53c7, make_lo("level_name_ptr_table"))
 expr(0x53cb, make_hi("level_name_ptr_table"))
@@ -78,7 +77,9 @@ comment(0x552e, "TODO: Some intriguing secret passwords here. Now I see this, I 
 
 comment(0x5642, "TODO: Presumably a screen dump routine for Epson-compatible printers")
 
-comment(0x53c0, "TODO: This is comparing an eor-encrypted string - probably a level 'password' - against the string buffer. Not quite clear yet how this matches against multiple correct passwords.")
+comment(0x53c0, "Check a password entered by the user at string_buffer against the list of EOR-encrypted paswords at level_name_ptr_table and invoke the corresponding handler if a match is found. Otherwise generate an error.")
+
+# TODO: DELETE? expr(0x5620, "game_state_flag_have_spell")
 
 go()
 
