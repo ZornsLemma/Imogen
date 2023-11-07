@@ -25,16 +25,23 @@ constant(0xff, "osfile_load")
 
 substitute_labels = {
     (0x114f,0x1297): {
-        "address_low": "filename_low",
-        "address_high": "filename_high",
+        "address1_low": "filename_low",
+        "address1_high": "filename_high",
     },
+    (0x145d,0x1800): {
+        "address1_low":  "src_sprite_address_low",
+        "address1_high": "src_sprite_address_high",
+        "address2_low":  "dest_sprite_address_low",
+        "address2_high": "dest_sprite_address_high",
+    },
+
     (0x183d, 0x1841): {
-        "address_low": "filename_low",
-        "address_high": "filename_high",
+        "address1_low": "filename_low",
+        "address1_high": "filename_high",
     },
     (0x1aa0, 0x1aae): {
-        "address_low": "filename_low",
-        "address_high": "filename_high",
+        "address1_low": "filename_low",
+        "address1_high": "filename_high",
     },
 }
 
@@ -67,8 +74,41 @@ label(0x0007, "rnd1")
 label(0x0008, "rnd2")
 label(0x0009, "rnd3")
 label(0x000a, "rnd4")
-label(0x0070, "address_low")
-label(0x0071, "address_high")
+label(0x0014, "dest_sprite_number")
+label(0x0015, "sprite_op_flags")
+label(0x0016, "sprite_number")
+label(0x0016, "sprite_number")
+label(0x0018, "sprite_x_base_low")
+label(0x0019, "sprite_x_base_high")
+label(0x001a, "sprite_y_base_low")
+label(0x001b, "sprite_y_base_high")
+label(0x001d, "sprite_op_flags2")
+label(0x004c, "screen_base_address_high")
+
+label(0x0070, "address1_low")
+label(0x0071, "address1_high")
+label(0x0072, "sprite_screen_address1_low")
+label(0x0073, "sprite_screen_address1_high")
+
+label(0x0074, "sprite_x_pos_low")
+label(0x0075, "sprite_x_pos_high")
+label(0x0076, "sprite_y_pos_low")
+label(0x0077, "sprite_y_pos_high")
+label(0x0078, "sprite_x_offset_within_byte")
+label(0x0079, "byte_offset_within_sprite")
+label(0x007b, "sprite_screen_address2_low")
+label(0x007c, "sprite_screen_address2_high")
+label(0x007d, "sprite_byte")
+label(0x007e, "address2_low")
+label(0x007f, "address2_high")
+label(0x0080, "mask_sprite_byte")
+label(0x0081, "sprite_width")
+label(0x0082, "sprite_bit")
+label(0x0083, "sprite_bit_mask")
+label(0x0084, "sprite_y_offset_within_character_row")
+label(0x0085, "sprite_character_x_pos")
+label(0x0086, "amount_sprite_is_offscreen_x")
+label(0x0088, "sprite_screen_addresss1_copy_high")
 
 # Keypresses are checked in the IRQ routine every vsync.
 # Because the main game loop can be slow, multiple vsyncs can occur, so keypresses are accumulated and stored in "pending" variables
@@ -82,6 +122,116 @@ label(0x0046, "return_key_pressed_pending")
 
 label(0x00fc, "interrupt_accumulator")
 
+label(0x137f, "reset_sprite_flags_and_exit")
+comment(0x139f, "check flags to see if we are copying to another sprite", inline=True)
+comment(0x13b3, "Y=0", inline=True)
+label(0x13bf, "skip_inverting_x_offset")
+comment(0x13aa, "copy the first four bytes from sprite1 to sprite2 (header information)")
+label(0x13ac, "copy_sprite_header_loop")
+label(0x13b5, "skip_copying_sprite_header_to_destination_sprite")
+comment(0x13b5, "add the x and y offset in the sprite header to the sprite position")
+comment(0x13b7, "read byte 0 of sprite, a start x offset", inline=True)
+comment(0x13c1, "set flags based on A", inline=True)
+label(0x13c6, "non_negative_offset_in_x")
+comment(0x13d3, "read byte 1 of sprite, a start y offset", inline=True)
+label(0x13d8, "non_negative_offset_in_y")
+comment(0x13d2, "Y=1", inline=True)
+comment(0x13e2, "Y=2", inline=True)
+comment(0x13e3, "read sprite width in pixels - 1", inline=True)
+comment(0x13f6, "Take the Y position and round down to the previous character row")
+comment(0x13fe, "Then multiply by eight and store in ($72)")
+comment(0x1409, "Multiply by four")
+comment(0x1411, "Add eight times the x position as a character row")
+comment(0x141a, "Add high byte including X")
+label(0x1427, "not_out_of_range")
+comment(0x142e, "set Y to the horizontal offset within byte (0-7) of the sprite X position")
+comment(0x1435, "set the vertical offset within a character row (0-7) of the sprite Y position")
+comment(0x143b, "load X and check flags to see if we are copying to a destination sprite")
+label(0x154a, "out_of_screen_range_vertically")
+label(0x1574, "and_byte_with_mask_and_write_to_screen")
+comment(0x1557, "read byte from screen")
+label(0x155e, "skip1")
+comment(0x1564, "OR in the appropriate bit and write back to screen")
+comment(0x1566, "write byte to screen", inline=True)
+comment(0x1576, "write byte to screen", inline=True)
+comment(0x1589, "check if Y coordinate is above or below the screen area", inline=True)
+label(0x1593, "y_coordinate_is_within_character_row")
+comment(0x1598, "copy mask byte to destination")
+label(0x15ab, "byte_not_finished_yet")
+comment(0x15ab, "check top bit", inline=True)
+label(0x1551, "found_clear_bit")
+comment(0x15ad, "if bit clear then branch", inline=True)
+comment(0x15a1, "load next source byte from sprite")
+comment(0x15a5, "set mask byte to 255", inline=True)
+comment(0x15a7, "reset loop counter", inline=True)
+comment(0x15af, "add set bit to mask", inline=True)
+comment(0x15b1, "get next bit", inline=True)
+comment(0x15b3, "if bit set then branch", inline=True)
+label(0x15c3, "found_second_bit_set")
+comment(0x15b5, "add clear bit to mask", inline=True)
+comment(0x15b8, "if still in same character row, then branch back")
+comment(0x15bc, "move up to previous character row")
+label(0x1581, "move_to_previous_row")
+comment(0x15c3, "add set bit to mask")
+comment(0x15c5, "check if we are done", inline=True)
+comment(0x15c9, "reset sprite address")
+comment(0x15d5, "move to next column")
+comment(0x15de, "if we reach the right hand edge of the screen then we are done")
+comment(0x15e2, "move sprite addresses on by eight to get to next character column")
+decimal(0x15df)
+label(0x15f3, "move_while_rendering_reflected_about_y_axis")
+comment(0x15f3, "move within byte to next bit", inline=True)
+label(0x161e, "finish_off_sprite")
+label(0x1623, "shift_mask_byte_loop")
+label(0x1628, "write_last_byte")
+#comment(0x15ad, "", inline=True)
+#comment(0x15ad, "", inline=True)
+#comment(0x15ad, "", inline=True)
+
+label(0x1589, "check_vertically_in_range")
+label(0x160c, "update_sprite_bit_variables")
+
+label(0x162f, "clamp_and_clip_x")
+comment(0x162f, "exit if X position is 512 or more", inline=True)
+comment(0x1636, "exit if Y position is 512 or more", inline=True)
+comment(0x164f, "check flags2 (top bit) to see if we should clamp to the right edge")
+comment(0x1653, "clamp to left edge")
+comment(0x1657, "if fully off screen to the right, then pull values and return else just return")
+
+label(0x163d, "pull_values_and_exit_sprite_op_local")
+label(0x1640, "clamp_x")
+label(0x165e, "sprite_clamp_x_left")
+label(0x1670, "sprite_clamp_x_right")
+label(0x168a, "sprite_clip_x")
+comment(0x168e, "exit if fully offscreen", inline=True)
+label(0x1696, "sprite_clip_x_loop")
+label(0x16a5, "not_copying_to_destination_sprite")
+label(0x16ce, "pull_values_and_exit_sprite_op")
+decimal(0x1658)
+comment(0x16a3, "set dest sprite byte to 255", inline=True)
+comment(0x16aa, "get top bit", inline=True)
+comment(0x16ab, "if set then branch", inline=True)
+comment(0x16ad, "put clear bit into mask", inline=True)
+comment(0x16af, "read next bit", inline=True)
+comment(0x16b0, "put next bit into mask", inline=True)
+comment(0x16b2, "loop back", inline=True)
+label(0x16b5, "found_set_bit")
+comment(0x16b5, "put set bit into mask", inline=True)
+comment(0x16b7, "get next bit", inline=True)
+comment(0x16b8, "if set then branch", inline=True)
+comment(0x16ba, "put zero bit into mask", inline=True)
+comment(0x16bc, "loop back", inline=True)
+label(0x16bf, "found_second_set_bit")
+comment(0x16bf, "put another set bit into mask", inline=True)
+comment(0x16c1, "decrement loop counters", inline=True)
+comment(0x16c5, "jump back if not done", inline=True)
+
+comment(0x1642, "calculate character x position by dividing pixel position by eight")
+expr(0x167f, make_lo("319"))
+expr(0x1683, make_hi("319"))
+comment(0x167e, "set x position to the right edge (319)")
+decimal(0x1675)
+decimal(0x1687)
 label(0x17b9, "if_vsync_elapsed_then_set_toolbar_area_palette")
 comment(0x17bb, "check for vsync interrupt", inline=True)
 comment(0x17c0, "reset timers")
@@ -145,6 +295,7 @@ comment(0x3d3d, "define envelopes")
 comment(0x3d52, "loop eight times resetting data in the printer buffer")
 comment(0x3d61, "store something else now that envelopes have already been defined above?")
 comment(0x3d75, "seed random number generation by reading the User VIA timers")
+comment(0x3d8d, "set base address for sprite rendering, $6200 is the main game area")
 label(0x110b, "vertical_sync_amount_for_crtc_register")
 label(0x3f05, "drive_number")
 char(0x3f05)
@@ -683,9 +834,11 @@ entry(0x2a17, "plot_menu_pointer") # TODO: plausible guess - ditto
 # TODO: l0014 is an input if l0015 has bit 0 set on entry - I suspect (given the two calls to set_yx_based_on_a in sprite_op) that l0014 is something like a mask or backing slot to store whatever's underneath the sprite
 # TODO: This suggests that the menu pointer sprite *might* start at offset $528 in sprdata, and occupy 52 bytes (since the entry at 0x1d*2 is $528 and the next is $5c5) - sprites may have a four byte header, which would perhaps work as then there'd be 52-4=48 bytes of sprite data, which would be 6 character cell's worth (but this is just an assumption)
 entry(0x138d, "sprite_op")
-comment(0x2c52, "TODO: Self-modifying code here? If so we haven't found the code that modifies it as we have no labels")
-comment(0x13c1, "TODO: Self-modifying code here? If so we haven't found the code that modifies it as we have no labels")
-entry(0x2c46, "something_to_do_with_incrementing_by_20_pixels_x_maybe")
+label(0x2c46, "calculate_sprite_position_for_menu_item")
+label(0x2c58, "multiply_x_by_twenty_loop")
+decimal(0x2c5a)
+label(0x2c62, "finished_multiply")
+label(0x2c5f, "skip_increment_high_byte")
 comment(0x135d, "The sprite table starts with a table of 16 bit addresses, one for each sprite.\nLook up the address of the sprite by reading this table.\nSet ($58) to point to the base of the table.\nSet YX to point to the base of the sprite.")
 label(0x54, "sprdata_ptr")
 expr_label(0x55, make_add("sprdata_ptr", "1"))

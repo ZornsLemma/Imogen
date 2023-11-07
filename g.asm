@@ -70,14 +70,14 @@ rnd1                                = $07
 rnd2                                = $08
 rnd3                                = $09
 rnd4                                = $0a
-l0014                               = $14
-l0015                               = $15
-l0016                               = $16
-l0018                               = $18
-l0019                               = $19
-l001a                               = $1a
-l001b                               = $1b
-l001d                               = $1d
+dest_sprite_number                  = $14
+sprite_op_flags                     = $15
+sprite_number                       = $16
+sprite_x_base_low                   = $18
+sprite_x_base_high                  = $19
+sprite_y_base_low                   = $1a
+sprite_y_base_high                  = $1b
+sprite_op_flags2                    = $1d
 valid_direction_pending             = $20
 another_menu_index                  = $25
 l0026                               = $26
@@ -109,7 +109,7 @@ current_player_character            = $48
 l0049                               = $49
 l004a                               = $4a
 l004b                               = $4b
-l004c                               = $4c
+screen_base_address_high            = $4c
 new_player_character                = $4d
 l0050                               = $50
 maybe_current_level                 = $51
@@ -131,33 +131,37 @@ l0065                               = $65
 l0066                               = $66
 l0067                               = $67
 l0068                               = $68
-address_low                         = $70
+address1_low                        = $70
 filename_low                        = $70
-address_high                        = $71
+src_sprite_address_low              = $70
+address1_high                       = $71
 filename_high                       = $71
-l0072                               = $72
-l0073                               = $73
-l0074                               = $74
-l0075                               = $75
-l0076                               = $76
-l0077                               = $77
-l0078                               = $78
-l0079                               = $79
+src_sprite_address_high             = $71
+sprite_screen_address1_low          = $72
+sprite_screen_address1_high         = $73
+sprite_x_pos_low                    = $74
+sprite_x_pos_high                   = $75
+sprite_y_pos_low                    = $76
+sprite_y_pos_high                   = $77
+sprite_x_offset_within_byte         = $78
+byte_offset_within_sprite           = $79
 l007a                               = $7a
-l007b                               = $7b
-l007c                               = $7c
-l007d                               = $7d
-l007e                               = $7e
-l007f                               = $7f
-l0080                               = $80
-l0081                               = $81
-l0082                               = $82
-l0083                               = $83
-l0084                               = $84
-l0085                               = $85
-l0086                               = $86
+sprite_screen_address2_low          = $7b
+sprite_screen_address2_high         = $7c
+sprite_byte                         = $7d
+address2_low                        = $7e
+dest_sprite_address_low             = $7e
+address2_high                       = $7f
+dest_sprite_address_high            = $7f
+mask_sprite_byte                    = $80
+sprite_width                        = $81
+sprite_bit                          = $82
+sprite_bit_mask                     = $83
+sprite_y_offset_within_character_row = $84
+sprite_character_x_pos              = $85
+amount_sprite_is_offscreen_x        = $86
 l0087                               = $87
-l0088                               = $88
+sprite_screen_addresss1_copy_high   = $88
 romsel_copy                         = $f4
 interrupt_accumulator               = $fc
 l00fd                               = $fd
@@ -482,14 +486,14 @@ c129b
     asl                                                               ; 13ce: 0a          .   :129d[1]
     tay                                                               ; 13cf: a8          .   :129e[1]
     lda c3adf,y                                                       ; 13d0: b9 df 3a    ..: :129f[1]
-    sta address_low                                                   ; 13d3: 85 70       .p  :12a2[1]
+    sta address1_low                                                  ; 13d3: 85 70       .p  :12a2[1]
     lda l3ae0,y                                                       ; 13d5: b9 e0 3a    ..: :12a4[1]
-    sta address_high                                                  ; 13d8: 85 71       .q  :12a7[1]
+    sta address1_high                                                 ; 13d8: 85 71       .q  :12a7[1]
     ldy #0                                                            ; 13da: a0 00       ..  :12a9[1]
-    lda (address_low),y                                               ; 13dc: b1 70       .p  :12ab[1]
+    lda (address1_low),y                                              ; 13dc: b1 70       .p  :12ab[1]
     tax                                                               ; 13de: aa          .   :12ad[1]
     iny                                                               ; 13df: c8          .   :12ae[1]
-    lda (address_low),y                                               ; 13e0: b1 70       .p  :12af[1]
+    lda (address1_low),y                                              ; 13e0: b1 70       .p  :12af[1]
     tay                                                               ; 13e2: a8          .   :12b1[1]
     lda #0                                                            ; 13e3: a9 00       ..  :12b2[1]
     sta l003b                                                         ; 13e5: 85 3b       .;  :12b4[1]
@@ -613,11 +617,11 @@ return2
 power_of_2_table
     !byte $01, $02, $04, $08, $10, $20, $40, $80                      ; 14a8: 01 02 04... ... :1377[1]
 
-c137f
+reset_sprite_flags_and_exit
     lda #0                                                            ; 14b0: a9 00       ..  :137f[1]
-    sta l0015                                                         ; 14b2: 85 15       ..  :1381[1]
+    sta sprite_op_flags                                               ; 14b2: 85 15       ..  :1381[1]
     lda #1                                                            ; 14b4: a9 01       ..  :1383[1]
-    sta l001d                                                         ; 14b6: 85 1d       ..  :1385[1]
+    sta sprite_op_flags2                                              ; 14b6: 85 1d       ..  :1385[1]
     pla                                                               ; 14b8: 68          h   :1387[1]
     tay                                                               ; 14b9: a8          .   :1388[1]
     pla                                                               ; 14ba: 68          h   :1389[1]
@@ -631,115 +635,123 @@ sprite_op
     pha                                                               ; 14c0: 48          H   :138f[1]
     tya                                                               ; 14c1: 98          .   :1390[1]
     pha                                                               ; 14c2: 48          H   :1391[1]
-    lda l0016                                                         ; 14c3: a5 16       ..  :1392[1]
+    lda sprite_number                                                 ; 14c3: a5 16       ..  :1392[1]
     jsr get_address_of_sprite_a                                       ; 14c5: 20 2c 13     ,. :1394[1]
-    stx address_low                                                   ; 14c8: 86 70       .p  :1397[1]
-    sty address_high                                                  ; 14ca: 84 71       .q  :1399[1]
-    lda l0015                                                         ; 14cc: a5 15       ..  :139b[1]
+    stx src_sprite_address_low                                        ; 14c8: 86 70       .p  :1397[1]
+    sty src_sprite_address_high                                       ; 14ca: 84 71       .q  :1399[1]
+    lda sprite_op_flags                                               ; 14cc: a5 15       ..  :139b[1]
     and #1                                                            ; 14ce: 29 01       ).  :139d[1]
-    beq c13b5                                                         ; 14d0: f0 14       ..  :139f[1]
-    lda l0014                                                         ; 14d2: a5 14       ..  :13a1[1]
+    beq skip_copying_sprite_header_to_destination_sprite              ; 14d0: f0 14       ..  :139f[1]   ; check flags to see if we are copying to another sprite
+    lda dest_sprite_number                                            ; 14d2: a5 14       ..  :13a1[1]
     jsr get_address_of_sprite_a                                       ; 14d4: 20 2c 13     ,. :13a3[1]
-    stx l007e                                                         ; 14d7: 86 7e       .~  :13a6[1]
-    sty l007f                                                         ; 14d9: 84 7f       ..  :13a8[1]
+    stx dest_sprite_address_low                                       ; 14d7: 86 7e       .~  :13a6[1]
+    sty dest_sprite_address_high                                      ; 14d9: 84 7f       ..  :13a8[1]
+; copy the first four bytes from sprite1 to sprite2 (header information)
     ldy #3                                                            ; 14db: a0 03       ..  :13aa[1]
-loop_c13ac
-    lda (address_low),y                                               ; 14dd: b1 70       .p  :13ac[1]
-    sta (l007e),y                                                     ; 14df: 91 7e       .~  :13ae[1]
+copy_sprite_header_loop
+    lda (src_sprite_address_low),y                                    ; 14dd: b1 70       .p  :13ac[1]
+    sta (dest_sprite_address_low),y                                   ; 14df: 91 7e       .~  :13ae[1]
     dey                                                               ; 14e1: 88          .   :13b0[1]
-    bpl loop_c13ac                                                    ; 14e2: 10 f9       ..  :13b1[1]
-    sty l0080                                                         ; 14e4: 84 80       ..  :13b3[1]
-c13b5
+    bpl copy_sprite_header_loop                                       ; 14e2: 10 f9       ..  :13b1[1]
+    sty mask_sprite_byte                                              ; 14e4: 84 80       ..  :13b3[1]   ; Y=0
+; add the x and y offset in the sprite header to the sprite position
+skip_copying_sprite_header_to_destination_sprite
     ldy #0                                                            ; 14e6: a0 00       ..  :13b5[1]
-    lda (address_low),y                                               ; 14e8: b1 70       .p  :13b7[1]
-    ldx l001d                                                         ; 14ea: a6 1d       ..  :13b9[1]
-    bpl c13bf                                                         ; 14ec: 10 02       ..  :13bb[1]
+    lda (src_sprite_address_low),y                                    ; 14e8: b1 70       .p  :13b7[1]   ; read byte 0 of sprite, a start x offset
+    ldx sprite_op_flags2                                              ; 14ea: a6 1d       ..  :13b9[1]
+    bpl skip_inverting_x_offset                                       ; 14ec: 10 02       ..  :13bb[1]
     eor #$ff                                                          ; 14ee: 49 ff       I.  :13bd[1]
-c13bf
+skip_inverting_x_offset
     ldx #0                                                            ; 14f0: a2 00       ..  :13bf[1]
-; TODO: Self-modifying code here? If so we haven't found the code that modifies it as
-; we have no labels
-    ora #0                                                            ; 14f2: 09 00       ..  :13c1[1]
-    bpl c13c6                                                         ; 14f4: 10 01       ..  :13c3[1]
+    ora #0                                                            ; 14f2: 09 00       ..  :13c1[1]   ; set flags based on A
+    bpl non_negative_offset_in_x                                      ; 14f4: 10 01       ..  :13c3[1]
     dex                                                               ; 14f6: ca          .   :13c5[1]
-c13c6
+non_negative_offset_in_x
     clc                                                               ; 14f7: 18          .   :13c6[1]
-    adc l0018                                                         ; 14f8: 65 18       e.  :13c7[1]
-    sta l0074                                                         ; 14fa: 85 74       .t  :13c9[1]
+    adc sprite_x_base_low                                             ; 14f8: 65 18       e.  :13c7[1]
+    sta sprite_x_pos_low                                              ; 14fa: 85 74       .t  :13c9[1]
     txa                                                               ; 14fc: 8a          .   :13cb[1]
-    adc l0019                                                         ; 14fd: 65 19       e.  :13cc[1]
-    sta l0075                                                         ; 14ff: 85 75       .u  :13ce[1]
+    adc sprite_x_base_high                                            ; 14fd: 65 19       e.  :13cc[1]
+    sta sprite_x_pos_high                                             ; 14ff: 85 75       .u  :13ce[1]
     ldx #0                                                            ; 1501: a2 00       ..  :13d0[1]
-    iny                                                               ; 1503: c8          .   :13d2[1]
-    lda (address_low),y                                               ; 1504: b1 70       .p  :13d3[1]
-    bpl c13d8                                                         ; 1506: 10 01       ..  :13d5[1]
+    iny                                                               ; 1503: c8          .   :13d2[1]   ; Y=1
+    lda (src_sprite_address_low),y                                    ; 1504: b1 70       .p  :13d3[1]   ; read byte 1 of sprite, a start y offset
+    bpl non_negative_offset_in_y                                      ; 1506: 10 01       ..  :13d5[1]
     dex                                                               ; 1508: ca          .   :13d7[1]
-c13d8
+non_negative_offset_in_y
     clc                                                               ; 1509: 18          .   :13d8[1]
-    adc l001a                                                         ; 150a: 65 1a       e.  :13d9[1]
-    sta l0076                                                         ; 150c: 85 76       .v  :13db[1]
+    adc sprite_y_base_low                                             ; 150a: 65 1a       e.  :13d9[1]
+    sta sprite_y_pos_low                                              ; 150c: 85 76       .v  :13db[1]
     txa                                                               ; 150e: 8a          .   :13dd[1]
-    adc l001b                                                         ; 150f: 65 1b       e.  :13de[1]
-    sta l0077                                                         ; 1511: 85 77       .w  :13e0[1]
-    iny                                                               ; 1513: c8          .   :13e2[1]
-    lda (address_low),y                                               ; 1514: b1 70       .p  :13e3[1]
-    sta l0081                                                         ; 1516: 85 81       ..  :13e5[1]
+    adc sprite_y_base_high                                            ; 150f: 65 1b       e.  :13de[1]
+    sta sprite_y_pos_high                                             ; 1511: 85 77       .w  :13e0[1]
+    iny                                                               ; 1513: c8          .   :13e2[1]   ; Y=2
+    lda (src_sprite_address_low),y                                    ; 1514: b1 70       .p  :13e3[1]   ; read sprite width in pixels - 1
+    sta sprite_width                                                  ; 1516: 85 81       ..  :13e5[1]
     ldy #4                                                            ; 1518: a0 04       ..  :13e7[1]
-    lda (address_low),y                                               ; 151a: b1 70       .p  :13e9[1]
-    sta l007d                                                         ; 151c: 85 7d       .}  :13eb[1]
-    sty l0079                                                         ; 151e: 84 79       .y  :13ed[1]
+    lda (src_sprite_address_low),y                                    ; 151a: b1 70       .p  :13e9[1]
+    sta sprite_byte                                                   ; 151c: 85 7d       .}  :13eb[1]
+    sty byte_offset_within_sprite                                     ; 151e: 84 79       .y  :13ed[1]
     lda #4                                                            ; 1520: a9 04       ..  :13ef[1]
     sta l0087                                                         ; 1522: 85 87       ..  :13f1[1]
-    jsr sub_c162f                                                     ; 1524: 20 2f 16     /. :13f3[1]
-    lda l0077                                                         ; 1527: a5 77       .w  :13f6[1]
-    sta l0073                                                         ; 1529: 85 73       .s  :13f8[1]
-    lda l0076                                                         ; 152b: a5 76       .v  :13fa[1]
+    jsr clamp_and_clip_x                                              ; 1524: 20 2f 16     /. :13f3[1]
+; Take the Y position and round down to the previous character row
+    lda sprite_y_pos_high                                             ; 1527: a5 77       .w  :13f6[1]
+    sta sprite_screen_address1_high                                   ; 1529: 85 73       .s  :13f8[1]
+    lda sprite_y_pos_low                                              ; 152b: a5 76       .v  :13fa[1]
     and #$f8                                                          ; 152d: 29 f8       ).  :13fc[1]
+; Then multiply by eight and store in ($72)
     asl                                                               ; 152f: 0a          .   :13fe[1]
-    rol l0073                                                         ; 1530: 26 73       &s  :13ff[1]
+    rol sprite_screen_address1_high                                   ; 1530: 26 73       &s  :13ff[1]
     asl                                                               ; 1532: 0a          .   :1401[1]
-    rol l0073                                                         ; 1533: 26 73       &s  :1402[1]
+    rol sprite_screen_address1_high                                   ; 1533: 26 73       &s  :1402[1]
     asl                                                               ; 1535: 0a          .   :1404[1]
-    rol l0073                                                         ; 1536: 26 73       &s  :1405[1]
-    sta l0072                                                         ; 1538: 85 72       .r  :1407[1]
-    ldx l0073                                                         ; 153a: a6 73       .s  :1409[1]
+    rol sprite_screen_address1_high                                   ; 1536: 26 73       &s  :1405[1]
+    sta sprite_screen_address1_low                                    ; 1538: 85 72       .r  :1407[1]
+; Multiply by four
+    ldx sprite_screen_address1_high                                   ; 153a: a6 73       .s  :1409[1]
     asl                                                               ; 153c: 0a          .   :140b[1]
-    rol l0073                                                         ; 153d: 26 73       &s  :140c[1]
+    rol sprite_screen_address1_high                                   ; 153d: 26 73       &s  :140c[1]
     asl                                                               ; 153f: 0a          .   :140e[1]
-    rol l0073                                                         ; 1540: 26 73       &s  :140f[1]
-    lda l0074                                                         ; 1542: a5 74       .t  :1411[1]
+    rol sprite_screen_address1_high                                   ; 1540: 26 73       &s  :140f[1]
+; Add eight times the x position as a character row
+    lda sprite_x_pos_low                                              ; 1542: a5 74       .t  :1411[1]
     and #$f8                                                          ; 1544: 29 f8       ).  :1413[1]
     clc                                                               ; 1546: 18          .   :1415[1]
-    adc l0072                                                         ; 1547: 65 72       er  :1416[1]
-    sta l0072                                                         ; 1549: 85 72       .r  :1418[1]
-    sta l007b                                                         ; 154b: 85 7b       .{  :141a[1]
+    adc sprite_screen_address1_low                                    ; 1547: 65 72       er  :1416[1]
+    sta sprite_screen_address1_low                                    ; 1549: 85 72       .r  :1418[1]
+; Add high byte including X
+    sta sprite_screen_address2_low                                    ; 154b: 85 7b       .{  :141a[1]
     txa                                                               ; 154d: 8a          .   :141c[1]
-    adc l0073                                                         ; 154e: 65 73       es  :141d[1]
+    adc sprite_screen_address1_high                                   ; 154e: 65 73       es  :141d[1]
     clc                                                               ; 1550: 18          .   :141f[1]
-    adc l0075                                                         ; 1551: 65 75       eu  :1420[1]
-    bpl c1427                                                         ; 1553: 10 03       ..  :1422[1]
-    jmp c137f                                                         ; 1555: 4c 7f 13    L.. :1424[1]
+    adc sprite_x_pos_high                                             ; 1551: 65 75       eu  :1420[1]
+    bpl not_out_of_range                                              ; 1553: 10 03       ..  :1422[1]
+    jmp reset_sprite_flags_and_exit                                   ; 1555: 4c 7f 13    L.. :1424[1]
 
-c1427
+not_out_of_range
     clc                                                               ; 1558: 18          .   :1427[1]
-    adc l004c                                                         ; 1559: 65 4c       eL  :1428[1]
-    sta l0073                                                         ; 155b: 85 73       .s  :142a[1]
-    sta l007c                                                         ; 155d: 85 7c       .|  :142c[1]
-    lda l0074                                                         ; 155f: a5 74       .t  :142e[1]
+    adc screen_base_address_high                                      ; 1559: 65 4c       eL  :1428[1]
+    sta sprite_screen_address1_high                                   ; 155b: 85 73       .s  :142a[1]
+    sta sprite_screen_address2_high                                   ; 155d: 85 7c       .|  :142c[1]
+; set Y to the horizontal offset within byte (0-7) of the sprite X position
+    lda sprite_x_pos_low                                              ; 155f: a5 74       .t  :142e[1]
     and #7                                                            ; 1561: 29 07       ).  :1430[1]
     eor #7                                                            ; 1563: 49 07       I.  :1432[1]
     tay                                                               ; 1565: a8          .   :1434[1]
-    lda l0076                                                         ; 1566: a5 76       .v  :1435[1]
+; set the vertical offset within a character row (0-7) of the sprite Y position
+    lda sprite_y_pos_low                                              ; 1566: a5 76       .v  :1435[1]
     and #7                                                            ; 1568: 29 07       ).  :1437[1]
-    sta l0084                                                         ; 156a: 85 84       ..  :1439[1]
+    sta sprite_y_offset_within_character_row                          ; 156a: 85 84       ..  :1439[1]
+; load X and check flags to see if we are copying to a destination sprite
     ldx l0087                                                         ; 156c: a6 87       ..  :143b[1]
-    lda l0015                                                         ; 156e: a5 15       ..  :143d[1]
+    lda sprite_op_flags                                               ; 156e: a5 15       ..  :143d[1]
     and #1                                                            ; 1570: 29 01       ).  :143f[1]
     beq c1446                                                         ; 1572: f0 03       ..  :1441[1]
-    jmp c160c                                                         ; 1574: 4c 0c 16    L.. :1443[1]
+    jmp update_sprite_bit_variables                                   ; 1574: 4c 0c 16    L.. :1443[1]
 
 c1446
-    lda l0015                                                         ; 1577: a5 15       ..  :1446[1]
+    lda sprite_op_flags                                               ; 1577: a5 15       ..  :1446[1]
     and #6                                                            ; 1579: 29 06       ).  :1448[1]
     beq c146e                                                         ; 157b: f0 22       ."  :144a[1]
     and #4                                                            ; 157d: 29 04       ).  :144c[1]
@@ -761,115 +773,115 @@ c146e
     jmp c1517                                                         ; 159f: 4c 17 15    L.. :146e[1]
 
 loop_c1471
-    asl l007d                                                         ; 15a2: 06 7d       .}  :1471[1]
+    asl sprite_byte                                                   ; 15a2: 06 7d       .}  :1471[1]
     clc                                                               ; 15a4: 18          .   :1473[1]
     jmp c149c                                                         ; 15a5: 4c 9c 14    L.. :1474[1]
 
 c1477
     lda #0                                                            ; 15a8: a9 00       ..  :1477[1]
-    sta l0088                                                         ; 15aa: 85 88       ..  :1479[1]
+    sta sprite_screen_addresss1_copy_high                             ; 15aa: 85 88       ..  :1479[1]
     jmp c14b7                                                         ; 15ac: 4c b7 14    L.. :147b[1]
 
 c147e
-    lda l0088                                                         ; 15af: a5 88       ..  :147e[1]
+    lda sprite_screen_addresss1_copy_high                             ; 15af: a5 88       ..  :147e[1]
     beq loop_c1471                                                    ; 15b1: f0 ef       ..  :1480[1]
-    lda (l0072),y                                                     ; 15b3: b1 72       .r  :1482[1]
-    asl l007d                                                         ; 15b5: 06 7d       .}  :1484[1]
+    lda (sprite_screen_address1_low),y                                ; 15b3: b1 72       .r  :1482[1]
+    asl sprite_byte                                                   ; 15b5: 06 7d       .}  :1484[1]
 c1486
 l1487 = c1486+1
     bcc c1498                                                         ; 15b7: 90 10       ..  :1486[1]
 c1488
 l1489 = c1488+1
-    ora l0082                                                         ; 15b9: 05 82       ..  :1488[1]
-    sta (l0072),y                                                     ; 15bb: 91 72       .r  :148a[1]
+    ora sprite_bit                                                    ; 15b9: 05 82       ..  :1488[1]
+    sta (sprite_screen_address1_low),y                                ; 15bb: 91 72       .r  :148a[1]
     dey                                                               ; 15bd: 88          .   :148c[1]
     bpl c14b7                                                         ; 15be: 10 28       .(  :148d[1]
     ldy #7                                                            ; 15c0: a0 07       ..  :148f[1]
-    lda l0072                                                         ; 15c2: a5 72       .r  :1491[1]
+    lda sprite_screen_address1_low                                    ; 15c2: a5 72       .r  :1491[1]
     sbc #$40 ; '@'                                                    ; 15c4: e9 40       .@  :1493[1]
     jmp c14a5                                                         ; 15c6: 4c a5 14    L.. :1495[1]
 
 c1498
-    and l0083                                                         ; 15c9: 25 83       %.  :1498[1]
-    sta (l0072),y                                                     ; 15cb: 91 72       .r  :149a[1]
+    and sprite_bit_mask                                               ; 15c9: 25 83       %.  :1498[1]
+    sta (sprite_screen_address1_low),y                                ; 15cb: 91 72       .r  :149a[1]
 c149c
     dey                                                               ; 15cd: 88          .   :149c[1]
     bpl c14b7                                                         ; 15ce: 10 18       ..  :149d[1]
     ldy #7                                                            ; 15d0: a0 07       ..  :149f[1]
-    lda l0072                                                         ; 15d2: a5 72       .r  :14a1[1]
+    lda sprite_screen_address1_low                                    ; 15d2: a5 72       .r  :14a1[1]
     sbc #$3f ; '?'                                                    ; 15d4: e9 3f       .?  :14a3[1]
 c14a5
-    sta l0072                                                         ; 15d6: 85 72       .r  :14a5[1]
-    lda l0073                                                         ; 15d8: a5 73       .s  :14a7[1]
+    sta sprite_screen_address1_low                                    ; 15d6: 85 72       .r  :14a5[1]
+    lda sprite_screen_address1_high                                   ; 15d8: a5 73       .s  :14a7[1]
     sbc #1                                                            ; 15da: e9 01       ..  :14a9[1]
-    sta l0073                                                         ; 15dc: 85 73       .s  :14ab[1]
+    sta sprite_screen_address1_high                                   ; 15dc: 85 73       .s  :14ab[1]
 c14ad
-    sta l0088                                                         ; 15de: 85 88       ..  :14ad[1]
+    sta sprite_screen_addresss1_copy_high                             ; 15de: 85 88       ..  :14ad[1]
     cmp #$80                                                          ; 15e0: c9 80       ..  :14af[1]
     bcs c1477                                                         ; 15e2: b0 c4       ..  :14b1[1]
-    cmp l004c                                                         ; 15e4: c5 4c       .L  :14b3[1]
+    cmp screen_base_address_high                                      ; 15e4: c5 4c       .L  :14b3[1]
     bcc c1477                                                         ; 15e6: 90 c0       ..  :14b5[1]
 c14b7
     dex                                                               ; 15e8: ca          .   :14b7[1]
     bpl c14c8                                                         ; 15e9: 10 0e       ..  :14b8[1]
     sty l007a                                                         ; 15eb: 84 7a       .z  :14ba[1]
-    inc l0079                                                         ; 15ed: e6 79       .y  :14bc[1]
-    ldy l0079                                                         ; 15ef: a4 79       .y  :14be[1]
-    lda (address_low),y                                               ; 15f1: b1 70       .p  :14c0[1]
-    sta l007d                                                         ; 15f3: 85 7d       .}  :14c2[1]
+    inc byte_offset_within_sprite                                     ; 15ed: e6 79       .y  :14bc[1]
+    ldy byte_offset_within_sprite                                     ; 15ef: a4 79       .y  :14be[1]
+    lda (src_sprite_address_low),y                                    ; 15f1: b1 70       .p  :14c0[1]
+    sta sprite_byte                                                   ; 15f3: 85 7d       .}  :14c2[1]
     ldx #3                                                            ; 15f5: a2 03       ..  :14c4[1]
     ldy l007a                                                         ; 15f7: a4 7a       .z  :14c6[1]
 c14c8
-    asl l007d                                                         ; 15f9: 06 7d       .}  :14c8[1]
+    asl sprite_byte                                                   ; 15f9: 06 7d       .}  :14c8[1]
     bcc c147e                                                         ; 15fb: 90 b2       ..  :14ca[1]
-    asl l007d                                                         ; 15fd: 06 7d       .}  :14cc[1]
+    asl sprite_byte                                                   ; 15fd: 06 7d       .}  :14cc[1]
     bcc c149c                                                         ; 15ff: 90 cc       ..  :14ce[1]
-    dec l0081                                                         ; 1601: c6 81       ..  :14d0[1]
+    dec sprite_width                                                  ; 1601: c6 81       ..  :14d0[1]
     beq c1529                                                         ; 1603: f0 55       .U  :14d2[1]
-    lda l007c                                                         ; 1605: a5 7c       .|  :14d4[1]
-    sta l0073                                                         ; 1607: 85 73       .s  :14d6[1]
-    lda l007b                                                         ; 1609: a5 7b       .{  :14d8[1]
-    sta l0072                                                         ; 160b: 85 72       .r  :14da[1]
-    ldy l001d                                                         ; 160d: a4 1d       ..  :14dc[1]
+    lda sprite_screen_address2_high                                   ; 1605: a5 7c       .|  :14d4[1]
+    sta sprite_screen_address1_high                                   ; 1607: 85 73       .s  :14d6[1]
+    lda sprite_screen_address2_low                                    ; 1609: a5 7b       .{  :14d8[1]
+    sta sprite_screen_address1_low                                    ; 160b: 85 72       .r  :14da[1]
+    ldy sprite_op_flags2                                              ; 160d: a4 1d       ..  :14dc[1]
     bmi c14fe                                                         ; 160f: 30 1e       0.  :14de[1]
-    ldy l0078                                                         ; 1611: a4 78       .x  :14e0[1]
+    ldy sprite_x_offset_within_byte                                   ; 1611: a4 78       .x  :14e0[1]
     dey                                                               ; 1613: 88          .   :14e2[1]
     bpl c1517                                                         ; 1614: 10 32       .2  :14e3[1]
-    inc l0085                                                         ; 1616: e6 85       ..  :14e5[1]
-    ldy l0085                                                         ; 1618: a4 85       ..  :14e7[1]
+    inc sprite_character_x_pos                                        ; 1616: e6 85       ..  :14e5[1]
+    ldy sprite_character_x_pos                                        ; 1618: a4 85       ..  :14e7[1]
     cpy #$28 ; '('                                                    ; 161a: c0 28       .(  :14e9[1]
     bcs c1529                                                         ; 161c: b0 3c       .<  :14eb[1]
     ldy #7                                                            ; 161e: a0 07       ..  :14ed[1]
     adc #8                                                            ; 1620: 69 08       i.  :14ef[1]
-    sta l007b                                                         ; 1622: 85 7b       .{  :14f1[1]
-    sta l0072                                                         ; 1624: 85 72       .r  :14f3[1]
+    sta sprite_screen_address2_low                                    ; 1622: 85 7b       .{  :14f1[1]
+    sta sprite_screen_address1_low                                    ; 1624: 85 72       .r  :14f3[1]
     bcc c1517                                                         ; 1626: 90 20       .   :14f5[1]
-    inc l007c                                                         ; 1628: e6 7c       .|  :14f7[1]
-    inc l0073                                                         ; 162a: e6 73       .s  :14f9[1]
+    inc sprite_screen_address2_high                                   ; 1628: e6 7c       .|  :14f7[1]
+    inc sprite_screen_address1_high                                   ; 162a: e6 73       .s  :14f9[1]
     jmp c1517                                                         ; 162c: 4c 17 15    L.. :14fb[1]
 
 c14fe
-    ldy l0078                                                         ; 162f: a4 78       .x  :14fe[1]
+    ldy sprite_x_offset_within_byte                                   ; 162f: a4 78       .x  :14fe[1]
     iny                                                               ; 1631: c8          .   :1500[1]
     cpy #8                                                            ; 1632: c0 08       ..  :1501[1]
     bcc c1517                                                         ; 1634: 90 12       ..  :1503[1]
-    dec l0085                                                         ; 1636: c6 85       ..  :1505[1]
+    dec sprite_character_x_pos                                        ; 1636: c6 85       ..  :1505[1]
     bmi c1529                                                         ; 1638: 30 20       0   :1507[1]
     ldy #0                                                            ; 163a: a0 00       ..  :1509[1]
     sbc #8                                                            ; 163c: e9 08       ..  :150b[1]
-    sta l007b                                                         ; 163e: 85 7b       .{  :150d[1]
-    sta l0072                                                         ; 1640: 85 72       .r  :150f[1]
+    sta sprite_screen_address2_low                                    ; 163e: 85 7b       .{  :150d[1]
+    sta sprite_screen_address1_low                                    ; 1640: 85 72       .r  :150f[1]
     bcs c1517                                                         ; 1642: b0 04       ..  :1511[1]
-    dec l007c                                                         ; 1644: c6 7c       .|  :1513[1]
-    dec l0073                                                         ; 1646: c6 73       .s  :1515[1]
+    dec sprite_screen_address2_high                                   ; 1644: c6 7c       .|  :1513[1]
+    dec sprite_screen_address1_high                                   ; 1646: c6 73       .s  :1515[1]
 c1517
-    sty l0078                                                         ; 1648: 84 78       .x  :1517[1]
+    sty sprite_x_offset_within_byte                                   ; 1648: 84 78       .x  :1517[1]
     lda power_of_2_table,y                                            ; 164a: b9 77 13    .w. :1519[1]
-    sta l0082                                                         ; 164d: 85 82       ..  :151c[1]
+    sta sprite_bit                                                    ; 164d: 85 82       ..  :151c[1]
     eor #$ff                                                          ; 164f: 49 ff       I.  :151e[1]
-    sta l0083                                                         ; 1651: 85 83       ..  :1520[1]
-    ldy l0084                                                         ; 1653: a4 84       ..  :1522[1]
-    lda l0073                                                         ; 1655: a5 73       .s  :1524[1]
+    sta sprite_bit_mask                                               ; 1651: 85 83       ..  :1520[1]
+    ldy sprite_y_offset_within_character_row                          ; 1653: a4 84       ..  :1522[1]
+    lda sprite_screen_address1_high                                   ; 1655: a5 73       .s  :1524[1]
     jmp c14ad                                                         ; 1657: 4c ad 14    L.. :1526[1]
 
 c1529
@@ -881,258 +893,274 @@ c1529
     sta c1488                                                         ; 1666: 8d 88 14    ... :1535[1]
     lda #$82                                                          ; 1669: a9 82       ..  :1538[1]
     sta l1489                                                         ; 166b: 8d 89 14    ... :153a[1]
-    jmp c137f                                                         ; 166e: 4c 7f 13    L.. :153d[1]
+    jmp reset_sprite_flags_and_exit                                   ; 166e: 4c 7f 13    L.. :153d[1]
 
 loop_c1540
-    asl l007d                                                         ; 1671: 06 7d       .}  :1540[1]
+    asl sprite_byte                                                   ; 1671: 06 7d       .}  :1540[1]
     sec                                                               ; 1673: 38          8   :1542[1]
-    rol l0080                                                         ; 1674: 26 80       &.  :1543[1]
-    asl l0080                                                         ; 1676: 06 80       ..  :1545[1]
+    rol mask_sprite_byte                                              ; 1674: 26 80       &.  :1543[1]
+    asl mask_sprite_byte                                              ; 1676: 06 80       ..  :1545[1]
     jmp c1568                                                         ; 1678: 4c 68 15    Lh. :1547[1]
 
-c154a
+out_of_screen_range_vertically
     lda #0                                                            ; 167b: a9 00       ..  :154a[1]
-    sta l0088                                                         ; 167d: 85 88       ..  :154c[1]
-    jmp c1593                                                         ; 167f: 4c 93 15    L.. :154e[1]
+    sta sprite_screen_addresss1_copy_high                             ; 167d: 85 88       ..  :154c[1]
+    jmp y_coordinate_is_within_character_row                          ; 167f: 4c 93 15    L.. :154e[1]
 
-c1551
-    lda l0088                                                         ; 1682: a5 88       ..  :1551[1]
+found_clear_bit
+    lda sprite_screen_addresss1_copy_high                             ; 1682: a5 88       ..  :1551[1]
     beq loop_c1540                                                    ; 1684: f0 eb       ..  :1553[1]
-    asl l0080                                                         ; 1686: 06 80       ..  :1555[1]
-    lda (l0072),y                                                     ; 1688: b1 72       .r  :1557[1]
-    bit l0082                                                         ; 168a: 24 82       $.  :1559[1]
-    bne c155e                                                         ; 168c: d0 01       ..  :155b[1]
+    asl mask_sprite_byte                                              ; 1686: 06 80       ..  :1555[1]
+; read byte from screen
+    lda (sprite_screen_address1_low),y                                ; 1688: b1 72       .r  :1557[1]
+    bit sprite_bit                                                    ; 168a: 24 82       $.  :1559[1]
+    bne skip1                                                         ; 168c: d0 01       ..  :155b[1]
     clc                                                               ; 168e: 18          .   :155d[1]
-c155e
-    rol l0080                                                         ; 168f: 26 80       &.  :155e[1]
-    asl l007d                                                         ; 1691: 06 7d       .}  :1560[1]
-    bcc c1574                                                         ; 1693: 90 10       ..  :1562[1]
-    ora l0082                                                         ; 1695: 05 82       ..  :1564[1]
-    sta (l0072),y                                                     ; 1697: 91 72       .r  :1566[1]
+skip1
+    rol mask_sprite_byte                                              ; 168f: 26 80       &.  :155e[1]
+    asl sprite_byte                                                   ; 1691: 06 7d       .}  :1560[1]
+    bcc and_byte_with_mask_and_write_to_screen                        ; 1693: 90 10       ..  :1562[1]
+; OR in the appropriate bit and write back to screen
+    ora sprite_bit                                                    ; 1695: 05 82       ..  :1564[1]
+    sta (sprite_screen_address1_low),y                                ; 1697: 91 72       .r  :1566[1]   ; write byte to screen
 c1568
     dey                                                               ; 1699: 88          .   :1568[1]
-    bpl c1593                                                         ; 169a: 10 28       .(  :1569[1]
+    bpl y_coordinate_is_within_character_row                          ; 169a: 10 28       .(  :1569[1]
     ldy #7                                                            ; 169c: a0 07       ..  :156b[1]
-    lda l0072                                                         ; 169e: a5 72       .r  :156d[1]
+    lda sprite_screen_address1_low                                    ; 169e: a5 72       .r  :156d[1]
     sbc #$40 ; '@'                                                    ; 16a0: e9 40       .@  :156f[1]
-    jmp c1581                                                         ; 16a2: 4c 81 15    L.. :1571[1]
+    jmp move_to_previous_row                                          ; 16a2: 4c 81 15    L.. :1571[1]
 
-c1574
-    and l0083                                                         ; 16a5: 25 83       %.  :1574[1]
-    sta (l0072),y                                                     ; 16a7: 91 72       .r  :1576[1]
+and_byte_with_mask_and_write_to_screen
+    and sprite_bit_mask                                               ; 16a5: 25 83       %.  :1574[1]
+    sta (sprite_screen_address1_low),y                                ; 16a7: 91 72       .r  :1576[1]   ; write byte to screen
     dey                                                               ; 16a9: 88          .   :1578[1]
-    bpl c1593                                                         ; 16aa: 10 18       ..  :1579[1]
+    bpl y_coordinate_is_within_character_row                          ; 16aa: 10 18       ..  :1579[1]
     ldy #7                                                            ; 16ac: a0 07       ..  :157b[1]
-    lda l0072                                                         ; 16ae: a5 72       .r  :157d[1]
+    lda sprite_screen_address1_low                                    ; 16ae: a5 72       .r  :157d[1]
     sbc #$3f ; '?'                                                    ; 16b0: e9 3f       .?  :157f[1]
-c1581
-    sta l0072                                                         ; 16b2: 85 72       .r  :1581[1]
-    lda l0073                                                         ; 16b4: a5 73       .s  :1583[1]
+move_to_previous_row
+    sta sprite_screen_address1_low                                    ; 16b2: 85 72       .r  :1581[1]
+    lda sprite_screen_address1_high                                   ; 16b4: a5 73       .s  :1583[1]
     sbc #1                                                            ; 16b6: e9 01       ..  :1585[1]
-    sta l0073                                                         ; 16b8: 85 73       .s  :1587[1]
-c1589
-    sta l0088                                                         ; 16ba: 85 88       ..  :1589[1]
+    sta sprite_screen_address1_high                                   ; 16b8: 85 73       .s  :1587[1]
+check_vertically_in_range
+    sta sprite_screen_addresss1_copy_high                             ; 16ba: 85 88       ..  :1589[1]   ; check if Y coordinate is above or below the screen area
     cmp #$80                                                          ; 16bc: c9 80       ..  :158b[1]
-    bcs c154a                                                         ; 16be: b0 bb       ..  :158d[1]
-    cmp l004c                                                         ; 16c0: c5 4c       .L  :158f[1]
-    bcc c154a                                                         ; 16c2: 90 b7       ..  :1591[1]
-c1593
+    bcs out_of_screen_range_vertically                                ; 16be: b0 bb       ..  :158d[1]
+    cmp screen_base_address_high                                      ; 16c0: c5 4c       .L  :158f[1]
+    bcc out_of_screen_range_vertically                                ; 16c2: 90 b7       ..  :1591[1]
+y_coordinate_is_within_character_row
     dex                                                               ; 16c4: ca          .   :1593[1]
-    bpl c15ab                                                         ; 16c5: 10 15       ..  :1594[1]
+    bpl byte_not_finished_yet                                         ; 16c5: 10 15       ..  :1594[1]
     sty l007a                                                         ; 16c7: 84 7a       .z  :1596[1]
-    ldy l0079                                                         ; 16c9: a4 79       .y  :1598[1]
-    lda l0080                                                         ; 16cb: a5 80       ..  :159a[1]
-    sta (l007e),y                                                     ; 16cd: 91 7e       .~  :159c[1]
+; copy mask byte to destination
+    ldy byte_offset_within_sprite                                     ; 16c9: a4 79       .y  :1598[1]
+    lda mask_sprite_byte                                              ; 16cb: a5 80       ..  :159a[1]
+    sta (dest_sprite_address_low),y                                   ; 16cd: 91 7e       .~  :159c[1]
     iny                                                               ; 16cf: c8          .   :159e[1]
-    sty l0079                                                         ; 16d0: 84 79       .y  :159f[1]
-    lda (address_low),y                                               ; 16d2: b1 70       .p  :15a1[1]
-    sta l007d                                                         ; 16d4: 85 7d       .}  :15a3[1]
-    stx l0080                                                         ; 16d6: 86 80       ..  :15a5[1]
-    ldx #3                                                            ; 16d8: a2 03       ..  :15a7[1]
+    sty byte_offset_within_sprite                                     ; 16d0: 84 79       .y  :159f[1]
+; load next source byte from sprite
+    lda (src_sprite_address_low),y                                    ; 16d2: b1 70       .p  :15a1[1]
+    sta sprite_byte                                                   ; 16d4: 85 7d       .}  :15a3[1]
+    stx mask_sprite_byte                                              ; 16d6: 86 80       ..  :15a5[1]   ; set mask byte to 255
+    ldx #3                                                            ; 16d8: a2 03       ..  :15a7[1]   ; reset loop counter
     ldy l007a                                                         ; 16da: a4 7a       .z  :15a9[1]
-c15ab
-    asl l007d                                                         ; 16dc: 06 7d       .}  :15ab[1]
-    bcc c1551                                                         ; 16de: 90 a2       ..  :15ad[1]
-    rol l0080                                                         ; 16e0: 26 80       &.  :15af[1]
-    asl l007d                                                         ; 16e2: 06 7d       .}  :15b1[1]
-    bcs c15c3                                                         ; 16e4: b0 0e       ..  :15b3[1]
-    rol l0080                                                         ; 16e6: 26 80       &.  :15b5[1]
+byte_not_finished_yet
+    asl sprite_byte                                                   ; 16dc: 06 7d       .}  :15ab[1]   ; check top bit
+    bcc found_clear_bit                                               ; 16de: 90 a2       ..  :15ad[1]   ; if bit clear then branch
+    rol mask_sprite_byte                                              ; 16e0: 26 80       &.  :15af[1]   ; add set bit to mask
+    asl sprite_byte                                                   ; 16e2: 06 7d       .}  :15b1[1]   ; get next bit
+    bcs found_second_bit_set                                          ; 16e4: b0 0e       ..  :15b3[1]   ; if bit set then branch
+    rol mask_sprite_byte                                              ; 16e6: 26 80       &.  :15b5[1]   ; add clear bit to mask
     dey                                                               ; 16e8: 88          .   :15b7[1]
-    bpl c1593                                                         ; 16e9: 10 d9       ..  :15b8[1]
+; if still in same character row, then branch back
+    bpl y_coordinate_is_within_character_row                          ; 16e9: 10 d9       ..  :15b8[1]
     ldy #7                                                            ; 16eb: a0 07       ..  :15ba[1]
-    lda l0072                                                         ; 16ed: a5 72       .r  :15bc[1]
+; move up to previous character row
+    lda sprite_screen_address1_low                                    ; 16ed: a5 72       .r  :15bc[1]
     sbc #$40 ; '@'                                                    ; 16ef: e9 40       .@  :15be[1]
-    jmp c1581                                                         ; 16f1: 4c 81 15    L.. :15c0[1]
+    jmp move_to_previous_row                                          ; 16f1: 4c 81 15    L.. :15c0[1]
 
-c15c3
-    rol l0080                                                         ; 16f4: 26 80       &.  :15c3[1]
-    dec l0081                                                         ; 16f6: c6 81       ..  :15c5[1]
-    beq c161e                                                         ; 16f8: f0 55       .U  :15c7[1]
-    lda l007c                                                         ; 16fa: a5 7c       .|  :15c9[1]
-    sta l0073                                                         ; 16fc: 85 73       .s  :15cb[1]
-    lda l007b                                                         ; 16fe: a5 7b       .{  :15cd[1]
-    sta l0072                                                         ; 1700: 85 72       .r  :15cf[1]
-    ldy l001d                                                         ; 1702: a4 1d       ..  :15d1[1]
-    bmi c15f3                                                         ; 1704: 30 1e       0.  :15d3[1]
-    ldy l0078                                                         ; 1706: a4 78       .x  :15d5[1]
+; add set bit to mask
+found_second_bit_set
+    rol mask_sprite_byte                                              ; 16f4: 26 80       &.  :15c3[1]
+    dec sprite_width                                                  ; 16f6: c6 81       ..  :15c5[1]   ; check if we are done
+    beq finish_off_sprite                                             ; 16f8: f0 55       .U  :15c7[1]
+; reset sprite address
+    lda sprite_screen_address2_high                                   ; 16fa: a5 7c       .|  :15c9[1]
+    sta sprite_screen_address1_high                                   ; 16fc: 85 73       .s  :15cb[1]
+    lda sprite_screen_address2_low                                    ; 16fe: a5 7b       .{  :15cd[1]
+    sta sprite_screen_address1_low                                    ; 1700: 85 72       .r  :15cf[1]
+    ldy sprite_op_flags2                                              ; 1702: a4 1d       ..  :15d1[1]
+    bmi move_while_rendering_reflected_about_y_axis                   ; 1704: 30 1e       0.  :15d3[1]
+; move to next column
+    ldy sprite_x_offset_within_byte                                   ; 1706: a4 78       .x  :15d5[1]
     dey                                                               ; 1708: 88          .   :15d7[1]
-    bpl c160c                                                         ; 1709: 10 32       .2  :15d8[1]
-    inc l0085                                                         ; 170b: e6 85       ..  :15da[1]
-    ldy l0085                                                         ; 170d: a4 85       ..  :15dc[1]
-    cpy #$28 ; '('                                                    ; 170f: c0 28       .(  :15de[1]
-    bcs c161e                                                         ; 1711: b0 3c       .<  :15e0[1]
+    bpl update_sprite_bit_variables                                   ; 1709: 10 32       .2  :15d8[1]
+    inc sprite_character_x_pos                                        ; 170b: e6 85       ..  :15da[1]
+    ldy sprite_character_x_pos                                        ; 170d: a4 85       ..  :15dc[1]
+; if we reach the right hand edge of the screen then we are done
+    cpy #40                                                           ; 170f: c0 28       .(  :15de[1]
+    bcs finish_off_sprite                                             ; 1711: b0 3c       .<  :15e0[1]
+; move sprite addresses on by eight to get to next character column
     ldy #7                                                            ; 1713: a0 07       ..  :15e2[1]
     adc #8                                                            ; 1715: 69 08       i.  :15e4[1]
-    sta l007b                                                         ; 1717: 85 7b       .{  :15e6[1]
-    sta l0072                                                         ; 1719: 85 72       .r  :15e8[1]
-    bcc c160c                                                         ; 171b: 90 20       .   :15ea[1]
-    inc l007c                                                         ; 171d: e6 7c       .|  :15ec[1]
-    inc l0073                                                         ; 171f: e6 73       .s  :15ee[1]
-    jmp c160c                                                         ; 1721: 4c 0c 16    L.. :15f0[1]
+    sta sprite_screen_address2_low                                    ; 1717: 85 7b       .{  :15e6[1]
+    sta sprite_screen_address1_low                                    ; 1719: 85 72       .r  :15e8[1]
+    bcc update_sprite_bit_variables                                   ; 171b: 90 20       .   :15ea[1]
+    inc sprite_screen_address2_high                                   ; 171d: e6 7c       .|  :15ec[1]
+    inc sprite_screen_address1_high                                   ; 171f: e6 73       .s  :15ee[1]
+    jmp update_sprite_bit_variables                                   ; 1721: 4c 0c 16    L.. :15f0[1]
 
-c15f3
-    ldy l0078                                                         ; 1724: a4 78       .x  :15f3[1]
+move_while_rendering_reflected_about_y_axis
+    ldy sprite_x_offset_within_byte                                   ; 1724: a4 78       .x  :15f3[1]   ; move within byte to next bit
     iny                                                               ; 1726: c8          .   :15f5[1]
     cpy #8                                                            ; 1727: c0 08       ..  :15f6[1]
-    bcc c160c                                                         ; 1729: 90 12       ..  :15f8[1]
-    dec l0085                                                         ; 172b: c6 85       ..  :15fa[1]
-    bmi c161e                                                         ; 172d: 30 20       0   :15fc[1]
+    bcc update_sprite_bit_variables                                   ; 1729: 90 12       ..  :15f8[1]
+    dec sprite_character_x_pos                                        ; 172b: c6 85       ..  :15fa[1]
+    bmi finish_off_sprite                                             ; 172d: 30 20       0   :15fc[1]
     ldy #0                                                            ; 172f: a0 00       ..  :15fe[1]
     sbc #8                                                            ; 1731: e9 08       ..  :1600[1]
-    sta l007b                                                         ; 1733: 85 7b       .{  :1602[1]
-    sta l0072                                                         ; 1735: 85 72       .r  :1604[1]
-    bcs c160c                                                         ; 1737: b0 04       ..  :1606[1]
-    dec l007c                                                         ; 1739: c6 7c       .|  :1608[1]
-    dec l0073                                                         ; 173b: c6 73       .s  :160a[1]
-c160c
-    sty l0078                                                         ; 173d: 84 78       .x  :160c[1]
+    sta sprite_screen_address2_low                                    ; 1733: 85 7b       .{  :1602[1]
+    sta sprite_screen_address1_low                                    ; 1735: 85 72       .r  :1604[1]
+    bcs update_sprite_bit_variables                                   ; 1737: b0 04       ..  :1606[1]
+    dec sprite_screen_address2_high                                   ; 1739: c6 7c       .|  :1608[1]
+    dec sprite_screen_address1_high                                   ; 173b: c6 73       .s  :160a[1]
+update_sprite_bit_variables
+    sty sprite_x_offset_within_byte                                   ; 173d: 84 78       .x  :160c[1]
     lda power_of_2_table,y                                            ; 173f: b9 77 13    .w. :160e[1]
-    sta l0082                                                         ; 1742: 85 82       ..  :1611[1]
+    sta sprite_bit                                                    ; 1742: 85 82       ..  :1611[1]
     eor #$ff                                                          ; 1744: 49 ff       I.  :1613[1]
-    sta l0083                                                         ; 1746: 85 83       ..  :1615[1]
-    ldy l0084                                                         ; 1748: a4 84       ..  :1617[1]
-    lda l0073                                                         ; 174a: a5 73       .s  :1619[1]
-    jmp c1589                                                         ; 174c: 4c 89 15    L.. :161b[1]
+    sta sprite_bit_mask                                               ; 1746: 85 83       ..  :1615[1]
+    ldy sprite_y_offset_within_character_row                          ; 1748: a4 84       ..  :1617[1]
+    lda sprite_screen_address1_high                                   ; 174a: a5 73       .s  :1619[1]
+    jmp check_vertically_in_range                                     ; 174c: 4c 89 15    L.. :161b[1]
 
-c161e
-    lda l0080                                                         ; 174f: a5 80       ..  :161e[1]
+finish_off_sprite
+    lda mask_sprite_byte                                              ; 174f: a5 80       ..  :161e[1]
     dex                                                               ; 1751: ca          .   :1620[1]
-    bmi c1628                                                         ; 1752: 30 05       0.  :1621[1]
-loop_c1623
+    bmi write_last_byte                                               ; 1752: 30 05       0.  :1621[1]
+shift_mask_byte_loop
     asl                                                               ; 1754: 0a          .   :1623[1]
     asl                                                               ; 1755: 0a          .   :1624[1]
     dex                                                               ; 1756: ca          .   :1625[1]
-    bpl loop_c1623                                                    ; 1757: 10 fb       ..  :1626[1]
-c1628
-    ldy l0079                                                         ; 1759: a4 79       .y  :1628[1]
-    sta (l007e),y                                                     ; 175b: 91 7e       .~  :162a[1]
-    jmp c137f                                                         ; 175d: 4c 7f 13    L.. :162c[1]
+    bpl shift_mask_byte_loop                                          ; 1757: 10 fb       ..  :1626[1]
+write_last_byte
+    ldy byte_offset_within_sprite                                     ; 1759: a4 79       .y  :1628[1]
+    sta (dest_sprite_address_low),y                                   ; 175b: 91 7e       .~  :162a[1]
+    jmp reset_sprite_flags_and_exit                                   ; 175d: 4c 7f 13    L.. :162c[1]
 
-sub_c162f
-    ldy l0075                                                         ; 1760: a4 75       .u  :162f[1]
+clamp_and_clip_x
+    ldy sprite_x_pos_high                                             ; 1760: a4 75       .u  :162f[1]   ; exit if X position is 512 or more
     iny                                                               ; 1762: c8          .   :1631[1]
     cpy #3                                                            ; 1763: c0 03       ..  :1632[1]
-    bcs c163d                                                         ; 1765: b0 07       ..  :1634[1]
-    ldy l0077                                                         ; 1767: a4 77       .w  :1636[1]
+    bcs pull_values_and_exit_sprite_op_local                          ; 1765: b0 07       ..  :1634[1]
+    ldy sprite_y_pos_high                                             ; 1767: a4 77       .w  :1636[1]   ; exit if Y position is 512 or more
     iny                                                               ; 1769: c8          .   :1638[1]
     cpy #3                                                            ; 176a: c0 03       ..  :1639[1]
-    bcc c1640                                                         ; 176c: 90 03       ..  :163b[1]
-c163d
-    jmp c16ce                                                         ; 176e: 4c ce 16    L.. :163d[1]
+    bcc clamp_x                                                       ; 176c: 90 03       ..  :163b[1]
+pull_values_and_exit_sprite_op_local
+    jmp pull_values_and_exit_sprite_op                                ; 176e: 4c ce 16    L.. :163d[1]
 
-c1640
-    lda l0074                                                         ; 1771: a5 74       .t  :1640[1]
-    sta l0085                                                         ; 1773: 85 85       ..  :1642[1]
-    lda l0075                                                         ; 1775: a5 75       .u  :1644[1]
+clamp_x
+    lda sprite_x_pos_low                                              ; 1771: a5 74       .t  :1640[1]
+; calculate character x position by dividing pixel position by eight
+    sta sprite_character_x_pos                                        ; 1773: 85 85       ..  :1642[1]
+    lda sprite_x_pos_high                                             ; 1775: a5 75       .u  :1644[1]
     lsr                                                               ; 1777: 4a          J   :1646[1]
-    ror l0085                                                         ; 1778: 66 85       f.  :1647[1]
+    ror sprite_character_x_pos                                        ; 1778: 66 85       f.  :1647[1]
     lsr                                                               ; 177a: 4a          J   :1649[1]
-    ror l0085                                                         ; 177b: 66 85       f.  :164a[1]
+    ror sprite_character_x_pos                                        ; 177b: 66 85       f.  :164a[1]
     lsr                                                               ; 177d: 4a          J   :164c[1]
-    ror l0085                                                         ; 177e: 66 85       f.  :164d[1]
-    lda l001d                                                         ; 1780: a5 1d       ..  :164f[1]
-    bmi c1670                                                         ; 1782: 30 1d       0.  :1651[1]
-    lda l0085                                                         ; 1784: a5 85       ..  :1653[1]
-    bmi c165e                                                         ; 1786: 30 07       0.  :1655[1]
-    cmp #$28 ; '('                                                    ; 1788: c9 28       .(  :1657[1]
+    ror sprite_character_x_pos                                        ; 177e: 66 85       f.  :164d[1]
+; check flags2 (top bit) to see if we should clamp to the right edge
+    lda sprite_op_flags2                                              ; 1780: a5 1d       ..  :164f[1]
+    bmi sprite_clamp_x_right                                          ; 1782: 30 1d       0.  :1651[1]
+; clamp to left edge
+    lda sprite_character_x_pos                                        ; 1784: a5 85       ..  :1653[1]
+    bmi sprite_clamp_x_left                                           ; 1786: 30 07       0.  :1655[1]
+; if fully off screen to the right, then pull values and return else just return
+    cmp #40                                                           ; 1788: c9 28       .(  :1657[1]
     bcc return3                                                       ; 178a: 90 72       .r  :1659[1]
-    jmp c16ce                                                         ; 178c: 4c ce 16    L.. :165b[1]
+    jmp pull_values_and_exit_sprite_op                                ; 178c: 4c ce 16    L.. :165b[1]
 
-c165e
+sprite_clamp_x_left
     lda #0                                                            ; 178f: a9 00       ..  :165e[1]
     sec                                                               ; 1791: 38          8   :1660[1]
-    sbc l0074                                                         ; 1792: e5 74       .t  :1661[1]
-    sta l0086                                                         ; 1794: 85 86       ..  :1663[1]
+    sbc sprite_x_pos_low                                              ; 1792: e5 74       .t  :1661[1]
+    sta amount_sprite_is_offscreen_x                                  ; 1794: 85 86       ..  :1663[1]
     lda #0                                                            ; 1796: a9 00       ..  :1665[1]
-    sta l0074                                                         ; 1798: 85 74       .t  :1667[1]
-    sta l0075                                                         ; 179a: 85 75       .u  :1669[1]
-    sta l0085                                                         ; 179c: 85 85       ..  :166b[1]
-    jmp c168a                                                         ; 179e: 4c 8a 16    L.. :166d[1]
+    sta sprite_x_pos_low                                              ; 1798: 85 74       .t  :1667[1]
+    sta sprite_x_pos_high                                             ; 179a: 85 75       .u  :1669[1]
+    sta sprite_character_x_pos                                        ; 179c: 85 85       ..  :166b[1]
+    jmp sprite_clip_x                                                 ; 179e: 4c 8a 16    L.. :166d[1]
 
-c1670
-    lda l0085                                                         ; 17a1: a5 85       ..  :1670[1]
-    bmi c16ce                                                         ; 17a3: 30 5a       0Z  :1672[1]
-    cmp #$28 ; '('                                                    ; 17a5: c9 28       .(  :1674[1]
+sprite_clamp_x_right
+    lda sprite_character_x_pos                                        ; 17a1: a5 85       ..  :1670[1]
+    bmi pull_values_and_exit_sprite_op                                ; 17a3: 30 5a       0Z  :1672[1]
+    cmp #40                                                           ; 17a5: c9 28       .(  :1674[1]
     bcc return3                                                       ; 17a7: 90 55       .U  :1676[1]
-    lda l0074                                                         ; 17a9: a5 74       .t  :1678[1]
+    lda sprite_x_pos_low                                              ; 17a9: a5 74       .t  :1678[1]
     sbc #$3f ; '?'                                                    ; 17ab: e9 3f       .?  :167a[1]
-    sta l0086                                                         ; 17ad: 85 86       ..  :167c[1]
-    lda #$3f ; '?'                                                    ; 17af: a9 3f       .?  :167e[1]
-    sta l0074                                                         ; 17b1: 85 74       .t  :1680[1]
-    lda #1                                                            ; 17b3: a9 01       ..  :1682[1]
-    sta l0075                                                         ; 17b5: 85 75       .u  :1684[1]
-    lda #$27 ; '''                                                    ; 17b7: a9 27       .'  :1686[1]
-    sta l0085                                                         ; 17b9: 85 85       ..  :1688[1]
-c168a
-    lda l0086                                                         ; 17bb: a5 86       ..  :168a[1]
-    cmp l0081                                                         ; 17bd: c5 81       ..  :168c[1]
-    bcs c16ce                                                         ; 17bf: b0 3e       .>  :168e[1]
-    lda l007d                                                         ; 17c1: a5 7d       .}  :1690[1]
+    sta amount_sprite_is_offscreen_x                                  ; 17ad: 85 86       ..  :167c[1]
+; set x position to the right edge (319)
+    lda #<319                                                         ; 17af: a9 3f       .?  :167e[1]
+    sta sprite_x_pos_low                                              ; 17b1: 85 74       .t  :1680[1]
+    lda #>319                                                         ; 17b3: a9 01       ..  :1682[1]
+    sta sprite_x_pos_high                                             ; 17b5: 85 75       .u  :1684[1]
+    lda #39                                                           ; 17b7: a9 27       .'  :1686[1]
+    sta sprite_character_x_pos                                        ; 17b9: 85 85       ..  :1688[1]
+sprite_clip_x
+    lda amount_sprite_is_offscreen_x                                  ; 17bb: a5 86       ..  :168a[1]
+    cmp sprite_width                                                  ; 17bd: c5 81       ..  :168c[1]
+    bcs pull_values_and_exit_sprite_op                                ; 17bf: b0 3e       .>  :168e[1]   ; exit if fully offscreen
+    lda sprite_byte                                                   ; 17c1: a5 7d       .}  :1690[1]
     ldx l0087                                                         ; 17c3: a6 87       ..  :1692[1]
-    ldy l0079                                                         ; 17c5: a4 79       .y  :1694[1]
-c1696
+    ldy byte_offset_within_sprite                                     ; 17c5: a4 79       .y  :1694[1]
+sprite_clip_x_loop
     dex                                                               ; 17c7: ca          .   :1696[1]
     bpl c16aa                                                         ; 17c8: 10 11       ..  :1697[1]
-    lda l0015                                                         ; 17ca: a5 15       ..  :1699[1]
+    lda sprite_op_flags                                               ; 17ca: a5 15       ..  :1699[1]
     and #1                                                            ; 17cc: 29 01       ).  :169b[1]
-    beq c16a5                                                         ; 17ce: f0 06       ..  :169d[1]
-    lda l0080                                                         ; 17d0: a5 80       ..  :169f[1]
-    sta (l007e),y                                                     ; 17d2: 91 7e       .~  :16a1[1]
-    stx l0080                                                         ; 17d4: 86 80       ..  :16a3[1]
-c16a5
+    beq not_copying_to_destination_sprite                             ; 17ce: f0 06       ..  :169d[1]
+    lda mask_sprite_byte                                              ; 17d0: a5 80       ..  :169f[1]
+    sta (dest_sprite_address_low),y                                   ; 17d2: 91 7e       .~  :16a1[1]
+    stx mask_sprite_byte                                              ; 17d4: 86 80       ..  :16a3[1]   ; set dest sprite byte to 255
+not_copying_to_destination_sprite
     iny                                                               ; 17d6: c8          .   :16a5[1]
-    lda (address_low),y                                               ; 17d7: b1 70       .p  :16a6[1]
+    lda (src_sprite_address_low),y                                    ; 17d7: b1 70       .p  :16a6[1]
     ldx #3                                                            ; 17d9: a2 03       ..  :16a8[1]
 c16aa
-    asl                                                               ; 17db: 0a          .   :16aa[1]
-    bcs c16b5                                                         ; 17dc: b0 08       ..  :16ab[1]
-    rol l0080                                                         ; 17de: 26 80       &.  :16ad[1]
-    asl                                                               ; 17e0: 0a          .   :16af[1]
-    rol l0080                                                         ; 17e1: 26 80       &.  :16b0[1]
-    jmp c1696                                                         ; 17e3: 4c 96 16    L.. :16b2[1]
+    asl                                                               ; 17db: 0a          .   :16aa[1]   ; get top bit
+    bcs found_set_bit                                                 ; 17dc: b0 08       ..  :16ab[1]   ; if set then branch
+    rol mask_sprite_byte                                              ; 17de: 26 80       &.  :16ad[1]   ; put clear bit into mask
+    asl                                                               ; 17e0: 0a          .   :16af[1]   ; read next bit
+    rol mask_sprite_byte                                              ; 17e1: 26 80       &.  :16b0[1]   ; put next bit into mask
+    jmp sprite_clip_x_loop                                            ; 17e3: 4c 96 16    L.. :16b2[1]   ; loop back
 
-c16b5
-    rol l0080                                                         ; 17e6: 26 80       &.  :16b5[1]
-    asl                                                               ; 17e8: 0a          .   :16b7[1]
-    bcs c16bf                                                         ; 17e9: b0 05       ..  :16b8[1]
-    rol l0080                                                         ; 17eb: 26 80       &.  :16ba[1]
-    jmp c1696                                                         ; 17ed: 4c 96 16    L.. :16bc[1]
+found_set_bit
+    rol mask_sprite_byte                                              ; 17e6: 26 80       &.  :16b5[1]   ; put set bit into mask
+    asl                                                               ; 17e8: 0a          .   :16b7[1]   ; get next bit
+    bcs found_second_set_bit                                          ; 17e9: b0 05       ..  :16b8[1]   ; if set then branch
+    rol mask_sprite_byte                                              ; 17eb: 26 80       &.  :16ba[1]   ; put zero bit into mask
+    jmp sprite_clip_x_loop                                            ; 17ed: 4c 96 16    L.. :16bc[1]   ; loop back
 
-c16bf
-    rol l0080                                                         ; 17f0: 26 80       &.  :16bf[1]
-    dec l0081                                                         ; 17f2: c6 81       ..  :16c1[1]
-    dec l0086                                                         ; 17f4: c6 86       ..  :16c3[1]
-    bne c1696                                                         ; 17f6: d0 cf       ..  :16c5[1]
-    sta l007d                                                         ; 17f8: 85 7d       .}  :16c7[1]
+found_second_set_bit
+    rol mask_sprite_byte                                              ; 17f0: 26 80       &.  :16bf[1]   ; put another set bit into mask
+    dec sprite_width                                                  ; 17f2: c6 81       ..  :16c1[1]   ; decrement loop counters
+    dec amount_sprite_is_offscreen_x                                  ; 17f4: c6 86       ..  :16c3[1]
+    bne sprite_clip_x_loop                                            ; 17f6: d0 cf       ..  :16c5[1]   ; jump back if not done
+    sta sprite_byte                                                   ; 17f8: 85 7d       .}  :16c7[1]
     stx l0087                                                         ; 17fa: 86 87       ..  :16c9[1]
-    sty l0079                                                         ; 17fc: 84 79       .y  :16cb[1]
+    sty byte_offset_within_sprite                                     ; 17fc: 84 79       .y  :16cb[1]
 return3
     rts                                                               ; 17fe: 60          `   :16cd[1]
 
-c16ce
+pull_values_and_exit_sprite_op
     pla                                                               ; 17ff: 68          h   :16ce[1]
     pla                                                               ; 1800: 68          h   :16cf[1]
-    jmp c137f                                                         ; 1801: 4c 7f 13    L.. :16d0[1]
+    jmp reset_sprite_flags_and_exit                                   ; 1801: 4c 7f 13    L.. :16d0[1]
 
 brk_handler
     ldy #0                                                            ; 1804: a0 00       ..  :16d3[1]
@@ -1141,20 +1169,20 @@ brk_handler
     jmp c1713                                                         ; 180a: 4c 13 17    L.. :16d9[1]
 
 osfile_wrapper
-    stx l0072                                                         ; 180d: 86 72       .r  :16dc[1]
-    sty l0073                                                         ; 180f: 84 73       .s  :16de[1]
+    stx sprite_screen_address1_low                                    ; 180d: 86 72       .r  :16dc[1]
+    sty sprite_screen_address1_high                                   ; 180f: 84 73       .s  :16de[1]
     ldx #0                                                            ; 1811: a2 00       ..  :16e0[1]
-    stx l0074                                                         ; 1813: 86 74       .t  :16e2[1]
-    stx l0075                                                         ; 1815: 86 75       .u  :16e4[1]
-    stx l0078                                                         ; 1817: 86 78       .x  :16e6[1]
-    stx l0079                                                         ; 1819: 86 79       .y  :16e8[1]
-    stx l007c                                                         ; 181b: 86 7c       .|  :16ea[1]
-    stx l007d                                                         ; 181d: 86 7d       .}  :16ec[1]
-    stx l0080                                                         ; 181f: 86 80       ..  :16ee[1]
-    stx l0081                                                         ; 1821: 86 81       ..  :16f0[1]
+    stx sprite_x_pos_low                                              ; 1813: 86 74       .t  :16e2[1]
+    stx sprite_x_pos_high                                             ; 1815: 86 75       .u  :16e4[1]
+    stx sprite_x_offset_within_byte                                   ; 1817: 86 78       .x  :16e6[1]
+    stx byte_offset_within_sprite                                     ; 1819: 86 79       .y  :16e8[1]
+    stx sprite_screen_address2_high                                   ; 181b: 86 7c       .|  :16ea[1]
+    stx sprite_byte                                                   ; 181d: 86 7d       .}  :16ec[1]
+    stx mask_sprite_byte                                              ; 181f: 86 80       ..  :16ee[1]
+    stx sprite_width                                                  ; 1821: 86 81       ..  :16f0[1]
     tay                                                               ; 1823: a8          .   :16f2[1]
     beq c16f7                                                         ; 1824: f0 02       ..  :16f3[1]
-    stx l0076                                                         ; 1826: 86 76       .v  :16f5[1]
+    stx sprite_y_pos_low                                              ; 1826: 86 76       .v  :16f5[1]
 c16f7
     ldx #0                                                            ; 1828: a2 00       ..  :16f7[1]
     stx l0002                                                         ; 182a: 86 02       ..  :16f9[1]
@@ -1452,15 +1480,15 @@ c18d1
     beq c1906                                                         ; 1a09: f0 2c       .,  :18d8[1]
     lda x_entry_table7a                                               ; 1a0b: ad 92 09    ... :18da[1]
     sbc x_entry_table7b                                               ; 1a0e: ed 9d 09    ... :18dd[1]
-    sta address_low                                                   ; 1a11: 85 70       .p  :18e0[1]
+    sta address1_low                                                  ; 1a11: 85 70       .p  :18e0[1]
     ldx #0                                                            ; 1a13: a2 00       ..  :18e2[1]
     jsr sub_c24d2                                                     ; 1a15: 20 d2 24     .$ :18e4[1]
-    lda l0074                                                         ; 1a18: a5 74       .t  :18e7[1]
+    lda sprite_x_pos_low                                              ; 1a18: a5 74       .t  :18e7[1]
     clc                                                               ; 1a1a: 18          .   :18e9[1]
-    adc l0076                                                         ; 1a1b: 65 76       ev  :18ea[1]
+    adc sprite_y_pos_low                                              ; 1a1b: 65 76       ev  :18ea[1]
     sta l007a                                                         ; 1a1d: 85 7a       .z  :18ec[1]
-    lda l0075                                                         ; 1a1f: a5 75       .u  :18ee[1]
-    adc l0077                                                         ; 1a21: 65 77       ew  :18f0[1]
+    lda sprite_x_pos_high                                             ; 1a1f: a5 75       .u  :18ee[1]
+    adc sprite_y_pos_high                                             ; 1a21: 65 77       ew  :18f0[1]
     lsr                                                               ; 1a23: 4a          J   :18f2[1]
     ror l007a                                                         ; 1a24: 66 7a       fz  :18f3[1]
     lsr                                                               ; 1a26: 4a          J   :18f5[1]
@@ -1507,7 +1535,7 @@ loop_c1921
     rts                                                               ; 1a67: 60          `   :1936[1]
 
 c1937
-    lda address_low                                                   ; 1a68: a5 70       .p  :1937[1]
+    lda address1_low                                                  ; 1a68: a5 70       .p  :1937[1]
     bpl c1906                                                         ; 1a6a: 10 cb       ..  :1939[1]
     ldx #1                                                            ; 1a6c: a2 01       ..  :193b[1]
 loop_c193d
@@ -1523,7 +1551,7 @@ loop_c193d
     rts                                                               ; 1a81: 60          `   :1950[1]
 
 c1951
-    lda address_low                                                   ; 1a82: a5 70       .p  :1951[1]
+    lda address1_low                                                  ; 1a82: a5 70       .p  :1951[1]
     bmi c1906                                                         ; 1a84: 30 b1       0.  :1953[1]
     ldx #1                                                            ; 1a86: a2 01       ..  :1955[1]
 loop_c1957
@@ -1587,7 +1615,7 @@ c19b9
     jsr sub_c1ebb                                                     ; 1aed: 20 bb 1e     .. :19bc[1]
     inx                                                               ; 1af0: e8          .   :19bf[1]
     lda #$ff                                                          ; 1af1: a9 ff       ..  :19c0[1]
-    sta l001d                                                         ; 1af3: 85 1d       ..  :19c2[1]
+    sta sprite_op_flags2                                              ; 1af3: 85 1d       ..  :19c2[1]
     iny                                                               ; 1af5: c8          .   :19c4[1]
     lda #$3a ; ':'                                                    ; 1af6: a9 3a       .:  :19c5[1]
     jsr sub_c1f4c                                                     ; 1af8: 20 4c 1f     L. :19c7[1]
@@ -1721,26 +1749,26 @@ l1aba
 
 c1abb
     pha                                                               ; 1bec: 48          H   :1abb[1]
-    sty l007d                                                         ; 1bed: 84 7d       .}  :1abc[1]
+    sty sprite_byte                                                   ; 1bed: 84 7d       .}  :1abc[1]
     jsr sub_c1e17                                                     ; 1bef: 20 17 1e     .. :1abe[1]
     jsr sub_c1b66                                                     ; 1bf2: 20 66 1b     f. :1ac1[1]
-    lda l0076                                                         ; 1bf5: a5 76       .v  :1ac4[1]
-    sta l0074                                                         ; 1bf7: 85 74       .t  :1ac6[1]
-    lda l0077                                                         ; 1bf9: a5 77       .w  :1ac8[1]
-    sta l0075                                                         ; 1bfb: 85 75       .u  :1aca[1]
+    lda sprite_y_pos_low                                              ; 1bf5: a5 76       .v  :1ac4[1]
+    sta sprite_x_pos_low                                              ; 1bf7: 85 74       .t  :1ac6[1]
+    lda sprite_y_pos_high                                             ; 1bf9: a5 77       .w  :1ac8[1]
+    sta sprite_x_pos_high                                             ; 1bfb: 85 75       .u  :1aca[1]
     ldx l0040                                                         ; 1bfd: a6 40       .@  :1acc[1]
     ldy l0041                                                         ; 1bff: a4 41       .A  :1ace[1]
-    stx l0078                                                         ; 1c01: 86 78       .x  :1ad0[1]
-    sty l0079                                                         ; 1c03: 84 79       .y  :1ad2[1]
+    stx sprite_x_offset_within_byte                                   ; 1c01: 86 78       .x  :1ad0[1]
+    sty byte_offset_within_sprite                                     ; 1c03: 84 79       .y  :1ad2[1]
     stx l007a                                                         ; 1c05: 86 7a       .z  :1ad4[1]
-    sty l007b                                                         ; 1c07: 84 7b       .{  :1ad6[1]
+    sty sprite_screen_address2_low                                    ; 1c07: 84 7b       .{  :1ad6[1]
     clc                                                               ; 1c09: 18          .   :1ad8[1]
     lda #0                                                            ; 1c0a: a9 00       ..  :1ad9[1]
-    sta l007e                                                         ; 1c0c: 85 7e       .~  :1adb[1]
+    sta address2_low                                                  ; 1c0c: 85 7e       .~  :1adb[1]
 c1add
-    ldx l0072                                                         ; 1c0e: a6 72       .r  :1add[1]
-    lda address_low                                                   ; 1c10: a5 70       .p  :1adf[1]
-    sta l007c                                                         ; 1c12: 85 7c       .|  :1ae1[1]
+    ldx sprite_screen_address1_low                                    ; 1c0e: a6 72       .r  :1add[1]
+    lda address1_low                                                  ; 1c10: a5 70       .p  :1adf[1]
+    sta sprite_screen_address2_high                                   ; 1c12: 85 7c       .|  :1ae1[1]
 c1ae3
     ldy #7                                                            ; 1c14: a0 07       ..  :1ae3[1]
     lda l0042                                                         ; 1c16: a5 42       .B  :1ae5[1]
@@ -1757,64 +1785,64 @@ c1af8
     and #$7f                                                          ; 1c29: 29 7f       ).  :1af8[1]
     sec                                                               ; 1c2b: 38          8   :1afa[1]
     sbc #1                                                            ; 1c2c: e9 01       ..  :1afb[1]
-    cmp l007e                                                         ; 1c2e: c5 7e       .~  :1afd[1]
-    lda l007e                                                         ; 1c30: a5 7e       .~  :1aff[1]
-    inc l007e                                                         ; 1c32: e6 7e       .~  :1b01[1]
+    cmp address2_low                                                  ; 1c2e: c5 7e       .~  :1afd[1]
+    lda address2_low                                                  ; 1c30: a5 7e       .~  :1aff[1]
+    inc address2_low                                                  ; 1c32: e6 7e       .~  :1b01[1]
     bcs c1b14                                                         ; 1c34: b0 0f       ..  :1b03[1]
     lda #0                                                            ; 1c36: a9 00       ..  :1b05[1]
-    sta l007e                                                         ; 1c38: 85 7e       .~  :1b07[1]
+    sta address2_low                                                  ; 1c38: 85 7e       .~  :1b07[1]
     jmp c1b14                                                         ; 1c3a: 4c 14 1b    L.. :1b09[1]
 
 c1b0c
-    lda l007c                                                         ; 1c3d: a5 7c       .|  :1b0c[1]
+    lda sprite_screen_address2_high                                   ; 1c3d: a5 7c       .|  :1b0c[1]
     lsr                                                               ; 1c3f: 4a          J   :1b0e[1]
-    lda l007d                                                         ; 1c40: a5 7d       .}  :1b0f[1]
+    lda sprite_byte                                                   ; 1c40: a5 7d       .}  :1b0f[1]
     rol                                                               ; 1c42: 2a          *   :1b11[1]
     and #3                                                            ; 1c43: 29 03       ).  :1b12[1]
 c1b14
     asl                                                               ; 1c45: 0a          .   :1b14[1]
     asl                                                               ; 1c46: 0a          .   :1b15[1]
-    rol l007b                                                         ; 1c47: 26 7b       &{  :1b16[1]
+    rol sprite_screen_address2_low                                    ; 1c47: 26 7b       &{  :1b16[1]
     asl                                                               ; 1c49: 0a          .   :1b18[1]
-    rol l007b                                                         ; 1c4a: 26 7b       &{  :1b19[1]
+    rol sprite_screen_address2_low                                    ; 1c4a: 26 7b       &{  :1b19[1]
     clc                                                               ; 1c4c: 18          .   :1b1b[1]
-    adc l0078                                                         ; 1c4d: 65 78       ex  :1b1c[1]
+    adc sprite_x_offset_within_byte                                   ; 1c4d: 65 78       ex  :1b1c[1]
     sta l007a                                                         ; 1c4f: 85 7a       .z  :1b1e[1]
-    lda l007b                                                         ; 1c51: a5 7b       .{  :1b20[1]
+    lda sprite_screen_address2_low                                    ; 1c51: a5 7b       .{  :1b20[1]
     and #3                                                            ; 1c53: 29 03       ).  :1b22[1]
-    adc l0079                                                         ; 1c55: 65 79       ey  :1b24[1]
-    sta l007b                                                         ; 1c57: 85 7b       .{  :1b26[1]
+    adc byte_offset_within_sprite                                     ; 1c55: 65 79       ey  :1b24[1]
+    sta sprite_screen_address2_low                                    ; 1c57: 85 7b       .{  :1b26[1]
 c1b28
     lda (l007a),y                                                     ; 1c59: b1 7a       .z  :1b28[1]
-    sta (l0076),y                                                     ; 1c5b: 91 76       .v  :1b2a[1]
+    sta (sprite_y_pos_low),y                                          ; 1c5b: 91 76       .v  :1b2a[1]
     dey                                                               ; 1c5d: 88          .   :1b2c[1]
     bpl c1b28                                                         ; 1c5e: 10 f9       ..  :1b2d[1]
-    inc l007c                                                         ; 1c60: e6 7c       .|  :1b2f[1]
+    inc sprite_screen_address2_high                                   ; 1c60: e6 7c       .|  :1b2f[1]
     dex                                                               ; 1c62: ca          .   :1b31[1]
     beq c1b41                                                         ; 1c63: f0 0d       ..  :1b32[1]
-    lda l0076                                                         ; 1c65: a5 76       .v  :1b34[1]
+    lda sprite_y_pos_low                                              ; 1c65: a5 76       .v  :1b34[1]
     adc #8                                                            ; 1c67: 69 08       i.  :1b36[1]
-    sta l0076                                                         ; 1c69: 85 76       .v  :1b38[1]
+    sta sprite_y_pos_low                                              ; 1c69: 85 76       .v  :1b38[1]
     bcc c1ae3                                                         ; 1c6b: 90 a7       ..  :1b3a[1]
-    inc l0077                                                         ; 1c6d: e6 77       .w  :1b3c[1]
+    inc sprite_y_pos_high                                             ; 1c6d: e6 77       .w  :1b3c[1]
     clc                                                               ; 1c6f: 18          .   :1b3e[1]
     bcc c1ae3                                                         ; 1c70: 90 a2       ..  :1b3f[1]
 c1b41
-    inc l007d                                                         ; 1c72: e6 7d       .}  :1b41[1]
-    dec l0073                                                         ; 1c74: c6 73       .s  :1b43[1]
+    inc sprite_byte                                                   ; 1c72: e6 7d       .}  :1b41[1]
+    dec sprite_screen_address1_high                                   ; 1c74: c6 73       .s  :1b43[1]
     beq c1b59                                                         ; 1c76: f0 12       ..  :1b45[1]
-    lda l0074                                                         ; 1c78: a5 74       .t  :1b47[1]
+    lda sprite_x_pos_low                                              ; 1c78: a5 74       .t  :1b47[1]
     adc #$40 ; '@'                                                    ; 1c7a: 69 40       i@  :1b49[1]
-    sta l0074                                                         ; 1c7c: 85 74       .t  :1b4b[1]
-    sta l0076                                                         ; 1c7e: 85 76       .v  :1b4d[1]
-    lda l0075                                                         ; 1c80: a5 75       .u  :1b4f[1]
+    sta sprite_x_pos_low                                              ; 1c7c: 85 74       .t  :1b4b[1]
+    sta sprite_y_pos_low                                              ; 1c7e: 85 76       .v  :1b4d[1]
+    lda sprite_x_pos_high                                             ; 1c80: a5 75       .u  :1b4f[1]
     adc #1                                                            ; 1c82: 69 01       i.  :1b51[1]
-    sta l0075                                                         ; 1c84: 85 75       .u  :1b53[1]
-    sta l0077                                                         ; 1c86: 85 77       .w  :1b55[1]
+    sta sprite_x_pos_high                                             ; 1c84: 85 75       .u  :1b53[1]
+    sta sprite_y_pos_high                                             ; 1c86: 85 77       .w  :1b55[1]
     bcc c1add                                                         ; 1c88: 90 84       ..  :1b57[1]
 c1b59
-    ldx address_low                                                   ; 1c8a: a6 70       .p  :1b59[1]
-    ldy address_high                                                  ; 1c8c: a4 71       .q  :1b5b[1]
+    ldx address1_low                                                  ; 1c8a: a6 70       .p  :1b59[1]
+    ldy address1_high                                                 ; 1c8c: a4 71       .q  :1b5b[1]
     lda l003e                                                         ; 1c8e: a5 3e       .>  :1b5d[1]
     bmi c1b64                                                         ; 1c90: 30 03       0.  :1b5f[1]
     jsr sub_c1e44                                                     ; 1c92: 20 44 1e     D. :1b61[1]
@@ -1824,14 +1852,14 @@ c1b64
 
 sub_c1b66
     lda #0                                                            ; 1c97: a9 00       ..  :1b66[1]
-    sta l0076                                                         ; 1c99: 85 76       .v  :1b68[1]
-    sty l0077                                                         ; 1c9b: 84 77       .w  :1b6a[1]
+    sta sprite_y_pos_low                                              ; 1c99: 85 76       .v  :1b68[1]
+    sty sprite_y_pos_high                                             ; 1c9b: 84 77       .w  :1b6a[1]
     tya                                                               ; 1c9d: 98          .   :1b6c[1]
     lsr                                                               ; 1c9e: 4a          J   :1b6d[1]
-    ror l0076                                                         ; 1c9f: 66 76       fv  :1b6e[1]
+    ror sprite_y_pos_low                                              ; 1c9f: 66 76       fv  :1b6e[1]
     lsr                                                               ; 1ca1: 4a          J   :1b70[1]
-    ror l0076                                                         ; 1ca2: 66 76       fv  :1b71[1]
-    adc l0077                                                         ; 1ca4: 65 77       ew  :1b73[1]
+    ror sprite_y_pos_low                                              ; 1ca2: 66 76       fv  :1b71[1]
+    adc sprite_y_pos_high                                             ; 1ca4: 65 77       ew  :1b73[1]
     tay                                                               ; 1ca6: a8          .   :1b75[1]
     txa                                                               ; 1ca7: 8a          .   :1b76[1]
     asl                                                               ; 1ca8: 0a          .   :1b77[1]
@@ -1841,12 +1869,12 @@ sub_c1b66
     iny                                                               ; 1cad: c8          .   :1b7c[1]
     clc                                                               ; 1cae: 18          .   :1b7d[1]
 c1b7e
-    adc l0076                                                         ; 1caf: 65 76       ev  :1b7e[1]
-    sta l0076                                                         ; 1cb1: 85 76       .v  :1b80[1]
+    adc sprite_y_pos_low                                              ; 1caf: 65 76       ev  :1b7e[1]
+    sta sprite_y_pos_low                                              ; 1cb1: 85 76       .v  :1b80[1]
     tya                                                               ; 1cb3: 98          .   :1b82[1]
-    adc l004c                                                         ; 1cb4: 65 4c       eL  :1b83[1]
-    ldy l0077                                                         ; 1cb6: a4 77       .w  :1b85[1]
-    sta l0077                                                         ; 1cb8: 85 77       .w  :1b87[1]
+    adc screen_base_address_high                                      ; 1cb4: 65 4c       eL  :1b83[1]
+    ldy sprite_y_pos_high                                             ; 1cb6: a4 77       .w  :1b85[1]
+    sta sprite_y_pos_high                                             ; 1cb8: 85 77       .w  :1b87[1]
     rts                                                               ; 1cba: 60          `   :1b89[1]
 
 something15_TODO
@@ -1893,7 +1921,7 @@ c1bc3
     rts                                                               ; 1cfa: 60          `   :1bc9[1]
 
 c1bca
-    sty address_high                                                  ; 1cfb: 84 71       .q  :1bca[1]
+    sty address1_high                                                 ; 1cfb: 84 71       .q  :1bca[1]
     dey                                                               ; 1cfd: 88          .   :1bcc[1]
     jsr sub_c1b66                                                     ; 1cfe: 20 66 1b     f. :1bcd[1]
     txa                                                               ; 1d01: 8a          .   :1bd0[1]
@@ -1907,11 +1935,11 @@ c1bca
     sta l007a                                                         ; 1d0b: 85 7a       .z  :1bda[1]
     lda #0                                                            ; 1d0d: a9 00       ..  :1bdc[1]
     adc #$1d                                                          ; 1d0f: 69 1d       i.  :1bde[1]
-    sta l007b                                                         ; 1d11: 85 7b       .{  :1be0[1]
+    sta sprite_screen_address2_low                                    ; 1d11: 85 7b       .{  :1be0[1]
     ldy #7                                                            ; 1d13: a0 07       ..  :1be2[1]
 loop_c1be4
     lda (l007a),y                                                     ; 1d15: b1 7a       .z  :1be4[1]
-    sta (l0076),y                                                     ; 1d17: 91 76       .v  :1be6[1]
+    sta (sprite_y_pos_low),y                                          ; 1d17: 91 76       .v  :1be6[1]
     dey                                                               ; 1d19: 88          .   :1be8[1]
     cpy #2                                                            ; 1d1a: c0 02       ..  :1be9[1]
     bcs loop_c1be4                                                    ; 1d1c: b0 f7       ..  :1beb[1]
@@ -1919,23 +1947,23 @@ loop_c1be4
     clc                                                               ; 1d20: 18          .   :1bef[1]
     adc #8                                                            ; 1d21: 69 08       i.  :1bf0[1]
     sta l007a                                                         ; 1d23: 85 7a       .z  :1bf2[1]
-    lda l007b                                                         ; 1d25: a5 7b       .{  :1bf4[1]
+    lda sprite_screen_address2_low                                    ; 1d25: a5 7b       .{  :1bf4[1]
     adc #0                                                            ; 1d27: 69 00       i.  :1bf6[1]
-    sta l007b                                                         ; 1d29: 85 7b       .{  :1bf8[1]
-    lda l0076                                                         ; 1d2b: a5 76       .v  :1bfa[1]
+    sta sprite_screen_address2_low                                    ; 1d29: 85 7b       .{  :1bf8[1]
+    lda sprite_y_pos_low                                              ; 1d2b: a5 76       .v  :1bfa[1]
     clc                                                               ; 1d2d: 18          .   :1bfc[1]
     adc #$40 ; '@'                                                    ; 1d2e: 69 40       i@  :1bfd[1]
-    sta l0076                                                         ; 1d30: 85 76       .v  :1bff[1]
-    lda l0077                                                         ; 1d32: a5 77       .w  :1c01[1]
+    sta sprite_y_pos_low                                              ; 1d30: 85 76       .v  :1bff[1]
+    lda sprite_y_pos_high                                             ; 1d32: a5 77       .w  :1c01[1]
     adc #1                                                            ; 1d34: 69 01       i.  :1c03[1]
-    sta l0077                                                         ; 1d36: 85 77       .w  :1c05[1]
+    sta sprite_y_pos_high                                             ; 1d36: 85 77       .w  :1c05[1]
     ldy #5                                                            ; 1d38: a0 05       ..  :1c07[1]
 loop_c1c09
     lda (l007a),y                                                     ; 1d3a: b1 7a       .z  :1c09[1]
-    sta (l0076),y                                                     ; 1d3c: 91 76       .v  :1c0b[1]
+    sta (sprite_y_pos_low),y                                          ; 1d3c: 91 76       .v  :1c0b[1]
     dey                                                               ; 1d3e: 88          .   :1c0d[1]
     bpl loop_c1c09                                                    ; 1d3f: 10 f9       ..  :1c0e[1]
-    ldy address_high                                                  ; 1d41: a4 71       .q  :1c10[1]
+    ldy address1_high                                                 ; 1d41: a4 71       .q  :1c10[1]
     jmp c1bc3                                                         ; 1d43: 4c c3 1b    L.. :1c12[1]
 
 c1c15
@@ -1950,16 +1978,16 @@ c1c15
     sta l007a                                                         ; 1d52: 85 7a       .z  :1c21[1]
     lda #0                                                            ; 1d54: a9 00       ..  :1c23[1]
     adc #$1d                                                          ; 1d56: 69 1d       i.  :1c25[1]
-    sta l007b                                                         ; 1d58: 85 7b       .{  :1c27[1]
-    sty address_high                                                  ; 1d5a: 84 71       .q  :1c29[1]
+    sta sprite_screen_address2_low                                    ; 1d58: 85 7b       .{  :1c27[1]
+    sty address1_high                                                 ; 1d5a: 84 71       .q  :1c29[1]
     ldy #7                                                            ; 1d5c: a0 07       ..  :1c2b[1]
 loop_c1c2d
     lda (l007a),y                                                     ; 1d5e: b1 7a       .z  :1c2d[1]
-    sta (l0076),y                                                     ; 1d60: 91 76       .v  :1c2f[1]
+    sta (sprite_y_pos_low),y                                          ; 1d60: 91 76       .v  :1c2f[1]
     dey                                                               ; 1d62: 88          .   :1c31[1]
     cpy #2                                                            ; 1d63: c0 02       ..  :1c32[1]
     bcs loop_c1c2d                                                    ; 1d65: b0 f7       ..  :1c34[1]
-    ldy address_high                                                  ; 1d67: a4 71       .q  :1c36[1]
+    ldy address1_high                                                 ; 1d67: a4 71       .q  :1c36[1]
     jmp c1bc3                                                         ; 1d69: 4c c3 1b    L.. :1c38[1]
 
 c1c3b
@@ -1967,8 +1995,8 @@ c1c3b
     beq c1c4e                                                         ; 1d6f: f0 0e       ..  :1c3e[1]
     inx                                                               ; 1d71: e8          .   :1c40[1]
     lda #$ff                                                          ; 1d72: a9 ff       ..  :1c41[1]
-    sta l001d                                                         ; 1d74: 85 1d       ..  :1c43[1]
-    lda l0016                                                         ; 1d76: a5 16       ..  :1c45[1]
+    sta sprite_op_flags2                                              ; 1d74: 85 1d       ..  :1c43[1]
+    lda sprite_number                                                 ; 1d76: a5 16       ..  :1c45[1]
     jsr sub_c1f4c                                                     ; 1d78: 20 4c 1f     L. :1c47[1]
     dex                                                               ; 1d7b: ca          .   :1c4a[1]
     jmp c1c6e                                                         ; 1d7c: 4c 6e 1c    Ln. :1c4b[1]
@@ -1984,16 +2012,16 @@ c1c4e
     sta l007a                                                         ; 1d88: 85 7a       .z  :1c57[1]
     lda #0                                                            ; 1d8a: a9 00       ..  :1c59[1]
     adc #$1d                                                          ; 1d8c: 69 1d       i.  :1c5b[1]
-    sta l007b                                                         ; 1d8e: 85 7b       .{  :1c5d[1]
+    sta sprite_screen_address2_low                                    ; 1d8e: 85 7b       .{  :1c5d[1]
     ldy #7                                                            ; 1d90: a0 07       ..  :1c5f[1]
 loop_c1c61
-    lda (l0076),y                                                     ; 1d92: b1 76       .v  :1c61[1]
+    lda (sprite_y_pos_low),y                                          ; 1d92: b1 76       .v  :1c61[1]
     and #$c0                                                          ; 1d94: 29 c0       ).  :1c63[1]
     ora (l007a),y                                                     ; 1d96: 11 7a       .z  :1c65[1]
-    sta (l0076),y                                                     ; 1d98: 91 76       .v  :1c67[1]
+    sta (sprite_y_pos_low),y                                          ; 1d98: 91 76       .v  :1c67[1]
     dey                                                               ; 1d9a: 88          .   :1c69[1]
     bpl loop_c1c61                                                    ; 1d9b: 10 f5       ..  :1c6a[1]
-    ldy address_high                                                  ; 1d9d: a4 71       .q  :1c6c[1]
+    ldy address1_high                                                 ; 1d9d: a4 71       .q  :1c6c[1]
 c1c6e
     inx                                                               ; 1d9f: e8          .   :1c6e[1]
     dey                                                               ; 1da0: 88          .   :1c6f[1]
@@ -2002,7 +2030,7 @@ c1c6e
     cmp #3                                                            ; 1da6: c9 03       ..  :1c75[1]
     bne c1c82                                                         ; 1da8: d0 09       ..  :1c77[1]
     lda #$ff                                                          ; 1daa: a9 ff       ..  :1c79[1]
-    sta l001d                                                         ; 1dac: 85 1d       ..  :1c7b[1]
+    sta sprite_op_flags2                                              ; 1dac: 85 1d       ..  :1c7b[1]
     lda #$2f ; '/'                                                    ; 1dae: a9 2f       ./  :1c7d[1]
     jsr sub_c1f4c                                                     ; 1db0: 20 4c 1f     L. :1c7f[1]
 c1c82
@@ -2014,7 +2042,7 @@ c1c82
     cmp #3                                                            ; 1dbc: c9 03       ..  :1c8b[1]
     bne c1c98                                                         ; 1dbe: d0 09       ..  :1c8d[1]
     lda #$ff                                                          ; 1dc0: a9 ff       ..  :1c8f[1]
-    sta l001d                                                         ; 1dc2: 85 1d       ..  :1c91[1]
+    sta sprite_op_flags2                                              ; 1dc2: 85 1d       ..  :1c91[1]
     lda #$2e ; '.'                                                    ; 1dc4: a9 2e       ..  :1c93[1]
     jsr sub_c1f4c                                                     ; 1dc6: 20 4c 1f     L. :1c95[1]
 c1c98
@@ -2039,16 +2067,16 @@ c1ca8
     sta l007a                                                         ; 1de2: 85 7a       .z  :1cb1[1]
     lda #0                                                            ; 1de4: a9 00       ..  :1cb3[1]
     adc #$1d                                                          ; 1de6: 69 1d       i.  :1cb5[1]
-    sta l007b                                                         ; 1de8: 85 7b       .{  :1cb7[1]
+    sta sprite_screen_address2_low                                    ; 1de8: 85 7b       .{  :1cb7[1]
     ldy #7                                                            ; 1dea: a0 07       ..  :1cb9[1]
 loop_c1cbb
-    lda (l0076),y                                                     ; 1dec: b1 76       .v  :1cbb[1]
+    lda (sprite_y_pos_low),y                                          ; 1dec: b1 76       .v  :1cbb[1]
     and #3                                                            ; 1dee: 29 03       ).  :1cbd[1]
     ora (l007a),y                                                     ; 1df0: 11 7a       .z  :1cbf[1]
-    sta (l0076),y                                                     ; 1df2: 91 76       .v  :1cc1[1]
+    sta (sprite_y_pos_low),y                                          ; 1df2: 91 76       .v  :1cc1[1]
     dey                                                               ; 1df4: 88          .   :1cc3[1]
     bpl loop_c1cbb                                                    ; 1df5: 10 f5       ..  :1cc4[1]
-    ldy address_high                                                  ; 1df7: a4 71       .q  :1cc6[1]
+    ldy address1_high                                                 ; 1df7: a4 71       .q  :1cc6[1]
 c1cc8
     dex                                                               ; 1df9: ca          .   :1cc8[1]
     dey                                                               ; 1dfa: 88          .   :1cc9[1]
@@ -2079,25 +2107,25 @@ c1cee
 
 sub_c1cf3
     lda #$2c ; ','                                                    ; 1e24: a9 2c       .,  :1cf3[1]
-    sta l0016                                                         ; 1e26: 85 16       ..  :1cf5[1]
+    sta sprite_number                                                 ; 1e26: 85 16       ..  :1cf5[1]
     dey                                                               ; 1e28: 88          .   :1cf7[1]
     jsr sub_c1efa                                                     ; 1e29: 20 fa 1e     .. :1cf8[1]
     iny                                                               ; 1e2c: c8          .   :1cfb[1]
     cmp #3                                                            ; 1e2d: c9 03       ..  :1cfc[1]
     bne c1d16                                                         ; 1e2f: d0 16       ..  :1cfe[1]
     lda #$2d ; '-'                                                    ; 1e31: a9 2d       .-  :1d00[1]
-    sta l0016                                                         ; 1e33: 85 16       ..  :1d02[1]
+    sta sprite_number                                                 ; 1e33: 85 16       ..  :1d02[1]
     iny                                                               ; 1e35: c8          .   :1d04[1]
     jsr sub_c1efa                                                     ; 1e36: 20 fa 1e     .. :1d05[1]
     dey                                                               ; 1e39: 88          .   :1d08[1]
     cmp #3                                                            ; 1e3a: c9 03       ..  :1d09[1]
     bne c1d16                                                         ; 1e3c: d0 09       ..  :1d0b[1]
-    sty address_high                                                  ; 1e3e: 84 71       .q  :1d0d[1]
+    sty address1_high                                                 ; 1e3e: 84 71       .q  :1d0d[1]
     jsr sub_c1b66                                                     ; 1e40: 20 66 1b     f. :1d0f[1]
     lda #0                                                            ; 1e43: a9 00       ..  :1d12[1]
-    sta l0016                                                         ; 1e45: 85 16       ..  :1d14[1]
+    sta sprite_number                                                 ; 1e45: 85 16       ..  :1d14[1]
 c1d16
-    lda l0016                                                         ; 1e47: a5 16       ..  :1d16[1]
+    lda sprite_number                                                 ; 1e47: a5 16       ..  :1d16[1]
     rts                                                               ; 1e49: 60          `   :1d18[1]
 
     !byte   0,   0,   0, $ff, $b7, $ff, $fd, $ef,   0, $ff, $fd, $df  ; 1e4a: 00 00 00... ... :1d19[1]
@@ -2133,27 +2161,27 @@ loop_c1df7
     cpy #$f0                                                          ; 1f2c: c0 f0       ..  :1dfb[1]
     bne loop_c1df7                                                    ; 1f2e: d0 f8       ..  :1dfd[1]
     ldy #0                                                            ; 1f30: a0 00       ..  :1dff[1]
-    sty address_low                                                   ; 1f32: 84 70       .p  :1e01[1]
+    sty address1_low                                                  ; 1f32: 84 70       .p  :1e01[1]
     ldx #$62 ; 'b'                                                    ; 1f34: a2 62       .b  :1e03[1]
-    stx address_high                                                  ; 1f36: 86 71       .q  :1e05[1]
+    stx address1_high                                                 ; 1f36: 86 71       .q  :1e05[1]
     lda #$ff                                                          ; 1f38: a9 ff       ..  :1e07[1]
     ldx #$80                                                          ; 1f3a: a2 80       ..  :1e09[1]
 c1e0b
-    sta (address_low),y                                               ; 1f3c: 91 70       .p  :1e0b[1]
+    sta (address1_low),y                                              ; 1f3c: 91 70       .p  :1e0b[1]
     iny                                                               ; 1f3e: c8          .   :1e0d[1]
     bne c1e0b                                                         ; 1f3f: d0 fb       ..  :1e0e[1]
-    inc address_high                                                  ; 1f41: e6 71       .q  :1e10[1]
-    cpx address_high                                                  ; 1f43: e4 71       .q  :1e12[1]
+    inc address1_high                                                 ; 1f41: e6 71       .q  :1e10[1]
+    cpx address1_high                                                 ; 1f43: e4 71       .q  :1e12[1]
     bne c1e0b                                                         ; 1f45: d0 f5       ..  :1e14[1]
     rts                                                               ; 1f47: 60          `   :1e16[1]
 
 sub_c1e17
-    stx address_low                                                   ; 1f48: 86 70       .p  :1e17[1]
-    sty address_high                                                  ; 1f4a: 84 71       .q  :1e19[1]
+    stx address1_low                                                  ; 1f48: 86 70       .p  :1e17[1]
+    sty address1_high                                                 ; 1f4a: 84 71       .q  :1e19[1]
     lda some_word                                                     ; 1f4c: a5 3c       .<  :1e1b[1]
-    sta l0072                                                         ; 1f4e: 85 72       .r  :1e1d[1]
+    sta sprite_screen_address1_low                                    ; 1f4e: 85 72       .r  :1e1d[1]
     lda some_word + 1                                                 ; 1f50: a5 3d       .=  :1e1f[1]
-    sta l0073                                                         ; 1f52: 85 73       .s  :1e21[1]
+    sta sprite_screen_address1_high                                   ; 1f52: 85 73       .s  :1e21[1]
     txa                                                               ; 1f54: 8a          .   :1e23[1]
     clc                                                               ; 1f55: 18          .   :1e24[1]
     adc some_word                                                     ; 1f56: 65 3c       e<  :1e25[1]
@@ -2162,8 +2190,8 @@ sub_c1e17
     bcc c1e33                                                         ; 1f5c: 90 06       ..  :1e2b[1]
 c1e2d
     lda #$28 ; '('                                                    ; 1f5e: a9 28       .(  :1e2d[1]
-    sbc address_low                                                   ; 1f60: e5 70       .p  :1e2f[1]
-    sta l0072                                                         ; 1f62: 85 72       .r  :1e31[1]
+    sbc address1_low                                                  ; 1f60: e5 70       .p  :1e2f[1]
+    sta sprite_screen_address1_low                                    ; 1f62: 85 72       .r  :1e31[1]
 c1e33
     tya                                                               ; 1f64: 98          .   :1e33[1]
     clc                                                               ; 1f65: 18          .   :1e34[1]
@@ -2173,8 +2201,8 @@ c1e33
     bcc return7                                                       ; 1f6c: 90 06       ..  :1e3b[1]
 c1e3d
     lda #$18                                                          ; 1f6e: a9 18       ..  :1e3d[1]
-    sbc address_high                                                  ; 1f70: e5 71       .q  :1e3f[1]
-    sta l0073                                                         ; 1f72: 85 73       .s  :1e41[1]
+    sbc address1_high                                                 ; 1f70: e5 71       .q  :1e3f[1]
+    sta sprite_screen_address1_high                                   ; 1f72: 85 73       .s  :1e41[1]
 return7
     rts                                                               ; 1f74: 60          `   :1e43[1]
 
@@ -2206,41 +2234,41 @@ c1e4e
     eor #3                                                            ; 1f98: 49 03       I.  :1e67[1]
     tax                                                               ; 1f9a: aa          .   :1e69[1]
 c1e6a
-    lda l0073                                                         ; 1f9b: a5 73       .s  :1e6a[1]
+    lda sprite_screen_address1_high                                   ; 1f9b: a5 73       .s  :1e6a[1]
     sta l004b                                                         ; 1f9d: 85 4b       .K  :1e6c[1]
-    stx l0074                                                         ; 1f9f: 86 74       .t  :1e6e[1]
+    stx sprite_x_pos_low                                              ; 1f9f: 86 74       .t  :1e6e[1]
     lda l0049                                                         ; 1fa1: a5 49       .I  :1e70[1]
     asl                                                               ; 1fa3: 0a          .   :1e72[1]
     asl                                                               ; 1fa4: 0a          .   :1e73[1]
-    ora l0074                                                         ; 1fa5: 05 74       .t  :1e74[1]
+    ora sprite_x_pos_low                                              ; 1fa5: 05 74       .t  :1e74[1]
     tax                                                               ; 1fa7: aa          .   :1e76[1]
     lda l1eab,x                                                       ; 1fa8: bd ab 1e    ... :1e77[1]
-    ldx l0074                                                         ; 1fab: a6 74       .t  :1e7a[1]
-    sta l0074                                                         ; 1fad: 85 74       .t  :1e7c[1]
-    sty l0075                                                         ; 1faf: 84 75       .u  :1e7e[1]
+    ldx sprite_x_pos_low                                              ; 1fab: a6 74       .t  :1e7a[1]
+    sta sprite_x_pos_low                                              ; 1fad: 85 74       .t  :1e7c[1]
+    sty sprite_x_pos_high                                             ; 1faf: 84 75       .u  :1e7e[1]
 ; TODO: What's going on with the modification to something3_TODO here? Is it copy
 ; protection/obfuscation or is there something else going on?
 loop_c1e80
     lda something3_TODO,y                                             ; 1fb1: b9 00 0c    ... :1e80[1]
     and l1ea7,x                                                       ; 1fb4: 3d a7 1e    =.. :1e83[1]
-    ora l0074                                                         ; 1fb7: 05 74       .t  :1e86[1]
+    ora sprite_x_pos_low                                              ; 1fb7: 05 74       .t  :1e86[1]
     sta something3_TODO,y                                             ; 1fb9: 99 00 0c    ... :1e88[1]
     tya                                                               ; 1fbc: 98          .   :1e8b[1]
     adc #$0a                                                          ; 1fbd: 69 0a       i.  :1e8c[1]
     tay                                                               ; 1fbf: a8          .   :1e8e[1]
     dec l004b                                                         ; 1fc0: c6 4b       .K  :1e8f[1]
     bne loop_c1e80                                                    ; 1fc2: d0 ed       ..  :1e91[1]
-    ldy l0075                                                         ; 1fc4: a4 75       .u  :1e93[1]
+    ldy sprite_x_pos_high                                             ; 1fc4: a4 75       .u  :1e93[1]
     dex                                                               ; 1fc6: ca          .   :1e95[1]
     bpl c1e9b                                                         ; 1fc7: 10 03       ..  :1e96[1]
     ldx #3                                                            ; 1fc9: a2 03       ..  :1e98[1]
     iny                                                               ; 1fcb: c8          .   :1e9a[1]
 c1e9b
-    dec l0072                                                         ; 1fcc: c6 72       .r  :1e9b[1]
+    dec sprite_screen_address1_low                                    ; 1fcc: c6 72       .r  :1e9b[1]
     bne c1e6a                                                         ; 1fce: d0 cb       ..  :1e9d[1]
     lda l0049                                                         ; 1fd0: a5 49       .I  :1e9f[1]
-    ldx address_low                                                   ; 1fd2: a6 70       .p  :1ea1[1]
-    ldy address_high                                                  ; 1fd4: a4 71       .q  :1ea3[1]
+    ldx address1_low                                                  ; 1fd2: a6 70       .p  :1ea1[1]
+    ldy address1_high                                                 ; 1fd4: a4 71       .q  :1ea3[1]
 c1ea5
     pla                                                               ; 1fd6: 68          h   :1ea5[1]
     rts                                                               ; 1fd7: 60          `   :1ea6[1]
@@ -2352,10 +2380,10 @@ c1f2d
     ldy #$17                                                          ; 2079: a0 17       ..  :1f48[1]
     bne c1f06                                                         ; 207b: d0 ba       ..  :1f4a[1]
 sub_c1f4c
-    sta l0016                                                         ; 207d: 85 16       ..  :1f4c[1]
+    sta sprite_number                                                 ; 207d: 85 16       ..  :1f4c[1]
     jsr sub_c1f84                                                     ; 207f: 20 84 1f     .. :1f4e[1]
     jsr sprite_op                                                     ; 2082: 20 8d 13     .. :1f51[1]
-    lda l0016                                                         ; 2085: a5 16       ..  :1f54[1]
+    lda sprite_number                                                 ; 2085: a5 16       ..  :1f54[1]
     rts                                                               ; 2087: 60          `   :1f56[1]
 
     !byte $20, $4c, $1f, $4c, $44, $1e                                ; 2088: 20 4c 1f...  L. :1f57[1]
@@ -2374,13 +2402,13 @@ l1f6c
 
 sub_c1f6d
     pha                                                               ; 209e: 48          H   :1f6d[1]
-    lda l0018                                                         ; 209f: a5 18       ..  :1f6e[1]
+    lda sprite_x_base_low                                             ; 209f: a5 18       ..  :1f6e[1]
     sta x_entry_table2a,x                                             ; 20a1: 9d 50 09    .P. :1f70[1]
-    lda l0019                                                         ; 20a4: a5 19       ..  :1f73[1]
+    lda sprite_x_base_high                                            ; 20a4: a5 19       ..  :1f73[1]
     sta x_entry_table5a,x                                             ; 20a6: 9d 66 09    .f. :1f75[1]
-    lda l001a                                                         ; 20a9: a5 1a       ..  :1f78[1]
+    lda sprite_y_base_low                                             ; 20a9: a5 1a       ..  :1f78[1]
     sta x_entry_table6a,x                                             ; 20ab: 9d 7c 09    .|. :1f7a[1]
-    lda l001b                                                         ; 20ae: a5 1b       ..  :1f7d[1]
+    lda sprite_y_base_high                                            ; 20ae: a5 1b       ..  :1f7d[1]
     sta x_entry_table7a,x                                             ; 20b0: 9d 92 09    ... :1f7f[1]
     pla                                                               ; 20b3: 68          h   :1f82[1]
     rts                                                               ; 20b4: 60          `   :1f83[1]
@@ -2395,48 +2423,48 @@ sub_c1f84
     asl                                                               ; 20bb: 0a          .   :1f8a[1]
     asl                                                               ; 20bc: 0a          .   :1f8b[1]
     asl                                                               ; 20bd: 0a          .   :1f8c[1]
-    sta l0018                                                         ; 20be: 85 18       ..  :1f8d[1]
+    sta sprite_x_base_low                                             ; 20be: 85 18       ..  :1f8d[1]
     txa                                                               ; 20c0: 8a          .   :1f8f[1]
     and #$80                                                          ; 20c1: 29 80       ).  :1f90[1]
     beq c1f96                                                         ; 20c3: f0 02       ..  :1f92[1]
     lda #$ff                                                          ; 20c5: a9 ff       ..  :1f94[1]
 c1f96
     rol                                                               ; 20c7: 2a          *   :1f96[1]
-    sta l0019                                                         ; 20c8: 85 19       ..  :1f97[1]
+    sta sprite_x_base_high                                            ; 20c8: 85 19       ..  :1f97[1]
     ldx #0                                                            ; 20ca: a2 00       ..  :1f99[1]
     lda l003a                                                         ; 20cc: a5 3a       .:  :1f9b[1]
     bpl c1fa0                                                         ; 20ce: 10 01       ..  :1f9d[1]
     dex                                                               ; 20d0: ca          .   :1f9f[1]
 c1fa0
     clc                                                               ; 20d1: 18          .   :1fa0[1]
-    adc l0018                                                         ; 20d2: 65 18       e.  :1fa1[1]
-    sta l0018                                                         ; 20d4: 85 18       ..  :1fa3[1]
+    adc sprite_x_base_low                                             ; 20d2: 65 18       e.  :1fa1[1]
+    sta sprite_x_base_low                                             ; 20d4: 85 18       ..  :1fa3[1]
     txa                                                               ; 20d6: 8a          .   :1fa5[1]
-    adc l0019                                                         ; 20d7: 65 19       e.  :1fa6[1]
-    sta l0019                                                         ; 20d9: 85 19       ..  :1fa8[1]
+    adc sprite_x_base_high                                            ; 20d7: 65 19       e.  :1fa6[1]
+    sta sprite_x_base_high                                            ; 20d9: 85 19       ..  :1fa8[1]
     tya                                                               ; 20db: 98          .   :1faa[1]
     asl                                                               ; 20dc: 0a          .   :1fab[1]
     asl                                                               ; 20dd: 0a          .   :1fac[1]
     asl                                                               ; 20de: 0a          .   :1fad[1]
-    sta l001a                                                         ; 20df: 85 1a       ..  :1fae[1]
+    sta sprite_y_base_low                                             ; 20df: 85 1a       ..  :1fae[1]
     tya                                                               ; 20e1: 98          .   :1fb0[1]
     and #$80                                                          ; 20e2: 29 80       ).  :1fb1[1]
     beq c1fb7                                                         ; 20e4: f0 02       ..  :1fb3[1]
     lda #$ff                                                          ; 20e6: a9 ff       ..  :1fb5[1]
 c1fb7
     rol                                                               ; 20e8: 2a          *   :1fb7[1]
-    sta l001b                                                         ; 20e9: 85 1b       ..  :1fb8[1]
+    sta sprite_y_base_high                                            ; 20e9: 85 1b       ..  :1fb8[1]
     ldy #0                                                            ; 20eb: a0 00       ..  :1fba[1]
     lda l003b                                                         ; 20ed: a5 3b       .;  :1fbc[1]
     bpl c1fc1                                                         ; 20ef: 10 01       ..  :1fbe[1]
     dey                                                               ; 20f1: 88          .   :1fc0[1]
 c1fc1
     clc                                                               ; 20f2: 18          .   :1fc1[1]
-    adc l001a                                                         ; 20f3: 65 1a       e.  :1fc2[1]
-    sta l001a                                                         ; 20f5: 85 1a       ..  :1fc4[1]
+    adc sprite_y_base_low                                             ; 20f3: 65 1a       e.  :1fc2[1]
+    sta sprite_y_base_low                                             ; 20f5: 85 1a       ..  :1fc4[1]
     tya                                                               ; 20f7: 98          .   :1fc6[1]
-    adc l001b                                                         ; 20f8: 65 1b       e.  :1fc7[1]
-    sta l001b                                                         ; 20fa: 85 1b       ..  :1fc9[1]
+    adc sprite_y_base_high                                            ; 20f8: 65 1b       e.  :1fc7[1]
+    sta sprite_y_base_high                                            ; 20fa: 85 1b       ..  :1fc9[1]
     lda #0                                                            ; 20fc: a9 00       ..  :1fcb[1]
     sta l003a                                                         ; 20fe: 85 3a       .:  :1fcd[1]
     sta l003b                                                         ; 2100: 85 3b       .;  :1fcf[1]
@@ -2663,15 +2691,15 @@ sub_c2157
     lda x_entry_table9b,x                                             ; 228a: bd b3 09    ... :2159[1]
     beq c2197                                                         ; 228d: f0 39       .9  :215c[1]
     lda x_entry_table2b,x                                             ; 228f: bd 5b 09    .[. :215e[1]
-    sta l0018                                                         ; 2292: 85 18       ..  :2161[1]
+    sta sprite_x_base_low                                             ; 2292: 85 18       ..  :2161[1]
     lda x_entry_table5b,x                                             ; 2294: bd 71 09    .q. :2163[1]
-    sta l0019                                                         ; 2297: 85 19       ..  :2166[1]
+    sta sprite_x_base_high                                            ; 2297: 85 19       ..  :2166[1]
     lda x_entry_table6b,x                                             ; 2299: bd 87 09    ... :2168[1]
-    sta l001a                                                         ; 229c: 85 1a       ..  :216b[1]
+    sta sprite_y_base_low                                             ; 229c: 85 1a       ..  :216b[1]
     lda x_entry_table7b,x                                             ; 229e: bd 9d 09    ... :216d[1]
-    sta l001b                                                         ; 22a1: 85 1b       ..  :2170[1]
+    sta sprite_y_base_high                                            ; 22a1: 85 1b       ..  :2170[1]
     lda x_entry_table10b,x                                            ; 22a3: bd c9 09    ... :2172[1]
-    sta l001d                                                         ; 22a6: 85 1d       ..  :2175[1]
+    sta sprite_op_flags2                                              ; 22a6: 85 1d       ..  :2175[1]
     lda x_entry_table12,x                                             ; 22a8: bd ac 38    ..8 :2177[1]
     beq c2184                                                         ; 22ab: f0 08       ..  :217a[1]
     cmp #$ff                                                          ; 22ad: c9 ff       ..  :217c[1]
@@ -2686,8 +2714,8 @@ c218b
     lda x_entry_table9b,x                                             ; 22bc: bd b3 09    ... :218b[1]
     ldy #4                                                            ; 22bf: a0 04       ..  :218e[1]
 c2190
-    sta l0016                                                         ; 22c1: 85 16       ..  :2190[1]
-    sty l0015                                                         ; 22c3: 84 15       ..  :2192[1]
+    sta sprite_number                                                 ; 22c1: 85 16       ..  :2190[1]
+    sty sprite_op_flags                                               ; 22c3: 84 15       ..  :2192[1]
     jsr sprite_op                                                     ; 22c5: 20 8d 13     .. :2194[1]
 c2197
     pla                                                               ; 22c8: 68          h   :2197[1]
@@ -2698,26 +2726,26 @@ sub_c219a
     lda x_entry_table9a,x                                             ; 22cb: bd a8 09    ... :219a[1]
     beq return9                                                       ; 22ce: f0 60       .`  :219d[1]
     lda x_entry_table2a,x                                             ; 22d0: bd 50 09    .P. :219f[1]
-    sta l0018                                                         ; 22d3: 85 18       ..  :21a2[1]
+    sta sprite_x_base_low                                             ; 22d3: 85 18       ..  :21a2[1]
     lda x_entry_table5a,x                                             ; 22d5: bd 66 09    .f. :21a4[1]
-    sta l0019                                                         ; 22d8: 85 19       ..  :21a7[1]
+    sta sprite_x_base_high                                            ; 22d8: 85 19       ..  :21a7[1]
     lda x_entry_table6a,x                                             ; 22da: bd 7c 09    .|. :21a9[1]
-    sta l001a                                                         ; 22dd: 85 1a       ..  :21ac[1]
+    sta sprite_y_base_low                                             ; 22dd: 85 1a       ..  :21ac[1]
     lda x_entry_table7a,x                                             ; 22df: bd 92 09    ... :21ae[1]
-    sta l001b                                                         ; 22e2: 85 1b       ..  :21b1[1]
+    sta sprite_y_base_high                                            ; 22e2: 85 1b       ..  :21b1[1]
     lda x_entry_table10a,x                                            ; 22e4: bd be 09    ... :21b3[1]
-    sta l001d                                                         ; 22e7: 85 1d       ..  :21b6[1]
+    sta sprite_op_flags2                                              ; 22e7: 85 1d       ..  :21b6[1]
     lda x_entry_table9a,x                                             ; 22e9: bd a8 09    ... :21b8[1]
-    sta l0016                                                         ; 22ec: 85 16       ..  :21bb[1]
+    sta sprite_number                                                 ; 22ec: 85 16       ..  :21bb[1]
     lda #0                                                            ; 22ee: a9 00       ..  :21bd[1]
-    sta l0015                                                         ; 22f0: 85 15       ..  :21bf[1]
+    sta sprite_op_flags                                               ; 22f0: 85 15       ..  :21bf[1]
     lda x_entry_table12,x                                             ; 22f2: bd ac 38    ..8 :21c1[1]
     beq c21d0                                                         ; 22f5: f0 0a       ..  :21c4[1]
     cmp #$ff                                                          ; 22f7: c9 ff       ..  :21c6[1]
     beq c21d0                                                         ; 22f9: f0 06       ..  :21c8[1]
-    sta l0014                                                         ; 22fb: 85 14       ..  :21ca[1]
+    sta dest_sprite_number                                            ; 22fb: 85 14       ..  :21ca[1]
     lda #3                                                            ; 22fd: a9 03       ..  :21cc[1]
-    sta l0015                                                         ; 22ff: 85 15       ..  :21ce[1]
+    sta sprite_op_flags                                               ; 22ff: 85 15       ..  :21ce[1]
 c21d0
     jsr sprite_op                                                     ; 2301: 20 8d 13     .. :21d0[1]
     cpx #1                                                            ; 2304: e0 01       ..  :21d3[1]
@@ -2735,25 +2763,25 @@ c21d0
     beq return9                                                       ; 231e: f0 10       ..  :21ed[1]
 c21ef
     lda x_entry_table10a,x                                            ; 2320: bd be 09    ... :21ef[1]
-    sta l001d                                                         ; 2323: 85 1d       ..  :21f2[1]
+    sta sprite_op_flags2                                              ; 2323: 85 1d       ..  :21f2[1]
     lda #0                                                            ; 2325: a9 00       ..  :21f4[1]
-    sta l0015                                                         ; 2327: 85 15       ..  :21f6[1]
+    sta sprite_op_flags                                               ; 2327: 85 15       ..  :21f6[1]
     lda #$37 ; '7'                                                    ; 2329: a9 37       .7  :21f8[1]
-    sta l0016                                                         ; 232b: 85 16       ..  :21fa[1]
+    sta sprite_number                                                 ; 232b: 85 16       ..  :21fa[1]
     jsr sprite_op                                                     ; 232d: 20 8d 13     .. :21fc[1]
 return9
     rts                                                               ; 2330: 60          `   :21ff[1]
 
 something17_TODO
-    stx address_low                                                   ; 2331: 86 70       .p  :2200[1]
-    sty address_high                                                  ; 2333: 84 71       .q  :2202[1]
+    stx address1_low                                                  ; 2331: 86 70       .p  :2200[1]
+    sty address1_high                                                 ; 2333: 84 71       .q  :2202[1]
     tay                                                               ; 2335: a8          .   :2204[1]
-    lda (address_low),y                                               ; 2336: b1 70       .p  :2205[1]
+    lda (address1_low),y                                              ; 2336: b1 70       .p  :2205[1]
     sta x_entry_table9a                                               ; 2338: 8d a8 09    ... :2207[1]
     iny                                                               ; 233b: c8          .   :220a[1]
     lda l2433                                                         ; 233c: ad 33 24    .3$ :220b[1]
     bne c2231                                                         ; 233f: d0 21       .!  :220e[1]
-    lda (address_low),y                                               ; 2341: b1 70       .p  :2210[1]
+    lda (address1_low),y                                              ; 2341: b1 70       .p  :2210[1]
     ldx x_entry_table10a                                              ; 2343: ae be 09    ... :2212[1]
     bpl c221c                                                         ; 2346: 10 05       ..  :2215[1]
     eor #$ff                                                          ; 2348: 49 ff       I.  :2217[1]
@@ -2774,7 +2802,7 @@ c2223
 c2231
     iny                                                               ; 2362: c8          .   :2231[1]
     ldx #0                                                            ; 2363: a2 00       ..  :2232[1]
-    lda (address_low),y                                               ; 2365: b1 70       .p  :2234[1]
+    lda (address1_low),y                                              ; 2365: b1 70       .p  :2234[1]
     bpl c2239                                                         ; 2367: 10 01       ..  :2236[1]
     dex                                                               ; 2369: ca          .   :2238[1]
 c2239
@@ -2787,22 +2815,22 @@ c2239
     rts                                                               ; 2378: 60          `   :2247[1]
 
 something18_TODO
-    stx l0072                                                         ; 2379: 86 72       .r  :2248[1]
-    sty l0073                                                         ; 237b: 84 73       .s  :224a[1]
+    stx sprite_screen_address1_low                                    ; 2379: 86 72       .r  :2248[1]
+    sty sprite_screen_address1_high                                   ; 237b: 84 73       .s  :224a[1]
     ldy #0                                                            ; 237d: a0 00       ..  :224c[1]
     ora #0                                                            ; 237f: 09 00       ..  :224e[1]
     bpl c2267                                                         ; 2381: 10 15       ..  :2250[1]
     and #$7f                                                          ; 2383: 29 7f       ).  :2252[1]
     tay                                                               ; 2385: a8          .   :2254[1]
-    lda (address_low),y                                               ; 2386: b1 70       .p  :2255[1]
+    lda (address1_low),y                                              ; 2386: b1 70       .p  :2255[1]
     cpy #$7f                                                          ; 2388: c0 7f       ..  :2257[1]
     bne c2267                                                         ; 238a: d0 0c       ..  :2259[1]
     ldy l09d5                                                         ; 238c: ac d5 09    ... :225b[1]
     iny                                                               ; 238f: c8          .   :225e[1]
-    lda (address_low),y                                               ; 2390: b1 70       .p  :225f[1]
+    lda (address1_low),y                                              ; 2390: b1 70       .p  :225f[1]
     bne c2267                                                         ; 2392: d0 04       ..  :2261[1]
     ldy #0                                                            ; 2394: a0 00       ..  :2263[1]
-    lda (address_low),y                                               ; 2396: b1 70       .p  :2265[1]
+    lda (address1_low),y                                              ; 2396: b1 70       .p  :2265[1]
 c2267
     sty l09d5                                                         ; 2398: 8c d5 09    ... :2267[1]
     sta l09a9                                                         ; 239b: 8d a9 09    ... :226a[1]
@@ -2842,17 +2870,17 @@ c229f
     rts                                                               ; 23de: 60          `   :22ad[1]
 
 sub_c22ae
-    sta l0074                                                         ; 23df: 85 74       .t  :22ae[1]
+    sta sprite_x_pos_low                                              ; 23df: 85 74       .t  :22ae[1]
     ldy #0                                                            ; 23e1: a0 00       ..  :22b0[1]
     beq c22bb                                                         ; 23e3: f0 07       ..  :22b2[1]
 loop_c22b4
-    cmp l0074                                                         ; 23e5: c5 74       .t  :22b4[1]
+    cmp sprite_x_pos_low                                              ; 23e5: c5 74       .t  :22b4[1]
     beq c22c4                                                         ; 23e7: f0 0c       ..  :22b6[1]
     iny                                                               ; 23e9: c8          .   :22b8[1]
     iny                                                               ; 23ea: c8          .   :22b9[1]
     iny                                                               ; 23eb: c8          .   :22ba[1]
 c22bb
-    lda (l0072),y                                                     ; 23ec: b1 72       .r  :22bb[1]
+    lda (sprite_screen_address1_low),y                                ; 23ec: b1 72       .r  :22bb[1]
     bne loop_c22b4                                                    ; 23ee: d0 f5       ..  :22bd[1]
     ldx #0                                                            ; 23f0: a2 00       ..  :22bf[1]
     ldy #0                                                            ; 23f2: a0 00       ..  :22c1[1]
@@ -2860,10 +2888,10 @@ c22bb
 
 c22c4
     iny                                                               ; 23f5: c8          .   :22c4[1]
-    lda (l0072),y                                                     ; 23f6: b1 72       .r  :22c5[1]
+    lda (sprite_screen_address1_low),y                                ; 23f6: b1 72       .r  :22c5[1]
     tax                                                               ; 23f8: aa          .   :22c7[1]
     iny                                                               ; 23f9: c8          .   :22c8[1]
-    lda (l0072),y                                                     ; 23fa: b1 72       .r  :22c9[1]
+    lda (sprite_screen_address1_low),y                                ; 23fa: b1 72       .r  :22c9[1]
     tay                                                               ; 23fc: a8          .   :22cb[1]
     rts                                                               ; 23fd: 60          `   :22cc[1]
 
@@ -2897,12 +2925,12 @@ l22ed
     !byte 0                                                           ; 241e: 00          .   :22ed[1]
 
 sub_c22ee
-    stx address_low                                                   ; 241f: 86 70       .p  :22ee[1]
-    sty address_high                                                  ; 2421: 84 71       .q  :22f0[1]
+    stx address1_low                                                  ; 241f: 86 70       .p  :22ee[1]
+    sty address1_high                                                 ; 2421: 84 71       .q  :22f0[1]
     clc                                                               ; 2423: 18          .   :22f2[1]
     adc l09d4                                                         ; 2424: 6d d4 09    m.. :22f3[1]
     tay                                                               ; 2427: a8          .   :22f6[1]
-    lda (address_low),y                                               ; 2428: b1 70       .p  :22f7[1]
+    lda (address1_low),y                                              ; 2428: b1 70       .p  :22f7[1]
     bne c22fe                                                         ; 242a: d0 03       ..  :22f9[1]
     ldy l09df                                                         ; 242c: ac df 09    ... :22fb[1]
 c22fe
@@ -3088,12 +3116,12 @@ sub_c2434
     pha                                                               ; 2566: 48          H   :2435[1]
     lda x_entry_table9a,x                                             ; 2567: bd a8 09    ... :2436[1]
     jsr get_address_of_sprite_a                                       ; 256a: 20 2c 13     ,. :2439[1]
-    stx l0080                                                         ; 256d: 86 80       ..  :243c[1]
-    sty l0081                                                         ; 256f: 84 81       ..  :243e[1]
+    stx mask_sprite_byte                                              ; 256d: 86 80       ..  :243c[1]
+    sty sprite_width                                                  ; 256f: 84 81       ..  :243e[1]
     pla                                                               ; 2571: 68          h   :2440[1]
     tax                                                               ; 2572: aa          .   :2441[1]
     ldy #0                                                            ; 2573: a0 00       ..  :2442[1]
-    lda (l0080),y                                                     ; 2575: b1 80       ..  :2444[1]
+    lda (mask_sprite_byte),y                                          ; 2575: b1 80       ..  :2444[1]
     ldy x_entry_table10a,x                                            ; 2577: bc be 09    ... :2446[1]
     bpl c244d                                                         ; 257a: 10 02       ..  :2449[1]
     eor #$ff                                                          ; 257c: 49 ff       I.  :244b[1]
@@ -3105,35 +3133,35 @@ c244d
 c2454
     clc                                                               ; 2585: 18          .   :2454[1]
     adc x_entry_table2a,x                                             ; 2586: 7d 50 09    }P. :2455[1]
-    sta address_low                                                   ; 2589: 85 70       .p  :2458[1]
+    sta address1_low                                                  ; 2589: 85 70       .p  :2458[1]
     tya                                                               ; 258b: 98          .   :245a[1]
     adc x_entry_table5a,x                                             ; 258c: 7d 66 09    }f. :245b[1]
-    sta address_high                                                  ; 258f: 85 71       .q  :245e[1]
+    sta address1_high                                                 ; 258f: 85 71       .q  :245e[1]
     ldy #2                                                            ; 2591: a0 02       ..  :2460[1]
-    lda (l0080),y                                                     ; 2593: b1 80       ..  :2462[1]
+    lda (mask_sprite_byte),y                                          ; 2593: b1 80       ..  :2462[1]
     sec                                                               ; 2595: 38          8   :2464[1]
     sbc #1                                                            ; 2596: e9 01       ..  :2465[1]
     ldy x_entry_table10a,x                                            ; 2598: bc be 09    ... :2467[1]
     bmi c247a                                                         ; 259b: 30 0e       0.  :246a[1]
     clc                                                               ; 259d: 18          .   :246c[1]
-    adc address_low                                                   ; 259e: 65 70       ep  :246d[1]
-    sta l0072                                                         ; 25a0: 85 72       .r  :246f[1]
+    adc address1_low                                                  ; 259e: 65 70       ep  :246d[1]
+    sta sprite_screen_address1_low                                    ; 25a0: 85 72       .r  :246f[1]
     lda #0                                                            ; 25a2: a9 00       ..  :2471[1]
-    adc address_high                                                  ; 25a4: 65 71       eq  :2473[1]
-    sta l0073                                                         ; 25a6: 85 73       .s  :2475[1]
+    adc address1_high                                                 ; 25a4: 65 71       eq  :2473[1]
+    sta sprite_screen_address1_high                                   ; 25a6: 85 73       .s  :2475[1]
     jmp c248d                                                         ; 25a8: 4c 8d 24    L.$ :2477[1]
 
 c247a
-    sta l0073                                                         ; 25ab: 85 73       .s  :247a[1]
-    lda address_low                                                   ; 25ad: a5 70       .p  :247c[1]
-    sta l0072                                                         ; 25af: 85 72       .r  :247e[1]
+    sta sprite_screen_address1_high                                   ; 25ab: 85 73       .s  :247a[1]
+    lda address1_low                                                  ; 25ad: a5 70       .p  :247c[1]
+    sta sprite_screen_address1_low                                    ; 25af: 85 72       .r  :247e[1]
     sec                                                               ; 25b1: 38          8   :2480[1]
-    sbc l0073                                                         ; 25b2: e5 73       .s  :2481[1]
-    sta address_low                                                   ; 25b4: 85 70       .p  :2483[1]
-    lda address_high                                                  ; 25b6: a5 71       .q  :2485[1]
-    sta l0073                                                         ; 25b8: 85 73       .s  :2487[1]
+    sbc sprite_screen_address1_high                                   ; 25b2: e5 73       .s  :2481[1]
+    sta address1_low                                                  ; 25b4: 85 70       .p  :2483[1]
+    lda address1_high                                                 ; 25b6: a5 71       .q  :2485[1]
+    sta sprite_screen_address1_high                                   ; 25b8: 85 73       .s  :2487[1]
     sbc #0                                                            ; 25ba: e9 00       ..  :2489[1]
-    sta address_high                                                  ; 25bc: 85 71       .q  :248b[1]
+    sta address1_high                                                 ; 25bc: 85 71       .q  :248b[1]
 c248d
     ldy #0                                                            ; 25be: a0 00       ..  :248d[1]
     lda l24d0                                                         ; 25c0: ad d0 24    ..$ :248f[1]
@@ -3141,36 +3169,36 @@ c248d
     dey                                                               ; 25c5: 88          .   :2494[1]
 c2495
     clc                                                               ; 25c6: 18          .   :2495[1]
-    adc address_low                                                   ; 25c7: 65 70       ep  :2496[1]
-    sta address_low                                                   ; 25c9: 85 70       .p  :2498[1]
-    sta l0078                                                         ; 25cb: 85 78       .x  :249a[1]
+    adc address1_low                                                  ; 25c7: 65 70       ep  :2496[1]
+    sta address1_low                                                  ; 25c9: 85 70       .p  :2498[1]
+    sta sprite_x_offset_within_byte                                   ; 25cb: 85 78       .x  :249a[1]
     tya                                                               ; 25cd: 98          .   :249c[1]
-    adc address_high                                                  ; 25ce: 65 71       eq  :249d[1]
-    sta address_high                                                  ; 25d0: 85 71       .q  :249f[1]
+    adc address1_high                                                 ; 25ce: 65 71       eq  :249d[1]
+    sta address1_high                                                 ; 25d0: 85 71       .q  :249f[1]
     lsr                                                               ; 25d2: 4a          J   :24a1[1]
-    ror l0078                                                         ; 25d3: 66 78       fx  :24a2[1]
+    ror sprite_x_offset_within_byte                                   ; 25d3: 66 78       fx  :24a2[1]
     lsr                                                               ; 25d5: 4a          J   :24a4[1]
-    ror l0078                                                         ; 25d6: 66 78       fx  :24a5[1]
+    ror sprite_x_offset_within_byte                                   ; 25d6: 66 78       fx  :24a5[1]
     lsr                                                               ; 25d8: 4a          J   :24a7[1]
-    ror l0078                                                         ; 25d9: 66 78       fx  :24a8[1]
+    ror sprite_x_offset_within_byte                                   ; 25d9: 66 78       fx  :24a8[1]
     ldy #0                                                            ; 25db: a0 00       ..  :24aa[1]
     lda l24d1                                                         ; 25dd: ad d1 24    ..$ :24ac[1]
     bpl c24b2                                                         ; 25e0: 10 01       ..  :24af[1]
     dey                                                               ; 25e2: 88          .   :24b1[1]
 c24b2
     clc                                                               ; 25e3: 18          .   :24b2[1]
-    adc l0072                                                         ; 25e4: 65 72       er  :24b3[1]
-    sta l0072                                                         ; 25e6: 85 72       .r  :24b5[1]
-    sta l0079                                                         ; 25e8: 85 79       .y  :24b7[1]
+    adc sprite_screen_address1_low                                    ; 25e4: 65 72       er  :24b3[1]
+    sta sprite_screen_address1_low                                    ; 25e6: 85 72       .r  :24b5[1]
+    sta byte_offset_within_sprite                                     ; 25e8: 85 79       .y  :24b7[1]
     tya                                                               ; 25ea: 98          .   :24b9[1]
-    adc l0073                                                         ; 25eb: 65 73       es  :24ba[1]
-    sta l0073                                                         ; 25ed: 85 73       .s  :24bc[1]
+    adc sprite_screen_address1_high                                   ; 25eb: 65 73       es  :24ba[1]
+    sta sprite_screen_address1_high                                   ; 25ed: 85 73       .s  :24bc[1]
     lsr                                                               ; 25ef: 4a          J   :24be[1]
-    ror l0079                                                         ; 25f0: 66 79       fy  :24bf[1]
+    ror byte_offset_within_sprite                                     ; 25f0: 66 79       fy  :24bf[1]
     lsr                                                               ; 25f2: 4a          J   :24c1[1]
-    ror l0079                                                         ; 25f3: 66 79       fy  :24c2[1]
+    ror byte_offset_within_sprite                                     ; 25f3: 66 79       fy  :24c2[1]
     lsr                                                               ; 25f5: 4a          J   :24c4[1]
-    ror l0079                                                         ; 25f6: 66 79       fy  :24c5[1]
+    ror byte_offset_within_sprite                                     ; 25f6: 66 79       fy  :24c5[1]
     lda #0                                                            ; 25f8: a9 00       ..  :24c7[1]
     sta l24d0                                                         ; 25fa: 8d d0 24    ..$ :24c9[1]
     sta l24d1                                                         ; 25fd: 8d d1 24    ..$ :24cc[1]
@@ -3186,12 +3214,12 @@ sub_c24d2
     pha                                                               ; 2604: 48          H   :24d3[1]
     lda x_entry_table9a,x                                             ; 2605: bd a8 09    ... :24d4[1]
     jsr get_address_of_sprite_a                                       ; 2608: 20 2c 13     ,. :24d7[1]
-    stx l0080                                                         ; 260b: 86 80       ..  :24da[1]
-    sty l0081                                                         ; 260d: 84 81       ..  :24dc[1]
+    stx mask_sprite_byte                                              ; 260b: 86 80       ..  :24da[1]
+    sty sprite_width                                                  ; 260d: 84 81       ..  :24dc[1]
     pla                                                               ; 260f: 68          h   :24de[1]
     tax                                                               ; 2610: aa          .   :24df[1]
     ldy #1                                                            ; 2611: a0 01       ..  :24e0[1]
-    lda (l0080),y                                                     ; 2613: b1 80       ..  :24e2[1]
+    lda (mask_sprite_byte),y                                          ; 2613: b1 80       ..  :24e2[1]
     ldy #0                                                            ; 2615: a0 00       ..  :24e4[1]
     ora #0                                                            ; 2617: 09 00       ..  :24e6[1]
     bpl c24eb                                                         ; 2619: 10 01       ..  :24e8[1]
@@ -3199,34 +3227,34 @@ sub_c24d2
 c24eb
     clc                                                               ; 261c: 18          .   :24eb[1]
     adc x_entry_table6a,x                                             ; 261d: 7d 7c 09    }|. :24ec[1]
-    sta l0076                                                         ; 2620: 85 76       .v  :24ef[1]
+    sta sprite_y_pos_low                                              ; 2620: 85 76       .v  :24ef[1]
     tya                                                               ; 2622: 98          .   :24f1[1]
     adc x_entry_table7a,x                                             ; 2623: 7d 92 09    }.. :24f2[1]
-    sta l0077                                                         ; 2626: 85 77       .w  :24f5[1]
+    sta sprite_y_pos_high                                             ; 2626: 85 77       .w  :24f5[1]
     ldy #3                                                            ; 2628: a0 03       ..  :24f7[1]
-    lda (l0080),y                                                     ; 262a: b1 80       ..  :24f9[1]
+    lda (mask_sprite_byte),y                                          ; 262a: b1 80       ..  :24f9[1]
     sec                                                               ; 262c: 38          8   :24fb[1]
     sbc #1                                                            ; 262d: e9 01       ..  :24fc[1]
-    sta l0074                                                         ; 262f: 85 74       .t  :24fe[1]
-    lda l0076                                                         ; 2631: a5 76       .v  :2500[1]
+    sta sprite_x_pos_low                                              ; 262f: 85 74       .t  :24fe[1]
+    lda sprite_y_pos_low                                              ; 2631: a5 76       .v  :2500[1]
     sec                                                               ; 2633: 38          8   :2502[1]
-    sbc l0074                                                         ; 2634: e5 74       .t  :2503[1]
-    sta l0074                                                         ; 2636: 85 74       .t  :2505[1]
-    lda l0077                                                         ; 2638: a5 77       .w  :2507[1]
+    sbc sprite_x_pos_low                                              ; 2634: e5 74       .t  :2503[1]
+    sta sprite_x_pos_low                                              ; 2636: 85 74       .t  :2505[1]
+    lda sprite_y_pos_high                                             ; 2638: a5 77       .w  :2507[1]
     sbc #0                                                            ; 263a: e9 00       ..  :2509[1]
-    sta l0075                                                         ; 263c: 85 75       .u  :250b[1]
+    sta sprite_x_pos_high                                             ; 263c: 85 75       .u  :250b[1]
     ldy #0                                                            ; 263e: a0 00       ..  :250d[1]
     lda l2550                                                         ; 2640: ad 50 25    .P% :250f[1]
     bpl c2515                                                         ; 2643: 10 01       ..  :2512[1]
     dey                                                               ; 2645: 88          .   :2514[1]
 c2515
     clc                                                               ; 2646: 18          .   :2515[1]
-    adc l0074                                                         ; 2647: 65 74       et  :2516[1]
-    sta l0074                                                         ; 2649: 85 74       .t  :2518[1]
+    adc sprite_x_pos_low                                              ; 2647: 65 74       et  :2516[1]
+    sta sprite_x_pos_low                                              ; 2649: 85 74       .t  :2518[1]
     sta l007a                                                         ; 264b: 85 7a       .z  :251a[1]
     tya                                                               ; 264d: 98          .   :251c[1]
-    adc l0075                                                         ; 264e: 65 75       eu  :251d[1]
-    sta l0075                                                         ; 2650: 85 75       .u  :251f[1]
+    adc sprite_x_pos_high                                             ; 264e: 65 75       eu  :251d[1]
+    sta sprite_x_pos_high                                             ; 2650: 85 75       .u  :251f[1]
     lsr                                                               ; 2652: 4a          J   :2521[1]
     ror l007a                                                         ; 2653: 66 7a       fz  :2522[1]
     lsr                                                               ; 2655: 4a          J   :2524[1]
@@ -3239,18 +3267,18 @@ c2515
     dey                                                               ; 2662: 88          .   :2531[1]
 c2532
     clc                                                               ; 2663: 18          .   :2532[1]
-    adc l0076                                                         ; 2664: 65 76       ev  :2533[1]
-    sta l0076                                                         ; 2666: 85 76       .v  :2535[1]
-    sta l007b                                                         ; 2668: 85 7b       .{  :2537[1]
+    adc sprite_y_pos_low                                              ; 2664: 65 76       ev  :2533[1]
+    sta sprite_y_pos_low                                              ; 2666: 85 76       .v  :2535[1]
+    sta sprite_screen_address2_low                                    ; 2668: 85 7b       .{  :2537[1]
     tya                                                               ; 266a: 98          .   :2539[1]
-    adc l0077                                                         ; 266b: 65 77       ew  :253a[1]
-    sta l0077                                                         ; 266d: 85 77       .w  :253c[1]
+    adc sprite_y_pos_high                                             ; 266b: 65 77       ew  :253a[1]
+    sta sprite_y_pos_high                                             ; 266d: 85 77       .w  :253c[1]
     lsr                                                               ; 266f: 4a          J   :253e[1]
-    ror l007b                                                         ; 2670: 66 7b       f{  :253f[1]
+    ror sprite_screen_address2_low                                    ; 2670: 66 7b       f{  :253f[1]
     lsr                                                               ; 2672: 4a          J   :2541[1]
-    ror l007b                                                         ; 2673: 66 7b       f{  :2542[1]
+    ror sprite_screen_address2_low                                    ; 2673: 66 7b       f{  :2542[1]
     lsr                                                               ; 2675: 4a          J   :2544[1]
-    ror l007b                                                         ; 2676: 66 7b       f{  :2545[1]
+    ror sprite_screen_address2_low                                    ; 2676: 66 7b       f{  :2545[1]
     lda #0                                                            ; 2678: a9 00       ..  :2547[1]
     sta l2550                                                         ; 267a: 8d 50 25    .P% :2549[1]
     sta l2551                                                         ; 267d: 8d 51 25    .Q% :254c[1]
@@ -3277,55 +3305,55 @@ c255a
     inx                                                               ; 2698: e8          .   :2567[1]
     ldy #3                                                            ; 2699: a0 03       ..  :2568[1]
 loop_c256a
-    lda address_low,y                                                 ; 269b: b9 70 00    .p. :256a[1]
+    lda address1_low,y                                                ; 269b: b9 70 00    .p. :256a[1]
     sta l0129,y                                                       ; 269e: 99 29 01    .). :256d[1]
     dey                                                               ; 26a1: 88          .   :2570[1]
     bpl loop_c256a                                                    ; 26a2: 10 f7       ..  :2571[1]
-    lda l0078                                                         ; 26a4: a5 78       .x  :2573[1]
+    lda sprite_x_offset_within_byte                                   ; 26a4: a5 78       .x  :2573[1]
     sta l012d                                                         ; 26a6: 8d 2d 01    .-. :2575[1]
-    lda l0079                                                         ; 26a9: a5 79       .y  :2578[1]
+    lda byte_offset_within_sprite                                     ; 26a9: a5 79       .y  :2578[1]
     sta l012e                                                         ; 26ab: 8d 2e 01    ... :257a[1]
     jsr sub_c2434                                                     ; 26ae: 20 34 24     4$ :257d[1]
     lda x_entry_table10a,x                                            ; 26b1: bd be 09    ... :2580[1]
     bpl c25a4                                                         ; 26b4: 10 1f       ..  :2583[1]
-    lda address_low                                                   ; 26b6: a5 70       .p  :2585[1]
+    lda address1_low                                                  ; 26b6: a5 70       .p  :2585[1]
     sec                                                               ; 26b8: 38          8   :2587[1]
     sbc l0129                                                         ; 26b9: ed 29 01    .). :2588[1]
-    lda address_high                                                  ; 26bc: a5 71       .q  :258b[1]
+    lda address1_high                                                 ; 26bc: a5 71       .q  :258b[1]
     sbc l012a                                                         ; 26be: ed 2a 01    .*. :258d[1]
     bpl c25c0                                                         ; 26c1: 10 2e       ..  :2590[1]
-    lda address_low                                                   ; 26c3: a5 70       .p  :2592[1]
+    lda address1_low                                                  ; 26c3: a5 70       .p  :2592[1]
     sta l0129                                                         ; 26c5: 8d 29 01    .). :2594[1]
-    lda address_high                                                  ; 26c8: a5 71       .q  :2597[1]
+    lda address1_high                                                 ; 26c8: a5 71       .q  :2597[1]
     sta l012a                                                         ; 26ca: 8d 2a 01    .*. :2599[1]
-    lda l0078                                                         ; 26cd: a5 78       .x  :259c[1]
+    lda sprite_x_offset_within_byte                                   ; 26cd: a5 78       .x  :259c[1]
     sta l012d                                                         ; 26cf: 8d 2d 01    .-. :259e[1]
     jmp c25c0                                                         ; 26d2: 4c c0 25    L.% :25a1[1]
 
 c25a4
     lda l012b                                                         ; 26d5: ad 2b 01    .+. :25a4[1]
     sec                                                               ; 26d8: 38          8   :25a7[1]
-    sbc l0072                                                         ; 26d9: e5 72       .r  :25a8[1]
+    sbc sprite_screen_address1_low                                    ; 26d9: e5 72       .r  :25a8[1]
     lda l012c                                                         ; 26db: ad 2c 01    .,. :25aa[1]
-    sbc l0073                                                         ; 26de: e5 73       .s  :25ad[1]
+    sbc sprite_screen_address1_high                                   ; 26de: e5 73       .s  :25ad[1]
     bpl c25c0                                                         ; 26e0: 10 0f       ..  :25af[1]
-    lda l0072                                                         ; 26e2: a5 72       .r  :25b1[1]
+    lda sprite_screen_address1_low                                    ; 26e2: a5 72       .r  :25b1[1]
     sta l012b                                                         ; 26e4: 8d 2b 01    .+. :25b3[1]
-    lda l0073                                                         ; 26e7: a5 73       .s  :25b6[1]
+    lda sprite_screen_address1_high                                   ; 26e7: a5 73       .s  :25b6[1]
     sta l012c                                                         ; 26e9: 8d 2c 01    .,. :25b8[1]
-    lda l0079                                                         ; 26ec: a5 79       .y  :25bb[1]
+    lda byte_offset_within_sprite                                     ; 26ec: a5 79       .y  :25bb[1]
     sta l012e                                                         ; 26ee: 8d 2e 01    ... :25bd[1]
 c25c0
     ldy #3                                                            ; 26f1: a0 03       ..  :25c0[1]
 loop_c25c2
     lda l0129,y                                                       ; 26f3: b9 29 01    .). :25c2[1]
-    sta address_low,y                                                 ; 26f6: 99 70 00    .p. :25c5[1]
+    sta address1_low,y                                                ; 26f6: 99 70 00    .p. :25c5[1]
     dey                                                               ; 26f9: 88          .   :25c8[1]
     bpl loop_c25c2                                                    ; 26fa: 10 f7       ..  :25c9[1]
     lda l012d                                                         ; 26fc: ad 2d 01    .-. :25cb[1]
-    sta l0078                                                         ; 26ff: 85 78       .x  :25ce[1]
+    sta sprite_x_offset_within_byte                                   ; 26ff: 85 78       .x  :25ce[1]
     lda l012e                                                         ; 2701: ad 2e 01    ... :25d0[1]
-    sta l0079                                                         ; 2704: 85 79       .y  :25d3[1]
+    sta byte_offset_within_sprite                                     ; 2704: 85 79       .y  :25d3[1]
     dex                                                               ; 2706: ca          .   :25d5[1]
 c25d6
     lda #0                                                            ; 2707: a9 00       ..  :25d6[1]
@@ -3362,8 +3390,8 @@ sub_c25f5
     tax                                                               ; 2741: aa          .   :2610[1]
     jsr sub_c24d2                                                     ; 2742: 20 d2 24     .$ :2611[1]
     jsr sub_c265a                                                     ; 2745: 20 5a 26     Z& :2614[1]
-    lda l007c                                                         ; 2748: a5 7c       .|  :2617[1]
-    ora l007d                                                         ; 274a: 05 7d       .}  :2619[1]
+    lda sprite_screen_address2_high                                   ; 2748: a5 7c       .|  :2617[1]
+    ora sprite_byte                                                   ; 274a: 05 7d       .}  :2619[1]
     beq c2626                                                         ; 274c: f0 09       ..  :261b[1]
     lda l0053                                                         ; 274e: a5 53       .S  :261d[1]
     clc                                                               ; 2750: 18          .   :261f[1]
@@ -3377,8 +3405,8 @@ c2626
     jsr sub_c24d2                                                     ; 275e: 20 d2 24     .$ :262d[1]
     jsr sub_c26e5                                                     ; 2761: 20 e5 26     .& :2630[1]
     jsr sub_c271e                                                     ; 2764: 20 1e 27     .' :2633[1]
-    lda l007c                                                         ; 2767: a5 7c       .|  :2636[1]
-    ora l007d                                                         ; 2769: 05 7d       .}  :2638[1]
+    lda sprite_screen_address2_high                                   ; 2767: a5 7c       .|  :2636[1]
+    ora sprite_byte                                                   ; 2769: 05 7d       .}  :2638[1]
     beq c264f                                                         ; 276b: f0 13       ..  :263a[1]
     lda #1                                                            ; 276d: a9 01       ..  :263c[1]
     sta l2551                                                         ; 276f: 8d 51 25    .Q% :263e[1]
@@ -3397,53 +3425,53 @@ return13
 
 sub_c265a
     lda #$ff                                                          ; 278b: a9 ff       ..  :265a[1]
-    sta l007c                                                         ; 278d: 85 7c       .|  :265c[1]
-    ldx l0078                                                         ; 278f: a6 78       .x  :265e[1]
-    ldy l007b                                                         ; 2791: a4 7b       .{  :2660[1]
+    sta sprite_screen_address2_high                                   ; 278d: 85 7c       .|  :265c[1]
+    ldx sprite_x_offset_within_byte                                   ; 278f: a6 78       .x  :265e[1]
+    ldy sprite_screen_address2_low                                    ; 2791: a4 7b       .{  :2660[1]
     tya                                                               ; 2793: 98          .   :2662[1]
     sec                                                               ; 2794: 38          8   :2663[1]
     sbc l007a                                                         ; 2795: e5 7a       .z  :2664[1]
-    sta l0080                                                         ; 2797: 85 80       ..  :2666[1]
+    sta mask_sprite_byte                                              ; 2797: 85 80       ..  :2666[1]
 loop_c2668
     jsr sub_c1efa                                                     ; 2799: 20 fa 1e     .. :2668[1]
     cmp #3                                                            ; 279c: c9 03       ..  :266b[1]
     beq c2676                                                         ; 279e: f0 07       ..  :266d[1]
     dey                                                               ; 27a0: 88          .   :266f[1]
-    dec l0080                                                         ; 27a1: c6 80       ..  :2670[1]
+    dec mask_sprite_byte                                              ; 27a1: c6 80       ..  :2670[1]
     bpl loop_c2668                                                    ; 27a3: 10 f4       ..  :2672[1]
-    inc l007c                                                         ; 27a5: e6 7c       .|  :2674[1]
+    inc sprite_screen_address2_high                                   ; 27a5: e6 7c       .|  :2674[1]
 c2676
     lda #$ff                                                          ; 27a7: a9 ff       ..  :2676[1]
-    sta l007d                                                         ; 27a9: 85 7d       .}  :2678[1]
-    ldx l0079                                                         ; 27ab: a6 79       .y  :267a[1]
-    ldy l007b                                                         ; 27ad: a4 7b       .{  :267c[1]
+    sta sprite_byte                                                   ; 27a9: 85 7d       .}  :2678[1]
+    ldx byte_offset_within_sprite                                     ; 27ab: a6 79       .y  :267a[1]
+    ldy sprite_screen_address2_low                                    ; 27ad: a4 7b       .{  :267c[1]
     tya                                                               ; 27af: 98          .   :267e[1]
     sec                                                               ; 27b0: 38          8   :267f[1]
     sbc l007a                                                         ; 27b1: e5 7a       .z  :2680[1]
-    sta l0080                                                         ; 27b3: 85 80       ..  :2682[1]
+    sta mask_sprite_byte                                              ; 27b3: 85 80       ..  :2682[1]
 loop_c2684
     jsr sub_c1efa                                                     ; 27b5: 20 fa 1e     .. :2684[1]
     cmp #3                                                            ; 27b8: c9 03       ..  :2687[1]
     beq return14                                                      ; 27ba: f0 07       ..  :2689[1]
     dey                                                               ; 27bc: 88          .   :268b[1]
-    dec l0080                                                         ; 27bd: c6 80       ..  :268c[1]
+    dec mask_sprite_byte                                              ; 27bd: c6 80       ..  :268c[1]
     bpl loop_c2684                                                    ; 27bf: 10 f4       ..  :268e[1]
-    inc l007d                                                         ; 27c1: e6 7d       .}  :2690[1]
+    inc sprite_byte                                                   ; 27c1: e6 7d       .}  :2690[1]
 return14
     rts                                                               ; 27c3: 60          `   :2692[1]
 
 sub_c2693
     ldx l0053                                                         ; 27c4: a6 53       .S  :2693[1]
-    lda l007c                                                         ; 27c6: a5 7c       .|  :2695[1]
-    cmp l007d                                                         ; 27c8: c5 7d       .}  :2697[1]
+    lda sprite_screen_address2_high                                   ; 27c6: a5 7c       .|  :2695[1]
+    cmp sprite_byte                                                   ; 27c8: c5 7d       .}  :2697[1]
     beq return15                                                      ; 27ca: f0 49       .I  :2699[1]
     bcc c26c2                                                         ; 27cc: 90 25       .%  :269b[1]
-    lda address_low                                                   ; 27ce: a5 70       .p  :269d[1]
+    lda address1_low                                                  ; 27ce: a5 70       .p  :269d[1]
     and #7                                                            ; 27d0: 29 07       ).  :269f[1]
-    sta l0080                                                         ; 27d2: 85 80       ..  :26a1[1]
+    sta mask_sprite_byte                                              ; 27d2: 85 80       ..  :26a1[1]
     lda #8                                                            ; 27d4: a9 08       ..  :26a3[1]
     sec                                                               ; 27d6: 38          8   :26a5[1]
-    sbc l0080                                                         ; 27d7: e5 80       ..  :26a6[1]
+    sbc mask_sprite_byte                                              ; 27d7: e5 80       ..  :26a6[1]
     clc                                                               ; 27d9: 18          .   :26a8[1]
     adc x_entry_table2a,x                                             ; 27da: 7d 50 09    }P. :26a9[1]
     sta x_entry_table2a,x                                             ; 27dd: 9d 50 09    .P. :26ac[1]
@@ -3456,14 +3484,14 @@ sub_c2693
     jmp return15                                                      ; 27f0: 4c e4 26    L.& :26bf[1]
 
 c26c2
-    lda l0072                                                         ; 27f3: a5 72       .r  :26c2[1]
+    lda sprite_screen_address1_low                                    ; 27f3: a5 72       .r  :26c2[1]
     and #7                                                            ; 27f5: 29 07       ).  :26c4[1]
     clc                                                               ; 27f7: 18          .   :26c6[1]
     adc #1                                                            ; 27f8: 69 01       i.  :26c7[1]
-    sta l0080                                                         ; 27fa: 85 80       ..  :26c9[1]
+    sta mask_sprite_byte                                              ; 27fa: 85 80       ..  :26c9[1]
     lda x_entry_table2a,x                                             ; 27fc: bd 50 09    .P. :26cb[1]
     sec                                                               ; 27ff: 38          8   :26ce[1]
-    sbc l0080                                                         ; 2800: e5 80       ..  :26cf[1]
+    sbc mask_sprite_byte                                              ; 2800: e5 80       ..  :26cf[1]
     sta x_entry_table2a,x                                             ; 2802: 9d 50 09    .P. :26d1[1]
     lda x_entry_table5a,x                                             ; 2805: bd 66 09    .f. :26d4[1]
     sbc #0                                                            ; 2808: e9 00       ..  :26d7[1]
@@ -3476,53 +3504,53 @@ return15
 
 sub_c26e5
     lda #$ff                                                          ; 2816: a9 ff       ..  :26e5[1]
-    sta l007e                                                         ; 2818: 85 7e       .~  :26e7[1]
+    sta address2_low                                                  ; 2818: 85 7e       .~  :26e7[1]
     ldy l007a                                                         ; 281a: a4 7a       .z  :26e9[1]
-    ldx l0079                                                         ; 281c: a6 79       .y  :26eb[1]
+    ldx byte_offset_within_sprite                                     ; 281c: a6 79       .y  :26eb[1]
     txa                                                               ; 281e: 8a          .   :26ed[1]
     sec                                                               ; 281f: 38          8   :26ee[1]
-    sbc l0078                                                         ; 2820: e5 78       .x  :26ef[1]
-    sta l0080                                                         ; 2822: 85 80       ..  :26f1[1]
+    sbc sprite_x_offset_within_byte                                   ; 2820: e5 78       .x  :26ef[1]
+    sta mask_sprite_byte                                              ; 2822: 85 80       ..  :26f1[1]
 loop_c26f3
     jsr sub_c1efa                                                     ; 2824: 20 fa 1e     .. :26f3[1]
     cmp #3                                                            ; 2827: c9 03       ..  :26f6[1]
     beq c2701                                                         ; 2829: f0 07       ..  :26f8[1]
     dex                                                               ; 282b: ca          .   :26fa[1]
-    dec l0080                                                         ; 282c: c6 80       ..  :26fb[1]
+    dec mask_sprite_byte                                              ; 282c: c6 80       ..  :26fb[1]
     bpl loop_c26f3                                                    ; 282e: 10 f4       ..  :26fd[1]
-    inc l007e                                                         ; 2830: e6 7e       .~  :26ff[1]
+    inc address2_low                                                  ; 2830: e6 7e       .~  :26ff[1]
 c2701
     lda #$ff                                                          ; 2832: a9 ff       ..  :2701[1]
-    sta l007f                                                         ; 2834: 85 7f       ..  :2703[1]
-    ldy l007b                                                         ; 2836: a4 7b       .{  :2705[1]
-    ldx l0079                                                         ; 2838: a6 79       .y  :2707[1]
+    sta address2_high                                                 ; 2834: 85 7f       ..  :2703[1]
+    ldy sprite_screen_address2_low                                    ; 2836: a4 7b       .{  :2705[1]
+    ldx byte_offset_within_sprite                                     ; 2838: a6 79       .y  :2707[1]
     txa                                                               ; 283a: 8a          .   :2709[1]
     sec                                                               ; 283b: 38          8   :270a[1]
-    sbc l0078                                                         ; 283c: e5 78       .x  :270b[1]
-    sta l0080                                                         ; 283e: 85 80       ..  :270d[1]
+    sbc sprite_x_offset_within_byte                                   ; 283c: e5 78       .x  :270b[1]
+    sta mask_sprite_byte                                              ; 283e: 85 80       ..  :270d[1]
 loop_c270f
     jsr sub_c1efa                                                     ; 2840: 20 fa 1e     .. :270f[1]
     cmp #3                                                            ; 2843: c9 03       ..  :2712[1]
     beq return16                                                      ; 2845: f0 07       ..  :2714[1]
     dex                                                               ; 2847: ca          .   :2716[1]
-    dec l0080                                                         ; 2848: c6 80       ..  :2717[1]
+    dec mask_sprite_byte                                              ; 2848: c6 80       ..  :2717[1]
     bpl loop_c270f                                                    ; 284a: 10 f4       ..  :2719[1]
-    inc l007f                                                         ; 284c: e6 7f       ..  :271b[1]
+    inc address2_high                                                 ; 284c: e6 7f       ..  :271b[1]
 return16
     rts                                                               ; 284e: 60          `   :271d[1]
 
 sub_c271e
     ldx l0053                                                         ; 284f: a6 53       .S  :271e[1]
-    lda l007e                                                         ; 2851: a5 7e       .~  :2720[1]
-    cmp l007f                                                         ; 2853: c5 7f       ..  :2722[1]
+    lda address2_low                                                  ; 2851: a5 7e       .~  :2720[1]
+    cmp address2_high                                                 ; 2853: c5 7f       ..  :2722[1]
     beq return17                                                      ; 2855: f0 49       .I  :2724[1]
     bcc c274d                                                         ; 2857: 90 25       .%  :2726[1]
-    lda l0074                                                         ; 2859: a5 74       .t  :2728[1]
+    lda sprite_x_pos_low                                              ; 2859: a5 74       .t  :2728[1]
     and #7                                                            ; 285b: 29 07       ).  :272a[1]
-    sta l0080                                                         ; 285d: 85 80       ..  :272c[1]
+    sta mask_sprite_byte                                              ; 285d: 85 80       ..  :272c[1]
     lda #8                                                            ; 285f: a9 08       ..  :272e[1]
     sec                                                               ; 2861: 38          8   :2730[1]
-    sbc l0080                                                         ; 2862: e5 80       ..  :2731[1]
+    sbc mask_sprite_byte                                              ; 2862: e5 80       ..  :2731[1]
     clc                                                               ; 2864: 18          .   :2733[1]
     adc x_entry_table6a,x                                             ; 2865: 7d 7c 09    }|. :2734[1]
     sta x_entry_table6a,x                                             ; 2868: 9d 7c 09    .|. :2737[1]
@@ -3535,14 +3563,14 @@ sub_c271e
     jmp return17                                                      ; 287b: 4c 6f 27    Lo' :274a[1]
 
 c274d
-    lda l0076                                                         ; 287e: a5 76       .v  :274d[1]
+    lda sprite_y_pos_low                                              ; 287e: a5 76       .v  :274d[1]
     and #7                                                            ; 2880: 29 07       ).  :274f[1]
     clc                                                               ; 2882: 18          .   :2751[1]
     adc #1                                                            ; 2883: 69 01       i.  :2752[1]
-    sta l0080                                                         ; 2885: 85 80       ..  :2754[1]
+    sta mask_sprite_byte                                              ; 2885: 85 80       ..  :2754[1]
     lda x_entry_table6a,x                                             ; 2887: bd 7c 09    .|. :2756[1]
     sec                                                               ; 288a: 38          8   :2759[1]
-    sbc l0080                                                         ; 288b: e5 80       ..  :275a[1]
+    sbc mask_sprite_byte                                              ; 288b: e5 80       ..  :275a[1]
     sta x_entry_table6a,x                                             ; 288d: 9d 7c 09    .|. :275c[1]
     lda x_entry_table7a,x                                             ; 2890: bd 92 09    ... :275f[1]
     sbc #0                                                            ; 2893: e9 00       ..  :2762[1]
@@ -3570,45 +3598,45 @@ sub_c2770
     lda #0                                                            ; 28bb: a9 00       ..  :278a[1]
     sta l2890                                                         ; 28bd: 8d 90 28    ..( :278c[1]
     sta l2891                                                         ; 28c0: 8d 91 28    ..( :278f[1]
-    lda l007f                                                         ; 28c3: a5 7f       ..  :2792[1]
+    lda address2_high                                                 ; 28c3: a5 7f       ..  :2792[1]
     sta l288f                                                         ; 28c5: 8d 8f 28    ..( :2794[1]
     bne c279c                                                         ; 28c8: d0 03       ..  :2797[1]
     jmp c2851                                                         ; 28ca: 4c 51 28    LQ( :2799[1]
 
 c279c
-    lda l0078                                                         ; 28cd: a5 78       .x  :279c[1]
+    lda sprite_x_offset_within_byte                                   ; 28cd: a5 78       .x  :279c[1]
     sta l0121                                                         ; 28cf: 8d 21 01    .!. :279e[1]
-    lda l0079                                                         ; 28d2: a5 79       .y  :27a1[1]
+    lda byte_offset_within_sprite                                     ; 28d2: a5 79       .y  :27a1[1]
     sta l0122                                                         ; 28d4: 8d 22 01    .". :27a3[1]
     ldx l0053                                                         ; 28d7: a6 53       .S  :27a6[1]
     jsr sub_c2434                                                     ; 28d9: 20 34 24     4$ :27a8[1]
-    lda l0072                                                         ; 28dc: a5 72       .r  :27ab[1]
+    lda sprite_screen_address1_low                                    ; 28dc: a5 72       .r  :27ab[1]
     clc                                                               ; 28de: 18          .   :27ad[1]
     adc #1                                                            ; 28df: 69 01       i.  :27ae[1]
-    sta l0072                                                         ; 28e1: 85 72       .r  :27b0[1]
-    lda l0073                                                         ; 28e3: a5 73       .s  :27b2[1]
+    sta sprite_screen_address1_low                                    ; 28e1: 85 72       .r  :27b0[1]
+    lda sprite_screen_address1_high                                   ; 28e3: a5 73       .s  :27b2[1]
     adc #0                                                            ; 28e5: 69 00       i.  :27b4[1]
-    sta l0073                                                         ; 28e7: 85 73       .s  :27b6[1]
-    lda address_low                                                   ; 28e9: a5 70       .p  :27b8[1]
+    sta sprite_screen_address1_high                                   ; 28e7: 85 73       .s  :27b6[1]
+    lda address1_low                                                  ; 28e9: a5 70       .p  :27b8[1]
     clc                                                               ; 28eb: 18          .   :27ba[1]
-    adc l0072                                                         ; 28ec: 65 72       er  :27bb[1]
+    adc sprite_screen_address1_low                                    ; 28ec: 65 72       er  :27bb[1]
     sta l2892                                                         ; 28ee: 8d 92 28    ..( :27bd[1]
-    lda address_high                                                  ; 28f1: a5 71       .q  :27c0[1]
-    adc l0073                                                         ; 28f3: 65 73       es  :27c2[1]
+    lda address1_high                                                 ; 28f1: a5 71       .q  :27c0[1]
+    adc sprite_screen_address1_high                                   ; 28f3: 65 73       es  :27c2[1]
     sta l2893                                                         ; 28f5: 8d 93 28    ..( :27c4[1]
     lda l0121                                                         ; 28f8: ad 21 01    .!. :27c7[1]
-    sta l0078                                                         ; 28fb: 85 78       .x  :27ca[1]
+    sta sprite_x_offset_within_byte                                   ; 28fb: 85 78       .x  :27ca[1]
     lda l0122                                                         ; 28fd: ad 22 01    .". :27cc[1]
-    sta l0079                                                         ; 2900: 85 79       .y  :27cf[1]
-    ldy l007b                                                         ; 2902: a4 7b       .{  :27d1[1]
-    asl address_low                                                   ; 2904: 06 70       .p  :27d3[1]
-    rol address_high                                                  ; 2906: 26 71       &q  :27d5[1]
+    sta byte_offset_within_sprite                                     ; 2900: 85 79       .y  :27cf[1]
+    ldy sprite_screen_address2_low                                    ; 2902: a4 7b       .{  :27d1[1]
+    asl address1_low                                                  ; 2904: 06 70       .p  :27d3[1]
+    rol address1_high                                                 ; 2906: 26 71       &q  :27d5[1]
     lda l2892                                                         ; 2908: ad 92 28    ..( :27d7[1]
     clc                                                               ; 290b: 18          .   :27da[1]
-    adc address_low                                                   ; 290c: 65 70       ep  :27db[1]
+    adc address1_low                                                  ; 290c: 65 70       ep  :27db[1]
     sta l007a                                                         ; 290e: 85 7a       .z  :27dd[1]
     lda l2893                                                         ; 2910: ad 93 28    ..( :27df[1]
-    adc address_high                                                  ; 2913: 65 71       eq  :27e2[1]
+    adc address1_high                                                 ; 2913: 65 71       eq  :27e2[1]
     lsr                                                               ; 2915: 4a          J   :27e4[1]
     ror l007a                                                         ; 2916: 66 7a       fz  :27e5[1]
     lsr                                                               ; 2918: 4a          J   :27e7[1]
@@ -3624,14 +3652,14 @@ c279c
     dec l2890                                                         ; 292a: ce 90 28    ..( :27f9[1]
     bne c281d                                                         ; 292d: d0 1f       ..  :27fc[1]
 c27fe
-    asl l0072                                                         ; 292f: 06 72       .r  :27fe[1]
-    rol l0073                                                         ; 2931: 26 73       &s  :2800[1]
+    asl sprite_screen_address1_low                                    ; 292f: 06 72       .r  :27fe[1]
+    rol sprite_screen_address1_high                                   ; 2931: 26 73       &s  :2800[1]
     lda l2892                                                         ; 2933: ad 92 28    ..( :2802[1]
     clc                                                               ; 2936: 18          .   :2805[1]
-    adc l0072                                                         ; 2937: 65 72       er  :2806[1]
+    adc sprite_screen_address1_low                                    ; 2937: 65 72       er  :2806[1]
     sta l007a                                                         ; 2939: 85 7a       .z  :2808[1]
     lda l2893                                                         ; 293b: ad 93 28    ..( :280a[1]
-    adc l0073                                                         ; 293e: 65 73       es  :280d[1]
+    adc sprite_screen_address1_high                                   ; 293e: 65 73       es  :280d[1]
     lsr                                                               ; 2940: 4a          J   :280f[1]
     ror l007a                                                         ; 2941: 66 7a       fz  :2810[1]
     lsr                                                               ; 2943: 4a          J   :2812[1]
@@ -3681,8 +3709,8 @@ sub_c2859
     ldx l007a                                                         ; 2993: a6 7a       .z  :2862[1]
     txa                                                               ; 2995: 8a          .   :2864[1]
     sec                                                               ; 2996: 38          8   :2865[1]
-    sbc l0078                                                         ; 2997: e5 78       .x  :2866[1]
-    sta l0080                                                         ; 2999: 85 80       ..  :2868[1]
+    sbc sprite_x_offset_within_byte                                   ; 2997: e5 78       .x  :2866[1]
+    sta mask_sprite_byte                                              ; 2999: 85 80       ..  :2868[1]
     jmp c287e                                                         ; 299b: 4c 7e 28    L~( :286a[1]
 
 sub_c286d
@@ -3692,17 +3720,17 @@ sub_c286d
     ror l007a                                                         ; 29a2: 66 7a       fz  :2871[1]
     lsr                                                               ; 29a4: 4a          J   :2873[1]
     ror l007a                                                         ; 29a5: 66 7a       fz  :2874[1]
-    ldx l0079                                                         ; 29a7: a6 79       .y  :2876[1]
+    ldx byte_offset_within_sprite                                     ; 29a7: a6 79       .y  :2876[1]
     txa                                                               ; 29a9: 8a          .   :2878[1]
     sec                                                               ; 29aa: 38          8   :2879[1]
     sbc l007a                                                         ; 29ab: e5 7a       .z  :287a[1]
-    sta l0080                                                         ; 29ad: 85 80       ..  :287c[1]
+    sta mask_sprite_byte                                              ; 29ad: 85 80       ..  :287c[1]
 c287e
     jsr sub_c1efa                                                     ; 29af: 20 fa 1e     .. :287e[1]
     cmp #3                                                            ; 29b2: c9 03       ..  :2881[1]
     beq c288c                                                         ; 29b4: f0 07       ..  :2883[1]
     dex                                                               ; 29b6: ca          .   :2885[1]
-    dec l0080                                                         ; 29b7: c6 80       ..  :2886[1]
+    dec mask_sprite_byte                                              ; 29b7: c6 80       ..  :2886[1]
     bpl c287e                                                         ; 29b9: 10 f4       ..  :2888[1]
     lda #0                                                            ; 29bb: a9 00       ..  :288a[1]
 c288c
@@ -3733,18 +3761,18 @@ sub_c2894
     sta l0044                                                         ; 29d8: 85 44       .D  :28a7[1]
     jsr sub_c265a                                                     ; 29da: 20 5a 26     Z& :28a9[1]
     jsr sub_c26e5                                                     ; 29dd: 20 e5 26     .& :28ac[1]
-    lda l007c                                                         ; 29e0: a5 7c       .|  :28af[1]
+    lda sprite_screen_address2_high                                   ; 29e0: a5 7c       .|  :28af[1]
     and #1                                                            ; 29e2: 29 01       ).  :28b1[1]
     sta l295b                                                         ; 29e4: 8d 5b 29    .[) :28b3[1]
-    lda l007d                                                         ; 29e7: a5 7d       .}  :28b6[1]
+    lda sprite_byte                                                   ; 29e7: a5 7d       .}  :28b6[1]
     and #4                                                            ; 29e9: 29 04       ).  :28b8[1]
     ora l295b                                                         ; 29eb: 0d 5b 29    .[) :28ba[1]
     sta l295b                                                         ; 29ee: 8d 5b 29    .[) :28bd[1]
-    lda l007e                                                         ; 29f1: a5 7e       .~  :28c0[1]
+    lda address2_low                                                  ; 29f1: a5 7e       .~  :28c0[1]
     and #8                                                            ; 29f3: 29 08       ).  :28c2[1]
     ora l295b                                                         ; 29f5: 0d 5b 29    .[) :28c4[1]
     sta l295b                                                         ; 29f8: 8d 5b 29    .[) :28c7[1]
-    lda l007f                                                         ; 29fb: a5 7f       ..  :28ca[1]
+    lda address2_high                                                 ; 29fb: a5 7f       ..  :28ca[1]
     and #2                                                            ; 29fd: 29 02       ).  :28cc[1]
     ora l295b                                                         ; 29ff: 0d 5b 29    .[) :28ce[1]
     sta l295b                                                         ; 2a02: 8d 5b 29    .[) :28d1[1]
@@ -3775,7 +3803,7 @@ sub_c28e2
     jsr sub_c24d2                                                     ; 2a29: 20 d2 24     .$ :28f8[1]
     ldx #7                                                            ; 2a2c: a2 07       ..  :28fb[1]
 loop_c28fd
-    lda address_low,x                                                 ; 2a2e: b5 70       .p  :28fd[1]
+    lda address1_low,x                                                ; 2a2e: b5 70       .p  :28fd[1]
     sta l0121,x                                                       ; 2a30: 9d 21 01    .!. :28ff[1]
     dex                                                               ; 2a33: ca          .   :2902[1]
     bpl loop_c28fd                                                    ; 2a34: 10 f8       ..  :2903[1]
@@ -3786,26 +3814,26 @@ loop_c28fd
     jsr sub_c24d2                                                     ; 2a3c: 20 d2 24     .$ :290b[1]
     lda l0123                                                         ; 2a3f: ad 23 01    .#. :290e[1]
     sec                                                               ; 2a42: 38          8   :2911[1]
-    sbc address_low                                                   ; 2a43: e5 70       .p  :2912[1]
+    sbc address1_low                                                  ; 2a43: e5 70       .p  :2912[1]
     lda l0124                                                         ; 2a45: ad 24 01    .$. :2914[1]
-    sbc address_high                                                  ; 2a48: e5 71       .q  :2917[1]
+    sbc address1_high                                                 ; 2a48: e5 71       .q  :2917[1]
     bmi c2945                                                         ; 2a4a: 30 2a       0*  :2919[1]
-    lda l0072                                                         ; 2a4c: a5 72       .r  :291b[1]
+    lda sprite_screen_address1_low                                    ; 2a4c: a5 72       .r  :291b[1]
     sec                                                               ; 2a4e: 38          8   :291d[1]
     sbc l0121                                                         ; 2a4f: ed 21 01    .!. :291e[1]
-    lda l0073                                                         ; 2a52: a5 73       .s  :2921[1]
+    lda sprite_screen_address1_high                                   ; 2a52: a5 73       .s  :2921[1]
     sbc l0122                                                         ; 2a54: ed 22 01    .". :2923[1]
     bmi c2945                                                         ; 2a57: 30 1d       0.  :2926[1]
     lda l0127                                                         ; 2a59: ad 27 01    .'. :2928[1]
     sec                                                               ; 2a5c: 38          8   :292b[1]
-    sbc l0074                                                         ; 2a5d: e5 74       .t  :292c[1]
+    sbc sprite_x_pos_low                                              ; 2a5d: e5 74       .t  :292c[1]
     lda l0128                                                         ; 2a5f: ad 28 01    .(. :292e[1]
-    sbc l0075                                                         ; 2a62: e5 75       .u  :2931[1]
+    sbc sprite_x_pos_high                                             ; 2a62: e5 75       .u  :2931[1]
     bmi c2945                                                         ; 2a64: 30 10       0.  :2933[1]
-    lda l0076                                                         ; 2a66: a5 76       .v  :2935[1]
+    lda sprite_y_pos_low                                              ; 2a66: a5 76       .v  :2935[1]
     sec                                                               ; 2a68: 38          8   :2937[1]
     sbc l0125                                                         ; 2a69: ed 25 01    .%. :2938[1]
-    lda l0077                                                         ; 2a6c: a5 77       .w  :293b[1]
+    lda sprite_y_pos_high                                             ; 2a6c: a5 77       .w  :293b[1]
     sbc l0126                                                         ; 2a6e: ed 26 01    .&. :293d[1]
     bmi c2945                                                         ; 2a71: 30 03       0.  :2940[1]
     dec l295b                                                         ; 2a73: ce 5b 29    .[) :2942[1]
@@ -3906,23 +3934,23 @@ apply_new_menu_index_rts
 unplot_menu_pointer
     ldx current_menu_index                                            ; 2b1c: a6 2e       ..  :29eb[1]
     bmi c2a12                                                         ; 2b1e: 30 23       0#  :29ed[1]
-    lda l004c                                                         ; 2b20: a5 4c       .L  :29ef[1]
+    lda screen_base_address_high                                      ; 2b20: a5 4c       .L  :29ef[1]
     pha                                                               ; 2b22: 48          H   :29f1[1]
     lda #$58 ; 'X'                                                    ; 2b23: a9 58       .X  :29f2[1]
-    sta l004c                                                         ; 2b25: 85 4c       .L  :29f4[1]
-    jsr something_to_do_with_incrementing_by_20_pixels_x_maybe        ; 2b27: 20 46 2c     F, :29f6[1]
+    sta screen_base_address_high                                      ; 2b25: 85 4c       .L  :29f4[1]
+    jsr calculate_sprite_position_for_menu_item                       ; 2b27: 20 46 2c     F, :29f6[1]
     lda #$1d                                                          ; 2b2a: a9 1d       ..  :29f9[1]
-    sta l0016                                                         ; 2b2c: 85 16       ..  :29fb[1]
+    sta sprite_number                                                 ; 2b2c: 85 16       ..  :29fb[1]
     lda #2                                                            ; 2b2e: a9 02       ..  :29fd[1]
-    sta l0015                                                         ; 2b30: 85 15       ..  :29ff[1]
+    sta sprite_op_flags                                               ; 2b30: 85 15       ..  :29ff[1]
     jsr sprite_op                                                     ; 2b32: 20 8d 13     .. :2a01[1]
     lda #$1e                                                          ; 2b35: a9 1e       ..  :2a04[1]
-    sta l0016                                                         ; 2b37: 85 16       ..  :2a06[1]
+    sta sprite_number                                                 ; 2b37: 85 16       ..  :2a06[1]
     lda #0                                                            ; 2b39: a9 00       ..  :2a08[1]
-    sta l0015                                                         ; 2b3b: 85 15       ..  :2a0a[1]
+    sta sprite_op_flags                                               ; 2b3b: 85 15       ..  :2a0a[1]
     jsr sprite_op                                                     ; 2b3d: 20 8d 13     .. :2a0c[1]
     pla                                                               ; 2b40: 68          h   :2a0f[1]
-    sta l004c                                                         ; 2b41: 85 4c       .L  :2a10[1]
+    sta screen_base_address_high                                      ; 2b41: 85 4c       .L  :2a10[1]
 c2a12
     lda #$ff                                                          ; 2b43: a9 ff       ..  :2a12[1]
     sta current_menu_index                                            ; 2b45: 85 2e       ..  :2a14[1]
@@ -3931,18 +3959,18 @@ c2a12
 plot_menu_pointer
     ldx new_menu_index                                                ; 2b48: a6 29       .)  :2a17[1]
     bmi c2a33                                                         ; 2b4a: 30 18       0.  :2a19[1]
-    lda l004c                                                         ; 2b4c: a5 4c       .L  :2a1b[1]
+    lda screen_base_address_high                                      ; 2b4c: a5 4c       .L  :2a1b[1]
     pha                                                               ; 2b4e: 48          H   :2a1d[1]
     lda #$58 ; 'X'                                                    ; 2b4f: a9 58       .X  :2a1e[1]
-    sta l004c                                                         ; 2b51: 85 4c       .L  :2a20[1]
-    jsr something_to_do_with_incrementing_by_20_pixels_x_maybe        ; 2b53: 20 46 2c     F, :2a22[1]
+    sta screen_base_address_high                                      ; 2b51: 85 4c       .L  :2a20[1]
+    jsr calculate_sprite_position_for_menu_item                       ; 2b53: 20 46 2c     F, :2a22[1]
     lda #$1d                                                          ; 2b56: a9 1d       ..  :2a25[1]
-    sta l0016                                                         ; 2b58: 85 16       ..  :2a27[1]
+    sta sprite_number                                                 ; 2b58: 85 16       ..  :2a27[1]
     lda #0                                                            ; 2b5a: a9 00       ..  :2a29[1]
-    sta l0015                                                         ; 2b5c: 85 15       ..  :2a2b[1]
+    sta sprite_op_flags                                               ; 2b5c: 85 15       ..  :2a2b[1]
     jsr sprite_op                                                     ; 2b5e: 20 8d 13     .. :2a2d[1]
     pla                                                               ; 2b61: 68          h   :2a30[1]
-    sta l004c                                                         ; 2b62: 85 4c       .L  :2a31[1]
+    sta screen_base_address_high                                      ; 2b62: 85 4c       .L  :2a31[1]
 c2a33
     lda new_menu_index                                                ; 2b64: a5 29       .)  :2a33[1]
     sta current_menu_index                                            ; 2b66: 85 2e       ..  :2a35[1]
@@ -4060,7 +4088,7 @@ c2afc
     jmp c3404                                                         ; 2c2d: 4c 04 34    L.4 :2afc[1]
 
 c2aff
-    jsr something_to_do_with_incrementing_by_20_pixels_x_maybe        ; 2c30: 20 46 2c     F, :2aff[1]
+    jsr calculate_sprite_position_for_menu_item                       ; 2c30: 20 46 2c     F, :2aff[1]
     lda l3966                                                         ; 2c33: ad 66 39    .f9 :2b02[1]
     pha                                                               ; 2c36: 48          H   :2b05[1]
     lda #$ff                                                          ; 2c37: a9 ff       ..  :2b06[1]
@@ -4073,20 +4101,20 @@ c2aff
     eor #$ff                                                          ; 2c46: 49 ff       I.  :2b15[1]
     sta l3966                                                         ; 2c48: 8d 66 39    .f9 :2b17[1]
     lda #$1f                                                          ; 2c4b: a9 1f       ..  :2b1a[1]
-    sta l0016                                                         ; 2c4d: 85 16       ..  :2b1c[1]
-    lda l004c                                                         ; 2c4f: a5 4c       .L  :2b1e[1]
+    sta sprite_number                                                 ; 2c4d: 85 16       ..  :2b1c[1]
+    lda screen_base_address_high                                      ; 2c4f: a5 4c       .L  :2b1e[1]
     pha                                                               ; 2c51: 48          H   :2b20[1]
     lda #$58 ; 'X'                                                    ; 2c52: a9 58       .X  :2b21[1]
-    sta l004c                                                         ; 2c54: 85 4c       .L  :2b23[1]
+    sta screen_base_address_high                                      ; 2c54: 85 4c       .L  :2b23[1]
     lda #0                                                            ; 2c56: a9 00       ..  :2b25[1]
     ldx l3966                                                         ; 2c58: ae 66 39    .f9 :2b27[1]
     bne c2b2e                                                         ; 2c5b: d0 02       ..  :2b2a[1]
     lda #2                                                            ; 2c5d: a9 02       ..  :2b2c[1]
 c2b2e
-    sta l0015                                                         ; 2c5f: 85 15       ..  :2b2e[1]
+    sta sprite_op_flags                                               ; 2c5f: 85 15       ..  :2b2e[1]
     jsr sprite_op                                                     ; 2c61: 20 8d 13     .. :2b30[1]
     pla                                                               ; 2c64: 68          h   :2b33[1]
-    sta l004c                                                         ; 2c65: 85 4c       .L  :2b34[1]
+    sta screen_base_address_high                                      ; 2c65: 85 4c       .L  :2b34[1]
     rts                                                               ; 2c67: 60          `   :2b36[1]
 
 sub_c2b37
@@ -4133,13 +4161,13 @@ return21
     rts                                                               ; 2cb7: 60          `   :2b86[1]
 
 something21_TODO
-    sta address_low                                                   ; 2cb8: 85 70       .p  :2b87[1]
+    sta address1_low                                                  ; 2cb8: 85 70       .p  :2b87[1]
     lda #0                                                            ; 2cba: a9 00       ..  :2b89[1]
-    sta address_high                                                  ; 2cbc: 85 71       .q  :2b8b[1]
+    sta address1_high                                                 ; 2cbc: 85 71       .q  :2b8b[1]
     ldx l296d                                                         ; 2cbe: ae 6d 29    .m) :2b8d[1]
 loop_c2b90
     lda menu_slots1,x                                                 ; 2cc1: bd 5c 29    .\) :2b90[1]
-    cmp address_low                                                   ; 2cc4: c5 70       .p  :2b93[1]
+    cmp address1_low                                                  ; 2cc4: c5 70       .p  :2b93[1]
     beq c2bba                                                         ; 2cc6: f0 23       .#  :2b95[1]
     inx                                                               ; 2cc8: e8          .   :2b97[1]
     cpx l296e                                                         ; 2cc9: ec 6e 29    .n) :2b98[1]
@@ -4154,43 +4182,43 @@ loop_c2ba4
     cpx l296e                                                         ; 2cdc: ec 6e 29    .n) :2bab[1]
     bcs loop_c2ba4                                                    ; 2cdf: b0 f4       ..  :2bae[1]
     inc l296e                                                         ; 2ce1: ee 6e 29    .n) :2bb0[1]
-    lda address_low                                                   ; 2ce4: a5 70       .p  :2bb3[1]
+    lda address1_low                                                  ; 2ce4: a5 70       .p  :2bb3[1]
     sta menu_slots1,x                                                 ; 2ce6: 9d 5c 29    .\) :2bb5[1]
-    dec address_high                                                  ; 2ce9: c6 71       .q  :2bb8[1]
+    dec address1_high                                                 ; 2ce9: c6 71       .q  :2bb8[1]
 c2bba
-    lda address_high                                                  ; 2ceb: a5 71       .q  :2bba[1]
+    lda address1_high                                                 ; 2ceb: a5 71       .q  :2bba[1]
     rts                                                               ; 2ced: 60          `   :2bbc[1]
 
 sub_c2bbd
-    sta address_low                                                   ; 2cee: 85 70       .p  :2bbd[1]
+    sta address1_low                                                  ; 2cee: 85 70       .p  :2bbd[1]
     lda #0                                                            ; 2cf0: a9 00       ..  :2bbf[1]
-    sta address_high                                                  ; 2cf2: 85 71       .q  :2bc1[1]
+    sta address1_high                                                 ; 2cf2: 85 71       .q  :2bc1[1]
     ldx l296e                                                         ; 2cf4: ae 6e 29    .n) :2bc3[1]
 loop_c2bc6
     lda menu_slots1,x                                                 ; 2cf7: bd 5c 29    .\) :2bc6[1]
     beq c2bd6                                                         ; 2cfa: f0 0b       ..  :2bc9[1]
-    cmp address_low                                                   ; 2cfc: c5 70       .p  :2bcb[1]
+    cmp address1_low                                                  ; 2cfc: c5 70       .p  :2bcb[1]
     beq c2bdd                                                         ; 2cfe: f0 0e       ..  :2bcd[1]
     inx                                                               ; 2d00: e8          .   :2bcf[1]
     cpx #$11                                                          ; 2d01: e0 11       ..  :2bd0[1]
     bcc loop_c2bc6                                                    ; 2d03: 90 f2       ..  :2bd2[1]
     bcs c2bdd                                                         ; 2d05: b0 07       ..  :2bd4[1]
 c2bd6
-    lda address_low                                                   ; 2d07: a5 70       .p  :2bd6[1]
+    lda address1_low                                                  ; 2d07: a5 70       .p  :2bd6[1]
     sta menu_slots1,x                                                 ; 2d09: 9d 5c 29    .\) :2bd8[1]
-    dec address_high                                                  ; 2d0c: c6 71       .q  :2bdb[1]
+    dec address1_high                                                 ; 2d0c: c6 71       .q  :2bdb[1]
 c2bdd
-    lda address_high                                                  ; 2d0e: a5 71       .q  :2bdd[1]
+    lda address1_high                                                 ; 2d0e: a5 71       .q  :2bdd[1]
     rts                                                               ; 2d10: 60          `   :2bdf[1]
 
 something22_TODO
-    sta address_low                                                   ; 2d11: 85 70       .p  :2be0[1]
+    sta address1_low                                                  ; 2d11: 85 70       .p  :2be0[1]
     lda #0                                                            ; 2d13: a9 00       ..  :2be2[1]
-    sta address_high                                                  ; 2d15: 85 71       .q  :2be4[1]
+    sta address1_high                                                 ; 2d15: 85 71       .q  :2be4[1]
     ldx l296e                                                         ; 2d17: ae 6e 29    .n) :2be6[1]
 loop_c2be9
     lda menu_slots1,x                                                 ; 2d1a: bd 5c 29    .\) :2be9[1]
-    cmp address_low                                                   ; 2d1d: c5 70       .p  :2bec[1]
+    cmp address1_low                                                  ; 2d1d: c5 70       .p  :2bec[1]
     beq c2bf7                                                         ; 2d1f: f0 07       ..  :2bee[1]
     inx                                                               ; 2d21: e8          .   :2bf0[1]
     cpx #$11                                                          ; 2d22: e0 11       ..  :2bf1[1]
@@ -4204,9 +4232,9 @@ c2bf7
     bcc c2bf7                                                         ; 2d31: 90 f5       ..  :2c00[1]
     lda #0                                                            ; 2d33: a9 00       ..  :2c02[1]
     sta menu_slots1,x                                                 ; 2d35: 9d 5c 29    .\) :2c04[1]
-    dec address_high                                                  ; 2d38: c6 71       .q  :2c07[1]
+    dec address1_high                                                 ; 2d38: c6 71       .q  :2c07[1]
 c2c09
-    lda address_high                                                  ; 2d3a: a5 71       .q  :2c09[1]
+    lda address1_high                                                 ; 2d3a: a5 71       .q  :2c09[1]
     rts                                                               ; 2d3c: 60          `   :2c0b[1]
 
 sub_c2c0c
@@ -4215,30 +4243,30 @@ sub_c2c0c
     pha                                                               ; 2d3f: 48          H   :2c0e[1]
     tya                                                               ; 2d40: 98          .   :2c0f[1]
     pha                                                               ; 2d41: 48          H   :2c10[1]
-    lda l004c                                                         ; 2d42: a5 4c       .L  :2c11[1]
+    lda screen_base_address_high                                      ; 2d42: a5 4c       .L  :2c11[1]
     pha                                                               ; 2d44: 48          H   :2c13[1]
     lda #$58 ; 'X'                                                    ; 2d45: a9 58       .X  :2c14[1]
-    sta l004c                                                         ; 2d47: 85 4c       .L  :2c16[1]
-    jsr something_to_do_with_incrementing_by_20_pixels_x_maybe        ; 2d49: 20 46 2c     F, :2c18[1]
+    sta screen_base_address_high                                      ; 2d47: 85 4c       .L  :2c16[1]
+    jsr calculate_sprite_position_for_menu_item                       ; 2d49: 20 46 2c     F, :2c18[1]
     lda #0                                                            ; 2d4c: a9 00       ..  :2c1b[1]
-    sta l0015                                                         ; 2d4e: 85 15       ..  :2c1d[1]
+    sta sprite_op_flags                                               ; 2d4e: 85 15       ..  :2c1d[1]
     lda #1                                                            ; 2d50: a9 01       ..  :2c1f[1]
-    sta l0016                                                         ; 2d52: 85 16       ..  :2c21[1]
+    sta sprite_number                                                 ; 2d52: 85 16       ..  :2c21[1]
     lda menu_slots1,x                                                 ; 2d54: bd 5c 29    .\) :2c23[1]
     sta menu_slots2,x                                                 ; 2d57: 9d 6f 29    .o) :2c26[1]
     bne c2c35                                                         ; 2d5a: d0 0a       ..  :2c29[1]
     lda #2                                                            ; 2d5c: a9 02       ..  :2c2b[1]
-    sta l0015                                                         ; 2d5e: 85 15       ..  :2c2d[1]
+    sta sprite_op_flags                                               ; 2d5e: 85 15       ..  :2c2d[1]
     jsr sprite_op                                                     ; 2d60: 20 8d 13     .. :2c2f[1]
     jmp c2c3d                                                         ; 2d63: 4c 3d 2c    L=, :2c32[1]
 
 c2c35
     jsr sprite_op                                                     ; 2d66: 20 8d 13     .. :2c35[1]
-    sta l0016                                                         ; 2d69: 85 16       ..  :2c38[1]
+    sta sprite_number                                                 ; 2d69: 85 16       ..  :2c38[1]
     jsr sprite_op                                                     ; 2d6b: 20 8d 13     .. :2c3a[1]
 c2c3d
     pla                                                               ; 2d6e: 68          h   :2c3d[1]
-    sta l004c                                                         ; 2d6f: 85 4c       .L  :2c3e[1]
+    sta screen_base_address_high                                      ; 2d6f: 85 4c       .L  :2c3e[1]
     pla                                                               ; 2d71: 68          h   :2c40[1]
     tay                                                               ; 2d72: a8          .   :2c41[1]
     pla                                                               ; 2d73: 68          h   :2c42[1]
@@ -4246,29 +4274,27 @@ c2c3d
     pla                                                               ; 2d75: 68          h   :2c44[1]
     rts                                                               ; 2d76: 60          `   :2c45[1]
 
-something_to_do_with_incrementing_by_20_pixels_x_maybe
+calculate_sprite_position_for_menu_item
     txa                                                               ; 2d77: 8a          .   :2c46[1]
     pha                                                               ; 2d78: 48          H   :2c47[1]
     lda #$25 ; '%'                                                    ; 2d79: a9 25       .%  :2c48[1]
-    sta l001a                                                         ; 2d7b: 85 1a       ..  :2c4a[1]
+    sta sprite_y_base_low                                             ; 2d7b: 85 1a       ..  :2c4a[1]
     lda #0                                                            ; 2d7d: a9 00       ..  :2c4c[1]
-    sta l0019                                                         ; 2d7f: 85 19       ..  :2c4e[1]
-    sta l001b                                                         ; 2d81: 85 1b       ..  :2c50[1]
-; TODO: Self-modifying code here? If so we haven't found the code that modifies it as
-; we have no labels
+    sta sprite_x_base_high                                            ; 2d7f: 85 19       ..  :2c4e[1]
+    sta sprite_y_base_high                                            ; 2d81: 85 1b       ..  :2c50[1]
     lda #0                                                            ; 2d83: a9 00       ..  :2c52[1]
     cpx #0                                                            ; 2d85: e0 00       ..  :2c54[1]
-    beq c2c62                                                         ; 2d87: f0 0a       ..  :2c56[1]
-loop_c2c58
+    beq finished_multiply                                             ; 2d87: f0 0a       ..  :2c56[1]
+multiply_x_by_twenty_loop
     clc                                                               ; 2d89: 18          .   :2c58[1]
-    adc #$14                                                          ; 2d8a: 69 14       i.  :2c59[1]
-    bcc c2c5f                                                         ; 2d8c: 90 02       ..  :2c5b[1]
-    inc l0019                                                         ; 2d8e: e6 19       ..  :2c5d[1]
-c2c5f
+    adc #20                                                           ; 2d8a: 69 14       i.  :2c59[1]
+    bcc skip_increment_high_byte                                      ; 2d8c: 90 02       ..  :2c5b[1]
+    inc sprite_x_base_high                                            ; 2d8e: e6 19       ..  :2c5d[1]
+skip_increment_high_byte
     dex                                                               ; 2d90: ca          .   :2c5f[1]
-    bne loop_c2c58                                                    ; 2d91: d0 f6       ..  :2c60[1]
-c2c62
-    sta l0018                                                         ; 2d93: 85 18       ..  :2c62[1]
+    bne multiply_x_by_twenty_loop                                     ; 2d91: d0 f6       ..  :2c60[1]
+finished_multiply
+    sta sprite_x_base_low                                             ; 2d93: 85 18       ..  :2c62[1]
     pla                                                               ; 2d95: 68          h   :2c64[1]
     tax                                                               ; 2d96: aa          .   :2c65[1]
     rts                                                               ; 2d97: 60          `   :2c66[1]
@@ -4682,9 +4708,9 @@ c30a5
     lda #0                                                            ; 31e1: a9 00       ..  :30b0[1]
     jsr sub_c25f5                                                     ; 31e3: 20 f5 25     .% :30b2[1]
     lda #$f7                                                          ; 31e6: a9 f7       ..  :30b5[1]
-    sta address_low                                                   ; 31e8: 85 70       .p  :30b7[1]
+    sta address1_low                                                  ; 31e8: 85 70       .p  :30b7[1]
     lda #$2e ; '.'                                                    ; 31ea: a9 2e       ..  :30b9[1]
-    sta address_high                                                  ; 31ec: 85 71       .q  :30bb[1]
+    sta address1_high                                                 ; 31ec: 85 71       .q  :30bb[1]
     lda #$ff                                                          ; 31ee: a9 ff       ..  :30bd[1]
     ldx l09df                                                         ; 31f0: ae df 09    ... :30bf[1]
     cpx #0                                                            ; 31f3: e0 00       ..  :30c2[1]
@@ -4919,9 +4945,9 @@ c3331
     lda #0                                                            ; 3472: a9 00       ..  :3341[1]
     jsr sub_c25f5                                                     ; 3474: 20 f5 25     .% :3343[1]
     lda #$dd                                                          ; 3477: a9 dd       ..  :3346[1]
-    sta address_low                                                   ; 3479: 85 70       .p  :3348[1]
+    sta address1_low                                                  ; 3479: 85 70       .p  :3348[1]
     lda #$30 ; '0'                                                    ; 347b: a9 30       .0  :334a[1]
-    sta address_high                                                  ; 347d: 85 71       .q  :334c[1]
+    sta address1_high                                                 ; 347d: 85 71       .q  :334c[1]
     lda #$ff                                                          ; 347f: a9 ff       ..  :334e[1]
     ldx l09df                                                         ; 3481: ae df 09    ... :3350[1]
     cpx #0                                                            ; 3484: e0 00       ..  :3353[1]
@@ -4947,21 +4973,21 @@ sub_c336e
     pha                                                               ; 34a2: 48          H   :3371[1]
     ldx #0                                                            ; 34a3: a2 00       ..  :3372[1]
     jsr sub_c24d2                                                     ; 34a5: 20 d2 24     .$ :3374[1]
-    lda l0074                                                         ; 34a8: a5 74       .t  :3377[1]
+    lda sprite_x_pos_low                                              ; 34a8: a5 74       .t  :3377[1]
     clc                                                               ; 34aa: 18          .   :3379[1]
-    adc l0076                                                         ; 34ab: 65 76       ev  :337a[1]
-    sta address_high                                                  ; 34ad: 85 71       .q  :337c[1]
-    lda l0075                                                         ; 34af: a5 75       .u  :337e[1]
-    adc l0077                                                         ; 34b1: 65 77       ew  :3380[1]
+    adc sprite_y_pos_low                                              ; 34ab: 65 76       ev  :337a[1]
+    sta address1_high                                                 ; 34ad: 85 71       .q  :337c[1]
+    lda sprite_x_pos_high                                             ; 34af: a5 75       .u  :337e[1]
+    adc sprite_y_pos_high                                             ; 34b1: 65 77       ew  :3380[1]
     ror                                                               ; 34b3: 6a          j   :3382[1]
-    ror address_high                                                  ; 34b4: 66 71       fq  :3383[1]
+    ror address1_high                                                 ; 34b4: 66 71       fq  :3383[1]
     lsr                                                               ; 34b6: 4a          J   :3385[1]
-    ror address_high                                                  ; 34b7: 66 71       fq  :3386[1]
+    ror address1_high                                                 ; 34b7: 66 71       fq  :3386[1]
     lsr                                                               ; 34b9: 4a          J   :3388[1]
-    ror address_high                                                  ; 34ba: 66 71       fq  :3389[1]
+    ror address1_high                                                 ; 34ba: 66 71       fq  :3389[1]
     lsr                                                               ; 34bc: 4a          J   :338b[1]
-    ror address_high                                                  ; 34bd: 66 71       fq  :338c[1]
-    ldy address_high                                                  ; 34bf: a4 71       .q  :338e[1]
+    ror address1_high                                                 ; 34bd: 66 71       fq  :338c[1]
+    ldy address1_high                                                 ; 34bf: a4 71       .q  :338e[1]
     lda #$ff                                                          ; 34c1: a9 ff       ..  :3390[1]
     sta l0044                                                         ; 34c3: 85 44       .D  :3392[1]
     lda #5                                                            ; 34c5: a9 05       ..  :3394[1]
@@ -4972,33 +4998,33 @@ c3399
     lda x_entry_table2a                                               ; 34cf: ad 50 09    .P. :339e[1]
     clc                                                               ; 34d2: 18          .   :33a1[1]
     adc l3403                                                         ; 34d3: 6d 03 34    m.4 :33a2[1]
-    sta address_low                                                   ; 34d6: 85 70       .p  :33a5[1]
+    sta address1_low                                                  ; 34d6: 85 70       .p  :33a5[1]
     and #$f8                                                          ; 34d8: 29 f8       ).  :33a7[1]
-    sta l0072                                                         ; 34da: 85 72       .r  :33a9[1]
+    sta sprite_screen_address1_low                                    ; 34da: 85 72       .r  :33a9[1]
     lda x_entry_table5a                                               ; 34dc: ad 66 09    .f. :33ab[1]
     adc #0                                                            ; 34df: 69 00       i.  :33ae[1]
-    sta l0073                                                         ; 34e1: 85 73       .s  :33b0[1]
+    sta sprite_screen_address1_high                                   ; 34e1: 85 73       .s  :33b0[1]
     jmp c33cb                                                         ; 34e3: 4c cb 33    L.3 :33b2[1]
 
 c33b5
     lda x_entry_table2a                                               ; 34e6: ad 50 09    .P. :33b5[1]
     sec                                                               ; 34e9: 38          8   :33b8[1]
     sbc l3403                                                         ; 34ea: ed 03 34    ..4 :33b9[1]
-    sta address_low                                                   ; 34ed: 85 70       .p  :33bc[1]
+    sta address1_low                                                  ; 34ed: 85 70       .p  :33bc[1]
     and #$f8                                                          ; 34ef: 29 f8       ).  :33be[1]
     ora #7                                                            ; 34f1: 09 07       ..  :33c0[1]
-    sta l0072                                                         ; 34f3: 85 72       .r  :33c2[1]
+    sta sprite_screen_address1_low                                    ; 34f3: 85 72       .r  :33c2[1]
     lda x_entry_table5a                                               ; 34f5: ad 66 09    .f. :33c4[1]
     sbc #0                                                            ; 34f8: e9 00       ..  :33c7[1]
-    sta l0073                                                         ; 34fa: 85 73       .s  :33c9[1]
+    sta sprite_screen_address1_high                                   ; 34fa: 85 73       .s  :33c9[1]
 c33cb
     lsr                                                               ; 34fc: 4a          J   :33cb[1]
-    ror address_low                                                   ; 34fd: 66 70       fp  :33cc[1]
+    ror address1_low                                                  ; 34fd: 66 70       fp  :33cc[1]
     lsr                                                               ; 34ff: 4a          J   :33ce[1]
-    ror address_low                                                   ; 3500: 66 70       fp  :33cf[1]
+    ror address1_low                                                  ; 3500: 66 70       fp  :33cf[1]
     lsr                                                               ; 3502: 4a          J   :33d1[1]
-    ror address_low                                                   ; 3503: 66 70       fp  :33d2[1]
-    ldx address_low                                                   ; 3505: a6 70       .p  :33d4[1]
+    ror address1_low                                                  ; 3503: 66 70       fp  :33d2[1]
+    ldx address1_low                                                  ; 3505: a6 70       .p  :33d4[1]
     jsr sub_c1efa                                                     ; 3507: 20 fa 1e     .. :33d6[1]
     cmp #2                                                            ; 350a: c9 02       ..  :33d9[1]
     beq c33ea                                                         ; 350c: f0 0d       ..  :33db[1]
@@ -5009,21 +5035,21 @@ c33cb
     jmp c3399                                                         ; 3518: 4c 99 33    L.3 :33e7[1]
 
 c33ea
-    lda l0072                                                         ; 351b: a5 72       .r  :33ea[1]
+    lda sprite_screen_address1_low                                    ; 351b: a5 72       .r  :33ea[1]
     sta x_entry_table2a                                               ; 351d: 8d 50 09    .P. :33ec[1]
-    lda l0073                                                         ; 3520: a5 73       .s  :33ef[1]
+    lda sprite_screen_address1_high                                   ; 3520: a5 73       .s  :33ef[1]
     sta x_entry_table5a                                               ; 3522: 8d 66 09    .f. :33f1[1]
     lda #$ff                                                          ; 3525: a9 ff       ..  :33f4[1]
     bne c33fa                                                         ; 3527: d0 02       ..  :33f6[1]
 c33f8
     lda #0                                                            ; 3529: a9 00       ..  :33f8[1]
 c33fa
-    sta address_low                                                   ; 352b: 85 70       .p  :33fa[1]
+    sta address1_low                                                  ; 352b: 85 70       .p  :33fa[1]
     pla                                                               ; 352d: 68          h   :33fc[1]
     tay                                                               ; 352e: a8          .   :33fd[1]
     pla                                                               ; 352f: 68          h   :33fe[1]
     tax                                                               ; 3530: aa          .   :33ff[1]
-    lda address_low                                                   ; 3531: a5 70       .p  :3400[1]
+    lda address1_low                                                  ; 3531: a5 70       .p  :3400[1]
     rts                                                               ; 3533: 60          `   :3402[1]
 
 l3403
@@ -5191,17 +5217,17 @@ c3557
 c3573
     jsr sub_c37f3                                                     ; 36a4: 20 f3 37     .7 :3573[1]
     lda #$d6                                                          ; 36a7: a9 d6       ..  :3576[1]
-    sta address_low                                                   ; 36a9: 85 70       .p  :3578[1]
+    sta address1_low                                                  ; 36a9: 85 70       .p  :3578[1]
     lda #$34 ; '4'                                                    ; 36ab: a9 34       .4  :357a[1]
-    sta address_high                                                  ; 36ad: 85 71       .q  :357c[1]
+    sta address1_high                                                 ; 36ad: 85 71       .q  :357c[1]
     lda l3497                                                         ; 36af: ad 97 34    ..4 :357e[1]
     beq c359e                                                         ; 36b2: f0 1b       ..  :3581[1]
     lda #5                                                            ; 36b4: a9 05       ..  :3583[1]
     jsr osfile_wrapper                                                ; 36b6: 20 dc 16     .. :3585[1]
     bne c359b                                                         ; 36b9: d0 11       ..  :3588[1]
-    lda l007b                                                         ; 36bb: a5 7b       .{  :358a[1]
-    ora l007c                                                         ; 36bd: 05 7c       .|  :358c[1]
-    ora l007d                                                         ; 36bf: 05 7d       .}  :358e[1]
+    lda sprite_screen_address2_low                                    ; 36bb: a5 7b       .{  :358a[1]
+    ora sprite_screen_address2_high                                   ; 36bd: 05 7c       .|  :358c[1]
+    ora sprite_byte                                                   ; 36bf: 05 7d       .}  :358e[1]
     bne c3598                                                         ; 36c1: d0 06       ..  :3590[1]
     lda l007a                                                         ; 36c3: a5 7a       .z  :3592[1]
     cmp #$85                                                          ; 36c5: c9 85       ..  :3594[1]
@@ -5216,16 +5242,16 @@ c359e
     sta l09eb                                                         ; 36d2: 8d eb 09    ... :35a1[1]
     ldx #0                                                            ; 36d5: a2 00       ..  :35a4[1]
     ldy #0                                                            ; 36d7: a0 00       ..  :35a6[1]
-    stx l0076                                                         ; 36d9: 86 76       .v  :35a8[1]
-    stx l0077                                                         ; 36db: 86 77       .w  :35aa[1]
+    stx sprite_y_pos_low                                              ; 36d9: 86 76       .v  :35a8[1]
+    stx sprite_y_pos_high                                             ; 36db: 86 77       .w  :35aa[1]
     lda #$ea                                                          ; 36dd: a9 ea       ..  :35ac[1]
     sta l007a                                                         ; 36df: 85 7a       .z  :35ae[1]
     lda #9                                                            ; 36e1: a9 09       ..  :35b0[1]
-    sta l007b                                                         ; 36e3: 85 7b       .{  :35b2[1]
+    sta sprite_screen_address2_low                                    ; 36e3: 85 7b       .{  :35b2[1]
     lda #$6f ; 'o'                                                    ; 36e5: a9 6f       .o  :35b4[1]
-    sta l007e                                                         ; 36e7: 85 7e       .~  :35b6[1]
+    sta address2_low                                                  ; 36e7: 85 7e       .~  :35b6[1]
     lda #$0a                                                          ; 36e9: a9 0a       ..  :35b8[1]
-    sta l007f                                                         ; 36eb: 85 7f       ..  :35ba[1]
+    sta address2_high                                                 ; 36eb: 85 7f       ..  :35ba[1]
 c35bc
     ldx #$ea                                                          ; 36ed: a2 ea       ..  :35bc[1]
     ldy #9                                                            ; 36ef: a0 09       ..  :35be[1]
@@ -5335,9 +5361,9 @@ return24
 
 c36a8
     lda #<auxcode_filename                                            ; 37d9: a9 9c       ..  :36a8[1]
-    sta address_low                                                   ; 37db: 85 70       .p  :36aa[1]
+    sta address1_low                                                  ; 37db: 85 70       .p  :36aa[1]
     lda #>auxcode_filename                                            ; 37dd: a9 38       .8  :36ac[1]
-    sta address_high                                                  ; 37df: 85 71       .q  :36ae[1]
+    sta address1_high                                                 ; 37df: 85 71       .q  :36ae[1]
     ldx #<auxcode                                                     ; 37e1: a2 c0       ..  :36b0[1]
     ldy #>auxcode                                                     ; 37e3: a0 53       .S  :36b2[1]
     lda #osfile_load                                                  ; 37e5: a9 ff       ..  :36b4[1]
@@ -5528,22 +5554,22 @@ return26
     rts                                                               ; 3923: 60          `   :37f2[1]
 
 sub_c37f3
-    stx address_low                                                   ; 3924: 86 70       .p  :37f3[1]
-    sty address_high                                                  ; 3926: 84 71       .q  :37f5[1]
+    stx address1_low                                                  ; 3924: 86 70       .p  :37f3[1]
+    sty address1_high                                                 ; 3926: 84 71       .q  :37f5[1]
     ldy #0                                                            ; 3928: a0 00       ..  :37f7[1]
 loop_c37f9
-    lda (address_low),y                                               ; 392a: b1 70       .p  :37f9[1]
+    lda (address1_low),y                                              ; 392a: b1 70       .p  :37f9[1]
     eor eor_key                                                       ; 392c: 45 45       EE  :37fb[1]
     cmp #$0d                                                          ; 392e: c9 0d       ..  :37fd[1]
     beq c3804                                                         ; 3930: f0 03       ..  :37ff[1]
     iny                                                               ; 3932: c8          .   :3801[1]
     bne loop_c37f9                                                    ; 3933: d0 f5       ..  :3802[1]
 c3804
-    sty address_low                                                   ; 3935: 84 70       .p  :3804[1]
+    sty address1_low                                                  ; 3935: 84 70       .p  :3804[1]
     lda l0409                                                         ; 3937: ad 09 04    ... :3806[1]
     sec                                                               ; 393a: 38          8   :3809[1]
     sbc #2                                                            ; 393b: e9 02       ..  :380a[1]
-    sbc address_low                                                   ; 393d: e5 70       .p  :380c[1]
+    sbc address1_low                                                  ; 393d: e5 70       .p  :380c[1]
     lsr                                                               ; 393f: 4a          J   :380e[1]
     tay                                                               ; 3940: a8          .   :380f[1]
     beq c381a                                                         ; 3941: f0 08       ..  :3810[1]
@@ -5553,12 +5579,12 @@ print_y_spaces_loop
     dey                                                               ; 3948: 88          .   :3817[1]
     bne print_y_spaces_loop                                           ; 3949: d0 fa       ..  :3818[1]
 c381a
-    ldy address_high                                                  ; 394b: a4 71       .q  :381a[1]
+    ldy address1_high                                                 ; 394b: a4 71       .q  :381a[1]
 ; Print the EOR-encrypted (with eor_key) CR-terminated string at YX. Print in italics
 ; iff l0043 is non-0.
 print_encrypted_string_at_yx
-    stx address_low                                                   ; 394d: 86 70       .p  :381c[1]
-    sty address_high                                                  ; 394f: 84 71       .q  :381e[1]
+    stx address1_low                                                  ; 394d: 86 70       .p  :381c[1]
+    sty address1_high                                                 ; 394f: 84 71       .q  :381e[1]
     lda #<print_italic                                                ; 3951: a9 66       .f  :3820[1]
     sta print_char_target                                             ; 3953: 8d 4e 38    .N8 :3822[1]
     lda #>print_italic                                                ; 3956: a9 18       ..  :3825[1]
@@ -5572,7 +5598,7 @@ print_encrypted_string_at_yx
 c3838
     ldy #0                                                            ; 3969: a0 00       ..  :3838[1]
 loop_c383a
-    lda (address_low),y                                               ; 396b: b1 70       .p  :383a[1]
+    lda (address1_low),y                                              ; 396b: b1 70       .p  :383a[1]
     eor eor_key                                                       ; 396d: 45 45       EE  :383c[1]
     cmp #vdu_cr                                                       ; 396f: c9 0d       ..  :383e[1]
     beq c3848                                                         ; 3971: f0 06       ..  :3840[1]
@@ -5671,19 +5697,19 @@ some_data3_TODO
 
 sub_c38f6
     sta l3973                                                         ; 3a27: 8d 73 39    .s9 :38f6[1]
-    lda address_low                                                   ; 3a2a: a5 70       .p  :38f9[1]
+    lda address1_low                                                  ; 3a2a: a5 70       .p  :38f9[1]
     pha                                                               ; 3a2c: 48          H   :38fb[1]
-    lda address_high                                                  ; 3a2d: a5 71       .q  :38fc[1]
+    lda address1_high                                                 ; 3a2d: a5 71       .q  :38fc[1]
     pha                                                               ; 3a2f: 48          H   :38fe[1]
-    stx address_low                                                   ; 3a30: 86 70       .p  :38ff[1]
-    sty address_high                                                  ; 3a32: 84 71       .q  :3901[1]
+    stx address1_low                                                  ; 3a30: 86 70       .p  :38ff[1]
+    sty address1_high                                                 ; 3a32: 84 71       .q  :3901[1]
     lda l3966                                                         ; 3a34: ad 66 39    .f9 :3903[1]
     beq c3954                                                         ; 3a37: f0 4c       .L  :3906[1]
     ldy #0                                                            ; 3a39: a0 00       ..  :3908[1]
-    lda (address_low),y                                               ; 3a3b: b1 70       .p  :390a[1]
+    lda (address1_low),y                                              ; 3a3b: b1 70       .p  :390a[1]
     and #$f0                                                          ; 3a3d: 29 f0       ).  :390c[1]
     beq c393c                                                         ; 3a3f: f0 2c       .,  :390e[1]
-    lda (address_low),y                                               ; 3a41: b1 70       .p  :3910[1]
+    lda (address1_low),y                                              ; 3a41: b1 70       .p  :3910[1]
     and #3                                                            ; 3a43: 29 03       ).  :3912[1]
     tax                                                               ; 3a45: aa          .   :3914[1]
     lda l3973                                                         ; 3a46: ad 73 39    .s9 :3915[1]
@@ -5692,10 +5718,10 @@ sub_c38f6
     sta four_entry_table3_maybe_sound,x                               ; 3a4e: 9d 6f 39    .o9 :391d[1]
     cpx #2                                                            ; 3a51: e0 02       ..  :3920[1]
     bcs c394b                                                         ; 3a53: b0 27       .'  :3922[1]
-    lda address_low                                                   ; 3a55: a5 70       .p  :3924[1]
+    lda address1_low                                                  ; 3a55: a5 70       .p  :3924[1]
     cmp l3967,x                                                       ; 3a57: dd 67 39    .g9 :3926[1]
     bne c3932                                                         ; 3a5a: d0 07       ..  :3929[1]
-    lda address_high                                                  ; 3a5c: a5 71       .q  :392b[1]
+    lda address1_high                                                 ; 3a5c: a5 71       .q  :392b[1]
     cmp l396b,x                                                       ; 3a5e: dd 6b 39    .k9 :392d[1]
     beq c394b                                                         ; 3a61: f0 19       ..  :3930[1]
 c3932
@@ -5706,23 +5732,23 @@ c3932
     lda #osbyte_flush_buffer                                          ; 3a68: a9 15       ..  :3937[1]
     jsr osbyte                                                        ; 3a6a: 20 f4 ff     .. :3939[1]   ; Flush specific buffer X
 c393c
-    lda (address_low),y                                               ; 3a6d: b1 70       .p  :393c[1]
+    lda (address1_low),y                                              ; 3a6d: b1 70       .p  :393c[1]
     and #3                                                            ; 3a6f: 29 03       ).  :393e[1]
     tax                                                               ; 3a71: aa          .   :3940[1]
-    lda address_low                                                   ; 3a72: a5 70       .p  :3941[1]
+    lda address1_low                                                  ; 3a72: a5 70       .p  :3941[1]
     sta l3967,x                                                       ; 3a74: 9d 67 39    .g9 :3943[1]
-    lda address_high                                                  ; 3a77: a5 71       .q  :3946[1]
+    lda address1_high                                                 ; 3a77: a5 71       .q  :3946[1]
     sta l396b,x                                                       ; 3a79: 9d 6b 39    .k9 :3948[1]
 c394b
-    ldx address_low                                                   ; 3a7c: a6 70       .p  :394b[1]
-    ldy address_high                                                  ; 3a7e: a4 71       .q  :394d[1]
+    ldx address1_low                                                  ; 3a7c: a6 70       .p  :394b[1]
+    ldy address1_high                                                 ; 3a7e: a4 71       .q  :394d[1]
     lda #osword_sound                                                 ; 3a80: a9 07       ..  :394f[1]
     jsr osword                                                        ; 3a82: 20 f1 ff     .. :3951[1]   ; SOUND command
 c3954
     pla                                                               ; 3a85: 68          h   :3954[1]
-    sta address_high                                                  ; 3a86: 85 71       .q  :3955[1]
+    sta address1_high                                                 ; 3a86: 85 71       .q  :3955[1]
     pla                                                               ; 3a88: 68          h   :3957[1]
-    sta address_low                                                   ; 3a89: 85 70       .p  :3958[1]
+    sta address1_low                                                  ; 3a89: 85 70       .p  :3958[1]
     lda l3973                                                         ; 3a8b: ad 73 39    .s9 :395a[1]
     rts                                                               ; 3a8e: 60          `   :395d[1]
 
@@ -5986,23 +6012,23 @@ execution_start
 
 ; Relocation 1: Copy 512 bytes of code from &40FF to &400
     lda #<some_code_high_copy_TODO                                    ; 3c16: a9 ff       ..
-    sta address_low                                                   ; 3c18: 85 70       .p
+    sta address1_low                                                  ; 3c18: 85 70       .p
     lda #>some_code_high_copy_TODO                                    ; 3c1a: a9 40       .@
-    sta address_high                                                  ; 3c1c: 85 71       .q
+    sta address1_high                                                 ; 3c1c: 85 71       .q
     lda #<wait_for_timingB_counter                                    ; 3c1e: a9 00       ..
-    sta l0072                                                         ; 3c20: 85 72       .r
+    sta sprite_screen_address1_low                                    ; 3c20: 85 72       .r
     lda #>wait_for_timingB_counter                                    ; 3c22: a9 04       ..
-    sta l0073                                                         ; 3c24: 85 73       .s
+    sta sprite_screen_address1_high                                   ; 3c24: 85 73       .s
     ldx #2                                                            ; 3c26: a2 02       ..
     beq relocation2                                                   ; 3c28: f0 10       ..             ; TODO: branch never taken?
     ldy #0                                                            ; 3c2a: a0 00       ..
 relocation1_loop
-    lda (address_low),y                                               ; 3c2c: b1 70       .p
-    sta (l0072),y                                                     ; 3c2e: 91 72       .r
+    lda (address1_low),y                                              ; 3c2c: b1 70       .p
+    sta (sprite_screen_address1_low),y                                ; 3c2e: 91 72       .r
     iny                                                               ; 3c30: c8          .
     bne relocation1_loop                                              ; 3c31: d0 f9       ..
-    inc address_high                                                  ; 3c33: e6 71       .q
-    inc l0073                                                         ; 3c35: e6 73       .s
+    inc address1_high                                                 ; 3c33: e6 71       .q
+    inc sprite_screen_address1_high                                   ; 3c35: e6 73       .s
     dex                                                               ; 3c37: ca          .
     bne relocation1_loop                                              ; 3c38: d0 f2       ..
 
@@ -6013,30 +6039,30 @@ relocation1_loop
 ; to cause confusion. This is just speculation at this point.
 relocation2
     lda #$34 ; '4'                                                    ; 3c3a: a9 34       .4
-    sta address_low                                                   ; 3c3c: 85 70       .p
+    sta address1_low                                                  ; 3c3c: 85 70       .p
     lda #$12                                                          ; 3c3e: a9 12       ..
-    sta address_high                                                  ; 3c40: 85 71       .q
+    sta address1_high                                                 ; 3c40: 85 71       .q
     lda #3                                                            ; 3c42: a9 03       ..
-    sta l0072                                                         ; 3c44: 85 72       .r
+    sta sprite_screen_address1_low                                    ; 3c44: 85 72       .r
     lda #$11                                                          ; 3c46: a9 11       ..
-    sta l0073                                                         ; 3c48: 85 73       .s
-    lda address_high                                                  ; 3c4a: a5 71       .q
-    cmp l0073                                                         ; 3c4c: c5 73       .s
+    sta sprite_screen_address1_high                                   ; 3c48: 85 73       .s
+    lda address1_high                                                 ; 3c4a: a5 71       .q
+    cmp sprite_screen_address1_high                                   ; 3c4c: c5 73       .s
     bne c3c56                                                         ; 3c4e: d0 06       ..             ; TODO: branch always taken?
-    lda address_low                                                   ; 3c50: a5 70       .p
-    cmp l0072                                                         ; 3c52: c5 72       .r
+    lda address1_low                                                  ; 3c50: a5 70       .p
+    cmp sprite_screen_address1_low                                    ; 3c52: c5 72       .r
     beq relocation3                                                   ; 3c54: f0 14       ..
 c3c56
     ldx #$2a ; '*'                                                    ; 3c56: a2 2a       .*
     beq relocation3                                                   ; 3c58: f0 10       ..             ; TODO: branch never taken?
     ldy #0                                                            ; 3c5a: a0 00       ..
 relocation2_loop
-    lda (address_low),y                                               ; 3c5c: b1 70       .p
-    sta (l0072),y                                                     ; 3c5e: 91 72       .r
+    lda (address1_low),y                                              ; 3c5c: b1 70       .p
+    sta (sprite_screen_address1_low),y                                ; 3c5e: 91 72       .r
     iny                                                               ; 3c60: c8          .
     bne relocation2_loop                                              ; 3c61: d0 f9       ..
-    inc address_high                                                  ; 3c63: e6 71       .q
-    inc l0073                                                         ; 3c65: e6 73       .s
+    inc address1_high                                                 ; 3c63: e6 71       .q
+    inc sprite_screen_address1_high                                   ; 3c65: e6 73       .s
     dex                                                               ; 3c67: ca          .
     bne relocation2_loop                                              ; 3c68: d0 f2       ..
 
@@ -6141,9 +6167,9 @@ define_character_fe_loop
     lda #0                                                            ; 3d2a: a9 00       ..
     sta l003a                                                         ; 3d2c: 85 3a       .:
     sta l003b                                                         ; 3d2e: 85 3b       .;
-    sta l0015                                                         ; 3d30: 85 15       ..
+    sta sprite_op_flags                                               ; 3d30: 85 15       ..
     lda #1                                                            ; 3d32: a9 01       ..
-    sta l001d                                                         ; 3d34: 85 1d       ..
+    sta sprite_op_flags2                                              ; 3d34: 85 1d       ..
     lda #osbyte_select_adc_channels                                   ; 3d36: a9 10       ..
     ldx #0                                                            ; 3d38: a2 00       ..
     jsr osbyte                                                        ; 3d3a: 20 f4 ff     ..            ; Disable ADC channel sampling (X=0)
@@ -6186,8 +6212,9 @@ loop_c3d54
     sta rnd3                                                          ; 3d87: 85 09       ..
     lda #1                                                            ; 3d89: a9 01       ..
     sta rnd4                                                          ; 3d8b: 85 0a       ..
+; set base address for sprite rendering, $6200 is the main game area
     lda #$62 ; 'b'                                                    ; 3d8d: a9 62       .b
-    sta l004c                                                         ; 3d8f: 85 4c       .L
+    sta screen_base_address_high                                      ; 3d8f: 85 4c       .L
 ; Check to see if VDU output was disabled (VDU 21) when we first started to execute,
 ; before we re-enabled output (VDU 6) ourselves.
 ; TODO: Is this to make the G file self-contained if it's run directly from the command
@@ -6207,17 +6234,17 @@ loop_c3d54
 ; data there anyway
 clear_toolbar_part_of_screen
     lda #0                                                            ; 3da3: a9 00       ..             ; set start address to $5b00
-    sta address_low                                                   ; 3da5: 85 70       .p
+    sta address1_low                                                  ; 3da5: 85 70       .p
     tay                                                               ; 3da7: a8          .
     ldx #$5b ; '['                                                    ; 3da8: a2 5b       .[
-    stx address_high                                                  ; 3daa: 86 71       .q
-    ldx l004c                                                         ; 3dac: a6 4c       .L
+    stx address1_high                                                 ; 3daa: 86 71       .q
+    ldx screen_base_address_high                                      ; 3dac: a6 4c       .L
 clear_toolbar_part_of_screen_loop
-    sta (address_low),y                                               ; 3dae: 91 70       .p
+    sta (address1_low),y                                              ; 3dae: 91 70       .p
     iny                                                               ; 3db0: c8          .
     bne clear_toolbar_part_of_screen_loop                             ; 3db1: d0 fb       ..
-    inc address_high                                                  ; 3db3: e6 71       .q
-    cpx address_high                                                  ; 3db5: e4 71       .q
+    inc address1_high                                                 ; 3db3: e6 71       .q
+    cpx address1_high                                                 ; 3db5: e4 71       .q
     bne clear_toolbar_part_of_screen_loop                             ; 3db7: d0 f5       ..
 define_text_window
     lda #vdu_define_text_window                                       ; 3db9: a9 1c       ..             ; Define text window that excludes the leftmost column (left 1, bottom 31, right: 39, top: 0)
@@ -6252,7 +6279,7 @@ define_text_window
     lda #osbyte_tv                                                    ; 3df7: a9 90       ..
     jsr osbyte                                                        ; 3df9: 20 f4 ff     ..            ; *TV 0,0 turn interlace on
 ; remember *TV shift setting
-    stx address_low                                                   ; 3dfc: 86 70       .p             ; X is the previous screen shift setting
+    stx address1_low                                                  ; 3dfc: 86 70       .p             ; X is the previous screen shift setting
     jsr osbyte                                                        ; 3dfe: 20 f4 ff     ..            ; restore previous *TV setting (since we changed it in the process of reading it)
 ; Set CRTC registers
     lda #crtc_cursor_start                                            ; 3e01: a9 0a       ..
@@ -6264,7 +6291,7 @@ define_text_window
 ; Calculate 34+tv shift and store in vertical_sync_amount_for_crtc_register
     lda #$23 ; '#'                                                    ; 3e0f: a9 23       .#
     clc                                                               ; 3e11: 18          .
-    adc address_low                                                   ; 3e12: 65 70       ep
+    adc address1_low                                                  ; 3e12: 65 70       ep
     sec                                                               ; 3e14: 38          8
     sbc #1                                                            ; 3e15: e9 01       ..
     sta vertical_sync_amount_for_crtc_register                        ; 3e17: 8d 0b 11    ...
@@ -6290,22 +6317,22 @@ define_text_window
     sta crtc_address_register                                         ; 3e46: 8d 00 fe    ...
     lda #0                                                            ; 3e49: a9 00       ..
     sta crtc_address_write                                            ; 3e4b: 8d 01 fe    ...
-    asl address_low                                                   ; 3e4e: 06 70       .p             ; Double the *TV shift amount
+    asl address1_low                                                  ; 3e4e: 06 70       .p             ; Double the *TV shift amount
 ; Adjust two timing counters depending on the *TV shift amount
     ldy #3                                                            ; 3e50: a0 03       ..             ; Loop counter, goes twice around the loop (Y is decremented twice each time)
 adjust_timing_variable_loop
     lda timingA_counter_low,y                                         ; 3e52: b9 04 11    ...
     sec                                                               ; 3e55: 38          8
-    sbc address_low                                                   ; 3e56: e5 70       .p             ; subtract twice the *TV shift amount
+    sbc address1_low                                                  ; 3e56: e5 70       .p             ; subtract twice the *TV shift amount
     sta timingA_counter_low,y                                         ; 3e58: 99 04 11    ...
     dey                                                               ; 3e5b: 88          .
     dey                                                               ; 3e5c: 88          .
     bpl adjust_timing_variable_loop                                   ; 3e5d: 10 f3       ..
 ; Load sprites
     lda #<sprdata_filename                                            ; 3e5f: a9 80       ..
-    sta address_low                                                   ; 3e61: 85 70       .p
+    sta address1_low                                                  ; 3e61: 85 70       .p
     lda #>sprdata_filename                                            ; 3e63: a9 19       ..
-    sta address_high                                                  ; 3e65: 85 71       .q
+    sta address1_high                                                 ; 3e65: 85 71       .q
     lda #osfile_read_catalogue_info                                   ; 3e67: a9 05       ..
     jsr osfile_wrapper                                                ; 3e69: 20 dc 16     ..
 ; Load 'sprdata' file into memory so it ends just before screen memory at $5bc0.
@@ -6314,7 +6341,7 @@ adjust_timing_variable_loop
     sbc l007a                                                         ; 3e6f: e5 7a       .z
     sta sprdata_ptr                                                   ; 3e71: 85 54       .T
     lda #>start_of_screen_memory                                      ; 3e73: a9 5b       .[
-    sbc l007b                                                         ; 3e75: e5 7b       .{
+    sbc sprite_screen_address2_low                                    ; 3e75: e5 7b       .{
     sta sprdata_ptr + 1                                               ; 3e77: 85 55       .U
     jsr load_sprdata                                                  ; 3e79: 20 6f 19     o.
 ; remember where sprite data is loaded
@@ -6331,9 +6358,9 @@ adjust_timing_variable_loop
     and #4                                                            ; 3e8d: 29 04       ).
     bne read_icodata_using_osword_7f                                  ; 3e8f: d0 10       ..
     lda #<icodata_filename                                            ; 3e91: a9 5e       .^
-    sta address_low                                                   ; 3e93: 85 70       .p
+    sta address1_low                                                  ; 3e93: 85 70       .p
     lda #>icodata_filename                                            ; 3e95: a9 3f       .?
-    sta address_high                                                  ; 3e97: 85 71       .q
+    sta address1_high                                                 ; 3e97: 85 71       .q
     lda #osfile_load                                                  ; 3e99: a9 ff       ..
     jsr osfile_wrapper                                                ; 3e9b: 20 dc 16     ..
     jmp c3f0d                                                         ; 3e9e: 4c 0d 3f    L.?
@@ -6416,18 +6443,18 @@ dir_dollar_command
 c3f0d
     lda #0                                                            ; 3f0d: a9 00       ..
     jsr get_address_of_sprite_a                                       ; 3f0f: 20 2c 13     ,.
-    stx address_low                                                   ; 3f12: 86 70       .p
-    sty address_high                                                  ; 3f14: 84 71       .q
+    stx address1_low                                                  ; 3f12: 86 70       .p
+    sty address1_high                                                 ; 3f14: 84 71       .q
     ldy #$11                                                          ; 3f16: a0 11       ..
 loop_c3f18
-    lda (address_low),y                                               ; 3f18: b1 70       .p
+    lda (address1_low),y                                              ; 3f18: b1 70       .p
     sta sixteen_entry_table - 1,y                                     ; 3f1a: 99 7e 0a    .~.
     dey                                                               ; 3f1d: 88          .
     bne loop_c3f18                                                    ; 3f1e: d0 f8       ..
-    lda (address_low),y                                               ; 3f20: b1 70       .p
+    lda (address1_low),y                                              ; 3f20: b1 70       .p
     and #$40 ; '@'                                                    ; 3f22: 29 40       )@
     beq c3f2d                                                         ; 3f24: f0 07       ..
-    lda (address_low),y                                               ; 3f26: b1 70       .p
+    lda (address1_low),y                                              ; 3f26: b1 70       .p
     and #$bf                                                          ; 3f28: 29 bf       ).
     sta copy_protection_flag                                          ; 3f2a: 8d 03 11    ...
 c3f2d
@@ -6436,16 +6463,16 @@ c3f2d
     jsr osbyte                                                        ; 3f32: 20 f4 ff     ..            ; Reset function keys
     jsr sub_c2980                                                     ; 3f35: 20 80 29     .)
     jsr sub_c29a8                                                     ; 3f38: 20 a8 29     .)
-    lda l004c                                                         ; 3f3b: a5 4c       .L
+    lda screen_base_address_high                                      ; 3f3b: a5 4c       .L
     pha                                                               ; 3f3d: 48          H
     lda #$58 ; 'X'                                                    ; 3f3e: a9 58       .X
-    sta l004c                                                         ; 3f40: 85 4c       .L
+    sta screen_base_address_high                                      ; 3f40: 85 4c       .L
     ldx #$24 ; '$'                                                    ; 3f42: a2 24       .$
     ldy #6                                                            ; 3f44: a0 06       ..
     lda #9                                                            ; 3f46: a9 09       ..
     jsr sub_c1f4c                                                     ; 3f48: 20 4c 1f     L.
     pla                                                               ; 3f4b: 68          h
-    sta l004c                                                         ; 3f4c: 85 4c       .L
+    sta screen_base_address_high                                      ; 3f4c: 85 4c       .L
     pla                                                               ; 3f4e: 68          h
     sta sprdata_ptr + 1                                               ; 3f4f: 85 55       .U
     pla                                                               ; 3f51: 68          h
@@ -6589,19 +6616,19 @@ quit_to_basic
     pla                                                               ; 4067: 68          h
     pla                                                               ; 4068: 68          h
     lda #'B'                                                          ; 4069: a9 42       .B
-    sta address_low                                                   ; 406b: 85 70       .p
+    sta address1_low                                                  ; 406b: 85 70       .p
     lda #'A'                                                          ; 406d: a9 41       .A
-    sta address_high                                                  ; 406f: 85 71       .q
+    sta address1_high                                                 ; 406f: 85 71       .q
     lda #'S'                                                          ; 4071: a9 53       .S
-    sta l0072                                                         ; 4073: 85 72       .r
+    sta sprite_screen_address1_low                                    ; 4073: 85 72       .r
     lda #'I'                                                          ; 4075: a9 49       .I
-    sta l0073                                                         ; 4077: 85 73       .s
+    sta sprite_screen_address1_high                                   ; 4077: 85 73       .s
     lda #'C'                                                          ; 4079: a9 43       .C
-    sta l0074                                                         ; 407b: 85 74       .t
+    sta sprite_x_pos_low                                              ; 407b: 85 74       .t
     lda #vdu_cr                                                       ; 407d: a9 0d       ..
-    sta l0075                                                         ; 407f: 85 75       .u
-    ldx #<(address_low)                                               ; 4081: a2 70       .p
-    ldy #>(address_low)                                               ; 4083: a0 00       ..
+    sta sprite_x_pos_high                                             ; 407f: 85 75       .u
+    ldx #<(address1_low)                                              ; 4081: a2 70       .p
+    ldy #>(address1_low)                                              ; 4083: a0 00       ..
     jmp oscli                                                         ; 4085: 4c f7 ff    L..
 
 clear_128_bytes_at_l09ef_high_copy_start
@@ -6780,24 +6807,24 @@ return29
 
 stash_data_pointed_to_by_l0076_at_530_maybe
     lda #0                                                            ; 4173: a9 00       ..  :0474[2]
-    sta l0074                                                         ; 4175: 85 74       .t  :0476[2]
-    sta l0076                                                         ; 4177: 85 76       .v  :0478[2]
-    lda l004c                                                         ; 4179: a5 4c       .L  :047a[2]
-    sta l0075                                                         ; 417b: 85 75       .u  :047c[2]
-    sta l0077                                                         ; 417d: 85 77       .w  :047e[2]
+    sta sprite_x_pos_low                                              ; 4175: 85 74       .t  :0476[2]
+    sta sprite_y_pos_low                                              ; 4177: 85 76       .v  :0478[2]
+    lda screen_base_address_high                                      ; 4179: a5 4c       .L  :047a[2]
+    sta sprite_x_pos_high                                             ; 417b: 85 75       .u  :047c[2]
+    sta sprite_y_pos_high                                             ; 417d: 85 77       .w  :047e[2]
     lda #$30 ; '0'                                                    ; 417f: a9 30       .0  :0480[2]
     sta l007a                                                         ; 4181: 85 7a       .z  :0482[2]
     lda #5                                                            ; 4183: a9 05       ..  :0484[2]
-    sta l007b                                                         ; 4185: 85 7b       .{  :0486[2]
+    sta sprite_screen_address2_low                                    ; 4185: 85 7b       .{  :0486[2]
     clc                                                               ; 4187: 18          .   :0488[2]
     lda #5                                                            ; 4188: a9 05       ..  :0489[2]
-    sta l0073                                                         ; 418a: 85 73       .s  :048b[2]
+    sta sprite_screen_address1_high                                   ; 418a: 85 73       .s  :048b[2]
 c048d
     ldx l0409                                                         ; 418c: ae 09 04    ... :048d[2]
 c0490
     ldy #7                                                            ; 418f: a0 07       ..  :0490[2]
 loop_c0492
-    lda (l0076),y                                                     ; 4191: b1 76       .v  :0492[2]
+    lda (sprite_y_pos_low),y                                          ; 4191: b1 76       .v  :0492[2]
     sta (l007a),y                                                     ; 4193: 91 7a       .z  :0494[2]
     dey                                                               ; 4195: 88          .   :0496[2]
     bpl loop_c0492                                                    ; 4196: 10 f9       ..  :0497[2]
@@ -6805,29 +6832,29 @@ loop_c0492
     adc #8                                                            ; 419a: 69 08       i.  :049b[2]
     sta l007a                                                         ; 419c: 85 7a       .z  :049d[2]
     bcc c04a4                                                         ; 419e: 90 03       ..  :049f[2]
-    inc l007b                                                         ; 41a0: e6 7b       .{  :04a1[2]
+    inc sprite_screen_address2_low                                    ; 41a0: e6 7b       .{  :04a1[2]
     clc                                                               ; 41a2: 18          .   :04a3[2]
 c04a4
     dex                                                               ; 41a3: ca          .   :04a4[2]
     beq c04b4                                                         ; 41a4: f0 0d       ..  :04a5[2]
-    lda l0076                                                         ; 41a6: a5 76       .v  :04a7[2]
+    lda sprite_y_pos_low                                              ; 41a6: a5 76       .v  :04a7[2]
     adc #8                                                            ; 41a8: 69 08       i.  :04a9[2]
-    sta l0076                                                         ; 41aa: 85 76       .v  :04ab[2]
+    sta sprite_y_pos_low                                              ; 41aa: 85 76       .v  :04ab[2]
     bcc c0490                                                         ; 41ac: 90 e1       ..  :04ad[2]
-    inc l0077                                                         ; 41ae: e6 77       .w  :04af[2]
+    inc sprite_y_pos_high                                             ; 41ae: e6 77       .w  :04af[2]
     clc                                                               ; 41b0: 18          .   :04b1[2]
     bcc c0490                                                         ; 41b1: 90 dc       ..  :04b2[2]
 c04b4
-    dec l0073                                                         ; 41b3: c6 73       .s  :04b4[2]
+    dec sprite_screen_address1_high                                   ; 41b3: c6 73       .s  :04b4[2]
     beq return30                                                      ; 41b5: f0 12       ..  :04b6[2]
-    lda l0074                                                         ; 41b7: a5 74       .t  :04b8[2]
+    lda sprite_x_pos_low                                              ; 41b7: a5 74       .t  :04b8[2]
     adc #$40 ; '@'                                                    ; 41b9: 69 40       i@  :04ba[2]
-    sta l0074                                                         ; 41bb: 85 74       .t  :04bc[2]
-    sta l0076                                                         ; 41bd: 85 76       .v  :04be[2]
-    lda l0075                                                         ; 41bf: a5 75       .u  :04c0[2]
+    sta sprite_x_pos_low                                              ; 41bb: 85 74       .t  :04bc[2]
+    sta sprite_y_pos_low                                              ; 41bd: 85 76       .v  :04be[2]
+    lda sprite_x_pos_high                                             ; 41bf: a5 75       .u  :04c0[2]
     adc #1                                                            ; 41c1: 69 01       i.  :04c2[2]
-    sta l0075                                                         ; 41c3: 85 75       .u  :04c4[2]
-    sta l0077                                                         ; 41c5: 85 77       .w  :04c6[2]
+    sta sprite_x_pos_high                                             ; 41c3: 85 75       .u  :04c4[2]
+    sta sprite_y_pos_high                                             ; 41c5: 85 77       .w  :04c6[2]
     bcc c048d                                                         ; 41c7: 90 c3       ..  :04c8[2]
 return30
     rts                                                               ; 41c9: 60          `   :04ca[2]
@@ -6902,12 +6929,6 @@ pydis_end
 ;     c12fc
 ;     c1306
 ;     c131e
-;     c137f
-;     c13b5
-;     c13bf
-;     c13c6
-;     c13d8
-;     c1427
 ;     c1446
 ;     c1466
 ;     c146e
@@ -6924,31 +6945,8 @@ pydis_end
 ;     c14fe
 ;     c1517
 ;     c1529
-;     c154a
-;     c1551
-;     c155e
 ;     c1568
-;     c1574
-;     c1581
-;     c1589
-;     c1593
-;     c15ab
-;     c15c3
-;     c15f3
-;     c160c
-;     c161e
-;     c1628
-;     c163d
-;     c1640
-;     c165e
-;     c1670
-;     c168a
-;     c1696
-;     c16a5
 ;     c16aa
-;     c16b5
-;     c16bf
-;     c16ce
 ;     c16f7
 ;     c1713
 ;     c174c
@@ -7115,8 +7113,6 @@ pydis_end
 ;     c2c09
 ;     c2c35
 ;     c2c3d
-;     c2c5f
-;     c2c62
 ;     c2d87
 ;     c2da6
 ;     c2dc0
@@ -7253,14 +7249,6 @@ pydis_end
 ;     l0003
 ;     l0004
 ;     l0005
-;     l0014
-;     l0015
-;     l0016
-;     l0018
-;     l0019
-;     l001a
-;     l001b
-;     l001d
 ;     l0026
 ;     l0030
 ;     l0039
@@ -7276,7 +7264,6 @@ pydis_end
 ;     l0049
 ;     l004a
 ;     l004b
-;     l004c
 ;     l0050
 ;     l0052
 ;     l0053
@@ -7294,29 +7281,8 @@ pydis_end
 ;     l0066
 ;     l0067
 ;     l0068
-;     l0072
-;     l0073
-;     l0074
-;     l0075
-;     l0076
-;     l0077
-;     l0078
-;     l0079
 ;     l007a
-;     l007b
-;     l007c
-;     l007d
-;     l007e
-;     l007f
-;     l0080
-;     l0081
-;     l0082
-;     l0083
-;     l0084
-;     l0085
-;     l0086
 ;     l0087
-;     l0088
 ;     l00fd
 ;     l0100
 ;     l010b
@@ -7426,10 +7392,8 @@ pydis_end
 ;     loop_c114f
 ;     loop_c11dd
 ;     loop_c1213
-;     loop_c13ac
 ;     loop_c1471
 ;     loop_c1540
-;     loop_c1623
 ;     loop_c1830
 ;     loop_c184d
 ;     loop_c190b
@@ -7468,7 +7432,6 @@ pydis_end
 ;     loop_c2ba4
 ;     loop_c2bc6
 ;     loop_c2be9
-;     loop_c2c58
 ;     loop_c2ec9
 ;     loop_c34b2
 ;     loop_c36c7
@@ -7483,7 +7446,6 @@ pydis_end
 ;     loop_c3f87
 ;     sub_c04cb
 ;     sub_c1278
-;     sub_c162f
 ;     sub_c1728
 ;     sub_c1845
 ;     sub_c1b66
@@ -7548,8 +7510,8 @@ pydis_end
 !if (0) != $00 {
     !error "Assertion failed: 0 == $00"
 }
-!if (<(address_low)) != $70 {
-    !error "Assertion failed: <(address_low) == $70"
+!if (<(address1_low)) != $70 {
+    !error "Assertion failed: <(address1_low) == $70"
 }
 !if (<(dir_dollar_command)) != $07 {
     !error "Assertion failed: <(dir_dollar_command) == $07"
@@ -7571,6 +7533,9 @@ pydis_end
 }
 !if (<(osword_7f_block_write_special_register)) != $ea {
     !error "Assertion failed: <(osword_7f_block_write_special_register) == $ea"
+}
+!if (<319) != $3f {
+    !error "Assertion failed: <319 == $3f"
 }
 !if (<auxcode) != $c0 {
     !error "Assertion failed: <auxcode == $c0"
@@ -7647,8 +7612,8 @@ pydis_end
 !if (<which_drive_encrypted_string) != $e3 {
     !error "Assertion failed: <which_drive_encrypted_string == $e3"
 }
-!if (>(address_low)) != $00 {
-    !error "Assertion failed: >(address_low) == $00"
+!if (>(address1_low)) != $00 {
+    !error "Assertion failed: >(address1_low) == $00"
 }
 !if (>(dir_dollar_command)) != $3f {
     !error "Assertion failed: >(dir_dollar_command) == $3f"
@@ -7670,6 +7635,9 @@ pydis_end
 }
 !if (>(osword_7f_block_write_special_register)) != $3e {
     !error "Assertion failed: >(osword_7f_block_write_special_register) == $3e"
+}
+!if (>319) != $01 {
+    !error "Assertion failed: >319 == $01"
 }
 !if (>auxcode) != $53 {
     !error "Assertion failed: >auxcode == $53"
