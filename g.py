@@ -673,6 +673,8 @@ label(0x31, "desired_level") # TODO: This is not right but let's go with it for 
 label(0x37, "currently_loaded_level")
 label(0x51, "maybe_current_level") # TODO: not clear yet, but looks like some kind of level indicator
 label(0x1175, "level_already_loaded")
+label(0x36da, "check_password_level")
+entry(0x36db, "select_level_a")
 
 comment(0x3f78, "TODO: I suspect the following code is copy protection related - writing data to the sideways ROM region feels wrong.")
 

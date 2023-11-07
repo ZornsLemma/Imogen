@@ -5280,7 +5280,7 @@ c35ed
     lda #$ff                                                          ; 371e: a9 ff       ..  :35ed[1]
     sta desired_level                                                 ; 3720: 85 31       .1  :35ef[1]
     lda l09ea                                                         ; 3722: ad ea 09    ... :35f1[1]
-    jmp c36db                                                         ; 3725: 4c db 36    L.6 :35f4[1]
+    jmp select_level_a                                                ; 3725: 4c db 36    L.6 :35f4[1]
 
     !byte $98, $aa, $bd, $a2, $a5, $ac, $c6, $87, $a4, $aa, $af, $a2  ; 3728: 98 aa bd... ... :35f7[1]
     !byte $a5, $ac, $c6, $82, $a5, $b8, $ae, $b9, $bf, $eb, $ac, $aa  ; 3734: a5 ac c6... ... :3603[1]
@@ -5346,7 +5346,7 @@ sub_c3664
     pha                                                               ; 37c1: 48          H   :3690[1]
     jsr something_TODO                                                ; 37c2: 20 53 04     S. :3691[1]
     pla                                                               ; 37c5: 68          h   :3694[1]
-    jmp c36db                                                         ; 37c6: 4c db 36    L.6 :3695[1]
+    jmp select_level_a                                                ; 37c6: 4c db 36    L.6 :3695[1]
 
 c3698
     lda copy_protection_flag                                          ; 37c9: ad 03 11    ... :3698[1]
@@ -5354,7 +5354,7 @@ c3698
     beq return24                                                      ; 37ce: f0 08       ..  :369d[1]
     jsr something_TODO                                                ; 37d0: 20 53 04     S. :369f[1]
     lda #$ff                                                          ; 37d3: a9 ff       ..  :36a2[1]
-    jmp c36db                                                         ; 37d5: 4c db 36    L.6 :36a4[1]
+    jmp select_level_a                                                ; 37d5: 4c db 36    L.6 :36a4[1]
 
 return24
     rts                                                               ; 37d8: 60          `   :36a7[1]
@@ -5374,7 +5374,7 @@ c36a8
 
 c36c1
     jsr check_password                                                ; 37f2: 20 c0 53     .S :36c1[1]
-    sta l36da                                                         ; 37f5: 8d da 36    ..6 :36c4[1]
+    sta check_password_level                                          ; 37f5: 8d da 36    ..6 :36c4[1]
 loop_c36c7
     jsr load_sprdata                                                  ; 37f8: 20 6f 19     o. :36c7[1]
     beq c36d2                                                         ; 37fb: f0 06       ..  :36ca[1]
@@ -5382,14 +5382,14 @@ loop_c36c7
     jmp loop_c36c7                                                    ; 3800: 4c c7 36    L.6 :36cf[1]
 
 c36d2
-    lda l36da                                                         ; 3803: ad da 36    ..6 :36d2[1]
-    bne c36db                                                         ; 3806: d0 04       ..  :36d5[1]
+    lda check_password_level                                          ; 3803: ad da 36    ..6 :36d2[1]
+    bne select_level_a                                                ; 3806: d0 04       ..  :36d5[1]
     jmp c363f                                                         ; 3808: 4c 3f 36    L?6 :36d7[1]
 
-l36da
+check_password_level
     !byte 0                                                           ; 380b: 00          .   :36da[1]
 
-c36db
+select_level_a
     cmp #1                                                            ; 380c: c9 01       ..  :36db[1]
     beq c36f6                                                         ; 380e: f0 17       ..  :36dd[1]
     cmp desired_level                                                 ; 3810: c5 31       .1  :36df[1]
@@ -7201,7 +7201,6 @@ pydis_end
 ;     c36a8
 ;     c36c1
 ;     c36d2
-;     c36db
 ;     c36f3
 ;     c36f6
 ;     c3720
@@ -7363,7 +7362,6 @@ pydis_end
 ;     l31d7
 ;     l3403
 ;     l3497
-;     l36da
 ;     l377d
 ;     l38ad
 ;     l38c3
