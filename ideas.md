@@ -11,3 +11,7 @@
 * Could the duck be made more widely available?
 
 * Build in a "reset transformation count" or "infinite transformations" cheat? Ideally in some way that it's obvious when it's used.
+
+# Other versions
+
+* The Micro User review (June 1986, p33) says Imogen was available on cassette. Did this load individual levels from tape or did they load in batches?
