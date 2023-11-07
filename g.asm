@@ -3911,7 +3911,7 @@ draw_menu_icon_loop
     dec redraw_menu_pointer_flag                                      ; 2aec: ce dd 29    ..) :29bb[1]
     jsr unplot_menu_pointer                                           ; 2aef: 20 eb 29     .) :29be[1]
 menu_pointer_not_present_on_slot
-    jsr sub_c2c0c                                                     ; 2af2: 20 0c 2c     ., :29c1[1]
+    jsr plot_menu_icon                                                ; 2af2: 20 0c 2c     ., :29c1[1]
     lda redraw_menu_pointer_flag                                      ; 2af5: ad dd 29    ..) :29c4[1]
     beq draw_next_menu_slot                                           ; 2af8: f0 0e       ..  :29c7[1]
 ; If there's a blank under the pointer in the new menu, bump the pointer left until we
@@ -4248,12 +4248,16 @@ c2c09
     lda address1_high                                                 ; 2d3a: a5 71       .q  :2c09[1]
     rts                                                               ; 2d3c: 60          `   :2c0b[1]
 
-sub_c2c0c
+plot_menu_icon
     pha                                                               ; 2d3d: 48          H   :2c0c[1]
     txa                                                               ; 2d3e: 8a          .   :2c0d[1]
     pha                                                               ; 2d3f: 48          H   :2c0e[1]
     tya                                                               ; 2d40: 98          .   :2c0f[1]
     pha                                                               ; 2d41: 48          H   :2c10[1]
+; Save the current screen_base_address_high so we can temporarily set it to $58 to plot
+; the menu icon. TODO: Is this just saving the old value because it's tidy/safe, or do
+; we really not know what the old value was? I'd have naively thought we could just do
+; lda #blah:sta screen_base_address_high at the end of this routine?
     lda screen_base_address_high                                      ; 2d42: a5 4c       .L  :2c11[1]
     pha                                                               ; 2d44: 48          H   :2c13[1]
     lda #$58 ; 'X'                                                    ; 2d45: a9 58       .X  :2c14[1]
@@ -7486,7 +7490,6 @@ pydis_end
 ;     sub_c2b37
 ;     sub_c2b65
 ;     sub_c2bbd
-;     sub_c2c0c
 ;     sub_c2eb8
 ;     sub_c336e
 ;     sub_c344b

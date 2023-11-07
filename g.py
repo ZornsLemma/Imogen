@@ -694,6 +694,9 @@ constant(0x11, "menu_slot_count") # numbered 0-$10 inclusive
 expr(0x29d9, "menu_slot_count")
 entry(0x29aa, "draw_menu_icon_loop")
 
+entry(0x2c0c, "plot_menu_icon")
+comment(0x2c11, "Save the current screen_base_address_high so we can temporarily set it to $58 to plot the menu icon. TODO: Is this just saving the old value because it's tidy/safe, or do we really not know what the old value was? I'd have naively thought we could just do lda #blah:sta screen_base_address_high at the end of this routine?")
+
 comment(0x3f78, "TODO: I suspect the following code is copy protection related - writing data to the sideways ROM region feels wrong.")
 
 label(0x1103, "copy_protection_flag")
