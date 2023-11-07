@@ -283,8 +283,8 @@ c5635
     lda #1                                                            ; 5635: a9 01       ..
     jmp c544e                                                         ; 5637: 4c 4e 54    LNT
 
-l563a
-    !byte   1,   2,   4,   8, $10, $20, $40, $80                      ; 563a: 01 02 04... ...
+power_of_2_table
+    !byte $01, $02, $04, $08, $10, $20, $40, $80                      ; 563a: 01 02 04... ...
 
 ; TODO: Presumably a screen dump routine for Epson-compatible printers
 dump_handler
@@ -373,7 +373,7 @@ c56f4
 loop_c56f8
     asl l0073                                                         ; 56f8: 06 73       .s
     lda (l0070),y                                                     ; 56fa: b1 70       .p
-    and l563a,x                                                       ; 56fc: 3d 3a 56    =:V
+    and power_of_2_table,x                                            ; 56fc: 3d 3a 56    =:V
     bne c5703                                                         ; 56ff: d0 02       ..
     inc l0073                                                         ; 5701: e6 73       .s
 c5703
@@ -475,7 +475,6 @@ pydis_end
 ;     l37f3
 ;     l388d
 ;     l3a8f
-;     l563a
 ;     loop_c5625
 ;     loop_c56f8
 ;     loop_c5760

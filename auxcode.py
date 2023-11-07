@@ -80,6 +80,9 @@ comment(0x5642, "TODO: Presumably a screen dump routine for Epson-compatible pri
 comment(0x53c0, "Check a password entered by the user at string_buffer against the list of EOR-encrypted paswords at level_name_ptr_table and invoke the corresponding handler if a match is found. Otherwise generate an error.")
 
 # TODO: DELETE? expr(0x5620, "game_state_flag_have_spell")
+#
+label(0x563a, "power_of_2_table")
+hexadecimal(0x563a, 8)
 
 go()
 
