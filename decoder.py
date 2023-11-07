@@ -107,7 +107,7 @@ Converts binary sprite file from Imogen to text.
 options:
   -h   --help                 show this help message and exit
   -i   --input                input file (binary sprite file)
-  -o   --output               output file (asm file)
+  -o   --output               output file (txt file)
   -l   --level                input is a level file
 """, file=venue)
 
@@ -118,7 +118,7 @@ if __name__ == '__main__':
                     epilog="TobyLobster, 2023")
 
     parser.add_argument('-i', '--input',            help="input binary filepath")
-    parser.add_argument('-o', '--output',           help="output TXT")
+    parser.add_argument('-o', '--output',           help="output text filepath")
     parser.add_argument('-l', '--level',            help="input is a level file", action=argparse.BooleanOptionalAction, default=False)
 
     if len(sys.argv)==1:
