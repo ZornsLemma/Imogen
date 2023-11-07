@@ -84,6 +84,11 @@ comment(0x53c0, "Check a password entered by the user at string_buffer against t
 label(0x563a, "power_of_2_table")
 hexadecimal(0x563a, 8)
 
+expr(0x5597, "first_level_letter")
+expr(0x559c, "last_level_letter")
+
+entry(0x544e, "return1")
+
 go()
 
 # vi: tw=100

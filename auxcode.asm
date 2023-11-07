@@ -1,5 +1,7 @@
 ; Constants
+first_level_letter                             = 65
 fixed_eor_key                                  = 203
+last_level_letter                              = 81
 osbyte_flush_buffer_class                      = 15
 osbyte_read_write_escape_break_effect          = 200
 osbyte_read_write_first_byte_break_intercept   = 247
@@ -115,13 +117,13 @@ this_entry_doesnt_match
     jsr l37f3                                                         ; 543b: 20 f3 37     .7
     jsr l388d                                                         ; 543e: 20 8d 38     .8
     lda #0                                                            ; 5441: a9 00       ..
-    jmp c544e                                                         ; 5443: 4c 4e 54    LNT
+    jmp return1                                                       ; 5443: 4c 4e 54    LNT
 
 ; 'Unknown\r' EOR-encrypted with $cb
 unknown_encrypted_string
     !byte $9e, $a5, $a0, $a5, $a4, $bc, $a5, $c6                      ; 5446: 9e a5 a0... ...
 
-c544e
+return1
     rts                                                               ; 544e: 60          `
 
 level_name_ptr_table
@@ -189,22 +191,22 @@ level_name_ptr_table
 
 normal_level_handler
     clc                                                               ; 5595: 18          .
-    adc #$41 ; 'A'                                                    ; 5596: 69 41       iA
-    jmp c544e                                                         ; 5598: 4c 4e 54    LNT
+    adc #first_level_letter                                           ; 5596: 69 41       iA
+    jmp return1                                                       ; 5598: 4c 4e 54    LNT
 
 epilogue_handler
-    ldx #$51 ; 'Q'                                                    ; 559b: a2 51       .Q
+    ldx #last_level_letter                                            ; 559b: a2 51       .Q
     lda l1103                                                         ; 559d: ad 03 11    ...
     and #2                                                            ; 55a0: 29 02       ).
     bne c55a6                                                         ; 55a2: d0 02       ..
     ldx #1                                                            ; 55a4: a2 01       ..
 c55a6
     txa                                                               ; 55a6: 8a          .
-    jmp c544e                                                         ; 55a7: 4c 4e 54    LNT
+    jmp return1                                                       ; 55a7: 4c 4e 54    LNT
 
 quit_handler
     lda #$ff                                                          ; 55aa: a9 ff       ..
-    jmp c544e                                                         ; 55ac: 4c 4e 54    LNT
+    jmp return1                                                       ; 55ac: 4c 4e 54    LNT
 
 normal_mode_handler
     lda #0                                                            ; 55af: a9 00       ..
@@ -242,7 +244,7 @@ c55d3
     ldy #0                                                            ; 55e0: a0 00       ..
     jsr osbyte                                                        ; 55e2: 20 f4 ff     ..            ; Write ESCAPE+BREAK effects
     lda #1                                                            ; 55e5: a9 01       ..
-    jmp c544e                                                         ; 55e7: 4c 4e 54    LNT
+    jmp return1                                                       ; 55e7: 4c 4e 54    LNT
 
 mono_handler
     lda #0                                                            ; 55ea: a9 00       ..
@@ -253,7 +255,7 @@ mono_handler
     lda pending_gameplay_area_colour                                  ; 55f8: ad 5f 17    ._.
     sta gameplay_area_colour                                          ; 55fb: 8d 60 17    .`.
     lda #1                                                            ; 55fe: a9 01       ..
-    jmp c544e                                                         ; 5600: 4c 4e 54    LNT
+    jmp return1                                                       ; 5600: 4c 4e 54    LNT
 
 colour_handler
     lda #$ff                                                          ; 5603: a9 ff       ..
@@ -264,7 +266,7 @@ colour_handler
     lda pending_gameplay_area_colour                                  ; 5611: ad 5f 17    ._.
     sta gameplay_area_colour                                          ; 5614: 8d 60 17    .`.
     lda #1                                                            ; 5617: a9 01       ..
-    jmp c544e                                                         ; 5619: 4c 4e 54    LNT
+    jmp return1                                                       ; 5619: 4c 4e 54    LNT
 
 gimme_handler
     lda l1103                                                         ; 561c: ad 03 11    ...
@@ -281,7 +283,7 @@ loop_c5625
     jsr l2bbd                                                         ; 5632: 20 bd 2b     .+
 c5635
     lda #1                                                            ; 5635: a9 01       ..
-    jmp c544e                                                         ; 5637: 4c 4e 54    LNT
+    jmp return1                                                       ; 5637: 4c 4e 54    LNT
 
 power_of_2_table
     !byte $01, $02, $04, $08, $10, $20, $40, $80                      ; 563a: 01 02 04... ...
@@ -292,7 +294,7 @@ dump_handler
     and #2                                                            ; 5645: 29 02       ).
     bne c564e                                                         ; 5647: d0 05       ..
     lda #1                                                            ; 5649: a9 01       ..
-    jmp c544e                                                         ; 564b: 4c 4e 54    LNT
+    jmp return1                                                       ; 564b: 4c 4e 54    LNT
 
 c564e
     lda #2                                                            ; 564e: a9 02       ..
@@ -439,13 +441,12 @@ loop_c5760
     jsr osbyte                                                        ; 5780: 20 f4 ff     ..            ; Flush input buffers (X non-zero)
     jsr l3a8f                                                         ; 5783: 20 8f 3a     .:
     lda #1                                                            ; 5786: a9 01       ..
-    jmp c544e                                                         ; 5788: 4c 4e 54    LNT
+    jmp return1                                                       ; 5788: 4c 4e 54    LNT
 
 pydis_end
 
 ; Automatically generated labels:
 ;     c53ce
-;     c544e
 ;     c55a6
 ;     c55c0
 ;     c55d3
@@ -502,11 +503,17 @@ pydis_end
 !if (epilogue_handler) != $559b {
     !error "Assertion failed: epilogue_handler == $559b"
 }
+!if (first_level_letter) != $41 {
+    !error "Assertion failed: first_level_letter == $41"
+}
 !if (fixed_eor_key) != $cb {
     !error "Assertion failed: fixed_eor_key == $cb"
 }
 !if (gimme_handler) != $561c {
     !error "Assertion failed: gimme_handler == $561c"
+}
+!if (last_level_letter) != $51 {
+    !error "Assertion failed: last_level_letter == $51"
 }
 !if (mono_handler) != $55ea {
     !error "Assertion failed: mono_handler == $55ea"
