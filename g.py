@@ -417,7 +417,7 @@ entry(0x395e, "define_envelope")
 constant(39, "screen_width_minus_one")
 expr(0x3dc9, "screen_width_minus_one")
 
-# TODO: This code is crreutnly disassembled using "sprite-oriented" labels - it's not a big deal in the short term as we already understand it and can just view this subroutine as a black box, but later on it would be good (even if it means using expr() on individual labels, though I'd hope the label maker hook can work round this) to give it better labels.
+# TODO: This code is currently disassembled using "sprite-oriented" labels - it's not a big deal in the short term as we already understand it and can just view this subroutine as a black box, but later on it would be good (even if it means using expr() on individual labels, though I'd hope the label maker hook can work round this) to give it better labels.
 entry(0x16dc, "osfile_wrapper")
 
 expr(0x197c, "osfile_load")
