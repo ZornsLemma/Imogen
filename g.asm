@@ -315,8 +315,8 @@ l0b00                                   = $0b00
 sprite_199                              = $0b11
 sprite_198                              = $0b93
 sprite_197                              = $0bc5
-l3ad7                                   = $3ad7
-c3ad8                                   = $3ad8
+level_handler_ptr                       = $3ad7
+level_handler_ptr_plus_1                = $3ad8
 l3ad9                                   = $3ad9
 l3ada                                   = $3ada
 c3adb                                   = $3adb
@@ -515,8 +515,8 @@ loop_c1213
     sta four_entry_table3_maybe_sound,x                               ; 1344: 9d 6f 39    .o9 :1213[1]
     dex                                                               ; 1347: ca          .   :1216[1]
     bpl loop_c1213                                                    ; 1348: 10 fa       ..  :1217[1]
-    ldx l3ad7                                                         ; 134a: ae d7 3a    ..: :1219[1]
-    ldy c3ad8                                                         ; 134d: ac d8 3a    ..: :121c[1]
+    ldx level_handler_ptr                                             ; 134a: ae d7 3a    ..: :1219[1]
+    ldy level_handler_ptr_plus_1                                      ; 134d: ac d8 3a    ..: :121c[1]
     jsr jmp_yx                                                        ; 1350: 20 66 19     f. :121f[1]
     lda desired_level                                                 ; 1353: a5 31       .1  :1222[1]
     sec                                                               ; 1355: 38          8   :1224[1]
@@ -7486,7 +7486,6 @@ pydis_end
 ;     c3a83
 ;     c3a88
 ;     c3a8f
-;     c3ad8
 ;     c3adb
 ;     c3ade
 ;     c3adf
@@ -7607,7 +7606,6 @@ pydis_end
 ;     l3970
 ;     l3974
 ;     l3a8e
-;     l3ad7
 ;     l3ad9
 ;     l3ada
 ;     l3adc

@@ -33,6 +33,9 @@ l2bbd                       = $2bbd
 l37f3                       = $37f3
 l388d                       = $388d
 l3a8f                       = $3a8f
+level_data                  = $3ad5
+level_handler_ptr           = $3ad7
+level_handler_ptr_plus_1    = $3ad8
 oswrch                      = $ffee
 osbyte                      = $fff4
 

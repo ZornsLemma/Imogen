@@ -11,6 +11,9 @@ cmp orig/g.dat g.out || echo g.asm rebuild failed
 python3 auxcode.py --acme > auxcode.asm
 acme -o auxcode.out --report auxcode.lst auxcode.asm
 cmp orig/auxcode.dat auxcode.out || echo auxcode.asm rebuild failed
+python3 dataA.py --acme > dataA.asm
+acme -o dataA.out --report dataA.lst dataA.asm
+cmp orig/dataA.dat dataA.out || echo dataA.asm rebuild failed
 
 # Decode sprite data
 python3 decoder.py -i orig/sprdata.dat -o sprdata.txt
