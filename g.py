@@ -21,6 +21,8 @@ constant(28, "vdu_define_text_window")
 constant(31, "vdu_goto_xy")
 constant(127, "vdu_delete")
 
+constant(39, "screen_width_minus_one")
+
 constant(5, "osfile_read_catalogue_info")
 constant(0xff, "osfile_load")
 
@@ -103,6 +105,7 @@ label(0x004c, "screen_base_address_high")
 label(0x0058, "temp_sprite_address_low")
 label(0x0059, "temp_sprite_address_high")
 label(0x005a, "temp_sprite_offset")
+label(0x005b, "developer_mode_sideways_ram_is_set_up_flag")
 
 label(0x005f, "initial_level_number_div4")
 
@@ -146,7 +149,7 @@ sprite_dict = {
     0x08: "spriteid_blob_thing7",        # TODO: better name
     0x09: "spriteid_blob_thing8",        # TODO: better name
     0x0a: "spriteid_blob_thing9",        # TODO: better name
-    0x0b: "spriteid_w_thing",            # TODO: better name
+    0x0b: "spriteid_rope_hook",
     0x0c: "spriteid_cat_walk1",
     0x0d: "spriteid_cat_walk2",
     0x0e: "spriteid_cat_walk3",
@@ -224,6 +227,7 @@ sprite_dict = {
     0x58: "spriteid_rope4",
 }
 
+label(0x1f4c, "draw_sprite_a_at_character_xy")
 label(0x1f84, "set_sprite_pixel_position_from_character_xy")
 
 substitute_constants("sta sprite_number", 'a', sprite_dict, True)
@@ -393,6 +397,8 @@ comment(0x167e, "set x position to the right edge (319)")
 decimal(0x1675)
 decimal(0x1687)
 label(0x17b9, "if_vsync_elapsed_then_set_toolbar_area_palette")
+expr(0x17ed, "magenta")
+expr(0x1816, "black")
 comment(0x17bb, "check for vsync interrupt", inline=True)
 comment(0x17c0, "reset timers")
 label(0x17fa, "if_timer1_elapsed_then_set_main_area_palette")
@@ -408,6 +414,7 @@ comment(0x18bd, "loop back until enough random bits are generated", inline=True)
 comment(0x18c0, "AND the mask with the random bits", inline=True)
 comment(0x1966, "use the value stored in the X,Y registers as an address to jump to")
 label(0x1825, "change_palette_logical_colour_x_to_y")
+label(0x1830, "change_palette_loop")
 label(0x196c, "jmp_instruction")
 expr(0x1967, "jmp_instruction+1")
 expr(0x196a, "jmp_instruction+2")
@@ -787,8 +794,40 @@ label(0x4088+0x48, "clear_128_bytes_at_l09ef_high_copy_end")
 expr(0x3c74, make_subtract("clear_128_bytes_at_l09ef_high_copy_end", "clear_128_bytes_at_l09ef_high_copy_start"))
 
 entry(0x4094, "something6_TODO")
-entry(0x40a5, "convert_level_number_to_letter") # TODO: guesswork but something like this - probably not right though
-entry(0x40c0, "convert_level_letter_to_number") # TODO: guesswork but something like this - probably not right though
+comment(0x40a5, """*************************************************************************************
+
+Convert a level filename letter into the section letter as shown in-game
+
+The index within the level_ordering_table determines the letter returned.
+
+On Entry:
+    Y: letter as seen in the level filename
+
+On Exit:
+    Y: section letter (as seen in-game)
+    Preserves A, X
+
+*************************************************************************************""")
+entry(0x40a5, "convert_level_filename_letter_into_section_letter")
+label(0x0ade, "find_letter_loop")
+
+comment(0x40c0, """*************************************************************************************
+
+Convert a section letter into the level file letter
+
+Simple look up.
+
+On Entry:
+    Y: section letter (as seen in-game)
+
+On Exit:
+    Y: letter as seen in the level filename
+    Preserves A, X
+
+*************************************************************************************""")
+entry(0x40c0, "convert_section_letter_to_level_filename_letter")
+
+label(0x1234, "skip5")
 
 comment(0x40d0, "Update the transformation count on screen at text position (35-37, 6). This takes care to update as few digits on screen as possible, probably to reduce flicker and to offset the relatively slow implementation of print_italic.")
 label(0x9ec, "current_transformations_remaining")
@@ -842,7 +881,7 @@ entry(0x18a3, "print_italic_rts")
 # TODO: Could use a named constant for character $ff - ditto character $fe I guess
 
 entry(0x17a0, "irq1_routine")
-entry(0x1839, "something11_TODO")
+entry(0x1839, "reset_game_because_escape_pressed")
 entry(0x18c3, "something12_TODO")
 entry(0x1b8a, "something15_TODO")
 entry(0x1fd7, "something16_TODO")
@@ -850,6 +889,7 @@ entry(0x2200, "something17_TODO")
 entry(0x2248, "something18_TODO")
 entry(0x22cd, "something19_TODO")
 entry(0x2a38, "something20_TODO")
+label(0x2a60, "skip_developer_mode_handling")
 entry(0x2b87, "something21_TODO")
 entry(0x2be0, "something22_TODO")
 # TODO: DELETE entry(0x35f7, "something23_TODO")
@@ -902,7 +942,15 @@ comment(0x1848, "select ROM in slot 13", inline=True)
 comment(0x1862, "clear the reset vector")
 label(0x184d, "copy_from_rom_c_loop")
 label(0x1845, "reset_code")
-label(0x1103, "copy_protection_flag")
+comment(0x1103, """developer_flags
+
+    bit 0: <TODO>
+    bit 1: <TODO>
+    bit 2: <TODO>
+    bit 3: <TODO>
+    bit 4-6: unused
+    bit 7: "developer mode active", toolbar is magenta, ESCAPE resets or exits the game I think, if you have the right sideways RAM set up.""")
+label(0x1103, "developer_flags")
 
 label(0x2ef7, "some_more_data")
 expr(0x30b6, make_lo("some_more_data"))
@@ -1005,6 +1053,7 @@ comment(0x38f6, """*************************************************************
 Play a sound
 
 On Extry:
+    A: Sound priority ($FF always plays, $00 will not if sound already playing is $FF)
     YX: Address of SOUND block to play (eight bytes)
 
 On Exit:
@@ -1025,7 +1074,12 @@ comment(0x2b14, "recall current sound flag", inline=True)
 comment(0x2b15, "toggle current flag", inline=True)
 comment(0x2b17, "save new sound flag", inline=True)
 
+comment(0x390c, "If flush is clear, then branch forward to play sound", inline=True)
+comment(0x3914, "X=channel (0-3)", inline=True)
 
+label(0x1213, "clear_sound_priorities_loop")
+
+expr(0x0ad5, "last_level_letter")
 expr(0xaf0, "last_level_letter")
 expr(0xaf7, "first_level_letter")
 expr(0xae9, "first_level_letter")
@@ -1050,6 +1104,8 @@ constant(0, "black")
 constant(1, "red")
 constant(2, "green")
 constant(3, "yellow")
+constant(4, "blue")
+constant(5, "magenta")
 constant(6, "cyan")
 constant(7, "white")
 expr(0x1761, "yellow")
@@ -1133,11 +1189,18 @@ label(0x1108, "timing_latch_low")
 label(0x1109, "timing_latch_high")
 label(0x110a, "display_initialised_flag")
 label(0x2ee9, "four_entry_table2") # TODO: write only, at least in 'g' itself?
-label(0x396f, "four_entry_table3_maybe_sound") # TODO: possibly something to do with sound??
+label(0x396f, "sound_priority_per_channel_table")
 label(0x3973, "remember_a")
 label(0xa6f, "sixteen_entry_table1")
-label(0xa7f, "sixteen_entry_table2")
-expr(0x3f1b, make_subtract("sixteen_entry_table2", 1))
+label(0xa7f, "level_ordering_table")
+label(0xa80, "level_ordering_table+1")
+comment(0x3f0d, "Get the address of the first 'sprite' which is actually level ordering data", inline=True)
+comment(0x3f16, "Copy seventeen bytes of level ordering data into the level_ordering_table")
+decimal(0x3f17)
+label(0x3f18, "copy_level_ordering_table_loop")
+expr(0x3f1b, make_subtract("level_ordering_table", 1))
+comment(0x3f20, "read the first byte of the data (which is zero) and set the copy_protection_flag if needed")
+label(0x3f2d, "skip_writing_copy_protection_flag")
 label(0x295c, "desired_menu_slots") # sub_c2980 initialises elements 9 inclusive to $11 exclusive, but elsewhere we do access lower elements
 label(0x296f, "displayed_menu_slots") # see code at c29aa which pairs this with menu_slots1
 # sub_c2157 uses all of these tables in parallel, so presumably they share the same size - represented here by 'x'
@@ -1159,7 +1222,7 @@ envelope(0x38c2, "envelope_2")
 envelope(0x38d8, "envelope_3")
 label(0x950, "x_entry_table2a")
 
-entry(0x3f6f, "probably_copy_protection_TODO")
+entry(0x3f6f, "handle_developer_mode_setup")
 # TODO: DELETE? expr(0x3f73, "game_state_flag_have_spell")
 
 constant(3, "menu_action_file") # TODO: plausible guess
@@ -1176,7 +1239,7 @@ comment(0x3a75, "TODO: This looks like a manual implementation of an auto-repeat
 # TODO: Not yet clear exactly why we have two versions of these flags
 label(0x3aa0, "space_flag2")
 label(0x28, "left_right_flag")
-label(0x3aa1, "left_right_flag2")
+label(0x3aa1, "left_right_flag_pending")
 label(0x27, "left_right_repeat_flag")
 entry(0x2c67, "apply_pending_menu_motion")
 entry(0x2c88, "no_menu_motion")

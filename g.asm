@@ -1,5 +1,6 @@
 ; Constants
 black                                           = 0
+blue                                            = 4
 buffer_sound_channel_0                          = 4
 caps_mask                                       = 223
 characters_per_line                             = 40
@@ -21,6 +22,7 @@ inkey_key_space                                 = 157
 inkey_key_x                                     = 189
 inkey_key_z                                     = 158
 last_level_letter                               = 81
+magenta                                         = 5
 max_filename_len                                = 7
 menu_action_file                                = 3
 menu_slot_count                                 = 17
@@ -118,6 +120,7 @@ spriteid_rope1                                  = 85
 spriteid_rope2                                  = 86
 spriteid_rope3                                  = 87
 spriteid_rope4                                  = 88
+spriteid_rope_hook                              = 11
 spriteid_some_small_blob                        = 55
 spriteid_some_small_number_of_pixels_set        = 30
 spriteid_sparkles1                              = 34
@@ -127,7 +130,6 @@ spriteid_sparkles4                              = 37
 spriteid_sparkles5                              = 38
 spriteid_transform1                             = 56
 spriteid_transform2                             = 57
-spriteid_w_thing                                = 11
 spriteid_wizard1                                = 48
 spriteid_wizard2                                = 49
 spriteid_wizard3                                = 50
@@ -152,214 +154,222 @@ white                                           = 7
 yellow                                          = 3
 
 ; Memory locations
-l0002                                   = $02
-l0003                                   = $03
-l0004                                   = $04
-l0005                                   = $05
-rnd0                                    = $06
-rnd1                                    = $07
-rnd2                                    = $08
-rnd3                                    = $09
-rnd4                                    = $0a
-dest_sprite_number                      = $14
-sprite_op_flags                         = $15
-sprite_number                           = $16
-sprite_x_base_low                       = $18
-sprite_x_base_high                      = $19
-sprite_y_base_low                       = $1a
-sprite_y_base_high                      = $1b
-sprite_reflect_flag                     = $1d
-valid_direction_pending                 = $20
-another_menu_index                      = $25
-l0026                                   = $26
-left_right_repeat_flag                  = $27
-left_right_flag                         = $28
-new_menu_index                          = $29
-space_bar_press_pending                 = $2a
-space_bar_pressed                       = $2b
-z_key_pressed_pending                   = $2c
-x_key_pressed_pending                   = $2d
-current_menu_index                      = $2e
-l0030                                   = $30
-desired_level                           = $31
-currently_loaded_level                  = $37
-l0039                                   = $39
-l003a                                   = $3a
-l003b                                   = $3b
-some_word                               = $3c
-l003e                                   = $3e
-l003f                                   = $3f
-l0040                                   = $40
-l0041                                   = $41
-l0042                                   = $42
-print_in_italics_flag                   = $43
-l0044                                   = $44
-eor_key                                 = $45
-return_key_pressed_pending              = $46
-current_player_character                = $48
-l0049                                   = $49
-l004a                                   = $4a
-l004b                                   = $4b
-screen_base_address_high                = $4c
-new_player_character                    = $4d
-l0050                                   = $50
-previous_level                          = $51
-l0052                                   = $52
-l0053                                   = $53
-sprdata_ptr                             = $54
-l0056                                   = $56
-temp_sprite_address_low                 = $58
-temp_sprite_address_high                = $59
-temp_sprite_offset                      = $5a
-l005b                                   = $5b
-displayed_transformations_remaining     = $5c
-initial_level_number_div4               = $5f
-l0060                                   = $60
-l0061                                   = $61
-l0062                                   = $62
-l0063                                   = $63
-l0064                                   = $64
-l0065                                   = $65
-l0066                                   = $66
-l0067                                   = $67
-l0068                                   = $68
-address1_low                            = $70
-filename_low                            = $70
-src_sprite_address_low                  = $70
-address1_high                           = $71
-filename_high                           = $71
-src_sprite_address_high                 = $71
-sprite_screen_address_low               = $72
-sprite_screen_address_high              = $73
-sprite_x_pos_low                        = $74
-sprite_x_pos_high                       = $75
-sprite_y_pos_low                        = $76
-sprite_y_pos_high                       = $77
-sprite_x_offset_within_byte             = $78
-byte_offset_within_sprite               = $79
-l007a                                   = $7a
-sprite_screen_address_for_column_low    = $7b
-sprite_screen_address_for_column_high   = $7c
-sprite_data_byte                        = $7d
-address2_low                            = $7e
-dest_sprite_address_low                 = $7e
-address2_high                           = $7f
-dest_sprite_address_high                = $7f
-mask_sprite_byte                        = $80
-sprite_width                            = $81
-sprite_bit                              = $82
-sprite_bit_mask                         = $83
-sprite_y_offset_within_character_row    = $84
-sprite_character_x_pos                  = $85
-amount_sprite_is_offscreen_x            = $86
-l0087                                   = $87
-vertical_sprite_position_is_valid_flag  = $88
-romsel_copy                             = $f4
-interrupt_accumulator                   = $fc
-l00fd                                   = $fd
-l0100                                   = $0100
-l010b                                   = $010b
-l0116                                   = $0116
-l0121                                   = $0121
-l0122                                   = $0122
-l0123                                   = $0123
-l0124                                   = $0124
-l0125                                   = $0125
-l0126                                   = $0126
-l0127                                   = $0127
-l0128                                   = $0128
-l0129                                   = $0129
-l012a                                   = $012a
-l012b                                   = $012b
-l012c                                   = $012c
-l012d                                   = $012d
-l012e                                   = $012e
-brkv                                    = $0202
-irq1v                                   = $0204
-first_byte_break_intercept              = $0287
-x_entry_table2a                         = $0950
-l0951                                   = $0951
-x_entry_table2b                         = $095b
-x_entry_table5a                         = $0966
-l0967                                   = $0967
-x_entry_table5b                         = $0971
-x_entry_table6a                         = $097c
-l097d                                   = $097d
-x_entry_table6b                         = $0987
-x_entry_table7a                         = $0992
-l0993                                   = $0993
-x_entry_table7b                         = $099d
-x_entry_table9a                         = $09a8
-l09a9                                   = $09a9
-x_entry_table9b                         = $09b3
-l09b4                                   = $09b4
-x_entry_table10a                        = $09be
-l09bf                                   = $09bf
-x_entry_table10b                        = $09c9
-l09d4                                   = $09d4
-l09d5                                   = $09d5
-l09df                                   = $09df
-l09ea                                   = $09ea
-l09eb                                   = $09eb
-current_transformations_remaining       = $09ec
-byte_per_level_table1                   = $09ef
-sixteen_entry_table1                    = $0a6f
-sixteen_entry_table2                    = $0a7f
-l0a80                                   = $0a80
-string_input_buffer                     = $0a90
-eight_entry_table1                      = $0aa1
-eight_entry_table2                      = $0aa9
-old_brkv1                               = $0ab1
-old_brkv2                               = $0ab3
-old_irq1v                               = $0ab5
-l0b00                                   = $0b00
-sprite_199                              = $0b11
-sprite_198                              = $0b93
-sprite_197                              = $0bc5
-level_init_after_load_handler_ptr       = $3ad7
-second_level_handler_ptr                = $3ad9
-level_name_ptr                          = $3adb
-l3add                                   = $3add
-c3ade                                   = $3ade
-level_header_data                       = $3adf
-l3ae0                                   = $3ae0
-auxcode                                 = $53c0
-check_password                          = $53c0
-start_of_screen_memory                  = $5bc0
-l8000                                   = $8000
-l8008                                   = $8008
-lbe00                                   = $be00
-lbf00                                   = $bf00
-crtc_address_register                   = $fe00
-crtc_address_write                      = $fe01
-video_ula_palette                       = $fe21
-romsel                                  = $fe30
-system_via_t1c_l                        = $fe44
-system_via_t1c_h                        = $fe45
-system_via_t1l_l                        = $fe46
-system_via_t1l_h                        = $fe47
-system_via_t2c_l                        = $fe48
-system_via_t2c_h                        = $fe49
-system_via_acr                          = $fe4b
-system_via_ifr                          = $fe4d
-system_via_ier                          = $fe4e
-user_via_t1c_l                          = $fe64
-user_via_t1c_h                          = $fe65
-user_via_t2c_l                          = $fe68
-user_via_t2c_h                          = $fe69
-user_via_ier                            = $fe6e
-osfile                                  = $ffdd
-oswrch                                  = $ffee
-osword                                  = $fff1
-osbyte                                  = $fff4
-oscli                                   = $fff7
+l0002                                       = $02
+l0003                                       = $03
+l0004                                       = $04
+l0005                                       = $05
+rnd0                                        = $06
+rnd1                                        = $07
+rnd2                                        = $08
+rnd3                                        = $09
+rnd4                                        = $0a
+dest_sprite_number                          = $14
+sprite_op_flags                             = $15
+sprite_number                               = $16
+sprite_x_base_low                           = $18
+sprite_x_base_high                          = $19
+sprite_y_base_low                           = $1a
+sprite_y_base_high                          = $1b
+sprite_reflect_flag                         = $1d
+valid_direction_pending                     = $20
+another_menu_index                          = $25
+l0026                                       = $26
+left_right_repeat_flag                      = $27
+left_right_flag                             = $28
+new_menu_index                              = $29
+space_bar_press_pending                     = $2a
+space_bar_pressed                           = $2b
+z_key_pressed_pending                       = $2c
+x_key_pressed_pending                       = $2d
+current_menu_index                          = $2e
+l0030                                       = $30
+desired_level                               = $31
+currently_loaded_level                      = $37
+l0039                                       = $39
+l003a                                       = $3a
+l003b                                       = $3b
+some_word                                   = $3c
+l003e                                       = $3e
+l003f                                       = $3f
+l0040                                       = $40
+l0041                                       = $41
+l0042                                       = $42
+print_in_italics_flag                       = $43
+l0044                                       = $44
+eor_key                                     = $45
+return_key_pressed_pending                  = $46
+current_player_character                    = $48
+l0049                                       = $49
+l004a                                       = $4a
+l004b                                       = $4b
+screen_base_address_high                    = $4c
+new_player_character                        = $4d
+l0050                                       = $50
+previous_level                              = $51
+l0052                                       = $52
+l0053                                       = $53
+sprdata_ptr                                 = $54
+l0056                                       = $56
+temp_sprite_address_low                     = $58
+temp_sprite_address_high                    = $59
+temp_sprite_offset                          = $5a
+developer_mode_sideways_ram_is_set_up_flag  = $5b
+displayed_transformations_remaining         = $5c
+initial_level_number_div4                   = $5f
+l0060                                       = $60
+l0061                                       = $61
+l0062                                       = $62
+l0063                                       = $63
+l0064                                       = $64
+l0065                                       = $65
+l0066                                       = $66
+l0067                                       = $67
+l0068                                       = $68
+address1_low                                = $70
+filename_low                                = $70
+src_sprite_address_low                      = $70
+address1_high                               = $71
+filename_high                               = $71
+src_sprite_address_high                     = $71
+sprite_screen_address_low                   = $72
+sprite_screen_address_high                  = $73
+sprite_x_pos_low                            = $74
+sprite_x_pos_high                           = $75
+sprite_y_pos_low                            = $76
+sprite_y_pos_high                           = $77
+sprite_x_offset_within_byte                 = $78
+byte_offset_within_sprite                   = $79
+l007a                                       = $7a
+sprite_screen_address_for_column_low        = $7b
+sprite_screen_address_for_column_high       = $7c
+sprite_data_byte                            = $7d
+address2_low                                = $7e
+dest_sprite_address_low                     = $7e
+address2_high                               = $7f
+dest_sprite_address_high                    = $7f
+mask_sprite_byte                            = $80
+sprite_width                                = $81
+sprite_bit                                  = $82
+sprite_bit_mask                             = $83
+sprite_y_offset_within_character_row        = $84
+sprite_character_x_pos                      = $85
+amount_sprite_is_offscreen_x                = $86
+l0087                                       = $87
+vertical_sprite_position_is_valid_flag      = $88
+romsel_copy                                 = $f4
+interrupt_accumulator                       = $fc
+l00fd                                       = $fd
+l0100                                       = $0100
+l010b                                       = $010b
+l0116                                       = $0116
+l0121                                       = $0121
+l0122                                       = $0122
+l0123                                       = $0123
+l0124                                       = $0124
+l0125                                       = $0125
+l0126                                       = $0126
+l0127                                       = $0127
+l0128                                       = $0128
+l0129                                       = $0129
+l012a                                       = $012a
+l012b                                       = $012b
+l012c                                       = $012c
+l012d                                       = $012d
+l012e                                       = $012e
+brkv                                        = $0202
+irq1v                                       = $0204
+first_byte_break_intercept                  = $0287
+x_entry_table2a                             = $0950
+l0951                                       = $0951
+x_entry_table2b                             = $095b
+x_entry_table5a                             = $0966
+l0967                                       = $0967
+x_entry_table5b                             = $0971
+x_entry_table6a                             = $097c
+l097d                                       = $097d
+x_entry_table6b                             = $0987
+x_entry_table7a                             = $0992
+l0993                                       = $0993
+x_entry_table7b                             = $099d
+x_entry_table9a                             = $09a8
+l09a9                                       = $09a9
+x_entry_table9b                             = $09b3
+l09b4                                       = $09b4
+x_entry_table10a                            = $09be
+l09bf                                       = $09bf
+x_entry_table10b                            = $09c9
+l09d4                                       = $09d4
+l09d5                                       = $09d5
+l09df                                       = $09df
+l09ea                                       = $09ea
+l09eb                                       = $09eb
+current_transformations_remaining           = $09ec
+byte_per_level_table1                       = $09ef
+sixteen_entry_table1                        = $0a6f
+level_ordering_table                        = $0a7f
+string_input_buffer                         = $0a90
+eight_entry_table1                          = $0aa1
+eight_entry_table2                          = $0aa9
+old_brkv1                                   = $0ab1
+old_brkv2                                   = $0ab3
+old_irq1v                                   = $0ab5
+l0b00                                       = $0b00
+sprite_199                                  = $0b11
+sprite_198                                  = $0b93
+sprite_197                                  = $0bc5
+level_init_after_load_handler_ptr           = $3ad7
+second_level_handler_ptr                    = $3ad9
+level_name_ptr                              = $3adb
+l3add                                       = $3add
+c3ade                                       = $3ade
+level_header_data                           = $3adf
+l3ae0                                       = $3ae0
+auxcode                                     = $53c0
+check_password                              = $53c0
+start_of_screen_memory                      = $5bc0
+l8000                                       = $8000
+l8008                                       = $8008
+lbe00                                       = $be00
+lbf00                                       = $bf00
+crtc_address_register                       = $fe00
+crtc_address_write                          = $fe01
+video_ula_palette                           = $fe21
+romsel                                      = $fe30
+system_via_t1c_l                            = $fe44
+system_via_t1c_h                            = $fe45
+system_via_t1l_l                            = $fe46
+system_via_t1l_h                            = $fe47
+system_via_t2c_l                            = $fe48
+system_via_t2c_h                            = $fe49
+system_via_acr                              = $fe4b
+system_via_ifr                              = $fe4d
+system_via_ier                              = $fe4e
+user_via_t1c_l                              = $fe64
+user_via_t1c_h                              = $fe65
+user_via_t2c_l                              = $fe68
+user_via_t2c_h                              = $fe69
+user_via_ier                                = $fe6e
+osfile                                      = $ffdd
+oswrch                                      = $ffee
+osword                                      = $fff1
+osbyte                                      = $fff4
+oscli                                       = $fff7
 
     * = $1234
 
 pydis_start
 
 !pseudopc $1103 {
-copy_protection_flag
+; developer_flags
+; 
+;     bit 0: <TODO>
+;     bit 1: <TODO>
+;     bit 2: <TODO>
+;     bit 3: <TODO>
+;     bit 4-6: unused
+;     bit 7: "developer mode active", toolbar is magenta, ESCAPE resets or exits the
+; game I think, if you have the right sideways RAM set up.
+developer_flags
     !byte 0                                                           ; 1234: 00          .   :1103[1]
 timingA_counter_low
     !byte $47                                                         ; 1235: 47          G   :1104[1]
@@ -393,7 +403,7 @@ c110c
     lda #'1'                                                          ; 1255: a9 31       .1  :1124[1]
     sta current_transformations_remaining+2                           ; 1257: 8d ee 09    ... :1126[1]
     ldx #0                                                            ; 125a: a2 00       ..  :1129[1]
-    ldy sixteen_entry_table2                                          ; 125c: ac 7f 0a    ... :112b[1]
+    ldy level_ordering_table                                          ; 125c: ac 7f 0a    ... :112b[1]
     cpy #last_level_letter+1                                          ; 125f: c0 52       .R  :112e[1]
     bne initialise_level                                              ; 1261: d0 0e       ..  :1130[1]
 ; choose a new starting level
@@ -404,7 +414,7 @@ c110c
     asl                                                               ; 126a: 0a          .   :1139[1]
     adc #first_level_letter                                           ; 126b: 69 41       iA  :113a[1]
     tay                                                               ; 126d: a8          .   :113c[1]
-    jsr convert_level_letter_to_number                                ; 126e: 20 ef 0a     .. :113d[1]
+    jsr convert_section_letter_to_level_filename_letter               ; 126e: 20 ef 0a     .. :113d[1]
 ; TODO: this is used by e.g. dataA
 initialise_level
     lda l0030                                                         ; 1271: a5 30       .0  :1140[1]
@@ -510,10 +520,10 @@ c1209
     lda #0                                                            ; 133d: a9 00       ..  :120c[1]
     sta l31d7                                                         ; 133f: 8d d7 31    ..1 :120e[1]
     ldx #3                                                            ; 1342: a2 03       ..  :1211[1]
-loop_c1213
-    sta four_entry_table3_maybe_sound,x                               ; 1344: 9d 6f 39    .o9 :1213[1]
+clear_sound_priorities_loop
+    sta sound_priority_per_channel_table,x                            ; 1344: 9d 6f 39    .o9 :1213[1]
     dex                                                               ; 1347: ca          .   :1216[1]
-    bpl loop_c1213                                                    ; 1348: 10 fa       ..  :1217[1]
+    bpl clear_sound_priorities_loop                                   ; 1348: 10 fa       ..  :1217[1]
     ldx level_init_after_load_handler_ptr                             ; 134a: ae d7 3a    ..: :1219[1]
     ldy level_init_after_load_handler_ptr + 1                         ; 134d: ac d8 3a    ..: :121c[1]
     jsr jmp_yx                                                        ; 1350: 20 66 19     f. :121f[1]
@@ -523,9 +533,10 @@ loop_c1213
     tax                                                               ; 1358: aa          .   :1227[1]
     lda byte_per_level_table1,x                                       ; 1359: bd ef 09    ... :1228[1]
     and #$80                                                          ; 135c: 29 80       ).  :122b[1]
-    beq pydis_start                                                   ; 135e: f0 05       ..  :122d[1]
+    beq skip5                                                         ; 135e: f0 05       ..  :122d[1]
     lda #$21 ; '!'                                                    ; 1360: a9 21       .!  :122f[1]
     jsr something50_TODO                                              ; 1362: 20 bd 2b     .+ :1231[1]
+skip5
     lda #3                                                            ; 1365: a9 03       ..  :1234[1]
     sta l003e                                                         ; 1367: 85 3e       .>  :1236[1]
     lda #black                                                        ; 1369: a9 00       ..  :1238[1]
@@ -577,7 +588,7 @@ sub_c1278
     bne c129b                                                         ; 13bb: d0 0f       ..  :128a[1]
     lda l3add                                                         ; 13bd: ad dd 3a    ..: :128c[1]
     sta l0030                                                         ; 13c0: 85 30       .0  :128f[1]
-    lda copy_protection_flag                                          ; 13c2: ad 03 11    ... :1291[1]
+    lda developer_flags                                               ; 13c2: ad 03 11    ... :1291[1]
     bpl c129b                                                         ; 13c5: 10 05       ..  :1294[1]
     lda c3ade                                                         ; 13c7: ad de 3a    ..: :1296[1]
     sta l0030                                                         ; 13ca: 85 30       .0  :1299[1]
@@ -1423,7 +1434,7 @@ set_toolbar_and_gameplay_area_colours
     lda use_colour_flag                                               ; 189f: ad 65 17    .e. :176e[1]
     beq return4                                                       ; 18a2: f0 17       ..  :1771[1]
     ldy desired_level                                                 ; 18a4: a4 31       .1  :1773[1]
-    jsr convert_level_number_to_letter                                ; 18a6: 20 d4 0a     .. :1775[1]
+    jsr convert_level_filename_letter_into_section_letter             ; 18a6: 20 d4 0a     .. :1775[1]
     tya                                                               ; 18a9: 98          .   :1778[1]
     sec                                                               ; 18aa: 38          8   :1779[1]
     sbc #first_level_letter                                           ; 18ab: e9 41       .A  :177a[1]
@@ -1492,10 +1503,10 @@ if_vsync_elapsed_then_set_toolbar_area_palette
     ldx #1                                                            ; 190e: a2 01       ..  :17dd[1]
     ldy toolbar_colour                                                ; 1910: ac 5e 17    .^. :17df[1]
     jsr change_palette_logical_colour_x_to_y                          ; 1913: 20 25 18     %. :17e2[1]
-    lda copy_protection_flag                                          ; 1916: ad 03 11    ... :17e5[1]
+    lda developer_flags                                               ; 1916: ad 03 11    ... :17e5[1]
     bpl c17f1                                                         ; 1919: 10 07       ..  :17e8[1]
     ldx #0                                                            ; 191b: a2 00       ..  :17ea[1]
-    ldy #5                                                            ; 191d: a0 05       ..  :17ec[1]
+    ldy #magenta                                                      ; 191d: a0 05       ..  :17ec[1]
     jsr change_palette_logical_colour_x_to_y                          ; 191f: 20 25 18     %. :17ee[1]
 c17f1
     lda #0                                                            ; 1922: a9 00       ..  :17f1[1]
@@ -1513,10 +1524,10 @@ if_timer1_elapsed_then_set_main_area_palette
     ldx #1                                                            ; 1937: a2 01       ..  :1806[1]
     ldy gameplay_area_colour                                          ; 1939: ac 60 17    .`. :1808[1]
     jsr change_palette_logical_colour_x_to_y                          ; 193c: 20 25 18     %. :180b[1]
-    lda copy_protection_flag                                          ; 193f: ad 03 11    ... :180e[1]
+    lda developer_flags                                               ; 193f: ad 03 11    ... :180e[1]
     bpl c181a                                                         ; 1942: 10 07       ..  :1811[1]
     ldx #0                                                            ; 1944: a2 00       ..  :1813[1]
-    ldy #0                                                            ; 1946: a0 00       ..  :1815[1]
+    ldy #black                                                        ; 1946: a0 00       ..  :1815[1]
     jsr change_palette_logical_colour_x_to_y                          ; 1948: 20 25 18     %. :1817[1]
 c181a
     inc l1824                                                         ; 194b: ee 24 18    .$. :181a[1]
@@ -1538,14 +1549,14 @@ change_palette_logical_colour_x_to_y
     plp                                                               ; 195d: 28          (   :182c[1]
     ror                                                               ; 195e: 6a          j   :182d[1]
     ldx #7                                                            ; 195f: a2 07       ..  :182e[1]
-loop_c1830
+change_palette_loop
     sta video_ula_palette                                             ; 1961: 8d 21 fe    .!. :1830[1]
     adc #$10                                                          ; 1964: 69 10       i.  :1833[1]
     dex                                                               ; 1966: ca          .   :1835[1]
-    bpl loop_c1830                                                    ; 1967: 10 f8       ..  :1836[1]
+    bpl change_palette_loop                                           ; 1967: 10 f8       ..  :1836[1]
     rts                                                               ; 1969: 60          `   :1838[1]
 
-something11_TODO
+reset_game_because_escape_pressed
     jsr wait_for_vsync                                                ; 196a: 20 8c 17     .. :1839[1]
     jsr wait_for_timingB_counter                                      ; 196d: 20 00 04     .. :183c[1]
     jsr reset_code                                                    ; 1970: 20 45 18     E. :183f[1]
@@ -2325,7 +2336,7 @@ something53_TODO
     tya                                                               ; 1eed: 98          .   :1dbc[1]
     pha                                                               ; 1eee: 48          H   :1dbd[1]
     beq c1dc9                                                         ; 1eef: f0 09       ..  :1dbe[1]
-    lda #spriteid_w_thing                                             ; 1ef1: a9 0b       ..  :1dc0[1]
+    lda #spriteid_rope_hook                                           ; 1ef1: a9 0b       ..  :1dc0[1]
     jsr draw_sprite_a_at_character_xy                                 ; 1ef3: 20 4c 1f     L. :1dc2[1]
     lda #3                                                            ; 1ef6: a9 03       ..  :1dc5[1]
     bne c1dda                                                         ; 1ef8: d0 11       ..  :1dc7[1]
@@ -3207,7 +3218,7 @@ sub_c2358
     ldx #buffer_sound_channel_0                                       ; 248b: a2 04       ..  :235a[1]
     jsr osbyte                                                        ; 248d: 20 f4 ff     .. :235c[1]   ; Flush sound channel 0 (X=4)
     lda #0                                                            ; 2490: a9 00       ..  :235f[1]
-    sta four_entry_table3_maybe_sound                                 ; 2492: 8d 6f 39    .o9 :2361[1]
+    sta sound_priority_per_channel_table                              ; 2492: 8d 6f 39    .o9 :2361[1]
     sta l3970                                                         ; 2495: 8d 70 39    .p9 :2364[1]
     sta l2433                                                         ; 2498: 8d 33 24    .3$ :2367[1]
     rts                                                               ; 249b: 60          `   :236a[1]
@@ -4203,21 +4214,21 @@ something20_TODO
     jsr wait_for_timer_2_using_yx                                     ; 2b6f: 20 91 17     .. :2a3e[1]
     jsr draw_toolbar                                                  ; 2b72: 20 a1 29     .) :2a41[1]
     jsr c3a8f                                                         ; 2b75: 20 8f 3a     .: :2a44[1]
-    lda l005b                                                         ; 2b78: a5 5b       .[  :2a47[1]
-    beq c2a60                                                         ; 2b7a: f0 15       ..  :2a49[1]
-    lda copy_protection_flag                                          ; 2b7c: ad 03 11    ... :2a4b[1]
+    lda developer_mode_sideways_ram_is_set_up_flag                    ; 2b78: a5 5b       .[  :2a47[1]
+    beq skip_developer_mode_handling                                  ; 2b7a: f0 15       ..  :2a49[1]
+    lda developer_flags                                               ; 2b7c: ad 03 11    ... :2a4b[1]
     and #1                                                            ; 2b7f: 29 01       ).  :2a4e[1]
-    beq c2a60                                                         ; 2b81: f0 0e       ..  :2a50[1]
+    beq skip_developer_mode_handling                                  ; 2b81: f0 0e       ..  :2a50[1]
     ldx #inkey_key_escape                                             ; 2b83: a2 8f       ..  :2a52[1]
     jsr negative_inkey                                                ; 2b85: 20 cc 3a     .: :2a54[1]
-    beq c2a60                                                         ; 2b88: f0 07       ..  :2a57[1]
+    beq skip_developer_mode_handling                                  ; 2b88: f0 07       ..  :2a57[1]
     pla                                                               ; 2b8a: 68          h   :2a59[1]
     pla                                                               ; 2b8b: 68          h   :2a5a[1]
     pla                                                               ; 2b8c: 68          h   :2a5b[1]
     pla                                                               ; 2b8d: 68          h   :2a5c[1]
-    jmp something11_TODO                                              ; 2b8e: 4c 39 18    L9. :2a5d[1]
+    jmp reset_game_because_escape_pressed                             ; 2b8e: 4c 39 18    L9. :2a5d[1]
 
-c2a60
+skip_developer_mode_handling
     lda new_menu_index                                                ; 2b91: a5 29       .)  :2a60[1]
     sta another_menu_index                                            ; 2b93: 85 25       .%  :2a62[1]
     jsr apply_pending_menu_motion                                     ; 2b95: 20 67 2c     g, :2a64[1]
@@ -4246,14 +4257,14 @@ c2a81
     ldx #3                                                            ; 2bc7: a2 03       ..  :2a96[1]
     lda #0                                                            ; 2bc9: a9 00       ..  :2a98[1]
 loop_c2a9a
-    sta four_entry_table3_maybe_sound,x                               ; 2bcb: 9d 6f 39    .o9 :2a9a[1]
+    sta sound_priority_per_channel_table,x                            ; 2bcb: 9d 6f 39    .o9 :2a9a[1]
     dex                                                               ; 2bce: ca          .   :2a9d[1]
     bpl loop_c2a9a                                                    ; 2bcf: 10 fa       ..  :2a9e[1]
 c2aa0
     jsr wait_for_timingB_counter                                      ; 2bd1: 20 00 04     .. :2aa0[1]
     jsr sub_c3664                                                     ; 2bd4: 20 64 36     d6 :2aa3[1]
     jsr sub_c344b                                                     ; 2bd7: 20 4b 34     K4 :2aa6[1]
-    lda copy_protection_flag                                          ; 2bda: ad 03 11    ... :2aa9[1]
+    lda developer_flags                                               ; 2bda: ad 03 11    ... :2aa9[1]
     and #1                                                            ; 2bdd: 29 01       ).  :2aac[1]
     beq c2ab7                                                         ; 2bdf: f0 07       ..  :2aae[1]
     ldx #inkey_key_shift                                              ; 2be1: a2 ff       ..  :2ab0[1]
@@ -4526,7 +4537,7 @@ finished_multiply
 
 apply_pending_menu_motion
     ldx new_menu_index                                                ; 2d98: a6 29       .)  :2c67[1]
-    lda left_right_flag2                                              ; 2d9a: ad a1 3a    ..: :2c69[1]
+    lda left_right_flag_pending                                       ; 2d9a: ad a1 3a    ..: :2c69[1]
     beq no_menu_motion                                                ; 2d9d: f0 1a       ..  :2c6c[1]
     bmi menu_left_pending                                             ; 2d9f: 30 0e       0.  :2c6e[1]
 menu_right_pending
@@ -5571,7 +5582,7 @@ sub_c3664
     jsr string_input                                                  ; 37a4: 20 fc 36     .6 :3673[1]
     ldy l0005                                                         ; 37a7: a4 05       ..  :3676[1]
     beq c3698                                                         ; 37a9: f0 1e       ..  :3678[1]
-    lda copy_protection_flag                                          ; 37ab: ad 03 11    ... :367a[1]
+    lda developer_flags                                               ; 37ab: ad 03 11    ... :367a[1]
     and #1                                                            ; 37ae: 29 01       ).  :367d[1]
     beq c36a8                                                         ; 37b0: f0 27       .'  :367f[1]
     cpy #2                                                            ; 37b2: c0 02       ..  :3681[1]
@@ -5587,7 +5598,7 @@ sub_c3664
     jmp select_level_a                                                ; 37c6: 4c db 36    L.6 :3695[1]
 
 c3698
-    lda copy_protection_flag                                          ; 37c9: ad 03 11    ... :3698[1]
+    lda developer_flags                                               ; 37c9: ad 03 11    ... :3698[1]
     and #1                                                            ; 37cc: 29 01       ).  :369b[1]
     beq return24                                                      ; 37ce: f0 08       ..  :369d[1]
     jsr something_TODO                                                ; 37d0: 20 53 04     S. :369f[1]
@@ -5745,7 +5756,7 @@ c378e
     ldy #>section_message                                             ; 38c8: a0 37       .7  :3797[1]
     jsr print_encrypted_string_at_yx                                  ; 38ca: 20 1c 38     .8 :3799[1]
     ldy desired_level                                                 ; 38cd: a4 31       .1  :379c[1]
-    jsr convert_level_number_to_letter                                ; 38cf: 20 d4 0a     .. :379e[1]
+    jsr convert_level_filename_letter_into_section_letter             ; 38cf: 20 d4 0a     .. :379e[1]
     tya                                                               ; 38d2: 98          .   :37a1[1]
     jsr print_italic                                                  ; 38d3: 20 66 18     f. :37a2[1]
     jsr print_2xlf_cr                                                 ; 38d6: 20 50 38     P8 :37a5[1]
@@ -5764,7 +5775,7 @@ c37ba
 c37c3
     txa                                                               ; 38f4: 8a          .   :37c3[1]
     tay                                                               ; 38f5: a8          .   :37c4[1]
-    jsr convert_level_letter_to_number                                ; 38f6: 20 ef 0a     .. :37c5[1]
+    jsr convert_section_letter_to_level_filename_letter               ; 38f6: 20 ef 0a     .. :37c5[1]
     tya                                                               ; 38f9: 98          .   :37c8[1]
     sec                                                               ; 38fa: 38          8   :37c9[1]
     sbc #first_level_letter                                           ; 38fb: e9 41       .A  :37ca[1]
@@ -5993,6 +6004,8 @@ sound_data4
 ; Play a sound
 ; 
 ; On Extry:
+;     A: Sound priority ($FF always plays, $00 will not if sound already playing is
+; $FF)
 ;     YX: Address of SOUND block to play (eight bytes)
 ; 
 ; On Exit:
@@ -6013,15 +6026,15 @@ play_sound_yx
     beq finish_play_sound                                             ; 3a37: f0 4c       .L  :3906[1]
     ldy #0                                                            ; 3a39: a0 00       ..  :3908[1]
     lda (address1_low),y                                              ; 3a3b: b1 70       .p  :390a[1]
-    and #$f0                                                          ; 3a3d: 29 f0       ).  :390c[1]
+    and #$f0                                                          ; 3a3d: 29 f0       ).  :390c[1]   ; If flush is clear, then branch forward to play sound
     beq c393c                                                         ; 3a3f: f0 2c       .,  :390e[1]
     lda (address1_low),y                                              ; 3a41: b1 70       .p  :3910[1]
     and #3                                                            ; 3a43: 29 03       ).  :3912[1]
-    tax                                                               ; 3a45: aa          .   :3914[1]
+    tax                                                               ; 3a45: aa          .   :3914[1]   ; X=channel (0-3)
     lda remember_a                                                    ; 3a46: ad 73 39    .s9 :3915[1]
-    cmp four_entry_table3_maybe_sound,x                               ; 3a49: dd 6f 39    .o9 :3918[1]
+    cmp sound_priority_per_channel_table,x                            ; 3a49: dd 6f 39    .o9 :3918[1]
     bcc finish_play_sound                                             ; 3a4c: 90 37       .7  :391b[1]
-    sta four_entry_table3_maybe_sound,x                               ; 3a4e: 9d 6f 39    .o9 :391d[1]
+    sta sound_priority_per_channel_table,x                            ; 3a4e: 9d 6f 39    .o9 :391d[1]
     cpx #2                                                            ; 3a51: e0 02       ..  :3920[1]
     bcs play_sound                                                    ; 3a53: b0 27       .'  :3922[1]
     lda address1_low                                                  ; 3a55: a5 70       .p  :3924[1]
@@ -6072,7 +6085,7 @@ l3967
     !byte 0, 0, 0, 0                                                  ; 3a98: 00 00 00... ... :3967[1]
 l396b
     !byte 0, 0, 0, 0                                                  ; 3a9c: 00 00 00... ... :396b[1]
-four_entry_table3_maybe_sound
+sound_priority_per_channel_table
     !byte 0                                                           ; 3aa0: 00          .   :396f[1]
 l3970
     !byte 0, 0, 0                                                     ; 3aa1: 00 00 00    ... :3970[1]
@@ -6137,14 +6150,14 @@ loop_c39d2
     bne c39ec                                                         ; 3b0f: d0 0c       ..  :39de[1]
 c39e0
     ldy desired_level                                                 ; 3b11: a4 31       .1  :39e0[1]
-    jsr convert_level_number_to_letter                                ; 3b13: 20 d4 0a     .. :39e2[1]
+    jsr convert_level_filename_letter_into_section_letter             ; 3b13: 20 d4 0a     .. :39e2[1]
     iny                                                               ; 3b16: c8          .   :39e5[1]
     cpy #last_level_letter                                            ; 3b17: c0 51       .Q  :39e6[1]
     bcc c39ec                                                         ; 3b19: 90 02       ..  :39e8[1]
     ldy #first_level_letter                                           ; 3b1b: a0 41       .A  :39ea[1]
 c39ec
     ldx #0                                                            ; 3b1d: a2 00       ..  :39ec[1]
-    jsr convert_level_letter_to_number                                ; 3b1f: 20 ef 0a     .. :39ee[1]
+    jsr convert_section_letter_to_level_filename_letter               ; 3b1f: 20 ef 0a     .. :39ee[1]
     jmp initialise_level                                              ; 3b22: 4c 40 11    L@. :39f1[1]
 
 c39f4
@@ -6243,7 +6256,7 @@ c3a8f
     lda space_bar_press_pending                                       ; 3bc0: a5 2a       .*  :3a8f[1]
     sta space_flag2                                                   ; 3bc2: 8d a0 3a    ..: :3a91[1]
     lda left_right_flag                                               ; 3bc5: a5 28       .(  :3a94[1]
-    sta left_right_flag2                                              ; 3bc7: 8d a1 3a    ..: :3a96[1]
+    sta left_right_flag_pending                                       ; 3bc7: 8d a1 3a    ..: :3a96[1]
     lda #0                                                            ; 3bca: a9 00       ..  :3a99[1]
     sta space_bar_press_pending                                       ; 3bcc: 85 2a       .*  :3a9b[1]
     sta left_right_flag                                               ; 3bce: 85 28       .(  :3a9d[1]
@@ -6251,7 +6264,7 @@ c3a8f
 
 space_flag2
     !byte 0                                                           ; 3bd1: 00          .   :3aa0[1]
-left_right_flag2
+left_right_flag_pending
     !byte 0                                                           ; 3bd2: 00          .   :3aa1[1]
 
 sub_c3aa2
@@ -6397,7 +6410,7 @@ relocation5_loop
     cpy #update_displayed_transformations_remaining_high_copy_end - update_displayed_transformations_remaining_high_copy_start; 3c8b: c0 2f       ./
     bne relocation5_loop                                              ; 3c8d: d0 f5       ..
 ; Relocation finished
-    lda copy_protection_flag                                          ; 3c8f: ad 03 11    ...
+    lda developer_flags                                               ; 3c8f: ad 03 11    ...
     and #8                                                            ; 3c92: 29 08       ).
     beq set_drive_and_directory                                       ; 3c94: f0 05       ..
     lda #'2'                                                          ; 3c96: a9 32       .2
@@ -6658,7 +6671,7 @@ adjust_timing_variable_loop
     stx sprdata_ptr                                                   ; 3e84: 86 54       .T
     ldy #>icodata                                                     ; 3e86: a0 40       .@
     sty sprdata_ptr + 1                                               ; 3e88: 84 55       .U
-    lda copy_protection_flag                                          ; 3e8a: ad 03 11    ...
+    lda developer_flags                                               ; 3e8a: ad 03 11    ...
     and #4                                                            ; 3e8d: 29 04       ).
     bne read_icodata_using_osword_7f                                  ; 3e8f: d0 10       ..
     lda #<icodata_filename                                            ; 3e91: a9 5e       .^
@@ -6745,24 +6758,27 @@ dir_dollar_command
     !byte $0d                                                         ; 3f0c: 0d          .
 
 c3f0d
-    lda #0                                                            ; 3f0d: a9 00       ..
+    lda #0                                                            ; 3f0d: a9 00       ..             ; Get the address of the first 'sprite' which is actually level ordering data
     jsr get_address_of_sprite_a                                       ; 3f0f: 20 2c 13     ,.
     stx address1_low                                                  ; 3f12: 86 70       .p
     sty address1_high                                                 ; 3f14: 84 71       .q
-    ldy #$11                                                          ; 3f16: a0 11       ..
-loop_c3f18
+; Copy seventeen bytes of level ordering data into the level_ordering_table
+    ldy #17                                                           ; 3f16: a0 11       ..
+copy_level_ordering_table_loop
     lda (address1_low),y                                              ; 3f18: b1 70       .p
-    sta sixteen_entry_table2 - 1,y                                    ; 3f1a: 99 7e 0a    .~.
+    sta level_ordering_table - 1,y                                    ; 3f1a: 99 7e 0a    .~.
     dey                                                               ; 3f1d: 88          .
-    bne loop_c3f18                                                    ; 3f1e: d0 f8       ..
+    bne copy_level_ordering_table_loop                                ; 3f1e: d0 f8       ..
+; read the first byte of the data (which is zero) and set the copy_protection_flag if
+; needed
     lda (address1_low),y                                              ; 3f20: b1 70       .p
     and #$40 ; '@'                                                    ; 3f22: 29 40       )@
-    beq c3f2d                                                         ; 3f24: f0 07       ..
+    beq skip_writing_copy_protection_flag                             ; 3f24: f0 07       ..
     lda (address1_low),y                                              ; 3f26: b1 70       .p
     and #$bf                                                          ; 3f28: 29 bf       ).
-    sta copy_protection_flag                                          ; 3f2a: 8d 03 11    ...
-c3f2d
-    jsr probably_copy_protection_TODO                                 ; 3f2d: 20 6f 3f     o?
+    sta developer_flags                                               ; 3f2a: 8d 03 11    ...
+skip_writing_copy_protection_flag
+    jsr handle_developer_mode_setup                                   ; 3f2d: 20 6f 3f     o?
     lda #osbyte_reset_soft_keys                                       ; 3f30: a9 12       ..
     jsr osbyte                                                        ; 3f32: 20 f4 ff     ..            ; Reset function keys
     jsr sub_c2980                                                     ; 3f35: 20 80 29     .)
@@ -6801,10 +6817,10 @@ character_fe_bitmap
 initial_screen_disabled_flag
     !byte 0                                                           ; 3f6e: 00          .
 
-probably_copy_protection_TODO
-    lda copy_protection_flag                                          ; 3f6f: ad 03 11    ...
+handle_developer_mode_setup
+    lda developer_flags                                               ; 3f6f: ad 03 11    ...
     and #1                                                            ; 3f72: 29 01       ).
-    sta l005b                                                         ; 3f74: 85 5b       .[
+    sta developer_mode_sideways_ram_is_set_up_flag                    ; 3f74: 85 5b       .[
     beq return27                                                      ; 3f76: f0 42       .B
 ; The following code assumes there may be a ROM image stored in sideways RAM at $8000.
 ; It copies 16 bytes of an empty ROM image to the start of sideways RAM. This
@@ -6981,19 +6997,33 @@ loop_c0ac6
     eor #$ff                                                          ; 40a2: 49 ff       I.  :0ad1[5]
     rts                                                               ; 40a4: 60          `   :0ad3[5]
 
-convert_level_number_to_letter
-    cpy #$51 ; 'Q'                                                    ; 40a5: c0 51       .Q  :0ad4[5]
+; *************************************************************************************
+; 
+; Convert a level filename letter into the section letter as shown in-game
+; 
+; The index within the level_ordering_table determines the letter returned.
+; 
+; On Entry:
+;     Y: letter as seen in the level filename
+; 
+; On Exit:
+;     Y: section letter (as seen in-game)
+;     Preserves A, X
+; 
+; *************************************************************************************
+convert_level_filename_letter_into_section_letter
+    cpy #last_level_letter                                            ; 40a5: c0 51       .Q  :0ad4[5]
     beq return28                                                      ; 40a7: f0 26       .&  :0ad6[5]
     pha                                                               ; 40a9: 48          H   :0ad8[5]
     txa                                                               ; 40aa: 8a          .   :0ad9[5]
     pha                                                               ; 40ab: 48          H   :0ada[5]
     tya                                                               ; 40ac: 98          .   :0adb[5]
     ldx #$0f                                                          ; 40ad: a2 0f       ..  :0adc[5]
-loop_c0ade
-    cmp l0a80,x                                                       ; 40af: dd 80 0a    ... :0ade[5]
+find_letter_loop
+    cmp level_ordering_table+1,x                                      ; 40af: dd 80 0a    ... :0ade[5]
     beq c0ae6                                                         ; 40b2: f0 03       ..  :0ae1[5]
     dex                                                               ; 40b4: ca          .   :0ae3[5]
-    bpl loop_c0ade                                                    ; 40b5: 10 f8       ..  :0ae4[5]
+    bpl find_letter_loop                                              ; 40b5: 10 f8       ..  :0ae4[5]
 c0ae6
     txa                                                               ; 40b7: 8a          .   :0ae6[5]
     clc                                                               ; 40b8: 18          .   :0ae7[5]
@@ -7004,7 +7034,21 @@ c0ae6
     pla                                                               ; 40be: 68          h   :0aed[5]
     rts                                                               ; 40bf: 60          `   :0aee[5]
 
-convert_level_letter_to_number
+; *************************************************************************************
+; 
+; Convert a section letter into the level file letter
+; 
+; Simple look up.
+; 
+; On Entry:
+;     Y: section letter (as seen in-game)
+; 
+; On Exit:
+;     Y: letter as seen in the level filename
+;     Preserves A, X
+; 
+; *************************************************************************************
+convert_section_letter_to_level_filename_letter
     cpy #last_level_letter                                            ; 40c0: c0 51       .Q  :0aef[5]
     beq return28                                                      ; 40c2: f0 0b       ..  :0af1[5]
     pha                                                               ; 40c4: 48          H   :0af3[5]
@@ -7012,7 +7056,7 @@ convert_level_letter_to_number
     sec                                                               ; 40c6: 38          8   :0af5[5]
     sbc #first_level_letter                                           ; 40c7: e9 41       .A  :0af6[5]
     tay                                                               ; 40c9: a8          .   :0af8[5]
-    lda l0a80,y                                                       ; 40ca: b9 80 0a    ... :0af9[5]
+    lda level_ordering_table+1,y                                      ; 40ca: b9 80 0a    ... :0af9[5]
     tay                                                               ; 40cd: a8          .   :0afc[5]
     pla                                                               ; 40ce: 68          h   :0afd[5]
 return28
@@ -7396,7 +7440,6 @@ pydis_end
 ;     c2945
 ;     c2a12
 ;     c2a33
-;     c2a60
 ;     c2a73
 ;     c2a81
 ;     c2aa0
@@ -7539,7 +7582,6 @@ pydis_end
 ;     c3ade
 ;     c3ec1
 ;     c3f0d
-;     c3f2d
 ;     l0002
 ;     l0003
 ;     l0004
@@ -7562,7 +7604,6 @@ pydis_end
 ;     l0052
 ;     l0053
 ;     l0056
-;     l005b
 ;     l0060
 ;     l0061
 ;     l0062
@@ -7608,7 +7649,6 @@ pydis_end
 ;     l09df
 ;     l09ea
 ;     l09eb
-;     l0a80
 ;     l0b00
 ;     l132b
 ;     l178b
@@ -7665,9 +7705,6 @@ pydis_end
 ;     loop_c04f9
 ;     loop_c0aba
 ;     loop_c0ac6
-;     loop_c0ade
-;     loop_c1213
-;     loop_c1830
 ;     loop_c190b
 ;     loop_c1921
 ;     loop_c193d
@@ -7712,7 +7749,6 @@ pydis_end
 ;     loop_c3892
 ;     loop_c39d2
 ;     loop_c3d54
-;     loop_c3f18
 ;     loop_c3f87
 ;     sub_c04cb
 ;     sub_c1278
@@ -8161,6 +8197,12 @@ pydis_end
 !if (last_level_letter+1) != $52 {
     !error "Assertion failed: last_level_letter+1 == $52"
 }
+!if (level_ordering_table - 1) != $0a7e {
+    !error "Assertion failed: level_ordering_table - 1 == $0a7e"
+}
+!if (magenta) != $05 {
+    !error "Assertion failed: magenta == $05"
+}
 !if (max_filename_len) != $07 {
     !error "Assertion failed: max_filename_len == $07"
 }
@@ -8239,9 +8281,6 @@ pydis_end
 !if (screen_width_minus_one) != $27 {
     !error "Assertion failed: screen_width_minus_one == $27"
 }
-!if (sixteen_entry_table2 - 1) != $0a7e {
-    !error "Assertion failed: sixteen_entry_table2 - 1 == $0a7e"
-}
 !if (spriteid_blob_thing8) != $09 {
     !error "Assertion failed: spriteid_blob_thing8 == $09"
 }
@@ -8275,14 +8314,14 @@ pydis_end
 !if (spriteid_pointer_hand) != $1d {
     !error "Assertion failed: spriteid_pointer_hand == $1d"
 }
+!if (spriteid_rope_hook) != $0b {
+    !error "Assertion failed: spriteid_rope_hook == $0b"
+}
 !if (spriteid_some_small_blob) != $37 {
     !error "Assertion failed: spriteid_some_small_blob == $37"
 }
 !if (spriteid_some_small_number_of_pixels_set) != $1e {
     !error "Assertion failed: spriteid_some_small_number_of_pixels_set == $1e"
-}
-!if (spriteid_w_thing) != $0b {
-    !error "Assertion failed: spriteid_w_thing == $0b"
 }
 !if (update_displayed_transformations_remaining_high_copy_end - update_displayed_transformations_remaining_high_copy_start) != $2f {
     !error "Assertion failed: update_displayed_transformations_remaining_high_copy_end - update_displayed_transformations_remaining_high_copy_start == $2f"
