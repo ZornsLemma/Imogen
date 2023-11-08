@@ -92,13 +92,13 @@ label(0x0070, "address1_low")
 label(0x0071, "address1_high")
 label(0x0072, "sprite_screen_address_low")
 label(0x0073, "sprite_screen_address_high")
-
 label(0x0074, "sprite_x_pos_low")
 label(0x0075, "sprite_x_pos_high")
 label(0x0076, "sprite_y_pos_low")
 label(0x0077, "sprite_y_pos_high")
 label(0x0078, "sprite_x_offset_within_byte")
 label(0x0079, "byte_offset_within_sprite")
+
 label(0x007b, "sprite_screen_address_for_column_low")
 label(0x007c, "sprite_screen_address_for_column_high")
 label(0x007d, "sprite_data_byte")
@@ -111,6 +111,7 @@ label(0x0083, "sprite_bit_mask")
 label(0x0084, "sprite_y_offset_within_character_row")
 label(0x0085, "sprite_character_x_pos")
 label(0x0086, "amount_sprite_is_offscreen_x")
+
 label(0x0088, "vertical_sprite_position_is_valid_flag")
 
 # Keypresses are checked in the IRQ routine every vsync.
@@ -151,15 +152,34 @@ label(0x1427, "not_out_of_range")
 comment(0x142e, "set Y to the horizontal offset within byte (0-7) of the sprite X position")
 comment(0x1435, "set the vertical offset within a character row (0-7) of the sprite Y position")
 comment(0x143b, "load X and check flags to see if we are copying to a destination sprite")
+
+label(0x1471, "out_of_bounds_vertically2")
+label(0x1477, "record_that_we_are_out_of_screen_range_vertically2")
+label(0x147e, "write_one_pixel_to_the_screen2")
+label(0x1498, "and_byte_with_mask_and_write_to_screen2")
+label(0x14a5, "move_up_to_previous_character_row2")
+label(0x14ad, "draw_sprite2")
+label(0x14b7, "y_coordinate_is_within_character_row2")
+label(0x14c8, "byte_not_finished_yet2")
+label(0x14fe, "move_to_next_column_while_rendering_reflected_about_y_axis2")
+label(0x1517, "update_sprite_bit_variables_and_draw_sprite2")
+label(0x1529, "finish_off_sprite2")
+comment(0x1529, "restore the original three bytes of code (self-modifying)", inline=True)
+comment(0x152b, "90 10='bcc and_byte_with_mask_and_write_to_screen2'", inline=True)
+comment(0x1533, "05 82='ora sprite_bit'", inline=True)
 label(0x1540, "out_of_bounds_vertically")
 label(0x154a, "record_that_we_are_out_of_screen_range_vertically")
-label(0x1568, "move_up_to_next_pixel_row")
-label(0x1574, "and_byte_with_mask_and_write_to_screen")
 comment(0x1557, "read byte from screen")
+label(0x1551, "write_one_pixel_to_the_screen")
+comment(0x1555, "update carry flag with the mask pixel", inline=True)
+comment(0x1559, "read the screen pixel into Z", inline=True)
+comment(0x155b, "if (screen pixel is set) then branch (this preserves carry, the mask pixel)", inline=True)
 label(0x155e, "skip1")
 comment(0x1564, "OR in (set) the appropriate bit and write back to screen memory")
-comment(0x1574, "AND with the mask to clear the appropriate bit and write the byte back to screen memory")
 comment(0x1566, "write byte to screen", inline=True)
+label(0x1568, "move_up_to_next_pixel_row")
+label(0x1574, "and_byte_with_mask_and_write_to_screen")
+comment(0x1574, "AND with the mask to clear the appropriate bit and write the byte back to screen memory")
 comment(0x1576, "write byte to screen", inline=True)
 expr(0x1580, make_lo("screen_width_in_pixels-1"))
 expr(0x1586, make_hi("screen_width_in_pixels-1"))
@@ -168,10 +188,6 @@ label(0x1593, "y_coordinate_is_within_character_row")
 comment(0x1598, "copy mask byte to destination")
 label(0x15ab, "byte_not_finished_yet")
 comment(0x15ab, "check top bit", inline=True)
-label(0x1551, "write_one_pixel_to_the_screen")
-comment(0x1555, "update carry flag with the mask pixel", inline=True)
-comment(0x1559, "read the screen pixel into Z", inline=True)
-comment(0x155b, "if (screen pixel is set) then branch (this preserves carry, the mask pixel)", inline=True)
 comment(0x158b, "$8000 is end of screen memory", inline=True)
 comment(0x15ad, "if (sprite bit is clear) then branch (to write pixel to screen)", inline=True)
 comment(0x15a1, "load next source byte from sprite")
@@ -187,9 +203,6 @@ comment(0x15bc, "move up to previous character row")
 comment(0x15e2, "reset to start of (i.e. bit 7 of) next byte", inline=True)
 expr(0x15bf, make_lo("screen_width_in_pixels"))
 expr(0x15df, "characters_per_line")
-expr(0x1675, "characters_per_line")
-expr(0x167b, make_lo("screen_width_in_pixels-1"))
-expr(0x1687, "characters_per_line-1")
 label(0x1581, "move_up_to_previous_character_row")
 comment(0x15c3, "add set bit to mask")
 comment(0x15c5, "check if we are done", inline=True)
@@ -212,6 +225,11 @@ label(0x1628, "write_last_byte")
 label(0x1589, "draw_sprite")
 expr(0x1570, make_lo("screen_width_in_pixels"))
 label(0x160c, "update_sprite_bit_variables_and_draw_sprite")
+
+expr(0x1675, "characters_per_line")
+expr(0x167b, make_lo("screen_width_in_pixels-1"))
+expr(0x1687, "characters_per_line-1")
+label(0x16f7, "skip2")
 
 
 label(0x162f, "clamp_and_clip_x")
@@ -322,6 +340,16 @@ comment(0x3d8d, "set base address for sprite rendering, $6200 is the main game a
 label(0x110b, "vertical_sync_amount_for_crtc_register")
 label(0x3f05, "drive_number")
 char(0x3f05)
+entry(0x3fbb, "sideways_rom_image")
+comment(0x3fbb, "language entry point", inline=True)
+entry(0x3fbe)
+comment(0x3fbe, "service entry point", inline=True)
+entry(0x3fc3)
+comment(0x3fc1, "ROM type flag", inline=True)
+byte(0x3fc1, 1)
+comment(0x3fc2, "empty copyright string", inline=True)
+comment(0x3fc3, "do nothing - return", inline=True)
+comment(0x3fc4, "unused bytes", inline=True)
 
 entry(0x12bb, "something23_TODO")
 entry(0x12da, "something24_TODO")
@@ -371,7 +399,6 @@ expr(0x0c2c, make_hi("irq1_routine"))
 
 
 expr(0x3c12, "vdu_enable")
-# SFTODO: I am seeing this comment duplicated, but it isn't in Toby's g.asm. Is my py8dis outdated? Ditto the "update the transformation count..." comment.
 comment(0x3c06, "The loader will have executed VDU 21 to disable VDU output. Record the current disable state before re-enabling it, so we can check it later as part of a copy protection scheme.")
 comment(0x3c06, "This initialisation code gets overwritten by level data later on.")
 comment(0x3d91, "Check to see if VDU output was disabled (VDU 21) when we first started to execute, before we re-enabled output (VDU 6) ourselves.")
@@ -382,8 +409,7 @@ expr(0x3e74, make_hi("start_of_screen_memory"))
 label(0x3f6e, "initial_screen_disabled_flag")
 expr(0x3d97, "vdu_set_mode")
 label(0x3da3, "clear_toolbar_part_of_screen")
-# SF: I haven't analysed the code and this may well be right, but clearing up to $d200 seems weird (copy protection?) and screen memory won't go that high, so I'd expect the toolbar to end at (making this up) $6200-ish not $d200. Is there a typo here?
-comment(0x3da3, "Clear memory from $5b00 to $d200. This clears the toolbar area of the screen. The toolbar lives in screen memory from $5bc0 to $d200, so this routine clears a little before the start of screen memory, but this is OK as we are just about to load sprite data there anyway")
+comment(0x3da3, "Clear memory from $5b00 to $6200. This clears the toolbar area of the screen. The toolbar lives in screen memory from $5bc0 to $6200, so this routine clears a little before the start of screen memory, but this is OK as we are just about to load sprite data there anyway")
 comment(0x3da3, "set start address to $5b00", inline=True)
 label(0x3dae, "clear_toolbar_part_of_screen_loop")
 comment(0x3d96, "VDU output wasn't disabled when we started to execute. Change to MODE 4.")
@@ -419,7 +445,7 @@ comment(0x3c28, "TODO: branch never taken?", inline=True)
 comment(0x3c4e, "TODO: branch always taken?", inline=True)
 comment(0x3c58, "TODO: branch never taken?", inline=True)
 blank(0x3c3a)
-comment(0x3c3a, "Relocation 2: Copy &2A00 bytes from &1234 to &1103. This is done more for obfuscation than any real requirement - we could have just loaded at &1103 in the first place.\n\nTODO: I suspect some routines - eg &16DC? - have 'real' versions and 'trap' versions to cause confusion. This is just speculation at this point.")
+comment(0x3c3a, "Relocation 2: Copy &2A00 bytes from &1234 to &1103. This is done more for obfuscation than any real requirement - we could have just loaded at &1103 in the first place.")
 
 label(0x3eff, "drive_0_command")
 label(0x3f07, "dir_dollar_command")
@@ -604,7 +630,6 @@ entry(0x453, "something_TODO")
 
 entry(0x3fcb, "something3_TODO")
 label(0x3fcb, "something3_high_copy_start")
-comment(0x1845, "TODO: Is this code deliberately trashing the code at something3_TODO? I can't think of any genuine reason for the game to copy anything from ROM into RAM.")
 comment(0x1df4, "TODO: Is this code deliberately trashing the code at something3_TODO?")
 comment(0x1e80, "TODO: What's going on with the modification to something3_TODO here? Is it copy protection/obfuscation or is there something else going on?")
 comment(0x1ebb, "TODO: What's going on with the modification to something3_TODO here? Is it copy protection/obfuscation or is there something else going on?")
@@ -720,8 +745,18 @@ entry(0x29aa, "draw_menu_icon_loop")
 entry(0x2c0c, "plot_menu_icon")
 comment(0x2c11, "Save the current screen_base_address_high so we can temporarily set it to $58 to plot the menu icon. TODO: Is this just saving the old value because it's tidy/safe, or do we really not know what the old value was? I'd have naively thought we could just do lda #blah:sta screen_base_address_high at the end of this routine?")
 
-comment(0x3f78, "TODO: I suspect the following code is copy protection related - writing data to the sideways ROM region feels wrong.")
-
+comment(0x3f78, "The following code assumes there may be a ROM image stored in sideways RAM at $8000. It copies 16 bytes of an empty ROM image to the start of sideways RAM. This overwrites any existing ROM image held in sideways RAM. Is this some copy protection, or a development environment?")
+label(0x3f7b, "copy_to_sideways_ram_loop")
+comment(0x3f85, "Copy 256 bytes from quit_to_basic to $be00, and 256 bytes from $0b00 to $bf00. ")
+comment(0x3f9f, "The reset intercept code is set to 'JMP $1845'")
+comment(0x3fa1, "JMP opcode")
+expr(0x3fab, make_lo("reset_code"))
+expr(0x3fb4, make_hi("reset_code"))
+comment(0x1845, "Assuming there is sideways RAM mapped into ROM slot 13, this copy 256 bytes from $be00 to $0c00, and 256 bytes from $bf00 to $0b00. Could this be code helping during development of the game?")
+comment(0x1848, "select ROM in slot 13", inline=True)
+comment(0x1862, "clear the reset vector")
+label(0x184d, "copy_from_rom_c_loop")
+label(0x1845, "reset_code")
 label(0x1103, "copy_protection_flag")
 
 expr(0xaf0, "last_level_letter")
@@ -880,15 +915,17 @@ comment(0x138d, """*************************************************************
 
 Sprite Plotting
 
-Plots a sprite with a mask, optionally reflected about a vertical axis.
+Plots a sprite with a mask, optionally reflected about a vertical axis. Sprites can be any pixel width and height, can be drawn at any pixel position, and have an offset in X and Y pixels whenever drawn, which helps authoring animations.
+
+Conventionally, sprite characters are authored looking to the right.
 
 On Entry:
              sprite_number: id of the sprite to plot
     sprite_x_base_low/high: X coordinate of sprite to plot (pixels)
     sprite_y_base_low/high: Y coordinate of sprite to plot (pixels)
            sprite_op_flags: bit 0: set means copy to sprite 'dest_sprite_number'
-                            bit 1: TODO
-                            bit 2: TODO
+                            bit 1: <TODO>
+                            bit 2: <TODO>
                             bits 3-7: unused
        sprite_reflect_flag: bit 7: set means draw the sprite reflected about the Y axis (i.e. 'looking left')
 
@@ -902,8 +939,21 @@ Each sprite stores a four byte header, containing:
     <unsigned byte> width of sprite in pixels
     <unsigned byte> height of sprite in pixels
 
+Sprite pixels are then stored in the following bytes, starting with the bottom left pixel and moving up the sprite. Columns are stored from left to right.
+
+Each pixel is encoded in two bits:
+
+    00 - draw the background colour (black)
+    01 - draw the foreground colour
+    10 - don't draw a pixel (it is masked off)
+    11 - finish the current column and start the next column
+
+The behaviour of '11' shows that this is compression scheme, where columns can finish early if they have no set pixels at the top of the sprite.
+
 *************************************************************************************""")
 label(0x138d, "sprite_op")
+label(0x1446, "copy_sprite_to_other_sprite")
+comment(0x1450, "Bit 1 of sprite_op_flags is set (but not bit 2)\nThis self-modifies code")
 label(0x2c46, "calculate_sprite_position_for_menu_item")
 label(0x2c58, "multiply_x_by_twenty_loop")
 decimal(0x2c5a)

@@ -242,6 +242,7 @@ auxcode                                 = $53c0
 check_password                          = $53c0
 start_of_screen_memory                  = $5bc0
 l8000                                   = $8000
+l8008                                   = $8008
 lbe00                                   = $be00
 lbf00                                   = $bf00
 crtc_address_register                   = $fe00
@@ -644,15 +645,19 @@ reset_sprite_flags_and_exit
 ; 
 ; Sprite Plotting
 ; 
-; Plots a sprite with a mask, optionally reflected about a vertical axis.
+; Plots a sprite with a mask, optionally reflected about a vertical axis. Sprites can
+; be any pixel width and height, can be drawn at any pixel position, and have an offset
+; in X and Y pixels whenever drawn, which helps authoring animations.
+; 
+; Conventionally, sprite characters are authored looking to the right.
 ; 
 ; On Entry:
 ;              sprite_number: id of the sprite to plot
 ;     sprite_x_base_low/high: X coordinate of sprite to plot (pixels)
 ;     sprite_y_base_low/high: Y coordinate of sprite to plot (pixels)
 ;            sprite_op_flags: bit 0: set means copy to sprite 'dest_sprite_number'
-;                             bit 1: TODO
-;                             bit 2: TODO
+;                             bit 1: <TODO>
+;                             bit 2: <TODO>
 ;                             bits 3-7: unused
 ;        sprite_reflect_flag: bit 7: set means draw the sprite reflected about the Y
 ; axis (i.e. 'looking left')
@@ -667,6 +672,19 @@ reset_sprite_flags_and_exit
 ;     <signed byte>   offset y to start drawing the sprite relative to sprite_y_base
 ;     <unsigned byte> width of sprite in pixels
 ;     <unsigned byte> height of sprite in pixels
+; 
+; Sprite pixels are then stored in the following bytes, starting with the bottom left
+; pixel and moving up the sprite. Columns are stored from left to right.
+; 
+; Each pixel is encoded in two bits:
+; 
+;     00 - draw the background colour (black)
+;     01 - draw the foreground colour
+;     10 - don't draw a pixel (it is masked off)
+;     11 - finish the current column and start the next column
+; 
+; The behaviour of '11' shows that this is compression scheme, where columns can finish
+; early if they have no set pixels at the top of the sprite.
 ; 
 ; *************************************************************************************
 sprite_op
@@ -787,15 +805,17 @@ not_out_of_range
     ldx l0087                                                         ; 156c: a6 87       ..  :143b[1]
     lda sprite_op_flags                                               ; 156e: a5 15       ..  :143d[1]
     and #1                                                            ; 1570: 29 01       ).  :143f[1]
-    beq c1446                                                         ; 1572: f0 03       ..  :1441[1]
+    beq copy_sprite_to_other_sprite                                   ; 1572: f0 03       ..  :1441[1]
     jmp update_sprite_bit_variables_and_draw_sprite                   ; 1574: 4c 0c 16    L.. :1443[1]
 
-c1446
+copy_sprite_to_other_sprite
     lda sprite_op_flags                                               ; 1577: a5 15       ..  :1446[1]
     and #6                                                            ; 1579: 29 06       ).  :1448[1]
     beq c146e                                                         ; 157b: f0 22       ."  :144a[1]
     and #4                                                            ; 157d: 29 04       ).  :144c[1]
     bne c1466                                                         ; 157f: d0 16       ..  :144e[1]
+; Bit 1 of sprite_op_flags is set (but not bit 2)
+; This self-modifies code
     lda #$18                                                          ; 1581: a9 18       ..  :1450[1]
     sta c1486                                                         ; 1583: 8d 86 14    ... :1452[1]
     lda #$4c ; 'L'                                                    ; 1586: a9 4c       .L  :1455[1]
@@ -810,60 +830,60 @@ c1466
     sta c1486                                                         ; 1599: 8d 86 14    ... :1468[1]
     sta l1487                                                         ; 159c: 8d 87 14    ... :146b[1]
 c146e
-    jmp c1517                                                         ; 159f: 4c 17 15    L.. :146e[1]
+    jmp update_sprite_bit_variables_and_draw_sprite2                  ; 159f: 4c 17 15    L.. :146e[1]
 
-loop_c1471
+out_of_bounds_vertically2
     asl sprite_data_byte                                              ; 15a2: 06 7d       .}  :1471[1]
     clc                                                               ; 15a4: 18          .   :1473[1]
     jmp c149c                                                         ; 15a5: 4c 9c 14    L.. :1474[1]
 
-c1477
+record_that_we_are_out_of_screen_range_vertically2
     lda #0                                                            ; 15a8: a9 00       ..  :1477[1]
     sta vertical_sprite_position_is_valid_flag                        ; 15aa: 85 88       ..  :1479[1]
-    jmp c14b7                                                         ; 15ac: 4c b7 14    L.. :147b[1]
+    jmp y_coordinate_is_within_character_row2                         ; 15ac: 4c b7 14    L.. :147b[1]
 
-c147e
+write_one_pixel_to_the_screen2
     lda vertical_sprite_position_is_valid_flag                        ; 15af: a5 88       ..  :147e[1]
-    beq loop_c1471                                                    ; 15b1: f0 ef       ..  :1480[1]
+    beq out_of_bounds_vertically2                                     ; 15b1: f0 ef       ..  :1480[1]
     lda (sprite_screen_address_low),y                                 ; 15b3: b1 72       .r  :1482[1]
     asl sprite_data_byte                                              ; 15b5: 06 7d       .}  :1484[1]
 c1486
 l1487 = c1486+1
-    bcc c1498                                                         ; 15b7: 90 10       ..  :1486[1]
+    bcc and_byte_with_mask_and_write_to_screen2                       ; 15b7: 90 10       ..  :1486[1]
 c1488
 l1489 = c1488+1
     ora sprite_bit                                                    ; 15b9: 05 82       ..  :1488[1]
     sta (sprite_screen_address_low),y                                 ; 15bb: 91 72       .r  :148a[1]
     dey                                                               ; 15bd: 88          .   :148c[1]
-    bpl c14b7                                                         ; 15be: 10 28       .(  :148d[1]
+    bpl y_coordinate_is_within_character_row2                         ; 15be: 10 28       .(  :148d[1]
     ldy #7                                                            ; 15c0: a0 07       ..  :148f[1]
     lda sprite_screen_address_low                                     ; 15c2: a5 72       .r  :1491[1]
     sbc #$40 ; '@'                                                    ; 15c4: e9 40       .@  :1493[1]
-    jmp c14a5                                                         ; 15c6: 4c a5 14    L.. :1495[1]
+    jmp move_up_to_previous_character_row2                            ; 15c6: 4c a5 14    L.. :1495[1]
 
-c1498
+and_byte_with_mask_and_write_to_screen2
     and sprite_bit_mask                                               ; 15c9: 25 83       %.  :1498[1]
     sta (sprite_screen_address_low),y                                 ; 15cb: 91 72       .r  :149a[1]
 c149c
     dey                                                               ; 15cd: 88          .   :149c[1]
-    bpl c14b7                                                         ; 15ce: 10 18       ..  :149d[1]
+    bpl y_coordinate_is_within_character_row2                         ; 15ce: 10 18       ..  :149d[1]
     ldy #7                                                            ; 15d0: a0 07       ..  :149f[1]
     lda sprite_screen_address_low                                     ; 15d2: a5 72       .r  :14a1[1]
     sbc #$3f ; '?'                                                    ; 15d4: e9 3f       .?  :14a3[1]
-c14a5
+move_up_to_previous_character_row2
     sta sprite_screen_address_low                                     ; 15d6: 85 72       .r  :14a5[1]
     lda sprite_screen_address_high                                    ; 15d8: a5 73       .s  :14a7[1]
     sbc #1                                                            ; 15da: e9 01       ..  :14a9[1]
     sta sprite_screen_address_high                                    ; 15dc: 85 73       .s  :14ab[1]
-c14ad
+draw_sprite2
     sta vertical_sprite_position_is_valid_flag                        ; 15de: 85 88       ..  :14ad[1]
     cmp #$80                                                          ; 15e0: c9 80       ..  :14af[1]
-    bcs c1477                                                         ; 15e2: b0 c4       ..  :14b1[1]
+    bcs record_that_we_are_out_of_screen_range_vertically2            ; 15e2: b0 c4       ..  :14b1[1]
     cmp screen_base_address_high                                      ; 15e4: c5 4c       .L  :14b3[1]
-    bcc c1477                                                         ; 15e6: 90 c0       ..  :14b5[1]
-c14b7
+    bcc record_that_we_are_out_of_screen_range_vertically2            ; 15e6: 90 c0       ..  :14b5[1]
+y_coordinate_is_within_character_row2
     dex                                                               ; 15e8: ca          .   :14b7[1]
-    bpl c14c8                                                         ; 15e9: 10 0e       ..  :14b8[1]
+    bpl byte_not_finished_yet2                                        ; 15e9: 10 0e       ..  :14b8[1]
     sty l007a                                                         ; 15eb: 84 7a       .z  :14ba[1]
     inc byte_offset_within_sprite                                     ; 15ed: e6 79       .y  :14bc[1]
     ldy byte_offset_within_sprite                                     ; 15ef: a4 79       .y  :14be[1]
@@ -871,50 +891,50 @@ c14b7
     sta sprite_data_byte                                              ; 15f3: 85 7d       .}  :14c2[1]
     ldx #3                                                            ; 15f5: a2 03       ..  :14c4[1]
     ldy l007a                                                         ; 15f7: a4 7a       .z  :14c6[1]
-c14c8
+byte_not_finished_yet2
     asl sprite_data_byte                                              ; 15f9: 06 7d       .}  :14c8[1]
-    bcc c147e                                                         ; 15fb: 90 b2       ..  :14ca[1]
+    bcc write_one_pixel_to_the_screen2                                ; 15fb: 90 b2       ..  :14ca[1]
     asl sprite_data_byte                                              ; 15fd: 06 7d       .}  :14cc[1]
     bcc c149c                                                         ; 15ff: 90 cc       ..  :14ce[1]
     dec sprite_width                                                  ; 1601: c6 81       ..  :14d0[1]
-    beq c1529                                                         ; 1603: f0 55       .U  :14d2[1]
+    beq finish_off_sprite2                                            ; 1603: f0 55       .U  :14d2[1]
     lda sprite_screen_address_for_column_high                         ; 1605: a5 7c       .|  :14d4[1]
     sta sprite_screen_address_high                                    ; 1607: 85 73       .s  :14d6[1]
     lda sprite_screen_address_for_column_low                          ; 1609: a5 7b       .{  :14d8[1]
     sta sprite_screen_address_low                                     ; 160b: 85 72       .r  :14da[1]
     ldy sprite_reflect_flag                                           ; 160d: a4 1d       ..  :14dc[1]
-    bmi c14fe                                                         ; 160f: 30 1e       0.  :14de[1]
+    bmi move_to_next_column_while_rendering_reflected_about_y_axis2   ; 160f: 30 1e       0.  :14de[1]
     ldy sprite_x_offset_within_byte                                   ; 1611: a4 78       .x  :14e0[1]
     dey                                                               ; 1613: 88          .   :14e2[1]
-    bpl c1517                                                         ; 1614: 10 32       .2  :14e3[1]
+    bpl update_sprite_bit_variables_and_draw_sprite2                  ; 1614: 10 32       .2  :14e3[1]
     inc sprite_character_x_pos                                        ; 1616: e6 85       ..  :14e5[1]
     ldy sprite_character_x_pos                                        ; 1618: a4 85       ..  :14e7[1]
     cpy #$28 ; '('                                                    ; 161a: c0 28       .(  :14e9[1]
-    bcs c1529                                                         ; 161c: b0 3c       .<  :14eb[1]
+    bcs finish_off_sprite2                                            ; 161c: b0 3c       .<  :14eb[1]
     ldy #7                                                            ; 161e: a0 07       ..  :14ed[1]
     adc #8                                                            ; 1620: 69 08       i.  :14ef[1]
     sta sprite_screen_address_for_column_low                          ; 1622: 85 7b       .{  :14f1[1]
     sta sprite_screen_address_low                                     ; 1624: 85 72       .r  :14f3[1]
-    bcc c1517                                                         ; 1626: 90 20       .   :14f5[1]
+    bcc update_sprite_bit_variables_and_draw_sprite2                  ; 1626: 90 20       .   :14f5[1]
     inc sprite_screen_address_for_column_high                         ; 1628: e6 7c       .|  :14f7[1]
     inc sprite_screen_address_high                                    ; 162a: e6 73       .s  :14f9[1]
-    jmp c1517                                                         ; 162c: 4c 17 15    L.. :14fb[1]
+    jmp update_sprite_bit_variables_and_draw_sprite2                  ; 162c: 4c 17 15    L.. :14fb[1]
 
-c14fe
+move_to_next_column_while_rendering_reflected_about_y_axis2
     ldy sprite_x_offset_within_byte                                   ; 162f: a4 78       .x  :14fe[1]
     iny                                                               ; 1631: c8          .   :1500[1]
     cpy #8                                                            ; 1632: c0 08       ..  :1501[1]
-    bcc c1517                                                         ; 1634: 90 12       ..  :1503[1]
+    bcc update_sprite_bit_variables_and_draw_sprite2                  ; 1634: 90 12       ..  :1503[1]
     dec sprite_character_x_pos                                        ; 1636: c6 85       ..  :1505[1]
-    bmi c1529                                                         ; 1638: 30 20       0   :1507[1]
+    bmi finish_off_sprite2                                            ; 1638: 30 20       0   :1507[1]
     ldy #0                                                            ; 163a: a0 00       ..  :1509[1]
     sbc #8                                                            ; 163c: e9 08       ..  :150b[1]
     sta sprite_screen_address_for_column_low                          ; 163e: 85 7b       .{  :150d[1]
     sta sprite_screen_address_low                                     ; 1640: 85 72       .r  :150f[1]
-    bcs c1517                                                         ; 1642: b0 04       ..  :1511[1]
+    bcs update_sprite_bit_variables_and_draw_sprite2                  ; 1642: b0 04       ..  :1511[1]
     dec sprite_screen_address_for_column_high                         ; 1644: c6 7c       .|  :1513[1]
     dec sprite_screen_address_high                                    ; 1646: c6 73       .s  :1515[1]
-c1517
+update_sprite_bit_variables_and_draw_sprite2
     sty sprite_x_offset_within_byte                                   ; 1648: 84 78       .x  :1517[1]
     lda power_of_2_table,y                                            ; 164a: b9 77 13    .w. :1519[1]
     sta sprite_bit                                                    ; 164d: 85 82       ..  :151c[1]
@@ -922,14 +942,14 @@ c1517
     sta sprite_bit_mask                                               ; 1651: 85 83       ..  :1520[1]
     ldy sprite_y_offset_within_character_row                          ; 1653: a4 84       ..  :1522[1]
     lda sprite_screen_address_high                                    ; 1655: a5 73       .s  :1524[1]
-    jmp c14ad                                                         ; 1657: 4c ad 14    L.. :1526[1]
+    jmp draw_sprite2                                                  ; 1657: 4c ad 14    L.. :1526[1]
 
-c1529
-    lda #$90                                                          ; 165a: a9 90       ..  :1529[1]
-    sta c1486                                                         ; 165c: 8d 86 14    ... :152b[1]
+finish_off_sprite2
+    lda #$90                                                          ; 165a: a9 90       ..  :1529[1]   ; restore the original three bytes of code (self-modifying)
+    sta c1486                                                         ; 165c: 8d 86 14    ... :152b[1]   ; 90 10='bcc and_byte_with_mask_and_write_to_screen2'
     lda #$10                                                          ; 165f: a9 10       ..  :152e[1]
     sta l1487                                                         ; 1661: 8d 87 14    ... :1530[1]
-    lda #5                                                            ; 1664: a9 05       ..  :1533[1]
+    lda #5                                                            ; 1664: a9 05       ..  :1533[1]   ; 05 82='ora sprite_bit'
     sta c1488                                                         ; 1666: 8d 88 14    ... :1535[1]
     lda #$82                                                          ; 1669: a9 82       ..  :1538[1]
     sta l1489                                                         ; 166b: 8d 89 14    ... :153a[1]
@@ -1223,9 +1243,9 @@ osfile_wrapper
     stx mask_sprite_byte                                              ; 181f: 86 80       ..  :16ee[1]
     stx sprite_width                                                  ; 1821: 86 81       ..  :16f0[1]
     tay                                                               ; 1823: a8          .   :16f2[1]
-    beq c16f7                                                         ; 1824: f0 02       ..  :16f3[1]
+    beq skip2                                                         ; 1824: f0 02       ..  :16f3[1]
     stx sprite_y_pos_low                                              ; 1826: 86 76       .v  :16f5[1]
-c16f7
+skip2
     ldx #0                                                            ; 1828: a2 00       ..  :16f7[1]
     stx l0002                                                         ; 182a: 86 02       ..  :16f9[1]
     tsx                                                               ; 182c: ba          .   :16fb[1]
@@ -1422,26 +1442,28 @@ loop_c1830
 something11_TODO
     jsr wait_for_vsync                                                ; 196a: 20 8c 17     .. :1839[1]
     jsr wait_for_timingB_counter                                      ; 196d: 20 00 04     .. :183c[1]
-    jsr sub_c1845                                                     ; 1970: 20 45 18     E. :183f[1]
+    jsr reset_code                                                    ; 1970: 20 45 18     E. :183f[1]
     jmp something3_TODO                                               ; 1973: 4c 00 0c    L.. :1842[1]
 
-; TODO: Is this code deliberately trashing the code at something3_TODO? I can't think
-; of any genuine reason for the game to copy anything from ROM into RAM.
-sub_c1845
+; Assuming there is sideways RAM mapped into ROM slot 13, this copy 256 bytes from
+; $be00 to $0c00, and 256 bytes from $bf00 to $0b00. Could this be code helping during
+; development of the game?
+reset_code
     sei                                                               ; 1976: 78          x   :1845[1]
     lda #$0c                                                          ; 1977: a9 0c       ..  :1846[1]
-    sta romsel                                                        ; 1979: 8d 30 fe    .0. :1848[1]
+    sta romsel                                                        ; 1979: 8d 30 fe    .0. :1848[1]   ; select ROM in slot 13
     ldy #0                                                            ; 197c: a0 00       ..  :184b[1]
-loop_c184d
+copy_from_rom_c_loop
     lda lbe00,y                                                       ; 197e: b9 00 be    ... :184d[1]
     sta something3_TODO,y                                             ; 1981: 99 00 0c    ... :1850[1]
     lda lbf00,y                                                       ; 1984: b9 00 bf    ... :1853[1]
     sta l0b00,y                                                       ; 1987: 99 00 0b    ... :1856[1]
     iny                                                               ; 198a: c8          .   :1859[1]
-    bne loop_c184d                                                    ; 198b: d0 f1       ..  :185a[1]
+    bne copy_from_rom_c_loop                                          ; 198b: d0 f1       ..  :185a[1]
     lda romsel_copy                                                   ; 198d: a5 f4       ..  :185c[1]
     sta romsel                                                        ; 198f: 8d 30 fe    .0. :185e[1]
     cli                                                               ; 1992: 58          X   :1861[1]
+; clear the reset vector
     sty first_byte_break_intercept                                    ; 1993: 8c 87 02    ... :1862[1]
     rts                                                               ; 1996: 60          `   :1865[1]
 
@@ -6082,9 +6104,6 @@ relocation1_loop
 
 ; Relocation 2: Copy &2A00 bytes from &1234 to &1103. This is done more for obfuscation
 ; than any real requirement - we could have just loaded at &1103 in the first place.
-; 
-; TODO: I suspect some routines - eg &16DC? - have 'real' versions and 'trap' versions
-; to cause confusion. This is just speculation at this point.
 relocation2
     lda #$34 ; '4'                                                    ; 3c3a: a9 34       .4
     sta address1_low                                                  ; 3c3c: 85 70       .p
@@ -6276,8 +6295,8 @@ loop_c3d54
     jsr oswrch                                                        ; 3d9d: 20 ee ff     ..            ; Write character 4
     jmp define_text_window                                            ; 3da0: 4c b9 3d    L.=
 
-; Clear memory from $5b00 to $d200. This clears the toolbar area of the screen. The
-; toolbar lives in screen memory from $5bc0 to $d200, so this routine clears a little
+; Clear memory from $5b00 to $6200. This clears the toolbar area of the screen. The
+; toolbar lives in screen memory from $5bc0 to $6200, so this routine clears a little
 ; before the start of screen memory, but this is OK as we are just about to load sprite
 ; data there anyway
 clear_toolbar_part_of_screen
@@ -6549,16 +6568,19 @@ probably_copy_protection_TODO
     and #1                                                            ; 3f72: 29 01       ).
     sta l005b                                                         ; 3f74: 85 5b       .[
     beq return27                                                      ; 3f76: f0 42       .B
-; TODO: I suspect the following code is copy protection related - writing data to the
-; sideways ROM region feels wrong.
+; The following code assumes there may be a ROM image stored in sideways RAM at $8000.
+; It copies 16 bytes of an empty ROM image to the start of sideways RAM. This
+; overwrites any existing ROM image held in sideways RAM. Is this some copy protection,
+; or a development environment?
     ldy #$0f                                                          ; 3f78: a0 0f       ..
     sei                                                               ; 3f7a: 78          x
-loop_c3f7b
-    lda l3fbb,y                                                       ; 3f7b: b9 bb 3f    ..?
+copy_to_sideways_ram_loop
+    lda sideways_rom_image,y                                          ; 3f7b: b9 bb 3f    ..?
     sta l8000,y                                                       ; 3f7e: 99 00 80    ...
     dey                                                               ; 3f81: 88          .
-    bpl loop_c3f7b                                                    ; 3f82: 10 f7       ..
+    bpl copy_to_sideways_ram_loop                                     ; 3f82: 10 f7       ..
     cli                                                               ; 3f84: 58          X
+; Copy 256 bytes from quit_to_basic to $be00, and 256 bytes from $0b00 to $bf00.
     ldy #0                                                            ; 3f85: a0 00       ..
 loop_c3f87
     lda quit_to_basic,y                                               ; 3f87: b9 2c 40    .,@
@@ -6571,24 +6593,34 @@ loop_c3f87
     ldx #1                                                            ; 3f98: a2 01       ..
     ldy #0                                                            ; 3f9a: a0 00       ..
     jsr osbyte                                                        ; 3f9c: 20 f4 ff     ..            ; Write Disable ESCAPE action, set normal BREAK action, value X=1
+; The reset intercept code is set to 'JMP $1845'
     lda #osbyte_read_write_first_byte_break_intercept                 ; 3f9f: a9 f7       ..
+; JMP opcode
     ldx #$4c ; 'L'                                                    ; 3fa1: a2 4c       .L
     ldy #0                                                            ; 3fa3: a0 00       ..
     jsr osbyte                                                        ; 3fa5: 20 f4 ff     ..            ; Write reset intercept code (opcode), value X=76
     lda #osbyte_read_write_second_byte_break_intercept                ; 3fa8: a9 f8       ..
-    ldx #$45 ; 'E'                                                    ; 3faa: a2 45       .E
+    ldx #<reset_code                                                  ; 3faa: a2 45       .E
     ldy #0                                                            ; 3fac: a0 00       ..
     jsr osbyte                                                        ; 3fae: 20 f4 ff     ..            ; Write reset intercept code (operand low), value X=69
     lda #osbyte_read_write_third_byte_break_intercept                 ; 3fb1: a9 f9       ..
-    ldx #$18                                                          ; 3fb3: a2 18       ..
+    ldx #>reset_code                                                  ; 3fb3: a2 18       ..
     ldy #0                                                            ; 3fb5: a0 00       ..
     jsr osbyte                                                        ; 3fb7: 20 f4 ff     ..            ; Write reset intercept code (operand high), value X=24
 return27
     rts                                                               ; 3fba: 60          `
 
-l3fbb
-    !byte $4c,   8, $80, $4c,   8, $80,   0, $0a, $60,   0,   0,   0  ; 3fbb: 4c 08 80... L..
-    !byte   0,   0,   0,   0                                          ; 3fc7: 00 00 00... ...
+sideways_rom_image
+    jmp l8008                                                         ; 3fbb: 4c 08 80    L..            ; language entry point
+
+    jmp l8008                                                         ; 3fbe: 4c 08 80    L..            ; service entry point
+
+    !byte 0                                                           ; 3fc1: 00          .              ; ROM type flag
+    !byte $0a                                                         ; 3fc2: 0a          .              ; empty copyright string
+
+    rts                                                               ; 3fc3: 60          `              ; do nothing - return
+
+    !byte 0, 0, 0, 0, 0, 0, 0                                         ; 3fc4: 00 00 00... ...            ; unused bytes
 something3_high_copy_start
 
 !pseudopc $0c00 {
@@ -6976,24 +7008,12 @@ pydis_end
 ;     c12fc
 ;     c1306
 ;     c131e
-;     c1446
 ;     c1466
 ;     c146e
-;     c1477
-;     c147e
 ;     c1486
 ;     c1488
-;     c1498
 ;     c149c
-;     c14a5
-;     c14ad
-;     c14b7
-;     c14c8
-;     c14fe
-;     c1517
-;     c1529
 ;     c16aa
-;     c16f7
 ;     c1713
 ;     c174c
 ;     c17f1
@@ -7418,8 +7438,8 @@ pydis_end
 ;     l3adc
 ;     l3add
 ;     l3ae0
-;     l3fbb
 ;     l8000
+;     l8008
 ;     lbe00
 ;     lbf00
 ;     loop_c0492
@@ -7429,9 +7449,7 @@ pydis_end
 ;     loop_c0ade
 ;     loop_c114f
 ;     loop_c1213
-;     loop_c1471
 ;     loop_c1830
-;     loop_c184d
 ;     loop_c190b
 ;     loop_c1921
 ;     loop_c193d
@@ -7477,12 +7495,10 @@ pydis_end
 ;     loop_c39d2
 ;     loop_c3d54
 ;     loop_c3f18
-;     loop_c3f7b
 ;     loop_c3f87
 ;     sub_c04cb
 ;     sub_c1278
 ;     sub_c1728
-;     sub_c1845
 ;     sub_c1b66
 ;     sub_c1cf3
 ;     sub_c1df4
@@ -7620,6 +7636,9 @@ pydis_end
 !if (<print_italic) != $66 {
     !error "Assertion failed: <print_italic == $66"
 }
+!if (<reset_code) != $45 {
+    !error "Assertion failed: <reset_code == $45"
+}
 !if (<screen_width_in_pixels) != $40 {
     !error "Assertion failed: <screen_width_in_pixels == $40"
 }
@@ -7724,6 +7743,9 @@ pydis_end
 }
 !if (>print_italic) != $18 {
     !error "Assertion failed: >print_italic == $18"
+}
+!if (>reset_code) != $18 {
+    !error "Assertion failed: >reset_code == $18"
 }
 !if (>some_code_high_copy_TODO) != $40 {
     !error "Assertion failed: >some_code_high_copy_TODO == $40"
