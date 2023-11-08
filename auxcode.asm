@@ -54,6 +54,7 @@ level_data                          = $3ad5
 level_init_after_load_handler_ptr   = $3ad7
 second_level_handler_ptr            = $3ad9
 level_name_ptr                      = $3adb
+level_header_data                   = $3adf
 oswrch                              = $ffee
 osbyte                              = $fff4
 

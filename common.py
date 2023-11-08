@@ -51,3 +51,5 @@ label(0x1ebb, "something60_TODO")
 label(0x23a9, "something61_TODO")
 
 label(0x1140, "initialise_level")
+
+label(0x3adf, "level_header_data")

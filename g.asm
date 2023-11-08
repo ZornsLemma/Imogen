@@ -321,7 +321,7 @@ second_level_handler_ptr                = $3ad9
 level_name_ptr                          = $3adb
 l3add                                   = $3add
 c3ade                                   = $3ade
-c3adf                                   = $3adf
+level_header_data                       = $3adf
 l3ae0                                   = $3ae0
 auxcode                                 = $53c0
 check_password                          = $53c0
@@ -547,7 +547,7 @@ loop_c1213
     lda l0030                                                         ; 138c: a5 30       .0  :125b[1]
     asl                                                               ; 138e: 0a          .   :125d[1]
     tay                                                               ; 138f: a8          .   :125e[1]
-    ldx c3adf,y                                                       ; 1390: be df 3a    ..: :125f[1]
+    ldx level_header_data,y                                           ; 1390: be df 3a    ..: :125f[1]
     lda l3ae0,y                                                       ; 1393: b9 e0 3a    ..: :1262[1]
     tay                                                               ; 1396: a8          .   :1265[1]
     txa                                                               ; 1397: 8a          .   :1266[1]
@@ -585,7 +585,7 @@ c129b
     lda l0030                                                         ; 13cc: a5 30       .0  :129b[1]
     asl                                                               ; 13ce: 0a          .   :129d[1]
     tay                                                               ; 13cf: a8          .   :129e[1]
-    lda c3adf,y                                                       ; 13d0: b9 df 3a    ..: :129f[1]
+    lda level_header_data,y                                           ; 13d0: b9 df 3a    ..: :129f[1]
     sta address1_low                                                  ; 13d3: 85 70       .p  :12a2[1]
     lda l3ae0,y                                                       ; 13d5: b9 e0 3a    ..: :12a4[1]
     sta address1_high                                                 ; 13d8: 85 71       .q  :12a7[1]
@@ -7537,7 +7537,6 @@ pydis_end
 ;     c3a88
 ;     c3a8f
 ;     c3ade
-;     c3adf
 ;     c3ec1
 ;     c3f0d
 ;     c3f2d

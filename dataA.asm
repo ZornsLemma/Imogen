@@ -97,8 +97,9 @@ second_level_handler_ptr
 level_name_ptr
     !word level_name                                                  ; 3adb: e7 3a       .:
     !byte 0, 1                                                        ; 3add: 00 01       ..
-    !word fourth_level_handler                                        ; 3adf: 27 3b       ';
-    !byte $3d, $3d, $d7                                               ; 3ae1: 3d 3d d7    ==.
+level_header_data
+    !text "';=="                                                      ; 3adf: 27 3b 3d... ';=
+    !byte $d7                                                         ; 3ae3: d7          .
     !text "?MB"                                                       ; 3ae4: 3f 4d 42    ?MB
 ; 'SAXOPHOBIA\r' EOR-encrypted with $cb
 level_name
@@ -1791,9 +1792,6 @@ pydis_end
 ;     sub_c3f02
 ;     sub_c407f
 ;     sub_c42f8
-!if (fourth_level_handler) != $3b27 {
-    !error "Assertion failed: fourth_level_handler == $3b27"
-}
 !if (level_init_after_load_handler) != $3af2 {
     !error "Assertion failed: level_init_after_load_handler == $3af2"
 }
