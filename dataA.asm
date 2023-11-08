@@ -98,9 +98,7 @@ level_name_ptr
     !word level_name                                                  ; 3adb: e7 3a       .:
     !byte 0, 1                                                        ; 3add: 00 01       ..
 level_header_data
-    !text "';=="                                                      ; 3adf: 27 3b 3d... ';=
-    !byte $d7                                                         ; 3ae3: d7          .
-    !text "?MB"                                                       ; 3ae4: 3f 4d 42    ?MB
+    !byte $27, $3b, $3d, $3d, $d7, $3f, $4d, $42                      ; 3adf: 27 3b 3d... ';=
 ; 'SAXOPHOBIA\r' EOR-encrypted with $cb
 level_name
     !byte $98, $8a, $93, $84, $9b, $83, $84, $89, $82, $8a, $c6       ; 3ae7: 98 8a 93... ...
