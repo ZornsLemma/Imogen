@@ -16,6 +16,10 @@ word(0x3adf)
 expr(0x3adf, "fourth_level_handler") # TODO: probably data, not actually a handler (code)
 label(get_u16_binary(0x3adf), "fourth_level_handler")
 
+label(0x449a, "inverse_power_of_2_table")
+hexadecimal(0x449a, 8)
+byte(0x449a, 8)
+
 entry(0x3b29, "some_code1")
 entry(0x3d21, "some_data1")
 entry(0x3f8b, "some_code2")
