@@ -405,6 +405,7 @@ c110c
     adc #first_level_letter                                           ; 126b: 69 41       iA  :113a[1]
     tay                                                               ; 126d: a8          .   :113c[1]
     jsr convert_level_letter_to_number                                ; 126e: 20 ef 0a     .. :113d[1]
+; TODO: this is used by e.g. dataA
 initialise_level
     lda l0030                                                         ; 1271: a5 30       .0  :1140[1]
     sta l0050                                                         ; 1273: 85 50       .P  :1142[1]

@@ -1089,7 +1089,8 @@ expr(0x3a61, "inkey_key_right")
 label(0x9ef, "byte_per_level_table1")
 
 comment(0x1132, "choose a new starting level")
-entry(0x1140, "initialise_level") # TODO: guessing, but seems plausible
+comment(0x1140, "TODO: this is used by e.g. dataA")
+entry(0x1140)
 
 label(0xab5, "old_irq1v")
 expr_label(0xab6, "old_irq1v+1")

@@ -41,7 +41,7 @@ l0a72                       = $0a72
 l0a73                       = $0a73
 string_input_buffer         = $0a90
 l1103                       = $1103
-l1140                       = $1140
+initialise_level            = $1140
 something23_TODO            = $12bb
 something24_TODO            = $12da
 l132b                       = $132b
@@ -223,7 +223,7 @@ loop_c3bd4
     beq loop_c3bd4                                                    ; 3bdb: f0 f7       ..
     ldx #1                                                            ; 3bdd: a2 01       ..
     ldy l0031                                                         ; 3bdf: a4 31       .1
-    jsr l1140                                                         ; 3be1: 20 40 11     @.
+    jsr initialise_level                                              ; 3be1: 20 40 11     @.
 ; $3be4 referenced 1 time by $3b17
 sub_c3be4
     lda l132b                                                         ; 3be4: ad 2b 13    .+.
@@ -759,7 +759,7 @@ loop_c4044
     beq loop_c4044                                                    ; 4049: f0 f9       ..
     ldx #1                                                            ; 404b: a2 01       ..
     ldy l0031                                                         ; 404d: a4 31       .1
-    jmp l1140                                                         ; 404f: 4c 40 11    L@.
+    jmp initialise_level                                              ; 404f: 4c 40 11    L@.
 
 ; $4052 referenced 2 times by $40ef, $4240
 some_data2
@@ -1111,7 +1111,7 @@ loop_c42ea
     beq loop_c42ea                                                    ; 42ef: f0 f9       ..
     ldx #1                                                            ; 42f1: a2 01       ..
     ldy l0031                                                         ; 42f3: a4 31       .1
-    jmp l1140                                                         ; 42f5: 4c 40 11    L@.
+    jmp initialise_level                                              ; 42f5: 4c 40 11    L@.
 
 ; $42f8 referenced 1 time by $3b23
 sub_c42f8
@@ -1540,7 +1540,7 @@ pydis_end
 ;     l09aa:              3
 ;     l09ab:              3
 ;     l09ac:              3
-;     l1140:              3
+;     initialise_level:   3
 ;     something23_TODO:   3
 ;     something24_TODO:   3
 ;     l1988:              3
@@ -1760,7 +1760,6 @@ pydis_end
 ;     l0a72
 ;     l0a73
 ;     l1103
-;     l1140
 ;     l132b
 ;     l1988
 ;     l1a10
