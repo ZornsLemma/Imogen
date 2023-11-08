@@ -90,11 +90,12 @@ check_password              = $53c0
 level_data
 pydis_start
     !byte $d1,   9                                                    ; 3ad5: d1 09       ..
-level_handler_ptr
-second_level_handler_ptr = level_handler_ptr+2
-third_level_handler_ptr = level_handler_ptr+4
-    !word        level_handler, second_level_handler                  ; 3ad7: f2 3a 17... .:.
-    !word  third_level_handler                                        ; 3adb: e7 3a       .:
+level_init_after_load_handler_ptr
+second_level_handler_ptr = level_init_after_load_handler_ptr+2
+third_level_handler_ptr = level_init_after_load_handler_ptr+4
+    !word level_init_after_load_handler                               ; 3ad7: f2 3a       .:
+    !word          second_level_handler                               ; 3ad9: 17 3b       .;
+    !word           third_level_handler                               ; 3adb: e7 3a       .:
     !byte 0, 1                                                        ; 3add: 00 01       ..
     !word fourth_level_handler                                        ; 3adf: 27 3b       ';
     !byte $3d, $3d, $d7                                               ; 3ae1: 3d 3d d7    ==.
@@ -105,7 +106,7 @@ third_level_handler
     txa                                                               ; 3ae8: 8a          .
     !byte $93, $84, $9b, $83, $84, $89, $82, $8a, $c6                 ; 3ae9: 93 84 9b... ...
 
-level_handler
+level_init_after_load_handler
     lda l0031                                                         ; 3af2: a5 31       .1
     cmp l0051                                                         ; 3af4: c5 51       .Q
     beq c3b0e                                                         ; 3af6: f0 16       ..
@@ -1813,8 +1814,8 @@ pydis_end
 !if (fourth_level_handler) != $3b27 {
     !error "Assertion failed: fourth_level_handler == $3b27"
 }
-!if (level_handler) != $3af2 {
-    !error "Assertion failed: level_handler == $3af2"
+!if (level_init_after_load_handler) != $3af2 {
+    !error "Assertion failed: level_init_after_load_handler == $3af2"
 }
 !if (second_level_handler) != $3b17 {
     !error "Assertion failed: second_level_handler == $3b17"

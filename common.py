@@ -23,8 +23,8 @@ constant(0x41, "first_level_letter") # TODO: would be nice to use 'A' as constan
 constant(0x51, "last_level_letter") # TODO: would be nice to use 'Q' as constant
 
 label(0x3ad5, "level_data")
-label(0x3ad7, "level_handler_ptr")
-expr_label(0x3ad8, make_add("level_handler_ptr", "1"))
+label(0x3ad7, "level_init_after_load_handler_ptr")
+expr_label(0x3ad8, make_add("level_init_after_load_handler_ptr", "1"))
 label(0x3ad9, "second_level_handler_ptr") # TODO: poor name
 expr_label(0x3ada, make_add("second_level_handler_ptr", "1"))
 label(0x3adb, "third_level_handler_ptr") # TODO: poor name
