@@ -1,5 +1,7 @@
 from commands import *
 
+# TODO: Some of these constants are not common to *all* files which currently include common (e.g. first/last_level_letter are probably not needed by data*) - may not be worth fussing with, or may be better to have different common files for different things to minimise label noise.
+
 # TODO: See mono_handler and colour_handler in auxcode.asm
 label(0x1765, "use_colour_flag")
 label(0x175d, "pending_toolbar_colour")
@@ -23,4 +25,6 @@ constant(0x51, "last_level_letter") # TODO: would be nice to use 'Q' as constant
 label(0x3ad5, "level_data")
 label(0x3ad7, "level_handler_ptr")
 label(0x3ad8, "level_handler_ptr_plus_1")
+label(0x3ad9, "second_level_handler_ptr") # TODO: poor name
+label(0x3ada, "second_handler_ptr_plus_1")
 # TODO: py8dis blocks this as no data is loaded at this address, annoying: expr(0x3ad8, make_add("level_handler_ptr", "1"))

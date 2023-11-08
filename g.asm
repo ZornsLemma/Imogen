@@ -317,8 +317,8 @@ sprite_198                              = $0b93
 sprite_197                              = $0bc5
 level_handler_ptr                       = $3ad7
 level_handler_ptr_plus_1                = $3ad8
-l3ad9                                   = $3ad9
-l3ada                                   = $3ada
+second_level_handler_ptr                = $3ad9
+second_handler_ptr_plus_1               = $3ada
 c3adb                                   = $3adb
 l3adc                                   = $3adc
 l3add                                   = $3add
@@ -604,8 +604,8 @@ c129b
 something23_TODO
     lda #$ff                                                          ; 13ec: a9 ff       ..  :12bb[1]
     sta l132b                                                         ; 13ee: 8d 2b 13    .+. :12bd[1]
-    ldx l3ad9                                                         ; 13f1: ae d9 3a    ..: :12c0[1]
-    ldy l3ada                                                         ; 13f4: ac da 3a    ..: :12c3[1]
+    ldx second_level_handler_ptr                                      ; 13f1: ae d9 3a    ..: :12c0[1]
+    ldy second_handler_ptr_plus_1                                     ; 13f4: ac da 3a    ..: :12c3[1]
     jsr jmp_yx                                                        ; 13f7: 20 66 19     f. :12c6[1]
     lda #0                                                            ; 13fa: a9 00       ..  :12c9[1]
     sta l132b                                                         ; 13fc: 8d 2b 13    .+. :12cb[1]
@@ -640,8 +640,8 @@ c1306
     jsr c131e                                                         ; 143a: 20 1e 13     .. :1309[1]
     jsr sub_c3aa2                                                     ; 143d: 20 a2 3a     .: :130c[1]
     jsr something19_TODO                                              ; 1440: 20 cd 22     ." :130f[1]
-    ldx l3ad9                                                         ; 1443: ae d9 3a    ..: :1312[1]
-    ldy l3ada                                                         ; 1446: ac da 3a    ..: :1315[1]
+    ldx second_level_handler_ptr                                      ; 1443: ae d9 3a    ..: :1312[1]
+    ldy second_handler_ptr_plus_1                                     ; 1446: ac da 3a    ..: :1315[1]
     jsr jmp_yx                                                        ; 1449: 20 66 19     f. :1318[1]
     jmp something12_TODO                                              ; 144c: 4c c3 18    L.. :131b[1]
 
@@ -7606,8 +7606,6 @@ pydis_end
 ;     l3970
 ;     l3974
 ;     l3a8e
-;     l3ad9
-;     l3ada
 ;     l3adc
 ;     l3add
 ;     l3ae0

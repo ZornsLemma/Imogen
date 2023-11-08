@@ -36,6 +36,8 @@ l3a8f                       = $3a8f
 level_data                  = $3ad5
 level_handler_ptr           = $3ad7
 level_handler_ptr_plus_1    = $3ad8
+second_level_handler_ptr    = $3ad9
+second_handler_ptr_plus_1   = $3ada
 oswrch                      = $ffee
 osbyte                      = $fff4
 
