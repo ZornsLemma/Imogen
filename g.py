@@ -2,6 +2,7 @@ from commands import *
 import acorn
 import re
 from common import *
+
 acorn.bbc()
 
 config.set_label_references(False)
@@ -917,26 +918,61 @@ expr(0x3645, make_hi("enter_password_message"))
 expr(0x3796, make_lo("section_message"))
 expr(0x3798, make_hi("section_message"))
 
-label(0x38a4, "sound_data1")
+
+def sound(addr, lab):
+    label(addr, lab)
+    word(addr, 1)
+    word(addr+2, 1)
+    word(addr+4, 1)
+    word(addr+6, 1)
+    decimal(addr+2)
+    decimal(addr+4)
+    decimal(addr+6)
+    comment(addr, "channel", inline=True)
+    comment(addr+2, "amplitude", inline=True)
+    comment(addr+4, "pitch", inline=True)
+    comment(addr+6, "duration", inline=True)
+
+def envelope(addr, lab):
+    label(addr, lab)
+    for i in range(addr, addr+14):
+        byte(i, 1)
+        decimal(i)
+    comment(addr, "envelope number", inline=True)
+    comment(addr+1, "step length (100ths of a second)", inline=True)
+    comment(addr+2, "pitch change per step in section 1", inline=True)
+    comment(addr+3, "pitch change per step in section 2", inline=True)
+    comment(addr+4, "pitch change per step in section 3", inline=True)
+    comment(addr+5, "number of steps in section 1", inline=True)
+    comment(addr+6, "number of steps in section 2", inline=True)
+    comment(addr+7, "number of steps in section 3", inline=True)
+    comment(addr+8, "change of amplitude per step during attack phase", inline=True)
+    comment(addr+9, "change of amplitude per step during decay phase", inline=True)
+    comment(addr+10, "change of amplitude per step during sustain phase", inline=True)
+    comment(addr+11, "change of amplitude per step during release phase", inline=True)
+    comment(addr+12, "target of level at end of attack phase", inline=True)
+    comment(addr+13, "target of level at end of decay phase", inline=True)
+
+sound(0x38a4, "sound_data1")
 expr(0x2b0e, make_lo("sound_data1"))
 expr(0x2b10, make_hi("sound_data1"))
 comment(0x38f9, "remember address1 on stack")
 comment(0x38ff, "store YX address")
 comment(0x3954, "restore address1 from stack")
 
-label(0x38d0, "sound_data2")
+sound(0x38d0, "sound_data2")
 expr(0x234a, make_lo("sound_data2"))
 expr(0x234c, make_hi("sound_data2"))
 
-label(0x38ba, "sound_data3")
+sound(0x38ba, "sound_data3")
 expr(0x2351, make_lo("sound_data3"))
 expr(0x2353, make_hi("sound_data3"))
 
-label(0x38ee, "sound_data4")
+sound(0x38ee, "sound_data4")
 expr(0x23b1, make_lo("sound_data4"))
 expr(0x23b3, make_hi("sound_data4"))
 
-label(0x38e6, "sound_data5")
+sound(0x38e6, "sound_data5")
 expr(0x23b8, make_lo("sound_data5"))
 expr(0x23ba, make_hi("sound_data5"))
 
@@ -1039,12 +1075,6 @@ label(0xab3, "old_brkv2")
 expr_label(0xab4, "old_brkv2+1")
 
 comment(0x38ac, "The envelope definitions get overwritten after initialisation - this is harmless as they will have been copied into the OS workspace when they were defined.")
-byte(0x38ac, 14)
-decimal(0x38ac, 14)
-byte(0x38c2, 14)
-decimal(0x38c2, 14)
-byte(0x38d8, 14)
-decimal(0x38d8, 14)
 expr(0x3d3e, make_lo("envelope_1"))
 expr(0x3d40, make_hi("envelope_1"))
 expr(0x3d45, make_lo("envelope_2"))
@@ -1084,9 +1114,9 @@ label(0x9a8, "x_entry_table9a")
 label(0x9be, "x_entry_table10a")
 label(0x9c9, "x_entry_table10b")
 label(0x38ac, "x_entry_table12") # TODO: Re-uses envelope_1, need to resolve label clash
-label(0x38ac, "envelope_1")
-label(0x38c2, "envelope_2")
-label(0x38d8, "envelope_3")
+envelope(0x38ac, "envelope_1")
+envelope(0x38c2, "envelope_2")
+envelope(0x38d8, "envelope_3")
 label(0x950, "x_entry_table2a")
 
 entry(0x3f6f, "probably_copy_protection_TODO")
@@ -1161,7 +1191,7 @@ Each pixel is encoded in two bits:
     10 - don't draw a pixel (it is masked off)
     11 - finish the current column and start the next column
 
-The behaviour of '11' shows that this is compression scheme, where columns can finish early if they have no set pixels at the top of the sprite.
+The behaviour of '11' shows that this is a compression scheme, where columns can finish early if they have no set pixels at the top of the sprite.
 
 *************************************************************************************""")
 label(0x138d, "sprite_op")

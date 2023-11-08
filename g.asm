@@ -776,8 +776,8 @@ reset_sprite_flags_and_exit
 ;     10 - don't draw a pixel (it is masked off)
 ;     11 - finish the current column and start the next column
 ; 
-; The behaviour of '11' shows that this is compression scheme, where columns can finish
-; early if they have no set pixels at the top of the sprite.
+; The behaviour of '11' shows that this is a compression scheme, where columns can
+; finish early if they have no set pixels at the top of the sprite.
 ; 
 ; *************************************************************************************
 sprite_op
@@ -5864,28 +5864,80 @@ loop_c3892
 auxcode_filename
     !text "auxcode", $0d                                              ; 39cd: 61 75 78... aux :389c[1]
 sound_data1
-    !byte $10,   0, $f4, $ff,   2,   0,   1,   0                      ; 39d5: 10 00 f4... ... :38a4[1]
+    !word $10                                                         ; 39d5: 10 00       ..  :38a4[1]   ; channel
+    !word 65524                                                       ; 39d7: f4 ff       ..  :38a6[1]   ; amplitude
+    !word 2                                                           ; 39d9: 02 00       ..  :38a8[1]   ; pitch
+    !word 1                                                           ; 39db: 01 00       ..  :38aa[1]   ; duration
 ; The envelope definitions get overwritten after initialisation - this is harmless as
 ; they will have been copied into the OS workspace when they were defined.
 x_entry_table12
 envelope_1
-l38ad = x_entry_table12+1
-    !byte  1,  3,  0,  0,  0,  0,  0,  0,  3,  0,  0,  0, 64,  0      ; 39dd: 01 03 00... ... :38ac[1]
+    !byte 1                                                           ; 39dd: 01          .   :38ac[1]   ; envelope number
+l38ad
+    !byte 3                                                           ; 39de: 03          .   :38ad[1]   ; step length (100ths of a second)
+    !byte 0                                                           ; 39df: 00          .   :38ae[1]   ; pitch change per step in section 1
+    !byte 0                                                           ; 39e0: 00          .   :38af[1]   ; pitch change per step in section 2
+    !byte 0                                                           ; 39e1: 00          .   :38b0[1]   ; pitch change per step in section 3
+    !byte 0                                                           ; 39e2: 00          .   :38b1[1]   ; number of steps in section 1
+    !byte 0                                                           ; 39e3: 00          .   :38b2[1]   ; number of steps in section 2
+    !byte 0                                                           ; 39e4: 00          .   :38b3[1]   ; number of steps in section 3
+    !byte 3                                                           ; 39e5: 03          .   :38b4[1]   ; change of amplitude per step during attack phase
+    !byte 0                                                           ; 39e6: 00          .   :38b5[1]   ; change of amplitude per step during decay phase
+    !byte 0                                                           ; 39e7: 00          .   :38b6[1]   ; change of amplitude per step during sustain phase
+    !byte 0                                                           ; 39e8: 00          .   :38b7[1]   ; change of amplitude per step during release phase
+    !byte 64                                                          ; 39e9: 40          @   :38b8[1]   ; target of level at end of attack phase
+    !byte 0                                                           ; 39ea: 00          .   :38b9[1]   ; target of level at end of decay phase
 sound_data3
-    !byte $10,   0,   1,   0,   7,   0, $64,   0                      ; 39eb: 10 00 01... ... :38ba[1]
+    !word $10                                                         ; 39eb: 10 00       ..  :38ba[1]   ; channel
+    !word 1                                                           ; 39ed: 01 00       ..  :38bc[1]   ; amplitude
+    !word 7                                                           ; 39ef: 07 00       ..  :38be[1]   ; pitch
+    !word 100                                                         ; 39f1: 64 00       d.  :38c0[1]   ; duration
 envelope_2
-l38c3 = envelope_2+1
-    !byte   2, 134,   1,   3,   5,  10,  10,  16,   0,   0,   0,   0  ; 39f3: 02 86 01... ... :38c2[1]
-    !byte   0,   0                                                    ; 39ff: 00 00       ..  :38ce[1]
+    !byte 2                                                           ; 39f3: 02          .   :38c2[1]   ; envelope number
+l38c3
+    !byte 134                                                         ; 39f4: 86          .   :38c3[1]   ; step length (100ths of a second)
+    !byte 1                                                           ; 39f5: 01          .   :38c4[1]   ; pitch change per step in section 1
+    !byte 3                                                           ; 39f6: 03          .   :38c5[1]   ; pitch change per step in section 2
+    !byte 5                                                           ; 39f7: 05          .   :38c6[1]   ; pitch change per step in section 3
+    !byte 10                                                          ; 39f8: 0a          .   :38c7[1]   ; number of steps in section 1
+    !byte 10                                                          ; 39f9: 0a          .   :38c8[1]   ; number of steps in section 2
+    !byte 16                                                          ; 39fa: 10          .   :38c9[1]   ; number of steps in section 3
+    !byte 0                                                           ; 39fb: 00          .   :38ca[1]   ; change of amplitude per step during attack phase
+    !byte 0                                                           ; 39fc: 00          .   :38cb[1]   ; change of amplitude per step during decay phase
+    !byte 0                                                           ; 39fd: 00          .   :38cc[1]   ; change of amplitude per step during sustain phase
+    !byte 0                                                           ; 39fe: 00          .   :38cd[1]   ; change of amplitude per step during release phase
+    !byte 0                                                           ; 39ff: 00          .   :38ce[1]   ; target of level at end of attack phase
+    !byte 0                                                           ; 3a00: 00          .   :38cf[1]   ; target of level at end of decay phase
 sound_data2
-    !byte $11,   0,   2,   0, $b4,   0, $64,   0                      ; 3a01: 11 00 02... ... :38d0[1]
+    !word $11                                                         ; 3a01: 11 00       ..  :38d0[1]   ; channel
+    !word 2                                                           ; 3a03: 02 00       ..  :38d2[1]   ; amplitude
+    !word 180                                                         ; 3a05: b4 00       ..  :38d4[1]   ; pitch
+    !word 100                                                         ; 3a07: 64 00       d.  :38d6[1]   ; duration
 envelope_3
-    !byte   3,   1,   0,   0,   0,   0,   0,   0, 100,   0,   0, 248  ; 3a09: 03 01 00... ... :38d8[1]
-    !byte 126,   0                                                    ; 3a15: 7e 00       ~.  :38e4[1]
+    !byte 3                                                           ; 3a09: 03          .   :38d8[1]   ; envelope number
+    !byte 1                                                           ; 3a0a: 01          .   :38d9[1]   ; step length (100ths of a second)
+    !byte 0                                                           ; 3a0b: 00          .   :38da[1]   ; pitch change per step in section 1
+    !byte 0                                                           ; 3a0c: 00          .   :38db[1]   ; pitch change per step in section 2
+    !byte 0                                                           ; 3a0d: 00          .   :38dc[1]   ; pitch change per step in section 3
+    !byte 0                                                           ; 3a0e: 00          .   :38dd[1]   ; number of steps in section 1
+    !byte 0                                                           ; 3a0f: 00          .   :38de[1]   ; number of steps in section 2
+    !byte 0                                                           ; 3a10: 00          .   :38df[1]   ; number of steps in section 3
+    !byte 100                                                         ; 3a11: 64          d   :38e0[1]   ; change of amplitude per step during attack phase
+    !byte 0                                                           ; 3a12: 00          .   :38e1[1]   ; change of amplitude per step during decay phase
+    !byte 0                                                           ; 3a13: 00          .   :38e2[1]   ; change of amplitude per step during sustain phase
+    !byte 248                                                         ; 3a14: f8          .   :38e3[1]   ; change of amplitude per step during release phase
+    !byte 126                                                         ; 3a15: 7e          ~   :38e4[1]   ; target of level at end of attack phase
+    !byte 0                                                           ; 3a16: 00          .   :38e5[1]   ; target of level at end of decay phase
 sound_data5
-    !byte $10,   0,   3,   0,   3,   0,   1,   0                      ; 3a17: 10 00 03... ... :38e6[1]
+    !word $10                                                         ; 3a17: 10 00       ..  :38e6[1]   ; channel
+    !word 3                                                           ; 3a19: 03 00       ..  :38e8[1]   ; amplitude
+    !word 3                                                           ; 3a1b: 03 00       ..  :38ea[1]   ; pitch
+    !word 1                                                           ; 3a1d: 01 00       ..  :38ec[1]   ; duration
 sound_data4
-    !byte $11,   0,   0,   0, $28,   0,   1,   0                      ; 3a1f: 11 00 00... ... :38ee[1]
+    !word $11                                                         ; 3a1f: 11 00       ..  :38ee[1]   ; channel
+    !word 0                                                           ; 3a21: 00 00       ..  :38f0[1]   ; amplitude
+    !word 40                                                          ; 3a23: 28 00       (.  :38f2[1]   ; pitch
+    !word 1                                                           ; 3a25: 01 00       ..  :38f4[1]   ; duration
 
 ; *************************************************************************************
 ; 
