@@ -288,7 +288,7 @@ timing_latch_low
     !byte $10                                                         ; 1239: 10          .   :1108[1]
 timing_latch_high
     !byte $27                                                         ; 123a: 27          '   :1109[1]
-l110a
+display_initialised_flag
     !byte 0                                                           ; 123b: 00          .   :110a[1]
 vertical_sync_amount_for_crtc_register
     !byte 0                                                           ; 123c: 00          .   :110b[1]
@@ -404,9 +404,9 @@ clear_sixteen_entry_table1
     sta old_brkv2                                                     ; 1319: 8d b3 0a    ... :11e8[1]
     lda #>brk_handler                                                 ; 131c: a9 16       ..  :11eb[1]
     sta old_brkv2+1                                                   ; 131e: 8d b4 0a    ... :11ed[1]
-    lda l110a                                                         ; 1321: ad 0a 11    ... :11f0[1]
+    lda display_initialised_flag                                      ; 1321: ad 0a 11    ... :11f0[1]
     bne c11f8                                                         ; 1324: d0 03       ..  :11f3[1]
-    jsr something3_TODO                                               ; 1326: 20 00 0c     .. :11f5[1]
+    jsr initialise_display                                            ; 1326: 20 00 0c     .. :11f5[1]
 ; Blank the whole screen temporarily. TODO: Note that when flipping from screen to
 ; screen during play, the toolbar is not blanked, but it is here. Is this just cosmetic
 ; or is there a technical reason for this?
@@ -655,12 +655,18 @@ reset_sprite_flags_and_exit
 ;              sprite_number: id of the sprite to plot
 ;     sprite_x_base_low/high: X coordinate of sprite to plot (pixels)
 ;     sprite_y_base_low/high: Y coordinate of sprite to plot (pixels)
-;            sprite_op_flags: bit 0: set means copy to sprite 'dest_sprite_number'
-;                             bit 1: <TODO>
-;                             bit 2: <TODO>
+; 
+;            sprite_op_flags: These bits are mutually exclusive. If bit is set:
+; 
+;                             bit 0: also copy mask into sprite 'dest_sprite_number'
+;                             bit 1: erase the sprite from the screen (with mask)
+;                             bit 2: write to the screen without a mask
 ;                             bits 3-7: unused
-;        sprite_reflect_flag: bit 7: set means draw the sprite reflected about the Y
-; axis (i.e. 'looking left')
+; 
+;        sprite_reflect_flag: bit 7: draw sprite reflected ('looking left')
+; 
+; On Exit:
+;     Preserves A,X,Y
 ; 
 ; Notes:
 ; 
@@ -700,6 +706,7 @@ sprite_op
     lda sprite_op_flags                                               ; 14cc: a5 15       ..  :139b[1]
     and #1                                                            ; 14ce: 29 01       ).  :139d[1]
     beq skip_copying_sprite_header_to_destination_sprite              ; 14d0: f0 14       ..  :139f[1]   ; check flags to see if we are copying to another sprite
+; get destination sprite address
     lda dest_sprite_number                                            ; 14d2: a5 14       ..  :13a1[1]
     jsr get_address_of_sprite_a                                       ; 14d4: 20 2c 13     ,. :13a3[1]
     stx dest_sprite_address_low                                       ; 14d7: 86 7e       .~  :13a6[1]
@@ -801,37 +808,44 @@ not_out_of_range
     lda sprite_y_pos_low                                              ; 1566: a5 76       .v  :1435[1]
     and #7                                                            ; 1568: 29 07       ).  :1437[1]
     sta sprite_y_offset_within_character_row                          ; 156a: 85 84       ..  :1439[1]
-; load X and check flags to see if we are copying to a destination sprite
+; load X and check flags to see if we are copying the mask to a destination sprite
     ldx l0087                                                         ; 156c: a6 87       ..  :143b[1]
     lda sprite_op_flags                                               ; 156e: a5 15       ..  :143d[1]
     and #1                                                            ; 1570: 29 01       ).  :143f[1]
-    beq copy_sprite_to_other_sprite                                   ; 1572: f0 03       ..  :1441[1]
-    jmp update_sprite_bit_variables_and_draw_sprite                   ; 1574: 4c 0c 16    L.. :1443[1]
+    beq sprite_op_without_copying_mask                                ; 1572: f0 03       ..  :1441[1]
+    jmp draw_sprite                                                   ; 1574: 4c 0c 16    L.. :1443[1]
 
-copy_sprite_to_other_sprite
+sprite_op_without_copying_mask
     lda sprite_op_flags                                               ; 1577: a5 15       ..  :1446[1]
     and #6                                                            ; 1579: 29 06       ).  :1448[1]
-    beq c146e                                                         ; 157b: f0 22       ."  :144a[1]
+    beq skip3                                                         ; 157b: f0 22       ."  :144a[1]
     and #4                                                            ; 157d: 29 04       ).  :144c[1]
-    bne c1466                                                         ; 157f: d0 16       ..  :144e[1]
-; Bit 1 of sprite_op_flags is set (but not bit 2)
+    bne write_sprite_without_mask                                     ; 157f: d0 16       ..  :144e[1]
+; Bit 1 of sprite_op_flags is set (but not bit 2).
+; This erases the sprite from the screen.
 ; This self-modifies code
-    lda #$18                                                          ; 1581: a9 18       ..  :1450[1]
-    sta c1486                                                         ; 1583: 8d 86 14    ... :1452[1]
-    lda #$4c ; 'L'                                                    ; 1586: a9 4c       .L  :1455[1]
-    sta l1487                                                         ; 1588: 8d 87 14    ... :1457[1]
+    lda #$18                                                          ; 1581: a9 18       ..  :1450[1]   ; Write CLC
+    sta smc_sprite_opcode                                             ; 1583: 8d 86 14    ... :1452[1]
+    lda #$4c ; 'L'                                                    ; 1586: a9 4c       .L  :1455[1]   ; Write JMP and_byte_with_mask_and_write_to_screen2
+    sta smc_sprite_opcode+1                                           ; 1588: 8d 87 14    ... :1457[1]
     lda #$98                                                          ; 158b: a9 98       ..  :145a[1]
-    sta c1488                                                         ; 158d: 8d 88 14    ... :145c[1]
+    sta smc_sprite_opcode+2                                           ; 158d: 8d 88 14    ... :145c[1]
     lda #$14                                                          ; 1590: a9 14       ..  :145f[1]
-    sta l1489                                                         ; 1592: 8d 89 14    ... :1461[1]
-    bne c146e                                                         ; 1595: d0 08       ..  :1464[1]
-c1466
-    lda #$38 ; '8'                                                    ; 1597: a9 38       .8  :1466[1]
-    sta c1486                                                         ; 1599: 8d 86 14    ... :1468[1]
-    sta l1487                                                         ; 159c: 8d 87 14    ... :146b[1]
-c146e
-    jmp update_sprite_bit_variables_and_draw_sprite2                  ; 159f: 4c 17 15    L.. :146e[1]
+    sta smc_sprite_opcode+3                                           ; 1592: 8d 89 14    ... :1461[1]
+    bne skip3                                                         ; 1595: d0 08       ..  :1464[1]   ; ALWAYS branch
 
+write_sprite_without_mask
+    lda #$38 ; '8'                                                    ; 1597: a9 38       .8  :1466[1]   ; Write 'SEC; SEC'
+    sta smc_sprite_opcode                                             ; 1599: 8d 86 14    ... :1468[1]
+    sta smc_sprite_opcode+1                                           ; 159c: 8d 87 14    ... :146b[1]
+skip3
+    jmp draw_sprite2                                                  ; 159f: 4c 17 15    L.. :146e[1]
+
+; *************************************************************************************
+; 
+; Regular sprite routines
+; 
+; *************************************************************************************
 out_of_bounds_vertically2
     asl sprite_data_byte                                              ; 15a2: 06 7d       .}  :1471[1]
     clc                                                               ; 15a4: 18          .   :1473[1]
@@ -847,11 +861,8 @@ write_one_pixel_to_the_screen2
     beq out_of_bounds_vertically2                                     ; 15b1: f0 ef       ..  :1480[1]
     lda (sprite_screen_address_low),y                                 ; 15b3: b1 72       .r  :1482[1]
     asl sprite_data_byte                                              ; 15b5: 06 7d       .}  :1484[1]
-c1486
-l1487 = c1486+1
+smc_sprite_opcode
     bcc and_byte_with_mask_and_write_to_screen2                       ; 15b7: 90 10       ..  :1486[1]
-c1488
-l1489 = c1488+1
     ora sprite_bit                                                    ; 15b9: 05 82       ..  :1488[1]
     sta (sprite_screen_address_low),y                                 ; 15bb: 91 72       .r  :148a[1]
     dey                                                               ; 15bd: 88          .   :148c[1]
@@ -875,7 +886,7 @@ move_up_to_previous_character_row2
     lda sprite_screen_address_high                                    ; 15d8: a5 73       .s  :14a7[1]
     sbc #1                                                            ; 15da: e9 01       ..  :14a9[1]
     sta sprite_screen_address_high                                    ; 15dc: 85 73       .s  :14ab[1]
-draw_sprite2
+check_within_vertical_range2
     sta vertical_sprite_position_is_valid_flag                        ; 15de: 85 88       ..  :14ad[1]
     cmp #$80                                                          ; 15e0: c9 80       ..  :14af[1]
     bcs record_that_we_are_out_of_screen_range_vertically2            ; 15e2: b0 c4       ..  :14b1[1]
@@ -906,7 +917,7 @@ byte_not_finished_yet2
     bmi move_to_next_column_while_rendering_reflected_about_y_axis2   ; 160f: 30 1e       0.  :14de[1]
     ldy sprite_x_offset_within_byte                                   ; 1611: a4 78       .x  :14e0[1]
     dey                                                               ; 1613: 88          .   :14e2[1]
-    bpl update_sprite_bit_variables_and_draw_sprite2                  ; 1614: 10 32       .2  :14e3[1]
+    bpl draw_sprite2                                                  ; 1614: 10 32       .2  :14e3[1]
     inc sprite_character_x_pos                                        ; 1616: e6 85       ..  :14e5[1]
     ldy sprite_character_x_pos                                        ; 1618: a4 85       ..  :14e7[1]
     cpy #$28 ; '('                                                    ; 161a: c0 28       .(  :14e9[1]
@@ -915,26 +926,26 @@ byte_not_finished_yet2
     adc #8                                                            ; 1620: 69 08       i.  :14ef[1]
     sta sprite_screen_address_for_column_low                          ; 1622: 85 7b       .{  :14f1[1]
     sta sprite_screen_address_low                                     ; 1624: 85 72       .r  :14f3[1]
-    bcc update_sprite_bit_variables_and_draw_sprite2                  ; 1626: 90 20       .   :14f5[1]
+    bcc draw_sprite2                                                  ; 1626: 90 20       .   :14f5[1]
     inc sprite_screen_address_for_column_high                         ; 1628: e6 7c       .|  :14f7[1]
     inc sprite_screen_address_high                                    ; 162a: e6 73       .s  :14f9[1]
-    jmp update_sprite_bit_variables_and_draw_sprite2                  ; 162c: 4c 17 15    L.. :14fb[1]
+    jmp draw_sprite2                                                  ; 162c: 4c 17 15    L.. :14fb[1]
 
 move_to_next_column_while_rendering_reflected_about_y_axis2
     ldy sprite_x_offset_within_byte                                   ; 162f: a4 78       .x  :14fe[1]
     iny                                                               ; 1631: c8          .   :1500[1]
     cpy #8                                                            ; 1632: c0 08       ..  :1501[1]
-    bcc update_sprite_bit_variables_and_draw_sprite2                  ; 1634: 90 12       ..  :1503[1]
+    bcc draw_sprite2                                                  ; 1634: 90 12       ..  :1503[1]
     dec sprite_character_x_pos                                        ; 1636: c6 85       ..  :1505[1]
     bmi finish_off_sprite2                                            ; 1638: 30 20       0   :1507[1]
     ldy #0                                                            ; 163a: a0 00       ..  :1509[1]
     sbc #8                                                            ; 163c: e9 08       ..  :150b[1]
     sta sprite_screen_address_for_column_low                          ; 163e: 85 7b       .{  :150d[1]
     sta sprite_screen_address_low                                     ; 1640: 85 72       .r  :150f[1]
-    bcs update_sprite_bit_variables_and_draw_sprite2                  ; 1642: b0 04       ..  :1511[1]
+    bcs draw_sprite2                                                  ; 1642: b0 04       ..  :1511[1]
     dec sprite_screen_address_for_column_high                         ; 1644: c6 7c       .|  :1513[1]
     dec sprite_screen_address_high                                    ; 1646: c6 73       .s  :1515[1]
-update_sprite_bit_variables_and_draw_sprite2
+draw_sprite2
     sty sprite_x_offset_within_byte                                   ; 1648: 84 78       .x  :1517[1]
     lda power_of_2_table,y                                            ; 164a: b9 77 13    .w. :1519[1]
     sta sprite_bit                                                    ; 164d: 85 82       ..  :151c[1]
@@ -942,19 +953,25 @@ update_sprite_bit_variables_and_draw_sprite2
     sta sprite_bit_mask                                               ; 1651: 85 83       ..  :1520[1]
     ldy sprite_y_offset_within_character_row                          ; 1653: a4 84       ..  :1522[1]
     lda sprite_screen_address_high                                    ; 1655: a5 73       .s  :1524[1]
-    jmp draw_sprite2                                                  ; 1657: 4c ad 14    L.. :1526[1]
+    jmp check_within_vertical_range2                                  ; 1657: 4c ad 14    L.. :1526[1]
 
 finish_off_sprite2
     lda #$90                                                          ; 165a: a9 90       ..  :1529[1]   ; restore the original three bytes of code (self-modifying)
-    sta c1486                                                         ; 165c: 8d 86 14    ... :152b[1]   ; 90 10='bcc and_byte_with_mask_and_write_to_screen2'
+    sta smc_sprite_opcode                                             ; 165c: 8d 86 14    ... :152b[1]   ; 90 10='bcc and_byte_with_mask_and_write_to_screen2'
     lda #$10                                                          ; 165f: a9 10       ..  :152e[1]
-    sta l1487                                                         ; 1661: 8d 87 14    ... :1530[1]
+    sta smc_sprite_opcode+1                                           ; 1661: 8d 87 14    ... :1530[1]
     lda #5                                                            ; 1664: a9 05       ..  :1533[1]   ; 05 82='ora sprite_bit'
-    sta c1488                                                         ; 1666: 8d 88 14    ... :1535[1]
+    sta smc_sprite_opcode+2                                           ; 1666: 8d 88 14    ... :1535[1]
     lda #$82                                                          ; 1669: a9 82       ..  :1538[1]
-    sta l1489                                                         ; 166b: 8d 89 14    ... :153a[1]
+    sta smc_sprite_opcode+3                                           ; 166b: 8d 89 14    ... :153a[1]
     jmp reset_sprite_flags_and_exit                                   ; 166e: 4c 7f 13    L.. :153d[1]
 
+; *************************************************************************************
+; 
+; Sprite routines that also copy the mask to a destination sprite (similar to code
+; above)
+; 
+; *************************************************************************************
 out_of_bounds_vertically
     asl sprite_data_byte                                              ; 1671: 06 7d       .}  :1540[1]
     sec                                                               ; 1673: 38          8   :1542[1]
@@ -1006,7 +1023,7 @@ move_up_to_previous_character_row
     lda sprite_screen_address_high                                    ; 16b4: a5 73       .s  :1583[1]
     sbc #>(screen_width_in_pixels-1)                                  ; 16b6: e9 01       ..  :1585[1]
     sta sprite_screen_address_high                                    ; 16b8: 85 73       .s  :1587[1]
-draw_sprite
+check_within_vertical_range
     sta vertical_sprite_position_is_valid_flag                        ; 16ba: 85 88       ..  :1589[1]   ; check if Y coordinate is above or below the screen area
     cmp #$80                                                          ; 16bc: c9 80       ..  :158b[1]   ; $8000 is end of screen memory
     bcs record_that_we_are_out_of_screen_range_vertically             ; 16be: b0 bb       ..  :158d[1]
@@ -1059,7 +1076,7 @@ found_second_bit_set
 ; move to next column
     ldy sprite_x_offset_within_byte                                   ; 1706: a4 78       .x  :15d5[1]
     dey                                                               ; 1708: 88          .   :15d7[1]
-    bpl update_sprite_bit_variables_and_draw_sprite                   ; 1709: 10 32       .2  :15d8[1]
+    bpl draw_sprite                                                   ; 1709: 10 32       .2  :15d8[1]
     inc sprite_character_x_pos                                        ; 170b: e6 85       ..  :15da[1]
     ldy sprite_character_x_pos                                        ; 170d: a4 85       ..  :15dc[1]
 ; if we reach the right hand edge of the screen then we are done
@@ -1070,26 +1087,26 @@ found_second_bit_set
     adc #8                                                            ; 1715: 69 08       i.  :15e4[1]
     sta sprite_screen_address_for_column_low                          ; 1717: 85 7b       .{  :15e6[1]
     sta sprite_screen_address_low                                     ; 1719: 85 72       .r  :15e8[1]
-    bcc update_sprite_bit_variables_and_draw_sprite                   ; 171b: 90 20       .   :15ea[1]
+    bcc draw_sprite                                                   ; 171b: 90 20       .   :15ea[1]
     inc sprite_screen_address_for_column_high                         ; 171d: e6 7c       .|  :15ec[1]
     inc sprite_screen_address_high                                    ; 171f: e6 73       .s  :15ee[1]
-    jmp update_sprite_bit_variables_and_draw_sprite                   ; 1721: 4c 0c 16    L.. :15f0[1]
+    jmp draw_sprite                                                   ; 1721: 4c 0c 16    L.. :15f0[1]
 
 move_to_next_column_while_rendering_reflected_about_y_axis
     ldy sprite_x_offset_within_byte                                   ; 1724: a4 78       .x  :15f3[1]   ; move within byte to next bit
     iny                                                               ; 1726: c8          .   :15f5[1]
     cpy #8                                                            ; 1727: c0 08       ..  :15f6[1]
-    bcc update_sprite_bit_variables_and_draw_sprite                   ; 1729: 90 12       ..  :15f8[1]
+    bcc draw_sprite                                                   ; 1729: 90 12       ..  :15f8[1]
     dec sprite_character_x_pos                                        ; 172b: c6 85       ..  :15fa[1]
     bmi finish_off_sprite                                             ; 172d: 30 20       0   :15fc[1]
     ldy #0                                                            ; 172f: a0 00       ..  :15fe[1]
     sbc #8                                                            ; 1731: e9 08       ..  :1600[1]
     sta sprite_screen_address_for_column_low                          ; 1733: 85 7b       .{  :1602[1]
     sta sprite_screen_address_low                                     ; 1735: 85 72       .r  :1604[1]
-    bcs update_sprite_bit_variables_and_draw_sprite                   ; 1737: b0 04       ..  :1606[1]
+    bcs draw_sprite                                                   ; 1737: b0 04       ..  :1606[1]
     dec sprite_screen_address_for_column_high                         ; 1739: c6 7c       .|  :1608[1]
     dec sprite_screen_address_high                                    ; 173b: c6 73       .s  :160a[1]
-update_sprite_bit_variables_and_draw_sprite
+draw_sprite
     sty sprite_x_offset_within_byte                                   ; 173d: 84 78       .x  :160c[1]
     lda power_of_2_table,y                                            ; 173f: b9 77 13    .w. :160e[1]
     sta sprite_bit                                                    ; 1742: 85 82       ..  :1611[1]   ; store the single bit within a byte we are interested in
@@ -1097,7 +1114,7 @@ update_sprite_bit_variables_and_draw_sprite
     sta sprite_bit_mask                                               ; 1746: 85 83       ..  :1615[1]   ; store every other bit in the byte other than the one we are interested in (it's a mask)
     ldy sprite_y_offset_within_character_row                          ; 1748: a4 84       ..  :1617[1]
     lda sprite_screen_address_high                                    ; 174a: a5 73       .s  :1619[1]
-    jmp draw_sprite                                                   ; 174c: 4c 89 15    L.. :161b[1]
+    jmp check_within_vertical_range                                   ; 174c: 4c 89 15    L.. :161b[1]
 
 finish_off_sprite
     lda mask_sprite_byte                                              ; 174f: a5 80       ..  :161e[1]
@@ -1273,7 +1290,7 @@ c1713
     lda l0002                                                         ; 1855: a5 02       ..  :1724[1]
     beq c174c                                                         ; 1857: f0 24       .$  :1726[1]
 sub_c1728
-    lda l110a                                                         ; 1859: ad 0a 11    ... :1728[1]
+    lda display_initialised_flag                                      ; 1859: ad 0a 11    ... :1728[1]
     beq c174c                                                         ; 185c: f0 1f       ..  :172b[1]
     lda #vdu_bell                                                     ; 185e: a9 07       ..  :172d[1]
     jsr oswrch                                                        ; 1860: 20 ee ff     .. :172f[1]   ; Write character 7
@@ -1443,7 +1460,7 @@ something11_TODO
     jsr wait_for_vsync                                                ; 196a: 20 8c 17     .. :1839[1]
     jsr wait_for_timingB_counter                                      ; 196d: 20 00 04     .. :183c[1]
     jsr reset_code                                                    ; 1970: 20 45 18     E. :183f[1]
-    jmp something3_TODO                                               ; 1973: 4c 00 0c    L.. :1842[1]
+    jmp initialise_display                                            ; 1973: 4c 00 0c    L.. :1842[1]
 
 ; Assuming there is sideways RAM mapped into ROM slot 13, this copy 256 bytes from
 ; $be00 to $0c00, and 256 bytes from $bf00 to $0b00. Could this be code helping during
@@ -1455,7 +1472,7 @@ reset_code
     ldy #0                                                            ; 197c: a0 00       ..  :184b[1]
 copy_from_rom_c_loop
     lda lbe00,y                                                       ; 197e: b9 00 be    ... :184d[1]
-    sta something3_TODO,y                                             ; 1981: 99 00 0c    ... :1850[1]
+    sta initialise_display,y                                          ; 1981: 99 00 0c    ... :1850[1]
     lda lbf00,y                                                       ; 1984: b9 00 bf    ... :1853[1]
     sta l0b00,y                                                       ; 1987: 99 00 0b    ... :1856[1]
     iny                                                               ; 198a: c8          .   :1859[1]
@@ -2215,12 +2232,12 @@ c1d16
     !byte $e5, $b0, $0a, $a9, $0a, $20, $4c, $1f, $a9,   2, $20, $bb  ; 1f14: e5 b0 0a... ... :1de3[1]
     !byte $1e, $68, $a8, $68, $60                                     ; 1f20: 1e 68 a8... .h. :1def[1]
 
-; TODO: Is this code deliberately trashing the code at something3_TODO?
+; TODO: Is this code deliberately trashing the code at initialise_display?
 sub_c1df4
     lda #0                                                            ; 1f25: a9 00       ..  :1df4[1]
     tay                                                               ; 1f27: a8          .   :1df6[1]
 loop_c1df7
-    sta something3_TODO,y                                             ; 1f28: 99 00 0c    ... :1df7[1]
+    sta initialise_display,y                                          ; 1f28: 99 00 0c    ... :1df7[1]
     iny                                                               ; 1f2b: c8          .   :1dfa[1]
     cpy #$f0                                                          ; 1f2c: c0 f0       ..  :1dfb[1]
     bne loop_c1df7                                                    ; 1f2e: d0 f8       ..  :1dfd[1]
@@ -2310,13 +2327,13 @@ c1e6a
     ldx sprite_x_pos_low                                              ; 1fab: a6 74       .t  :1e7a[1]
     sta sprite_x_pos_low                                              ; 1fad: 85 74       .t  :1e7c[1]
     sty sprite_x_pos_high                                             ; 1faf: 84 75       .u  :1e7e[1]
-; TODO: What's going on with the modification to something3_TODO here? Is it copy
+; TODO: What's going on with the modification to initialise_display here? Is it copy
 ; protection/obfuscation or is there something else going on?
 loop_c1e80
-    lda something3_TODO,y                                             ; 1fb1: b9 00 0c    ... :1e80[1]
+    lda initialise_display,y                                          ; 1fb1: b9 00 0c    ... :1e80[1]
     and l1ea7,x                                                       ; 1fb4: 3d a7 1e    =.. :1e83[1]
     ora sprite_x_pos_low                                              ; 1fb7: 05 74       .t  :1e86[1]
-    sta something3_TODO,y                                             ; 1fb9: 99 00 0c    ... :1e88[1]
+    sta initialise_display,y                                          ; 1fb9: 99 00 0c    ... :1e88[1]
     tya                                                               ; 1fbc: 98          .   :1e8b[1]
     adc #$0a                                                          ; 1fbd: 69 0a       i.  :1e8c[1]
     tay                                                               ; 1fbf: a8          .   :1e8e[1]
@@ -2343,7 +2360,7 @@ l1eab
     !byte   0,   0,   0,   0, $40, $10,   4,   1, $80, $20,   8,   2  ; 1fdc: 00 00 00... ... :1eab[1]
     !byte $c0, $30, $0c,   3                                          ; 1fe8: c0 30 0c... .0. :1eb7[1]
 
-; TODO: What's going on with the modification to something3_TODO here? Is it copy
+; TODO: What's going on with the modification to initialise_display here? Is it copy
 ; protection/obfuscation or is there something else going on?
 sub_c1ebb
     and #3                                                            ; 1fec: 29 03       ).  :1ebb[1]
@@ -2376,10 +2393,10 @@ sub_c1ebb
     lda l1eab,x                                                       ; 2012: bd ab 1e    ... :1ee1[1]
     ldx l004a                                                         ; 2015: a6 4a       .J  :1ee4[1]
     sta l004a                                                         ; 2017: 85 4a       .J  :1ee6[1]
-    lda something3_TODO,y                                             ; 2019: b9 00 0c    ... :1ee8[1]
+    lda initialise_display,y                                          ; 2019: b9 00 0c    ... :1ee8[1]
     and l1ea7,x                                                       ; 201c: 3d a7 1e    =.. :1eeb[1]
     ora l004a                                                         ; 201f: 05 4a       .J  :1eee[1]
-    sta something3_TODO,y                                             ; 2021: 99 00 0c    ... :1ef0[1]
+    sta initialise_display,y                                          ; 2021: 99 00 0c    ... :1ef0[1]
     pla                                                               ; 2024: 68          h   :1ef3[1]
     tay                                                               ; 2025: a8          .   :1ef4[1]
     pla                                                               ; 2026: 68          h   :1ef5[1]
@@ -2411,7 +2428,7 @@ c1f06
     txa                                                               ; 2048: 8a          .   :1f17[1]
     and #3                                                            ; 2049: 29 03       ).  :1f18[1]
     tax                                                               ; 204b: aa          .   :1f1a[1]
-    lda something3_TODO,y                                             ; 204c: b9 00 0c    ... :1f1b[1]
+    lda initialise_display,y                                          ; 204c: b9 00 0c    ... :1f1b[1]
     jmp c1f23                                                         ; 204f: 4c 23 1f    L#. :1f1e[1]
 
 loop_c1f21
@@ -6146,8 +6163,8 @@ relocation3_loop
 ; Relocation 4: Copy $100 bytes of code from $3fcb to $0c00
     ldy #0                                                            ; 3c77: a0 00       ..
 relocation4_loop
-    lda something3_high_copy_start,y                                  ; 3c79: b9 cb 3f    ..?
-    sta something3_TODO,y                                             ; 3c7c: 99 00 0c    ...
+    lda initialise_display_high_copy_start,y                          ; 3c79: b9 cb 3f    ..?
+    sta initialise_display,y                                          ; 3c7c: 99 00 0c    ...
     iny                                                               ; 3c7f: c8          .
     bne relocation4_loop                                              ; 3c80: d0 f7       ..
 
@@ -6621,12 +6638,19 @@ sideways_rom_image
     rts                                                               ; 3fc3: 60          `              ; do nothing - return
 
     !byte 0, 0, 0, 0, 0, 0, 0                                         ; 3fc4: 00 00 00... ...            ; unused bytes
-something3_high_copy_start
+initialise_display_high_copy_start
 
 !pseudopc $0c00 {
-something3_TODO
+; Initialise display
+; 
+; 1. Set toolbar and game area colours
+; 2. Initialise the system timer to interrupt at the right time to change palettes
+; 3. Initialise the irq routine address
+; 4. Set the crtc registers
+; 
+initialise_display
     lda #$ff                                                          ; 3fcb: a9 ff       ..  :0c00[4]
-    sta l110a                                                         ; 3fcd: 8d 0a 11    ... :0c02[4]
+    sta display_initialised_flag                                      ; 3fcd: 8d 0a 11    ... :0c02[4]
     lda pending_toolbar_colour                                        ; 3fd0: ad 5d 17    .]. :0c05[4]
     sta toolbar_colour                                                ; 3fd3: 8d 5e 17    .^. :0c08[4]
     lda pending_gameplay_area_colour                                  ; 3fd6: ad 5f 17    ._. :0c0b[4]
@@ -7008,10 +7032,6 @@ pydis_end
 ;     c12fc
 ;     c1306
 ;     c131e
-;     c1466
-;     c146e
-;     c1486
-;     c1488
 ;     c149c
 ;     c16aa
 ;     c1713
@@ -7380,10 +7400,7 @@ pydis_end
 ;     l09eb
 ;     l0a80
 ;     l0b00
-;     l110a
 ;     l132b
-;     l1487
-;     l1489
 ;     l178b
 ;     l1824
 ;     l1a0f

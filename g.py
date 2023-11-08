@@ -151,22 +151,33 @@ comment(0x141a, "Add high byte including X")
 label(0x1427, "not_out_of_range")
 comment(0x142e, "set Y to the horizontal offset within byte (0-7) of the sprite X position")
 comment(0x1435, "set the vertical offset within a character row (0-7) of the sprite Y position")
-comment(0x143b, "load X and check flags to see if we are copying to a destination sprite")
+comment(0x143b, "load X and check flags to see if we are copying the mask to a destination sprite")
 
+comment(0x1471, """*************************************************************************************
+
+Regular sprite routines
+
+*************************************************************************************""")
 label(0x1471, "out_of_bounds_vertically2")
 label(0x1477, "record_that_we_are_out_of_screen_range_vertically2")
 label(0x147e, "write_one_pixel_to_the_screen2")
 label(0x1498, "and_byte_with_mask_and_write_to_screen2")
 label(0x14a5, "move_up_to_previous_character_row2")
-label(0x14ad, "draw_sprite2")
+label(0x14ad, "check_within_vertical_range2")
 label(0x14b7, "y_coordinate_is_within_character_row2")
 label(0x14c8, "byte_not_finished_yet2")
 label(0x14fe, "move_to_next_column_while_rendering_reflected_about_y_axis2")
-label(0x1517, "update_sprite_bit_variables_and_draw_sprite2")
+label(0x1517, "draw_sprite2")
 label(0x1529, "finish_off_sprite2")
+
 comment(0x1529, "restore the original three bytes of code (self-modifying)", inline=True)
 comment(0x152b, "90 10='bcc and_byte_with_mask_and_write_to_screen2'", inline=True)
 comment(0x1533, "05 82='ora sprite_bit'", inline=True)
+comment(0x1540, """*************************************************************************************
+
+Sprite routines that also copy the mask to a destination sprite (similar to code above)
+
+*************************************************************************************""")
 label(0x1540, "out_of_bounds_vertically")
 label(0x154a, "record_that_we_are_out_of_screen_range_vertically")
 comment(0x1557, "read byte from screen")
@@ -222,9 +233,9 @@ label(0x1628, "write_last_byte")
 #comment(0x15ad, "", inline=True)
 #comment(0x15ad, "", inline=True)
 
-label(0x1589, "draw_sprite")
+label(0x1589, "check_within_vertical_range")
 expr(0x1570, make_lo("screen_width_in_pixels"))
-label(0x160c, "update_sprite_bit_variables_and_draw_sprite")
+label(0x160c, "draw_sprite")
 
 expr(0x1675, "characters_per_line")
 expr(0x167b, make_lo("screen_width_in_pixels-1"))
@@ -628,11 +639,18 @@ expr(0x445, "vdu_goto_xy")
 entry(0x453, "something_TODO")
 # TODO: DELETE? entry(0x3fbb, "something2_TODO")
 
-entry(0x3fcb, "something3_TODO")
-label(0x3fcb, "something3_high_copy_start")
-comment(0x1df4, "TODO: Is this code deliberately trashing the code at something3_TODO?")
-comment(0x1e80, "TODO: What's going on with the modification to something3_TODO here? Is it copy protection/obfuscation or is there something else going on?")
-comment(0x1ebb, "TODO: What's going on with the modification to something3_TODO here? Is it copy protection/obfuscation or is there something else going on?")
+comment(0x3fcb, """Initialise display
+
+1. Set toolbar and game area colours
+2. Initialise the system timer to interrupt at the right time to change palettes
+3. Initialise the irq routine address
+4. Set the crtc registers
+""")
+entry(0x3fcb, "initialise_display")
+label(0x3fcb, "initialise_display_high_copy_start")
+comment(0x1df4, "TODO: Is this code deliberately trashing the code at initialise_display?")
+comment(0x1e80, "TODO: What's going on with the modification to initialise_display here? Is it copy protection/obfuscation or is there something else going on?")
+comment(0x1ebb, "TODO: What's going on with the modification to initialise_display here? Is it copy protection/obfuscation or is there something else going on?")
 
 entry(0x402c, "quit_to_basic")
 for i in range(5):
@@ -857,6 +875,7 @@ label(0x1106, "timingB_counter_low")
 label(0x1107, "timingB_counter_high")
 label(0x1108, "timing_latch_low")
 label(0x1109, "timing_latch_high")
+label(0x110a, "display_initialised_flag")
 label(0x2ee9, "four_entry_table2") # TODO: write only, at least in 'g' itself?
 label(0x396f, "four_entry_table3_maybe_sound") # TODO: possibly something to do with sound??
 label(0xa6f, "sixteen_entry_table1")
@@ -923,11 +942,18 @@ On Entry:
              sprite_number: id of the sprite to plot
     sprite_x_base_low/high: X coordinate of sprite to plot (pixels)
     sprite_y_base_low/high: Y coordinate of sprite to plot (pixels)
-           sprite_op_flags: bit 0: set means copy to sprite 'dest_sprite_number'
-                            bit 1: <TODO>
-                            bit 2: <TODO>
+
+           sprite_op_flags: These bits are mutually exclusive. If bit is set:
+
+                            bit 0: also copy mask into sprite 'dest_sprite_number'
+                            bit 1: erase the sprite from the screen (with mask)
+                            bit 2: write to the screen without a mask
                             bits 3-7: unused
-       sprite_reflect_flag: bit 7: set means draw the sprite reflected about the Y axis (i.e. 'looking left')
+
+       sprite_reflect_flag: bit 7: draw sprite reflected ('looking left')
+
+On Exit:
+    Preserves A,X,Y
 
 Notes:
 
@@ -952,8 +978,22 @@ The behaviour of '11' shows that this is compression scheme, where columns can f
 
 *************************************************************************************""")
 label(0x138d, "sprite_op")
-label(0x1446, "copy_sprite_to_other_sprite")
-comment(0x1450, "Bit 1 of sprite_op_flags is set (but not bit 2)\nThis self-modifies code")
+comment(0x13a1, "get destination sprite address")
+label(0x1446, "sprite_op_without_copying_mask")
+comment(0x1450, """Bit 1 of sprite_op_flags is set (but not bit 2).
+This erases the sprite from the screen.
+This self-modifies code""")
+comment(0x1450, "Write CLC", inline=True)
+comment(0x1455, "Write JMP and_byte_with_mask_and_write_to_screen2", inline=True)
+comment(0x1464, "ALWAYS branch", inline=True)
+blank(0x1466)
+comment(0x1466, "Write 'SEC; SEC'", inline=True)
+label(0x1466, "write_sprite_without_mask")
+label(0x146e, "skip3")
+label(0x1486, "smc_sprite_opcode")
+label(0x1487, "smc_sprite_opcode+1")
+label(0x1488, "smc_sprite_opcode+2")
+label(0x1489, "smc_sprite_opcode+3")
 label(0x2c46, "calculate_sprite_position_for_menu_item")
 label(0x2c58, "multiply_x_by_twenty_loop")
 decimal(0x2c5a)
