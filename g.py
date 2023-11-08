@@ -1101,6 +1101,7 @@ comment(0x1f6d, "TODO: this is used by e.g. dataA")
 comment(0x2894, "TODO: this is used by e.g. dataA")
 entry(0x1988)
 comment(0x1988, "TODO: this is used by e.g. dataA")
+comment(0x23a9, "TODO: this is used by e.g. dataA")
 
 label(0xab5, "old_irq1v")
 expr_label(0xab6, "old_irq1v+1")

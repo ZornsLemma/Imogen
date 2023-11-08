@@ -43,6 +43,7 @@ draw_sprite_a_at_character_xy       = $1f4c
 something52_TODO                    = $1f57
 something58_TODO                    = $1f5d
 something57_TODO                    = $1f6d
+something61_TODO                    = $23a9
 something59_TODO                    = $2894
 something55_TODO                    = $28e2
 something50_TODO                    = $2bbd

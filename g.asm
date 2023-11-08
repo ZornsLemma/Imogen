@@ -3239,11 +3239,12 @@ c2392
     jsr something59_TODO                                              ; 24d1: 20 94 28     .( :23a0[1]
     bne return12                                                      ; 24d4: d0 03       ..  :23a3[1]
 c23a5
-    jsr sub_c23a9                                                     ; 24d6: 20 a9 23     .# :23a5[1]
+    jsr something61_TODO                                              ; 24d6: 20 a9 23     .# :23a5[1]
 return12
     rts                                                               ; 24d9: 60          `   :23a8[1]
 
-sub_c23a9
+; TODO: this is used by e.g. dataA
+something61_TODO
     pha                                                               ; 24da: 48          H   :23a9[1]
     txa                                                               ; 24db: 8a          .   :23aa[1]
     pha                                                               ; 24dc: 48          H   :23ab[1]
@@ -7730,7 +7731,6 @@ pydis_end
 ;     sub_c22ee
 ;     sub_c2358
 ;     sub_c236b
-;     sub_c23a9
 ;     sub_c23c4
 ;     sub_c2434
 ;     sub_c24d2
