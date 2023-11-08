@@ -3060,11 +3060,11 @@ transform
     cmp l296d                                                         ; 2473: cd 6d 29    .m) :2342[1]
     bcc return11                                                      ; 2476: 90 10       ..  :2345[1]
     lda #$ff                                                          ; 2478: a9 ff       ..  :2347[1]
-    ldx #$d0                                                          ; 247a: a2 d0       ..  :2349[1]
-    ldy #$38 ; '8'                                                    ; 247c: a0 38       .8  :234b[1]
+    ldx #<yet_more_data2                                              ; 247a: a2 d0       ..  :2349[1]
+    ldy #>yet_more_data2                                              ; 247c: a0 38       .8  :234b[1]
     jsr sub_c38f6                                                     ; 247e: 20 f6 38     .8 :234d[1]
-    ldx #$ba                                                          ; 2481: a2 ba       ..  :2350[1]
-    ldy #$38 ; '8'                                                    ; 2483: a0 38       .8  :2352[1]
+    ldx #<yet_more_data3                                              ; 2481: a2 ba       ..  :2350[1]
+    ldy #>yet_more_data3                                              ; 2483: a0 38       .8  :2352[1]
     jsr sub_c38f6                                                     ; 2485: 20 f6 38     .8 :2354[1]
 return11
     rts                                                               ; 2488: 60          `   :2357[1]
@@ -3117,11 +3117,11 @@ sub_c23a9
     tya                                                               ; 24dd: 98          .   :23ac[1]
     pha                                                               ; 24de: 48          H   :23ad[1]
     lda #0                                                            ; 24df: a9 00       ..  :23ae[1]
-    ldx #$ee                                                          ; 24e1: a2 ee       ..  :23b0[1]
-    ldy #$38 ; '8'                                                    ; 24e3: a0 38       .8  :23b2[1]
+    ldx #<yet_more_data4                                              ; 24e1: a2 ee       ..  :23b0[1]
+    ldy #>yet_more_data4                                              ; 24e3: a0 38       .8  :23b2[1]
     jsr sub_c38f6                                                     ; 24e5: 20 f6 38     .8 :23b4[1]
-    ldx #$e6                                                          ; 24e8: a2 e6       ..  :23b7[1]
-    ldy #$38 ; '8'                                                    ; 24ea: a0 38       .8  :23b9[1]
+    ldx #<yet_more_data5                                              ; 24e8: a2 e6       ..  :23b7[1]
+    ldy #>yet_more_data5                                              ; 24ea: a0 38       .8  :23b9[1]
     jsr sub_c38f6                                                     ; 24ec: 20 f6 38     .8 :23bb[1]
     pla                                                               ; 24ef: 68          h   :23be[1]
     tay                                                               ; 24f0: a8          .   :23bf[1]
@@ -4179,8 +4179,8 @@ c2aff
     lda #$ff                                                          ; 2c37: a9 ff       ..  :2b06[1]
     sta l3966                                                         ; 2c39: 8d 66 39    .f9 :2b08[1]
     lda #0                                                            ; 2c3c: a9 00       ..  :2b0b[1]
-    ldx #$a4                                                          ; 2c3e: a2 a4       ..  :2b0d[1]
-    ldy #$38 ; '8'                                                    ; 2c40: a0 38       .8  :2b0f[1]
+    ldx #<yet_more_data1                                              ; 2c3e: a2 a4       ..  :2b0d[1]
+    ldy #>yet_more_data1                                              ; 2c40: a0 38       .8  :2b0f[1]
     jsr sub_c38f6                                                     ; 2c42: 20 f6 38     .8 :2b11[1]
     pla                                                               ; 2c45: 68          h   :2b14[1]
     eor #$ff                                                          ; 2c46: 49 ff       I.  :2b15[1]
@@ -5310,7 +5310,7 @@ c3557
     lda l3497                                                         ; 369b: ad 97 34    ..4 :356a[1]
     beq c3573                                                         ; 369e: f0 04       ..  :356d[1]
     ldx #<loading_message                                             ; 36a0: a2 fe       ..  :356f[1]
-    ldy #<loading_message                                             ; 36a2: a0 35       .5  :3571[1]
+    ldy #>loading_message                                             ; 36a2: a0 35       .5  :3571[1]
 c3573
     jsr sub_c37f3                                                     ; 36a4: 20 f3 37     .7 :3573[1]
     lda #<save_full_filename                                          ; 36a7: a9 d6       ..  :3576[1]
@@ -5776,6 +5776,7 @@ loop_c3892
 
 auxcode_filename
     !text "auxcode", $0d                                              ; 39cd: 61 75 78... aux :389c[1]
+yet_more_data1
     !byte $10,   0, $f4, $ff,   2,   0,   1,   0                      ; 39d5: 10 00 f4... ... :38a4[1]
 ; The envelope definitions get overwritten after initialisation - this is harmless as
 ; they will have been copied into the OS workspace when they were defined.
@@ -5783,20 +5784,21 @@ x_entry_table12
 envelope_1
 l38ad = x_entry_table12+1
     !byte  1,  3,  0,  0,  0,  0,  0,  0,  3,  0,  0,  0, 64,  0      ; 39dd: 01 03 00... ... :38ac[1]
-some_data1_TODO
+yet_more_data3
     !byte $10,   0,   1,   0,   7,   0, $64,   0                      ; 39eb: 10 00 01... ... :38ba[1]
 envelope_2
 l38c3 = envelope_2+1
     !byte   2, 134,   1,   3,   5,  10,  10,  16,   0,   0,   0,   0  ; 39f3: 02 86 01... ... :38c2[1]
     !byte   0,   0                                                    ; 39ff: 00 00       ..  :38ce[1]
-some_data2_TODO
+yet_more_data2
     !byte $11,   0,   2,   0, $b4,   0, $64,   0                      ; 3a01: 11 00 02... ... :38d0[1]
 envelope_3
     !byte   3,   1,   0,   0,   0,   0,   0,   0, 100,   0,   0, 248  ; 3a09: 03 01 00... ... :38d8[1]
     !byte 126,   0                                                    ; 3a15: 7e 00       ~.  :38e4[1]
-some_data3_TODO
-    !byte $10,   0,   3,   0,   3,   0,   1,   0, $11,   0,   0,   0  ; 3a17: 10 00 03... ... :38e6[1]
-    !byte $28,   0,   1,   0                                          ; 3a23: 28 00 01... (.. :38f2[1]
+yet_more_data5
+    !byte $10,   0,   3,   0,   3,   0,   1,   0                      ; 3a17: 10 00 03... ... :38e6[1]
+yet_more_data4
+    !byte $11,   0,   0,   0, $28,   0,   1,   0                      ; 3a1f: 11 00 00... ... :38ee[1]
 
 sub_c38f6
     sta l3973                                                         ; 3a27: 8d 73 39    .s9 :38f6[1]
@@ -7667,8 +7669,8 @@ pydis_end
 !if (<level_data) != $d5 {
     !error "Assertion failed: <level_data == $d5"
 }
-!if (<loading_message) != $35 {
-    !error "Assertion failed: <loading_message == $35"
+!if (<loading_message) != $fe {
+    !error "Assertion failed: <loading_message == $fe"
 }
 !if (<oswrch) != $ee {
     !error "Assertion failed: <oswrch == $ee"
@@ -7729,6 +7731,21 @@ pydis_end
 }
 !if (<which_drive_encrypted_string) != $e3 {
     !error "Assertion failed: <which_drive_encrypted_string == $e3"
+}
+!if (<yet_more_data1) != $a4 {
+    !error "Assertion failed: <yet_more_data1 == $a4"
+}
+!if (<yet_more_data2) != $d0 {
+    !error "Assertion failed: <yet_more_data2 == $d0"
+}
+!if (<yet_more_data3) != $ba {
+    !error "Assertion failed: <yet_more_data3 == $ba"
+}
+!if (<yet_more_data4) != $ee {
+    !error "Assertion failed: <yet_more_data4 == $ee"
+}
+!if (<yet_more_data5) != $e6 {
+    !error "Assertion failed: <yet_more_data5 == $e6"
 }
 !if (>(address1_low)) != $00 {
     !error "Assertion failed: >(address1_low) == $00"
@@ -7808,6 +7825,9 @@ pydis_end
 !if (>level_data) != $3a {
     !error "Assertion failed: >level_data == $3a"
 }
+!if (>loading_message) != $35 {
+    !error "Assertion failed: >loading_message == $35"
+}
 !if (>oswrch) != $ff {
     !error "Assertion failed: >oswrch == $ff"
 }
@@ -7864,6 +7884,21 @@ pydis_end
 }
 !if (>which_drive_encrypted_string) != $34 {
     !error "Assertion failed: >which_drive_encrypted_string == $34"
+}
+!if (>yet_more_data1) != $38 {
+    !error "Assertion failed: >yet_more_data1 == $38"
+}
+!if (>yet_more_data2) != $38 {
+    !error "Assertion failed: >yet_more_data2 == $38"
+}
+!if (>yet_more_data3) != $38 {
+    !error "Assertion failed: >yet_more_data3 == $38"
+}
+!if (>yet_more_data4) != $38 {
+    !error "Assertion failed: >yet_more_data4 == $38"
+}
+!if (>yet_more_data5) != $38 {
+    !error "Assertion failed: >yet_more_data5 == $38"
 }
 !if (black) != $00 {
     !error "Assertion failed: black == $00"
