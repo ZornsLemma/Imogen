@@ -24,9 +24,8 @@ constant(0x51, "last_level_letter") # TODO: would be nice to use 'Q' as constant
 
 label(0x3ad5, "level_data")
 label(0x3ad7, "level_handler_ptr")
-label(0x3ad8, "level_handler_ptr_plus_1")
+expr_label(0x3ad8, make_add("level_handler_ptr", "1"))
 label(0x3ad9, "second_level_handler_ptr") # TODO: poor name
-label(0x3ada, "second_level_handler_ptr_plus_1")
+expr_label(0x3ada, make_add("second_level_handler_ptr", "1"))
 label(0x3adb, "third_level_handler_ptr") # TODO: poor name
-label(0x3adc, "third_level_handler_ptr_plus_1")
-# TODO: py8dis blocks this as no data is loaded at this address, annoying: expr(0x3ad8, make_add("level_handler_ptr", "1"))
+expr_label(0x3adc, make_add("third_level_handler_ptr", "1"))

@@ -91,11 +91,8 @@ level_data
 pydis_start
     !byte $d1,   9                                                    ; 3ad5: d1 09       ..
 level_handler_ptr
-level_handler_ptr_plus_1 = level_handler_ptr+1
 second_level_handler_ptr = level_handler_ptr+2
-second_level_handler_ptr_plus_1 = level_handler_ptr+3
 third_level_handler_ptr = level_handler_ptr+4
-third_level_handler_ptr_plus_1 = level_handler_ptr+5
     !word        level_handler, second_level_handler                  ; 3ad7: f2 3a 17... .:.
     !word  third_level_handler                                        ; 3adb: e7 3a       .:
     !byte 0, 1                                                        ; 3add: 00 01       ..
