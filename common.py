@@ -35,3 +35,5 @@ label_word(0x3adb, "level_name_ptr") # TODO: poor name
 label(0x12bb, "something23_TODO")
 label(0x12da, "something24_TODO")
 label(0x2bbd, "something50_TODO")
+label(0x1abb, "something51_TODO")
+label(0x1f57, "something52_TODO")

@@ -53,13 +53,13 @@ use_colour_flag             = $1765
 l1988                       = $1988
 l1a10                       = $1a10
 l1aba                       = $1aba
-l1abb                       = $1abb
+something51_TODO            = $1abb
 l1b90                       = $1b90
 l1db9                       = $1db9
 l1e44                       = $1e44
 l1ebb                       = $1ebb
 l1f4c                       = $1f4c
-l1f57                       = $1f57
+something52_TODO            = $1f57
 l1f5d                       = $1f5d
 l1f6d                       = $1f6d
 l23a9                       = $23a9
@@ -145,42 +145,42 @@ some_code1
     sta l003c                                                         ; 3b2f: 85 3c       .<
     lda #2                                                            ; 3b31: a9 02       ..
     sta l003d                                                         ; 3b33: 85 3d       .=
-    jsr l1abb                                                         ; 3b35: 20 bb 1a     ..
+    jsr something51_TODO                                              ; 3b35: 20 bb 1a     ..
     ldy #2                                                            ; 3b38: a0 02       ..
     lda #4                                                            ; 3b3a: a9 04       ..
     sta l003c                                                         ; 3b3c: 85 3c       .<
     dec l003d                                                         ; 3b3e: c6 3d       .=
-    jsr l1abb                                                         ; 3b40: 20 bb 1a     ..
+    jsr something51_TODO                                              ; 3b40: 20 bb 1a     ..
     iny                                                               ; 3b43: c8          .
     dec l003c                                                         ; 3b44: c6 3c       .<
     lda #$13                                                          ; 3b46: a9 13       ..
     sta l003d                                                         ; 3b48: 85 3d       .=
-    jsr l1abb                                                         ; 3b4a: 20 bb 1a     ..
+    jsr something51_TODO                                              ; 3b4a: 20 bb 1a     ..
     ldy #$16                                                          ; 3b4d: a0 16       ..
     lda #$ff                                                          ; 3b4f: a9 ff       ..
     sta l003c                                                         ; 3b51: 85 3c       .<
-    jsr l1abb                                                         ; 3b53: 20 bb 1a     ..
+    jsr something51_TODO                                              ; 3b53: 20 bb 1a     ..
     ldx #$22 ; '"'                                                    ; 3b56: a2 22       ."
     ldy #7                                                            ; 3b58: a0 07       ..
     lda #6                                                            ; 3b5a: a9 06       ..
     sta l003c                                                         ; 3b5c: 85 3c       .<
     lda #2                                                            ; 3b5e: a9 02       ..
     sta l003d                                                         ; 3b60: 85 3d       .=
-    jsr l1abb                                                         ; 3b62: 20 bb 1a     ..
+    jsr something51_TODO                                              ; 3b62: 20 bb 1a     ..
     ldx #$25 ; '%'                                                    ; 3b65: a2 25       .%
     ldy #9                                                            ; 3b67: a0 09       ..
     lda #$0d                                                          ; 3b69: a9 0d       ..
     sta l003d                                                         ; 3b6b: 85 3d       .=
-    jsr l1abb                                                         ; 3b6d: 20 bb 1a     ..
+    jsr something51_TODO                                              ; 3b6d: 20 bb 1a     ..
     ldx #$0e                                                          ; 3b70: a2 0e       ..
     ldy #$0b                                                          ; 3b72: a0 0b       ..
     lda #3                                                            ; 3b74: a9 03       ..
     sta l003c                                                         ; 3b76: 85 3c       .<
     lda #2                                                            ; 3b78: a9 02       ..
     sta l003d                                                         ; 3b7a: 85 3d       .=
-    jsr l1abb                                                         ; 3b7c: 20 bb 1a     ..
+    jsr something51_TODO                                              ; 3b7c: 20 bb 1a     ..
     ldx #$18                                                          ; 3b7f: a2 18       ..
-    jsr l1abb                                                         ; 3b81: 20 bb 1a     ..
+    jsr something51_TODO                                              ; 3b81: 20 bb 1a     ..
     jsr l1b90                                                         ; 3b84: 20 90 1b     ..
     lda #3                                                            ; 3b87: a9 03       ..
     sta l003c                                                         ; 3b89: 85 3c       .<
@@ -189,16 +189,16 @@ some_code1
     lda #$de                                                          ; 3b8f: a9 de       ..
     ldx #3                                                            ; 3b91: a2 03       ..
     ldy #$14                                                          ; 3b93: a0 14       ..
-    jsr l1f57                                                         ; 3b95: 20 57 1f     W.
+    jsr something52_TODO                                              ; 3b95: 20 57 1f     W.
     ldx #6                                                            ; 3b98: a2 06       ..
-    jsr l1f57                                                         ; 3b9a: 20 57 1f     W.
+    jsr something52_TODO                                              ; 3b9a: 20 57 1f     W.
     ldx #9                                                            ; 3b9d: a2 09       ..
-    jsr l1f57                                                         ; 3b9f: 20 57 1f     W.
+    jsr something52_TODO                                              ; 3b9f: 20 57 1f     W.
     ldx #3                                                            ; 3ba2: a2 03       ..
     ldy #$12                                                          ; 3ba4: a0 12       ..
-    jsr l1f57                                                         ; 3ba6: 20 57 1f     W.
+    jsr something52_TODO                                              ; 3ba6: 20 57 1f     W.
     ldx #6                                                            ; 3ba9: a2 06       ..
-    jsr l1f57                                                         ; 3bab: 20 57 1f     W.
+    jsr something52_TODO                                              ; 3bab: 20 57 1f     W.
     ldx #$0a                                                          ; 3bae: a2 0a       ..
     ldy #2                                                            ; 3bb0: a0 02       ..
     lda #$0a                                                          ; 3bb2: a9 0a       ..
@@ -664,19 +664,19 @@ some_code2
     sta l003c                                                         ; 3f95: 85 3c       .<
     lda #1                                                            ; 3f97: a9 01       ..
     sta l003d                                                         ; 3f99: 85 3d       .=
-    jsr l1abb                                                         ; 3f9b: 20 bb 1a     ..
+    jsr something51_TODO                                              ; 3f9b: 20 bb 1a     ..
     dex                                                               ; 3f9e: ca          .
     iny                                                               ; 3f9f: c8          .
     lda #7                                                            ; 3fa0: a9 07       ..
     sta l003c                                                         ; 3fa2: 85 3c       .<
-    jsr l1abb                                                         ; 3fa4: 20 bb 1a     ..
+    jsr something51_TODO                                              ; 3fa4: 20 bb 1a     ..
     dex                                                               ; 3fa7: ca          .
     iny                                                               ; 3fa8: c8          .
     lda #9                                                            ; 3fa9: a9 09       ..
     sta l003c                                                         ; 3fab: 85 3c       .<
     lda #5                                                            ; 3fad: a9 05       ..
     sta l003d                                                         ; 3faf: 85 3d       .=
-    jsr l1abb                                                         ; 3fb1: 20 bb 1a     ..
+    jsr something51_TODO                                              ; 3fb1: 20 bb 1a     ..
     inx                                                               ; 3fb4: e8          .
     tya                                                               ; 3fb5: 98          .
     clc                                                               ; 3fb6: 18          .
@@ -686,12 +686,12 @@ some_code2
     sta l003c                                                         ; 3fbc: 85 3c       .<
     lda #1                                                            ; 3fbe: a9 01       ..
     sta l003d                                                         ; 3fc0: 85 3d       .=
-    jsr l1abb                                                         ; 3fc2: 20 bb 1a     ..
+    jsr something51_TODO                                              ; 3fc2: 20 bb 1a     ..
     inx                                                               ; 3fc5: e8          .
     iny                                                               ; 3fc6: c8          .
     lda #5                                                            ; 3fc7: a9 05       ..
     sta l003c                                                         ; 3fc9: 85 3c       .<
-    jsr l1abb                                                         ; 3fcb: 20 bb 1a     ..
+    jsr something51_TODO                                              ; 3fcb: 20 bb 1a     ..
     ldx l3fd5                                                         ; 3fce: ae d5 3f    ..?
     ldy l3fd6                                                         ; 3fd1: ac d6 3f    ..?
     rts                                                               ; 3fd4: 60          `
@@ -709,7 +709,7 @@ some_code3
     lda #$ff                                                          ; 3fdd: a9 ff       ..
     sta l003c                                                         ; 3fdf: 85 3c       .<
     sta l003d                                                         ; 3fe1: 85 3d       .=
-    jsr l1abb                                                         ; 3fe3: 20 bb 1a     ..
+    jsr something51_TODO                                              ; 3fe3: 20 bb 1a     ..
     lda #$a9                                                          ; 3fe6: a9 a9       ..
     sta l0040                                                         ; 3fe8: 85 40       .@
     lda #$0a                                                          ; 3fea: a9 0a       ..
@@ -733,23 +733,23 @@ some_code3
     sta l003c                                                         ; 4012: 85 3c       .<
     lda #4                                                            ; 4014: a9 04       ..
     sta l003d                                                         ; 4016: 85 3d       .=
-    jsr l1abb                                                         ; 4018: 20 bb 1a     ..
+    jsr something51_TODO                                              ; 4018: 20 bb 1a     ..
     ldx #$0c                                                          ; 401b: a2 0c       ..
     ldy #4                                                            ; 401d: a0 04       ..
     lda #$10                                                          ; 401f: a9 10       ..
     sta l003c                                                         ; 4021: 85 3c       .<
     lda #5                                                            ; 4023: a9 05       ..
     sta l003d                                                         ; 4025: 85 3d       .=
-    jsr l1abb                                                         ; 4027: 20 bb 1a     ..
+    jsr something51_TODO                                              ; 4027: 20 bb 1a     ..
     ldy #$0f                                                          ; 402a: a0 0f       ..
-    jsr l1abb                                                         ; 402c: 20 bb 1a     ..
+    jsr something51_TODO                                              ; 402c: 20 bb 1a     ..
     ldx #$1e                                                          ; 402f: a2 1e       ..
     ldy #$0b                                                          ; 4031: a0 0b       ..
     lda #5                                                            ; 4033: a9 05       ..
     sta l003c                                                         ; 4035: 85 3c       .<
     lda #2                                                            ; 4037: a9 02       ..
     sta l003d                                                         ; 4039: 85 3d       .=
-    jsr l1abb                                                         ; 403b: 20 bb 1a     ..
+    jsr something51_TODO                                              ; 403b: 20 bb 1a     ..
     jsr l1b90                                                         ; 403e: 20 90 1b     ..
     jsr something23_TODO                                              ; 4041: 20 bb 12     ..
 ; $4044 referenced 1 time by $4049
@@ -1039,59 +1039,59 @@ some_code4
     sta l003c                                                         ; 4255: 85 3c       .<
     lda #2                                                            ; 4257: a9 02       ..
     sta l003d                                                         ; 4259: 85 3d       .=
-    jsr l1abb                                                         ; 425b: 20 bb 1a     ..
+    jsr something51_TODO                                              ; 425b: 20 bb 1a     ..
     ldx #$24 ; '$'                                                    ; 425e: a2 24       .$
     ldy #2                                                            ; 4260: a0 02       ..
     dec l003d                                                         ; 4262: c6 3d       .=
-    jsr l1abb                                                         ; 4264: 20 bb 1a     ..
+    jsr something51_TODO                                              ; 4264: 20 bb 1a     ..
     inx                                                               ; 4267: e8          .
     iny                                                               ; 4268: c8          .
     lda #$0f                                                          ; 4269: a9 0f       ..
     sta l003d                                                         ; 426b: 85 3d       .=
-    jsr l1abb                                                         ; 426d: 20 bb 1a     ..
+    jsr something51_TODO                                              ; 426d: 20 bb 1a     ..
     ldx #0                                                            ; 4270: a2 00       ..
     ldy #$12                                                          ; 4272: a0 12       ..
     lda #5                                                            ; 4274: a9 05       ..
     sta l003c                                                         ; 4276: 85 3c       .<
     lda #3                                                            ; 4278: a9 03       ..
     sta l003d                                                         ; 427a: 85 3d       .=
-    jsr l1abb                                                         ; 427c: 20 bb 1a     ..
+    jsr something51_TODO                                              ; 427c: 20 bb 1a     ..
     ldx #$1e                                                          ; 427f: a2 1e       ..
     lda #$ff                                                          ; 4281: a9 ff       ..
     sta l003c                                                         ; 4283: 85 3c       .<
-    jsr l1abb                                                         ; 4285: 20 bb 1a     ..
+    jsr something51_TODO                                              ; 4285: 20 bb 1a     ..
     ldx #0                                                            ; 4288: a2 00       ..
     ldy #$15                                                          ; 428a: a0 15       ..
     lda #$0a                                                          ; 428c: a9 0a       ..
     sta l003c                                                         ; 428e: 85 3c       .<
     lda #1                                                            ; 4290: a9 01       ..
     sta l003d                                                         ; 4292: 85 3d       .=
-    jsr l1abb                                                         ; 4294: 20 bb 1a     ..
+    jsr something51_TODO                                              ; 4294: 20 bb 1a     ..
     ldx #$19                                                          ; 4297: a2 19       ..
     lda #$ff                                                          ; 4299: a9 ff       ..
     sta l003c                                                         ; 429b: 85 3c       .<
-    jsr l1abb                                                         ; 429d: 20 bb 1a     ..
+    jsr something51_TODO                                              ; 429d: 20 bb 1a     ..
     ldx #0                                                            ; 42a0: a2 00       ..
     iny                                                               ; 42a2: c8          .
     inc l003d                                                         ; 42a3: e6 3d       .=
-    jsr l1abb                                                         ; 42a5: 20 bb 1a     ..
+    jsr something51_TODO                                              ; 42a5: 20 bb 1a     ..
     ldx #$0a                                                          ; 42a8: a2 0a       ..
     ldy #7                                                            ; 42aa: a0 07       ..
     lda #$14                                                          ; 42ac: a9 14       ..
     sta l003c                                                         ; 42ae: 85 3c       .<
     lda #2                                                            ; 42b0: a9 02       ..
     sta l003d                                                         ; 42b2: 85 3d       .=
-    jsr l1abb                                                         ; 42b4: 20 bb 1a     ..
+    jsr something51_TODO                                              ; 42b4: 20 bb 1a     ..
     ldx #0                                                            ; 42b7: a2 00       ..
     lda #5                                                            ; 42b9: a9 05       ..
     sta l003c                                                         ; 42bb: 85 3c       .<
-    jsr l1abb                                                         ; 42bd: 20 bb 1a     ..
+    jsr something51_TODO                                              ; 42bd: 20 bb 1a     ..
     ldy #9                                                            ; 42c0: a0 09       ..
     lda #3                                                            ; 42c2: a9 03       ..
     sta l003c                                                         ; 42c4: 85 3c       .<
     lda #4                                                            ; 42c6: a9 04       ..
     sta l003d                                                         ; 42c8: 85 3d       .=
-    jsr l1abb                                                         ; 42ca: 20 bb 1a     ..
+    jsr something51_TODO                                              ; 42ca: 20 bb 1a     ..
     jsr l1b90                                                         ; 42cd: 20 90 1b     ..
     ldx #$14                                                          ; 42d0: a2 14       ..
     ldy #$0c                                                          ; 42d2: a0 0c       ..
@@ -1502,7 +1502,7 @@ pydis_end
 ; Label references by decreasing frequency:
 ;     l003c:             34
 ;     l003d:             32
-;     l1abb:             29
+;     something51_TODO:  29
 ;     l0030:             19
 ;     l1e44:             13
 ;     l0a72:             11
@@ -1522,7 +1522,7 @@ pydis_end
 ;     l1db9:              6
 ;     l0051:              5
 ;     l0a73:              5
-;     l1f57:              5
+;     something52_TODO:   5
 ;     l1f5d:              5
 ;     l28e2:              5
 ;     l38ac:              5
@@ -1765,13 +1765,11 @@ pydis_end
 ;     l1988
 ;     l1a10
 ;     l1aba
-;     l1abb
 ;     l1b90
 ;     l1db9
 ;     l1e44
 ;     l1ebb
 ;     l1f4c
-;     l1f57
 ;     l1f5d
 ;     l1f6d
 ;     l23a9

@@ -1915,7 +1915,7 @@ l1ab2
 l1aba
     !byte 0                                                           ; 1beb: 00          .   :1aba[1]
 
-c1abb
+something51_TODO
     pha                                                               ; 1bec: 48          H   :1abb[1]
     sty sprite_data_byte                                              ; 1bed: 84 7d       .}  :1abc[1]
     jsr sub_c1e17                                                     ; 1bef: 20 17 1e     .. :1abe[1]
@@ -2013,7 +2013,7 @@ c1b59
     ldy address1_high                                                 ; 1c8c: a4 71       .q  :1b5b[1]
     lda l003e                                                         ; 1c8e: a5 3e       .>  :1b5d[1]
     bmi c1b64                                                         ; 1c90: 30 03       0.  :1b5f[1]
-    jsr sub_c1e44                                                     ; 1c92: 20 44 1e     D. :1b61[1]
+    jsr c1e44                                                         ; 1c92: 20 44 1e     D. :1b61[1]
 c1b64
     pla                                                               ; 1c95: 68          h   :1b64[1]
     rts                                                               ; 1c96: 60          `   :1b65[1]
@@ -2374,7 +2374,7 @@ c1e3d
 return7
     rts                                                               ; 1f74: 60          `   :1e43[1]
 
-sub_c1e44
+c1e44
     pha                                                               ; 1f75: 48          H   :1e44[1]
     lda l003e                                                         ; 1f76: a5 3e       .>  :1e45[1]
     cmp #4                                                            ; 1f78: c9 04       ..  :1e47[1]
@@ -2556,7 +2556,10 @@ draw_sprite_a_at_character_xy
     lda sprite_number                                                 ; 2085: a5 16       ..  :1f54[1]
     rts                                                               ; 2087: 60          `   :1f56[1]
 
-    !byte $20, $4c, $1f, $4c, $44, $1e                                ; 2088: 20 4c 1f...  L. :1f57[1]
+; TODO: This is called from e.g. dataA
+something52_TODO
+    jsr draw_sprite_a_at_character_xy                                 ; 2088: 20 4c 1f     L. :1f57[1]
+    jmp c1e44                                                         ; 208b: 4c 44 1e    LD. :1f5a[1]
 
 c1f5d
     jsr set_sprite_pixel_position_from_character_xy                   ; 208e: 20 84 1f     .. :1f5d[1]
@@ -7045,7 +7048,7 @@ save_or_restore_screen_under_dialog_box
     sta some_word                                                     ; 412d: 85 3c       .<  :042e[2]
     lda #3                                                            ; 412f: a9 03       ..  :0430[2]
     sta some_word + 1                                                 ; 4131: 85 3d       .=  :0432[2]
-    jsr c1abb                                                         ; 4133: 20 bb 1a     .. :0434[2]
+    jsr something51_TODO                                              ; 4133: 20 bb 1a     .. :0434[2]
     jmp vdu_goto_0_9                                                  ; 4136: 4c 44 04    LD. :0437[2]
 
 c043a
@@ -7175,7 +7178,7 @@ c0505
     sta some_word                                                     ; 420b: 85 3c       .<  :050c[2]
     lda #5                                                            ; 420d: a9 05       ..  :050e[2]
     sta some_word + 1                                                 ; 420f: 85 3d       .=  :0510[2]
-    jmp c1abb                                                         ; 4211: 4c bb 1a    L.. :0512[2]
+    jmp something51_TODO                                              ; 4211: 4c bb 1a    L.. :0512[2]
 
 l0515
     !byte $19,   4                                                    ; 4214: 19 04       ..  :0515[2]
@@ -7224,7 +7227,6 @@ pydis_end
 ;     c1a59
 ;     c1a8f
 ;     c1a9e
-;     c1abb
 ;     c1add
 ;     c1ae3
 ;     c1af8
@@ -7256,6 +7258,7 @@ pydis_end
 ;     c1e2d
 ;     c1e33
 ;     c1e3d
+;     c1e44
 ;     c1e4e
 ;     c1e6a
 ;     c1e9b
@@ -7670,7 +7673,6 @@ pydis_end
 ;     sub_c1cf3
 ;     sub_c1df4
 ;     sub_c1e17
-;     sub_c1e44
 ;     sub_c1ebb
 ;     sub_c1efa
 ;     sub_c1f6d
