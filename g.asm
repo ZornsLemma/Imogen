@@ -615,6 +615,7 @@ something23_TODO
 return1
     rts                                                               ; 140a: 60          `   :12d9[1]
 
+; TODO: This is called from level-specific machine code, e.g. see dataA.asm
 something24_TODO
     jsr something16_TODO                                              ; 140b: 20 d7 1f     .. :12da[1]
     lda gameplay_area_colour                                          ; 140e: ad 60 17    .`. :12dd[1]

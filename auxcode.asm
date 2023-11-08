@@ -23,6 +23,7 @@ l09ef                               = $09ef
 string_input_buffer                 = $0a90
 l1103                               = $1103
 something23_TODO                    = $12bb
+something24_TODO                    = $12da
 pending_toolbar_colour              = $175d
 toolbar_colour                      = $175e
 pending_gameplay_area_colour        = $175f

@@ -43,7 +43,7 @@ string_input_buffer         = $0a90
 l1103                       = $1103
 l1140                       = $1140
 something23_TODO            = $12bb
-l12da                       = $12da
+something24_TODO            = $12da
 l132b                       = $132b
 pending_toolbar_colour      = $175d
 toolbar_colour              = $175e
@@ -217,7 +217,7 @@ some_code1
     jsr something23_TODO                                              ; 3bd1: 20 bb 12     ..
 ; $3bd4 referenced 1 time by $3bdb
 loop_c3bd4
-    jsr l12da                                                         ; 3bd4: 20 da 12     ..
+    jsr something24_TODO                                              ; 3bd4: 20 da 12     ..
     sta l0070                                                         ; 3bd7: 85 70       .p
     and #4                                                            ; 3bd9: 29 04       ).
     beq loop_c3bd4                                                    ; 3bdb: f0 f7       ..
@@ -754,7 +754,7 @@ some_code3
     jsr something23_TODO                                              ; 4041: 20 bb 12     ..
 ; $4044 referenced 1 time by $4049
 loop_c4044
-    jsr l12da                                                         ; 4044: 20 da 12     ..
+    jsr something24_TODO                                              ; 4044: 20 da 12     ..
     and #8                                                            ; 4047: 29 08       ).
     beq loop_c4044                                                    ; 4049: f0 f9       ..
     ldx #1                                                            ; 404b: a2 01       ..
@@ -1106,7 +1106,7 @@ some_code4
     jsr something23_TODO                                              ; 42e7: 20 bb 12     ..
 ; $42ea referenced 1 time by $42ef
 loop_c42ea
-    jsr l12da                                                         ; 42ea: 20 da 12     ..
+    jsr something24_TODO                                              ; 42ea: 20 da 12     ..
     and #1                                                            ; 42ed: 29 01       ).
     beq loop_c42ea                                                    ; 42ef: f0 f9       ..
     ldx #1                                                            ; 42f1: a2 01       ..
@@ -1542,7 +1542,7 @@ pydis_end
 ;     l09ac:              3
 ;     l1140:              3
 ;     something23_TODO:   3
-;     l12da:              3
+;     something24_TODO:   3
 ;     l1988:              3
 ;     l1aba:              3
 ;     l1b90:              3
@@ -1761,7 +1761,6 @@ pydis_end
 ;     l0a73
 ;     l1103
 ;     l1140
-;     l12da
 ;     l132b
 ;     l1988
 ;     l1a10
