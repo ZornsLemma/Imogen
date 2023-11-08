@@ -317,7 +317,7 @@ sprite_198                              = $0b93
 sprite_197                              = $0bc5
 level_init_after_load_handler_ptr       = $3ad7
 second_level_handler_ptr                = $3ad9
-third_level_handler_ptr                 = $3adb
+level_name_ptr                          = $3adb
 l3add                                   = $3add
 c3ade                                   = $3ade
 c3adf                                   = $3adf
@@ -5698,8 +5698,8 @@ c378e
     tya                                                               ; 38d2: 98          .   :37a1[1]
     jsr print_italic                                                  ; 38d3: 20 66 18     f. :37a2[1]
     jsr print_2xlf_cr                                                 ; 38d6: 20 50 38     P8 :37a5[1]
-    ldx third_level_handler_ptr                                       ; 38d9: ae db 3a    ..: :37a8[1]
-    ldy third_level_handler_ptr + 1                                   ; 38dc: ac dc 3a    ..: :37ab[1]
+    ldx level_name_ptr                                                ; 38d9: ae db 3a    ..: :37a8[1]
+    ldy level_name_ptr + 1                                            ; 38dc: ac dc 3a    ..: :37ab[1]
     jmp print_encrypted_string_at_yx                                  ; 38df: 4c 1c 38    L.8 :37ae[1]
 
 section_message

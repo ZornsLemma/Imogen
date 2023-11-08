@@ -5,13 +5,15 @@ from common import *
 acorn.bbc()
 
 load(0x3ad5, "orig/dataA.dat", "6502", "df027a3ac06abfed1878eaec3d2bbe5f")
-word(0x3ad7, 3)
+word(0x3ad7)
 expr(0x3ad7, "level_init_after_load_handler")
+word(0x3ad9)
 expr(0x3ad9, "second_level_handler") # TODO: rename
-expr(0x3adb, "third_level_handler") # TODO: rename
+word(0x3adb)
+expr(0x3adb, "level_name") # TODO: rename
 entry(get_u16_binary(0x3ad7), "level_init_after_load_handler")
 entry(get_u16_binary(0x3ad9), "second_level_handler")
-entry(get_u16_binary(0x3adb), "third_level_handler")
+label(get_u16_binary(0x3adb), "level_name")
 word(0x3adf)
 expr(0x3adf, "fourth_level_handler") # TODO: probably data, not actually a handler (code)
 label(get_u16_binary(0x3adf), "fourth_level_handler")
@@ -26,6 +28,8 @@ entry(0x3f8b, "some_code2")
 entry(0x3fd9, "some_code3")
 label(0x4052, "some_data2")
 entry(0x424f, "some_code4")
+
+comment(0x3ae7, "'SAXOPHOBIA\\r' EOR-encrypted with $cb")
 
 go()
 
