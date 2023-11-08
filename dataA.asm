@@ -56,7 +56,7 @@ l1aba                       = $1aba
 something51_TODO            = $1abb
 something26_TODO            = $1b90
 something53_TODO            = $1db9
-l1e44                       = $1e44
+something54_TODO            = $1e44
 l1ebb                       = $1ebb
 l1f4c                       = $1f4c
 something52_TODO            = $1f57
@@ -259,7 +259,7 @@ c3bf7
     dex                                                               ; 3c1b: ca          .
     dey                                                               ; 3c1c: 88          .
     dey                                                               ; 3c1d: 88          .
-    jsr l1e44                                                         ; 3c1e: 20 44 1e     D.
+    jsr something54_TODO                                              ; 3c1e: 20 44 1e     D.
     ldx #2                                                            ; 3c21: a2 02       ..
     jsr l1f6d                                                         ; 3c23: 20 6d 1f     m.
     lda #$cd                                                          ; 3c26: a9 cd       ..
@@ -277,7 +277,7 @@ c3bf7
     dex                                                               ; 3c41: ca          .
     dey                                                               ; 3c42: 88          .
     dey                                                               ; 3c43: 88          .
-    jsr l1e44                                                         ; 3c44: 20 44 1e     D.
+    jsr something54_TODO                                              ; 3c44: 20 44 1e     D.
     ldx #3                                                            ; 3c47: a2 03       ..
     jsr l1f6d                                                         ; 3c49: 20 6d 1f     m.
     lda #$ff                                                          ; 3c4c: a9 ff       ..
@@ -475,7 +475,7 @@ c3e11
     sta l003c                                                         ; 3e49: 85 3c       .<
     lda #1                                                            ; 3e4b: a9 01       ..
     sta l003d                                                         ; 3e4d: 85 3d       .=
-    jsr l1e44                                                         ; 3e4f: 20 44 1e     D.
+    jsr something54_TODO                                              ; 3e4f: 20 44 1e     D.
     jmp c3e69                                                         ; 3e52: 4c 69 3e    Li>
 
 ; $3e55 referenced 1 time by $3e41
@@ -486,9 +486,9 @@ c3e55
     sta l003c                                                         ; 3e5b: 85 3c       .<
     lda #2                                                            ; 3e5d: a9 02       ..
     sta l003d                                                         ; 3e5f: 85 3d       .=
-    jsr l1e44                                                         ; 3e61: 20 44 1e     D.
+    jsr something54_TODO                                              ; 3e61: 20 44 1e     D.
     ldx #$16                                                          ; 3e64: a2 16       ..
-    jsr l1e44                                                         ; 3e66: 20 44 1e     D.
+    jsr something54_TODO                                              ; 3e66: 20 44 1e     D.
 ; $3e69 referenced 2 times by $3e15, $3e52
 c3e69
     jmp c3ed7                                                         ; 3e69: 4c d7 3e    L.>
@@ -523,7 +523,7 @@ c3e6c
     sta l003d                                                         ; 3ea3: 85 3d       .=
     lda #0                                                            ; 3ea5: a9 00       ..
     sta l003e                                                         ; 3ea7: 85 3e       .>
-    jsr l1e44                                                         ; 3ea9: 20 44 1e     D.
+    jsr something54_TODO                                              ; 3ea9: 20 44 1e     D.
     iny                                                               ; 3eac: c8          .
     lda #1                                                            ; 3ead: a9 01       ..
     sta l003c                                                         ; 3eaf: 85 3c       .<
@@ -531,9 +531,9 @@ c3e6c
     sta l003d                                                         ; 3eb3: 85 3d       .=
     lda #3                                                            ; 3eb5: a9 03       ..
     sta l003e                                                         ; 3eb7: 85 3e       .>
-    jsr l1e44                                                         ; 3eb9: 20 44 1e     D.
+    jsr something54_TODO                                              ; 3eb9: 20 44 1e     D.
     ldx #$16                                                          ; 3ebc: a2 16       ..
-    jsr l1e44                                                         ; 3ebe: 20 44 1e     D.
+    jsr something54_TODO                                              ; 3ebe: 20 44 1e     D.
 ; $3ec1 referenced 1 time by $3e71
 c3ec1
     ldy l09ff                                                         ; 3ec1: ac ff 09    ...
@@ -989,7 +989,7 @@ c41d9
     sta l003d                                                         ; 4200: 85 3d       .=
     lda #3                                                            ; 4202: a9 03       ..
     sta l003e                                                         ; 4204: 85 3e       .>
-    jsr l1e44                                                         ; 4206: 20 44 1e     D.
+    jsr something54_TODO                                              ; 4206: 20 44 1e     D.
     jmp c4235                                                         ; 4209: 4c 35 42    L5B
 
 ; $420c referenced 1 time by $41f5
@@ -1002,7 +1002,7 @@ c420c
     sta l003d                                                         ; 4215: 85 3d       .=
     lda #0                                                            ; 4217: a9 00       ..
     sta l003e                                                         ; 4219: 85 3e       .>
-    jsr l1e44                                                         ; 421b: 20 44 1e     D.
+    jsr something54_TODO                                              ; 421b: 20 44 1e     D.
     lda l0a04                                                         ; 421e: ad 04 0a    ...
     bmi c4224                                                         ; 4221: 30 01       0.
     dex                                                               ; 4223: ca          .
@@ -1015,7 +1015,7 @@ c4224
     sta l003d                                                         ; 422c: 85 3d       .=
     lda #3                                                            ; 422e: a9 03       ..
     sta l003e                                                         ; 4230: 85 3e       .>
-    jsr l1e44                                                         ; 4232: 20 44 1e     D.
+    jsr something54_TODO                                              ; 4232: 20 44 1e     D.
 ; $4235 referenced 2 times by $41e4, $4209
 c4235
     ldx #2                                                            ; 4235: a2 02       ..
@@ -1249,7 +1249,7 @@ c43e3
     sta l003d                                                         ; 43ed: 85 3d       .=
     lda #0                                                            ; 43ef: a9 00       ..
     sta l003e                                                         ; 43f1: 85 3e       .>
-    jsr l1e44                                                         ; 43f3: 20 44 1e     D.
+    jsr something54_TODO                                              ; 43f3: 20 44 1e     D.
 ; $43f6 referenced 1 time by $4352
 c43f6
     lda l0030                                                         ; 43f6: a5 30       .0
@@ -1263,7 +1263,7 @@ c43f6
     sta l003d                                                         ; 4407: 85 3d       .=
     lda #3                                                            ; 4409: a9 03       ..
     sta l003e                                                         ; 440b: 85 3e       .>
-    jsr l1e44                                                         ; 440d: 20 44 1e     D.
+    jsr something54_TODO                                              ; 440d: 20 44 1e     D.
     lda #2                                                            ; 4410: a9 02       ..
     jsr l1f5d                                                         ; 4412: 20 5d 1f     ].
 ; $4415 referenced 4 times by $4355, $43bd, $43d8, $43fa
@@ -1504,7 +1504,7 @@ pydis_end
 ;     l003d:             32
 ;     something51_TODO:  29
 ;     l0030:             19
-;     l1e44:             13
+;     something54_TODO:  13
 ;     l0a72:             11
 ;     l003e:             10
 ;     l0a70:             10
@@ -1764,7 +1764,6 @@ pydis_end
 ;     l1988
 ;     l1a10
 ;     l1aba
-;     l1e44
 ;     l1ebb
 ;     l1f4c
 ;     l1f5d

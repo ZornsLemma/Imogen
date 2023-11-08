@@ -2015,7 +2015,7 @@ c1b59
     ldy address1_high                                                 ; 1c8c: a4 71       .q  :1b5b[1]
     lda l003e                                                         ; 1c8e: a5 3e       .>  :1b5d[1]
     bmi c1b64                                                         ; 1c90: 30 03       0.  :1b5f[1]
-    jsr c1e44                                                         ; 1c92: 20 44 1e     D. :1b61[1]
+    jsr something54_TODO                                              ; 1c92: 20 44 1e     D. :1b61[1]
 c1b64
     pla                                                               ; 1c95: 68          h   :1b64[1]
     rts                                                               ; 1c96: 60          `   :1b65[1]
@@ -2410,7 +2410,7 @@ c1e3d
 return7
     rts                                                               ; 1f74: 60          `   :1e43[1]
 
-c1e44
+something54_TODO
     pha                                                               ; 1f75: 48          H   :1e44[1]
     lda l003e                                                         ; 1f76: a5 3e       .>  :1e45[1]
     cmp #4                                                            ; 1f78: c9 04       ..  :1e47[1]
@@ -2595,7 +2595,7 @@ draw_sprite_a_at_character_xy
 ; TODO: This is called from e.g. dataA
 something52_TODO
     jsr draw_sprite_a_at_character_xy                                 ; 2088: 20 4c 1f     L. :1f57[1]
-    jmp c1e44                                                         ; 208b: 4c 44 1e    LD. :1f5a[1]
+    jmp something54_TODO                                              ; 208b: 4c 44 1e    LD. :1f5a[1]
 
 c1f5d
     jsr set_sprite_pixel_position_from_character_xy                   ; 208e: 20 84 1f     .. :1f5d[1]
@@ -7298,7 +7298,6 @@ pydis_end
 ;     c1e2d
 ;     c1e33
 ;     c1e3d
-;     c1e44
 ;     c1e4e
 ;     c1e6a
 ;     c1e9b
