@@ -479,8 +479,11 @@ entry(0x12bb)
 
 comment(0x12da, "TODO: This is called from level-specific machine code, e.g. see dataA.asm")
 entry(0x12da)
+
 entry(0x16d3, "brk_handler")
-entry(0x1b90, "something26_TODO")
+
+comment(0x1b90, "TODO: This is called from level-specific machine code, e.g. see dataA.asm")
+entry(0x1b90)
 
 label(0x1752, "data_TODO")
 expr(0x1740, make_lo("data_TODO"))

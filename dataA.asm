@@ -54,7 +54,7 @@ l1988                       = $1988
 l1a10                       = $1a10
 l1aba                       = $1aba
 something51_TODO            = $1abb
-l1b90                       = $1b90
+something26_TODO            = $1b90
 l1db9                       = $1db9
 l1e44                       = $1e44
 l1ebb                       = $1ebb
@@ -181,7 +181,7 @@ some_code1
     jsr something51_TODO                                              ; 3b7c: 20 bb 1a     ..
     ldx #$18                                                          ; 3b7f: a2 18       ..
     jsr something51_TODO                                              ; 3b81: 20 bb 1a     ..
-    jsr l1b90                                                         ; 3b84: 20 90 1b     ..
+    jsr something26_TODO                                              ; 3b84: 20 90 1b     ..
     lda #3                                                            ; 3b87: a9 03       ..
     sta l003c                                                         ; 3b89: 85 3c       .<
     lda #2                                                            ; 3b8b: a9 02       ..
@@ -750,7 +750,7 @@ some_code3
     lda #2                                                            ; 4037: a9 02       ..
     sta l003d                                                         ; 4039: 85 3d       .=
     jsr something51_TODO                                              ; 403b: 20 bb 1a     ..
-    jsr l1b90                                                         ; 403e: 20 90 1b     ..
+    jsr something26_TODO                                              ; 403e: 20 90 1b     ..
     jsr something23_TODO                                              ; 4041: 20 bb 12     ..
 ; $4044 referenced 1 time by $4049
 loop_c4044
@@ -1092,7 +1092,7 @@ some_code4
     lda #4                                                            ; 42c6: a9 04       ..
     sta l003d                                                         ; 42c8: 85 3d       .=
     jsr something51_TODO                                              ; 42ca: 20 bb 1a     ..
-    jsr l1b90                                                         ; 42cd: 20 90 1b     ..
+    jsr something26_TODO                                              ; 42cd: 20 90 1b     ..
     ldx #$14                                                          ; 42d0: a2 14       ..
     ldy #$0c                                                          ; 42d2: a0 0c       ..
     lda #$3b ; ';'                                                    ; 42d4: a9 3b       .;
@@ -1545,7 +1545,7 @@ pydis_end
 ;     something24_TODO:   3
 ;     l1988:              3
 ;     l1aba:              3
-;     l1b90:              3
+;     something26_TODO:   3
 ;     l1f4c:              3
 ;     something50_TODO:   3
 ;     l2eb6:              3
@@ -1765,7 +1765,6 @@ pydis_end
 ;     l1988
 ;     l1a10
 ;     l1aba
-;     l1b90
 ;     l1db9
 ;     l1e44
 ;     l1ebb
