@@ -3060,12 +3060,12 @@ transform
     cmp l296d                                                         ; 2473: cd 6d 29    .m) :2342[1]
     bcc return11                                                      ; 2476: 90 10       ..  :2345[1]
     lda #$ff                                                          ; 2478: a9 ff       ..  :2347[1]
-    ldx #<yet_more_data2                                              ; 247a: a2 d0       ..  :2349[1]
-    ldy #>yet_more_data2                                              ; 247c: a0 38       .8  :234b[1]
-    jsr sub_c38f6                                                     ; 247e: 20 f6 38     .8 :234d[1]
-    ldx #<yet_more_data3                                              ; 2481: a2 ba       ..  :2350[1]
-    ldy #>yet_more_data3                                              ; 2483: a0 38       .8  :2352[1]
-    jsr sub_c38f6                                                     ; 2485: 20 f6 38     .8 :2354[1]
+    ldx #<sound_data2                                                 ; 247a: a2 d0       ..  :2349[1]
+    ldy #>sound_data2                                                 ; 247c: a0 38       .8  :234b[1]
+    jsr play_sound_xy                                                 ; 247e: 20 f6 38     .8 :234d[1]
+    ldx #<sound_data3                                                 ; 2481: a2 ba       ..  :2350[1]
+    ldy #>sound_data3                                                 ; 2483: a0 38       .8  :2352[1]
+    jsr play_sound_xy                                                 ; 2485: 20 f6 38     .8 :2354[1]
 return11
     rts                                                               ; 2488: 60          `   :2357[1]
 
@@ -3117,12 +3117,12 @@ sub_c23a9
     tya                                                               ; 24dd: 98          .   :23ac[1]
     pha                                                               ; 24de: 48          H   :23ad[1]
     lda #0                                                            ; 24df: a9 00       ..  :23ae[1]
-    ldx #<yet_more_data4                                              ; 24e1: a2 ee       ..  :23b0[1]
-    ldy #>yet_more_data4                                              ; 24e3: a0 38       .8  :23b2[1]
-    jsr sub_c38f6                                                     ; 24e5: 20 f6 38     .8 :23b4[1]
-    ldx #<yet_more_data5                                              ; 24e8: a2 e6       ..  :23b7[1]
-    ldy #>yet_more_data5                                              ; 24ea: a0 38       .8  :23b9[1]
-    jsr sub_c38f6                                                     ; 24ec: 20 f6 38     .8 :23bb[1]
+    ldx #<sound_data4                                                 ; 24e1: a2 ee       ..  :23b0[1]
+    ldy #>sound_data4                                                 ; 24e3: a0 38       .8  :23b2[1]
+    jsr play_sound_xy                                                 ; 24e5: 20 f6 38     .8 :23b4[1]
+    ldx #<sound_data5                                                 ; 24e8: a2 e6       ..  :23b7[1]
+    ldy #>sound_data5                                                 ; 24ea: a0 38       .8  :23b9[1]
+    jsr play_sound_xy                                                 ; 24ec: 20 f6 38     .8 :23bb[1]
     pla                                                               ; 24ef: 68          h   :23be[1]
     tay                                                               ; 24f0: a8          .   :23bf[1]
     pla                                                               ; 24f1: 68          h   :23c0[1]
@@ -4179,9 +4179,9 @@ c2aff
     lda #$ff                                                          ; 2c37: a9 ff       ..  :2b06[1]
     sta l3966                                                         ; 2c39: 8d 66 39    .f9 :2b08[1]
     lda #0                                                            ; 2c3c: a9 00       ..  :2b0b[1]
-    ldx #<yet_more_data1                                              ; 2c3e: a2 a4       ..  :2b0d[1]
-    ldy #>yet_more_data1                                              ; 2c40: a0 38       .8  :2b0f[1]
-    jsr sub_c38f6                                                     ; 2c42: 20 f6 38     .8 :2b11[1]
+    ldx #<sound_data1                                                 ; 2c3e: a2 a4       ..  :2b0d[1]
+    ldy #>sound_data1                                                 ; 2c40: a0 38       .8  :2b0f[1]
+    jsr play_sound_xy                                                 ; 2c42: 20 f6 38     .8 :2b11[1]
     pla                                                               ; 2c45: 68          h   :2b14[1]
     eor #$ff                                                          ; 2c46: 49 ff       I.  :2b15[1]
     sta l3966                                                         ; 2c48: 8d 66 39    .f9 :2b17[1]
@@ -5776,7 +5776,7 @@ loop_c3892
 
 auxcode_filename
     !text "auxcode", $0d                                              ; 39cd: 61 75 78... aux :389c[1]
-yet_more_data1
+sound_data1
     !byte $10,   0, $f4, $ff,   2,   0,   1,   0                      ; 39d5: 10 00 f4... ... :38a4[1]
 ; The envelope definitions get overwritten after initialisation - this is harmless as
 ; they will have been copied into the OS workspace when they were defined.
@@ -5784,32 +5784,34 @@ x_entry_table12
 envelope_1
 l38ad = x_entry_table12+1
     !byte  1,  3,  0,  0,  0,  0,  0,  0,  3,  0,  0,  0, 64,  0      ; 39dd: 01 03 00... ... :38ac[1]
-yet_more_data3
+sound_data3
     !byte $10,   0,   1,   0,   7,   0, $64,   0                      ; 39eb: 10 00 01... ... :38ba[1]
 envelope_2
 l38c3 = envelope_2+1
     !byte   2, 134,   1,   3,   5,  10,  10,  16,   0,   0,   0,   0  ; 39f3: 02 86 01... ... :38c2[1]
     !byte   0,   0                                                    ; 39ff: 00 00       ..  :38ce[1]
-yet_more_data2
+sound_data2
     !byte $11,   0,   2,   0, $b4,   0, $64,   0                      ; 3a01: 11 00 02... ... :38d0[1]
 envelope_3
     !byte   3,   1,   0,   0,   0,   0,   0,   0, 100,   0,   0, 248  ; 3a09: 03 01 00... ... :38d8[1]
     !byte 126,   0                                                    ; 3a15: 7e 00       ~.  :38e4[1]
-yet_more_data5
+sound_data5
     !byte $10,   0,   3,   0,   3,   0,   1,   0                      ; 3a17: 10 00 03... ... :38e6[1]
-yet_more_data4
+sound_data4
     !byte $11,   0,   0,   0, $28,   0,   1,   0                      ; 3a1f: 11 00 00... ... :38ee[1]
 
-sub_c38f6
+play_sound_xy
     sta l3973                                                         ; 3a27: 8d 73 39    .s9 :38f6[1]
+; remember address1 on stack
     lda address1_low                                                  ; 3a2a: a5 70       .p  :38f9[1]
     pha                                                               ; 3a2c: 48          H   :38fb[1]
     lda address1_high                                                 ; 3a2d: a5 71       .q  :38fc[1]
     pha                                                               ; 3a2f: 48          H   :38fe[1]
+; store XY address
     stx address1_low                                                  ; 3a30: 86 70       .p  :38ff[1]
     sty address1_high                                                 ; 3a32: 84 71       .q  :3901[1]
     lda l3966                                                         ; 3a34: ad 66 39    .f9 :3903[1]
-    beq c3954                                                         ; 3a37: f0 4c       .L  :3906[1]
+    beq finish_play_sound                                             ; 3a37: f0 4c       .L  :3906[1]
     ldy #0                                                            ; 3a39: a0 00       ..  :3908[1]
     lda (address1_low),y                                              ; 3a3b: b1 70       .p  :390a[1]
     and #$f0                                                          ; 3a3d: 29 f0       ).  :390c[1]
@@ -5819,18 +5821,18 @@ sub_c38f6
     tax                                                               ; 3a45: aa          .   :3914[1]
     lda l3973                                                         ; 3a46: ad 73 39    .s9 :3915[1]
     cmp four_entry_table3_maybe_sound,x                               ; 3a49: dd 6f 39    .o9 :3918[1]
-    bcc c3954                                                         ; 3a4c: 90 37       .7  :391b[1]
+    bcc finish_play_sound                                             ; 3a4c: 90 37       .7  :391b[1]
     sta four_entry_table3_maybe_sound,x                               ; 3a4e: 9d 6f 39    .o9 :391d[1]
     cpx #2                                                            ; 3a51: e0 02       ..  :3920[1]
-    bcs c394b                                                         ; 3a53: b0 27       .'  :3922[1]
+    bcs play_sound                                                    ; 3a53: b0 27       .'  :3922[1]
     lda address1_low                                                  ; 3a55: a5 70       .p  :3924[1]
     cmp l3967,x                                                       ; 3a57: dd 67 39    .g9 :3926[1]
-    bne c3932                                                         ; 3a5a: d0 07       ..  :3929[1]
+    bne flush_sound_buffer_X                                          ; 3a5a: d0 07       ..  :3929[1]
     lda address1_high                                                 ; 3a5c: a5 71       .q  :392b[1]
     cmp l396b,x                                                       ; 3a5e: dd 6b 39    .k9 :392d[1]
-    beq c394b                                                         ; 3a61: f0 19       ..  :3930[1]
-c3932
-    txa                                                               ; 3a63: 8a          .   :3932[1]
+    beq play_sound                                                    ; 3a61: f0 19       ..  :3930[1]
+flush_sound_buffer_X
+    txa                                                               ; 3a63: 8a          .   :3932[1]   ; add four to X to get sound buffer number
     clc                                                               ; 3a64: 18          .   :3933[1]
     adc #4                                                            ; 3a65: 69 04       i.  :3934[1]
     tax                                                               ; 3a67: aa          .   :3936[1]
@@ -5844,12 +5846,13 @@ c393c
     sta l3967,x                                                       ; 3a74: 9d 67 39    .g9 :3943[1]
     lda address1_high                                                 ; 3a77: a5 71       .q  :3946[1]
     sta l396b,x                                                       ; 3a79: 9d 6b 39    .k9 :3948[1]
-c394b
+play_sound
     ldx address1_low                                                  ; 3a7c: a6 70       .p  :394b[1]
     ldy address1_high                                                 ; 3a7e: a4 71       .q  :394d[1]
     lda #osword_sound                                                 ; 3a80: a9 07       ..  :394f[1]
     jsr osword                                                        ; 3a82: 20 f1 ff     .. :3951[1]   ; SOUND command
-c3954
+; restore address1 from stack
+finish_play_sound
     pla                                                               ; 3a85: 68          h   :3954[1]
     sta address1_high                                                 ; 3a86: 85 71       .q  :3955[1]
     pla                                                               ; 3a88: 68          h   :3957[1]
@@ -7321,10 +7324,7 @@ pydis_end
 ;     c3848
 ;     c3867
 ;     c388a
-;     c3932
 ;     c393c
-;     c394b
-;     c3954
 ;     c3986
 ;     c3997
 ;     c39b6
@@ -7577,7 +7577,6 @@ pydis_end
 ;     sub_c3664
 ;     sub_c37f3
 ;     sub_c388d
-;     sub_c38f6
 ;     sub_c3aa2
 !if (' ' + '0') != $50 {
     !error "Assertion failed: ' ' + '0' == $50"
@@ -7711,6 +7710,21 @@ pydis_end
 !if (<some_more_data2) != $dd {
     !error "Assertion failed: <some_more_data2 == $dd"
 }
+!if (<sound_data1) != $a4 {
+    !error "Assertion failed: <sound_data1 == $a4"
+}
+!if (<sound_data2) != $d0 {
+    !error "Assertion failed: <sound_data2 == $d0"
+}
+!if (<sound_data3) != $ba {
+    !error "Assertion failed: <sound_data3 == $ba"
+}
+!if (<sound_data4) != $ee {
+    !error "Assertion failed: <sound_data4 == $ee"
+}
+!if (<sound_data5) != $e6 {
+    !error "Assertion failed: <sound_data5 == $e6"
+}
 !if (<sprdata_filename) != $80 {
     !error "Assertion failed: <sprdata_filename == $80"
 }
@@ -7731,21 +7745,6 @@ pydis_end
 }
 !if (<which_drive_encrypted_string) != $e3 {
     !error "Assertion failed: <which_drive_encrypted_string == $e3"
-}
-!if (<yet_more_data1) != $a4 {
-    !error "Assertion failed: <yet_more_data1 == $a4"
-}
-!if (<yet_more_data2) != $d0 {
-    !error "Assertion failed: <yet_more_data2 == $d0"
-}
-!if (<yet_more_data3) != $ba {
-    !error "Assertion failed: <yet_more_data3 == $ba"
-}
-!if (<yet_more_data4) != $ee {
-    !error "Assertion failed: <yet_more_data4 == $ee"
-}
-!if (<yet_more_data5) != $e6 {
-    !error "Assertion failed: <yet_more_data5 == $e6"
 }
 !if (>(address1_low)) != $00 {
     !error "Assertion failed: >(address1_low) == $00"
@@ -7864,6 +7863,21 @@ pydis_end
 !if (>some_more_data2) != $30 {
     !error "Assertion failed: >some_more_data2 == $30"
 }
+!if (>sound_data1) != $38 {
+    !error "Assertion failed: >sound_data1 == $38"
+}
+!if (>sound_data2) != $38 {
+    !error "Assertion failed: >sound_data2 == $38"
+}
+!if (>sound_data3) != $38 {
+    !error "Assertion failed: >sound_data3 == $38"
+}
+!if (>sound_data4) != $38 {
+    !error "Assertion failed: >sound_data4 == $38"
+}
+!if (>sound_data5) != $38 {
+    !error "Assertion failed: >sound_data5 == $38"
+}
 !if (>sprdata_filename) != $19 {
     !error "Assertion failed: >sprdata_filename == $19"
 }
@@ -7884,21 +7898,6 @@ pydis_end
 }
 !if (>which_drive_encrypted_string) != $34 {
     !error "Assertion failed: >which_drive_encrypted_string == $34"
-}
-!if (>yet_more_data1) != $38 {
-    !error "Assertion failed: >yet_more_data1 == $38"
-}
-!if (>yet_more_data2) != $38 {
-    !error "Assertion failed: >yet_more_data2 == $38"
-}
-!if (>yet_more_data3) != $38 {
-    !error "Assertion failed: >yet_more_data3 == $38"
-}
-!if (>yet_more_data4) != $38 {
-    !error "Assertion failed: >yet_more_data4 == $38"
-}
-!if (>yet_more_data5) != $38 {
-    !error "Assertion failed: >yet_more_data5 == $38"
 }
 !if (black) != $00 {
     !error "Assertion failed: black == $00"
