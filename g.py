@@ -100,6 +100,11 @@ label(0x0046, "return_key_pressed_pending")
 
 label(0x0043, "print_in_italics_flag")
 label(0x004c, "screen_base_address_high")
+label(0x0058, "temp_sprite_address_low")
+label(0x0059, "temp_sprite_address_high")
+label(0x005a, "temp_sprite_offset")
+
+label(0x005f, "initial_level_number_div4")
 
 label(0x0070, "address1_low")
 label(0x0071, "address1_high")
@@ -430,6 +435,7 @@ label(0x3aca, "move_left_requested")
 label(0x3acb, "move_right_requested")
 label(0x3c2c, "relocation1_loop")
 label(0x3c3a, "relocation2")
+label(0x3c56, "skip4")
 label(0x3c5c, "relocation2_loop")
 label(0x3c6a, "relocation3")
 blank(0x3c6a)
@@ -455,6 +461,8 @@ comment(0x3d8d, "set base address for sprite rendering, $6200 is the main game a
 label(0x110b, "vertical_sync_amount_for_crtc_register")
 label(0x3f05, "drive_number")
 char(0x3f05)
+comment(0x3f54, "start in one of four random levels")
+
 entry(0x3fbb, "sideways_rom_image")
 comment(0x3fbb, "language entry point", inline=True)
 entry(0x3fbe)
@@ -841,6 +849,14 @@ entry(0x2be0, "something22_TODO")
 label(0x31, "desired_level") # TODO: This is not right but let's go with it for now - the way this is used it clearly contains *a* level (as a letter, I think), but I am not quite sure what it's used for - the use at 36df suggests this is more like "current level" actually - or maybe it's more like "level_to_load"
 label(0x37, "currently_loaded_level")
 label(0x51, "previous_level") # TODO: see use at initialise_level
+label(0x114f, "level_load_loop")
+label(0x1171, "level_load_successful")
+label(0x3617, "prompt_user_to_insert_correct_disc")
+
+comment(0x1153, "if desired level is already loaded, skip forward", inline=True)
+comment(0x1155, "load level in A")
+comment(0x1169, "if load successful, then skip forward", inline=True)
+
 label(0x1175, "level_already_loaded")
 label(0x36da, "check_password_level")
 entry(0x36db, "select_level_a")
@@ -1061,6 +1077,7 @@ expr(0x3a61, "inkey_key_right")
 # TODO: Don't know what the byte means yet, but the code structure makes it clear this is indexed by level number
 label(0x9ef, "byte_per_level_table1")
 
+comment(0x1132, "choose a new starting level")
 entry(0x1140, "initialise_level") # TODO: guessing, but seems plausible
 
 label(0xab5, "old_irq1v")
@@ -1216,7 +1233,7 @@ label(0x2c58, "multiply_x_by_twenty_loop")
 decimal(0x2c5a)
 label(0x2c62, "finished_multiply")
 label(0x2c5f, "skip_increment_high_byte")
-comment(0x135d, "The sprite table starts with a table of 16 bit addresses, one for each sprite.\nLook up the address of the sprite by reading this table.\nSet ($58) to point to the base of the table.\nSet YX to point to the base of the sprite.")
+comment(0x135d, "The sprite table starts with a table of 16 bit addresses, one for each sprite.\nLook up the address of the sprite by reading this table.\nSet YX to point to the base of the sprite.")
 label(0x54, "sprdata_ptr")
 expr_label(0x55, make_add("sprdata_ptr", "1"))
 

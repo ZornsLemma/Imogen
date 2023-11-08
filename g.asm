@@ -207,12 +207,12 @@ previous_level                          = $51
 l0052                                   = $52
 l0053                                   = $53
 sprdata_ptr                             = $54
-l0058                                   = $58
-l0059                                   = $59
-l005a                                   = $5a
+temp_sprite_address_low                 = $58
+temp_sprite_address_high                = $59
+temp_sprite_offset                      = $5a
 l005b                                   = $5b
 displayed_transformations_remaining     = $5c
-l005f                                   = $5f
+initial_level_number_div4               = $5f
 l0060                                   = $60
 l0061                                   = $61
 l0062                                   = $62
@@ -398,8 +398,9 @@ c110c
     ldy sixteen_entry_table2                                          ; 125c: ac 7f 0a    ... :112b[1]
     cpy #last_level_letter+1                                          ; 125f: c0 52       .R  :112e[1]
     bne initialise_level                                              ; 1261: d0 0e       ..  :1130[1]
-    inc l005f                                                         ; 1263: e6 5f       ._  :1132[1]
-    lda l005f                                                         ; 1265: a5 5f       ._  :1134[1]
+; choose a new starting level
+    inc initial_level_number_div4                                     ; 1263: e6 5f       ._  :1132[1]
+    lda initial_level_number_div4                                     ; 1265: a5 5f       ._  :1134[1]
     and #3                                                            ; 1267: 29 03       ).  :1136[1]
     asl                                                               ; 1269: 0a          .   :1138[1]
     asl                                                               ; 126a: 0a          .   :1139[1]
@@ -418,10 +419,11 @@ initialise_level
 ; loop kind of makes sense as a retry if disc error sort of thing, but I don't see why
 ; we'd ever have the wrong level loaded or something like that. It still doesn't feel
 ; quite right, but could this maybe be some leftover hint of a tape version?
-loop_c114f
+level_load_loop
     lda desired_level                                                 ; 1280: a5 31       .1  :114f[1]
     cmp currently_loaded_level                                        ; 1282: c5 37       .7  :1151[1]
-    beq level_already_loaded                                          ; 1284: f0 20       .   :1153[1]
+    beq level_already_loaded                                          ; 1284: f0 20       .   :1153[1]   ; if desired level is already loaded, skip forward
+; load level in A
     sta data_filename_variable_letter                                 ; 1286: 8d 76 12    .v. :1155[1]
     lda #<data_filename                                               ; 1289: a9 72       .r  :1158[1]
     sta filename_low                                                  ; 128b: 85 70       .p  :115a[1]
@@ -431,11 +433,11 @@ loop_c114f
     ldy #>level_data                                                  ; 1293: a0 3a       .:  :1162[1]
     lda #osfile_load                                                  ; 1295: a9 ff       ..  :1164[1]
     jsr osfile_wrapper                                                ; 1297: 20 dc 16     .. :1166[1]
-    beq c1171                                                         ; 129a: f0 06       ..  :1169[1]
-    jsr sub_c3617                                                     ; 129c: 20 17 36     .6 :116b[1]
-    jmp loop_c114f                                                    ; 129f: 4c 4f 11    LO. :116e[1]
+    beq level_load_successful                                         ; 129a: f0 06       ..  :1169[1]   ; if load successful, then skip forward
+    jsr prompt_user_to_insert_correct_disc                            ; 129c: 20 17 36     .6 :116b[1]
+    jmp level_load_loop                                               ; 129f: 4c 4f 11    LO. :116e[1]
 
-c1171
+level_load_successful
     lda desired_level                                                 ; 12a2: a5 31       .1  :1171[1]
     sta currently_loaded_level                                        ; 12a4: 85 37       .7  :1173[1]
 level_already_loaded
@@ -692,23 +694,22 @@ get_address_of_sprite_a
     pla                                                               ; 148d: 68          h   :135c[1]   ; recall sprite number
 ; The sprite table starts with a table of 16 bit addresses, one for each sprite.
 ; Look up the address of the sprite by reading this table.
-; Set ($58) to point to the base of the table.
 ; Set YX to point to the base of the sprite.
 get_sprite_address_from_sprite_table
-    stx l0058                                                         ; 148e: 86 58       .X  :135d[1]
-    sty l0059                                                         ; 1490: 84 59       .Y  :135f[1]
+    stx temp_sprite_address_low                                       ; 148e: 86 58       .X  :135d[1]
+    sty temp_sprite_address_high                                      ; 1490: 84 59       .Y  :135f[1]
     asl                                                               ; 1492: 0a          .   :1361[1]
     tay                                                               ; 1493: a8          .   :1362[1]
-    lda l0059                                                         ; 1494: a5 59       .Y  :1363[1]
-    sta l005a                                                         ; 1496: 85 5a       .Z  :1365[1]
+    lda temp_sprite_address_high                                      ; 1494: a5 59       .Y  :1363[1]
+    sta temp_sprite_offset                                            ; 1496: 85 5a       .Z  :1365[1]
     adc #0                                                            ; 1498: 69 00       i.  :1367[1]
-    sta l0059                                                         ; 149a: 85 59       .Y  :1369[1]
-    lda (l0058),y                                                     ; 149c: b1 58       .X  :136b[1]
-    adc l0058                                                         ; 149e: 65 58       eX  :136d[1]
+    sta temp_sprite_address_high                                      ; 149a: 85 59       .Y  :1369[1]
+    lda (temp_sprite_address_low),y                                   ; 149c: b1 58       .X  :136b[1]
+    adc temp_sprite_address_low                                       ; 149e: 65 58       eX  :136d[1]
     tax                                                               ; 14a0: aa          .   :136f[1]
     iny                                                               ; 14a1: c8          .   :1370[1]
-    lda (l0058),y                                                     ; 14a2: b1 58       .X  :1371[1]
-    adc l005a                                                         ; 14a4: 65 5a       eZ  :1373[1]
+    lda (temp_sprite_address_low),y                                   ; 14a2: b1 58       .X  :1371[1]
+    adc temp_sprite_offset                                            ; 14a4: 65 5a       eZ  :1373[1]
     tay                                                               ; 14a6: a8          .   :1375[1]
 return2
     rts                                                               ; 14a7: 60          `   :1376[1]
@@ -5453,7 +5454,7 @@ c35d5
     sbc #$30 ; '0'                                                    ; 370a: e9 30       .0  :35d9[1]
     and #1                                                            ; 370c: 29 01       ).  :35db[1]
     bne c35e2                                                         ; 370e: d0 03       ..  :35dd[1]
-    jsr sub_c3617                                                     ; 3710: 20 17 36     .6 :35df[1]
+    jsr prompt_user_to_insert_correct_disc                            ; 3710: 20 17 36     .6 :35df[1]
 c35e2
     jsr c3a8f                                                         ; 3713: 20 8f 3a     .: :35e2[1]
     lda l3497                                                         ; 3716: ad 97 34    ..4 :35e5[1]
@@ -5474,7 +5475,7 @@ insert_game_disk_message
     !byte $82, $a5, $b8, $ae, $b9, $bf, $eb, $ac, $aa, $a6, $ae, $eb  ; 3737: 82 a5 b8... ... :3606[1]
     !byte $af, $a2, $b8, $a0, $c6                                     ; 3743: af a2 b8... ... :3612[1]
 
-sub_c3617
+prompt_user_to_insert_correct_disc
     jsr save_or_restore_screen_under_dialog_box                       ; 3748: 20 0a 04     .. :3617[1]
     ldx #<insert_game_disk_message                                    ; 374b: a2 06       ..  :361a[1]
     ldy #>insert_game_disk_message                                    ; 374d: a0 36       .6  :361c[1]
@@ -5558,7 +5559,7 @@ c36a8
     lda #osfile_load                                                  ; 37e5: a9 ff       ..  :36b4[1]
     jsr osfile_wrapper                                                ; 37e7: 20 dc 16     .. :36b6[1]
     beq c36c1                                                         ; 37ea: f0 06       ..  :36b9[1]
-    jsr sub_c3617                                                     ; 37ec: 20 17 36     .6 :36bb[1]
+    jsr prompt_user_to_insert_correct_disc                            ; 37ec: 20 17 36     .6 :36bb[1]
     jmp c36a8                                                         ; 37ef: 4c a8 36    L.6 :36be[1]
 
 c36c1
@@ -5567,7 +5568,7 @@ c36c1
 loop_c36c7
     jsr load_sprdata                                                  ; 37f8: 20 6f 19     o. :36c7[1]
     beq c36d2                                                         ; 37fb: f0 06       ..  :36ca[1]
-    jsr sub_c3617                                                     ; 37fd: 20 17 36     .6 :36cc[1]
+    jsr prompt_user_to_insert_correct_disc                            ; 37fd: 20 17 36     .6 :36cc[1]
     jmp loop_c36c7                                                    ; 3800: 4c c7 36    L.6 :36cf[1]
 
 c36d2
@@ -6303,11 +6304,11 @@ relocation2
     sta sprite_screen_address_high                                    ; 3c48: 85 73       .s
     lda address1_high                                                 ; 3c4a: a5 71       .q
     cmp sprite_screen_address_high                                    ; 3c4c: c5 73       .s
-    bne c3c56                                                         ; 3c4e: d0 06       ..             ; TODO: branch always taken?
+    bne skip4                                                         ; 3c4e: d0 06       ..             ; TODO: branch always taken?
     lda address1_low                                                  ; 3c50: a5 70       .p
     cmp sprite_screen_address_low                                     ; 3c52: c5 72       .r
     beq relocation3                                                   ; 3c54: f0 14       ..
-c3c56
+skip4
     ldx #$2a ; '*'                                                    ; 3c56: a2 2a       .*
     beq relocation3                                                   ; 3c58: f0 10       ..             ; TODO: branch never taken?
     ldy #0                                                            ; 3c5a: a0 00       ..
@@ -6732,9 +6733,10 @@ c3f2d
     sta sprdata_ptr + 1                                               ; 3f4f: 85 55       .U
     pla                                                               ; 3f51: 68          h
     sta sprdata_ptr                                                   ; 3f52: 85 54       .T
+; start in one of four random levels
     lda #3                                                            ; 3f54: a9 03       ..
     jsr get_random_number_up_to_a                                     ; 3f56: 20 a6 18     ..
-    sta l005f                                                         ; 3f59: 85 5f       ._
+    sta initial_level_number_div4                                     ; 3f59: 85 5f       ._
     jmp c110c                                                         ; 3f5b: 4c 0c 11    L..
 
 icodata_filename
@@ -7196,7 +7198,6 @@ pydis_end
 ;     c0505
 ;     c0ae6
 ;     c110c
-;     c1171
 ;     c11f8
 ;     c1209
 ;     c129b
@@ -7489,7 +7490,6 @@ pydis_end
 ;     c3adb
 ;     c3ade
 ;     c3adf
-;     c3c56
 ;     c3ec1
 ;     c3f0d
 ;     c3f2d
@@ -7514,11 +7514,7 @@ pydis_end
 ;     l0050
 ;     l0052
 ;     l0053
-;     l0058
-;     l0059
-;     l005a
 ;     l005b
-;     l005f
 ;     l0060
 ;     l0061
 ;     l0062
@@ -7626,7 +7622,6 @@ pydis_end
 ;     loop_c0aba
 ;     loop_c0ac6
 ;     loop_c0ade
-;     loop_c114f
 ;     loop_c1213
 ;     loop_c1830
 ;     loop_c190b
@@ -7717,7 +7712,6 @@ pydis_end
 ;     sub_c2eb8
 ;     sub_c336e
 ;     sub_c344b
-;     sub_c3617
 ;     sub_c3664
 ;     sub_c37f3
 ;     sub_c388d
