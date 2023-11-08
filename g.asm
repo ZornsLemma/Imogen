@@ -318,9 +318,9 @@ sprite_197                              = $0bc5
 level_handler_ptr                       = $3ad7
 level_handler_ptr_plus_1                = $3ad8
 second_level_handler_ptr                = $3ad9
-second_handler_ptr_plus_1               = $3ada
-c3adb                                   = $3adb
-l3adc                                   = $3adc
+second_level_handler_ptr_plus_1         = $3ada
+third_level_handler_ptr                 = $3adb
+third_level_handler_ptr_plus_1          = $3adc
 l3add                                   = $3add
 c3ade                                   = $3ade
 c3adf                                   = $3adf
@@ -605,7 +605,7 @@ something23_TODO
     lda #$ff                                                          ; 13ec: a9 ff       ..  :12bb[1]
     sta l132b                                                         ; 13ee: 8d 2b 13    .+. :12bd[1]
     ldx second_level_handler_ptr                                      ; 13f1: ae d9 3a    ..: :12c0[1]
-    ldy second_handler_ptr_plus_1                                     ; 13f4: ac da 3a    ..: :12c3[1]
+    ldy second_level_handler_ptr_plus_1                               ; 13f4: ac da 3a    ..: :12c3[1]
     jsr jmp_yx                                                        ; 13f7: 20 66 19     f. :12c6[1]
     lda #0                                                            ; 13fa: a9 00       ..  :12c9[1]
     sta l132b                                                         ; 13fc: 8d 2b 13    .+. :12cb[1]
@@ -641,7 +641,7 @@ c1306
     jsr sub_c3aa2                                                     ; 143d: 20 a2 3a     .: :130c[1]
     jsr something19_TODO                                              ; 1440: 20 cd 22     ." :130f[1]
     ldx second_level_handler_ptr                                      ; 1443: ae d9 3a    ..: :1312[1]
-    ldy second_handler_ptr_plus_1                                     ; 1446: ac da 3a    ..: :1315[1]
+    ldy second_level_handler_ptr_plus_1                               ; 1446: ac da 3a    ..: :1315[1]
     jsr jmp_yx                                                        ; 1449: 20 66 19     f. :1318[1]
     jmp something12_TODO                                              ; 144c: 4c c3 18    L.. :131b[1]
 
@@ -5701,8 +5701,8 @@ c378e
     tya                                                               ; 38d2: 98          .   :37a1[1]
     jsr print_italic                                                  ; 38d3: 20 66 18     f. :37a2[1]
     jsr print_2xlf_cr                                                 ; 38d6: 20 50 38     P8 :37a5[1]
-    ldx c3adb                                                         ; 38d9: ae db 3a    ..: :37a8[1]
-    ldy l3adc                                                         ; 38dc: ac dc 3a    ..: :37ab[1]
+    ldx third_level_handler_ptr                                       ; 38d9: ae db 3a    ..: :37a8[1]
+    ldy third_level_handler_ptr_plus_1                                ; 38dc: ac dc 3a    ..: :37ab[1]
     jmp print_encrypted_string_at_yx                                  ; 38df: 4c 1c 38    L.8 :37ae[1]
 
 section_message
@@ -7486,7 +7486,6 @@ pydis_end
 ;     c3a83
 ;     c3a88
 ;     c3a8f
-;     c3adb
 ;     c3ade
 ;     c3adf
 ;     c3ec1
@@ -7606,7 +7605,6 @@ pydis_end
 ;     l3970
 ;     l3974
 ;     l3a8e
-;     l3adc
 ;     l3add
 ;     l3ae0
 ;     l8000
