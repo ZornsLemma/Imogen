@@ -126,6 +126,98 @@ label(0x0046, "return_key_pressed_pending")
 
 label(0x00fc, "interrupt_accumulator")
 
+sprite_dict = {
+    0x00: "spriteid_one_pixel_masked_out",
+    0x01: "spriteid_icon_background",
+    0x02: "spriteid_blob_thing1",        # TODO: better name
+    0x03: "spriteid_blob_thing2",        # TODO: better name
+    0x04: "spriteid_blob_thing3",        # TODO: better name
+    0x05: "spriteid_blob_thing4",        # TODO: better name
+    0x06: "spriteid_blob_thing5",        # TODO: better name
+    0x07: "spriteid_blob_thing6",        # TODO: better name
+    0x08: "spriteid_blob_thing7",        # TODO: better name
+    0x09: "spriteid_blob_thing8",        # TODO: better name
+    0x0a: "spriteid_blob_thing9",        # TODO: better name
+    0x0b: "spriteid_w_thing",            # TODO: better name
+    0x0c: "spriteid_cat_walk1",
+    0x0d: "spriteid_cat_walk2",
+    0x0e: "spriteid_cat_walk3",
+    0x0f: "spriteid_cat_walk4",
+    0x10: "spriteid_cat_transform1",
+    0x11: "spriteid_cat_transform2",
+    0x12: "spriteid_cat_tail1",
+    0x13: "spriteid_cat_tail2",
+    0x14: "spriteid_cat_tail3",
+    0x15: "spriteid_cat_tail4",
+    0x16: "spriteid_cat_tail5",
+    0x17: "spriteid_cat_tail6",
+    0x18: "spriteid_cat_tail7",
+    0x19: "spriteid_cat_tail8",
+    0x1a: "spriteid_cat_jump",
+    0x1b: "spriteid_cat1",
+    0x1c: "spriteid_cat2",
+    0x1d: "spriteid_pointer_hand",
+    0x1e: "spriteid_some_small_number_of_pixels_set",       # TODO: better name
+    0x1f: "spriteid_one_pixel_set",
+    0x20: "spriteid_circle",
+    0x22: "spriteid_sparkles1",
+    0x23: "spriteid_sparkles2",
+    0x24: "spriteid_sparkles3",
+    0x25: "spriteid_sparkles4",
+    0x26: "spriteid_sparkles5",
+    0x27: "spriteid_diamond1",
+    0x28: "spriteid_diamond2",
+    0x29: "spriteid_diamond3",
+    0x2a: "spriteid_diamond4",
+    0x2b: "spriteid_diamond5",
+    0x2c: "spriteid_corner_top_left",
+    0x2d: "spriteid_corner_bottom_left",
+    0x2e: "spriteid_corner_bottom_right",
+    0x2f: "spriteid_corner_top_right",
+    0x30: "spriteid_wizard1",
+    0x31: "spriteid_wizard2",
+    0x32: "spriteid_wizard3",
+    0x33: "spriteid_wizard4",
+    0x34: "spriteid_wizard5",
+    0x35: "spriteid_wizard6",
+    0x36: "spriteid_wizard7",
+    0x37: "spriteid_some_small_blob",        # TODO: better name
+    0x38: "spriteid_transform1",
+    0x39: "spriteid_transform2",
+    0x3a: "spriteid_brazier",
+    0x3c: "spriteid_fire1",
+    0x3d: "spriteid_fire2",
+    0x3e: "spriteid_fire3",
+    0x3f: "spriteid_fire4",
+    0x40: "spriteid_fire5",
+    0x41: "spriteid_fire6",
+    0x42: "spriteid_fire7",
+    0x43: "spriteid_fire8",
+    0x44: "spriteid_monkey_transform1",
+    0x45: "spriteid_monkey_transform2",
+    0x46: "spriteid_monkey_tail1",
+    0x47: "spriteid_monkey_tail2",
+    0x48: "spriteid_monkey_tail3",
+    0x49: "spriteid_monkey_tail4",
+    0x4a: "spriteid_monkey_tail5",
+    0x4b: "spriteid_monkey_tail6",
+    0x4c: "spriteid_monkey_tail7",
+    0x4d: "spriteid_monkey_tail8",
+    0x4e: "spriteid_monkey1",
+    0x4f: "spriteid_monkey2",
+    0x50: "spriteid_monkey3",
+    0x51: "spriteid_monkey4",
+    0x52: "spriteid_monkey5",
+    0x53: "spriteid_monkey_climb1",
+    0x54: "spriteid_monkey_climb2",
+    0x55: "spriteid_rope1",
+    0x56: "spriteid_rope2",
+    0x57: "spriteid_rope3",
+    0x58: "spriteid_rope4",
+}
+
+substitute_constants("sta sprite_number", 'a', sprite_dict, True)
+
 label(0x137f, "reset_sprite_flags_and_exit")
 comment(0x139f, "check flags to see if we are copying to another sprite", inline=True)
 comment(0x13b3, "Y=0", inline=True)
@@ -849,6 +941,13 @@ comment(0x3932, "add four to X to get sound buffer number", inline=True)
 label(0x3954, "finish_play_sound")
 label(0x3966, "sound_enable_flag")
 label(0x2aff, "toggle_sound_on_off")
+comment(0x2b02, "remember current sound flag", inline=True)
+comment(0x2b06, "temporarily enable sound", inline=True)
+comment(0x2b0b, "play brief tick sound", inline=True)
+comment(0x2b14, "recall current sound flag", inline=True)
+comment(0x2b15, "toggle current flag", inline=True)
+comment(0x2b17, "save new sound flag", inline=True)
+
 
 expr(0xaf0, "last_level_letter")
 expr(0xaf7, "first_level_letter")

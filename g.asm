@@ -48,6 +48,93 @@ osword_sound                                    = 7
 red                                             = 1
 screen_width_in_pixels                          = 320
 screen_width_minus_one                          = 39
+spriteid_blob_thing1                            = 2
+spriteid_blob_thing2                            = 3
+spriteid_blob_thing3                            = 4
+spriteid_blob_thing4                            = 5
+spriteid_blob_thing5                            = 6
+spriteid_blob_thing6                            = 7
+spriteid_blob_thing7                            = 8
+spriteid_blob_thing8                            = 9
+spriteid_blob_thing9                            = 10
+spriteid_brazier                                = 58
+spriteid_cat1                                   = 27
+spriteid_cat2                                   = 28
+spriteid_cat_jump                               = 26
+spriteid_cat_tail1                              = 18
+spriteid_cat_tail2                              = 19
+spriteid_cat_tail3                              = 20
+spriteid_cat_tail4                              = 21
+spriteid_cat_tail5                              = 22
+spriteid_cat_tail6                              = 23
+spriteid_cat_tail7                              = 24
+spriteid_cat_tail8                              = 25
+spriteid_cat_transform1                         = 16
+spriteid_cat_transform2                         = 17
+spriteid_cat_walk1                              = 12
+spriteid_cat_walk2                              = 13
+spriteid_cat_walk3                              = 14
+spriteid_cat_walk4                              = 15
+spriteid_circle                                 = 32
+spriteid_corner_bottom_left                     = 45
+spriteid_corner_bottom_right                    = 46
+spriteid_corner_top_left                        = 44
+spriteid_corner_top_right                       = 47
+spriteid_diamond1                               = 39
+spriteid_diamond2                               = 40
+spriteid_diamond3                               = 41
+spriteid_diamond4                               = 42
+spriteid_diamond5                               = 43
+spriteid_fire1                                  = 60
+spriteid_fire2                                  = 61
+spriteid_fire3                                  = 62
+spriteid_fire4                                  = 63
+spriteid_fire5                                  = 64
+spriteid_fire6                                  = 65
+spriteid_fire7                                  = 66
+spriteid_fire8                                  = 67
+spriteid_icon_background                        = 1
+spriteid_monkey1                                = 78
+spriteid_monkey2                                = 79
+spriteid_monkey3                                = 80
+spriteid_monkey4                                = 81
+spriteid_monkey5                                = 82
+spriteid_monkey_climb1                          = 83
+spriteid_monkey_climb2                          = 84
+spriteid_monkey_tail1                           = 70
+spriteid_monkey_tail2                           = 71
+spriteid_monkey_tail3                           = 72
+spriteid_monkey_tail4                           = 73
+spriteid_monkey_tail5                           = 74
+spriteid_monkey_tail6                           = 75
+spriteid_monkey_tail7                           = 76
+spriteid_monkey_tail8                           = 77
+spriteid_monkey_transform1                      = 68
+spriteid_monkey_transform2                      = 69
+spriteid_one_pixel_masked_out                   = 0
+spriteid_one_pixel_set                          = 31
+spriteid_pointer_hand                           = 29
+spriteid_rope1                                  = 85
+spriteid_rope2                                  = 86
+spriteid_rope3                                  = 87
+spriteid_rope4                                  = 88
+spriteid_some_small_blob                        = 55
+spriteid_some_small_number_of_pixels_set        = 30
+spriteid_sparkles1                              = 34
+spriteid_sparkles2                              = 35
+spriteid_sparkles3                              = 36
+spriteid_sparkles4                              = 37
+spriteid_sparkles5                              = 38
+spriteid_transform1                             = 56
+spriteid_transform2                             = 57
+spriteid_w_thing                                = 11
+spriteid_wizard1                                = 48
+spriteid_wizard2                                = 49
+spriteid_wizard3                                = 50
+spriteid_wizard4                                = 51
+spriteid_wizard5                                = 52
+spriteid_wizard6                                = 53
+spriteid_wizard7                                = 54
 vdu_bell                                        = 7
 vdu_cr                                          = 13
 vdu_define_character                            = 23
@@ -2187,14 +2274,14 @@ c1cee
     jmp c1bc3                                                         ; 1e21: 4c c3 1b    L.. :1cf0[1]
 
 sub_c1cf3
-    lda #$2c ; ','                                                    ; 1e24: a9 2c       .,  :1cf3[1]
+    lda #spriteid_corner_top_left                                     ; 1e24: a9 2c       .,  :1cf3[1]
     sta sprite_number                                                 ; 1e26: 85 16       ..  :1cf5[1]
     dey                                                               ; 1e28: 88          .   :1cf7[1]
     jsr sub_c1efa                                                     ; 1e29: 20 fa 1e     .. :1cf8[1]
     iny                                                               ; 1e2c: c8          .   :1cfb[1]
     cmp #3                                                            ; 1e2d: c9 03       ..  :1cfc[1]
     bne c1d16                                                         ; 1e2f: d0 16       ..  :1cfe[1]
-    lda #$2d ; '-'                                                    ; 1e31: a9 2d       .-  :1d00[1]
+    lda #spriteid_corner_bottom_left                                  ; 1e31: a9 2d       .-  :1d00[1]
     sta sprite_number                                                 ; 1e33: 85 16       ..  :1d02[1]
     iny                                                               ; 1e35: c8          .   :1d04[1]
     jsr sub_c1efa                                                     ; 1e36: 20 fa 1e     .. :1d05[1]
@@ -2203,7 +2290,7 @@ sub_c1cf3
     bne c1d16                                                         ; 1e3c: d0 09       ..  :1d0b[1]
     sty address1_high                                                 ; 1e3e: 84 71       .q  :1d0d[1]
     jsr sub_c1b66                                                     ; 1e40: 20 66 1b     f. :1d0f[1]
-    lda #0                                                            ; 1e43: a9 00       ..  :1d12[1]
+    lda #spriteid_one_pixel_masked_out                                ; 1e43: a9 00       ..  :1d12[1]
     sta sprite_number                                                 ; 1e45: 85 16       ..  :1d14[1]
 c1d16
     lda sprite_number                                                 ; 1e47: a5 16       ..  :1d16[1]
@@ -2849,7 +2936,7 @@ c21ef
     sta sprite_reflect_flag                                           ; 2323: 85 1d       ..  :21f2[1]
     lda #0                                                            ; 2325: a9 00       ..  :21f4[1]
     sta sprite_op_flags                                               ; 2327: 85 15       ..  :21f6[1]
-    lda #$37 ; '7'                                                    ; 2329: a9 37       .7  :21f8[1]
+    lda #spriteid_some_small_blob                                     ; 2329: a9 37       .7  :21f8[1]
     sta sprite_number                                                 ; 232b: 85 16       ..  :21fa[1]
     jsr sprite_op                                                     ; 232d: 20 8d 13     .. :21fc[1]
 return9
@@ -4024,12 +4111,12 @@ unplot_menu_pointer
     lda #$58 ; 'X'                                                    ; 2b23: a9 58       .X  :29f2[1]
     sta screen_base_address_high                                      ; 2b25: 85 4c       .L  :29f4[1]
     jsr calculate_sprite_position_for_menu_item                       ; 2b27: 20 46 2c     F, :29f6[1]
-    lda #$1d                                                          ; 2b2a: a9 1d       ..  :29f9[1]
+    lda #spriteid_pointer_hand                                        ; 2b2a: a9 1d       ..  :29f9[1]
     sta sprite_number                                                 ; 2b2c: 85 16       ..  :29fb[1]
     lda #2                                                            ; 2b2e: a9 02       ..  :29fd[1]
     sta sprite_op_flags                                               ; 2b30: 85 15       ..  :29ff[1]
     jsr sprite_op                                                     ; 2b32: 20 8d 13     .. :2a01[1]
-    lda #$1e                                                          ; 2b35: a9 1e       ..  :2a04[1]
+    lda #spriteid_some_small_number_of_pixels_set                     ; 2b35: a9 1e       ..  :2a04[1]
     sta sprite_number                                                 ; 2b37: 85 16       ..  :2a06[1]
     lda #0                                                            ; 2b39: a9 00       ..  :2a08[1]
     sta sprite_op_flags                                               ; 2b3b: 85 15       ..  :2a0a[1]
@@ -4049,7 +4136,7 @@ plot_menu_pointer
     lda #$58 ; 'X'                                                    ; 2b4f: a9 58       .X  :2a1e[1]
     sta screen_base_address_high                                      ; 2b51: 85 4c       .L  :2a20[1]
     jsr calculate_sprite_position_for_menu_item                       ; 2b53: 20 46 2c     F, :2a22[1]
-    lda #$1d                                                          ; 2b56: a9 1d       ..  :2a25[1]
+    lda #spriteid_pointer_hand                                        ; 2b56: a9 1d       ..  :2a25[1]
     sta sprite_number                                                 ; 2b58: 85 16       ..  :2a27[1]
     lda #0                                                            ; 2b5a: a9 00       ..  :2a29[1]
     sta sprite_op_flags                                               ; 2b5c: 85 15       ..  :2a2b[1]
@@ -4174,18 +4261,18 @@ c2afc
 
 toggle_sound_on_off
     jsr calculate_sprite_position_for_menu_item                       ; 2c30: 20 46 2c     F, :2aff[1]
-    lda sound_enable_flag                                             ; 2c33: ad 66 39    .f9 :2b02[1]
+    lda sound_enable_flag                                             ; 2c33: ad 66 39    .f9 :2b02[1]   ; remember current sound flag
     pha                                                               ; 2c36: 48          H   :2b05[1]
-    lda #$ff                                                          ; 2c37: a9 ff       ..  :2b06[1]
+    lda #$ff                                                          ; 2c37: a9 ff       ..  :2b06[1]   ; temporarily enable sound
     sta sound_enable_flag                                             ; 2c39: 8d 66 39    .f9 :2b08[1]
-    lda #0                                                            ; 2c3c: a9 00       ..  :2b0b[1]
+    lda #0                                                            ; 2c3c: a9 00       ..  :2b0b[1]   ; play brief tick sound
     ldx #<sound_data1                                                 ; 2c3e: a2 a4       ..  :2b0d[1]
     ldy #>sound_data1                                                 ; 2c40: a0 38       .8  :2b0f[1]
     jsr play_sound_xy                                                 ; 2c42: 20 f6 38     .8 :2b11[1]
-    pla                                                               ; 2c45: 68          h   :2b14[1]
-    eor #$ff                                                          ; 2c46: 49 ff       I.  :2b15[1]
-    sta sound_enable_flag                                             ; 2c48: 8d 66 39    .f9 :2b17[1]
-    lda #$1f                                                          ; 2c4b: a9 1f       ..  :2b1a[1]
+    pla                                                               ; 2c45: 68          h   :2b14[1]   ; recall current sound flag
+    eor #$ff                                                          ; 2c46: 49 ff       I.  :2b15[1]   ; toggle current flag
+    sta sound_enable_flag                                             ; 2c48: 8d 66 39    .f9 :2b17[1]   ; save new sound flag
+    lda #spriteid_one_pixel_set                                       ; 2c4b: a9 1f       ..  :2b1a[1]
     sta sprite_number                                                 ; 2c4d: 85 16       ..  :2b1c[1]
     lda screen_base_address_high                                      ; 2c4f: a5 4c       .L  :2b1e[1]
     pha                                                               ; 2c51: 48          H   :2b20[1]
@@ -4339,7 +4426,7 @@ plot_menu_icon
     jsr calculate_sprite_position_for_menu_item                       ; 2d49: 20 46 2c     F, :2c18[1]
     lda #0                                                            ; 2d4c: a9 00       ..  :2c1b[1]
     sta sprite_op_flags                                               ; 2d4e: 85 15       ..  :2c1d[1]
-    lda #1                                                            ; 2d50: a9 01       ..  :2c1f[1]
+    lda #spriteid_icon_background                                     ; 2d50: a9 01       ..  :2c1f[1]
     sta sprite_number                                                 ; 2d52: 85 16       ..  :2c21[1]
     lda desired_menu_slots,x                                          ; 2d54: bd 5c 29    .\) :2c23[1]
     sta displayed_menu_slots,x                                        ; 2d57: 9d 6f 29    .o) :2c26[1]
@@ -8064,6 +8151,30 @@ pydis_end
 }
 !if (sixteen_entry_table2 - 1) != $0a7e {
     !error "Assertion failed: sixteen_entry_table2 - 1 == $0a7e"
+}
+!if (spriteid_corner_bottom_left) != $2d {
+    !error "Assertion failed: spriteid_corner_bottom_left == $2d"
+}
+!if (spriteid_corner_top_left) != $2c {
+    !error "Assertion failed: spriteid_corner_top_left == $2c"
+}
+!if (spriteid_icon_background) != $01 {
+    !error "Assertion failed: spriteid_icon_background == $01"
+}
+!if (spriteid_one_pixel_masked_out) != $00 {
+    !error "Assertion failed: spriteid_one_pixel_masked_out == $00"
+}
+!if (spriteid_one_pixel_set) != $1f {
+    !error "Assertion failed: spriteid_one_pixel_set == $1f"
+}
+!if (spriteid_pointer_hand) != $1d {
+    !error "Assertion failed: spriteid_pointer_hand == $1d"
+}
+!if (spriteid_some_small_blob) != $37 {
+    !error "Assertion failed: spriteid_some_small_blob == $37"
+}
+!if (spriteid_some_small_number_of_pixels_set) != $1e {
+    !error "Assertion failed: spriteid_some_small_number_of_pixels_set == $1e"
 }
 !if (update_displayed_transformations_remaining_high_copy_end - update_displayed_transformations_remaining_high_copy_start) != $2f {
     !error "Assertion failed: update_displayed_transformations_remaining_high_copy_end - update_displayed_transformations_remaining_high_copy_start == $2f"
