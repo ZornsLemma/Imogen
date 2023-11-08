@@ -2323,7 +2323,7 @@ c1e6a
     asl                                                               ; 1fa4: 0a          .   :1e73[1]
     ora sprite_x_pos_low                                              ; 1fa5: 05 74       .t  :1e74[1]
     tax                                                               ; 1fa7: aa          .   :1e76[1]
-    lda l1eab,x                                                       ; 1fa8: bd ab 1e    ... :1e77[1]
+    lda bitmask2,x                                                    ; 1fa8: bd ab 1e    ... :1e77[1]
     ldx sprite_x_pos_low                                              ; 1fab: a6 74       .t  :1e7a[1]
     sta sprite_x_pos_low                                              ; 1fad: 85 74       .t  :1e7c[1]
     sty sprite_x_pos_high                                             ; 1faf: 84 75       .u  :1e7e[1]
@@ -2331,7 +2331,7 @@ c1e6a
 ; protection/obfuscation or is there something else going on?
 loop_c1e80
     lda initialise_display,y                                          ; 1fb1: b9 00 0c    ... :1e80[1]
-    and l1ea7,x                                                       ; 1fb4: 3d a7 1e    =.. :1e83[1]
+    and bitmask1,x                                                    ; 1fb4: 3d a7 1e    =.. :1e83[1]
     ora sprite_x_pos_low                                              ; 1fb7: 05 74       .t  :1e86[1]
     sta initialise_display,y                                          ; 1fb9: 99 00 0c    ... :1e88[1]
     tya                                                               ; 1fbc: 98          .   :1e8b[1]
@@ -2354,11 +2354,13 @@ c1ea5
     pla                                                               ; 1fd6: 68          h   :1ea5[1]
     rts                                                               ; 1fd7: 60          `   :1ea6[1]
 
-l1ea7
-    !byte $3f, $cf, $f3, $fc                                          ; 1fd8: 3f cf f3... ?.. :1ea7[1]
-l1eab
-    !byte   0,   0,   0,   0, $40, $10,   4,   1, $80, $20,   8,   2  ; 1fdc: 00 00 00... ... :1eab[1]
-    !byte $c0, $30, $0c,   3                                          ; 1fe8: c0 30 0c... .0. :1eb7[1]
+bitmask1
+    !byte %00111111, %11001111, %11110011, %11111100                  ; 1fd8: 3f cf f3... ?.. :1ea7[1]
+bitmask2
+    !byte %00000000, %00000000, %00000000, %00000000, %01000000       ; 1fdc: 00 00 00... ... :1eab[1]
+    !byte %00010000, %00000100, %00000001, %10000000, %00100000       ; 1fe1: 10 04 01... ... :1eb0[1]
+    !byte %00001000, %00000010, %11000000, %00110000, %00001100       ; 1fe6: 08 02 c0... ... :1eb5[1]
+    !byte %00000011                                                   ; 1feb: 03          .   :1eba[1]
 
 ; TODO: What's going on with the modification to initialise_display here? Is it copy
 ; protection/obfuscation or is there something else going on?
@@ -2390,11 +2392,11 @@ sub_c1ebb
     asl                                                               ; 200e: 0a          .   :1edd[1]
     ora l004a                                                         ; 200f: 05 4a       .J  :1ede[1]
     tax                                                               ; 2011: aa          .   :1ee0[1]
-    lda l1eab,x                                                       ; 2012: bd ab 1e    ... :1ee1[1]
+    lda bitmask2,x                                                    ; 2012: bd ab 1e    ... :1ee1[1]
     ldx l004a                                                         ; 2015: a6 4a       .J  :1ee4[1]
     sta l004a                                                         ; 2017: 85 4a       .J  :1ee6[1]
     lda initialise_display,y                                          ; 2019: b9 00 0c    ... :1ee8[1]
-    and l1ea7,x                                                       ; 201c: 3d a7 1e    =.. :1eeb[1]
+    and bitmask1,x                                                    ; 201c: 3d a7 1e    =.. :1eeb[1]
     ora l004a                                                         ; 201f: 05 4a       .J  :1eee[1]
     sta initialise_display,y                                          ; 2021: 99 00 0c    ... :1ef0[1]
     pla                                                               ; 2024: 68          h   :1ef3[1]
@@ -4656,24 +4658,26 @@ four_entry_table2
 l2eed
     !byte 0, 0, 0, 0, 0                                               ; 301e: 00 00 00... ... :2eed[1]
 l2ef2
-    !byte   0,   0,   0,   0,   0, $12, $13, $14, $15, $16, $17, $18  ; 3023: 00 00 00... ... :2ef2[1]
-    !byte $19,   0, $0c, $f9, $f6, $0d, $f9, $f5, $0e, $f9, $f6, $0f  ; 302f: 19 00 0c... ... :2efe[1]
-    !byte $f9, $f5, $0f, $f9, $f5, $1c, $f9, $f5, $1a, $f9, $f6,   0  ; 303b: f9 f5 0f... ... :2f0a[1]
-    !byte   0,   0,   0, $11,   0,   0, $11,   0,   0, $10,   0,   0  ; 3047: 00 00 00... ... :2f16[1]
-    !byte $10,   0,   0, $0f,   0,   0, $0f,   0,   0,   0, $0f,   0  ; 3053: 10 00 00... ... :2f22[1]
-    !byte   0, $0f,   0,   0, $10,   0,   0, $10,   0,   0, $11,   0  ; 305f: 00 0f 00... ... :2f2e[1]
-    !byte   0, $11,   0,   0,   0, $0c,   4,   0, $0d,   4,   0, $0e  ; 306b: 00 11 00... ... :2f3a[1]
-    !byte   4,   0, $0f,   4,   0,   0, $0f,   0,   0, $0f,   2,   0  ; 3077: 04 00 0f... ... :2f46[1]
-    !byte   0, $1c,   4,   0,   0, $1c,   0,   0,   0, $1a,   6, $fb  ; 3083: 00 1c 04... ... :2f52[1]
-    !byte $1a,   6, $fc, $1a,   5, $fc, $1a,   5, $fd, $1a,   5, $fe  ; 308f: 1a 06 fc... ... :2f5e[1]
-    !byte $1a,   5, $ff,   0, $1a,   5,   0, $1a,   5,   0,   0, $0f  ; 309b: 1a 05 ff... ... :2f6a[1]
-    !byte   5,   1, $0f,   5,   2, $0f,   4,   3, $0f,   4,   4, $0f  ; 30a7: 05 01 0f... ... :2f76[1]
-    !byte   4,   4, $0f,   4,   5, $0f,   3,   5, $0f,   3,   5, $0f  ; 30b3: 04 04 0f... ... :2f82[1]
-    !byte   2,   6, $0f,   2,   6, $0f,   1,   6, $0f,   1,   6,   0  ; 30bf: 02 06 0f... ... :2f8e[1]
-    !byte $0f,   4,   2, $0f,   3,   3, $0f,   2,   4, $0f,   1,   5  ; 30cb: 0f 04 02... ... :2f9a[1]
-    !byte   0, $0f, $fc,   2, $0f, $fd,   3, $0f, $fe,   4, $0f, $ff  ; 30d7: 00 0f fc... ... :2fa6[1]
-    !byte   5,   0, $0f,   0,   1, $0f,   0,   2, $0f,   0,   3, $0f  ; 30e3: 05 00 0f... ... :2fb2[1]
-    !byte   0,   4, $0f,   0,   5,   0, $0f,   0,   7,   0            ; 30ef: 00 04 0f... ... :2fbe[1]
+    !byte 0, 0, 0, 0, 0                                               ; 3023: 00 00 00... ... :2ef2[1]
+some_more_data
+    !byte $12, $13, $14, $15, $16, $17, $18, $19,   0, $0c, $f9, $f6  ; 3028: 12 13 14... ... :2ef7[1]
+    !byte $0d, $f9, $f5, $0e, $f9, $f6, $0f, $f9, $f5, $0f, $f9, $f5  ; 3034: 0d f9 f5... ... :2f03[1]
+    !byte $1c, $f9, $f5, $1a, $f9, $f6,   0,   0,   0,   0, $11,   0  ; 3040: 1c f9 f5... ... :2f0f[1]
+    !byte   0, $11,   0,   0, $10,   0,   0, $10,   0,   0, $0f,   0  ; 304c: 00 11 00... ... :2f1b[1]
+    !byte   0, $0f,   0,   0,   0, $0f,   0,   0, $0f,   0,   0, $10  ; 3058: 00 0f 00... ... :2f27[1]
+    !byte   0,   0, $10,   0,   0, $11,   0,   0, $11,   0,   0,   0  ; 3064: 00 00 10... ... :2f33[1]
+    !byte $0c,   4,   0, $0d,   4,   0, $0e,   4,   0, $0f,   4,   0  ; 3070: 0c 04 00... ... :2f3f[1]
+    !byte   0, $0f,   0,   0, $0f,   2,   0,   0, $1c,   4,   0,   0  ; 307c: 00 0f 00... ... :2f4b[1]
+    !byte $1c,   0,   0,   0, $1a,   6, $fb, $1a,   6, $fc, $1a,   5  ; 3088: 1c 00 00... ... :2f57[1]
+    !byte $fc, $1a,   5, $fd, $1a,   5, $fe, $1a,   5, $ff,   0, $1a  ; 3094: fc 1a 05... ... :2f63[1]
+    !byte   5,   0, $1a,   5,   0,   0, $0f,   5,   1, $0f,   5,   2  ; 30a0: 05 00 1a... ... :2f6f[1]
+    !byte $0f,   4,   3, $0f,   4,   4, $0f,   4,   4, $0f,   4,   5  ; 30ac: 0f 04 03... ... :2f7b[1]
+    !byte $0f,   3,   5, $0f,   3,   5, $0f,   2,   6, $0f,   2,   6  ; 30b8: 0f 03 05... ... :2f87[1]
+    !byte $0f,   1,   6, $0f,   1,   6,   0, $0f,   4,   2, $0f,   3  ; 30c4: 0f 01 06... ... :2f93[1]
+    !byte   3, $0f,   2,   4, $0f,   1,   5,   0, $0f, $fc,   2, $0f  ; 30d0: 03 0f 02... ... :2f9f[1]
+    !byte $fd,   3, $0f, $fe,   4, $0f, $ff,   5,   0, $0f,   0,   1  ; 30dc: fd 03 0f... ... :2fab[1]
+    !byte $0f,   0,   2, $0f,   0,   3, $0f,   0,   4, $0f,   0,   5  ; 30e8: 0f 00 02... ... :2fb7[1]
+    !byte   0, $0f,   0,   7,   0                                     ; 30f4: 00 0f 00... ... :2fc3[1]
 
 c2fc8
     lda #$16                                                          ; 30f9: a9 16       ..  :2fc8[1]
@@ -4794,9 +4798,9 @@ c30a5
     jsr something17_TODO                                              ; 31de: 20 00 22     ." :30ad[1]
     lda #0                                                            ; 31e1: a9 00       ..  :30b0[1]
     jsr sub_c25f5                                                     ; 31e3: 20 f5 25     .% :30b2[1]
-    lda #$f7                                                          ; 31e6: a9 f7       ..  :30b5[1]
+    lda #<some_more_data                                              ; 31e6: a9 f7       ..  :30b5[1]
     sta address1_low                                                  ; 31e8: 85 70       .p  :30b7[1]
-    lda #$2e ; '.'                                                    ; 31ea: a9 2e       ..  :30b9[1]
+    lda #>some_more_data                                              ; 31ea: a9 2e       ..  :30b9[1]
     sta address1_high                                                 ; 31ec: 85 71       .q  :30bb[1]
     lda #$ff                                                          ; 31ee: a9 ff       ..  :30bd[1]
     ldx l09df                                                         ; 31f0: ae df 09    ... :30bf[1]
@@ -4816,6 +4820,7 @@ c30d5
     jsr something18_TODO                                              ; 320a: 20 48 22     H" :30d9[1]
     rts                                                               ; 320d: 60          `   :30dc[1]
 
+some_more_data2
     !text "FGHIJKLM"                                                  ; 320e: 46 47 48... FGH :30dd[1]
     !byte   0, $52, $f7, $f9, $4e, $f7, $fa, $4f, $f7, $f9, $50, $f7  ; 3216: 00 52 f7... .R. :30e5[1]
     !byte $fa, $51, $f7, $f9, $51, $f7, $f9, $53, $f7, $fa, $54, $f8  ; 3222: fa 51 f7... .Q. :30f1[1]
@@ -5031,9 +5036,9 @@ c3331
     jsr something17_TODO                                              ; 346f: 20 00 22     ." :333e[1]
     lda #0                                                            ; 3472: a9 00       ..  :3341[1]
     jsr sub_c25f5                                                     ; 3474: 20 f5 25     .% :3343[1]
-    lda #$dd                                                          ; 3477: a9 dd       ..  :3346[1]
+    lda #<some_more_data2                                             ; 3477: a9 dd       ..  :3346[1]
     sta address1_low                                                  ; 3479: 85 70       .p  :3348[1]
-    lda #$30 ; '0'                                                    ; 347b: a9 30       .0  :334a[1]
+    lda #>some_more_data2                                             ; 347b: a9 30       .0  :334a[1]
     sta address1_high                                                 ; 347d: 85 71       .q  :334c[1]
     lda #$ff                                                          ; 347f: a9 ff       ..  :334e[1]
     ldx l09df                                                         ; 3481: ae df 09    ... :3350[1]
@@ -5204,8 +5209,8 @@ c347f
     jsr save_or_restore_screen_under_dialog_box                       ; 35b0: 20 0a 04     .. :347f[1]
     lda #2                                                            ; 35b3: a9 02       ..  :3482[1]
     sta l0004                                                         ; 35b5: 85 04       ..  :3484[1]
-    ldx #$98                                                          ; 35b7: a2 98       ..  :3486[1]
-    ldy #$34 ; '4'                                                    ; 35b9: a0 34       .4  :3488[1]
+    ldx #<enter_filename_message                                      ; 35b7: a2 98       ..  :3486[1]
+    ldy #>enter_filename_message                                      ; 35b9: a0 34       .4  :3488[1]
     jsr print_encrypted_string_at_yx                                  ; 35bb: 20 1c 38     .8 :348a[1]
     jsr print_2xlf_cr                                                 ; 35be: 20 50 38     P8 :348d[1]
     jsr turn_cursor_on                                                ; 35c1: 20 5d 38     ]8 :3490[1]
@@ -5215,8 +5220,10 @@ return22
     rts                                                               ; 35c7: 60          `   :3496[1]
 
 l3497
-    !byte   0, $8e, $a5, $bf, $ae, $b9, $eb, $ad, $a2, $a7, $ae, $a5  ; 35c8: 00 8e a5... ... :3497[1]
-    !byte $aa, $a6, $ae, $c6                                          ; 35d4: aa a6 ae... ... :34a3[1]
+    !byte 0                                                           ; 35c8: 00          .   :3497[1]
+enter_filename_message
+    !byte $8e, $a5, $bf, $ae, $b9, $eb, $ad, $a2, $a7, $ae, $a5, $aa  ; 35c9: 8e a5 bf... ... :3498[1]
+    !byte $a6, $ae, $c6                                               ; 35d5: a6 ae c6    ... :34a4[1]
 
 get_filename_and_print_drive_number_prompt
     lda #max_filename_len                                             ; 35d8: a9 07       ..  :34a7[1]
@@ -5272,21 +5279,24 @@ c3516
     jsr save_or_restore_screen_under_dialog_box                       ; 364a: 20 0a 04     .. :3519[1]
     lda #4                                                            ; 364d: a9 04       ..  :351c[1]
     sta l0004                                                         ; 364f: 85 04       ..  :351e[1]
-    ldx #$35 ; '5'                                                    ; 3651: a2 35       .5  :3520[1]
-    ldy #$35 ; '5'                                                    ; 3653: a0 35       .5  :3522[1]
+    ldx #<insert_save_disk_message                                    ; 3651: a2 35       .5  :3520[1]
+    ldy #>insert_save_disk_message                                    ; 3653: a0 35       .5  :3522[1]
     jsr print_encrypted_string_at_yx                                  ; 3655: 20 1c 38     .8 :3524[1]
     jsr print_2xlf_cr                                                 ; 3658: 20 50 38     P8 :3527[1]
-    ldx #$46 ; 'F'                                                    ; 365b: a2 46       .F  :352a[1]
-    ldy #$35 ; '5'                                                    ; 365d: a0 35       .5  :352c[1]
+    ldx #<and_press_return_message                                    ; 365b: a2 46       .F  :352a[1]
+    ldy #>and_press_return_message                                    ; 365d: a0 35       .5  :352c[1]
     jsr print_encrypted_string_at_yx                                  ; 365f: 20 1c 38     .8 :352e[1]
     jmp flush_input_buffers_and_zero_l0005                            ; 3662: 4c 72 38    Lr8 :3531[1]
 
 return23
     rts                                                               ; 3665: 60          `   :3534[1]
 
+insert_save_disk_message
     !byte $82, $a5, $b8, $ae, $b9, $bf, $eb, $b8, $aa, $bd, $ae, $eb  ; 3666: 82 a5 b8... ... :3535[1]
-    !byte $af, $a2, $b8, $a0, $c6, $aa, $a5, $af, $eb, $bb, $b9, $ae  ; 3672: af a2 b8... ... :3541[1]
-    !byte $b8, $b8, $eb, $99, $8e, $9f, $9e, $99, $85, $c6            ; 367e: b8 b8 eb... ... :354d[1]
+    !byte $af, $a2, $b8, $a0, $c6                                     ; 3672: af a2 b8... ... :3541[1]
+and_press_return_message
+    !byte $aa, $a5, $af, $eb, $bb, $b9, $ae, $b8, $b8, $eb, $99, $8e  ; 3677: aa a5 af... ... :3546[1]
+    !byte $9f, $9e, $99, $85, $c6                                     ; 3683: 9f 9e 99... ... :3552[1]
 
 c3557
     jsr inkey_0                                                       ; 3688: 20 7c 38     |8 :3557[1]
@@ -5295,17 +5305,17 @@ c3557
     jsr save_or_restore_screen_under_dialog_box                       ; 368f: 20 0a 04     .. :355e[1]
     lda #vdu_lf                                                       ; 3692: a9 0a       ..  :3561[1]
     jsr oswrch                                                        ; 3694: 20 ee ff     .. :3563[1]   ; Write character 10
-    ldx #$f7                                                          ; 3697: a2 f7       ..  :3566[1]
-    ldy #$35 ; '5'                                                    ; 3699: a0 35       .5  :3568[1]
+    ldx #<saving_message                                              ; 3697: a2 f7       ..  :3566[1]
+    ldy #>saving_message                                              ; 3699: a0 35       .5  :3568[1]
     lda l3497                                                         ; 369b: ad 97 34    ..4 :356a[1]
     beq c3573                                                         ; 369e: f0 04       ..  :356d[1]
-    ldx #$fe                                                          ; 36a0: a2 fe       ..  :356f[1]
-    ldy #$35 ; '5'                                                    ; 36a2: a0 35       .5  :3571[1]
+    ldx #<loading_message                                             ; 36a0: a2 fe       ..  :356f[1]
+    ldy #<loading_message                                             ; 36a2: a0 35       .5  :3571[1]
 c3573
     jsr sub_c37f3                                                     ; 36a4: 20 f3 37     .7 :3573[1]
-    lda #$d6                                                          ; 36a7: a9 d6       ..  :3576[1]
+    lda #<save_full_filename                                          ; 36a7: a9 d6       ..  :3576[1]
     sta address1_low                                                  ; 36a9: 85 70       .p  :3578[1]
-    lda #$34 ; '4'                                                    ; 36ab: a9 34       .4  :357a[1]
+    lda #>save_full_filename                                          ; 36ab: a9 34       .4  :357a[1]
     sta address1_high                                                 ; 36ad: 85 71       .q  :357c[1]
     lda l3497                                                         ; 36af: ad 97 34    ..4 :357e[1]
     beq c359e                                                         ; 36b2: f0 1b       ..  :3581[1]
@@ -5369,18 +5379,22 @@ c35ed
     lda l09ea                                                         ; 3722: ad ea 09    ... :35f1[1]
     jmp select_level_a                                                ; 3725: 4c db 36    L.6 :35f4[1]
 
-    !byte $98, $aa, $bd, $a2, $a5, $ac, $c6, $87, $a4, $aa, $af, $a2  ; 3728: 98 aa bd... ... :35f7[1]
-    !byte $a5, $ac, $c6, $82, $a5, $b8, $ae, $b9, $bf, $eb, $ac, $aa  ; 3734: a5 ac c6... ... :3603[1]
-    !byte $a6, $ae, $eb, $af, $a2, $b8, $a0, $c6                      ; 3740: a6 ae eb... ... :360f[1]
+saving_message
+    !byte $98, $aa, $bd, $a2, $a5, $ac, $c6                           ; 3728: 98 aa bd... ... :35f7[1]
+loading_message
+    !byte $87, $a4, $aa, $af, $a2, $a5, $ac, $c6                      ; 372f: 87 a4 aa... ... :35fe[1]
+insert_game_disk_message
+    !byte $82, $a5, $b8, $ae, $b9, $bf, $eb, $ac, $aa, $a6, $ae, $eb  ; 3737: 82 a5 b8... ... :3606[1]
+    !byte $af, $a2, $b8, $a0, $c6                                     ; 3743: af a2 b8... ... :3612[1]
 
 sub_c3617
     jsr save_or_restore_screen_under_dialog_box                       ; 3748: 20 0a 04     .. :3617[1]
-    ldx #6                                                            ; 374b: a2 06       ..  :361a[1]
-    ldy #$36 ; '6'                                                    ; 374d: a0 36       .6  :361c[1]
+    ldx #<insert_game_disk_message                                    ; 374b: a2 06       ..  :361a[1]
+    ldy #>insert_game_disk_message                                    ; 374d: a0 36       .6  :361c[1]
     jsr print_encrypted_string_at_yx                                  ; 374f: 20 1c 38     .8 :361e[1]
     jsr print_2xlf_cr                                                 ; 3752: 20 50 38     P8 :3621[1]
-    ldx #$46 ; 'F'                                                    ; 3755: a2 46       .F  :3624[1]
-    ldy #$35 ; '5'                                                    ; 3757: a0 35       .5  :3626[1]
+    ldx #<and_press_return_message                                    ; 3755: a2 46       .F  :3624[1]
+    ldy #>and_press_return_message                                    ; 3757: a0 35       .5  :3626[1]
     jsr print_encrypted_string_at_yx                                  ; 3759: 20 1c 38     .8 :3628[1]
     jsr flush_input_buffers_and_zero_l0005                            ; 375c: 20 72 38     r8 :362b[1]
 wait_for_return
@@ -5396,8 +5410,8 @@ c3636
     bne c3652                                                         ; 376e: d0 13       ..  :363d[1]
 c363f
     jsr save_or_restore_screen_under_dialog_box                       ; 3770: 20 0a 04     .. :363f[1]
-    ldx #$55 ; 'U'                                                    ; 3773: a2 55       .U  :3642[1]
-    ldy #$36 ; '6'                                                    ; 3775: a0 36       .6  :3644[1]
+    ldx #<enter_password_message                                      ; 3773: a2 55       .U  :3642[1]
+    ldy #>enter_password_message                                      ; 3775: a0 36       .6  :3644[1]
     jsr print_encrypted_string_at_yx                                  ; 3777: 20 1c 38     .8 :3646[1]
     jsr print_2xlf_cr                                                 ; 377a: 20 50 38     P8 :3649[1]
     jsr turn_cursor_on                                                ; 377d: 20 5d 38     ]8 :364c[1]
@@ -5406,6 +5420,7 @@ c363f
 c3652
     jmp something_TODO                                                ; 3783: 4c 53 04    LS. :3652[1]
 
+enter_password_message
     !byte $8e, $a5, $bf, $ae, $b9, $eb, $bb, $aa, $b8, $b8, $bc, $a4  ; 3786: 8e a5 bf... ... :3655[1]
     !byte $b9, $af, $c6                                               ; 3792: b9 af c6    ... :3661[1]
 
@@ -5590,8 +5605,8 @@ c378e
     jsr save_or_restore_screen_under_dialog_box                       ; 38bf: 20 0a 04     .. :378e[1]
     lda #1                                                            ; 38c2: a9 01       ..  :3791[1]
     sta l0004                                                         ; 38c4: 85 04       ..  :3793[1]
-    ldx #$b1                                                          ; 38c6: a2 b1       ..  :3795[1]
-    ldy #$37 ; '7'                                                    ; 38c8: a0 37       .7  :3797[1]
+    ldx #<section_message                                             ; 38c6: a2 b1       ..  :3795[1]
+    ldy #>section_message                                             ; 38c8: a0 37       .7  :3797[1]
     jsr print_encrypted_string_at_yx                                  ; 38ca: 20 1c 38     .8 :3799[1]
     ldy desired_level                                                 ; 38cd: a4 31       .1  :379c[1]
     jsr convert_level_number_to_letter                                ; 38cf: 20 d4 0a     .. :379e[1]
@@ -5602,6 +5617,7 @@ c378e
     ldy l3adc                                                         ; 38dc: ac dc 3a    ..: :37ab[1]
     jmp print_encrypted_string_at_yx                                  ; 38df: 4c 1c 38    L.8 :37ae[1]
 
+section_message
     !byte $98, $ae, $a8, $bf, $a2, $a4, $a5, $eb, $c6                 ; 38e2: 98 ae a8... ... :37b1[1]
 
 c37ba
@@ -7410,8 +7426,6 @@ pydis_end
 ;     l1ab1
 ;     l1ab2
 ;     l1aba
-;     l1ea7
-;     l1eab
 ;     l1f6c
 ;     l22ed
 ;     l2433
@@ -7602,6 +7616,9 @@ pydis_end
 !if (<(screen_width_in_pixels-1)) != $3f {
     !error "Assertion failed: <(screen_width_in_pixels-1) == $3f"
 }
+!if (<and_press_return_message) != $46 {
+    !error "Assertion failed: <and_press_return_message == $46"
+}
 !if (<auxcode) != $c0 {
     !error "Assertion failed: <auxcode == $c0"
 }
@@ -7616,6 +7633,12 @@ pydis_end
 }
 !if (<data_filename) != $72 {
     !error "Assertion failed: <data_filename == $72"
+}
+!if (<enter_filename_message) != $98 {
+    !error "Assertion failed: <enter_filename_message == $98"
+}
+!if (<enter_password_message) != $55 {
+    !error "Assertion failed: <enter_password_message == $55"
 }
 !if (<envelope_1) != $ac {
     !error "Assertion failed: <envelope_1 == $ac"
@@ -7632,11 +7655,20 @@ pydis_end
 !if (<icodata_filename) != $5e {
     !error "Assertion failed: <icodata_filename == $5e"
 }
+!if (<insert_game_disk_message) != $06 {
+    !error "Assertion failed: <insert_game_disk_message == $06"
+}
+!if (<insert_save_disk_message) != $35 {
+    !error "Assertion failed: <insert_save_disk_message == $35"
+}
 !if (<irq1_routine) != $a0 {
     !error "Assertion failed: <irq1_routine == $a0"
 }
 !if (<level_data) != $d5 {
     !error "Assertion failed: <level_data == $d5"
+}
+!if (<loading_message) != $35 {
+    !error "Assertion failed: <loading_message == $35"
 }
 !if (<oswrch) != $ee {
     !error "Assertion failed: <oswrch == $ee"
@@ -7656,11 +7688,26 @@ pydis_end
 !if (<reset_code) != $45 {
     !error "Assertion failed: <reset_code == $45"
 }
+!if (<save_full_filename) != $d6 {
+    !error "Assertion failed: <save_full_filename == $d6"
+}
+!if (<saving_message) != $f7 {
+    !error "Assertion failed: <saving_message == $f7"
+}
 !if (<screen_width_in_pixels) != $40 {
     !error "Assertion failed: <screen_width_in_pixels == $40"
 }
+!if (<section_message) != $b1 {
+    !error "Assertion failed: <section_message == $b1"
+}
 !if (<some_code_high_copy_TODO) != $ff {
     !error "Assertion failed: <some_code_high_copy_TODO == $ff"
+}
+!if (<some_more_data) != $f7 {
+    !error "Assertion failed: <some_more_data == $f7"
+}
+!if (<some_more_data2) != $dd {
+    !error "Assertion failed: <some_more_data2 == $dd"
 }
 !if (<sprdata_filename) != $80 {
     !error "Assertion failed: <sprdata_filename == $80"
@@ -7710,6 +7757,9 @@ pydis_end
 !if (>(screen_width_in_pixels-1)) != $01 {
     !error "Assertion failed: >(screen_width_in_pixels-1) == $01"
 }
+!if (>and_press_return_message) != $35 {
+    !error "Assertion failed: >and_press_return_message == $35"
+}
 !if (>auxcode) != $53 {
     !error "Assertion failed: >auxcode == $53"
 }
@@ -7725,6 +7775,12 @@ pydis_end
 !if (>data_filename) != $12 {
     !error "Assertion failed: >data_filename == $12"
 }
+!if (>enter_filename_message) != $34 {
+    !error "Assertion failed: >enter_filename_message == $34"
+}
+!if (>enter_password_message) != $36 {
+    !error "Assertion failed: >enter_password_message == $36"
+}
 !if (>envelope_1) != $38 {
     !error "Assertion failed: >envelope_1 == $38"
 }
@@ -7739,6 +7795,12 @@ pydis_end
 }
 !if (>icodata_filename) != $3f {
     !error "Assertion failed: >icodata_filename == $3f"
+}
+!if (>insert_game_disk_message) != $36 {
+    !error "Assertion failed: >insert_game_disk_message == $36"
+}
+!if (>insert_save_disk_message) != $35 {
+    !error "Assertion failed: >insert_save_disk_message == $35"
 }
 !if (>irq1_routine) != $17 {
     !error "Assertion failed: >irq1_routine == $17"
@@ -7764,8 +7826,23 @@ pydis_end
 !if (>reset_code) != $18 {
     !error "Assertion failed: >reset_code == $18"
 }
+!if (>save_full_filename) != $34 {
+    !error "Assertion failed: >save_full_filename == $34"
+}
+!if (>saving_message) != $35 {
+    !error "Assertion failed: >saving_message == $35"
+}
+!if (>section_message) != $37 {
+    !error "Assertion failed: >section_message == $37"
+}
 !if (>some_code_high_copy_TODO) != $40 {
     !error "Assertion failed: >some_code_high_copy_TODO == $40"
+}
+!if (>some_more_data) != $2e {
+    !error "Assertion failed: >some_more_data == $2e"
+}
+!if (>some_more_data2) != $30 {
+    !error "Assertion failed: >some_more_data2 == $30"
 }
 !if (>sprdata_filename) != $19 {
     !error "Assertion failed: >sprdata_filename == $19"
