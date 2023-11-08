@@ -32,6 +32,8 @@ label_word(0x3ad7, "level_init_after_load_handler_ptr")
 label_word(0x3ad9, "second_level_handler_ptr") # TODO: poor name
 label_word(0x3adb, "level_name_ptr") # TODO: poor name
 
+label(0x1988, "something13_TODO")
+label(0x1a10, "something14_TODO")
 label(0x12bb, "something23_TODO")
 label(0x12da, "something24_TODO")
 label(0x1b90, "something26_TODO")
@@ -41,5 +43,9 @@ label(0x1f57, "something52_TODO")
 label(0x1db9, "something53_TODO")
 label(0x1e44, "something54_TODO")
 label(0x28e2, "something55_TODO")
+label(0x1f4c, "draw_sprite_a_at_character_xy")
+label(0x1f6d, "something57_TODO")
+label(0x1f5d, "something58_TODO")
+label(0x2894, "something59_TODO")
 
 label(0x1140, "initialise_level")

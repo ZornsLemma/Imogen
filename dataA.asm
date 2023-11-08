@@ -3,87 +3,87 @@ first_level_letter   = 65
 last_level_letter    = 81
 
 ; Memory locations
-l001d                       = $1d
-l0030                       = $30
-l0031                       = $31
-l003a                       = $3a
-l003b                       = $3b
-l003c                       = $3c
-l003d                       = $3d
-l003e                       = $3e
-l0040                       = $40
-l0041                       = $41
-l0042                       = $42
-l0051                       = $51
-l0052                       = $52
-l0070                       = $70
-l0950                       = $0950
-l0954                       = $0954
-l0966                       = $0966
-l097c                       = $097c
-l0980                       = $0980
-l0992                       = $0992
-l09a8                       = $09a8
-l09aa                       = $09aa
-l09ab                       = $09ab
-l09ac                       = $09ac
-l09be                       = $09be
-l09ff                       = $09ff
-l0a00                       = $0a00
-l0a01                       = $0a01
-l0a02                       = $0a02
-l0a03                       = $0a03
-l0a04                       = $0a04
-l0a6f                       = $0a6f
-l0a70                       = $0a70
-l0a71                       = $0a71
-l0a72                       = $0a72
-l0a73                       = $0a73
-string_input_buffer         = $0a90
-l1103                       = $1103
-initialise_level            = $1140
-something23_TODO            = $12bb
-something24_TODO            = $12da
-l132b                       = $132b
-pending_toolbar_colour      = $175d
-toolbar_colour              = $175e
-pending_gameplay_area_colour = $175f
-gameplay_area_colour        = $1760
-use_colour_flag             = $1765
-l1988                       = $1988
-l1a10                       = $1a10
-l1aba                       = $1aba
-something51_TODO            = $1abb
-something26_TODO            = $1b90
-something53_TODO            = $1db9
-something54_TODO            = $1e44
-l1ebb                       = $1ebb
-l1f4c                       = $1f4c
-something52_TODO            = $1f57
-l1f5d                       = $1f5d
-l1f6d                       = $1f6d
-l23a9                       = $23a9
-l2433                       = $2433
-l24d0                       = $24d0
-l24d1                       = $24d1
-l2551                       = $2551
-l2894                       = $2894
-something55_TODO            = $28e2
-something50_TODO            = $2bbd
-l2eb6                       = $2eb6
-l2ee9                       = $2ee9
-l2eee                       = $2eee
-l2ef3                       = $2ef3
-l38ac                       = $38ac
-l38ae                       = $38ae
-l38c2                       = $38c2
-l38d8                       = $38d8
-l38f6                       = $38f6
-l395e                       = $395e
-l396f                       = $396f
-l3970                       = $3970
-auxcode                     = $53c0
-check_password              = $53c0
+l001d                           = $1d
+l0030                           = $30
+l0031                           = $31
+l003a                           = $3a
+l003b                           = $3b
+l003c                           = $3c
+l003d                           = $3d
+l003e                           = $3e
+l0040                           = $40
+l0041                           = $41
+l0042                           = $42
+l0051                           = $51
+l0052                           = $52
+l0070                           = $70
+l0950                           = $0950
+l0954                           = $0954
+l0966                           = $0966
+l097c                           = $097c
+l0980                           = $0980
+l0992                           = $0992
+l09a8                           = $09a8
+l09aa                           = $09aa
+l09ab                           = $09ab
+l09ac                           = $09ac
+l09be                           = $09be
+l09ff                           = $09ff
+l0a00                           = $0a00
+l0a01                           = $0a01
+l0a02                           = $0a02
+l0a03                           = $0a03
+l0a04                           = $0a04
+l0a6f                           = $0a6f
+l0a70                           = $0a70
+l0a71                           = $0a71
+l0a72                           = $0a72
+l0a73                           = $0a73
+string_input_buffer             = $0a90
+l1103                           = $1103
+initialise_level                = $1140
+something23_TODO                = $12bb
+something24_TODO                = $12da
+l132b                           = $132b
+pending_toolbar_colour          = $175d
+toolbar_colour                  = $175e
+pending_gameplay_area_colour    = $175f
+gameplay_area_colour            = $1760
+use_colour_flag                 = $1765
+something13_TODO                = $1988
+something14_TODO                = $1a10
+l1aba                           = $1aba
+something51_TODO                = $1abb
+something26_TODO                = $1b90
+something53_TODO                = $1db9
+something54_TODO                = $1e44
+l1ebb                           = $1ebb
+draw_sprite_a_at_character_xy   = $1f4c
+something52_TODO                = $1f57
+something58_TODO                = $1f5d
+something57_TODO                = $1f6d
+l23a9                           = $23a9
+l2433                           = $2433
+l24d0                           = $24d0
+l24d1                           = $24d1
+l2551                           = $2551
+something59_TODO                = $2894
+something55_TODO                = $28e2
+something50_TODO                = $2bbd
+l2eb6                           = $2eb6
+l2ee9                           = $2ee9
+l2eee                           = $2eee
+l2ef3                           = $2ef3
+l38ac                           = $38ac
+l38ae                           = $38ae
+l38c2                           = $38c2
+l38d8                           = $38d8
+l38f6                           = $38f6
+l395e                           = $395e
+l396f                           = $396f
+l3970                           = $3970
+auxcode                         = $53c0
+check_password                  = $53c0
 
     * = $3ad5
 
@@ -255,13 +255,13 @@ c3bf7
     lda #$fe                                                          ; 3c12: a9 fe       ..
     sta l003b                                                         ; 3c14: 85 3b       .;
     lda #$c8                                                          ; 3c16: a9 c8       ..
-    jsr l1f4c                                                         ; 3c18: 20 4c 1f     L.
+    jsr draw_sprite_a_at_character_xy                                 ; 3c18: 20 4c 1f     L.
     dex                                                               ; 3c1b: ca          .
     dey                                                               ; 3c1c: 88          .
     dey                                                               ; 3c1d: 88          .
     jsr something54_TODO                                              ; 3c1e: 20 44 1e     D.
     ldx #2                                                            ; 3c21: a2 02       ..
-    jsr l1f6d                                                         ; 3c23: 20 6d 1f     m.
+    jsr something57_TODO                                              ; 3c23: 20 6d 1f     m.
     lda #$cd                                                          ; 3c26: a9 cd       ..
     sta l38ac,x                                                       ; 3c28: 9d ac 38    ..8
     lda #$c0                                                          ; 3c2b: a9 c0       ..
@@ -273,13 +273,13 @@ c3bf7
     lda #$fe                                                          ; 3c38: a9 fe       ..
     sta l003b                                                         ; 3c3a: 85 3b       .;
     lda #$c8                                                          ; 3c3c: a9 c8       ..
-    jsr l1f4c                                                         ; 3c3e: 20 4c 1f     L.
+    jsr draw_sprite_a_at_character_xy                                 ; 3c3e: 20 4c 1f     L.
     dex                                                               ; 3c41: ca          .
     dey                                                               ; 3c42: 88          .
     dey                                                               ; 3c43: 88          .
     jsr something54_TODO                                              ; 3c44: 20 44 1e     D.
     ldx #3                                                            ; 3c47: a2 03       ..
-    jsr l1f6d                                                         ; 3c49: 20 6d 1f     m.
+    jsr something57_TODO                                              ; 3c49: 20 6d 1f     m.
     lda #$ff                                                          ; 3c4c: a9 ff       ..
     sta l09be,x                                                       ; 3c4e: 9d be 09    ...
     lda #$ce                                                          ; 3c51: a9 ce       ..
@@ -455,13 +455,13 @@ c3e11
     ldx #$11                                                          ; 3e1e: a2 11       ..
     ldy #7                                                            ; 3e20: a0 07       ..
     lda #2                                                            ; 3e22: a9 02       ..
-    jsr l1f5d                                                         ; 3e24: 20 5d 1f     ].
+    jsr something58_TODO                                              ; 3e24: 20 5d 1f     ].
     tax                                                               ; 3e27: aa          .
     lda #1                                                            ; 3e28: a9 01       ..
     sta l09be,x                                                       ; 3e2a: 9d be 09    ...
     ldx #$17                                                          ; 3e2d: a2 17       ..
     lda #3                                                            ; 3e2f: a9 03       ..
-    jsr l1f5d                                                         ; 3e31: 20 5d 1f     ].
+    jsr something58_TODO                                              ; 3e31: 20 5d 1f     ].
     tax                                                               ; 3e34: aa          .
     lda #$ff                                                          ; 3e35: a9 ff       ..
     sta l09be,x                                                       ; 3e37: 9d be 09    ...
@@ -513,7 +513,7 @@ c3e6c
     lda #2                                                            ; 3e8d: a9 02       ..
     sta l2551                                                         ; 3e8f: 8d 51 25    .Q%
     lda #$0b                                                          ; 3e92: a9 0b       ..
-    jsr l2894                                                         ; 3e94: 20 94 28     .(
+    jsr something59_TODO                                              ; 3e94: 20 94 28     .(
     beq c3ed7                                                         ; 3e97: f0 3e       .>
     ldx #$11                                                          ; 3e99: a2 11       ..
     ldy #7                                                            ; 3e9b: a0 07       ..
@@ -589,7 +589,7 @@ sub_c3f02
     lda #5                                                            ; 3f07: a9 05       ..
     ldx #$1a                                                          ; 3f09: a2 1a       ..
     ldy #$0e                                                          ; 3f0b: a0 0e       ..
-    jsr l1988                                                         ; 3f0d: 20 88 19     ..
+    jsr something13_TODO                                              ; 3f0d: 20 88 19     ..
     lda l132b                                                         ; 3f10: ad 2b 13    .+.
     beq c3f52                                                         ; 3f13: f0 3d       .=
     lda #$d3                                                          ; 3f15: a9 d3       ..
@@ -610,7 +610,7 @@ sub_c3f02
     lda #7                                                            ; 3f38: a9 07       ..
     sta l003b                                                         ; 3f3a: 85 3b       .;
     lda #4                                                            ; 3f3c: a9 04       ..
-    jsr l1f5d                                                         ; 3f3e: 20 5d 1f     ].
+    jsr something58_TODO                                              ; 3f3e: 20 5d 1f     ].
     tax                                                               ; 3f41: aa          .
     lda #1                                                            ; 3f42: a9 01       ..
     sta l09be,x                                                       ; 3f44: 9d be 09    ...
@@ -780,7 +780,7 @@ sub_c407f
     sta l003a                                                         ; 408e: 85 3a       .:
     ldy #$16                                                          ; 4090: a0 16       ..
     lda #5                                                            ; 4092: a9 05       ..
-    jsr l1a10                                                         ; 4094: 20 10 1a     ..
+    jsr something14_TODO                                              ; 4094: 20 10 1a     ..
     lda l132b                                                         ; 4097: ad 2b 13    .+.
     beq c40e4                                                         ; 409a: f0 48       .H
     lda l0031                                                         ; 409c: a5 31       .1
@@ -813,7 +813,7 @@ c40c1
     lda #$fe                                                          ; 40d2: a9 fe       ..
     sta l003b                                                         ; 40d4: 85 3b       .;
     lda #2                                                            ; 40d6: a9 02       ..
-    jsr l1f5d                                                         ; 40d8: 20 5d 1f     ].
+    jsr something58_TODO                                              ; 40d8: 20 5d 1f     ].
     lda #$cc                                                          ; 40db: a9 cc       ..
     sta l38ae                                                         ; 40dd: 8d ae 38    ..8
 ; $40e0 referenced 1 time by $40c5
@@ -1096,7 +1096,7 @@ some_code4
     ldx #$14                                                          ; 42d0: a2 14       ..
     ldy #$0c                                                          ; 42d2: a0 0c       ..
     lda #$3b ; ';'                                                    ; 42d4: a9 3b       .;
-    jsr l1f4c                                                         ; 42d6: 20 4c 1f     L.
+    jsr draw_sprite_a_at_character_xy                                 ; 42d6: 20 4c 1f     L.
     lda #3                                                            ; 42d9: a9 03       ..
     jsr l1ebb                                                         ; 42db: 20 bb 1e     ..
     ldx #$21 ; '!'                                                    ; 42de: a2 21       .!
@@ -1120,10 +1120,10 @@ sub_c42f8
     lda #3                                                            ; 42fd: a9 03       ..
     ldx #$14                                                          ; 42ff: a2 14       ..
     ldy #$0c                                                          ; 4301: a0 0c       ..
-    jsr l1988                                                         ; 4303: 20 88 19     ..
+    jsr something13_TODO                                              ; 4303: 20 88 19     ..
     lda #4                                                            ; 4306: a9 04       ..
     inx                                                               ; 4308: e8          .
-    jsr l1988                                                         ; 4309: 20 88 19     ..
+    jsr something13_TODO                                              ; 4309: 20 88 19     ..
     lda l132b                                                         ; 430c: ad 2b 13    .+.
     beq c4358                                                         ; 430f: f0 47       .G
     lda l0051                                                         ; 4311: a5 51       .Q
@@ -1265,7 +1265,7 @@ c43f6
     sta l003e                                                         ; 440b: 85 3e       .>
     jsr something54_TODO                                              ; 440d: 20 44 1e     D.
     lda #2                                                            ; 4410: a9 02       ..
-    jsr l1f5d                                                         ; 4412: 20 5d 1f     ].
+    jsr something58_TODO                                              ; 4412: 20 5d 1f     ].
 ; $4415 referenced 4 times by $4355, $43bd, $43d8, $43fa
 c4415
     rts                                                               ; 4415: 60          `
@@ -1500,161 +1500,161 @@ inverse_power_of_2_table
 pydis_end
 
 ; Label references by decreasing frequency:
-;     l003c:             34
-;     l003d:             32
-;     something51_TODO:  29
-;     l0030:             19
-;     something54_TODO:  13
-;     l0a72:             11
-;     l003e:             10
-;     l0a70:             10
-;     l0031:              8
-;     l0a02:              8
-;     l0a04:              8
-;     c3ed7:              8
-;     l09ff:              7
-;     l0a01:              7
-;     l38f6:              7
-;     some_data1:         7
-;     l09be:              6
-;     l0a71:              6
-;     l132b:              6
-;     something53_TODO:   6
-;     l0051:              5
-;     l0a73:              5
-;     something52_TODO:   5
-;     l1f5d:              5
-;     something55_TODO:   5
-;     l38ac:              5
-;     l395e:              5
-;     c41ae:              5
-;     c4355:              5
-;     l003b:              4
-;     l0a00:              4
-;     l0a6f:              4
-;     some_code2:         4
-;     c41d9:              4
-;     c4415:              4
-;     l0070:              3
-;     l09a8:              3
-;     l09aa:              3
-;     l09ab:              3
-;     l09ac:              3
-;     initialise_level:   3
-;     something23_TODO:   3
-;     something24_TODO:   3
-;     l1988:              3
-;     l1aba:              3
-;     something26_TODO:   3
-;     l1f4c:              3
-;     something50_TODO:   3
-;     l2eb6:              3
-;     l38c2:              3
-;     c3ca8:              3
-;     c3d20:              3
-;     c3f8a:              3
-;     c419f:              3
-;     c4339:              3
-;     l0040:              2
-;     l0041:              2
-;     l0950:              2
-;     l0966:              2
-;     l0a03:              2
-;     l1f6d:              2
-;     l2433:              2
-;     l38d8:              2
-;     l396f:              2
-;     c3b0e:              2
-;     c3e11:              2
-;     c3e69:              2
-;     sub_c3ef1:          2
-;     c3f51:              2
-;     l3fd5:              2
-;     l3fd6:              2
-;     some_data2:         2
-;     l40e3:              2
-;     c412e:              2
-;     c415e:              2
-;     c418c:              2
-;     c4194:              2
-;     c41c9:              2
-;     c4235:              2
-;     c432f:              2
-;     c43a0:              2
-;     l001d:              1
-;     l003a:              1
-;     l0042:              1
-;     l0052:              1
-;     l0954:              1
-;     l097c:              1
-;     l0980:              1
-;     l0992:              1
-;     l1103:              1
-;     l1a10:              1
-;     l1ebb:              1
-;     l23a9:              1
-;     l24d0:              1
-;     l24d1:              1
-;     l2551:              1
-;     l2894:              1
-;     l2ee9:              1
-;     l2eee:              1
-;     l2ef3:              1
-;     l38ae:              1
-;     l3970:              1
-;     c3b04:              1
-;     loop_c3bd4:         1
-;     sub_c3be4:          1
-;     c3bec:              1
-;     c3bf7:              1
-;     c3c74:              1
-;     c3c77:              1
-;     c3c81:              1
-;     c3c91:              1
-;     c3cb9:              1
-;     c3cc3:              1
-;     c3cd9:              1
-;     c3ce1:              1
-;     c3ce7:              1
-;     c3cfb:              1
-;     sub_c3dfc:          1
-;     c3e55:              1
-;     c3e6c:              1
-;     c3ec1:              1
-;     c3ed2:              1
-;     c3ed4:              1
-;     c3ee4:              1
-;     c3eed:              1
-;     l3eee:              1
-;     sub_c3f02:          1
-;     c3f52:              1
-;     c3f62:              1
-;     loop_c4044:         1
-;     sub_c407f:          1
-;     c40b2:              1
-;     c40c1:              1
-;     c40e0:              1
-;     c40e4:              1
-;     c40ee:              1
-;     c40f7:              1
-;     c412b:              1
-;     c4137:              1
-;     c4167:              1
-;     c4184:              1
-;     c41c1:              1
-;     c420c:              1
-;     c4224:              1
-;     c424c:              1
-;     loop_c42ea:         1
-;     sub_c42f8:          1
-;     c4352:              1
-;     c4358:              1
-;     c4386:              1
-;     c43b4:              1
-;     c43ce:              1
-;     c43d4:              1
-;     c43e3:              1
-;     c43f6:              1
+;     l003c:                          34
+;     l003d:                          32
+;     something51_TODO:               29
+;     l0030:                          19
+;     something54_TODO:               13
+;     l0a72:                          11
+;     l003e:                          10
+;     l0a70:                          10
+;     l0031:                           8
+;     l0a02:                           8
+;     l0a04:                           8
+;     c3ed7:                           8
+;     l09ff:                           7
+;     l0a01:                           7
+;     l38f6:                           7
+;     some_data1:                      7
+;     l09be:                           6
+;     l0a71:                           6
+;     l132b:                           6
+;     something53_TODO:                6
+;     l0051:                           5
+;     l0a73:                           5
+;     something52_TODO:                5
+;     something58_TODO:                5
+;     something55_TODO:                5
+;     l38ac:                           5
+;     l395e:                           5
+;     c41ae:                           5
+;     c4355:                           5
+;     l003b:                           4
+;     l0a00:                           4
+;     l0a6f:                           4
+;     some_code2:                      4
+;     c41d9:                           4
+;     c4415:                           4
+;     l0070:                           3
+;     l09a8:                           3
+;     l09aa:                           3
+;     l09ab:                           3
+;     l09ac:                           3
+;     initialise_level:                3
+;     something23_TODO:                3
+;     something24_TODO:                3
+;     something13_TODO:                3
+;     l1aba:                           3
+;     something26_TODO:                3
+;     draw_sprite_a_at_character_xy:   3
+;     something50_TODO:                3
+;     l2eb6:                           3
+;     l38c2:                           3
+;     c3ca8:                           3
+;     c3d20:                           3
+;     c3f8a:                           3
+;     c419f:                           3
+;     c4339:                           3
+;     l0040:                           2
+;     l0041:                           2
+;     l0950:                           2
+;     l0966:                           2
+;     l0a03:                           2
+;     something57_TODO:                2
+;     l2433:                           2
+;     l38d8:                           2
+;     l396f:                           2
+;     c3b0e:                           2
+;     c3e11:                           2
+;     c3e69:                           2
+;     sub_c3ef1:                       2
+;     c3f51:                           2
+;     l3fd5:                           2
+;     l3fd6:                           2
+;     some_data2:                      2
+;     l40e3:                           2
+;     c412e:                           2
+;     c415e:                           2
+;     c418c:                           2
+;     c4194:                           2
+;     c41c9:                           2
+;     c4235:                           2
+;     c432f:                           2
+;     c43a0:                           2
+;     l001d:                           1
+;     l003a:                           1
+;     l0042:                           1
+;     l0052:                           1
+;     l0954:                           1
+;     l097c:                           1
+;     l0980:                           1
+;     l0992:                           1
+;     l1103:                           1
+;     something14_TODO:                1
+;     l1ebb:                           1
+;     l23a9:                           1
+;     l24d0:                           1
+;     l24d1:                           1
+;     l2551:                           1
+;     something59_TODO:                1
+;     l2ee9:                           1
+;     l2eee:                           1
+;     l2ef3:                           1
+;     l38ae:                           1
+;     l3970:                           1
+;     c3b04:                           1
+;     loop_c3bd4:                      1
+;     sub_c3be4:                       1
+;     c3bec:                           1
+;     c3bf7:                           1
+;     c3c74:                           1
+;     c3c77:                           1
+;     c3c81:                           1
+;     c3c91:                           1
+;     c3cb9:                           1
+;     c3cc3:                           1
+;     c3cd9:                           1
+;     c3ce1:                           1
+;     c3ce7:                           1
+;     c3cfb:                           1
+;     sub_c3dfc:                       1
+;     c3e55:                           1
+;     c3e6c:                           1
+;     c3ec1:                           1
+;     c3ed2:                           1
+;     c3ed4:                           1
+;     c3ee4:                           1
+;     c3eed:                           1
+;     l3eee:                           1
+;     sub_c3f02:                       1
+;     c3f52:                           1
+;     c3f62:                           1
+;     loop_c4044:                      1
+;     sub_c407f:                       1
+;     c40b2:                           1
+;     c40c1:                           1
+;     c40e0:                           1
+;     c40e4:                           1
+;     c40ee:                           1
+;     c40f7:                           1
+;     c412b:                           1
+;     c4137:                           1
+;     c4167:                           1
+;     c4184:                           1
+;     c41c1:                           1
+;     c420c:                           1
+;     c4224:                           1
+;     c424c:                           1
+;     loop_c42ea:                      1
+;     sub_c42f8:                       1
+;     c4352:                           1
+;     c4358:                           1
+;     c4386:                           1
+;     c43b4:                           1
+;     c43ce:                           1
+;     c43d4:                           1
+;     c43e3:                           1
+;     c43f6:                           1
 
 ; Automatically generated labels:
 ;     c3b04
@@ -1761,19 +1761,13 @@ pydis_end
 ;     l0a73
 ;     l1103
 ;     l132b
-;     l1988
-;     l1a10
 ;     l1aba
 ;     l1ebb
-;     l1f4c
-;     l1f5d
-;     l1f6d
 ;     l23a9
 ;     l2433
 ;     l24d0
 ;     l24d1
 ;     l2551
-;     l2894
 ;     l2eb6
 ;     l2ee9
 ;     l2eee

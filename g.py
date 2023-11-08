@@ -224,7 +224,6 @@ sprite_dict = {
     0x58: "spriteid_rope4",
 }
 
-label(0x1f4c, "draw_sprite_a_at_character_xy")
 label(0x1f84, "set_sprite_pixel_position_from_character_xy")
 
 substitute_constants("sta sprite_number", 'a', sprite_dict, True)
@@ -845,8 +844,6 @@ entry(0x18a3, "print_italic_rts")
 entry(0x17a0, "irq1_routine")
 entry(0x1839, "something11_TODO")
 entry(0x18c3, "something12_TODO")
-entry(0x1988, "something13_TODO")
-entry(0x1a10, "something14_TODO")
 entry(0x1b8a, "something15_TODO")
 entry(0x1fd7, "something16_TODO")
 entry(0x2200, "something17_TODO")
@@ -1091,8 +1088,18 @@ label(0x9ef, "byte_per_level_table1")
 comment(0x1132, "choose a new starting level")
 comment(0x1140, "TODO: this is used by e.g. dataA")
 entry(0x1140)
+comment(0x1a10, "TODO: this is used by e.g. dataA")
+entry(0x1a10)
 
+# TODO: I don't think we necessary need to indicate functions in 'g' called from 'data*' in the long run, but it might be helpful to flag them for now.
 comment(0x1e44, "TODO: this is used by e.g. dataA")
+comment(0x28e2, "TODO: this is used by e.g. dataA")
+comment(0x1f4c, "TODO: this is used by e.g. dataA")
+comment(0x1f5d, "TODO: this is used by e.g. dataA")
+comment(0x1f6d, "TODO: this is used by e.g. dataA")
+comment(0x2894, "TODO: this is used by e.g. dataA")
+entry(0x1988)
+comment(0x1988, "TODO: this is used by e.g. dataA")
 
 label(0xab5, "old_irq1v")
 expr_label(0xab6, "old_irq1v+1")

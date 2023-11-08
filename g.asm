@@ -598,7 +598,7 @@ c129b
     lda #0                                                            ; 13e3: a9 00       ..  :12b2[1]
     sta l003b                                                         ; 13e5: 85 3b       .;  :12b4[1]
     lda #0                                                            ; 13e7: a9 00       ..  :12b6[1]
-    jmp c1f5d                                                         ; 13e9: 4c 5d 1f    L]. :12b8[1]
+    jmp something58_TODO                                              ; 13e9: 4c 5d 1f    L]. :12b8[1]
 
 ; TODO: This is called from level-specific machine code, e.g. see dataA.asm
 something23_TODO
@@ -1754,6 +1754,7 @@ load_sprdata
 sprdata_filename
     !text "sprdata", $0d                                              ; 1ab1: 73 70 72... spr :1980[1]
 
+; TODO: this is used by e.g. dataA
 something13_TODO
     sta l1a0f                                                         ; 1ab9: 8d 0f 1a    ... :1988[1]
     txa                                                               ; 1abc: 8a          .   :198b[1]
@@ -1776,7 +1777,7 @@ something13_TODO
     dey                                                               ; 1ade: 88          .   :19ad[1]
     inx                                                               ; 1adf: e8          .   :19ae[1]
     lda l1a0f                                                         ; 1ae0: ad 0f 1a    ... :19af[1]
-    jsr c1f5d                                                         ; 1ae3: 20 5d 1f     ]. :19b2[1]
+    jsr something58_TODO                                              ; 1ae3: 20 5d 1f     ]. :19b2[1]
     lda #1                                                            ; 1ae6: a9 01       ..  :19b5[1]
     bne c19d4                                                         ; 1ae8: d0 1b       ..  :19b7[1]
 c19b9
@@ -1792,7 +1793,7 @@ c19b9
     dey                                                               ; 1afb: 88          .   :19ca[1]
     dex                                                               ; 1afc: ca          .   :19cb[1]
     lda l1a0f                                                         ; 1afd: ad 0f 1a    ... :19cc[1]
-    jsr c1f5d                                                         ; 1b00: 20 5d 1f     ]. :19cf[1]
+    jsr something58_TODO                                              ; 1b00: 20 5d 1f     ]. :19cf[1]
     lda #$ff                                                          ; 1b03: a9 ff       ..  :19d2[1]
 c19d4
     ldx l1a0f                                                         ; 1b05: ae 0f 1a    ... :19d4[1]
@@ -1830,6 +1831,7 @@ c1a07
 l1a0f
     !byte 0                                                           ; 1b40: 00          .   :1a0f[1]
 
+; TODO: this is used by e.g. dataA
 something14_TODO
     sta l1aae                                                         ; 1b41: 8d ae 1a    ... :1a10[1]
     stx l1aaf                                                         ; 1b44: 8e af 1a    ... :1a13[1]
@@ -1894,7 +1896,7 @@ c1a8f
     txa                                                               ; 1bc5: 8a          .   :1a94[1]
     ldx l1aaf                                                         ; 1bc6: ae af 1a    ... :1a95[1]
     ldy l1ab0                                                         ; 1bc9: ac b0 1a    ... :1a98[1]
-    jsr c1f5d                                                         ; 1bcc: 20 5d 1f     ]. :1a9b[1]
+    jsr something58_TODO                                              ; 1bcc: 20 5d 1f     ]. :1a9b[1]
 c1a9e
     lda #0                                                            ; 1bcf: a9 00       ..  :1a9e[1]
     sta l003a                                                         ; 1bd1: 85 3a       .:  :1aa0[1]
@@ -2586,6 +2588,7 @@ c1f2d
     bmi c1f06                                                         ; 2077: 30 be       0.  :1f46[1]
     ldy #$17                                                          ; 2079: a0 17       ..  :1f48[1]
     bne c1f06                                                         ; 207b: d0 ba       ..  :1f4a[1]
+; TODO: this is used by e.g. dataA
 draw_sprite_a_at_character_xy
     sta sprite_number                                                 ; 207d: 85 16       ..  :1f4c[1]
     jsr set_sprite_pixel_position_from_character_xy                   ; 207f: 20 84 1f     .. :1f4e[1]
@@ -2598,11 +2601,12 @@ something52_TODO
     jsr draw_sprite_a_at_character_xy                                 ; 2088: 20 4c 1f     L. :1f57[1]
     jmp something54_TODO                                              ; 208b: 4c 44 1e    LD. :1f5a[1]
 
-c1f5d
+; TODO: this is used by e.g. dataA
+something58_TODO
     jsr set_sprite_pixel_position_from_character_xy                   ; 208e: 20 84 1f     .. :1f5d[1]
     stx l1f6c                                                         ; 2091: 8e 6c 1f    .l. :1f60[1]
     tax                                                               ; 2094: aa          .   :1f63[1]
-    jsr sub_c1f6d                                                     ; 2095: 20 6d 1f     m. :1f64[1]
+    jsr something57_TODO                                              ; 2095: 20 6d 1f     m. :1f64[1]
     txa                                                               ; 2098: 8a          .   :1f67[1]
     ldx l1f6c                                                         ; 2099: ae 6c 1f    .l. :1f68[1]
     rts                                                               ; 209c: 60          `   :1f6b[1]
@@ -2610,7 +2614,8 @@ c1f5d
 l1f6c
     !byte 0                                                           ; 209d: 00          .   :1f6c[1]
 
-sub_c1f6d
+; TODO: this is used by e.g. dataA
+something57_TODO
     pha                                                               ; 209e: 48          H   :1f6d[1]
     lda sprite_x_base_low                                             ; 209f: a5 18       ..  :1f6e[1]
     sta x_entry_table2a,x                                             ; 20a1: 9d 50 09    .P. :1f70[1]
@@ -3213,7 +3218,7 @@ sub_c236b
     lda #2                                                            ; 24a4: a9 02       ..  :2373[1]
     sta l2551                                                         ; 24a6: 8d 51 25    .Q% :2375[1]
     lda #0                                                            ; 24a9: a9 00       ..  :2378[1]
-    jsr sub_c2894                                                     ; 24ab: 20 94 28     .( :237a[1]
+    jsr something59_TODO                                              ; 24ab: 20 94 28     .( :237a[1]
     beq return12                                                      ; 24ae: f0 29       .)  :237d[1]
     lda x_entry_table6b                                               ; 24b0: ad 87 09    ... :237f[1]
     sec                                                               ; 24b3: 38          8   :2382[1]
@@ -3230,7 +3235,7 @@ c2392
     lda #2                                                            ; 24ca: a9 02       ..  :2399[1]
     sta l2551                                                         ; 24cc: 8d 51 25    .Q% :239b[1]
     lda #$0b                                                          ; 24cf: a9 0b       ..  :239e[1]
-    jsr sub_c2894                                                     ; 24d1: 20 94 28     .( :23a0[1]
+    jsr something59_TODO                                              ; 24d1: 20 94 28     .( :23a0[1]
     bne return12                                                      ; 24d4: d0 03       ..  :23a3[1]
 c23a5
     jsr sub_c23a9                                                     ; 24d6: 20 a9 23     .# :23a5[1]
@@ -3280,7 +3285,7 @@ c23e7
     lda #1                                                            ; 2518: a9 01       ..  :23e7[1]
     sta l2551                                                         ; 251a: 8d 51 25    .Q% :23e9[1]
     lda #0                                                            ; 251d: a9 00       ..  :23ec[1]
-    jsr sub_c2894                                                     ; 251f: 20 94 28     .( :23ee[1]
+    jsr something59_TODO                                              ; 251f: 20 94 28     .( :23ee[1]
     beq c23fa                                                         ; 2522: f0 07       ..  :23f1[1]
     lda #$80                                                          ; 2524: a9 80       ..  :23f3[1]
     sta l2433                                                         ; 2526: 8d 33 24    .3$ :23f5[1]
@@ -3958,7 +3963,8 @@ l2892
 l2893
     !byte 0                                                           ; 29c4: 00          .   :2893[1]
 
-sub_c2894
+; TODO: this is used by e.g. dataA
+something59_TODO
     sta l295b                                                         ; 29c5: 8d 5b 29    .[) :2894[1]
     txa                                                               ; 29c8: 8a          .   :2897[1]
     pha                                                               ; 29c9: 48          H   :2898[1]
@@ -3998,6 +4004,7 @@ sub_c2894
 l28e1
     !byte 0                                                           ; 2a12: 00          .   :28e1[1]
 
+; TODO: this is used by e.g. dataA
 something55_TODO
     txa                                                               ; 2a13: 8a          .   :28e2[1]
     pha                                                               ; 2a14: 48          H   :28e3[1]
@@ -4620,7 +4627,7 @@ c2da6
     bne c2dca                                                         ; 2ee1: d0 18       ..  :2db0[1]
     dec l2550                                                         ; 2ee3: ce 50 25    .P% :2db2[1]
     lda #0                                                            ; 2ee6: a9 00       ..  :2db5[1]
-    jsr sub_c2894                                                     ; 2ee8: 20 94 28     .( :2db7[1]
+    jsr something59_TODO                                              ; 2ee8: 20 94 28     .( :2db7[1]
     bne c2dc3                                                         ; 2eeb: d0 07       ..  :2dba[1]
     cpy #$49 ; 'I'                                                    ; 2eed: c0 49       .I  :2dbc[1]
     beq c2dc3                                                         ; 2eef: f0 03       ..  :2dbe[1]
@@ -4829,7 +4836,7 @@ c2fe7
     bne c3011                                                         ; 3122: d0 1e       ..  :2ff1[1]
     dec l2550                                                         ; 3124: ce 50 25    .P% :2ff3[1]
     lda #0                                                            ; 3127: a9 00       ..  :2ff6[1]
-    jsr sub_c2894                                                     ; 3129: 20 94 28     .( :2ff8[1]
+    jsr something59_TODO                                              ; 3129: 20 94 28     .( :2ff8[1]
     bne c3023                                                         ; 312c: d0 26       .&  :2ffb[1]
     cpy #$45 ; 'E'                                                    ; 312e: c0 45       .E  :2ffd[1]
     bne c300e                                                         ; 3130: d0 0d       ..  :2fff[1]
@@ -4846,7 +4853,7 @@ c3011
     bne c302a                                                         ; 3144: d0 15       ..  :3013[1]
     dec l2550                                                         ; 3146: ce 50 25    .P% :3015[1]
     lda #0                                                            ; 3149: a9 00       ..  :3018[1]
-    jsr sub_c2894                                                     ; 314b: 20 94 28     .( :301a[1]
+    jsr something59_TODO                                              ; 314b: 20 94 28     .( :301a[1]
     bne c3023                                                         ; 314e: d0 04       ..  :301d[1]
     cpy #$58 ; 'X'                                                    ; 3150: c0 58       .X  :301f[1]
     bne c300e                                                         ; 3152: d0 eb       ..  :3021[1]
@@ -5019,7 +5026,7 @@ c3222
     beq c324c                                                         ; 335d: f0 1e       ..  :322c[1]
     dec l2550                                                         ; 335f: ce 50 25    .P% :322e[1]
     lda #0                                                            ; 3362: a9 00       ..  :3231[1]
-    jsr sub_c2894                                                     ; 3364: 20 94 28     .( :3233[1]
+    jsr something59_TODO                                              ; 3364: 20 94 28     .( :3233[1]
     bne c3247                                                         ; 3367: d0 0f       ..  :3236[1]
     ldx #$51 ; 'Q'                                                    ; 3369: a2 51       .Q  :3238[1]
     lda l31d7                                                         ; 336b: ad d7 31    ..1 :323a[1]
@@ -5062,7 +5069,7 @@ c3276
     bne c328d                                                         ; 33ac: d0 10       ..  :327b[1]
     dec l2550                                                         ; 33ae: ce 50 25    .P% :327d[1]
     lda #0                                                            ; 33b1: a9 00       ..  :3280[1]
-    jsr sub_c2894                                                     ; 33b3: 20 94 28     .( :3282[1]
+    jsr something59_TODO                                              ; 33b3: 20 94 28     .( :3282[1]
     bne c32ac                                                         ; 33b6: d0 25       .%  :3285[1]
     cpy #$7a ; 'z'                                                    ; 33b8: c0 7a       .z  :3287[1]
     beq c32ac                                                         ; 33ba: f0 21       .!  :3289[1]
@@ -5073,7 +5080,7 @@ c328d
     bne c32ac                                                         ; 33c3: d0 18       ..  :3292[1]
     dec l2550                                                         ; 33c5: ce 50 25    .P% :3294[1]
     lda #0                                                            ; 33c8: a9 00       ..  :3297[1]
-    jsr sub_c2894                                                     ; 33ca: 20 94 28     .( :3299[1]
+    jsr something59_TODO                                              ; 33ca: 20 94 28     .( :3299[1]
     bne c32a5                                                         ; 33cd: d0 07       ..  :329c[1]
     cpy #$87                                                          ; 33cf: c0 87       ..  :329e[1]
     beq c32a5                                                         ; 33d1: f0 03       ..  :32a0[1]
@@ -7306,7 +7313,6 @@ pydis_end
 ;     c1f06
 ;     c1f23
 ;     c1f2d
-;     c1f5d
 ;     c1f96
 ;     c1fa0
 ;     c1fb7
@@ -7716,7 +7722,6 @@ pydis_end
 ;     sub_c1e17
 ;     sub_c1ebb
 ;     sub_c1efa
-;     sub_c1f6d
 ;     sub_c20f7
 ;     sub_c211e
 ;     sub_c2157
@@ -7738,7 +7743,6 @@ pydis_end
 ;     sub_c2770
 ;     sub_c2859
 ;     sub_c286d
-;     sub_c2894
 ;     sub_c2980
 ;     sub_c2adb
 ;     sub_c2b37
