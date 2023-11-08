@@ -12,6 +12,16 @@ expr(0x3adb, "third_level_handler") # TODO: rename
 entry(get_u16_binary(0x3ad7), "level_handler")
 entry(get_u16_binary(0x3ad9), "second_level_handler")
 entry(get_u16_binary(0x3adb), "third_level_handler")
+word(0x3adf)
+expr(0x3adf, "fourth_level_handler") # TODO: probably data, not actually a handler (code)
+label(get_u16_binary(0x3adf), "fourth_level_handler")
+
+entry(0x3b29, "some_code1")
+entry(0x3d21, "some_data1")
+entry(0x3f8b, "some_code2")
+entry(0x3fd9, "some_code3")
+label(0x4052, "some_data2")
+entry(0x424f, "some_code4")
 
 go()
 
