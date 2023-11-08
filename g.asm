@@ -192,7 +192,7 @@ l003f                                   = $3f
 l0040                                   = $40
 l0041                                   = $41
 l0042                                   = $42
-l0043                                   = $43
+print_in_italics_flag                   = $43
 l0044                                   = $44
 eor_key                                 = $45
 return_key_pressed_pending              = $46
@@ -515,7 +515,7 @@ loop_c1213
     bpl loop_c1213                                                    ; 1348: 10 fa       ..  :1217[1]
     ldx l3ad7                                                         ; 134a: ae d7 3a    ..: :1219[1]
     ldy c3ad8                                                         ; 134d: ac d8 3a    ..: :121c[1]
-    jsr jmp_xy                                                        ; 1350: 20 66 19     f. :121f[1]
+    jsr jmp_yx                                                        ; 1350: 20 66 19     f. :121f[1]
     lda desired_level                                                 ; 1353: a5 31       .1  :1222[1]
     sec                                                               ; 1355: 38          8   :1224[1]
     sbc #first_level_letter                                           ; 1356: e9 41       .A  :1225[1]
@@ -556,7 +556,7 @@ loop_c1213
     tya                                                               ; 139c: 98          .   :126b[1]
     adc #0                                                            ; 139d: 69 00       i.  :126c[1]
     tay                                                               ; 139f: a8          .   :126e[1]
-    jmp jmp_xy                                                        ; 13a0: 4c 66 19    Lf. :126f[1]
+    jmp jmp_yx                                                        ; 13a0: 4c 66 19    Lf. :126f[1]
 
 data_filename
     !text "data"                                                      ; 13a3: 64 61 74... dat :1272[1]
@@ -604,7 +604,7 @@ something23_TODO
     sta l132b                                                         ; 13ee: 8d 2b 13    .+. :12bd[1]
     ldx l3ad9                                                         ; 13f1: ae d9 3a    ..: :12c0[1]
     ldy l3ada                                                         ; 13f4: ac da 3a    ..: :12c3[1]
-    jsr jmp_xy                                                        ; 13f7: 20 66 19     f. :12c6[1]
+    jsr jmp_yx                                                        ; 13f7: 20 66 19     f. :12c6[1]
     lda #0                                                            ; 13fa: a9 00       ..  :12c9[1]
     sta l132b                                                         ; 13fc: 8d 2b 13    .+. :12cb[1]
     lda desired_level                                                 ; 13ff: a5 31       .1  :12ce[1]
@@ -640,7 +640,7 @@ c1306
     jsr something19_TODO                                              ; 1440: 20 cd 22     ." :130f[1]
     ldx l3ad9                                                         ; 1443: ae d9 3a    ..: :1312[1]
     ldy l3ada                                                         ; 1446: ac da 3a    ..: :1315[1]
-    jsr jmp_xy                                                        ; 1449: 20 66 19     f. :1318[1]
+    jsr jmp_yx                                                        ; 1449: 20 66 19     f. :1318[1]
     jmp something12_TODO                                              ; 144c: 4c c3 18    L.. :131b[1]
 
 c131e
@@ -1733,7 +1733,7 @@ loop_c1957
     rts                                                               ; 1a96: 60          `   :1965[1]
 
 ; use the value stored in the X,Y registers as an address to jump to
-jmp_xy
+jmp_yx
     stx jmp_instruction+1                                             ; 1a97: 8e 6d 19    .m. :1966[1]
     sty jmp_instruction+2                                             ; 1a9a: 8c 6e 19    .n. :1969[1]
 jmp_instruction
@@ -1769,8 +1769,8 @@ something13_TODO
     lda #3                                                            ; 1ad3: a9 03       ..  :19a2[1]
     jsr sub_c1ebb                                                     ; 1ad5: 20 bb 1e     .. :19a4[1]
     iny                                                               ; 1ad8: c8          .   :19a7[1]
-    lda #$3a ; ':'                                                    ; 1ad9: a9 3a       .:  :19a8[1]
-    jsr sub_c1f4c                                                     ; 1adb: 20 4c 1f     L. :19aa[1]
+    lda #spriteid_brazier                                             ; 1ad9: a9 3a       .:  :19a8[1]
+    jsr draw_sprite_a_at_character_xy                                 ; 1adb: 20 4c 1f     L. :19aa[1]
     dey                                                               ; 1ade: 88          .   :19ad[1]
     inx                                                               ; 1adf: e8          .   :19ae[1]
     lda l1a0f                                                         ; 1ae0: ad 0f 1a    ... :19af[1]
@@ -1785,8 +1785,8 @@ c19b9
     lda #$ff                                                          ; 1af1: a9 ff       ..  :19c0[1]
     sta sprite_reflect_flag                                           ; 1af3: 85 1d       ..  :19c2[1]
     iny                                                               ; 1af5: c8          .   :19c4[1]
-    lda #$3a ; ':'                                                    ; 1af6: a9 3a       .:  :19c5[1]
-    jsr sub_c1f4c                                                     ; 1af8: 20 4c 1f     L. :19c7[1]
+    lda #spriteid_brazier                                             ; 1af6: a9 3a       .:  :19c5[1]
+    jsr draw_sprite_a_at_character_xy                                 ; 1af8: 20 4c 1f     L. :19c7[1]
     dey                                                               ; 1afb: 88          .   :19ca[1]
     dex                                                               ; 1afc: ca          .   :19cb[1]
     lda l1a0f                                                         ; 1afd: ad 0f 1a    ... :19cc[1]
@@ -2165,7 +2165,7 @@ c1c3b
     lda #$ff                                                          ; 1d72: a9 ff       ..  :1c41[1]
     sta sprite_reflect_flag                                           ; 1d74: 85 1d       ..  :1c43[1]
     lda sprite_number                                                 ; 1d76: a5 16       ..  :1c45[1]
-    jsr sub_c1f4c                                                     ; 1d78: 20 4c 1f     L. :1c47[1]
+    jsr draw_sprite_a_at_character_xy                                 ; 1d78: 20 4c 1f     L. :1c47[1]
     dex                                                               ; 1d7b: ca          .   :1c4a[1]
     jmp c1c6e                                                         ; 1d7c: 4c 6e 1c    Ln. :1c4b[1]
 
@@ -2199,8 +2199,8 @@ c1c6e
     bne c1c82                                                         ; 1da8: d0 09       ..  :1c77[1]
     lda #$ff                                                          ; 1daa: a9 ff       ..  :1c79[1]
     sta sprite_reflect_flag                                           ; 1dac: 85 1d       ..  :1c7b[1]
-    lda #$2f ; '/'                                                    ; 1dae: a9 2f       ./  :1c7d[1]
-    jsr sub_c1f4c                                                     ; 1db0: 20 4c 1f     L. :1c7f[1]
+    lda #spriteid_corner_top_right                                    ; 1dae: a9 2f       ./  :1c7d[1]
+    jsr draw_sprite_a_at_character_xy                                 ; 1db0: 20 4c 1f     L. :1c7f[1]
 c1c82
     iny                                                               ; 1db3: c8          .   :1c82[1]
     iny                                                               ; 1db4: c8          .   :1c83[1]
@@ -2211,8 +2211,8 @@ c1c82
     bne c1c98                                                         ; 1dbe: d0 09       ..  :1c8d[1]
     lda #$ff                                                          ; 1dc0: a9 ff       ..  :1c8f[1]
     sta sprite_reflect_flag                                           ; 1dc2: 85 1d       ..  :1c91[1]
-    lda #$2e ; '.'                                                    ; 1dc4: a9 2e       ..  :1c93[1]
-    jsr sub_c1f4c                                                     ; 1dc6: 20 4c 1f     L. :1c95[1]
+    lda #spriteid_corner_bottom_right                                 ; 1dc4: a9 2e       ..  :1c93[1]
+    jsr draw_sprite_a_at_character_xy                                 ; 1dc6: 20 4c 1f     L. :1c95[1]
 c1c98
     dex                                                               ; 1dc9: ca          .   :1c98[1]
     dey                                                               ; 1dca: 88          .   :1c99[1]
@@ -2221,7 +2221,7 @@ c1c98
 c1c9d
     jsr sub_c1cf3                                                     ; 1dce: 20 f3 1c     .. :1c9d[1]
     beq c1ca8                                                         ; 1dd1: f0 06       ..  :1ca0[1]
-    jsr sub_c1f4c                                                     ; 1dd3: 20 4c 1f     L. :1ca2[1]
+    jsr draw_sprite_a_at_character_xy                                 ; 1dd3: 20 4c 1f     L. :1ca2[1]
     jmp c1cc8                                                         ; 1dd6: 4c c8 1c    L.. :1ca5[1]
 
 c1ca8
@@ -2252,9 +2252,9 @@ c1cc8
     jsr sub_c1efa                                                     ; 1dfd: 20 fa 1e     .. :1ccc[1]
     cmp #3                                                            ; 1e00: c9 03       ..  :1ccf[1]
     bne c1cda                                                         ; 1e02: d0 07       ..  :1cd1[1]
-    lda #$2f ; '/'                                                    ; 1e04: a9 2f       ./  :1cd3[1]
+    lda #spriteid_corner_top_right                                    ; 1e04: a9 2f       ./  :1cd3[1]
     inx                                                               ; 1e06: e8          .   :1cd5[1]
-    jsr sub_c1f4c                                                     ; 1e07: 20 4c 1f     L. :1cd6[1]
+    jsr draw_sprite_a_at_character_xy                                 ; 1e07: 20 4c 1f     L. :1cd6[1]
     dex                                                               ; 1e0a: ca          .   :1cd9[1]
 c1cda
     iny                                                               ; 1e0b: c8          .   :1cda[1]
@@ -2264,9 +2264,9 @@ c1cda
     jsr sub_c1efa                                                     ; 1e11: 20 fa 1e     .. :1ce0[1]
     cmp #3                                                            ; 1e14: c9 03       ..  :1ce3[1]
     bne c1cee                                                         ; 1e16: d0 07       ..  :1ce5[1]
-    lda #$2e ; '.'                                                    ; 1e18: a9 2e       ..  :1ce7[1]
+    lda #spriteid_corner_bottom_right                                 ; 1e18: a9 2e       ..  :1ce7[1]
     inx                                                               ; 1e1a: e8          .   :1ce9[1]
-    jsr sub_c1f4c                                                     ; 1e1b: 20 4c 1f     L. :1cea[1]
+    jsr draw_sprite_a_at_character_xy                                 ; 1e1b: 20 4c 1f     L. :1cea[1]
     dex                                                               ; 1e1e: ca          .   :1ced[1]
 c1cee
     inx                                                               ; 1e1f: e8          .   :1cee[1]
@@ -2549,9 +2549,9 @@ c1f2d
     bmi c1f06                                                         ; 2077: 30 be       0.  :1f46[1]
     ldy #$17                                                          ; 2079: a0 17       ..  :1f48[1]
     bne c1f06                                                         ; 207b: d0 ba       ..  :1f4a[1]
-sub_c1f4c
+draw_sprite_a_at_character_xy
     sta sprite_number                                                 ; 207d: 85 16       ..  :1f4c[1]
-    jsr sub_c1f84                                                     ; 207f: 20 84 1f     .. :1f4e[1]
+    jsr set_sprite_pixel_position_from_character_xy                   ; 207f: 20 84 1f     .. :1f4e[1]
     jsr sprite_op                                                     ; 2082: 20 8d 13     .. :1f51[1]
     lda sprite_number                                                 ; 2085: a5 16       ..  :1f54[1]
     rts                                                               ; 2087: 60          `   :1f56[1]
@@ -2559,7 +2559,7 @@ sub_c1f4c
     !byte $20, $4c, $1f, $4c, $44, $1e                                ; 2088: 20 4c 1f...  L. :1f57[1]
 
 c1f5d
-    jsr sub_c1f84                                                     ; 208e: 20 84 1f     .. :1f5d[1]
+    jsr set_sprite_pixel_position_from_character_xy                   ; 208e: 20 84 1f     .. :1f5d[1]
     stx l1f6c                                                         ; 2091: 8e 6c 1f    .l. :1f60[1]
     tax                                                               ; 2094: aa          .   :1f63[1]
     jsr sub_c1f6d                                                     ; 2095: 20 6d 1f     m. :1f64[1]
@@ -2583,7 +2583,7 @@ sub_c1f6d
     pla                                                               ; 20b3: 68          h   :1f82[1]
     rts                                                               ; 20b4: 60          `   :1f83[1]
 
-sub_c1f84
+set_sprite_pixel_position_from_character_xy
     pha                                                               ; 20b5: 48          H   :1f84[1]
     txa                                                               ; 20b6: 8a          .   :1f85[1]
     pha                                                               ; 20b7: 48          H   :1f86[1]
@@ -3149,10 +3149,10 @@ transform
     lda #$ff                                                          ; 2478: a9 ff       ..  :2347[1]
     ldx #<sound_data2                                                 ; 247a: a2 d0       ..  :2349[1]
     ldy #>sound_data2                                                 ; 247c: a0 38       .8  :234b[1]
-    jsr play_sound_xy                                                 ; 247e: 20 f6 38     .8 :234d[1]
+    jsr play_sound_yx                                                 ; 247e: 20 f6 38     .8 :234d[1]
     ldx #<sound_data3                                                 ; 2481: a2 ba       ..  :2350[1]
     ldy #>sound_data3                                                 ; 2483: a0 38       .8  :2352[1]
-    jsr play_sound_xy                                                 ; 2485: 20 f6 38     .8 :2354[1]
+    jsr play_sound_yx                                                 ; 2485: 20 f6 38     .8 :2354[1]
 return11
     rts                                                               ; 2488: 60          `   :2357[1]
 
@@ -3206,10 +3206,10 @@ sub_c23a9
     lda #0                                                            ; 24df: a9 00       ..  :23ae[1]
     ldx #<sound_data4                                                 ; 24e1: a2 ee       ..  :23b0[1]
     ldy #>sound_data4                                                 ; 24e3: a0 38       .8  :23b2[1]
-    jsr play_sound_xy                                                 ; 24e5: 20 f6 38     .8 :23b4[1]
+    jsr play_sound_yx                                                 ; 24e5: 20 f6 38     .8 :23b4[1]
     ldx #<sound_data5                                                 ; 24e8: a2 e6       ..  :23b7[1]
     ldy #>sound_data5                                                 ; 24ea: a0 38       .8  :23b9[1]
-    jsr play_sound_xy                                                 ; 24ec: 20 f6 38     .8 :23bb[1]
+    jsr play_sound_yx                                                 ; 24ec: 20 f6 38     .8 :23bb[1]
     pla                                                               ; 24ef: 68          h   :23be[1]
     tay                                                               ; 24f0: a8          .   :23bf[1]
     pla                                                               ; 24f1: 68          h   :23c0[1]
@@ -4268,7 +4268,7 @@ toggle_sound_on_off
     lda #0                                                            ; 2c3c: a9 00       ..  :2b0b[1]   ; play brief tick sound
     ldx #<sound_data1                                                 ; 2c3e: a2 a4       ..  :2b0d[1]
     ldy #>sound_data1                                                 ; 2c40: a0 38       .8  :2b0f[1]
-    jsr play_sound_xy                                                 ; 2c42: 20 f6 38     .8 :2b11[1]
+    jsr play_sound_yx                                                 ; 2c42: 20 f6 38     .8 :2b11[1]
     pla                                                               ; 2c45: 68          h   :2b14[1]   ; recall current sound flag
     eor #$ff                                                          ; 2c46: 49 ff       I.  :2b15[1]   ; toggle current flag
     sta sound_enable_flag                                             ; 2c48: 8d 66 39    .f9 :2b17[1]   ; save new sound flag
@@ -5779,7 +5779,7 @@ print_encrypted_string_at_yx
     sta print_char_target                                             ; 3953: 8d 4e 38    .N8 :3822[1]
     lda #>print_italic                                                ; 3956: a9 18       ..  :3825[1]
     sta print_char_target + 1                                         ; 3958: 8d 4f 38    .O8 :3827[1]
-    lda l0043                                                         ; 395b: a5 43       .C  :382a[1]
+    lda print_in_italics_flag                                         ; 395b: a5 43       .C  :382a[1]
     bne c3838                                                         ; 395d: d0 0a       ..  :382c[1]
     lda #<oswrch                                                      ; 395f: a9 ee       ..  :382e[1]
     sta print_char_target                                             ; 3961: 8d 4e 38    .N8 :3830[1]
@@ -5887,14 +5887,25 @@ sound_data5
 sound_data4
     !byte $11,   0,   0,   0, $28,   0,   1,   0                      ; 3a1f: 11 00 00... ... :38ee[1]
 
-play_sound_xy
-    sta l3973                                                         ; 3a27: 8d 73 39    .s9 :38f6[1]
+; *************************************************************************************
+; 
+; Play a sound
+; 
+; On Extry:
+;     YX: Address of SOUND block to play (eight bytes)
+; 
+; On Exit:
+;     Preserves A
+; 
+; *************************************************************************************
+play_sound_yx
+    sta remember_a                                                    ; 3a27: 8d 73 39    .s9 :38f6[1]
 ; remember address1 on stack
     lda address1_low                                                  ; 3a2a: a5 70       .p  :38f9[1]
     pha                                                               ; 3a2c: 48          H   :38fb[1]
     lda address1_high                                                 ; 3a2d: a5 71       .q  :38fc[1]
     pha                                                               ; 3a2f: 48          H   :38fe[1]
-; store XY address
+; store YX address
     stx address1_low                                                  ; 3a30: 86 70       .p  :38ff[1]
     sty address1_high                                                 ; 3a32: 84 71       .q  :3901[1]
     lda sound_enable_flag                                             ; 3a34: ad 66 39    .f9 :3903[1]
@@ -5906,7 +5917,7 @@ play_sound_xy
     lda (address1_low),y                                              ; 3a41: b1 70       .p  :3910[1]
     and #3                                                            ; 3a43: 29 03       ).  :3912[1]
     tax                                                               ; 3a45: aa          .   :3914[1]
-    lda l3973                                                         ; 3a46: ad 73 39    .s9 :3915[1]
+    lda remember_a                                                    ; 3a46: ad 73 39    .s9 :3915[1]
     cmp four_entry_table3_maybe_sound,x                               ; 3a49: dd 6f 39    .o9 :3918[1]
     bcc finish_play_sound                                             ; 3a4c: 90 37       .7  :391b[1]
     sta four_entry_table3_maybe_sound,x                               ; 3a4e: 9d 6f 39    .o9 :391d[1]
@@ -5944,7 +5955,7 @@ finish_play_sound
     sta address1_high                                                 ; 3a86: 85 71       .q  :3955[1]
     pla                                                               ; 3a88: 68          h   :3957[1]
     sta address1_low                                                  ; 3a89: 85 70       .p  :3958[1]
-    lda l3973                                                         ; 3a8b: ad 73 39    .s9 :395a[1]
+    lda remember_a                                                    ; 3a8b: ad 73 39    .s9 :395a[1]
     rts                                                               ; 3a8e: 60          `   :395d[1]
 
 define_envelope
@@ -5964,7 +5975,7 @@ four_entry_table3_maybe_sound
     !byte 0                                                           ; 3aa0: 00          .   :396f[1]
 l3970
     !byte 0, 0, 0                                                     ; 3aa1: 00 00 00    ... :3970[1]
-l3973
+remember_a
     !byte 0                                                           ; 3aa4: 00          .   :3973[1]
 l3974
     !byte   0, $20, $20, $ff,   0                                     ; 3aa5: 00 20 20... .   :3974[1]
@@ -6355,7 +6366,7 @@ define_character_fe_loop
     lda #$cb                                                          ; 3d22: a9 cb       ..
     sta eor_key                                                       ; 3d24: 85 45       .E
     lda #$ff                                                          ; 3d26: a9 ff       ..
-    sta l0043                                                         ; 3d28: 85 43       .C
+    sta print_in_italics_flag                                         ; 3d28: 85 43       .C
     lda #0                                                            ; 3d2a: a9 00       ..
     sta l003a                                                         ; 3d2c: 85 3a       .:
     sta l003b                                                         ; 3d2e: 85 3b       .;
@@ -6661,8 +6672,8 @@ c3f2d
     sta screen_base_address_high                                      ; 3f40: 85 4c       .L
     ldx #$24 ; '$'                                                    ; 3f42: a2 24       .$
     ldy #6                                                            ; 3f44: a0 06       ..
-    lda #9                                                            ; 3f46: a9 09       ..
-    jsr sub_c1f4c                                                     ; 3f48: 20 4c 1f     L.
+    lda #spriteid_blob_thing8                                         ; 3f46: a9 09       ..
+    jsr draw_sprite_a_at_character_xy                                 ; 3f48: 20 4c 1f     L.
     pla                                                               ; 3f4b: 68          h
     sta screen_base_address_high                                      ; 3f4c: 85 4c       .L
     pla                                                               ; 3f4e: 68          h
@@ -7444,7 +7455,6 @@ pydis_end
 ;     l0040
 ;     l0041
 ;     l0042
-;     l0043
 ;     l0044
 ;     l0049
 ;     l004a
@@ -7547,7 +7557,6 @@ pydis_end
 ;     l3967
 ;     l396b
 ;     l3970
-;     l3973
 ;     l3974
 ;     l3a8e
 ;     l3ad7
@@ -7624,9 +7633,7 @@ pydis_end
 ;     sub_c1e44
 ;     sub_c1ebb
 ;     sub_c1efa
-;     sub_c1f4c
 ;     sub_c1f6d
-;     sub_c1f84
 ;     sub_c20f7
 ;     sub_c211e
 ;     sub_c2157
@@ -8152,11 +8159,23 @@ pydis_end
 !if (sixteen_entry_table2 - 1) != $0a7e {
     !error "Assertion failed: sixteen_entry_table2 - 1 == $0a7e"
 }
+!if (spriteid_blob_thing8) != $09 {
+    !error "Assertion failed: spriteid_blob_thing8 == $09"
+}
+!if (spriteid_brazier) != $3a {
+    !error "Assertion failed: spriteid_brazier == $3a"
+}
 !if (spriteid_corner_bottom_left) != $2d {
     !error "Assertion failed: spriteid_corner_bottom_left == $2d"
 }
+!if (spriteid_corner_bottom_right) != $2e {
+    !error "Assertion failed: spriteid_corner_bottom_right == $2e"
+}
 !if (spriteid_corner_top_left) != $2c {
     !error "Assertion failed: spriteid_corner_top_left == $2c"
+}
+!if (spriteid_corner_top_right) != $2f {
+    !error "Assertion failed: spriteid_corner_top_right == $2f"
 }
 !if (spriteid_icon_background) != $01 {
     !error "Assertion failed: spriteid_icon_background == $01"

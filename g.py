@@ -86,6 +86,18 @@ label(0x0019, "sprite_x_base_high")
 label(0x001a, "sprite_y_base_low")
 label(0x001b, "sprite_y_base_high")
 label(0x001d, "sprite_reflect_flag")
+
+# Keypresses are checked in the IRQ routine every vsync.
+# Because the main game loop can be slow, multiple vsyncs can occur, so keypresses are accumulated and stored in "pending" variables
+# The main game can deal with these in the next tick.
+label(0x0020, "valid_direction_pending")
+label(0x002a, "space_bar_press_pending")
+label(0x002b, "space_bar_pressed")
+label(0x002c, "z_key_pressed_pending")
+label(0x002d, "x_key_pressed_pending")
+label(0x0046, "return_key_pressed_pending")
+
+label(0x0043, "print_in_italics_flag")
 label(0x004c, "screen_base_address_high")
 
 label(0x0070, "address1_low")
@@ -113,16 +125,6 @@ label(0x0085, "sprite_character_x_pos")
 label(0x0086, "amount_sprite_is_offscreen_x")
 
 label(0x0088, "vertical_sprite_position_is_valid_flag")
-
-# Keypresses are checked in the IRQ routine every vsync.
-# Because the main game loop can be slow, multiple vsyncs can occur, so keypresses are accumulated and stored in "pending" variables
-# The main game can deal with these in the next tick.
-label(0x0020, "valid_direction_pending")
-label(0x002a, "space_bar_press_pending")
-label(0x002b, "space_bar_pressed")
-label(0x002c, "z_key_pressed_pending")
-label(0x002d, "x_key_pressed_pending")
-label(0x0046, "return_key_pressed_pending")
 
 label(0x00fc, "interrupt_accumulator")
 
@@ -216,7 +218,11 @@ sprite_dict = {
     0x58: "spriteid_rope4",
 }
 
+label(0x1f4c, "draw_sprite_a_at_character_xy")
+label(0x1f84, "set_sprite_pixel_position_from_character_xy")
+
 substitute_constants("sta sprite_number", 'a', sprite_dict, True)
+substitute_constants("jsr draw_sprite_a_at_character_xy", 'a', sprite_dict, True)
 
 label(0x137f, "reset_sprite_flags_and_exit")
 comment(0x139f, "check flags to see if we are copying to another sprite", inline=True)
@@ -401,7 +407,7 @@ label(0x196c, "jmp_instruction")
 expr(0x1967, "jmp_instruction+1")
 expr(0x196a, "jmp_instruction+2")
 expr(0x196d, "0")
-label(0x1966, "jmp_xy")
+label(0x1966, "jmp_yx")
 expr(0x11e7, make_lo("brk_handler"))
 expr(0x11ec, make_hi("brk_handler"))
 comment(0x16ff, "set brk handler")
@@ -915,7 +921,7 @@ label(0x38a4, "sound_data1")
 expr(0x2b0e, make_lo("sound_data1"))
 expr(0x2b10, make_hi("sound_data1"))
 comment(0x38f9, "remember address1 on stack")
-comment(0x38ff, "store XY address")
+comment(0x38ff, "store YX address")
 comment(0x3954, "restore address1 from stack")
 
 label(0x38d0, "sound_data2")
@@ -934,7 +940,18 @@ label(0x38e6, "sound_data5")
 expr(0x23b8, make_lo("sound_data5"))
 expr(0x23ba, make_hi("sound_data5"))
 
-label(0x38f6, "play_sound_xy")
+comment(0x38f6, """*************************************************************************************
+
+Play a sound
+
+On Extry:
+    YX: Address of SOUND block to play (eight bytes)
+
+On Exit:
+    Preserves A
+
+*************************************************************************************""")
+label(0x38f6, "play_sound_yx")
 label(0x394b, "play_sound")
 label(0x3932, "flush_sound_buffer_X")
 comment(0x3932, "add four to X to get sound buffer number", inline=True)
@@ -1047,6 +1064,7 @@ label(0x1109, "timing_latch_high")
 label(0x110a, "display_initialised_flag")
 label(0x2ee9, "four_entry_table2") # TODO: write only, at least in 'g' itself?
 label(0x396f, "four_entry_table3_maybe_sound") # TODO: possibly something to do with sound??
+label(0x3973, "remember_a")
 label(0xa6f, "sixteen_entry_table1")
 label(0xa7f, "sixteen_entry_table2")
 expr(0x3f1b, make_subtract("sixteen_entry_table2", 1))
