@@ -55,7 +55,7 @@ l1a10                       = $1a10
 l1aba                       = $1aba
 something51_TODO            = $1abb
 something26_TODO            = $1b90
-l1db9                       = $1db9
+something53_TODO            = $1db9
 l1e44                       = $1e44
 l1ebb                       = $1ebb
 l1f4c                       = $1f4c
@@ -202,18 +202,18 @@ some_code1
     ldx #$0a                                                          ; 3bae: a2 0a       ..
     ldy #2                                                            ; 3bb0: a0 02       ..
     lda #$0a                                                          ; 3bb2: a9 0a       ..
-    jsr l1db9                                                         ; 3bb4: 20 b9 1d     ..
+    jsr something53_TODO                                              ; 3bb4: 20 b9 1d     ..
     ldx #$1e                                                          ; 3bb7: a2 1e       ..
-    jsr l1db9                                                         ; 3bb9: 20 b9 1d     ..
+    jsr something53_TODO                                              ; 3bb9: 20 b9 1d     ..
     ldx #$14                                                          ; 3bbc: a2 14       ..
     lda #$10                                                          ; 3bbe: a9 10       ..
-    jsr l1db9                                                         ; 3bc0: 20 b9 1d     ..
+    jsr something53_TODO                                              ; 3bc0: 20 b9 1d     ..
     ldx #$0f                                                          ; 3bc3: a2 0f       ..
     ldy #$0d                                                          ; 3bc5: a0 0d       ..
     lda #5                                                            ; 3bc7: a9 05       ..
-    jsr l1db9                                                         ; 3bc9: 20 b9 1d     ..
+    jsr something53_TODO                                              ; 3bc9: 20 b9 1d     ..
     ldx #$19                                                          ; 3bcc: a2 19       ..
-    jsr l1db9                                                         ; 3bce: 20 b9 1d     ..
+    jsr something53_TODO                                              ; 3bce: 20 b9 1d     ..
     jsr something23_TODO                                              ; 3bd1: 20 bb 12     ..
 ; $3bd4 referenced 1 time by $3bdb
 loop_c3bd4
@@ -1102,7 +1102,7 @@ some_code4
     ldx #$21 ; '!'                                                    ; 42de: a2 21       .!
     ldy #2                                                            ; 42e0: a0 02       ..
     lda #$0e                                                          ; 42e2: a9 0e       ..
-    jsr l1db9                                                         ; 42e4: 20 b9 1d     ..
+    jsr something53_TODO                                              ; 42e4: 20 b9 1d     ..
     jsr something23_TODO                                              ; 42e7: 20 bb 12     ..
 ; $42ea referenced 1 time by $42ef
 loop_c42ea
@@ -1519,7 +1519,7 @@ pydis_end
 ;     l09be:              6
 ;     l0a71:              6
 ;     l132b:              6
-;     l1db9:              6
+;     something53_TODO:   6
 ;     l0051:              5
 ;     l0a73:              5
 ;     something52_TODO:   5
@@ -1765,7 +1765,6 @@ pydis_end
 ;     l1988
 ;     l1a10
 ;     l1aba
-;     l1db9
 ;     l1e44
 ;     l1ebb
 ;     l1f4c

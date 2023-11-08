@@ -207,6 +207,7 @@ previous_level                          = $51
 l0052                                   = $52
 l0053                                   = $53
 sprdata_ptr                             = $54
+l0056                                   = $56
 temp_sprite_address_low                 = $58
 temp_sprite_address_high                = $59
 temp_sprite_offset                      = $5a
@@ -2312,13 +2313,46 @@ c1d16
     !text "xXx"                                                       ; 1ec7: 78 58 78    xXx :1d96[1]
     !byte $1e, $1a, $0e, $0e, $1a, $1e, $16, $1e, $1e, $16, $1e, $1a  ; 1eca: 1e 1a 0e... ... :1d99[1]
     !byte $1e, $1d, $16, $1e, $1e, $1a, $1e, $16, $1e, $0e, $1a, $1e  ; 1ed6: 1e 1d 16... ... :1da5[1]
-    !byte $16, $1e, $1e, $1d, $15, $1e, $1a, $1e, $85, $56, $48, $98  ; 1ee2: 16 1e 1e... ... :1db1[1]
-    !byte $48, $f0,   9, $a9, $0b, $20, $4c, $1f, $a9,   3, $d0, $11  ; 1eee: 48 f0 09... H.. :1dbd[1]
-    !byte $a5, $56, $c9,   1, $f0, $17, $98, $29,   3, $18            ; 1efa: a5 56 c9... .V. :1dc9[1]
-    !text "iU L"                                                      ; 1f04: 69 55 20... iU  :1dd3[1]
-    !byte $1f, $a9,   2, $20, $bb, $1e, $c6, $56, $c8, $c0, $18, $90  ; 1f08: 1f a9 02... ... :1dd7[1]
-    !byte $e5, $b0, $0a, $a9, $0a, $20, $4c, $1f, $a9,   2, $20, $bb  ; 1f14: e5 b0 0a... ... :1de3[1]
-    !byte $1e, $68, $a8, $68, $60                                     ; 1f20: 1e 68 a8... .h. :1def[1]
+    !byte $16, $1e, $1e, $1d, $15, $1e, $1a, $1e                      ; 1ee2: 16 1e 1e... ... :1db1[1]
+
+; TODO: This is called from e.g. data
+something53_TODO
+    sta l0056                                                         ; 1eea: 85 56       .V  :1db9[1]
+    pha                                                               ; 1eec: 48          H   :1dbb[1]
+    tya                                                               ; 1eed: 98          .   :1dbc[1]
+    pha                                                               ; 1eee: 48          H   :1dbd[1]
+    beq c1dc9                                                         ; 1eef: f0 09       ..  :1dbe[1]
+    lda #spriteid_w_thing                                             ; 1ef1: a9 0b       ..  :1dc0[1]
+    jsr draw_sprite_a_at_character_xy                                 ; 1ef3: 20 4c 1f     L. :1dc2[1]
+    lda #3                                                            ; 1ef6: a9 03       ..  :1dc5[1]
+    bne c1dda                                                         ; 1ef8: d0 11       ..  :1dc7[1]
+c1dc9
+    lda l0056                                                         ; 1efa: a5 56       .V  :1dc9[1]
+    cmp #1                                                            ; 1efc: c9 01       ..  :1dcb[1]
+    beq c1de6                                                         ; 1efe: f0 17       ..  :1dcd[1]
+    tya                                                               ; 1f00: 98          .   :1dcf[1]
+    and #3                                                            ; 1f01: 29 03       ).  :1dd0[1]
+    clc                                                               ; 1f03: 18          .   :1dd2[1]
+    adc #$55 ; 'U'                                                    ; 1f04: 69 55       iU  :1dd3[1]
+    jsr draw_sprite_a_at_character_xy                                 ; 1f06: 20 4c 1f     L. :1dd5[1]
+    lda #2                                                            ; 1f09: a9 02       ..  :1dd8[1]
+c1dda
+    jsr sub_c1ebb                                                     ; 1f0b: 20 bb 1e     .. :1dda[1]
+    dec l0056                                                         ; 1f0e: c6 56       .V  :1ddd[1]
+    iny                                                               ; 1f10: c8          .   :1ddf[1]
+    cpy #$18                                                          ; 1f11: c0 18       ..  :1de0[1]
+    bcc c1dc9                                                         ; 1f13: 90 e5       ..  :1de2[1]
+    bcs c1df0                                                         ; 1f15: b0 0a       ..  :1de4[1]
+c1de6
+    lda #spriteid_blob_thing9                                         ; 1f17: a9 0a       ..  :1de6[1]
+    jsr draw_sprite_a_at_character_xy                                 ; 1f19: 20 4c 1f     L. :1de8[1]
+    lda #2                                                            ; 1f1c: a9 02       ..  :1deb[1]
+    jsr sub_c1ebb                                                     ; 1f1e: 20 bb 1e     .. :1ded[1]
+c1df0
+    pla                                                               ; 1f21: 68          h   :1df0[1]
+    tay                                                               ; 1f22: a8          .   :1df1[1]
+    pla                                                               ; 1f23: 68          h   :1df2[1]
+    rts                                                               ; 1f24: 60          `   :1df3[1]
 
 ; TODO: Is this code deliberately trashing the code at initialise_display?
 sub_c1df4
@@ -7255,6 +7289,10 @@ pydis_end
 ;     c1cda
 ;     c1cee
 ;     c1d16
+;     c1dc9
+;     c1dda
+;     c1de6
+;     c1df0
 ;     c1e0b
 ;     c1e2d
 ;     c1e33
@@ -7515,6 +7553,7 @@ pydis_end
 ;     l0050
 ;     l0052
 ;     l0053
+;     l0056
 ;     l005b
 ;     l0060
 ;     l0061
@@ -8203,6 +8242,9 @@ pydis_end
 !if (spriteid_blob_thing8) != $09 {
     !error "Assertion failed: spriteid_blob_thing8 == $09"
 }
+!if (spriteid_blob_thing9) != $0a {
+    !error "Assertion failed: spriteid_blob_thing9 == $0a"
+}
 !if (spriteid_brazier) != $3a {
     !error "Assertion failed: spriteid_brazier == $3a"
 }
@@ -8235,6 +8277,9 @@ pydis_end
 }
 !if (spriteid_some_small_number_of_pixels_set) != $1e {
     !error "Assertion failed: spriteid_some_small_number_of_pixels_set == $1e"
+}
+!if (spriteid_w_thing) != $0b {
+    !error "Assertion failed: spriteid_w_thing == $0b"
 }
 !if (update_displayed_transformations_remaining_high_copy_end - update_displayed_transformations_remaining_high_copy_start) != $2f {
     !error "Assertion failed: update_displayed_transformations_remaining_high_copy_end - update_displayed_transformations_remaining_high_copy_start == $2f"

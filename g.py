@@ -492,6 +492,9 @@ expr(0x1742, make_hi("data_TODO"))
 comment(0x1f57, "TODO: This is called from e.g. dataA")
 entry(0x1f57)
 
+comment(0x1db9, "TODO: This is called from e.g. data")
+entry(0x1db9)
+
 label(0x12d9, "return1")
 label(0x1376, "return2")
 label(0x16cd, "return3")
