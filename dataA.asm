@@ -68,7 +68,7 @@ l24d0                       = $24d0
 l24d1                       = $24d1
 l2551                       = $2551
 l2894                       = $2894
-l28e2                       = $28e2
+something55_TODO            = $28e2
 something50_TODO            = $2bbd
 l2eb6                       = $2eb6
 l2ee9                       = $2ee9
@@ -398,7 +398,7 @@ c3cfb
     bne c3d20                                                         ; 3d10: d0 0e       ..
     ldx #0                                                            ; 3d12: a2 00       ..
     ldy #4                                                            ; 3d14: a0 04       ..
-    jsr l28e2                                                         ; 3d16: 20 e2 28     .(
+    jsr something55_TODO                                              ; 3d16: 20 e2 28     .(
     beq c3d20                                                         ; 3d19: f0 05       ..
     lda #$80                                                          ; 3d1b: a9 80       ..
     sta l2433                                                         ; 3d1d: 8d 33 24    .3$
@@ -642,7 +642,7 @@ c3f62
     sta l09ac                                                         ; 3f6f: 8d ac 09    ...
     ldx #$0b                                                          ; 3f72: a2 0b       ..
     ldy #4                                                            ; 3f74: a0 04       ..
-    jsr l28e2                                                         ; 3f76: 20 e2 28     .(
+    jsr something55_TODO                                              ; 3f76: 20 e2 28     .(
     beq c3f8a                                                         ; 3f79: f0 0f       ..
     lda #$d3                                                          ; 3f7b: a9 d3       ..
     jsr something50_TODO                                              ; 3f7d: 20 bd 2b     .+
@@ -848,7 +848,7 @@ c40f7
     ldx #0                                                            ; 4104: a2 00       ..
     sty l40e3                                                         ; 4106: 8c e3 40    ..@
     ldy #2                                                            ; 4109: a0 02       ..
-    jsr l28e2                                                         ; 410b: 20 e2 28     .(
+    jsr something55_TODO                                              ; 410b: 20 e2 28     .(
     ldy l40e3                                                         ; 410e: ac e3 40    ..@
     ora #0                                                            ; 4111: 09 00       ..
     beq c412e                                                         ; 4113: f0 19       ..
@@ -1183,7 +1183,7 @@ c4358
     sta l24d1                                                         ; 4373: 8d d1 24    ..$
     ldx #0                                                            ; 4376: a2 00       ..
     ldy #2                                                            ; 4378: a0 02       ..
-    jsr l28e2                                                         ; 437a: 20 e2 28     .(
+    jsr something55_TODO                                              ; 437a: 20 e2 28     .(
     beq c4355                                                         ; 437d: f0 d6       ..
     lda #1                                                            ; 437f: a9 01       ..
     sta l0a02                                                         ; 4381: 8d 02 0a    ...
@@ -1197,7 +1197,7 @@ c4386
     sta l24d0                                                         ; 438f: 8d d0 24    ..$
     ldx #0                                                            ; 4392: a2 00       ..
     ldy #2                                                            ; 4394: a0 02       ..
-    jsr l28e2                                                         ; 4396: 20 e2 28     .(
+    jsr something55_TODO                                              ; 4396: 20 e2 28     .(
     beq c4355                                                         ; 4399: f0 ba       ..
     lda #$ff                                                          ; 439b: a9 ff       ..
     sta l0a02                                                         ; 439d: 8d 02 0a    ...
@@ -1524,7 +1524,7 @@ pydis_end
 ;     l0a73:              5
 ;     something52_TODO:   5
 ;     l1f5d:              5
-;     l28e2:              5
+;     something55_TODO:   5
 ;     l38ac:              5
 ;     l395e:              5
 ;     c41ae:              5
@@ -1774,7 +1774,6 @@ pydis_end
 ;     l24d1
 ;     l2551
 ;     l2894
-;     l28e2
 ;     l2eb6
 ;     l2ee9
 ;     l2eee

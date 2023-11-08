@@ -1850,7 +1850,7 @@ something14_TODO
     bne c1a59                                                         ; 1b6b: d0 1d       ..  :1a3a[1]
     ldx l1aae                                                         ; 1b6d: ae ae 1a    ... :1a3c[1]
     ldy #$0b                                                          ; 1b70: a0 0b       ..  :1a3f[1]
-    jsr sub_c28e2                                                     ; 1b72: 20 e2 28     .( :1a41[1]
+    jsr something55_TODO                                              ; 1b72: 20 e2 28     .( :1a41[1]
     beq c1a59                                                         ; 1b75: f0 13       ..  :1a44[1]
     lda desired_level                                                 ; 1b77: a5 31       .1  :1a46[1]
     sec                                                               ; 1b79: 38          8   :1a48[1]
@@ -2410,6 +2410,7 @@ c1e3d
 return7
     rts                                                               ; 1f74: 60          `   :1e43[1]
 
+; TODO: this is used by e.g. dataA
 something54_TODO
     pha                                                               ; 1f75: 48          H   :1e44[1]
     lda l003e                                                         ; 1f76: a5 3e       .>  :1e45[1]
@@ -2770,13 +2771,13 @@ c2061
     adc #$0b                                                          ; 2196: 69 0b       i.  :2065[1]
     tax                                                               ; 2198: aa          .   :2067[1]
     ldy l0060                                                         ; 2199: a4 60       .`  :2068[1]
-    jsr sub_c28e2                                                     ; 219b: 20 e2 28     .( :206a[1]
+    jsr something55_TODO                                              ; 219b: 20 e2 28     .( :206a[1]
     bne c207d                                                         ; 219e: d0 0e       ..  :206d[1]
     tya                                                               ; 21a0: 98          .   :206f[1]
     clc                                                               ; 21a1: 18          .   :2070[1]
     adc #$0b                                                          ; 21a2: 69 0b       i.  :2071[1]
     tay                                                               ; 21a4: a8          .   :2073[1]
-    jsr sub_c28e2                                                     ; 21a5: 20 e2 28     .( :2074[1]
+    jsr something55_TODO                                              ; 21a5: 20 e2 28     .( :2074[1]
     ldx l0064                                                         ; 21a8: a6 64       .d  :2077[1]
     ora #0                                                            ; 21aa: 09 00       ..  :2079[1]
     beq c208d                                                         ; 21ac: f0 10       ..  :207b[1]
@@ -3997,7 +3998,7 @@ sub_c2894
 l28e1
     !byte 0                                                           ; 2a12: 00          .   :28e1[1]
 
-sub_c28e2
+something55_TODO
     txa                                                               ; 2a13: 8a          .   :28e2[1]
     pha                                                               ; 2a14: 48          H   :28e3[1]
     tya                                                               ; 2a15: 98          .   :28e4[1]
@@ -7738,7 +7739,6 @@ pydis_end
 ;     sub_c2859
 ;     sub_c286d
 ;     sub_c2894
-;     sub_c28e2
 ;     sub_c2980
 ;     sub_c2adb
 ;     sub_c2b37
