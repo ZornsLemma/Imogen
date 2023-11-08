@@ -847,6 +847,8 @@ label(0x394b, "play_sound")
 label(0x3932, "flush_sound_buffer_X")
 comment(0x3932, "add four to X to get sound buffer number", inline=True)
 label(0x3954, "finish_play_sound")
+label(0x3966, "sound_enable_flag")
+label(0x2aff, "toggle_sound_on_off")
 
 expr(0xaf0, "last_level_letter")
 expr(0xaf7, "first_level_letter")

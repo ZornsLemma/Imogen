@@ -4157,7 +4157,7 @@ sub_c2adb
     cmp #8                                                            ; 2c1a: c9 08       ..  :2ae9[1]
     beq c2af9                                                         ; 2c1c: f0 0c       ..  :2aeb[1]
     cmp #2                                                            ; 2c1e: c9 02       ..  :2aed[1]
-    beq c2aff                                                         ; 2c20: f0 0e       ..  :2aef[1]
+    beq toggle_sound_on_off                                           ; 2c20: f0 0e       ..  :2aef[1]
     cmp #menu_action_file                                             ; 2c22: c9 03       ..  :2af1[1]
     beq c2afc                                                         ; 2c24: f0 07       ..  :2af3[1]
 return19
@@ -4172,19 +4172,19 @@ c2af9
 c2afc
     jmp c3404                                                         ; 2c2d: 4c 04 34    L.4 :2afc[1]
 
-c2aff
+toggle_sound_on_off
     jsr calculate_sprite_position_for_menu_item                       ; 2c30: 20 46 2c     F, :2aff[1]
-    lda l3966                                                         ; 2c33: ad 66 39    .f9 :2b02[1]
+    lda sound_enable_flag                                             ; 2c33: ad 66 39    .f9 :2b02[1]
     pha                                                               ; 2c36: 48          H   :2b05[1]
     lda #$ff                                                          ; 2c37: a9 ff       ..  :2b06[1]
-    sta l3966                                                         ; 2c39: 8d 66 39    .f9 :2b08[1]
+    sta sound_enable_flag                                             ; 2c39: 8d 66 39    .f9 :2b08[1]
     lda #0                                                            ; 2c3c: a9 00       ..  :2b0b[1]
     ldx #<sound_data1                                                 ; 2c3e: a2 a4       ..  :2b0d[1]
     ldy #>sound_data1                                                 ; 2c40: a0 38       .8  :2b0f[1]
     jsr play_sound_xy                                                 ; 2c42: 20 f6 38     .8 :2b11[1]
     pla                                                               ; 2c45: 68          h   :2b14[1]
     eor #$ff                                                          ; 2c46: 49 ff       I.  :2b15[1]
-    sta l3966                                                         ; 2c48: 8d 66 39    .f9 :2b17[1]
+    sta sound_enable_flag                                             ; 2c48: 8d 66 39    .f9 :2b17[1]
     lda #$1f                                                          ; 2c4b: a9 1f       ..  :2b1a[1]
     sta sprite_number                                                 ; 2c4d: 85 16       ..  :2b1c[1]
     lda screen_base_address_high                                      ; 2c4f: a5 4c       .L  :2b1e[1]
@@ -4192,7 +4192,7 @@ c2aff
     lda #$58 ; 'X'                                                    ; 2c52: a9 58       .X  :2b21[1]
     sta screen_base_address_high                                      ; 2c54: 85 4c       .L  :2b23[1]
     lda #0                                                            ; 2c56: a9 00       ..  :2b25[1]
-    ldx l3966                                                         ; 2c58: ae 66 39    .f9 :2b27[1]
+    ldx sound_enable_flag                                             ; 2c58: ae 66 39    .f9 :2b27[1]
     bne c2b2e                                                         ; 2c5b: d0 02       ..  :2b2a[1]
     lda #2                                                            ; 2c5d: a9 02       ..  :2b2c[1]
 c2b2e
@@ -5810,7 +5810,7 @@ play_sound_xy
 ; store XY address
     stx address1_low                                                  ; 3a30: 86 70       .p  :38ff[1]
     sty address1_high                                                 ; 3a32: 84 71       .q  :3901[1]
-    lda l3966                                                         ; 3a34: ad 66 39    .f9 :3903[1]
+    lda sound_enable_flag                                             ; 3a34: ad 66 39    .f9 :3903[1]
     beq finish_play_sound                                             ; 3a37: f0 4c       .L  :3906[1]
     ldy #0                                                            ; 3a39: a0 00       ..  :3908[1]
     lda (address1_low),y                                              ; 3a3b: b1 70       .p  :390a[1]
@@ -5867,7 +5867,7 @@ define_envelope
     pla                                                               ; 3a95: 68          h   :3964[1]
     rts                                                               ; 3a96: 60          `   :3965[1]
 
-l3966
+sound_enable_flag
     !byte $ff                                                         ; 3a97: ff          .   :3966[1]
 l3967
     !byte 0, 0, 0, 0                                                  ; 3a98: 00 00 00... ... :3967[1]
@@ -7206,7 +7206,6 @@ pydis_end
 ;     c2af6
 ;     c2af9
 ;     c2afc
-;     c2aff
 ;     c2b2e
 ;     c2b84
 ;     c2bba
@@ -7458,7 +7457,6 @@ pydis_end
 ;     l377d
 ;     l38ad
 ;     l38c3
-;     l3966
 ;     l3967
 ;     l396b
 ;     l3970
