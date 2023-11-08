@@ -42,7 +42,7 @@ l0a73                       = $0a73
 string_input_buffer         = $0a90
 l1103                       = $1103
 l1140                       = $1140
-l12bb                       = $12bb
+something23_TODO            = $12bb
 l12da                       = $12da
 l132b                       = $132b
 pending_toolbar_colour      = $175d
@@ -214,7 +214,7 @@ some_code1
     jsr l1db9                                                         ; 3bc9: 20 b9 1d     ..
     ldx #$19                                                          ; 3bcc: a2 19       ..
     jsr l1db9                                                         ; 3bce: 20 b9 1d     ..
-    jsr l12bb                                                         ; 3bd1: 20 bb 12     ..
+    jsr something23_TODO                                              ; 3bd1: 20 bb 12     ..
 ; $3bd4 referenced 1 time by $3bdb
 loop_c3bd4
     jsr l12da                                                         ; 3bd4: 20 da 12     ..
@@ -751,7 +751,7 @@ some_code3
     sta l003d                                                         ; 4039: 85 3d       .=
     jsr l1abb                                                         ; 403b: 20 bb 1a     ..
     jsr l1b90                                                         ; 403e: 20 90 1b     ..
-    jsr l12bb                                                         ; 4041: 20 bb 12     ..
+    jsr something23_TODO                                              ; 4041: 20 bb 12     ..
 ; $4044 referenced 1 time by $4049
 loop_c4044
     jsr l12da                                                         ; 4044: 20 da 12     ..
@@ -1103,7 +1103,7 @@ some_code4
     ldy #2                                                            ; 42e0: a0 02       ..
     lda #$0e                                                          ; 42e2: a9 0e       ..
     jsr l1db9                                                         ; 42e4: 20 b9 1d     ..
-    jsr l12bb                                                         ; 42e7: 20 bb 12     ..
+    jsr something23_TODO                                              ; 42e7: 20 bb 12     ..
 ; $42ea referenced 1 time by $42ef
 loop_c42ea
     jsr l12da                                                         ; 42ea: 20 da 12     ..
@@ -1500,161 +1500,161 @@ inverse_power_of_2_table
 pydis_end
 
 ; Label references by decreasing frequency:
-;     l003c:       34
-;     l003d:       32
-;     l1abb:       29
-;     l0030:       19
-;     l1e44:       13
-;     l0a72:       11
-;     l003e:       10
-;     l0a70:       10
-;     l0031:        8
-;     l0a02:        8
-;     l0a04:        8
-;     c3ed7:        8
-;     l09ff:        7
-;     l0a01:        7
-;     l38f6:        7
-;     some_data1:   7
-;     l09be:        6
-;     l0a71:        6
-;     l132b:        6
-;     l1db9:        6
-;     l0051:        5
-;     l0a73:        5
-;     l1f57:        5
-;     l1f5d:        5
-;     l28e2:        5
-;     l38ac:        5
-;     l395e:        5
-;     c41ae:        5
-;     c4355:        5
-;     l003b:        4
-;     l0a00:        4
-;     l0a6f:        4
-;     some_code2:   4
-;     c41d9:        4
-;     c4415:        4
-;     l0070:        3
-;     l09a8:        3
-;     l09aa:        3
-;     l09ab:        3
-;     l09ac:        3
-;     l1140:        3
-;     l12bb:        3
-;     l12da:        3
-;     l1988:        3
-;     l1aba:        3
-;     l1b90:        3
-;     l1f4c:        3
-;     l2bbd:        3
-;     l2eb6:        3
-;     l38c2:        3
-;     c3ca8:        3
-;     c3d20:        3
-;     c3f8a:        3
-;     c419f:        3
-;     c4339:        3
-;     l0040:        2
-;     l0041:        2
-;     l0950:        2
-;     l0966:        2
-;     l0a03:        2
-;     l1f6d:        2
-;     l2433:        2
-;     l38d8:        2
-;     l396f:        2
-;     c3b0e:        2
-;     c3e11:        2
-;     c3e69:        2
-;     sub_c3ef1:    2
-;     c3f51:        2
-;     l3fd5:        2
-;     l3fd6:        2
-;     some_data2:   2
-;     l40e3:        2
-;     c412e:        2
-;     c415e:        2
-;     c418c:        2
-;     c4194:        2
-;     c41c9:        2
-;     c4235:        2
-;     c432f:        2
-;     c43a0:        2
-;     l001d:        1
-;     l003a:        1
-;     l0042:        1
-;     l0052:        1
-;     l0954:        1
-;     l097c:        1
-;     l0980:        1
-;     l0992:        1
-;     l1103:        1
-;     l1a10:        1
-;     l1ebb:        1
-;     l23a9:        1
-;     l24d0:        1
-;     l24d1:        1
-;     l2551:        1
-;     l2894:        1
-;     l2ee9:        1
-;     l2eee:        1
-;     l2ef3:        1
-;     l38ae:        1
-;     l3970:        1
-;     c3b04:        1
-;     loop_c3bd4:   1
-;     sub_c3be4:    1
-;     c3bec:        1
-;     c3bf7:        1
-;     c3c74:        1
-;     c3c77:        1
-;     c3c81:        1
-;     c3c91:        1
-;     c3cb9:        1
-;     c3cc3:        1
-;     c3cd9:        1
-;     c3ce1:        1
-;     c3ce7:        1
-;     c3cfb:        1
-;     sub_c3dfc:    1
-;     c3e55:        1
-;     c3e6c:        1
-;     c3ec1:        1
-;     c3ed2:        1
-;     c3ed4:        1
-;     c3ee4:        1
-;     c3eed:        1
-;     l3eee:        1
-;     sub_c3f02:    1
-;     c3f52:        1
-;     c3f62:        1
-;     loop_c4044:   1
-;     sub_c407f:    1
-;     c40b2:        1
-;     c40c1:        1
-;     c40e0:        1
-;     c40e4:        1
-;     c40ee:        1
-;     c40f7:        1
-;     c412b:        1
-;     c4137:        1
-;     c4167:        1
-;     c4184:        1
-;     c41c1:        1
-;     c420c:        1
-;     c4224:        1
-;     c424c:        1
-;     loop_c42ea:   1
-;     sub_c42f8:    1
-;     c4352:        1
-;     c4358:        1
-;     c4386:        1
-;     c43b4:        1
-;     c43ce:        1
-;     c43d4:        1
-;     c43e3:        1
-;     c43f6:        1
+;     l003c:             34
+;     l003d:             32
+;     l1abb:             29
+;     l0030:             19
+;     l1e44:             13
+;     l0a72:             11
+;     l003e:             10
+;     l0a70:             10
+;     l0031:              8
+;     l0a02:              8
+;     l0a04:              8
+;     c3ed7:              8
+;     l09ff:              7
+;     l0a01:              7
+;     l38f6:              7
+;     some_data1:         7
+;     l09be:              6
+;     l0a71:              6
+;     l132b:              6
+;     l1db9:              6
+;     l0051:              5
+;     l0a73:              5
+;     l1f57:              5
+;     l1f5d:              5
+;     l28e2:              5
+;     l38ac:              5
+;     l395e:              5
+;     c41ae:              5
+;     c4355:              5
+;     l003b:              4
+;     l0a00:              4
+;     l0a6f:              4
+;     some_code2:         4
+;     c41d9:              4
+;     c4415:              4
+;     l0070:              3
+;     l09a8:              3
+;     l09aa:              3
+;     l09ab:              3
+;     l09ac:              3
+;     l1140:              3
+;     something23_TODO:   3
+;     l12da:              3
+;     l1988:              3
+;     l1aba:              3
+;     l1b90:              3
+;     l1f4c:              3
+;     l2bbd:              3
+;     l2eb6:              3
+;     l38c2:              3
+;     c3ca8:              3
+;     c3d20:              3
+;     c3f8a:              3
+;     c419f:              3
+;     c4339:              3
+;     l0040:              2
+;     l0041:              2
+;     l0950:              2
+;     l0966:              2
+;     l0a03:              2
+;     l1f6d:              2
+;     l2433:              2
+;     l38d8:              2
+;     l396f:              2
+;     c3b0e:              2
+;     c3e11:              2
+;     c3e69:              2
+;     sub_c3ef1:          2
+;     c3f51:              2
+;     l3fd5:              2
+;     l3fd6:              2
+;     some_data2:         2
+;     l40e3:              2
+;     c412e:              2
+;     c415e:              2
+;     c418c:              2
+;     c4194:              2
+;     c41c9:              2
+;     c4235:              2
+;     c432f:              2
+;     c43a0:              2
+;     l001d:              1
+;     l003a:              1
+;     l0042:              1
+;     l0052:              1
+;     l0954:              1
+;     l097c:              1
+;     l0980:              1
+;     l0992:              1
+;     l1103:              1
+;     l1a10:              1
+;     l1ebb:              1
+;     l23a9:              1
+;     l24d0:              1
+;     l24d1:              1
+;     l2551:              1
+;     l2894:              1
+;     l2ee9:              1
+;     l2eee:              1
+;     l2ef3:              1
+;     l38ae:              1
+;     l3970:              1
+;     c3b04:              1
+;     loop_c3bd4:         1
+;     sub_c3be4:          1
+;     c3bec:              1
+;     c3bf7:              1
+;     c3c74:              1
+;     c3c77:              1
+;     c3c81:              1
+;     c3c91:              1
+;     c3cb9:              1
+;     c3cc3:              1
+;     c3cd9:              1
+;     c3ce1:              1
+;     c3ce7:              1
+;     c3cfb:              1
+;     sub_c3dfc:          1
+;     c3e55:              1
+;     c3e6c:              1
+;     c3ec1:              1
+;     c3ed2:              1
+;     c3ed4:              1
+;     c3ee4:              1
+;     c3eed:              1
+;     l3eee:              1
+;     sub_c3f02:          1
+;     c3f52:              1
+;     c3f62:              1
+;     loop_c4044:         1
+;     sub_c407f:          1
+;     c40b2:              1
+;     c40c1:              1
+;     c40e0:              1
+;     c40e4:              1
+;     c40ee:              1
+;     c40f7:              1
+;     c412b:              1
+;     c4137:              1
+;     c4167:              1
+;     c4184:              1
+;     c41c1:              1
+;     c420c:              1
+;     c4224:              1
+;     c424c:              1
+;     loop_c42ea:         1
+;     sub_c42f8:          1
+;     c4352:              1
+;     c4358:              1
+;     c4386:              1
+;     c43b4:              1
+;     c43ce:              1
+;     c43d4:              1
+;     c43e3:              1
+;     c43f6:              1
 
 ; Automatically generated labels:
 ;     c3b04
@@ -1761,7 +1761,6 @@ pydis_end
 ;     l0a73
 ;     l1103
 ;     l1140
-;     l12bb
 ;     l12da
 ;     l132b
 ;     l1988

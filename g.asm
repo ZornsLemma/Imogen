@@ -598,6 +598,7 @@ c129b
     lda #0                                                            ; 13e7: a9 00       ..  :12b6[1]
     jmp c1f5d                                                         ; 13e9: 4c 5d 1f    L]. :12b8[1]
 
+; TODO: This is called from level-specific machine code, e.g. see dataA.asm
 something23_TODO
     lda #$ff                                                          ; 13ec: a9 ff       ..  :12bb[1]
     sta l132b                                                         ; 13ee: 8d 2b 13    .+. :12bd[1]

@@ -31,3 +31,5 @@ label(0x3ad5, "level_data")
 label_word(0x3ad7, "level_init_after_load_handler_ptr")
 label_word(0x3ad9, "second_level_handler_ptr") # TODO: poor name
 label_word(0x3adb, "level_name_ptr") # TODO: poor name
+
+label(0x12bb, "something23_TODO")

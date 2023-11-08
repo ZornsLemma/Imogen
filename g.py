@@ -474,7 +474,9 @@ comment(0x3fc2, "empty copyright string", inline=True)
 comment(0x3fc3, "do nothing - return", inline=True)
 comment(0x3fc4, "unused bytes", inline=True)
 
-entry(0x12bb, "something23_TODO")
+comment(0x12bb, "TODO: This is called from level-specific machine code, e.g. see dataA.asm")
+entry(0x12bb)
+
 entry(0x12da, "something24_TODO")
 entry(0x16d3, "brk_handler")
 entry(0x1b90, "something26_TODO")
