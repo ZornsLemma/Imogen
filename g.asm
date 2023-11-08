@@ -523,7 +523,7 @@ loop_c1213
     and #$80                                                          ; 135c: 29 80       ).  :122b[1]
     beq pydis_start                                                   ; 135e: f0 05       ..  :122d[1]
     lda #$21 ; '!'                                                    ; 1360: a9 21       .!  :122f[1]
-    jsr sub_c2bbd                                                     ; 1362: 20 bd 2b     .+ :1231[1]
+    jsr something50_TODO                                              ; 1362: 20 bd 2b     .+ :1231[1]
     lda #3                                                            ; 1365: a9 03       ..  :1234[1]
     sta l003e                                                         ; 1367: 85 3e       .>  :1236[1]
     lda #black                                                        ; 1369: a9 00       ..  :1238[1]
@@ -1858,7 +1858,7 @@ something14_TODO
     ora #$80                                                          ; 1b80: 09 80       ..  :1a4f[1]
     sta byte_per_level_table1,y                                       ; 1b82: 99 ef 09    ... :1a51[1]
     lda #$21 ; '!'                                                    ; 1b85: a9 21       .!  :1a54[1]
-    jsr sub_c2bbd                                                     ; 1b87: 20 bd 2b     .+ :1a56[1]
+    jsr something50_TODO                                              ; 1b87: 20 bd 2b     .+ :1a56[1]
 c1a59
     ldx l1aae                                                         ; 1b8a: ae ae 1a    ... :1a59[1]
     lda #$c5                                                          ; 1b8d: a9 c5       ..  :1a5c[1]
@@ -4361,7 +4361,7 @@ c2bba
     lda address1_high                                                 ; 2ceb: a5 71       .q  :2bba[1]
     rts                                                               ; 2ced: 60          `   :2bbc[1]
 
-sub_c2bbd
+something50_TODO
     sta address1_low                                                  ; 2cee: 85 70       .p  :2bbd[1]
     lda #0                                                            ; 2cf0: a9 00       ..  :2bbf[1]
     sta address1_high                                                 ; 2cf2: 85 71       .q  :2bc1[1]
@@ -7701,7 +7701,6 @@ pydis_end
 ;     sub_c2adb
 ;     sub_c2b37
 ;     sub_c2b65
-;     sub_c2bbd
 ;     sub_c2eb8
 ;     sub_c336e
 ;     sub_c344b

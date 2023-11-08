@@ -31,7 +31,7 @@ gameplay_area_colour                = $1760
 use_colour_flag                     = $1765
 l1766                               = $1766
 l1966                               = $1966
-l2bbd                               = $2bbd
+something50_TODO                    = $2bbd
 l37f3                               = $37f3
 l388d                               = $388d
 l3a8f                               = $3a8f
@@ -286,7 +286,7 @@ loop_c5625
     dey                                                               ; 562d: 88          .
     bpl loop_c5625                                                    ; 562e: 10 f5       ..
     lda #$21 ; '!'                                                    ; 5630: a9 21       .!
-    jsr l2bbd                                                         ; 5632: 20 bd 2b     .+
+    jsr something50_TODO                                              ; 5632: 20 bd 2b     .+
 c5635
     lda #1                                                            ; 5635: a9 01       ..
     jmp return1                                                       ; 5637: 4c 4e 54    LNT
@@ -478,7 +478,6 @@ pydis_end
 ;     l1103
 ;     l1766
 ;     l1966
-;     l2bbd
 ;     l37f3
 ;     l388d
 ;     l3a8f

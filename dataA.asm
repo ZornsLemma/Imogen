@@ -69,7 +69,7 @@ l24d1                       = $24d1
 l2551                       = $2551
 l2894                       = $2894
 l28e2                       = $28e2
-l2bbd                       = $2bbd
+something50_TODO            = $2bbd
 l2eb6                       = $2eb6
 l2ee9                       = $2ee9
 l2eee                       = $2eee
@@ -111,14 +111,14 @@ level_init_after_load_handler
     lda l1103                                                         ; 3af8: ad 03 11    ...
     bpl c3b04                                                         ; 3afb: 10 07       ..
     lda #$d3                                                          ; 3afd: a9 d3       ..
-    jsr l2bbd                                                         ; 3aff: 20 bd 2b     .+
+    jsr something50_TODO                                              ; 3aff: 20 bd 2b     .+
     lda #$ff                                                          ; 3b02: a9 ff       ..
 ; $3b04 referenced 1 time by $3afb
 c3b04
     lda l0a00                                                         ; 3b04: ad 00 0a    ...
     beq c3b0e                                                         ; 3b07: f0 05       ..
     lda #$d3                                                          ; 3b09: a9 d3       ..
-    jsr l2bbd                                                         ; 3b0b: 20 bd 2b     .+
+    jsr something50_TODO                                              ; 3b0b: 20 bd 2b     .+
 ; $3b0e referenced 2 times by $3af6, $3b07
 c3b0e
     lda #$86                                                          ; 3b0e: a9 86       ..
@@ -645,7 +645,7 @@ c3f62
     jsr l28e2                                                         ; 3f76: 20 e2 28     .(
     beq c3f8a                                                         ; 3f79: f0 0f       ..
     lda #$d3                                                          ; 3f7b: a9 d3       ..
-    jsr l2bbd                                                         ; 3f7d: 20 bd 2b     .+
+    jsr something50_TODO                                              ; 3f7d: 20 bd 2b     .+
     lda #0                                                            ; 3f80: a9 00       ..
     sta l09ac                                                         ; 3f82: 8d ac 09    ...
     lda #$ff                                                          ; 3f85: a9 ff       ..
@@ -1547,7 +1547,7 @@ pydis_end
 ;     l1aba:              3
 ;     l1b90:              3
 ;     l1f4c:              3
-;     l2bbd:              3
+;     something50_TODO:   3
 ;     l2eb6:              3
 ;     l38c2:              3
 ;     c3ca8:              3
@@ -1781,7 +1781,6 @@ pydis_end
 ;     l2551
 ;     l2894
 ;     l28e2
-;     l2bbd
 ;     l2eb6
 ;     l2ee9
 ;     l2eee
