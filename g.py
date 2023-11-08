@@ -1090,6 +1090,7 @@ comment(0x1140, "TODO: this is used by e.g. dataA")
 entry(0x1140)
 comment(0x1a10, "TODO: this is used by e.g. dataA")
 entry(0x1a10)
+comment(0x1ebb, "TODO: this is used by e.g. dataA")
 
 # TODO: I don't think we necessary need to indicate functions in 'g' called from 'data*' in the long run, but it might be helpful to flag them for now.
 comment(0x1e44, "TODO: this is used by e.g. dataA")

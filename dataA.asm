@@ -57,7 +57,7 @@ something51_TODO                = $1abb
 something26_TODO                = $1b90
 something53_TODO                = $1db9
 something54_TODO                = $1e44
-l1ebb                           = $1ebb
+something60_TODO                = $1ebb
 draw_sprite_a_at_character_xy   = $1f4c
 something52_TODO                = $1f57
 something58_TODO                = $1f5d
@@ -1098,7 +1098,7 @@ some_code4
     lda #$3b ; ';'                                                    ; 42d4: a9 3b       .;
     jsr draw_sprite_a_at_character_xy                                 ; 42d6: 20 4c 1f     L.
     lda #3                                                            ; 42d9: a9 03       ..
-    jsr l1ebb                                                         ; 42db: 20 bb 1e     ..
+    jsr something60_TODO                                              ; 42db: 20 bb 1e     ..
     ldx #$21 ; '!'                                                    ; 42de: a2 21       .!
     ldy #2                                                            ; 42e0: a0 02       ..
     lda #$0e                                                          ; 42e2: a9 0e       ..
@@ -1591,7 +1591,7 @@ pydis_end
 ;     l0992:                           1
 ;     l1103:                           1
 ;     something14_TODO:                1
-;     l1ebb:                           1
+;     something60_TODO:                1
 ;     l23a9:                           1
 ;     l24d0:                           1
 ;     l24d1:                           1
@@ -1762,7 +1762,6 @@ pydis_end
 ;     l1103
 ;     l132b
 ;     l1aba
-;     l1ebb
 ;     l23a9
 ;     l2433
 ;     l24d0

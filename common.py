@@ -47,5 +47,6 @@ label(0x1f4c, "draw_sprite_a_at_character_xy")
 label(0x1f6d, "something57_TODO")
 label(0x1f5d, "something58_TODO")
 label(0x2894, "something59_TODO")
+label(0x1ebb, "something60_TODO")
 
 label(0x1140, "initialise_level")

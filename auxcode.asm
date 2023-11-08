@@ -38,6 +38,7 @@ something51_TODO                    = $1abb
 something26_TODO                    = $1b90
 something53_TODO                    = $1db9
 something54_TODO                    = $1e44
+something60_TODO                    = $1ebb
 draw_sprite_a_at_character_xy       = $1f4c
 something52_TODO                    = $1f57
 something58_TODO                    = $1f5d

@@ -1770,7 +1770,7 @@ something13_TODO
     cmp #3                                                            ; 1acf: c9 03       ..  :199e[1]
     beq c19b9                                                         ; 1ad1: f0 17       ..  :19a0[1]
     lda #3                                                            ; 1ad3: a9 03       ..  :19a2[1]
-    jsr sub_c1ebb                                                     ; 1ad5: 20 bb 1e     .. :19a4[1]
+    jsr something60_TODO                                              ; 1ad5: 20 bb 1e     .. :19a4[1]
     iny                                                               ; 1ad8: c8          .   :19a7[1]
     lda #spriteid_brazier                                             ; 1ad9: a9 3a       .:  :19a8[1]
     jsr draw_sprite_a_at_character_xy                                 ; 1adb: 20 4c 1f     L. :19aa[1]
@@ -1783,7 +1783,7 @@ something13_TODO
 c19b9
     dex                                                               ; 1aea: ca          .   :19b9[1]
     lda #3                                                            ; 1aeb: a9 03       ..  :19ba[1]
-    jsr sub_c1ebb                                                     ; 1aed: 20 bb 1e     .. :19bc[1]
+    jsr something60_TODO                                              ; 1aed: 20 bb 1e     .. :19bc[1]
     inx                                                               ; 1af0: e8          .   :19bf[1]
     lda #$ff                                                          ; 1af1: a9 ff       ..  :19c0[1]
     sta sprite_reflect_flag                                           ; 1af3: 85 1d       ..  :19c2[1]
@@ -2340,7 +2340,7 @@ c1dc9
     jsr draw_sprite_a_at_character_xy                                 ; 1f06: 20 4c 1f     L. :1dd5[1]
     lda #2                                                            ; 1f09: a9 02       ..  :1dd8[1]
 c1dda
-    jsr sub_c1ebb                                                     ; 1f0b: 20 bb 1e     .. :1dda[1]
+    jsr something60_TODO                                              ; 1f0b: 20 bb 1e     .. :1dda[1]
     dec l0056                                                         ; 1f0e: c6 56       .V  :1ddd[1]
     iny                                                               ; 1f10: c8          .   :1ddf[1]
     cpy #$18                                                          ; 1f11: c0 18       ..  :1de0[1]
@@ -2350,7 +2350,7 @@ c1de6
     lda #spriteid_blob_thing9                                         ; 1f17: a9 0a       ..  :1de6[1]
     jsr draw_sprite_a_at_character_xy                                 ; 1f19: 20 4c 1f     L. :1de8[1]
     lda #2                                                            ; 1f1c: a9 02       ..  :1deb[1]
-    jsr sub_c1ebb                                                     ; 1f1e: 20 bb 1e     .. :1ded[1]
+    jsr something60_TODO                                              ; 1f1e: 20 bb 1e     .. :1ded[1]
 c1df0
     pla                                                               ; 1f21: 68          h   :1df0[1]
     tay                                                               ; 1f22: a8          .   :1df1[1]
@@ -2490,7 +2490,8 @@ bitmask2
 
 ; TODO: What's going on with the modification to initialise_display here? Is it copy
 ; protection/obfuscation or is there something else going on?
-sub_c1ebb
+; TODO: this is used by e.g. dataA
+something60_TODO
     and #3                                                            ; 1fec: 29 03       ).  :1ebb[1]
     sta l0049                                                         ; 1fee: 85 49       .I  :1ebd[1]
     txa                                                               ; 1ff0: 8a          .   :1ebf[1]
@@ -7720,7 +7721,6 @@ pydis_end
 ;     sub_c1cf3
 ;     sub_c1df4
 ;     sub_c1e17
-;     sub_c1ebb
 ;     sub_c1efa
 ;     sub_c20f7
 ;     sub_c211e
