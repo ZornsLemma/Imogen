@@ -365,13 +365,13 @@ pydis_start
 !pseudopc $1103 {
 ; developer_flags
 ; 
-;     bit 0: <TODO>
+;     bit 0: "developer keys active", ESCAPE resets or exits the game I think, if you
+; have the right sideways RAM set up.
 ;     bit 1: <TODO>
 ;     bit 2: <TODO>
 ;     bit 3: <TODO>
 ;     bit 4-6: unused
-;     bit 7: "developer mode active", toolbar is magenta, ESCAPE resets or exits the
-; game I think, if you have the right sideways RAM set up.
+;     bit 7: "developer mode active", toolbar is magenta
 developer_flags
     !byte 0                                                           ; 1234: 00          .   :1103[1]
 timingA_counter_low
@@ -594,14 +594,14 @@ sub_c1278
     sta desired_room_index                                            ; 13b4: 85 30       .0  :1283[1]
     lda byte_per_level_table1,x                                       ; 13b6: bd ef 09    ... :1285[1]
     and #$40 ; '@'                                                    ; 13b9: 29 40       )@  :1288[1]
-    bne skip_developer_mode_code                                      ; 13bb: d0 0f       ..  :128a[1]
+    bne skip_developer_mode_code1                                     ; 13bb: d0 0f       ..  :128a[1]
     lda l3add                                                         ; 13bd: ad dd 3a    ..: :128c[1]
     sta desired_room_index                                            ; 13c0: 85 30       .0  :128f[1]
     lda developer_flags                                               ; 13c2: ad 03 11    ... :1291[1]
-    bpl skip_developer_mode_code                                      ; 13c5: 10 05       ..  :1294[1]
+    bpl skip_developer_mode_code1                                     ; 13c5: 10 05       ..  :1294[1]
     lda c3ade                                                         ; 13c7: ad de 3a    ..: :1296[1]
     sta desired_room_index                                            ; 13ca: 85 30       .0  :1299[1]
-skip_developer_mode_code
+skip_developer_mode_code1
     lda desired_room_index                                            ; 13cc: a5 30       .0  :129b[1]
     asl                                                               ; 13ce: 0a          .   :129d[1]
     tay                                                               ; 13cf: a8          .   :129e[1]
@@ -677,14 +677,31 @@ c131e
 some_data_shared_between_g_and_dataA
     !byte 0                                                           ; 145c: 00          .   :132b[1]
 
+; *************************************************************************************
+; 
 ; Get sprite address for sprite A
 ; 
-; Sprites 0-196: stored in sprdata
-; Sprite 197: is stored at $0bc5
-; Sprite 198: is stored at $0b93
-; Sprite 199: is stored at $0b11
-; Sprite 200+: stored in level data
+;     Sprites 0-196: are stored in sprdata (or icodata if loaded (*))
+;     Sprite 197: is stored at $0bc5
+;     Sprite 198: is stored at $0b93
+;     Sprite 199: is stored at $0b11
+;     Sprites 200+: are stored in level data
 ; 
+; (*) The first entry in the ICODATA file is actually not a sprite. It contains:
+; 
+;       1 byte: developer_flags
+;       1 byte: 'R' indicating a random initial level
+;     16 bytes: the order of level letters
+; 
+; See sprite_op for the format of sprites.
+; 
+; On Entry:
+;     A: sprite id
+; 
+; On Exit:
+;     YX: address of sprite
+; 
+; *************************************************************************************
 get_address_of_sprite_a
     ldx #<sprite_199                                                  ; 145d: a2 11       ..  :132c[1]
     ldy #>sprite_199                                                  ; 145f: a0 0b       ..  :132e[1]
@@ -1513,11 +1530,11 @@ if_vsync_elapsed_then_set_toolbar_area_palette
     ldy toolbar_colour                                                ; 1910: ac 5e 17    .^. :17df[1]
     jsr change_palette_logical_colour_x_to_y                          ; 1913: 20 25 18     %. :17e2[1]
     lda developer_flags                                               ; 1916: ad 03 11    ... :17e5[1]
-    bpl c17f1                                                         ; 1919: 10 07       ..  :17e8[1]
+    bpl skip_developer_mode_code2                                     ; 1919: 10 07       ..  :17e8[1]
     ldx #0                                                            ; 191b: a2 00       ..  :17ea[1]
     ldy #magenta                                                      ; 191d: a0 05       ..  :17ec[1]
     jsr change_palette_logical_colour_x_to_y                          ; 191f: 20 25 18     %. :17ee[1]
-c17f1
+skip_developer_mode_code2
     lda #0                                                            ; 1922: a9 00       ..  :17f1[1]
     sta l1824                                                         ; 1924: 8d 24 18    .$. :17f3[1]
     inc l178b                                                         ; 1927: ee 8b 17    ... :17f6[1]
@@ -1534,11 +1551,11 @@ if_timer1_elapsed_then_set_main_area_palette
     ldy gameplay_area_colour                                          ; 1939: ac 60 17    .`. :1808[1]
     jsr change_palette_logical_colour_x_to_y                          ; 193c: 20 25 18     %. :180b[1]
     lda developer_flags                                               ; 193f: ad 03 11    ... :180e[1]
-    bpl c181a                                                         ; 1942: 10 07       ..  :1811[1]
+    bpl skip_developer_mode_code3                                     ; 1942: 10 07       ..  :1811[1]
     ldx #0                                                            ; 1944: a2 00       ..  :1813[1]
     ldy #black                                                        ; 1946: a0 00       ..  :1815[1]
     jsr change_palette_logical_colour_x_to_y                          ; 1948: 20 25 18     %. :1817[1]
-c181a
+skip_developer_mode_code3
     inc l1824                                                         ; 194b: ee 24 18    .$. :181a[1]
     jsr update_main_keys                                              ; 194e: 20 12 3a     .: :181d[1]
     jsr update_space_etc_keys                                         ; 1951: 20 47 3a     G: :1820[1]
@@ -4224,20 +4241,20 @@ something20_TODO
     jsr draw_toolbar                                                  ; 2b72: 20 a1 29     .) :2a41[1]
     jsr c3a8f                                                         ; 2b75: 20 8f 3a     .: :2a44[1]
     lda developer_mode_sideways_ram_is_set_up_flag                    ; 2b78: a5 5b       .[  :2a47[1]
-    beq skip_developer_mode_handling                                  ; 2b7a: f0 15       ..  :2a49[1]
+    beq skip_developer_key_escape_handling                            ; 2b7a: f0 15       ..  :2a49[1]
     lda developer_flags                                               ; 2b7c: ad 03 11    ... :2a4b[1]
     and #1                                                            ; 2b7f: 29 01       ).  :2a4e[1]
-    beq skip_developer_mode_handling                                  ; 2b81: f0 0e       ..  :2a50[1]
+    beq skip_developer_key_escape_handling                            ; 2b81: f0 0e       ..  :2a50[1]
     ldx #inkey_key_escape                                             ; 2b83: a2 8f       ..  :2a52[1]
     jsr negative_inkey                                                ; 2b85: 20 cc 3a     .: :2a54[1]
-    beq skip_developer_mode_handling                                  ; 2b88: f0 07       ..  :2a57[1]
+    beq skip_developer_key_escape_handling                            ; 2b88: f0 07       ..  :2a57[1]
     pla                                                               ; 2b8a: 68          h   :2a59[1]
     pla                                                               ; 2b8b: 68          h   :2a5a[1]
     pla                                                               ; 2b8c: 68          h   :2a5b[1]
     pla                                                               ; 2b8d: 68          h   :2a5c[1]
     jmp reset_game_because_escape_pressed                             ; 2b8e: 4c 39 18    L9. :2a5d[1]
 
-skip_developer_mode_handling
+skip_developer_key_escape_handling
     lda new_menu_index                                                ; 2b91: a5 29       .)  :2a60[1]
     sta another_menu_index                                            ; 2b93: 85 25       .%  :2a62[1]
     jsr apply_pending_menu_motion                                     ; 2b95: 20 67 2c     g, :2a64[1]
@@ -4275,11 +4292,11 @@ c2aa0
     jsr sub_c344b                                                     ; 2bd7: 20 4b 34     K4 :2aa6[1]
     lda developer_flags                                               ; 2bda: ad 03 11    ... :2aa9[1]
     and #1                                                            ; 2bdd: 29 01       ).  :2aac[1]
-    beq c2ab7                                                         ; 2bdf: f0 07       ..  :2aae[1]
+    beq skip_developer_key_shift_handling                             ; 2bdf: f0 07       ..  :2aae[1]
     ldx #inkey_key_shift                                              ; 2be1: a2 ff       ..  :2ab0[1]
     jsr negative_inkey                                                ; 2be3: 20 cc 3a     .: :2ab2[1]
     bne c2abd                                                         ; 2be6: d0 06       ..  :2ab5[1]
-c2ab7
+skip_developer_key_shift_handling
     jsr wait_for_vsync                                                ; 2be8: 20 8c 17     .. :2ab7[1]
     jmp something20_TODO                                              ; 2beb: 4c 38 2a    L8* :2aba[1]
 
@@ -5603,14 +5620,14 @@ sub_c3664
     beq c3698                                                         ; 37a9: f0 1e       ..  :3678[1]
     lda developer_flags                                               ; 37ab: ad 03 11    ... :367a[1]
     and #1                                                            ; 37ae: 29 01       ).  :367d[1]
-    beq c36a8                                                         ; 37b0: f0 27       .'  :367f[1]
+    beq skip_developer_key_level_select_handling                      ; 37b0: f0 27       .'  :367f[1]
     cpy #2                                                            ; 37b2: c0 02       ..  :3681[1]
-    bne c36a8                                                         ; 37b4: d0 23       .#  :3683[1]
+    bne skip_developer_key_level_select_handling                      ; 37b4: d0 23       .#  :3683[1]
     lda string_input_buffer                                           ; 37b6: ad 90 0a    ... :3685[1]
     cmp #$41 ; 'A'                                                    ; 37b9: c9 41       .A  :3688[1]
-    bcc c36a8                                                         ; 37bb: 90 1c       ..  :368a[1]
+    bcc skip_developer_key_level_select_handling                      ; 37bb: 90 1c       ..  :368a[1]
     cmp #$52 ; 'R'                                                    ; 37bd: c9 52       .R  :368c[1]
-    bcs c36a8                                                         ; 37bf: b0 18       ..  :368e[1]
+    bcs skip_developer_key_level_select_handling                      ; 37bf: b0 18       ..  :368e[1]
     pha                                                               ; 37c1: 48          H   :3690[1]
     jsr something_TODO                                                ; 37c2: 20 53 04     S. :3691[1]
     pla                                                               ; 37c5: 68          h   :3694[1]
@@ -5627,7 +5644,7 @@ c3698
 return24
     rts                                                               ; 37d8: 60          `   :36a7[1]
 
-c36a8
+skip_developer_key_level_select_handling
     lda #<auxcode_filename                                            ; 37d9: a9 9c       ..  :36a8[1]
     sta address1_low                                                  ; 37db: 85 70       .p  :36aa[1]
     lda #>auxcode_filename                                            ; 37dd: a9 38       .8  :36ac[1]
@@ -5638,7 +5655,7 @@ c36a8
     jsr osfile_wrapper                                                ; 37e7: 20 dc 16     .. :36b6[1]
     beq c36c1                                                         ; 37ea: f0 06       ..  :36b9[1]
     jsr prompt_user_to_insert_correct_disc                            ; 37ec: 20 17 36     .6 :36bb[1]
-    jmp c36a8                                                         ; 37ef: 4c a8 36    L.6 :36be[1]
+    jmp skip_developer_key_level_select_handling                      ; 37ef: 4c a8 36    L.6 :36be[1]
 
 c36c1
     jsr check_password                                                ; 37f2: 20 c0 53     .S :36c1[1]
@@ -7318,8 +7335,6 @@ pydis_end
 ;     c16aa
 ;     c1713
 ;     c174c
-;     c17f1
-;     c181a
 ;     c18d1
 ;     c1906
 ;     c1909
@@ -7461,7 +7476,6 @@ pydis_end
 ;     c2a73
 ;     c2a81
 ;     c2aa0
-;     c2ab7
 ;     c2abd
 ;     c2ac4
 ;     c2acd
@@ -7560,7 +7574,6 @@ pydis_end
 ;     c363f
 ;     c3652
 ;     c3698
-;     c36a8
 ;     c36c1
 ;     c36d2
 ;     c36f3

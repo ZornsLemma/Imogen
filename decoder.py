@@ -2,6 +2,7 @@ from pathlib import Path
 import argparse
 import sys
 import struct
+import json
 
 def error(message):
     print("ERROR:", message, file=sys.stderr)
@@ -33,7 +34,7 @@ def read_bit(data, start, start_bit):
         start += 1
     return (start, start_bit, v)
 
-def decode(infile, outfile, level_flag):
+def decode(infile, outfile, level_flag, index_zero_is_level_order_data):
 
     with open(infile, 'rb') as fin:
         data = fin.read()
@@ -54,6 +55,8 @@ def decode(infile, outfile, level_flag):
             offset = file_offset + data[file_offset + i*2] + 256*data[file_offset + 1 + i*2]
             sprites.append(offset)
 
+        spr_data = {}
+        sprite_array = []
         for i in range(num_sprites):
             start = sprites[i]
             if i < (num_sprites-1):
@@ -61,36 +64,47 @@ def decode(infile, outfile, level_flag):
             else:
                 end = file_size
 
-            print("Sprite " + hex(sprite_index_offset + i) + " (at file offset " + hex(start) + ")", file=fout)
-            if (start != end):
-                width = int(data[start+2])
-                height = 1+int(data[start+3])
-                print("    Offset (" + sbyte(data[start]) + "," + sbyte(data[start+1]) + "), size " + str(width) + "x" + str(height-1), file=fout)
+            if (i==0) and index_zero_is_level_order_data:
+                spr_data["level order data"] = {
+                    "developer_flags": hex(data[start]),
+                    "first level": chr(data[start+1]),
+                    "level order": "".join([chr(data[x]) for x in range(start+2, start+18)])
+                }
+            else:
+                sprite = { "sprite number": hex(sprite_index_offset + i) }
+                if (start != end):
+                    width = int(data[start+2])
+                    height = 1+int(data[start+3])
+                    sprite["sprite width"] = width
+                    sprite["sprite height"] = height-1
 
-                start += 4
-                start_bit = 128
-                lines = [""]*height
-                for x in range(width):
-                    for y in range(height):
-                        start, start_bit, sprite_bit = read_bit(data, start, start_bit)
-                        start, start_bit, mask_bit = read_bit(data, start, start_bit)
+                    start += 4
+                    start_bit = 128
+                    lines = [""]*height
+                    for x in range(width):
+                        for y in range(height):
+                            start, start_bit, sprite_bit = read_bit(data, start, start_bit)
+                            start, start_bit, mask_bit = read_bit(data, start, start_bit)
 
-                        if not sprite_bit:
-                            if mask_bit:
-                                lines[y] += '.'
+                            if not sprite_bit:
+                                if mask_bit:
+                                    lines[y] += '.'
+                                else:
+                                    lines[y] += '#'
                             else:
-                                lines[y] += '#'
-                        else:
-                            lines[y] += ' '
-                            if mask_bit:
-                                for y2 in range(y+1,height):
-                                    lines[y2] += ' '
-                                break
+                                lines[y] += ' '
+                                if mask_bit:
+                                    for y2 in range(y+1,height):
+                                        lines[y2] += ' '
+                                    break
 
-                lines = list(reversed(lines))
-                for line in lines:
-                    print(line, file=fout)
-                print("", file=fout)
+                    lines = list(reversed(lines))
+                    lines = lines[1:]       # Remove first line
+
+                    sprite["pixels"] = lines
+                sprite_array.append(sprite)
+        spr_data["sprites"] = sprite_array
+        print(json.dumps(spr_data, indent=4), file=fout)
 
 
 class MyParser(argparse.ArgumentParser):
@@ -108,6 +122,7 @@ options:
   -h   --help                 show this help message and exit
   -i   --input                input file (binary sprite file)
   -o   --output               output file (txt file)
+  -z   --zero                 index zero is level order data
   -l   --level                input is a level file
 """, file=venue)
 
@@ -119,6 +134,7 @@ if __name__ == '__main__':
 
     parser.add_argument('-i', '--input',            help="input binary filepath")
     parser.add_argument('-o', '--output',           help="output text filepath")
+    parser.add_argument('-z', '--zero',             help="index zero is level order data", action=argparse.BooleanOptionalAction, default=False)
     parser.add_argument('-l', '--level',            help="input is a level file", action=argparse.BooleanOptionalAction, default=False)
 
     if len(sys.argv)==1:
@@ -131,7 +147,7 @@ if __name__ == '__main__':
         if args.input == args.output:
             error("Input and output are the same")
             exit(-2)
-        decode(args.input, args.output, args.level)
+        decode(args.input, args.output, args.level, args.zero)
         exit(0)
     else:
         error("Need input and output parameters")

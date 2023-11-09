@@ -243,7 +243,9 @@ substitute_constants("sta sprite_op_flags", 'a', sprite_op_flags_dict, True)
 
 expr(0x2b26, "sprite_op_flags_normal")
 
-label(0x129b, "skip_developer_mode_code")
+label(0x129b, "skip_developer_mode_code1")
+label(0x17f1, "skip_developer_mode_code2")
+label(0x181a, "skip_developer_mode_code3")
 label(0x137f, "reset_sprite_flags_and_exit")
 comment(0x139f, "check flags to see if we are copying to another sprite", inline=True)
 comment(0x13b3, "Y=0", inline=True)
@@ -693,14 +695,31 @@ label(0x3ef3, "osword_7f_write_special_register_result")
 entry(0x3ed5, "set_track_special_register_to_a")
 entry(0x3ea1, "read_icodata_using_osword_7f")
 
-comment(0x132c, """Get sprite address for sprite A
+comment(0x132c, """*************************************************************************************
 
-Sprites 0-196: stored in sprdata
-Sprite 197: is stored at $0bc5
-Sprite 198: is stored at $0b93
-Sprite 199: is stored at $0b11
-Sprite 200+: stored in level data
-""")
+Get sprite address for sprite A
+
+    Sprites 0-196: are stored in sprdata (or icodata if loaded (*))
+    Sprite 197: is stored at $0bc5
+    Sprite 198: is stored at $0b93
+    Sprite 199: is stored at $0b11
+    Sprites 200+: are stored in level data
+
+(*) The first entry in the ICODATA file is actually not a sprite. It contains:
+
+      1 byte: developer_flags
+      1 byte: 'R' indicating a random initial level
+    16 bytes: the order of level letters
+
+See sprite_op for the format of sprites.
+
+On Entry:
+    A: sprite id
+
+On Exit:
+    YX: address of sprite
+
+*************************************************************************************""")
 label(0x0b11, "sprite_199")
 label(0x0b93, "sprite_198")
 label(0x0bc5, "sprite_197")
@@ -900,7 +919,9 @@ entry(0x2200, "something17_TODO")
 entry(0x2248, "something18_TODO")
 entry(0x22cd, "something19_TODO")
 entry(0x2a38, "something20_TODO")
-label(0x2a60, "skip_developer_mode_handling")
+label(0x2a60, "skip_developer_key_escape_handling")
+label(0x2ab7, "skip_developer_key_shift_handling")
+label(0x36a8, "skip_developer_key_level_select_handling")
 entry(0x2b87, "something21_TODO")
 entry(0x2be0, "something22_TODO")
 # TODO: DELETE entry(0x35f7, "something23_TODO")
@@ -954,12 +975,12 @@ label(0x184d, "copy_from_rom_c_loop")
 label(0x1845, "reset_code")
 comment(0x1103, """developer_flags
 
-    bit 0: <TODO>
+    bit 0: "developer keys active", ESCAPE resets or exits the game I think, if you have the right sideways RAM set up.
     bit 1: <TODO>
     bit 2: <TODO>
     bit 3: <TODO>
     bit 4-6: unused
-    bit 7: "developer mode active", toolbar is magenta, ESCAPE resets or exits the game I think, if you have the right sideways RAM set up.""")
+    bit 7: "developer mode active", toolbar is magenta""")
 
 label(0x2ef7, "some_more_data")
 expr(0x30b6, make_lo("some_more_data"))
