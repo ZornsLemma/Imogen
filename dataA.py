@@ -30,6 +30,8 @@ entry(0x424f, "some_code4")
 
 comment(0x3ae7, "'SAXOPHOBIA\\r' EOR-encrypted with $cb")
 
+entry(0x3b04, "developer_mode_not_active")
+
 go()
 
 # vi: tw=100

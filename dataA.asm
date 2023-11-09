@@ -108,12 +108,12 @@ level_init_after_load_handler
     cmp l0051                                                         ; 3af4: c5 51       .Q
     beq c3b0e                                                         ; 3af6: f0 16       ..
     lda developer_flags                                               ; 3af8: ad 03 11    ...
-    bpl c3b04                                                         ; 3afb: 10 07       ..
+    bpl developer_mode_not_active                                     ; 3afb: 10 07       ..
     lda #$d3                                                          ; 3afd: a9 d3       ..
     jsr something50_TODO                                              ; 3aff: 20 bd 2b     .+
     lda #$ff                                                          ; 3b02: a9 ff       ..
 ; $3b04 referenced 1 time by $3afb
-c3b04
+developer_mode_not_active
     lda l0a00                                                         ; 3b04: ad 00 0a    ...
     beq c3b0e                                                         ; 3b07: f0 05       ..
     lda #$d3                                                          ; 3b09: a9 d3       ..
@@ -1601,7 +1601,7 @@ pydis_end
 ;     l2ef3:                           1
 ;     l38ae:                           1
 ;     l3970:                           1
-;     c3b04:                           1
+;     developer_mode_not_active:       1
 ;     loop_c3bd4:                      1
 ;     sub_c3be4:                       1
 ;     c3bec:                           1
@@ -1656,7 +1656,6 @@ pydis_end
 ;     c43f6:                           1
 
 ; Automatically generated labels:
-;     c3b04
 ;     c3b0e
 ;     c3bec
 ;     c3bf7
