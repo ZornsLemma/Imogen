@@ -21,7 +21,7 @@ l040a                               = $040a
 l0453                               = $0453
 l09ef                               = $09ef
 string_input_buffer                 = $0a90
-l1103                               = $1103
+developer_flags                     = $1103
 initialise_level                    = $1140
 something23_TODO                    = $12bb
 something24_TODO                    = $12da
@@ -218,7 +218,7 @@ normal_level_handler
 
 epilogue_handler
     ldx #last_level_letter                                            ; 559b: a2 51       .Q
-    lda l1103                                                         ; 559d: ad 03 11    ...
+    lda developer_flags                                               ; 559d: ad 03 11    ...
     and #2                                                            ; 55a0: 29 02       ).
     bne c55a6                                                         ; 55a2: d0 02       ..
     ldx #1                                                            ; 55a4: a2 01       ..
@@ -245,7 +245,7 @@ test_mode_handler
 debug_mode_handler
     lda #$83                                                          ; 55be: a9 83       ..
 c55c0
-    sta l1103                                                         ; 55c0: 8d 03 11    ...
+    sta developer_flags                                               ; 55c0: 8d 03 11    ...
     ldx #0                                                            ; 55c3: a2 00       ..
     ldy #3                                                            ; 55c5: a0 03       ..
     and #1                                                            ; 55c7: 29 01       ).
@@ -291,7 +291,7 @@ colour_handler
     jmp return1                                                       ; 5619: 4c 4e 54    LNT
 
 gimme_handler
-    lda l1103                                                         ; 561c: ad 03 11    ...
+    lda developer_flags                                               ; 561c: ad 03 11    ...
     and #1                                                            ; 561f: 29 01       ).
     beq c5635                                                         ; 5621: f0 12       ..
     ldy #$0f                                                          ; 5623: a0 0f       ..
@@ -312,7 +312,7 @@ power_of_2_table
 
 ; TODO: Presumably a screen dump routine for Epson-compatible printers
 dump_handler
-    lda l1103                                                         ; 5642: ad 03 11    ...
+    lda developer_flags                                               ; 5642: ad 03 11    ...
     and #2                                                            ; 5645: 29 02       ).
     bne c564e                                                         ; 5647: d0 05       ..
     lda #1                                                            ; 5649: a9 01       ..
@@ -491,7 +491,6 @@ pydis_end
 ;     l040a
 ;     l0453
 ;     l09ef
-;     l1103
 ;     l1766
 ;     l1966
 ;     l37f3

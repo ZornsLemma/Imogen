@@ -950,7 +950,6 @@ comment(0x1103, """developer_flags
     bit 3: <TODO>
     bit 4-6: unused
     bit 7: "developer mode active", toolbar is magenta, ESCAPE resets or exits the game I think, if you have the right sideways RAM set up.""")
-label(0x1103, "developer_flags")
 
 label(0x2ef7, "some_more_data")
 expr(0x30b6, make_lo("some_more_data"))

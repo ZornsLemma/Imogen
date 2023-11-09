@@ -40,7 +40,7 @@ l0a71                           = $0a71
 l0a72                           = $0a72
 l0a73                           = $0a73
 string_input_buffer             = $0a90
-l1103                           = $1103
+developer_flags                 = $1103
 initialise_level                = $1140
 something23_TODO                = $12bb
 something24_TODO                = $12da
@@ -107,7 +107,7 @@ level_init_after_load_handler
     lda l0031                                                         ; 3af2: a5 31       .1
     cmp l0051                                                         ; 3af4: c5 51       .Q
     beq c3b0e                                                         ; 3af6: f0 16       ..
-    lda l1103                                                         ; 3af8: ad 03 11    ...
+    lda developer_flags                                               ; 3af8: ad 03 11    ...
     bpl c3b04                                                         ; 3afb: 10 07       ..
     lda #$d3                                                          ; 3afd: a9 d3       ..
     jsr something50_TODO                                              ; 3aff: 20 bd 2b     .+
@@ -1588,7 +1588,7 @@ pydis_end
 ;     l097c:                           1
 ;     l0980:                           1
 ;     l0992:                           1
-;     l1103:                           1
+;     developer_flags:                 1
 ;     something14_TODO:                1
 ;     something60_TODO:                1
 ;     something61_TODO:                1
@@ -1758,7 +1758,6 @@ pydis_end
 ;     l0a71
 ;     l0a72
 ;     l0a73
-;     l1103
 ;     l132b
 ;     l1aba
 ;     l2433

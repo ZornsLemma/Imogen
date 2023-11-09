@@ -2,6 +2,8 @@ from commands import *
 
 # TODO: Some of these constants are not common to *all* files which currently include common (e.g. first/last_level_letter are probably not needed by data*) - may not be worth fussing with, or may be better to have different common files for different things to minimise label noise.
 
+label(0x1103, "developer_flags")
+
 # TODO: See mono_handler and colour_handler in auxcode.asm
 label(0x1765, "use_colour_flag")
 label(0x175d, "pending_toolbar_colour")
