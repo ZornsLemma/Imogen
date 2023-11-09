@@ -94,7 +94,7 @@ check_password                      = $53c0
 
 level_data
 pydis_start
-    !byte $d1,   9                                                    ; 3ad5: d1 09       ..
+    !word sprite_data - level_data                                    ; 3ad5: d1 09       ..
 level_init_after_load_handler_ptr
     !word level_init_after_load_handler                               ; 3ad7: f2 3a       .:
 second_level_handler_ptr
@@ -1379,11 +1379,13 @@ c4415
     !byte   8,   4,   2,   1, $80, $40, $20, $10,   8,   4,   2,   1  ; 448e: 08 04 02... ...
 inverse_power_of_2_table
     !byte $80, $40, $20, $10, $08, $04, $02, $01                      ; 449a: 80 40 20... .@
-    !byte $80, $40, $20, $10, $2e,   0, $79,   0, $86,   0, $98,   0  ; 44a2: 80 40 20... .@
-    !byte $c7,   0, $53,   1, $67,   1, $7b,   1, $c1,   1, $1e,   2  ; 44ae: c7 00 53... ..S
-    !byte $4d,   2, $71,   2, $9d,   2, $aa,   2, $b9,   2, $0f,   3  ; 44ba: 4d 02 71... M.q
-    !byte $68,   3, $be,   3, $1d,   4, $72,   4, $e0,   4, $32,   5  ; 44c6: 68 03 be... h..
-    !byte $86,   5, $f0,   0, $18, $14, $a3, $84, $c5                 ; 44d2: 86 05 f0... ...
+    !byte $80, $40, $20, $10                                          ; 44a2: 80 40 20... .@
+sprite_data
+    !byte $2e,   0, $79,   0, $86,   0, $98,   0, $c7,   0, $53,   1  ; 44a6: 2e 00 79... ..y
+    !byte $67,   1, $7b,   1, $c1,   1, $1e,   2, $4d,   2, $71,   2  ; 44b2: 67 01 7b... g.{
+    !byte $9d,   2, $aa,   2, $b9,   2, $0f,   3, $68,   3, $be,   3  ; 44be: 9d 02 aa... ...
+    !byte $1d,   4, $72,   4, $e0,   4, $32,   5, $86,   5, $f0,   0  ; 44ca: 1d 04 72... ..r
+    !byte $18, $14, $a3, $84, $c5                                     ; 44d6: 18 14 a3... ...
     !text "1111N"                                                     ; 44db: 31 31 31... 111
     !byte $13, $85, $3a, $13, $a1,   0,   3, $a1                      ; 44e0: 13 85 3a... ..:
     !text "UT8UUT "                                                   ; 44e8: 55 54 38... UT8
@@ -1918,6 +1920,9 @@ pydis_end
 }
 !if (second_level_handler) != $3b17 {
     !error "Assertion failed: second_level_handler == $3b17"
+}
+!if (sprite_data - level_data) != $09d1 {
+    !error "Assertion failed: sprite_data - level_data == $09d1"
 }
 !if (spriteid_saxophone) != $d3 {
     !error "Assertion failed: spriteid_saxophone == $d3"

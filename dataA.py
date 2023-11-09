@@ -26,6 +26,10 @@ entry(0x3fd9, "some_code3")
 label(0x4052, "some_data2")
 entry(0x424f, "some_code4")
 
+label(0x44A6, "sprite_data")
+word(0x3ad5)
+expr(0x3ad5, "sprite_data - level_data")
+
 comment(0x3ae7, "'SAXOPHOBIA\\r' EOR-encrypted with $cb")
 
 entry(0x3b04, "developer_mode_not_active")
