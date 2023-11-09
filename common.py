@@ -58,3 +58,5 @@ label(0x23a9, "something61_TODO")
 label(0x1140, "initialise_level")
 
 label(0x3adf, "level_header_data")
+
+label(0x132b, "some_data_shared_between_g_and_dataA")

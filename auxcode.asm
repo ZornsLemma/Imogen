@@ -27,6 +27,7 @@ developer_flags                     = $1103
 initialise_level                    = $1140
 something23_TODO                    = $12bb
 something24_TODO                    = $12da
+some_data_shared_between_g_and_dataA = $132b
 pending_toolbar_colour              = $175d
 toolbar_colour                      = $175e
 pending_gameplay_area_colour        = $175f

@@ -3,87 +3,87 @@ first_level_letter   = 65
 last_level_letter    = 81
 
 ; Memory locations
-l001d                           = $1d
-l0030                           = $30
-desired_level                   = $31
-l003a                           = $3a
-l003b                           = $3b
-l003c                           = $3c
-l003d                           = $3d
-l003e                           = $3e
-l0040                           = $40
-l0041                           = $41
-l0042                           = $42
-previous_level                  = $51
-l0052                           = $52
-l0070                           = $70
-l0950                           = $0950
-l0954                           = $0954
-l0966                           = $0966
-l097c                           = $097c
-l0980                           = $0980
-l0992                           = $0992
-l09a8                           = $09a8
-l09aa                           = $09aa
-l09ab                           = $09ab
-l09ac                           = $09ac
-l09be                           = $09be
-l09ff                           = $09ff
-l0a00                           = $0a00
-l0a01                           = $0a01
-l0a02                           = $0a02
-l0a03                           = $0a03
-l0a04                           = $0a04
-l0a6f                           = $0a6f
-l0a70                           = $0a70
-l0a71                           = $0a71
-l0a72                           = $0a72
-l0a73                           = $0a73
-string_input_buffer             = $0a90
-developer_flags                 = $1103
-initialise_level                = $1140
-something23_TODO                = $12bb
-something24_TODO                = $12da
-l132b                           = $132b
-pending_toolbar_colour          = $175d
-toolbar_colour                  = $175e
-pending_gameplay_area_colour    = $175f
-gameplay_area_colour            = $1760
-use_colour_flag                 = $1765
-something13_TODO                = $1988
-something14_TODO                = $1a10
-l1aba                           = $1aba
-something51_TODO                = $1abb
-something26_TODO                = $1b90
-something53_TODO                = $1db9
-something54_TODO                = $1e44
-something60_TODO                = $1ebb
-draw_sprite_a_at_character_xy   = $1f4c
-something52_TODO                = $1f57
-something58_TODO                = $1f5d
-something57_TODO                = $1f6d
-something61_TODO                = $23a9
-l2433                           = $2433
-l24d0                           = $24d0
-l24d1                           = $24d1
-l2551                           = $2551
-something59_TODO                = $2894
-something55_TODO                = $28e2
-something50_TODO                = $2bbd
-l2eb6                           = $2eb6
-l2ee9                           = $2ee9
-l2eee                           = $2eee
-l2ef3                           = $2ef3
-l38ac                           = $38ac
-l38ae                           = $38ae
-l38c2                           = $38c2
-l38d8                           = $38d8
-l38f6                           = $38f6
-l395e                           = $395e
-l396f                           = $396f
-l3970                           = $3970
-auxcode                         = $53c0
-check_password                  = $53c0
+l001d                               = $1d
+l0030                               = $30
+desired_level                       = $31
+l003a                               = $3a
+l003b                               = $3b
+l003c                               = $3c
+l003d                               = $3d
+l003e                               = $3e
+l0040                               = $40
+l0041                               = $41
+l0042                               = $42
+previous_level                      = $51
+l0052                               = $52
+l0070                               = $70
+l0950                               = $0950
+l0954                               = $0954
+l0966                               = $0966
+l097c                               = $097c
+l0980                               = $0980
+l0992                               = $0992
+l09a8                               = $09a8
+l09aa                               = $09aa
+l09ab                               = $09ab
+l09ac                               = $09ac
+l09be                               = $09be
+l09ff                               = $09ff
+l0a00                               = $0a00
+l0a01                               = $0a01
+l0a02                               = $0a02
+l0a03                               = $0a03
+l0a04                               = $0a04
+l0a6f                               = $0a6f
+l0a70                               = $0a70
+l0a71                               = $0a71
+l0a72                               = $0a72
+l0a73                               = $0a73
+string_input_buffer                 = $0a90
+developer_flags                     = $1103
+initialise_level                    = $1140
+something23_TODO                    = $12bb
+something24_TODO                    = $12da
+some_data_shared_between_g_and_dataA = $132b
+pending_toolbar_colour              = $175d
+toolbar_colour                      = $175e
+pending_gameplay_area_colour        = $175f
+gameplay_area_colour                = $1760
+use_colour_flag                     = $1765
+something13_TODO                    = $1988
+something14_TODO                    = $1a10
+l1aba                               = $1aba
+something51_TODO                    = $1abb
+something26_TODO                    = $1b90
+something53_TODO                    = $1db9
+something54_TODO                    = $1e44
+something60_TODO                    = $1ebb
+draw_sprite_a_at_character_xy       = $1f4c
+something52_TODO                    = $1f57
+something58_TODO                    = $1f5d
+something57_TODO                    = $1f6d
+something61_TODO                    = $23a9
+l2433                               = $2433
+l24d0                               = $24d0
+l24d1                               = $24d1
+l2551                               = $2551
+something59_TODO                    = $2894
+something55_TODO                    = $28e2
+something50_TODO                    = $2bbd
+l2eb6                               = $2eb6
+l2ee9                               = $2ee9
+l2eee                               = $2eee
+l2ef3                               = $2ef3
+l38ac                               = $38ac
+l38ae                               = $38ae
+l38c2                               = $38c2
+l38d8                               = $38d8
+l38f6                               = $38f6
+l395e                               = $395e
+l396f                               = $396f
+l3970                               = $3970
+auxcode                             = $53c0
+check_password                      = $53c0
 
     * = $3ad5
 
@@ -225,7 +225,7 @@ loop_c3bd4
     jsr initialise_level                                              ; 3be1: 20 40 11     @.
 ; $3be4 referenced 1 time by $3b17
 sub_c3be4
-    lda l132b                                                         ; 3be4: ad 2b 13    .+.
+    lda some_data_shared_between_g_and_dataA                          ; 3be4: ad 2b 13    .+.
     bne c3bec                                                         ; 3be7: d0 03       ..
     jmp c3c77                                                         ; 3be9: 4c 77 3c    Lw<
 
@@ -393,7 +393,7 @@ c3cfb
     sta l0980                                                         ; 3d05: 8d 80 09    ...
     lda #$cb                                                          ; 3d08: a9 cb       ..
     sta l09ac                                                         ; 3d0a: 8d ac 09    ...
-    lda l132b                                                         ; 3d0d: ad 2b 13    .+.
+    lda some_data_shared_between_g_and_dataA                          ; 3d0d: ad 2b 13    .+.
     bne c3d20                                                         ; 3d10: d0 0e       ..
     ldx #0                                                            ; 3d12: a2 00       ..
     ldy #4                                                            ; 3d14: a0 04       ..
@@ -434,7 +434,7 @@ some_data1
 
 ; $3dfc referenced 1 time by $3b1a
 sub_c3dfc
-    lda l132b                                                         ; 3dfc: ad 2b 13    .+.
+    lda some_data_shared_between_g_and_dataA                          ; 3dfc: ad 2b 13    .+.
     beq c3e6c                                                         ; 3dff: f0 6b       .k
     lda previous_level                                                ; 3e01: a5 51       .Q
     cmp desired_level                                                 ; 3e03: c5 31       .1
@@ -589,7 +589,7 @@ sub_c3f02
     ldx #$1a                                                          ; 3f09: a2 1a       ..
     ldy #$0e                                                          ; 3f0b: a0 0e       ..
     jsr something13_TODO                                              ; 3f0d: 20 88 19     ..
-    lda l132b                                                         ; 3f10: ad 2b 13    .+.
+    lda some_data_shared_between_g_and_dataA                          ; 3f10: ad 2b 13    .+.
     beq c3f52                                                         ; 3f13: f0 3d       .=
     lda #$d3                                                          ; 3f15: a9 d3       ..
     sta l2ee9                                                         ; 3f17: 8d e9 2e    ...
@@ -780,7 +780,7 @@ sub_c407f
     ldy #$16                                                          ; 4090: a0 16       ..
     lda #5                                                            ; 4092: a9 05       ..
     jsr something14_TODO                                              ; 4094: 20 10 1a     ..
-    lda l132b                                                         ; 4097: ad 2b 13    .+.
+    lda some_data_shared_between_g_and_dataA                          ; 4097: ad 2b 13    .+.
     beq c40e4                                                         ; 409a: f0 48       .H
     lda desired_level                                                 ; 409c: a5 31       .1
     cmp previous_level                                                ; 409e: c5 51       .Q
@@ -1123,7 +1123,7 @@ sub_c42f8
     lda #4                                                            ; 4306: a9 04       ..
     inx                                                               ; 4308: e8          .
     jsr something13_TODO                                              ; 4309: 20 88 19     ..
-    lda l132b                                                         ; 430c: ad 2b 13    .+.
+    lda some_data_shared_between_g_and_dataA                          ; 430c: ad 2b 13    .+.
     beq c4358                                                         ; 430f: f0 47       .G
     lda previous_level                                                ; 4311: a5 51       .Q
     cmp desired_level                                                 ; 4313: c5 31       .1
@@ -1499,161 +1499,161 @@ inverse_power_of_2_table
 pydis_end
 
 ; Label references by decreasing frequency:
-;     l003c:                          34
-;     l003d:                          32
-;     something51_TODO:               29
-;     l0030:                          19
-;     something54_TODO:               13
-;     l0a72:                          11
-;     l003e:                          10
-;     l0a70:                          10
-;     desired_level:                   8
-;     l0a02:                           8
-;     l0a04:                           8
-;     c3ed7:                           8
-;     l09ff:                           7
-;     l0a01:                           7
-;     l38f6:                           7
-;     some_data1:                      7
-;     l09be:                           6
-;     l0a71:                           6
-;     l132b:                           6
-;     something53_TODO:                6
-;     previous_level:                  5
-;     l0a73:                           5
-;     something52_TODO:                5
-;     something58_TODO:                5
-;     something55_TODO:                5
-;     l38ac:                           5
-;     l395e:                           5
-;     c41ae:                           5
-;     c4355:                           5
-;     l003b:                           4
-;     l0a00:                           4
-;     l0a6f:                           4
-;     some_code2:                      4
-;     c41d9:                           4
-;     c4415:                           4
-;     l0070:                           3
-;     l09a8:                           3
-;     l09aa:                           3
-;     l09ab:                           3
-;     l09ac:                           3
-;     initialise_level:                3
-;     something23_TODO:                3
-;     something24_TODO:                3
-;     something13_TODO:                3
-;     l1aba:                           3
-;     something26_TODO:                3
-;     draw_sprite_a_at_character_xy:   3
-;     something50_TODO:                3
-;     l2eb6:                           3
-;     l38c2:                           3
-;     c3ca8:                           3
-;     c3d20:                           3
-;     c3f8a:                           3
-;     c419f:                           3
-;     c4339:                           3
-;     l0040:                           2
-;     l0041:                           2
-;     l0950:                           2
-;     l0966:                           2
-;     l0a03:                           2
-;     something57_TODO:                2
-;     l2433:                           2
-;     l38d8:                           2
-;     l396f:                           2
-;     c3b0e:                           2
-;     c3e11:                           2
-;     c3e69:                           2
-;     sub_c3ef1:                       2
-;     c3f51:                           2
-;     l3fd5:                           2
-;     l3fd6:                           2
-;     some_data2:                      2
-;     l40e3:                           2
-;     c412e:                           2
-;     c415e:                           2
-;     c418c:                           2
-;     c4194:                           2
-;     c41c9:                           2
-;     c4235:                           2
-;     c432f:                           2
-;     c43a0:                           2
-;     l001d:                           1
-;     l003a:                           1
-;     l0042:                           1
-;     l0052:                           1
-;     l0954:                           1
-;     l097c:                           1
-;     l0980:                           1
-;     l0992:                           1
-;     developer_flags:                 1
-;     something14_TODO:                1
-;     something60_TODO:                1
-;     something61_TODO:                1
-;     l24d0:                           1
-;     l24d1:                           1
-;     l2551:                           1
-;     something59_TODO:                1
-;     l2ee9:                           1
-;     l2eee:                           1
-;     l2ef3:                           1
-;     l38ae:                           1
-;     l3970:                           1
-;     developer_mode_not_active:       1
-;     loop_c3bd4:                      1
-;     sub_c3be4:                       1
-;     c3bec:                           1
-;     c3bf7:                           1
-;     c3c74:                           1
-;     c3c77:                           1
-;     c3c81:                           1
-;     c3c91:                           1
-;     c3cb9:                           1
-;     c3cc3:                           1
-;     c3cd9:                           1
-;     c3ce1:                           1
-;     c3ce7:                           1
-;     c3cfb:                           1
-;     sub_c3dfc:                       1
-;     c3e55:                           1
-;     c3e6c:                           1
-;     c3ec1:                           1
-;     c3ed2:                           1
-;     c3ed4:                           1
-;     c3ee4:                           1
-;     c3eed:                           1
-;     l3eee:                           1
-;     sub_c3f02:                       1
-;     c3f52:                           1
-;     c3f62:                           1
-;     loop_c4044:                      1
-;     sub_c407f:                       1
-;     c40b2:                           1
-;     c40c1:                           1
-;     c40e0:                           1
-;     c40e4:                           1
-;     c40ee:                           1
-;     c40f7:                           1
-;     c412b:                           1
-;     c4137:                           1
-;     c4167:                           1
-;     c4184:                           1
-;     c41c1:                           1
-;     c420c:                           1
-;     c4224:                           1
-;     c424c:                           1
-;     loop_c42ea:                      1
-;     sub_c42f8:                       1
-;     c4352:                           1
-;     c4358:                           1
-;     c4386:                           1
-;     c43b4:                           1
-;     c43ce:                           1
-;     c43d4:                           1
-;     c43e3:                           1
-;     c43f6:                           1
+;     l003c:                                 34
+;     l003d:                                 32
+;     something51_TODO:                      29
+;     l0030:                                 19
+;     something54_TODO:                      13
+;     l0a72:                                 11
+;     l003e:                                 10
+;     l0a70:                                 10
+;     desired_level:                          8
+;     l0a02:                                  8
+;     l0a04:                                  8
+;     c3ed7:                                  8
+;     l09ff:                                  7
+;     l0a01:                                  7
+;     l38f6:                                  7
+;     some_data1:                             7
+;     l09be:                                  6
+;     l0a71:                                  6
+;     some_data_shared_between_g_and_dataA:   6
+;     something53_TODO:                       6
+;     previous_level:                         5
+;     l0a73:                                  5
+;     something52_TODO:                       5
+;     something58_TODO:                       5
+;     something55_TODO:                       5
+;     l38ac:                                  5
+;     l395e:                                  5
+;     c41ae:                                  5
+;     c4355:                                  5
+;     l003b:                                  4
+;     l0a00:                                  4
+;     l0a6f:                                  4
+;     some_code2:                             4
+;     c41d9:                                  4
+;     c4415:                                  4
+;     l0070:                                  3
+;     l09a8:                                  3
+;     l09aa:                                  3
+;     l09ab:                                  3
+;     l09ac:                                  3
+;     initialise_level:                       3
+;     something23_TODO:                       3
+;     something24_TODO:                       3
+;     something13_TODO:                       3
+;     l1aba:                                  3
+;     something26_TODO:                       3
+;     draw_sprite_a_at_character_xy:          3
+;     something50_TODO:                       3
+;     l2eb6:                                  3
+;     l38c2:                                  3
+;     c3ca8:                                  3
+;     c3d20:                                  3
+;     c3f8a:                                  3
+;     c419f:                                  3
+;     c4339:                                  3
+;     l0040:                                  2
+;     l0041:                                  2
+;     l0950:                                  2
+;     l0966:                                  2
+;     l0a03:                                  2
+;     something57_TODO:                       2
+;     l2433:                                  2
+;     l38d8:                                  2
+;     l396f:                                  2
+;     c3b0e:                                  2
+;     c3e11:                                  2
+;     c3e69:                                  2
+;     sub_c3ef1:                              2
+;     c3f51:                                  2
+;     l3fd5:                                  2
+;     l3fd6:                                  2
+;     some_data2:                             2
+;     l40e3:                                  2
+;     c412e:                                  2
+;     c415e:                                  2
+;     c418c:                                  2
+;     c4194:                                  2
+;     c41c9:                                  2
+;     c4235:                                  2
+;     c432f:                                  2
+;     c43a0:                                  2
+;     l001d:                                  1
+;     l003a:                                  1
+;     l0042:                                  1
+;     l0052:                                  1
+;     l0954:                                  1
+;     l097c:                                  1
+;     l0980:                                  1
+;     l0992:                                  1
+;     developer_flags:                        1
+;     something14_TODO:                       1
+;     something60_TODO:                       1
+;     something61_TODO:                       1
+;     l24d0:                                  1
+;     l24d1:                                  1
+;     l2551:                                  1
+;     something59_TODO:                       1
+;     l2ee9:                                  1
+;     l2eee:                                  1
+;     l2ef3:                                  1
+;     l38ae:                                  1
+;     l3970:                                  1
+;     developer_mode_not_active:              1
+;     loop_c3bd4:                             1
+;     sub_c3be4:                              1
+;     c3bec:                                  1
+;     c3bf7:                                  1
+;     c3c74:                                  1
+;     c3c77:                                  1
+;     c3c81:                                  1
+;     c3c91:                                  1
+;     c3cb9:                                  1
+;     c3cc3:                                  1
+;     c3cd9:                                  1
+;     c3ce1:                                  1
+;     c3ce7:                                  1
+;     c3cfb:                                  1
+;     sub_c3dfc:                              1
+;     c3e55:                                  1
+;     c3e6c:                                  1
+;     c3ec1:                                  1
+;     c3ed2:                                  1
+;     c3ed4:                                  1
+;     c3ee4:                                  1
+;     c3eed:                                  1
+;     l3eee:                                  1
+;     sub_c3f02:                              1
+;     c3f52:                                  1
+;     c3f62:                                  1
+;     loop_c4044:                             1
+;     sub_c407f:                              1
+;     c40b2:                                  1
+;     c40c1:                                  1
+;     c40e0:                                  1
+;     c40e4:                                  1
+;     c40ee:                                  1
+;     c40f7:                                  1
+;     c412b:                                  1
+;     c4137:                                  1
+;     c4167:                                  1
+;     c4184:                                  1
+;     c41c1:                                  1
+;     c420c:                                  1
+;     c4224:                                  1
+;     c424c:                                  1
+;     loop_c42ea:                             1
+;     sub_c42f8:                              1
+;     c4352:                                  1
+;     c4358:                                  1
+;     c4386:                                  1
+;     c43b4:                                  1
+;     c43ce:                                  1
+;     c43d4:                                  1
+;     c43e3:                                  1
+;     c43f6:                                  1
 
 ; Automatically generated labels:
 ;     c3b0e
@@ -1755,7 +1755,6 @@ pydis_end
 ;     l0a71
 ;     l0a72
 ;     l0a73
-;     l132b
 ;     l1aba
 ;     l2433
 ;     l24d0
