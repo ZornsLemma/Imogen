@@ -1938,7 +1938,7 @@ l1aba
 something51_TODO
     pha                                                               ; 1bec: 48          H   :1abb[1]
     sty sprite_data_byte                                              ; 1bed: 84 7d       .}  :1abc[1]
-    jsr sub_c1e17                                                     ; 1bef: 20 17 1e     .. :1abe[1]
+    jsr set_sprite_screen_address_using_x_y_and_some_word             ; 1bef: 20 17 1e     .. :1abe[1]
     jsr sub_c1b66                                                     ; 1bf2: 20 66 1b     f. :1ac1[1]
     lda sprite_y_pos_low                                              ; 1bf5: a5 76       .v  :1ac4[1]
     sta sprite_x_pos_low                                              ; 1bf7: 85 74       .t  :1ac6[1]
@@ -2397,7 +2397,7 @@ c1e0b
     bne c1e0b                                                         ; 1f45: d0 f5       ..  :1e14[1]
     rts                                                               ; 1f47: 60          `   :1e16[1]
 
-sub_c1e17
+set_sprite_screen_address_using_x_y_and_some_word
     stx address1_low                                                  ; 1f48: 86 70       .p  :1e17[1]
     sty address1_high                                                 ; 1f4a: 84 71       .q  :1e19[1]
     lda some_word                                                     ; 1f4c: a5 3c       .<  :1e1b[1]
@@ -2438,7 +2438,7 @@ something54_TODO
 
 c1e4e
     sta l0049                                                         ; 1f7f: 85 49       .I  :1e4e[1]
-    jsr sub_c1e17                                                     ; 1f81: 20 17 1e     .. :1e50[1]
+    jsr set_sprite_screen_address_using_x_y_and_some_word             ; 1f81: 20 17 1e     .. :1e50[1]
     tya                                                               ; 1f84: 98          .   :1e53[1]
     asl                                                               ; 1f85: 0a          .   :1e54[1]
     sta l004a                                                         ; 1f86: 85 4a       .J  :1e55[1]
@@ -7766,7 +7766,6 @@ pydis_end
 ;     sub_c1b66
 ;     sub_c1cf3
 ;     sub_c1df4
-;     sub_c1e17
 ;     sub_c1efa
 ;     sub_c20f7
 ;     sub_c211e

@@ -1393,6 +1393,8 @@ entry(0x2bc6, "find_slot_loop")
 entry(0x2bd6, "empty_slot_found")
 entry(0x2bdd, "matching_slot_found_or_no_empty_slot")
 
+entry(0x1e17, "set_sprite_screen_address_using_x_y_and_some_word") # TODO!
+
 go()
 
 # vi: tw=100
