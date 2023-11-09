@@ -29,6 +29,10 @@ constant(0xff, "osfile_load")
 constant(320, "screen_width_in_pixels")
 constant(40, "characters_per_line")
 
+constant(0x18, "opcode_clc")
+constant(0x38, "opcode_sec")
+constant(0x4c, "opcode_jmp")
+
 substitute_labels = {
     (0x114f,0x1297): {
         "address1_low": "filename_low",
@@ -1452,11 +1456,15 @@ label(0x1446, "sprite_op_without_copying_mask")
 comment(0x1450, """Bit 1 of sprite_op_flags is set (but not bit 2).
 This erases the sprite from the screen.
 This self-modifies code""")
-comment(0x1450, "Write CLC", inline=True)
-comment(0x1455, "Write JMP and_byte_with_mask_and_write_to_screen2", inline=True)
+expr(0x1451, "opcode_clc")
+comment(0x1455, "Write JMP and_byte_with_mask_and_write_to_screen2")
+expr(0x1456, "opcode_jmp")
+expr(0x145b, make_lo("and_byte_with_mask_and_write_to_screen2"))
+expr(0x1460, make_hi("and_byte_with_mask_and_write_to_screen2"))
 comment(0x1464, "ALWAYS branch", inline=True)
 blank(0x1466)
-comment(0x1466, "Write 'SEC; SEC'", inline=True)
+comment(0x1466, "Write 'SEC; SEC'")
+expr(0x1467, "opcode_sec")
 label(0x1466, "write_sprite_without_mask")
 label(0x146e, "skip3")
 label(0x1486, "smc_sprite_opcode")

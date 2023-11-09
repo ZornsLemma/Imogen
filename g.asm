@@ -25,6 +25,9 @@ last_level_letter                               = 81
 magenta                                         = 5
 max_filename_len                                = 7
 menu_slot_count                                 = 17
+opcode_clc                                      = 24
+opcode_jmp                                      = 76
+opcode_sec                                      = 56
 osbyte_close_spool_exec                         = 119
 osbyte_flush_buffer                             = 21
 osbyte_flush_buffer_class                       = 15
@@ -953,18 +956,20 @@ sprite_op_without_copying_mask
 ; Bit 1 of sprite_op_flags is set (but not bit 2).
 ; This erases the sprite from the screen.
 ; This self-modifies code
-    lda #$18                                                          ; 1581: a9 18       ..  :1450[1]   ; Write CLC
+    lda #opcode_clc                                                   ; 1581: a9 18       ..  :1450[1]
     sta smc_sprite_opcode                                             ; 1583: 8d 86 14    ... :1452[1]
-    lda #$4c ; 'L'                                                    ; 1586: a9 4c       .L  :1455[1]   ; Write JMP and_byte_with_mask_and_write_to_screen2
+; Write JMP and_byte_with_mask_and_write_to_screen2
+    lda #opcode_jmp                                                   ; 1586: a9 4c       .L  :1455[1]
     sta smc_sprite_opcode+1                                           ; 1588: 8d 87 14    ... :1457[1]
-    lda #$98                                                          ; 158b: a9 98       ..  :145a[1]
+    lda #<and_byte_with_mask_and_write_to_screen2                     ; 158b: a9 98       ..  :145a[1]
     sta smc_sprite_opcode+2                                           ; 158d: 8d 88 14    ... :145c[1]
-    lda #$14                                                          ; 1590: a9 14       ..  :145f[1]
+    lda #>and_byte_with_mask_and_write_to_screen2                     ; 1590: a9 14       ..  :145f[1]
     sta smc_sprite_opcode+3                                           ; 1592: 8d 89 14    ... :1461[1]
     bne skip3                                                         ; 1595: d0 08       ..  :1464[1]   ; ALWAYS branch
 
+; Write 'SEC; SEC'
 write_sprite_without_mask
-    lda #$38 ; '8'                                                    ; 1597: a9 38       .8  :1466[1]   ; Write 'SEC; SEC'
+    lda #opcode_sec                                                   ; 1597: a9 38       .8  :1466[1]
     sta smc_sprite_opcode                                             ; 1599: 8d 86 14    ... :1468[1]
     sta smc_sprite_opcode+1                                           ; 159c: 8d 87 14    ... :146b[1]
 skip3
@@ -7907,6 +7912,9 @@ pydis_end
 !if (<(screen_width_in_pixels-1)) != $3f {
     !error "Assertion failed: <(screen_width_in_pixels-1) == $3f"
 }
+!if (<and_byte_with_mask_and_write_to_screen2) != $98 {
+    !error "Assertion failed: <and_byte_with_mask_and_write_to_screen2 == $98"
+}
 !if (<and_press_return_message) != $46 {
     !error "Assertion failed: <and_press_return_message == $46"
 }
@@ -8062,6 +8070,9 @@ pydis_end
 }
 !if (>(screen_width_in_pixels-1)) != $01 {
     !error "Assertion failed: >(screen_width_in_pixels-1) == $01"
+}
+!if (>and_byte_with_mask_and_write_to_screen2) != $14 {
+    !error "Assertion failed: >and_byte_with_mask_and_write_to_screen2 == $14"
 }
 !if (>and_press_return_message) != $35 {
     !error "Assertion failed: >and_press_return_message == $35"
@@ -8290,6 +8301,15 @@ pydis_end
 }
 !if (menu_slot_count) != $11 {
     !error "Assertion failed: menu_slot_count == $11"
+}
+!if (opcode_clc) != $18 {
+    !error "Assertion failed: opcode_clc == $18"
+}
+!if (opcode_jmp) != $4c {
+    !error "Assertion failed: opcode_jmp == $4c"
+}
+!if (opcode_sec) != $38 {
+    !error "Assertion failed: opcode_sec == $38"
 }
 !if (osbyte_close_spool_exec) != $77 {
     !error "Assertion failed: osbyte_close_spool_exec == $77"
