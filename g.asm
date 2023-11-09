@@ -667,7 +667,7 @@ something24_TODO
     lda #0                                                            ; 1422: a9 00       ..  :12f1[1]
     sta vsync_counter                                                 ; 1424: 8d 8b 17    ... :12f3[1]
     jsr check_cursor_left_right_and_space                             ; 1427: 20 8f 3a     .: :12f6[1]
-    jsr sub_c3aa2                                                     ; 142a: 20 a2 3a     .: :12f9[1]
+    jsr read_jump_zx_keys                                             ; 142a: 20 a2 3a     .: :12f9[1]
 c12fc
     lda vsync_counter                                                 ; 142d: ad 8b 17    ... :12fc[1]
     cmp #4                                                            ; 1430: c9 04       ..  :12ff[1]
@@ -676,7 +676,7 @@ c12fc
 c1306
     jsr something20_TODO                                              ; 1437: 20 38 2a     8* :1306[1]
     jsr c131e                                                         ; 143a: 20 1e 13     .. :1309[1]
-    jsr sub_c3aa2                                                     ; 143d: 20 a2 3a     .: :130c[1]
+    jsr read_jump_zx_keys                                             ; 143d: 20 a2 3a     .: :130c[1]
     jsr something19_TODO                                              ; 1440: 20 cd 22     ." :130f[1]
     ldx second_level_handler_ptr                                      ; 1443: ae d9 3a    ..: :1312[1]
     ldy second_level_handler_ptr + 1                                  ; 1446: ac da 3a    ..: :1315[1]
@@ -3869,7 +3869,7 @@ sub_c2770
     sta l0044                                                         ; 28b6: 85 44       .D  :2785[1]
     jsr sub_c26e5                                                     ; 28b8: 20 e5 26     .& :2787[1]
     lda #0                                                            ; 28bb: a9 00       ..  :278a[1]
-    sta l2890                                                         ; 28bd: 8d 90 28    ..( :278c[1]
+    sta two_byte_table_based_on_left_right_direction                  ; 28bd: 8d 90 28    ..( :278c[1]
     sta l2891                                                         ; 28c0: 8d 91 28    ..( :278f[1]
     lda address2_high                                                 ; 28c3: a5 7f       ..  :2792[1]
     sta l288f                                                         ; 28c5: 8d 8f 28    ..( :2794[1]
@@ -3922,7 +3922,7 @@ c279c
     sbc #0                                                            ; 2923: e9 00       ..  :27f2[1]
     jsr sub_c2859                                                     ; 2925: 20 59 28     Y( :27f4[1]
     bne c27fe                                                         ; 2928: d0 05       ..  :27f7[1]
-    dec l2890                                                         ; 292a: ce 90 28    ..( :27f9[1]
+    dec two_byte_table_based_on_left_right_direction                  ; 292a: ce 90 28    ..( :27f9[1]
     bne c281d                                                         ; 292d: d0 1f       ..  :27fc[1]
 c27fe
     asl sprite_screen_address_low                                     ; 292f: 06 72       .r  :27fe[1]
@@ -3939,7 +3939,7 @@ c27fe
     ror l007a                                                         ; 2944: 66 7a       fz  :2813[1]
     jsr sub_c286d                                                     ; 2946: 20 6d 28     m( :2815[1]
     bne c2851                                                         ; 2949: d0 37       .7  :2818[1]
-    inc l2890                                                         ; 294b: ee 90 28    ..( :281a[1]
+    inc two_byte_table_based_on_left_right_direction                  ; 294b: ee 90 28    ..( :281a[1]
 c281d
     lda l0053                                                         ; 294e: a5 53       .S  :281d[1]
     beq c2825                                                         ; 2950: f0 04       ..  :281f[1]
@@ -4012,7 +4012,7 @@ c288c
 
 l288f
     !byte 0                                                           ; 29c0: 00          .   :288f[1]
-l2890
+two_byte_table_based_on_left_right_direction
     !byte 0                                                           ; 29c1: 00          .   :2890[1]
 l2891
     !byte 0                                                           ; 29c2: 00          .   :2891[1]
@@ -4358,27 +4358,27 @@ c2aa0
     beq skip_developer_key_shift_handling                             ; 2bdf: f0 07       ..  :2aae[1]
     ldx #inkey_key_shift                                              ; 2be1: a2 ff       ..  :2ab0[1]
     jsr negative_inkey                                                ; 2be3: 20 cc 3a     .: :2ab2[1]
-    bne c2abd                                                         ; 2be6: d0 06       ..  :2ab5[1]
+    bne shift_key_detected                                            ; 2be6: d0 06       ..  :2ab5[1]
 skip_developer_key_shift_handling
     jsr wait_for_vsync                                                ; 2be8: 20 8c 17     .. :2ab7[1]
     jmp something20_TODO                                              ; 2beb: 4c 38 2a    L8* :2aba[1]
 
-c2abd
-    jsr sub_c3aa2                                                     ; 2bee: 20 a2 3a     .: :2abd[1]
-    ldx #$80                                                          ; 2bf1: a2 80       ..  :2ac0[1]
+shift_key_detected
+    jsr read_jump_zx_keys                                             ; 2bee: 20 a2 3a     .: :2abd[1]
+    ldx #$80                                                          ; 2bf1: a2 80       ..  :2ac0[1]   ; wait for a bit
     ldy #0                                                            ; 2bf3: a0 00       ..  :2ac2[1]
-c2ac4
+delay_loop1
     dey                                                               ; 2bf5: 88          .   :2ac4[1]
-    bne c2ac4                                                         ; 2bf6: d0 fd       ..  :2ac5[1]
+    bne delay_loop1                                                   ; 2bf6: d0 fd       ..  :2ac5[1]
     dex                                                               ; 2bf8: ca          .   :2ac7[1]
-    bne c2ac4                                                         ; 2bf9: d0 fa       ..  :2ac8[1]
+    bne delay_loop1                                                   ; 2bf9: d0 fa       ..  :2ac8[1]
     jmp return19                                                      ; 2bfb: 4c da 2a    L.* :2aca[1]
 
 c2acd
     lda another_menu_index                                            ; 2bfe: a5 25       .%  :2acd[1]
     cmp menu_index_for_first_player_character                         ; 2c00: cd 6d 29    .m) :2acf[1]
     bcs return19                                                      ; 2c03: b0 06       ..  :2ad2[1]
-    jsr sub_c3aa2                                                     ; 2c05: 20 a2 3a     .: :2ad4[1]
+    jsr read_jump_zx_keys                                             ; 2c05: 20 a2 3a     .: :2ad4[1]
     jsr update_main_keys                                              ; 2c08: 20 12 3a     .: :2ad7[1]
 return19
     rts                                                               ; 2c0b: 60          `   :2ada[1]
@@ -4850,7 +4850,7 @@ c2e44
     beq c2e4c                                                         ; 2f7a: f0 01       ..  :2e49[1]
     inx                                                               ; 2f7c: e8          .   :2e4b[1]
 c2e4c
-    lda l2890,x                                                       ; 2f7d: bd 90 28    ..( :2e4c[1]
+    lda two_byte_table_based_on_left_right_direction,x                ; 2f7d: bd 90 28    ..( :2e4c[1]
     beq c2e5f                                                         ; 2f80: f0 0e       ..  :2e4f[1]
     ldy #$96                                                          ; 2f82: a0 96       ..  :2e51[1]
     sty l09df                                                         ; 2f84: 8c df 09    ... :2e53[1]
@@ -5061,7 +5061,7 @@ c308a
     beq c3092                                                         ; 31c0: f0 01       ..  :308f[1]
     inx                                                               ; 31c2: e8          .   :3091[1]
 c3092
-    lda l2890,x                                                       ; 31c3: bd 90 28    ..( :3092[1]
+    lda two_byte_table_based_on_left_right_direction,x                ; 31c3: bd 90 28    ..( :3092[1]
     beq c30a5                                                         ; 31c6: f0 0e       ..  :3095[1]
     ldy #$ae                                                          ; 31c8: a0 ae       ..  :3097[1]
     sty l09df                                                         ; 31ca: 8c df 09    ... :3099[1]
@@ -5297,7 +5297,7 @@ c3316
     beq c331e                                                         ; 344c: f0 01       ..  :331b[1]
     inx                                                               ; 344e: e8          .   :331d[1]
 c331e
-    lda l2890,x                                                       ; 344f: bd 90 28    ..( :331e[1]
+    lda two_byte_table_based_on_left_right_direction,x                ; 344f: bd 90 28    ..( :331e[1]
     beq c3331                                                         ; 3452: f0 0e       ..  :3321[1]
     ldy #$d4                                                          ; 3454: a0 d4       ..  :3323[1]
     sty l09df                                                         ; 3456: 8c df 09    ... :3325[1]
@@ -6399,7 +6399,7 @@ space_flag2
 left_right_flag_pending
     !byte 0                                                           ; 3bd2: 00          .   :3aa1[1]
 
-sub_c3aa2
+read_jump_zx_keys
     lda jump_requested                                                ; 3bd3: ad c7 3a    ..: :3aa2[1]
     sta jump_requested_previous_tick                                  ; 3bd6: 8d c8 3a    ..: :3aa5[1]
     lda return_key_pressed_pending                                    ; 3bd9: a5 46       .F  :3aa8[1]
@@ -7583,8 +7583,6 @@ pydis_end
 ;     c2a73
 ;     c2a81
 ;     c2aa0
-;     c2abd
-;     c2ac4
 ;     c2acd
 ;     c2b2e
 ;     c2c35
@@ -7781,7 +7779,6 @@ pydis_end
 ;     l2550
 ;     l2551
 ;     l288f
-;     l2890
 ;     l2891
 ;     l2892
 ;     l2893
@@ -7882,7 +7879,6 @@ pydis_end
 ;     sub_c336e
 ;     sub_c344b
 ;     sub_c3664
-;     sub_c3aa2
 !if (' ' + '0') != $50 {
     !error "Assertion failed: ' ' + '0' == $50"
 }

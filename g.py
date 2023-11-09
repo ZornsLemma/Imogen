@@ -970,6 +970,11 @@ entry(0x22cd, "something19_TODO")
 entry(0x2a38, "something20_TODO")
 label(0x2a60, "skip_developer_key_escape_handling")
 label(0x2ab7, "skip_developer_key_shift_handling")
+label(0x2abd, "shift_key_detected")
+label(0x2ac4, "delay_loop1")
+label(0x3aa2, "read_jump_zx_keys")
+label(0x2890, "two_byte_table_based_on_left_right_direction")
+comment(0x2ac0, "wait for a bit", inline=True)
 label(0x36a8, "skip_developer_key_level_select_handling")
 comment(0x2b87, """*************************************************************************************
 
