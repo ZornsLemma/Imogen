@@ -1429,13 +1429,13 @@ sub_c1728
     lda #vdu_bell                                                     ; 185e: a9 07       ..  :172d[1]
     jsr oswrch                                                        ; 1860: 20 ee ff     .. :172f[1]   ; Write character 7
     lda #$12                                                          ; 1863: a9 12       ..  :1732[1]
-    sta l0409                                                         ; 1865: 8d 09 04    ... :1734[1]
+    sta current_text_width                                            ; 1865: 8d 09 04    ... :1734[1]
     jsr save_or_restore_screen_under_dialog_box                       ; 1868: 20 0a 04     .. :1737[1]
     lda #$0a                                                          ; 186b: a9 0a       ..  :173a[1]
     jsr oswrch                                                        ; 186d: 20 ee ff     .. :173c[1]   ; Write character 10
     ldx #<data_TODO                                                   ; 1870: a2 52       .R  :173f[1]
     ldy #>data_TODO                                                   ; 1872: a0 17       ..  :1741[1]
-    jsr sub_c37f3                                                     ; 1874: 20 f3 37     .7 :1743[1]
+    jsr print_encrypted_string_at_yx_centred                          ; 1874: 20 f3 37     .7 :1743[1]
     jsr sub_c388d                                                     ; 1877: 20 8d 38     .8 :1746[1]
     jsr sub_c388d                                                     ; 187a: 20 8d 38     .8 :1749[1]
 c174c
@@ -5417,7 +5417,7 @@ l3403
 
 show_load_save_dialog
     lda #$12                                                          ; 3535: a9 12       ..  :3404[1]
-    sta l0409                                                         ; 3537: 8d 09 04    ... :3406[1]
+    sta current_text_width                                            ; 3537: 8d 09 04    ... :3406[1]
     lda l0004                                                         ; 353a: a5 04       ..  :3409[1]
     bne c3428                                                         ; 353c: d0 1b       ..  :340b[1]
 c340d
@@ -5580,7 +5580,7 @@ c3557
     ldx #<loading_message                                             ; 36a0: a2 fe       ..  :356f[1]
     ldy #>loading_message                                             ; 36a2: a0 35       .5  :3571[1]
 c3573
-    jsr sub_c37f3                                                     ; 36a4: 20 f3 37     .7 :3573[1]
+    jsr print_encrypted_string_at_yx_centred                          ; 36a4: 20 f3 37     .7 :3573[1]
     lda #<save_full_filename                                          ; 36a7: a9 d6       ..  :3576[1]
     sta address1_low                                                  ; 36a9: 85 70       .p  :3578[1]
     lda #>save_full_filename                                          ; 36ab: a9 34       .4  :357a[1]
@@ -5673,7 +5673,7 @@ wait_for_return
 
 show_password_entry_dialog
     lda #$12                                                          ; 3767: a9 12       ..  :3636[1]
-    sta l0409                                                         ; 3769: 8d 09 04    ... :3638[1]
+    sta current_text_width                                            ; 3769: 8d 09 04    ... :3638[1]
     lda l0004                                                         ; 376c: a5 04       ..  :363b[1]
     bne c3652                                                         ; 376e: d0 13       ..  :363d[1]
 c363f
@@ -5862,7 +5862,7 @@ l377d
 
 show_level_info_dialog
     lda #$11                                                          ; 38af: a9 11       ..  :377e[1]
-    sta l0409                                                         ; 38b1: 8d 09 04    ... :3780[1]
+    sta current_text_width                                            ; 38b1: 8d 09 04    ... :3780[1]
     lda l0004                                                         ; 38b4: a5 04       ..  :3783[1]
     beq c378e                                                         ; 38b6: f0 07       ..  :3785[1]
     cmp #1                                                            ; 38b8: c9 01       ..  :3787[1]
@@ -5924,20 +5924,20 @@ c37da
 return27
     rts                                                               ; 3923: 60          `   :37f2[1]
 
-sub_c37f3
+print_encrypted_string_at_yx_centred
     stx address1_low                                                  ; 3924: 86 70       .p  :37f3[1]
     sty address1_high                                                 ; 3926: 84 71       .q  :37f5[1]
     ldy #0                                                            ; 3928: a0 00       ..  :37f7[1]
-loop_c37f9
+find_string_length_loop
     lda (address1_low),y                                              ; 392a: b1 70       .p  :37f9[1]
     eor eor_key                                                       ; 392c: 45 45       EE  :37fb[1]
-    cmp #$0d                                                          ; 392e: c9 0d       ..  :37fd[1]
-    beq c3804                                                         ; 3930: f0 03       ..  :37ff[1]
+    cmp #vdu_cr                                                       ; 392e: c9 0d       ..  :37fd[1]
+    beq string_length_in_y                                            ; 3930: f0 03       ..  :37ff[1]
     iny                                                               ; 3932: c8          .   :3801[1]
-    bne loop_c37f9                                                    ; 3933: d0 f5       ..  :3802[1]
-c3804
+    bne find_string_length_loop                                       ; 3933: d0 f5       ..  :3802[1]
+string_length_in_y
     sty address1_low                                                  ; 3935: 84 70       .p  :3804[1]
-    lda l0409                                                         ; 3937: ad 09 04    ... :3806[1]
+    lda current_text_width                                            ; 3937: ad 09 04    ... :3806[1]
     sec                                                               ; 393a: 38          8   :3809[1]
     sbc #2                                                            ; 393b: e9 02       ..  :380a[1]
     sbc address1_low                                                  ; 393d: e5 70       .p  :380c[1]
@@ -7233,7 +7233,7 @@ wait_for_timingB_counter
     ldy timingB_counter_high                                          ; 4102: ac 07 11    ... :0403[2]
     jmp wait_for_timer_2_using_yx                                     ; 4105: 4c 91 17    L.. :0406[2]
 
-l0409
+current_text_width
     !byte $12                                                         ; 4108: 12          .   :0409[2]
 
 save_or_restore_screen_under_dialog_box
@@ -7252,7 +7252,7 @@ save_or_restore_screen_under_dialog_box
     inx                                                               ; 4122: e8          .   :0423[2]
     stx l0042                                                         ; 4123: 86 42       .B  :0424[2]
     ldy #1                                                            ; 4125: a0 01       ..  :0426[2]
-    lda l0409                                                         ; 4127: ad 09 04    ... :0428[2]
+    lda current_text_width                                            ; 4127: ad 09 04    ... :0428[2]
     sec                                                               ; 412a: 38          8   :042b[2]
     sbc #2                                                            ; 412b: e9 02       ..  :042c[2]
     sta some_word                                                     ; 412d: 85 3c       .<  :042e[2]
@@ -7309,7 +7309,7 @@ stash_data_pointed_to_by_l0076_at_530_maybe
     lda #5                                                            ; 4188: a9 05       ..  :0489[2]
     sta sprite_screen_address_high                                    ; 418a: 85 73       .s  :048b[2]
 c048d
-    ldx l0409                                                         ; 418c: ae 09 04    ... :048d[2]
+    ldx current_text_width                                            ; 418c: ae 09 04    ... :048d[2]
 c0490
     ldy #7                                                            ; 418f: a0 07       ..  :0490[2]
 loop_c0492
@@ -7361,7 +7361,7 @@ sub_c04cb
     inx                                                               ; 41dc: e8          .   :04dd[2]
     stx l0042                                                         ; 41dd: 86 42       .B  :04de[2]
     jsr c0505                                                         ; 41df: 20 05 05     .. :04e0[2]
-    lda l0409                                                         ; 41e2: ad 09 04    ... :04e3[2]
+    lda current_text_width                                            ; 41e2: ad 09 04    ... :04e3[2]
     asl                                                               ; 41e5: 0a          .   :04e6[2]
     asl                                                               ; 41e6: 0a          .   :04e7[2]
     asl                                                               ; 41e7: 0a          .   :04e8[2]
@@ -7384,7 +7384,7 @@ loop_c04f9
 c0505
     ldx #0                                                            ; 4204: a2 00       ..  :0505[2]
     ldy #0                                                            ; 4206: a0 00       ..  :0507[2]
-    lda l0409                                                         ; 4208: ad 09 04    ... :0509[2]
+    lda current_text_width                                            ; 4208: ad 09 04    ... :0509[2]
     sta some_word                                                     ; 420b: 85 3c       .<  :050c[2]
     lda #5                                                            ; 420d: a9 05       ..  :050e[2]
     sta some_word + 1                                                 ; 420f: 85 3d       .=  :0510[2]
@@ -7662,7 +7662,6 @@ pydis_end
 ;     c37ba
 ;     c37c3
 ;     c37da
-;     c3804
 ;     c381a
 ;     c3838
 ;     c3848
@@ -7733,7 +7732,6 @@ pydis_end
 ;     l012c
 ;     l012d
 ;     l012e
-;     l0409
 ;     l0515
 ;     l0517
 ;     l0518
@@ -7834,7 +7832,6 @@ pydis_end
 ;     loop_c34b2
 ;     loop_c36c7
 ;     loop_c36f9
-;     loop_c37f9
 ;     loop_c383a
 ;     loop_c3892
 ;     loop_c39d2
@@ -7870,7 +7867,6 @@ pydis_end
 ;     sub_c336e
 ;     sub_c344b
 ;     sub_c3664
-;     sub_c37f3
 ;     sub_c388d
 ;     sub_c3aa2
 !if (' ' + '0') != $50 {

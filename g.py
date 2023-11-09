@@ -1568,6 +1568,12 @@ entry(0x1b66, "set_sprite_y_pos_using_x_y") # TODO!
 label(0x58c0, "toolbar_screen_address")
 label(0x6200, "game_area_screen_address")
 
+entry(0x37f3, "print_encrypted_string_at_yx_centred")
+entry(0x37f9, "find_string_length_loop")
+expr(0x37fe, "vdu_cr")
+entry(0x3804, "string_length_in_y")
+label(0x409, "current_text_width")
+
 go()
 
 # vi: tw=100
