@@ -3055,41 +3055,48 @@ c21ef
 return9
     rts                                                               ; 2330: 60          `   :21ff[1]
 
-something17_TODO
-    stx address1_low                                                  ; 2331: 86 70       .p  :2200[1]
+set_player_spriteid_and_offset_from_animation_table
+    stx address1_low                                                  ; 2331: 86 70       .p  :2200[1]   ; store YX as animation table address
     sty address1_high                                                 ; 2333: 84 71       .q  :2202[1]
+; load byte at offset A from table, the spriteid
     tay                                                               ; 2335: a8          .   :2204[1]
     lda (address1_low),y                                              ; 2336: b1 70       .p  :2205[1]
     sta object_spriteid                                               ; 2338: 8d a8 09    ... :2207[1]
+; check if we should add offset x
     iny                                                               ; 233b: c8          .   :220a[1]
     lda l2433                                                         ; 233c: ad 33 24    .3$ :220b[1]
-    bne c2231                                                         ; 233f: d0 21       .!  :220e[1]
+    bne skip8                                                         ; 233f: d0 21       .!  :220e[1]
+; load next byte from table, the X offset
     lda (address1_low),y                                              ; 2341: b1 70       .p  :2210[1]
+; invert offset if direction is reversed
     ldx object_direction                                              ; 2343: ae be 09    ... :2212[1]
     bpl add_movement_in_direction_to_player                           ; 2346: 10 05       ..  :2215[1]
 ; invert A if direction is left
     eor #$ff                                                          ; 2348: 49 ff       I.  :2217[1]
     clc                                                               ; 234a: 18          .   :2219[1]
     adc #1                                                            ; 234b: 69 01       i.  :221a[1]
+; add offset in X to player position
 add_movement_in_direction_to_player
     ldx #0                                                            ; 234d: a2 00       ..  :221c[1]
     ora #0                                                            ; 234f: 09 00       ..  :221e[1]
-    bpl c2223                                                         ; 2351: 10 01       ..  :2220[1]
+    bpl skip7                                                         ; 2351: 10 01       ..  :2220[1]
     dex                                                               ; 2353: ca          .   :2222[1]
-c2223
+skip7
     clc                                                               ; 2354: 18          .   :2223[1]
     adc object_x_low                                                  ; 2355: 6d 50 09    mP. :2224[1]
     sta object_x_low                                                  ; 2358: 8d 50 09    .P. :2227[1]
     txa                                                               ; 235b: 8a          .   :222a[1]
     adc object_x_high                                                 ; 235c: 6d 66 09    mf. :222b[1]
     sta object_x_high                                                 ; 235f: 8d 66 09    .f. :222e[1]
-c2231
+skip8
     iny                                                               ; 2362: c8          .   :2231[1]
+; load next byte from table, the Y offset
     ldx #0                                                            ; 2363: a2 00       ..  :2232[1]
     lda (address1_low),y                                              ; 2365: b1 70       .p  :2234[1]
-    bpl c2239                                                         ; 2367: 10 01       ..  :2236[1]
+    bpl skip9                                                         ; 2367: 10 01       ..  :2236[1]
     dex                                                               ; 2369: ca          .   :2238[1]
-c2239
+; add offset in Y to player position
+skip9
     clc                                                               ; 236a: 18          .   :2239[1]
     adc object_y_low                                                  ; 236b: 6d 7c 09    m|. :223a[1]
     sta object_y_low                                                  ; 236e: 8d 7c 09    .|. :223d[1]
@@ -4744,7 +4751,7 @@ decrement_current_tranformations_remaining_pla_rts
     pla                                                               ; 2e06: 68          h   :2cd5[1]
     rts                                                               ; 2e07: 60          `   :2cd6[1]
 
-other_data2
+wizard_animations2
     !byte spriteid_wizard1,                2,              $f8        ; 2e08: 30 02 f8    0.. :2cd7[1]
     !byte spriteid_wizard2,                4,              $f7        ; 2e0b: 31 04 f7    1.. :2cda[1]
     !byte spriteid_wizard3,                2,              $f8        ; 2e0e: 32 02 f8    2.. :2cdd[1]
@@ -4753,8 +4760,7 @@ other_data2
     !byte spriteid_wizard7,                2,              $f7        ; 2e17: 36 02 f7    6.. :2ce6[1]
     !byte spriteid_wizard6,                4,              $f6        ; 2e1a: 35 04 f6    5.. :2ce9[1]
     !byte                0                                            ; 2e1d: 00          .   :2cec[1]
-data1
-other_data1
+wizard_animations
     !byte                          0,                          0      ; 2e1e: 00 00       ..  :2ced[1]
     !byte                          0, spriteid_wizard_transform2      ; 2e20: 00 39       .9  :2cef[1]
     !byte                          0,                          0      ; 2e22: 00 00       ..  :2cf1[1]
@@ -4836,8 +4842,8 @@ other_data1
 update_wizard
     lda #$16                                                          ; 2eb8: a9 16       ..  :2d87[1]
     sta l22ed                                                         ; 2eba: 8d ed 22    .." :2d89[1]
-    ldx #<data1                                                       ; 2ebd: a2 ed       ..  :2d8c[1]
-    ldy #>data1                                                       ; 2ebf: a0 2c       .,  :2d8e[1]
+    ldx #<wizard_animations                                           ; 2ebd: a2 ed       ..  :2d8c[1]
+    ldy #>wizard_animations                                           ; 2ebf: a0 2c       .,  :2d8e[1]
     lda #3                                                            ; 2ec1: a9 03       ..  :2d90[1]
     jsr sub_c22ee                                                     ; 2ec3: 20 ee 22     ." :2d92[1]
     bne c2dc0                                                         ; 2ec6: d0 29       .)  :2d95[1]
@@ -4949,7 +4955,7 @@ c2e5f
     lda l0052                                                         ; 2f98: a5 52       .R  :2e67[1]
     beq c2e82                                                         ; 2f9a: f0 17       ..  :2e69[1]
     ldy l09d4                                                         ; 2f9c: ac d4 09    ... :2e6b[1]
-    lda data1,y                                                       ; 2f9f: b9 ed 2c    .., :2e6e[1]
+    lda wizard_animations,y                                           ; 2f9f: b9 ed 2c    .., :2e6e[1]
     sta object_spriteid                                               ; 2fa2: 8d a8 09    ... :2e71[1]
     jsr sub_c2eb8                                                     ; 2fa5: 20 b8 2e     .. :2e74[1]
     lda #0                                                            ; 2fa8: a9 00       ..  :2e77[1]
@@ -4958,9 +4964,9 @@ c2e5f
     sta l2eb5                                                         ; 2fb0: 8d b5 2e    ... :2e7f[1]
 c2e82
     lda l09d4                                                         ; 2fb3: ad d4 09    ... :2e82[1]
-    ldx #<other_data1                                                 ; 2fb6: a2 ed       ..  :2e85[1]
-    ldy #>other_data1                                                 ; 2fb8: a0 2c       .,  :2e87[1]
-    jsr something17_TODO                                              ; 2fba: 20 00 22     ." :2e89[1]
+    ldx #<wizard_animations                                           ; 2fb6: a2 ed       ..  :2e85[1]
+    ldy #>wizard_animations                                           ; 2fb8: a0 2c       .,  :2e87[1]
+    jsr set_player_spriteid_and_offset_from_animation_table           ; 2fba: 20 00 22     ." :2e89[1]
     jsr sub_c2eb8                                                     ; 2fbd: 20 b8 2e     .. :2e8c[1]
     lda #0                                                            ; 2fc0: a9 00       ..  :2e8f[1]
     jsr sub_c25f5                                                     ; 2fc2: 20 f5 25     .% :2e91[1]
@@ -4990,8 +4996,8 @@ l2eb7
 sub_c2eb8
     ldx l0052                                                         ; 2fe9: a6 52       .R  :2eb8[1]
     beq c2ee4                                                         ; 2feb: f0 28       .(  :2eba[1]
-    ldx #<other_data2                                                 ; 2fed: a2 d7       ..  :2ebc[1]
-    ldy #>other_data2                                                 ; 2fef: a0 2c       .,  :2ebe[1]
+    ldx #<wizard_animations2                                          ; 2fed: a2 d7       ..  :2ebc[1]
+    ldy #>wizard_animations2                                          ; 2fef: a0 2c       .,  :2ebe[1]
     lda #0                                                            ; 2ff1: a9 00       ..  :2ec0[1]
     jsr something18_TODO                                              ; 2ff3: 20 48 22     H" :2ec2[1]
     lda l0052                                                         ; 2ff6: a5 52       .R  :2ec5[1]
@@ -5024,31 +5030,111 @@ l2ef2
     !byte 0, 0, 0, 0, 0                                               ; 3023: 00 00 00... ... :2ef2[1]
 some_more_data
     !byte $12, $13, $14, $15, $16, $17, $18, $19,   0                 ; 3028: 12 13 14... ... :2ef7[1]
-other_data4
-    !byte $0c, $f9, $f6, $0d, $f9, $f5, $0e, $f9, $f6, $0f, $f9, $f5  ; 3031: 0c f9 f6... ... :2f00[1]
-    !byte $0f, $f9, $f5, $1c, $f9, $f5, $1a, $f9, $f6,   0            ; 303d: 0f f9 f5... ... :2f0c[1]
-data2
-    !byte   0,   0,   0, $11,   0,   0, $11,   0,   0, $10,   0,   0  ; 3047: 00 00 00... ... :2f16[1]
-    !byte $10,   0,   0, $0f,   0,   0, $0f,   0,   0,   0, $0f,   0  ; 3053: 10 00 00... ... :2f22[1]
-    !byte   0, $0f,   0,   0, $10,   0,   0, $10,   0,   0, $11,   0  ; 305f: 00 0f 00... ... :2f2e[1]
-    !byte   0, $11,   0,   0,   0, $0c,   4,   0, $0d,   4,   0, $0e  ; 306b: 00 11 00... ... :2f3a[1]
-    !byte   4,   0, $0f,   4,   0,   0, $0f,   0,   0, $0f,   2,   0  ; 3077: 04 00 0f... ... :2f46[1]
-    !byte   0, $1c,   4,   0,   0, $1c,   0,   0,   0, $1a,   6, $fb  ; 3083: 00 1c 04... ... :2f52[1]
-    !byte $1a,   6, $fc, $1a,   5, $fc, $1a,   5, $fd, $1a,   5, $fe  ; 308f: 1a 06 fc... ... :2f5e[1]
-    !byte $1a,   5, $ff,   0, $1a,   5,   0, $1a,   5,   0,   0, $0f  ; 309b: 1a 05 ff... ... :2f6a[1]
-    !byte   5,   1, $0f,   5,   2, $0f,   4,   3, $0f,   4,   4, $0f  ; 30a7: 05 01 0f... ... :2f76[1]
-    !byte   4,   4, $0f,   4,   5, $0f,   3,   5, $0f,   3,   5, $0f  ; 30b3: 04 04 0f... ... :2f82[1]
-    !byte   2,   6, $0f,   2,   6, $0f,   1,   6, $0f,   1,   6,   0  ; 30bf: 02 06 0f... ... :2f8e[1]
-    !byte $0f,   4,   2, $0f,   3,   3, $0f,   2,   4, $0f,   1,   5  ; 30cb: 0f 04 02... ... :2f9a[1]
-    !byte   0, $0f, $fc,   2, $0f, $fd,   3, $0f, $fe,   4, $0f, $ff  ; 30d7: 00 0f fc... ... :2fa6[1]
-    !byte   5,   0, $0f,   0,   1, $0f,   0,   2, $0f,   0,   3, $0f  ; 30e3: 05 00 0f... ... :2fb2[1]
-    !byte   0,   4, $0f,   0,   5,   0, $0f,   0,   7,   0            ; 30ef: 00 04 0f... ... :2fbe[1]
+cat_animations2
+    !byte spriteid_cat_walk1,                $f9,                $f6  ; 3031: 0c f9 f6    ... :2f00[1]
+    !byte spriteid_cat_walk2,                $f9,                $f5  ; 3034: 0d f9 f5    ... :2f03[1]
+    !byte spriteid_cat_walk3,                $f9,                $f6  ; 3037: 0e f9 f6    ... :2f06[1]
+    !byte spriteid_cat_walk4,                $f9,                $f5  ; 303a: 0f f9 f5    ... :2f09[1]
+    !byte spriteid_cat_walk4,                $f9,                $f5  ; 303d: 0f f9 f5    ... :2f0c[1]
+    !byte      spriteid_cat2,                $f9,                $f5  ; 3040: 1c f9 f5    ... :2f0f[1]
+    !byte  spriteid_cat_jump,                $f9,                $f6  ; 3043: 1a f9 f6    ... :2f12[1]
+    !byte                  0                                          ; 3046: 00          .   :2f15[1]
+cat_animations
+    !byte                       0,                       0            ; 3047: 00 00       ..  :2f16[1]
+    !byte                       0, spriteid_cat_transform2            ; 3049: 00 11       ..  :2f18[1]
+    !byte                       0,                       0            ; 304b: 00 00       ..  :2f1a[1]
+    !byte spriteid_cat_transform2,                       0            ; 304d: 11 00       ..  :2f1c[1]
+    !byte                       0, spriteid_cat_transform1            ; 304f: 00 10       ..  :2f1e[1]
+    !byte                       0,                       0            ; 3051: 00 00       ..  :2f20[1]
+    !byte spriteid_cat_transform1,                       0            ; 3053: 10 00       ..  :2f22[1]
+    !byte                       0,      spriteid_cat_walk4            ; 3055: 00 0f       ..  :2f24[1]
+    !byte                       0,                       0            ; 3057: 00 00       ..  :2f26[1]
+    !byte      spriteid_cat_walk4,                       0            ; 3059: 0f 00       ..  :2f28[1]
+    !byte                       0,                       0            ; 305b: 00 00       ..  :2f2a[1]
+    !byte      spriteid_cat_walk4,                       0            ; 305d: 0f 00       ..  :2f2c[1]
+    !byte                       0,      spriteid_cat_walk4            ; 305f: 00 0f       ..  :2f2e[1]
+    !byte                       0,                       0            ; 3061: 00 00       ..  :2f30[1]
+    !byte spriteid_cat_transform1,                       0            ; 3063: 10 00       ..  :2f32[1]
+    !byte                       0, spriteid_cat_transform1            ; 3065: 00 10       ..  :2f34[1]
+    !byte                       0,                       0            ; 3067: 00 00       ..  :2f36[1]
+    !byte spriteid_cat_transform2,                       0            ; 3069: 11 00       ..  :2f38[1]
+    !byte                       0, spriteid_cat_transform2            ; 306b: 00 11       ..  :2f3a[1]
+    !byte                       0,                       0            ; 306d: 00 00       ..  :2f3c[1]
+    !byte                       0,      spriteid_cat_walk1            ; 306f: 00 0c       ..  :2f3e[1]
+    !byte                       4,                       0            ; 3071: 04 00       ..  :2f40[1]
+    !byte      spriteid_cat_walk2,                       4            ; 3073: 0d 04       ..  :2f42[1]
+    !byte                       0,      spriteid_cat_walk3            ; 3075: 00 0e       ..  :2f44[1]
+    !byte                       4,                       0            ; 3077: 04 00       ..  :2f46[1]
+    !byte      spriteid_cat_walk4,                       4            ; 3079: 0f 04       ..  :2f48[1]
+    !byte                       0,                       0            ; 307b: 00 00       ..  :2f4a[1]
+    !byte      spriteid_cat_walk4,                       0            ; 307d: 0f 00       ..  :2f4c[1]
+    !byte                       0,      spriteid_cat_walk4            ; 307f: 00 0f       ..  :2f4e[1]
+    !byte                       2,                       0            ; 3081: 02 00       ..  :2f50[1]
+    !byte                       0,           spriteid_cat2            ; 3083: 00 1c       ..  :2f52[1]
+    !byte                       4,                       0            ; 3085: 04 00       ..  :2f54[1]
+    !byte                       0,           spriteid_cat2            ; 3087: 00 1c       ..  :2f56[1]
+    !byte                       0,                       0            ; 3089: 00 00       ..  :2f58[1]
+    !byte                       0,       spriteid_cat_jump            ; 308b: 00 1a       ..  :2f5a[1]
+    !byte                       6,                     $fb            ; 308d: 06 fb       ..  :2f5c[1]
+    !byte       spriteid_cat_jump,                       6            ; 308f: 1a 06       ..  :2f5e[1]
+    !byte                     $fc,       spriteid_cat_jump            ; 3091: fc 1a       ..  :2f60[1]
+    !byte                       5,                     $fc            ; 3093: 05 fc       ..  :2f62[1]
+    !byte       spriteid_cat_jump,                       5            ; 3095: 1a 05       ..  :2f64[1]
+    !byte                     $fd,       spriteid_cat_jump            ; 3097: fd 1a       ..  :2f66[1]
+    !byte                       5,                     $fe            ; 3099: 05 fe       ..  :2f68[1]
+    !byte       spriteid_cat_jump,                       5            ; 309b: 1a 05       ..  :2f6a[1]
+    !byte                     $ff,                       0            ; 309d: ff 00       ..  :2f6c[1]
+    !byte       spriteid_cat_jump,                       5            ; 309f: 1a 05       ..  :2f6e[1]
+    !byte                       0,       spriteid_cat_jump            ; 30a1: 00 1a       ..  :2f70[1]
+    !byte                       5,                       0            ; 30a3: 05 00       ..  :2f72[1]
+    !byte                       0,      spriteid_cat_walk4            ; 30a5: 00 0f       ..  :2f74[1]
+    !byte                       5,                       1            ; 30a7: 05 01       ..  :2f76[1]
+    !byte      spriteid_cat_walk4,                       5            ; 30a9: 0f 05       ..  :2f78[1]
+    !byte                       2,      spriteid_cat_walk4            ; 30ab: 02 0f       ..  :2f7a[1]
+    !byte                       4,                       3            ; 30ad: 04 03       ..  :2f7c[1]
+    !byte      spriteid_cat_walk4,                       4            ; 30af: 0f 04       ..  :2f7e[1]
+    !byte                       4,      spriteid_cat_walk4            ; 30b1: 04 0f       ..  :2f80[1]
+    !byte                       4,                       4            ; 30b3: 04 04       ..  :2f82[1]
+    !byte      spriteid_cat_walk4,                       4            ; 30b5: 0f 04       ..  :2f84[1]
+    !byte                       5,      spriteid_cat_walk4            ; 30b7: 05 0f       ..  :2f86[1]
+    !byte                       3,                       5            ; 30b9: 03 05       ..  :2f88[1]
+    !byte      spriteid_cat_walk4,                       3            ; 30bb: 0f 03       ..  :2f8a[1]
+    !byte                       5,      spriteid_cat_walk4            ; 30bd: 05 0f       ..  :2f8c[1]
+    !byte                       2,                       6            ; 30bf: 02 06       ..  :2f8e[1]
+    !byte      spriteid_cat_walk4,                       2            ; 30c1: 0f 02       ..  :2f90[1]
+    !byte                       6,      spriteid_cat_walk4            ; 30c3: 06 0f       ..  :2f92[1]
+    !byte                       1,                       6            ; 30c5: 01 06       ..  :2f94[1]
+    !byte      spriteid_cat_walk4,                       1            ; 30c7: 0f 01       ..  :2f96[1]
+    !byte                       6,                       0            ; 30c9: 06 00       ..  :2f98[1]
+    !byte      spriteid_cat_walk4,                       4            ; 30cb: 0f 04       ..  :2f9a[1]
+    !byte                       2,      spriteid_cat_walk4            ; 30cd: 02 0f       ..  :2f9c[1]
+    !byte                       3,                       3            ; 30cf: 03 03       ..  :2f9e[1]
+    !byte      spriteid_cat_walk4,                       2            ; 30d1: 0f 02       ..  :2fa0[1]
+    !byte                       4,      spriteid_cat_walk4            ; 30d3: 04 0f       ..  :2fa2[1]
+    !byte                       1,                       5            ; 30d5: 01 05       ..  :2fa4[1]
+    !byte                       0,      spriteid_cat_walk4            ; 30d7: 00 0f       ..  :2fa6[1]
+    !byte                     $fc,                       2            ; 30d9: fc 02       ..  :2fa8[1]
+    !byte      spriteid_cat_walk4,                     $fd            ; 30db: 0f fd       ..  :2faa[1]
+    !byte                       3,      spriteid_cat_walk4            ; 30dd: 03 0f       ..  :2fac[1]
+    !byte                     $fe,                       4            ; 30df: fe 04       ..  :2fae[1]
+    !byte      spriteid_cat_walk4,                     $ff            ; 30e1: 0f ff       ..  :2fb0[1]
+    !byte                       5,                       0            ; 30e3: 05 00       ..  :2fb2[1]
+    !byte      spriteid_cat_walk4,                       0            ; 30e5: 0f 00       ..  :2fb4[1]
+    !byte                       1,      spriteid_cat_walk4            ; 30e7: 01 0f       ..  :2fb6[1]
+    !byte                       0,                       2            ; 30e9: 00 02       ..  :2fb8[1]
+    !byte      spriteid_cat_walk4,                       0            ; 30eb: 0f 00       ..  :2fba[1]
+    !byte                       3,      spriteid_cat_walk4            ; 30ed: 03 0f       ..  :2fbc[1]
+    !byte                       0,                       4            ; 30ef: 00 04       ..  :2fbe[1]
+    !byte      spriteid_cat_walk4,                       0            ; 30f1: 0f 00       ..  :2fc0[1]
+    !byte                       5,                       0            ; 30f3: 05 00       ..  :2fc2[1]
+    !byte      spriteid_cat_walk4,                       0            ; 30f5: 0f 00       ..  :2fc4[1]
+    !byte                       7,                       0            ; 30f7: 07 00       ..  :2fc6[1]
 
 update_cat
     lda #$16                                                          ; 30f9: a9 16       ..  :2fc8[1]
     sta l22ed                                                         ; 30fb: 8d ed 22    .." :2fca[1]
-    ldx #<data2                                                       ; 30fe: a2 16       ..  :2fcd[1]
-    ldy #>data2                                                       ; 3100: a0 2f       ./  :2fcf[1]
+    ldx #<cat_animations                                              ; 30fe: a2 16       ..  :2fcd[1]
+    ldy #>cat_animations                                              ; 3100: a0 2f       ./  :2fcf[1]
     lda #3                                                            ; 3102: a9 03       ..  :2fd1[1]
     jsr sub_c22ee                                                     ; 3104: 20 ee 22     ." :2fd3[1]
     bne c300e                                                         ; 3107: d0 36       .6  :2fd6[1]
@@ -5158,9 +5244,9 @@ c3092
 c30a5
     sty l09d4                                                         ; 31d6: 8c d4 09    ... :30a5[1]
     tya                                                               ; 31d9: 98          .   :30a8[1]
-    ldx #<data2                                                       ; 31da: a2 16       ..  :30a9[1]
-    ldy #>data2                                                       ; 31dc: a0 2f       ./  :30ab[1]
-    jsr something17_TODO                                              ; 31de: 20 00 22     ." :30ad[1]
+    ldx #<cat_animations                                              ; 31da: a2 16       ..  :30a9[1]
+    ldy #>cat_animations                                              ; 31dc: a0 2f       ./  :30ab[1]
+    jsr set_player_spriteid_and_offset_from_animation_table           ; 31de: 20 00 22     ." :30ad[1]
     lda #0                                                            ; 31e1: a9 00       ..  :30b0[1]
     jsr sub_c25f5                                                     ; 31e3: 20 f5 25     .% :30b2[1]
     lda #<some_more_data                                              ; 31e6: a9 f7       ..  :30b5[1]
@@ -5180,45 +5266,145 @@ c30ca
     bne c30d5                                                         ; 3202: d0 02       ..  :30d1[1]
     lda #$81                                                          ; 3204: a9 81       ..  :30d3[1]
 c30d5
-    ldx #<other_data4                                                 ; 3206: a2 00       ..  :30d5[1]
-    ldy #>other_data4                                                 ; 3208: a0 2f       ./  :30d7[1]
+    ldx #<cat_animations2                                             ; 3206: a2 00       ..  :30d5[1]
+    ldy #>cat_animations2                                             ; 3208: a0 2f       ./  :30d7[1]
     jsr something18_TODO                                              ; 320a: 20 48 22     H" :30d9[1]
     rts                                                               ; 320d: 60          `   :30dc[1]
 
 some_more_data2
     !text "FGHIJKLM"                                                  ; 320e: 46 47 48... FGH :30dd[1]
     !byte 0                                                           ; 3216: 00          .   :30e5[1]
-other_data6
-    !byte $52, $f7, $f9, $4e, $f7, $fa, $4f, $f7, $f9, $50, $f7, $fa  ; 3217: 52 f7 f9... R.. :30e6[1]
-    !byte $51, $f7, $f9, $51, $f7, $f9, $53, $f7, $fa, $54, $f8, $fa  ; 3223: 51 f7 f9... Q.. :30f2[1]
-    !byte   0                                                         ; 322f: 00          .   :30fe[1]
-data3
-    !byte   0,   0,   0, $45,   0,   0, $45,   0,   0, $44,   0,   0  ; 3230: 00 00 00... ... :30ff[1]
-    !byte $44,   0,   0, $51,   0,   0, $51,   0,   0,   0, $51,   0  ; 323c: 44 00 00... D.. :310b[1]
-    !byte   0, $51,   0,   0, $44,   0,   0, $44,   0,   0, $45,   0  ; 3248: 00 51 00... .Q. :3117[1]
-    !byte   0, $45,   0,   0,   0, $4e,   4,   0, $4f,   4,   0, $50  ; 3254: 00 45 00... .E. :3123[1]
-    !byte   4,   0, $51,   4,   0,   0, $51,   0,   0, $51,   2,   0  ; 3260: 04 00 51... ..Q :312f[1]
-    !byte   0, $52,   4,   0,   0, $52,   0,   0,   0, $53,   0,   0  ; 326c: 00 52 04... .R. :313b[1]
-    !byte   0, $53,   0,   6,   0, $53,   0, $fc,   0, $54,   0, $fc  ; 3278: 00 53 00... .S. :3147[1]
-    !byte $53,   0, $fc,   0, $51,   7,   0, $51,   7,   1, $51,   6  ; 3284: 53 00 fc... S.. :3153[1]
-    !byte   1, $51,   6,   2, $51,   4,   2, $51,   4,   3, $51,   3  ; 3290: 01 51 06... .Q. :315f[1]
-    !byte   4, $51,   2,   4, $51,   2,   4, $51,   1,   5, $51,   1  ; 329c: 04 51 02... .Q. :316b[1]
-    !byte   6,   0, $51,   0, $fc, $51,   0, $fd, $51,   0, $fe, $51  ; 32a8: 06 00 51... ..Q :3177[1]
-    !byte   0, $ff,   0, $51,   6, $fc, $51,   6, $fe, $51,   5, $fe  ; 32b4: 00 ff 00... ... :3183[1]
-    !byte $51,   5, $ff, $51,   4,   0,   0, $51,   4,   1, $51,   3  ; 32c0: 51 05 ff... Q.. :318f[1]
-    !byte   2, $51,   3,   3, $51,   2,   4, $51,   2,   5, $51,   1  ; 32cc: 02 51 03... .Q. :319b[1]
-    !byte   6,   0, $51,   4,   2, $51,   3,   3, $51,   2,   4, $51  ; 32d8: 06 00 51... ..Q :31a7[1]
-    !byte   1,   5,   0, $51, $fc,   2, $51, $fd,   3, $51, $fe,   4  ; 32e4: 01 05 00... ... :31b3[1]
-    !byte $51, $ff,   5,   0, $51,   0,   1, $51,   0,   2, $51,   0  ; 32f0: 51 ff 05... Q.. :31bf[1]
-    !byte   3, $51,   0,   4, $51,   0,   5,   0, $51,   0,   7,   0  ; 32fc: 03 51 00... .Q. :31cb[1]
+monkey_animations2
+    !byte       spriteid_monkey5,                    $f7              ; 3217: 52 f7       R.  :30e6[1]
+    !byte                    $f9,       spriteid_monkey1              ; 3219: f9 4e       .N  :30e8[1]
+    !byte                    $f7,                    $fa              ; 321b: f7 fa       ..  :30ea[1]
+    !byte       spriteid_monkey2,                    $f7              ; 321d: 4f f7       O.  :30ec[1]
+    !byte                    $f9,       spriteid_monkey3              ; 321f: f9 50       .P  :30ee[1]
+    !byte                    $f7,                    $fa              ; 3221: f7 fa       ..  :30f0[1]
+    !byte       spriteid_monkey4,                    $f7              ; 3223: 51 f7       Q.  :30f2[1]
+    !byte                    $f9,       spriteid_monkey4              ; 3225: f9 51       .Q  :30f4[1]
+    !byte                    $f7,                    $f9              ; 3227: f7 f9       ..  :30f6[1]
+    !byte spriteid_monkey_climb1,                    $f7              ; 3229: 53 f7       S.  :30f8[1]
+    !byte                    $fa, spriteid_monkey_climb2              ; 322b: fa 54       .T  :30fa[1]
+    !byte                    $f8,                    $fa              ; 322d: f8 fa       ..  :30fc[1]
+    !byte                      0                                      ; 322f: 00          .   :30fe[1]
+monkey_animations
+    !byte                          0,                          0      ; 3230: 00 00       ..  :30ff[1]
+    !byte                          0, spriteid_monkey_transform2      ; 3232: 00 45       .E  :3101[1]
+    !byte                          0,                          0      ; 3234: 00 00       ..  :3103[1]
+    !byte spriteid_monkey_transform2,                          0      ; 3236: 45 00       E.  :3105[1]
+    !byte                          0, spriteid_monkey_transform1      ; 3238: 00 44       .D  :3107[1]
+    !byte                          0,                          0      ; 323a: 00 00       ..  :3109[1]
+    !byte spriteid_monkey_transform1,                          0      ; 323c: 44 00       D.  :310b[1]
+    !byte                          0,           spriteid_monkey4      ; 323e: 00 51       .Q  :310d[1]
+    !byte                          0,                          0      ; 3240: 00 00       ..  :310f[1]
+    !byte           spriteid_monkey4,                          0      ; 3242: 51 00       Q.  :3111[1]
+    !byte                          0,                          0      ; 3244: 00 00       ..  :3113[1]
+    !byte           spriteid_monkey4,                          0      ; 3246: 51 00       Q.  :3115[1]
+    !byte                          0,           spriteid_monkey4      ; 3248: 00 51       .Q  :3117[1]
+    !byte                          0,                          0      ; 324a: 00 00       ..  :3119[1]
+    !byte spriteid_monkey_transform1,                          0      ; 324c: 44 00       D.  :311b[1]
+    !byte                          0, spriteid_monkey_transform1      ; 324e: 00 44       .D  :311d[1]
+    !byte                          0,                          0      ; 3250: 00 00       ..  :311f[1]
+    !byte spriteid_monkey_transform2,                          0      ; 3252: 45 00       E.  :3121[1]
+    !byte                          0, spriteid_monkey_transform2      ; 3254: 00 45       .E  :3123[1]
+    !byte                          0,                          0      ; 3256: 00 00       ..  :3125[1]
+    !byte                          0,           spriteid_monkey1      ; 3258: 00 4e       .N  :3127[1]
+    !byte                          4,                          0      ; 325a: 04 00       ..  :3129[1]
+    !byte           spriteid_monkey2,                          4      ; 325c: 4f 04       O.  :312b[1]
+    !byte                          0,           spriteid_monkey3      ; 325e: 00 50       .P  :312d[1]
+    !byte                          4,                          0      ; 3260: 04 00       ..  :312f[1]
+    !byte           spriteid_monkey4,                          4      ; 3262: 51 04       Q.  :3131[1]
+    !byte                          0,                          0      ; 3264: 00 00       ..  :3133[1]
+    !byte           spriteid_monkey4,                          0      ; 3266: 51 00       Q.  :3135[1]
+    !byte                          0,           spriteid_monkey4      ; 3268: 00 51       .Q  :3137[1]
+    !byte                          2,                          0      ; 326a: 02 00       ..  :3139[1]
+    !byte                          0,           spriteid_monkey5      ; 326c: 00 52       .R  :313b[1]
+    !byte                          4,                          0      ; 326e: 04 00       ..  :313d[1]
+    !byte                          0,           spriteid_monkey5      ; 3270: 00 52       .R  :313f[1]
+    !byte                          0,                          0      ; 3272: 00 00       ..  :3141[1]
+    !byte                          0,     spriteid_monkey_climb1      ; 3274: 00 53       .S  :3143[1]
+    !byte                          0,                          0      ; 3276: 00 00       ..  :3145[1]
+    !byte                          0,     spriteid_monkey_climb1      ; 3278: 00 53       .S  :3147[1]
+    !byte                          0,                          6      ; 327a: 00 06       ..  :3149[1]
+    !byte                          0,     spriteid_monkey_climb1      ; 327c: 00 53       .S  :314b[1]
+    !byte                          0,                        $fc      ; 327e: 00 fc       ..  :314d[1]
+    !byte                          0,     spriteid_monkey_climb2      ; 3280: 00 54       .T  :314f[1]
+    !byte                          0,                        $fc      ; 3282: 00 fc       ..  :3151[1]
+    !byte     spriteid_monkey_climb1,                          0      ; 3284: 53 00       S.  :3153[1]
+    !byte                        $fc,                          0      ; 3286: fc 00       ..  :3155[1]
+    !byte           spriteid_monkey4,                          7      ; 3288: 51 07       Q.  :3157[1]
+    !byte                          0,           spriteid_monkey4      ; 328a: 00 51       .Q  :3159[1]
+    !byte                          7,                          1      ; 328c: 07 01       ..  :315b[1]
+    !byte           spriteid_monkey4,                          6      ; 328e: 51 06       Q.  :315d[1]
+    !byte                          1,           spriteid_monkey4      ; 3290: 01 51       .Q  :315f[1]
+    !byte                          6,                          2      ; 3292: 06 02       ..  :3161[1]
+    !byte           spriteid_monkey4,                          4      ; 3294: 51 04       Q.  :3163[1]
+    !byte                          2,           spriteid_monkey4      ; 3296: 02 51       .Q  :3165[1]
+    !byte                          4,                          3      ; 3298: 04 03       ..  :3167[1]
+    !byte           spriteid_monkey4,                          3      ; 329a: 51 03       Q.  :3169[1]
+    !byte                          4,           spriteid_monkey4      ; 329c: 04 51       .Q  :316b[1]
+    !byte                          2,                          4      ; 329e: 02 04       ..  :316d[1]
+    !byte           spriteid_monkey4,                          2      ; 32a0: 51 02       Q.  :316f[1]
+    !byte                          4,           spriteid_monkey4      ; 32a2: 04 51       .Q  :3171[1]
+    !byte                          1,                          5      ; 32a4: 01 05       ..  :3173[1]
+    !byte           spriteid_monkey4,                          1      ; 32a6: 51 01       Q.  :3175[1]
+    !byte                          6,                          0      ; 32a8: 06 00       ..  :3177[1]
+    !byte           spriteid_monkey4,                          0      ; 32aa: 51 00       Q.  :3179[1]
+    !byte                        $fc,           spriteid_monkey4      ; 32ac: fc 51       .Q  :317b[1]
+    !byte                          0,                        $fd      ; 32ae: 00 fd       ..  :317d[1]
+    !byte           spriteid_monkey4,                          0      ; 32b0: 51 00       Q.  :317f[1]
+    !byte                        $fe,           spriteid_monkey4      ; 32b2: fe 51       .Q  :3181[1]
+    !byte                          0,                        $ff      ; 32b4: 00 ff       ..  :3183[1]
+    !byte                          0,           spriteid_monkey4      ; 32b6: 00 51       .Q  :3185[1]
+    !byte                          6,                        $fc      ; 32b8: 06 fc       ..  :3187[1]
+    !byte           spriteid_monkey4,                          6      ; 32ba: 51 06       Q.  :3189[1]
+    !byte                        $fe,           spriteid_monkey4      ; 32bc: fe 51       .Q  :318b[1]
+    !byte                          5,                        $fe      ; 32be: 05 fe       ..  :318d[1]
+    !byte           spriteid_monkey4,                          5      ; 32c0: 51 05       Q.  :318f[1]
+    !byte                        $ff,           spriteid_monkey4      ; 32c2: ff 51       .Q  :3191[1]
+    !byte                          4,                          0      ; 32c4: 04 00       ..  :3193[1]
+    !byte                          0,           spriteid_monkey4      ; 32c6: 00 51       .Q  :3195[1]
+    !byte                          4,                          1      ; 32c8: 04 01       ..  :3197[1]
+    !byte           spriteid_monkey4,                          3      ; 32ca: 51 03       Q.  :3199[1]
+    !byte                          2,           spriteid_monkey4      ; 32cc: 02 51       .Q  :319b[1]
+    !byte                          3,                          3      ; 32ce: 03 03       ..  :319d[1]
+    !byte           spriteid_monkey4,                          2      ; 32d0: 51 02       Q.  :319f[1]
+    !byte                          4,           spriteid_monkey4      ; 32d2: 04 51       .Q  :31a1[1]
+    !byte                          2,                          5      ; 32d4: 02 05       ..  :31a3[1]
+    !byte           spriteid_monkey4,                          1      ; 32d6: 51 01       Q.  :31a5[1]
+    !byte                          6,                          0      ; 32d8: 06 00       ..  :31a7[1]
+    !byte           spriteid_monkey4,                          4      ; 32da: 51 04       Q.  :31a9[1]
+    !byte                          2,           spriteid_monkey4      ; 32dc: 02 51       .Q  :31ab[1]
+    !byte                          3,                          3      ; 32de: 03 03       ..  :31ad[1]
+    !byte           spriteid_monkey4,                          2      ; 32e0: 51 02       Q.  :31af[1]
+    !byte                          4,           spriteid_monkey4      ; 32e2: 04 51       .Q  :31b1[1]
+    !byte                          1,                          5      ; 32e4: 01 05       ..  :31b3[1]
+    !byte                          0,           spriteid_monkey4      ; 32e6: 00 51       .Q  :31b5[1]
+    !byte                        $fc,                          2      ; 32e8: fc 02       ..  :31b7[1]
+    !byte           spriteid_monkey4,                        $fd      ; 32ea: 51 fd       Q.  :31b9[1]
+    !byte                          3,           spriteid_monkey4      ; 32ec: 03 51       .Q  :31bb[1]
+    !byte                        $fe,                          4      ; 32ee: fe 04       ..  :31bd[1]
+    !byte           spriteid_monkey4,                        $ff      ; 32f0: 51 ff       Q.  :31bf[1]
+    !byte                          5,                          0      ; 32f2: 05 00       ..  :31c1[1]
+    !byte           spriteid_monkey4,                          0      ; 32f4: 51 00       Q.  :31c3[1]
+    !byte                          1,           spriteid_monkey4      ; 32f6: 01 51       .Q  :31c5[1]
+    !byte                          0,                          2      ; 32f8: 00 02       ..  :31c7[1]
+    !byte           spriteid_monkey4,                          0      ; 32fa: 51 00       Q.  :31c9[1]
+    !byte                          3,           spriteid_monkey4      ; 32fc: 03 51       .Q  :31cb[1]
+    !byte                          0,                          4      ; 32fe: 00 04       ..  :31cd[1]
+    !byte           spriteid_monkey4,                          0      ; 3300: 51 00       Q.  :31cf[1]
+    !byte                          5,                          0      ; 3302: 05 00       ..  :31d1[1]
+    !byte           spriteid_monkey4,                          0      ; 3304: 51 00       Q.  :31d3[1]
+    !byte                          7,                          0      ; 3306: 07 00       ..  :31d5[1]
 l31d7
     !byte 0                                                           ; 3308: 00          .   :31d7[1]
 
 update_monkey
     lda #$16                                                          ; 3309: a9 16       ..  :31d8[1]
     sta l22ed                                                         ; 330b: 8d ed 22    .." :31da[1]
-    ldx #<data3                                                       ; 330e: a2 ff       ..  :31dd[1]
-    ldy #>data3                                                       ; 3310: a0 30       .0  :31df[1]
+    ldx #<monkey_animations                                           ; 330e: a2 ff       ..  :31dd[1]
+    ldy #>monkey_animations                                           ; 3310: a0 30       .0  :31df[1]
     lda #3                                                            ; 3312: a9 03       ..  :31e1[1]
     jsr sub_c22ee                                                     ; 3314: 20 ee 22     ." :31e3[1]
     bne c31f4                                                         ; 3317: d0 0c       ..  :31e6[1]
@@ -5399,9 +5585,9 @@ c3331
     sta l31d7                                                         ; 3464: 8d d7 31    ..1 :3333[1]
     sty l09d4                                                         ; 3467: 8c d4 09    ... :3336[1]
     tya                                                               ; 346a: 98          .   :3339[1]
-    ldx #<data3                                                       ; 346b: a2 ff       ..  :333a[1]
-    ldy #>data3                                                       ; 346d: a0 30       .0  :333c[1]
-    jsr something17_TODO                                              ; 346f: 20 00 22     ." :333e[1]
+    ldx #<monkey_animations                                           ; 346b: a2 ff       ..  :333a[1]
+    ldy #>monkey_animations                                           ; 346d: a0 30       .0  :333c[1]
+    jsr set_player_spriteid_and_offset_from_animation_table           ; 346f: 20 00 22     ." :333e[1]
     lda #0                                                            ; 3472: a9 00       ..  :3341[1]
     jsr sub_c25f5                                                     ; 3474: 20 f5 25     .% :3343[1]
     lda #<some_more_data2                                             ; 3477: a9 dd       ..  :3346[1]
@@ -5421,8 +5607,8 @@ c335b
     bne c3366                                                         ; 3493: d0 02       ..  :3362[1]
     lda #$87                                                          ; 3495: a9 87       ..  :3364[1]
 c3366
-    ldx #<other_data6                                                 ; 3497: a2 e6       ..  :3366[1]
-    ldy #>other_data6                                                 ; 3499: a0 30       .0  :3368[1]
+    ldx #<monkey_animations2                                          ; 3497: a2 e6       ..  :3366[1]
+    ldy #>monkey_animations2                                          ; 3499: a0 30       .0  :3368[1]
     jsr something18_TODO                                              ; 349b: 20 48 22     H" :336a[1]
     rts                                                               ; 349e: 60          `   :336d[1]
 
@@ -7608,9 +7794,6 @@ pydis_end
 ;     c20be
 ;     c2155
 ;     c21ef
-;     c2223
-;     c2231
-;     c2239
 ;     c2267
 ;     c2284
 ;     c228b
@@ -8002,14 +8185,11 @@ pydis_end
 !if (<brk_handler) != $d3 {
     !error "Assertion failed: <brk_handler == $d3"
 }
-!if (<data1) != $ed {
-    !error "Assertion failed: <data1 == $ed"
+!if (<cat_animations) != $16 {
+    !error "Assertion failed: <cat_animations == $16"
 }
-!if (<data2) != $16 {
-    !error "Assertion failed: <data2 == $16"
-}
-!if (<data3) != $ff {
-    !error "Assertion failed: <data3 == $ff"
+!if (<cat_animations2) != $00 {
+    !error "Assertion failed: <cat_animations2 == $00"
 }
 !if (<data_filename) != $72 {
     !error "Assertion failed: <data_filename == $72"
@@ -8056,20 +8236,14 @@ pydis_end
 !if (<loading_message) != $fe {
     !error "Assertion failed: <loading_message == $fe"
 }
+!if (<monkey_animations) != $ff {
+    !error "Assertion failed: <monkey_animations == $ff"
+}
+!if (<monkey_animations2) != $e6 {
+    !error "Assertion failed: <monkey_animations2 == $e6"
+}
 !if (<oswrch) != $ee {
     !error "Assertion failed: <oswrch == $ee"
-}
-!if (<other_data1) != $ed {
-    !error "Assertion failed: <other_data1 == $ed"
-}
-!if (<other_data2) != $d7 {
-    !error "Assertion failed: <other_data2 == $d7"
-}
-!if (<other_data4) != $00 {
-    !error "Assertion failed: <other_data4 == $00"
-}
-!if (<other_data6) != $e6 {
-    !error "Assertion failed: <other_data6 == $e6"
 }
 !if (<press_012_or_3_encrypted_string) != $f0 {
     !error "Assertion failed: <press_012_or_3_encrypted_string == $f0"
@@ -8152,6 +8326,12 @@ pydis_end
 !if (<which_drive_encrypted_string) != $e3 {
     !error "Assertion failed: <which_drive_encrypted_string == $e3"
 }
+!if (<wizard_animations) != $ed {
+    !error "Assertion failed: <wizard_animations == $ed"
+}
+!if (<wizard_animations2) != $d7 {
+    !error "Assertion failed: <wizard_animations2 == $d7"
+}
 !if (>(address1_low)) != $00 {
     !error "Assertion failed: >(address1_low) == $00"
 }
@@ -8194,14 +8374,11 @@ pydis_end
 !if (>brk_handler) != $16 {
     !error "Assertion failed: >brk_handler == $16"
 }
-!if (>data1) != $2c {
-    !error "Assertion failed: >data1 == $2c"
+!if (>cat_animations) != $2f {
+    !error "Assertion failed: >cat_animations == $2f"
 }
-!if (>data2) != $2f {
-    !error "Assertion failed: >data2 == $2f"
-}
-!if (>data3) != $30 {
-    !error "Assertion failed: >data3 == $30"
+!if (>cat_animations2) != $2f {
+    !error "Assertion failed: >cat_animations2 == $2f"
 }
 !if (>data_filename) != $12 {
     !error "Assertion failed: >data_filename == $12"
@@ -8248,20 +8425,14 @@ pydis_end
 !if (>loading_message) != $35 {
     !error "Assertion failed: >loading_message == $35"
 }
+!if (>monkey_animations) != $30 {
+    !error "Assertion failed: >monkey_animations == $30"
+}
+!if (>monkey_animations2) != $30 {
+    !error "Assertion failed: >monkey_animations2 == $30"
+}
 !if (>oswrch) != $ff {
     !error "Assertion failed: >oswrch == $ff"
-}
-!if (>other_data1) != $2c {
-    !error "Assertion failed: >other_data1 == $2c"
-}
-!if (>other_data2) != $2c {
-    !error "Assertion failed: >other_data2 == $2c"
-}
-!if (>other_data4) != $2f {
-    !error "Assertion failed: >other_data4 == $2f"
-}
-!if (>other_data6) != $30 {
-    !error "Assertion failed: >other_data6 == $30"
 }
 !if (>press_012_or_3_encrypted_string) != $34 {
     !error "Assertion failed: >press_012_or_3_encrypted_string == $34"
@@ -8343,6 +8514,12 @@ pydis_end
 }
 !if (>which_drive_encrypted_string) != $34 {
     !error "Assertion failed: >which_drive_encrypted_string == $34"
+}
+!if (>wizard_animations) != $2c {
+    !error "Assertion failed: >wizard_animations == $2c"
+}
+!if (>wizard_animations2) != $2c {
+    !error "Assertion failed: >wizard_animations2 == $2c"
 }
 !if (black) != $00 {
     !error "Assertion failed: black == $00"
@@ -8539,6 +8716,30 @@ pydis_end
 !if (spriteid_brazier) != $3a {
     !error "Assertion failed: spriteid_brazier == $3a"
 }
+!if (spriteid_cat2) != $1c {
+    !error "Assertion failed: spriteid_cat2 == $1c"
+}
+!if (spriteid_cat_jump) != $1a {
+    !error "Assertion failed: spriteid_cat_jump == $1a"
+}
+!if (spriteid_cat_transform1) != $10 {
+    !error "Assertion failed: spriteid_cat_transform1 == $10"
+}
+!if (spriteid_cat_transform2) != $11 {
+    !error "Assertion failed: spriteid_cat_transform2 == $11"
+}
+!if (spriteid_cat_walk1) != $0c {
+    !error "Assertion failed: spriteid_cat_walk1 == $0c"
+}
+!if (spriteid_cat_walk2) != $0d {
+    !error "Assertion failed: spriteid_cat_walk2 == $0d"
+}
+!if (spriteid_cat_walk3) != $0e {
+    !error "Assertion failed: spriteid_cat_walk3 == $0e"
+}
+!if (spriteid_cat_walk4) != $0f {
+    !error "Assertion failed: spriteid_cat_walk4 == $0f"
+}
 !if (spriteid_corner_bottom_left) != $2d {
     !error "Assertion failed: spriteid_corner_bottom_left == $2d"
 }
@@ -8580,6 +8781,33 @@ pydis_end
 }
 !if (spriteid_icon_background) != $01 {
     !error "Assertion failed: spriteid_icon_background == $01"
+}
+!if (spriteid_monkey1) != $4e {
+    !error "Assertion failed: spriteid_monkey1 == $4e"
+}
+!if (spriteid_monkey2) != $4f {
+    !error "Assertion failed: spriteid_monkey2 == $4f"
+}
+!if (spriteid_monkey3) != $50 {
+    !error "Assertion failed: spriteid_monkey3 == $50"
+}
+!if (spriteid_monkey4) != $51 {
+    !error "Assertion failed: spriteid_monkey4 == $51"
+}
+!if (spriteid_monkey5) != $52 {
+    !error "Assertion failed: spriteid_monkey5 == $52"
+}
+!if (spriteid_monkey_climb1) != $53 {
+    !error "Assertion failed: spriteid_monkey_climb1 == $53"
+}
+!if (spriteid_monkey_climb2) != $54 {
+    !error "Assertion failed: spriteid_monkey_climb2 == $54"
+}
+!if (spriteid_monkey_transform1) != $44 {
+    !error "Assertion failed: spriteid_monkey_transform1 == $44"
+}
+!if (spriteid_monkey_transform2) != $45 {
+    !error "Assertion failed: spriteid_monkey_transform2 == $45"
 }
 !if (spriteid_one_pixel_masked_out) != $00 {
     !error "Assertion failed: spriteid_one_pixel_masked_out == $00"
