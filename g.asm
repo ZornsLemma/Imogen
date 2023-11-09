@@ -1939,7 +1939,7 @@ something51_TODO
     pha                                                               ; 1bec: 48          H   :1abb[1]
     sty sprite_data_byte                                              ; 1bed: 84 7d       .}  :1abc[1]
     jsr set_sprite_screen_address_using_x_y_and_some_word             ; 1bef: 20 17 1e     .. :1abe[1]
-    jsr sub_c1b66                                                     ; 1bf2: 20 66 1b     f. :1ac1[1]
+    jsr set_sprite_y_pos_using_x_y                                    ; 1bf2: 20 66 1b     f. :1ac1[1]
     lda sprite_y_pos_low                                              ; 1bf5: a5 76       .v  :1ac4[1]
     sta sprite_x_pos_low                                              ; 1bf7: 85 74       .t  :1ac6[1]
     lda sprite_y_pos_high                                             ; 1bf9: a5 77       .w  :1ac8[1]
@@ -2038,7 +2038,7 @@ c1b64
     pla                                                               ; 1c95: 68          h   :1b64[1]
     rts                                                               ; 1c96: 60          `   :1b65[1]
 
-sub_c1b66
+set_sprite_y_pos_using_x_y
     lda #0                                                            ; 1c97: a9 00       ..  :1b66[1]
     sta sprite_y_pos_low                                              ; 1c99: 85 76       .v  :1b68[1]
     sty sprite_y_pos_high                                             ; 1c9b: 84 77       .w  :1b6a[1]
@@ -2112,7 +2112,7 @@ c1bc3
 c1bca
     sty address1_high                                                 ; 1cfb: 84 71       .q  :1bca[1]
     dey                                                               ; 1cfd: 88          .   :1bcc[1]
-    jsr sub_c1b66                                                     ; 1cfe: 20 66 1b     f. :1bcd[1]
+    jsr set_sprite_y_pos_using_x_y                                    ; 1cfe: 20 66 1b     f. :1bcd[1]
     txa                                                               ; 1d01: 8a          .   :1bd0[1]
     and #3                                                            ; 1d02: 29 03       ).  :1bd1[1]
     asl                                                               ; 1d04: 0a          .   :1bd3[1]
@@ -2156,7 +2156,7 @@ loop_c1c09
     jmp c1bc3                                                         ; 1d43: 4c c3 1b    L.. :1c12[1]
 
 c1c15
-    jsr sub_c1b66                                                     ; 1d46: 20 66 1b     f. :1c15[1]
+    jsr set_sprite_y_pos_using_x_y                                    ; 1d46: 20 66 1b     f. :1c15[1]
     txa                                                               ; 1d49: 8a          .   :1c18[1]
     and #3                                                            ; 1d4a: 29 03       ).  :1c19[1]
     asl                                                               ; 1d4c: 0a          .   :1c1b[1]
@@ -2310,7 +2310,7 @@ sub_c1cf3
     cmp #3                                                            ; 1e3a: c9 03       ..  :1d09[1]
     bne c1d16                                                         ; 1e3c: d0 09       ..  :1d0b[1]
     sty address1_high                                                 ; 1e3e: 84 71       .q  :1d0d[1]
-    jsr sub_c1b66                                                     ; 1e40: 20 66 1b     f. :1d0f[1]
+    jsr set_sprite_y_pos_using_x_y                                    ; 1e40: 20 66 1b     f. :1d0f[1]
     lda #spriteid_one_pixel_masked_out                                ; 1e43: a9 00       ..  :1d12[1]
     sta sprite_number                                                 ; 1e45: 85 16       ..  :1d14[1]
 c1d16
@@ -7763,7 +7763,6 @@ pydis_end
 ;     sub_c04cb
 ;     sub_c1278
 ;     sub_c1728
-;     sub_c1b66
 ;     sub_c1cf3
 ;     sub_c1df4
 ;     sub_c1efa
