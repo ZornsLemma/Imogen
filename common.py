@@ -39,6 +39,7 @@ label_word(0x3adb, "level_name_ptr") # TODO: poor name
 
 label(0x1988, "something13_TODO")
 label(0x1a10, "something14_TODO")
+label(0x2b87, "insert_character_menu_item_into_toolbar")
 label(0x2be0, "remove_item_from_toolbar_menu")
 label(0x12bb, "something23_TODO")
 label(0x12da, "something24_TODO")

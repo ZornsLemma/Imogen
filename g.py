@@ -932,7 +932,7 @@ comment(0x2b87, """*************************************************************
 Insert a player character menu item into the toolbar
 
 *************************************************************************************""")
-entry(0x2b87, "insert_character_menu_item_into_toolbar")
+entry(0x2b87)
 label(0x2b90, "find_existing_item_loop")
 comment(0x2b87, "remember menu item to insert", inline=True)
 comment(0x2b89, "flag that nothing has changed yet")
