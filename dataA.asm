@@ -106,6 +106,9 @@ level_name_ptr
 ; where the l030-th element *plus 2* is called. TODO: Why +2? The code at c129b
 ; suggests the two bytes *at* the address in this table is used as an address of some
 ; kind.
+; TODO: Speculation - could this be code to draw each of the screens making up the
+; level? AFAICT saxophobia does have four screens. I assume the *number* of entries in
+; this table is stored somewhere, but I can't see it.
 level_header_data
     !word level_thing_1_data_ptr                                      ; 3adf: 27 3b       ';
     !word level_thing_2_data_ptr                                      ; 3ae1: 3d 3d       ==

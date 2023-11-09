@@ -31,6 +31,7 @@ comment(0x3ae7, "'SAXOPHOBIA\\r' EOR-encrypted with $cb")
 entry(0x3b04, "developer_mode_not_active")
 
 comment(0x3adf, "This is a table of four words, used by code just below (TODO: proper label) skip5 where the l030-th element *plus 2* is called. TODO: Why +2? The code at c129b suggests the two bytes *at* the address in this table is used as an address of some kind.")
+comment(0x3adf, "TODO: Speculation - could this be code to draw each of the screens making up the level? AFAICT saxophobia does have four screens. I assume the *number* of entries in this table is stored somewhere, but I can't see it.")
 def level_header_data_table_entry(addr, s):
     word(addr)
     expr(addr, s + "_data_ptr")
