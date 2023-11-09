@@ -17,6 +17,9 @@ l0042                               = $42
 previous_level                      = $51
 l0052                               = $52
 l0070                               = $70
+level_thing_2_data                  = $0709
+level_thing_4_data                  = $0714
+level_thing_3_data                  = $0914
 l0950                               = $0950
 l0954                               = $0954
 l0966                               = $0966
@@ -45,6 +48,7 @@ initialise_level                    = $1140
 something23_TODO                    = $12bb
 something24_TODO                    = $12da
 some_data_shared_between_g_and_dataA = $132b
+level_thing_1_data                  = $1614
 pending_toolbar_colour              = $175d
 toolbar_colour                      = $175e
 pending_gameplay_area_colour        = $175f
@@ -97,8 +101,15 @@ second_level_handler_ptr
 level_name_ptr
     !word level_name                                                  ; 3adb: e7 3a       .:
     !byte 0, 1                                                        ; 3add: 00 01       ..
+; This is a table of four words, used by code just below (TODO: proper label) skip5
+; where the l030-th element *plus 2* is called. TODO: Why +2? The code at c129b
+; suggests the two bytes *at* the address in this table is used as an address of some
+; kind.
 level_header_data
-    !byte $27, $3b, $3d, $3d, $d7, $3f, $4d, $42                      ; 3adf: 27 3b 3d... ';=
+    !word level_thing_1_data_ptr                                      ; 3adf: 27 3b       ';
+    !word level_thing_2_data_ptr                                      ; 3ae1: 3d 3d       ==
+    !word level_thing_3_data_ptr                                      ; 3ae3: d7 3f       .?
+    !word level_thing_4_data_ptr                                      ; 3ae5: 4d 42       MB
 ; 'SAXOPHOBIA\r' EOR-encrypted with $cb
 level_name
     !byte $98, $8a, $93, $84, $9b, $83, $84, $89, $82, $8a, $c6       ; 3ae7: 98 8a 93... ...
@@ -134,9 +145,11 @@ second_level_handler
     jsr sub_c42f8                                                     ; 3b23: 20 f8 42     .B
     rts                                                               ; 3b26: 60          `
 
-    !byte $14, $16                                                    ; 3b27: 14 16       ..
+level_thing_1_data_ptr
+    !word level_thing_1_data                                          ; 3b27: 14 16       ..
 
 some_code1
+level_thing_1_code
     ldx #0                                                            ; 3b29: a2 00       ..
     ldy #0                                                            ; 3b2b: a0 00       ..
     lda #$ff                                                          ; 3b2d: a9 ff       ..
@@ -408,28 +421,102 @@ c3d20
 some_data1
     !byte $d4, $c9,   0,   0, $ca, $c9,   8,   6, $ca, $c9, $10, $0a  ; 3d21: d4 c9 00... ...
     !byte $ca, $d5, $18, $0c, $d5, $ca, $20, $0c, $c9, $ca, $28, $0a  ; 3d2d: ca d5 18... ...
-    !byte $c9, $ca, $30,   6,   9,   7, $a2,   0, $a0,   0, $a9, $ff  ; 3d39: c9 ca 30... ..0
-    !byte $85, $3c, $a9,   2, $85, $3d, $20, $bb, $1a, $a0,   7, $a9  ; 3d45: 85 3c a9... .<.
-    !byte $11, $85, $3c, $20, $bb, $1a, $a2, $17, $20, $bb, $1a, $a2  ; 3d51: 11 85 3c... ..<
-    !byte   0, $a0, $16, $20, $bb, $1a, $a2, $17, $20, $bb, $1a, $a2  ; 3d5d: 00 a0 16... ...
-    !byte   0, $a0,   9, $a9,   4, $85, $3c, $c6, $3d, $20, $bb, $1a  ; 3d69: 00 a0 09... ...
-    !byte $a2, $0d, $20, $bb, $1a, $a2, $17, $20, $bb, $1a, $a2, $24  ; 3d75: a2 0d 20... ..
-    !byte $20, $bb, $1a, $a2,   0, $c8, $c6, $3c, $a9, $0c, $85, $3d  ; 3d81: 20 bb 1a...  ..
-    !byte $20, $bb, $1a, $a2, $0e, $20, $bb, $1a, $a2, $17, $20, $bb  ; 3d8d: 20 bb 1a...  ..
-    !byte $1a, $a2, $25, $a9,   3, $85, $3d, $20, $bb, $1a, $a0, $12  ; 3d99: 1a a2 25... ..%
-    !byte $e6, $3d, $20, $bb, $1a, $20, $90, $1b, $a9,   3, $85, $3c  ; 3da5: e6 3d 20... .=
-    !byte $a9,   2, $85, $3d, $a9, $de, $a2, $1a, $a0, $14, $20, $57  ; 3db1: a9 02 85... ...
-    !byte $1f, $a2                                                    ; 3dbd: 1f a2       ..
-    !text '"', " W"                                                   ; 3dbf: 22 20 57    " W
-    !byte $1f, $a0, $12, $20, $57, $1f, $a2,   7, $a0, $14, $20, $57  ; 3dc2: 1f a0 12... ...
-    !byte $1f, $20, $bb, $12, $20, $da, $12, $85, $70, $29,   1, $f0  ; 3dce: 1f 20 bb... . .
-    !byte   7, $a2,   0, $a4                                          ; 3dda: 07 a2 00... ...
-    !text "1L@"                                                       ; 3dde: 31 4c 40    1L@
-    !byte $11, $a5, $70, $29,   2, $f0,   7, $a2,   2, $a4            ; 3de1: 11 a5 70... ..p
-    !text "1L@"                                                       ; 3deb: 31 4c 40    1L@
-    !byte $11, $a5, $70, $29,   4, $f0, $dd, $a2,   3, $a4            ; 3dee: 11 a5 70... ..p
-    !text "1L@"                                                       ; 3df8: 31 4c 40    1L@
-    !byte $11                                                         ; 3dfb: 11          .
+    !byte $c9, $ca, $30,   6                                          ; 3d39: c9 ca 30... ..0
+level_thing_2_data_ptr
+    !word level_thing_2_data                                          ; 3d3d: 09 07       ..
+
+level_thing_2_code
+    ldx #0                                                            ; 3d3f: a2 00       ..
+    ldy #0                                                            ; 3d41: a0 00       ..
+    lda #$ff                                                          ; 3d43: a9 ff       ..
+    sta l003c                                                         ; 3d45: 85 3c       .<
+    lda #2                                                            ; 3d47: a9 02       ..
+    sta l003d                                                         ; 3d49: 85 3d       .=
+    jsr something51_TODO                                              ; 3d4b: 20 bb 1a     ..
+    ldy #7                                                            ; 3d4e: a0 07       ..
+    lda #$11                                                          ; 3d50: a9 11       ..
+    sta l003c                                                         ; 3d52: 85 3c       .<
+    jsr something51_TODO                                              ; 3d54: 20 bb 1a     ..
+    ldx #$17                                                          ; 3d57: a2 17       ..
+    jsr something51_TODO                                              ; 3d59: 20 bb 1a     ..
+    ldx #0                                                            ; 3d5c: a2 00       ..
+    ldy #$16                                                          ; 3d5e: a0 16       ..
+    jsr something51_TODO                                              ; 3d60: 20 bb 1a     ..
+    ldx #$17                                                          ; 3d63: a2 17       ..
+    jsr something51_TODO                                              ; 3d65: 20 bb 1a     ..
+    ldx #0                                                            ; 3d68: a2 00       ..
+    ldy #9                                                            ; 3d6a: a0 09       ..
+    lda #4                                                            ; 3d6c: a9 04       ..
+    sta l003c                                                         ; 3d6e: 85 3c       .<
+    dec l003d                                                         ; 3d70: c6 3d       .=
+    jsr something51_TODO                                              ; 3d72: 20 bb 1a     ..
+    ldx #$0d                                                          ; 3d75: a2 0d       ..
+    jsr something51_TODO                                              ; 3d77: 20 bb 1a     ..
+    ldx #$17                                                          ; 3d7a: a2 17       ..
+    jsr something51_TODO                                              ; 3d7c: 20 bb 1a     ..
+    ldx #$24 ; '$'                                                    ; 3d7f: a2 24       .$
+    jsr something51_TODO                                              ; 3d81: 20 bb 1a     ..
+    ldx #0                                                            ; 3d84: a2 00       ..
+    iny                                                               ; 3d86: c8          .
+    dec l003c                                                         ; 3d87: c6 3c       .<
+    lda #$0c                                                          ; 3d89: a9 0c       ..
+    sta l003d                                                         ; 3d8b: 85 3d       .=
+    jsr something51_TODO                                              ; 3d8d: 20 bb 1a     ..
+    ldx #$0e                                                          ; 3d90: a2 0e       ..
+    jsr something51_TODO                                              ; 3d92: 20 bb 1a     ..
+    ldx #$17                                                          ; 3d95: a2 17       ..
+    jsr something51_TODO                                              ; 3d97: 20 bb 1a     ..
+    ldx #$25 ; '%'                                                    ; 3d9a: a2 25       .%
+    lda #3                                                            ; 3d9c: a9 03       ..
+    sta l003d                                                         ; 3d9e: 85 3d       .=
+    jsr something51_TODO                                              ; 3da0: 20 bb 1a     ..
+    ldy #$12                                                          ; 3da3: a0 12       ..
+    inc l003d                                                         ; 3da5: e6 3d       .=
+    jsr something51_TODO                                              ; 3da7: 20 bb 1a     ..
+    jsr something26_TODO                                              ; 3daa: 20 90 1b     ..
+    lda #3                                                            ; 3dad: a9 03       ..
+    sta l003c                                                         ; 3daf: 85 3c       .<
+    lda #2                                                            ; 3db1: a9 02       ..
+    sta l003d                                                         ; 3db3: 85 3d       .=
+    lda #$de                                                          ; 3db5: a9 de       ..
+    ldx #$1a                                                          ; 3db7: a2 1a       ..
+    ldy #$14                                                          ; 3db9: a0 14       ..
+    jsr something52_TODO                                              ; 3dbb: 20 57 1f     W.
+    ldx #$22 ; '"'                                                    ; 3dbe: a2 22       ."
+    jsr something52_TODO                                              ; 3dc0: 20 57 1f     W.
+    ldy #$12                                                          ; 3dc3: a0 12       ..
+    jsr something52_TODO                                              ; 3dc5: 20 57 1f     W.
+    ldx #7                                                            ; 3dc8: a2 07       ..
+    ldy #$14                                                          ; 3dca: a0 14       ..
+    jsr something52_TODO                                              ; 3dcc: 20 57 1f     W.
+    jsr something23_TODO                                              ; 3dcf: 20 bb 12     ..
+; $3dd2 referenced 1 time by $3df3
+c3dd2
+    jsr something24_TODO                                              ; 3dd2: 20 da 12     ..
+    sta l0070                                                         ; 3dd5: 85 70       .p
+    and #1                                                            ; 3dd7: 29 01       ).
+    beq c3de2                                                         ; 3dd9: f0 07       ..
+    ldx #0                                                            ; 3ddb: a2 00       ..
+    ldy desired_level                                                 ; 3ddd: a4 31       .1
+    jmp initialise_level                                              ; 3ddf: 4c 40 11    L@.
+
+; $3de2 referenced 1 time by $3dd9
+c3de2
+    lda l0070                                                         ; 3de2: a5 70       .p
+    and #2                                                            ; 3de4: 29 02       ).
+    beq c3def                                                         ; 3de6: f0 07       ..
+    ldx #2                                                            ; 3de8: a2 02       ..
+    ldy desired_level                                                 ; 3dea: a4 31       .1
+    jmp initialise_level                                              ; 3dec: 4c 40 11    L@.
+
+; $3def referenced 1 time by $3de6
+c3def
+    lda l0070                                                         ; 3def: a5 70       .p
+    and #4                                                            ; 3df1: 29 04       ).
+    beq c3dd2                                                         ; 3df3: f0 dd       ..
+    ldx #3                                                            ; 3df5: a2 03       ..
+    ldy desired_level                                                 ; 3df7: a4 31       .1
+    jmp initialise_level                                              ; 3df9: 4c 40 11    L@.
 
 ; $3dfc referenced 1 time by $3b1a
 sub_c3dfc
@@ -699,9 +786,12 @@ l3fd5
     !byte 0                                                           ; 3fd5: 00          .
 ; $3fd6 referenced 2 times by $3f8e, $3fd1
 l3fd6
-    !byte   0, $14,   9                                               ; 3fd6: 00 14 09    ...
+    !byte 0                                                           ; 3fd6: 00          .
+level_thing_3_data_ptr
+    !word level_thing_3_data                                          ; 3fd7: 14 09       ..
 
 some_code3
+level_thing_3_code
     ldx #0                                                            ; 3fd9: a2 00       ..
     ldy #0                                                            ; 3fdb: a0 00       ..
     lda #$ff                                                          ; 3fdd: a9 ff       ..
@@ -1028,9 +1118,11 @@ c4235
 c424c
     rts                                                               ; 424c: 60          `
 
-    !byte $14,   7                                                    ; 424d: 14 07       ..
+level_thing_4_data_ptr
+    !word level_thing_4_data                                          ; 424d: 14 07       ..
 
 some_code4
+level_thing_4_code
     ldx #0                                                            ; 424f: a2 00       ..
     ldy #0                                                            ; 4251: a0 00       ..
     lda #$ff                                                          ; 4253: a9 ff       ..
@@ -1498,15 +1590,16 @@ inverse_power_of_2_table
 pydis_end
 
 ; Label references by decreasing frequency:
-;     l003c:                                 34
-;     l003d:                                 32
-;     something51_TODO:                      29
+;     something51_TODO:                      43
+;     l003c:                                 39
+;     l003d:                                 38
 ;     l0030:                                 19
 ;     something54_TODO:                      13
+;     desired_level:                         11
 ;     l0a72:                                 11
 ;     l003e:                                 10
 ;     l0a70:                                 10
-;     desired_level:                          8
+;     something52_TODO:                       9
 ;     l0a02:                                  8
 ;     l0a04:                                  8
 ;     c3ed7:                                  8
@@ -1514,13 +1607,14 @@ pydis_end
 ;     l0a01:                                  7
 ;     l38f6:                                  7
 ;     some_data1:                             7
+;     l0070:                                  6
 ;     l09be:                                  6
 ;     l0a71:                                  6
+;     initialise_level:                       6
 ;     some_data_shared_between_g_and_dataA:   6
 ;     something53_TODO:                       6
 ;     previous_level:                         5
 ;     l0a73:                                  5
-;     something52_TODO:                       5
 ;     something58_TODO:                       5
 ;     something55_TODO:                       5
 ;     l38ac:                                  5
@@ -1530,20 +1624,18 @@ pydis_end
 ;     l003b:                                  4
 ;     l0a00:                                  4
 ;     l0a6f:                                  4
+;     something23_TODO:                       4
+;     something24_TODO:                       4
+;     something26_TODO:                       4
 ;     some_code2:                             4
 ;     c41d9:                                  4
 ;     c4415:                                  4
-;     l0070:                                  3
 ;     l09a8:                                  3
 ;     l09aa:                                  3
 ;     l09ab:                                  3
 ;     l09ac:                                  3
-;     initialise_level:                       3
-;     something23_TODO:                       3
-;     something24_TODO:                       3
 ;     something13_TODO:                       3
 ;     l1aba:                                  3
-;     something26_TODO:                       3
 ;     draw_sprite_a_at_character_xy:          3
 ;     something50_TODO:                       3
 ;     l2eb6:                                  3
@@ -1615,6 +1707,9 @@ pydis_end
 ;     c3ce1:                                  1
 ;     c3ce7:                                  1
 ;     c3cfb:                                  1
+;     c3dd2:                                  1
+;     c3de2:                                  1
+;     c3def:                                  1
 ;     sub_c3dfc:                              1
 ;     c3e55:                                  1
 ;     c3e6c:                                  1
@@ -1670,6 +1765,9 @@ pydis_end
 ;     c3ce7
 ;     c3cfb
 ;     c3d20
+;     c3dd2
+;     c3de2
+;     c3def
 ;     c3e11
 ;     c3e55
 ;     c3e69
@@ -1789,6 +1887,30 @@ pydis_end
 }
 !if (level_name) != $3ae7 {
     !error "Assertion failed: level_name == $3ae7"
+}
+!if (level_thing_1_data) != $1614 {
+    !error "Assertion failed: level_thing_1_data == $1614"
+}
+!if (level_thing_1_data_ptr) != $3b27 {
+    !error "Assertion failed: level_thing_1_data_ptr == $3b27"
+}
+!if (level_thing_2_data) != $0709 {
+    !error "Assertion failed: level_thing_2_data == $0709"
+}
+!if (level_thing_2_data_ptr) != $3d3d {
+    !error "Assertion failed: level_thing_2_data_ptr == $3d3d"
+}
+!if (level_thing_3_data) != $0914 {
+    !error "Assertion failed: level_thing_3_data == $0914"
+}
+!if (level_thing_3_data_ptr) != $3fd7 {
+    !error "Assertion failed: level_thing_3_data_ptr == $3fd7"
+}
+!if (level_thing_4_data) != $0714 {
+    !error "Assertion failed: level_thing_4_data == $0714"
+}
+!if (level_thing_4_data_ptr) != $424d {
+    !error "Assertion failed: level_thing_4_data_ptr == $424d"
 }
 !if (second_level_handler) != $3b17 {
     !error "Assertion failed: second_level_handler == $3b17"

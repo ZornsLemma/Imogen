@@ -323,7 +323,6 @@ level_name_ptr                              = $3adb
 l3add                                       = $3add
 c3ade                                       = $3ade
 level_header_data                           = $3adf
-l3ae0                                       = $3ae0
 auxcode                                     = $53c0
 check_password                              = $53c0
 start_of_screen_memory                      = $5bc0
@@ -559,7 +558,7 @@ skip5
     asl                                                               ; 138e: 0a          .   :125d[1]
     tay                                                               ; 138f: a8          .   :125e[1]
     ldx level_header_data,y                                           ; 1390: be df 3a    ..: :125f[1]
-    lda l3ae0,y                                                       ; 1393: b9 e0 3a    ..: :1262[1]
+    lda level_header_data + 1,y                                       ; 1393: b9 e0 3a    ..: :1262[1]
     tay                                                               ; 1396: a8          .   :1265[1]
     txa                                                               ; 1397: 8a          .   :1266[1]
     clc                                                               ; 1398: 18          .   :1267[1]
@@ -598,7 +597,7 @@ c129b
     tay                                                               ; 13cf: a8          .   :129e[1]
     lda level_header_data,y                                           ; 13d0: b9 df 3a    ..: :129f[1]
     sta address1_low                                                  ; 13d3: 85 70       .p  :12a2[1]
-    lda l3ae0,y                                                       ; 13d5: b9 e0 3a    ..: :12a4[1]
+    lda level_header_data + 1,y                                       ; 13d5: b9 e0 3a    ..: :12a4[1]
     sta address1_high                                                 ; 13d8: 85 71       .q  :12a7[1]
     ldy #0                                                            ; 13da: a0 00       ..  :12a9[1]
     lda (address1_low),y                                              ; 13dc: b1 70       .p  :12ab[1]
@@ -7695,7 +7694,6 @@ pydis_end
 ;     l3974
 ;     l3a8e
 ;     l3add
-;     l3ae0
 ;     l8000
 ;     l8008
 ;     lbe00
