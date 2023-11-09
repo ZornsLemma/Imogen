@@ -50,6 +50,10 @@ osword_sound                                    = 7
 red                                             = 1
 screen_width_in_pixels                          = 320
 screen_width_minus_one                          = 39
+sprite_op_flags_copy_mask                       = 1
+sprite_op_flags_erase                           = 2
+sprite_op_flags_ignore_mask                     = 4
+sprite_op_flags_normal                          = 0
 spriteid_blob_thing1                            = 2
 spriteid_blob_thing2                            = 3
 spriteid_blob_thing3                            = 4
@@ -590,14 +594,14 @@ sub_c1278
     sta desired_room_index                                            ; 13b4: 85 30       .0  :1283[1]
     lda byte_per_level_table1,x                                       ; 13b6: bd ef 09    ... :1285[1]
     and #$40 ; '@'                                                    ; 13b9: 29 40       )@  :1288[1]
-    bne c129b                                                         ; 13bb: d0 0f       ..  :128a[1]
+    bne skip_developer_mode_code                                      ; 13bb: d0 0f       ..  :128a[1]
     lda l3add                                                         ; 13bd: ad dd 3a    ..: :128c[1]
     sta desired_room_index                                            ; 13c0: 85 30       .0  :128f[1]
     lda developer_flags                                               ; 13c2: ad 03 11    ... :1291[1]
-    bpl c129b                                                         ; 13c5: 10 05       ..  :1294[1]
+    bpl skip_developer_mode_code                                      ; 13c5: 10 05       ..  :1294[1]
     lda c3ade                                                         ; 13c7: ad de 3a    ..: :1296[1]
     sta desired_room_index                                            ; 13ca: 85 30       .0  :1299[1]
-c129b
+skip_developer_mode_code
     lda desired_room_index                                            ; 13cc: a5 30       .0  :129b[1]
     asl                                                               ; 13ce: 0a          .   :129d[1]
     tay                                                               ; 13cf: a8          .   :129e[1]
@@ -735,7 +739,7 @@ power_of_2_table
     !byte $01, $02, $04, $08, $10, $20, $40, $80                      ; 14a8: 01 02 04... ... :1377[1]
 
 reset_sprite_flags_and_exit
-    lda #0                                                            ; 14b0: a9 00       ..  :137f[1]
+    lda #sprite_op_flags_normal                                       ; 14b0: a9 00       ..  :137f[1]
     sta sprite_op_flags                                               ; 14b2: 85 15       ..  :1381[1]
     lda #1                                                            ; 14b4: a9 01       ..  :1383[1]
     sta sprite_reflect_flag                                           ; 14b6: 85 1d       ..  :1385[1]
@@ -2969,7 +2973,7 @@ sub_c219a
     sta sprite_reflect_flag                                           ; 22e7: 85 1d       ..  :21b6[1]
     lda x_entry_table9a,x                                             ; 22e9: bd a8 09    ... :21b8[1]
     sta sprite_number                                                 ; 22ec: 85 16       ..  :21bb[1]
-    lda #0                                                            ; 22ee: a9 00       ..  :21bd[1]
+    lda #sprite_op_flags_normal                                       ; 22ee: a9 00       ..  :21bd[1]
     sta sprite_op_flags                                               ; 22f0: 85 15       ..  :21bf[1]
     lda x_entry_table12,x                                             ; 22f2: bd ac 38    ..8 :21c1[1]
     beq c21d0                                                         ; 22f5: f0 0a       ..  :21c4[1]
@@ -2996,7 +3000,7 @@ c21d0
 c21ef
     lda x_entry_table10a,x                                            ; 2320: bd be 09    ... :21ef[1]
     sta sprite_reflect_flag                                           ; 2323: 85 1d       ..  :21f2[1]
-    lda #0                                                            ; 2325: a9 00       ..  :21f4[1]
+    lda #sprite_op_flags_normal                                       ; 2325: a9 00       ..  :21f4[1]
     sta sprite_op_flags                                               ; 2327: 85 15       ..  :21f6[1]
     lda #spriteid_some_small_blob                                     ; 2329: a9 37       .7  :21f8[1]
     sta sprite_number                                                 ; 232b: 85 16       ..  :21fa[1]
@@ -4178,12 +4182,12 @@ unplot_menu_pointer
     jsr calculate_sprite_position_for_menu_item                       ; 2b27: 20 46 2c     F, :29f6[1]
     lda #spriteid_pointer_hand                                        ; 2b2a: a9 1d       ..  :29f9[1]
     sta sprite_number                                                 ; 2b2c: 85 16       ..  :29fb[1]
-    lda #2                                                            ; 2b2e: a9 02       ..  :29fd[1]
+    lda #sprite_op_flags_erase                                        ; 2b2e: a9 02       ..  :29fd[1]
     sta sprite_op_flags                                               ; 2b30: 85 15       ..  :29ff[1]
     jsr sprite_op                                                     ; 2b32: 20 8d 13     .. :2a01[1]
     lda #spriteid_some_small_number_of_pixels_set                     ; 2b35: a9 1e       ..  :2a04[1]
     sta sprite_number                                                 ; 2b37: 85 16       ..  :2a06[1]
-    lda #0                                                            ; 2b39: a9 00       ..  :2a08[1]
+    lda #sprite_op_flags_normal                                       ; 2b39: a9 00       ..  :2a08[1]
     sta sprite_op_flags                                               ; 2b3b: 85 15       ..  :2a0a[1]
     jsr sprite_op                                                     ; 2b3d: 20 8d 13     .. :2a0c[1]
     pla                                                               ; 2b40: 68          h   :2a0f[1]
@@ -4203,7 +4207,7 @@ plot_menu_pointer
     jsr calculate_sprite_position_for_menu_item                       ; 2b53: 20 46 2c     F, :2a22[1]
     lda #spriteid_pointer_hand                                        ; 2b56: a9 1d       ..  :2a25[1]
     sta sprite_number                                                 ; 2b58: 85 16       ..  :2a27[1]
-    lda #0                                                            ; 2b5a: a9 00       ..  :2a29[1]
+    lda #sprite_op_flags_normal                                       ; 2b5a: a9 00       ..  :2a29[1]
     sta sprite_op_flags                                               ; 2b5c: 85 15       ..  :2a2b[1]
     jsr sprite_op                                                     ; 2b5e: 20 8d 13     .. :2a2d[1]
     pla                                                               ; 2b61: 68          h   :2a30[1]
@@ -4343,10 +4347,10 @@ toggle_sound_on_off
     pha                                                               ; 2c51: 48          H   :2b20[1]
     lda #$58 ; 'X'                                                    ; 2c52: a9 58       .X  :2b21[1]
     sta screen_base_address_high                                      ; 2c54: 85 4c       .L  :2b23[1]
-    lda #0                                                            ; 2c56: a9 00       ..  :2b25[1]
+    lda #sprite_op_flags_normal                                       ; 2c56: a9 00       ..  :2b25[1]
     ldx sound_enable_flag                                             ; 2c58: ae 66 39    .f9 :2b27[1]
     bne c2b2e                                                         ; 2c5b: d0 02       ..  :2b2a[1]
-    lda #2                                                            ; 2c5d: a9 02       ..  :2b2c[1]
+    lda #sprite_op_flags_erase                                        ; 2c5d: a9 02       ..  :2b2c[1]
 c2b2e
     sta sprite_op_flags                                               ; 2c5f: 85 15       ..  :2b2e[1]
     jsr sprite_op                                                     ; 2c61: 20 8d 13     .. :2b30[1]
@@ -4499,14 +4503,14 @@ plot_menu_icon
     lda #$58 ; 'X'                                                    ; 2d45: a9 58       .X  :2c14[1]
     sta screen_base_address_high                                      ; 2d47: 85 4c       .L  :2c16[1]
     jsr calculate_sprite_position_for_menu_item                       ; 2d49: 20 46 2c     F, :2c18[1]
-    lda #0                                                            ; 2d4c: a9 00       ..  :2c1b[1]
+    lda #sprite_op_flags_normal                                       ; 2d4c: a9 00       ..  :2c1b[1]
     sta sprite_op_flags                                               ; 2d4e: 85 15       ..  :2c1d[1]
     lda #spriteid_icon_background                                     ; 2d50: a9 01       ..  :2c1f[1]
     sta sprite_number                                                 ; 2d52: 85 16       ..  :2c21[1]
     lda desired_menu_slots,x                                          ; 2d54: bd 5c 29    .\) :2c23[1]
     sta displayed_menu_slots,x                                        ; 2d57: 9d 6f 29    .o) :2c26[1]
     bne c2c35                                                         ; 2d5a: d0 0a       ..  :2c29[1]
-    lda #2                                                            ; 2d5c: a9 02       ..  :2c2b[1]
+    lda #sprite_op_flags_erase                                        ; 2d5c: a9 02       ..  :2c2b[1]
     sta sprite_op_flags                                               ; 2d5e: 85 15       ..  :2c2d[1]
     jsr sprite_op                                                     ; 2d60: 20 8d 13     .. :2c2f[1]
     jmp c2c3d                                                         ; 2d63: 4c 3d 2c    L=, :2c32[1]
@@ -6496,7 +6500,7 @@ define_character_fe_loop
     sta eor_key                                                       ; 3d24: 85 45       .E
     lda #$ff                                                          ; 3d26: a9 ff       ..
     sta print_in_italics_flag                                         ; 3d28: 85 43       .C
-    lda #0                                                            ; 3d2a: a9 00       ..
+    lda #sprite_op_flags_normal                                       ; 3d2a: a9 00       ..
     sta l003a                                                         ; 3d2c: 85 3a       .:
     sta l003b                                                         ; 3d2e: 85 3b       .;
     sta sprite_op_flags                                               ; 3d30: 85 15       ..
@@ -7307,7 +7311,6 @@ pydis_end
 ;     c110c
 ;     c11f8
 ;     c1209
-;     c129b
 ;     c12fc
 ;     c1306
 ;     c131e
@@ -8283,6 +8286,12 @@ pydis_end
 }
 !if (screen_width_minus_one) != $27 {
     !error "Assertion failed: screen_width_minus_one == $27"
+}
+!if (sprite_op_flags_erase) != $02 {
+    !error "Assertion failed: sprite_op_flags_erase == $02"
+}
+!if (sprite_op_flags_normal) != $00 {
+    !error "Assertion failed: sprite_op_flags_normal == $00"
 }
 !if (spriteid_blob_thing8) != $09 {
     !error "Assertion failed: spriteid_blob_thing8 == $09"

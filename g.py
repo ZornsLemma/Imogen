@@ -226,6 +226,12 @@ sprite_dict = {
     0x57: "spriteid_rope3",
     0x58: "spriteid_rope4",
 }
+sprite_op_flags_dict = {
+    0x00: "sprite_op_flags_normal",
+    0x01: "sprite_op_flags_copy_mask",
+    0x02: "sprite_op_flags_erase",
+    0x04: "sprite_op_flags_ignore_mask",
+}
 
 label(0x1f4c, "draw_sprite_a_at_character_xy")
 label(0x1f84, "set_sprite_pixel_position_from_character_xy")
@@ -233,7 +239,11 @@ label(0x1f84, "set_sprite_pixel_position_from_character_xy")
 substitute_constants("sta sprite_number", 'a', sprite_dict, True)
 substitute_constants("jsr draw_sprite_a_at_character_xy", 'a', sprite_dict, True)
 substitute_constants("jsr find_or_create_menu_slot_for_A", 'a', sprite_dict, True) # TODO: not actually useful yet, maybe never
+substitute_constants("sta sprite_op_flags", 'a', sprite_op_flags_dict, True)
 
+expr(0x2b26, "sprite_op_flags_normal")
+
+label(0x129b, "skip_developer_mode_code")
 label(0x137f, "reset_sprite_flags_and_exit")
 comment(0x139f, "check flags to see if we are copying to another sprite", inline=True)
 comment(0x13b3, "Y=0", inline=True)
