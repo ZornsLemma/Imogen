@@ -1370,17 +1370,39 @@ label(0x987, "object_y_old")
 
 label(0x992, "x_entry_table7a")
 label(0x99d, "x_entry_table7a_old")
-label(0x9a8, "x_entry_table9a")
-label(0x9b3, "x_entry_table9a_old")
+label(0x9a8, "object_spriteid")
+label(0x9b3, "object_spriteid_old")
 
 label(0x9be, "object_direction")
 label(0x9c9, "object_direction_old")
-label(0x38ac, "x_entry_table12") # TODO: Re-uses envelope_1, need to resolve label clash
+comment(0x2177, """object_sprite_mask_type:
+
+    00 means erase,
+    ff means draw without mask,
+    otherwise draw normally with mask""")
+label(0x2197, "done_drawing_object")
+label(0x38ac, "object_sprite_mask_type")                # TODO: Re-uses envelope_1, need to resolve label clash
+
+comment(0x2159, "exit if object is not visible")
+comment(0x215e, "prepare to draw sprite")
+
 envelope(0x38ac, "envelope_1")
 envelope(0x38c2, "envelope_2")
 envelope(0x38d8, "envelope_3")
 
-label(0x211e, "has_object_x_changed_state")
+label(0x20f7, "copy_object_state_to_old")
+label(0x211e, "has_object_changed_state")
+label(0x219a, "draw_object")
+label(0x21d0, "draw_object_sprite")
+
+comment(0x2182, "ALWAYS branch", inline=True)
+label(0x2184, "erase_object")
+label(0x218b, "draw_object_without_mask")
+label(0x2190, "draw_or_erase_object")
+
+comment(0x21d3, "return if not the player")
+comment(0x21d7, "return if current player character is not the bird?")
+comment(0x21dd, "special bird processing?")
 
 entry(0x3f6f, "handle_developer_mode_setup")
 # TODO: DELETE? expr(0x3f73, "game_state_flag_have_spell")

@@ -299,9 +299,9 @@ object_y_old                                = $0987
 x_entry_table7a                             = $0992
 l0993                                       = $0993
 x_entry_table7a_old                         = $099d
-x_entry_table9a                             = $09a8
+object_spriteid                             = $09a8
 l09a9                                       = $09a9
-x_entry_table9a_old                         = $09b3
+object_spriteid_old                         = $09b3
 l09b4                                       = $09b4
 object_direction                            = $09be
 l09bf                                       = $09bf
@@ -472,13 +472,13 @@ level_already_loaded
     ldx #0                                                            ; 12a8: a2 00       ..  :1177[1]
     jsr osbyte                                                        ; 12aa: 20 f4 ff     .. :1179[1]   ; Flush all buffers (X=0)
     lda #0                                                            ; 12ad: a9 00       ..  :117c[1]
-    sta x_entry_table9a_old                                           ; 12af: 8d b3 09    ... :117e[1]
+    sta object_spriteid_old                                           ; 12af: 8d b3 09    ... :117e[1]
     sta l09b4                                                         ; 12b2: 8d b4 09    ... :1181[1]
     ldy #2                                                            ; 12b5: a0 02       ..  :1184[1]
 level_reset_loop
     lda #0                                                            ; 12b7: a9 00       ..  :1186[1]
-    sta x_entry_table9a,y                                             ; 12b9: 99 a8 09    ... :1188[1]
-    sta x_entry_table9a_old,y                                         ; 12bc: 99 b3 09    ... :118b[1]
+    sta object_spriteid,y                                             ; 12b9: 99 a8 09    ... :1188[1]
+    sta object_spriteid_old,y                                         ; 12bc: 99 b3 09    ... :118b[1]
     sta object_x_low,y                                                ; 12bf: 99 50 09    .P. :118e[1]
     sta object_x_high,y                                               ; 12c2: 99 66 09    .f. :1191[1]
     sta object_y,y                                                    ; 12c5: 99 7c 09    .|. :1194[1]
@@ -486,7 +486,7 @@ level_reset_loop
     lda #1                                                            ; 12cb: a9 01       ..  :119a[1]
     sta object_direction,y                                            ; 12cd: 99 be 09    ... :119c[1]
     lda #$ff                                                          ; 12d0: a9 ff       ..  :119f[1]
-    sta x_entry_table12,y                                             ; 12d2: 99 ac 38    ..8 :11a1[1]
+    sta object_sprite_mask_type,y                                     ; 12d2: 99 ac 38    ..8 :11a1[1]
     sta envelope_2,y                                                  ; 12d5: 99 c2 38    ..8 :11a4[1]
     iny                                                               ; 12d8: c8          .   :11a7[1]
     cpy #$0b                                                          ; 12d9: c0 0b       ..  :11a8[1]
@@ -498,7 +498,7 @@ level_reset_loop
     sta l2433                                                         ; 12e5: 8d 33 24    .3$ :11b4[1]
     sta current_player_character                                      ; 12e8: 85 48       .H  :11b7[1]
     sta new_player_character                                          ; 12ea: 85 4d       .M  :11b9[1]
-    sta x_entry_table9a                                               ; 12ec: 8d a8 09    ... :11bb[1]
+    sta object_spriteid                                               ; 12ec: 8d a8 09    ... :11bb[1]
     sta l0052                                                         ; 12ef: 85 52       .R  :11be[1]
     sta l2eb6                                                         ; 12f1: 8d b6 2e    ... :11c0[1]
     sta l2eb7                                                         ; 12f4: 8d b7 2e    ... :11c3[1]
@@ -1875,7 +1875,7 @@ c19f2
     and #7                                                            ; 1b30: 29 07       ).  :19ff[1]
     clc                                                               ; 1b32: 18          .   :1a01[1]
     adc #$3c ; '<'                                                    ; 1b33: 69 3c       i<  :1a02[1]
-    sta x_entry_table9a,x                                             ; 1b35: 9d a8 09    ... :1a04[1]
+    sta object_spriteid,x                                             ; 1b35: 9d a8 09    ... :1a04[1]
 c1a07
     pla                                                               ; 1b38: 68          h   :1a07[1]
     tay                                                               ; 1b39: a8          .   :1a08[1]
@@ -1922,9 +1922,9 @@ something14_TODO
 c1a59
     ldx l1aae                                                         ; 1b8a: ae ae 1a    ... :1a59[1]
     lda #$c5                                                          ; 1b8d: a9 c5       ..  :1a5c[1]
-    sta x_entry_table12,x                                             ; 1b8f: 9d ac 38    ..8 :1a5e[1]
+    sta object_sprite_mask_type,x                                     ; 1b8f: 9d ac 38    ..8 :1a5e[1]
     lda #0                                                            ; 1b92: a9 00       ..  :1a61[1]
-    sta x_entry_table9a,x                                             ; 1b94: 9d a8 09    ... :1a63[1]
+    sta object_spriteid,x                                             ; 1b94: 9d a8 09    ... :1a63[1]
     lda desired_level                                                 ; 1b97: a5 31       .1  :1a66[1]
     sec                                                               ; 1b99: 38          8   :1a68[1]
     sbc #first_level_letter                                           ; 1b9a: e9 41       .A  :1a69[1]
@@ -1948,7 +1948,7 @@ c1a59
     sec                                                               ; 1bbf: 38          8   :1a8e[1]
 c1a8f
     adc #$22 ; '"'                                                    ; 1bc0: 69 22       i"  :1a8f[1]
-    sta x_entry_table9a,x                                             ; 1bc2: 9d a8 09    ... :1a91[1]
+    sta object_spriteid,x                                             ; 1bc2: 9d a8 09    ... :1a91[1]
     txa                                                               ; 1bc5: 8a          .   :1a94[1]
     ldx l1aaf                                                         ; 1bc6: ae af 1a    ... :1a95[1]
     ldy l1ab0                                                         ; 1bc9: ac b0 1a    ... :1a98[1]
@@ -2769,8 +2769,8 @@ c1fe9
 loop_c1ff5
     lda l0116,x                                                       ; 2126: bd 16 01    ... :1ff5[1]
     bne c200d                                                         ; 2129: d0 13       ..  :1ff8[1]
-    lda x_entry_table9a,x                                             ; 212b: bd a8 09    ... :1ffa[1]
-    ora x_entry_table9a_old,x                                         ; 212e: 1d b3 09    ... :1ffd[1]
+    lda object_spriteid,x                                             ; 212b: bd a8 09    ... :1ffa[1]
+    ora object_spriteid_old,x                                         ; 212e: 1d b3 09    ... :1ffd[1]
     beq c200d                                                         ; 2131: f0 0b       ..  :2000[1]
     lda envelope_2,x                                                  ; 2133: bd c2 38    ..8 :2002[1]
     cmp l0061                                                         ; 2136: c5 61       .a  :2005[1]
@@ -2787,7 +2787,7 @@ c200d
 loop_c2018
     lda l0116,x                                                       ; 2149: bd 16 01    ... :2018[1]
     bne c2020                                                         ; 214c: d0 03       ..  :201b[1]
-    jsr sub_c20f7                                                     ; 214e: 20 f7 20     .  :201d[1]
+    jsr copy_object_state_to_old                                      ; 214e: 20 f7 20     .  :201d[1]
 c2020
     dex                                                               ; 2151: ca          .   :2020[1]
     bpl loop_c2018                                                    ; 2152: 10 f5       ..  :2021[1]
@@ -2798,7 +2798,7 @@ c2020
 c2027
     lda #$ff                                                          ; 2158: a9 ff       ..  :2027[1]
     sta l0116,x                                                       ; 215a: 9d 16 01    ... :2029[1]
-    jsr has_object_x_changed_state                                    ; 215d: 20 1e 21     .! :202c[1]
+    jsr has_object_changed_state                                      ; 215d: 20 1e 21     .! :202c[1]
     beq c1fe9                                                         ; 2160: f0 b8       ..  :202f[1]
     txa                                                               ; 2162: 8a          .   :2031[1]
     ldx l0062                                                         ; 2163: a6 62       .b  :2032[1]
@@ -2906,13 +2906,13 @@ loop_c20da
 loop_c20e7
     lda l010b,y                                                       ; 2218: b9 0b 01    ... :20e7[1]
     tax                                                               ; 221b: aa          .   :20ea[1]
-    jsr sub_c219a                                                     ; 221c: 20 9a 21     .! :20eb[1]
-    jsr sub_c20f7                                                     ; 221f: 20 f7 20     .  :20ee[1]
+    jsr draw_object                                                   ; 221c: 20 9a 21     .! :20eb[1]
+    jsr copy_object_state_to_old                                      ; 221f: 20 f7 20     .  :20ee[1]
     dey                                                               ; 2222: 88          .   :20f1[1]
     bpl loop_c20e7                                                    ; 2223: 10 f3       ..  :20f2[1]
     jmp c1fe9                                                         ; 2225: 4c e9 1f    L.. :20f4[1]
 
-sub_c20f7
+copy_object_state_to_old
     pha                                                               ; 2228: 48          H   :20f7[1]
     lda object_x_low,x                                                ; 2229: bd 50 09    .P. :20f8[1]
     sta object_x_low_old,x                                            ; 222c: 9d 5b 09    .[. :20fb[1]
@@ -2922,14 +2922,14 @@ sub_c20f7
     sta object_y_old,x                                                ; 2238: 9d 87 09    ... :2107[1]
     lda x_entry_table7a,x                                             ; 223b: bd 92 09    ... :210a[1]
     sta x_entry_table7a_old,x                                         ; 223e: 9d 9d 09    ... :210d[1]
-    lda x_entry_table9a,x                                             ; 2241: bd a8 09    ... :2110[1]
-    sta x_entry_table9a_old,x                                         ; 2244: 9d b3 09    ... :2113[1]
+    lda object_spriteid,x                                             ; 2241: bd a8 09    ... :2110[1]
+    sta object_spriteid_old,x                                         ; 2244: 9d b3 09    ... :2113[1]
     lda object_direction,x                                            ; 2247: bd be 09    ... :2116[1]
     sta object_direction_old,x                                        ; 224a: 9d c9 09    ... :2119[1]
     pla                                                               ; 224d: 68          h   :211c[1]
     rts                                                               ; 224e: 60          `   :211d[1]
 
-has_object_x_changed_state
+has_object_changed_state
     lda #$ff                                                          ; 224f: a9 ff       ..  :211e[1]
     pha                                                               ; 2251: 48          H   :2120[1]
     lda object_x_low,x                                                ; 2252: bd 50 09    .P. :2121[1]
@@ -2944,8 +2944,8 @@ has_object_x_changed_state
     lda x_entry_table7a,x                                             ; 226a: bd 92 09    ... :2139[1]
     cmp x_entry_table7a_old,x                                         ; 226d: dd 9d 09    ... :213c[1]
     bne c2155                                                         ; 2270: d0 14       ..  :213f[1]
-    lda x_entry_table9a,x                                             ; 2272: bd a8 09    ... :2141[1]
-    cmp x_entry_table9a_old,x                                         ; 2275: dd b3 09    ... :2144[1]
+    lda object_spriteid,x                                             ; 2272: bd a8 09    ... :2141[1]
+    cmp object_spriteid_old,x                                         ; 2275: dd b3 09    ... :2144[1]
     bne c2155                                                         ; 2278: d0 0c       ..  :2147[1]
     lda object_direction,x                                            ; 227a: bd be 09    ... :2149[1]
     cmp object_direction_old,x                                        ; 227d: dd c9 09    ... :214c[1]
@@ -2960,8 +2960,10 @@ c2155
 sub_c2157
     tya                                                               ; 2288: 98          .   :2157[1]
     pha                                                               ; 2289: 48          H   :2158[1]
-    lda x_entry_table9a_old,x                                         ; 228a: bd b3 09    ... :2159[1]
-    beq c2197                                                         ; 228d: f0 39       .9  :215c[1]
+; exit if object is not visible
+    lda object_spriteid_old,x                                         ; 228a: bd b3 09    ... :2159[1]
+    beq done_drawing_object                                           ; 228d: f0 39       .9  :215c[1]
+; prepare to draw sprite
     lda object_x_low_old,x                                            ; 228f: bd 5b 09    .[. :215e[1]
     sta sprite_x_base_low                                             ; 2292: 85 18       ..  :2161[1]
     lda object_x_high_old,x                                           ; 2294: bd 71 09    .q. :2163[1]
@@ -2972,30 +2974,35 @@ sub_c2157
     sta sprite_y_base_high                                            ; 22a1: 85 1b       ..  :2170[1]
     lda object_direction_old,x                                        ; 22a3: bd c9 09    ... :2172[1]
     sta sprite_reflect_flag                                           ; 22a6: 85 1d       ..  :2175[1]
-    lda x_entry_table12,x                                             ; 22a8: bd ac 38    ..8 :2177[1]
-    beq c2184                                                         ; 22ab: f0 08       ..  :217a[1]
+; object_sprite_mask_type:
+; 
+;     00 means erase,
+;     ff means draw without mask,
+;     otherwise draw normally with mask
+    lda object_sprite_mask_type,x                                     ; 22a8: bd ac 38    ..8 :2177[1]
+    beq erase_object                                                  ; 22ab: f0 08       ..  :217a[1]
     cmp #$ff                                                          ; 22ad: c9 ff       ..  :217c[1]
-    beq c218b                                                         ; 22af: f0 0b       ..  :217e[1]
+    beq draw_object_without_mask                                      ; 22af: f0 0b       ..  :217e[1]
     ldy #0                                                            ; 22b1: a0 00       ..  :2180[1]
-    beq c2190                                                         ; 22b3: f0 0c       ..  :2182[1]
-c2184
-    lda x_entry_table9a_old,x                                         ; 22b5: bd b3 09    ... :2184[1]
+    beq draw_or_erase_object                                          ; 22b3: f0 0c       ..  :2182[1]   ; ALWAYS branch
+erase_object
+    lda object_spriteid_old,x                                         ; 22b5: bd b3 09    ... :2184[1]
     ldy #2                                                            ; 22b8: a0 02       ..  :2187[1]
-    bne c2190                                                         ; 22ba: d0 05       ..  :2189[1]
-c218b
-    lda x_entry_table9a_old,x                                         ; 22bc: bd b3 09    ... :218b[1]
+    bne draw_or_erase_object                                          ; 22ba: d0 05       ..  :2189[1]
+draw_object_without_mask
+    lda object_spriteid_old,x                                         ; 22bc: bd b3 09    ... :218b[1]
     ldy #4                                                            ; 22bf: a0 04       ..  :218e[1]
-c2190
+draw_or_erase_object
     sta sprite_number                                                 ; 22c1: 85 16       ..  :2190[1]
     sty sprite_op_flags                                               ; 22c3: 84 15       ..  :2192[1]
     jsr sprite_op                                                     ; 22c5: 20 8d 13     .. :2194[1]
-c2197
+done_drawing_object
     pla                                                               ; 22c8: 68          h   :2197[1]
     tay                                                               ; 22c9: a8          .   :2198[1]
     rts                                                               ; 22ca: 60          `   :2199[1]
 
-sub_c219a
-    lda x_entry_table9a,x                                             ; 22cb: bd a8 09    ... :219a[1]
+draw_object
+    lda object_spriteid,x                                             ; 22cb: bd a8 09    ... :219a[1]
     beq return9                                                       ; 22ce: f0 60       .`  :219d[1]
     lda object_x_low,x                                                ; 22d0: bd 50 09    .P. :219f[1]
     sta sprite_x_base_low                                             ; 22d3: 85 18       ..  :21a2[1]
@@ -3007,27 +3014,30 @@ sub_c219a
     sta sprite_y_base_high                                            ; 22e2: 85 1b       ..  :21b1[1]
     lda object_direction,x                                            ; 22e4: bd be 09    ... :21b3[1]
     sta sprite_reflect_flag                                           ; 22e7: 85 1d       ..  :21b6[1]
-    lda x_entry_table9a,x                                             ; 22e9: bd a8 09    ... :21b8[1]
+    lda object_spriteid,x                                             ; 22e9: bd a8 09    ... :21b8[1]
     sta sprite_number                                                 ; 22ec: 85 16       ..  :21bb[1]
     lda #sprite_op_flags_normal                                       ; 22ee: a9 00       ..  :21bd[1]
     sta sprite_op_flags                                               ; 22f0: 85 15       ..  :21bf[1]
-    lda x_entry_table12,x                                             ; 22f2: bd ac 38    ..8 :21c1[1]
-    beq c21d0                                                         ; 22f5: f0 0a       ..  :21c4[1]
+    lda object_sprite_mask_type,x                                     ; 22f2: bd ac 38    ..8 :21c1[1]
+    beq draw_object_sprite                                            ; 22f5: f0 0a       ..  :21c4[1]
     cmp #$ff                                                          ; 22f7: c9 ff       ..  :21c6[1]
-    beq c21d0                                                         ; 22f9: f0 06       ..  :21c8[1]
+    beq draw_object_sprite                                            ; 22f9: f0 06       ..  :21c8[1]
     sta dest_sprite_number                                            ; 22fb: 85 14       ..  :21ca[1]
     lda #3                                                            ; 22fd: a9 03       ..  :21cc[1]
     sta sprite_op_flags                                               ; 22ff: 85 15       ..  :21ce[1]
-c21d0
+draw_object_sprite
     jsr sprite_op                                                     ; 2301: 20 8d 13     .. :21d0[1]
+; return if not the player
     cpx #1                                                            ; 2304: e0 01       ..  :21d3[1]
     bne return9                                                       ; 2306: d0 28       .(  :21d5[1]
+; return if current player character is not the bird?
     lda current_player_character                                      ; 2308: a5 48       .H  :21d7[1]
     cmp #4                                                            ; 230a: c9 04       ..  :21d9[1]
     bne return9                                                       ; 230c: d0 22       ."  :21db[1]
+; special bird processing?
     stx l0065                                                         ; 230e: 86 65       .e  :21dd[1]
     ldx #0                                                            ; 2310: a2 00       ..  :21df[1]
-    jsr has_object_x_changed_state                                    ; 2312: 20 1e 21     .! :21e1[1]
+    jsr has_object_changed_state                                      ; 2312: 20 1e 21     .! :21e1[1]
     ldx l0065                                                         ; 2315: a6 65       .e  :21e4[1]
     ora #0                                                            ; 2317: 09 00       ..  :21e6[1]
     beq c21ef                                                         ; 2319: f0 05       ..  :21e8[1]
@@ -3049,7 +3059,7 @@ something17_TODO
     sty address1_high                                                 ; 2333: 84 71       .q  :2202[1]
     tay                                                               ; 2335: a8          .   :2204[1]
     lda (address1_low),y                                              ; 2336: b1 70       .p  :2205[1]
-    sta x_entry_table9a                                               ; 2338: 8d a8 09    ... :2207[1]
+    sta object_spriteid                                               ; 2338: 8d a8 09    ... :2207[1]
     iny                                                               ; 233b: c8          .   :220a[1]
     lda l2433                                                         ; 233c: ad 33 24    .3$ :220b[1]
     bne c2231                                                         ; 233f: d0 21       .!  :220e[1]
@@ -3108,7 +3118,7 @@ c2267
     sta l09a9                                                         ; 239b: 8d a9 09    ... :226a[1]
     lda object_direction                                              ; 239e: ad be 09    ... :226d[1]
     sta l09bf                                                         ; 23a1: 8d bf 09    ... :2270[1]
-    lda x_entry_table9a                                               ; 23a4: ad a8 09    ... :2273[1]
+    lda object_spriteid                                               ; 23a4: ad a8 09    ... :2273[1]
     jsr sub_c22ae                                                     ; 23a7: 20 ae 22     ." :2276[1]
     txa                                                               ; 23aa: 8a          .   :2279[1]
     ldx object_direction                                              ; 23ab: ae be 09    ... :227a[1]
@@ -3269,8 +3279,8 @@ sub_c2358
     rts                                                               ; 249b: 60          `   :236a[1]
 
 sub_c236b
-    lda x_entry_table9a                                               ; 249c: ad a8 09    ... :236b[1]
-    and x_entry_table9a_old                                           ; 249f: 2d b3 09    -.. :236e[1]
+    lda object_spriteid                                               ; 249c: ad a8 09    ... :236b[1]
+    and object_spriteid_old                                           ; 249f: 2d b3 09    -.. :236e[1]
     beq return12                                                      ; 24a2: f0 35       .5  :2371[1]
     lda #2                                                            ; 24a4: a9 02       ..  :2373[1]
     sta l2551                                                         ; 24a6: 8d 51 25    .Q% :2375[1]
@@ -3387,7 +3397,7 @@ l2433
 sub_c2434
     txa                                                               ; 2565: 8a          .   :2434[1]
     pha                                                               ; 2566: 48          H   :2435[1]
-    lda x_entry_table9a,x                                             ; 2567: bd a8 09    ... :2436[1]
+    lda object_spriteid,x                                             ; 2567: bd a8 09    ... :2436[1]
     jsr get_address_of_sprite_a                                       ; 256a: 20 2c 13     ,. :2439[1]
     stx mask_sprite_byte                                              ; 256d: 86 80       ..  :243c[1]
     sty sprite_width                                                  ; 256f: 84 81       ..  :243e[1]
@@ -3485,7 +3495,7 @@ l24d1
 sub_c24d2
     txa                                                               ; 2603: 8a          .   :24d2[1]
     pha                                                               ; 2604: 48          H   :24d3[1]
-    lda x_entry_table9a,x                                             ; 2605: bd a8 09    ... :24d4[1]
+    lda object_spriteid,x                                             ; 2605: bd a8 09    ... :24d4[1]
     jsr get_address_of_sprite_a                                       ; 2608: 20 2c 13     ,. :24d7[1]
     stx mask_sprite_byte                                              ; 260b: 86 80       ..  :24da[1]
     sty sprite_width                                                  ; 260d: 84 81       ..  :24dc[1]
@@ -3571,7 +3581,7 @@ c255a
     lda l0052                                                         ; 268b: a5 52       .R  :255a[1]
     beq c25d6                                                         ; 268d: f0 78       .x  :255c[1]
     inx                                                               ; 268f: e8          .   :255e[1]
-    lda x_entry_table9a,x                                             ; 2690: bd a8 09    ... :255f[1]
+    lda object_spriteid,x                                             ; 2690: bd a8 09    ... :255f[1]
     dex                                                               ; 2693: ca          .   :2562[1]
     ora #0                                                            ; 2694: 09 00       ..  :2563[1]
     beq c25d6                                                         ; 2696: f0 6f       .o  :2565[1]
@@ -4070,9 +4080,9 @@ something55_TODO
     pha                                                               ; 2a16: 48          H   :28e5[1]
     lda #0                                                            ; 2a17: a9 00       ..  :28e6[1]
     sta l295b                                                         ; 2a19: 8d 5b 29    .[) :28e8[1]
-    lda x_entry_table9a,x                                             ; 2a1c: bd a8 09    ... :28eb[1]
+    lda object_spriteid,x                                             ; 2a1c: bd a8 09    ... :28eb[1]
     beq c2945                                                         ; 2a1f: f0 55       .U  :28ee[1]
-    lda x_entry_table9a,y                                             ; 2a21: b9 a8 09    ... :28f0[1]
+    lda object_spriteid,y                                             ; 2a21: b9 a8 09    ... :28f0[1]
     beq c2945                                                         ; 2a24: f0 50       .P  :28f3[1]
     jsr sub_c25df                                                     ; 2a26: 20 df 25     .% :28f5[1]
     jsr sub_c24d2                                                     ; 2a29: 20 d2 24     .$ :28f8[1]
@@ -4866,7 +4876,7 @@ c2e5f
     beq c2e82                                                         ; 2f9a: f0 17       ..  :2e69[1]
     ldy l09d4                                                         ; 2f9c: ac d4 09    ... :2e6b[1]
     lda l2ced,y                                                       ; 2f9f: b9 ed 2c    .., :2e6e[1]
-    sta x_entry_table9a                                               ; 2fa2: 8d a8 09    ... :2e71[1]
+    sta object_spriteid                                               ; 2fa2: 8d a8 09    ... :2e71[1]
     jsr sub_c2eb8                                                     ; 2fa5: 20 b8 2e     .. :2e74[1]
     lda #0                                                            ; 2fa8: a9 00       ..  :2e77[1]
     jsr sub_c25f5                                                     ; 2faa: 20 f5 25     .% :2e79[1]
@@ -4886,7 +4896,7 @@ c2e82
     lda l2eb6                                                         ; 2fce: ad b6 2e    ... :2e9d[1]
     sta l2eb7                                                         ; 2fd1: 8d b7 2e    ... :2ea0[1]
     ldx #0                                                            ; 2fd4: a2 00       ..  :2ea3[1]
-    lda x_entry_table9a                                               ; 2fd6: ad a8 09    ... :2ea5[1]
+    lda object_spriteid                                               ; 2fd6: ad a8 09    ... :2ea5[1]
     cmp #$35 ; '5'                                                    ; 2fd9: c9 35       .5  :2ea8[1]
     bne c2eb1                                                         ; 2fdb: d0 05       ..  :2eaa[1]
     lda l0052                                                         ; 2fdd: a5 52       .R  :2eac[1]
@@ -4922,7 +4932,7 @@ loop_c2ec9
     beq c2ee4                                                         ; 3006: f0 0d       ..  :2ed5[1]
 c2ed7
     ldx l2ef2,y                                                       ; 3008: be f2 2e    ... :2ed7[1]
-    lda x_entry_table9a                                               ; 300b: ad a8 09    ... :2eda[1]
+    lda object_spriteid                                               ; 300b: ad a8 09    ... :2eda[1]
     cmp #$35 ; '5'                                                    ; 300e: c9 35       .5  :2edd[1]
     beq c2ee4                                                         ; 3010: f0 03       ..  :2edf[1]
     ldx l2eed,y                                                       ; 3012: be ed 2e    ... :2ee1[1]
@@ -5089,7 +5099,7 @@ c30a5
     bne c30d5                                                         ; 31f9: d0 0b       ..  :30c8[1]
 c30ca
     lda #0                                                            ; 31fb: a9 00       ..  :30ca[1]
-    ldx x_entry_table9a                                               ; 31fd: ae a8 09    ... :30cc[1]
+    ldx object_spriteid                                               ; 31fd: ae a8 09    ... :30cc[1]
     cpx #$0f                                                          ; 3200: e0 0f       ..  :30cf[1]
     bne c30d5                                                         ; 3202: d0 02       ..  :30d1[1]
     lda #$81                                                          ; 3204: a9 81       ..  :30d3[1]
@@ -5327,7 +5337,7 @@ c3331
     bne c3366                                                         ; 348a: d0 0b       ..  :3359[1]
 c335b
     lda #0                                                            ; 348c: a9 00       ..  :335b[1]
-    ldx x_entry_table9a                                               ; 348e: ae a8 09    ... :335d[1]
+    ldx object_spriteid                                               ; 348e: ae a8 09    ... :335d[1]
     cpx #$51 ; 'Q'                                                    ; 3491: e0 51       .Q  :3360[1]
     bne c3366                                                         ; 3493: d0 02       ..  :3362[1]
     lda #$87                                                          ; 3495: a9 87       ..  :3364[1]
@@ -6062,7 +6072,7 @@ sound_data1
     !word 1                                                           ; 39db: 01 00       ..  :38aa[1]   ; duration
 ; The envelope definitions get overwritten after initialisation - this is harmless as
 ; they will have been copied into the OS workspace when they were defined.
-x_entry_table12
+object_sprite_mask_type
 envelope_1
     !byte 1                                                           ; 39dd: 01          .   :38ac[1]   ; envelope number
 l38ad
@@ -6305,7 +6315,7 @@ c39f4
 c3a08
     sty l09d4                                                         ; 3b39: 8c d4 09    ... :3a08[1]
     lda l3974,y                                                       ; 3b3c: b9 74 39    .t9 :3a0b[1]
-    sta x_entry_table9a                                               ; 3b3f: 8d a8 09    ... :3a0e[1]
+    sta object_spriteid                                               ; 3b3f: 8d a8 09    ... :3a0e[1]
     rts                                                               ; 3b42: 60          `   :3a11[1]
 
 update_main_keys
@@ -6644,7 +6654,7 @@ loop_c3d54
     bpl loop_c3d54                                                    ; 3d5f: 10 f3       ..
 ; store something else now that envelopes have already been defined above?
     lda #$c7                                                          ; 3d61: a9 c7       ..
-    sta x_entry_table12                                               ; 3d63: 8d ac 38    ..8
+    sta object_sprite_mask_type                                       ; 3d63: 8d ac 38    ..8
     lda #$c6                                                          ; 3d66: a9 c6       ..
     sta l38ad                                                         ; 3d68: 8d ad 38    ..8
     lda #$80                                                          ; 3d6b: a9 80       ..
@@ -7518,11 +7528,6 @@ pydis_end
 ;     c20b8
 ;     c20be
 ;     c2155
-;     c2184
-;     c218b
-;     c2190
-;     c2197
-;     c21d0
 ;     c21ef
 ;     c221c
 ;     c2223
@@ -7855,9 +7860,7 @@ pydis_end
 ;     sub_c1cf3
 ;     sub_c1df4
 ;     sub_c1efa
-;     sub_c20f7
 ;     sub_c2157
-;     sub_c219a
 ;     sub_c22ae
 ;     sub_c22ee
 ;     sub_c2358
