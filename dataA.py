@@ -51,10 +51,9 @@ level_header_data_table_entry(0x3ae5, "level_thing_4")
 sprite_dict = {
     0xd3: "spriteid_saxophone",
 }
-for addr, s in sprite_dict.items():
-    constant(addr, s)
-expr(0x3afe, "spriteid_saxophone")
-expr(0x3b0a, "spriteid_saxophone")
+substitute_constants("jsr find_or_create_menu_slot_for_A", 'a', sprite_dict, True)
+#for addr, s in sprite_dict.items():
+#    constant(addr, s)
 
 go()
 

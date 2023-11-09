@@ -730,7 +730,7 @@ c3f62
     ldy #4                                                            ; 3f74: a0 04       ..
     jsr something55_TODO                                              ; 3f76: 20 e2 28     .(
     beq c3f8a                                                         ; 3f79: f0 0f       ..
-    lda #$d3                                                          ; 3f7b: a9 d3       ..
+    lda #spriteid_saxophone                                           ; 3f7b: a9 d3       ..
     jsr find_or_create_menu_slot_for_A                                ; 3f7d: 20 bd 2b     .+
     lda #0                                                            ; 3f80: a9 00       ..
     sta l09ac                                                         ; 3f82: 8d ac 09    ...
