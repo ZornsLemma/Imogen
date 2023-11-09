@@ -7,6 +7,7 @@ beebasm -o imogen.out -i imogen.asm -v > imogen.lst
 cmp orig/imogen-trailing-mc-3900.dat imogen.out || echo imogen.asm rebuild failed
 python3 g.py --acme > temp.asm
 cp temp.asm g.asm
+rm temp.asm
 acme -o g.out --report g.lst g.asm
 cmp orig/g.dat g.out || echo g.asm rebuild failed
 python3 auxcode.py --acme > auxcode.asm

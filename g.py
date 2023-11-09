@@ -49,6 +49,10 @@ substitute_labels = {
         "address1_low": "filename_low",
         "address1_high": "filename_high",
     },
+    (0x2cb8, 0x2d3c): {
+        "address1_low": "menu_item_to_use",
+        "address1_high": "menu_has_changed_flag",
+    }
 }
 
 def my_label_maker(addr, context, suggestion):
@@ -1247,8 +1251,8 @@ comment(0x3f16, "Copy seventeen bytes of level ordering data into the level_orde
 decimal(0x3f17)
 label(0x3f18, "copy_level_ordering_table_loop")
 expr(0x3f1b, make_subtract("level_ordering_table", 1))
-comment(0x3f20, "read the first byte of the data (which is zero) and set the copy_protection_flag if needed")
-label(0x3f2d, "skip_writing_copy_protection_flag")
+comment(0x3f20, "read the first byte of the data and set the developer_flags if needed")
+label(0x3f2d, "skip_writing_developer_flags")
 label(0x295c, "desired_menu_slots") # sub_c2980 initialises elements 9 inclusive to $11 exclusive, but elsewhere we do access lower elements
 label(0x295d, "desired_menu_slots+1")
 label(0x2bf7, "shuffle_menu_items_left_loop")
@@ -1331,12 +1335,15 @@ comment(0x2c7c, "always branch", inline=True)
 entry(0x29eb, "unplot_menu_pointer")
 comment(0x29eb, """*************************************************************************************
 
-Unplot Menu Pointer
+Unplot Menu Hand Pointer
 
 *************************************************************************************""")
 comment(0x29ef, "remember currrent screen base address")
 comment(0x29f2, "select toolbar area for drawing")
 expr(0x29f3, make_hi("toolbar_screen_address"))
+expr(0x2b22, make_hi("toolbar_screen_address"))
+expr(0x2c15, make_hi("toolbar_screen_address"))
+expr(0x3f3f, make_hi("toolbar_screen_address"))
 comment(0x29f6, "find position of current menu item")
 comment(0x29f9, "erase the hand")
 comment(0x2a04, "restore the background tile where the fingertip overlaps the tile")
@@ -1346,7 +1353,7 @@ label(0x2a12, "no_menu_item_selected")
 entry(0x2a17, "plot_menu_pointer")
 comment(0x2a17, """*************************************************************************************
 
-plot_menu_pointer
+Plot Menu Hand Pointer
 
 *************************************************************************************""")
 comment(0x2a1b, "remember currrent screen base address")

@@ -231,9 +231,11 @@ l0067                                       = $67
 l0068                                       = $68
 address1_low                                = $70
 filename_low                                = $70
+menu_item_to_use                            = $70
 src_sprite_address_low                      = $70
 address1_high                               = $71
 filename_high                               = $71
+menu_has_changed_flag                       = $71
 src_sprite_address_high                     = $71
 sprite_screen_address_low                   = $72
 sprite_screen_address_high                  = $73
@@ -4216,7 +4218,7 @@ return18
 
 ; *************************************************************************************
 ; 
-; Unplot Menu Pointer
+; Unplot Menu Hand Pointer
 ; 
 ; *************************************************************************************
 unplot_menu_pointer
@@ -4252,7 +4254,7 @@ no_menu_item_selected
 
 ; *************************************************************************************
 ; 
-; plot_menu_pointer
+; Plot Menu Hand Pointer
 ; 
 ; *************************************************************************************
 plot_menu_pointer
@@ -4408,7 +4410,7 @@ toggle_sound_on_off
     sta sprite_number                                                 ; 2c4d: 85 16       ..  :2b1c[1]
     lda screen_base_address_high                                      ; 2c4f: a5 4c       .L  :2b1e[1]
     pha                                                               ; 2c51: 48          H   :2b20[1]
-    lda #$58 ; 'X'                                                    ; 2c52: a9 58       .X  :2b21[1]
+    lda #>toolbar_screen_address                                      ; 2c52: a9 58       .X  :2b21[1]
     sta screen_base_address_high                                      ; 2c54: 85 4c       .L  :2b23[1]
     lda #sprite_op_flags_normal                                       ; 2c56: a9 00       ..  :2b25[1]
     ldx sound_enable_flag                                             ; 2c58: ae 66 39    .f9 :2b27[1]
@@ -4465,13 +4467,13 @@ return22
     rts                                                               ; 2cb7: 60          `   :2b86[1]
 
 something21_TODO
-    sta address1_low                                                  ; 2cb8: 85 70       .p  :2b87[1]
+    sta menu_item_to_use                                              ; 2cb8: 85 70       .p  :2b87[1]
     lda #0                                                            ; 2cba: a9 00       ..  :2b89[1]
-    sta address1_high                                                 ; 2cbc: 85 71       .q  :2b8b[1]
+    sta menu_has_changed_flag                                         ; 2cbc: 85 71       .q  :2b8b[1]
     ldx menu_index_for_first_player_character                         ; 2cbe: ae 6d 29    .m) :2b8d[1]
 loop_c2b90
     lda desired_menu_slots,x                                          ; 2cc1: bd 5c 29    .\) :2b90[1]
-    cmp address1_low                                                  ; 2cc4: c5 70       .p  :2b93[1]
+    cmp menu_item_to_use                                              ; 2cc4: c5 70       .p  :2b93[1]
     beq c2bba                                                         ; 2cc6: f0 23       .#  :2b95[1]
     inx                                                               ; 2cc8: e8          .   :2b97[1]
     cpx menu_index_for_extra_items                                    ; 2cc9: ec 6e 29    .n) :2b98[1]
@@ -4486,11 +4488,11 @@ loop_c2ba4
     cpx menu_index_for_extra_items                                    ; 2cdc: ec 6e 29    .n) :2bab[1]
     bcs loop_c2ba4                                                    ; 2cdf: b0 f4       ..  :2bae[1]
     inc menu_index_for_extra_items                                    ; 2ce1: ee 6e 29    .n) :2bb0[1]
-    lda address1_low                                                  ; 2ce4: a5 70       .p  :2bb3[1]
+    lda menu_item_to_use                                              ; 2ce4: a5 70       .p  :2bb3[1]
     sta desired_menu_slots,x                                          ; 2ce6: 9d 5c 29    .\) :2bb5[1]
-    dec address1_high                                                 ; 2ce9: c6 71       .q  :2bb8[1]
+    dec menu_has_changed_flag                                         ; 2ce9: c6 71       .q  :2bb8[1]
 c2bba
-    lda address1_high                                                 ; 2ceb: a5 71       .q  :2bba[1]
+    lda menu_has_changed_flag                                         ; 2ceb: a5 71       .q  :2bba[1]
     rts                                                               ; 2ced: 60          `   :2bbc[1]
 
 ; TODO: address1_low and address1_high are misleading names here; these are used as
@@ -4504,25 +4506,25 @@ c2bba
 ; slot and no match' behaviour is terribly sensible, but it presumably never actually
 ; happens.
 find_or_create_menu_slot_for_A
-    sta address1_low                                                  ; 2cee: 85 70       .p  :2bbd[1]
+    sta menu_item_to_use                                              ; 2cee: 85 70       .p  :2bbd[1]
     lda #0                                                            ; 2cf0: a9 00       ..  :2bbf[1]
-    sta address1_high                                                 ; 2cf2: 85 71       .q  :2bc1[1]
+    sta menu_has_changed_flag                                         ; 2cf2: 85 71       .q  :2bc1[1]
     ldx menu_index_for_extra_items                                    ; 2cf4: ae 6e 29    .n) :2bc3[1]
 find_slot_loop
     lda desired_menu_slots,x                                          ; 2cf7: bd 5c 29    .\) :2bc6[1]
     beq empty_slot_found                                              ; 2cfa: f0 0b       ..  :2bc9[1]
-    cmp address1_low                                                  ; 2cfc: c5 70       .p  :2bcb[1]
+    cmp menu_item_to_use                                              ; 2cfc: c5 70       .p  :2bcb[1]
     beq matching_slot_found_or_no_empty_slot                          ; 2cfe: f0 0e       ..  :2bcd[1]
     inx                                                               ; 2d00: e8          .   :2bcf[1]
     cpx #menu_slot_count                                              ; 2d01: e0 11       ..  :2bd0[1]
     bcc find_slot_loop                                                ; 2d03: 90 f2       ..  :2bd2[1]
     bcs matching_slot_found_or_no_empty_slot                          ; 2d05: b0 07       ..  :2bd4[1]
 empty_slot_found
-    lda address1_low                                                  ; 2d07: a5 70       .p  :2bd6[1]
+    lda menu_item_to_use                                              ; 2d07: a5 70       .p  :2bd6[1]
     sta desired_menu_slots,x                                          ; 2d09: 9d 5c 29    .\) :2bd8[1]
-    dec address1_high                                                 ; 2d0c: c6 71       .q  :2bdb[1]
+    dec menu_has_changed_flag                                         ; 2d0c: c6 71       .q  :2bdb[1]
 matching_slot_found_or_no_empty_slot
-    lda address1_high                                                 ; 2d0e: a5 71       .q  :2bdd[1]
+    lda menu_has_changed_flag                                         ; 2d0e: a5 71       .q  :2bdd[1]
     rts                                                               ; 2d10: 60          `   :2bdf[1]
 
 ; *************************************************************************************
@@ -4531,15 +4533,15 @@ matching_slot_found_or_no_empty_slot
 ; 
 ; *************************************************************************************
 remove_item_from_toolbar_menu
-    sta address1_low                                                  ; 2d11: 85 70       .p  :2be0[1]   ; remember item to remove
+    sta menu_item_to_use                                              ; 2d11: 85 70       .p  :2be0[1]   ; remember item to remove
 ; flag that nothing has changed yet
     lda #0                                                            ; 2d13: a9 00       ..  :2be2[1]
-    sta address1_high                                                 ; 2d15: 85 71       .q  :2be4[1]
+    sta menu_has_changed_flag                                         ; 2d15: 85 71       .q  :2be4[1]
 ; start index for non-standard menu items
     ldx menu_index_for_extra_items                                    ; 2d17: ae 6e 29    .n) :2be6[1]
 loop_c2be9
     lda desired_menu_slots,x                                          ; 2d1a: bd 5c 29    .\) :2be9[1]
-    cmp address1_low                                                  ; 2d1d: c5 70       .p  :2bec[1]
+    cmp menu_item_to_use                                              ; 2d1d: c5 70       .p  :2bec[1]
     beq shuffle_menu_items_left_loop                                  ; 2d1f: f0 07       ..  :2bee[1]
     inx                                                               ; 2d21: e8          .   :2bf0[1]
     cpx #$11                                                          ; 2d22: e0 11       ..  :2bf1[1]
@@ -4555,9 +4557,9 @@ shuffle_menu_items_left_loop
 ; make final menu slot empty
     lda #0                                                            ; 2d33: a9 00       ..  :2c02[1]
     sta desired_menu_slots,x                                          ; 2d35: 9d 5c 29    .\) :2c04[1]
-    dec address1_high                                                 ; 2d38: c6 71       .q  :2c07[1]
+    dec menu_has_changed_flag                                         ; 2d38: c6 71       .q  :2c07[1]
 return_with_flag_set_if_shuffled_left
-    lda address1_high                                                 ; 2d3a: a5 71       .q  :2c09[1]
+    lda menu_has_changed_flag                                         ; 2d3a: a5 71       .q  :2c09[1]
     rts                                                               ; 2d3c: 60          `   :2c0b[1]
 
 plot_menu_icon
@@ -4572,7 +4574,7 @@ plot_menu_icon
 ; lda #blah:sta screen_base_address_high at the end of this routine?
     lda screen_base_address_high                                      ; 2d42: a5 4c       .L  :2c11[1]
     pha                                                               ; 2d44: 48          H   :2c13[1]
-    lda #$58 ; 'X'                                                    ; 2d45: a9 58       .X  :2c14[1]
+    lda #>toolbar_screen_address                                      ; 2d45: a9 58       .X  :2c14[1]
     sta screen_base_address_high                                      ; 2d47: 85 4c       .L  :2c16[1]
     jsr calculate_sprite_position_for_menu_item                       ; 2d49: 20 46 2c     F, :2c18[1]
     lda #sprite_op_flags_normal                                       ; 2d4c: a9 00       ..  :2c1b[1]
@@ -6860,15 +6862,14 @@ copy_level_ordering_table_loop
     sta level_ordering_table - 1,y                                    ; 3f1a: 99 7e 0a    .~.
     dey                                                               ; 3f1d: 88          .
     bne copy_level_ordering_table_loop                                ; 3f1e: d0 f8       ..
-; read the first byte of the data (which is zero) and set the copy_protection_flag if
-; needed
+; read the first byte of the data and set the developer_flags if needed
     lda (address1_low),y                                              ; 3f20: b1 70       .p
     and #$40 ; '@'                                                    ; 3f22: 29 40       )@
-    beq skip_writing_copy_protection_flag                             ; 3f24: f0 07       ..
+    beq skip_writing_developer_flags                                  ; 3f24: f0 07       ..
     lda (address1_low),y                                              ; 3f26: b1 70       .p
     and #$bf                                                          ; 3f28: 29 bf       ).
     sta developer_flags                                               ; 3f2a: 8d 03 11    ...
-skip_writing_copy_protection_flag
+skip_writing_developer_flags
     jsr handle_developer_mode_setup                                   ; 3f2d: 20 6f 3f     o?
     lda #osbyte_reset_soft_keys                                       ; 3f30: a9 12       ..
     jsr osbyte                                                        ; 3f32: 20 f4 ff     ..            ; Reset function keys
@@ -6876,7 +6877,7 @@ skip_writing_copy_protection_flag
     jsr draw_menu_icons                                               ; 3f38: 20 a8 29     .)
     lda screen_base_address_high                                      ; 3f3b: a5 4c       .L
     pha                                                               ; 3f3d: 48          H
-    lda #$58 ; 'X'                                                    ; 3f3e: a9 58       .X
+    lda #>toolbar_screen_address                                      ; 3f3e: a9 58       .X
     sta screen_base_address_high                                      ; 3f40: 85 4c       .L
     ldx #$24 ; '$'                                                    ; 3f42: a2 24       .$
     ldy #6                                                            ; 3f44: a0 06       ..
