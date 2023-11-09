@@ -906,7 +906,7 @@ comment(0x1169, "if load successful, then skip forward", inline=True)
 label(0x1175, "level_already_loaded")
 label(0x36da, "check_password_level")
 entry(0x36db, "select_level_a")
-comment(0x114f, "TODO: Why do we check desired_level against currently_loaded_level in this loop? The loop kind of makes sense as a retry if disc error sort of thing, but I don't see why we'd ever have the wrong level loaded or something like that. It still doesn't feel quite right, but could this maybe be some leftover hint of a tape version?")
+comment(0x114f, "TODO: Why do we check desired_level against currently_loaded_level in this loop? The loop kind of makes sense as a retry if disc error sort of thing, but I don't see why we'd ever have the wrong level loaded or something like that. It still doesn't feel quite right, but could this maybe be some leftover hint of a tape version? - hmm, note that dataA.asm calls into initialise_level in several different places (with different values of X, indicating different level_header_data entries to be called) - it may be that this check is so that second and subsequent calls don't redo pointless or harmful initialisation?")
 entry(0x1186, "level_reset_loop")
 entry(0x11dd, "clear_sixteen_entry_table1")
 comment(0x11f8, "Blank the whole screen temporarily. TODO: Note that when flipping from screen to screen during play, the toolbar is not blanked, but it is here. Is this just cosmetic or is there a technical reason for this?")
@@ -1144,6 +1144,8 @@ entry(0x1140)
 comment(0x1a10, "TODO: this is used by e.g. dataA")
 entry(0x1a10)
 comment(0x1ebb, "TODO: this is used by e.g. dataA")
+
+comment(0x1140, "X is the element of level_header_data to invoke the code for during initialisation. TODO: But what does this 'mean'?")
 
 # TODO: I don't think we necessarily need to indicate functions in 'g' called from 'data*' in the long run, but it might be helpful to flag them for now.
 comment(0x1e44, "TODO: this is used by e.g. dataA")

@@ -415,6 +415,8 @@ c110c
     tay                                                               ; 126d: a8          .   :113c[1]
     jsr convert_section_letter_to_level_filename_letter               ; 126e: 20 ef 0a     .. :113d[1]
 ; TODO: this is used by e.g. dataA
+; X is the element of level_header_data to invoke the code for during initialisation.
+; TODO: But what does this 'mean'?
 initialise_level
     lda l0030                                                         ; 1271: a5 30       .0  :1140[1]
     sta l0050                                                         ; 1273: 85 50       .P  :1142[1]
@@ -426,7 +428,11 @@ initialise_level
 ; TODO: Why do we check desired_level against currently_loaded_level in this loop? The
 ; loop kind of makes sense as a retry if disc error sort of thing, but I don't see why
 ; we'd ever have the wrong level loaded or something like that. It still doesn't feel
-; quite right, but could this maybe be some leftover hint of a tape version?
+; quite right, but could this maybe be some leftover hint of a tape version? - hmm,
+; note that dataA.asm calls into initialise_level in several different places (with
+; different values of X, indicating different level_header_data entries to be called) -
+; it may be that this check is so that second and subsequent calls don't redo pointless
+; or harmful initialisation?
 level_load_loop
     lda desired_level                                                 ; 1280: a5 31       .1  :114f[1]
     cmp currently_loaded_level                                        ; 1282: c5 37       .7  :1151[1]
