@@ -927,10 +927,26 @@ entry(0x2a38, "something20_TODO")
 label(0x2a60, "skip_developer_key_escape_handling")
 label(0x2ab7, "skip_developer_key_shift_handling")
 label(0x36a8, "skip_developer_key_level_select_handling")
-entry(0x2b87, "something21_TODO")
+comment(0x2b87, """*************************************************************************************
+
+Insert a player character menu item into the toolbar
+
+*************************************************************************************""")
+entry(0x2b87, "insert_character_menu_item_into_toolbar")
+label(0x2b90, "find_existing_item_loop")
+comment(0x2b87, "remember menu item to insert", inline=True)
+comment(0x2b89, "flag that nothing has changed yet")
+comment(0x2b8d, "start at first player character, and loop until we reach the extras or we find the character")
+comment(0x2b9d, "shuffle existing items right to make room for the new item")
+comment(0x2bb0, "the start of the 'extra' menu items is now one to the right")
+comment(0x2bb3, "store the new item")
+comment(0x2bb8, "flag that the menu has changed")
+label(0x2ba4, "shuffle_menu_items_right_loop")
+label(0x2bba, "return_with_flag_set_if_item_inserted")
+
 comment(0x2be0, """*************************************************************************************
 
-Remove menu item from toolbar
+Remove a menu item from the toolbar
 
 *************************************************************************************""")
 entry(0x2be0)
@@ -1253,7 +1269,8 @@ label(0x3f18, "copy_level_ordering_table_loop")
 expr(0x3f1b, make_subtract("level_ordering_table", 1))
 comment(0x3f20, "read the first byte of the data and set the developer_flags if needed")
 label(0x3f2d, "skip_writing_developer_flags")
-label(0x295c, "desired_menu_slots") # sub_c2980 initialises elements 9 inclusive to $11 exclusive, but elsewhere we do access lower elements
+expr(0x2ba5, "desired_menu_slots-1")
+label(0x295c, "desired_menu_slots")
 label(0x295d, "desired_menu_slots+1")
 label(0x2bf7, "shuffle_menu_items_left_loop")
 comment(0x2bf7, "shuffle menu items left")
@@ -1498,10 +1515,23 @@ entry(0x3872, "flush_input_buffers_and_zero_l0005")
 # TODO: Not probing deeper as this may be sprite-related
 entry(0x474, "stash_data_pointed_to_by_l0076_at_530_maybe")
 
-comment(0x2bbd, "TODO: address1_low and address1_high are misleading names here; these are used as independent scratch space.")
 
+comment(0x2bbd, """*************************************************************************************
 
-comment(0x2bbd, "Find an existing menu slot containing A, or fill the lowest empty slot if one hasn't been found yet. (The code doesn't search the whole menu before adding; this presumably is OK in practice given how it's called.) Only slots >= l296e are considered. Return with A=0 if matching slot found or no match found and no empty slot available, A=$ff if empty slot found and filled with the entry value of A. X is the index of the slot. Flags reflect A on exit. TODO: I am not sure the 'no empty slot and no match' behaviour is terribly sensible, but it presumably never actually happens.")
+Find or append menu item onto toolbar
+
+Find an existing menu slot containing A, or fill the lowest empty slot if one hasn't been found yet. Only 'extra' slots are considered after the standard set, and there are no gaps beyond this point until the end of the menu.
+
+On Exit:
+    A=0 if matching slot found or no match found and no empty slot available,
+    A=$ff if empty slot found and filled with the entry value of A.
+    X is the index of the slot.
+    Flags reflect A on exit.
+
+I am not sure the 'no empty slot and no match' behaviour is terribly sensible, but it should never actually happen.
+
+*************************************************************************************""")
+
 entry(0x2bc6, "find_slot_loop")
 entry(0x2bd6, "empty_slot_found")
 entry(0x2bdd, "matching_slot_found_or_no_empty_slot")

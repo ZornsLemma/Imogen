@@ -4466,45 +4466,65 @@ c2b84
 return22
     rts                                                               ; 2cb7: 60          `   :2b86[1]
 
-something21_TODO
-    sta menu_item_to_use                                              ; 2cb8: 85 70       .p  :2b87[1]
+; *************************************************************************************
+; 
+; Insert a player character menu item into the toolbar
+; 
+; *************************************************************************************
+insert_character_menu_item_into_toolbar
+    sta menu_item_to_use                                              ; 2cb8: 85 70       .p  :2b87[1]   ; remember menu item to insert
+; flag that nothing has changed yet
     lda #0                                                            ; 2cba: a9 00       ..  :2b89[1]
     sta menu_has_changed_flag                                         ; 2cbc: 85 71       .q  :2b8b[1]
+; start at first player character, and loop until we reach the extras or we find the
+; character
     ldx menu_index_for_first_player_character                         ; 2cbe: ae 6d 29    .m) :2b8d[1]
-loop_c2b90
+find_existing_item_loop
     lda desired_menu_slots,x                                          ; 2cc1: bd 5c 29    .\) :2b90[1]
     cmp menu_item_to_use                                              ; 2cc4: c5 70       .p  :2b93[1]
-    beq c2bba                                                         ; 2cc6: f0 23       .#  :2b95[1]
+    beq return_with_flag_set_if_item_inserted                         ; 2cc6: f0 23       .#  :2b95[1]
     inx                                                               ; 2cc8: e8          .   :2b97[1]
     cpx menu_index_for_extra_items                                    ; 2cc9: ec 6e 29    .n) :2b98[1]
-    bcc loop_c2b90                                                    ; 2ccc: 90 f3       ..  :2b9b[1]
+    bcc find_existing_item_loop                                       ; 2ccc: 90 f3       ..  :2b9b[1]
+; shuffle existing items right to make room for the new item
     ldx #$10                                                          ; 2cce: a2 10       ..  :2b9d[1]
     lda desired_menu_slots,x                                          ; 2cd0: bd 5c 29    .\) :2b9f[1]
-    bne c2bba                                                         ; 2cd3: d0 16       ..  :2ba2[1]
-loop_c2ba4
-    lda l295b,x                                                       ; 2cd5: bd 5b 29    .[) :2ba4[1]
+    bne return_with_flag_set_if_item_inserted                         ; 2cd3: d0 16       ..  :2ba2[1]
+shuffle_menu_items_right_loop
+    lda desired_menu_slots-1,x                                        ; 2cd5: bd 5b 29    .[) :2ba4[1]
     sta desired_menu_slots,x                                          ; 2cd8: 9d 5c 29    .\) :2ba7[1]
     dex                                                               ; 2cdb: ca          .   :2baa[1]
     cpx menu_index_for_extra_items                                    ; 2cdc: ec 6e 29    .n) :2bab[1]
-    bcs loop_c2ba4                                                    ; 2cdf: b0 f4       ..  :2bae[1]
+    bcs shuffle_menu_items_right_loop                                 ; 2cdf: b0 f4       ..  :2bae[1]
+; the start of the 'extra' menu items is now one to the right
     inc menu_index_for_extra_items                                    ; 2ce1: ee 6e 29    .n) :2bb0[1]
+; store the new item
     lda menu_item_to_use                                              ; 2ce4: a5 70       .p  :2bb3[1]
     sta desired_menu_slots,x                                          ; 2ce6: 9d 5c 29    .\) :2bb5[1]
+; flag that the menu has changed
     dec menu_has_changed_flag                                         ; 2ce9: c6 71       .q  :2bb8[1]
-c2bba
+return_with_flag_set_if_item_inserted
     lda menu_has_changed_flag                                         ; 2ceb: a5 71       .q  :2bba[1]
     rts                                                               ; 2ced: 60          `   :2bbc[1]
 
-; TODO: address1_low and address1_high are misleading names here; these are used as
-; independent scratch space.
+; *************************************************************************************
+; 
+; Find or append menu item onto toolbar
+; 
 ; Find an existing menu slot containing A, or fill the lowest empty slot if one hasn't
-; been found yet. (The code doesn't search the whole menu before adding; this
-; presumably is OK in practice given how it's called.) Only slots >= l296e are
-; considered. Return with A=0 if matching slot found or no match found and no empty
-; slot available, A=$ff if empty slot found and filled with the entry value of A. X is
-; the index of the slot. Flags reflect A on exit. TODO: I am not sure the 'no empty
-; slot and no match' behaviour is terribly sensible, but it presumably never actually
-; happens.
+; been found yet. Only 'extra' slots are considered after the standard set, and there
+; are no gaps beyond this point until the end of the menu.
+; 
+; On Exit:
+;     A=0 if matching slot found or no match found and no empty slot available,
+;     A=$ff if empty slot found and filled with the entry value of A.
+;     X is the index of the slot.
+;     Flags reflect A on exit.
+; 
+; I am not sure the 'no empty slot and no match' behaviour is terribly sensible, but it
+; should never actually happen.
+; 
+; *************************************************************************************
 find_or_create_menu_slot_for_A
     sta menu_item_to_use                                              ; 2cee: 85 70       .p  :2bbd[1]
     lda #0                                                            ; 2cf0: a9 00       ..  :2bbf[1]
@@ -4529,7 +4549,7 @@ matching_slot_found_or_no_empty_slot
 
 ; *************************************************************************************
 ; 
-; Remove menu item from toolbar
+; Remove a menu item from the toolbar
 ; 
 ; *************************************************************************************
 remove_item_from_toolbar_menu
@@ -7538,7 +7558,6 @@ pydis_end
 ;     c2afc
 ;     c2b2e
 ;     c2b84
-;     c2bba
 ;     c2c35
 ;     c2c3d
 ;     c2d87
@@ -7809,8 +7828,6 @@ pydis_end
 ;     loop_c28fd
 ;     loop_c2992
 ;     loop_c2a9a
-;     loop_c2b90
-;     loop_c2ba4
 ;     loop_c2be9
 ;     loop_c2ec9
 ;     loop_c34b2
@@ -8223,6 +8240,9 @@ pydis_end
 }
 !if (cyan) != $06 {
     !error "Assertion failed: cyan == $06"
+}
+!if (desired_menu_slots-1) != $295b {
+    !error "Assertion failed: desired_menu_slots-1 == $295b"
 }
 !if (first_level_letter) != $41 {
     !error "Assertion failed: first_level_letter == $41"
