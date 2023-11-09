@@ -520,6 +520,16 @@ label(0x1752, "disk_error_message")
 expr(0x1740, make_lo("disk_error_message"))
 expr(0x1742, make_hi("disk_error_message"))
 
+comment(0x1245, """which_dialog_is_active is non-zero when a dialog is active:
+
+    1: save or load dialog, or section information dialog
+    2: save filename dialog
+    3: which drive dialog
+    4: insert save disk dialog
+  255: TODO
+""")
+label(0x0004, "which_dialog_is_active")
+
 label(0x388d, "wait_one_second_then_check_keys")
 label(0x3892, "wait_one_second_loop")
 decimal(0x3896)

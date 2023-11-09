@@ -162,7 +162,7 @@ yellow                                          = 3
 ; Memory locations
 l0002                                       = $02
 l0003                                       = $03
-l0004                                       = $04
+which_dialog_is_active                      = $04
 l0005                                       = $05
 rnd0                                        = $06
 rnd1                                        = $07
@@ -562,8 +562,16 @@ skip5
     sta gameplay_area_colour                                          ; 136d: 8d 60 17    .`. :123c[1]
     jsr draw_toolbar                                                  ; 1370: 20 a1 29     .) :123f[1]
     jsr sub_c1df4                                                     ; 1373: 20 f4 1d     .. :1242[1]
+; which_dialog_is_active is non-zero when a dialog is active:
+; 
+;     1: save or load dialog, or section information dialog
+;     2: save filename dialog
+;     3: which drive dialog
+;     4: insert save disk dialog
+;   255: TODO
+; 
     lda #0                                                            ; 1376: a9 00       ..  :1245[1]
-    sta l0004                                                         ; 1378: 85 04       ..  :1247[1]
+    sta which_dialog_is_active                                        ; 1378: 85 04       ..  :1247[1]
     lda desired_level                                                 ; 137a: a5 31       .1  :1249[1]
     sec                                                               ; 137c: 38          8   :124b[1]
     sbc #first_level_letter                                           ; 137d: e9 41       .A  :124c[1]
@@ -5421,12 +5429,12 @@ l3403
 show_load_save_dialog
     lda #$12                                                          ; 3535: a9 12       ..  :3404[1]
     sta current_text_width                                            ; 3537: 8d 09 04    ... :3406[1]
-    lda l0004                                                         ; 353a: a5 04       ..  :3409[1]
+    lda which_dialog_is_active                                        ; 353a: a5 04       ..  :3409[1]
     bne c3428                                                         ; 353c: d0 1b       ..  :340b[1]
 c340d
     jsr save_or_restore_screen_under_dialog_box                       ; 353e: 20 0a 04     .. :340d[1]
     lda #1                                                            ; 3541: a9 01       ..  :3410[1]
-    sta l0004                                                         ; 3543: 85 04       ..  :3412[1]
+    sta which_dialog_is_active                                        ; 3543: 85 04       ..  :3412[1]
     ldx #<press_s_to_save_encrypted_string                            ; 3545: a2 2b       .+  :3414[1]
     ldy #>press_s_to_save_encrypted_string                            ; 3547: a0 34       .4  :3416[1]
     jsr print_encrypted_string_at_yx                                  ; 3549: 20 1c 38     .8 :3418[1]
@@ -5453,7 +5461,7 @@ sub_c344b
     lda desired_menu_slots,y                                          ; 357e: b9 5c 29    .\) :344d[1]
     cmp #spriteid_icodata_disc                                        ; 3581: c9 03       ..  :3450[1]
     bne return23                                                      ; 3583: d0 42       .B  :3452[1]
-    lda l0004                                                         ; 3585: a5 04       ..  :3454[1]
+    lda which_dialog_is_active                                        ; 3585: a5 04       ..  :3454[1]
     beq return23                                                      ; 3587: f0 3e       .>  :3456[1]
     cmp #1                                                            ; 3589: c9 01       ..  :3458[1]
     beq c346a                                                         ; 358b: f0 0e       ..  :345a[1]
@@ -5479,7 +5487,7 @@ c346a
 c347f
     jsr save_or_restore_screen_under_dialog_box                       ; 35b0: 20 0a 04     .. :347f[1]
     lda #2                                                            ; 35b3: a9 02       ..  :3482[1]
-    sta l0004                                                         ; 35b5: 85 04       ..  :3484[1]
+    sta which_dialog_is_active                                        ; 35b5: 85 04       ..  :3484[1]
     ldx #<enter_filename_message                                      ; 35b7: a2 98       ..  :3486[1]
     ldy #>enter_filename_message                                      ; 35b9: a0 34       .4  :3488[1]
     jsr print_encrypted_string_at_yx                                  ; 35bb: 20 1c 38     .8 :348a[1]
@@ -5509,7 +5517,7 @@ loop_c34b2
     bpl loop_c34b2                                                    ; 35ea: 10 f7       ..  :34b9[1]
     jsr save_or_restore_screen_under_dialog_box                       ; 35ec: 20 0a 04     .. :34bb[1]
     lda #3                                                            ; 35ef: a9 03       ..  :34be[1]
-    sta l0004                                                         ; 35f1: 85 04       ..  :34c0[1]
+    sta which_dialog_is_active                                        ; 35f1: 85 04       ..  :34c0[1]
     ldx #<which_drive_encrypted_string                                ; 35f3: a2 e3       ..  :34c2[1]
     ldy #>which_drive_encrypted_string                                ; 35f5: a0 34       .4  :34c4[1]
     jsr print_encrypted_string_at_yx                                  ; 35f7: 20 1c 38     .8 :34c6[1]
@@ -5549,7 +5557,7 @@ c3516
     sta save_drive_number                                             ; 3647: 8d d7 34    ..4 :3516[1]
     jsr save_or_restore_screen_under_dialog_box                       ; 364a: 20 0a 04     .. :3519[1]
     lda #4                                                            ; 364d: a9 04       ..  :351c[1]
-    sta l0004                                                         ; 364f: 85 04       ..  :351e[1]
+    sta which_dialog_is_active                                        ; 364f: 85 04       ..  :351e[1]
     ldx #<insert_save_disk_message                                    ; 3651: a2 35       .5  :3520[1]
     ldy #>insert_save_disk_message                                    ; 3653: a0 35       .5  :3522[1]
     jsr print_encrypted_string_at_yx                                  ; 3655: 20 1c 38     .8 :3524[1]
@@ -5677,7 +5685,7 @@ wait_for_return
 show_password_entry_dialog
     lda #$12                                                          ; 3767: a9 12       ..  :3636[1]
     sta current_text_width                                            ; 3769: 8d 09 04    ... :3638[1]
-    lda l0004                                                         ; 376c: a5 04       ..  :363b[1]
+    lda which_dialog_is_active                                        ; 376c: a5 04       ..  :363b[1]
     bne c3652                                                         ; 376e: d0 13       ..  :363d[1]
 c363f
     jsr save_or_restore_screen_under_dialog_box                       ; 3770: 20 0a 04     .. :363f[1]
@@ -5700,7 +5708,7 @@ sub_c3664
     lda desired_menu_slots,y                                          ; 3797: b9 5c 29    .\) :3666[1]
     cmp #8                                                            ; 379a: c9 08       ..  :3669[1]
     bne return25                                                      ; 379c: d0 3a       .:  :366b[1]
-    lda l0004                                                         ; 379e: a5 04       ..  :366d[1]
+    lda which_dialog_is_active                                        ; 379e: a5 04       ..  :366d[1]
     beq return25                                                      ; 37a0: f0 36       .6  :366f[1]
     lda #$10                                                          ; 37a2: a9 10       ..  :3671[1]
     jsr string_input                                                  ; 37a4: 20 fc 36     .6 :3673[1]
@@ -5866,7 +5874,7 @@ l377d
 show_level_info_dialog
     lda #$11                                                          ; 38af: a9 11       ..  :377e[1]
     sta current_text_width                                            ; 38b1: 8d 09 04    ... :3780[1]
-    lda l0004                                                         ; 38b4: a5 04       ..  :3783[1]
+    lda which_dialog_is_active                                        ; 38b4: a5 04       ..  :3783[1]
     beq c378e                                                         ; 38b6: f0 07       ..  :3785[1]
     cmp #1                                                            ; 38b8: c9 01       ..  :3787[1]
     beq c37ba                                                         ; 38ba: f0 2f       ./  :3789[1]
@@ -5875,7 +5883,7 @@ show_level_info_dialog
 c378e
     jsr save_or_restore_screen_under_dialog_box                       ; 38bf: 20 0a 04     .. :378e[1]
     lda #1                                                            ; 38c2: a9 01       ..  :3791[1]
-    sta l0004                                                         ; 38c4: 85 04       ..  :3793[1]
+    sta which_dialog_is_active                                        ; 38c4: 85 04       ..  :3793[1]
     ldx #<section_message                                             ; 38c6: a2 b1       ..  :3795[1]
     ldy #>section_message                                             ; 38c8: a0 37       .7  :3797[1]
     jsr print_encrypted_string_at_yx                                  ; 38ca: 20 1c 38     .8 :3799[1]
@@ -5894,7 +5902,7 @@ section_message
 c37ba
     jsr save_or_restore_screen_under_dialog_box                       ; 38eb: 20 0a 04     .. :37ba[1]
     lda #2                                                            ; 38ee: a9 02       ..  :37bd[1]
-    sta l0004                                                         ; 38f0: 85 04       ..  :37bf[1]
+    sta which_dialog_is_active                                        ; 38f0: 85 04       ..  :37bf[1]
     ldx #first_level_letter                                           ; 38f2: a2 41       .A  :37c1[1]
 c37c3
     txa                                                               ; 38f4: 8a          .   :37c3[1]
@@ -6594,7 +6602,7 @@ define_character_fe_loop
     lda #$fe                                                          ; 3d0e: a9 fe       ..
     sta currently_loaded_level                                        ; 3d10: 85 37       .7
     lda #0                                                            ; 3d12: a9 00       ..
-    sta l0004                                                         ; 3d14: 85 04       ..
+    sta which_dialog_is_active                                        ; 3d14: 85 04       ..
     lda #$ff                                                          ; 3d16: a9 ff       ..
     sta current_menu_index                                            ; 3d18: 85 2e       ..
 ; clear the display of remaining transformations
@@ -7256,7 +7264,7 @@ current_text_width
 
 save_or_restore_screen_under_dialog_box
     jsr wait_for_timingB_counter                                      ; 4109: 20 00 04     .. :040a[2]
-    lda l0004                                                         ; 410c: a5 04       ..  :040d[2]
+    lda which_dialog_is_active                                        ; 410c: a5 04       ..  :040d[2]
     beq c043a                                                         ; 410e: f0 29       .)  :040f[2]
     jsr turn_cursor_off                                               ; 4110: 20 63 38     c8 :0411[2]
     ldx #$ff                                                          ; 4113: a2 ff       ..  :0414[2]
@@ -7281,7 +7289,7 @@ save_or_restore_screen_under_dialog_box
 
 c043a
     lda #$ff                                                          ; 4139: a9 ff       ..  :043a[2]
-    sta l0004                                                         ; 413b: 85 04       ..  :043c[2]
+    sta which_dialog_is_active                                        ; 413b: 85 04       ..  :043c[2]
     jsr stash_data_pointed_to_by_l0076_at_530_maybe                   ; 413d: 20 74 04     t. :043e[2]
     jsr sub_c04cb                                                     ; 4140: 20 cb 04     .. :0441[2]
 vdu_goto_0_9
@@ -7293,7 +7301,7 @@ vdu_goto_0_9
     jmp oswrch                                                        ; 414f: 4c ee ff    L.. :0450[2]   ; Write character 9
 
 something_TODO
-    lda l0004                                                         ; 4152: a5 04       ..  :0453[2]
+    lda which_dialog_is_active                                        ; 4152: a5 04       ..  :0453[2]
     beq return30                                                      ; 4154: f0 1c       ..  :0455[2]
     jsr wait_for_timingB_counter                                      ; 4156: 20 00 04     .. :0457[2]
     jsr turn_cursor_off                                               ; 4159: 20 63 38     c8 :045a[2]
@@ -7301,7 +7309,7 @@ something_TODO
     stx l003e                                                         ; 415e: 86 3e       .>  :045f[2]
     stx l0042                                                         ; 4160: 86 42       .B  :0461[2]
     inx                                                               ; 4162: e8          .   :0463[2]
-    stx l0004                                                         ; 4163: 86 04       ..  :0464[2]
+    stx which_dialog_is_active                                        ; 4163: 86 04       ..  :0464[2]
     stx l003f                                                         ; 4165: 86 3f       .?  :0466[2]
     lda #$30 ; '0'                                                    ; 4167: a9 30       .0  :0468[2]
     sta l0040                                                         ; 4169: 85 40       .@  :046a[2]
@@ -7696,7 +7704,6 @@ pydis_end
 ;     c3ade
 ;     l0002
 ;     l0003
-;     l0004
 ;     l0005
 ;     l0026
 ;     l0039
