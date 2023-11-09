@@ -134,7 +134,6 @@ second_level_handler
     jsr sub_c42f8                                                     ; 3b23: 20 f8 42     .B
     rts                                                               ; 3b26: 60          `
 
-fourth_level_handler
     !byte $14, $16                                                    ; 3b27: 14 16       ..
 
 some_code1
