@@ -894,9 +894,7 @@ entry(0x2b87, "something21_TODO")
 entry(0x2be0, "something22_TODO")
 # TODO: DELETE entry(0x35f7, "something23_TODO")
 
-label(0x31, "desired_level") # TODO: This is not right but let's go with it for now - the way this is used it clearly contains *a* level (as a letter, I think), but I am not quite sure what it's used for - the use at 36df suggests this is more like "current level" actually - or maybe it's more like "level_to_load"
 label(0x37, "currently_loaded_level")
-label(0x51, "previous_level") # TODO: see use at initialise_level
 label(0x114f, "level_load_loop")
 label(0x1171, "level_load_successful")
 label(0x3617, "prompt_user_to_insert_correct_disc")

@@ -5,7 +5,7 @@ last_level_letter    = 81
 ; Memory locations
 l001d                           = $1d
 l0030                           = $30
-l0031                           = $31
+desired_level                   = $31
 l003a                           = $3a
 l003b                           = $3b
 l003c                           = $3c
@@ -14,7 +14,7 @@ l003e                           = $3e
 l0040                           = $40
 l0041                           = $41
 l0042                           = $42
-l0051                           = $51
+previous_level                  = $51
 l0052                           = $52
 l0070                           = $70
 l0950                           = $0950
@@ -104,8 +104,8 @@ level_name
     !byte $98, $8a, $93, $84, $9b, $83, $84, $89, $82, $8a, $c6       ; 3ae7: 98 8a 93... ...
 
 level_init_after_load_handler
-    lda l0031                                                         ; 3af2: a5 31       .1
-    cmp l0051                                                         ; 3af4: c5 51       .Q
+    lda desired_level                                                 ; 3af2: a5 31       .1
+    cmp previous_level                                                ; 3af4: c5 51       .Q
     beq c3b0e                                                         ; 3af6: f0 16       ..
     lda developer_flags                                               ; 3af8: ad 03 11    ...
     bpl developer_mode_not_active                                     ; 3afb: 10 07       ..
@@ -221,7 +221,7 @@ loop_c3bd4
     and #4                                                            ; 3bd9: 29 04       ).
     beq loop_c3bd4                                                    ; 3bdb: f0 f7       ..
     ldx #1                                                            ; 3bdd: a2 01       ..
-    ldy l0031                                                         ; 3bdf: a4 31       .1
+    ldy desired_level                                                 ; 3bdf: a4 31       .1
     jsr initialise_level                                              ; 3be1: 20 40 11     @.
 ; $3be4 referenced 1 time by $3b17
 sub_c3be4
@@ -231,8 +231,8 @@ sub_c3be4
 
 ; $3bec referenced 1 time by $3be7
 c3bec
-    lda l0031                                                         ; 3bec: a5 31       .1
-    cmp l0051                                                         ; 3bee: c5 51       .Q
+    lda desired_level                                                 ; 3bec: a5 31       .1
+    cmp previous_level                                                ; 3bee: c5 51       .Q
     beq c3bf7                                                         ; 3bf0: f0 05       ..
     lda #0                                                            ; 3bf2: a9 00       ..
     sta l0a6f                                                         ; 3bf4: 8d 6f 0a    .o.
@@ -436,8 +436,8 @@ some_data1
 sub_c3dfc
     lda l132b                                                         ; 3dfc: ad 2b 13    .+.
     beq c3e6c                                                         ; 3dff: f0 6b       .k
-    lda l0051                                                         ; 3e01: a5 51       .Q
-    cmp l0031                                                         ; 3e03: c5 31       .1
+    lda previous_level                                                ; 3e01: a5 51       .Q
+    cmp desired_level                                                 ; 3e03: c5 31       .1
     beq c3e11                                                         ; 3e05: f0 0a       ..
     lda l09ff                                                         ; 3e07: ad ff 09    ...
     beq c3e11                                                         ; 3e0a: f0 05       ..
@@ -757,7 +757,7 @@ loop_c4044
     and #8                                                            ; 4047: 29 08       ).
     beq loop_c4044                                                    ; 4049: f0 f9       ..
     ldx #1                                                            ; 404b: a2 01       ..
-    ldy l0031                                                         ; 404d: a4 31       .1
+    ldy desired_level                                                 ; 404d: a4 31       .1
     jmp initialise_level                                              ; 404f: 4c 40 11    L@.
 
 ; $4052 referenced 2 times by $40ef, $4240
@@ -782,8 +782,8 @@ sub_c407f
     jsr something14_TODO                                              ; 4094: 20 10 1a     ..
     lda l132b                                                         ; 4097: ad 2b 13    .+.
     beq c40e4                                                         ; 409a: f0 48       .H
-    lda l0031                                                         ; 409c: a5 31       .1
-    cmp l0051                                                         ; 409e: c5 51       .Q
+    lda desired_level                                                 ; 409c: a5 31       .1
+    cmp previous_level                                                ; 409e: c5 51       .Q
     beq c40c1                                                         ; 40a0: f0 1f       ..
     ldy #$2b ; '+'                                                    ; 40a2: a0 2b       .+
     lda l0a04                                                         ; 40a4: ad 04 0a    ...
@@ -1109,7 +1109,7 @@ loop_c42ea
     and #1                                                            ; 42ed: 29 01       ).
     beq loop_c42ea                                                    ; 42ef: f0 f9       ..
     ldx #1                                                            ; 42f1: a2 01       ..
-    ldy l0031                                                         ; 42f3: a4 31       .1
+    ldy desired_level                                                 ; 42f3: a4 31       .1
     jmp initialise_level                                              ; 42f5: 4c 40 11    L@.
 
 ; $42f8 referenced 1 time by $3b23
@@ -1125,8 +1125,8 @@ sub_c42f8
     jsr something13_TODO                                              ; 4309: 20 88 19     ..
     lda l132b                                                         ; 430c: ad 2b 13    .+.
     beq c4358                                                         ; 430f: f0 47       .G
-    lda l0051                                                         ; 4311: a5 51       .Q
-    cmp l0031                                                         ; 4313: c5 31       .1
+    lda previous_level                                                ; 4311: a5 51       .Q
+    cmp desired_level                                                 ; 4313: c5 31       .1
     beq c4339                                                         ; 4315: f0 22       ."
     lda l0a01                                                         ; 4317: ad 01 0a    ...
     beq c432f                                                         ; 431a: f0 13       ..
@@ -1507,7 +1507,7 @@ pydis_end
 ;     l0a72:                          11
 ;     l003e:                          10
 ;     l0a70:                          10
-;     l0031:                           8
+;     desired_level:                   8
 ;     l0a02:                           8
 ;     l0a04:                           8
 ;     c3ed7:                           8
@@ -1519,7 +1519,7 @@ pydis_end
 ;     l0a71:                           6
 ;     l132b:                           6
 ;     something53_TODO:                6
-;     l0051:                           5
+;     previous_level:                  5
 ;     l0a73:                           5
 ;     something52_TODO:                5
 ;     something58_TODO:                5
@@ -1723,7 +1723,6 @@ pydis_end
 ;     c4415
 ;     l001d
 ;     l0030
-;     l0031
 ;     l003a
 ;     l003b
 ;     l003c
@@ -1732,7 +1731,6 @@ pydis_end
 ;     l0040
 ;     l0041
 ;     l0042
-;     l0051
 ;     l0052
 ;     l0070
 ;     l0950

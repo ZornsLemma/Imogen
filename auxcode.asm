@@ -10,7 +10,9 @@ vdu_lf                                         = 10
 
 ; Memory locations
 l0005                               = $05
+desired_level                       = $31
 l004c                               = $4c
+previous_level                      = $51
 l005b                               = $5b
 l0070                               = $70
 l0071                               = $71
