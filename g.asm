@@ -287,25 +287,25 @@ l012e                                       = $012e
 brkv                                        = $0202
 irq1v                                       = $0204
 first_byte_break_intercept                  = $0287
-x_entry_table2a                             = $0950
+object_x_low                                = $0950
 l0951                                       = $0951
-x_entry_table2b                             = $095b
-x_entry_table5a                             = $0966
+object_x_low_old                            = $095b
+object_x_high                               = $0966
 l0967                                       = $0967
-x_entry_table5b                             = $0971
-x_entry_table6a                             = $097c
+object_x_high_old                           = $0971
+object_y                                    = $097c
 l097d                                       = $097d
-x_entry_table6b                             = $0987
+object_y_old                                = $0987
 x_entry_table7a                             = $0992
 l0993                                       = $0993
-x_entry_table7b                             = $099d
+x_entry_table7a_old                         = $099d
 x_entry_table9a                             = $09a8
 l09a9                                       = $09a9
-x_entry_table9b                             = $09b3
+x_entry_table9a_old                         = $09b3
 l09b4                                       = $09b4
-x_entry_table10a                            = $09be
+object_direction                            = $09be
 l09bf                                       = $09bf
-x_entry_table10b                            = $09c9
+object_direction_old                        = $09c9
 l09d4                                       = $09d4
 l09d5                                       = $09d5
 l09df                                       = $09df
@@ -472,19 +472,19 @@ level_already_loaded
     ldx #0                                                            ; 12a8: a2 00       ..  :1177[1]
     jsr osbyte                                                        ; 12aa: 20 f4 ff     .. :1179[1]   ; Flush all buffers (X=0)
     lda #0                                                            ; 12ad: a9 00       ..  :117c[1]
-    sta x_entry_table9b                                               ; 12af: 8d b3 09    ... :117e[1]
+    sta x_entry_table9a_old                                           ; 12af: 8d b3 09    ... :117e[1]
     sta l09b4                                                         ; 12b2: 8d b4 09    ... :1181[1]
     ldy #2                                                            ; 12b5: a0 02       ..  :1184[1]
 level_reset_loop
     lda #0                                                            ; 12b7: a9 00       ..  :1186[1]
     sta x_entry_table9a,y                                             ; 12b9: 99 a8 09    ... :1188[1]
-    sta x_entry_table9b,y                                             ; 12bc: 99 b3 09    ... :118b[1]
-    sta x_entry_table2a,y                                             ; 12bf: 99 50 09    .P. :118e[1]
-    sta x_entry_table5a,y                                             ; 12c2: 99 66 09    .f. :1191[1]
-    sta x_entry_table6a,y                                             ; 12c5: 99 7c 09    .|. :1194[1]
+    sta x_entry_table9a_old,y                                         ; 12bc: 99 b3 09    ... :118b[1]
+    sta object_x_low,y                                                ; 12bf: 99 50 09    .P. :118e[1]
+    sta object_x_high,y                                               ; 12c2: 99 66 09    .f. :1191[1]
+    sta object_y,y                                                    ; 12c5: 99 7c 09    .|. :1194[1]
     sta x_entry_table7a,y                                             ; 12c8: 99 92 09    ... :1197[1]
     lda #1                                                            ; 12cb: a9 01       ..  :119a[1]
-    sta x_entry_table10a,y                                            ; 12cd: 99 be 09    ... :119c[1]
+    sta object_direction,y                                            ; 12cd: 99 be 09    ... :119c[1]
     lda #$ff                                                          ; 12d0: a9 ff       ..  :119f[1]
     sta x_entry_table12,y                                             ; 12d2: 99 ac 38    ..8 :11a1[1]
     sta envelope_2,y                                                  ; 12d5: 99 c2 38    ..8 :11a4[1]
@@ -508,7 +508,7 @@ level_reset_loop
     sta l09df                                                         ; 12ff: 8d df 09    ... :11ce[1]
     sta l09d4                                                         ; 1302: 8d d4 09    ... :11d1[1]
     lda #1                                                            ; 1305: a9 01       ..  :11d4[1]
-    sta x_entry_table10a                                              ; 1307: 8d be 09    ... :11d6[1]
+    sta object_direction                                              ; 1307: 8d be 09    ... :11d6[1]
     lda #0                                                            ; 130a: a9 00       ..  :11d9[1]
     ldy #$0f                                                          ; 130c: a0 0f       ..  :11db[1]
 clear_sixteen_entry_table1
@@ -1693,19 +1693,19 @@ generate_random_bits_loop
     rts                                                               ; 19f3: 60          `   :18c2[1]
 
 something12_TODO
-    lda x_entry_table5a                                               ; 19f4: ad 66 09    .f. :18c3[1]
+    lda object_x_high                                                 ; 19f4: ad 66 09    .f. :18c3[1]
     bmi c1909                                                         ; 19f7: 30 41       0A  :18c6[1]
     beq c18d1                                                         ; 19f9: f0 07       ..  :18c8[1]
-    lda x_entry_table2a                                               ; 19fb: ad 50 09    .P. :18ca[1]
+    lda object_x_low                                                  ; 19fb: ad 50 09    .P. :18ca[1]
     cmp #$40 ; '@'                                                    ; 19fe: c9 40       .@  :18cd[1]
     bcs c191f                                                         ; 1a00: b0 4e       .N  :18cf[1]
 c18d1
-    lda x_entry_table6a                                               ; 1a02: ad 7c 09    .|. :18d1[1]
+    lda object_y                                                      ; 1a02: ad 7c 09    .|. :18d1[1]
     sec                                                               ; 1a05: 38          8   :18d4[1]
-    sbc x_entry_table6b                                               ; 1a06: ed 87 09    ... :18d5[1]
+    sbc object_y_old                                                  ; 1a06: ed 87 09    ... :18d5[1]
     beq c1906                                                         ; 1a09: f0 2c       .,  :18d8[1]
     lda x_entry_table7a                                               ; 1a0b: ad 92 09    ... :18da[1]
-    sbc x_entry_table7b                                               ; 1a0e: ed 9d 09    ... :18dd[1]
+    sbc x_entry_table7a_old                                           ; 1a0e: ed 9d 09    ... :18dd[1]
     sta address1_low                                                  ; 1a11: 85 70       .p  :18e0[1]
     ldx #0                                                            ; 1a13: a2 00       ..  :18e2[1]
     jsr sub_c24d2                                                     ; 1a15: 20 d2 24     .$ :18e4[1]
@@ -1734,12 +1734,12 @@ c1906
 c1909
     ldx #1                                                            ; 1a3a: a2 01       ..  :1909[1]
 loop_c190b
-    lda x_entry_table2a,x                                             ; 1a3c: bd 50 09    .P. :190b[1]
+    lda object_x_low,x                                                ; 1a3c: bd 50 09    .P. :190b[1]
     clc                                                               ; 1a3f: 18          .   :190e[1]
     adc #$40 ; '@'                                                    ; 1a40: 69 40       i@  :190f[1]
-    sta x_entry_table2a,x                                             ; 1a42: 9d 50 09    .P. :1911[1]
+    sta object_x_low,x                                                ; 1a42: 9d 50 09    .P. :1911[1]
     lda #1                                                            ; 1a45: a9 01       ..  :1914[1]
-    sta x_entry_table5a,x                                             ; 1a47: 9d 66 09    .f. :1916[1]
+    sta object_x_high,x                                               ; 1a47: 9d 66 09    .f. :1916[1]
     dex                                                               ; 1a4a: ca          .   :1919[1]
     bpl loop_c190b                                                    ; 1a4b: 10 ef       ..  :191a[1]
     lda #1                                                            ; 1a4d: a9 01       ..  :191c[1]
@@ -1748,13 +1748,13 @@ loop_c190b
 c191f
     ldx #1                                                            ; 1a50: a2 01       ..  :191f[1]
 loop_c1921
-    lda x_entry_table2a,x                                             ; 1a52: bd 50 09    .P. :1921[1]
+    lda object_x_low,x                                                ; 1a52: bd 50 09    .P. :1921[1]
     sec                                                               ; 1a55: 38          8   :1924[1]
     sbc #$40 ; '@'                                                    ; 1a56: e9 40       .@  :1925[1]
-    sta x_entry_table2a,x                                             ; 1a58: 9d 50 09    .P. :1927[1]
+    sta object_x_low,x                                                ; 1a58: 9d 50 09    .P. :1927[1]
     lda #0                                                            ; 1a5b: a9 00       ..  :192a[1]
     sbc #0                                                            ; 1a5d: e9 00       ..  :192c[1]
-    sta x_entry_table5a,x                                             ; 1a5f: 9d 66 09    .f. :192e[1]
+    sta object_x_high,x                                               ; 1a5f: 9d 66 09    .f. :192e[1]
     dex                                                               ; 1a62: ca          .   :1931[1]
     bpl loop_c1921                                                    ; 1a63: 10 ed       ..  :1932[1]
     lda #4                                                            ; 1a65: a9 04       ..  :1934[1]
@@ -1765,10 +1765,10 @@ c1937
     bpl c1906                                                         ; 1a6a: 10 cb       ..  :1939[1]
     ldx #1                                                            ; 1a6c: a2 01       ..  :193b[1]
 loop_c193d
-    lda x_entry_table6a,x                                             ; 1a6e: bd 7c 09    .|. :193d[1]
+    lda object_y,x                                                    ; 1a6e: bd 7c 09    .|. :193d[1]
     clc                                                               ; 1a71: 18          .   :1940[1]
     adc #$c0                                                          ; 1a72: 69 c0       i.  :1941[1]
-    sta x_entry_table6a,x                                             ; 1a74: 9d 7c 09    .|. :1943[1]
+    sta object_y,x                                                    ; 1a74: 9d 7c 09    .|. :1943[1]
     lda #0                                                            ; 1a77: a9 00       ..  :1946[1]
     sta x_entry_table7a,x                                             ; 1a79: 9d 92 09    ... :1948[1]
     dex                                                               ; 1a7c: ca          .   :194b[1]
@@ -1781,10 +1781,10 @@ c1951
     bmi c1906                                                         ; 1a84: 30 b1       0.  :1953[1]
     ldx #1                                                            ; 1a86: a2 01       ..  :1955[1]
 loop_c1957
-    lda x_entry_table6a,x                                             ; 1a88: bd 7c 09    .|. :1957[1]
+    lda object_y,x                                                    ; 1a88: bd 7c 09    .|. :1957[1]
     sec                                                               ; 1a8b: 38          8   :195a[1]
     sbc #$c0                                                          ; 1a8c: e9 c0       ..  :195b[1]
-    sta x_entry_table6a,x                                             ; 1a8e: 9d 7c 09    .|. :195d[1]
+    sta object_y,x                                                    ; 1a8e: 9d 7c 09    .|. :195d[1]
     dex                                                               ; 1a91: ca          .   :1960[1]
     bpl loop_c1957                                                    ; 1a92: 10 f4       ..  :1961[1]
     lda #2                                                            ; 1a94: a9 02       ..  :1963[1]
@@ -1853,7 +1853,7 @@ c19b9
     lda #$ff                                                          ; 1b03: a9 ff       ..  :19d2[1]
 c19d4
     ldx l1a0f                                                         ; 1b05: ae 0f 1a    ... :19d4[1]
-    sta x_entry_table10a,x                                            ; 1b08: 9d be 09    ... :19d7[1]
+    sta object_direction,x                                            ; 1b08: 9d be 09    ... :19d7[1]
     lda #7                                                            ; 1b0b: a9 07       ..  :19da[1]
     jsr get_random_number_up_to_a                                     ; 1b0d: 20 a6 18     .. :19dc[1]
     sta l09d4,x                                                       ; 1b10: 9d d4 09    ... :19df[1]
@@ -1933,14 +1933,14 @@ c1a59
     and #$80                                                          ; 1ba0: 29 80       ).  :1a6f[1]
     bne c1a9e                                                         ; 1ba2: d0 2b       .+  :1a71[1]
     lda #1                                                            ; 1ba4: a9 01       ..  :1a73[1]
-    sta x_entry_table10a,x                                            ; 1ba6: 9d be 09    ... :1a75[1]
+    sta object_direction,x                                            ; 1ba6: 9d be 09    ... :1a75[1]
     lda l1ab1                                                         ; 1ba9: ad b1 1a    ... :1a78[1]
     and #7                                                            ; 1bac: 29 07       ).  :1a7b[1]
     tay                                                               ; 1bae: a8          .   :1a7d[1]
     cpy #5                                                            ; 1baf: c0 05       ..  :1a7e[1]
     bcc c1a8f                                                         ; 1bb1: 90 0d       ..  :1a80[1]
     lda #$ff                                                          ; 1bb3: a9 ff       ..  :1a82[1]
-    sta x_entry_table10a,x                                            ; 1bb5: 9d be 09    ... :1a84[1]
+    sta object_direction,x                                            ; 1bb5: 9d be 09    ... :1a84[1]
     inc l003a                                                         ; 1bb8: e6 3a       .:  :1a87[1]
     tya                                                               ; 1bba: 98          .   :1a89[1]
     sbc #8                                                            ; 1bbb: e9 08       ..  :1a8a[1]
@@ -2675,11 +2675,11 @@ l1f6c
 something57_TODO
     pha                                                               ; 209e: 48          H   :1f6d[1]
     lda sprite_x_base_low                                             ; 209f: a5 18       ..  :1f6e[1]
-    sta x_entry_table2a,x                                             ; 20a1: 9d 50 09    .P. :1f70[1]
+    sta object_x_low,x                                                ; 20a1: 9d 50 09    .P. :1f70[1]
     lda sprite_x_base_high                                            ; 20a4: a5 19       ..  :1f73[1]
-    sta x_entry_table5a,x                                             ; 20a6: 9d 66 09    .f. :1f75[1]
+    sta object_x_high,x                                               ; 20a6: 9d 66 09    .f. :1f75[1]
     lda sprite_y_base_low                                             ; 20a9: a5 1a       ..  :1f78[1]
-    sta x_entry_table6a,x                                             ; 20ab: 9d 7c 09    .|. :1f7a[1]
+    sta object_y,x                                                    ; 20ab: 9d 7c 09    .|. :1f7a[1]
     lda sprite_y_base_high                                            ; 20ae: a5 1b       ..  :1f7d[1]
     sta x_entry_table7a,x                                             ; 20b0: 9d 92 09    ... :1f7f[1]
     pla                                                               ; 20b3: 68          h   :1f82[1]
@@ -2770,7 +2770,7 @@ loop_c1ff5
     lda l0116,x                                                       ; 2126: bd 16 01    ... :1ff5[1]
     bne c200d                                                         ; 2129: d0 13       ..  :1ff8[1]
     lda x_entry_table9a,x                                             ; 212b: bd a8 09    ... :1ffa[1]
-    ora x_entry_table9b,x                                             ; 212e: 1d b3 09    ... :1ffd[1]
+    ora x_entry_table9a_old,x                                         ; 212e: 1d b3 09    ... :1ffd[1]
     beq c200d                                                         ; 2131: f0 0b       ..  :2000[1]
     lda envelope_2,x                                                  ; 2133: bd c2 38    ..8 :2002[1]
     cmp l0061                                                         ; 2136: c5 61       .a  :2005[1]
@@ -2798,7 +2798,7 @@ c2020
 c2027
     lda #$ff                                                          ; 2158: a9 ff       ..  :2027[1]
     sta l0116,x                                                       ; 215a: 9d 16 01    ... :2029[1]
-    jsr sub_c211e                                                     ; 215d: 20 1e 21     .! :202c[1]
+    jsr has_object_x_changed_state                                    ; 215d: 20 1e 21     .! :202c[1]
     beq c1fe9                                                         ; 2160: f0 b8       ..  :202f[1]
     txa                                                               ; 2162: 8a          .   :2031[1]
     ldx l0062                                                         ; 2163: a6 62       .b  :2032[1]
@@ -2914,41 +2914,41 @@ loop_c20e7
 
 sub_c20f7
     pha                                                               ; 2228: 48          H   :20f7[1]
-    lda x_entry_table2a,x                                             ; 2229: bd 50 09    .P. :20f8[1]
-    sta x_entry_table2b,x                                             ; 222c: 9d 5b 09    .[. :20fb[1]
-    lda x_entry_table5a,x                                             ; 222f: bd 66 09    .f. :20fe[1]
-    sta x_entry_table5b,x                                             ; 2232: 9d 71 09    .q. :2101[1]
-    lda x_entry_table6a,x                                             ; 2235: bd 7c 09    .|. :2104[1]
-    sta x_entry_table6b,x                                             ; 2238: 9d 87 09    ... :2107[1]
+    lda object_x_low,x                                                ; 2229: bd 50 09    .P. :20f8[1]
+    sta object_x_low_old,x                                            ; 222c: 9d 5b 09    .[. :20fb[1]
+    lda object_x_high,x                                               ; 222f: bd 66 09    .f. :20fe[1]
+    sta object_x_high_old,x                                           ; 2232: 9d 71 09    .q. :2101[1]
+    lda object_y,x                                                    ; 2235: bd 7c 09    .|. :2104[1]
+    sta object_y_old,x                                                ; 2238: 9d 87 09    ... :2107[1]
     lda x_entry_table7a,x                                             ; 223b: bd 92 09    ... :210a[1]
-    sta x_entry_table7b,x                                             ; 223e: 9d 9d 09    ... :210d[1]
+    sta x_entry_table7a_old,x                                         ; 223e: 9d 9d 09    ... :210d[1]
     lda x_entry_table9a,x                                             ; 2241: bd a8 09    ... :2110[1]
-    sta x_entry_table9b,x                                             ; 2244: 9d b3 09    ... :2113[1]
-    lda x_entry_table10a,x                                            ; 2247: bd be 09    ... :2116[1]
-    sta x_entry_table10b,x                                            ; 224a: 9d c9 09    ... :2119[1]
+    sta x_entry_table9a_old,x                                         ; 2244: 9d b3 09    ... :2113[1]
+    lda object_direction,x                                            ; 2247: bd be 09    ... :2116[1]
+    sta object_direction_old,x                                        ; 224a: 9d c9 09    ... :2119[1]
     pla                                                               ; 224d: 68          h   :211c[1]
     rts                                                               ; 224e: 60          `   :211d[1]
 
-sub_c211e
+has_object_x_changed_state
     lda #$ff                                                          ; 224f: a9 ff       ..  :211e[1]
     pha                                                               ; 2251: 48          H   :2120[1]
-    lda x_entry_table2a,x                                             ; 2252: bd 50 09    .P. :2121[1]
-    cmp x_entry_table2b,x                                             ; 2255: dd 5b 09    .[. :2124[1]
+    lda object_x_low,x                                                ; 2252: bd 50 09    .P. :2121[1]
+    cmp object_x_low_old,x                                            ; 2255: dd 5b 09    .[. :2124[1]
     bne c2155                                                         ; 2258: d0 2c       .,  :2127[1]
-    lda x_entry_table5a,x                                             ; 225a: bd 66 09    .f. :2129[1]
-    cmp x_entry_table5b,x                                             ; 225d: dd 71 09    .q. :212c[1]
+    lda object_x_high,x                                               ; 225a: bd 66 09    .f. :2129[1]
+    cmp object_x_high_old,x                                           ; 225d: dd 71 09    .q. :212c[1]
     bne c2155                                                         ; 2260: d0 24       .$  :212f[1]
-    lda x_entry_table6a,x                                             ; 2262: bd 7c 09    .|. :2131[1]
-    cmp x_entry_table6b,x                                             ; 2265: dd 87 09    ... :2134[1]
+    lda object_y,x                                                    ; 2262: bd 7c 09    .|. :2131[1]
+    cmp object_y_old,x                                                ; 2265: dd 87 09    ... :2134[1]
     bne c2155                                                         ; 2268: d0 1c       ..  :2137[1]
     lda x_entry_table7a,x                                             ; 226a: bd 92 09    ... :2139[1]
-    cmp x_entry_table7b,x                                             ; 226d: dd 9d 09    ... :213c[1]
+    cmp x_entry_table7a_old,x                                         ; 226d: dd 9d 09    ... :213c[1]
     bne c2155                                                         ; 2270: d0 14       ..  :213f[1]
     lda x_entry_table9a,x                                             ; 2272: bd a8 09    ... :2141[1]
-    cmp x_entry_table9b,x                                             ; 2275: dd b3 09    ... :2144[1]
+    cmp x_entry_table9a_old,x                                         ; 2275: dd b3 09    ... :2144[1]
     bne c2155                                                         ; 2278: d0 0c       ..  :2147[1]
-    lda x_entry_table10a,x                                            ; 227a: bd be 09    ... :2149[1]
-    cmp x_entry_table10b,x                                            ; 227d: dd c9 09    ... :214c[1]
+    lda object_direction,x                                            ; 227a: bd be 09    ... :2149[1]
+    cmp object_direction_old,x                                        ; 227d: dd c9 09    ... :214c[1]
     bne c2155                                                         ; 2280: d0 04       ..  :214f[1]
     pla                                                               ; 2282: 68          h   :2151[1]
     lda #0                                                            ; 2283: a9 00       ..  :2152[1]
@@ -2960,17 +2960,17 @@ c2155
 sub_c2157
     tya                                                               ; 2288: 98          .   :2157[1]
     pha                                                               ; 2289: 48          H   :2158[1]
-    lda x_entry_table9b,x                                             ; 228a: bd b3 09    ... :2159[1]
+    lda x_entry_table9a_old,x                                         ; 228a: bd b3 09    ... :2159[1]
     beq c2197                                                         ; 228d: f0 39       .9  :215c[1]
-    lda x_entry_table2b,x                                             ; 228f: bd 5b 09    .[. :215e[1]
+    lda object_x_low_old,x                                            ; 228f: bd 5b 09    .[. :215e[1]
     sta sprite_x_base_low                                             ; 2292: 85 18       ..  :2161[1]
-    lda x_entry_table5b,x                                             ; 2294: bd 71 09    .q. :2163[1]
+    lda object_x_high_old,x                                           ; 2294: bd 71 09    .q. :2163[1]
     sta sprite_x_base_high                                            ; 2297: 85 19       ..  :2166[1]
-    lda x_entry_table6b,x                                             ; 2299: bd 87 09    ... :2168[1]
+    lda object_y_old,x                                                ; 2299: bd 87 09    ... :2168[1]
     sta sprite_y_base_low                                             ; 229c: 85 1a       ..  :216b[1]
-    lda x_entry_table7b,x                                             ; 229e: bd 9d 09    ... :216d[1]
+    lda x_entry_table7a_old,x                                         ; 229e: bd 9d 09    ... :216d[1]
     sta sprite_y_base_high                                            ; 22a1: 85 1b       ..  :2170[1]
-    lda x_entry_table10b,x                                            ; 22a3: bd c9 09    ... :2172[1]
+    lda object_direction_old,x                                        ; 22a3: bd c9 09    ... :2172[1]
     sta sprite_reflect_flag                                           ; 22a6: 85 1d       ..  :2175[1]
     lda x_entry_table12,x                                             ; 22a8: bd ac 38    ..8 :2177[1]
     beq c2184                                                         ; 22ab: f0 08       ..  :217a[1]
@@ -2979,11 +2979,11 @@ sub_c2157
     ldy #0                                                            ; 22b1: a0 00       ..  :2180[1]
     beq c2190                                                         ; 22b3: f0 0c       ..  :2182[1]
 c2184
-    lda x_entry_table9b,x                                             ; 22b5: bd b3 09    ... :2184[1]
+    lda x_entry_table9a_old,x                                         ; 22b5: bd b3 09    ... :2184[1]
     ldy #2                                                            ; 22b8: a0 02       ..  :2187[1]
     bne c2190                                                         ; 22ba: d0 05       ..  :2189[1]
 c218b
-    lda x_entry_table9b,x                                             ; 22bc: bd b3 09    ... :218b[1]
+    lda x_entry_table9a_old,x                                         ; 22bc: bd b3 09    ... :218b[1]
     ldy #4                                                            ; 22bf: a0 04       ..  :218e[1]
 c2190
     sta sprite_number                                                 ; 22c1: 85 16       ..  :2190[1]
@@ -2997,15 +2997,15 @@ c2197
 sub_c219a
     lda x_entry_table9a,x                                             ; 22cb: bd a8 09    ... :219a[1]
     beq return9                                                       ; 22ce: f0 60       .`  :219d[1]
-    lda x_entry_table2a,x                                             ; 22d0: bd 50 09    .P. :219f[1]
+    lda object_x_low,x                                                ; 22d0: bd 50 09    .P. :219f[1]
     sta sprite_x_base_low                                             ; 22d3: 85 18       ..  :21a2[1]
-    lda x_entry_table5a,x                                             ; 22d5: bd 66 09    .f. :21a4[1]
+    lda object_x_high,x                                               ; 22d5: bd 66 09    .f. :21a4[1]
     sta sprite_x_base_high                                            ; 22d8: 85 19       ..  :21a7[1]
-    lda x_entry_table6a,x                                             ; 22da: bd 7c 09    .|. :21a9[1]
+    lda object_y,x                                                    ; 22da: bd 7c 09    .|. :21a9[1]
     sta sprite_y_base_low                                             ; 22dd: 85 1a       ..  :21ac[1]
     lda x_entry_table7a,x                                             ; 22df: bd 92 09    ... :21ae[1]
     sta sprite_y_base_high                                            ; 22e2: 85 1b       ..  :21b1[1]
-    lda x_entry_table10a,x                                            ; 22e4: bd be 09    ... :21b3[1]
+    lda object_direction,x                                            ; 22e4: bd be 09    ... :21b3[1]
     sta sprite_reflect_flag                                           ; 22e7: 85 1d       ..  :21b6[1]
     lda x_entry_table9a,x                                             ; 22e9: bd a8 09    ... :21b8[1]
     sta sprite_number                                                 ; 22ec: 85 16       ..  :21bb[1]
@@ -3027,14 +3027,14 @@ c21d0
     bne return9                                                       ; 230c: d0 22       ."  :21db[1]
     stx l0065                                                         ; 230e: 86 65       .e  :21dd[1]
     ldx #0                                                            ; 2310: a2 00       ..  :21df[1]
-    jsr sub_c211e                                                     ; 2312: 20 1e 21     .! :21e1[1]
+    jsr has_object_x_changed_state                                    ; 2312: 20 1e 21     .! :21e1[1]
     ldx l0065                                                         ; 2315: a6 65       .e  :21e4[1]
     ora #0                                                            ; 2317: 09 00       ..  :21e6[1]
     beq c21ef                                                         ; 2319: f0 05       ..  :21e8[1]
     lda l0116                                                         ; 231b: ad 16 01    ... :21ea[1]
     beq return9                                                       ; 231e: f0 10       ..  :21ed[1]
 c21ef
-    lda x_entry_table10a,x                                            ; 2320: bd be 09    ... :21ef[1]
+    lda object_direction,x                                            ; 2320: bd be 09    ... :21ef[1]
     sta sprite_reflect_flag                                           ; 2323: 85 1d       ..  :21f2[1]
     lda #sprite_op_flags_normal                                       ; 2325: a9 00       ..  :21f4[1]
     sta sprite_op_flags                                               ; 2327: 85 15       ..  :21f6[1]
@@ -3054,7 +3054,7 @@ something17_TODO
     lda l2433                                                         ; 233c: ad 33 24    .3$ :220b[1]
     bne c2231                                                         ; 233f: d0 21       .!  :220e[1]
     lda (address1_low),y                                              ; 2341: b1 70       .p  :2210[1]
-    ldx x_entry_table10a                                              ; 2343: ae be 09    ... :2212[1]
+    ldx object_direction                                              ; 2343: ae be 09    ... :2212[1]
     bpl c221c                                                         ; 2346: 10 05       ..  :2215[1]
     eor #$ff                                                          ; 2348: 49 ff       I.  :2217[1]
     clc                                                               ; 234a: 18          .   :2219[1]
@@ -3066,11 +3066,11 @@ c221c
     dex                                                               ; 2353: ca          .   :2222[1]
 c2223
     clc                                                               ; 2354: 18          .   :2223[1]
-    adc x_entry_table2a                                               ; 2355: 6d 50 09    mP. :2224[1]
-    sta x_entry_table2a                                               ; 2358: 8d 50 09    .P. :2227[1]
+    adc object_x_low                                                  ; 2355: 6d 50 09    mP. :2224[1]
+    sta object_x_low                                                  ; 2358: 8d 50 09    .P. :2227[1]
     txa                                                               ; 235b: 8a          .   :222a[1]
-    adc x_entry_table5a                                               ; 235c: 6d 66 09    mf. :222b[1]
-    sta x_entry_table5a                                               ; 235f: 8d 66 09    .f. :222e[1]
+    adc object_x_high                                                 ; 235c: 6d 66 09    mf. :222b[1]
+    sta object_x_high                                                 ; 235f: 8d 66 09    .f. :222e[1]
 c2231
     iny                                                               ; 2362: c8          .   :2231[1]
     ldx #0                                                            ; 2363: a2 00       ..  :2232[1]
@@ -3079,8 +3079,8 @@ c2231
     dex                                                               ; 2369: ca          .   :2238[1]
 c2239
     clc                                                               ; 236a: 18          .   :2239[1]
-    adc x_entry_table6a                                               ; 236b: 6d 7c 09    m|. :223a[1]
-    sta x_entry_table6a                                               ; 236e: 8d 7c 09    .|. :223d[1]
+    adc object_y                                                      ; 236b: 6d 7c 09    m|. :223a[1]
+    sta object_y                                                      ; 236e: 8d 7c 09    .|. :223d[1]
     txa                                                               ; 2371: 8a          .   :2240[1]
     adc x_entry_table7a                                               ; 2372: 6d 92 09    m.. :2241[1]
     sta x_entry_table7a                                               ; 2375: 8d 92 09    ... :2244[1]
@@ -3106,12 +3106,12 @@ something18_TODO
 c2267
     sty l09d5                                                         ; 2398: 8c d5 09    ... :2267[1]
     sta l09a9                                                         ; 239b: 8d a9 09    ... :226a[1]
-    lda x_entry_table10a                                              ; 239e: ad be 09    ... :226d[1]
+    lda object_direction                                              ; 239e: ad be 09    ... :226d[1]
     sta l09bf                                                         ; 23a1: 8d bf 09    ... :2270[1]
     lda x_entry_table9a                                               ; 23a4: ad a8 09    ... :2273[1]
     jsr sub_c22ae                                                     ; 23a7: 20 ae 22     ." :2276[1]
     txa                                                               ; 23aa: 8a          .   :2279[1]
-    ldx x_entry_table10a                                              ; 23ab: ae be 09    ... :227a[1]
+    ldx object_direction                                              ; 23ab: ae be 09    ... :227a[1]
     bpl c2284                                                         ; 23ae: 10 05       ..  :227d[1]
     eor #$ff                                                          ; 23b0: 49 ff       I.  :227f[1]
     clc                                                               ; 23b2: 18          .   :2281[1]
@@ -3123,10 +3123,10 @@ c2284
     dex                                                               ; 23bb: ca          .   :228a[1]
 c228b
     clc                                                               ; 23bc: 18          .   :228b[1]
-    adc x_entry_table2a                                               ; 23bd: 6d 50 09    mP. :228c[1]
+    adc object_x_low                                                  ; 23bd: 6d 50 09    mP. :228c[1]
     sta l0951                                                         ; 23c0: 8d 51 09    .Q. :228f[1]
     txa                                                               ; 23c3: 8a          .   :2292[1]
-    adc x_entry_table5a                                               ; 23c4: 6d 66 09    mf. :2293[1]
+    adc object_x_high                                                 ; 23c4: 6d 66 09    mf. :2293[1]
     sta l0967                                                         ; 23c7: 8d 67 09    .g. :2296[1]
     ldx #0                                                            ; 23ca: a2 00       ..  :2299[1]
     tya                                                               ; 23cc: 98          .   :229b[1]
@@ -3134,7 +3134,7 @@ c228b
     dex                                                               ; 23cf: ca          .   :229e[1]
 c229f
     clc                                                               ; 23d0: 18          .   :229f[1]
-    adc x_entry_table6a                                               ; 23d1: 6d 7c 09    m|. :22a0[1]
+    adc object_y                                                      ; 23d1: 6d 7c 09    m|. :22a0[1]
     sta l097d                                                         ; 23d4: 8d 7d 09    .}. :22a3[1]
     txa                                                               ; 23d7: 8a          .   :22a6[1]
     adc x_entry_table7a                                               ; 23d8: 6d 92 09    m.. :22a7[1]
@@ -3270,18 +3270,18 @@ sub_c2358
 
 sub_c236b
     lda x_entry_table9a                                               ; 249c: ad a8 09    ... :236b[1]
-    and x_entry_table9b                                               ; 249f: 2d b3 09    -.. :236e[1]
+    and x_entry_table9a_old                                           ; 249f: 2d b3 09    -.. :236e[1]
     beq return12                                                      ; 24a2: f0 35       .5  :2371[1]
     lda #2                                                            ; 24a4: a9 02       ..  :2373[1]
     sta l2551                                                         ; 24a6: 8d 51 25    .Q% :2375[1]
     lda #0                                                            ; 24a9: a9 00       ..  :2378[1]
     jsr something59_TODO                                              ; 24ab: 20 94 28     .( :237a[1]
     beq return12                                                      ; 24ae: f0 29       .)  :237d[1]
-    lda x_entry_table6b                                               ; 24b0: ad 87 09    ... :237f[1]
+    lda object_y_old                                                  ; 24b0: ad 87 09    ... :237f[1]
     sec                                                               ; 24b3: 38          8   :2382[1]
-    sbc x_entry_table6a                                               ; 24b4: ed 7c 09    .|. :2383[1]
+    sbc object_y                                                      ; 24b4: ed 7c 09    .|. :2383[1]
     beq c2392                                                         ; 24b7: f0 0a       ..  :2386[1]
-    lda x_entry_table7b                                               ; 24b9: ad 9d 09    ... :2388[1]
+    lda x_entry_table7a_old                                           ; 24b9: ad 9d 09    ... :2388[1]
     sbc x_entry_table7a                                               ; 24bc: ed 92 09    ... :238b[1]
     bmi c23a5                                                         ; 24bf: 30 15       0.  :238e[1]
     bpl return12                                                      ; 24c1: 10 16       ..  :2390[1]
@@ -3358,11 +3358,11 @@ c2404
 loop_c2406
     lda l2433                                                         ; 2537: ad 33 24    .3$ :2406[1]
     clc                                                               ; 253a: 18          .   :2409[1]
-    adc x_entry_table2a,x                                             ; 253b: 7d 50 09    }P. :240a[1]
-    sta x_entry_table2a,x                                             ; 253e: 9d 50 09    .P. :240d[1]
+    adc object_x_low,x                                                ; 253b: 7d 50 09    }P. :240a[1]
+    sta object_x_low,x                                                ; 253e: 9d 50 09    .P. :240d[1]
     tya                                                               ; 2541: 98          .   :2410[1]
-    adc x_entry_table5a,x                                             ; 2542: 7d 66 09    }f. :2411[1]
-    sta x_entry_table5a,x                                             ; 2545: 9d 66 09    .f. :2414[1]
+    adc object_x_high,x                                               ; 2542: 7d 66 09    }f. :2411[1]
+    sta object_x_high,x                                               ; 2545: 9d 66 09    .f. :2414[1]
     dex                                                               ; 2548: ca          .   :2417[1]
     bpl loop_c2406                                                    ; 2549: 10 ec       ..  :2418[1]
 c241a
@@ -3395,7 +3395,7 @@ sub_c2434
     tax                                                               ; 2572: aa          .   :2441[1]
     ldy #0                                                            ; 2573: a0 00       ..  :2442[1]
     lda (mask_sprite_byte),y                                          ; 2575: b1 80       ..  :2444[1]
-    ldy x_entry_table10a,x                                            ; 2577: bc be 09    ... :2446[1]
+    ldy object_direction,x                                            ; 2577: bc be 09    ... :2446[1]
     bpl c244d                                                         ; 257a: 10 02       ..  :2449[1]
     eor #$ff                                                          ; 257c: 49 ff       I.  :244b[1]
 c244d
@@ -3405,16 +3405,16 @@ c244d
     dey                                                               ; 2584: 88          .   :2453[1]
 c2454
     clc                                                               ; 2585: 18          .   :2454[1]
-    adc x_entry_table2a,x                                             ; 2586: 7d 50 09    }P. :2455[1]
+    adc object_x_low,x                                                ; 2586: 7d 50 09    }P. :2455[1]
     sta address1_low                                                  ; 2589: 85 70       .p  :2458[1]
     tya                                                               ; 258b: 98          .   :245a[1]
-    adc x_entry_table5a,x                                             ; 258c: 7d 66 09    }f. :245b[1]
+    adc object_x_high,x                                               ; 258c: 7d 66 09    }f. :245b[1]
     sta address1_high                                                 ; 258f: 85 71       .q  :245e[1]
     ldy #2                                                            ; 2591: a0 02       ..  :2460[1]
     lda (mask_sprite_byte),y                                          ; 2593: b1 80       ..  :2462[1]
     sec                                                               ; 2595: 38          8   :2464[1]
     sbc #1                                                            ; 2596: e9 01       ..  :2465[1]
-    ldy x_entry_table10a,x                                            ; 2598: bc be 09    ... :2467[1]
+    ldy object_direction,x                                            ; 2598: bc be 09    ... :2467[1]
     bmi c247a                                                         ; 259b: 30 0e       0.  :246a[1]
     clc                                                               ; 259d: 18          .   :246c[1]
     adc address1_low                                                  ; 259e: 65 70       ep  :246d[1]
@@ -3499,7 +3499,7 @@ sub_c24d2
     dey                                                               ; 261b: 88          .   :24ea[1]
 c24eb
     clc                                                               ; 261c: 18          .   :24eb[1]
-    adc x_entry_table6a,x                                             ; 261d: 7d 7c 09    }|. :24ec[1]
+    adc object_y,x                                                    ; 261d: 7d 7c 09    }|. :24ec[1]
     sta sprite_y_pos_low                                              ; 2620: 85 76       .v  :24ef[1]
     tya                                                               ; 2622: 98          .   :24f1[1]
     adc x_entry_table7a,x                                             ; 2623: 7d 92 09    }.. :24f2[1]
@@ -3587,7 +3587,7 @@ loop_c256a
     lda byte_offset_within_sprite                                     ; 26a9: a5 79       .y  :2578[1]
     sta l012e                                                         ; 26ab: 8d 2e 01    ... :257a[1]
     jsr sub_c2434                                                     ; 26ae: 20 34 24     4$ :257d[1]
-    lda x_entry_table10a,x                                            ; 26b1: bd be 09    ... :2580[1]
+    lda object_direction,x                                            ; 26b1: bd be 09    ... :2580[1]
     bpl c25a4                                                         ; 26b4: 10 1f       ..  :2583[1]
     lda address1_low                                                  ; 26b6: a5 70       .p  :2585[1]
     sec                                                               ; 26b8: 38          8   :2587[1]
@@ -3746,11 +3746,11 @@ sub_c2693
     sec                                                               ; 27d6: 38          8   :26a5[1]
     sbc mask_sprite_byte                                              ; 27d7: e5 80       ..  :26a6[1]
     clc                                                               ; 27d9: 18          .   :26a8[1]
-    adc x_entry_table2a,x                                             ; 27da: 7d 50 09    }P. :26a9[1]
-    sta x_entry_table2a,x                                             ; 27dd: 9d 50 09    .P. :26ac[1]
+    adc object_x_low,x                                                ; 27da: 7d 50 09    }P. :26a9[1]
+    sta object_x_low,x                                                ; 27dd: 9d 50 09    .P. :26ac[1]
     lda #0                                                            ; 27e0: a9 00       ..  :26af[1]
-    adc x_entry_table5a,x                                             ; 27e2: 7d 66 09    }f. :26b1[1]
-    sta x_entry_table5a,x                                             ; 27e5: 9d 66 09    .f. :26b4[1]
+    adc object_x_high,x                                               ; 27e2: 7d 66 09    }f. :26b1[1]
+    sta object_x_high,x                                               ; 27e5: 9d 66 09    .f. :26b4[1]
     lda envelope_3,x                                                  ; 27e8: bd d8 38    ..8 :26b7[1]
     ora #1                                                            ; 27eb: 09 01       ..  :26ba[1]
     sta envelope_3,x                                                  ; 27ed: 9d d8 38    ..8 :26bc[1]
@@ -3762,13 +3762,13 @@ c26c2
     clc                                                               ; 27f7: 18          .   :26c6[1]
     adc #1                                                            ; 27f8: 69 01       i.  :26c7[1]
     sta mask_sprite_byte                                              ; 27fa: 85 80       ..  :26c9[1]
-    lda x_entry_table2a,x                                             ; 27fc: bd 50 09    .P. :26cb[1]
+    lda object_x_low,x                                                ; 27fc: bd 50 09    .P. :26cb[1]
     sec                                                               ; 27ff: 38          8   :26ce[1]
     sbc mask_sprite_byte                                              ; 2800: e5 80       ..  :26cf[1]
-    sta x_entry_table2a,x                                             ; 2802: 9d 50 09    .P. :26d1[1]
-    lda x_entry_table5a,x                                             ; 2805: bd 66 09    .f. :26d4[1]
+    sta object_x_low,x                                                ; 2802: 9d 50 09    .P. :26d1[1]
+    lda object_x_high,x                                               ; 2805: bd 66 09    .f. :26d4[1]
     sbc #0                                                            ; 2808: e9 00       ..  :26d7[1]
-    sta x_entry_table5a,x                                             ; 280a: 9d 66 09    .f. :26d9[1]
+    sta object_x_high,x                                               ; 280a: 9d 66 09    .f. :26d9[1]
     lda envelope_3,x                                                  ; 280d: bd d8 38    ..8 :26dc[1]
     ora #4                                                            ; 2810: 09 04       ..  :26df[1]
     sta envelope_3,x                                                  ; 2812: 9d d8 38    ..8 :26e1[1]
@@ -3825,8 +3825,8 @@ sub_c271e
     sec                                                               ; 2861: 38          8   :2730[1]
     sbc mask_sprite_byte                                              ; 2862: e5 80       ..  :2731[1]
     clc                                                               ; 2864: 18          .   :2733[1]
-    adc x_entry_table6a,x                                             ; 2865: 7d 7c 09    }|. :2734[1]
-    sta x_entry_table6a,x                                             ; 2868: 9d 7c 09    .|. :2737[1]
+    adc object_y,x                                                    ; 2865: 7d 7c 09    }|. :2734[1]
+    sta object_y,x                                                    ; 2868: 9d 7c 09    .|. :2737[1]
     lda #0                                                            ; 286b: a9 00       ..  :273a[1]
     adc x_entry_table7a,x                                             ; 286d: 7d 92 09    }.. :273c[1]
     sta x_entry_table7a,x                                             ; 2870: 9d 92 09    ... :273f[1]
@@ -3841,10 +3841,10 @@ c274d
     clc                                                               ; 2882: 18          .   :2751[1]
     adc #1                                                            ; 2883: 69 01       i.  :2752[1]
     sta mask_sprite_byte                                              ; 2885: 85 80       ..  :2754[1]
-    lda x_entry_table6a,x                                             ; 2887: bd 7c 09    .|. :2756[1]
+    lda object_y,x                                                    ; 2887: bd 7c 09    .|. :2756[1]
     sec                                                               ; 288a: 38          8   :2759[1]
     sbc mask_sprite_byte                                              ; 288b: e5 80       ..  :275a[1]
-    sta x_entry_table6a,x                                             ; 288d: 9d 7c 09    .|. :275c[1]
+    sta object_y,x                                                    ; 288d: 9d 7c 09    .|. :275c[1]
     lda x_entry_table7a,x                                             ; 2890: bd 92 09    ... :275f[1]
     sbc #0                                                            ; 2893: e9 00       ..  :2762[1]
     sta x_entry_table7a,x                                             ; 2895: 9d 92 09    ... :2764[1]
@@ -4759,9 +4759,9 @@ c2d87
     bne c2dc0                                                         ; 2ec6: d0 29       .)  :2d95[1]
     cpy #$39 ; '9'                                                    ; 2ec8: c0 39       .9  :2d97[1]
     bne c2da6                                                         ; 2eca: d0 0b       ..  :2d99[1]
-    lda x_entry_table10a                                              ; 2ecc: ad be 09    ... :2d9b[1]
+    lda object_direction                                              ; 2ecc: ad be 09    ... :2d9b[1]
     eor #$fe                                                          ; 2ecf: 49 fe       I.  :2d9e[1]
-    sta x_entry_table10a                                              ; 2ed1: 8d be 09    ... :2da0[1]
+    sta object_direction                                              ; 2ed1: 8d be 09    ... :2da0[1]
     jmp c2e5f                                                         ; 2ed4: 4c 5f 2e    L_. :2da3[1]
 
 c2da6
@@ -4807,7 +4807,7 @@ c2df3
     ldx player_move_direction_requested                               ; 2f24: ae c9 3a    ..: :2df3[1]
     beq c2e1b                                                         ; 2f27: f0 23       .#  :2df6[1]
     lda #$36 ; '6'                                                    ; 2f29: a9 36       .6  :2df8[1]
-    cpx x_entry_table10a                                              ; 2f2b: ec be 09    ... :2dfa[1]
+    cpx object_direction                                              ; 2f2b: ec be 09    ... :2dfa[1]
     bne c2e0f                                                         ; 2f2e: d0 10       ..  :2dfd[1]
     lda #$29 ; ')'                                                    ; 2f30: a9 29       .)  :2dff[1]
     ldx jump_requested                                                ; 2f32: ae c7 3a    ..: :2e01[1]
@@ -4855,7 +4855,7 @@ c2e4c
     ldy #$96                                                          ; 2f82: a0 96       ..  :2e51[1]
     sty l09df                                                         ; 2f84: 8c df 09    ... :2e53[1]
     ldy #$6c ; 'l'                                                    ; 2f87: a0 6c       .l  :2e56[1]
-    cmp x_entry_table10a                                              ; 2f89: cd be 09    ... :2e58[1]
+    cmp object_direction                                              ; 2f89: cd be 09    ... :2e58[1]
     beq c2e5f                                                         ; 2f8c: f0 02       ..  :2e5b[1]
     ldy #$79 ; 'y'                                                    ; 2f8e: a0 79       .y  :2e5d[1]
 c2e5f
@@ -4968,9 +4968,9 @@ c2fc8
     bne c300e                                                         ; 3107: d0 36       .6  :2fd6[1]
     cpy #$39 ; '9'                                                    ; 3109: c0 39       .9  :2fd8[1]
     bne c2fe7                                                         ; 310b: d0 0b       ..  :2fda[1]
-    lda x_entry_table10a                                              ; 310d: ad be 09    ... :2fdc[1]
+    lda object_direction                                              ; 310d: ad be 09    ... :2fdc[1]
     eor #$fe                                                          ; 3110: 49 fe       I.  :2fdf[1]
-    sta x_entry_table10a                                              ; 3112: 8d be 09    ... :2fe1[1]
+    sta object_direction                                              ; 3112: 8d be 09    ... :2fe1[1]
     jmp c30a5                                                         ; 3115: 4c a5 30    L.0 :2fe4[1]
 
 c2fe7
@@ -4986,7 +4986,7 @@ c2fe7
     cpy #$45 ; 'E'                                                    ; 312e: c0 45       .E  :2ffd[1]
     bne c300e                                                         ; 3130: d0 0d       ..  :2fff[1]
     lda player_move_direction_requested                               ; 3132: ad c9 3a    ..: :3001[1]
-    cmp x_entry_table10a                                              ; 3135: cd be 09    ... :3004[1]
+    cmp object_direction                                              ; 3135: cd be 09    ... :3004[1]
     bne c3023                                                         ; 3138: d0 1a       ..  :3007[1]
     ldy #$58 ; 'X'                                                    ; 313a: a0 58       .X  :3009[1]
     sty l09df                                                         ; 313c: 8c df 09    ... :300b[1]
@@ -5030,7 +5030,7 @@ c3053
     ldx player_move_direction_requested                               ; 3184: ae c9 3a    ..: :3053[1]
     beq c3074                                                         ; 3187: f0 1c       ..  :3056[1]
     lda #$36 ; '6'                                                    ; 3189: a9 36       .6  :3058[1]
-    cpx x_entry_table10a                                              ; 318b: ec be 09    ... :305a[1]
+    cpx object_direction                                              ; 318b: ec be 09    ... :305a[1]
     bne c3068                                                         ; 318e: d0 09       ..  :305d[1]
     lda #$29 ; ')'                                                    ; 3190: a9 29       .)  :305f[1]
     ldx jump_requested                                                ; 3192: ae c7 3a    ..: :3061[1]
@@ -5066,7 +5066,7 @@ c3092
     ldy #$ae                                                          ; 31c8: a0 ae       ..  :3097[1]
     sty l09df                                                         ; 31ca: 8c df 09    ... :3099[1]
     ldy #$84                                                          ; 31cd: a0 84       ..  :309c[1]
-    cmp x_entry_table10a                                              ; 31cf: cd be 09    ... :309e[1]
+    cmp object_direction                                              ; 31cf: cd be 09    ... :309e[1]
     beq c30a5                                                         ; 31d2: f0 02       ..  :30a1[1]
     ldy #$91                                                          ; 31d4: a0 91       ..  :30a3[1]
 c30a5
@@ -5135,9 +5135,9 @@ c31d8
     bne c31f4                                                         ; 3317: d0 0c       ..  :31e6[1]
     cpy #$39 ; '9'                                                    ; 3319: c0 39       .9  :31e8[1]
     bne c31f7                                                         ; 331b: d0 0b       ..  :31ea[1]
-    lda x_entry_table10a                                              ; 331d: ad be 09    ... :31ec[1]
+    lda object_direction                                              ; 331d: ad be 09    ... :31ec[1]
     eor #$fe                                                          ; 3320: 49 fe       I.  :31ef[1]
-    sta x_entry_table10a                                              ; 3322: 8d be 09    ... :31f1[1]
+    sta object_direction                                              ; 3322: 8d be 09    ... :31f1[1]
 c31f4
     jmp c3331                                                         ; 3325: 4c 31 33    L13 :31f4[1]
 
@@ -5186,7 +5186,7 @@ c3247
 c324c
     ldx #$58 ; 'X'                                                    ; 337d: a2 58       .X  :324c[1]
     lda player_move_direction_requested                               ; 337f: ad c9 3a    ..: :324e[1]
-    cmp x_entry_table10a                                              ; 3382: cd be 09    ... :3251[1]
+    cmp object_direction                                              ; 3382: cd be 09    ... :3251[1]
     beq c325f                                                         ; 3385: f0 09       ..  :3254[1]
     ldx #$49 ; 'I'                                                    ; 3387: a2 49       .I  :3256[1]
     lda l288f                                                         ; 3389: ad 8f 28    ..( :3258[1]
@@ -5263,7 +5263,7 @@ c32c8
 
 c32de
     lda #$36 ; '6'                                                    ; 340f: a9 36       .6  :32de[1]
-    cpx x_entry_table10a                                              ; 3411: ec be 09    ... :32e0[1]
+    cpx object_direction                                              ; 3411: ec be 09    ... :32e0[1]
     bne c32f5                                                         ; 3414: d0 10       ..  :32e3[1]
     lda #$29 ; ')'                                                    ; 3416: a9 29       .)  :32e5[1]
     ldx jump_requested                                                ; 3418: ae c7 3a    ..: :32e7[1]
@@ -5302,7 +5302,7 @@ c331e
     ldy #$d4                                                          ; 3454: a0 d4       ..  :3323[1]
     sty l09df                                                         ; 3456: 8c df 09    ... :3325[1]
     ldy #$aa                                                          ; 3459: a0 aa       ..  :3328[1]
-    cmp x_entry_table10a                                              ; 345b: cd be 09    ... :332a[1]
+    cmp object_direction                                              ; 345b: cd be 09    ... :332a[1]
     beq c3331                                                         ; 345e: f0 02       ..  :332d[1]
     ldy #$b7                                                          ; 3460: a0 b7       ..  :332f[1]
 c3331
@@ -5364,28 +5364,28 @@ sub_c336e
     lda #5                                                            ; 34c5: a9 05       ..  :3394[1]
     sta l3403                                                         ; 34c7: 8d 03 34    ..4 :3396[1]
 c3399
-    lda x_entry_table10a                                              ; 34ca: ad be 09    ... :3399[1]
+    lda object_direction                                              ; 34ca: ad be 09    ... :3399[1]
     bmi c33b5                                                         ; 34cd: 30 17       0.  :339c[1]
-    lda x_entry_table2a                                               ; 34cf: ad 50 09    .P. :339e[1]
+    lda object_x_low                                                  ; 34cf: ad 50 09    .P. :339e[1]
     clc                                                               ; 34d2: 18          .   :33a1[1]
     adc l3403                                                         ; 34d3: 6d 03 34    m.4 :33a2[1]
     sta address1_low                                                  ; 34d6: 85 70       .p  :33a5[1]
     and #$f8                                                          ; 34d8: 29 f8       ).  :33a7[1]
     sta sprite_screen_address_low                                     ; 34da: 85 72       .r  :33a9[1]
-    lda x_entry_table5a                                               ; 34dc: ad 66 09    .f. :33ab[1]
+    lda object_x_high                                                 ; 34dc: ad 66 09    .f. :33ab[1]
     adc #0                                                            ; 34df: 69 00       i.  :33ae[1]
     sta sprite_screen_address_high                                    ; 34e1: 85 73       .s  :33b0[1]
     jmp c33cb                                                         ; 34e3: 4c cb 33    L.3 :33b2[1]
 
 c33b5
-    lda x_entry_table2a                                               ; 34e6: ad 50 09    .P. :33b5[1]
+    lda object_x_low                                                  ; 34e6: ad 50 09    .P. :33b5[1]
     sec                                                               ; 34e9: 38          8   :33b8[1]
     sbc l3403                                                         ; 34ea: ed 03 34    ..4 :33b9[1]
     sta address1_low                                                  ; 34ed: 85 70       .p  :33bc[1]
     and #$f8                                                          ; 34ef: 29 f8       ).  :33be[1]
     ora #7                                                            ; 34f1: 09 07       ..  :33c0[1]
     sta sprite_screen_address_low                                     ; 34f3: 85 72       .r  :33c2[1]
-    lda x_entry_table5a                                               ; 34f5: ad 66 09    .f. :33c4[1]
+    lda object_x_high                                                 ; 34f5: ad 66 09    .f. :33c4[1]
     sbc #0                                                            ; 34f8: e9 00       ..  :33c7[1]
     sta sprite_screen_address_high                                    ; 34fa: 85 73       .s  :33c9[1]
 c33cb
@@ -5407,9 +5407,9 @@ c33cb
 
 c33ea
     lda sprite_screen_address_low                                     ; 351b: a5 72       .r  :33ea[1]
-    sta x_entry_table2a                                               ; 351d: 8d 50 09    .P. :33ec[1]
+    sta object_x_low                                                  ; 351d: 8d 50 09    .P. :33ec[1]
     lda sprite_screen_address_high                                    ; 3520: a5 73       .s  :33ef[1]
-    sta x_entry_table5a                                               ; 3522: 8d 66 09    .f. :33f1[1]
+    sta object_x_high                                                 ; 3522: 8d 66 09    .f. :33f1[1]
     lda #$ff                                                          ; 3525: a9 ff       ..  :33f4[1]
     bne c33fa                                                         ; 3527: d0 02       ..  :33f6[1]
 c33f8
@@ -6249,10 +6249,10 @@ c3997
     bne c39b6                                                         ; 3ad4: d0 11       ..  :39a3[1]
     ldy #$0b                                                          ; 3ad6: a0 0b       ..  :39a5[1]
     sty l09df                                                         ; 3ad8: 8c df 09    ... :39a7[1]
-    lda x_entry_table6a                                               ; 3adb: ad 7c 09    .|. :39aa[1]
+    lda object_y                                                      ; 3adb: ad 7c 09    .|. :39aa[1]
     clc                                                               ; 3ade: 18          .   :39ad[1]
     adc #2                                                            ; 3adf: 69 02       i.  :39ae[1]
-    sta x_entry_table6a                                               ; 3ae1: 8d 7c 09    .|. :39b0[1]
+    sta object_y                                                      ; 3ae1: 8d 7c 09    .|. :39b0[1]
     jmp c3a08                                                         ; 3ae4: 4c 08 3a    L.: :39b3[1]
 
 c39b6
@@ -6298,10 +6298,10 @@ c39f4
     lda #0                                                            ; 3b29: a9 00       ..  :39f8[1]
     sta l09df                                                         ; 3b2b: 8d df 09    ... :39fa[1]
     ldy #1                                                            ; 3b2e: a0 01       ..  :39fd[1]
-    lda x_entry_table6a                                               ; 3b30: ad 7c 09    .|. :39ff[1]
+    lda object_y                                                      ; 3b30: ad 7c 09    .|. :39ff[1]
     sec                                                               ; 3b33: 38          8   :3a02[1]
     sbc #2                                                            ; 3b34: e9 02       ..  :3a03[1]
-    sta x_entry_table6a                                               ; 3b36: 8d 7c 09    .|. :3a05[1]
+    sta object_y                                                      ; 3b36: 8d 7c 09    .|. :3a05[1]
 c3a08
     sty l09d4                                                         ; 3b39: 8c d4 09    ... :3a08[1]
     lda l3974,y                                                       ; 3b3c: b9 74 39    .t9 :3a0b[1]
@@ -7856,7 +7856,6 @@ pydis_end
 ;     sub_c1df4
 ;     sub_c1efa
 ;     sub_c20f7
-;     sub_c211e
 ;     sub_c2157
 ;     sub_c219a
 ;     sub_c22ae

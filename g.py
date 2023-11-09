@@ -1361,22 +1361,26 @@ comment(0x2998, "set new menu position")
 
 # sub_c2157 uses all of these tables in parallel, so presumably they share the same size - represented here by 'x'
 # TODO: These tables seem to occur in pairs (copy or cmp) so I've renamed them to use a/b names to try to tie the pairs together.
-label(0x9b3, "x_entry_table9b")
-label(0x95b, "x_entry_table2b")
-label(0x971, "x_entry_table5b")
-label(0x987, "x_entry_table6b")
-label(0x966, "x_entry_table5a")
-label(0x97c, "x_entry_table6a")
+label(0x950, "object_x_low")
+label(0x95b, "object_x_low_old")
+label(0x966, "object_x_high")
+label(0x971, "object_x_high_old")
+label(0x97c, "object_y")
+label(0x987, "object_y_old")
+
 label(0x992, "x_entry_table7a")
-label(0x99d, "x_entry_table7b")
+label(0x99d, "x_entry_table7a_old")
 label(0x9a8, "x_entry_table9a")
-label(0x9be, "x_entry_table10a")
-label(0x9c9, "x_entry_table10b")
+label(0x9b3, "x_entry_table9a_old")
+
+label(0x9be, "object_direction")
+label(0x9c9, "object_direction_old")
 label(0x38ac, "x_entry_table12") # TODO: Re-uses envelope_1, need to resolve label clash
 envelope(0x38ac, "envelope_1")
 envelope(0x38c2, "envelope_2")
 envelope(0x38d8, "envelope_3")
-label(0x950, "x_entry_table2a")
+
+label(0x211e, "has_object_x_changed_state")
 
 entry(0x3f6f, "handle_developer_mode_setup")
 # TODO: DELETE? expr(0x3f73, "game_state_flag_have_spell")
