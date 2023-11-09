@@ -657,11 +657,11 @@ something24_TODO
     sta gameplay_area_colour                                          ; 141c: 8d 60 17    .`. :12eb[1]
     jsr wait_for_vsync                                                ; 141f: 20 8c 17     .. :12ee[1]
     lda #0                                                            ; 1422: a9 00       ..  :12f1[1]
-    sta l178b                                                         ; 1424: 8d 8b 17    ... :12f3[1]
-    jsr c3a8f                                                         ; 1427: 20 8f 3a     .: :12f6[1]
+    sta vsync_counter                                                 ; 1424: 8d 8b 17    ... :12f3[1]
+    jsr check_cursor_left_right_and_space                             ; 1427: 20 8f 3a     .: :12f6[1]
     jsr sub_c3aa2                                                     ; 142a: 20 a2 3a     .: :12f9[1]
 c12fc
-    lda l178b                                                         ; 142d: ad 8b 17    ... :12fc[1]
+    lda vsync_counter                                                 ; 142d: ad 8b 17    ... :12fc[1]
     cmp #4                                                            ; 1430: c9 04       ..  :12ff[1]
     bcs c1306                                                         ; 1432: b0 03       ..  :1301[1]
     jsr wait_for_vsync                                                ; 1434: 20 8c 17     .. :1303[1]
@@ -676,11 +676,11 @@ c1306
     jmp something12_TODO                                              ; 144c: 4c c3 18    L.. :131b[1]
 
 c131e
-    lda l178b                                                         ; 144f: ad 8b 17    ... :131e[1]
+    lda vsync_counter                                                 ; 144f: ad 8b 17    ... :131e[1]
     cmp #5                                                            ; 1452: c9 05       ..  :1321[1]
     bcc c131e                                                         ; 1454: 90 f9       ..  :1323[1]
     lda #0                                                            ; 1456: a9 00       ..  :1325[1]
-    sta l178b                                                         ; 1458: 8d 8b 17    ... :1327[1]
+    sta vsync_counter                                                 ; 1458: 8d 8b 17    ... :1327[1]
     rts                                                               ; 145b: 60          `   :132a[1]
 
 some_data_shared_between_g_and_dataA
@@ -1436,17 +1436,17 @@ sub_c1728
     jsr save_or_restore_screen_under_dialog_box                       ; 1868: 20 0a 04     .. :1737[1]
     lda #$0a                                                          ; 186b: a9 0a       ..  :173a[1]
     jsr oswrch                                                        ; 186d: 20 ee ff     .. :173c[1]   ; Write character 10
-    ldx #<data_TODO                                                   ; 1870: a2 52       .R  :173f[1]
-    ldy #>data_TODO                                                   ; 1872: a0 17       ..  :1741[1]
+    ldx #<disk_error_message                                          ; 1870: a2 52       .R  :173f[1]
+    ldy #>disk_error_message                                          ; 1872: a0 17       ..  :1741[1]
     jsr print_encrypted_string_at_yx_centred                          ; 1874: 20 f3 37     .7 :1743[1]
-    jsr sub_c388d                                                     ; 1877: 20 8d 38     .8 :1746[1]
-    jsr sub_c388d                                                     ; 187a: 20 8d 38     .8 :1749[1]
+    jsr wait_one_second_then_check_keys                               ; 1877: 20 8d 38     .8 :1746[1]
+    jsr wait_one_second_then_check_keys                               ; 187a: 20 8d 38     .8 :1749[1]
 c174c
-    jsr c3a8f                                                         ; 187d: 20 8f 3a     .: :174c[1]
+    jsr check_cursor_left_right_and_space                             ; 187d: 20 8f 3a     .: :174c[1]
     lda l0002                                                         ; 1880: a5 02       ..  :174f[1]
     rts                                                               ; 1882: 60          `   :1751[1]
 
-data_TODO
+disk_error_message
     !byte $8f, $a2, $b8, $a0, $eb, $ae, $b9, $b9, $a4, $b9, $c6       ; 1883: 8f a2 b8... ... :1752[1]
 pending_toolbar_colour
     !byte 0                                                           ; 188e: 00          .   :175d[1]
@@ -1484,7 +1484,7 @@ set_toolbar_and_gameplay_area_colours
 return4
     rts                                                               ; 18bb: 60          `   :178a[1]
 
-l178b
+vsync_counter
     !byte 0                                                           ; 18bc: 00          .   :178b[1]
 
 wait_for_vsync
@@ -1547,8 +1547,8 @@ if_vsync_elapsed_then_set_toolbar_area_palette
     jsr change_palette_logical_colour_x_to_y                          ; 191f: 20 25 18     %. :17ee[1]
 skip_developer_mode_code2
     lda #0                                                            ; 1922: a9 00       ..  :17f1[1]
-    sta l1824                                                         ; 1924: 8d 24 18    .$. :17f3[1]
-    inc l178b                                                         ; 1927: ee 8b 17    ... :17f6[1]
+    sta gameplay_area_palette_set                                     ; 1924: 8d 24 18    .$. :17f3[1]
+    inc vsync_counter                                                 ; 1927: ee 8b 17    ... :17f6[1]
 return5
     rts                                                               ; 192a: 60          `   :17f9[1]
 
@@ -1556,7 +1556,7 @@ if_timer1_elapsed_then_set_main_area_palette
     lda #$40 ; '@'                                                    ; 192b: a9 40       .@  :17fa[1]
     bit system_via_ifr                                                ; 192d: 2c 4d fe    ,M. :17fc[1]   ; check for timer1 elapsed
     beq return6                                                       ; 1930: f0 22       ."  :17ff[1]
-    lda l1824                                                         ; 1932: ad 24 18    .$. :1801[1]
+    lda gameplay_area_palette_set                                     ; 1932: ad 24 18    .$. :1801[1]
     bne return6                                                       ; 1935: d0 1d       ..  :1804[1]
     ldx #1                                                            ; 1937: a2 01       ..  :1806[1]
     ldy gameplay_area_colour                                          ; 1939: ac 60 17    .`. :1808[1]
@@ -1567,13 +1567,13 @@ if_timer1_elapsed_then_set_main_area_palette
     ldy #black                                                        ; 1946: a0 00       ..  :1815[1]
     jsr change_palette_logical_colour_x_to_y                          ; 1948: 20 25 18     %. :1817[1]
 skip_developer_mode_code3
-    inc l1824                                                         ; 194b: ee 24 18    .$. :181a[1]
+    inc gameplay_area_palette_set                                     ; 194b: ee 24 18    .$. :181a[1]
     jsr update_main_keys                                              ; 194e: 20 12 3a     .: :181d[1]
     jsr update_space_etc_keys                                         ; 1951: 20 47 3a     G: :1820[1]
 return6
     rts                                                               ; 1954: 60          `   :1823[1]
 
-l1824
+gameplay_area_palette_set
     !byte 0                                                           ; 1955: 00          .   :1824[1]
 
 change_palette_logical_colour_x_to_y
@@ -4294,7 +4294,7 @@ something20_TODO
     ldy timingA_counter_high                                          ; 2b6c: ac 05 11    ... :2a3b[1]
     jsr wait_for_timer_2_using_yx                                     ; 2b6f: 20 91 17     .. :2a3e[1]
     jsr draw_toolbar                                                  ; 2b72: 20 a1 29     .) :2a41[1]
-    jsr c3a8f                                                         ; 2b75: 20 8f 3a     .: :2a44[1]
+    jsr check_cursor_left_right_and_space                             ; 2b75: 20 8f 3a     .: :2a44[1]
     lda developer_mode_sideways_ram_is_set_up_flag                    ; 2b78: a5 5b       .[  :2a47[1]
     beq skip_developer_key_escape_handling                            ; 2b7a: f0 15       ..  :2a49[1]
     lda developer_flags                                               ; 2b7c: ad 03 11    ... :2a4b[1]
@@ -5639,7 +5639,7 @@ c35d5
     bne c35e2                                                         ; 370e: d0 03       ..  :35dd[1]
     jsr prompt_user_to_insert_correct_disc                            ; 3710: 20 17 36     .6 :35df[1]
 c35e2
-    jsr c3a8f                                                         ; 3713: 20 8f 3a     .: :35e2[1]
+    jsr check_cursor_left_right_and_space                             ; 3713: 20 8f 3a     .: :35e2[1]
     lda l3497                                                         ; 3716: ad 97 34    ..4 :35e5[1]
     bne c35ed                                                         ; 3719: d0 03       ..  :35e8[1]
     jmp something_TODO                                                ; 371b: 4c 53 04    LS. :35ea[1]
@@ -6036,14 +6036,14 @@ c388a
     lda #0                                                            ; 39bb: a9 00       ..  :388a[1]
     rts                                                               ; 39bd: 60          `   :388c[1]
 
-sub_c388d
+wait_one_second_then_check_keys
     lda #0                                                            ; 39be: a9 00       ..  :388d[1]
-    sta l178b                                                         ; 39c0: 8d 8b 17    ... :388f[1]
-loop_c3892
-    lda l178b                                                         ; 39c3: ad 8b 17    ... :3892[1]
-    cmp #$32 ; '2'                                                    ; 39c6: c9 32       .2  :3895[1]
-    bcc loop_c3892                                                    ; 39c8: 90 f9       ..  :3897[1]
-    jmp c3a8f                                                         ; 39ca: 4c 8f 3a    L.: :3899[1]
+    sta vsync_counter                                                 ; 39c0: 8d 8b 17    ... :388f[1]
+wait_one_second_loop
+    lda vsync_counter                                                 ; 39c3: ad 8b 17    ... :3892[1]
+    cmp #50                                                           ; 39c6: c9 32       .2  :3895[1]
+    bcc wait_one_second_loop                                          ; 39c8: 90 f9       ..  :3897[1]
+    jmp check_cursor_left_right_and_space                             ; 39ca: 4c 8f 3a    L.: :3899[1]
 
 auxcode_filename
     !text "auxcode", $0d                                              ; 39cd: 61 75 78... aux :389c[1]
@@ -6376,7 +6376,7 @@ z_key_pressed
 l3a8e
     !byte $10                                                         ; 3bbf: 10          .   :3a8e[1]
 
-c3a8f
+check_cursor_left_right_and_space
     lda space_bar_press_pending                                       ; 3bc0: a5 2a       .*  :3a8f[1]
     sta space_flag2                                                   ; 3bc2: 8d a0 3a    ..: :3a91[1]
     lda left_right_flag                                               ; 3bc5: a5 28       .(  :3a94[1]
@@ -7693,7 +7693,6 @@ pydis_end
 ;     c3a08
 ;     c3a83
 ;     c3a88
-;     c3a8f
 ;     c3ade
 ;     l0002
 ;     l0003
@@ -7761,8 +7760,6 @@ pydis_end
 ;     l09ea
 ;     l09eb
 ;     l0b00
-;     l178b
-;     l1824
 ;     l1a0f
 ;     l1aae
 ;     l1aaf
@@ -7845,7 +7842,6 @@ pydis_end
 ;     loop_c34b2
 ;     loop_c36c7
 ;     loop_c36f9
-;     loop_c3892
 ;     loop_c39d2
 ;     loop_c3d54
 ;     loop_c3f87
@@ -7879,7 +7875,6 @@ pydis_end
 ;     sub_c336e
 ;     sub_c344b
 ;     sub_c3664
-;     sub_c388d
 ;     sub_c3aa2
 !if (' ' + '0') != $50 {
     !error "Assertion failed: ' ' + '0' == $50"
@@ -7935,14 +7930,14 @@ pydis_end
 !if (<brk_handler) != $d3 {
     !error "Assertion failed: <brk_handler == $d3"
 }
-!if (<data_TODO) != $52 {
-    !error "Assertion failed: <data_TODO == $52"
-}
 !if (<data_filename) != $72 {
     !error "Assertion failed: <data_filename == $72"
 }
 !if (<developer_flags) != $03 {
     !error "Assertion failed: <developer_flags == $03"
+}
+!if (<disk_error_message) != $52 {
+    !error "Assertion failed: <disk_error_message == $52"
 }
 !if (<enter_filename_message) != $98 {
     !error "Assertion failed: <enter_filename_message == $98"
@@ -8100,14 +8095,14 @@ pydis_end
 !if (>brk_handler) != $16 {
     !error "Assertion failed: >brk_handler == $16"
 }
-!if (>data_TODO) != $17 {
-    !error "Assertion failed: >data_TODO == $17"
-}
 !if (>data_filename) != $12 {
     !error "Assertion failed: >data_filename == $12"
 }
 !if (>developer_flags) != $11 {
     !error "Assertion failed: >developer_flags == $11"
+}
+!if (>disk_error_message) != $17 {
+    !error "Assertion failed: >disk_error_message == $17"
 }
 !if (>enter_filename_message) != $34 {
     !error "Assertion failed: >enter_filename_message == $34"

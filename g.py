@@ -516,9 +516,14 @@ entry(0x16d3, "brk_handler")
 comment(0x1b90, "TODO: This is called from level-specific machine code, e.g. see dataA.asm")
 entry(0x1b90)
 
-label(0x1752, "data_TODO")
-expr(0x1740, make_lo("data_TODO"))
-expr(0x1742, make_hi("data_TODO"))
+label(0x1752, "disk_error_message")
+expr(0x1740, make_lo("disk_error_message"))
+expr(0x1742, make_hi("disk_error_message"))
+
+label(0x388d, "wait_one_second_then_check_keys")
+label(0x3892, "wait_one_second_loop")
+decimal(0x3896)
+label(0x3a8f, "check_cursor_left_right_and_space")
 
 comment(0x1f57, "TODO: This is called from e.g. dataA")
 entry(0x1f57)
@@ -940,6 +945,9 @@ expr(0x1888, "vdu_define_character")
 label(0x1893, "define_character_ff_loop")
 entry(0x18a3, "print_italic_rts")
 # TODO: Could use a named constant for character $ff - ditto character $fe I guess
+
+label(0x178b, "vsync_counter")
+label(0x1824, "gameplay_area_palette_set")
 
 entry(0x17a0, "irq1_routine")
 entry(0x1839, "reset_game_because_escape_pressed")
