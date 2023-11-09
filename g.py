@@ -2,6 +2,7 @@ from commands import *
 import acorn
 import re
 from common import *
+from memorymanager import get_u8_runtime, get_u16_runtime, get_u16_be_runtime, RuntimeAddr
 
 acorn.bbc()
 
@@ -202,8 +203,8 @@ sprite_dict = {
     0x35: "spriteid_wizard6",
     0x36: "spriteid_wizard7",
     0x37: "spriteid_some_small_blob",        # TODO: better name
-    0x38: "spriteid_transform1",
-    0x39: "spriteid_transform2",
+    0x38: "spriteid_wizard_transform1",
+    0x39: "spriteid_wizard_transform2",
     0x3a: "spriteid_brazier",
     0x3c: "spriteid_fire1",
     0x3d: "spriteid_fire2",
@@ -1405,6 +1406,9 @@ comment(0x21d3, "return if not the player")
 comment(0x21d7, "return if current player character is not the bird?")
 comment(0x21dd, "special bird processing?")
 
+label(0x221c, "add_movement_in_direction_to_player")
+comment(0x2217, "invert A if direction is left")
+
 entry(0x3f6f, "handle_developer_mode_setup")
 # TODO: DELETE? expr(0x3f73, "game_state_flag_have_spell")
 
@@ -1414,6 +1418,27 @@ expr(0x2aea, "spriteid_icodata_password")
 expr(0x2aee, "spriteid_icodata_sound")
 expr(0x2af2, "spriteid_icodata_disc")
 
+sprite_addr = [ 0x2cd7, 0x2cda, 0x2cdd, 0x2ce0, 0x2ce3, 0x2ce6, 0x2ce9,
+                0x2cf0, 0x2cf3, 0x2cf6, 0x2cf9, 0x2cfc, 0x2cff, 0x2d2e, 0x2d03, 0x2d06, 0x2d09, 0x2d0c, 0x2d0f, 0x2d12, 0x2d16,
+                0x2d19, 0x2d1c, 0x2d1f, 0x2d23, 0x2d26, 0x2d2a, 0x2d32, 0x2d36, 0x2d39, 0x2d3c, 0x2d3f, 0x2d42, 0x2d46, 0x2d49,
+                0x2d4c, 0x2d4f, 0x2d52, 0x2d55, 0x2d59, 0x2d5c, 0x2d5f, 0x2d62, 0x2d66, 0x2d69, 0x2d6c, 0x2d6f, 0x2d73, 0x2d76,
+                0x2d79, 0x2d7c, 0x2d7f, 0x2d83]
+
+for i in sprite_addr:
+    v = get_u8_runtime(memorymanager.RuntimeAddr(i))
+    expr(i, sprite_dict[v])
+
+expr(0x22d2, sprite_dict[4])
+expr(0x22d6, sprite_dict[5])
+expr(0x22da, sprite_dict[6])
+label(0x22e0, "update_mid_transformation_local")
+label(0x3986, "update_mid_transformation")
+label(0x2d87, "update_wizard")
+label(0x22e3, "update_wizard_local")
+label(0x2fc8, "update_cat")
+label(0x22e6, "update_cat_local")
+label(0x22e9, "update_monkey_local")
+label(0x31d8, "update_monkey")
 label(0x2af6, "show_level_info_dialog_local")
 label(0x2af9, "show_password_entry_dialog_local")
 label(0x2afc, "show_load_save_dialog_local")
@@ -1429,6 +1454,51 @@ comment(0x2b52, "return if we are already this character")
 comment(0x2b43, "return if in mid-transformation")
 comment(0x2b49, "TODO")
 comment(0x2b59, "reduce number of transformations left and execute transformation")
+
+label(0x2ced, "data1")
+expr(0x2d8d, make_lo("data1"))
+expr(0x2d8f, make_hi("data1"))
+
+label(0x2f16, "data2")
+expr(0x2fce, make_lo("data2"))
+expr(0x2fd0, make_hi("data2"))
+
+label(0x30ff, "data3")
+expr(0x31de, make_lo("data3"))
+expr(0x31e0, make_hi("data3"))
+
+label(0x2ced, "other_data1")
+expr(0x2e86, make_lo("other_data1"))
+expr(0x2e88, make_hi("other_data1"))
+
+label(0x2cd7, "other_data2")
+expr(0x2ebd, make_lo("other_data2"))
+expr(0x2ebf, make_hi("other_data2"))
+
+expr(0x30aa, make_lo("data2"))
+expr(0x30ac, make_hi("data2"))
+
+label(0x2f00, "other_data4")
+expr(0x30d6, make_lo("other_data4"))
+expr(0x30d8, make_hi("other_data4"))
+
+expr(0x333b, make_lo("data3"))
+expr(0x333d, make_hi("data3"))
+
+label(0x30e6, "other_data6")
+expr(0x3367, make_lo("other_data6"))
+expr(0x3369, make_hi("other_data6"))
+
+label(0x0a6f, "something")
+expr(0x35b5, make_lo("something"))
+expr(0x35b9, make_hi("something"))
+
+label(0x09ea, "something2")
+expr(0x35bd, make_lo("something2"))
+expr(0x35bf, make_hi("something2"))
+
+decimal(0x3f43)
+expr(0x3fa2, "opcode_jmp")
 
 label(0x29, "new_menu_index")
 label(0x2e, "current_menu_index")

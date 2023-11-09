@@ -134,8 +134,6 @@ spriteid_sparkles2                              = 35
 spriteid_sparkles3                              = 36
 spriteid_sparkles4                              = 37
 spriteid_sparkles5                              = 38
-spriteid_transform1                             = 56
-spriteid_transform2                             = 57
 spriteid_wizard1                                = 48
 spriteid_wizard2                                = 49
 spriteid_wizard3                                = 50
@@ -143,6 +141,8 @@ spriteid_wizard4                                = 51
 spriteid_wizard5                                = 52
 spriteid_wizard6                                = 53
 spriteid_wizard7                                = 54
+spriteid_wizard_transform1                      = 56
+spriteid_wizard_transform2                      = 57
 vdu_bell                                        = 7
 vdu_cr                                          = 13
 vdu_define_character                            = 23
@@ -309,11 +309,12 @@ object_direction_old                        = $09c9
 l09d4                                       = $09d4
 l09d5                                       = $09d5
 l09df                                       = $09df
-l09ea                                       = $09ea
+something2                                  = $09ea
 l09eb                                       = $09eb
 current_transformations_remaining           = $09ec
 byte_per_level_table1                       = $09ef
 sixteen_entry_table1                        = $0a6f
+something                                   = $0a6f
 level_ordering_table                        = $0a7f
 string_input_buffer                         = $0a90
 eight_entry_table1                          = $0aa1
@@ -437,7 +438,7 @@ initialise_level
     sta previous_level                                                ; 1277: 85 51       .Q  :1146[1]
     stx desired_room_index                                            ; 1279: 86 30       .0  :1148[1]
     sty desired_level                                                 ; 127b: 84 31       .1  :114a[1]
-    sty l09ea                                                         ; 127d: 8c ea 09    ... :114c[1]
+    sty something2                                                    ; 127d: 8c ea 09    ... :114c[1]
 ; TODO: Why do we check desired_level against currently_loaded_level in this loop? The
 ; loop kind of makes sense as a retry if disc error sort of thing, but I don't see why
 ; we'd ever have the wrong level loaded or something like that. It still doesn't feel
@@ -3065,11 +3066,12 @@ something17_TODO
     bne c2231                                                         ; 233f: d0 21       .!  :220e[1]
     lda (address1_low),y                                              ; 2341: b1 70       .p  :2210[1]
     ldx object_direction                                              ; 2343: ae be 09    ... :2212[1]
-    bpl c221c                                                         ; 2346: 10 05       ..  :2215[1]
+    bpl add_movement_in_direction_to_player                           ; 2346: 10 05       ..  :2215[1]
+; invert A if direction is left
     eor #$ff                                                          ; 2348: 49 ff       I.  :2217[1]
     clc                                                               ; 234a: 18          .   :2219[1]
     adc #1                                                            ; 234b: 69 01       i.  :221a[1]
-c221c
+add_movement_in_direction_to_player
     ldx #0                                                            ; 234d: a2 00       ..  :221c[1]
     ora #0                                                            ; 234f: 09 00       ..  :221e[1]
     bpl c2223                                                         ; 2351: 10 01       ..  :2220[1]
@@ -3179,26 +3181,26 @@ c22c4
 
 something19_TODO
     lda current_player_character                                      ; 23fe: a5 48       .H  :22cd[1]
-    beq c22e0                                                         ; 2400: f0 0f       ..  :22cf[1]
-    cmp #4                                                            ; 2402: c9 04       ..  :22d1[1]
-    beq c22e3                                                         ; 2404: f0 0e       ..  :22d3[1]
-    cmp #5                                                            ; 2406: c9 05       ..  :22d5[1]
-    beq c22e6                                                         ; 2408: f0 0d       ..  :22d7[1]
-    cmp #6                                                            ; 240a: c9 06       ..  :22d9[1]
-    beq c22e9                                                         ; 240c: f0 0c       ..  :22db[1]
+    beq update_mid_transformation_local                               ; 2400: f0 0f       ..  :22cf[1]
+    cmp #spriteid_icodata_wizard                                      ; 2402: c9 04       ..  :22d1[1]
+    beq update_wizard_local                                           ; 2404: f0 0e       ..  :22d3[1]
+    cmp #spriteid_icodata_cat                                         ; 2406: c9 05       ..  :22d5[1]
+    beq update_cat_local                                              ; 2408: f0 0d       ..  :22d7[1]
+    cmp #spriteid_icodata_monkey                                      ; 240a: c9 06       ..  :22d9[1]
+    beq update_monkey_local                                           ; 240c: f0 0c       ..  :22db[1]
     jmp return10                                                      ; 240e: 4c ec 22    L." :22dd[1]
 
-c22e0
-    jmp c3986                                                         ; 2411: 4c 86 39    L.9 :22e0[1]
+update_mid_transformation_local
+    jmp update_mid_transformation                                     ; 2411: 4c 86 39    L.9 :22e0[1]
 
-c22e3
-    jmp c2d87                                                         ; 2414: 4c 87 2d    L.- :22e3[1]
+update_wizard_local
+    jmp update_wizard                                                 ; 2414: 4c 87 2d    L.- :22e3[1]
 
-c22e6
-    jmp c2fc8                                                         ; 2417: 4c c8 2f    L./ :22e6[1]
+update_cat_local
+    jmp update_cat                                                    ; 2417: 4c c8 2f    L./ :22e6[1]
 
-c22e9
-    jmp c31d8                                                         ; 241a: 4c d8 31    L.1 :22e9[1]
+update_monkey_local
+    jmp update_monkey                                                 ; 241a: 4c d8 31    L.1 :22e9[1]
 
 return10
     rts                                                               ; 241d: 60          `   :22ec[1]
@@ -4742,28 +4744,100 @@ decrement_current_tranformations_remaining_pla_rts
     pla                                                               ; 2e06: 68          h   :2cd5[1]
     rts                                                               ; 2e07: 60          `   :2cd6[1]
 
-    !byte $30,   2, $f8, $31,   4, $f7, $32,   2, $f8, $33,   0, $f7  ; 2e08: 30 02 f8... 0.. :2cd7[1]
-    !byte $34,   3, $f5, $36,   2, $f7, $35,   4, $f6,   0            ; 2e14: 34 03 f5... 4.. :2ce3[1]
-l2ced
-    !byte   0,   0,   0, $39,   0,   0, $39,   0,   0, $38,   0,   0  ; 2e1e: 00 00 00... ... :2ced[1]
-    !byte $38,   0,   0, $34,   0,   0, $34,   0,   0,   0, $34,   0  ; 2e2a: 38 00 00... 8.. :2cf9[1]
-    !byte   0, $34,   0,   0, $38,   0,   0, $38,   0,   0, $39,   0  ; 2e36: 00 34 00... .4. :2d05[1]
-    !byte   0, $39,   0,   0,   0, $30,   4,   0, $31,   4,   0, $32  ; 2e42: 00 39 00... .9. :2d11[1]
-    !byte   4,   0, $33,   4,   0,   0, $33,   0,   0, $33,   2,   0  ; 2e4e: 04 00 33... ..3 :2d1d[1]
-    !byte   0, $36,   4,   0,   0, $36,   0,   0,   0, $35,   0,   0  ; 2e5a: 00 36 04... .6. :2d29[1]
-    !byte   0, $34,   6, $fc, $34,   6, $fd, $34,   5, $fe, $34,   5  ; 2e66: 00 34 06... .4. :2d35[1]
-    !byte $ff, $34,   4,   0,   0, $34,   4,   1, $34,   3,   2, $34  ; 2e72: ff 34 04... .4. :2d41[1]
-    !byte   3,   3, $34,   2,   4, $34,   2,   5, $34,   1,   6,   0  ; 2e7e: 03 03 34... ..4 :2d4d[1]
-    !byte $34,   4,   2, $34,   3,   3, $34,   2,   4, $34,   1,   5  ; 2e8a: 34 04 02... 4.. :2d59[1]
-    !byte   0, $34, $fc,   2, $34, $fd,   3, $34, $fe,   4, $34, $ff  ; 2e96: 00 34 fc... .4. :2d65[1]
-    !byte   5,   0, $34,   0,   1, $34,   0,   2, $34,   0,   3, $34  ; 2ea2: 05 00 34... ..4 :2d71[1]
-    !byte   0,   4, $34,   0,   5,   0, $34,   0,   7,   0            ; 2eae: 00 04 34... ..4 :2d7d[1]
+other_data2
+    !byte spriteid_wizard1,                2,              $f8        ; 2e08: 30 02 f8    0.. :2cd7[1]
+    !byte spriteid_wizard2,                4,              $f7        ; 2e0b: 31 04 f7    1.. :2cda[1]
+    !byte spriteid_wizard3,                2,              $f8        ; 2e0e: 32 02 f8    2.. :2cdd[1]
+    !byte spriteid_wizard4,                0,              $f7        ; 2e11: 33 00 f7    3.. :2ce0[1]
+    !byte spriteid_wizard5,                3,              $f5        ; 2e14: 34 03 f5    4.. :2ce3[1]
+    !byte spriteid_wizard7,                2,              $f7        ; 2e17: 36 02 f7    6.. :2ce6[1]
+    !byte spriteid_wizard6,                4,              $f6        ; 2e1a: 35 04 f6    5.. :2ce9[1]
+    !byte                0                                            ; 2e1d: 00          .   :2cec[1]
+data1
+other_data1
+    !byte                          0,                          0      ; 2e1e: 00 00       ..  :2ced[1]
+    !byte                          0, spriteid_wizard_transform2      ; 2e20: 00 39       .9  :2cef[1]
+    !byte                          0,                          0      ; 2e22: 00 00       ..  :2cf1[1]
+    !byte spriteid_wizard_transform2,                          0      ; 2e24: 39 00       9.  :2cf3[1]
+    !byte                          0, spriteid_wizard_transform1      ; 2e26: 00 38       .8  :2cf5[1]
+    !byte                          0,                          0      ; 2e28: 00 00       ..  :2cf7[1]
+    !byte spriteid_wizard_transform1,                          0      ; 2e2a: 38 00       8.  :2cf9[1]
+    !byte                          0,           spriteid_wizard5      ; 2e2c: 00 34       .4  :2cfb[1]
+    !byte                          0,                          0      ; 2e2e: 00 00       ..  :2cfd[1]
+    !byte           spriteid_wizard5,                          0      ; 2e30: 34 00       4.  :2cff[1]
+    !byte                          0,                          0      ; 2e32: 00 00       ..  :2d01[1]
+    !byte           spriteid_wizard5,                          0      ; 2e34: 34 00       4.  :2d03[1]
+    !byte                          0,           spriteid_wizard5      ; 2e36: 00 34       .4  :2d05[1]
+    !byte                          0,                          0      ; 2e38: 00 00       ..  :2d07[1]
+    !byte spriteid_wizard_transform1,                          0      ; 2e3a: 38 00       8.  :2d09[1]
+    !byte                          0, spriteid_wizard_transform1      ; 2e3c: 00 38       .8  :2d0b[1]
+    !byte                          0,                          0      ; 2e3e: 00 00       ..  :2d0d[1]
+    !byte spriteid_wizard_transform2,                          0      ; 2e40: 39 00       9.  :2d0f[1]
+    !byte                          0, spriteid_wizard_transform2      ; 2e42: 00 39       .9  :2d11[1]
+    !byte                          0,                          0      ; 2e44: 00 00       ..  :2d13[1]
+    !byte                          0,           spriteid_wizard1      ; 2e46: 00 30       .0  :2d15[1]
+    !byte                          4,                          0      ; 2e48: 04 00       ..  :2d17[1]
+    !byte           spriteid_wizard2,                          4      ; 2e4a: 31 04       1.  :2d19[1]
+    !byte                          0,           spriteid_wizard3      ; 2e4c: 00 32       .2  :2d1b[1]
+    !byte                          4,                          0      ; 2e4e: 04 00       ..  :2d1d[1]
+    !byte           spriteid_wizard4,                          4      ; 2e50: 33 04       3.  :2d1f[1]
+    !byte                          0,                          0      ; 2e52: 00 00       ..  :2d21[1]
+    !byte           spriteid_wizard4,                          0      ; 2e54: 33 00       3.  :2d23[1]
+    !byte                          0,           spriteid_wizard4      ; 2e56: 00 33       .3  :2d25[1]
+    !byte                          2,                          0      ; 2e58: 02 00       ..  :2d27[1]
+    !byte                          0,           spriteid_wizard7      ; 2e5a: 00 36       .6  :2d29[1]
+    !byte                          4,                          0      ; 2e5c: 04 00       ..  :2d2b[1]
+    !byte                          0,           spriteid_wizard7      ; 2e5e: 00 36       .6  :2d2d[1]
+    !byte                          0,                          0      ; 2e60: 00 00       ..  :2d2f[1]
+    !byte                          0,           spriteid_wizard6      ; 2e62: 00 35       .5  :2d31[1]
+    !byte                          0,                          0      ; 2e64: 00 00       ..  :2d33[1]
+    !byte                          0,           spriteid_wizard5      ; 2e66: 00 34       .4  :2d35[1]
+    !byte                          6,                        $fc      ; 2e68: 06 fc       ..  :2d37[1]
+    !byte           spriteid_wizard5,                          6      ; 2e6a: 34 06       4.  :2d39[1]
+    !byte                        $fd,           spriteid_wizard5      ; 2e6c: fd 34       .4  :2d3b[1]
+    !byte                          5,                        $fe      ; 2e6e: 05 fe       ..  :2d3d[1]
+    !byte           spriteid_wizard5,                          5      ; 2e70: 34 05       4.  :2d3f[1]
+    !byte                        $ff,           spriteid_wizard5      ; 2e72: ff 34       .4  :2d41[1]
+    !byte                          4,                          0      ; 2e74: 04 00       ..  :2d43[1]
+    !byte                          0,           spriteid_wizard5      ; 2e76: 00 34       .4  :2d45[1]
+    !byte                          4,                          1      ; 2e78: 04 01       ..  :2d47[1]
+    !byte           spriteid_wizard5,                          3      ; 2e7a: 34 03       4.  :2d49[1]
+    !byte                          2,           spriteid_wizard5      ; 2e7c: 02 34       .4  :2d4b[1]
+    !byte                          3,                          3      ; 2e7e: 03 03       ..  :2d4d[1]
+    !byte           spriteid_wizard5,                          2      ; 2e80: 34 02       4.  :2d4f[1]
+    !byte                          4,           spriteid_wizard5      ; 2e82: 04 34       .4  :2d51[1]
+    !byte                          2,                          5      ; 2e84: 02 05       ..  :2d53[1]
+    !byte           spriteid_wizard5,                          1      ; 2e86: 34 01       4.  :2d55[1]
+    !byte                          6,                          0      ; 2e88: 06 00       ..  :2d57[1]
+    !byte           spriteid_wizard5,                          4      ; 2e8a: 34 04       4.  :2d59[1]
+    !byte                          2,           spriteid_wizard5      ; 2e8c: 02 34       .4  :2d5b[1]
+    !byte                          3,                          3      ; 2e8e: 03 03       ..  :2d5d[1]
+    !byte           spriteid_wizard5,                          2      ; 2e90: 34 02       4.  :2d5f[1]
+    !byte                          4,           spriteid_wizard5      ; 2e92: 04 34       .4  :2d61[1]
+    !byte                          1,                          5      ; 2e94: 01 05       ..  :2d63[1]
+    !byte                          0,           spriteid_wizard5      ; 2e96: 00 34       .4  :2d65[1]
+    !byte                        $fc,                          2      ; 2e98: fc 02       ..  :2d67[1]
+    !byte           spriteid_wizard5,                        $fd      ; 2e9a: 34 fd       4.  :2d69[1]
+    !byte                          3,           spriteid_wizard5      ; 2e9c: 03 34       .4  :2d6b[1]
+    !byte                        $fe,                          4      ; 2e9e: fe 04       ..  :2d6d[1]
+    !byte           spriteid_wizard5,                        $ff      ; 2ea0: 34 ff       4.  :2d6f[1]
+    !byte                          5,                          0      ; 2ea2: 05 00       ..  :2d71[1]
+    !byte           spriteid_wizard5,                          0      ; 2ea4: 34 00       4.  :2d73[1]
+    !byte                          1,           spriteid_wizard5      ; 2ea6: 01 34       .4  :2d75[1]
+    !byte                          0,                          2      ; 2ea8: 00 02       ..  :2d77[1]
+    !byte           spriteid_wizard5,                          0      ; 2eaa: 34 00       4.  :2d79[1]
+    !byte                          3,           spriteid_wizard5      ; 2eac: 03 34       .4  :2d7b[1]
+    !byte                          0,                          4      ; 2eae: 00 04       ..  :2d7d[1]
+    !byte           spriteid_wizard5,                          0      ; 2eb0: 34 00       4.  :2d7f[1]
+    !byte                          5,                          0      ; 2eb2: 05 00       ..  :2d81[1]
+    !byte           spriteid_wizard5,                          0      ; 2eb4: 34 00       4.  :2d83[1]
+    !byte                          7,                          0      ; 2eb6: 07 00       ..  :2d85[1]
 
-c2d87
+update_wizard
     lda #$16                                                          ; 2eb8: a9 16       ..  :2d87[1]
     sta l22ed                                                         ; 2eba: 8d ed 22    .." :2d89[1]
-    ldx #$ed                                                          ; 2ebd: a2 ed       ..  :2d8c[1]
-    ldy #$2c ; ','                                                    ; 2ebf: a0 2c       .,  :2d8e[1]
+    ldx #<data1                                                       ; 2ebd: a2 ed       ..  :2d8c[1]
+    ldy #>data1                                                       ; 2ebf: a0 2c       .,  :2d8e[1]
     lda #3                                                            ; 2ec1: a9 03       ..  :2d90[1]
     jsr sub_c22ee                                                     ; 2ec3: 20 ee 22     ." :2d92[1]
     bne c2dc0                                                         ; 2ec6: d0 29       .)  :2d95[1]
@@ -4850,7 +4924,7 @@ c2e1b
     bne c2e44                                                         ; 2f69: d0 0a       ..  :2e38[1]
     lda #0                                                            ; 2f6b: a9 00       ..  :2e3a[1]
     jsr transform                                                     ; 2f6d: 20 37 23     7# :2e3c[1]
-    jmp c2d87                                                         ; 2f70: 4c 87 2d    L.- :2e3f[1]
+    jmp update_wizard                                                 ; 2f70: 4c 87 2d    L.- :2e3f[1]
 
 c2e42
     ldy #$3d ; '='                                                    ; 2f73: a0 3d       .=  :2e42[1]
@@ -4875,7 +4949,7 @@ c2e5f
     lda l0052                                                         ; 2f98: a5 52       .R  :2e67[1]
     beq c2e82                                                         ; 2f9a: f0 17       ..  :2e69[1]
     ldy l09d4                                                         ; 2f9c: ac d4 09    ... :2e6b[1]
-    lda l2ced,y                                                       ; 2f9f: b9 ed 2c    .., :2e6e[1]
+    lda data1,y                                                       ; 2f9f: b9 ed 2c    .., :2e6e[1]
     sta object_spriteid                                               ; 2fa2: 8d a8 09    ... :2e71[1]
     jsr sub_c2eb8                                                     ; 2fa5: 20 b8 2e     .. :2e74[1]
     lda #0                                                            ; 2fa8: a9 00       ..  :2e77[1]
@@ -4884,8 +4958,8 @@ c2e5f
     sta l2eb5                                                         ; 2fb0: 8d b5 2e    ... :2e7f[1]
 c2e82
     lda l09d4                                                         ; 2fb3: ad d4 09    ... :2e82[1]
-    ldx #$ed                                                          ; 2fb6: a2 ed       ..  :2e85[1]
-    ldy #$2c ; ','                                                    ; 2fb8: a0 2c       .,  :2e87[1]
+    ldx #<other_data1                                                 ; 2fb6: a2 ed       ..  :2e85[1]
+    ldy #>other_data1                                                 ; 2fb8: a0 2c       .,  :2e87[1]
     jsr something17_TODO                                              ; 2fba: 20 00 22     ." :2e89[1]
     jsr sub_c2eb8                                                     ; 2fbd: 20 b8 2e     .. :2e8c[1]
     lda #0                                                            ; 2fc0: a9 00       ..  :2e8f[1]
@@ -4916,8 +4990,8 @@ l2eb7
 sub_c2eb8
     ldx l0052                                                         ; 2fe9: a6 52       .R  :2eb8[1]
     beq c2ee4                                                         ; 2feb: f0 28       .(  :2eba[1]
-    ldx #$d7                                                          ; 2fed: a2 d7       ..  :2ebc[1]
-    ldy #$2c ; ','                                                    ; 2fef: a0 2c       .,  :2ebe[1]
+    ldx #<other_data2                                                 ; 2fed: a2 d7       ..  :2ebc[1]
+    ldy #>other_data2                                                 ; 2fef: a0 2c       .,  :2ebe[1]
     lda #0                                                            ; 2ff1: a9 00       ..  :2ec0[1]
     jsr something18_TODO                                              ; 2ff3: 20 48 22     H" :2ec2[1]
     lda l0052                                                         ; 2ff6: a5 52       .R  :2ec5[1]
@@ -4949,30 +5023,32 @@ l2eed
 l2ef2
     !byte 0, 0, 0, 0, 0                                               ; 3023: 00 00 00... ... :2ef2[1]
 some_more_data
-    !byte $12, $13, $14, $15, $16, $17, $18, $19,   0, $0c, $f9, $f6  ; 3028: 12 13 14... ... :2ef7[1]
-    !byte $0d, $f9, $f5, $0e, $f9, $f6, $0f, $f9, $f5, $0f, $f9, $f5  ; 3034: 0d f9 f5... ... :2f03[1]
-    !byte $1c, $f9, $f5, $1a, $f9, $f6,   0,   0,   0,   0, $11,   0  ; 3040: 1c f9 f5... ... :2f0f[1]
-    !byte   0, $11,   0,   0, $10,   0,   0, $10,   0,   0, $0f,   0  ; 304c: 00 11 00... ... :2f1b[1]
-    !byte   0, $0f,   0,   0,   0, $0f,   0,   0, $0f,   0,   0, $10  ; 3058: 00 0f 00... ... :2f27[1]
-    !byte   0,   0, $10,   0,   0, $11,   0,   0, $11,   0,   0,   0  ; 3064: 00 00 10... ... :2f33[1]
-    !byte $0c,   4,   0, $0d,   4,   0, $0e,   4,   0, $0f,   4,   0  ; 3070: 0c 04 00... ... :2f3f[1]
-    !byte   0, $0f,   0,   0, $0f,   2,   0,   0, $1c,   4,   0,   0  ; 307c: 00 0f 00... ... :2f4b[1]
-    !byte $1c,   0,   0,   0, $1a,   6, $fb, $1a,   6, $fc, $1a,   5  ; 3088: 1c 00 00... ... :2f57[1]
-    !byte $fc, $1a,   5, $fd, $1a,   5, $fe, $1a,   5, $ff,   0, $1a  ; 3094: fc 1a 05... ... :2f63[1]
-    !byte   5,   0, $1a,   5,   0,   0, $0f,   5,   1, $0f,   5,   2  ; 30a0: 05 00 1a... ... :2f6f[1]
-    !byte $0f,   4,   3, $0f,   4,   4, $0f,   4,   4, $0f,   4,   5  ; 30ac: 0f 04 03... ... :2f7b[1]
-    !byte $0f,   3,   5, $0f,   3,   5, $0f,   2,   6, $0f,   2,   6  ; 30b8: 0f 03 05... ... :2f87[1]
-    !byte $0f,   1,   6, $0f,   1,   6,   0, $0f,   4,   2, $0f,   3  ; 30c4: 0f 01 06... ... :2f93[1]
-    !byte   3, $0f,   2,   4, $0f,   1,   5,   0, $0f, $fc,   2, $0f  ; 30d0: 03 0f 02... ... :2f9f[1]
-    !byte $fd,   3, $0f, $fe,   4, $0f, $ff,   5,   0, $0f,   0,   1  ; 30dc: fd 03 0f... ... :2fab[1]
-    !byte $0f,   0,   2, $0f,   0,   3, $0f,   0,   4, $0f,   0,   5  ; 30e8: 0f 00 02... ... :2fb7[1]
-    !byte   0, $0f,   0,   7,   0                                     ; 30f4: 00 0f 00... ... :2fc3[1]
+    !byte $12, $13, $14, $15, $16, $17, $18, $19,   0                 ; 3028: 12 13 14... ... :2ef7[1]
+other_data4
+    !byte $0c, $f9, $f6, $0d, $f9, $f5, $0e, $f9, $f6, $0f, $f9, $f5  ; 3031: 0c f9 f6... ... :2f00[1]
+    !byte $0f, $f9, $f5, $1c, $f9, $f5, $1a, $f9, $f6,   0            ; 303d: 0f f9 f5... ... :2f0c[1]
+data2
+    !byte   0,   0,   0, $11,   0,   0, $11,   0,   0, $10,   0,   0  ; 3047: 00 00 00... ... :2f16[1]
+    !byte $10,   0,   0, $0f,   0,   0, $0f,   0,   0,   0, $0f,   0  ; 3053: 10 00 00... ... :2f22[1]
+    !byte   0, $0f,   0,   0, $10,   0,   0, $10,   0,   0, $11,   0  ; 305f: 00 0f 00... ... :2f2e[1]
+    !byte   0, $11,   0,   0,   0, $0c,   4,   0, $0d,   4,   0, $0e  ; 306b: 00 11 00... ... :2f3a[1]
+    !byte   4,   0, $0f,   4,   0,   0, $0f,   0,   0, $0f,   2,   0  ; 3077: 04 00 0f... ... :2f46[1]
+    !byte   0, $1c,   4,   0,   0, $1c,   0,   0,   0, $1a,   6, $fb  ; 3083: 00 1c 04... ... :2f52[1]
+    !byte $1a,   6, $fc, $1a,   5, $fc, $1a,   5, $fd, $1a,   5, $fe  ; 308f: 1a 06 fc... ... :2f5e[1]
+    !byte $1a,   5, $ff,   0, $1a,   5,   0, $1a,   5,   0,   0, $0f  ; 309b: 1a 05 ff... ... :2f6a[1]
+    !byte   5,   1, $0f,   5,   2, $0f,   4,   3, $0f,   4,   4, $0f  ; 30a7: 05 01 0f... ... :2f76[1]
+    !byte   4,   4, $0f,   4,   5, $0f,   3,   5, $0f,   3,   5, $0f  ; 30b3: 04 04 0f... ... :2f82[1]
+    !byte   2,   6, $0f,   2,   6, $0f,   1,   6, $0f,   1,   6,   0  ; 30bf: 02 06 0f... ... :2f8e[1]
+    !byte $0f,   4,   2, $0f,   3,   3, $0f,   2,   4, $0f,   1,   5  ; 30cb: 0f 04 02... ... :2f9a[1]
+    !byte   0, $0f, $fc,   2, $0f, $fd,   3, $0f, $fe,   4, $0f, $ff  ; 30d7: 00 0f fc... ... :2fa6[1]
+    !byte   5,   0, $0f,   0,   1, $0f,   0,   2, $0f,   0,   3, $0f  ; 30e3: 05 00 0f... ... :2fb2[1]
+    !byte   0,   4, $0f,   0,   5,   0, $0f,   0,   7,   0            ; 30ef: 00 04 0f... ... :2fbe[1]
 
-c2fc8
+update_cat
     lda #$16                                                          ; 30f9: a9 16       ..  :2fc8[1]
     sta l22ed                                                         ; 30fb: 8d ed 22    .." :2fca[1]
-    ldx #$16                                                          ; 30fe: a2 16       ..  :2fcd[1]
-    ldy #$2f ; '/'                                                    ; 3100: a0 2f       ./  :2fcf[1]
+    ldx #<data2                                                       ; 30fe: a2 16       ..  :2fcd[1]
+    ldy #>data2                                                       ; 3100: a0 2f       ./  :2fcf[1]
     lda #3                                                            ; 3102: a9 03       ..  :2fd1[1]
     jsr sub_c22ee                                                     ; 3104: 20 ee 22     ." :2fd3[1]
     bne c300e                                                         ; 3107: d0 36       .6  :2fd6[1]
@@ -5082,8 +5158,8 @@ c3092
 c30a5
     sty l09d4                                                         ; 31d6: 8c d4 09    ... :30a5[1]
     tya                                                               ; 31d9: 98          .   :30a8[1]
-    ldx #$16                                                          ; 31da: a2 16       ..  :30a9[1]
-    ldy #$2f ; '/'                                                    ; 31dc: a0 2f       ./  :30ab[1]
+    ldx #<data2                                                       ; 31da: a2 16       ..  :30a9[1]
+    ldy #>data2                                                       ; 31dc: a0 2f       ./  :30ab[1]
     jsr something17_TODO                                              ; 31de: 20 00 22     ." :30ad[1]
     lda #0                                                            ; 31e1: a9 00       ..  :30b0[1]
     jsr sub_c25f5                                                     ; 31e3: 20 f5 25     .% :30b2[1]
@@ -5104,42 +5180,45 @@ c30ca
     bne c30d5                                                         ; 3202: d0 02       ..  :30d1[1]
     lda #$81                                                          ; 3204: a9 81       ..  :30d3[1]
 c30d5
-    ldx #0                                                            ; 3206: a2 00       ..  :30d5[1]
-    ldy #$2f ; '/'                                                    ; 3208: a0 2f       ./  :30d7[1]
+    ldx #<other_data4                                                 ; 3206: a2 00       ..  :30d5[1]
+    ldy #>other_data4                                                 ; 3208: a0 2f       ./  :30d7[1]
     jsr something18_TODO                                              ; 320a: 20 48 22     H" :30d9[1]
     rts                                                               ; 320d: 60          `   :30dc[1]
 
 some_more_data2
     !text "FGHIJKLM"                                                  ; 320e: 46 47 48... FGH :30dd[1]
-    !byte   0, $52, $f7, $f9, $4e, $f7, $fa, $4f, $f7, $f9, $50, $f7  ; 3216: 00 52 f7... .R. :30e5[1]
-    !byte $fa, $51, $f7, $f9, $51, $f7, $f9, $53, $f7, $fa, $54, $f8  ; 3222: fa 51 f7... .Q. :30f1[1]
-    !byte $fa,   0,   0,   0,   0, $45,   0,   0, $45,   0,   0, $44  ; 322e: fa 00 00... ... :30fd[1]
-    !byte   0,   0, $44,   0,   0, $51,   0,   0, $51,   0,   0,   0  ; 323a: 00 00 44... ..D :3109[1]
-    !byte $51,   0,   0, $51,   0,   0, $44,   0,   0, $44,   0,   0  ; 3246: 51 00 00... Q.. :3115[1]
-    !byte $45,   0,   0, $45,   0,   0,   0, $4e,   4,   0, $4f,   4  ; 3252: 45 00 00... E.. :3121[1]
-    !byte   0, $50,   4,   0, $51,   4,   0,   0, $51,   0,   0, $51  ; 325e: 00 50 04... .P. :312d[1]
-    !byte   2,   0,   0, $52,   4,   0,   0, $52,   0,   0,   0, $53  ; 326a: 02 00 00... ... :3139[1]
-    !byte   0,   0,   0, $53,   0,   6,   0, $53,   0, $fc,   0, $54  ; 3276: 00 00 00... ... :3145[1]
-    !byte   0, $fc, $53,   0, $fc,   0, $51,   7,   0, $51,   7,   1  ; 3282: 00 fc 53... ..S :3151[1]
-    !byte $51,   6,   1, $51,   6,   2, $51,   4,   2, $51,   4,   3  ; 328e: 51 06 01... Q.. :315d[1]
-    !byte $51,   3,   4, $51,   2,   4, $51,   2,   4, $51,   1,   5  ; 329a: 51 03 04... Q.. :3169[1]
-    !byte $51,   1,   6,   0, $51,   0, $fc, $51,   0, $fd, $51,   0  ; 32a6: 51 01 06... Q.. :3175[1]
-    !byte $fe, $51,   0, $ff,   0, $51,   6, $fc, $51,   6, $fe, $51  ; 32b2: fe 51 00... .Q. :3181[1]
-    !byte   5, $fe, $51,   5, $ff, $51,   4,   0,   0, $51,   4,   1  ; 32be: 05 fe 51... ..Q :318d[1]
-    !byte $51,   3,   2, $51,   3,   3, $51,   2,   4, $51,   2,   5  ; 32ca: 51 03 02... Q.. :3199[1]
-    !byte $51,   1,   6,   0, $51,   4,   2, $51,   3,   3, $51,   2  ; 32d6: 51 01 06... Q.. :31a5[1]
-    !byte   4, $51,   1,   5,   0, $51, $fc,   2, $51, $fd,   3, $51  ; 32e2: 04 51 01... .Q. :31b1[1]
-    !byte $fe,   4, $51, $ff,   5,   0, $51,   0,   1, $51,   0,   2  ; 32ee: fe 04 51... ..Q :31bd[1]
-    !byte $51,   0,   3, $51,   0,   4, $51,   0,   5,   0, $51,   0  ; 32fa: 51 00 03... Q.. :31c9[1]
-    !byte   7,   0                                                    ; 3306: 07 00       ..  :31d5[1]
+    !byte 0                                                           ; 3216: 00          .   :30e5[1]
+other_data6
+    !byte $52, $f7, $f9, $4e, $f7, $fa, $4f, $f7, $f9, $50, $f7, $fa  ; 3217: 52 f7 f9... R.. :30e6[1]
+    !byte $51, $f7, $f9, $51, $f7, $f9, $53, $f7, $fa, $54, $f8, $fa  ; 3223: 51 f7 f9... Q.. :30f2[1]
+    !byte   0                                                         ; 322f: 00          .   :30fe[1]
+data3
+    !byte   0,   0,   0, $45,   0,   0, $45,   0,   0, $44,   0,   0  ; 3230: 00 00 00... ... :30ff[1]
+    !byte $44,   0,   0, $51,   0,   0, $51,   0,   0,   0, $51,   0  ; 323c: 44 00 00... D.. :310b[1]
+    !byte   0, $51,   0,   0, $44,   0,   0, $44,   0,   0, $45,   0  ; 3248: 00 51 00... .Q. :3117[1]
+    !byte   0, $45,   0,   0,   0, $4e,   4,   0, $4f,   4,   0, $50  ; 3254: 00 45 00... .E. :3123[1]
+    !byte   4,   0, $51,   4,   0,   0, $51,   0,   0, $51,   2,   0  ; 3260: 04 00 51... ..Q :312f[1]
+    !byte   0, $52,   4,   0,   0, $52,   0,   0,   0, $53,   0,   0  ; 326c: 00 52 04... .R. :313b[1]
+    !byte   0, $53,   0,   6,   0, $53,   0, $fc,   0, $54,   0, $fc  ; 3278: 00 53 00... .S. :3147[1]
+    !byte $53,   0, $fc,   0, $51,   7,   0, $51,   7,   1, $51,   6  ; 3284: 53 00 fc... S.. :3153[1]
+    !byte   1, $51,   6,   2, $51,   4,   2, $51,   4,   3, $51,   3  ; 3290: 01 51 06... .Q. :315f[1]
+    !byte   4, $51,   2,   4, $51,   2,   4, $51,   1,   5, $51,   1  ; 329c: 04 51 02... .Q. :316b[1]
+    !byte   6,   0, $51,   0, $fc, $51,   0, $fd, $51,   0, $fe, $51  ; 32a8: 06 00 51... ..Q :3177[1]
+    !byte   0, $ff,   0, $51,   6, $fc, $51,   6, $fe, $51,   5, $fe  ; 32b4: 00 ff 00... ... :3183[1]
+    !byte $51,   5, $ff, $51,   4,   0,   0, $51,   4,   1, $51,   3  ; 32c0: 51 05 ff... Q.. :318f[1]
+    !byte   2, $51,   3,   3, $51,   2,   4, $51,   2,   5, $51,   1  ; 32cc: 02 51 03... .Q. :319b[1]
+    !byte   6,   0, $51,   4,   2, $51,   3,   3, $51,   2,   4, $51  ; 32d8: 06 00 51... ..Q :31a7[1]
+    !byte   1,   5,   0, $51, $fc,   2, $51, $fd,   3, $51, $fe,   4  ; 32e4: 01 05 00... ... :31b3[1]
+    !byte $51, $ff,   5,   0, $51,   0,   1, $51,   0,   2, $51,   0  ; 32f0: 51 ff 05... Q.. :31bf[1]
+    !byte   3, $51,   0,   4, $51,   0,   5,   0, $51,   0,   7,   0  ; 32fc: 03 51 00... .Q. :31cb[1]
 l31d7
     !byte 0                                                           ; 3308: 00          .   :31d7[1]
 
-c31d8
+update_monkey
     lda #$16                                                          ; 3309: a9 16       ..  :31d8[1]
     sta l22ed                                                         ; 330b: 8d ed 22    .." :31da[1]
-    ldx #$ff                                                          ; 330e: a2 ff       ..  :31dd[1]
-    ldy #$30 ; '0'                                                    ; 3310: a0 30       .0  :31df[1]
+    ldx #<data3                                                       ; 330e: a2 ff       ..  :31dd[1]
+    ldy #>data3                                                       ; 3310: a0 30       .0  :31df[1]
     lda #3                                                            ; 3312: a9 03       ..  :31e1[1]
     jsr sub_c22ee                                                     ; 3314: 20 ee 22     ." :31e3[1]
     bne c31f4                                                         ; 3317: d0 0c       ..  :31e6[1]
@@ -5320,8 +5399,8 @@ c3331
     sta l31d7                                                         ; 3464: 8d d7 31    ..1 :3333[1]
     sty l09d4                                                         ; 3467: 8c d4 09    ... :3336[1]
     tya                                                               ; 346a: 98          .   :3339[1]
-    ldx #$ff                                                          ; 346b: a2 ff       ..  :333a[1]
-    ldy #$30 ; '0'                                                    ; 346d: a0 30       .0  :333c[1]
+    ldx #<data3                                                       ; 346b: a2 ff       ..  :333a[1]
+    ldy #>data3                                                       ; 346d: a0 30       .0  :333c[1]
     jsr something17_TODO                                              ; 346f: 20 00 22     ." :333e[1]
     lda #0                                                            ; 3472: a9 00       ..  :3341[1]
     jsr sub_c25f5                                                     ; 3474: 20 f5 25     .% :3343[1]
@@ -5342,8 +5421,8 @@ c335b
     bne c3366                                                         ; 3493: d0 02       ..  :3362[1]
     lda #$87                                                          ; 3495: a9 87       ..  :3364[1]
 c3366
-    ldx #$e6                                                          ; 3497: a2 e6       ..  :3366[1]
-    ldy #$30 ; '0'                                                    ; 3499: a0 30       .0  :3368[1]
+    ldx #<other_data6                                                 ; 3497: a2 e6       ..  :3366[1]
+    ldy #>other_data6                                                 ; 3499: a0 30       .0  :3368[1]
     jsr something18_TODO                                              ; 349b: 20 48 22     H" :336a[1]
     rts                                                               ; 349e: 60          `   :336d[1]
 
@@ -5634,13 +5713,13 @@ c359e
     sta l007a                                                         ; 36df: 85 7a       .z  :35ae[1]
     lda #9                                                            ; 36e1: a9 09       ..  :35b0[1]
     sta sprite_screen_address_for_column_low                          ; 36e3: 85 7b       .{  :35b2[1]
-    lda #$6f ; 'o'                                                    ; 36e5: a9 6f       .o  :35b4[1]
+    lda #<something                                                   ; 36e5: a9 6f       .o  :35b4[1]
     sta address2_low                                                  ; 36e7: 85 7e       .~  :35b6[1]
-    lda #$0a                                                          ; 36e9: a9 0a       ..  :35b8[1]
+    lda #>something                                                   ; 36e9: a9 0a       ..  :35b8[1]
     sta address2_high                                                 ; 36eb: 85 7f       ..  :35ba[1]
 c35bc
-    ldx #$ea                                                          ; 36ed: a2 ea       ..  :35bc[1]
-    ldy #9                                                            ; 36ef: a0 09       ..  :35be[1]
+    ldx #<something2                                                  ; 36ed: a2 ea       ..  :35bc[1]
+    ldy #>something2                                                  ; 36ef: a0 09       ..  :35be[1]
     lda l3497                                                         ; 36f1: ad 97 34    ..4 :35c0[1]
     jsr osfile_wrapper                                                ; 36f4: 20 dc 16     .. :35c3[1]
     bne c359b                                                         ; 36f7: d0 d3       ..  :35c6[1]
@@ -5648,7 +5727,7 @@ c35bc
     cmp l09eb                                                         ; 36fc: cd eb 09    ... :35cb[1]
     beq c35d5                                                         ; 36ff: f0 05       ..  :35ce[1]
     lda #$ff                                                          ; 3701: a9 ff       ..  :35d0[1]
-    sta l09ea                                                         ; 3703: 8d ea 09    ... :35d2[1]
+    sta something2                                                    ; 3703: 8d ea 09    ... :35d2[1]
 c35d5
     lda save_drive_number                                             ; 3706: ad d7 34    ..4 :35d5[1]
     sec                                                               ; 3709: 38          8   :35d8[1]
@@ -5665,7 +5744,7 @@ c35e2
 c35ed
     lda #$ff                                                          ; 371e: a9 ff       ..  :35ed[1]
     sta desired_level                                                 ; 3720: 85 31       .1  :35ef[1]
-    lda l09ea                                                         ; 3722: ad ea 09    ... :35f1[1]
+    lda something2                                                    ; 3722: ad ea 09    ... :35f1[1]
     jmp select_level_a                                                ; 3725: 4c db 36    L.6 :35f4[1]
 
 saving_message
@@ -6240,7 +6319,7 @@ l3974
     !text '"', "#$%&"                                                 ; 3ab0: 22 23 24... "#$ :397f[1]
     !byte   0, $ff                                                    ; 3ab5: 00 ff       ..  :3984[1]
 
-c3986
+update_mid_transformation
     lda l09d4                                                         ; 3ab7: ad d4 09    ... :3986[1]
     clc                                                               ; 3aba: 18          .   :3989[1]
     adc #1                                                            ; 3abb: 69 01       i.  :398a[1]
@@ -6943,7 +7022,7 @@ skip_writing_developer_flags
     pha                                                               ; 3f3d: 48          H
     lda #>toolbar_screen_address                                      ; 3f3e: a9 58       .X
     sta screen_base_address_high                                      ; 3f40: 85 4c       .L
-    ldx #$24 ; '$'                                                    ; 3f42: a2 24       .$
+    ldx #36                                                           ; 3f42: a2 24       .$
     ldy #6                                                            ; 3f44: a0 06       ..
     lda #spriteid_icodata_box                                         ; 3f46: a9 09       ..
     jsr draw_sprite_a_at_character_xy                                 ; 3f48: 20 4c 1f     L.
@@ -7006,7 +7085,7 @@ loop_c3f87
 ; The reset intercept code is set to 'JMP $1845'
     lda #osbyte_read_write_first_byte_break_intercept                 ; 3f9f: a9 f7       ..
 ; JMP opcode
-    ldx #$4c ; 'L'                                                    ; 3fa1: a2 4c       .L
+    ldx #opcode_jmp                                                   ; 3fa1: a2 4c       .L
     ldy #0                                                            ; 3fa3: a0 00       ..
     jsr osbyte                                                        ; 3fa5: 20 f4 ff     ..            ; Write reset intercept code (opcode), value X=76
     lda #osbyte_read_write_second_byte_break_intercept                ; 3fa8: a9 f8       ..
@@ -7149,7 +7228,7 @@ loop_c0ac6
     inx                                                               ; 409a: e8          .   :0ac9[5]
     cpx #$80                                                          ; 409b: e0 80       ..  :0aca[5]
     bcc loop_c0ac6                                                    ; 409d: 90 f8       ..  :0acc[5]
-    eor l09ea                                                         ; 409f: 4d ea 09    M.. :0ace[5]
+    eor something2                                                    ; 409f: 4d ea 09    M.. :0ace[5]
     eor #$ff                                                          ; 40a2: 49 ff       I.  :0ad1[5]
     rts                                                               ; 40a4: 60          `   :0ad3[5]
 
@@ -7529,7 +7608,6 @@ pydis_end
 ;     c20be
 ;     c2155
 ;     c21ef
-;     c221c
 ;     c2223
 ;     c2231
 ;     c2239
@@ -7539,10 +7617,6 @@ pydis_end
 ;     c229f
 ;     c22bb
 ;     c22c4
-;     c22e0
-;     c22e3
-;     c22e6
-;     c22e9
 ;     c22fe
 ;     c2309
 ;     c2325
@@ -7592,7 +7666,6 @@ pydis_end
 ;     c2b2e
 ;     c2c35
 ;     c2c3d
-;     c2d87
 ;     c2da6
 ;     c2dc0
 ;     c2dc3
@@ -7609,7 +7682,6 @@ pydis_end
 ;     c2eb1
 ;     c2ed7
 ;     c2ee4
-;     c2fc8
 ;     c2fe7
 ;     c300e
 ;     c3011
@@ -7625,7 +7697,6 @@ pydis_end
 ;     c30a5
 ;     c30ca
 ;     c30d5
-;     c31d8
 ;     c31f4
 ;     c31f7
 ;     c31ff
@@ -7694,7 +7765,6 @@ pydis_end
 ;     c3867
 ;     c388a
 ;     c393c
-;     c3986
 ;     c3997
 ;     c39b6
 ;     c39c1
@@ -7766,7 +7836,6 @@ pydis_end
 ;     l09d4
 ;     l09d5
 ;     l09df
-;     l09ea
 ;     l09eb
 ;     l0b00
 ;     l1a0f
@@ -7788,7 +7857,6 @@ pydis_end
 ;     l2893
 ;     l28e1
 ;     l295b
-;     l2ced
 ;     l2eb5
 ;     l2eb6
 ;     l2eb7
@@ -7934,6 +8002,15 @@ pydis_end
 !if (<brk_handler) != $d3 {
     !error "Assertion failed: <brk_handler == $d3"
 }
+!if (<data1) != $ed {
+    !error "Assertion failed: <data1 == $ed"
+}
+!if (<data2) != $16 {
+    !error "Assertion failed: <data2 == $16"
+}
+!if (<data3) != $ff {
+    !error "Assertion failed: <data3 == $ff"
+}
 !if (<data_filename) != $72 {
     !error "Assertion failed: <data_filename == $72"
 }
@@ -7982,6 +8059,18 @@ pydis_end
 !if (<oswrch) != $ee {
     !error "Assertion failed: <oswrch == $ee"
 }
+!if (<other_data1) != $ed {
+    !error "Assertion failed: <other_data1 == $ed"
+}
+!if (<other_data2) != $d7 {
+    !error "Assertion failed: <other_data2 == $d7"
+}
+!if (<other_data4) != $00 {
+    !error "Assertion failed: <other_data4 == $00"
+}
+!if (<other_data6) != $e6 {
+    !error "Assertion failed: <other_data6 == $e6"
+}
 !if (<press_012_or_3_encrypted_string) != $f0 {
     !error "Assertion failed: <press_012_or_3_encrypted_string == $f0"
 }
@@ -8020,6 +8109,12 @@ pydis_end
 }
 !if (<some_more_data2) != $dd {
     !error "Assertion failed: <some_more_data2 == $dd"
+}
+!if (<something) != $6f {
+    !error "Assertion failed: <something == $6f"
+}
+!if (<something2) != $ea {
+    !error "Assertion failed: <something2 == $ea"
 }
 !if (<sound_data1) != $a4 {
     !error "Assertion failed: <sound_data1 == $a4"
@@ -8099,6 +8194,15 @@ pydis_end
 !if (>brk_handler) != $16 {
     !error "Assertion failed: >brk_handler == $16"
 }
+!if (>data1) != $2c {
+    !error "Assertion failed: >data1 == $2c"
+}
+!if (>data2) != $2f {
+    !error "Assertion failed: >data2 == $2f"
+}
+!if (>data3) != $30 {
+    !error "Assertion failed: >data3 == $30"
+}
 !if (>data_filename) != $12 {
     !error "Assertion failed: >data_filename == $12"
 }
@@ -8147,6 +8251,18 @@ pydis_end
 !if (>oswrch) != $ff {
     !error "Assertion failed: >oswrch == $ff"
 }
+!if (>other_data1) != $2c {
+    !error "Assertion failed: >other_data1 == $2c"
+}
+!if (>other_data2) != $2c {
+    !error "Assertion failed: >other_data2 == $2c"
+}
+!if (>other_data4) != $2f {
+    !error "Assertion failed: >other_data4 == $2f"
+}
+!if (>other_data6) != $30 {
+    !error "Assertion failed: >other_data6 == $30"
+}
 !if (>press_012_or_3_encrypted_string) != $34 {
     !error "Assertion failed: >press_012_or_3_encrypted_string == $34"
 }
@@ -8182,6 +8298,12 @@ pydis_end
 }
 !if (>some_more_data2) != $30 {
     !error "Assertion failed: >some_more_data2 == $30"
+}
+!if (>something) != $0a {
+    !error "Assertion failed: >something == $0a"
+}
+!if (>something2) != $09 {
+    !error "Assertion failed: >something2 == $09"
 }
 !if (>sound_data1) != $38 {
     !error "Assertion failed: >sound_data1 == $38"
@@ -8473,6 +8595,33 @@ pydis_end
 }
 !if (spriteid_some_small_blob) != $37 {
     !error "Assertion failed: spriteid_some_small_blob == $37"
+}
+!if (spriteid_wizard1) != $30 {
+    !error "Assertion failed: spriteid_wizard1 == $30"
+}
+!if (spriteid_wizard2) != $31 {
+    !error "Assertion failed: spriteid_wizard2 == $31"
+}
+!if (spriteid_wizard3) != $32 {
+    !error "Assertion failed: spriteid_wizard3 == $32"
+}
+!if (spriteid_wizard4) != $33 {
+    !error "Assertion failed: spriteid_wizard4 == $33"
+}
+!if (spriteid_wizard5) != $34 {
+    !error "Assertion failed: spriteid_wizard5 == $34"
+}
+!if (spriteid_wizard6) != $35 {
+    !error "Assertion failed: spriteid_wizard6 == $35"
+}
+!if (spriteid_wizard7) != $36 {
+    !error "Assertion failed: spriteid_wizard7 == $36"
+}
+!if (spriteid_wizard_transform1) != $38 {
+    !error "Assertion failed: spriteid_wizard_transform1 == $38"
+}
+!if (spriteid_wizard_transform2) != $39 {
+    !error "Assertion failed: spriteid_wizard_transform2 == $39"
 }
 !if (vdu_bell) != $07 {
     !error "Assertion failed: vdu_bell == $07"
