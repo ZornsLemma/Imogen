@@ -1093,7 +1093,7 @@ expr(0x39dd, "last_level_letter")
 expr(0x39e7, "last_level_letter")
 expr(0x39eb, "first_level_letter")
 expr(0x113b, "first_level_letter")
-expr(0x112f, "last_level_letter+1")
+char(0x112f)
 expr(0x1a6a, "first_level_letter")
 expr(0x177b, "first_level_letter")
 

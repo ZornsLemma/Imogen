@@ -404,7 +404,7 @@ c110c
     sta current_transformations_remaining+2                           ; 1257: 8d ee 09    ... :1126[1]
     ldx #0                                                            ; 125a: a2 00       ..  :1129[1]
     ldy level_ordering_table                                          ; 125c: ac 7f 0a    ... :112b[1]
-    cpy #last_level_letter+1                                          ; 125f: c0 52       .R  :112e[1]
+    cpy #'R'                                                          ; 125f: c0 52       .R  :112e[1]
     bne initialise_level                                              ; 1261: d0 0e       ..  :1130[1]
 ; choose a new starting level
     inc initial_level_number_div4                                     ; 1263: e6 5f       ._  :1132[1]
@@ -8193,9 +8193,6 @@ pydis_end
 }
 !if (last_level_letter) != $51 {
     !error "Assertion failed: last_level_letter == $51"
-}
-!if (last_level_letter+1) != $52 {
-    !error "Assertion failed: last_level_letter+1 == $52"
 }
 !if (level_ordering_table - 1) != $0a7e {
     !error "Assertion failed: level_ordering_table - 1 == $0a7e"
