@@ -227,7 +227,7 @@ l0061                                       = $61
 l0062                                       = $62
 l0063                                       = $63
 l0064                                       = $64
-l0065                                       = $65
+remember_object_index                       = $65
 l0066                                       = $66
 l0067                                       = $67
 l0068                                       = $68
@@ -3035,10 +3035,10 @@ draw_object_sprite
     cmp #4                                                            ; 230a: c9 04       ..  :21d9[1]
     bne return9                                                       ; 230c: d0 22       ."  :21db[1]
 ; special bird processing?
-    stx l0065                                                         ; 230e: 86 65       .e  :21dd[1]
+    stx remember_object_index                                         ; 230e: 86 65       .e  :21dd[1]
     ldx #0                                                            ; 2310: a2 00       ..  :21df[1]
     jsr has_object_changed_state                                      ; 2312: 20 1e 21     .! :21e1[1]
-    ldx l0065                                                         ; 2315: a6 65       .e  :21e4[1]
+    ldx remember_object_index                                         ; 2315: a6 65       .e  :21e4[1]
     ora #0                                                            ; 2317: 09 00       ..  :21e6[1]
     beq c21ef                                                         ; 2319: f0 05       ..  :21e8[1]
     lda l0116                                                         ; 231b: ad 16 01    ... :21ea[1]
@@ -7730,7 +7730,6 @@ pydis_end
 ;     l0062
 ;     l0063
 ;     l0064
-;     l0065
 ;     l0066
 ;     l0067
 ;     l0068

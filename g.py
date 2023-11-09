@@ -116,6 +116,7 @@ label(0x005a, "temp_sprite_offset")
 label(0x005b, "developer_mode_sideways_ram_is_set_up_flag")
 
 label(0x005f, "initial_level_number_div4")
+label(0x0065, "remember_object_index")
 
 label(0x0070, "address1_low")
 label(0x0071, "address1_high")
