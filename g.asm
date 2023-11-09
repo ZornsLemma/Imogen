@@ -5988,10 +5988,10 @@ print_char_target = print_char+1
     jmp oswrch                                                        ; 397e: 4c ee ff    L.. :384d[1]   ; Write character
 
 print_2xlf_cr
-    lda #$0a                                                          ; 3981: a9 0a       ..  :3850[1]
+    lda #vdu_lf                                                       ; 3981: a9 0a       ..  :3850[1]
     jsr oswrch                                                        ; 3983: 20 ee ff     .. :3852[1]   ; Write character 10
     jsr oswrch                                                        ; 3986: 20 ee ff     .. :3855[1]   ; Write character
-    lda #$0d                                                          ; 3989: a9 0d       ..  :3858[1]
+    lda #vdu_cr                                                       ; 3989: a9 0d       ..  :3858[1]
     jmp oswrch                                                        ; 398b: 4c ee ff    L.. :385a[1]   ; Write character 13
 
 turn_cursor_on
