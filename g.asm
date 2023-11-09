@@ -24,7 +24,6 @@ inkey_key_z                                     = 158
 last_level_letter                               = 81
 magenta                                         = 5
 max_filename_len                                = 7
-menu_action_file                                = 3
 menu_slot_count                                 = 17
 osbyte_close_spool_exec                         = 119
 osbyte_flush_buffer                             = 21
@@ -4315,9 +4314,9 @@ skip_developer_key_escape_handling
 c2a73
     lda space_flag2                                                   ; 2ba4: ad a0 3a    ..: :2a73[1]
     beq c2a81                                                         ; 2ba7: f0 09       ..  :2a76[1]
-    jsr sub_c2adb                                                     ; 2ba9: 20 db 2a     .* :2a78[1]
-    jsr sub_c2b37                                                     ; 2bac: 20 37 2b     7+ :2a7b[1]
-    jsr sub_c2b65                                                     ; 2baf: 20 65 2b     e+ :2a7e[1]
+    jsr check_for_one_of_first_four_menu_items_chosen                 ; 2ba9: 20 db 2a     .* :2a78[1]
+    jsr check_if_player_character_menu_item_chosen                    ; 2bac: 20 37 2b     7+ :2a7b[1]
+    jsr check_for_extra_menu_item_chosen                              ; 2baf: 20 65 2b     e+ :2a7e[1]
 c2a81
     lda new_menu_index                                                ; 2bb2: a5 29       .)  :2a81[1]
     cmp menu_index_for_first_player_character                         ; 2bb4: cd 6d 29    .m) :2a83[1]
@@ -4368,30 +4367,30 @@ c2acd
 return19
     rts                                                               ; 2c0b: 60          `   :2ada[1]
 
-sub_c2adb
+check_for_one_of_first_four_menu_items_chosen
     ldx new_menu_index                                                ; 2c0c: a6 29       .)  :2adb[1]
     cpx menu_index_for_first_player_character                         ; 2c0e: ec 6d 29    .m) :2add[1]
     bcs return20                                                      ; 2c11: b0 13       ..  :2ae0[1]
     lda desired_menu_slots,x                                          ; 2c13: bd 5c 29    .\) :2ae2[1]
-    cmp #7                                                            ; 2c16: c9 07       ..  :2ae5[1]
-    beq c2af6                                                         ; 2c18: f0 0d       ..  :2ae7[1]
-    cmp #8                                                            ; 2c1a: c9 08       ..  :2ae9[1]
-    beq c2af9                                                         ; 2c1c: f0 0c       ..  :2aeb[1]
-    cmp #2                                                            ; 2c1e: c9 02       ..  :2aed[1]
+    cmp #spriteid_icodata_info                                        ; 2c16: c9 07       ..  :2ae5[1]
+    beq show_level_info_dialog_local                                  ; 2c18: f0 0d       ..  :2ae7[1]
+    cmp #spriteid_icodata_password                                    ; 2c1a: c9 08       ..  :2ae9[1]
+    beq show_password_entry_dialog_local                              ; 2c1c: f0 0c       ..  :2aeb[1]
+    cmp #spriteid_icodata_sound                                       ; 2c1e: c9 02       ..  :2aed[1]
     beq toggle_sound_on_off                                           ; 2c20: f0 0e       ..  :2aef[1]
-    cmp #menu_action_file                                             ; 2c22: c9 03       ..  :2af1[1]
-    beq c2afc                                                         ; 2c24: f0 07       ..  :2af3[1]
+    cmp #spriteid_icodata_disc                                        ; 2c22: c9 03       ..  :2af1[1]
+    beq show_load_save_dialog_local                                   ; 2c24: f0 07       ..  :2af3[1]
 return20
     rts                                                               ; 2c26: 60          `   :2af5[1]
 
-c2af6
-    jmp c377e                                                         ; 2c27: 4c 7e 37    L~7 :2af6[1]
+show_level_info_dialog_local
+    jmp show_level_info_dialog                                        ; 2c27: 4c 7e 37    L~7 :2af6[1]
 
-c2af9
-    jmp c3636                                                         ; 2c2a: 4c 36 36    L66 :2af9[1]
+show_password_entry_dialog_local
+    jmp show_password_entry_dialog                                    ; 2c2a: 4c 36 36    L66 :2af9[1]
 
-c2afc
-    jmp c3404                                                         ; 2c2d: 4c 04 34    L.4 :2afc[1]
+show_load_save_dialog_local
+    jmp show_load_save_dialog                                         ; 2c2d: 4c 04 34    L.4 :2afc[1]
 
 toggle_sound_on_off
     jsr calculate_sprite_position_for_menu_item                       ; 2c30: 20 46 2c     F, :2aff[1]
@@ -4423,22 +4422,26 @@ c2b2e
     sta screen_base_address_high                                      ; 2c65: 85 4c       .L  :2b34[1]
     rts                                                               ; 2c67: 60          `   :2b36[1]
 
-sub_c2b37
-    ldx new_menu_index                                                ; 2c68: a6 29       .)  :2b37[1]
+check_if_player_character_menu_item_chosen
+    ldx new_menu_index                                                ; 2c68: a6 29       .)  :2b37[1]   ; check menu item is in the player character range
     cpx menu_index_for_first_player_character                         ; 2c6a: ec 6d 29    .m) :2b39[1]
     bcc return21                                                      ; 2c6d: 90 26       .&  :2b3c[1]
     cpx menu_index_for_extra_items                                    ; 2c6f: ec 6e 29    .n) :2b3e[1]
     bcs return21                                                      ; 2c72: b0 21       .!  :2b41[1]
+; return if in mid-transformation
     lda current_player_character                                      ; 2c74: a5 48       .H  :2b43[1]
     cmp new_player_character                                          ; 2c76: c5 4d       .M  :2b45[1]
     bne return21                                                      ; 2c78: d0 1b       ..  :2b47[1]
+; TODO
     lda l09df                                                         ; 2c7a: ad df 09    ... :2b49[1]
     beq return21                                                      ; 2c7d: f0 16       ..  :2b4c[1]
     lda #0                                                            ; 2c7f: a9 00       ..  :2b4e[1]
     sta l0052                                                         ; 2c81: 85 52       .R  :2b50[1]
+; return if we are already this character
     lda desired_menu_slots,x                                          ; 2c83: bd 5c 29    .\) :2b52[1]
     cmp current_player_character                                      ; 2c86: c5 48       .H  :2b55[1]
     beq return21                                                      ; 2c88: f0 0b       ..  :2b57[1]
+; reduce number of transformations left and execute transformation
     jsr decrement_current_transformations_remaining                   ; 2c8a: 20 8c 2c     ., :2b59[1]
     bcc return21                                                      ; 2c8d: 90 06       ..  :2b5c[1]   ; branch if no transformations remaining before decrement
     jsr update_displayed_transformations_remaining                    ; 2c8f: 20 31 01     1. :2b5e[1]
@@ -4446,7 +4449,7 @@ sub_c2b37
 return21
     rts                                                               ; 2c95: 60          `   :2b64[1]
 
-sub_c2b65
+check_for_extra_menu_item_chosen
     ldx new_menu_index                                                ; 2c96: a6 29       .)  :2b65[1]
     cpx menu_index_for_extra_items                                    ; 2c98: ec 6e 29    .n) :2b67[1]
     bcc return22                                                      ; 2c9b: 90 1a       ..  :2b6a[1]
@@ -4459,9 +4462,9 @@ sub_c2b65
     beq return22                                                      ; 2caa: f0 0b       ..  :2b79[1]
     lda desired_menu_slots,x                                          ; 2cac: bd 5c 29    .\) :2b7b[1]
     cmp l0052                                                         ; 2caf: c5 52       .R  :2b7e[1]
-    bne c2b84                                                         ; 2cb1: d0 02       ..  :2b80[1]
+    bne skip6                                                         ; 2cb1: d0 02       ..  :2b80[1]
     lda #0                                                            ; 2cb3: a9 00       ..  :2b82[1]
-c2b84
+skip6
     sta l0052                                                         ; 2cb5: 85 52       .R  :2b84[1]
 return22
     rts                                                               ; 2cb7: 60          `   :2b86[1]
@@ -5407,7 +5410,7 @@ c33fa
 l3403
     !byte 0                                                           ; 3534: 00          .   :3403[1]
 
-c3404
+show_load_save_dialog
     lda #$12                                                          ; 3535: a9 12       ..  :3404[1]
     sta l0409                                                         ; 3537: 8d 09 04    ... :3406[1]
     lda l0004                                                         ; 353a: a5 04       ..  :3409[1]
@@ -5440,7 +5443,7 @@ press_l_to_load_encrypted_string
 sub_c344b
     ldy new_menu_index                                                ; 357c: a4 29       .)  :344b[1]
     lda desired_menu_slots,y                                          ; 357e: b9 5c 29    .\) :344d[1]
-    cmp #menu_action_file                                             ; 3581: c9 03       ..  :3450[1]
+    cmp #spriteid_icodata_disc                                        ; 3581: c9 03       ..  :3450[1]
     bne return23                                                      ; 3583: d0 42       .B  :3452[1]
     lda l0004                                                         ; 3585: a5 04       ..  :3454[1]
     beq return23                                                      ; 3587: f0 3e       .>  :3456[1]
@@ -5663,7 +5666,7 @@ wait_for_return
     bne wait_for_return                                               ; 3764: d0 f9       ..  :3633[1]
     rts                                                               ; 3766: 60          `   :3635[1]
 
-c3636
+show_password_entry_dialog
     lda #$12                                                          ; 3767: a9 12       ..  :3636[1]
     sta l0409                                                         ; 3769: 8d 09 04    ... :3638[1]
     lda l0004                                                         ; 376c: a5 04       ..  :363b[1]
@@ -5852,7 +5855,7 @@ return26
 l377d
     !byte 0                                                           ; 38ae: 00          .   :377d[1]
 
-c377e
+show_level_info_dialog
     lda #$11                                                          ; 38af: a9 11       ..  :377e[1]
     sta l0409                                                         ; 38b1: 8d 09 04    ... :3780[1]
     lda l0004                                                         ; 38b4: a5 04       ..  :3783[1]
@@ -7553,11 +7556,7 @@ pydis_end
 ;     c2abd
 ;     c2ac4
 ;     c2acd
-;     c2af6
-;     c2af9
-;     c2afc
 ;     c2b2e
-;     c2b84
 ;     c2c35
 ;     c2c3d
 ;     c2d87
@@ -7624,7 +7623,6 @@ pydis_end
 ;     c33ea
 ;     c33f8
 ;     c33fa
-;     c3404
 ;     c340d
 ;     c3428
 ;     c3467
@@ -7641,7 +7639,6 @@ pydis_end
 ;     c35d5
 ;     c35e2
 ;     c35ed
-;     c3636
 ;     c363f
 ;     c3652
 ;     c3698
@@ -7656,7 +7653,6 @@ pydis_end
 ;     c3750
 ;     c376b
 ;     c377a
-;     c377e
 ;     c378e
 ;     c37ba
 ;     c37c3
@@ -7865,9 +7861,6 @@ pydis_end
 ;     sub_c2770
 ;     sub_c2859
 ;     sub_c286d
-;     sub_c2adb
-;     sub_c2b37
-;     sub_c2b65
 ;     sub_c2eb8
 ;     sub_c336e
 ;     sub_c344b
@@ -8294,9 +8287,6 @@ pydis_end
 }
 !if (max_filename_len) != $07 {
     !error "Assertion failed: max_filename_len == $07"
-}
-!if (menu_action_file) != $03 {
-    !error "Assertion failed: menu_action_file == $03"
 }
 !if (menu_slot_count) != $11 {
     !error "Assertion failed: menu_slot_count == $11"
