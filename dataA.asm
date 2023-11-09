@@ -5,7 +5,7 @@ spriteid_saxophone   = 211
 
 ; Memory locations
 l001d                               = $1d
-l0030                               = $30
+desired_room_index                  = $30
 desired_level                       = $31
 l003a                               = $3a
 l003b                               = $3b
@@ -57,7 +57,7 @@ gameplay_area_colour                = $1760
 use_colour_flag                     = $1765
 something13_TODO                    = $1988
 something14_TODO                    = $1a10
-l1aba                               = $1aba
+current_room_index                  = $1aba
 something51_TODO                    = $1abb
 something26_TODO                    = $1b90
 something53_TODO                    = $1db9
@@ -108,7 +108,9 @@ level_name_ptr
 ; kind.
 ; TODO: Speculation - could this be code to draw each of the screens making up the
 ; level? AFAICT saxophobia does have four screens. I assume the *number* of entries in
-; this table is stored somewhere, but I can't see it.
+; this table is stored somewhere, but I can't see it. It is also possible that because
+; entering rooms is handled by level specific code, the player always starts in room 0
+; and there is no need to have a byte of data representing the maximum room number.
 level_header_data
     !word level_thing_1_data_ptr                                      ; 3adf: 27 3b       ';
     !word level_thing_2_data_ptr                                      ; 3ae1: 3d 3d       ==
@@ -254,7 +256,7 @@ c3bec
     sta l0a6f                                                         ; 3bf4: 8d 6f 0a    .o.
 ; $3bf7 referenced 1 time by $3bf0
 c3bf7
-    lda l0030                                                         ; 3bf7: a5 30       .0
+    lda desired_room_index                                            ; 3bf7: a5 30       .0
     cmp #0                                                            ; 3bf9: c9 00       ..
     bne c3c74                                                         ; 3bfb: d0 77       .w
     ldx #$60 ; '`'                                                    ; 3bfd: a2 60       .`
@@ -325,7 +327,7 @@ c3c77
 ; $3c81 referenced 1 time by $3c7d
 c3c81
     sty l0a6f                                                         ; 3c81: 8c 6f 0a    .o.
-    lda l0030                                                         ; 3c84: a5 30       .0
+    lda desired_room_index                                            ; 3c84: a5 30       .0
     cmp #0                                                            ; 3c86: c9 00       ..
     bne c3ca8                                                         ; 3c88: d0 1e       ..
     tya                                                               ; 3c8a: 98          .
@@ -346,7 +348,7 @@ c3c91
     jsr l38f6                                                         ; 3ca5: 20 f6 38     .8
 ; $3ca8 referenced 3 times by $3c74, $3c88, $3c8f
 c3ca8
-    lda l0030                                                         ; 3ca8: a5 30       .0
+    lda desired_room_index                                            ; 3ca8: a5 30       .0
     cmp #0                                                            ; 3caa: c9 00       ..
     bne c3d20                                                         ; 3cac: d0 72       .r
     lda l0a6f                                                         ; 3cae: ad 6f 0a    .o.
@@ -535,7 +537,7 @@ sub_c3dfc
     sta l09ff                                                         ; 3e0e: 8d ff 09    ...
 ; $3e11 referenced 2 times by $3e05, $3e0a
 c3e11
-    lda l0030                                                         ; 3e11: a5 30       .0
+    lda desired_room_index                                            ; 3e11: a5 30       .0
     cmp #1                                                            ; 3e13: c9 01       ..
     bne c3e69                                                         ; 3e15: d0 52       .R
     ldx #$2c ; ','                                                    ; 3e17: a2 2c       .,
@@ -587,7 +589,7 @@ c3e6c
     ldy l09ff                                                         ; 3e6c: ac ff 09    ...
     bmi c3ed7                                                         ; 3e6f: 30 66       0f
     bne c3ec1                                                         ; 3e71: d0 4e       .N
-    lda l0030                                                         ; 3e73: a5 30       .0
+    lda desired_room_index                                            ; 3e73: a5 30       .0
     cmp #1                                                            ; 3e75: c9 01       ..
     bne c3ed7                                                         ; 3e77: d0 5e       .^
     lda l0052                                                         ; 3e79: a5 52       .R
@@ -629,7 +631,7 @@ c3ec1
     iny                                                               ; 3ec4: c8          .
     cpy #2                                                            ; 3ec5: c0 02       ..
     bcc c3ed4                                                         ; 3ec7: 90 0b       ..
-    lda l0030                                                         ; 3ec9: a5 30       .0
+    lda desired_room_index                                            ; 3ec9: a5 30       .0
     cmp #1                                                            ; 3ecb: c9 01       ..
     bne c3ed2                                                         ; 3ecd: d0 03       ..
     jsr sub_c3ef1                                                     ; 3ecf: 20 f1 3e     .>
@@ -641,7 +643,7 @@ c3ed4
     sty l09ff                                                         ; 3ed4: 8c ff 09    ...
 ; $3ed7 referenced 8 times by $3e69, $3e6f, $3e77, $3e7b, $3e80, $3e87, $3e8b, $3e97
 c3ed7
-    lda l0030                                                         ; 3ed7: a5 30       .0
+    lda desired_room_index                                            ; 3ed7: a5 30       .0
     cmp #1                                                            ; 3ed9: c9 01       ..
     bne c3eed                                                         ; 3edb: d0 10       ..
     ldy l09ff                                                         ; 3edd: ac ff 09    ...
@@ -674,7 +676,7 @@ sub_c3ef1
 ; $3f02 referenced 1 time by $3b20
 sub_c3f02
     lda #1                                                            ; 3f02: a9 01       ..
-    sta l1aba                                                         ; 3f04: 8d ba 1a    ...
+    sta current_room_index                                            ; 3f04: 8d ba 1a    ...
     lda #5                                                            ; 3f07: a9 05       ..
     ldx #$1a                                                          ; 3f09: a2 1a       ..
     ldy #$0e                                                          ; 3f0b: a0 0e       ..
@@ -689,7 +691,7 @@ sub_c3f02
     ldx #$16                                                          ; 3f22: a2 16       ..
     ldy #$44 ; 'D'                                                    ; 3f24: a0 44       .D
     jsr l395e                                                         ; 3f26: 20 5e 39     ^9
-    lda l0030                                                         ; 3f29: a5 30       .0
+    lda desired_room_index                                            ; 3f29: a5 30       .0
     cmp #1                                                            ; 3f2b: c9 01       ..
     bne c3f51                                                         ; 3f2d: d0 22       ."
     lda l0a00                                                         ; 3f2f: ad 00 0a    ...
@@ -722,7 +724,7 @@ c3f52
     jsr l38f6                                                         ; 3f5f: 20 f6 38     .8
 ; $3f62 referenced 1 time by $3f57
 c3f62
-    lda l0030                                                         ; 3f62: a5 30       .0
+    lda desired_room_index                                            ; 3f62: a5 30       .0
     cmp #1                                                            ; 3f64: c9 01       ..
     bne c3f8a                                                         ; 3f66: d0 22       ."
     lda l0a00                                                         ; 3f68: ad 00 0a    ...
@@ -863,7 +865,7 @@ some_data2
 ; $407f referenced 1 time by $3b1d
 sub_c407f
     lda #2                                                            ; 407f: a9 02       ..
-    sta l1aba                                                         ; 4081: 8d ba 1a    ...
+    sta current_room_index                                            ; 4081: 8d ba 1a    ...
     lda #3                                                            ; 4084: a9 03       ..
     ldx #3                                                            ; 4086: a2 03       ..
     ldy #$11                                                          ; 4088: a0 11       ..
@@ -894,7 +896,7 @@ c40b2
     stx l0a70                                                         ; 40be: 8e 70 0a    .p.
 ; $40c1 referenced 1 time by $40a0
 c40c1
-    lda l0030                                                         ; 40c1: a5 30       .0
+    lda desired_room_index                                            ; 40c1: a5 30       .0
     cmp #2                                                            ; 40c3: c9 02       ..
     bne c40e0                                                         ; 40c5: d0 19       ..
     ldx #$2c ; ','                                                    ; 40c7: a2 2c       .,
@@ -931,7 +933,7 @@ c40ee
     ldy l0a72                                                         ; 40f4: ac 72 0a    .r.
 ; $40f7 referenced 1 time by $40f2
 c40f7
-    lda l0030                                                         ; 40f7: a5 30       .0
+    lda desired_room_index                                            ; 40f7: a5 30       .0
     cmp #2                                                            ; 40f9: c9 02       ..
     bne c412e                                                         ; 40fb: d0 31       .1
     lda l0a72                                                         ; 40fd: ad 72 0a    .r.
@@ -965,7 +967,7 @@ c412e
     sty l0a72                                                         ; 4134: 8c 72 0a    .r.
 ; $4137 referenced 1 time by $4130
 c4137
-    lda l0030                                                         ; 4137: a5 30       .0
+    lda desired_room_index                                            ; 4137: a5 30       .0
     cmp #2                                                            ; 4139: c9 02       ..
     bne c415e                                                         ; 413b: d0 21       .!
     lda l2eb6                                                         ; 413d: ad b6 2e    ...
@@ -1050,7 +1052,7 @@ c41c1
 ; $41c9 referenced 2 times by $41ab, $41be
 c41c9
     sty l0a73                                                         ; 41c9: 8c 73 0a    .s.
-    lda l0030                                                         ; 41cc: a5 30       .0
+    lda desired_room_index                                            ; 41cc: a5 30       .0
     cmp #2                                                            ; 41ce: c9 02       ..
     bne c41d9                                                         ; 41d0: d0 07       ..
     cpy #$2b ; '+'                                                    ; 41d2: c0 2b       .+
@@ -1058,7 +1060,7 @@ c41c9
     jsr sub_c3ef1                                                     ; 41d6: 20 f1 3e     .>
 ; $41d9 referenced 4 times by $40e0, $40eb, $41d0, $41d4
 c41d9
-    lda l0030                                                         ; 41d9: a5 30       .0
+    lda desired_room_index                                            ; 41d9: a5 30       .0
     cmp #2                                                            ; 41db: c9 02       ..
     bne c424c                                                         ; 41dd: d0 6d       .m
     lda l0a72                                                         ; 41df: ad 72 0a    .r.
@@ -1210,7 +1212,7 @@ loop_c42ea
 ; $42f8 referenced 1 time by $3b23
 sub_c42f8
     lda #3                                                            ; 42f8: a9 03       ..
-    sta l1aba                                                         ; 42fa: 8d ba 1a    ...
+    sta current_room_index                                            ; 42fa: 8d ba 1a    ...
     lda #3                                                            ; 42fd: a9 03       ..
     ldx #$14                                                          ; 42ff: a2 14       ..
     ldy #$0c                                                          ; 4301: a0 0c       ..
@@ -1241,7 +1243,7 @@ c432f
     sta l0a02                                                         ; 4336: 8d 02 0a    ...
 ; $4339 referenced 3 times by $4315, $431f, $432d
 c4339
-    lda l0030                                                         ; 4339: a5 30       .0
+    lda desired_room_index                                            ; 4339: a5 30       .0
     cmp #3                                                            ; 433b: c9 03       ..
     bne c4352                                                         ; 433d: d0 13       ..
     ldx #$4a ; 'J'                                                    ; 433f: a2 4a       .J
@@ -1264,7 +1266,7 @@ c4355
 c4358
     lda l0a02                                                         ; 4358: ad 02 0a    ...
     bne c43a0                                                         ; 435b: d0 43       .C
-    lda l0030                                                         ; 435d: a5 30       .0
+    lda desired_room_index                                            ; 435d: a5 30       .0
     cmp #3                                                            ; 435f: c9 03       ..
     bne c4355                                                         ; 4361: d0 f2       ..
     lda l0a01                                                         ; 4363: ad 01 0a    ...
@@ -1310,7 +1312,7 @@ c43a0
 c43b4
     lda #0                                                            ; 43b4: a9 00       ..
     sta l0a02                                                         ; 43b6: 8d 02 0a    ...
-    lda l0030                                                         ; 43b9: a5 30       .0
+    lda desired_room_index                                            ; 43b9: a5 30       .0
     cmp #3                                                            ; 43bb: c9 03       ..
     bne c4415                                                         ; 43bd: d0 56       .V
     lda l396f                                                         ; 43bf: ad 6f 39    .o9
@@ -1326,7 +1328,7 @@ c43ce
 
 ; $43d4 referenced 1 time by $43b2
 c43d4
-    lda l0030                                                         ; 43d4: a5 30       .0
+    lda desired_room_index                                            ; 43d4: a5 30       .0
     cmp #3                                                            ; 43d6: c9 03       ..
     bne c4415                                                         ; 43d8: d0 3b       .;
     lda #$80                                                          ; 43da: a9 80       ..
@@ -1346,7 +1348,7 @@ c43e3
     jsr something54_TODO                                              ; 43f3: 20 44 1e     D.
 ; $43f6 referenced 1 time by $4352
 c43f6
-    lda l0030                                                         ; 43f6: a5 30       .0
+    lda desired_room_index                                            ; 43f6: a5 30       .0
     cmp #3                                                            ; 43f8: c9 03       ..
     bne c4415                                                         ; 43fa: d0 19       ..
     ldx l0a01                                                         ; 43fc: ae 01 0a    ...
@@ -1597,7 +1599,7 @@ pydis_end
 ;     something51_TODO:                      43
 ;     l003c:                                 39
 ;     l003d:                                 38
-;     l0030:                                 19
+;     desired_room_index:                    19
 ;     something54_TODO:                      13
 ;     desired_level:                         11
 ;     l0a72:                                 11
@@ -1639,7 +1641,7 @@ pydis_end
 ;     l09ab:                                  3
 ;     l09ac:                                  3
 ;     something13_TODO:                       3
-;     l1aba:                                  3
+;     current_room_index:                     3
 ;     draw_sprite_a_at_character_xy:          3
 ;     find_or_create_menu_slot_for_A:         3
 ;     l2eb6:                                  3
@@ -1823,7 +1825,6 @@ pydis_end
 ;     c43f6
 ;     c4415
 ;     l001d
-;     l0030
 ;     l003a
 ;     l003b
 ;     l003c
@@ -1856,7 +1857,6 @@ pydis_end
 ;     l0a71
 ;     l0a72
 ;     l0a73
-;     l1aba
 ;     l2433
 ;     l24d0
 ;     l24d1

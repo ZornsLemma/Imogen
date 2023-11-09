@@ -10,6 +10,7 @@ vdu_lf                                         = 10
 
 ; Memory locations
 l0005                               = $05
+desired_room_index                  = $30
 desired_level                       = $31
 l004c                               = $4c
 previous_level                      = $51
@@ -37,6 +38,7 @@ l1766                               = $1766
 l1966                               = $1966
 something13_TODO                    = $1988
 something14_TODO                    = $1a10
+current_room_index                  = $1aba
 something51_TODO                    = $1abb
 something26_TODO                    = $1b90
 something53_TODO                    = $1db9

@@ -182,7 +182,7 @@ space_bar_pressed                           = $2b
 z_key_pressed_pending                       = $2c
 x_key_pressed_pending                       = $2d
 current_menu_index                          = $2e
-l0030                                       = $30
+desired_room_index                          = $30
 desired_level                               = $31
 currently_loaded_level                      = $37
 l0039                                       = $39
@@ -418,11 +418,11 @@ c110c
 ; X is the element of level_header_data to invoke the code for during initialisation.
 ; TODO: But what does this 'mean'?
 initialise_level
-    lda l0030                                                         ; 1271: a5 30       .0  :1140[1]
+    lda desired_room_index                                            ; 1271: a5 30       .0  :1140[1]
     sta l0050                                                         ; 1273: 85 50       .P  :1142[1]
     lda desired_level                                                 ; 1275: a5 31       .1  :1144[1]
     sta previous_level                                                ; 1277: 85 51       .Q  :1146[1]
-    stx l0030                                                         ; 1279: 86 30       .0  :1148[1]
+    stx desired_room_index                                            ; 1279: 86 30       .0  :1148[1]
     sty desired_level                                                 ; 127b: 84 31       .1  :114a[1]
     sty l09ea                                                         ; 127d: 8c ea 09    ... :114c[1]
 ; TODO: Why do we check desired_level against currently_loaded_level in this loop? The
@@ -557,10 +557,10 @@ skip5
     tax                                                               ; 137f: aa          .   :124e[1]
     lda byte_per_level_table1,x                                       ; 1380: bd ef 09    ... :124f[1]
     and #$f8                                                          ; 1383: 29 f8       ).  :1252[1]
-    ora l0030                                                         ; 1385: 05 30       .0  :1254[1]
+    ora desired_room_index                                            ; 1385: 05 30       .0  :1254[1]
     ora #$40 ; '@'                                                    ; 1387: 09 40       .@  :1256[1]
     sta byte_per_level_table1,x                                       ; 1389: 9d ef 09    ... :1258[1]
-    lda l0030                                                         ; 138c: a5 30       .0  :125b[1]
+    lda desired_room_index                                            ; 138c: a5 30       .0  :125b[1]
     asl                                                               ; 138e: 0a          .   :125d[1]
     tay                                                               ; 138f: a8          .   :125e[1]
     ldx level_header_data,y                                           ; 1390: be df 3a    ..: :125f[1]
@@ -587,18 +587,18 @@ sub_c1278
     tax                                                               ; 13ae: aa          .   :127d[1]
     lda byte_per_level_table1,x                                       ; 13af: bd ef 09    ... :127e[1]
     and #7                                                            ; 13b2: 29 07       ).  :1281[1]
-    sta l0030                                                         ; 13b4: 85 30       .0  :1283[1]
+    sta desired_room_index                                            ; 13b4: 85 30       .0  :1283[1]
     lda byte_per_level_table1,x                                       ; 13b6: bd ef 09    ... :1285[1]
     and #$40 ; '@'                                                    ; 13b9: 29 40       )@  :1288[1]
     bne c129b                                                         ; 13bb: d0 0f       ..  :128a[1]
     lda l3add                                                         ; 13bd: ad dd 3a    ..: :128c[1]
-    sta l0030                                                         ; 13c0: 85 30       .0  :128f[1]
+    sta desired_room_index                                            ; 13c0: 85 30       .0  :128f[1]
     lda developer_flags                                               ; 13c2: ad 03 11    ... :1291[1]
     bpl c129b                                                         ; 13c5: 10 05       ..  :1294[1]
     lda c3ade                                                         ; 13c7: ad de 3a    ..: :1296[1]
-    sta l0030                                                         ; 13ca: 85 30       .0  :1299[1]
+    sta desired_room_index                                            ; 13ca: 85 30       .0  :1299[1]
 c129b
-    lda l0030                                                         ; 13cc: a5 30       .0  :129b[1]
+    lda desired_room_index                                            ; 13cc: a5 30       .0  :129b[1]
     asl                                                               ; 13ce: 0a          .   :129d[1]
     tay                                                               ; 13cf: a8          .   :129e[1]
     lda level_header_data,y                                           ; 13d0: b9 df 3a    ..: :129f[1]
@@ -1779,8 +1779,8 @@ something13_TODO
     pha                                                               ; 1abf: 48          H   :198e[1]
     lda some_data_shared_between_g_and_dataA                          ; 1ac0: ad 2b 13    .+. :198f[1]
     beq c19e5                                                         ; 1ac3: f0 51       .Q  :1992[1]
-    lda l0030                                                         ; 1ac5: a5 30       .0  :1994[1]
-    cmp l1aba                                                         ; 1ac7: cd ba 1a    ... :1996[1]
+    lda desired_room_index                                            ; 1ac5: a5 30       .0  :1994[1]
+    cmp current_room_index                                            ; 1ac7: cd ba 1a    ... :1996[1]
     bne c19e2                                                         ; 1aca: d0 47       .G  :1999[1]
     jsr sub_c1efa                                                     ; 1acc: 20 fa 1e     .. :199b[1]
     cmp #3                                                            ; 1acf: c9 03       ..  :199e[1]
@@ -1821,14 +1821,14 @@ c19e2
     jmp c19f2                                                         ; 1b13: 4c f2 19    L.. :19e2[1]
 
 c19e5
-    lda l0030                                                         ; 1b16: a5 30       .0  :19e5[1]
-    cmp l1aba                                                         ; 1b18: cd ba 1a    ... :19e7[1]
+    lda desired_room_index                                            ; 1b16: a5 30       .0  :19e5[1]
+    cmp current_room_index                                            ; 1b18: cd ba 1a    ... :19e7[1]
     bne c19f2                                                         ; 1b1b: d0 06       ..  :19ea[1]
     ldx l1a0f                                                         ; 1b1d: ae 0f 1a    ... :19ec[1]
     inc l09d4,x                                                       ; 1b20: fe d4 09    ... :19ef[1]
 c19f2
-    lda l0030                                                         ; 1b23: a5 30       .0  :19f2[1]
-    cmp l1aba                                                         ; 1b25: cd ba 1a    ... :19f4[1]
+    lda desired_room_index                                            ; 1b23: a5 30       .0  :19f2[1]
+    cmp current_room_index                                            ; 1b25: cd ba 1a    ... :19f4[1]
     bne c1a07                                                         ; 1b28: d0 0e       ..  :19f7[1]
     ldx l1a0f                                                         ; 1b2a: ae 0f 1a    ... :19f9[1]
     lda l09d4,x                                                       ; 1b2d: bd d4 09    ... :19fc[1]
@@ -1861,8 +1861,8 @@ something14_TODO
     sta l2ef2                                                         ; 1b59: 8d f2 2e    ... :1a28[1]
     lda #$21 ; '!'                                                    ; 1b5c: a9 21       .!  :1a2b[1]
     sta l2ee8                                                         ; 1b5e: 8d e8 2e    ... :1a2d[1]
-    lda l0030                                                         ; 1b61: a5 30       .0  :1a30[1]
-    cmp l1aba                                                         ; 1b63: cd ba 1a    ... :1a32[1]
+    lda desired_room_index                                            ; 1b61: a5 30       .0  :1a30[1]
+    cmp current_room_index                                            ; 1b63: cd ba 1a    ... :1a32[1]
     bne c1a9e                                                         ; 1b66: d0 67       .g  :1a35[1]
     lda some_data_shared_between_g_and_dataA                          ; 1b68: ad 2b 13    .+. :1a37[1]
     bne c1a59                                                         ; 1b6b: d0 1d       ..  :1a3a[1]
@@ -1932,7 +1932,7 @@ l1ab1
     !byte 0                                                           ; 1be2: 00          .   :1ab1[1]
 l1ab2
     !text "'()*+*)("                                                  ; 1be3: 27 28 29... '() :1ab2[1]
-l1aba
+current_room_index
     !byte 0                                                           ; 1beb: 00          .   :1aba[1]
 
 something51_TODO
@@ -7600,7 +7600,6 @@ pydis_end
 ;     l0004
 ;     l0005
 ;     l0026
-;     l0030
 ;     l0039
 ;     l003a
 ;     l003b
@@ -7671,7 +7670,6 @@ pydis_end
 ;     l1ab0
 ;     l1ab1
 ;     l1ab2
-;     l1aba
 ;     l1f6c
 ;     l22ed
 ;     l2433

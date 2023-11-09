@@ -63,3 +63,8 @@ label(0x3adf, "level_header_data")
 expr_label(0x3ae0, make_add("level_header_data", "1"))
 
 label(0x132b, "some_data_shared_between_g_and_dataA")
+
+# TODO: Speculative but feels quite plausible looking at the code - 'current' and 'desirable' is extra-speculative
+# Room index is within the level, 0-(n-1) if the level has n rooms
+label(0x1aba, "current_room_index")
+label(0x30, "desired_room_index")
