@@ -47,6 +47,14 @@ level_header_data_table_entry(0x3ae1, "level_thing_2")
 level_header_data_table_entry(0x3ae3, "level_thing_3")
 level_header_data_table_entry(0x3ae5, "level_thing_4")
 
+# TODO: Possibly wire substitute_constants() in for find_or_create_menu_slot_in_A?
+sprite_dict = {
+    0xd3: "spriteid_saxophone",
+}
+for addr, s in sprite_dict.items():
+    constant(addr, s)
+expr(0x3afe, "spriteid_saxophone")
+expr(0x3b0a, "spriteid_saxophone")
 
 go()
 

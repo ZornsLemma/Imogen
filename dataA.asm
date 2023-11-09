@@ -1,6 +1,7 @@
 ; Constants
 first_level_letter   = 65
 last_level_letter    = 81
+spriteid_saxophone   = 211
 
 ; Memory locations
 l001d                               = $1d
@@ -73,7 +74,7 @@ l24d1                               = $24d1
 l2551                               = $2551
 something59_TODO                    = $2894
 something55_TODO                    = $28e2
-something50_TODO                    = $2bbd
+find_or_create_menu_slot_for_A      = $2bbd
 l2eb6                               = $2eb6
 l2ee9                               = $2ee9
 l2eee                               = $2eee
@@ -120,15 +121,15 @@ level_init_after_load_handler
     beq c3b0e                                                         ; 3af6: f0 16       ..
     lda developer_flags                                               ; 3af8: ad 03 11    ...
     bpl developer_mode_not_active                                     ; 3afb: 10 07       ..
-    lda #$d3                                                          ; 3afd: a9 d3       ..
-    jsr something50_TODO                                              ; 3aff: 20 bd 2b     .+
+    lda #spriteid_saxophone                                           ; 3afd: a9 d3       ..
+    jsr find_or_create_menu_slot_for_A                                ; 3aff: 20 bd 2b     .+
     lda #$ff                                                          ; 3b02: a9 ff       ..
 ; $3b04 referenced 1 time by $3afb
 developer_mode_not_active
     lda l0a00                                                         ; 3b04: ad 00 0a    ...
     beq c3b0e                                                         ; 3b07: f0 05       ..
-    lda #$d3                                                          ; 3b09: a9 d3       ..
-    jsr something50_TODO                                              ; 3b0b: 20 bd 2b     .+
+    lda #spriteid_saxophone                                           ; 3b09: a9 d3       ..
+    jsr find_or_create_menu_slot_for_A                                ; 3b0b: 20 bd 2b     .+
 ; $3b0e referenced 2 times by $3af6, $3b07
 c3b0e
     lda #$86                                                          ; 3b0e: a9 86       ..
@@ -730,7 +731,7 @@ c3f62
     jsr something55_TODO                                              ; 3f76: 20 e2 28     .(
     beq c3f8a                                                         ; 3f79: f0 0f       ..
     lda #$d3                                                          ; 3f7b: a9 d3       ..
-    jsr something50_TODO                                              ; 3f7d: 20 bd 2b     .+
+    jsr find_or_create_menu_slot_for_A                                ; 3f7d: 20 bd 2b     .+
     lda #0                                                            ; 3f80: a9 00       ..
     sta l09ac                                                         ; 3f82: 8d ac 09    ...
     lda #$ff                                                          ; 3f85: a9 ff       ..
@@ -1637,7 +1638,7 @@ pydis_end
 ;     something13_TODO:                       3
 ;     l1aba:                                  3
 ;     draw_sprite_a_at_character_xy:          3
-;     something50_TODO:                       3
+;     find_or_create_menu_slot_for_A:         3
 ;     l2eb6:                                  3
 ;     l38c2:                                  3
 ;     c3ca8:                                  3
@@ -1914,4 +1915,7 @@ pydis_end
 }
 !if (second_level_handler) != $3b17 {
     !error "Assertion failed: second_level_handler == $3b17"
+}
+!if (spriteid_saxophone) != $d3 {
+    !error "Assertion failed: spriteid_saxophone == $d3"
 }

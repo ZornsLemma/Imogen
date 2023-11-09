@@ -42,7 +42,6 @@ label(0x1a10, "something14_TODO")
 label(0x12bb, "something23_TODO")
 label(0x12da, "something24_TODO")
 label(0x1b90, "something26_TODO")
-label(0x2bbd, "something50_TODO")
 label(0x1abb, "something51_TODO")
 label(0x1f57, "something52_TODO")
 label(0x1db9, "something53_TODO")
@@ -54,6 +53,9 @@ label(0x1f5d, "something58_TODO")
 label(0x2894, "something59_TODO")
 label(0x1ebb, "something60_TODO")
 label(0x23a9, "something61_TODO")
+
+label(0x2bbd, "find_or_create_menu_slot_for_A")
+
 
 label(0x1140, "initialise_level")
 

@@ -232,6 +232,7 @@ label(0x1f84, "set_sprite_pixel_position_from_character_xy")
 
 substitute_constants("sta sprite_number", 'a', sprite_dict, True)
 substitute_constants("jsr draw_sprite_a_at_character_xy", 'a', sprite_dict, True)
+#substitute_constants("jsr find_or_create_menu_slot_for_A", )
 
 label(0x137f, "reset_sprite_flags_and_exit")
 comment(0x139f, "check flags to see if we are copying to another sprite", inline=True)
@@ -923,6 +924,7 @@ entry(0x29c9, "find_valid_menu_slot_loop")
 entry(0x29d4, "new_menu_index_valid")
 constant(0x11, "menu_slot_count") # numbered 0-$10 inclusive
 expr(0x29d9, "menu_slot_count")
+expr(0x2bd1, "menu_slot_count")
 entry(0x29aa, "draw_menu_icon_loop")
 
 entry(0x2c0c, "plot_menu_icon")
@@ -1382,6 +1384,14 @@ entry(0x3872, "flush_input_buffers_and_zero_l0005")
 
 # TODO: Not probing deeper as this may be sprite-related
 entry(0x474, "stash_data_pointed_to_by_l0076_at_530_maybe")
+
+comment(0x2bbd, "TODO: address1_low and address1_high are misleading names here; these are used as independent scratch space.")
+
+
+comment(0x2bbd, "Find an existing menu slot containing A, or fill the lowest empty slot if one hasn't been found yet. (The code doesn't search the whole menu before adding; this presumably is OK in practice given how it's called.) Only slots >= l296e are considered. Return with A=0 if matching slot found or no match found and no empty slot available, A=$ff if empty slot found and filled with the entry value of A. X is the index of the slot. Flags reflect A on exit. TODO: I am not sure the 'no empty slot and no match' behaviour is terribly sensible, but it presumably never actually happens.")
+entry(0x2bc6, "find_slot_loop")
+entry(0x2bd6, "empty_slot_found")
+entry(0x2bdd, "matching_slot_found_or_no_empty_slot")
 
 go()
 

@@ -540,7 +540,7 @@ clear_sound_priorities_loop
     and #$80                                                          ; 135c: 29 80       ).  :122b[1]
     beq skip5                                                         ; 135e: f0 05       ..  :122d[1]
     lda #$21 ; '!'                                                    ; 1360: a9 21       .!  :122f[1]
-    jsr something50_TODO                                              ; 1362: 20 bd 2b     .+ :1231[1]
+    jsr find_or_create_menu_slot_for_A                                ; 1362: 20 bd 2b     .+ :1231[1]
 skip5
     lda #3                                                            ; 1365: a9 03       ..  :1234[1]
     sta l003e                                                         ; 1367: 85 3e       .>  :1236[1]
@@ -1878,7 +1878,7 @@ something14_TODO
     ora #$80                                                          ; 1b80: 09 80       ..  :1a4f[1]
     sta byte_per_level_table1,y                                       ; 1b82: 99 ef 09    ... :1a51[1]
     lda #$21 ; '!'                                                    ; 1b85: a9 21       .!  :1a54[1]
-    jsr something50_TODO                                              ; 1b87: 20 bd 2b     .+ :1a56[1]
+    jsr find_or_create_menu_slot_for_A                                ; 1b87: 20 bd 2b     .+ :1a56[1]
 c1a59
     ldx l1aae                                                         ; 1b8a: ae ae 1a    ... :1a59[1]
     lda #$c5                                                          ; 1b8d: a9 c5       ..  :1a5c[1]
@@ -4426,25 +4426,35 @@ c2bba
     lda address1_high                                                 ; 2ceb: a5 71       .q  :2bba[1]
     rts                                                               ; 2ced: 60          `   :2bbc[1]
 
-something50_TODO
+; TODO: address1_low and address1_high are misleading names here; these are used as
+; independent scratch space.
+; Find an existing menu slot containing A, or fill the lowest empty slot if one hasn't
+; been found yet. (The code doesn't search the whole menu before adding; this
+; presumably is OK in practice given how it's called.) Only slots >= l296e are
+; considered. Return with A=0 if matching slot found or no match found and no empty
+; slot available, A=$ff if empty slot found and filled with the entry value of A. X is
+; the index of the slot. Flags reflect A on exit. TODO: I am not sure the 'no empty
+; slot and no match' behaviour is terribly sensible, but it presumably never actually
+; happens.
+find_or_create_menu_slot_for_A
     sta address1_low                                                  ; 2cee: 85 70       .p  :2bbd[1]
     lda #0                                                            ; 2cf0: a9 00       ..  :2bbf[1]
     sta address1_high                                                 ; 2cf2: 85 71       .q  :2bc1[1]
     ldx l296e                                                         ; 2cf4: ae 6e 29    .n) :2bc3[1]
-loop_c2bc6
+find_slot_loop
     lda desired_menu_slots,x                                          ; 2cf7: bd 5c 29    .\) :2bc6[1]
-    beq c2bd6                                                         ; 2cfa: f0 0b       ..  :2bc9[1]
+    beq empty_slot_found                                              ; 2cfa: f0 0b       ..  :2bc9[1]
     cmp address1_low                                                  ; 2cfc: c5 70       .p  :2bcb[1]
-    beq c2bdd                                                         ; 2cfe: f0 0e       ..  :2bcd[1]
+    beq matching_slot_found_or_no_empty_slot                          ; 2cfe: f0 0e       ..  :2bcd[1]
     inx                                                               ; 2d00: e8          .   :2bcf[1]
-    cpx #$11                                                          ; 2d01: e0 11       ..  :2bd0[1]
-    bcc loop_c2bc6                                                    ; 2d03: 90 f2       ..  :2bd2[1]
-    bcs c2bdd                                                         ; 2d05: b0 07       ..  :2bd4[1]
-c2bd6
+    cpx #menu_slot_count                                              ; 2d01: e0 11       ..  :2bd0[1]
+    bcc find_slot_loop                                                ; 2d03: 90 f2       ..  :2bd2[1]
+    bcs matching_slot_found_or_no_empty_slot                          ; 2d05: b0 07       ..  :2bd4[1]
+empty_slot_found
     lda address1_low                                                  ; 2d07: a5 70       .p  :2bd6[1]
     sta desired_menu_slots,x                                          ; 2d09: 9d 5c 29    .\) :2bd8[1]
     dec address1_high                                                 ; 2d0c: c6 71       .q  :2bdb[1]
-c2bdd
+matching_slot_found_or_no_empty_slot
     lda address1_high                                                 ; 2d0e: a5 71       .q  :2bdd[1]
     rts                                                               ; 2d10: 60          `   :2bdf[1]
 
@@ -7458,8 +7468,6 @@ pydis_end
 ;     c2b2e
 ;     c2b84
 ;     c2bba
-;     c2bd6
-;     c2bdd
 ;     c2bf7
 ;     c2c09
 ;     c2c35
@@ -7741,7 +7749,6 @@ pydis_end
 ;     loop_c2a9a
 ;     loop_c2b90
 ;     loop_c2ba4
-;     loop_c2bc6
 ;     loop_c2be9
 ;     loop_c2ec9
 ;     loop_c34b2

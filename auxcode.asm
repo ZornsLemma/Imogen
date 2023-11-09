@@ -49,7 +49,7 @@ something57_TODO                    = $1f6d
 something61_TODO                    = $23a9
 something59_TODO                    = $2894
 something55_TODO                    = $28e2
-something50_TODO                    = $2bbd
+find_or_create_menu_slot_for_A      = $2bbd
 l37f3                               = $37f3
 l388d                               = $388d
 l3a8f                               = $3a8f
@@ -305,7 +305,7 @@ loop_c5625
     dey                                                               ; 562d: 88          .
     bpl loop_c5625                                                    ; 562e: 10 f5       ..
     lda #$21 ; '!'                                                    ; 5630: a9 21       .!
-    jsr something50_TODO                                              ; 5632: 20 bd 2b     .+
+    jsr find_or_create_menu_slot_for_A                                ; 5632: 20 bd 2b     .+
 c5635
     lda #1                                                            ; 5635: a9 01       ..
     jmp return1                                                       ; 5637: 4c 4e 54    LNT
