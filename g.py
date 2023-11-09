@@ -462,6 +462,10 @@ label(0x3aca, "move_left_requested")
 label(0x3acb, "move_right_requested")
 label(0x3c2c, "relocation1_loop")
 label(0x3c3a, "relocation2")
+expr(0x3c43, make_lo("developer_flags"))
+expr(0x3c47, make_hi("developer_flags"))
+expr(0x3c3b, make_lo("pydis_start"))
+expr(0x3c3f, make_hi("pydis_start"))
 label(0x3c56, "skip4")
 label(0x3c5c, "relocation2_loop")
 label(0x3c6a, "relocation3")
@@ -598,10 +602,10 @@ comment(0x3e5f, "Load sprites")
 
 blank(0x3c16)
 comment(0x3c16, "Relocation 1: Copy 512 bytes of code from &40FF to &400")
-label(0x40ff, "some_code_high_copy_TODO")
+label(0x40ff, "relocation1_high_copy_start")
 label(0x400, "wait_for_timingB_counter")
-expr(0x3c17, make_lo("some_code_high_copy_TODO"))
-expr(0x3c1b, make_hi("some_code_high_copy_TODO"))
+expr(0x3c17, make_lo("relocation1_high_copy_start"))
+expr(0x3c1b, make_hi("relocation1_high_copy_start"))
 expr(0x3c1f, make_lo("wait_for_timingB_counter"))
 expr(0x3c23, make_hi("wait_for_timingB_counter"))
 comment(0x3c28, "TODO: branch never taken?", inline=True)
@@ -644,7 +648,14 @@ entry(0x196f, "load_sprdata")
 comment(0x3e6c, "Load 'sprdata' file into memory so it ends just before screen memory at $5bc0.")
 comment(0x3e7c, "remember where sprite data is loaded")
 
-comment(0x3e82, "Load 'icodata' file into memory at icodata")
+comment(0x3e82, """
+Load 'icodata' file into memory at icodata
+
+ICODATA contains the standard set of sprites for the toolbar. These are drawn once and stay on screen permanently, so the the memory used by ICODATA is reused.
+ICODATA also holds a developer_flags byte and the level ordering details, which is copied before being reused.
+
+ICODATA is loaded at $40ff (overwriting 'block_of_code_to_live_at_0400' which has already been moved) where it is used, then overwritten.
+""")
 label(0x40ff, "icodata")
 expr(0x3e83, make_lo("icodata"))
 expr(0x3e87, make_hi("icodata"))
@@ -703,6 +714,14 @@ label(0x3ef3, "osword_7f_write_special_register_result")
 
 entry(0x3ed5, "set_track_special_register_to_a")
 entry(0x3ea1, "read_icodata_using_osword_7f")
+comment(0x3ea1, "seek track 39", inline=True)
+comment(0x3ea6, "write special register 'track' with value 127")
+comment(0x3eab, "block read three 256 byte sectors into memory at 'icodata'")
+decimal(0x3ea2)
+comment(0x3eb9, "read failed, seek track zero and try again")
+label(0x3ec1, "read_successful")
+comment(0x3ec1, "write special register 'track' with value 39")
+label(0x3f0d, "icodata_read_ok")
 
 comment(0x132c, """*************************************************************************************
 
@@ -815,7 +834,7 @@ comment(0x3fcb, """Initialise display
 4. Set the crtc registers
 """)
 entry(0x3fcb, "initialise_display")
-label(0x3fcb, "initialise_display_high_copy_start")
+label(0x3fcb, "relocation4_high_copy_start")
 comment(0x1df4, "TODO: Is this code deliberately trashing the code at initialise_display?")
 comment(0x1e80, "TODO: What's going on with the modification to initialise_display here? Is it copy protection/obfuscation or is there something else going on?")
 comment(0x1ebb, "TODO: What's going on with the modification to initialise_display here? Is it copy protection/obfuscation or is there something else going on?")
@@ -827,10 +846,12 @@ expr(0x407e, "vdu_cr")
 expr(0x4040, "vdu_set_mode")
 expr(0x403b, "vdu_printer_off")
 
+label(0x110c, "start_game")
+
 entry(0x4088, "clear_128_bytes_at_l09ef") # TODO: improve name as things become clearer
-label(0x4088, "clear_128_bytes_at_l09ef_high_copy_start")
-label(0x4088+0x48, "clear_128_bytes_at_l09ef_high_copy_end")
-expr(0x3c74, make_subtract("clear_128_bytes_at_l09ef_high_copy_end", "clear_128_bytes_at_l09ef_high_copy_start"))
+label(0x4088, "relocation3_high_copy_start")
+label(0x4088+0x48, "relocation3_high_copy_end")
+expr(0x3c74, make_subtract("relocation3_high_copy_end", "relocation3_high_copy_start"))
 
 entry(0x4094, "something6_TODO")
 comment(0x40a5, """*************************************************************************************
@@ -878,11 +899,12 @@ expr_label(0x5e, "displayed_transformations_remaining+2")
 decimal(0x149)
 # TODO: From a py8dis POV, this code feels wrong/confusing. entry() and label() behave different with how the label is placed. This works, but I am not sure it's by design. Maybe it is, it's been a while and I haven't had any coffee yet...
 entry(0x40d0, "update_displayed_transformations_remaining")
-label(0x40d0, "update_displayed_transformations_remaining_high_copy_start")
-label(0x40d0+0x2f, "update_displayed_transformations_remaining_high_copy_end")
-expr(0x3c8c, make_subtract("update_displayed_transformations_remaining_high_copy_end", "update_displayed_transformations_remaining_high_copy_start"))
+label(0x40d0, "relocation5_high_copy_start")
+label(0x40d0+0x2f, "relocation5_high_copy_end")
+expr(0x3c8c, make_subtract("relocation5_high_copy_end", "relocation5_high_copy_start"))
+blank(0x3c8f)
 expr(0x140, "vdu_goto_xy")
-expr(0x3c85, "update_displayed_transformations_remaining_high_copy_start")
+expr(0x3c85, "relocation5_high_copy_start")
 entry(0x136, "digit_loop")
 entry(0x157, "digit_unchanged")
 char(0x3d1b)
@@ -1016,15 +1038,18 @@ label(0x1845, "reset_code")
 comment(0x1103, """developer_flags
 
     bit 0: "developer keys active", ESCAPE resets or exits the game I think, if you have the right sideways RAM set up.
-    bit 1: <TODO>
-    bit 2: <TODO>
-    bit 3: <TODO>
-    bit 4-6: unused
+    bit 1: unused
+    bit 2: load ICODATA directly from track 39 on the disc, rather than as a regular load. (An option for copy protection)
+    bit 3: load game data from drive 2, not drive 0
+    bit 4: unused
+    bit 5: unused
+    bit 6: unused
     bit 7: "developer mode active", toolbar is magenta""")
 
 label(0x2ef7, "some_more_data")
 expr(0x30b6, make_lo("some_more_data"))
 expr(0x30ba, make_hi("some_more_data"))
+binary(0x3f29)
 
 label(0x30dd, "some_more_data2")
 expr(0x3347, make_lo("some_more_data2"))

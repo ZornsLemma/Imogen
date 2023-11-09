@@ -373,10 +373,13 @@ pydis_start
 ; 
 ;     bit 0: "developer keys active", ESCAPE resets or exits the game I think, if you
 ; have the right sideways RAM set up.
-;     bit 1: <TODO>
-;     bit 2: <TODO>
-;     bit 3: <TODO>
-;     bit 4-6: unused
+;     bit 1: unused
+;     bit 2: load ICODATA directly from track 39 on the disc, rather than as a regular
+; load. (An option for copy protection)
+;     bit 3: load game data from drive 2, not drive 0
+;     bit 4: unused
+;     bit 5: unused
+;     bit 6: unused
 ;     bit 7: "developer mode active", toolbar is magenta
 developer_flags
     !byte 0                                                           ; 1234: 00          .   :1103[1]
@@ -397,7 +400,7 @@ display_initialised_flag
 vertical_sync_amount_for_crtc_register
     !byte 0                                                           ; 123c: 00          .   :110b[1]
 
-c110c
+start_game
     jsr clear_128_bytes_at_l09ef                                      ; 123d: 20 b7 0a     .. :110c[1]
     lda #$ff                                                          ; 1240: a9 ff       ..  :110f[1]
     sta desired_level                                                 ; 1242: 85 31       .1  :1111[1]
@@ -5777,7 +5780,7 @@ select_level_a
     jmp initialise_level                                              ; 3821: 4c 40 11    L@. :36f0[1]
 
 c36f3
-    jmp c110c                                                         ; 3824: 4c 0c 11    L.. :36f3[1]
+    jmp start_game                                                    ; 3824: 4c 0c 11    L.. :36f3[1]
 
 c36f6
     jmp something_TODO                                                ; 3827: 4c 53 04    LS. :36f6[1]
@@ -6452,9 +6455,9 @@ execution_start
     jsr oswrch                                                        ; 3c13: 20 ee ff     ..            ; Write character 6
 
 ; Relocation 1: Copy 512 bytes of code from &40FF to &400
-    lda #<some_code_high_copy_TODO                                    ; 3c16: a9 ff       ..
+    lda #<relocation1_high_copy_start                                 ; 3c16: a9 ff       ..
     sta address1_low                                                  ; 3c18: 85 70       .p
-    lda #>some_code_high_copy_TODO                                    ; 3c1a: a9 40       .@
+    lda #>relocation1_high_copy_start                                 ; 3c1a: a9 40       .@
     sta address1_high                                                 ; 3c1c: 85 71       .q
     lda #<wait_for_timingB_counter                                    ; 3c1e: a9 00       ..
     sta sprite_screen_address_low                                     ; 3c20: 85 72       .r
@@ -6476,13 +6479,13 @@ relocation1_loop
 ; Relocation 2: Copy &2A00 bytes from &1234 to &1103. This is done more for obfuscation
 ; than any real requirement - we could have just loaded at &1103 in the first place.
 relocation2
-    lda #$34 ; '4'                                                    ; 3c3a: a9 34       .4
+    lda #<pydis_start                                                 ; 3c3a: a9 34       .4
     sta address1_low                                                  ; 3c3c: 85 70       .p
-    lda #$12                                                          ; 3c3e: a9 12       ..
+    lda #>pydis_start                                                 ; 3c3e: a9 12       ..
     sta address1_high                                                 ; 3c40: 85 71       .q
-    lda #3                                                            ; 3c42: a9 03       ..
+    lda #<developer_flags                                             ; 3c42: a9 03       ..
     sta sprite_screen_address_low                                     ; 3c44: 85 72       .r
-    lda #$11                                                          ; 3c46: a9 11       ..
+    lda #>developer_flags                                             ; 3c46: a9 11       ..
     sta sprite_screen_address_high                                    ; 3c48: 85 73       .s
     lda address1_high                                                 ; 3c4a: a5 71       .q
     cmp sprite_screen_address_high                                    ; 3c4c: c5 73       .s
@@ -6508,16 +6511,16 @@ relocation2_loop
 relocation3
     ldx #0                                                            ; 3c6a: a2 00       ..
 relocation3_loop
-    lda clear_128_bytes_at_l09ef_high_copy_start,x                    ; 3c6c: bd 88 40    ..@
+    lda relocation3_high_copy_start,x                                 ; 3c6c: bd 88 40    ..@
     sta clear_128_bytes_at_l09ef,x                                    ; 3c6f: 9d b7 0a    ...
     inx                                                               ; 3c72: e8          .
-    cpx #clear_128_bytes_at_l09ef_high_copy_end - clear_128_bytes_at_l09ef_high_copy_start; 3c73: e0 48       .H
+    cpx #relocation3_high_copy_end - relocation3_high_copy_start      ; 3c73: e0 48       .H
     bcc relocation3_loop                                              ; 3c75: 90 f5       ..
 
 ; Relocation 4: Copy $100 bytes of code from $3fcb to $0c00
     ldy #0                                                            ; 3c77: a0 00       ..
 relocation4_loop
-    lda initialise_display_high_copy_start,y                          ; 3c79: b9 cb 3f    ..?
+    lda relocation4_high_copy_start,y                                 ; 3c79: b9 cb 3f    ..?
     sta initialise_display,y                                          ; 3c7c: 99 00 0c    ...
     iny                                                               ; 3c7f: c8          .
     bne relocation4_loop                                              ; 3c80: d0 f7       ..
@@ -6525,12 +6528,13 @@ relocation4_loop
 ; Relocation 5: Copy $2f bytes of data from $40d0 to $0131
     ldy #0                                                            ; 3c82: a0 00       ..
 relocation5_loop
-    lda update_displayed_transformations_remaining_high_copy_start,y  ; 3c84: b9 d0 40    ..@
+    lda relocation5_high_copy_start,y                                 ; 3c84: b9 d0 40    ..@
     sta update_displayed_transformations_remaining,y                  ; 3c87: 99 31 01    .1.
     iny                                                               ; 3c8a: c8          .
-    cpy #update_displayed_transformations_remaining_high_copy_end - update_displayed_transformations_remaining_high_copy_start; 3c8b: c0 2f       ./
+    cpy #relocation5_high_copy_end - relocation5_high_copy_start      ; 3c8b: c0 2f       ./
     bne relocation5_loop                                              ; 3c8d: d0 f5       ..
 ; Relocation finished
+
     lda developer_flags                                               ; 3c8f: ad 03 11    ...
     and #8                                                            ; 3c92: 29 08       ).
     beq set_drive_and_directory                                       ; 3c94: f0 05       ..
@@ -6787,7 +6791,17 @@ adjust_timing_variable_loop
     pha                                                               ; 3e7e: 48          H
     lda sprdata_ptr + 1                                               ; 3e7f: a5 55       .U
     pha                                                               ; 3e81: 48          H
+; 
 ; Load 'icodata' file into memory at icodata
+; 
+; ICODATA contains the standard set of sprites for the toolbar. These are drawn once
+; and stay on screen permanently, so the the memory used by ICODATA is reused.
+; ICODATA also holds a developer_flags byte and the level ordering details, which is
+; copied before being reused.
+; 
+; ICODATA is loaded at $40ff (overwriting 'block_of_code_to_live_at_0400' which has
+; already been moved) where it is used, then overwritten.
+; 
     ldx #<icodata                                                     ; 3e82: a2 ff       ..
     stx sprdata_ptr                                                   ; 3e84: 86 54       .T
     ldy #>icodata                                                     ; 3e86: a0 40       .@
@@ -6801,27 +6815,31 @@ adjust_timing_variable_loop
     sta address1_high                                                 ; 3e97: 85 71       .q
     lda #osfile_load                                                  ; 3e99: a9 ff       ..
     jsr osfile_wrapper                                                ; 3e9b: 20 dc 16     ..
-    jmp c3f0d                                                         ; 3e9e: 4c 0d 3f    L.?
+    jmp icodata_read_ok                                               ; 3e9e: 4c 0d 3f    L.?
 
 read_icodata_using_osword_7f
-    lda #$27 ; '''                                                    ; 3ea1: a9 27       .'
+    lda #39                                                           ; 3ea1: a9 27       .'             ; seek track 39
     jsr seek_track_a                                                  ; 3ea3: 20 c9 3e     .>
+; write special register 'track' with value 127
     lda #$7f                                                          ; 3ea6: a9 7f       ..
     jsr set_track_special_register_to_a                               ; 3ea8: 20 d5 3e     .>
+; block read three 256 byte sectors into memory at 'icodata'
     lda #$7f                                                          ; 3eab: a9 7f       ..
     ldx #<(osword_7f_block_read)                                      ; 3ead: a2 f4       ..
     ldy #>(osword_7f_block_read)                                      ; 3eaf: a0 3e       .>
     jsr osword                                                        ; 3eb1: 20 f1 ff     ..            ; Single track single density FDC command (see https://beebwiki.mdfs.net/OSWORDs)
     lda osword_7f_read_result                                         ; 3eb4: ad fe 3e    ..>
-    beq c3ec1                                                         ; 3eb7: f0 08       ..
+    beq read_successful                                               ; 3eb7: f0 08       ..
+; read failed, seek track zero and try again
     lda #0                                                            ; 3eb9: a9 00       ..
     jsr seek_track_a                                                  ; 3ebb: 20 c9 3e     .>
     jmp read_icodata_using_osword_7f                                  ; 3ebe: 4c a1 3e    L.>
 
-c3ec1
+; write special register 'track' with value 39
+read_successful
     lda #$27 ; '''                                                    ; 3ec1: a9 27       .'
     jsr set_track_special_register_to_a                               ; 3ec3: 20 d5 3e     .>
-    jmp c3f0d                                                         ; 3ec6: 4c 0d 3f    L.?
+    jmp icodata_read_ok                                               ; 3ec6: 4c 0d 3f    L.?
 
 seek_track_a
     sta osword_7f_block_seek_track                                    ; 3ec9: 8d e8 3e    ..>
@@ -6878,7 +6896,7 @@ dir_dollar_command
     !text "DIR $"                                                     ; 3f07: 44 49 52... DIR
     !byte $0d                                                         ; 3f0c: 0d          .
 
-c3f0d
+icodata_read_ok
     lda #0                                                            ; 3f0d: a9 00       ..             ; Get the address of the first 'sprite' which is actually level ordering data
     jsr get_address_of_sprite_a                                       ; 3f0f: 20 2c 13     ,.
     stx address1_low                                                  ; 3f12: 86 70       .p
@@ -6895,7 +6913,7 @@ copy_level_ordering_table_loop
     and #$40 ; '@'                                                    ; 3f22: 29 40       )@
     beq skip_writing_developer_flags                                  ; 3f24: f0 07       ..
     lda (address1_low),y                                              ; 3f26: b1 70       .p
-    and #$bf                                                          ; 3f28: 29 bf       ).
+    and #%10111111                                                    ; 3f28: 29 bf       ).
     sta developer_flags                                               ; 3f2a: 8d 03 11    ...
 skip_writing_developer_flags
     jsr handle_developer_mode_setup                                   ; 3f2d: 20 6f 3f     o?
@@ -6921,7 +6939,7 @@ skip_writing_developer_flags
     lda #3                                                            ; 3f54: a9 03       ..
     jsr get_random_number_up_to_a                                     ; 3f56: 20 a6 18     ..
     sta initial_level_number_div4                                     ; 3f59: 85 5f       ._
-    jmp c110c                                                         ; 3f5b: 4c 0c 11    L..
+    jmp start_game                                                    ; 3f5b: 4c 0c 11    L..
 
 icodata_filename
     !text "icodata", $0d                                              ; 3f5e: 69 63 6f... ico
@@ -6995,7 +7013,7 @@ sideways_rom_image
     rts                                                               ; 3fc3: 60          `              ; do nothing - return
 
     !byte 0, 0, 0, 0, 0, 0, 0                                         ; 3fc4: 00 00 00... ...            ; unused bytes
-initialise_display_high_copy_start
+relocation4_high_copy_start
 
 !pseudopc $0c00 {
 ; Initialise display
@@ -7092,7 +7110,7 @@ quit_to_basic
     ldy #>(address1_low)                                              ; 4083: a0 00       ..
     jmp oscli                                                         ; 4085: 4c f7 ff    L..
 
-clear_128_bytes_at_l09ef_high_copy_start
+relocation3_high_copy_start
 
 !pseudopc $0ab7 {
 clear_128_bytes_at_l09ef
@@ -7184,8 +7202,8 @@ return29
 
 }
 
-clear_128_bytes_at_l09ef_high_copy_end
-update_displayed_transformations_remaining_high_copy_start
+relocation3_high_copy_end
+relocation5_high_copy_start
 
 !pseudopc $0131 {
 ; Update the transformation count on screen at text position (35-37, 6). This takes
@@ -7223,9 +7241,9 @@ digit_unchanged
 
 }
 
-some_code_high_copy_TODO
+relocation1_high_copy_start
 icodata
-update_displayed_transformations_remaining_high_copy_end
+relocation5_high_copy_end
 
 !pseudopc $0400 {
 wait_for_timingB_counter
@@ -7409,7 +7427,6 @@ pydis_end
 ;     c04b4
 ;     c0505
 ;     c0ae6
-;     c110c
 ;     c11f8
 ;     c1209
 ;     c12fc
@@ -7678,8 +7695,6 @@ pydis_end
 ;     c3a88
 ;     c3a8f
 ;     c3ade
-;     c3ec1
-;     c3f0d
 ;     l0002
 ;     l0003
 ;     l0004
@@ -7926,6 +7941,9 @@ pydis_end
 !if (<data_filename) != $72 {
     !error "Assertion failed: <data_filename == $72"
 }
+!if (<developer_flags) != $03 {
+    !error "Assertion failed: <developer_flags == $03"
+}
 !if (<enter_filename_message) != $98 {
     !error "Assertion failed: <enter_filename_message == $98"
 }
@@ -7977,6 +7995,12 @@ pydis_end
 !if (<print_italic) != $66 {
     !error "Assertion failed: <print_italic == $66"
 }
+!if (<pydis_start) != $34 {
+    !error "Assertion failed: <pydis_start == $34"
+}
+!if (<relocation1_high_copy_start) != $ff {
+    !error "Assertion failed: <relocation1_high_copy_start == $ff"
+}
 !if (<reset_code) != $45 {
     !error "Assertion failed: <reset_code == $45"
 }
@@ -7991,9 +8015,6 @@ pydis_end
 }
 !if (<section_message) != $b1 {
     !error "Assertion failed: <section_message == $b1"
-}
-!if (<some_code_high_copy_TODO) != $ff {
-    !error "Assertion failed: <some_code_high_copy_TODO == $ff"
 }
 !if (<some_more_data) != $f7 {
     !error "Assertion failed: <some_more_data == $f7"
@@ -8085,6 +8106,9 @@ pydis_end
 !if (>data_filename) != $12 {
     !error "Assertion failed: >data_filename == $12"
 }
+!if (>developer_flags) != $11 {
+    !error "Assertion failed: >developer_flags == $11"
+}
 !if (>enter_filename_message) != $34 {
     !error "Assertion failed: >enter_filename_message == $34"
 }
@@ -8136,6 +8160,12 @@ pydis_end
 !if (>print_italic) != $18 {
     !error "Assertion failed: >print_italic == $18"
 }
+!if (>pydis_start) != $12 {
+    !error "Assertion failed: >pydis_start == $12"
+}
+!if (>relocation1_high_copy_start) != $40 {
+    !error "Assertion failed: >relocation1_high_copy_start == $40"
+}
 !if (>reset_code) != $18 {
     !error "Assertion failed: >reset_code == $18"
 }
@@ -8147,9 +8177,6 @@ pydis_end
 }
 !if (>section_message) != $37 {
     !error "Assertion failed: >section_message == $37"
-}
-!if (>some_code_high_copy_TODO) != $40 {
-    !error "Assertion failed: >some_code_high_copy_TODO == $40"
 }
 !if (>some_more_data) != $2e {
     !error "Assertion failed: >some_more_data == $2e"
@@ -8213,9 +8240,6 @@ pydis_end
 }
 !if (check_password) != $53c0 {
     !error "Assertion failed: check_password == $53c0"
-}
-!if (clear_128_bytes_at_l09ef_high_copy_end - clear_128_bytes_at_l09ef_high_copy_start) != $48 {
-    !error "Assertion failed: clear_128_bytes_at_l09ef_high_copy_end - clear_128_bytes_at_l09ef_high_copy_start == $48"
 }
 !if (crtc_cursor_start) != $0a {
     !error "Assertion failed: crtc_cursor_start == $0a"
@@ -8370,6 +8394,15 @@ pydis_end
 !if (red) != $01 {
     !error "Assertion failed: red == $01"
 }
+!if (relocation3_high_copy_end - relocation3_high_copy_start) != $48 {
+    !error "Assertion failed: relocation3_high_copy_end - relocation3_high_copy_start == $48"
+}
+!if (relocation5_high_copy_end - relocation5_high_copy_start) != $2f {
+    !error "Assertion failed: relocation5_high_copy_end - relocation5_high_copy_start == $2f"
+}
+!if (relocation5_high_copy_start) != $40d0 {
+    !error "Assertion failed: relocation5_high_copy_start == $40d0"
+}
 !if (screen_width_minus_one) != $27 {
     !error "Assertion failed: screen_width_minus_one == $27"
 }
@@ -8441,12 +8474,6 @@ pydis_end
 }
 !if (spriteid_some_small_blob) != $37 {
     !error "Assertion failed: spriteid_some_small_blob == $37"
-}
-!if (update_displayed_transformations_remaining_high_copy_end - update_displayed_transformations_remaining_high_copy_start) != $2f {
-    !error "Assertion failed: update_displayed_transformations_remaining_high_copy_end - update_displayed_transformations_remaining_high_copy_start == $2f"
-}
-!if (update_displayed_transformations_remaining_high_copy_start) != $40d0 {
-    !error "Assertion failed: update_displayed_transformations_remaining_high_copy_start == $40d0"
 }
 !if (vdu_bell) != $07 {
     !error "Assertion failed: vdu_bell == $07"
