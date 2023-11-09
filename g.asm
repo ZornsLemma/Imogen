@@ -306,7 +306,7 @@ l09b4                                       = $09b4
 object_direction                            = $09be
 l09bf                                       = $09bf
 object_direction_old                        = $09c9
-l09d4                                       = $09d4
+object_current_index_in_animation           = $09d4
 l09d5                                       = $09d5
 l09df                                       = $09df
 something2                                  = $09ea
@@ -507,7 +507,7 @@ object_reset_loop
     sta l09a9                                                         ; 12fa: 8d a9 09    ... :11c9[1]
     lda #4                                                            ; 12fd: a9 04       ..  :11cc[1]
     sta l09df                                                         ; 12ff: 8d df 09    ... :11ce[1]
-    sta l09d4                                                         ; 1302: 8d d4 09    ... :11d1[1]
+    sta object_current_index_in_animation                             ; 1302: 8d d4 09    ... :11d1[1]
     lda #1                                                            ; 1305: a9 01       ..  :11d4[1]
     sta object_direction                                              ; 1307: 8d be 09    ... :11d6[1]
     lda #0                                                            ; 130a: a9 00       ..  :11d9[1]
@@ -1836,7 +1836,7 @@ something13_TODO
     lda l1a0f                                                         ; 1ae0: ad 0f 1a    ... :19af[1]
     jsr something58_TODO                                              ; 1ae3: 20 5d 1f     ]. :19b2[1]
     lda #1                                                            ; 1ae6: a9 01       ..  :19b5[1]
-    bne c19d4                                                         ; 1ae8: d0 1b       ..  :19b7[1]
+    bne c19d4                                                         ; 1ae8: d0 1b       ..  :19b7[1]   ; ALWAYS branch
 c19b9
     dex                                                               ; 1aea: ca          .   :19b9[1]
     lda #3                                                            ; 1aeb: a9 03       ..  :19ba[1]
@@ -1857,7 +1857,7 @@ c19d4
     sta object_direction,x                                            ; 1b08: 9d be 09    ... :19d7[1]
     lda #7                                                            ; 1b0b: a9 07       ..  :19da[1]
     jsr get_random_number_up_to_a                                     ; 1b0d: 20 a6 18     .. :19dc[1]
-    sta l09d4,x                                                       ; 1b10: 9d d4 09    ... :19df[1]
+    sta object_current_index_in_animation,x                           ; 1b10: 9d d4 09    ... :19df[1]
 c19e2
     jmp c19f2                                                         ; 1b13: 4c f2 19    L.. :19e2[1]
 
@@ -1866,13 +1866,13 @@ c19e5
     cmp current_room_index                                            ; 1b18: cd ba 1a    ... :19e7[1]
     bne c19f2                                                         ; 1b1b: d0 06       ..  :19ea[1]
     ldx l1a0f                                                         ; 1b1d: ae 0f 1a    ... :19ec[1]
-    inc l09d4,x                                                       ; 1b20: fe d4 09    ... :19ef[1]
+    inc object_current_index_in_animation,x                           ; 1b20: fe d4 09    ... :19ef[1]
 c19f2
     lda desired_room_index                                            ; 1b23: a5 30       .0  :19f2[1]
     cmp current_room_index                                            ; 1b25: cd ba 1a    ... :19f4[1]
     bne c1a07                                                         ; 1b28: d0 0e       ..  :19f7[1]
     ldx l1a0f                                                         ; 1b2a: ae 0f 1a    ... :19f9[1]
-    lda l09d4,x                                                       ; 1b2d: bd d4 09    ... :19fc[1]
+    lda object_current_index_in_animation,x                           ; 1b2d: bd d4 09    ... :19fc[1]
     and #7                                                            ; 1b30: 29 07       ).  :19ff[1]
     clc                                                               ; 1b32: 18          .   :1a01[1]
     adc #$3c ; '<'                                                    ; 1b33: 69 3c       i<  :1a02[1]
@@ -3219,7 +3219,7 @@ sub_c22ee
     stx address1_low                                                  ; 241f: 86 70       .p  :22ee[1]
     sty address1_high                                                 ; 2421: 84 71       .q  :22f0[1]
     clc                                                               ; 2423: 18          .   :22f2[1]
-    adc l09d4                                                         ; 2424: 6d d4 09    m.. :22f3[1]
+    adc object_current_index_in_animation                             ; 2424: 6d d4 09    m.. :22f3[1]
     tay                                                               ; 2427: a8          .   :22f6[1]
     lda (address1_low),y                                              ; 2428: b1 70       .p  :22f7[1]
     bne c22fe                                                         ; 242a: d0 03       ..  :22f9[1]
@@ -3238,7 +3238,7 @@ c2309
     bne c2331                                                         ; 2445: d0 1b       ..  :2314[1]
     lda #0                                                            ; 2447: a9 00       ..  :2316[1]
     sta l09df                                                         ; 2449: 8d df 09    ... :2318[1]
-    sta l09d4                                                         ; 244c: 8d d4 09    ... :231b[1]
+    sta object_current_index_in_animation                             ; 244c: 8d d4 09    ... :231b[1]
     sta current_player_character                                      ; 244f: 85 48       .H  :231e[1]
     pla                                                               ; 2451: 68          h   :2320[1]
     pla                                                               ; 2452: 68          h   :2321[1]
@@ -4850,6 +4850,7 @@ update_wizard
     bne c2dc0                                                         ; 2ec6: d0 29       .)  :2d95[1]
     cpy #$39 ; '9'                                                    ; 2ec8: c0 39       .9  :2d97[1]
     bne c2da6                                                         ; 2eca: d0 0b       ..  :2d99[1]
+; toggle player direction
     lda object_direction                                              ; 2ecc: ad be 09    ... :2d9b[1]
     eor #$fe                                                          ; 2ecf: 49 fe       I.  :2d9e[1]
     sta object_direction                                              ; 2ed1: 8d be 09    ... :2da0[1]
@@ -4950,12 +4951,12 @@ c2e4c
     beq c2e5f                                                         ; 2f8c: f0 02       ..  :2e5b[1]
     ldy #$79 ; 'y'                                                    ; 2f8e: a0 79       .y  :2e5d[1]
 c2e5f
-    sty l09d4                                                         ; 2f90: 8c d4 09    ... :2e5f[1]
+    sty object_current_index_in_animation                             ; 2f90: 8c d4 09    ... :2e5f[1]
     lda #0                                                            ; 2f93: a9 00       ..  :2e62[1]
     sta l2eb5                                                         ; 2f95: 8d b5 2e    ... :2e64[1]
     lda l0052                                                         ; 2f98: a5 52       .R  :2e67[1]
     beq c2e82                                                         ; 2f9a: f0 17       ..  :2e69[1]
-    ldy l09d4                                                         ; 2f9c: ac d4 09    ... :2e6b[1]
+    ldy object_current_index_in_animation                             ; 2f9c: ac d4 09    ... :2e6b[1]
     lda wizard_animation2,y                                           ; 2f9f: b9 ed 2c    .., :2e6e[1]
     sta object_spriteid                                               ; 2fa2: 8d a8 09    ... :2e71[1]
     jsr sub_c2eb8                                                     ; 2fa5: 20 b8 2e     .. :2e74[1]
@@ -4964,7 +4965,7 @@ c2e5f
     lda envelope_3                                                    ; 2fad: ad d8 38    ..8 :2e7c[1]
     sta l2eb5                                                         ; 2fb0: 8d b5 2e    ... :2e7f[1]
 c2e82
-    lda l09d4                                                         ; 2fb3: ad d4 09    ... :2e82[1]
+    lda object_current_index_in_animation                             ; 2fb3: ad d4 09    ... :2e82[1]
     ldx #<wizard_animation2                                           ; 2fb6: a2 ed       ..  :2e85[1]
     ldy #>wizard_animation2                                           ; 2fb8: a0 2c       .,  :2e87[1]
     jsr set_player_spriteid_and_offset_from_animation_table           ; 2fba: 20 00 22     ." :2e89[1]
@@ -5014,7 +5015,7 @@ loop_c2ec9
 c2ed7
     ldx l2ef2,y                                                       ; 3008: be f2 2e    ... :2ed7[1]
     lda object_spriteid                                               ; 300b: ad a8 09    ... :2eda[1]
-    cmp #$35 ; '5'                                                    ; 300e: c9 35       .5  :2edd[1]
+    cmp #spriteid_wizard6                                             ; 300e: c9 35       .5  :2edd[1]
     beq c2ee4                                                         ; 3010: f0 03       ..  :2edf[1]
     ldx l2eed,y                                                       ; 3012: be ed 2e    ... :2ee1[1]
 c2ee4
@@ -5138,6 +5139,7 @@ update_cat
     bne c300e                                                         ; 3107: d0 36       .6  :2fd6[1]
     cpy #$39 ; '9'                                                    ; 3109: c0 39       .9  :2fd8[1]
     bne c2fe7                                                         ; 310b: d0 0b       ..  :2fda[1]
+; toggle player direction
     lda object_direction                                              ; 310d: ad be 09    ... :2fdc[1]
     eor #$fe                                                          ; 3110: 49 fe       I.  :2fdf[1]
     sta object_direction                                              ; 3112: 8d be 09    ... :2fe1[1]
@@ -5240,7 +5242,7 @@ c3092
     beq c30a5                                                         ; 31d2: f0 02       ..  :30a1[1]
     ldy #$91                                                          ; 31d4: a0 91       ..  :30a3[1]
 c30a5
-    sty l09d4                                                         ; 31d6: 8c d4 09    ... :30a5[1]
+    sty object_current_index_in_animation                             ; 31d6: 8c d4 09    ... :30a5[1]
     tya                                                               ; 31d9: 98          .   :30a8[1]
     ldx #<cat_animation2                                              ; 31da: a2 16       ..  :30a9[1]
     ldy #>cat_animation2                                              ; 31dc: a0 2f       ./  :30ab[1]
@@ -5260,7 +5262,7 @@ c30a5
 c30ca
     lda #0                                                            ; 31fb: a9 00       ..  :30ca[1]
     ldx object_spriteid                                               ; 31fd: ae a8 09    ... :30cc[1]
-    cpx #$0f                                                          ; 3200: e0 0f       ..  :30cf[1]
+    cpx #spriteid_cat_walk4                                           ; 3200: e0 0f       ..  :30cf[1]
     bne c30d5                                                         ; 3202: d0 02       ..  :30d1[1]
     lda #$81                                                          ; 3204: a9 81       ..  :30d3[1]
 c30d5
@@ -5411,6 +5413,7 @@ update_monkey
     bne c31f4                                                         ; 3317: d0 0c       ..  :31e6[1]
     cpy #$39 ; '9'                                                    ; 3319: c0 39       .9  :31e8[1]
     bne c31f7                                                         ; 331b: d0 0b       ..  :31ea[1]
+; toggle player direction
     lda object_direction                                              ; 331d: ad be 09    ... :31ec[1]
     eor #$fe                                                          ; 3320: 49 fe       I.  :31ef[1]
     sta object_direction                                              ; 3322: 8d be 09    ... :31f1[1]
@@ -5584,7 +5587,7 @@ c331e
 c3331
     lda #0                                                            ; 3462: a9 00       ..  :3331[1]
     sta l31d7                                                         ; 3464: 8d d7 31    ..1 :3333[1]
-    sty l09d4                                                         ; 3467: 8c d4 09    ... :3336[1]
+    sty object_current_index_in_animation                             ; 3467: 8c d4 09    ... :3336[1]
     tya                                                               ; 346a: 98          .   :3339[1]
     ldx #<monkey_animation2                                           ; 346b: a2 ff       ..  :333a[1]
     ldy #>monkey_animation2                                           ; 346d: a0 30       .0  :333c[1]
@@ -5604,7 +5607,7 @@ c3331
 c335b
     lda #0                                                            ; 348c: a9 00       ..  :335b[1]
     ldx object_spriteid                                               ; 348e: ae a8 09    ... :335d[1]
-    cpx #$51 ; 'Q'                                                    ; 3491: e0 51       .Q  :3360[1]
+    cpx #spriteid_monkey4                                             ; 3491: e0 51       .Q  :3360[1]
     bne c3366                                                         ; 3493: d0 02       ..  :3362[1]
     lda #$87                                                          ; 3495: a9 87       ..  :3364[1]
 c3366
@@ -6507,7 +6510,7 @@ l3974
     !byte   0, $ff                                                    ; 3ab5: 00 ff       ..  :3984[1]
 
 update_mid_transformation
-    lda l09d4                                                         ; 3ab7: ad d4 09    ... :3986[1]
+    lda object_current_index_in_animation                             ; 3ab7: ad d4 09    ... :3986[1]
     clc                                                               ; 3aba: 18          .   :3989[1]
     adc #1                                                            ; 3abb: 69 01       i.  :398a[1]
     tay                                                               ; 3abd: a8          .   :398c[1]
@@ -6534,7 +6537,7 @@ c3997
 c39b6
     lda #0                                                            ; 3ae7: a9 00       ..  :39b6[1]
     sta l09df                                                         ; 3ae9: 8d df 09    ... :39b8[1]
-    sta l09d4                                                         ; 3aec: 8d d4 09    ... :39bb[1]
+    sta object_current_index_in_animation                             ; 3aec: 8d d4 09    ... :39bb[1]
     jmp something19_TODO                                              ; 3aef: 4c cd 22    L." :39be[1]
 
 c39c1
@@ -6579,7 +6582,7 @@ c39f4
     sbc #2                                                            ; 3b34: e9 02       ..  :3a03[1]
     sta object_y_low                                                  ; 3b36: 8d 7c 09    .|. :3a05[1]
 c3a08
-    sty l09d4                                                         ; 3b39: 8c d4 09    ... :3a08[1]
+    sty object_current_index_in_animation                             ; 3b39: 8c d4 09    ... :3a08[1]
     lda l3974,y                                                       ; 3b3c: b9 74 39    .t9 :3a0b[1]
     sta object_spriteid                                               ; 3b3f: 8d a8 09    ... :3a0e[1]
     rts                                                               ; 3b42: 60          `   :3a11[1]
@@ -8017,7 +8020,6 @@ pydis_end
 ;     l09a9
 ;     l09b4
 ;     l09bf
-;     l09d4
 ;     l09d5
 ;     l09df
 ;     l09eb

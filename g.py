@@ -246,6 +246,16 @@ sprite_op_flags_dict = {
 label(0x1f4c, "draw_sprite_a_at_character_xy")
 label(0x1f84, "set_sprite_pixel_position_from_character_xy")
 
+label(0x9d4, "object_current_index_in_animation")
+comment(0x19b7, "ALWAYS branch", inline=True)
+expr(0x2ede, "spriteid_wizard6")
+expr(0x30d0, "spriteid_cat_walk4")
+expr(0x3361, "spriteid_monkey4")
+
+comment(0x2d9b, "toggle player direction")
+comment(0x2fdc, "toggle player direction")
+comment(0x31ec, "toggle player direction")
+
 substitute_constants("sta sprite_number", 'a', sprite_dict, True)
 substitute_constants("jsr draw_sprite_a_at_character_xy", 'a', sprite_dict, True)
 substitute_constants("jsr find_or_create_menu_slot_for_A", 'a', sprite_dict, True) # TODO: not actually useful yet, maybe never
