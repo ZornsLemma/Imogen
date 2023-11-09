@@ -5961,22 +5961,22 @@ print_encrypted_string_at_yx
     lda #>print_italic                                                ; 3956: a9 18       ..  :3825[1]
     sta print_char_target + 1                                         ; 3958: 8d 4f 38    .O8 :3827[1]
     lda print_in_italics_flag                                         ; 395b: a5 43       .C  :382a[1]
-    bne c3838                                                         ; 395d: d0 0a       ..  :382c[1]
+    bne print_char_target_set                                         ; 395d: d0 0a       ..  :382c[1]
     lda #<oswrch                                                      ; 395f: a9 ee       ..  :382e[1]
     sta print_char_target                                             ; 3961: 8d 4e 38    .N8 :3830[1]
     lda #>oswrch                                                      ; 3964: a9 ff       ..  :3833[1]
     sta print_char_target + 1                                         ; 3966: 8d 4f 38    .O8 :3835[1]
-c3838
+print_char_target_set
     ldy #0                                                            ; 3969: a0 00       ..  :3838[1]
-loop_c383a
+print_char_loop
     lda (address1_low),y                                              ; 396b: b1 70       .p  :383a[1]
     eor eor_key                                                       ; 396d: 45 45       EE  :383c[1]
     cmp #vdu_cr                                                       ; 396f: c9 0d       ..  :383e[1]
-    beq c3848                                                         ; 3971: f0 06       ..  :3840[1]
+    beq print_done                                                    ; 3971: f0 06       ..  :3840[1]
     jsr print_char                                                    ; 3973: 20 4d 38     M8 :3842[1]
     iny                                                               ; 3976: c8          .   :3845[1]
-    bne loop_c383a                                                    ; 3977: d0 f2       ..  :3846[1]
-c3848
+    bne print_char_loop                                               ; 3977: d0 f2       ..  :3846[1]
+print_done
     lda #$cb                                                          ; 3979: a9 cb       ..  :3848[1]
     sta eor_key                                                       ; 397b: 85 45       .E  :384a[1]
     rts                                                               ; 397d: 60          `   :384c[1]
@@ -7663,8 +7663,6 @@ pydis_end
 ;     c37c3
 ;     c37da
 ;     c381a
-;     c3838
-;     c3848
 ;     c3867
 ;     c388a
 ;     c393c
@@ -7832,7 +7830,6 @@ pydis_end
 ;     loop_c34b2
 ;     loop_c36c7
 ;     loop_c36f9
-;     loop_c383a
 ;     loop_c3892
 ;     loop_c39d2
 ;     loop_c3d54

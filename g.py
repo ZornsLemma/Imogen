@@ -1533,6 +1533,9 @@ expr(0x3834, make_hi("oswrch"))
 
 comment(0x381c, "Print the EOR-encrypted (with eor_key) CR-terminated string at YX. Print in italics iff l0043 is non-0.")
 entry(0x381c, "print_encrypted_string_at_yx")
+entry(0x3838, "print_char_target_set")
+entry(0x383a, "print_char_loop")
+entry(0x3848, "print_done")
 label(0x45, "eor_key") # TODO: Is this *always* $cb in practice?
 
 # TODO: Mention l0005 in name until we know why
