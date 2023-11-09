@@ -168,7 +168,7 @@ sprite_dict = {
     0x1b: "spriteid_cat1",
     0x1c: "spriteid_cat2",
     0x1d: "spriteid_pointer_hand",
-    0x1e: "spriteid_some_small_number_of_pixels_set",       # TODO: better name
+    0x1e: "spriteid_fingertip_tile_restoration",
     0x1f: "spriteid_one_pixel_set",
     0x20: "spriteid_circle",
     0x22: "spriteid_sparkles1",
@@ -531,19 +531,20 @@ label(0x2692, "return14")
 label(0x26e4, "return15")
 label(0x271d, "return16")
 label(0x276f, "return17")
-label(0x2ada, "return18")
-label(0x2af5, "return19")
-label(0x2b64, "return20")
-label(0x2b86, "return21")
-label(0x3496, "return22")
-label(0x3534, "return23")
-label(0x36a7, "return24")
-label(0x377c, "return25")
-label(0x37f2, "return26")
-label(0x3fba, "return27")
-label(0x0afe, "return28")
-label(0x0473, "return29")
-label(0x04ca, "return30")
+label(0x29ea, "return18")
+label(0x2ada, "return19")
+label(0x2af5, "return20")
+label(0x2b64, "return21")
+label(0x2b86, "return22")
+label(0x3496, "return23")
+label(0x3534, "return24")
+label(0x36a7, "return25")
+label(0x377c, "return26")
+label(0x37f2, "return27")
+label(0x3fba, "return28")
+label(0x0afe, "return29")
+label(0x0473, "return30")
+label(0x04ca, "return31")
 
 
 label(0x179a, "delay_loop")
@@ -946,7 +947,15 @@ comment(0x11f8, "Blank the whole screen temporarily. TODO: Note that when flippi
 entry(0x29a1, "draw_toolbar") # TODO: plausible guess
 # TODO: barking up wrong tree entry(0x1df4, "draw_gameplay_area") # TODO: plausible guess
 # TODO: Inconsistent use of "toolbar" and "menu", fix up eventually - "toolbar" is probably better, but not thought much yet - also some inconsistency between "icon" and "slot", although these are arguably distinct (even if the disassembly doesn't respect it), a slot can be blank or have an icon in it - also maybe "slot" vs "index" is a bit sloppy
+comment(0x29a8, """*************************************************************************************
+
+draw_menu_icons
+
+*************************************************************************************""")
 entry(0x29a8, "draw_menu_icons")
+comment(0x29aa, "check to see if menu icon has changed since last drawn")
+comment(0x29b2, "if the current icon to be redrawn shows the hand pointer, we unplot the hand pointer first, draw the new icon, then redraw the hand after")
+comment(0x29c1, "draw the new menu icon")
 entry(0x29d7, "draw_next_menu_slot")
 label(0x29dd, "redraw_menu_pointer_flag")
 entry(0x29c1, "menu_pointer_not_present_on_slot")
@@ -1265,7 +1274,6 @@ label(0x29, "new_menu_index")
 label(0x2e, "current_menu_index")
 label(0x25, "another_menu_index")
 entry(0x29de, "apply_new_menu_index")
-entry(0x29ea, "apply_new_menu_index_rts")
 entry(0x3a75, "menu_x_step_in_a")
 comment(0x3a75, "TODO: This looks like a manual implementation of an auto-repeat delay, so if you hold down left/right a fraction of a second too long it doesn't zip all the way to the left or right.")
 # TODO: Not yet clear exactly why we have two versions of these flags
@@ -1278,9 +1286,34 @@ entry(0x2c88, "no_menu_motion")
 entry(0x2c7e, "menu_left_pending")
 entry(0x2c70, "menu_right_pending")
 comment(0x2c7c, "always branch", inline=True)
-entry(0x29eb, "unplot_menu_pointer") # TODO: plausible guess - hmm, losing faith in this
-entry(0x2a17, "plot_menu_pointer") # TODO: plausible guess - ditto
+entry(0x29eb, "unplot_menu_pointer")
+comment(0x29eb, """*************************************************************************************
 
+unplot_menu_pointer
+
+*************************************************************************************""")
+comment(0x29ef, "remember currrent screen base address")
+comment(0x29f2, "select toolbar area for drawing")
+expr(0x29f3, make_hi("toolbar_screen_address"))
+comment(0x29f6, "find position of current menu item")
+comment(0x29f9, "erase the hand")
+comment(0x2a04, "restore the background tile where the fingertip overlaps the tile")
+comment(0x2a0f, "restore original screen base address")
+label(0x2a12, "no_menu_item_selected")
+
+entry(0x2a17, "plot_menu_pointer")
+comment(0x2a17, """*************************************************************************************
+
+plot_menu_pointer
+
+*************************************************************************************""")
+comment(0x2a1b, "remember currrent screen base address")
+comment(0x2a1e, "select toolbar area for drawing")
+expr(0x2a1f, make_hi("toolbar_screen_address"))
+comment(0x2a22, "find position of current menu item")
+comment(0x2a25, "draw the hand")
+comment(0x2a30, "restore original screen base address")
+label(0x2a33, "record_the_new_menu_item")
 
 comment(0x138d, """*************************************************************************************
 
@@ -1426,6 +1459,9 @@ entry(0x2bdd, "matching_slot_found_or_no_empty_slot")
 
 entry(0x1e17, "set_sprite_screen_address_using_x_y_and_some_word") # TODO!
 entry(0x1b66, "set_sprite_y_pos_using_x_y") # TODO!
+
+label(0x58c0, "toolbar_screen_address")
+label(0x6200, "game_area_screen_address")
 
 go()
 

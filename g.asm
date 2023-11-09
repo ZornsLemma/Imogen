@@ -91,6 +91,7 @@ spriteid_diamond2                               = 40
 spriteid_diamond3                               = 41
 spriteid_diamond4                               = 42
 spriteid_diamond5                               = 43
+spriteid_fingertip_tile_restoration             = 30
 spriteid_fire1                                  = 60
 spriteid_fire2                                  = 61
 spriteid_fire3                                  = 62
@@ -126,7 +127,6 @@ spriteid_rope3                                  = 87
 spriteid_rope4                                  = 88
 spriteid_rope_hook                              = 11
 spriteid_some_small_blob                        = 55
-spriteid_some_small_number_of_pixels_set        = 30
 spriteid_sparkles1                              = 34
 spriteid_sparkles2                              = 35
 spriteid_sparkles3                              = 36
@@ -329,7 +329,9 @@ c3ade                                       = $3ade
 level_header_data                           = $3adf
 auxcode                                     = $53c0
 check_password                              = $53c0
+toolbar_screen_address                      = $58c0
 start_of_screen_memory                      = $5bc0
+game_area_screen_address                    = $6200
 l8000                                       = $8000
 l8008                                       = $8008
 lbe00                                       = $be00
@@ -4145,18 +4147,27 @@ draw_toolbar
     jsr apply_new_menu_index                                          ; 2ad5: 20 de 29     .) :29a4[1]
     rts                                                               ; 2ad8: 60          `   :29a7[1]
 
+; *************************************************************************************
+; 
+; draw_menu_icons
+; 
+; *************************************************************************************
 draw_menu_icons
     ldx #0                                                            ; 2ad9: a2 00       ..  :29a8[1]
+; check to see if menu icon has changed since last drawn
 draw_menu_icon_loop
     lda desired_menu_slots,x                                          ; 2adb: bd 5c 29    .\) :29aa[1]
     cmp displayed_menu_slots,x                                        ; 2ade: dd 6f 29    .o) :29ad[1]
     beq draw_next_menu_slot                                           ; 2ae1: f0 25       .%  :29b0[1]
+; if the current icon to be redrawn shows the hand pointer, we unplot the hand pointer
+; first, draw the new icon, then redraw the hand after
     lda #0                                                            ; 2ae3: a9 00       ..  :29b2[1]
     sta redraw_menu_pointer_flag                                      ; 2ae5: 8d dd 29    ..) :29b4[1]
     cpx current_menu_index                                            ; 2ae8: e4 2e       ..  :29b7[1]
     bne menu_pointer_not_present_on_slot                              ; 2aea: d0 06       ..  :29b9[1]
     dec redraw_menu_pointer_flag                                      ; 2aec: ce dd 29    ..) :29bb[1]
     jsr unplot_menu_pointer                                           ; 2aef: 20 eb 29     .) :29be[1]
+; draw the new menu icon
 menu_pointer_not_present_on_slot
     jsr plot_menu_icon                                                ; 2af2: 20 0c 2c     ., :29c1[1]
     lda redraw_menu_pointer_flag                                      ; 2af5: ad dd 29    ..) :29c4[1]
@@ -4183,53 +4194,74 @@ redraw_menu_pointer_flag
 apply_new_menu_index
     lda new_menu_index                                                ; 2b0f: a5 29       .)  :29de[1]
     cmp current_menu_index                                            ; 2b11: c5 2e       ..  :29e0[1]
-    beq apply_new_menu_index_rts                                      ; 2b13: f0 06       ..  :29e2[1]
+    beq return18                                                      ; 2b13: f0 06       ..  :29e2[1]
     jsr unplot_menu_pointer                                           ; 2b15: 20 eb 29     .) :29e4[1]
     jsr plot_menu_pointer                                             ; 2b18: 20 17 2a     .* :29e7[1]
-apply_new_menu_index_rts
+return18
     rts                                                               ; 2b1b: 60          `   :29ea[1]
 
+; *************************************************************************************
+; 
+; unplot_menu_pointer
+; 
+; *************************************************************************************
 unplot_menu_pointer
     ldx current_menu_index                                            ; 2b1c: a6 2e       ..  :29eb[1]
-    bmi c2a12                                                         ; 2b1e: 30 23       0#  :29ed[1]
+    bmi no_menu_item_selected                                         ; 2b1e: 30 23       0#  :29ed[1]
+; remember currrent screen base address
     lda screen_base_address_high                                      ; 2b20: a5 4c       .L  :29ef[1]
     pha                                                               ; 2b22: 48          H   :29f1[1]
-    lda #$58 ; 'X'                                                    ; 2b23: a9 58       .X  :29f2[1]
+; select toolbar area for drawing
+    lda #>toolbar_screen_address                                      ; 2b23: a9 58       .X  :29f2[1]
     sta screen_base_address_high                                      ; 2b25: 85 4c       .L  :29f4[1]
+; find position of current menu item
     jsr calculate_sprite_position_for_menu_item                       ; 2b27: 20 46 2c     F, :29f6[1]
+; erase the hand
     lda #spriteid_pointer_hand                                        ; 2b2a: a9 1d       ..  :29f9[1]
     sta sprite_number                                                 ; 2b2c: 85 16       ..  :29fb[1]
     lda #sprite_op_flags_erase                                        ; 2b2e: a9 02       ..  :29fd[1]
     sta sprite_op_flags                                               ; 2b30: 85 15       ..  :29ff[1]
     jsr sprite_op                                                     ; 2b32: 20 8d 13     .. :2a01[1]
-    lda #spriteid_some_small_number_of_pixels_set                     ; 2b35: a9 1e       ..  :2a04[1]
+; restore the background tile where the fingertip overlaps the tile
+    lda #spriteid_fingertip_tile_restoration                          ; 2b35: a9 1e       ..  :2a04[1]
     sta sprite_number                                                 ; 2b37: 85 16       ..  :2a06[1]
     lda #sprite_op_flags_normal                                       ; 2b39: a9 00       ..  :2a08[1]
     sta sprite_op_flags                                               ; 2b3b: 85 15       ..  :2a0a[1]
     jsr sprite_op                                                     ; 2b3d: 20 8d 13     .. :2a0c[1]
+; restore original screen base address
     pla                                                               ; 2b40: 68          h   :2a0f[1]
     sta screen_base_address_high                                      ; 2b41: 85 4c       .L  :2a10[1]
-c2a12
+no_menu_item_selected
     lda #$ff                                                          ; 2b43: a9 ff       ..  :2a12[1]
     sta current_menu_index                                            ; 2b45: 85 2e       ..  :2a14[1]
     rts                                                               ; 2b47: 60          `   :2a16[1]
 
+; *************************************************************************************
+; 
+; plot_menu_pointer
+; 
+; *************************************************************************************
 plot_menu_pointer
     ldx new_menu_index                                                ; 2b48: a6 29       .)  :2a17[1]
-    bmi c2a33                                                         ; 2b4a: 30 18       0.  :2a19[1]
+    bmi record_the_new_menu_item                                      ; 2b4a: 30 18       0.  :2a19[1]
+; remember currrent screen base address
     lda screen_base_address_high                                      ; 2b4c: a5 4c       .L  :2a1b[1]
     pha                                                               ; 2b4e: 48          H   :2a1d[1]
-    lda #$58 ; 'X'                                                    ; 2b4f: a9 58       .X  :2a1e[1]
+; select toolbar area for drawing
+    lda #>toolbar_screen_address                                      ; 2b4f: a9 58       .X  :2a1e[1]
     sta screen_base_address_high                                      ; 2b51: 85 4c       .L  :2a20[1]
+; find position of current menu item
     jsr calculate_sprite_position_for_menu_item                       ; 2b53: 20 46 2c     F, :2a22[1]
+; draw the hand
     lda #spriteid_pointer_hand                                        ; 2b56: a9 1d       ..  :2a25[1]
     sta sprite_number                                                 ; 2b58: 85 16       ..  :2a27[1]
     lda #sprite_op_flags_normal                                       ; 2b5a: a9 00       ..  :2a29[1]
     sta sprite_op_flags                                               ; 2b5c: 85 15       ..  :2a2b[1]
     jsr sprite_op                                                     ; 2b5e: 20 8d 13     .. :2a2d[1]
+; restore original screen base address
     pla                                                               ; 2b61: 68          h   :2a30[1]
     sta screen_base_address_high                                      ; 2b62: 85 4c       .L  :2a31[1]
-c2a33
+record_the_new_menu_item
     lda new_menu_index                                                ; 2b64: a5 29       .)  :2a33[1]
     sta current_menu_index                                            ; 2b66: 85 2e       ..  :2a35[1]
     rts                                                               ; 2b68: 60          `   :2a37[1]
@@ -4309,21 +4341,21 @@ c2ac4
     bne c2ac4                                                         ; 2bf6: d0 fd       ..  :2ac5[1]
     dex                                                               ; 2bf8: ca          .   :2ac7[1]
     bne c2ac4                                                         ; 2bf9: d0 fa       ..  :2ac8[1]
-    jmp return18                                                      ; 2bfb: 4c da 2a    L.* :2aca[1]
+    jmp return19                                                      ; 2bfb: 4c da 2a    L.* :2aca[1]
 
 c2acd
     lda another_menu_index                                            ; 2bfe: a5 25       .%  :2acd[1]
     cmp l296d                                                         ; 2c00: cd 6d 29    .m) :2acf[1]
-    bcs return18                                                      ; 2c03: b0 06       ..  :2ad2[1]
+    bcs return19                                                      ; 2c03: b0 06       ..  :2ad2[1]
     jsr sub_c3aa2                                                     ; 2c05: 20 a2 3a     .: :2ad4[1]
     jsr update_main_keys                                              ; 2c08: 20 12 3a     .: :2ad7[1]
-return18
+return19
     rts                                                               ; 2c0b: 60          `   :2ada[1]
 
 sub_c2adb
     ldx new_menu_index                                                ; 2c0c: a6 29       .)  :2adb[1]
     cpx l296d                                                         ; 2c0e: ec 6d 29    .m) :2add[1]
-    bcs return19                                                      ; 2c11: b0 13       ..  :2ae0[1]
+    bcs return20                                                      ; 2c11: b0 13       ..  :2ae0[1]
     lda desired_menu_slots,x                                          ; 2c13: bd 5c 29    .\) :2ae2[1]
     cmp #7                                                            ; 2c16: c9 07       ..  :2ae5[1]
     beq c2af6                                                         ; 2c18: f0 0d       ..  :2ae7[1]
@@ -4333,7 +4365,7 @@ sub_c2adb
     beq toggle_sound_on_off                                           ; 2c20: f0 0e       ..  :2aef[1]
     cmp #menu_action_file                                             ; 2c22: c9 03       ..  :2af1[1]
     beq c2afc                                                         ; 2c24: f0 07       ..  :2af3[1]
-return19
+return20
     rts                                                               ; 2c26: 60          `   :2af5[1]
 
 c2af6
@@ -4378,44 +4410,44 @@ c2b2e
 sub_c2b37
     ldx new_menu_index                                                ; 2c68: a6 29       .)  :2b37[1]
     cpx l296d                                                         ; 2c6a: ec 6d 29    .m) :2b39[1]
-    bcc return20                                                      ; 2c6d: 90 26       .&  :2b3c[1]
+    bcc return21                                                      ; 2c6d: 90 26       .&  :2b3c[1]
     cpx l296e                                                         ; 2c6f: ec 6e 29    .n) :2b3e[1]
-    bcs return20                                                      ; 2c72: b0 21       .!  :2b41[1]
+    bcs return21                                                      ; 2c72: b0 21       .!  :2b41[1]
     lda current_player_character                                      ; 2c74: a5 48       .H  :2b43[1]
     cmp new_player_character                                          ; 2c76: c5 4d       .M  :2b45[1]
-    bne return20                                                      ; 2c78: d0 1b       ..  :2b47[1]
+    bne return21                                                      ; 2c78: d0 1b       ..  :2b47[1]
     lda l09df                                                         ; 2c7a: ad df 09    ... :2b49[1]
-    beq return20                                                      ; 2c7d: f0 16       ..  :2b4c[1]
+    beq return21                                                      ; 2c7d: f0 16       ..  :2b4c[1]
     lda #0                                                            ; 2c7f: a9 00       ..  :2b4e[1]
     sta l0052                                                         ; 2c81: 85 52       .R  :2b50[1]
     lda desired_menu_slots,x                                          ; 2c83: bd 5c 29    .\) :2b52[1]
     cmp current_player_character                                      ; 2c86: c5 48       .H  :2b55[1]
-    beq return20                                                      ; 2c88: f0 0b       ..  :2b57[1]
+    beq return21                                                      ; 2c88: f0 0b       ..  :2b57[1]
     jsr decrement_current_transformations_remaining                   ; 2c8a: 20 8c 2c     ., :2b59[1]
-    bcc return20                                                      ; 2c8d: 90 06       ..  :2b5c[1]   ; branch if no transformations remaining before decrement
+    bcc return21                                                      ; 2c8d: 90 06       ..  :2b5c[1]   ; branch if no transformations remaining before decrement
     jsr update_displayed_transformations_remaining                    ; 2c8f: 20 31 01     1. :2b5e[1]
     jsr transform                                                     ; 2c92: 20 37 23     7# :2b61[1]
-return20
+return21
     rts                                                               ; 2c95: 60          `   :2b64[1]
 
 sub_c2b65
     ldx new_menu_index                                                ; 2c96: a6 29       .)  :2b65[1]
     cpx l296e                                                         ; 2c98: ec 6e 29    .n) :2b67[1]
-    bcc return21                                                      ; 2c9b: 90 1a       ..  :2b6a[1]
+    bcc return22                                                      ; 2c9b: 90 1a       ..  :2b6a[1]
     lda current_player_character                                      ; 2c9d: a5 48       .H  :2b6c[1]
     cmp #4                                                            ; 2c9f: c9 04       ..  :2b6e[1]
-    bne return21                                                      ; 2ca1: d0 14       ..  :2b70[1]
+    bne return22                                                      ; 2ca1: d0 14       ..  :2b70[1]
     cmp new_player_character                                          ; 2ca3: c5 4d       .M  :2b72[1]
-    bne return21                                                      ; 2ca5: d0 10       ..  :2b74[1]
+    bne return22                                                      ; 2ca5: d0 10       ..  :2b74[1]
     lda l09df                                                         ; 2ca7: ad df 09    ... :2b76[1]
-    beq return21                                                      ; 2caa: f0 0b       ..  :2b79[1]
+    beq return22                                                      ; 2caa: f0 0b       ..  :2b79[1]
     lda desired_menu_slots,x                                          ; 2cac: bd 5c 29    .\) :2b7b[1]
     cmp l0052                                                         ; 2caf: c5 52       .R  :2b7e[1]
     bne c2b84                                                         ; 2cb1: d0 02       ..  :2b80[1]
     lda #0                                                            ; 2cb3: a9 00       ..  :2b82[1]
 c2b84
     sta l0052                                                         ; 2cb5: 85 52       .R  :2b84[1]
-return21
+return22
     rts                                                               ; 2cb7: 60          `   :2b86[1]
 
 something21_TODO
@@ -5364,9 +5396,9 @@ sub_c344b
     ldy new_menu_index                                                ; 357c: a4 29       .)  :344b[1]
     lda desired_menu_slots,y                                          ; 357e: b9 5c 29    .\) :344d[1]
     cmp #menu_action_file                                             ; 3581: c9 03       ..  :3450[1]
-    bne return22                                                      ; 3583: d0 42       .B  :3452[1]
+    bne return23                                                      ; 3583: d0 42       .B  :3452[1]
     lda l0004                                                         ; 3585: a5 04       ..  :3454[1]
-    beq return22                                                      ; 3587: f0 3e       .>  :3456[1]
+    beq return23                                                      ; 3587: f0 3e       .>  :3456[1]
     cmp #1                                                            ; 3589: c9 01       ..  :3458[1]
     beq c346a                                                         ; 358b: f0 0e       ..  :345a[1]
     cmp #2                                                            ; 358d: c9 02       ..  :345c[1]
@@ -5386,7 +5418,7 @@ c346a
     cmp #'S'                                                          ; 35a5: c9 53       .S  :3474[1]
     beq c347f                                                         ; 35a7: f0 07       ..  :3476[1]
     cmp #'L'                                                          ; 35a9: c9 4c       .L  :3478[1]
-    bne return22                                                      ; 35ab: d0 1a       ..  :347a[1]
+    bne return23                                                      ; 35ab: d0 1a       ..  :347a[1]
     dec l3497                                                         ; 35ad: ce 97 34    ..4 :347c[1]
 c347f
     jsr save_or_restore_screen_under_dialog_box                       ; 35b0: 20 0a 04     .. :347f[1]
@@ -5399,7 +5431,7 @@ c347f
     jsr turn_cursor_on                                                ; 35c1: 20 5d 38     ]8 :3490[1]
     jmp flush_input_buffers_and_zero_l0005                            ; 35c4: 4c 72 38    Lr8 :3493[1]
 
-return22
+return23
     rts                                                               ; 35c7: 60          `   :3496[1]
 
 l3497
@@ -5412,7 +5444,7 @@ get_filename_and_print_drive_number_prompt
     lda #max_filename_len                                             ; 35d8: a9 07       ..  :34a7[1]
     jsr string_input                                                  ; 35da: 20 fc 36     .6 :34a9[1]
     ldy l0005                                                         ; 35dd: a4 05       ..  :34ac[1]
-    beq return22                                                      ; 35df: f0 e6       ..  :34ae[1]
+    beq return23                                                      ; 35df: f0 e6       ..  :34ae[1]
     ldy #6                                                            ; 35e1: a0 06       ..  :34b0[1]
 loop_c34b2
     lda string_input_buffer,y                                         ; 35e3: b9 90 0a    ... :34b2[1]
@@ -5449,13 +5481,13 @@ press_012_or_3_encrypted_string
 c3501
     jsr inkey_0                                                       ; 3632: 20 7c 38     |8 :3501[1]
     cmp #'4'                                                          ; 3635: c9 34       .4  :3504[1]
-    bcs return23                                                      ; 3637: b0 2c       .,  :3506[1]
+    bcs return24                                                      ; 3637: b0 2c       .,  :3506[1]
     cmp #'0'                                                          ; 3639: c9 30       .0  :3508[1]
     bcs c3516                                                         ; 363b: b0 0a       ..  :350a[1]
     cmp #'$'                                                          ; 363d: c9 24       .$  :350c[1]
-    bcs return23                                                      ; 363f: b0 24       .$  :350e[1]
+    bcs return24                                                      ; 363f: b0 24       .$  :350e[1]
     cmp #'!'                                                          ; 3641: c9 21       .!  :3510[1]
-    bcc return23                                                      ; 3643: 90 20       .   :3512[1]
+    bcc return24                                                      ; 3643: 90 20       .   :3512[1]
     adc #$0f                                                          ; 3645: 69 0f       i.  :3514[1]
 c3516
     sta save_drive_number                                             ; 3647: 8d d7 34    ..4 :3516[1]
@@ -5471,7 +5503,7 @@ c3516
     jsr print_encrypted_string_at_yx                                  ; 365f: 20 1c 38     .8 :352e[1]
     jmp flush_input_buffers_and_zero_l0005                            ; 3662: 4c 72 38    Lr8 :3531[1]
 
-return23
+return24
     rts                                                               ; 3665: 60          `   :3534[1]
 
 insert_save_disk_message
@@ -5484,7 +5516,7 @@ and_press_return_message
 c3557
     jsr inkey_0                                                       ; 3688: 20 7c 38     |8 :3557[1]
     cmp #vdu_cr                                                       ; 368b: c9 0d       ..  :355a[1]
-    bne return23                                                      ; 368d: d0 d6       ..  :355c[1]
+    bne return24                                                      ; 368d: d0 d6       ..  :355c[1]
     jsr save_or_restore_screen_under_dialog_box                       ; 368f: 20 0a 04     .. :355e[1]
     lda #vdu_lf                                                       ; 3692: a9 0a       ..  :3561[1]
     jsr oswrch                                                        ; 3694: 20 ee ff     .. :3563[1]   ; Write character 10
@@ -5611,9 +5643,9 @@ sub_c3664
     ldy new_menu_index                                                ; 3795: a4 29       .)  :3664[1]
     lda desired_menu_slots,y                                          ; 3797: b9 5c 29    .\) :3666[1]
     cmp #8                                                            ; 379a: c9 08       ..  :3669[1]
-    bne return24                                                      ; 379c: d0 3a       .:  :366b[1]
+    bne return25                                                      ; 379c: d0 3a       .:  :366b[1]
     lda l0004                                                         ; 379e: a5 04       ..  :366d[1]
-    beq return24                                                      ; 37a0: f0 36       .6  :366f[1]
+    beq return25                                                      ; 37a0: f0 36       .6  :366f[1]
     lda #$10                                                          ; 37a2: a9 10       ..  :3671[1]
     jsr string_input                                                  ; 37a4: 20 fc 36     .6 :3673[1]
     ldy l0005                                                         ; 37a7: a4 05       ..  :3676[1]
@@ -5636,12 +5668,12 @@ sub_c3664
 c3698
     lda developer_flags                                               ; 37c9: ad 03 11    ... :3698[1]
     and #1                                                            ; 37cc: 29 01       ).  :369b[1]
-    beq return24                                                      ; 37ce: f0 08       ..  :369d[1]
+    beq return25                                                      ; 37ce: f0 08       ..  :369d[1]
     jsr something_TODO                                                ; 37d0: 20 53 04     S. :369f[1]
     lda #$ff                                                          ; 37d3: a9 ff       ..  :36a2[1]
     jmp select_level_a                                                ; 37d5: 4c db 36    L.6 :36a4[1]
 
-return24
+return25
     rts                                                               ; 37d8: 60          `   :36a7[1]
 
 skip_developer_key_level_select_handling
@@ -5760,16 +5792,16 @@ c3750
 
 c376b
     cpy #0                                                            ; 389c: c0 00       ..  :376b[1]
-    beq return25                                                      ; 389e: f0 0d       ..  :376d[1]
+    beq return26                                                      ; 389e: f0 0d       ..  :376d[1]
     sta string_input_buffer,y                                         ; 38a0: 99 90 0a    ... :376f[1]
     inc l0005                                                         ; 38a3: e6 05       ..  :3772[1]
     jsr turn_cursor_off                                               ; 38a5: 20 63 38     c8 :3774[1]
-    jmp return25                                                      ; 38a8: 4c 7c 37    L|7 :3777[1]
+    jmp return26                                                      ; 38a8: 4c 7c 37    L|7 :3777[1]
 
 c377a
     pla                                                               ; 38ab: 68          h   :377a[1]
     pla                                                               ; 38ac: 68          h   :377b[1]
-return25
+return26
     rts                                                               ; 38ad: 60          `   :377c[1]
 
 l377d
@@ -5826,7 +5858,7 @@ c37c3
 c37da
     jsr print_italic                                                  ; 390b: 20 66 18     f. :37da[1]
     cpx #$50 ; 'P'                                                    ; 390e: e0 50       .P  :37dd[1]
-    beq return26                                                      ; 3910: f0 11       ..  :37df[1]
+    beq return27                                                      ; 3910: f0 11       ..  :37df[1]
     lda #9                                                            ; 3912: a9 09       ..  :37e1[1]
     jsr oswrch                                                        ; 3914: 20 ee ff     .. :37e3[1]   ; Write character 9
     txa                                                               ; 3917: 8a          .   :37e6[1]
@@ -5836,7 +5868,7 @@ c37da
     jsr print_2xlf_cr                                                 ; 391d: 20 50 38     P8 :37ec[1]
     jmp c37c3                                                         ; 3920: 4c c3 37    L.7 :37ef[1]
 
-return26
+return27
     rts                                                               ; 3923: 60          `   :37f2[1]
 
 sub_c37f3
@@ -6857,7 +6889,7 @@ handle_developer_mode_setup
     lda developer_flags                                               ; 3f6f: ad 03 11    ...
     and #1                                                            ; 3f72: 29 01       ).
     sta developer_mode_sideways_ram_is_set_up_flag                    ; 3f74: 85 5b       .[
-    beq return27                                                      ; 3f76: f0 42       .B
+    beq return28                                                      ; 3f76: f0 42       .B
 ; The following code assumes there may be a ROM image stored in sideways RAM at $8000.
 ; It copies 16 bytes of an empty ROM image to the start of sideways RAM. This
 ; overwrites any existing ROM image held in sideways RAM. Is this some copy protection,
@@ -6897,7 +6929,7 @@ loop_c3f87
     ldx #>reset_code                                                  ; 3fb3: a2 18       ..
     ldy #0                                                            ; 3fb5: a0 00       ..
     jsr osbyte                                                        ; 3fb7: 20 f4 ff     ..            ; Write reset intercept code (operand high), value X=24
-return27
+return28
     rts                                                               ; 3fba: 60          `
 
 sideways_rom_image
@@ -7049,7 +7081,7 @@ loop_c0ac6
 ; *************************************************************************************
 convert_level_filename_letter_into_section_letter
     cpy #last_level_letter                                            ; 40a5: c0 51       .Q  :0ad4[5]
-    beq return28                                                      ; 40a7: f0 26       .&  :0ad6[5]
+    beq return29                                                      ; 40a7: f0 26       .&  :0ad6[5]
     pha                                                               ; 40a9: 48          H   :0ad8[5]
     txa                                                               ; 40aa: 8a          .   :0ad9[5]
     pha                                                               ; 40ab: 48          H   :0ada[5]
@@ -7086,7 +7118,7 @@ c0ae6
 ; *************************************************************************************
 convert_section_letter_to_level_filename_letter
     cpy #last_level_letter                                            ; 40c0: c0 51       .Q  :0aef[5]
-    beq return28                                                      ; 40c2: f0 0b       ..  :0af1[5]
+    beq return29                                                      ; 40c2: f0 0b       ..  :0af1[5]
     pha                                                               ; 40c4: 48          H   :0af3[5]
     tya                                                               ; 40c5: 98          .   :0af4[5]
     sec                                                               ; 40c6: 38          8   :0af5[5]
@@ -7095,7 +7127,7 @@ convert_section_letter_to_level_filename_letter
     lda level_ordering_table+1,y                                      ; 40ca: b9 80 0a    ... :0af9[5]
     tay                                                               ; 40cd: a8          .   :0afc[5]
     pla                                                               ; 40ce: 68          h   :0afd[5]
-return28
+return29
     rts                                                               ; 40cf: 60          `   :0afe[5]
 
 }
@@ -7192,7 +7224,7 @@ vdu_goto_0_9
 
 something_TODO
     lda l0004                                                         ; 4152: a5 04       ..  :0453[2]
-    beq return29                                                      ; 4154: f0 1c       ..  :0455[2]
+    beq return30                                                      ; 4154: f0 1c       ..  :0455[2]
     jsr wait_for_timingB_counter                                      ; 4156: 20 00 04     .. :0457[2]
     jsr turn_cursor_off                                               ; 4159: 20 63 38     c8 :045a[2]
     ldx #$ff                                                          ; 415c: a2 ff       ..  :045d[2]
@@ -7207,7 +7239,7 @@ something_TODO
     sta l0041                                                         ; 416d: 85 41       .A  :046e[2]
     jmp c0505                                                         ; 416f: 4c 05 05    L.. :0470[2]
 
-return29
+return30
     rts                                                               ; 4172: 60          `   :0473[2]
 
 stash_data_pointed_to_by_l0076_at_530_maybe
@@ -7251,7 +7283,7 @@ c04a4
     bcc c0490                                                         ; 41b1: 90 dc       ..  :04b2[2]
 c04b4
     dec sprite_screen_address_high                                    ; 41b3: c6 73       .s  :04b4[2]
-    beq return30                                                      ; 41b5: f0 12       ..  :04b6[2]
+    beq return31                                                      ; 41b5: f0 12       ..  :04b6[2]
     lda sprite_x_pos_low                                              ; 41b7: a5 74       .t  :04b8[2]
     adc #$40 ; '@'                                                    ; 41b9: 69 40       i@  :04ba[2]
     sta sprite_x_pos_low                                              ; 41bb: 85 74       .t  :04bc[2]
@@ -7261,7 +7293,7 @@ c04b4
     sta sprite_x_pos_high                                             ; 41c3: 85 75       .u  :04c4[2]
     sta sprite_y_pos_high                                             ; 41c5: 85 77       .w  :04c6[2]
     bcc c048d                                                         ; 41c7: 90 c3       ..  :04c8[2]
-return30
+return31
     rts                                                               ; 41c9: 60          `   :04ca[2]
 
 sub_c04cb
@@ -7471,8 +7503,6 @@ pydis_end
 ;     c287e
 ;     c288c
 ;     c2945
-;     c2a12
-;     c2a33
 ;     c2a73
 ;     c2a81
 ;     c2aa0
@@ -8126,6 +8156,9 @@ pydis_end
 !if (>start_of_screen_memory) != $5b {
     !error "Assertion failed: >start_of_screen_memory == $5b"
 }
+!if (>toolbar_screen_address) != $58 {
+    !error "Assertion failed: >toolbar_screen_address == $58"
+}
 !if (>wait_for_timingB_counter) != $04 {
     !error "Assertion failed: >wait_for_timingB_counter == $04"
 }
@@ -8327,6 +8360,9 @@ pydis_end
 !if (spriteid_corner_top_right) != $2f {
     !error "Assertion failed: spriteid_corner_top_right == $2f"
 }
+!if (spriteid_fingertip_tile_restoration) != $1e {
+    !error "Assertion failed: spriteid_fingertip_tile_restoration == $1e"
+}
 !if (spriteid_icon_background) != $01 {
     !error "Assertion failed: spriteid_icon_background == $01"
 }
@@ -8344,9 +8380,6 @@ pydis_end
 }
 !if (spriteid_some_small_blob) != $37 {
     !error "Assertion failed: spriteid_some_small_blob == $37"
-}
-!if (spriteid_some_small_number_of_pixels_set) != $1e {
-    !error "Assertion failed: spriteid_some_small_number_of_pixels_set == $1e"
 }
 !if (update_displayed_transformations_remaining_high_copy_end - update_displayed_transformations_remaining_high_copy_start) != $2f {
     !error "Assertion failed: update_displayed_transformations_remaining_high_copy_end - update_displayed_transformations_remaining_high_copy_start == $2f"
