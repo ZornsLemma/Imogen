@@ -75,6 +75,7 @@ l2551                               = $2551
 something59_TODO                    = $2894
 something55_TODO                    = $28e2
 find_or_create_menu_slot_for_A      = $2bbd
+remove_item_from_toolbar_menu       = $2be0
 l2eb6                               = $2eb6
 l2ee9                               = $2ee9
 l2eee                               = $2eee

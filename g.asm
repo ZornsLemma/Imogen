@@ -54,15 +54,7 @@ sprite_op_flags_copy_mask                       = 1
 sprite_op_flags_erase                           = 2
 sprite_op_flags_ignore_mask                     = 4
 sprite_op_flags_normal                          = 0
-spriteid_blob_thing1                            = 2
-spriteid_blob_thing2                            = 3
-spriteid_blob_thing3                            = 4
-spriteid_blob_thing4                            = 5
-spriteid_blob_thing5                            = 6
-spriteid_blob_thing6                            = 7
-spriteid_blob_thing7                            = 8
-spriteid_blob_thing8                            = 9
-spriteid_blob_thing9                            = 10
+spriteid_blob_thing                             = 10
 spriteid_brazier                                = 58
 spriteid_cat1                                   = 27
 spriteid_cat2                                   = 28
@@ -100,6 +92,14 @@ spriteid_fire5                                  = 64
 spriteid_fire6                                  = 65
 spriteid_fire7                                  = 66
 spriteid_fire8                                  = 67
+spriteid_icodata_box                            = 9
+spriteid_icodata_cat                            = 5
+spriteid_icodata_disc                           = 3
+spriteid_icodata_info                           = 7
+spriteid_icodata_monkey                         = 6
+spriteid_icodata_password                       = 8
+spriteid_icodata_sound                          = 2
+spriteid_icodata_wizard                         = 4
 spriteid_icon_background                        = 1
 spriteid_monkey1                                = 78
 spriteid_monkey2                                = 79
@@ -523,7 +523,7 @@ c11f8
     lda #black                                                        ; 1329: a9 00       ..  :11f8[1]
     sta toolbar_colour                                                ; 132b: 8d 5e 17    .^. :11fa[1]
     sta gameplay_area_colour                                          ; 132e: 8d 60 17    .`. :11fd[1]
-    jsr sub_c2980                                                     ; 1331: 20 80 29     .) :1200[1]
+    jsr reset_menu_items                                              ; 1331: 20 80 29     .) :1200[1]
     jsr draw_toolbar                                                  ; 1334: 20 a1 29     .) :1203[1]
     jsr update_displayed_transformations_remaining                    ; 1337: 20 31 01     1. :1206[1]
 c1209
@@ -2386,7 +2386,7 @@ c1dda
     bcc c1dc9                                                         ; 1f13: 90 e5       ..  :1de2[1]
     bcs c1df0                                                         ; 1f15: b0 0a       ..  :1de4[1]
 c1de6
-    lda #spriteid_blob_thing9                                         ; 1f17: a9 0a       ..  :1de6[1]
+    lda #spriteid_blob_thing                                          ; 1f17: a9 0a       ..  :1de6[1]
     jsr draw_sprite_a_at_character_xy                                 ; 1f19: 20 4c 1f     L. :1de8[1]
     lda #2                                                            ; 1f1c: a9 02       ..  :1deb[1]
     jsr something60_TODO                                              ; 1f1e: 20 bb 1e     .. :1ded[1]
@@ -3229,7 +3229,7 @@ transform
     sta l2433                                                         ; 246c: 8d 33 24    .3$ :233b[1]
     sta l0052                                                         ; 246f: 85 52       .R  :233e[1]
     lda new_menu_index                                                ; 2471: a5 29       .)  :2340[1]
-    cmp l296d                                                         ; 2473: cd 6d 29    .m) :2342[1]
+    cmp menu_index_for_first_player_character                         ; 2473: cd 6d 29    .m) :2342[1]
     bcc return11                                                      ; 2476: 90 10       ..  :2345[1]
     lda #$ff                                                          ; 2478: a9 ff       ..  :2347[1]
     ldx #<sound_data2                                                 ; 247a: a2 d0       ..  :2349[1]
@@ -4111,32 +4111,46 @@ c2945
 l295b
     !byte 0                                                           ; 2a8c: 00          .   :295b[1]
 desired_menu_slots
-    !byte 3                                                           ; 2a8d: 03          .   :295c[1]
-l295d
-    !byte 2, 8, 7, 0, 5, 6, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0              ; 2a8e: 02 08 07... ... :295d[1]
-l296d
+    !byte spriteid_icodata_disc                                       ; 2a8d: 03          .   :295c[1]
+    !byte spriteid_icodata_sound                                      ; 2a8e: 02          .   :295d[1]
+    !byte spriteid_icodata_password                                   ; 2a8f: 08          .   :295e[1]
+    !byte spriteid_icodata_info                                       ; 2a90: 07          .   :295f[1]
+    !byte 0                                                           ; 2a91: 00          .   :2960[1]
+    !byte spriteid_icodata_cat                                        ; 2a92: 05          .   :2961[1]
+    !byte spriteid_icodata_monkey                                     ; 2a93: 06          .   :2962[1]
+    !byte spriteid_icodata_wizard                                     ; 2a94: 04          .   :2963[1]
+    !byte 0, 0, 0, 0, 0, 0, 0, 0, 0                                   ; 2a95: 00 00 00... ... :2964[1]
+menu_index_for_first_player_character
     !byte 5                                                           ; 2a9e: 05          .   :296d[1]
-l296e
+menu_index_for_extra_items
     !byte 9                                                           ; 2a9f: 09          .   :296e[1]
 displayed_menu_slots
     !byte 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0           ; 2aa0: 00 00 00... ... :296f[1]
 
-sub_c2980
-    ldx #9                                                            ; 2ab1: a2 09       ..  :2980[1]
-    stx l296e                                                         ; 2ab3: 8e 6e 29    .n) :2982[1]
+; *************************************************************************************
+; 
+; Reset menu items to defaults
+; 
+; *************************************************************************************
+reset_menu_items
+    ldx #9                                                            ; 2ab1: a2 09       ..  :2980[1]   ; set standard set as nine menu items (including separators)
+    stx menu_index_for_extra_items                                    ; 2ab3: 8e 6e 29    .n) :2982[1]
+; clear desired slots from slot eight upwards
     dex                                                               ; 2ab6: ca          .   :2985[1]
     lda #0                                                            ; 2ab7: a9 00       ..  :2986[1]
-loop_c2988
+clear_extra_menu_slots_loop
     sta desired_menu_slots,x                                          ; 2ab9: 9d 5c 29    .\) :2988[1]
     inx                                                               ; 2abc: e8          .   :298b[1]
     cpx #$11                                                          ; 2abd: e0 11       ..  :298c[1]
-    bcc loop_c2988                                                    ; 2abf: 90 f8       ..  :298e[1]
+    bcc clear_extra_menu_slots_loop                                   ; 2abf: 90 f8       ..  :298e[1]
+; clear another table
     ldx #3                                                            ; 2ac1: a2 03       ..  :2990[1]
 loop_c2992
     sta four_entry_table2,x                                           ; 2ac3: 9d e9 2e    ... :2992[1]
     dex                                                               ; 2ac6: ca          .   :2995[1]
     bpl loop_c2992                                                    ; 2ac7: 10 fa       ..  :2996[1]
-    lda l296d                                                         ; 2ac9: ad 6d 29    .m) :2998[1]
+; set new menu position
+    lda menu_index_for_first_player_character                         ; 2ac9: ad 6d 29    .m) :2998[1]
     clc                                                               ; 2acc: 18          .   :299b[1]
     adc #2                                                            ; 2acd: 69 02       i.  :299c[1]
     sta new_menu_index                                                ; 2acf: 85 29       .)  :299e[1]
@@ -4149,7 +4163,7 @@ draw_toolbar
 
 ; *************************************************************************************
 ; 
-; draw_menu_icons
+; Update menu items (redrawing them if needed)
 ; 
 ; *************************************************************************************
 draw_menu_icons
@@ -4202,7 +4216,7 @@ return18
 
 ; *************************************************************************************
 ; 
-; unplot_menu_pointer
+; Unplot Menu Pointer
 ; 
 ; *************************************************************************************
 unplot_menu_pointer
@@ -4304,10 +4318,10 @@ c2a73
     jsr sub_c2b65                                                     ; 2baf: 20 65 2b     e+ :2a7e[1]
 c2a81
     lda new_menu_index                                                ; 2bb2: a5 29       .)  :2a81[1]
-    cmp l296d                                                         ; 2bb4: cd 6d 29    .m) :2a83[1]
+    cmp menu_index_for_first_player_character                         ; 2bb4: cd 6d 29    .m) :2a83[1]
     bcs c2acd                                                         ; 2bb7: b0 45       .E  :2a86[1]
     lda another_menu_index                                            ; 2bb9: a5 25       .%  :2a88[1]
-    cmp l296d                                                         ; 2bbb: cd 6d 29    .m) :2a8a[1]
+    cmp menu_index_for_first_player_character                         ; 2bbb: cd 6d 29    .m) :2a8a[1]
     bcc c2aa0                                                         ; 2bbe: 90 11       ..  :2a8d[1]
     lda #osbyte_flush_buffer_class                                    ; 2bc0: a9 0f       ..  :2a8f[1]
     ldx #0                                                            ; 2bc2: a2 00       ..  :2a91[1]
@@ -4345,7 +4359,7 @@ c2ac4
 
 c2acd
     lda another_menu_index                                            ; 2bfe: a5 25       .%  :2acd[1]
-    cmp l296d                                                         ; 2c00: cd 6d 29    .m) :2acf[1]
+    cmp menu_index_for_first_player_character                         ; 2c00: cd 6d 29    .m) :2acf[1]
     bcs return19                                                      ; 2c03: b0 06       ..  :2ad2[1]
     jsr sub_c3aa2                                                     ; 2c05: 20 a2 3a     .: :2ad4[1]
     jsr update_main_keys                                              ; 2c08: 20 12 3a     .: :2ad7[1]
@@ -4354,7 +4368,7 @@ return19
 
 sub_c2adb
     ldx new_menu_index                                                ; 2c0c: a6 29       .)  :2adb[1]
-    cpx l296d                                                         ; 2c0e: ec 6d 29    .m) :2add[1]
+    cpx menu_index_for_first_player_character                         ; 2c0e: ec 6d 29    .m) :2add[1]
     bcs return20                                                      ; 2c11: b0 13       ..  :2ae0[1]
     lda desired_menu_slots,x                                          ; 2c13: bd 5c 29    .\) :2ae2[1]
     cmp #7                                                            ; 2c16: c9 07       ..  :2ae5[1]
@@ -4409,9 +4423,9 @@ c2b2e
 
 sub_c2b37
     ldx new_menu_index                                                ; 2c68: a6 29       .)  :2b37[1]
-    cpx l296d                                                         ; 2c6a: ec 6d 29    .m) :2b39[1]
+    cpx menu_index_for_first_player_character                         ; 2c6a: ec 6d 29    .m) :2b39[1]
     bcc return21                                                      ; 2c6d: 90 26       .&  :2b3c[1]
-    cpx l296e                                                         ; 2c6f: ec 6e 29    .n) :2b3e[1]
+    cpx menu_index_for_extra_items                                    ; 2c6f: ec 6e 29    .n) :2b3e[1]
     bcs return21                                                      ; 2c72: b0 21       .!  :2b41[1]
     lda current_player_character                                      ; 2c74: a5 48       .H  :2b43[1]
     cmp new_player_character                                          ; 2c76: c5 4d       .M  :2b45[1]
@@ -4432,7 +4446,7 @@ return21
 
 sub_c2b65
     ldx new_menu_index                                                ; 2c96: a6 29       .)  :2b65[1]
-    cpx l296e                                                         ; 2c98: ec 6e 29    .n) :2b67[1]
+    cpx menu_index_for_extra_items                                    ; 2c98: ec 6e 29    .n) :2b67[1]
     bcc return22                                                      ; 2c9b: 90 1a       ..  :2b6a[1]
     lda current_player_character                                      ; 2c9d: a5 48       .H  :2b6c[1]
     cmp #4                                                            ; 2c9f: c9 04       ..  :2b6e[1]
@@ -4454,13 +4468,13 @@ something21_TODO
     sta address1_low                                                  ; 2cb8: 85 70       .p  :2b87[1]
     lda #0                                                            ; 2cba: a9 00       ..  :2b89[1]
     sta address1_high                                                 ; 2cbc: 85 71       .q  :2b8b[1]
-    ldx l296d                                                         ; 2cbe: ae 6d 29    .m) :2b8d[1]
+    ldx menu_index_for_first_player_character                         ; 2cbe: ae 6d 29    .m) :2b8d[1]
 loop_c2b90
     lda desired_menu_slots,x                                          ; 2cc1: bd 5c 29    .\) :2b90[1]
     cmp address1_low                                                  ; 2cc4: c5 70       .p  :2b93[1]
     beq c2bba                                                         ; 2cc6: f0 23       .#  :2b95[1]
     inx                                                               ; 2cc8: e8          .   :2b97[1]
-    cpx l296e                                                         ; 2cc9: ec 6e 29    .n) :2b98[1]
+    cpx menu_index_for_extra_items                                    ; 2cc9: ec 6e 29    .n) :2b98[1]
     bcc loop_c2b90                                                    ; 2ccc: 90 f3       ..  :2b9b[1]
     ldx #$10                                                          ; 2cce: a2 10       ..  :2b9d[1]
     lda desired_menu_slots,x                                          ; 2cd0: bd 5c 29    .\) :2b9f[1]
@@ -4469,9 +4483,9 @@ loop_c2ba4
     lda l295b,x                                                       ; 2cd5: bd 5b 29    .[) :2ba4[1]
     sta desired_menu_slots,x                                          ; 2cd8: 9d 5c 29    .\) :2ba7[1]
     dex                                                               ; 2cdb: ca          .   :2baa[1]
-    cpx l296e                                                         ; 2cdc: ec 6e 29    .n) :2bab[1]
+    cpx menu_index_for_extra_items                                    ; 2cdc: ec 6e 29    .n) :2bab[1]
     bcs loop_c2ba4                                                    ; 2cdf: b0 f4       ..  :2bae[1]
-    inc l296e                                                         ; 2ce1: ee 6e 29    .n) :2bb0[1]
+    inc menu_index_for_extra_items                                    ; 2ce1: ee 6e 29    .n) :2bb0[1]
     lda address1_low                                                  ; 2ce4: a5 70       .p  :2bb3[1]
     sta desired_menu_slots,x                                          ; 2ce6: 9d 5c 29    .\) :2bb5[1]
     dec address1_high                                                 ; 2ce9: c6 71       .q  :2bb8[1]
@@ -4493,7 +4507,7 @@ find_or_create_menu_slot_for_A
     sta address1_low                                                  ; 2cee: 85 70       .p  :2bbd[1]
     lda #0                                                            ; 2cf0: a9 00       ..  :2bbf[1]
     sta address1_high                                                 ; 2cf2: 85 71       .q  :2bc1[1]
-    ldx l296e                                                         ; 2cf4: ae 6e 29    .n) :2bc3[1]
+    ldx menu_index_for_extra_items                                    ; 2cf4: ae 6e 29    .n) :2bc3[1]
 find_slot_loop
     lda desired_menu_slots,x                                          ; 2cf7: bd 5c 29    .\) :2bc6[1]
     beq empty_slot_found                                              ; 2cfa: f0 0b       ..  :2bc9[1]
@@ -4511,29 +4525,38 @@ matching_slot_found_or_no_empty_slot
     lda address1_high                                                 ; 2d0e: a5 71       .q  :2bdd[1]
     rts                                                               ; 2d10: 60          `   :2bdf[1]
 
-something22_TODO
-    sta address1_low                                                  ; 2d11: 85 70       .p  :2be0[1]
+; *************************************************************************************
+; 
+; Remove menu item from toolbar
+; 
+; *************************************************************************************
+remove_item_from_toolbar_menu
+    sta address1_low                                                  ; 2d11: 85 70       .p  :2be0[1]   ; remember item to remove
+; flag that nothing has changed yet
     lda #0                                                            ; 2d13: a9 00       ..  :2be2[1]
     sta address1_high                                                 ; 2d15: 85 71       .q  :2be4[1]
-    ldx l296e                                                         ; 2d17: ae 6e 29    .n) :2be6[1]
+; start index for non-standard menu items
+    ldx menu_index_for_extra_items                                    ; 2d17: ae 6e 29    .n) :2be6[1]
 loop_c2be9
     lda desired_menu_slots,x                                          ; 2d1a: bd 5c 29    .\) :2be9[1]
     cmp address1_low                                                  ; 2d1d: c5 70       .p  :2bec[1]
-    beq c2bf7                                                         ; 2d1f: f0 07       ..  :2bee[1]
+    beq shuffle_menu_items_left_loop                                  ; 2d1f: f0 07       ..  :2bee[1]
     inx                                                               ; 2d21: e8          .   :2bf0[1]
     cpx #$11                                                          ; 2d22: e0 11       ..  :2bf1[1]
     bcc loop_c2be9                                                    ; 2d24: 90 f4       ..  :2bf3[1]
-    bcs c2c09                                                         ; 2d26: b0 12       ..  :2bf5[1]
-c2bf7
-    lda l295d,x                                                       ; 2d28: bd 5d 29    .]) :2bf7[1]
+    bcs return_with_flag_set_if_shuffled_left                         ; 2d26: b0 12       ..  :2bf5[1]   ; ALWAYS branch
+; shuffle menu items left
+shuffle_menu_items_left_loop
+    lda desired_menu_slots+1,x                                        ; 2d28: bd 5d 29    .]) :2bf7[1]
     sta desired_menu_slots,x                                          ; 2d2b: 9d 5c 29    .\) :2bfa[1]
     inx                                                               ; 2d2e: e8          .   :2bfd[1]
     cpx #$10                                                          ; 2d2f: e0 10       ..  :2bfe[1]
-    bcc c2bf7                                                         ; 2d31: 90 f5       ..  :2c00[1]
+    bcc shuffle_menu_items_left_loop                                  ; 2d31: 90 f5       ..  :2c00[1]
+; make final menu slot empty
     lda #0                                                            ; 2d33: a9 00       ..  :2c02[1]
     sta desired_menu_slots,x                                          ; 2d35: 9d 5c 29    .\) :2c04[1]
     dec address1_high                                                 ; 2d38: c6 71       .q  :2c07[1]
-c2c09
+return_with_flag_set_if_shuffled_left
     lda address1_high                                                 ; 2d3a: a5 71       .q  :2c09[1]
     rts                                                               ; 2d3c: 60          `   :2c0b[1]
 
@@ -6849,7 +6872,7 @@ skip_writing_copy_protection_flag
     jsr handle_developer_mode_setup                                   ; 3f2d: 20 6f 3f     o?
     lda #osbyte_reset_soft_keys                                       ; 3f30: a9 12       ..
     jsr osbyte                                                        ; 3f32: 20 f4 ff     ..            ; Reset function keys
-    jsr sub_c2980                                                     ; 3f35: 20 80 29     .)
+    jsr reset_menu_items                                              ; 3f35: 20 80 29     .)
     jsr draw_menu_icons                                               ; 3f38: 20 a8 29     .)
     lda screen_base_address_high                                      ; 3f3b: a5 4c       .L
     pha                                                               ; 3f3d: 48          H
@@ -6857,7 +6880,7 @@ skip_writing_copy_protection_flag
     sta screen_base_address_high                                      ; 3f40: 85 4c       .L
     ldx #$24 ; '$'                                                    ; 3f42: a2 24       .$
     ldy #6                                                            ; 3f44: a0 06       ..
-    lda #spriteid_blob_thing8                                         ; 3f46: a9 09       ..
+    lda #spriteid_icodata_box                                         ; 3f46: a9 09       ..
     jsr draw_sprite_a_at_character_xy                                 ; 3f48: 20 4c 1f     L.
     pla                                                               ; 3f4b: 68          h
     sta screen_base_address_high                                      ; 3f4c: 85 4c       .L
@@ -7515,8 +7538,6 @@ pydis_end
 ;     c2b2e
 ;     c2b84
 ;     c2bba
-;     c2bf7
-;     c2c09
 ;     c2c35
 ;     c2c3d
 ;     c2d87
@@ -7730,9 +7751,6 @@ pydis_end
 ;     l2893
 ;     l28e1
 ;     l295b
-;     l295d
-;     l296d
-;     l296e
 ;     l2ced
 ;     l2eb5
 ;     l2eb6
@@ -7788,7 +7806,6 @@ pydis_end
 ;     loop_c26f3
 ;     loop_c270f
 ;     loop_c28fd
-;     loop_c2988
 ;     loop_c2992
 ;     loop_c2a9a
 ;     loop_c2b90
@@ -7830,7 +7847,6 @@ pydis_end
 ;     sub_c2770
 ;     sub_c2859
 ;     sub_c286d
-;     sub_c2980
 ;     sub_c2adb
 ;     sub_c2b37
 ;     sub_c2b65
@@ -8339,11 +8355,8 @@ pydis_end
 !if (sprite_op_flags_normal) != $00 {
     !error "Assertion failed: sprite_op_flags_normal == $00"
 }
-!if (spriteid_blob_thing8) != $09 {
-    !error "Assertion failed: spriteid_blob_thing8 == $09"
-}
-!if (spriteid_blob_thing9) != $0a {
-    !error "Assertion failed: spriteid_blob_thing9 == $0a"
+!if (spriteid_blob_thing) != $0a {
+    !error "Assertion failed: spriteid_blob_thing == $0a"
 }
 !if (spriteid_brazier) != $3a {
     !error "Assertion failed: spriteid_brazier == $3a"
@@ -8362,6 +8375,30 @@ pydis_end
 }
 !if (spriteid_fingertip_tile_restoration) != $1e {
     !error "Assertion failed: spriteid_fingertip_tile_restoration == $1e"
+}
+!if (spriteid_icodata_box) != $09 {
+    !error "Assertion failed: spriteid_icodata_box == $09"
+}
+!if (spriteid_icodata_cat) != $05 {
+    !error "Assertion failed: spriteid_icodata_cat == $05"
+}
+!if (spriteid_icodata_disc) != $03 {
+    !error "Assertion failed: spriteid_icodata_disc == $03"
+}
+!if (spriteid_icodata_info) != $07 {
+    !error "Assertion failed: spriteid_icodata_info == $07"
+}
+!if (spriteid_icodata_monkey) != $06 {
+    !error "Assertion failed: spriteid_icodata_monkey == $06"
+}
+!if (spriteid_icodata_password) != $08 {
+    !error "Assertion failed: spriteid_icodata_password == $08"
+}
+!if (spriteid_icodata_sound) != $02 {
+    !error "Assertion failed: spriteid_icodata_sound == $02"
+}
+!if (spriteid_icodata_wizard) != $04 {
+    !error "Assertion failed: spriteid_icodata_wizard == $04"
 }
 !if (spriteid_icon_background) != $01 {
     !error "Assertion failed: spriteid_icon_background == $01"

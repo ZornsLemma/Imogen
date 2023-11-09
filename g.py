@@ -140,15 +140,15 @@ label(0x00fc, "interrupt_accumulator")
 sprite_dict = {
     0x00: "spriteid_one_pixel_masked_out",
     0x01: "spriteid_icon_background",
-    0x02: "spriteid_blob_thing1",        # TODO: better name
-    0x03: "spriteid_blob_thing2",        # TODO: better name
-    0x04: "spriteid_blob_thing3",        # TODO: better name
-    0x05: "spriteid_blob_thing4",        # TODO: better name
-    0x06: "spriteid_blob_thing5",        # TODO: better name
-    0x07: "spriteid_blob_thing6",        # TODO: better name
-    0x08: "spriteid_blob_thing7",        # TODO: better name
-    0x09: "spriteid_blob_thing8",        # TODO: better name
-    0x0a: "spriteid_blob_thing9",        # TODO: better name
+    0x02: "spriteid_icodata_sound",
+    0x03: "spriteid_icodata_disc",
+    0x04: "spriteid_icodata_wizard",
+    0x05: "spriteid_icodata_cat",
+    0x06: "spriteid_icodata_monkey",
+    0x07: "spriteid_icodata_info",
+    0x08: "spriteid_icodata_password",
+    0x09: "spriteid_icodata_box",
+    0x0a: "spriteid_blob_thing",          # TODO: better name
     0x0b: "spriteid_rope_hook",
     0x0c: "spriteid_cat_walk1",
     0x0d: "spriteid_cat_walk2",
@@ -924,8 +924,15 @@ label(0x2a60, "skip_developer_key_escape_handling")
 label(0x2ab7, "skip_developer_key_shift_handling")
 label(0x36a8, "skip_developer_key_level_select_handling")
 entry(0x2b87, "something21_TODO")
-entry(0x2be0, "something22_TODO")
-# TODO: DELETE entry(0x35f7, "something23_TODO")
+comment(0x2be0, """*************************************************************************************
+
+Remove menu item from toolbar
+
+*************************************************************************************""")
+entry(0x2be0)
+comment(0x2be0, "remember item to remove", inline=True)
+comment(0x2be2, "flag that nothing has changed yet")
+comment(0x2be6, "start index for non-standard menu items")
 
 label(0x37, "currently_loaded_level")
 label(0x114f, "level_load_loop")
@@ -949,7 +956,7 @@ entry(0x29a1, "draw_toolbar") # TODO: plausible guess
 # TODO: Inconsistent use of "toolbar" and "menu", fix up eventually - "toolbar" is probably better, but not thought much yet - also some inconsistency between "icon" and "slot", although these are arguably distinct (even if the disassembly doesn't respect it), a slot can be blank or have an icon in it - also maybe "slot" vs "index" is a bit sloppy
 comment(0x29a8, """*************************************************************************************
 
-draw_menu_icons
+Update menu items (redrawing them if needed)
 
 *************************************************************************************""")
 entry(0x29a8, "draw_menu_icons")
@@ -1243,7 +1250,42 @@ expr(0x3f1b, make_subtract("level_ordering_table", 1))
 comment(0x3f20, "read the first byte of the data (which is zero) and set the copy_protection_flag if needed")
 label(0x3f2d, "skip_writing_copy_protection_flag")
 label(0x295c, "desired_menu_slots") # sub_c2980 initialises elements 9 inclusive to $11 exclusive, but elsewhere we do access lower elements
+label(0x295d, "desired_menu_slots+1")
+label(0x2bf7, "shuffle_menu_items_left_loop")
+comment(0x2bf7, "shuffle menu items left")
+comment(0x2c02, "make final menu slot empty")
+comment(0x2bf5, "ALWAYS branch", inline=True)
+label(0x2c09, "return_with_flag_set_if_shuffled_left")
+expr(0x295c, sprite_dict[3])
+byte(0x295c)
+expr(0x295d, sprite_dict[2])
+byte(0x295d)
+expr(0x295e, sprite_dict[8])
+byte(0x295e)
+expr(0x295f, sprite_dict[7])
+byte(0x295f)
+expr(0x2961, sprite_dict[5])
+byte(0x2960)
+byte(0x2961)
+expr(0x2962, sprite_dict[6])
+byte(0x2962)
+expr(0x2963, sprite_dict[4])
+byte(0x2963)
+label(0x296e, "menu_index_for_extra_items")
 label(0x296f, "displayed_menu_slots") # see code at c29aa which pairs this with menu_slots1
+comment(0x2980, """*************************************************************************************
+
+Reset menu items to defaults
+
+*************************************************************************************""")
+label(0x2980, "reset_menu_items")
+comment(0x2980, "set standard set as nine menu items (including separators)", inline=True)
+comment(0x2985, "clear desired slots from slot eight upwards")
+label(0x2988, "clear_extra_menu_slots_loop")
+label(0x296d, "menu_index_for_first_player_character")
+comment(0x2990, "clear another table")
+comment(0x2998, "set new menu position")
+
 # sub_c2157 uses all of these tables in parallel, so presumably they share the same size - represented here by 'x'
 # TODO: These tables seem to occur in pairs (copy or cmp) so I've renamed them to use a/b names to try to tie the pairs together.
 label(0x9b3, "x_entry_table9b")
@@ -1289,7 +1331,7 @@ comment(0x2c7c, "always branch", inline=True)
 entry(0x29eb, "unplot_menu_pointer")
 comment(0x29eb, """*************************************************************************************
 
-unplot_menu_pointer
+Unplot Menu Pointer
 
 *************************************************************************************""")
 comment(0x29ef, "remember currrent screen base address")

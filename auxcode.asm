@@ -52,6 +52,7 @@ something61_TODO                    = $23a9
 something59_TODO                    = $2894
 something55_TODO                    = $28e2
 find_or_create_menu_slot_for_A      = $2bbd
+remove_item_from_toolbar_menu       = $2be0
 l37f3                               = $37f3
 l388d                               = $388d
 l3a8f                               = $3a8f
