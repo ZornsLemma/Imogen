@@ -9,9 +9,9 @@ desired_room_index                      = $30
 desired_level                           = $31
 l003a                                   = $3a
 l003b                                   = $3b
-l003c                                   = $3c
-l003d                                   = $3d
-l003e                                   = $3e
+width_in_cells                          = $3c
+height_in_cells                         = $3d
+value_to_write_to_collision_map         = $3e
 l0040                                   = $40
 l0041                                   = $41
 l0042                                   = $42
@@ -61,7 +61,7 @@ current_room_index                      = $1aba
 something51_TODO                        = $1abb
 something26_TODO                        = $1b90
 something53_TODO                        = $1db9
-something54_TODO                        = $1e44
+write_rectangle_to_collision_map        = $1e44
 something60_TODO                        = $1ebb
 draw_sprite_a_at_character_xy           = $1f4c
 something52_TODO                        = $1f57
@@ -161,50 +161,50 @@ level_thing_1_code
     ldx #0                                                            ; 3b29: a2 00       ..
     ldy #0                                                            ; 3b2b: a0 00       ..
     lda #$ff                                                          ; 3b2d: a9 ff       ..
-    sta l003c                                                         ; 3b2f: 85 3c       .<
+    sta width_in_cells                                                ; 3b2f: 85 3c       .<
     lda #2                                                            ; 3b31: a9 02       ..
-    sta l003d                                                         ; 3b33: 85 3d       .=
+    sta height_in_cells                                               ; 3b33: 85 3d       .=
     jsr something51_TODO                                              ; 3b35: 20 bb 1a     ..
     ldy #2                                                            ; 3b38: a0 02       ..
     lda #4                                                            ; 3b3a: a9 04       ..
-    sta l003c                                                         ; 3b3c: 85 3c       .<
-    dec l003d                                                         ; 3b3e: c6 3d       .=
+    sta width_in_cells                                                ; 3b3c: 85 3c       .<
+    dec height_in_cells                                               ; 3b3e: c6 3d       .=
     jsr something51_TODO                                              ; 3b40: 20 bb 1a     ..
     iny                                                               ; 3b43: c8          .
-    dec l003c                                                         ; 3b44: c6 3c       .<
+    dec width_in_cells                                                ; 3b44: c6 3c       .<
     lda #$13                                                          ; 3b46: a9 13       ..
-    sta l003d                                                         ; 3b48: 85 3d       .=
+    sta height_in_cells                                               ; 3b48: 85 3d       .=
     jsr something51_TODO                                              ; 3b4a: 20 bb 1a     ..
     ldy #$16                                                          ; 3b4d: a0 16       ..
     lda #$ff                                                          ; 3b4f: a9 ff       ..
-    sta l003c                                                         ; 3b51: 85 3c       .<
+    sta width_in_cells                                                ; 3b51: 85 3c       .<
     jsr something51_TODO                                              ; 3b53: 20 bb 1a     ..
     ldx #$22 ; '"'                                                    ; 3b56: a2 22       ."
     ldy #7                                                            ; 3b58: a0 07       ..
     lda #6                                                            ; 3b5a: a9 06       ..
-    sta l003c                                                         ; 3b5c: 85 3c       .<
+    sta width_in_cells                                                ; 3b5c: 85 3c       .<
     lda #2                                                            ; 3b5e: a9 02       ..
-    sta l003d                                                         ; 3b60: 85 3d       .=
+    sta height_in_cells                                               ; 3b60: 85 3d       .=
     jsr something51_TODO                                              ; 3b62: 20 bb 1a     ..
     ldx #$25 ; '%'                                                    ; 3b65: a2 25       .%
     ldy #9                                                            ; 3b67: a0 09       ..
     lda #$0d                                                          ; 3b69: a9 0d       ..
-    sta l003d                                                         ; 3b6b: 85 3d       .=
+    sta height_in_cells                                               ; 3b6b: 85 3d       .=
     jsr something51_TODO                                              ; 3b6d: 20 bb 1a     ..
     ldx #$0e                                                          ; 3b70: a2 0e       ..
     ldy #$0b                                                          ; 3b72: a0 0b       ..
     lda #3                                                            ; 3b74: a9 03       ..
-    sta l003c                                                         ; 3b76: 85 3c       .<
+    sta width_in_cells                                                ; 3b76: 85 3c       .<
     lda #2                                                            ; 3b78: a9 02       ..
-    sta l003d                                                         ; 3b7a: 85 3d       .=
+    sta height_in_cells                                               ; 3b7a: 85 3d       .=
     jsr something51_TODO                                              ; 3b7c: 20 bb 1a     ..
     ldx #$18                                                          ; 3b7f: a2 18       ..
     jsr something51_TODO                                              ; 3b81: 20 bb 1a     ..
     jsr something26_TODO                                              ; 3b84: 20 90 1b     ..
     lda #3                                                            ; 3b87: a9 03       ..
-    sta l003c                                                         ; 3b89: 85 3c       .<
+    sta width_in_cells                                                ; 3b89: 85 3c       .<
     lda #2                                                            ; 3b8b: a9 02       ..
-    sta l003d                                                         ; 3b8d: 85 3d       .=
+    sta height_in_cells                                               ; 3b8d: 85 3d       .=
     lda #$de                                                          ; 3b8f: a9 de       ..
     ldx #3                                                            ; 3b91: a2 03       ..
     ldy #$14                                                          ; 3b93: a0 14       ..
@@ -265,10 +265,10 @@ c3bf7
     ldy #$44 ; 'D'                                                    ; 3bff: a0 44       .D
     jsr l395e                                                         ; 3c01: 20 5e 39     ^9
     lda #2                                                            ; 3c04: a9 02       ..
-    sta l003c                                                         ; 3c06: 85 3c       .<
-    sta l003d                                                         ; 3c08: 85 3d       .=
+    sta width_in_cells                                                ; 3c06: 85 3c       .<
+    sta height_in_cells                                               ; 3c08: 85 3d       .=
     lda #3                                                            ; 3c0a: a9 03       ..
-    sta l003e                                                         ; 3c0c: 85 3e       .>
+    sta value_to_write_to_collision_map                               ; 3c0c: 85 3e       .>
     ldx #$10                                                          ; 3c0e: a2 10       ..
     ldy #$0b                                                          ; 3c10: a0 0b       ..
     lda #$fe                                                          ; 3c12: a9 fe       ..
@@ -278,7 +278,7 @@ c3bf7
     dex                                                               ; 3c1b: ca          .
     dey                                                               ; 3c1c: 88          .
     dey                                                               ; 3c1d: 88          .
-    jsr something54_TODO                                              ; 3c1e: 20 44 1e     D.
+    jsr write_rectangle_to_collision_map                              ; 3c1e: 20 44 1e     D.
     ldx #2                                                            ; 3c21: a2 02       ..
     jsr something57_TODO                                              ; 3c23: 20 6d 1f     m.
     lda #$cd                                                          ; 3c26: a9 cd       ..
@@ -296,7 +296,7 @@ c3bf7
     dex                                                               ; 3c41: ca          .
     dey                                                               ; 3c42: 88          .
     dey                                                               ; 3c43: 88          .
-    jsr something54_TODO                                              ; 3c44: 20 44 1e     D.
+    jsr write_rectangle_to_collision_map                              ; 3c44: 20 44 1e     D.
     ldx #3                                                            ; 3c47: a2 03       ..
     jsr something57_TODO                                              ; 3c49: 20 6d 1f     m.
     lda #$ff                                                          ; 3c4c: a9 ff       ..
@@ -437,13 +437,13 @@ level_thing_2_code
     ldx #0                                                            ; 3d3f: a2 00       ..
     ldy #0                                                            ; 3d41: a0 00       ..
     lda #$ff                                                          ; 3d43: a9 ff       ..
-    sta l003c                                                         ; 3d45: 85 3c       .<
+    sta width_in_cells                                                ; 3d45: 85 3c       .<
     lda #2                                                            ; 3d47: a9 02       ..
-    sta l003d                                                         ; 3d49: 85 3d       .=
+    sta height_in_cells                                               ; 3d49: 85 3d       .=
     jsr something51_TODO                                              ; 3d4b: 20 bb 1a     ..
     ldy #7                                                            ; 3d4e: a0 07       ..
     lda #$11                                                          ; 3d50: a9 11       ..
-    sta l003c                                                         ; 3d52: 85 3c       .<
+    sta width_in_cells                                                ; 3d52: 85 3c       .<
     jsr something51_TODO                                              ; 3d54: 20 bb 1a     ..
     ldx #$17                                                          ; 3d57: a2 17       ..
     jsr something51_TODO                                              ; 3d59: 20 bb 1a     ..
@@ -455,8 +455,8 @@ level_thing_2_code
     ldx #0                                                            ; 3d68: a2 00       ..
     ldy #9                                                            ; 3d6a: a0 09       ..
     lda #4                                                            ; 3d6c: a9 04       ..
-    sta l003c                                                         ; 3d6e: 85 3c       .<
-    dec l003d                                                         ; 3d70: c6 3d       .=
+    sta width_in_cells                                                ; 3d6e: 85 3c       .<
+    dec height_in_cells                                               ; 3d70: c6 3d       .=
     jsr something51_TODO                                              ; 3d72: 20 bb 1a     ..
     ldx #$0d                                                          ; 3d75: a2 0d       ..
     jsr something51_TODO                                              ; 3d77: 20 bb 1a     ..
@@ -466,9 +466,9 @@ level_thing_2_code
     jsr something51_TODO                                              ; 3d81: 20 bb 1a     ..
     ldx #0                                                            ; 3d84: a2 00       ..
     iny                                                               ; 3d86: c8          .
-    dec l003c                                                         ; 3d87: c6 3c       .<
+    dec width_in_cells                                                ; 3d87: c6 3c       .<
     lda #$0c                                                          ; 3d89: a9 0c       ..
-    sta l003d                                                         ; 3d8b: 85 3d       .=
+    sta height_in_cells                                               ; 3d8b: 85 3d       .=
     jsr something51_TODO                                              ; 3d8d: 20 bb 1a     ..
     ldx #$0e                                                          ; 3d90: a2 0e       ..
     jsr something51_TODO                                              ; 3d92: 20 bb 1a     ..
@@ -476,16 +476,16 @@ level_thing_2_code
     jsr something51_TODO                                              ; 3d97: 20 bb 1a     ..
     ldx #$25 ; '%'                                                    ; 3d9a: a2 25       .%
     lda #3                                                            ; 3d9c: a9 03       ..
-    sta l003d                                                         ; 3d9e: 85 3d       .=
+    sta height_in_cells                                               ; 3d9e: 85 3d       .=
     jsr something51_TODO                                              ; 3da0: 20 bb 1a     ..
     ldy #$12                                                          ; 3da3: a0 12       ..
-    inc l003d                                                         ; 3da5: e6 3d       .=
+    inc height_in_cells                                               ; 3da5: e6 3d       .=
     jsr something51_TODO                                              ; 3da7: 20 bb 1a     ..
     jsr something26_TODO                                              ; 3daa: 20 90 1b     ..
     lda #3                                                            ; 3dad: a9 03       ..
-    sta l003c                                                         ; 3daf: 85 3c       .<
+    sta width_in_cells                                                ; 3daf: 85 3c       .<
     lda #2                                                            ; 3db1: a9 02       ..
-    sta l003d                                                         ; 3db3: 85 3d       .=
+    sta height_in_cells                                               ; 3db3: 85 3d       .=
     lda #$de                                                          ; 3db5: a9 de       ..
     ldx #$1a                                                          ; 3db7: a2 1a       ..
     ldy #$14                                                          ; 3db9: a0 14       ..
@@ -559,16 +559,16 @@ c3e11
     lda #$ff                                                          ; 3e35: a9 ff       ..
     sta l09be,x                                                       ; 3e37: 9d be 09    ...
     lda #3                                                            ; 3e3a: a9 03       ..
-    sta l003e                                                         ; 3e3c: 85 3e       .>
+    sta value_to_write_to_collision_map                               ; 3e3c: 85 3e       .>
     lda l09ff                                                         ; 3e3e: ad ff 09    ...
     bne c3e55                                                         ; 3e41: d0 12       ..
     ldx #$11                                                          ; 3e43: a2 11       ..
     ldy #7                                                            ; 3e45: a0 07       ..
     lda #6                                                            ; 3e47: a9 06       ..
-    sta l003c                                                         ; 3e49: 85 3c       .<
+    sta width_in_cells                                                ; 3e49: 85 3c       .<
     lda #1                                                            ; 3e4b: a9 01       ..
-    sta l003d                                                         ; 3e4d: 85 3d       .=
-    jsr something54_TODO                                              ; 3e4f: 20 44 1e     D.
+    sta height_in_cells                                               ; 3e4d: 85 3d       .=
+    jsr write_rectangle_to_collision_map                              ; 3e4f: 20 44 1e     D.
     jmp c3e69                                                         ; 3e52: 4c 69 3e    Li>
 
 ; $3e55 referenced 1 time by $3e41
@@ -576,12 +576,12 @@ c3e55
     ldx #$11                                                          ; 3e55: a2 11       ..
     ldy #8                                                            ; 3e57: a0 08       ..
     lda #1                                                            ; 3e59: a9 01       ..
-    sta l003c                                                         ; 3e5b: 85 3c       .<
+    sta width_in_cells                                                ; 3e5b: 85 3c       .<
     lda #2                                                            ; 3e5d: a9 02       ..
-    sta l003d                                                         ; 3e5f: 85 3d       .=
-    jsr something54_TODO                                              ; 3e61: 20 44 1e     D.
+    sta height_in_cells                                               ; 3e5f: 85 3d       .=
+    jsr write_rectangle_to_collision_map                              ; 3e61: 20 44 1e     D.
     ldx #$16                                                          ; 3e64: a2 16       ..
-    jsr something54_TODO                                              ; 3e66: 20 44 1e     D.
+    jsr write_rectangle_to_collision_map                              ; 3e66: 20 44 1e     D.
 ; $3e69 referenced 2 times by $3e15, $3e52
 c3e69
     jmp c3ed7                                                         ; 3e69: 4c d7 3e    L.>
@@ -611,22 +611,22 @@ c3e6c
     ldx #$11                                                          ; 3e99: a2 11       ..
     ldy #7                                                            ; 3e9b: a0 07       ..
     lda #6                                                            ; 3e9d: a9 06       ..
-    sta l003c                                                         ; 3e9f: 85 3c       .<
+    sta width_in_cells                                                ; 3e9f: 85 3c       .<
     lda #1                                                            ; 3ea1: a9 01       ..
-    sta l003d                                                         ; 3ea3: 85 3d       .=
+    sta height_in_cells                                               ; 3ea3: 85 3d       .=
     lda #0                                                            ; 3ea5: a9 00       ..
-    sta l003e                                                         ; 3ea7: 85 3e       .>
-    jsr something54_TODO                                              ; 3ea9: 20 44 1e     D.
+    sta value_to_write_to_collision_map                               ; 3ea7: 85 3e       .>
+    jsr write_rectangle_to_collision_map                              ; 3ea9: 20 44 1e     D.
     iny                                                               ; 3eac: c8          .
     lda #1                                                            ; 3ead: a9 01       ..
-    sta l003c                                                         ; 3eaf: 85 3c       .<
+    sta width_in_cells                                                ; 3eaf: 85 3c       .<
     lda #2                                                            ; 3eb1: a9 02       ..
-    sta l003d                                                         ; 3eb3: 85 3d       .=
+    sta height_in_cells                                               ; 3eb3: 85 3d       .=
     lda #3                                                            ; 3eb5: a9 03       ..
-    sta l003e                                                         ; 3eb7: 85 3e       .>
-    jsr something54_TODO                                              ; 3eb9: 20 44 1e     D.
+    sta value_to_write_to_collision_map                               ; 3eb7: 85 3e       .>
+    jsr write_rectangle_to_collision_map                              ; 3eb9: 20 44 1e     D.
     ldx #$16                                                          ; 3ebc: a2 16       ..
-    jsr something54_TODO                                              ; 3ebe: 20 44 1e     D.
+    jsr write_rectangle_to_collision_map                              ; 3ebe: 20 44 1e     D.
 ; $3ec1 referenced 1 time by $3e71
 c3ec1
     ldy l09ff                                                         ; 3ec1: ac ff 09    ...
@@ -754,21 +754,21 @@ some_code2
     inx                                                               ; 3f91: e8          .
     inx                                                               ; 3f92: e8          .
     lda #5                                                            ; 3f93: a9 05       ..
-    sta l003c                                                         ; 3f95: 85 3c       .<
+    sta width_in_cells                                                ; 3f95: 85 3c       .<
     lda #1                                                            ; 3f97: a9 01       ..
-    sta l003d                                                         ; 3f99: 85 3d       .=
+    sta height_in_cells                                               ; 3f99: 85 3d       .=
     jsr something51_TODO                                              ; 3f9b: 20 bb 1a     ..
     dex                                                               ; 3f9e: ca          .
     iny                                                               ; 3f9f: c8          .
     lda #7                                                            ; 3fa0: a9 07       ..
-    sta l003c                                                         ; 3fa2: 85 3c       .<
+    sta width_in_cells                                                ; 3fa2: 85 3c       .<
     jsr something51_TODO                                              ; 3fa4: 20 bb 1a     ..
     dex                                                               ; 3fa7: ca          .
     iny                                                               ; 3fa8: c8          .
     lda #9                                                            ; 3fa9: a9 09       ..
-    sta l003c                                                         ; 3fab: 85 3c       .<
+    sta width_in_cells                                                ; 3fab: 85 3c       .<
     lda #5                                                            ; 3fad: a9 05       ..
-    sta l003d                                                         ; 3faf: 85 3d       .=
+    sta height_in_cells                                               ; 3faf: 85 3d       .=
     jsr something51_TODO                                              ; 3fb1: 20 bb 1a     ..
     inx                                                               ; 3fb4: e8          .
     tya                                                               ; 3fb5: 98          .
@@ -776,14 +776,14 @@ some_code2
     adc #5                                                            ; 3fb7: 69 05       i.
     tay                                                               ; 3fb9: a8          .
     lda #7                                                            ; 3fba: a9 07       ..
-    sta l003c                                                         ; 3fbc: 85 3c       .<
+    sta width_in_cells                                                ; 3fbc: 85 3c       .<
     lda #1                                                            ; 3fbe: a9 01       ..
-    sta l003d                                                         ; 3fc0: 85 3d       .=
+    sta height_in_cells                                               ; 3fc0: 85 3d       .=
     jsr something51_TODO                                              ; 3fc2: 20 bb 1a     ..
     inx                                                               ; 3fc5: e8          .
     iny                                                               ; 3fc6: c8          .
     lda #5                                                            ; 3fc7: a9 05       ..
-    sta l003c                                                         ; 3fc9: 85 3c       .<
+    sta width_in_cells                                                ; 3fc9: 85 3c       .<
     jsr something51_TODO                                              ; 3fcb: 20 bb 1a     ..
     ldx l3fd5                                                         ; 3fce: ae d5 3f    ..?
     ldy l3fd6                                                         ; 3fd1: ac d6 3f    ..?
@@ -803,15 +803,15 @@ level_thing_3_code
     ldx #0                                                            ; 3fd9: a2 00       ..
     ldy #0                                                            ; 3fdb: a0 00       ..
     lda #$ff                                                          ; 3fdd: a9 ff       ..
-    sta l003c                                                         ; 3fdf: 85 3c       .<
-    sta l003d                                                         ; 3fe1: 85 3d       .=
+    sta width_in_cells                                                ; 3fdf: 85 3c       .<
+    sta height_in_cells                                               ; 3fe1: 85 3d       .=
     jsr something51_TODO                                              ; 3fe3: 20 bb 1a     ..
     lda #$a9                                                          ; 3fe6: a9 a9       ..
     sta l0040                                                         ; 3fe8: 85 40       .@
     lda #$0a                                                          ; 3fea: a9 0a       ..
     sta l0041                                                         ; 3fec: 85 41       .A
     lda #0                                                            ; 3fee: a9 00       ..
-    sta l003e                                                         ; 3ff0: 85 3e       .>
+    sta value_to_write_to_collision_map                               ; 3ff0: 85 3e       .>
     lda #1                                                            ; 3ff2: a9 01       ..
     sta l0042                                                         ; 3ff4: 85 42       .B
     ldx #3                                                            ; 3ff6: a2 03       ..
@@ -826,25 +826,25 @@ level_thing_3_code
     ldx #$11                                                          ; 400c: a2 11       ..
     ldy #0                                                            ; 400e: a0 00       ..
     lda #6                                                            ; 4010: a9 06       ..
-    sta l003c                                                         ; 4012: 85 3c       .<
+    sta width_in_cells                                                ; 4012: 85 3c       .<
     lda #4                                                            ; 4014: a9 04       ..
-    sta l003d                                                         ; 4016: 85 3d       .=
+    sta height_in_cells                                               ; 4016: 85 3d       .=
     jsr something51_TODO                                              ; 4018: 20 bb 1a     ..
     ldx #$0c                                                          ; 401b: a2 0c       ..
     ldy #4                                                            ; 401d: a0 04       ..
     lda #$10                                                          ; 401f: a9 10       ..
-    sta l003c                                                         ; 4021: 85 3c       .<
+    sta width_in_cells                                                ; 4021: 85 3c       .<
     lda #5                                                            ; 4023: a9 05       ..
-    sta l003d                                                         ; 4025: 85 3d       .=
+    sta height_in_cells                                               ; 4025: 85 3d       .=
     jsr something51_TODO                                              ; 4027: 20 bb 1a     ..
     ldy #$0f                                                          ; 402a: a0 0f       ..
     jsr something51_TODO                                              ; 402c: 20 bb 1a     ..
     ldx #$1e                                                          ; 402f: a2 1e       ..
     ldy #$0b                                                          ; 4031: a0 0b       ..
     lda #5                                                            ; 4033: a9 05       ..
-    sta l003c                                                         ; 4035: 85 3c       .<
+    sta width_in_cells                                                ; 4035: 85 3c       .<
     lda #2                                                            ; 4037: a9 02       ..
-    sta l003d                                                         ; 4039: 85 3d       .=
+    sta height_in_cells                                               ; 4039: 85 3d       .=
     jsr something51_TODO                                              ; 403b: 20 bb 1a     ..
     jsr something26_TODO                                              ; 403e: 20 90 1b     ..
     jsr something23_TODO                                              ; 4041: 20 bb 12     ..
@@ -1080,12 +1080,12 @@ c41d9
     dex                                                               ; 41f7: ca          .
     ldy #$11                                                          ; 41f8: a0 11       ..
     lda #2                                                            ; 41fa: a9 02       ..
-    sta l003c                                                         ; 41fc: 85 3c       .<
+    sta width_in_cells                                                ; 41fc: 85 3c       .<
     lda #3                                                            ; 41fe: a9 03       ..
-    sta l003d                                                         ; 4200: 85 3d       .=
+    sta height_in_cells                                               ; 4200: 85 3d       .=
     lda #3                                                            ; 4202: a9 03       ..
-    sta l003e                                                         ; 4204: 85 3e       .>
-    jsr something54_TODO                                              ; 4206: 20 44 1e     D.
+    sta value_to_write_to_collision_map                               ; 4204: 85 3e       .>
+    jsr write_rectangle_to_collision_map                              ; 4206: 20 44 1e     D.
     jmp c4235                                                         ; 4209: 4c 35 42    L5B
 
 ; $420c referenced 1 time by $41f5
@@ -1093,12 +1093,12 @@ c420c
     dex                                                               ; 420c: ca          .
     ldy #$11                                                          ; 420d: a0 11       ..
     lda #2                                                            ; 420f: a9 02       ..
-    sta l003c                                                         ; 4211: 85 3c       .<
+    sta width_in_cells                                                ; 4211: 85 3c       .<
     lda #3                                                            ; 4213: a9 03       ..
-    sta l003d                                                         ; 4215: 85 3d       .=
+    sta height_in_cells                                               ; 4215: 85 3d       .=
     lda #0                                                            ; 4217: a9 00       ..
-    sta l003e                                                         ; 4219: 85 3e       .>
-    jsr something54_TODO                                              ; 421b: 20 44 1e     D.
+    sta value_to_write_to_collision_map                               ; 4219: 85 3e       .>
+    jsr write_rectangle_to_collision_map                              ; 421b: 20 44 1e     D.
     lda l0a04                                                         ; 421e: ad 04 0a    ...
     bmi c4224                                                         ; 4221: 30 01       0.
     dex                                                               ; 4223: ca          .
@@ -1106,12 +1106,12 @@ c420c
 c4224
     ldy #$13                                                          ; 4224: a0 13       ..
     lda #3                                                            ; 4226: a9 03       ..
-    sta l003c                                                         ; 4228: 85 3c       .<
+    sta width_in_cells                                                ; 4228: 85 3c       .<
     lda #1                                                            ; 422a: a9 01       ..
-    sta l003d                                                         ; 422c: 85 3d       .=
+    sta height_in_cells                                               ; 422c: 85 3d       .=
     lda #3                                                            ; 422e: a9 03       ..
-    sta l003e                                                         ; 4230: 85 3e       .>
-    jsr something54_TODO                                              ; 4232: 20 44 1e     D.
+    sta value_to_write_to_collision_map                               ; 4230: 85 3e       .>
+    jsr write_rectangle_to_collision_map                              ; 4232: 20 44 1e     D.
 ; $4235 referenced 2 times by $41e4, $4209
 c4235
     ldx #2                                                            ; 4235: a2 02       ..
@@ -1134,61 +1134,61 @@ level_thing_4_code
     ldx #0                                                            ; 424f: a2 00       ..
     ldy #0                                                            ; 4251: a0 00       ..
     lda #$ff                                                          ; 4253: a9 ff       ..
-    sta l003c                                                         ; 4255: 85 3c       .<
+    sta width_in_cells                                                ; 4255: 85 3c       .<
     lda #2                                                            ; 4257: a9 02       ..
-    sta l003d                                                         ; 4259: 85 3d       .=
+    sta height_in_cells                                               ; 4259: 85 3d       .=
     jsr something51_TODO                                              ; 425b: 20 bb 1a     ..
     ldx #$24 ; '$'                                                    ; 425e: a2 24       .$
     ldy #2                                                            ; 4260: a0 02       ..
-    dec l003d                                                         ; 4262: c6 3d       .=
+    dec height_in_cells                                               ; 4262: c6 3d       .=
     jsr something51_TODO                                              ; 4264: 20 bb 1a     ..
     inx                                                               ; 4267: e8          .
     iny                                                               ; 4268: c8          .
     lda #$0f                                                          ; 4269: a9 0f       ..
-    sta l003d                                                         ; 426b: 85 3d       .=
+    sta height_in_cells                                               ; 426b: 85 3d       .=
     jsr something51_TODO                                              ; 426d: 20 bb 1a     ..
     ldx #0                                                            ; 4270: a2 00       ..
     ldy #$12                                                          ; 4272: a0 12       ..
     lda #5                                                            ; 4274: a9 05       ..
-    sta l003c                                                         ; 4276: 85 3c       .<
+    sta width_in_cells                                                ; 4276: 85 3c       .<
     lda #3                                                            ; 4278: a9 03       ..
-    sta l003d                                                         ; 427a: 85 3d       .=
+    sta height_in_cells                                               ; 427a: 85 3d       .=
     jsr something51_TODO                                              ; 427c: 20 bb 1a     ..
     ldx #$1e                                                          ; 427f: a2 1e       ..
     lda #$ff                                                          ; 4281: a9 ff       ..
-    sta l003c                                                         ; 4283: 85 3c       .<
+    sta width_in_cells                                                ; 4283: 85 3c       .<
     jsr something51_TODO                                              ; 4285: 20 bb 1a     ..
     ldx #0                                                            ; 4288: a2 00       ..
     ldy #$15                                                          ; 428a: a0 15       ..
     lda #$0a                                                          ; 428c: a9 0a       ..
-    sta l003c                                                         ; 428e: 85 3c       .<
+    sta width_in_cells                                                ; 428e: 85 3c       .<
     lda #1                                                            ; 4290: a9 01       ..
-    sta l003d                                                         ; 4292: 85 3d       .=
+    sta height_in_cells                                               ; 4292: 85 3d       .=
     jsr something51_TODO                                              ; 4294: 20 bb 1a     ..
     ldx #$19                                                          ; 4297: a2 19       ..
     lda #$ff                                                          ; 4299: a9 ff       ..
-    sta l003c                                                         ; 429b: 85 3c       .<
+    sta width_in_cells                                                ; 429b: 85 3c       .<
     jsr something51_TODO                                              ; 429d: 20 bb 1a     ..
     ldx #0                                                            ; 42a0: a2 00       ..
     iny                                                               ; 42a2: c8          .
-    inc l003d                                                         ; 42a3: e6 3d       .=
+    inc height_in_cells                                               ; 42a3: e6 3d       .=
     jsr something51_TODO                                              ; 42a5: 20 bb 1a     ..
     ldx #$0a                                                          ; 42a8: a2 0a       ..
     ldy #7                                                            ; 42aa: a0 07       ..
     lda #$14                                                          ; 42ac: a9 14       ..
-    sta l003c                                                         ; 42ae: 85 3c       .<
+    sta width_in_cells                                                ; 42ae: 85 3c       .<
     lda #2                                                            ; 42b0: a9 02       ..
-    sta l003d                                                         ; 42b2: 85 3d       .=
+    sta height_in_cells                                               ; 42b2: 85 3d       .=
     jsr something51_TODO                                              ; 42b4: 20 bb 1a     ..
     ldx #0                                                            ; 42b7: a2 00       ..
     lda #5                                                            ; 42b9: a9 05       ..
-    sta l003c                                                         ; 42bb: 85 3c       .<
+    sta width_in_cells                                                ; 42bb: 85 3c       .<
     jsr something51_TODO                                              ; 42bd: 20 bb 1a     ..
     ldy #9                                                            ; 42c0: a0 09       ..
     lda #3                                                            ; 42c2: a9 03       ..
-    sta l003c                                                         ; 42c4: 85 3c       .<
+    sta width_in_cells                                                ; 42c4: 85 3c       .<
     lda #4                                                            ; 42c6: a9 04       ..
-    sta l003d                                                         ; 42c8: 85 3d       .=
+    sta height_in_cells                                               ; 42c8: 85 3d       .=
     jsr something51_TODO                                              ; 42ca: 20 bb 1a     ..
     jsr something26_TODO                                              ; 42cd: 20 90 1b     ..
     ldx #$14                                                          ; 42d0: a2 14       ..
@@ -1342,12 +1342,12 @@ c43e3
     ldx l0070                                                         ; 43e3: a6 70       .p
     ldy #$14                                                          ; 43e5: a0 14       ..
     lda #3                                                            ; 43e7: a9 03       ..
-    sta l003c                                                         ; 43e9: 85 3c       .<
+    sta width_in_cells                                                ; 43e9: 85 3c       .<
     lda #2                                                            ; 43eb: a9 02       ..
-    sta l003d                                                         ; 43ed: 85 3d       .=
+    sta height_in_cells                                               ; 43ed: 85 3d       .=
     lda #0                                                            ; 43ef: a9 00       ..
-    sta l003e                                                         ; 43f1: 85 3e       .>
-    jsr something54_TODO                                              ; 43f3: 20 44 1e     D.
+    sta value_to_write_to_collision_map                               ; 43f1: 85 3e       .>
+    jsr write_rectangle_to_collision_map                              ; 43f3: 20 44 1e     D.
 ; $43f6 referenced 1 time by $4352
 c43f6
     lda desired_room_index                                            ; 43f6: a5 30       .0
@@ -1356,12 +1356,12 @@ c43f6
     ldx l0a01                                                         ; 43fc: ae 01 0a    ...
     ldy #$14                                                          ; 43ff: a0 14       ..
     lda #3                                                            ; 4401: a9 03       ..
-    sta l003c                                                         ; 4403: 85 3c       .<
+    sta width_in_cells                                                ; 4403: 85 3c       .<
     lda #2                                                            ; 4405: a9 02       ..
-    sta l003d                                                         ; 4407: 85 3d       .=
+    sta height_in_cells                                               ; 4407: 85 3d       .=
     lda #3                                                            ; 4409: a9 03       ..
-    sta l003e                                                         ; 440b: 85 3e       .>
-    jsr something54_TODO                                              ; 440d: 20 44 1e     D.
+    sta value_to_write_to_collision_map                               ; 440b: 85 3e       .>
+    jsr write_rectangle_to_collision_map                              ; 440d: 20 44 1e     D.
     lda #2                                                            ; 4410: a9 02       ..
     jsr something58_TODO                                              ; 4412: 20 5d 1f     ].
 ; $4415 referenced 4 times by $4355, $43bd, $43d8, $43fa
@@ -1601,13 +1601,13 @@ pydis_end
 
 ; Label references by decreasing frequency:
 ;     something51_TODO:                      43
-;     l003c:                                 39
-;     l003d:                                 38
+;     width_in_cells:                        39
+;     height_in_cells:                       38
 ;     desired_room_index:                    19
-;     something54_TODO:                      13
+;     write_rectangle_to_collision_map:      13
 ;     desired_level:                         11
 ;     l0a72:                                 11
-;     l003e:                                 10
+;     value_to_write_to_collision_map:       10
 ;     l0a70:                                 10
 ;     something52_TODO:                       9
 ;     l0a02:                                  8
@@ -1831,9 +1831,6 @@ pydis_end
 ;     l001d
 ;     l003a
 ;     l003b
-;     l003c
-;     l003d
-;     l003e
 ;     l0040
 ;     l0041
 ;     l0042

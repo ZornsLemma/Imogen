@@ -5,6 +5,10 @@ from commands import *
 label(0x31, "desired_level") # TODO: This is not right but let's go with it for now - the way this is used it clearly contains *a* level (as a letter, I think), but I am not quite sure what it's used for - the use at 36df suggests this is more like "current level" actually - or maybe it's more like "level_to_load"
 label(0x51, "previous_level") # TODO: see use at initialise_level
 
+label(0x3c, "width_in_cells")
+label(0x3d, "height_in_cells")
+label(0x003e, "value_to_write_to_collision_map")
+
 label(0x1103, "developer_flags")
 
 # TODO: See mono_handler and colour_handler in auxcode.asm
@@ -47,7 +51,7 @@ label(0x1b90, "something26_TODO")
 label(0x1abb, "something51_TODO")
 label(0x1f57, "something52_TODO")
 label(0x1db9, "something53_TODO")
-label(0x1e44, "something54_TODO")
+label(0x1e44, "write_rectangle_to_collision_map")
 label(0x28e2, "something55_TODO")
 label(0x1f4c, "draw_sprite_a_at_character_xy")
 label(0x1f6d, "something57_TODO")

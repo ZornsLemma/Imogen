@@ -76,6 +76,7 @@ substitute_labels = {
     (0x1f48, 0x1fd7): {
         "address1_low": "cell_x",
         "address1_high": "cell_y",
+        "sprite_x_pos_high": "offset_within_collision_map",
         "sprite_screen_address_low": "width_in_cells_to_write",
         "l004b": "height_counter",
         "sprite_x_pos_low": "offset_within_byte",
@@ -158,6 +159,9 @@ label(0x002a, "space_bar_press_pending")
 label(0x002b, "space_bar_pressed")
 label(0x002c, "z_key_pressed_pending")
 label(0x002d, "x_key_pressed_pending")
+label(0x0049, "temp_value")
+label(0x004a, "temp_coordinate")
+
 label(0x0046, "return_key_pressed_pending")
 
 label(0x0043, "print_in_italics_flag")
@@ -485,7 +489,7 @@ label(0x18d1, "get_delta_y")
 label(0x1906, "return_with_a_zero")
 comment(0x1e8f, "loop counter", inline=True)
 
-comment(0x1e4e, "l0049 is the input value (0-3)")
+comment(0x1e4e, "value is (0-3)")
 comment(0x1e70, "multiply input value (0-3) by four")
 comment(0x1e74, "add offset within byte in the bottom two bits")
 comment(0x1e74, "use as the offset into the bitmask2 array")
@@ -1128,10 +1132,20 @@ label(0x3fcb, "relocation4_high_copy_start")
 comment(0x1ebb, "TODO: Collision map maybe?")
 
 label(0x1e80, "write_to_next_row_in_collision_map_loop")
+comment(0x1e80, "read from current collision map", inline=True)
+comment(0x1e83, "mask out the bits for the current cell", inline=True)
+comment(0x1e86, "OR in the new bits for the cell", inline=True)
+comment(0x1e88, "write the new value back to the collision map", inline=True)
+comment(0x1e8b, "add 10 to Y to move to next row", inline=True)
 comment(0x1e95, "X is the offset within the byte to write to (0-3)")
+label(0x1e9b, "try_next_cell_across")
+comment(0x1e98, "move to next byte", inline=True)
 label(0x1e6a, "write_to_next_column_in_collision_map_loop")
 label(0x1ea5, "pull_and_return")
 label(0x1e4e, "write_value_to_rectangle_of_collision_map")
+comment(0x1e53, "multiply Y by 10 and store in temp_coordinate")
+comment(0x1e5d, "divide X by 4 and add the Y coordinate, and store in Y, the byte offset in the collision map")
+comment(0x1e64, "let X be the offset within the byte for the current cell (0-3)")
 
 decimal(0x1e8d)
 
@@ -1578,7 +1592,6 @@ comment(0x1ebb, "TODO: this is used by e.g. dataA")
 comment(0x1140, "X is the element of level_header_data to invoke the code for during initialisation. TODO: But what does this 'mean'?")
 
 # TODO: I don't think we necessarily need to indicate functions in 'g' called from 'data*' in the long run, but it might be helpful to flag them for now.
-comment(0x1e44, "TODO: this is used by e.g. dataA")
 comment(0x28e2, "TODO: this is used by e.g. dataA")
 comment(0x1f4c, "TODO: this is used by e.g. dataA")
 comment(0x1f5d, "TODO: this is used by e.g. dataA")
@@ -1938,9 +1951,6 @@ entry(0x1791, "wait_for_timer_2_using_yx")
 entry(0x385d, "turn_cursor_on")
 entry(0x3863, "turn_cursor_off")
 
-label(0x3c, "width_in_cells")
-label(0x3d, "height_in_cells")
-
 label(0x34a7, "get_filename_and_print_drive_number_prompt")
 # This string will be used for save and loads, but I'll use "save" here as a noun to refer to the file on disc.
 label(0x34d6, "save_full_filename")
@@ -2018,6 +2028,22 @@ entry(0x2bc6, "find_slot_loop")
 entry(0x2bd6, "empty_slot_found")
 entry(0x2bdd, "matching_slot_found_or_no_empty_slot")
 
+comment(0x1e44, """*************************************************************************************
+
+Write a value to a rectangle in the collision map
+
+On Entry:
+    value_to_write_to_collision_map: Value to write
+    X: Left cell X coordinate of rectangle
+    Y: Top cell X coordinate of rectangle
+    width_in_cells: Rectangle width
+    height_in_cells: Rectangle height
+
+On Exit:
+    Preserves A,X,Y
+
+*************************************************************************************""")
+
 comment(0x1e17, """*************************************************************************************
 
 Clip the given rectangle of cells to the game area (right and bottom)
@@ -2027,8 +2053,8 @@ The game area is a grid of 40x24 cells.
 On Entry:
     X: Left cell X coordinate of rectangle
     Y: Top cell X coordinate of rectangle
-    width_in_cell: Rectangle width
-    height_in_cell: Rectangle height
+    width_in_cells: Rectangle width
+    height_in_cells: Rectangle height
 
 On Exit:
     width_in_cells_to_write: Clipped rectangle width

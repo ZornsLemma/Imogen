@@ -196,7 +196,7 @@ l003a                                       = $3a
 l003b                                       = $3b
 width_in_cells                              = $3c
 height_in_cells                             = $3d
-l003e                                       = $3e
+value_to_write_to_collision_map             = $3e
 l003f                                       = $3f
 l0040                                       = $40
 l0041                                       = $41
@@ -206,8 +206,8 @@ l0044                                       = $44
 eor_key                                     = $45
 return_key_pressed_pending                  = $46
 current_player_character                    = $48
-l0049                                       = $49
-l004a                                       = $4a
+temp_value                                  = $49
+temp_coordinate                             = $4a
 height_counter                              = $4b
 l004b                                       = $4b
 screen_base_address_high                    = $4c
@@ -256,6 +256,7 @@ height_in_cells_to_write                    = $73
 sprite_screen_address_high                  = $73
 offset_within_byte                          = $74
 sprite_x_pos_low                            = $74
+offset_within_collision_map                 = $75
 sprite_x_pos_high                           = $75
 sprite_y_pos_low                            = $76
 sprite_y_pos_high                           = $77
@@ -565,7 +566,7 @@ clear_sound_priorities_loop
     jsr find_or_create_menu_slot_for_A                                ; 1362: 20 bd 2b     .+ :1231[1]
 skip5
     lda #3                                                            ; 1365: a9 03       ..  :1234[1]
-    sta l003e                                                         ; 1367: 85 3e       .>  :1236[1]
+    sta value_to_write_to_collision_map                               ; 1367: 85 3e       .>  :1236[1]
     lda #black                                                        ; 1369: a9 00       ..  :1238[1]
     sta l0042                                                         ; 136b: 85 42       .B  :123a[1]
     sta gameplay_area_colour                                          ; 136d: 8d 60 17    .`. :123c[1]
@@ -2080,9 +2081,9 @@ c1b41
 c1b59
     ldx address1_low                                                  ; 1c8a: a6 70       .p  :1b59[1]
     ldy address1_high                                                 ; 1c8c: a4 71       .q  :1b5b[1]
-    lda l003e                                                         ; 1c8e: a5 3e       .>  :1b5d[1]
+    lda value_to_write_to_collision_map                               ; 1c8e: a5 3e       .>  :1b5d[1]
     bmi c1b64                                                         ; 1c90: 30 03       0.  :1b5f[1]
-    jsr something54_TODO                                              ; 1c92: 20 44 1e     D. :1b61[1]
+    jsr write_rectangle_to_collision_map                              ; 1c92: 20 44 1e     D. :1b61[1]
 c1b64
     pla                                                               ; 1c95: 68          h   :1b64[1]
     rts                                                               ; 1c96: 60          `   :1b65[1]
@@ -2455,8 +2456,8 @@ clear_screen_game_area_loop
 ; On Entry:
 ;     X: Left cell X coordinate of rectangle
 ;     Y: Top cell X coordinate of rectangle
-;     width_in_cell: Rectangle width
-;     height_in_cell: Rectangle height
+;     width_in_cells: Rectangle width
+;     height_in_cells: Rectangle height
 ; 
 ; On Exit:
 ;     width_in_cells_to_write: Clipped rectangle width
@@ -2494,31 +2495,49 @@ clip_y
 return7
     rts                                                               ; 1f74: 60          `   :1e43[1]
 
-; TODO: this is used by e.g. dataA
-something54_TODO
+; *************************************************************************************
+; 
+; Write a value to a rectangle in the collision map
+; 
+; On Entry:
+;     value_to_write_to_collision_map: Value to write
+;     X: Left cell X coordinate of rectangle
+;     Y: Top cell X coordinate of rectangle
+;     width_in_cells: Rectangle width
+;     height_in_cells: Rectangle height
+; 
+; On Exit:
+;     Preserves A,X,Y
+; 
+; *************************************************************************************
+write_rectangle_to_collision_map
     pha                                                               ; 1f75: 48          H   :1e44[1]
-    lda l003e                                                         ; 1f76: a5 3e       .>  :1e45[1]
+    lda value_to_write_to_collision_map                               ; 1f76: a5 3e       .>  :1e45[1]
     cmp #4                                                            ; 1f78: c9 04       ..  :1e47[1]
     bcc write_value_to_rectangle_of_collision_map                     ; 1f7a: 90 03       ..  :1e49[1]
     jmp pull_and_return                                               ; 1f7c: 4c a5 1e    L.. :1e4b[1]
 
-; l0049 is the input value (0-3)
+; value is (0-3)
 write_value_to_rectangle_of_collision_map
-    sta l0049                                                         ; 1f7f: 85 49       .I  :1e4e[1]
+    sta temp_value                                                    ; 1f7f: 85 49       .I  :1e4e[1]
     jsr clip_cells_to_write_to_collision_map                          ; 1f81: 20 17 1e     .. :1e50[1]
+; multiply Y by 10 and store in temp_coordinate
     tya                                                               ; 1f84: 98          .   :1e53[1]
     asl                                                               ; 1f85: 0a          .   :1e54[1]
-    sta l004a                                                         ; 1f86: 85 4a       .J  :1e55[1]
+    sta temp_coordinate                                               ; 1f86: 85 4a       .J  :1e55[1]
     asl                                                               ; 1f88: 0a          .   :1e57[1]
     asl                                                               ; 1f89: 0a          .   :1e58[1]
-    adc l004a                                                         ; 1f8a: 65 4a       eJ  :1e59[1]
-    sta l004a                                                         ; 1f8c: 85 4a       .J  :1e5b[1]
+    adc temp_coordinate                                               ; 1f8a: 65 4a       eJ  :1e59[1]
+    sta temp_coordinate                                               ; 1f8c: 85 4a       .J  :1e5b[1]
+; divide X by 4 and add the Y coordinate, and store in Y, the byte offset in the
+; collision map
     txa                                                               ; 1f8e: 8a          .   :1e5d[1]
     lsr                                                               ; 1f8f: 4a          J   :1e5e[1]
     lsr                                                               ; 1f90: 4a          J   :1e5f[1]
     clc                                                               ; 1f91: 18          .   :1e60[1]
-    adc l004a                                                         ; 1f92: 65 4a       eJ  :1e61[1]
+    adc temp_coordinate                                               ; 1f92: 65 4a       eJ  :1e61[1]
     tay                                                               ; 1f94: a8          .   :1e63[1]
+; let X be the offset within the byte for the current cell (0-3)
     txa                                                               ; 1f95: 8a          .   :1e64[1]
     and #3                                                            ; 1f96: 29 03       ).  :1e65[1]
     eor #3                                                            ; 1f98: 49 03       I.  :1e67[1]
@@ -2528,7 +2547,7 @@ write_to_next_column_in_collision_map_loop
     sta height_counter                                                ; 1f9d: 85 4b       .K  :1e6c[1]
     stx offset_within_byte                                            ; 1f9f: 86 74       .t  :1e6e[1]
 ; multiply input value (0-3) by four
-    lda l0049                                                         ; 1fa1: a5 49       .I  :1e70[1]
+    lda temp_value                                                    ; 1fa1: a5 49       .I  :1e70[1]
     asl                                                               ; 1fa3: 0a          .   :1e72[1]
     asl                                                               ; 1fa4: 0a          .   :1e73[1]
 ; add offset within byte in the bottom two bits
@@ -2539,27 +2558,27 @@ write_to_next_column_in_collision_map_loop
     ldx offset_within_byte                                            ; 1fab: a6 74       .t  :1e7a[1]
 ; store the value to write in the 'offset_within_byte' variable
     sta offset_within_byte                                            ; 1fad: 85 74       .t  :1e7c[1]
-    sty sprite_x_pos_high                                             ; 1faf: 84 75       .u  :1e7e[1]
+    sty offset_within_collision_map                                   ; 1faf: 84 75       .u  :1e7e[1]
 write_to_next_row_in_collision_map_loop
-    lda collision_map,y                                               ; 1fb1: b9 00 0c    ... :1e80[1]
-    and bitmask_of_bits_to_keep_from_collision_map_table,x            ; 1fb4: 3d a7 1e    =.. :1e83[1]
-    ora offset_within_byte                                            ; 1fb7: 05 74       .t  :1e86[1]
-    sta collision_map,y                                               ; 1fb9: 99 00 0c    ... :1e88[1]
-    tya                                                               ; 1fbc: 98          .   :1e8b[1]
+    lda collision_map,y                                               ; 1fb1: b9 00 0c    ... :1e80[1]   ; read from current collision map
+    and bitmask_of_bits_to_keep_from_collision_map_table,x            ; 1fb4: 3d a7 1e    =.. :1e83[1]   ; mask out the bits for the current cell
+    ora offset_within_byte                                            ; 1fb7: 05 74       .t  :1e86[1]   ; OR in the new bits for the cell
+    sta collision_map,y                                               ; 1fb9: 99 00 0c    ... :1e88[1]   ; write the new value back to the collision map
+    tya                                                               ; 1fbc: 98          .   :1e8b[1]   ; add 10 to Y to move to next row
     adc #10                                                           ; 1fbd: 69 0a       i.  :1e8c[1]
     tay                                                               ; 1fbf: a8          .   :1e8e[1]
     dec height_counter                                                ; 1fc0: c6 4b       .K  :1e8f[1]   ; loop counter
     bne write_to_next_row_in_collision_map_loop                       ; 1fc2: d0 ed       ..  :1e91[1]
-    ldy sprite_x_pos_high                                             ; 1fc4: a4 75       .u  :1e93[1]
+    ldy offset_within_collision_map                                   ; 1fc4: a4 75       .u  :1e93[1]
 ; X is the offset within the byte to write to (0-3)
     dex                                                               ; 1fc6: ca          .   :1e95[1]
-    bpl c1e9b                                                         ; 1fc7: 10 03       ..  :1e96[1]
-    ldx #3                                                            ; 1fc9: a2 03       ..  :1e98[1]
+    bpl try_next_cell_across                                          ; 1fc7: 10 03       ..  :1e96[1]
+    ldx #3                                                            ; 1fc9: a2 03       ..  :1e98[1]   ; move to next byte
     iny                                                               ; 1fcb: c8          .   :1e9a[1]
-c1e9b
+try_next_cell_across
     dec width_in_cells_to_write                                       ; 1fcc: c6 72       .r  :1e9b[1]
     bne write_to_next_column_in_collision_map_loop                    ; 1fce: d0 cb       ..  :1e9d[1]
-    lda l0049                                                         ; 1fd0: a5 49       .I  :1e9f[1]
+    lda temp_value                                                    ; 1fd0: a5 49       .I  :1e9f[1]
     ldx cell_x                                                        ; 1fd2: a6 70       .p  :1ea1[1]
     ldy cell_y                                                        ; 1fd4: a4 71       .q  :1ea3[1]
 pull_and_return
@@ -2578,44 +2597,44 @@ value_to_write_into_collision_map_table
 ; TODO: this is used by e.g. dataA
 something60_TODO
     and #3                                                            ; 1fec: 29 03       ).  :1ebb[1]
-    sta l0049                                                         ; 1fee: 85 49       .I  :1ebd[1]
+    sta temp_value                                                    ; 1fee: 85 49       .I  :1ebd[1]
     txa                                                               ; 1ff0: 8a          .   :1ebf[1]
     pha                                                               ; 1ff1: 48          H   :1ec0[1]
     tya                                                               ; 1ff2: 98          .   :1ec1[1]
     pha                                                               ; 1ff3: 48          H   :1ec2[1]
     asl                                                               ; 1ff4: 0a          .   :1ec3[1]
-    sta l004a                                                         ; 1ff5: 85 4a       .J  :1ec4[1]
+    sta temp_coordinate                                               ; 1ff5: 85 4a       .J  :1ec4[1]
     asl                                                               ; 1ff7: 0a          .   :1ec6[1]
     asl                                                               ; 1ff8: 0a          .   :1ec7[1]
-    adc l004a                                                         ; 1ff9: 65 4a       eJ  :1ec8[1]
-    sta l004a                                                         ; 1ffb: 85 4a       .J  :1eca[1]
+    adc temp_coordinate                                               ; 1ff9: 65 4a       eJ  :1ec8[1]
+    sta temp_coordinate                                               ; 1ffb: 85 4a       .J  :1eca[1]
     txa                                                               ; 1ffd: 8a          .   :1ecc[1]
     lsr                                                               ; 1ffe: 4a          J   :1ecd[1]
     lsr                                                               ; 1fff: 4a          J   :1ece[1]
     clc                                                               ; 2000: 18          .   :1ecf[1]
-    adc l004a                                                         ; 2001: 65 4a       eJ  :1ed0[1]
+    adc temp_coordinate                                               ; 2001: 65 4a       eJ  :1ed0[1]
     tay                                                               ; 2003: a8          .   :1ed2[1]
     txa                                                               ; 2004: 8a          .   :1ed3[1]
     and #3                                                            ; 2005: 29 03       ).  :1ed4[1]
     eor #3                                                            ; 2007: 49 03       I.  :1ed6[1]
-    sta l004a                                                         ; 2009: 85 4a       .J  :1ed8[1]
-    lda l0049                                                         ; 200b: a5 49       .I  :1eda[1]
+    sta temp_coordinate                                               ; 2009: 85 4a       .J  :1ed8[1]
+    lda temp_value                                                    ; 200b: a5 49       .I  :1eda[1]
     asl                                                               ; 200d: 0a          .   :1edc[1]
     asl                                                               ; 200e: 0a          .   :1edd[1]
-    ora l004a                                                         ; 200f: 05 4a       .J  :1ede[1]
+    ora temp_coordinate                                               ; 200f: 05 4a       .J  :1ede[1]
     tax                                                               ; 2011: aa          .   :1ee0[1]
     lda value_to_write_into_collision_map_table,x                     ; 2012: bd ab 1e    ... :1ee1[1]
-    ldx l004a                                                         ; 2015: a6 4a       .J  :1ee4[1]
-    sta l004a                                                         ; 2017: 85 4a       .J  :1ee6[1]
+    ldx temp_coordinate                                               ; 2015: a6 4a       .J  :1ee4[1]
+    sta temp_coordinate                                               ; 2017: 85 4a       .J  :1ee6[1]
     lda collision_map,y                                               ; 2019: b9 00 0c    ... :1ee8[1]
     and bitmask_of_bits_to_keep_from_collision_map_table,x            ; 201c: 3d a7 1e    =.. :1eeb[1]
-    ora l004a                                                         ; 201f: 05 4a       .J  :1eee[1]
+    ora temp_coordinate                                               ; 201f: 05 4a       .J  :1eee[1]
     sta collision_map,y                                               ; 2021: 99 00 0c    ... :1ef0[1]
     pla                                                               ; 2024: 68          h   :1ef3[1]
     tay                                                               ; 2025: a8          .   :1ef4[1]
     pla                                                               ; 2026: 68          h   :1ef5[1]
     tax                                                               ; 2027: aa          .   :1ef6[1]
-    lda l0049                                                         ; 2028: a5 49       .I  :1ef7[1]
+    lda temp_value                                                    ; 2028: a5 49       .I  :1ef7[1]
     rts                                                               ; 202a: 60          `   :1ef9[1]
 
 sub_c1efa
@@ -2623,21 +2642,21 @@ sub_c1efa
     bcs c1f2d                                                         ; 202d: b0 2f       ./  :1efc[1]
     cpy #$18                                                          ; 202f: c0 18       ..  :1efe[1]
     bcs c1f2d                                                         ; 2031: b0 2b       .+  :1f00[1]
-    stx l004a                                                         ; 2033: 86 4a       .J  :1f02[1]
+    stx temp_coordinate                                               ; 2033: 86 4a       .J  :1f02[1]
     sty l004b                                                         ; 2035: 84 4b       .K  :1f04[1]
 c1f06
     tya                                                               ; 2037: 98          .   :1f06[1]
     asl                                                               ; 2038: 0a          .   :1f07[1]
-    sta l0049                                                         ; 2039: 85 49       .I  :1f08[1]
+    sta temp_value                                                    ; 2039: 85 49       .I  :1f08[1]
     asl                                                               ; 203b: 0a          .   :1f0a[1]
     asl                                                               ; 203c: 0a          .   :1f0b[1]
-    adc l0049                                                         ; 203d: 65 49       eI  :1f0c[1]
-    sta l0049                                                         ; 203f: 85 49       .I  :1f0e[1]
+    adc temp_value                                                    ; 203d: 65 49       eI  :1f0c[1]
+    sta temp_value                                                    ; 203f: 85 49       .I  :1f0e[1]
     txa                                                               ; 2041: 8a          .   :1f10[1]
     lsr                                                               ; 2042: 4a          J   :1f11[1]
     lsr                                                               ; 2043: 4a          J   :1f12[1]
     clc                                                               ; 2044: 18          .   :1f13[1]
-    adc l0049                                                         ; 2045: 65 49       eI  :1f14[1]
+    adc temp_value                                                    ; 2045: 65 49       eI  :1f14[1]
     tay                                                               ; 2047: a8          .   :1f16[1]
     txa                                                               ; 2048: 8a          .   :1f17[1]
     and #3                                                            ; 2049: 29 03       ).  :1f18[1]
@@ -2651,7 +2670,7 @@ loop_c1f21
 c1f23
     dex                                                               ; 2054: ca          .   :1f23[1]
     bpl loop_c1f21                                                    ; 2055: 10 fb       ..  :1f24[1]
-    ldx l004a                                                         ; 2057: a6 4a       .J  :1f26[1]
+    ldx temp_coordinate                                               ; 2057: a6 4a       .J  :1f26[1]
     ldy l004b                                                         ; 2059: a4 4b       .K  :1f28[1]
     and #3                                                            ; 205b: 29 03       ).  :1f2a[1]
 return8
@@ -2660,10 +2679,10 @@ return8
 c1f2d
     lda l0044                                                         ; 205e: a5 44       .D  :1f2d[1]
     bpl return8                                                       ; 2060: 10 fb       ..  :1f2f[1]
-    stx l004a                                                         ; 2062: 86 4a       .J  :1f31[1]
+    stx temp_coordinate                                               ; 2062: 86 4a       .J  :1f31[1]
     sty l004b                                                         ; 2064: 84 4b       .K  :1f33[1]
     ldx #0                                                            ; 2066: a2 00       ..  :1f35[1]
-    lda l004a                                                         ; 2068: a5 4a       .J  :1f37[1]
+    lda temp_coordinate                                               ; 2068: a5 4a       .J  :1f37[1]
     bmi c1f06                                                         ; 206a: 30 cb       0.  :1f39[1]
     ldx #$27 ; '''                                                    ; 206c: a2 27       .'  :1f3b[1]
     cmp #$28 ; '('                                                    ; 206e: c9 28       .(  :1f3d[1]
@@ -2685,7 +2704,7 @@ draw_sprite_a_at_character_xy
 ; TODO: This is called from e.g. dataA
 something52_TODO
     jsr draw_sprite_a_at_character_xy                                 ; 2088: 20 4c 1f     L. :1f57[1]
-    jmp something54_TODO                                              ; 208b: 4c 44 1e    LD. :1f5a[1]
+    jmp write_rectangle_to_collision_map                              ; 208b: 4c 44 1e    LD. :1f5a[1]
 
 ; TODO: this is used by e.g. dataA
 something58_TODO
@@ -7596,7 +7615,7 @@ save_or_restore_screen_under_dialog_box
     beq c043a                                                         ; 410e: f0 29       .)  :040f[2]
     jsr turn_cursor_off                                               ; 4110: 20 63 38     c8 :0411[2]
     ldx #$ff                                                          ; 4113: a2 ff       ..  :0414[2]
-    stx l003e                                                         ; 4115: 86 3e       .>  :0416[2]
+    stx value_to_write_to_collision_map                               ; 4115: 86 3e       .>  :0416[2]
     inx                                                               ; 4117: e8          .   :0418[2]
     stx l003f                                                         ; 4118: 86 3f       .?  :0419[2]
     lda #$a9                                                          ; 411a: a9 a9       ..  :041b[2]
@@ -7634,7 +7653,7 @@ something_TODO
     jsr wait_for_timingB_counter                                      ; 4156: 20 00 04     .. :0457[2]
     jsr turn_cursor_off                                               ; 4159: 20 63 38     c8 :045a[2]
     ldx #$ff                                                          ; 415c: a2 ff       ..  :045d[2]
-    stx l003e                                                         ; 415e: 86 3e       .>  :045f[2]
+    stx value_to_write_to_collision_map                               ; 415e: 86 3e       .>  :045f[2]
     stx l0042                                                         ; 4160: 86 42       .B  :0461[2]
     inx                                                               ; 4162: e8          .   :0463[2]
     stx which_dialog_is_active                                        ; 4163: 86 04       ..  :0464[2]
@@ -7704,7 +7723,7 @@ return31
 
 sub_c04cb
     ldx #$ff                                                          ; 41ca: a2 ff       ..  :04cb[2]
-    stx l003e                                                         ; 41cc: 86 3e       .>  :04cd[2]
+    stx value_to_write_to_collision_map                               ; 41cc: 86 3e       .>  :04cd[2]
     inx                                                               ; 41ce: e8          .   :04cf[2]
     stx l003f                                                         ; 41cf: 86 3f       .?  :04d0[2]
     stx l0518                                                         ; 41d1: 8e 18 05    ... :04d2[2]
@@ -7814,7 +7833,6 @@ pydis_end
 ;     c1dda
 ;     c1de6
 ;     c1df0
-;     c1e9b
 ;     c1f06
 ;     c1f23
 ;     c1f2d
@@ -8007,14 +8025,11 @@ pydis_end
 ;     l0039
 ;     l003a
 ;     l003b
-;     l003e
 ;     l003f
 ;     l0040
 ;     l0041
 ;     l0042
 ;     l0044
-;     l0049
-;     l004a
 ;     l0050
 ;     l0052
 ;     l0053
