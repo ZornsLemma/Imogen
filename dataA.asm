@@ -67,7 +67,7 @@ draw_sprite_a_at_character_xy           = $1f4c
 something52_TODO                        = $1f57
 something58_TODO                        = $1f5d
 something57_TODO                        = $1f6d
-something61_TODO                        = $23a9
+play_landing_sound                      = $23a9
 l2433                                   = $2433
 l24d0                                   = $24d0
 l24d1                                   = $24d1
@@ -1325,7 +1325,7 @@ c43b4
     sta l3970                                                         ; 43cb: 8d 70 39    .p9
 ; $43ce referenced 1 time by $43c4
 c43ce
-    jsr something61_TODO                                              ; 43ce: 20 a9 23     .#
+    jsr play_landing_sound                                            ; 43ce: 20 a9 23     .#
     jmp c43e3                                                         ; 43d1: 4c e3 43    L.C
 
 ; $43d4 referenced 1 time by $43b2
@@ -1692,7 +1692,7 @@ pydis_end
 ;     developer_flags:                        1
 ;     something14_TODO:                       1
 ;     something60_TODO:                       1
-;     something61_TODO:                       1
+;     play_landing_sound:                     1
 ;     l24d0:                                  1
 ;     l24d1:                                  1
 ;     l2551:                                  1
