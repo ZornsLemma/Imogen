@@ -7,6 +7,8 @@
     "sprites": [
         {
             "sprite number": "0x1",
+            "offset x": 0,
+            "offset y": 18,
             "sprite width": 19,
             "sprite height": 19,
             "pixels": [
@@ -33,6 +35,8 @@
         },
         {
             "sprite number": "0x2",
+            "offset x": 1,
+            "offset y": 14,
             "sprite width": 13,
             "sprite height": 14,
             "pixels": [
@@ -54,6 +58,8 @@
         },
         {
             "sprite number": "0x3",
+            "offset x": 4,
+            "offset y": 14,
             "sprite width": 11,
             "sprite height": 11,
             "pixels": [
@@ -72,6 +78,8 @@
         },
         {
             "sprite number": "0x4",
+            "offset x": 2,
+            "offset y": 17,
             "sprite width": 15,
             "sprite height": 16,
             "pixels": [
@@ -95,6 +103,8 @@
         },
         {
             "sprite number": "0x5",
+            "offset x": 4,
+            "offset y": 15,
             "sprite width": 11,
             "sprite height": 12,
             "pixels": [
@@ -114,6 +124,8 @@
         },
         {
             "sprite number": "0x6",
+            "offset x": 3,
+            "offset y": 15,
             "sprite width": 14,
             "sprite height": 12,
             "pixels": [
@@ -133,6 +145,8 @@
         },
         {
             "sprite number": "0x7",
+            "offset x": 7,
+            "offset y": 15,
             "sprite width": 6,
             "sprite height": 13,
             "pixels": [
@@ -153,6 +167,8 @@
         },
         {
             "sprite number": "0x8",
+            "offset x": 5,
+            "offset y": 15,
             "sprite width": 10,
             "sprite height": 13,
             "pixels": [
@@ -173,6 +189,8 @@
         },
         {
             "sprite number": "0x9",
+            "offset x": -2,
+            "offset y": 8,
             "sprite width": 28,
             "sprite height": 11,
             "pixels": [

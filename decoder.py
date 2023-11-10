@@ -19,8 +19,8 @@ def read_uint(f, num_bytes = 4):
 
 def sbyte(i):
     if i >= 128:
-        return str(i - 256)
-    return str(i)
+        return i - 256
+    return i
 
 def read_bit(data, start, start_bit):
     if data[start] & start_bit:
@@ -75,6 +75,8 @@ def decode(infile, outfile, level_flag, index_zero_is_level_order_data):
                 if (start != end):
                     width = int(data[start+2])
                     height = 1+int(data[start+3])
+                    sprite["offset x"] = sbyte(data[start])
+                    sprite["offset y"] = sbyte(data[start+1])
                     sprite["sprite width"] = width
                     sprite["sprite height"] = height-1
 

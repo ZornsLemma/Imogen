@@ -2,6 +2,8 @@
     "sprites": [
         {
             "sprite number": "0xc8",
+            "offset x": -3,
+            "offset y": 7,
             "sprite width": 19,
             "sprite height": 9,
             "pixels": [
@@ -18,6 +20,8 @@
         },
         {
             "sprite number": "0xc9",
+            "offset x": -8,
+            "offset y": 8,
             "sprite width": 17,
             "sprite height": 10,
             "pixels": [
@@ -35,6 +39,8 @@
         },
         {
             "sprite number": "0xca",
+            "offset x": 0,
+            "offset y": 5,
             "sprite width": 8,
             "sprite height": 4,
             "pixels": [
@@ -46,6 +52,8 @@
         },
         {
             "sprite number": "0xcb",
+            "offset x": 1,
+            "offset y": 3,
             "sprite width": 5,
             "sprite height": 4,
             "pixels": [
@@ -57,6 +65,8 @@
         },
         {
             "sprite number": "0xcc",
+            "offset x": 1,
+            "offset y": 7,
             "sprite width": 5,
             "sprite height": 8,
             "pixels": [
@@ -72,6 +82,8 @@
         },
         {
             "sprite number": "0xcd",
+            "offset x": 0,
+            "offset y": 15,
             "sprite width": 7,
             "sprite height": 16,
             "pixels": [
@@ -95,6 +107,8 @@
         },
         {
             "sprite number": "0xce",
+            "offset x": 0,
+            "offset y": 39,
             "sprite width": 7,
             "sprite height": 48,
             "pixels": [
@@ -150,12 +164,16 @@
         },
         {
             "sprite number": "0xcf",
+            "offset x": 0,
+            "offset y": 0,
             "sprite width": 0,
             "sprite height": 0,
             "pixels": []
         },
         {
             "sprite number": "0xd0",
+            "offset x": 0,
+            "offset y": 14,
             "sprite width": 24,
             "sprite height": 20,
             "pixels": [
@@ -183,12 +201,16 @@
         },
         {
             "sprite number": "0xd1",
+            "offset x": 0,
+            "offset y": 0,
             "sprite width": 0,
             "sprite height": 0,
             "pixels": []
         },
         {
             "sprite number": "0xd2",
+            "offset x": -12,
+            "offset y": 0,
             "sprite width": 23,
             "sprite height": 17,
             "pixels": [
@@ -213,6 +235,8 @@
         },
         {
             "sprite number": "0xd3",
+            "offset x": -13,
+            "offset y": 0,
             "sprite width": 25,
             "sprite height": 18,
             "pixels": [
@@ -238,6 +262,8 @@
         },
         {
             "sprite number": "0xd4",
+            "offset x": -12,
+            "offset y": 0,
             "sprite width": 23,
             "sprite height": 17,
             "pixels": [
@@ -262,6 +288,8 @@
         },
         {
             "sprite number": "0xd5",
+            "offset x": -13,
+            "offset y": 0,
             "sprite width": 24,
             "sprite height": 18,
             "pixels": [
@@ -287,6 +315,8 @@
         },
         {
             "sprite number": "0xd6",
+            "offset x": -11,
+            "offset y": 0,
             "sprite width": 22,
             "sprite height": 18,
             "pixels": [
@@ -312,6 +342,8 @@
         },
         {
             "sprite number": "0xd7",
+            "offset x": -7,
+            "offset y": 2,
             "sprite width": 20,
             "sprite height": 22,
             "pixels": [
@@ -341,6 +373,8 @@
         },
         {
             "sprite number": "0xd8",
+            "offset x": -7,
+            "offset y": 5,
             "sprite width": 20,
             "sprite height": 26,
             "pixels": [
@@ -374,6 +408,8 @@
         },
         {
             "sprite number": "0xd9",
+            "offset x": -11,
+            "offset y": 0,
             "sprite width": 22,
             "sprite height": 20,
             "pixels": [
@@ -401,6 +437,8 @@
         },
         {
             "sprite number": "0xda",
+            "offset x": -3,
+            "offset y": 6,
             "sprite width": 8,
             "sprite height": 11,
             "pixels": [
@@ -419,6 +457,8 @@
         },
         {
             "sprite number": "0xdb",
+            "offset x": 6,
+            "offset y": 14,
             "sprite width": 8,
             "sprite height": 11,
             "pixels": [
@@ -437,6 +477,8 @@
         },
         {
             "sprite number": "0xdc",
+            "offset x": -10,
+            "offset y": 27,
             "sprite width": 22,
             "sprite height": 28,
             "pixels": [
@@ -472,6 +514,8 @@
         },
         {
             "sprite number": "0xdd",
+            "offset x": -6,
+            "offset y": 0,
             "sprite width": 14,
             "sprite height": 7,
             "pixels": [
@@ -486,6 +530,8 @@
         },
         {
             "sprite number": "0xde",
+            "offset x": -11,
+            "offset y": 0,
             "sprite width": 22,
             "sprite height": 20,
             "pixels": [
