@@ -232,12 +232,19 @@ l0066                                       = $66
 l0067                                       = $67
 l0068                                       = $68
 address1_low                                = $70
+animation_address_low                       = $70
 filename_low                                = $70
+level_data_ptr_low                          = $70
 menu_item_to_use                            = $70
+object_y_delta                              = $70
+screen_address_low                          = $70
 src_sprite_address_low                      = $70
 address1_high                               = $71
+animation_address_high                      = $71
 filename_high                               = $71
+level_data_ptr_high                         = $71
 menu_has_changed_flag                       = $71
+screen_address_high                         = $71
 src_sprite_address_high                     = $71
 sprite_screen_address_low                   = $72
 sprite_screen_address_high                  = $73
@@ -256,6 +263,8 @@ dest_sprite_address_low                     = $7e
 address2_high                               = $7f
 dest_sprite_address_high                    = $7f
 mask_sprite_byte                            = $80
+sprite_addr_low                             = $80
+sprite_addr_high                            = $81
 sprite_width                                = $81
 sprite_bit                                  = $82
 sprite_bit_mask                             = $83
@@ -554,7 +563,7 @@ skip5
     sta l0042                                                         ; 136b: 85 42       .B  :123a[1]
     sta gameplay_area_colour                                          ; 136d: 8d 60 17    .`. :123c[1]
     jsr draw_toolbar                                                  ; 1370: 20 a1 29     .) :123f[1]
-    jsr sub_c1df4                                                     ; 1373: 20 f4 1d     .. :1242[1]
+    jsr clear_game_area                                               ; 1373: 20 f4 1d     .. :1242[1]
 ; which_dialog_is_active is non-zero when a dialog is active:
 ; 
 ;     1: save or load dialog, or section information dialog
@@ -616,14 +625,14 @@ skip_developer_mode_code1
     asl                                                               ; 13ce: 0a          .   :129d[1]
     tay                                                               ; 13cf: a8          .   :129e[1]
     lda level_header_data,y                                           ; 13d0: b9 df 3a    ..: :129f[1]
-    sta address1_low                                                  ; 13d3: 85 70       .p  :12a2[1]
+    sta level_data_ptr_low                                            ; 13d3: 85 70       .p  :12a2[1]
     lda level_header_data + 1,y                                       ; 13d5: b9 e0 3a    ..: :12a4[1]
-    sta address1_high                                                 ; 13d8: 85 71       .q  :12a7[1]
+    sta level_data_ptr_high                                           ; 13d8: 85 71       .q  :12a7[1]
     ldy #0                                                            ; 13da: a0 00       ..  :12a9[1]
-    lda (address1_low),y                                              ; 13dc: b1 70       .p  :12ab[1]
+    lda (level_data_ptr_low),y                                        ; 13dc: b1 70       .p  :12ab[1]
     tax                                                               ; 13de: aa          .   :12ad[1]
     iny                                                               ; 13df: c8          .   :12ae[1]
-    lda (address1_low),y                                              ; 13e0: b1 70       .p  :12af[1]
+    lda (level_data_ptr_low),y                                        ; 13e0: b1 70       .p  :12af[1]
     tay                                                               ; 13e2: a8          .   :12b1[1]
     lda #0                                                            ; 13e3: a9 00       ..  :12b2[1]
     sta l003b                                                         ; 13e5: 85 3b       .;  :12b4[1]
@@ -1687,21 +1696,21 @@ generate_random_bits_loop
 
 something12_TODO
     lda object_x_high                                                 ; 19f4: ad 66 09    .f. :18c3[1]
-    bmi c1909                                                         ; 19f7: 30 41       0A  :18c6[1]
-    beq c18d1                                                         ; 19f9: f0 07       ..  :18c8[1]
+    bmi bring_player_and_object1_back_onto_the_left_side_of_screen    ; 19f7: 30 41       0A  :18c6[1]
+    beq get_delta_y                                                   ; 19f9: f0 07       ..  :18c8[1]
     lda object_x_low                                                  ; 19fb: ad 50 09    .P. :18ca[1]
     cmp #$40 ; '@'                                                    ; 19fe: c9 40       .@  :18cd[1]
-    bcs c191f                                                         ; 1a00: b0 4e       .N  :18cf[1]
-c18d1
+    bcs bring_player_and_object1_back_onto_the_right_side_of_screen   ; 1a00: b0 4e       .N  :18cf[1]
+get_delta_y
     lda object_y_low                                                  ; 1a02: ad 7c 09    .|. :18d1[1]
     sec                                                               ; 1a05: 38          8   :18d4[1]
     sbc object_y_low_old                                              ; 1a06: ed 87 09    ... :18d5[1]
-    beq c1906                                                         ; 1a09: f0 2c       .,  :18d8[1]
+    beq return_with_a_zero                                            ; 1a09: f0 2c       .,  :18d8[1]
     lda object_y_high                                                 ; 1a0b: ad 92 09    ... :18da[1]
     sbc object_y_high_old                                             ; 1a0e: ed 9d 09    ... :18dd[1]
-    sta address1_low                                                  ; 1a11: 85 70       .p  :18e0[1]
+    sta object_y_delta                                                ; 1a11: 85 70       .p  :18e0[1]
     ldx #0                                                            ; 1a13: a2 00       ..  :18e2[1]
-    jsr sub_c24d2                                                     ; 1a15: 20 d2 24     .$ :18e4[1]
+    jsr examine_object_y_position_taking_into_account_sprite_offset_and_object_direction; 1a15: 20 d2 24     .$ :18e4[1]
     lda sprite_x_pos_low                                              ; 1a18: a5 74       .t  :18e7[1]
     clc                                                               ; 1a1a: 18          .   :18e9[1]
     adc sprite_y_pos_low                                              ; 1a1b: 65 76       ev  :18ea[1]
@@ -1720,11 +1729,11 @@ c18d1
     bmi c1937                                                         ; 1a31: 30 35       05  :1900[1]
     cmp #$18                                                          ; 1a33: c9 18       ..  :1902[1]
     bcs c1951                                                         ; 1a35: b0 4b       .K  :1904[1]
-c1906
+return_with_a_zero
     lda #0                                                            ; 1a37: a9 00       ..  :1906[1]
     rts                                                               ; 1a39: 60          `   :1908[1]
 
-c1909
+bring_player_and_object1_back_onto_the_left_side_of_screen
     ldx #1                                                            ; 1a3a: a2 01       ..  :1909[1]
 loop_c190b
     lda object_x_low,x                                                ; 1a3c: bd 50 09    .P. :190b[1]
@@ -1738,14 +1747,14 @@ loop_c190b
     lda #1                                                            ; 1a4d: a9 01       ..  :191c[1]
     rts                                                               ; 1a4f: 60          `   :191e[1]
 
-c191f
+bring_player_and_object1_back_onto_the_right_side_of_screen
     ldx #1                                                            ; 1a50: a2 01       ..  :191f[1]
 loop_c1921
     lda object_x_low,x                                                ; 1a52: bd 50 09    .P. :1921[1]
     sec                                                               ; 1a55: 38          8   :1924[1]
     sbc #$40 ; '@'                                                    ; 1a56: e9 40       .@  :1925[1]
     sta object_x_low,x                                                ; 1a58: 9d 50 09    .P. :1927[1]
-    lda #0                                                            ; 1a5b: a9 00       ..  :192a[1]
+    lda #0                                                            ; 1a5b: a9 00       ..  :192a[1]   ; should be 1?
     sbc #0                                                            ; 1a5d: e9 00       ..  :192c[1]
     sta object_x_high,x                                               ; 1a5f: 9d 66 09    .f. :192e[1]
     dex                                                               ; 1a62: ca          .   :1931[1]
@@ -1754,8 +1763,8 @@ loop_c1921
     rts                                                               ; 1a67: 60          `   :1936[1]
 
 c1937
-    lda address1_low                                                  ; 1a68: a5 70       .p  :1937[1]
-    bpl c1906                                                         ; 1a6a: 10 cb       ..  :1939[1]
+    lda object_y_delta                                                ; 1a68: a5 70       .p  :1937[1]
+    bpl return_with_a_zero                                            ; 1a6a: 10 cb       ..  :1939[1]
     ldx #1                                                            ; 1a6c: a2 01       ..  :193b[1]
 loop_c193d
     lda object_y_low,x                                                ; 1a6e: bd 7c 09    .|. :193d[1]
@@ -1770,8 +1779,8 @@ loop_c193d
     rts                                                               ; 1a81: 60          `   :1950[1]
 
 c1951
-    lda address1_low                                                  ; 1a82: a5 70       .p  :1951[1]
-    bmi c1906                                                         ; 1a84: 30 b1       0.  :1953[1]
+    lda object_y_delta                                                ; 1a82: a5 70       .p  :1951[1]
+    bmi return_with_a_zero                                            ; 1a84: 30 b1       0.  :1953[1]
     ldx #1                                                            ; 1a86: a2 01       ..  :1955[1]
 loop_c1957
     lda object_y_low,x                                                ; 1a88: bd 7c 09    .|. :1957[1]
@@ -2406,33 +2415,33 @@ c1df0
     pla                                                               ; 1f23: 68          h   :1df2[1]
     rts                                                               ; 1f24: 60          `   :1df3[1]
 
-; TODO: Is this code deliberately trashing the code at initialise_display?
-sub_c1df4
+; clear the game area of the screen to 255 (and also clear the collision map?)
+clear_game_area
     lda #0                                                            ; 1f25: a9 00       ..  :1df4[1]
     tay                                                               ; 1f27: a8          .   :1df6[1]
 loop_c1df7
-    sta initialise_display,y                                          ; 1f28: 99 00 0c    ... :1df7[1]
+    sta collision_map,y                                               ; 1f28: 99 00 0c    ... :1df7[1]
     iny                                                               ; 1f2b: c8          .   :1dfa[1]
     cpy #$f0                                                          ; 1f2c: c0 f0       ..  :1dfb[1]
     bne loop_c1df7                                                    ; 1f2e: d0 f8       ..  :1dfd[1]
     ldy #0                                                            ; 1f30: a0 00       ..  :1dff[1]
-    sty address1_low                                                  ; 1f32: 84 70       .p  :1e01[1]
+    sty screen_address_low                                            ; 1f32: 84 70       .p  :1e01[1]
     ldx #$62 ; 'b'                                                    ; 1f34: a2 62       .b  :1e03[1]
-    stx address1_high                                                 ; 1f36: 86 71       .q  :1e05[1]
+    stx screen_address_high                                           ; 1f36: 86 71       .q  :1e05[1]
     lda #$ff                                                          ; 1f38: a9 ff       ..  :1e07[1]
     ldx #$80                                                          ; 1f3a: a2 80       ..  :1e09[1]
-c1e0b
-    sta (address1_low),y                                              ; 1f3c: 91 70       .p  :1e0b[1]
+clear_screen_game_area_loop
+    sta (screen_address_low),y                                        ; 1f3c: 91 70       .p  :1e0b[1]
     iny                                                               ; 1f3e: c8          .   :1e0d[1]
-    bne c1e0b                                                         ; 1f3f: d0 fb       ..  :1e0e[1]
-    inc address1_high                                                 ; 1f41: e6 71       .q  :1e10[1]
-    cpx address1_high                                                 ; 1f43: e4 71       .q  :1e12[1]
-    bne c1e0b                                                         ; 1f45: d0 f5       ..  :1e14[1]
+    bne clear_screen_game_area_loop                                   ; 1f3f: d0 fb       ..  :1e0e[1]
+    inc screen_address_high                                           ; 1f41: e6 71       .q  :1e10[1]
+    cpx screen_address_high                                           ; 1f43: e4 71       .q  :1e12[1]
+    bne clear_screen_game_area_loop                                   ; 1f45: d0 f5       ..  :1e14[1]
     rts                                                               ; 1f47: 60          `   :1e16[1]
 
 set_sprite_screen_address_using_x_y_and_some_word
-    stx address1_low                                                  ; 1f48: 86 70       .p  :1e17[1]
-    sty address1_high                                                 ; 1f4a: 84 71       .q  :1e19[1]
+    stx screen_address_low                                            ; 1f48: 86 70       .p  :1e17[1]
+    sty screen_address_high                                           ; 1f4a: 84 71       .q  :1e19[1]
     lda some_word                                                     ; 1f4c: a5 3c       .<  :1e1b[1]
     sta sprite_screen_address_low                                     ; 1f4e: 85 72       .r  :1e1d[1]
     lda some_word + 1                                                 ; 1f50: a5 3d       .=  :1e1f[1]
@@ -2445,7 +2454,7 @@ set_sprite_screen_address_using_x_y_and_some_word
     bcc c1e33                                                         ; 1f5c: 90 06       ..  :1e2b[1]
 c1e2d
     lda #$28 ; '('                                                    ; 1f5e: a9 28       .(  :1e2d[1]
-    sbc address1_low                                                  ; 1f60: e5 70       .p  :1e2f[1]
+    sbc screen_address_low                                            ; 1f60: e5 70       .p  :1e2f[1]
     sta sprite_screen_address_low                                     ; 1f62: 85 72       .r  :1e31[1]
 c1e33
     tya                                                               ; 1f64: 98          .   :1e33[1]
@@ -2456,7 +2465,7 @@ c1e33
     bcc return7                                                       ; 1f6c: 90 06       ..  :1e3b[1]
 c1e3d
     lda #$18                                                          ; 1f6e: a9 18       ..  :1e3d[1]
-    sbc address1_high                                                 ; 1f70: e5 71       .q  :1e3f[1]
+    sbc screen_address_high                                           ; 1f70: e5 71       .q  :1e3f[1]
     sta sprite_screen_address_high                                    ; 1f72: 85 73       .s  :1e41[1]
 return7
     rts                                                               ; 1f74: 60          `   :1e43[1]
@@ -2505,10 +2514,10 @@ c1e6a
 ; TODO: What's going on with the modification to initialise_display here? Is it copy
 ; protection/obfuscation or is there something else going on?
 loop_c1e80
-    lda initialise_display,y                                          ; 1fb1: b9 00 0c    ... :1e80[1]
+    lda collision_map,y                                               ; 1fb1: b9 00 0c    ... :1e80[1]
     and bitmask1,x                                                    ; 1fb4: 3d a7 1e    =.. :1e83[1]
     ora sprite_x_pos_low                                              ; 1fb7: 05 74       .t  :1e86[1]
-    sta initialise_display,y                                          ; 1fb9: 99 00 0c    ... :1e88[1]
+    sta collision_map,y                                               ; 1fb9: 99 00 0c    ... :1e88[1]
     tya                                                               ; 1fbc: 98          .   :1e8b[1]
     adc #$0a                                                          ; 1fbd: 69 0a       i.  :1e8c[1]
     tay                                                               ; 1fbf: a8          .   :1e8e[1]
@@ -2571,10 +2580,10 @@ something60_TODO
     lda bitmask2,x                                                    ; 2012: bd ab 1e    ... :1ee1[1]
     ldx l004a                                                         ; 2015: a6 4a       .J  :1ee4[1]
     sta l004a                                                         ; 2017: 85 4a       .J  :1ee6[1]
-    lda initialise_display,y                                          ; 2019: b9 00 0c    ... :1ee8[1]
+    lda collision_map,y                                               ; 2019: b9 00 0c    ... :1ee8[1]
     and bitmask1,x                                                    ; 201c: 3d a7 1e    =.. :1eeb[1]
     ora l004a                                                         ; 201f: 05 4a       .J  :1eee[1]
-    sta initialise_display,y                                          ; 2021: 99 00 0c    ... :1ef0[1]
+    sta collision_map,y                                               ; 2021: 99 00 0c    ... :1ef0[1]
     pla                                                               ; 2024: 68          h   :1ef3[1]
     tay                                                               ; 2025: a8          .   :1ef4[1]
     pla                                                               ; 2026: 68          h   :1ef5[1]
@@ -2606,7 +2615,7 @@ c1f06
     txa                                                               ; 2048: 8a          .   :1f17[1]
     and #3                                                            ; 2049: 29 03       ).  :1f18[1]
     tax                                                               ; 204b: aa          .   :1f1a[1]
-    lda initialise_display,y                                          ; 204c: b9 00 0c    ... :1f1b[1]
+    lda collision_map,y                                               ; 204c: b9 00 0c    ... :1f1b[1]
     jmp c1f23                                                         ; 204f: 4c 23 1f    L#. :1f1e[1]
 
 loop_c1f21
@@ -3048,18 +3057,18 @@ return9
     rts                                                               ; 2330: 60          `   :21ff[1]
 
 set_player_spriteid_and_offset_from_animation_table
-    stx address1_low                                                  ; 2331: 86 70       .p  :2200[1]   ; store YX as animation table address
-    sty address1_high                                                 ; 2333: 84 71       .q  :2202[1]
+    stx animation_address_low                                         ; 2331: 86 70       .p  :2200[1]   ; store YX as animation table address
+    sty animation_address_high                                        ; 2333: 84 71       .q  :2202[1]
 ; load byte at offset A from table, the spriteid
     tay                                                               ; 2335: a8          .   :2204[1]
-    lda (address1_low),y                                              ; 2336: b1 70       .p  :2205[1]
+    lda (animation_address_low),y                                     ; 2336: b1 70       .p  :2205[1]
     sta object_spriteid                                               ; 2338: 8d a8 09    ... :2207[1]
 ; check if we should add offset x
     iny                                                               ; 233b: c8          .   :220a[1]
     lda l2433                                                         ; 233c: ad 33 24    .3$ :220b[1]
     bne skip8                                                         ; 233f: d0 21       .!  :220e[1]
 ; load next byte from table, the X offset
-    lda (address1_low),y                                              ; 2341: b1 70       .p  :2210[1]
+    lda (animation_address_low),y                                     ; 2341: b1 70       .p  :2210[1]
 ; invert offset if direction is reversed
     ldx object_direction                                              ; 2343: ae be 09    ... :2212[1]
     bpl add_movement_in_direction_to_player                           ; 2346: 10 05       ..  :2215[1]
@@ -3084,7 +3093,7 @@ skip8
     iny                                                               ; 2362: c8          .   :2231[1]
 ; load next byte from table, the Y offset
     ldx #0                                                            ; 2363: a2 00       ..  :2232[1]
-    lda (address1_low),y                                              ; 2365: b1 70       .p  :2234[1]
+    lda (animation_address_low),y                                     ; 2365: b1 70       .p  :2234[1]
     bpl skip9                                                         ; 2367: 10 01       ..  :2236[1]
     dex                                                               ; 2369: ca          .   :2238[1]
 ; add offset in Y to player position
@@ -3105,15 +3114,15 @@ something18_TODO
     bpl c2267                                                         ; 2381: 10 15       ..  :2250[1]
     and #$7f                                                          ; 2383: 29 7f       ).  :2252[1]
     tay                                                               ; 2385: a8          .   :2254[1]
-    lda (address1_low),y                                              ; 2386: b1 70       .p  :2255[1]
+    lda (animation_address_low),y                                     ; 2386: b1 70       .p  :2255[1]
     cpy #$7f                                                          ; 2388: c0 7f       ..  :2257[1]
     bne c2267                                                         ; 238a: d0 0c       ..  :2259[1]
     ldy object_current_index_in_animation+1                           ; 238c: ac d5 09    ... :225b[1]
     iny                                                               ; 238f: c8          .   :225e[1]
-    lda (address1_low),y                                              ; 2390: b1 70       .p  :225f[1]
+    lda (animation_address_low),y                                     ; 2390: b1 70       .p  :225f[1]
     bne c2267                                                         ; 2392: d0 04       ..  :2261[1]
     ldy #0                                                            ; 2394: a0 00       ..  :2263[1]
-    lda (address1_low),y                                              ; 2396: b1 70       .p  :2265[1]
+    lda (animation_address_low),y                                     ; 2396: b1 70       .p  :2265[1]
 c2267
     sty object_current_index_in_animation+1                           ; 2398: 8c d5 09    ... :2267[1]
     sta object_spriteid+1                                             ; 239b: 8d a9 09    ... :226a[1]
@@ -3208,12 +3217,12 @@ l22ed
     !byte 0                                                           ; 241e: 00          .   :22ed[1]
 
 sub_c22ee
-    stx address1_low                                                  ; 241f: 86 70       .p  :22ee[1]
-    sty address1_high                                                 ; 2421: 84 71       .q  :22f0[1]
+    stx animation_address_low                                         ; 241f: 86 70       .p  :22ee[1]
+    sty animation_address_high                                        ; 2421: 84 71       .q  :22f0[1]
     clc                                                               ; 2423: 18          .   :22f2[1]
     adc object_current_index_in_animation                             ; 2424: 6d d4 09    m.. :22f3[1]
     tay                                                               ; 2427: a8          .   :22f6[1]
-    lda (address1_low),y                                              ; 2428: b1 70       .p  :22f7[1]
+    lda (animation_address_low),y                                     ; 2428: b1 70       .p  :22f7[1]
     bne c22fe                                                         ; 242a: d0 03       ..  :22f9[1]
     ldy current_animation                                             ; 242c: ac df 09    ... :22fb[1]
 c22fe
@@ -3395,17 +3404,27 @@ c242b
 l2433
     !byte 0                                                           ; 2564: 00          .   :2433[1]
 
-sub_c2434
+; Some calculation based on the X coordinate of an object. Part of collision detection
+; maybe?
+; 
+; On Entry:
+;     X has the object to look at
+; 
+examine_object_x_position_taking_into_account_sprite_offset_and_object_direction
     txa                                                               ; 2565: 8a          .   :2434[1]
     pha                                                               ; 2566: 48          H   :2435[1]
     lda object_spriteid,x                                             ; 2567: bd a8 09    ... :2436[1]
+; get and remember the sprite address
     jsr get_address_of_sprite_a                                       ; 256a: 20 2c 13     ,. :2439[1]
-    stx mask_sprite_byte                                              ; 256d: 86 80       ..  :243c[1]
-    sty sprite_width                                                  ; 256f: 84 81       ..  :243e[1]
+    stx sprite_addr_low                                               ; 256d: 86 80       ..  :243c[1]
+    sty sprite_addr_high                                              ; 256f: 84 81       ..  :243e[1]
+; recall object index
     pla                                                               ; 2571: 68          h   :2440[1]
     tax                                                               ; 2572: aa          .   :2441[1]
+; read the sprite's X offset
     ldy #0                                                            ; 2573: a0 00       ..  :2442[1]
-    lda (mask_sprite_byte),y                                          ; 2575: b1 80       ..  :2444[1]
+    lda (sprite_addr_low),y                                           ; 2575: b1 80       ..  :2444[1]
+; invert the sprite offset if looking left
     ldy object_direction,x                                            ; 2577: bc be 09    ... :2446[1]
     bpl c244d                                                         ; 257a: 10 02       ..  :2449[1]
     eor #$ff                                                          ; 257c: 49 ff       I.  :244b[1]
@@ -3415,14 +3434,17 @@ c244d
     bpl c2454                                                         ; 2582: 10 01       ..  :2451[1]
     dey                                                               ; 2584: 88          .   :2453[1]
 c2454
-    clc                                                               ; 2585: 18          .   :2454[1]
+    clc                                                               ; 2585: 18          .   :2454[1]   ; update address1 based on sprite offset
     adc object_x_low,x                                                ; 2586: 7d 50 09    }P. :2455[1]
     sta address1_low                                                  ; 2589: 85 70       .p  :2458[1]
     tya                                                               ; 258b: 98          .   :245a[1]
     adc object_x_high,x                                               ; 258c: 7d 66 09    }f. :245b[1]
     sta address1_high                                                 ; 258f: 85 71       .q  :245e[1]
+; get sprite width
     ldy #2                                                            ; 2591: a0 02       ..  :2460[1]
-    lda (mask_sprite_byte),y                                          ; 2593: b1 80       ..  :2462[1]
+    lda (sprite_addr_low),y                                           ; 2593: b1 80       ..  :2462[1]
+; add sprite width-1 to address1 if looking right, or subtract if looking left storing
+; result in sprite_screen_address
     sec                                                               ; 2595: 38          8   :2464[1]
     sbc #1                                                            ; 2596: e9 01       ..  :2465[1]
     ldy object_direction,x                                            ; 2598: bc be 09    ... :2467[1]
@@ -3435,6 +3457,7 @@ c2454
     sta sprite_screen_address_high                                    ; 25a6: 85 73       .s  :2475[1]
     jmp c248d                                                         ; 25a8: 4c 8d 24    L.$ :2477[1]
 
+; sprite_screen_address = address1 - (width-1)
 c247a
     sta sprite_screen_address_high                                    ; 25ab: 85 73       .s  :247a[1]
     lda address1_low                                                  ; 25ad: a5 70       .p  :247c[1]
@@ -3493,17 +3516,23 @@ l24d0
 l24d1
     !byte 0                                                           ; 2602: 00          .   :24d1[1]
 
-sub_c24d2
+; Some calculation based on the Y coordinate of an object. Part of collision detection
+; maybe?
+; 
+; On Entry:
+;     X has the object to look at
+; 
+examine_object_y_position_taking_into_account_sprite_offset_and_object_direction
     txa                                                               ; 2603: 8a          .   :24d2[1]
     pha                                                               ; 2604: 48          H   :24d3[1]
     lda object_spriteid,x                                             ; 2605: bd a8 09    ... :24d4[1]
     jsr get_address_of_sprite_a                                       ; 2608: 20 2c 13     ,. :24d7[1]
-    stx mask_sprite_byte                                              ; 260b: 86 80       ..  :24da[1]
-    sty sprite_width                                                  ; 260d: 84 81       ..  :24dc[1]
+    stx sprite_addr_low                                               ; 260b: 86 80       ..  :24da[1]
+    sty sprite_addr_high                                              ; 260d: 84 81       ..  :24dc[1]
     pla                                                               ; 260f: 68          h   :24de[1]
     tax                                                               ; 2610: aa          .   :24df[1]
     ldy #1                                                            ; 2611: a0 01       ..  :24e0[1]
-    lda (mask_sprite_byte),y                                          ; 2613: b1 80       ..  :24e2[1]
+    lda (sprite_addr_low),y                                           ; 2613: b1 80       ..  :24e2[1]
     ldy #0                                                            ; 2615: a0 00       ..  :24e4[1]
     ora #0                                                            ; 2617: 09 00       ..  :24e6[1]
     bpl c24eb                                                         ; 2619: 10 01       ..  :24e8[1]
@@ -3516,7 +3545,7 @@ c24eb
     adc object_y_high,x                                               ; 2623: 7d 92 09    }.. :24f2[1]
     sta sprite_y_pos_high                                             ; 2626: 85 77       .w  :24f5[1]
     ldy #3                                                            ; 2628: a0 03       ..  :24f7[1]
-    lda (mask_sprite_byte),y                                          ; 262a: b1 80       ..  :24f9[1]
+    lda (sprite_addr_low),y                                           ; 262a: b1 80       ..  :24f9[1]
     sec                                                               ; 262c: 38          8   :24fb[1]
     sbc #1                                                            ; 262d: e9 01       ..  :24fc[1]
     sta sprite_x_pos_low                                              ; 262f: 85 74       .t  :24fe[1]
@@ -3597,7 +3626,7 @@ loop_c256a
     sta l012d                                                         ; 26a6: 8d 2d 01    .-. :2575[1]
     lda byte_offset_within_sprite                                     ; 26a9: a5 79       .y  :2578[1]
     sta l012e                                                         ; 26ab: 8d 2e 01    ... :257a[1]
-    jsr sub_c2434                                                     ; 26ae: 20 34 24     4$ :257d[1]
+    jsr examine_object_x_position_taking_into_account_sprite_offset_and_object_direction; 26ae: 20 34 24     4$ :257d[1]
     lda object_direction,x                                            ; 26b1: bd be 09    ... :2580[1]
     bpl c25a4                                                         ; 26b4: 10 1f       ..  :2583[1]
     lda address1_low                                                  ; 26b6: a5 70       .p  :2585[1]
@@ -3650,7 +3679,7 @@ sub_c25df
     pha                                                               ; 2713: 48          H   :25e2[1]
     lda l24d1                                                         ; 2714: ad d1 24    ..$ :25e3[1]
     pha                                                               ; 2717: 48          H   :25e6[1]
-    jsr sub_c2434                                                     ; 2718: 20 34 24     4$ :25e7[1]
+    jsr examine_object_x_position_taking_into_account_sprite_offset_and_object_direction; 2718: 20 34 24     4$ :25e7[1]
     pla                                                               ; 271b: 68          h   :25ea[1]
     sta l24d1                                                         ; 271c: 8d d1 24    ..$ :25eb[1]
     pla                                                               ; 271f: 68          h   :25ee[1]
@@ -3672,7 +3701,7 @@ sub_c25f5
     clc                                                               ; 273e: 18          .   :260d[1]
     adc #$0b                                                          ; 273f: 69 0b       i.  :260e[1]
     tax                                                               ; 2741: aa          .   :2610[1]
-    jsr sub_c24d2                                                     ; 2742: 20 d2 24     .$ :2611[1]
+    jsr examine_object_y_position_taking_into_account_sprite_offset_and_object_direction; 2742: 20 d2 24     .$ :2611[1]
     jsr sub_c265a                                                     ; 2745: 20 5a 26     Z& :2614[1]
     lda sprite_screen_address_for_column_high                         ; 2748: a5 7c       .|  :2617[1]
     ora sprite_data_byte                                              ; 274a: 05 7d       .}  :2619[1]
@@ -3686,7 +3715,7 @@ c2626
     lda #1                                                            ; 2757: a9 01       ..  :2626[1]
     sta l2551                                                         ; 2759: 8d 51 25    .Q% :2628[1]
     ldx l0053                                                         ; 275c: a6 53       .S  :262b[1]
-    jsr sub_c24d2                                                     ; 275e: 20 d2 24     .$ :262d[1]
+    jsr examine_object_y_position_taking_into_account_sprite_offset_and_object_direction; 275e: 20 d2 24     .$ :262d[1]
     jsr sub_c26e5                                                     ; 2761: 20 e5 26     .& :2630[1]
     jsr sub_c271e                                                     ; 2764: 20 1e 27     .' :2633[1]
     lda sprite_screen_address_for_column_high                         ; 2767: a5 7c       .|  :2636[1]
@@ -3696,7 +3725,7 @@ c2626
     sta l2551                                                         ; 276f: 8d 51 25    .Q% :263e[1]
     ldx l0053                                                         ; 2772: a6 53       .S  :2641[1]
     jsr sub_c25df                                                     ; 2774: 20 df 25     .% :2643[1]
-    jsr sub_c24d2                                                     ; 2777: 20 d2 24     .$ :2646[1]
+    jsr examine_object_y_position_taking_into_account_sprite_offset_and_object_direction; 2777: 20 d2 24     .$ :2646[1]
     jsr sub_c265a                                                     ; 277a: 20 5a 26     Z& :2649[1]
     jsr sub_c2693                                                     ; 277d: 20 93 26     .& :264c[1]
 c264f
@@ -3875,7 +3904,7 @@ sub_c2770
     jsr sub_c25df                                                     ; 28a9: 20 df 25     .% :2778[1]
     lda #2                                                            ; 28ac: a9 02       ..  :277b[1]
     sta l2551                                                         ; 28ae: 8d 51 25    .Q% :277d[1]
-    jsr sub_c24d2                                                     ; 28b1: 20 d2 24     .$ :2780[1]
+    jsr examine_object_y_position_taking_into_account_sprite_offset_and_object_direction; 28b1: 20 d2 24     .$ :2780[1]
     lda #$ff                                                          ; 28b4: a9 ff       ..  :2783[1]
     sta l0044                                                         ; 28b6: 85 44       .D  :2785[1]
     jsr sub_c26e5                                                     ; 28b8: 20 e5 26     .& :2787[1]
@@ -3893,7 +3922,7 @@ c279c
     lda byte_offset_within_sprite                                     ; 28d2: a5 79       .y  :27a1[1]
     sta l0122                                                         ; 28d4: 8d 22 01    .". :27a3[1]
     ldx l0053                                                         ; 28d7: a6 53       .S  :27a6[1]
-    jsr sub_c2434                                                     ; 28d9: 20 34 24     4$ :27a8[1]
+    jsr examine_object_x_position_taking_into_account_sprite_offset_and_object_direction; 28d9: 20 34 24     4$ :27a8[1]
     lda sprite_screen_address_low                                     ; 28dc: a5 72       .r  :27ab[1]
     clc                                                               ; 28de: 18          .   :27ad[1]
     adc #1                                                            ; 28df: 69 01       i.  :27ae[1]
@@ -4041,7 +4070,7 @@ something59_TODO
     pha                                                               ; 29cb: 48          H   :289a[1]
     ldx l295b                                                         ; 29cc: ae 5b 29    .[) :289b[1]
     jsr sub_c25df                                                     ; 29cf: 20 df 25     .% :289e[1]
-    jsr sub_c24d2                                                     ; 29d2: 20 d2 24     .$ :28a1[1]
+    jsr examine_object_y_position_taking_into_account_sprite_offset_and_object_direction; 29d2: 20 d2 24     .$ :28a1[1]
     lda l28e1                                                         ; 29d5: ad e1 28    ..( :28a4[1]
     sta l0044                                                         ; 29d8: 85 44       .D  :28a7[1]
     jsr sub_c265a                                                     ; 29da: 20 5a 26     Z& :28a9[1]
@@ -4086,7 +4115,7 @@ something55_TODO
     lda object_spriteid,y                                             ; 2a21: b9 a8 09    ... :28f0[1]
     beq c2945                                                         ; 2a24: f0 50       .P  :28f3[1]
     jsr sub_c25df                                                     ; 2a26: 20 df 25     .% :28f5[1]
-    jsr sub_c24d2                                                     ; 2a29: 20 d2 24     .$ :28f8[1]
+    jsr examine_object_y_position_taking_into_account_sprite_offset_and_object_direction; 2a29: 20 d2 24     .$ :28f8[1]
     ldx #7                                                            ; 2a2c: a2 07       ..  :28fb[1]
 loop_c28fd
     lda address1_low,x                                                ; 2a2e: b5 70       .p  :28fd[1]
@@ -4097,7 +4126,7 @@ loop_c28fd
     pha                                                               ; 2a37: 48          H   :2906[1]
     tax                                                               ; 2a38: aa          .   :2907[1]
     jsr sub_c25df                                                     ; 2a39: 20 df 25     .% :2908[1]
-    jsr sub_c24d2                                                     ; 2a3c: 20 d2 24     .$ :290b[1]
+    jsr examine_object_y_position_taking_into_account_sprite_offset_and_object_direction; 2a3c: 20 d2 24     .$ :290b[1]
     lda l0123                                                         ; 2a3f: ad 23 01    .#. :290e[1]
     sec                                                               ; 2a42: 38          8   :2911[1]
     sbc address1_low                                                  ; 2a43: e5 70       .p  :2912[1]
@@ -5614,7 +5643,7 @@ sub_c336e
     tya                                                               ; 34a1: 98          .   :3370[1]
     pha                                                               ; 34a2: 48          H   :3371[1]
     ldx #0                                                            ; 34a3: a2 00       ..  :3372[1]
-    jsr sub_c24d2                                                     ; 34a5: 20 d2 24     .$ :3374[1]
+    jsr examine_object_y_position_taking_into_account_sprite_offset_and_object_direction; 34a5: 20 d2 24     .$ :3374[1]
     lda sprite_x_pos_low                                              ; 34a8: a5 74       .t  :3377[1]
     clc                                                               ; 34aa: 18          .   :3379[1]
     adc sprite_y_pos_low                                              ; 34ab: 65 76       ev  :337a[1]
@@ -7303,6 +7332,7 @@ relocation4_high_copy_start
 ; 4. Set the crtc registers
 ; 
 initialise_display
+collision_map
     lda #$ff                                                          ; 3fcb: a9 ff       ..  :0c00[4]
     sta display_initialised_flag                                      ; 3fcd: 8d 0a 11    ... :0c02[4]
     lda pending_toolbar_colour                                        ; 3fd0: ad 5d 17    .]. :0c05[4]
@@ -7715,10 +7745,6 @@ pydis_end
 ;     c16aa
 ;     c1713
 ;     c174c
-;     c18d1
-;     c1906
-;     c1909
-;     c191f
 ;     c1937
 ;     c1951
 ;     c19b9
@@ -7761,7 +7787,6 @@ pydis_end
 ;     c1dda
 ;     c1de6
 ;     c1df0
-;     c1e0b
 ;     c1e2d
 ;     c1e33
 ;     c1e3d
@@ -8094,7 +8119,6 @@ pydis_end
 ;     sub_c1278
 ;     sub_c1728
 ;     sub_c1cf3
-;     sub_c1df4
 ;     sub_c1efa
 ;     sub_c2157
 ;     sub_c22ae
@@ -8102,8 +8126,6 @@ pydis_end
 ;     sub_c2358
 ;     sub_c236b
 ;     sub_c23c4
-;     sub_c2434
-;     sub_c24d2
 ;     sub_c25df
 ;     sub_c25f5
 ;     sub_c265a

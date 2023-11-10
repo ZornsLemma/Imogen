@@ -34,6 +34,12 @@ constant(0x18, "opcode_clc")
 constant(0x38, "opcode_sec")
 constant(0x4c, "opcode_jmp")
 
+
+# NOTE:
+#
+#   Ranges here are *binary* NOT the *runtime* addresses as used everywhere else.
+#   This is weird, but makes the addresses unique.
+#
 substitute_labels = {
     (0x114f,0x1297): {
         "address1_low": "filename_low",
@@ -45,27 +51,57 @@ substitute_labels = {
         "address2_low":  "dest_sprite_address_low",
         "address2_high": "dest_sprite_address_high",
     },
-
+    (0x13a9, 0x140a): {
+        "address1_low": "level_data_ptr_low",
+        "address1_high": "level_data_ptr_high",
+    },
     (0x183d, 0x1841): {
         "address1_low": "filename_low",
         "address1_high": "filename_high",
+    },
+    (0x19f4, 0x1a96): {
+        "address1_low": "object_y_delta",
     },
     (0x1aa0, 0x1aae): {
         "address1_low": "filename_low",
         "address1_high": "filename_high",
     },
+    (0x1f25, 0x1f74): {
+        "address1_low": "screen_address_low",
+        "address1_high": "screen_address_high",
+    },
+    (0x1f25, 0x3c05): {
+        "initialise_display": "collision_map",
+    },
+    (0x2331, 0x2467): {
+        "address1_low": "animation_address_low",
+        "address1_high": "animation_address_high",
+    },
     (0x2cb8, 0x2d3c): {
         "address1_low": "menu_item_to_use",
         "address1_high": "menu_has_changed_flag",
+    },
+    (0x2565, 0x2680): {
+        "mask_sprite_byte": "sprite_addr_low",
+        "sprite_width": "sprite_addr_high",
     }
 }
 
 def my_label_maker(addr, context, suggestion):
+    # find a substitution if in one of the ranges
     for pair in substitute_labels:
         if context in range(pair[0], pair[1]):
             dict = substitute_labels[pair]
             if suggestion[0] in dict:
                 return dict[suggestion[0]]
+
+    # don't use the substitution if not in range
+    for pair in substitute_labels:
+        if context not in range(pair[0], pair[1]):
+            dict = substitute_labels[pair]
+            if suggestion[0] in dict:
+                return suggestion[0]
+
 
     return suggestion
 
@@ -427,6 +463,36 @@ comment(0x2d9b, "toggle player direction")
 comment(0x2fdc, "toggle player direction")
 comment(0x31ec, "toggle player direction")
 
+label(0x1909, "bring_player_and_object1_back_onto_the_left_side_of_screen")
+label(0x191f, "bring_player_and_object1_back_onto_the_right_side_of_screen")
+comment(0x192a, "should be 1?", inline=True)
+label(0x18d1, "get_delta_y")
+label(0x1906, "return_with_a_zero")
+
+label(0x2434, "examine_object_x_position_taking_into_account_sprite_offset_and_object_direction")
+comment(0x2434, """Some calculation based on the X coordinate of an object. Part of collision detection maybe?
+
+On Entry:
+    X has the object to look at
+""")
+
+comment(0x2439, "get and remember the sprite address")
+comment(0x2440, "recall object index")
+comment(0x2442, "read the sprite's X offset")
+comment(0x2446, "invert the sprite offset if looking left")
+comment(0x2454, "update address1 based on sprite offset", inline=True)
+comment(0x2460, "get sprite width")
+comment(0x2464, "add sprite width-1 to address1 if looking right, or subtract if looking left storing result in sprite_screen_address")
+comment(0x247a, "sprite_screen_address = address1 - (width-1)")
+
+label(0x24d2, "examine_object_y_position_taking_into_account_sprite_offset_and_object_direction")
+comment(0x24d2, """Some calculation based on the Y coordinate of an object. Part of collision detection maybe?
+
+On Entry:
+    X has the object to look at
+""")
+
+
 substitute_constants("sta sprite_number", 'a', sprite_dict, True)
 substitute_constants("jsr draw_sprite_a_at_character_xy", 'a', sprite_dict, True)
 substitute_constants("jsr find_or_create_menu_slot_for_A", 'a', sprite_dict, True) # TODO: not actually useful yet, maybe never
@@ -540,9 +606,10 @@ comment(0x1615, "store every other bit in the byte other than the one we are int
 label(0x161e, "finish_off_sprite")
 label(0x1623, "shift_mask_byte_loop")
 label(0x1628, "write_last_byte")
-#comment(0x15ad, "", inline=True)
-#comment(0x15ad, "", inline=True)
-#comment(0x15ad, "", inline=True)
+
+comment(0x1df4, "clear the game area of the screen to 255 (and also clear the collision map?)")
+label(0x1df4, "clear_game_area")
+label(0x1e0b, "clear_screen_game_area_loop")
 
 binary(0x1ea7, 4)
 label(0x1ea7, "bitmask1")
@@ -1033,7 +1100,6 @@ comment(0x3fcb, """Initialise display
 """)
 entry(0x3fcb, "initialise_display")
 label(0x3fcb, "relocation4_high_copy_start")
-comment(0x1df4, "TODO: Is this code deliberately trashing the code at initialise_display?")
 comment(0x1e80, "TODO: What's going on with the modification to initialise_display here? Is it copy protection/obfuscation or is there something else going on?")
 comment(0x1ebb, "TODO: What's going on with the modification to initialise_display here? Is it copy protection/obfuscation or is there something else going on?")
 
