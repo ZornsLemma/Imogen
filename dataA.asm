@@ -4,93 +4,93 @@ last_level_letter    = 81
 spriteid_saxophone   = 211
 
 ; Memory locations
-l001d                                   = $1d
-desired_room_index                      = $30
-desired_level                           = $31
-l003a                                   = $3a
-l003b                                   = $3b
-width_in_cells                          = $3c
-height_in_cells                         = $3d
-value_to_write_to_collision_map         = $3e
-l0040                                   = $40
-l0041                                   = $41
-l0042                                   = $42
-previous_level                          = $51
-l0052                                   = $52
-l0070                                   = $70
-level_thing_2_data                      = $0709
-level_thing_4_data                      = $0714
-level_thing_3_data                      = $0914
-l0950                                   = $0950
-l0954                                   = $0954
-l0966                                   = $0966
-l097c                                   = $097c
-l0980                                   = $0980
-l0992                                   = $0992
-l09a8                                   = $09a8
-l09aa                                   = $09aa
-l09ab                                   = $09ab
-l09ac                                   = $09ac
-l09be                                   = $09be
-l09ff                                   = $09ff
-l0a00                                   = $0a00
-l0a01                                   = $0a01
-l0a02                                   = $0a02
-l0a03                                   = $0a03
-l0a04                                   = $0a04
-l0a6f                                   = $0a6f
-l0a70                                   = $0a70
-l0a71                                   = $0a71
-l0a72                                   = $0a72
-l0a73                                   = $0a73
-string_input_buffer                     = $0a90
-developer_flags                         = $1103
-initialise_level                        = $1140
-something23_TODO                        = $12bb
-something24_TODO                        = $12da
-some_data_shared_between_g_and_dataA    = $132b
-level_thing_1_data                      = $1614
-pending_toolbar_colour                  = $175d
-toolbar_colour                          = $175e
-pending_gameplay_area_colour            = $175f
-gameplay_area_colour                    = $1760
-use_colour_flag                         = $1765
-something13_TODO                        = $1988
-something14_TODO                        = $1a10
-current_room_index                      = $1aba
-something51_TODO                        = $1abb
-something26_TODO                        = $1b90
-something53_TODO                        = $1db9
-write_rectangle_to_collision_map        = $1e44
-something60_TODO                        = $1ebb
-draw_sprite_a_at_character_xy           = $1f4c
-something52_TODO                        = $1f57
-something58_TODO                        = $1f5d
-something57_TODO                        = $1f6d
-play_landing_sound                      = $23a9
-l2433                                   = $2433
-l24d0                                   = $24d0
-l24d1                                   = $24d1
-l2551                                   = $2551
-something59_TODO                        = $2894
-something55_TODO                        = $28e2
-insert_character_menu_item_into_toolbar = $2b87
-find_or_create_menu_slot_for_A          = $2bbd
-remove_item_from_toolbar_menu           = $2be0
-l2eb6                                   = $2eb6
-l2ee9                                   = $2ee9
-l2eee                                   = $2eee
-l2ef3                                   = $2ef3
-l38ac                                   = $38ac
-l38ae                                   = $38ae
-l38c2                                   = $38c2
-l38d8                                   = $38d8
-l38f6                                   = $38f6
-l395e                                   = $395e
-l396f                                   = $396f
-l3970                                   = $3970
-auxcode                                 = $53c0
-check_password                          = $53c0
+l001d                                       = $1d
+desired_room_index                          = $30
+desired_level                               = $31
+l003a                                       = $3a
+l003b                                       = $3b
+width_in_cells                              = $3c
+height_in_cells                             = $3d
+value_to_write_to_collision_map             = $3e
+l0040                                       = $40
+l0041                                       = $41
+l0042                                       = $42
+previous_level                              = $51
+l0052                                       = $52
+l0070                                       = $70
+level_thing_2_data                          = $0709
+level_thing_4_data                          = $0714
+level_thing_3_data                          = $0914
+l0950                                       = $0950
+l0954                                       = $0954
+l0966                                       = $0966
+l097c                                       = $097c
+l0980                                       = $0980
+l0992                                       = $0992
+l09a8                                       = $09a8
+l09aa                                       = $09aa
+l09ab                                       = $09ab
+l09ac                                       = $09ac
+l09be                                       = $09be
+l09ff                                       = $09ff
+l0a00                                       = $0a00
+l0a01                                       = $0a01
+l0a02                                       = $0a02
+l0a03                                       = $0a03
+l0a04                                       = $0a04
+l0a6f                                       = $0a6f
+l0a70                                       = $0a70
+l0a71                                       = $0a71
+l0a72                                       = $0a72
+l0a73                                       = $0a73
+string_input_buffer                         = $0a90
+developer_flags                             = $1103
+initialise_level                            = $1140
+something23_TODO                            = $12bb
+something24_TODO                            = $12da
+some_data_shared_between_g_and_dataA        = $132b
+level_thing_1_data                          = $1614
+pending_toolbar_colour                      = $175d
+toolbar_colour                              = $175e
+pending_gameplay_area_colour                = $175f
+gameplay_area_colour                        = $1760
+use_colour_flag                             = $1765
+something13_TODO                            = $1988
+something14_TODO                            = $1a10
+current_room_index                          = $1aba
+something51_TODO                            = $1abb
+something26_TODO                            = $1b90
+something53_TODO                            = $1db9
+write_value_to_a_rectangle_in_collision_map = $1e44
+write_a_single_value_to_collision_map       = $1ebb
+draw_sprite_a_at_character_xy               = $1f4c
+something52_TODO                            = $1f57
+something58_TODO                            = $1f5d
+something57_TODO                            = $1f6d
+play_landing_sound                          = $23a9
+l2433                                       = $2433
+l24d0                                       = $24d0
+l24d1                                       = $24d1
+l2551                                       = $2551
+something59_TODO                            = $2894
+something55_TODO                            = $28e2
+insert_character_menu_item_into_toolbar     = $2b87
+find_or_create_menu_slot_for_A              = $2bbd
+remove_item_from_toolbar_menu               = $2be0
+l2eb6                                       = $2eb6
+l2ee9                                       = $2ee9
+l2eee                                       = $2eee
+l2ef3                                       = $2ef3
+l38ac                                       = $38ac
+l38ae                                       = $38ae
+l38c2                                       = $38c2
+l38d8                                       = $38d8
+l38f6                                       = $38f6
+l395e                                       = $395e
+l396f                                       = $396f
+l3970                                       = $3970
+auxcode                                     = $53c0
+check_password                              = $53c0
 
     * = $3ad5
 
@@ -278,7 +278,7 @@ c3bf7
     dex                                                               ; 3c1b: ca          .
     dey                                                               ; 3c1c: 88          .
     dey                                                               ; 3c1d: 88          .
-    jsr write_rectangle_to_collision_map                              ; 3c1e: 20 44 1e     D.
+    jsr write_value_to_a_rectangle_in_collision_map                   ; 3c1e: 20 44 1e     D.
     ldx #2                                                            ; 3c21: a2 02       ..
     jsr something57_TODO                                              ; 3c23: 20 6d 1f     m.
     lda #$cd                                                          ; 3c26: a9 cd       ..
@@ -296,7 +296,7 @@ c3bf7
     dex                                                               ; 3c41: ca          .
     dey                                                               ; 3c42: 88          .
     dey                                                               ; 3c43: 88          .
-    jsr write_rectangle_to_collision_map                              ; 3c44: 20 44 1e     D.
+    jsr write_value_to_a_rectangle_in_collision_map                   ; 3c44: 20 44 1e     D.
     ldx #3                                                            ; 3c47: a2 03       ..
     jsr something57_TODO                                              ; 3c49: 20 6d 1f     m.
     lda #$ff                                                          ; 3c4c: a9 ff       ..
@@ -568,7 +568,7 @@ c3e11
     sta width_in_cells                                                ; 3e49: 85 3c       .<
     lda #1                                                            ; 3e4b: a9 01       ..
     sta height_in_cells                                               ; 3e4d: 85 3d       .=
-    jsr write_rectangle_to_collision_map                              ; 3e4f: 20 44 1e     D.
+    jsr write_value_to_a_rectangle_in_collision_map                   ; 3e4f: 20 44 1e     D.
     jmp c3e69                                                         ; 3e52: 4c 69 3e    Li>
 
 ; $3e55 referenced 1 time by $3e41
@@ -579,9 +579,9 @@ c3e55
     sta width_in_cells                                                ; 3e5b: 85 3c       .<
     lda #2                                                            ; 3e5d: a9 02       ..
     sta height_in_cells                                               ; 3e5f: 85 3d       .=
-    jsr write_rectangle_to_collision_map                              ; 3e61: 20 44 1e     D.
+    jsr write_value_to_a_rectangle_in_collision_map                   ; 3e61: 20 44 1e     D.
     ldx #$16                                                          ; 3e64: a2 16       ..
-    jsr write_rectangle_to_collision_map                              ; 3e66: 20 44 1e     D.
+    jsr write_value_to_a_rectangle_in_collision_map                   ; 3e66: 20 44 1e     D.
 ; $3e69 referenced 2 times by $3e15, $3e52
 c3e69
     jmp c3ed7                                                         ; 3e69: 4c d7 3e    L.>
@@ -616,7 +616,7 @@ c3e6c
     sta height_in_cells                                               ; 3ea3: 85 3d       .=
     lda #0                                                            ; 3ea5: a9 00       ..
     sta value_to_write_to_collision_map                               ; 3ea7: 85 3e       .>
-    jsr write_rectangle_to_collision_map                              ; 3ea9: 20 44 1e     D.
+    jsr write_value_to_a_rectangle_in_collision_map                   ; 3ea9: 20 44 1e     D.
     iny                                                               ; 3eac: c8          .
     lda #1                                                            ; 3ead: a9 01       ..
     sta width_in_cells                                                ; 3eaf: 85 3c       .<
@@ -624,9 +624,9 @@ c3e6c
     sta height_in_cells                                               ; 3eb3: 85 3d       .=
     lda #3                                                            ; 3eb5: a9 03       ..
     sta value_to_write_to_collision_map                               ; 3eb7: 85 3e       .>
-    jsr write_rectangle_to_collision_map                              ; 3eb9: 20 44 1e     D.
+    jsr write_value_to_a_rectangle_in_collision_map                   ; 3eb9: 20 44 1e     D.
     ldx #$16                                                          ; 3ebc: a2 16       ..
-    jsr write_rectangle_to_collision_map                              ; 3ebe: 20 44 1e     D.
+    jsr write_value_to_a_rectangle_in_collision_map                   ; 3ebe: 20 44 1e     D.
 ; $3ec1 referenced 1 time by $3e71
 c3ec1
     ldy l09ff                                                         ; 3ec1: ac ff 09    ...
@@ -1085,7 +1085,7 @@ c41d9
     sta height_in_cells                                               ; 4200: 85 3d       .=
     lda #3                                                            ; 4202: a9 03       ..
     sta value_to_write_to_collision_map                               ; 4204: 85 3e       .>
-    jsr write_rectangle_to_collision_map                              ; 4206: 20 44 1e     D.
+    jsr write_value_to_a_rectangle_in_collision_map                   ; 4206: 20 44 1e     D.
     jmp c4235                                                         ; 4209: 4c 35 42    L5B
 
 ; $420c referenced 1 time by $41f5
@@ -1098,7 +1098,7 @@ c420c
     sta height_in_cells                                               ; 4215: 85 3d       .=
     lda #0                                                            ; 4217: a9 00       ..
     sta value_to_write_to_collision_map                               ; 4219: 85 3e       .>
-    jsr write_rectangle_to_collision_map                              ; 421b: 20 44 1e     D.
+    jsr write_value_to_a_rectangle_in_collision_map                   ; 421b: 20 44 1e     D.
     lda l0a04                                                         ; 421e: ad 04 0a    ...
     bmi c4224                                                         ; 4221: 30 01       0.
     dex                                                               ; 4223: ca          .
@@ -1111,7 +1111,7 @@ c4224
     sta height_in_cells                                               ; 422c: 85 3d       .=
     lda #3                                                            ; 422e: a9 03       ..
     sta value_to_write_to_collision_map                               ; 4230: 85 3e       .>
-    jsr write_rectangle_to_collision_map                              ; 4232: 20 44 1e     D.
+    jsr write_value_to_a_rectangle_in_collision_map                   ; 4232: 20 44 1e     D.
 ; $4235 referenced 2 times by $41e4, $4209
 c4235
     ldx #2                                                            ; 4235: a2 02       ..
@@ -1196,7 +1196,7 @@ level_thing_4_code
     lda #$3b ; ';'                                                    ; 42d4: a9 3b       .;
     jsr draw_sprite_a_at_character_xy                                 ; 42d6: 20 4c 1f     L.
     lda #3                                                            ; 42d9: a9 03       ..
-    jsr something60_TODO                                              ; 42db: 20 bb 1e     ..
+    jsr write_a_single_value_to_collision_map                         ; 42db: 20 bb 1e     ..
     ldx #$21 ; '!'                                                    ; 42de: a2 21       .!
     ldy #2                                                            ; 42e0: a0 02       ..
     lda #$0e                                                          ; 42e2: a9 0e       ..
@@ -1347,7 +1347,7 @@ c43e3
     sta height_in_cells                                               ; 43ed: 85 3d       .=
     lda #0                                                            ; 43ef: a9 00       ..
     sta value_to_write_to_collision_map                               ; 43f1: 85 3e       .>
-    jsr write_rectangle_to_collision_map                              ; 43f3: 20 44 1e     D.
+    jsr write_value_to_a_rectangle_in_collision_map                   ; 43f3: 20 44 1e     D.
 ; $43f6 referenced 1 time by $4352
 c43f6
     lda desired_room_index                                            ; 43f6: a5 30       .0
@@ -1361,7 +1361,7 @@ c43f6
     sta height_in_cells                                               ; 4407: 85 3d       .=
     lda #3                                                            ; 4409: a9 03       ..
     sta value_to_write_to_collision_map                               ; 440b: 85 3e       .>
-    jsr write_rectangle_to_collision_map                              ; 440d: 20 44 1e     D.
+    jsr write_value_to_a_rectangle_in_collision_map                   ; 440d: 20 44 1e     D.
     lda #2                                                            ; 4410: a9 02       ..
     jsr something58_TODO                                              ; 4412: 20 5d 1f     ].
 ; $4415 referenced 4 times by $4355, $43bd, $43d8, $43fa
@@ -1600,164 +1600,164 @@ sprite_data
 pydis_end
 
 ; Label references by decreasing frequency:
-;     something51_TODO:                      43
-;     width_in_cells:                        39
-;     height_in_cells:                       38
-;     desired_room_index:                    19
-;     write_rectangle_to_collision_map:      13
-;     desired_level:                         11
-;     l0a72:                                 11
-;     value_to_write_to_collision_map:       10
-;     l0a70:                                 10
-;     something52_TODO:                       9
-;     l0a02:                                  8
-;     l0a04:                                  8
-;     c3ed7:                                  8
-;     l09ff:                                  7
-;     l0a01:                                  7
-;     l38f6:                                  7
-;     some_data1:                             7
-;     l0070:                                  6
-;     l09be:                                  6
-;     l0a71:                                  6
-;     initialise_level:                       6
-;     some_data_shared_between_g_and_dataA:   6
-;     something53_TODO:                       6
-;     previous_level:                         5
-;     l0a73:                                  5
-;     something58_TODO:                       5
-;     something55_TODO:                       5
-;     l38ac:                                  5
-;     l395e:                                  5
-;     c41ae:                                  5
-;     c4355:                                  5
-;     l003b:                                  4
-;     l0a00:                                  4
-;     l0a6f:                                  4
-;     something23_TODO:                       4
-;     something24_TODO:                       4
-;     something26_TODO:                       4
-;     some_code2:                             4
-;     c41d9:                                  4
-;     c4415:                                  4
-;     l09a8:                                  3
-;     l09aa:                                  3
-;     l09ab:                                  3
-;     l09ac:                                  3
-;     something13_TODO:                       3
-;     current_room_index:                     3
-;     draw_sprite_a_at_character_xy:          3
-;     find_or_create_menu_slot_for_A:         3
-;     l2eb6:                                  3
-;     l38c2:                                  3
-;     c3ca8:                                  3
-;     c3d20:                                  3
-;     c3f8a:                                  3
-;     c419f:                                  3
-;     c4339:                                  3
-;     l0040:                                  2
-;     l0041:                                  2
-;     l0950:                                  2
-;     l0966:                                  2
-;     l0a03:                                  2
-;     something57_TODO:                       2
-;     l2433:                                  2
-;     l38d8:                                  2
-;     l396f:                                  2
-;     c3b0e:                                  2
-;     c3e11:                                  2
-;     c3e69:                                  2
-;     sub_c3ef1:                              2
-;     c3f51:                                  2
-;     l3fd5:                                  2
-;     l3fd6:                                  2
-;     some_data2:                             2
-;     l40e3:                                  2
-;     c412e:                                  2
-;     c415e:                                  2
-;     c418c:                                  2
-;     c4194:                                  2
-;     c41c9:                                  2
-;     c4235:                                  2
-;     c432f:                                  2
-;     c43a0:                                  2
-;     l001d:                                  1
-;     l003a:                                  1
-;     l0042:                                  1
-;     l0052:                                  1
-;     l0954:                                  1
-;     l097c:                                  1
-;     l0980:                                  1
-;     l0992:                                  1
-;     developer_flags:                        1
-;     something14_TODO:                       1
-;     something60_TODO:                       1
-;     play_landing_sound:                     1
-;     l24d0:                                  1
-;     l24d1:                                  1
-;     l2551:                                  1
-;     something59_TODO:                       1
-;     l2ee9:                                  1
-;     l2eee:                                  1
-;     l2ef3:                                  1
-;     l38ae:                                  1
-;     l3970:                                  1
-;     developer_mode_not_active:              1
-;     loop_c3bd4:                             1
-;     sub_c3be4:                              1
-;     c3bec:                                  1
-;     c3bf7:                                  1
-;     c3c74:                                  1
-;     c3c77:                                  1
-;     c3c81:                                  1
-;     c3c91:                                  1
-;     c3cb9:                                  1
-;     c3cc3:                                  1
-;     c3cd9:                                  1
-;     c3ce1:                                  1
-;     c3ce7:                                  1
-;     c3cfb:                                  1
-;     c3dd2:                                  1
-;     c3de2:                                  1
-;     c3def:                                  1
-;     sub_c3dfc:                              1
-;     c3e55:                                  1
-;     c3e6c:                                  1
-;     c3ec1:                                  1
-;     c3ed2:                                  1
-;     c3ed4:                                  1
-;     c3ee4:                                  1
-;     c3eed:                                  1
-;     l3eee:                                  1
-;     sub_c3f02:                              1
-;     c3f52:                                  1
-;     c3f62:                                  1
-;     loop_c4044:                             1
-;     sub_c407f:                              1
-;     c40b2:                                  1
-;     c40c1:                                  1
-;     c40e0:                                  1
-;     c40e4:                                  1
-;     c40ee:                                  1
-;     c40f7:                                  1
-;     c412b:                                  1
-;     c4137:                                  1
-;     c4167:                                  1
-;     c4184:                                  1
-;     c41c1:                                  1
-;     c420c:                                  1
-;     c4224:                                  1
-;     c424c:                                  1
-;     loop_c42ea:                             1
-;     sub_c42f8:                              1
-;     c4352:                                  1
-;     c4358:                                  1
-;     c4386:                                  1
-;     c43b4:                                  1
-;     c43ce:                                  1
-;     c43d4:                                  1
-;     c43e3:                                  1
-;     c43f6:                                  1
+;     something51_TODO:                             43
+;     width_in_cells:                               39
+;     height_in_cells:                              38
+;     desired_room_index:                           19
+;     write_value_to_a_rectangle_in_collision_map:  13
+;     desired_level:                                11
+;     l0a72:                                        11
+;     value_to_write_to_collision_map:              10
+;     l0a70:                                        10
+;     something52_TODO:                              9
+;     l0a02:                                         8
+;     l0a04:                                         8
+;     c3ed7:                                         8
+;     l09ff:                                         7
+;     l0a01:                                         7
+;     l38f6:                                         7
+;     some_data1:                                    7
+;     l0070:                                         6
+;     l09be:                                         6
+;     l0a71:                                         6
+;     initialise_level:                              6
+;     some_data_shared_between_g_and_dataA:          6
+;     something53_TODO:                              6
+;     previous_level:                                5
+;     l0a73:                                         5
+;     something58_TODO:                              5
+;     something55_TODO:                              5
+;     l38ac:                                         5
+;     l395e:                                         5
+;     c41ae:                                         5
+;     c4355:                                         5
+;     l003b:                                         4
+;     l0a00:                                         4
+;     l0a6f:                                         4
+;     something23_TODO:                              4
+;     something24_TODO:                              4
+;     something26_TODO:                              4
+;     some_code2:                                    4
+;     c41d9:                                         4
+;     c4415:                                         4
+;     l09a8:                                         3
+;     l09aa:                                         3
+;     l09ab:                                         3
+;     l09ac:                                         3
+;     something13_TODO:                              3
+;     current_room_index:                            3
+;     draw_sprite_a_at_character_xy:                 3
+;     find_or_create_menu_slot_for_A:                3
+;     l2eb6:                                         3
+;     l38c2:                                         3
+;     c3ca8:                                         3
+;     c3d20:                                         3
+;     c3f8a:                                         3
+;     c419f:                                         3
+;     c4339:                                         3
+;     l0040:                                         2
+;     l0041:                                         2
+;     l0950:                                         2
+;     l0966:                                         2
+;     l0a03:                                         2
+;     something57_TODO:                              2
+;     l2433:                                         2
+;     l38d8:                                         2
+;     l396f:                                         2
+;     c3b0e:                                         2
+;     c3e11:                                         2
+;     c3e69:                                         2
+;     sub_c3ef1:                                     2
+;     c3f51:                                         2
+;     l3fd5:                                         2
+;     l3fd6:                                         2
+;     some_data2:                                    2
+;     l40e3:                                         2
+;     c412e:                                         2
+;     c415e:                                         2
+;     c418c:                                         2
+;     c4194:                                         2
+;     c41c9:                                         2
+;     c4235:                                         2
+;     c432f:                                         2
+;     c43a0:                                         2
+;     l001d:                                         1
+;     l003a:                                         1
+;     l0042:                                         1
+;     l0052:                                         1
+;     l0954:                                         1
+;     l097c:                                         1
+;     l0980:                                         1
+;     l0992:                                         1
+;     developer_flags:                               1
+;     something14_TODO:                              1
+;     write_a_single_value_to_collision_map:         1
+;     play_landing_sound:                            1
+;     l24d0:                                         1
+;     l24d1:                                         1
+;     l2551:                                         1
+;     something59_TODO:                              1
+;     l2ee9:                                         1
+;     l2eee:                                         1
+;     l2ef3:                                         1
+;     l38ae:                                         1
+;     l3970:                                         1
+;     developer_mode_not_active:                     1
+;     loop_c3bd4:                                    1
+;     sub_c3be4:                                     1
+;     c3bec:                                         1
+;     c3bf7:                                         1
+;     c3c74:                                         1
+;     c3c77:                                         1
+;     c3c81:                                         1
+;     c3c91:                                         1
+;     c3cb9:                                         1
+;     c3cc3:                                         1
+;     c3cd9:                                         1
+;     c3ce1:                                         1
+;     c3ce7:                                         1
+;     c3cfb:                                         1
+;     c3dd2:                                         1
+;     c3de2:                                         1
+;     c3def:                                         1
+;     sub_c3dfc:                                     1
+;     c3e55:                                         1
+;     c3e6c:                                         1
+;     c3ec1:                                         1
+;     c3ed2:                                         1
+;     c3ed4:                                         1
+;     c3ee4:                                         1
+;     c3eed:                                         1
+;     l3eee:                                         1
+;     sub_c3f02:                                     1
+;     c3f52:                                         1
+;     c3f62:                                         1
+;     loop_c4044:                                    1
+;     sub_c407f:                                     1
+;     c40b2:                                         1
+;     c40c1:                                         1
+;     c40e0:                                         1
+;     c40e4:                                         1
+;     c40ee:                                         1
+;     c40f7:                                         1
+;     c412b:                                         1
+;     c4137:                                         1
+;     c4167:                                         1
+;     c4184:                                         1
+;     c41c1:                                         1
+;     c420c:                                         1
+;     c4224:                                         1
+;     c424c:                                         1
+;     loop_c42ea:                                    1
+;     sub_c42f8:                                     1
+;     c4352:                                         1
+;     c4358:                                         1
+;     c4386:                                         1
+;     c43b4:                                         1
+;     c43ce:                                         1
+;     c43d4:                                         1
+;     c43e3:                                         1
+;     c43f6:                                         1
 
 ; Automatically generated labels:
 ;     c3b0e

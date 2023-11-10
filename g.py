@@ -1129,7 +1129,6 @@ comment(0x3fcb, """Initialise display
 """)
 entry(0x3fcb, "initialise_display")
 label(0x3fcb, "relocation4_high_copy_start")
-comment(0x1ebb, "TODO: Collision map maybe?")
 
 label(0x1e80, "write_to_next_row_in_collision_map_loop")
 comment(0x1e80, "read from current collision map", inline=True)
@@ -1945,6 +1944,16 @@ comment(0x135d, "The sprite table starts with a table of 16 bit addresses, one f
 label(0x54, "sprdata_ptr")
 expr_label(0x55, make_add("sprdata_ptr", "1"))
 
+comment(0x1ebd, "remember value to write", inline=True)
+comment(0x1ec3, "multiply A by ten, and store in temp_coordinate")
+comment(0x1ecc, "divide X by four and add temp_coordinate. This is the offset into the collision map, stored in Y.")
+comment(0x1ed3, "store the offset within the byte in temp_coordinate (0-3)")
+comment(0x1eda, "get the value to write multiplied by four and add the offset within the byte. This is the index into the table for the value to write")
+comment(0x1ee1, "get the value to write")
+comment(0x1ee4, "store the value to write in temp_coordinate, but first put it's previous value (the offset within the byte) into X")
+comment(0x1ee8, "write the new value into the collision map, based on some bits from the old value and the new value bits being written, similar to the routine above.")
+comment(0x1ef3, "restore X,Y and A")
+
 # TODO: Possibly something to do with trying to avoid flicker as sprites update? Doesn't obviously look like palette change code.
 entry(0x1791, "wait_for_timer_2_using_yx")
 
@@ -2038,6 +2047,20 @@ On Entry:
     Y: Top cell X coordinate of rectangle
     width_in_cells: Rectangle width
     height_in_cells: Rectangle height
+
+On Exit:
+    Preserves A,X,Y
+
+*************************************************************************************""")
+
+comment(0x1ebb, """*************************************************************************************
+
+Write a value to a single cell in the collision map
+
+On Entry:
+    A: Value to write
+    X: Cell X coordinate
+    Y: Cell Y coordinate
 
 On Exit:
     Preserves A,X,Y
