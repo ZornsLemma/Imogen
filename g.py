@@ -66,12 +66,20 @@ substitute_labels = {
         "address1_low": "filename_low",
         "address1_high": "filename_high",
     },
-    (0x1f25, 0x1f74): {
+    (0x1f25, 0x3c05): {
+        "initialise_display": "collision_map",
+    },
+    (0x1f25, 0x1f48): {
         "address1_low": "screen_address_low",
         "address1_high": "screen_address_high",
     },
-    (0x1f25, 0x3c05): {
-        "initialise_display": "collision_map",
+    (0x1f48, 0x1fd7): {
+        "address1_low": "cell_x",
+        "address1_high": "cell_y",
+        "sprite_screen_address_low": "width_in_cells_to_write",
+        "l004b": "height_counter",
+        "sprite_x_pos_low": "offset_within_byte",
+        "sprite_screen_address_high": "height_in_cells_to_write",
     },
     (0x2331, 0x2467): {
         "address1_low": "animation_address_low",
@@ -84,8 +92,15 @@ substitute_labels = {
     (0x2565, 0x2680): {
         "mask_sprite_byte": "sprite_addr_low",
         "sprite_width": "sprite_addr_high",
-    }
+    },
 }
+
+# Create the substitute labels with inverted dictionaries
+inverse_labels = {}
+for pair in substitute_labels:
+    dict = substitute_labels[pair]
+    inv_dict = {v: k for k, v in dict.items()}
+    inverse_labels[pair] = inv_dict
 
 def my_label_maker(addr, context, suggestion):
     # find a substitution if in one of the ranges
@@ -94,6 +109,14 @@ def my_label_maker(addr, context, suggestion):
             dict = substitute_labels[pair]
             if suggestion[0] in dict:
                 return dict[suggestion[0]]
+
+    # stop using the substitution if not in range
+    for pair in inverse_labels:
+        if context not in range(pair[0], pair[1]):
+            dict = inverse_labels[pair]
+            if suggestion[0] in dict:
+                return dict[suggestion[0]]
+
 
     return suggestion
 
@@ -460,6 +483,16 @@ label(0x191f, "bring_player_and_object1_back_onto_the_right_side_of_screen")
 comment(0x192a, "should be 1?", inline=True)
 label(0x18d1, "get_delta_y")
 label(0x1906, "return_with_a_zero")
+comment(0x1e8f, "loop counter", inline=True)
+
+comment(0x1e4e, "l0049 is the input value (0-3)")
+comment(0x1e70, "multiply input value (0-3) by four")
+comment(0x1e74, "add offset within byte in the bottom two bits")
+comment(0x1e74, "use as the offset into the bitmask2 array")
+byte(0x1eab, 4)
+byte(0x1eaf, 4)
+byte(0x1eb3, 4)
+comment(0x1e7c, "store the value to write in the 'offset_within_byte' variable")
 
 label(0x2434, "examine_object_x_position_taking_into_account_sprite_offset_and_object_direction")
 comment(0x2434, """Some calculation based on the X coordinate of an object. Part of collision detection maybe?
@@ -604,9 +637,9 @@ label(0x1df4, "clear_game_area")
 label(0x1e0b, "clear_screen_game_area_loop")
 
 binary(0x1ea7, 4)
-label(0x1ea7, "bitmask1")
+label(0x1ea7, "bitmask_of_bits_to_keep_from_collision_map_table")
 binary(0x1eab, 16)
-label(0x1eab, "bitmask2")
+label(0x1eab, "value_to_write_into_collision_map_table")
 
 label(0x1589, "check_within_vertical_range")
 expr(0x1570, make_lo("screen_width_in_pixels"))
@@ -1092,8 +1125,15 @@ comment(0x3fcb, """Initialise display
 """)
 entry(0x3fcb, "initialise_display")
 label(0x3fcb, "relocation4_high_copy_start")
-comment(0x1e80, "TODO: What's going on with the modification to initialise_display here? Is it copy protection/obfuscation or is there something else going on?")
-comment(0x1ebb, "TODO: What's going on with the modification to initialise_display here? Is it copy protection/obfuscation or is there something else going on?")
+comment(0x1ebb, "TODO: Collision map maybe?")
+
+label(0x1e80, "write_to_next_row_in_collision_map_loop")
+comment(0x1e95, "X is the offset within the byte to write to (0-3)")
+label(0x1e6a, "write_to_next_column_in_collision_map_loop")
+label(0x1ea5, "pull_and_return")
+label(0x1e4e, "write_value_to_rectangle_of_collision_map")
+
+decimal(0x1e8d)
 
 entry(0x402c, "quit_to_basic")
 for i in range(5):
@@ -1898,9 +1938,8 @@ entry(0x1791, "wait_for_timer_2_using_yx")
 entry(0x385d, "turn_cursor_on")
 entry(0x3863, "turn_cursor_off")
 
-# This seems to be a 16-bit word.
-label(0x3c, "some_word")
-expr_label(0x3d, make_add("some_word", "1"))
+label(0x3c, "width_in_cells")
+label(0x3d, "height_in_cells")
 
 label(0x34a7, "get_filename_and_print_drive_number_prompt")
 # This string will be used for save and loads, but I'll use "save" here as a noun to refer to the file on disc.
@@ -1979,7 +2018,31 @@ entry(0x2bc6, "find_slot_loop")
 entry(0x2bd6, "empty_slot_found")
 entry(0x2bdd, "matching_slot_found_or_no_empty_slot")
 
-entry(0x1e17, "set_sprite_screen_address_using_x_y_and_some_word") # TODO!
+comment(0x1e17, """*************************************************************************************
+
+Clip the given rectangle of cells to the game area (right and bottom)
+
+The game area is a grid of 40x24 cells.
+
+On Entry:
+    X: Left cell X coordinate of rectangle
+    Y: Top cell X coordinate of rectangle
+    width_in_cell: Rectangle width
+    height_in_cell: Rectangle height
+
+On Exit:
+    width_in_cells_to_write: Clipped rectangle width
+    height_in_cells_to_write: Clipped rectangle height
+
+*************************************************************************************""")
+entry(0x1e17, "clip_cells_to_write_to_collision_map")
+decimal(0x1e2a)
+decimal(0x1e2e)
+label(0x1e33, "clipped_x_ok")
+decimal(0x1e3a)
+label(0x1e2d, "clip_x")
+decimal(0x1e3e)
+label(0x1e3d, "clip_y")
 entry(0x1b66, "set_sprite_y_pos_using_x_y") # TODO!
 
 label(0x58c0, "toolbar_screen_address")

@@ -194,7 +194,8 @@ currently_loaded_level                      = $37
 l0039                                       = $39
 l003a                                       = $3a
 l003b                                       = $3b
-some_word                                   = $3c
+width_in_cells                              = $3c
+height_in_cells                             = $3d
 l003e                                       = $3e
 l003f                                       = $3f
 l0040                                       = $40
@@ -207,6 +208,7 @@ return_key_pressed_pending                  = $46
 current_player_character                    = $48
 l0049                                       = $49
 l004a                                       = $4a
+height_counter                              = $4b
 l004b                                       = $4b
 screen_base_address_high                    = $4c
 new_player_character                        = $4d
@@ -233,6 +235,7 @@ l0067                                       = $67
 l0068                                       = $68
 address1_low                                = $70
 animation_address_low                       = $70
+cell_x                                      = $70
 filename_low                                = $70
 level_data_ptr_low                          = $70
 menu_item_to_use                            = $70
@@ -241,13 +244,17 @@ screen_address_low                          = $70
 src_sprite_address_low                      = $70
 address1_high                               = $71
 animation_address_high                      = $71
+cell_y                                      = $71
 filename_high                               = $71
 level_data_ptr_high                         = $71
 menu_has_changed_flag                       = $71
 screen_address_high                         = $71
 src_sprite_address_high                     = $71
 sprite_screen_address_low                   = $72
+width_in_cells_to_write                     = $72
+height_in_cells_to_write                    = $73
 sprite_screen_address_high                  = $73
+offset_within_byte                          = $74
 sprite_x_pos_low                            = $74
 sprite_x_pos_high                           = $75
 sprite_y_pos_low                            = $76
@@ -1980,7 +1987,7 @@ current_room_index
 something51_TODO
     pha                                                               ; 1bec: 48          H   :1abb[1]
     sty sprite_data_byte                                              ; 1bed: 84 7d       .}  :1abc[1]
-    jsr set_sprite_screen_address_using_x_y_and_some_word             ; 1bef: 20 17 1e     .. :1abe[1]
+    jsr clip_cells_to_write_to_collision_map                          ; 1bef: 20 17 1e     .. :1abe[1]
     jsr set_sprite_y_pos_using_x_y                                    ; 1bf2: 20 66 1b     f. :1ac1[1]
     lda sprite_y_pos_low                                              ; 1bf5: a5 76       .v  :1ac4[1]
     sta sprite_x_pos_low                                              ; 1bf7: 85 74       .t  :1ac6[1]
@@ -2439,34 +2446,51 @@ clear_screen_game_area_loop
     bne clear_screen_game_area_loop                                   ; 1f45: d0 f5       ..  :1e14[1]
     rts                                                               ; 1f47: 60          `   :1e16[1]
 
-set_sprite_screen_address_using_x_y_and_some_word
-    stx screen_address_low                                            ; 1f48: 86 70       .p  :1e17[1]
-    sty screen_address_high                                           ; 1f4a: 84 71       .q  :1e19[1]
-    lda some_word                                                     ; 1f4c: a5 3c       .<  :1e1b[1]
-    sta sprite_screen_address_low                                     ; 1f4e: 85 72       .r  :1e1d[1]
-    lda some_word + 1                                                 ; 1f50: a5 3d       .=  :1e1f[1]
-    sta sprite_screen_address_high                                    ; 1f52: 85 73       .s  :1e21[1]
+; *************************************************************************************
+; 
+; Clip the given rectangle of cells to the game area (right and bottom)
+; 
+; The game area is a grid of 40x24 cells.
+; 
+; On Entry:
+;     X: Left cell X coordinate of rectangle
+;     Y: Top cell X coordinate of rectangle
+;     width_in_cell: Rectangle width
+;     height_in_cell: Rectangle height
+; 
+; On Exit:
+;     width_in_cells_to_write: Clipped rectangle width
+;     height_in_cells_to_write: Clipped rectangle height
+; 
+; *************************************************************************************
+clip_cells_to_write_to_collision_map
+    stx cell_x                                                        ; 1f48: 86 70       .p  :1e17[1]
+    sty cell_y                                                        ; 1f4a: 84 71       .q  :1e19[1]
+    lda width_in_cells                                                ; 1f4c: a5 3c       .<  :1e1b[1]
+    sta width_in_cells_to_write                                       ; 1f4e: 85 72       .r  :1e1d[1]
+    lda height_in_cells                                               ; 1f50: a5 3d       .=  :1e1f[1]
+    sta height_in_cells_to_write                                      ; 1f52: 85 73       .s  :1e21[1]
     txa                                                               ; 1f54: 8a          .   :1e23[1]
     clc                                                               ; 1f55: 18          .   :1e24[1]
-    adc some_word                                                     ; 1f56: 65 3c       e<  :1e25[1]
-    bcs c1e2d                                                         ; 1f58: b0 04       ..  :1e27[1]
-    cmp #$29 ; ')'                                                    ; 1f5a: c9 29       .)  :1e29[1]
-    bcc c1e33                                                         ; 1f5c: 90 06       ..  :1e2b[1]
-c1e2d
-    lda #$28 ; '('                                                    ; 1f5e: a9 28       .(  :1e2d[1]
-    sbc screen_address_low                                            ; 1f60: e5 70       .p  :1e2f[1]
-    sta sprite_screen_address_low                                     ; 1f62: 85 72       .r  :1e31[1]
-c1e33
+    adc width_in_cells                                                ; 1f56: 65 3c       e<  :1e25[1]
+    bcs clip_x                                                        ; 1f58: b0 04       ..  :1e27[1]
+    cmp #41                                                           ; 1f5a: c9 29       .)  :1e29[1]
+    bcc clipped_x_ok                                                  ; 1f5c: 90 06       ..  :1e2b[1]
+clip_x
+    lda #40                                                           ; 1f5e: a9 28       .(  :1e2d[1]
+    sbc cell_x                                                        ; 1f60: e5 70       .p  :1e2f[1]
+    sta width_in_cells_to_write                                       ; 1f62: 85 72       .r  :1e31[1]
+clipped_x_ok
     tya                                                               ; 1f64: 98          .   :1e33[1]
     clc                                                               ; 1f65: 18          .   :1e34[1]
-    adc some_word + 1                                                 ; 1f66: 65 3d       e=  :1e35[1]
-    bcs c1e3d                                                         ; 1f68: b0 04       ..  :1e37[1]
-    cmp #$19                                                          ; 1f6a: c9 19       ..  :1e39[1]
+    adc height_in_cells                                               ; 1f66: 65 3d       e=  :1e35[1]
+    bcs clip_y                                                        ; 1f68: b0 04       ..  :1e37[1]
+    cmp #25                                                           ; 1f6a: c9 19       ..  :1e39[1]
     bcc return7                                                       ; 1f6c: 90 06       ..  :1e3b[1]
-c1e3d
-    lda #$18                                                          ; 1f6e: a9 18       ..  :1e3d[1]
-    sbc screen_address_high                                           ; 1f70: e5 71       .q  :1e3f[1]
-    sta sprite_screen_address_high                                    ; 1f72: 85 73       .s  :1e41[1]
+clip_y
+    lda #24                                                           ; 1f6e: a9 18       ..  :1e3d[1]
+    sbc cell_y                                                        ; 1f70: e5 71       .q  :1e3f[1]
+    sta height_in_cells_to_write                                      ; 1f72: 85 73       .s  :1e41[1]
 return7
     rts                                                               ; 1f74: 60          `   :1e43[1]
 
@@ -2475,12 +2499,13 @@ something54_TODO
     pha                                                               ; 1f75: 48          H   :1e44[1]
     lda l003e                                                         ; 1f76: a5 3e       .>  :1e45[1]
     cmp #4                                                            ; 1f78: c9 04       ..  :1e47[1]
-    bcc c1e4e                                                         ; 1f7a: 90 03       ..  :1e49[1]
-    jmp c1ea5                                                         ; 1f7c: 4c a5 1e    L.. :1e4b[1]
+    bcc write_value_to_rectangle_of_collision_map                     ; 1f7a: 90 03       ..  :1e49[1]
+    jmp pull_and_return                                               ; 1f7c: 4c a5 1e    L.. :1e4b[1]
 
-c1e4e
+; l0049 is the input value (0-3)
+write_value_to_rectangle_of_collision_map
     sta l0049                                                         ; 1f7f: 85 49       .I  :1e4e[1]
-    jsr set_sprite_screen_address_using_x_y_and_some_word             ; 1f81: 20 17 1e     .. :1e50[1]
+    jsr clip_cells_to_write_to_collision_map                          ; 1f81: 20 17 1e     .. :1e50[1]
     tya                                                               ; 1f84: 98          .   :1e53[1]
     asl                                                               ; 1f85: 0a          .   :1e54[1]
     sta l004a                                                         ; 1f86: 85 4a       .J  :1e55[1]
@@ -2498,56 +2523,58 @@ c1e4e
     and #3                                                            ; 1f96: 29 03       ).  :1e65[1]
     eor #3                                                            ; 1f98: 49 03       I.  :1e67[1]
     tax                                                               ; 1f9a: aa          .   :1e69[1]
-c1e6a
-    lda sprite_screen_address_high                                    ; 1f9b: a5 73       .s  :1e6a[1]
-    sta l004b                                                         ; 1f9d: 85 4b       .K  :1e6c[1]
-    stx sprite_x_pos_low                                              ; 1f9f: 86 74       .t  :1e6e[1]
+write_to_next_column_in_collision_map_loop
+    lda height_in_cells_to_write                                      ; 1f9b: a5 73       .s  :1e6a[1]
+    sta height_counter                                                ; 1f9d: 85 4b       .K  :1e6c[1]
+    stx offset_within_byte                                            ; 1f9f: 86 74       .t  :1e6e[1]
+; multiply input value (0-3) by four
     lda l0049                                                         ; 1fa1: a5 49       .I  :1e70[1]
     asl                                                               ; 1fa3: 0a          .   :1e72[1]
     asl                                                               ; 1fa4: 0a          .   :1e73[1]
-    ora sprite_x_pos_low                                              ; 1fa5: 05 74       .t  :1e74[1]
+; add offset within byte in the bottom two bits
+; use as the offset into the bitmask2 array
+    ora offset_within_byte                                            ; 1fa5: 05 74       .t  :1e74[1]
     tax                                                               ; 1fa7: aa          .   :1e76[1]
-    lda bitmask2,x                                                    ; 1fa8: bd ab 1e    ... :1e77[1]
-    ldx sprite_x_pos_low                                              ; 1fab: a6 74       .t  :1e7a[1]
-    sta sprite_x_pos_low                                              ; 1fad: 85 74       .t  :1e7c[1]
+    lda value_to_write_into_collision_map_table,x                     ; 1fa8: bd ab 1e    ... :1e77[1]
+    ldx offset_within_byte                                            ; 1fab: a6 74       .t  :1e7a[1]
+; store the value to write in the 'offset_within_byte' variable
+    sta offset_within_byte                                            ; 1fad: 85 74       .t  :1e7c[1]
     sty sprite_x_pos_high                                             ; 1faf: 84 75       .u  :1e7e[1]
-; TODO: What's going on with the modification to initialise_display here? Is it copy
-; protection/obfuscation or is there something else going on?
-loop_c1e80
+write_to_next_row_in_collision_map_loop
     lda collision_map,y                                               ; 1fb1: b9 00 0c    ... :1e80[1]
-    and bitmask1,x                                                    ; 1fb4: 3d a7 1e    =.. :1e83[1]
-    ora sprite_x_pos_low                                              ; 1fb7: 05 74       .t  :1e86[1]
+    and bitmask_of_bits_to_keep_from_collision_map_table,x            ; 1fb4: 3d a7 1e    =.. :1e83[1]
+    ora offset_within_byte                                            ; 1fb7: 05 74       .t  :1e86[1]
     sta collision_map,y                                               ; 1fb9: 99 00 0c    ... :1e88[1]
     tya                                                               ; 1fbc: 98          .   :1e8b[1]
-    adc #$0a                                                          ; 1fbd: 69 0a       i.  :1e8c[1]
+    adc #10                                                           ; 1fbd: 69 0a       i.  :1e8c[1]
     tay                                                               ; 1fbf: a8          .   :1e8e[1]
-    dec l004b                                                         ; 1fc0: c6 4b       .K  :1e8f[1]
-    bne loop_c1e80                                                    ; 1fc2: d0 ed       ..  :1e91[1]
+    dec height_counter                                                ; 1fc0: c6 4b       .K  :1e8f[1]   ; loop counter
+    bne write_to_next_row_in_collision_map_loop                       ; 1fc2: d0 ed       ..  :1e91[1]
     ldy sprite_x_pos_high                                             ; 1fc4: a4 75       .u  :1e93[1]
+; X is the offset within the byte to write to (0-3)
     dex                                                               ; 1fc6: ca          .   :1e95[1]
     bpl c1e9b                                                         ; 1fc7: 10 03       ..  :1e96[1]
     ldx #3                                                            ; 1fc9: a2 03       ..  :1e98[1]
     iny                                                               ; 1fcb: c8          .   :1e9a[1]
 c1e9b
-    dec sprite_screen_address_low                                     ; 1fcc: c6 72       .r  :1e9b[1]
-    bne c1e6a                                                         ; 1fce: d0 cb       ..  :1e9d[1]
+    dec width_in_cells_to_write                                       ; 1fcc: c6 72       .r  :1e9b[1]
+    bne write_to_next_column_in_collision_map_loop                    ; 1fce: d0 cb       ..  :1e9d[1]
     lda l0049                                                         ; 1fd0: a5 49       .I  :1e9f[1]
-    ldx address1_low                                                  ; 1fd2: a6 70       .p  :1ea1[1]
-    ldy address1_high                                                 ; 1fd4: a4 71       .q  :1ea3[1]
-c1ea5
+    ldx cell_x                                                        ; 1fd2: a6 70       .p  :1ea1[1]
+    ldy cell_y                                                        ; 1fd4: a4 71       .q  :1ea3[1]
+pull_and_return
     pla                                                               ; 1fd6: 68          h   :1ea5[1]
     rts                                                               ; 1fd7: 60          `   :1ea6[1]
 
-bitmask1
+bitmask_of_bits_to_keep_from_collision_map_table
     !byte %00111111, %11001111, %11110011, %11111100                  ; 1fd8: 3f cf f3... ?.. :1ea7[1]
-bitmask2
-    !byte %00000000, %00000000, %00000000, %00000000, %01000000       ; 1fdc: 00 00 00... ... :1eab[1]
-    !byte %00010000, %00000100, %00000001, %10000000, %00100000       ; 1fe1: 10 04 01... ... :1eb0[1]
-    !byte %00001000, %00000010, %11000000, %00110000, %00001100       ; 1fe6: 08 02 c0... ... :1eb5[1]
-    !byte %00000011                                                   ; 1feb: 03          .   :1eba[1]
+value_to_write_into_collision_map_table
+    !byte %00000000, %00000000, %00000000, %00000000                  ; 1fdc: 00 00 00... ... :1eab[1]
+    !byte %01000000, %00010000, %00000100, %00000001                  ; 1fe0: 40 10 04... @.. :1eaf[1]
+    !byte %10000000, %00100000, %00001000, %00000010                  ; 1fe4: 80 20 08... . . :1eb3[1]
+    !byte %11000000, %00110000, %00001100, %00000011                  ; 1fe8: c0 30 0c... .0. :1eb7[1]
 
-; TODO: What's going on with the modification to initialise_display here? Is it copy
-; protection/obfuscation or is there something else going on?
+; TODO: Collision map maybe?
 ; TODO: this is used by e.g. dataA
 something60_TODO
     and #3                                                            ; 1fec: 29 03       ).  :1ebb[1]
@@ -2577,11 +2604,11 @@ something60_TODO
     asl                                                               ; 200e: 0a          .   :1edd[1]
     ora l004a                                                         ; 200f: 05 4a       .J  :1ede[1]
     tax                                                               ; 2011: aa          .   :1ee0[1]
-    lda bitmask2,x                                                    ; 2012: bd ab 1e    ... :1ee1[1]
+    lda value_to_write_into_collision_map_table,x                     ; 2012: bd ab 1e    ... :1ee1[1]
     ldx l004a                                                         ; 2015: a6 4a       .J  :1ee4[1]
     sta l004a                                                         ; 2017: 85 4a       .J  :1ee6[1]
     lda collision_map,y                                               ; 2019: b9 00 0c    ... :1ee8[1]
-    and bitmask1,x                                                    ; 201c: 3d a7 1e    =.. :1eeb[1]
+    and bitmask_of_bits_to_keep_from_collision_map_table,x            ; 201c: 3d a7 1e    =.. :1eeb[1]
     ora l004a                                                         ; 201f: 05 4a       .J  :1eee[1]
     sta collision_map,y                                               ; 2021: 99 00 0c    ... :1ef0[1]
     pla                                                               ; 2024: 68          h   :1ef3[1]
@@ -7582,9 +7609,9 @@ save_or_restore_screen_under_dialog_box
     lda current_text_width                                            ; 4127: ad 09 04    ... :0428[2]
     sec                                                               ; 412a: 38          8   :042b[2]
     sbc #2                                                            ; 412b: e9 02       ..  :042c[2]
-    sta some_word                                                     ; 412d: 85 3c       .<  :042e[2]
+    sta width_in_cells                                                ; 412d: 85 3c       .<  :042e[2]
     lda #3                                                            ; 412f: a9 03       ..  :0430[2]
-    sta some_word + 1                                                 ; 4131: 85 3d       .=  :0432[2]
+    sta height_in_cells                                               ; 4131: 85 3d       .=  :0432[2]
     jsr something51_TODO                                              ; 4133: 20 bb 1a     .. :0434[2]
     jmp vdu_goto_0_9                                                  ; 4136: 4c 44 04    LD. :0437[2]
 
@@ -7712,9 +7739,9 @@ c0505
     ldx #0                                                            ; 4204: a2 00       ..  :0505[2]
     ldy #0                                                            ; 4206: a0 00       ..  :0507[2]
     lda current_text_width                                            ; 4208: ad 09 04    ... :0509[2]
-    sta some_word                                                     ; 420b: 85 3c       .<  :050c[2]
+    sta width_in_cells                                                ; 420b: 85 3c       .<  :050c[2]
     lda #5                                                            ; 420d: a9 05       ..  :050e[2]
-    sta some_word + 1                                                 ; 420f: 85 3d       .=  :0510[2]
+    sta height_in_cells                                               ; 420f: 85 3d       .=  :0510[2]
     jmp something51_TODO                                              ; 4211: 4c bb 1a    L.. :0512[2]
 
 l0515
@@ -7787,13 +7814,7 @@ pydis_end
 ;     c1dda
 ;     c1de6
 ;     c1df0
-;     c1e2d
-;     c1e33
-;     c1e3d
-;     c1e4e
-;     c1e6a
 ;     c1e9b
-;     c1ea5
 ;     c1f06
 ;     c1f23
 ;     c1f2d
@@ -7994,7 +8015,6 @@ pydis_end
 ;     l0044
 ;     l0049
 ;     l004a
-;     l004b
 ;     l0050
 ;     l0052
 ;     l0053
@@ -8087,7 +8107,6 @@ pydis_end
 ;     loop_c1c61
 ;     loop_c1cbb
 ;     loop_c1df7
-;     loop_c1e80
 ;     loop_c1f21
 ;     loop_c1fe1
 ;     loop_c1ff5
