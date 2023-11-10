@@ -1,6 +1,7 @@
 ; Constants
 first_level_letter   = 65
 last_level_letter    = 81
+opcode_jmp           = 76
 spriteid_saxophone   = 211
 
 ; Memory locations

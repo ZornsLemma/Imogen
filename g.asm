@@ -383,9 +383,9 @@ pydis_start
 ; 
 ;     bit 0: "developer keys active", ESCAPE resets or exits the game I think, if you
 ; have the right sideways RAM set up.
-;     bit 1: unused
+;     bit 1: enable a screen dump for an EPSOM compatible printer (see auxcode.asm)
 ;     bit 2: load ICODATA directly from track 39 on the disc, rather than as a regular
-; load. (An option for copy protection)
+; load. (An option for copy protection?)
 ;     bit 3: load game data from drive 2, not drive 0
 ;     bit 4: unused
 ;     bit 5: unused

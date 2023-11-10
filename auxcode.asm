@@ -2,6 +2,7 @@
 first_level_letter                             = 65
 fixed_eor_key                                  = 203
 last_level_letter                              = 81
+opcode_jmp                                     = 76
 osbyte_flush_buffer_class                      = 15
 osbyte_read_write_escape_break_effect          = 200
 osbyte_read_write_first_byte_break_intercept   = 247
@@ -15,14 +16,14 @@ desired_level                               = $31
 width_in_cells                              = $3c
 height_in_cells                             = $3d
 value_to_write_to_collision_map             = $3e
-l004c                                       = $4c
+game_area_screen_address_high               = $4c
 previous_level                              = $51
 l005b                                       = $5b
-l0070                                       = $70
-l0071                                       = $71
-l0072                                       = $72
+screen_address_low                          = $70
+screen_address_high                         = $71
+row_counter                                 = $72
 l0073                                       = $73
-l0074                                       = $74
+invert_screen_dump_flag                     = $74
 l040a                                       = $040a
 l0453                                       = $0453
 l09ef                                       = $09ef
@@ -78,27 +79,27 @@ check_password
 pydis_start
     ldy #0                                                            ; 53c0: a0 00       ..
     sty l0005                                                         ; 53c2: 84 05       ..
-    sty l0072                                                         ; 53c4: 84 72       .r
+    sty row_counter                                                   ; 53c4: 84 72       .r
     lda #<level_name_ptr_table                                        ; 53c6: a9 4f       .O
-    sta l0070                                                         ; 53c8: 85 70       .p
+    sta screen_address_low                                            ; 53c8: 85 70       .p
     lda #>level_name_ptr_table                                        ; 53ca: a9 54       .T
-    sta l0071                                                         ; 53cc: 85 71       .q
+    sta screen_address_high                                           ; 53cc: 85 71       .q
 c53ce
-    lda (l0070),y                                                     ; 53ce: b1 70       .p
+    lda (screen_address_low),y                                        ; 53ce: b1 70       .p
     eor #$cb                                                          ; 53d0: 49 cb       I.
     cmp string_input_buffer,y                                         ; 53d2: d9 90 0a    ...
     bne this_entry_doesnt_match                                       ; 53d5: d0 3d       .=
     iny                                                               ; 53d7: c8          .
     cmp #vdu_cr                                                       ; 53d8: c9 0d       ..
     bne c53ce                                                         ; 53da: d0 f2       ..
-    lda (l0070),y                                                     ; 53dc: b1 70       .p
+    lda (screen_address_low),y                                        ; 53dc: b1 70       .p
     tax                                                               ; 53de: aa          .
     iny                                                               ; 53df: c8          .
-    lda (l0070),y                                                     ; 53e0: b1 70       .p
+    lda (screen_address_low),y                                        ; 53e0: b1 70       .p
     tay                                                               ; 53e2: a8          .
 ; TODO: At this point we have the level pointer for the successfully matched password
 ; in YX
-    lda l0072                                                         ; 53e3: a5 72       .r
+    lda row_counter                                                   ; 53e3: a5 72       .r
     pha                                                               ; 53e5: 48          H
     txa                                                               ; 53e6: 8a          .
     pha                                                               ; 53e7: 48          H
@@ -107,8 +108,8 @@ c53ce
     jsr l040a                                                         ; 53ea: 20 0a 04     ..
     lda #$0a                                                          ; 53ed: a9 0a       ..
     jsr oswrch                                                        ; 53ef: 20 ee ff     ..            ; Write character 10
-    ldx #7                                                            ; 53f2: a2 07       ..
-    ldy #$54 ; 'T'                                                    ; 53f4: a0 54       .T
+    ldx #<accepted_encrypted_string                                   ; 53f2: a2 07       ..
+    ldy #>accepted_encrypted_string                                   ; 53f4: a0 54       .T
     jsr l37f3                                                         ; 53f6: 20 f3 37     .7
     jsr l388d                                                         ; 53f9: 20 8d 38     .8
     jsr l0453                                                         ; 53fc: 20 53 04     S.
@@ -119,10 +120,12 @@ c53ce
     pla                                                               ; 5403: 68          h
     jmp l1966                                                         ; 5404: 4c 66 19    Lf.
 
+; 'Accepted\r' EOR-encrypted with $cb
+accepted_encrypted_string
     !byte $8a, $a8, $a8, $ae, $bb, $bf, $ae, $af, $c6                 ; 5407: 8a a8 a8... ...
 
 skip_rest_of_entry
-    lda (l0070),y                                                     ; 5410: b1 70       .p
+    lda (screen_address_low),y                                        ; 5410: b1 70       .p
     eor #fixed_eor_key                                                ; 5412: 49 cb       I.
 this_entry_doesnt_match
     iny                                                               ; 5414: c8          .
@@ -130,14 +133,14 @@ this_entry_doesnt_match
     bne skip_rest_of_entry                                            ; 5417: d0 f7       ..
     iny                                                               ; 5419: c8          .
     tya                                                               ; 541a: 98          .
-    adc l0070                                                         ; 541b: 65 70       ep             ; effectively adds l0070+1 as cmp # above set Z and thus C: TODO: correct?
-    sta l0070                                                         ; 541d: 85 70       .p
-    lda l0071                                                         ; 541f: a5 71       .q
+    adc screen_address_low                                            ; 541b: 65 70       ep             ; effectively adds l0070+1 as cmp # above set Z and thus C: TODO: correct?
+    sta screen_address_low                                            ; 541d: 85 70       .p
+    lda screen_address_high                                           ; 541f: a5 71       .q
     adc #0                                                            ; 5421: 69 00       i.
-    sta l0071                                                         ; 5423: 85 71       .q
-    inc l0072                                                         ; 5425: e6 72       .r
+    sta screen_address_high                                           ; 5423: 85 71       .q
+    inc row_counter                                                   ; 5425: e6 72       .r
     ldy #0                                                            ; 5427: a0 00       ..
-    lda (l0070),y                                                     ; 5429: b1 70       .p
+    lda (screen_address_low),y                                        ; 5429: b1 70       .p
     eor #fixed_eor_key                                                ; 542b: 49 cb       I.
     bne c53ce                                                         ; 542d: d0 9f       ..
 ; None of the passwords in the table matched.
@@ -262,7 +265,8 @@ c55c0
     beq c55d3                                                         ; 55c9: f0 08       ..
     lda l005b                                                         ; 55cb: a5 5b       .[
     beq c55d3                                                         ; 55cd: f0 04       ..
-    ldx #$4c ; 'L'                                                    ; 55cf: a2 4c       .L
+    ldx #opcode_jmp                                                   ; 55cf: a2 4c       .L
+; For Break effect: *FX 200,1
     ldy #1                                                            ; 55d1: a0 01       ..
 c55d3
     tya                                                               ; 55d3: 98          .
@@ -320,7 +324,7 @@ c5635
 power_of_2_table
     !byte $01, $02, $04, $08, $10, $20, $40, $80                      ; 563a: 01 02 04... ...
 
-; TODO: Presumably a screen dump routine for Epson-compatible printers
+; A screen dump routine for Epson-compatible printers
 dump_handler
     lda developer_flags                                               ; 5642: ad 03 11    ...
     and #2                                                            ; 5645: 29 02       ).
@@ -329,8 +333,9 @@ dump_handler
     jmp return1                                                       ; 564b: 4c 4e 54    LNT
 
 c564e
-    lda #2                                                            ; 564e: a9 02       ..
+    lda #2                                                            ; 564e: a9 02       ..             ; turn on printer output
     jsr oswrch                                                        ; 5650: 20 ee ff     ..            ; Write character 2
+; 'ESC 64': Reset printer to its power up state
     lda #1                                                            ; 5653: a9 01       ..
     jsr oswrch                                                        ; 5655: 20 ee ff     ..            ; Write character 1
     lda #$1b                                                          ; 5658: a9 1b       ..
@@ -339,10 +344,12 @@ c564e
     jsr oswrch                                                        ; 565f: 20 ee ff     ..            ; Write character 1
     lda #$40 ; '@'                                                    ; 5662: a9 40       .@
     jsr oswrch                                                        ; 5664: 20 ee ff     ..            ; Write character 64
+; '10': Line feed
     lda #1                                                            ; 5667: a9 01       ..
     jsr oswrch                                                        ; 5669: 20 ee ff     ..            ; Write character 1
     lda #$0a                                                          ; 566c: a9 0a       ..
     jsr oswrch                                                        ; 566e: 20 ee ff     ..            ; Write character 10
+; 'ESC $6C $11': ?
     lda #1                                                            ; 5671: a9 01       ..
     jsr oswrch                                                        ; 5673: 20 ee ff     ..            ; Write character 1
     lda #$1b                                                          ; 5676: a9 1b       ..
@@ -355,6 +362,7 @@ c564e
     jsr oswrch                                                        ; 5687: 20 ee ff     ..            ; Write character 1
     lda #$11                                                          ; 568a: a9 11       ..
     jsr oswrch                                                        ; 568c: 20 ee ff     ..            ; Write character 17
+; 'ESC $41 $08': Set line spacing to 8/72 inch
     lda #1                                                            ; 568f: a9 01       ..
     jsr oswrch                                                        ; 5691: 20 ee ff     ..            ; Write character 1
     lda #$1b                                                          ; 5694: a9 1b       ..
@@ -367,13 +375,15 @@ c564e
     jsr oswrch                                                        ; 56a5: 20 ee ff     ..            ; Write character 1
     lda #8                                                            ; 56a8: a9 08       ..
     jsr oswrch                                                        ; 56aa: 20 ee ff     ..            ; Write character 8
+; start of screen memory
     lda #$c0                                                          ; 56ad: a9 c0       ..
-    sta l0070                                                         ; 56af: 85 70       .p
+    sta screen_address_low                                            ; 56af: 85 70       .p
     lda #$5b ; '['                                                    ; 56b1: a9 5b       .[
-    sta l0071                                                         ; 56b3: 85 71       .q
+    sta screen_address_high                                           ; 56b3: 85 71       .q
     lda #$ff                                                          ; 56b5: a9 ff       ..
-    sta l0074                                                         ; 56b7: 85 74       .t
-c56b9
+    sta invert_screen_dump_flag                                       ; 56b7: 85 74       .t
+; 'ESC 42 2A 05 40': Turn on graphics mode, followed by 16389 characters
+turn_on_graphics_mode_for_a_row_of_graphics
     lda #1                                                            ; 56b9: a9 01       ..
     jsr oswrch                                                        ; 56bb: 20 ee ff     ..            ; Write character 1
     lda #$1b                                                          ; 56be: a9 1b       ..
@@ -394,58 +404,63 @@ c56b9
     jsr oswrch                                                        ; 56e3: 20 ee ff     ..            ; Write character 1
     jsr oswrch                                                        ; 56e6: 20 ee ff     ..            ; Write character
     lda #$28 ; '('                                                    ; 56e9: a9 28       .(
-    sta l0072                                                         ; 56eb: 85 72       .r
-    bne c56f2                                                         ; 56ed: d0 03       ..
-c56ef
+    sta row_counter                                                   ; 56eb: 85 72       .r
+    bne screendump_character_row_loop                                 ; 56ed: d0 03       ..
+add_another_row_of_graphics_characters
     clc                                                               ; 56ef: 18          .
-    bcc c56b9                                                         ; 56f0: 90 c7       ..
-c56f2
+    bcc turn_on_graphics_mode_for_a_row_of_graphics                   ; 56f0: 90 c7       ..
+screendump_character_row_loop
     ldx #7                                                            ; 56f2: a2 07       ..
-c56f4
+eight_bytes_of_screen_dump_loop
     ldy #0                                                            ; 56f4: a0 00       ..
     sty l0073                                                         ; 56f6: 84 73       .s
-loop_c56f8
+get_byte_of_screen_data_loop
     asl l0073                                                         ; 56f8: 06 73       .s
-    lda (l0070),y                                                     ; 56fa: b1 70       .p
+    lda (screen_address_low),y                                        ; 56fa: b1 70       .p
     and power_of_2_table,x                                            ; 56fc: 3d 3a 56    =:V
-    bne c5703                                                         ; 56ff: d0 02       ..
+    bne skip1                                                         ; 56ff: d0 02       ..
     inc l0073                                                         ; 5701: e6 73       .s
-c5703
+skip1
     iny                                                               ; 5703: c8          .
     cpy #8                                                            ; 5704: c0 08       ..
-    bne loop_c56f8                                                    ; 5706: d0 f0       ..
+    bne get_byte_of_screen_data_loop                                  ; 5706: d0 f0       ..
+; write byte of data
     lda #1                                                            ; 5708: a9 01       ..
     jsr oswrch                                                        ; 570a: 20 ee ff     ..            ; Write character 1
     lda l0073                                                         ; 570d: a5 73       .s
-    eor l0074                                                         ; 570f: 45 74       Et
+    eor invert_screen_dump_flag                                       ; 570f: 45 74       Et
     jsr oswrch                                                        ; 5711: 20 ee ff     ..            ; Write character
     dex                                                               ; 5714: ca          .
-    bpl c56f4                                                         ; 5715: 10 dd       ..
+    bpl eight_bytes_of_screen_dump_loop                               ; 5715: 10 dd       ..
+; move screen address on by eight
     clc                                                               ; 5717: 18          .
-    lda l0070                                                         ; 5718: a5 70       .p
+    lda screen_address_low                                            ; 5718: a5 70       .p
     adc #8                                                            ; 571a: 69 08       i.
-    sta l0070                                                         ; 571c: 85 70       .p
-    bcc c572c                                                         ; 571e: 90 0c       ..
-    inc l0071                                                         ; 5720: e6 71       .q
-    lda l0071                                                         ; 5722: a5 71       .q
-    cmp l004c                                                         ; 5724: c5 4c       .L
-    bne c572c                                                         ; 5726: d0 04       ..
+    sta screen_address_low                                            ; 571c: 85 70       .p
+    bcc skip2                                                         ; 571e: 90 0c       ..
+    inc screen_address_high                                           ; 5720: e6 71       .q
+; when we reach the game area of the screen, stop inverting the output
+    lda screen_address_high                                           ; 5722: a5 71       .q
+    cmp game_area_screen_address_high                                 ; 5724: c5 4c       .L
+    bne skip2                                                         ; 5726: d0 04       ..
     lda #0                                                            ; 5728: a9 00       ..
-    sta l0074                                                         ; 572a: 85 74       .t
-c572c
-    dec l0072                                                         ; 572c: c6 72       .r
-    bne c56f2                                                         ; 572e: d0 c2       ..
+    sta invert_screen_dump_flag                                       ; 572a: 85 74       .t
+skip2
+    dec row_counter                                                   ; 572c: c6 72       .r
+    bne screendump_character_row_loop                                 ; 572e: d0 c2       ..
     lda #1                                                            ; 5730: a9 01       ..
     jsr oswrch                                                        ; 5732: 20 ee ff     ..            ; Write character 1
     lda #$0a                                                          ; 5735: a9 0a       ..
     jsr oswrch                                                        ; 5737: 20 ee ff     ..            ; Write character 10
-    lda l0071                                                         ; 573a: a5 71       .q
+    lda screen_address_high                                           ; 573a: a5 71       .q
     cmp #$80                                                          ; 573c: c9 80       ..
-    bcc c56ef                                                         ; 573e: 90 af       ..
+    bcc add_another_row_of_graphics_characters                        ; 573e: 90 af       ..
+; '10': Line feed
     lda #1                                                            ; 5740: a9 01       ..
     jsr oswrch                                                        ; 5742: 20 ee ff     ..            ; Write character 1
     lda #$0a                                                          ; 5745: a9 0a       ..
     jsr oswrch                                                        ; 5747: 20 ee ff     ..            ; Write character 10
+; 'ESC $40': reset printer
     lda #1                                                            ; 574a: a9 01       ..
     jsr oswrch                                                        ; 574c: 20 ee ff     ..            ; Write character 1
     lda #$1b                                                          ; 574f: a9 1b       ..
@@ -454,18 +469,21 @@ c572c
     jsr oswrch                                                        ; 5756: 20 ee ff     ..            ; Write character 1
     lda #$40 ; '@'                                                    ; 5759: a9 40       .@
     jsr oswrch                                                        ; 575b: 20 ee ff     ..            ; Write character 64
+; twelve line feeds
     ldy #$0c                                                          ; 575e: a0 0c       ..
-loop_c5760
+line_feed_loop
     lda #1                                                            ; 5760: a9 01       ..
     jsr oswrch                                                        ; 5762: 20 ee ff     ..            ; Write character 1
     lda #$0a                                                          ; 5765: a9 0a       ..
     jsr oswrch                                                        ; 5767: 20 ee ff     ..            ; Write character 10
     dey                                                               ; 576a: 88          .
-    bne loop_c5760                                                    ; 576b: d0 f3       ..
+    bne line_feed_loop                                                ; 576b: d0 f3       ..
+; beep
     lda #1                                                            ; 576d: a9 01       ..
     jsr oswrch                                                        ; 576f: 20 ee ff     ..            ; Write character 1
     lda #7                                                            ; 5772: a9 07       ..
     jsr oswrch                                                        ; 5774: 20 ee ff     ..            ; Write character 7
+; printer off
     lda #3                                                            ; 5777: a9 03       ..
     jsr oswrch                                                        ; 5779: 20 ee ff     ..            ; Write character 3
     lda #osbyte_flush_buffer_class                                    ; 577c: a9 0f       ..
@@ -484,20 +502,9 @@ pydis_end
 ;     c55d3
 ;     c5635
 ;     c564e
-;     c56b9
-;     c56ef
-;     c56f2
-;     c56f4
-;     c5703
-;     c572c
 ;     l0005
-;     l004c
 ;     l005b
-;     l0070
-;     l0071
-;     l0072
 ;     l0073
-;     l0074
 ;     l040a
 ;     l0453
 ;     l09ef
@@ -507,13 +514,17 @@ pydis_end
 ;     l388d
 ;     l3a8f
 ;     loop_c5625
-;     loop_c56f8
-;     loop_c5760
+!if (<accepted_encrypted_string) != $07 {
+    !error "Assertion failed: <accepted_encrypted_string == $07"
+}
 !if (<level_name_ptr_table) != $4f {
     !error "Assertion failed: <level_name_ptr_table == $4f"
 }
 !if (<unknown_encrypted_string) != $46 {
     !error "Assertion failed: <unknown_encrypted_string == $46"
+}
+!if (>accepted_encrypted_string) != $54 {
+    !error "Assertion failed: >accepted_encrypted_string == $54"
 }
 !if (>level_name_ptr_table) != $54 {
     !error "Assertion failed: >level_name_ptr_table == $54"
@@ -553,6 +564,9 @@ pydis_end
 }
 !if (normal_mode_handler) != $55af {
     !error "Assertion failed: normal_mode_handler == $55af"
+}
+!if (opcode_jmp) != $4c {
+    !error "Assertion failed: opcode_jmp == $4c"
 }
 !if (osbyte_flush_buffer_class) != $0f {
     !error "Assertion failed: osbyte_flush_buffer_class == $0f"
