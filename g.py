@@ -95,14 +95,6 @@ def my_label_maker(addr, context, suggestion):
             if suggestion[0] in dict:
                 return dict[suggestion[0]]
 
-    # don't use the substitution if not in range
-    for pair in substitute_labels:
-        if context not in range(pair[0], pair[1]):
-            dict = substitute_labels[pair]
-            if suggestion[0] in dict:
-                return suggestion[0]
-
-
     return suggestion
 
 set_label_maker_hook(my_label_maker)
