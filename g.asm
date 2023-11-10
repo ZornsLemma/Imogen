@@ -288,26 +288,18 @@ brkv                                        = $0202
 irq1v                                       = $0204
 first_byte_break_intercept                  = $0287
 object_x_low                                = $0950
-l0951                                       = $0951
 object_x_low_old                            = $095b
 object_x_high                               = $0966
-l0967                                       = $0967
 object_x_high_old                           = $0971
 object_y_low                                = $097c
-l097d                                       = $097d
 object_y_low_old                            = $0987
 object_y_high                               = $0992
-l0993                                       = $0993
 object_y_high_old                           = $099d
 object_spriteid                             = $09a8
-l09a9                                       = $09a9
 object_spriteid_old                         = $09b3
-l09b4                                       = $09b4
 object_direction                            = $09be
-l09bf                                       = $09bf
 object_direction_old                        = $09c9
 object_current_index_in_animation           = $09d4
-l09d5                                       = $09d5
 l09df                                       = $09df
 something2                                  = $09ea
 l09eb                                       = $09eb
@@ -474,7 +466,7 @@ level_already_loaded
     jsr osbyte                                                        ; 12aa: 20 f4 ff     .. :1179[1]   ; Flush all buffers (X=0)
     lda #0                                                            ; 12ad: a9 00       ..  :117c[1]
     sta object_spriteid_old                                           ; 12af: 8d b3 09    ... :117e[1]
-    sta l09b4                                                         ; 12b2: 8d b4 09    ... :1181[1]
+    sta object_spriteid_old+1                                         ; 12b2: 8d b4 09    ... :1181[1]
     ldy #2                                                            ; 12b5: a0 02       ..  :1184[1]
 object_reset_loop
     lda #0                                                            ; 12b7: a9 00       ..  :1186[1]
@@ -503,8 +495,8 @@ object_reset_loop
     sta l0052                                                         ; 12ef: 85 52       .R  :11be[1]
     sta l2eb6                                                         ; 12f1: 8d b6 2e    ... :11c0[1]
     sta l2eb7                                                         ; 12f4: 8d b7 2e    ... :11c3[1]
-    sta l09d5                                                         ; 12f7: 8d d5 09    ... :11c6[1]
-    sta l09a9                                                         ; 12fa: 8d a9 09    ... :11c9[1]
+    sta object_current_index_in_animation+1                           ; 12f7: 8d d5 09    ... :11c6[1]
+    sta object_spriteid+1                                             ; 12fa: 8d a9 09    ... :11c9[1]
     lda #4                                                            ; 12fd: a9 04       ..  :11cc[1]
     sta l09df                                                         ; 12ff: 8d df 09    ... :11ce[1]
     sta object_current_index_in_animation                             ; 1302: 8d d4 09    ... :11d1[1]
@@ -3116,17 +3108,17 @@ something18_TODO
     lda (address1_low),y                                              ; 2386: b1 70       .p  :2255[1]
     cpy #$7f                                                          ; 2388: c0 7f       ..  :2257[1]
     bne c2267                                                         ; 238a: d0 0c       ..  :2259[1]
-    ldy l09d5                                                         ; 238c: ac d5 09    ... :225b[1]
+    ldy object_current_index_in_animation+1                           ; 238c: ac d5 09    ... :225b[1]
     iny                                                               ; 238f: c8          .   :225e[1]
     lda (address1_low),y                                              ; 2390: b1 70       .p  :225f[1]
     bne c2267                                                         ; 2392: d0 04       ..  :2261[1]
     ldy #0                                                            ; 2394: a0 00       ..  :2263[1]
     lda (address1_low),y                                              ; 2396: b1 70       .p  :2265[1]
 c2267
-    sty l09d5                                                         ; 2398: 8c d5 09    ... :2267[1]
-    sta l09a9                                                         ; 239b: 8d a9 09    ... :226a[1]
+    sty object_current_index_in_animation+1                           ; 2398: 8c d5 09    ... :2267[1]
+    sta object_spriteid+1                                             ; 239b: 8d a9 09    ... :226a[1]
     lda object_direction                                              ; 239e: ad be 09    ... :226d[1]
-    sta l09bf                                                         ; 23a1: 8d bf 09    ... :2270[1]
+    sta object_direction+1                                            ; 23a1: 8d bf 09    ... :2270[1]
     lda object_spriteid                                               ; 23a4: ad a8 09    ... :2273[1]
     jsr sub_c22ae                                                     ; 23a7: 20 ae 22     ." :2276[1]
     txa                                                               ; 23aa: 8a          .   :2279[1]
@@ -3143,10 +3135,10 @@ c2284
 c228b
     clc                                                               ; 23bc: 18          .   :228b[1]
     adc object_x_low                                                  ; 23bd: 6d 50 09    mP. :228c[1]
-    sta l0951                                                         ; 23c0: 8d 51 09    .Q. :228f[1]
+    sta object_x_low+1                                                ; 23c0: 8d 51 09    .Q. :228f[1]
     txa                                                               ; 23c3: 8a          .   :2292[1]
     adc object_x_high                                                 ; 23c4: 6d 66 09    mf. :2293[1]
-    sta l0967                                                         ; 23c7: 8d 67 09    .g. :2296[1]
+    sta object_x_high+1                                               ; 23c7: 8d 67 09    .g. :2296[1]
     ldx #0                                                            ; 23ca: a2 00       ..  :2299[1]
     tya                                                               ; 23cc: 98          .   :229b[1]
     bpl c229f                                                         ; 23cd: 10 01       ..  :229c[1]
@@ -3154,10 +3146,10 @@ c228b
 c229f
     clc                                                               ; 23d0: 18          .   :229f[1]
     adc object_y_low                                                  ; 23d1: 6d 7c 09    m|. :22a0[1]
-    sta l097d                                                         ; 23d4: 8d 7d 09    .}. :22a3[1]
+    sta object_y_low+1                                                ; 23d4: 8d 7d 09    .}. :22a3[1]
     txa                                                               ; 23d7: 8a          .   :22a6[1]
     adc object_y_high                                                 ; 23d8: 6d 92 09    m.. :22a7[1]
-    sta l0993                                                         ; 23db: 8d 93 09    ... :22aa[1]
+    sta object_y_high+1                                               ; 23db: 8d 93 09    ... :22aa[1]
     rts                                                               ; 23de: 60          `   :22ad[1]
 
 sub_c22ae
@@ -5019,7 +5011,7 @@ c2ed7
     beq c2ee4                                                         ; 3010: f0 03       ..  :2edf[1]
     ldx l2eed,y                                                       ; 3012: be ed 2e    ... :2ee1[1]
 c2ee4
-    stx l09a9                                                         ; 3015: 8e a9 09    ... :2ee4[1]
+    stx object_spriteid+1                                             ; 3015: 8e a9 09    ... :2ee4[1]
     rts                                                               ; 3018: 60          `   :2ee7[1]
 
 l2ee8
@@ -8013,14 +8005,6 @@ pydis_end
 ;     l0515
 ;     l0517
 ;     l0518
-;     l0951
-;     l0967
-;     l097d
-;     l0993
-;     l09a9
-;     l09b4
-;     l09bf
-;     l09d5
 ;     l09df
 ;     l09eb
 ;     l0b00

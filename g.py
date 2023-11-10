@@ -247,6 +247,7 @@ label(0x1f4c, "draw_sprite_a_at_character_xy")
 label(0x1f84, "set_sprite_pixel_position_from_character_xy")
 
 label(0x9d4, "object_current_index_in_animation")
+label(0x9d5, "object_current_index_in_animation+1")
 comment(0x19b7, "ALWAYS branch", inline=True)
 expr(0x2ede, "spriteid_wizard6")
 expr(0x30d0, "spriteid_cat_walk4")
@@ -1420,18 +1421,25 @@ comment(0x2998, "set new menu position")
 # sub_c2157 uses all of these tables in parallel, so presumably they share the same size - represented here by 'x'
 # TODO: These tables seem to occur in pairs (copy or cmp) so I've renamed them to use a/b names to try to tie the pairs together.
 label(0x950, "object_x_low")
+label(0x951, "object_x_low+1")
 label(0x95b, "object_x_low_old")
 label(0x966, "object_x_high")
+label(0x967, "object_x_high+1")
 label(0x971, "object_x_high_old")
 label(0x97c, "object_y_low")
+label(0x97d, "object_y_low+1")
 label(0x987, "object_y_low_old")
 
 label(0x992, "object_y_high")
+label(0x993, "object_y_high+1")
 label(0x99d, "object_y_high_old")
 label(0x9a8, "object_spriteid")
+label(0x9a9, "object_spriteid+1")
 label(0x9b3, "object_spriteid_old")
+label(0x9b4, "object_spriteid_old+1")
 
 label(0x9be, "object_direction")
+label(0x9bf, "object_direction+1")
 label(0x9c9, "object_direction_old")
 comment(0x2177, """object_sprite_mask_type:
 
