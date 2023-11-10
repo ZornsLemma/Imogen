@@ -4752,7 +4752,7 @@ wizard_animation1
     !byte spriteid_wizard7,                2,              $f7        ; 2e17: 36 02 f7    6.. :2ce6[1]
     !byte spriteid_wizard6,                4,              $f6        ; 2e1a: 35 04 f6    5.. :2ce9[1]
     !byte                0                                            ; 2e1d: 00          .   :2cec[1]
-wizard_animation2
+wizard_transform_in_animation
     !byte                          0,                          0      ; 2e1e: 00 00       ..  :2ced[1]
     !byte                          0, spriteid_wizard_transform2      ; 2e20: 00 39       .9  :2cef[1]
     !byte                          0,                          0      ; 2e22: 00 00       ..  :2cf1[1]
@@ -4764,7 +4764,7 @@ wizard_animation2
     !byte                          0,                          0      ; 2e2e: 00 00       ..  :2cfd[1]
     !byte           spriteid_wizard5,                          0      ; 2e30: 34 00       4.  :2cff[1]
     !byte                          0,                          0      ; 2e32: 00 00       ..  :2d01[1]
-wizard_animation3
+wizard_transform_out_animation
     !byte           spriteid_wizard5,                          0      ; 2e34: 34 00       4.  :2d03[1]
     !byte                          0,           spriteid_wizard5      ; 2e36: 00 34       .4  :2d05[1]
     !byte                          0,                          0      ; 2e38: 00 00       ..  :2d07[1]
@@ -4775,26 +4775,26 @@ wizard_animation3
     !byte                          0, spriteid_wizard_transform2      ; 2e42: 00 39       .9  :2d11[1]
     !byte                          0,                          0      ; 2e44: 00 00       ..  :2d13[1]
     !byte                          0                                  ; 2e46: 00          .   :2d15[1]
-wizard_animation4
+wizard_walk_cycle_animation
     !byte spriteid_wizard1,                4,                0        ; 2e47: 30 04 00    0.. :2d16[1]
     !byte spriteid_wizard2,                4,                0        ; 2e4a: 31 04 00    1.. :2d19[1]
     !byte spriteid_wizard3,                4,                0        ; 2e4d: 32 04 00    2.. :2d1c[1]
     !byte spriteid_wizard4,                4,                0        ; 2e50: 33 04 00    3.. :2d1f[1]
     !byte                0                                            ; 2e53: 00          .   :2d22[1]
-wizard_animation5
+wizard_change_direction_animation
     !byte spriteid_wizard4,                0,                0        ; 2e54: 33 00 00    3.. :2d23[1]
     !byte spriteid_wizard4,                2,                0        ; 2e57: 33 02 00    3.. :2d26[1]
     !byte                0                                            ; 2e5a: 00          .   :2d29[1]
 wizard_animation6
     !byte spriteid_wizard7,                4,                0        ; 2e5b: 36 04 00    6.. :2d2a[1]
     !byte                0                                            ; 2e5e: 00          .   :2d2d[1]
-wizard_animation7
+wizard_standing_still_animation
     !byte spriteid_wizard7,                0,                0        ; 2e5f: 36 00 00    6.. :2d2e[1]
     !byte                0                                            ; 2e62: 00          .   :2d31[1]
 wizard_animation8
     !byte spriteid_wizard6,                0,                0        ; 2e63: 35 00 00    5.. :2d32[1]
     !byte                0                                            ; 2e66: 00          .   :2d35[1]
-wizard_animation9
+wizard_jump_animation
     !byte spriteid_wizard5,                6,              $fc        ; 2e67: 34 06 fc    4.. :2d36[1]
     !byte spriteid_wizard5,                6,              $fd        ; 2e6a: 34 06 fd    4.. :2d39[1]
     !byte spriteid_wizard5,                5,              $fe        ; 2e6d: 34 05 fe    4.. :2d3c[1]
@@ -4828,15 +4828,15 @@ wizard_animation13
     !byte spriteid_wizard5,                0,                4        ; 2ead: 34 00 04    4.. :2d7c[1]
     !byte spriteid_wizard5,                0,                5        ; 2eb0: 34 00 05    4.. :2d7f[1]
     !byte                0                                            ; 2eb3: 00          .   :2d82[1]
-wizard_animation14
+wizard_fall_animation
     !byte spriteid_wizard5,                0,                7        ; 2eb4: 34 00 07    4.. :2d83[1]
     !byte                0                                            ; 2eb7: 00          .   :2d86[1]
 
 update_wizard_animation
-    lda #$16                                                          ; 2eb8: a9 16       ..  :2d87[1]
+    lda #wizard_transform_out_animation - wizard_transform_in_animation; 2eb8: a9 16       ..  :2d87[1]
     sta l22ed                                                         ; 2eba: 8d ed 22    .." :2d89[1]
-    ldx #<wizard_animation2                                           ; 2ebd: a2 ed       ..  :2d8c[1]
-    ldy #>wizard_animation2                                           ; 2ebf: a0 2c       .,  :2d8e[1]
+    ldx #<wizard_transform_in_animation                               ; 2ebd: a2 ed       ..  :2d8c[1]
+    ldy #>wizard_transform_in_animation                               ; 2ebf: a0 2c       .,  :2d8e[1]
     lda #3                                                            ; 2ec1: a9 03       ..  :2d90[1]
     jsr sub_c22ee                                                     ; 2ec3: 20 ee 22     ." :2d92[1]
     bne c2dc0                                                         ; 2ec6: d0 29       .)  :2d95[1]
@@ -4852,26 +4852,26 @@ c2da6
     jsr sub_c23c4                                                     ; 2ed7: 20 c4 23     .# :2da6[1]
     bne c2de4                                                         ; 2eda: d0 39       .9  :2da9[1]
     lda current_animation                                             ; 2edc: ad df 09    ... :2dab[1]
-    cmp #wizard_animation9 - wizard_animation2                        ; 2edf: c9 49       .I  :2dae[1]
+    cmp #wizard_jump_animation - wizard_transform_in_animation        ; 2edf: c9 49       .I  :2dae[1]
     bne c2dca                                                         ; 2ee1: d0 18       ..  :2db0[1]
     dec l2550                                                         ; 2ee3: ce 50 25    .P% :2db2[1]
     lda #0                                                            ; 2ee6: a9 00       ..  :2db5[1]
     jsr something59_TODO                                              ; 2ee8: 20 94 28     .( :2db7[1]
     bne c2dc3                                                         ; 2eeb: d0 07       ..  :2dba[1]
-    cpy #wizard_animation9 - wizard_animation2                        ; 2eed: c0 49       .I  :2dbc[1]
+    cpy #wizard_jump_animation - wizard_transform_in_animation        ; 2eed: c0 49       .I  :2dbc[1]
     beq c2dc3                                                         ; 2eef: f0 03       ..  :2dbe[1]
 c2dc0
     jmp c2e5f                                                         ; 2ef1: 4c 5f 2e    L_. :2dc0[1]
 
 c2dc3
-    lda #wizard_animation14 - wizard_animation2                       ; 2ef4: a9 96       ..  :2dc3[1]
+    lda #wizard_fall_animation - wizard_transform_in_animation        ; 2ef4: a9 96       ..  :2dc3[1]
     sta current_animation                                             ; 2ef6: 8d df 09    ... :2dc5[1]
-    ldy #wizard_animation10 - wizard_animation2                       ; 2ef9: a0 59       .Y  :2dc8[1]
+    ldy #wizard_animation10 - wizard_transform_in_animation           ; 2ef9: a0 59       .Y  :2dc8[1]
 c2dca
     lda l288f                                                         ; 2efb: ad 8f 28    ..( :2dca[1]
     bne c2df3                                                         ; 2efe: d0 24       .$  :2dcd[1]
     lda current_animation                                             ; 2f00: ad df 09    ... :2dcf[1]
-    cmp #wizard_animation14 - wizard_animation2                       ; 2f03: c9 96       ..  :2dd2[1]
+    cmp #wizard_fall_animation - wizard_transform_in_animation        ; 2f03: c9 96       ..  :2dd2[1]
     bne c2de4                                                         ; 2f05: d0 0e       ..  :2dd4[1]
     lda #4                                                            ; 2f07: a9 04       ..  :2dd6[1]
     ora #1                                                            ; 2f09: 09 01       ..  :2dd8[1]
@@ -4880,7 +4880,7 @@ c2dca
     lda #$80                                                          ; 2f10: a9 80       ..  :2ddf[1]
     sta l2433                                                         ; 2f12: 8d 33 24    .3$ :2de1[1]
 c2de4
-    lda #wizard_animation14 - wizard_animation2                       ; 2f15: a9 96       ..  :2de4[1]
+    lda #wizard_fall_animation - wizard_transform_in_animation        ; 2f15: a9 96       ..  :2de4[1]
     cmp current_animation                                             ; 2f17: cd df 09    ... :2de6[1]
     beq c2dc0                                                         ; 2f1a: f0 d5       ..  :2de9[1]
     sta current_animation                                             ; 2f1c: 8d df 09    ... :2deb[1]
@@ -4890,16 +4890,16 @@ c2de4
 c2df3
     ldx player_move_direction_requested                               ; 2f24: ae c9 3a    ..: :2df3[1]
     beq c2e1b                                                         ; 2f27: f0 23       .#  :2df6[1]
-    lda #wizard_animation5 - wizard_animation2                        ; 2f29: a9 36       .6  :2df8[1]
+    lda #wizard_change_direction_animation - wizard_transform_in_animation; 2f29: a9 36       .6  :2df8[1]
     cpx object_direction                                              ; 2f2b: ec be 09    ... :2dfa[1]
     bne c2e0f                                                         ; 2f2e: d0 10       ..  :2dfd[1]
-    lda #wizard_animation4 - wizard_animation2                        ; 2f30: a9 29       .)  :2dff[1]
+    lda #wizard_walk_cycle_animation - wizard_transform_in_animation  ; 2f30: a9 29       .)  :2dff[1]
     ldx jump_requested                                                ; 2f32: ae c7 3a    ..: :2e01[1]
     beq c2e0f                                                         ; 2f35: f0 09       ..  :2e04[1]
     ldx current_animation                                             ; 2f37: ae df 09    ... :2e06[1]
-    cpx #wizard_animation14 - wizard_animation2                       ; 2f3a: e0 96       ..  :2e09[1]
+    cpx #wizard_fall_animation - wizard_transform_in_animation        ; 2f3a: e0 96       ..  :2e09[1]
     beq c2e0f                                                         ; 2f3c: f0 02       ..  :2e0b[1]
-    lda #wizard_animation9 - wizard_animation2                        ; 2f3e: a9 49       .I  :2e0d[1]
+    lda #wizard_jump_animation - wizard_transform_in_animation        ; 2f3e: a9 49       .I  :2e0d[1]
 c2e0f
     cmp current_animation                                             ; 2f40: cd df 09    ... :2e0f[1]
     beq c2e44                                                         ; 2f43: f0 30       .0  :2e12[1]
@@ -4909,17 +4909,17 @@ c2e0f
 
 c2e1b
     lda current_animation                                             ; 2f4c: ad df 09    ... :2e1b[1]
-    ldy #wizard_animation7 - wizard_animation2                        ; 2f4f: a0 41       .A  :2e1e[1]
+    ldy #wizard_standing_still_animation - wizard_transform_in_animation; 2f4f: a0 41       .A  :2e1e[1]
     sty current_animation                                             ; 2f51: 8c df 09    ... :2e20[1]
-    cmp #wizard_animation4 - wizard_animation2                        ; 2f54: c9 29       .)  :2e23[1]
+    cmp #wizard_walk_cycle_animation - wizard_transform_in_animation  ; 2f54: c9 29       .)  :2e23[1]
     beq c2e42                                                         ; 2f56: f0 1b       ..  :2e25[1]
-    cmp #wizard_animation5 - wizard_animation2                        ; 2f58: c9 36       .6  :2e27[1]
+    cmp #wizard_change_direction_animation - wizard_transform_in_animation; 2f58: c9 36       .6  :2e27[1]
     beq c2e42                                                         ; 2f5a: f0 17       ..  :2e29[1]
     lda jump_requested                                                ; 2f5c: ad c7 3a    ..: :2e2b[1]
     beq c2e44                                                         ; 2f5f: f0 14       ..  :2e2e[1]
     lda l0052                                                         ; 2f61: a5 52       .R  :2e30[1]
     beq c2e44                                                         ; 2f63: f0 10       ..  :2e32[1]
-    ldy #wizard_animation8 - wizard_animation2                        ; 2f65: a0 45       .E  :2e34[1]
+    ldy #wizard_animation8 - wizard_transform_in_animation            ; 2f65: a0 45       .E  :2e34[1]
     cmp #$21 ; '!'                                                    ; 2f67: c9 21       .!  :2e36[1]
     bne c2e44                                                         ; 2f69: d0 0a       ..  :2e38[1]
     lda #0                                                            ; 2f6b: a9 00       ..  :2e3a[1]
@@ -4927,7 +4927,7 @@ c2e1b
     jmp update_wizard_animation                                       ; 2f70: 4c 87 2d    L.- :2e3f[1]
 
 c2e42
-    ldy #wizard_animation6 - wizard_animation2                        ; 2f73: a0 3d       .=  :2e42[1]
+    ldy #wizard_animation6 - wizard_transform_in_animation            ; 2f73: a0 3d       .=  :2e42[1]
 c2e44
     ldx #0                                                            ; 2f75: a2 00       ..  :2e44[1]
     lda player_move_direction_requested                               ; 2f77: ad c9 3a    ..: :2e46[1]
@@ -4936,12 +4936,12 @@ c2e44
 c2e4c
     lda two_byte_table_based_on_left_right_direction,x                ; 2f7d: bd 90 28    ..( :2e4c[1]
     beq c2e5f                                                         ; 2f80: f0 0e       ..  :2e4f[1]
-    ldy #wizard_animation14 - wizard_animation2                       ; 2f82: a0 96       ..  :2e51[1]
+    ldy #wizard_fall_animation - wizard_transform_in_animation        ; 2f82: a0 96       ..  :2e51[1]
     sty current_animation                                             ; 2f84: 8c df 09    ... :2e53[1]
-    ldy #wizard_animation11 - wizard_animation2                       ; 2f87: a0 6c       .l  :2e56[1]
+    ldy #wizard_animation11 - wizard_transform_in_animation           ; 2f87: a0 6c       .l  :2e56[1]
     cmp object_direction                                              ; 2f89: cd be 09    ... :2e58[1]
     beq c2e5f                                                         ; 2f8c: f0 02       ..  :2e5b[1]
-    ldy #wizard_animation12 - wizard_animation2                       ; 2f8e: a0 79       .y  :2e5d[1]
+    ldy #wizard_animation12 - wizard_transform_in_animation           ; 2f8e: a0 79       .y  :2e5d[1]
 c2e5f
     sty object_current_index_in_animation                             ; 2f90: 8c d4 09    ... :2e5f[1]
     lda #0                                                            ; 2f93: a9 00       ..  :2e62[1]
@@ -4949,7 +4949,7 @@ c2e5f
     lda l0052                                                         ; 2f98: a5 52       .R  :2e67[1]
     beq c2e82                                                         ; 2f9a: f0 17       ..  :2e69[1]
     ldy object_current_index_in_animation                             ; 2f9c: ac d4 09    ... :2e6b[1]
-    lda wizard_animation2,y                                           ; 2f9f: b9 ed 2c    .., :2e6e[1]
+    lda wizard_transform_in_animation,y                               ; 2f9f: b9 ed 2c    .., :2e6e[1]
     sta object_spriteid                                               ; 2fa2: 8d a8 09    ... :2e71[1]
     jsr sub_c2eb8                                                     ; 2fa5: 20 b8 2e     .. :2e74[1]
     lda #0                                                            ; 2fa8: a9 00       ..  :2e77[1]
@@ -4958,8 +4958,8 @@ c2e5f
     sta l2eb5                                                         ; 2fb0: 8d b5 2e    ... :2e7f[1]
 c2e82
     lda object_current_index_in_animation                             ; 2fb3: ad d4 09    ... :2e82[1]
-    ldx #<wizard_animation2                                           ; 2fb6: a2 ed       ..  :2e85[1]
-    ldy #>wizard_animation2                                           ; 2fb8: a0 2c       .,  :2e87[1]
+    ldx #<wizard_transform_in_animation                               ; 2fb6: a2 ed       ..  :2e85[1]
+    ldy #>wizard_transform_in_animation                               ; 2fb8: a0 2c       .,  :2e87[1]
     jsr set_player_spriteid_and_offset_from_animation_table           ; 2fba: 20 00 22     ." :2e89[1]
     jsr sub_c2eb8                                                     ; 2fbd: 20 b8 2e     .. :2e8c[1]
     lda #0                                                            ; 2fc0: a9 00       ..  :2e8f[1]
@@ -5035,7 +5035,7 @@ cat_animation1
     !byte      spriteid_cat2,                $f9,                $f5  ; 3040: 1c f9 f5    ... :2f0f[1]
     !byte  spriteid_cat_jump,                $f9,                $f6  ; 3043: 1a f9 f6    ... :2f12[1]
     !byte                  0                                          ; 3046: 00          .   :2f15[1]
-cat_animation2
+cat_transform_in_animation
     !byte                       0,                       0            ; 3047: 00 00       ..  :2f16[1]
     !byte                       0, spriteid_cat_transform2            ; 3049: 00 11       ..  :2f18[1]
     !byte                       0,                       0            ; 304b: 00 00       ..  :2f1a[1]
@@ -5047,7 +5047,7 @@ cat_animation2
     !byte                       0,                       0            ; 3057: 00 00       ..  :2f26[1]
     !byte      spriteid_cat_walk4,                       0            ; 3059: 0f 00       ..  :2f28[1]
     !byte                       0,                       0            ; 305b: 00 00       ..  :2f2a[1]
-cat_animation3
+cat_transform_out_animation
     !byte      spriteid_cat_walk4,                       0            ; 305d: 0f 00       ..  :2f2c[1]
     !byte                       0,      spriteid_cat_walk4            ; 305f: 00 0f       ..  :2f2e[1]
     !byte                       0,                       0            ; 3061: 00 00       ..  :2f30[1]
@@ -5058,21 +5058,21 @@ cat_animation3
     !byte                       0, spriteid_cat_transform2            ; 306b: 00 11       ..  :2f3a[1]
     !byte                       0,                       0            ; 306d: 00 00       ..  :2f3c[1]
     !byte                       0                                     ; 306f: 00          .   :2f3e[1]
-cat_animation4
+cat_walk_cycle_animation
     !byte spriteid_cat_walk1,                  4,                  0  ; 3070: 0c 04 00    ... :2f3f[1]
     !byte spriteid_cat_walk2,                  4,                  0  ; 3073: 0d 04 00    ... :2f42[1]
     !byte spriteid_cat_walk3,                  4,                  0  ; 3076: 0e 04 00    ... :2f45[1]
     !byte spriteid_cat_walk4,                  4,                  0  ; 3079: 0f 04 00    ... :2f48[1]
     !byte                  0                                          ; 307c: 00          .   :2f4b[1]
-cat_animation5
+cat_change_direction_animation
     !byte spriteid_cat_walk4,                  0,                  0  ; 307d: 0f 00 00    ... :2f4c[1]
     !byte spriteid_cat_walk4,                  2,                  0  ; 3080: 0f 02 00    ... :2f4f[1]
     !byte                  0                                          ; 3083: 00          .   :2f52[1]
 cat_animation6
     !byte spriteid_cat2,             4,             0,             0  ; 3084: 1c 04 00... ... :2f53[1]
-cat_animation7
+cat_standing_still_animation
     !byte spriteid_cat2,             0,             0,             0  ; 3088: 1c 00 00... ... :2f57[1]
-cat_animation8
+cat_jump_animation
     !byte spriteid_cat_jump,                 6,               $fb     ; 308c: 1a 06 fb    ... :2f5b[1]
     !byte spriteid_cat_jump,                 6,               $fc     ; 308f: 1a 06 fc    ... :2f5e[1]
     !byte spriteid_cat_jump,                 5,               $fc     ; 3092: 1a 05 fc    ... :2f61[1]
@@ -5080,7 +5080,7 @@ cat_animation8
     !byte spriteid_cat_jump,                 5,               $fe     ; 3098: 1a 05 fe    ... :2f67[1]
     !byte spriteid_cat_jump,                 5,               $ff     ; 309b: 1a 05 ff    ... :2f6a[1]
     !byte                 0                                           ; 309e: 00          .   :2f6d[1]
-cat_animation9
+cat_jump_apex_animation
     !byte spriteid_cat_jump,                 5,                 0     ; 309f: 1a 05 00    ... :2f6e[1]
     !byte spriteid_cat_jump,                 5,                 0     ; 30a2: 1a 05 00    ... :2f71[1]
     !byte                 0                                           ; 30a5: 00          .   :2f74[1]
@@ -5117,15 +5117,15 @@ cat_animation13
     !byte spriteid_cat_walk4,                  0,                  4  ; 30ee: 0f 00 04    ... :2fbd[1]
     !byte spriteid_cat_walk4,                  0,                  5  ; 30f1: 0f 00 05    ... :2fc0[1]
     !byte                  0                                          ; 30f4: 00          .   :2fc3[1]
-cat_animation14
+cat_fall_animation
     !byte spriteid_cat_walk4,                  0,                  7  ; 30f5: 0f 00 07    ... :2fc4[1]
     !byte                  0                                          ; 30f8: 00          .   :2fc7[1]
 
 update_cat_animation
-    lda #$16                                                          ; 30f9: a9 16       ..  :2fc8[1]
+    lda #cat_transform_out_animation - cat_transform_in_animation     ; 30f9: a9 16       ..  :2fc8[1]
     sta l22ed                                                         ; 30fb: 8d ed 22    .." :2fca[1]
-    ldx #<cat_animation2                                              ; 30fe: a2 16       ..  :2fcd[1]
-    ldy #>cat_animation2                                              ; 3100: a0 2f       ./  :2fcf[1]
+    ldx #<cat_transform_in_animation                                  ; 30fe: a2 16       ..  :2fcd[1]
+    ldy #>cat_transform_in_animation                                  ; 3100: a0 2f       ./  :2fcf[1]
     lda #3                                                            ; 3102: a9 03       ..  :2fd1[1]
     jsr sub_c22ee                                                     ; 3104: 20 ee 22     ." :2fd3[1]
     bne c300e                                                         ; 3107: d0 36       .6  :2fd6[1]
@@ -5141,40 +5141,40 @@ c2fe7
     jsr sub_c23c4                                                     ; 3118: 20 c4 23     .# :2fe7[1]
     bne c3044                                                         ; 311b: d0 58       .X  :2fea[1]
     lda current_animation                                             ; 311d: ad df 09    ... :2fec[1]
-    cmp #cat_animation8 - cat_animation2                              ; 3120: c9 45       .E  :2fef[1]
+    cmp #cat_jump_animation - cat_transform_in_animation              ; 3120: c9 45       .E  :2fef[1]
     bne c3011                                                         ; 3122: d0 1e       ..  :2ff1[1]
     dec l2550                                                         ; 3124: ce 50 25    .P% :2ff3[1]
     lda #0                                                            ; 3127: a9 00       ..  :2ff6[1]
     jsr something59_TODO                                              ; 3129: 20 94 28     .( :2ff8[1]
     bne c3023                                                         ; 312c: d0 26       .&  :2ffb[1]
-    cpy #cat_animation8 - cat_animation2                              ; 312e: c0 45       .E  :2ffd[1]
+    cpy #cat_jump_animation - cat_transform_in_animation              ; 312e: c0 45       .E  :2ffd[1]
     bne c300e                                                         ; 3130: d0 0d       ..  :2fff[1]
     lda player_move_direction_requested                               ; 3132: ad c9 3a    ..: :3001[1]
     cmp object_direction                                              ; 3135: cd be 09    ... :3004[1]
     bne c3023                                                         ; 3138: d0 1a       ..  :3007[1]
-    ldy #cat_animation9 - cat_animation2                              ; 313a: a0 58       .X  :3009[1]
+    ldy #cat_jump_apex_animation - cat_transform_in_animation         ; 313a: a0 58       .X  :3009[1]
     sty current_animation                                             ; 313c: 8c df 09    ... :300b[1]
 c300e
     jmp c30a5                                                         ; 313f: 4c a5 30    L.0 :300e[1]
 
 c3011
-    cmp #cat_animation9 - cat_animation2                              ; 3142: c9 58       .X  :3011[1]
+    cmp #cat_jump_apex_animation - cat_transform_in_animation         ; 3142: c9 58       .X  :3011[1]
     bne c302a                                                         ; 3144: d0 15       ..  :3013[1]
     dec l2550                                                         ; 3146: ce 50 25    .P% :3015[1]
     lda #0                                                            ; 3149: a9 00       ..  :3018[1]
     jsr something59_TODO                                              ; 314b: 20 94 28     .( :301a[1]
     bne c3023                                                         ; 314e: d0 04       ..  :301d[1]
-    cpy #cat_animation9 - cat_animation2                              ; 3150: c0 58       .X  :301f[1]
+    cpy #cat_jump_apex_animation - cat_transform_in_animation         ; 3150: c0 58       .X  :301f[1]
     bne c300e                                                         ; 3152: d0 eb       ..  :3021[1]
 c3023
     lda #$ae                                                          ; 3154: a9 ae       ..  :3023[1]
     sta current_animation                                             ; 3156: 8d df 09    ... :3025[1]
-    ldy #cat_animation10 - cat_animation2                             ; 3159: a0 5f       ._  :3028[1]
+    ldy #cat_animation10 - cat_transform_in_animation                 ; 3159: a0 5f       ._  :3028[1]
 c302a
     lda l288f                                                         ; 315b: ad 8f 28    ..( :302a[1]
     bne c3053                                                         ; 315e: d0 24       .$  :302d[1]
     lda current_animation                                             ; 3160: ad df 09    ... :302f[1]
-    cmp #cat_animation14 - cat_animation2                             ; 3163: c9 ae       ..  :3032[1]
+    cmp #cat_fall_animation - cat_transform_in_animation              ; 3163: c9 ae       ..  :3032[1]
     bne c3044                                                         ; 3165: d0 0e       ..  :3034[1]
     lda #4                                                            ; 3167: a9 04       ..  :3036[1]
     ora #1                                                            ; 3169: 09 01       ..  :3038[1]
@@ -5183,23 +5183,23 @@ c302a
     lda #$80                                                          ; 3170: a9 80       ..  :303f[1]
     sta l2433                                                         ; 3172: 8d 33 24    .3$ :3041[1]
 c3044
-    lda #cat_animation14 - cat_animation2                             ; 3175: a9 ae       ..  :3044[1]
+    lda #cat_fall_animation - cat_transform_in_animation              ; 3175: a9 ae       ..  :3044[1]
     cmp current_animation                                             ; 3177: cd df 09    ... :3046[1]
     beq c300e                                                         ; 317a: f0 c3       ..  :3049[1]
     sta current_animation                                             ; 317c: 8d df 09    ... :304b[1]
-    ldy #cat_animation13 - cat_animation2                             ; 317f: a0 9e       ..  :304e[1]
+    ldy #cat_animation13 - cat_transform_in_animation                 ; 317f: a0 9e       ..  :304e[1]
     jmp c30a5                                                         ; 3181: 4c a5 30    L.0 :3050[1]
 
 c3053
     ldx player_move_direction_requested                               ; 3184: ae c9 3a    ..: :3053[1]
     beq c3074                                                         ; 3187: f0 1c       ..  :3056[1]
-    lda #cat_animation5 - cat_animation2                              ; 3189: a9 36       .6  :3058[1]
+    lda #cat_change_direction_animation - cat_transform_in_animation  ; 3189: a9 36       .6  :3058[1]
     cpx object_direction                                              ; 318b: ec be 09    ... :305a[1]
     bne c3068                                                         ; 318e: d0 09       ..  :305d[1]
-    lda #cat_animation4 - cat_animation2                              ; 3190: a9 29       .)  :305f[1]
+    lda #cat_walk_cycle_animation - cat_transform_in_animation        ; 3190: a9 29       .)  :305f[1]
     ldx jump_requested                                                ; 3192: ae c7 3a    ..: :3061[1]
     beq c3068                                                         ; 3195: f0 02       ..  :3064[1]
-    lda #cat_animation8 - cat_animation2                              ; 3197: a9 45       .E  :3066[1]
+    lda #cat_jump_animation - cat_transform_in_animation              ; 3197: a9 45       .E  :3066[1]
 c3068
     cmp current_animation                                             ; 3199: cd df 09    ... :3068[1]
     beq c308a                                                         ; 319c: f0 1d       ..  :306b[1]
@@ -5209,16 +5209,16 @@ c3068
 
 c3074
     lda current_animation                                             ; 31a5: ad df 09    ... :3074[1]
-    cmp #cat_animation7 - cat_animation2                              ; 31a8: c9 41       .A  :3077[1]
+    cmp #cat_standing_still_animation - cat_transform_in_animation    ; 31a8: c9 41       .A  :3077[1]
     beq c308a                                                         ; 31aa: f0 0f       ..  :3079[1]
-    ldy #cat_animation7 - cat_animation2                              ; 31ac: a0 41       .A  :307b[1]
+    ldy #cat_standing_still_animation - cat_transform_in_animation    ; 31ac: a0 41       .A  :307b[1]
     sty current_animation                                             ; 31ae: 8c df 09    ... :307d[1]
-    cmp #cat_animation4 - cat_animation2                              ; 31b1: c9 29       .)  :3080[1]
+    cmp #cat_walk_cycle_animation - cat_transform_in_animation        ; 31b1: c9 29       .)  :3080[1]
     beq c3088                                                         ; 31b3: f0 04       ..  :3082[1]
-    cmp #cat_animation5 - cat_animation2                              ; 31b5: c9 36       .6  :3084[1]
+    cmp #cat_change_direction_animation - cat_transform_in_animation  ; 31b5: c9 36       .6  :3084[1]
     bne c308a                                                         ; 31b7: d0 02       ..  :3086[1]
 c3088
-    ldy #cat_animation6 - cat_animation2                              ; 31b9: a0 3d       .=  :3088[1]
+    ldy #cat_animation6 - cat_transform_in_animation                  ; 31b9: a0 3d       .=  :3088[1]
 c308a
     ldx #0                                                            ; 31bb: a2 00       ..  :308a[1]
     lda player_move_direction_requested                               ; 31bd: ad c9 3a    ..: :308c[1]
@@ -5227,17 +5227,17 @@ c308a
 c3092
     lda two_byte_table_based_on_left_right_direction,x                ; 31c3: bd 90 28    ..( :3092[1]
     beq c30a5                                                         ; 31c6: f0 0e       ..  :3095[1]
-    ldy #cat_animation14 - cat_animation2                             ; 31c8: a0 ae       ..  :3097[1]
+    ldy #cat_fall_animation - cat_transform_in_animation              ; 31c8: a0 ae       ..  :3097[1]
     sty current_animation                                             ; 31ca: 8c df 09    ... :3099[1]
-    ldy #cat_animation11 - cat_animation2                             ; 31cd: a0 84       ..  :309c[1]
+    ldy #cat_animation11 - cat_transform_in_animation                 ; 31cd: a0 84       ..  :309c[1]
     cmp object_direction                                              ; 31cf: cd be 09    ... :309e[1]
     beq c30a5                                                         ; 31d2: f0 02       ..  :30a1[1]
-    ldy #cat_animation12 - cat_animation2                             ; 31d4: a0 91       ..  :30a3[1]
+    ldy #cat_animation12 - cat_transform_in_animation                 ; 31d4: a0 91       ..  :30a3[1]
 c30a5
     sty object_current_index_in_animation                             ; 31d6: 8c d4 09    ... :30a5[1]
     tya                                                               ; 31d9: 98          .   :30a8[1]
-    ldx #<cat_animation2                                              ; 31da: a2 16       ..  :30a9[1]
-    ldy #>cat_animation2                                              ; 31dc: a0 2f       ./  :30ab[1]
+    ldx #<cat_transform_in_animation                                  ; 31da: a2 16       ..  :30a9[1]
+    ldy #>cat_transform_in_animation                                  ; 31dc: a0 2f       ./  :30ab[1]
     jsr set_player_spriteid_and_offset_from_animation_table           ; 31de: 20 00 22     ." :30ad[1]
     lda #0                                                            ; 31e1: a9 00       ..  :30b0[1]
     jsr sub_c25f5                                                     ; 31e3: 20 f5 25     .% :30b2[1]
@@ -5247,9 +5247,9 @@ c30a5
     sta address1_high                                                 ; 31ec: 85 71       .q  :30bb[1]
     lda #$ff                                                          ; 31ee: a9 ff       ..  :30bd[1]
     ldx current_animation                                             ; 31f0: ae df 09    ... :30bf[1]
-    cpx #0                                                            ; 31f3: e0 00       ..  :30c2[1]
+    cpx #cat_transform_in_animation - cat_transform_in_animation      ; 31f3: e0 00       ..  :30c2[1]
     beq c30ca                                                         ; 31f5: f0 04       ..  :30c4[1]
-    cpx #$16                                                          ; 31f7: e0 16       ..  :30c6[1]
+    cpx #cat_transform_out_animation - cat_transform_in_animation     ; 31f7: e0 16       ..  :30c6[1]
     bne c30d5                                                         ; 31f9: d0 0b       ..  :30c8[1]
 c30ca
     lda #0                                                            ; 31fb: a9 00       ..  :30ca[1]
@@ -5281,7 +5281,7 @@ monkey_animation1
     !byte spriteid_monkey_climb2,                    $f8              ; 322c: 54 f8       T.  :30fb[1]
     !byte                    $fa                                      ; 322e: fa          .   :30fd[1]
     !byte 0                                                           ; 322f: 00          .   :30fe[1]
-monkey_animation2
+monkey_transform_in_animation
     !byte 0, 0, 0                                                     ; 3230: 00 00 00    ... :30ff[1]
     !byte spriteid_monkey_transform2,                          0      ; 3233: 45 00       E.  :3102[1]
     !byte                          0                                  ; 3235: 00          .   :3104[1]
@@ -5294,7 +5294,7 @@ monkey_animation2
     !byte spriteid_monkey4,                0,                0        ; 323f: 51 00 00    Q.. :310e[1]
     !byte spriteid_monkey4,                0,                0        ; 3242: 51 00 00    Q.. :3111[1]
     !byte 0                                                           ; 3245: 00          .   :3114[1]
-monkey_animation3
+monkey_transform_out_animation
     !byte spriteid_monkey4,                0,                0        ; 3246: 51 00 00    Q.. :3115[1]
     !byte spriteid_monkey4,                0,                0        ; 3249: 51 00 00    Q.. :3118[1]
     !byte spriteid_monkey_transform1,                          0      ; 324c: 44 00       D.  :311b[1]
@@ -5306,32 +5306,32 @@ monkey_animation3
     !byte spriteid_monkey_transform2,                          0      ; 3255: 45 00       E.  :3124[1]
     !byte                          0                                  ; 3257: 00          .   :3126[1]
     !byte 0                                                           ; 3258: 00          .   :3127[1]
-monkey_animation4
+monkey_walk_cycle_animation
     !byte spriteid_monkey1,                4,                0        ; 3259: 4e 04 00    N.. :3128[1]
     !byte spriteid_monkey2,                4,                0        ; 325c: 4f 04 00    O.. :312b[1]
     !byte spriteid_monkey3,                4,                0        ; 325f: 50 04 00    P.. :312e[1]
     !byte spriteid_monkey4,                4,                0        ; 3262: 51 04 00    Q.. :3131[1]
     !byte                0                                            ; 3265: 00          .   :3134[1]
-monkey_animation5
+monkey_change_direction_animation
     !byte spriteid_monkey4,                0,                0        ; 3266: 51 00 00    Q.. :3135[1]
     !byte spriteid_monkey4,                2,                0        ; 3269: 51 02 00    Q.. :3138[1]
     !byte                0                                            ; 326c: 00          .   :313b[1]
 monkey_animation6
     !byte spriteid_monkey5,                4,                0        ; 326d: 52 04 00    R.. :313c[1]
     !byte                0                                            ; 3270: 00          .   :313f[1]
-monkey_animation7
+monkey_standing_still_animation
     !byte spriteid_monkey5,                0,                0        ; 3271: 52 00 00    R.. :3140[1]
     !byte                0                                            ; 3274: 00          .   :3143[1]
-monkey_animation8
+monkey_climb_idle_animation
     !byte spriteid_monkey_climb1,                      0              ; 3275: 53 00       S.  :3144[1]
     !byte                      0,                      0              ; 3277: 00 00       ..  :3146[1]
-monkey_animation9
+monkey_climb_down_animation
     !byte spriteid_monkey_climb1,                      0              ; 3279: 53 00       S.  :3148[1]
     !byte                      6,                      0              ; 327b: 06 00       ..  :314a[1]
 monkey_animation10
     !byte spriteid_monkey_climb1,                      0              ; 327d: 53 00       S.  :314c[1]
     !byte                    $fc,                      0              ; 327f: fc 00       ..  :314e[1]
-monkey_animation11
+monkey_climb_animation
     !byte spriteid_monkey_climb2,                      0              ; 3281: 54 00       T.  :3150[1]
     !byte                    $fc, spriteid_monkey_climb1              ; 3283: fc 53       .S  :3152[1]
     !byte                      0,                    $fc              ; 3285: 00 fc       ..  :3154[1]
@@ -5349,13 +5349,13 @@ monkey_animation12
     !byte spriteid_monkey4,                1,                5        ; 32a3: 51 01 05    Q.. :3172[1]
     !byte spriteid_monkey4,                1,                6        ; 32a6: 51 01 06    Q.. :3175[1]
     !byte                0                                            ; 32a9: 00          .   :3178[1]
-monkey_animation13
+monkey_standing_jump_animation
     !byte spriteid_monkey4,                0,              $fc        ; 32aa: 51 00 fc    Q.. :3179[1]
     !byte spriteid_monkey4,                0,              $fd        ; 32ad: 51 00 fd    Q.. :317c[1]
     !byte spriteid_monkey4,                0,              $fe        ; 32b0: 51 00 fe    Q.. :317f[1]
     !byte spriteid_monkey4,                0,              $ff        ; 32b3: 51 00 ff    Q.. :3182[1]
     !byte                0                                            ; 32b6: 00          .   :3185[1]
-monkey_animation14
+monkey_jump_animation
     !byte spriteid_monkey4,                6,              $fc        ; 32b7: 51 06 fc    Q.. :3186[1]
     !byte spriteid_monkey4,                6,              $fe        ; 32ba: 51 06 fe    Q.. :3189[1]
     !byte spriteid_monkey4,                5,              $fe        ; 32bd: 51 05 fe    Q.. :318c[1]
@@ -5389,17 +5389,17 @@ monkey_animation18
     !byte spriteid_monkey4,                0,                4        ; 32fd: 51 00 04    Q.. :31cc[1]
     !byte spriteid_monkey4,                0,                5        ; 3300: 51 00 05    Q.. :31cf[1]
     !byte                0                                            ; 3303: 00          .   :31d2[1]
-monkey_animation19
+monkey_fall_animation
     !byte spriteid_monkey4,                0,                7        ; 3304: 51 00 07    Q.. :31d3[1]
     !byte                0                                            ; 3307: 00          .   :31d6[1]
 l31d7
     !byte 0                                                           ; 3308: 00          .   :31d7[1]
 
 update_monkey_animation
-    lda #$16                                                          ; 3309: a9 16       ..  :31d8[1]
+    lda #monkey_transform_out_animation - monkey_transform_in_animation; 3309: a9 16       ..  :31d8[1]
     sta l22ed                                                         ; 330b: 8d ed 22    .." :31da[1]
-    ldx #<monkey_animation2                                           ; 330e: a2 ff       ..  :31dd[1]
-    ldy #>monkey_animation2                                           ; 3310: a0 30       .0  :31df[1]
+    ldx #<monkey_transform_in_animation                               ; 330e: a2 ff       ..  :31dd[1]
+    ldy #>monkey_transform_in_animation                               ; 3310: a0 30       .0  :31df[1]
     lda #3                                                            ; 3312: a9 03       ..  :31e1[1]
     jsr sub_c22ee                                                     ; 3314: 20 ee 22     ." :31e3[1]
     bne c31f4                                                         ; 3317: d0 0c       ..  :31e6[1]
@@ -5419,23 +5419,23 @@ c31f7
 
 c31ff
     lda current_animation                                             ; 3330: ad df 09    ... :31ff[1]
-    cmp #monkey_animation11 - monkey_animation2                       ; 3333: c9 51       .Q  :3202[1]
+    cmp #monkey_climb_animation - monkey_transform_in_animation       ; 3333: c9 51       .Q  :3202[1]
     beq c3222                                                         ; 3335: f0 1c       ..  :3204[1]
-    cmp #monkey_animation9 - monkey_animation2                        ; 3337: c9 49       .I  :3206[1]
+    cmp #monkey_climb_down_animation - monkey_transform_in_animation  ; 3337: c9 49       .I  :3206[1]
     beq c3222                                                         ; 3339: f0 18       ..  :3208[1]
-    cmp #monkey_animation8 - monkey_animation2                        ; 333b: c9 45       .E  :320a[1]
+    cmp #monkey_climb_idle_animation - monkey_transform_in_animation  ; 333b: c9 45       .E  :320a[1]
     beq c3222                                                         ; 333d: f0 14       ..  :320c[1]
     lda jump_requested                                                ; 333f: ad c7 3a    ..: :320e[1]
     beq c3276                                                         ; 3342: f0 63       .c  :3211[1]
     jsr sub_c336e                                                     ; 3344: 20 6e 33     n3 :3213[1]
     beq c3276                                                         ; 3347: f0 5e       .^  :3216[1]
-    lda #monkey_animation11 - monkey_animation2                       ; 3349: a9 51       .Q  :3218[1]
+    lda #monkey_climb_animation - monkey_transform_in_animation       ; 3349: a9 51       .Q  :3218[1]
     sta current_animation                                             ; 334b: 8d df 09    ... :321a[1]
-    ldy #monkey_animation10 - monkey_animation2                       ; 334e: a0 4d       .M  :321d[1]
+    ldy #monkey_animation10 - monkey_transform_in_animation           ; 334e: a0 4d       .M  :321d[1]
     jmp c3331                                                         ; 3350: 4c 31 33    L13 :321f[1]
 
 c3222
-    ldx #$d4                                                          ; 3353: a2 d4       ..  :3222[1]
+    ldx #monkey_fall_animation - monkey_transform_in_animation        ; 3353: a2 d4       ..  :3222[1]
     jsr sub_c336e                                                     ; 3355: 20 6e 33     n3 :3224[1]
     beq c325f                                                         ; 3358: f0 36       .6  :3227[1]
     lda jump_requested                                                ; 335a: ad c7 3a    ..: :3229[1]
@@ -5444,27 +5444,27 @@ c3222
     lda #0                                                            ; 3362: a9 00       ..  :3231[1]
     jsr something59_TODO                                              ; 3364: 20 94 28     .( :3233[1]
     bne c3247                                                         ; 3367: d0 0f       ..  :3236[1]
-    ldx #monkey_animation11 - monkey_animation2                       ; 3369: a2 51       .Q  :3238[1]
+    ldx #monkey_climb_animation - monkey_transform_in_animation       ; 3369: a2 51       .Q  :3238[1]
     lda l31d7                                                         ; 336b: ad d7 31    ..1 :323a[1]
     bne c3247                                                         ; 336e: d0 08       ..  :323d[1]
     lda move_left_requested                                           ; 3370: ad ca 3a    ..: :323f[1]
     ora move_right_requested                                          ; 3373: 0d cb 3a    ..: :3242[1]
     beq c3269                                                         ; 3376: f0 22       ."  :3245[1]
 c3247
-    ldx #monkey_animation8 - monkey_animation2                        ; 3378: a2 45       .E  :3247[1]
+    ldx #monkey_climb_idle_animation - monkey_transform_in_animation  ; 3378: a2 45       .E  :3247[1]
     jmp c3269                                                         ; 337a: 4c 69 32    Li2 :3249[1]
 
 c324c
-    ldx #monkey_animation12 - monkey_animation2                       ; 337d: a2 58       .X  :324c[1]
+    ldx #monkey_animation12 - monkey_transform_in_animation           ; 337d: a2 58       .X  :324c[1]
     lda player_move_direction_requested                               ; 337f: ad c9 3a    ..: :324e[1]
     cmp object_direction                                              ; 3382: cd be 09    ... :3251[1]
     beq c325f                                                         ; 3385: f0 09       ..  :3254[1]
-    ldx #monkey_animation9 - monkey_animation2                        ; 3387: a2 49       .I  :3256[1]
+    ldx #monkey_climb_down_animation - monkey_transform_in_animation  ; 3387: a2 49       .I  :3256[1]
     lda l288f                                                         ; 3389: ad 8f 28    ..( :3258[1]
     beq c3269                                                         ; 338c: f0 0c       ..  :325b[1]
     bne c3276                                                         ; 338e: d0 17       ..  :325d[1]
 c325f
-    lda #monkey_animation19 - monkey_animation2                       ; 3390: a9 d4       ..  :325f[1]
+    lda #monkey_fall_animation - monkey_transform_in_animation        ; 3390: a9 d4       ..  :325f[1]
     sta current_animation                                             ; 3392: 8d df 09    ... :3261[1]
     txa                                                               ; 3395: 8a          .   :3264[1]
     tay                                                               ; 3396: a8          .   :3265[1]
@@ -5481,42 +5481,42 @@ c3273
 
 c3276
     lda current_animation                                             ; 33a7: ad df 09    ... :3276[1]
-    cmp #monkey_animation13 - monkey_animation2                       ; 33aa: c9 7a       .z  :3279[1]
+    cmp #monkey_standing_jump_animation - monkey_transform_in_animation; 33aa: c9 7a       .z  :3279[1]
     bne c328d                                                         ; 33ac: d0 10       ..  :327b[1]
     dec l2550                                                         ; 33ae: ce 50 25    .P% :327d[1]
     lda #0                                                            ; 33b1: a9 00       ..  :3280[1]
     jsr something59_TODO                                              ; 33b3: 20 94 28     .( :3282[1]
     bne c32ac                                                         ; 33b6: d0 25       .%  :3285[1]
-    cpy #monkey_animation13 - monkey_animation2                       ; 33b8: c0 7a       .z  :3287[1]
+    cpy #monkey_standing_jump_animation - monkey_transform_in_animation; 33b8: c0 7a       .z  :3287[1]
     beq c32ac                                                         ; 33ba: f0 21       .!  :3289[1]
     bne c3273                                                         ; 33bc: d0 e6       ..  :328b[1]
 c328d
     lda current_animation                                             ; 33be: ad df 09    ... :328d[1]
-    cmp #monkey_animation14 - monkey_animation2                       ; 33c1: c9 87       ..  :3290[1]
+    cmp #monkey_jump_animation - monkey_transform_in_animation        ; 33c1: c9 87       ..  :3290[1]
     bne c32ac                                                         ; 33c3: d0 18       ..  :3292[1]
     dec l2550                                                         ; 33c5: ce 50 25    .P% :3294[1]
     lda #0                                                            ; 33c8: a9 00       ..  :3297[1]
     jsr something59_TODO                                              ; 33ca: 20 94 28     .( :3299[1]
     bne c32a5                                                         ; 33cd: d0 07       ..  :329c[1]
-    cpy #monkey_animation14 - monkey_animation2                       ; 33cf: c0 87       ..  :329e[1]
+    cpy #monkey_jump_animation - monkey_transform_in_animation        ; 33cf: c0 87       ..  :329e[1]
     beq c32a5                                                         ; 33d1: f0 03       ..  :32a0[1]
     jmp c3331                                                         ; 33d3: 4c 31 33    L13 :32a2[1]
 
 c32a5
-    lda #monkey_animation19 - monkey_animation2                       ; 33d6: a9 d4       ..  :32a5[1]
+    lda #monkey_fall_animation - monkey_transform_in_animation        ; 33d6: a9 d4       ..  :32a5[1]
     sta current_animation                                             ; 33d8: 8d df 09    ... :32a7[1]
-    ldy #monkey_animation15 - monkey_animation2                       ; 33db: a0 97       ..  :32aa[1]
+    ldy #monkey_animation15 - monkey_transform_in_animation           ; 33db: a0 97       ..  :32aa[1]
 c32ac
     lda l288f                                                         ; 33dd: ad 8f 28    ..( :32ac[1]
     bne c32c8                                                         ; 33e0: d0 17       ..  :32af[1]
 c32b1
-    lda #monkey_animation19 - monkey_animation2                       ; 33e2: a9 d4       ..  :32b1[1]
+    lda #monkey_fall_animation - monkey_transform_in_animation        ; 33e2: a9 d4       ..  :32b1[1]
     cmp current_animation                                             ; 33e4: cd df 09    ... :32b3[1]
     beq c3273                                                         ; 33e7: f0 bb       ..  :32b6[1]
     ldx current_animation                                             ; 33e9: ae df 09    ... :32b8[1]
     sta current_animation                                             ; 33ec: 8d df 09    ... :32bb[1]
-    ldy #monkey_animation18 - monkey_animation2                       ; 33ef: a0 c4       ..  :32be[1]
-    cpx #monkey_animation9 - monkey_animation2                        ; 33f1: e0 49       .I  :32c0[1]
+    ldy #monkey_animation18 - monkey_transform_in_animation           ; 33ef: a0 c4       ..  :32be[1]
+    cpx #monkey_climb_down_animation - monkey_transform_in_animation  ; 33f1: e0 49       .I  :32c0[1]
     bne c3273                                                         ; 33f3: d0 af       ..  :32c2[1]
     tay                                                               ; 33f5: a8          .   :32c4[1]
     jmp c3331                                                         ; 33f6: 4c 31 33    L13 :32c5[1]
@@ -5527,22 +5527,22 @@ c32c8
     lda jump_requested                                                ; 33fe: ad c7 3a    ..: :32cd[1]
     beq c3301                                                         ; 3401: f0 2f       ./  :32d0[1]
     lda current_animation                                             ; 3403: ad df 09    ... :32d2[1]
-    cmp #monkey_animation19 - monkey_animation2                       ; 3406: c9 d4       ..  :32d5[1]
+    cmp #monkey_fall_animation - monkey_transform_in_animation        ; 3406: c9 d4       ..  :32d5[1]
     beq c3301                                                         ; 3408: f0 28       .(  :32d7[1]
-    lda #monkey_animation13 - monkey_animation2                       ; 340a: a9 7a       .z  :32d9[1]
+    lda #monkey_standing_jump_animation - monkey_transform_in_animation; 340a: a9 7a       .z  :32d9[1]
     jmp c32f5                                                         ; 340c: 4c f5 32    L.2 :32db[1]
 
 c32de
-    lda #monkey_animation5 - monkey_animation2                        ; 340f: a9 36       .6  :32de[1]
+    lda #monkey_change_direction_animation - monkey_transform_in_animation; 340f: a9 36       .6  :32de[1]
     cpx object_direction                                              ; 3411: ec be 09    ... :32e0[1]
     bne c32f5                                                         ; 3414: d0 10       ..  :32e3[1]
-    lda #monkey_animation4 - monkey_animation2                        ; 3416: a9 29       .)  :32e5[1]
+    lda #monkey_walk_cycle_animation - monkey_transform_in_animation  ; 3416: a9 29       .)  :32e5[1]
     ldx jump_requested                                                ; 3418: ae c7 3a    ..: :32e7[1]
     beq c32f5                                                         ; 341b: f0 09       ..  :32ea[1]
     ldx current_animation                                             ; 341d: ae df 09    ... :32ec[1]
-    cpx #monkey_animation19 - monkey_animation2                       ; 3420: e0 d4       ..  :32ef[1]
+    cpx #monkey_fall_animation - monkey_transform_in_animation        ; 3420: e0 d4       ..  :32ef[1]
     beq c32f5                                                         ; 3422: f0 02       ..  :32f1[1]
-    lda #monkey_animation14 - monkey_animation2                       ; 3424: a9 87       ..  :32f3[1]
+    lda #monkey_jump_animation - monkey_transform_in_animation        ; 3424: a9 87       ..  :32f3[1]
 c32f5
     cmp current_animation                                             ; 3426: cd df 09    ... :32f5[1]
     beq c3316                                                         ; 3429: f0 1c       ..  :32f8[1]
@@ -5552,14 +5552,14 @@ c32f5
 
 c3301
     lda current_animation                                             ; 3432: ad df 09    ... :3301[1]
-    ldy #monkey_animation7 - monkey_animation2                        ; 3435: a0 41       .A  :3304[1]
+    ldy #monkey_standing_still_animation - monkey_transform_in_animation; 3435: a0 41       .A  :3304[1]
     sty current_animation                                             ; 3437: 8c df 09    ... :3306[1]
-    cmp #monkey_animation4 - monkey_animation2                        ; 343a: c9 29       .)  :3309[1]
+    cmp #monkey_walk_cycle_animation - monkey_transform_in_animation  ; 343a: c9 29       .)  :3309[1]
     beq c3311                                                         ; 343c: f0 04       ..  :330b[1]
-    cmp #monkey_animation5 - monkey_animation2                        ; 343e: c9 36       .6  :330d[1]
+    cmp #monkey_change_direction_animation - monkey_transform_in_animation; 343e: c9 36       .6  :330d[1]
     bne c3316                                                         ; 3440: d0 05       ..  :330f[1]
 c3311
-    ldy #monkey_animation6 - monkey_animation2                        ; 3442: a0 3d       .=  :3311[1]
+    ldy #monkey_animation6 - monkey_transform_in_animation            ; 3442: a0 3d       .=  :3311[1]
     jmp c3316                                                         ; 3444: 4c 16 33    L.3 :3313[1]
 
 c3316
@@ -5570,19 +5570,19 @@ c3316
 c331e
     lda two_byte_table_based_on_left_right_direction,x                ; 344f: bd 90 28    ..( :331e[1]
     beq c3331                                                         ; 3452: f0 0e       ..  :3321[1]
-    ldy #monkey_animation19 - monkey_animation2                       ; 3454: a0 d4       ..  :3323[1]
+    ldy #monkey_fall_animation - monkey_transform_in_animation        ; 3454: a0 d4       ..  :3323[1]
     sty current_animation                                             ; 3456: 8c df 09    ... :3325[1]
-    ldy #monkey_animation16 - monkey_animation2                       ; 3459: a0 aa       ..  :3328[1]
+    ldy #monkey_animation16 - monkey_transform_in_animation           ; 3459: a0 aa       ..  :3328[1]
     cmp object_direction                                              ; 345b: cd be 09    ... :332a[1]
     beq c3331                                                         ; 345e: f0 02       ..  :332d[1]
-    ldy #monkey_animation17 - monkey_animation2                       ; 3460: a0 b7       ..  :332f[1]
+    ldy #monkey_animation17 - monkey_transform_in_animation           ; 3460: a0 b7       ..  :332f[1]
 c3331
     lda #0                                                            ; 3462: a9 00       ..  :3331[1]
     sta l31d7                                                         ; 3464: 8d d7 31    ..1 :3333[1]
     sty object_current_index_in_animation                             ; 3467: 8c d4 09    ... :3336[1]
     tya                                                               ; 346a: 98          .   :3339[1]
-    ldx #<monkey_animation2                                           ; 346b: a2 ff       ..  :333a[1]
-    ldy #>monkey_animation2                                           ; 346d: a0 30       .0  :333c[1]
+    ldx #<monkey_transform_in_animation                               ; 346b: a2 ff       ..  :333a[1]
+    ldy #>monkey_transform_in_animation                               ; 346d: a0 30       .0  :333c[1]
     jsr set_player_spriteid_and_offset_from_animation_table           ; 346f: 20 00 22     ." :333e[1]
     lda #0                                                            ; 3472: a9 00       ..  :3341[1]
     jsr sub_c25f5                                                     ; 3474: 20 f5 25     .% :3343[1]
@@ -8174,11 +8174,11 @@ pydis_end
 !if (<cat_animation1) != $00 {
     !error "Assertion failed: <cat_animation1 == $00"
 }
-!if (<cat_animation2) != $16 {
-    !error "Assertion failed: <cat_animation2 == $16"
-}
 !if (<cat_tail_spriteids) != $f7 {
     !error "Assertion failed: <cat_tail_spriteids == $f7"
+}
+!if (<cat_transform_in_animation) != $16 {
+    !error "Assertion failed: <cat_transform_in_animation == $16"
 }
 !if (<data_filename) != $72 {
     !error "Assertion failed: <data_filename == $72"
@@ -8228,11 +8228,11 @@ pydis_end
 !if (<monkey_animation1) != $e6 {
     !error "Assertion failed: <monkey_animation1 == $e6"
 }
-!if (<monkey_animation2) != $ff {
-    !error "Assertion failed: <monkey_animation2 == $ff"
-}
 !if (<monkey_tail_spriteids) != $dd {
     !error "Assertion failed: <monkey_tail_spriteids == $dd"
+}
+!if (<monkey_transform_in_animation) != $ff {
+    !error "Assertion failed: <monkey_transform_in_animation == $ff"
 }
 !if (<oswrch) != $ee {
     !error "Assertion failed: <oswrch == $ee"
@@ -8315,8 +8315,8 @@ pydis_end
 !if (<wizard_animation1) != $d7 {
     !error "Assertion failed: <wizard_animation1 == $d7"
 }
-!if (<wizard_animation2) != $ed {
-    !error "Assertion failed: <wizard_animation2 == $ed"
+!if (<wizard_transform_in_animation) != $ed {
+    !error "Assertion failed: <wizard_transform_in_animation == $ed"
 }
 !if (>(address1_low)) != $00 {
     !error "Assertion failed: >(address1_low) == $00"
@@ -8363,11 +8363,11 @@ pydis_end
 !if (>cat_animation1) != $2f {
     !error "Assertion failed: >cat_animation1 == $2f"
 }
-!if (>cat_animation2) != $2f {
-    !error "Assertion failed: >cat_animation2 == $2f"
-}
 !if (>cat_tail_spriteids) != $2e {
     !error "Assertion failed: >cat_tail_spriteids == $2e"
+}
+!if (>cat_transform_in_animation) != $2f {
+    !error "Assertion failed: >cat_transform_in_animation == $2f"
 }
 !if (>data_filename) != $12 {
     !error "Assertion failed: >data_filename == $12"
@@ -8417,11 +8417,11 @@ pydis_end
 !if (>monkey_animation1) != $30 {
     !error "Assertion failed: >monkey_animation1 == $30"
 }
-!if (>monkey_animation2) != $30 {
-    !error "Assertion failed: >monkey_animation2 == $30"
-}
 !if (>monkey_tail_spriteids) != $30 {
     !error "Assertion failed: >monkey_tail_spriteids == $30"
+}
+!if (>monkey_transform_in_animation) != $30 {
+    !error "Assertion failed: >monkey_transform_in_animation == $30"
 }
 !if (>oswrch) != $ff {
     !error "Assertion failed: >oswrch == $ff"
@@ -8504,8 +8504,8 @@ pydis_end
 !if (>wizard_animation1) != $2c {
     !error "Assertion failed: >wizard_animation1 == $2c"
 }
-!if (>wizard_animation2) != $2c {
-    !error "Assertion failed: >wizard_animation2 == $2c"
+!if (>wizard_transform_in_animation) != $2c {
+    !error "Assertion failed: >wizard_transform_in_animation == $2c"
 }
 !if (black) != $00 {
     !error "Assertion failed: black == $00"
@@ -8516,38 +8516,44 @@ pydis_end
 !if (caps_mask) != $df {
     !error "Assertion failed: caps_mask == $df"
 }
-!if (cat_animation10 - cat_animation2) != $5f {
-    !error "Assertion failed: cat_animation10 - cat_animation2 == $5f"
+!if (cat_animation10 - cat_transform_in_animation) != $5f {
+    !error "Assertion failed: cat_animation10 - cat_transform_in_animation == $5f"
 }
-!if (cat_animation11 - cat_animation2) != $84 {
-    !error "Assertion failed: cat_animation11 - cat_animation2 == $84"
+!if (cat_animation11 - cat_transform_in_animation) != $84 {
+    !error "Assertion failed: cat_animation11 - cat_transform_in_animation == $84"
 }
-!if (cat_animation12 - cat_animation2) != $91 {
-    !error "Assertion failed: cat_animation12 - cat_animation2 == $91"
+!if (cat_animation12 - cat_transform_in_animation) != $91 {
+    !error "Assertion failed: cat_animation12 - cat_transform_in_animation == $91"
 }
-!if (cat_animation13 - cat_animation2) != $9e {
-    !error "Assertion failed: cat_animation13 - cat_animation2 == $9e"
+!if (cat_animation13 - cat_transform_in_animation) != $9e {
+    !error "Assertion failed: cat_animation13 - cat_transform_in_animation == $9e"
 }
-!if (cat_animation14 - cat_animation2) != $ae {
-    !error "Assertion failed: cat_animation14 - cat_animation2 == $ae"
+!if (cat_animation6 - cat_transform_in_animation) != $3d {
+    !error "Assertion failed: cat_animation6 - cat_transform_in_animation == $3d"
 }
-!if (cat_animation4 - cat_animation2) != $29 {
-    !error "Assertion failed: cat_animation4 - cat_animation2 == $29"
+!if (cat_change_direction_animation - cat_transform_in_animation) != $36 {
+    !error "Assertion failed: cat_change_direction_animation - cat_transform_in_animation == $36"
 }
-!if (cat_animation5 - cat_animation2) != $36 {
-    !error "Assertion failed: cat_animation5 - cat_animation2 == $36"
+!if (cat_fall_animation - cat_transform_in_animation) != $ae {
+    !error "Assertion failed: cat_fall_animation - cat_transform_in_animation == $ae"
 }
-!if (cat_animation6 - cat_animation2) != $3d {
-    !error "Assertion failed: cat_animation6 - cat_animation2 == $3d"
+!if (cat_jump_animation - cat_transform_in_animation) != $45 {
+    !error "Assertion failed: cat_jump_animation - cat_transform_in_animation == $45"
 }
-!if (cat_animation7 - cat_animation2) != $41 {
-    !error "Assertion failed: cat_animation7 - cat_animation2 == $41"
+!if (cat_jump_apex_animation - cat_transform_in_animation) != $58 {
+    !error "Assertion failed: cat_jump_apex_animation - cat_transform_in_animation == $58"
 }
-!if (cat_animation8 - cat_animation2) != $45 {
-    !error "Assertion failed: cat_animation8 - cat_animation2 == $45"
+!if (cat_standing_still_animation - cat_transform_in_animation) != $41 {
+    !error "Assertion failed: cat_standing_still_animation - cat_transform_in_animation == $41"
 }
-!if (cat_animation9 - cat_animation2) != $58 {
-    !error "Assertion failed: cat_animation9 - cat_animation2 == $58"
+!if (cat_transform_in_animation - cat_transform_in_animation) != $00 {
+    !error "Assertion failed: cat_transform_in_animation - cat_transform_in_animation == $00"
+}
+!if (cat_transform_out_animation - cat_transform_in_animation) != $16 {
+    !error "Assertion failed: cat_transform_out_animation - cat_transform_in_animation == $16"
+}
+!if (cat_walk_cycle_animation - cat_transform_in_animation) != $29 {
+    !error "Assertion failed: cat_walk_cycle_animation - cat_transform_in_animation == $29"
 }
 !if (characters_per_line) != $28 {
     !error "Assertion failed: characters_per_line == $28"
@@ -8636,53 +8642,56 @@ pydis_end
 !if (menu_slot_count) != $11 {
     !error "Assertion failed: menu_slot_count == $11"
 }
-!if (monkey_animation10 - monkey_animation2) != $4d {
-    !error "Assertion failed: monkey_animation10 - monkey_animation2 == $4d"
+!if (monkey_animation10 - monkey_transform_in_animation) != $4d {
+    !error "Assertion failed: monkey_animation10 - monkey_transform_in_animation == $4d"
 }
-!if (monkey_animation11 - monkey_animation2) != $51 {
-    !error "Assertion failed: monkey_animation11 - monkey_animation2 == $51"
+!if (monkey_animation12 - monkey_transform_in_animation) != $58 {
+    !error "Assertion failed: monkey_animation12 - monkey_transform_in_animation == $58"
 }
-!if (monkey_animation12 - monkey_animation2) != $58 {
-    !error "Assertion failed: monkey_animation12 - monkey_animation2 == $58"
+!if (monkey_animation15 - monkey_transform_in_animation) != $97 {
+    !error "Assertion failed: monkey_animation15 - monkey_transform_in_animation == $97"
 }
-!if (monkey_animation13 - monkey_animation2) != $7a {
-    !error "Assertion failed: monkey_animation13 - monkey_animation2 == $7a"
+!if (monkey_animation16 - monkey_transform_in_animation) != $aa {
+    !error "Assertion failed: monkey_animation16 - monkey_transform_in_animation == $aa"
 }
-!if (monkey_animation14 - monkey_animation2) != $87 {
-    !error "Assertion failed: monkey_animation14 - monkey_animation2 == $87"
+!if (monkey_animation17 - monkey_transform_in_animation) != $b7 {
+    !error "Assertion failed: monkey_animation17 - monkey_transform_in_animation == $b7"
 }
-!if (monkey_animation15 - monkey_animation2) != $97 {
-    !error "Assertion failed: monkey_animation15 - monkey_animation2 == $97"
+!if (monkey_animation18 - monkey_transform_in_animation) != $c4 {
+    !error "Assertion failed: monkey_animation18 - monkey_transform_in_animation == $c4"
 }
-!if (monkey_animation16 - monkey_animation2) != $aa {
-    !error "Assertion failed: monkey_animation16 - monkey_animation2 == $aa"
+!if (monkey_animation6 - monkey_transform_in_animation) != $3d {
+    !error "Assertion failed: monkey_animation6 - monkey_transform_in_animation == $3d"
 }
-!if (monkey_animation17 - monkey_animation2) != $b7 {
-    !error "Assertion failed: monkey_animation17 - monkey_animation2 == $b7"
+!if (monkey_change_direction_animation - monkey_transform_in_animation) != $36 {
+    !error "Assertion failed: monkey_change_direction_animation - monkey_transform_in_animation == $36"
 }
-!if (monkey_animation18 - monkey_animation2) != $c4 {
-    !error "Assertion failed: monkey_animation18 - monkey_animation2 == $c4"
+!if (monkey_climb_animation - monkey_transform_in_animation) != $51 {
+    !error "Assertion failed: monkey_climb_animation - monkey_transform_in_animation == $51"
 }
-!if (monkey_animation19 - monkey_animation2) != $d4 {
-    !error "Assertion failed: monkey_animation19 - monkey_animation2 == $d4"
+!if (monkey_climb_down_animation - monkey_transform_in_animation) != $49 {
+    !error "Assertion failed: monkey_climb_down_animation - monkey_transform_in_animation == $49"
 }
-!if (monkey_animation4 - monkey_animation2) != $29 {
-    !error "Assertion failed: monkey_animation4 - monkey_animation2 == $29"
+!if (monkey_climb_idle_animation - monkey_transform_in_animation) != $45 {
+    !error "Assertion failed: monkey_climb_idle_animation - monkey_transform_in_animation == $45"
 }
-!if (monkey_animation5 - monkey_animation2) != $36 {
-    !error "Assertion failed: monkey_animation5 - monkey_animation2 == $36"
+!if (monkey_fall_animation - monkey_transform_in_animation) != $d4 {
+    !error "Assertion failed: monkey_fall_animation - monkey_transform_in_animation == $d4"
 }
-!if (monkey_animation6 - monkey_animation2) != $3d {
-    !error "Assertion failed: monkey_animation6 - monkey_animation2 == $3d"
+!if (monkey_jump_animation - monkey_transform_in_animation) != $87 {
+    !error "Assertion failed: monkey_jump_animation - monkey_transform_in_animation == $87"
 }
-!if (monkey_animation7 - monkey_animation2) != $41 {
-    !error "Assertion failed: monkey_animation7 - monkey_animation2 == $41"
+!if (monkey_standing_jump_animation - monkey_transform_in_animation) != $7a {
+    !error "Assertion failed: monkey_standing_jump_animation - monkey_transform_in_animation == $7a"
 }
-!if (monkey_animation8 - monkey_animation2) != $45 {
-    !error "Assertion failed: monkey_animation8 - monkey_animation2 == $45"
+!if (monkey_standing_still_animation - monkey_transform_in_animation) != $41 {
+    !error "Assertion failed: monkey_standing_still_animation - monkey_transform_in_animation == $41"
 }
-!if (monkey_animation9 - monkey_animation2) != $49 {
-    !error "Assertion failed: monkey_animation9 - monkey_animation2 == $49"
+!if (monkey_transform_out_animation - monkey_transform_in_animation) != $16 {
+    !error "Assertion failed: monkey_transform_out_animation - monkey_transform_in_animation == $16"
+}
+!if (monkey_walk_cycle_animation - monkey_transform_in_animation) != $29 {
+    !error "Assertion failed: monkey_walk_cycle_animation - monkey_transform_in_animation == $29"
 }
 !if (opcode_clc) != $18 {
     !error "Assertion failed: opcode_clc == $18"
@@ -9008,35 +9017,38 @@ pydis_end
 !if (white) != $07 {
     !error "Assertion failed: white == $07"
 }
-!if (wizard_animation10 - wizard_animation2) != $59 {
-    !error "Assertion failed: wizard_animation10 - wizard_animation2 == $59"
+!if (wizard_animation10 - wizard_transform_in_animation) != $59 {
+    !error "Assertion failed: wizard_animation10 - wizard_transform_in_animation == $59"
 }
-!if (wizard_animation11 - wizard_animation2) != $6c {
-    !error "Assertion failed: wizard_animation11 - wizard_animation2 == $6c"
+!if (wizard_animation11 - wizard_transform_in_animation) != $6c {
+    !error "Assertion failed: wizard_animation11 - wizard_transform_in_animation == $6c"
 }
-!if (wizard_animation12 - wizard_animation2) != $79 {
-    !error "Assertion failed: wizard_animation12 - wizard_animation2 == $79"
+!if (wizard_animation12 - wizard_transform_in_animation) != $79 {
+    !error "Assertion failed: wizard_animation12 - wizard_transform_in_animation == $79"
 }
-!if (wizard_animation14 - wizard_animation2) != $96 {
-    !error "Assertion failed: wizard_animation14 - wizard_animation2 == $96"
+!if (wizard_animation6 - wizard_transform_in_animation) != $3d {
+    !error "Assertion failed: wizard_animation6 - wizard_transform_in_animation == $3d"
 }
-!if (wizard_animation4 - wizard_animation2) != $29 {
-    !error "Assertion failed: wizard_animation4 - wizard_animation2 == $29"
+!if (wizard_animation8 - wizard_transform_in_animation) != $45 {
+    !error "Assertion failed: wizard_animation8 - wizard_transform_in_animation == $45"
 }
-!if (wizard_animation5 - wizard_animation2) != $36 {
-    !error "Assertion failed: wizard_animation5 - wizard_animation2 == $36"
+!if (wizard_change_direction_animation - wizard_transform_in_animation) != $36 {
+    !error "Assertion failed: wizard_change_direction_animation - wizard_transform_in_animation == $36"
 }
-!if (wizard_animation6 - wizard_animation2) != $3d {
-    !error "Assertion failed: wizard_animation6 - wizard_animation2 == $3d"
+!if (wizard_fall_animation - wizard_transform_in_animation) != $96 {
+    !error "Assertion failed: wizard_fall_animation - wizard_transform_in_animation == $96"
 }
-!if (wizard_animation7 - wizard_animation2) != $41 {
-    !error "Assertion failed: wizard_animation7 - wizard_animation2 == $41"
+!if (wizard_jump_animation - wizard_transform_in_animation) != $49 {
+    !error "Assertion failed: wizard_jump_animation - wizard_transform_in_animation == $49"
 }
-!if (wizard_animation8 - wizard_animation2) != $45 {
-    !error "Assertion failed: wizard_animation8 - wizard_animation2 == $45"
+!if (wizard_standing_still_animation - wizard_transform_in_animation) != $41 {
+    !error "Assertion failed: wizard_standing_still_animation - wizard_transform_in_animation == $41"
 }
-!if (wizard_animation9 - wizard_animation2) != $49 {
-    !error "Assertion failed: wizard_animation9 - wizard_animation2 == $49"
+!if (wizard_transform_out_animation - wizard_transform_in_animation) != $16 {
+    !error "Assertion failed: wizard_transform_out_animation - wizard_transform_in_animation == $16"
+}
+!if (wizard_walk_cycle_animation - wizard_transform_in_animation) != $29 {
+    !error "Assertion failed: wizard_walk_cycle_animation - wizard_transform_in_animation == $29"
 }
 !if (yellow) != $03 {
     !error "Assertion failed: yellow == $03"
