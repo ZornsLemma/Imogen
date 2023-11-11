@@ -2099,7 +2099,7 @@ restore_rectangle_of_screen_memory_copy_loop
     bcc c1ae3                                                         ; 1c6b: 90 a7       ..  :1b3a[1]
     inc cell_screen_address_high                                      ; 1c6d: e6 77       .w  :1b3c[1]
     clc                                                               ; 1c6f: 18          .   :1b3e[1]
-    bcc c1ae3                                                         ; 1c70: 90 a2       ..  :1b3f[1]
+    bcc c1ae3                                                         ; 1c70: 90 a2       ..  :1b3f[1]   ; always branch
 c1b41
     inc l007d                                                         ; 1c72: e6 7d       .}  :1b41[1]
     dec l0073                                                         ; 1c74: c6 73       .s  :1b43[1]
