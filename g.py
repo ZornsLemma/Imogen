@@ -97,11 +97,11 @@ substitute_labels = {
     (0x1f48, 0x1fd7): {
         "address1_low": "cell_x",
         "address1_high": "cell_y",
-        "l0075": "offset_within_collision_map",
-        "l0072": "width_in_cells_to_write",
         "l004b": "height_counter",
-        "l0074": "offset_within_byte",
+        "l0072": "width_in_cells_to_write",
         "l0073": "height_in_cells_to_write",
+        "l0074": "offset_within_byte",
+        "l0075": "offset_within_collision_map",
     },
     (0x2331, 0x2467): {
         "address1_low": "animation_address_low",
@@ -251,6 +251,7 @@ sprite_dict = {
     0x1e: "spriteid_fingertip_tile_restoration",
     0x1f: "spriteid_one_pixel_set",
     0x20: "spriteid_circle",
+    0x21: "spriteid_menu_item_completion_spell",
     0x22: "spriteid_sparkles1",
     0x23: "spriteid_sparkles2",
     0x24: "spriteid_sparkles3",
@@ -1138,11 +1139,11 @@ expr(0x355b, "vdu_cr")
 expr(0x3562, "vdu_lf")
 expr(0x3705, "vdu_cr")
 
-entry(0x40a, "save_or_restore_screen_under_dialog_box") # TODO: guesswork
-entry(0x444, "vdu_goto_0_9")
-expr(0x445, "vdu_goto_xy")
+entry(0x040a)
+entry(0x0444, "vdu_goto_0_9")
+expr(0x0445, "vdu_goto_xy")
 
-entry(0x453, "selected_menu_item_changed")
+entry(0x0453)
 comment(0x0457, "clear away the active dialog")
 # TODO: DELETE? entry(0x3fbb, "something2_TODO")
 
@@ -1222,7 +1223,12 @@ On Exit:
 *************************************************************************************""")
 entry(0x40c0, "convert_section_letter_to_level_filename_letter")
 
-label(0x1234, "skip5")
+comment(0x1228, """level_progress_table has:
+
+    bits 0-2: current room number
+    bit 7: set when the completion spell is obtained
+""")
+label(0x1234, "skip_adding_completion_spell_to_toolbar")
 
 comment(0x40d0, "Update the transformation count on screen at text position (35-37, 6). This takes care to update as few digits on screen as possible, probably to reduce flicker and to offset the relatively slow implementation of print_italic.")
 label(0x9ec, "current_transformations_remaining")
@@ -1346,7 +1352,8 @@ comment(0x1169, "if load successful, then skip forward", inline=True)
 label(0x1175, "level_already_loaded")
 label(0x36da, "check_password_level")
 entry(0x36db, "select_level_a")
-comment(0x114f, "TODO: Why do we check desired_level against currently_loaded_level in this loop? The loop kind of makes sense as a retry if disc error sort of thing, but I don't see why we'd ever have the wrong level loaded or something like that. It still doesn't feel quite right, but could this maybe be some leftover hint of a tape version? - hmm, note that dataA.asm calls into initialise_level in several different places (with different values of X, indicating different level_header_data entries to be called) - it may be that this check is so that second and subsequent calls don't redo pointless or harmful initialisation?")
+#comment(0x114f, "TODO: Why do we check desired_level against currently_loaded_level in this loop? The loop kind of makes sense as a retry if disc error sort of thing, but I don't see why we'd ever have the wrong level loaded or something like that. It still doesn't feel quite right, but could this maybe be some leftover hint of a tape version? - hmm, note that dataA.asm calls into initialise_level in several different places (with different values of X, indicating different level_header_data entries to be called) - it may be that this check is so that second and subsequent calls don't redo pointless or harmful initialisation?")
+comment(0x114f, "Load a new level if the desired_level has changed.\n\nAny time we want to load a new level, we just set the desired_level and let this code do the work. (It is a loop to allow for retries on a disk error.)")
 entry(0x1186, "object_reset_loop")
 entry(0x11dd, "clear_sixteen_entry_table1")
 comment(0x11f8, "Blank the whole screen temporarily. TODO: Note that when flipping from screen to screen during play, the toolbar is not blanked, but it is here. Is this just cosmetic or is there a technical reason for this?")
@@ -1604,10 +1611,13 @@ expr(0x3a28, "inkey_key_x")
 expr(0x3a48, "inkey_key_space")
 expr(0x3a59, "inkey_key_left")
 expr(0x3a61, "inkey_key_right")
+
+# With developer_flags, set the start room to go to?
+label(0x3add, "room_index_cheat")
 # TODO: What does the shift key do in the game? Or Escape?
 
-# TODO: Don't know what the byte means yet, but the code structure makes it clear this is indexed by level number
-label(0x9ef, "byte_per_level_table1")
+label(0x9ef, "level_progress_table")
+comment(0x1a4c, "got completion spell")
 
 comment(0x1132, "choose a new starting level")
 comment(0x1140, "TODO: this is used by e.g. dataA")

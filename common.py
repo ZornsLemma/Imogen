@@ -6,6 +6,7 @@ constant(0x4c, "opcode_jmp")
 #
 label(0x0005, "password_characters_entered")
 label(0x31, "desired_level") # TODO: This is not right but let's go with it for now - the way this is used it clearly contains *a* level (as a letter, I think), but I am not quite sure what it's used for - the use at 36df suggests this is more like "current level" actually - or maybe it's more like "level_to_load"
+label(0x50, "previous_room_index")
 label(0x51, "previous_level") # TODO: see use at initialise_level
 
 label(0x3c, "width_in_cells")
@@ -14,6 +15,8 @@ label(0x003e, "value_to_write_to_collision_map")
 
 label(0x1103, "developer_flags")
 label(0x005b, "developer_mode_sideways_ram_is_set_up_flag")
+label(0x040a, "restore_screen_under_dialog_box") # TODO: guesswork
+label(0x0453, "remove_dialog")
 
 # See mono_handler and colour_handler in auxcode.asm
 label(0x1765, "use_colour_flag")

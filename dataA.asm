@@ -17,10 +17,13 @@ value_to_write_to_collision_map             = $3e
 l0040                                       = $40
 l0041                                       = $41
 l0042                                       = $42
+previous_room_index                         = $50
 previous_level                              = $51
 l0052                                       = $52
 developer_mode_sideways_ram_is_set_up_flag  = $5b
 l0070                                       = $70
+restore_screen_under_dialog_box             = $040a
+remove_dialog                               = $0453
 level_thing_2_data                          = $0709
 level_thing_4_data                          = $0714
 level_thing_3_data                          = $0914
@@ -107,10 +110,10 @@ second_level_handler_ptr
 level_name_ptr
     !word level_name                                                  ; 3adb: e7 3a       .:
     !byte 0, 1                                                        ; 3add: 00 01       ..
-; This is a table of four words, used by code just below (TODO: proper label) skip5
-; where the l030-th element *plus 2* is called. TODO: Why +2? The code at c129b
-; suggests the two bytes *at* the address in this table is used as an address of some
-; kind.
+; This is a table of four words, used by code just below
+; 'skip_adding_completion_spell_to_toolbar' where the l030-th element *plus 2* is
+; called. TODO: Why +2? The code at c129b suggests the two bytes *at* the address in
+; this table is used as an address of some kind.
 ; TODO: Speculation - could this be code to draw each of the screens making up the
 ; level? AFAICT saxophobia does have four screens. I assume the *number* of entries in
 ; this table is stored somewhere, but I can't see it. It is also possible that because

@@ -105,6 +105,7 @@ spriteid_icodata_password                       = 8
 spriteid_icodata_sound                          = 2
 spriteid_icodata_wizard                         = 4
 spriteid_icon_background                        = 1
+spriteid_menu_item_completion_spell             = 33
 spriteid_monkey1                                = 78
 spriteid_monkey2                                = 79
 spriteid_monkey3                                = 80
@@ -214,7 +215,7 @@ height_counter                              = $4b
 l004b                                       = $4b
 screen_base_address_high                    = $4c
 new_player_character                        = $4d
-l0050                                       = $50
+previous_room_index                         = $50
 previous_level                              = $51
 l0052                                       = $52
 l0053                                       = $53
@@ -338,7 +339,7 @@ current_animation                           = $09df
 something2                                  = $09ea
 l09eb                                       = $09eb
 current_transformations_remaining           = $09ec
-byte_per_level_table1                       = $09ef
+level_progress_table                        = $09ef
 sixteen_entry_table1                        = $0a6f
 something                                   = $0a6f
 level_ordering_table                        = $0a7f
@@ -355,7 +356,7 @@ sprite_197                                  = $0bc5
 level_init_after_load_handler_ptr           = $3ad7
 second_level_handler_ptr                    = $3ad9
 level_name_ptr                              = $3adb
-l3add                                       = $3add
+room_index_cheat                            = $3add
 c3ade                                       = $3ade
 level_header_data                           = $3adf
 auxcode                                     = $53c0
@@ -462,20 +463,16 @@ start_game
 ; TODO: But what does this 'mean'?
 initialise_level
     lda desired_room_index                                            ; 1271: a5 30       .0  :1140[1]
-    sta l0050                                                         ; 1273: 85 50       .P  :1142[1]
+    sta previous_room_index                                           ; 1273: 85 50       .P  :1142[1]
     lda desired_level                                                 ; 1275: a5 31       .1  :1144[1]
     sta previous_level                                                ; 1277: 85 51       .Q  :1146[1]
     stx desired_room_index                                            ; 1279: 86 30       .0  :1148[1]
     sty desired_level                                                 ; 127b: 84 31       .1  :114a[1]
     sty something2                                                    ; 127d: 8c ea 09    ... :114c[1]
-; TODO: Why do we check desired_level against currently_loaded_level in this loop? The
-; loop kind of makes sense as a retry if disc error sort of thing, but I don't see why
-; we'd ever have the wrong level loaded or something like that. It still doesn't feel
-; quite right, but could this maybe be some leftover hint of a tape version? - hmm,
-; note that dataA.asm calls into initialise_level in several different places (with
-; different values of X, indicating different level_header_data entries to be called) -
-; it may be that this check is so that second and subsequent calls don't redo pointless
-; or harmful initialisation?
+; Load a new level if the desired_level has changed.
+; 
+; Any time we want to load a new level, we just set the desired_level and let this code
+; do the work. (It is a loop to allow for retries on a disk error.)
 level_load_loop
     lda desired_level                                                 ; 1280: a5 31       .1  :114f[1]
     cmp currently_loaded_level                                        ; 1282: c5 37       .7  :1151[1]
@@ -579,12 +576,17 @@ clear_sound_priorities_loop
     sec                                                               ; 1355: 38          8   :1224[1]
     sbc #first_level_letter                                           ; 1356: e9 41       .A  :1225[1]
     tax                                                               ; 1358: aa          .   :1227[1]
-    lda byte_per_level_table1,x                                       ; 1359: bd ef 09    ... :1228[1]
+; level_progress_table has:
+; 
+;     bits 0-2: current room number
+;     bit 7: set when the completion spell is obtained
+; 
+    lda level_progress_table,x                                        ; 1359: bd ef 09    ... :1228[1]
     and #$80                                                          ; 135c: 29 80       ).  :122b[1]
-    beq skip5                                                         ; 135e: f0 05       ..  :122d[1]
-    lda #$21 ; '!'                                                    ; 1360: a9 21       .!  :122f[1]
+    beq skip_adding_completion_spell_to_toolbar                       ; 135e: f0 05       ..  :122d[1]
+    lda #spriteid_menu_item_completion_spell                          ; 1360: a9 21       .!  :122f[1]
     jsr find_or_create_menu_slot_for_A                                ; 1362: 20 bd 2b     .+ :1231[1]
-skip5
+skip_adding_completion_spell_to_toolbar
     lda #3                                                            ; 1365: a9 03       ..  :1234[1]
     sta value_to_write_to_collision_map                               ; 1367: 85 3e       .>  :1236[1]
     lda #black                                                        ; 1369: a9 00       ..  :1238[1]
@@ -606,11 +608,11 @@ skip5
     sec                                                               ; 137c: 38          8   :124b[1]
     sbc #first_level_letter                                           ; 137d: e9 41       .A  :124c[1]
     tax                                                               ; 137f: aa          .   :124e[1]
-    lda byte_per_level_table1,x                                       ; 1380: bd ef 09    ... :124f[1]
+    lda level_progress_table,x                                        ; 1380: bd ef 09    ... :124f[1]
     and #$f8                                                          ; 1383: 29 f8       ).  :1252[1]
     ora desired_room_index                                            ; 1385: 05 30       .0  :1254[1]
     ora #$40 ; '@'                                                    ; 1387: 09 40       .@  :1256[1]
-    sta byte_per_level_table1,x                                       ; 1389: 9d ef 09    ... :1258[1]
+    sta level_progress_table,x                                        ; 1389: 9d ef 09    ... :1258[1]
     lda desired_room_index                                            ; 138c: a5 30       .0  :125b[1]
     asl                                                               ; 138e: 0a          .   :125d[1]
     tay                                                               ; 138f: a8          .   :125e[1]
@@ -636,13 +638,13 @@ sub_c1278
     sec                                                               ; 13ab: 38          8   :127a[1]
     sbc #first_level_letter                                           ; 13ac: e9 41       .A  :127b[1]
     tax                                                               ; 13ae: aa          .   :127d[1]
-    lda byte_per_level_table1,x                                       ; 13af: bd ef 09    ... :127e[1]
+    lda level_progress_table,x                                        ; 13af: bd ef 09    ... :127e[1]
     and #7                                                            ; 13b2: 29 07       ).  :1281[1]
     sta desired_room_index                                            ; 13b4: 85 30       .0  :1283[1]
-    lda byte_per_level_table1,x                                       ; 13b6: bd ef 09    ... :1285[1]
+    lda level_progress_table,x                                        ; 13b6: bd ef 09    ... :1285[1]
     and #$40 ; '@'                                                    ; 13b9: 29 40       )@  :1288[1]
     bne skip_developer_mode_code1                                     ; 13bb: d0 0f       ..  :128a[1]
-    lda l3add                                                         ; 13bd: ad dd 3a    ..: :128c[1]
+    lda room_index_cheat                                              ; 13bd: ad dd 3a    ..: :128c[1]
     sta desired_room_index                                            ; 13c0: 85 30       .0  :128f[1]
     lda developer_flags                                               ; 13c2: ad 03 11    ... :1291[1]
     bpl skip_developer_mode_code1                                     ; 13c5: 10 05       ..  :1294[1]
@@ -1471,7 +1473,7 @@ sub_c1728
     jsr oswrch                                                        ; 1860: 20 ee ff     .. :172f[1]   ; Write character 7
     lda #$12                                                          ; 1863: a9 12       ..  :1732[1]
     sta current_text_width                                            ; 1865: 8d 09 04    ... :1734[1]
-    jsr save_or_restore_screen_under_dialog_box                       ; 1868: 20 0a 04     .. :1737[1]
+    jsr restore_screen_under_dialog_box                               ; 1868: 20 0a 04     .. :1737[1]
     lda #$0a                                                          ; 186b: a9 0a       ..  :173a[1]
     jsr oswrch                                                        ; 186d: 20 ee ff     .. :173c[1]   ; Write character 10
     ldx #<disk_error_message                                          ; 1870: a2 52       .R  :173f[1]
@@ -1944,10 +1946,11 @@ something14_TODO
     sec                                                               ; 1b79: 38          8   :1a48[1]
     sbc #first_level_letter                                           ; 1b7a: e9 41       .A  :1a49[1]
     tay                                                               ; 1b7c: a8          .   :1a4b[1]
-    lda byte_per_level_table1,y                                       ; 1b7d: b9 ef 09    ... :1a4c[1]
+; got completion spell
+    lda level_progress_table,y                                        ; 1b7d: b9 ef 09    ... :1a4c[1]
     ora #$80                                                          ; 1b80: 09 80       ..  :1a4f[1]
-    sta byte_per_level_table1,y                                       ; 1b82: 99 ef 09    ... :1a51[1]
-    lda #$21 ; '!'                                                    ; 1b85: a9 21       .!  :1a54[1]
+    sta level_progress_table,y                                        ; 1b82: 99 ef 09    ... :1a51[1]
+    lda #spriteid_menu_item_completion_spell                          ; 1b85: a9 21       .!  :1a54[1]
     jsr find_or_create_menu_slot_for_A                                ; 1b87: 20 bd 2b     .+ :1a56[1]
 c1a59
     ldx l1aae                                                         ; 1b8a: ae ae 1a    ... :1a59[1]
@@ -1959,7 +1962,7 @@ c1a59
     sec                                                               ; 1b99: 38          8   :1a68[1]
     sbc #first_level_letter                                           ; 1b9a: e9 41       .A  :1a69[1]
     tay                                                               ; 1b9c: a8          .   :1a6b[1]
-    lda byte_per_level_table1,y                                       ; 1b9d: b9 ef 09    ... :1a6c[1]
+    lda level_progress_table,y                                        ; 1b9d: b9 ef 09    ... :1a6c[1]
     and #$80                                                          ; 1ba0: 29 80       ).  :1a6f[1]
     bne c1a9e                                                         ; 1ba2: d0 2b       .+  :1a71[1]
     lda #1                                                            ; 1ba4: a9 01       ..  :1a73[1]
@@ -4455,7 +4458,7 @@ skip_developer_key_escape_handling
     lda new_menu_index                                                ; 2b98: a5 29       .)  :2a67[1]
     cmp another_menu_index                                            ; 2b9a: c5 25       .%  :2a69[1]
     beq c2a73                                                         ; 2b9c: f0 06       ..  :2a6b[1]
-    jsr selected_menu_item_changed                                    ; 2b9e: 20 53 04     S. :2a6d[1]
+    jsr remove_dialog                                                 ; 2b9e: 20 53 04     S. :2a6d[1]
     jmp c2a81                                                         ; 2ba1: 4c 81 2a    L.* :2a70[1]
 
 c2a73
@@ -5823,7 +5826,7 @@ show_load_save_dialog
     lda which_dialog_is_active                                        ; 353a: a5 04       ..  :3409[1]
     bne c3428                                                         ; 353c: d0 1b       ..  :340b[1]
 c340d
-    jsr save_or_restore_screen_under_dialog_box                       ; 353e: 20 0a 04     .. :340d[1]
+    jsr restore_screen_under_dialog_box                               ; 353e: 20 0a 04     .. :340d[1]
     lda #1                                                            ; 3541: a9 01       ..  :3410[1]
     sta which_dialog_is_active                                        ; 3543: 85 04       ..  :3412[1]
     ldx #<press_s_to_save_encrypted_string                            ; 3545: a2 2b       .+  :3414[1]
@@ -5836,7 +5839,7 @@ c340d
     jmp flush_input_buffers_and_zero_l0005                            ; 3556: 4c 72 38    Lr8 :3425[1]
 
 c3428
-    jmp selected_menu_item_changed                                    ; 3559: 4c 53 04    LS. :3428[1]
+    jmp remove_dialog                                                 ; 3559: 4c 53 04    LS. :3428[1]
 
 ; 'Press S to save\r' EOR-encrypted with $cb
 press_s_to_save_encrypted_string
@@ -5876,7 +5879,7 @@ c346a
     bne return23                                                      ; 35ab: d0 1a       ..  :347a[1]
     dec l3497                                                         ; 35ad: ce 97 34    ..4 :347c[1]
 c347f
-    jsr save_or_restore_screen_under_dialog_box                       ; 35b0: 20 0a 04     .. :347f[1]
+    jsr restore_screen_under_dialog_box                               ; 35b0: 20 0a 04     .. :347f[1]
     lda #2                                                            ; 35b3: a9 02       ..  :3482[1]
     sta which_dialog_is_active                                        ; 35b5: 85 04       ..  :3484[1]
     ldx #<enter_filename_message                                      ; 35b7: a2 98       ..  :3486[1]
@@ -5906,7 +5909,7 @@ loop_c34b2
     sta save_leaf_filename,y                                          ; 35e6: 99 db 34    ..4 :34b5[1]
     dey                                                               ; 35e9: 88          .   :34b8[1]
     bpl loop_c34b2                                                    ; 35ea: 10 f7       ..  :34b9[1]
-    jsr save_or_restore_screen_under_dialog_box                       ; 35ec: 20 0a 04     .. :34bb[1]
+    jsr restore_screen_under_dialog_box                               ; 35ec: 20 0a 04     .. :34bb[1]
     lda #3                                                            ; 35ef: a9 03       ..  :34be[1]
     sta which_dialog_is_active                                        ; 35f1: 85 04       ..  :34c0[1]
     ldx #<which_drive_encrypted_string                                ; 35f3: a2 e3       ..  :34c2[1]
@@ -5946,7 +5949,7 @@ c3501
     adc #$0f                                                          ; 3645: 69 0f       i.  :3514[1]
 c3516
     sta save_drive_number                                             ; 3647: 8d d7 34    ..4 :3516[1]
-    jsr save_or_restore_screen_under_dialog_box                       ; 364a: 20 0a 04     .. :3519[1]
+    jsr restore_screen_under_dialog_box                               ; 364a: 20 0a 04     .. :3519[1]
     lda #4                                                            ; 364d: a9 04       ..  :351c[1]
     sta which_dialog_is_active                                        ; 364f: 85 04       ..  :351e[1]
     ldx #<insert_save_disk_message                                    ; 3651: a2 35       .5  :3520[1]
@@ -5972,7 +5975,7 @@ c3557
     jsr inkey_0                                                       ; 3688: 20 7c 38     |8 :3557[1]
     cmp #vdu_cr                                                       ; 368b: c9 0d       ..  :355a[1]
     bne return24                                                      ; 368d: d0 d6       ..  :355c[1]
-    jsr save_or_restore_screen_under_dialog_box                       ; 368f: 20 0a 04     .. :355e[1]
+    jsr restore_screen_under_dialog_box                               ; 368f: 20 0a 04     .. :355e[1]
     lda #vdu_lf                                                       ; 3692: a9 0a       ..  :3561[1]
     jsr oswrch                                                        ; 3694: 20 ee ff     .. :3563[1]   ; Write character 10
     ldx #<saving_message                                              ; 3697: a2 f7       ..  :3566[1]
@@ -6041,7 +6044,7 @@ c35e2
     jsr check_cursor_left_right_and_space                             ; 3713: 20 8f 3a     .: :35e2[1]
     lda l3497                                                         ; 3716: ad 97 34    ..4 :35e5[1]
     bne c35ed                                                         ; 3719: d0 03       ..  :35e8[1]
-    jmp selected_menu_item_changed                                    ; 371b: 4c 53 04    LS. :35ea[1]
+    jmp remove_dialog                                                 ; 371b: 4c 53 04    LS. :35ea[1]
 
 c35ed
     lda #$ff                                                          ; 371e: a9 ff       ..  :35ed[1]
@@ -6058,7 +6061,7 @@ insert_game_disk_message
     !byte $af, $a2, $b8, $a0, $c6                                     ; 3743: af a2 b8... ... :3612[1]
 
 prompt_user_to_insert_correct_disc
-    jsr save_or_restore_screen_under_dialog_box                       ; 3748: 20 0a 04     .. :3617[1]
+    jsr restore_screen_under_dialog_box                               ; 3748: 20 0a 04     .. :3617[1]
     ldx #<insert_game_disk_message                                    ; 374b: a2 06       ..  :361a[1]
     ldy #>insert_game_disk_message                                    ; 374d: a0 36       .6  :361c[1]
     jsr print_encrypted_string_at_yx                                  ; 374f: 20 1c 38     .8 :361e[1]
@@ -6079,7 +6082,7 @@ show_password_entry_dialog
     lda which_dialog_is_active                                        ; 376c: a5 04       ..  :363b[1]
     bne c3652                                                         ; 376e: d0 13       ..  :363d[1]
 c363f
-    jsr save_or_restore_screen_under_dialog_box                       ; 3770: 20 0a 04     .. :363f[1]
+    jsr restore_screen_under_dialog_box                               ; 3770: 20 0a 04     .. :363f[1]
     ldx #<enter_password_message                                      ; 3773: a2 55       .U  :3642[1]
     ldy #>enter_password_message                                      ; 3775: a0 36       .6  :3644[1]
     jsr print_encrypted_string_at_yx                                  ; 3777: 20 1c 38     .8 :3646[1]
@@ -6088,7 +6091,7 @@ c363f
     jmp flush_input_buffers_and_zero_l0005                            ; 3780: 4c 72 38    Lr8 :364f[1]
 
 c3652
-    jmp selected_menu_item_changed                                    ; 3783: 4c 53 04    LS. :3652[1]
+    jmp remove_dialog                                                 ; 3783: 4c 53 04    LS. :3652[1]
 
 enter_password_message
     !byte $8e, $a5, $bf, $ae, $b9, $eb, $bb, $aa, $b8, $b8, $bc, $a4  ; 3786: 8e a5 bf... ... :3655[1]
@@ -6116,7 +6119,7 @@ sub_c3664
     cmp #$52 ; 'R'                                                    ; 37bd: c9 52       .R  :368c[1]
     bcs skip_developer_key_level_select_handling                      ; 37bf: b0 18       ..  :368e[1]
     pha                                                               ; 37c1: 48          H   :3690[1]
-    jsr selected_menu_item_changed                                    ; 37c2: 20 53 04     S. :3691[1]
+    jsr remove_dialog                                                 ; 37c2: 20 53 04     S. :3691[1]
     pla                                                               ; 37c5: 68          h   :3694[1]
     jmp select_level_a                                                ; 37c6: 4c db 36    L.6 :3695[1]
 
@@ -6124,7 +6127,7 @@ c3698
     lda developer_flags                                               ; 37c9: ad 03 11    ... :3698[1]
     and #1                                                            ; 37cc: 29 01       ).  :369b[1]
     beq return25                                                      ; 37ce: f0 08       ..  :369d[1]
-    jsr selected_menu_item_changed                                    ; 37d0: 20 53 04     S. :369f[1]
+    jsr remove_dialog                                                 ; 37d0: 20 53 04     S. :369f[1]
     lda #$ff                                                          ; 37d3: a9 ff       ..  :36a2[1]
     jmp select_level_a                                                ; 37d5: 4c db 36    L.6 :36a4[1]
 
@@ -6182,7 +6185,7 @@ c36f3
     jmp start_game                                                    ; 3824: 4c 0c 11    L.. :36f3[1]
 
 c36f6
-    jmp selected_menu_item_changed                                    ; 3827: 4c 53 04    LS. :36f6[1]
+    jmp remove_dialog                                                 ; 3827: 4c 53 04    LS. :36f6[1]
 
 loop_c36f9
     jmp c377a                                                         ; 382a: 4c 7a 37    Lz7 :36f9[1]
@@ -6269,10 +6272,10 @@ show_level_info_dialog
     beq c378e                                                         ; 38b6: f0 07       ..  :3785[1]
     cmp #1                                                            ; 38b8: c9 01       ..  :3787[1]
     beq c37ba                                                         ; 38ba: f0 2f       ./  :3789[1]
-    jmp selected_menu_item_changed                                    ; 38bc: 4c 53 04    LS. :378b[1]
+    jmp remove_dialog                                                 ; 38bc: 4c 53 04    LS. :378b[1]
 
 c378e
-    jsr save_or_restore_screen_under_dialog_box                       ; 38bf: 20 0a 04     .. :378e[1]
+    jsr restore_screen_under_dialog_box                               ; 38bf: 20 0a 04     .. :378e[1]
     lda #1                                                            ; 38c2: a9 01       ..  :3791[1]
     sta which_dialog_is_active                                        ; 38c4: 85 04       ..  :3793[1]
     ldx #<section_message                                             ; 38c6: a2 b1       ..  :3795[1]
@@ -6291,7 +6294,7 @@ section_message
     !byte $98, $ae, $a8, $bf, $a2, $a4, $a5, $eb, $c6                 ; 38e2: 98 ae a8... ... :37b1[1]
 
 c37ba
-    jsr save_or_restore_screen_under_dialog_box                       ; 38eb: 20 0a 04     .. :37ba[1]
+    jsr restore_screen_under_dialog_box                               ; 38eb: 20 0a 04     .. :37ba[1]
     lda #2                                                            ; 38ee: a9 02       ..  :37bd[1]
     sta which_dialog_is_active                                        ; 38f0: 85 04       ..  :37bf[1]
     ldx #first_level_letter                                           ; 38f2: a2 41       .A  :37c1[1]
@@ -6303,7 +6306,7 @@ c37c3
     sec                                                               ; 38fa: 38          8   :37c9[1]
     sbc #first_level_letter                                           ; 38fb: e9 41       .A  :37ca[1]
     tay                                                               ; 38fd: a8          .   :37cc[1]
-    lda byte_per_level_table1,y                                       ; 38fe: b9 ef 09    ... :37cd[1]
+    lda level_progress_table,y                                        ; 38fe: b9 ef 09    ... :37cd[1]
     and #$80                                                          ; 3901: 29 80       ).  :37d0[1]
     tay                                                               ; 3903: a8          .   :37d2[1]
     txa                                                               ; 3904: 8a          .   :37d3[1]
@@ -6664,7 +6667,7 @@ c39c1
     pla                                                               ; 3b00: 68          h   :39cf[1]
     ldy #$0f                                                          ; 3b01: a0 0f       ..  :39d0[1]
 loop_c39d2
-    lda byte_per_level_table1,y                                       ; 3b03: b9 ef 09    ... :39d2[1]
+    lda level_progress_table,y                                        ; 3b03: b9 ef 09    ... :39d2[1]
     and #$80                                                          ; 3b06: 29 80       ).  :39d5[1]
     beq c39e0                                                         ; 3b08: f0 07       ..  :39d7[1]
     dey                                                               ; 3b0a: 88          .   :39d9[1]
@@ -7517,7 +7520,7 @@ clear_128_bytes_at_l09ef
     lda #0                                                            ; 4088: a9 00       ..  :0ab7[5]
     tax                                                               ; 408a: aa          .   :0ab9[5]
 loop_c0aba
-    sta byte_per_level_table1,x                                       ; 408b: 9d ef 09    ... :0aba[5]
+    sta level_progress_table,x                                        ; 408b: 9d ef 09    ... :0aba[5]
     inx                                                               ; 408e: e8          .   :0abd[5]
     cpx #$80                                                          ; 408f: e0 80       ..  :0abe[5]
     bcc loop_c0aba                                                    ; 4091: 90 f8       ..  :0ac0[5]
@@ -7527,7 +7530,7 @@ something6_TODO
     lda #0                                                            ; 4094: a9 00       ..  :0ac3[5]
     tax                                                               ; 4096: aa          .   :0ac5[5]
 loop_c0ac6
-    eor byte_per_level_table1,x                                       ; 4097: 5d ef 09    ].. :0ac6[5]
+    eor level_progress_table,x                                        ; 4097: 5d ef 09    ].. :0ac6[5]
     inx                                                               ; 409a: e8          .   :0ac9[5]
     cpx #$80                                                          ; 409b: e0 80       ..  :0aca[5]
     bcc loop_c0ac6                                                    ; 409d: 90 f8       ..  :0acc[5]
@@ -7654,7 +7657,7 @@ wait_for_timingB_counter
 current_text_width
     !byte $12                                                         ; 4108: 12          .   :0409[2]
 
-save_or_restore_screen_under_dialog_box
+restore_screen_under_dialog_box
     jsr wait_for_timingB_counter                                      ; 4109: 20 00 04     .. :040a[2]
     lda which_dialog_is_active                                        ; 410c: a5 04       ..  :040d[2]
     beq c043a                                                         ; 410e: f0 29       .)  :040f[2]
@@ -7692,7 +7695,7 @@ vdu_goto_0_9
     lda #9                                                            ; 414d: a9 09       ..  :044e[2]
     jmp oswrch                                                        ; 414f: 4c ee ff    L.. :0450[2]   ; Write character 9
 
-selected_menu_item_changed
+remove_dialog
     lda which_dialog_is_active                                        ; 4152: a5 04       ..  :0453[2]
     beq return30                                                      ; 4154: f0 1c       ..  :0455[2]
 ; clear away the active dialog
@@ -8075,7 +8078,6 @@ pydis_end
 ;     l0041
 ;     l0042
 ;     l0044
-;     l0050
 ;     l0052
 ;     l0053
 ;     l0056
@@ -8148,7 +8150,6 @@ pydis_end
 ;     l3970
 ;     l3974
 ;     l3a8e
-;     l3add
 ;     l8000
 ;     l8008
 ;     lbe00
@@ -8994,6 +8995,9 @@ pydis_end
 }
 !if (spriteid_icon_background) != $01 {
     !error "Assertion failed: spriteid_icon_background == $01"
+}
+!if (spriteid_menu_item_completion_spell) != $21 {
+    !error "Assertion failed: spriteid_menu_item_completion_spell == $21"
 }
 !if (spriteid_monkey1) != $4e {
     !error "Assertion failed: spriteid_monkey1 == $4e"

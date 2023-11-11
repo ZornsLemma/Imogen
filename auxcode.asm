@@ -17,6 +17,7 @@ width_in_cells                              = $3c
 height_in_cells                             = $3d
 value_to_write_to_collision_map             = $3e
 game_area_screen_address_high               = $4c
+previous_room_index                         = $50
 previous_level                              = $51
 developer_mode_sideways_ram_is_set_up_flag  = $5b
 screen_address_low                          = $70
@@ -24,8 +25,8 @@ screen_address_high                         = $71
 counter                                     = $72
 screendump_data_byte                        = $73
 invert_screen_dump_flag                     = $74
-l040a                                       = $040a
-l0453                                       = $0453
+restore_screen_under_dialog_box             = $040a
+remove_dialog                               = $0453
 l09ef                                       = $09ef
 string_input_buffer                         = $0a90
 developer_flags                             = $1103
@@ -105,14 +106,14 @@ c53ce
     pha                                                               ; 53e7: 48          H
     tya                                                               ; 53e8: 98          .
     pha                                                               ; 53e9: 48          H
-    jsr l040a                                                         ; 53ea: 20 0a 04     ..
+    jsr restore_screen_under_dialog_box                               ; 53ea: 20 0a 04     ..
     lda #$0a                                                          ; 53ed: a9 0a       ..
     jsr oswrch                                                        ; 53ef: 20 ee ff     ..            ; Write character 10
     ldx #<accepted_encrypted_string                                   ; 53f2: a2 07       ..
     ldy #>accepted_encrypted_string                                   ; 53f4: a0 54       .T
     jsr l37f3                                                         ; 53f6: 20 f3 37     .7
     jsr l388d                                                         ; 53f9: 20 8d 38     .8
-    jsr l0453                                                         ; 53fc: 20 53 04     S.
+    jsr remove_dialog                                                 ; 53fc: 20 53 04     S.
     pla                                                               ; 53ff: 68          h
     tay                                                               ; 5400: a8          .
     pla                                                               ; 5401: 68          h
@@ -144,7 +145,7 @@ this_entry_doesnt_match
     eor #fixed_eor_key                                                ; 542b: 49 cb       I.
     bne c53ce                                                         ; 542d: d0 9f       ..
 ; None of the passwords in the table matched.
-    jsr l040a                                                         ; 542f: 20 0a 04     ..
+    jsr restore_screen_under_dialog_box                               ; 542f: 20 0a 04     ..
     lda #vdu_lf                                                       ; 5432: a9 0a       ..
     jsr oswrch                                                        ; 5434: 20 ee ff     ..            ; Write character 10
     ldx #<unknown_encrypted_string                                    ; 5437: a2 46       .F
@@ -502,8 +503,6 @@ pydis_end
 ;     c55d3
 ;     c5635
 ;     c564e
-;     l040a
-;     l0453
 ;     l09ef
 ;     l1766
 ;     l1966
