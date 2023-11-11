@@ -22,12 +22,12 @@ constant(28, "vdu_define_text_window")
 constant(31, "vdu_goto_xy")
 constant(127, "vdu_delete")
 
-constant(39, "screen_width_minus_one")
 
 constant(5, "osfile_read_catalogue_info")
 constant(0xff, "osfile_load")
 
 constant(320, "screen_width_in_pixels")
+constant(39, "screen_width_minus_one")
 constant(40, "characters_per_line")
 constant(40, "game_area_columns")
 constant(24, "game_area_rows")
@@ -117,6 +117,7 @@ substitute_labels = {
     },
 }
 
+# (Class SubstituteLabels is defined in common.py to implement the substitute labels)
 s = SubstituteLabels(substitute_labels)
 set_label_maker_hook(s.substitute_label_maker)
 
@@ -913,7 +914,6 @@ expr(0x3de7, "vdu_set_graphics_colour")
 
 entry(0x395e, "define_envelope")
 
-constant(39, "screen_width_minus_one")
 expr(0x3dc9, "screen_width_minus_one")
 
 # TODO: This code is currently disassembled using "sprite-oriented" labels - it's not a big deal in the short term as we already understand it and can just view this subroutine as a black box, but later on it would be good (even if it means using expr() on individual labels, though I'd hope the label maker hook can work round this) to give it better labels.
@@ -2019,8 +2019,21 @@ label(0x45, "eor_key") # TODO: Is this *always* $cb in practice?
 # TODO: Mention l0005 in name until we know why
 entry(0x3872, "flush_input_buffers_and_zero_l0005")
 
-# TODO: Not probing deeper as this may be sprite-related
-entry(0x474, "stash_data_pointed_to_by_l0076_at_530_maybe")
+entry(0x474, "remember_screen_memory_before_showing_dialog_box")
+comment(0x0474, "set screen addresses", inline=True)
+comment(0x0480, "set destination address")
+comment(0x0489, "set number of rows")
+label(0x048d, "copy_row_loop")
+label(0x0490, "copy_cells_loop")
+label(0x0492, "copy_cell_loop")
+comment(0x0499, "move destination to next cell along")
+comment(0x04a7, "move source to next cell along")
+label(0x0530, "cache_of_screen_memory_under_dialog")
+expr(0x0481, make_lo("cache_of_screen_memory_under_dialog"))
+expr(0x0485, make_hi("cache_of_screen_memory_under_dialog"))
+expr(0x0469, make_lo("cache_of_screen_memory_under_dialog"))
+expr(0x046d, make_hi("cache_of_screen_memory_under_dialog"))
+comment(0x04b8, "move to next screen row")
 
 
 comment(0x2bbd, """*************************************************************************************
@@ -2098,6 +2111,7 @@ decimal(0x1e3a)
 label(0x1e2d, "clip_x")
 decimal(0x1e3e)
 label(0x1e3d, "clip_y")
+label(0x1b64, "skip_writing_to_collision_map")
 entry(0x1b66, "get_screen_address_from_cell_xy")
 
 label(0x58c0, "toolbar_screen_address")
@@ -2107,7 +2121,36 @@ entry(0x37f3) #print_encrypted_string_at_yx_centred
 entry(0x37f9, "find_string_length_loop")
 expr(0x37fe, "vdu_cr")
 entry(0x3804, "string_length_in_y")
-label(0x409, "current_text_width")
+label(0x0409, "current_text_width")
+comment(0x040d, "check if a dialog box is already active")
+comment(0x0414, "Replace dialog box\nDon't write to collision map")
+label(0x043a, "no_existing_dialog_box_shown")
+decimal(0x0501)
+label(0x0515, "plot_vdu_bytes")
+label(0x0517, "plot_move_x_low")
+label(0x0518, "plot_move_x_high")
+word(0x0519)
+decimal(0x0519)
+comment(0x0519, "Y coordinate", inline=True)
+word(0x051d)
+word(0x051f)
+decimal(0x051d)
+decimal(0x051f)
+comment(0x0515, "MOVE absolute", inline=True)
+comment(0x051b, "DRAW relative", inline=True)
+comment(0x051d, "X coordinate", inline=True)
+comment(0x051f, "Y coordinate (-156)", inline=True)
+comment(0x0521, "DRAW absolute", inline=True)
+comment(0x0523, "X coordinate", inline=True)
+comment(0x0525, "Y coordinate", inline=True)
+word(0x0523)
+word(0x0525)
+decimal(0x0523)
+decimal(0x0525)
+label(0x04f9, "plot_loop")
+label(0x04b4, "move_to_next_row")
+label(0x04a4, "skip_high_byte")
+label(0x0505, "restore_screen_memory_after_dialog_box")
 
 go()
 

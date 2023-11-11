@@ -12,7 +12,7 @@ class SubstituteLabels():
             inv_dict = {v: k for k, v in dict.items()}
             self.inverse_labels[pair] = inv_dict
 
-            # also make labels lXXXX, which seems redundant, but changes the way the label_maker suggestions works
+            # HACK: also make labels lXXXX, which seems redundant, but changes the way the label_maker suggestions works
             for key in dict:
                 m = re.match("l([0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F])", key)
                 if m:
@@ -50,7 +50,7 @@ label(0x003e, "value_to_write_to_collision_map")
 
 label(0x1103, "developer_flags")
 label(0x005b, "developer_mode_sideways_ram_is_set_up_flag")
-label(0x040a, "show_or_restore_screen_under_dialog_box") # TODO: guesswork
+label(0x040a, "show_dialog_box") # TODO: guesswork
 label(0x0453, "remove_dialog")
 label(0x09ef, "level_progress_table")
 label(0x1766, "set_toolbar_and_gameplay_area_colours")
@@ -96,7 +96,7 @@ label(0x2be0, "remove_item_from_toolbar_menu")
 label(0x12bb, "something23_TODO")
 label(0x12da, "something24_TODO")
 label(0x1b90, "something26_TODO")
-label(0x1abb, "something51_TODO")
+label(0x1abb, "restore_rectangle_of_screen_memory")
 label(0x1f57, "something52_TODO")
 label(0x1db9, "something53_TODO")
 label(0x1e44, "write_value_to_a_rectangle_in_collision_map")

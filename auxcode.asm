@@ -25,7 +25,7 @@ screen_address_high                         = $71
 counter                                     = $72
 screendump_data_byte                        = $73
 invert_screen_dump_flag                     = $74
-show_or_restore_screen_under_dialog_box     = $040a
+show_dialog_box                             = $040a
 remove_dialog                               = $0453
 level_progress_table                        = $09ef
 string_input_buffer                         = $0a90
@@ -44,7 +44,7 @@ jmp_yx                                      = $1966
 something13_TODO                            = $1988
 something14_TODO                            = $1a10
 current_room_index                          = $1aba
-something51_TODO                            = $1abb
+restore_rectangle_of_screen_memory          = $1abb
 something26_TODO                            = $1b90
 something53_TODO                            = $1db9
 write_value_to_a_rectangle_in_collision_map = $1e44
@@ -105,7 +105,7 @@ check_password_loop
     pha                                                               ; 53e7: 48          H
     tya                                                               ; 53e8: 98          .
     pha                                                               ; 53e9: 48          H
-    jsr show_or_restore_screen_under_dialog_box                       ; 53ea: 20 0a 04     ..
+    jsr show_dialog_box                                               ; 53ea: 20 0a 04     ..
     lda #$0a                                                          ; 53ed: a9 0a       ..
     jsr oswrch                                                        ; 53ef: 20 ee ff     ..            ; Write character 10
     ldx #<accepted_encrypted_string                                   ; 53f2: a2 07       ..
@@ -144,7 +144,7 @@ this_entry_doesnt_match
     eor #fixed_eor_key                                                ; 542b: 49 cb       I.
     bne check_password_loop                                           ; 542d: d0 9f       ..
 ; None of the passwords in the table matched.
-    jsr show_or_restore_screen_under_dialog_box                       ; 542f: 20 0a 04     ..
+    jsr show_dialog_box                                               ; 542f: 20 0a 04     ..
     lda #vdu_lf                                                       ; 5432: a9 0a       ..
     jsr oswrch                                                        ; 5434: 20 ee ff     ..            ; Write character 10
     ldx #<unknown_encrypted_string                                    ; 5437: a2 46       .F

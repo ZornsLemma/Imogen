@@ -322,6 +322,7 @@ l012e                                       = $012e
 brkv                                        = $0202
 irq1v                                       = $0204
 first_byte_break_intercept                  = $0287
+cache_of_screen_memory_under_dialog         = $0530
 object_x_low                                = $0950
 object_x_low_old                            = $095b
 object_x_high                               = $0966
@@ -1476,7 +1477,7 @@ sub_c1728
     jsr oswrch                                                        ; 1860: 20 ee ff     .. :172f[1]   ; Write character 7
     lda #$12                                                          ; 1863: a9 12       ..  :1732[1]
     sta current_text_width                                            ; 1865: 8d 09 04    ... :1734[1]
-    jsr show_or_restore_screen_under_dialog_box                       ; 1868: 20 0a 04     .. :1737[1]
+    jsr show_dialog_box                                               ; 1868: 20 0a 04     .. :1737[1]
     lda #$0a                                                          ; 186b: a9 0a       ..  :173a[1]
     jsr oswrch                                                        ; 186d: 20 ee ff     .. :173c[1]   ; Write character 10
     ldx #<disk_error_message                                          ; 1870: a2 52       .R  :173f[1]
@@ -2011,7 +2012,7 @@ l1ab2
 current_room_index
     !byte 0                                                           ; 1beb: 00          .   :1aba[1]
 
-something51_TODO
+restore_rectangle_of_screen_memory
     pha                                                               ; 1bec: 48          H   :1abb[1]
     sty l007d                                                         ; 1bed: 84 7d       .}  :1abc[1]
     jsr clip_cells_to_write_to_collision_map                          ; 1bef: 20 17 1e     .. :1abe[1]
@@ -2108,9 +2109,9 @@ c1b59
     ldx address1_low                                                  ; 1c8a: a6 70       .p  :1b59[1]
     ldy address1_high                                                 ; 1c8c: a4 71       .q  :1b5b[1]
     lda value_to_write_to_collision_map                               ; 1c8e: a5 3e       .>  :1b5d[1]
-    bmi c1b64                                                         ; 1c90: 30 03       0.  :1b5f[1]
+    bmi skip_writing_to_collision_map                                 ; 1c90: 30 03       0.  :1b5f[1]
     jsr write_value_to_a_rectangle_in_collision_map                   ; 1c92: 20 44 1e     D. :1b61[1]
-c1b64
+skip_writing_to_collision_map
     pla                                                               ; 1c95: 68          h   :1b64[1]
     rts                                                               ; 1c96: 60          `   :1b65[1]
 
@@ -5829,7 +5830,7 @@ show_load_save_dialog
     lda which_dialog_is_active                                        ; 353a: a5 04       ..  :3409[1]
     bne c3428                                                         ; 353c: d0 1b       ..  :340b[1]
 c340d
-    jsr show_or_restore_screen_under_dialog_box                       ; 353e: 20 0a 04     .. :340d[1]
+    jsr show_dialog_box                                               ; 353e: 20 0a 04     .. :340d[1]
     lda #1                                                            ; 3541: a9 01       ..  :3410[1]
     sta which_dialog_is_active                                        ; 3543: 85 04       ..  :3412[1]
     ldx #<press_s_to_save_encrypted_string                            ; 3545: a2 2b       .+  :3414[1]
@@ -5882,7 +5883,7 @@ c346a
     bne return23                                                      ; 35ab: d0 1a       ..  :347a[1]
     dec l3497                                                         ; 35ad: ce 97 34    ..4 :347c[1]
 c347f
-    jsr show_or_restore_screen_under_dialog_box                       ; 35b0: 20 0a 04     .. :347f[1]
+    jsr show_dialog_box                                               ; 35b0: 20 0a 04     .. :347f[1]
     lda #2                                                            ; 35b3: a9 02       ..  :3482[1]
     sta which_dialog_is_active                                        ; 35b5: 85 04       ..  :3484[1]
     ldx #<enter_filename_message                                      ; 35b7: a2 98       ..  :3486[1]
@@ -5912,7 +5913,7 @@ loop_c34b2
     sta save_leaf_filename,y                                          ; 35e6: 99 db 34    ..4 :34b5[1]
     dey                                                               ; 35e9: 88          .   :34b8[1]
     bpl loop_c34b2                                                    ; 35ea: 10 f7       ..  :34b9[1]
-    jsr show_or_restore_screen_under_dialog_box                       ; 35ec: 20 0a 04     .. :34bb[1]
+    jsr show_dialog_box                                               ; 35ec: 20 0a 04     .. :34bb[1]
     lda #3                                                            ; 35ef: a9 03       ..  :34be[1]
     sta which_dialog_is_active                                        ; 35f1: 85 04       ..  :34c0[1]
     ldx #<which_drive_encrypted_string                                ; 35f3: a2 e3       ..  :34c2[1]
@@ -5952,7 +5953,7 @@ c3501
     adc #$0f                                                          ; 3645: 69 0f       i.  :3514[1]
 c3516
     sta save_drive_number                                             ; 3647: 8d d7 34    ..4 :3516[1]
-    jsr show_or_restore_screen_under_dialog_box                       ; 364a: 20 0a 04     .. :3519[1]
+    jsr show_dialog_box                                               ; 364a: 20 0a 04     .. :3519[1]
     lda #4                                                            ; 364d: a9 04       ..  :351c[1]
     sta which_dialog_is_active                                        ; 364f: 85 04       ..  :351e[1]
     ldx #<insert_save_disk_message                                    ; 3651: a2 35       .5  :3520[1]
@@ -5978,7 +5979,7 @@ c3557
     jsr inkey_0                                                       ; 3688: 20 7c 38     |8 :3557[1]
     cmp #vdu_cr                                                       ; 368b: c9 0d       ..  :355a[1]
     bne return24                                                      ; 368d: d0 d6       ..  :355c[1]
-    jsr show_or_restore_screen_under_dialog_box                       ; 368f: 20 0a 04     .. :355e[1]
+    jsr show_dialog_box                                               ; 368f: 20 0a 04     .. :355e[1]
     lda #vdu_lf                                                       ; 3692: a9 0a       ..  :3561[1]
     jsr oswrch                                                        ; 3694: 20 ee ff     .. :3563[1]   ; Write character 10
     ldx #<saving_message                                              ; 3697: a2 f7       ..  :3566[1]
@@ -6064,7 +6065,7 @@ insert_game_disk_message
     !byte $af, $a2, $b8, $a0, $c6                                     ; 3743: af a2 b8... ... :3612[1]
 
 prompt_user_to_insert_correct_disc
-    jsr show_or_restore_screen_under_dialog_box                       ; 3748: 20 0a 04     .. :3617[1]
+    jsr show_dialog_box                                               ; 3748: 20 0a 04     .. :3617[1]
     ldx #<insert_game_disk_message                                    ; 374b: a2 06       ..  :361a[1]
     ldy #>insert_game_disk_message                                    ; 374d: a0 36       .6  :361c[1]
     jsr print_encrypted_string_at_yx                                  ; 374f: 20 1c 38     .8 :361e[1]
@@ -6085,7 +6086,7 @@ show_password_entry_dialog
     lda which_dialog_is_active                                        ; 376c: a5 04       ..  :363b[1]
     bne c3652                                                         ; 376e: d0 13       ..  :363d[1]
 c363f
-    jsr show_or_restore_screen_under_dialog_box                       ; 3770: 20 0a 04     .. :363f[1]
+    jsr show_dialog_box                                               ; 3770: 20 0a 04     .. :363f[1]
     ldx #<enter_password_message                                      ; 3773: a2 55       .U  :3642[1]
     ldy #>enter_password_message                                      ; 3775: a0 36       .6  :3644[1]
     jsr print_encrypted_string_at_yx                                  ; 3777: 20 1c 38     .8 :3646[1]
@@ -6278,7 +6279,7 @@ show_level_info_dialog
     jmp remove_dialog                                                 ; 38bc: 4c 53 04    LS. :378b[1]
 
 c378e
-    jsr show_or_restore_screen_under_dialog_box                       ; 38bf: 20 0a 04     .. :378e[1]
+    jsr show_dialog_box                                               ; 38bf: 20 0a 04     .. :378e[1]
     lda #1                                                            ; 38c2: a9 01       ..  :3791[1]
     sta which_dialog_is_active                                        ; 38c4: 85 04       ..  :3793[1]
     ldx #<section_message                                             ; 38c6: a2 b1       ..  :3795[1]
@@ -6297,7 +6298,7 @@ section_message
     !byte $98, $ae, $a8, $bf, $a2, $a4, $a5, $eb, $c6                 ; 38e2: 98 ae a8... ... :37b1[1]
 
 c37ba
-    jsr show_or_restore_screen_under_dialog_box                       ; 38eb: 20 0a 04     .. :37ba[1]
+    jsr show_dialog_box                                               ; 38eb: 20 0a 04     .. :37ba[1]
     lda #2                                                            ; 38ee: a9 02       ..  :37bd[1]
     sta which_dialog_is_active                                        ; 38f0: 85 04       ..  :37bf[1]
     ldx #first_level_letter                                           ; 38f2: a2 41       .A  :37c1[1]
@@ -7660,11 +7661,14 @@ wait_for_timingB_counter
 current_text_width
     !byte $12                                                         ; 4108: 12          .   :0409[2]
 
-show_or_restore_screen_under_dialog_box
+show_dialog_box
     jsr wait_for_timingB_counter                                      ; 4109: 20 00 04     .. :040a[2]
+; check if a dialog box is already active
     lda which_dialog_is_active                                        ; 410c: a5 04       ..  :040d[2]
-    beq c043a                                                         ; 410e: f0 29       .)  :040f[2]
+    beq no_existing_dialog_box_shown                                  ; 410e: f0 29       .)  :040f[2]
     jsr turn_cursor_off                                               ; 4110: 20 63 38     c8 :0411[2]
+; Replace dialog box
+; Don't write to collision map
     ldx #$ff                                                          ; 4113: a2 ff       ..  :0414[2]
     stx value_to_write_to_collision_map                               ; 4115: 86 3e       .>  :0416[2]
     inx                                                               ; 4117: e8          .   :0418[2]
@@ -7682,13 +7686,13 @@ show_or_restore_screen_under_dialog_box
     sta width_in_cells                                                ; 412d: 85 3c       .<  :042e[2]
     lda #3                                                            ; 412f: a9 03       ..  :0430[2]
     sta height_in_cells                                               ; 4131: 85 3d       .=  :0432[2]
-    jsr something51_TODO                                              ; 4133: 20 bb 1a     .. :0434[2]
+    jsr restore_rectangle_of_screen_memory                            ; 4133: 20 bb 1a     .. :0434[2]
     jmp vdu_goto_0_9                                                  ; 4136: 4c 44 04    LD. :0437[2]
 
-c043a
+no_existing_dialog_box_shown
     lda #$ff                                                          ; 4139: a9 ff       ..  :043a[2]
     sta which_dialog_is_active                                        ; 413b: 85 04       ..  :043c[2]
-    jsr stash_data_pointed_to_by_l0076_at_530_maybe                   ; 413d: 20 74 04     t. :043e[2]
+    jsr remember_screen_memory_before_showing_dialog_box              ; 413d: 20 74 04     t. :043e[2]
     jsr sub_c04cb                                                     ; 4140: 20 cb 04     .. :0441[2]
 vdu_goto_0_9
     lda #vdu_goto_xy                                                  ; 4143: a9 1f       ..  :0444[2]
@@ -7710,57 +7714,62 @@ remove_dialog
     inx                                                               ; 4162: e8          .   :0463[2]
     stx which_dialog_is_active                                        ; 4163: 86 04       ..  :0464[2]
     stx l003f                                                         ; 4165: 86 3f       .?  :0466[2]
-    lda #$30 ; '0'                                                    ; 4167: a9 30       .0  :0468[2]
+    lda #<cache_of_screen_memory_under_dialog                         ; 4167: a9 30       .0  :0468[2]
     sta l0040                                                         ; 4169: 85 40       .@  :046a[2]
-    lda #5                                                            ; 416b: a9 05       ..  :046c[2]
+    lda #>cache_of_screen_memory_under_dialog                         ; 416b: a9 05       ..  :046c[2]
     sta l0041                                                         ; 416d: 85 41       .A  :046e[2]
-    jmp c0505                                                         ; 416f: 4c 05 05    L.. :0470[2]
+    jmp restore_screen_memory_after_dialog_box                        ; 416f: 4c 05 05    L.. :0470[2]
 
 return30
     rts                                                               ; 4172: 60          `   :0473[2]
 
-stash_data_pointed_to_by_l0076_at_530_maybe
-    lda #0                                                            ; 4173: a9 00       ..  :0474[2]
+remember_screen_memory_before_showing_dialog_box
+    lda #0                                                            ; 4173: a9 00       ..  :0474[2]   ; set screen addresses
     sta l0074                                                         ; 4175: 85 74       .t  :0476[2]
     sta l0076                                                         ; 4177: 85 76       .v  :0478[2]
     lda screen_base_address_high                                      ; 4179: a5 4c       .L  :047a[2]
     sta l0075                                                         ; 417b: 85 75       .u  :047c[2]
     sta l0077                                                         ; 417d: 85 77       .w  :047e[2]
-    lda #$30 ; '0'                                                    ; 417f: a9 30       .0  :0480[2]
+; set destination address
+    lda #<cache_of_screen_memory_under_dialog                         ; 417f: a9 30       .0  :0480[2]
     sta l007a                                                         ; 4181: 85 7a       .z  :0482[2]
-    lda #5                                                            ; 4183: a9 05       ..  :0484[2]
+    lda #>cache_of_screen_memory_under_dialog                         ; 4183: a9 05       ..  :0484[2]
     sta l007b                                                         ; 4185: 85 7b       .{  :0486[2]
     clc                                                               ; 4187: 18          .   :0488[2]
+; set number of rows
     lda #5                                                            ; 4188: a9 05       ..  :0489[2]
     sta l0073                                                         ; 418a: 85 73       .s  :048b[2]
-c048d
+copy_row_loop
     ldx current_text_width                                            ; 418c: ae 09 04    ... :048d[2]
-c0490
+copy_cells_loop
     ldy #7                                                            ; 418f: a0 07       ..  :0490[2]
-loop_c0492
+copy_cell_loop
     lda (l0076),y                                                     ; 4191: b1 76       .v  :0492[2]
     sta (l007a),y                                                     ; 4193: 91 7a       .z  :0494[2]
     dey                                                               ; 4195: 88          .   :0496[2]
-    bpl loop_c0492                                                    ; 4196: 10 f9       ..  :0497[2]
+    bpl copy_cell_loop                                                ; 4196: 10 f9       ..  :0497[2]
+; move destination to next cell along
     lda l007a                                                         ; 4198: a5 7a       .z  :0499[2]
     adc #8                                                            ; 419a: 69 08       i.  :049b[2]
     sta l007a                                                         ; 419c: 85 7a       .z  :049d[2]
-    bcc c04a4                                                         ; 419e: 90 03       ..  :049f[2]
+    bcc skip_high_byte                                                ; 419e: 90 03       ..  :049f[2]
     inc l007b                                                         ; 41a0: e6 7b       .{  :04a1[2]
     clc                                                               ; 41a2: 18          .   :04a3[2]
-c04a4
+skip_high_byte
     dex                                                               ; 41a3: ca          .   :04a4[2]
-    beq c04b4                                                         ; 41a4: f0 0d       ..  :04a5[2]
+    beq move_to_next_row                                              ; 41a4: f0 0d       ..  :04a5[2]
+; move source to next cell along
     lda l0076                                                         ; 41a6: a5 76       .v  :04a7[2]
     adc #8                                                            ; 41a8: 69 08       i.  :04a9[2]
     sta l0076                                                         ; 41aa: 85 76       .v  :04ab[2]
-    bcc c0490                                                         ; 41ac: 90 e1       ..  :04ad[2]
+    bcc copy_cells_loop                                               ; 41ac: 90 e1       ..  :04ad[2]
     inc l0077                                                         ; 41ae: e6 77       .w  :04af[2]
     clc                                                               ; 41b0: 18          .   :04b1[2]
-    bcc c0490                                                         ; 41b1: 90 dc       ..  :04b2[2]
-c04b4
+    bcc copy_cells_loop                                               ; 41b1: 90 dc       ..  :04b2[2]
+move_to_next_row
     dec l0073                                                         ; 41b3: c6 73       .s  :04b4[2]
     beq return31                                                      ; 41b5: f0 12       ..  :04b6[2]
+; move to next screen row
     lda l0074                                                         ; 41b7: a5 74       .t  :04b8[2]
     adc #$40 ; '@'                                                    ; 41b9: 69 40       i@  :04ba[2]
     sta l0074                                                         ; 41bb: 85 74       .t  :04bc[2]
@@ -7769,7 +7778,7 @@ c04b4
     adc #1                                                            ; 41c1: 69 01       i.  :04c2[2]
     sta l0075                                                         ; 41c3: 85 75       .u  :04c4[2]
     sta l0077                                                         ; 41c5: 85 77       .w  :04c6[2]
-    bcc c048d                                                         ; 41c7: 90 c3       ..  :04c8[2]
+    bcc copy_row_loop                                                 ; 41c7: 90 c3       ..  :04c8[2]
 return31
     rts                                                               ; 41c9: 60          `   :04ca[2]
 
@@ -7778,14 +7787,14 @@ sub_c04cb
     stx value_to_write_to_collision_map                               ; 41cc: 86 3e       .>  :04cd[2]
     inx                                                               ; 41ce: e8          .   :04cf[2]
     stx l003f                                                         ; 41cf: 86 3f       .?  :04d0[2]
-    stx l0518                                                         ; 41d1: 8e 18 05    ... :04d2[2]
+    stx plot_move_x_high                                              ; 41d1: 8e 18 05    ... :04d2[2]
     lda #$a9                                                          ; 41d4: a9 a9       ..  :04d5[2]
     sta l0040                                                         ; 41d6: 85 40       .@  :04d7[2]
     lda #$0a                                                          ; 41d8: a9 0a       ..  :04d9[2]
     sta l0041                                                         ; 41da: 85 41       .A  :04db[2]
     inx                                                               ; 41dc: e8          .   :04dd[2]
     stx l0042                                                         ; 41dd: 86 42       .B  :04de[2]
-    jsr c0505                                                         ; 41df: 20 05 05     .. :04e0[2]
+    jsr restore_screen_memory_after_dialog_box                        ; 41df: 20 05 05     .. :04e0[2]
     lda current_text_width                                            ; 41e2: ad 09 04    ... :04e3[2]
     asl                                                               ; 41e5: 0a          .   :04e6[2]
     asl                                                               ; 41e6: 0a          .   :04e7[2]
@@ -7793,46 +7802,46 @@ sub_c04cb
     sec                                                               ; 41e8: 38          8   :04e9[2]
     sbc #1                                                            ; 41e9: e9 01       ..  :04ea[2]
     asl                                                               ; 41eb: 0a          .   :04ec[2]
-    rol l0518                                                         ; 41ec: 2e 18 05    ... :04ed[2]
+    rol plot_move_x_high                                              ; 41ec: 2e 18 05    ... :04ed[2]
     asl                                                               ; 41ef: 0a          .   :04f0[2]
-    sta l0517                                                         ; 41f0: 8d 17 05    ... :04f1[2]
-    rol l0518                                                         ; 41f3: 2e 18 05    ... :04f4[2]
+    sta plot_move_x_low                                               ; 41f0: 8d 17 05    ... :04f1[2]
+    rol plot_move_x_high                                              ; 41f3: 2e 18 05    ... :04f4[2]
     ldy #0                                                            ; 41f6: a0 00       ..  :04f7[2]
-loop_c04f9
-    lda l0515,y                                                       ; 41f8: b9 15 05    ... :04f9[2]
+plot_loop
+    lda plot_vdu_bytes,y                                              ; 41f8: b9 15 05    ... :04f9[2]
     jsr oswrch                                                        ; 41fb: 20 ee ff     .. :04fc[2]   ; Write character
     iny                                                               ; 41fe: c8          .   :04ff[2]
-    cpy #$12                                                          ; 41ff: c0 12       ..  :0500[2]
-    bcc loop_c04f9                                                    ; 4201: 90 f5       ..  :0502[2]
+    cpy #18                                                           ; 41ff: c0 12       ..  :0500[2]
+    bcc plot_loop                                                     ; 4201: 90 f5       ..  :0502[2]
     rts                                                               ; 4203: 60          `   :0504[2]
 
-c0505
+restore_screen_memory_after_dialog_box
     ldx #0                                                            ; 4204: a2 00       ..  :0505[2]
     ldy #0                                                            ; 4206: a0 00       ..  :0507[2]
     lda current_text_width                                            ; 4208: ad 09 04    ... :0509[2]
     sta width_in_cells                                                ; 420b: 85 3c       .<  :050c[2]
     lda #5                                                            ; 420d: a9 05       ..  :050e[2]
     sta height_in_cells                                               ; 420f: 85 3d       .=  :0510[2]
-    jmp something51_TODO                                              ; 4211: 4c bb 1a    L.. :0512[2]
+    jmp restore_rectangle_of_screen_memory                            ; 4211: 4c bb 1a    L.. :0512[2]
 
-l0515
-    !byte $19,   4                                                    ; 4214: 19 04       ..  :0515[2]
-l0517
+plot_vdu_bytes
+    !byte $19,   4                                                    ; 4214: 19 04       ..  :0515[2]   ; MOVE absolute
+plot_move_x_low
     !byte 0                                                           ; 4216: 00          .   :0517[2]
-l0518
-    !byte   0, $fc,   2, $19,   1,   0,   0, $64, $ff, $19,   5,   0  ; 4217: 00 fc 02... ... :0518[2]
-    !byte   0, $60,   2                                               ; 4223: 00 60 02    .`. :0524[2]
+plot_move_x_high
+    !byte 0                                                           ; 4217: 00          .   :0518[2]
+    !word 764                                                         ; 4218: fc 02       ..  :0519[2]   ; Y coordinate
+    !byte $19,   1                                                    ; 421a: 19 01       ..  :051b[2]   ; DRAW relative
+    !word 0                                                           ; 421c: 00 00       ..  :051d[2]   ; X coordinate
+    !word 65380                                                       ; 421e: 64 ff       d.  :051f[2]   ; Y coordinate (-156)
+    !byte $19,   5                                                    ; 4220: 19 05       ..  :0521[2]   ; DRAW absolute
+    !word 0                                                           ; 4222: 00 00       ..  :0523[2]   ; X coordinate
+    !word 608                                                         ; 4224: 60 02       `.  :0525[2]   ; Y coordinate
 }
 
 pydis_end
 
 ; Automatically generated labels:
-;     c043a
-;     c048d
-;     c0490
-;     c04a4
-;     c04b4
-;     c0505
 ;     c0ae6
 ;     c11f8
 ;     c1209
@@ -7862,7 +7871,6 @@ pydis_end
 ;     c1b28
 ;     c1b41
 ;     c1b59
-;     c1b64
 ;     c1b7e
 ;     c1b8d
 ;     c1b96
@@ -8111,9 +8119,6 @@ pydis_end
 ;     l012c
 ;     l012d
 ;     l012e
-;     l0515
-;     l0517
-;     l0518
 ;     l09eb
 ;     l0b00
 ;     l1a0f
@@ -8156,8 +8161,6 @@ pydis_end
 ;     l8008
 ;     lbe00
 ;     lbf00
-;     loop_c0492
-;     loop_c04f9
 ;     loop_c0aba
 ;     loop_c0ac6
 ;     loop_c190b
@@ -8274,6 +8277,9 @@ pydis_end
 }
 !if (<brk_handler) != $d3 {
     !error "Assertion failed: <brk_handler == $d3"
+}
+!if (<cache_of_screen_memory_under_dialog) != $30 {
+    !error "Assertion failed: <cache_of_screen_memory_under_dialog == $30"
 }
 !if (<cat_animation1) != $00 {
     !error "Assertion failed: <cat_animation1 == $00"
@@ -8463,6 +8469,9 @@ pydis_end
 }
 !if (>brk_handler) != $16 {
     !error "Assertion failed: >brk_handler == $16"
+}
+!if (>cache_of_screen_memory_under_dialog) != $05 {
+    !error "Assertion failed: >cache_of_screen_memory_under_dialog == $05"
 }
 !if (>cat_animation1) != $2f {
     !error "Assertion failed: >cat_animation1 == $2f"

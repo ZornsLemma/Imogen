@@ -22,7 +22,7 @@ previous_level                              = $51
 l0052                                       = $52
 developer_mode_sideways_ram_is_set_up_flag  = $5b
 l0070                                       = $70
-show_or_restore_screen_under_dialog_box     = $040a
+show_dialog_box                             = $040a
 remove_dialog                               = $0453
 level_thing_2_data                          = $0709
 level_thing_4_data                          = $0714
@@ -67,7 +67,7 @@ jmp_yx                                      = $1966
 something13_TODO                            = $1988
 something14_TODO                            = $1a10
 current_room_index                          = $1aba
-something51_TODO                            = $1abb
+restore_rectangle_of_screen_memory          = $1abb
 something26_TODO                            = $1b90
 something53_TODO                            = $1db9
 write_value_to_a_rectangle_in_collision_map = $1e44
@@ -176,42 +176,42 @@ level_thing_1_code
     sta width_in_cells                                                ; 3b2f: 85 3c       .<
     lda #2                                                            ; 3b31: a9 02       ..
     sta height_in_cells                                               ; 3b33: 85 3d       .=
-    jsr something51_TODO                                              ; 3b35: 20 bb 1a     ..
+    jsr restore_rectangle_of_screen_memory                            ; 3b35: 20 bb 1a     ..
     ldy #2                                                            ; 3b38: a0 02       ..
     lda #4                                                            ; 3b3a: a9 04       ..
     sta width_in_cells                                                ; 3b3c: 85 3c       .<
     dec height_in_cells                                               ; 3b3e: c6 3d       .=
-    jsr something51_TODO                                              ; 3b40: 20 bb 1a     ..
+    jsr restore_rectangle_of_screen_memory                            ; 3b40: 20 bb 1a     ..
     iny                                                               ; 3b43: c8          .
     dec width_in_cells                                                ; 3b44: c6 3c       .<
     lda #$13                                                          ; 3b46: a9 13       ..
     sta height_in_cells                                               ; 3b48: 85 3d       .=
-    jsr something51_TODO                                              ; 3b4a: 20 bb 1a     ..
+    jsr restore_rectangle_of_screen_memory                            ; 3b4a: 20 bb 1a     ..
     ldy #$16                                                          ; 3b4d: a0 16       ..
     lda #$ff                                                          ; 3b4f: a9 ff       ..
     sta width_in_cells                                                ; 3b51: 85 3c       .<
-    jsr something51_TODO                                              ; 3b53: 20 bb 1a     ..
+    jsr restore_rectangle_of_screen_memory                            ; 3b53: 20 bb 1a     ..
     ldx #$22 ; '"'                                                    ; 3b56: a2 22       ."
     ldy #7                                                            ; 3b58: a0 07       ..
     lda #6                                                            ; 3b5a: a9 06       ..
     sta width_in_cells                                                ; 3b5c: 85 3c       .<
     lda #2                                                            ; 3b5e: a9 02       ..
     sta height_in_cells                                               ; 3b60: 85 3d       .=
-    jsr something51_TODO                                              ; 3b62: 20 bb 1a     ..
+    jsr restore_rectangle_of_screen_memory                            ; 3b62: 20 bb 1a     ..
     ldx #$25 ; '%'                                                    ; 3b65: a2 25       .%
     ldy #9                                                            ; 3b67: a0 09       ..
     lda #$0d                                                          ; 3b69: a9 0d       ..
     sta height_in_cells                                               ; 3b6b: 85 3d       .=
-    jsr something51_TODO                                              ; 3b6d: 20 bb 1a     ..
+    jsr restore_rectangle_of_screen_memory                            ; 3b6d: 20 bb 1a     ..
     ldx #$0e                                                          ; 3b70: a2 0e       ..
     ldy #$0b                                                          ; 3b72: a0 0b       ..
     lda #3                                                            ; 3b74: a9 03       ..
     sta width_in_cells                                                ; 3b76: 85 3c       .<
     lda #2                                                            ; 3b78: a9 02       ..
     sta height_in_cells                                               ; 3b7a: 85 3d       .=
-    jsr something51_TODO                                              ; 3b7c: 20 bb 1a     ..
+    jsr restore_rectangle_of_screen_memory                            ; 3b7c: 20 bb 1a     ..
     ldx #$18                                                          ; 3b7f: a2 18       ..
-    jsr something51_TODO                                              ; 3b81: 20 bb 1a     ..
+    jsr restore_rectangle_of_screen_memory                            ; 3b81: 20 bb 1a     ..
     jsr something26_TODO                                              ; 3b84: 20 90 1b     ..
     lda #3                                                            ; 3b87: a9 03       ..
     sta width_in_cells                                                ; 3b89: 85 3c       .<
@@ -452,47 +452,47 @@ level_thing_2_code
     sta width_in_cells                                                ; 3d45: 85 3c       .<
     lda #2                                                            ; 3d47: a9 02       ..
     sta height_in_cells                                               ; 3d49: 85 3d       .=
-    jsr something51_TODO                                              ; 3d4b: 20 bb 1a     ..
+    jsr restore_rectangle_of_screen_memory                            ; 3d4b: 20 bb 1a     ..
     ldy #7                                                            ; 3d4e: a0 07       ..
     lda #$11                                                          ; 3d50: a9 11       ..
     sta width_in_cells                                                ; 3d52: 85 3c       .<
-    jsr something51_TODO                                              ; 3d54: 20 bb 1a     ..
+    jsr restore_rectangle_of_screen_memory                            ; 3d54: 20 bb 1a     ..
     ldx #$17                                                          ; 3d57: a2 17       ..
-    jsr something51_TODO                                              ; 3d59: 20 bb 1a     ..
+    jsr restore_rectangle_of_screen_memory                            ; 3d59: 20 bb 1a     ..
     ldx #0                                                            ; 3d5c: a2 00       ..
     ldy #$16                                                          ; 3d5e: a0 16       ..
-    jsr something51_TODO                                              ; 3d60: 20 bb 1a     ..
+    jsr restore_rectangle_of_screen_memory                            ; 3d60: 20 bb 1a     ..
     ldx #$17                                                          ; 3d63: a2 17       ..
-    jsr something51_TODO                                              ; 3d65: 20 bb 1a     ..
+    jsr restore_rectangle_of_screen_memory                            ; 3d65: 20 bb 1a     ..
     ldx #0                                                            ; 3d68: a2 00       ..
     ldy #9                                                            ; 3d6a: a0 09       ..
     lda #4                                                            ; 3d6c: a9 04       ..
     sta width_in_cells                                                ; 3d6e: 85 3c       .<
     dec height_in_cells                                               ; 3d70: c6 3d       .=
-    jsr something51_TODO                                              ; 3d72: 20 bb 1a     ..
+    jsr restore_rectangle_of_screen_memory                            ; 3d72: 20 bb 1a     ..
     ldx #$0d                                                          ; 3d75: a2 0d       ..
-    jsr something51_TODO                                              ; 3d77: 20 bb 1a     ..
+    jsr restore_rectangle_of_screen_memory                            ; 3d77: 20 bb 1a     ..
     ldx #$17                                                          ; 3d7a: a2 17       ..
-    jsr something51_TODO                                              ; 3d7c: 20 bb 1a     ..
+    jsr restore_rectangle_of_screen_memory                            ; 3d7c: 20 bb 1a     ..
     ldx #$24 ; '$'                                                    ; 3d7f: a2 24       .$
-    jsr something51_TODO                                              ; 3d81: 20 bb 1a     ..
+    jsr restore_rectangle_of_screen_memory                            ; 3d81: 20 bb 1a     ..
     ldx #0                                                            ; 3d84: a2 00       ..
     iny                                                               ; 3d86: c8          .
     dec width_in_cells                                                ; 3d87: c6 3c       .<
     lda #$0c                                                          ; 3d89: a9 0c       ..
     sta height_in_cells                                               ; 3d8b: 85 3d       .=
-    jsr something51_TODO                                              ; 3d8d: 20 bb 1a     ..
+    jsr restore_rectangle_of_screen_memory                            ; 3d8d: 20 bb 1a     ..
     ldx #$0e                                                          ; 3d90: a2 0e       ..
-    jsr something51_TODO                                              ; 3d92: 20 bb 1a     ..
+    jsr restore_rectangle_of_screen_memory                            ; 3d92: 20 bb 1a     ..
     ldx #$17                                                          ; 3d95: a2 17       ..
-    jsr something51_TODO                                              ; 3d97: 20 bb 1a     ..
+    jsr restore_rectangle_of_screen_memory                            ; 3d97: 20 bb 1a     ..
     ldx #$25 ; '%'                                                    ; 3d9a: a2 25       .%
     lda #3                                                            ; 3d9c: a9 03       ..
     sta height_in_cells                                               ; 3d9e: 85 3d       .=
-    jsr something51_TODO                                              ; 3da0: 20 bb 1a     ..
+    jsr restore_rectangle_of_screen_memory                            ; 3da0: 20 bb 1a     ..
     ldy #$12                                                          ; 3da3: a0 12       ..
     inc height_in_cells                                               ; 3da5: e6 3d       .=
-    jsr something51_TODO                                              ; 3da7: 20 bb 1a     ..
+    jsr restore_rectangle_of_screen_memory                            ; 3da7: 20 bb 1a     ..
     jsr something26_TODO                                              ; 3daa: 20 90 1b     ..
     lda #3                                                            ; 3dad: a9 03       ..
     sta width_in_cells                                                ; 3daf: 85 3c       .<
@@ -769,19 +769,19 @@ some_code2
     sta width_in_cells                                                ; 3f95: 85 3c       .<
     lda #1                                                            ; 3f97: a9 01       ..
     sta height_in_cells                                               ; 3f99: 85 3d       .=
-    jsr something51_TODO                                              ; 3f9b: 20 bb 1a     ..
+    jsr restore_rectangle_of_screen_memory                            ; 3f9b: 20 bb 1a     ..
     dex                                                               ; 3f9e: ca          .
     iny                                                               ; 3f9f: c8          .
     lda #7                                                            ; 3fa0: a9 07       ..
     sta width_in_cells                                                ; 3fa2: 85 3c       .<
-    jsr something51_TODO                                              ; 3fa4: 20 bb 1a     ..
+    jsr restore_rectangle_of_screen_memory                            ; 3fa4: 20 bb 1a     ..
     dex                                                               ; 3fa7: ca          .
     iny                                                               ; 3fa8: c8          .
     lda #9                                                            ; 3fa9: a9 09       ..
     sta width_in_cells                                                ; 3fab: 85 3c       .<
     lda #5                                                            ; 3fad: a9 05       ..
     sta height_in_cells                                               ; 3faf: 85 3d       .=
-    jsr something51_TODO                                              ; 3fb1: 20 bb 1a     ..
+    jsr restore_rectangle_of_screen_memory                            ; 3fb1: 20 bb 1a     ..
     inx                                                               ; 3fb4: e8          .
     tya                                                               ; 3fb5: 98          .
     clc                                                               ; 3fb6: 18          .
@@ -791,12 +791,12 @@ some_code2
     sta width_in_cells                                                ; 3fbc: 85 3c       .<
     lda #1                                                            ; 3fbe: a9 01       ..
     sta height_in_cells                                               ; 3fc0: 85 3d       .=
-    jsr something51_TODO                                              ; 3fc2: 20 bb 1a     ..
+    jsr restore_rectangle_of_screen_memory                            ; 3fc2: 20 bb 1a     ..
     inx                                                               ; 3fc5: e8          .
     iny                                                               ; 3fc6: c8          .
     lda #5                                                            ; 3fc7: a9 05       ..
     sta width_in_cells                                                ; 3fc9: 85 3c       .<
-    jsr something51_TODO                                              ; 3fcb: 20 bb 1a     ..
+    jsr restore_rectangle_of_screen_memory                            ; 3fcb: 20 bb 1a     ..
     ldx l3fd5                                                         ; 3fce: ae d5 3f    ..?
     ldy l3fd6                                                         ; 3fd1: ac d6 3f    ..?
     rts                                                               ; 3fd4: 60          `
@@ -817,7 +817,7 @@ level_thing_3_code
     lda #$ff                                                          ; 3fdd: a9 ff       ..
     sta width_in_cells                                                ; 3fdf: 85 3c       .<
     sta height_in_cells                                               ; 3fe1: 85 3d       .=
-    jsr something51_TODO                                              ; 3fe3: 20 bb 1a     ..
+    jsr restore_rectangle_of_screen_memory                            ; 3fe3: 20 bb 1a     ..
     lda #$a9                                                          ; 3fe6: a9 a9       ..
     sta l0040                                                         ; 3fe8: 85 40       .@
     lda #$0a                                                          ; 3fea: a9 0a       ..
@@ -841,23 +841,23 @@ level_thing_3_code
     sta width_in_cells                                                ; 4012: 85 3c       .<
     lda #4                                                            ; 4014: a9 04       ..
     sta height_in_cells                                               ; 4016: 85 3d       .=
-    jsr something51_TODO                                              ; 4018: 20 bb 1a     ..
+    jsr restore_rectangle_of_screen_memory                            ; 4018: 20 bb 1a     ..
     ldx #$0c                                                          ; 401b: a2 0c       ..
     ldy #4                                                            ; 401d: a0 04       ..
     lda #$10                                                          ; 401f: a9 10       ..
     sta width_in_cells                                                ; 4021: 85 3c       .<
     lda #5                                                            ; 4023: a9 05       ..
     sta height_in_cells                                               ; 4025: 85 3d       .=
-    jsr something51_TODO                                              ; 4027: 20 bb 1a     ..
+    jsr restore_rectangle_of_screen_memory                            ; 4027: 20 bb 1a     ..
     ldy #$0f                                                          ; 402a: a0 0f       ..
-    jsr something51_TODO                                              ; 402c: 20 bb 1a     ..
+    jsr restore_rectangle_of_screen_memory                            ; 402c: 20 bb 1a     ..
     ldx #$1e                                                          ; 402f: a2 1e       ..
     ldy #$0b                                                          ; 4031: a0 0b       ..
     lda #5                                                            ; 4033: a9 05       ..
     sta width_in_cells                                                ; 4035: 85 3c       .<
     lda #2                                                            ; 4037: a9 02       ..
     sta height_in_cells                                               ; 4039: 85 3d       .=
-    jsr something51_TODO                                              ; 403b: 20 bb 1a     ..
+    jsr restore_rectangle_of_screen_memory                            ; 403b: 20 bb 1a     ..
     jsr something26_TODO                                              ; 403e: 20 90 1b     ..
     jsr something23_TODO                                              ; 4041: 20 bb 12     ..
 ; $4044 referenced 1 time by $4049
@@ -1149,59 +1149,59 @@ level_thing_4_code
     sta width_in_cells                                                ; 4255: 85 3c       .<
     lda #2                                                            ; 4257: a9 02       ..
     sta height_in_cells                                               ; 4259: 85 3d       .=
-    jsr something51_TODO                                              ; 425b: 20 bb 1a     ..
+    jsr restore_rectangle_of_screen_memory                            ; 425b: 20 bb 1a     ..
     ldx #$24 ; '$'                                                    ; 425e: a2 24       .$
     ldy #2                                                            ; 4260: a0 02       ..
     dec height_in_cells                                               ; 4262: c6 3d       .=
-    jsr something51_TODO                                              ; 4264: 20 bb 1a     ..
+    jsr restore_rectangle_of_screen_memory                            ; 4264: 20 bb 1a     ..
     inx                                                               ; 4267: e8          .
     iny                                                               ; 4268: c8          .
     lda #$0f                                                          ; 4269: a9 0f       ..
     sta height_in_cells                                               ; 426b: 85 3d       .=
-    jsr something51_TODO                                              ; 426d: 20 bb 1a     ..
+    jsr restore_rectangle_of_screen_memory                            ; 426d: 20 bb 1a     ..
     ldx #0                                                            ; 4270: a2 00       ..
     ldy #$12                                                          ; 4272: a0 12       ..
     lda #5                                                            ; 4274: a9 05       ..
     sta width_in_cells                                                ; 4276: 85 3c       .<
     lda #3                                                            ; 4278: a9 03       ..
     sta height_in_cells                                               ; 427a: 85 3d       .=
-    jsr something51_TODO                                              ; 427c: 20 bb 1a     ..
+    jsr restore_rectangle_of_screen_memory                            ; 427c: 20 bb 1a     ..
     ldx #$1e                                                          ; 427f: a2 1e       ..
     lda #$ff                                                          ; 4281: a9 ff       ..
     sta width_in_cells                                                ; 4283: 85 3c       .<
-    jsr something51_TODO                                              ; 4285: 20 bb 1a     ..
+    jsr restore_rectangle_of_screen_memory                            ; 4285: 20 bb 1a     ..
     ldx #0                                                            ; 4288: a2 00       ..
     ldy #$15                                                          ; 428a: a0 15       ..
     lda #$0a                                                          ; 428c: a9 0a       ..
     sta width_in_cells                                                ; 428e: 85 3c       .<
     lda #1                                                            ; 4290: a9 01       ..
     sta height_in_cells                                               ; 4292: 85 3d       .=
-    jsr something51_TODO                                              ; 4294: 20 bb 1a     ..
+    jsr restore_rectangle_of_screen_memory                            ; 4294: 20 bb 1a     ..
     ldx #$19                                                          ; 4297: a2 19       ..
     lda #$ff                                                          ; 4299: a9 ff       ..
     sta width_in_cells                                                ; 429b: 85 3c       .<
-    jsr something51_TODO                                              ; 429d: 20 bb 1a     ..
+    jsr restore_rectangle_of_screen_memory                            ; 429d: 20 bb 1a     ..
     ldx #0                                                            ; 42a0: a2 00       ..
     iny                                                               ; 42a2: c8          .
     inc height_in_cells                                               ; 42a3: e6 3d       .=
-    jsr something51_TODO                                              ; 42a5: 20 bb 1a     ..
+    jsr restore_rectangle_of_screen_memory                            ; 42a5: 20 bb 1a     ..
     ldx #$0a                                                          ; 42a8: a2 0a       ..
     ldy #7                                                            ; 42aa: a0 07       ..
     lda #$14                                                          ; 42ac: a9 14       ..
     sta width_in_cells                                                ; 42ae: 85 3c       .<
     lda #2                                                            ; 42b0: a9 02       ..
     sta height_in_cells                                               ; 42b2: 85 3d       .=
-    jsr something51_TODO                                              ; 42b4: 20 bb 1a     ..
+    jsr restore_rectangle_of_screen_memory                            ; 42b4: 20 bb 1a     ..
     ldx #0                                                            ; 42b7: a2 00       ..
     lda #5                                                            ; 42b9: a9 05       ..
     sta width_in_cells                                                ; 42bb: 85 3c       .<
-    jsr something51_TODO                                              ; 42bd: 20 bb 1a     ..
+    jsr restore_rectangle_of_screen_memory                            ; 42bd: 20 bb 1a     ..
     ldy #9                                                            ; 42c0: a0 09       ..
     lda #3                                                            ; 42c2: a9 03       ..
     sta width_in_cells                                                ; 42c4: 85 3c       .<
     lda #4                                                            ; 42c6: a9 04       ..
     sta height_in_cells                                               ; 42c8: 85 3d       .=
-    jsr something51_TODO                                              ; 42ca: 20 bb 1a     ..
+    jsr restore_rectangle_of_screen_memory                            ; 42ca: 20 bb 1a     ..
     jsr something26_TODO                                              ; 42cd: 20 90 1b     ..
     ldx #$14                                                          ; 42d0: a2 14       ..
     ldy #$0c                                                          ; 42d2: a0 0c       ..
@@ -1612,7 +1612,7 @@ sprite_data
 pydis_end
 
 ; Label references by decreasing frequency:
-;     something51_TODO:                             43
+;     restore_rectangle_of_screen_memory:           43
 ;     width_in_cells:                               39
 ;     height_in_cells:                              38
 ;     desired_room_index:                           19
