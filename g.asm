@@ -1863,7 +1863,7 @@ something13_TODO
     cmp #3                                                            ; 1acf: c9 03       ..  :199e[1]
     beq c19b9                                                         ; 1ad1: f0 17       ..  :19a0[1]
     lda #3                                                            ; 1ad3: a9 03       ..  :19a2[1]
-    jsr write_a_single_value_to_collision_map                         ; 1ad5: 20 bb 1e     .. :19a4[1]
+    jsr write_a_single_value_to_cell_in_collision_map                 ; 1ad5: 20 bb 1e     .. :19a4[1]
     iny                                                               ; 1ad8: c8          .   :19a7[1]
     lda #spriteid_brazier                                             ; 1ad9: a9 3a       .:  :19a8[1]
     jsr draw_sprite_a_at_character_xy                                 ; 1adb: 20 4c 1f     L. :19aa[1]
@@ -1876,7 +1876,7 @@ something13_TODO
 c19b9
     dex                                                               ; 1aea: ca          .   :19b9[1]
     lda #3                                                            ; 1aeb: a9 03       ..  :19ba[1]
-    jsr write_a_single_value_to_collision_map                         ; 1aed: 20 bb 1e     .. :19bc[1]
+    jsr write_a_single_value_to_cell_in_collision_map                 ; 1aed: 20 bb 1e     .. :19bc[1]
     inx                                                               ; 1af0: e8          .   :19bf[1]
     lda #$ff                                                          ; 1af1: a9 ff       ..  :19c0[1]
     sta sprite_reflect_flag                                           ; 1af3: 85 1d       ..  :19c2[1]
@@ -2111,7 +2111,7 @@ c1b59
     ldy address1_high                                                 ; 1c8c: a4 71       .q  :1b5b[1]
     lda value_to_write_to_collision_map                               ; 1c8e: a5 3e       .>  :1b5d[1]
     bmi skip_writing_to_collision_map                                 ; 1c90: 30 03       0.  :1b5f[1]
-    jsr write_value_to_a_rectangle_in_collision_map                   ; 1c92: 20 44 1e     D. :1b61[1]
+    jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 1c92: 20 44 1e     D. :1b61[1]
 skip_writing_to_collision_map
     pla                                                               ; 1c95: 68          h   :1b64[1]
     rts                                                               ; 1c96: 60          `   :1b65[1]
@@ -2435,7 +2435,7 @@ c1dc9
     jsr draw_sprite_a_at_character_xy                                 ; 1f06: 20 4c 1f     L. :1dd5[1]
     lda #2                                                            ; 1f09: a9 02       ..  :1dd8[1]
 c1dda
-    jsr write_a_single_value_to_collision_map                         ; 1f0b: 20 bb 1e     .. :1dda[1]
+    jsr write_a_single_value_to_cell_in_collision_map                 ; 1f0b: 20 bb 1e     .. :1dda[1]
     dec l0056                                                         ; 1f0e: c6 56       .V  :1ddd[1]
     iny                                                               ; 1f10: c8          .   :1ddf[1]
     cpy #$18                                                          ; 1f11: c0 18       ..  :1de0[1]
@@ -2445,7 +2445,7 @@ c1de6
     lda #spriteid_rope_end                                            ; 1f17: a9 0a       ..  :1de6[1]
     jsr draw_sprite_a_at_character_xy                                 ; 1f19: 20 4c 1f     L. :1de8[1]
     lda #2                                                            ; 1f1c: a9 02       ..  :1deb[1]
-    jsr write_a_single_value_to_collision_map                         ; 1f1e: 20 bb 1e     .. :1ded[1]
+    jsr write_a_single_value_to_cell_in_collision_map                 ; 1f1e: 20 bb 1e     .. :1ded[1]
 c1df0
     pla                                                               ; 1f21: 68          h   :1df0[1]
     tay                                                               ; 1f22: a8          .   :1df1[1]
@@ -2539,7 +2539,7 @@ return7
 ;     Preserves A,X,Y
 ; 
 ; *************************************************************************************
-write_value_to_a_rectangle_in_collision_map
+write_value_to_a_rectangle_of_cells_in_collision_map
     pha                                                               ; 1f75: 48          H   :1e44[1]
     lda value_to_write_to_collision_map                               ; 1f76: a5 3e       .>  :1e45[1]
     cmp #4                                                            ; 1f78: c9 04       ..  :1e47[1]
@@ -2636,7 +2636,7 @@ value_to_write_into_collision_map_table
 ;     Preserves A,X,Y
 ; 
 ; *************************************************************************************
-write_a_single_value_to_collision_map
+write_a_single_value_to_cell_in_collision_map
     and #3                                                            ; 1fec: 29 03       ).  :1ebb[1]
     sta temp_value                                                    ; 1fee: 85 49       .I  :1ebd[1]   ; remember value to write
     txa                                                               ; 1ff0: 8a          .   :1ebf[1]
@@ -2757,7 +2757,7 @@ draw_sprite_a_at_character_xy
 ; TODO: This is called from e.g. dataA
 something52_TODO
     jsr draw_sprite_a_at_character_xy                                 ; 2088: 20 4c 1f     L. :1f57[1]
-    jmp write_value_to_a_rectangle_in_collision_map                   ; 208b: 4c 44 1e    LD. :1f5a[1]
+    jmp write_value_to_a_rectangle_of_cells_in_collision_map          ; 208b: 4c 44 1e    LD. :1f5a[1]
 
 ; TODO: this is used by e.g. dataA
 something58_TODO
