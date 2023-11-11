@@ -2223,6 +2223,9 @@ comment(0x1b90, "TODO: From the context this is called in in dataA, I suspect it
 expr(0x1efb, "game_area_columns")
 expr(0x1eff, "game_area_rows")
 entry(0x1f2d, "outside_game_area")
+comment(0x1f06, "Set temp_value=10*Y")
+comment(0x1f10, "Set Y=temp_value+X/4")
+blank(0x1f17)
 
 go()
 

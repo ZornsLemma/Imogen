@@ -2754,6 +2754,7 @@ sub_c1efa
     bcs outside_game_area                                             ; 2031: b0 2b       .+  :1f00[1]
     stx temp_coordinate                                               ; 2033: 86 4a       .J  :1f02[1]
     sty l004b                                                         ; 2035: 84 4b       .K  :1f04[1]
+; Set temp_value=10*Y
 c1f06
     tya                                                               ; 2037: 98          .   :1f06[1]
     asl                                                               ; 2038: 0a          .   :1f07[1]
@@ -2762,12 +2763,14 @@ c1f06
     asl                                                               ; 203c: 0a          .   :1f0b[1]
     adc temp_value                                                    ; 203d: 65 49       eI  :1f0c[1]
     sta temp_value                                                    ; 203f: 85 49       .I  :1f0e[1]
+; Set Y=temp_value+X/4
     txa                                                               ; 2041: 8a          .   :1f10[1]
     lsr                                                               ; 2042: 4a          J   :1f11[1]
     lsr                                                               ; 2043: 4a          J   :1f12[1]
     clc                                                               ; 2044: 18          .   :1f13[1]
     adc temp_value                                                    ; 2045: 65 49       eI  :1f14[1]
     tay                                                               ; 2047: a8          .   :1f16[1]
+
     txa                                                               ; 2048: 8a          .   :1f17[1]
     and #3                                                            ; 2049: 29 03       ).  :1f18[1]
     tax                                                               ; 204b: aa          .   :1f1a[1]
