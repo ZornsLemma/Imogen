@@ -55,6 +55,7 @@ osword_read_char                                = 10
 osword_sound                                    = 7
 red                                             = 1
 rows_per_character                              = 8
+screen_height_characters                        = 24
 screen_width_in_pixels                          = 320
 screen_width_minus_one                          = 39
 sprite_op_flags_copy_mask                       = 1
@@ -2213,7 +2214,7 @@ c1c9d_local
 something26_TODO
     lda #3                                                            ; 1cc1: a9 03       ..  :1b90[1]
     sta l0044                                                         ; 1cc3: 85 44       .D  :1b92[1]
-    ldy #$17                                                          ; 1cc5: a0 17       ..  :1b94[1]
+    ldy #screen_height_characters - 1                                 ; 1cc5: a0 17       ..  :1b94[1]
 something26_y_loop
     ldx #$27 ; '''                                                    ; 1cc7: a2 27       .'  :1b96[1]
 something26_x_loop
@@ -8967,6 +8968,9 @@ pydis_end
 }
 !if (relocation5_high_copy_start) != $40d0 {
     !error "Assertion failed: relocation5_high_copy_start == $40d0"
+}
+!if (screen_height_characters - 1) != $17 {
+    !error "Assertion failed: screen_height_characters - 1 == $17"
 }
 !if (screen_width_minus_one) != $27 {
     !error "Assertion failed: screen_width_minus_one == $27"

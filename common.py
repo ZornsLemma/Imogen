@@ -124,3 +124,5 @@ label(0x40, "some_data3_ptr")
 expr_label(0x41, make_add("some_data3_ptr", "1"))
 
 label(0xaa9, "eight_entry_table2")
+
+constant(24, "screen_height_characters")

@@ -1,8 +1,9 @@
 ; Constants
-first_level_letter   = 65
-last_level_letter    = 81
-opcode_jmp           = 76
-spriteid_saxophone   = 211
+first_level_letter         = 65
+last_level_letter          = 81
+opcode_jmp                 = 76
+screen_height_characters   = 24
+spriteid_saxophone         = 211
 
 ; Memory locations
 password_characters_entered                         = $05
