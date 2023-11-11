@@ -2178,6 +2178,9 @@ entry(0x1b41, "all_characters_copied")
 entry(0x1ae3, "character_copy_loop")
 comment(0x1b57, "always branch TODO: 99% confident", inline=True)
 entry(0x1add, "row_copy_loop")
+constant(8, "rows_per_character")
+expr(0x1b4a, make_lo(make_multiply("characters_per_line", "rows_per_character")))
+expr(0x1b52, make_hi(make_multiply("characters_per_line", "rows_per_character")))
 
 go()
 

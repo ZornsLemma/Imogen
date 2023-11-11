@@ -53,6 +53,7 @@ osword_envelope                                 = 8
 osword_read_char                                = 10
 osword_sound                                    = 7
 red                                             = 1
+rows_per_character                              = 8
 screen_width_in_pixels                          = 320
 screen_width_minus_one                          = 39
 sprite_op_flags_copy_mask                       = 1
@@ -2106,11 +2107,11 @@ all_characters_copied
     dec l0073                                                         ; 1c74: c6 73       .s  :1b43[1]
     beq c1b59                                                         ; 1c76: f0 12       ..  :1b45[1]
     lda l0074                                                         ; 1c78: a5 74       .t  :1b47[1]
-    adc #$40 ; '@'                                                    ; 1c7a: 69 40       i@  :1b49[1]   ; C is clear because beq above not taken
+    adc #<(characters_per_line * rows_per_character)                  ; 1c7a: 69 40       i@  :1b49[1]   ; C is clear because beq above not taken
     sta l0074                                                         ; 1c7c: 85 74       .t  :1b4b[1]
     sta cell_screen_address_low                                       ; 1c7e: 85 76       .v  :1b4d[1]
     lda l0075                                                         ; 1c80: a5 75       .u  :1b4f[1]
-    adc #1                                                            ; 1c82: 69 01       i.  :1b51[1]
+    adc #>(characters_per_line * rows_per_character)                  ; 1c82: 69 01       i.  :1b51[1]
     sta l0075                                                         ; 1c84: 85 75       .u  :1b53[1]
     sta cell_screen_address_high                                      ; 1c86: 85 77       .w  :1b55[1]
     bcc row_copy_loop                                                 ; 1c88: 90 84       ..  :1b57[1]   ; always branch TODO: 99% confident
@@ -8241,6 +8242,9 @@ pydis_end
 !if (<(address1_low)) != $70 {
     !error "Assertion failed: <(address1_low) == $70"
 }
+!if (<(characters_per_line * rows_per_character)) != $40 {
+    !error "Assertion failed: <(characters_per_line * rows_per_character) == $40"
+}
 !if (<(dir_dollar_command)) != $07 {
     !error "Assertion failed: <(dir_dollar_command) == $07"
 }
@@ -8435,6 +8439,9 @@ pydis_end
 }
 !if (>(address1_low)) != $00 {
     !error "Assertion failed: >(address1_low) == $00"
+}
+!if (>(characters_per_line * rows_per_character)) != $01 {
+    !error "Assertion failed: >(characters_per_line * rows_per_character) == $01"
 }
 !if (>(dir_dollar_command)) != $3f {
     !error "Assertion failed: >(dir_dollar_command) == $3f"
