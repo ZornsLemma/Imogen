@@ -2115,7 +2115,7 @@ skip_writing_to_collision_map
     pla                                                               ; 1c95: 68          h   :1b64[1]
     rts                                                               ; 1c96: 60          `   :1b65[1]
 
-; Y*$140 + X*8
+; cell_screen_address = screen_base_address + Y*$140 + X*8
 get_screen_address_from_cell_xy
     lda #0                                                            ; 1c97: a9 00       ..  :1b66[1]
     sta cell_screen_address_low                                       ; 1c99: 85 76       .v  :1b68[1]

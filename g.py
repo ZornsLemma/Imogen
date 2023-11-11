@@ -512,7 +512,7 @@ substitute_constants("jsr draw_sprite_a_at_character_xy", 'a', sprite_dict, True
 substitute_constants("jsr find_or_create_menu_slot_for_A", 'a', sprite_dict, True) # TODO: not actually useful yet, maybe never
 substitute_constants("sta sprite_op_flags", 'a', sprite_op_flags_dict, True)
 
-comment(0x1b66, "Y*$140 + X*8")
+comment(0x1b66, "cell_screen_address = screen_base_address + Y*$140 + X*8")
 
 expr(0x2b26, "sprite_op_flags_normal")
 
