@@ -85,7 +85,7 @@ substitute_labels = {
         "address1_high": "filename_high",
     },
     (0x1bec,0x1f24): {
-         "l0072": "characters_to_copy",
+         "l0072": "characters_to_copy_per_row",
          "l0076": "cell_screen_address_low",
          "l0077": "cell_screen_address_high",
          # TODO: Maybe rename the next two - "off_screen_address" is named based on its 'final' use in the lda (off_screen_address),y, but it may be more instructive to think of original... differently
@@ -2173,9 +2173,11 @@ label(0x1b14, "common_code_after_variable_code_has_set_a")
 comment(0x1ae5, "TODO: The value in l0042 selects various different code paths here. Note that if it contains 1, we have a 'simple' case where we just copy data without any further fiddling with off_screen_address.")
 entry(0x1b28, "byte_copy_loop")
 comment(0x1b3f, "always branch", inline=True)
-comment(0x1b31, "X was initialised with characters_to_copy", inline=True)
+comment(0x1b31, "X was initialised with characters_to_copy_per_row", inline=True)
 entry(0x1b41, "all_characters_copied")
 entry(0x1ae3, "character_copy_loop")
+comment(0x1b57, "always branch TODO: 99% confident", inline=True)
+entry(0x1add, "row_copy_loop")
 
 go()
 
