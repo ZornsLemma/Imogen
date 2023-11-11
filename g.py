@@ -87,6 +87,7 @@ substitute_labels = {
     (0x1bec,0x1f24): {
          "l0076": "cell_screen_address_low",
          "l0077": "cell_screen_address_high",
+         # TODO: Maybe rename the next two - "off_screen_address" is named based on its 'final' use in the lda (off_screen_address),y, but it may be more instructive to think of original... differently
          "l0078": "original_off_screen_address_low",
          "l0079": "original_off_screen_address_high",
          "l007a": "off_screen_address_low",
@@ -2168,7 +2169,8 @@ expr(0x4da, make_hi("eight_entry_table2"))
 comment(0x1b49, "C is clear because beq above not taken", inline=True)
 comment(0x1af0, "Subtract 1; note C cleared before beq", inline=True)
 label(0x1b14, "common_code_after_variable_code_has_set_a")
-comment(0x1ae5, "TODO: The value in l0042 selects various different code paths here.")
+comment(0x1ae5, "TODO: The value in l0042 selects various different code paths here. Note that if it contains 1, we have a 'simple' case where we just copy data without any further fiddling with off_screen_address.")
+entry(0x1b28, "restore_rectangle_of_screen_memory_copy_loop")
 
 go()
 

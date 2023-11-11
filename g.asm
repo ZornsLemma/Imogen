@@ -2041,13 +2041,15 @@ c1add
     sta l007c                                                         ; 1c12: 85 7c       .|  :1ae1[1]
 c1ae3
     ldy #7                                                            ; 1c14: a0 07       ..  :1ae3[1]
-; TODO: The value in l0042 selects various different code paths here.
+; TODO: The value in l0042 selects various different code paths here. Note that if it
+; contains 1, we have a 'simple' case where we just copy data without any further
+; fiddling with off_screen_address.
     lda l0042                                                         ; 1c16: a5 42       .B  :1ae5[1]
     beq c1b0c                                                         ; 1c18: f0 23       .#  :1ae7[1]
     bmi c1af8                                                         ; 1c1a: 30 0d       0.  :1ae9[1]
     cmp #1                                                            ; 1c1c: c9 01       ..  :1aeb[1]
     clc                                                               ; 1c1e: 18          .   :1aed[1]
-    beq c1b28                                                         ; 1c1f: f0 38       .8  :1aee[1]
+    beq restore_rectangle_of_screen_memory_copy_loop                  ; 1c1f: f0 38       .8  :1aee[1]
     sbc #0                                                            ; 1c21: e9 00       ..  :1af0[1]   ; Subtract 1; note C cleared before beq
     jsr get_random_number_up_to_a                                     ; 1c23: 20 a6 18     .. :1af2[1]
     jmp common_code_after_variable_code_has_set_a                     ; 1c26: 4c 14 1b    L.. :1af5[1]
@@ -2083,11 +2085,11 @@ common_code_after_variable_code_has_set_a
     and #3                                                            ; 1c53: 29 03       ).  :1b22[1]
     adc original_off_screen_address_high                              ; 1c55: 65 79       ey  :1b24[1]
     sta off_screen_address_high                                       ; 1c57: 85 7b       .{  :1b26[1]
-c1b28
+restore_rectangle_of_screen_memory_copy_loop
     lda (off_screen_address_low),y                                    ; 1c59: b1 7a       .z  :1b28[1]
     sta (cell_screen_address_low),y                                   ; 1c5b: 91 76       .v  :1b2a[1]
     dey                                                               ; 1c5d: 88          .   :1b2c[1]
-    bpl c1b28                                                         ; 1c5e: 10 f9       ..  :1b2d[1]
+    bpl restore_rectangle_of_screen_memory_copy_loop                  ; 1c5e: 10 f9       ..  :1b2d[1]
     inc l007c                                                         ; 1c60: e6 7c       .|  :1b2f[1]
     dex                                                               ; 1c62: ca          .   :1b31[1]
     beq c1b41                                                         ; 1c63: f0 0d       ..  :1b32[1]
@@ -7875,7 +7877,6 @@ pydis_end
 ;     c1ae3
 ;     c1af8
 ;     c1b0c
-;     c1b28
 ;     c1b41
 ;     c1b59
 ;     c1b8d
