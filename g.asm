@@ -260,10 +260,13 @@ sprite_screen_address_low                   = $72
 width_in_cells_to_write                     = $72
 height_in_cells_to_write                    = $73
 l0073                                       = $73
+rows_to_copy                                = $73
 sprite_screen_address_high                  = $73
+first_cell_in_row_screen_address_low        = $74
 l0074                                       = $74
 offset_within_byte                          = $74
 sprite_x_pos_low                            = $74
+first_cell_in_row_screen_address_high       = $75
 l0075                                       = $75
 offset_within_collision_map                 = $75
 sprite_x_pos_high                           = $75
@@ -2019,15 +2022,19 @@ l1ab2
 current_room_index
     !byte 0                                                           ; 1beb: 00          .   :1aba[1]
 
+; TODO: WIP incomplete entry conditions:
+; characters_to_copy_per_row (width)
+; rows_to_copy (height)
+; l0042 some kind of copy mode (1=simple)
 restore_rectangle_of_screen_memory
     pha                                                               ; 1bec: 48          H   :1abb[1]
     sty l007d                                                         ; 1bed: 84 7d       .}  :1abc[1]
     jsr clip_cells_to_write_to_collision_map                          ; 1bef: 20 17 1e     .. :1abe[1]
     jsr get_screen_address_from_cell_xy                               ; 1bf2: 20 66 1b     f. :1ac1[1]
     lda cell_screen_address_low                                       ; 1bf5: a5 76       .v  :1ac4[1]
-    sta l0074                                                         ; 1bf7: 85 74       .t  :1ac6[1]
+    sta first_cell_in_row_screen_address_low                          ; 1bf7: 85 74       .t  :1ac6[1]
     lda cell_screen_address_high                                      ; 1bf9: a5 77       .w  :1ac8[1]
-    sta l0075                                                         ; 1bfb: 85 75       .u  :1aca[1]
+    sta first_cell_in_row_screen_address_high                         ; 1bfb: 85 75       .u  :1aca[1]
     ldx some_data3_ptr                                                ; 1bfd: a6 40       .@  :1acc[1]
     ldy some_data3_ptr + 1                                            ; 1bff: a4 41       .A  :1ace[1]
     stx original_off_screen_address_low                               ; 1c01: 86 78       .x  :1ad0[1]
@@ -2104,15 +2111,16 @@ byte_copy_loop
     bcc character_copy_loop                                           ; 1c70: 90 a2       ..  :1b3f[1]   ; always branch
 all_characters_copied
     inc l007d                                                         ; 1c72: e6 7d       .}  :1b41[1]
-    dec l0073                                                         ; 1c74: c6 73       .s  :1b43[1]
+    dec rows_to_copy                                                  ; 1c74: c6 73       .s  :1b43[1]
     beq c1b59                                                         ; 1c76: f0 12       ..  :1b45[1]
-    lda l0074                                                         ; 1c78: a5 74       .t  :1b47[1]
+; Advance first_cell_in_row_screen_address by one row and reset cell_screen_address
+    lda first_cell_in_row_screen_address_low                          ; 1c78: a5 74       .t  :1b47[1]
     adc #<(characters_per_line * rows_per_character)                  ; 1c7a: 69 40       i@  :1b49[1]   ; C is clear because beq above not taken
-    sta l0074                                                         ; 1c7c: 85 74       .t  :1b4b[1]
+    sta first_cell_in_row_screen_address_low                          ; 1c7c: 85 74       .t  :1b4b[1]
     sta cell_screen_address_low                                       ; 1c7e: 85 76       .v  :1b4d[1]
-    lda l0075                                                         ; 1c80: a5 75       .u  :1b4f[1]
+    lda first_cell_in_row_screen_address_high                         ; 1c80: a5 75       .u  :1b4f[1]
     adc #>(characters_per_line * rows_per_character)                  ; 1c82: 69 01       i.  :1b51[1]
-    sta l0075                                                         ; 1c84: 85 75       .u  :1b53[1]
+    sta first_cell_in_row_screen_address_high                         ; 1c84: 85 75       .u  :1b53[1]
     sta cell_screen_address_high                                      ; 1c86: 85 77       .w  :1b55[1]
     bcc row_copy_loop                                                 ; 1c88: 90 84       ..  :1b57[1]   ; always branch TODO: 99% confident
 c1b59

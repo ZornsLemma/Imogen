@@ -85,7 +85,10 @@ substitute_labels = {
         "address1_high": "filename_high",
     },
     (0x1bec,0x1f24): {
-         "l0072": "characters_to_copy_per_row",
+         "l0072": "characters_to_copy_per_row", # TODO: cells_to_copy_per_row, for consistency?
+         "l0073": "rows_to_copy",
+         "l0074": "first_cell_in_row_screen_address_low",
+         "l0075": "first_cell_in_row_screen_address_high",
          "l0076": "cell_screen_address_low",
          "l0077": "cell_screen_address_high",
          # TODO: Maybe rename the next two - "off_screen_address" is named based on its 'final' use in the lda (off_screen_address),y, but it may be more instructive to think of original... differently
@@ -2167,6 +2170,8 @@ expr(0x420, make_hi("eight_entry_table2"))
 expr(0x4d6, make_lo("eight_entry_table2"))
 expr(0x4da, make_hi("eight_entry_table2"))
 
+# TODO: "character"->"cell" here for consistency?
+comment(0x1abb, "TODO: WIP incomplete entry conditions:\ncharacters_to_copy_per_row (width)\nrows_to_copy (height)\nl0042 some kind of copy mode (1=simple)")
 comment(0x1b49, "C is clear because beq above not taken", inline=True)
 comment(0x1af0, "Subtract 1; note C cleared before beq", inline=True)
 label(0x1b14, "common_code_after_variable_code_has_set_a")
@@ -2181,6 +2186,7 @@ entry(0x1add, "row_copy_loop")
 constant(8, "rows_per_character")
 expr(0x1b4a, make_lo(make_multiply("characters_per_line", "rows_per_character")))
 expr(0x1b52, make_hi(make_multiply("characters_per_line", "rows_per_character")))
+comment(0x1b47, "Advance first_cell_in_row_screen_address by one row and reset cell_screen_address")
 
 go()
 
