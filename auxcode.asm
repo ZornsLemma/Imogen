@@ -27,7 +27,7 @@ screendump_data_byte                        = $73
 invert_screen_dump_flag                     = $74
 restore_screen_under_dialog_box             = $040a
 remove_dialog                               = $0453
-l09ef                                       = $09ef
+level_progress_table                        = $09ef
 string_input_buffer                         = $0a90
 developer_flags                             = $1103
 initialise_level                            = $1140
@@ -39,8 +39,8 @@ toolbar_colour                              = $175e
 pending_gameplay_area_colour                = $175f
 gameplay_area_colour                        = $1760
 use_colour_flag                             = $1765
-l1766                                       = $1766
-l1966                                       = $1966
+set_toolbar_and_gameplay_area_colours       = $1766
+jmp_yx                                      = $1966
 something13_TODO                            = $1988
 something14_TODO                            = $1a10
 current_room_index                          = $1aba
@@ -59,9 +59,9 @@ something55_TODO                            = $28e2
 insert_character_menu_item_into_toolbar     = $2b87
 find_or_create_menu_slot_for_A              = $2bbd
 remove_item_from_toolbar_menu               = $2be0
-l37f3                                       = $37f3
-l388d                                       = $388d
-l3a8f                                       = $3a8f
+print_encrypted_string_at_yx_centred        = $37f3
+wait_one_second_then_check_keys             = $388d
+check_cursor_left_right_and_space           = $3a8f
 level_data                                  = $3ad5
 level_init_after_load_handler_ptr           = $3ad7
 second_level_handler_ptr                    = $3ad9
@@ -111,15 +111,15 @@ c53ce
     jsr oswrch                                                        ; 53ef: 20 ee ff     ..            ; Write character 10
     ldx #<accepted_encrypted_string                                   ; 53f2: a2 07       ..
     ldy #>accepted_encrypted_string                                   ; 53f4: a0 54       .T
-    jsr l37f3                                                         ; 53f6: 20 f3 37     .7
-    jsr l388d                                                         ; 53f9: 20 8d 38     .8
+    jsr print_encrypted_string_at_yx_centred                          ; 53f6: 20 f3 37     .7
+    jsr wait_one_second_then_check_keys                               ; 53f9: 20 8d 38     .8
     jsr remove_dialog                                                 ; 53fc: 20 53 04     S.
     pla                                                               ; 53ff: 68          h
     tay                                                               ; 5400: a8          .
     pla                                                               ; 5401: 68          h
     tax                                                               ; 5402: aa          .
     pla                                                               ; 5403: 68          h
-    jmp l1966                                                         ; 5404: 4c 66 19    Lf.
+    jmp jmp_yx                                                        ; 5404: 4c 66 19    Lf.
 
 ; 'Accepted\r' EOR-encrypted with $cb
 accepted_encrypted_string
@@ -150,8 +150,8 @@ this_entry_doesnt_match
     jsr oswrch                                                        ; 5434: 20 ee ff     ..            ; Write character 10
     ldx #<unknown_encrypted_string                                    ; 5437: a2 46       .F
     ldy #>unknown_encrypted_string                                    ; 5439: a0 54       .T
-    jsr l37f3                                                         ; 543b: 20 f3 37     .7
-    jsr l388d                                                         ; 543e: 20 8d 38     .8
+    jsr print_encrypted_string_at_yx_centred                          ; 543b: 20 f3 37     .7
+    jsr wait_one_second_then_check_keys                               ; 543e: 20 8d 38     .8
     lda #0                                                            ; 5441: a9 00       ..
     jmp return1                                                       ; 5443: 4c 4e 54    LNT
 
@@ -201,8 +201,9 @@ password_ptr_table
     !byte $c6                                                         ; 552b: c6          .
     !word normal_level_handler                                        ; 552c: 95 55       .U
 ; TODO: Some intriguing secret passwords here. Now I see this, I have a vague
-; recollection of The Micro User or Acorn User printing some/all of these, but still
-; cool to find them for myself. :-)
+; recollection of The Micro User or Acorn User printing some/all of these (See
+; https://archive.org/details/micro-user-058/page/n52/mode/1up), but still cool to find
+; them for myself. :-)
     !byte $8e, $9b, $82, $87, $84, $8c, $9e, $8e, $c6                 ; 552e: 8e 9b 82... ...            ; EOR-encrypted string: 'EPILOGUE'
     !word epilogue_handler                                            ; 5537: 9b 55       .U
     !byte $8f, $9e, $86, $9b, $c6                                     ; 5539: 8f 9e 86... ...            ; EOR-encrypted string: 'DUMP'
@@ -286,7 +287,7 @@ c55d3
 mono_handler
     lda #0                                                            ; 55ea: a9 00       ..
     sta use_colour_flag                                               ; 55ec: 8d 65 17    .e.
-    jsr l1766                                                         ; 55ef: 20 66 17     f.
+    jsr set_toolbar_and_gameplay_area_colours                         ; 55ef: 20 66 17     f.
     lda pending_toolbar_colour                                        ; 55f2: ad 5d 17    .].
     sta toolbar_colour                                                ; 55f5: 8d 5e 17    .^.
     lda pending_gameplay_area_colour                                  ; 55f8: ad 5f 17    ._.
@@ -297,7 +298,7 @@ mono_handler
 colour_handler
     lda #$ff                                                          ; 5603: a9 ff       ..
     sta use_colour_flag                                               ; 5605: 8d 65 17    .e.
-    jsr l1766                                                         ; 5608: 20 66 17     f.
+    jsr set_toolbar_and_gameplay_area_colours                         ; 5608: 20 66 17     f.
     lda pending_toolbar_colour                                        ; 560b: ad 5d 17    .].
     sta toolbar_colour                                                ; 560e: 8d 5e 17    .^.
     lda pending_gameplay_area_colour                                  ; 5611: ad 5f 17    ._.
@@ -311,9 +312,9 @@ gimme_handler
     beq c5635                                                         ; 5621: f0 12       ..
     ldy #$0f                                                          ; 5623: a0 0f       ..
 loop_c5625
-    lda l09ef,y                                                       ; 5625: b9 ef 09    ...
+    lda level_progress_table,y                                        ; 5625: b9 ef 09    ...
     ora #$80                                                          ; 5628: 09 80       ..
-    sta l09ef,y                                                       ; 562a: 99 ef 09    ...
+    sta level_progress_table,y                                        ; 562a: 99 ef 09    ...
     dey                                                               ; 562d: 88          .
     bpl loop_c5625                                                    ; 562e: 10 f5       ..
     lda #$21 ; '!'                                                    ; 5630: a9 21       .!
@@ -490,7 +491,7 @@ line_feed_loop
     lda #osbyte_flush_buffer_class                                    ; 577c: a9 0f       ..
     ldx #1                                                            ; 577e: a2 01       ..
     jsr osbyte                                                        ; 5780: 20 f4 ff     ..            ; Flush input buffers (X non-zero)
-    jsr l3a8f                                                         ; 5783: 20 8f 3a     .:
+    jsr check_cursor_left_right_and_space                             ; 5783: 20 8f 3a     .:
     lda #1                                                            ; 5786: a9 01       ..
     jmp return1                                                       ; 5788: 4c 4e 54    LNT
 
@@ -503,12 +504,6 @@ pydis_end
 ;     c55d3
 ;     c5635
 ;     c564e
-;     l09ef
-;     l1766
-;     l1966
-;     l37f3
-;     l388d
-;     l3a8f
 ;     loop_c5625
 !if (<accepted_encrypted_string) != $07 {
     !error "Assertion failed: <accepted_encrypted_string == $07"

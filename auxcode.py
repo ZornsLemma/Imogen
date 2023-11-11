@@ -111,7 +111,7 @@ while memory[pc] != fixed_eor_key:
     pc = decode_level_name_ptr(pc)
 byte(pc)
 comment(pc, "0 EOR $CB marks the end of the table", inline=True)
-comment(0x552e, "TODO: Some intriguing secret passwords here. Now I see this, I have a vague recollection of The Micro User or Acorn User printing some/all of these, but still cool to find them for myself. :-)")
+comment(0x552e, "TODO: Some intriguing secret passwords here. Now I see this, I have a vague recollection of The Micro User or Acorn User printing some/all of these (See https://archive.org/details/micro-user-058/page/n52/mode/1up), but still cool to find them for myself. :-)")
 
 comment(0x5642, "A screen dump routine for Epson-compatible printers")
 

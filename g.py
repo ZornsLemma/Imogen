@@ -743,7 +743,6 @@ label(0x196c, "jmp_instruction")
 expr(0x1967, "jmp_instruction+1")
 expr(0x196a, "jmp_instruction+2")
 expr(0x196d, "0")
-label(0x1966, "jmp_yx")
 expr(0x11e7, make_lo("brk_handler"))
 expr(0x11ec, make_hi("brk_handler"))
 comment(0x16ff, "set brk handler")
@@ -833,10 +832,8 @@ comment(0x1245, """which_dialog_is_active is non-zero when a dialog is active:
 """)
 label(0x0004, "which_dialog_is_active")
 
-label(0x388d, "wait_one_second_then_check_keys")
 label(0x3892, "wait_one_second_loop")
 decimal(0x3896)
-label(0x3a8f, "check_cursor_left_right_and_space")
 
 comment(0x1f57, "TODO: This is called from e.g. dataA")
 entry(0x1f57)
@@ -1575,7 +1572,7 @@ expr(0x1a6a, "first_level_letter")
 expr(0x177b, "first_level_letter")
 
 comment(0x1766, "Set the toolbar and gameplay area colours. In mono mode both are white. In colour mode the gameplay area is cyan and the toolbar colour is toolbar_colour_choices[(level_letter - 'A') & 3].")
-entry(0x1766, "set_toolbar_and_gameplay_area_colours")
+entry(0x1766)
 label(0x1761, "toolbar_colour_choices")
 constant(0, "black")
 constant(1, "red")
@@ -1620,7 +1617,6 @@ label(0x3ade, "room_index_cheat2")
 
 # TODO: What does the shift key do in the game? Or Escape?
 
-label(0x9ef, "level_progress_table")
 comment(0x1a4c, "got completion spell")
 
 comment(0x1132, "choose a new starting level")
@@ -2139,7 +2135,7 @@ entry(0x1b66, "get_screen_address_from_cell_xy")
 label(0x58c0, "toolbar_screen_address")
 label(0x6200, "game_area_screen_address")
 
-entry(0x37f3, "print_encrypted_string_at_yx_centred")
+entry(0x37f3) #print_encrypted_string_at_yx_centred
 entry(0x37f9, "find_string_length_loop")
 expr(0x37fe, "vdu_cr")
 entry(0x3804, "string_length_in_y")

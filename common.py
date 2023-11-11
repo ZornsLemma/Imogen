@@ -17,6 +17,12 @@ label(0x1103, "developer_flags")
 label(0x005b, "developer_mode_sideways_ram_is_set_up_flag")
 label(0x040a, "restore_screen_under_dialog_box") # TODO: guesswork
 label(0x0453, "remove_dialog")
+label(0x09ef, "level_progress_table")
+label(0x1766, "set_toolbar_and_gameplay_area_colours")
+label(0x1966, "jmp_yx")
+label(0x37f3, "print_encrypted_string_at_yx_centred")
+label(0x388d, "wait_one_second_then_check_keys")
+label(0x3a8f, "check_cursor_left_right_and_space")
 
 # See mono_handler and colour_handler in auxcode.asm
 label(0x1765, "use_colour_flag")
