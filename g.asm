@@ -2064,7 +2064,7 @@ character_copy_loop
 ; contains 1, we have a 'simple' case where we just copy data without any further
 ; fiddling with off_screen_address.
     lda l0042                                                         ; 1c16: a5 42       .B  :1ae5[1]
-    beq c1b0c                                                         ; 1c18: f0 23       .#  :1ae7[1]
+    beq two_by_two_alternating_pattern                                ; 1c18: f0 23       .#  :1ae7[1]
     bmi c1af8                                                         ; 1c1a: 30 0d       0.  :1ae9[1]
     cmp #1                                                            ; 1c1c: c9 01       ..  :1aeb[1]
     clc                                                               ; 1c1e: 18          .   :1aed[1]
@@ -2085,7 +2085,10 @@ c1af8
     sta address2_low                                                  ; 1c38: 85 7e       .~  :1b07[1]
     jmp common_code_after_variable_code_has_set_a                     ; 1c3a: 4c 14 1b    L.. :1b09[1]
 
-c1b0c
+; Set A=%(low bit of current_row)(low bit of current character), giving a 2x2
+; alternating pattern. ('current character' is actually offset by address1_low, but the
+; idea is the same.)
+two_by_two_alternating_pattern
     lda address1_low_plus_current_character_within_row                ; 1c3d: a5 7c       .|  :1b0c[1]
     lsr                                                               ; 1c3f: 4a          J   :1b0e[1]
     lda current_row                                                   ; 1c40: a5 7d       .}  :1b0f[1]
@@ -7899,7 +7902,6 @@ pydis_end
 ;     c1a8f
 ;     c1a9e
 ;     c1af8
-;     c1b0c
 ;     c1b59
 ;     c1b8d
 ;     c1b96

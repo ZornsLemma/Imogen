@@ -1401,11 +1401,45 @@ c4415
     !byte $11,   0,   0,   0, $be,   0,   1,   0, $10,   0,   0,   0  ; 4476: 11 00 00... ...
     !byte   0,   0,   0,   0                                          ; 4482: 00 00 00... ...
 some_data3
-    !byte $10, $20, $40, $83,   4,   8, $10, $10,   8,   4,   2,   1  ; 4486: 10 20 40... . @
-    !byte $80, $40, $20, $10,   8,   4,   2,   1                      ; 4492: 80 40 20... .@
-inverse_power_of_2_table
-    !byte $80, $40, $20, $10, $08, $04, $02, $01                      ; 449a: 80 40 20... .@
-    !byte $80, $40, $20, $10                                          ; 44a2: 80 40 20... .@
+ground_fill_2x2_top_left
+    !byte %...#....                                                   ; 4486: 10          .
+    !byte %..#.....                                                   ; 4487: 20
+    !byte %.#......                                                   ; 4488: 40          @
+    !byte %#.....##                                                   ; 4489: 83          .
+    !byte %.....#..                                                   ; 448a: 04          .
+    !byte %....#...                                                   ; 448b: 08          .
+    !byte %...#....                                                   ; 448c: 10          .
+    !byte %...#....                                                   ; 448d: 10          .
+; Note that the next three characters are all identical. I think this is done because
+; the 'tiling' code in restore_rectangle_of_screen_memory for l0042=1 uses a 2x2 tiling
+; arrangement.
+ground_fill_2x2_top_right
+    !byte %....#...                                                   ; 448e: 08          .
+    !byte %.....#..                                                   ; 448f: 04          .
+    !byte %......#.                                                   ; 4490: 02          .
+    !byte %.......#                                                   ; 4491: 01          .
+    !byte %#.......                                                   ; 4492: 80          .
+    !byte %.#......                                                   ; 4493: 40          @
+    !byte %..#.....                                                   ; 4494: 20
+    !byte %...#....                                                   ; 4495: 10          .
+ground_fill_2x2_bottom_left
+    !byte %....#...                                                   ; 4496: 08          .
+    !byte %.....#..                                                   ; 4497: 04          .
+    !byte %......#.                                                   ; 4498: 02          .
+    !byte %.......#                                                   ; 4499: 01          .
+    !byte %#.......                                                   ; 449a: 80          .
+    !byte %.#......                                                   ; 449b: 40          @
+    !byte %..#.....                                                   ; 449c: 20
+    !byte %...#....                                                   ; 449d: 10          .
+ground_fill_2x2_bottom_right
+    !byte %....#...                                                   ; 449e: 08          .
+    !byte %.....#..                                                   ; 449f: 04          .
+    !byte %......#.                                                   ; 44a0: 02          .
+    !byte %.......#                                                   ; 44a1: 01          .
+    !byte %#.......                                                   ; 44a2: 80          .
+    !byte %.#......                                                   ; 44a3: 40          @
+    !byte %..#.....                                                   ; 44a4: 20
+    !byte %...#....                                                   ; 44a5: 10          .
 sprite_data
     !byte $2e,   0, $79,   0, $86,   0, $98,   0, $c7,   0, $53,   1  ; 44a6: 2e 00 79... ..y
     !byte $67,   1, $7b,   1, $c1,   1, $1e,   2, $4d,   2, $71,   2  ; 44b2: 67 01 7b... g.{
