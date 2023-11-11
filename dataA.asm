@@ -179,6 +179,7 @@ level_thing_1_code
     sta width_in_cells                                                ; 3b2f: 85 3c       .<
     lda #2                                                            ; 3b31: a9 02       ..
     sta height_in_cells                                               ; 3b33: 85 3d       .=
+; TODO: Setting a breakpoint in b-em shows l0042 is 0 here
     jsr restore_rectangle_of_screen_memory                            ; 3b35: 20 bb 1a     ..
     ldy #2                                                            ; 3b38: a0 02       ..
     lda #4                                                            ; 3b3a: a9 04       ..
