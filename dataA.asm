@@ -69,7 +69,7 @@ something14_TODO                            = $1a10
 current_room_index                          = $1aba
 restore_rectangle_of_screen_memory          = $1abb
 something26_TODO                            = $1b90
-something53_TODO                            = $1db9
+draw_rope                                   = $1db9
 write_value_to_a_rectangle_in_collision_map = $1e44
 write_a_single_value_to_collision_map       = $1ebb
 draw_sprite_a_at_character_xy               = $1f4c
@@ -233,18 +233,18 @@ level_thing_1_code
     ldx #$0a                                                          ; 3bae: a2 0a       ..
     ldy #2                                                            ; 3bb0: a0 02       ..
     lda #$0a                                                          ; 3bb2: a9 0a       ..
-    jsr something53_TODO                                              ; 3bb4: 20 b9 1d     ..
+    jsr draw_rope                                                     ; 3bb4: 20 b9 1d     ..
     ldx #$1e                                                          ; 3bb7: a2 1e       ..
-    jsr something53_TODO                                              ; 3bb9: 20 b9 1d     ..
+    jsr draw_rope                                                     ; 3bb9: 20 b9 1d     ..
     ldx #$14                                                          ; 3bbc: a2 14       ..
     lda #$10                                                          ; 3bbe: a9 10       ..
-    jsr something53_TODO                                              ; 3bc0: 20 b9 1d     ..
+    jsr draw_rope                                                     ; 3bc0: 20 b9 1d     ..
     ldx #$0f                                                          ; 3bc3: a2 0f       ..
     ldy #$0d                                                          ; 3bc5: a0 0d       ..
     lda #5                                                            ; 3bc7: a9 05       ..
-    jsr something53_TODO                                              ; 3bc9: 20 b9 1d     ..
+    jsr draw_rope                                                     ; 3bc9: 20 b9 1d     ..
     ldx #$19                                                          ; 3bcc: a2 19       ..
-    jsr something53_TODO                                              ; 3bce: 20 b9 1d     ..
+    jsr draw_rope                                                     ; 3bce: 20 b9 1d     ..
     jsr something23_TODO                                              ; 3bd1: 20 bb 12     ..
 ; $3bd4 referenced 1 time by $3bdb
 loop_c3bd4
@@ -1212,7 +1212,7 @@ level_thing_4_code
     ldx #$21 ; '!'                                                    ; 42de: a2 21       .!
     ldy #2                                                            ; 42e0: a0 02       ..
     lda #$0e                                                          ; 42e2: a9 0e       ..
-    jsr something53_TODO                                              ; 42e4: 20 b9 1d     ..
+    jsr draw_rope                                                     ; 42e4: 20 b9 1d     ..
     jsr something23_TODO                                              ; 42e7: 20 bb 12     ..
 ; $42ea referenced 1 time by $42ef
 loop_c42ea
@@ -1634,7 +1634,7 @@ pydis_end
 ;     l0a71:                                         6
 ;     initialise_level:                              6
 ;     some_data_shared_between_g_and_dataA:          6
-;     something53_TODO:                              6
+;     draw_rope:                                     6
 ;     previous_level:                                5
 ;     l0a73:                                         5
 ;     something58_TODO:                              5

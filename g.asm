@@ -58,7 +58,6 @@ sprite_op_flags_copy_mask                       = 1
 sprite_op_flags_erase                           = 2
 sprite_op_flags_ignore_mask                     = 4
 sprite_op_flags_normal                          = 0
-spriteid_blob_thing                             = 10
 spriteid_brazier                                = 58
 spriteid_cat1                                   = 27
 spriteid_cat2                                   = 28
@@ -130,6 +129,7 @@ spriteid_rope1                                  = 85
 spriteid_rope2                                  = 86
 spriteid_rope3                                  = 87
 spriteid_rope4                                  = 88
+spriteid_rope_end                               = 10
 spriteid_rope_hook                              = 11
 spriteid_some_small_blob                        = 55
 spriteid_sparkles1                              = 34
@@ -580,7 +580,8 @@ clear_sound_priorities_loop
 ; level_progress_table has:
 ; 
 ;     bits 0-2: current room number
-;     bit 6: if clear then override with a cheat room number
+;     bit 6: if clear then override regular room number with a cheat room number (there
+; are two cheat room numbers!)
 ;     bit 7: set when the completion spell is obtained
 ; 
     lda level_progress_table,x                                        ; 1359: bd ef 09    ... :1228[1]
@@ -2131,10 +2132,10 @@ get_screen_address_from_cell_xy
     asl                                                               ; 1ca8: 0a          .   :1b77[1]
     asl                                                               ; 1ca9: 0a          .   :1b78[1]
     asl                                                               ; 1caa: 0a          .   :1b79[1]
-    bcc c1b7e                                                         ; 1cab: 90 02       ..  :1b7a[1]
+    bcc skip_high_byte2                                               ; 1cab: 90 02       ..  :1b7a[1]
     iny                                                               ; 1cad: c8          .   :1b7c[1]
     clc                                                               ; 1cae: 18          .   :1b7d[1]
-c1b7e
+skip_high_byte2
     adc cell_screen_address_low                                       ; 1caf: 65 76       ev  :1b7e[1]
     sta cell_screen_address_low                                       ; 1cb1: 85 76       .v  :1b80[1]
     tya                                                               ; 1cb3: 98          .   :1b82[1]
@@ -2413,7 +2414,7 @@ c1d16
     !byte $16, $1e, $1e, $1d, $15, $1e, $1a, $1e                      ; 1ee2: 16 1e 1e... ... :1db1[1]
 
 ; TODO: This is called from e.g. data
-something53_TODO
+draw_rope
     sta l0056                                                         ; 1eea: 85 56       .V  :1db9[1]
     pha                                                               ; 1eec: 48          H   :1dbb[1]
     tya                                                               ; 1eed: 98          .   :1dbc[1]
@@ -2430,7 +2431,7 @@ c1dc9
     tya                                                               ; 1f00: 98          .   :1dcf[1]
     and #3                                                            ; 1f01: 29 03       ).  :1dd0[1]
     clc                                                               ; 1f03: 18          .   :1dd2[1]
-    adc #$55 ; 'U'                                                    ; 1f04: 69 55       iU  :1dd3[1]
+    adc #spriteid_rope1                                               ; 1f04: 69 55       iU  :1dd3[1]
     jsr draw_sprite_a_at_character_xy                                 ; 1f06: 20 4c 1f     L. :1dd5[1]
     lda #2                                                            ; 1f09: a9 02       ..  :1dd8[1]
 c1dda
@@ -2441,7 +2442,7 @@ c1dda
     bcc c1dc9                                                         ; 1f13: 90 e5       ..  :1de2[1]
     bcs c1df0                                                         ; 1f15: b0 0a       ..  :1de4[1]
 c1de6
-    lda #spriteid_blob_thing                                          ; 1f17: a9 0a       ..  :1de6[1]
+    lda #spriteid_rope_end                                            ; 1f17: a9 0a       ..  :1de6[1]
     jsr draw_sprite_a_at_character_xy                                 ; 1f19: 20 4c 1f     L. :1de8[1]
     lda #2                                                            ; 1f1c: a9 02       ..  :1deb[1]
     jsr write_a_single_value_to_collision_map                         ; 1f1e: 20 bb 1e     .. :1ded[1]
@@ -7752,10 +7753,10 @@ copy_cell_loop
     lda l007a                                                         ; 4198: a5 7a       .z  :0499[2]
     adc #8                                                            ; 419a: 69 08       i.  :049b[2]
     sta l007a                                                         ; 419c: 85 7a       .z  :049d[2]
-    bcc skip_high_byte                                                ; 419e: 90 03       ..  :049f[2]
+    bcc skip_high_byte1                                               ; 419e: 90 03       ..  :049f[2]
     inc l007b                                                         ; 41a0: e6 7b       .{  :04a1[2]
     clc                                                               ; 41a2: 18          .   :04a3[2]
-skip_high_byte
+skip_high_byte1
     dex                                                               ; 41a3: ca          .   :04a4[2]
     beq move_to_next_row                                              ; 41a4: f0 0d       ..  :04a5[2]
 ; move source to next cell along
@@ -7871,7 +7872,6 @@ pydis_end
 ;     c1b28
 ;     c1b41
 ;     c1b59
-;     c1b7e
 ;     c1b8d
 ;     c1b96
 ;     c1b98
@@ -8911,9 +8911,6 @@ pydis_end
 !if (sprite_op_flags_normal) != $00 {
     !error "Assertion failed: sprite_op_flags_normal == $00"
 }
-!if (spriteid_blob_thing) != $0a {
-    !error "Assertion failed: spriteid_blob_thing == $0a"
-}
 !if (spriteid_brazier) != $3a {
     !error "Assertion failed: spriteid_brazier == $3a"
 }
@@ -9069,6 +9066,12 @@ pydis_end
 }
 !if (spriteid_pointer_hand) != $1d {
     !error "Assertion failed: spriteid_pointer_hand == $1d"
+}
+!if (spriteid_rope1) != $55 {
+    !error "Assertion failed: spriteid_rope1 == $55"
+}
+!if (spriteid_rope_end) != $0a {
+    !error "Assertion failed: spriteid_rope_end == $0a"
 }
 !if (spriteid_rope_hook) != $0b {
     !error "Assertion failed: spriteid_rope_hook == $0b"

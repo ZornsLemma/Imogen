@@ -197,7 +197,7 @@ sprite_dict = {
     0x07: "spriteid_icodata_info",
     0x08: "spriteid_icodata_password",
     0x09: "spriteid_icodata_box",
-    0x0a: "spriteid_blob_thing",          # TODO: better name
+    0x0a: "spriteid_rope_end",
     0x0b: "spriteid_rope_hook",
     0x0c: "spriteid_cat_walk1",
     0x0d: "spriteid_cat_walk2",
@@ -1191,7 +1191,7 @@ entry(0x40c0, "convert_section_letter_to_level_filename_letter")
 comment(0x1228, """level_progress_table has:
 
     bits 0-2: current room number
-    bit 6: if clear then override with a cheat room number
+    bit 6: if clear then override regular room number with a cheat room number (there are two cheat room numbers!)
     bit 7: set when the completion spell is obtained
 """)
 label(0x1234, "skip_adding_completion_spell_to_toolbar")
@@ -2149,8 +2149,10 @@ decimal(0x0523)
 decimal(0x0525)
 label(0x04f9, "plot_loop")
 label(0x04b4, "move_to_next_row")
-label(0x04a4, "skip_high_byte")
+label(0x04a4, "skip_high_byte1")
 label(0x0505, "restore_screen_memory_after_dialog_box")
+label(0x1b7e, "skip_high_byte2")
+expr(0x1dd4, "spriteid_rope1")
 
 go()
 
