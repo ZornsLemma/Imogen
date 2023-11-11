@@ -23,6 +23,7 @@ constant(31, "vdu_goto_xy")
 constant(127, "vdu_delete")
 
 
+constant(0, "osfile_save")
 constant(5, "osfile_read_catalogue_info")
 constant(0xff, "osfile_load")
 
@@ -72,6 +73,18 @@ substitute_labels = {
         "l007d": "sprite_data_byte",
         "l0080": "mask_sprite_byte",
         "l0081": "sprite_width",
+    },
+    (0x180d, 0x1882): {
+        "l0072": "osfile_block_filename_low",
+        "l0073": "osfile_block_filename_high",
+        "l0074": "osfile_block_load_address_low",
+        "l0075": "osfile_block_load_address_mid1",
+        "l0078": "osfile_block_exec_address_low",
+        "l0079": "osfile_block_exec_address_mid1",
+        "l007c": "osfile_block_start_address_low",
+        "l007d": "osfile_block_start_address_mid1",
+        "l0080": "osfile_block_end_address_low",
+        "l0081": "osfile_block_end_address_mid1",
     },
     (0x183d, 0x1841): {
         "address1_low": "filename_low",
@@ -928,10 +941,22 @@ entry(0x395e, "define_envelope")
 
 expr(0x3dc9, "screen_width_minus_one")
 
-# TODO: This code is currently disassembled using "sprite-oriented" labels - it's not a big deal in the short term as we already understand it and can just view this subroutine as a black box, but later on it would be good (even if it means using expr() on individual labels, though I'd hope the label maker hook can work round this) to give it better labels.
 entry(0x16dc, "osfile_wrapper")
+comment(0x16dc, """*************************************************************************************
+
+OSFILE wrapper
+
+On Entry:
+     A: OSFILE action (load / save)
+    YX: address of filename
+
+*************************************************************************************""")
 
 expr(0x197c, "osfile_load")
+expr(0x3584, "osfile_read_catalogue_info")
+label(0x346a, "load_or_save")
+label(0x347f, "ask_for_filename")
+label(0x3497, "osfile_action_load_or_save")
 label(0x1980, "sprdata_filename")
 expr(0x1970, make_lo("sprdata_filename"))
 expr(0x1974, make_hi("sprdata_filename"))
@@ -939,6 +964,7 @@ stringcr(0x1980)
 expr(0x3e60, make_lo("sprdata_filename"))
 expr(0x3e64, make_hi("sprdata_filename"))
 entry(0x196f, "load_sprdata")
+expr(0x346b, "osfile_save")
 
 comment(0x3e6c, "Load 'sprdata' file into memory so it ends just before screen memory at $5bc0.")
 comment(0x3e7c, "remember where sprite data is loaded")
@@ -1334,7 +1360,7 @@ entry(0x36db, "select_level_a")
 #comment(0x114f, "TODO: Why do we check desired_level against currently_loaded_level in this loop? The loop kind of makes sense as a retry if disc error sort of thing, but I don't see why we'd ever have the wrong level loaded or something like that. It still doesn't feel quite right, but could this maybe be some leftover hint of a tape version? - hmm, note that dataA.asm calls into initialise_level in several different places (with different values of X, indicating different level_header_data entries to be called) - it may be that this check is so that second and subsequent calls don't redo pointless or harmful initialisation?")
 comment(0x114f, "Load a new level if the desired_level has changed.\n\nAny time we want to load a new level, we just set the desired_level and let this code do the work. (It is a loop to allow for retries on a disk error.)")
 entry(0x1186, "object_reset_loop")
-entry(0x11dd, "clear_sixteen_entry_table1")
+entry(0x11dd, "clear_sixteen_entry_table")
 comment(0x11f8, "Blank the whole screen temporarily. TODO: Note that when flipping from screen to screen during play, the toolbar is not blanked, but it is here. Is this just cosmetic or is there a technical reason for this?")
 
 entry(0x29a1, "draw_toolbar") # TODO: plausible guess
@@ -1649,7 +1675,7 @@ label(0x110a, "display_initialised_flag")
 label(0x2ee9, "four_entry_table2") # TODO: write only, at least in 'g' itself?
 label(0x396f, "sound_priority_per_channel_table")
 label(0x3973, "remember_a")
-label(0xa6f, "sixteen_entry_table1")
+label(0xa6f, "sixteen_entry_table")
 label(0xa7f, "level_ordering_table")
 label(0xa80, "level_ordering_table+1")
 comment(0x3f0d, "Get the address of the first 'sprite' which is actually level ordering data", inline=True)
@@ -1825,13 +1851,12 @@ expr(0x2fce, make_lo("cat_transform_in_animation"))
 expr(0x2fd0, make_hi("cat_transform_in_animation"))
 
 
-label(0x0a6f, "something")
-expr(0x35b5, make_lo("something"))
-expr(0x35b9, make_hi("something"))
+expr(0x35b5, make_lo("sixteen_entry_table"))
+expr(0x35b9, make_hi("sixteen_entry_table"))
 
-label(0x09ea, "something2")
-expr(0x35bd, make_lo("something2"))
-expr(0x35bf, make_hi("something2"))
+label(0x09ea, "save_game")
+expr(0x35bd, make_lo("save_game"))
+expr(0x35bf, make_hi("save_game"))
 
 decimal(0x3f43)
 expr(0x3fa2, "opcode_jmp")

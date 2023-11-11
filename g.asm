@@ -49,6 +49,7 @@ osbyte_tv                                       = 144
 osbyte_vsync                                    = 19
 osfile_load                                     = 255
 osfile_read_catalogue_info                      = 5
+osfile_save                                     = 0
 osword_envelope                                 = 8
 osword_read_char                                = 10
 osword_sound                                    = 7
@@ -256,19 +257,23 @@ screen_address_high                             = $71
 src_sprite_address_high                         = $71
 characters_to_copy_per_row                      = $72
 l0072                                           = $72
+osfile_block_filename_low                       = $72
 sprite_screen_address_low                       = $72
 width_in_cells_to_write                         = $72
 height_in_cells_to_write                        = $73
 l0073                                           = $73
+osfile_block_filename_high                      = $73
 rows_to_copy                                    = $73
 sprite_screen_address_high                      = $73
 first_cell_in_row_screen_address_low            = $74
 l0074                                           = $74
 offset_within_byte                              = $74
+osfile_block_load_address_low                   = $74
 sprite_x_pos_low                                = $74
 first_cell_in_row_screen_address_high           = $75
 l0075                                           = $75
 offset_within_collision_map                     = $75
+osfile_block_load_address_mid1                  = $75
 sprite_x_pos_high                               = $75
 cell_screen_address_low                         = $76
 l0076                                           = $76
@@ -278,10 +283,12 @@ l0077                                           = $77
 sprite_y_pos_high                               = $77
 l0078                                           = $78
 original_off_screen_address_low                 = $78
+osfile_block_exec_address_low                   = $78
 sprite_x_offset_within_byte                     = $78
 byte_offset_within_sprite                       = $79
 l0079                                           = $79
 original_off_screen_address_high                = $79
+osfile_block_exec_address_mid1                  = $79
 l007a                                           = $7a
 off_screen_address_low                          = $7a
 l007b                                           = $7b
@@ -289,9 +296,11 @@ off_screen_address_high                         = $7b
 sprite_screen_address_for_column_low            = $7b
 address1_low_plus_current_character_within_row  = $7c
 l007c                                           = $7c
+osfile_block_start_address_low                  = $7c
 sprite_screen_address_for_column_high           = $7c
 current_row                                     = $7d
 l007d                                           = $7d
+osfile_block_start_address_mid1                 = $7d
 sprite_data_byte                                = $7d
 address2_low                                    = $7e
 dest_sprite_address_low                         = $7e
@@ -299,8 +308,10 @@ address2_high                                   = $7f
 dest_sprite_address_high                        = $7f
 l0080                                           = $80
 mask_sprite_byte                                = $80
+osfile_block_end_address_low                    = $80
 sprite_addr_low                                 = $80
 l0081                                           = $81
+osfile_block_end_address_mid1                   = $81
 sprite_addr_high                                = $81
 sprite_width                                    = $81
 sprite_bit                                      = $82
@@ -348,12 +359,11 @@ object_direction                                = $09be
 object_direction_old                            = $09c9
 object_current_index_in_animation               = $09d4
 current_animation                               = $09df
-something2                                      = $09ea
+save_game                                       = $09ea
 l09eb                                           = $09eb
 current_transformations_remaining               = $09ec
 level_progress_table                            = $09ef
-sixteen_entry_table1                            = $0a6f
-something                                       = $0a6f
+sixteen_entry_table                             = $0a6f
 level_ordering_table                            = $0a7f
 string_input_buffer                             = $0a90
 eight_entry_table1                              = $0aa1
@@ -480,7 +490,7 @@ initialise_level
     sta previous_level                                                ; 1277: 85 51       .Q  :1146[1]
     stx desired_room_index                                            ; 1279: 86 30       .0  :1148[1]
     sty desired_level                                                 ; 127b: 84 31       .1  :114a[1]
-    sty something2                                                    ; 127d: 8c ea 09    ... :114c[1]
+    sty save_game                                                     ; 127d: 8c ea 09    ... :114c[1]
 ; Load a new level if the desired_level has changed.
 ; 
 ; Any time we want to load a new level, we just set the desired_level and let this code
@@ -550,10 +560,10 @@ object_reset_loop
     sta object_direction                                              ; 1307: 8d be 09    ... :11d6[1]
     lda #0                                                            ; 130a: a9 00       ..  :11d9[1]
     ldy #$0f                                                          ; 130c: a0 0f       ..  :11db[1]
-clear_sixteen_entry_table1
-    sta sixteen_entry_table1,y                                        ; 130e: 99 6f 0a    .o. :11dd[1]
+clear_sixteen_entry_table
+    sta sixteen_entry_table,y                                         ; 130e: 99 6f 0a    .o. :11dd[1]
     dey                                                               ; 1311: 88          .   :11e0[1]
-    bpl clear_sixteen_entry_table1                                    ; 1312: 10 fa       ..  :11e1[1]
+    bpl clear_sixteen_entry_table                                     ; 1312: 10 fa       ..  :11e1[1]
     jsr sub_c1278                                                     ; 1314: 20 78 12     x. :11e3[1]
     lda #<brk_handler                                                 ; 1317: a9 d3       ..  :11e6[1]
     sta old_brkv2                                                     ; 1319: 8d b3 0a    ... :11e8[1]
@@ -1440,18 +1450,27 @@ brk_handler
     sta l0002                                                         ; 1808: 85 02       ..  :16d7[1]
     jmp c1713                                                         ; 180a: 4c 13 17    L.. :16d9[1]
 
+; *************************************************************************************
+; 
+; OSFILE wrapper
+; 
+; On Entry:
+;      A: OSFILE action (load / save)
+;     YX: address of filename
+; 
+; *************************************************************************************
 osfile_wrapper
-    stx l0072                                                         ; 180d: 86 72       .r  :16dc[1]
-    sty l0073                                                         ; 180f: 84 73       .s  :16de[1]
+    stx osfile_block_filename_low                                     ; 180d: 86 72       .r  :16dc[1]
+    sty osfile_block_filename_high                                    ; 180f: 84 73       .s  :16de[1]
     ldx #0                                                            ; 1811: a2 00       ..  :16e0[1]
-    stx l0074                                                         ; 1813: 86 74       .t  :16e2[1]
-    stx l0075                                                         ; 1815: 86 75       .u  :16e4[1]
-    stx l0078                                                         ; 1817: 86 78       .x  :16e6[1]
-    stx l0079                                                         ; 1819: 86 79       .y  :16e8[1]
-    stx l007c                                                         ; 181b: 86 7c       .|  :16ea[1]
-    stx l007d                                                         ; 181d: 86 7d       .}  :16ec[1]
-    stx l0080                                                         ; 181f: 86 80       ..  :16ee[1]
-    stx l0081                                                         ; 1821: 86 81       ..  :16f0[1]
+    stx osfile_block_load_address_low                                 ; 1813: 86 74       .t  :16e2[1]
+    stx osfile_block_load_address_mid1                                ; 1815: 86 75       .u  :16e4[1]
+    stx osfile_block_exec_address_low                                 ; 1817: 86 78       .x  :16e6[1]
+    stx osfile_block_exec_address_mid1                                ; 1819: 86 79       .y  :16e8[1]
+    stx osfile_block_start_address_low                                ; 181b: 86 7c       .|  :16ea[1]
+    stx osfile_block_start_address_mid1                               ; 181d: 86 7d       .}  :16ec[1]
+    stx osfile_block_end_address_low                                  ; 181f: 86 80       ..  :16ee[1]
+    stx osfile_block_end_address_mid1                                 ; 1821: 86 81       ..  :16f0[1]
     tay                                                               ; 1823: a8          .   :16f2[1]
     beq skip2                                                         ; 1824: f0 02       ..  :16f3[1]
     stx l0076                                                         ; 1826: 86 76       .v  :16f5[1]
@@ -5901,7 +5920,7 @@ sub_c344b
     lda which_dialog_is_active                                        ; 3585: a5 04       ..  :3454[1]
     beq return23                                                      ; 3587: f0 3e       .>  :3456[1]
     cmp #1                                                            ; 3589: c9 01       ..  :3458[1]
-    beq c346a                                                         ; 358b: f0 0e       ..  :345a[1]
+    beq load_or_save                                                  ; 358b: f0 0e       ..  :345a[1]
     cmp #2                                                            ; 358d: c9 02       ..  :345c[1]
     beq get_filename_and_print_drive_number_prompt                    ; 358f: f0 47       .G  :345e[1]
     cmp #3                                                            ; 3591: c9 03       ..  :3460[1]
@@ -5911,17 +5930,17 @@ sub_c344b
 c3467
     jmp c3501                                                         ; 3598: 4c 01 35    L.5 :3467[1]
 
-c346a
-    lda #0                                                            ; 359b: a9 00       ..  :346a[1]
-    sta l3497                                                         ; 359d: 8d 97 34    ..4 :346c[1]
+load_or_save
+    lda #osfile_save                                                  ; 359b: a9 00       ..  :346a[1]
+    sta osfile_action_load_or_save                                    ; 359d: 8d 97 34    ..4 :346c[1]
     jsr inkey_0                                                       ; 35a0: 20 7c 38     |8 :346f[1]
     and #caps_mask                                                    ; 35a3: 29 df       ).  :3472[1]
     cmp #'S'                                                          ; 35a5: c9 53       .S  :3474[1]
-    beq c347f                                                         ; 35a7: f0 07       ..  :3476[1]
+    beq ask_for_filename                                              ; 35a7: f0 07       ..  :3476[1]
     cmp #'L'                                                          ; 35a9: c9 4c       .L  :3478[1]
     bne return23                                                      ; 35ab: d0 1a       ..  :347a[1]
-    dec l3497                                                         ; 35ad: ce 97 34    ..4 :347c[1]
-c347f
+    dec osfile_action_load_or_save                                    ; 35ad: ce 97 34    ..4 :347c[1]
+ask_for_filename
     jsr show_dialog_box                                               ; 35b0: 20 0a 04     .. :347f[1]
     lda #2                                                            ; 35b3: a9 02       ..  :3482[1]
     sta which_dialog_is_active                                        ; 35b5: 85 04       ..  :3484[1]
@@ -5935,7 +5954,7 @@ c347f
 return23
     rts                                                               ; 35c7: 60          `   :3496[1]
 
-l3497
+osfile_action_load_or_save
     !byte 0                                                           ; 35c8: 00          .   :3497[1]
 enter_filename_message
     !byte $8e, $a5, $bf, $ae, $b9, $eb, $ad, $a2, $a7, $ae, $a5, $aa  ; 35c9: 8e a5 bf... ... :3498[1]
@@ -6023,7 +6042,7 @@ c3557
     jsr oswrch                                                        ; 3694: 20 ee ff     .. :3563[1]   ; Write character 10
     ldx #<saving_message                                              ; 3697: a2 f7       ..  :3566[1]
     ldy #>saving_message                                              ; 3699: a0 35       .5  :3568[1]
-    lda l3497                                                         ; 369b: ad 97 34    ..4 :356a[1]
+    lda osfile_action_load_or_save                                    ; 369b: ad 97 34    ..4 :356a[1]
     beq c3573                                                         ; 369e: f0 04       ..  :356d[1]
     ldx #<loading_message                                             ; 36a0: a2 fe       ..  :356f[1]
     ldy #>loading_message                                             ; 36a2: a0 35       .5  :3571[1]
@@ -6033,9 +6052,9 @@ c3573
     sta address1_low                                                  ; 36a9: 85 70       .p  :3578[1]
     lda #>save_full_filename                                          ; 36ab: a9 34       .4  :357a[1]
     sta address1_high                                                 ; 36ad: 85 71       .q  :357c[1]
-    lda l3497                                                         ; 36af: ad 97 34    ..4 :357e[1]
+    lda osfile_action_load_or_save                                    ; 36af: ad 97 34    ..4 :357e[1]
     beq c359e                                                         ; 36b2: f0 1b       ..  :3581[1]
-    lda #5                                                            ; 36b4: a9 05       ..  :3583[1]
+    lda #osfile_read_catalogue_info                                   ; 36b4: a9 05       ..  :3583[1]
     jsr osfile_wrapper                                                ; 36b6: 20 dc 16     .. :3585[1]
     bne c359b                                                         ; 36b9: d0 11       ..  :3588[1]
     lda l007b                                                         ; 36bb: a5 7b       .{  :358a[1]
@@ -6061,21 +6080,21 @@ c359e
     sta l007a                                                         ; 36df: 85 7a       .z  :35ae[1]
     lda #9                                                            ; 36e1: a9 09       ..  :35b0[1]
     sta l007b                                                         ; 36e3: 85 7b       .{  :35b2[1]
-    lda #<something                                                   ; 36e5: a9 6f       .o  :35b4[1]
+    lda #<sixteen_entry_table                                         ; 36e5: a9 6f       .o  :35b4[1]
     sta address2_low                                                  ; 36e7: 85 7e       .~  :35b6[1]
-    lda #>something                                                   ; 36e9: a9 0a       ..  :35b8[1]
+    lda #>sixteen_entry_table                                         ; 36e9: a9 0a       ..  :35b8[1]
     sta address2_high                                                 ; 36eb: 85 7f       ..  :35ba[1]
 c35bc
-    ldx #<something2                                                  ; 36ed: a2 ea       ..  :35bc[1]
-    ldy #>something2                                                  ; 36ef: a0 09       ..  :35be[1]
-    lda l3497                                                         ; 36f1: ad 97 34    ..4 :35c0[1]
+    ldx #<save_game                                                   ; 36ed: a2 ea       ..  :35bc[1]
+    ldy #>save_game                                                   ; 36ef: a0 09       ..  :35be[1]
+    lda osfile_action_load_or_save                                    ; 36f1: ad 97 34    ..4 :35c0[1]
     jsr osfile_wrapper                                                ; 36f4: 20 dc 16     .. :35c3[1]
     bne c359b                                                         ; 36f7: d0 d3       ..  :35c6[1]
     jsr something6_TODO                                               ; 36f9: 20 c3 0a     .. :35c8[1]
     cmp l09eb                                                         ; 36fc: cd eb 09    ... :35cb[1]
     beq c35d5                                                         ; 36ff: f0 05       ..  :35ce[1]
     lda #$ff                                                          ; 3701: a9 ff       ..  :35d0[1]
-    sta something2                                                    ; 3703: 8d ea 09    ... :35d2[1]
+    sta save_game                                                     ; 3703: 8d ea 09    ... :35d2[1]
 c35d5
     lda save_drive_number                                             ; 3706: ad d7 34    ..4 :35d5[1]
     sec                                                               ; 3709: 38          8   :35d8[1]
@@ -6085,14 +6104,14 @@ c35d5
     jsr prompt_user_to_insert_correct_disc                            ; 3710: 20 17 36     .6 :35df[1]
 c35e2
     jsr check_cursor_left_right_and_space                             ; 3713: 20 8f 3a     .: :35e2[1]
-    lda l3497                                                         ; 3716: ad 97 34    ..4 :35e5[1]
+    lda osfile_action_load_or_save                                    ; 3716: ad 97 34    ..4 :35e5[1]
     bne c35ed                                                         ; 3719: d0 03       ..  :35e8[1]
     jmp remove_dialog                                                 ; 371b: 4c 53 04    LS. :35ea[1]
 
 c35ed
     lda #$ff                                                          ; 371e: a9 ff       ..  :35ed[1]
     sta desired_level                                                 ; 3720: 85 31       .1  :35ef[1]
-    lda something2                                                    ; 3722: ad ea 09    ... :35f1[1]
+    lda save_game                                                     ; 3722: ad ea 09    ... :35f1[1]
     jmp select_level_a                                                ; 3725: 4c db 36    L.6 :35f4[1]
 
 saving_message
@@ -7579,7 +7598,7 @@ loop_c0ac6
     inx                                                               ; 409a: e8          .   :0ac9[5]
     cpx #$80                                                          ; 409b: e0 80       ..  :0aca[5]
     bcc loop_c0ac6                                                    ; 409d: 90 f8       ..  :0acc[5]
-    eor something2                                                    ; 409f: 4d ea 09    M.. :0ace[5]
+    eor save_game                                                     ; 409f: 4d ea 09    M.. :0ace[5]
     eor #$ff                                                          ; 40a2: 49 ff       I.  :0ad1[5]
     rts                                                               ; 40a4: 60          `   :0ad3[5]
 
@@ -8066,8 +8085,6 @@ pydis_end
 ;     c340d
 ;     c3428
 ;     c3467
-;     c346a
-;     c347f
 ;     c3501
 ;     c3516
 ;     c3557
@@ -8178,7 +8195,6 @@ pydis_end
 ;     l2ef2
 ;     l31d7
 ;     l3403
-;     l3497
 ;     l377d
 ;     l38ad
 ;     l38c3
@@ -8407,6 +8423,9 @@ pydis_end
 !if (<save_full_filename) != $d6 {
     !error "Assertion failed: <save_full_filename == $d6"
 }
+!if (<save_game) != $ea {
+    !error "Assertion failed: <save_game == $ea"
+}
 !if (<saving_message) != $f7 {
     !error "Assertion failed: <saving_message == $f7"
 }
@@ -8416,11 +8435,8 @@ pydis_end
 !if (<section_message) != $b1 {
     !error "Assertion failed: <section_message == $b1"
 }
-!if (<something) != $6f {
-    !error "Assertion failed: <something == $6f"
-}
-!if (<something2) != $ea {
-    !error "Assertion failed: <something2 == $ea"
+!if (<sixteen_entry_table) != $6f {
+    !error "Assertion failed: <sixteen_entry_table == $6f"
 }
 !if (<sound_data1) != $a4 {
     !error "Assertion failed: <sound_data1 == $a4"
@@ -8605,17 +8621,17 @@ pydis_end
 !if (>save_full_filename) != $34 {
     !error "Assertion failed: >save_full_filename == $34"
 }
+!if (>save_game) != $09 {
+    !error "Assertion failed: >save_game == $09"
+}
 !if (>saving_message) != $35 {
     !error "Assertion failed: >saving_message == $35"
 }
 !if (>section_message) != $37 {
     !error "Assertion failed: >section_message == $37"
 }
-!if (>something) != $0a {
-    !error "Assertion failed: >something == $0a"
-}
-!if (>something2) != $09 {
-    !error "Assertion failed: >something2 == $09"
+!if (>sixteen_entry_table) != $0a {
+    !error "Assertion failed: >sixteen_entry_table == $0a"
 }
 !if (>sound_data1) != $38 {
     !error "Assertion failed: >sound_data1 == $38"
@@ -8922,6 +8938,9 @@ pydis_end
 }
 !if (osfile_read_catalogue_info) != $05 {
     !error "Assertion failed: osfile_read_catalogue_info == $05"
+}
+!if (osfile_save) != $00 {
+    !error "Assertion failed: osfile_save == $00"
 }
 !if (osword_envelope) != $08 {
     !error "Assertion failed: osword_envelope == $08"
