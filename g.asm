@@ -356,8 +356,8 @@ sprite_197                                  = $0bc5
 level_init_after_load_handler_ptr           = $3ad7
 second_level_handler_ptr                    = $3ad9
 level_name_ptr                              = $3adb
-room_index_cheat                            = $3add
-c3ade                                       = $3ade
+room_index_cheat1                           = $3add
+room_index_cheat2                           = $3ade
 level_header_data                           = $3adf
 auxcode                                     = $53c0
 check_password                              = $53c0
@@ -579,6 +579,7 @@ clear_sound_priorities_loop
 ; level_progress_table has:
 ; 
 ;     bits 0-2: current room number
+;     bit 6: if clear then override with a cheat room number
 ;     bit 7: set when the completion spell is obtained
 ; 
     lda level_progress_table,x                                        ; 1359: bd ef 09    ... :1228[1]
@@ -608,11 +609,13 @@ skip_adding_completion_spell_to_toolbar
     sec                                                               ; 137c: 38          8   :124b[1]
     sbc #first_level_letter                                           ; 137d: e9 41       .A  :124c[1]
     tax                                                               ; 137f: aa          .   :124e[1]
+; set current room number in level progress table
     lda level_progress_table,x                                        ; 1380: bd ef 09    ... :124f[1]
     and #$f8                                                          ; 1383: 29 f8       ).  :1252[1]
     ora desired_room_index                                            ; 1385: 05 30       .0  :1254[1]
     ora #$40 ; '@'                                                    ; 1387: 09 40       .@  :1256[1]
     sta level_progress_table,x                                        ; 1389: 9d ef 09    ... :1258[1]
+; set XY to address from the start of the level data based on the room number
     lda desired_room_index                                            ; 138c: a5 30       .0  :125b[1]
     asl                                                               ; 138e: 0a          .   :125d[1]
     tay                                                               ; 138f: a8          .   :125e[1]
@@ -644,11 +647,11 @@ sub_c1278
     lda level_progress_table,x                                        ; 13b6: bd ef 09    ... :1285[1]
     and #$40 ; '@'                                                    ; 13b9: 29 40       )@  :1288[1]
     bne skip_developer_mode_code1                                     ; 13bb: d0 0f       ..  :128a[1]
-    lda room_index_cheat                                              ; 13bd: ad dd 3a    ..: :128c[1]
+    lda room_index_cheat1                                             ; 13bd: ad dd 3a    ..: :128c[1]
     sta desired_room_index                                            ; 13c0: 85 30       .0  :128f[1]
     lda developer_flags                                               ; 13c2: ad 03 11    ... :1291[1]
     bpl skip_developer_mode_code1                                     ; 13c5: 10 05       ..  :1294[1]
-    lda c3ade                                                         ; 13c7: ad de 3a    ..: :1296[1]
+    lda room_index_cheat2                                             ; 13c7: ad de 3a    ..: :1296[1]
     sta desired_room_index                                            ; 13ca: 85 30       .0  :1299[1]
 skip_developer_mode_code1
     lda desired_room_index                                            ; 13cc: a5 30       .0  :129b[1]
@@ -8066,7 +8069,6 @@ pydis_end
 ;     c3a08
 ;     c3a83
 ;     c3a88
-;     c3ade
 ;     l0002
 ;     l0003
 ;     l0026

@@ -1226,9 +1226,12 @@ entry(0x40c0, "convert_section_letter_to_level_filename_letter")
 comment(0x1228, """level_progress_table has:
 
     bits 0-2: current room number
+    bit 6: if clear then override with a cheat room number
     bit 7: set when the completion spell is obtained
 """)
 label(0x1234, "skip_adding_completion_spell_to_toolbar")
+comment(0x124f, "set current room number in level progress table")
+comment(0x125b, "set XY to address from the start of the level data based on the room number")
 
 comment(0x40d0, "Update the transformation count on screen at text position (35-37, 6). This takes care to update as few digits on screen as possible, probably to reduce flicker and to offset the relatively slow implementation of print_italic.")
 label(0x9ec, "current_transformations_remaining")
@@ -1238,8 +1241,7 @@ label(0x5c, "displayed_transformations_remaining")
 expr_label(0x5d, "displayed_transformations_remaining+1")
 expr_label(0x5e, "displayed_transformations_remaining+2")
 decimal(0x149)
-# TODO: From a py8dis POV, this code feels wrong/confusing. entry() and label() behave different with how the label is placed. This works, but I am not sure it's by design. Maybe it is, it's been a while and I haven't had any coffee yet...
-entry(0x40d0, "update_displayed_transformations_remaining")
+label(0x0131, "update_displayed_transformations_remaining")
 label(0x40d0, "relocation5_high_copy_start")
 label(0x40d0+0x2f, "relocation5_high_copy_end")
 expr(0x3c8c, make_subtract("relocation5_high_copy_end", "relocation5_high_copy_start"))
@@ -1613,7 +1615,9 @@ expr(0x3a59, "inkey_key_left")
 expr(0x3a61, "inkey_key_right")
 
 # With developer_flags, set the start room to go to?
-label(0x3add, "room_index_cheat")
+label(0x3add, "room_index_cheat1")
+label(0x3ade, "room_index_cheat2")
+
 # TODO: What does the shift key do in the game? Or Escape?
 
 label(0x9ef, "level_progress_table")
