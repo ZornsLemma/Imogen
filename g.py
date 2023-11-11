@@ -39,6 +39,9 @@ constant(0x38, "opcode_sec")
 #   Ranges here are *binary* NOT the *runtime* addresses as used everywhere else.
 #   This is weird, but makes the addresses unique.
 #
+#   When we replace unnamed variables like "l0072" with another variable, later ranges mut replace the replacement variable.
+#   This is not a great system, but the best I can come up with that actually works so far.
+#
 substitute_labels = {
 
     (0x114f,0x1297): {
