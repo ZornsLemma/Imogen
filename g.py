@@ -2240,6 +2240,10 @@ entry(0x1b96, "something26_y_loop")
 
 entry(0x1b8d, "c1c9d_local")
 
+# TODO: Not 100% sure screen_width_in_pixels is right constant here
+expr(0x1bfe, make_lo("screen_width_in_pixels"))
+expr(0x1c04, make_hi("screen_width_in_pixels"))
+
 go()
 
 # vi: tw=100

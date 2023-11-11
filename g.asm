@@ -2279,10 +2279,10 @@ loop_c1be4
     sta off_screen_address_high                                       ; 1d29: 85 7b       .{  :1bf8[1]
     lda cell_screen_address_low                                       ; 1d2b: a5 76       .v  :1bfa[1]
     clc                                                               ; 1d2d: 18          .   :1bfc[1]
-    adc #$40 ; '@'                                                    ; 1d2e: 69 40       i@  :1bfd[1]
+    adc #<screen_width_in_pixels                                      ; 1d2e: 69 40       i@  :1bfd[1]
     sta cell_screen_address_low                                       ; 1d30: 85 76       .v  :1bff[1]
     lda cell_screen_address_high                                      ; 1d32: a5 77       .w  :1c01[1]
-    adc #1                                                            ; 1d34: 69 01       i.  :1c03[1]
+    adc #>screen_width_in_pixels                                      ; 1d34: 69 01       i.  :1c03[1]
     sta cell_screen_address_high                                      ; 1d36: 85 77       .w  :1c05[1]
     ldy #5                                                            ; 1d38: a0 05       ..  :1c07[1]
 loop_c1c09
@@ -8628,6 +8628,9 @@ pydis_end
 }
 !if (>saving_message) != $35 {
     !error "Assertion failed: >saving_message == $35"
+}
+!if (>screen_width_in_pixels) != $01 {
+    !error "Assertion failed: >screen_width_in_pixels == $01"
 }
 !if (>section_message) != $37 {
     !error "Assertion failed: >section_message == $37"
