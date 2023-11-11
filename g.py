@@ -41,9 +41,6 @@ constant(0x38, "opcode_sec")
 #   Ranges here are *binary* NOT the *runtime* addresses as used everywhere else.
 #   This is weird, but makes the addresses unique.
 #
-#   When we replace unnamed variables like "l0072" with another variable, later ranges mut replace the replacement variable.
-#   This is not a great system, but the best I can come up with that actually works so far.
-#
 substitute_labels = {
 
     (0x114f,0x1297): {
@@ -74,10 +71,6 @@ substitute_labels = {
         "l007d": "sprite_data_byte",
         "l0080": "mask_sprite_byte",
         "l0081": "sprite_width",
-        "l0082": "sprite_bit",
-        "l0083": "sprite_bit_mask",
-        "l0084": "sprite_y_offset_within_character_row",
-        "l0085": "sprite_character_x_pos",
     },
     (0x183d, 0x1841): {
         "address1_low": "filename_low",
@@ -91,8 +84,8 @@ substitute_labels = {
         "address1_high": "filename_high",
     },
     (0x1bec,0x1f24): {
-         "sprite_y_pos_low": "cell_screen_address_low",
-         "sprite_y_pos_high": "cell_screen_address_high",
+         "l0076": "cell_screen_address_low",
+         "l0077": "cell_screen_address_high",
     },
     (0x1f25, 0x3c05): {
         "initialise_display": "collision_map",
@@ -104,19 +97,19 @@ substitute_labels = {
     (0x1f48, 0x1fd7): {
         "address1_low": "cell_x",
         "address1_high": "cell_y",
-        "sprite_x_pos_high": "offset_within_collision_map",
-        "sprite_screen_address_low": "width_in_cells_to_write",
+        "l0075": "offset_within_collision_map",
+        "l0072": "width_in_cells_to_write",
         "l004b": "height_counter",
-        "sprite_x_pos_low": "offset_within_byte",
-        "sprite_screen_address_high": "height_in_cells_to_write",
+        "l0074": "offset_within_byte",
+        "l0073": "height_in_cells_to_write",
     },
     (0x2331, 0x2467): {
         "address1_low": "animation_address_low",
         "address1_high": "animation_address_high",
     },
     (0x2565, 0x2680): {
-        "mask_sprite_byte": "sprite_addr_low",
-        "sprite_width": "sprite_addr_high",
+        "l0080": "sprite_addr_low",
+        "l0081": "sprite_addr_high",
     },
     (0x2cb8, 0x2d3c): {
         "address1_low": "menu_item_to_use",
@@ -130,6 +123,14 @@ for pair in substitute_labels:
     dict = substitute_labels[pair]
     inv_dict = {v: k for k, v in dict.items()}
     inverse_labels[pair] = inv_dict
+
+    # also make labels lXXXX, which seems redundant, but changes the way the label_maker suggestions works
+    for key in dict:
+        m = re.match("l([0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F])", key)
+        if m:
+            addr = int(m.group(1), 16)
+            label(addr, key)
+
 
 def my_label_maker(addr, context, suggestion):
     # find a substitution if in one of the ranges
@@ -197,7 +198,6 @@ label(0x004c, "screen_base_address_high")
 label(0x0058, "temp_sprite_address_low")
 label(0x0059, "temp_sprite_address_high")
 label(0x005a, "temp_sprite_offset")
-label(0x005b, "developer_mode_sideways_ram_is_set_up_flag")
 
 label(0x005f, "initial_level_number_div4")
 label(0x0065, "remember_object_index")
@@ -207,6 +207,10 @@ label(0x0071, "address1_high")
 label(0x007e, "address2_low")
 label(0x007f, "address2_high")
 
+label(0x0082, "sprite_bit")
+label(0x0083, "sprite_bit_mask")
+label(0x0084, "sprite_y_offset_within_character_row")
+label(0x0085, "sprite_character_x_pos")
 label(0x0086, "amount_sprite_is_offscreen_x")
 
 label(0x0088, "vertical_sprite_position_is_valid_flag")

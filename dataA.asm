@@ -19,6 +19,7 @@ l0041                                       = $41
 l0042                                       = $42
 previous_level                              = $51
 l0052                                       = $52
+developer_mode_sideways_ram_is_set_up_flag  = $5b
 l0070                                       = $70
 level_thing_2_data                          = $0709
 level_thing_4_data                          = $0714

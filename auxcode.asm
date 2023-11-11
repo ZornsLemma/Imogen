@@ -18,11 +18,11 @@ height_in_cells                             = $3d
 value_to_write_to_collision_map             = $3e
 game_area_screen_address_high               = $4c
 previous_level                              = $51
-l005b                                       = $5b
+developer_mode_sideways_ram_is_set_up_flag  = $5b
 screen_address_low                          = $70
 screen_address_high                         = $71
 counter                                     = $72
-l0073                                       = $73
+screendump_data_byte                        = $73
 invert_screen_dump_flag                     = $74
 l040a                                       = $040a
 l0453                                       = $0453
@@ -263,7 +263,7 @@ c55c0
     ldy #3                                                            ; 55c5: a0 03       ..
     and #1                                                            ; 55c7: 29 01       ).
     beq c55d3                                                         ; 55c9: f0 08       ..
-    lda l005b                                                         ; 55cb: a5 5b       .[
+    lda developer_mode_sideways_ram_is_set_up_flag                    ; 55cb: a5 5b       .[
     beq c55d3                                                         ; 55cd: f0 04       ..
     ldx #opcode_jmp                                                   ; 55cf: a2 4c       .L
 ; For break effect: *FX 200,1
@@ -413,13 +413,13 @@ screendump_character_row_loop
     ldx #7                                                            ; 56f2: a2 07       ..
 eight_bytes_of_screen_dump_loop
     ldy #0                                                            ; 56f4: a0 00       ..
-    sty l0073                                                         ; 56f6: 84 73       .s
+    sty screendump_data_byte                                          ; 56f6: 84 73       .s
 get_byte_of_screen_data_loop
-    asl l0073                                                         ; 56f8: 06 73       .s
+    asl screendump_data_byte                                          ; 56f8: 06 73       .s
     lda (screen_address_low),y                                        ; 56fa: b1 70       .p
     and power_of_2_table,x                                            ; 56fc: 3d 3a 56    =:V
     bne skip1                                                         ; 56ff: d0 02       ..
-    inc l0073                                                         ; 5701: e6 73       .s
+    inc screendump_data_byte                                          ; 5701: e6 73       .s
 skip1
     iny                                                               ; 5703: c8          .
     cpy #8                                                            ; 5704: c0 08       ..
@@ -427,7 +427,7 @@ skip1
 ; write byte of data
     lda #1                                                            ; 5708: a9 01       ..
     jsr oswrch                                                        ; 570a: 20 ee ff     ..            ; Write character 1
-    lda l0073                                                         ; 570d: a5 73       .s
+    lda screendump_data_byte                                          ; 570d: a5 73       .s
     eor invert_screen_dump_flag                                       ; 570f: 45 74       Et
     jsr oswrch                                                        ; 5711: 20 ee ff     ..            ; Write character
     dex                                                               ; 5714: ca          .
@@ -502,8 +502,6 @@ pydis_end
 ;     c55d3
 ;     c5635
 ;     c564e
-;     l005b
-;     l0073
 ;     l040a
 ;     l0453
 ;     l09ef

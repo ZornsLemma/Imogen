@@ -13,6 +13,7 @@ label(0x3d, "height_in_cells")
 label(0x003e, "value_to_write_to_collision_map")
 
 label(0x1103, "developer_flags")
+label(0x005b, "developer_mode_sideways_ram_is_set_up_flag")
 
 # See mono_handler and colour_handler in auxcode.asm
 label(0x1765, "use_colour_flag")
