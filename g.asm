@@ -283,8 +283,10 @@ address2_low                                = $7e
 dest_sprite_address_low                     = $7e
 address2_high                               = $7f
 dest_sprite_address_high                    = $7f
+l0080                                       = $80
 mask_sprite_byte                            = $80
 sprite_addr_low                             = $80
+l0081                                       = $81
 sprite_addr_high                            = $81
 sprite_width                                = $81
 sprite_bit                                  = $82
@@ -1425,8 +1427,8 @@ osfile_wrapper
     stx l0079                                                         ; 1819: 86 79       .y  :16e8[1]
     stx l007c                                                         ; 181b: 86 7c       .|  :16ea[1]
     stx l007d                                                         ; 181d: 86 7d       .}  :16ec[1]
-    stx mask_sprite_byte                                              ; 181f: 86 80       ..  :16ee[1]
-    stx sprite_width                                                  ; 1821: 86 81       ..  :16f0[1]
+    stx l0080                                                         ; 181f: 86 80       ..  :16ee[1]
+    stx l0081                                                         ; 1821: 86 81       ..  :16f0[1]
     tay                                                               ; 1823: a8          .   :16f2[1]
     beq skip2                                                         ; 1824: f0 02       ..  :16f3[1]
     stx l0076                                                         ; 1826: 86 76       .v  :16f5[1]
@@ -3828,13 +3830,13 @@ sub_c265a
     tya                                                               ; 2793: 98          .   :2662[1]
     sec                                                               ; 2794: 38          8   :2663[1]
     sbc l007a                                                         ; 2795: e5 7a       .z  :2664[1]
-    sta mask_sprite_byte                                              ; 2797: 85 80       ..  :2666[1]
+    sta l0080                                                         ; 2797: 85 80       ..  :2666[1]
 loop_c2668
     jsr sub_c1efa                                                     ; 2799: 20 fa 1e     .. :2668[1]
     cmp #3                                                            ; 279c: c9 03       ..  :266b[1]
     beq c2676                                                         ; 279e: f0 07       ..  :266d[1]
     dey                                                               ; 27a0: 88          .   :266f[1]
-    dec mask_sprite_byte                                              ; 27a1: c6 80       ..  :2670[1]
+    dec l0080                                                         ; 27a1: c6 80       ..  :2670[1]
     bpl loop_c2668                                                    ; 27a3: 10 f4       ..  :2672[1]
     inc l007c                                                         ; 27a5: e6 7c       .|  :2674[1]
 c2676
@@ -3845,13 +3847,13 @@ c2676
     tya                                                               ; 27af: 98          .   :267e[1]
     sec                                                               ; 27b0: 38          8   :267f[1]
     sbc l007a                                                         ; 27b1: e5 7a       .z  :2680[1]
-    sta mask_sprite_byte                                              ; 27b3: 85 80       ..  :2682[1]
+    sta l0080                                                         ; 27b3: 85 80       ..  :2682[1]
 loop_c2684
     jsr sub_c1efa                                                     ; 27b5: 20 fa 1e     .. :2684[1]
     cmp #3                                                            ; 27b8: c9 03       ..  :2687[1]
     beq return14                                                      ; 27ba: f0 07       ..  :2689[1]
     dey                                                               ; 27bc: 88          .   :268b[1]
-    dec mask_sprite_byte                                              ; 27bd: c6 80       ..  :268c[1]
+    dec l0080                                                         ; 27bd: c6 80       ..  :268c[1]
     bpl loop_c2684                                                    ; 27bf: 10 f4       ..  :268e[1]
     inc l007d                                                         ; 27c1: e6 7d       .}  :2690[1]
 return14
@@ -3865,10 +3867,10 @@ sub_c2693
     bcc c26c2                                                         ; 27cc: 90 25       .%  :269b[1]
     lda address1_low                                                  ; 27ce: a5 70       .p  :269d[1]
     and #7                                                            ; 27d0: 29 07       ).  :269f[1]
-    sta mask_sprite_byte                                              ; 27d2: 85 80       ..  :26a1[1]
+    sta l0080                                                         ; 27d2: 85 80       ..  :26a1[1]
     lda #8                                                            ; 27d4: a9 08       ..  :26a3[1]
     sec                                                               ; 27d6: 38          8   :26a5[1]
-    sbc mask_sprite_byte                                              ; 27d7: e5 80       ..  :26a6[1]
+    sbc l0080                                                         ; 27d7: e5 80       ..  :26a6[1]
     clc                                                               ; 27d9: 18          .   :26a8[1]
     adc object_x_low,x                                                ; 27da: 7d 50 09    }P. :26a9[1]
     sta object_x_low,x                                                ; 27dd: 9d 50 09    .P. :26ac[1]
@@ -3885,10 +3887,10 @@ c26c2
     and #7                                                            ; 27f5: 29 07       ).  :26c4[1]
     clc                                                               ; 27f7: 18          .   :26c6[1]
     adc #1                                                            ; 27f8: 69 01       i.  :26c7[1]
-    sta mask_sprite_byte                                              ; 27fa: 85 80       ..  :26c9[1]
+    sta l0080                                                         ; 27fa: 85 80       ..  :26c9[1]
     lda object_x_low,x                                                ; 27fc: bd 50 09    .P. :26cb[1]
     sec                                                               ; 27ff: 38          8   :26ce[1]
-    sbc mask_sprite_byte                                              ; 2800: e5 80       ..  :26cf[1]
+    sbc l0080                                                         ; 2800: e5 80       ..  :26cf[1]
     sta object_x_low,x                                                ; 2802: 9d 50 09    .P. :26d1[1]
     lda object_x_high,x                                               ; 2805: bd 66 09    .f. :26d4[1]
     sbc #0                                                            ; 2808: e9 00       ..  :26d7[1]
@@ -3907,13 +3909,13 @@ sub_c26e5
     txa                                                               ; 281e: 8a          .   :26ed[1]
     sec                                                               ; 281f: 38          8   :26ee[1]
     sbc l0078                                                         ; 2820: e5 78       .x  :26ef[1]
-    sta mask_sprite_byte                                              ; 2822: 85 80       ..  :26f1[1]
+    sta l0080                                                         ; 2822: 85 80       ..  :26f1[1]
 loop_c26f3
     jsr sub_c1efa                                                     ; 2824: 20 fa 1e     .. :26f3[1]
     cmp #3                                                            ; 2827: c9 03       ..  :26f6[1]
     beq c2701                                                         ; 2829: f0 07       ..  :26f8[1]
     dex                                                               ; 282b: ca          .   :26fa[1]
-    dec mask_sprite_byte                                              ; 282c: c6 80       ..  :26fb[1]
+    dec l0080                                                         ; 282c: c6 80       ..  :26fb[1]
     bpl loop_c26f3                                                    ; 282e: 10 f4       ..  :26fd[1]
     inc address2_low                                                  ; 2830: e6 7e       .~  :26ff[1]
 c2701
@@ -3924,13 +3926,13 @@ c2701
     txa                                                               ; 283a: 8a          .   :2709[1]
     sec                                                               ; 283b: 38          8   :270a[1]
     sbc l0078                                                         ; 283c: e5 78       .x  :270b[1]
-    sta mask_sprite_byte                                              ; 283e: 85 80       ..  :270d[1]
+    sta l0080                                                         ; 283e: 85 80       ..  :270d[1]
 loop_c270f
     jsr sub_c1efa                                                     ; 2840: 20 fa 1e     .. :270f[1]
     cmp #3                                                            ; 2843: c9 03       ..  :2712[1]
     beq return16                                                      ; 2845: f0 07       ..  :2714[1]
     dex                                                               ; 2847: ca          .   :2716[1]
-    dec mask_sprite_byte                                              ; 2848: c6 80       ..  :2717[1]
+    dec l0080                                                         ; 2848: c6 80       ..  :2717[1]
     bpl loop_c270f                                                    ; 284a: 10 f4       ..  :2719[1]
     inc address2_high                                                 ; 284c: e6 7f       ..  :271b[1]
 return16
@@ -3944,10 +3946,10 @@ sub_c271e
     bcc c274d                                                         ; 2857: 90 25       .%  :2726[1]
     lda l0074                                                         ; 2859: a5 74       .t  :2728[1]
     and #7                                                            ; 285b: 29 07       ).  :272a[1]
-    sta mask_sprite_byte                                              ; 285d: 85 80       ..  :272c[1]
+    sta l0080                                                         ; 285d: 85 80       ..  :272c[1]
     lda #8                                                            ; 285f: a9 08       ..  :272e[1]
     sec                                                               ; 2861: 38          8   :2730[1]
-    sbc mask_sprite_byte                                              ; 2862: e5 80       ..  :2731[1]
+    sbc l0080                                                         ; 2862: e5 80       ..  :2731[1]
     clc                                                               ; 2864: 18          .   :2733[1]
     adc object_y_low,x                                                ; 2865: 7d 7c 09    }|. :2734[1]
     sta object_y_low,x                                                ; 2868: 9d 7c 09    .|. :2737[1]
@@ -3964,10 +3966,10 @@ c274d
     and #7                                                            ; 2880: 29 07       ).  :274f[1]
     clc                                                               ; 2882: 18          .   :2751[1]
     adc #1                                                            ; 2883: 69 01       i.  :2752[1]
-    sta mask_sprite_byte                                              ; 2885: 85 80       ..  :2754[1]
+    sta l0080                                                         ; 2885: 85 80       ..  :2754[1]
     lda object_y_low,x                                                ; 2887: bd 7c 09    .|. :2756[1]
     sec                                                               ; 288a: 38          8   :2759[1]
-    sbc mask_sprite_byte                                              ; 288b: e5 80       ..  :275a[1]
+    sbc l0080                                                         ; 288b: e5 80       ..  :275a[1]
     sta object_y_low,x                                                ; 288d: 9d 7c 09    .|. :275c[1]
     lda object_y_high,x                                               ; 2890: bd 92 09    ... :275f[1]
     sbc #0                                                            ; 2893: e9 00       ..  :2762[1]
@@ -4107,7 +4109,7 @@ sub_c2859
     txa                                                               ; 2995: 8a          .   :2864[1]
     sec                                                               ; 2996: 38          8   :2865[1]
     sbc l0078                                                         ; 2997: e5 78       .x  :2866[1]
-    sta mask_sprite_byte                                              ; 2999: 85 80       ..  :2868[1]
+    sta l0080                                                         ; 2999: 85 80       ..  :2868[1]
     jmp c287e                                                         ; 299b: 4c 7e 28    L~( :286a[1]
 
 sub_c286d
@@ -4121,13 +4123,13 @@ sub_c286d
     txa                                                               ; 29a9: 8a          .   :2878[1]
     sec                                                               ; 29aa: 38          8   :2879[1]
     sbc l007a                                                         ; 29ab: e5 7a       .z  :287a[1]
-    sta mask_sprite_byte                                              ; 29ad: 85 80       ..  :287c[1]
+    sta l0080                                                         ; 29ad: 85 80       ..  :287c[1]
 c287e
     jsr sub_c1efa                                                     ; 29af: 20 fa 1e     .. :287e[1]
     cmp #3                                                            ; 29b2: c9 03       ..  :2881[1]
     beq c288c                                                         ; 29b4: f0 07       ..  :2883[1]
     dex                                                               ; 29b6: ca          .   :2885[1]
-    dec mask_sprite_byte                                              ; 29b7: c6 80       ..  :2886[1]
+    dec l0080                                                         ; 29b7: c6 80       ..  :2886[1]
     bpl c287e                                                         ; 29b9: 10 f4       ..  :2888[1]
     lda #0                                                            ; 29bb: a9 00       ..  :288a[1]
 c288c

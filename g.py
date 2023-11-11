@@ -70,6 +70,13 @@ substitute_labels = {
         "l007b": "sprite_screen_address_for_column_low",
         "l007c": "sprite_screen_address_for_column_high",
         "l007d": "sprite_data_byte",
+        "l0080": "mask_sprite_byte",
+        "l0081": "sprite_width",
+        "l0082": "sprite_bit",
+        "l0083": "sprite_bit_mask",
+        "l0084": "sprite_y_offset_within_character_row",
+        "l0085": "sprite_character_x_pos",
+
     },
     (0x183d, 0x1841): {
         "address1_low": "filename_low",
@@ -198,12 +205,7 @@ label(0x0070, "address1_low")
 label(0x0071, "address1_high")
 label(0x007e, "address2_low")
 label(0x007f, "address2_high")
-label(0x0080, "mask_sprite_byte")
-label(0x0081, "sprite_width")
-label(0x0082, "sprite_bit")
-label(0x0083, "sprite_bit_mask")
-label(0x0084, "sprite_y_offset_within_character_row")
-label(0x0085, "sprite_character_x_pos")
+
 label(0x0086, "amount_sprite_is_offscreen_x")
 
 label(0x0088, "vertical_sprite_position_is_valid_flag")
