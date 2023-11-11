@@ -2224,6 +2224,8 @@ entry(0x1b0c, "two_by_two_alternating_pattern")
 
 comment(0x1b90, "TODO: From the context this is called in in dataA, I suspect it is changing the current plot mode and/or set of characters used by restore_rectangle_of_screen_memory.")
 
+entry(0x1efa, "read_collision_map_value_for_x_y")
+comment(0x1efa, "TODO: speculating but think this is right - my skimming of existing collision map disassembly suggests it stores 2 bits per character cell, so we have 10 bytes per 40 column row (4 cells per byte), which seems to fit with the constants in this code")
 expr(0x1efb, "game_area_columns")
 expr(0x1eff, "game_area_rows")
 entry(0x1f2d, "outside_game_area")

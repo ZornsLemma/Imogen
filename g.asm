@@ -1891,7 +1891,7 @@ something13_TODO
     lda desired_room_index                                            ; 1ac5: a5 30       .0  :1994[1]
     cmp current_room_index                                            ; 1ac7: cd ba 1a    ... :1996[1]
     bne c19e2                                                         ; 1aca: d0 47       .G  :1999[1]
-    jsr sub_c1efa                                                     ; 1acc: 20 fa 1e     .. :199b[1]
+    jsr read_collision_map_value_for_x_y                              ; 1acc: 20 fa 1e     .. :199b[1]
     cmp #3                                                            ; 1acf: c9 03       ..  :199e[1]
     beq c19b9                                                         ; 1ad1: f0 17       ..  :19a0[1]
     lda #3                                                            ; 1ad3: a9 03       ..  :19a2[1]
@@ -2217,26 +2217,26 @@ something26_TODO
 c1b96
     ldx #$27 ; '''                                                    ; 1cc7: a2 27       .'  :1b96[1]
 c1b98
-    jsr sub_c1efa                                                     ; 1cc9: 20 fa 1e     .. :1b98[1]
+    jsr read_collision_map_value_for_x_y                              ; 1cc9: 20 fa 1e     .. :1b98[1]
     cmp #3                                                            ; 1ccc: c9 03       ..  :1b9b[1]
     bne c1bc3                                                         ; 1cce: d0 24       .$  :1b9d[1]
     inx                                                               ; 1cd0: e8          .   :1b9f[1]
-    jsr sub_c1efa                                                     ; 1cd1: 20 fa 1e     .. :1ba0[1]
+    jsr read_collision_map_value_for_x_y                              ; 1cd1: 20 fa 1e     .. :1ba0[1]
     dex                                                               ; 1cd4: ca          .   :1ba3[1]
     cmp #3                                                            ; 1cd5: c9 03       ..  :1ba4[1]
     bne something15_TODO                                              ; 1cd7: d0 e2       ..  :1ba6[1]
     dex                                                               ; 1cd9: ca          .   :1ba8[1]
-    jsr sub_c1efa                                                     ; 1cda: 20 fa 1e     .. :1ba9[1]
+    jsr read_collision_map_value_for_x_y                              ; 1cda: 20 fa 1e     .. :1ba9[1]
     inx                                                               ; 1cdd: e8          .   :1bac[1]
     cmp #3                                                            ; 1cde: c9 03       ..  :1bad[1]
     bne c1b8d                                                         ; 1ce0: d0 dc       ..  :1baf[1]
     dey                                                               ; 1ce2: 88          .   :1bb1[1]
-    jsr sub_c1efa                                                     ; 1ce3: 20 fa 1e     .. :1bb2[1]
+    jsr read_collision_map_value_for_x_y                              ; 1ce3: 20 fa 1e     .. :1bb2[1]
     iny                                                               ; 1ce6: c8          .   :1bb5[1]
     cmp #3                                                            ; 1ce7: c9 03       ..  :1bb6[1]
     bne c1bca                                                         ; 1ce9: d0 10       ..  :1bb8[1]
     iny                                                               ; 1ceb: c8          .   :1bba[1]
-    jsr sub_c1efa                                                     ; 1cec: 20 fa 1e     .. :1bbb[1]
+    jsr read_collision_map_value_for_x_y                              ; 1cec: 20 fa 1e     .. :1bbb[1]
     dey                                                               ; 1cef: 88          .   :1bbe[1]
     cmp #3                                                            ; 1cf0: c9 03       ..  :1bbf[1]
     bne c1c15                                                         ; 1cf2: d0 52       .R  :1bc1[1]
@@ -2353,7 +2353,7 @@ c1c6e
     inx                                                               ; 1d9f: e8          .   :1c6e[1]
     dey                                                               ; 1da0: 88          .   :1c6f[1]
     bmi c1c82                                                         ; 1da1: 30 10       0.  :1c70[1]
-    jsr sub_c1efa                                                     ; 1da3: 20 fa 1e     .. :1c72[1]
+    jsr read_collision_map_value_for_x_y                              ; 1da3: 20 fa 1e     .. :1c72[1]
     cmp #3                                                            ; 1da6: c9 03       ..  :1c75[1]
     bne c1c82                                                         ; 1da8: d0 09       ..  :1c77[1]
     lda #$ff                                                          ; 1daa: a9 ff       ..  :1c79[1]
@@ -2365,7 +2365,7 @@ c1c82
     iny                                                               ; 1db4: c8          .   :1c83[1]
     cpy #$18                                                          ; 1db5: c0 18       ..  :1c84[1]
     bcs c1c98                                                         ; 1db7: b0 10       ..  :1c86[1]
-    jsr sub_c1efa                                                     ; 1db9: 20 fa 1e     .. :1c88[1]
+    jsr read_collision_map_value_for_x_y                              ; 1db9: 20 fa 1e     .. :1c88[1]
     cmp #3                                                            ; 1dbc: c9 03       ..  :1c8b[1]
     bne c1c98                                                         ; 1dbe: d0 09       ..  :1c8d[1]
     lda #$ff                                                          ; 1dc0: a9 ff       ..  :1c8f[1]
@@ -2408,7 +2408,7 @@ c1cc8
     dex                                                               ; 1df9: ca          .   :1cc8[1]
     dey                                                               ; 1dfa: 88          .   :1cc9[1]
     bmi c1cda                                                         ; 1dfb: 30 0e       0.  :1cca[1]
-    jsr sub_c1efa                                                     ; 1dfd: 20 fa 1e     .. :1ccc[1]
+    jsr read_collision_map_value_for_x_y                              ; 1dfd: 20 fa 1e     .. :1ccc[1]
     cmp #3                                                            ; 1e00: c9 03       ..  :1ccf[1]
     bne c1cda                                                         ; 1e02: d0 07       ..  :1cd1[1]
     lda #spriteid_corner_top_right                                    ; 1e04: a9 2f       ./  :1cd3[1]
@@ -2420,7 +2420,7 @@ c1cda
     iny                                                               ; 1e0c: c8          .   :1cdb[1]
     cpy #$18                                                          ; 1e0d: c0 18       ..  :1cdc[1]
     bcs c1cee                                                         ; 1e0f: b0 0e       ..  :1cde[1]
-    jsr sub_c1efa                                                     ; 1e11: 20 fa 1e     .. :1ce0[1]
+    jsr read_collision_map_value_for_x_y                              ; 1e11: 20 fa 1e     .. :1ce0[1]
     cmp #3                                                            ; 1e14: c9 03       ..  :1ce3[1]
     bne c1cee                                                         ; 1e16: d0 07       ..  :1ce5[1]
     lda #spriteid_corner_bottom_right                                 ; 1e18: a9 2e       ..  :1ce7[1]
@@ -2436,14 +2436,14 @@ sub_c1cf3
     lda #spriteid_corner_top_left                                     ; 1e24: a9 2c       .,  :1cf3[1]
     sta sprite_number                                                 ; 1e26: 85 16       ..  :1cf5[1]
     dey                                                               ; 1e28: 88          .   :1cf7[1]
-    jsr sub_c1efa                                                     ; 1e29: 20 fa 1e     .. :1cf8[1]
+    jsr read_collision_map_value_for_x_y                              ; 1e29: 20 fa 1e     .. :1cf8[1]
     iny                                                               ; 1e2c: c8          .   :1cfb[1]
     cmp #3                                                            ; 1e2d: c9 03       ..  :1cfc[1]
     bne c1d16                                                         ; 1e2f: d0 16       ..  :1cfe[1]
     lda #spriteid_corner_bottom_left                                  ; 1e31: a9 2d       .-  :1d00[1]
     sta sprite_number                                                 ; 1e33: 85 16       ..  :1d02[1]
     iny                                                               ; 1e35: c8          .   :1d04[1]
-    jsr sub_c1efa                                                     ; 1e36: 20 fa 1e     .. :1d05[1]
+    jsr read_collision_map_value_for_x_y                              ; 1e36: 20 fa 1e     .. :1d05[1]
     dey                                                               ; 1e39: 88          .   :1d08[1]
     cmp #3                                                            ; 1e3a: c9 03       ..  :1d09[1]
     bne c1d16                                                         ; 1e3c: d0 09       ..  :1d0b[1]
@@ -2749,7 +2749,10 @@ write_a_single_value_to_cell_in_collision_map
     lda temp_value                                                    ; 2028: a5 49       .I  :1ef7[1]
     rts                                                               ; 202a: 60          `   :1ef9[1]
 
-sub_c1efa
+; TODO: speculating but think this is right - my skimming of existing collision map
+; disassembly suggests it stores 2 bits per character cell, so we have 10 bytes per 40
+; column row (4 cells per byte), which seems to fit with the constants in this code
+read_collision_map_value_for_x_y
     cpx #game_area_columns                                            ; 202b: e0 28       .(  :1efa[1]
     bcs outside_game_area                                             ; 202d: b0 2f       ./  :1efc[1]
     cpy #game_area_rows                                               ; 202f: c0 18       ..  :1efe[1]
@@ -3907,7 +3910,7 @@ sub_c265a
     sbc l007a                                                         ; 2795: e5 7a       .z  :2664[1]
     sta l0080                                                         ; 2797: 85 80       ..  :2666[1]
 loop_c2668
-    jsr sub_c1efa                                                     ; 2799: 20 fa 1e     .. :2668[1]
+    jsr read_collision_map_value_for_x_y                              ; 2799: 20 fa 1e     .. :2668[1]
     cmp #3                                                            ; 279c: c9 03       ..  :266b[1]
     beq c2676                                                         ; 279e: f0 07       ..  :266d[1]
     dey                                                               ; 27a0: 88          .   :266f[1]
@@ -3924,7 +3927,7 @@ c2676
     sbc l007a                                                         ; 27b1: e5 7a       .z  :2680[1]
     sta l0080                                                         ; 27b3: 85 80       ..  :2682[1]
 loop_c2684
-    jsr sub_c1efa                                                     ; 27b5: 20 fa 1e     .. :2684[1]
+    jsr read_collision_map_value_for_x_y                              ; 27b5: 20 fa 1e     .. :2684[1]
     cmp #3                                                            ; 27b8: c9 03       ..  :2687[1]
     beq return14                                                      ; 27ba: f0 07       ..  :2689[1]
     dey                                                               ; 27bc: 88          .   :268b[1]
@@ -3986,7 +3989,7 @@ sub_c26e5
     sbc l0078                                                         ; 2820: e5 78       .x  :26ef[1]
     sta l0080                                                         ; 2822: 85 80       ..  :26f1[1]
 loop_c26f3
-    jsr sub_c1efa                                                     ; 2824: 20 fa 1e     .. :26f3[1]
+    jsr read_collision_map_value_for_x_y                              ; 2824: 20 fa 1e     .. :26f3[1]
     cmp #3                                                            ; 2827: c9 03       ..  :26f6[1]
     beq c2701                                                         ; 2829: f0 07       ..  :26f8[1]
     dex                                                               ; 282b: ca          .   :26fa[1]
@@ -4003,7 +4006,7 @@ c2701
     sbc l0078                                                         ; 283c: e5 78       .x  :270b[1]
     sta l0080                                                         ; 283e: 85 80       ..  :270d[1]
 loop_c270f
-    jsr sub_c1efa                                                     ; 2840: 20 fa 1e     .. :270f[1]
+    jsr read_collision_map_value_for_x_y                              ; 2840: 20 fa 1e     .. :270f[1]
     cmp #3                                                            ; 2843: c9 03       ..  :2712[1]
     beq return16                                                      ; 2845: f0 07       ..  :2714[1]
     dex                                                               ; 2847: ca          .   :2716[1]
@@ -4200,7 +4203,7 @@ sub_c286d
     sbc l007a                                                         ; 29ab: e5 7a       .z  :287a[1]
     sta l0080                                                         ; 29ad: 85 80       ..  :287c[1]
 c287e
-    jsr sub_c1efa                                                     ; 29af: 20 fa 1e     .. :287e[1]
+    jsr read_collision_map_value_for_x_y                              ; 29af: 20 fa 1e     .. :287e[1]
     cmp #3                                                            ; 29b2: c9 03       ..  :2881[1]
     beq c288c                                                         ; 29b4: f0 07       ..  :2883[1]
     dex                                                               ; 29b6: ca          .   :2885[1]
@@ -5857,7 +5860,7 @@ c33cb
     lsr                                                               ; 3502: 4a          J   :33d1[1]
     ror address1_low                                                  ; 3503: 66 70       fp  :33d2[1]
     ldx address1_low                                                  ; 3505: a6 70       .p  :33d4[1]
-    jsr sub_c1efa                                                     ; 3507: 20 fa 1e     .. :33d6[1]
+    jsr read_collision_map_value_for_x_y                              ; 3507: 20 fa 1e     .. :33d6[1]
     cmp #2                                                            ; 350a: c9 02       ..  :33d9[1]
     beq c33ea                                                         ; 350c: f0 0d       ..  :33db[1]
     lda #2                                                            ; 350e: a9 02       ..  :33dd[1]
@@ -8253,7 +8256,6 @@ pydis_end
 ;     sub_c1278
 ;     sub_c1728
 ;     sub_c1cf3
-;     sub_c1efa
 ;     sub_c2157
 ;     sub_c22ae
 ;     sub_c22ee
