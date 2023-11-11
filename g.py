@@ -34,6 +34,7 @@ constant(24, "game_area_rows")
 
 constant(0x18, "opcode_clc")
 constant(0x38, "opcode_sec")
+constant(0xa9, "opcode_lda_imm")
 
 
 # NOTE:
@@ -1627,7 +1628,6 @@ expr(0x3d4e, make_hi("envelope_3"))
 
 # TODO: Temporary names, of course
 label(0xaa1, "eight_entry_table1")
-label(0xaa9, "eight_entry_table2")
 label(0x1104, "timingA_counter_low")
 label(0x1105, "timingA_counter_high")
 label(0x1106, "timingB_counter_low")
@@ -2153,6 +2153,13 @@ label(0x04a4, "skip_high_byte1")
 label(0x0505, "restore_screen_memory_after_dialog_box")
 label(0x1b7e, "skip_high_byte2")
 expr(0x1dd4, "spriteid_rope1")
+
+# TODO: DELETE expr(0x411b, "opcode_lda_imm")
+
+expr(0x41c, make_lo("eight_entry_table2"))
+expr(0x420, make_hi("eight_entry_table2"))
+expr(0x4d6, make_lo("eight_entry_table2"))
+expr(0x4da, make_hi("eight_entry_table2"))
 
 go()
 

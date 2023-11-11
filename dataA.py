@@ -26,6 +26,12 @@ entry(0x3fd9, "some_code3")
 label(0x4052, "some_data2")
 entry(0x424f, "some_code4")
 
+expr(0x3b0f, make_lo("some_data3"))
+expr(0x3b13, make_hi("some_data3"))
+label(0x4486, "some_data3")
+expr(0x3fe7, make_lo("eight_entry_table2"))
+expr(0x3feb, make_hi("eight_entry_table2"))
+
 label(0x44A6, "sprite_data")
 word(0x3ad5)
 expr(0x3ad5, "sprite_data - level_data")
@@ -63,6 +69,7 @@ substitute_constants("jsr find_or_create_menu_slot_for_A", 'a', sprite_dict, Tru
 comment(0x3f7b, "TODO: I suspect this is handling 'collection of the saxophone'")
 comment(0x3b04, "clear_128_bytes_at_l09ef (which is called by start_game) will have zeroed saxophone_collected_flag. TODO: It's not clear to me why it would be set here under normal circumstances - what would go wrong if we just assumed l0a00==0 here?")
 label(0xa00, "saxophone_collected_flag")
+
 
 go()
 

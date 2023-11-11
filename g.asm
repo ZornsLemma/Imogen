@@ -29,6 +29,7 @@ max_filename_len                                = 7
 menu_slot_count                                 = 17
 opcode_clc                                      = 24
 opcode_jmp                                      = 76
+opcode_lda_imm                                  = 169
 opcode_sec                                      = 56
 osbyte_close_spool_exec                         = 119
 osbyte_flush_buffer                             = 21
@@ -201,8 +202,7 @@ width_in_cells                              = $3c
 height_in_cells                             = $3d
 value_to_write_to_collision_map             = $3e
 l003f                                       = $3f
-l0040                                       = $40
-l0041                                       = $41
+some_data3_ptr                              = $40
 l0042                                       = $42
 print_in_italics_flag                       = $43
 l0044                                       = $44
@@ -2022,8 +2022,8 @@ restore_rectangle_of_screen_memory
     sta l0074                                                         ; 1bf7: 85 74       .t  :1ac6[1]
     lda cell_screen_address_high                                      ; 1bf9: a5 77       .w  :1ac8[1]
     sta l0075                                                         ; 1bfb: 85 75       .u  :1aca[1]
-    ldx l0040                                                         ; 1bfd: a6 40       .@  :1acc[1]
-    ldy l0041                                                         ; 1bff: a4 41       .A  :1ace[1]
+    ldx some_data3_ptr                                                ; 1bfd: a6 40       .@  :1acc[1]
+    ldy some_data3_ptr + 1                                            ; 1bff: a4 41       .A  :1ace[1]
     stx l0078                                                         ; 1c01: 86 78       .x  :1ad0[1]
     sty l0079                                                         ; 1c03: 84 79       .y  :1ad2[1]
     stx l007a                                                         ; 1c05: 86 7a       .z  :1ad4[1]
@@ -7676,10 +7676,10 @@ show_dialog_box
     stx value_to_write_to_collision_map                               ; 4115: 86 3e       .>  :0416[2]
     inx                                                               ; 4117: e8          .   :0418[2]
     stx l003f                                                         ; 4118: 86 3f       .?  :0419[2]
-    lda #$a9                                                          ; 411a: a9 a9       ..  :041b[2]
-    sta l0040                                                         ; 411c: 85 40       .@  :041d[2]
-    lda #$0a                                                          ; 411e: a9 0a       ..  :041f[2]
-    sta l0041                                                         ; 4120: 85 41       .A  :0421[2]
+    lda #<eight_entry_table2                                          ; 411a: a9 a9       ..  :041b[2]
+    sta some_data3_ptr                                                ; 411c: 85 40       .@  :041d[2]
+    lda #>eight_entry_table2                                          ; 411e: a9 0a       ..  :041f[2]
+    sta some_data3_ptr + 1                                            ; 4120: 85 41       .A  :0421[2]
     inx                                                               ; 4122: e8          .   :0423[2]
     stx l0042                                                         ; 4123: 86 42       .B  :0424[2]
     ldy #1                                                            ; 4125: a0 01       ..  :0426[2]
@@ -7718,9 +7718,9 @@ remove_dialog
     stx which_dialog_is_active                                        ; 4163: 86 04       ..  :0464[2]
     stx l003f                                                         ; 4165: 86 3f       .?  :0466[2]
     lda #<cache_of_screen_memory_under_dialog                         ; 4167: a9 30       .0  :0468[2]
-    sta l0040                                                         ; 4169: 85 40       .@  :046a[2]
+    sta some_data3_ptr                                                ; 4169: 85 40       .@  :046a[2]
     lda #>cache_of_screen_memory_under_dialog                         ; 416b: a9 05       ..  :046c[2]
-    sta l0041                                                         ; 416d: 85 41       .A  :046e[2]
+    sta some_data3_ptr + 1                                            ; 416d: 85 41       .A  :046e[2]
     jmp restore_screen_memory_after_dialog_box                        ; 416f: 4c 05 05    L.. :0470[2]
 
 return30
@@ -7791,10 +7791,10 @@ sub_c04cb
     inx                                                               ; 41ce: e8          .   :04cf[2]
     stx l003f                                                         ; 41cf: 86 3f       .?  :04d0[2]
     stx plot_move_x_high                                              ; 41d1: 8e 18 05    ... :04d2[2]
-    lda #$a9                                                          ; 41d4: a9 a9       ..  :04d5[2]
-    sta l0040                                                         ; 41d6: 85 40       .@  :04d7[2]
-    lda #$0a                                                          ; 41d8: a9 0a       ..  :04d9[2]
-    sta l0041                                                         ; 41da: 85 41       .A  :04db[2]
+    lda #<eight_entry_table2                                          ; 41d4: a9 a9       ..  :04d5[2]
+    sta some_data3_ptr                                                ; 41d6: 85 40       .@  :04d7[2]
+    lda #>eight_entry_table2                                          ; 41d8: a9 0a       ..  :04d9[2]
+    sta some_data3_ptr + 1                                            ; 41da: 85 41       .A  :04db[2]
     inx                                                               ; 41dc: e8          .   :04dd[2]
     stx l0042                                                         ; 41dd: 86 42       .B  :04de[2]
     jsr restore_screen_memory_after_dialog_box                        ; 41df: 20 05 05     .. :04e0[2]
@@ -8086,8 +8086,6 @@ pydis_end
 ;     l003a
 ;     l003b
 ;     l003f
-;     l0040
-;     l0041
 ;     l0042
 ;     l0044
 ;     l0052
@@ -8301,6 +8299,9 @@ pydis_end
 !if (<disk_error_message) != $52 {
     !error "Assertion failed: <disk_error_message == $52"
 }
+!if (<eight_entry_table2) != $a9 {
+    !error "Assertion failed: <eight_entry_table2 == $a9"
+}
 !if (<enter_filename_message) != $98 {
     !error "Assertion failed: <enter_filename_message == $98"
 }
@@ -8492,6 +8493,9 @@ pydis_end
 }
 !if (>disk_error_message) != $17 {
     !error "Assertion failed: >disk_error_message == $17"
+}
+!if (>eight_entry_table2) != $0a {
+    !error "Assertion failed: >eight_entry_table2 == $0a"
 }
 !if (>enter_filename_message) != $34 {
     !error "Assertion failed: >enter_filename_message == $34"

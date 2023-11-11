@@ -14,8 +14,7 @@ l003b                                               = $3b
 width_in_cells                                      = $3c
 height_in_cells                                     = $3d
 value_to_write_to_collision_map                     = $3e
-l0040                                               = $40
-l0041                                               = $41
+some_data3_ptr                                      = $40
 l0042                                               = $42
 previous_room_index                                 = $50
 previous_level                                      = $51
@@ -51,6 +50,7 @@ l0a71                                               = $0a71
 l0a72                                               = $0a72
 l0a73                                               = $0a73
 string_input_buffer                                 = $0a90
+eight_entry_table2                                  = $0aa9
 developer_flags                                     = $1103
 initialise_level                                    = $1140
 something23_TODO                                    = $12bb
@@ -154,10 +154,10 @@ developer_mode_not_active
     jsr find_or_create_menu_slot_for_A                                ; 3b0b: 20 bd 2b     .+
 ; $3b0e referenced 2 times by $3af6, $3b07
 c3b0e
-    lda #$86                                                          ; 3b0e: a9 86       ..
-    sta l0040                                                         ; 3b10: 85 40       .@
-    lda #$44 ; 'D'                                                    ; 3b12: a9 44       .D
-    sta l0041                                                         ; 3b14: 85 41       .A
+    lda #<some_data3                                                  ; 3b0e: a9 86       ..
+    sta some_data3_ptr                                                ; 3b10: 85 40       .@
+    lda #>some_data3                                                  ; 3b12: a9 44       .D
+    sta some_data3_ptr + 1                                            ; 3b14: 85 41       .A
     rts                                                               ; 3b16: 60          `
 
 second_level_handler
@@ -822,10 +822,10 @@ level_thing_3_code
     sta width_in_cells                                                ; 3fdf: 85 3c       .<
     sta height_in_cells                                               ; 3fe1: 85 3d       .=
     jsr restore_rectangle_of_screen_memory                            ; 3fe3: 20 bb 1a     ..
-    lda #$a9                                                          ; 3fe6: a9 a9       ..
-    sta l0040                                                         ; 3fe8: 85 40       .@
-    lda #$0a                                                          ; 3fea: a9 0a       ..
-    sta l0041                                                         ; 3fec: 85 41       .A
+    lda #<eight_entry_table2                                          ; 3fe6: a9 a9       ..
+    sta some_data3_ptr                                                ; 3fe8: 85 40       .@
+    lda #>eight_entry_table2                                          ; 3fea: a9 0a       ..
+    sta some_data3_ptr + 1                                            ; 3fec: 85 41       .A
     lda #0                                                            ; 3fee: a9 00       ..
     sta value_to_write_to_collision_map                               ; 3ff0: 85 3e       .>
     lda #1                                                            ; 3ff2: a9 01       ..
@@ -1393,8 +1393,10 @@ c4415
     !byte   4,   0,   6,   1,   0,   0,   0,   0,   0,   0, $1e, $ce  ; 445e: 04 00 06... ...
     !byte $ce, $9c, $64,   0, $10,   0,   6,   0,   7,   0,   1,   0  ; 446a: ce 9c 64... ..d
     !byte $11,   0,   0,   0, $be,   0,   1,   0, $10,   0,   0,   0  ; 4476: 11 00 00... ...
-    !byte   0,   0,   0,   0, $10, $20, $40, $83,   4,   8, $10, $10  ; 4482: 00 00 00... ...
-    !byte   8,   4,   2,   1, $80, $40, $20, $10,   8,   4,   2,   1  ; 448e: 08 04 02... ...
+    !byte   0,   0,   0,   0                                          ; 4482: 00 00 00... ...
+some_data3
+    !byte $10, $20, $40, $83,   4,   8, $10, $10,   8,   4,   2,   1  ; 4486: 10 20 40... . @
+    !byte $80, $40, $20, $10,   8,   4,   2,   1                      ; 4492: 80 40 20... .@
 inverse_power_of_2_table
     !byte $80, $40, $20, $10, $08, $04, $02, $01                      ; 449a: 80 40 20... .@
     !byte $80, $40, $20, $10                                          ; 44a2: 80 40 20... .@
@@ -1671,8 +1673,8 @@ pydis_end
 ;     c3f8a:                                                  3
 ;     c419f:                                                  3
 ;     c4339:                                                  3
-;     l0040:                                                  2
-;     l0041:                                                  2
+;     some_data3_ptr:                                         2
+;     some_data3_ptr + 1:                                     2
 ;     l0950:                                                  2
 ;     l0966:                                                  2
 ;     l0a03:                                                  2
@@ -1847,8 +1849,6 @@ pydis_end
 ;     l001d
 ;     l003a
 ;     l003b
-;     l0040
-;     l0041
 ;     l0042
 ;     l0052
 ;     l0070
@@ -1902,6 +1902,18 @@ pydis_end
 ;     sub_c3f02
 ;     sub_c407f
 ;     sub_c42f8
+!if (<eight_entry_table2) != $a9 {
+    !error "Assertion failed: <eight_entry_table2 == $a9"
+}
+!if (<some_data3) != $86 {
+    !error "Assertion failed: <some_data3 == $86"
+}
+!if (>eight_entry_table2) != $0a {
+    !error "Assertion failed: >eight_entry_table2 == $0a"
+}
+!if (>some_data3) != $44 {
+    !error "Assertion failed: >some_data3 == $44"
+}
 !if (level_init_after_load_handler) != $3af2 {
     !error "Assertion failed: level_init_after_load_handler == $3af2"
 }

@@ -118,3 +118,9 @@ label(0x132b, "some_data_shared_between_g_and_dataA")
 # Room index is within the level, 0-(n-1) if the level has n rooms
 label(0x1aba, "current_room_index")
 label(0x30, "desired_room_index")
+
+# TODO: Speculative - but note that dataA stores an address in its data-ish section here but never reads from it (except maybe via subroutines in g)
+label(0x40, "some_data3_ptr")
+expr_label(0x41, make_add("some_data3_ptr", "1"))
+
+label(0xaa9, "eight_entry_table2")
