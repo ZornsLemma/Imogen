@@ -2091,6 +2091,11 @@ c1b0c
     lda current_row                                                   ; 1c40: a5 7d       .}  :1b0f[1]
     rol                                                               ; 1c42: 2a          *   :1b11[1]
     and #3                                                            ; 1c43: 29 03       ).  :1b12[1]
+; TODO: off_screen_address_high is and-ed with 3 in a few instructions' time and it
+; gets reset to its original value plus that tweak to the low bits. I suspect what's
+; happening here is that we're selecting from a set of characters in a repeating
+; sequence, modulated by A. A itself gets multiplied by 8, which is of course the
+; number of bytes in a character.
 common_code_after_variable_code_has_set_a
     asl                                                               ; 1c45: 0a          .   :1b14[1]
     asl                                                               ; 1c46: 0a          .   :1b15[1]

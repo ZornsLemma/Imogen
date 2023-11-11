@@ -2189,6 +2189,7 @@ constant(8, "rows_per_character")
 expr(0x1b4a, make_lo(make_multiply("characters_per_line", "rows_per_character")))
 expr(0x1b52, make_hi(make_multiply("characters_per_line", "rows_per_character")))
 comment(0x1b47, "Advance first_cell_in_row_screen_address by one row and reset cell_screen_address")
+comment(0x1b14, "TODO: off_screen_address_high is and-ed with 3 in a few instructions' time and it gets reset to its original value plus that tweak to the low bits. I suspect what's happening here is that we're selecting from a set of characters in a repeating sequence, modulated by A. A itself gets multiplied by 8, which is of course the number of bytes in a character.")
 
 go()
 

@@ -71,6 +71,11 @@ comment(0x3b04, "clear_128_bytes_at_l09ef (which is called by start_game) will h
 label(0xa00, "saxophone_collected_flag")
 
 comment(0x3b35, "TODO: Setting a breakpoint in b-em shows l0042 is 0 here")
+comment(0x3b35, "TODO: Setting a breakpoint in b-em shows some_data3_ptr ($40) is $4486 here")
+comment(0x3b35, "TODO: Setting a breakpoint in b-em shows address1_low ($70) is $00 here")
+comment(0x3b35, "TODO: Setting a breakpoint in b-em shows address1_high ($71) is $80 here")
+
+comment(0x3b29, "TODO: I suspect this next block up to and including the jsr is drawing the 'wall' pattern on the top two rows of the opening screen")
 
 go()
 

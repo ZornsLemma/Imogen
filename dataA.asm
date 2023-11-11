@@ -171,6 +171,8 @@ second_level_handler
 level_thing_1_data_ptr
     !word level_thing_1_data                                          ; 3b27: 14 16       ..
 
+; TODO: I suspect this next block up to and including the jsr is drawing the 'wall'
+; pattern on the top two rows of the opening screen
 some_code1
 level_thing_1_code
     ldx #0                                                            ; 3b29: a2 00       ..
@@ -180,6 +182,9 @@ level_thing_1_code
     lda #2                                                            ; 3b31: a9 02       ..
     sta height_in_cells                                               ; 3b33: 85 3d       .=
 ; TODO: Setting a breakpoint in b-em shows l0042 is 0 here
+; TODO: Setting a breakpoint in b-em shows some_data3_ptr ($40) is $4486 here
+; TODO: Setting a breakpoint in b-em shows address1_low ($70) is $00 here
+; TODO: Setting a breakpoint in b-em shows address1_high ($71) is $80 here
     jsr restore_rectangle_of_screen_memory                            ; 3b35: 20 bb 1a     ..
     ldy #2                                                            ; 3b38: a0 02       ..
     lda #4                                                            ; 3b3a: a9 04       ..
