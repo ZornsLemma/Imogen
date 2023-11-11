@@ -2216,7 +2216,7 @@ something26_TODO
     sta l0044                                                         ; 1cc3: 85 44       .D  :1b92[1]
     ldy #screen_height_characters - 1                                 ; 1cc5: a0 17       ..  :1b94[1]
 something26_y_loop
-    ldx #$27 ; '''                                                    ; 1cc7: a2 27       .'  :1b96[1]
+    ldx #screen_width_minus_one                                       ; 1cc7: a2 27       .'  :1b96[1]
 something26_x_loop
     jsr read_collision_map_value_for_x_y                              ; 1cc9: 20 fa 1e     .. :1b98[1]
     cmp #3                                                            ; 1ccc: c9 03       ..  :1b9b[1]
