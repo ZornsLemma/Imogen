@@ -2027,6 +2027,10 @@ current_room_index
 ; TODO: WIP incomplete entry conditions:
 ; characters_to_copy_per_row (width)
 ; rows_to_copy (height)
+; TODO: the above two overlap with width_in_cells_to_write and height_in_cells_to_write
+; - depending how this is called, it may be confusing for this subroutine to use those
+; names, but if we keep the names distinct we need to at least document that they are
+; the same
 ; l0042 some kind of copy mode (1=simple)
 ; some_data_3_ptr is the source address of top left
 ; X and Y registers specify destination address of top left on screen

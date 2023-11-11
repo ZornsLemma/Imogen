@@ -2173,7 +2173,7 @@ expr(0x4d6, make_lo("eight_entry_table2"))
 expr(0x4da, make_hi("eight_entry_table2"))
 
 # TODO: "character"->"cell" here for consistency?
-comment(0x1abb, "TODO: WIP incomplete entry conditions:\ncharacters_to_copy_per_row (width)\nrows_to_copy (height)\nl0042 some kind of copy mode (1=simple)\nsome_data_3_ptr is the source address of top left\nX and Y registers specify destination address of top left on screen\naddress1_low and address1_high contain something, possibly X/Y coords for collision map?")
+comment(0x1abb, "TODO: WIP incomplete entry conditions:\ncharacters_to_copy_per_row (width)\nrows_to_copy (height)\nTODO: the above two overlap with width_in_cells_to_write and height_in_cells_to_write - depending how this is called, it may be confusing for this subroutine to use those names, but if we keep the names distinct we need to at least document that they are the same\nl0042 some kind of copy mode (1=simple)\nsome_data_3_ptr is the source address of top left\nX and Y registers specify destination address of top left on screen\naddress1_low and address1_high contain something, possibly X/Y coords for collision map?")
 comment(0x1b49, "C is clear because beq above not taken", inline=True)
 comment(0x1af0, "Subtract 1; note C cleared before beq", inline=True)
 label(0x1b14, "common_code_after_variable_code_has_set_a")
