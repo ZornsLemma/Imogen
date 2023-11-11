@@ -167,8 +167,8 @@ white                                           = 7
 yellow                                          = 3
 
 ; Memory locations
-l0002                                           = $02
-l0003                                           = $03
+error_code_on_brk                               = $02
+remember_stack_pointer                          = $03
 which_dialog_is_active                          = $04
 password_characters_entered                     = $05
 rnd0                                            = $06
@@ -280,6 +280,7 @@ osfile_block_load_address_mid1                  = $75
 sprite_x_pos_high                               = $75
 cell_screen_address_low                         = $76
 l0076                                           = $76
+osfile_block_load_address_mid2                  = $76
 sprite_y_pos_low                                = $76
 cell_screen_address_high                        = $77
 l0077                                           = $77
@@ -563,10 +564,10 @@ object_reset_loop
     sta object_direction                                              ; 1307: 8d be 09    ... :11d6[1]
     lda #0                                                            ; 130a: a9 00       ..  :11d9[1]
     ldy #$0f                                                          ; 130c: a0 0f       ..  :11db[1]
-clear_sixteen_entry_table
+clear_sixteen_entry_table_loop
     sta sixteen_entry_table,y                                         ; 130e: 99 6f 0a    .o. :11dd[1]
     dey                                                               ; 1311: 88          .   :11e0[1]
-    bpl clear_sixteen_entry_table                                     ; 1312: 10 fa       ..  :11e1[1]
+    bpl clear_sixteen_entry_table_loop                                ; 1312: 10 fa       ..  :11e1[1]
     jsr sub_c1278                                                     ; 1314: 20 78 12     x. :11e3[1]
     lda #<brk_handler                                                 ; 1317: a9 d3       ..  :11e6[1]
     sta old_brkv2                                                     ; 1319: 8d b3 0a    ... :11e8[1]
@@ -1447,18 +1448,20 @@ pull_values_and_exit_sprite_op
     pla                                                               ; 1800: 68          h   :16cf[1]
     jmp reset_sprite_flags_and_exit                                   ; 1801: 4c 7f 13    L.. :16d0[1]
 
+; Record the brk error code, but otherwise do nothing - don't return from interrupt,
+; just restore the stack pointer and continue (!)
 brk_handler
     ldy #0                                                            ; 1804: a0 00       ..  :16d3[1]
     lda (l00fd),y                                                     ; 1806: b1 fd       ..  :16d5[1]
-    sta l0002                                                         ; 1808: 85 02       ..  :16d7[1]
-    jmp c1713                                                         ; 180a: 4c 13 17    L.. :16d9[1]
+    sta error_code_on_brk                                             ; 1808: 85 02       ..  :16d7[1]
+    jmp restore_brk_handler_since_osfile_is_finished                  ; 180a: 4c 13 17    L.. :16d9[1]
 
 ; *************************************************************************************
 ; 
 ; OSFILE wrapper
 ; 
 ; On Entry:
-;      A: OSFILE action (load / save)
+;      A: OSFILE action (load / save / read catalogue)
 ;     YX: address of filename
 ; 
 ; *************************************************************************************
@@ -1475,15 +1478,15 @@ osfile_wrapper
     stx osfile_block_end_address_low                                  ; 181f: 86 80       ..  :16ee[1]
     stx osfile_block_end_address_mid1                                 ; 1821: 86 81       ..  :16f0[1]
     tay                                                               ; 1823: a8          .   :16f2[1]
-    beq skip2                                                         ; 1824: f0 02       ..  :16f3[1]
-    stx l0076                                                         ; 1826: 86 76       .v  :16f5[1]
-skip2
+    beq skip_if_saving                                                ; 1824: f0 02       ..  :16f3[1]
+    stx osfile_block_load_address_mid2                                ; 1826: 86 76       .v  :16f5[1]
+skip_if_saving
     ldx #0                                                            ; 1828: a2 00       ..  :16f7[1]
-    stx l0002                                                         ; 182a: 86 02       ..  :16f9[1]
+    stx error_code_on_brk                                             ; 182a: 86 02       ..  :16f9[1]
     tsx                                                               ; 182c: ba          .   :16fb[1]
-    stx l0003                                                         ; 182d: 86 03       ..  :16fc[1]
+    stx remember_stack_pointer                                        ; 182d: 86 03       ..  :16fc[1]
     sei                                                               ; 182f: 78          x   :16fe[1]
-; set brk handler
+; use our brk_handler (to trap disk errors)
     ldx old_brkv2                                                     ; 1830: ae b3 0a    ... :16ff[1]
     stx brkv                                                          ; 1833: 8e 02 02    ... :1702[1]
     ldx old_brkv2+1                                                   ; 1836: ae b4 0a    ... :1705[1]
@@ -1492,21 +1495,23 @@ skip2
     ldx #<(filename_low)                                              ; 183d: a2 70       .p  :170c[1]
     ldy #>(filename_low)                                              ; 183f: a0 00       ..  :170e[1]
     jsr osfile                                                        ; 1841: 20 dd ff     .. :1710[1]
-c1713
+restore_brk_handler_since_osfile_is_finished
     sei                                                               ; 1844: 78          x   :1713[1]
-; set brk handler
+; reset brk handler to standard one (after disk access finished)
     ldx old_brkv1                                                     ; 1845: ae b1 0a    ... :1714[1]
     stx brkv                                                          ; 1848: 8e 02 02    ... :1717[1]
     ldx old_brkv1+1                                                   ; 184b: ae b2 0a    ... :171a[1]
     stx brkv+1                                                        ; 184e: 8e 03 02    ... :171d[1]
     cli                                                               ; 1851: 58          X   :1720[1]
-    ldx l0003                                                         ; 1852: a6 03       ..  :1721[1]
+; restore stack pointer, since it may have been disrupted by a BRK during OSFILE
+    ldx remember_stack_pointer                                        ; 1852: a6 03       ..  :1721[1]
     txs                                                               ; 1854: 9a          .   :1723[1]
-    lda l0002                                                         ; 1855: a5 02       ..  :1724[1]
-    beq c174c                                                         ; 1857: f0 24       .$  :1726[1]
-sub_c1728
+    lda error_code_on_brk                                             ; 1855: a5 02       ..  :1724[1]
+    beq no_disk_error                                                 ; 1857: f0 24       .$  :1726[1]
+show_disk_error_dialog_if_display_is_initialised
     lda display_initialised_flag                                      ; 1859: ad 0a 11    ... :1728[1]
-    beq c174c                                                         ; 185c: f0 1f       ..  :172b[1]
+    beq no_disk_error                                                 ; 185c: f0 1f       ..  :172b[1]
+; beep and show disk error dialog
     lda #vdu_bell                                                     ; 185e: a9 07       ..  :172d[1]
     jsr oswrch                                                        ; 1860: 20 ee ff     .. :172f[1]   ; Write character 7
     lda #$12                                                          ; 1863: a9 12       ..  :1732[1]
@@ -1519,9 +1524,9 @@ sub_c1728
     jsr print_encrypted_string_at_yx_centred                          ; 1874: 20 f3 37     .7 :1743[1]
     jsr wait_one_second_then_check_keys                               ; 1877: 20 8d 38     .8 :1746[1]
     jsr wait_one_second_then_check_keys                               ; 187a: 20 8d 38     .8 :1749[1]
-c174c
+no_disk_error
     jsr check_cursor_left_right_and_space                             ; 187d: 20 8f 3a     .: :174c[1]
-    lda l0002                                                         ; 1880: a5 02       ..  :174f[1]
+    lda error_code_on_brk                                             ; 1880: a5 02       ..  :174f[1]
     rts                                                               ; 1882: 60          `   :1751[1]
 
 disk_error_message
@@ -1737,10 +1742,17 @@ define_character_ff_loop
 print_italic_rts
     jmp oswrch                                                        ; 19d4: 4c ee ff    L.. :18a3[1]   ; Write character 255
 
+; *************************************************************************************
+; 
 ; Random Number Generator
 ; 
-; On Entry: A must be one less than a power of two, a mask to fill in with random bits
-; On Exit: A holds a random number up to the value of A on entry
+; On Entry:
+;     A must be one less than a power of two, a mask to fill in with random bits
+; 
+; On Exit:
+;     A holds a random number up to the value of A on entry
+; 
+; *************************************************************************************
 get_random_number_up_to_a
     sta l0039                                                         ; 19d7: 85 39       .9  :18a6[1]   ; store loop variable, all 1s in the lowest bits
     pha                                                               ; 19d9: 48          H   :18a8[1]   ; remember mask
@@ -6074,7 +6086,7 @@ c3573
     cmp #$85                                                          ; 36c5: c9 85       ..  :3594[1]
     beq c35bc                                                         ; 36c7: f0 24       .$  :3596[1]
 c3598
-    jsr sub_c1728                                                     ; 36c9: 20 28 17     (. :3598[1]
+    jsr show_disk_error_dialog_if_display_is_initialised              ; 36c9: 20 28 17     (. :3598[1]
 c359b
     jmp c340d                                                         ; 36cc: 4c 0d 34    L.4 :359b[1]
 
@@ -7038,7 +7050,7 @@ set_drive_and_directory
     ldx #1                                                            ; 3ccb: a2 01       ..
     ldy #0                                                            ; 3ccd: a0 00       ..
     jsr osbyte                                                        ; 3ccf: 20 f4 ff     ..            ; Disable cursor editing (edit keys give ASCII 135-139) (X=1)
-; remember brk and irq vectors
+; remember default brk and irq vectors
     lda brkv                                                          ; 3cd2: ad 02 02    ...
     sta old_brkv1                                                     ; 3cd5: 8d b1 0a    ...
     sta old_brkv2                                                     ; 3cd8: 8d b3 0a    ...
@@ -7919,8 +7931,6 @@ pydis_end
 ;     c131e
 ;     c149c
 ;     c16aa
-;     c1713
-;     c174c
 ;     c1937
 ;     c1951
 ;     c19b9
@@ -8132,8 +8142,6 @@ pydis_end
 ;     c3a08
 ;     c3a83
 ;     c3a88
-;     l0002
-;     l0003
 ;     l0026
 ;     l0039
 ;     l003a
@@ -8252,7 +8260,6 @@ pydis_end
 ;     loop_c3f87
 ;     sub_c04cb
 ;     sub_c1278
-;     sub_c1728
 ;     sub_c1cf3
 ;     sub_c2157
 ;     sub_c22ae

@@ -79,6 +79,7 @@ substitute_labels = {
         "l0073": "osfile_block_filename_high",
         "l0074": "osfile_block_load_address_low",
         "l0075": "osfile_block_load_address_mid1",
+        "l0076": "osfile_block_load_address_mid2",
         "l0078": "osfile_block_exec_address_low",
         "l0079": "osfile_block_exec_address_mid1",
         "l007c": "osfile_block_start_address_low",
@@ -163,6 +164,8 @@ move(0xab7, 0x4088, 0x48)
 entry(0x3c06, "execution_start")
 
 # Zero page variables
+label(0x0002, "error_code_on_brk")
+label(0x0003, "remember_stack_pointer")
 label(0x0006, "rnd0")
 label(0x0007, "rnd1")
 label(0x0008, "rnd2")
@@ -674,8 +677,7 @@ label(0x160c, "draw_sprite")
 expr(0x1675, "characters_per_line")
 expr(0x167b, make_lo("screen_width_in_pixels-1"))
 expr(0x1687, "characters_per_line-1")
-label(0x16f7, "skip2")
-
+label(0x16f7, "skip_if_saving")
 
 label(0x162f, "clamp_and_clip_x")
 comment(0x162f, "exit if X position is 512 or more", inline=True)
@@ -727,7 +729,17 @@ label(0x17fa, "if_timer1_elapsed_then_set_main_area_palette")
 comment(0x17fc, "check for timer1 elapsed", inline=True)
 label(0x18a6, "get_random_number_up_to_a")
 label(0x18a9, "generate_random_bits_loop")
-comment(0x18a6, "Random Number Generator\n\nOn Entry: A must be one less than a power of two, a mask to fill in with random bits\nOn Exit: A holds a random number up to the value of A on entry")
+comment(0x18a6, """*************************************************************************************
+
+Random Number Generator
+
+On Entry:
+    A must be one less than a power of two, a mask to fill in with random bits
+
+On Exit:
+    A holds a random number up to the value of A on entry
+
+*************************************************************************************""")
 comment(0x18a6, "store loop variable, all 1s in the lowest bits", inline=True)
 comment(0x18a8, "remember mask", inline=True)
 comment(0x18bf, "recall mask", inline=True)
@@ -743,8 +755,8 @@ expr(0x196a, "jmp_instruction+2")
 expr(0x196d, "0")
 expr(0x11e7, make_lo("brk_handler"))
 expr(0x11ec, make_hi("brk_handler"))
-comment(0x16ff, "set brk handler")
-comment(0x1714, "set brk handler")
+comment(0x16ff, "use our brk_handler (to trap disk errors)")
+comment(0x1714, "reset brk handler to standard one (after disk access finished)")
 
 label(0x3a12, "update_main_keys")
 label(0x3a41, "store_x_as_valid_direction_pending")
@@ -781,7 +793,7 @@ label(0x3c84, "relocation5_loop")
 comment(0x3c8f, "Relocation finished")
 char(0x3c97)
 label(0x3c9b, "set_drive_and_directory")
-comment(0x3cd2, "remember brk and irq vectors")
+comment(0x3cd2, "remember default brk and irq vectors")
 comment(0x3cf0, "redefine character 254 as a diamond shape")
 comment(0x3d1a, "clear the display of remaining transformations")
 comment(0x3d3d, "define envelopes")
@@ -812,6 +824,12 @@ comment(0x12da, "TODO: This is called from level-specific machine code, e.g. see
 entry(0x12da)
 
 entry(0x16d3, "brk_handler")
+comment(0x16d3, "Record the brk error code, but otherwise do nothing - don't return from interrupt, just restore the stack pointer and continue (!)")
+label(0x174c, "no_disk_error")
+comment(0x172d, "beep and show disk error dialog")
+label(0x1713, "restore_brk_handler_since_osfile_is_finished")
+comment(0x1721, "restore stack pointer, since it may have been disrupted by a BRK during OSFILE")
+label(0x1728, "show_disk_error_dialog_if_display_is_initialised")
 
 comment(0x1b90, "TODO: This is called from level-specific machine code, e.g. see dataA.asm")
 entry(0x1b90)
@@ -951,7 +969,7 @@ comment(0x16dc, """*************************************************************
 OSFILE wrapper
 
 On Entry:
-     A: OSFILE action (load / save)
+     A: OSFILE action (load / save / read catalogue)
     YX: address of filename
 
 *************************************************************************************""")
@@ -1363,8 +1381,8 @@ label(0x36da, "check_password_level")
 entry(0x36db, "select_level_a")
 #comment(0x114f, "TODO: Why do we check desired_level against currently_loaded_level in this loop? The loop kind of makes sense as a retry if disc error sort of thing, but I don't see why we'd ever have the wrong level loaded or something like that. It still doesn't feel quite right, but could this maybe be some leftover hint of a tape version? - hmm, note that dataA.asm calls into initialise_level in several different places (with different values of X, indicating different level_header_data entries to be called) - it may be that this check is so that second and subsequent calls don't redo pointless or harmful initialisation?")
 comment(0x114f, "Load a new level if the desired_level has changed.\n\nAny time we want to load a new level, we just set the desired_level and let this code do the work. (It is a loop to allow for retries on a disk error.)")
-entry(0x1186, "object_reset_loop")
-entry(0x11dd, "clear_sixteen_entry_table")
+label(0x1186, "object_reset_loop")
+label(0x11dd, "clear_sixteen_entry_table_loop")
 comment(0x11f8, "Blank the whole screen temporarily. TODO: Note that when flipping from screen to screen during play, the toolbar is not blanked, but it is here. Is this just cosmetic or is there a technical reason for this?")
 
 entry(0x29a1, "draw_toolbar") # TODO: plausible guess
