@@ -2164,6 +2164,8 @@ expr(0x4d6, make_lo("eight_entry_table2"))
 expr(0x4da, make_hi("eight_entry_table2"))
 
 comment(0x1b49, "C is clear because beq above not taken", inline=True)
+comment(0x1af0, "Subtract 1; note C cleared before beq", inline=True)
+label(0x1b14, "common_code_after_variable_code_has_set_a")
 
 go()
 

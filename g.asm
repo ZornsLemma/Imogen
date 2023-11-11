@@ -2045,9 +2045,9 @@ c1ae3
     cmp #1                                                            ; 1c1c: c9 01       ..  :1aeb[1]
     clc                                                               ; 1c1e: 18          .   :1aed[1]
     beq c1b28                                                         ; 1c1f: f0 38       .8  :1aee[1]
-    sbc #0                                                            ; 1c21: e9 00       ..  :1af0[1]
+    sbc #0                                                            ; 1c21: e9 00       ..  :1af0[1]   ; Subtract 1; note C cleared before beq
     jsr get_random_number_up_to_a                                     ; 1c23: 20 a6 18     .. :1af2[1]
-    jmp c1b14                                                         ; 1c26: 4c 14 1b    L.. :1af5[1]
+    jmp common_code_after_variable_code_has_set_a                     ; 1c26: 4c 14 1b    L.. :1af5[1]
 
 c1af8
     and #$7f                                                          ; 1c29: 29 7f       ).  :1af8[1]
@@ -2056,10 +2056,10 @@ c1af8
     cmp address2_low                                                  ; 1c2e: c5 7e       .~  :1afd[1]
     lda address2_low                                                  ; 1c30: a5 7e       .~  :1aff[1]
     inc address2_low                                                  ; 1c32: e6 7e       .~  :1b01[1]
-    bcs c1b14                                                         ; 1c34: b0 0f       ..  :1b03[1]
+    bcs common_code_after_variable_code_has_set_a                     ; 1c34: b0 0f       ..  :1b03[1]
     lda #0                                                            ; 1c36: a9 00       ..  :1b05[1]
     sta address2_low                                                  ; 1c38: 85 7e       .~  :1b07[1]
-    jmp c1b14                                                         ; 1c3a: 4c 14 1b    L.. :1b09[1]
+    jmp common_code_after_variable_code_has_set_a                     ; 1c3a: 4c 14 1b    L.. :1b09[1]
 
 c1b0c
     lda l007c                                                         ; 1c3d: a5 7c       .|  :1b0c[1]
@@ -2067,7 +2067,7 @@ c1b0c
     lda l007d                                                         ; 1c40: a5 7d       .}  :1b0f[1]
     rol                                                               ; 1c42: 2a          *   :1b11[1]
     and #3                                                            ; 1c43: 29 03       ).  :1b12[1]
-c1b14
+common_code_after_variable_code_has_set_a
     asl                                                               ; 1c45: 0a          .   :1b14[1]
     asl                                                               ; 1c46: 0a          .   :1b15[1]
     rol off_screen_address_high                                       ; 1c47: 26 7b       &{  :1b16[1]
@@ -2100,7 +2100,7 @@ c1b41
     dec l0073                                                         ; 1c74: c6 73       .s  :1b43[1]
     beq c1b59                                                         ; 1c76: f0 12       ..  :1b45[1]
     lda l0074                                                         ; 1c78: a5 74       .t  :1b47[1]
-    adc #$40 ; '@'                                                    ; 1c7a: 69 40       i@  :1b49[1]   ; ; C is clear because beq above not taken
+    adc #$40 ; '@'                                                    ; 1c7a: 69 40       i@  :1b49[1]   ; C is clear because beq above not taken
     sta l0074                                                         ; 1c7c: 85 74       .t  :1b4b[1]
     sta cell_screen_address_low                                       ; 1c7e: 85 76       .v  :1b4d[1]
     lda l0075                                                         ; 1c80: a5 75       .u  :1b4f[1]
@@ -7872,7 +7872,6 @@ pydis_end
 ;     c1ae3
 ;     c1af8
 ;     c1b0c
-;     c1b14
 ;     c1b28
 ;     c1b41
 ;     c1b59
