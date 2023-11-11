@@ -85,6 +85,7 @@ comment(0x3b35, "TODO: Setting a breakpoint in b-em shows address1_low ($70) is 
 comment(0x3b35, "TODO: Setting a breakpoint in b-em shows address1_high ($71) is $80 here")
 
 comment(0x3b29, "TODO: I suspect this next block up to and including the jsr is drawing the 'wall' pattern on the top two rows of the opening screen")
+comment(0x3b84, "TODO: I suspect we've finished drawing the ground fill and are now switching to another pattern.")
 
 go()
 

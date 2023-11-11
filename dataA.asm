@@ -221,6 +221,8 @@ level_thing_1_code
     jsr restore_rectangle_of_screen_memory                            ; 3b7c: 20 bb 1a     ..
     ldx #$18                                                          ; 3b7f: a2 18       ..
     jsr restore_rectangle_of_screen_memory                            ; 3b81: 20 bb 1a     ..
+; TODO: I suspect we've finished drawing the ground fill and are now switching to
+; another pattern.
     jsr something26_TODO                                              ; 3b84: 20 90 1b     ..
     lda #3                                                            ; 3b87: a9 03       ..
     sta width_in_cells                                                ; 3b89: 85 3c       .<

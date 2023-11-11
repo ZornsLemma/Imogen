@@ -2193,6 +2193,8 @@ comment(0x1b14, "TODO: off_screen_address_high is and-ed with 3 in a few instruc
 comment(0x1b0c, "Set A=%(low bit of current_row)(low bit of current character), giving a 2x2 alternating pattern. ('current character' is actually offset by address1_low, but the idea is the same.)")
 entry(0x1b0c, "two_by_two_alternating_pattern")
 
+comment(0x1b90, "TODO: From the context this is called in in dataA, I suspect it is changing the current plot mode and/or set of characters used by restore_rectangle_of_screen_memory.")
+
 go()
 
 # vi: tw=100
