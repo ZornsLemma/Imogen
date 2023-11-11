@@ -7095,8 +7095,10 @@ clear_toolbar_part_of_screen_loop
     inc address1_high                                                 ; 3db3: e6 71       .q
     cpx address1_high                                                 ; 3db5: e4 71       .q
     bne clear_toolbar_part_of_screen_loop                             ; 3db7: d0 f5       ..
+; Define text window that excludes the leftmost column (left 1, bottom 31, right: 39,
+; top: 0). This simplifies printing text in dialog boxes.
 define_text_window
-    lda #vdu_define_text_window                                       ; 3db9: a9 1c       ..             ; Define text window that excludes the leftmost column (left 1, bottom 31, right: 39, top: 0)
+    lda #vdu_define_text_window                                       ; 3db9: a9 1c       ..
     jsr oswrch                                                        ; 3dbb: 20 ee ff     ..            ; Write character 28
     lda #1                                                            ; 3dbe: a9 01       ..
     jsr oswrch                                                        ; 3dc0: 20 ee ff     ..            ; Write character 1

@@ -19,3 +19,5 @@
 * The Micro User review (June 1986, p33) says Imogen was available on cassette. Did this load individual levels from tape or did they load in batches?
 
 * https://www.retrovideogamer.co.uk/imogen-reviewed-bbc-micro-acorn-electron/ mentions a "slimmed down" version for the Electron.
+
+* I don't think the game was ported to other systems, but I haven't checked. It might be interesting to try a C64 or Atari 8-bit port. (Or to any system, but at least with a 6502-based one, the core game logic could be reused.)

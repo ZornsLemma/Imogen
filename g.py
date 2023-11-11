@@ -864,7 +864,7 @@ comment(0x3da3, "Clear memory from $5b00 to $6200. This clears the toolbar area 
 comment(0x3da3, "set start address to $5b00", inline=True)
 label(0x3dae, "clear_toolbar_part_of_screen_loop")
 comment(0x3d96, "VDU output wasn't disabled when we started to execute. Change to MODE 4.")
-comment(0x3db9, "Define text window that excludes the leftmost column (left 1, bottom 31, right: 39, top: 0)", inline=True)
+comment(0x3db9, "Define text window that excludes the leftmost column (left 1, bottom 31, right: 39, top: 0). This simplifies printing text in dialog boxes.")
 label(0x3db9, "define_text_window")
 comment(0x3dd2, "set background text colour to 1")
 comment(0x3ddc, "set foreground text colour to 0")
