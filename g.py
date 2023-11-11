@@ -117,40 +117,8 @@ substitute_labels = {
     },
 }
 
-# Create the substitute labels with inverted dictionaries
-inverse_labels = {}
-for pair in substitute_labels:
-    dict = substitute_labels[pair]
-    inv_dict = {v: k for k, v in dict.items()}
-    inverse_labels[pair] = inv_dict
-
-    # also make labels lXXXX, which seems redundant, but changes the way the label_maker suggestions works
-    for key in dict:
-        m = re.match("l([0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F])", key)
-        if m:
-            addr = int(m.group(1), 16)
-            label(addr, key)
-
-
-def my_label_maker(addr, context, suggestion):
-    # find a substitution if in one of the ranges
-    for pair in substitute_labels:
-        if context in range(pair[0], pair[1]):
-            dict = substitute_labels[pair]
-            if suggestion[0] in dict:
-                return dict[suggestion[0]]
-
-    # stop using the substitution if not in range
-    for pair in inverse_labels:
-        if context not in range(pair[0], pair[1]):
-            dict = inverse_labels[pair]
-            if suggestion[0] in dict:
-                return dict[suggestion[0]]
-
-
-    return suggestion
-
-set_label_maker_hook(my_label_maker)
+s = SubstituteLabels(substitute_labels)
+set_label_maker_hook(s.substitute_label_maker)
 
 
 label(0x287, "first_byte_break_intercept")

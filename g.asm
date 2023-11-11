@@ -1476,7 +1476,7 @@ sub_c1728
     jsr oswrch                                                        ; 1860: 20 ee ff     .. :172f[1]   ; Write character 7
     lda #$12                                                          ; 1863: a9 12       ..  :1732[1]
     sta current_text_width                                            ; 1865: 8d 09 04    ... :1734[1]
-    jsr restore_screen_under_dialog_box                               ; 1868: 20 0a 04     .. :1737[1]
+    jsr show_or_restore_screen_under_dialog_box                       ; 1868: 20 0a 04     .. :1737[1]
     lda #$0a                                                          ; 186b: a9 0a       ..  :173a[1]
     jsr oswrch                                                        ; 186d: 20 ee ff     .. :173c[1]   ; Write character 10
     ldx #<disk_error_message                                          ; 1870: a2 52       .R  :173f[1]
@@ -5829,7 +5829,7 @@ show_load_save_dialog
     lda which_dialog_is_active                                        ; 353a: a5 04       ..  :3409[1]
     bne c3428                                                         ; 353c: d0 1b       ..  :340b[1]
 c340d
-    jsr restore_screen_under_dialog_box                               ; 353e: 20 0a 04     .. :340d[1]
+    jsr show_or_restore_screen_under_dialog_box                       ; 353e: 20 0a 04     .. :340d[1]
     lda #1                                                            ; 3541: a9 01       ..  :3410[1]
     sta which_dialog_is_active                                        ; 3543: 85 04       ..  :3412[1]
     ldx #<press_s_to_save_encrypted_string                            ; 3545: a2 2b       .+  :3414[1]
@@ -5882,7 +5882,7 @@ c346a
     bne return23                                                      ; 35ab: d0 1a       ..  :347a[1]
     dec l3497                                                         ; 35ad: ce 97 34    ..4 :347c[1]
 c347f
-    jsr restore_screen_under_dialog_box                               ; 35b0: 20 0a 04     .. :347f[1]
+    jsr show_or_restore_screen_under_dialog_box                       ; 35b0: 20 0a 04     .. :347f[1]
     lda #2                                                            ; 35b3: a9 02       ..  :3482[1]
     sta which_dialog_is_active                                        ; 35b5: 85 04       ..  :3484[1]
     ldx #<enter_filename_message                                      ; 35b7: a2 98       ..  :3486[1]
@@ -5912,7 +5912,7 @@ loop_c34b2
     sta save_leaf_filename,y                                          ; 35e6: 99 db 34    ..4 :34b5[1]
     dey                                                               ; 35e9: 88          .   :34b8[1]
     bpl loop_c34b2                                                    ; 35ea: 10 f7       ..  :34b9[1]
-    jsr restore_screen_under_dialog_box                               ; 35ec: 20 0a 04     .. :34bb[1]
+    jsr show_or_restore_screen_under_dialog_box                       ; 35ec: 20 0a 04     .. :34bb[1]
     lda #3                                                            ; 35ef: a9 03       ..  :34be[1]
     sta which_dialog_is_active                                        ; 35f1: 85 04       ..  :34c0[1]
     ldx #<which_drive_encrypted_string                                ; 35f3: a2 e3       ..  :34c2[1]
@@ -5952,7 +5952,7 @@ c3501
     adc #$0f                                                          ; 3645: 69 0f       i.  :3514[1]
 c3516
     sta save_drive_number                                             ; 3647: 8d d7 34    ..4 :3516[1]
-    jsr restore_screen_under_dialog_box                               ; 364a: 20 0a 04     .. :3519[1]
+    jsr show_or_restore_screen_under_dialog_box                       ; 364a: 20 0a 04     .. :3519[1]
     lda #4                                                            ; 364d: a9 04       ..  :351c[1]
     sta which_dialog_is_active                                        ; 364f: 85 04       ..  :351e[1]
     ldx #<insert_save_disk_message                                    ; 3651: a2 35       .5  :3520[1]
@@ -5978,7 +5978,7 @@ c3557
     jsr inkey_0                                                       ; 3688: 20 7c 38     |8 :3557[1]
     cmp #vdu_cr                                                       ; 368b: c9 0d       ..  :355a[1]
     bne return24                                                      ; 368d: d0 d6       ..  :355c[1]
-    jsr restore_screen_under_dialog_box                               ; 368f: 20 0a 04     .. :355e[1]
+    jsr show_or_restore_screen_under_dialog_box                       ; 368f: 20 0a 04     .. :355e[1]
     lda #vdu_lf                                                       ; 3692: a9 0a       ..  :3561[1]
     jsr oswrch                                                        ; 3694: 20 ee ff     .. :3563[1]   ; Write character 10
     ldx #<saving_message                                              ; 3697: a2 f7       ..  :3566[1]
@@ -6064,7 +6064,7 @@ insert_game_disk_message
     !byte $af, $a2, $b8, $a0, $c6                                     ; 3743: af a2 b8... ... :3612[1]
 
 prompt_user_to_insert_correct_disc
-    jsr restore_screen_under_dialog_box                               ; 3748: 20 0a 04     .. :3617[1]
+    jsr show_or_restore_screen_under_dialog_box                       ; 3748: 20 0a 04     .. :3617[1]
     ldx #<insert_game_disk_message                                    ; 374b: a2 06       ..  :361a[1]
     ldy #>insert_game_disk_message                                    ; 374d: a0 36       .6  :361c[1]
     jsr print_encrypted_string_at_yx                                  ; 374f: 20 1c 38     .8 :361e[1]
@@ -6085,7 +6085,7 @@ show_password_entry_dialog
     lda which_dialog_is_active                                        ; 376c: a5 04       ..  :363b[1]
     bne c3652                                                         ; 376e: d0 13       ..  :363d[1]
 c363f
-    jsr restore_screen_under_dialog_box                               ; 3770: 20 0a 04     .. :363f[1]
+    jsr show_or_restore_screen_under_dialog_box                       ; 3770: 20 0a 04     .. :363f[1]
     ldx #<enter_password_message                                      ; 3773: a2 55       .U  :3642[1]
     ldy #>enter_password_message                                      ; 3775: a0 36       .6  :3644[1]
     jsr print_encrypted_string_at_yx                                  ; 3777: 20 1c 38     .8 :3646[1]
@@ -6278,7 +6278,7 @@ show_level_info_dialog
     jmp remove_dialog                                                 ; 38bc: 4c 53 04    LS. :378b[1]
 
 c378e
-    jsr restore_screen_under_dialog_box                               ; 38bf: 20 0a 04     .. :378e[1]
+    jsr show_or_restore_screen_under_dialog_box                       ; 38bf: 20 0a 04     .. :378e[1]
     lda #1                                                            ; 38c2: a9 01       ..  :3791[1]
     sta which_dialog_is_active                                        ; 38c4: 85 04       ..  :3793[1]
     ldx #<section_message                                             ; 38c6: a2 b1       ..  :3795[1]
@@ -6297,7 +6297,7 @@ section_message
     !byte $98, $ae, $a8, $bf, $a2, $a4, $a5, $eb, $c6                 ; 38e2: 98 ae a8... ... :37b1[1]
 
 c37ba
-    jsr restore_screen_under_dialog_box                               ; 38eb: 20 0a 04     .. :37ba[1]
+    jsr show_or_restore_screen_under_dialog_box                       ; 38eb: 20 0a 04     .. :37ba[1]
     lda #2                                                            ; 38ee: a9 02       ..  :37bd[1]
     sta which_dialog_is_active                                        ; 38f0: 85 04       ..  :37bf[1]
     ldx #first_level_letter                                           ; 38f2: a2 41       .A  :37c1[1]
@@ -7660,7 +7660,7 @@ wait_for_timingB_counter
 current_text_width
     !byte $12                                                         ; 4108: 12          .   :0409[2]
 
-restore_screen_under_dialog_box
+show_or_restore_screen_under_dialog_box
     jsr wait_for_timingB_counter                                      ; 4109: 20 00 04     .. :040a[2]
     lda which_dialog_is_active                                        ; 410c: a5 04       ..  :040d[2]
     beq c043a                                                         ; 410e: f0 29       .)  :040f[2]

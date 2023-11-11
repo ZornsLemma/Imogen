@@ -1,5 +1,40 @@
 from commands import *
 
+
+class SubstituteLabels():
+    def __init__(self, substitute_labels):
+        self.substitute_labels = substitute_labels
+
+        # Create the substitute labels but with inverted dictionaries
+        self.inverse_labels = {}
+        for pair in self.substitute_labels:
+            dict = self.substitute_labels[pair]
+            inv_dict = {v: k for k, v in dict.items()}
+            self.inverse_labels[pair] = inv_dict
+
+            # also make labels lXXXX, which seems redundant, but changes the way the label_maker suggestions works
+            for key in dict:
+                m = re.match("l([0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F])", key)
+                if m:
+                    addr = int(m.group(1), 16)
+                    label(addr, key)
+
+    def substitute_label_maker(self, addr, context, suggestion):
+        for pair in self.substitute_labels:
+            if context in range(pair[0], pair[1]):
+                dict = self.substitute_labels[pair]
+                if suggestion[0] in dict:
+                    return dict[suggestion[0]]
+
+        # stop using the substitution if not in range
+        for pair in self.inverse_labels:
+            if context not in range(pair[0], pair[1]):
+                dict = self.inverse_labels[pair]
+                if suggestion[0] in dict:
+                    return dict[suggestion[0]]
+
+        return suggestion
+
 constant(0x4c, "opcode_jmp")
 
 # TODO: Some of these constants are not common to *all* files which currently include common (e.g. first/last_level_letter are probably not needed by data*) - may not be worth fussing with, or may be better to have different common files for different things to minimise label noise.
@@ -15,7 +50,7 @@ label(0x003e, "value_to_write_to_collision_map")
 
 label(0x1103, "developer_flags")
 label(0x005b, "developer_mode_sideways_ram_is_set_up_flag")
-label(0x040a, "restore_screen_under_dialog_box") # TODO: guesswork
+label(0x040a, "show_or_restore_screen_under_dialog_box") # TODO: guesswork
 label(0x0453, "remove_dialog")
 label(0x09ef, "level_progress_table")
 label(0x1766, "set_toolbar_and_gameplay_area_colours")

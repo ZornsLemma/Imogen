@@ -25,7 +25,7 @@ screen_address_high                         = $71
 counter                                     = $72
 screendump_data_byte                        = $73
 invert_screen_dump_flag                     = $74
-restore_screen_under_dialog_box             = $040a
+show_or_restore_screen_under_dialog_box     = $040a
 remove_dialog                               = $0453
 level_progress_table                        = $09ef
 string_input_buffer                         = $0a90
@@ -85,28 +85,27 @@ pydis_start
     sta screen_address_low                                            ; 53c8: 85 70       .p
     lda #>password_ptr_table                                          ; 53ca: a9 54       .T
     sta screen_address_high                                           ; 53cc: 85 71       .q
-c53ce
+check_password_loop
     lda (screen_address_low),y                                        ; 53ce: b1 70       .p
     eor #$cb                                                          ; 53d0: 49 cb       I.
     cmp string_input_buffer,y                                         ; 53d2: d9 90 0a    ...
     bne this_entry_doesnt_match                                       ; 53d5: d0 3d       .=
     iny                                                               ; 53d7: c8          .
     cmp #vdu_cr                                                       ; 53d8: c9 0d       ..
-    bne c53ce                                                         ; 53da: d0 f2       ..
+    bne check_password_loop                                           ; 53da: d0 f2       ..
     lda (screen_address_low),y                                        ; 53dc: b1 70       .p
     tax                                                               ; 53de: aa          .
     iny                                                               ; 53df: c8          .
     lda (screen_address_low),y                                        ; 53e0: b1 70       .p
     tay                                                               ; 53e2: a8          .
-; TODO: At this point we have the level pointer for the successfully matched password
-; in YX
+; At this point we have the level pointer for the successfully matched password in YX
     lda counter                                                       ; 53e3: a5 72       .r
     pha                                                               ; 53e5: 48          H
     txa                                                               ; 53e6: 8a          .
     pha                                                               ; 53e7: 48          H
     tya                                                               ; 53e8: 98          .
     pha                                                               ; 53e9: 48          H
-    jsr restore_screen_under_dialog_box                               ; 53ea: 20 0a 04     ..
+    jsr show_or_restore_screen_under_dialog_box                       ; 53ea: 20 0a 04     ..
     lda #$0a                                                          ; 53ed: a9 0a       ..
     jsr oswrch                                                        ; 53ef: 20 ee ff     ..            ; Write character 10
     ldx #<accepted_encrypted_string                                   ; 53f2: a2 07       ..
@@ -143,9 +142,9 @@ this_entry_doesnt_match
     ldy #0                                                            ; 5427: a0 00       ..
     lda (screen_address_low),y                                        ; 5429: b1 70       .p
     eor #fixed_eor_key                                                ; 542b: 49 cb       I.
-    bne c53ce                                                         ; 542d: d0 9f       ..
+    bne check_password_loop                                           ; 542d: d0 9f       ..
 ; None of the passwords in the table matched.
-    jsr restore_screen_under_dialog_box                               ; 542f: 20 0a 04     ..
+    jsr show_or_restore_screen_under_dialog_box                       ; 542f: 20 0a 04     ..
     lda #vdu_lf                                                       ; 5432: a9 0a       ..
     jsr oswrch                                                        ; 5434: 20 ee ff     ..            ; Write character 10
     ldx #<unknown_encrypted_string                                    ; 5437: a2 46       .F
@@ -498,7 +497,6 @@ line_feed_loop
 pydis_end
 
 ; Automatically generated labels:
-;     c53ce
 ;     c55a6
 ;     c55c0
 ;     c55d3
