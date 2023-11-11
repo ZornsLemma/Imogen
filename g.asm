@@ -272,9 +272,11 @@ cell_screen_address_high                    = $77
 l0077                                       = $77
 sprite_y_pos_high                           = $77
 l0078                                       = $78
+original_off_screen_address_low             = $78
 sprite_x_offset_within_byte                 = $78
 byte_offset_within_sprite                   = $79
 l0079                                       = $79
+original_off_screen_address_high            = $79
 l007a                                       = $7a
 off_screen_address_low                      = $7a
 l007b                                       = $7b
@@ -2026,8 +2028,8 @@ restore_rectangle_of_screen_memory
     sta l0075                                                         ; 1bfb: 85 75       .u  :1aca[1]
     ldx some_data3_ptr                                                ; 1bfd: a6 40       .@  :1acc[1]
     ldy some_data3_ptr + 1                                            ; 1bff: a4 41       .A  :1ace[1]
-    stx l0078                                                         ; 1c01: 86 78       .x  :1ad0[1]
-    sty l0079                                                         ; 1c03: 84 79       .y  :1ad2[1]
+    stx original_off_screen_address_low                               ; 1c01: 86 78       .x  :1ad0[1]
+    sty original_off_screen_address_high                              ; 1c03: 84 79       .y  :1ad2[1]
     stx off_screen_address_low                                        ; 1c05: 86 7a       .z  :1ad4[1]
     sty off_screen_address_high                                       ; 1c07: 84 7b       .{  :1ad6[1]
     clc                                                               ; 1c09: 18          .   :1ad8[1]
@@ -2039,6 +2041,7 @@ c1add
     sta l007c                                                         ; 1c12: 85 7c       .|  :1ae1[1]
 c1ae3
     ldy #7                                                            ; 1c14: a0 07       ..  :1ae3[1]
+; TODO: The value in l0042 selects various different code paths here.
     lda l0042                                                         ; 1c16: a5 42       .B  :1ae5[1]
     beq c1b0c                                                         ; 1c18: f0 23       .#  :1ae7[1]
     bmi c1af8                                                         ; 1c1a: 30 0d       0.  :1ae9[1]
@@ -2074,11 +2077,11 @@ common_code_after_variable_code_has_set_a
     asl                                                               ; 1c49: 0a          .   :1b18[1]
     rol off_screen_address_high                                       ; 1c4a: 26 7b       &{  :1b19[1]
     clc                                                               ; 1c4c: 18          .   :1b1b[1]
-    adc l0078                                                         ; 1c4d: 65 78       ex  :1b1c[1]
+    adc original_off_screen_address_low                               ; 1c4d: 65 78       ex  :1b1c[1]
     sta off_screen_address_low                                        ; 1c4f: 85 7a       .z  :1b1e[1]
     lda off_screen_address_high                                       ; 1c51: a5 7b       .{  :1b20[1]
     and #3                                                            ; 1c53: 29 03       ).  :1b22[1]
-    adc l0079                                                         ; 1c55: 65 79       ey  :1b24[1]
+    adc original_off_screen_address_high                              ; 1c55: 65 79       ey  :1b24[1]
     sta off_screen_address_high                                       ; 1c57: 85 7b       .{  :1b26[1]
 c1b28
     lda (off_screen_address_low),y                                    ; 1c59: b1 7a       .z  :1b28[1]
