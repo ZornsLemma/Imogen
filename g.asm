@@ -2100,7 +2100,7 @@ c1b41
     dec l0073                                                         ; 1c74: c6 73       .s  :1b43[1]
     beq c1b59                                                         ; 1c76: f0 12       ..  :1b45[1]
     lda l0074                                                         ; 1c78: a5 74       .t  :1b47[1]
-    adc #$40 ; '@'                                                    ; 1c7a: 69 40       i@  :1b49[1]
+    adc #$40 ; '@'                                                    ; 1c7a: 69 40       i@  :1b49[1]   ; ; C is clear because beq above not taken
     sta l0074                                                         ; 1c7c: 85 74       .t  :1b4b[1]
     sta cell_screen_address_low                                       ; 1c7e: 85 76       .v  :1b4d[1]
     lda l0075                                                         ; 1c80: a5 75       .u  :1b4f[1]

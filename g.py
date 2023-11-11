@@ -2163,6 +2163,8 @@ expr(0x420, make_hi("eight_entry_table2"))
 expr(0x4d6, make_lo("eight_entry_table2"))
 expr(0x4da, make_hi("eight_entry_table2"))
 
+comment(0x1b49, "C is clear because beq above not taken", inline=True)
+
 go()
 
 # vi: tw=100
