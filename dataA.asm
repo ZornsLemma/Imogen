@@ -40,7 +40,7 @@ l09ac                                               = $09ac
 l09be                                               = $09be
 level_progress_table                                = $09ef
 l09ff                                               = $09ff
-l0a00                                               = $0a00
+saxophone_collected_flag                            = $0a00
 l0a01                                               = $0a01
 l0a02                                               = $0a02
 l0a03                                               = $0a03
@@ -143,9 +143,12 @@ level_init_after_load_handler
     lda #spriteid_saxophone                                           ; 3afd: a9 d3       ..
     jsr find_or_create_menu_slot_for_A                                ; 3aff: 20 bd 2b     .+
     lda #$ff                                                          ; 3b02: a9 ff       ..
+; clear_128_bytes_at_l09ef (which is called by start_game) will have zeroed
+; saxophone_collected_flag. TODO: It's not clear to me why it would be set here under
+; normal circumstances - what would go wrong if we just assumed l0a00==0 here?
 ; $3b04 referenced 1 time by $3afb
 developer_mode_not_active
-    lda l0a00                                                         ; 3b04: ad 00 0a    ...
+    lda saxophone_collected_flag                                      ; 3b04: ad 00 0a    ...
     beq c3b0e                                                         ; 3b07: f0 05       ..
     lda #spriteid_saxophone                                           ; 3b09: a9 d3       ..
     jsr find_or_create_menu_slot_for_A                                ; 3b0b: 20 bd 2b     .+
@@ -708,7 +711,7 @@ sub_c3f02
     lda desired_room_index                                            ; 3f29: a5 30       .0
     cmp #1                                                            ; 3f2b: c9 01       ..
     bne c3f51                                                         ; 3f2d: d0 22       ."
-    lda l0a00                                                         ; 3f2f: ad 00 0a    ...
+    lda saxophone_collected_flag                                      ; 3f2f: ad 00 0a    ...
     bne c3f51                                                         ; 3f32: d0 1d       ..
     ldx #$1b                                                          ; 3f34: a2 1b       ..
     ldy #$12                                                          ; 3f36: a0 12       ..
@@ -741,7 +744,7 @@ c3f62
     lda desired_room_index                                            ; 3f62: a5 30       .0
     cmp #1                                                            ; 3f64: c9 01       ..
     bne c3f8a                                                         ; 3f66: d0 22       ."
-    lda l0a00                                                         ; 3f68: ad 00 0a    ...
+    lda saxophone_collected_flag                                      ; 3f68: ad 00 0a    ...
     bne c3f8a                                                         ; 3f6b: d0 1d       ..
     lda #$d2                                                          ; 3f6d: a9 d2       ..
     sta l09ac                                                         ; 3f6f: 8d ac 09    ...
@@ -749,12 +752,13 @@ c3f62
     ldy #4                                                            ; 3f74: a0 04       ..
     jsr something55_TODO                                              ; 3f76: 20 e2 28     .(
     beq c3f8a                                                         ; 3f79: f0 0f       ..
+; TODO: I suspect this is handling 'collection of the saxophone'
     lda #spriteid_saxophone                                           ; 3f7b: a9 d3       ..
     jsr find_or_create_menu_slot_for_A                                ; 3f7d: 20 bd 2b     .+
     lda #0                                                            ; 3f80: a9 00       ..
     sta l09ac                                                         ; 3f82: 8d ac 09    ...
     lda #$ff                                                          ; 3f85: a9 ff       ..
-    sta l0a00                                                         ; 3f87: 8d 00 0a    ...
+    sta saxophone_collected_flag                                      ; 3f87: 8d 00 0a    ...
 ; $3f8a referenced 3 times by $3f66, $3f6b, $3f79
 c3f8a
     rts                                                               ; 3f8a: 60          `
@@ -1644,7 +1648,7 @@ pydis_end
 ;     c41ae:                                                  5
 ;     c4355:                                                  5
 ;     l003b:                                                  4
-;     l0a00:                                                  4
+;     saxophone_collected_flag:                               4
 ;     l0a6f:                                                  4
 ;     something23_TODO:                                       4
 ;     something24_TODO:                                       4
@@ -1860,7 +1864,6 @@ pydis_end
 ;     l09ac
 ;     l09be
 ;     l09ff
-;     l0a00
 ;     l0a01
 ;     l0a02
 ;     l0a03

@@ -60,6 +60,10 @@ substitute_constants("jsr find_or_create_menu_slot_for_A", 'a', sprite_dict, Tru
 #for addr, s in sprite_dict.items():
 #    constant(addr, s)
 
+comment(0x3f7b, "TODO: I suspect this is handling 'collection of the saxophone'")
+comment(0x3b04, "clear_128_bytes_at_l09ef (which is called by start_game) will have zeroed saxophone_collected_flag. TODO: It's not clear to me why it would be set here under normal circumstances - what would go wrong if we just assumed l0a00==0 here?")
+label(0xa00, "saxophone_collected_flag")
+
 go()
 
 # vi: tw=100
