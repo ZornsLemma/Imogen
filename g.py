@@ -87,6 +87,8 @@ substitute_labels = {
     (0x1bec,0x1f24): {
          "l0076": "cell_screen_address_low",
          "l0077": "cell_screen_address_high",
+         "l007a": "off_screen_address_low",
+         "l007b": "off_screen_address_high",
     },
     (0x1f25, 0x3c05): {
         "initialise_display": "collision_map",
