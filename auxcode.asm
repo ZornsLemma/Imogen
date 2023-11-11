@@ -10,7 +10,7 @@ vdu_cr                                         = 13
 vdu_lf                                         = 10
 
 ; Memory locations
-l0005                                       = $05
+password_characters_entered                 = $05
 desired_room_index                          = $30
 desired_level                               = $31
 width_in_cells                              = $3c
@@ -21,7 +21,7 @@ previous_level                              = $51
 l005b                                       = $5b
 screen_address_low                          = $70
 screen_address_high                         = $71
-row_counter                                 = $72
+counter                                     = $72
 l0073                                       = $73
 invert_screen_dump_flag                     = $74
 l040a                                       = $040a
@@ -72,17 +72,17 @@ osbyte                                      = $fff4
     * = $53c0
 
 ; Check a password entered by the user at string_buffer against the list of EOR-
-; encrypted paswords at level_name_ptr_table and invoke the corresponding handler if a
+; encrypted paswords at password_ptr_table and invoke the corresponding handler if a
 ; match is found. Otherwise generate an error.
 auxcode
 check_password
 pydis_start
     ldy #0                                                            ; 53c0: a0 00       ..
-    sty l0005                                                         ; 53c2: 84 05       ..
-    sty row_counter                                                   ; 53c4: 84 72       .r
-    lda #<level_name_ptr_table                                        ; 53c6: a9 4f       .O
+    sty password_characters_entered                                   ; 53c2: 84 05       ..
+    sty counter                                                       ; 53c4: 84 72       .r
+    lda #<password_ptr_table                                          ; 53c6: a9 4f       .O
     sta screen_address_low                                            ; 53c8: 85 70       .p
-    lda #>level_name_ptr_table                                        ; 53ca: a9 54       .T
+    lda #>password_ptr_table                                          ; 53ca: a9 54       .T
     sta screen_address_high                                           ; 53cc: 85 71       .q
 c53ce
     lda (screen_address_low),y                                        ; 53ce: b1 70       .p
@@ -99,7 +99,7 @@ c53ce
     tay                                                               ; 53e2: a8          .
 ; TODO: At this point we have the level pointer for the successfully matched password
 ; in YX
-    lda row_counter                                                   ; 53e3: a5 72       .r
+    lda counter                                                       ; 53e3: a5 72       .r
     pha                                                               ; 53e5: 48          H
     txa                                                               ; 53e6: 8a          .
     pha                                                               ; 53e7: 48          H
@@ -138,7 +138,7 @@ this_entry_doesnt_match
     lda screen_address_high                                           ; 541f: a5 71       .q
     adc #0                                                            ; 5421: 69 00       i.
     sta screen_address_high                                           ; 5423: 85 71       .q
-    inc row_counter                                                   ; 5425: e6 72       .r
+    inc counter                                                       ; 5425: e6 72       .r
     ldy #0                                                            ; 5427: a0 00       ..
     lda (screen_address_low),y                                        ; 5429: b1 70       .p
     eor #fixed_eor_key                                                ; 542b: 49 cb       I.
@@ -161,7 +161,7 @@ unknown_encrypted_string
 return1
     rts                                                               ; 544e: 60          `
 
-level_name_ptr_table
+password_ptr_table
     !byte $98, $8a, $93, $84, $9b, $83, $84, $89, $82, $8a, $c6       ; 544f: 98 8a 93... ...            ; EOR-encrypted string: 'SAXOPHOBIA'
     !word normal_level_handler                                        ; 545a: 95 55       .U
     !byte $9f, $82, $86, $8e, $e6, $8d, $87, $82, $8e, $98, $c6       ; 545c: 9f 82 86... ...            ; EOR-encrypted string: 'TIME-FLIES'
@@ -266,7 +266,7 @@ c55c0
     lda l005b                                                         ; 55cb: a5 5b       .[
     beq c55d3                                                         ; 55cd: f0 04       ..
     ldx #opcode_jmp                                                   ; 55cf: a2 4c       .L
-; For Break effect: *FX 200,1
+; For break effect: *FX 200,1
     ldy #1                                                            ; 55d1: a0 01       ..
 c55d3
     tya                                                               ; 55d3: 98          .
@@ -404,7 +404,7 @@ turn_on_graphics_mode_for_a_row_of_graphics
     jsr oswrch                                                        ; 56e3: 20 ee ff     ..            ; Write character 1
     jsr oswrch                                                        ; 56e6: 20 ee ff     ..            ; Write character
     lda #$28 ; '('                                                    ; 56e9: a9 28       .(
-    sta row_counter                                                   ; 56eb: 85 72       .r
+    sta counter                                                       ; 56eb: 85 72       .r
     bne screendump_character_row_loop                                 ; 56ed: d0 03       ..
 add_another_row_of_graphics_characters
     clc                                                               ; 56ef: 18          .
@@ -446,7 +446,7 @@ skip1
     lda #0                                                            ; 5728: a9 00       ..
     sta invert_screen_dump_flag                                       ; 572a: 85 74       .t
 skip2
-    dec row_counter                                                   ; 572c: c6 72       .r
+    dec counter                                                       ; 572c: c6 72       .r
     bne screendump_character_row_loop                                 ; 572e: d0 c2       ..
     lda #1                                                            ; 5730: a9 01       ..
     jsr oswrch                                                        ; 5732: 20 ee ff     ..            ; Write character 1
@@ -502,7 +502,6 @@ pydis_end
 ;     c55d3
 ;     c5635
 ;     c564e
-;     l0005
 ;     l005b
 ;     l0073
 ;     l040a
@@ -517,8 +516,8 @@ pydis_end
 !if (<accepted_encrypted_string) != $07 {
     !error "Assertion failed: <accepted_encrypted_string == $07"
 }
-!if (<level_name_ptr_table) != $4f {
-    !error "Assertion failed: <level_name_ptr_table == $4f"
+!if (<password_ptr_table) != $4f {
+    !error "Assertion failed: <password_ptr_table == $4f"
 }
 !if (<unknown_encrypted_string) != $46 {
     !error "Assertion failed: <unknown_encrypted_string == $46"
@@ -526,8 +525,8 @@ pydis_end
 !if (>accepted_encrypted_string) != $54 {
     !error "Assertion failed: >accepted_encrypted_string == $54"
 }
-!if (>level_name_ptr_table) != $54 {
-    !error "Assertion failed: >level_name_ptr_table == $54"
+!if (>password_ptr_table) != $54 {
+    !error "Assertion failed: >password_ptr_table == $54"
 }
 !if (>unknown_encrypted_string) != $54 {
     !error "Assertion failed: >unknown_encrypted_string == $54"

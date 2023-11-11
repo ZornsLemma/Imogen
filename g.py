@@ -29,6 +29,8 @@ constant(0xff, "osfile_load")
 
 constant(320, "screen_width_in_pixels")
 constant(40, "characters_per_line")
+constant(40, "game_area_columns")
+constant(24, "game_area_rows")
 
 constant(0x18, "opcode_clc")
 constant(0x38, "opcode_sec")
@@ -76,7 +78,6 @@ substitute_labels = {
         "l0083": "sprite_bit_mask",
         "l0084": "sprite_y_offset_within_character_row",
         "l0085": "sprite_character_x_pos",
-
     },
     (0x183d, 0x1841): {
         "address1_low": "filename_low",
@@ -584,6 +585,7 @@ label(0x14a5, "move_up_to_previous_character_row2")
 label(0x14ad, "check_within_vertical_range2")
 label(0x14b7, "y_coordinate_is_within_character_row2")
 label(0x14c8, "byte_not_finished_yet2")
+expr(0x14ea, "characters_per_line")
 label(0x14fe, "move_to_next_column_while_rendering_reflected_about_y_axis2")
 label(0x1517, "draw_sprite2")
 label(0x1529, "finish_off_sprite2")
@@ -647,6 +649,11 @@ comment(0x1615, "store every other bit in the byte other than the one we are int
 label(0x161e, "finish_off_sprite")
 label(0x1623, "shift_mask_byte_loop")
 label(0x1628, "write_last_byte")
+expr(0x1658, "characters_per_line")
+expr(0x1e2e, "game_area_columns")
+expr(0x1e2a, "game_area_columns+1")
+expr(0x1e3a, "game_area_rows+1")
+expr(0x1e3e, "game_area_rows")
 
 comment(0x1df4, "clear the game area of the screen to 255 (and also clear the collision map?)")
 label(0x1df4, "clear_game_area")
@@ -1024,6 +1031,8 @@ comment(0x3ea1, "seek track 39", inline=True)
 comment(0x3ea6, "write special register 'track' with value 127")
 comment(0x3eab, "block read three 256 byte sectors into memory at 'icodata'")
 decimal(0x3ea2)
+decimal(0x3ec2)
+binary(0x3f23)
 comment(0x3eb9, "read failed, seek track zero and try again")
 label(0x3ec1, "read_successful")
 comment(0x3ec1, "write special register 'track' with value 39")
@@ -1378,13 +1387,15 @@ label(0x184d, "copy_from_rom_c_loop")
 label(0x1845, "reset_code")
 comment(0x1103, """developer_flags
 
-    bit 0: "developer keys active", ESCAPE resets or exits the game I think, if you have the right sideways RAM set up.
+    The 'developer flags byte' lives in ICODATA. When loaded, if bit 6 is set then the variable 'developer_flags' is set to this value.
+
+    bit 0: "developer keys active", ESCAPE resets or exits the game I think, if you have the right sideways RAM set up. SHIFT does something too, slow down game?
     bit 1: enable a screen dump for an EPSOM compatible printer (see auxcode.asm)
     bit 2: load ICODATA directly from track 39 on the disc, rather than as a regular load. (An option for copy protection?)
     bit 3: load game data from drive 2, not drive 0
     bit 4: unused
     bit 5: unused
-    bit 6: unused
+    bit 6: load into developer_flags variable
     bit 7: "developer mode active", toolbar is magenta""")
 
 label(0x2ef7, "cat_tail_spriteids")
@@ -1653,7 +1664,7 @@ comment(0x3f16, "Copy seventeen bytes of level ordering data into the level_orde
 decimal(0x3f17)
 label(0x3f18, "copy_level_ordering_table_loop")
 expr(0x3f1b, make_subtract("level_ordering_table", 1))
-comment(0x3f20, "read the first byte of the data and set the developer_flags if needed")
+comment(0x3f20, "read the first byte of the data. If bit 6 is set then set the developer_flags.")
 label(0x3f2d, "skip_writing_developer_flags")
 expr(0x2ba5, "desired_menu_slots-1")
 label(0x295c, "desired_menu_slots")

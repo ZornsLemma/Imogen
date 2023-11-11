@@ -12,6 +12,8 @@ crtc_vert_displayed                             = 6
 crtc_vert_sync_pos                              = 7
 cyan                                            = 6
 first_level_letter                              = 65
+game_area_columns                               = 40
+game_area_rows                                  = 24
 green                                           = 2
 inkey_key_escape                                = 143
 inkey_key_left                                  = 230
@@ -163,7 +165,7 @@ yellow                                          = 3
 l0002                                       = $02
 l0003                                       = $03
 which_dialog_is_active                      = $04
-l0005                                       = $05
+password_characters_entered                 = $05
 rnd0                                        = $06
 rnd1                                        = $07
 rnd2                                        = $08
@@ -396,15 +398,18 @@ pydis_start
 !pseudopc $1103 {
 ; developer_flags
 ; 
+;     The 'developer flags byte' lives in ICODATA. When loaded, if bit 6 is set then
+; the variable 'developer_flags' is set to this value.
+; 
 ;     bit 0: "developer keys active", ESCAPE resets or exits the game I think, if you
-; have the right sideways RAM set up.
+; have the right sideways RAM set up. SHIFT does something too, slow down game?
 ;     bit 1: enable a screen dump for an EPSOM compatible printer (see auxcode.asm)
 ;     bit 2: load ICODATA directly from track 39 on the disc, rather than as a regular
 ; load. (An option for copy protection?)
 ;     bit 3: load game data from drive 2, not drive 0
 ;     bit 4: unused
 ;     bit 5: unused
-;     bit 6: unused
+;     bit 6: load into developer_flags variable
 ;     bit 7: "developer mode active", toolbar is magenta
 developer_flags
     !byte 0                                                           ; 1234: 00          .   :1103[1]
@@ -1090,7 +1095,7 @@ byte_not_finished_yet2
     bpl draw_sprite2                                                  ; 1614: 10 32       .2  :14e3[1]
     inc sprite_character_x_pos                                        ; 1616: e6 85       ..  :14e5[1]
     ldy sprite_character_x_pos                                        ; 1618: a4 85       ..  :14e7[1]
-    cpy #$28 ; '('                                                    ; 161a: c0 28       .(  :14e9[1]
+    cpy #characters_per_line                                          ; 161a: c0 28       .(  :14e9[1]
     bcs finish_off_sprite2                                            ; 161c: b0 3c       .<  :14eb[1]
     ldy #7                                                            ; 161e: a0 07       ..  :14ed[1]
     adc #8                                                            ; 1620: 69 08       i.  :14ef[1]
@@ -1330,7 +1335,7 @@ clamp_x
     lda sprite_character_x_pos                                        ; 1784: a5 85       ..  :1653[1]
     bmi sprite_clamp_x_left                                           ; 1786: 30 07       0.  :1655[1]
 ; if fully off screen to the right, then pull values and return else just return
-    cmp #40                                                           ; 1788: c9 28       .(  :1657[1]
+    cmp #characters_per_line                                          ; 1788: c9 28       .(  :1657[1]
     bcc return3                                                       ; 178a: 90 72       .r  :1659[1]
     jmp pull_values_and_exit_sprite_op                                ; 178c: 4c ce 16    L.. :165b[1]
 
@@ -2491,10 +2496,10 @@ clip_cells_to_write_to_collision_map
     clc                                                               ; 1f55: 18          .   :1e24[1]
     adc width_in_cells                                                ; 1f56: 65 3c       e<  :1e25[1]
     bcs clip_x                                                        ; 1f58: b0 04       ..  :1e27[1]
-    cmp #41                                                           ; 1f5a: c9 29       .)  :1e29[1]
+    cmp #game_area_columns+1                                          ; 1f5a: c9 29       .)  :1e29[1]
     bcc clipped_x_ok                                                  ; 1f5c: 90 06       ..  :1e2b[1]
 clip_x
-    lda #40                                                           ; 1f5e: a9 28       .(  :1e2d[1]
+    lda #game_area_columns                                            ; 1f5e: a9 28       .(  :1e2d[1]
     sbc cell_x                                                        ; 1f60: e5 70       .p  :1e2f[1]
     sta width_in_cells_to_write                                       ; 1f62: 85 72       .r  :1e31[1]
 clipped_x_ok
@@ -2502,10 +2507,10 @@ clipped_x_ok
     clc                                                               ; 1f65: 18          .   :1e34[1]
     adc height_in_cells                                               ; 1f66: 65 3d       e=  :1e35[1]
     bcs clip_y                                                        ; 1f68: b0 04       ..  :1e37[1]
-    cmp #25                                                           ; 1f6a: c9 19       ..  :1e39[1]
+    cmp #game_area_rows+1                                             ; 1f6a: c9 19       ..  :1e39[1]
     bcc return7                                                       ; 1f6c: 90 06       ..  :1e3b[1]
 clip_y
-    lda #24                                                           ; 1f6e: a9 18       ..  :1e3d[1]
+    lda #game_area_rows                                               ; 1f6e: a9 18       ..  :1e3d[1]
     sbc cell_y                                                        ; 1f70: e5 71       .q  :1e3f[1]
     sta height_in_cells_to_write                                      ; 1f72: 85 73       .s  :1e41[1]
 return7
@@ -5893,7 +5898,7 @@ enter_filename_message
 get_filename_and_print_drive_number_prompt
     lda #max_filename_len                                             ; 35d8: a9 07       ..  :34a7[1]
     jsr string_input                                                  ; 35da: 20 fc 36     .6 :34a9[1]
-    ldy l0005                                                         ; 35dd: a4 05       ..  :34ac[1]
+    ldy password_characters_entered                                   ; 35dd: a4 05       ..  :34ac[1]
     beq return23                                                      ; 35df: f0 e6       ..  :34ae[1]
     ldy #6                                                            ; 35e1: a0 06       ..  :34b0[1]
 loop_c34b2
@@ -6098,7 +6103,7 @@ sub_c3664
     beq return25                                                      ; 37a0: f0 36       .6  :366f[1]
     lda #$10                                                          ; 37a2: a9 10       ..  :3671[1]
     jsr string_input                                                  ; 37a4: 20 fc 36     .6 :3673[1]
-    ldy l0005                                                         ; 37a7: a4 05       ..  :3676[1]
+    ldy password_characters_entered                                   ; 37a7: a4 05       ..  :3676[1]
     beq c3698                                                         ; 37a9: f0 1e       ..  :3678[1]
     lda developer_flags                                               ; 37ab: ad 03 11    ... :367a[1]
     and #1                                                            ; 37ae: 29 01       ).  :367d[1]
@@ -6185,7 +6190,7 @@ loop_c36f9
 string_input
     sta l377d                                                         ; 382d: 8d 7d 37    .}7 :36fc[1]
     jsr inkey_0                                                       ; 3830: 20 7c 38     |8 :36ff[1]
-    ldy l0005                                                         ; 3833: a4 05       ..  :3702[1]
+    ldy password_characters_entered                                   ; 3833: a4 05       ..  :3702[1]
     cmp #vdu_cr                                                       ; 3835: c9 0d       ..  :3704[1]
     beq c376b                                                         ; 3837: f0 63       .c  :3706[1]
     cmp #vdu_delete                                                   ; 3839: c9 7f       ..  :3708[1]
@@ -6224,7 +6229,7 @@ c3744
     dey                                                               ; 3875: 88          .   :3744[1]
     sta string_input_buffer,y                                         ; 3876: 99 90 0a    ... :3745[1]
     jsr print_italic                                                  ; 3879: 20 66 18     f. :3748[1]
-    inc l0005                                                         ; 387c: e6 05       ..  :374b[1]
+    inc password_characters_entered                                   ; 387c: e6 05       ..  :374b[1]
     jmp c377a                                                         ; 387e: 4c 7a 37    Lz7 :374d[1]
 
 c3750
@@ -6236,7 +6241,7 @@ c3750
     jsr oswrch                                                        ; 388c: 20 ee ff     .. :375b[1]   ; Write character 32
     lda #vdu_left                                                     ; 388f: a9 08       ..  :375e[1]
     jsr oswrch                                                        ; 3891: 20 ee ff     .. :3760[1]   ; Write character 8
-    dec l0005                                                         ; 3894: c6 05       ..  :3763[1]
+    dec password_characters_entered                                   ; 3894: c6 05       ..  :3763[1]
     jsr turn_cursor_on                                                ; 3896: 20 5d 38     ]8 :3765[1]
     jmp c377a                                                         ; 3899: 4c 7a 37    Lz7 :3768[1]
 
@@ -6244,7 +6249,7 @@ c376b
     cpy #0                                                            ; 389c: c0 00       ..  :376b[1]
     beq return26                                                      ; 389e: f0 0d       ..  :376d[1]
     sta string_input_buffer,y                                         ; 38a0: 99 90 0a    ... :376f[1]
-    inc l0005                                                         ; 38a3: e6 05       ..  :3772[1]
+    inc password_characters_entered                                   ; 38a3: e6 05       ..  :3772[1]
     jsr turn_cursor_off                                               ; 38a5: 20 63 38     c8 :3774[1]
     jmp return26                                                      ; 38a8: 4c 7c 37    L|7 :3777[1]
 
@@ -6410,7 +6415,7 @@ c3867
 
 flush_input_buffers_and_zero_l0005
     ldx #0                                                            ; 39a3: a2 00       ..  :3872[1]
-    stx l0005                                                         ; 39a5: 86 05       ..  :3874[1]
+    stx password_characters_entered                                   ; 39a5: 86 05       ..  :3874[1]
     lda #osbyte_flush_buffer_class                                    ; 39a7: a9 0f       ..  :3876[1]
     inx                                                               ; 39a9: e8          .   :3878[1]
     jmp osbyte                                                        ; 39aa: 4c f4 ff    L.. :3879[1]   ; Flush all buffers (X=0), or just input buffers (X non-zero)
@@ -7231,7 +7236,7 @@ read_icodata_using_osword_7f
 
 ; write special register 'track' with value 39
 read_successful
-    lda #$27 ; '''                                                    ; 3ec1: a9 27       .'
+    lda #39                                                           ; 3ec1: a9 27       .'
     jsr set_track_special_register_to_a                               ; 3ec3: 20 d5 3e     .>
     jmp icodata_read_ok                                               ; 3ec6: 4c 0d 3f    L.?
 
@@ -7302,9 +7307,9 @@ copy_level_ordering_table_loop
     sta level_ordering_table - 1,y                                    ; 3f1a: 99 7e 0a    .~.
     dey                                                               ; 3f1d: 88          .
     bne copy_level_ordering_table_loop                                ; 3f1e: d0 f8       ..
-; read the first byte of the data and set the developer_flags if needed
+; read the first byte of the data. If bit 6 is set then set the developer_flags.
     lda (address1_low),y                                              ; 3f20: b1 70       .p
-    and #$40 ; '@'                                                    ; 3f22: 29 40       )@
+    and #%01000000                                                    ; 3f22: 29 40       )@
     beq skip_writing_developer_flags                                  ; 3f24: f0 07       ..
     lda (address1_low),y                                              ; 3f26: b1 70       .p
     and #%10111111                                                    ; 3f28: 29 bf       ).
@@ -8061,7 +8066,6 @@ pydis_end
 ;     c3ade
 ;     l0002
 ;     l0003
-;     l0005
 ;     l0026
 ;     l0039
 ;     l003a
@@ -8687,6 +8691,18 @@ pydis_end
 }
 !if (first_level_letter) != $41 {
     !error "Assertion failed: first_level_letter == $41"
+}
+!if (game_area_columns) != $28 {
+    !error "Assertion failed: game_area_columns == $28"
+}
+!if (game_area_columns+1) != $29 {
+    !error "Assertion failed: game_area_columns+1 == $29"
+}
+!if (game_area_rows) != $18 {
+    !error "Assertion failed: game_area_rows == $18"
+}
+!if (game_area_rows+1) != $19 {
+    !error "Assertion failed: game_area_rows+1 == $19"
 }
 !if (green) != $02 {
     !error "Assertion failed: green == $02"

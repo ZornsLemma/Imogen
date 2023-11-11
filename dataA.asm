@@ -5,6 +5,7 @@ opcode_jmp           = 76
 spriteid_saxophone   = 211
 
 ; Memory locations
+password_characters_entered                 = $05
 l001d                                       = $1d
 desired_room_index                          = $30
 desired_level                               = $31

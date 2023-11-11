@@ -44,9 +44,9 @@ expr(0x5433, "vdu_lf")
 expr(0x5413, "fixed_eor_key")
 expr(0x542c, "fixed_eor_key")
 
-label(0x544f, "level_name_ptr_table")
-expr(0x53c7, make_lo("level_name_ptr_table"))
-expr(0x53cb, make_hi("level_name_ptr_table"))
+label(0x544f, "password_ptr_table")
+expr(0x53c7, make_lo("password_ptr_table"))
+expr(0x53cb, make_hi("password_ptr_table"))
 expr(0x53d9, "vdu_cr")
 comment(0x53e3, "TODO: At this point we have the level pointer for the successfully matched password in YX")
 entry(0x5410, "skip_rest_of_entry")
@@ -61,11 +61,11 @@ comment(0x568f, "'ESC $41 $08': Set line spacing to 8/72 inch")
 comment(0x56b9, "'ESC 42 2A 05 40': Turn on graphics mode, followed by 16389 characters")
 comment(0x56ad, "start of screen memory")
 expr(0x55d0, "opcode_jmp")
-comment(0x55d1, "For Break effect: *FX 200,1")
+comment(0x55d1, "For break effect: *FX 200,1")
 
 label(0x0070, "screen_address_low")
 label(0x0071, "screen_address_high")
-label(0x0072, "row_counter")
+label(0x0072, "counter")
 comment(0x564e, "turn on printer output", inline=True)
 label(0x56b9, "turn_on_graphics_mode_for_a_row_of_graphics")
 label(0x56f8, "get_byte_of_screen_data_loop")
@@ -114,7 +114,7 @@ comment(0x552e, "TODO: Some intriguing secret passwords here. Now I see this, I 
 
 comment(0x5642, "A screen dump routine for Epson-compatible printers")
 
-comment(0x53c0, "Check a password entered by the user at string_buffer against the list of EOR-encrypted paswords at level_name_ptr_table and invoke the corresponding handler if a match is found. Otherwise generate an error.")
+comment(0x53c0, "Check a password entered by the user at string_buffer against the list of EOR-encrypted paswords at password_ptr_table and invoke the corresponding handler if a match is found. Otherwise generate an error.")
 
 # TODO: DELETE? expr(0x5620, "game_state_flag_have_spell")
 #
