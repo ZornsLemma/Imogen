@@ -2040,7 +2040,7 @@ c1add
     ldx characters_to_copy                                            ; 1c0e: a6 72       .r  :1add[1]
     lda address1_low                                                  ; 1c10: a5 70       .p  :1adf[1]
     sta l007c                                                         ; 1c12: 85 7c       .|  :1ae1[1]
-c1ae3
+character_copy_loop
     ldy #7                                                            ; 1c14: a0 07       ..  :1ae3[1]
 ; TODO: The value in l0042 selects various different code paths here. Note that if it
 ; contains 1, we have a 'simple' case where we just copy data without any further
@@ -2050,7 +2050,7 @@ c1ae3
     bmi c1af8                                                         ; 1c1a: 30 0d       0.  :1ae9[1]
     cmp #1                                                            ; 1c1c: c9 01       ..  :1aeb[1]
     clc                                                               ; 1c1e: 18          .   :1aed[1]
-    beq restore_rectangle_of_screen_memory_copy_loop                  ; 1c1f: f0 38       .8  :1aee[1]
+    beq byte_copy_loop                                                ; 1c1f: f0 38       .8  :1aee[1]
     sbc #0                                                            ; 1c21: e9 00       ..  :1af0[1]   ; Subtract 1; note C cleared before beq
     jsr get_random_number_up_to_a                                     ; 1c23: 20 a6 18     .. :1af2[1]
     jmp common_code_after_variable_code_has_set_a                     ; 1c26: 4c 14 1b    L.. :1af5[1]
@@ -2086,21 +2086,21 @@ common_code_after_variable_code_has_set_a
     and #3                                                            ; 1c53: 29 03       ).  :1b22[1]
     adc original_off_screen_address_high                              ; 1c55: 65 79       ey  :1b24[1]
     sta off_screen_address_high                                       ; 1c57: 85 7b       .{  :1b26[1]
-restore_rectangle_of_screen_memory_copy_loop
+byte_copy_loop
     lda (off_screen_address_low),y                                    ; 1c59: b1 7a       .z  :1b28[1]
     sta (cell_screen_address_low),y                                   ; 1c5b: 91 76       .v  :1b2a[1]
     dey                                                               ; 1c5d: 88          .   :1b2c[1]
-    bpl restore_rectangle_of_screen_memory_copy_loop                  ; 1c5e: 10 f9       ..  :1b2d[1]
+    bpl byte_copy_loop                                                ; 1c5e: 10 f9       ..  :1b2d[1]
     inc l007c                                                         ; 1c60: e6 7c       .|  :1b2f[1]
     dex                                                               ; 1c62: ca          .   :1b31[1]   ; X was initialised with characters_to_copy
     beq all_characters_copied                                         ; 1c63: f0 0d       ..  :1b32[1]
     lda cell_screen_address_low                                       ; 1c65: a5 76       .v  :1b34[1]
     adc #8                                                            ; 1c67: 69 08       i.  :1b36[1]
     sta cell_screen_address_low                                       ; 1c69: 85 76       .v  :1b38[1]
-    bcc c1ae3                                                         ; 1c6b: 90 a7       ..  :1b3a[1]
+    bcc character_copy_loop                                           ; 1c6b: 90 a7       ..  :1b3a[1]
     inc cell_screen_address_high                                      ; 1c6d: e6 77       .w  :1b3c[1]
     clc                                                               ; 1c6f: 18          .   :1b3e[1]
-    bcc c1ae3                                                         ; 1c70: 90 a2       ..  :1b3f[1]   ; always branch
+    bcc character_copy_loop                                           ; 1c70: 90 a2       ..  :1b3f[1]   ; always branch
 all_characters_copied
     inc l007d                                                         ; 1c72: e6 7d       .}  :1b41[1]
     dec l0073                                                         ; 1c74: c6 73       .s  :1b43[1]
@@ -7875,7 +7875,6 @@ pydis_end
 ;     c1a8f
 ;     c1a9e
 ;     c1add
-;     c1ae3
 ;     c1af8
 ;     c1b0c
 ;     c1b59

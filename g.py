@@ -2171,10 +2171,11 @@ comment(0x1b49, "C is clear because beq above not taken", inline=True)
 comment(0x1af0, "Subtract 1; note C cleared before beq", inline=True)
 label(0x1b14, "common_code_after_variable_code_has_set_a")
 comment(0x1ae5, "TODO: The value in l0042 selects various different code paths here. Note that if it contains 1, we have a 'simple' case where we just copy data without any further fiddling with off_screen_address.")
-entry(0x1b28, "restore_rectangle_of_screen_memory_copy_loop")
+entry(0x1b28, "byte_copy_loop")
 comment(0x1b3f, "always branch", inline=True)
 comment(0x1b31, "X was initialised with characters_to_copy", inline=True)
 entry(0x1b41, "all_characters_copied")
+entry(0x1ae3, "character_copy_loop")
 
 go()
 
