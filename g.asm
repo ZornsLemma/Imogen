@@ -2203,7 +2203,7 @@ skip_high_byte2
 something15_TODO
     jmp c1c3b                                                         ; 1cbb: 4c 3b 1c    L;. :1b8a[1]
 
-c1b8d
+c1c9d_local
     jmp c1c9d                                                         ; 1cbe: 4c 9d 1c    L.. :1b8d[1]
 
 ; TODO: This is called from level-specific machine code, e.g. see dataA.asm
@@ -2214,9 +2214,9 @@ something26_TODO
     lda #3                                                            ; 1cc1: a9 03       ..  :1b90[1]
     sta l0044                                                         ; 1cc3: 85 44       .D  :1b92[1]
     ldy #$17                                                          ; 1cc5: a0 17       ..  :1b94[1]
-c1b96
+something26_y_loop
     ldx #$27 ; '''                                                    ; 1cc7: a2 27       .'  :1b96[1]
-c1b98
+something26_x_loop
     jsr read_collision_map_value_for_x_y                              ; 1cc9: 20 fa 1e     .. :1b98[1]
     cmp #3                                                            ; 1ccc: c9 03       ..  :1b9b[1]
     bne c1bc3                                                         ; 1cce: d0 24       .$  :1b9d[1]
@@ -2229,7 +2229,7 @@ c1b98
     jsr read_collision_map_value_for_x_y                              ; 1cda: 20 fa 1e     .. :1ba9[1]
     inx                                                               ; 1cdd: e8          .   :1bac[1]
     cmp #3                                                            ; 1cde: c9 03       ..  :1bad[1]
-    bne c1b8d                                                         ; 1ce0: d0 dc       ..  :1baf[1]
+    bne c1c9d_local                                                   ; 1ce0: d0 dc       ..  :1baf[1]
     dey                                                               ; 1ce2: 88          .   :1bb1[1]
     jsr read_collision_map_value_for_x_y                              ; 1ce3: 20 fa 1e     .. :1bb2[1]
     iny                                                               ; 1ce6: c8          .   :1bb5[1]
@@ -2242,9 +2242,9 @@ c1b98
     bne c1c15                                                         ; 1cf2: d0 52       .R  :1bc1[1]
 c1bc3
     dex                                                               ; 1cf4: ca          .   :1bc3[1]
-    bpl c1b98                                                         ; 1cf5: 10 d2       ..  :1bc4[1]
+    bpl something26_x_loop                                            ; 1cf5: 10 d2       ..  :1bc4[1]
     dey                                                               ; 1cf7: 88          .   :1bc6[1]
-    bpl c1b96                                                         ; 1cf8: 10 cd       ..  :1bc7[1]
+    bpl something26_y_loop                                            ; 1cf8: 10 cd       ..  :1bc7[1]
     rts                                                               ; 1cfa: 60          `   :1bc9[1]
 
 c1bca
@@ -7933,9 +7933,6 @@ pydis_end
 ;     c1a9e
 ;     c1af8
 ;     c1b59
-;     c1b8d
-;     c1b96
-;     c1b98
 ;     c1bc3
 ;     c1bca
 ;     c1c15

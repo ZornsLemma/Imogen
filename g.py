@@ -2235,6 +2235,11 @@ blank(0x1f17)
 entry(0x1f21, "right_shift_a_by_2x_loop")
 entry(0x1f23, "right_shift_a_by_2x")
 
+entry(0x1b98, "something26_x_loop")
+entry(0x1b96, "something26_y_loop")
+
+entry(0x1b8d, "c1c9d_local")
+
 go()
 
 # vi: tw=100
