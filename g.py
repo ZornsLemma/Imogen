@@ -40,6 +40,7 @@ constant(0x38, "opcode_sec")
 #   This is weird, but makes the addresses unique.
 #
 substitute_labels = {
+
     (0x114f,0x1297): {
         "address1_low": "filename_low",
         "address1_high": "filename_high",
@@ -65,6 +66,34 @@ substitute_labels = {
         "address1_low": "filename_low",
         "address1_high": "filename_high",
     },
+    (0x14be, 0x1801): {
+        "l0072": "sprite_screen_address_low",
+        "l0073": "sprite_screen_address_high",
+        "l0074": "sprite_x_pos_low",
+        "l0075": "sprite_x_pos_high",
+        "l0076": "sprite_y_pos_low",
+        "l0077": "sprite_y_pos_high",
+        "l0078": "sprite_x_offset_within_byte",
+        "l0079": "byte_offset_within_sprite",
+        "l007b": "sprite_screen_address_for_column_low",
+        "l007c": "sprite_screen_address_for_column_high",
+        "l007d": "sprite_data_byte",
+    },
+
+
+#    (0x1bec,0x1f24): {
+#         "sprite_screen_address_low": "x0072",
+#         "sprite_screen_address_high": "x0073",
+#         "sprite_x_pos_low": "x0074",
+#         "sprite_x_pos_high": "x0075",
+#         "sprite_y_pos_low": "cell_screen_address_low",
+#         "sprite_y_pos_high": "cell_screen_address_high",
+#         "sprite_x_offset_within_byte": "x0078",
+#         "byte_offset_within_sprite": "x0079",
+#         "sprite_screen_address_for_column_low": "x007b",
+#         "sprite_screen_address_for_column_high": "x007c",
+#         "sprite_data_byte": "x007d",
+#    },
     (0x1f25, 0x3c05): {
         "initialise_display": "collision_map",
     },
@@ -175,18 +204,6 @@ label(0x0065, "remember_object_index")
 
 label(0x0070, "address1_low")
 label(0x0071, "address1_high")
-label(0x0072, "sprite_screen_address_low")
-label(0x0073, "sprite_screen_address_high")
-label(0x0074, "sprite_x_pos_low")
-label(0x0075, "sprite_x_pos_high")
-label(0x0076, "sprite_y_pos_low")
-label(0x0077, "sprite_y_pos_high")
-label(0x0078, "sprite_x_offset_within_byte")
-label(0x0079, "byte_offset_within_sprite")
-
-label(0x007b, "sprite_screen_address_for_column_low")
-label(0x007c, "sprite_screen_address_for_column_high")
-label(0x007d, "sprite_data_byte")
 label(0x007e, "address2_low")
 label(0x007f, "address2_high")
 label(0x0080, "mask_sprite_byte")
@@ -525,6 +542,8 @@ substitute_constants("sta sprite_number", 'a', sprite_dict, True)
 substitute_constants("jsr draw_sprite_a_at_character_xy", 'a', sprite_dict, True)
 substitute_constants("jsr find_or_create_menu_slot_for_A", 'a', sprite_dict, True) # TODO: not actually useful yet, maybe never
 substitute_constants("sta sprite_op_flags", 'a', sprite_op_flags_dict, True)
+
+comment(0x1b66, "Y*$140 + X*8")
 
 expr(0x2b26, "sprite_op_flags_normal")
 
@@ -1116,7 +1135,8 @@ entry(0x40a, "save_or_restore_screen_under_dialog_box") # TODO: guesswork
 entry(0x444, "vdu_goto_0_9")
 expr(0x445, "vdu_goto_xy")
 
-entry(0x453, "something_TODO")
+entry(0x453, "selected_menu_item_changed")
+comment(0x0457, "clear away the active dialog")
 # TODO: DELETE? entry(0x3fbb, "something2_TODO")
 
 comment(0x3fcb, """Initialise display
@@ -2091,7 +2111,7 @@ decimal(0x1e3a)
 label(0x1e2d, "clip_x")
 decimal(0x1e3e)
 label(0x1e3d, "clip_y")
-entry(0x1b66, "set_sprite_y_pos_using_x_y") # TODO!
+entry(0x1b66, "get_screen_address_from_cell_xy")
 
 label(0x58c0, "toolbar_screen_address")
 label(0x6200, "game_area_screen_address")
