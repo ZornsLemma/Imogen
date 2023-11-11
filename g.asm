@@ -2729,10 +2729,10 @@ write_a_single_value_to_cell_in_collision_map
     rts                                                               ; 202a: 60          `   :1ef9[1]
 
 sub_c1efa
-    cpx #$28 ; '('                                                    ; 202b: e0 28       .(  :1efa[1]
-    bcs c1f2d                                                         ; 202d: b0 2f       ./  :1efc[1]
-    cpy #$18                                                          ; 202f: c0 18       ..  :1efe[1]
-    bcs c1f2d                                                         ; 2031: b0 2b       .+  :1f00[1]
+    cpx #game_area_columns                                            ; 202b: e0 28       .(  :1efa[1]
+    bcs outside_game_area                                             ; 202d: b0 2f       ./  :1efc[1]
+    cpy #game_area_rows                                               ; 202f: c0 18       ..  :1efe[1]
+    bcs outside_game_area                                             ; 2031: b0 2b       .+  :1f00[1]
     stx temp_coordinate                                               ; 2033: 86 4a       .J  :1f02[1]
     sty l004b                                                         ; 2035: 84 4b       .K  :1f04[1]
 c1f06
@@ -2767,7 +2767,7 @@ c1f23
 return8
     rts                                                               ; 205d: 60          `   :1f2c[1]
 
-c1f2d
+outside_game_area
     lda l0044                                                         ; 205e: a5 44       .D  :1f2d[1]
     bpl return8                                                       ; 2060: 10 fb       ..  :1f2f[1]
     stx temp_coordinate                                               ; 2062: 86 4a       .J  :1f31[1]
@@ -7929,7 +7929,6 @@ pydis_end
 ;     c1df0
 ;     c1f06
 ;     c1f23
-;     c1f2d
 ;     c1f96
 ;     c1fa0
 ;     c1fb7

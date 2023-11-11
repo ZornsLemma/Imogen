@@ -2195,6 +2195,10 @@ entry(0x1b0c, "two_by_two_alternating_pattern")
 
 comment(0x1b90, "TODO: From the context this is called in in dataA, I suspect it is changing the current plot mode and/or set of characters used by restore_rectangle_of_screen_memory.")
 
+expr(0x1efb, "game_area_columns")
+expr(0x1eff, "game_area_rows")
+entry(0x1f2d, "outside_game_area")
+
 go()
 
 # vi: tw=100
