@@ -212,9 +212,11 @@ eor_key                                         = $45
 return_key_pressed_pending                      = $46
 current_player_character                        = $48
 temp_value                                      = $49
+saved_x                                         = $4a
 temp_coordinate                                 = $4a
 height_counter                                  = $4b
 l004b                                           = $4b
+saved_y                                         = $4b
 screen_base_address_high                        = $4c
 new_player_character                            = $4d
 previous_room_index                             = $50
@@ -2752,8 +2754,8 @@ sub_c1efa
     bcs outside_game_area                                             ; 202d: b0 2f       ./  :1efc[1]
     cpy #game_area_rows                                               ; 202f: c0 18       ..  :1efe[1]
     bcs outside_game_area                                             ; 2031: b0 2b       .+  :1f00[1]
-    stx temp_coordinate                                               ; 2033: 86 4a       .J  :1f02[1]
-    sty l004b                                                         ; 2035: 84 4b       .K  :1f04[1]
+    stx saved_x                                                       ; 2033: 86 4a       .J  :1f02[1]
+    sty saved_y                                                       ; 2035: 84 4b       .K  :1f04[1]
 ; Set temp_value=10*Y
 c1f06
     tya                                                               ; 2037: 98          .   :1f06[1]
@@ -2775,16 +2777,16 @@ c1f06
     and #3                                                            ; 2049: 29 03       ).  :1f18[1]
     tax                                                               ; 204b: aa          .   :1f1a[1]
     lda collision_map,y                                               ; 204c: b9 00 0c    ... :1f1b[1]
-    jmp c1f23                                                         ; 204f: 4c 23 1f    L#. :1f1e[1]
+    jmp right_shift_a_by_2x                                           ; 204f: 4c 23 1f    L#. :1f1e[1]
 
-loop_c1f21
+right_shift_a_by_2x_loop
     lsr                                                               ; 2052: 4a          J   :1f21[1]
     lsr                                                               ; 2053: 4a          J   :1f22[1]
-c1f23
+right_shift_a_by_2x
     dex                                                               ; 2054: ca          .   :1f23[1]
-    bpl loop_c1f21                                                    ; 2055: 10 fb       ..  :1f24[1]
-    ldx temp_coordinate                                               ; 2057: a6 4a       .J  :1f26[1]
-    ldy l004b                                                         ; 2059: a4 4b       .K  :1f28[1]
+    bpl right_shift_a_by_2x_loop                                      ; 2055: 10 fb       ..  :1f24[1]
+    ldx saved_x                                                       ; 2057: a6 4a       .J  :1f26[1]
+    ldy saved_y                                                       ; 2059: a4 4b       .K  :1f28[1]
     and #3                                                            ; 205b: 29 03       ).  :1f2a[1]
 return8
     rts                                                               ; 205d: 60          `   :1f2c[1]
@@ -7950,7 +7952,6 @@ pydis_end
 ;     c1de6
 ;     c1df0
 ;     c1f06
-;     c1f23
 ;     c1f96
 ;     c1fa0
 ;     c1fb7
@@ -8222,7 +8223,6 @@ pydis_end
 ;     loop_c1c61
 ;     loop_c1cbb
 ;     loop_c1df7
-;     loop_c1f21
 ;     loop_c1fe1
 ;     loop_c1ff5
 ;     loop_c2018

@@ -128,6 +128,10 @@ substitute_labels = {
         "l0074": "offset_within_byte",
         "l0075": "offset_within_collision_map",
     },
+    (0x202b, 0x205e): {
+         "temp_coordinate": "saved_x",
+         "l004b": "saved_y",
+    },
     (0x2331, 0x2467): {
         "address1_low": "animation_address_low",
         "address1_high": "animation_address_high",
@@ -2226,6 +2230,8 @@ entry(0x1f2d, "outside_game_area")
 comment(0x1f06, "Set temp_value=10*Y")
 comment(0x1f10, "Set Y=temp_value+X/4")
 blank(0x1f17)
+entry(0x1f21, "right_shift_a_by_2x_loop")
+entry(0x1f23, "right_shift_a_by_2x")
 
 go()
 
