@@ -253,6 +253,7 @@ level_data_ptr_high                         = $71
 menu_has_changed_flag                       = $71
 screen_address_high                         = $71
 src_sprite_address_high                     = $71
+characters_to_copy                          = $72
 l0072                                       = $72
 sprite_screen_address_low                   = $72
 width_in_cells_to_write                     = $72
@@ -2036,7 +2037,7 @@ restore_rectangle_of_screen_memory
     lda #0                                                            ; 1c0a: a9 00       ..  :1ad9[1]
     sta address2_low                                                  ; 1c0c: 85 7e       .~  :1adb[1]
 c1add
-    ldx l0072                                                         ; 1c0e: a6 72       .r  :1add[1]
+    ldx characters_to_copy                                            ; 1c0e: a6 72       .r  :1add[1]
     lda address1_low                                                  ; 1c10: a5 70       .p  :1adf[1]
     sta l007c                                                         ; 1c12: 85 7c       .|  :1ae1[1]
 c1ae3
@@ -2091,8 +2092,8 @@ restore_rectangle_of_screen_memory_copy_loop
     dey                                                               ; 1c5d: 88          .   :1b2c[1]
     bpl restore_rectangle_of_screen_memory_copy_loop                  ; 1c5e: 10 f9       ..  :1b2d[1]
     inc l007c                                                         ; 1c60: e6 7c       .|  :1b2f[1]
-    dex                                                               ; 1c62: ca          .   :1b31[1]
-    beq c1b41                                                         ; 1c63: f0 0d       ..  :1b32[1]
+    dex                                                               ; 1c62: ca          .   :1b31[1]   ; X was initialised with characters_to_copy
+    beq all_characters_copied                                         ; 1c63: f0 0d       ..  :1b32[1]
     lda cell_screen_address_low                                       ; 1c65: a5 76       .v  :1b34[1]
     adc #8                                                            ; 1c67: 69 08       i.  :1b36[1]
     sta cell_screen_address_low                                       ; 1c69: 85 76       .v  :1b38[1]
@@ -2100,7 +2101,7 @@ restore_rectangle_of_screen_memory_copy_loop
     inc cell_screen_address_high                                      ; 1c6d: e6 77       .w  :1b3c[1]
     clc                                                               ; 1c6f: 18          .   :1b3e[1]
     bcc c1ae3                                                         ; 1c70: 90 a2       ..  :1b3f[1]   ; always branch
-c1b41
+all_characters_copied
     inc l007d                                                         ; 1c72: e6 7d       .}  :1b41[1]
     dec l0073                                                         ; 1c74: c6 73       .s  :1b43[1]
     beq c1b59                                                         ; 1c76: f0 12       ..  :1b45[1]
@@ -7877,7 +7878,6 @@ pydis_end
 ;     c1ae3
 ;     c1af8
 ;     c1b0c
-;     c1b41
 ;     c1b59
 ;     c1b8d
 ;     c1b96
