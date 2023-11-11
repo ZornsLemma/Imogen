@@ -2222,7 +2222,7 @@ comment(0x1b14, "TODO: off_screen_address_high is and-ed with 3 in a few instruc
 comment(0x1b0c, "Set A=%(low bit of current_row)(low bit of current character), giving a 2x2 alternating pattern. ('current character' is actually offset by address1_low, but the idea is the same.)")
 entry(0x1b0c, "two_by_two_alternating_pattern")
 
-comment(0x1b90, "TODO: From the context this is called in in dataA, I suspect it is changing the current plot mode and/or set of characters used by restore_rectangle_of_screen_memory.")
+comment(0x1b90, "TODO: Still figuring out exactly what, but this seems to be 'seeking' leftwards and upwards from starting position in X and Y registers to find the 'topleftmost' section which has a certain pattern of free space.")
 
 entry(0x1efa, "read_collision_map_value_for_x_y")
 comment(0x1efa, "TODO: speculating but think this is right - my skimming of existing collision map disassembly suggests it stores 2 bits per character cell, so we have 10 bytes per 40 column row (4 cells per byte), which seems to fit with the constants in this code")

@@ -2207,9 +2207,9 @@ c1c9d_local
     jmp c1c9d                                                         ; 1cbe: 4c 9d 1c    L.. :1b8d[1]
 
 ; TODO: This is called from level-specific machine code, e.g. see dataA.asm
-; TODO: From the context this is called in in dataA, I suspect it is changing the
-; current plot mode and/or set of characters used by
-; restore_rectangle_of_screen_memory.
+; TODO: Still figuring out exactly what, but this seems to be 'seeking' leftwards and
+; upwards from starting position in X and Y registers to find the 'topleftmost' section
+; which has a certain pattern of free space.
 something26_TODO
     lda #3                                                            ; 1cc1: a9 03       ..  :1b90[1]
     sta l0044                                                         ; 1cc3: 85 44       .D  :1b92[1]
