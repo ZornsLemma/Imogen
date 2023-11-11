@@ -262,8 +262,10 @@ sprite_x_pos_low                            = $74
 l0075                                       = $75
 offset_within_collision_map                 = $75
 sprite_x_pos_high                           = $75
+cell_screen_address_low                     = $76
 l0076                                       = $76
 sprite_y_pos_low                            = $76
+cell_screen_address_high                    = $77
 l0077                                       = $77
 sprite_y_pos_high                           = $77
 l0078                                       = $78
@@ -2001,9 +2003,9 @@ something51_TODO
     sty l007d                                                         ; 1bed: 84 7d       .}  :1abc[1]
     jsr clip_cells_to_write_to_collision_map                          ; 1bef: 20 17 1e     .. :1abe[1]
     jsr get_screen_address_from_cell_xy                               ; 1bf2: 20 66 1b     f. :1ac1[1]
-    lda l0076                                                         ; 1bf5: a5 76       .v  :1ac4[1]
+    lda cell_screen_address_low                                       ; 1bf5: a5 76       .v  :1ac4[1]
     sta l0074                                                         ; 1bf7: 85 74       .t  :1ac6[1]
-    lda l0077                                                         ; 1bf9: a5 77       .w  :1ac8[1]
+    lda cell_screen_address_high                                      ; 1bf9: a5 77       .w  :1ac8[1]
     sta l0075                                                         ; 1bfb: 85 75       .u  :1aca[1]
     ldx l0040                                                         ; 1bfd: a6 40       .@  :1acc[1]
     ldy l0041                                                         ; 1bff: a4 41       .A  :1ace[1]
@@ -2063,17 +2065,17 @@ c1b14
     sta l007b                                                         ; 1c57: 85 7b       .{  :1b26[1]
 c1b28
     lda (l007a),y                                                     ; 1c59: b1 7a       .z  :1b28[1]
-    sta (l0076),y                                                     ; 1c5b: 91 76       .v  :1b2a[1]
+    sta (cell_screen_address_low),y                                   ; 1c5b: 91 76       .v  :1b2a[1]
     dey                                                               ; 1c5d: 88          .   :1b2c[1]
     bpl c1b28                                                         ; 1c5e: 10 f9       ..  :1b2d[1]
     inc l007c                                                         ; 1c60: e6 7c       .|  :1b2f[1]
     dex                                                               ; 1c62: ca          .   :1b31[1]
     beq c1b41                                                         ; 1c63: f0 0d       ..  :1b32[1]
-    lda l0076                                                         ; 1c65: a5 76       .v  :1b34[1]
+    lda cell_screen_address_low                                       ; 1c65: a5 76       .v  :1b34[1]
     adc #8                                                            ; 1c67: 69 08       i.  :1b36[1]
-    sta l0076                                                         ; 1c69: 85 76       .v  :1b38[1]
+    sta cell_screen_address_low                                       ; 1c69: 85 76       .v  :1b38[1]
     bcc c1ae3                                                         ; 1c6b: 90 a7       ..  :1b3a[1]
-    inc l0077                                                         ; 1c6d: e6 77       .w  :1b3c[1]
+    inc cell_screen_address_high                                      ; 1c6d: e6 77       .w  :1b3c[1]
     clc                                                               ; 1c6f: 18          .   :1b3e[1]
     bcc c1ae3                                                         ; 1c70: 90 a2       ..  :1b3f[1]
 c1b41
@@ -2083,11 +2085,11 @@ c1b41
     lda l0074                                                         ; 1c78: a5 74       .t  :1b47[1]
     adc #$40 ; '@'                                                    ; 1c7a: 69 40       i@  :1b49[1]
     sta l0074                                                         ; 1c7c: 85 74       .t  :1b4b[1]
-    sta l0076                                                         ; 1c7e: 85 76       .v  :1b4d[1]
+    sta cell_screen_address_low                                       ; 1c7e: 85 76       .v  :1b4d[1]
     lda l0075                                                         ; 1c80: a5 75       .u  :1b4f[1]
     adc #1                                                            ; 1c82: 69 01       i.  :1b51[1]
     sta l0075                                                         ; 1c84: 85 75       .u  :1b53[1]
-    sta l0077                                                         ; 1c86: 85 77       .w  :1b55[1]
+    sta cell_screen_address_high                                      ; 1c86: 85 77       .w  :1b55[1]
     bcc c1add                                                         ; 1c88: 90 84       ..  :1b57[1]
 c1b59
     ldx address1_low                                                  ; 1c8a: a6 70       .p  :1b59[1]
@@ -2102,14 +2104,14 @@ c1b64
 ; Y*$140 + X*8
 get_screen_address_from_cell_xy
     lda #0                                                            ; 1c97: a9 00       ..  :1b66[1]
-    sta l0076                                                         ; 1c99: 85 76       .v  :1b68[1]
-    sty l0077                                                         ; 1c9b: 84 77       .w  :1b6a[1]
+    sta cell_screen_address_low                                       ; 1c99: 85 76       .v  :1b68[1]
+    sty cell_screen_address_high                                      ; 1c9b: 84 77       .w  :1b6a[1]
     tya                                                               ; 1c9d: 98          .   :1b6c[1]
     lsr                                                               ; 1c9e: 4a          J   :1b6d[1]
-    ror l0076                                                         ; 1c9f: 66 76       fv  :1b6e[1]
+    ror cell_screen_address_low                                       ; 1c9f: 66 76       fv  :1b6e[1]
     lsr                                                               ; 1ca1: 4a          J   :1b70[1]
-    ror l0076                                                         ; 1ca2: 66 76       fv  :1b71[1]
-    adc l0077                                                         ; 1ca4: 65 77       ew  :1b73[1]
+    ror cell_screen_address_low                                       ; 1ca2: 66 76       fv  :1b71[1]
+    adc cell_screen_address_high                                      ; 1ca4: 65 77       ew  :1b73[1]
     tay                                                               ; 1ca6: a8          .   :1b75[1]
     txa                                                               ; 1ca7: 8a          .   :1b76[1]
     asl                                                               ; 1ca8: 0a          .   :1b77[1]
@@ -2119,12 +2121,12 @@ get_screen_address_from_cell_xy
     iny                                                               ; 1cad: c8          .   :1b7c[1]
     clc                                                               ; 1cae: 18          .   :1b7d[1]
 c1b7e
-    adc l0076                                                         ; 1caf: 65 76       ev  :1b7e[1]
-    sta l0076                                                         ; 1cb1: 85 76       .v  :1b80[1]
+    adc cell_screen_address_low                                       ; 1caf: 65 76       ev  :1b7e[1]
+    sta cell_screen_address_low                                       ; 1cb1: 85 76       .v  :1b80[1]
     tya                                                               ; 1cb3: 98          .   :1b82[1]
     adc screen_base_address_high                                      ; 1cb4: 65 4c       eL  :1b83[1]
-    ldy l0077                                                         ; 1cb6: a4 77       .w  :1b85[1]
-    sta l0077                                                         ; 1cb8: 85 77       .w  :1b87[1]
+    ldy cell_screen_address_high                                      ; 1cb6: a4 77       .w  :1b85[1]
+    sta cell_screen_address_high                                      ; 1cb8: 85 77       .w  :1b87[1]
     rts                                                               ; 1cba: 60          `   :1b89[1]
 
 something15_TODO
@@ -2190,7 +2192,7 @@ c1bca
     ldy #7                                                            ; 1d13: a0 07       ..  :1be2[1]
 loop_c1be4
     lda (l007a),y                                                     ; 1d15: b1 7a       .z  :1be4[1]
-    sta (l0076),y                                                     ; 1d17: 91 76       .v  :1be6[1]
+    sta (cell_screen_address_low),y                                   ; 1d17: 91 76       .v  :1be6[1]
     dey                                                               ; 1d19: 88          .   :1be8[1]
     cpy #2                                                            ; 1d1a: c0 02       ..  :1be9[1]
     bcs loop_c1be4                                                    ; 1d1c: b0 f7       ..  :1beb[1]
@@ -2201,17 +2203,17 @@ loop_c1be4
     lda l007b                                                         ; 1d25: a5 7b       .{  :1bf4[1]
     adc #0                                                            ; 1d27: 69 00       i.  :1bf6[1]
     sta l007b                                                         ; 1d29: 85 7b       .{  :1bf8[1]
-    lda l0076                                                         ; 1d2b: a5 76       .v  :1bfa[1]
+    lda cell_screen_address_low                                       ; 1d2b: a5 76       .v  :1bfa[1]
     clc                                                               ; 1d2d: 18          .   :1bfc[1]
     adc #$40 ; '@'                                                    ; 1d2e: 69 40       i@  :1bfd[1]
-    sta l0076                                                         ; 1d30: 85 76       .v  :1bff[1]
-    lda l0077                                                         ; 1d32: a5 77       .w  :1c01[1]
+    sta cell_screen_address_low                                       ; 1d30: 85 76       .v  :1bff[1]
+    lda cell_screen_address_high                                      ; 1d32: a5 77       .w  :1c01[1]
     adc #1                                                            ; 1d34: 69 01       i.  :1c03[1]
-    sta l0077                                                         ; 1d36: 85 77       .w  :1c05[1]
+    sta cell_screen_address_high                                      ; 1d36: 85 77       .w  :1c05[1]
     ldy #5                                                            ; 1d38: a0 05       ..  :1c07[1]
 loop_c1c09
     lda (l007a),y                                                     ; 1d3a: b1 7a       .z  :1c09[1]
-    sta (l0076),y                                                     ; 1d3c: 91 76       .v  :1c0b[1]
+    sta (cell_screen_address_low),y                                   ; 1d3c: 91 76       .v  :1c0b[1]
     dey                                                               ; 1d3e: 88          .   :1c0d[1]
     bpl loop_c1c09                                                    ; 1d3f: 10 f9       ..  :1c0e[1]
     ldy address1_high                                                 ; 1d41: a4 71       .q  :1c10[1]
@@ -2234,7 +2236,7 @@ c1c15
     ldy #7                                                            ; 1d5c: a0 07       ..  :1c2b[1]
 loop_c1c2d
     lda (l007a),y                                                     ; 1d5e: b1 7a       .z  :1c2d[1]
-    sta (l0076),y                                                     ; 1d60: 91 76       .v  :1c2f[1]
+    sta (cell_screen_address_low),y                                   ; 1d60: 91 76       .v  :1c2f[1]
     dey                                                               ; 1d62: 88          .   :1c31[1]
     cpy #2                                                            ; 1d63: c0 02       ..  :1c32[1]
     bcs loop_c1c2d                                                    ; 1d65: b0 f7       ..  :1c34[1]
@@ -2266,10 +2268,10 @@ c1c4e
     sta l007b                                                         ; 1d8e: 85 7b       .{  :1c5d[1]
     ldy #7                                                            ; 1d90: a0 07       ..  :1c5f[1]
 loop_c1c61
-    lda (l0076),y                                                     ; 1d92: b1 76       .v  :1c61[1]
+    lda (cell_screen_address_low),y                                   ; 1d92: b1 76       .v  :1c61[1]
     and #$c0                                                          ; 1d94: 29 c0       ).  :1c63[1]
     ora (l007a),y                                                     ; 1d96: 11 7a       .z  :1c65[1]
-    sta (l0076),y                                                     ; 1d98: 91 76       .v  :1c67[1]
+    sta (cell_screen_address_low),y                                   ; 1d98: 91 76       .v  :1c67[1]
     dey                                                               ; 1d9a: 88          .   :1c69[1]
     bpl loop_c1c61                                                    ; 1d9b: 10 f5       ..  :1c6a[1]
     ldy address1_high                                                 ; 1d9d: a4 71       .q  :1c6c[1]
@@ -2321,10 +2323,10 @@ c1ca8
     sta l007b                                                         ; 1de8: 85 7b       .{  :1cb7[1]
     ldy #7                                                            ; 1dea: a0 07       ..  :1cb9[1]
 loop_c1cbb
-    lda (l0076),y                                                     ; 1dec: b1 76       .v  :1cbb[1]
+    lda (cell_screen_address_low),y                                   ; 1dec: b1 76       .v  :1cbb[1]
     and #3                                                            ; 1dee: 29 03       ).  :1cbd[1]
     ora (l007a),y                                                     ; 1df0: 11 7a       .z  :1cbf[1]
-    sta (l0076),y                                                     ; 1df2: 91 76       .v  :1cc1[1]
+    sta (cell_screen_address_low),y                                   ; 1df2: 91 76       .v  :1cc1[1]
     dey                                                               ; 1df4: 88          .   :1cc3[1]
     bpl loop_c1cbb                                                    ; 1df5: 10 f5       ..  :1cc4[1]
     ldy address1_high                                                 ; 1df7: a4 71       .q  :1cc6[1]

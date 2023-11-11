@@ -45,26 +45,15 @@ substitute_labels = {
         "address1_low": "filename_low",
         "address1_high": "filename_high",
     },
+    (0x13a9, 0x140a): {
+        "address1_low": "level_data_ptr_low",
+        "address1_high": "level_data_ptr_high",
+    },
     (0x145d,0x1800): {
         "address1_low":  "src_sprite_address_low",
         "address1_high": "src_sprite_address_high",
         "address2_low":  "dest_sprite_address_low",
         "address2_high": "dest_sprite_address_high",
-    },
-    (0x13a9, 0x140a): {
-        "address1_low": "level_data_ptr_low",
-        "address1_high": "level_data_ptr_high",
-    },
-    (0x183d, 0x1841): {
-        "address1_low": "filename_low",
-        "address1_high": "filename_high",
-    },
-    (0x19f4, 0x1a96): {
-        "address1_low": "object_y_delta",
-    },
-    (0x1aa0, 0x1aae): {
-        "address1_low": "filename_low",
-        "address1_high": "filename_high",
     },
     (0x14be, 0x1801): {
         "l0072": "sprite_screen_address_low",
@@ -79,21 +68,21 @@ substitute_labels = {
         "l007c": "sprite_screen_address_for_column_high",
         "l007d": "sprite_data_byte",
     },
-
-
-#    (0x1bec,0x1f24): {
-#         "sprite_screen_address_low": "x0072",
-#         "sprite_screen_address_high": "x0073",
-#         "sprite_x_pos_low": "x0074",
-#         "sprite_x_pos_high": "x0075",
-#         "sprite_y_pos_low": "cell_screen_address_low",
-#         "sprite_y_pos_high": "cell_screen_address_high",
-#         "sprite_x_offset_within_byte": "x0078",
-#         "byte_offset_within_sprite": "x0079",
-#         "sprite_screen_address_for_column_low": "x007b",
-#         "sprite_screen_address_for_column_high": "x007c",
-#         "sprite_data_byte": "x007d",
-#    },
+    (0x183d, 0x1841): {
+        "address1_low": "filename_low",
+        "address1_high": "filename_high",
+    },
+    (0x19f4, 0x1a96): {
+        "address1_low": "object_y_delta",
+    },
+    (0x1aa0, 0x1aae): {
+        "address1_low": "filename_low",
+        "address1_high": "filename_high",
+    },
+    (0x1bec,0x1f24): {
+         "sprite_y_pos_low": "cell_screen_address_low",
+         "sprite_y_pos_high": "cell_screen_address_high",
+    },
     (0x1f25, 0x3c05): {
         "initialise_display": "collision_map",
     },
@@ -114,13 +103,13 @@ substitute_labels = {
         "address1_low": "animation_address_low",
         "address1_high": "animation_address_high",
     },
-    (0x2cb8, 0x2d3c): {
-        "address1_low": "menu_item_to_use",
-        "address1_high": "menu_has_changed_flag",
-    },
     (0x2565, 0x2680): {
         "mask_sprite_byte": "sprite_addr_low",
         "sprite_width": "sprite_addr_high",
+    },
+    (0x2cb8, 0x2d3c): {
+        "address1_low": "menu_item_to_use",
+        "address1_high": "menu_has_changed_flag",
     },
 }
 
