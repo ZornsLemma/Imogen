@@ -2030,6 +2030,8 @@ current_room_index
 ; l0042 some kind of copy mode (1=simple)
 ; some_data_3_ptr is the source address of top left
 ; X and Y registers specify destination address of top left on screen
+; address1_low and address1_high contain something, possibly X/Y coords for collision
+; map?
 restore_rectangle_of_screen_memory
     pha                                                               ; 1bec: 48          H   :1abb[1]
     sty current_row                                                   ; 1bed: 84 7d       .}  :1abc[1]
