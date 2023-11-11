@@ -165,242 +165,244 @@ white                                           = 7
 yellow                                          = 3
 
 ; Memory locations
-l0002                                       = $02
-l0003                                       = $03
-which_dialog_is_active                      = $04
-password_characters_entered                 = $05
-rnd0                                        = $06
-rnd1                                        = $07
-rnd2                                        = $08
-rnd3                                        = $09
-rnd4                                        = $0a
-dest_sprite_number                          = $14
-sprite_op_flags                             = $15
-sprite_number                               = $16
-sprite_x_base_low                           = $18
-sprite_x_base_high                          = $19
-sprite_y_base_low                           = $1a
-sprite_y_base_high                          = $1b
-sprite_reflect_flag                         = $1d
-valid_direction_pending                     = $20
-another_menu_index                          = $25
-l0026                                       = $26
-left_right_repeat_flag                      = $27
-left_right_flag                             = $28
-new_menu_index                              = $29
-space_bar_press_pending                     = $2a
-space_bar_pressed                           = $2b
-z_key_pressed_pending                       = $2c
-x_key_pressed_pending                       = $2d
-current_menu_index                          = $2e
-desired_room_index                          = $30
-desired_level                               = $31
-currently_loaded_level                      = $37
-l0039                                       = $39
-l003a                                       = $3a
-l003b                                       = $3b
-width_in_cells                              = $3c
-height_in_cells                             = $3d
-value_to_write_to_collision_map             = $3e
-l003f                                       = $3f
-some_data3_ptr                              = $40
-l0042                                       = $42
-print_in_italics_flag                       = $43
-l0044                                       = $44
-eor_key                                     = $45
-return_key_pressed_pending                  = $46
-current_player_character                    = $48
-temp_value                                  = $49
-temp_coordinate                             = $4a
-height_counter                              = $4b
-l004b                                       = $4b
-screen_base_address_high                    = $4c
-new_player_character                        = $4d
-previous_room_index                         = $50
-previous_level                              = $51
-l0052                                       = $52
-l0053                                       = $53
-sprdata_ptr                                 = $54
-l0056                                       = $56
-temp_sprite_address_low                     = $58
-temp_sprite_address_high                    = $59
-temp_sprite_offset                          = $5a
-developer_mode_sideways_ram_is_set_up_flag  = $5b
-displayed_transformations_remaining         = $5c
-initial_level_number_div4                   = $5f
-l0060                                       = $60
-l0061                                       = $61
-l0062                                       = $62
-l0063                                       = $63
-l0064                                       = $64
-remember_object_index                       = $65
-l0066                                       = $66
-l0067                                       = $67
-l0068                                       = $68
-address1_low                                = $70
-animation_address_low                       = $70
-cell_x                                      = $70
-filename_low                                = $70
-level_data_ptr_low                          = $70
-menu_item_to_use                            = $70
-object_y_delta                              = $70
-screen_address_low                          = $70
-src_sprite_address_low                      = $70
-address1_high                               = $71
-animation_address_high                      = $71
-cell_y                                      = $71
-filename_high                               = $71
-level_data_ptr_high                         = $71
-menu_has_changed_flag                       = $71
-screen_address_high                         = $71
-src_sprite_address_high                     = $71
-characters_to_copy_per_row                  = $72
-l0072                                       = $72
-sprite_screen_address_low                   = $72
-width_in_cells_to_write                     = $72
-height_in_cells_to_write                    = $73
-l0073                                       = $73
-rows_to_copy                                = $73
-sprite_screen_address_high                  = $73
-first_cell_in_row_screen_address_low        = $74
-l0074                                       = $74
-offset_within_byte                          = $74
-sprite_x_pos_low                            = $74
-first_cell_in_row_screen_address_high       = $75
-l0075                                       = $75
-offset_within_collision_map                 = $75
-sprite_x_pos_high                           = $75
-cell_screen_address_low                     = $76
-l0076                                       = $76
-sprite_y_pos_low                            = $76
-cell_screen_address_high                    = $77
-l0077                                       = $77
-sprite_y_pos_high                           = $77
-l0078                                       = $78
-original_off_screen_address_low             = $78
-sprite_x_offset_within_byte                 = $78
-byte_offset_within_sprite                   = $79
-l0079                                       = $79
-original_off_screen_address_high            = $79
-l007a                                       = $7a
-off_screen_address_low                      = $7a
-l007b                                       = $7b
-off_screen_address_high                     = $7b
-sprite_screen_address_for_column_low        = $7b
-l007c                                       = $7c
-sprite_screen_address_for_column_high       = $7c
-l007d                                       = $7d
-sprite_data_byte                            = $7d
-address2_low                                = $7e
-dest_sprite_address_low                     = $7e
-address2_high                               = $7f
-dest_sprite_address_high                    = $7f
-l0080                                       = $80
-mask_sprite_byte                            = $80
-sprite_addr_low                             = $80
-l0081                                       = $81
-sprite_addr_high                            = $81
-sprite_width                                = $81
-sprite_bit                                  = $82
-sprite_bit_mask                             = $83
-sprite_y_offset_within_character_row        = $84
-sprite_character_x_pos                      = $85
-amount_sprite_is_offscreen_x                = $86
-l0087                                       = $87
-vertical_sprite_position_is_valid_flag      = $88
-romsel_copy                                 = $f4
-interrupt_accumulator                       = $fc
-l00fd                                       = $fd
-l0100                                       = $0100
-l010b                                       = $010b
-l0116                                       = $0116
-l0121                                       = $0121
-l0122                                       = $0122
-l0123                                       = $0123
-l0124                                       = $0124
-l0125                                       = $0125
-l0126                                       = $0126
-l0127                                       = $0127
-l0128                                       = $0128
-l0129                                       = $0129
-l012a                                       = $012a
-l012b                                       = $012b
-l012c                                       = $012c
-l012d                                       = $012d
-l012e                                       = $012e
-brkv                                        = $0202
-irq1v                                       = $0204
-first_byte_break_intercept                  = $0287
-cache_of_screen_memory_under_dialog         = $0530
-object_x_low                                = $0950
-object_x_low_old                            = $095b
-object_x_high                               = $0966
-object_x_high_old                           = $0971
-object_y_low                                = $097c
-object_y_low_old                            = $0987
-object_y_high                               = $0992
-object_y_high_old                           = $099d
-object_spriteid                             = $09a8
-object_spriteid_old                         = $09b3
-object_direction                            = $09be
-object_direction_old                        = $09c9
-object_current_index_in_animation           = $09d4
-current_animation                           = $09df
-something2                                  = $09ea
-l09eb                                       = $09eb
-current_transformations_remaining           = $09ec
-level_progress_table                        = $09ef
-sixteen_entry_table1                        = $0a6f
-something                                   = $0a6f
-level_ordering_table                        = $0a7f
-string_input_buffer                         = $0a90
-eight_entry_table1                          = $0aa1
-eight_entry_table2                          = $0aa9
-old_brkv1                                   = $0ab1
-old_brkv2                                   = $0ab3
-old_irq1v                                   = $0ab5
-l0b00                                       = $0b00
-sprite_199                                  = $0b11
-sprite_198                                  = $0b93
-sprite_197                                  = $0bc5
-level_init_after_load_handler_ptr           = $3ad7
-second_level_handler_ptr                    = $3ad9
-level_name_ptr                              = $3adb
-room_index_cheat1                           = $3add
-room_index_cheat2                           = $3ade
-level_header_data                           = $3adf
-auxcode                                     = $53c0
-check_password                              = $53c0
-toolbar_screen_address                      = $58c0
-start_of_screen_memory                      = $5bc0
-game_area_screen_address                    = $6200
-l8000                                       = $8000
-l8008                                       = $8008
-lbe00                                       = $be00
-lbf00                                       = $bf00
-crtc_address_register                       = $fe00
-crtc_address_write                          = $fe01
-video_ula_palette                           = $fe21
-romsel                                      = $fe30
-system_via_t1c_l                            = $fe44
-system_via_t1c_h                            = $fe45
-system_via_t1l_l                            = $fe46
-system_via_t1l_h                            = $fe47
-system_via_t2c_l                            = $fe48
-system_via_t2c_h                            = $fe49
-system_via_acr                              = $fe4b
-system_via_ifr                              = $fe4d
-system_via_ier                              = $fe4e
-user_via_t1c_l                              = $fe64
-user_via_t1c_h                              = $fe65
-user_via_t2c_l                              = $fe68
-user_via_t2c_h                              = $fe69
-user_via_ier                                = $fe6e
-osfile                                      = $ffdd
-oswrch                                      = $ffee
-osword                                      = $fff1
-osbyte                                      = $fff4
-oscli                                       = $fff7
+l0002                                           = $02
+l0003                                           = $03
+which_dialog_is_active                          = $04
+password_characters_entered                     = $05
+rnd0                                            = $06
+rnd1                                            = $07
+rnd2                                            = $08
+rnd3                                            = $09
+rnd4                                            = $0a
+dest_sprite_number                              = $14
+sprite_op_flags                                 = $15
+sprite_number                                   = $16
+sprite_x_base_low                               = $18
+sprite_x_base_high                              = $19
+sprite_y_base_low                               = $1a
+sprite_y_base_high                              = $1b
+sprite_reflect_flag                             = $1d
+valid_direction_pending                         = $20
+another_menu_index                              = $25
+l0026                                           = $26
+left_right_repeat_flag                          = $27
+left_right_flag                                 = $28
+new_menu_index                                  = $29
+space_bar_press_pending                         = $2a
+space_bar_pressed                               = $2b
+z_key_pressed_pending                           = $2c
+x_key_pressed_pending                           = $2d
+current_menu_index                              = $2e
+desired_room_index                              = $30
+desired_level                                   = $31
+currently_loaded_level                          = $37
+l0039                                           = $39
+l003a                                           = $3a
+l003b                                           = $3b
+width_in_cells                                  = $3c
+height_in_cells                                 = $3d
+value_to_write_to_collision_map                 = $3e
+l003f                                           = $3f
+some_data3_ptr                                  = $40
+l0042                                           = $42
+print_in_italics_flag                           = $43
+l0044                                           = $44
+eor_key                                         = $45
+return_key_pressed_pending                      = $46
+current_player_character                        = $48
+temp_value                                      = $49
+temp_coordinate                                 = $4a
+height_counter                                  = $4b
+l004b                                           = $4b
+screen_base_address_high                        = $4c
+new_player_character                            = $4d
+previous_room_index                             = $50
+previous_level                                  = $51
+l0052                                           = $52
+l0053                                           = $53
+sprdata_ptr                                     = $54
+l0056                                           = $56
+temp_sprite_address_low                         = $58
+temp_sprite_address_high                        = $59
+temp_sprite_offset                              = $5a
+developer_mode_sideways_ram_is_set_up_flag      = $5b
+displayed_transformations_remaining             = $5c
+initial_level_number_div4                       = $5f
+l0060                                           = $60
+l0061                                           = $61
+l0062                                           = $62
+l0063                                           = $63
+l0064                                           = $64
+remember_object_index                           = $65
+l0066                                           = $66
+l0067                                           = $67
+l0068                                           = $68
+address1_low                                    = $70
+animation_address_low                           = $70
+cell_x                                          = $70
+filename_low                                    = $70
+level_data_ptr_low                              = $70
+menu_item_to_use                                = $70
+object_y_delta                                  = $70
+screen_address_low                              = $70
+src_sprite_address_low                          = $70
+address1_high                                   = $71
+animation_address_high                          = $71
+cell_y                                          = $71
+filename_high                                   = $71
+level_data_ptr_high                             = $71
+menu_has_changed_flag                           = $71
+screen_address_high                             = $71
+src_sprite_address_high                         = $71
+characters_to_copy_per_row                      = $72
+l0072                                           = $72
+sprite_screen_address_low                       = $72
+width_in_cells_to_write                         = $72
+height_in_cells_to_write                        = $73
+l0073                                           = $73
+rows_to_copy                                    = $73
+sprite_screen_address_high                      = $73
+first_cell_in_row_screen_address_low            = $74
+l0074                                           = $74
+offset_within_byte                              = $74
+sprite_x_pos_low                                = $74
+first_cell_in_row_screen_address_high           = $75
+l0075                                           = $75
+offset_within_collision_map                     = $75
+sprite_x_pos_high                               = $75
+cell_screen_address_low                         = $76
+l0076                                           = $76
+sprite_y_pos_low                                = $76
+cell_screen_address_high                        = $77
+l0077                                           = $77
+sprite_y_pos_high                               = $77
+l0078                                           = $78
+original_off_screen_address_low                 = $78
+sprite_x_offset_within_byte                     = $78
+byte_offset_within_sprite                       = $79
+l0079                                           = $79
+original_off_screen_address_high                = $79
+l007a                                           = $7a
+off_screen_address_low                          = $7a
+l007b                                           = $7b
+off_screen_address_high                         = $7b
+sprite_screen_address_for_column_low            = $7b
+address1_low_plus_current_character_within_row  = $7c
+l007c                                           = $7c
+sprite_screen_address_for_column_high           = $7c
+current_row                                     = $7d
+l007d                                           = $7d
+sprite_data_byte                                = $7d
+address2_low                                    = $7e
+dest_sprite_address_low                         = $7e
+address2_high                                   = $7f
+dest_sprite_address_high                        = $7f
+l0080                                           = $80
+mask_sprite_byte                                = $80
+sprite_addr_low                                 = $80
+l0081                                           = $81
+sprite_addr_high                                = $81
+sprite_width                                    = $81
+sprite_bit                                      = $82
+sprite_bit_mask                                 = $83
+sprite_y_offset_within_character_row            = $84
+sprite_character_x_pos                          = $85
+amount_sprite_is_offscreen_x                    = $86
+l0087                                           = $87
+vertical_sprite_position_is_valid_flag          = $88
+romsel_copy                                     = $f4
+interrupt_accumulator                           = $fc
+l00fd                                           = $fd
+l0100                                           = $0100
+l010b                                           = $010b
+l0116                                           = $0116
+l0121                                           = $0121
+l0122                                           = $0122
+l0123                                           = $0123
+l0124                                           = $0124
+l0125                                           = $0125
+l0126                                           = $0126
+l0127                                           = $0127
+l0128                                           = $0128
+l0129                                           = $0129
+l012a                                           = $012a
+l012b                                           = $012b
+l012c                                           = $012c
+l012d                                           = $012d
+l012e                                           = $012e
+brkv                                            = $0202
+irq1v                                           = $0204
+first_byte_break_intercept                      = $0287
+cache_of_screen_memory_under_dialog             = $0530
+object_x_low                                    = $0950
+object_x_low_old                                = $095b
+object_x_high                                   = $0966
+object_x_high_old                               = $0971
+object_y_low                                    = $097c
+object_y_low_old                                = $0987
+object_y_high                                   = $0992
+object_y_high_old                               = $099d
+object_spriteid                                 = $09a8
+object_spriteid_old                             = $09b3
+object_direction                                = $09be
+object_direction_old                            = $09c9
+object_current_index_in_animation               = $09d4
+current_animation                               = $09df
+something2                                      = $09ea
+l09eb                                           = $09eb
+current_transformations_remaining               = $09ec
+level_progress_table                            = $09ef
+sixteen_entry_table1                            = $0a6f
+something                                       = $0a6f
+level_ordering_table                            = $0a7f
+string_input_buffer                             = $0a90
+eight_entry_table1                              = $0aa1
+eight_entry_table2                              = $0aa9
+old_brkv1                                       = $0ab1
+old_brkv2                                       = $0ab3
+old_irq1v                                       = $0ab5
+l0b00                                           = $0b00
+sprite_199                                      = $0b11
+sprite_198                                      = $0b93
+sprite_197                                      = $0bc5
+level_init_after_load_handler_ptr               = $3ad7
+second_level_handler_ptr                        = $3ad9
+level_name_ptr                                  = $3adb
+room_index_cheat1                               = $3add
+room_index_cheat2                               = $3ade
+level_header_data                               = $3adf
+auxcode                                         = $53c0
+check_password                                  = $53c0
+toolbar_screen_address                          = $58c0
+start_of_screen_memory                          = $5bc0
+game_area_screen_address                        = $6200
+l8000                                           = $8000
+l8008                                           = $8008
+lbe00                                           = $be00
+lbf00                                           = $bf00
+crtc_address_register                           = $fe00
+crtc_address_write                              = $fe01
+video_ula_palette                               = $fe21
+romsel                                          = $fe30
+system_via_t1c_l                                = $fe44
+system_via_t1c_h                                = $fe45
+system_via_t1l_l                                = $fe46
+system_via_t1l_h                                = $fe47
+system_via_t2c_l                                = $fe48
+system_via_t2c_h                                = $fe49
+system_via_acr                                  = $fe4b
+system_via_ifr                                  = $fe4d
+system_via_ier                                  = $fe4e
+user_via_t1c_l                                  = $fe64
+user_via_t1c_h                                  = $fe65
+user_via_t2c_l                                  = $fe68
+user_via_t2c_h                                  = $fe69
+user_via_ier                                    = $fe6e
+osfile                                          = $ffdd
+oswrch                                          = $ffee
+osword                                          = $fff1
+osbyte                                          = $fff4
+oscli                                           = $fff7
 
     * = $1234
 
@@ -2026,9 +2028,11 @@ current_room_index
 ; characters_to_copy_per_row (width)
 ; rows_to_copy (height)
 ; l0042 some kind of copy mode (1=simple)
+; some_data_3_ptr is the source address of top left
+; X and Y registers specify destination address of top left on screen
 restore_rectangle_of_screen_memory
     pha                                                               ; 1bec: 48          H   :1abb[1]
-    sty l007d                                                         ; 1bed: 84 7d       .}  :1abc[1]
+    sty current_row                                                   ; 1bed: 84 7d       .}  :1abc[1]
     jsr clip_cells_to_write_to_collision_map                          ; 1bef: 20 17 1e     .. :1abe[1]
     jsr get_screen_address_from_cell_xy                               ; 1bf2: 20 66 1b     f. :1ac1[1]
     lda cell_screen_address_low                                       ; 1bf5: a5 76       .v  :1ac4[1]
@@ -2047,7 +2051,7 @@ restore_rectangle_of_screen_memory
 row_copy_loop
     ldx characters_to_copy_per_row                                    ; 1c0e: a6 72       .r  :1add[1]
     lda address1_low                                                  ; 1c10: a5 70       .p  :1adf[1]
-    sta l007c                                                         ; 1c12: 85 7c       .|  :1ae1[1]
+    sta address1_low_plus_current_character_within_row                ; 1c12: 85 7c       .|  :1ae1[1]
 character_copy_loop
     ldy #7                                                            ; 1c14: a0 07       ..  :1ae3[1]
 ; TODO: The value in l0042 selects various different code paths here. Note that if it
@@ -2076,9 +2080,9 @@ c1af8
     jmp common_code_after_variable_code_has_set_a                     ; 1c3a: 4c 14 1b    L.. :1b09[1]
 
 c1b0c
-    lda l007c                                                         ; 1c3d: a5 7c       .|  :1b0c[1]
+    lda address1_low_plus_current_character_within_row                ; 1c3d: a5 7c       .|  :1b0c[1]
     lsr                                                               ; 1c3f: 4a          J   :1b0e[1]
-    lda l007d                                                         ; 1c40: a5 7d       .}  :1b0f[1]
+    lda current_row                                                   ; 1c40: a5 7d       .}  :1b0f[1]
     rol                                                               ; 1c42: 2a          *   :1b11[1]
     and #3                                                            ; 1c43: 29 03       ).  :1b12[1]
 common_code_after_variable_code_has_set_a
@@ -2099,7 +2103,7 @@ byte_copy_loop
     sta (cell_screen_address_low),y                                   ; 1c5b: 91 76       .v  :1b2a[1]
     dey                                                               ; 1c5d: 88          .   :1b2c[1]
     bpl byte_copy_loop                                                ; 1c5e: 10 f9       ..  :1b2d[1]
-    inc l007c                                                         ; 1c60: e6 7c       .|  :1b2f[1]
+    inc address1_low_plus_current_character_within_row                ; 1c60: e6 7c       .|  :1b2f[1]
     dex                                                               ; 1c62: ca          .   :1b31[1]   ; X was initialised with characters_to_copy_per_row
     beq all_characters_copied                                         ; 1c63: f0 0d       ..  :1b32[1]
     lda cell_screen_address_low                                       ; 1c65: a5 76       .v  :1b34[1]
@@ -2110,7 +2114,7 @@ byte_copy_loop
     clc                                                               ; 1c6f: 18          .   :1b3e[1]
     bcc character_copy_loop                                           ; 1c70: 90 a2       ..  :1b3f[1]   ; always branch
 all_characters_copied
-    inc l007d                                                         ; 1c72: e6 7d       .}  :1b41[1]
+    inc current_row                                                   ; 1c72: e6 7d       .}  :1b41[1]
     dec rows_to_copy                                                  ; 1c74: c6 73       .s  :1b43[1]
     beq c1b59                                                         ; 1c76: f0 12       ..  :1b45[1]
 ; Advance first_cell_in_row_screen_address by one row and reset cell_screen_address

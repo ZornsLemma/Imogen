@@ -96,6 +96,8 @@ substitute_labels = {
          "l0079": "original_off_screen_address_high",
          "l007a": "off_screen_address_low",
          "l007b": "off_screen_address_high",
+         "l007c": "address1_low_plus_current_character_within_row",
+         "l007d": "current_row",
     },
     (0x1f25, 0x3c05): {
         "initialise_display": "collision_map",
@@ -2171,7 +2173,7 @@ expr(0x4d6, make_lo("eight_entry_table2"))
 expr(0x4da, make_hi("eight_entry_table2"))
 
 # TODO: "character"->"cell" here for consistency?
-comment(0x1abb, "TODO: WIP incomplete entry conditions:\ncharacters_to_copy_per_row (width)\nrows_to_copy (height)\nl0042 some kind of copy mode (1=simple)")
+comment(0x1abb, "TODO: WIP incomplete entry conditions:\ncharacters_to_copy_per_row (width)\nrows_to_copy (height)\nl0042 some kind of copy mode (1=simple)\nsome_data_3_ptr is the source address of top left\nX and Y registers specify destination address of top left on screen")
 comment(0x1b49, "C is clear because beq above not taken", inline=True)
 comment(0x1af0, "Subtract 1; note C cleared before beq", inline=True)
 label(0x1b14, "common_code_after_variable_code_has_set_a")
