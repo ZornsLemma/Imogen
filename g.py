@@ -97,8 +97,12 @@ substitute_labels = {
         "address1_high": "filename_high",
     },
     (0x1bec,0x1f24): {
-         "l0072": "characters_to_copy_per_row", # TODO: cells_to_copy_per_row, for consistency?
-         "l0073": "rows_to_copy",
+        "address1_low": "cell_x",
+        "address1_high": "cell_y",
+        "address2_low": "row_counter",
+        "l0042": "copy_mode",
+         "l0072": "width_in_cells_to_write",
+         "l0073": "height_in_cells_to_write",
          "l0074": "first_cell_in_row_screen_address_low",
          "l0075": "first_cell_in_row_screen_address_high",
          "l0076": "cell_screen_address_low",
@@ -108,7 +112,7 @@ substitute_labels = {
          "l0079": "original_off_screen_address_high",
          "l007a": "off_screen_address_low",
          "l007b": "off_screen_address_high",
-         "l007c": "address1_low_plus_current_character_within_row",
+         "l007c": "cell_x_plus_current_cell_within_row",
          "l007d": "current_row",
     },
     (0x1f25, 0x3c05): {
@@ -2246,24 +2250,37 @@ expr(0x4d6, make_lo("eight_entry_table2"))
 expr(0x4da, make_hi("eight_entry_table2"))
 
 # TODO: "character"->"cell" here for consistency?
-comment(0x1abb, "TODO: WIP incomplete entry conditions:\ncharacters_to_copy_per_row (width)\nrows_to_copy (height)\nTODO: the above two overlap with width_in_cells_to_write and height_in_cells_to_write - depending how this is called, it may be confusing for this subroutine to use those names, but if we keep the names distinct we need to at least document that they are the same\nl0042 some kind of copy mode (1=simple)\nsome_data_3_ptr is the source address of top left\nX and Y registers specify destination address of top left on screen\naddress1_low and address1_high contain something, possibly X/Y coords for collision map?")
+comment(0x1abb, """Copy memory to rectangle on screen
+
+On Entry:
+    X and Y registers specify top left cell
+    width_in_cells_to_write: width of rectangle (in cells)
+    height_in_cells_to_write: height of rectangle (in cells)
+    source_sprite_memory: source address data to copy to screen (top left)
+    copy_mode: some kind of copy mode
+        0: alternating 2x2 pattern (checkboard)
+        1: simple copy
+        power of two: choose random tiles less than the power of two""")
 comment(0x1b49, "C is clear because beq above not taken", inline=True)
 comment(0x1af0, "Subtract 1; note C cleared before beq", inline=True)
-label(0x1b14, "common_code_after_variable_code_has_set_a")
-comment(0x1ae5, "TODO: The value in l0042 selects various different code paths here. Note that if it contains 1, we have a 'simple' case where we just copy data without any further fiddling with off_screen_address.")
+label(0x1b14, "get_final_off_screen_tile_address")
+comment(0x1ae5, "TODO: copy_mode selects various different code paths here. Note that if it contains 1, we have a 'simple' case where we just copy data without any further fiddling with off_screen_address.")
 entry(0x1b28, "byte_copy_loop")
 comment(0x1b3f, "always branch", inline=True)
 comment(0x1b31, "X was initialised with characters_to_copy_per_row", inline=True)
 entry(0x1b41, "all_characters_copied")
-entry(0x1ae3, "character_copy_loop")
+entry(0x1ae3, "cell_copy_loop")
 comment(0x1b57, "always branch TODO: 99% confident", inline=True)
 entry(0x1add, "row_copy_loop")
 constant(8, "rows_per_character")
 expr(0x1b4a, make_lo(make_multiply("characters_per_line", "rows_per_character")))
 expr(0x1b52, make_hi(make_multiply("characters_per_line", "rows_per_character")))
 comment(0x1b47, "Advance first_cell_in_row_screen_address by one row and reset cell_screen_address")
-comment(0x1b14, "TODO: off_screen_address_high is and-ed with 3 in a few instructions' time and it gets reset to its original value plus that tweak to the low bits. I suspect what's happening here is that we're selecting from a set of characters in a repeating sequence, modulated by A. A itself gets multiplied by 8, which is of course the number of bytes in a character.")
-comment(0x1b0c, "Set A=%(low bit of current_row)(low bit of current character), giving a 2x2 alternating pattern. ('current character' is actually offset by address1_low, but the idea is the same.)")
+
+comment(0x1b14, """The value in A at this point is the offset from the first tile to use. We multiply this by eight to get the offset of the memory address of the tile (each tile being eight bytes), and add to the original tile address to get the final address of the tile we want to use.
+(The code uses the bottom two bits of off_screen_address_high to temporarily store the high bits of the offset. These two bits are then extracted and added to the original address to get the final address).""")
+
+comment(0x1b0c, "Set A=%(low bit of current_row)(low bit of current column), giving a 2x2 alternating pattern.")
 entry(0x1b0c, "two_by_two_alternating_pattern")
 
 comment(0x1b90, "TODO: Still figuring out exactly what, but this seems to be 'seeking' leftwards and upwards from starting position in X and Y registers to find the 'topleftmost' section which has a certain pattern of free space.")

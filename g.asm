@@ -168,257 +168,257 @@ white                                           = 7
 yellow                                          = 3
 
 ; Memory locations
-error_code_on_brk                               = $02
-remember_stack_pointer                          = $03
-which_dialog_is_active                          = $04
-password_characters_entered                     = $05
-rnd0                                            = $06
-rnd1                                            = $07
-rnd2                                            = $08
-rnd3                                            = $09
-rnd4                                            = $0a
-dest_sprite_number                              = $14
-sprite_op_flags                                 = $15
-sprite_number                                   = $16
-sprite_x_base_low                               = $18
-sprite_x_base_high                              = $19
-sprite_y_base_low                               = $1a
-sprite_y_base_high                              = $1b
-sprite_reflect_flag                             = $1d
-valid_direction_pending                         = $20
-another_menu_index                              = $25
-l0026                                           = $26
-left_right_repeat_flag                          = $27
-left_right_flag                                 = $28
-new_menu_index                                  = $29
-space_bar_press_pending                         = $2a
-space_bar_pressed                               = $2b
-z_key_pressed_pending                           = $2c
-x_key_pressed_pending                           = $2d
-current_menu_index                              = $2e
-desired_room_index                              = $30
-desired_level                                   = $31
-currently_loaded_level                          = $37
-l0039                                           = $39
-l003a                                           = $3a
-l003b                                           = $3b
-width_in_cells                                  = $3c
-height_in_cells                                 = $3d
-value_to_write_to_collision_map                 = $3e
-l003f                                           = $3f
-source_sprite_memory_low                        = $40
-source_sprite_memory_high                       = $41
-l0042                                           = $42
-print_in_italics_flag                           = $43
-l0044                                           = $44
-eor_key                                         = $45
-return_key_pressed_pending                      = $46
-current_player_character                        = $48
-temp_value                                      = $49
-saved_x                                         = $4a
-temp_coordinate                                 = $4a
-height_counter                                  = $4b
-l004b                                           = $4b
-saved_y                                         = $4b
-screen_base_address_high                        = $4c
-new_player_character                            = $4d
-previous_room_index                             = $50
-previous_level                                  = $51
-l0052                                           = $52
-l0053                                           = $53
-sprdata_ptr                                     = $54
-temp_rope_length                                = $56
-temp_sprite_address_low                         = $58
-temp_sprite_address_high                        = $59
-temp_sprite_offset                              = $5a
-developer_mode_sideways_ram_is_set_up_flag      = $5b
-displayed_transformations_remaining             = $5c
-initial_level_number_div4                       = $5f
-l0060                                           = $60
-l0061                                           = $61
-l0062                                           = $62
-l0063                                           = $63
-l0064                                           = $64
-remember_object_index                           = $65
-l0066                                           = $66
-l0067                                           = $67
-l0068                                           = $68
-address1_low                                    = $70
-animation_address_low                           = $70
-cell_x                                          = $70
-filename_low                                    = $70
-level_data_ptr_low                              = $70
-menu_item_to_use                                = $70
-object_y_delta                                  = $70
-screen_address_low                              = $70
-src_sprite_address_low                          = $70
-address1_high                                   = $71
-animation_address_high                          = $71
-cell_y                                          = $71
-filename_high                                   = $71
-level_data_ptr_high                             = $71
-menu_has_changed_flag                           = $71
-screen_address_high                             = $71
-src_sprite_address_high                         = $71
-characters_to_copy_per_row                      = $72
-l0072                                           = $72
-osfile_block_filename_low                       = $72
-sprite_screen_address_low                       = $72
-width_in_cells_to_write                         = $72
-height_in_cells_to_write                        = $73
-l0073                                           = $73
-osfile_block_filename_high                      = $73
-rows_to_copy                                    = $73
-sprite_screen_address_high                      = $73
-first_cell_in_row_screen_address_low            = $74
-l0074                                           = $74
-offset_within_byte                              = $74
-osfile_block_load_address_low                   = $74
-sprite_x_pos_low                                = $74
-first_cell_in_row_screen_address_high           = $75
-l0075                                           = $75
-offset_within_collision_map                     = $75
-osfile_block_load_address_mid1                  = $75
-sprite_x_pos_high                               = $75
-cell_screen_address_low                         = $76
-l0076                                           = $76
-osfile_block_load_address_mid2                  = $76
-sprite_y_pos_low                                = $76
-cell_screen_address_high                        = $77
-l0077                                           = $77
-sprite_y_pos_high                               = $77
-l0078                                           = $78
-original_off_screen_address_low                 = $78
-osfile_block_exec_address_low                   = $78
-sprite_x_offset_within_byte                     = $78
-byte_offset_within_sprite                       = $79
-l0079                                           = $79
-original_off_screen_address_high                = $79
-osfile_block_exec_address_mid1                  = $79
-l007a                                           = $7a
-off_screen_address_low                          = $7a
-l007b                                           = $7b
-off_screen_address_high                         = $7b
-sprite_screen_address_for_column_low            = $7b
-address1_low_plus_current_character_within_row  = $7c
-l007c                                           = $7c
-osfile_block_start_address_low                  = $7c
-sprite_screen_address_for_column_high           = $7c
-current_row                                     = $7d
-l007d                                           = $7d
-osfile_block_start_address_mid1                 = $7d
-sprite_data_byte                                = $7d
-address2_low                                    = $7e
-dest_sprite_address_low                         = $7e
-address2_high                                   = $7f
-dest_sprite_address_high                        = $7f
-l0080                                           = $80
-mask_sprite_byte                                = $80
-osfile_block_end_address_low                    = $80
-sprite_addr_low                                 = $80
-l0081                                           = $81
-osfile_block_end_address_mid1                   = $81
-sprite_addr_high                                = $81
-sprite_width                                    = $81
-sprite_bit                                      = $82
-sprite_bit_mask                                 = $83
-sprite_y_offset_within_character_row            = $84
-sprite_character_x_pos                          = $85
-amount_sprite_is_offscreen_x                    = $86
-l0087                                           = $87
-vertical_sprite_position_is_valid_flag          = $88
-romsel_copy                                     = $f4
-interrupt_accumulator                           = $fc
-l00fd                                           = $fd
-l0100                                           = $0100
-l010b                                           = $010b
-l0116                                           = $0116
-l0121                                           = $0121
-l0122                                           = $0122
-l0123                                           = $0123
-l0124                                           = $0124
-l0125                                           = $0125
-l0126                                           = $0126
-l0127                                           = $0127
-l0128                                           = $0128
-l0129                                           = $0129
-l012a                                           = $012a
-l012b                                           = $012b
-l012c                                           = $012c
-l012d                                           = $012d
-l012e                                           = $012e
-brkv                                            = $0202
-irq1v                                           = $0204
-first_byte_break_intercept                      = $0287
-cache_of_screen_memory_under_dialog             = $0530
-object_x_low                                    = $0950
-object_x_low_old                                = $095b
-object_x_high                                   = $0966
-object_x_high_old                               = $0971
-object_y_low                                    = $097c
-object_y_low_old                                = $0987
-object_y_high                                   = $0992
-object_y_high_old                               = $099d
-object_spriteid                                 = $09a8
-object_spriteid_old                             = $09b3
-object_direction                                = $09be
-object_direction_old                            = $09c9
-object_current_index_in_animation               = $09d4
-current_animation                               = $09df
-save_game                                       = $09ea
-l09eb                                           = $09eb
-current_transformations_remaining               = $09ec
-level_progress_table                            = $09ef
-sixteen_entry_table                             = $0a6f
-level_ordering_table                            = $0a7f
-string_input_buffer                             = $0a90
-eight_entry_table1                              = $0aa1
-eight_entry_table2                              = $0aa9
-old_brkv1                                       = $0ab1
-old_brkv2                                       = $0ab3
-old_irq1v                                       = $0ab5
-l0b00                                           = $0b00
-sprite_199                                      = $0b11
-sprite_198                                      = $0b93
-sprite_197                                      = $0bc5
-level_init_after_load_handler_ptr               = $3ad7
-second_level_handler_ptr                        = $3ad9
-level_name_ptr                                  = $3adb
-room_index_cheat1                               = $3add
-room_index_cheat2                               = $3ade
-level_header_data                               = $3adf
-auxcode                                         = $53c0
-check_password                                  = $53c0
-toolbar_screen_address                          = $58c0
-start_of_screen_memory                          = $5bc0
-game_area_screen_address                        = $6200
-l8000                                           = $8000
-l8008                                           = $8008
-lbe00                                           = $be00
-lbf00                                           = $bf00
-crtc_address_register                           = $fe00
-crtc_address_write                              = $fe01
-video_ula_palette                               = $fe21
-romsel                                          = $fe30
-system_via_t1c_l                                = $fe44
-system_via_t1c_h                                = $fe45
-system_via_t1l_l                                = $fe46
-system_via_t1l_h                                = $fe47
-system_via_t2c_l                                = $fe48
-system_via_t2c_h                                = $fe49
-system_via_acr                                  = $fe4b
-system_via_ifr                                  = $fe4d
-system_via_ier                                  = $fe4e
-user_via_t1c_l                                  = $fe64
-user_via_t1c_h                                  = $fe65
-user_via_t2c_l                                  = $fe68
-user_via_t2c_h                                  = $fe69
-user_via_ier                                    = $fe6e
-osfile                                          = $ffdd
-oswrch                                          = $ffee
-osword                                          = $fff1
-osbyte                                          = $fff4
-oscli                                           = $fff7
+error_code_on_brk                           = $02
+remember_stack_pointer                      = $03
+which_dialog_is_active                      = $04
+password_characters_entered                 = $05
+rnd0                                        = $06
+rnd1                                        = $07
+rnd2                                        = $08
+rnd3                                        = $09
+rnd4                                        = $0a
+dest_sprite_number                          = $14
+sprite_op_flags                             = $15
+sprite_number                               = $16
+sprite_x_base_low                           = $18
+sprite_x_base_high                          = $19
+sprite_y_base_low                           = $1a
+sprite_y_base_high                          = $1b
+sprite_reflect_flag                         = $1d
+valid_direction_pending                     = $20
+another_menu_index                          = $25
+l0026                                       = $26
+left_right_repeat_flag                      = $27
+left_right_flag                             = $28
+new_menu_index                              = $29
+space_bar_press_pending                     = $2a
+space_bar_pressed                           = $2b
+z_key_pressed_pending                       = $2c
+x_key_pressed_pending                       = $2d
+current_menu_index                          = $2e
+desired_room_index                          = $30
+desired_level                               = $31
+currently_loaded_level                      = $37
+l0039                                       = $39
+l003a                                       = $3a
+l003b                                       = $3b
+width_in_cells                              = $3c
+height_in_cells                             = $3d
+value_to_write_to_collision_map             = $3e
+l003f                                       = $3f
+source_sprite_memory_low                    = $40
+source_sprite_memory_high                   = $41
+copy_mode                                   = $42
+l0042                                       = $42
+print_in_italics_flag                       = $43
+l0044                                       = $44
+eor_key                                     = $45
+return_key_pressed_pending                  = $46
+current_player_character                    = $48
+temp_value                                  = $49
+saved_x                                     = $4a
+temp_coordinate                             = $4a
+height_counter                              = $4b
+l004b                                       = $4b
+saved_y                                     = $4b
+screen_base_address_high                    = $4c
+new_player_character                        = $4d
+previous_room_index                         = $50
+previous_level                              = $51
+l0052                                       = $52
+l0053                                       = $53
+sprdata_ptr                                 = $54
+temp_rope_length                            = $56
+temp_sprite_address_low                     = $58
+temp_sprite_address_high                    = $59
+temp_sprite_offset                          = $5a
+developer_mode_sideways_ram_is_set_up_flag  = $5b
+displayed_transformations_remaining         = $5c
+initial_level_number_div4                   = $5f
+l0060                                       = $60
+l0061                                       = $61
+l0062                                       = $62
+l0063                                       = $63
+l0064                                       = $64
+remember_object_index                       = $65
+l0066                                       = $66
+l0067                                       = $67
+l0068                                       = $68
+address1_low                                = $70
+animation_address_low                       = $70
+cell_x                                      = $70
+filename_low                                = $70
+level_data_ptr_low                          = $70
+menu_item_to_use                            = $70
+object_y_delta                              = $70
+screen_address_low                          = $70
+src_sprite_address_low                      = $70
+address1_high                               = $71
+animation_address_high                      = $71
+cell_y                                      = $71
+filename_high                               = $71
+level_data_ptr_high                         = $71
+menu_has_changed_flag                       = $71
+screen_address_high                         = $71
+src_sprite_address_high                     = $71
+l0072                                       = $72
+osfile_block_filename_low                   = $72
+sprite_screen_address_low                   = $72
+width_in_cells_to_write                     = $72
+height_in_cells_to_write                    = $73
+l0073                                       = $73
+osfile_block_filename_high                  = $73
+sprite_screen_address_high                  = $73
+first_cell_in_row_screen_address_low        = $74
+l0074                                       = $74
+offset_within_byte                          = $74
+osfile_block_load_address_low               = $74
+sprite_x_pos_low                            = $74
+first_cell_in_row_screen_address_high       = $75
+l0075                                       = $75
+offset_within_collision_map                 = $75
+osfile_block_load_address_mid1              = $75
+sprite_x_pos_high                           = $75
+cell_screen_address_low                     = $76
+l0076                                       = $76
+osfile_block_load_address_mid2              = $76
+sprite_y_pos_low                            = $76
+cell_screen_address_high                    = $77
+l0077                                       = $77
+sprite_y_pos_high                           = $77
+l0078                                       = $78
+original_off_screen_address_low             = $78
+osfile_block_exec_address_low               = $78
+sprite_x_offset_within_byte                 = $78
+byte_offset_within_sprite                   = $79
+l0079                                       = $79
+original_off_screen_address_high            = $79
+osfile_block_exec_address_mid1              = $79
+l007a                                       = $7a
+off_screen_address_low                      = $7a
+l007b                                       = $7b
+off_screen_address_high                     = $7b
+sprite_screen_address_for_column_low        = $7b
+cell_x_plus_current_cell_within_row         = $7c
+l007c                                       = $7c
+osfile_block_start_address_low              = $7c
+sprite_screen_address_for_column_high       = $7c
+current_row                                 = $7d
+l007d                                       = $7d
+osfile_block_start_address_mid1             = $7d
+sprite_data_byte                            = $7d
+address2_low                                = $7e
+dest_sprite_address_low                     = $7e
+row_counter                                 = $7e
+address2_high                               = $7f
+dest_sprite_address_high                    = $7f
+l0080                                       = $80
+mask_sprite_byte                            = $80
+osfile_block_end_address_low                = $80
+sprite_addr_low                             = $80
+l0081                                       = $81
+osfile_block_end_address_mid1               = $81
+sprite_addr_high                            = $81
+sprite_width                                = $81
+sprite_bit                                  = $82
+sprite_bit_mask                             = $83
+sprite_y_offset_within_character_row        = $84
+sprite_character_x_pos                      = $85
+amount_sprite_is_offscreen_x                = $86
+l0087                                       = $87
+vertical_sprite_position_is_valid_flag      = $88
+romsel_copy                                 = $f4
+interrupt_accumulator                       = $fc
+l00fd                                       = $fd
+l0100                                       = $0100
+l010b                                       = $010b
+l0116                                       = $0116
+l0121                                       = $0121
+l0122                                       = $0122
+l0123                                       = $0123
+l0124                                       = $0124
+l0125                                       = $0125
+l0126                                       = $0126
+l0127                                       = $0127
+l0128                                       = $0128
+l0129                                       = $0129
+l012a                                       = $012a
+l012b                                       = $012b
+l012c                                       = $012c
+l012d                                       = $012d
+l012e                                       = $012e
+brkv                                        = $0202
+irq1v                                       = $0204
+first_byte_break_intercept                  = $0287
+cache_of_screen_memory_under_dialog         = $0530
+object_x_low                                = $0950
+object_x_low_old                            = $095b
+object_x_high                               = $0966
+object_x_high_old                           = $0971
+object_y_low                                = $097c
+object_y_low_old                            = $0987
+object_y_high                               = $0992
+object_y_high_old                           = $099d
+object_spriteid                             = $09a8
+object_spriteid_old                         = $09b3
+object_direction                            = $09be
+object_direction_old                        = $09c9
+object_current_index_in_animation           = $09d4
+current_animation                           = $09df
+save_game                                   = $09ea
+l09eb                                       = $09eb
+current_transformations_remaining           = $09ec
+level_progress_table                        = $09ef
+sixteen_entry_table                         = $0a6f
+level_ordering_table                        = $0a7f
+string_input_buffer                         = $0a90
+eight_entry_table1                          = $0aa1
+eight_entry_table2                          = $0aa9
+old_brkv1                                   = $0ab1
+old_brkv2                                   = $0ab3
+old_irq1v                                   = $0ab5
+l0b00                                       = $0b00
+sprite_199                                  = $0b11
+sprite_198                                  = $0b93
+sprite_197                                  = $0bc5
+level_init_after_load_handler_ptr           = $3ad7
+second_level_handler_ptr                    = $3ad9
+level_name_ptr                              = $3adb
+room_index_cheat1                           = $3add
+room_index_cheat2                           = $3ade
+level_header_data                           = $3adf
+auxcode                                     = $53c0
+check_password                              = $53c0
+toolbar_screen_address                      = $58c0
+start_of_screen_memory                      = $5bc0
+game_area_screen_address                    = $6200
+l8000                                       = $8000
+l8008                                       = $8008
+lbe00                                       = $be00
+lbf00                                       = $bf00
+crtc_address_register                       = $fe00
+crtc_address_write                          = $fe01
+video_ula_palette                           = $fe21
+romsel                                      = $fe30
+system_via_t1c_l                            = $fe44
+system_via_t1c_h                            = $fe45
+system_via_t1l_l                            = $fe46
+system_via_t1l_h                            = $fe47
+system_via_t2c_l                            = $fe48
+system_via_t2c_h                            = $fe49
+system_via_acr                              = $fe4b
+system_via_ifr                              = $fe4d
+system_via_ier                              = $fe4e
+user_via_t1c_l                              = $fe64
+user_via_t1c_h                              = $fe65
+user_via_t2c_l                              = $fe68
+user_via_t2c_h                              = $fe69
+user_via_ier                                = $fe6e
+osfile                                      = $ffdd
+oswrch                                      = $ffee
+osword                                      = $fff1
+osbyte                                      = $fff4
+oscli                                       = $fff7
 
     * = $1234
 
@@ -2060,18 +2060,17 @@ l1ab2
 current_room_index
     !byte 0                                                           ; 1beb: 00          .   :1aba[1]
 
-; TODO: WIP incomplete entry conditions:
-; characters_to_copy_per_row (width)
-; rows_to_copy (height)
-; TODO: the above two overlap with width_in_cells_to_write and height_in_cells_to_write
-; - depending how this is called, it may be confusing for this subroutine to use those
-; names, but if we keep the names distinct we need to at least document that they are
-; the same
-; l0042 some kind of copy mode (1=simple)
-; some_data_3_ptr is the source address of top left
-; X and Y registers specify destination address of top left on screen
-; address1_low and address1_high contain something, possibly X/Y coords for collision
-; map?
+; Copy memory to rectangle on screen
+; 
+; On Entry:
+;     X and Y registers specify top left cell
+;     width_in_cells_to_write: width of rectangle (in cells)
+;     height_in_cells_to_write: height of rectangle (in cells)
+;     source_sprite_memory: source address data to copy to screen (top left)
+;     copy_mode: some kind of copy mode
+;         0: alternating 2x2 pattern (checkboard)
+;         1: simple copy
+;         power of two: choose random tiles less than the power of two
 copy_rectangle_of_memory_to_screen
     pha                                                               ; 1bec: 48          H   :1abb[1]
     sty current_row                                                   ; 1bed: 84 7d       .}  :1abc[1]
@@ -2089,17 +2088,17 @@ copy_rectangle_of_memory_to_screen
     sty off_screen_address_high                                       ; 1c07: 84 7b       .{  :1ad6[1]
     clc                                                               ; 1c09: 18          .   :1ad8[1]
     lda #0                                                            ; 1c0a: a9 00       ..  :1ad9[1]
-    sta address2_low                                                  ; 1c0c: 85 7e       .~  :1adb[1]
+    sta row_counter                                                   ; 1c0c: 85 7e       .~  :1adb[1]
 row_copy_loop
-    ldx characters_to_copy_per_row                                    ; 1c0e: a6 72       .r  :1add[1]
-    lda address1_low                                                  ; 1c10: a5 70       .p  :1adf[1]
-    sta address1_low_plus_current_character_within_row                ; 1c12: 85 7c       .|  :1ae1[1]
-character_copy_loop
+    ldx width_in_cells_to_write                                       ; 1c0e: a6 72       .r  :1add[1]
+    lda cell_x                                                        ; 1c10: a5 70       .p  :1adf[1]
+    sta cell_x_plus_current_cell_within_row                           ; 1c12: 85 7c       .|  :1ae1[1]
+cell_copy_loop
     ldy #7                                                            ; 1c14: a0 07       ..  :1ae3[1]
-; TODO: The value in l0042 selects various different code paths here. Note that if it
-; contains 1, we have a 'simple' case where we just copy data without any further
-; fiddling with off_screen_address.
-    lda l0042                                                         ; 1c16: a5 42       .B  :1ae5[1]
+; TODO: copy_mode selects various different code paths here. Note that if it contains
+; 1, we have a 'simple' case where we just copy data without any further fiddling with
+; off_screen_address.
+    lda copy_mode                                                     ; 1c16: a5 42       .B  :1ae5[1]
     beq two_by_two_alternating_pattern                                ; 1c18: f0 23       .#  :1ae7[1]
     bmi c1af8                                                         ; 1c1a: 30 0d       0.  :1ae9[1]
     cmp #1                                                            ; 1c1c: c9 01       ..  :1aeb[1]
@@ -2107,35 +2106,36 @@ character_copy_loop
     beq byte_copy_loop                                                ; 1c1f: f0 38       .8  :1aee[1]
     sbc #0                                                            ; 1c21: e9 00       ..  :1af0[1]   ; Subtract 1; note C cleared before beq
     jsr get_random_number_up_to_a                                     ; 1c23: 20 a6 18     .. :1af2[1]
-    jmp common_code_after_variable_code_has_set_a                     ; 1c26: 4c 14 1b    L.. :1af5[1]
+    jmp get_final_off_screen_tile_address                             ; 1c26: 4c 14 1b    L.. :1af5[1]
 
 c1af8
     and #$7f                                                          ; 1c29: 29 7f       ).  :1af8[1]
     sec                                                               ; 1c2b: 38          8   :1afa[1]
     sbc #1                                                            ; 1c2c: e9 01       ..  :1afb[1]
-    cmp address2_low                                                  ; 1c2e: c5 7e       .~  :1afd[1]
-    lda address2_low                                                  ; 1c30: a5 7e       .~  :1aff[1]
-    inc address2_low                                                  ; 1c32: e6 7e       .~  :1b01[1]
-    bcs common_code_after_variable_code_has_set_a                     ; 1c34: b0 0f       ..  :1b03[1]
+    cmp row_counter                                                   ; 1c2e: c5 7e       .~  :1afd[1]
+    lda row_counter                                                   ; 1c30: a5 7e       .~  :1aff[1]
+    inc row_counter                                                   ; 1c32: e6 7e       .~  :1b01[1]
+    bcs get_final_off_screen_tile_address                             ; 1c34: b0 0f       ..  :1b03[1]
     lda #0                                                            ; 1c36: a9 00       ..  :1b05[1]
-    sta address2_low                                                  ; 1c38: 85 7e       .~  :1b07[1]
-    jmp common_code_after_variable_code_has_set_a                     ; 1c3a: 4c 14 1b    L.. :1b09[1]
+    sta row_counter                                                   ; 1c38: 85 7e       .~  :1b07[1]
+    jmp get_final_off_screen_tile_address                             ; 1c3a: 4c 14 1b    L.. :1b09[1]
 
-; Set A=%(low bit of current_row)(low bit of current character), giving a 2x2
-; alternating pattern. ('current character' is actually offset by address1_low, but the
-; idea is the same.)
+; Set A=%(low bit of current_row)(low bit of current column), giving a 2x2 alternating
+; pattern.
 two_by_two_alternating_pattern
-    lda address1_low_plus_current_character_within_row                ; 1c3d: a5 7c       .|  :1b0c[1]
+    lda cell_x_plus_current_cell_within_row                           ; 1c3d: a5 7c       .|  :1b0c[1]
     lsr                                                               ; 1c3f: 4a          J   :1b0e[1]
     lda current_row                                                   ; 1c40: a5 7d       .}  :1b0f[1]
     rol                                                               ; 1c42: 2a          *   :1b11[1]
     and #3                                                            ; 1c43: 29 03       ).  :1b12[1]
-; TODO: off_screen_address_high is and-ed with 3 in a few instructions' time and it
-; gets reset to its original value plus that tweak to the low bits. I suspect what's
-; happening here is that we're selecting from a set of characters in a repeating
-; sequence, modulated by A. A itself gets multiplied by 8, which is of course the
-; number of bytes in a character.
-common_code_after_variable_code_has_set_a
+; The value in A at this point is the offset from the first tile to use. We multiply
+; this by eight to get the offset of the memory address of the tile (each tile being
+; eight bytes), and add to the original tile address to get the final address of the
+; tile we want to use.
+; (The code uses the bottom two bits of off_screen_address_high to temporarily store
+; the high bits of the offset. These two bits are then extracted and added to the
+; original address to get the final address).
+get_final_off_screen_tile_address
     asl                                                               ; 1c45: 0a          .   :1b14[1]
     asl                                                               ; 1c46: 0a          .   :1b15[1]
     rol off_screen_address_high                                       ; 1c47: 26 7b       &{  :1b16[1]
@@ -2153,19 +2153,19 @@ byte_copy_loop
     sta (cell_screen_address_low),y                                   ; 1c5b: 91 76       .v  :1b2a[1]
     dey                                                               ; 1c5d: 88          .   :1b2c[1]
     bpl byte_copy_loop                                                ; 1c5e: 10 f9       ..  :1b2d[1]
-    inc address1_low_plus_current_character_within_row                ; 1c60: e6 7c       .|  :1b2f[1]
+    inc cell_x_plus_current_cell_within_row                           ; 1c60: e6 7c       .|  :1b2f[1]
     dex                                                               ; 1c62: ca          .   :1b31[1]   ; X was initialised with characters_to_copy_per_row
     beq all_characters_copied                                         ; 1c63: f0 0d       ..  :1b32[1]
     lda cell_screen_address_low                                       ; 1c65: a5 76       .v  :1b34[1]
     adc #8                                                            ; 1c67: 69 08       i.  :1b36[1]
     sta cell_screen_address_low                                       ; 1c69: 85 76       .v  :1b38[1]
-    bcc character_copy_loop                                           ; 1c6b: 90 a7       ..  :1b3a[1]
+    bcc cell_copy_loop                                                ; 1c6b: 90 a7       ..  :1b3a[1]
     inc cell_screen_address_high                                      ; 1c6d: e6 77       .w  :1b3c[1]
     clc                                                               ; 1c6f: 18          .   :1b3e[1]
-    bcc character_copy_loop                                           ; 1c70: 90 a2       ..  :1b3f[1]   ; always branch
+    bcc cell_copy_loop                                                ; 1c70: 90 a2       ..  :1b3f[1]   ; always branch
 all_characters_copied
     inc current_row                                                   ; 1c72: e6 7d       .}  :1b41[1]
-    dec rows_to_copy                                                  ; 1c74: c6 73       .s  :1b43[1]
+    dec height_in_cells_to_write                                      ; 1c74: c6 73       .s  :1b43[1]
     beq c1b59                                                         ; 1c76: f0 12       ..  :1b45[1]
 ; Advance first_cell_in_row_screen_address by one row and reset cell_screen_address
     lda first_cell_in_row_screen_address_low                          ; 1c78: a5 74       .t  :1b47[1]
@@ -2178,8 +2178,8 @@ all_characters_copied
     sta cell_screen_address_high                                      ; 1c86: 85 77       .w  :1b55[1]
     bcc row_copy_loop                                                 ; 1c88: 90 84       ..  :1b57[1]   ; always branch TODO: 99% confident
 c1b59
-    ldx address1_low                                                  ; 1c8a: a6 70       .p  :1b59[1]
-    ldy address1_high                                                 ; 1c8c: a4 71       .q  :1b5b[1]
+    ldx cell_x                                                        ; 1c8a: a6 70       .p  :1b59[1]
+    ldy cell_y                                                        ; 1c8c: a4 71       .q  :1b5b[1]
     lda value_to_write_to_collision_map                               ; 1c8e: a5 3e       .>  :1b5d[1]
     bmi skip_writing_to_collision_map                                 ; 1c90: 30 03       0.  :1b5f[1]
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 1c92: 20 44 1e     D. :1b61[1]
@@ -2268,7 +2268,7 @@ something26_decrement_and_loop
 ; and the top six rows of the second bitmap at (X,Y). I'm sure I've got the details
 ; wrong, but something like that.
 partial_plot_across_row_boundary
-    sty address1_high                                                 ; 1cfb: 84 71       .q  :1bca[1]
+    sty cell_y                                                        ; 1cfb: 84 71       .q  :1bca[1]
     dey                                                               ; 1cfd: 88          .   :1bcc[1]
     jsr get_screen_address_from_cell_xy                               ; 1cfe: 20 66 1b     f. :1bcd[1]
     txa                                                               ; 1d01: 8a          .   :1bd0[1]
@@ -2313,7 +2313,7 @@ something26_copy_loop2
     sta (cell_screen_address_low),y                                   ; 1d3c: 91 76       .v  :1c0b[1]
     dey                                                               ; 1d3e: 88          .   :1c0d[1]
     bpl something26_copy_loop2                                        ; 1d3f: 10 f9       ..  :1c0e[1]
-    ldy address1_high                                                 ; 1d41: a4 71       .q  :1c10[1]
+    ldy cell_y                                                        ; 1d41: a4 71       .q  :1c10[1]
     jmp something26_decrement_and_loop                                ; 1d43: 4c c3 1b    L.. :1c12[1]
 
 c1c15
@@ -2329,7 +2329,7 @@ c1c15
     lda #0                                                            ; 1d54: a9 00       ..  :1c23[1]
     adc #>character_bitmap_1d59                                       ; 1d56: 69 1d       i.  :1c25[1]
     sta off_screen_address_high                                       ; 1d58: 85 7b       .{  :1c27[1]
-    sty address1_high                                                 ; 1d5a: 84 71       .q  :1c29[1]
+    sty cell_y                                                        ; 1d5a: 84 71       .q  :1c29[1]
     ldy #7                                                            ; 1d5c: a0 07       ..  :1c2b[1]
 loop_c1c2d
     lda (off_screen_address_low),y                                    ; 1d5e: b1 7a       .z  :1c2d[1]
@@ -2337,7 +2337,7 @@ loop_c1c2d
     dey                                                               ; 1d62: 88          .   :1c31[1]
     cpy #2                                                            ; 1d63: c0 02       ..  :1c32[1]
     bcs loop_c1c2d                                                    ; 1d65: b0 f7       ..  :1c34[1]
-    ldy address1_high                                                 ; 1d67: a4 71       .q  :1c36[1]
+    ldy cell_y                                                        ; 1d67: a4 71       .q  :1c36[1]
     jmp something26_decrement_and_loop                                ; 1d69: 4c c3 1b    L.. :1c38[1]
 
 c1c3b
@@ -2371,7 +2371,7 @@ loop_c1c61
     sta (cell_screen_address_low),y                                   ; 1d98: 91 76       .v  :1c67[1]
     dey                                                               ; 1d9a: 88          .   :1c69[1]
     bpl loop_c1c61                                                    ; 1d9b: 10 f5       ..  :1c6a[1]
-    ldy address1_high                                                 ; 1d9d: a4 71       .q  :1c6c[1]
+    ldy cell_y                                                        ; 1d9d: a4 71       .q  :1c6c[1]
 c1c6e
     inx                                                               ; 1d9f: e8          .   :1c6e[1]
     dey                                                               ; 1da0: 88          .   :1c6f[1]
@@ -2428,7 +2428,7 @@ loop_c1cbb
     sta (cell_screen_address_low),y                                   ; 1df2: 91 76       .v  :1cc1[1]
     dey                                                               ; 1df4: 88          .   :1cc3[1]
     bpl loop_c1cbb                                                    ; 1df5: 10 f5       ..  :1cc4[1]
-    ldy address1_high                                                 ; 1df7: a4 71       .q  :1cc6[1]
+    ldy cell_y                                                        ; 1df7: a4 71       .q  :1cc6[1]
 c1cc8
     dex                                                               ; 1df9: ca          .   :1cc8[1]
     dey                                                               ; 1dfa: 88          .   :1cc9[1]
@@ -2472,7 +2472,7 @@ sub_c1cf3
     dey                                                               ; 1e39: 88          .   :1d08[1]
     cmp #3                                                            ; 1e3a: c9 03       ..  :1d09[1]
     bne c1d16                                                         ; 1e3c: d0 09       ..  :1d0b[1]
-    sty address1_high                                                 ; 1e3e: 84 71       .q  :1d0d[1]
+    sty cell_y                                                        ; 1e3e: 84 71       .q  :1d0d[1]
     jsr get_screen_address_from_cell_xy                               ; 1e40: 20 66 1b     f. :1d0f[1]
     lda #spriteid_one_pixel_masked_out                                ; 1e43: a9 00       ..  :1d12[1]
     sta sprite_number                                                 ; 1e45: 85 16       ..  :1d14[1]
@@ -8397,7 +8397,6 @@ pydis_end
 ;     l003a
 ;     l003b
 ;     l003f
-;     l0042
 ;     l0044
 ;     l0052
 ;     l0053
