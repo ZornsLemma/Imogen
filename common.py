@@ -165,7 +165,7 @@ label(0x1140, "initialise_level")
 label(0x3adf, "level_header_data")
 expr_label(0x3ae0, make_add("level_header_data", "1"))
 
-label(0x132b, "something23_TODO_executing_flag") # TODO: speculation, but I think this might be used to prevent infinite recursion - it appears to be set to $ff only inside something23_TODO while calling second_level_handler_ptr, then gets reset to 0.
+label(0x132b, "something23_TODO_executing_flag") # TODO: speculation, but I think this might be used to prevent infinite recursion - it appears to be set to $ff only inside something23_TODO while calling second_level_handler_ptr, then gets reset to 0. - actually it may be simpler, this might be a "we are initialising the level for the first time, as opposed to running the level" - I have a vague suspicion the second_level_handler is called regularly by the game engine to let the level do animation and any other every-n-frame type actions
 
 # TODO: Speculative but feels quite plausible looking at the code - 'current' and 'desirable' is extra-speculative
 # Room index is within the level, 0-(n-1) if the level has n rooms
