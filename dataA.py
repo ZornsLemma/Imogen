@@ -85,6 +85,11 @@ comment(0x3b35, "TODO: Setting a breakpoint in b-em shows address1_high ($71) is
 comment(0x3b29, "TODO: I suspect this next block up to and including the jsr is drawing the 'wall' pattern on the top two rows of the opening screen")
 comment(0x3b84, "TODO: I suspect we've finished drawing the ground fill and are now switching to another pattern.")
 
+label(0xa6f, "mouse_ball_position") # TODO: guesswork but fairly convinced - I think this runs from 0-$1d inclusive with 0 being (guess) far left, $f being far right
+entry(0x3bf7, "level_unchanged")
+entry(0x3c77, "bump_and_wrap_mouse_ball_position")
+entry(0x3c81, "no_wrap_needed")
+
 go()
 
 # vi: tw=100

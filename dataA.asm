@@ -47,7 +47,7 @@ l0a01                                               = $0a01
 l0a02                                               = $0a02
 l0a03                                               = $0a03
 l0a04                                               = $0a04
-l0a6f                                               = $0a6f
+mouse_ball_position                                 = $0a6f
 l0a70                                               = $0a70
 l0a71                                               = $0a71
 l0a72                                               = $0a72
@@ -272,17 +272,17 @@ loop_c3bd4
 sub_c3be4
     lda something23_TODO_executing_flag                               ; 3be4: ad 2b 13    .+.
     bne c3bec                                                         ; 3be7: d0 03       ..
-    jmp c3c77                                                         ; 3be9: 4c 77 3c    Lw<
+    jmp bump_and_wrap_mouse_ball_position                             ; 3be9: 4c 77 3c    Lw<
 
 ; $3bec referenced 1 time by $3be7
 c3bec
     lda desired_level                                                 ; 3bec: a5 31       .1
     cmp previous_level                                                ; 3bee: c5 51       .Q
-    beq c3bf7                                                         ; 3bf0: f0 05       ..
+    beq level_unchanged                                               ; 3bf0: f0 05       ..
     lda #0                                                            ; 3bf2: a9 00       ..
-    sta l0a6f                                                         ; 3bf4: 8d 6f 0a    .o.
+    sta mouse_ball_position                                           ; 3bf4: 8d 6f 0a    .o.
 ; $3bf7 referenced 1 time by $3bf0
-c3bf7
+level_unchanged
     lda desired_room_index                                            ; 3bf7: a5 30       .0
     cmp #0                                                            ; 3bf9: c9 00       ..
     bne c3c74                                                         ; 3bfb: d0 77       .w
@@ -345,15 +345,15 @@ c3c74
     jmp c3ca8                                                         ; 3c74: 4c a8 3c    L.<
 
 ; $3c77 referenced 1 time by $3be9
-c3c77
-    ldy l0a6f                                                         ; 3c77: ac 6f 0a    .o.
+bump_and_wrap_mouse_ball_position
+    ldy mouse_ball_position                                           ; 3c77: ac 6f 0a    .o.
     iny                                                               ; 3c7a: c8          .
     cpy #$1e                                                          ; 3c7b: c0 1e       ..
-    bcc c3c81                                                         ; 3c7d: 90 02       ..
+    bcc no_wrap_needed                                                ; 3c7d: 90 02       ..
     ldy #0                                                            ; 3c7f: a0 00       ..
 ; $3c81 referenced 1 time by $3c7d
-c3c81
-    sty l0a6f                                                         ; 3c81: 8c 6f 0a    .o.
+no_wrap_needed
+    sty mouse_ball_position                                           ; 3c81: 8c 6f 0a    .o.
     lda desired_room_index                                            ; 3c84: a5 30       .0
     cmp #0                                                            ; 3c86: c9 00       ..
     bne c3ca8                                                         ; 3c88: d0 1e       ..
@@ -378,7 +378,7 @@ c3ca8
     lda desired_room_index                                            ; 3ca8: a5 30       .0
     cmp #0                                                            ; 3caa: c9 00       ..
     bne c3d20                                                         ; 3cac: d0 72       .r
-    lda l0a6f                                                         ; 3cae: ad 6f 0a    .o.
+    lda mouse_ball_position                                           ; 3cae: ad 6f 0a    .o.
     cmp #8                                                            ; 3cb1: c9 08       ..
     bcs c3cb9                                                         ; 3cb3: b0 04       ..
     ldy #0                                                            ; 3cb5: a0 00       ..
@@ -1695,7 +1695,7 @@ pydis_end
 ;     c4355:                                                  5
 ;     l003b:                                                  4
 ;     saxophone_collected_flag:                               4
-;     l0a6f:                                                  4
+;     mouse_ball_position:                                    4
 ;     something23_TODO:                                       4
 ;     something24_TODO:                                       4
 ;     draw_floor_walls_and_ceiling_around_solid_rock:         4
@@ -1768,10 +1768,10 @@ pydis_end
 ;     loop_c3bd4:                                             1
 ;     sub_c3be4:                                              1
 ;     c3bec:                                                  1
-;     c3bf7:                                                  1
+;     level_unchanged:                                        1
 ;     c3c74:                                                  1
-;     c3c77:                                                  1
-;     c3c81:                                                  1
+;     bump_and_wrap_mouse_ball_position:                      1
+;     no_wrap_needed:                                         1
 ;     c3c91:                                                  1
 ;     c3cb9:                                                  1
 ;     c3cc3:                                                  1
@@ -1824,10 +1824,7 @@ pydis_end
 ; Automatically generated labels:
 ;     c3b0e
 ;     c3bec
-;     c3bf7
 ;     c3c74
-;     c3c77
-;     c3c81
 ;     c3c91
 ;     c3ca8
 ;     c3cb9
@@ -1912,7 +1909,6 @@ pydis_end
 ;     l0a02
 ;     l0a03
 ;     l0a04
-;     l0a6f
 ;     l0a70
 ;     l0a71
 ;     l0a72
