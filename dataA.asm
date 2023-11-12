@@ -377,7 +377,7 @@ c3c91
 move_mouse_ball
     lda desired_room_index                                            ; 3ca8: a5 30       .0
     cmp #0                                                            ; 3caa: c9 00       ..
-    bne c3d20                                                         ; 3cac: d0 72       .r
+    bne return1                                                       ; 3cac: d0 72       .r
     lda mouse_ball_position                                           ; 3cae: ad 6f 0a    .o.
     cmp #8                                                            ; 3cb1: c9 08       ..
     bcs c3cb9                                                         ; 3cb3: b0 04       ..
@@ -439,15 +439,15 @@ c3cfb
     lda #$cb                                                          ; 3d08: a9 cb       ..
     sta l09ac                                                         ; 3d0a: 8d ac 09    ...
     lda something23_TODO_executing_flag                               ; 3d0d: ad 2b 13    .+.
-    bne c3d20                                                         ; 3d10: d0 0e       ..
+    bne return1                                                       ; 3d10: d0 0e       ..
     ldx #0                                                            ; 3d12: a2 00       ..
     ldy #4                                                            ; 3d14: a0 04       ..
     jsr something55_TODO                                              ; 3d16: 20 e2 28     .(
-    beq c3d20                                                         ; 3d19: f0 05       ..
+    beq return1                                                       ; 3d19: f0 05       ..
     lda #$80                                                          ; 3d1b: a9 80       ..
     sta l2433                                                         ; 3d1d: 8d 33 24    .3$
 ; $3d20 referenced 3 times by $3cac, $3d10, $3d19
-c3d20
+return1
     rts                                                               ; 3d20: 60          `
 
 ; $3d21 referenced 7 times by $3cc3, $3cca, $3cd4, $3ce7, $3cee, $3cf8, $3d02
@@ -1726,7 +1726,7 @@ pydis_end
 ;     l2eb6:                                                  3
 ;     l38c2:                                                  3
 ;     move_mouse_ball:                                        3
-;     c3d20:                                                  3
+;     return1:                                                3
 ;     c3f8a:                                                  3
 ;     c419f:                                                  3
 ;     c4339:                                                  3
@@ -1845,7 +1845,6 @@ pydis_end
 ;     c3ce1
 ;     c3ce7
 ;     c3cfb
-;     c3d20
 ;     c3dd2
 ;     c3de2
 ;     c3def

@@ -99,6 +99,7 @@ expr(0x3c9b, make_lo("mouse_ball_sound2"))
 expr(0x3c9d, make_hi("mouse_ball_sound2"))
 expr(0x3ca2, make_lo("mouse_ball_sound3"))
 expr(0x3ca4, make_hi("mouse_ball_sound3"))
+entry(0x3d20, "return1")
 
 go()
 
