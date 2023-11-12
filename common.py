@@ -143,3 +143,5 @@ label(0xaa9, "tile_all_set_pixels")
 
 constant(40, "game_area_width_cells")
 constant(24, "game_area_height_cells")
+
+label(0x38f6, "play_sound_yx")

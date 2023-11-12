@@ -98,7 +98,7 @@ l38ac                                               = $38ac
 l38ae                                               = $38ae
 l38c2                                               = $38c2
 l38d8                                               = $38d8
-l38f6                                               = $38f6
+play_sound_yx                                       = $38f6
 l395e                                               = $395e
 l396f                                               = $396f
 l3970                                               = $3970
@@ -342,7 +342,7 @@ level_unchanged
     sta l38c2,x                                                       ; 3c71: 9d c2 38    ..8
 ; $3c74 referenced 1 time by $3bfb
 c3c74
-    jmp c3ca8                                                         ; 3c74: 4c a8 3c    L.<
+    jmp dont_move_mouse_ball                                          ; 3c74: 4c a8 3c    L.<
 
 ; $3c77 referenced 1 time by $3be9
 bump_and_wrap_mouse_ball_position
@@ -356,25 +356,25 @@ no_wrap_needed
     sty mouse_ball_position                                           ; 3c81: 8c 6f 0a    .o.
     lda desired_room_index                                            ; 3c84: a5 30       .0
     cmp #0                                                            ; 3c86: c9 00       ..
-    bne c3ca8                                                         ; 3c88: d0 1e       ..
+    bne dont_move_mouse_ball                                          ; 3c88: d0 1e       ..
     tya                                                               ; 3c8a: 98          .
     beq c3c91                                                         ; 3c8b: f0 04       ..
     cpy #$0f                                                          ; 3c8d: c0 0f       ..
-    bne c3ca8                                                         ; 3c8f: d0 17       ..
+    bne dont_move_mouse_ball                                          ; 3c8f: d0 17       ..
 ; $3c91 referenced 1 time by $3c8b
 c3c91
     lda #0                                                            ; 3c91: a9 00       ..
     ldx #$7e ; '~'                                                    ; 3c93: a2 7e       .~
     ldy #$44 ; 'D'                                                    ; 3c95: a0 44       .D
-    jsr l38f6                                                         ; 3c97: 20 f6 38     .8
+    jsr play_sound_yx                                                 ; 3c97: 20 f6 38     .8
     ldx #$76 ; 'v'                                                    ; 3c9a: a2 76       .v
     ldy #$44 ; 'D'                                                    ; 3c9c: a0 44       .D
-    jsr l38f6                                                         ; 3c9e: 20 f6 38     .8
+    jsr play_sound_yx                                                 ; 3c9e: 20 f6 38     .8
     ldx #$6e ; 'n'                                                    ; 3ca1: a2 6e       .n
     ldy #$44 ; 'D'                                                    ; 3ca3: a0 44       .D
-    jsr l38f6                                                         ; 3ca5: 20 f6 38     .8
+    jsr play_sound_yx                                                 ; 3ca5: 20 f6 38     .8
 ; $3ca8 referenced 3 times by $3c74, $3c88, $3c8f
-c3ca8
+dont_move_mouse_ball
     lda desired_room_index                                            ; 3ca8: a5 30       .0
     cmp #0                                                            ; 3caa: c9 00       ..
     bne c3d20                                                         ; 3cac: d0 72       .r
@@ -695,10 +695,10 @@ sub_c3ef1
     lda #0                                                            ; 3ef1: a9 00       ..
     ldx #$42 ; 'B'                                                    ; 3ef3: a2 42       .B
     ldy #$44 ; 'D'                                                    ; 3ef5: a0 44       .D
-    jsr l38f6                                                         ; 3ef7: 20 f6 38     .8
+    jsr play_sound_yx                                                 ; 3ef7: 20 f6 38     .8
     ldx #$3a ; ':'                                                    ; 3efa: a2 3a       .:
     ldy #$44 ; 'D'                                                    ; 3efc: a0 44       .D
-    jsr l38f6                                                         ; 3efe: 20 f6 38     .8
+    jsr play_sound_yx                                                 ; 3efe: 20 f6 38     .8
     rts                                                               ; 3f01: 60          `
 
 ; $3f02 referenced 1 time by $3b20
@@ -749,7 +749,7 @@ c3f52
     lda #0                                                            ; 3f59: a9 00       ..
     ldx #$24 ; '$'                                                    ; 3f5b: a2 24       .$
     ldy #$44 ; 'D'                                                    ; 3f5d: a0 44       .D
-    jsr l38f6                                                         ; 3f5f: 20 f6 38     .8
+    jsr play_sound_yx                                                 ; 3f5f: 20 f6 38     .8
 ; $3f62 referenced 1 time by $3f57
 c3f62
     lda desired_room_index                                            ; 3f62: a5 30       .0
@@ -1363,7 +1363,7 @@ c43d4
     lda #$80                                                          ; 43da: a9 80       ..
     ldx #$58 ; 'X'                                                    ; 43dc: a2 58       .X
     ldy #$44 ; 'D'                                                    ; 43de: a0 44       .D
-    jsr l38f6                                                         ; 43e0: 20 f6 38     .8
+    jsr play_sound_yx                                                 ; 43e0: 20 f6 38     .8
 ; $43e3 referenced 1 time by $43d1
 c43e3
     ldx l0070                                                         ; 43e3: a6 70       .p
@@ -1677,7 +1677,7 @@ pydis_end
 ;     c3ed7:                                                  8
 ;     l09ff:                                                  7
 ;     l0a01:                                                  7
-;     l38f6:                                                  7
+;     play_sound_yx:                                          7
 ;     some_data1:                                             7
 ;     l0070:                                                  6
 ;     l09be:                                                  6
@@ -1712,7 +1712,7 @@ pydis_end
 ;     find_or_create_menu_slot_for_A:                         3
 ;     l2eb6:                                                  3
 ;     l38c2:                                                  3
-;     c3ca8:                                                  3
+;     dont_move_mouse_ball:                                   3
 ;     c3d20:                                                  3
 ;     c3f8a:                                                  3
 ;     c419f:                                                  3
@@ -1826,7 +1826,6 @@ pydis_end
 ;     c3bec
 ;     c3c74
 ;     c3c91
-;     c3ca8
 ;     c3cb9
 ;     c3cc3
 ;     c3cd9
@@ -1925,7 +1924,6 @@ pydis_end
 ;     l38ae
 ;     l38c2
 ;     l38d8
-;     l38f6
 ;     l395e
 ;     l396f
 ;     l3970

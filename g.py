@@ -1585,7 +1585,6 @@ On Exit:
     Preserves A
 
 *************************************************************************************""")
-label(0x38f6, "play_sound_yx")
 label(0x394b, "play_sound")
 label(0x3932, "flush_sound_buffer_X")
 comment(0x3932, "add four to X to get sound buffer number", inline=True)
