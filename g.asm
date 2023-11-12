@@ -309,7 +309,7 @@ osfile_block_start_address_mid1             = $7d
 sprite_data_byte                            = $7d
 address2_low                                = $7e
 dest_sprite_address_low                     = $7e
-row_counter                                 = $7e
+pattern_length_cycle_counter                = $7e
 address2_high                               = $7f
 dest_sprite_address_high                    = $7f
 l0080                                       = $80
@@ -2060,7 +2060,8 @@ l1ab2
 current_room_index
     !byte 0                                                           ; 1beb: 00          .   :1aba[1]
 
-; Copy memory to rectangle on screen
+; Copy tiles (8x8 pixels, eight bytes of memory) in memory to a rectangular area of
+; cells on screen
 ; 
 ; On Entry:
 ;     X and Y registers specify top left cell
@@ -2070,7 +2071,11 @@ current_room_index
 ;     copy_mode: some kind of copy mode
 ;         0: alternating 2x2 pattern (checkboard)
 ;         1: simple copy
-;         power of two: choose random tiles less than the power of two
+;         power of two: choose random tile offsets less than the power of two
+;         negative: strip off top bit, and use the result as the length of a pattern to
+; cycle around
+;     value_to_write_to_collision_map: if non-negative, write the value into the
+; collision map using the same rectangle of cells
 copy_rectangle_of_memory_to_screen
     pha                                                               ; 1bec: 48          H   :1abb[1]
     sty current_row                                                   ; 1bed: 84 7d       .}  :1abc[1]
@@ -2088,7 +2093,7 @@ copy_rectangle_of_memory_to_screen
     sty off_screen_address_high                                       ; 1c07: 84 7b       .{  :1ad6[1]
     clc                                                               ; 1c09: 18          .   :1ad8[1]
     lda #0                                                            ; 1c0a: a9 00       ..  :1ad9[1]
-    sta row_counter                                                   ; 1c0c: 85 7e       .~  :1adb[1]
+    sta pattern_length_cycle_counter                                  ; 1c0c: 85 7e       .~  :1adb[1]
 row_copy_loop
     ldx width_in_cells_to_write                                       ; 1c0e: a6 72       .r  :1add[1]
     lda cell_x                                                        ; 1c10: a5 70       .p  :1adf[1]
@@ -2103,7 +2108,7 @@ cell_copy_loop
     bmi c1af8                                                         ; 1c1a: 30 0d       0.  :1ae9[1]
     cmp #1                                                            ; 1c1c: c9 01       ..  :1aeb[1]
     clc                                                               ; 1c1e: 18          .   :1aed[1]
-    beq byte_copy_loop                                                ; 1c1f: f0 38       .8  :1aee[1]
+    beq copy_one_tile_loop                                            ; 1c1f: f0 38       .8  :1aee[1]
     sbc #0                                                            ; 1c21: e9 00       ..  :1af0[1]   ; Subtract 1; note C cleared before beq
     jsr get_random_number_up_to_a                                     ; 1c23: 20 a6 18     .. :1af2[1]
     jmp get_final_off_screen_tile_address                             ; 1c26: 4c 14 1b    L.. :1af5[1]
@@ -2112,12 +2117,12 @@ c1af8
     and #$7f                                                          ; 1c29: 29 7f       ).  :1af8[1]
     sec                                                               ; 1c2b: 38          8   :1afa[1]
     sbc #1                                                            ; 1c2c: e9 01       ..  :1afb[1]
-    cmp row_counter                                                   ; 1c2e: c5 7e       .~  :1afd[1]
-    lda row_counter                                                   ; 1c30: a5 7e       .~  :1aff[1]
-    inc row_counter                                                   ; 1c32: e6 7e       .~  :1b01[1]
+    cmp pattern_length_cycle_counter                                  ; 1c2e: c5 7e       .~  :1afd[1]
+    lda pattern_length_cycle_counter                                  ; 1c30: a5 7e       .~  :1aff[1]
+    inc pattern_length_cycle_counter                                  ; 1c32: e6 7e       .~  :1b01[1]
     bcs get_final_off_screen_tile_address                             ; 1c34: b0 0f       ..  :1b03[1]
     lda #0                                                            ; 1c36: a9 00       ..  :1b05[1]
-    sta row_counter                                                   ; 1c38: 85 7e       .~  :1b07[1]
+    sta pattern_length_cycle_counter                                  ; 1c38: 85 7e       .~  :1b07[1]
     jmp get_final_off_screen_tile_address                             ; 1c3a: 4c 14 1b    L.. :1b09[1]
 
 ; Set A=%(low bit of current_row)(low bit of current column), giving a 2x2 alternating
@@ -2148,13 +2153,13 @@ get_final_off_screen_tile_address
     and #3                                                            ; 1c53: 29 03       ).  :1b22[1]
     adc original_off_screen_address_high                              ; 1c55: 65 79       ey  :1b24[1]
     sta off_screen_address_high                                       ; 1c57: 85 7b       .{  :1b26[1]
-byte_copy_loop
+copy_one_tile_loop
     lda (off_screen_address_low),y                                    ; 1c59: b1 7a       .z  :1b28[1]
     sta (cell_screen_address_low),y                                   ; 1c5b: 91 76       .v  :1b2a[1]
     dey                                                               ; 1c5d: 88          .   :1b2c[1]
-    bpl byte_copy_loop                                                ; 1c5e: 10 f9       ..  :1b2d[1]
+    bpl copy_one_tile_loop                                            ; 1c5e: 10 f9       ..  :1b2d[1]
     inc cell_x_plus_current_cell_within_row                           ; 1c60: e6 7c       .|  :1b2f[1]
-    dex                                                               ; 1c62: ca          .   :1b31[1]   ; X was initialised with characters_to_copy_per_row
+    dex                                                               ; 1c62: ca          .   :1b31[1]   ; X was initialised with width_in_cells_to_write
     beq all_characters_copied                                         ; 1c63: f0 0d       ..  :1b32[1]
     lda cell_screen_address_low                                       ; 1c65: a5 76       .v  :1b34[1]
     adc #8                                                            ; 1c67: 69 08       i.  :1b36[1]

@@ -99,7 +99,7 @@ substitute_labels = {
     (0x1bec,0x1f24): {
         "address1_low": "cell_x",
         "address1_high": "cell_y",
-        "address2_low": "row_counter",
+        "address2_low": "pattern_length_cycle_counter",
         "l0042": "copy_mode",
          "l0072": "width_in_cells_to_write",
          "l0073": "height_in_cells_to_write",
@@ -2249,8 +2249,7 @@ expr(0x420, make_hi("eight_entry_table2"))
 expr(0x4d6, make_lo("eight_entry_table2"))
 expr(0x4da, make_hi("eight_entry_table2"))
 
-# TODO: "character"->"cell" here for consistency?
-comment(0x1abb, """Copy memory to rectangle on screen
+comment(0x1abb, """Copy tiles (8x8 pixels, eight bytes of memory) in memory to a rectangular area of cells on screen
 
 On Entry:
     X and Y registers specify top left cell
@@ -2260,14 +2259,16 @@ On Entry:
     copy_mode: some kind of copy mode
         0: alternating 2x2 pattern (checkboard)
         1: simple copy
-        power of two: choose random tiles less than the power of two""")
+        power of two: choose random tile offsets less than the power of two
+        negative: strip off top bit, and use the result as the length of a pattern to cycle around
+    value_to_write_to_collision_map: if non-negative, write the value into the collision map using the same rectangle of cells""")
 comment(0x1b49, "C is clear because beq above not taken", inline=True)
 comment(0x1af0, "Subtract 1; note C cleared before beq", inline=True)
 label(0x1b14, "get_final_off_screen_tile_address")
 comment(0x1ae5, "TODO: copy_mode selects various different code paths here. Note that if it contains 1, we have a 'simple' case where we just copy data without any further fiddling with off_screen_address.")
-entry(0x1b28, "byte_copy_loop")
+entry(0x1b28, "copy_one_tile_loop")
 comment(0x1b3f, "always branch", inline=True)
-comment(0x1b31, "X was initialised with characters_to_copy_per_row", inline=True)
+comment(0x1b31, "X was initialised with width_in_cells_to_write", inline=True)
 entry(0x1b41, "all_characters_copied")
 entry(0x1ae3, "cell_copy_loop")
 comment(0x1b57, "always branch TODO: 99% confident", inline=True)
