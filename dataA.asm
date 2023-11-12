@@ -56,7 +56,7 @@ developer_flags                                     = $1103
 initialise_level                                    = $1140
 something23_TODO                                    = $12bb
 something24_TODO                                    = $12da
-some_data_shared_between_g_and_dataA                = $132b
+something23_TODO_executing_flag                     = $132b
 pending_toolbar_colour                              = $175d
 toolbar_colour                                      = $175e
 pending_gameplay_area_colour                        = $175f
@@ -268,7 +268,7 @@ loop_c3bd4
     jsr initialise_level                                              ; 3be1: 20 40 11     @.
 ; $3be4 referenced 1 time by $3b17
 sub_c3be4
-    lda some_data_shared_between_g_and_dataA                          ; 3be4: ad 2b 13    .+.
+    lda something23_TODO_executing_flag                               ; 3be4: ad 2b 13    .+.
     bne c3bec                                                         ; 3be7: d0 03       ..
     jmp c3c77                                                         ; 3be9: 4c 77 3c    Lw<
 
@@ -436,7 +436,7 @@ c3cfb
     sta l0980                                                         ; 3d05: 8d 80 09    ...
     lda #$cb                                                          ; 3d08: a9 cb       ..
     sta l09ac                                                         ; 3d0a: 8d ac 09    ...
-    lda some_data_shared_between_g_and_dataA                          ; 3d0d: ad 2b 13    .+.
+    lda something23_TODO_executing_flag                               ; 3d0d: ad 2b 13    .+.
     bne c3d20                                                         ; 3d10: d0 0e       ..
     ldx #0                                                            ; 3d12: a2 00       ..
     ldy #4                                                            ; 3d14: a0 04       ..
@@ -552,7 +552,7 @@ c3def
 
 ; $3dfc referenced 1 time by $3b1a
 sub_c3dfc
-    lda some_data_shared_between_g_and_dataA                          ; 3dfc: ad 2b 13    .+.
+    lda something23_TODO_executing_flag                               ; 3dfc: ad 2b 13    .+.
     beq c3e6c                                                         ; 3dff: f0 6b       .k
     lda previous_level                                                ; 3e01: a5 51       .Q
     cmp desired_level                                                 ; 3e03: c5 31       .1
@@ -707,7 +707,7 @@ sub_c3f02
     ldx #$1a                                                          ; 3f09: a2 1a       ..
     ldy #$0e                                                          ; 3f0b: a0 0e       ..
     jsr initialise_brazier_and_fire                                   ; 3f0d: 20 88 19     ..
-    lda some_data_shared_between_g_and_dataA                          ; 3f10: ad 2b 13    .+.
+    lda something23_TODO_executing_flag                               ; 3f10: ad 2b 13    .+.
     beq c3f52                                                         ; 3f13: f0 3d       .=
     lda #$d3                                                          ; 3f15: a9 d3       ..
     sta l2ee9                                                         ; 3f17: 8d e9 2e    ...
@@ -902,7 +902,7 @@ sub_c407f
     ldy #$16                                                          ; 4090: a0 16       ..
     lda #5                                                            ; 4092: a9 05       ..
     jsr something14_TODO                                              ; 4094: 20 10 1a     ..
-    lda some_data_shared_between_g_and_dataA                          ; 4097: ad 2b 13    .+.
+    lda something23_TODO_executing_flag                               ; 4097: ad 2b 13    .+.
     beq c40e4                                                         ; 409a: f0 48       .H
     lda desired_level                                                 ; 409c: a5 31       .1
     cmp previous_level                                                ; 409e: c5 51       .Q
@@ -1247,7 +1247,7 @@ sub_c42f8
     lda #4                                                            ; 4306: a9 04       ..
     inx                                                               ; 4308: e8          .
     jsr initialise_brazier_and_fire                                   ; 4309: 20 88 19     ..
-    lda some_data_shared_between_g_and_dataA                          ; 430c: ad 2b 13    .+.
+    lda something23_TODO_executing_flag                               ; 430c: ad 2b 13    .+.
     beq c4358                                                         ; 430f: f0 47       .G
     lda previous_level                                                ; 4311: a5 51       .Q
     cmp desired_level                                                 ; 4313: c5 31       .1
@@ -1681,7 +1681,7 @@ pydis_end
 ;     l09be:                                                  6
 ;     l0a71:                                                  6
 ;     initialise_level:                                       6
-;     some_data_shared_between_g_and_dataA:                   6
+;     something23_TODO_executing_flag:                        6
 ;     draw_rope:                                              6
 ;     previous_level:                                         5
 ;     l0a73:                                                  5

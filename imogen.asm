@@ -253,7 +253,7 @@ something23_TODO = sub_c12ba+1
     lda #<osfile                                                      ; 1326: a9 dd       ..
     sta l0001                                                         ; 1328: 85 01       ..
 .sub_c132a
-some_data_shared_between_g_and_dataA = sub_c132a+1
+something23_TODO_executing_flag = sub_c132a+1
     lda #>osfile                                                      ; 132a: a9 ff       ..
     sta l0002                                                         ; 132c: 85 02       ..
     lda #jmp_indirect_opcode                                          ; 132e: a9 6c       .l

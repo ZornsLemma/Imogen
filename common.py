@@ -128,7 +128,7 @@ label(0x1140, "initialise_level")
 label(0x3adf, "level_header_data")
 expr_label(0x3ae0, make_add("level_header_data", "1"))
 
-label(0x132b, "some_data_shared_between_g_and_dataA")
+label(0x132b, "something23_TODO_executing_flag") # TODO: speculation, but I think this might be used to prevent infinite recursion - it appears to be set to $ff only inside something23_TODO while calling second_level_handler_ptr, then gets reset to 0.
 
 # TODO: Speculative but feels quite plausible looking at the code - 'current' and 'desirable' is extra-speculative
 # Room index is within the level, 0-(n-1) if the level has n rooms

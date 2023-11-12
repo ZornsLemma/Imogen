@@ -705,12 +705,12 @@ skip_developer_mode_code1
 ; TODO: This is called from level-specific machine code, e.g. see dataA.asm
 something23_TODO
     lda #$ff                                                          ; 13ec: a9 ff       ..  :12bb[1]
-    sta some_data_shared_between_g_and_dataA                          ; 13ee: 8d 2b 13    .+. :12bd[1]
+    sta something23_TODO_executing_flag                               ; 13ee: 8d 2b 13    .+. :12bd[1]
     ldx second_level_handler_ptr                                      ; 13f1: ae d9 3a    ..: :12c0[1]
     ldy second_level_handler_ptr + 1                                  ; 13f4: ac da 3a    ..: :12c3[1]
     jsr jmp_yx                                                        ; 13f7: 20 66 19     f. :12c6[1]
     lda #0                                                            ; 13fa: a9 00       ..  :12c9[1]
-    sta some_data_shared_between_g_and_dataA                          ; 13fc: 8d 2b 13    .+. :12cb[1]
+    sta something23_TODO_executing_flag                               ; 13fc: 8d 2b 13    .+. :12cb[1]
     lda desired_level                                                 ; 13ff: a5 31       .1  :12ce[1]
     cmp previous_level                                                ; 1401: c5 51       .Q  :12d0[1]
     beq return1                                                       ; 1403: f0 05       ..  :12d2[1]
@@ -756,7 +756,7 @@ c131e
     sta vsync_counter                                                 ; 1458: 8d 8b 17    ... :1327[1]
     rts                                                               ; 145b: 60          `   :132a[1]
 
-some_data_shared_between_g_and_dataA
+something23_TODO_executing_flag
     !byte 0                                                           ; 145c: 00          .   :132b[1]
 
 ; *************************************************************************************
@@ -1915,7 +1915,7 @@ initialise_brazier_and_fire
     pha                                                               ; 1abd: 48          H   :198c[1]
     tya                                                               ; 1abe: 98          .   :198d[1]
     pha                                                               ; 1abf: 48          H   :198e[1]
-    lda some_data_shared_between_g_and_dataA                          ; 1ac0: ad 2b 13    .+. :198f[1]
+    lda something23_TODO_executing_flag                               ; 1ac0: ad 2b 13    .+. :198f[1]
     beq c19e5                                                         ; 1ac3: f0 51       .Q  :1992[1]
     lda desired_room_index                                            ; 1ac5: a5 30       .0  :1994[1]
     cmp current_room_index                                            ; 1ac7: cd ba 1a    ... :1996[1]
@@ -2009,7 +2009,7 @@ something14_TODO
     lda desired_room_index                                            ; 1b61: a5 30       .0  :1a30[1]
     cmp current_room_index                                            ; 1b63: cd ba 1a    ... :1a32[1]
     bne c1a9e                                                         ; 1b66: d0 67       .g  :1a35[1]
-    lda some_data_shared_between_g_and_dataA                          ; 1b68: ad 2b 13    .+. :1a37[1]
+    lda something23_TODO_executing_flag                               ; 1b68: ad 2b 13    .+. :1a37[1]
     bne c1a59                                                         ; 1b6b: d0 1d       ..  :1a3a[1]
     ldx l1aae                                                         ; 1b6d: ae ae 1a    ... :1a3c[1]
     ldy #$0b                                                          ; 1b70: a0 0b       ..  :1a3f[1]
