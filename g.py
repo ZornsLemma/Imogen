@@ -2383,13 +2383,39 @@ expr(0x1bf7, make_hi("bytes_per_cell"))
 comment(0x1bed, "off_screen_address += bytes_per_cell")
 comment(0x1bfc, "cell_screen_address += bytes_per_character_row")
 
-label(0x1b8d, "draw_left_facing_wall_local")
-label(0x1c9d, "draw_left_facing_wall")
+label(0x1b8d, "draw_left_wall_local")
+comment(0x1c9d, """*************************************************************************************
+
+Draw left facing wall, including corner pieces
+
+On Entry:
+    (X,Y): cell coordinates
+
+*************************************************************************************""")
+label(0x1c9d, "draw_left_wall")
+comment(0x1ca2, "draw corner sprite")
+label(0x1cda, "move_to_next_row2")
+expr(0x1cdd, "game_area_height_cells")
+comment(0x1ca8, "no corner found, so the cell Y position is used to determine the tile to use")
+label(0x1cee, "not_corner")
+label(0x1ca8, "normal_left_wall_no_corner")
+label(0x1cbb, "copy_wall_tile_loop")
+comment(0x1cbd, "just copy the leftmost six pixels")
+label(0x1cc8, "move_up_and_left_to_check_if_wall_continues2")
+binary(0x1cbe)
 label(0x1cf3, "find_corner_spriteid")
-label(0x1d15, "found_corner_spriteid")
+label(0x1d0b, "found_corner_spriteid")
 label(0x1c4e, "normal_right_wall_not_corner")
 expr(0x1c56, make_lo("tile_wall_right0"))
 expr(0x1c5c, make_hi("tile_wall_right0"))
+comment(0x1c15, """*************************************************************************************
+
+Draw ceiling
+
+On Entry:
+    (X,Y): cell coordinates
+
+*************************************************************************************""")
 label(0x1c15, "draw_ceiling")
 
 comment(0x1c4e, "no corner found, so the cell Y position is used to determine the tile to use")
@@ -2423,7 +2449,7 @@ expr(0x1c26, make_hi("tile_ceiling0"))
 expr(0x1cb0, make_lo("tile_wall_left0"))
 expr(0x1cb6, make_hi("tile_wall_left0"))
 label(0x1c2d, "copy_ceiling_tile_loop")
-label(0x1c6e, "move_up_and_left_to_check_if_wall_continues")
+label(0x1c6e, "move_up_and_left_to_check_if_wall_continues1")
 label(0x1c98, "finished_wall")
 comment(0x1c8f, "draw final corner")
 label(0x1c82, "not_top_corner")
@@ -2432,9 +2458,7 @@ decimal(0x1c85)
 
 comment(0x1c63, "just copy the rightmost six pixels")
 binary(0x1c64)
-comment(0x1ca8, "TODO: Just based on partial_plot_across_row_boundary's existence and the look of the bitmaps, I am guessing this is similar but handles plots across column boundaries.")
 
-# TODO: See partial_plot_across_row_boundary - I think there are 4 sets of two bitmap pairs here for that, and it looks like several additional bitmaps I might as well pick up as well
 character_bitmap(0x1d19, "tile_floor0_top")
 character_bitmap(0x1d21, "tile_floor0_bottom")
 character_bitmap(0x1d29, "tile_floor1_top")

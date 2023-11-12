@@ -2225,8 +2225,8 @@ skip_high_byte2
 draw_right_facing_wall_local
     jmp draw_right_facing_wall                                        ; 1cbb: 4c 3b 1c    L;. :1b8a[1]
 
-draw_left_facing_wall_local
-    jmp draw_left_facing_wall                                         ; 1cbe: 4c 9d 1c    L.. :1b8d[1]
+draw_left_wall_local
+    jmp draw_left_wall                                                ; 1cbe: 4c 9d 1c    L.. :1b8d[1]
 
 ; TODO: This is called from level-specific machine code, e.g. see dataA.asm
 ; *************************************************************************************
@@ -2256,7 +2256,7 @@ draw_columns_loop
     jsr read_collision_map_value_for_xy                               ; 1cda: 20 fa 1e     .. :1ba9[1]
     inx                                                               ; 1cdd: e8          .   :1bac[1]
     cmp #3                                                            ; 1cde: c9 03       ..  :1bad[1]
-    bne draw_left_facing_wall_local                                   ; 1ce0: d0 dc       ..  :1baf[1]
+    bne draw_left_wall_local                                          ; 1ce0: d0 dc       ..  :1baf[1]
     dey                                                               ; 1ce2: 88          .   :1bb1[1]
     jsr read_collision_map_value_for_xy                               ; 1ce3: 20 fa 1e     .. :1bb2[1]
     iny                                                               ; 1ce6: c8          .   :1bb5[1]
@@ -2336,6 +2336,14 @@ draw_floor_bottom_loop
     ldy cell_y                                                        ; 1d41: a4 71       .q  :1c10[1]
     jmp next_cell_over                                                ; 1d43: 4c c3 1b    L.. :1c12[1]
 
+; *************************************************************************************
+; 
+; Draw ceiling
+; 
+; On Entry:
+;     (X,Y): cell coordinates
+; 
+; *************************************************************************************
 draw_ceiling
     jsr get_screen_address_from_cell_xy                               ; 1d46: 20 66 1b     f. :1c15[1]
     txa                                                               ; 1d49: 8a          .   :1c18[1]
@@ -2369,7 +2377,7 @@ draw_right_facing_wall
     lda sprite_number                                                 ; 1d76: a5 16       ..  :1c45[1]
     jsr draw_sprite_a_at_cell_xy                                      ; 1d78: 20 4c 1f     L. :1c47[1]
     dex                                                               ; 1d7b: ca          .   :1c4a[1]
-    jmp move_up_and_left_to_check_if_wall_continues                   ; 1d7c: 4c 6e 1c    Ln. :1c4b[1]
+    jmp move_up_and_left_to_check_if_wall_continues1                  ; 1d7c: 4c 6e 1c    Ln. :1c4b[1]
 
 ; no corner found, so the cell Y position is used to determine the tile to use
 normal_right_wall_not_corner
@@ -2395,7 +2403,7 @@ copy_right_wall_tile_loop
     dey                                                               ; 1d9a: 88          .   :1c69[1]
     bpl copy_right_wall_tile_loop                                     ; 1d9b: 10 f5       ..  :1c6a[1]
     ldy cell_y                                                        ; 1d9d: a4 71       .q  :1c6c[1]
-move_up_and_left_to_check_if_wall_continues
+move_up_and_left_to_check_if_wall_continues1
     inx                                                               ; 1d9f: e8          .   :1c6e[1]
     dey                                                               ; 1da0: 88          .   :1c6f[1]
     bmi not_top_corner                                                ; 1da1: 30 10       0.  :1c70[1]
@@ -2424,15 +2432,23 @@ finished_wall
     dey                                                               ; 1dca: 88          .   :1c99[1]
     jmp next_cell_over                                                ; 1dcb: 4c c3 1b    L.. :1c9a[1]
 
-draw_left_facing_wall
+; *************************************************************************************
+; 
+; Draw left facing wall, including corner pieces
+; 
+; On Entry:
+;     (X,Y): cell coordinates
+; 
+; *************************************************************************************
+draw_left_wall
     jsr find_corner_spriteid                                          ; 1dce: 20 f3 1c     .. :1c9d[1]
-    beq c1ca8                                                         ; 1dd1: f0 06       ..  :1ca0[1]
+    beq normal_left_wall_no_corner                                    ; 1dd1: f0 06       ..  :1ca0[1]
+; draw corner sprite
     jsr draw_sprite_a_at_cell_xy                                      ; 1dd3: 20 4c 1f     L. :1ca2[1]
-    jmp c1cc8                                                         ; 1dd6: 4c c8 1c    L.. :1ca5[1]
+    jmp move_up_and_left_to_check_if_wall_continues2                  ; 1dd6: 4c c8 1c    L.. :1ca5[1]
 
-; TODO: Just based on partial_plot_across_row_boundary's existence and the look of the
-; bitmaps, I am guessing this is similar but handles plots across column boundaries.
-c1ca8
+; no corner found, so the cell Y position is used to determine the tile to use
+normal_left_wall_no_corner
     tya                                                               ; 1dd9: 98          .   :1ca8[1]
     and #3                                                            ; 1dda: 29 03       ).  :1ca9[1]
     asl                                                               ; 1ddc: 0a          .   :1cab[1]
@@ -2445,38 +2461,39 @@ c1ca8
     adc #>tile_wall_left0                                             ; 1de6: 69 1d       i.  :1cb5[1]
     sta off_screen_address_high                                       ; 1de8: 85 7b       .{  :1cb7[1]
     ldy #7                                                            ; 1dea: a0 07       ..  :1cb9[1]
-loop_c1cbb
+copy_wall_tile_loop
     lda (cell_screen_address_low),y                                   ; 1dec: b1 76       .v  :1cbb[1]
-    and #3                                                            ; 1dee: 29 03       ).  :1cbd[1]
+; just copy the leftmost six pixels
+    and #%00000011                                                    ; 1dee: 29 03       ).  :1cbd[1]
     ora (off_screen_address_low),y                                    ; 1df0: 11 7a       .z  :1cbf[1]
     sta (cell_screen_address_low),y                                   ; 1df2: 91 76       .v  :1cc1[1]
     dey                                                               ; 1df4: 88          .   :1cc3[1]
-    bpl loop_c1cbb                                                    ; 1df5: 10 f5       ..  :1cc4[1]
+    bpl copy_wall_tile_loop                                           ; 1df5: 10 f5       ..  :1cc4[1]
     ldy cell_y                                                        ; 1df7: a4 71       .q  :1cc6[1]
-c1cc8
+move_up_and_left_to_check_if_wall_continues2
     dex                                                               ; 1df9: ca          .   :1cc8[1]
     dey                                                               ; 1dfa: 88          .   :1cc9[1]
-    bmi c1cda                                                         ; 1dfb: 30 0e       0.  :1cca[1]
+    bmi move_to_next_row2                                             ; 1dfb: 30 0e       0.  :1cca[1]
     jsr read_collision_map_value_for_xy                               ; 1dfd: 20 fa 1e     .. :1ccc[1]
     cmp #3                                                            ; 1e00: c9 03       ..  :1ccf[1]
-    bne c1cda                                                         ; 1e02: d0 07       ..  :1cd1[1]
+    bne move_to_next_row2                                             ; 1e02: d0 07       ..  :1cd1[1]
     lda #spriteid_corner_top_right                                    ; 1e04: a9 2f       ./  :1cd3[1]
     inx                                                               ; 1e06: e8          .   :1cd5[1]
     jsr draw_sprite_a_at_cell_xy                                      ; 1e07: 20 4c 1f     L. :1cd6[1]
     dex                                                               ; 1e0a: ca          .   :1cd9[1]
-c1cda
+move_to_next_row2
     iny                                                               ; 1e0b: c8          .   :1cda[1]
     iny                                                               ; 1e0c: c8          .   :1cdb[1]
-    cpy #$18                                                          ; 1e0d: c0 18       ..  :1cdc[1]
-    bcs c1cee                                                         ; 1e0f: b0 0e       ..  :1cde[1]
+    cpy #game_area_height_cells                                       ; 1e0d: c0 18       ..  :1cdc[1]
+    bcs not_corner                                                    ; 1e0f: b0 0e       ..  :1cde[1]
     jsr read_collision_map_value_for_xy                               ; 1e11: 20 fa 1e     .. :1ce0[1]
     cmp #3                                                            ; 1e14: c9 03       ..  :1ce3[1]
-    bne c1cee                                                         ; 1e16: d0 07       ..  :1ce5[1]
+    bne not_corner                                                    ; 1e16: d0 07       ..  :1ce5[1]
     lda #spriteid_corner_bottom_right                                 ; 1e18: a9 2e       ..  :1ce7[1]
     inx                                                               ; 1e1a: e8          .   :1ce9[1]
     jsr draw_sprite_a_at_cell_xy                                      ; 1e1b: 20 4c 1f     L. :1cea[1]
     dex                                                               ; 1e1e: ca          .   :1ced[1]
-c1cee
+not_corner
     inx                                                               ; 1e1f: e8          .   :1cee[1]
     dey                                                               ; 1e20: 88          .   :1cef[1]
     jmp next_cell_over                                                ; 1e21: 4c c3 1b    L.. :1cf0[1]
@@ -2495,12 +2512,11 @@ find_corner_spriteid
     jsr read_collision_map_value_for_xy                               ; 1e36: 20 fa 1e     .. :1d05[1]
     dey                                                               ; 1e39: 88          .   :1d08[1]
     cmp #3                                                            ; 1e3a: c9 03       ..  :1d09[1]
+found_corner_spriteid
     bne c1d16                                                         ; 1e3c: d0 09       ..  :1d0b[1]
     sty cell_y                                                        ; 1e3e: 84 71       .q  :1d0d[1]
     jsr get_screen_address_from_cell_xy                               ; 1e40: 20 66 1b     f. :1d0f[1]
     lda #spriteid_one_pixel_masked_out                                ; 1e43: a9 00       ..  :1d12[1]
-sub_c1d14
-found_corner_spriteid = sub_c1d14+1
     sta sprite_number                                                 ; 1e45: 85 16       ..  :1d14[1]
 c1d16
     lda sprite_number                                                 ; 1e47: a5 16       ..  :1d16[1]
@@ -8224,10 +8240,6 @@ pydis_end
 ;     c1a59
 ;     c1a8f
 ;     c1a9e
-;     c1ca8
-;     c1cc8
-;     c1cda
-;     c1cee
 ;     c1d16
 ;     c1f06
 ;     c1f96
@@ -8490,7 +8502,6 @@ pydis_end
 ;     loop_c1921
 ;     loop_c193d
 ;     loop_c1957
-;     loop_c1cbb
 ;     loop_c1df7
 ;     loop_c1fe1
 ;     loop_c1ff5
@@ -8520,7 +8531,6 @@ pydis_end
 ;     loop_c3f87
 ;     sub_c04cb
 ;     sub_c1278
-;     sub_c1d14
 ;     sub_c2157
 ;     sub_c22ae
 ;     sub_c22ee
