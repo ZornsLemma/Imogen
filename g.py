@@ -2249,7 +2249,9 @@ expr(0x420, make_hi("eight_entry_table2"))
 expr(0x4d6, make_lo("eight_entry_table2"))
 expr(0x4da, make_hi("eight_entry_table2"))
 
-comment(0x1abb, """Copy tiles (8x8 pixels, eight bytes of memory) in memory to a rectangular area of cells on screen
+comment(0x1abb, """*************************************************************************************
+
+Copy tiles (one tile is a bitmap of 8x8 pixels, eight bytes of memory) from off screen memory to a rectangular area of cells on screen
 
 On Entry:
     X and Y registers specify top left cell
@@ -2261,7 +2263,9 @@ On Entry:
         1: simple copy
         power of two: choose random tile offsets less than the power of two
         negative: strip off top bit, and use the result as the length of a pattern to cycle around
-    value_to_write_to_collision_map: if non-negative, write the value into the collision map using the same rectangle of cells""")
+    value_to_write_to_collision_map: if non-negative, write the value into the collision map using the same rectangle of cells
+
+*************************************************************************************""")
 comment(0x1b49, "C is clear because beq above not taken", inline=True)
 comment(0x1af0, "Subtract 1; note C cleared before beq", inline=True)
 label(0x1b14, "get_final_off_screen_tile_address")
