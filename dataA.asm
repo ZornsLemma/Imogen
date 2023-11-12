@@ -4,6 +4,8 @@ game_area_height_cells   = 24
 game_area_width_cells    = 40
 last_level_letter        = 81
 opcode_jmp               = 76
+spriteid_ball            = 59
+spriteid_mouse           = 200
 spriteid_saxophone       = 211
 spriteid_table           = 222
 
@@ -296,7 +298,7 @@ c3bf7
     ldy #$0b                                                          ; 3c10: a0 0b       ..
     lda #$fe                                                          ; 3c12: a9 fe       ..
     sta l003b                                                         ; 3c14: 85 3b       .;
-    lda #$c8                                                          ; 3c16: a9 c8       ..
+    lda #spriteid_mouse                                               ; 3c16: a9 c8       ..
     jsr draw_sprite_a_at_cell_xy                                      ; 3c18: 20 4c 1f     L.
     dex                                                               ; 3c1b: ca          .
     dey                                                               ; 3c1c: 88          .
@@ -314,7 +316,7 @@ c3bf7
     ldy #$0b                                                          ; 3c36: a0 0b       ..
     lda #$fe                                                          ; 3c38: a9 fe       ..
     sta l003b                                                         ; 3c3a: 85 3b       .;
-    lda #$c8                                                          ; 3c3c: a9 c8       ..
+    lda #spriteid_mouse                                               ; 3c3c: a9 c8       ..
     jsr draw_sprite_a_at_cell_xy                                      ; 3c3e: 20 4c 1f     L.
     dex                                                               ; 3c41: ca          .
     dey                                                               ; 3c42: 88          .
@@ -1218,7 +1220,7 @@ room_4_code
     jsr draw_floor_walls_and_ceiling_around_solid_rock                ; 42cd: 20 90 1b     ..
     ldx #$14                                                          ; 42d0: a2 14       ..
     ldy #$0c                                                          ; 42d2: a0 0c       ..
-    lda #$3b ; ';'                                                    ; 42d4: a9 3b       .;
+    lda #spriteid_ball                                                ; 42d4: a9 3b       .;
     jsr draw_sprite_a_at_cell_xy                                      ; 42d6: 20 4c 1f     L.
     lda #3                                                            ; 42d9: a9 03       ..
     jsr write_a_single_value_to_cell_in_collision_map                 ; 42db: 20 bb 1e     ..
@@ -1980,6 +1982,12 @@ pydis_end
 }
 !if (sprite_data - level_data) != $09d1 {
     !error "Assertion failed: sprite_data - level_data == $09d1"
+}
+!if (spriteid_ball) != $3b {
+    !error "Assertion failed: spriteid_ball == $3b"
+}
+!if (spriteid_mouse) != $c8 {
+    !error "Assertion failed: spriteid_mouse == $c8"
 }
 !if (spriteid_saxophone) != $d3 {
     !error "Assertion failed: spriteid_saxophone == $d3"

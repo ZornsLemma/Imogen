@@ -5,6 +5,8 @@ from common import *
 acorn.bbc()
 
 sprite_dict = {
+    0x3b: "spriteid_ball",
+    0xc8: "spriteid_mouse",
     0xd3: "spriteid_saxophone",
     0xde: "spriteid_table",
 }
