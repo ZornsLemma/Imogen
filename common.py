@@ -101,7 +101,7 @@ label_word(0x3ad7, "level_init_after_load_handler_ptr")
 label_word(0x3ad9, "second_level_handler_ptr") # TODO: poor name
 label_word(0x3adb, "level_name_ptr") # TODO: poor name
 
-label(0x1988, "something13_TODO")
+label(0x1988, "initialise_brazier_and_fire")
 label(0x1a10, "something14_TODO")
 label(0x2b87, "insert_character_menu_item_into_toolbar")
 label(0x2be0, "remove_item_from_toolbar_menu")

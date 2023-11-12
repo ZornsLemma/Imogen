@@ -1895,8 +1895,19 @@ sprdata_filename
     !text "sprdata", $0d                                              ; 1ab1: 73 70 72... spr :1980[1]
 
 ; TODO: this is used by e.g. dataA
-something13_TODO
-    sta l1a0f                                                         ; 1ab9: 8d 0f 1a    ... :1988[1]
+; *************************************************************************************
+; 
+; Initialise a brazier and associated fire.
+; Two objects are initialised, the brazier and the fire. It chooses a direction based
+; on whether
+; a wall is to the left or right. It sets a random animation state and draws them.
+; 
+; On Entry:
+;     A: object index for brazier
+; 
+; *************************************************************************************
+initialise_brazier_and_fire
+    sta fire_object_index                                             ; 1ab9: 8d 0f 1a    ... :1988[1]
     txa                                                               ; 1abc: 8a          .   :198b[1]
     pha                                                               ; 1abd: 48          H   :198c[1]
     tya                                                               ; 1abe: 98          .   :198d[1]
@@ -1905,26 +1916,31 @@ something13_TODO
     beq c19e5                                                         ; 1ac3: f0 51       .Q  :1992[1]
     lda desired_room_index                                            ; 1ac5: a5 30       .0  :1994[1]
     cmp current_room_index                                            ; 1ac7: cd ba 1a    ... :1996[1]
-    bne c19e2                                                         ; 1aca: d0 47       .G  :1999[1]
+    bne done_with_brazier_and_fire                                    ; 1aca: d0 47       .G  :1999[1]
     jsr read_collision_map_value_for_xy                               ; 1acc: 20 fa 1e     .. :199b[1]
     cmp #3                                                            ; 1acf: c9 03       ..  :199e[1]
-    beq c19b9                                                         ; 1ad1: f0 17       ..  :19a0[1]
+    beq brazier_position_already_blocked_so_look_left                 ; 1ad1: f0 17       ..  :19a0[1]
+; block positions and draw brazier
     lda #3                                                            ; 1ad3: a9 03       ..  :19a2[1]
     jsr write_a_single_value_to_cell_in_collision_map                 ; 1ad5: 20 bb 1e     .. :19a4[1]
     iny                                                               ; 1ad8: c8          .   :19a7[1]
     lda #spriteid_brazier                                             ; 1ad9: a9 3a       .:  :19a8[1]
     jsr draw_sprite_a_at_cell_xy                                      ; 1adb: 20 4c 1f     L. :19aa[1]
     dey                                                               ; 1ade: 88          .   :19ad[1]
+; increment object index past the brazier to be the fire
     inx                                                               ; 1adf: e8          .   :19ae[1]
-    lda l1a0f                                                         ; 1ae0: ad 0f 1a    ... :19af[1]
+    lda fire_object_index                                             ; 1ae0: ad 0f 1a    ... :19af[1]
+; set the fire object position
     jsr set_object_position_from_cell_xy                              ; 1ae3: 20 5d 1f     ]. :19b2[1]
+; fire looks right
     lda #1                                                            ; 1ae6: a9 01       ..  :19b5[1]
-    bne c19d4                                                         ; 1ae8: d0 1b       ..  :19b7[1]   ; ALWAYS branch
-c19b9
+    bne set_fire_direction                                            ; 1ae8: d0 1b       ..  :19b7[1]   ; ALWAYS branch
+brazier_position_already_blocked_so_look_left
     dex                                                               ; 1aea: ca          .   :19b9[1]
     lda #3                                                            ; 1aeb: a9 03       ..  :19ba[1]
     jsr write_a_single_value_to_cell_in_collision_map                 ; 1aed: 20 bb 1e     .. :19bc[1]
     inx                                                               ; 1af0: e8          .   :19bf[1]
+; draw brazier reflected to look left
     lda #$ff                                                          ; 1af1: a9 ff       ..  :19c0[1]
     sta sprite_reflect_flag                                           ; 1af3: 85 1d       ..  :19c2[1]
     iny                                                               ; 1af5: c8          .   :19c4[1]
@@ -1932,43 +1948,45 @@ c19b9
     jsr draw_sprite_a_at_cell_xy                                      ; 1af8: 20 4c 1f     L. :19c7[1]
     dey                                                               ; 1afb: 88          .   :19ca[1]
     dex                                                               ; 1afc: ca          .   :19cb[1]
-    lda l1a0f                                                         ; 1afd: ad 0f 1a    ... :19cc[1]
+; set fire object position
+    lda fire_object_index                                             ; 1afd: ad 0f 1a    ... :19cc[1]
     jsr set_object_position_from_cell_xy                              ; 1b00: 20 5d 1f     ]. :19cf[1]
+; fire looks left
     lda #$ff                                                          ; 1b03: a9 ff       ..  :19d2[1]
-c19d4
-    ldx l1a0f                                                         ; 1b05: ae 0f 1a    ... :19d4[1]
+set_fire_direction
+    ldx fire_object_index                                             ; 1b05: ae 0f 1a    ... :19d4[1]
     sta object_direction,x                                            ; 1b08: 9d be 09    ... :19d7[1]
     lda #7                                                            ; 1b0b: a9 07       ..  :19da[1]
     jsr get_random_number_up_to_a                                     ; 1b0d: 20 a6 18     .. :19dc[1]
     sta object_current_index_in_animation,x                           ; 1b10: 9d d4 09    ... :19df[1]
-c19e2
-    jmp c19f2                                                         ; 1b13: 4c f2 19    L.. :19e2[1]
+done_with_brazier_and_fire
+    jmp changing_rooms1                                               ; 1b13: 4c f2 19    L.. :19e2[1]
 
 c19e5
     lda desired_room_index                                            ; 1b16: a5 30       .0  :19e5[1]
     cmp current_room_index                                            ; 1b18: cd ba 1a    ... :19e7[1]
-    bne c19f2                                                         ; 1b1b: d0 06       ..  :19ea[1]
-    ldx l1a0f                                                         ; 1b1d: ae 0f 1a    ... :19ec[1]
+    bne changing_rooms1                                               ; 1b1b: d0 06       ..  :19ea[1]
+    ldx fire_object_index                                             ; 1b1d: ae 0f 1a    ... :19ec[1]
     inc object_current_index_in_animation,x                           ; 1b20: fe d4 09    ... :19ef[1]
-c19f2
+changing_rooms1
     lda desired_room_index                                            ; 1b23: a5 30       .0  :19f2[1]
     cmp current_room_index                                            ; 1b25: cd ba 1a    ... :19f4[1]
-    bne c1a07                                                         ; 1b28: d0 0e       ..  :19f7[1]
-    ldx l1a0f                                                         ; 1b2a: ae 0f 1a    ... :19f9[1]
+    bne changing_rooms2                                               ; 1b28: d0 0e       ..  :19f7[1]
+    ldx fire_object_index                                             ; 1b2a: ae 0f 1a    ... :19f9[1]
     lda object_current_index_in_animation,x                           ; 1b2d: bd d4 09    ... :19fc[1]
     and #7                                                            ; 1b30: 29 07       ).  :19ff[1]
     clc                                                               ; 1b32: 18          .   :1a01[1]
-    adc #$3c ; '<'                                                    ; 1b33: 69 3c       i<  :1a02[1]
+    adc #spriteid_fire1                                               ; 1b33: 69 3c       i<  :1a02[1]
     sta object_spriteid,x                                             ; 1b35: 9d a8 09    ... :1a04[1]
-c1a07
+changing_rooms2
     pla                                                               ; 1b38: 68          h   :1a07[1]
     tay                                                               ; 1b39: a8          .   :1a08[1]
     pla                                                               ; 1b3a: 68          h   :1a09[1]
     tax                                                               ; 1b3b: aa          .   :1a0a[1]
-    lda l1a0f                                                         ; 1b3c: ad 0f 1a    ... :1a0b[1]
+    lda fire_object_index                                             ; 1b3c: ad 0f 1a    ... :1a0b[1]
     rts                                                               ; 1b3f: 60          `   :1a0e[1]
 
-l1a0f
+fire_object_index
     !byte 0                                                           ; 1b40: 00          .   :1a0f[1]
 
 ; TODO: this is used by e.g. dataA
@@ -8239,12 +8257,7 @@ pydis_end
 ;     c16aa
 ;     c1937
 ;     c1951
-;     c19b9
-;     c19d4
-;     c19e2
 ;     c19e5
-;     c19f2
-;     c1a07
 ;     c1a59
 ;     c1a8f
 ;     c1a9e
@@ -8466,7 +8479,6 @@ pydis_end
 ;     l012e
 ;     l09eb
 ;     l0b00
-;     l1a0f
 ;     l1aae
 ;     l1aaf
 ;     l1ab0
@@ -9364,6 +9376,9 @@ pydis_end
 }
 !if (spriteid_fingertip_tile_restoration) != $1e {
     !error "Assertion failed: spriteid_fingertip_tile_restoration == $1e"
+}
+!if (spriteid_fire1) != $3c {
+    !error "Assertion failed: spriteid_fire1 == $3c"
 }
 !if (spriteid_icodata_box) != $09 {
     !error "Assertion failed: spriteid_icodata_box == $09"

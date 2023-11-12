@@ -2451,6 +2451,17 @@ comment(0x1be2, "copy tile lower six rows to screen")
 comment(0x1c07, "copy tile upper 6 rows to screen")
 comment(0x1c10, "restore Y")
 
+comment(0x1988, """*************************************************************************************
+
+Initialise a brazier and associated fire.
+Two objects are initialised, the brazier and the fire. It chooses a direction based on whether
+a wall is to the left or right. It sets a random animation state and draws them.
+
+On Entry:
+    A: object index for brazier
+
+*************************************************************************************""")
+
 #comment(0x1bca, "TODO: This is looking like it takes the low two bits of A to get a value 0-3 inclusive. It then multiplies that by sixteen, selecting one of four possible two-character bitmap pairs. It plots the bottom six rows of the first bitmap at (X,Y-1) and the top six rows of the second bitmap at (X,Y). I'm sure I've got the details wrong, but something like that.")
 entry(0x1bca, "draw_floor")
 expr(0x1bd9, make_lo("tile_floor0_top"))
@@ -2469,6 +2480,21 @@ decimal(0x1c85)
 
 comment(0x1c63, "just copy the rightmost six pixels")
 binary(0x1c64)
+
+expr(0x1a03, "spriteid_fire1")
+label(0x19f2, "changing_rooms1")
+label(0x1a07, "changing_rooms2")
+label(0x1a0f, "fire_object_index")
+label(0x19b9, "brazier_position_already_blocked_so_look_left")
+comment(0x19c0, "draw brazier reflected to look left")
+comment(0x19cc, "set fire object position")
+comment(0x19a2, "block positions and draw brazier")
+comment(0x19ae, "increment object index past the brazier to be the fire")
+comment(0x19b2, "set the fire object position")
+comment(0x19b5, "fire looks right")
+comment(0x19d2, "fire looks left")
+label(0x19e2, "done_with_brazier_and_fire")
+label(0x19d4, "set_fire_direction")
 
 character_bitmap(0x1d19, "tile_floor0_top")
 character_bitmap(0x1d21, "tile_floor0_bottom")
