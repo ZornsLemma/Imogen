@@ -2274,6 +2274,11 @@ expr(0x1c04, make_hi("bytes_per_character_row"))
 blank(0x1c07)
 comment(0x1bca, "TODO: This is looking like it takes the low two bits of A to get a value 0-3 inclusive. It then multiplies that by sixteen, selecting one of four possible two-character bitmap pairs. It plots the bottom six rows of the first bitmap at (X,Y-1) and the top six rows of the second bitmap at (X,Y). I'm sure I've got the details wrong, but something like that.")
 entry(0x1bca, "partial_plot_across_row_boundary") # TODO: poor name
+expr(0x1bd9, make_lo("character_bitmap_1d19"))
+expr(0x1bdf, make_hi("character_bitmap_1d19"))
+
+character_bitmap(0x1d19)
+character_bitmap(0x1d19+8)
 
 go()
 

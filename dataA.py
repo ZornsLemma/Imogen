@@ -27,13 +27,6 @@ expr(0x3b13, make_hi("some_data3"))
 label(0x4486, "some_data3")
 expr(0x3fe7, make_lo("eight_entry_table2"))
 expr(0x3feb, make_hi("eight_entry_table2"))
-def character_bitmap(addr, s=None):
-    if s is None:
-        s = "character_bitmap_%04x" % addr
-    label(addr, s)
-    for i in range(8):
-        picture_binary(addr + i)
-        byte(addr + i)
 character_bitmap(0x4486, "ground_fill_2x2_top_left")
 comment(0x448e, "Note that the next three characters are all identical. I think this is done because the 'tiling' code in restore_rectangle_of_screen_memory for l0042=1 uses a 2x2 tiling arrangement.")
 character_bitmap(0x448e, "ground_fill_2x2_top_right")

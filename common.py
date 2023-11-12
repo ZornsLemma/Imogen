@@ -35,6 +35,16 @@ class SubstituteLabels():
 
         return suggestion
 
+
+def character_bitmap(addr, s=None):
+    if s is None:
+        s = "character_bitmap_%04x" % addr
+    label(addr, s)
+    for i in range(8):
+        picture_binary(addr + i)
+        byte(addr + i)
+
+
 constant(0x4c, "opcode_jmp")
 
 # TODO: Some of these constants are not common to *all* files which currently include common (e.g. first/last_level_letter are probably not needed by data*) - may not be worth fussing with, or may be better to have different common files for different things to minimise label noise.

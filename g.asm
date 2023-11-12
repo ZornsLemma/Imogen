@@ -2278,10 +2278,10 @@ partial_plot_across_row_boundary
     asl                                                               ; 1d06: 0a          .   :1bd5[1]
     asl                                                               ; 1d07: 0a          .   :1bd6[1]
     clc                                                               ; 1d08: 18          .   :1bd7[1]
-    adc #$19                                                          ; 1d09: 69 19       i.  :1bd8[1]
+    adc #<character_bitmap_1d19                                       ; 1d09: 69 19       i.  :1bd8[1]
     sta off_screen_address_low                                        ; 1d0b: 85 7a       .z  :1bda[1]
     lda #0                                                            ; 1d0d: a9 00       ..  :1bdc[1]
-    adc #$1d                                                          ; 1d0f: 69 1d       i.  :1bde[1]
+    adc #>character_bitmap_1d19                                       ; 1d0f: 69 1d       i.  :1bde[1]
     sta off_screen_address_high                                       ; 1d11: 85 7b       .{  :1be0[1]
     ldy #7                                                            ; 1d13: a0 07       ..  :1be2[1]
 something26_copy_loop1
@@ -2478,14 +2478,31 @@ c1d16
     lda sprite_number                                                 ; 1e47: a5 16       ..  :1d16[1]
     rts                                                               ; 1e49: 60          `   :1d18[1]
 
-    !byte   0,   0,   0, $ff, $b7, $ff, $fd, $ef,   0, $ff, $fd, $df  ; 1e4a: 00 00 00... ... :1d19[1]
-    !byte $f3,   0,   0,   0,   0,   0, $0c, $f3, $bf, $fd, $ef, $ff  ; 1e56: f3 00 00... ... :1d25[1]
-    !byte   0, $ff, $fb, $bf, $ff,   0,   0,   0,   0,   0,   0, $ff  ; 1e62: 00 ff fb... ... :1d31[1]
-    !byte $bd, $ff, $df, $fb,   4, $ef, $ff, $db, $ff,   0,   0,   0  ; 1e6e: bd ff df... ... :1d3d[1]
-    !byte   0,   0, $20, $df, $f7, $bd, $ef, $ff,   2, $fd, $bf, $fb  ; 1e7a: 00 00 20... ..  :1d49[1]
-    !byte $ef,   0,   0,   0,   0,   0,   0, $df, $fd, $bf, $f7,   8  ; 1e86: ef 00 00... ... :1d55[1]
-    !byte   0,   0,   0, $ff, $fb, $df, $f7,   0,   0,   0,   0, $bf  ; 1e92: 00 00 00... ... :1d61[1]
-    !byte $f7, $df, $f9,   6,   0,   0,   0, $ef, $fb, $bf, $ff,   0  ; 1e9e: f7 df f9... ... :1d6d[1]
+character_bitmap_1d19
+    !byte %........                                                   ; 1e4a: 00          .   :1d19[1]
+    !byte %........                                                   ; 1e4b: 00          .   :1d1a[1]
+    !byte %........                                                   ; 1e4c: 00          .   :1d1b[1]
+    !byte %########                                                   ; 1e4d: ff          .   :1d1c[1]
+    !byte %#.##.###                                                   ; 1e4e: b7          .   :1d1d[1]
+    !byte %########                                                   ; 1e4f: ff          .   :1d1e[1]
+    !byte %######.#                                                   ; 1e50: fd          .   :1d1f[1]
+    !byte %###.####                                                   ; 1e51: ef          .   :1d20[1]
+character_bitmap_1d21
+    !byte %........                                                   ; 1e52: 00          .   :1d21[1]
+    !byte %########                                                   ; 1e53: ff          .   :1d22[1]
+    !byte %######.#                                                   ; 1e54: fd          .   :1d23[1]
+    !byte %##.#####                                                   ; 1e55: df          .   :1d24[1]
+    !byte %####..##                                                   ; 1e56: f3          .   :1d25[1]
+    !byte %........                                                   ; 1e57: 00          .   :1d26[1]
+    !byte %........                                                   ; 1e58: 00          .   :1d27[1]
+    !byte %........                                                   ; 1e59: 00          .   :1d28[1]
+    !byte   0,   0, $0c, $f3, $bf, $fd, $ef, $ff,   0, $ff, $fb, $bf  ; 1e5a: 00 00 0c... ... :1d29[1]
+    !byte $ff,   0,   0,   0,   0,   0,   0, $ff, $bd, $ff, $df, $fb  ; 1e66: ff 00 00... ... :1d35[1]
+    !byte   4, $ef, $ff, $db, $ff,   0,   0,   0,   0,   0, $20, $df  ; 1e72: 04 ef ff... ... :1d41[1]
+    !byte $f7, $bd, $ef, $ff,   2, $fd, $bf, $fb, $ef,   0,   0,   0  ; 1e7e: f7 bd ef... ... :1d4d[1]
+    !byte   0,   0,   0, $df, $fd, $bf, $f7,   8,   0,   0,   0, $ff  ; 1e8a: 00 00 00... ... :1d59[1]
+    !byte $fb, $df, $f7,   0,   0,   0,   0, $bf, $f7, $df, $f9,   6  ; 1e96: fb df f7... ... :1d65[1]
+    !byte   0,   0,   0, $ef, $fb, $bf, $ff,   0                      ; 1ea2: 00 00 00... ... :1d71[1]
     !text "xXppXxhxxhxXx"                                             ; 1eaa: 78 58 70... xXp :1d79[1]
     !byte $b8                                                         ; 1eb7: b8          .   :1d86[1]
     !text "hxxXxhxpXxhxx"                                             ; 1eb8: 68 78 78... hxx :1d87[1]
@@ -8361,6 +8378,9 @@ pydis_end
 !if (<cat_transform_in_animation) != $16 {
     !error "Assertion failed: <cat_transform_in_animation == $16"
 }
+!if (<character_bitmap_1d19) != $19 {
+    !error "Assertion failed: <character_bitmap_1d19 == $19"
+}
 !if (<data_filename) != $72 {
     !error "Assertion failed: <data_filename == $72"
 }
@@ -8564,6 +8584,9 @@ pydis_end
 }
 !if (>cat_transform_in_animation) != $2f {
     !error "Assertion failed: >cat_transform_in_animation == $2f"
+}
+!if (>character_bitmap_1d19) != $1d {
+    !error "Assertion failed: >character_bitmap_1d19 == $1d"
 }
 !if (>data_filename) != $12 {
     !error "Assertion failed: >data_filename == $12"
