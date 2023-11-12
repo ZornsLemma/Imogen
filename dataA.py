@@ -101,6 +101,8 @@ expr(0x3ca2, make_lo("mouse_ball_sound3"))
 expr(0x3ca4, make_hi("mouse_ball_sound3"))
 entry(0x3d20, "return1")
 
+entry(0x395e, "define_envelope") # TODO: duplicate of line in g.py, can't trivially put in common as it breaks imogen.py
+
 go()
 
 # vi: tw=100

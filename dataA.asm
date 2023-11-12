@@ -99,7 +99,7 @@ l38ae                                               = $38ae
 l38c2                                               = $38c2
 l38d8                                               = $38d8
 play_sound_yx                                       = $38f6
-l395e                                               = $395e
+define_envelope                                     = $395e
 l396f                                               = $396f
 l3970                                               = $3970
 check_cursor_left_right_and_space                   = $3a8f
@@ -288,7 +288,7 @@ level_unchanged
     bne c3c74                                                         ; 3bfb: d0 77       .w
     ldx #$60 ; '`'                                                    ; 3bfd: a2 60       .`
     ldy #$44 ; 'D'                                                    ; 3bff: a0 44       .D
-    jsr l395e                                                         ; 3c01: 20 5e 39     ^9
+    jsr define_envelope                                               ; 3c01: 20 5e 39     ^9
     lda #2                                                            ; 3c04: a9 02       ..
     sta width_in_cells                                                ; 3c06: 85 3c       .<
     sta height_in_cells                                               ; 3c08: 85 3d       .=
@@ -570,7 +570,7 @@ c3e11
     bne c3e69                                                         ; 3e15: d0 52       .R
     ldx #$2c ; ','                                                    ; 3e17: a2 2c       .,
     ldy #$44 ; 'D'                                                    ; 3e19: a0 44       .D
-    jsr l395e                                                         ; 3e1b: 20 5e 39     ^9
+    jsr define_envelope                                               ; 3e1b: 20 5e 39     ^9
     ldx #$11                                                          ; 3e1e: a2 11       ..
     ldy #7                                                            ; 3e20: a0 07       ..
     lda #2                                                            ; 3e22: a9 02       ..
@@ -718,7 +718,7 @@ sub_c3f02
     sta l2ef3                                                         ; 3f1f: 8d f3 2e    ...
     ldx #$16                                                          ; 3f22: a2 16       ..
     ldy #$44 ; 'D'                                                    ; 3f24: a0 44       .D
-    jsr l395e                                                         ; 3f26: 20 5e 39     ^9
+    jsr define_envelope                                               ; 3f26: 20 5e 39     ^9
     lda desired_room_index                                            ; 3f29: a5 30       .0
     cmp #1                                                            ; 3f2b: c9 01       ..
     bne c3f51                                                         ; 3f2d: d0 22       ."
@@ -930,7 +930,7 @@ c40c1
     bne c40e0                                                         ; 40c5: d0 19       ..
     ldx #$2c ; ','                                                    ; 40c7: a2 2c       .,
     ldy #$44 ; 'D'                                                    ; 40c9: a0 44       .D
-    jsr l395e                                                         ; 40cb: 20 5e 39     ^9
+    jsr define_envelope                                               ; 40cb: 20 5e 39     ^9
     ldx #0                                                            ; 40ce: a2 00       ..
     ldy #$14                                                          ; 40d0: a0 14       ..
     lda #$fe                                                          ; 40d2: a9 fe       ..
@@ -1277,7 +1277,7 @@ c4339
     bne c4352                                                         ; 433d: d0 13       ..
     ldx #$4a ; 'J'                                                    ; 433f: a2 4a       .J
     ldy #$44 ; 'D'                                                    ; 4341: a0 44       .D
-    jsr l395e                                                         ; 4343: 20 5e 39     ^9
+    jsr define_envelope                                               ; 4343: 20 5e 39     ^9
     ldx #2                                                            ; 4346: a2 02       ..
     lda #$de                                                          ; 4348: a9 de       ..
     sta l09a8,x                                                       ; 434a: 9d a8 09    ...
@@ -1703,7 +1703,7 @@ pydis_end
 ;     set_object_position_from_cell_xy:                       5
 ;     something55_TODO:                                       5
 ;     l38ac:                                                  5
-;     l395e:                                                  5
+;     define_envelope:                                        5
 ;     c41ae:                                                  5
 ;     c4355:                                                  5
 ;     l003b:                                                  4
@@ -1936,7 +1936,6 @@ pydis_end
 ;     l38ae
 ;     l38c2
 ;     l38d8
-;     l395e
 ;     l396f
 ;     l3970
 ;     l3eee
