@@ -1312,6 +1312,8 @@ label(0x2cd4, "decrement_current_tranformations_remaining_no_borrow")
 comment(0x2b5c, "branch if no transformations remaining before decrement", inline=True) # TODO: rephrase as "branch if decrement failed"? and maybe make associated change in comment at 2c8c?
 comment(0x2337, "Transform the player into a new form.")
 entry(0x2337, "transform")
+constant(4, "player_character_4")
+expr(0x12d5, "player_character_4")
 
 label(0x48, "current_player_character")
 label(0x4d, "new_player_character")

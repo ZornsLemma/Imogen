@@ -55,6 +55,7 @@ osfile_save                                     = 0
 osword_envelope                                 = 8
 osword_read_char                                = 10
 osword_sound                                    = 7
+player_character_4                              = 4
 red                                             = 1
 rows_per_cell                                   = 8
 screen_width_in_pixels                          = 320
@@ -714,7 +715,7 @@ something23_TODO
     lda desired_level                                                 ; 13ff: a5 31       .1  :12ce[1]
     cmp previous_level                                                ; 1401: c5 51       .Q  :12d0[1]
     beq return1                                                       ; 1403: f0 05       ..  :12d2[1]
-    lda #4                                                            ; 1405: a9 04       ..  :12d4[1]
+    lda #player_character_4                                           ; 1405: a9 04       ..  :12d4[1]
     jsr transform                                                     ; 1407: 20 37 23     7# :12d6[1]
 return1
     rts                                                               ; 140a: 60          `   :12d9[1]
@@ -9295,6 +9296,9 @@ pydis_end
 }
 !if (osword_sound) != $07 {
     !error "Assertion failed: osword_sound == $07"
+}
+!if (player_character_4) != $04 {
+    !error "Assertion failed: player_character_4 == $04"
 }
 !if (red) != $01 {
     !error "Assertion failed: red == $01"
