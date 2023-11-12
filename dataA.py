@@ -4,6 +4,16 @@ import re
 from common import *
 acorn.bbc()
 
+sprite_dict = {
+    0xd3: "spriteid_saxophone",
+    0xde: "spriteid_table",
+}
+
+substitute_constants("jsr draw_sprite_a_at_cell_xy", 'a', sprite_dict, True)
+substitute_constants("jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map", 'a', sprite_dict, True)
+substitute_constants("jsr find_or_create_menu_slot_for_A", 'a', sprite_dict, True)
+#substitute_constants("sta sprite_op_flags", 'a', sprite_op_flags_dict, True)
+
 load(0x3ad5, "orig/dataA.dat", "6502", "df027a3ac06abfed1878eaec3d2bbe5f")
 word(0x3ad7)
 expr(0x3ad7, "level_init_after_load_handler")
@@ -60,14 +70,6 @@ level_header_data_table_entry(0x3adf, "room_1")
 level_header_data_table_entry(0x3ae1, "room_2")
 level_header_data_table_entry(0x3ae3, "room_3")
 level_header_data_table_entry(0x3ae5, "room_4")
-
-# TODO: Possibly wire substitute_constants() in for find_or_create_menu_slot_in_A?
-sprite_dict = {
-    0xd3: "spriteid_saxophone",
-}
-substitute_constants("jsr find_or_create_menu_slot_for_A", 'a', sprite_dict, True)
-#for addr, s in sprite_dict.items():
-#    constant(addr, s)
 
 comment(0x3f7b, "TODO: I suspect this is handling 'collection of the saxophone'")
 comment(0x3b04, "clear_128_bytes_at_l09ef (which is called by start_game) will have zeroed saxophone_collected_flag. TODO: It's not clear to me why it would be set here under normal circumstances - what would go wrong if we just assumed l0a00==0 here?")

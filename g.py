@@ -311,12 +311,6 @@ sprite_dict = {
     0x57: "spriteid_rope3",
     0x58: "spriteid_rope4",
 }
-sprite_op_flags_dict = {
-    0x00: "sprite_op_flags_normal",
-    0x01: "sprite_op_flags_copy_mask",
-    0x02: "sprite_op_flags_erase",
-    0x04: "sprite_op_flags_ignore_mask",
-}
 
 label(0x1f4c, "draw_sprite_a_at_cell_xy")
 label(0x1f84, "set_sprite_pixel_position_from_cell_xy")
@@ -544,7 +538,7 @@ On Entry:
 
 substitute_constants("sta sprite_number", 'a', sprite_dict, True)
 substitute_constants("jsr draw_sprite_a_at_cell_xy", 'a', sprite_dict, True)
-substitute_constants("jsr find_or_create_menu_slot_for_A", 'a', sprite_dict, True) # TODO: not actually useful yet, maybe never
+substitute_constants("jsr find_or_create_menu_slot_for_A", 'a', sprite_dict, True)
 substitute_constants("sta sprite_op_flags", 'a', sprite_op_flags_dict, True)
 
 comment(0x1b66, "cell_screen_address = screen_base_address + Y*$140 + X*8")

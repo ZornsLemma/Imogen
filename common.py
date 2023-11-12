@@ -44,6 +44,12 @@ def character_bitmap(addr, s=None):
         picture_binary(addr + i)
         byte(addr + i)
 
+sprite_op_flags_dict = {
+    0x00: "sprite_op_flags_normal",
+    0x01: "sprite_op_flags_copy_mask",
+    0x02: "sprite_op_flags_erase",
+    0x04: "sprite_op_flags_ignore_mask",
+}
 
 constant(0x4c, "opcode_jmp")
 

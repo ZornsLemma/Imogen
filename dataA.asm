@@ -5,6 +5,7 @@ game_area_width_cells    = 40
 last_level_letter        = 81
 opcode_jmp               = 76
 spriteid_saxophone       = 211
+spriteid_table           = 222
 
 ; Memory locations
 password_characters_entered                         = $05
@@ -227,7 +228,7 @@ room_1_code
     sta width_in_cells                                                ; 3b89: 85 3c       .<
     lda #2                                                            ; 3b8b: a9 02       ..
     sta height_in_cells                                               ; 3b8d: 85 3d       .=
-    lda #$de                                                          ; 3b8f: a9 de       ..
+    lda #spriteid_table                                               ; 3b8f: a9 de       ..
     ldx #3                                                            ; 3b91: a2 03       ..
     ldy #$14                                                          ; 3b93: a0 14       ..
     jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map           ; 3b95: 20 57 1f     W.
@@ -509,7 +510,7 @@ room_2_code
     sta width_in_cells                                                ; 3daf: 85 3c       .<
     lda #2                                                            ; 3db1: a9 02       ..
     sta height_in_cells                                               ; 3db3: 85 3d       .=
-    lda #$de                                                          ; 3db5: a9 de       ..
+    lda #spriteid_table                                               ; 3db5: a9 de       ..
     ldx #$1a                                                          ; 3db7: a2 1a       ..
     ldy #$14                                                          ; 3db9: a0 14       ..
     jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map           ; 3dbb: 20 57 1f     W.
@@ -1982,4 +1983,7 @@ pydis_end
 }
 !if (spriteid_saxophone) != $d3 {
     !error "Assertion failed: spriteid_saxophone == $d3"
+}
+!if (spriteid_table) != $de {
+    !error "Assertion failed: spriteid_table == $de"
 }
