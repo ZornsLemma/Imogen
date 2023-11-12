@@ -2257,7 +2257,7 @@ On Entry:
     height_in_cells_to_write: height of rectangle (in cells)
     source_sprite_memory: source address data to copy to screen (top left)
     copy_mode: some kind of copy mode
-        0: alternating 2x2 pattern (checkboard)
+        0: 2x2 pattern
         1: simple copy
         power of two: choose random tile offsets less than the power of two
         negative: strip off top bit, and use the result as the length of a pattern to cycle around
