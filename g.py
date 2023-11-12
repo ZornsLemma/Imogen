@@ -310,6 +310,9 @@ sprite_dict = {
     0x56: "spriteid_rope2",
     0x57: "spriteid_rope3",
     0x58: "spriteid_rope4",
+    197: "spriteid_197",            # TODO: Better name
+    198: "spriteid_198",            # TODO: Better name
+    199: "spriteid_199",            # TODO: Better name
 }
 
 label(0x1f4c, "draw_sprite_a_at_cell_xy")
@@ -1801,6 +1804,12 @@ comment(0x2177, """object_sprite_mask_type:
     otherwise draw normally with mask""")
 label(0x2197, "done_drawing_object")
 label(0x38ac, "object_sprite_mask_type")                # TODO: Re-uses envelope_1, need to resolve label clash
+expr(0x3d62, "spriteid_199")
+expr(0x3d67, "spriteid_198")
+expr(0x1a5d, "spriteid_197")
+expr(0x1331, "spriteid_199")
+expr(0x1339, "spriteid_198")
+expr(0x1341, "spriteid_197")
 
 comment(0x2159, "exit if object is not visible")
 comment(0x215e, "prepare to draw sprite")

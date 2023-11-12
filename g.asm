@@ -63,6 +63,9 @@ sprite_op_flags_copy_mask                       = 1
 sprite_op_flags_erase                           = 2
 sprite_op_flags_ignore_mask                     = 4
 sprite_op_flags_normal                          = 0
+spriteid_197                                    = 197
+spriteid_198                                    = 198
+spriteid_199                                    = 199
 spriteid_brazier                                = 58
 spriteid_cat1                                   = 27
 spriteid_cat2                                   = 28
@@ -786,15 +789,15 @@ some_data_shared_between_g_and_dataA
 get_address_of_sprite_a
     ldx #<sprite_199                                                  ; 145d: a2 11       ..  :132c[1]
     ldy #>sprite_199                                                  ; 145f: a0 0b       ..  :132e[1]
-    cmp #199                                                          ; 1461: c9 c7       ..  :1330[1]
+    cmp #spriteid_199                                                 ; 1461: c9 c7       ..  :1330[1]
     beq return2                                                       ; 1463: f0 42       .B  :1332[1]
     ldx #<sprite_198                                                  ; 1465: a2 93       ..  :1334[1]
     ldy #>sprite_198                                                  ; 1467: a0 0b       ..  :1336[1]
-    cmp #198                                                          ; 1469: c9 c6       ..  :1338[1]
+    cmp #spriteid_198                                                 ; 1469: c9 c6       ..  :1338[1]
     beq return2                                                       ; 146b: f0 3a       .:  :133a[1]
     ldx #<sprite_197                                                  ; 146d: a2 c5       ..  :133c[1]
     ldy #>sprite_197                                                  ; 146f: a0 0b       ..  :133e[1]
-    cmp #197                                                          ; 1471: c9 c5       ..  :1340[1]
+    cmp #spriteid_197                                                 ; 1471: c9 c5       ..  :1340[1]
     beq return2                                                       ; 1473: f0 32       .2  :1342[1]
     ldx sprdata_ptr                                                   ; 1475: a6 54       .T  :1344[1]
     ldy sprdata_ptr + 1                                               ; 1477: a4 55       .U  :1346[1]
@@ -2026,7 +2029,7 @@ something14_TODO
     jsr find_or_create_menu_slot_for_A                                ; 1b87: 20 bd 2b     .+ :1a56[1]
 c1a59
     ldx l1aae                                                         ; 1b8a: ae ae 1a    ... :1a59[1]
-    lda #$c5                                                          ; 1b8d: a9 c5       ..  :1a5c[1]
+    lda #spriteid_197                                                 ; 1b8d: a9 c5       ..  :1a5c[1]
     sta object_sprite_mask_type,x                                     ; 1b8f: 9d ac 38    ..8 :1a5e[1]
     lda #0                                                            ; 1b92: a9 00       ..  :1a61[1]
     sta object_spriteid,x                                             ; 1b94: 9d a8 09    ... :1a63[1]
@@ -7446,9 +7449,9 @@ loop_c3d54
     dey                                                               ; 3d5e: 88          .
     bpl loop_c3d54                                                    ; 3d5f: 10 f3       ..
 ; store something else now that envelopes have already been defined above?
-    lda #$c7                                                          ; 3d61: a9 c7       ..
+    lda #spriteid_199                                                 ; 3d61: a9 c7       ..
     sta object_sprite_mask_type                                       ; 3d63: 8d ac 38    ..8
-    lda #$c6                                                          ; 3d66: a9 c6       ..
+    lda #spriteid_198                                                 ; 3d66: a9 c6       ..
     sta l38ad                                                         ; 3d68: 8d ad 38    ..8
     lda #$80                                                          ; 3d6b: a9 80       ..
     sta envelope_2                                                    ; 3d6d: 8d c2 38    ..8
@@ -9310,6 +9313,15 @@ pydis_end
 }
 !if (sprite_op_flags_normal) != $00 {
     !error "Assertion failed: sprite_op_flags_normal == $00"
+}
+!if (spriteid_197) != $c5 {
+    !error "Assertion failed: spriteid_197 == $c5"
+}
+!if (spriteid_198) != $c6 {
+    !error "Assertion failed: spriteid_198 == $c6"
+}
+!if (spriteid_199) != $c7 {
+    !error "Assertion failed: spriteid_199 == $c7"
 }
 !if (spriteid_brazier) != $3a {
     !error "Assertion failed: spriteid_brazier == $3a"
