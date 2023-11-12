@@ -37,7 +37,8 @@ desired_level                                       = &0031
 width_in_cells                                      = &003c
 height_in_cells                                     = &003d
 value_to_write_to_collision_map                     = &003e
-some_data3_ptr                                      = &0040
+source_sprite_memory_low                            = &0040
+source_sprite_memory_high                           = &0041
 previous_room_index                                 = &0050
 previous_level                                      = &0051
 developer_mode_sideways_ram_is_set_up_flag          = &005b
@@ -530,7 +531,7 @@ some_data_shared_between_g_and_dataA = sub_c132a+1
     equb   0,   0                                                     ; 1ab8: 00 00       ..
 .current_room_index
     equb 0                                                            ; 1aba: 00          .
-.restore_rectangle_of_screen_memory
+.copy_rectangle_of_memory_to_screen
     equb   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0   ; 1abb: 00 00 00... ...
     equb   0,   0,   0,   0,   0,   0,   0,   0,   0, &3f, &1f, &0f   ; 1ac7: 00 00 00... ...
     equb   3,   0,   0,   0,   0, &c0, &f0, &ff, &ff, &7f,   0,   0   ; 1ad3: 03 00 00... ...

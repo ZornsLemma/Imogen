@@ -16,7 +16,8 @@ l003b                                               = $3b
 width_in_cells                                      = $3c
 height_in_cells                                     = $3d
 value_to_write_to_collision_map                     = $3e
-some_data3_ptr                                      = $40
+source_sprite_memory_low                            = $40
+source_sprite_memory_high                           = $41
 l0042                                               = $42
 previous_room_index                                 = $50
 previous_level                                      = $51
@@ -25,9 +26,6 @@ developer_mode_sideways_ram_is_set_up_flag          = $5b
 l0070                                               = $70
 show_dialog_box                                     = $040a
 remove_dialog                                       = $0453
-level_thing_2_data                                  = $0709
-level_thing_4_data                                  = $0714
-level_thing_3_data                                  = $0914
 l0950                                               = $0950
 l0954                                               = $0954
 l0966                                               = $0966
@@ -58,7 +56,6 @@ initialise_level                                    = $1140
 something23_TODO                                    = $12bb
 something24_TODO                                    = $12da
 some_data_shared_between_g_and_dataA                = $132b
-level_thing_1_data                                  = $1614
 pending_toolbar_colour                              = $175d
 toolbar_colour                                      = $175e
 pending_gameplay_area_colour                        = $175f
@@ -69,7 +66,7 @@ jmp_yx                                              = $1966
 something13_TODO                                    = $1988
 something14_TODO                                    = $1a10
 current_room_index                                  = $1aba
-restore_rectangle_of_screen_memory                  = $1abb
+copy_rectangle_of_memory_to_screen                  = $1abb
 something26_TODO                                    = $1b90
 draw_rope                                           = $1db9
 write_value_to_a_rectangle_of_cells_in_collision_map = $1e44
@@ -128,10 +125,10 @@ level_name_ptr
 ; entering rooms is handled by level specific code, the player always starts in room 0
 ; and there is no need to have a byte of data representing the maximum room number.
 level_header_data
-    !word level_thing_1_data_ptr                                      ; 3adf: 27 3b       ';
-    !word level_thing_2_data_ptr                                      ; 3ae1: 3d 3d       ==
-    !word level_thing_3_data_ptr                                      ; 3ae3: d7 3f       .?
-    !word level_thing_4_data_ptr                                      ; 3ae5: 4d 42       MB
+    !word room_1_data_ptr                                             ; 3adf: 27 3b       ';
+    !word room_2_data_ptr                                             ; 3ae1: 3d 3d       ==
+    !word room_3_data_ptr                                             ; 3ae3: d7 3f       .?
+    !word room_4_data_ptr                                             ; 3ae5: 4d 42       MB
 ; 'SAXOPHOBIA\r' EOR-encrypted with $cb
 level_name
     !byte $98, $8a, $93, $84, $9b, $83, $84, $89, $82, $8a, $c6       ; 3ae7: 98 8a 93... ...
@@ -156,10 +153,10 @@ developer_mode_not_active
     jsr find_or_create_menu_slot_for_A                                ; 3b0b: 20 bd 2b     .+
 ; $3b0e referenced 2 times by $3af6, $3b07
 c3b0e
-    lda #<some_data3                                                  ; 3b0e: a9 86       ..
-    sta some_data3_ptr                                                ; 3b10: 85 40       .@
-    lda #>some_data3                                                  ; 3b12: a9 44       .D
-    sta some_data3_ptr + 1                                            ; 3b14: 85 41       .A
+    lda #<ground_fill_2x2_top_left                                    ; 3b0e: a9 86       ..
+    sta source_sprite_memory_low                                      ; 3b10: 85 40       .@
+    lda #>ground_fill_2x2_top_left                                    ; 3b12: a9 44       .D
+    sta source_sprite_memory_high                                     ; 3b14: 85 41       .A
     rts                                                               ; 3b16: 60          `
 
 second_level_handler
@@ -170,13 +167,13 @@ second_level_handler
     jsr sub_c42f8                                                     ; 3b23: 20 f8 42     .B
     rts                                                               ; 3b26: 60          `
 
-level_thing_1_data_ptr
-    !word level_thing_1_data                                          ; 3b27: 14 16       ..
+room_1_data_ptr
+    !byte 20                                                          ; 3b27: 14          .              ; initial player X cell
+    !byte 22                                                          ; 3b28: 16          .              ; initial player Y cell
 
 ; TODO: I suspect this next block up to and including the jsr is drawing the 'wall'
 ; pattern on the top two rows of the opening screen
-some_code1
-level_thing_1_code
+room_1_code
     ldx #0                                                            ; 3b29: a2 00       ..
     ldy #0                                                            ; 3b2b: a0 00       ..
     lda #$ff                                                          ; 3b2d: a9 ff       ..
@@ -187,42 +184,42 @@ level_thing_1_code
 ; TODO: Setting a breakpoint in b-em shows some_data3_ptr ($40) is $4486 here
 ; TODO: Setting a breakpoint in b-em shows address1_low ($70) is $00 here
 ; TODO: Setting a breakpoint in b-em shows address1_high ($71) is $80 here
-    jsr restore_rectangle_of_screen_memory                            ; 3b35: 20 bb 1a     ..
+    jsr copy_rectangle_of_memory_to_screen                            ; 3b35: 20 bb 1a     ..
     ldy #2                                                            ; 3b38: a0 02       ..
     lda #4                                                            ; 3b3a: a9 04       ..
     sta width_in_cells                                                ; 3b3c: 85 3c       .<
     dec height_in_cells                                               ; 3b3e: c6 3d       .=
-    jsr restore_rectangle_of_screen_memory                            ; 3b40: 20 bb 1a     ..
+    jsr copy_rectangle_of_memory_to_screen                            ; 3b40: 20 bb 1a     ..
     iny                                                               ; 3b43: c8          .
     dec width_in_cells                                                ; 3b44: c6 3c       .<
     lda #$13                                                          ; 3b46: a9 13       ..
     sta height_in_cells                                               ; 3b48: 85 3d       .=
-    jsr restore_rectangle_of_screen_memory                            ; 3b4a: 20 bb 1a     ..
+    jsr copy_rectangle_of_memory_to_screen                            ; 3b4a: 20 bb 1a     ..
     ldy #$16                                                          ; 3b4d: a0 16       ..
     lda #$ff                                                          ; 3b4f: a9 ff       ..
     sta width_in_cells                                                ; 3b51: 85 3c       .<
-    jsr restore_rectangle_of_screen_memory                            ; 3b53: 20 bb 1a     ..
+    jsr copy_rectangle_of_memory_to_screen                            ; 3b53: 20 bb 1a     ..
     ldx #$22 ; '"'                                                    ; 3b56: a2 22       ."
     ldy #7                                                            ; 3b58: a0 07       ..
     lda #6                                                            ; 3b5a: a9 06       ..
     sta width_in_cells                                                ; 3b5c: 85 3c       .<
     lda #2                                                            ; 3b5e: a9 02       ..
     sta height_in_cells                                               ; 3b60: 85 3d       .=
-    jsr restore_rectangle_of_screen_memory                            ; 3b62: 20 bb 1a     ..
+    jsr copy_rectangle_of_memory_to_screen                            ; 3b62: 20 bb 1a     ..
     ldx #$25 ; '%'                                                    ; 3b65: a2 25       .%
     ldy #9                                                            ; 3b67: a0 09       ..
     lda #$0d                                                          ; 3b69: a9 0d       ..
     sta height_in_cells                                               ; 3b6b: 85 3d       .=
-    jsr restore_rectangle_of_screen_memory                            ; 3b6d: 20 bb 1a     ..
+    jsr copy_rectangle_of_memory_to_screen                            ; 3b6d: 20 bb 1a     ..
     ldx #$0e                                                          ; 3b70: a2 0e       ..
     ldy #$0b                                                          ; 3b72: a0 0b       ..
     lda #3                                                            ; 3b74: a9 03       ..
     sta width_in_cells                                                ; 3b76: 85 3c       .<
     lda #2                                                            ; 3b78: a9 02       ..
     sta height_in_cells                                               ; 3b7a: 85 3d       .=
-    jsr restore_rectangle_of_screen_memory                            ; 3b7c: 20 bb 1a     ..
+    jsr copy_rectangle_of_memory_to_screen                            ; 3b7c: 20 bb 1a     ..
     ldx #$18                                                          ; 3b7f: a2 18       ..
-    jsr restore_rectangle_of_screen_memory                            ; 3b81: 20 bb 1a     ..
+    jsr copy_rectangle_of_memory_to_screen                            ; 3b81: 20 bb 1a     ..
 ; TODO: I suspect we've finished drawing the ground fill and are now switching to
 ; another pattern.
     jsr something26_TODO                                              ; 3b84: 20 90 1b     ..
@@ -455,57 +452,58 @@ some_data1
     !byte $d4, $c9,   0,   0, $ca, $c9,   8,   6, $ca, $c9, $10, $0a  ; 3d21: d4 c9 00... ...
     !byte $ca, $d5, $18, $0c, $d5, $ca, $20, $0c, $c9, $ca, $28, $0a  ; 3d2d: ca d5 18... ...
     !byte $c9, $ca, $30,   6                                          ; 3d39: c9 ca 30... ..0
-level_thing_2_data_ptr
-    !word level_thing_2_data                                          ; 3d3d: 09 07       ..
+room_2_data_ptr
+    !byte 9                                                           ; 3d3d: 09          .              ; initial player X cell
+    !byte 7                                                           ; 3d3e: 07          .              ; initial player Y cell
 
-level_thing_2_code
+room_2_code
     ldx #0                                                            ; 3d3f: a2 00       ..
     ldy #0                                                            ; 3d41: a0 00       ..
     lda #$ff                                                          ; 3d43: a9 ff       ..
     sta width_in_cells                                                ; 3d45: 85 3c       .<
     lda #2                                                            ; 3d47: a9 02       ..
     sta height_in_cells                                               ; 3d49: 85 3d       .=
-    jsr restore_rectangle_of_screen_memory                            ; 3d4b: 20 bb 1a     ..
+    jsr copy_rectangle_of_memory_to_screen                            ; 3d4b: 20 bb 1a     ..
     ldy #7                                                            ; 3d4e: a0 07       ..
     lda #$11                                                          ; 3d50: a9 11       ..
     sta width_in_cells                                                ; 3d52: 85 3c       .<
-    jsr restore_rectangle_of_screen_memory                            ; 3d54: 20 bb 1a     ..
+    jsr copy_rectangle_of_memory_to_screen                            ; 3d54: 20 bb 1a     ..
     ldx #$17                                                          ; 3d57: a2 17       ..
-    jsr restore_rectangle_of_screen_memory                            ; 3d59: 20 bb 1a     ..
+    jsr copy_rectangle_of_memory_to_screen                            ; 3d59: 20 bb 1a     ..
     ldx #0                                                            ; 3d5c: a2 00       ..
     ldy #$16                                                          ; 3d5e: a0 16       ..
-    jsr restore_rectangle_of_screen_memory                            ; 3d60: 20 bb 1a     ..
+    jsr copy_rectangle_of_memory_to_screen                            ; 3d60: 20 bb 1a     ..
     ldx #$17                                                          ; 3d63: a2 17       ..
-    jsr restore_rectangle_of_screen_memory                            ; 3d65: 20 bb 1a     ..
+    jsr copy_rectangle_of_memory_to_screen                            ; 3d65: 20 bb 1a     ..
     ldx #0                                                            ; 3d68: a2 00       ..
     ldy #9                                                            ; 3d6a: a0 09       ..
     lda #4                                                            ; 3d6c: a9 04       ..
     sta width_in_cells                                                ; 3d6e: 85 3c       .<
     dec height_in_cells                                               ; 3d70: c6 3d       .=
-    jsr restore_rectangle_of_screen_memory                            ; 3d72: 20 bb 1a     ..
+    jsr copy_rectangle_of_memory_to_screen                            ; 3d72: 20 bb 1a     ..
     ldx #$0d                                                          ; 3d75: a2 0d       ..
-    jsr restore_rectangle_of_screen_memory                            ; 3d77: 20 bb 1a     ..
+    jsr copy_rectangle_of_memory_to_screen                            ; 3d77: 20 bb 1a     ..
     ldx #$17                                                          ; 3d7a: a2 17       ..
-    jsr restore_rectangle_of_screen_memory                            ; 3d7c: 20 bb 1a     ..
+    jsr copy_rectangle_of_memory_to_screen                            ; 3d7c: 20 bb 1a     ..
     ldx #$24 ; '$'                                                    ; 3d7f: a2 24       .$
-    jsr restore_rectangle_of_screen_memory                            ; 3d81: 20 bb 1a     ..
+    jsr copy_rectangle_of_memory_to_screen                            ; 3d81: 20 bb 1a     ..
     ldx #0                                                            ; 3d84: a2 00       ..
     iny                                                               ; 3d86: c8          .
     dec width_in_cells                                                ; 3d87: c6 3c       .<
     lda #$0c                                                          ; 3d89: a9 0c       ..
     sta height_in_cells                                               ; 3d8b: 85 3d       .=
-    jsr restore_rectangle_of_screen_memory                            ; 3d8d: 20 bb 1a     ..
+    jsr copy_rectangle_of_memory_to_screen                            ; 3d8d: 20 bb 1a     ..
     ldx #$0e                                                          ; 3d90: a2 0e       ..
-    jsr restore_rectangle_of_screen_memory                            ; 3d92: 20 bb 1a     ..
+    jsr copy_rectangle_of_memory_to_screen                            ; 3d92: 20 bb 1a     ..
     ldx #$17                                                          ; 3d95: a2 17       ..
-    jsr restore_rectangle_of_screen_memory                            ; 3d97: 20 bb 1a     ..
+    jsr copy_rectangle_of_memory_to_screen                            ; 3d97: 20 bb 1a     ..
     ldx #$25 ; '%'                                                    ; 3d9a: a2 25       .%
     lda #3                                                            ; 3d9c: a9 03       ..
     sta height_in_cells                                               ; 3d9e: 85 3d       .=
-    jsr restore_rectangle_of_screen_memory                            ; 3da0: 20 bb 1a     ..
+    jsr copy_rectangle_of_memory_to_screen                            ; 3da0: 20 bb 1a     ..
     ldy #$12                                                          ; 3da3: a0 12       ..
     inc height_in_cells                                               ; 3da5: e6 3d       .=
-    jsr restore_rectangle_of_screen_memory                            ; 3da7: 20 bb 1a     ..
+    jsr copy_rectangle_of_memory_to_screen                            ; 3da7: 20 bb 1a     ..
     jsr something26_TODO                                              ; 3daa: 20 90 1b     ..
     lda #3                                                            ; 3dad: a9 03       ..
     sta width_in_cells                                                ; 3daf: 85 3c       .<
@@ -774,7 +772,7 @@ c3f8a
     rts                                                               ; 3f8a: 60          `
 
 ; $3f8b referenced 4 times by $3ffa, $3fff, $4004, $4009
-some_code2
+sub_c3f8b
     stx l3fd5                                                         ; 3f8b: 8e d5 3f    ..?
     sty l3fd6                                                         ; 3f8e: 8c d6 3f    ..?
     inx                                                               ; 3f91: e8          .
@@ -783,19 +781,19 @@ some_code2
     sta width_in_cells                                                ; 3f95: 85 3c       .<
     lda #1                                                            ; 3f97: a9 01       ..
     sta height_in_cells                                               ; 3f99: 85 3d       .=
-    jsr restore_rectangle_of_screen_memory                            ; 3f9b: 20 bb 1a     ..
+    jsr copy_rectangle_of_memory_to_screen                            ; 3f9b: 20 bb 1a     ..
     dex                                                               ; 3f9e: ca          .
     iny                                                               ; 3f9f: c8          .
     lda #7                                                            ; 3fa0: a9 07       ..
     sta width_in_cells                                                ; 3fa2: 85 3c       .<
-    jsr restore_rectangle_of_screen_memory                            ; 3fa4: 20 bb 1a     ..
+    jsr copy_rectangle_of_memory_to_screen                            ; 3fa4: 20 bb 1a     ..
     dex                                                               ; 3fa7: ca          .
     iny                                                               ; 3fa8: c8          .
     lda #9                                                            ; 3fa9: a9 09       ..
     sta width_in_cells                                                ; 3fab: 85 3c       .<
     lda #5                                                            ; 3fad: a9 05       ..
     sta height_in_cells                                               ; 3faf: 85 3d       .=
-    jsr restore_rectangle_of_screen_memory                            ; 3fb1: 20 bb 1a     ..
+    jsr copy_rectangle_of_memory_to_screen                            ; 3fb1: 20 bb 1a     ..
     inx                                                               ; 3fb4: e8          .
     tya                                                               ; 3fb5: 98          .
     clc                                                               ; 3fb6: 18          .
@@ -805,12 +803,12 @@ some_code2
     sta width_in_cells                                                ; 3fbc: 85 3c       .<
     lda #1                                                            ; 3fbe: a9 01       ..
     sta height_in_cells                                               ; 3fc0: 85 3d       .=
-    jsr restore_rectangle_of_screen_memory                            ; 3fc2: 20 bb 1a     ..
+    jsr copy_rectangle_of_memory_to_screen                            ; 3fc2: 20 bb 1a     ..
     inx                                                               ; 3fc5: e8          .
     iny                                                               ; 3fc6: c8          .
     lda #5                                                            ; 3fc7: a9 05       ..
     sta width_in_cells                                                ; 3fc9: 85 3c       .<
-    jsr restore_rectangle_of_screen_memory                            ; 3fcb: 20 bb 1a     ..
+    jsr copy_rectangle_of_memory_to_screen                            ; 3fcb: 20 bb 1a     ..
     ldx l3fd5                                                         ; 3fce: ae d5 3f    ..?
     ldy l3fd6                                                         ; 3fd1: ac d6 3f    ..?
     rts                                                               ; 3fd4: 60          `
@@ -821,57 +819,57 @@ l3fd5
 ; $3fd6 referenced 2 times by $3f8e, $3fd1
 l3fd6
     !byte 0                                                           ; 3fd6: 00          .
-level_thing_3_data_ptr
-    !word level_thing_3_data                                          ; 3fd7: 14 09       ..
+room_3_data_ptr
+    !byte 20                                                          ; 3fd7: 14          .              ; initial player X cell
+    !byte 9                                                           ; 3fd8: 09          .              ; initial player Y cell
 
-some_code3
-level_thing_3_code
+room_3_code
     ldx #0                                                            ; 3fd9: a2 00       ..
     ldy #0                                                            ; 3fdb: a0 00       ..
     lda #$ff                                                          ; 3fdd: a9 ff       ..
     sta width_in_cells                                                ; 3fdf: 85 3c       .<
     sta height_in_cells                                               ; 3fe1: 85 3d       .=
-    jsr restore_rectangle_of_screen_memory                            ; 3fe3: 20 bb 1a     ..
+    jsr copy_rectangle_of_memory_to_screen                            ; 3fe3: 20 bb 1a     ..
     lda #<eight_entry_table2                                          ; 3fe6: a9 a9       ..
-    sta some_data3_ptr                                                ; 3fe8: 85 40       .@
+    sta source_sprite_memory_low                                      ; 3fe8: 85 40       .@
     lda #>eight_entry_table2                                          ; 3fea: a9 0a       ..
-    sta some_data3_ptr + 1                                            ; 3fec: 85 41       .A
+    sta source_sprite_memory_high                                     ; 3fec: 85 41       .A
     lda #0                                                            ; 3fee: a9 00       ..
     sta value_to_write_to_collision_map                               ; 3ff0: 85 3e       .>
     lda #1                                                            ; 3ff2: a9 01       ..
     sta l0042                                                         ; 3ff4: 85 42       .B
     ldx #3                                                            ; 3ff6: a2 03       ..
     ldy #2                                                            ; 3ff8: a0 02       ..
-    jsr some_code2                                                    ; 3ffa: 20 8b 3f     .?
+    jsr sub_c3f8b                                                     ; 3ffa: 20 8b 3f     .?
     ldx #$1c                                                          ; 3ffd: a2 1c       ..
-    jsr some_code2                                                    ; 3fff: 20 8b 3f     .?
+    jsr sub_c3f8b                                                     ; 3fff: 20 8b 3f     .?
     ldy #$0d                                                          ; 4002: a0 0d       ..
-    jsr some_code2                                                    ; 4004: 20 8b 3f     .?
+    jsr sub_c3f8b                                                     ; 4004: 20 8b 3f     .?
     ldx #3                                                            ; 4007: a2 03       ..
-    jsr some_code2                                                    ; 4009: 20 8b 3f     .?
+    jsr sub_c3f8b                                                     ; 4009: 20 8b 3f     .?
     ldx #$11                                                          ; 400c: a2 11       ..
     ldy #0                                                            ; 400e: a0 00       ..
     lda #6                                                            ; 4010: a9 06       ..
     sta width_in_cells                                                ; 4012: 85 3c       .<
     lda #4                                                            ; 4014: a9 04       ..
     sta height_in_cells                                               ; 4016: 85 3d       .=
-    jsr restore_rectangle_of_screen_memory                            ; 4018: 20 bb 1a     ..
+    jsr copy_rectangle_of_memory_to_screen                            ; 4018: 20 bb 1a     ..
     ldx #$0c                                                          ; 401b: a2 0c       ..
     ldy #4                                                            ; 401d: a0 04       ..
     lda #$10                                                          ; 401f: a9 10       ..
     sta width_in_cells                                                ; 4021: 85 3c       .<
     lda #5                                                            ; 4023: a9 05       ..
     sta height_in_cells                                               ; 4025: 85 3d       .=
-    jsr restore_rectangle_of_screen_memory                            ; 4027: 20 bb 1a     ..
+    jsr copy_rectangle_of_memory_to_screen                            ; 4027: 20 bb 1a     ..
     ldy #$0f                                                          ; 402a: a0 0f       ..
-    jsr restore_rectangle_of_screen_memory                            ; 402c: 20 bb 1a     ..
+    jsr copy_rectangle_of_memory_to_screen                            ; 402c: 20 bb 1a     ..
     ldx #$1e                                                          ; 402f: a2 1e       ..
     ldy #$0b                                                          ; 4031: a0 0b       ..
     lda #5                                                            ; 4033: a9 05       ..
     sta width_in_cells                                                ; 4035: 85 3c       .<
     lda #2                                                            ; 4037: a9 02       ..
     sta height_in_cells                                               ; 4039: 85 3d       .=
-    jsr restore_rectangle_of_screen_memory                            ; 403b: 20 bb 1a     ..
+    jsr copy_rectangle_of_memory_to_screen                            ; 403b: 20 bb 1a     ..
     jsr something26_TODO                                              ; 403e: 20 90 1b     ..
     jsr something23_TODO                                              ; 4041: 20 bb 12     ..
 ; $4044 referenced 1 time by $4049
@@ -1152,70 +1150,70 @@ c4235
 c424c
     rts                                                               ; 424c: 60          `
 
-level_thing_4_data_ptr
-    !word level_thing_4_data                                          ; 424d: 14 07       ..
+room_4_data_ptr
+    !byte 20                                                          ; 424d: 14          .              ; initial player X cell
+    !byte 7                                                           ; 424e: 07          .              ; initial player Y cell
 
-some_code4
-level_thing_4_code
+room_4_code
     ldx #0                                                            ; 424f: a2 00       ..
     ldy #0                                                            ; 4251: a0 00       ..
     lda #$ff                                                          ; 4253: a9 ff       ..
     sta width_in_cells                                                ; 4255: 85 3c       .<
     lda #2                                                            ; 4257: a9 02       ..
     sta height_in_cells                                               ; 4259: 85 3d       .=
-    jsr restore_rectangle_of_screen_memory                            ; 425b: 20 bb 1a     ..
+    jsr copy_rectangle_of_memory_to_screen                            ; 425b: 20 bb 1a     ..
     ldx #$24 ; '$'                                                    ; 425e: a2 24       .$
     ldy #2                                                            ; 4260: a0 02       ..
     dec height_in_cells                                               ; 4262: c6 3d       .=
-    jsr restore_rectangle_of_screen_memory                            ; 4264: 20 bb 1a     ..
+    jsr copy_rectangle_of_memory_to_screen                            ; 4264: 20 bb 1a     ..
     inx                                                               ; 4267: e8          .
     iny                                                               ; 4268: c8          .
     lda #$0f                                                          ; 4269: a9 0f       ..
     sta height_in_cells                                               ; 426b: 85 3d       .=
-    jsr restore_rectangle_of_screen_memory                            ; 426d: 20 bb 1a     ..
+    jsr copy_rectangle_of_memory_to_screen                            ; 426d: 20 bb 1a     ..
     ldx #0                                                            ; 4270: a2 00       ..
     ldy #$12                                                          ; 4272: a0 12       ..
     lda #5                                                            ; 4274: a9 05       ..
     sta width_in_cells                                                ; 4276: 85 3c       .<
     lda #3                                                            ; 4278: a9 03       ..
     sta height_in_cells                                               ; 427a: 85 3d       .=
-    jsr restore_rectangle_of_screen_memory                            ; 427c: 20 bb 1a     ..
+    jsr copy_rectangle_of_memory_to_screen                            ; 427c: 20 bb 1a     ..
     ldx #$1e                                                          ; 427f: a2 1e       ..
     lda #$ff                                                          ; 4281: a9 ff       ..
     sta width_in_cells                                                ; 4283: 85 3c       .<
-    jsr restore_rectangle_of_screen_memory                            ; 4285: 20 bb 1a     ..
+    jsr copy_rectangle_of_memory_to_screen                            ; 4285: 20 bb 1a     ..
     ldx #0                                                            ; 4288: a2 00       ..
     ldy #$15                                                          ; 428a: a0 15       ..
     lda #$0a                                                          ; 428c: a9 0a       ..
     sta width_in_cells                                                ; 428e: 85 3c       .<
     lda #1                                                            ; 4290: a9 01       ..
     sta height_in_cells                                               ; 4292: 85 3d       .=
-    jsr restore_rectangle_of_screen_memory                            ; 4294: 20 bb 1a     ..
+    jsr copy_rectangle_of_memory_to_screen                            ; 4294: 20 bb 1a     ..
     ldx #$19                                                          ; 4297: a2 19       ..
     lda #$ff                                                          ; 4299: a9 ff       ..
     sta width_in_cells                                                ; 429b: 85 3c       .<
-    jsr restore_rectangle_of_screen_memory                            ; 429d: 20 bb 1a     ..
+    jsr copy_rectangle_of_memory_to_screen                            ; 429d: 20 bb 1a     ..
     ldx #0                                                            ; 42a0: a2 00       ..
     iny                                                               ; 42a2: c8          .
     inc height_in_cells                                               ; 42a3: e6 3d       .=
-    jsr restore_rectangle_of_screen_memory                            ; 42a5: 20 bb 1a     ..
+    jsr copy_rectangle_of_memory_to_screen                            ; 42a5: 20 bb 1a     ..
     ldx #$0a                                                          ; 42a8: a2 0a       ..
     ldy #7                                                            ; 42aa: a0 07       ..
     lda #$14                                                          ; 42ac: a9 14       ..
     sta width_in_cells                                                ; 42ae: 85 3c       .<
     lda #2                                                            ; 42b0: a9 02       ..
     sta height_in_cells                                               ; 42b2: 85 3d       .=
-    jsr restore_rectangle_of_screen_memory                            ; 42b4: 20 bb 1a     ..
+    jsr copy_rectangle_of_memory_to_screen                            ; 42b4: 20 bb 1a     ..
     ldx #0                                                            ; 42b7: a2 00       ..
     lda #5                                                            ; 42b9: a9 05       ..
     sta width_in_cells                                                ; 42bb: 85 3c       .<
-    jsr restore_rectangle_of_screen_memory                            ; 42bd: 20 bb 1a     ..
+    jsr copy_rectangle_of_memory_to_screen                            ; 42bd: 20 bb 1a     ..
     ldy #9                                                            ; 42c0: a0 09       ..
     lda #3                                                            ; 42c2: a9 03       ..
     sta width_in_cells                                                ; 42c4: 85 3c       .<
     lda #4                                                            ; 42c6: a9 04       ..
     sta height_in_cells                                               ; 42c8: 85 3d       .=
-    jsr restore_rectangle_of_screen_memory                            ; 42ca: 20 bb 1a     ..
+    jsr copy_rectangle_of_memory_to_screen                            ; 42ca: 20 bb 1a     ..
     jsr something26_TODO                                              ; 42cd: 20 90 1b     ..
     ldx #$14                                                          ; 42d0: a2 14       ..
     ldy #$0c                                                          ; 42d2: a0 0c       ..
@@ -1404,7 +1402,6 @@ c4415
     !byte $ce, $9c, $64,   0, $10,   0,   6,   0,   7,   0,   1,   0  ; 446a: ce 9c 64... ..d
     !byte $11,   0,   0,   0, $be,   0,   1,   0, $10,   0,   0,   0  ; 4476: 11 00 00... ...
     !byte   0,   0,   0,   0                                          ; 4482: 00 00 00... ...
-some_data3
 ground_fill_2x2_top_left
     !byte %...#....                                                   ; 4486: 10          .
     !byte %..#.....                                                   ; 4487: 20
@@ -1662,7 +1659,7 @@ sprite_data
 pydis_end
 
 ; Label references by decreasing frequency:
-;     restore_rectangle_of_screen_memory:                    43
+;     copy_rectangle_of_memory_to_screen:                    43
 ;     width_in_cells:                                        39
 ;     height_in_cells:                                       38
 ;     desired_room_index:                                    19
@@ -1699,7 +1696,7 @@ pydis_end
 ;     something23_TODO:                                       4
 ;     something24_TODO:                                       4
 ;     something26_TODO:                                       4
-;     some_code2:                                             4
+;     sub_c3f8b:                                              4
 ;     c41d9:                                                  4
 ;     c4415:                                                  4
 ;     l09a8:                                                  3
@@ -1717,8 +1714,8 @@ pydis_end
 ;     c3f8a:                                                  3
 ;     c419f:                                                  3
 ;     c4339:                                                  3
-;     some_data3_ptr:                                         2
-;     some_data3_ptr + 1:                                     2
+;     source_sprite_memory_low:                               2
+;     source_sprite_memory_high:                              2
 ;     l0950:                                                  2
 ;     l0966:                                                  2
 ;     l0a03:                                                  2
@@ -1944,19 +1941,20 @@ pydis_end
 ;     sub_c3dfc
 ;     sub_c3ef1
 ;     sub_c3f02
+;     sub_c3f8b
 ;     sub_c407f
 ;     sub_c42f8
 !if (<eight_entry_table2) != $a9 {
     !error "Assertion failed: <eight_entry_table2 == $a9"
 }
-!if (<some_data3) != $86 {
-    !error "Assertion failed: <some_data3 == $86"
+!if (<ground_fill_2x2_top_left) != $86 {
+    !error "Assertion failed: <ground_fill_2x2_top_left == $86"
 }
 !if (>eight_entry_table2) != $0a {
     !error "Assertion failed: >eight_entry_table2 == $0a"
 }
-!if (>some_data3) != $44 {
-    !error "Assertion failed: >some_data3 == $44"
+!if (>ground_fill_2x2_top_left) != $44 {
+    !error "Assertion failed: >ground_fill_2x2_top_left == $44"
 }
 !if (level_init_after_load_handler) != $3af2 {
     !error "Assertion failed: level_init_after_load_handler == $3af2"
@@ -1964,29 +1962,17 @@ pydis_end
 !if (level_name) != $3ae7 {
     !error "Assertion failed: level_name == $3ae7"
 }
-!if (level_thing_1_data) != $1614 {
-    !error "Assertion failed: level_thing_1_data == $1614"
+!if (room_1_data_ptr) != $3b27 {
+    !error "Assertion failed: room_1_data_ptr == $3b27"
 }
-!if (level_thing_1_data_ptr) != $3b27 {
-    !error "Assertion failed: level_thing_1_data_ptr == $3b27"
+!if (room_2_data_ptr) != $3d3d {
+    !error "Assertion failed: room_2_data_ptr == $3d3d"
 }
-!if (level_thing_2_data) != $0709 {
-    !error "Assertion failed: level_thing_2_data == $0709"
+!if (room_3_data_ptr) != $3fd7 {
+    !error "Assertion failed: room_3_data_ptr == $3fd7"
 }
-!if (level_thing_2_data_ptr) != $3d3d {
-    !error "Assertion failed: level_thing_2_data_ptr == $3d3d"
-}
-!if (level_thing_3_data) != $0914 {
-    !error "Assertion failed: level_thing_3_data == $0914"
-}
-!if (level_thing_3_data_ptr) != $3fd7 {
-    !error "Assertion failed: level_thing_3_data_ptr == $3fd7"
-}
-!if (level_thing_4_data) != $0714 {
-    !error "Assertion failed: level_thing_4_data == $0714"
-}
-!if (level_thing_4_data_ptr) != $424d {
-    !error "Assertion failed: level_thing_4_data_ptr == $424d"
+!if (room_4_data_ptr) != $424d {
+    !error "Assertion failed: room_4_data_ptr == $424d"
 }
 !if (second_level_handler) != $3b17 {
     !error "Assertion failed: second_level_handler == $3b17"

@@ -206,7 +206,8 @@ width_in_cells                                  = $3c
 height_in_cells                                 = $3d
 value_to_write_to_collision_map                 = $3e
 l003f                                           = $3f
-some_data3_ptr                                  = $40
+source_sprite_memory_low                        = $40
+source_sprite_memory_high                       = $41
 l0042                                           = $42
 print_in_italics_flag                           = $43
 l0044                                           = $44
@@ -2071,7 +2072,7 @@ current_room_index
 ; X and Y registers specify destination address of top left on screen
 ; address1_low and address1_high contain something, possibly X/Y coords for collision
 ; map?
-restore_rectangle_of_screen_memory
+copy_rectangle_of_memory_to_screen
     pha                                                               ; 1bec: 48          H   :1abb[1]
     sty current_row                                                   ; 1bed: 84 7d       .}  :1abc[1]
     jsr clip_cells_to_write_to_collision_map                          ; 1bef: 20 17 1e     .. :1abe[1]
@@ -2080,8 +2081,8 @@ restore_rectangle_of_screen_memory
     sta first_cell_in_row_screen_address_low                          ; 1bf7: 85 74       .t  :1ac6[1]
     lda cell_screen_address_high                                      ; 1bf9: a5 77       .w  :1ac8[1]
     sta first_cell_in_row_screen_address_high                         ; 1bfb: 85 75       .u  :1aca[1]
-    ldx some_data3_ptr                                                ; 1bfd: a6 40       .@  :1acc[1]
-    ldy some_data3_ptr + 1                                            ; 1bff: a4 41       .A  :1ace[1]
+    ldx source_sprite_memory_low                                      ; 1bfd: a6 40       .@  :1acc[1]
+    ldy source_sprite_memory_high                                     ; 1bff: a4 41       .A  :1ace[1]
     stx original_off_screen_address_low                               ; 1c01: 86 78       .x  :1ad0[1]
     sty original_off_screen_address_high                              ; 1c03: 84 79       .y  :1ad2[1]
     stx off_screen_address_low                                        ; 1c05: 86 7a       .z  :1ad4[1]
@@ -2714,7 +2715,7 @@ restore_ay_and_return
     pla                                                               ; 1f23: 68          h   :1df2[1]
     rts                                                               ; 1f24: 60          `   :1df3[1]
 
-; clear the game area of the screen to 255 (and also clear the collision map?)
+; clear the game area of the screen to 255, and also clear the collision map
 clear_game_area
     lda #0                                                            ; 1f25: a9 00       ..  :1df4[1]
     tay                                                               ; 1f27: a8          .   :1df6[1]
@@ -8009,9 +8010,9 @@ show_dialog_box
     inx                                                               ; 4117: e8          .   :0418[2]
     stx l003f                                                         ; 4118: 86 3f       .?  :0419[2]
     lda #<eight_entry_table2                                          ; 411a: a9 a9       ..  :041b[2]
-    sta some_data3_ptr                                                ; 411c: 85 40       .@  :041d[2]
+    sta source_sprite_memory_low                                      ; 411c: 85 40       .@  :041d[2]
     lda #>eight_entry_table2                                          ; 411e: a9 0a       ..  :041f[2]
-    sta some_data3_ptr + 1                                            ; 4120: 85 41       .A  :0421[2]
+    sta source_sprite_memory_high                                     ; 4120: 85 41       .A  :0421[2]
     inx                                                               ; 4122: e8          .   :0423[2]
     stx l0042                                                         ; 4123: 86 42       .B  :0424[2]
     ldy #1                                                            ; 4125: a0 01       ..  :0426[2]
@@ -8021,7 +8022,7 @@ show_dialog_box
     sta width_in_cells                                                ; 412d: 85 3c       .<  :042e[2]
     lda #3                                                            ; 412f: a9 03       ..  :0430[2]
     sta height_in_cells                                               ; 4131: 85 3d       .=  :0432[2]
-    jsr restore_rectangle_of_screen_memory                            ; 4133: 20 bb 1a     .. :0434[2]
+    jsr copy_rectangle_of_memory_to_screen                            ; 4133: 20 bb 1a     .. :0434[2]
     jmp vdu_goto_0_9                                                  ; 4136: 4c 44 04    LD. :0437[2]
 
 no_existing_dialog_box_shown
@@ -8050,9 +8051,9 @@ remove_dialog
     stx which_dialog_is_active                                        ; 4163: 86 04       ..  :0464[2]
     stx l003f                                                         ; 4165: 86 3f       .?  :0466[2]
     lda #<cache_of_screen_memory_under_dialog                         ; 4167: a9 30       .0  :0468[2]
-    sta some_data3_ptr                                                ; 4169: 85 40       .@  :046a[2]
+    sta source_sprite_memory_low                                      ; 4169: 85 40       .@  :046a[2]
     lda #>cache_of_screen_memory_under_dialog                         ; 416b: a9 05       ..  :046c[2]
-    sta some_data3_ptr + 1                                            ; 416d: 85 41       .A  :046e[2]
+    sta source_sprite_memory_high                                     ; 416d: 85 41       .A  :046e[2]
     jmp restore_screen_memory_after_dialog_box                        ; 416f: 4c 05 05    L.. :0470[2]
 
 return30
@@ -8124,9 +8125,9 @@ sub_c04cb
     stx l003f                                                         ; 41cf: 86 3f       .?  :04d0[2]
     stx plot_move_x_high                                              ; 41d1: 8e 18 05    ... :04d2[2]
     lda #<eight_entry_table2                                          ; 41d4: a9 a9       ..  :04d5[2]
-    sta some_data3_ptr                                                ; 41d6: 85 40       .@  :04d7[2]
+    sta source_sprite_memory_low                                      ; 41d6: 85 40       .@  :04d7[2]
     lda #>eight_entry_table2                                          ; 41d8: a9 0a       ..  :04d9[2]
-    sta some_data3_ptr + 1                                            ; 41da: 85 41       .A  :04db[2]
+    sta source_sprite_memory_high                                     ; 41da: 85 41       .A  :04db[2]
     inx                                                               ; 41dc: e8          .   :04dd[2]
     stx l0042                                                         ; 41dd: 86 42       .B  :04de[2]
     jsr restore_screen_memory_after_dialog_box                        ; 41df: 20 05 05     .. :04e0[2]
@@ -8157,7 +8158,7 @@ restore_screen_memory_after_dialog_box
     sta width_in_cells                                                ; 420b: 85 3c       .<  :050c[2]
     lda #5                                                            ; 420d: a9 05       ..  :050e[2]
     sta height_in_cells                                               ; 420f: 85 3d       .=  :0510[2]
-    jmp restore_rectangle_of_screen_memory                            ; 4211: 4c bb 1a    L.. :0512[2]
+    jmp copy_rectangle_of_memory_to_screen                            ; 4211: 4c bb 1a    L.. :0512[2]
 
 plot_vdu_bytes
     !byte $19,   4                                                    ; 4214: 19 04       ..  :0515[2]   ; MOVE absolute

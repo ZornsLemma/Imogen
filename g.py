@@ -660,7 +660,7 @@ expr(0x1e2a, "game_area_width_cells+1")
 expr(0x1e3a, "game_area_height_cells+1")
 expr(0x1e3e, "game_area_height_cells")
 
-comment(0x1df4, "clear the game area of the screen to 255 (and also clear the collision map?)")
+comment(0x1df4, "clear the game area of the screen to 255, and also clear the collision map")
 label(0x1df4, "clear_game_area")
 label(0x1e0b, "clear_screen_game_area_loop")
 
