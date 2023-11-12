@@ -6,6 +6,8 @@ crtc_screen_start_low                   = 13
 crtc_vert_displayed                     = 6
 crtc_vert_sync_pos                      = 7
 first_level_letter                      = 65
+game_area_height_cells                  = 24
+game_area_width_cells                   = 40
 jmp_indirect_opcode                     = 108
 jsr_opcode                              = 32
 last_level_letter                       = 81
@@ -18,7 +20,6 @@ osbyte_vsync                            = 19
 osfile                                  = 65501
 osword_read_char                        = 10
 relocate_address                        = 4608
-screen_height_characters                = 24
 screen_start                            = 25088
 vdu_disable                             = 21
 vdu_goto_xy                             = 31
@@ -167,7 +168,7 @@ oscli                                               = &fff7
     sta crtc_address_write                                            ; 1295: 8d 01 fe    ...
     lda #crtc_vert_displayed                                          ; 1298: a9 06       ..
     sta crtc_address_register                                         ; 129a: 8d 00 fe    ...
-    lda #screen_height_characters                                     ; 129d: a9 18       ..
+    lda #game_area_height_cells                                       ; 129d: a9 18       ..
     sta crtc_address_write                                            ; 129f: 8d 01 fe    ...
     lda #crtc_interlace_delay                                         ; 12a2: a9 08       ..
     sta crtc_address_register                                         ; 12a4: 8d 00 fe    ...
@@ -648,6 +649,7 @@ some_data_shared_between_g_and_dataA = sub_c132a+1
     assert crtc_screen_start_low == &0d
     assert crtc_vert_displayed == &06
     assert crtc_vert_sync_pos == &07
+    assert game_area_height_cells == &18
     assert jmp_indirect_opcode == &6c
     assert jsr_opcode == &20
     assert osbyte_opt == &8b
@@ -655,7 +657,6 @@ some_data_shared_between_g_and_dataA = sub_c132a+1
     assert osbyte_tv == &90
     assert osbyte_vsync == &13
     assert osword_read_char == &0a
-    assert screen_height_characters == &18
     assert vdu_disable == &15
     assert vdu_goto_xy == &1f
     assert vdu_set_mode == &16

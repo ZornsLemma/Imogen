@@ -1,12 +1,13 @@
 ; Constants
 first_level_letter                             = 65
 fixed_eor_key                                  = 203
+game_area_height_cells                         = 24
+game_area_width_cells                          = 40
 last_level_letter                              = 81
 opcode_jmp                                     = 76
 osbyte_flush_buffer_class                      = 15
 osbyte_read_write_escape_break_effect          = 200
 osbyte_read_write_first_byte_break_intercept   = 247
-screen_height_characters                       = 24
 vdu_cr                                         = 13
 vdu_lf                                         = 10
 

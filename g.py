@@ -30,8 +30,6 @@ constant(0xff, "osfile_load")
 constant(320, "screen_width_in_pixels")
 constant(39, "screen_width_minus_one")
 constant(40, "characters_per_line")
-constant(40, "game_area_columns")
-constant(24, "game_area_rows")
 
 constant(0x18, "opcode_clc")
 constant(0x38, "opcode_sec")
@@ -196,6 +194,7 @@ label(0x0046, "return_key_pressed_pending")
 
 label(0x0043, "print_in_italics_flag")
 label(0x004c, "screen_base_address_high")
+label(0x0056, "temp_rope_length")
 label(0x0058, "temp_sprite_address_low")
 label(0x0059, "temp_sprite_address_high")
 label(0x005a, "temp_sprite_offset")
@@ -656,10 +655,10 @@ label(0x161e, "finish_off_sprite")
 label(0x1623, "shift_mask_byte_loop")
 label(0x1628, "write_last_byte")
 expr(0x1658, "characters_per_line")
-expr(0x1e2e, "game_area_columns")
-expr(0x1e2a, "game_area_columns+1")
-expr(0x1e3a, "game_area_rows+1")
-expr(0x1e3e, "game_area_rows")
+expr(0x1e2e, "game_area_width_cells")
+expr(0x1e2a, "game_area_width_cells+1")
+expr(0x1e3a, "game_area_height_cells+1")
+expr(0x1e3e, "game_area_height_cells")
 
 comment(0x1df4, "clear the game area of the screen to 255 (and also clear the collision map?)")
 label(0x1df4, "clear_game_area")
@@ -2271,8 +2270,8 @@ comment(0x1b90, "TODO: Still figuring out exactly what, but this seems to be 'se
 
 entry(0x1efa, "read_collision_map_value_for_x_y")
 comment(0x1efa, "TODO: speculating but think this is right - my skimming of existing collision map disassembly suggests it stores 2 bits per character cell, so we have 10 bytes per 40 column row (4 cells per byte), which seems to fit with the constants in this code")
-expr(0x1efb, "game_area_columns")
-expr(0x1eff, "game_area_rows")
+expr(0x1efb, "game_area_width_cells")
+expr(0x1eff, "game_area_height_cells")
 entry(0x1f2d, "outside_game_area")
 comment(0x1f4c, """*************************************************************************************
 
@@ -2317,6 +2316,25 @@ On Exit:
 *************************************************************************************""")
 label(0x1f6c, "remember_x")
 
+comment(0x1db9, """*************************************************************************************
+
+Draw rope
+    The top of the rope is a rope hook, which has collision map value 3 (solid)
+    The rope itself has collision map value 2 (climbable), including the rope end
+
+On Entry:
+    (X,Y): cell coordinates for the top of the rope
+
+On Exit:
+    Preserves A,X,Y
+
+*************************************************************************************""")
+comment(0x1dbe, "Don't draw the rope hook if Y is zero")
+label(0x1dc9, "draw_rope_loop")
+label(0x1de6, "draw_end_of_rope")
+comment(0x1dcf, "cycle through the rope sprites based on Y coordinate")
+expr(0x1de1, "game_area_height_cells")
+
 comment(0x1f06, "Set temp_value=10*Y")
 comment(0x1f10, "Set Y=temp_value+X/4")
 blank(0x1f17)
@@ -2325,7 +2343,7 @@ entry(0x1f23, "right_shift_a_by_2x")
 
 entry(0x1b98, "something26_x_loop")
 entry(0x1b96, "something26_y_loop")
-expr(0x1b95, make_subtract("screen_height_characters", "1"))
+expr(0x1b95, make_subtract("game_area_height_cells", "1"))
 expr(0x1b97, "screen_width_minus_one")
 entry(0x1bc3, "something26_decrement_and_loop")
 entry(0x1be4, "something26_copy_loop1")

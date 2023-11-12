@@ -1,6 +1,6 @@
 from commands import *
 import acorn
-# TODO: Maybe we shouldn't import common here - does it mess things up too much? I did this to share screen_height_characters - if that's all we gain, we should maybe just duplicate it.
+# TODO: Maybe we shouldn't import common here - does it mess things up too much? I did this to share game_area_height_characters - if that's all we gain, we should maybe just duplicate it.
 from common import *
 acorn.bbc()
 
@@ -35,7 +35,7 @@ constant(0x6200, "screen_start")
 expr(0x1260, "vdu_set_mode")
 expr(0x128a, make_lo(make_divide("screen_start", 8)))
 expr(0x1294, make_hi(make_divide("screen_start", 8)))
-expr(0x129e, "screen_height_characters")
+expr(0x129e, "game_area_height_cells")
 
 expr(0x12e0, "vdu_goto_xy")
 expr(0x12ff, "vdu_goto_xy")

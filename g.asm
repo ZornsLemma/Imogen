@@ -14,8 +14,8 @@ crtc_vert_displayed                             = 6
 crtc_vert_sync_pos                              = 7
 cyan                                            = 6
 first_level_letter                              = 65
-game_area_columns                               = 40
-game_area_rows                                  = 24
+game_area_height_cells                          = 24
+game_area_width_cells                           = 40
 green                                           = 2
 inkey_key_escape                                = 143
 inkey_key_left                                  = 230
@@ -57,7 +57,6 @@ osword_read_char                                = 10
 osword_sound                                    = 7
 red                                             = 1
 rows_per_character                              = 8
-screen_height_characters                        = 24
 screen_width_in_pixels                          = 320
 screen_width_minus_one                          = 39
 sprite_op_flags_copy_mask                       = 1
@@ -227,7 +226,7 @@ previous_level                                  = $51
 l0052                                           = $52
 l0053                                           = $53
 sprdata_ptr                                     = $54
-l0056                                           = $56
+temp_rope_length                                = $56
 temp_sprite_address_low                         = $58
 temp_sprite_address_high                        = $59
 temp_sprite_offset                              = $5a
@@ -2228,7 +2227,7 @@ c1c9d_local
 something26_TODO
     lda #3                                                            ; 1cc1: a9 03       ..  :1b90[1]
     sta l0044                                                         ; 1cc3: 85 44       .D  :1b92[1]
-    ldy #screen_height_characters - 1                                 ; 1cc5: a0 17       ..  :1b94[1]
+    ldy #game_area_height_cells - 1                                   ; 1cc5: a0 17       ..  :1b94[1]
 something26_y_loop
     ldx #screen_width_minus_one                                       ; 1cc7: a2 27       .'  :1b96[1]
 something26_x_loop
@@ -2662,20 +2661,35 @@ character_bitmap_1db1
     !byte %...####.                                                   ; 1ee9: 1e          .   :1db8[1]
 
 ; TODO: This is called from e.g. data
+; *************************************************************************************
+; 
+; Draw rope
+;     The top of the rope is a rope hook, which has collision map value 3 (solid)
+;     The rope itself has collision map value 2 (climbable), including the rope end
+; 
+; On Entry:
+;     (X,Y): cell coordinates for the top of the rope
+; 
+; On Exit:
+;     Preserves A,X,Y
+; 
+; *************************************************************************************
 draw_rope
-    sta l0056                                                         ; 1eea: 85 56       .V  :1db9[1]
+    sta temp_rope_length                                              ; 1eea: 85 56       .V  :1db9[1]
     pha                                                               ; 1eec: 48          H   :1dbb[1]
     tya                                                               ; 1eed: 98          .   :1dbc[1]
     pha                                                               ; 1eee: 48          H   :1dbd[1]
-    beq c1dc9                                                         ; 1eef: f0 09       ..  :1dbe[1]
+; Don't draw the rope hook if Y is zero
+    beq draw_rope_loop                                                ; 1eef: f0 09       ..  :1dbe[1]
     lda #spriteid_rope_hook                                           ; 1ef1: a9 0b       ..  :1dc0[1]
     jsr draw_sprite_a_at_cell_xy                                      ; 1ef3: 20 4c 1f     L. :1dc2[1]
     lda #3                                                            ; 1ef6: a9 03       ..  :1dc5[1]
     bne c1dda                                                         ; 1ef8: d0 11       ..  :1dc7[1]
-c1dc9
-    lda l0056                                                         ; 1efa: a5 56       .V  :1dc9[1]
+draw_rope_loop
+    lda temp_rope_length                                              ; 1efa: a5 56       .V  :1dc9[1]
     cmp #1                                                            ; 1efc: c9 01       ..  :1dcb[1]
-    beq c1de6                                                         ; 1efe: f0 17       ..  :1dcd[1]
+    beq draw_end_of_rope                                              ; 1efe: f0 17       ..  :1dcd[1]
+; cycle through the rope sprites based on Y coordinate
     tya                                                               ; 1f00: 98          .   :1dcf[1]
     and #3                                                            ; 1f01: 29 03       ).  :1dd0[1]
     clc                                                               ; 1f03: 18          .   :1dd2[1]
@@ -2684,12 +2698,12 @@ c1dc9
     lda #2                                                            ; 1f09: a9 02       ..  :1dd8[1]
 c1dda
     jsr write_a_single_value_to_cell_in_collision_map                 ; 1f0b: 20 bb 1e     .. :1dda[1]
-    dec l0056                                                         ; 1f0e: c6 56       .V  :1ddd[1]
+    dec temp_rope_length                                              ; 1f0e: c6 56       .V  :1ddd[1]
     iny                                                               ; 1f10: c8          .   :1ddf[1]
-    cpy #$18                                                          ; 1f11: c0 18       ..  :1de0[1]
-    bcc c1dc9                                                         ; 1f13: 90 e5       ..  :1de2[1]
+    cpy #game_area_height_cells                                       ; 1f11: c0 18       ..  :1de0[1]
+    bcc draw_rope_loop                                                ; 1f13: 90 e5       ..  :1de2[1]
     bcs c1df0                                                         ; 1f15: b0 0a       ..  :1de4[1]
-c1de6
+draw_end_of_rope
     lda #spriteid_rope_end                                            ; 1f17: a9 0a       ..  :1de6[1]
     jsr draw_sprite_a_at_cell_xy                                      ; 1f19: 20 4c 1f     L. :1de8[1]
     lda #2                                                            ; 1f1c: a9 02       ..  :1deb[1]
@@ -2752,10 +2766,10 @@ clip_cells_to_write_to_collision_map
     clc                                                               ; 1f55: 18          .   :1e24[1]
     adc width_in_cells                                                ; 1f56: 65 3c       e<  :1e25[1]
     bcs clip_x                                                        ; 1f58: b0 04       ..  :1e27[1]
-    cmp #game_area_columns+1                                          ; 1f5a: c9 29       .)  :1e29[1]
+    cmp #game_area_width_cells+1                                      ; 1f5a: c9 29       .)  :1e29[1]
     bcc clipped_x_ok                                                  ; 1f5c: 90 06       ..  :1e2b[1]
 clip_x
-    lda #game_area_columns                                            ; 1f5e: a9 28       .(  :1e2d[1]
+    lda #game_area_width_cells                                        ; 1f5e: a9 28       .(  :1e2d[1]
     sbc cell_x                                                        ; 1f60: e5 70       .p  :1e2f[1]
     sta width_in_cells_to_write                                       ; 1f62: 85 72       .r  :1e31[1]
 clipped_x_ok
@@ -2763,10 +2777,10 @@ clipped_x_ok
     clc                                                               ; 1f65: 18          .   :1e34[1]
     adc height_in_cells                                               ; 1f66: 65 3d       e=  :1e35[1]
     bcs clip_y                                                        ; 1f68: b0 04       ..  :1e37[1]
-    cmp #game_area_rows+1                                             ; 1f6a: c9 19       ..  :1e39[1]
+    cmp #game_area_height_cells+1                                     ; 1f6a: c9 19       ..  :1e39[1]
     bcc return7                                                       ; 1f6c: 90 06       ..  :1e3b[1]
 clip_y
-    lda #game_area_rows                                               ; 1f6e: a9 18       ..  :1e3d[1]
+    lda #game_area_height_cells                                       ; 1f6e: a9 18       ..  :1e3d[1]
     sbc cell_y                                                        ; 1f70: e5 71       .q  :1e3f[1]
     sta height_in_cells_to_write                                      ; 1f72: 85 73       .s  :1e41[1]
 return7
@@ -2942,9 +2956,9 @@ write_a_single_value_to_cell_in_collision_map
 ; disassembly suggests it stores 2 bits per character cell, so we have 10 bytes per 40
 ; column row (4 cells per byte), which seems to fit with the constants in this code
 read_collision_map_value_for_x_y
-    cpx #game_area_columns                                            ; 202b: e0 28       .(  :1efa[1]
+    cpx #game_area_width_cells                                        ; 202b: e0 28       .(  :1efa[1]
     bcs outside_game_area                                             ; 202d: b0 2f       ./  :1efc[1]
-    cpy #game_area_rows                                               ; 202f: c0 18       ..  :1efe[1]
+    cpy #game_area_height_cells                                       ; 202f: c0 18       ..  :1efe[1]
     bcs outside_game_area                                             ; 2031: b0 2b       .+  :1f00[1]
     stx saved_x                                                       ; 2033: 86 4a       .J  :1f02[1]
     sty saved_y                                                       ; 2035: 84 4b       .K  :1f04[1]
@@ -8196,9 +8210,7 @@ pydis_end
 ;     c1cda
 ;     c1cee
 ;     c1d16
-;     c1dc9
 ;     c1dda
-;     c1de6
 ;     c1df0
 ;     c1f06
 ;     c1f96
@@ -8389,7 +8401,6 @@ pydis_end
 ;     l0044
 ;     l0052
 ;     l0053
-;     l0056
 ;     l0060
 ;     l0061
 ;     l0062
@@ -9037,17 +9048,20 @@ pydis_end
 !if (first_level_letter) != $41 {
     !error "Assertion failed: first_level_letter == $41"
 }
-!if (game_area_columns) != $28 {
-    !error "Assertion failed: game_area_columns == $28"
+!if (game_area_height_cells) != $18 {
+    !error "Assertion failed: game_area_height_cells == $18"
 }
-!if (game_area_columns+1) != $29 {
-    !error "Assertion failed: game_area_columns+1 == $29"
+!if (game_area_height_cells - 1) != $17 {
+    !error "Assertion failed: game_area_height_cells - 1 == $17"
 }
-!if (game_area_rows) != $18 {
-    !error "Assertion failed: game_area_rows == $18"
+!if (game_area_height_cells+1) != $19 {
+    !error "Assertion failed: game_area_height_cells+1 == $19"
 }
-!if (game_area_rows+1) != $19 {
-    !error "Assertion failed: game_area_rows+1 == $19"
+!if (game_area_width_cells) != $28 {
+    !error "Assertion failed: game_area_width_cells == $28"
+}
+!if (game_area_width_cells+1) != $29 {
+    !error "Assertion failed: game_area_width_cells+1 == $29"
 }
 !if (green) != $02 {
     !error "Assertion failed: green == $02"
@@ -9237,9 +9251,6 @@ pydis_end
 }
 !if (relocation5_high_copy_start) != $40d0 {
     !error "Assertion failed: relocation5_high_copy_start == $40d0"
-}
-!if (screen_height_characters - 1) != $17 {
-    !error "Assertion failed: screen_height_characters - 1 == $17"
 }
 !if (screen_width_minus_one) != $27 {
     !error "Assertion failed: screen_width_minus_one == $27"

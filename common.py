@@ -135,4 +135,5 @@ expr_label(0x41, make_add("some_data3_ptr", "1"))
 
 label(0xaa9, "eight_entry_table2")
 
-constant(24, "screen_height_characters")
+constant(40, "game_area_width_cells")
+constant(24, "game_area_height_cells")
