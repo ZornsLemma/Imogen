@@ -2276,9 +2276,15 @@ comment(0x1bca, "TODO: This is looking like it takes the low two bits of A to ge
 entry(0x1bca, "partial_plot_across_row_boundary") # TODO: poor name
 expr(0x1bd9, make_lo("character_bitmap_1d19"))
 expr(0x1bdf, make_hi("character_bitmap_1d19"))
+expr(0x1c20, make_lo("character_bitmap_1d59"))
+expr(0x1c26, make_hi("character_bitmap_1d59"))
+expr(0x1cb0, make_lo("character_bitmap_1d79"))
+expr(0x1cb6, make_hi("character_bitmap_1d79"))
+comment(0x1ca8, "TODO: Just based on partial_plot_across_row_boundary's existence and the look of the bitmaps, I am guessing this is similar but handles plots across column boundaries.")
 
-character_bitmap(0x1d19)
-character_bitmap(0x1d19+8)
+# TODO: See partial_plot_across_row_boundary - I think there are 4 sets of two bitmap pairs here for that, and it looks like several additional bitmaps I might as well pick up as well
+for i in range(20):
+    character_bitmap(0x1d19+i*8)
 
 go()
 
