@@ -1340,7 +1340,6 @@ entry(0x17a0, "irq1_routine")
 entry(0x1839, "reset_game_because_escape_pressed")
 entry(0x18c3, "something12_TODO")
 label(0x1b8a, "draw_right_facing_wall_local")
-label(0x1c3b, "draw_right_facing_wall")
 entry(0x1fd7, "something16_TODO")
 entry(0x2200, "set_player_spriteid_and_offset_from_animation_table")
 comment(0x2200, "store YX as animation table address", inline=True)
@@ -2408,6 +2407,18 @@ label(0x1d0b, "found_corner_spriteid")
 label(0x1c4e, "normal_right_wall_not_corner")
 expr(0x1c56, make_lo("tile_wall_right0"))
 expr(0x1c5c, make_hi("tile_wall_right0"))
+
+comment(0x1c3b, """*************************************************************************************
+
+Draw right facing wall, including corner pieces
+
+On Entry:
+    (X,Y): cell coordinates
+
+*************************************************************************************""")
+label(0x1c3b, "draw_right_facing_wall")
+
+
 comment(0x1c15, """*************************************************************************************
 
 Draw ceiling

@@ -2368,6 +2368,14 @@ copy_ceiling_tile_loop
     ldy cell_y                                                        ; 1d67: a4 71       .q  :1c36[1]
     jmp next_cell_over                                                ; 1d69: 4c c3 1b    L.. :1c38[1]
 
+; *************************************************************************************
+; 
+; Draw right facing wall, including corner pieces
+; 
+; On Entry:
+;     (X,Y): cell coordinates
+; 
+; *************************************************************************************
 draw_right_facing_wall
     jsr find_corner_spriteid                                          ; 1d6c: 20 f3 1c     .. :1c3b[1]
     beq normal_right_wall_not_corner                                  ; 1d6f: f0 0e       ..  :1c3e[1]
