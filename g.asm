@@ -177,9 +177,9 @@ rnd1                                        = $07
 rnd2                                        = $08
 rnd3                                        = $09
 rnd4                                        = $0a
-dest_sprite_number                          = $14
+dest_sprite_id                              = $14
 sprite_op_flags                             = $15
-sprite_number                               = $16
+sprite_id                                   = $16
 sprite_x_base_low                           = $18
 sprite_x_base_high                          = $19
 sprite_y_base_low                           = $1a
@@ -859,13 +859,13 @@ reset_sprite_flags_and_exit
 ; Conventionally, sprite characters are authored looking to the right.
 ; 
 ; On Entry:
-;              sprite_number: id of the sprite to plot
+;                  sprite_id: id of the sprite to plot
 ;     sprite_x_base_low/high: X coordinate of sprite to plot (pixels)
 ;     sprite_y_base_low/high: Y coordinate of sprite to plot (pixels)
 ; 
 ;            sprite_op_flags: These bits are mutually exclusive. If bit is set:
 ; 
-;                             bit 0: also copy mask into sprite 'dest_sprite_number'
+;                             bit 0: also copy mask into sprite 'dest_sprite_id'
 ;                             bit 1: erase the sprite from the screen (with mask)
 ;                             bit 2: write to the screen without a mask
 ;                             bits 3-7: unused
@@ -906,7 +906,7 @@ sprite_op
     pha                                                               ; 14c0: 48          H   :138f[1]
     tya                                                               ; 14c1: 98          .   :1390[1]
     pha                                                               ; 14c2: 48          H   :1391[1]
-    lda sprite_number                                                 ; 14c3: a5 16       ..  :1392[1]
+    lda sprite_id                                                     ; 14c3: a5 16       ..  :1392[1]
     jsr get_address_of_sprite_a                                       ; 14c5: 20 2c 13     ,. :1394[1]
     stx src_sprite_address_low                                        ; 14c8: 86 70       .p  :1397[1]
     sty src_sprite_address_high                                       ; 14ca: 84 71       .q  :1399[1]
@@ -914,7 +914,7 @@ sprite_op
     and #1                                                            ; 14ce: 29 01       ).  :139d[1]
     beq skip_copying_sprite_header_to_destination_sprite              ; 14d0: f0 14       ..  :139f[1]   ; check flags to see if we are copying to another sprite
 ; get destination sprite address
-    lda dest_sprite_number                                            ; 14d2: a5 14       ..  :13a1[1]
+    lda dest_sprite_id                                                ; 14d2: a5 14       ..  :13a1[1]
     jsr get_address_of_sprite_a                                       ; 14d4: 20 2c 13     ,. :13a3[1]
     stx dest_sprite_address_low                                       ; 14d7: 86 7e       .~  :13a6[1]
     sty dest_sprite_address_high                                      ; 14d9: 84 7f       ..  :13a8[1]
@@ -2402,7 +2402,7 @@ draw_right_facing_wall
     inx                                                               ; 1d71: e8          .   :1c40[1]
     lda #$ff                                                          ; 1d72: a9 ff       ..  :1c41[1]
     sta sprite_reflect_flag                                           ; 1d74: 85 1d       ..  :1c43[1]
-    lda sprite_number                                                 ; 1d76: a5 16       ..  :1c45[1]
+    lda sprite_id                                                     ; 1d76: a5 16       ..  :1c45[1]
     jsr draw_sprite_a_at_cell_xy                                      ; 1d78: 20 4c 1f     L. :1c47[1]
     dex                                                               ; 1d7b: ca          .   :1c4a[1]
     jmp move_up_and_left_to_check_if_wall_continues1                  ; 1d7c: 4c 6e 1c    Ln. :1c4b[1]
@@ -2528,14 +2528,14 @@ not_corner
 
 find_corner_spriteid
     lda #spriteid_corner_top_left                                     ; 1e24: a9 2c       .,  :1cf3[1]
-    sta sprite_number                                                 ; 1e26: 85 16       ..  :1cf5[1]
+    sta sprite_id                                                     ; 1e26: 85 16       ..  :1cf5[1]
     dey                                                               ; 1e28: 88          .   :1cf7[1]
     jsr read_collision_map_value_for_xy                               ; 1e29: 20 fa 1e     .. :1cf8[1]
     iny                                                               ; 1e2c: c8          .   :1cfb[1]
     cmp #3                                                            ; 1e2d: c9 03       ..  :1cfc[1]
     bne c1d16                                                         ; 1e2f: d0 16       ..  :1cfe[1]
     lda #spriteid_corner_bottom_left                                  ; 1e31: a9 2d       .-  :1d00[1]
-    sta sprite_number                                                 ; 1e33: 85 16       ..  :1d02[1]
+    sta sprite_id                                                     ; 1e33: 85 16       ..  :1d02[1]
     iny                                                               ; 1e35: c8          .   :1d04[1]
     jsr read_collision_map_value_for_xy                               ; 1e36: 20 fa 1e     .. :1d05[1]
     dey                                                               ; 1e39: 88          .   :1d08[1]
@@ -2545,9 +2545,9 @@ found_corner_spriteid
     sty cell_y                                                        ; 1e3e: 84 71       .q  :1d0d[1]
     jsr get_screen_address_from_cell_xy                               ; 1e40: 20 66 1b     f. :1d0f[1]
     lda #spriteid_one_pixel_masked_out                                ; 1e43: a9 00       ..  :1d12[1]
-    sta sprite_number                                                 ; 1e45: 85 16       ..  :1d14[1]
+    sta sprite_id                                                     ; 1e45: 85 16       ..  :1d14[1]
 c1d16
-    lda sprite_number                                                 ; 1e47: a5 16       ..  :1d16[1]
+    lda sprite_id                                                     ; 1e47: a5 16       ..  :1d16[1]
     rts                                                               ; 1e49: 60          `   :1d18[1]
 
 tile_floor0_top
@@ -3100,10 +3100,10 @@ outside_game_area
 ; 
 ; *************************************************************************************
 draw_sprite_a_at_cell_xy
-    sta sprite_number                                                 ; 207d: 85 16       ..  :1f4c[1]
+    sta sprite_id                                                     ; 207d: 85 16       ..  :1f4c[1]
     jsr set_sprite_pixel_position_from_cell_xy                        ; 207f: 20 84 1f     .. :1f4e[1]
     jsr sprite_op                                                     ; 2082: 20 8d 13     .. :1f51[1]
-    lda sprite_number                                                 ; 2085: a5 16       ..  :1f54[1]
+    lda sprite_id                                                     ; 2085: a5 16       ..  :1f54[1]
     rts                                                               ; 2087: 60          `   :1f56[1]
 
 ; TODO: This is called from e.g. dataA
@@ -3498,7 +3498,7 @@ draw_object_without_mask
     lda object_spriteid_old,x                                         ; 22bc: bd b3 09    ... :218b[1]
     ldy #4                                                            ; 22bf: a0 04       ..  :218e[1]
 draw_or_erase_object
-    sta sprite_number                                                 ; 22c1: 85 16       ..  :2190[1]
+    sta sprite_id                                                     ; 22c1: 85 16       ..  :2190[1]
     sty sprite_op_flags                                               ; 22c3: 84 15       ..  :2192[1]
     jsr sprite_op                                                     ; 22c5: 20 8d 13     .. :2194[1]
 done_drawing_object
@@ -3520,14 +3520,14 @@ draw_object
     lda object_direction,x                                            ; 22e4: bd be 09    ... :21b3[1]
     sta sprite_reflect_flag                                           ; 22e7: 85 1d       ..  :21b6[1]
     lda object_spriteid,x                                             ; 22e9: bd a8 09    ... :21b8[1]
-    sta sprite_number                                                 ; 22ec: 85 16       ..  :21bb[1]
+    sta sprite_id                                                     ; 22ec: 85 16       ..  :21bb[1]
     lda #sprite_op_flags_normal                                       ; 22ee: a9 00       ..  :21bd[1]
     sta sprite_op_flags                                               ; 22f0: 85 15       ..  :21bf[1]
     lda object_sprite_mask_type,x                                     ; 22f2: bd ac 38    ..8 :21c1[1]
     beq draw_object_sprite                                            ; 22f5: f0 0a       ..  :21c4[1]
     cmp #$ff                                                          ; 22f7: c9 ff       ..  :21c6[1]
     beq draw_object_sprite                                            ; 22f9: f0 06       ..  :21c8[1]
-    sta dest_sprite_number                                            ; 22fb: 85 14       ..  :21ca[1]
+    sta dest_sprite_id                                                ; 22fb: 85 14       ..  :21ca[1]
     lda #3                                                            ; 22fd: a9 03       ..  :21cc[1]
     sta sprite_op_flags                                               ; 22ff: 85 15       ..  :21ce[1]
 draw_object_sprite
@@ -3554,7 +3554,7 @@ c21ef
     lda #sprite_op_flags_normal                                       ; 2325: a9 00       ..  :21f4[1]
     sta sprite_op_flags                                               ; 2327: 85 15       ..  :21f6[1]
     lda #spriteid_some_small_blob                                     ; 2329: a9 37       .7  :21f8[1]
-    sta sprite_number                                                 ; 232b: 85 16       ..  :21fa[1]
+    sta sprite_id                                                     ; 232b: 85 16       ..  :21fa[1]
     jsr sprite_op                                                     ; 232d: 20 8d 13     .. :21fc[1]
 return9
     rts                                                               ; 2330: 60          `   :21ff[1]
@@ -4792,13 +4792,13 @@ unplot_menu_pointer
     jsr calculate_sprite_position_for_menu_item                       ; 2b27: 20 46 2c     F, :29f6[1]
 ; erase the hand
     lda #spriteid_pointer_hand                                        ; 2b2a: a9 1d       ..  :29f9[1]
-    sta sprite_number                                                 ; 2b2c: 85 16       ..  :29fb[1]
+    sta sprite_id                                                     ; 2b2c: 85 16       ..  :29fb[1]
     lda #sprite_op_flags_erase                                        ; 2b2e: a9 02       ..  :29fd[1]
     sta sprite_op_flags                                               ; 2b30: 85 15       ..  :29ff[1]
     jsr sprite_op                                                     ; 2b32: 20 8d 13     .. :2a01[1]
 ; restore the background tile where the fingertip overlaps the tile
     lda #spriteid_fingertip_tile_restoration                          ; 2b35: a9 1e       ..  :2a04[1]
-    sta sprite_number                                                 ; 2b37: 85 16       ..  :2a06[1]
+    sta sprite_id                                                     ; 2b37: 85 16       ..  :2a06[1]
     lda #sprite_op_flags_normal                                       ; 2b39: a9 00       ..  :2a08[1]
     sta sprite_op_flags                                               ; 2b3b: 85 15       ..  :2a0a[1]
     jsr sprite_op                                                     ; 2b3d: 20 8d 13     .. :2a0c[1]
@@ -4828,7 +4828,7 @@ plot_menu_pointer
     jsr calculate_sprite_position_for_menu_item                       ; 2b53: 20 46 2c     F, :2a22[1]
 ; draw the hand
     lda #spriteid_pointer_hand                                        ; 2b56: a9 1d       ..  :2a25[1]
-    sta sprite_number                                                 ; 2b58: 85 16       ..  :2a27[1]
+    sta sprite_id                                                     ; 2b58: 85 16       ..  :2a27[1]
     lda #sprite_op_flags_normal                                       ; 2b5a: a9 00       ..  :2a29[1]
     sta sprite_op_flags                                               ; 2b5c: 85 15       ..  :2a2b[1]
     jsr sprite_op                                                     ; 2b5e: 20 8d 13     .. :2a2d[1]
@@ -4965,7 +4965,7 @@ toggle_sound_on_off
     eor #$ff                                                          ; 2c46: 49 ff       I.  :2b15[1]   ; toggle current flag
     sta sound_enable_flag                                             ; 2c48: 8d 66 39    .f9 :2b17[1]   ; save new sound flag
     lda #spriteid_one_pixel_set                                       ; 2c4b: a9 1f       ..  :2b1a[1]
-    sta sprite_number                                                 ; 2c4d: 85 16       ..  :2b1c[1]
+    sta sprite_id                                                     ; 2c4d: 85 16       ..  :2b1c[1]
     lda screen_base_address_high                                      ; 2c4f: a5 4c       .L  :2b1e[1]
     pha                                                               ; 2c51: 48          H   :2b20[1]
     lda #>toolbar_screen_address                                      ; 2c52: a9 58       .X  :2b21[1]
@@ -5162,7 +5162,7 @@ plot_menu_icon
     lda #sprite_op_flags_normal                                       ; 2d4c: a9 00       ..  :2c1b[1]
     sta sprite_op_flags                                               ; 2d4e: 85 15       ..  :2c1d[1]
     lda #spriteid_icon_background                                     ; 2d50: a9 01       ..  :2c1f[1]
-    sta sprite_number                                                 ; 2d52: 85 16       ..  :2c21[1]
+    sta sprite_id                                                     ; 2d52: 85 16       ..  :2c21[1]
     lda desired_menu_slots,x                                          ; 2d54: bd 5c 29    .\) :2c23[1]
     sta displayed_menu_slots,x                                        ; 2d57: 9d 6f 29    .o) :2c26[1]
     bne c2c35                                                         ; 2d5a: d0 0a       ..  :2c29[1]
@@ -5173,7 +5173,7 @@ plot_menu_icon
 
 c2c35
     jsr sprite_op                                                     ; 2d66: 20 8d 13     .. :2c35[1]
-    sta sprite_number                                                 ; 2d69: 85 16       ..  :2c38[1]
+    sta sprite_id                                                     ; 2d69: 85 16       ..  :2c38[1]
     jsr sprite_op                                                     ; 2d6b: 20 8d 13     .. :2c3a[1]
 c2c3d
     pla                                                               ; 2d6e: 68          h   :2c3d[1]

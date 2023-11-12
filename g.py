@@ -173,10 +173,10 @@ label(0x0007, "rnd1")
 label(0x0008, "rnd2")
 label(0x0009, "rnd3")
 label(0x000a, "rnd4")
-label(0x0014, "dest_sprite_number")
+label(0x0014, "dest_sprite_id")
 label(0x0015, "sprite_op_flags")
-label(0x0016, "sprite_number")
-label(0x0016, "sprite_number")
+label(0x0016, "sprite_id")
+label(0x0016, "sprite_id")
 label(0x0018, "sprite_x_base_low")
 label(0x0019, "sprite_x_base_high")
 label(0x001a, "sprite_y_base_low")
@@ -539,7 +539,7 @@ On Entry:
 """)
 
 
-substitute_constants("sta sprite_number", 'a', sprite_dict, True)
+substitute_constants("sta sprite_id", 'a', sprite_dict, True)
 substitute_constants("jsr draw_sprite_a_at_cell_xy", 'a', sprite_dict, True)
 substitute_constants("jsr find_or_create_menu_slot_for_A", 'a', sprite_dict, True)
 substitute_constants("sta sprite_op_flags", 'a', sprite_op_flags_dict, True)
@@ -1966,13 +1966,13 @@ Plots a sprite with a mask, optionally reflected about a vertical axis. Sprites 
 Conventionally, sprite characters are authored looking to the right.
 
 On Entry:
-             sprite_number: id of the sprite to plot
+                 sprite_id: id of the sprite to plot
     sprite_x_base_low/high: X coordinate of sprite to plot (pixels)
     sprite_y_base_low/high: Y coordinate of sprite to plot (pixels)
 
            sprite_op_flags: These bits are mutually exclusive. If bit is set:
 
-                            bit 0: also copy mask into sprite 'dest_sprite_number'
+                            bit 0: also copy mask into sprite 'dest_sprite_id'
                             bit 1: erase the sprite from the screen (with mask)
                             bit 2: write to the screen without a mask
                             bits 3-7: unused
