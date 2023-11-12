@@ -3,6 +3,7 @@ black                                           = 0
 blue                                            = 4
 buffer_sound_channel_0                          = 4
 bytes_per_character_cell                        = 8
+bytes_per_character_row                         = 320
 caps_mask                                       = 223
 characters_per_line                             = 40
 crtc_cursor_start                               = 10
@@ -2293,10 +2294,10 @@ something26_copy_loop
     sta off_screen_address_high                                       ; 1d29: 85 7b       .{  :1bf8[1]
     lda cell_screen_address_low                                       ; 1d2b: a5 76       .v  :1bfa[1]
     clc                                                               ; 1d2d: 18          .   :1bfc[1]
-    adc #<screen_width_in_pixels                                      ; 1d2e: 69 40       i@  :1bfd[1]
+    adc #<bytes_per_character_row                                     ; 1d2e: 69 40       i@  :1bfd[1]
     sta cell_screen_address_low                                       ; 1d30: 85 76       .v  :1bff[1]
     lda cell_screen_address_high                                      ; 1d32: a5 77       .w  :1c01[1]
-    adc #>screen_width_in_pixels                                      ; 1d34: 69 01       i.  :1c03[1]
+    adc #>bytes_per_character_row                                     ; 1d34: 69 01       i.  :1c03[1]
     sta cell_screen_address_high                                      ; 1d36: 85 77       .w  :1c05[1]
     ldy #5                                                            ; 1d38: a0 05       ..  :1c07[1]
 loop_c1c09
@@ -8339,6 +8340,9 @@ pydis_end
 !if (<bytes_per_character_cell) != $08 {
     !error "Assertion failed: <bytes_per_character_cell == $08"
 }
+!if (<bytes_per_character_row) != $40 {
+    !error "Assertion failed: <bytes_per_character_row == $40"
+}
 !if (<cache_of_screen_memory_under_dialog) != $30 {
     !error "Assertion failed: <cache_of_screen_memory_under_dialog == $30"
 }
@@ -8540,6 +8544,9 @@ pydis_end
 !if (>bytes_per_character_cell) != $00 {
     !error "Assertion failed: >bytes_per_character_cell == $00"
 }
+!if (>bytes_per_character_row) != $01 {
+    !error "Assertion failed: >bytes_per_character_row == $01"
+}
 !if (>cache_of_screen_memory_under_dialog) != $05 {
     !error "Assertion failed: >cache_of_screen_memory_under_dialog == $05"
 }
@@ -8641,9 +8648,6 @@ pydis_end
 }
 !if (>saving_message) != $35 {
     !error "Assertion failed: >saving_message == $35"
-}
-!if (>screen_width_in_pixels) != $01 {
-    !error "Assertion failed: >screen_width_in_pixels == $01"
 }
 !if (>section_message) != $37 {
     !error "Assertion failed: >section_message == $37"
