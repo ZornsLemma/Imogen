@@ -101,7 +101,23 @@ expr(0x3ca2, make_lo("mouse_ball_sound3"))
 expr(0x3ca4, make_hi("mouse_ball_sound3"))
 entry(0x3d20, "return1")
 
+# TODO: envelope1/2/4 share the same envelope number (6) - maybe we should adopt a convention of using labels like envelopeA6b -> level A, OS env number 6, a/b/c/d suffix indicates competing envelopes for that OS env number
 entry(0x395e, "define_envelope") # TODO: duplicate of line in g.py, can't trivially put in common as it breaks imogen.py
+envelope(0x4460, "envelope1")
+expr(0x3bfe, make_lo("envelope1"))
+expr(0x3c00, make_hi("envelope1"))
+envelope(0x442c, "envelope2")
+expr(0x3e18, make_lo("envelope2"))
+expr(0x3e1a, make_hi("envelope2"))
+expr(0x40c8, make_lo("envelope2"))
+expr(0x40ca, make_hi("envelope2"))
+envelope(0x4416, "envelope3")
+expr(0x3f23, make_lo("envelope3"))
+expr(0x3f25, make_hi("envelope3"))
+envelope(0x444a, "envelope4")
+expr(0x4340, make_lo("envelope4"))
+expr(0x4342, make_hi("envelope4"))
+
 
 go()
 

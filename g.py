@@ -1516,27 +1516,6 @@ expr(0x3796, make_lo("section_message"))
 expr(0x3798, make_hi("section_message"))
 
 
-
-def envelope(addr, lab):
-    label(addr, lab)
-    for i in range(addr, addr+14):
-        byte(i, 1)
-        decimal(i)
-    comment(addr, "envelope number", inline=True)
-    comment(addr+1, "step length (100ths of a second)", inline=True)
-    comment(addr+2, "pitch change per step in section 1", inline=True)
-    comment(addr+3, "pitch change per step in section 2", inline=True)
-    comment(addr+4, "pitch change per step in section 3", inline=True)
-    comment(addr+5, "number of steps in section 1", inline=True)
-    comment(addr+6, "number of steps in section 2", inline=True)
-    comment(addr+7, "number of steps in section 3", inline=True)
-    comment(addr+8, "change of amplitude per step during attack phase", inline=True)
-    comment(addr+9, "change of amplitude per step during decay phase", inline=True)
-    comment(addr+10, "change of amplitude per step during sustain phase", inline=True)
-    comment(addr+11, "change of amplitude per step during release phase", inline=True)
-    comment(addr+12, "target of level at end of attack phase", inline=True)
-    comment(addr+13, "target of level at end of decay phase", inline=True)
-
 sound(0x38a4, "sound_data1")
 expr(0x2b0e, make_lo("sound_data1"))
 expr(0x2b10, make_hi("sound_data1"))
