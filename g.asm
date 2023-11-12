@@ -2071,12 +2071,11 @@ current_room_index
 ;     width_in_cells_to_write: width of rectangle (in cells)
 ;     height_in_cells_to_write: height of rectangle (in cells)
 ;     source_sprite_memory: source address data to copy to screen (top left)
-;     copy_mode: some kind of copy mode
+;     copy_mode:
 ;         0: 2x2 pattern
 ;         1: simple copy
 ;         power of two: choose random tile offsets less than the power of two
-;         negative: strip off top bit, and use the result as the length of a pattern to
-; cycle around
+;         negative: strip off top bit for length of tile offsets to cycle around
 ;     value_to_write_to_collision_map: if non-negative, write the value into the
 ; collision map using the same rectangle of cells
 ; 
@@ -2105,12 +2104,10 @@ row_copy_loop
     sta cell_x_plus_current_cell_within_row                           ; 1c12: 85 7c       .|  :1ae1[1]
 cell_copy_loop
     ldy #7                                                            ; 1c14: a0 07       ..  :1ae3[1]
-; TODO: copy_mode selects various different code paths here. Note that if it contains
-; 1, we have a 'simple' case where we just copy data without any further fiddling with
-; off_screen_address.
+; Choose the pattern based on copy_mode
     lda copy_mode                                                     ; 1c16: a5 42       .B  :1ae5[1]
     beq two_by_two_alternating_pattern                                ; 1c18: f0 23       .#  :1ae7[1]
-    bmi c1af8                                                         ; 1c1a: 30 0d       0.  :1ae9[1]
+    bmi negative_copy_mode                                            ; 1c1a: 30 0d       0.  :1ae9[1]
     cmp #1                                                            ; 1c1c: c9 01       ..  :1aeb[1]
     clc                                                               ; 1c1e: 18          .   :1aed[1]
     beq copy_one_tile_loop                                            ; 1c1f: f0 38       .8  :1aee[1]
@@ -2118,7 +2115,8 @@ cell_copy_loop
     jsr get_random_number_up_to_a                                     ; 1c23: 20 a6 18     .. :1af2[1]
     jmp get_final_off_screen_tile_address                             ; 1c26: 4c 14 1b    L.. :1af5[1]
 
-c1af8
+; strip off top bit, subtract one and compare with pattern_length_counter
+negative_copy_mode
     and #$7f                                                          ; 1c29: 29 7f       ).  :1af8[1]
     sec                                                               ; 1c2b: 38          8   :1afa[1]
     sbc #1                                                            ; 1c2c: e9 01       ..  :1afb[1]
@@ -8208,7 +8206,6 @@ pydis_end
 ;     c1a59
 ;     c1a8f
 ;     c1a9e
-;     c1af8
 ;     c1b59
 ;     c1c15
 ;     c1c3b

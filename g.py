@@ -2258,18 +2258,20 @@ On Entry:
     width_in_cells_to_write: width of rectangle (in cells)
     height_in_cells_to_write: height of rectangle (in cells)
     source_sprite_memory: source address data to copy to screen (top left)
-    copy_mode: some kind of copy mode
+    copy_mode:
         0: 2x2 pattern
         1: simple copy
         power of two: choose random tile offsets less than the power of two
-        negative: strip off top bit, and use the result as the length of a pattern to cycle around
+        negative: strip off top bit for length of tile offsets to cycle around
     value_to_write_to_collision_map: if non-negative, write the value into the collision map using the same rectangle of cells
 
 *************************************************************************************""")
 comment(0x1b49, "C is clear because beq above not taken", inline=True)
 comment(0x1af0, "Subtract 1; note C cleared before beq", inline=True)
 label(0x1b14, "get_final_off_screen_tile_address")
-comment(0x1ae5, "TODO: copy_mode selects various different code paths here. Note that if it contains 1, we have a 'simple' case where we just copy data without any further fiddling with off_screen_address.")
+comment(0x1ae5, "Choose the pattern based on copy_mode")
+label(0x1af8, "negative_copy_mode")
+comment(0x1af8, "strip off top bit, subtract one and compare with pattern_length_counter")
 entry(0x1b28, "copy_one_tile_loop")
 comment(0x1b3f, "always branch", inline=True)
 comment(0x1b31, "X was initialised with width_in_cells_to_write", inline=True)
