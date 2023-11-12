@@ -2257,6 +2257,7 @@ entry(0x1b98, "something26_x_loop")
 entry(0x1b96, "something26_y_loop")
 expr(0x1b95, make_subtract("screen_height_characters", "1"))
 expr(0x1b97, "screen_width_minus_one")
+entry(0x1bc3, "something26_decrement_and_loop")
 
 entry(0x1b8d, "c1c9d_local")
 

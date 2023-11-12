@@ -2232,7 +2232,7 @@ something26_y_loop
 something26_x_loop
     jsr read_collision_map_value_for_x_y                              ; 1cc9: 20 fa 1e     .. :1b98[1]
     cmp #3                                                            ; 1ccc: c9 03       ..  :1b9b[1]
-    bne c1bc3                                                         ; 1cce: d0 24       .$  :1b9d[1]
+    bne something26_decrement_and_loop                                ; 1cce: d0 24       .$  :1b9d[1]
     inx                                                               ; 1cd0: e8          .   :1b9f[1]
     jsr read_collision_map_value_for_x_y                              ; 1cd1: 20 fa 1e     .. :1ba0[1]
     dex                                                               ; 1cd4: ca          .   :1ba3[1]
@@ -2253,7 +2253,7 @@ something26_x_loop
     dey                                                               ; 1cef: 88          .   :1bbe[1]
     cmp #3                                                            ; 1cf0: c9 03       ..  :1bbf[1]
     bne c1c15                                                         ; 1cf2: d0 52       .R  :1bc1[1]
-c1bc3
+something26_decrement_and_loop
     dex                                                               ; 1cf4: ca          .   :1bc3[1]
     bpl something26_x_loop                                            ; 1cf5: 10 d2       ..  :1bc4[1]
     dey                                                               ; 1cf7: 88          .   :1bc6[1]
@@ -2304,7 +2304,7 @@ loop_c1c09
     dey                                                               ; 1d3e: 88          .   :1c0d[1]
     bpl loop_c1c09                                                    ; 1d3f: 10 f9       ..  :1c0e[1]
     ldy address1_high                                                 ; 1d41: a4 71       .q  :1c10[1]
-    jmp c1bc3                                                         ; 1d43: 4c c3 1b    L.. :1c12[1]
+    jmp something26_decrement_and_loop                                ; 1d43: 4c c3 1b    L.. :1c12[1]
 
 c1c15
     jsr get_screen_address_from_cell_xy                               ; 1d46: 20 66 1b     f. :1c15[1]
@@ -2328,7 +2328,7 @@ loop_c1c2d
     cpy #2                                                            ; 1d63: c0 02       ..  :1c32[1]
     bcs loop_c1c2d                                                    ; 1d65: b0 f7       ..  :1c34[1]
     ldy address1_high                                                 ; 1d67: a4 71       .q  :1c36[1]
-    jmp c1bc3                                                         ; 1d69: 4c c3 1b    L.. :1c38[1]
+    jmp something26_decrement_and_loop                                ; 1d69: 4c c3 1b    L.. :1c38[1]
 
 c1c3b
     jsr sub_c1cf3                                                     ; 1d6c: 20 f3 1c     .. :1c3b[1]
@@ -2388,7 +2388,7 @@ c1c82
 c1c98
     dex                                                               ; 1dc9: ca          .   :1c98[1]
     dey                                                               ; 1dca: 88          .   :1c99[1]
-    jmp c1bc3                                                         ; 1dcb: 4c c3 1b    L.. :1c9a[1]
+    jmp something26_decrement_and_loop                                ; 1dcb: 4c c3 1b    L.. :1c9a[1]
 
 c1c9d
     jsr sub_c1cf3                                                     ; 1dce: 20 f3 1c     .. :1c9d[1]
@@ -2443,7 +2443,7 @@ c1cda
 c1cee
     inx                                                               ; 1e1f: e8          .   :1cee[1]
     dey                                                               ; 1e20: 88          .   :1cef[1]
-    jmp c1bc3                                                         ; 1e21: 4c c3 1b    L.. :1cf0[1]
+    jmp something26_decrement_and_loop                                ; 1e21: 4c c3 1b    L.. :1cf0[1]
 
 sub_c1cf3
     lda #spriteid_corner_top_left                                     ; 1e24: a9 2c       .,  :1cf3[1]
@@ -7944,7 +7944,6 @@ pydis_end
 ;     c1a9e
 ;     c1af8
 ;     c1b59
-;     c1bc3
 ;     c1bca
 ;     c1c15
 ;     c1c3b
