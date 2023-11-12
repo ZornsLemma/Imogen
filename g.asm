@@ -2,6 +2,7 @@
 black                                           = 0
 blue                                            = 4
 buffer_sound_channel_0                          = 4
+bytes_per_character_cell                        = 8
 caps_mask                                       = 223
 characters_per_line                             = 40
 crtc_cursor_start                               = 10
@@ -2277,18 +2278,18 @@ c1bca
     adc #$1d                                                          ; 1d0f: 69 1d       i.  :1bde[1]
     sta off_screen_address_high                                       ; 1d11: 85 7b       .{  :1be0[1]
     ldy #7                                                            ; 1d13: a0 07       ..  :1be2[1]
-loop_c1be4
+something26_copy_loop
     lda (off_screen_address_low),y                                    ; 1d15: b1 7a       .z  :1be4[1]
     sta (cell_screen_address_low),y                                   ; 1d17: 91 76       .v  :1be6[1]
     dey                                                               ; 1d19: 88          .   :1be8[1]
     cpy #2                                                            ; 1d1a: c0 02       ..  :1be9[1]
-    bcs loop_c1be4                                                    ; 1d1c: b0 f7       ..  :1beb[1]
+    bcs something26_copy_loop                                         ; 1d1c: b0 f7       ..  :1beb[1]
     lda off_screen_address_low                                        ; 1d1e: a5 7a       .z  :1bed[1]
     clc                                                               ; 1d20: 18          .   :1bef[1]
-    adc #8                                                            ; 1d21: 69 08       i.  :1bf0[1]
+    adc #<bytes_per_character_cell                                    ; 1d21: 69 08       i.  :1bf0[1]
     sta off_screen_address_low                                        ; 1d23: 85 7a       .z  :1bf2[1]
     lda off_screen_address_high                                       ; 1d25: a5 7b       .{  :1bf4[1]
-    adc #0                                                            ; 1d27: 69 00       i.  :1bf6[1]
+    adc #>bytes_per_character_cell                                    ; 1d27: 69 00       i.  :1bf6[1]
     sta off_screen_address_high                                       ; 1d29: 85 7b       .{  :1bf8[1]
     lda cell_screen_address_low                                       ; 1d2b: a5 76       .v  :1bfa[1]
     clc                                                               ; 1d2d: 18          .   :1bfc[1]
@@ -8225,7 +8226,6 @@ pydis_end
 ;     loop_c1921
 ;     loop_c193d
 ;     loop_c1957
-;     loop_c1be4
 ;     loop_c1c09
 ;     loop_c1c2d
 ;     loop_c1c61
@@ -8335,6 +8335,9 @@ pydis_end
 }
 !if (<brk_handler) != $d3 {
     !error "Assertion failed: <brk_handler == $d3"
+}
+!if (<bytes_per_character_cell) != $08 {
+    !error "Assertion failed: <bytes_per_character_cell == $08"
 }
 !if (<cache_of_screen_memory_under_dialog) != $30 {
     !error "Assertion failed: <cache_of_screen_memory_under_dialog == $30"
@@ -8533,6 +8536,9 @@ pydis_end
 }
 !if (>brk_handler) != $16 {
     !error "Assertion failed: >brk_handler == $16"
+}
+!if (>bytes_per_character_cell) != $00 {
+    !error "Assertion failed: >bytes_per_character_cell == $00"
 }
 !if (>cache_of_screen_memory_under_dialog) != $05 {
     !error "Assertion failed: >cache_of_screen_memory_under_dialog == $05"
