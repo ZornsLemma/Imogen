@@ -162,6 +162,7 @@ move_id2 = move(0x400, 0x40ff, 295) # code copies 512 bytes, but we only have 29
 move(0x131, 0x40d0, 0x2f)
 move(0xc00, 0x3fcb, 0x402c-0x3fcb) # code copies 256 bytes, but this is what we actually care about
 move(0xab7, 0x4088, 0x48)
+move(0x8000, 0x3fbb, 16)
 
 entry(0x3c06, "execution_start")
 
@@ -327,6 +328,7 @@ expr(0x2ede, "spriteid_wizard6")
 expr(0x2ea9, "spriteid_wizard6")
 expr(0x30d0, "spriteid_cat_walk4")
 expr(0x3361, "spriteid_monkey4")
+
 
 ##################################################################################################
 # Wizard animations
@@ -835,17 +837,6 @@ label(0x110b, "vertical_sync_amount_for_crtc_register")
 label(0x3f05, "drive_number")
 char(0x3f05)
 comment(0x3f54, "start in one of four random levels")
-
-entry(0x3fbb, "sideways_rom_image")
-comment(0x3fbb, "language entry point", inline=True)
-entry(0x3fbe)
-comment(0x3fbe, "service entry point", inline=True)
-entry(0x3fc3)
-comment(0x3fc1, "ROM type flag", inline=True)
-byte(0x3fc1, 1)
-comment(0x3fc2, "empty copyright string", inline=True)
-comment(0x3fc3, "do nothing - return", inline=True)
-comment(0x3fc4, "unused bytes", inline=True)
 
 comment(0x12bb, "TODO: This is called from level-specific machine code, e.g. see dataA.asm")
 entry(0x12bb)
@@ -2506,6 +2497,22 @@ comment(0x19b5, "fire looks right")
 comment(0x19d2, "fire looks left")
 label(0x19e2, "done_with_brazier_and_fire")
 label(0x19d4, "set_fire_direction")
+
+label(0x3fbb, "sideways_rom_image_source_start")
+label(0x3fcb, "sideways_rom_image_source_end")
+expr(0x3f79, "sideways_rom_image_source_end - sideways_rom_image_source_start - 1")
+entry(0x8000, "sideways_rom_image_dest")
+label(0x8008, "sideways_rom_return")
+
+comment(0x8000, "language entry point", inline=True)
+entry(0x3fbe)
+comment(0x8003, "service entry point", inline=True)
+entry(0x3fc3)
+comment(0x8006, "ROM type flag", inline=True)
+byte(0x3fc1, 1)
+comment(0x8007, "empty copyright string", inline=True)
+comment(0x8008, "do nothing - return", inline=True)
+comment(0x8009, "unused bytes", inline=True)
 
 character_bitmap(0x1d19, "tile_floor0_top")
 character_bitmap(0x1d21, "tile_floor0_bottom")

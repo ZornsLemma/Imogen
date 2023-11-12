@@ -395,8 +395,6 @@ check_password                              = $53c0
 toolbar_screen_address                      = $58c0
 start_of_screen_memory                      = $5bc0
 game_area_screen_address                    = $6200
-l8000                                       = $8000
-l8008                                       = $8008
 lbe00                                       = $be00
 lbf00                                       = $bf00
 crtc_address_register                       = $fe00
@@ -7780,11 +7778,11 @@ handle_developer_mode_setup
 ; It copies 16 bytes of an empty ROM image to the start of sideways RAM. This
 ; overwrites any existing ROM image held in sideways RAM. Is this some copy protection,
 ; or a development environment?
-    ldy #$0f                                                          ; 3f78: a0 0f       ..
+    ldy #sideways_rom_image_source_end - sideways_rom_image_source_start - 1; 3f78: a0 0f       ..
     sei                                                               ; 3f7a: 78          x
 copy_to_sideways_ram_loop
-    lda sideways_rom_image,y                                          ; 3f7b: b9 bb 3f    ..?
-    sta l8000,y                                                       ; 3f7e: 99 00 80    ...
+    lda sideways_rom_image_source_start,y                             ; 3f7b: b9 bb 3f    ..?
+    sta sideways_rom_image_dest,y                                     ; 3f7e: 99 00 80    ...
     dey                                                               ; 3f81: 88          .
     bpl copy_to_sideways_ram_loop                                     ; 3f82: 10 f7       ..
     cli                                                               ; 3f84: 58          X
@@ -7818,18 +7816,25 @@ loop_c3f87
 return28
     rts                                                               ; 3fba: 60          `
 
-sideways_rom_image
-    jmp l8008                                                         ; 3fbb: 4c 08 80    L..            ; language entry point
+sideways_rom_image_source_start
 
-    jmp l8008                                                         ; 3fbe: 4c 08 80    L..            ; service entry point
+!pseudopc $8000 {
+sideways_rom_image_dest
+    jmp sideways_rom_return                                           ; 3fbb: 4c 08 80    L.. :8000[6]   ; language entry point
 
-    !byte 0                                                           ; 3fc1: 00          .              ; ROM type flag
-    !byte $0a                                                         ; 3fc2: 0a          .              ; empty copyright string
+    jmp sideways_rom_return                                           ; 3fbe: 4c 08 80    L.. :8003[6]   ; service entry point
 
-    rts                                                               ; 3fc3: 60          `              ; do nothing - return
+    !byte 0                                                           ; 3fc1: 00          .   :8006[6]   ; ROM type flag
+    !byte $0a                                                         ; 3fc2: 0a          .   :8007[6]   ; empty copyright string
 
-    !byte 0, 0, 0, 0, 0, 0, 0                                         ; 3fc4: 00 00 00... ...            ; unused bytes
+sideways_rom_return
+    rts                                                               ; 3fc3: 60          `   :8008[6]   ; do nothing - return
+
+    !byte 0, 0, 0, 0, 0, 0, 0                                         ; 3fc4: 00 00 00... ... :8009[6]   ; unused bytes
+}
+
 relocation4_high_copy_start
+sideways_rom_image_source_end
 
 !pseudopc $0c00 {
 ; Initialise display
@@ -8517,8 +8522,6 @@ pydis_end
 ;     l3970
 ;     l3974
 ;     l3a8e
-;     l8000
-;     l8008
 ;     lbe00
 ;     lbf00
 ;     loop_c0aba
@@ -9307,6 +9310,9 @@ pydis_end
 }
 !if (screen_width_minus_one) != $27 {
     !error "Assertion failed: screen_width_minus_one == $27"
+}
+!if (sideways_rom_image_source_end - sideways_rom_image_source_start - 1) != $0f {
+    !error "Assertion failed: sideways_rom_image_source_end - sideways_rom_image_source_start - 1 == $0f"
 }
 !if (sprite_op_flags_erase) != $02 {
     !error "Assertion failed: sprite_op_flags_erase == $02"
