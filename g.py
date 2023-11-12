@@ -2258,16 +2258,22 @@ entry(0x1b96, "something26_y_loop")
 expr(0x1b95, make_subtract("screen_height_characters", "1"))
 expr(0x1b97, "screen_width_minus_one")
 entry(0x1bc3, "something26_decrement_and_loop")
-entry(0x1be4, "something26_copy_loop")
+entry(0x1be4, "something26_copy_loop1")
+entry(0x1c09, "something26_copy_loop2")
 constant(8, "bytes_per_character_cell")
 expr(0x1bf1, make_lo("bytes_per_character_cell"))
 expr(0x1bf7, make_hi("bytes_per_character_cell"))
+comment(0x1bed, "off_screen_address += bytes_per_character_cell")
+comment(0x1bfc, "cell_screen_address += bytes_per_character_row")
 
 entry(0x1b8d, "c1c9d_local")
 
 constant(320, "bytes_per_character_row")
 expr(0x1bfe, make_lo("bytes_per_character_row"))
 expr(0x1c04, make_hi("bytes_per_character_row"))
+blank(0x1c07)
+comment(0x1bca, "TODO: This is looking like it takes the low two bits of A to get a value 0-3 inclusive. It then multiplies that by sixteen, selecting one of four possible two-character bitmap pairs. It plots the bottom six rows of the first bitmap at (X,Y-1) and the top six rows of the second bitmap at (X,Y). I'm sure I've got the details wrong, but something like that.")
+entry(0x1bca, "partial_plot_across_row_boundary") # TODO: poor name
 
 go()
 

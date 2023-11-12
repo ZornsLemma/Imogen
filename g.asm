@@ -2249,7 +2249,7 @@ something26_x_loop
     jsr read_collision_map_value_for_x_y                              ; 1ce3: 20 fa 1e     .. :1bb2[1]
     iny                                                               ; 1ce6: c8          .   :1bb5[1]
     cmp #3                                                            ; 1ce7: c9 03       ..  :1bb6[1]
-    bne c1bca                                                         ; 1ce9: d0 10       ..  :1bb8[1]
+    bne partial_plot_across_row_boundary                              ; 1ce9: d0 10       ..  :1bb8[1]
     iny                                                               ; 1ceb: c8          .   :1bba[1]
     jsr read_collision_map_value_for_x_y                              ; 1cec: 20 fa 1e     .. :1bbb[1]
     dey                                                               ; 1cef: 88          .   :1bbe[1]
@@ -2262,7 +2262,12 @@ something26_decrement_and_loop
     bpl something26_y_loop                                            ; 1cf8: 10 cd       ..  :1bc7[1]
     rts                                                               ; 1cfa: 60          `   :1bc9[1]
 
-c1bca
+; TODO: This is looking like it takes the low two bits of A to get a value 0-3
+; inclusive. It then multiplies that by sixteen, selecting one of four possible two-
+; character bitmap pairs. It plots the bottom six rows of the first bitmap at (X,Y-1)
+; and the top six rows of the second bitmap at (X,Y). I'm sure I've got the details
+; wrong, but something like that.
+partial_plot_across_row_boundary
     sty address1_high                                                 ; 1cfb: 84 71       .q  :1bca[1]
     dey                                                               ; 1cfd: 88          .   :1bcc[1]
     jsr get_screen_address_from_cell_xy                               ; 1cfe: 20 66 1b     f. :1bcd[1]
@@ -2279,12 +2284,13 @@ c1bca
     adc #$1d                                                          ; 1d0f: 69 1d       i.  :1bde[1]
     sta off_screen_address_high                                       ; 1d11: 85 7b       .{  :1be0[1]
     ldy #7                                                            ; 1d13: a0 07       ..  :1be2[1]
-something26_copy_loop
+something26_copy_loop1
     lda (off_screen_address_low),y                                    ; 1d15: b1 7a       .z  :1be4[1]
     sta (cell_screen_address_low),y                                   ; 1d17: 91 76       .v  :1be6[1]
     dey                                                               ; 1d19: 88          .   :1be8[1]
     cpy #2                                                            ; 1d1a: c0 02       ..  :1be9[1]
-    bcs something26_copy_loop                                         ; 1d1c: b0 f7       ..  :1beb[1]
+    bcs something26_copy_loop1                                        ; 1d1c: b0 f7       ..  :1beb[1]
+; off_screen_address += bytes_per_character_cell
     lda off_screen_address_low                                        ; 1d1e: a5 7a       .z  :1bed[1]
     clc                                                               ; 1d20: 18          .   :1bef[1]
     adc #<bytes_per_character_cell                                    ; 1d21: 69 08       i.  :1bf0[1]
@@ -2293,18 +2299,20 @@ something26_copy_loop
     adc #>bytes_per_character_cell                                    ; 1d27: 69 00       i.  :1bf6[1]
     sta off_screen_address_high                                       ; 1d29: 85 7b       .{  :1bf8[1]
     lda cell_screen_address_low                                       ; 1d2b: a5 76       .v  :1bfa[1]
+; cell_screen_address += bytes_per_character_row
     clc                                                               ; 1d2d: 18          .   :1bfc[1]
     adc #<bytes_per_character_row                                     ; 1d2e: 69 40       i@  :1bfd[1]
     sta cell_screen_address_low                                       ; 1d30: 85 76       .v  :1bff[1]
     lda cell_screen_address_high                                      ; 1d32: a5 77       .w  :1c01[1]
     adc #>bytes_per_character_row                                     ; 1d34: 69 01       i.  :1c03[1]
     sta cell_screen_address_high                                      ; 1d36: 85 77       .w  :1c05[1]
+
     ldy #5                                                            ; 1d38: a0 05       ..  :1c07[1]
-loop_c1c09
+something26_copy_loop2
     lda (off_screen_address_low),y                                    ; 1d3a: b1 7a       .z  :1c09[1]
     sta (cell_screen_address_low),y                                   ; 1d3c: 91 76       .v  :1c0b[1]
     dey                                                               ; 1d3e: 88          .   :1c0d[1]
-    bpl loop_c1c09                                                    ; 1d3f: 10 f9       ..  :1c0e[1]
+    bpl something26_copy_loop2                                        ; 1d3f: 10 f9       ..  :1c0e[1]
     ldy address1_high                                                 ; 1d41: a4 71       .q  :1c10[1]
     jmp something26_decrement_and_loop                                ; 1d43: 4c c3 1b    L.. :1c12[1]
 
@@ -7946,7 +7954,6 @@ pydis_end
 ;     c1a9e
 ;     c1af8
 ;     c1b59
-;     c1bca
 ;     c1c15
 ;     c1c3b
 ;     c1c4e
@@ -8227,7 +8234,6 @@ pydis_end
 ;     loop_c1921
 ;     loop_c193d
 ;     loop_c1957
-;     loop_c1c09
 ;     loop_c1c2d
 ;     loop_c1c61
 ;     loop_c1cbb
