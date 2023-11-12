@@ -2669,6 +2669,7 @@ character_bitmap_1db1
 ;     The rope itself has collision map value 2 (climbable), including the rope end
 ; 
 ; On Entry:
+;     A: rope length
 ;     (X,Y): cell coordinates for the top of the rope
 ; 
 ; On Exit:
