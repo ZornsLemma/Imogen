@@ -699,7 +699,7 @@ skip_developer_mode_code1
     lda #0                                                            ; 13e3: a9 00       ..  :12b2[1]
     sta l003b                                                         ; 13e5: 85 3b       .;  :12b4[1]
     lda #0                                                            ; 13e7: a9 00       ..  :12b6[1]
-    jmp something58_TODO                                              ; 13e9: 4c 5d 1f    L]. :12b8[1]
+    jmp set_object_position_from_cell_xy                              ; 13e9: 4c 5d 1f    L]. :12b8[1]
 
 ; TODO: This is called from level-specific machine code, e.g. see dataA.asm
 something23_TODO
@@ -1913,11 +1913,11 @@ something13_TODO
     jsr write_a_single_value_to_cell_in_collision_map                 ; 1ad5: 20 bb 1e     .. :19a4[1]
     iny                                                               ; 1ad8: c8          .   :19a7[1]
     lda #spriteid_brazier                                             ; 1ad9: a9 3a       .:  :19a8[1]
-    jsr draw_sprite_a_at_character_xy                                 ; 1adb: 20 4c 1f     L. :19aa[1]
+    jsr draw_sprite_a_at_cell_xy                                      ; 1adb: 20 4c 1f     L. :19aa[1]
     dey                                                               ; 1ade: 88          .   :19ad[1]
     inx                                                               ; 1adf: e8          .   :19ae[1]
     lda l1a0f                                                         ; 1ae0: ad 0f 1a    ... :19af[1]
-    jsr something58_TODO                                              ; 1ae3: 20 5d 1f     ]. :19b2[1]
+    jsr set_object_position_from_cell_xy                              ; 1ae3: 20 5d 1f     ]. :19b2[1]
     lda #1                                                            ; 1ae6: a9 01       ..  :19b5[1]
     bne c19d4                                                         ; 1ae8: d0 1b       ..  :19b7[1]   ; ALWAYS branch
 c19b9
@@ -1929,11 +1929,11 @@ c19b9
     sta sprite_reflect_flag                                           ; 1af3: 85 1d       ..  :19c2[1]
     iny                                                               ; 1af5: c8          .   :19c4[1]
     lda #spriteid_brazier                                             ; 1af6: a9 3a       .:  :19c5[1]
-    jsr draw_sprite_a_at_character_xy                                 ; 1af8: 20 4c 1f     L. :19c7[1]
+    jsr draw_sprite_a_at_cell_xy                                      ; 1af8: 20 4c 1f     L. :19c7[1]
     dey                                                               ; 1afb: 88          .   :19ca[1]
     dex                                                               ; 1afc: ca          .   :19cb[1]
     lda l1a0f                                                         ; 1afd: ad 0f 1a    ... :19cc[1]
-    jsr something58_TODO                                              ; 1b00: 20 5d 1f     ]. :19cf[1]
+    jsr set_object_position_from_cell_xy                              ; 1b00: 20 5d 1f     ]. :19cf[1]
     lda #$ff                                                          ; 1b03: a9 ff       ..  :19d2[1]
 c19d4
     ldx l1a0f                                                         ; 1b05: ae 0f 1a    ... :19d4[1]
@@ -2037,7 +2037,7 @@ c1a8f
     txa                                                               ; 1bc5: 8a          .   :1a94[1]
     ldx l1aaf                                                         ; 1bc6: ae af 1a    ... :1a95[1]
     ldy l1ab0                                                         ; 1bc9: ac b0 1a    ... :1a98[1]
-    jsr something58_TODO                                              ; 1bcc: 20 5d 1f     ]. :1a9b[1]
+    jsr set_object_position_from_cell_xy                              ; 1bcc: 20 5d 1f     ]. :1a9b[1]
 c1a9e
     lda #0                                                            ; 1bcf: a9 00       ..  :1a9e[1]
     sta l003a                                                         ; 1bd1: 85 3a       .:  :1aa0[1]
@@ -2347,7 +2347,7 @@ c1c3b
     lda #$ff                                                          ; 1d72: a9 ff       ..  :1c41[1]
     sta sprite_reflect_flag                                           ; 1d74: 85 1d       ..  :1c43[1]
     lda sprite_number                                                 ; 1d76: a5 16       ..  :1c45[1]
-    jsr draw_sprite_a_at_character_xy                                 ; 1d78: 20 4c 1f     L. :1c47[1]
+    jsr draw_sprite_a_at_cell_xy                                      ; 1d78: 20 4c 1f     L. :1c47[1]
     dex                                                               ; 1d7b: ca          .   :1c4a[1]
     jmp c1c6e                                                         ; 1d7c: 4c 6e 1c    Ln. :1c4b[1]
 
@@ -2382,7 +2382,7 @@ c1c6e
     lda #$ff                                                          ; 1daa: a9 ff       ..  :1c79[1]
     sta sprite_reflect_flag                                           ; 1dac: 85 1d       ..  :1c7b[1]
     lda #spriteid_corner_top_right                                    ; 1dae: a9 2f       ./  :1c7d[1]
-    jsr draw_sprite_a_at_character_xy                                 ; 1db0: 20 4c 1f     L. :1c7f[1]
+    jsr draw_sprite_a_at_cell_xy                                      ; 1db0: 20 4c 1f     L. :1c7f[1]
 c1c82
     iny                                                               ; 1db3: c8          .   :1c82[1]
     iny                                                               ; 1db4: c8          .   :1c83[1]
@@ -2394,7 +2394,7 @@ c1c82
     lda #$ff                                                          ; 1dc0: a9 ff       ..  :1c8f[1]
     sta sprite_reflect_flag                                           ; 1dc2: 85 1d       ..  :1c91[1]
     lda #spriteid_corner_bottom_right                                 ; 1dc4: a9 2e       ..  :1c93[1]
-    jsr draw_sprite_a_at_character_xy                                 ; 1dc6: 20 4c 1f     L. :1c95[1]
+    jsr draw_sprite_a_at_cell_xy                                      ; 1dc6: 20 4c 1f     L. :1c95[1]
 c1c98
     dex                                                               ; 1dc9: ca          .   :1c98[1]
     dey                                                               ; 1dca: 88          .   :1c99[1]
@@ -2403,7 +2403,7 @@ c1c98
 c1c9d
     jsr sub_c1cf3                                                     ; 1dce: 20 f3 1c     .. :1c9d[1]
     beq c1ca8                                                         ; 1dd1: f0 06       ..  :1ca0[1]
-    jsr draw_sprite_a_at_character_xy                                 ; 1dd3: 20 4c 1f     L. :1ca2[1]
+    jsr draw_sprite_a_at_cell_xy                                      ; 1dd3: 20 4c 1f     L. :1ca2[1]
     jmp c1cc8                                                         ; 1dd6: 4c c8 1c    L.. :1ca5[1]
 
 ; TODO: Just based on partial_plot_across_row_boundary's existence and the look of the
@@ -2438,7 +2438,7 @@ c1cc8
     bne c1cda                                                         ; 1e02: d0 07       ..  :1cd1[1]
     lda #spriteid_corner_top_right                                    ; 1e04: a9 2f       ./  :1cd3[1]
     inx                                                               ; 1e06: e8          .   :1cd5[1]
-    jsr draw_sprite_a_at_character_xy                                 ; 1e07: 20 4c 1f     L. :1cd6[1]
+    jsr draw_sprite_a_at_cell_xy                                      ; 1e07: 20 4c 1f     L. :1cd6[1]
     dex                                                               ; 1e0a: ca          .   :1cd9[1]
 c1cda
     iny                                                               ; 1e0b: c8          .   :1cda[1]
@@ -2450,7 +2450,7 @@ c1cda
     bne c1cee                                                         ; 1e16: d0 07       ..  :1ce5[1]
     lda #spriteid_corner_bottom_right                                 ; 1e18: a9 2e       ..  :1ce7[1]
     inx                                                               ; 1e1a: e8          .   :1ce9[1]
-    jsr draw_sprite_a_at_character_xy                                 ; 1e1b: 20 4c 1f     L. :1cea[1]
+    jsr draw_sprite_a_at_cell_xy                                      ; 1e1b: 20 4c 1f     L. :1cea[1]
     dex                                                               ; 1e1e: ca          .   :1ced[1]
 c1cee
     inx                                                               ; 1e1f: e8          .   :1cee[1]
@@ -2669,7 +2669,7 @@ draw_rope
     pha                                                               ; 1eee: 48          H   :1dbd[1]
     beq c1dc9                                                         ; 1eef: f0 09       ..  :1dbe[1]
     lda #spriteid_rope_hook                                           ; 1ef1: a9 0b       ..  :1dc0[1]
-    jsr draw_sprite_a_at_character_xy                                 ; 1ef3: 20 4c 1f     L. :1dc2[1]
+    jsr draw_sprite_a_at_cell_xy                                      ; 1ef3: 20 4c 1f     L. :1dc2[1]
     lda #3                                                            ; 1ef6: a9 03       ..  :1dc5[1]
     bne c1dda                                                         ; 1ef8: d0 11       ..  :1dc7[1]
 c1dc9
@@ -2680,7 +2680,7 @@ c1dc9
     and #3                                                            ; 1f01: 29 03       ).  :1dd0[1]
     clc                                                               ; 1f03: 18          .   :1dd2[1]
     adc #spriteid_rope1                                               ; 1f04: 69 55       iU  :1dd3[1]
-    jsr draw_sprite_a_at_character_xy                                 ; 1f06: 20 4c 1f     L. :1dd5[1]
+    jsr draw_sprite_a_at_cell_xy                                      ; 1f06: 20 4c 1f     L. :1dd5[1]
     lda #2                                                            ; 1f09: a9 02       ..  :1dd8[1]
 c1dda
     jsr write_a_single_value_to_cell_in_collision_map                 ; 1f0b: 20 bb 1e     .. :1dda[1]
@@ -2691,7 +2691,7 @@ c1dda
     bcs c1df0                                                         ; 1f15: b0 0a       ..  :1de4[1]
 c1de6
     lda #spriteid_rope_end                                            ; 1f17: a9 0a       ..  :1de6[1]
-    jsr draw_sprite_a_at_character_xy                                 ; 1f19: 20 4c 1f     L. :1de8[1]
+    jsr draw_sprite_a_at_cell_xy                                      ; 1f19: 20 4c 1f     L. :1de8[1]
     lda #2                                                            ; 1f1c: a9 02       ..  :1deb[1]
     jsr write_a_single_value_to_cell_in_collision_map                 ; 1f1e: 20 bb 1e     .. :1ded[1]
 c1df0
@@ -3001,33 +3001,85 @@ outside_game_area
     ldy #$17                                                          ; 2079: a0 17       ..  :1f48[1]
     bne c1f06                                                         ; 207b: d0 ba       ..  :1f4a[1]
 ; TODO: this is used by e.g. dataA
-draw_sprite_a_at_character_xy
+; *************************************************************************************
+; 
+; Draw a sprite at a cell position
+; 
+; On Entry:
+;     A: spriteid
+;     (X,Y): cell coordinates
+; 
+; On Exit:
+;     Preserves A,X,Y
+; 
+; *************************************************************************************
+draw_sprite_a_at_cell_xy
     sta sprite_number                                                 ; 207d: 85 16       ..  :1f4c[1]
-    jsr set_sprite_pixel_position_from_character_xy                   ; 207f: 20 84 1f     .. :1f4e[1]
+    jsr set_sprite_pixel_position_from_cell_xy                        ; 207f: 20 84 1f     .. :1f4e[1]
     jsr sprite_op                                                     ; 2082: 20 8d 13     .. :1f51[1]
     lda sprite_number                                                 ; 2085: a5 16       ..  :1f54[1]
     rts                                                               ; 2087: 60          `   :1f56[1]
 
 ; TODO: This is called from e.g. dataA
-something52_TODO
-    jsr draw_sprite_a_at_character_xy                                 ; 2088: 20 4c 1f     L. :1f57[1]
+; *************************************************************************************
+; 
+; Draw a sprite at a cell position, and write a rectangle of values into the collision
+; map
+; 
+; On Entry:
+;     A: spriteid
+;     (X,Y): cell coordinates
+;     value_to_write_to_collision_map: value to write
+;     width_in_cells: rectangle width
+;     height_in_cells: rectangle height
+; 
+; On Exit:
+;     Preserves A,X,Y
+; 
+; *************************************************************************************
+draw_sprite_a_at_cell_xy_and_write_to_collision_map
+    jsr draw_sprite_a_at_cell_xy                                      ; 2088: 20 4c 1f     L. :1f57[1]
     jmp write_value_to_a_rectangle_of_cells_in_collision_map          ; 208b: 4c 44 1e    LD. :1f5a[1]
 
 ; TODO: this is used by e.g. dataA
-something58_TODO
-    jsr set_sprite_pixel_position_from_character_xy                   ; 208e: 20 84 1f     .. :1f5d[1]
-    stx l1f6c                                                         ; 2091: 8e 6c 1f    .l. :1f60[1]
+; *************************************************************************************
+; 
+; Set object's position based on a cell XY position
+; 
+; On Entry:
+;     A: object index
+;     (X,Y): cell coordinates
+; 
+; On Exit:
+;     Preserves A,X,Y
+; 
+; *************************************************************************************
+set_object_position_from_cell_xy
+    jsr set_sprite_pixel_position_from_cell_xy                        ; 208e: 20 84 1f     .. :1f5d[1]
+    stx remember_x                                                    ; 2091: 8e 6c 1f    .l. :1f60[1]
     tax                                                               ; 2094: aa          .   :1f63[1]
-    jsr something57_TODO                                              ; 2095: 20 6d 1f     m. :1f64[1]
+    jsr set_object_position_from_current_sprite_position              ; 2095: 20 6d 1f     m. :1f64[1]
     txa                                                               ; 2098: 8a          .   :1f67[1]
-    ldx l1f6c                                                         ; 2099: ae 6c 1f    .l. :1f68[1]
+    ldx remember_x                                                    ; 2099: ae 6c 1f    .l. :1f68[1]
     rts                                                               ; 209c: 60          `   :1f6b[1]
 
-l1f6c
+remember_x
     !byte 0                                                           ; 209d: 00          .   :1f6c[1]
 
+; *************************************************************************************
+; 
+; Set object position from sprite coordinates
+; 
+; On Entry:
+;     X: object index
+;     (sprite_x_base, sprite_y_base): pixel position to set
+; 
+; On Exit:
+;     Preserves A,X,Y
+; 
+; *************************************************************************************
 ; TODO: this is used by e.g. dataA
-something57_TODO
+set_object_position_from_current_sprite_position
     pha                                                               ; 209e: 48          H   :1f6d[1]
     lda sprite_x_base_low                                             ; 209f: a5 18       ..  :1f6e[1]
     sta object_x_low,x                                                ; 20a1: 9d 50 09    .P. :1f70[1]
@@ -3040,7 +3092,19 @@ something57_TODO
     pla                                                               ; 20b3: 68          h   :1f82[1]
     rts                                                               ; 20b4: 60          `   :1f83[1]
 
-set_sprite_pixel_position_from_character_xy
+; *************************************************************************************
+; 
+; Set current sprite position from cell XY coordinates
+; 
+; On Entry:
+;     (X,Y): cell coordinates
+; 
+; On Exit:
+;     (sprite_x_base, sprite_y_base): pixel position
+;     Preserves A,X,Y
+; 
+; *************************************************************************************
+set_sprite_pixel_position_from_cell_xy
     pha                                                               ; 20b5: 48          H   :1f84[1]
     txa                                                               ; 20b6: 8a          .   :1f85[1]
     pha                                                               ; 20b7: 48          H   :1f86[1]
@@ -7591,7 +7655,7 @@ skip_writing_developer_flags
     ldx #36                                                           ; 3f42: a2 24       .$
     ldy #6                                                            ; 3f44: a0 06       ..
     lda #spriteid_icodata_box                                         ; 3f46: a9 09       ..
-    jsr draw_sprite_a_at_character_xy                                 ; 3f48: 20 4c 1f     L.
+    jsr draw_sprite_a_at_cell_xy                                      ; 3f48: 20 4c 1f     L.
     pla                                                               ; 3f4b: 68          h
     sta screen_base_address_high                                      ; 3f4c: 85 4c       .L
     pla                                                               ; 3f4e: 68          h
@@ -8361,7 +8425,6 @@ pydis_end
 ;     l1ab0
 ;     l1ab1
 ;     l1ab2
-;     l1f6c
 ;     l22ed
 ;     l2433
 ;     l24d0

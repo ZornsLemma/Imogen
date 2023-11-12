@@ -73,10 +73,10 @@ something26_TODO                                    = $1b90
 draw_rope                                           = $1db9
 write_value_to_a_rectangle_of_cells_in_collision_map = $1e44
 write_a_single_value_to_cell_in_collision_map       = $1ebb
-draw_sprite_a_at_character_xy                       = $1f4c
-something52_TODO                                    = $1f57
-something58_TODO                                    = $1f5d
-something57_TODO                                    = $1f6d
+draw_sprite_a_at_cell_xy                            = $1f4c
+draw_sprite_a_at_cell_xy_and_write_to_collision_map = $1f57
+set_object_position_from_cell_xy                    = $1f5d
+set_object_position_from_current_sprite_position    = $1f6d
 play_landing_sound                                  = $23a9
 l2433                                               = $2433
 l24d0                                               = $24d0
@@ -232,16 +232,16 @@ level_thing_1_code
     lda #$de                                                          ; 3b8f: a9 de       ..
     ldx #3                                                            ; 3b91: a2 03       ..
     ldy #$14                                                          ; 3b93: a0 14       ..
-    jsr something52_TODO                                              ; 3b95: 20 57 1f     W.
+    jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map           ; 3b95: 20 57 1f     W.
     ldx #6                                                            ; 3b98: a2 06       ..
-    jsr something52_TODO                                              ; 3b9a: 20 57 1f     W.
+    jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map           ; 3b9a: 20 57 1f     W.
     ldx #9                                                            ; 3b9d: a2 09       ..
-    jsr something52_TODO                                              ; 3b9f: 20 57 1f     W.
+    jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map           ; 3b9f: 20 57 1f     W.
     ldx #3                                                            ; 3ba2: a2 03       ..
     ldy #$12                                                          ; 3ba4: a0 12       ..
-    jsr something52_TODO                                              ; 3ba6: 20 57 1f     W.
+    jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map           ; 3ba6: 20 57 1f     W.
     ldx #6                                                            ; 3ba9: a2 06       ..
-    jsr something52_TODO                                              ; 3bab: 20 57 1f     W.
+    jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map           ; 3bab: 20 57 1f     W.
     ldx #$0a                                                          ; 3bae: a2 0a       ..
     ldy #2                                                            ; 3bb0: a0 02       ..
     lda #$0a                                                          ; 3bb2: a9 0a       ..
@@ -298,13 +298,13 @@ c3bf7
     lda #$fe                                                          ; 3c12: a9 fe       ..
     sta l003b                                                         ; 3c14: 85 3b       .;
     lda #$c8                                                          ; 3c16: a9 c8       ..
-    jsr draw_sprite_a_at_character_xy                                 ; 3c18: 20 4c 1f     L.
+    jsr draw_sprite_a_at_cell_xy                                      ; 3c18: 20 4c 1f     L.
     dex                                                               ; 3c1b: ca          .
     dey                                                               ; 3c1c: 88          .
     dey                                                               ; 3c1d: 88          .
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 3c1e: 20 44 1e     D.
     ldx #2                                                            ; 3c21: a2 02       ..
-    jsr something57_TODO                                              ; 3c23: 20 6d 1f     m.
+    jsr set_object_position_from_current_sprite_position              ; 3c23: 20 6d 1f     m.
     lda #$cd                                                          ; 3c26: a9 cd       ..
     sta l38ac,x                                                       ; 3c28: 9d ac 38    ..8
     lda #$c0                                                          ; 3c2b: a9 c0       ..
@@ -316,13 +316,13 @@ c3bf7
     lda #$fe                                                          ; 3c38: a9 fe       ..
     sta l003b                                                         ; 3c3a: 85 3b       .;
     lda #$c8                                                          ; 3c3c: a9 c8       ..
-    jsr draw_sprite_a_at_character_xy                                 ; 3c3e: 20 4c 1f     L.
+    jsr draw_sprite_a_at_cell_xy                                      ; 3c3e: 20 4c 1f     L.
     dex                                                               ; 3c41: ca          .
     dey                                                               ; 3c42: 88          .
     dey                                                               ; 3c43: 88          .
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 3c44: 20 44 1e     D.
     ldx #3                                                            ; 3c47: a2 03       ..
-    jsr something57_TODO                                              ; 3c49: 20 6d 1f     m.
+    jsr set_object_position_from_current_sprite_position              ; 3c49: 20 6d 1f     m.
     lda #$ff                                                          ; 3c4c: a9 ff       ..
     sta l09be,x                                                       ; 3c4e: 9d be 09    ...
     lda #$ce                                                          ; 3c51: a9 ce       ..
@@ -513,14 +513,14 @@ level_thing_2_code
     lda #$de                                                          ; 3db5: a9 de       ..
     ldx #$1a                                                          ; 3db7: a2 1a       ..
     ldy #$14                                                          ; 3db9: a0 14       ..
-    jsr something52_TODO                                              ; 3dbb: 20 57 1f     W.
+    jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map           ; 3dbb: 20 57 1f     W.
     ldx #$22 ; '"'                                                    ; 3dbe: a2 22       ."
-    jsr something52_TODO                                              ; 3dc0: 20 57 1f     W.
+    jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map           ; 3dc0: 20 57 1f     W.
     ldy #$12                                                          ; 3dc3: a0 12       ..
-    jsr something52_TODO                                              ; 3dc5: 20 57 1f     W.
+    jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map           ; 3dc5: 20 57 1f     W.
     ldx #7                                                            ; 3dc8: a2 07       ..
     ldy #$14                                                          ; 3dca: a0 14       ..
-    jsr something52_TODO                                              ; 3dcc: 20 57 1f     W.
+    jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map           ; 3dcc: 20 57 1f     W.
     jsr something23_TODO                                              ; 3dcf: 20 bb 12     ..
 ; $3dd2 referenced 1 time by $3df3
 c3dd2
@@ -572,13 +572,13 @@ c3e11
     ldx #$11                                                          ; 3e1e: a2 11       ..
     ldy #7                                                            ; 3e20: a0 07       ..
     lda #2                                                            ; 3e22: a9 02       ..
-    jsr something58_TODO                                              ; 3e24: 20 5d 1f     ].
+    jsr set_object_position_from_cell_xy                              ; 3e24: 20 5d 1f     ].
     tax                                                               ; 3e27: aa          .
     lda #1                                                            ; 3e28: a9 01       ..
     sta l09be,x                                                       ; 3e2a: 9d be 09    ...
     ldx #$17                                                          ; 3e2d: a2 17       ..
     lda #3                                                            ; 3e2f: a9 03       ..
-    jsr something58_TODO                                              ; 3e31: 20 5d 1f     ].
+    jsr set_object_position_from_cell_xy                              ; 3e31: 20 5d 1f     ].
     tax                                                               ; 3e34: aa          .
     lda #$ff                                                          ; 3e35: a9 ff       ..
     sta l09be,x                                                       ; 3e37: 9d be 09    ...
@@ -727,7 +727,7 @@ sub_c3f02
     lda #7                                                            ; 3f38: a9 07       ..
     sta l003b                                                         ; 3f3a: 85 3b       .;
     lda #4                                                            ; 3f3c: a9 04       ..
-    jsr something58_TODO                                              ; 3f3e: 20 5d 1f     ].
+    jsr set_object_position_from_cell_xy                              ; 3f3e: 20 5d 1f     ].
     tax                                                               ; 3f41: aa          .
     lda #1                                                            ; 3f42: a9 01       ..
     sta l09be,x                                                       ; 3f44: 9d be 09    ...
@@ -934,7 +934,7 @@ c40c1
     lda #$fe                                                          ; 40d2: a9 fe       ..
     sta l003b                                                         ; 40d4: 85 3b       .;
     lda #2                                                            ; 40d6: a9 02       ..
-    jsr something58_TODO                                              ; 40d8: 20 5d 1f     ].
+    jsr set_object_position_from_cell_xy                              ; 40d8: 20 5d 1f     ].
     lda #$cc                                                          ; 40db: a9 cc       ..
     sta l38ae                                                         ; 40dd: 8d ae 38    ..8
 ; $40e0 referenced 1 time by $40c5
@@ -1219,7 +1219,7 @@ level_thing_4_code
     ldx #$14                                                          ; 42d0: a2 14       ..
     ldy #$0c                                                          ; 42d2: a0 0c       ..
     lda #$3b ; ';'                                                    ; 42d4: a9 3b       .;
-    jsr draw_sprite_a_at_character_xy                                 ; 42d6: 20 4c 1f     L.
+    jsr draw_sprite_a_at_cell_xy                                      ; 42d6: 20 4c 1f     L.
     lda #3                                                            ; 42d9: a9 03       ..
     jsr write_a_single_value_to_cell_in_collision_map                 ; 42db: 20 bb 1e     ..
     ldx #$21 ; '!'                                                    ; 42de: a2 21       .!
@@ -1388,7 +1388,7 @@ c43f6
     sta value_to_write_to_collision_map                               ; 440b: 85 3e       .>
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 440d: 20 44 1e     D.
     lda #2                                                            ; 4410: a9 02       ..
-    jsr something58_TODO                                              ; 4412: 20 5d 1f     ].
+    jsr set_object_position_from_cell_xy                              ; 4412: 20 5d 1f     ].
 ; $4415 referenced 4 times by $4355, $43bd, $43d8, $43fa
 c4415
     rts                                                               ; 4415: 60          `
@@ -1670,7 +1670,7 @@ pydis_end
 ;     l0a72:                                                 11
 ;     value_to_write_to_collision_map:                       10
 ;     l0a70:                                                 10
-;     something52_TODO:                                       9
+;     draw_sprite_a_at_cell_xy_and_write_to_collision_map:    9
 ;     l0a02:                                                  8
 ;     l0a04:                                                  8
 ;     c3ed7:                                                  8
@@ -1686,7 +1686,7 @@ pydis_end
 ;     draw_rope:                                              6
 ;     previous_level:                                         5
 ;     l0a73:                                                  5
-;     something58_TODO:                                       5
+;     set_object_position_from_cell_xy:                       5
 ;     something55_TODO:                                       5
 ;     l38ac:                                                  5
 ;     l395e:                                                  5
@@ -1707,7 +1707,7 @@ pydis_end
 ;     l09ac:                                                  3
 ;     something13_TODO:                                       3
 ;     current_room_index:                                     3
-;     draw_sprite_a_at_character_xy:                          3
+;     draw_sprite_a_at_cell_xy:                               3
 ;     find_or_create_menu_slot_for_A:                         3
 ;     l2eb6:                                                  3
 ;     l38c2:                                                  3
@@ -1721,7 +1721,7 @@ pydis_end
 ;     l0950:                                                  2
 ;     l0966:                                                  2
 ;     l0a03:                                                  2
-;     something57_TODO:                                       2
+;     set_object_position_from_current_sprite_position:       2
 ;     l2433:                                                  2
 ;     l38d8:                                                  2
 ;     l396f:                                                  2

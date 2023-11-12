@@ -315,8 +315,8 @@ sprite_op_flags_dict = {
     0x04: "sprite_op_flags_ignore_mask",
 }
 
-label(0x1f4c, "draw_sprite_a_at_character_xy")
-label(0x1f84, "set_sprite_pixel_position_from_character_xy")
+label(0x1f4c, "draw_sprite_a_at_cell_xy")
+label(0x1f84, "set_sprite_pixel_position_from_cell_xy")
 
 label(0x9d4, "object_current_index_in_animation")
 label(0x9d5, "object_current_index_in_animation+1")
@@ -540,7 +540,7 @@ On Entry:
 
 
 substitute_constants("sta sprite_number", 'a', sprite_dict, True)
-substitute_constants("jsr draw_sprite_a_at_character_xy", 'a', sprite_dict, True)
+substitute_constants("jsr draw_sprite_a_at_cell_xy", 'a', sprite_dict, True)
 substitute_constants("jsr find_or_create_menu_slot_for_A", 'a', sprite_dict, True) # TODO: not actually useful yet, maybe never
 substitute_constants("sta sprite_op_flags", 'a', sprite_op_flags_dict, True)
 
@@ -729,6 +729,33 @@ label(0x17fa, "if_timer1_elapsed_then_set_main_area_palette")
 comment(0x17fc, "check for timer1 elapsed", inline=True)
 label(0x18a6, "get_random_number_up_to_a")
 label(0x18a9, "generate_random_bits_loop")
+
+comment(0x1f6d, """*************************************************************************************
+
+Set object position from sprite coordinates
+
+On Entry:
+    X: object index
+    (sprite_x_base, sprite_y_base): pixel position to set
+
+On Exit:
+    Preserves A,X,Y
+
+*************************************************************************************""")
+
+comment(0x1f84, """*************************************************************************************
+
+Set current sprite position from cell XY coordinates
+
+On Entry:
+    (X,Y): cell coordinates
+
+On Exit:
+    (sprite_x_base, sprite_y_base): pixel position
+    Preserves A,X,Y
+
+*************************************************************************************""")
+
 comment(0x18a6, """*************************************************************************************
 
 Random Number Generator
@@ -2247,6 +2274,49 @@ comment(0x1efa, "TODO: speculating but think this is right - my skimming of exis
 expr(0x1efb, "game_area_columns")
 expr(0x1eff, "game_area_rows")
 entry(0x1f2d, "outside_game_area")
+comment(0x1f4c, """*************************************************************************************
+
+Draw a sprite at a cell position
+
+On Entry:
+    A: spriteid
+    (X,Y): cell coordinates
+
+On Exit:
+    Preserves A,X,Y
+
+*************************************************************************************""")
+
+comment(0x1f57, """*************************************************************************************
+
+Draw a sprite at a cell position, and write a rectangle of values into the collision map
+
+On Entry:
+    A: spriteid
+    (X,Y): cell coordinates
+    value_to_write_to_collision_map: value to write
+    width_in_cells: rectangle width
+    height_in_cells: rectangle height
+
+On Exit:
+    Preserves A,X,Y
+
+*************************************************************************************""")
+
+comment(0x1f5d, """*************************************************************************************
+
+Set object's position based on a cell XY position
+
+On Entry:
+    A: object index
+    (X,Y): cell coordinates
+
+On Exit:
+    Preserves A,X,Y
+
+*************************************************************************************""")
+label(0x1f6c, "remember_x")
+
 comment(0x1f06, "Set temp_value=10*Y")
 comment(0x1f10, "Set Y=temp_value+X/4")
 blank(0x1f17)
