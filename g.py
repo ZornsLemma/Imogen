@@ -1516,19 +1516,6 @@ expr(0x3796, make_lo("section_message"))
 expr(0x3798, make_hi("section_message"))
 
 
-def sound(addr, lab):
-    label(addr, lab)
-    word(addr, 1)
-    word(addr+2, 1)
-    word(addr+4, 1)
-    word(addr+6, 1)
-    decimal(addr+2)
-    decimal(addr+4)
-    decimal(addr+6)
-    comment(addr, "channel", inline=True)
-    comment(addr+2, "amplitude", inline=True)
-    comment(addr+4, "pitch", inline=True)
-    comment(addr+6, "duration", inline=True)
 
 def envelope(addr, lab):
     label(addr, lab)

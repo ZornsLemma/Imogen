@@ -342,7 +342,7 @@ level_unchanged
     sta l38c2,x                                                       ; 3c71: 9d c2 38    ..8
 ; $3c74 referenced 1 time by $3bfb
 c3c74
-    jmp dont_move_mouse_ball                                          ; 3c74: 4c a8 3c    L.<
+    jmp move_mouse_ball                                               ; 3c74: 4c a8 3c    L.<
 
 ; $3c77 referenced 1 time by $3be9
 bump_and_wrap_mouse_ball_position
@@ -356,25 +356,25 @@ no_wrap_needed
     sty mouse_ball_position                                           ; 3c81: 8c 6f 0a    .o.
     lda desired_room_index                                            ; 3c84: a5 30       .0
     cmp #0                                                            ; 3c86: c9 00       ..
-    bne dont_move_mouse_ball                                          ; 3c88: d0 1e       ..
+    bne move_mouse_ball                                               ; 3c88: d0 1e       ..
     tya                                                               ; 3c8a: 98          .
     beq c3c91                                                         ; 3c8b: f0 04       ..
     cpy #$0f                                                          ; 3c8d: c0 0f       ..
-    bne dont_move_mouse_ball                                          ; 3c8f: d0 17       ..
+    bne move_mouse_ball                                               ; 3c8f: d0 17       ..
 ; $3c91 referenced 1 time by $3c8b
 c3c91
     lda #0                                                            ; 3c91: a9 00       ..
-    ldx #$7e ; '~'                                                    ; 3c93: a2 7e       .~
-    ldy #$44 ; 'D'                                                    ; 3c95: a0 44       .D
+    ldx #<mouse_ball_sound1                                           ; 3c93: a2 7e       .~
+    ldy #>mouse_ball_sound1                                           ; 3c95: a0 44       .D
     jsr play_sound_yx                                                 ; 3c97: 20 f6 38     .8
-    ldx #$76 ; 'v'                                                    ; 3c9a: a2 76       .v
-    ldy #$44 ; 'D'                                                    ; 3c9c: a0 44       .D
+    ldx #<mouse_ball_sound2                                           ; 3c9a: a2 76       .v
+    ldy #>mouse_ball_sound2                                           ; 3c9c: a0 44       .D
     jsr play_sound_yx                                                 ; 3c9e: 20 f6 38     .8
-    ldx #$6e ; 'n'                                                    ; 3ca1: a2 6e       .n
-    ldy #$44 ; 'D'                                                    ; 3ca3: a0 44       .D
+    ldx #<mouse_ball_sound3                                           ; 3ca1: a2 6e       .n
+    ldy #>mouse_ball_sound3                                           ; 3ca3: a0 44       .D
     jsr play_sound_yx                                                 ; 3ca5: 20 f6 38     .8
 ; $3ca8 referenced 3 times by $3c74, $3c88, $3c8f
-dont_move_mouse_ball
+move_mouse_ball
     lda desired_room_index                                            ; 3ca8: a5 30       .0
     cmp #0                                                            ; 3caa: c9 00       ..
     bne c3d20                                                         ; 3cac: d0 72       .r
@@ -1402,9 +1402,22 @@ c4415
     !byte $d2,   0,   1,   0,   6,   1,   0,   0,   0,   0,   0,   0  ; 4446: d2 00 01... ...
     !byte $0a,   0,   0, $d8, $28,   0, $10,   0,   6,   0,   4,   0  ; 4452: 0a 00 00... ...
     !byte   4,   0,   6,   1,   0,   0,   0,   0,   0,   0, $1e, $ce  ; 445e: 04 00 06... ...
-    !byte $ce, $9c, $64,   0, $10,   0,   6,   0,   7,   0,   1,   0  ; 446a: ce 9c 64... ..d
-    !byte $11,   0,   0,   0, $be,   0,   1,   0, $10,   0,   0,   0  ; 4476: 11 00 00... ...
-    !byte   0,   0,   0,   0                                          ; 4482: 00 00 00... ...
+    !byte $ce, $9c, $64,   0                                          ; 446a: ce 9c 64... ..d
+mouse_ball_sound3
+    !word $10                                                         ; 446e: 10 00       ..             ; channel
+    !word 6                                                           ; 4470: 06 00       ..             ; amplitude
+    !word 7                                                           ; 4472: 07 00       ..             ; pitch
+    !word 1                                                           ; 4474: 01 00       ..             ; duration
+mouse_ball_sound2
+    !word $11                                                         ; 4476: 11 00       ..             ; channel
+    !word 0                                                           ; 4478: 00 00       ..             ; amplitude
+    !word 190                                                         ; 447a: be 00       ..             ; pitch
+    !word 1                                                           ; 447c: 01 00       ..             ; duration
+mouse_ball_sound1
+    !word $10                                                         ; 447e: 10 00       ..             ; channel
+    !word 0                                                           ; 4480: 00 00       ..             ; amplitude
+    !word 0                                                           ; 4482: 00 00       ..             ; pitch
+    !word 0                                                           ; 4484: 00 00       ..             ; duration
 ground_fill_2x2_top_left
     !byte %...#....                                                   ; 4486: 10          .
     !byte %..#.....                                                   ; 4487: 20
@@ -1712,7 +1725,7 @@ pydis_end
 ;     find_or_create_menu_slot_for_A:                         3
 ;     l2eb6:                                                  3
 ;     l38c2:                                                  3
-;     dont_move_mouse_ball:                                   3
+;     move_mouse_ball:                                        3
 ;     c3d20:                                                  3
 ;     c3f8a:                                                  3
 ;     c419f:                                                  3
@@ -1944,11 +1957,29 @@ pydis_end
 !if (<ground_fill_2x2_top_left) != $86 {
     !error "Assertion failed: <ground_fill_2x2_top_left == $86"
 }
+!if (<mouse_ball_sound1) != $7e {
+    !error "Assertion failed: <mouse_ball_sound1 == $7e"
+}
+!if (<mouse_ball_sound2) != $76 {
+    !error "Assertion failed: <mouse_ball_sound2 == $76"
+}
+!if (<mouse_ball_sound3) != $6e {
+    !error "Assertion failed: <mouse_ball_sound3 == $6e"
+}
 !if (<tile_all_set_pixels) != $a9 {
     !error "Assertion failed: <tile_all_set_pixels == $a9"
 }
 !if (>ground_fill_2x2_top_left) != $44 {
     !error "Assertion failed: >ground_fill_2x2_top_left == $44"
+}
+!if (>mouse_ball_sound1) != $44 {
+    !error "Assertion failed: >mouse_ball_sound1 == $44"
+}
+!if (>mouse_ball_sound2) != $44 {
+    !error "Assertion failed: >mouse_ball_sound2 == $44"
+}
+!if (>mouse_ball_sound3) != $44 {
+    !error "Assertion failed: >mouse_ball_sound3 == $44"
 }
 !if (>tile_all_set_pixels) != $0a {
     !error "Assertion failed: >tile_all_set_pixels == $0a"

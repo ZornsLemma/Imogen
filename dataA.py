@@ -89,7 +89,16 @@ label(0xa6f, "mouse_ball_position") # TODO: guesswork but fairly convinced - I t
 entry(0x3bf7, "level_unchanged")
 entry(0x3c77, "bump_and_wrap_mouse_ball_position")
 entry(0x3c81, "no_wrap_needed")
-entry(0x3ca8, "dont_move_mouse_ball") # TODO: guesswork - seems to correspond to the extreme positions 0 and $f, does this indicate a frame's pause in movement?
+entry(0x3ca8, "move_mouse_ball")
+sound(0x447e, "mouse_ball_sound1")
+sound(0x4476, "mouse_ball_sound2")
+sound(0x446e, "mouse_ball_sound3")
+expr(0x3c94, make_lo("mouse_ball_sound1"))
+expr(0x3c96, make_hi("mouse_ball_sound1"))
+expr(0x3c9b, make_lo("mouse_ball_sound2"))
+expr(0x3c9d, make_hi("mouse_ball_sound2"))
+expr(0x3ca2, make_lo("mouse_ball_sound3"))
+expr(0x3ca4, make_hi("mouse_ball_sound3"))
 
 go()
 

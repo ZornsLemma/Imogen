@@ -44,6 +44,22 @@ def character_bitmap(addr, s=None):
         picture_binary(addr + i)
         byte(addr + i)
 
+
+def sound(addr, lab):
+    label(addr, lab)
+    word(addr, 1)
+    word(addr+2, 1)
+    word(addr+4, 1)
+    word(addr+6, 1)
+    decimal(addr+2)
+    decimal(addr+4)
+    decimal(addr+6)
+    comment(addr, "channel", inline=True)
+    comment(addr+2, "amplitude", inline=True)
+    comment(addr+4, "pitch", inline=True)
+    comment(addr+6, "duration", inline=True)
+
+
 sprite_op_flags_dict = {
     0x00: "sprite_op_flags_normal",
     0x01: "sprite_op_flags_copy_mask",
