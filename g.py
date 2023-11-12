@@ -2333,6 +2333,8 @@ comment(0x1dbe, "Don't draw the rope hook if Y is zero")
 label(0x1dc9, "draw_rope_loop")
 label(0x1de6, "draw_end_of_rope")
 comment(0x1dcf, "cycle through the rope sprites based on Y coordinate")
+label(0x1dda, "write_to_collision_map")
+label(0x1df0, "restore_ay_and_return")
 expr(0x1de1, "game_area_height_cells")
 
 comment(0x1f06, "Set temp_value=10*Y")

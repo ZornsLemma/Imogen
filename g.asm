@@ -2684,7 +2684,7 @@ draw_rope
     lda #spriteid_rope_hook                                           ; 1ef1: a9 0b       ..  :1dc0[1]
     jsr draw_sprite_a_at_cell_xy                                      ; 1ef3: 20 4c 1f     L. :1dc2[1]
     lda #3                                                            ; 1ef6: a9 03       ..  :1dc5[1]
-    bne c1dda                                                         ; 1ef8: d0 11       ..  :1dc7[1]
+    bne write_to_collision_map                                        ; 1ef8: d0 11       ..  :1dc7[1]
 draw_rope_loop
     lda temp_rope_length                                              ; 1efa: a5 56       .V  :1dc9[1]
     cmp #1                                                            ; 1efc: c9 01       ..  :1dcb[1]
@@ -2696,19 +2696,19 @@ draw_rope_loop
     adc #spriteid_rope1                                               ; 1f04: 69 55       iU  :1dd3[1]
     jsr draw_sprite_a_at_cell_xy                                      ; 1f06: 20 4c 1f     L. :1dd5[1]
     lda #2                                                            ; 1f09: a9 02       ..  :1dd8[1]
-c1dda
+write_to_collision_map
     jsr write_a_single_value_to_cell_in_collision_map                 ; 1f0b: 20 bb 1e     .. :1dda[1]
     dec temp_rope_length                                              ; 1f0e: c6 56       .V  :1ddd[1]
     iny                                                               ; 1f10: c8          .   :1ddf[1]
     cpy #game_area_height_cells                                       ; 1f11: c0 18       ..  :1de0[1]
     bcc draw_rope_loop                                                ; 1f13: 90 e5       ..  :1de2[1]
-    bcs c1df0                                                         ; 1f15: b0 0a       ..  :1de4[1]
+    bcs restore_ay_and_return                                         ; 1f15: b0 0a       ..  :1de4[1]
 draw_end_of_rope
     lda #spriteid_rope_end                                            ; 1f17: a9 0a       ..  :1de6[1]
     jsr draw_sprite_a_at_cell_xy                                      ; 1f19: 20 4c 1f     L. :1de8[1]
     lda #2                                                            ; 1f1c: a9 02       ..  :1deb[1]
     jsr write_a_single_value_to_cell_in_collision_map                 ; 1f1e: 20 bb 1e     .. :1ded[1]
-c1df0
+restore_ay_and_return
     pla                                                               ; 1f21: 68          h   :1df0[1]
     tay                                                               ; 1f22: a8          .   :1df1[1]
     pla                                                               ; 1f23: 68          h   :1df2[1]
@@ -8210,8 +8210,6 @@ pydis_end
 ;     c1cda
 ;     c1cee
 ;     c1d16
-;     c1dda
-;     c1df0
 ;     c1f06
 ;     c1f96
 ;     c1fa0
