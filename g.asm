@@ -2302,12 +2302,12 @@ draw_floor
     sta off_screen_address_high                                       ; 1d11: 85 7b       .{  :1be0[1]
 ; copy tile lower six rows to screen
     ldy #7                                                            ; 1d13: a0 07       ..  :1be2[1]
-something26_copy_loop1
+draw_floor_top_loop
     lda (off_screen_address_low),y                                    ; 1d15: b1 7a       .z  :1be4[1]
     sta (cell_screen_address_low),y                                   ; 1d17: 91 76       .v  :1be6[1]
     dey                                                               ; 1d19: 88          .   :1be8[1]
     cpy #2                                                            ; 1d1a: c0 02       ..  :1be9[1]
-    bcs something26_copy_loop1                                        ; 1d1c: b0 f7       ..  :1beb[1]
+    bcs draw_floor_top_loop                                           ; 1d1c: b0 f7       ..  :1beb[1]
 ; off_screen_address += bytes_per_cell
     lda off_screen_address_low                                        ; 1d1e: a5 7a       .z  :1bed[1]
     clc                                                               ; 1d20: 18          .   :1bef[1]
@@ -2327,11 +2327,11 @@ something26_copy_loop1
 
 ; copy tile upper 6 rows to screen
     ldy #5                                                            ; 1d38: a0 05       ..  :1c07[1]
-something26_copy_loop2
+draw_floor_bottom_loop
     lda (off_screen_address_low),y                                    ; 1d3a: b1 7a       .z  :1c09[1]
     sta (cell_screen_address_low),y                                   ; 1d3c: 91 76       .v  :1c0b[1]
     dey                                                               ; 1d3e: 88          .   :1c0d[1]
-    bpl something26_copy_loop2                                        ; 1d3f: 10 f9       ..  :1c0e[1]
+    bpl draw_floor_bottom_loop                                        ; 1d3f: 10 f9       ..  :1c0e[1]
 ; restore Y
     ldy cell_y                                                        ; 1d41: a4 71       .q  :1c10[1]
     jmp next_cell_over                                                ; 1d43: 4c c3 1b    L.. :1c12[1]
@@ -2344,84 +2344,88 @@ draw_ceiling
     asl                                                               ; 1d4d: 0a          .   :1c1c[1]
     asl                                                               ; 1d4e: 0a          .   :1c1d[1]
     clc                                                               ; 1d4f: 18          .   :1c1e[1]
-    adc #<character_bitmap_1d59                                       ; 1d50: 69 59       iY  :1c1f[1]
+    adc #<tile_ceiling0                                               ; 1d50: 69 59       iY  :1c1f[1]
     sta off_screen_address_low                                        ; 1d52: 85 7a       .z  :1c21[1]
     lda #0                                                            ; 1d54: a9 00       ..  :1c23[1]
-    adc #>character_bitmap_1d59                                       ; 1d56: 69 1d       i.  :1c25[1]
+    adc #>tile_ceiling0                                               ; 1d56: 69 1d       i.  :1c25[1]
     sta off_screen_address_high                                       ; 1d58: 85 7b       .{  :1c27[1]
     sty cell_y                                                        ; 1d5a: 84 71       .q  :1c29[1]
     ldy #7                                                            ; 1d5c: a0 07       ..  :1c2b[1]
-loop_c1c2d
+copy_ceiling_tile_loop
     lda (off_screen_address_low),y                                    ; 1d5e: b1 7a       .z  :1c2d[1]
     sta (cell_screen_address_low),y                                   ; 1d60: 91 76       .v  :1c2f[1]
     dey                                                               ; 1d62: 88          .   :1c31[1]
     cpy #2                                                            ; 1d63: c0 02       ..  :1c32[1]
-    bcs loop_c1c2d                                                    ; 1d65: b0 f7       ..  :1c34[1]
+    bcs copy_ceiling_tile_loop                                        ; 1d65: b0 f7       ..  :1c34[1]
     ldy cell_y                                                        ; 1d67: a4 71       .q  :1c36[1]
     jmp next_cell_over                                                ; 1d69: 4c c3 1b    L.. :1c38[1]
 
 draw_right_facing_wall
-    jsr sub_c1cf3                                                     ; 1d6c: 20 f3 1c     .. :1c3b[1]
-    beq c1c4e                                                         ; 1d6f: f0 0e       ..  :1c3e[1]
+    jsr find_corner_spriteid                                          ; 1d6c: 20 f3 1c     .. :1c3b[1]
+    beq normal_right_wall_not_corner                                  ; 1d6f: f0 0e       ..  :1c3e[1]
     inx                                                               ; 1d71: e8          .   :1c40[1]
     lda #$ff                                                          ; 1d72: a9 ff       ..  :1c41[1]
     sta sprite_reflect_flag                                           ; 1d74: 85 1d       ..  :1c43[1]
     lda sprite_number                                                 ; 1d76: a5 16       ..  :1c45[1]
     jsr draw_sprite_a_at_cell_xy                                      ; 1d78: 20 4c 1f     L. :1c47[1]
     dex                                                               ; 1d7b: ca          .   :1c4a[1]
-    jmp c1c6e                                                         ; 1d7c: 4c 6e 1c    Ln. :1c4b[1]
+    jmp move_up_and_left_to_check_if_wall_continues                   ; 1d7c: 4c 6e 1c    Ln. :1c4b[1]
 
-c1c4e
+; no corner found, so the cell Y position is used to determine the tile to use
+normal_right_wall_not_corner
     tya                                                               ; 1d7f: 98          .   :1c4e[1]
+; find the tile to use based on tile base address + (cellY and 3)*8
     and #3                                                            ; 1d80: 29 03       ).  :1c4f[1]
     asl                                                               ; 1d82: 0a          .   :1c51[1]
     asl                                                               ; 1d83: 0a          .   :1c52[1]
     asl                                                               ; 1d84: 0a          .   :1c53[1]
     clc                                                               ; 1d85: 18          .   :1c54[1]
-    adc #$99                                                          ; 1d86: 69 99       i.  :1c55[1]
+    adc #<tile_wall_right0                                            ; 1d86: 69 99       i.  :1c55[1]
     sta off_screen_address_low                                        ; 1d88: 85 7a       .z  :1c57[1]
     lda #0                                                            ; 1d8a: a9 00       ..  :1c59[1]
-    adc #$1d                                                          ; 1d8c: 69 1d       i.  :1c5b[1]
+    adc #>tile_wall_right0                                            ; 1d8c: 69 1d       i.  :1c5b[1]
     sta off_screen_address_high                                       ; 1d8e: 85 7b       .{  :1c5d[1]
     ldy #7                                                            ; 1d90: a0 07       ..  :1c5f[1]
-loop_c1c61
+copy_right_wall_tile_loop
     lda (cell_screen_address_low),y                                   ; 1d92: b1 76       .v  :1c61[1]
-    and #$c0                                                          ; 1d94: 29 c0       ).  :1c63[1]
+; just copy the rightmost six pixels
+    and #%11000000                                                    ; 1d94: 29 c0       ).  :1c63[1]
     ora (off_screen_address_low),y                                    ; 1d96: 11 7a       .z  :1c65[1]
     sta (cell_screen_address_low),y                                   ; 1d98: 91 76       .v  :1c67[1]
     dey                                                               ; 1d9a: 88          .   :1c69[1]
-    bpl loop_c1c61                                                    ; 1d9b: 10 f5       ..  :1c6a[1]
+    bpl copy_right_wall_tile_loop                                     ; 1d9b: 10 f5       ..  :1c6a[1]
     ldy cell_y                                                        ; 1d9d: a4 71       .q  :1c6c[1]
-c1c6e
+move_up_and_left_to_check_if_wall_continues
     inx                                                               ; 1d9f: e8          .   :1c6e[1]
     dey                                                               ; 1da0: 88          .   :1c6f[1]
-    bmi c1c82                                                         ; 1da1: 30 10       0.  :1c70[1]
+    bmi not_top_corner                                                ; 1da1: 30 10       0.  :1c70[1]
     jsr read_collision_map_value_for_xy                               ; 1da3: 20 fa 1e     .. :1c72[1]
     cmp #3                                                            ; 1da6: c9 03       ..  :1c75[1]
-    bne c1c82                                                         ; 1da8: d0 09       ..  :1c77[1]
+    bne not_top_corner                                                ; 1da8: d0 09       ..  :1c77[1]
     lda #$ff                                                          ; 1daa: a9 ff       ..  :1c79[1]
     sta sprite_reflect_flag                                           ; 1dac: 85 1d       ..  :1c7b[1]
     lda #spriteid_corner_top_right                                    ; 1dae: a9 2f       ./  :1c7d[1]
     jsr draw_sprite_a_at_cell_xy                                      ; 1db0: 20 4c 1f     L. :1c7f[1]
-c1c82
+not_top_corner
     iny                                                               ; 1db3: c8          .   :1c82[1]
     iny                                                               ; 1db4: c8          .   :1c83[1]
-    cpy #$18                                                          ; 1db5: c0 18       ..  :1c84[1]
-    bcs c1c98                                                         ; 1db7: b0 10       ..  :1c86[1]
+    cpy #24                                                           ; 1db5: c0 18       ..  :1c84[1]
+    bcs finished_wall                                                 ; 1db7: b0 10       ..  :1c86[1]
     jsr read_collision_map_value_for_xy                               ; 1db9: 20 fa 1e     .. :1c88[1]
     cmp #3                                                            ; 1dbc: c9 03       ..  :1c8b[1]
-    bne c1c98                                                         ; 1dbe: d0 09       ..  :1c8d[1]
+    bne finished_wall                                                 ; 1dbe: d0 09       ..  :1c8d[1]
+; draw final corner
     lda #$ff                                                          ; 1dc0: a9 ff       ..  :1c8f[1]
     sta sprite_reflect_flag                                           ; 1dc2: 85 1d       ..  :1c91[1]
     lda #spriteid_corner_bottom_right                                 ; 1dc4: a9 2e       ..  :1c93[1]
     jsr draw_sprite_a_at_cell_xy                                      ; 1dc6: 20 4c 1f     L. :1c95[1]
-c1c98
+finished_wall
     dex                                                               ; 1dc9: ca          .   :1c98[1]
     dey                                                               ; 1dca: 88          .   :1c99[1]
     jmp next_cell_over                                                ; 1dcb: 4c c3 1b    L.. :1c9a[1]
 
 draw_left_facing_wall
-    jsr sub_c1cf3                                                     ; 1dce: 20 f3 1c     .. :1c9d[1]
+    jsr find_corner_spriteid                                          ; 1dce: 20 f3 1c     .. :1c9d[1]
     beq c1ca8                                                         ; 1dd1: f0 06       ..  :1ca0[1]
     jsr draw_sprite_a_at_cell_xy                                      ; 1dd3: 20 4c 1f     L. :1ca2[1]
     jmp c1cc8                                                         ; 1dd6: 4c c8 1c    L.. :1ca5[1]
@@ -2435,10 +2439,10 @@ c1ca8
     asl                                                               ; 1ddd: 0a          .   :1cac[1]
     asl                                                               ; 1dde: 0a          .   :1cad[1]
     clc                                                               ; 1ddf: 18          .   :1cae[1]
-    adc #<character_bitmap_1d79                                       ; 1de0: 69 79       iy  :1caf[1]
+    adc #<tile_wall_left0                                             ; 1de0: 69 79       iy  :1caf[1]
     sta off_screen_address_low                                        ; 1de2: 85 7a       .z  :1cb1[1]
     lda #0                                                            ; 1de4: a9 00       ..  :1cb3[1]
-    adc #>character_bitmap_1d79                                       ; 1de6: 69 1d       i.  :1cb5[1]
+    adc #>tile_wall_left0                                             ; 1de6: 69 1d       i.  :1cb5[1]
     sta off_screen_address_high                                       ; 1de8: 85 7b       .{  :1cb7[1]
     ldy #7                                                            ; 1dea: a0 07       ..  :1cb9[1]
 loop_c1cbb
@@ -2477,7 +2481,7 @@ c1cee
     dey                                                               ; 1e20: 88          .   :1cef[1]
     jmp next_cell_over                                                ; 1e21: 4c c3 1b    L.. :1cf0[1]
 
-sub_c1cf3
+find_corner_spriteid
     lda #spriteid_corner_top_left                                     ; 1e24: a9 2c       .,  :1cf3[1]
     sta sprite_number                                                 ; 1e26: 85 16       ..  :1cf5[1]
     dey                                                               ; 1e28: 88          .   :1cf7[1]
@@ -2495,6 +2499,8 @@ sub_c1cf3
     sty cell_y                                                        ; 1e3e: 84 71       .q  :1d0d[1]
     jsr get_screen_address_from_cell_xy                               ; 1e40: 20 66 1b     f. :1d0f[1]
     lda #spriteid_one_pixel_masked_out                                ; 1e43: a9 00       ..  :1d12[1]
+sub_c1d14
+found_corner_spriteid = sub_c1d14+1
     sta sprite_number                                                 ; 1e45: 85 16       ..  :1d14[1]
 c1d16
     lda sprite_number                                                 ; 1e47: a5 16       ..  :1d16[1]
@@ -2572,7 +2578,7 @@ tile_floor3_bottom
     !byte %........                                                   ; 1e87: 00          .   :1d56[1]
     !byte %........                                                   ; 1e88: 00          .   :1d57[1]
     !byte %........                                                   ; 1e89: 00          .   :1d58[1]
-character_bitmap_1d59
+tile_ceiling0
     !byte %........                                                   ; 1e8a: 00          .   :1d59[1]
     !byte %........                                                   ; 1e8b: 00          .   :1d5a[1]
     !byte %........                                                   ; 1e8c: 00          .   :1d5b[1]
@@ -2581,7 +2587,7 @@ character_bitmap_1d59
     !byte %#.######                                                   ; 1e8f: bf          .   :1d5e[1]
     !byte %####.###                                                   ; 1e90: f7          .   :1d5f[1]
     !byte %....#...                                                   ; 1e91: 08          .   :1d60[1]
-character_bitmap_1d61
+tile_ceiling1
     !byte %........                                                   ; 1e92: 00          .   :1d61[1]
     !byte %........                                                   ; 1e93: 00          .   :1d62[1]
     !byte %........                                                   ; 1e94: 00          .   :1d63[1]
@@ -2590,7 +2596,7 @@ character_bitmap_1d61
     !byte %##.#####                                                   ; 1e97: df          .   :1d66[1]
     !byte %####.###                                                   ; 1e98: f7          .   :1d67[1]
     !byte %........                                                   ; 1e99: 00          .   :1d68[1]
-character_bitmap_1d69
+tile_ceiling2
     !byte %........                                                   ; 1e9a: 00          .   :1d69[1]
     !byte %........                                                   ; 1e9b: 00          .   :1d6a[1]
     !byte %........                                                   ; 1e9c: 00          .   :1d6b[1]
@@ -2599,7 +2605,7 @@ character_bitmap_1d69
     !byte %##.#####                                                   ; 1e9f: df          .   :1d6e[1]
     !byte %#####..#                                                   ; 1ea0: f9          .   :1d6f[1]
     !byte %.....##.                                                   ; 1ea1: 06          .   :1d70[1]
-character_bitmap_1d71
+tile_ceiling3
     !byte %........                                                   ; 1ea2: 00          .   :1d71[1]
     !byte %........                                                   ; 1ea3: 00          .   :1d72[1]
     !byte %........                                                   ; 1ea4: 00          .   :1d73[1]
@@ -2608,7 +2614,7 @@ character_bitmap_1d71
     !byte %#.######                                                   ; 1ea7: bf          .   :1d76[1]
     !byte %########                                                   ; 1ea8: ff          .   :1d77[1]
     !byte %........                                                   ; 1ea9: 00          .   :1d78[1]
-character_bitmap_1d79
+tile_wall_left0
     !byte %.####...                                                   ; 1eaa: 78          x   :1d79[1]
     !byte %.#.##...                                                   ; 1eab: 58          X   :1d7a[1]
     !byte %.###....                                                   ; 1eac: 70          p   :1d7b[1]
@@ -2617,7 +2623,7 @@ character_bitmap_1d79
     !byte %.####...                                                   ; 1eaf: 78          x   :1d7e[1]
     !byte %.##.#...                                                   ; 1eb0: 68          h   :1d7f[1]
     !byte %.####...                                                   ; 1eb1: 78          x   :1d80[1]
-character_bitmap_1d81
+tile_wall_left1
     !byte %.####...                                                   ; 1eb2: 78          x   :1d81[1]
     !byte %.##.#...                                                   ; 1eb3: 68          h   :1d82[1]
     !byte %.####...                                                   ; 1eb4: 78          x   :1d83[1]
@@ -2626,7 +2632,7 @@ character_bitmap_1d81
     !byte %#.###...                                                   ; 1eb7: b8          .   :1d86[1]
     !byte %.##.#...                                                   ; 1eb8: 68          h   :1d87[1]
     !byte %.####...                                                   ; 1eb9: 78          x   :1d88[1]
-character_bitmap_1d89
+tile_wall_left2
     !byte %.####...                                                   ; 1eba: 78          x   :1d89[1]
     !byte %.#.##...                                                   ; 1ebb: 58          X   :1d8a[1]
     !byte %.####...                                                   ; 1ebc: 78          x   :1d8b[1]
@@ -2635,7 +2641,7 @@ character_bitmap_1d89
     !byte %.###....                                                   ; 1ebf: 70          p   :1d8e[1]
     !byte %.#.##...                                                   ; 1ec0: 58          X   :1d8f[1]
     !byte %.####...                                                   ; 1ec1: 78          x   :1d90[1]
-character_bitmap_1d91
+tile_wall_left3
     !byte %.##.#...                                                   ; 1ec2: 68          h   :1d91[1]
     !byte %.####...                                                   ; 1ec3: 78          x   :1d92[1]
     !byte %.####...                                                   ; 1ec4: 78          x   :1d93[1]
@@ -2644,7 +2650,7 @@ character_bitmap_1d91
     !byte %.####...                                                   ; 1ec7: 78          x   :1d96[1]
     !byte %.#.##...                                                   ; 1ec8: 58          X   :1d97[1]
     !byte %.####...                                                   ; 1ec9: 78          x   :1d98[1]
-character_bitmap_1d99
+tile_wall_right0
     !byte %...####.                                                   ; 1eca: 1e          .   :1d99[1]
     !byte %...##.#.                                                   ; 1ecb: 1a          .   :1d9a[1]
     !byte %....###.                                                   ; 1ecc: 0e          .   :1d9b[1]
@@ -2653,7 +2659,7 @@ character_bitmap_1d99
     !byte %...####.                                                   ; 1ecf: 1e          .   :1d9e[1]
     !byte %...#.##.                                                   ; 1ed0: 16          .   :1d9f[1]
     !byte %...####.                                                   ; 1ed1: 1e          .   :1da0[1]
-character_bitmap_1da1
+tile_wall_right1
     !byte %...####.                                                   ; 1ed2: 1e          .   :1da1[1]
     !byte %...#.##.                                                   ; 1ed3: 16          .   :1da2[1]
     !byte %...####.                                                   ; 1ed4: 1e          .   :1da3[1]
@@ -2662,7 +2668,7 @@ character_bitmap_1da1
     !byte %...###.#                                                   ; 1ed7: 1d          .   :1da6[1]
     !byte %...#.##.                                                   ; 1ed8: 16          .   :1da7[1]
     !byte %...####.                                                   ; 1ed9: 1e          .   :1da8[1]
-character_bitmap_1da9
+tile_wall_right2
     !byte %...####.                                                   ; 1eda: 1e          .   :1da9[1]
     !byte %...##.#.                                                   ; 1edb: 1a          .   :1daa[1]
     !byte %...####.                                                   ; 1edc: 1e          .   :1dab[1]
@@ -2671,7 +2677,7 @@ character_bitmap_1da9
     !byte %....###.                                                   ; 1edf: 0e          .   :1dae[1]
     !byte %...##.#.                                                   ; 1ee0: 1a          .   :1daf[1]
     !byte %...####.                                                   ; 1ee1: 1e          .   :1db0[1]
-character_bitmap_1db1
+tile_wall_right3
     !byte %...#.##.                                                   ; 1ee2: 16          .   :1db1[1]
     !byte %...####.                                                   ; 1ee3: 1e          .   :1db2[1]
     !byte %...####.                                                   ; 1ee4: 1e          .   :1db3[1]
@@ -8218,10 +8224,6 @@ pydis_end
 ;     c1a59
 ;     c1a8f
 ;     c1a9e
-;     c1c4e
-;     c1c6e
-;     c1c82
-;     c1c98
 ;     c1ca8
 ;     c1cc8
 ;     c1cda
@@ -8488,8 +8490,6 @@ pydis_end
 ;     loop_c1921
 ;     loop_c193d
 ;     loop_c1957
-;     loop_c1c2d
-;     loop_c1c61
 ;     loop_c1cbb
 ;     loop_c1df7
 ;     loop_c1fe1
@@ -8520,7 +8520,7 @@ pydis_end
 ;     loop_c3f87
 ;     sub_c04cb
 ;     sub_c1278
-;     sub_c1cf3
+;     sub_c1d14
 ;     sub_c2157
 ;     sub_c22ae
 ;     sub_c22ee
@@ -8614,12 +8614,6 @@ pydis_end
 }
 !if (<cat_transform_in_animation) != $16 {
     !error "Assertion failed: <cat_transform_in_animation == $16"
-}
-!if (<character_bitmap_1d59) != $59 {
-    !error "Assertion failed: <character_bitmap_1d59 == $59"
-}
-!if (<character_bitmap_1d79) != $79 {
-    !error "Assertion failed: <character_bitmap_1d79 == $79"
 }
 !if (<data_filename) != $72 {
     !error "Assertion failed: <data_filename == $72"
@@ -8750,8 +8744,17 @@ pydis_end
 !if (<start_of_screen_memory) != $c0 {
     !error "Assertion failed: <start_of_screen_memory == $c0"
 }
+!if (<tile_ceiling0) != $59 {
+    !error "Assertion failed: <tile_ceiling0 == $59"
+}
 !if (<tile_floor0_top) != $19 {
     !error "Assertion failed: <tile_floor0_top == $19"
+}
+!if (<tile_wall_left0) != $79 {
+    !error "Assertion failed: <tile_wall_left0 == $79"
+}
+!if (<tile_wall_right0) != $99 {
+    !error "Assertion failed: <tile_wall_right0 == $99"
 }
 !if (<wait_for_timingB_counter) != $00 {
     !error "Assertion failed: <wait_for_timingB_counter == $00"
@@ -8827,12 +8830,6 @@ pydis_end
 }
 !if (>cat_transform_in_animation) != $2f {
     !error "Assertion failed: >cat_transform_in_animation == $2f"
-}
-!if (>character_bitmap_1d59) != $1d {
-    !error "Assertion failed: >character_bitmap_1d59 == $1d"
-}
-!if (>character_bitmap_1d79) != $1d {
-    !error "Assertion failed: >character_bitmap_1d79 == $1d"
 }
 !if (>data_filename) != $12 {
     !error "Assertion failed: >data_filename == $12"
@@ -8960,8 +8957,17 @@ pydis_end
 !if (>start_of_screen_memory) != $5b {
     !error "Assertion failed: >start_of_screen_memory == $5b"
 }
+!if (>tile_ceiling0) != $1d {
+    !error "Assertion failed: >tile_ceiling0 == $1d"
+}
 !if (>tile_floor0_top) != $1d {
     !error "Assertion failed: >tile_floor0_top == $1d"
+}
+!if (>tile_wall_left0) != $1d {
+    !error "Assertion failed: >tile_wall_left0 == $1d"
+}
+!if (>tile_wall_right0) != $1d {
+    !error "Assertion failed: >tile_wall_right0 == $1d"
 }
 !if (>toolbar_screen_address) != $58 {
     !error "Assertion failed: >toolbar_screen_address == $58"
