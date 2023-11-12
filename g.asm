@@ -2,10 +2,10 @@
 black                                           = 0
 blue                                            = 4
 buffer_sound_channel_0                          = 4
-bytes_per_character_cell                        = 8
+bytes_per_cell                                  = 8
 bytes_per_character_row                         = 320
 caps_mask                                       = 223
-characters_per_line                             = 40
+cells_per_line                                  = 40
 crtc_cursor_start                               = 10
 crtc_interlace_delay                            = 8
 crtc_screen_start_high                          = 12
@@ -56,7 +56,7 @@ osword_envelope                                 = 8
 osword_read_char                                = 10
 osword_sound                                    = 7
 red                                             = 1
-rows_per_character                              = 8
+rows_per_cell                                   = 8
 screen_width_in_pixels                          = 320
 screen_width_minus_one                          = 39
 sprite_op_flags_copy_mask                       = 1
@@ -323,7 +323,7 @@ sprite_width                                = $81
 sprite_bit                                  = $82
 sprite_bit_mask                             = $83
 sprite_y_offset_within_character_row        = $84
-sprite_character_x_pos                      = $85
+sprite_cell_x_pos                           = $85
 amount_sprite_is_offscreen_x                = $86
 l0087                                       = $87
 vertical_sprite_position_is_valid_flag      = $88
@@ -1127,9 +1127,9 @@ byte_not_finished_yet2
     ldy sprite_x_offset_within_byte                                   ; 1611: a4 78       .x  :14e0[1]
     dey                                                               ; 1613: 88          .   :14e2[1]
     bpl draw_sprite2                                                  ; 1614: 10 32       .2  :14e3[1]
-    inc sprite_character_x_pos                                        ; 1616: e6 85       ..  :14e5[1]
-    ldy sprite_character_x_pos                                        ; 1618: a4 85       ..  :14e7[1]
-    cpy #characters_per_line                                          ; 161a: c0 28       .(  :14e9[1]
+    inc sprite_cell_x_pos                                             ; 1616: e6 85       ..  :14e5[1]
+    ldy sprite_cell_x_pos                                             ; 1618: a4 85       ..  :14e7[1]
+    cpy #cells_per_line                                               ; 161a: c0 28       .(  :14e9[1]
     bcs finish_off_sprite2                                            ; 161c: b0 3c       .<  :14eb[1]
     ldy #7                                                            ; 161e: a0 07       ..  :14ed[1]
     adc #8                                                            ; 1620: 69 08       i.  :14ef[1]
@@ -1145,7 +1145,7 @@ move_to_next_column_while_rendering_reflected_about_y_axis2
     iny                                                               ; 1631: c8          .   :1500[1]
     cpy #8                                                            ; 1632: c0 08       ..  :1501[1]
     bcc draw_sprite2                                                  ; 1634: 90 12       ..  :1503[1]
-    dec sprite_character_x_pos                                        ; 1636: c6 85       ..  :1505[1]
+    dec sprite_cell_x_pos                                             ; 1636: c6 85       ..  :1505[1]
     bmi finish_off_sprite2                                            ; 1638: 30 20       0   :1507[1]
     ldy #0                                                            ; 163a: a0 00       ..  :1509[1]
     sbc #8                                                            ; 163c: e9 08       ..  :150b[1]
@@ -1286,12 +1286,12 @@ found_second_bit_set
     ldy sprite_x_offset_within_byte                                   ; 1706: a4 78       .x  :15d5[1]
     dey                                                               ; 1708: 88          .   :15d7[1]
     bpl draw_sprite                                                   ; 1709: 10 32       .2  :15d8[1]
-    inc sprite_character_x_pos                                        ; 170b: e6 85       ..  :15da[1]
-    ldy sprite_character_x_pos                                        ; 170d: a4 85       ..  :15dc[1]
+    inc sprite_cell_x_pos                                             ; 170b: e6 85       ..  :15da[1]
+    ldy sprite_cell_x_pos                                             ; 170d: a4 85       ..  :15dc[1]
 ; if we reach the right hand edge of the screen then we are done
-    cpy #characters_per_line                                          ; 170f: c0 28       .(  :15de[1]
+    cpy #cells_per_line                                               ; 170f: c0 28       .(  :15de[1]
     bcs finish_off_sprite                                             ; 1711: b0 3c       .<  :15e0[1]
-; move sprite addresses on by eight to get to next character column
+; move sprite addresses on by eight to get to next cell column
     ldy #7                                                            ; 1713: a0 07       ..  :15e2[1]   ; reset to start of (i.e. bit 7 of) next byte
     adc #8                                                            ; 1715: 69 08       i.  :15e4[1]
     sta sprite_screen_address_for_column_low                          ; 1717: 85 7b       .{  :15e6[1]
@@ -1306,7 +1306,7 @@ move_to_next_column_while_rendering_reflected_about_y_axis
     iny                                                               ; 1726: c8          .   :15f5[1]
     cpy #8                                                            ; 1727: c0 08       ..  :15f6[1]
     bcc draw_sprite                                                   ; 1729: 90 12       ..  :15f8[1]
-    dec sprite_character_x_pos                                        ; 172b: c6 85       ..  :15fa[1]
+    dec sprite_cell_x_pos                                             ; 172b: c6 85       ..  :15fa[1]
     bmi finish_off_sprite                                             ; 172d: 30 20       0   :15fc[1]
     ldy #0                                                            ; 172f: a0 00       ..  :15fe[1]
     sbc #8                                                            ; 1731: e9 08       ..  :1600[1]
@@ -1353,23 +1353,23 @@ pull_values_and_exit_sprite_op_local
 
 clamp_x
     lda sprite_x_pos_low                                              ; 1771: a5 74       .t  :1640[1]
-; calculate character x position by dividing pixel position by eight
-    sta sprite_character_x_pos                                        ; 1773: 85 85       ..  :1642[1]
+; calculate cell x position by dividing pixel position by eight
+    sta sprite_cell_x_pos                                             ; 1773: 85 85       ..  :1642[1]
     lda sprite_x_pos_high                                             ; 1775: a5 75       .u  :1644[1]
     lsr                                                               ; 1777: 4a          J   :1646[1]
-    ror sprite_character_x_pos                                        ; 1778: 66 85       f.  :1647[1]
+    ror sprite_cell_x_pos                                             ; 1778: 66 85       f.  :1647[1]
     lsr                                                               ; 177a: 4a          J   :1649[1]
-    ror sprite_character_x_pos                                        ; 177b: 66 85       f.  :164a[1]
+    ror sprite_cell_x_pos                                             ; 177b: 66 85       f.  :164a[1]
     lsr                                                               ; 177d: 4a          J   :164c[1]
-    ror sprite_character_x_pos                                        ; 177e: 66 85       f.  :164d[1]
+    ror sprite_cell_x_pos                                             ; 177e: 66 85       f.  :164d[1]
 ; check flags2 (top bit) to see if we should clamp to the right edge
     lda sprite_reflect_flag                                           ; 1780: a5 1d       ..  :164f[1]
     bmi sprite_clamp_x_right                                          ; 1782: 30 1d       0.  :1651[1]
 ; clamp to left edge
-    lda sprite_character_x_pos                                        ; 1784: a5 85       ..  :1653[1]
+    lda sprite_cell_x_pos                                             ; 1784: a5 85       ..  :1653[1]
     bmi sprite_clamp_x_left                                           ; 1786: 30 07       0.  :1655[1]
 ; if fully off screen to the right, then pull values and return else just return
-    cmp #characters_per_line                                          ; 1788: c9 28       .(  :1657[1]
+    cmp #cells_per_line                                               ; 1788: c9 28       .(  :1657[1]
     bcc return3                                                       ; 178a: 90 72       .r  :1659[1]
     jmp pull_values_and_exit_sprite_op                                ; 178c: 4c ce 16    L.. :165b[1]
 
@@ -1381,13 +1381,13 @@ sprite_clamp_x_left
     lda #0                                                            ; 1796: a9 00       ..  :1665[1]
     sta sprite_x_pos_low                                              ; 1798: 85 74       .t  :1667[1]
     sta sprite_x_pos_high                                             ; 179a: 85 75       .u  :1669[1]
-    sta sprite_character_x_pos                                        ; 179c: 85 85       ..  :166b[1]
+    sta sprite_cell_x_pos                                             ; 179c: 85 85       ..  :166b[1]
     jmp sprite_clip_x                                                 ; 179e: 4c 8a 16    L.. :166d[1]
 
 sprite_clamp_x_right
-    lda sprite_character_x_pos                                        ; 17a1: a5 85       ..  :1670[1]
+    lda sprite_cell_x_pos                                             ; 17a1: a5 85       ..  :1670[1]
     bmi pull_values_and_exit_sprite_op                                ; 17a3: 30 5a       0Z  :1672[1]
-    cmp #characters_per_line                                          ; 17a5: c9 28       .(  :1674[1]
+    cmp #cells_per_line                                               ; 17a5: c9 28       .(  :1674[1]
     bcc return3                                                       ; 17a7: 90 55       .U  :1676[1]
     lda sprite_x_pos_low                                              ; 17a9: a5 74       .t  :1678[1]
     sbc #<(screen_width_in_pixels-1)                                  ; 17ab: e9 3f       .?  :167a[1]
@@ -1397,8 +1397,8 @@ sprite_clamp_x_right
     sta sprite_x_pos_low                                              ; 17b1: 85 74       .t  :1680[1]
     lda #>(screen_width_in_pixels-1)                                  ; 17b3: a9 01       ..  :1682[1]
     sta sprite_x_pos_high                                             ; 17b5: 85 75       .u  :1684[1]
-    lda #characters_per_line-1                                        ; 17b7: a9 27       .'  :1686[1]
-    sta sprite_character_x_pos                                        ; 17b9: 85 85       ..  :1688[1]
+    lda #cells_per_line-1                                             ; 17b7: a9 27       .'  :1686[1]
+    sta sprite_cell_x_pos                                             ; 17b9: 85 85       ..  :1688[1]
 sprite_clip_x
     lda amount_sprite_is_offscreen_x                                  ; 17bb: a5 86       ..  :168a[1]
     cmp sprite_width                                                  ; 17bd: c5 81       ..  :168c[1]
@@ -1906,7 +1906,7 @@ something13_TODO
     lda desired_room_index                                            ; 1ac5: a5 30       .0  :1994[1]
     cmp current_room_index                                            ; 1ac7: cd ba 1a    ... :1996[1]
     bne c19e2                                                         ; 1aca: d0 47       .G  :1999[1]
-    jsr read_collision_map_value_for_x_y                              ; 1acc: 20 fa 1e     .. :199b[1]
+    jsr read_collision_map_value_for_xy                               ; 1acc: 20 fa 1e     .. :199b[1]
     cmp #3                                                            ; 1acf: c9 03       ..  :199e[1]
     beq c19b9                                                         ; 1ad1: f0 17       ..  :19a0[1]
     lda #3                                                            ; 1ad3: a9 03       ..  :19a2[1]
@@ -2063,8 +2063,7 @@ current_room_index
 ; *************************************************************************************
 ; 
 ; Copy one or more tiles from off screen memory to a rectangular area of cells on
-; screen. A 'tile' here means a bitmap of 8x8 pixels, which takes eight bytes of
-; memory.
+; screen. A 'tile' here means a bitmap of 8x8 pixels stored in eight bytes of memory.
 ; 
 ; On Entry:
 ;     X and Y registers specify top left cell
@@ -2163,7 +2162,7 @@ copy_one_tile_loop
     bpl copy_one_tile_loop                                            ; 1c5e: 10 f9       ..  :1b2d[1]
     inc cell_x_plus_current_cell_within_row                           ; 1c60: e6 7c       .|  :1b2f[1]
     dex                                                               ; 1c62: ca          .   :1b31[1]   ; X was initialised with width_in_cells_to_write
-    beq all_characters_copied                                         ; 1c63: f0 0d       ..  :1b32[1]
+    beq all_cells_in_row_copied                                       ; 1c63: f0 0d       ..  :1b32[1]
     lda cell_screen_address_low                                       ; 1c65: a5 76       .v  :1b34[1]
     adc #8                                                            ; 1c67: 69 08       i.  :1b36[1]
     sta cell_screen_address_low                                       ; 1c69: 85 76       .v  :1b38[1]
@@ -2171,21 +2170,21 @@ copy_one_tile_loop
     inc cell_screen_address_high                                      ; 1c6d: e6 77       .w  :1b3c[1]
     clc                                                               ; 1c6f: 18          .   :1b3e[1]
     bcc cell_copy_loop                                                ; 1c70: 90 a2       ..  :1b3f[1]   ; always branch
-all_characters_copied
+all_cells_in_row_copied
     inc current_row                                                   ; 1c72: e6 7d       .}  :1b41[1]
     dec height_in_cells_to_write                                      ; 1c74: c6 73       .s  :1b43[1]
-    beq c1b59                                                         ; 1c76: f0 12       ..  :1b45[1]
+    beq now_write_to_collision_map                                    ; 1c76: f0 12       ..  :1b45[1]
 ; Advance first_cell_in_row_screen_address by one row and reset cell_screen_address
     lda first_cell_in_row_screen_address_low                          ; 1c78: a5 74       .t  :1b47[1]
-    adc #<(characters_per_line * rows_per_character)                  ; 1c7a: 69 40       i@  :1b49[1]   ; C is clear because beq above not taken
+    adc #<(cells_per_line * rows_per_cell)                            ; 1c7a: 69 40       i@  :1b49[1]   ; C is clear because beq above not taken
     sta first_cell_in_row_screen_address_low                          ; 1c7c: 85 74       .t  :1b4b[1]
     sta cell_screen_address_low                                       ; 1c7e: 85 76       .v  :1b4d[1]
     lda first_cell_in_row_screen_address_high                         ; 1c80: a5 75       .u  :1b4f[1]
-    adc #>(characters_per_line * rows_per_character)                  ; 1c82: 69 01       i.  :1b51[1]
+    adc #>(cells_per_line * rows_per_cell)                            ; 1c82: 69 01       i.  :1b51[1]
     sta first_cell_in_row_screen_address_high                         ; 1c84: 85 75       .u  :1b53[1]
     sta cell_screen_address_high                                      ; 1c86: 85 77       .w  :1b55[1]
     bcc row_copy_loop                                                 ; 1c88: 90 84       ..  :1b57[1]   ; always branch TODO: 99% confident
-c1b59
+now_write_to_collision_map
     ldx cell_x                                                        ; 1c8a: a6 70       .p  :1b59[1]
     ldy cell_y                                                        ; 1c8c: a4 71       .q  :1b5b[1]
     lda value_to_write_to_collision_map                               ; 1c8e: a5 3e       .>  :1b5d[1]
@@ -2223,74 +2222,85 @@ skip_high_byte2
     sta cell_screen_address_high                                      ; 1cb8: 85 77       .w  :1b87[1]
     rts                                                               ; 1cba: 60          `   :1b89[1]
 
-something15_TODO
-    jmp c1c3b                                                         ; 1cbb: 4c 3b 1c    L;. :1b8a[1]
+draw_right_facing_wall_local
+    jmp draw_right_facing_wall                                        ; 1cbb: 4c 3b 1c    L;. :1b8a[1]
 
-c1c9d_local
-    jmp c1c9d                                                         ; 1cbe: 4c 9d 1c    L.. :1b8d[1]
+draw_left_facing_wall_local
+    jmp draw_left_facing_wall                                         ; 1cbe: 4c 9d 1c    L.. :1b8d[1]
 
 ; TODO: This is called from level-specific machine code, e.g. see dataA.asm
-; TODO: Still figuring out exactly what, but this seems to be 'seeking' leftwards and
-; upwards from starting position in X and Y registers to find the 'topleftmost' section
-; which has a certain pattern of free space.
-something26_TODO
+; *************************************************************************************
+; 
+; Once the rocks of the room have been drawn, this function carves the floor, wall and
+; ceiling tiles into the rock.
+; 
+; *************************************************************************************
+draw_floor_walls_and_ceiling_around_solid_rock
     lda #3                                                            ; 1cc1: a9 03       ..  :1b90[1]
     sta l0044                                                         ; 1cc3: 85 44       .D  :1b92[1]
+; Y is loop counter over cell rows
     ldy #game_area_height_cells - 1                                   ; 1cc5: a0 17       ..  :1b94[1]
-something26_y_loop
+; X is loop counter over cell columns
+draw_rows_loop
     ldx #screen_width_minus_one                                       ; 1cc7: a2 27       .'  :1b96[1]
-something26_x_loop
-    jsr read_collision_map_value_for_x_y                              ; 1cc9: 20 fa 1e     .. :1b98[1]
+draw_columns_loop
+    jsr read_collision_map_value_for_xy                               ; 1cc9: 20 fa 1e     .. :1b98[1]
     cmp #3                                                            ; 1ccc: c9 03       ..  :1b9b[1]
-    bne something26_decrement_and_loop                                ; 1cce: d0 24       .$  :1b9d[1]
+    bne next_cell_over                                                ; 1cce: d0 24       .$  :1b9d[1]
     inx                                                               ; 1cd0: e8          .   :1b9f[1]
-    jsr read_collision_map_value_for_x_y                              ; 1cd1: 20 fa 1e     .. :1ba0[1]
+    jsr read_collision_map_value_for_xy                               ; 1cd1: 20 fa 1e     .. :1ba0[1]
     dex                                                               ; 1cd4: ca          .   :1ba3[1]
     cmp #3                                                            ; 1cd5: c9 03       ..  :1ba4[1]
-    bne something15_TODO                                              ; 1cd7: d0 e2       ..  :1ba6[1]
+    bne draw_right_facing_wall_local                                  ; 1cd7: d0 e2       ..  :1ba6[1]
     dex                                                               ; 1cd9: ca          .   :1ba8[1]
-    jsr read_collision_map_value_for_x_y                              ; 1cda: 20 fa 1e     .. :1ba9[1]
+    jsr read_collision_map_value_for_xy                               ; 1cda: 20 fa 1e     .. :1ba9[1]
     inx                                                               ; 1cdd: e8          .   :1bac[1]
     cmp #3                                                            ; 1cde: c9 03       ..  :1bad[1]
-    bne c1c9d_local                                                   ; 1ce0: d0 dc       ..  :1baf[1]
+    bne draw_left_facing_wall_local                                   ; 1ce0: d0 dc       ..  :1baf[1]
     dey                                                               ; 1ce2: 88          .   :1bb1[1]
-    jsr read_collision_map_value_for_x_y                              ; 1ce3: 20 fa 1e     .. :1bb2[1]
+    jsr read_collision_map_value_for_xy                               ; 1ce3: 20 fa 1e     .. :1bb2[1]
     iny                                                               ; 1ce6: c8          .   :1bb5[1]
     cmp #3                                                            ; 1ce7: c9 03       ..  :1bb6[1]
-    bne partial_plot_across_row_boundary                              ; 1ce9: d0 10       ..  :1bb8[1]
+    bne draw_floor                                                    ; 1ce9: d0 10       ..  :1bb8[1]
     iny                                                               ; 1ceb: c8          .   :1bba[1]
-    jsr read_collision_map_value_for_x_y                              ; 1cec: 20 fa 1e     .. :1bbb[1]
+    jsr read_collision_map_value_for_xy                               ; 1cec: 20 fa 1e     .. :1bbb[1]
     dey                                                               ; 1cef: 88          .   :1bbe[1]
     cmp #3                                                            ; 1cf0: c9 03       ..  :1bbf[1]
-    bne c1c15                                                         ; 1cf2: d0 52       .R  :1bc1[1]
-something26_decrement_and_loop
+    bne draw_ceiling                                                  ; 1cf2: d0 52       .R  :1bc1[1]
+next_cell_over
     dex                                                               ; 1cf4: ca          .   :1bc3[1]
-    bpl something26_x_loop                                            ; 1cf5: 10 d2       ..  :1bc4[1]
+    bpl draw_columns_loop                                             ; 1cf5: 10 d2       ..  :1bc4[1]
     dey                                                               ; 1cf7: 88          .   :1bc6[1]
-    bpl something26_y_loop                                            ; 1cf8: 10 cd       ..  :1bc7[1]
+    bpl draw_rows_loop                                                ; 1cf8: 10 cd       ..  :1bc7[1]
     rts                                                               ; 1cfa: 60          `   :1bc9[1]
 
-; TODO: This is looking like it takes the low two bits of A to get a value 0-3
-; inclusive. It then multiplies that by sixteen, selecting one of four possible two-
-; character bitmap pairs. It plots the bottom six rows of the first bitmap at (X,Y-1)
-; and the top six rows of the second bitmap at (X,Y). I'm sure I've got the details
-; wrong, but something like that.
-partial_plot_across_row_boundary
-    sty cell_y                                                        ; 1cfb: 84 71       .q  :1bca[1]
+; *************************************************************************************
+; 
+; Draw floor
+; 
+; On Entry:
+;     (X,Y): cell coordinates
+; 
+; *************************************************************************************
+draw_floor
+    sty cell_y                                                        ; 1cfb: 84 71       .q  :1bca[1]   ; remember Y
     dey                                                               ; 1cfd: 88          .   :1bcc[1]
     jsr get_screen_address_from_cell_xy                               ; 1cfe: 20 66 1b     f. :1bcd[1]
+; find tile index based on the cellX: tile index=(cellX AND 3)*2
     txa                                                               ; 1d01: 8a          .   :1bd0[1]
     and #3                                                            ; 1d02: 29 03       ).  :1bd1[1]
     asl                                                               ; 1d04: 0a          .   :1bd3[1]
     asl                                                               ; 1d05: 0a          .   :1bd4[1]
     asl                                                               ; 1d06: 0a          .   :1bd5[1]
     asl                                                               ; 1d07: 0a          .   :1bd6[1]
+; add address of first floor tile
     clc                                                               ; 1d08: 18          .   :1bd7[1]
-    adc #<character_bitmap_1d19                                       ; 1d09: 69 19       i.  :1bd8[1]
+    adc #<tile_floor0_top                                             ; 1d09: 69 19       i.  :1bd8[1]
     sta off_screen_address_low                                        ; 1d0b: 85 7a       .z  :1bda[1]
     lda #0                                                            ; 1d0d: a9 00       ..  :1bdc[1]
-    adc #>character_bitmap_1d19                                       ; 1d0f: 69 1d       i.  :1bde[1]
+    adc #>tile_floor0_top                                             ; 1d0f: 69 1d       i.  :1bde[1]
     sta off_screen_address_high                                       ; 1d11: 85 7b       .{  :1be0[1]
+; copy tile lower six rows to screen
     ldy #7                                                            ; 1d13: a0 07       ..  :1be2[1]
 something26_copy_loop1
     lda (off_screen_address_low),y                                    ; 1d15: b1 7a       .z  :1be4[1]
@@ -2298,13 +2308,13 @@ something26_copy_loop1
     dey                                                               ; 1d19: 88          .   :1be8[1]
     cpy #2                                                            ; 1d1a: c0 02       ..  :1be9[1]
     bcs something26_copy_loop1                                        ; 1d1c: b0 f7       ..  :1beb[1]
-; off_screen_address += bytes_per_character_cell
+; off_screen_address += bytes_per_cell
     lda off_screen_address_low                                        ; 1d1e: a5 7a       .z  :1bed[1]
     clc                                                               ; 1d20: 18          .   :1bef[1]
-    adc #<bytes_per_character_cell                                    ; 1d21: 69 08       i.  :1bf0[1]
+    adc #<bytes_per_cell                                              ; 1d21: 69 08       i.  :1bf0[1]
     sta off_screen_address_low                                        ; 1d23: 85 7a       .z  :1bf2[1]
     lda off_screen_address_high                                       ; 1d25: a5 7b       .{  :1bf4[1]
-    adc #>bytes_per_character_cell                                    ; 1d27: 69 00       i.  :1bf6[1]
+    adc #>bytes_per_cell                                              ; 1d27: 69 00       i.  :1bf6[1]
     sta off_screen_address_high                                       ; 1d29: 85 7b       .{  :1bf8[1]
     lda cell_screen_address_low                                       ; 1d2b: a5 76       .v  :1bfa[1]
 ; cell_screen_address += bytes_per_character_row
@@ -2315,16 +2325,18 @@ something26_copy_loop1
     adc #>bytes_per_character_row                                     ; 1d34: 69 01       i.  :1c03[1]
     sta cell_screen_address_high                                      ; 1d36: 85 77       .w  :1c05[1]
 
+; copy tile upper 6 rows to screen
     ldy #5                                                            ; 1d38: a0 05       ..  :1c07[1]
 something26_copy_loop2
     lda (off_screen_address_low),y                                    ; 1d3a: b1 7a       .z  :1c09[1]
     sta (cell_screen_address_low),y                                   ; 1d3c: 91 76       .v  :1c0b[1]
     dey                                                               ; 1d3e: 88          .   :1c0d[1]
     bpl something26_copy_loop2                                        ; 1d3f: 10 f9       ..  :1c0e[1]
+; restore Y
     ldy cell_y                                                        ; 1d41: a4 71       .q  :1c10[1]
-    jmp something26_decrement_and_loop                                ; 1d43: 4c c3 1b    L.. :1c12[1]
+    jmp next_cell_over                                                ; 1d43: 4c c3 1b    L.. :1c12[1]
 
-c1c15
+draw_ceiling
     jsr get_screen_address_from_cell_xy                               ; 1d46: 20 66 1b     f. :1c15[1]
     txa                                                               ; 1d49: 8a          .   :1c18[1]
     and #3                                                            ; 1d4a: 29 03       ).  :1c19[1]
@@ -2346,9 +2358,9 @@ loop_c1c2d
     cpy #2                                                            ; 1d63: c0 02       ..  :1c32[1]
     bcs loop_c1c2d                                                    ; 1d65: b0 f7       ..  :1c34[1]
     ldy cell_y                                                        ; 1d67: a4 71       .q  :1c36[1]
-    jmp something26_decrement_and_loop                                ; 1d69: 4c c3 1b    L.. :1c38[1]
+    jmp next_cell_over                                                ; 1d69: 4c c3 1b    L.. :1c38[1]
 
-c1c3b
+draw_right_facing_wall
     jsr sub_c1cf3                                                     ; 1d6c: 20 f3 1c     .. :1c3b[1]
     beq c1c4e                                                         ; 1d6f: f0 0e       ..  :1c3e[1]
     inx                                                               ; 1d71: e8          .   :1c40[1]
@@ -2384,7 +2396,7 @@ c1c6e
     inx                                                               ; 1d9f: e8          .   :1c6e[1]
     dey                                                               ; 1da0: 88          .   :1c6f[1]
     bmi c1c82                                                         ; 1da1: 30 10       0.  :1c70[1]
-    jsr read_collision_map_value_for_x_y                              ; 1da3: 20 fa 1e     .. :1c72[1]
+    jsr read_collision_map_value_for_xy                               ; 1da3: 20 fa 1e     .. :1c72[1]
     cmp #3                                                            ; 1da6: c9 03       ..  :1c75[1]
     bne c1c82                                                         ; 1da8: d0 09       ..  :1c77[1]
     lda #$ff                                                          ; 1daa: a9 ff       ..  :1c79[1]
@@ -2396,7 +2408,7 @@ c1c82
     iny                                                               ; 1db4: c8          .   :1c83[1]
     cpy #$18                                                          ; 1db5: c0 18       ..  :1c84[1]
     bcs c1c98                                                         ; 1db7: b0 10       ..  :1c86[1]
-    jsr read_collision_map_value_for_x_y                              ; 1db9: 20 fa 1e     .. :1c88[1]
+    jsr read_collision_map_value_for_xy                               ; 1db9: 20 fa 1e     .. :1c88[1]
     cmp #3                                                            ; 1dbc: c9 03       ..  :1c8b[1]
     bne c1c98                                                         ; 1dbe: d0 09       ..  :1c8d[1]
     lda #$ff                                                          ; 1dc0: a9 ff       ..  :1c8f[1]
@@ -2406,9 +2418,9 @@ c1c82
 c1c98
     dex                                                               ; 1dc9: ca          .   :1c98[1]
     dey                                                               ; 1dca: 88          .   :1c99[1]
-    jmp something26_decrement_and_loop                                ; 1dcb: 4c c3 1b    L.. :1c9a[1]
+    jmp next_cell_over                                                ; 1dcb: 4c c3 1b    L.. :1c9a[1]
 
-c1c9d
+draw_left_facing_wall
     jsr sub_c1cf3                                                     ; 1dce: 20 f3 1c     .. :1c9d[1]
     beq c1ca8                                                         ; 1dd1: f0 06       ..  :1ca0[1]
     jsr draw_sprite_a_at_cell_xy                                      ; 1dd3: 20 4c 1f     L. :1ca2[1]
@@ -2441,7 +2453,7 @@ c1cc8
     dex                                                               ; 1df9: ca          .   :1cc8[1]
     dey                                                               ; 1dfa: 88          .   :1cc9[1]
     bmi c1cda                                                         ; 1dfb: 30 0e       0.  :1cca[1]
-    jsr read_collision_map_value_for_x_y                              ; 1dfd: 20 fa 1e     .. :1ccc[1]
+    jsr read_collision_map_value_for_xy                               ; 1dfd: 20 fa 1e     .. :1ccc[1]
     cmp #3                                                            ; 1e00: c9 03       ..  :1ccf[1]
     bne c1cda                                                         ; 1e02: d0 07       ..  :1cd1[1]
     lda #spriteid_corner_top_right                                    ; 1e04: a9 2f       ./  :1cd3[1]
@@ -2453,7 +2465,7 @@ c1cda
     iny                                                               ; 1e0c: c8          .   :1cdb[1]
     cpy #$18                                                          ; 1e0d: c0 18       ..  :1cdc[1]
     bcs c1cee                                                         ; 1e0f: b0 0e       ..  :1cde[1]
-    jsr read_collision_map_value_for_x_y                              ; 1e11: 20 fa 1e     .. :1ce0[1]
+    jsr read_collision_map_value_for_xy                               ; 1e11: 20 fa 1e     .. :1ce0[1]
     cmp #3                                                            ; 1e14: c9 03       ..  :1ce3[1]
     bne c1cee                                                         ; 1e16: d0 07       ..  :1ce5[1]
     lda #spriteid_corner_bottom_right                                 ; 1e18: a9 2e       ..  :1ce7[1]
@@ -2463,20 +2475,20 @@ c1cda
 c1cee
     inx                                                               ; 1e1f: e8          .   :1cee[1]
     dey                                                               ; 1e20: 88          .   :1cef[1]
-    jmp something26_decrement_and_loop                                ; 1e21: 4c c3 1b    L.. :1cf0[1]
+    jmp next_cell_over                                                ; 1e21: 4c c3 1b    L.. :1cf0[1]
 
 sub_c1cf3
     lda #spriteid_corner_top_left                                     ; 1e24: a9 2c       .,  :1cf3[1]
     sta sprite_number                                                 ; 1e26: 85 16       ..  :1cf5[1]
     dey                                                               ; 1e28: 88          .   :1cf7[1]
-    jsr read_collision_map_value_for_x_y                              ; 1e29: 20 fa 1e     .. :1cf8[1]
+    jsr read_collision_map_value_for_xy                               ; 1e29: 20 fa 1e     .. :1cf8[1]
     iny                                                               ; 1e2c: c8          .   :1cfb[1]
     cmp #3                                                            ; 1e2d: c9 03       ..  :1cfc[1]
     bne c1d16                                                         ; 1e2f: d0 16       ..  :1cfe[1]
     lda #spriteid_corner_bottom_left                                  ; 1e31: a9 2d       .-  :1d00[1]
     sta sprite_number                                                 ; 1e33: 85 16       ..  :1d02[1]
     iny                                                               ; 1e35: c8          .   :1d04[1]
-    jsr read_collision_map_value_for_x_y                              ; 1e36: 20 fa 1e     .. :1d05[1]
+    jsr read_collision_map_value_for_xy                               ; 1e36: 20 fa 1e     .. :1d05[1]
     dey                                                               ; 1e39: 88          .   :1d08[1]
     cmp #3                                                            ; 1e3a: c9 03       ..  :1d09[1]
     bne c1d16                                                         ; 1e3c: d0 09       ..  :1d0b[1]
@@ -2488,7 +2500,7 @@ c1d16
     lda sprite_number                                                 ; 1e47: a5 16       ..  :1d16[1]
     rts                                                               ; 1e49: 60          `   :1d18[1]
 
-character_bitmap_1d19
+tile_floor0_top
     !byte %........                                                   ; 1e4a: 00          .   :1d19[1]
     !byte %........                                                   ; 1e4b: 00          .   :1d1a[1]
     !byte %........                                                   ; 1e4c: 00          .   :1d1b[1]
@@ -2497,7 +2509,7 @@ character_bitmap_1d19
     !byte %########                                                   ; 1e4f: ff          .   :1d1e[1]
     !byte %######.#                                                   ; 1e50: fd          .   :1d1f[1]
     !byte %###.####                                                   ; 1e51: ef          .   :1d20[1]
-character_bitmap_1d21
+tile_floor0_bottom
     !byte %........                                                   ; 1e52: 00          .   :1d21[1]
     !byte %########                                                   ; 1e53: ff          .   :1d22[1]
     !byte %######.#                                                   ; 1e54: fd          .   :1d23[1]
@@ -2506,7 +2518,7 @@ character_bitmap_1d21
     !byte %........                                                   ; 1e57: 00          .   :1d26[1]
     !byte %........                                                   ; 1e58: 00          .   :1d27[1]
     !byte %........                                                   ; 1e59: 00          .   :1d28[1]
-character_bitmap_1d29
+tile_floor1_top
     !byte %........                                                   ; 1e5a: 00          .   :1d29[1]
     !byte %........                                                   ; 1e5b: 00          .   :1d2a[1]
     !byte %....##..                                                   ; 1e5c: 0c          .   :1d2b[1]
@@ -2515,7 +2527,7 @@ character_bitmap_1d29
     !byte %######.#                                                   ; 1e5f: fd          .   :1d2e[1]
     !byte %###.####                                                   ; 1e60: ef          .   :1d2f[1]
     !byte %########                                                   ; 1e61: ff          .   :1d30[1]
-character_bitmap_1d31
+tile_floor1_bottom
     !byte %........                                                   ; 1e62: 00          .   :1d31[1]
     !byte %########                                                   ; 1e63: ff          .   :1d32[1]
     !byte %#####.##                                                   ; 1e64: fb          .   :1d33[1]
@@ -2524,7 +2536,7 @@ character_bitmap_1d31
     !byte %........                                                   ; 1e67: 00          .   :1d36[1]
     !byte %........                                                   ; 1e68: 00          .   :1d37[1]
     !byte %........                                                   ; 1e69: 00          .   :1d38[1]
-character_bitmap_1d39
+tile_floor2_top
     !byte %........                                                   ; 1e6a: 00          .   :1d39[1]
     !byte %........                                                   ; 1e6b: 00          .   :1d3a[1]
     !byte %........                                                   ; 1e6c: 00          .   :1d3b[1]
@@ -2533,7 +2545,7 @@ character_bitmap_1d39
     !byte %########                                                   ; 1e6f: ff          .   :1d3e[1]
     !byte %##.#####                                                   ; 1e70: df          .   :1d3f[1]
     !byte %#####.##                                                   ; 1e71: fb          .   :1d40[1]
-character_bitmap_1d41
+tile_floor2_bottom
     !byte %.....#..                                                   ; 1e72: 04          .   :1d41[1]
     !byte %###.####                                                   ; 1e73: ef          .   :1d42[1]
     !byte %########                                                   ; 1e74: ff          .   :1d43[1]
@@ -2542,7 +2554,7 @@ character_bitmap_1d41
     !byte %........                                                   ; 1e77: 00          .   :1d46[1]
     !byte %........                                                   ; 1e78: 00          .   :1d47[1]
     !byte %........                                                   ; 1e79: 00          .   :1d48[1]
-character_bitmap_1d49
+tile_floor3_top
     !byte %........                                                   ; 1e7a: 00          .   :1d49[1]
     !byte %........                                                   ; 1e7b: 00          .   :1d4a[1]
     !byte %..#.....                                                   ; 1e7c: 20              :1d4b[1]
@@ -2551,7 +2563,7 @@ character_bitmap_1d49
     !byte %#.####.#                                                   ; 1e7f: bd          .   :1d4e[1]
     !byte %###.####                                                   ; 1e80: ef          .   :1d4f[1]
     !byte %########                                                   ; 1e81: ff          .   :1d50[1]
-character_bitmap_1d51
+tile_floor3_bottom
     !byte %......#.                                                   ; 1e82: 02          .   :1d51[1]
     !byte %######.#                                                   ; 1e83: fd          .   :1d52[1]
     !byte %#.######                                                   ; 1e84: bf          .   :1d53[1]
@@ -2963,9 +2975,9 @@ write_a_single_value_to_cell_in_collision_map
     rts                                                               ; 202a: 60          `   :1ef9[1]
 
 ; TODO: speculating but think this is right - my skimming of existing collision map
-; disassembly suggests it stores 2 bits per character cell, so we have 10 bytes per 40
-; column row (4 cells per byte), which seems to fit with the constants in this code
-read_collision_map_value_for_x_y
+; disassembly suggests it stores 2 bits per cell, so we have 10 bytes per 40 column row
+; (4 cells per byte), which seems to fit with the constants in this code
+read_collision_map_value_for_xy
     cpx #game_area_width_cells                                        ; 202b: e0 28       .(  :1efa[1]
     bcs outside_game_area                                             ; 202d: b0 2f       ./  :1efc[1]
     cpy #game_area_height_cells                                       ; 202f: c0 18       ..  :1efe[1]
@@ -4187,7 +4199,7 @@ sub_c265a
     sbc l007a                                                         ; 2795: e5 7a       .z  :2664[1]
     sta l0080                                                         ; 2797: 85 80       ..  :2666[1]
 loop_c2668
-    jsr read_collision_map_value_for_x_y                              ; 2799: 20 fa 1e     .. :2668[1]
+    jsr read_collision_map_value_for_xy                               ; 2799: 20 fa 1e     .. :2668[1]
     cmp #3                                                            ; 279c: c9 03       ..  :266b[1]
     beq c2676                                                         ; 279e: f0 07       ..  :266d[1]
     dey                                                               ; 27a0: 88          .   :266f[1]
@@ -4204,7 +4216,7 @@ c2676
     sbc l007a                                                         ; 27b1: e5 7a       .z  :2680[1]
     sta l0080                                                         ; 27b3: 85 80       ..  :2682[1]
 loop_c2684
-    jsr read_collision_map_value_for_x_y                              ; 27b5: 20 fa 1e     .. :2684[1]
+    jsr read_collision_map_value_for_xy                               ; 27b5: 20 fa 1e     .. :2684[1]
     cmp #3                                                            ; 27b8: c9 03       ..  :2687[1]
     beq return14                                                      ; 27ba: f0 07       ..  :2689[1]
     dey                                                               ; 27bc: 88          .   :268b[1]
@@ -4266,7 +4278,7 @@ sub_c26e5
     sbc l0078                                                         ; 2820: e5 78       .x  :26ef[1]
     sta l0080                                                         ; 2822: 85 80       ..  :26f1[1]
 loop_c26f3
-    jsr read_collision_map_value_for_x_y                              ; 2824: 20 fa 1e     .. :26f3[1]
+    jsr read_collision_map_value_for_xy                               ; 2824: 20 fa 1e     .. :26f3[1]
     cmp #3                                                            ; 2827: c9 03       ..  :26f6[1]
     beq c2701                                                         ; 2829: f0 07       ..  :26f8[1]
     dex                                                               ; 282b: ca          .   :26fa[1]
@@ -4283,7 +4295,7 @@ c2701
     sbc l0078                                                         ; 283c: e5 78       .x  :270b[1]
     sta l0080                                                         ; 283e: 85 80       ..  :270d[1]
 loop_c270f
-    jsr read_collision_map_value_for_x_y                              ; 2840: 20 fa 1e     .. :270f[1]
+    jsr read_collision_map_value_for_xy                               ; 2840: 20 fa 1e     .. :270f[1]
     cmp #3                                                            ; 2843: c9 03       ..  :2712[1]
     beq return16                                                      ; 2845: f0 07       ..  :2714[1]
     dex                                                               ; 2847: ca          .   :2716[1]
@@ -4480,7 +4492,7 @@ sub_c286d
     sbc l007a                                                         ; 29ab: e5 7a       .z  :287a[1]
     sta l0080                                                         ; 29ad: 85 80       ..  :287c[1]
 c287e
-    jsr read_collision_map_value_for_x_y                              ; 29af: 20 fa 1e     .. :287e[1]
+    jsr read_collision_map_value_for_xy                               ; 29af: 20 fa 1e     .. :287e[1]
     cmp #3                                                            ; 29b2: c9 03       ..  :2881[1]
     beq c288c                                                         ; 29b4: f0 07       ..  :2883[1]
     dex                                                               ; 29b6: ca          .   :2885[1]
@@ -4934,7 +4946,7 @@ check_if_player_character_menu_item_chosen
     beq return21                                                      ; 2c7d: f0 16       ..  :2b4c[1]
     lda #0                                                            ; 2c7f: a9 00       ..  :2b4e[1]
     sta l0052                                                         ; 2c81: 85 52       .R  :2b50[1]
-; return if we are already this character
+; return if we are already this player character
     lda desired_menu_slots,x                                          ; 2c83: bd 5c 29    .\) :2b52[1]
     cmp current_player_character                                      ; 2c86: c5 48       .H  :2b55[1]
     beq return21                                                      ; 2c88: f0 0b       ..  :2b57[1]
@@ -6137,7 +6149,7 @@ c33cb
     lsr                                                               ; 3502: 4a          J   :33d1[1]
     ror address1_low                                                  ; 3503: 66 70       fp  :33d2[1]
     ldx address1_low                                                  ; 3505: a6 70       .p  :33d4[1]
-    jsr read_collision_map_value_for_x_y                              ; 3507: 20 fa 1e     .. :33d6[1]
+    jsr read_collision_map_value_for_xy                               ; 3507: 20 fa 1e     .. :33d6[1]
     cmp #2                                                            ; 350a: c9 02       ..  :33d9[1]
     beq c33ea                                                         ; 350c: f0 0d       ..  :33db[1]
     lda #2                                                            ; 350e: a9 02       ..  :33dd[1]
@@ -8206,14 +8218,10 @@ pydis_end
 ;     c1a59
 ;     c1a8f
 ;     c1a9e
-;     c1b59
-;     c1c15
-;     c1c3b
 ;     c1c4e
 ;     c1c6e
 ;     c1c82
 ;     c1c98
-;     c1c9d
 ;     c1ca8
 ;     c1cc8
 ;     c1cda
@@ -8547,8 +8555,8 @@ pydis_end
 !if (<(address1_low)) != $70 {
     !error "Assertion failed: <(address1_low) == $70"
 }
-!if (<(characters_per_line * rows_per_character)) != $40 {
-    !error "Assertion failed: <(characters_per_line * rows_per_character) == $40"
+!if (<(cells_per_line * rows_per_cell)) != $40 {
+    !error "Assertion failed: <(cells_per_line * rows_per_cell) == $40"
 }
 !if (<(dir_dollar_command)) != $07 {
     !error "Assertion failed: <(dir_dollar_command) == $07"
@@ -8589,8 +8597,8 @@ pydis_end
 !if (<brk_handler) != $d3 {
     !error "Assertion failed: <brk_handler == $d3"
 }
-!if (<bytes_per_character_cell) != $08 {
-    !error "Assertion failed: <bytes_per_character_cell == $08"
+!if (<bytes_per_cell) != $08 {
+    !error "Assertion failed: <bytes_per_cell == $08"
 }
 !if (<bytes_per_character_row) != $40 {
     !error "Assertion failed: <bytes_per_character_row == $40"
@@ -8606,9 +8614,6 @@ pydis_end
 }
 !if (<cat_transform_in_animation) != $16 {
     !error "Assertion failed: <cat_transform_in_animation == $16"
-}
-!if (<character_bitmap_1d19) != $19 {
-    !error "Assertion failed: <character_bitmap_1d19 == $19"
 }
 !if (<character_bitmap_1d59) != $59 {
     !error "Assertion failed: <character_bitmap_1d59 == $59"
@@ -8745,6 +8750,9 @@ pydis_end
 !if (<start_of_screen_memory) != $c0 {
     !error "Assertion failed: <start_of_screen_memory == $c0"
 }
+!if (<tile_floor0_top) != $19 {
+    !error "Assertion failed: <tile_floor0_top == $19"
+}
 !if (<wait_for_timingB_counter) != $00 {
     !error "Assertion failed: <wait_for_timingB_counter == $00"
 }
@@ -8760,8 +8768,8 @@ pydis_end
 !if (>(address1_low)) != $00 {
     !error "Assertion failed: >(address1_low) == $00"
 }
-!if (>(characters_per_line * rows_per_character)) != $01 {
-    !error "Assertion failed: >(characters_per_line * rows_per_character) == $01"
+!if (>(cells_per_line * rows_per_cell)) != $01 {
+    !error "Assertion failed: >(cells_per_line * rows_per_cell) == $01"
 }
 !if (>(dir_dollar_command)) != $3f {
     !error "Assertion failed: >(dir_dollar_command) == $3f"
@@ -8802,8 +8810,8 @@ pydis_end
 !if (>brk_handler) != $16 {
     !error "Assertion failed: >brk_handler == $16"
 }
-!if (>bytes_per_character_cell) != $00 {
-    !error "Assertion failed: >bytes_per_character_cell == $00"
+!if (>bytes_per_cell) != $00 {
+    !error "Assertion failed: >bytes_per_cell == $00"
 }
 !if (>bytes_per_character_row) != $01 {
     !error "Assertion failed: >bytes_per_character_row == $01"
@@ -8819,9 +8827,6 @@ pydis_end
 }
 !if (>cat_transform_in_animation) != $2f {
     !error "Assertion failed: >cat_transform_in_animation == $2f"
-}
-!if (>character_bitmap_1d19) != $1d {
-    !error "Assertion failed: >character_bitmap_1d19 == $1d"
 }
 !if (>character_bitmap_1d59) != $1d {
     !error "Assertion failed: >character_bitmap_1d59 == $1d"
@@ -8955,6 +8960,9 @@ pydis_end
 !if (>start_of_screen_memory) != $5b {
     !error "Assertion failed: >start_of_screen_memory == $5b"
 }
+!if (>tile_floor0_top) != $1d {
+    !error "Assertion failed: >tile_floor0_top == $1d"
+}
 !if (>toolbar_screen_address) != $58 {
     !error "Assertion failed: >toolbar_screen_address == $58"
 }
@@ -9018,11 +9026,11 @@ pydis_end
 !if (cat_walk_cycle_animation - cat_transform_in_animation) != $29 {
     !error "Assertion failed: cat_walk_cycle_animation - cat_transform_in_animation == $29"
 }
-!if (characters_per_line) != $28 {
-    !error "Assertion failed: characters_per_line == $28"
+!if (cells_per_line) != $28 {
+    !error "Assertion failed: cells_per_line == $28"
 }
-!if (characters_per_line-1) != $27 {
-    !error "Assertion failed: characters_per_line-1 == $27"
+!if (cells_per_line-1) != $27 {
+    !error "Assertion failed: cells_per_line-1 == $27"
 }
 !if (check_password) != $53c0 {
     !error "Assertion failed: check_password == $53c0"

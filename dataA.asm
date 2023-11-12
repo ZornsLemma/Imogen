@@ -67,7 +67,7 @@ something13_TODO                                    = $1988
 something14_TODO                                    = $1a10
 current_room_index                                  = $1aba
 copy_rectangle_of_memory_to_screen                  = $1abb
-something26_TODO                                    = $1b90
+draw_floor_walls_and_ceiling_around_solid_rock      = $1b90
 draw_rope                                           = $1db9
 write_value_to_a_rectangle_of_cells_in_collision_map = $1e44
 write_a_single_value_to_cell_in_collision_map       = $1ebb
@@ -222,7 +222,7 @@ room_1_code
     jsr copy_rectangle_of_memory_to_screen                            ; 3b81: 20 bb 1a     ..
 ; TODO: I suspect we've finished drawing the ground fill and are now switching to
 ; another pattern.
-    jsr something26_TODO                                              ; 3b84: 20 90 1b     ..
+    jsr draw_floor_walls_and_ceiling_around_solid_rock                ; 3b84: 20 90 1b     ..
     lda #3                                                            ; 3b87: a9 03       ..
     sta width_in_cells                                                ; 3b89: 85 3c       .<
     lda #2                                                            ; 3b8b: a9 02       ..
@@ -504,7 +504,7 @@ room_2_code
     ldy #$12                                                          ; 3da3: a0 12       ..
     inc height_in_cells                                               ; 3da5: e6 3d       .=
     jsr copy_rectangle_of_memory_to_screen                            ; 3da7: 20 bb 1a     ..
-    jsr something26_TODO                                              ; 3daa: 20 90 1b     ..
+    jsr draw_floor_walls_and_ceiling_around_solid_rock                ; 3daa: 20 90 1b     ..
     lda #3                                                            ; 3dad: a9 03       ..
     sta width_in_cells                                                ; 3daf: 85 3c       .<
     lda #2                                                            ; 3db1: a9 02       ..
@@ -870,7 +870,7 @@ room_3_code
     lda #2                                                            ; 4037: a9 02       ..
     sta height_in_cells                                               ; 4039: 85 3d       .=
     jsr copy_rectangle_of_memory_to_screen                            ; 403b: 20 bb 1a     ..
-    jsr something26_TODO                                              ; 403e: 20 90 1b     ..
+    jsr draw_floor_walls_and_ceiling_around_solid_rock                ; 403e: 20 90 1b     ..
     jsr something23_TODO                                              ; 4041: 20 bb 12     ..
 ; $4044 referenced 1 time by $4049
 loop_c4044
@@ -1214,7 +1214,7 @@ room_4_code
     lda #4                                                            ; 42c6: a9 04       ..
     sta height_in_cells                                               ; 42c8: 85 3d       .=
     jsr copy_rectangle_of_memory_to_screen                            ; 42ca: 20 bb 1a     ..
-    jsr something26_TODO                                              ; 42cd: 20 90 1b     ..
+    jsr draw_floor_walls_and_ceiling_around_solid_rock                ; 42cd: 20 90 1b     ..
     ldx #$14                                                          ; 42d0: a2 14       ..
     ldy #$0c                                                          ; 42d2: a0 0c       ..
     lda #$3b ; ';'                                                    ; 42d4: a9 3b       .;
@@ -1695,7 +1695,7 @@ pydis_end
 ;     l0a6f:                                                  4
 ;     something23_TODO:                                       4
 ;     something24_TODO:                                       4
-;     something26_TODO:                                       4
+;     draw_floor_walls_and_ceiling_around_solid_rock:         4
 ;     sub_c3f8b:                                              4
 ;     c41d9:                                                  4
 ;     c4415:                                                  4
