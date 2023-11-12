@@ -2062,8 +2062,9 @@ current_room_index
 
 ; *************************************************************************************
 ; 
-; Copy tiles (one tile is a bitmap of 8x8 pixels, eight bytes of memory) from off
-; screen memory to a rectangular area of cells on screen
+; Copy one or more tiles from off screen memory to a rectangular area of cells on
+; screen. A 'tile' here means a bitmap of 8x8 pixels, which takes eight bytes of
+; memory.
 ; 
 ; On Entry:
 ;     X and Y registers specify top left cell
