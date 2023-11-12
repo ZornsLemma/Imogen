@@ -139,7 +139,7 @@ label(0x30, "desired_room_index")
 label(0x40, "source_sprite_memory_low")
 expr_label(0x41, "source_sprite_memory_high")
 
-label(0xaa9, "eight_entry_table2")
+label(0xaa9, "tile_all_set_pixels")
 
 constant(40, "game_area_width_cells")
 constant(24, "game_area_height_cells")

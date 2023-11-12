@@ -497,8 +497,11 @@ comment(0x2fdc, "toggle player direction")
 comment(0x31ec, "toggle player direction")
 
 label(0x1909, "bring_player_and_object1_back_onto_the_left_side_of_screen")
+comment(0x190b, "add one screen amount to the X coordinate until within range")
+label(0x190b, "add_to_player_x_loop")
 label(0x191f, "bring_player_and_object1_back_onto_the_right_side_of_screen")
-comment(0x192a, "should be 1?", inline=True)
+label(0x1921, "subtract_from_player_x_loop")
+comment(0x192c, "Do we know carry is clear here in order to subtract 1? Possible bug?")
 label(0x18d1, "get_delta_y")
 label(0x1906, "return_with_a_zero")
 comment(0x1e8f, "loop counter", inline=True)
@@ -1709,8 +1712,7 @@ expr(0x3d47, make_hi("envelope_2"))
 expr(0x3d4c, make_lo("envelope_3"))
 expr(0x3d4e, make_hi("envelope_3"))
 
-# TODO: Temporary names, of course
-label(0xaa1, "eight_entry_table1")
+label(0xaa1, "tile_all_clear_pixels")
 label(0x1104, "timingA_counter_low")
 label(0x1105, "timingA_counter_high")
 label(0x1106, "timingB_counter_low")
@@ -2239,10 +2241,10 @@ expr(0x1dd4, "spriteid_rope1")
 
 # TODO: DELETE expr(0x411b, "opcode_lda_imm")
 
-expr(0x41c, make_lo("eight_entry_table2"))
-expr(0x420, make_hi("eight_entry_table2"))
-expr(0x4d6, make_lo("eight_entry_table2"))
-expr(0x4da, make_hi("eight_entry_table2"))
+expr(0x41c, make_lo("tile_all_set_pixels"))
+expr(0x420, make_hi("tile_all_set_pixels"))
+expr(0x4d6, make_lo("tile_all_set_pixels"))
+expr(0x4da, make_hi("tile_all_set_pixels"))
 
 comment(0x1abb, """*************************************************************************************
 

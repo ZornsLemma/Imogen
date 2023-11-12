@@ -372,8 +372,8 @@ level_progress_table                        = $09ef
 sixteen_entry_table                         = $0a6f
 level_ordering_table                        = $0a7f
 string_input_buffer                         = $0a90
-eight_entry_table1                          = $0aa1
-eight_entry_table2                          = $0aa9
+tile_all_clear_pixels                       = $0aa1
+tile_all_set_pixels                         = $0aa9
 old_brkv1                                   = $0ab1
 old_brkv2                                   = $0ab3
 old_irq1v                                   = $0ab5
@@ -1817,7 +1817,8 @@ return_with_a_zero
 
 bring_player_and_object1_back_onto_the_left_side_of_screen
     ldx #1                                                            ; 1a3a: a2 01       ..  :1909[1]
-loop_c190b
+; add one screen amount to the X coordinate until within range
+add_to_player_x_loop
     lda object_x_low,x                                                ; 1a3c: bd 50 09    .P. :190b[1]
     clc                                                               ; 1a3f: 18          .   :190e[1]
     adc #$40 ; '@'                                                    ; 1a40: 69 40       i@  :190f[1]
@@ -1825,22 +1826,23 @@ loop_c190b
     lda #1                                                            ; 1a45: a9 01       ..  :1914[1]
     sta object_x_high,x                                               ; 1a47: 9d 66 09    .f. :1916[1]
     dex                                                               ; 1a4a: ca          .   :1919[1]
-    bpl loop_c190b                                                    ; 1a4b: 10 ef       ..  :191a[1]
+    bpl add_to_player_x_loop                                          ; 1a4b: 10 ef       ..  :191a[1]
     lda #1                                                            ; 1a4d: a9 01       ..  :191c[1]
     rts                                                               ; 1a4f: 60          `   :191e[1]
 
 bring_player_and_object1_back_onto_the_right_side_of_screen
     ldx #1                                                            ; 1a50: a2 01       ..  :191f[1]
-loop_c1921
+subtract_from_player_x_loop
     lda object_x_low,x                                                ; 1a52: bd 50 09    .P. :1921[1]
     sec                                                               ; 1a55: 38          8   :1924[1]
     sbc #$40 ; '@'                                                    ; 1a56: e9 40       .@  :1925[1]
     sta object_x_low,x                                                ; 1a58: 9d 50 09    .P. :1927[1]
-    lda #0                                                            ; 1a5b: a9 00       ..  :192a[1]   ; should be 1?
+    lda #0                                                            ; 1a5b: a9 00       ..  :192a[1]
+; Do we know carry is clear here in order to subtract 1? Possible bug?
     sbc #0                                                            ; 1a5d: e9 00       ..  :192c[1]
     sta object_x_high,x                                               ; 1a5f: 9d 66 09    .f. :192e[1]
     dex                                                               ; 1a62: ca          .   :1931[1]
-    bpl loop_c1921                                                    ; 1a63: 10 ed       ..  :1932[1]
+    bpl subtract_from_player_x_loop                                   ; 1a63: 10 ed       ..  :1932[1]
     lda #4                                                            ; 1a65: a9 04       ..  :1934[1]
     rts                                                               ; 1a67: 60          `   :1936[1]
 
@@ -7438,9 +7440,9 @@ define_character_fe_loop
     ldy #7                                                            ; 3d52: a0 07       ..
 loop_c3d54
     lda #0                                                            ; 3d54: a9 00       ..
-    sta eight_entry_table1,y                                          ; 3d56: 99 a1 0a    ...
+    sta tile_all_clear_pixels,y                                       ; 3d56: 99 a1 0a    ...
     lda #$ff                                                          ; 3d59: a9 ff       ..
-    sta eight_entry_table2,y                                          ; 3d5b: 99 a9 0a    ...
+    sta tile_all_set_pixels,y                                         ; 3d5b: 99 a9 0a    ...
     dey                                                               ; 3d5e: 88          .
     bpl loop_c3d54                                                    ; 3d5f: 10 f3       ..
 ; store something else now that envelopes have already been defined above?
@@ -8078,9 +8080,9 @@ show_dialog_box
     stx value_to_write_to_collision_map                               ; 4115: 86 3e       .>  :0416[2]
     inx                                                               ; 4117: e8          .   :0418[2]
     stx l003f                                                         ; 4118: 86 3f       .?  :0419[2]
-    lda #<eight_entry_table2                                          ; 411a: a9 a9       ..  :041b[2]
+    lda #<tile_all_set_pixels                                         ; 411a: a9 a9       ..  :041b[2]
     sta source_sprite_memory_low                                      ; 411c: 85 40       .@  :041d[2]
-    lda #>eight_entry_table2                                          ; 411e: a9 0a       ..  :041f[2]
+    lda #>tile_all_set_pixels                                         ; 411e: a9 0a       ..  :041f[2]
     sta source_sprite_memory_high                                     ; 4120: 85 41       .A  :0421[2]
     inx                                                               ; 4122: e8          .   :0423[2]
     stx l0042                                                         ; 4123: 86 42       .B  :0424[2]
@@ -8193,9 +8195,9 @@ sub_c04cb
     inx                                                               ; 41ce: e8          .   :04cf[2]
     stx l003f                                                         ; 41cf: 86 3f       .?  :04d0[2]
     stx plot_move_x_high                                              ; 41d1: 8e 18 05    ... :04d2[2]
-    lda #<eight_entry_table2                                          ; 41d4: a9 a9       ..  :04d5[2]
+    lda #<tile_all_set_pixels                                         ; 41d4: a9 a9       ..  :04d5[2]
     sta source_sprite_memory_low                                      ; 41d6: 85 40       .@  :04d7[2]
-    lda #>eight_entry_table2                                          ; 41d8: a9 0a       ..  :04d9[2]
+    lda #>tile_all_set_pixels                                         ; 41d8: a9 0a       ..  :04d9[2]
     sta source_sprite_memory_high                                     ; 41da: 85 41       .A  :04db[2]
     inx                                                               ; 41dc: e8          .   :04dd[2]
     stx l0042                                                         ; 41dd: 86 42       .B  :04de[2]
@@ -8518,8 +8520,6 @@ pydis_end
 ;     lbf00
 ;     loop_c0aba
 ;     loop_c0ac6
-;     loop_c190b
-;     loop_c1921
 ;     loop_c193d
 ;     loop_c1957
 ;     loop_c1df7
@@ -8654,9 +8654,6 @@ pydis_end
 !if (<disk_error_message) != $52 {
     !error "Assertion failed: <disk_error_message == $52"
 }
-!if (<eight_entry_table2) != $a9 {
-    !error "Assertion failed: <eight_entry_table2 == $a9"
-}
 !if (<enter_filename_message) != $98 {
     !error "Assertion failed: <enter_filename_message == $98"
 }
@@ -8774,6 +8771,9 @@ pydis_end
 !if (<start_of_screen_memory) != $c0 {
     !error "Assertion failed: <start_of_screen_memory == $c0"
 }
+!if (<tile_all_set_pixels) != $a9 {
+    !error "Assertion failed: <tile_all_set_pixels == $a9"
+}
 !if (<tile_ceiling0) != $59 {
     !error "Assertion failed: <tile_ceiling0 == $59"
 }
@@ -8869,9 +8869,6 @@ pydis_end
 }
 !if (>disk_error_message) != $17 {
     !error "Assertion failed: >disk_error_message == $17"
-}
-!if (>eight_entry_table2) != $0a {
-    !error "Assertion failed: >eight_entry_table2 == $0a"
 }
 !if (>enter_filename_message) != $34 {
     !error "Assertion failed: >enter_filename_message == $34"
@@ -8986,6 +8983,9 @@ pydis_end
 }
 !if (>start_of_screen_memory) != $5b {
     !error "Assertion failed: >start_of_screen_memory == $5b"
+}
+!if (>tile_all_set_pixels) != $0a {
+    !error "Assertion failed: >tile_all_set_pixels == $0a"
 }
 !if (>tile_ceiling0) != $1d {
     !error "Assertion failed: >tile_ceiling0 == $1d"

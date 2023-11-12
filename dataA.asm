@@ -51,7 +51,7 @@ l0a71                                               = $0a71
 l0a72                                               = $0a72
 l0a73                                               = $0a73
 string_input_buffer                                 = $0a90
-eight_entry_table2                                  = $0aa9
+tile_all_set_pixels                                 = $0aa9
 developer_flags                                     = $1103
 initialise_level                                    = $1140
 something23_TODO                                    = $12bb
@@ -143,9 +143,9 @@ level_init_after_load_handler
     lda #spriteid_saxophone                                           ; 3afd: a9 d3       ..
     jsr find_or_create_menu_slot_for_A                                ; 3aff: 20 bd 2b     .+
     lda #$ff                                                          ; 3b02: a9 ff       ..
-; clear_128_bytes_at_l09ef (which is called by start_game) will have zeroed
-; saxophone_collected_flag. TODO: It's not clear to me why it would be set here under
-; normal circumstances - what would go wrong if we just assumed l0a00==0 here?
+; reset the saxaphone collected flag. The user can choose during the course of a game
+; to enter the password to continue playing this level having previously got the
+; saxaphone.
 ; $3b04 referenced 1 time by $3afb
 developer_mode_not_active
     lda saxophone_collected_flag                                      ; 3b04: ad 00 0a    ...
@@ -831,9 +831,9 @@ room_3_code
     sta width_in_cells                                                ; 3fdf: 85 3c       .<
     sta height_in_cells                                               ; 3fe1: 85 3d       .=
     jsr copy_rectangle_of_memory_to_screen                            ; 3fe3: 20 bb 1a     ..
-    lda #<eight_entry_table2                                          ; 3fe6: a9 a9       ..
+    lda #<tile_all_set_pixels                                         ; 3fe6: a9 a9       ..
     sta source_sprite_memory_low                                      ; 3fe8: 85 40       .@
-    lda #>eight_entry_table2                                          ; 3fea: a9 0a       ..
+    lda #>tile_all_set_pixels                                         ; 3fea: a9 0a       ..
     sta source_sprite_memory_high                                     ; 3fec: 85 41       .A
     lda #0                                                            ; 3fee: a9 00       ..
     sta value_to_write_to_collision_map                               ; 3ff0: 85 3e       .>
@@ -1945,17 +1945,17 @@ pydis_end
 ;     sub_c3f8b
 ;     sub_c407f
 ;     sub_c42f8
-!if (<eight_entry_table2) != $a9 {
-    !error "Assertion failed: <eight_entry_table2 == $a9"
-}
 !if (<ground_fill_2x2_top_left) != $86 {
     !error "Assertion failed: <ground_fill_2x2_top_left == $86"
 }
-!if (>eight_entry_table2) != $0a {
-    !error "Assertion failed: >eight_entry_table2 == $0a"
+!if (<tile_all_set_pixels) != $a9 {
+    !error "Assertion failed: <tile_all_set_pixels == $a9"
 }
 !if (>ground_fill_2x2_top_left) != $44 {
     !error "Assertion failed: >ground_fill_2x2_top_left == $44"
+}
+!if (>tile_all_set_pixels) != $0a {
+    !error "Assertion failed: >tile_all_set_pixels == $0a"
 }
 !if (level_init_after_load_handler) != $3af2 {
     !error "Assertion failed: level_init_after_load_handler == $3af2"
