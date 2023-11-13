@@ -31,7 +31,7 @@ l0001                                               = &0001
 l0002                                               = &0002
 l0003                                               = &0003
 l0004                                               = &0004
-password_characters_entered                         = &0005
+characters_entered                                  = &0005
 sprite_reflect_flag                                 = &001d
 desired_room_index                                  = &0030
 desired_level                                       = &0031
@@ -276,7 +276,7 @@ something23_TODO_executing_flag = sub_c132a+1
     lda #&76 ; 'v'                                                    ; 1332: a9 76       .v
     sta l0004                                                         ; 1334: 85 04       ..
     lda #0                                                            ; 1336: a9 00       ..
-    sta password_characters_entered                                   ; 1338: 85 05       ..
+    sta characters_entered                                            ; 1338: 85 05       ..
     lda #<osfile_load_filename                                        ; 133a: a9 a7       ..
     sta l0070                                                         ; 133c: 85 70       .p
     lda #>osfile_load_filename                                        ; 133e: a9 13       ..
@@ -575,44 +575,44 @@ something23_TODO_executing_flag = sub_c132a+1
 .pydis_end
 
 ; Label references by decreasing frequency:
-;     oswrch:                       13
-;     l0070:                         9
-;     crtc_address_register:         6
-;     crtc_address_write:            6
-;     l0071:                         5
-;     l0073:                         5
-;     osbyte:                        5
-;     l0072:                         4
-;     l0074:                         3
-;     l0000:                         2
-;     l0081:                         2
-;     relocate_loop:                 2
-;     c12d1:                         2
-;     sub_c134d:                     2
-;     c138a:                         2
-;     l0001:                         1
-;     l0002:                         1
-;     l0003:                         1
-;     l0004:                         1
-;     password_characters_entered:   1
-;     l0076:                         1
-;     l0080:                         1
-;     l0082:                         1
-;     l0086:                         1
-;     l0087:                         1
-;     l0088:                         1
-;     post_relocate_init:            1
-;     loop_c12f0:                    1
-;     c12fe:                         1
-;     loop_c130f:                    1
-;     c131d:                         1
-;     loop_c137a:                    1
-;     sub_c139b:                     1
-;     loop_c139d:                    1
-;     written_by_string:             1
-;     copyright_string:              1
-;     osword:                        1
-;     oscli:                         1
+;     oswrch:                 13
+;     l0070:                   9
+;     crtc_address_register:   6
+;     crtc_address_write:      6
+;     l0071:                   5
+;     l0073:                   5
+;     osbyte:                  5
+;     l0072:                   4
+;     l0074:                   3
+;     l0000:                   2
+;     l0081:                   2
+;     relocate_loop:           2
+;     c12d1:                   2
+;     sub_c134d:               2
+;     c138a:                   2
+;     l0001:                   1
+;     l0002:                   1
+;     l0003:                   1
+;     l0004:                   1
+;     characters_entered:      1
+;     l0076:                   1
+;     l0080:                   1
+;     l0082:                   1
+;     l0086:                   1
+;     l0087:                   1
+;     l0088:                   1
+;     post_relocate_init:      1
+;     loop_c12f0:              1
+;     c12fe:                   1
+;     loop_c130f:              1
+;     c131d:                   1
+;     loop_c137a:              1
+;     sub_c139b:               1
+;     loop_c139d:              1
+;     written_by_string:       1
+;     copyright_string:        1
+;     osword:                  1
+;     oscli:                   1
 
 ; Automatically generated labels:
 ;     c12d1

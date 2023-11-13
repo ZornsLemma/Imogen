@@ -175,7 +175,7 @@ yellow                                          = 3
 error_code_on_brk                           = $02
 remember_stack_pointer                      = $03
 which_dialog_is_active                      = $04
-password_characters_entered                 = $05
+characters_entered                          = $05
 rnd0                                        = $06
 rnd1                                        = $07
 rnd2                                        = $08
@@ -491,8 +491,14 @@ start_game
     tay                                                               ; 126d: a8          .   :113c[1]
     jsr convert_section_letter_to_level_filename_letter               ; 126e: 20 ef 0a     .. :113d[1]
 ; TODO: this is used by e.g. dataA
-; X is the element of level_header_data to invoke the code for during initialisation.
-; TODO: But what does this 'mean'?
+; *************************************************************************************
+; 
+; Initialise level
+; 
+; On Entry:
+;     X is the room index
+; 
+; *************************************************************************************
 initialise_level
     lda desired_room_index                                            ; 1271: a5 30       .0  :1140[1]
     sta previous_room_index                                           ; 1273: 85 50       .P  :1142[1]
@@ -6370,8 +6376,8 @@ enter_filename_message
 
 get_filename_and_print_drive_number_prompt
     lda #max_filename_len                                             ; 35d8: a9 07       ..  :34a7[1]
-    jsr string_input                                                  ; 35da: 20 fc 36     .6 :34a9[1]
-    ldy password_characters_entered                                   ; 35dd: a4 05       ..  :34ac[1]
+    jsr string_input_character                                        ; 35da: 20 fc 36     .6 :34a9[1]
+    ldy characters_entered                                            ; 35dd: a4 05       ..  :34ac[1]
     beq return23                                                      ; 35df: f0 e6       ..  :34ae[1]
     ldy #6                                                            ; 35e1: a0 06       ..  :34b0[1]
 loop_c34b2
@@ -6575,8 +6581,8 @@ sub_c3664
     lda which_dialog_is_active                                        ; 379e: a5 04       ..  :366d[1]
     beq return25                                                      ; 37a0: f0 36       .6  :366f[1]
     lda #$10                                                          ; 37a2: a9 10       ..  :3671[1]
-    jsr string_input                                                  ; 37a4: 20 fc 36     .6 :3673[1]
-    ldy password_characters_entered                                   ; 37a7: a4 05       ..  :3676[1]
+    jsr string_input_character                                        ; 37a4: 20 fc 36     .6 :3673[1]
+    ldy characters_entered                                            ; 37a7: a4 05       ..  :3676[1]
     beq c3698                                                         ; 37a9: f0 1e       ..  :3678[1]
     lda developer_flags                                               ; 37ab: ad 03 11    ... :367a[1]
     and #1                                                            ; 37ae: 29 01       ).  :367d[1]
@@ -6657,82 +6663,99 @@ c36f3
 c36f6
     jmp remove_dialog                                                 ; 3827: 4c 53 04    LS. :36f6[1]
 
-loop_c36f9
-    jmp c377a                                                         ; 382a: 4c 7a 37    Lz7 :36f9[1]
+character_too_low
+    jmp character_handled                                             ; 382a: 4c 7a 37    Lz7 :36f9[1]
 
-string_input
-    sta l377d                                                         ; 382d: 8d 7d 37    .}7 :36fc[1]
+; *************************************************************************************
+; 
+; Input a character into a string
+; 
+; Waits for the minimum time for keyboard key.
+; If the RETURN key is pressed, the routine ends normally and the input can be
+; processed.
+; If another key (or no key) is pressed, the regular return address is pulled off the
+; stack and control returns to the next routine up on the stack.
+; 
+; On Entry:
+;     A: maximum length of string
+; 
+; *************************************************************************************
+string_input_character
+    sta max_input_length                                              ; 382d: 8d 7d 37    .}7 :36fc[1]
     jsr inkey_0                                                       ; 3830: 20 7c 38     |8 :36ff[1]
-    ldy password_characters_entered                                   ; 3833: a4 05       ..  :3702[1]
+    ldy characters_entered                                            ; 3833: a4 05       ..  :3702[1]
     cmp #vdu_cr                                                       ; 3835: c9 0d       ..  :3704[1]
-    beq c376b                                                         ; 3837: f0 63       .c  :3706[1]
+    beq finished_string_input                                         ; 3837: f0 63       .c  :3706[1]
     cmp #vdu_delete                                                   ; 3839: c9 7f       ..  :3708[1]
-    beq c3750                                                         ; 383b: f0 44       .D  :370a[1]
+    beq delete_pressed                                                ; 383b: f0 44       .D  :370a[1]
     cmp #'-'                                                          ; 383d: c9 2d       .-  :370c[1]
-    beq c3734                                                         ; 383f: f0 24       .$  :370e[1]
+    beq minus_or_equals_key_pressed                                   ; 383f: f0 24       .$  :370e[1]
     cmp #'='                                                          ; 3841: c9 3d       .=  :3710[1]
-    beq c3734                                                         ; 3843: f0 20       .   :3712[1]
+    beq minus_or_equals_key_pressed                                   ; 3843: f0 20       .   :3712[1]
     cmp #'!'                                                          ; 3845: c9 21       .!  :3714[1]
-    bcc loop_c36f9                                                    ; 3847: 90 e1       ..  :3716[1]
+    bcc character_too_low                                             ; 3847: 90 e1       ..  :3716[1]
     cmp #'*'                                                          ; 3849: c9 2a       .*  :3718[1]
-    bcs c3720                                                         ; 384b: b0 04       ..  :371a[1]
+    bcs check_range_of_characters                                     ; 384b: b0 04       ..  :371a[1]
+; Character is between '!' and '*' i.e. one of the shifted number keys. Add 16 to get
+; ASCII number, even if SHIFT LOCK is on
     adc #$10                                                          ; 384d: 69 10       i.  :371c[1]
-    bne c3736                                                         ; 384f: d0 16       ..  :371e[1]
-c3720
+    bne store_character_if_room_available                             ; 384f: d0 16       ..  :371e[1]
+check_range_of_characters
     cmp #'0'                                                          ; 3851: c9 30       .0  :3720[1]
-    bcc c377a                                                         ; 3853: 90 56       .V  :3722[1]
+    bcc character_handled                                             ; 3853: 90 56       .V  :3722[1]
     cmp #'9' + 1                                                      ; 3855: c9 3a       .:  :3724[1]
-    bcc c3736                                                         ; 3857: 90 0e       ..  :3726[1]
+    bcc store_character_if_room_available                             ; 3857: 90 0e       ..  :3726[1]
     and #caps_mask                                                    ; 3859: 29 df       ).  :3728[1]
     cmp #'A'                                                          ; 385b: c9 41       .A  :372a[1]
-    bcc c377a                                                         ; 385d: 90 4c       .L  :372c[1]
+    bcc character_handled                                             ; 385d: 90 4c       .L  :372c[1]
     cmp #'Z' + 1                                                      ; 385f: c9 5b       .[  :372e[1]
-    bcc c3736                                                         ; 3861: 90 04       ..  :3730[1]
-    bcs c377a                                                         ; 3863: b0 46       .F  :3732[1]
-c3734
-    lda #$2d ; '-'                                                    ; 3865: a9 2d       .-  :3734[1]
-c3736
-    cpy l377d                                                         ; 3867: cc 7d 37    .}7 :3736[1]
-    bcs c377a                                                         ; 386a: b0 3f       .?  :3739[1]
+    bcc store_character_if_room_available                             ; 3861: 90 04       ..  :3730[1]
+    bcs character_handled                                             ; 3863: b0 46       .F  :3732[1]
+minus_or_equals_key_pressed
+    lda #'-'                                                          ; 3865: a9 2d       .-  :3734[1]
+store_character_if_room_available
+    cpy max_input_length                                              ; 3867: cc 7d 37    .}7 :3736[1]
+    bcs character_handled                                             ; 386a: b0 3f       .?  :3739[1]
     iny                                                               ; 386c: c8          .   :373b[1]
-    cpy l377d                                                         ; 386d: cc 7d 37    .}7 :373c[1]
-    bne c3744                                                         ; 3870: d0 03       ..  :373f[1]
+    cpy max_input_length                                              ; 386d: cc 7d 37    .}7 :373c[1]
+    bne store_character                                               ; 3870: d0 03       ..  :373f[1]
     jsr turn_cursor_off                                               ; 3872: 20 63 38     c8 :3741[1]
-c3744
+store_character
     dey                                                               ; 3875: 88          .   :3744[1]
     sta string_input_buffer,y                                         ; 3876: 99 90 0a    ... :3745[1]
     jsr print_italic                                                  ; 3879: 20 66 18     f. :3748[1]
-    inc password_characters_entered                                   ; 387c: e6 05       ..  :374b[1]
-    jmp c377a                                                         ; 387e: 4c 7a 37    Lz7 :374d[1]
+    inc characters_entered                                            ; 387c: e6 05       ..  :374b[1]
+    jmp character_handled                                             ; 387e: 4c 7a 37    Lz7 :374d[1]
 
-c3750
+delete_pressed
     cpy #0                                                            ; 3881: c0 00       ..  :3750[1]
-    beq c377a                                                         ; 3883: f0 26       .&  :3752[1]
+    beq character_handled                                             ; 3883: f0 26       .&  :3752[1]
     lda #vdu_left                                                     ; 3885: a9 08       ..  :3754[1]
     jsr oswrch                                                        ; 3887: 20 ee ff     .. :3756[1]   ; Write character 8
     lda #' '                                                          ; 388a: a9 20       .   :3759[1]
     jsr oswrch                                                        ; 388c: 20 ee ff     .. :375b[1]   ; Write character 32
     lda #vdu_left                                                     ; 388f: a9 08       ..  :375e[1]
     jsr oswrch                                                        ; 3891: 20 ee ff     .. :3760[1]   ; Write character 8
-    dec password_characters_entered                                   ; 3894: c6 05       ..  :3763[1]
+    dec characters_entered                                            ; 3894: c6 05       ..  :3763[1]
     jsr turn_cursor_on                                                ; 3896: 20 5d 38     ]8 :3765[1]
-    jmp c377a                                                         ; 3899: 4c 7a 37    Lz7 :3768[1]
+    jmp character_handled                                             ; 3899: 4c 7a 37    Lz7 :3768[1]
 
-c376b
+finished_string_input
     cpy #0                                                            ; 389c: c0 00       ..  :376b[1]
     beq return26                                                      ; 389e: f0 0d       ..  :376d[1]
     sta string_input_buffer,y                                         ; 38a0: 99 90 0a    ... :376f[1]
-    inc password_characters_entered                                   ; 38a3: e6 05       ..  :3772[1]
+    inc characters_entered                                            ; 38a3: e6 05       ..  :3772[1]
     jsr turn_cursor_off                                               ; 38a5: 20 63 38     c8 :3774[1]
     jmp return26                                                      ; 38a8: 4c 7c 37    L|7 :3777[1]
 
-c377a
+; take the return address off the stack and return to the routine above the callee
+character_handled
     pla                                                               ; 38ab: 68          h   :377a[1]
     pla                                                               ; 38ac: 68          h   :377b[1]
 return26
     rts                                                               ; 38ad: 60          `   :377c[1]
 
-l377d
+max_input_length
     !byte 0                                                           ; 38ae: 00          .   :377d[1]
 
 show_level_info_dialog
@@ -6893,7 +6916,7 @@ c3867
 
 flush_input_buffers_and_zero_l0005
     ldx #0                                                            ; 39a3: a2 00       ..  :3872[1]
-    stx password_characters_entered                                   ; 39a5: 86 05       ..  :3874[1]
+    stx characters_entered                                            ; 39a5: 86 05       ..  :3874[1]
     lda #osbyte_flush_buffer_class                                    ; 39a7: a9 0f       ..  :3876[1]
     inx                                                               ; 39a9: e8          .   :3878[1]
     jmp osbyte                                                        ; 39aa: 4c f4 ff    L.. :3879[1]   ; Flush all buffers (X=0), or just input buffers (X non-zero)
@@ -8476,13 +8499,6 @@ pydis_end
 ;     c36d2
 ;     c36f3
 ;     c36f6
-;     c3720
-;     c3734
-;     c3736
-;     c3744
-;     c3750
-;     c376b
-;     c377a
 ;     c381a
 ;     c3867
 ;     c388a
@@ -8555,7 +8571,6 @@ pydis_end
 ;     l2ef2
 ;     l31d7
 ;     l3403
-;     l377d
 ;     l38ad
 ;     l38c3
 ;     l3967
@@ -8592,7 +8607,6 @@ pydis_end
 ;     loop_c2ec9
 ;     loop_c34b2
 ;     loop_c36c7
-;     loop_c36f9
 ;     loop_c39d2
 ;     loop_c3d54
 ;     loop_c3f87

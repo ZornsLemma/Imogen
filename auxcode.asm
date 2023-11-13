@@ -12,7 +12,7 @@ vdu_cr                                         = 13
 vdu_lf                                         = 10
 
 ; Memory locations
-password_characters_entered                         = $05
+characters_entered                                  = $05
 sprite_reflect_flag                                 = $1d
 desired_room_index                                  = $30
 desired_level                                       = $31
@@ -99,7 +99,7 @@ auxcode
 check_password
 pydis_start
     ldy #0                                                            ; 53c0: a0 00       ..
-    sty password_characters_entered                                   ; 53c2: 84 05       ..
+    sty characters_entered                                            ; 53c2: 84 05       ..
     sty counter                                                       ; 53c4: 84 72       .r
     lda #<password_ptr_table                                          ; 53c6: a9 4f       .O
     sta screen_address_low                                            ; 53c8: 85 70       .p

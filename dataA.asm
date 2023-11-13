@@ -10,7 +10,7 @@ spriteid_saxophone       = 211
 spriteid_table           = 222
 
 ; Memory locations
-password_characters_entered                         = $05
+characters_entered                                  = $05
 sprite_reflect_flag                                 = $1d
 desired_room_index                                  = $30
 desired_level                                       = $31

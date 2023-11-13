@@ -1181,7 +1181,31 @@ hexadecimal(0x1377, 8)
 
 entry(0x3814, "print_y_spaces_loop")
 
-entry(0x36fc, "string_input") # TODO: Something like this
+comment(0x36fc, """*************************************************************************************
+
+Input a character into a string
+
+Waits for the minimum time for keyboard key.
+If the RETURN key is pressed, the routine ends normally and the input can be processed.
+If another key (or no key) is pressed, the regular return address is pulled off the stack and control returns to the next routine up on the stack.
+
+On Entry:
+    A: maximum length of string
+
+*************************************************************************************""")
+entry(0x36fc, "string_input_character")
+label(0x377d, "max_input_length")
+label(0x376b, "finished_string_input")
+label(0x3750, "delete_pressed")
+label(0x3734, "minus_or_equals_key_pressed")
+label(0x36f9, "character_too_low")
+label(0x3720, "check_range_of_characters")
+label(0x3736, "store_character_if_room_available")
+label(0x377a, "character_handled")
+label(0x3744, "store_character")
+comment(0x371c, "Character is between '!' and '*' i.e. one of the shifted number keys. Add 16 to get ASCII number, even if SHIFT LOCK is on")
+comment(0x377a, "take the return address off the stack and return to the routine above the callee")
+char(0x3735)
 char(0x3475)
 char(0x3479)
 char(0x3505)
@@ -1734,7 +1758,14 @@ comment(0x1a10, "TODO: this is used by e.g. dataA")
 entry(0x1a10)
 comment(0x1ebb, "TODO: this is used by e.g. dataA")
 
-comment(0x1140, "X is the element of level_header_data to invoke the code for during initialisation. TODO: But what does this 'mean'?")
+comment(0x1140, """*************************************************************************************
+
+Initialise level
+
+On Entry:
+    X is the room index
+
+*************************************************************************************""")
 
 # TODO: I don't think we necessarily need to indicate functions in 'g' called from 'data*' in the long run, but it might be helpful to flag them for now.
 comment(0x28e2, "TODO: this is used by e.g. dataA")
