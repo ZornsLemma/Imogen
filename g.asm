@@ -3757,7 +3757,7 @@ transform_out_animation
 ;     A: (for zero flag) $FF if transform in/out is in progress, $00 otherwise
 ; 
 ; *************************************************************************************
-set_base_player_animation_and_handle_transformation_in_out
+set_base_animation_address_and_handle_transform_in_out
     stx animation_address_low                                         ; 241f: 86 70       .p  :22ee[1]
     sty animation_address_high                                        ; 2421: 84 71       .q  :22f0[1]
 ; read next entry in animation
@@ -5372,6 +5372,7 @@ wizard_walk_cycle_animation
     !byte                0                                            ; 2e53: 00          .   :2d22[1]
 wizard_change_direction_animation
     !byte spriteid_wizard4,                0,                0        ; 2e54: 33 00 00    3.. :2d23[1]
+wizard_change_direction_animation_last_step
     !byte spriteid_wizard4,                2,                0        ; 2e57: 33 02 00    3.. :2d26[1]
     !byte                0                                            ; 2e5a: 00          .   :2d29[1]
 wizard_animation6
@@ -5427,17 +5428,18 @@ update_wizard_animation
     ldx #<wizard_transform_in_animation                               ; 2ebd: a2 ed       ..  :2d8c[1]
     ldy #>wizard_transform_in_animation                               ; 2ebf: a0 2c       .,  :2d8e[1]
     lda #3                                                            ; 2ec1: a9 03       ..  :2d90[1]
-    jsr set_base_player_animation_and_handle_transformation_in_out    ; 2ec3: 20 ee 22     ." :2d92[1]
-    bne c2dc0                                                         ; 2ec6: d0 29       .)  :2d95[1]
-    cpy #$39 ; '9'                                                    ; 2ec8: c0 39       .9  :2d97[1]
-    bne c2da6                                                         ; 2eca: d0 0b       ..  :2d99[1]
+    jsr set_base_animation_address_and_handle_transform_in_out        ; 2ec3: 20 ee 22     ." :2d92[1]
+; branch if transforming
+    bne store_wizard_animation_state_local                            ; 2ec6: d0 29       .)  :2d95[1]
+    cpy #wizard_change_direction_animation_last_step - wizard_transform_in_animation; 2ec8: c0 39       .9  :2d97[1]
+    bne wizard_not_changing_direction                                 ; 2eca: d0 0b       ..  :2d99[1]
 ; toggle player direction
     lda object_direction                                              ; 2ecc: ad be 09    ... :2d9b[1]
     eor #$fe                                                          ; 2ecf: 49 fe       I.  :2d9e[1]
     sta object_direction                                              ; 2ed1: 8d be 09    ... :2da0[1]
     jmp store_wizard_animation_state                                  ; 2ed4: 4c 5f 2e    L_. :2da3[1]
 
-c2da6
+wizard_not_changing_direction
     jsr sub_c23c4                                                     ; 2ed7: 20 c4 23     .# :2da6[1]
     bne c2de4                                                         ; 2eda: d0 39       .9  :2da9[1]
     lda current_animation                                             ; 2edc: ad df 09    ... :2dab[1]
@@ -5449,7 +5451,7 @@ c2da6
     bne c2dc3                                                         ; 2eeb: d0 07       ..  :2dba[1]
     cpy #wizard_jump_animation - wizard_transform_in_animation        ; 2eed: c0 49       .I  :2dbc[1]
     beq c2dc3                                                         ; 2eef: f0 03       ..  :2dbe[1]
-c2dc0
+store_wizard_animation_state_local
     jmp store_wizard_animation_state                                  ; 2ef1: 4c 5f 2e    L_. :2dc0[1]
 
 c2dc3
@@ -5471,7 +5473,7 @@ c2dca
 c2de4
     lda #wizard_fall_animation - wizard_transform_in_animation        ; 2f15: a9 96       ..  :2de4[1]
     cmp current_animation                                             ; 2f17: cd df 09    ... :2de6[1]
-    beq c2dc0                                                         ; 2f1a: f0 d5       ..  :2de9[1]
+    beq store_wizard_animation_state_local                            ; 2f1a: f0 d5       ..  :2de9[1]
     sta current_animation                                             ; 2f1c: 8d df 09    ... :2deb[1]
     ldy #$86                                                          ; 2f1f: a0 86       ..  :2dee[1]
     jmp store_wizard_animation_state                                  ; 2f21: 4c 5f 2e    L_. :2df0[1]
@@ -5655,6 +5657,7 @@ cat_walk_cycle_animation
     !byte                  0                                          ; 307c: 00          .   :2f4b[1]
 cat_change_direction_animation
     !byte spriteid_cat_walk4,                  0,                  0  ; 307d: 0f 00 00    ... :2f4c[1]
+cat_change_direction_animation_last_step
     !byte spriteid_cat_walk4,                  2,                  0  ; 3080: 0f 02 00    ... :2f4f[1]
     !byte                  0                                          ; 3083: 00          .   :2f52[1]
 cat_animation6
@@ -5716,17 +5719,17 @@ update_cat_animation
     ldx #<cat_transform_in_animation                                  ; 30fe: a2 16       ..  :2fcd[1]
     ldy #>cat_transform_in_animation                                  ; 3100: a0 2f       ./  :2fcf[1]
     lda #3                                                            ; 3102: a9 03       ..  :2fd1[1]
-    jsr set_base_player_animation_and_handle_transformation_in_out    ; 3104: 20 ee 22     ." :2fd3[1]
+    jsr set_base_animation_address_and_handle_transform_in_out        ; 3104: 20 ee 22     ." :2fd3[1]
     bne c300e                                                         ; 3107: d0 36       .6  :2fd6[1]
-    cpy #$39 ; '9'                                                    ; 3109: c0 39       .9  :2fd8[1]
-    bne c2fe7                                                         ; 310b: d0 0b       ..  :2fda[1]
+    cpy #cat_change_direction_animation_last_step - cat_transform_in_animation; 3109: c0 39       .9  :2fd8[1]
+    bne cat_not_changing_direction                                    ; 310b: d0 0b       ..  :2fda[1]
 ; toggle player direction
     lda object_direction                                              ; 310d: ad be 09    ... :2fdc[1]
     eor #$fe                                                          ; 3110: 49 fe       I.  :2fdf[1]
     sta object_direction                                              ; 3112: 8d be 09    ... :2fe1[1]
     jmp c30a5                                                         ; 3115: 4c a5 30    L.0 :2fe4[1]
 
-c2fe7
+cat_not_changing_direction
     jsr sub_c23c4                                                     ; 3118: 20 c4 23     .# :2fe7[1]
     bne c3044                                                         ; 311b: d0 58       .X  :2fea[1]
     lda current_animation                                             ; 311d: ad df 09    ... :2fec[1]
@@ -5903,6 +5906,7 @@ monkey_walk_cycle_animation
     !byte                0                                            ; 3265: 00          .   :3134[1]
 monkey_change_direction_animation
     !byte spriteid_monkey4,                0,                0        ; 3266: 51 00 00    Q.. :3135[1]
+monkey_change_direction_animation_last_step
     !byte spriteid_monkey4,                2,                0        ; 3269: 51 02 00    Q.. :3138[1]
     !byte                0                                            ; 326c: 00          .   :313b[1]
 monkey_animation6
@@ -5990,10 +5994,10 @@ update_monkey_animation
     ldx #<monkey_transform_in_animation                               ; 330e: a2 ff       ..  :31dd[1]
     ldy #>monkey_transform_in_animation                               ; 3310: a0 30       .0  :31df[1]
     lda #3                                                            ; 3312: a9 03       ..  :31e1[1]
-    jsr set_base_player_animation_and_handle_transformation_in_out    ; 3314: 20 ee 22     ." :31e3[1]
+    jsr set_base_animation_address_and_handle_transform_in_out        ; 3314: 20 ee 22     ." :31e3[1]
     bne c31f4                                                         ; 3317: d0 0c       ..  :31e6[1]
-    cpy #$39 ; '9'                                                    ; 3319: c0 39       .9  :31e8[1]
-    bne c31f7                                                         ; 331b: d0 0b       ..  :31ea[1]
+    cpy #monkey_change_direction_animation_last_step - monkey_transform_in_animation; 3319: c0 39       .9  :31e8[1]
+    bne monkey_not_changing_direction                                 ; 331b: d0 0b       ..  :31ea[1]
 ; toggle player direction
     lda object_direction                                              ; 331d: ad be 09    ... :31ec[1]
     eor #$fe                                                          ; 3320: 49 fe       I.  :31ef[1]
@@ -6001,7 +6005,7 @@ update_monkey_animation
 c31f4
     jmp c3331                                                         ; 3325: 4c 31 33    L13 :31f4[1]
 
-c31f7
+monkey_not_changing_direction
     jsr sub_c23c4                                                     ; 3328: 20 c4 23     .# :31f7[1]
     beq c31ff                                                         ; 332b: f0 03       ..  :31fa[1]
     jmp c32b1                                                         ; 332d: 4c b1 32    L.2 :31fc[1]
@@ -8397,8 +8401,6 @@ pydis_end
 ;     c2b2e
 ;     c2c35
 ;     c2c3d
-;     c2da6
-;     c2dc0
 ;     c2dc3
 ;     c2dca
 ;     c2de4
@@ -8412,7 +8414,6 @@ pydis_end
 ;     c2eb1
 ;     c2ed7
 ;     c2ee4
-;     c2fe7
 ;     c300e
 ;     c3011
 ;     c3023
@@ -8428,7 +8429,6 @@ pydis_end
 ;     c30ca
 ;     c30d5
 ;     c31f4
-;     c31f7
 ;     c31ff
 ;     c3222
 ;     c3247
@@ -9086,6 +9086,9 @@ pydis_end
 !if (cat_change_direction_animation - cat_transform_in_animation) != $36 {
     !error "Assertion failed: cat_change_direction_animation - cat_transform_in_animation == $36"
 }
+!if (cat_change_direction_animation_last_step - cat_transform_in_animation) != $39 {
+    !error "Assertion failed: cat_change_direction_animation_last_step - cat_transform_in_animation == $39"
+}
 !if (cat_fall_animation - cat_transform_in_animation) != $ae {
     !error "Assertion failed: cat_fall_animation - cat_transform_in_animation == $ae"
 }
@@ -9238,6 +9241,9 @@ pydis_end
 }
 !if (monkey_change_direction_animation - monkey_transform_in_animation) != $36 {
     !error "Assertion failed: monkey_change_direction_animation - monkey_transform_in_animation == $36"
+}
+!if (monkey_change_direction_animation_last_step - monkey_transform_in_animation) != $39 {
+    !error "Assertion failed: monkey_change_direction_animation_last_step - monkey_transform_in_animation == $39"
 }
 !if (monkey_climb_animation - monkey_transform_in_animation) != $51 {
     !error "Assertion failed: monkey_climb_animation - monkey_transform_in_animation == $51"
@@ -9631,6 +9637,9 @@ pydis_end
 }
 !if (wizard_change_direction_animation - wizard_transform_in_animation) != $36 {
     !error "Assertion failed: wizard_change_direction_animation - wizard_transform_in_animation == $36"
+}
+!if (wizard_change_direction_animation_last_step - wizard_transform_in_animation) != $39 {
+    !error "Assertion failed: wizard_change_direction_animation_last_step - wizard_transform_in_animation == $39"
 }
 !if (wizard_fall_animation - wizard_transform_in_animation) != $96 {
     !error "Assertion failed: wizard_fall_animation - wizard_transform_in_animation == $96"
