@@ -14,8 +14,8 @@ characters_entered                                  = $05
 sprite_reflect_flag                                 = $1d
 desired_room_index                                  = $30
 desired_level                                       = $31
-l003a                                               = $3a
-l003b                                               = $3b
+temp_sprite_x_offset                                = $3a
+temp_sprite_y_offset                                = $3b
 width_in_cells                                      = $3c
 height_in_cells                                     = $3d
 value_to_write_to_collision_map                     = $3e
@@ -303,7 +303,7 @@ level_unchanged
     ldx #$10                                                          ; 3c0e: a2 10       ..
     ldy #$0b                                                          ; 3c10: a0 0b       ..
     lda #$fe                                                          ; 3c12: a9 fe       ..
-    sta l003b                                                         ; 3c14: 85 3b       .;
+    sta temp_sprite_y_offset                                          ; 3c14: 85 3b       .;
     lda #spriteid_mouse                                               ; 3c16: a9 c8       ..
     jsr draw_sprite_a_at_cell_xy                                      ; 3c18: 20 4c 1f     L.
     dex                                                               ; 3c1b: ca          .
@@ -321,7 +321,7 @@ level_unchanged
     ldx #$19                                                          ; 3c34: a2 19       ..
     ldy #$0b                                                          ; 3c36: a0 0b       ..
     lda #$fe                                                          ; 3c38: a9 fe       ..
-    sta l003b                                                         ; 3c3a: 85 3b       .;
+    sta temp_sprite_y_offset                                          ; 3c3a: 85 3b       .;
     lda #spriteid_mouse                                               ; 3c3c: a9 c8       ..
     jsr draw_sprite_a_at_cell_xy                                      ; 3c3e: 20 4c 1f     L.
     dex                                                               ; 3c41: ca          .
@@ -733,7 +733,7 @@ sub_c3f02
     ldx #$1b                                                          ; 3f34: a2 1b       ..
     ldy #$12                                                          ; 3f36: a0 12       ..
     lda #7                                                            ; 3f38: a9 07       ..
-    sta l003b                                                         ; 3f3a: 85 3b       .;
+    sta temp_sprite_y_offset                                          ; 3f3a: 85 3b       .;
     lda #4                                                            ; 3f3c: a9 04       ..
     jsr set_object_position_from_cell_xy                              ; 3f3e: 20 5d 1f     ].
     tax                                                               ; 3f41: aa          .
@@ -901,12 +901,12 @@ some_data2
 sub_c407f
     lda #2                                                            ; 407f: a9 02       ..
     sta current_room_index                                            ; 4081: 8d ba 1a    ...
-    lda #3                                                            ; 4084: a9 03       ..
-    ldx #3                                                            ; 4086: a2 03       ..
-    ldy #$11                                                          ; 4088: a0 11       ..
+    lda #3                                                            ; 4084: a9 03       ..             ; redundant instruction
+    ldx #3                                                            ; 4086: a2 03       ..             ; redundant instruction
+    ldy #$11                                                          ; 4088: a0 11       ..             ; redundant instruction
     ldx #7                                                            ; 408a: a2 07       ..
     lda #4                                                            ; 408c: a9 04       ..
-    sta l003a                                                         ; 408e: 85 3a       .:
+    sta temp_sprite_x_offset                                          ; 408e: 85 3a       .:
     ldy #$16                                                          ; 4090: a0 16       ..
     lda #5                                                            ; 4092: a9 05       ..
     jsr something14_TODO                                              ; 4094: 20 10 1a     ..
@@ -940,7 +940,7 @@ c40c1
     ldx #0                                                            ; 40ce: a2 00       ..
     ldy #$14                                                          ; 40d0: a0 14       ..
     lda #$fe                                                          ; 40d2: a9 fe       ..
-    sta l003b                                                         ; 40d4: 85 3b       .;
+    sta temp_sprite_y_offset                                          ; 40d4: 85 3b       .;
     lda #2                                                            ; 40d6: a9 02       ..
     jsr set_object_position_from_cell_xy                              ; 40d8: 20 5d 1f     ].
     lda #$cc                                                          ; 40db: a9 cc       ..
@@ -1784,7 +1784,7 @@ pydis_end
 ;     define_envelope:                                        5
 ;     c41ae:                                                  5
 ;     c4355:                                                  5
-;     l003b:                                                  4
+;     temp_sprite_y_offset:                                   4
 ;     saxophone_collected_flag:                               4
 ;     mouse_ball_position:                                    4
 ;     something23_TODO:                                       4
@@ -1835,7 +1835,7 @@ pydis_end
 ;     c432f:                                                  2
 ;     c43a0:                                                  2
 ;     sprite_reflect_flag:                                    1
-;     l003a:                                                  1
+;     temp_sprite_x_offset:                                   1
 ;     l0042:                                                  1
 ;     l0052:                                                  1
 ;     l0954:                                                  1
@@ -1975,8 +1975,6 @@ pydis_end
 ;     c43e3
 ;     c43f6
 ;     c4415
-;     l003a
-;     l003b
 ;     l0042
 ;     l0052
 ;     l0070

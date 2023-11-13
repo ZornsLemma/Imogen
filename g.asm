@@ -6670,11 +6670,11 @@ character_too_low
 ; 
 ; Input a character into a string
 ; 
-; Waits for the minimum time for keyboard key.
+; Waits for the minimum time for a key to be pressed.
+; 
 ; If the RETURN key is pressed, the routine ends normally and the input can be
-; processed.
-; If another key (or no key) is pressed, the regular return address is pulled off the
-; stack and control returns to the next routine up on the stack.
+; processed. If another key (or no key) is pressed, the regular return address is
+; pulled off the stack and control returns to the next routine up on the stack.
 ; 
 ; On Entry:
 ;     A: maximum length of string

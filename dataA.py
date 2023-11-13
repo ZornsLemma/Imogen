@@ -30,6 +30,9 @@ label(get_u16_binary(0x3adb), "level_name")
 
 entry(0x3d21, "some_data1")
 label(0x4052, "some_data2")
+comment(0x4084, "redundant instruction", inline=True)
+comment(0x4086, "redundant instruction", inline=True)
+comment(0x4088, "redundant instruction", inline=True)
 
 expr(0x3b0f, make_lo("ground_fill_2x2_top_left"))
 expr(0x3b13, make_hi("ground_fill_2x2_top_left"))

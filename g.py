@@ -199,8 +199,6 @@ label(0x002a, "space_bar_press_pending")
 label(0x002b, "space_bar_pressed")
 label(0x002c, "z_key_pressed_pending")
 label(0x002d, "x_key_pressed_pending")
-label(0x003a, "temp_sprite_x_offset")
-label(0x003b, "temp_sprite_y_offset")
 label(0x0049, "temp_value")
 label(0x004a, "temp_coordinate")
 
@@ -1185,9 +1183,9 @@ comment(0x36fc, """*************************************************************
 
 Input a character into a string
 
-Waits for the minimum time for keyboard key.
-If the RETURN key is pressed, the routine ends normally and the input can be processed.
-If another key (or no key) is pressed, the regular return address is pulled off the stack and control returns to the next routine up on the stack.
+Waits for the minimum time for a key to be pressed.
+
+If the RETURN key is pressed, the routine ends normally and the input can be processed. If another key (or no key) is pressed, the regular return address is pulled off the stack and control returns to the next routine up on the stack.
 
 On Entry:
     A: maximum length of string
@@ -1242,7 +1240,6 @@ expr(0x0445, "vdu_goto_xy")
 
 entry(0x0453)
 comment(0x0457, "clear away the active dialog")
-# TODO: DELETE? entry(0x3fbb, "something2_TODO")
 
 comment(0x3fcb, """Initialise display
 

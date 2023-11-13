@@ -95,6 +95,10 @@ constant(0x4c, "opcode_jmp")
 label(0x0005, "characters_entered")
 label(0x001d, "sprite_reflect_flag")
 label(0x31, "desired_level") # TODO: This is not right but let's go with it for now - the way this is used it clearly contains *a* level (as a letter, I think), but I am not quite sure what it's used for - the use at 36df suggests this is more like "current level" actually - or maybe it's more like "level_to_load"
+
+label(0x003a, "temp_sprite_x_offset")
+label(0x003b, "temp_sprite_y_offset")
+
 label(0x50, "previous_room_index")
 label(0x51, "previous_level") # TODO: see use at initialise_level
 
