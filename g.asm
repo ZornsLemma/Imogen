@@ -580,18 +580,19 @@ clear_sixteen_entry_table_loop
     sta sixteen_entry_table,y                                         ; 130e: 99 6f 0a    .o. :11dd[1]
     dey                                                               ; 1311: 88          .   :11e0[1]
     bpl clear_sixteen_entry_table_loop                                ; 1312: 10 fa       ..  :11e1[1]
-    jsr sub_c1278                                                     ; 1314: 20 78 12     x. :11e3[1]
+    jsr set_player_position_for_new_room                              ; 1314: 20 78 12     x. :11e3[1]
     lda #<brk_handler                                                 ; 1317: a9 d3       ..  :11e6[1]
     sta old_brkv2                                                     ; 1319: 8d b3 0a    ... :11e8[1]
     lda #>brk_handler                                                 ; 131c: a9 16       ..  :11eb[1]
     sta old_brkv2+1                                                   ; 131e: 8d b4 0a    ... :11ed[1]
     lda display_initialised_flag                                      ; 1321: ad 0a 11    ... :11f0[1]
-    bne c11f8                                                         ; 1324: d0 03       ..  :11f3[1]
+    bne display_initialised                                           ; 1324: d0 03       ..  :11f3[1]
     jsr initialise_display                                            ; 1326: 20 00 0c     .. :11f5[1]
-; Blank the whole screen temporarily. TODO: Note that when flipping from screen to
-; screen during play, the toolbar is not blanked, but it is here. Is this just cosmetic
-; or is there a technical reason for this?
-c11f8
+; Blank the whole screen temporarily. The toolbar is blanked out here since we are
+; moving to a different level (we need to redraw it to remove any level specific
+; objects obtained). When moving between rooms on the same level the toolbar doesn't
+; change, so remains visible.
+display_initialised
     lda #black                                                        ; 1329: a9 00       ..  :11f8[1]
     sta toolbar_colour                                                ; 132b: 8d 5e 17    .^. :11fa[1]
     sta gameplay_area_colour                                          ; 132e: 8d 60 17    .`. :11fd[1]
@@ -654,13 +655,15 @@ skip_adding_completion_spell_to_toolbar
     ora desired_room_index                                            ; 1385: 05 30       .0  :1254[1]
     ora #$40 ; '@'                                                    ; 1387: 09 40       .@  :1256[1]
     sta level_progress_table,x                                        ; 1389: 9d ef 09    ... :1258[1]
-; set XY to address from the start of the level data based on the room number
+; set YX to the address of the room initialisation code, an address found in a table at
+; start of the level data offset by twice the room number
     lda desired_room_index                                            ; 138c: a5 30       .0  :125b[1]
     asl                                                               ; 138e: 0a          .   :125d[1]
     tay                                                               ; 138f: a8          .   :125e[1]
     ldx level_header_data,y                                           ; 1390: be df 3a    ..: :125f[1]
     lda level_header_data + 1,y                                       ; 1393: b9 e0 3a    ..: :1262[1]
     tay                                                               ; 1396: a8          .   :1265[1]
+; add two to the address in YX, to get past the two initial player position bytes
     txa                                                               ; 1397: 8a          .   :1266[1]
     clc                                                               ; 1398: 18          .   :1267[1]
     adc #2                                                            ; 1399: 69 02       i.  :1268[1]
@@ -668,6 +671,7 @@ skip_adding_completion_spell_to_toolbar
     tya                                                               ; 139c: 98          .   :126b[1]
     adc #0                                                            ; 139d: 69 00       i.  :126c[1]
     tay                                                               ; 139f: a8          .   :126e[1]
+; call the room initialisation code
     jmp jmp_yx                                                        ; 13a0: 4c 66 19    Lf. :126f[1]
 
 data_filename
@@ -675,7 +679,7 @@ data_filename
 data_filename_variable_letter
     !text "A", $0d                                                    ; 13a7: 41 0d       A.  :1276[1]
 
-sub_c1278
+set_player_position_for_new_room
     lda desired_level                                                 ; 13a9: a5 31       .1  :1278[1]
     sec                                                               ; 13ab: 38          8   :127a[1]
     sbc #first_level_letter                                           ; 13ac: e9 41       .A  :127b[1]
@@ -692,6 +696,7 @@ sub_c1278
     bpl skip_developer_mode_code1                                     ; 13c5: 10 05       ..  :1294[1]
     lda room_index_cheat2                                             ; 13c7: ad de 3a    ..: :1296[1]
     sta desired_room_index                                            ; 13ca: 85 30       .0  :1299[1]
+; get room data address
 skip_developer_mode_code1
     lda desired_room_index                                            ; 13cc: a5 30       .0  :129b[1]
     asl                                                               ; 13ce: 0a          .   :129d[1]
@@ -700,6 +705,8 @@ skip_developer_mode_code1
     sta level_data_ptr_low                                            ; 13d3: 85 70       .p  :12a2[1]
     lda level_header_data + 1,y                                       ; 13d5: b9 e0 3a    ..: :12a4[1]
     sta level_data_ptr_high                                           ; 13d8: 85 71       .q  :12a7[1]
+; read first byte into X and the second byte into Y. This is the player start position
+; in cells
     ldy #0                                                            ; 13da: a0 00       ..  :12a9[1]
     lda (level_data_ptr_low),y                                        ; 13dc: b1 70       .p  :12ab[1]
     tax                                                               ; 13de: aa          .   :12ad[1]
@@ -708,6 +715,7 @@ skip_developer_mode_code1
     tay                                                               ; 13e2: a8          .   :12b1[1]
     lda #0                                                            ; 13e3: a9 00       ..  :12b2[1]
     sta temp_sprite_y_offset                                          ; 13e5: 85 3b       .;  :12b4[1]
+; set player position
     lda #0                                                            ; 13e7: a9 00       ..  :12b6[1]
     jmp set_object_position_from_cell_xy                              ; 13e9: 4c 5d 1f    L]. :12b8[1]
 
@@ -8346,7 +8354,6 @@ pydis_end
 
 ; Automatically generated labels:
 ;     c0ae6
-;     c11f8
 ;     c1209
 ;     c12fc
 ;     c1306
@@ -8611,7 +8618,6 @@ pydis_end
 ;     loop_c3d54
 ;     loop_c3f87
 ;     sub_c04cb
-;     sub_c1278
 ;     sub_c2157
 ;     sub_c22ae
 ;     sub_c236b
