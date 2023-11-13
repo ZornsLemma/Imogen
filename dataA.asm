@@ -11,7 +11,7 @@ spriteid_table           = 222
 
 ; Memory locations
 password_characters_entered                         = $05
-l001d                                               = $1d
+sprite_reflect_flag                                 = $1d
 desired_room_index                                  = $30
 desired_level                                       = $31
 l003a                                               = $3a
@@ -311,7 +311,7 @@ level_unchanged
     lda #$c0                                                          ; 3c2b: a9 c0       ..
     sta l38c2,x                                                       ; 3c2d: 9d c2 38    ..8
     lda #$ff                                                          ; 3c30: a9 ff       ..
-    sta l001d                                                         ; 3c32: 85 1d       ..
+    sta sprite_reflect_flag                                           ; 3c32: 85 1d       ..
     ldx #$19                                                          ; 3c34: a2 19       ..
     ldy #$0b                                                          ; 3c36: a0 0b       ..
     lda #$fe                                                          ; 3c38: a9 fe       ..
@@ -1828,7 +1828,7 @@ pydis_end
 ;     c4235:                                                  2
 ;     c432f:                                                  2
 ;     c43a0:                                                  2
-;     l001d:                                                  1
+;     sprite_reflect_flag:                                    1
 ;     l003a:                                                  1
 ;     l0042:                                                  1
 ;     l0052:                                                  1
@@ -1969,7 +1969,6 @@ pydis_end
 ;     c43e3
 ;     c43f6
 ;     c4415
-;     l001d
 ;     l003a
 ;     l003b
 ;     l0042

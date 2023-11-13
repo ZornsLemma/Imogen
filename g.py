@@ -185,7 +185,6 @@ label(0x0018, "sprite_x_base_low")
 label(0x0019, "sprite_x_base_high")
 label(0x001a, "sprite_y_base_low")
 label(0x001b, "sprite_y_base_high")
-label(0x001d, "sprite_reflect_flag")
 
 # Keypresses are checked in the IRQ routine every vsync.
 # Because the main game loop can be slow, multiple vsyncs can occur, so keypresses are accumulated and stored in "pending" variables

@@ -13,6 +13,7 @@ vdu_lf                                         = 10
 
 ; Memory locations
 password_characters_entered                         = $05
+sprite_reflect_flag                                 = $1d
 desired_room_index                                  = $30
 desired_level                                       = $31
 width_in_cells                                      = $3c

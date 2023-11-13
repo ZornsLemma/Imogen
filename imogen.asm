@@ -32,6 +32,7 @@ l0002                                               = &0002
 l0003                                               = &0003
 l0004                                               = &0004
 password_characters_entered                         = &0005
+sprite_reflect_flag                                 = &001d
 desired_room_index                                  = &0030
 desired_level                                       = &0031
 width_in_cells                                      = &003c
