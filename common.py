@@ -182,3 +182,5 @@ constant(40, "game_area_width_cells")
 constant(24, "game_area_height_cells")
 
 label(0x38f6, "play_sound_yx")
+
+label(0x38ac, "object_sprite_mask_type")

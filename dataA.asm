@@ -94,7 +94,7 @@ l2eee                                               = $2eee
 l2ef3                                               = $2ef3
 print_encrypted_string_at_yx_centred                = $37f3
 wait_one_second_then_check_keys                     = $388d
-l38ac                                               = $38ac
+object_sprite_mask_type                             = $38ac
 l38ae                                               = $38ae
 l38c2                                               = $38c2
 l38d8                                               = $38d8
@@ -307,7 +307,7 @@ level_unchanged
     ldx #2                                                            ; 3c21: a2 02       ..
     jsr set_object_position_from_current_sprite_position              ; 3c23: 20 6d 1f     m.
     lda #$cd                                                          ; 3c26: a9 cd       ..
-    sta l38ac,x                                                       ; 3c28: 9d ac 38    ..8
+    sta object_sprite_mask_type,x                                     ; 3c28: 9d ac 38    ..8
     lda #$c0                                                          ; 3c2b: a9 c0       ..
     sta l38c2,x                                                       ; 3c2d: 9d c2 38    ..8
     lda #$ff                                                          ; 3c30: a9 ff       ..
@@ -327,7 +327,7 @@ level_unchanged
     lda #$ff                                                          ; 3c4c: a9 ff       ..
     sta l09be,x                                                       ; 3c4e: 9d be 09    ...
     lda #$ce                                                          ; 3c51: a9 ce       ..
-    sta l38ac,x                                                       ; 3c53: 9d ac 38    ..8
+    sta object_sprite_mask_type,x                                     ; 3c53: 9d ac 38    ..8
     lda #$c0                                                          ; 3c56: a9 c0       ..
     sta l38c2,x                                                       ; 3c58: 9d c2 38    ..8
     ldx #4                                                            ; 3c5b: a2 04       ..
@@ -337,7 +337,7 @@ level_unchanged
     lda #1                                                            ; 3c65: a9 01       ..
     sta l09be,x                                                       ; 3c67: 9d be 09    ...
     lda #$cc                                                          ; 3c6a: a9 cc       ..
-    sta l38ac,x                                                       ; 3c6c: 9d ac 38    ..8
+    sta object_sprite_mask_type,x                                     ; 3c6c: 9d ac 38    ..8
     lda #$40 ; '@'                                                    ; 3c6f: a9 40       .@
     sta l38c2,x                                                       ; 3c71: 9d c2 38    ..8
 ; $3c74 referenced 1 time by $3bfb
@@ -734,7 +734,7 @@ sub_c3f02
     lda #1                                                            ; 3f42: a9 01       ..
     sta l09be,x                                                       ; 3f44: 9d be 09    ...
     lda #$cc                                                          ; 3f47: a9 cc       ..
-    sta l38ac,x                                                       ; 3f49: 9d ac 38    ..8
+    sta object_sprite_mask_type,x                                     ; 3f49: 9d ac 38    ..8
     lda #$d2                                                          ; 3f4c: a9 d2       ..
     sta l09a8,x                                                       ; 3f4e: 9d a8 09    ...
 ; $3f51 referenced 2 times by $3f2d, $3f32
@@ -1282,7 +1282,7 @@ c4339
     lda #$de                                                          ; 4348: a9 de       ..
     sta l09a8,x                                                       ; 434a: 9d a8 09    ...
     lda #$cc                                                          ; 434d: a9 cc       ..
-    sta l38ac,x                                                       ; 434f: 9d ac 38    ..8
+    sta object_sprite_mask_type,x                                     ; 434f: 9d ac 38    ..8
 ; $4352 referenced 1 time by $433d
 c4352
     jmp c43f6                                                         ; 4352: 4c f6 43    L.C
@@ -1774,7 +1774,7 @@ pydis_end
 ;     l0a73:                                                  5
 ;     set_object_position_from_cell_xy:                       5
 ;     something55_TODO:                                       5
-;     l38ac:                                                  5
+;     object_sprite_mask_type:                                5
 ;     define_envelope:                                        5
 ;     c41ae:                                                  5
 ;     c4355:                                                  5
@@ -2003,7 +2003,6 @@ pydis_end
 ;     l2ee9
 ;     l2eee
 ;     l2ef3
-;     l38ac
 ;     l38ae
 ;     l38c2
 ;     l38d8

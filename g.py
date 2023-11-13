@@ -147,6 +147,9 @@ substitute_labels = {
         "address1_low": "menu_item_to_use",
         "address1_high": "menu_has_changed_flag",
     },
+    (0x3d3d, 0x3d41): {
+        "object_sprite_mask_type": "envelope_1",
+    },
 }
 
 # (Class SubstituteLabels is defined in common.py to implement the substitute labels)
@@ -1762,7 +1765,6 @@ comment(0x2177, """object_sprite_mask_type:
     ff means draw without mask,
     otherwise draw normally with mask""")
 label(0x2197, "done_drawing_object")
-label(0x38ac, "object_sprite_mask_type")                # TODO: Re-uses envelope_1, need to resolve label clash
 expr(0x3d62, "spriteid_199")
 expr(0x3d67, "spriteid_198")
 expr(0x1a5d, "spriteid_197")

@@ -66,6 +66,7 @@ find_or_create_menu_slot_for_A                      = $2bbd
 remove_item_from_toolbar_menu                       = $2be0
 print_encrypted_string_at_yx_centred                = $37f3
 wait_one_second_then_check_keys                     = $388d
+object_sprite_mask_type                             = $38ac
 play_sound_yx                                       = $38f6
 check_cursor_left_right_and_space                   = $3a8f
 level_data                                          = $3ad5

@@ -6869,8 +6869,8 @@ sound_data1
     !word 1                                                           ; 39db: 01 00       ..  :38aa[1]   ; duration
 ; The envelope definitions get overwritten after initialisation - this is harmless as
 ; they will have been copied into the OS workspace when they were defined.
-object_sprite_mask_type
 envelope_1
+object_sprite_mask_type
     !byte 1                                                           ; 39dd: 01          .   :38ac[1]   ; envelope number
 l38ad
     !byte 3                                                           ; 39de: 03          .   :38ad[1]   ; step length (100ths of a second)
