@@ -6187,7 +6187,7 @@ c3331
     ldx current_animation                                             ; 3481: ae df 09    ... :3350[1]
     cpx #0                                                            ; 3484: e0 00       ..  :3353[1]
     beq c335b                                                         ; 3486: f0 04       ..  :3355[1]
-    cpx #$16                                                          ; 3488: e0 16       ..  :3357[1]
+    cpx #monkey_transform_out_animation - monkey_transform_in_animation; 3488: e0 16       ..  :3357[1]
     bne c3366                                                         ; 348a: d0 0b       ..  :3359[1]
 c335b
     lda #0                                                            ; 348c: a9 00       ..  :335b[1]

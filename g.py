@@ -513,6 +513,7 @@ expr(0x3312, "monkey_animation6 - monkey_transform_in_animation")
 expr(0x3324, "monkey_fall_animation - monkey_transform_in_animation")
 expr(0x3329, "monkey_animation16 - monkey_transform_in_animation")
 expr(0x3330, "monkey_animation17 - monkey_transform_in_animation")
+expr(0x3358, "monkey_transform_out_animation - monkey_transform_in_animation")
 
 ##################################################################################################
 
