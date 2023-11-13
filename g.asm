@@ -29,6 +29,7 @@ last_level_letter                               = 81
 magenta                                         = 5
 max_filename_len                                = 7
 menu_slot_count                                 = 17
+num_levels                                      = 16
 opcode_clc                                      = 24
 opcode_jmp                                      = 76
 opcode_lda_imm                                  = 169
@@ -629,10 +630,10 @@ skip_adding_completion_spell_to_toolbar
 ; which_dialog_is_active is non-zero when a dialog is active:
 ; 
 ;     1: save or load dialog, or section information dialog
-;     2: save filename dialog
+;     2: choose filename dialog, or level letters dialog
 ;     3: which drive dialog
 ;     4: insert save disk dialog
-;   255: TODO
+;   255: blank dialog shown (to be overwritten by one of the above)
 ; 
     lda #0                                                            ; 1376: a9 00       ..  :1245[1]
     sta which_dialog_is_active                                        ; 1378: 85 04       ..  :1247[1]
@@ -6682,12 +6683,12 @@ show_level_info_dialog
     lda #$11                                                          ; 38af: a9 11       ..  :377e[1]
     sta current_text_width                                            ; 38b1: 8d 09 04    ... :3780[1]
     lda which_dialog_is_active                                        ; 38b4: a5 04       ..  :3783[1]
-    beq c378e                                                         ; 38b6: f0 07       ..  :3785[1]
+    beq show_section_letter_dialog                                    ; 38b6: f0 07       ..  :3785[1]
     cmp #1                                                            ; 38b8: c9 01       ..  :3787[1]
-    beq c37ba                                                         ; 38ba: f0 2f       ./  :3789[1]
+    beq show_level_completion_letters_dialog                          ; 38ba: f0 2f       ./  :3789[1]
     jmp remove_dialog                                                 ; 38bc: 4c 53 04    LS. :378b[1]
 
-c378e
+show_section_letter_dialog
     jsr show_dialog_box                                               ; 38bf: 20 0a 04     .. :378e[1]
     lda #1                                                            ; 38c2: a9 01       ..  :3791[1]
     sta which_dialog_is_active                                        ; 38c4: 85 04       ..  :3793[1]
@@ -6706,12 +6707,12 @@ c378e
 section_message
     !byte $98, $ae, $a8, $bf, $a2, $a4, $a5, $eb, $c6                 ; 38e2: 98 ae a8... ... :37b1[1]
 
-c37ba
+show_level_completion_letters_dialog
     jsr show_dialog_box                                               ; 38eb: 20 0a 04     .. :37ba[1]
     lda #2                                                            ; 38ee: a9 02       ..  :37bd[1]
     sta which_dialog_is_active                                        ; 38f0: 85 04       ..  :37bf[1]
     ldx #first_level_letter                                           ; 38f2: a2 41       .A  :37c1[1]
-c37c3
+show_level_completion_letters_loop
     txa                                                               ; 38f4: 8a          .   :37c3[1]
     tay                                                               ; 38f5: a8          .   :37c4[1]
     jsr convert_section_letter_to_level_filename_letter               ; 38f6: 20 ef 0a     .. :37c5[1]
@@ -6719,25 +6720,30 @@ c37c3
     sec                                                               ; 38fa: 38          8   :37c9[1]
     sbc #first_level_letter                                           ; 38fb: e9 41       .A  :37ca[1]
     tay                                                               ; 38fd: a8          .   :37cc[1]
+; check for level completion
     lda level_progress_table,y                                        ; 38fe: b9 ef 09    ... :37cd[1]
     and #$80                                                          ; 3901: 29 80       ).  :37d0[1]
     tay                                                               ; 3903: a8          .   :37d2[1]
     txa                                                               ; 3904: 8a          .   :37d3[1]
     cpy #0                                                            ; 3905: c0 00       ..  :37d4[1]
-    beq c37da                                                         ; 3907: f0 02       ..  :37d6[1]
+    beq got_character_to_print                                        ; 3907: f0 02       ..  :37d6[1]
+; print diamond for completed level
     lda #$fe                                                          ; 3909: a9 fe       ..  :37d8[1]
-c37da
+got_character_to_print
     jsr print_italic                                                  ; 390b: 20 66 18     f. :37da[1]
-    cpx #$50 ; 'P'                                                    ; 390e: e0 50       .P  :37dd[1]
+    cpx #last_level_letter                                            ; 390e: e0 50       .P  :37dd[1]
     beq return27                                                      ; 3910: f0 11       ..  :37df[1]
+; move forward one character
     lda #9                                                            ; 3912: a9 09       ..  :37e1[1]
     jsr oswrch                                                        ; 3914: 20 ee ff     .. :37e3[1]   ; Write character 9
     txa                                                               ; 3917: 8a          .   :37e6[1]
     inx                                                               ; 3918: e8          .   :37e7[1]
-    cmp #$48 ; 'H'                                                    ; 3919: c9 48       .H  :37e8[1]
-    bne c37c3                                                         ; 391b: d0 d7       ..  :37ea[1]
+; have we reached the end of the first line of letters?
+    cmp #first_level_letter + num_levels/2 - 1                        ; 3919: c9 48       .H  :37e8[1]
+    bne show_level_completion_letters_loop                            ; 391b: d0 d7       ..  :37ea[1]
+; move to second row of letters
     jsr print_2xlf_cr                                                 ; 391d: 20 50 38     P8 :37ec[1]
-    jmp c37c3                                                         ; 3920: 4c c3 37    L.7 :37ef[1]
+    jmp show_level_completion_letters_loop                            ; 3920: 4c c3 37    L.7 :37ef[1]
 
 return27
     rts                                                               ; 3923: 60          `   :37f2[1]
@@ -8434,10 +8440,6 @@ pydis_end
 ;     c3750
 ;     c376b
 ;     c377a
-;     c378e
-;     c37ba
-;     c37c3
-;     c37da
 ;     c381a
 ;     c3867
 ;     c388a
@@ -9100,6 +9102,9 @@ pydis_end
 }
 !if (first_level_letter) != $41 {
     !error "Assertion failed: first_level_letter == $41"
+}
+!if (first_level_letter + num_levels/2 - 1) != $48 {
+    !error "Assertion failed: first_level_letter + num_levels/2 - 1 == $48"
 }
 !if (game_area_height_cells) != $18 {
     !error "Assertion failed: game_area_height_cells == $18"

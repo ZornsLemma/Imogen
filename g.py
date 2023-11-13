@@ -35,6 +35,7 @@ constant(0x18, "opcode_clc")
 constant(0x38, "opcode_sec")
 constant(0xa9, "opcode_lda_imm")
 
+constant(16, "num_levels")
 
 # NOTE:
 #
@@ -873,10 +874,10 @@ expr(0x1742, make_hi("disk_error_message"))
 comment(0x1245, """which_dialog_is_active is non-zero when a dialog is active:
 
     1: save or load dialog, or section information dialog
-    2: save filename dialog
+    2: choose filename dialog, or level letters dialog
     3: which drive dialog
     4: insert save disk dialog
-  255: TODO
+  255: blank dialog shown (to be overwritten by one of the above)
 """)
 label(0x0004, "which_dialog_is_active")
 
@@ -1507,6 +1508,17 @@ label(0x3606, "insert_game_disk_message")
 label(0x35fe, "loading_message")
 label(0x3655, "enter_password_message")
 label(0x37b1, "section_message")
+label(0x378e, "show_section_letter_dialog")
+label(0x37ba, "show_level_completion_letters_dialog")
+label(0x37c3, "show_level_completion_letters_loop")
+comment(0x37cd, "check for level completion")
+label(0x37da, "got_character_to_print")
+comment(0x37d8, "print diamond for completed level")
+expr(0x37de, "last_level_letter")
+comment(0x37e1, "move forward one character")
+comment(0x37e8, "have we reached the end of the first line of letters?")
+comment(0x37ec, "move to second row of letters")
+expr(0x37e9, "first_level_letter + num_levels/2 - 1")
 expr(0x3487, make_lo("enter_filename_message"))
 expr(0x3489, make_hi("enter_filename_message"))
 expr(0x3521, make_lo("insert_save_disk_message"))
