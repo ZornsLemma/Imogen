@@ -291,7 +291,7 @@ initialise_mouse_ball_position_if_level_changed
 level_unchanged
     lda desired_room_index                                            ; 3bf7: a5 30       .0
     cmp #0                                                            ; 3bf9: c9 00       ..
-    bne c3c74                                                         ; 3bfb: d0 77       .w
+    bne move_mouse_ball_if_room_0local                                ; 3bfb: d0 77       .w
     ldx #<envelope1                                                   ; 3bfd: a2 60       .`
     ldy #>envelope1                                                   ; 3bff: a0 44       .D
     jsr define_envelope                                               ; 3c01: 20 5e 39     ^9
@@ -347,8 +347,8 @@ level_unchanged
     lda #$40 ; '@'                                                    ; 3c6f: a9 40       .@
     sta l38c2,x                                                       ; 3c71: 9d c2 38    ..8
 ; $3c74 referenced 1 time by $3bfb
-c3c74
-    jmp move_mouse_ball                                               ; 3c74: 4c a8 3c    L.<
+move_mouse_ball_if_room_0local
+    jmp move_mouse_ball_if_room_0                                     ; 3c74: 4c a8 3c    L.<
 
 ; $3c77 referenced 1 time by $3be9
 bump_and_wrap_mouse_ball_position
@@ -362,13 +362,13 @@ no_wrap_needed
     sty mouse_ball_position                                           ; 3c81: 8c 6f 0a    .o.
     lda desired_room_index                                            ; 3c84: a5 30       .0
     cmp #0                                                            ; 3c86: c9 00       ..
-    bne move_mouse_ball                                               ; 3c88: d0 1e       ..
+    bne move_mouse_ball_if_room_0                                     ; 3c88: d0 1e       ..
     tya                                                               ; 3c8a: 98          .
-    beq c3c91                                                         ; 3c8b: f0 04       ..
+    beq play_mouse_ball_sounds                                        ; 3c8b: f0 04       ..
     cpy #$0f                                                          ; 3c8d: c0 0f       ..
-    bne move_mouse_ball                                               ; 3c8f: d0 17       ..
+    bne move_mouse_ball_if_room_0                                     ; 3c8f: d0 17       ..
 ; $3c91 referenced 1 time by $3c8b
-c3c91
+play_mouse_ball_sounds
     lda #0                                                            ; 3c91: a9 00       ..
     ldx #<mouse_ball_sound1                                           ; 3c93: a2 7e       .~
     ldy #>mouse_ball_sound1                                           ; 3c95: a0 44       .D
@@ -380,7 +380,7 @@ c3c91
     ldy #>mouse_ball_sound3                                           ; 3ca3: a0 44       .D
     jsr play_sound_yx                                                 ; 3ca5: 20 f6 38     .8
 ; $3ca8 referenced 3 times by $3c74, $3c88, $3c8f
-move_mouse_ball
+move_mouse_ball_if_room_0
     lda desired_room_index                                            ; 3ca8: a5 30       .0
     cmp #0                                                            ; 3caa: c9 00       ..
     bne return1                                                       ; 3cac: d0 72       .r
@@ -1803,7 +1803,7 @@ pydis_end
 ;     find_or_create_menu_slot_for_A:                         3
 ;     l2eb6:                                                  3
 ;     l38c2:                                                  3
-;     move_mouse_ball:                                        3
+;     move_mouse_ball_if_room_0:                              3
 ;     return1:                                                3
 ;     c3f8a:                                                  3
 ;     c419f:                                                  3
@@ -1860,10 +1860,10 @@ pydis_end
 ;     sub_c3be4:                                              1
 ;     initialise_mouse_ball_position_if_level_changed:        1
 ;     level_unchanged:                                        1
-;     c3c74:                                                  1
+;     move_mouse_ball_if_room_0local:                         1
 ;     bump_and_wrap_mouse_ball_position:                      1
 ;     no_wrap_needed:                                         1
-;     c3c91:                                                  1
+;     play_mouse_ball_sounds:                                 1
 ;     c3cb9:                                                  1
 ;     c3cc3:                                                  1
 ;     c3cd9:                                                  1
@@ -1914,8 +1914,6 @@ pydis_end
 
 ; Automatically generated labels:
 ;     c3b0e
-;     c3c74
-;     c3c91
 ;     c3cb9
 ;     c3cc3
 ;     c3cd9
