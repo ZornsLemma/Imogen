@@ -693,11 +693,11 @@ l3eee
 ; $3ef1 referenced 2 times by $3ecf, $41d6
 sub_c3ef1
     lda #0                                                            ; 3ef1: a9 00       ..
-    ldx #$42 ; 'B'                                                    ; 3ef3: a2 42       .B
-    ldy #$44 ; 'D'                                                    ; 3ef5: a0 44       .D
+    ldx #<some_sound1                                                 ; 3ef3: a2 42       .B
+    ldy #>some_sound1                                                 ; 3ef5: a0 44       .D
     jsr play_sound_yx                                                 ; 3ef7: 20 f6 38     .8
-    ldx #$3a ; ':'                                                    ; 3efa: a2 3a       .:
-    ldy #$44 ; 'D'                                                    ; 3efc: a0 44       .D
+    ldx #<some_sound2                                                 ; 3efa: a2 3a       .:
+    ldy #>some_sound2                                                 ; 3efc: a0 44       .D
     jsr play_sound_yx                                                 ; 3efe: 20 f6 38     .8
     rts                                                               ; 3f01: 60          `
 
@@ -1426,8 +1426,10 @@ envelope2
     !byte 250                                                         ; 4437: fa          .              ; change of amplitude per step during release phase
     !byte 115                                                         ; 4438: 73          s              ; target of level at end of attack phase
     !byte 0                                                           ; 4439: 00          .              ; target of level at end of decay phase
-    !byte $10,   0,   6,   0,   7,   0,   1,   0, $11,   0,   0,   0  ; 443a: 10 00 06... ...
-    !byte $d2,   0,   1,   0                                          ; 4446: d2 00 01... ...
+some_sound2
+    !byte $10,   0,   6,   0,   7,   0,   1,   0                      ; 443a: 10 00 06... ...
+some_sound1
+    !byte $11,   0,   0,   0, $d2,   0,   1,   0                      ; 4442: 11 00 00... ...
 envelope4
     !byte 6                                                           ; 444a: 06          .              ; envelope number
     !byte 1                                                           ; 444b: 01          .              ; step length (100ths of a second)
@@ -2032,6 +2034,12 @@ pydis_end
 !if (<mouse_ball_sound3) != $6e {
     !error "Assertion failed: <mouse_ball_sound3 == $6e"
 }
+!if (<some_sound1) != $42 {
+    !error "Assertion failed: <some_sound1 == $42"
+}
+!if (<some_sound2) != $3a {
+    !error "Assertion failed: <some_sound2 == $3a"
+}
 !if (<tile_all_set_pixels) != $a9 {
     !error "Assertion failed: <tile_all_set_pixels == $a9"
 }
@@ -2058,6 +2066,12 @@ pydis_end
 }
 !if (>mouse_ball_sound3) != $44 {
     !error "Assertion failed: >mouse_ball_sound3 == $44"
+}
+!if (>some_sound1) != $44 {
+    !error "Assertion failed: >some_sound1 == $44"
+}
+!if (>some_sound2) != $44 {
+    !error "Assertion failed: >some_sound2 == $44"
 }
 !if (>tile_all_set_pixels) != $0a {
     !error "Assertion failed: >tile_all_set_pixels == $0a"

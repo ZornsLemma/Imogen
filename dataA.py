@@ -2,6 +2,7 @@ from commands import *
 import acorn
 import re
 from common import *
+from memorymanager import get_u8_runtime, RuntimeAddr
 acorn.bbc()
 
 sprite_dict = {
@@ -100,6 +101,20 @@ expr(0x3c9d, make_hi("mouse_ball_sound2"))
 expr(0x3ca2, make_lo("mouse_ball_sound3"))
 expr(0x3ca4, make_hi("mouse_ball_sound3"))
 entry(0x3d20, "return1")
+
+# TODO: Use this more?
+def ldx_ldy_jsr_play_sound_yx(jsr_runtime_addr, s):
+    # TODO: assert we have ldx # and ldy # opcodes immediately before jsr_addr?
+    sound_addr_lo = get_u8_runtime(RuntimeAddr(jsr_runtime_addr - 3))
+    sound_addr_hi = get_u8_runtime(RuntimeAddr(jsr_runtime_addr - 1))
+    sound_addr = (sound_addr_hi << 8) | sound_addr_lo
+    label(sound_addr, s)
+    expr(jsr_runtime_addr - 3, make_lo(s))
+    expr(jsr_runtime_addr - 1, make_hi(s))
+ldx_ldy_jsr_play_sound_yx(0x3ef7, "some_sound1")
+ldx_ldy_jsr_play_sound_yx(0x3efe, "some_sound2")
+
+
 
 # TODO: envelope1/2/4 share the same envelope number (6) - maybe we should adopt a convention of using labels like envelopeA6b -> level A, OS env number 6, a/b/c/d suffix indicates competing envelopes for that OS env number
 entry(0x395e, "define_envelope") # TODO: duplicate of line in g.py, can't trivially put in common as it breaks imogen.py
