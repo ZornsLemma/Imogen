@@ -6731,7 +6731,7 @@ show_level_completion_letters_loop
     lda #$fe                                                          ; 3909: a9 fe       ..  :37d8[1]
 got_character_to_print
     jsr print_italic                                                  ; 390b: 20 66 18     f. :37da[1]
-    cpx #last_level_letter                                            ; 390e: e0 50       .P  :37dd[1]
+    cpx #last_level_letter+1                                          ; 390e: e0 50       .P  :37dd[1]
     beq return27                                                      ; 3910: f0 11       ..  :37df[1]
 ; move forward one character
     lda #9                                                            ; 3912: a9 09       ..  :37e1[1]
@@ -7285,7 +7285,7 @@ execution_start
     lda #>wait_for_timingB_counter                                    ; 3c22: a9 04       ..
     sta l0073                                                         ; 3c24: 85 73       .s
     ldx #2                                                            ; 3c26: a2 02       ..
-    beq relocation2                                                   ; 3c28: f0 10       ..             ; TODO: branch never taken?
+    beq relocation2                                                   ; 3c28: f0 10       ..             ; branch never taken
     ldy #0                                                            ; 3c2a: a0 00       ..
 relocation1_loop
     lda (address1_low),y                                              ; 3c2c: b1 70       .p
@@ -7310,13 +7310,13 @@ relocation2
     sta l0073                                                         ; 3c48: 85 73       .s
     lda address1_high                                                 ; 3c4a: a5 71       .q
     cmp l0073                                                         ; 3c4c: c5 73       .s
-    bne skip4                                                         ; 3c4e: d0 06       ..             ; TODO: branch always taken?
+    bne skip4                                                         ; 3c4e: d0 06       ..             ; branch always taken
     lda address1_low                                                  ; 3c50: a5 70       .p
     cmp l0072                                                         ; 3c52: c5 72       .r
     beq relocation3                                                   ; 3c54: f0 14       ..
 skip4
     ldx #$2a ; '*'                                                    ; 3c56: a2 2a       .*
-    beq relocation3                                                   ; 3c58: f0 10       ..             ; TODO: branch never taken?
+    beq relocation3                                                   ; 3c58: f0 10       ..             ; branch never taken
     ldy #0                                                            ; 3c5a: a0 00       ..
 relocation2_loop
     lda (address1_low),y                                              ; 3c5c: b1 70       .p
@@ -9159,6 +9159,9 @@ pydis_end
 }
 !if (last_level_letter) != $51 {
     !error "Assertion failed: last_level_letter == $51"
+}
+!if (last_level_letter+1) != $50 {
+    !error "Assertion failed: last_level_letter+1 == $50"
 }
 !if (level_ordering_table - 1) != $0a7e {
     !error "Assertion failed: level_ordering_table - 1 == $0a7e"
