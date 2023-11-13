@@ -3180,6 +3180,8 @@ set_object_position_from_current_sprite_position
     pla                                                               ; 20b3: 68          h   :1f82[1]
     rts                                                               ; 20b4: 60          `   :1f83[1]
 
+; TODO: I think l003b is an input to this - it's set by e.g. dataA.asm at $3c14 before
+; calling this via draw_sprite_a_at_cell_y
 ; *************************************************************************************
 ; 
 ; Set current sprite position from cell XY coordinates

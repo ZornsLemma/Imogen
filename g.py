@@ -318,6 +318,7 @@ sprite_dict = {
 
 label(0x1f4c, "draw_sprite_a_at_cell_xy")
 label(0x1f84, "set_sprite_pixel_position_from_cell_xy")
+comment(0x1f84, "TODO: I think l003b is an input to this - it's set by e.g. dataA.asm at $3c14 before calling this via draw_sprite_a_at_cell_y")
 
 label(0x9d4, "object_current_index_in_animation")
 label(0x9d5, "object_current_index_in_animation+1")

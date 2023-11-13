@@ -271,11 +271,11 @@ loop_c3bd4
 ; $3be4 referenced 1 time by $3b17
 sub_c3be4
     lda something23_TODO_executing_flag                               ; 3be4: ad 2b 13    .+.
-    bne c3bec                                                         ; 3be7: d0 03       ..
+    bne initialise_mouse_ball_position_if_level_changed               ; 3be7: d0 03       ..
     jmp bump_and_wrap_mouse_ball_position                             ; 3be9: 4c 77 3c    Lw<
 
 ; $3bec referenced 1 time by $3be7
-c3bec
+initialise_mouse_ball_position_if_level_changed
     lda desired_level                                                 ; 3bec: a5 31       .1
     cmp previous_level                                                ; 3bee: c5 51       .Q
     beq level_unchanged                                               ; 3bf0: f0 05       ..
@@ -1852,7 +1852,7 @@ pydis_end
 ;     developer_mode_not_active:                              1
 ;     loop_c3bd4:                                             1
 ;     sub_c3be4:                                              1
-;     c3bec:                                                  1
+;     initialise_mouse_ball_position_if_level_changed:        1
 ;     level_unchanged:                                        1
 ;     c3c74:                                                  1
 ;     bump_and_wrap_mouse_ball_position:                      1
@@ -1908,7 +1908,6 @@ pydis_end
 
 ; Automatically generated labels:
 ;     c3b0e
-;     c3bec
 ;     c3c74
 ;     c3c91
 ;     c3cb9
