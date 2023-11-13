@@ -1510,6 +1510,9 @@ comment(0x1169, "if load successful, then skip forward", inline=True)
 
 comment(0x12c0, "call room update for the first time")
 comment(0x12d4, "start transformation to the wizard if it's a new level")
+label(0x131e, "regulate_time_loop")
+comment(0x1312, "update room")
+comment(0x131e, "wait until five vsyncs have elapsed before continuing")
 
 label(0x1175, "level_already_loaded")
 label(0x36da, "check_password_level")

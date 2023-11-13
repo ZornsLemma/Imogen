@@ -759,18 +759,20 @@ c12fc
     jsr wait_for_vsync                                                ; 1434: 20 8c 17     .. :1303[1]
 c1306
     jsr something20_TODO                                              ; 1437: 20 38 2a     8* :1306[1]
-    jsr c131e                                                         ; 143a: 20 1e 13     .. :1309[1]
+    jsr regulate_time_loop                                            ; 143a: 20 1e 13     .. :1309[1]
     jsr read_jump_zx_keys                                             ; 143d: 20 a2 3a     .: :130c[1]
     jsr check_for_next_player_animation                               ; 1440: 20 cd 22     ." :130f[1]
+; update room
     ldx update_room_ptr                                               ; 1443: ae d9 3a    ..: :1312[1]
     ldy update_room_ptr + 1                                           ; 1446: ac da 3a    ..: :1315[1]
     jsr jmp_yx                                                        ; 1449: 20 66 19     f. :1318[1]
     jmp something12_TODO                                              ; 144c: 4c c3 18    L.. :131b[1]
 
-c131e
+; wait until five vsyncs have elapsed before continuing
+regulate_time_loop
     lda vsync_counter                                                 ; 144f: ad 8b 17    ... :131e[1]
     cmp #5                                                            ; 1452: c9 05       ..  :1321[1]
-    bcc c131e                                                         ; 1454: 90 f9       ..  :1323[1]
+    bcc regulate_time_loop                                            ; 1454: 90 f9       ..  :1323[1]
     lda #0                                                            ; 1456: a9 00       ..  :1325[1]
     sta vsync_counter                                                 ; 1458: 8d 8b 17    ... :1327[1]
     rts                                                               ; 145b: 60          `   :132a[1]
@@ -8358,7 +8360,6 @@ pydis_end
 ;     c0ae6
 ;     c12fc
 ;     c1306
-;     c131e
 ;     c149c
 ;     c16aa
 ;     c1937
