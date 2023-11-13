@@ -204,8 +204,8 @@ desired_room_index                          = $30
 desired_level                               = $31
 currently_loaded_level                      = $37
 l0039                                       = $39
-l003a                                       = $3a
-l003b                                       = $3b
+temp_sprite_x_offset                        = $3a
+temp_sprite_y_offset                        = $3b
 width_in_cells                              = $3c
 height_in_cells                             = $3d
 value_to_write_to_collision_map             = $3e
@@ -699,7 +699,7 @@ skip_developer_mode_code1
     lda (level_data_ptr_low),y                                        ; 13e0: b1 70       .p  :12af[1]
     tay                                                               ; 13e2: a8          .   :12b1[1]
     lda #0                                                            ; 13e3: a9 00       ..  :12b2[1]
-    sta l003b                                                         ; 13e5: 85 3b       .;  :12b4[1]
+    sta temp_sprite_y_offset                                          ; 13e5: 85 3b       .;  :12b4[1]
     lda #0                                                            ; 13e7: a9 00       ..  :12b6[1]
     jmp set_object_position_from_cell_xy                              ; 13e9: 4c 5d 1f    L]. :12b8[1]
 
@@ -2048,7 +2048,7 @@ c1a59
     bcc c1a8f                                                         ; 1bb1: 90 0d       ..  :1a80[1]
     lda #$ff                                                          ; 1bb3: a9 ff       ..  :1a82[1]
     sta object_direction,x                                            ; 1bb5: 9d be 09    ... :1a84[1]
-    inc l003a                                                         ; 1bb8: e6 3a       .:  :1a87[1]
+    inc temp_sprite_x_offset                                          ; 1bb8: e6 3a       .:  :1a87[1]
     tya                                                               ; 1bba: 98          .   :1a89[1]
     sbc #8                                                            ; 1bbb: e9 08       ..  :1a8a[1]
     eor #$ff                                                          ; 1bbd: 49 ff       I.  :1a8c[1]
@@ -2062,8 +2062,8 @@ c1a8f
     jsr set_object_position_from_cell_xy                              ; 1bcc: 20 5d 1f     ]. :1a9b[1]
 c1a9e
     lda #0                                                            ; 1bcf: a9 00       ..  :1a9e[1]
-    sta l003a                                                         ; 1bd1: 85 3a       .:  :1aa0[1]
-    sta l003b                                                         ; 1bd3: 85 3b       .;  :1aa2[1]
+    sta temp_sprite_x_offset                                          ; 1bd1: 85 3a       .:  :1aa0[1]
+    sta temp_sprite_y_offset                                          ; 1bd3: 85 3b       .;  :1aa2[1]
     lda l1aae                                                         ; 1bd5: ad ae 1a    ... :1aa4[1]
     ldx l1aaf                                                         ; 1bd8: ae af 1a    ... :1aa7[1]
     ldy l1ab0                                                         ; 1bdb: ac b0 1a    ... :1aaa[1]
@@ -3103,7 +3103,7 @@ outside_game_area
 ; *************************************************************************************
 draw_sprite_a_at_cell_xy
     sta sprite_id                                                     ; 207d: 85 16       ..  :1f4c[1]
-    jsr set_sprite_pixel_position_from_cell_xy                        ; 207f: 20 84 1f     .. :1f4e[1]
+    jsr set_sprite_pixel_position_to_cell_xy_plus_pixel_offset        ; 207f: 20 84 1f     .. :1f4e[1]
     jsr sprite_op                                                     ; 2082: 20 8d 13     .. :1f51[1]
     lda sprite_id                                                     ; 2085: a5 16       ..  :1f54[1]
     rts                                                               ; 2087: 60          `   :1f56[1]
@@ -3143,7 +3143,7 @@ draw_sprite_a_at_cell_xy_and_write_to_collision_map
 ; 
 ; *************************************************************************************
 set_object_position_from_cell_xy
-    jsr set_sprite_pixel_position_from_cell_xy                        ; 208e: 20 84 1f     .. :1f5d[1]
+    jsr set_sprite_pixel_position_to_cell_xy_plus_pixel_offset        ; 208e: 20 84 1f     .. :1f5d[1]
     stx remember_x                                                    ; 2091: 8e 6c 1f    .l. :1f60[1]
     tax                                                               ; 2094: aa          .   :1f63[1]
     jsr set_object_position_from_current_sprite_position              ; 2095: 20 6d 1f     m. :1f64[1]
@@ -3180,21 +3180,21 @@ set_object_position_from_current_sprite_position
     pla                                                               ; 20b3: 68          h   :1f82[1]
     rts                                                               ; 20b4: 60          `   :1f83[1]
 
-; TODO: I think l003b is an input to this - it's set by e.g. dataA.asm at $3c14 before
-; calling this via draw_sprite_a_at_cell_y
 ; *************************************************************************************
 ; 
-; Set current sprite position from cell XY coordinates
+; Set the current sprite position to a cell XY plus a pixel offset
 ; 
 ; On Entry:
-;     (X,Y): cell coordinates
+;     (X,Y): cell coordinates (can be negative)
+;     temp_sprite_x_offset: Add pixel offset to the result (then reset to zero on exit)
+;     temp_sprite_y_offset: Add pixel offset to the result (then reset to zero on exit)
 ; 
 ; On Exit:
 ;     (sprite_x_base, sprite_y_base): pixel position
 ;     Preserves A,X,Y
 ; 
 ; *************************************************************************************
-set_sprite_pixel_position_from_cell_xy
+set_sprite_pixel_position_to_cell_xy_plus_pixel_offset
     pha                                                               ; 20b5: 48          H   :1f84[1]
     txa                                                               ; 20b6: 8a          .   :1f85[1]
     pha                                                               ; 20b7: 48          H   :1f86[1]
@@ -3207,16 +3207,16 @@ set_sprite_pixel_position_from_cell_xy
     sta sprite_x_base_low                                             ; 20be: 85 18       ..  :1f8d[1]
     txa                                                               ; 20c0: 8a          .   :1f8f[1]
     and #$80                                                          ; 20c1: 29 80       ).  :1f90[1]
-    beq c1f96                                                         ; 20c3: f0 02       ..  :1f92[1]
+    beq positive_x_cell                                               ; 20c3: f0 02       ..  :1f92[1]
     lda #$ff                                                          ; 20c5: a9 ff       ..  :1f94[1]
-c1f96
+positive_x_cell
     rol                                                               ; 20c7: 2a          *   :1f96[1]
     sta sprite_x_base_high                                            ; 20c8: 85 19       ..  :1f97[1]
     ldx #0                                                            ; 20ca: a2 00       ..  :1f99[1]
-    lda l003a                                                         ; 20cc: a5 3a       .:  :1f9b[1]
-    bpl c1fa0                                                         ; 20ce: 10 01       ..  :1f9d[1]
+    lda temp_sprite_x_offset                                          ; 20cc: a5 3a       .:  :1f9b[1]
+    bpl positive_x_pixel                                              ; 20ce: 10 01       ..  :1f9d[1]
     dex                                                               ; 20d0: ca          .   :1f9f[1]
-c1fa0
+positive_x_pixel
     clc                                                               ; 20d1: 18          .   :1fa0[1]
     adc sprite_x_base_low                                             ; 20d2: 65 18       e.  :1fa1[1]
     sta sprite_x_base_low                                             ; 20d4: 85 18       ..  :1fa3[1]
@@ -3230,16 +3230,16 @@ c1fa0
     sta sprite_y_base_low                                             ; 20df: 85 1a       ..  :1fae[1]
     tya                                                               ; 20e1: 98          .   :1fb0[1]
     and #$80                                                          ; 20e2: 29 80       ).  :1fb1[1]
-    beq c1fb7                                                         ; 20e4: f0 02       ..  :1fb3[1]
+    beq positive_y_cell                                               ; 20e4: f0 02       ..  :1fb3[1]
     lda #$ff                                                          ; 20e6: a9 ff       ..  :1fb5[1]
-c1fb7
+positive_y_cell
     rol                                                               ; 20e8: 2a          *   :1fb7[1]
     sta sprite_y_base_high                                            ; 20e9: 85 1b       ..  :1fb8[1]
     ldy #0                                                            ; 20eb: a0 00       ..  :1fba[1]
-    lda l003b                                                         ; 20ed: a5 3b       .;  :1fbc[1]
-    bpl c1fc1                                                         ; 20ef: 10 01       ..  :1fbe[1]
+    lda temp_sprite_y_offset                                          ; 20ed: a5 3b       .;  :1fbc[1]
+    bpl positive_y_pixel                                              ; 20ef: 10 01       ..  :1fbe[1]
     dey                                                               ; 20f1: 88          .   :1fc0[1]
-c1fc1
+positive_y_pixel
     clc                                                               ; 20f2: 18          .   :1fc1[1]
     adc sprite_y_base_low                                             ; 20f3: 65 1a       e.  :1fc2[1]
     sta sprite_y_base_low                                             ; 20f5: 85 1a       ..  :1fc4[1]
@@ -3247,8 +3247,8 @@ c1fc1
     adc sprite_y_base_high                                            ; 20f8: 65 1b       e.  :1fc7[1]
     sta sprite_y_base_high                                            ; 20fa: 85 1b       ..  :1fc9[1]
     lda #0                                                            ; 20fc: a9 00       ..  :1fcb[1]
-    sta l003a                                                         ; 20fe: 85 3a       .:  :1fcd[1]
-    sta l003b                                                         ; 2100: 85 3b       .;  :1fcf[1]
+    sta temp_sprite_x_offset                                          ; 20fe: 85 3a       .:  :1fcd[1]
+    sta temp_sprite_y_offset                                          ; 2100: 85 3b       .;  :1fcf[1]
     pla                                                               ; 2102: 68          h   :1fd1[1]
     tay                                                               ; 2103: a8          .   :1fd2[1]
     pla                                                               ; 2104: 68          h   :1fd3[1]
@@ -7422,8 +7422,8 @@ define_character_fe_loop
     lda #$ff                                                          ; 3d26: a9 ff       ..
     sta print_in_italics_flag                                         ; 3d28: 85 43       .C
     lda #sprite_op_flags_normal                                       ; 3d2a: a9 00       ..
-    sta l003a                                                         ; 3d2c: 85 3a       .:
-    sta l003b                                                         ; 3d2e: 85 3b       .;
+    sta temp_sprite_x_offset                                          ; 3d2c: 85 3a       .:
+    sta temp_sprite_y_offset                                          ; 3d2e: 85 3b       .;
     sta sprite_op_flags                                               ; 3d30: 85 15       ..
     lda #1                                                            ; 3d32: a9 01       ..
     sta sprite_reflect_flag                                           ; 3d34: 85 1d       ..
@@ -8276,10 +8276,6 @@ pydis_end
 ;     c1a9e
 ;     c1d16
 ;     c1f06
-;     c1f96
-;     c1fa0
-;     c1fb7
-;     c1fc1
 ;     c1fe9
 ;     c200d
 ;     c2020
@@ -8457,8 +8453,6 @@ pydis_end
 ;     c3a88
 ;     l0026
 ;     l0039
-;     l003a
-;     l003b
 ;     l003f
 ;     l0044
 ;     l0052

@@ -194,6 +194,8 @@ label(0x002a, "space_bar_press_pending")
 label(0x002b, "space_bar_pressed")
 label(0x002c, "z_key_pressed_pending")
 label(0x002d, "x_key_pressed_pending")
+label(0x003a, "temp_sprite_x_offset")
+label(0x003b, "temp_sprite_y_offset")
 label(0x0049, "temp_value")
 label(0x004a, "temp_coordinate")
 
@@ -319,8 +321,7 @@ sprite_dict = {
 }
 
 label(0x1f4c, "draw_sprite_a_at_cell_xy")
-label(0x1f84, "set_sprite_pixel_position_from_cell_xy")
-comment(0x1f84, "TODO: I think l003b is an input to this - it's set by e.g. dataA.asm at $3c14 before calling this via draw_sprite_a_at_cell_y")
+label(0x1f84, "set_sprite_pixel_position_to_cell_xy_plus_pixel_offset")
 
 label(0x9d4, "object_current_index_in_animation")
 label(0x9d5, "object_current_index_in_animation+1")
@@ -753,16 +754,23 @@ On Exit:
 
 comment(0x1f84, """*************************************************************************************
 
-Set current sprite position from cell XY coordinates
+Set the current sprite position to a cell XY plus a pixel offset
 
 On Entry:
-    (X,Y): cell coordinates
+    (X,Y): cell coordinates (can be negative)
+    temp_sprite_x_offset: Add pixel offset to the result (then reset to zero on exit)
+    temp_sprite_y_offset: Add pixel offset to the result (then reset to zero on exit)
 
 On Exit:
     (sprite_x_base, sprite_y_base): pixel position
     Preserves A,X,Y
 
 *************************************************************************************""")
+
+label(0x1f96, "positive_x_cell")
+label(0x1fb7, "positive_y_cell")
+label(0x1fa0, "positive_x_pixel")
+label(0x1fc1, "positive_y_pixel")
 
 comment(0x18a6, """*************************************************************************************
 
