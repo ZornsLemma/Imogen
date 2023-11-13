@@ -268,11 +268,13 @@ src_sprite_address_high                     = $71
 l0072                                       = $72
 osfile_block_filename_low                   = $72
 sprite_screen_address_low                   = $72
+temp_animation_low                          = $72
 width_in_cells_to_write                     = $72
 height_in_cells_to_write                    = $73
 l0073                                       = $73
 osfile_block_filename_high                  = $73
 sprite_screen_address_high                  = $73
+temp_animation_high                         = $73
 first_cell_in_row_screen_address_low        = $74
 l0074                                       = $74
 offset_within_byte                          = $74
@@ -3613,29 +3615,46 @@ skip9
     sta object_y_high                                                 ; 2375: 8d 92 09    ... :2244[1]
     rts                                                               ; 2378: 60          `   :2247[1]
 
-something18_TODO
-    stx l0072                                                         ; 2379: 86 72       .r  :2248[1]
-    sty l0073                                                         ; 237b: 84 73       .s  :224a[1]
+; *************************************************************************************
+; 
+; Update player accessory object animation
+; 
+; The player is object zero, and can have an associated 'accessory' object at index
+; one. This is often a tail, but otherwise can be an item the wizard is carrying (e.g.
+; the whip)
+; 
+; On Entry:
+;     A: if +ve, it's a spriteid
+;        if -ve, it's TODO: some kind of offset to get a spriteid?
+; 
+;     YX: Address of animation
+; 
+; *************************************************************************************
+update_player_accessory_object_animation
+    stx temp_animation_low                                            ; 2379: 86 72       .r  :2248[1]
+    sty temp_animation_high                                           ; 237b: 84 73       .s  :224a[1]
     ldy #0                                                            ; 237d: a0 00       ..  :224c[1]
     ora #0                                                            ; 237f: 09 00       ..  :224e[1]
-    bpl c2267                                                         ; 2381: 10 15       ..  :2250[1]
+    bpl store_accessory_object_state                                  ; 2381: 10 15       ..  :2250[1]
     and #$7f                                                          ; 2383: 29 7f       ).  :2252[1]
     tay                                                               ; 2385: a8          .   :2254[1]
     lda (animation_address_low),y                                     ; 2386: b1 70       .p  :2255[1]
     cpy #$7f                                                          ; 2388: c0 7f       ..  :2257[1]
-    bne c2267                                                         ; 238a: d0 0c       ..  :2259[1]
+    bne store_accessory_object_state                                  ; 238a: d0 0c       ..  :2259[1]
+; check for end of animation (loop if needed)
     ldy object_current_index_in_animation+1                           ; 238c: ac d5 09    ... :225b[1]
     iny                                                               ; 238f: c8          .   :225e[1]
     lda (animation_address_low),y                                     ; 2390: b1 70       .p  :225f[1]
-    bne c2267                                                         ; 2392: d0 04       ..  :2261[1]
+    bne store_accessory_object_state                                  ; 2392: d0 04       ..  :2261[1]
     ldy #0                                                            ; 2394: a0 00       ..  :2263[1]
     lda (animation_address_low),y                                     ; 2396: b1 70       .p  :2265[1]
-c2267
+store_accessory_object_state
     sty object_current_index_in_animation+1                           ; 2398: 8c d5 09    ... :2267[1]
     sta object_spriteid+1                                             ; 239b: 8d a9 09    ... :226a[1]
     lda object_direction                                              ; 239e: ad be 09    ... :226d[1]
     sta object_direction+1                                            ; 23a1: 8d bf 09    ... :2270[1]
     lda object_spriteid                                               ; 23a4: ad a8 09    ... :2273[1]
+; add animation XY offset to player object position (inverted if looking left)
     jsr sub_c22ae                                                     ; 23a7: 20 ae 22     ." :2276[1]
     txa                                                               ; 23aa: 8a          .   :2279[1]
     ldx object_direction                                              ; 23ab: ae be 09    ... :227a[1]
@@ -3679,7 +3698,7 @@ loop_c22b4
     iny                                                               ; 23ea: c8          .   :22b9[1]
     iny                                                               ; 23eb: c8          .   :22ba[1]
 c22bb
-    lda (l0072),y                                                     ; 23ec: b1 72       .r  :22bb[1]
+    lda (temp_animation_low),y                                        ; 23ec: b1 72       .r  :22bb[1]
     bne loop_c22b4                                                    ; 23ee: d0 f5       ..  :22bd[1]
     ldx #0                                                            ; 23f0: a2 00       ..  :22bf[1]
     ldy #0                                                            ; 23f2: a0 00       ..  :22c1[1]
@@ -3687,10 +3706,10 @@ c22bb
 
 c22c4
     iny                                                               ; 23f5: c8          .   :22c4[1]
-    lda (l0072),y                                                     ; 23f6: b1 72       .r  :22c5[1]
+    lda (temp_animation_low),y                                        ; 23f6: b1 72       .r  :22c5[1]
     tax                                                               ; 23f8: aa          .   :22c7[1]
     iny                                                               ; 23f9: c8          .   :22c8[1]
-    lda (l0072),y                                                     ; 23fa: b1 72       .r  :22c9[1]
+    lda (temp_animation_low),y                                        ; 23fa: b1 72       .r  :22c9[1]
     tay                                                               ; 23fc: a8          .   :22cb[1]
     rts                                                               ; 23fd: 60          `   :22cc[1]
 
@@ -3868,11 +3887,11 @@ play_landing_sound
     tya                                                               ; 24dd: 98          .   :23ac[1]
     pha                                                               ; 24de: 48          H   :23ad[1]
     lda #0                                                            ; 24df: a9 00       ..  :23ae[1]
-    ldx #<sound_data4                                                 ; 24e1: a2 ee       ..  :23b0[1]
-    ldy #>sound_data4                                                 ; 24e3: a0 38       .8  :23b2[1]
+    ldx #<sound_landing1                                              ; 24e1: a2 ee       ..  :23b0[1]
+    ldy #>sound_landing1                                              ; 24e3: a0 38       .8  :23b2[1]
     jsr play_sound_yx                                                 ; 24e5: 20 f6 38     .8 :23b4[1]
-    ldx #<sound_data5                                                 ; 24e8: a2 e6       ..  :23b7[1]
-    ldy #>sound_data5                                                 ; 24ea: a0 38       .8  :23b9[1]
+    ldx #<sound_landing2                                              ; 24e8: a2 e6       ..  :23b7[1]
+    ldy #>sound_landing2                                              ; 24ea: a0 38       .8  :23b9[1]
     jsr play_sound_yx                                                 ; 24ec: 20 f6 38     .8 :23bb[1]
     pla                                                               ; 24ef: 68          h   :23be[1]
     tay                                                               ; 24f0: a8          .   :23bf[1]
@@ -5416,7 +5435,7 @@ update_wizard_animation
     lda object_direction                                              ; 2ecc: ad be 09    ... :2d9b[1]
     eor #$fe                                                          ; 2ecf: 49 fe       I.  :2d9e[1]
     sta object_direction                                              ; 2ed1: 8d be 09    ... :2da0[1]
-    jmp c2e5f                                                         ; 2ed4: 4c 5f 2e    L_. :2da3[1]
+    jmp store_wizard_animation_state                                  ; 2ed4: 4c 5f 2e    L_. :2da3[1]
 
 c2da6
     jsr sub_c23c4                                                     ; 2ed7: 20 c4 23     .# :2da6[1]
@@ -5431,7 +5450,7 @@ c2da6
     cpy #wizard_jump_animation - wizard_transform_in_animation        ; 2eed: c0 49       .I  :2dbc[1]
     beq c2dc3                                                         ; 2eef: f0 03       ..  :2dbe[1]
 c2dc0
-    jmp c2e5f                                                         ; 2ef1: 4c 5f 2e    L_. :2dc0[1]
+    jmp store_wizard_animation_state                                  ; 2ef1: 4c 5f 2e    L_. :2dc0[1]
 
 c2dc3
     lda #wizard_fall_animation - wizard_transform_in_animation        ; 2ef4: a9 96       ..  :2dc3[1]
@@ -5455,7 +5474,7 @@ c2de4
     beq c2dc0                                                         ; 2f1a: f0 d5       ..  :2de9[1]
     sta current_animation                                             ; 2f1c: 8d df 09    ... :2deb[1]
     ldy #$86                                                          ; 2f1f: a0 86       ..  :2dee[1]
-    jmp c2e5f                                                         ; 2f21: 4c 5f 2e    L_. :2df0[1]
+    jmp store_wizard_animation_state                                  ; 2f21: 4c 5f 2e    L_. :2df0[1]
 
 c2df3
     ldx player_move_direction_requested                               ; 2f24: ae c9 3a    ..: :2df3[1]
@@ -5505,14 +5524,14 @@ c2e44
     inx                                                               ; 2f7c: e8          .   :2e4b[1]
 c2e4c
     lda two_byte_table_based_on_left_right_direction,x                ; 2f7d: bd 90 28    ..( :2e4c[1]
-    beq c2e5f                                                         ; 2f80: f0 0e       ..  :2e4f[1]
+    beq store_wizard_animation_state                                  ; 2f80: f0 0e       ..  :2e4f[1]
     ldy #wizard_fall_animation - wizard_transform_in_animation        ; 2f82: a0 96       ..  :2e51[1]
     sty current_animation                                             ; 2f84: 8c df 09    ... :2e53[1]
     ldy #wizard_animation11 - wizard_transform_in_animation           ; 2f87: a0 6c       .l  :2e56[1]
     cmp object_direction                                              ; 2f89: cd be 09    ... :2e58[1]
-    beq c2e5f                                                         ; 2f8c: f0 02       ..  :2e5b[1]
+    beq store_wizard_animation_state                                  ; 2f8c: f0 02       ..  :2e5b[1]
     ldy #wizard_animation12 - wizard_transform_in_animation           ; 2f8e: a0 79       .y  :2e5d[1]
-c2e5f
+store_wizard_animation_state
     sty object_current_index_in_animation                             ; 2f90: 8c d4 09    ... :2e5f[1]
     lda #0                                                            ; 2f93: a9 00       ..  :2e62[1]
     sta l2eb5                                                         ; 2f95: 8d b5 2e    ... :2e64[1]
@@ -5563,7 +5582,7 @@ sub_c2eb8
     ldx #<wizard_animation1                                           ; 2fed: a2 d7       ..  :2ebc[1]
     ldy #>wizard_animation1                                           ; 2fef: a0 2c       .,  :2ebe[1]
     lda #0                                                            ; 2ff1: a9 00       ..  :2ec0[1]
-    jsr something18_TODO                                              ; 2ff3: 20 48 22     H" :2ec2[1]
+    jsr update_player_accessory_object_animation                      ; 2ff3: 20 48 22     H" :2ec2[1]
     lda l0052                                                         ; 2ff6: a5 52       .R  :2ec5[1]
     ldy #0                                                            ; 2ff8: a0 00       ..  :2ec7[1]
 loop_c2ec9
@@ -5830,7 +5849,7 @@ c30ca
 c30d5
     ldx #<cat_animation1                                              ; 3206: a2 00       ..  :30d5[1]
     ldy #>cat_animation1                                              ; 3208: a0 2f       ./  :30d7[1]
-    jsr something18_TODO                                              ; 320a: 20 48 22     H" :30d9[1]
+    jsr update_player_accessory_object_animation                      ; 320a: 20 48 22     H" :30d9[1]
     rts                                                               ; 320d: 60          `   :30dc[1]
 
 monkey_tail_spriteids
@@ -6175,7 +6194,7 @@ c335b
 c3366
     ldx #<monkey_animation1                                           ; 3497: a2 e6       ..  :3366[1]
     ldy #>monkey_animation1                                           ; 3499: a0 30       .0  :3368[1]
-    jsr something18_TODO                                              ; 349b: 20 48 22     H" :336a[1]
+    jsr update_player_accessory_object_animation                      ; 349b: 20 48 22     H" :336a[1]
     rts                                                               ; 349e: 60          `   :336d[1]
 
 sub_c336e
@@ -6966,12 +6985,12 @@ envelope_3
     !byte 248                                                         ; 3a14: f8          .   :38e3[1]   ; change of amplitude per step during release phase
     !byte 126                                                         ; 3a15: 7e          ~   :38e4[1]   ; target of level at end of attack phase
     !byte 0                                                           ; 3a16: 00          .   :38e5[1]   ; target of level at end of decay phase
-sound_data5
+sound_landing2
     !word $10                                                         ; 3a17: 10 00       ..  :38e6[1]   ; channel
     !word 3                                                           ; 3a19: 03 00       ..  :38e8[1]   ; amplitude
     !word 3                                                           ; 3a1b: 03 00       ..  :38ea[1]   ; pitch
     !word 1                                                           ; 3a1d: 01 00       ..  :38ec[1]   ; duration
-sound_data4
+sound_landing1
     !word $11                                                         ; 3a1f: 11 00       ..  :38ee[1]   ; channel
     !word 0                                                           ; 3a21: 00 00       ..  :38f0[1]   ; amplitude
     !word 40                                                          ; 3a23: 28 00       (.  :38f2[1]   ; pitch
@@ -8329,7 +8348,6 @@ pydis_end
 ;     c20be
 ;     c2155
 ;     c21ef
-;     c2267
 ;     c2284
 ;     c228b
 ;     c229f
@@ -8390,7 +8408,6 @@ pydis_end
 ;     c2e42
 ;     c2e44
 ;     c2e4c
-;     c2e5f
 ;     c2e82
 ;     c2eb1
 ;     c2ed7
@@ -8778,11 +8795,11 @@ pydis_end
 !if (<sound_data3) != $ba {
     !error "Assertion failed: <sound_data3 == $ba"
 }
-!if (<sound_data4) != $ee {
-    !error "Assertion failed: <sound_data4 == $ee"
+!if (<sound_landing1) != $ee {
+    !error "Assertion failed: <sound_landing1 == $ee"
 }
-!if (<sound_data5) != $e6 {
-    !error "Assertion failed: <sound_data5 == $e6"
+!if (<sound_landing2) != $e6 {
+    !error "Assertion failed: <sound_landing2 == $e6"
 }
 !if (<sprdata_filename) != $80 {
     !error "Assertion failed: <sprdata_filename == $80"
@@ -8991,11 +9008,11 @@ pydis_end
 !if (>sound_data3) != $38 {
     !error "Assertion failed: >sound_data3 == $38"
 }
-!if (>sound_data4) != $38 {
-    !error "Assertion failed: >sound_data4 == $38"
+!if (>sound_landing1) != $38 {
+    !error "Assertion failed: >sound_landing1 == $38"
 }
-!if (>sound_data5) != $38 {
-    !error "Assertion failed: >sound_data5 == $38"
+!if (>sound_landing2) != $38 {
+    !error "Assertion failed: >sound_landing2 == $38"
 }
 !if (>sprdata_filename) != $19 {
     !error "Assertion failed: >sprdata_filename == $19"

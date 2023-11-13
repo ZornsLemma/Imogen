@@ -140,6 +140,10 @@ substitute_labels = {
         "address1_low": "animation_address_low",
         "address1_high": "animation_address_high",
     },
+    (0x2379, 0x23fd): {
+        "l0072": "temp_animation_low",
+        "l0073": "temp_animation_high",
+    },
     (0x2565, 0x2680): {
         "l0080": "sprite_addr_low",
         "l0081": "sprite_addr_high",
@@ -1372,8 +1376,25 @@ comment(0x2232, "load next byte from table, the Y offset")
 label(0x2223, "skip7")
 label(0x2231, "skip8")
 label(0x2239, "skip9")
-entry(0x2248, "something18_TODO")
+comment(0x2248, """*************************************************************************************
+
+Update player accessory object animation
+
+The player is object zero, and can have an associated 'accessory' object at index one. This is often a tail, but otherwise can be an item the wizard is carrying (e.g. the whip)
+
+On Entry:
+    A: if +ve, it's a spriteid
+       if -ve, it's TODO: some kind of offset to get a spriteid?
+
+    YX: Address of animation
+
+*************************************************************************************""")
+entry(0x2248, "update_player_accessory_object_animation")
 entry(0x22cd, "check_for_next_player_animation")
+comment(0x225b, "check for end of animation (loop if needed)")
+label(0x2267, "store_accessory_object_state")
+comment(0x2276, "add animation XY offset to player object position (inverted if looking left)")
+
 comment(0x22ee, """*************************************************************************************
 
 Set the base animation address for the current player type and handle any transform in/out
@@ -1591,13 +1612,15 @@ sound(0x38ba, "sound_data3")
 expr(0x2351, make_lo("sound_data3"))
 expr(0x2353, make_hi("sound_data3"))
 
-sound(0x38ee, "sound_data4")
-expr(0x23b1, make_lo("sound_data4"))
-expr(0x23b3, make_hi("sound_data4"))
+sound(0x38ee, "sound_landing1")
+expr(0x23b1, make_lo("sound_landing1"))
+expr(0x23b3, make_hi("sound_landing1"))
 
-sound(0x38e6, "sound_data5")
-expr(0x23b8, make_lo("sound_data5"))
-expr(0x23ba, make_hi("sound_data5"))
+sound(0x38e6, "sound_landing2")
+expr(0x23b8, make_lo("sound_landing2"))
+expr(0x23ba, make_hi("sound_landing2"))
+
+label(0x2e5f, "store_wizard_animation_state")
 
 comment(0x38f6, """*************************************************************************************
 
