@@ -29,17 +29,23 @@ developer_mode_sideways_ram_is_set_up_flag          = $5b
 l0070                                               = $70
 show_dialog_box                                     = $040a
 remove_dialog                                       = $0453
-l0950                                               = $0950
+object_x_low                                        = $0950
 l0954                                               = $0954
-l0966                                               = $0966
-l097c                                               = $097c
+object_x_low_old                                    = $095b
+object_x_high                                       = $0966
+object_x_high_old                                   = $0971
+object_y_low                                        = $097c
 l0980                                               = $0980
-l0992                                               = $0992
-l09a8                                               = $09a8
+object_y_low_old                                    = $0987
+object_y_high                                       = $0992
+object_y_high_old                                   = $099d
+object_spriteid                                     = $09a8
 l09aa                                               = $09aa
 l09ab                                               = $09ab
 l09ac                                               = $09ac
-l09be                                               = $09be
+object_spriteid_old                                 = $09b3
+object_direction                                    = $09be
+object_direction_old                                = $09c9
 level_progress_table                                = $09ef
 l09ff                                               = $09ff
 saxophone_collected_flag                            = $0a00
@@ -325,17 +331,17 @@ level_unchanged
     ldx #3                                                            ; 3c47: a2 03       ..
     jsr set_object_position_from_current_sprite_position              ; 3c49: 20 6d 1f     m.
     lda #$ff                                                          ; 3c4c: a9 ff       ..
-    sta l09be,x                                                       ; 3c4e: 9d be 09    ...
+    sta object_direction,x                                            ; 3c4e: 9d be 09    ...
     lda #$ce                                                          ; 3c51: a9 ce       ..
     sta object_sprite_mask_type,x                                     ; 3c53: 9d ac 38    ..8
     lda #$c0                                                          ; 3c56: a9 c0       ..
     sta l38c2,x                                                       ; 3c58: 9d c2 38    ..8
     ldx #4                                                            ; 3c5b: a2 04       ..
     lda #0                                                            ; 3c5d: a9 00       ..
-    sta l0966,x                                                       ; 3c5f: 9d 66 09    .f.
-    sta l0992,x                                                       ; 3c62: 9d 92 09    ...
+    sta object_x_high,x                                               ; 3c5f: 9d 66 09    .f.
+    sta object_y_high,x                                               ; 3c62: 9d 92 09    ...
     lda #1                                                            ; 3c65: a9 01       ..
-    sta l09be,x                                                       ; 3c67: 9d be 09    ...
+    sta object_direction,x                                            ; 3c67: 9d be 09    ...
     lda #$cc                                                          ; 3c6a: a9 cc       ..
     sta object_sprite_mask_type,x                                     ; 3c6c: 9d ac 38    ..8
     lda #$40 ; '@'                                                    ; 3c6f: a9 40       .@
@@ -577,13 +583,13 @@ c3e11
     jsr set_object_position_from_cell_xy                              ; 3e24: 20 5d 1f     ].
     tax                                                               ; 3e27: aa          .
     lda #1                                                            ; 3e28: a9 01       ..
-    sta l09be,x                                                       ; 3e2a: 9d be 09    ...
+    sta object_direction,x                                            ; 3e2a: 9d be 09    ...
     ldx #$17                                                          ; 3e2d: a2 17       ..
     lda #3                                                            ; 3e2f: a9 03       ..
     jsr set_object_position_from_cell_xy                              ; 3e31: 20 5d 1f     ].
     tax                                                               ; 3e34: aa          .
     lda #$ff                                                          ; 3e35: a9 ff       ..
-    sta l09be,x                                                       ; 3e37: 9d be 09    ...
+    sta object_direction,x                                            ; 3e37: 9d be 09    ...
     lda #3                                                            ; 3e3a: a9 03       ..
     sta value_to_write_to_collision_map                               ; 3e3c: 85 3e       .>
     lda l09ff                                                         ; 3e3e: ad ff 09    ...
@@ -622,9 +628,9 @@ c3e6c
     bne c3ed7                                                         ; 3e77: d0 5e       .^
     lda l0052                                                         ; 3e79: a5 52       .R
     beq c3ed7                                                         ; 3e7b: f0 5a       .Z
-    lda l0966                                                         ; 3e7d: ad 66 09    .f.
+    lda object_x_high                                                 ; 3e7d: ad 66 09    .f.
     bne c3ed7                                                         ; 3e80: d0 55       .U
-    lda l0950                                                         ; 3e82: ad 50 09    .P.
+    lda object_x_low                                                  ; 3e82: ad 50 09    .P.
     cmp #$88                                                          ; 3e85: c9 88       ..
     bcc c3ed7                                                         ; 3e87: 90 4e       .N
     cmp #$b8                                                          ; 3e89: c9 b8       ..
@@ -732,11 +738,11 @@ sub_c3f02
     jsr set_object_position_from_cell_xy                              ; 3f3e: 20 5d 1f     ].
     tax                                                               ; 3f41: aa          .
     lda #1                                                            ; 3f42: a9 01       ..
-    sta l09be,x                                                       ; 3f44: 9d be 09    ...
+    sta object_direction,x                                            ; 3f44: 9d be 09    ...
     lda #$cc                                                          ; 3f47: a9 cc       ..
     sta object_sprite_mask_type,x                                     ; 3f49: 9d ac 38    ..8
     lda #$d2                                                          ; 3f4c: a9 d2       ..
-    sta l09a8,x                                                       ; 3f4e: 9d a8 09    ...
+    sta object_spriteid,x                                             ; 3f4e: 9d a8 09    ...
 ; $3f51 referenced 2 times by $3f2d, $3f32
 c3f51
     rts                                                               ; 3f51: 60          `
@@ -1005,7 +1011,7 @@ c4137
     ldy #$0e                                                          ; 4144: a0 0e       ..
     lda #$19                                                          ; 4146: a9 19       ..
     sta l0a72                                                         ; 4148: 8d 72 0a    .r.
-    lda l097c                                                         ; 414b: ad 7c 09    .|.
+    lda object_y_low                                                  ; 414b: ad 7c 09    .|.
     cmp #$a0                                                          ; 414e: c9 a0       ..
     bcs c41ae                                                         ; 4150: b0 5c       .\
     cmp #$78 ; 'x'                                                    ; 4152: c9 78       .x
@@ -1143,12 +1149,12 @@ c4224
 c4235
     ldx #2                                                            ; 4235: a2 02       ..
     lda l0a70                                                         ; 4237: ad 70 0a    .p.
-    sta l0950,x                                                       ; 423a: 9d 50 09    .P.
+    sta object_x_low,x                                                ; 423a: 9d 50 09    .P.
     ldy l0a73                                                         ; 423d: ac 73 0a    .s.
     lda some_data2,y                                                  ; 4240: b9 52 40    .R@
-    sta l09a8,x                                                       ; 4243: 9d a8 09    ...
+    sta object_spriteid,x                                             ; 4243: 9d a8 09    ...
     lda l0a04                                                         ; 4246: ad 04 0a    ...
-    sta l09be,x                                                       ; 4249: 9d be 09    ...
+    sta object_direction,x                                            ; 4249: 9d be 09    ...
 ; $424c referenced 1 time by $41dd
 c424c
     rts                                                               ; 424c: 60          `
@@ -1280,7 +1286,7 @@ c4339
     jsr define_envelope                                               ; 4343: 20 5e 39     ^9
     ldx #2                                                            ; 4346: a2 02       ..
     lda #$de                                                          ; 4348: a9 de       ..
-    sta l09a8,x                                                       ; 434a: 9d a8 09    ...
+    sta object_spriteid,x                                             ; 434a: 9d a8 09    ...
     lda #$cc                                                          ; 434d: a9 cc       ..
     sta object_sprite_mask_type,x                                     ; 434f: 9d ac 38    ..8
 ; $4352 referenced 1 time by $433d
@@ -1765,7 +1771,7 @@ pydis_end
 ;     play_sound_yx:                                          7
 ;     some_data1:                                             7
 ;     l0070:                                                  6
-;     l09be:                                                  6
+;     object_direction:                                       6
 ;     l0a71:                                                  6
 ;     initialise_level:                                       6
 ;     something23_TODO_executing_flag:                        6
@@ -1787,7 +1793,7 @@ pydis_end
 ;     sub_c3f8b:                                              4
 ;     c41d9:                                                  4
 ;     c4415:                                                  4
-;     l09a8:                                                  3
+;     object_spriteid:                                        3
 ;     l09aa:                                                  3
 ;     l09ab:                                                  3
 ;     l09ac:                                                  3
@@ -1804,8 +1810,8 @@ pydis_end
 ;     c4339:                                                  3
 ;     source_sprite_memory_low:                               2
 ;     source_sprite_memory_high:                              2
-;     l0950:                                                  2
-;     l0966:                                                  2
+;     object_x_low:                                           2
+;     object_x_high:                                          2
 ;     l0a03:                                                  2
 ;     set_object_position_from_current_sprite_position:       2
 ;     l2433:                                                  2
@@ -1833,9 +1839,9 @@ pydis_end
 ;     l0042:                                                  1
 ;     l0052:                                                  1
 ;     l0954:                                                  1
-;     l097c:                                                  1
+;     object_y_low:                                           1
 ;     l0980:                                                  1
-;     l0992:                                                  1
+;     object_y_high:                                          1
 ;     developer_flags:                                        1
 ;     something14_TODO:                                       1
 ;     write_a_single_value_to_cell_in_collision_map:          1
@@ -1974,17 +1980,11 @@ pydis_end
 ;     l0042
 ;     l0052
 ;     l0070
-;     l0950
 ;     l0954
-;     l0966
-;     l097c
 ;     l0980
-;     l0992
-;     l09a8
 ;     l09aa
 ;     l09ab
 ;     l09ac
-;     l09be
 ;     l09ff
 ;     l0a01
 ;     l0a02
