@@ -56,7 +56,6 @@ osfile_save                                     = 0
 osword_envelope                                 = 8
 osword_read_char                                = 10
 osword_sound                                    = 7
-player_character_4                              = 4
 red                                             = 1
 rows_per_cell                                   = 8
 screen_width_in_pixels                          = 320
@@ -716,7 +715,7 @@ something23_TODO
     lda desired_level                                                 ; 13ff: a5 31       .1  :12ce[1]
     cmp previous_level                                                ; 1401: c5 51       .Q  :12d0[1]
     beq return1                                                       ; 1403: f0 05       ..  :12d2[1]
-    lda #player_character_4                                           ; 1405: a9 04       ..  :12d4[1]
+    lda #spriteid_icodata_wizard                                      ; 1405: a9 04       ..  :12d4[1]
     jsr transform                                                     ; 1407: 20 37 23     7# :12d6[1]
 return1
     rts                                                               ; 140a: 60          `   :12d9[1]
@@ -744,7 +743,7 @@ c1306
     jsr something20_TODO                                              ; 1437: 20 38 2a     8* :1306[1]
     jsr c131e                                                         ; 143a: 20 1e 13     .. :1309[1]
     jsr read_jump_zx_keys                                             ; 143d: 20 a2 3a     .: :130c[1]
-    jsr something19_TODO                                              ; 1440: 20 cd 22     ." :130f[1]
+    jsr check_for_next_player_animation                               ; 1440: 20 cd 22     ." :130f[1]
     ldx second_level_handler_ptr                                      ; 1443: ae d9 3a    ..: :1312[1]
     ldy second_level_handler_ptr + 1                                  ; 1446: ac da 3a    ..: :1315[1]
     jsr jmp_yx                                                        ; 1449: 20 66 19     f. :1318[1]
@@ -3537,14 +3536,14 @@ draw_object
     sta sprite_op_flags                                               ; 22ff: 85 15       ..  :21ce[1]
 draw_object_sprite
     jsr sprite_op                                                     ; 2301: 20 8d 13     .. :21d0[1]
-; return if not the player
+; return if not the object after the player
     cpx #1                                                            ; 2304: e0 01       ..  :21d3[1]
     bne return9                                                       ; 2306: d0 28       .(  :21d5[1]
-; return if current player character is not the bird?
+; return if current player character is not the wizard
     lda current_player_character                                      ; 2308: a5 48       .H  :21d7[1]
-    cmp #4                                                            ; 230a: c9 04       ..  :21d9[1]
+    cmp #spriteid_icodata_wizard                                      ; 230a: c9 04       ..  :21d9[1]
     bne return9                                                       ; 230c: d0 22       ."  :21db[1]
-; special bird processing?
+; special wizard processing - the level completion spell object?
     stx remember_object_index                                         ; 230e: 86 65       .e  :21dd[1]
     ldx #0                                                            ; 2310: a2 00       ..  :21df[1]
     jsr has_object_changed_state                                      ; 2312: 20 1e 21     .! :21e1[1]
@@ -3695,7 +3694,7 @@ c22c4
     tay                                                               ; 23fc: a8          .   :22cb[1]
     rts                                                               ; 23fd: 60          `   :22cc[1]
 
-something19_TODO
+check_for_next_player_animation
     lda current_player_character                                      ; 23fe: a5 48       .H  :22cd[1]
     beq update_mid_transformation_local                               ; 2400: f0 0f       ..  :22cf[1]
     cmp #spriteid_icodata_wizard                                      ; 2402: c9 04       ..  :22d1[1]
@@ -3721,61 +3720,95 @@ update_monkey_animation_local
 return10
     rts                                                               ; 241d: 60          `   :22ec[1]
 
-l22ed
+transform_out_animation
     !byte 0                                                           ; 241e: 00          .   :22ed[1]
 
-sub_c22ee
+; *************************************************************************************
+; 
+; Set the base animation address for the current player type and handle any transform
+; in/out
+; 
+; On Entry:
+;     XY: Address of start of animation data for the current player type
+;     A: Offset into animation data to read (usually three for the next animation step,
+; since each animation step takes three bytes)
+; 
+; On Exit:
+;     Y: set to the current offset of player animation
+;     A: (for zero flag) $FF if transform in/out is in progress, $00 otherwise
+; 
+; *************************************************************************************
+set_base_player_animation_and_handle_transformation_in_out
     stx animation_address_low                                         ; 241f: 86 70       .p  :22ee[1]
     sty animation_address_high                                        ; 2421: 84 71       .q  :22f0[1]
+; read next entry in animation
     clc                                                               ; 2423: 18          .   :22f2[1]
     adc object_current_index_in_animation                             ; 2424: 6d d4 09    m.. :22f3[1]
     tay                                                               ; 2427: a8          .   :22f6[1]
     lda (animation_address_low),y                                     ; 2428: b1 70       .p  :22f7[1]
-    bne c22fe                                                         ; 242a: d0 03       ..  :22f9[1]
+; branch if not at the end of the animation
+    bne not_at_end_of_animation                                       ; 242a: d0 03       ..  :22f9[1]
+; restart the animation
     ldy current_animation                                             ; 242c: ac df 09    ... :22fb[1]
-c22fe
+; check for 'transform in' animation
+not_at_end_of_animation
     lda current_animation                                             ; 242f: ad df 09    ... :22fe[1]
-    bne c2309                                                         ; 2432: d0 06       ..  :2301[1]
+    bne not_the_transform_in_animation                                ; 2432: d0 06       ..  :2301[1]
     tya                                                               ; 2434: 98          .   :2303[1]
-    bne c2331                                                         ; 2435: d0 2b       .+  :2304[1]
-    jsr sub_c2358                                                     ; 2437: 20 58 23     X# :2306[1]
-c2309
+    bne transforming                                                  ; 2435: d0 2b       .+  :2304[1]
+    jsr start_of_transform_in_animation                               ; 2437: 20 58 23     X# :2306[1]
+; check for 'transform out' animation
+not_the_transform_in_animation
     lda current_animation                                             ; 243a: ad df 09    ... :2309[1]
-    cmp l22ed                                                         ; 243d: cd ed 22    .." :230c[1]
-    bne c2325                                                         ; 2440: d0 14       ..  :230f[1]
+    cmp transform_out_animation                                       ; 243d: cd ed 22    .." :230c[1]
+    bne not_transforming_out                                          ; 2440: d0 14       ..  :230f[1]
     cpy current_animation                                             ; 2442: cc df 09    ... :2311[1]
-    bne c2331                                                         ; 2445: d0 1b       ..  :2314[1]
+    bne transforming                                                  ; 2445: d0 1b       ..  :2314[1]
+; start the 'transform in' animation, having finished the 'transform out'
     lda #0                                                            ; 2447: a9 00       ..  :2316[1]
     sta current_animation                                             ; 2449: 8d df 09    ... :2318[1]
     sta object_current_index_in_animation                             ; 244c: 8d d4 09    ... :231b[1]
     sta current_player_character                                      ; 244f: 85 48       .H  :231e[1]
+; stack shenanigans: remove the latest return address from the stack to restart the
+; calling function
     pla                                                               ; 2451: 68          h   :2320[1]
     pla                                                               ; 2452: 68          h   :2321[1]
-    jmp something19_TODO                                              ; 2453: 4c cd 22    L." :2322[1]
+    jmp check_for_next_player_animation                               ; 2453: 4c cd 22    L." :2322[1]
 
-c2325
+not_transforming_out
     lda current_player_character                                      ; 2456: a5 48       .H  :2325[1]
     cmp new_player_character                                          ; 2458: c5 4d       .M  :2327[1]
-    beq c2334                                                         ; 245a: f0 09       ..  :2329[1]
-    ldy l22ed                                                         ; 245c: ac ed 22    .." :232b[1]
+    beq not_transforming                                              ; 245a: f0 09       ..  :2329[1]
+; start 'transform out' animation
+    ldy transform_out_animation                                       ; 245c: ac ed 22    .." :232b[1]
     sty current_animation                                             ; 245f: 8c df 09    ... :232e[1]
-c2331
+transforming
     lda #$ff                                                          ; 2462: a9 ff       ..  :2331[1]
     rts                                                               ; 2464: 60          `   :2333[1]
 
-c2334
+not_transforming
     lda #0                                                            ; 2465: a9 00       ..  :2334[1]
     rts                                                               ; 2467: 60          `   :2336[1]
 
+; *************************************************************************************
+; 
 ; Transform the player into a new form.
+; 
+; On Entry:
+;     A: spriteid of player character to transform into
+; 
+; *************************************************************************************
 transform
     sta new_player_character                                          ; 2468: 85 4d       .M  :2337[1]
     lda #0                                                            ; 246a: a9 00       ..  :2339[1]
     sta l2433                                                         ; 246c: 8d 33 24    .3$ :233b[1]
     sta l0052                                                         ; 246f: 85 52       .R  :233e[1]
+; if the current menu item is to the left of the player characters, then we have just
+; loaded a level or something, so don't play the transform sounds.
     lda new_menu_index                                                ; 2471: a5 29       .)  :2340[1]
     cmp menu_index_for_first_player_character                         ; 2473: cd 6d 29    .m) :2342[1]
     bcc return11                                                      ; 2476: 90 10       ..  :2345[1]
+; play transform sounds with priority
     lda #$ff                                                          ; 2478: a9 ff       ..  :2347[1]
     ldx #<sound_data2                                                 ; 247a: a2 d0       ..  :2349[1]
     ldy #>sound_data2                                                 ; 247c: a0 38       .8  :234b[1]
@@ -3786,7 +3819,7 @@ transform
 return11
     rts                                                               ; 2488: 60          `   :2357[1]
 
-sub_c2358
+start_of_transform_in_animation
     lda #osbyte_flush_buffer                                          ; 2489: a9 15       ..  :2358[1]
     ldx #buffer_sound_channel_0                                       ; 248b: a2 04       ..  :235a[1]
     jsr osbyte                                                        ; 248d: 20 f4 ff     .. :235c[1]   ; Flush sound channel 0 (X=4)
@@ -4943,7 +4976,7 @@ check_for_one_of_first_four_menu_items_chosen
     cmp #spriteid_icodata_sound                                       ; 2c1e: c9 02       ..  :2aed[1]
     beq toggle_sound_on_off                                           ; 2c20: f0 0e       ..  :2aef[1]
     cmp #spriteid_icodata_disc                                        ; 2c22: c9 03       ..  :2af1[1]
-    beq show_load_save_dialog_local                                   ; 2c24: f0 07       ..  :2af3[1]
+    beq toggle_load_save_dialog_local                                 ; 2c24: f0 07       ..  :2af3[1]
 return20
     rts                                                               ; 2c26: 60          `   :2af5[1]
 
@@ -4953,8 +4986,8 @@ show_level_info_dialog_local
 show_password_entry_dialog_local
     jmp show_password_entry_dialog                                    ; 2c2a: 4c 36 36    L66 :2af9[1]
 
-show_load_save_dialog_local
-    jmp show_load_save_dialog                                         ; 2c2d: 4c 04 34    L.4 :2afc[1]
+toggle_load_save_dialog_local
+    jmp toggle_load_save_dialog                                       ; 2c2d: 4c 04 34    L.4 :2afc[1]
 
 toggle_sound_on_off
     jsr calculate_sprite_position_for_menu_item                       ; 2c30: 20 46 2c     F, :2aff[1]
@@ -5371,11 +5404,11 @@ wizard_fall_animation
 
 update_wizard_animation
     lda #wizard_transform_out_animation - wizard_transform_in_animation; 2eb8: a9 16       ..  :2d87[1]
-    sta l22ed                                                         ; 2eba: 8d ed 22    .." :2d89[1]
+    sta transform_out_animation                                       ; 2eba: 8d ed 22    .." :2d89[1]
     ldx #<wizard_transform_in_animation                               ; 2ebd: a2 ed       ..  :2d8c[1]
     ldy #>wizard_transform_in_animation                               ; 2ebf: a0 2c       .,  :2d8e[1]
     lda #3                                                            ; 2ec1: a9 03       ..  :2d90[1]
-    jsr sub_c22ee                                                     ; 2ec3: 20 ee 22     ." :2d92[1]
+    jsr set_base_player_animation_and_handle_transformation_in_out    ; 2ec3: 20 ee 22     ." :2d92[1]
     bne c2dc0                                                         ; 2ec6: d0 29       .)  :2d95[1]
     cpy #$39 ; '9'                                                    ; 2ec8: c0 39       .9  :2d97[1]
     bne c2da6                                                         ; 2eca: d0 0b       ..  :2d99[1]
@@ -5660,11 +5693,11 @@ cat_fall_animation
 
 update_cat_animation
     lda #cat_transform_out_animation - cat_transform_in_animation     ; 30f9: a9 16       ..  :2fc8[1]
-    sta l22ed                                                         ; 30fb: 8d ed 22    .." :2fca[1]
+    sta transform_out_animation                                       ; 30fb: 8d ed 22    .." :2fca[1]
     ldx #<cat_transform_in_animation                                  ; 30fe: a2 16       ..  :2fcd[1]
     ldy #>cat_transform_in_animation                                  ; 3100: a0 2f       ./  :2fcf[1]
     lda #3                                                            ; 3102: a9 03       ..  :2fd1[1]
-    jsr sub_c22ee                                                     ; 3104: 20 ee 22     ." :2fd3[1]
+    jsr set_base_player_animation_and_handle_transformation_in_out    ; 3104: 20 ee 22     ." :2fd3[1]
     bne c300e                                                         ; 3107: d0 36       .6  :2fd6[1]
     cpy #$39 ; '9'                                                    ; 3109: c0 39       .9  :2fd8[1]
     bne c2fe7                                                         ; 310b: d0 0b       ..  :2fda[1]
@@ -5934,11 +5967,11 @@ l31d7
 
 update_monkey_animation
     lda #monkey_transform_out_animation - monkey_transform_in_animation; 3309: a9 16       ..  :31d8[1]
-    sta l22ed                                                         ; 330b: 8d ed 22    .." :31da[1]
+    sta transform_out_animation                                       ; 330b: 8d ed 22    .." :31da[1]
     ldx #<monkey_transform_in_animation                               ; 330e: a2 ff       ..  :31dd[1]
     ldy #>monkey_transform_in_animation                               ; 3310: a0 30       .0  :31df[1]
     lda #3                                                            ; 3312: a9 03       ..  :31e1[1]
-    jsr sub_c22ee                                                     ; 3314: 20 ee 22     ." :31e3[1]
+    jsr set_base_player_animation_and_handle_transformation_in_out    ; 3314: 20 ee 22     ." :31e3[1]
     bne c31f4                                                         ; 3317: d0 0c       ..  :31e6[1]
     cpy #$39 ; '9'                                                    ; 3319: c0 39       .9  :31e8[1]
     bne c31f7                                                         ; 331b: d0 0b       ..  :31ea[1]
@@ -6234,12 +6267,12 @@ c33fa
 l3403
     !byte 0                                                           ; 3534: 00          .   :3403[1]
 
-show_load_save_dialog
+toggle_load_save_dialog
     lda #$12                                                          ; 3535: a9 12       ..  :3404[1]
     sta current_text_width                                            ; 3537: 8d 09 04    ... :3406[1]
     lda which_dialog_is_active                                        ; 353a: a5 04       ..  :3409[1]
-    bne c3428                                                         ; 353c: d0 1b       ..  :340b[1]
-c340d
+    bne remove_dialog_local                                           ; 353c: d0 1b       ..  :340b[1]
+show_load_save_dialog
     jsr show_dialog_box                                               ; 353e: 20 0a 04     .. :340d[1]
     lda #1                                                            ; 3541: a9 01       ..  :3410[1]
     sta which_dialog_is_active                                        ; 3543: 85 04       ..  :3412[1]
@@ -6252,7 +6285,7 @@ c340d
     jsr print_encrypted_string_at_yx                                  ; 3553: 20 1c 38     .8 :3422[1]
     jmp flush_input_buffers_and_zero_l0005                            ; 3556: 4c 72 38    Lr8 :3425[1]
 
-c3428
+remove_dialog_local
     jmp remove_dialog                                                 ; 3559: 4c 53 04    LS. :3428[1]
 
 ; 'Press S to save\r' EOR-encrypted with $cb
@@ -6419,7 +6452,7 @@ c3573
 c3598
     jsr show_disk_error_dialog_if_display_is_initialised              ; 36c9: 20 28 17     (. :3598[1]
 c359b
-    jmp c340d                                                         ; 36cc: 4c 0d 34    L.4 :359b[1]
+    jmp show_load_save_dialog                                         ; 36cc: 4c 0d 34    L.4 :359b[1]
 
 c359e
     jsr something6_TODO                                               ; 36cf: 20 c3 0a     .. :359e[1]
@@ -7072,14 +7105,14 @@ c39b6
     lda #0                                                            ; 3ae7: a9 00       ..  :39b6[1]
     sta current_animation                                             ; 3ae9: 8d df 09    ... :39b8[1]
     sta object_current_index_in_animation                             ; 3aec: 8d d4 09    ... :39bb[1]
-    jmp something19_TODO                                              ; 3aef: 4c cd 22    L." :39be[1]
+    jmp check_for_next_player_animation                               ; 3aef: 4c cd 22    L." :39be[1]
 
 c39c1
     cmp #$0b                                                          ; 3af2: c9 0b       ..  :39c1[1]
     bne c39f4                                                         ; 3af4: d0 2f       ./  :39c3[1]
     cpy #$0b                                                          ; 3af6: c0 0b       ..  :39c5[1]
     bne c3a08                                                         ; 3af8: d0 3f       .?  :39c7[1]
-    jsr sub_c2358                                                     ; 3afa: 20 58 23     X# :39c9[1]
+    jsr start_of_transform_in_animation                               ; 3afa: 20 58 23     X# :39c9[1]
     pla                                                               ; 3afd: 68          h   :39cc[1]
     pla                                                               ; 3afe: 68          h   :39cd[1]
     pla                                                               ; 3aff: 68          h   :39ce[1]
@@ -8302,11 +8335,6 @@ pydis_end
 ;     c229f
 ;     c22bb
 ;     c22c4
-;     c22fe
-;     c2309
-;     c2325
-;     c2331
-;     c2334
 ;     c2392
 ;     c23a5
 ;     c23e2
@@ -8412,8 +8440,6 @@ pydis_end
 ;     c33ea
 ;     c33f8
 ;     c33fa
-;     c340d
-;     c3428
 ;     c3467
 ;     c3501
 ;     c3516
@@ -8493,7 +8519,6 @@ pydis_end
 ;     l1ab0
 ;     l1ab1
 ;     l1ab2
-;     l22ed
 ;     l2433
 ;     l24d0
 ;     l24d1
@@ -8558,8 +8583,6 @@ pydis_end
 ;     sub_c1278
 ;     sub_c2157
 ;     sub_c22ae
-;     sub_c22ee
-;     sub_c2358
 ;     sub_c236b
 ;     sub_c23c4
 ;     sub_c25df
@@ -9300,9 +9323,6 @@ pydis_end
 }
 !if (osword_sound) != $07 {
     !error "Assertion failed: osword_sound == $07"
-}
-!if (player_character_4) != $04 {
-    !error "Assertion failed: player_character_4 == $04"
 }
 !if (red) != $01 {
     !error "Assertion failed: red == $01"

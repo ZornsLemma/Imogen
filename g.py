@@ -1322,10 +1322,18 @@ char(0x2cc0)
 char(0x2cce)
 label(0x2cd4, "decrement_current_tranformations_remaining_no_borrow")
 comment(0x2b5c, "branch if no transformations remaining before decrement", inline=True) # TODO: rephrase as "branch if decrement failed"? and maybe make associated change in comment at 2c8c?
-comment(0x2337, "Transform the player into a new form.")
+comment(0x2337, """*************************************************************************************
+
+Transform the player into a new form.
+
+On Entry:
+    A: spriteid of player character to transform into
+
+*************************************************************************************""")
 entry(0x2337, "transform")
-constant(4, "player_character_4")
-expr(0x12d5, "player_character_4")
+comment(0x2340, "if the current menu item is to the left of the player characters, then we have just loaded a level or something, so don't play the transform sounds.")
+comment(0x2347, "play transform sounds with priority")
+expr(0x12d5, "spriteid_icodata_wizard")
 
 label(0x48, "current_player_character")
 label(0x4d, "new_player_character")
@@ -1365,7 +1373,36 @@ label(0x2223, "skip7")
 label(0x2231, "skip8")
 label(0x2239, "skip9")
 entry(0x2248, "something18_TODO")
-entry(0x22cd, "something19_TODO")
+entry(0x22cd, "check_for_next_player_animation")
+comment(0x22ee, """*************************************************************************************
+
+Set the base animation address for the current player type and handle any transform in/out
+
+On Entry:
+    XY: Address of start of animation data for the current player type
+    A: Offset into animation data to read (usually three for the next animation step, since each animation step takes three bytes)
+
+On Exit:
+    Y: set to the current offset of player animation
+    A: (for zero flag) $FF if transform in/out is in progress, $00 otherwise
+
+*************************************************************************************""")
+comment(0x2320, "stack shenanigans: remove the latest return address from the stack to restart the calling function")
+entry(0x22ee, "set_base_player_animation_and_handle_transformation_in_out")
+comment(0x22f2, "read next entry in animation")
+comment(0x22f9, "branch if not at the end of the animation")
+label(0x22fe, "not_at_end_of_animation")
+comment(0x22fb, "restart the animation")
+label(0x22ed, "transform_out_animation")
+label(0x2309, "not_the_transform_in_animation")
+label(0x2331, "transforming")
+comment(0x22fe, "check for 'transform in' animation")
+comment(0x2309, "check for 'transform out' animation")
+comment(0x2316, "start the 'transform in' animation, having finished the 'transform out'")
+label(0x2325, "not_transforming_out")
+comment(0x232b, "start 'transform out' animation")
+label(0x2334, "not_transforming")
+label(0x2358, "start_of_transform_in_animation")
 entry(0x2a38, "something20_TODO")
 label(0x2a60, "skip_developer_key_escape_handling")
 label(0x2ab7, "skip_developer_key_shift_handling")
@@ -1785,9 +1822,10 @@ label(0x2184, "erase_object")
 label(0x218b, "draw_object_without_mask")
 label(0x2190, "draw_or_erase_object")
 
-comment(0x21d3, "return if not the player")
-comment(0x21d7, "return if current player character is not the bird?")
-comment(0x21dd, "special bird processing?")
+comment(0x21d3, "return if not the object after the player")
+comment(0x21d7, "return if current player character is not the wizard")
+expr(0x21da, "spriteid_icodata_wizard")
+comment(0x21dd, "special wizard processing - the level completion spell object?")
 
 label(0x221c, "add_movement_in_direction_to_player")
 comment(0x2217, "invert A if direction is left")
@@ -1845,10 +1883,12 @@ label(0x22e9, "update_monkey_animation_local")
 label(0x31d8, "update_monkey_animation")
 label(0x2af6, "show_level_info_dialog_local")
 label(0x2af9, "show_password_entry_dialog_local")
-label(0x2afc, "show_load_save_dialog_local")
+label(0x2afc, "toggle_load_save_dialog_local")
 label(0x377e, "show_level_info_dialog")
 label(0x3636, "show_password_entry_dialog")
-label(0x3404, "show_load_save_dialog")
+label(0x3404, "toggle_load_save_dialog")
+label(0x340d, "show_load_save_dialog")
+label(0x3428, "remove_dialog_local")
 label(0x2adb, "check_for_one_of_first_four_menu_items_chosen")
 label(0x2b37, "check_if_player_character_menu_item_chosen")
 label(0x2b65, "check_for_extra_menu_item_chosen")
