@@ -14,7 +14,7 @@
 
 * Build in a "reset transformation count" or "infinite transformations" cheat? Ideally in some way that it's obvious when it's used.
 
-* Add a cheat (e.g. via a password) to freeze the mouse ball in Saxophobia?
+* Add a cheat (e.g. via a password) to freeze the mouse ball in Saxophobia? A generalised version of this - not sure if useful elsewhere - would be to stop non-player movement or something like that.
 
 # Other versions
 
