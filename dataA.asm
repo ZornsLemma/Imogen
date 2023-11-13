@@ -747,8 +747,8 @@ c3f52
     cmp #$d3                                                          ; 3f55: c9 d3       ..
     bne c3f62                                                         ; 3f57: d0 09       ..
     lda #0                                                            ; 3f59: a9 00       ..
-    ldx #$24 ; '$'                                                    ; 3f5b: a2 24       .$
-    ldy #$44 ; 'D'                                                    ; 3f5d: a0 44       .D
+    ldx #<some_sound3                                                 ; 3f5b: a2 24       .$
+    ldy #>some_sound3                                                 ; 3f5d: a0 44       .D
     jsr play_sound_yx                                                 ; 3f5f: 20 f6 38     .8
 ; $3f62 referenced 1 time by $3f57
 c3f62
@@ -1361,8 +1361,8 @@ c43d4
     cmp #3                                                            ; 43d6: c9 03       ..
     bne c4415                                                         ; 43d8: d0 3b       .;
     lda #$80                                                          ; 43da: a9 80       ..
-    ldx #$58 ; 'X'                                                    ; 43dc: a2 58       .X
-    ldy #$44 ; 'D'                                                    ; 43de: a0 44       .D
+    ldx #<some_sound4                                                 ; 43dc: a2 58       .X
+    ldy #>some_sound4                                                 ; 43de: a0 44       .D
     jsr play_sound_yx                                                 ; 43e0: 20 f6 38     .8
 ; $43e3 referenced 1 time by $43d1
 c43e3
@@ -1410,7 +1410,11 @@ envelope3
     !byte 246                                                         ; 4421: f6          .              ; change of amplitude per step during release phase
     !byte 100                                                         ; 4422: 64          d              ; target of level at end of attack phase
     !byte 0                                                           ; 4423: 00          .              ; target of level at end of decay phase
-    !byte $13,   0,   5,   0,   0,   0,   4,   0                      ; 4424: 13 00 05... ...
+some_sound3
+    !word $13                                                         ; 4424: 13 00       ..             ; channel
+    !word 5                                                           ; 4426: 05 00       ..             ; amplitude
+    !word 0                                                           ; 4428: 00 00       ..             ; pitch
+    !word 4                                                           ; 442a: 04 00       ..             ; duration
 envelope2
     !byte 6                                                           ; 442c: 06          .              ; envelope number
     !byte 1                                                           ; 442d: 01          .              ; step length (100ths of a second)
@@ -1427,9 +1431,15 @@ envelope2
     !byte 115                                                         ; 4438: 73          s              ; target of level at end of attack phase
     !byte 0                                                           ; 4439: 00          .              ; target of level at end of decay phase
 some_sound2
-    !byte $10,   0,   6,   0,   7,   0,   1,   0                      ; 443a: 10 00 06... ...
+    !word $10                                                         ; 443a: 10 00       ..             ; channel
+    !word 6                                                           ; 443c: 06 00       ..             ; amplitude
+    !word 7                                                           ; 443e: 07 00       ..             ; pitch
+    !word 1                                                           ; 4440: 01 00       ..             ; duration
 some_sound1
-    !byte $11,   0,   0,   0, $d2,   0,   1,   0                      ; 4442: 11 00 00... ...
+    !word $11                                                         ; 4442: 11 00       ..             ; channel
+    !word 0                                                           ; 4444: 00 00       ..             ; amplitude
+    !word 210                                                         ; 4446: d2 00       ..             ; pitch
+    !word 1                                                           ; 4448: 01 00       ..             ; duration
 envelope4
     !byte 6                                                           ; 444a: 06          .              ; envelope number
     !byte 1                                                           ; 444b: 01          .              ; step length (100ths of a second)
@@ -1445,7 +1455,11 @@ envelope4
     !byte 216                                                         ; 4455: d8          .              ; change of amplitude per step during release phase
     !byte 40                                                          ; 4456: 28          (              ; target of level at end of attack phase
     !byte 0                                                           ; 4457: 00          .              ; target of level at end of decay phase
-    !byte $10,   0,   6,   0,   4,   0,   4,   0                      ; 4458: 10 00 06... ...
+some_sound4
+    !word $10                                                         ; 4458: 10 00       ..             ; channel
+    !word 6                                                           ; 445a: 06 00       ..             ; amplitude
+    !word 4                                                           ; 445c: 04 00       ..             ; pitch
+    !word 4                                                           ; 445e: 04 00       ..             ; duration
 envelope1
     !byte 6                                                           ; 4460: 06          .              ; envelope number
     !byte 1                                                           ; 4461: 01          .              ; step length (100ths of a second)
@@ -2040,6 +2054,12 @@ pydis_end
 !if (<some_sound2) != $3a {
     !error "Assertion failed: <some_sound2 == $3a"
 }
+!if (<some_sound3) != $24 {
+    !error "Assertion failed: <some_sound3 == $24"
+}
+!if (<some_sound4) != $58 {
+    !error "Assertion failed: <some_sound4 == $58"
+}
 !if (<tile_all_set_pixels) != $a9 {
     !error "Assertion failed: <tile_all_set_pixels == $a9"
 }
@@ -2072,6 +2092,12 @@ pydis_end
 }
 !if (>some_sound2) != $44 {
     !error "Assertion failed: >some_sound2 == $44"
+}
+!if (>some_sound3) != $44 {
+    !error "Assertion failed: >some_sound3 == $44"
+}
+!if (>some_sound4) != $44 {
+    !error "Assertion failed: >some_sound4 == $44"
 }
 !if (>tile_all_set_pixels) != $0a {
     !error "Assertion failed: >tile_all_set_pixels == $0a"

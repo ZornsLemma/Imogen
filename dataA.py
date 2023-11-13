@@ -109,11 +109,13 @@ def ldx_ldy_jsr_play_sound_yx(jsr_runtime_addr, s):
     assert get_u8_runtime(RuntimeAddr(jsr_runtime_addr - 2)) == 0xa0 # ldy #
     sound_addr_hi = get_u8_runtime(RuntimeAddr(jsr_runtime_addr - 1))
     sound_addr = (sound_addr_hi << 8) | sound_addr_lo
-    label(sound_addr, s)
+    sound(sound_addr, s)
     expr(jsr_runtime_addr - 3, make_lo(s))
     expr(jsr_runtime_addr - 1, make_hi(s))
 ldx_ldy_jsr_play_sound_yx(0x3ef7, "some_sound1")
 ldx_ldy_jsr_play_sound_yx(0x3efe, "some_sound2")
+ldx_ldy_jsr_play_sound_yx(0x3f5f, "some_sound3")
+ldx_ldy_jsr_play_sound_yx(0x43e0, "some_sound4")
 
 
 
