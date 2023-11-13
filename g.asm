@@ -6731,7 +6731,7 @@ show_level_completion_letters_loop
     lda #$fe                                                          ; 3909: a9 fe       ..  :37d8[1]
 got_character_to_print
     jsr print_italic                                                  ; 390b: 20 66 18     f. :37da[1]
-    cpx #last_level_letter+1                                          ; 390e: e0 50       .P  :37dd[1]
+    cpx #$50 ; 'P'                                                    ; 390e: e0 50       .P  :37dd[1]
     beq return27                                                      ; 3910: f0 11       ..  :37df[1]
 ; move forward one character
     lda #9                                                            ; 3912: a9 09       ..  :37e1[1]
@@ -9159,9 +9159,6 @@ pydis_end
 }
 !if (last_level_letter) != $51 {
     !error "Assertion failed: last_level_letter == $51"
-}
-!if (last_level_letter+1) != $50 {
-    !error "Assertion failed: last_level_letter+1 == $50"
 }
 !if (level_ordering_table - 1) != $0a7e {
     !error "Assertion failed: level_ordering_table - 1 == $0a7e"
