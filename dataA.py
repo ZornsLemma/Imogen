@@ -104,8 +104,9 @@ entry(0x3d20, "return1")
 
 # TODO: Use this more?
 def ldx_ldy_jsr_play_sound_yx(jsr_runtime_addr, s):
-    # TODO: assert we have ldx # and ldy # opcodes immediately before jsr_addr?
+    assert get_u8_runtime(RuntimeAddr(jsr_runtime_addr - 4)) == 0xa2 # ldx #
     sound_addr_lo = get_u8_runtime(RuntimeAddr(jsr_runtime_addr - 3))
+    assert get_u8_runtime(RuntimeAddr(jsr_runtime_addr - 2)) == 0xa0 # ldy #
     sound_addr_hi = get_u8_runtime(RuntimeAddr(jsr_runtime_addr - 1))
     sound_addr = (sound_addr_hi << 8) | sound_addr_lo
     label(sound_addr, s)
