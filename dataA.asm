@@ -62,9 +62,9 @@ string_input_buffer                                 = $0a90
 tile_all_set_pixels                                 = $0aa9
 developer_flags                                     = $1103
 initialise_level                                    = $1140
-something23_TODO                                    = $12bb
+start_room                                          = $12bb
 something24_TODO                                    = $12da
-something23_TODO_executing_flag                     = $132b
+update_room_first_update_flag                       = $132b
 pending_toolbar_colour                              = $175d
 toolbar_colour                                      = $175e
 pending_gameplay_area_colour                        = $175f
@@ -119,8 +119,8 @@ pydis_start
     !word sprite_data - level_data                                    ; 3ad5: d1 09       ..
 level_init_after_load_handler_ptr
     !word level_init_after_load_handler                               ; 3ad7: f2 3a       .:
-second_level_handler_ptr
-    !word second_level_handler                                        ; 3ad9: 17 3b       .;
+update_room_ptr
+    !word level_update_handler                                        ; 3ad9: 17 3b       .;
 level_name_ptr
     !word level_name                                                  ; 3adb: e7 3a       .:
     !byte 0, 1                                                        ; 3add: 00 01       ..
@@ -168,7 +168,7 @@ c3b0e
     sta source_sprite_memory_high                                     ; 3b14: 85 41       .A
     rts                                                               ; 3b16: 60          `
 
-second_level_handler
+level_update_handler
     jsr sub_c3be4                                                     ; 3b17: 20 e4 3b     .;
     jsr sub_c3dfc                                                     ; 3b1a: 20 fc 3d     .=
     jsr sub_c407f                                                     ; 3b1d: 20 7f 40     .@
@@ -264,7 +264,7 @@ room_1_code
     jsr draw_rope                                                     ; 3bc9: 20 b9 1d     ..
     ldx #$19                                                          ; 3bcc: a2 19       ..
     jsr draw_rope                                                     ; 3bce: 20 b9 1d     ..
-    jsr something23_TODO                                              ; 3bd1: 20 bb 12     ..
+    jsr start_room                                                    ; 3bd1: 20 bb 12     ..
 ; $3bd4 referenced 1 time by $3bdb
 loop_c3bd4
     jsr something24_TODO                                              ; 3bd4: 20 da 12     ..
@@ -276,7 +276,7 @@ loop_c3bd4
     jsr initialise_level                                              ; 3be1: 20 40 11     @.
 ; $3be4 referenced 1 time by $3b17
 sub_c3be4
-    lda something23_TODO_executing_flag                               ; 3be4: ad 2b 13    .+.
+    lda update_room_first_update_flag                                 ; 3be4: ad 2b 13    .+.
     bne initialise_mouse_ball_position_if_level_changed               ; 3be7: d0 03       ..
     jmp bump_and_wrap_mouse_ball_position                             ; 3be9: 4c 77 3c    Lw<
 
@@ -444,7 +444,7 @@ c3cfb
     sta l0980                                                         ; 3d05: 8d 80 09    ...
     lda #$cb                                                          ; 3d08: a9 cb       ..
     sta l09ac                                                         ; 3d0a: 8d ac 09    ...
-    lda something23_TODO_executing_flag                               ; 3d0d: ad 2b 13    .+.
+    lda update_room_first_update_flag                                 ; 3d0d: ad 2b 13    .+.
     bne return1                                                       ; 3d10: d0 0e       ..
     ldx #0                                                            ; 3d12: a2 00       ..
     ldy #4                                                            ; 3d14: a0 04       ..
@@ -529,7 +529,7 @@ room_2_code
     ldx #7                                                            ; 3dc8: a2 07       ..
     ldy #$14                                                          ; 3dca: a0 14       ..
     jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map           ; 3dcc: 20 57 1f     W.
-    jsr something23_TODO                                              ; 3dcf: 20 bb 12     ..
+    jsr start_room                                                    ; 3dcf: 20 bb 12     ..
 ; $3dd2 referenced 1 time by $3df3
 c3dd2
     jsr something24_TODO                                              ; 3dd2: 20 da 12     ..
@@ -560,7 +560,7 @@ c3def
 
 ; $3dfc referenced 1 time by $3b1a
 sub_c3dfc
-    lda something23_TODO_executing_flag                               ; 3dfc: ad 2b 13    .+.
+    lda update_room_first_update_flag                                 ; 3dfc: ad 2b 13    .+.
     beq c3e6c                                                         ; 3dff: f0 6b       .k
     lda previous_level                                                ; 3e01: a5 51       .Q
     cmp desired_level                                                 ; 3e03: c5 31       .1
@@ -715,7 +715,7 @@ sub_c3f02
     ldx #$1a                                                          ; 3f09: a2 1a       ..
     ldy #$0e                                                          ; 3f0b: a0 0e       ..
     jsr initialise_brazier_and_fire                                   ; 3f0d: 20 88 19     ..
-    lda something23_TODO_executing_flag                               ; 3f10: ad 2b 13    .+.
+    lda update_room_first_update_flag                                 ; 3f10: ad 2b 13    .+.
     beq c3f52                                                         ; 3f13: f0 3d       .=
     lda #$d3                                                          ; 3f15: a9 d3       ..
     sta l2ee9                                                         ; 3f17: 8d e9 2e    ...
@@ -880,7 +880,7 @@ room_3_code
     sta height_in_cells                                               ; 4039: 85 3d       .=
     jsr copy_rectangle_of_memory_to_screen                            ; 403b: 20 bb 1a     ..
     jsr draw_floor_walls_and_ceiling_around_solid_rock                ; 403e: 20 90 1b     ..
-    jsr something23_TODO                                              ; 4041: 20 bb 12     ..
+    jsr start_room                                                    ; 4041: 20 bb 12     ..
 ; $4044 referenced 1 time by $4049
 loop_c4044
     jsr something24_TODO                                              ; 4044: 20 da 12     ..
@@ -910,7 +910,7 @@ sub_c407f
     ldy #$16                                                          ; 4090: a0 16       ..
     lda #5                                                            ; 4092: a9 05       ..
     jsr something14_TODO                                              ; 4094: 20 10 1a     ..
-    lda something23_TODO_executing_flag                               ; 4097: ad 2b 13    .+.
+    lda update_room_first_update_flag                                 ; 4097: ad 2b 13    .+.
     beq c40e4                                                         ; 409a: f0 48       .H
     lda desired_level                                                 ; 409c: a5 31       .1
     cmp previous_level                                                ; 409e: c5 51       .Q
@@ -1234,7 +1234,7 @@ room_4_code
     ldy #2                                                            ; 42e0: a0 02       ..
     lda #$0e                                                          ; 42e2: a9 0e       ..
     jsr draw_rope                                                     ; 42e4: 20 b9 1d     ..
-    jsr something23_TODO                                              ; 42e7: 20 bb 12     ..
+    jsr start_room                                                    ; 42e7: 20 bb 12     ..
 ; $42ea referenced 1 time by $42ef
 loop_c42ea
     jsr something24_TODO                                              ; 42ea: 20 da 12     ..
@@ -1255,7 +1255,7 @@ sub_c42f8
     lda #4                                                            ; 4306: a9 04       ..
     inx                                                               ; 4308: e8          .
     jsr initialise_brazier_and_fire                                   ; 4309: 20 88 19     ..
-    lda something23_TODO_executing_flag                               ; 430c: ad 2b 13    .+.
+    lda update_room_first_update_flag                                 ; 430c: ad 2b 13    .+.
     beq c4358                                                         ; 430f: f0 47       .G
     lda previous_level                                                ; 4311: a5 51       .Q
     cmp desired_level                                                 ; 4313: c5 31       .1
@@ -1774,7 +1774,7 @@ pydis_end
 ;     object_direction:                                       6
 ;     l0a71:                                                  6
 ;     initialise_level:                                       6
-;     something23_TODO_executing_flag:                        6
+;     update_room_first_update_flag:                          6
 ;     draw_rope:                                              6
 ;     previous_level:                                         5
 ;     l0a73:                                                  5
@@ -1787,7 +1787,7 @@ pydis_end
 ;     temp_sprite_y_offset:                                   4
 ;     saxophone_collected_flag:                               4
 ;     mouse_ball_position:                                    4
-;     something23_TODO:                                       4
+;     start_room:                                             4
 ;     something24_TODO:                                       4
 ;     draw_floor_walls_and_ceiling_around_solid_rock:         4
 ;     sub_c3f8b:                                              4
@@ -2101,6 +2101,9 @@ pydis_end
 !if (level_name) != $3ae7 {
     !error "Assertion failed: level_name == $3ae7"
 }
+!if (level_update_handler) != $3b17 {
+    !error "Assertion failed: level_update_handler == $3b17"
+}
 !if (room_1_data_ptr) != $3b27 {
     !error "Assertion failed: room_1_data_ptr == $3b27"
 }
@@ -2112,9 +2115,6 @@ pydis_end
 }
 !if (room_4_data_ptr) != $424d {
     !error "Assertion failed: room_4_data_ptr == $424d"
-}
-!if (second_level_handler) != $3b17 {
-    !error "Assertion failed: second_level_handler == $3b17"
 }
 !if (sprite_data - level_data) != $09d1 {
     !error "Assertion failed: sprite_data - level_data == $09d1"

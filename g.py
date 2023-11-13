@@ -1508,12 +1508,16 @@ comment(0x1153, "if desired level is already loaded, skip forward", inline=True)
 comment(0x1155, "load level in A")
 comment(0x1169, "if load successful, then skip forward", inline=True)
 
+comment(0x12c0, "call room update for the first time")
+comment(0x12d4, "start transformation to the wizard if it's a new level")
+
 label(0x1175, "level_already_loaded")
 label(0x36da, "check_password_level")
 entry(0x36db, "select_level_a")
 #comment(0x114f, "TODO: Why do we check desired_level against currently_loaded_level in this loop? The loop kind of makes sense as a retry if disc error sort of thing, but I don't see why we'd ever have the wrong level loaded or something like that. It still doesn't feel quite right, but could this maybe be some leftover hint of a tape version? - hmm, note that dataA.asm calls into initialise_level in several different places (with different values of X, indicating different level_header_data entries to be called) - it may be that this check is so that second and subsequent calls don't redo pointless or harmful initialisation?")
 comment(0x114f, "Load a new level if the desired_level has changed.\n\nAny time we want to load a new level, we just set the desired_level and let this code do the work. (It is a loop to allow for retries on a disk error.)")
 label(0x1186, "object_reset_loop")
+label(0x1209, "same_level")
 label(0x11dd, "clear_sixteen_entry_table_loop")
 comment(0x11f8, "Blank the whole screen temporarily. The toolbar is blanked out here since we are moving to a different level (we need to redraw it to remove any level specific objects obtained). When moving between rooms on the same level the toolbar doesn't change, so remains visible.")
 

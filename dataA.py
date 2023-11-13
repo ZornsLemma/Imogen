@@ -21,11 +21,11 @@ load(0x3ad5, "orig/dataA.dat", "6502", "df027a3ac06abfed1878eaec3d2bbe5f")
 word(0x3ad7)
 expr(0x3ad7, "level_init_after_load_handler")
 word(0x3ad9)
-expr(0x3ad9, "second_level_handler") # TODO: rename
+expr(0x3ad9, "level_update_handler") # TODO: rename
 word(0x3adb)
 expr(0x3adb, "level_name") # TODO: rename
 entry(get_u16_binary(0x3ad7), "level_init_after_load_handler")
-entry(get_u16_binary(0x3ad9), "second_level_handler")
+entry(get_u16_binary(0x3ad9), "level_update_handler")
 label(get_u16_binary(0x3adb), "level_name")
 
 entry(0x3d21, "some_data1")

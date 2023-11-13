@@ -388,7 +388,7 @@ sprite_199                                  = $0b11
 sprite_198                                  = $0b93
 sprite_197                                  = $0bc5
 level_init_after_load_handler_ptr           = $3ad7
-second_level_handler_ptr                    = $3ad9
+update_room_ptr                             = $3ad9
 level_name_ptr                              = $3adb
 room_index_cheat1                           = $3add
 room_index_cheat2                           = $3ade
@@ -558,7 +558,7 @@ object_reset_loop
     bcc object_reset_loop                                             ; 12db: 90 da       ..  :11aa[1]
     lda desired_level                                                 ; 12dd: a5 31       .1  :11ac[1]
     cmp previous_level                                                ; 12df: c5 51       .Q  :11ae[1]
-    beq c1209                                                         ; 12e1: f0 57       .W  :11b0[1]
+    beq same_level                                                    ; 12e1: f0 57       .W  :11b0[1]
     lda #0                                                            ; 12e3: a9 00       ..  :11b2[1]
     sta l2433                                                         ; 12e5: 8d 33 24    .3$ :11b4[1]
     sta current_player_character                                      ; 12e8: 85 48       .H  :11b7[1]
@@ -599,7 +599,7 @@ display_initialised
     jsr reset_menu_items                                              ; 1331: 20 80 29     .) :1200[1]
     jsr draw_toolbar                                                  ; 1334: 20 a1 29     .) :1203[1]
     jsr update_displayed_transformations_remaining                    ; 1337: 20 31 01     1. :1206[1]
-c1209
+same_level
     jsr set_toolbar_and_gameplay_area_colours                         ; 133a: 20 66 17     f. :1209[1]
     lda #0                                                            ; 133d: a9 00       ..  :120c[1]
     sta l31d7                                                         ; 133f: 8d d7 31    ..1 :120e[1]
@@ -720,17 +720,19 @@ skip_developer_mode_code1
     jmp set_object_position_from_cell_xy                              ; 13e9: 4c 5d 1f    L]. :12b8[1]
 
 ; TODO: This is called from level-specific machine code, e.g. see dataA.asm
-something23_TODO
+start_room
     lda #$ff                                                          ; 13ec: a9 ff       ..  :12bb[1]
-    sta something23_TODO_executing_flag                               ; 13ee: 8d 2b 13    .+. :12bd[1]
-    ldx second_level_handler_ptr                                      ; 13f1: ae d9 3a    ..: :12c0[1]
-    ldy second_level_handler_ptr + 1                                  ; 13f4: ac da 3a    ..: :12c3[1]
+    sta update_room_first_update_flag                                 ; 13ee: 8d 2b 13    .+. :12bd[1]
+; call room update for the first time
+    ldx update_room_ptr                                               ; 13f1: ae d9 3a    ..: :12c0[1]
+    ldy update_room_ptr + 1                                           ; 13f4: ac da 3a    ..: :12c3[1]
     jsr jmp_yx                                                        ; 13f7: 20 66 19     f. :12c6[1]
     lda #0                                                            ; 13fa: a9 00       ..  :12c9[1]
-    sta something23_TODO_executing_flag                               ; 13fc: 8d 2b 13    .+. :12cb[1]
+    sta update_room_first_update_flag                                 ; 13fc: 8d 2b 13    .+. :12cb[1]
     lda desired_level                                                 ; 13ff: a5 31       .1  :12ce[1]
     cmp previous_level                                                ; 1401: c5 51       .Q  :12d0[1]
     beq return1                                                       ; 1403: f0 05       ..  :12d2[1]
+; start transformation to the wizard if it's a new level
     lda #spriteid_icodata_wizard                                      ; 1405: a9 04       ..  :12d4[1]
     jsr transform                                                     ; 1407: 20 37 23     7# :12d6[1]
 return1
@@ -760,8 +762,8 @@ c1306
     jsr c131e                                                         ; 143a: 20 1e 13     .. :1309[1]
     jsr read_jump_zx_keys                                             ; 143d: 20 a2 3a     .: :130c[1]
     jsr check_for_next_player_animation                               ; 1440: 20 cd 22     ." :130f[1]
-    ldx second_level_handler_ptr                                      ; 1443: ae d9 3a    ..: :1312[1]
-    ldy second_level_handler_ptr + 1                                  ; 1446: ac da 3a    ..: :1315[1]
+    ldx update_room_ptr                                               ; 1443: ae d9 3a    ..: :1312[1]
+    ldy update_room_ptr + 1                                           ; 1446: ac da 3a    ..: :1315[1]
     jsr jmp_yx                                                        ; 1449: 20 66 19     f. :1318[1]
     jmp something12_TODO                                              ; 144c: 4c c3 18    L.. :131b[1]
 
@@ -773,7 +775,7 @@ c131e
     sta vsync_counter                                                 ; 1458: 8d 8b 17    ... :1327[1]
     rts                                                               ; 145b: 60          `   :132a[1]
 
-something23_TODO_executing_flag
+update_room_first_update_flag
     !byte 0                                                           ; 145c: 00          .   :132b[1]
 
 ; *************************************************************************************
@@ -1932,7 +1934,7 @@ initialise_brazier_and_fire
     pha                                                               ; 1abd: 48          H   :198c[1]
     tya                                                               ; 1abe: 98          .   :198d[1]
     pha                                                               ; 1abf: 48          H   :198e[1]
-    lda something23_TODO_executing_flag                               ; 1ac0: ad 2b 13    .+. :198f[1]
+    lda update_room_first_update_flag                                 ; 1ac0: ad 2b 13    .+. :198f[1]
     beq c19e5                                                         ; 1ac3: f0 51       .Q  :1992[1]
     lda desired_room_index                                            ; 1ac5: a5 30       .0  :1994[1]
     cmp current_room_index                                            ; 1ac7: cd ba 1a    ... :1996[1]
@@ -2026,7 +2028,7 @@ something14_TODO
     lda desired_room_index                                            ; 1b61: a5 30       .0  :1a30[1]
     cmp current_room_index                                            ; 1b63: cd ba 1a    ... :1a32[1]
     bne c1a9e                                                         ; 1b66: d0 67       .g  :1a35[1]
-    lda something23_TODO_executing_flag                               ; 1b68: ad 2b 13    .+. :1a37[1]
+    lda update_room_first_update_flag                                 ; 1b68: ad 2b 13    .+. :1a37[1]
     bne c1a59                                                         ; 1b6b: d0 1d       ..  :1a3a[1]
     ldx l1aae                                                         ; 1b6d: ae ae 1a    ... :1a3c[1]
     ldy #$0b                                                          ; 1b70: a0 0b       ..  :1a3f[1]
@@ -8354,7 +8356,6 @@ pydis_end
 
 ; Automatically generated labels:
 ;     c0ae6
-;     c1209
 ;     c12fc
 ;     c1306
 ;     c131e

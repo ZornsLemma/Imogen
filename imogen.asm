@@ -96,7 +96,7 @@ play_sound_yx                                       = &38f6
 check_cursor_left_right_and_space                   = &3a8f
 level_data                                          = &3ad5
 level_init_after_load_handler_ptr                   = &3ad7
-second_level_handler_ptr                            = &3ad9
+update_room_ptr                                     = &3ad9
 level_name_ptr                                      = &3adb
 level_header_data                                   = &3adf
 auxcode                                             = &53c0
@@ -200,7 +200,7 @@ oscli                                               = &fff7
     lda #&e8                                                          ; 12b7: a9 e8       ..
     sec                                                               ; 12b9: 38          8
 .sub_c12ba
-something23_TODO = sub_c12ba+1
+start_room = sub_c12ba+1
     sbc l0074                                                         ; 12ba: e5 74       .t
     sta l0070                                                         ; 12bc: 85 70       .p
     lda #&13                                                          ; 12be: a9 13       ..
@@ -270,7 +270,7 @@ something23_TODO = sub_c12ba+1
     lda #<osfile                                                      ; 1326: a9 dd       ..
     sta l0001                                                         ; 1328: 85 01       ..
 .sub_c132a
-something23_TODO_executing_flag = sub_c132a+1
+update_room_first_update_flag = sub_c132a+1
     lda #>osfile                                                      ; 132a: a9 ff       ..
     sta l0002                                                         ; 132c: 85 02       ..
     lda #jmp_indirect_opcode                                          ; 132e: a9 6c       .l
