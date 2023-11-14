@@ -157,6 +157,8 @@ substitute_labels = {
         "address1_high": "object_left_high",
         "l0072": "object_right_low",
         "l0073": "object_right_high",
+        "l0078": "object_left_cell_x",
+        "l0079": "object_right_cell_x",
     },
     (0x2603, 0x2a8b): {
         "l0074": "object_top_low",
@@ -594,6 +596,22 @@ comment(0x2434, """*************************************************************
 
 Find the left and right of the object
 
+Returns both the left and right Y coordinate of the object (found using the object position, sprite offset, current sprite width, and object direction).
+It also returns cell based versions of these two coordinates.
+
+As input, pixel based 'temporary' offsets can be added to the result. 'Temporary' because they are zeroed on exit.
+
+On Entry:
+                       X: the object index to look at
+        temp_left_offset: offset to add to result (zeroed on exit)
+       temp_right_offset: offset to add to result (zeroed on exit)
+
+On Exit:
+             object_left: Set to object's position X + sprite offset - sprite width
+            object_right: Set to object's position X + sprite offset
+      object_left_cell_y: Cell Y for object_left
+     object_right_cell_y: Cell Y for object_right
+
 *************************************************************************************""")
 comment(0x2435, "remember object index")
 
@@ -607,6 +625,8 @@ comment(0x2464, "add sprite width-1 to address1 if looking right, or subtract if
 comment(0x247a, "sprite_screen_address = address1 - (width-1)")
 entry(0x247a, "object_direction_negative")
 entry(0x248d, "add_temporary_offsets")
+label(0x24d0, "temp_left_offset")
+label(0x24d1, "temp_right_offset")
 
 label(0x24d2, "find_top_and_bottom_of_object")
 comment(0x24d3, "remember object index")
@@ -621,9 +641,9 @@ comment(0x250f, "add temporary signed offset to object_top")
 comment(0x2521, "divide the bottom pixel coordinate by eight to get the cell Y")
 comment(0x252c, "add temporary signed offset to object_bottom")
 comment(0x2547, "zero the temporary offsets")
-label(0x2550, "temp_top_offset_y")
+label(0x2550, "temp_top_offset")
 comment(0x253e, "divide the bottom pixel coordinate by eight to get the cell Y")
-label(0x2551, "temp_bottom_offset_y")
+label(0x2551, "temp_bottom_offset")
 
 comment(0x24d2, """*************************************************************************************
 
@@ -636,8 +656,8 @@ As input, pixel based 'temporary' offsets can be added to the result. 'Temporary
 
 On Entry:
                        X: the object index to look at
-       temp_top_offset_y: offset to add to result (zeroed on exit)
-    temp_bottom_offset_y: offset to add to result (zeroed on exit)
+         temp_top_offset: offset to add to result (zeroed on exit)
+      temp_bottom_offset: offset to add to result (zeroed on exit)
 
 On Exit:
               object_top: Set to object's position Y + sprite offset - sprite height

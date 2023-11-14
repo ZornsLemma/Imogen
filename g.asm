@@ -303,11 +303,13 @@ l0077                                       = $77
 object_bottom_high                          = $77
 sprite_y_pos_high                           = $77
 l0078                                       = $78
+object_left_cell_x                          = $78
 original_off_screen_address_low             = $78
 osfile_block_exec_address_low               = $78
 sprite_x_offset_within_byte                 = $78
 byte_offset_within_sprite                   = $79
 l0079                                       = $79
+object_right_cell_x                         = $79
 original_off_screen_address_high            = $79
 osfile_block_exec_address_mid1              = $79
 l007a                                       = $7a
@@ -3905,7 +3907,7 @@ sub_c236b
     and object_spriteid_old                                           ; 249f: 2d b3 09    -.. :236e[1]
     beq return12                                                      ; 24a2: f0 35       .5  :2371[1]
     lda #2                                                            ; 24a4: a9 02       ..  :2373[1]
-    sta temp_bottom_offset_y                                          ; 24a6: 8d 51 25    .Q% :2375[1]
+    sta temp_bottom_offset                                            ; 24a6: 8d 51 25    .Q% :2375[1]
     lda #0                                                            ; 24a9: a9 00       ..  :2378[1]
     jsr something59_TODO                                              ; 24ab: 20 94 28     .( :237a[1]
     beq return12                                                      ; 24ae: f0 29       .)  :237d[1]
@@ -3922,7 +3924,7 @@ c2392
     and #2                                                            ; 24c6: 29 02       ).  :2395[1]
     beq return12                                                      ; 24c8: f0 0f       ..  :2397[1]
     lda #2                                                            ; 24ca: a9 02       ..  :2399[1]
-    sta temp_bottom_offset_y                                          ; 24cc: 8d 51 25    .Q% :239b[1]
+    sta temp_bottom_offset                                            ; 24cc: 8d 51 25    .Q% :239b[1]
     lda #$0b                                                          ; 24cf: a9 0b       ..  :239e[1]
     jsr something59_TODO                                              ; 24d1: 20 94 28     .( :23a0[1]
     bne return12                                                      ; 24d4: d0 03       ..  :23a3[1]
@@ -3965,15 +3967,15 @@ sub_c23c4
     beq c241a                                                         ; 2505: f0 44       .D  :23d4[1]
     lda l2433                                                         ; 2507: ad 33 24    .3$ :23d6[1]
     bmi c23e2                                                         ; 250a: 30 07       0.  :23d9[1]
-    inc l24d1                                                         ; 250c: ee d1 24    ..$ :23db[1]
+    inc temp_right_offset                                             ; 250c: ee d1 24    ..$ :23db[1]
     ldy #0                                                            ; 250f: a0 00       ..  :23de[1]
     beq c23e7                                                         ; 2511: f0 05       ..  :23e0[1]
 c23e2
-    dec l24d0                                                         ; 2513: ce d0 24    ..$ :23e2[1]
+    dec temp_left_offset                                              ; 2513: ce d0 24    ..$ :23e2[1]
     ldy #$ff                                                          ; 2516: a0 ff       ..  :23e5[1]
 c23e7
     lda #1                                                            ; 2518: a9 01       ..  :23e7[1]
-    sta temp_bottom_offset_y                                          ; 251a: 8d 51 25    .Q% :23e9[1]
+    sta temp_bottom_offset                                            ; 251a: 8d 51 25    .Q% :23e9[1]
     lda #0                                                            ; 251d: a9 00       ..  :23ec[1]
     jsr something59_TODO                                              ; 251f: 20 94 28     .( :23ee[1]
     beq c23fa                                                         ; 2522: f0 07       ..  :23f1[1]
@@ -4019,6 +4021,24 @@ l2433
 ; *************************************************************************************
 ; 
 ; Find the left and right of the object
+; 
+; Returns both the left and right Y coordinate of the object (found using the object
+; position, sprite offset, current sprite width, and object direction).
+; It also returns cell based versions of these two coordinates.
+; 
+; As input, pixel based 'temporary' offsets can be added to the result. 'Temporary'
+; because they are zeroed on exit.
+; 
+; On Entry:
+;                        X: the object index to look at
+;         temp_left_offset: offset to add to result (zeroed on exit)
+;        temp_right_offset: offset to add to result (zeroed on exit)
+; 
+; On Exit:
+;              object_left: Set to object's position X + sprite offset - sprite width
+;             object_right: Set to object's position X + sprite offset
+;       object_left_cell_y: Cell Y for object_left
+;      object_right_cell_y: Cell Y for object_right
 ; 
 ; *************************************************************************************
 find_left_and_right_of_object
@@ -4084,49 +4104,49 @@ object_direction_negative
     sta object_left_high                                              ; 25bc: 85 71       .q  :248b[1]
 add_temporary_offsets
     ldy #0                                                            ; 25be: a0 00       ..  :248d[1]
-    lda l24d0                                                         ; 25c0: ad d0 24    ..$ :248f[1]
+    lda temp_left_offset                                              ; 25c0: ad d0 24    ..$ :248f[1]
     bpl c2495                                                         ; 25c3: 10 01       ..  :2492[1]
     dey                                                               ; 25c5: 88          .   :2494[1]
 c2495
     clc                                                               ; 25c6: 18          .   :2495[1]
     adc object_left_low                                               ; 25c7: 65 70       ep  :2496[1]
     sta object_left_low                                               ; 25c9: 85 70       .p  :2498[1]
-    sta l0078                                                         ; 25cb: 85 78       .x  :249a[1]
+    sta object_left_cell_x                                            ; 25cb: 85 78       .x  :249a[1]
     tya                                                               ; 25cd: 98          .   :249c[1]
     adc object_left_high                                              ; 25ce: 65 71       eq  :249d[1]
     sta object_left_high                                              ; 25d0: 85 71       .q  :249f[1]
     lsr                                                               ; 25d2: 4a          J   :24a1[1]
-    ror l0078                                                         ; 25d3: 66 78       fx  :24a2[1]
+    ror object_left_cell_x                                            ; 25d3: 66 78       fx  :24a2[1]
     lsr                                                               ; 25d5: 4a          J   :24a4[1]
-    ror l0078                                                         ; 25d6: 66 78       fx  :24a5[1]
+    ror object_left_cell_x                                            ; 25d6: 66 78       fx  :24a5[1]
     lsr                                                               ; 25d8: 4a          J   :24a7[1]
-    ror l0078                                                         ; 25d9: 66 78       fx  :24a8[1]
+    ror object_left_cell_x                                            ; 25d9: 66 78       fx  :24a8[1]
     ldy #0                                                            ; 25db: a0 00       ..  :24aa[1]
-    lda l24d1                                                         ; 25dd: ad d1 24    ..$ :24ac[1]
+    lda temp_right_offset                                             ; 25dd: ad d1 24    ..$ :24ac[1]
     bpl c24b2                                                         ; 25e0: 10 01       ..  :24af[1]
     dey                                                               ; 25e2: 88          .   :24b1[1]
 c24b2
     clc                                                               ; 25e3: 18          .   :24b2[1]
     adc object_right_low                                              ; 25e4: 65 72       er  :24b3[1]
     sta object_right_low                                              ; 25e6: 85 72       .r  :24b5[1]
-    sta l0079                                                         ; 25e8: 85 79       .y  :24b7[1]
+    sta object_right_cell_x                                           ; 25e8: 85 79       .y  :24b7[1]
     tya                                                               ; 25ea: 98          .   :24b9[1]
     adc object_right_high                                             ; 25eb: 65 73       es  :24ba[1]
     sta object_right_high                                             ; 25ed: 85 73       .s  :24bc[1]
     lsr                                                               ; 25ef: 4a          J   :24be[1]
-    ror l0079                                                         ; 25f0: 66 79       fy  :24bf[1]
+    ror object_right_cell_x                                           ; 25f0: 66 79       fy  :24bf[1]
     lsr                                                               ; 25f2: 4a          J   :24c1[1]
-    ror l0079                                                         ; 25f3: 66 79       fy  :24c2[1]
+    ror object_right_cell_x                                           ; 25f3: 66 79       fy  :24c2[1]
     lsr                                                               ; 25f5: 4a          J   :24c4[1]
-    ror l0079                                                         ; 25f6: 66 79       fy  :24c5[1]
+    ror object_right_cell_x                                           ; 25f6: 66 79       fy  :24c5[1]
     lda #0                                                            ; 25f8: a9 00       ..  :24c7[1]
-    sta l24d0                                                         ; 25fa: 8d d0 24    ..$ :24c9[1]
-    sta l24d1                                                         ; 25fd: 8d d1 24    ..$ :24cc[1]
+    sta temp_left_offset                                              ; 25fa: 8d d0 24    ..$ :24c9[1]
+    sta temp_right_offset                                             ; 25fd: 8d d1 24    ..$ :24cc[1]
     rts                                                               ; 2600: 60          `   :24cf[1]
 
-l24d0
+temp_left_offset
     !byte 0                                                           ; 2601: 00          .   :24d0[1]
-l24d1
+temp_right_offset
     !byte 0                                                           ; 2602: 00          .   :24d1[1]
 
 ; *************************************************************************************
@@ -4142,8 +4162,8 @@ l24d1
 ; 
 ; On Entry:
 ;                        X: the object index to look at
-;        temp_top_offset_y: offset to add to result (zeroed on exit)
-;     temp_bottom_offset_y: offset to add to result (zeroed on exit)
+;          temp_top_offset: offset to add to result (zeroed on exit)
+;       temp_bottom_offset: offset to add to result (zeroed on exit)
 ; 
 ; On Exit:
 ;               object_top: Set to object's position Y + sprite offset - sprite height
@@ -4196,7 +4216,7 @@ c24eb
     sta object_top_high                                               ; 263c: 85 75       .u  :250b[1]
     ldy #0                                                            ; 263e: a0 00       ..  :250d[1]
 ; add temporary signed offset to object_top
-    lda temp_top_offset_y                                             ; 2640: ad 50 25    .P% :250f[1]
+    lda temp_top_offset                                               ; 2640: ad 50 25    .P% :250f[1]
     bpl c2515                                                         ; 2643: 10 01       ..  :2512[1]
     dey                                                               ; 2645: 88          .   :2514[1]
 c2515
@@ -4216,7 +4236,7 @@ c2515
     ror object_top_cell_y                                             ; 2659: 66 7a       fz  :2528[1]
     ldy #0                                                            ; 265b: a0 00       ..  :252a[1]
 ; add temporary signed offset to object_bottom
-    lda temp_bottom_offset_y                                          ; 265d: ad 51 25    .Q% :252c[1]
+    lda temp_bottom_offset                                            ; 265d: ad 51 25    .Q% :252c[1]
     bpl c2532                                                         ; 2660: 10 01       ..  :252f[1]
     dey                                                               ; 2662: 88          .   :2531[1]
 c2532
@@ -4236,13 +4256,13 @@ c2532
     ror object_bottom_cell_y                                          ; 2676: 66 7b       f{  :2545[1]
 ; zero the temporary offsets
     lda #0                                                            ; 2678: a9 00       ..  :2547[1]
-    sta temp_top_offset_y                                             ; 267a: 8d 50 25    .P% :2549[1]
-    sta temp_bottom_offset_y                                          ; 267d: 8d 51 25    .Q% :254c[1]
+    sta temp_top_offset                                               ; 267a: 8d 50 25    .P% :2549[1]
+    sta temp_bottom_offset                                            ; 267d: 8d 51 25    .Q% :254c[1]
     rts                                                               ; 2680: 60          `   :254f[1]
 
-temp_top_offset_y
+temp_top_offset
     !byte 0                                                           ; 2681: 00          .   :2550[1]
-temp_bottom_offset_y
+temp_bottom_offset
     !byte 0                                                           ; 2682: 00          .   :2551[1]
 
 c2552
@@ -4313,20 +4333,20 @@ loop_c25c2
     dex                                                               ; 2706: ca          .   :25d5[1]
 c25d6
     lda #0                                                            ; 2707: a9 00       ..  :25d6[1]
-    sta l24d0                                                         ; 2709: 8d d0 24    ..$ :25d8[1]
-    sta l24d1                                                         ; 270c: 8d d1 24    ..$ :25db[1]
+    sta temp_left_offset                                              ; 2709: 8d d0 24    ..$ :25d8[1]
+    sta temp_right_offset                                             ; 270c: 8d d1 24    ..$ :25db[1]
     rts                                                               ; 270f: 60          `   :25de[1]
 
 sub_c25df
-    lda l24d0                                                         ; 2710: ad d0 24    ..$ :25df[1]
+    lda temp_left_offset                                              ; 2710: ad d0 24    ..$ :25df[1]
     pha                                                               ; 2713: 48          H   :25e2[1]
-    lda l24d1                                                         ; 2714: ad d1 24    ..$ :25e3[1]
+    lda temp_right_offset                                             ; 2714: ad d1 24    ..$ :25e3[1]
     pha                                                               ; 2717: 48          H   :25e6[1]
     jsr find_left_and_right_of_object                                 ; 2718: 20 34 24     4$ :25e7[1]
     pla                                                               ; 271b: 68          h   :25ea[1]
-    sta l24d1                                                         ; 271c: 8d d1 24    ..$ :25eb[1]
+    sta temp_right_offset                                             ; 271c: 8d d1 24    ..$ :25eb[1]
     pla                                                               ; 271f: 68          h   :25ee[1]
-    sta l24d0                                                         ; 2720: 8d d0 24    ..$ :25ef[1]
+    sta temp_left_offset                                              ; 2720: 8d d0 24    ..$ :25ef[1]
     jmp c2552                                                         ; 2723: 4c 52 25    LR% :25f2[1]
 
 sub_c25f5
@@ -4337,7 +4357,7 @@ sub_c25f5
     lda #$ff                                                          ; 272e: a9 ff       ..  :25fd[1]
     sta l0044                                                         ; 2730: 85 44       .D  :25ff[1]
     lda #1                                                            ; 2732: a9 01       ..  :2601[1]
-    sta temp_bottom_offset_y                                          ; 2734: 8d 51 25    .Q% :2603[1]
+    sta temp_bottom_offset                                            ; 2734: 8d 51 25    .Q% :2603[1]
     ldx l0053                                                         ; 2737: a6 53       .S  :2606[1]
     jsr sub_c25df                                                     ; 2739: 20 df 25     .% :2608[1]
     lda l0053                                                         ; 273c: a5 53       .S  :260b[1]
@@ -4356,7 +4376,7 @@ sub_c25f5
     jsr sub_c25df                                                     ; 2754: 20 df 25     .% :2623[1]
 c2626
     lda #1                                                            ; 2757: a9 01       ..  :2626[1]
-    sta temp_bottom_offset_y                                          ; 2759: 8d 51 25    .Q% :2628[1]
+    sta temp_bottom_offset                                            ; 2759: 8d 51 25    .Q% :2628[1]
     ldx l0053                                                         ; 275c: a6 53       .S  :262b[1]
     jsr find_top_and_bottom_of_object                                 ; 275e: 20 d2 24     .$ :262d[1]
     jsr sub_c26e5                                                     ; 2761: 20 e5 26     .& :2630[1]
@@ -4365,7 +4385,7 @@ c2626
     ora l007d                                                         ; 2769: 05 7d       .}  :2638[1]
     beq c264f                                                         ; 276b: f0 13       ..  :263a[1]
     lda #1                                                            ; 276d: a9 01       ..  :263c[1]
-    sta temp_bottom_offset_y                                          ; 276f: 8d 51 25    .Q% :263e[1]
+    sta temp_bottom_offset                                            ; 276f: 8d 51 25    .Q% :263e[1]
     ldx l0053                                                         ; 2772: a6 53       .S  :2641[1]
     jsr sub_c25df                                                     ; 2774: 20 df 25     .% :2643[1]
     jsr find_top_and_bottom_of_object                                 ; 2777: 20 d2 24     .$ :2646[1]
@@ -4546,7 +4566,7 @@ sub_c2770
     ldx l0053                                                         ; 28a7: a6 53       .S  :2776[1]
     jsr sub_c25df                                                     ; 28a9: 20 df 25     .% :2778[1]
     lda #2                                                            ; 28ac: a9 02       ..  :277b[1]
-    sta temp_bottom_offset_y                                          ; 28ae: 8d 51 25    .Q% :277d[1]
+    sta temp_bottom_offset                                            ; 28ae: 8d 51 25    .Q% :277d[1]
     jsr find_top_and_bottom_of_object                                 ; 28b1: 20 d2 24     .$ :2780[1]
     lda #$ff                                                          ; 28b4: a9 ff       ..  :2783[1]
     sta l0044                                                         ; 28b6: 85 44       .D  :2785[1]
@@ -4797,10 +4817,10 @@ loop_c28fd
     dec l295b                                                         ; 2a73: ce 5b 29    .[) :2942[1]
 c2945
     lda #0                                                            ; 2a76: a9 00       ..  :2945[1]
-    sta temp_top_offset_y                                             ; 2a78: 8d 50 25    .P% :2947[1]
-    sta temp_bottom_offset_y                                          ; 2a7b: 8d 51 25    .Q% :294a[1]
-    sta l24d1                                                         ; 2a7e: 8d d1 24    ..$ :294d[1]
-    sta l24d0                                                         ; 2a81: 8d d0 24    ..$ :2950[1]
+    sta temp_top_offset                                               ; 2a78: 8d 50 25    .P% :2947[1]
+    sta temp_bottom_offset                                            ; 2a7b: 8d 51 25    .Q% :294a[1]
+    sta temp_right_offset                                             ; 2a7e: 8d d1 24    ..$ :294d[1]
+    sta temp_left_offset                                              ; 2a81: 8d d0 24    ..$ :2950[1]
     pla                                                               ; 2a84: 68          h   :2953[1]
     tay                                                               ; 2a85: a8          .   :2954[1]
     pla                                                               ; 2a86: 68          h   :2955[1]
@@ -5533,7 +5553,7 @@ wizard_not_changing_direction
     lda current_animation                                             ; 2edc: ad df 09    ... :2dab[1]
     cmp #wizard_jump_animation - wizard_transform_in_animation        ; 2edf: c9 49       .I  :2dae[1]
     bne c2dca                                                         ; 2ee1: d0 18       ..  :2db0[1]
-    dec temp_top_offset_y                                             ; 2ee3: ce 50 25    .P% :2db2[1]
+    dec temp_top_offset                                               ; 2ee3: ce 50 25    .P% :2db2[1]
     lda #0                                                            ; 2ee6: a9 00       ..  :2db5[1]
     jsr something59_TODO                                              ; 2ee8: 20 94 28     .( :2db7[1]
     bne c2dc3                                                         ; 2eeb: d0 07       ..  :2dba[1]
@@ -5823,7 +5843,7 @@ cat_not_changing_direction
     lda current_animation                                             ; 311d: ad df 09    ... :2fec[1]
     cmp #cat_jump_animation - cat_transform_in_animation              ; 3120: c9 45       .E  :2fef[1]
     bne c3011                                                         ; 3122: d0 1e       ..  :2ff1[1]
-    dec temp_top_offset_y                                             ; 3124: ce 50 25    .P% :2ff3[1]
+    dec temp_top_offset                                               ; 3124: ce 50 25    .P% :2ff3[1]
     lda #0                                                            ; 3127: a9 00       ..  :2ff6[1]
     jsr something59_TODO                                              ; 3129: 20 94 28     .( :2ff8[1]
     bne c3023                                                         ; 312c: d0 26       .&  :2ffb[1]
@@ -5840,7 +5860,7 @@ c300e
 c3011
     cmp #cat_jump_apex_animation - cat_transform_in_animation         ; 3142: c9 58       .X  :3011[1]
     bne c302a                                                         ; 3144: d0 15       ..  :3013[1]
-    dec temp_top_offset_y                                             ; 3146: ce 50 25    .P% :3015[1]
+    dec temp_top_offset                                               ; 3146: ce 50 25    .P% :3015[1]
     lda #0                                                            ; 3149: a9 00       ..  :3018[1]
     jsr something59_TODO                                              ; 314b: 20 94 28     .( :301a[1]
     bne c3023                                                         ; 314e: d0 04       ..  :301d[1]
@@ -6121,7 +6141,7 @@ c3222
     beq c325f                                                         ; 3358: f0 36       .6  :3227[1]
     lda jump_requested                                                ; 335a: ad c7 3a    ..: :3229[1]
     beq c324c                                                         ; 335d: f0 1e       ..  :322c[1]
-    dec temp_top_offset_y                                             ; 335f: ce 50 25    .P% :322e[1]
+    dec temp_top_offset                                               ; 335f: ce 50 25    .P% :322e[1]
     lda #0                                                            ; 3362: a9 00       ..  :3231[1]
     jsr something59_TODO                                              ; 3364: 20 94 28     .( :3233[1]
     bne c3247                                                         ; 3367: d0 0f       ..  :3236[1]
@@ -6164,7 +6184,7 @@ c3276
     lda current_animation                                             ; 33a7: ad df 09    ... :3276[1]
     cmp #monkey_standing_jump_animation - monkey_transform_in_animation; 33aa: c9 7a       .z  :3279[1]
     bne c328d                                                         ; 33ac: d0 10       ..  :327b[1]
-    dec temp_top_offset_y                                             ; 33ae: ce 50 25    .P% :327d[1]
+    dec temp_top_offset                                               ; 33ae: ce 50 25    .P% :327d[1]
     lda #0                                                            ; 33b1: a9 00       ..  :3280[1]
     jsr something59_TODO                                              ; 33b3: 20 94 28     .( :3282[1]
     bne c32ac                                                         ; 33b6: d0 25       .%  :3285[1]
@@ -6175,7 +6195,7 @@ c328d
     lda current_animation                                             ; 33be: ad df 09    ... :328d[1]
     cmp #monkey_jump_animation - monkey_transform_in_animation        ; 33c1: c9 87       ..  :3290[1]
     bne c32ac                                                         ; 33c3: d0 18       ..  :3292[1]
-    dec temp_top_offset_y                                             ; 33c5: ce 50 25    .P% :3294[1]
+    dec temp_top_offset                                               ; 33c5: ce 50 25    .P% :3294[1]
     lda #0                                                            ; 33c8: a9 00       ..  :3297[1]
     jsr something59_TODO                                              ; 33ca: 20 94 28     .( :3299[1]
     bne c32a5                                                         ; 33cd: d0 07       ..  :329c[1]
@@ -8642,8 +8662,6 @@ pydis_end
 ;     l1ab1
 ;     l1ab2
 ;     l2433
-;     l24d0
-;     l24d1
 ;     l288f
 ;     l2891
 ;     l2892
