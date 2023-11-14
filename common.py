@@ -140,14 +140,14 @@ def label_word(addr, s):
 
 label(0x3ad5, "level_data")
 label_word(0x3ad7, "level_init_after_load_handler_ptr")
-label_word(0x3ad9, "second_level_handler_ptr") # TODO: poor name
+label_word(0x3ad9, "update_room_ptr") # TODO: poor name
 label_word(0x3adb, "level_name_ptr") # TODO: poor name
 
 label(0x1988, "initialise_brazier_and_fire")
 label(0x1a10, "something14_TODO")
 label(0x2b87, "insert_character_menu_item_into_toolbar")
 label(0x2be0, "remove_item_from_toolbar_menu")
-label(0x12bb, "something23_TODO")
+label(0x12bb, "start_room")
 label(0x12da, "something24_TODO")
 label(0x1b90, "draw_floor_walls_and_ceiling_around_solid_rock")
 label(0x1abb, "copy_rectangle_of_memory_to_screen")
@@ -170,7 +170,7 @@ label(0x1140, "initialise_level")
 label(0x3adf, "level_header_data")
 expr_label(0x3ae0, make_add("level_header_data", "1"))
 
-label(0x132b, "something23_TODO_executing_flag") # TODO: speculation, but I think this might be used to prevent infinite recursion - it appears to be set to $ff only inside something23_TODO while calling second_level_handler_ptr, then gets reset to 0. - actually it may be simpler, this might be a "we are initialising the level for the first time, as opposed to running the level" - I have a vague suspicion the second_level_handler is called regularly by the game engine to let the level do animation and any other every-n-frame type actions
+label(0x132b, "update_room_first_update_flag")
 
 # TODO: Speculative but feels quite plausible looking at the code - 'current' and 'desirable' is extra-speculative
 # Room index is within the level, 0-(n-1) if the level has n rooms

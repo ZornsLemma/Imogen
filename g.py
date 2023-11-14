@@ -573,7 +573,12 @@ comment(0x1b66, "cell_screen_address = screen_base_address + Y*$140 + X*8")
 
 expr(0x2b26, "sprite_op_flags_normal")
 
+label(0x11f8, "display_initialised")
+label(0x1278, "set_player_position_for_new_room")
 label(0x129b, "skip_developer_mode_code1")
+comment(0x129b, "get room data address")
+comment(0x12a9, "read first byte into X and the second byte into Y. This is the player start position in cells")
+comment(0x12b6, "set player position")
 label(0x17f1, "skip_developer_mode_code2")
 label(0x181a, "skip_developer_mode_code3")
 label(0x137f, "reset_sprite_flags_and_exit")
@@ -1327,7 +1332,9 @@ comment(0x1228, """level_progress_table has:
 """)
 label(0x1234, "skip_adding_completion_spell_to_toolbar")
 comment(0x124f, "set current room number in level progress table")
-comment(0x125b, "set XY to address from the start of the level data based on the room number")
+comment(0x125b, "set YX to the address of the room initialisation code, an address found in a table at start of the level data offset by twice the room number")
+comment(0x1266, "add two to the address in YX, to get past the two initial player position bytes")
+comment(0x126f, "call the room initialisation code")
 
 comment(0x40d0, "Update the transformation count on screen at text position (35-37, 6). This takes care to update as few digits on screen as possible, probably to reduce flicker and to offset the relatively slow implementation of print_italic.")
 label(0x9ec, "current_transformations_remaining")
@@ -1503,14 +1510,21 @@ comment(0x1153, "if desired level is already loaded, skip forward", inline=True)
 comment(0x1155, "load level in A")
 comment(0x1169, "if load successful, then skip forward", inline=True)
 
+comment(0x12c0, "call room update for the first time")
+comment(0x12d4, "start transformation to the wizard if it's a new level")
+label(0x131e, "regulate_time_loop")
+comment(0x1312, "update room")
+comment(0x131e, "wait until five vsyncs have elapsed before continuing")
+
 label(0x1175, "level_already_loaded")
 label(0x36da, "check_password_level")
 entry(0x36db, "select_level_a")
 #comment(0x114f, "TODO: Why do we check desired_level against currently_loaded_level in this loop? The loop kind of makes sense as a retry if disc error sort of thing, but I don't see why we'd ever have the wrong level loaded or something like that. It still doesn't feel quite right, but could this maybe be some leftover hint of a tape version? - hmm, note that dataA.asm calls into initialise_level in several different places (with different values of X, indicating different level_header_data entries to be called) - it may be that this check is so that second and subsequent calls don't redo pointless or harmful initialisation?")
 comment(0x114f, "Load a new level if the desired_level has changed.\n\nAny time we want to load a new level, we just set the desired_level and let this code do the work. (It is a loop to allow for retries on a disk error.)")
 label(0x1186, "object_reset_loop")
+label(0x1209, "same_level")
 label(0x11dd, "clear_sixteen_entry_table_loop")
-comment(0x11f8, "Blank the whole screen temporarily. TODO: Note that when flipping from screen to screen during play, the toolbar is not blanked, but it is here. Is this just cosmetic or is there a technical reason for this?")
+comment(0x11f8, "Blank the whole screen temporarily. The toolbar is blanked out here since we are moving to a different level (we need to redraw it to remove any level specific objects obtained). When moving between rooms on the same level the toolbar doesn't change, so remains visible.")
 
 entry(0x29a1, "draw_toolbar") # TODO: plausible guess
 # TODO: barking up wrong tree entry(0x1df4, "draw_gameplay_area") # TODO: plausible guess
