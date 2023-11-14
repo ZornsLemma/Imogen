@@ -92,11 +92,11 @@ substitute_labels = {
     },
     (0x19f4, 0x1a96): {
         "address1_low": "object_y_delta",
-        "l0074": "object_true_bottom_low",
-        "l0075": "object_true_bottom_high",
+        "l0074": "object_top_low",
+        "l0075": "object_top_high",
         "l0076": "object_bottom_low",
         "l0077": "object_bottom_high",
-        "l007a": "true_object_bottom_cell_y",
+        "l007a": "object_top_cell_y",
         "l007b": "object_bottom_cell_y",
     },
     (0x1aa0, 0x1aae): {
@@ -155,11 +155,11 @@ substitute_labels = {
         "l0081": "sprite_addr_high",
     },
     (0x2603, 0x2a8b): {
-        "l0074": "object_true_bottom_low",
-        "l0075": "object_true_bottom_high",
+        "l0074": "object_top_low",
+        "l0075": "object_top_high",
         "l0076": "object_bottom_low",
         "l0077": "object_bottom_high",
-        "l007a": "true_object_bottom_cell_y",
+        "l007a": "object_top_cell_y",
         "l007b": "object_bottom_cell_y",
     },
     (0x2cb8, 0x2d3c): {
@@ -169,11 +169,11 @@ substitute_labels = {
     (0x349f, 0x3533): {
         "address1_low": "player_cell_y",
         "address1_high": "temp",
-        "l0074": "object_true_bottom_low",
-        "l0075": "object_true_bottom_high",
+        "l0074": "object_top_low",
+        "l0075": "object_top_high",
         "l0076": "object_bottom_low",
         "l0077": "object_bottom_high",
-        "l007a": "true_object_bottom_cell_y",
+        "l007a": "object_top_cell_y",
         "l007b": "object_bottom_cell_y",
     },
     (0x3d3d, 0x3d41): {
@@ -585,12 +585,12 @@ byte(0x1eaf, 4)
 byte(0x1eb3, 4)
 comment(0x1e7c, "store the value to write in the 'offset_within_byte' variable")
 
-label(0x2434, "examine_object_x_position_taking_into_account_sprite_offset_and_object_direction")
-comment(0x2434, """Some calculation based on the X coordinate of an object. Part of collision detection maybe?
+label(0x2434, "find_left_and_right_of_object")
+comment(0x2434, """*************************************************************************************
 
-On Entry:
-    X has the object to look at
-""")
+Find the left and right of the object
+
+*************************************************************************************""")
 
 comment(0x2439, "get and remember the sprite address")
 comment(0x2440, "recall object index")
@@ -603,42 +603,42 @@ comment(0x247a, "sprite_screen_address = address1 - (width-1)")
 entry(0x247a, "object_direction_negative")
 entry(0x248d, "object_direction_set") # TODO: mildly guessing
 
-label(0x24d2, "find_bottom_of_object")
+label(0x24d2, "find_top_and_bottom_of_object")
 comment(0x24d3, "remember object index")
 comment(0x24d4, "get address of current sprite for object")
 comment(0x24de, "recall object index")
-comment(0x24e0, "get sprite height")
-comment(0x24e4, "add sprite height to object position, store in object_bottom")
-comment(0x24f7, "read sprite offset Y")
-comment(0x24fb, "store sprite offset minus one")
-comment(0x2500, "subtract (sprite offset Y minus one) to get true bottom")
-comment(0x250f, "add mystery signed byte")
-comment(0x2521, "divide the true bottom pixel coordinate by eight to get the cell Y")
-comment(0x252c, "add mystery signed byte to object bottom")
-comment(0x2547, "zero mystery bytes")
-label(0x2550, "temp_true_bottom_offset_y")
+comment(0x24e0, "get sprite Y offset")
+comment(0x24e4, "add sprite Y offset to object position, store in object_bottom")
+comment(0x24f7, "read sprite height")
+comment(0x24fb, "store sprite height minus one")
+comment(0x2500, "subtract (sprite height Y minus one) to get object_top")
+comment(0x250f, "add temporary signed offset to object_top")
+comment(0x2521, "divide the bottom pixel coordinate by eight to get the cell Y")
+comment(0x252c, "add temporary signed offset to object_bottom")
+comment(0x2547, "zero the temporary offsets")
+label(0x2550, "temp_top_offset_y")
 comment(0x253e, "divide the bottom pixel coordinate by eight to get the cell Y")
 label(0x2551, "temp_bottom_offset_y")
 
 comment(0x24d2, """*************************************************************************************
 
-Find the bottom of the object
+Find the top and bottom of the object
 
-Returns both the regular bottom Y coordinate of the object (adding the object position and current sprite height), and the 'true' bottom coordinate which also includes the Y offset stored in the current sprite.
+Returns both the top and bottom Y coordinate of the object (found using the object position, sprite offset and current sprite height).
 It also returns cell based versions of these two coordinates.
 
-As input, pixel offsets can be added to the result.
+As input, pixel based 'temporary' offsets can be added to the result. 'Temporary' because they are zeroed on exit.
 
 On Entry:
-                          X: the object index to look at
-         temp_bottom_offset: offset to add to result (zeroed on exit)
-    temp_true_bottom_offset: offset to add to result (zeroed on exit)
+                       X: the object index to look at
+       temp_top_offset_y: offset to add to result (zeroed on exit)
+    temp_bottom_offset_y: offset to add to result (zeroed on exit)
 
 On Exit:
-                object_bottom: Set to object's position Y + sprite height
-           object_true_bottom: Set to object's position Y + sprite height - sprite offset
-    true_object_bottom_cell_y: Cell Y for object_true_bottom
-         object_bottom_cell_y: Cell Y for object_bottom
+              object_top: Set to object's position Y + sprite offset - sprite height
+           object_bottom: Set to object's position Y + sprite offset
+       object_top_cell_y: Cell Y for object_top
+    object_bottom_cell_y: Cell Y for object_bottom
 
 *************************************************************************************""")
 
@@ -940,7 +940,9 @@ comment(0x3cd2, "remember default brk and irq vectors")
 comment(0x3cf0, "redefine character 254 as a diamond shape")
 comment(0x3d1a, "clear the display of remaining transformations")
 comment(0x3d3d, "define envelopes")
-comment(0x3d52, "loop eight times resetting data in the printer buffer")
+comment(0x3d52, "initialise the 'all clear' and 'all set' tiles")
+label(0x3d54, "init_tiles_loop")
+label(0x38ad, "some_spriteid")
 comment(0x3d61, "store something else now that envelopes have already been defined above?")
 comment(0x3d75, "seed random number generation by reading the User VIA timers")
 comment(0x3d8d, "set base address for sprite rendering, $6200 is the main game area")

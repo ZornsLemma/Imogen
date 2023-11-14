@@ -279,13 +279,13 @@ sprite_screen_address_high                  = $73
 temp_animation_high                         = $73
 first_cell_in_row_screen_address_low        = $74
 l0074                                       = $74
-object_true_bottom_low                      = $74
+object_top_low                              = $74
 offset_within_byte                          = $74
 osfile_block_load_address_low               = $74
 sprite_x_pos_low                            = $74
 first_cell_in_row_screen_address_high       = $75
 l0075                                       = $75
-object_true_bottom_high                     = $75
+object_top_high                             = $75
 offset_within_collision_map                 = $75
 osfile_block_load_address_mid1              = $75
 sprite_x_pos_high                           = $75
@@ -307,8 +307,8 @@ l0079                                       = $79
 original_off_screen_address_high            = $79
 osfile_block_exec_address_mid1              = $79
 l007a                                       = $7a
+object_top_cell_y                           = $7a
 off_screen_address_low                      = $7a
-true_object_bottom_cell_y                   = $7a
 l007b                                       = $7b
 object_bottom_cell_y                        = $7b
 off_screen_address_high                     = $7b
@@ -1824,24 +1824,24 @@ get_delta_y
     sbc object_y_high_old                                             ; 1a0e: ed 9d 09    ... :18dd[1]
     sta object_y_delta                                                ; 1a11: 85 70       .p  :18e0[1]
     ldx #0                                                            ; 1a13: a2 00       ..  :18e2[1]
-    jsr find_bottom_of_object                                         ; 1a15: 20 d2 24     .$ :18e4[1]
+    jsr find_top_and_bottom_of_object                                 ; 1a15: 20 d2 24     .$ :18e4[1]
 ; Find the average of object_true_bottom and object_bottom and convert to a cell Y
 ; value. Use this value to test if the player is off screen.
-    lda object_true_bottom_low                                        ; 1a18: a5 74       .t  :18e7[1]
+    lda object_top_low                                                ; 1a18: a5 74       .t  :18e7[1]
     clc                                                               ; 1a1a: 18          .   :18e9[1]
     adc object_bottom_low                                             ; 1a1b: 65 76       ev  :18ea[1]
-    sta true_object_bottom_cell_y                                     ; 1a1d: 85 7a       .z  :18ec[1]
-    lda object_true_bottom_high                                       ; 1a1f: a5 75       .u  :18ee[1]
+    sta object_top_cell_y                                             ; 1a1d: 85 7a       .z  :18ec[1]
+    lda object_top_high                                               ; 1a1f: a5 75       .u  :18ee[1]
     adc object_bottom_high                                            ; 1a21: 65 77       ew  :18f0[1]
     lsr                                                               ; 1a23: 4a          J   :18f2[1]
-    ror true_object_bottom_cell_y                                     ; 1a24: 66 7a       fz  :18f3[1]
+    ror object_top_cell_y                                             ; 1a24: 66 7a       fz  :18f3[1]
     lsr                                                               ; 1a26: 4a          J   :18f5[1]
-    ror true_object_bottom_cell_y                                     ; 1a27: 66 7a       fz  :18f6[1]
+    ror object_top_cell_y                                             ; 1a27: 66 7a       fz  :18f6[1]
     lsr                                                               ; 1a29: 4a          J   :18f8[1]
-    ror true_object_bottom_cell_y                                     ; 1a2a: 66 7a       fz  :18f9[1]
+    ror object_top_cell_y                                             ; 1a2a: 66 7a       fz  :18f9[1]
     lsr                                                               ; 1a2c: 4a          J   :18fb[1]
-    ror true_object_bottom_cell_y                                     ; 1a2d: 66 7a       fz  :18fc[1]
-    lda true_object_bottom_cell_y                                     ; 1a2f: a5 7a       .z  :18fe[1]
+    ror object_top_cell_y                                             ; 1a2d: 66 7a       fz  :18fc[1]
+    lda object_top_cell_y                                             ; 1a2f: a5 7a       .z  :18fe[1]
     bmi increase_player_y_coordinate_to_be_on_screen                  ; 1a31: 30 35       05  :1900[1]
     cmp #game_area_height_cells                                       ; 1a33: c9 18       ..  :1902[1]
     bcs decrease_player_y_coordinate_to_be_on_screen                  ; 1a35: b0 4b       .K  :1904[1]
@@ -4012,13 +4012,12 @@ c242b
 l2433
     !byte 0                                                           ; 2564: 00          .   :2433[1]
 
-; Some calculation based on the X coordinate of an object. Part of collision detection
-; maybe?
+; *************************************************************************************
 ; 
-; On Entry:
-;     X has the object to look at
+; Find the left and right of the object
 ; 
-examine_object_x_position_taking_into_account_sprite_offset_and_object_direction
+; *************************************************************************************
+find_left_and_right_of_object
     txa                                                               ; 2565: 8a          .   :2434[1]
     pha                                                               ; 2566: 48          H   :2435[1]
     lda object_spriteid,x                                             ; 2567: bd a8 09    ... :2436[1]
@@ -4126,29 +4125,28 @@ l24d1
 
 ; *************************************************************************************
 ; 
-; Find the bottom of the object
+; Find the top and bottom of the object
 ; 
-; Returns both the regular bottom Y coordinate of the object (adding the object
-; position and current sprite height), and the 'true' bottom coordinate which also
-; includes the Y offset stored in the current sprite.
+; Returns both the top and bottom Y coordinate of the object (found using the object
+; position, sprite offset and current sprite height).
 ; It also returns cell based versions of these two coordinates.
 ; 
-; As input, pixel offsets can be added to the result.
+; As input, pixel based 'temporary' offsets can be added to the result. 'Temporary'
+; because they are zeroed on exit.
 ; 
 ; On Entry:
-;                           X: the object index to look at
-;          temp_bottom_offset: offset to add to result (zeroed on exit)
-;     temp_true_bottom_offset: offset to add to result (zeroed on exit)
+;                        X: the object index to look at
+;        temp_top_offset_y: offset to add to result (zeroed on exit)
+;     temp_bottom_offset_y: offset to add to result (zeroed on exit)
 ; 
 ; On Exit:
-;                 object_bottom: Set to object's position Y + sprite height
-;            object_true_bottom: Set to object's position Y + sprite height - sprite
-; offset
-;     true_object_bottom_cell_y: Cell Y for object_true_bottom
-;          object_bottom_cell_y: Cell Y for object_bottom
+;               object_top: Set to object's position Y + sprite offset - sprite height
+;            object_bottom: Set to object's position Y + sprite offset
+;        object_top_cell_y: Cell Y for object_top
+;     object_bottom_cell_y: Cell Y for object_bottom
 ; 
 ; *************************************************************************************
-find_bottom_of_object
+find_top_and_bottom_of_object
     txa                                                               ; 2603: 8a          .   :24d2[1]
 ; remember object index
     pha                                                               ; 2604: 48          H   :24d3[1]
@@ -4160,10 +4158,10 @@ find_bottom_of_object
 ; recall object index
     pla                                                               ; 260f: 68          h   :24de[1]
     tax                                                               ; 2610: aa          .   :24df[1]
-; get sprite height
+; get sprite Y offset
     ldy #1                                                            ; 2611: a0 01       ..  :24e0[1]
     lda (sprite_addr_low),y                                           ; 2613: b1 80       ..  :24e2[1]
-; add sprite height to object position, store in object_bottom
+; add sprite Y offset to object position, store in object_bottom
     ldy #0                                                            ; 2615: a0 00       ..  :24e4[1]
     ora #0                                                            ; 2617: 09 00       ..  :24e6[1]
     bpl c24eb                                                         ; 2619: 10 01       ..  :24e8[1]
@@ -4175,43 +4173,43 @@ c24eb
     tya                                                               ; 2622: 98          .   :24f1[1]
     adc object_y_high,x                                               ; 2623: 7d 92 09    }.. :24f2[1]
     sta object_bottom_high                                            ; 2626: 85 77       .w  :24f5[1]
-; read sprite offset Y
+; read sprite height
     ldy #3                                                            ; 2628: a0 03       ..  :24f7[1]
     lda (sprite_addr_low),y                                           ; 262a: b1 80       ..  :24f9[1]
-; store sprite offset minus one
+; store sprite height minus one
     sec                                                               ; 262c: 38          8   :24fb[1]
     sbc #1                                                            ; 262d: e9 01       ..  :24fc[1]
-    sta object_true_bottom_low                                        ; 262f: 85 74       .t  :24fe[1]
-; subtract (sprite offset Y minus one) to get true bottom
+    sta object_top_low                                                ; 262f: 85 74       .t  :24fe[1]
+; subtract (sprite height Y minus one) to get object_top
     lda object_bottom_low                                             ; 2631: a5 76       .v  :2500[1]
     sec                                                               ; 2633: 38          8   :2502[1]
-    sbc object_true_bottom_low                                        ; 2634: e5 74       .t  :2503[1]
-    sta object_true_bottom_low                                        ; 2636: 85 74       .t  :2505[1]
+    sbc object_top_low                                                ; 2634: e5 74       .t  :2503[1]
+    sta object_top_low                                                ; 2636: 85 74       .t  :2505[1]
     lda object_bottom_high                                            ; 2638: a5 77       .w  :2507[1]
     sbc #0                                                            ; 263a: e9 00       ..  :2509[1]
-    sta object_true_bottom_high                                       ; 263c: 85 75       .u  :250b[1]
+    sta object_top_high                                               ; 263c: 85 75       .u  :250b[1]
     ldy #0                                                            ; 263e: a0 00       ..  :250d[1]
-; add mystery signed byte
-    lda temp_true_bottom_offset_y                                     ; 2640: ad 50 25    .P% :250f[1]
+; add temporary signed offset to object_top
+    lda temp_top_offset_y                                             ; 2640: ad 50 25    .P% :250f[1]
     bpl c2515                                                         ; 2643: 10 01       ..  :2512[1]
     dey                                                               ; 2645: 88          .   :2514[1]
 c2515
     clc                                                               ; 2646: 18          .   :2515[1]
-    adc object_true_bottom_low                                        ; 2647: 65 74       et  :2516[1]
-    sta object_true_bottom_low                                        ; 2649: 85 74       .t  :2518[1]
-    sta true_object_bottom_cell_y                                     ; 264b: 85 7a       .z  :251a[1]
+    adc object_top_low                                                ; 2647: 65 74       et  :2516[1]
+    sta object_top_low                                                ; 2649: 85 74       .t  :2518[1]
+    sta object_top_cell_y                                             ; 264b: 85 7a       .z  :251a[1]
     tya                                                               ; 264d: 98          .   :251c[1]
-    adc object_true_bottom_high                                       ; 264e: 65 75       eu  :251d[1]
-    sta object_true_bottom_high                                       ; 2650: 85 75       .u  :251f[1]
-; divide the true bottom pixel coordinate by eight to get the cell Y
+    adc object_top_high                                               ; 264e: 65 75       eu  :251d[1]
+    sta object_top_high                                               ; 2650: 85 75       .u  :251f[1]
+; divide the bottom pixel coordinate by eight to get the cell Y
     lsr                                                               ; 2652: 4a          J   :2521[1]
-    ror true_object_bottom_cell_y                                     ; 2653: 66 7a       fz  :2522[1]
+    ror object_top_cell_y                                             ; 2653: 66 7a       fz  :2522[1]
     lsr                                                               ; 2655: 4a          J   :2524[1]
-    ror true_object_bottom_cell_y                                     ; 2656: 66 7a       fz  :2525[1]
+    ror object_top_cell_y                                             ; 2656: 66 7a       fz  :2525[1]
     lsr                                                               ; 2658: 4a          J   :2527[1]
-    ror true_object_bottom_cell_y                                     ; 2659: 66 7a       fz  :2528[1]
+    ror object_top_cell_y                                             ; 2659: 66 7a       fz  :2528[1]
     ldy #0                                                            ; 265b: a0 00       ..  :252a[1]
-; add mystery signed byte to object bottom
+; add temporary signed offset to object_bottom
     lda temp_bottom_offset_y                                          ; 265d: ad 51 25    .Q% :252c[1]
     bpl c2532                                                         ; 2660: 10 01       ..  :252f[1]
     dey                                                               ; 2662: 88          .   :2531[1]
@@ -4230,13 +4228,13 @@ c2532
     ror object_bottom_cell_y                                          ; 2673: 66 7b       f{  :2542[1]
     lsr                                                               ; 2675: 4a          J   :2544[1]
     ror object_bottom_cell_y                                          ; 2676: 66 7b       f{  :2545[1]
-; zero mystery bytes
+; zero the temporary offsets
     lda #0                                                            ; 2678: a9 00       ..  :2547[1]
-    sta temp_true_bottom_offset_y                                     ; 267a: 8d 50 25    .P% :2549[1]
+    sta temp_top_offset_y                                             ; 267a: 8d 50 25    .P% :2549[1]
     sta temp_bottom_offset_y                                          ; 267d: 8d 51 25    .Q% :254c[1]
     rts                                                               ; 2680: 60          `   :254f[1]
 
-temp_true_bottom_offset_y
+temp_top_offset_y
     !byte 0                                                           ; 2681: 00          .   :2550[1]
 temp_bottom_offset_y
     !byte 0                                                           ; 2682: 00          .   :2551[1]
@@ -4265,7 +4263,7 @@ loop_c256a
     sta l012d                                                         ; 26a6: 8d 2d 01    .-. :2575[1]
     lda l0079                                                         ; 26a9: a5 79       .y  :2578[1]
     sta l012e                                                         ; 26ab: 8d 2e 01    ... :257a[1]
-    jsr examine_object_x_position_taking_into_account_sprite_offset_and_object_direction; 26ae: 20 34 24     4$ :257d[1]
+    jsr find_left_and_right_of_object                                 ; 26ae: 20 34 24     4$ :257d[1]
     lda object_direction,x                                            ; 26b1: bd be 09    ... :2580[1]
     bpl c25a4                                                         ; 26b4: 10 1f       ..  :2583[1]
     lda address1_low                                                  ; 26b6: a5 70       .p  :2585[1]
@@ -4318,7 +4316,7 @@ sub_c25df
     pha                                                               ; 2713: 48          H   :25e2[1]
     lda l24d1                                                         ; 2714: ad d1 24    ..$ :25e3[1]
     pha                                                               ; 2717: 48          H   :25e6[1]
-    jsr examine_object_x_position_taking_into_account_sprite_offset_and_object_direction; 2718: 20 34 24     4$ :25e7[1]
+    jsr find_left_and_right_of_object                                 ; 2718: 20 34 24     4$ :25e7[1]
     pla                                                               ; 271b: 68          h   :25ea[1]
     sta l24d1                                                         ; 271c: 8d d1 24    ..$ :25eb[1]
     pla                                                               ; 271f: 68          h   :25ee[1]
@@ -4340,7 +4338,7 @@ sub_c25f5
     clc                                                               ; 273e: 18          .   :260d[1]
     adc #$0b                                                          ; 273f: 69 0b       i.  :260e[1]
     tax                                                               ; 2741: aa          .   :2610[1]
-    jsr find_bottom_of_object                                         ; 2742: 20 d2 24     .$ :2611[1]
+    jsr find_top_and_bottom_of_object                                 ; 2742: 20 d2 24     .$ :2611[1]
     jsr sub_c265a                                                     ; 2745: 20 5a 26     Z& :2614[1]
     lda l007c                                                         ; 2748: a5 7c       .|  :2617[1]
     ora l007d                                                         ; 274a: 05 7d       .}  :2619[1]
@@ -4354,7 +4352,7 @@ c2626
     lda #1                                                            ; 2757: a9 01       ..  :2626[1]
     sta temp_bottom_offset_y                                          ; 2759: 8d 51 25    .Q% :2628[1]
     ldx l0053                                                         ; 275c: a6 53       .S  :262b[1]
-    jsr find_bottom_of_object                                         ; 275e: 20 d2 24     .$ :262d[1]
+    jsr find_top_and_bottom_of_object                                 ; 275e: 20 d2 24     .$ :262d[1]
     jsr sub_c26e5                                                     ; 2761: 20 e5 26     .& :2630[1]
     jsr sub_c271e                                                     ; 2764: 20 1e 27     .' :2633[1]
     lda l007c                                                         ; 2767: a5 7c       .|  :2636[1]
@@ -4364,7 +4362,7 @@ c2626
     sta temp_bottom_offset_y                                          ; 276f: 8d 51 25    .Q% :263e[1]
     ldx l0053                                                         ; 2772: a6 53       .S  :2641[1]
     jsr sub_c25df                                                     ; 2774: 20 df 25     .% :2643[1]
-    jsr find_bottom_of_object                                         ; 2777: 20 d2 24     .$ :2646[1]
+    jsr find_top_and_bottom_of_object                                 ; 2777: 20 d2 24     .$ :2646[1]
     jsr sub_c265a                                                     ; 277a: 20 5a 26     Z& :2649[1]
     jsr sub_c2693                                                     ; 277d: 20 93 26     .& :264c[1]
 c264f
@@ -4382,7 +4380,7 @@ sub_c265a
     ldy object_bottom_cell_y                                          ; 2791: a4 7b       .{  :2660[1]
     tya                                                               ; 2793: 98          .   :2662[1]
     sec                                                               ; 2794: 38          8   :2663[1]
-    sbc true_object_bottom_cell_y                                     ; 2795: e5 7a       .z  :2664[1]
+    sbc object_top_cell_y                                             ; 2795: e5 7a       .z  :2664[1]
     sta l0080                                                         ; 2797: 85 80       ..  :2666[1]
 loop_c2668
     jsr read_collision_map_value_for_xy                               ; 2799: 20 fa 1e     .. :2668[1]
@@ -4399,7 +4397,7 @@ c2676
     ldy object_bottom_cell_y                                          ; 27ad: a4 7b       .{  :267c[1]
     tya                                                               ; 27af: 98          .   :267e[1]
     sec                                                               ; 27b0: 38          8   :267f[1]
-    sbc true_object_bottom_cell_y                                     ; 27b1: e5 7a       .z  :2680[1]
+    sbc object_top_cell_y                                             ; 27b1: e5 7a       .z  :2680[1]
     sta l0080                                                         ; 27b3: 85 80       ..  :2682[1]
 loop_c2684
     jsr read_collision_map_value_for_xy                               ; 27b5: 20 fa 1e     .. :2684[1]
@@ -4457,7 +4455,7 @@ return15
 sub_c26e5
     lda #$ff                                                          ; 2816: a9 ff       ..  :26e5[1]
     sta address2_low                                                  ; 2818: 85 7e       .~  :26e7[1]
-    ldy true_object_bottom_cell_y                                     ; 281a: a4 7a       .z  :26e9[1]
+    ldy object_top_cell_y                                             ; 281a: a4 7a       .z  :26e9[1]
     ldx l0079                                                         ; 281c: a6 79       .y  :26eb[1]
     txa                                                               ; 281e: 8a          .   :26ed[1]
     sec                                                               ; 281f: 38          8   :26ee[1]
@@ -4497,7 +4495,7 @@ sub_c271e
     cmp address2_high                                                 ; 2853: c5 7f       ..  :2722[1]
     beq return17                                                      ; 2855: f0 49       .I  :2724[1]
     bcc c274d                                                         ; 2857: 90 25       .%  :2726[1]
-    lda object_true_bottom_low                                        ; 2859: a5 74       .t  :2728[1]
+    lda object_top_low                                                ; 2859: a5 74       .t  :2728[1]
     and #7                                                            ; 285b: 29 07       ).  :272a[1]
     sta l0080                                                         ; 285d: 85 80       ..  :272c[1]
     lda #8                                                            ; 285f: a9 08       ..  :272e[1]
@@ -4543,7 +4541,7 @@ sub_c2770
     jsr sub_c25df                                                     ; 28a9: 20 df 25     .% :2778[1]
     lda #2                                                            ; 28ac: a9 02       ..  :277b[1]
     sta temp_bottom_offset_y                                          ; 28ae: 8d 51 25    .Q% :277d[1]
-    jsr find_bottom_of_object                                         ; 28b1: 20 d2 24     .$ :2780[1]
+    jsr find_top_and_bottom_of_object                                 ; 28b1: 20 d2 24     .$ :2780[1]
     lda #$ff                                                          ; 28b4: a9 ff       ..  :2783[1]
     sta l0044                                                         ; 28b6: 85 44       .D  :2785[1]
     jsr sub_c26e5                                                     ; 28b8: 20 e5 26     .& :2787[1]
@@ -4561,7 +4559,7 @@ c279c
     lda l0079                                                         ; 28d2: a5 79       .y  :27a1[1]
     sta l0122                                                         ; 28d4: 8d 22 01    .". :27a3[1]
     ldx l0053                                                         ; 28d7: a6 53       .S  :27a6[1]
-    jsr examine_object_x_position_taking_into_account_sprite_offset_and_object_direction; 28d9: 20 34 24     4$ :27a8[1]
+    jsr find_left_and_right_of_object                                 ; 28d9: 20 34 24     4$ :27a8[1]
     lda l0072                                                         ; 28dc: a5 72       .r  :27ab[1]
     clc                                                               ; 28de: 18          .   :27ad[1]
     adc #1                                                            ; 28df: 69 01       i.  :27ae[1]
@@ -4586,17 +4584,17 @@ c279c
     lda l2892                                                         ; 2908: ad 92 28    ..( :27d7[1]
     clc                                                               ; 290b: 18          .   :27da[1]
     adc address1_low                                                  ; 290c: 65 70       ep  :27db[1]
-    sta true_object_bottom_cell_y                                     ; 290e: 85 7a       .z  :27dd[1]
+    sta object_top_cell_y                                             ; 290e: 85 7a       .z  :27dd[1]
     lda l2893                                                         ; 2910: ad 93 28    ..( :27df[1]
     adc address1_high                                                 ; 2913: 65 71       eq  :27e2[1]
     lsr                                                               ; 2915: 4a          J   :27e4[1]
-    ror true_object_bottom_cell_y                                     ; 2916: 66 7a       fz  :27e5[1]
+    ror object_top_cell_y                                             ; 2916: 66 7a       fz  :27e5[1]
     lsr                                                               ; 2918: 4a          J   :27e7[1]
-    ror true_object_bottom_cell_y                                     ; 2919: 66 7a       fz  :27e8[1]
+    ror object_top_cell_y                                             ; 2919: 66 7a       fz  :27e8[1]
     tax                                                               ; 291b: aa          .   :27ea[1]
-    lda true_object_bottom_cell_y                                     ; 291c: a5 7a       .z  :27eb[1]
+    lda object_top_cell_y                                             ; 291c: a5 7a       .z  :27eb[1]
     sbc #0                                                            ; 291e: e9 00       ..  :27ed[1]
-    sta true_object_bottom_cell_y                                     ; 2920: 85 7a       .z  :27ef[1]
+    sta object_top_cell_y                                             ; 2920: 85 7a       .z  :27ef[1]
     txa                                                               ; 2922: 8a          .   :27f1[1]
     sbc #0                                                            ; 2923: e9 00       ..  :27f2[1]
     jsr sub_c2859                                                     ; 2925: 20 59 28     Y( :27f4[1]
@@ -4609,13 +4607,13 @@ c27fe
     lda l2892                                                         ; 2933: ad 92 28    ..( :2802[1]
     clc                                                               ; 2936: 18          .   :2805[1]
     adc l0072                                                         ; 2937: 65 72       er  :2806[1]
-    sta true_object_bottom_cell_y                                     ; 2939: 85 7a       .z  :2808[1]
+    sta object_top_cell_y                                             ; 2939: 85 7a       .z  :2808[1]
     lda l2893                                                         ; 293b: ad 93 28    ..( :280a[1]
     adc l0073                                                         ; 293e: 65 73       es  :280d[1]
     lsr                                                               ; 2940: 4a          J   :280f[1]
-    ror true_object_bottom_cell_y                                     ; 2941: 66 7a       fz  :2810[1]
+    ror object_top_cell_y                                             ; 2941: 66 7a       fz  :2810[1]
     lsr                                                               ; 2943: 4a          J   :2812[1]
-    ror true_object_bottom_cell_y                                     ; 2944: 66 7a       fz  :2813[1]
+    ror object_top_cell_y                                             ; 2944: 66 7a       fz  :2813[1]
     jsr sub_c286d                                                     ; 2946: 20 6d 28     m( :2815[1]
     bne c2851                                                         ; 2949: d0 37       .7  :2818[1]
     inc two_byte_table_based_on_left_right_direction                  ; 294b: ee 90 28    ..( :281a[1]
@@ -4629,7 +4627,7 @@ c2825
     ror l2892                                                         ; 2959: 6e 92 28    n.( :2828[1]
     lda l2892                                                         ; 295c: ad 92 28    ..( :282b[1]
     sbc #0                                                            ; 295f: e9 00       ..  :282e[1]
-    sta true_object_bottom_cell_y                                     ; 2961: 85 7a       .z  :2830[1]
+    sta object_top_cell_y                                             ; 2961: 85 7a       .z  :2830[1]
     lda l2893                                                         ; 2963: ad 93 28    ..( :2832[1]
     sbc #0                                                            ; 2966: e9 00       ..  :2835[1]
     jsr sub_c2859                                                     ; 2968: 20 59 28     Y( :2837[1]
@@ -4638,7 +4636,7 @@ c2825
     bne c2851                                                         ; 2970: d0 10       ..  :283f[1]
 c2841
     lda l2892                                                         ; 2972: ad 92 28    ..( :2841[1]
-    sta true_object_bottom_cell_y                                     ; 2975: 85 7a       .z  :2844[1]
+    sta object_top_cell_y                                             ; 2975: 85 7a       .z  :2844[1]
     lda l2893                                                         ; 2977: ad 93 28    ..( :2846[1]
     jsr sub_c286d                                                     ; 297a: 20 6d 28     m( :2849[1]
     bne c2851                                                         ; 297d: d0 03       ..  :284c[1]
@@ -4653,12 +4651,12 @@ c2851
 
 sub_c2859
     lsr                                                               ; 298a: 4a          J   :2859[1]
-    ror true_object_bottom_cell_y                                     ; 298b: 66 7a       fz  :285a[1]
+    ror object_top_cell_y                                             ; 298b: 66 7a       fz  :285a[1]
     lsr                                                               ; 298d: 4a          J   :285c[1]
-    ror true_object_bottom_cell_y                                     ; 298e: 66 7a       fz  :285d[1]
+    ror object_top_cell_y                                             ; 298e: 66 7a       fz  :285d[1]
     lsr                                                               ; 2990: 4a          J   :285f[1]
-    ror true_object_bottom_cell_y                                     ; 2991: 66 7a       fz  :2860[1]
-    ldx true_object_bottom_cell_y                                     ; 2993: a6 7a       .z  :2862[1]
+    ror object_top_cell_y                                             ; 2991: 66 7a       fz  :2860[1]
+    ldx object_top_cell_y                                             ; 2993: a6 7a       .z  :2862[1]
     txa                                                               ; 2995: 8a          .   :2864[1]
     sec                                                               ; 2996: 38          8   :2865[1]
     sbc l0078                                                         ; 2997: e5 78       .x  :2866[1]
@@ -4667,15 +4665,15 @@ sub_c2859
 
 sub_c286d
     lsr                                                               ; 299e: 4a          J   :286d[1]
-    ror true_object_bottom_cell_y                                     ; 299f: 66 7a       fz  :286e[1]
+    ror object_top_cell_y                                             ; 299f: 66 7a       fz  :286e[1]
     lsr                                                               ; 29a1: 4a          J   :2870[1]
-    ror true_object_bottom_cell_y                                     ; 29a2: 66 7a       fz  :2871[1]
+    ror object_top_cell_y                                             ; 29a2: 66 7a       fz  :2871[1]
     lsr                                                               ; 29a4: 4a          J   :2873[1]
-    ror true_object_bottom_cell_y                                     ; 29a5: 66 7a       fz  :2874[1]
+    ror object_top_cell_y                                             ; 29a5: 66 7a       fz  :2874[1]
     ldx l0079                                                         ; 29a7: a6 79       .y  :2876[1]
     txa                                                               ; 29a9: 8a          .   :2878[1]
     sec                                                               ; 29aa: 38          8   :2879[1]
-    sbc true_object_bottom_cell_y                                     ; 29ab: e5 7a       .z  :287a[1]
+    sbc object_top_cell_y                                             ; 29ab: e5 7a       .z  :287a[1]
     sta l0080                                                         ; 29ad: 85 80       ..  :287c[1]
 c287e
     jsr read_collision_map_value_for_xy                               ; 29af: 20 fa 1e     .. :287e[1]
@@ -4709,7 +4707,7 @@ something59_TODO
     pha                                                               ; 29cb: 48          H   :289a[1]
     ldx l295b                                                         ; 29cc: ae 5b 29    .[) :289b[1]
     jsr sub_c25df                                                     ; 29cf: 20 df 25     .% :289e[1]
-    jsr find_bottom_of_object                                         ; 29d2: 20 d2 24     .$ :28a1[1]
+    jsr find_top_and_bottom_of_object                                 ; 29d2: 20 d2 24     .$ :28a1[1]
     lda l28e1                                                         ; 29d5: ad e1 28    ..( :28a4[1]
     sta l0044                                                         ; 29d8: 85 44       .D  :28a7[1]
     jsr sub_c265a                                                     ; 29da: 20 5a 26     Z& :28a9[1]
@@ -4754,7 +4752,7 @@ something55_TODO
     lda object_spriteid,y                                             ; 2a21: b9 a8 09    ... :28f0[1]
     beq c2945                                                         ; 2a24: f0 50       .P  :28f3[1]
     jsr sub_c25df                                                     ; 2a26: 20 df 25     .% :28f5[1]
-    jsr find_bottom_of_object                                         ; 2a29: 20 d2 24     .$ :28f8[1]
+    jsr find_top_and_bottom_of_object                                 ; 2a29: 20 d2 24     .$ :28f8[1]
     ldx #7                                                            ; 2a2c: a2 07       ..  :28fb[1]
 loop_c28fd
     lda address1_low,x                                                ; 2a2e: b5 70       .p  :28fd[1]
@@ -4765,7 +4763,7 @@ loop_c28fd
     pha                                                               ; 2a37: 48          H   :2906[1]
     tax                                                               ; 2a38: aa          .   :2907[1]
     jsr sub_c25df                                                     ; 2a39: 20 df 25     .% :2908[1]
-    jsr find_bottom_of_object                                         ; 2a3c: 20 d2 24     .$ :290b[1]
+    jsr find_top_and_bottom_of_object                                 ; 2a3c: 20 d2 24     .$ :290b[1]
     lda l0123                                                         ; 2a3f: ad 23 01    .#. :290e[1]
     sec                                                               ; 2a42: 38          8   :2911[1]
     sbc address1_low                                                  ; 2a43: e5 70       .p  :2912[1]
@@ -4780,9 +4778,9 @@ loop_c28fd
     bmi c2945                                                         ; 2a57: 30 1d       0.  :2926[1]
     lda l0127                                                         ; 2a59: ad 27 01    .'. :2928[1]
     sec                                                               ; 2a5c: 38          8   :292b[1]
-    sbc object_true_bottom_low                                        ; 2a5d: e5 74       .t  :292c[1]
+    sbc object_top_low                                                ; 2a5d: e5 74       .t  :292c[1]
     lda l0128                                                         ; 2a5f: ad 28 01    .(. :292e[1]
-    sbc object_true_bottom_high                                       ; 2a62: e5 75       .u  :2931[1]
+    sbc object_top_high                                               ; 2a62: e5 75       .u  :2931[1]
     bmi c2945                                                         ; 2a64: 30 10       0.  :2933[1]
     lda object_bottom_low                                             ; 2a66: a5 76       .v  :2935[1]
     sec                                                               ; 2a68: 38          8   :2937[1]
@@ -4793,7 +4791,7 @@ loop_c28fd
     dec l295b                                                         ; 2a73: ce 5b 29    .[) :2942[1]
 c2945
     lda #0                                                            ; 2a76: a9 00       ..  :2945[1]
-    sta temp_true_bottom_offset_y                                     ; 2a78: 8d 50 25    .P% :2947[1]
+    sta temp_top_offset_y                                             ; 2a78: 8d 50 25    .P% :2947[1]
     sta temp_bottom_offset_y                                          ; 2a7b: 8d 51 25    .Q% :294a[1]
     sta l24d1                                                         ; 2a7e: 8d d1 24    ..$ :294d[1]
     sta l24d0                                                         ; 2a81: 8d d0 24    ..$ :2950[1]
@@ -5529,7 +5527,7 @@ wizard_not_changing_direction
     lda current_animation                                             ; 2edc: ad df 09    ... :2dab[1]
     cmp #wizard_jump_animation - wizard_transform_in_animation        ; 2edf: c9 49       .I  :2dae[1]
     bne c2dca                                                         ; 2ee1: d0 18       ..  :2db0[1]
-    dec temp_true_bottom_offset_y                                     ; 2ee3: ce 50 25    .P% :2db2[1]
+    dec temp_top_offset_y                                             ; 2ee3: ce 50 25    .P% :2db2[1]
     lda #0                                                            ; 2ee6: a9 00       ..  :2db5[1]
     jsr something59_TODO                                              ; 2ee8: 20 94 28     .( :2db7[1]
     bne c2dc3                                                         ; 2eeb: d0 07       ..  :2dba[1]
@@ -5819,7 +5817,7 @@ cat_not_changing_direction
     lda current_animation                                             ; 311d: ad df 09    ... :2fec[1]
     cmp #cat_jump_animation - cat_transform_in_animation              ; 3120: c9 45       .E  :2fef[1]
     bne c3011                                                         ; 3122: d0 1e       ..  :2ff1[1]
-    dec temp_true_bottom_offset_y                                     ; 3124: ce 50 25    .P% :2ff3[1]
+    dec temp_top_offset_y                                             ; 3124: ce 50 25    .P% :2ff3[1]
     lda #0                                                            ; 3127: a9 00       ..  :2ff6[1]
     jsr something59_TODO                                              ; 3129: 20 94 28     .( :2ff8[1]
     bne c3023                                                         ; 312c: d0 26       .&  :2ffb[1]
@@ -5836,7 +5834,7 @@ c300e
 c3011
     cmp #cat_jump_apex_animation - cat_transform_in_animation         ; 3142: c9 58       .X  :3011[1]
     bne c302a                                                         ; 3144: d0 15       ..  :3013[1]
-    dec temp_true_bottom_offset_y                                     ; 3146: ce 50 25    .P% :3015[1]
+    dec temp_top_offset_y                                             ; 3146: ce 50 25    .P% :3015[1]
     lda #0                                                            ; 3149: a9 00       ..  :3018[1]
     jsr something59_TODO                                              ; 314b: 20 94 28     .( :301a[1]
     bne c3023                                                         ; 314e: d0 04       ..  :301d[1]
@@ -6117,7 +6115,7 @@ c3222
     beq c325f                                                         ; 3358: f0 36       .6  :3227[1]
     lda jump_requested                                                ; 335a: ad c7 3a    ..: :3229[1]
     beq c324c                                                         ; 335d: f0 1e       ..  :322c[1]
-    dec temp_true_bottom_offset_y                                     ; 335f: ce 50 25    .P% :322e[1]
+    dec temp_top_offset_y                                             ; 335f: ce 50 25    .P% :322e[1]
     lda #0                                                            ; 3362: a9 00       ..  :3231[1]
     jsr something59_TODO                                              ; 3364: 20 94 28     .( :3233[1]
     bne c3247                                                         ; 3367: d0 0f       ..  :3236[1]
@@ -6160,7 +6158,7 @@ c3276
     lda current_animation                                             ; 33a7: ad df 09    ... :3276[1]
     cmp #monkey_standing_jump_animation - monkey_transform_in_animation; 33aa: c9 7a       .z  :3279[1]
     bne c328d                                                         ; 33ac: d0 10       ..  :327b[1]
-    dec temp_true_bottom_offset_y                                     ; 33ae: ce 50 25    .P% :327d[1]
+    dec temp_top_offset_y                                             ; 33ae: ce 50 25    .P% :327d[1]
     lda #0                                                            ; 33b1: a9 00       ..  :3280[1]
     jsr something59_TODO                                              ; 33b3: 20 94 28     .( :3282[1]
     bne c32ac                                                         ; 33b6: d0 25       .%  :3285[1]
@@ -6171,7 +6169,7 @@ c328d
     lda current_animation                                             ; 33be: ad df 09    ... :328d[1]
     cmp #monkey_jump_animation - monkey_transform_in_animation        ; 33c1: c9 87       ..  :3290[1]
     bne c32ac                                                         ; 33c3: d0 18       ..  :3292[1]
-    dec temp_true_bottom_offset_y                                     ; 33c5: ce 50 25    .P% :3294[1]
+    dec temp_top_offset_y                                             ; 33c5: ce 50 25    .P% :3294[1]
     lda #0                                                            ; 33c8: a9 00       ..  :3297[1]
     jsr something59_TODO                                              ; 33ca: 20 94 28     .( :3299[1]
     bne c32a5                                                         ; 33cd: d0 07       ..  :329c[1]
@@ -6291,12 +6289,12 @@ sub_c336e
     tya                                                               ; 34a1: 98          .   :3370[1]
     pha                                                               ; 34a2: 48          H   :3371[1]
     ldx #0                                                            ; 34a3: a2 00       ..  :3372[1]
-    jsr find_bottom_of_object                                         ; 34a5: 20 d2 24     .$ :3374[1]
-    lda object_true_bottom_low                                        ; 34a8: a5 74       .t  :3377[1]
+    jsr find_top_and_bottom_of_object                                 ; 34a5: 20 d2 24     .$ :3374[1]
+    lda object_top_low                                                ; 34a8: a5 74       .t  :3377[1]
     clc                                                               ; 34aa: 18          .   :3379[1]
     adc object_bottom_low                                             ; 34ab: 65 76       ev  :337a[1]
     sta temp                                                          ; 34ad: 85 71       .q  :337c[1]
-    lda object_true_bottom_high                                       ; 34af: a5 75       .u  :337e[1]
+    lda object_top_high                                               ; 34af: a5 75       .u  :337e[1]
     adc object_bottom_high                                            ; 34b1: 65 77       ew  :3380[1]
     ror                                                               ; 34b3: 6a          j   :3382[1]
     ror temp                                                          ; 34b4: 66 71       fq  :3383[1]
@@ -7036,7 +7034,7 @@ sound_data1
 envelope_1
 object_sprite_mask_type
     !byte 1                                                           ; 39dd: 01          .   :38ac[1]   ; envelope number
-l38ad
+some_spriteid
     !byte 3                                                           ; 39de: 03          .   :38ad[1]   ; step length (100ths of a second)
     !byte 0                                                           ; 39df: 00          .   :38ae[1]   ; pitch change per step in section 1
     !byte 0                                                           ; 39e0: 00          .   :38af[1]   ; pitch change per step in section 2
@@ -7620,20 +7618,20 @@ define_character_fe_loop
     ldx #<envelope_3                                                  ; 3d4b: a2 d8       ..
     ldy #>envelope_3                                                  ; 3d4d: a0 38       .8
     jsr define_envelope                                               ; 3d4f: 20 5e 39     ^9
-; loop eight times resetting data in the printer buffer
+; initialise the 'all clear' and 'all set' tiles
     ldy #7                                                            ; 3d52: a0 07       ..
-loop_c3d54
+init_tiles_loop
     lda #0                                                            ; 3d54: a9 00       ..
     sta tile_all_clear_pixels,y                                       ; 3d56: 99 a1 0a    ...
     lda #$ff                                                          ; 3d59: a9 ff       ..
     sta tile_all_set_pixels,y                                         ; 3d5b: 99 a9 0a    ...
     dey                                                               ; 3d5e: 88          .
-    bpl loop_c3d54                                                    ; 3d5f: 10 f3       ..
+    bpl init_tiles_loop                                               ; 3d5f: 10 f3       ..
 ; store something else now that envelopes have already been defined above?
     lda #spriteid_199                                                 ; 3d61: a9 c7       ..
     sta object_sprite_mask_type                                       ; 3d63: 8d ac 38    ..8
     lda #spriteid_198                                                 ; 3d66: a9 c6       ..
-    sta l38ad                                                         ; 3d68: 8d ad 38    ..8
+    sta some_spriteid                                                 ; 3d68: 8d ad 38    ..8
     lda #$80                                                          ; 3d6b: a9 80       ..
     sta envelope_2                                                    ; 3d6d: 8d c2 38    ..8
     lda #$7f                                                          ; 3d70: a9 7f       ..
@@ -8654,7 +8652,6 @@ pydis_end
 ;     l2ef2
 ;     l31d7
 ;     l3403
-;     l38ad
 ;     l38c3
 ;     l3967
 ;     l396b
@@ -8688,7 +8685,6 @@ pydis_end
 ;     loop_c34b2
 ;     loop_c36c7
 ;     loop_c39d2
-;     loop_c3d54
 ;     loop_c3f87
 ;     sub_c04cb
 ;     sub_c2157
