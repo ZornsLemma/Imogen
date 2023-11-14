@@ -553,6 +553,8 @@ comment(0x2454, "update address1 based on sprite offset", inline=True)
 comment(0x2460, "get sprite width")
 comment(0x2464, "add sprite width-1 to address1 if looking right, or subtract if looking left storing result in sprite_screen_address")
 comment(0x247a, "sprite_screen_address = address1 - (width-1)")
+entry(0x247a, "object_direction_negative")
+entry(0x248d, "object_direction_set") # TODO: mildly guessing
 
 label(0x24d2, "examine_object_y_position_taking_into_account_sprite_offset_and_object_direction")
 comment(0x24d2, """Some calculation based on the Y coordinate of an object. Part of collision detection maybe?

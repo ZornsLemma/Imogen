@@ -4014,17 +4014,17 @@ c2454
     sec                                                               ; 2595: 38          8   :2464[1]
     sbc #1                                                            ; 2596: e9 01       ..  :2465[1]
     ldy object_direction,x                                            ; 2598: bc be 09    ... :2467[1]
-    bmi c247a                                                         ; 259b: 30 0e       0.  :246a[1]
+    bmi object_direction_negative                                     ; 259b: 30 0e       0.  :246a[1]
     clc                                                               ; 259d: 18          .   :246c[1]
     adc address1_low                                                  ; 259e: 65 70       ep  :246d[1]
     sta l0072                                                         ; 25a0: 85 72       .r  :246f[1]
     lda #0                                                            ; 25a2: a9 00       ..  :2471[1]
     adc address1_high                                                 ; 25a4: 65 71       eq  :2473[1]
     sta l0073                                                         ; 25a6: 85 73       .s  :2475[1]
-    jmp c248d                                                         ; 25a8: 4c 8d 24    L.$ :2477[1]
+    jmp object_direction_set                                          ; 25a8: 4c 8d 24    L.$ :2477[1]
 
 ; sprite_screen_address = address1 - (width-1)
-c247a
+object_direction_negative
     sta l0073                                                         ; 25ab: 85 73       .s  :247a[1]
     lda address1_low                                                  ; 25ad: a5 70       .p  :247c[1]
     sta l0072                                                         ; 25af: 85 72       .r  :247e[1]
@@ -4035,7 +4035,7 @@ c247a
     sta l0073                                                         ; 25b8: 85 73       .s  :2487[1]
     sbc #0                                                            ; 25ba: e9 00       ..  :2489[1]
     sta address1_high                                                 ; 25bc: 85 71       .q  :248b[1]
-c248d
+object_direction_set
     ldy #0                                                            ; 25be: a0 00       ..  :248d[1]
     lda l24d0                                                         ; 25c0: ad d0 24    ..$ :248f[1]
     bpl c2495                                                         ; 25c3: 10 01       ..  :2492[1]
@@ -8390,8 +8390,6 @@ pydis_end
 ;     c242b
 ;     c244d
 ;     c2454
-;     c247a
-;     c248d
 ;     c2495
 ;     c24b2
 ;     c24eb
