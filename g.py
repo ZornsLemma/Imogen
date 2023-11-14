@@ -609,8 +609,8 @@ On Entry:
 On Exit:
              object_left: Set to object's position X + sprite offset - sprite width
             object_right: Set to object's position X + sprite offset
-      object_left_cell_y: Cell Y for object_left
-     object_right_cell_y: Cell Y for object_right
+      object_left_cell_x: Cell X for object_left
+     object_right_cell_x: Cell X for object_right
 
 *************************************************************************************""")
 comment(0x2435, "remember object index")
