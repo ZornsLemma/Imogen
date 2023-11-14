@@ -1980,7 +1980,10 @@ label(0x21d0, "draw_object_sprite")
 
 comment(0x2182, "ALWAYS branch", inline=True)
 label(0x2184, "erase_object")
+expr(0x2181, "sprite_op_flags_normal")
+expr(0x2188, "sprite_op_flags_erase")
 label(0x218b, "draw_object_without_mask")
+expr(0x218f, "sprite_op_flags_ignore_mask")
 label(0x2190, "draw_or_erase_object")
 
 comment(0x21d3, "return if not the object after the player")
@@ -2031,10 +2034,25 @@ for i in sprite_addr:
 #        print(hex(i))
 #        expr(i, sprite_dict[v])
 
+def spriteid(start_addr, end_addr=None):
+    if end_addr == None:
+        end_addr = start_addr
+    for addr in range(start_addr, end_addr):
+        v = get_u8_runtime(memorymanager.RuntimeAddr(addr))
+        if v in sprite_dict:
+            byte(addr)
+            expr(addr, sprite_dict[v])
+
 expr(0x22d2, sprite_dict[4])
 expr(0x22d6, sprite_dict[5])
 expr(0x22da, sprite_dict[6])
 label(0x22e0, "update_mid_transformation_local")
+spriteid(0x3974, 0x3986)
+label(0x3974, "mid_transform_sprites_table")
+label(0x3975, "mid_transform_circle_sprites")
+expr(0x39fe, "mid_transform_circle_sprites - mid_transform_sprites_table")
+
+comment(0x3986, "During a transformation, 'object_current_index_in_animation' is the index into the sprite array above and ")
 label(0x3986, "update_mid_transformation")
 label(0x2d87, "update_wizard_animation")
 comment(0x2d95, "branch if transforming")

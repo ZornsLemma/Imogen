@@ -3542,15 +3542,15 @@ sub_c2157
     beq erase_object                                                  ; 22ab: f0 08       ..  :217a[1]
     cmp #$ff                                                          ; 22ad: c9 ff       ..  :217c[1]
     beq draw_object_without_mask                                      ; 22af: f0 0b       ..  :217e[1]
-    ldy #0                                                            ; 22b1: a0 00       ..  :2180[1]
+    ldy #sprite_op_flags_normal                                       ; 22b1: a0 00       ..  :2180[1]
     beq draw_or_erase_object                                          ; 22b3: f0 0c       ..  :2182[1]   ; ALWAYS branch
 erase_object
     lda object_spriteid_old,x                                         ; 22b5: bd b3 09    ... :2184[1]
-    ldy #2                                                            ; 22b8: a0 02       ..  :2187[1]
+    ldy #sprite_op_flags_erase                                        ; 22b8: a0 02       ..  :2187[1]
     bne draw_or_erase_object                                          ; 22ba: d0 05       ..  :2189[1]
 draw_object_without_mask
     lda object_spriteid_old,x                                         ; 22bc: bd b3 09    ... :218b[1]
-    ldy #4                                                            ; 22bf: a0 04       ..  :218e[1]
+    ldy #sprite_op_flags_ignore_mask                                  ; 22bf: a0 04       ..  :218e[1]
 draw_or_erase_object
     sta sprite_id                                                     ; 22c1: 85 16       ..  :2190[1]
     sty sprite_op_flags                                               ; 22c3: 84 15       ..  :2192[1]
@@ -7194,19 +7194,35 @@ l3970
     !byte 0, 0, 0                                                     ; 3aa1: 00 00 00    ... :3970[1]
 remember_a
     !byte 0                                                           ; 3aa4: 00          .   :3973[1]
-l3974
-    !byte   0, $20, $20, $ff,   0                                     ; 3aa5: 00 20 20... .   :3974[1]
-    !text "&%$#", '"'                                                 ; 3aaa: 26 25 24... &%$ :3979[1]
+mid_transform_sprites_table
+    !byte spriteid_one_pixel_masked_out                               ; 3aa5: 00          .   :3974[1]
+mid_transform_circle_sprites
+    !byte spriteid_circle                                             ; 3aa6: 20              :3975[1]
+    !byte spriteid_circle                                             ; 3aa7: 20              :3976[1]
+    !byte $ff                                                         ; 3aa8: ff          .   :3977[1]
+    !byte spriteid_one_pixel_masked_out                               ; 3aa9: 00          .   :3978[1]
+    !byte spriteid_sparkles5                                          ; 3aaa: 26          &   :3979[1]
+    !byte spriteid_sparkles4                                          ; 3aab: 25          %   :397a[1]
+    !byte spriteid_sparkles3                                          ; 3aac: 24          $   :397b[1]
+    !byte spriteid_sparkles2                                          ; 3aad: 23          #   :397c[1]
+    !byte spriteid_sparkles1                                          ; 3aae: 22          "   :397d[1]
     !byte $ff                                                         ; 3aaf: ff          .   :397e[1]
-    !text '"', "#$%&"                                                 ; 3ab0: 22 23 24... "#$ :397f[1]
-    !byte   0, $ff                                                    ; 3ab5: 00 ff       ..  :3984[1]
+    !byte spriteid_sparkles1                                          ; 3ab0: 22          "   :397f[1]
+    !byte spriteid_sparkles2                                          ; 3ab1: 23          #   :3980[1]
+    !byte spriteid_sparkles3                                          ; 3ab2: 24          $   :3981[1]
+    !byte spriteid_sparkles4                                          ; 3ab3: 25          %   :3982[1]
+    !byte spriteid_sparkles5                                          ; 3ab4: 26          &   :3983[1]
+    !byte spriteid_one_pixel_masked_out                               ; 3ab5: 00          .   :3984[1]
+    !byte $ff                                                         ; 3ab6: ff          .   :3985[1]
 
+; During a transformation, 'object_current_index_in_animation' is the index into the
+; sprite array above and
 update_mid_transformation
     lda object_current_index_in_animation                             ; 3ab7: ad d4 09    ... :3986[1]
     clc                                                               ; 3aba: 18          .   :3989[1]
     adc #1                                                            ; 3abb: 69 01       i.  :398a[1]
     tay                                                               ; 3abd: a8          .   :398c[1]
-    lda l3974,y                                                       ; 3abe: b9 74 39    .t9 :398d[1]
+    lda mid_transform_sprites_table,y                                 ; 3abe: b9 74 39    .t9 :398d[1]
     cmp #$ff                                                          ; 3ac1: c9 ff       ..  :3990[1]
     bne c3997                                                         ; 3ac3: d0 03       ..  :3992[1]
     ldy current_animation                                             ; 3ac5: ac df 09    ... :3994[1]
@@ -7268,14 +7284,14 @@ c39f4
     bne c3a08                                                         ; 3b27: d0 10       ..  :39f6[1]
     lda #0                                                            ; 3b29: a9 00       ..  :39f8[1]
     sta current_animation                                             ; 3b2b: 8d df 09    ... :39fa[1]
-    ldy #1                                                            ; 3b2e: a0 01       ..  :39fd[1]
+    ldy #mid_transform_circle_sprites - mid_transform_sprites_table   ; 3b2e: a0 01       ..  :39fd[1]
     lda object_y_low                                                  ; 3b30: ad 7c 09    .|. :39ff[1]
     sec                                                               ; 3b33: 38          8   :3a02[1]
     sbc #2                                                            ; 3b34: e9 02       ..  :3a03[1]
     sta object_y_low                                                  ; 3b36: 8d 7c 09    .|. :3a05[1]
 c3a08
     sty object_current_index_in_animation                             ; 3b39: 8c d4 09    ... :3a08[1]
-    lda l3974,y                                                       ; 3b3c: b9 74 39    .t9 :3a0b[1]
+    lda mid_transform_sprites_table,y                                 ; 3b3c: b9 74 39    .t9 :3a0b[1]
     sta object_spriteid                                               ; 3b3f: 8d a8 09    ... :3a0e[1]
     rts                                                               ; 3b42: 60          `   :3a11[1]
 
@@ -8643,7 +8659,6 @@ pydis_end
 ;     l3967
 ;     l396b
 ;     l3970
-;     l3974
 ;     l3a8e
 ;     lbe00
 ;     lbf00
@@ -9295,6 +9310,9 @@ pydis_end
 !if (menu_slot_count) != $11 {
     !error "Assertion failed: menu_slot_count == $11"
 }
+!if (mid_transform_circle_sprites - mid_transform_sprites_table) != $01 {
+    !error "Assertion failed: mid_transform_circle_sprites - mid_transform_sprites_table == $01"
+}
 !if (monkey_animation10 - monkey_transform_in_animation) != $4d {
     !error "Assertion failed: monkey_animation10 - monkey_transform_in_animation == $4d"
 }
@@ -9445,6 +9463,9 @@ pydis_end
 !if (sprite_op_flags_erase) != $02 {
     !error "Assertion failed: sprite_op_flags_erase == $02"
 }
+!if (sprite_op_flags_ignore_mask) != $04 {
+    !error "Assertion failed: sprite_op_flags_ignore_mask == $04"
+}
 !if (sprite_op_flags_normal) != $00 {
     !error "Assertion failed: sprite_op_flags_normal == $00"
 }
@@ -9507,6 +9528,9 @@ pydis_end
 }
 !if (spriteid_cat_walk4) != $0f {
     !error "Assertion failed: spriteid_cat_walk4 == $0f"
+}
+!if (spriteid_circle) != $20 {
+    !error "Assertion failed: spriteid_circle == $20"
 }
 !if (spriteid_corner_bottom_left) != $2d {
     !error "Assertion failed: spriteid_corner_bottom_left == $2d"
@@ -9627,6 +9651,21 @@ pydis_end
 }
 !if (spriteid_some_small_blob) != $37 {
     !error "Assertion failed: spriteid_some_small_blob == $37"
+}
+!if (spriteid_sparkles1) != $22 {
+    !error "Assertion failed: spriteid_sparkles1 == $22"
+}
+!if (spriteid_sparkles2) != $23 {
+    !error "Assertion failed: spriteid_sparkles2 == $23"
+}
+!if (spriteid_sparkles3) != $24 {
+    !error "Assertion failed: spriteid_sparkles3 == $24"
+}
+!if (spriteid_sparkles4) != $25 {
+    !error "Assertion failed: spriteid_sparkles4 == $25"
+}
+!if (spriteid_sparkles5) != $26 {
+    !error "Assertion failed: spriteid_sparkles5 == $26"
 }
 !if (spriteid_wizard1) != $30 {
     !error "Assertion failed: spriteid_wizard1 == $30"
