@@ -3,6 +3,7 @@ first_level_letter       = 65
 game_area_height_cells   = 24
 game_area_width_cells    = 40
 last_level_letter        = 81
+objectid_left_mouse      = 2
 opcode_jmp               = 76
 spriteid_ball            = 59
 spriteid_mouse           = 200
@@ -295,6 +296,7 @@ level_unchanged
     ldx #<envelope1                                                   ; 3bfd: a2 60       .`
     ldy #>envelope1                                                   ; 3bff: a0 44       .D
     jsr define_envelope                                               ; 3c01: 20 5e 39     ^9
+; 
     lda #2                                                            ; 3c04: a9 02       ..
     sta width_in_cells                                                ; 3c06: 85 3c       .<
     sta height_in_cells                                               ; 3c08: 85 3d       .=
@@ -310,7 +312,7 @@ level_unchanged
     dey                                                               ; 3c1c: 88          .
     dey                                                               ; 3c1d: 88          .
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 3c1e: 20 44 1e     D.
-    ldx #2                                                            ; 3c21: a2 02       ..
+    ldx #objectid_left_mouse                                          ; 3c21: a2 02       ..
     jsr set_object_position_from_current_sprite_position              ; 3c23: 20 6d 1f     m.
     lda #$cd                                                          ; 3c26: a9 cd       ..
     sta object_sprite_mask_type,x                                     ; 3c28: 9d ac 38    ..8
@@ -2102,6 +2104,9 @@ pydis_end
 }
 !if (level_update_handler) != $3b17 {
     !error "Assertion failed: level_update_handler == $3b17"
+}
+!if (objectid_left_mouse) != $02 {
+    !error "Assertion failed: objectid_left_mouse == $02"
 }
 !if (room_1_data_ptr) != $3b27 {
     !error "Assertion failed: room_1_data_ptr == $3b27"
