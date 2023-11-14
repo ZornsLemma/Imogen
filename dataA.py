@@ -142,6 +142,7 @@ envelope(0x444a, "envelope4")
 expr(0x4340, make_lo("envelope4"))
 expr(0x4342, make_hi("envelope4"))
 
+label(0x38c2, "object_something_table")
 
 go()
 
