@@ -1546,8 +1546,8 @@ comment(0x232b, "start 'transform out' animation")
 label(0x2334, "not_transforming")
 label(0x2358, "start_of_transform_in_animation")
 entry(0x2a38, "something20_TODO")
-label(0x2a60, "skip_developer_key_escape_handling")
-label(0x2ab7, "skip_developer_key_shift_handling")
+label(0x2a60, "skip_developer_escape_key_handling")
+label(0x2ab7, "skip_developer_shift_key_handling")
 label(0x2abd, "shift_key_detected")
 label(0x2ac4, "delay_loop1")
 label(0x3aa2, "read_jump_zx_keys")
@@ -1648,7 +1648,7 @@ comment(0x1103, """developer_flags
 
     The 'developer flags byte' lives in ICODATA. When loaded, if bit 6 is set then the variable 'developer_flags' is set to this value.
 
-    bit 0: "developer keys active", ESCAPE resets or exits the game I think, if you have the right sideways RAM set up. SHIFT does something too, slow down game?
+    bit 0: "developer keys active", ESCAPE resets or exits the game I think, if you have the right sideways RAM set up. If the menu pointer is on one of the first four standard items (when the game is normally paused), SHIFT steps the animation forward.
     bit 1: enable a screen dump for an EPSOM compatible printer (see auxcode.asm)
     bit 2: load ICODATA directly from track 39 on the disc, rather than as a regular load. (An option for copy protection?)
     bit 3: load game data from drive 2, not drive 0
@@ -1724,6 +1724,11 @@ expr(0x3645, make_hi("enter_password_encrypted_string"))
 expr(0x3796, make_lo("section_encrypted_string"))
 expr(0x3798, make_hi("section_encrypted_string"))
 
+label(0x3501, "test_for_drive_number_key_press")
+label(0x3516, "drive_number_pressed")
+comment(0x350c, "check for shifted drive number")
+label(0x3467, "test_for_drive_number_key_press_local")
+label(0x344b, "update_disc_menu")
 
 sound(0x38a4, "sound_data1")
 expr(0x2b0e, make_lo("sound_data1"))

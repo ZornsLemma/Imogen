@@ -443,7 +443,8 @@ pydis_start
 ; the variable 'developer_flags' is set to this value.
 ; 
 ;     bit 0: "developer keys active", ESCAPE resets or exits the game I think, if you
-; have the right sideways RAM set up. SHIFT does something too, slow down game?
+; have the right sideways RAM set up. If the menu pointer is on one of the first four
+; standard items (when the game is normally paused), SHIFT steps the animation forward.
 ;     bit 1: enable a screen dump for an EPSOM compatible printer (see auxcode.asm)
 ;     bit 2: load ICODATA directly from track 39 on the disc, rather than as a regular
 ; load. (An option for copy protection?)
@@ -4982,20 +4983,20 @@ something20_TODO
     jsr draw_toolbar                                                  ; 2b72: 20 a1 29     .) :2a41[1]
     jsr check_cursor_left_right_and_space                             ; 2b75: 20 8f 3a     .: :2a44[1]
     lda developer_mode_sideways_ram_is_set_up_flag                    ; 2b78: a5 5b       .[  :2a47[1]
-    beq skip_developer_key_escape_handling                            ; 2b7a: f0 15       ..  :2a49[1]
+    beq skip_developer_escape_key_handling                            ; 2b7a: f0 15       ..  :2a49[1]
     lda developer_flags                                               ; 2b7c: ad 03 11    ... :2a4b[1]
     and #1                                                            ; 2b7f: 29 01       ).  :2a4e[1]
-    beq skip_developer_key_escape_handling                            ; 2b81: f0 0e       ..  :2a50[1]
+    beq skip_developer_escape_key_handling                            ; 2b81: f0 0e       ..  :2a50[1]
     ldx #inkey_key_escape                                             ; 2b83: a2 8f       ..  :2a52[1]
     jsr negative_inkey                                                ; 2b85: 20 cc 3a     .: :2a54[1]
-    beq skip_developer_key_escape_handling                            ; 2b88: f0 07       ..  :2a57[1]
+    beq skip_developer_escape_key_handling                            ; 2b88: f0 07       ..  :2a57[1]
     pla                                                               ; 2b8a: 68          h   :2a59[1]
     pla                                                               ; 2b8b: 68          h   :2a5a[1]
     pla                                                               ; 2b8c: 68          h   :2a5b[1]
     pla                                                               ; 2b8d: 68          h   :2a5c[1]
     jmp reset_game_because_escape_pressed                             ; 2b8e: 4c 39 18    L9. :2a5d[1]
 
-skip_developer_key_escape_handling
+skip_developer_escape_key_handling
     lda new_menu_index                                                ; 2b91: a5 29       .)  :2a60[1]
     sta another_menu_index                                            ; 2b93: 85 25       .%  :2a62[1]
     jsr apply_pending_menu_motion                                     ; 2b95: 20 67 2c     g, :2a64[1]
@@ -5030,14 +5031,14 @@ loop_c2a9a
 c2aa0
     jsr wait_for_timingB_counter                                      ; 2bd1: 20 00 04     .. :2aa0[1]
     jsr sub_c3664                                                     ; 2bd4: 20 64 36     d6 :2aa3[1]
-    jsr sub_c344b                                                     ; 2bd7: 20 4b 34     K4 :2aa6[1]
+    jsr update_disc_menu                                              ; 2bd7: 20 4b 34     K4 :2aa6[1]
     lda developer_flags                                               ; 2bda: ad 03 11    ... :2aa9[1]
     and #1                                                            ; 2bdd: 29 01       ).  :2aac[1]
-    beq skip_developer_key_shift_handling                             ; 2bdf: f0 07       ..  :2aae[1]
+    beq skip_developer_shift_key_handling                             ; 2bdf: f0 07       ..  :2aae[1]
     ldx #inkey_key_shift                                              ; 2be1: a2 ff       ..  :2ab0[1]
     jsr negative_inkey                                                ; 2be3: 20 cc 3a     .: :2ab2[1]
     bne shift_key_detected                                            ; 2be6: d0 06       ..  :2ab5[1]
-skip_developer_key_shift_handling
+skip_developer_shift_key_handling
     jsr wait_for_vsync                                                ; 2be8: 20 8c 17     .. :2ab7[1]
     jmp something20_TODO                                              ; 2beb: 4c 38 2a    L8* :2aba[1]
 
@@ -6403,7 +6404,7 @@ press_l_to_load_encrypted_string
     !byte $9b, $b9, $ae, $b8, $b8, $eb, $87, $eb, $bf, $a4, $eb, $a7  ; 356c: 9b b9 ae... ... :343b[1]
     !byte $a4, $aa, $af, $c6                                          ; 3578: a4 aa af... ... :3447[1]
 
-sub_c344b
+update_disc_menu
     ldy new_menu_index                                                ; 357c: a4 29       .)  :344b[1]
     lda desired_menu_slots,y                                          ; 357e: b9 5c 29    .\) :344d[1]
     cmp #spriteid_icodata_disc                                        ; 3581: c9 03       ..  :3450[1]
@@ -6415,11 +6416,11 @@ sub_c344b
     cmp #2                                                            ; 358d: c9 02       ..  :345c[1]
     beq get_filename_and_print_drive_number_prompt                    ; 358f: f0 47       .G  :345e[1]
     cmp #3                                                            ; 3591: c9 03       ..  :3460[1]
-    beq c3467                                                         ; 3593: f0 03       ..  :3462[1]
+    beq test_for_drive_number_key_press_local                         ; 3593: f0 03       ..  :3462[1]
     jmp c3557                                                         ; 3595: 4c 57 35    LW5 :3464[1]
 
-c3467
-    jmp c3501                                                         ; 3598: 4c 01 35    L.5 :3467[1]
+test_for_drive_number_key_press_local
+    jmp test_for_drive_number_key_press                               ; 3598: 4c 01 35    L.5 :3467[1]
 
 load_or_save
     lda #osfile_save                                                  ; 359b: a9 00       ..  :346a[1]
@@ -6489,18 +6490,19 @@ press_012_or_3_encrypted_string
     !byte $9b, $b9, $ae, $b8, $b8, $eb, $fb, $e7, $fa, $e7, $f9, $eb  ; 3621: 9b b9 ae... ... :34f0[1]
     !byte $a4, $b9, $eb, $f8, $c6                                     ; 362d: a4 b9 eb... ... :34fc[1]
 
-c3501
+test_for_drive_number_key_press
     jsr inkey_0                                                       ; 3632: 20 7c 38     |8 :3501[1]
     cmp #'4'                                                          ; 3635: c9 34       .4  :3504[1]
     bcs return24                                                      ; 3637: b0 2c       .,  :3506[1]
     cmp #'0'                                                          ; 3639: c9 30       .0  :3508[1]
-    bcs c3516                                                         ; 363b: b0 0a       ..  :350a[1]
+    bcs drive_number_pressed                                          ; 363b: b0 0a       ..  :350a[1]
+; check for shifted drive number
     cmp #'$'                                                          ; 363d: c9 24       .$  :350c[1]
     bcs return24                                                      ; 363f: b0 24       .$  :350e[1]
     cmp #'!'                                                          ; 3641: c9 21       .!  :3510[1]
     bcc return24                                                      ; 3643: 90 20       .   :3512[1]
     adc #$0f                                                          ; 3645: 69 0f       i.  :3514[1]
-c3516
+drive_number_pressed
     sta save_drive_number                                             ; 3647: 8d d7 34    ..4 :3516[1]
     jsr show_dialog_box                                               ; 364a: 20 0a 04     .. :3519[1]
     lda #4                                                            ; 364d: a9 04       ..  :351c[1]
@@ -8550,9 +8552,6 @@ pydis_end
 ;     c33ea
 ;     c33f8
 ;     c33fa
-;     c3467
-;     c3501
-;     c3516
 ;     c3557
 ;     c3573
 ;     c3598
@@ -8692,7 +8691,6 @@ pydis_end
 ;     sub_c286d
 ;     sub_c2eb8
 ;     sub_c336e
-;     sub_c344b
 ;     sub_c3664
 !if (' ' + '0') != $50 {
     !error "Assertion failed: ' ' + '0' == $50"
