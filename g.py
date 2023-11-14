@@ -153,6 +153,10 @@ substitute_labels = {
     (0x2565, 0x2680): {
         "l0080": "sprite_addr_low",
         "l0081": "sprite_addr_high",
+        "address1_low": "object_left_low",
+        "address1_high": "object_left_high",
+        "l0072": "object_right_low",
+        "l0073": "object_right_high",
     },
     (0x2603, 0x2a8b): {
         "l0074": "object_top_low",
@@ -591,17 +595,18 @@ comment(0x2434, """*************************************************************
 Find the left and right of the object
 
 *************************************************************************************""")
+comment(0x2435, "remember object index")
 
-comment(0x2439, "get and remember the sprite address")
+comment(0x2439, "get address of current sprite for object")
 comment(0x2440, "recall object index")
 comment(0x2442, "read the sprite's X offset")
-comment(0x2446, "invert the sprite offset if looking left")
+comment(0x2446, "add sprite Y offset to object position (or if looking left, subtract the sprite Y offset), then store in object_left.")
 comment(0x2454, "update address1 based on sprite offset", inline=True)
 comment(0x2460, "get sprite width")
-comment(0x2464, "add sprite width-1 to address1 if looking right, or subtract if looking left storing result in sprite_screen_address")
+comment(0x2464, "add sprite width-1 to address1 if looking right, or subtract if looking left storing result in object_right")
 comment(0x247a, "sprite_screen_address = address1 - (width-1)")
 entry(0x247a, "object_direction_negative")
-entry(0x248d, "object_direction_set") # TODO: mildly guessing
+entry(0x248d, "add_temporary_offsets")
 
 label(0x24d2, "find_top_and_bottom_of_object")
 comment(0x24d3, "remember object index")

@@ -254,6 +254,7 @@ cell_x                                      = $70
 filename_low                                = $70
 level_data_ptr_low                          = $70
 menu_item_to_use                            = $70
+object_left_low                             = $70
 object_y_delta                              = $70
 player_cell_y                               = $70
 screen_address_low                          = $70
@@ -264,16 +265,19 @@ cell_y                                      = $71
 filename_high                               = $71
 level_data_ptr_high                         = $71
 menu_has_changed_flag                       = $71
+object_left_high                            = $71
 screen_address_high                         = $71
 src_sprite_address_high                     = $71
 temp                                        = $71
 l0072                                       = $72
+object_right_low                            = $72
 osfile_block_filename_low                   = $72
 sprite_screen_address_low                   = $72
 temp_animation_low                          = $72
 width_in_cells_to_write                     = $72
 height_in_cells_to_write                    = $73
 l0073                                       = $73
+object_right_high                           = $73
 osfile_block_filename_high                  = $73
 sprite_screen_address_high                  = $73
 temp_animation_high                         = $73
@@ -4019,9 +4023,10 @@ l2433
 ; *************************************************************************************
 find_left_and_right_of_object
     txa                                                               ; 2565: 8a          .   :2434[1]
+; remember object index
     pha                                                               ; 2566: 48          H   :2435[1]
     lda object_spriteid,x                                             ; 2567: bd a8 09    ... :2436[1]
-; get and remember the sprite address
+; get address of current sprite for object
     jsr get_address_of_sprite_a                                       ; 256a: 20 2c 13     ,. :2439[1]
     stx sprite_addr_low                                               ; 256d: 86 80       ..  :243c[1]
     sty sprite_addr_high                                              ; 256f: 84 81       ..  :243e[1]
@@ -4031,7 +4036,8 @@ find_left_and_right_of_object
 ; read the sprite's X offset
     ldy #0                                                            ; 2573: a0 00       ..  :2442[1]
     lda (sprite_addr_low),y                                           ; 2575: b1 80       ..  :2444[1]
-; invert the sprite offset if looking left
+; add sprite Y offset to object position (or if looking left, subtract the sprite Y
+; offset), then store in object_left.
     ldy object_direction,x                                            ; 2577: bc be 09    ... :2446[1]
     bpl c244d                                                         ; 257a: 10 02       ..  :2449[1]
     eor #$ff                                                          ; 257c: 49 ff       I.  :244b[1]
@@ -4043,52 +4049,52 @@ c244d
 c2454
     clc                                                               ; 2585: 18          .   :2454[1]   ; update address1 based on sprite offset
     adc object_x_low,x                                                ; 2586: 7d 50 09    }P. :2455[1]
-    sta address1_low                                                  ; 2589: 85 70       .p  :2458[1]
+    sta object_left_low                                               ; 2589: 85 70       .p  :2458[1]
     tya                                                               ; 258b: 98          .   :245a[1]
     adc object_x_high,x                                               ; 258c: 7d 66 09    }f. :245b[1]
-    sta address1_high                                                 ; 258f: 85 71       .q  :245e[1]
+    sta object_left_high                                              ; 258f: 85 71       .q  :245e[1]
 ; get sprite width
     ldy #2                                                            ; 2591: a0 02       ..  :2460[1]
     lda (sprite_addr_low),y                                           ; 2593: b1 80       ..  :2462[1]
 ; add sprite width-1 to address1 if looking right, or subtract if looking left storing
-; result in sprite_screen_address
+; result in object_right
     sec                                                               ; 2595: 38          8   :2464[1]
     sbc #1                                                            ; 2596: e9 01       ..  :2465[1]
     ldy object_direction,x                                            ; 2598: bc be 09    ... :2467[1]
     bmi object_direction_negative                                     ; 259b: 30 0e       0.  :246a[1]
     clc                                                               ; 259d: 18          .   :246c[1]
-    adc address1_low                                                  ; 259e: 65 70       ep  :246d[1]
-    sta l0072                                                         ; 25a0: 85 72       .r  :246f[1]
+    adc object_left_low                                               ; 259e: 65 70       ep  :246d[1]
+    sta object_right_low                                              ; 25a0: 85 72       .r  :246f[1]
     lda #0                                                            ; 25a2: a9 00       ..  :2471[1]
-    adc address1_high                                                 ; 25a4: 65 71       eq  :2473[1]
-    sta l0073                                                         ; 25a6: 85 73       .s  :2475[1]
-    jmp object_direction_set                                          ; 25a8: 4c 8d 24    L.$ :2477[1]
+    adc object_left_high                                              ; 25a4: 65 71       eq  :2473[1]
+    sta object_right_high                                             ; 25a6: 85 73       .s  :2475[1]
+    jmp add_temporary_offsets                                         ; 25a8: 4c 8d 24    L.$ :2477[1]
 
 ; sprite_screen_address = address1 - (width-1)
 object_direction_negative
-    sta l0073                                                         ; 25ab: 85 73       .s  :247a[1]
-    lda address1_low                                                  ; 25ad: a5 70       .p  :247c[1]
-    sta l0072                                                         ; 25af: 85 72       .r  :247e[1]
+    sta object_right_high                                             ; 25ab: 85 73       .s  :247a[1]
+    lda object_left_low                                               ; 25ad: a5 70       .p  :247c[1]
+    sta object_right_low                                              ; 25af: 85 72       .r  :247e[1]
     sec                                                               ; 25b1: 38          8   :2480[1]
-    sbc l0073                                                         ; 25b2: e5 73       .s  :2481[1]
-    sta address1_low                                                  ; 25b4: 85 70       .p  :2483[1]
-    lda address1_high                                                 ; 25b6: a5 71       .q  :2485[1]
-    sta l0073                                                         ; 25b8: 85 73       .s  :2487[1]
+    sbc object_right_high                                             ; 25b2: e5 73       .s  :2481[1]
+    sta object_left_low                                               ; 25b4: 85 70       .p  :2483[1]
+    lda object_left_high                                              ; 25b6: a5 71       .q  :2485[1]
+    sta object_right_high                                             ; 25b8: 85 73       .s  :2487[1]
     sbc #0                                                            ; 25ba: e9 00       ..  :2489[1]
-    sta address1_high                                                 ; 25bc: 85 71       .q  :248b[1]
-object_direction_set
+    sta object_left_high                                              ; 25bc: 85 71       .q  :248b[1]
+add_temporary_offsets
     ldy #0                                                            ; 25be: a0 00       ..  :248d[1]
     lda l24d0                                                         ; 25c0: ad d0 24    ..$ :248f[1]
     bpl c2495                                                         ; 25c3: 10 01       ..  :2492[1]
     dey                                                               ; 25c5: 88          .   :2494[1]
 c2495
     clc                                                               ; 25c6: 18          .   :2495[1]
-    adc address1_low                                                  ; 25c7: 65 70       ep  :2496[1]
-    sta address1_low                                                  ; 25c9: 85 70       .p  :2498[1]
+    adc object_left_low                                               ; 25c7: 65 70       ep  :2496[1]
+    sta object_left_low                                               ; 25c9: 85 70       .p  :2498[1]
     sta l0078                                                         ; 25cb: 85 78       .x  :249a[1]
     tya                                                               ; 25cd: 98          .   :249c[1]
-    adc address1_high                                                 ; 25ce: 65 71       eq  :249d[1]
-    sta address1_high                                                 ; 25d0: 85 71       .q  :249f[1]
+    adc object_left_high                                              ; 25ce: 65 71       eq  :249d[1]
+    sta object_left_high                                              ; 25d0: 85 71       .q  :249f[1]
     lsr                                                               ; 25d2: 4a          J   :24a1[1]
     ror l0078                                                         ; 25d3: 66 78       fx  :24a2[1]
     lsr                                                               ; 25d5: 4a          J   :24a4[1]
@@ -4101,12 +4107,12 @@ c2495
     dey                                                               ; 25e2: 88          .   :24b1[1]
 c24b2
     clc                                                               ; 25e3: 18          .   :24b2[1]
-    adc l0072                                                         ; 25e4: 65 72       er  :24b3[1]
-    sta l0072                                                         ; 25e6: 85 72       .r  :24b5[1]
+    adc object_right_low                                              ; 25e4: 65 72       er  :24b3[1]
+    sta object_right_low                                              ; 25e6: 85 72       .r  :24b5[1]
     sta l0079                                                         ; 25e8: 85 79       .y  :24b7[1]
     tya                                                               ; 25ea: 98          .   :24b9[1]
-    adc l0073                                                         ; 25eb: 65 73       es  :24ba[1]
-    sta l0073                                                         ; 25ed: 85 73       .s  :24bc[1]
+    adc object_right_high                                             ; 25eb: 65 73       es  :24ba[1]
+    sta object_right_high                                             ; 25ed: 85 73       .s  :24bc[1]
     lsr                                                               ; 25ef: 4a          J   :24be[1]
     ror l0079                                                         ; 25f0: 66 79       fy  :24bf[1]
     lsr                                                               ; 25f2: 4a          J   :24c1[1]
