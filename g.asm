@@ -6412,7 +6412,7 @@ toggle_load_save_dialog
     lda #$12                                                          ; 3535: a9 12       ..  :3404[1]
     sta current_text_width                                            ; 3537: 8d 09 04    ... :3406[1]
     lda which_dialog_is_active                                        ; 353a: a5 04       ..  :3409[1]
-    bne remove_dialog_local                                           ; 353c: d0 1b       ..  :340b[1]
+    bne remove_dialog_local1                                          ; 353c: d0 1b       ..  :340b[1]
 show_load_save_dialog
     jsr show_dialog_box                                               ; 353e: 20 0a 04     .. :340d[1]
     lda #1                                                            ; 3541: a9 01       ..  :3410[1]
@@ -6426,7 +6426,7 @@ show_load_save_dialog
     jsr print_encrypted_string_at_yx                                  ; 3553: 20 1c 38     .8 :3422[1]
     jmp flush_input_buffers_and_zero_l0005                            ; 3556: 4c 72 38    Lr8 :3425[1]
 
-remove_dialog_local
+remove_dialog_local1
     jmp remove_dialog                                                 ; 3559: 4c 53 04    LS. :3428[1]
 
 ; 'Press S to save\r' EOR-encrypted with $cb
@@ -6703,9 +6703,9 @@ sub_c3664
     cpy #2                                                            ; 37b2: c0 02       ..  :3681[1]
     bne skip_developer_key_level_select_handling                      ; 37b4: d0 23       .#  :3683[1]
     lda string_input_buffer                                           ; 37b6: ad 90 0a    ... :3685[1]
-    cmp #$41 ; 'A'                                                    ; 37b9: c9 41       .A  :3688[1]
+    cmp #first_level_letter                                           ; 37b9: c9 41       .A  :3688[1]
     bcc skip_developer_key_level_select_handling                      ; 37bb: 90 1c       ..  :368a[1]
-    cmp #$52 ; 'R'                                                    ; 37bd: c9 52       .R  :368c[1]
+    cmp #last_level_letter+1                                          ; 37bd: c9 52       .R  :368c[1]
     bcs skip_developer_key_level_select_handling                      ; 37bf: b0 18       ..  :368e[1]
     pha                                                               ; 37c1: 48          H   :3690[1]
     jsr remove_dialog                                                 ; 37c2: 20 53 04     S. :3691[1]
@@ -6755,9 +6755,9 @@ check_password_level
 
 select_level_a
     cmp #1                                                            ; 380c: c9 01       ..  :36db[1]
-    beq c36f6                                                         ; 380e: f0 17       ..  :36dd[1]
+    beq remove_dialog_local2                                          ; 380e: f0 17       ..  :36dd[1]
     cmp desired_level                                                 ; 3810: c5 31       .1  :36df[1]
-    beq c36f6                                                         ; 3812: f0 13       ..  :36e1[1]
+    beq remove_dialog_local2                                          ; 3812: f0 13       ..  :36e1[1]
     tay                                                               ; 3814: a8          .   :36e3[1]
     pla                                                               ; 3815: 68          h   :36e4[1]
     pla                                                               ; 3816: 68          h   :36e5[1]
@@ -6766,14 +6766,14 @@ select_level_a
     pla                                                               ; 3819: 68          h   :36e8[1]
     pla                                                               ; 381a: 68          h   :36e9[1]
     cpy #$ff                                                          ; 381b: c0 ff       ..  :36ea[1]
-    beq c36f3                                                         ; 381d: f0 05       ..  :36ec[1]
+    beq start_game_local                                              ; 381d: f0 05       ..  :36ec[1]
     ldx #0                                                            ; 381f: a2 00       ..  :36ee[1]
     jmp initialise_level                                              ; 3821: 4c 40 11    L@. :36f0[1]
 
-c36f3
+start_game_local
     jmp start_game                                                    ; 3824: 4c 0c 11    L.. :36f3[1]
 
-c36f6
+remove_dialog_local2
     jmp remove_dialog                                                 ; 3827: 4c 53 04    LS. :36f6[1]
 
 character_too_low
@@ -8611,8 +8611,6 @@ pydis_end
 ;     c3698
 ;     c36c1
 ;     c36d2
-;     c36f3
-;     c36f6
 ;     c381a
 ;     c3867
 ;     c388a
@@ -9317,6 +9315,9 @@ pydis_end
 }
 !if (last_level_letter) != $51 {
     !error "Assertion failed: last_level_letter == $51"
+}
+!if (last_level_letter+1) != $52 {
+    !error "Assertion failed: last_level_letter+1 == $52"
 }
 !if (last_level_letter-1) != $50 {
     !error "Assertion failed: last_level_letter-1 == $50"

@@ -64,6 +64,8 @@ comment(0x56b9, "'ESC 42 2A 05 40': Turn on graphics mode, followed by 16389 cha
 comment(0x56ad, "start of screen memory")
 expr(0x55d0, "opcode_jmp")
 comment(0x55d1, "For break effect: *FX 200,1")
+label(0x55a6, "play_epilogue")
+label(0x55c0, "set_developer_flags_and_continue")
 
 label(0x0070, "screen_address_low")
 label(0x0071, "screen_address_high")

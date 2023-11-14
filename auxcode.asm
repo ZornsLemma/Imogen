@@ -256,9 +256,9 @@ epilogue_handler
     ldx #last_level_letter                                            ; 559b: a2 51       .Q
     lda developer_flags                                               ; 559d: ad 03 11    ...
     and #2                                                            ; 55a0: 29 02       ).
-    bne c55a6                                                         ; 55a2: d0 02       ..
+    bne play_epilogue                                                 ; 55a2: d0 02       ..
     ldx #1                                                            ; 55a4: a2 01       ..
-c55a6
+play_epilogue
     txa                                                               ; 55a6: 8a          .
     jmp return1                                                       ; 55a7: 4c 4e 54    LNT
 
@@ -268,19 +268,19 @@ quit_handler
 
 normal_mode_handler
     lda #0                                                            ; 55af: a9 00       ..
-    jmp c55c0                                                         ; 55b1: 4c c0 55    L.U
+    jmp set_developer_flags_and_continue                              ; 55b1: 4c c0 55    L.U
 
 review_mode_handler
     lda #2                                                            ; 55b4: a9 02       ..
-    jmp c55c0                                                         ; 55b6: 4c c0 55    L.U
+    jmp set_developer_flags_and_continue                              ; 55b6: 4c c0 55    L.U
 
 test_mode_handler
     lda #3                                                            ; 55b9: a9 03       ..
-    jmp c55c0                                                         ; 55bb: 4c c0 55    L.U
+    jmp set_developer_flags_and_continue                              ; 55bb: 4c c0 55    L.U
 
 debug_mode_handler
     lda #$83                                                          ; 55be: a9 83       ..
-c55c0
+set_developer_flags_and_continue
     sta developer_flags                                               ; 55c0: 8d 03 11    ...
     ldx #0                                                            ; 55c3: a2 00       ..
     ldy #3                                                            ; 55c5: a0 03       ..
@@ -519,8 +519,6 @@ line_feed_loop
 pydis_end
 
 ; Automatically generated labels:
-;     c55a6
-;     c55c0
 ;     c55d3
 ;     c5635
 ;     c564e
