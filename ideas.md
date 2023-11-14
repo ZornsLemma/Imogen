@@ -16,6 +16,8 @@
 
 * Add a cheat (e.g. via a password) to freeze the mouse ball in Saxophobia? A generalised version of this - not sure if useful elsewhere - would be to stop non-player movement or something like that.
 
+* Add a cheat code to avoid screen blanking when changing room/level, allowing the user to observe the redraw process.
+
 # Other versions
 
 * The Micro User review (June 1986, p33) says Imogen was available on cassette. Did this load individual levels from tape or did they load in batches?
