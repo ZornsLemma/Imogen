@@ -107,11 +107,18 @@ expr(0x3c9d, make_hi("mouse_ball_sound2"))
 expr(0x3ca2, make_lo("mouse_ball_sound3"))
 expr(0x3ca4, make_hi("mouse_ball_sound3"))
 entry(0x3d20, "return1")
-comment(0x3c04, "")
+comment(0x3c04, "Perform shared initialisation for both mice")
+comment(0x3c0e, "Set up the left mouse")
+comment(0x3c30, "Set up the right mouse")
+comment(0x3c5b, "Set up the ball TODO: plausible guess")
 
 # TODO: slight guesswork
 constant(2, "objectid_left_mouse")
+constant(3, "objectid_right_mouse")
+constant(4, "objectid_mouse_ball")
 expr(0x3c22, "objectid_left_mouse")
+expr(0x3c48, "objectid_right_mouse")
+expr(0x3c5c, "objectid_mouse_ball")
 
 # TODO: Use this more?
 def ldx_ldy_jsr_play_sound_yx(jsr_runtime_addr, s):

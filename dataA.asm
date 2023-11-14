@@ -4,6 +4,8 @@ game_area_height_cells   = 24
 game_area_width_cells    = 40
 last_level_letter        = 81
 objectid_left_mouse      = 2
+objectid_mouse_ball      = 4
+objectid_right_mouse     = 3
 opcode_jmp               = 76
 spriteid_ball            = 59
 spriteid_mouse           = 200
@@ -296,12 +298,13 @@ level_unchanged
     ldx #<envelope1                                                   ; 3bfd: a2 60       .`
     ldy #>envelope1                                                   ; 3bff: a0 44       .D
     jsr define_envelope                                               ; 3c01: 20 5e 39     ^9
-; 
+; Perform shared initialisation for both mice
     lda #2                                                            ; 3c04: a9 02       ..
     sta width_in_cells                                                ; 3c06: 85 3c       .<
     sta height_in_cells                                               ; 3c08: 85 3d       .=
     lda #3                                                            ; 3c0a: a9 03       ..
     sta value_to_write_to_collision_map                               ; 3c0c: 85 3e       .>
+; Set up the left mouse
     ldx #$10                                                          ; 3c0e: a2 10       ..
     ldy #$0b                                                          ; 3c10: a0 0b       ..
     lda #$fe                                                          ; 3c12: a9 fe       ..
@@ -318,6 +321,7 @@ level_unchanged
     sta object_sprite_mask_type,x                                     ; 3c28: 9d ac 38    ..8
     lda #$c0                                                          ; 3c2b: a9 c0       ..
     sta object_something_table,x                                      ; 3c2d: 9d c2 38    ..8
+; Set up the right mouse
     lda #$ff                                                          ; 3c30: a9 ff       ..
     sta sprite_reflect_flag                                           ; 3c32: 85 1d       ..
     ldx #$19                                                          ; 3c34: a2 19       ..
@@ -330,7 +334,7 @@ level_unchanged
     dey                                                               ; 3c42: 88          .
     dey                                                               ; 3c43: 88          .
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 3c44: 20 44 1e     D.
-    ldx #3                                                            ; 3c47: a2 03       ..
+    ldx #objectid_right_mouse                                         ; 3c47: a2 03       ..
     jsr set_object_position_from_current_sprite_position              ; 3c49: 20 6d 1f     m.
     lda #$ff                                                          ; 3c4c: a9 ff       ..
     sta object_direction,x                                            ; 3c4e: 9d be 09    ...
@@ -338,7 +342,8 @@ level_unchanged
     sta object_sprite_mask_type,x                                     ; 3c53: 9d ac 38    ..8
     lda #$c0                                                          ; 3c56: a9 c0       ..
     sta object_something_table,x                                      ; 3c58: 9d c2 38    ..8
-    ldx #4                                                            ; 3c5b: a2 04       ..
+; Set up the ball TODO: plausible guess
+    ldx #objectid_mouse_ball                                          ; 3c5b: a2 04       ..
     lda #0                                                            ; 3c5d: a9 00       ..
     sta object_x_high,x                                               ; 3c5f: 9d 66 09    .f.
     sta object_y_high,x                                               ; 3c62: 9d 92 09    ...
@@ -2107,6 +2112,12 @@ pydis_end
 }
 !if (objectid_left_mouse) != $02 {
     !error "Assertion failed: objectid_left_mouse == $02"
+}
+!if (objectid_mouse_ball) != $04 {
+    !error "Assertion failed: objectid_mouse_ball == $04"
+}
+!if (objectid_right_mouse) != $03 {
+    !error "Assertion failed: objectid_right_mouse == $03"
 }
 !if (room_1_data_ptr) != $3b27 {
     !error "Assertion failed: room_1_data_ptr == $3b27"
