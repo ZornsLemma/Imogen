@@ -4081,7 +4081,7 @@ c2454
     sec                                                               ; 2595: 38          8   :2464[1]
     sbc #1                                                            ; 2596: e9 01       ..  :2465[1]
     ldy object_direction,x                                            ; 2598: bc be 09    ... :2467[1]
-    bmi object_direction_negative                                     ; 259b: 30 0e       0.  :246a[1]
+    bmi subtract_sprite_width                                         ; 259b: 30 0e       0.  :246a[1]
     clc                                                               ; 259d: 18          .   :246c[1]
     adc object_left_low                                               ; 259e: 65 70       ep  :246d[1]
     sta object_right_low                                              ; 25a0: 85 72       .r  :246f[1]
@@ -4090,8 +4090,8 @@ c2454
     sta object_right_high                                             ; 25a6: 85 73       .s  :2475[1]
     jmp add_temporary_offsets                                         ; 25a8: 4c 8d 24    L.$ :2477[1]
 
-; sprite_screen_address = address1 - (width-1)
-object_direction_negative
+; subtract sprite width
+subtract_sprite_width
     sta object_right_high                                             ; 25ab: 85 73       .s  :247a[1]
     lda object_left_low                                               ; 25ad: a5 70       .p  :247c[1]
     sta object_right_low                                              ; 25af: 85 72       .r  :247e[1]
@@ -4104,6 +4104,7 @@ object_direction_negative
     sta object_left_high                                              ; 25bc: 85 71       .q  :248b[1]
 add_temporary_offsets
     ldy #0                                                            ; 25be: a0 00       ..  :248d[1]
+; add temporary left offset to object left position
     lda temp_left_offset                                              ; 25c0: ad d0 24    ..$ :248f[1]
     bpl c2495                                                         ; 25c3: 10 01       ..  :2492[1]
     dey                                                               ; 25c5: 88          .   :2494[1]
@@ -4115,6 +4116,7 @@ c2495
     tya                                                               ; 25cd: 98          .   :249c[1]
     adc object_left_high                                              ; 25ce: 65 71       eq  :249d[1]
     sta object_left_high                                              ; 25d0: 85 71       .q  :249f[1]
+; divide by eight to get cell left position
     lsr                                                               ; 25d2: 4a          J   :24a1[1]
     ror object_left_cell_x                                            ; 25d3: 66 78       fx  :24a2[1]
     lsr                                                               ; 25d5: 4a          J   :24a4[1]
@@ -4122,6 +4124,7 @@ c2495
     lsr                                                               ; 25d8: 4a          J   :24a7[1]
     ror object_left_cell_x                                            ; 25d9: 66 78       fx  :24a8[1]
     ldy #0                                                            ; 25db: a0 00       ..  :24aa[1]
+; add temporary right offset to object right position
     lda temp_right_offset                                             ; 25dd: ad d1 24    ..$ :24ac[1]
     bpl c24b2                                                         ; 25e0: 10 01       ..  :24af[1]
     dey                                                               ; 25e2: 88          .   :24b1[1]
@@ -4133,6 +4136,7 @@ c24b2
     tya                                                               ; 25ea: 98          .   :24b9[1]
     adc object_right_high                                             ; 25eb: 65 73       es  :24ba[1]
     sta object_right_high                                             ; 25ed: 85 73       .s  :24bc[1]
+; divide by eight to get cell right position
     lsr                                                               ; 25ef: 4a          J   :24be[1]
     ror object_right_cell_x                                           ; 25f0: 66 79       fy  :24bf[1]
     lsr                                                               ; 25f2: 4a          J   :24c1[1]

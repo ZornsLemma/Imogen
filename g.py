@@ -622,9 +622,14 @@ comment(0x2446, "add sprite Y offset to object position (or if looking left, sub
 comment(0x2454, "update address1 based on sprite offset", inline=True)
 comment(0x2460, "get sprite width")
 comment(0x2464, "add sprite width-1 to address1 if looking right, or subtract if looking left storing result in object_right")
-comment(0x247a, "sprite_screen_address = address1 - (width-1)")
-entry(0x247a, "object_direction_negative")
+comment(0x247a, "subtract sprite width")
+entry(0x247a, "subtract_sprite_width")
+comment(0x24a1, "divide by eight to get cell left position")
 entry(0x248d, "add_temporary_offsets")
+comment(0x24be, "divide by eight to get cell right position")
+comment(0x248f, "add temporary left offset to object left position")
+comment(0x24ac, "add temporary right offset to object right position")
+
 label(0x24d0, "temp_left_offset")
 label(0x24d1, "temp_right_offset")
 
