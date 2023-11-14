@@ -236,6 +236,7 @@ label(0x0046, "return_key_pressed_pending")
 
 label(0x0043, "print_in_italics_flag")
 label(0x004c, "screen_base_address_high")
+label(0x0052, "player_held_item")
 label(0x0056, "temp_rope_length")
 label(0x0058, "temp_sprite_address_low")
 label(0x0059, "temp_sprite_address_high")
