@@ -92,6 +92,12 @@ substitute_labels = {
     },
     (0x19f4, 0x1a96): {
         "address1_low": "object_y_delta",
+        "l0074": "object_true_bottom_low",
+        "l0075": "object_true_bottom_high",
+        "l0076": "object_bottom_low",
+        "l0077": "object_bottom_high",
+        "l007a": "true_object_bottom_cell_y",
+        "l007b": "object_bottom_cell_y",
     },
     (0x1aa0, 0x1aae): {
         "address1_low": "filename_low",
@@ -148,9 +154,27 @@ substitute_labels = {
         "l0080": "sprite_addr_low",
         "l0081": "sprite_addr_high",
     },
+    (0x2603, 0x2a8b): {
+        "l0074": "object_true_bottom_low",
+        "l0075": "object_true_bottom_high",
+        "l0076": "object_bottom_low",
+        "l0077": "object_bottom_high",
+        "l007a": "true_object_bottom_cell_y",
+        "l007b": "object_bottom_cell_y",
+    },
     (0x2cb8, 0x2d3c): {
         "address1_low": "menu_item_to_use",
         "address1_high": "menu_has_changed_flag",
+    },
+    (0x349f, 0x3533): {
+        "address1_low": "player_cell_y",
+        "address1_high": "temp",
+        "l0074": "object_true_bottom_low",
+        "l0075": "object_true_bottom_high",
+        "l0076": "object_bottom_low",
+        "l0077": "object_bottom_high",
+        "l007a": "true_object_bottom_cell_y",
+        "l007b": "object_bottom_cell_y",
     },
     (0x3d3d, 0x3d41): {
         "object_sprite_mask_type": "envelope_1",
@@ -379,6 +403,11 @@ expr(0x2e5e, "wizard_animation12 - wizard_transform_in_animation")
 expr(0x2e86, make_lo("wizard_transform_in_animation"))
 expr(0x2e88, make_hi("wizard_transform_in_animation"))
 
+comment(0x2cd7, """*************************************************************************************
+
+Animation code
+
+*************************************************************************************""")
 label(0x2cd7, "wizard_animation1")
 expr(0x2ebd, make_lo("wizard_animation1"))
 expr(0x2ebf, make_hi("wizard_animation1"))
@@ -519,15 +548,33 @@ comment(0x2d9b, "toggle player direction")
 comment(0x2fdc, "toggle player direction")
 comment(0x31ec, "toggle player direction")
 
-label(0x1909, "bring_player_and_object1_back_onto_the_left_side_of_screen")
-comment(0x190b, "add one screen amount to the X coordinate until within range")
+comment(0x1909, "If the player is off the left of the game play area, this is called. It tries to increase the X coordinate by 320 pixels (but just stores one in the high byte of the Y coordinate, presumably a bug?). It does the same for object one, the player's accessory object. Returns with A=1.")
+label(0x1909, "increase_player_x_coordinate_to_be_on_screen")
+comment(0x190b, "add one screen amount to the X coordinate")
 label(0x190b, "add_to_player_x_loop")
-label(0x191f, "bring_player_and_object1_back_onto_the_right_side_of_screen")
+comment(0x191f, "If the player is off the right of the game play area, this is called. It decreases the X coordinate by 64 pixels (probably meant to be 320 pixels, but high byte calculation looks wrong). It does the same for object one, the player's accessory object. Returns with A=4.")
+label(0x191f, "decrease_player_x_coordinate_to_be_on_screen")
 label(0x1921, "subtract_from_player_x_loop")
-comment(0x192c, "Do we know carry is clear here in order to subtract 1? Possible bug?")
+comment(0x192c, "Shouldn't this be sbc #1? Possible bug?")
 label(0x18d1, "get_delta_y")
+expr(0x1903, "game_area_height_cells")
+comment(0x18e7, "Find the average of object_true_bottom and object_bottom and convert to a cell Y value. Use this value to test if the player is off screen.")
 label(0x1906, "return_with_a_zero")
+
+label(0x1937, "increase_player_y_coordinate_to_be_on_screen")
+comment(0x1937, "If the player is off the top of the game play area, this is called. It increases the Y coordinate by 192 pixels (why 192 pixels?) but just stores zero in the high byte of the Y coordinate which could be a bug?. Does the same for object one, the player's accessory object. Returns with A=8.")
+comment(0x1939, "return if the player is moving in the correct direction (down) to get back on screen")
+label(0x1951, "decrease_player_y_coordinate_to_be_on_screen")
+comment(0x1951, "If the player is off the bottom of the game play area, this is called. It reduces the Y coordinate by 192 pixels (why 192 pixels?) but doesn't touch the high byte of the Y coordinate which could be a bug?. Does the same for object one, the player's accessory object. Returns with A=2.")
+label(0x193d, "add_to_player_y_loop")
+comment(0x1953, "return if the player is moving in the correct direction (up) to get back on screen")
+label(0x1957, "subtract_from_player_y_loop")
 comment(0x1e8f, "loop counter", inline=True)
+
+comment(0x1909, "object index (and loop counter)", inline=True)
+comment(0x191f, "object index (and loop counter)", inline=True)
+comment(0x193b, "object index (and loop counter)", inline=True)
+comment(0x1955, "object index (and loop counter)", inline=True)
 
 comment(0x1e4e, "value is (0-3)")
 comment(0x1e70, "multiply input value (0-3) by four")
@@ -556,12 +603,44 @@ comment(0x247a, "sprite_screen_address = address1 - (width-1)")
 entry(0x247a, "object_direction_negative")
 entry(0x248d, "object_direction_set") # TODO: mildly guessing
 
-label(0x24d2, "examine_object_y_position_taking_into_account_sprite_offset_and_object_direction")
-comment(0x24d2, """Some calculation based on the Y coordinate of an object. Part of collision detection maybe?
+label(0x24d2, "find_bottom_of_object")
+comment(0x24d3, "remember object index")
+comment(0x24d4, "get address of current sprite for object")
+comment(0x24de, "recall object index")
+comment(0x24e0, "get sprite height")
+comment(0x24e4, "add sprite height to object position, store in object_bottom")
+comment(0x24f7, "read sprite offset Y")
+comment(0x24fb, "store sprite offset minus one")
+comment(0x2500, "subtract (sprite offset Y minus one) to get true bottom")
+comment(0x250f, "add mystery signed byte")
+comment(0x2521, "divide the true bottom pixel coordinate by eight to get the cell Y")
+comment(0x252c, "add mystery signed byte to object bottom")
+comment(0x2547, "zero mystery bytes")
+label(0x2550, "temp_true_bottom_offset_y")
+comment(0x253e, "divide the bottom pixel coordinate by eight to get the cell Y")
+label(0x2551, "temp_bottom_offset_y")
+
+comment(0x24d2, """*************************************************************************************
+
+Find the bottom of the object
+
+Returns both the regular bottom Y coordinate of the object (adding the object position and current sprite height), and the 'true' bottom coordinate which also includes the Y offset stored in the current sprite.
+It also returns cell based versions of these two coordinates.
+
+As input, pixel offsets can be added to the result.
 
 On Entry:
-    X has the object to look at
-""")
+                          X: the object index to look at
+         temp_bottom_offset: offset to add to result (zeroed on exit)
+    temp_true_bottom_offset: offset to add to result (zeroed on exit)
+
+On Exit:
+                object_bottom: Set to object's position Y + sprite height
+           object_true_bottom: Set to object's position Y + sprite height - sprite offset
+    true_object_bottom_cell_y: Cell Y for object_true_bottom
+         object_bottom_cell_y: Cell Y for object_bottom
+
+*************************************************************************************""")
 
 
 substitute_constants("sta sprite_id", 'a', sprite_dict, True)
@@ -1402,7 +1481,8 @@ label(0x1824, "gameplay_area_palette_set")
 
 entry(0x17a0, "irq1_routine")
 entry(0x1839, "reset_game_because_escape_pressed")
-entry(0x18c3, "something12_TODO")
+comment(0x18c3, "*************************************************************************************")
+label(0x18c3, "try_to_ensure_player_is_on_screen")
 label(0x1b8a, "draw_right_facing_wall_local")
 entry(0x1fd7, "something16_TODO")
 entry(0x2200, "set_player_spriteid_and_offset_from_animation_table")
