@@ -2006,6 +2006,7 @@ label(0x219a, "draw_object")
 label(0x21d0, "draw_object_sprite")
 
 comment(0x2182, "ALWAYS branch", inline=True)
+comment(0x2189, "ALWAYS branch", inline=True)
 label(0x2184, "erase_object")
 expr(0x2181, "sprite_op_flags_normal")
 expr(0x2188, "sprite_op_flags_erase")

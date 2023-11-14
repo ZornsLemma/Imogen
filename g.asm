@@ -3553,7 +3553,7 @@ sub_c2157
 erase_object
     lda object_spriteid_old,x                                         ; 22b5: bd b3 09    ... :2184[1]
     ldy #sprite_op_flags_erase                                        ; 22b8: a0 02       ..  :2187[1]
-    bne draw_or_erase_object                                          ; 22ba: d0 05       ..  :2189[1]
+    bne draw_or_erase_object                                          ; 22ba: d0 05       ..  :2189[1]   ; ALWAYS branch
 draw_object_without_mask
     lda object_spriteid_old,x                                         ; 22bc: bd b3 09    ... :218b[1]
     ldy #sprite_op_flags_ignore_mask                                  ; 22bf: a0 04       ..  :218e[1]
