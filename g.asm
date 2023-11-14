@@ -1551,8 +1551,8 @@ show_disk_error_dialog_if_display_is_initialised
     jsr show_dialog_box                                               ; 1868: 20 0a 04     .. :1737[1]
     lda #$0a                                                          ; 186b: a9 0a       ..  :173a[1]
     jsr oswrch                                                        ; 186d: 20 ee ff     .. :173c[1]   ; Write character 10
-    ldx #<disk_error_message                                          ; 1870: a2 52       .R  :173f[1]
-    ldy #>disk_error_message                                          ; 1872: a0 17       ..  :1741[1]
+    ldx #<disk_error_encrypted_string                                 ; 1870: a2 52       .R  :173f[1]
+    ldy #>disk_error_encrypted_string                                 ; 1872: a0 17       ..  :1741[1]
     jsr print_encrypted_string_at_yx_centred                          ; 1874: 20 f3 37     .7 :1743[1]
     jsr wait_one_second_then_check_keys                               ; 1877: 20 8d 38     .8 :1746[1]
     jsr wait_one_second_then_check_keys                               ; 187a: 20 8d 38     .8 :1749[1]
@@ -1561,7 +1561,7 @@ no_disk_error
     lda error_code_on_brk                                             ; 1880: a5 02       ..  :174f[1]
     rts                                                               ; 1882: 60          `   :1751[1]
 
-disk_error_message
+disk_error_encrypted_string
     !byte $8f, $a2, $b8, $a0, $eb, $ae, $b9, $b9, $a4, $b9, $c6       ; 1883: 8f a2 b8... ... :1752[1]
 pending_toolbar_colour
     !byte 0                                                           ; 188e: 00          .   :175d[1]
@@ -6435,8 +6435,8 @@ ask_for_filename
     jsr show_dialog_box                                               ; 35b0: 20 0a 04     .. :347f[1]
     lda #2                                                            ; 35b3: a9 02       ..  :3482[1]
     sta which_dialog_is_active                                        ; 35b5: 85 04       ..  :3484[1]
-    ldx #<enter_filename_message                                      ; 35b7: a2 98       ..  :3486[1]
-    ldy #>enter_filename_message                                      ; 35b9: a0 34       .4  :3488[1]
+    ldx #<enter_filename_encrypted_string                             ; 35b7: a2 98       ..  :3486[1]
+    ldy #>enter_filename_encrypted_string                             ; 35b9: a0 34       .4  :3488[1]
     jsr print_encrypted_string_at_yx                                  ; 35bb: 20 1c 38     .8 :348a[1]
     jsr print_2xlf_cr                                                 ; 35be: 20 50 38     P8 :348d[1]
     jsr turn_cursor_on                                                ; 35c1: 20 5d 38     ]8 :3490[1]
@@ -6447,7 +6447,7 @@ return23
 
 osfile_action_load_or_save
     !byte 0                                                           ; 35c8: 00          .   :3497[1]
-enter_filename_message
+enter_filename_encrypted_string
     !byte $8e, $a5, $bf, $ae, $b9, $eb, $ad, $a2, $a7, $ae, $a5, $aa  ; 35c9: 8e a5 bf... ... :3498[1]
     !byte $a6, $ae, $c6                                               ; 35d5: a6 ae c6    ... :34a4[1]
 
@@ -6505,22 +6505,22 @@ c3516
     jsr show_dialog_box                                               ; 364a: 20 0a 04     .. :3519[1]
     lda #4                                                            ; 364d: a9 04       ..  :351c[1]
     sta which_dialog_is_active                                        ; 364f: 85 04       ..  :351e[1]
-    ldx #<insert_save_disk_message                                    ; 3651: a2 35       .5  :3520[1]
-    ldy #>insert_save_disk_message                                    ; 3653: a0 35       .5  :3522[1]
+    ldx #<insert_save_disk_encrypted_string                           ; 3651: a2 35       .5  :3520[1]
+    ldy #>insert_save_disk_encrypted_string                           ; 3653: a0 35       .5  :3522[1]
     jsr print_encrypted_string_at_yx                                  ; 3655: 20 1c 38     .8 :3524[1]
     jsr print_2xlf_cr                                                 ; 3658: 20 50 38     P8 :3527[1]
-    ldx #<and_press_return_message                                    ; 365b: a2 46       .F  :352a[1]
-    ldy #>and_press_return_message                                    ; 365d: a0 35       .5  :352c[1]
+    ldx #<and_press_return_encrypted_string                           ; 365b: a2 46       .F  :352a[1]
+    ldy #>and_press_return_encrypted_string                           ; 365d: a0 35       .5  :352c[1]
     jsr print_encrypted_string_at_yx                                  ; 365f: 20 1c 38     .8 :352e[1]
     jmp flush_input_buffers_and_zero_l0005                            ; 3662: 4c 72 38    Lr8 :3531[1]
 
 return24
     rts                                                               ; 3665: 60          `   :3534[1]
 
-insert_save_disk_message
+insert_save_disk_encrypted_string
     !byte $82, $a5, $b8, $ae, $b9, $bf, $eb, $b8, $aa, $bd, $ae, $eb  ; 3666: 82 a5 b8... ... :3535[1]
     !byte $af, $a2, $b8, $a0, $c6                                     ; 3672: af a2 b8... ... :3541[1]
-and_press_return_message
+and_press_return_encrypted_string
     !byte $aa, $a5, $af, $eb, $bb, $b9, $ae, $b8, $b8, $eb, $99, $8e  ; 3677: aa a5 af... ... :3546[1]
     !byte $9f, $9e, $99, $85, $c6                                     ; 3683: 9f 9e 99... ... :3552[1]
 
@@ -6531,12 +6531,12 @@ c3557
     jsr show_dialog_box                                               ; 368f: 20 0a 04     .. :355e[1]
     lda #vdu_lf                                                       ; 3692: a9 0a       ..  :3561[1]
     jsr oswrch                                                        ; 3694: 20 ee ff     .. :3563[1]   ; Write character 10
-    ldx #<saving_message                                              ; 3697: a2 f7       ..  :3566[1]
-    ldy #>saving_message                                              ; 3699: a0 35       .5  :3568[1]
+    ldx #<saving_encrypted_string                                     ; 3697: a2 f7       ..  :3566[1]
+    ldy #>saving_encrypted_string                                     ; 3699: a0 35       .5  :3568[1]
     lda osfile_action_load_or_save                                    ; 369b: ad 97 34    ..4 :356a[1]
     beq c3573                                                         ; 369e: f0 04       ..  :356d[1]
-    ldx #<loading_message                                             ; 36a0: a2 fe       ..  :356f[1]
-    ldy #>loading_message                                             ; 36a2: a0 35       .5  :3571[1]
+    ldx #<loading_encrypted_string                                    ; 36a0: a2 fe       ..  :356f[1]
+    ldy #>loading_encrypted_string                                    ; 36a2: a0 35       .5  :3571[1]
 c3573
     jsr print_encrypted_string_at_yx_centred                          ; 36a4: 20 f3 37     .7 :3573[1]
     lda #<save_full_filename                                          ; 36a7: a9 d6       ..  :3576[1]
@@ -6605,22 +6605,22 @@ c35ed
     lda save_game                                                     ; 3722: ad ea 09    ... :35f1[1]
     jmp select_level_a                                                ; 3725: 4c db 36    L.6 :35f4[1]
 
-saving_message
+saving_encrypted_string
     !byte $98, $aa, $bd, $a2, $a5, $ac, $c6                           ; 3728: 98 aa bd... ... :35f7[1]
-loading_message
+loading_encrypted_string
     !byte $87, $a4, $aa, $af, $a2, $a5, $ac, $c6                      ; 372f: 87 a4 aa... ... :35fe[1]
-insert_game_disk_message
+insert_game_disk_encrypted_string
     !byte $82, $a5, $b8, $ae, $b9, $bf, $eb, $ac, $aa, $a6, $ae, $eb  ; 3737: 82 a5 b8... ... :3606[1]
     !byte $af, $a2, $b8, $a0, $c6                                     ; 3743: af a2 b8... ... :3612[1]
 
 prompt_user_to_insert_correct_disc
     jsr show_dialog_box                                               ; 3748: 20 0a 04     .. :3617[1]
-    ldx #<insert_game_disk_message                                    ; 374b: a2 06       ..  :361a[1]
-    ldy #>insert_game_disk_message                                    ; 374d: a0 36       .6  :361c[1]
+    ldx #<insert_game_disk_encrypted_string                           ; 374b: a2 06       ..  :361a[1]
+    ldy #>insert_game_disk_encrypted_string                           ; 374d: a0 36       .6  :361c[1]
     jsr print_encrypted_string_at_yx                                  ; 374f: 20 1c 38     .8 :361e[1]
     jsr print_2xlf_cr                                                 ; 3752: 20 50 38     P8 :3621[1]
-    ldx #<and_press_return_message                                    ; 3755: a2 46       .F  :3624[1]
-    ldy #>and_press_return_message                                    ; 3757: a0 35       .5  :3626[1]
+    ldx #<and_press_return_encrypted_string                           ; 3755: a2 46       .F  :3624[1]
+    ldy #>and_press_return_encrypted_string                           ; 3757: a0 35       .5  :3626[1]
     jsr print_encrypted_string_at_yx                                  ; 3759: 20 1c 38     .8 :3628[1]
     jsr flush_input_buffers_and_zero_l0005                            ; 375c: 20 72 38     r8 :362b[1]
 wait_for_return
@@ -6636,8 +6636,8 @@ show_password_entry_dialog
     bne c3652                                                         ; 376e: d0 13       ..  :363d[1]
 c363f
     jsr show_dialog_box                                               ; 3770: 20 0a 04     .. :363f[1]
-    ldx #<enter_password_message                                      ; 3773: a2 55       .U  :3642[1]
-    ldy #>enter_password_message                                      ; 3775: a0 36       .6  :3644[1]
+    ldx #<enter_password_encrypted_string                             ; 3773: a2 55       .U  :3642[1]
+    ldy #>enter_password_encrypted_string                             ; 3775: a0 36       .6  :3644[1]
     jsr print_encrypted_string_at_yx                                  ; 3777: 20 1c 38     .8 :3646[1]
     jsr print_2xlf_cr                                                 ; 377a: 20 50 38     P8 :3649[1]
     jsr turn_cursor_on                                                ; 377d: 20 5d 38     ]8 :364c[1]
@@ -6646,7 +6646,7 @@ c363f
 c3652
     jmp remove_dialog                                                 ; 3783: 4c 53 04    LS. :3652[1]
 
-enter_password_message
+enter_password_encrypted_string
     !byte $8e, $a5, $bf, $ae, $b9, $eb, $bb, $aa, $b8, $b8, $bc, $a4  ; 3786: 8e a5 bf... ... :3655[1]
     !byte $b9, $af, $c6                                               ; 3792: b9 af c6    ... :3661[1]
 
@@ -6848,8 +6848,8 @@ show_section_letter_dialog
     jsr show_dialog_box                                               ; 38bf: 20 0a 04     .. :378e[1]
     lda #1                                                            ; 38c2: a9 01       ..  :3791[1]
     sta which_dialog_is_active                                        ; 38c4: 85 04       ..  :3793[1]
-    ldx #<section_message                                             ; 38c6: a2 b1       ..  :3795[1]
-    ldy #>section_message                                             ; 38c8: a0 37       .7  :3797[1]
+    ldx #<section_encrypted_string                                    ; 38c6: a2 b1       ..  :3795[1]
+    ldy #>section_encrypted_string                                    ; 38c8: a0 37       .7  :3797[1]
     jsr print_encrypted_string_at_yx                                  ; 38ca: 20 1c 38     .8 :3799[1]
     ldy desired_level                                                 ; 38cd: a4 31       .1  :379c[1]
     jsr convert_level_filename_letter_into_section_letter             ; 38cf: 20 d4 0a     .. :379e[1]
@@ -6860,7 +6860,7 @@ show_section_letter_dialog
     ldy level_name_ptr + 1                                            ; 38dc: ac dc 3a    ..: :37ab[1]
     jmp print_encrypted_string_at_yx                                  ; 38df: 4c 1c 38    L.8 :37ae[1]
 
-section_message
+section_encrypted_string
     !byte $98, $ae, $a8, $bf, $a2, $a4, $a5, $eb, $c6                 ; 38e2: 98 ae a8... ... :37b1[1]
 
 show_level_completion_letters_dialog
@@ -8739,8 +8739,8 @@ pydis_end
 !if (<and_byte_with_mask_and_write_to_screen2) != $98 {
     !error "Assertion failed: <and_byte_with_mask_and_write_to_screen2 == $98"
 }
-!if (<and_press_return_message) != $46 {
-    !error "Assertion failed: <and_press_return_message == $46"
+!if (<and_press_return_encrypted_string) != $46 {
+    !error "Assertion failed: <and_press_return_encrypted_string == $46"
 }
 !if (<auxcode) != $c0 {
     !error "Assertion failed: <auxcode == $c0"
@@ -8775,14 +8775,14 @@ pydis_end
 !if (<developer_flags) != $03 {
     !error "Assertion failed: <developer_flags == $03"
 }
-!if (<disk_error_message) != $52 {
-    !error "Assertion failed: <disk_error_message == $52"
+!if (<disk_error_encrypted_string) != $52 {
+    !error "Assertion failed: <disk_error_encrypted_string == $52"
 }
-!if (<enter_filename_message) != $98 {
-    !error "Assertion failed: <enter_filename_message == $98"
+!if (<enter_filename_encrypted_string) != $98 {
+    !error "Assertion failed: <enter_filename_encrypted_string == $98"
 }
-!if (<enter_password_message) != $55 {
-    !error "Assertion failed: <enter_password_message == $55"
+!if (<enter_password_encrypted_string) != $55 {
+    !error "Assertion failed: <enter_password_encrypted_string == $55"
 }
 !if (<envelope_1) != $ac {
     !error "Assertion failed: <envelope_1 == $ac"
@@ -8799,11 +8799,11 @@ pydis_end
 !if (<icodata_filename) != $5e {
     !error "Assertion failed: <icodata_filename == $5e"
 }
-!if (<insert_game_disk_message) != $06 {
-    !error "Assertion failed: <insert_game_disk_message == $06"
+!if (<insert_game_disk_encrypted_string) != $06 {
+    !error "Assertion failed: <insert_game_disk_encrypted_string == $06"
 }
-!if (<insert_save_disk_message) != $35 {
-    !error "Assertion failed: <insert_save_disk_message == $35"
+!if (<insert_save_disk_encrypted_string) != $35 {
+    !error "Assertion failed: <insert_save_disk_encrypted_string == $35"
 }
 !if (<irq1_routine) != $a0 {
     !error "Assertion failed: <irq1_routine == $a0"
@@ -8811,8 +8811,8 @@ pydis_end
 !if (<level_data) != $d5 {
     !error "Assertion failed: <level_data == $d5"
 }
-!if (<loading_message) != $fe {
-    !error "Assertion failed: <loading_message == $fe"
+!if (<loading_encrypted_string) != $fe {
+    !error "Assertion failed: <loading_encrypted_string == $fe"
 }
 !if (<monkey_animation1) != $e6 {
     !error "Assertion failed: <monkey_animation1 == $e6"
@@ -8853,14 +8853,14 @@ pydis_end
 !if (<save_game) != $ea {
     !error "Assertion failed: <save_game == $ea"
 }
-!if (<saving_message) != $f7 {
-    !error "Assertion failed: <saving_message == $f7"
+!if (<saving_encrypted_string) != $f7 {
+    !error "Assertion failed: <saving_encrypted_string == $f7"
 }
 !if (<screen_width_in_pixels) != $40 {
     !error "Assertion failed: <screen_width_in_pixels == $40"
 }
-!if (<section_message) != $b1 {
-    !error "Assertion failed: <section_message == $b1"
+!if (<section_encrypted_string) != $b1 {
+    !error "Assertion failed: <section_encrypted_string == $b1"
 }
 !if (<sixteen_entry_table) != $6f {
     !error "Assertion failed: <sixteen_entry_table == $6f"
@@ -8955,8 +8955,8 @@ pydis_end
 !if (>and_byte_with_mask_and_write_to_screen2) != $14 {
     !error "Assertion failed: >and_byte_with_mask_and_write_to_screen2 == $14"
 }
-!if (>and_press_return_message) != $35 {
-    !error "Assertion failed: >and_press_return_message == $35"
+!if (>and_press_return_encrypted_string) != $35 {
+    !error "Assertion failed: >and_press_return_encrypted_string == $35"
 }
 !if (>auxcode) != $53 {
     !error "Assertion failed: >auxcode == $53"
@@ -8991,14 +8991,14 @@ pydis_end
 !if (>developer_flags) != $11 {
     !error "Assertion failed: >developer_flags == $11"
 }
-!if (>disk_error_message) != $17 {
-    !error "Assertion failed: >disk_error_message == $17"
+!if (>disk_error_encrypted_string) != $17 {
+    !error "Assertion failed: >disk_error_encrypted_string == $17"
 }
-!if (>enter_filename_message) != $34 {
-    !error "Assertion failed: >enter_filename_message == $34"
+!if (>enter_filename_encrypted_string) != $34 {
+    !error "Assertion failed: >enter_filename_encrypted_string == $34"
 }
-!if (>enter_password_message) != $36 {
-    !error "Assertion failed: >enter_password_message == $36"
+!if (>enter_password_encrypted_string) != $36 {
+    !error "Assertion failed: >enter_password_encrypted_string == $36"
 }
 !if (>envelope_1) != $38 {
     !error "Assertion failed: >envelope_1 == $38"
@@ -9015,11 +9015,11 @@ pydis_end
 !if (>icodata_filename) != $3f {
     !error "Assertion failed: >icodata_filename == $3f"
 }
-!if (>insert_game_disk_message) != $36 {
-    !error "Assertion failed: >insert_game_disk_message == $36"
+!if (>insert_game_disk_encrypted_string) != $36 {
+    !error "Assertion failed: >insert_game_disk_encrypted_string == $36"
 }
-!if (>insert_save_disk_message) != $35 {
-    !error "Assertion failed: >insert_save_disk_message == $35"
+!if (>insert_save_disk_encrypted_string) != $35 {
+    !error "Assertion failed: >insert_save_disk_encrypted_string == $35"
 }
 !if (>irq1_routine) != $17 {
     !error "Assertion failed: >irq1_routine == $17"
@@ -9027,8 +9027,8 @@ pydis_end
 !if (>level_data) != $3a {
     !error "Assertion failed: >level_data == $3a"
 }
-!if (>loading_message) != $35 {
-    !error "Assertion failed: >loading_message == $35"
+!if (>loading_encrypted_string) != $35 {
+    !error "Assertion failed: >loading_encrypted_string == $35"
 }
 !if (>monkey_animation1) != $30 {
     !error "Assertion failed: >monkey_animation1 == $30"
@@ -9069,11 +9069,11 @@ pydis_end
 !if (>save_game) != $09 {
     !error "Assertion failed: >save_game == $09"
 }
-!if (>saving_message) != $35 {
-    !error "Assertion failed: >saving_message == $35"
+!if (>saving_encrypted_string) != $35 {
+    !error "Assertion failed: >saving_encrypted_string == $35"
 }
-!if (>section_message) != $37 {
-    !error "Assertion failed: >section_message == $37"
+!if (>section_encrypted_string) != $37 {
+    !error "Assertion failed: >section_encrypted_string == $37"
 }
 !if (>sixteen_entry_table) != $0a {
     !error "Assertion failed: >sixteen_entry_table == $0a"
