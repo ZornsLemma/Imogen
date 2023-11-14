@@ -717,6 +717,12 @@ comment(0x142e, "set Y to the horizontal offset within byte (0-7) of the sprite 
 comment(0x1435, "set the vertical offset within a character row (0-7) of the sprite Y position")
 comment(0x143b, "load X and check flags to see if we are copying the mask to a destination sprite")
 
+comment(0x12bb, """*************************************************************************************
+
+Start room
+
+*************************************************************************************""")
+
 comment(0x1471, """*************************************************************************************
 
 Regular sprite routines
@@ -1577,7 +1583,10 @@ label(0x2325, "not_transforming_out")
 comment(0x232b, "start 'transform out' animation")
 label(0x2334, "not_transforming")
 label(0x2358, "start_of_transform_in_animation")
-entry(0x2a38, "something20_TODO")
+entry(0x2a38, "update_menus")
+label(0x2a73, "not_changing_menu_position")
+label(0x2a81, "no_space_bar_pressed")
+label(0x2acd, "over_a_player_character_or_later_on_menu")
 label(0x2a60, "skip_developer_escape_key_handling")
 label(0x2ab7, "skip_developer_shift_key_handling")
 label(0x2abd, "shift_key_detected")
@@ -1813,7 +1822,7 @@ comment(0x2b17, "save new sound flag", inline=True)
 comment(0x390c, "If flush is clear, then branch forward to play sound", inline=True)
 comment(0x3914, "X=channel (0-3)", inline=True)
 
-label(0x1213, "clear_sound_priorities_loop")
+label(0x1213, "clear_sound_priorities_loop1")
 
 expr(0x0ad5, "last_level_letter")
 expr(0xaf0, "last_level_letter")
@@ -1970,6 +1979,7 @@ expr(0x2962, sprite_dict[6])
 byte(0x2962)
 expr(0x2963, sprite_dict[4])
 byte(0x2963)
+comment(0x296e, "The 'extra' menu items are level specific items after the player character items")
 label(0x296e, "menu_index_for_extra_items")
 label(0x296f, "displayed_menu_slots") # see code at c29aa which pairs this with menu_slots1
 comment(0x2980, """*************************************************************************************
@@ -2110,8 +2120,8 @@ label(0x2b65, "check_for_extra_menu_item_chosen")
 label(0x2b84, "skip6")
 comment(0x2b37, "check menu item is in the player character range", inline=True)
 comment(0x2b52, "return if we are already this player character")
-comment(0x2b43, "return if in mid-transformation")
-comment(0x2b49, "TODO")
+comment(0x2b43, "return if transforming-out")
+comment(0x2b49, "return if transforming-in")
 comment(0x2b59, "reduce number of transformations left and execute transformation")
 
 
@@ -2132,7 +2142,7 @@ expr(0x3fa2, "opcode_jmp")
 
 label(0x29, "new_menu_index")
 label(0x2e, "current_menu_index")
-label(0x25, "another_menu_index")
+label(0x25, "old_menu_index")
 entry(0x29de, "apply_new_menu_index")
 entry(0x3a75, "menu_x_step_in_a")
 comment(0x3a75, "TODO: This looks like a manual implementation of an auto-repeat delay, so if you hold down left/right a fraction of a second too long it doesn't zip all the way to the left or right.")
@@ -2163,6 +2173,9 @@ comment(0x29f9, "erase the hand")
 comment(0x2a04, "restore the background tile where the fingertip overlaps the tile")
 comment(0x2a0f, "restore original screen base address")
 label(0x2a12, "no_menu_item_selected")
+label(0x2aa0, "update_menu_with_game_paused")
+label(0x2a9a, "clear_sound_priorities_loop2")
+label(0x2b2e, "set_normal_or_erase_mode")
 
 entry(0x2a17, "plot_menu_pointer")
 comment(0x2a17, """*************************************************************************************

@@ -190,7 +190,7 @@ sprite_y_base_low                           = $1a
 sprite_y_base_high                          = $1b
 sprite_reflect_flag                         = $1d
 valid_direction_pending                     = $20
-another_menu_index                          = $25
+old_menu_index                              = $25
 l0026                                       = $26
 left_right_repeat_flag                      = $27
 left_right_flag                             = $28
@@ -619,10 +619,10 @@ same_level
     lda #0                                                            ; 133d: a9 00       ..  :120c[1]
     sta l31d7                                                         ; 133f: 8d d7 31    ..1 :120e[1]
     ldx #3                                                            ; 1342: a2 03       ..  :1211[1]
-clear_sound_priorities_loop
+clear_sound_priorities_loop1
     sta sound_priority_per_channel_table,x                            ; 1344: 9d 6f 39    .o9 :1213[1]
     dex                                                               ; 1347: ca          .   :1216[1]
-    bpl clear_sound_priorities_loop                                   ; 1348: 10 fa       ..  :1217[1]
+    bpl clear_sound_priorities_loop1                                  ; 1348: 10 fa       ..  :1217[1]
     ldx level_init_after_load_handler_ptr                             ; 134a: ae d7 3a    ..: :1219[1]
     ldy level_init_after_load_handler_ptr + 1                         ; 134d: ac d8 3a    ..: :121c[1]
     jsr jmp_yx                                                        ; 1350: 20 66 19     f. :121f[1]
@@ -734,6 +734,11 @@ skip_developer_mode_code1
     lda #0                                                            ; 13e7: a9 00       ..  :12b6[1]
     jmp set_object_position_from_cell_xy                              ; 13e9: 4c 5d 1f    L]. :12b8[1]
 
+; *************************************************************************************
+; 
+; Start room
+; 
+; *************************************************************************************
 ; TODO: This is called from level-specific machine code, e.g. see dataA.asm
 start_room
     lda #$ff                                                          ; 13ec: a9 ff       ..  :12bb[1]
@@ -773,7 +778,7 @@ c12fc
     bcs c1306                                                         ; 1432: b0 03       ..  :1301[1]
     jsr wait_for_vsync                                                ; 1434: 20 8c 17     .. :1303[1]
 c1306
-    jsr something20_TODO                                              ; 1437: 20 38 2a     8* :1306[1]
+    jsr update_menus                                                  ; 1437: 20 38 2a     8* :1306[1]
     jsr regulate_time_loop                                            ; 143a: 20 1e 13     .. :1309[1]
     jsr read_jump_zx_keys                                             ; 143d: 20 a2 3a     .: :130c[1]
     jsr check_for_next_player_animation                               ; 1440: 20 cd 22     ." :130f[1]
@@ -4846,6 +4851,7 @@ desired_menu_slots
     !byte 0, 0, 0, 0, 0, 0, 0, 0, 0                                   ; 2a95: 00 00 00... ... :2964[1]
 menu_index_for_first_player_character
     !byte 5                                                           ; 2a9e: 05          .   :296d[1]
+; The 'extra' menu items are level specific items after the player character items
 menu_index_for_extra_items
     !byte 9                                                           ; 2a9f: 09          .   :296e[1]
 displayed_menu_slots
@@ -5004,7 +5010,7 @@ record_the_new_menu_item
     sta current_menu_index                                            ; 2b66: 85 2e       ..  :2a35[1]
     rts                                                               ; 2b68: 60          `   :2a37[1]
 
-something20_TODO
+update_menus
     ldx timingA_counter_low                                           ; 2b69: ae 04 11    ... :2a38[1]
     ldy timingA_counter_high                                          ; 2b6c: ac 05 11    ... :2a3b[1]
     jsr wait_for_timer_2_using_yx                                     ; 2b6f: 20 91 17     .. :2a3e[1]
@@ -5026,37 +5032,37 @@ something20_TODO
 
 skip_developer_escape_key_handling
     lda new_menu_index                                                ; 2b91: a5 29       .)  :2a60[1]
-    sta another_menu_index                                            ; 2b93: 85 25       .%  :2a62[1]
+    sta old_menu_index                                                ; 2b93: 85 25       .%  :2a62[1]
     jsr apply_pending_menu_motion                                     ; 2b95: 20 67 2c     g, :2a64[1]
     lda new_menu_index                                                ; 2b98: a5 29       .)  :2a67[1]
-    cmp another_menu_index                                            ; 2b9a: c5 25       .%  :2a69[1]
-    beq c2a73                                                         ; 2b9c: f0 06       ..  :2a6b[1]
+    cmp old_menu_index                                                ; 2b9a: c5 25       .%  :2a69[1]
+    beq not_changing_menu_position                                    ; 2b9c: f0 06       ..  :2a6b[1]
     jsr remove_dialog                                                 ; 2b9e: 20 53 04     S. :2a6d[1]
-    jmp c2a81                                                         ; 2ba1: 4c 81 2a    L.* :2a70[1]
+    jmp no_space_bar_pressed                                          ; 2ba1: 4c 81 2a    L.* :2a70[1]
 
-c2a73
+not_changing_menu_position
     lda space_flag2                                                   ; 2ba4: ad a0 3a    ..: :2a73[1]
-    beq c2a81                                                         ; 2ba7: f0 09       ..  :2a76[1]
+    beq no_space_bar_pressed                                          ; 2ba7: f0 09       ..  :2a76[1]
     jsr check_for_one_of_first_four_menu_items_chosen                 ; 2ba9: 20 db 2a     .* :2a78[1]
     jsr check_if_player_character_menu_item_chosen                    ; 2bac: 20 37 2b     7+ :2a7b[1]
     jsr check_for_extra_menu_item_chosen                              ; 2baf: 20 65 2b     e+ :2a7e[1]
-c2a81
+no_space_bar_pressed
     lda new_menu_index                                                ; 2bb2: a5 29       .)  :2a81[1]
     cmp menu_index_for_first_player_character                         ; 2bb4: cd 6d 29    .m) :2a83[1]
-    bcs c2acd                                                         ; 2bb7: b0 45       .E  :2a86[1]
-    lda another_menu_index                                            ; 2bb9: a5 25       .%  :2a88[1]
+    bcs over_a_player_character_or_later_on_menu                      ; 2bb7: b0 45       .E  :2a86[1]
+    lda old_menu_index                                                ; 2bb9: a5 25       .%  :2a88[1]
     cmp menu_index_for_first_player_character                         ; 2bbb: cd 6d 29    .m) :2a8a[1]
-    bcc c2aa0                                                         ; 2bbe: 90 11       ..  :2a8d[1]
+    bcc update_menu_with_game_paused                                  ; 2bbe: 90 11       ..  :2a8d[1]
     lda #osbyte_flush_buffer_class                                    ; 2bc0: a9 0f       ..  :2a8f[1]
     ldx #0                                                            ; 2bc2: a2 00       ..  :2a91[1]
     jsr osbyte                                                        ; 2bc4: 20 f4 ff     .. :2a93[1]   ; Flush all buffers (X=0)
     ldx #3                                                            ; 2bc7: a2 03       ..  :2a96[1]
     lda #0                                                            ; 2bc9: a9 00       ..  :2a98[1]
-loop_c2a9a
+clear_sound_priorities_loop2
     sta sound_priority_per_channel_table,x                            ; 2bcb: 9d 6f 39    .o9 :2a9a[1]
     dex                                                               ; 2bce: ca          .   :2a9d[1]
-    bpl loop_c2a9a                                                    ; 2bcf: 10 fa       ..  :2a9e[1]
-c2aa0
+    bpl clear_sound_priorities_loop2                                  ; 2bcf: 10 fa       ..  :2a9e[1]
+update_menu_with_game_paused
     jsr wait_for_timingB_counter                                      ; 2bd1: 20 00 04     .. :2aa0[1]
     jsr sub_c3664                                                     ; 2bd4: 20 64 36     d6 :2aa3[1]
     jsr update_disc_menu                                              ; 2bd7: 20 4b 34     K4 :2aa6[1]
@@ -5068,7 +5074,7 @@ c2aa0
     bne shift_key_detected                                            ; 2be6: d0 06       ..  :2ab5[1]
 skip_developer_shift_key_handling
     jsr wait_for_vsync                                                ; 2be8: 20 8c 17     .. :2ab7[1]
-    jmp something20_TODO                                              ; 2beb: 4c 38 2a    L8* :2aba[1]
+    jmp update_menus                                                  ; 2beb: 4c 38 2a    L8* :2aba[1]
 
 shift_key_detected
     jsr read_jump_zx_keys                                             ; 2bee: 20 a2 3a     .: :2abd[1]
@@ -5081,8 +5087,8 @@ delay_loop1
     bne delay_loop1                                                   ; 2bf9: d0 fa       ..  :2ac8[1]
     jmp return19                                                      ; 2bfb: 4c da 2a    L.* :2aca[1]
 
-c2acd
-    lda another_menu_index                                            ; 2bfe: a5 25       .%  :2acd[1]
+over_a_player_character_or_later_on_menu
+    lda old_menu_index                                                ; 2bfe: a5 25       .%  :2acd[1]
     cmp menu_index_for_first_player_character                         ; 2c00: cd 6d 29    .m) :2acf[1]
     bcs return19                                                      ; 2c03: b0 06       ..  :2ad2[1]
     jsr read_jump_zx_keys                                             ; 2c05: 20 a2 3a     .: :2ad4[1]
@@ -5136,9 +5142,9 @@ toggle_sound_on_off
     sta screen_base_address_high                                      ; 2c54: 85 4c       .L  :2b23[1]
     lda #sprite_op_flags_normal                                       ; 2c56: a9 00       ..  :2b25[1]
     ldx sound_enable_flag                                             ; 2c58: ae 66 39    .f9 :2b27[1]
-    bne c2b2e                                                         ; 2c5b: d0 02       ..  :2b2a[1]
+    bne set_normal_or_erase_mode                                      ; 2c5b: d0 02       ..  :2b2a[1]
     lda #sprite_op_flags_erase                                        ; 2c5d: a9 02       ..  :2b2c[1]
-c2b2e
+set_normal_or_erase_mode
     sta sprite_op_flags                                               ; 2c5f: 85 15       ..  :2b2e[1]
     jsr sprite_op                                                     ; 2c61: 20 8d 13     .. :2b30[1]
     pla                                                               ; 2c64: 68          h   :2b33[1]
@@ -5151,11 +5157,11 @@ check_if_player_character_menu_item_chosen
     bcc return21                                                      ; 2c6d: 90 26       .&  :2b3c[1]
     cpx menu_index_for_extra_items                                    ; 2c6f: ec 6e 29    .n) :2b3e[1]
     bcs return21                                                      ; 2c72: b0 21       .!  :2b41[1]
-; return if in mid-transformation
+; return if transforming-out
     lda current_player_character                                      ; 2c74: a5 48       .H  :2b43[1]
     cmp new_player_character                                          ; 2c76: c5 4d       .M  :2b45[1]
     bne return21                                                      ; 2c78: d0 1b       ..  :2b47[1]
-; TODO
+; return if transforming-in
     lda current_animation                                             ; 2c7a: ad df 09    ... :2b49[1]
     beq return21                                                      ; 2c7d: f0 16       ..  :2b4c[1]
     lda #0                                                            ; 2c7f: a9 00       ..  :2b4e[1]
@@ -8533,11 +8539,6 @@ pydis_end
 ;     c287e
 ;     c288c
 ;     c2945
-;     c2a73
-;     c2a81
-;     c2aa0
-;     c2acd
-;     c2b2e
 ;     c2c35
 ;     c2c3d
 ;     c2dc3
@@ -8707,7 +8708,6 @@ pydis_end
 ;     loop_c270f
 ;     loop_c28fd
 ;     loop_c2992
-;     loop_c2a9a
 ;     loop_c2be9
 ;     loop_c2ec9
 ;     loop_c34b2
