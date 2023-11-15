@@ -1978,9 +1978,10 @@ sprdata_filename
 ; *************************************************************************************
 ; 
 ; Initialise a brazier and associated fire.
+; 
 ; Two objects are initialised, the brazier and the fire. It chooses a direction based
-; on whether
-; a wall is to the left or right. It sets a random animation state and draws them.
+; on whether a wall is to the left or right. It sets a random initial animation state
+; then draws them.
 ; 
 ; On Entry:
 ;     A: object index for brazier
@@ -2078,7 +2079,7 @@ something14_TODO
     lda l1ab1                                                         ; 1b4d: ad b1 1a    ... :1a1c[1]
     and #7                                                            ; 1b50: 29 07       ).  :1a1f[1]
     tay                                                               ; 1b52: a8          .   :1a21[1]
-    lda l1ab2,y                                                       ; 1b53: b9 b2 1a    ... :1a22[1]
+    lda diamond_sprite_cycle,y                                        ; 1b53: b9 b2 1a    ... :1a22[1]
     sta l2eed                                                         ; 1b56: 8d ed 2e    ... :1a25[1]
     sta l2ef2                                                         ; 1b59: 8d f2 2e    ... :1a28[1]
     lda #$21 ; '!'                                                    ; 1b5c: a9 21       .!  :1a2b[1]
@@ -2130,7 +2131,7 @@ c1a59
     eor #$ff                                                          ; 1bbd: 49 ff       I.  :1a8c[1]
     sec                                                               ; 1bbf: 38          8   :1a8e[1]
 c1a8f
-    adc #$22 ; '"'                                                    ; 1bc0: 69 22       i"  :1a8f[1]
+    adc #spriteid_sparkles1                                           ; 1bc0: 69 22       i"  :1a8f[1]
     sta object_spriteid,x                                             ; 1bc2: 9d a8 09    ... :1a91[1]
     txa                                                               ; 1bc5: 8a          .   :1a94[1]
     ldx l1aaf                                                         ; 1bc6: ae af 1a    ... :1a95[1]
@@ -2153,8 +2154,15 @@ l1ab0
     !byte 0                                                           ; 1be1: 00          .   :1ab0[1]
 l1ab1
     !byte 0                                                           ; 1be2: 00          .   :1ab1[1]
-l1ab2
-    !text "'()*+*)("                                                  ; 1be3: 27 28 29... '() :1ab2[1]
+diamond_sprite_cycle
+    !byte spriteid_diamond1                                           ; 1be3: 27          '   :1ab2[1]
+    !byte spriteid_diamond2                                           ; 1be4: 28          (   :1ab3[1]
+    !byte spriteid_diamond3                                           ; 1be5: 29          )   :1ab4[1]
+    !byte spriteid_diamond4                                           ; 1be6: 2a          *   :1ab5[1]
+    !byte spriteid_diamond5                                           ; 1be7: 2b          +   :1ab6[1]
+    !byte spriteid_diamond4                                           ; 1be8: 2a          *   :1ab7[1]
+    !byte spriteid_diamond3                                           ; 1be9: 29          )   :1ab8[1]
+    !byte spriteid_diamond2                                           ; 1bea: 28          (   :1ab9[1]
 current_room_index
     !byte 0                                                           ; 1beb: 00          .   :1aba[1]
 
@@ -4058,7 +4066,7 @@ l2433
 
 ; *************************************************************************************
 ; 
-; Find the left and right of the object
+; Find the left and right extents of the object
 ; 
 ; Returns both the left and right Y coordinate of the object (found using the object
 ; position, sprite offset, current sprite width, and object direction).
@@ -4194,7 +4202,7 @@ temp_right_offset
 
 ; *************************************************************************************
 ; 
-; Find the top and bottom of the object
+; Find the top and bottom extents of the object
 ; 
 ; Returns both the top and bottom Y coordinate of the object (found using the object
 ; position, sprite offset and current sprite height).
@@ -8722,7 +8730,6 @@ pydis_end
 ;     l1aaf
 ;     l1ab0
 ;     l1ab1
-;     l1ab2
 ;     l2433
 ;     l288f
 ;     l2891
@@ -9631,6 +9638,21 @@ pydis_end
 }
 !if (spriteid_corner_top_right) != $2f {
     !error "Assertion failed: spriteid_corner_top_right == $2f"
+}
+!if (spriteid_diamond1) != $27 {
+    !error "Assertion failed: spriteid_diamond1 == $27"
+}
+!if (spriteid_diamond2) != $28 {
+    !error "Assertion failed: spriteid_diamond2 == $28"
+}
+!if (spriteid_diamond3) != $29 {
+    !error "Assertion failed: spriteid_diamond3 == $29"
+}
+!if (spriteid_diamond4) != $2a {
+    !error "Assertion failed: spriteid_diamond4 == $2a"
+}
+!if (spriteid_diamond5) != $2b {
+    !error "Assertion failed: spriteid_diamond5 == $2b"
 }
 !if (spriteid_fingertip_tile_restoration) != $1e {
     !error "Assertion failed: spriteid_fingertip_tile_restoration == $1e"

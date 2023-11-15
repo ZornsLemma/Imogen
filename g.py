@@ -621,7 +621,7 @@ comment(0x1e7c, "store the value to write in the 'offset_within_byte' variable")
 label(0x2434, "find_left_and_right_of_object")
 comment(0x2434, """*************************************************************************************
 
-Find the left and right of the object
+Find the left and right extents of the object
 
 Returns both the left and right Y coordinate of the object (found using the object position, sprite offset, current sprite width, and object direction).
 It also returns cell based versions of these two coordinates.
@@ -707,7 +707,7 @@ comment(0x25df, "remember temp_left and right offsets, since we will use them ag
 
 comment(0x24d2, """*************************************************************************************
 
-Find the top and bottom of the object
+Find the top and bottom extents of the object
 
 Returns both the top and bottom Y coordinate of the object (found using the object position, sprite offset and current sprite height).
 It also returns cell based versions of these two coordinates.
@@ -2230,6 +2230,8 @@ expr(0x22d6, sprite_dict[5])
 expr(0x22da, sprite_dict[6])
 label(0x22e0, "update_mid_transformation_local")
 spriteid(0x3974, 0x3986)
+spriteid(0x1ab2, 0x1aba)
+label(0x1ab2, "diamond_sprite_cycle")
 label(0x3974, "mid_transform_sprites_table")
 label(0x3975, "mid_transform_circle_sprites")
 expr(0x39fe, "mid_transform_circle_sprites - mid_transform_sprites_table")
@@ -2566,6 +2568,8 @@ decimal(0x1e3a)
 label(0x1e2d, "clip_x")
 decimal(0x1e3e)
 label(0x1e3d, "clip_y")
+
+expr(0x1a90, "spriteid_sparkles1")
 label(0x1b64, "skip_writing_to_collision_map")
 label(0x1b59, "now_write_to_collision_map")
 entry(0x1b66, "get_screen_address_from_cell_xy")
@@ -2835,8 +2839,8 @@ comment(0x1c10, "restore Y")
 comment(0x1988, """*************************************************************************************
 
 Initialise a brazier and associated fire.
-Two objects are initialised, the brazier and the fire. It chooses a direction based on whether
-a wall is to the left or right. It sets a random animation state and draws them.
+
+Two objects are initialised, the brazier and the fire. It chooses a direction based on whether a wall is to the left or right. It sets a random initial animation state then draws them.
 
 On Entry:
     A: object index for brazier
