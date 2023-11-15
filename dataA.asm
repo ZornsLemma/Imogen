@@ -407,19 +407,18 @@ mouse_ball_position_ge_8
     tay                                                               ; 3cc2: a8          .
 ; $3cc3 referenced 1 time by $3cb7
 mouse_ball_position_lt_8
-    lda mouse_ball_movement_table,y                                   ; 3cc3: b9 21 3d    .!=
-; TODO: l09aa and l09ab seem to be write-only - this is presumably a false impression,
-; are they elements of some table or something like that?
-    sta l09aa                                                         ; 3cc6: 8d aa 09    ...
+    lda mouse_sprites_and_ball_movement_table,y                       ; 3cc3: b9 21 3d    .!=
+; Set the mouse sprites as a pair of values in the table
+    sta object_spriteid + objectid_left_mouse                         ; 3cc6: 8d aa 09    ...
     iny                                                               ; 3cc9: c8          .
-    lda mouse_ball_movement_table,y                                   ; 3cca: b9 21 3d    .!=
-    sta l09ab                                                         ; 3ccd: 8d ab 09    ...
+    lda mouse_sprites_and_ball_movement_table,y                       ; 3cca: b9 21 3d    .!=
+    sta object_spriteid + objectid_right_mouse                        ; 3ccd: 8d ab 09    ...
     lda #$88                                                          ; 3cd0: a9 88       ..
     clc                                                               ; 3cd2: 18          .
     iny                                                               ; 3cd3: c8          .
-    adc mouse_ball_movement_table,y                                   ; 3cd4: 79 21 3d    y!=
+    adc mouse_sprites_and_ball_movement_table,y                       ; 3cd4: 79 21 3d    y!=
 ; TODO: always branch? not sure, but superficially it would seem nothing in
-; mouse_ball_movement_table is -$88, i.e. $78
+; mouse_sprites_and_ball_movement_table is -$88, i.e. $78
     bne c3cfb                                                         ; 3cd7: d0 22       ."
 ; $3cd9 referenced 1 time by $3cbb
 mouse_ball_position_ge_0xf
@@ -436,22 +435,22 @@ mouse_ball_position_ge_0x17
     tay                                                               ; 3ce6: a8          .
 ; $3ce7 referenced 1 time by $3cdf
 mouse_ball_position_ge_0xf_common_tail
-    lda mouse_ball_movement_table,y                                   ; 3ce7: b9 21 3d    .!=
+    lda mouse_sprites_and_ball_movement_table,y                       ; 3ce7: b9 21 3d    .!=
     sta l09ab                                                         ; 3cea: 8d ab 09    ...
     iny                                                               ; 3ced: c8          .
-    lda mouse_ball_movement_table,y                                   ; 3cee: b9 21 3d    .!=
+    lda mouse_sprites_and_ball_movement_table,y                       ; 3cee: b9 21 3d    .!=
     sta l09aa                                                         ; 3cf1: 8d aa 09    ...
     lda #$c0                                                          ; 3cf4: a9 c0       ..
     sec                                                               ; 3cf6: 38          8
     iny                                                               ; 3cf7: c8          .
-    sbc mouse_ball_movement_table,y                                   ; 3cf8: f9 21 3d    .!=
+    sbc mouse_sprites_and_ball_movement_table,y                       ; 3cf8: f9 21 3d    .!=
 ; $3cfb referenced 1 time by $3cd7
 c3cfb
     sta l0954                                                         ; 3cfb: 8d 54 09    .T.
     lda #$53 ; 'S'                                                    ; 3cfe: a9 53       .S
     sec                                                               ; 3d00: 38          8
     iny                                                               ; 3d01: c8          .
-    sbc mouse_ball_movement_table,y                                   ; 3d02: f9 21 3d    .!=
+    sbc mouse_sprites_and_ball_movement_table,y                       ; 3d02: f9 21 3d    .!=
     sta l0980                                                         ; 3d05: 8d 80 09    ...
     lda #$cb                                                          ; 3d08: a9 cb       ..
     sta l09ac                                                         ; 3d0a: 8d ac 09    ...
@@ -468,7 +467,7 @@ return1
     rts                                                               ; 3d20: 60          `
 
 ; $3d21 referenced 7 times by $3cc3, $3cca, $3cd4, $3ce7, $3cee, $3cf8, $3d02
-mouse_ball_movement_table
+mouse_sprites_and_ball_movement_table
     !byte $d4, $c9,   0,   0, $ca, $c9,   8,   6, $ca, $c9, $10, $0a  ; 3d21: d4 c9 00... ...
     !byte $ca, $d5, $18, $0c, $d5, $ca, $20, $0c, $c9, $ca, $28, $0a  ; 3d2d: ca d5 18... ...
     !byte $c9, $ca, $30,   6                                          ; 3d39: c9 ca 30... ..0
@@ -1780,7 +1779,7 @@ pydis_end
 ;     l09ff:                                                  7
 ;     l0a01:                                                  7
 ;     play_sound_yx:                                          7
-;     mouse_ball_movement_table:                              7
+;     mouse_sprites_and_ball_movement_table:                  7
 ;     l0070:                                                  6
 ;     object_direction:                                       6
 ;     l0a71:                                                  6
@@ -2107,6 +2106,12 @@ pydis_end
 }
 !if (level_update_handler) != $3b17 {
     !error "Assertion failed: level_update_handler == $3b17"
+}
+!if (object_spriteid + objectid_left_mouse) != $09aa {
+    !error "Assertion failed: object_spriteid + objectid_left_mouse == $09aa"
+}
+!if (object_spriteid + objectid_right_mouse) != $09ab {
+    !error "Assertion failed: object_spriteid + objectid_right_mouse == $09ab"
 }
 !if (objectid_left_mouse) != $02 {
     !error "Assertion failed: objectid_left_mouse == $02"

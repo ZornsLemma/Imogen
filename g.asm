@@ -211,17 +211,16 @@ current_menu_index                          = $2e
 desired_room_index                          = $30
 desired_level                               = $31
 currently_loaded_level                      = $37
-l0039                                       = $39
+bit_mask_for_random_number_limit            = $39
 temp_sprite_x_offset                        = $3a
 temp_sprite_y_offset                        = $3b
 width_in_cells                              = $3c
 height_in_cells                             = $3d
 value_to_write_to_collision_map             = $3e
-l003f                                       = $3f
+only_ever_written_to_with_zero              = $3f
 source_sprite_memory_low                    = $40
 source_sprite_memory_high                   = $41
 copy_mode                                   = $42
-l0042                                       = $42
 print_in_italics_flag                       = $43
 l0044                                       = $44
 eor_key                                     = $45
@@ -654,7 +653,7 @@ skip_adding_completion_spell_to_toolbar
     lda #3                                                            ; 1365: a9 03       ..  :1234[1]
     sta value_to_write_to_collision_map                               ; 1367: 85 3e       .>  :1236[1]
     lda #colour_black                                                 ; 1369: a9 00       ..  :1238[1]
-    sta l0042                                                         ; 136b: 85 42       .B  :123a[1]
+    sta copy_mode                                                     ; 136b: 85 42       .B  :123a[1]
     sta gameplay_area_colour                                          ; 136d: 8d 60 17    .`. :123c[1]
     jsr draw_toolbar                                                  ; 1370: 20 a1 29     .) :123f[1]
     jsr clear_game_area                                               ; 1373: 20 f4 1d     .. :1242[1]
@@ -1814,7 +1813,7 @@ print_italic_rts
 ; 
 ; *************************************************************************************
 get_random_number_up_to_a
-    sta l0039                                                         ; 19d7: 85 39       .9  :18a6[1]   ; store loop variable, all 1s in the lowest bits
+    sta bit_mask_for_random_number_limit                              ; 19d7: 85 39       .9  :18a6[1]   ; store loop variable, all 1s in the lowest bits
     pha                                                               ; 19d9: 48          H   :18a8[1]   ; remember mask
 generate_random_bits_loop
     lda rnd2                                                          ; 19da: a5 08       ..  :18a9[1]
@@ -1828,7 +1827,7 @@ generate_random_bits_loop
     rol rnd2                                                          ; 19e6: 26 08       &.  :18b5[1]
     rol rnd3                                                          ; 19e8: 26 09       &.  :18b7[1]
     rol rnd4                                                          ; 19ea: 26 0a       &.  :18b9[1]
-    lsr l0039                                                         ; 19ec: 46 39       F9  :18bb[1]   ; update loop variable by shifting right
+    lsr bit_mask_for_random_number_limit                              ; 19ec: 46 39       F9  :18bb[1]   ; update loop variable by shifting right
     bne generate_random_bits_loop                                     ; 19ee: d0 ea       ..  :18bd[1]   ; loop back until enough random bits are generated
     pla                                                               ; 19f0: 68          h   :18bf[1]   ; recall mask
     and rnd0                                                          ; 19f1: 25 06       %.  :18c0[1]   ; AND the mask with the random bits
@@ -8374,13 +8373,15 @@ show_dialog_box
     ldx #$ff                                                          ; 4113: a2 ff       ..  :0414[2]
     stx value_to_write_to_collision_map                               ; 4115: 86 3e       .>  :0416[2]
     inx                                                               ; 4117: e8          .   :0418[2]
-    stx l003f                                                         ; 4118: 86 3f       .?  :0419[2]
+    stx only_ever_written_to_with_zero                                ; 4118: 86 3f       .?  :0419[2]
+; choose the 'all set' tile
     lda #<tile_all_set_pixels                                         ; 411a: a9 a9       ..  :041b[2]
     sta source_sprite_memory_low                                      ; 411c: 85 40       .@  :041d[2]
     lda #>tile_all_set_pixels                                         ; 411e: a9 0a       ..  :041f[2]
     sta source_sprite_memory_high                                     ; 4120: 85 41       .A  :0421[2]
+; copy_mode = 1 (simple copy)
     inx                                                               ; 4122: e8          .   :0423[2]
-    stx l0042                                                         ; 4123: 86 42       .B  :0424[2]
+    stx copy_mode                                                     ; 4123: 86 42       .B  :0424[2]
     ldy #1                                                            ; 4125: a0 01       ..  :0426[2]
     lda current_text_width                                            ; 4127: ad 09 04    ... :0428[2]
     sec                                                               ; 412a: 38          8   :042b[2]
@@ -8395,7 +8396,7 @@ no_existing_dialog_box_shown
     lda #$ff                                                          ; 4139: a9 ff       ..  :043a[2]
     sta which_dialog_is_active                                        ; 413b: 85 04       ..  :043c[2]
     jsr remember_screen_memory_before_showing_dialog_box              ; 413d: 20 74 04     t. :043e[2]
-    jsr sub_c04cb                                                     ; 4140: 20 cb 04     .. :0441[2]
+    jsr plot_dialog_box                                               ; 4140: 20 cb 04     .. :0441[2]
 vdu_goto_0_9
     lda #vdu_goto_xy                                                  ; 4143: a9 1f       ..  :0444[2]
     jsr oswrch                                                        ; 4145: 20 ee ff     .. :0446[2]   ; Write character 31
@@ -8412,15 +8413,17 @@ remove_dialog
     jsr turn_cursor_off                                               ; 4159: 20 63 38     c8 :045a[2]
     ldx #$ff                                                          ; 415c: a2 ff       ..  :045d[2]
     stx value_to_write_to_collision_map                               ; 415e: 86 3e       .>  :045f[2]
-    stx l0042                                                         ; 4160: 86 42       .B  :0461[2]
+; copy_mode = 255 (just copy from memory in sequence)
+    stx copy_mode                                                     ; 4160: 86 42       .B  :0461[2]
     inx                                                               ; 4162: e8          .   :0463[2]
     stx which_dialog_is_active                                        ; 4163: 86 04       ..  :0464[2]
-    stx l003f                                                         ; 4165: 86 3f       .?  :0466[2]
+    stx only_ever_written_to_with_zero                                ; 4165: 86 3f       .?  :0466[2]
+; copy from offscreen cache of what was underneath the dialog box
     lda #<cache_of_screen_memory_under_dialog                         ; 4167: a9 30       .0  :0468[2]
     sta source_sprite_memory_low                                      ; 4169: 85 40       .@  :046a[2]
     lda #>cache_of_screen_memory_under_dialog                         ; 416b: a9 05       ..  :046c[2]
     sta source_sprite_memory_high                                     ; 416d: 85 41       .A  :046e[2]
-    jmp restore_screen_memory_after_dialog_box                        ; 416f: 4c 05 05    L.. :0470[2]
+    jmp copy_to_rectangle_of_screen_memory_from_offscreen             ; 416f: 4c 05 05    L.. :0470[2]
 
 return30
     rts                                                               ; 4172: 60          `   :0473[2]
@@ -8484,19 +8487,23 @@ move_to_next_row
 return31
     rts                                                               ; 41c9: 60          `   :04ca[2]
 
-sub_c04cb
+plot_dialog_box
     ldx #$ff                                                          ; 41ca: a2 ff       ..  :04cb[2]
     stx value_to_write_to_collision_map                               ; 41cc: 86 3e       .>  :04cd[2]
     inx                                                               ; 41ce: e8          .   :04cf[2]
-    stx l003f                                                         ; 41cf: 86 3f       .?  :04d0[2]
+    stx only_ever_written_to_with_zero                                ; 41cf: 86 3f       .?  :04d0[2]
     stx plot_move_x_high                                              ; 41d1: 8e 18 05    ... :04d2[2]
+; choose the 'all set' tile
     lda #<tile_all_set_pixels                                         ; 41d4: a9 a9       ..  :04d5[2]
     sta source_sprite_memory_low                                      ; 41d6: 85 40       .@  :04d7[2]
     lda #>tile_all_set_pixels                                         ; 41d8: a9 0a       ..  :04d9[2]
     sta source_sprite_memory_high                                     ; 41da: 85 41       .A  :04db[2]
+; copy_mode = 1 (simple copy)
     inx                                                               ; 41dc: e8          .   :04dd[2]
-    stx l0042                                                         ; 41dd: 86 42       .B  :04de[2]
-    jsr restore_screen_memory_after_dialog_box                        ; 41df: 20 05 05     .. :04e0[2]
+    stx copy_mode                                                     ; 41dd: 86 42       .B  :04de[2]
+; draw blank background
+    jsr copy_to_rectangle_of_screen_memory_from_offscreen             ; 41df: 20 05 05     .. :04e0[2]
+; draw dialog box outline (calculate X plot position based on text width)
     lda current_text_width                                            ; 41e2: ad 09 04    ... :04e3[2]
     asl                                                               ; 41e5: 0a          .   :04e6[2]
     asl                                                               ; 41e6: 0a          .   :04e7[2]
@@ -8517,7 +8524,7 @@ plot_loop
     bcc plot_loop                                                     ; 4201: 90 f5       ..  :0502[2]
     rts                                                               ; 4203: 60          `   :0504[2]
 
-restore_screen_memory_after_dialog_box
+copy_to_rectangle_of_screen_memory_from_offscreen
     ldx #0                                                            ; 4204: a2 00       ..  :0505[2]
     ldy #0                                                            ; 4206: a0 00       ..  :0507[2]
     lda current_text_width                                            ; 4208: ad 09 04    ... :0509[2]
@@ -8681,8 +8688,6 @@ pydis_end
 ;     c39ec
 ;     c39f4
 ;     c3a08
-;     l0039
-;     l003f
 ;     l0044
 ;     l0053
 ;     l0064
@@ -8755,7 +8760,6 @@ pydis_end
 ;     loop_c34b2
 ;     loop_c39d2
 ;     loop_c3f87
-;     sub_c04cb
 ;     sub_c2157
 ;     sub_c22ae
 ;     sub_c236b

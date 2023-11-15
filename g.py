@@ -117,13 +117,12 @@ substitute_labels = {
         "address1_low": "cell_x",
         "address1_high": "cell_y",
         "address2_low": "pattern_length_cycle_counter",
-        "l0042": "copy_mode",
-         "l0072": "width_in_cells_to_write",
-         "l0073": "height_in_cells_to_write",
-         "l0074": "first_cell_in_row_screen_address_low",
-         "l0075": "first_cell_in_row_screen_address_high",
-         "l0076": "cell_screen_address_low",
-         "l0077": "cell_screen_address_high",
+        "l0072": "width_in_cells_to_write",
+        "l0073": "height_in_cells_to_write",
+        "l0074": "first_cell_in_row_screen_address_low",
+        "l0075": "first_cell_in_row_screen_address_high",
+        "l0076": "cell_screen_address_low",
+        "l0077": "cell_screen_address_high",
          # TODO: Maybe rename the next two - "off_screen_address" is named based on its 'final' use in the lda (off_screen_address),y, but it may be more instructive to think of original... differently
          "l0078": "original_off_screen_address_low",
          "l0079": "original_off_screen_address_high",
@@ -247,7 +246,11 @@ label(0x002c, "z_key_pressed_pending")
 label(0x002d, "x_key_pressed_pending")
 label(0x002e, "current_menu_index")
 label(0x0037, "currently_loaded_level")
+label(0x0039, "bit_mask_for_random_number_limit")
+label(0x003f, "only_ever_written_to_with_zero")
+comment(0x04e3, "draw dialog box outline (calculate X plot position based on text width)")
 
+label(0x0042, "copy_mode")
 label(0x0043, "print_in_italics_flag")
 label(0x0045, "eor_key") # TODO: Is this *always* $cb in practice?
 label(0x0046, "return_key_pressed_pending")
@@ -2569,10 +2572,18 @@ word(0x0523)
 word(0x0525)
 decimal(0x0523)
 decimal(0x0525)
+label(0x04cb, "plot_dialog_box")
+comment(0x0461, "copy_mode = 255 (just copy from memory in sequence)")
+comment(0x04e0, "draw blank background")
+comment(0x04d5, "choose the 'all set' tile")
+comment(0x04dd, "copy_mode = 1 (simple copy)")
+comment(0x041b, "choose the 'all set' tile")
+comment(0x0423, "copy_mode = 1 (simple copy)")
 label(0x04f9, "plot_loop")
 label(0x04b4, "move_to_next_row")
 label(0x04a4, "skip_high_byte1")
-label(0x0505, "restore_screen_memory_after_dialog_box")
+comment(0x0468, "copy from offscreen cache of what was underneath the dialog box")
+label(0x0505, "copy_to_rectangle_of_screen_memory_from_offscreen")
 label(0x1b7e, "skip_high_byte2")
 expr(0x1dd4, "spriteid_rope1")
 
