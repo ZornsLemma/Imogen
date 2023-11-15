@@ -53,8 +53,6 @@ object_y_low_old                                    = $0987
 object_y_high                                       = $0992
 object_y_high_old                                   = $099d
 object_spriteid                                     = $09a8
-l09aa                                               = $09aa
-l09ab                                               = $09ab
 l09ac                                               = $09ac
 object_spriteid_old                                 = $09b3
 object_direction                                    = $09be
@@ -446,10 +444,10 @@ mouse_ball_position_ge_0x17
 ; $3ce7 referenced 1 time by $3cdf
 mouse_ball_position_ge_0xf_common_tail
     lda mouse_sprites_and_ball_movement_table,y                       ; 3ce7: b9 21 3d    .!=
-    sta l09ab                                                         ; 3cea: 8d ab 09    ...
+    sta object_spriteid + objectid_right_mouse                        ; 3cea: 8d ab 09    ...
     iny                                                               ; 3ced: c8          .
     lda mouse_sprites_and_ball_movement_table,y                       ; 3cee: b9 21 3d    .!=
-    sta l09aa                                                         ; 3cf1: 8d aa 09    ...
+    sta object_spriteid + objectid_left_mouse                         ; 3cf1: 8d aa 09    ...
     lda #$c0                                                          ; 3cf4: a9 c0       ..
     sec                                                               ; 3cf6: 38          8
     iny                                                               ; 3cf7: c8          .
@@ -707,8 +705,8 @@ c3ed7
 ; $3ee4 referenced 1 time by $3ee0
 c3ee4
     lda something1_three_byte_table,y                                 ; 3ee4: b9 ee 3e    ..>
-    sta l09aa                                                         ; 3ee7: 8d aa 09    ...
-    sta l09ab                                                         ; 3eea: 8d ab 09    ...
+    sta object_spriteid + objectid_left_mouse                         ; 3ee7: 8d aa 09    ...
+    sta object_spriteid + objectid_right_mouse                        ; 3eea: 8d ab 09    ...
 ; $3eed referenced 1 time by $3edb
 c3eed
     rts                                                               ; 3eed: 60          `

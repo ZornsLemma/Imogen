@@ -165,6 +165,10 @@ expr(0x3c48, "objectid_right_mouse")
 expr(0x3c5c, "objectid_mouse_ball")
 expr(0x3cc7, "object_spriteid + objectid_left_mouse")
 expr(0x3cce, "object_spriteid + objectid_right_mouse")
+expr(0x3ceb, "object_spriteid + objectid_right_mouse")
+expr(0x3cf2, "object_spriteid + objectid_left_mouse")
+expr(0x3ee8, "object_spriteid + objectid_left_mouse")
+expr(0x3eeb, "object_spriteid + objectid_right_mouse")
 
 # TODO: Use this more?
 def ldx_ldy_jsr_play_sound_yx(jsr_runtime_addr, s):
