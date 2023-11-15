@@ -28,7 +28,7 @@ entry(get_u16_binary(0x3ad7), "level_init_after_load_handler")
 entry(get_u16_binary(0x3ad9), "level_update_handler")
 label(get_u16_binary(0x3adb), "level_name")
 
-entry(0x3d21, "some_data1")
+entry(0x3d21, "mouse_ball_movement_table") # TODO: improve
 label(0x4052, "some_data2")
 comment(0x4084, "redundant instruction", inline=True)
 comment(0x4086, "redundant instruction", inline=True)
@@ -118,6 +118,8 @@ entry(0x3cc3, "mouse_ball_position_lt_8")
 entry(0x3cd9, "mouse_ball_position_ge_0xf") # TODO: this name kind of ignores the possibility of fall through to this label
 entry(0x3ce1, "mouse_ball_position_ge_0x17")
 comment(0x3cc6, "TODO: l09aa and l09ab seem to be write-only - this is presumably a false impression, are they elements of some table or something like that?")
+entry(0x3ce7, "mouse_ball_position_ge_0xf_common_tail")
+comment(0x3cd7, "TODO: always branch? not sure, but superficially it would seem nothing in mouse_ball_movement_table is -$88, i.e. $78")
 
 # TODO: slight guesswork
 constant(2, "objectid_left_mouse")
