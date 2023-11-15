@@ -364,17 +364,11 @@ l0121                                       = $0121
 x_object_left_low                           = $0121
 l0122                                       = $0122
 x_object_left_high                          = $0122
-l0123                                       = $0123
 x_object_right_low                          = $0123
-l0124                                       = $0124
 x_object_right_high                         = $0124
-l0125                                       = $0125
 x_object_top_low                            = $0125
-l0126                                       = $0126
 x_object_top_high                           = $0126
-l0127                                       = $0127
 x_object_bottom_low                         = $0127
-l0128                                       = $0128
 x_object_bottom_high                        = $0128
 old_object_left_low                         = $0129
 old_object_left_high                        = $012a
@@ -1123,7 +1117,7 @@ skip3
 out_of_bounds_vertically2
     asl sprite_data_byte                                              ; 15a2: 06 7d       .}  :1471[1]
     clc                                                               ; 15a4: 18          .   :1473[1]
-    jmp c149c                                                         ; 15a5: 4c 9c 14    L.. :1474[1]
+    jmp move_up_to_next_pixel_row2                                    ; 15a5: 4c 9c 14    L.. :1474[1]
 
 record_that_we_are_out_of_screen_range_vertically2
     lda #0                                                            ; 15a8: a9 00       ..  :1477[1]
@@ -1149,7 +1143,7 @@ smc_sprite_opcode
 and_byte_with_mask_and_write_to_screen2
     and sprite_bit_mask                                               ; 15c9: 25 83       %.  :1498[1]
     sta (sprite_screen_address_low),y                                 ; 15cb: 91 72       .r  :149a[1]
-c149c
+move_up_to_next_pixel_row2
     dey                                                               ; 15cd: 88          .   :149c[1]
     bpl y_coordinate_is_within_character_row2                         ; 15ce: 10 18       ..  :149d[1]
     ldy #7                                                            ; 15d0: a0 07       ..  :149f[1]
@@ -1180,7 +1174,7 @@ byte_not_finished_yet2
     asl sprite_data_byte                                              ; 15f9: 06 7d       .}  :14c8[1]
     bcc write_one_pixel_to_the_screen2                                ; 15fb: 90 b2       ..  :14ca[1]
     asl sprite_data_byte                                              ; 15fd: 06 7d       .}  :14cc[1]
-    bcc c149c                                                         ; 15ff: 90 cc       ..  :14ce[1]
+    bcc move_up_to_next_pixel_row2                                    ; 15ff: 90 cc       ..  :14ce[1]
     dec sprite_width                                                  ; 1601: c6 81       ..  :14d0[1]
     beq finish_off_sprite2                                            ; 1603: f0 55       .U  :14d2[1]
     lda sprite_screen_address_for_column_high                         ; 1605: a5 7c       .|  :14d4[1]
@@ -8318,10 +8312,10 @@ convert_level_filename_letter_into_section_letter
     ldx #$0f                                                          ; 40ad: a2 0f       ..  :0adc[5]
 find_letter_loop
     cmp level_ordering_table+1,x                                      ; 40af: dd 80 0a    ... :0ade[5]
-    beq c0ae6                                                         ; 40b2: f0 03       ..  :0ae1[5]
+    beq found_letter                                                  ; 40b2: f0 03       ..  :0ae1[5]
     dex                                                               ; 40b4: ca          .   :0ae3[5]
     bpl find_letter_loop                                              ; 40b5: 10 f8       ..  :0ae4[5]
-c0ae6
+found_letter
     txa                                                               ; 40b7: 8a          .   :0ae6[5]
     clc                                                               ; 40b8: 18          .   :0ae7[5]
     adc #first_level_letter                                           ; 40b9: 69 41       iA  :0ae8[5]
@@ -8602,8 +8596,6 @@ plot_move_x_high
 pydis_end
 
 ; Automatically generated labels:
-;     c0ae6
-;     c149c
 ;     c16aa
 ;     c19e5
 ;     c1a59

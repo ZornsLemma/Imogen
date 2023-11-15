@@ -180,12 +180,6 @@ substitute_labels = {
     (0x28e2, 0x2a8b): {
         "l0121": "x_object_left_low",
         "l0122": "x_object_left_high",
-        "l0123": "x_object_right_low",
-        "l0124": "x_object_right_high",
-        "l0125": "x_object_top_low",
-        "l0126": "x_object_top_high",
-        "l0127": "x_object_bottom_low",
-        "l0128": "x_object_bottom_high",
     },
     (0x2cb8, 0x2d3c): {
         "address1_low": "menu_item_to_use",
@@ -389,6 +383,13 @@ sprite_dict = {
     198: "spriteid_198",            # TODO: Better name
     199: "spriteid_199",            # TODO: Better name
 }
+
+label(0x0123, "x_object_right_low")
+label(0x0124, "x_object_right_high")
+label(0x0125, "x_object_top_low")
+label(0x0126, "x_object_top_high")
+label(0x0127, "x_object_bottom_low")
+label(0x0128, "x_object_bottom_high")
 
 label(0x1f4c, "draw_sprite_a_at_cell_xy")
 label(0x1f84, "set_sprite_pixel_position_to_cell_xy_plus_pixel_offset")
@@ -802,6 +803,7 @@ label(0x1471, "out_of_bounds_vertically2")
 label(0x1477, "record_that_we_are_out_of_screen_range_vertically2")
 label(0x147e, "write_one_pixel_to_the_screen2")
 label(0x1498, "and_byte_with_mask_and_write_to_screen2")
+label(0x149c, "move_up_to_next_pixel_row2")
 label(0x14a5, "move_up_to_previous_character_row2")
 label(0x14ad, "check_within_vertical_range2")
 label(0x14b7, "y_coordinate_is_within_character_row2")
@@ -1556,6 +1558,7 @@ On Exit:
 *************************************************************************************""")
 entry(0x40a5, "convert_level_filename_letter_into_section_letter")
 label(0x0ade, "find_letter_loop")
+label(0x0ae6, "found_letter")
 
 comment(0x40c0, """*************************************************************************************
 
