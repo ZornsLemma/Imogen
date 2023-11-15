@@ -4498,7 +4498,7 @@ sub_c2693
     lda #0                                                            ; 27e0: a9 00       ..  :26af[1]
     adc object_x_high,x                                               ; 27e2: 7d 66 09    }f. :26b1[1]
     sta object_x_high,x                                               ; 27e5: 9d 66 09    .f. :26b4[1]
-; mark as collided with left wall
+; mark object has collided with left wall
     lda object_collision_flags,x                                      ; 27e8: bd d8 38    ..8 :26b7[1]
     ora #1                                                            ; 27eb: 09 01       ..  :26ba[1]
     sta object_collision_flags,x                                      ; 27ed: 9d d8 38    ..8 :26bc[1]
@@ -4517,7 +4517,7 @@ c26c2
     lda object_x_high,x                                               ; 2805: bd 66 09    .f. :26d4[1]
     sbc #0                                                            ; 2808: e9 00       ..  :26d7[1]
     sta object_x_high,x                                               ; 280a: 9d 66 09    .f. :26d9[1]
-; mark as collided with right wall
+; mark object has collided with right wall
     lda object_collision_flags,x                                      ; 280d: bd d8 38    ..8 :26dc[1]
     ora #4                                                            ; 2810: 09 04       ..  :26df[1]
     sta object_collision_flags,x                                      ; 2812: 9d d8 38    ..8 :26e1[1]
@@ -4579,7 +4579,7 @@ sub_c271e
     lda #0                                                            ; 286b: a9 00       ..  :273a[1]
     adc object_y_high,x                                               ; 286d: 7d 92 09    }.. :273c[1]
     sta object_y_high,x                                               ; 2870: 9d 92 09    ... :273f[1]
-; mark as collided with ceiling
+; mark object has collided with ceiling
     lda object_collision_flags,x                                      ; 2873: bd d8 38    ..8 :2742[1]
     ora #8                                                            ; 2876: 09 08       ..  :2745[1]
     sta object_collision_flags,x                                      ; 2878: 9d d8 38    ..8 :2747[1]
@@ -4598,7 +4598,7 @@ c274d
     lda object_y_high,x                                               ; 2890: bd 92 09    ... :275f[1]
     sbc #0                                                            ; 2893: e9 00       ..  :2762[1]
     sta object_y_high,x                                               ; 2895: 9d 92 09    ... :2764[1]
-; mark as collided with floor
+; mark object has collided with floor
     lda object_collision_flags,x                                      ; 2898: bd d8 38    ..8 :2767[1]
     ora #2                                                            ; 289b: 09 02       ..  :276a[1]
     sta object_collision_flags,x                                      ; 289d: 9d d8 38    ..8 :276c[1]
@@ -7165,12 +7165,12 @@ sound_data2
     !word 2                                                           ; 3a03: 02 00       ..  :38d2[1]   ; amplitude
     !word 180                                                         ; 3a05: b4 00       ..  :38d4[1]   ; pitch
     !word 100                                                         ; 3a07: 64 00       d.  :38d6[1]   ; duration
-; object_collision_flags has:
+; object_collision_flags is a per-object table that has:
 ; 
-;     bit 1: collided with left wall
-;     bit 2: collided with floor
-;     bit 4: collided with right wall
-;     bit 8: collided with ceiling
+;     bit 1: object collided with left wall
+;     bit 2: object collided with floor
+;     bit 4: object collided with right wall
+;     bit 8: object collided with ceiling
 object_collision_flags
 envelope_3
     !byte 3                                                           ; 3a09: 03          .   :38d8[1]   ; envelope number
