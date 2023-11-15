@@ -2160,6 +2160,7 @@ On Entry:
 
 On Exit:
     A: $ff if collision occcurs, else $00
+    flags: reflect value in A
     Preserves X,Y
 
 *************************************************************************************""")

@@ -427,7 +427,7 @@ mouse_ball_position_lt_8
     adc mouse_sprites_and_ball_movement_table,y                       ; 3cd4: 79 21 3d    y!=
 ; TODO: always branch? not sure, but superficially it would seem nothing in
 ; mouse_sprites_and_ball_movement_table is -$88, i.e. $78
-    bne c3cfb                                                         ; 3cd7: d0 22       ."
+    bne finish_mouse_ball_movement                                    ; 3cd7: d0 22       ."
 ; $3cd9 referenced 1 time by $3cbb
 mouse_ball_position_ge_0xf
     cmp #$17                                                          ; 3cd9: c9 17       ..
@@ -453,7 +453,7 @@ mouse_ball_position_ge_0xf_common_tail
     iny                                                               ; 3cf7: c8          .
     sbc mouse_sprites_and_ball_movement_table,y                       ; 3cf8: f9 21 3d    .!=
 ; $3cfb referenced 1 time by $3cd7
-c3cfb
+finish_mouse_ball_movement
     sta l0954                                                         ; 3cfb: 8d 54 09    .T.
     lda #$53 ; 'S'                                                    ; 3cfe: a9 53       .S
     sec                                                               ; 3d00: 38          8
@@ -464,6 +464,7 @@ c3cfb
     sta l09ac                                                         ; 3d0a: 8d ac 09    ...
     lda update_room_first_update_flag                                 ; 3d0d: ad 2b 13    .+.
     bne return1                                                       ; 3d10: d0 0e       ..
+; Check for player-ball collision TODO: just a plausible guess
     ldx #0                                                            ; 3d12: a2 00       ..
     ldy #4                                                            ; 3d14: a0 04       ..
     jsr test_for_collision_between_objects_x_and_y                    ; 3d16: 20 e2 28     .(
@@ -1928,7 +1929,7 @@ pydis_end
 ;     mouse_ball_position_ge_0xf:                             1
 ;     mouse_ball_position_ge_0x17:                            1
 ;     mouse_ball_position_ge_0xf_common_tail:                 1
-;     c3cfb:                                                  1
+;     finish_mouse_ball_movement:                             1
 ;     c3dd2:                                                  1
 ;     c3de2:                                                  1
 ;     c3def:                                                  1
@@ -1973,7 +1974,6 @@ pydis_end
 
 ; Automatically generated labels:
 ;     c3b0e
-;     c3cfb
 ;     c3dd2
 ;     c3de2
 ;     c3def
