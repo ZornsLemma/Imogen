@@ -3402,7 +3402,7 @@ found_object_to_process
 ; next object
     jsr has_object_changed_state                                      ; 215d: 20 1e 21     .! :202c[1]
     beq find_backmost_object_not_dealt_with_yet                       ; 2160: f0 b8       ..  :202f[1]
-; record the object to process (by appending it to a table) and continue
+; record the index of the object to process (by appending it to a table)
     txa                                                               ; 2162: 8a          .   :2031[1]
     ldx num_objects_to_process                                        ; 2163: a6 62       .b  :2032[1]
     sta objects_to_process_table,x                                    ; 2165: 9d 00 01    ... :2034[1]
@@ -3958,7 +3958,7 @@ sub_c236b
     bmi c23a5                                                         ; 24bf: 30 15       0.  :238e[1]
     bpl return12                                                      ; 24c1: 10 16       ..  :2390[1]
 c2392
-    lda envelope_3                                                    ; 24c3: ad d8 38    ..8 :2392[1]
+    lda object_flags                                                  ; 24c3: ad d8 38    ..8 :2392[1]
     and #2                                                            ; 24c6: 29 02       ).  :2395[1]
     beq return12                                                      ; 24c8: f0 0f       ..  :2397[1]
     lda #2                                                            ; 24ca: a9 02       ..  :2399[1]
@@ -4395,7 +4395,7 @@ sub_c25f5
     sta l0053                                                         ; 2726: 85 53       .S  :25f5[1]
     tax                                                               ; 2728: aa          .   :25f7[1]
     lda #0                                                            ; 2729: a9 00       ..  :25f8[1]
-    sta envelope_3,x                                                  ; 272b: 9d d8 38    ..8 :25fa[1]
+    sta object_flags,x                                                ; 272b: 9d d8 38    ..8 :25fa[1]
     lda #$ff                                                          ; 272e: a9 ff       ..  :25fd[1]
     sta l0044                                                         ; 2730: 85 44       .D  :25ff[1]
     lda #1                                                            ; 2732: a9 01       ..  :2601[1]
@@ -4496,9 +4496,9 @@ sub_c2693
     lda #0                                                            ; 27e0: a9 00       ..  :26af[1]
     adc object_x_high,x                                               ; 27e2: 7d 66 09    }f. :26b1[1]
     sta object_x_high,x                                               ; 27e5: 9d 66 09    .f. :26b4[1]
-    lda envelope_3,x                                                  ; 27e8: bd d8 38    ..8 :26b7[1]
+    lda object_flags,x                                                ; 27e8: bd d8 38    ..8 :26b7[1]
     ora #1                                                            ; 27eb: 09 01       ..  :26ba[1]
-    sta envelope_3,x                                                  ; 27ed: 9d d8 38    ..8 :26bc[1]
+    sta object_flags,x                                                ; 27ed: 9d d8 38    ..8 :26bc[1]
     jmp return15                                                      ; 27f0: 4c e4 26    L.& :26bf[1]
 
 c26c2
@@ -4514,9 +4514,9 @@ c26c2
     lda object_x_high,x                                               ; 2805: bd 66 09    .f. :26d4[1]
     sbc #0                                                            ; 2808: e9 00       ..  :26d7[1]
     sta object_x_high,x                                               ; 280a: 9d 66 09    .f. :26d9[1]
-    lda envelope_3,x                                                  ; 280d: bd d8 38    ..8 :26dc[1]
+    lda object_flags,x                                                ; 280d: bd d8 38    ..8 :26dc[1]
     ora #4                                                            ; 2810: 09 04       ..  :26df[1]
-    sta envelope_3,x                                                  ; 2812: 9d d8 38    ..8 :26e1[1]
+    sta object_flags,x                                                ; 2812: 9d d8 38    ..8 :26e1[1]
 return15
     rts                                                               ; 2815: 60          `   :26e4[1]
 
@@ -4575,9 +4575,9 @@ sub_c271e
     lda #0                                                            ; 286b: a9 00       ..  :273a[1]
     adc object_y_high,x                                               ; 286d: 7d 92 09    }.. :273c[1]
     sta object_y_high,x                                               ; 2870: 9d 92 09    ... :273f[1]
-    lda envelope_3,x                                                  ; 2873: bd d8 38    ..8 :2742[1]
+    lda object_flags,x                                                ; 2873: bd d8 38    ..8 :2742[1]
     ora #8                                                            ; 2876: 09 08       ..  :2745[1]
-    sta envelope_3,x                                                  ; 2878: 9d d8 38    ..8 :2747[1]
+    sta object_flags,x                                                ; 2878: 9d d8 38    ..8 :2747[1]
     jmp return17                                                      ; 287b: 4c 6f 27    Lo' :274a[1]
 
 c274d
@@ -4593,9 +4593,9 @@ c274d
     lda object_y_high,x                                               ; 2890: bd 92 09    ... :275f[1]
     sbc #0                                                            ; 2893: e9 00       ..  :2762[1]
     sta object_y_high,x                                               ; 2895: 9d 92 09    ... :2764[1]
-    lda envelope_3,x                                                  ; 2898: bd d8 38    ..8 :2767[1]
+    lda object_flags,x                                                ; 2898: bd d8 38    ..8 :2767[1]
     ora #2                                                            ; 289b: 09 02       ..  :276a[1]
-    sta envelope_3,x                                                  ; 289d: 9d d8 38    ..8 :276c[1]
+    sta object_flags,x                                                ; 289d: 9d d8 38    ..8 :276c[1]
 return17
     rts                                                               ; 28a0: 60          `   :276f[1]
 
@@ -5617,7 +5617,7 @@ c2dca
     bne c2de4                                                         ; 2f05: d0 0e       ..  :2dd4[1]
     lda #4                                                            ; 2f07: a9 04       ..  :2dd6[1]
     ora #1                                                            ; 2f09: 09 01       ..  :2dd8[1]
-    and envelope_3                                                    ; 2f0b: 2d d8 38    -.8 :2dda[1]
+    and object_flags                                                  ; 2f0b: 2d d8 38    -.8 :2dda[1]
     beq c2de4                                                         ; 2f0e: f0 05       ..  :2ddd[1]
     lda #$80                                                          ; 2f10: a9 80       ..  :2ddf[1]
     sta l2433                                                         ; 2f12: 8d 33 24    .3$ :2de1[1]
@@ -5696,7 +5696,7 @@ store_wizard_animation_state
     jsr sub_c2eb8                                                     ; 2fa5: 20 b8 2e     .. :2e74[1]
     lda #0                                                            ; 2fa8: a9 00       ..  :2e77[1]
     jsr sub_c25f5                                                     ; 2faa: 20 f5 25     .% :2e79[1]
-    lda envelope_3                                                    ; 2fad: ad d8 38    ..8 :2e7c[1]
+    lda object_flags                                                  ; 2fad: ad d8 38    ..8 :2e7c[1]
     sta l2eb5                                                         ; 2fb0: 8d b5 2e    ... :2e7f[1]
 c2e82
     lda object_current_index_in_animation                             ; 2fb3: ad d4 09    ... :2e82[1]
@@ -5706,9 +5706,9 @@ c2e82
     jsr sub_c2eb8                                                     ; 2fbd: 20 b8 2e     .. :2e8c[1]
     lda #0                                                            ; 2fc0: a9 00       ..  :2e8f[1]
     jsr sub_c25f5                                                     ; 2fc2: 20 f5 25     .% :2e91[1]
-    lda envelope_3                                                    ; 2fc5: ad d8 38    ..8 :2e94[1]
+    lda object_flags                                                  ; 2fc5: ad d8 38    ..8 :2e94[1]
     ora l2eb5                                                         ; 2fc8: 0d b5 2e    ... :2e97[1]
-    sta envelope_3                                                    ; 2fcb: 8d d8 38    ..8 :2e9a[1]
+    sta object_flags                                                  ; 2fcb: 8d d8 38    ..8 :2e9a[1]
     lda l2eb6                                                         ; 2fce: ad b6 2e    ... :2e9d[1]
     sta l2eb7                                                         ; 2fd1: 8d b7 2e    ... :2ea0[1]
     ldx #0                                                            ; 2fd4: a2 00       ..  :2ea3[1]
@@ -5921,7 +5921,7 @@ c302a
     bne c3044                                                         ; 3165: d0 0e       ..  :3034[1]
     lda #4                                                            ; 3167: a9 04       ..  :3036[1]
     ora #1                                                            ; 3169: 09 01       ..  :3038[1]
-    and envelope_3                                                    ; 316b: 2d d8 38    -.8 :303a[1]
+    and object_flags                                                  ; 316b: 2d d8 38    -.8 :303a[1]
     beq c3044                                                         ; 316e: f0 05       ..  :303d[1]
     lda #$80                                                          ; 3170: a9 80       ..  :303f[1]
     sta l2433                                                         ; 3172: 8d 33 24    .3$ :3041[1]
@@ -7157,6 +7157,7 @@ sound_data2
     !word 2                                                           ; 3a03: 02 00       ..  :38d2[1]   ; amplitude
     !word 180                                                         ; 3a05: b4 00       ..  :38d4[1]   ; pitch
     !word 100                                                         ; 3a07: 64 00       d.  :38d6[1]   ; duration
+object_flags
 envelope_3
     !byte 3                                                           ; 3a09: 03          .   :38d8[1]   ; envelope number
     !byte 1                                                           ; 3a0a: 01          .   :38d9[1]   ; step length (100ths of a second)

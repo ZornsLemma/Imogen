@@ -871,7 +871,7 @@ label(0x0062, "num_objects_to_process")
 label(0x0100, "objects_to_process_table")
 comment(0x2027, "mark object as dealt with", inline=True)
 comment(0x202c, "if the object has not changed state, we don't need to do anything. Move on to the next object")
-comment(0x2031, "record the object to process (by appending it to a table) and continue")
+comment(0x2031, "record the index of the object to process (by appending it to a table)")
 label(0x0063, "processing_object_index")
 
 label(0x1589, "check_within_vertical_range")

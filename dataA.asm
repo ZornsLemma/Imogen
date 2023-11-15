@@ -106,7 +106,7 @@ wait_one_second_then_check_keys                     = $388d
 object_sprite_mask_type                             = $38ac
 l38ae                                               = $38ae
 object_z_order                                      = $38c2
-l38d8                                               = $38d8
+object_flags                                        = $38d8
 play_sound_yx                                       = $38f6
 define_envelope                                     = $395e
 l396f                                               = $396f
@@ -1318,7 +1318,7 @@ c4358
     lda l0a01                                                         ; 4363: ad 01 0a    ...
     cmp #$16                                                          ; 4366: c9 16       ..
     beq c4386                                                         ; 4368: f0 1c       ..
-    lda l38d8                                                         ; 436a: ad d8 38    ..8
+    lda object_flags                                                  ; 436a: ad d8 38    ..8
     and #4                                                            ; 436d: 29 04       ).
     beq c4355                                                         ; 436f: f0 e4       ..
     lda #1                                                            ; 4371: a9 01       ..
@@ -1332,7 +1332,7 @@ c4358
     bne c43a0                                                         ; 4384: d0 1a       ..
 ; $4386 referenced 1 time by $4368
 c4386
-    lda l38d8                                                         ; 4386: ad d8 38    ..8
+    lda object_flags                                                  ; 4386: ad d8 38    ..8
     and #1                                                            ; 4389: 29 01       ).
     beq c4355                                                         ; 438b: f0 c8       ..
     lda #$ff                                                          ; 438d: a9 ff       ..
@@ -1826,7 +1826,7 @@ pydis_end
 ;     l0a03:                                                  2
 ;     set_object_position_from_current_sprite_position:       2
 ;     l2433:                                                  2
-;     l38d8:                                                  2
+;     object_flags:                                           2
 ;     l396f:                                                  2
 ;     c3b0e:                                                  2
 ;     c3e11:                                                  2
@@ -2005,7 +2005,6 @@ pydis_end
 ;     l2eee
 ;     l2ef3
 ;     l38ae
-;     l38d8
 ;     l396f
 ;     l3970
 ;     l3eee
