@@ -22,6 +22,14 @@ constant(28, "vdu_define_text_window")
 constant(31, "vdu_goto_xy")
 constant(127, "vdu_delete")
 
+constant(0, "colour_black")
+constant(1, "colour_red")
+constant(2, "colour_green")
+constant(3, "colour_yellow")
+constant(4, "colour_blue")
+constant(5, "colour_magenta")
+constant(6, "colour_cyan")
+constant(7, "colour_white")
 
 constant(0, "osfile_save")
 constant(5, "osfile_read_catalogue_info")
@@ -225,22 +233,33 @@ label(0x001b, "sprite_y_base_high")
 # Because the main game loop can be slow, multiple vsyncs can occur, so keypresses are accumulated and stored in "pending" variables
 # The main game can deal with these in the next tick.
 label(0x0020, "valid_direction_pending")
+label(0x0025, "old_menu_index")
+label(0x0029, "new_menu_index")
+label(0x0027, "left_right_repeat_direction")
+label(0x0028, "left_right_direction")
 label(0x002a, "space_bar_press_pending")
 label(0x002b, "space_bar_pressed")
 label(0x002c, "z_key_pressed_pending")
 label(0x002d, "x_key_pressed_pending")
+label(0x002e, "current_menu_index")
+label(0x0037, "currently_loaded_level")
 
 label(0x0043, "print_in_italics_flag")
+label(0x0045, "eor_key") # TODO: Is this *always* $cb in practice?
 label(0x0046, "return_key_pressed_pending")
+label(0x0048, "current_player_character")
 label(0x0049, "temp_value")
 label(0x004a, "temp_coordinate")
+label(0x004d, "new_player_character")
 
 label(0x004c, "screen_base_address_high")
 label(0x0052, "player_held_item")
+label(0x0054, "sprdata_ptr")
 label(0x0056, "temp_rope_length")
 label(0x0058, "temp_sprite_address_low")
 label(0x0059, "temp_sprite_address_high")
 label(0x005a, "temp_sprite_offset")
+label(0x005c, "displayed_transformations_remaining")
 
 label(0x005f, "initial_level_number_div4")
 label(0x0065, "remember_object_index")
@@ -867,8 +886,8 @@ comment(0x167e, "set x position to the right edge (319)")
 decimal(0x1675)
 decimal(0x1687)
 label(0x17b9, "if_vsync_elapsed_then_set_toolbar_area_palette")
-expr(0x17ed, "magenta")
-expr(0x1816, "black")
+expr(0x17ed, "colour_magenta")
+expr(0x1816, "colour_black")
 comment(0x17bb, "check for vsync interrupt", inline=True)
 comment(0x17c0, "reset timers")
 label(0x17fa, "if_timer1_elapsed_then_set_main_area_palette")
@@ -942,12 +961,36 @@ label(0x3a12, "update_main_keys")
 label(0x3a41, "store_x_as_valid_direction_pending")
 label(0x3a47, "update_space_etc_keys") # TODO: Why does it check the left and right keys again?
 label(0x3a54, "save_space_bar_state_change_pending")
+comment(0x3a58, "store whether the left cursor key is pressed in 'z_key_pressed'")
+comment(0x3a60, "if the left and right cursor keys are pressed together (or neither), there is no valid direction (set A=$00)")
+comment(0x3a6a, "set A=$FF if moving left, or $01 if moving right along the toolbar")
 label(0x3a73, "no_valid_direction")
 
 label(0x36f3, "start_game_local")
 label(0x36f6, "remove_dialog_local2")
 expr(0x3689, "first_level_letter")
 expr(0x368d, "last_level_letter+1")
+label(0x36c1, "auxcode_loaded_successfully")
+label(0x36c7, "load_sprdata_loop")
+label(0x36d2, "sprdata_loaded_successfully")
+label(0x3698, "no_characters_entered")
+label(0x3652, "remove_dialog_local3")
+expr(0x366a, "spriteid_icodata_password")
+decimal(0x3672)
+comment(0x3664, """*************************************************************************************
+
+Password dialogue update
+
+*************************************************************************************""")
+label(0x3664, "update_password_dialog")
+comment(0x3676, "At this point, because of the stack shenanigans in 'string_input_character', the input string has been entered")
+comment(0x3685, "Look for one letter passwords (level letter)")
+comment(0x3669, "return if not on the password menu item")
+comment(0x366d, "return if the dialog is not active")
+comment(0x3671, "update string entry (maximum 16 characters)")
+comment(0x367a, "check for developer flags")
+comment(0x3681, "check only one character entered + cr")
+comment(0x369f, "remove dialog and restart game")
 
 label(0x3a8d, "z_key_pressed")
 comment(0x3a71, "ALWAYS branch", inline=True)
@@ -1463,7 +1506,6 @@ comment(0x40d0, "Update the transformation count on screen at text position (35-
 label(0x9ec, "current_transformations_remaining")
 expr_label(0x9ed, "current_transformations_remaining+1")
 expr_label(0x9ee, "current_transformations_remaining+2")
-label(0x5c, "displayed_transformations_remaining")
 expr_label(0x5d, "displayed_transformations_remaining+1")
 expr_label(0x5e, "displayed_transformations_remaining+2")
 decimal(0x149)
@@ -1502,9 +1544,6 @@ entry(0x2337, "transform")
 comment(0x2340, "if the current menu item is to the left of the player characters, then we have just loaded a level or something, so don't play the transform sounds.")
 comment(0x2347, "play transform sounds with priority")
 expr(0x12d5, "spriteid_icodata_wizard")
-
-label(0x48, "current_player_character")
-label(0x4d, "new_player_character")
 
 comment(0x111a, "Initialise the number of remaining transformations to 150.")
 char(0x111b)
@@ -1600,7 +1639,7 @@ label(0x2ac4, "delay_loop1")
 label(0x3aa2, "read_jump_zx_keys")
 label(0x2890, "two_byte_table_based_on_left_right_direction")
 comment(0x2ac0, "wait for a bit", inline=True)
-label(0x36a8, "skip_developer_key_level_select_handling")
+label(0x36a8, "load_auxdata_loop")
 comment(0x2b87, """*************************************************************************************
 
 Insert a player character menu item into the toolbar
@@ -1628,7 +1667,6 @@ comment(0x2be0, "remember item to remove", inline=True)
 comment(0x2be2, "flag that nothing has changed yet")
 comment(0x2be6, "start index for non-standard menu items")
 
-label(0x37, "currently_loaded_level")
 label(0x114f, "level_load_loop")
 label(0x1171, "level_load_successful")
 label(0x3617, "prompt_user_to_insert_correct_disc")
@@ -1851,22 +1889,14 @@ expr(0x177b, "first_level_letter")
 comment(0x1766, "Set the toolbar and gameplay area colours. In mono mode both are white. In colour mode the gameplay area is cyan and the toolbar colour is toolbar_colour_choices[(level_letter - 'A') & 3].")
 entry(0x1766)
 label(0x1761, "toolbar_colour_choices")
-constant(0, "black")
-constant(1, "red")
-constant(2, "green")
-constant(3, "yellow")
-constant(4, "blue")
-constant(5, "magenta")
-constant(6, "cyan")
-constant(7, "white")
-expr(0x1761, "yellow")
-expr(0x1762, "green")
-expr(0x1763, "white")
-expr(0x1764, "red")
-expr(0x1767, "white")
-expr(0x1786, "cyan")
-expr(0x11f9, "black")
-expr(0x1239, "black")
+expr(0x1761, "colour_yellow")
+expr(0x1762, "colour_green")
+expr(0x1763, "colour_white")
+expr(0x1764, "colour_red")
+expr(0x1767, "colour_white")
+expr(0x1786, "colour_cyan")
+expr(0x11f9, "colour_black")
+expr(0x1239, "colour_black")
 
 def negative_constant(c, s):
     assert c < 0
@@ -2146,17 +2176,17 @@ expr(0x35bf, make_hi("save_game"))
 decimal(0x3f43)
 expr(0x3fa2, "opcode_jmp")
 
-label(0x29, "new_menu_index")
-label(0x2e, "current_menu_index")
-label(0x25, "old_menu_index")
 entry(0x29de, "apply_new_menu_index")
 entry(0x3a75, "menu_x_step_in_a")
-comment(0x3a75, "TODO: This looks like a manual implementation of an auto-repeat delay, so if you hold down left/right a fraction of a second too long it doesn't zip all the way to the left or right.")
+comment(0x3a75, "This is a manual implementation of an auto-repeat delay, so if you hold down left/right a fraction of a second too long it doesn't zip all the way to the left or right.")
 # TODO: Not yet clear exactly why we have two versions of these flags
 label(0x3aa0, "space_flag2")
-label(0x28, "left_right_flag")
 label(0x3aa1, "left_right_flag_pending")
-label(0x27, "left_right_repeat_flag")
+comment(0x3a79, "if direction changes, restart the auto-repat delay")
+label(0x3a8e, "auto_repeat_delay")
+label(0x0026, "auto_repeat_counter")
+label(0x3a83, "restart_auto_repeat_delay")
+label(0x3a88, "remember_direction_pressed")
 entry(0x2c67, "apply_pending_menu_motion")
 entry(0x2c88, "no_menu_motion")
 entry(0x2c7e, "menu_left_pending")
@@ -2236,8 +2266,8 @@ Sprite pixels are then stored in the following bytes, starting with the bottom l
 
 Each pixel is encoded in two bits:
 
-    00 - draw the background colour (black)
-    01 - draw the foreground colour
+    00 - draw the background colour (colour 0)
+    01 - draw the foreground colour (colour 1)
     10 - don't draw a pixel (it is masked off)
     11 - finish the current column and start the next column
 
@@ -2271,7 +2301,6 @@ decimal(0x2c5a)
 label(0x2c62, "finished_multiply")
 label(0x2c5f, "skip_increment_high_byte")
 comment(0x135d, "The sprite table starts with a table of 16 bit addresses, one for each sprite.\nLook up the address of the sprite by reading this table.\nSet YX to point to the base of the sprite.")
-label(0x54, "sprdata_ptr")
 expr_label(0x55, make_add("sprdata_ptr", "1"))
 
 comment(0x1ebd, "remember value to write", inline=True)
@@ -2338,7 +2367,6 @@ entry(0x381c, "print_encrypted_string_at_yx")
 entry(0x3838, "print_char_target_set")
 entry(0x383a, "print_char_loop")
 entry(0x3848, "print_done")
-label(0x45, "eor_key") # TODO: Is this *always* $cb in practice?
 
 # TODO: Mention l0005 in name until we know why
 entry(0x3872, "flush_input_buffers_and_zero_l0005")
@@ -2774,6 +2802,14 @@ character_bitmap(0x1d99, "tile_wall_right0")
 character_bitmap(0x1da1, "tile_wall_right1")
 character_bitmap(0x1da9, "tile_wall_right2")
 character_bitmap(0x1db1, "tile_wall_right3")
+
+print("""; *************************************************************************************
+;
+; Imogen disassembly
+; by SteveF and TobyLobster, 2023
+;
+; *************************************************************************************
+""")
 
 go()
 

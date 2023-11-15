@@ -1,22 +1,33 @@
+; *************************************************************************************
+;
+; Imogen disassembly
+; by SteveF and TobyLobster, 2023
+;
+; *************************************************************************************
+
 ; Constants
-black                                           = 0
-blue                                            = 4
 buffer_sound_channel_0                          = 4
 bytes_per_cell                                  = 8
 bytes_per_character_row                         = 320
 caps_mask                                       = 223
 cells_per_line                                  = 40
+colour_black                                    = 0
+colour_blue                                     = 4
+colour_cyan                                     = 6
+colour_green                                    = 2
+colour_magenta                                  = 5
+colour_red                                      = 1
+colour_white                                    = 7
+colour_yellow                                   = 3
 crtc_cursor_start                               = 10
 crtc_interlace_delay                            = 8
 crtc_screen_start_high                          = 12
 crtc_screen_start_low                           = 13
 crtc_vert_displayed                             = 6
 crtc_vert_sync_pos                              = 7
-cyan                                            = 6
 first_level_letter                              = 65
 game_area_height_cells                          = 24
 game_area_width_cells                           = 40
-green                                           = 2
 inkey_key_escape                                = 143
 inkey_key_left                                  = 230
 inkey_key_return                                = 182
@@ -26,7 +37,6 @@ inkey_key_space                                 = 157
 inkey_key_x                                     = 189
 inkey_key_z                                     = 158
 last_level_letter                               = 81
-magenta                                         = 5
 max_filename_len                                = 7
 menu_slot_count                                 = 17
 num_levels                                      = 16
@@ -56,7 +66,6 @@ osfile_save                                     = 0
 osword_envelope                                 = 8
 osword_read_char                                = 10
 osword_sound                                    = 7
-red                                             = 1
 rows_per_cell                                   = 8
 screen_width_in_pixels                          = 320
 screen_width_minus_one                          = 39
@@ -168,8 +177,6 @@ vdu_printer_off                                 = 3
 vdu_set_graphics_colour                         = 18
 vdu_set_mode                                    = 22
 vdu_set_text_colour                             = 17
-white                                           = 7
-yellow                                          = 3
 
 ; Memory locations
 error_code_on_brk                           = $02
@@ -191,9 +198,9 @@ sprite_y_base_high                          = $1b
 sprite_reflect_flag                         = $1d
 valid_direction_pending                     = $20
 old_menu_index                              = $25
-l0026                                       = $26
-left_right_repeat_flag                      = $27
-left_right_flag                             = $28
+auto_repeat_counter                         = $26
+left_right_repeat_direction                 = $27
+left_right_direction                        = $28
 new_menu_index                              = $29
 space_bar_press_pending                     = $2a
 space_bar_pressed                           = $2b
@@ -608,7 +615,7 @@ clear_sixteen_entry_table_loop
 ; objects obtained). When moving between rooms on the same level the toolbar doesn't
 ; change, so remains visible.
 display_initialised
-    lda #black                                                        ; 1329: a9 00       ..  :11f8[1]
+    lda #colour_black                                                 ; 1329: a9 00       ..  :11f8[1]
     sta toolbar_colour                                                ; 132b: 8d 5e 17    .^. :11fa[1]
     sta gameplay_area_colour                                          ; 132e: 8d 60 17    .`. :11fd[1]
     jsr reset_menu_items                                              ; 1331: 20 80 29     .) :1200[1]
@@ -645,7 +652,7 @@ clear_sound_priorities_loop1
 skip_adding_completion_spell_to_toolbar
     lda #3                                                            ; 1365: a9 03       ..  :1234[1]
     sta value_to_write_to_collision_map                               ; 1367: 85 3e       .>  :1236[1]
-    lda #black                                                        ; 1369: a9 00       ..  :1238[1]
+    lda #colour_black                                                 ; 1369: a9 00       ..  :1238[1]
     sta l0042                                                         ; 136b: 85 42       .B  :123a[1]
     sta gameplay_area_colour                                          ; 136d: 8d 60 17    .`. :123c[1]
     jsr draw_toolbar                                                  ; 1370: 20 a1 29     .) :123f[1]
@@ -933,8 +940,8 @@ reset_sprite_flags_and_exit
 ; 
 ; Each pixel is encoded in two bits:
 ; 
-;     00 - draw the background colour (black)
-;     01 - draw the foreground colour
+;     00 - draw the background colour (colour 0)
+;     01 - draw the foreground colour (colour 1)
 ;     10 - don't draw a pixel (it is masked off)
 ;     11 - finish the current column and start the next column
 ; 
@@ -1584,7 +1591,7 @@ pending_gameplay_area_colour
 gameplay_area_colour
     !byte 0                                                           ; 1891: 00          .   :1760[1]
 toolbar_colour_choices
-    !byte yellow,  green,  white,    red                              ; 1892: 03 02 07... ... :1761[1]
+    !byte colour_yellow,  colour_green,  colour_white,    colour_red  ; 1892: 03 02 07... ... :1761[1]
 use_colour_flag
     !byte $ff                                                         ; 1896: ff          .   :1765[1]
 
@@ -1592,7 +1599,7 @@ use_colour_flag
 ; mode the gameplay area is cyan and the toolbar colour is
 ; toolbar_colour_choices[(level_letter - 'A') & 3].
 set_toolbar_and_gameplay_area_colours
-    lda #white                                                        ; 1897: a9 07       ..  :1766[1]
+    lda #colour_white                                                 ; 1897: a9 07       ..  :1766[1]
     sta pending_toolbar_colour                                        ; 1899: 8d 5d 17    .]. :1768[1]
     sta pending_gameplay_area_colour                                  ; 189c: 8d 5f 17    ._. :176b[1]
     lda use_colour_flag                                               ; 189f: ad 65 17    .e. :176e[1]
@@ -1606,7 +1613,7 @@ set_toolbar_and_gameplay_area_colours
     tax                                                               ; 18af: aa          .   :177e[1]
     lda toolbar_colour_choices,x                                      ; 18b0: bd 61 17    .a. :177f[1]
     sta pending_toolbar_colour                                        ; 18b3: 8d 5d 17    .]. :1782[1]
-    lda #cyan                                                         ; 18b6: a9 06       ..  :1785[1]
+    lda #colour_cyan                                                  ; 18b6: a9 06       ..  :1785[1]
     sta pending_gameplay_area_colour                                  ; 18b8: 8d 5f 17    ._. :1787[1]
 return4
     rts                                                               ; 18bb: 60          `   :178a[1]
@@ -1670,7 +1677,7 @@ if_vsync_elapsed_then_set_toolbar_area_palette
     lda developer_flags                                               ; 1916: ad 03 11    ... :17e5[1]
     bpl skip_developer_mode_code2                                     ; 1919: 10 07       ..  :17e8[1]
     ldx #0                                                            ; 191b: a2 00       ..  :17ea[1]
-    ldy #magenta                                                      ; 191d: a0 05       ..  :17ec[1]
+    ldy #colour_magenta                                               ; 191d: a0 05       ..  :17ec[1]
     jsr change_palette_logical_colour_x_to_y                          ; 191f: 20 25 18     %. :17ee[1]
 skip_developer_mode_code2
     lda #0                                                            ; 1922: a9 00       ..  :17f1[1]
@@ -1691,7 +1698,7 @@ if_timer1_elapsed_then_set_main_area_palette
     lda developer_flags                                               ; 193f: ad 03 11    ... :180e[1]
     bpl skip_developer_mode_code3                                     ; 1942: 10 07       ..  :1811[1]
     ldx #0                                                            ; 1944: a2 00       ..  :1813[1]
-    ldy #black                                                        ; 1946: a0 00       ..  :1815[1]
+    ldy #colour_black                                                 ; 1946: a0 00       ..  :1815[1]
     jsr change_palette_logical_colour_x_to_y                          ; 1948: 20 25 18     %. :1817[1]
 skip_developer_mode_code3
     inc gameplay_area_palette_set                                     ; 194b: ee 24 18    .$. :181a[1]
@@ -5064,7 +5071,7 @@ clear_sound_priorities_loop2
     bpl clear_sound_priorities_loop2                                  ; 2bcf: 10 fa       ..  :2a9e[1]
 update_menu_with_game_paused
     jsr wait_for_timingB_counter                                      ; 2bd1: 20 00 04     .. :2aa0[1]
-    jsr sub_c3664                                                     ; 2bd4: 20 64 36     d6 :2aa3[1]
+    jsr update_password_dialog                                        ; 2bd4: 20 64 36     d6 :2aa3[1]
     jsr update_disc_menu                                              ; 2bd7: 20 4b 34     K4 :2aa6[1]
     lda developer_flags                                               ; 2bda: ad 03 11    ... :2aa9[1]
     and #1                                                            ; 2bdd: 29 01       ).  :2aac[1]
@@ -6669,7 +6676,7 @@ show_password_entry_dialog
     lda #$12                                                          ; 3767: a9 12       ..  :3636[1]
     sta current_text_width                                            ; 3769: 8d 09 04    ... :3638[1]
     lda which_dialog_is_active                                        ; 376c: a5 04       ..  :363b[1]
-    bne c3652                                                         ; 376e: d0 13       ..  :363d[1]
+    bne remove_dialog_local3                                          ; 376e: d0 13       ..  :363d[1]
 c363f
     jsr show_dialog_box                                               ; 3770: 20 0a 04     .. :363f[1]
     ldx #<enter_password_encrypted_string                             ; 3773: a2 55       .U  :3642[1]
@@ -6679,43 +6686,57 @@ c363f
     jsr turn_cursor_on                                                ; 377d: 20 5d 38     ]8 :364c[1]
     jmp flush_input_buffers_and_zero_l0005                            ; 3780: 4c 72 38    Lr8 :364f[1]
 
-c3652
+remove_dialog_local3
     jmp remove_dialog                                                 ; 3783: 4c 53 04    LS. :3652[1]
 
 enter_password_encrypted_string
     !byte $8e, $a5, $bf, $ae, $b9, $eb, $bb, $aa, $b8, $b8, $bc, $a4  ; 3786: 8e a5 bf... ... :3655[1]
     !byte $b9, $af, $c6                                               ; 3792: b9 af c6    ... :3661[1]
 
-sub_c3664
+; *************************************************************************************
+; 
+; Password dialogue update
+; 
+; *************************************************************************************
+update_password_dialog
     ldy new_menu_index                                                ; 3795: a4 29       .)  :3664[1]
     lda desired_menu_slots,y                                          ; 3797: b9 5c 29    .\) :3666[1]
-    cmp #8                                                            ; 379a: c9 08       ..  :3669[1]
+; return if not on the password menu item
+    cmp #spriteid_icodata_password                                    ; 379a: c9 08       ..  :3669[1]
     bne return25                                                      ; 379c: d0 3a       .:  :366b[1]
+; return if the dialog is not active
     lda which_dialog_is_active                                        ; 379e: a5 04       ..  :366d[1]
     beq return25                                                      ; 37a0: f0 36       .6  :366f[1]
-    lda #$10                                                          ; 37a2: a9 10       ..  :3671[1]
+; update string entry (maximum 16 characters)
+    lda #16                                                           ; 37a2: a9 10       ..  :3671[1]
     jsr string_input_character                                        ; 37a4: 20 fc 36     .6 :3673[1]
+; At this point, because of the stack shenanigans in 'string_input_character', the
+; input string has been entered
     ldy characters_entered                                            ; 37a7: a4 05       ..  :3676[1]
-    beq c3698                                                         ; 37a9: f0 1e       ..  :3678[1]
+    beq no_characters_entered                                         ; 37a9: f0 1e       ..  :3678[1]
+; check for developer flags
     lda developer_flags                                               ; 37ab: ad 03 11    ... :367a[1]
     and #1                                                            ; 37ae: 29 01       ).  :367d[1]
-    beq skip_developer_key_level_select_handling                      ; 37b0: f0 27       .'  :367f[1]
+    beq load_auxdata_loop                                             ; 37b0: f0 27       .'  :367f[1]
+; check only one character entered + cr
     cpy #2                                                            ; 37b2: c0 02       ..  :3681[1]
-    bne skip_developer_key_level_select_handling                      ; 37b4: d0 23       .#  :3683[1]
+    bne load_auxdata_loop                                             ; 37b4: d0 23       .#  :3683[1]
+; Look for one letter passwords (level letter)
     lda string_input_buffer                                           ; 37b6: ad 90 0a    ... :3685[1]
     cmp #first_level_letter                                           ; 37b9: c9 41       .A  :3688[1]
-    bcc skip_developer_key_level_select_handling                      ; 37bb: 90 1c       ..  :368a[1]
+    bcc load_auxdata_loop                                             ; 37bb: 90 1c       ..  :368a[1]
     cmp #last_level_letter+1                                          ; 37bd: c9 52       .R  :368c[1]
-    bcs skip_developer_key_level_select_handling                      ; 37bf: b0 18       ..  :368e[1]
+    bcs load_auxdata_loop                                             ; 37bf: b0 18       ..  :368e[1]
     pha                                                               ; 37c1: 48          H   :3690[1]
     jsr remove_dialog                                                 ; 37c2: 20 53 04     S. :3691[1]
     pla                                                               ; 37c5: 68          h   :3694[1]
     jmp select_level_a                                                ; 37c6: 4c db 36    L.6 :3695[1]
 
-c3698
+no_characters_entered
     lda developer_flags                                               ; 37c9: ad 03 11    ... :3698[1]
     and #1                                                            ; 37cc: 29 01       ).  :369b[1]
     beq return25                                                      ; 37ce: f0 08       ..  :369d[1]
+; remove dialog and restart game
     jsr remove_dialog                                                 ; 37d0: 20 53 04     S. :369f[1]
     lda #$ff                                                          ; 37d3: a9 ff       ..  :36a2[1]
     jmp select_level_a                                                ; 37d5: 4c db 36    L.6 :36a4[1]
@@ -6723,7 +6744,7 @@ c3698
 return25
     rts                                                               ; 37d8: 60          `   :36a7[1]
 
-skip_developer_key_level_select_handling
+load_auxdata_loop
     lda #<auxcode_filename                                            ; 37d9: a9 9c       ..  :36a8[1]
     sta address1_low                                                  ; 37db: 85 70       .p  :36aa[1]
     lda #>auxcode_filename                                            ; 37dd: a9 38       .8  :36ac[1]
@@ -6732,20 +6753,20 @@ skip_developer_key_level_select_handling
     ldy #>auxcode                                                     ; 37e3: a0 53       .S  :36b2[1]
     lda #osfile_load                                                  ; 37e5: a9 ff       ..  :36b4[1]
     jsr osfile_wrapper                                                ; 37e7: 20 dc 16     .. :36b6[1]
-    beq c36c1                                                         ; 37ea: f0 06       ..  :36b9[1]
+    beq auxcode_loaded_successfully                                   ; 37ea: f0 06       ..  :36b9[1]
     jsr prompt_user_to_insert_correct_disc                            ; 37ec: 20 17 36     .6 :36bb[1]
-    jmp skip_developer_key_level_select_handling                      ; 37ef: 4c a8 36    L.6 :36be[1]
+    jmp load_auxdata_loop                                             ; 37ef: 4c a8 36    L.6 :36be[1]
 
-c36c1
+auxcode_loaded_successfully
     jsr check_password                                                ; 37f2: 20 c0 53     .S :36c1[1]
     sta check_password_level                                          ; 37f5: 8d da 36    ..6 :36c4[1]
-loop_c36c7
+load_sprdata_loop
     jsr load_sprdata                                                  ; 37f8: 20 6f 19     o. :36c7[1]
-    beq c36d2                                                         ; 37fb: f0 06       ..  :36ca[1]
+    beq sprdata_loaded_successfully                                   ; 37fb: f0 06       ..  :36ca[1]
     jsr prompt_user_to_insert_correct_disc                            ; 37fd: 20 17 36     .6 :36cc[1]
-    jmp loop_c36c7                                                    ; 3800: 4c c7 36    L.6 :36cf[1]
+    jmp load_sprdata_loop                                             ; 3800: 4c c7 36    L.6 :36cf[1]
 
-c36d2
+sprdata_loaded_successfully
     lda check_password_level                                          ; 3803: ad da 36    ..6 :36d2[1]
     bne select_level_a                                                ; 3806: d0 04       ..  :36d5[1]
     jmp c363f                                                         ; 3808: 4c 3f 36    L?6 :36d7[1]
@@ -7368,51 +7389,56 @@ update_space_etc_keys
 save_space_bar_state_change_pending
     ora space_bar_press_pending                                       ; 3b85: 05 2a       .*  :3a54[1]
     sta space_bar_press_pending                                       ; 3b87: 85 2a       .*  :3a56[1]
+; store whether the left cursor key is pressed in 'z_key_pressed'
     ldx #inkey_key_left                                               ; 3b89: a2 e6       ..  :3a58[1]
     jsr negative_inkey                                                ; 3b8b: 20 cc 3a     .: :3a5a[1]
     sta z_key_pressed                                                 ; 3b8e: 8d 8d 3a    ..: :3a5d[1]
+; if the left and right cursor keys are pressed together (or neither), there is no
+; valid direction (set A=$00)
     ldx #inkey_key_right                                              ; 3b91: a2 86       ..  :3a60[1]
     jsr negative_inkey                                                ; 3b93: 20 cc 3a     .: :3a62[1]
     cmp z_key_pressed                                                 ; 3b96: cd 8d 3a    ..: :3a65[1]
     beq no_valid_direction                                            ; 3b99: f0 09       ..  :3a68[1]
+; set A=$FF if moving left, or $01 if moving right along the toolbar
     lda z_key_pressed                                                 ; 3b9b: ad 8d 3a    ..: :3a6a[1]
     bmi menu_x_step_in_a                                              ; 3b9e: 30 06       0.  :3a6d[1]
     lda #1                                                            ; 3ba0: a9 01       ..  :3a6f[1]
     bpl menu_x_step_in_a                                              ; 3ba2: 10 02       ..  :3a71[1]   ; ALWAYS branch
 no_valid_direction
     lda #0                                                            ; 3ba4: a9 00       ..  :3a73[1]
-; TODO: This looks like a manual implementation of an auto-repeat delay, so if you hold
-; down left/right a fraction of a second too long it doesn't zip all the way to the
-; left or right.
+; This is a manual implementation of an auto-repeat delay, so if you hold down
+; left/right a fraction of a second too long it doesn't zip all the way to the left or
+; right.
 menu_x_step_in_a
-    cmp left_right_repeat_flag                                        ; 3ba6: c5 27       .'  :3a75[1]
-    sta left_right_repeat_flag                                        ; 3ba8: 85 27       .'  :3a77[1]
-    bne c3a83                                                         ; 3baa: d0 08       ..  :3a79[1]
+    cmp left_right_repeat_direction                                   ; 3ba6: c5 27       .'  :3a75[1]
+    sta left_right_repeat_direction                                   ; 3ba8: 85 27       .'  :3a77[1]
+; if direction changes, restart the auto-repat delay
+    bne restart_auto_repeat_delay                                     ; 3baa: d0 08       ..  :3a79[1]
     lda #0                                                            ; 3bac: a9 00       ..  :3a7b[1]
-    dec l0026                                                         ; 3bae: c6 26       .&  :3a7d[1]
-    bpl c3a88                                                         ; 3bb0: 10 07       ..  :3a7f[1]
-    lda left_right_repeat_flag                                        ; 3bb2: a5 27       .'  :3a81[1]
-c3a83
-    ldx l3a8e                                                         ; 3bb4: ae 8e 3a    ..: :3a83[1]
-    stx l0026                                                         ; 3bb7: 86 26       .&  :3a86[1]
-c3a88
-    ora left_right_flag                                               ; 3bb9: 05 28       .(  :3a88[1]
-    sta left_right_flag                                               ; 3bbb: 85 28       .(  :3a8a[1]
+    dec auto_repeat_counter                                           ; 3bae: c6 26       .&  :3a7d[1]
+    bpl remember_direction_pressed                                    ; 3bb0: 10 07       ..  :3a7f[1]
+    lda left_right_repeat_direction                                   ; 3bb2: a5 27       .'  :3a81[1]
+restart_auto_repeat_delay
+    ldx auto_repeat_delay                                             ; 3bb4: ae 8e 3a    ..: :3a83[1]
+    stx auto_repeat_counter                                           ; 3bb7: 86 26       .&  :3a86[1]
+remember_direction_pressed
+    ora left_right_direction                                          ; 3bb9: 05 28       .(  :3a88[1]
+    sta left_right_direction                                          ; 3bbb: 85 28       .(  :3a8a[1]
     rts                                                               ; 3bbd: 60          `   :3a8c[1]
 
 z_key_pressed
     !byte 0                                                           ; 3bbe: 00          .   :3a8d[1]
-l3a8e
+auto_repeat_delay
     !byte $10                                                         ; 3bbf: 10          .   :3a8e[1]
 
 check_cursor_left_right_and_space
     lda space_bar_press_pending                                       ; 3bc0: a5 2a       .*  :3a8f[1]
     sta space_flag2                                                   ; 3bc2: 8d a0 3a    ..: :3a91[1]
-    lda left_right_flag                                               ; 3bc5: a5 28       .(  :3a94[1]
+    lda left_right_direction                                          ; 3bc5: a5 28       .(  :3a94[1]
     sta left_right_flag_pending                                       ; 3bc7: 8d a1 3a    ..: :3a96[1]
     lda #0                                                            ; 3bca: a9 00       ..  :3a99[1]
     sta space_bar_press_pending                                       ; 3bcc: 85 2a       .*  :3a9b[1]
-    sta left_right_flag                                               ; 3bce: 85 28       .(  :3a9d[1]
+    sta left_right_direction                                          ; 3bce: 85 28       .(  :3a9d[1]
     rts                                                               ; 3bd0: 60          `   :3a9f[1]
 
 space_flag2
@@ -8607,10 +8633,6 @@ pydis_end
 ;     c35e2
 ;     c35ed
 ;     c363f
-;     c3652
-;     c3698
-;     c36c1
-;     c36d2
 ;     c381a
 ;     c3867
 ;     c388a
@@ -8622,9 +8644,6 @@ pydis_end
 ;     c39ec
 ;     c39f4
 ;     c3a08
-;     c3a83
-;     c3a88
-;     l0026
 ;     l0039
 ;     l003f
 ;     l0044
@@ -8682,7 +8701,6 @@ pydis_end
 ;     l3967
 ;     l396b
 ;     l3970
-;     l3a8e
 ;     lbe00
 ;     lbf00
 ;     loop_c0aba
@@ -8708,7 +8726,6 @@ pydis_end
 ;     loop_c2be9
 ;     loop_c2ec9
 ;     loop_c34b2
-;     loop_c36c7
 ;     loop_c39d2
 ;     loop_c3f87
 ;     sub_c04cb
@@ -8727,7 +8744,6 @@ pydis_end
 ;     sub_c286d
 ;     sub_c2eb8
 ;     sub_c336e
-;     sub_c3664
 !if (' ' + '0') != $50 {
     !error "Assertion failed: ' ' + '0' == $50"
 }
@@ -9172,9 +9188,6 @@ pydis_end
 !if (>wizard_transform_in_animation) != $2c {
     !error "Assertion failed: >wizard_transform_in_animation == $2c"
 }
-!if (black) != $00 {
-    !error "Assertion failed: black == $00"
-}
 !if (buffer_sound_channel_0) != $04 {
     !error "Assertion failed: buffer_sound_channel_0 == $04"
 }
@@ -9232,6 +9245,27 @@ pydis_end
 !if (check_password) != $53c0 {
     !error "Assertion failed: check_password == $53c0"
 }
+!if (colour_black) != $00 {
+    !error "Assertion failed: colour_black == $00"
+}
+!if (colour_cyan) != $06 {
+    !error "Assertion failed: colour_cyan == $06"
+}
+!if (colour_green) != $02 {
+    !error "Assertion failed: colour_green == $02"
+}
+!if (colour_magenta) != $05 {
+    !error "Assertion failed: colour_magenta == $05"
+}
+!if (colour_red) != $01 {
+    !error "Assertion failed: colour_red == $01"
+}
+!if (colour_white) != $07 {
+    !error "Assertion failed: colour_white == $07"
+}
+!if (colour_yellow) != $03 {
+    !error "Assertion failed: colour_yellow == $03"
+}
 !if (crtc_cursor_start) != $0a {
     !error "Assertion failed: crtc_cursor_start == $0a"
 }
@@ -9249,9 +9283,6 @@ pydis_end
 }
 !if (crtc_vert_sync_pos) != $07 {
     !error "Assertion failed: crtc_vert_sync_pos == $07"
-}
-!if (cyan) != $06 {
-    !error "Assertion failed: cyan == $06"
 }
 !if (desired_menu_slots-1) != $295b {
     !error "Assertion failed: desired_menu_slots-1 == $295b"
@@ -9276,9 +9307,6 @@ pydis_end
 }
 !if (game_area_width_cells+1) != $29 {
     !error "Assertion failed: game_area_width_cells+1 == $29"
-}
-!if (green) != $02 {
-    !error "Assertion failed: green == $02"
 }
 !if (icodata) != $40ff {
     !error "Assertion failed: icodata == $40ff"
@@ -9324,9 +9352,6 @@ pydis_end
 }
 !if (level_ordering_table - 1) != $0a7e {
     !error "Assertion failed: level_ordering_table - 1 == $0a7e"
-}
-!if (magenta) != $05 {
-    !error "Assertion failed: magenta == $05"
 }
 !if (max_filename_len) != $07 {
     !error "Assertion failed: max_filename_len == $07"
@@ -9465,9 +9490,6 @@ pydis_end
 }
 !if (osword_sound) != $07 {
     !error "Assertion failed: osword_sound == $07"
-}
-!if (red) != $01 {
-    !error "Assertion failed: red == $01"
 }
 !if (relocation3_high_copy_end - relocation3_high_copy_start) != $48 {
     !error "Assertion failed: relocation3_high_copy_end - relocation3_high_copy_start == $48"
@@ -9757,9 +9779,6 @@ pydis_end
 !if (vdu_set_text_colour) != $11 {
     !error "Assertion failed: vdu_set_text_colour == $11"
 }
-!if (white) != $07 {
-    !error "Assertion failed: white == $07"
-}
 !if (wizard_animation10 - wizard_transform_in_animation) != $59 {
     !error "Assertion failed: wizard_animation10 - wizard_transform_in_animation == $59"
 }
@@ -9795,7 +9814,4 @@ pydis_end
 }
 !if (wizard_walk_cycle_animation - wizard_transform_in_animation) != $29 {
     !error "Assertion failed: wizard_walk_cycle_animation - wizard_transform_in_animation == $29"
-}
-!if (yellow) != $03 {
-    !error "Assertion failed: yellow == $03"
 }
