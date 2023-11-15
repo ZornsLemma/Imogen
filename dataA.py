@@ -179,7 +179,9 @@ constant(0x3, "objectid_right_trapdoor")
 expr(0x3e23, "objectid_left_trapdoor")
 expr(0x3e30, "objectid_right_trapdoor")
 comment(0x3e1e, "Set up the objects for the two trapdoors.")
-comment(0x3e3e, "Set up the collision map for the two trapdoors if they are closed. TODO: I don't think this is quite right, IIRC Colin's playthrough shows this depends on being Imogen+holding saxophone. So the precise meaning of this flag and when it's updated needs to be pinned down further.")
+comment(0x3e3e, "Set up the collision map for the two trapdoors.")
+comment(0x3e43, "Set up the trapdoor collision map if they are closed.")
+entry(0x3e55, "set_up_open_trapdoor_collision_map")
 
 # TODO: Use this more?
 def ldx_ldy_jsr_play_sound_yx(jsr_runtime_addr, s):

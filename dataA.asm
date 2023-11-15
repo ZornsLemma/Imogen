@@ -613,12 +613,10 @@ level_unchanged2
     sta object_direction,x                                            ; 3e37: 9d be 09    ...
     lda #3                                                            ; 3e3a: a9 03       ..
     sta value_to_write_to_collision_map                               ; 3e3c: 85 3e       .>
-; Set up the collision map for the two trapdoors if they are open. TODO: I don't think
-; this is quite right, IIRC Colin's playthrough shows this depends on being
-; Imogen+holding saxophone. So the precise meaning of this flag and when it's updated
-; needs to be pinned down further.
+; Set up the collision map for the two trapdoors.
     lda something1_trapdoor_open_flag                                 ; 3e3e: ad ff 09    ...
-    bne c3e55                                                         ; 3e41: d0 12       ..
+    bne set_up_open_trapdoor_collision_map                            ; 3e41: d0 12       ..
+; Set up the trapdoor collision map if they are closed.
     ldx #$11                                                          ; 3e43: a2 11       ..
     ldy #7                                                            ; 3e45: a0 07       ..
     lda #6                                                            ; 3e47: a9 06       ..
@@ -629,7 +627,7 @@ level_unchanged2
     jmp something1_initial_setup_done                                 ; 3e52: 4c 69 3e    Li>
 
 ; $3e55 referenced 1 time by $3e41
-c3e55
+set_up_open_trapdoor_collision_map
     ldx #$11                                                          ; 3e55: a2 11       ..
     ldy #8                                                            ; 3e57: a0 08       ..
     lda #1                                                            ; 3e59: a9 01       ..
@@ -1940,7 +1938,7 @@ pydis_end
 ;     c3de2:                                                  1
 ;     c3def:                                                  1
 ;     something1_handler:                                     1
-;     c3e55:                                                  1
+;     set_up_open_trapdoor_collision_map:                     1
 ;     something1_not_first_update:                            1
 ;     c3ec1:                                                  1
 ;     c3ed2:                                                  1
@@ -1983,7 +1981,6 @@ pydis_end
 ;     c3dd2
 ;     c3de2
 ;     c3def
-;     c3e55
 ;     c3ec1
 ;     c3ed2
 ;     c3ed4
