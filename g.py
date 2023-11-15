@@ -162,18 +162,18 @@ substitute_labels = {
     (0x2565, 0x2680): {
         "l0080": "sprite_addr_low",
         "l0081": "sprite_addr_high",
+    },
+    (0x2565, 0x2a8b): {
         "address1_low": "object_left_low",
         "address1_high": "object_left_high",
         "l0072": "object_right_low",
         "l0073": "object_right_high",
-        "l0078": "object_left_cell_x",
-        "l0079": "object_right_cell_x",
-    },
-    (0x2603, 0x2a8b): {
         "l0074": "object_top_low",
         "l0075": "object_top_high",
         "l0076": "object_bottom_low",
         "l0077": "object_bottom_high",
+        "l0078": "object_left_cell_x",
+        "l0079": "object_right_cell_x",
         "l007a": "object_top_cell_y",
         "l007b": "object_bottom_cell_y",
     },
@@ -638,6 +638,7 @@ On Exit:
             object_right: Set to object's position X + sprite offset
       object_left_cell_x: Cell X for object_left
      object_right_cell_x: Cell X for object_right
+     Preserves X
 
 *************************************************************************************""")
 comment(0x2435, "remember object index")
@@ -676,6 +677,13 @@ comment(0x2547, "zero the temporary offsets")
 label(0x2550, "temp_top_offset")
 comment(0x253e, "divide the bottom pixel coordinate by eight to get the cell Y")
 label(0x2551, "temp_bottom_offset")
+comment(0x2552, "Look for X=0 or X=11", inline=True)
+comment(0x255a, "if (player is not holding an object) then return")
+comment(0x255e, "get spriteid of object being held")
+comment(0x2563, "if (object being held has no sprite) then return")
+comment(0x2568, "copy four bytes (coordinates?)")
+comment(0x2585, "moving right")
+label(0x25d6, "return_zeroing_offsets")
 
 comment(0x24d2, """*************************************************************************************
 
@@ -2086,6 +2094,9 @@ label(0x2988, "clear_extra_menu_slots_loop")
 label(0x296d, "menu_index_for_first_player_character")
 comment(0x2990, "clear another table")
 comment(0x2998, "set new menu position")
+
+comment(0x28eb, "make sure we have sprites for both objects X and Y")
+label(0x2945, "return_restoring_registers")
 
 comment(0x2177, """object_sprite_mask_type:
 

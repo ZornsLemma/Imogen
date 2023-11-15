@@ -4077,6 +4077,7 @@ l2433
 ;             object_right: Set to object's position X + sprite offset
 ;       object_left_cell_x: Cell X for object_left
 ;      object_right_cell_x: Cell X for object_right
+;      Preserves X
 ; 
 ; *************************************************************************************
 find_left_and_right_of_object
@@ -4308,72 +4309,77 @@ temp_bottom_offset
     !byte 0                                                           ; 2682: 00          .   :2551[1]
 
 c2552
-    cpx #0                                                            ; 2683: e0 00       ..  :2552[1]
+    cpx #0                                                            ; 2683: e0 00       ..  :2552[1]   ; Look for X=0 or X=11
     beq c255a                                                         ; 2685: f0 04       ..  :2554[1]
     cpx #$0b                                                          ; 2687: e0 0b       ..  :2556[1]
-    bne c25d6                                                         ; 2689: d0 7c       .|  :2558[1]
+    bne return_zeroing_offsets                                        ; 2689: d0 7c       .|  :2558[1]
+; if (player is not holding an object) then return
 c255a
     lda player_held_item                                              ; 268b: a5 52       .R  :255a[1]
-    beq c25d6                                                         ; 268d: f0 78       .x  :255c[1]
+    beq return_zeroing_offsets                                        ; 268d: f0 78       .x  :255c[1]
+; get spriteid of object being held
     inx                                                               ; 268f: e8          .   :255e[1]
     lda object_spriteid,x                                             ; 2690: bd a8 09    ... :255f[1]
     dex                                                               ; 2693: ca          .   :2562[1]
+; if (object being held has no sprite) then return
     ora #0                                                            ; 2694: 09 00       ..  :2563[1]
-    beq c25d6                                                         ; 2696: f0 6f       .o  :2565[1]
+    beq return_zeroing_offsets                                        ; 2696: f0 6f       .o  :2565[1]
     inx                                                               ; 2698: e8          .   :2567[1]
+; copy four bytes (coordinates?)
     ldy #3                                                            ; 2699: a0 03       ..  :2568[1]
 loop_c256a
-    lda address1_low,y                                                ; 269b: b9 70 00    .p. :256a[1]
+    lda object_left_low,y                                             ; 269b: b9 70 00    .p. :256a[1]
     sta l0129,y                                                       ; 269e: 99 29 01    .). :256d[1]
     dey                                                               ; 26a1: 88          .   :2570[1]
     bpl loop_c256a                                                    ; 26a2: 10 f7       ..  :2571[1]
-    lda l0078                                                         ; 26a4: a5 78       .x  :2573[1]
+    lda object_left_cell_x                                            ; 26a4: a5 78       .x  :2573[1]
     sta l012d                                                         ; 26a6: 8d 2d 01    .-. :2575[1]
-    lda l0079                                                         ; 26a9: a5 79       .y  :2578[1]
+    lda object_right_cell_x                                           ; 26a9: a5 79       .y  :2578[1]
     sta l012e                                                         ; 26ab: 8d 2e 01    ... :257a[1]
     jsr find_left_and_right_of_object                                 ; 26ae: 20 34 24     4$ :257d[1]
     lda object_direction,x                                            ; 26b1: bd be 09    ... :2580[1]
     bpl c25a4                                                         ; 26b4: 10 1f       ..  :2583[1]
-    lda address1_low                                                  ; 26b6: a5 70       .p  :2585[1]
+; moving right
+    lda object_left_low                                               ; 26b6: a5 70       .p  :2585[1]
     sec                                                               ; 26b8: 38          8   :2587[1]
     sbc l0129                                                         ; 26b9: ed 29 01    .). :2588[1]
-    lda address1_high                                                 ; 26bc: a5 71       .q  :258b[1]
+    lda object_left_high                                              ; 26bc: a5 71       .q  :258b[1]
     sbc l012a                                                         ; 26be: ed 2a 01    .*. :258d[1]
     bpl c25c0                                                         ; 26c1: 10 2e       ..  :2590[1]
-    lda address1_low                                                  ; 26c3: a5 70       .p  :2592[1]
+    lda object_left_low                                               ; 26c3: a5 70       .p  :2592[1]
     sta l0129                                                         ; 26c5: 8d 29 01    .). :2594[1]
-    lda address1_high                                                 ; 26c8: a5 71       .q  :2597[1]
+    lda object_left_high                                              ; 26c8: a5 71       .q  :2597[1]
     sta l012a                                                         ; 26ca: 8d 2a 01    .*. :2599[1]
-    lda l0078                                                         ; 26cd: a5 78       .x  :259c[1]
+    lda object_left_cell_x                                            ; 26cd: a5 78       .x  :259c[1]
     sta l012d                                                         ; 26cf: 8d 2d 01    .-. :259e[1]
     jmp c25c0                                                         ; 26d2: 4c c0 25    L.% :25a1[1]
 
 c25a4
     lda l012b                                                         ; 26d5: ad 2b 01    .+. :25a4[1]
     sec                                                               ; 26d8: 38          8   :25a7[1]
-    sbc l0072                                                         ; 26d9: e5 72       .r  :25a8[1]
+    sbc object_right_low                                              ; 26d9: e5 72       .r  :25a8[1]
     lda l012c                                                         ; 26db: ad 2c 01    .,. :25aa[1]
-    sbc l0073                                                         ; 26de: e5 73       .s  :25ad[1]
+    sbc object_right_high                                             ; 26de: e5 73       .s  :25ad[1]
     bpl c25c0                                                         ; 26e0: 10 0f       ..  :25af[1]
-    lda l0072                                                         ; 26e2: a5 72       .r  :25b1[1]
+    lda object_right_low                                              ; 26e2: a5 72       .r  :25b1[1]
     sta l012b                                                         ; 26e4: 8d 2b 01    .+. :25b3[1]
-    lda l0073                                                         ; 26e7: a5 73       .s  :25b6[1]
+    lda object_right_high                                             ; 26e7: a5 73       .s  :25b6[1]
     sta l012c                                                         ; 26e9: 8d 2c 01    .,. :25b8[1]
-    lda l0079                                                         ; 26ec: a5 79       .y  :25bb[1]
+    lda object_right_cell_x                                           ; 26ec: a5 79       .y  :25bb[1]
     sta l012e                                                         ; 26ee: 8d 2e 01    ... :25bd[1]
 c25c0
     ldy #3                                                            ; 26f1: a0 03       ..  :25c0[1]
 loop_c25c2
     lda l0129,y                                                       ; 26f3: b9 29 01    .). :25c2[1]
-    sta address1_low,y                                                ; 26f6: 99 70 00    .p. :25c5[1]
+    sta object_left_low,y                                             ; 26f6: 99 70 00    .p. :25c5[1]
     dey                                                               ; 26f9: 88          .   :25c8[1]
     bpl loop_c25c2                                                    ; 26fa: 10 f7       ..  :25c9[1]
     lda l012d                                                         ; 26fc: ad 2d 01    .-. :25cb[1]
-    sta l0078                                                         ; 26ff: 85 78       .x  :25ce[1]
+    sta object_left_cell_x                                            ; 26ff: 85 78       .x  :25ce[1]
     lda l012e                                                         ; 2701: ad 2e 01    ... :25d0[1]
-    sta l0079                                                         ; 2704: 85 79       .y  :25d3[1]
+    sta object_right_cell_x                                           ; 2704: 85 79       .y  :25d3[1]
     dex                                                               ; 2706: ca          .   :25d5[1]
-c25d6
+return_zeroing_offsets
     lda #0                                                            ; 2707: a9 00       ..  :25d6[1]
     sta temp_left_offset                                              ; 2709: 8d d0 24    ..$ :25d8[1]
     sta temp_right_offset                                             ; 270c: 8d d1 24    ..$ :25db[1]
@@ -4445,7 +4451,7 @@ return13
 sub_c265a
     lda #$ff                                                          ; 278b: a9 ff       ..  :265a[1]
     sta l007c                                                         ; 278d: 85 7c       .|  :265c[1]
-    ldx l0078                                                         ; 278f: a6 78       .x  :265e[1]
+    ldx object_left_cell_x                                            ; 278f: a6 78       .x  :265e[1]
     ldy object_bottom_cell_y                                          ; 2791: a4 7b       .{  :2660[1]
     tya                                                               ; 2793: 98          .   :2662[1]
     sec                                                               ; 2794: 38          8   :2663[1]
@@ -4462,7 +4468,7 @@ loop_c2668
 c2676
     lda #$ff                                                          ; 27a7: a9 ff       ..  :2676[1]
     sta l007d                                                         ; 27a9: 85 7d       .}  :2678[1]
-    ldx l0079                                                         ; 27ab: a6 79       .y  :267a[1]
+    ldx object_right_cell_x                                           ; 27ab: a6 79       .y  :267a[1]
     ldy object_bottom_cell_y                                          ; 27ad: a4 7b       .{  :267c[1]
     tya                                                               ; 27af: 98          .   :267e[1]
     sec                                                               ; 27b0: 38          8   :267f[1]
@@ -4485,7 +4491,7 @@ sub_c2693
     cmp l007d                                                         ; 27c8: c5 7d       .}  :2697[1]
     beq return15                                                      ; 27ca: f0 49       .I  :2699[1]
     bcc c26c2                                                         ; 27cc: 90 25       .%  :269b[1]
-    lda address1_low                                                  ; 27ce: a5 70       .p  :269d[1]
+    lda object_left_low                                               ; 27ce: a5 70       .p  :269d[1]
     and #7                                                            ; 27d0: 29 07       ).  :269f[1]
     sta l0080                                                         ; 27d2: 85 80       ..  :26a1[1]
     lda #8                                                            ; 27d4: a9 08       ..  :26a3[1]
@@ -4504,7 +4510,7 @@ sub_c2693
     jmp return15                                                      ; 27f0: 4c e4 26    L.& :26bf[1]
 
 c26c2
-    lda l0072                                                         ; 27f3: a5 72       .r  :26c2[1]
+    lda object_right_low                                              ; 27f3: a5 72       .r  :26c2[1]
     and #7                                                            ; 27f5: 29 07       ).  :26c4[1]
     clc                                                               ; 27f7: 18          .   :26c6[1]
     adc #1                                                            ; 27f8: 69 01       i.  :26c7[1]
@@ -4527,10 +4533,10 @@ sub_c26e5
     lda #$ff                                                          ; 2816: a9 ff       ..  :26e5[1]
     sta address2_low                                                  ; 2818: 85 7e       .~  :26e7[1]
     ldy object_top_cell_y                                             ; 281a: a4 7a       .z  :26e9[1]
-    ldx l0079                                                         ; 281c: a6 79       .y  :26eb[1]
+    ldx object_right_cell_x                                           ; 281c: a6 79       .y  :26eb[1]
     txa                                                               ; 281e: 8a          .   :26ed[1]
     sec                                                               ; 281f: 38          8   :26ee[1]
-    sbc l0078                                                         ; 2820: e5 78       .x  :26ef[1]
+    sbc object_left_cell_x                                            ; 2820: e5 78       .x  :26ef[1]
     sta l0080                                                         ; 2822: 85 80       ..  :26f1[1]
 loop_c26f3
     jsr read_collision_map_value_for_xy                               ; 2824: 20 fa 1e     .. :26f3[1]
@@ -4544,10 +4550,10 @@ c2701
     lda #$ff                                                          ; 2832: a9 ff       ..  :2701[1]
     sta address2_high                                                 ; 2834: 85 7f       ..  :2703[1]
     ldy object_bottom_cell_y                                          ; 2836: a4 7b       .{  :2705[1]
-    ldx l0079                                                         ; 2838: a6 79       .y  :2707[1]
+    ldx object_right_cell_x                                           ; 2838: a6 79       .y  :2707[1]
     txa                                                               ; 283a: 8a          .   :2709[1]
     sec                                                               ; 283b: 38          8   :270a[1]
-    sbc l0078                                                         ; 283c: e5 78       .x  :270b[1]
+    sbc object_left_cell_x                                            ; 283c: e5 78       .x  :270b[1]
     sta l0080                                                         ; 283e: 85 80       ..  :270d[1]
 loop_c270f
     jsr read_collision_map_value_for_xy                               ; 2840: 20 fa 1e     .. :270f[1]
@@ -4627,39 +4633,39 @@ sub_c2770
     jmp c2851                                                         ; 28ca: 4c 51 28    LQ( :2799[1]
 
 c279c
-    lda l0078                                                         ; 28cd: a5 78       .x  :279c[1]
+    lda object_left_cell_x                                            ; 28cd: a5 78       .x  :279c[1]
     sta l0121                                                         ; 28cf: 8d 21 01    .!. :279e[1]
-    lda l0079                                                         ; 28d2: a5 79       .y  :27a1[1]
+    lda object_right_cell_x                                           ; 28d2: a5 79       .y  :27a1[1]
     sta l0122                                                         ; 28d4: 8d 22 01    .". :27a3[1]
     ldx l0053                                                         ; 28d7: a6 53       .S  :27a6[1]
     jsr find_left_and_right_of_object                                 ; 28d9: 20 34 24     4$ :27a8[1]
-    lda l0072                                                         ; 28dc: a5 72       .r  :27ab[1]
+    lda object_right_low                                              ; 28dc: a5 72       .r  :27ab[1]
     clc                                                               ; 28de: 18          .   :27ad[1]
     adc #1                                                            ; 28df: 69 01       i.  :27ae[1]
-    sta l0072                                                         ; 28e1: 85 72       .r  :27b0[1]
-    lda l0073                                                         ; 28e3: a5 73       .s  :27b2[1]
+    sta object_right_low                                              ; 28e1: 85 72       .r  :27b0[1]
+    lda object_right_high                                             ; 28e3: a5 73       .s  :27b2[1]
     adc #0                                                            ; 28e5: 69 00       i.  :27b4[1]
-    sta l0073                                                         ; 28e7: 85 73       .s  :27b6[1]
-    lda address1_low                                                  ; 28e9: a5 70       .p  :27b8[1]
+    sta object_right_high                                             ; 28e7: 85 73       .s  :27b6[1]
+    lda object_left_low                                               ; 28e9: a5 70       .p  :27b8[1]
     clc                                                               ; 28eb: 18          .   :27ba[1]
-    adc l0072                                                         ; 28ec: 65 72       er  :27bb[1]
+    adc object_right_low                                              ; 28ec: 65 72       er  :27bb[1]
     sta l2892                                                         ; 28ee: 8d 92 28    ..( :27bd[1]
-    lda address1_high                                                 ; 28f1: a5 71       .q  :27c0[1]
-    adc l0073                                                         ; 28f3: 65 73       es  :27c2[1]
+    lda object_left_high                                              ; 28f1: a5 71       .q  :27c0[1]
+    adc object_right_high                                             ; 28f3: 65 73       es  :27c2[1]
     sta l2893                                                         ; 28f5: 8d 93 28    ..( :27c4[1]
     lda l0121                                                         ; 28f8: ad 21 01    .!. :27c7[1]
-    sta l0078                                                         ; 28fb: 85 78       .x  :27ca[1]
+    sta object_left_cell_x                                            ; 28fb: 85 78       .x  :27ca[1]
     lda l0122                                                         ; 28fd: ad 22 01    .". :27cc[1]
-    sta l0079                                                         ; 2900: 85 79       .y  :27cf[1]
+    sta object_right_cell_x                                           ; 2900: 85 79       .y  :27cf[1]
     ldy object_bottom_cell_y                                          ; 2902: a4 7b       .{  :27d1[1]
-    asl address1_low                                                  ; 2904: 06 70       .p  :27d3[1]
-    rol address1_high                                                 ; 2906: 26 71       &q  :27d5[1]
+    asl object_left_low                                               ; 2904: 06 70       .p  :27d3[1]
+    rol object_left_high                                              ; 2906: 26 71       &q  :27d5[1]
     lda l2892                                                         ; 2908: ad 92 28    ..( :27d7[1]
     clc                                                               ; 290b: 18          .   :27da[1]
-    adc address1_low                                                  ; 290c: 65 70       ep  :27db[1]
+    adc object_left_low                                               ; 290c: 65 70       ep  :27db[1]
     sta object_top_cell_y                                             ; 290e: 85 7a       .z  :27dd[1]
     lda l2893                                                         ; 2910: ad 93 28    ..( :27df[1]
-    adc address1_high                                                 ; 2913: 65 71       eq  :27e2[1]
+    adc object_left_high                                              ; 2913: 65 71       eq  :27e2[1]
     lsr                                                               ; 2915: 4a          J   :27e4[1]
     ror object_top_cell_y                                             ; 2916: 66 7a       fz  :27e5[1]
     lsr                                                               ; 2918: 4a          J   :27e7[1]
@@ -4675,14 +4681,14 @@ c279c
     dec two_byte_table_based_on_left_right_direction                  ; 292a: ce 90 28    ..( :27f9[1]
     bne c281d                                                         ; 292d: d0 1f       ..  :27fc[1]
 c27fe
-    asl l0072                                                         ; 292f: 06 72       .r  :27fe[1]
-    rol l0073                                                         ; 2931: 26 73       &s  :2800[1]
+    asl object_right_low                                              ; 292f: 06 72       .r  :27fe[1]
+    rol object_right_high                                             ; 2931: 26 73       &s  :2800[1]
     lda l2892                                                         ; 2933: ad 92 28    ..( :2802[1]
     clc                                                               ; 2936: 18          .   :2805[1]
-    adc l0072                                                         ; 2937: 65 72       er  :2806[1]
+    adc object_right_low                                              ; 2937: 65 72       er  :2806[1]
     sta object_top_cell_y                                             ; 2939: 85 7a       .z  :2808[1]
     lda l2893                                                         ; 293b: ad 93 28    ..( :280a[1]
-    adc l0073                                                         ; 293e: 65 73       es  :280d[1]
+    adc object_right_high                                             ; 293e: 65 73       es  :280d[1]
     lsr                                                               ; 2940: 4a          J   :280f[1]
     ror object_top_cell_y                                             ; 2941: 66 7a       fz  :2810[1]
     lsr                                                               ; 2943: 4a          J   :2812[1]
@@ -4732,7 +4738,7 @@ sub_c2859
     ldx object_top_cell_y                                             ; 2993: a6 7a       .z  :2862[1]
     txa                                                               ; 2995: 8a          .   :2864[1]
     sec                                                               ; 2996: 38          8   :2865[1]
-    sbc l0078                                                         ; 2997: e5 78       .x  :2866[1]
+    sbc object_left_cell_x                                            ; 2997: e5 78       .x  :2866[1]
     sta l0080                                                         ; 2999: 85 80       ..  :2868[1]
     jmp c287e                                                         ; 299b: 4c 7e 28    L~( :286a[1]
 
@@ -4743,7 +4749,7 @@ sub_c286d
     ror object_top_cell_y                                             ; 29a2: 66 7a       fz  :2871[1]
     lsr                                                               ; 29a4: 4a          J   :2873[1]
     ror object_top_cell_y                                             ; 29a5: 66 7a       fz  :2874[1]
-    ldx l0079                                                         ; 29a7: a6 79       .y  :2876[1]
+    ldx object_right_cell_x                                           ; 29a7: a6 79       .y  :2876[1]
     txa                                                               ; 29a9: 8a          .   :2878[1]
     sec                                                               ; 29aa: 38          8   :2879[1]
     sbc object_top_cell_y                                             ; 29ab: e5 7a       .z  :287a[1]
@@ -4820,15 +4826,16 @@ something55_TODO
     pha                                                               ; 2a16: 48          H   :28e5[1]
     lda #0                                                            ; 2a17: a9 00       ..  :28e6[1]
     sta l295b                                                         ; 2a19: 8d 5b 29    .[) :28e8[1]
+; make sure we have sprites for both objects X and Y
     lda object_spriteid,x                                             ; 2a1c: bd a8 09    ... :28eb[1]
-    beq c2945                                                         ; 2a1f: f0 55       .U  :28ee[1]
+    beq return_restoring_registers                                    ; 2a1f: f0 55       .U  :28ee[1]
     lda object_spriteid,y                                             ; 2a21: b9 a8 09    ... :28f0[1]
-    beq c2945                                                         ; 2a24: f0 50       .P  :28f3[1]
+    beq return_restoring_registers                                    ; 2a24: f0 50       .P  :28f3[1]
     jsr sub_c25df                                                     ; 2a26: 20 df 25     .% :28f5[1]
     jsr find_top_and_bottom_of_object                                 ; 2a29: 20 d2 24     .$ :28f8[1]
     ldx #7                                                            ; 2a2c: a2 07       ..  :28fb[1]
 loop_c28fd
-    lda address1_low,x                                                ; 2a2e: b5 70       .p  :28fd[1]
+    lda object_left_low,x                                             ; 2a2e: b5 70       .p  :28fd[1]
     sta l0121,x                                                       ; 2a30: 9d 21 01    .!. :28ff[1]
     dex                                                               ; 2a33: ca          .   :2902[1]
     bpl loop_c28fd                                                    ; 2a34: 10 f8       ..  :2903[1]
@@ -4839,30 +4846,30 @@ loop_c28fd
     jsr find_top_and_bottom_of_object                                 ; 2a3c: 20 d2 24     .$ :290b[1]
     lda l0123                                                         ; 2a3f: ad 23 01    .#. :290e[1]
     sec                                                               ; 2a42: 38          8   :2911[1]
-    sbc address1_low                                                  ; 2a43: e5 70       .p  :2912[1]
+    sbc object_left_low                                               ; 2a43: e5 70       .p  :2912[1]
     lda l0124                                                         ; 2a45: ad 24 01    .$. :2914[1]
-    sbc address1_high                                                 ; 2a48: e5 71       .q  :2917[1]
-    bmi c2945                                                         ; 2a4a: 30 2a       0*  :2919[1]
-    lda l0072                                                         ; 2a4c: a5 72       .r  :291b[1]
+    sbc object_left_high                                              ; 2a48: e5 71       .q  :2917[1]
+    bmi return_restoring_registers                                    ; 2a4a: 30 2a       0*  :2919[1]
+    lda object_right_low                                              ; 2a4c: a5 72       .r  :291b[1]
     sec                                                               ; 2a4e: 38          8   :291d[1]
     sbc l0121                                                         ; 2a4f: ed 21 01    .!. :291e[1]
-    lda l0073                                                         ; 2a52: a5 73       .s  :2921[1]
+    lda object_right_high                                             ; 2a52: a5 73       .s  :2921[1]
     sbc l0122                                                         ; 2a54: ed 22 01    .". :2923[1]
-    bmi c2945                                                         ; 2a57: 30 1d       0.  :2926[1]
+    bmi return_restoring_registers                                    ; 2a57: 30 1d       0.  :2926[1]
     lda l0127                                                         ; 2a59: ad 27 01    .'. :2928[1]
     sec                                                               ; 2a5c: 38          8   :292b[1]
     sbc object_top_low                                                ; 2a5d: e5 74       .t  :292c[1]
     lda l0128                                                         ; 2a5f: ad 28 01    .(. :292e[1]
     sbc object_top_high                                               ; 2a62: e5 75       .u  :2931[1]
-    bmi c2945                                                         ; 2a64: 30 10       0.  :2933[1]
+    bmi return_restoring_registers                                    ; 2a64: 30 10       0.  :2933[1]
     lda object_bottom_low                                             ; 2a66: a5 76       .v  :2935[1]
     sec                                                               ; 2a68: 38          8   :2937[1]
     sbc l0125                                                         ; 2a69: ed 25 01    .%. :2938[1]
     lda object_bottom_high                                            ; 2a6c: a5 77       .w  :293b[1]
     sbc l0126                                                         ; 2a6e: ed 26 01    .&. :293d[1]
-    bmi c2945                                                         ; 2a71: 30 03       0.  :2940[1]
+    bmi return_restoring_registers                                    ; 2a71: 30 03       0.  :2940[1]
     dec l295b                                                         ; 2a73: ce 5b 29    .[) :2942[1]
-c2945
+return_restoring_registers
     lda #0                                                            ; 2a76: a9 00       ..  :2945[1]
     sta temp_top_offset                                               ; 2a78: 8d 50 25    .P% :2947[1]
     sta temp_bottom_offset                                            ; 2a7b: 8d 51 25    .Q% :294a[1]
@@ -8593,7 +8600,6 @@ pydis_end
 ;     c255a
 ;     c25a4
 ;     c25c0
-;     c25d6
 ;     c2626
 ;     c264f
 ;     c2676
@@ -8608,7 +8614,6 @@ pydis_end
 ;     c2851
 ;     c287e
 ;     c288c
-;     c2945
 ;     c2c35
 ;     c2c3d
 ;     c2dc3
