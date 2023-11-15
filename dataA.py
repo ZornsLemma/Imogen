@@ -153,7 +153,7 @@ expr(0x4116, "player_collision_flag_baby")
 entry(0x3dfc, "something1_handler")
 entry(0x3e6c, "something1_not_first_update")
 entry(0x3e11, "level_unchanged2")
-label(0x9ff, "something1_flag_maybe")
+label(0x9ff, "something1_trapdoor_open_flag")
 label(0x3eee, "something1_three_byte_table")
 
 # TODO: slight guesswork
@@ -178,6 +178,8 @@ constant(0x2, "objectid_left_trapdoor")
 constant(0x3, "objectid_right_trapdoor")
 expr(0x3e23, "objectid_left_trapdoor")
 expr(0x3e30, "objectid_right_trapdoor")
+comment(0x3e1e, "Set up the objects for the two trapdoors.")
+comment(0x3e3e, "Set up the collision map for the two trapdoors if they are closed. TODO: I don't think this is quite right, IIRC Colin's playthrough shows this depends on being Imogen+holding saxophone. So the precise meaning of this flag and when it's updated needs to be pinned down further.")
 
 # TODO: Use this more?
 def ldx_ldy_jsr_play_sound_yx(jsr_runtime_addr, s):

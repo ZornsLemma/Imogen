@@ -59,7 +59,7 @@ object_spriteid_old                                 = $09b3
 object_direction                                    = $09be
 object_direction_old                                = $09c9
 level_progress_table                                = $09ef
-something1_flag_maybe                               = $09ff
+something1_trapdoor_open_flag                       = $09ff
 saxophone_collected_flag                            = $0a00
 l0a01                                               = $0a01
 l0a02                                               = $0a02
@@ -585,10 +585,10 @@ something1_handler
     lda previous_level                                                ; 3e01: a5 51       .Q
     cmp desired_level                                                 ; 3e03: c5 31       .1
     beq level_unchanged2                                              ; 3e05: f0 0a       ..
-    lda something1_flag_maybe                                         ; 3e07: ad ff 09    ...
+    lda something1_trapdoor_open_flag                                 ; 3e07: ad ff 09    ...
     beq level_unchanged2                                              ; 3e0a: f0 05       ..
     lda #$ff                                                          ; 3e0c: a9 ff       ..
-    sta something1_flag_maybe                                         ; 3e0e: 8d ff 09    ...
+    sta something1_trapdoor_open_flag                                 ; 3e0e: 8d ff 09    ...
 ; $3e11 referenced 2 times by $3e05, $3e0a
 level_unchanged2
     lda desired_room_index                                            ; 3e11: a5 30       .0
@@ -597,6 +597,7 @@ level_unchanged2
     ldx #<envelope2                                                   ; 3e17: a2 2c       .,
     ldy #>envelope2                                                   ; 3e19: a0 44       .D
     jsr define_envelope                                               ; 3e1b: 20 5e 39     ^9
+; Set up the objects for the two trapdoors.
     ldx #$11                                                          ; 3e1e: a2 11       ..
     ldy #7                                                            ; 3e20: a0 07       ..
     lda #objectid_left_trapdoor                                       ; 3e22: a9 02       ..
@@ -612,7 +613,11 @@ level_unchanged2
     sta object_direction,x                                            ; 3e37: 9d be 09    ...
     lda #3                                                            ; 3e3a: a9 03       ..
     sta value_to_write_to_collision_map                               ; 3e3c: 85 3e       .>
-    lda something1_flag_maybe                                         ; 3e3e: ad ff 09    ...
+; Set up the collision map for the two trapdoors if they are open. TODO: I don't think
+; this is quite right, IIRC Colin's playthrough shows this depends on being
+; Imogen+holding saxophone. So the precise meaning of this flag and when it's updated
+; needs to be pinned down further.
+    lda something1_trapdoor_open_flag                                 ; 3e3e: ad ff 09    ...
     bne c3e55                                                         ; 3e41: d0 12       ..
     ldx #$11                                                          ; 3e43: a2 11       ..
     ldy #7                                                            ; 3e45: a0 07       ..
@@ -640,7 +645,7 @@ something1_initial_setup_done
 
 ; $3e6c referenced 1 time by $3dff
 something1_not_first_update
-    ldy something1_flag_maybe                                         ; 3e6c: ac ff 09    ...
+    ldy something1_trapdoor_open_flag                                 ; 3e6c: ac ff 09    ...
     bmi c3ed7                                                         ; 3e6f: 30 66       0f
     bne c3ec1                                                         ; 3e71: d0 4e       .N
     lda desired_room_index                                            ; 3e73: a5 30       .0
@@ -681,7 +686,7 @@ something1_not_first_update
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 3ebe: 20 44 1e     D.
 ; $3ec1 referenced 1 time by $3e71
 c3ec1
-    ldy something1_flag_maybe                                         ; 3ec1: ac ff 09    ...
+    ldy something1_trapdoor_open_flag                                 ; 3ec1: ac ff 09    ...
     iny                                                               ; 3ec4: c8          .
     cpy #2                                                            ; 3ec5: c0 02       ..
     bcc c3ed4                                                         ; 3ec7: 90 0b       ..
@@ -694,13 +699,13 @@ c3ed2
     ldy #$ff                                                          ; 3ed2: a0 ff       ..
 ; $3ed4 referenced 1 time by $3ec7
 c3ed4
-    sty something1_flag_maybe                                         ; 3ed4: 8c ff 09    ...
+    sty something1_trapdoor_open_flag                                 ; 3ed4: 8c ff 09    ...
 ; $3ed7 referenced 8 times by $3e69, $3e6f, $3e77, $3e7b, $3e80, $3e87, $3e8b, $3e97
 c3ed7
     lda desired_room_index                                            ; 3ed7: a5 30       .0
     cmp #1                                                            ; 3ed9: c9 01       ..
     bne c3eed                                                         ; 3edb: d0 10       ..
-    ldy something1_flag_maybe                                         ; 3edd: ac ff 09    ...
+    ldy something1_trapdoor_open_flag                                 ; 3edd: ac ff 09    ...
     bpl c3ee4                                                         ; 3ee0: 10 02       ..
     ldy #2                                                            ; 3ee2: a0 02       ..
 ; $3ee4 referenced 1 time by $3ee0
@@ -1827,7 +1832,7 @@ pydis_end
 ;     l0a02:                                                  8
 ;     l0a04:                                                  8
 ;     c3ed7:                                                  8
-;     something1_flag_maybe:                                  7
+;     something1_trapdoor_open_flag:                          7
 ;     l0a01:                                                  7
 ;     play_sound_yx:                                          7
 ;     mouse_sprites_and_ball_movement_table:                  7
