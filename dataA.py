@@ -111,9 +111,13 @@ comment(0x3c04, "Perform shared initialisation for both mice")
 comment(0x3c0e, "Set up the left mouse")
 comment(0x3c30, "Set up the right mouse")
 comment(0x3c5b, "Set up the ball TODO: plausible guess")
-comment(0x3cb7, "always branch")
+comment(0x3cb7, "always branch", inline=True)
+comment(0x3cdf, "always branch", inline=True)
 entry(0x3cb9, "mouse_ball_position_ge_8")
 entry(0x3cc3, "mouse_ball_position_lt_8")
+entry(0x3cd9, "mouse_ball_position_ge_0xf") # TODO: this name kind of ignores the possibility of fall through to this label
+entry(0x3ce1, "mouse_ball_position_ge_0x17")
+comment(0x3cc6, "TODO: l09aa and l09ab seem to be write-only - this is presumably a false impression, are they elements of some table or something like that?")
 
 # TODO: slight guesswork
 constant(2, "objectid_left_mouse")

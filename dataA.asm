@@ -395,12 +395,11 @@ move_mouse_ball_if_room_0
     cmp #8                                                            ; 3cb1: c9 08       ..
     bcs mouse_ball_position_ge_8                                      ; 3cb3: b0 04       ..
     ldy #0                                                            ; 3cb5: a0 00       ..
-; always branch
-    beq mouse_ball_position_lt_8                                      ; 3cb7: f0 0a       ..
+    beq mouse_ball_position_lt_8                                      ; 3cb7: f0 0a       ..             ; always branch
 ; $3cb9 referenced 1 time by $3cb3
 mouse_ball_position_ge_8
     cmp #$0f                                                          ; 3cb9: c9 0f       ..
-    bcs c3cd9                                                         ; 3cbb: b0 1c       ..
+    bcs mouse_ball_position_ge_0xf                                    ; 3cbb: b0 1c       ..
     sec                                                               ; 3cbd: 38          8
     sbc #8                                                            ; 3cbe: e9 08       ..
     asl                                                               ; 3cc0: 0a          .
@@ -409,6 +408,8 @@ mouse_ball_position_ge_8
 ; $3cc3 referenced 1 time by $3cb7
 mouse_ball_position_lt_8
     lda some_data1,y                                                  ; 3cc3: b9 21 3d    .!=
+; TODO: l09aa and l09ab seem to be write-only - this is presumably a false impression,
+; are they elements of some table or something like that?
     sta l09aa                                                         ; 3cc6: 8d aa 09    ...
     iny                                                               ; 3cc9: c8          .
     lda some_data1,y                                                  ; 3cca: b9 21 3d    .!=
@@ -419,13 +420,13 @@ mouse_ball_position_lt_8
     adc some_data1,y                                                  ; 3cd4: 79 21 3d    y!=
     bne c3cfb                                                         ; 3cd7: d0 22       ."
 ; $3cd9 referenced 1 time by $3cbb
-c3cd9
+mouse_ball_position_ge_0xf
     cmp #$17                                                          ; 3cd9: c9 17       ..
-    bcs c3ce1                                                         ; 3cdb: b0 04       ..
+    bcs mouse_ball_position_ge_0x17                                   ; 3cdb: b0 04       ..
     ldy #0                                                            ; 3cdd: a0 00       ..
-    beq c3ce7                                                         ; 3cdf: f0 06       ..
+    beq c3ce7                                                         ; 3cdf: f0 06       ..             ; always branch
 ; $3ce1 referenced 1 time by $3cdb
-c3ce1
+mouse_ball_position_ge_0x17
     sec                                                               ; 3ce1: 38          8
     sbc #$17                                                          ; 3ce2: e9 17       ..
     asl                                                               ; 3ce4: 0a          .
@@ -1874,8 +1875,8 @@ pydis_end
 ;     play_mouse_ball_sounds:                                 1
 ;     mouse_ball_position_ge_8:                               1
 ;     mouse_ball_position_lt_8:                               1
-;     c3cd9:                                                  1
-;     c3ce1:                                                  1
+;     mouse_ball_position_ge_0xf:                             1
+;     mouse_ball_position_ge_0x17:                            1
 ;     c3ce7:                                                  1
 ;     c3cfb:                                                  1
 ;     c3dd2:                                                  1
@@ -1922,8 +1923,6 @@ pydis_end
 
 ; Automatically generated labels:
 ;     c3b0e
-;     c3cd9
-;     c3ce1
 ;     c3ce7
 ;     c3cfb
 ;     c3dd2
