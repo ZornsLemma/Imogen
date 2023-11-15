@@ -177,6 +177,16 @@ substitute_labels = {
         "l007a": "object_top_cell_y",
         "l007b": "object_bottom_cell_y",
     },
+    (0x28e2, 0x2a8b): {
+        "l0121": "x_object_left_low",
+        "l0122": "x_object_left_high",
+        "l0123": "x_object_right_low",
+        "l0124": "x_object_right_high",
+        "l0125": "x_object_top_low",
+        "l0126": "x_object_top_high",
+        "l0127": "x_object_bottom_low",
+        "l0128": "x_object_bottom_high",
+    },
     (0x2cb8, 0x2d3c): {
         "address1_low": "menu_item_to_use",
         "address1_high": "menu_has_changed_flag",
@@ -702,7 +712,7 @@ label(0x25c0, "reset_old_values_back_into_object_left_and_right")
 comment(0x25b1, "use the held object's right coordinate")
 label(0x25c2, "reset_coordinates_loop")
 label(0x25d6, "return_zeroing_offsets")
-label(0x25df, "get_left_right_extents_including_any_held_object")
+label(0x25df, "find_left_and_right_of_object_including_held_object")
 comment(0x25df, "remember temp_left and right offsets, since we will use them again to find the attached object's left/right extents")
 
 comment(0x24d2, """*************************************************************************************
@@ -2116,7 +2126,30 @@ comment(0x2990, "clear another table")
 comment(0x2998, "set new menu position")
 
 comment(0x28eb, "make sure we have sprites for both objects X and Y")
+comment(0x28fb, "remember extents for object x (as 'x_' versions) (copy eight bytes)")
+label(0x28fd, "copy_extents_loop")
+comment(0x2905, "retrieve index for second object (was in Y on entry), and put in X register")
+comment(0x2908, "get extents for object Y")
+comment(0x290e, "compare edges of the two objects to see if there is an overlap")
+comment(0x2942, "there is an overlap")
+
+comment(0x28e2, """*************************************************************************************
+
+Test for a collision between two objects
+
+Calculate if the bounding boxes of the two objects overlap.
+
+On Entry:
+    X, Y: The object indexes of two objects to test
+
+On Exit:
+    A: $ff if collision occcurs, else $00
+    Preserves X,Y
+
+*************************************************************************************""")
+
 label(0x2945, "return_restoring_registers")
+label(0x295b, "temp_collision_result")
 
 comment(0x2177, """object_sprite_mask_type:
 
@@ -2232,6 +2265,12 @@ label(0x22e0, "update_mid_transformation_local")
 spriteid(0x3974, 0x3986)
 spriteid(0x1ab2, 0x1aba)
 label(0x1ab2, "diamond_sprite_cycle")
+label(0x1ab1, "diamond_sprite_index")
+expr(0x1a2c, "spriteid_menu_item_completion_spell")
+label(0x1a9e, "reset_offsets_and_exit")
+label(0x1aae, "remember_obj_index")
+label(0x1aaf, "remember_cell_x")
+label(0x1ab0, "remember_cell_y")
 label(0x3974, "mid_transform_sprites_table")
 label(0x3975, "mid_transform_circle_sprites")
 expr(0x39fe, "mid_transform_circle_sprites - mid_transform_sprites_table")

@@ -361,13 +361,21 @@ objects_to_process_table                    = $0100
 l010b                                       = $010b
 object_dealt_with_flag                      = $0116
 l0121                                       = $0121
+x_object_left_low                           = $0121
 l0122                                       = $0122
+x_object_left_high                          = $0122
 l0123                                       = $0123
+x_object_right_low                          = $0123
 l0124                                       = $0124
+x_object_right_high                         = $0124
 l0125                                       = $0125
+x_object_top_low                            = $0125
 l0126                                       = $0126
+x_object_top_high                           = $0126
 l0127                                       = $0127
+x_object_bottom_low                         = $0127
 l0128                                       = $0128
+x_object_bottom_high                        = $0128
 old_object_left_low                         = $0129
 old_object_left_high                        = $012a
 old_object_right_low                        = $012b
@@ -2072,26 +2080,26 @@ fire_object_index
 
 ; TODO: this is used by e.g. dataA
 something14_TODO
-    sta l1aae                                                         ; 1b41: 8d ae 1a    ... :1a10[1]
-    stx l1aaf                                                         ; 1b44: 8e af 1a    ... :1a13[1]
-    sty l1ab0                                                         ; 1b47: 8c b0 1a    ... :1a16[1]
-    inc l1ab1                                                         ; 1b4a: ee b1 1a    ... :1a19[1]
-    lda l1ab1                                                         ; 1b4d: ad b1 1a    ... :1a1c[1]
+    sta remember_obj_index                                            ; 1b41: 8d ae 1a    ... :1a10[1]
+    stx remember_cell_x                                               ; 1b44: 8e af 1a    ... :1a13[1]
+    sty remember_cell_y                                               ; 1b47: 8c b0 1a    ... :1a16[1]
+    inc diamond_sprite_index                                          ; 1b4a: ee b1 1a    ... :1a19[1]
+    lda diamond_sprite_index                                          ; 1b4d: ad b1 1a    ... :1a1c[1]
     and #7                                                            ; 1b50: 29 07       ).  :1a1f[1]
     tay                                                               ; 1b52: a8          .   :1a21[1]
     lda diamond_sprite_cycle,y                                        ; 1b53: b9 b2 1a    ... :1a22[1]
     sta l2eed                                                         ; 1b56: 8d ed 2e    ... :1a25[1]
     sta l2ef2                                                         ; 1b59: 8d f2 2e    ... :1a28[1]
-    lda #$21 ; '!'                                                    ; 1b5c: a9 21       .!  :1a2b[1]
+    lda #spriteid_menu_item_completion_spell                          ; 1b5c: a9 21       .!  :1a2b[1]
     sta l2ee8                                                         ; 1b5e: 8d e8 2e    ... :1a2d[1]
     lda desired_room_index                                            ; 1b61: a5 30       .0  :1a30[1]
     cmp current_room_index                                            ; 1b63: cd ba 1a    ... :1a32[1]
-    bne c1a9e                                                         ; 1b66: d0 67       .g  :1a35[1]
+    bne reset_offsets_and_exit                                        ; 1b66: d0 67       .g  :1a35[1]
     lda update_room_first_update_flag                                 ; 1b68: ad 2b 13    .+. :1a37[1]
     bne c1a59                                                         ; 1b6b: d0 1d       ..  :1a3a[1]
-    ldx l1aae                                                         ; 1b6d: ae ae 1a    ... :1a3c[1]
+    ldx remember_obj_index                                            ; 1b6d: ae ae 1a    ... :1a3c[1]
     ldy #$0b                                                          ; 1b70: a0 0b       ..  :1a3f[1]
-    jsr something55_TODO                                              ; 1b72: 20 e2 28     .( :1a41[1]
+    jsr test_for_collision_between_objects_x_and_y                    ; 1b72: 20 e2 28     .( :1a41[1]
     beq c1a59                                                         ; 1b75: f0 13       ..  :1a44[1]
     lda desired_level                                                 ; 1b77: a5 31       .1  :1a46[1]
     sec                                                               ; 1b79: 38          8   :1a48[1]
@@ -2104,7 +2112,7 @@ something14_TODO
     lda #spriteid_menu_item_completion_spell                          ; 1b85: a9 21       .!  :1a54[1]
     jsr find_or_create_menu_slot_for_A                                ; 1b87: 20 bd 2b     .+ :1a56[1]
 c1a59
-    ldx l1aae                                                         ; 1b8a: ae ae 1a    ... :1a59[1]
+    ldx remember_obj_index                                            ; 1b8a: ae ae 1a    ... :1a59[1]
     lda #spriteid_197                                                 ; 1b8d: a9 c5       ..  :1a5c[1]
     sta object_sprite_mask_type,x                                     ; 1b8f: 9d ac 38    ..8 :1a5e[1]
     lda #0                                                            ; 1b92: a9 00       ..  :1a61[1]
@@ -2115,10 +2123,10 @@ c1a59
     tay                                                               ; 1b9c: a8          .   :1a6b[1]
     lda level_progress_table,y                                        ; 1b9d: b9 ef 09    ... :1a6c[1]
     and #$80                                                          ; 1ba0: 29 80       ).  :1a6f[1]
-    bne c1a9e                                                         ; 1ba2: d0 2b       .+  :1a71[1]
+    bne reset_offsets_and_exit                                        ; 1ba2: d0 2b       .+  :1a71[1]
     lda #1                                                            ; 1ba4: a9 01       ..  :1a73[1]
     sta object_direction,x                                            ; 1ba6: 9d be 09    ... :1a75[1]
-    lda l1ab1                                                         ; 1ba9: ad b1 1a    ... :1a78[1]
+    lda diamond_sprite_index                                          ; 1ba9: ad b1 1a    ... :1a78[1]
     and #7                                                            ; 1bac: 29 07       ).  :1a7b[1]
     tay                                                               ; 1bae: a8          .   :1a7d[1]
     cpy #5                                                            ; 1baf: c0 05       ..  :1a7e[1]
@@ -2134,25 +2142,25 @@ c1a8f
     adc #spriteid_sparkles1                                           ; 1bc0: 69 22       i"  :1a8f[1]
     sta object_spriteid,x                                             ; 1bc2: 9d a8 09    ... :1a91[1]
     txa                                                               ; 1bc5: 8a          .   :1a94[1]
-    ldx l1aaf                                                         ; 1bc6: ae af 1a    ... :1a95[1]
-    ldy l1ab0                                                         ; 1bc9: ac b0 1a    ... :1a98[1]
+    ldx remember_cell_x                                               ; 1bc6: ae af 1a    ... :1a95[1]
+    ldy remember_cell_y                                               ; 1bc9: ac b0 1a    ... :1a98[1]
     jsr set_object_position_from_cell_xy                              ; 1bcc: 20 5d 1f     ]. :1a9b[1]
-c1a9e
+reset_offsets_and_exit
     lda #0                                                            ; 1bcf: a9 00       ..  :1a9e[1]
     sta temp_sprite_x_offset                                          ; 1bd1: 85 3a       .:  :1aa0[1]
     sta temp_sprite_y_offset                                          ; 1bd3: 85 3b       .;  :1aa2[1]
-    lda l1aae                                                         ; 1bd5: ad ae 1a    ... :1aa4[1]
-    ldx l1aaf                                                         ; 1bd8: ae af 1a    ... :1aa7[1]
-    ldy l1ab0                                                         ; 1bdb: ac b0 1a    ... :1aaa[1]
+    lda remember_obj_index                                            ; 1bd5: ad ae 1a    ... :1aa4[1]
+    ldx remember_cell_x                                               ; 1bd8: ae af 1a    ... :1aa7[1]
+    ldy remember_cell_y                                               ; 1bdb: ac b0 1a    ... :1aaa[1]
     rts                                                               ; 1bde: 60          `   :1aad[1]
 
-l1aae
+remember_obj_index
     !byte 0                                                           ; 1bdf: 00          .   :1aae[1]
-l1aaf
+remember_cell_x
     !byte 0                                                           ; 1be0: 00          .   :1aaf[1]
-l1ab0
+remember_cell_y
     !byte 0                                                           ; 1be1: 00          .   :1ab0[1]
-l1ab1
+diamond_sprite_index
     !byte 0                                                           ; 1be2: 00          .   :1ab1[1]
 diamond_sprite_cycle
     !byte spriteid_diamond1                                           ; 1be3: 27          '   :1ab2[1]
@@ -3443,13 +3451,13 @@ c2061
     adc #$0b                                                          ; 2196: 69 0b       i.  :2065[1]
     tax                                                               ; 2198: aa          .   :2067[1]
     ldy backmost_object_index                                         ; 2199: a4 60       .`  :2068[1]
-    jsr something55_TODO                                              ; 219b: 20 e2 28     .( :206a[1]
+    jsr test_for_collision_between_objects_x_and_y                    ; 219b: 20 e2 28     .( :206a[1]
     bne c207d                                                         ; 219e: d0 0e       ..  :206d[1]
     tya                                                               ; 21a0: 98          .   :206f[1]
     clc                                                               ; 21a1: 18          .   :2070[1]
     adc #$0b                                                          ; 21a2: 69 0b       i.  :2071[1]
     tay                                                               ; 21a4: a8          .   :2073[1]
-    jsr something55_TODO                                              ; 21a5: 20 e2 28     .( :2074[1]
+    jsr test_for_collision_between_objects_x_and_y                    ; 21a5: 20 e2 28     .( :2074[1]
     ldx l0064                                                         ; 21a8: a6 64       .d  :2077[1]
     ora #0                                                            ; 21aa: 09 00       ..  :2079[1]
     beq c208d                                                         ; 21ac: f0 10       ..  :207b[1]
@@ -4402,7 +4410,7 @@ return_zeroing_offsets
 
 ; remember temp_left and right offsets, since we will use them again to find the
 ; attached object's left/right extents
-get_left_right_extents_including_any_held_object
+find_left_and_right_of_object_including_held_object
     lda temp_left_offset                                              ; 2710: ad d0 24    ..$ :25df[1]
     pha                                                               ; 2713: 48          H   :25e2[1]
     lda temp_right_offset                                             ; 2714: ad d1 24    ..$ :25e3[1]
@@ -4425,7 +4433,7 @@ sub_c25f5
     lda #1                                                            ; 2732: a9 01       ..  :2601[1]
     sta temp_bottom_offset                                            ; 2734: 8d 51 25    .Q% :2603[1]
     ldx l0053                                                         ; 2737: a6 53       .S  :2606[1]
-    jsr get_left_right_extents_including_any_held_object              ; 2739: 20 df 25     .% :2608[1]
+    jsr find_left_and_right_of_object_including_held_object           ; 2739: 20 df 25     .% :2608[1]
     lda l0053                                                         ; 273c: a5 53       .S  :260b[1]
     clc                                                               ; 273e: 18          .   :260d[1]
     adc #$0b                                                          ; 273f: 69 0b       i.  :260e[1]
@@ -4439,7 +4447,7 @@ sub_c25f5
     clc                                                               ; 2750: 18          .   :261f[1]
     adc #$0b                                                          ; 2751: 69 0b       i.  :2620[1]
     tax                                                               ; 2753: aa          .   :2622[1]
-    jsr get_left_right_extents_including_any_held_object              ; 2754: 20 df 25     .% :2623[1]
+    jsr find_left_and_right_of_object_including_held_object           ; 2754: 20 df 25     .% :2623[1]
 c2626
     lda #1                                                            ; 2757: a9 01       ..  :2626[1]
     sta temp_bottom_offset                                            ; 2759: 8d 51 25    .Q% :2628[1]
@@ -4453,7 +4461,7 @@ c2626
     lda #1                                                            ; 276d: a9 01       ..  :263c[1]
     sta temp_bottom_offset                                            ; 276f: 8d 51 25    .Q% :263e[1]
     ldx l0053                                                         ; 2772: a6 53       .S  :2641[1]
-    jsr get_left_right_extents_including_any_held_object              ; 2774: 20 df 25     .% :2643[1]
+    jsr find_left_and_right_of_object_including_held_object           ; 2774: 20 df 25     .% :2643[1]
     jsr find_top_and_bottom_of_object                                 ; 2777: 20 d2 24     .$ :2646[1]
     jsr sub_c265a                                                     ; 277a: 20 5a 26     Z& :2649[1]
     jsr sub_c2693                                                     ; 277d: 20 93 26     .& :264c[1]
@@ -4634,7 +4642,7 @@ sub_c2770
     tya                                                               ; 28a5: 98          .   :2774[1]
     pha                                                               ; 28a6: 48          H   :2775[1]
     ldx l0053                                                         ; 28a7: a6 53       .S  :2776[1]
-    jsr get_left_right_extents_including_any_held_object              ; 28a9: 20 df 25     .% :2778[1]
+    jsr find_left_and_right_of_object_including_held_object           ; 28a9: 20 df 25     .% :2778[1]
     lda #2                                                            ; 28ac: a9 02       ..  :277b[1]
     sta temp_bottom_offset                                            ; 28ae: 8d 51 25    .Q% :277d[1]
     jsr find_top_and_bottom_of_object                                 ; 28b1: 20 d2 24     .$ :2780[1]
@@ -4670,9 +4678,9 @@ c279c
     lda object_left_high                                              ; 28f1: a5 71       .q  :27c0[1]
     adc object_right_high                                             ; 28f3: 65 73       es  :27c2[1]
     sta l2893                                                         ; 28f5: 8d 93 28    ..( :27c4[1]
-    lda l0121                                                         ; 28f8: ad 21 01    .!. :27c7[1]
+    lda x_object_left_low                                             ; 28f8: ad 21 01    .!. :27c7[1]
     sta object_left_cell_x                                            ; 28fb: 85 78       .x  :27ca[1]
-    lda l0122                                                         ; 28fd: ad 22 01    .". :27cc[1]
+    lda x_object_left_high                                            ; 28fd: ad 22 01    .". :27cc[1]
     sta object_right_cell_x                                           ; 2900: 85 79       .y  :27cf[1]
     ldy object_bottom_cell_y                                          ; 2902: a4 7b       .{  :27d1[1]
     asl object_left_low                                               ; 2904: 06 70       .p  :27d3[1]
@@ -4796,13 +4804,13 @@ l2893
 
 ; TODO: this is used by e.g. dataA
 something59_TODO
-    sta l295b                                                         ; 29c5: 8d 5b 29    .[) :2894[1]
+    sta temp_collision_result                                         ; 29c5: 8d 5b 29    .[) :2894[1]
     txa                                                               ; 29c8: 8a          .   :2897[1]
     pha                                                               ; 29c9: 48          H   :2898[1]
     tya                                                               ; 29ca: 98          .   :2899[1]
     pha                                                               ; 29cb: 48          H   :289a[1]
-    ldx l295b                                                         ; 29cc: ae 5b 29    .[) :289b[1]
-    jsr get_left_right_extents_including_any_held_object              ; 29cf: 20 df 25     .% :289e[1]
+    ldx temp_collision_result                                         ; 29cc: ae 5b 29    .[) :289b[1]
+    jsr find_left_and_right_of_object_including_held_object           ; 29cf: 20 df 25     .% :289e[1]
     jsr find_top_and_bottom_of_object                                 ; 29d2: 20 d2 24     .$ :28a1[1]
     lda l28e1                                                         ; 29d5: ad e1 28    ..( :28a4[1]
     sta l0044                                                         ; 29d8: 85 44       .D  :28a7[1]
@@ -4810,82 +4818,101 @@ something59_TODO
     jsr sub_c26e5                                                     ; 29dd: 20 e5 26     .& :28ac[1]
     lda l007c                                                         ; 29e0: a5 7c       .|  :28af[1]
     and #1                                                            ; 29e2: 29 01       ).  :28b1[1]
-    sta l295b                                                         ; 29e4: 8d 5b 29    .[) :28b3[1]
+    sta temp_collision_result                                         ; 29e4: 8d 5b 29    .[) :28b3[1]
     lda l007d                                                         ; 29e7: a5 7d       .}  :28b6[1]
     and #4                                                            ; 29e9: 29 04       ).  :28b8[1]
-    ora l295b                                                         ; 29eb: 0d 5b 29    .[) :28ba[1]
-    sta l295b                                                         ; 29ee: 8d 5b 29    .[) :28bd[1]
+    ora temp_collision_result                                         ; 29eb: 0d 5b 29    .[) :28ba[1]
+    sta temp_collision_result                                         ; 29ee: 8d 5b 29    .[) :28bd[1]
     lda address2_low                                                  ; 29f1: a5 7e       .~  :28c0[1]
     and #8                                                            ; 29f3: 29 08       ).  :28c2[1]
-    ora l295b                                                         ; 29f5: 0d 5b 29    .[) :28c4[1]
-    sta l295b                                                         ; 29f8: 8d 5b 29    .[) :28c7[1]
+    ora temp_collision_result                                         ; 29f5: 0d 5b 29    .[) :28c4[1]
+    sta temp_collision_result                                         ; 29f8: 8d 5b 29    .[) :28c7[1]
     lda address2_high                                                 ; 29fb: a5 7f       ..  :28ca[1]
     and #2                                                            ; 29fd: 29 02       ).  :28cc[1]
-    ora l295b                                                         ; 29ff: 0d 5b 29    .[) :28ce[1]
-    sta l295b                                                         ; 2a02: 8d 5b 29    .[) :28d1[1]
+    ora temp_collision_result                                         ; 29ff: 0d 5b 29    .[) :28ce[1]
+    sta temp_collision_result                                         ; 2a02: 8d 5b 29    .[) :28d1[1]
     lda #0                                                            ; 2a05: a9 00       ..  :28d4[1]
     sta l28e1                                                         ; 2a07: 8d e1 28    ..( :28d6[1]
     pla                                                               ; 2a0a: 68          h   :28d9[1]
     tay                                                               ; 2a0b: a8          .   :28da[1]
     pla                                                               ; 2a0c: 68          h   :28db[1]
     tax                                                               ; 2a0d: aa          .   :28dc[1]
-    lda l295b                                                         ; 2a0e: ad 5b 29    .[) :28dd[1]
+    lda temp_collision_result                                         ; 2a0e: ad 5b 29    .[) :28dd[1]
     rts                                                               ; 2a11: 60          `   :28e0[1]
 
 l28e1
     !byte 0                                                           ; 2a12: 00          .   :28e1[1]
 
 ; TODO: this is used by e.g. dataA
-something55_TODO
+; *************************************************************************************
+; 
+; Test for a collision between two objects
+; 
+; Calculate if the bounding boxes of the two objects overlap.
+; 
+; On Entry:
+;     X, Y: The object indexes of two objects to test
+; 
+; On Exit:
+;     A: $ff if collision occcurs, else $00
+;     Preserves X,Y
+; 
+; *************************************************************************************
+test_for_collision_between_objects_x_and_y
     txa                                                               ; 2a13: 8a          .   :28e2[1]
     pha                                                               ; 2a14: 48          H   :28e3[1]
     tya                                                               ; 2a15: 98          .   :28e4[1]
     pha                                                               ; 2a16: 48          H   :28e5[1]
     lda #0                                                            ; 2a17: a9 00       ..  :28e6[1]
-    sta l295b                                                         ; 2a19: 8d 5b 29    .[) :28e8[1]
+    sta temp_collision_result                                         ; 2a19: 8d 5b 29    .[) :28e8[1]
 ; make sure we have sprites for both objects X and Y
     lda object_spriteid,x                                             ; 2a1c: bd a8 09    ... :28eb[1]
     beq return_restoring_registers                                    ; 2a1f: f0 55       .U  :28ee[1]
     lda object_spriteid,y                                             ; 2a21: b9 a8 09    ... :28f0[1]
     beq return_restoring_registers                                    ; 2a24: f0 50       .P  :28f3[1]
-    jsr get_left_right_extents_including_any_held_object              ; 2a26: 20 df 25     .% :28f5[1]
+    jsr find_left_and_right_of_object_including_held_object           ; 2a26: 20 df 25     .% :28f5[1]
     jsr find_top_and_bottom_of_object                                 ; 2a29: 20 d2 24     .$ :28f8[1]
+; remember extents for object x (as 'x_' versions) (copy eight bytes)
     ldx #7                                                            ; 2a2c: a2 07       ..  :28fb[1]
-loop_c28fd
+copy_extents_loop
     lda object_left_low,x                                             ; 2a2e: b5 70       .p  :28fd[1]
-    sta l0121,x                                                       ; 2a30: 9d 21 01    .!. :28ff[1]
+    sta x_object_left_low,x                                           ; 2a30: 9d 21 01    .!. :28ff[1]
     dex                                                               ; 2a33: ca          .   :2902[1]
-    bpl loop_c28fd                                                    ; 2a34: 10 f8       ..  :2903[1]
+    bpl copy_extents_loop                                             ; 2a34: 10 f8       ..  :2903[1]
+; retrieve index for second object (was in Y on entry), and put in X register
     pla                                                               ; 2a36: 68          h   :2905[1]
     pha                                                               ; 2a37: 48          H   :2906[1]
     tax                                                               ; 2a38: aa          .   :2907[1]
-    jsr get_left_right_extents_including_any_held_object              ; 2a39: 20 df 25     .% :2908[1]
+; get extents for object Y
+    jsr find_left_and_right_of_object_including_held_object           ; 2a39: 20 df 25     .% :2908[1]
     jsr find_top_and_bottom_of_object                                 ; 2a3c: 20 d2 24     .$ :290b[1]
-    lda l0123                                                         ; 2a3f: ad 23 01    .#. :290e[1]
+; compare edges of the two objects to see if there is an overlap
+    lda x_object_right_low                                            ; 2a3f: ad 23 01    .#. :290e[1]
     sec                                                               ; 2a42: 38          8   :2911[1]
     sbc object_left_low                                               ; 2a43: e5 70       .p  :2912[1]
-    lda l0124                                                         ; 2a45: ad 24 01    .$. :2914[1]
+    lda x_object_right_high                                           ; 2a45: ad 24 01    .$. :2914[1]
     sbc object_left_high                                              ; 2a48: e5 71       .q  :2917[1]
     bmi return_restoring_registers                                    ; 2a4a: 30 2a       0*  :2919[1]
     lda object_right_low                                              ; 2a4c: a5 72       .r  :291b[1]
     sec                                                               ; 2a4e: 38          8   :291d[1]
-    sbc l0121                                                         ; 2a4f: ed 21 01    .!. :291e[1]
+    sbc x_object_left_low                                             ; 2a4f: ed 21 01    .!. :291e[1]
     lda object_right_high                                             ; 2a52: a5 73       .s  :2921[1]
-    sbc l0122                                                         ; 2a54: ed 22 01    .". :2923[1]
+    sbc x_object_left_high                                            ; 2a54: ed 22 01    .". :2923[1]
     bmi return_restoring_registers                                    ; 2a57: 30 1d       0.  :2926[1]
-    lda l0127                                                         ; 2a59: ad 27 01    .'. :2928[1]
+    lda x_object_bottom_low                                           ; 2a59: ad 27 01    .'. :2928[1]
     sec                                                               ; 2a5c: 38          8   :292b[1]
     sbc object_top_low                                                ; 2a5d: e5 74       .t  :292c[1]
-    lda l0128                                                         ; 2a5f: ad 28 01    .(. :292e[1]
+    lda x_object_bottom_high                                          ; 2a5f: ad 28 01    .(. :292e[1]
     sbc object_top_high                                               ; 2a62: e5 75       .u  :2931[1]
     bmi return_restoring_registers                                    ; 2a64: 30 10       0.  :2933[1]
     lda object_bottom_low                                             ; 2a66: a5 76       .v  :2935[1]
     sec                                                               ; 2a68: 38          8   :2937[1]
-    sbc l0125                                                         ; 2a69: ed 25 01    .%. :2938[1]
+    sbc x_object_top_low                                              ; 2a69: ed 25 01    .%. :2938[1]
     lda object_bottom_high                                            ; 2a6c: a5 77       .w  :293b[1]
-    sbc l0126                                                         ; 2a6e: ed 26 01    .&. :293d[1]
+    sbc x_object_top_high                                             ; 2a6e: ed 26 01    .&. :293d[1]
     bmi return_restoring_registers                                    ; 2a71: 30 03       0.  :2940[1]
-    dec l295b                                                         ; 2a73: ce 5b 29    .[) :2942[1]
+; there is an overlap
+    dec temp_collision_result                                         ; 2a73: ce 5b 29    .[) :2942[1]
 return_restoring_registers
     lda #0                                                            ; 2a76: a9 00       ..  :2945[1]
     sta temp_top_offset                                               ; 2a78: 8d 50 25    .P% :2947[1]
@@ -4896,10 +4923,10 @@ return_restoring_registers
     tay                                                               ; 2a85: a8          .   :2954[1]
     pla                                                               ; 2a86: 68          h   :2955[1]
     tax                                                               ; 2a87: aa          .   :2956[1]
-    lda l295b                                                         ; 2a88: ad 5b 29    .[) :2957[1]
+    lda temp_collision_result                                         ; 2a88: ad 5b 29    .[) :2957[1]
     rts                                                               ; 2a8b: 60          `   :295a[1]
 
-l295b
+temp_collision_result
     !byte 0                                                           ; 2a8c: 00          .   :295b[1]
 desired_menu_slots
     !byte spriteid_icodata_disc                                       ; 2a8d: 03          .   :295c[1]
@@ -8581,7 +8608,6 @@ pydis_end
 ;     c19e5
 ;     c1a59
 ;     c1a8f
-;     c1a9e
 ;     c1d16
 ;     c1f06
 ;     c2047
@@ -8716,27 +8742,14 @@ pydis_end
 ;     l0087
 ;     l00fd
 ;     l010b
-;     l0121
-;     l0122
-;     l0123
-;     l0124
-;     l0125
-;     l0126
-;     l0127
-;     l0128
 ;     l09eb
 ;     l0b00
-;     l1aae
-;     l1aaf
-;     l1ab0
-;     l1ab1
 ;     l2433
 ;     l288f
 ;     l2891
 ;     l2892
 ;     l2893
 ;     l28e1
-;     l295b
 ;     l2eb5
 ;     l2eb6
 ;     l2eb7
@@ -8763,7 +8776,6 @@ pydis_end
 ;     loop_c2684
 ;     loop_c26f3
 ;     loop_c270f
-;     loop_c28fd
 ;     loop_c2992
 ;     loop_c2be9
 ;     loop_c2ec9

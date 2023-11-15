@@ -155,7 +155,7 @@ def common_to_all():
     label(0x1f57, "draw_sprite_a_at_cell_xy_and_write_to_collision_map")
     label(0x1db9, "draw_rope")
     label(0x1e44, "write_value_to_a_rectangle_of_cells_in_collision_map")
-    label(0x28e2, "something55_TODO")
+    label(0x28e2, "test_for_collision_between_objects_x_and_y")
     label(0x1f4c, "draw_sprite_a_at_cell_xy")
     label(0x1f6d, "set_object_position_from_current_sprite_position")
     label(0x1f5d, "set_object_position_from_cell_xy")
