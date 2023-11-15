@@ -1,24 +1,26 @@
 ; Constants
-first_level_letter       = 65
-game_area_height_cells   = 24
-game_area_width_cells    = 40
-last_level_letter        = 81
-objectid_left_mouse      = 2
-objectid_mouse_ball      = 4
-objectid_right_mouse     = 3
-opcode_jmp               = 76
-spriteid_baby0           = 214
-spriteid_baby1           = 215
-spriteid_baby2           = 216
-spriteid_baby3           = 217
-spriteid_baby4           = 218
-spriteid_baby5           = 219
-spriteid_baby6           = 220
-spriteid_baby7           = 221
-spriteid_ball            = 59
-spriteid_mouse           = 200
-spriteid_saxophone       = 211
-spriteid_table           = 222
+first_level_letter                 = 65
+game_area_height_cells             = 24
+game_area_width_cells              = 40
+last_level_letter                  = 81
+objectid_left_mouse                = 2
+objectid_mouse_ball                = 4
+objectid_right_mouse               = 3
+opcode_jmp                         = 76
+player_collision_flag_baby         = 6
+player_collision_flag_mouse_ball   = 128
+spriteid_baby0                     = 214
+spriteid_baby1                     = 215
+spriteid_baby2                     = 216
+spriteid_baby3                     = 217
+spriteid_baby4                     = 218
+spriteid_baby5                     = 219
+spriteid_baby6                     = 220
+spriteid_baby7                     = 221
+spriteid_ball                      = 59
+spriteid_mouse                     = 200
+spriteid_saxophone                 = 211
+spriteid_table                     = 222
 
 ; Memory locations
 characters_entered                                  = $05
@@ -96,7 +98,7 @@ draw_sprite_a_at_cell_xy_and_write_to_collision_map = $1f57
 set_object_position_from_cell_xy                    = $1f5d
 set_object_position_from_current_sprite_position    = $1f6d
 play_landing_sound                                  = $23a9
-l2433                                               = $2433
+player_collision_flag                               = $2433
 l24d0                                               = $24d0
 l24d1                                               = $24d1
 l2551                                               = $2551
@@ -469,8 +471,8 @@ finish_mouse_ball_movement
     ldy #4                                                            ; 3d14: a0 04       ..
     jsr test_for_collision_between_objects_x_and_y                    ; 3d16: 20 e2 28     .(
     beq return1                                                       ; 3d19: f0 05       ..
-    lda #$80                                                          ; 3d1b: a9 80       ..
-    sta l2433                                                         ; 3d1d: 8d 33 24    .3$
+    lda #player_collision_flag_mouse_ball                             ; 3d1b: a9 80       ..
+    sta player_collision_flag                                         ; 3d1d: 8d 33 24    .3$
 ; $3d20 referenced 3 times by $3cac, $3d10, $3d19
 return1
     rts                                                               ; 3d20: 60          `
@@ -1041,8 +1043,8 @@ c40f7
     ldy l40e3                                                         ; 410e: ac e3 40    ..@
     ora #0                                                            ; 4111: 09 00       ..
     beq c412e                                                         ; 4113: f0 19       ..
-    lda #6                                                            ; 4115: a9 06       ..
-    sta l2433                                                         ; 4117: 8d 33 24    .3$
+    lda #player_collision_flag_baby                                   ; 4115: a9 06       ..
+    sta player_collision_flag                                         ; 4117: 8d 33 24    .3$
     lda #0                                                            ; 411a: a9 00       ..
     sta l2eb6                                                         ; 411c: 8d b6 2e    ...
     lda #1                                                            ; 411f: a9 01       ..
@@ -1874,7 +1876,7 @@ pydis_end
 ;     object_x_high:                                          2
 ;     l0a03:                                                  2
 ;     set_object_position_from_current_sprite_position:       2
-;     l2433:                                                  2
+;     player_collision_flag:                                  2
 ;     object_collision_flags:                                 2
 ;     l396f:                                                  2
 ;     c3b0e:                                                  2
@@ -2044,7 +2046,6 @@ pydis_end
 ;     l0a71
 ;     l0a72
 ;     l0a73
-;     l2433
 ;     l24d0
 ;     l24d1
 ;     l2551
@@ -2170,6 +2171,12 @@ pydis_end
 }
 !if (objectid_right_mouse) != $03 {
     !error "Assertion failed: objectid_right_mouse == $03"
+}
+!if (player_collision_flag_baby) != $06 {
+    !error "Assertion failed: player_collision_flag_baby == $06"
+}
+!if (player_collision_flag_mouse_ball) != $80 {
+    !error "Assertion failed: player_collision_flag_mouse_ball == $80"
 }
 !if (room_1_data_ptr) != $3b27 {
     !error "Assertion failed: room_1_data_ptr == $3b27"

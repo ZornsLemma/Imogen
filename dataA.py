@@ -144,6 +144,10 @@ entry(0x3ce7, "mouse_ball_position_ge_0xf_common_tail")
 comment(0x3cd7, "TODO: always branch? not sure, but superficially it would seem nothing in mouse_sprites_and_ball_movement_table is -$88, i.e. $78")
 entry(0x3cfb, "finish_mouse_ball_movement")
 comment(0x3d12, "Check for player-ball collision TODO: just a plausible guess") 
+constant(6, "player_collision_flag_baby")
+constant(0x80, "player_collision_flag_mouse_ball")
+expr(0x3d1c, "player_collision_flag_mouse_ball")
+expr(0x4116, "player_collision_flag_baby")
 
 # TODO: slight guesswork
 constant(2, "objectid_left_mouse")

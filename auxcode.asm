@@ -74,6 +74,7 @@ draw_sprite_a_at_cell_xy_and_write_to_collision_map = $1f57
 set_object_position_from_cell_xy                    = $1f5d
 set_object_position_from_current_sprite_position    = $1f6d
 play_landing_sound                                  = $23a9
+player_collision_flag                               = $2433
 something59_TODO                                    = $2894
 test_for_collision_between_objects_x_and_y          = $28e2
 insert_character_menu_item_into_toolbar             = $2b87

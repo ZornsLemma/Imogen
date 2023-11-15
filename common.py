@@ -220,3 +220,5 @@ def common_to_all():
     label(0x9c9, "object_direction_old")
 
     label(0x38c2, "object_z_order")
+
+    label(0x2433, "player_collision_flag") # TODO: object_collision_flag?

@@ -585,7 +585,7 @@ object_reset_loop
     cmp previous_level                                                ; 12df: c5 51       .Q  :11ae[1]
     beq same_level                                                    ; 12e1: f0 57       .W  :11b0[1]
     lda #0                                                            ; 12e3: a9 00       ..  :11b2[1]
-    sta l2433                                                         ; 12e5: 8d 33 24    .3$ :11b4[1]
+    sta player_collision_flag                                         ; 12e5: 8d 33 24    .3$ :11b4[1]
     sta current_player_character                                      ; 12e8: 85 48       .H  :11b7[1]
     sta new_player_character                                          ; 12ea: 85 4d       .M  :11b9[1]
     sta object_spriteid                                               ; 12ec: 8d a8 09    ... :11bb[1]
@@ -3694,7 +3694,7 @@ set_player_spriteid_and_offset_from_animation_table
     sta object_spriteid                                               ; 2338: 8d a8 09    ... :2207[1]
 ; check if we should add offset x
     iny                                                               ; 233b: c8          .   :220a[1]
-    lda l2433                                                         ; 233c: ad 33 24    .3$ :220b[1]
+    lda player_collision_flag                                         ; 233c: ad 33 24    .3$ :220b[1]
     bne skip8                                                         ; 233f: d0 21       .!  :220e[1]
 ; load next byte from table, the X offset
     lda (animation_address_low),y                                     ; 2341: b1 70       .p  :2210[1]
@@ -3940,7 +3940,7 @@ not_transforming
 transform
     sta new_player_character                                          ; 2468: 85 4d       .M  :2337[1]
     lda #0                                                            ; 246a: a9 00       ..  :2339[1]
-    sta l2433                                                         ; 246c: 8d 33 24    .3$ :233b[1]
+    sta player_collision_flag                                         ; 246c: 8d 33 24    .3$ :233b[1]
     sta player_held_item                                              ; 246f: 85 52       .R  :233e[1]
 ; if the current menu item is to the left of the player characters, then we have just
 ; loaded a level or something, so don't play the transform sounds.
@@ -3965,7 +3965,7 @@ start_of_transform_in_animation
     lda #0                                                            ; 2490: a9 00       ..  :235f[1]
     sta sound_priority_per_channel_table                              ; 2492: 8d 6f 39    .o9 :2361[1]
     sta l3970                                                         ; 2495: 8d 70 39    .p9 :2364[1]
-    sta l2433                                                         ; 2498: 8d 33 24    .3$ :2367[1]
+    sta player_collision_flag                                         ; 2498: 8d 33 24    .3$ :2367[1]
     rts                                                               ; 249b: 60          `   :236a[1]
 
 sub_c236b
@@ -4028,11 +4028,11 @@ sub_c23c4
     pha                                                               ; 24f8: 48          H   :23c7[1]
     lda #0                                                            ; 24f9: a9 00       ..  :23c8[1]
     jsr sub_c2770                                                     ; 24fb: 20 70 27     p' :23ca[1]
-    lda l2433                                                         ; 24fe: ad 33 24    .3$ :23cd[1]
+    lda player_collision_flag                                         ; 24fe: ad 33 24    .3$ :23cd[1]
     beq c242b                                                         ; 2501: f0 59       .Y  :23d0[1]
     cmp #$80                                                          ; 2503: c9 80       ..  :23d2[1]
     beq c241a                                                         ; 2505: f0 44       .D  :23d4[1]
-    lda l2433                                                         ; 2507: ad 33 24    .3$ :23d6[1]
+    lda player_collision_flag                                         ; 2507: ad 33 24    .3$ :23d6[1]
     bmi c23e2                                                         ; 250a: 30 07       0.  :23d9[1]
     inc temp_right_offset                                             ; 250c: ee d1 24    ..$ :23db[1]
     ldy #0                                                            ; 250f: a0 00       ..  :23de[1]
@@ -4047,7 +4047,7 @@ c23e7
     jsr something59_TODO                                              ; 251f: 20 94 28     .( :23ee[1]
     beq c23fa                                                         ; 2522: f0 07       ..  :23f1[1]
     lda #$80                                                          ; 2524: a9 80       ..  :23f3[1]
-    sta l2433                                                         ; 2526: 8d 33 24    .3$ :23f5[1]
+    sta player_collision_flag                                         ; 2526: 8d 33 24    .3$ :23f5[1]
     bne c241a                                                         ; 2529: d0 20       .   :23f8[1]
 c23fa
     lda l288f                                                         ; 252b: ad 8f 28    ..( :23fa[1]
@@ -4057,7 +4057,7 @@ c23fa
 c2404
     ldx #1                                                            ; 2535: a2 01       ..  :2404[1]
 loop_c2406
-    lda l2433                                                         ; 2537: ad 33 24    .3$ :2406[1]
+    lda player_collision_flag                                         ; 2537: ad 33 24    .3$ :2406[1]
     clc                                                               ; 253a: 18          .   :2409[1]
     adc object_x_low,x                                                ; 253b: 7d 50 09    }P. :240a[1]
     sta object_x_low,x                                                ; 253e: 9d 50 09    .P. :240d[1]
@@ -4067,22 +4067,22 @@ loop_c2406
     dex                                                               ; 2548: ca          .   :2417[1]
     bpl loop_c2406                                                    ; 2549: 10 ec       ..  :2418[1]
 c241a
-    lda l2433                                                         ; 254b: ad 33 24    .3$ :241a[1]
+    lda player_collision_flag                                         ; 254b: ad 33 24    .3$ :241a[1]
     cmp #$80                                                          ; 254e: c9 80       ..  :241d[1]
     bne c242b                                                         ; 2550: d0 0a       ..  :241f[1]
     lda l288f                                                         ; 2552: ad 8f 28    ..( :2421[1]
     beq c242b                                                         ; 2555: f0 05       ..  :2424[1]
     lda #0                                                            ; 2557: a9 00       ..  :2426[1]
-    sta l2433                                                         ; 2559: 8d 33 24    .3$ :2428[1]
+    sta player_collision_flag                                         ; 2559: 8d 33 24    .3$ :2428[1]
 c242b
     pla                                                               ; 255c: 68          h   :242b[1]
     tay                                                               ; 255d: a8          .   :242c[1]
     pla                                                               ; 255e: 68          h   :242d[1]
     tax                                                               ; 255f: aa          .   :242e[1]
-    lda l2433                                                         ; 2560: ad 33 24    .3$ :242f[1]
+    lda player_collision_flag                                         ; 2560: ad 33 24    .3$ :242f[1]
     rts                                                               ; 2563: 60          `   :2432[1]
 
-l2433
+player_collision_flag
     !byte 0                                                           ; 2564: 00          .   :2433[1]
 
 ; *************************************************************************************
@@ -5691,7 +5691,7 @@ c2dca
     and object_collision_flags                                        ; 2f0b: 2d d8 38    -.8 :2dda[1]
     beq c2de4                                                         ; 2f0e: f0 05       ..  :2ddd[1]
     lda #$80                                                          ; 2f10: a9 80       ..  :2ddf[1]
-    sta l2433                                                         ; 2f12: 8d 33 24    .3$ :2de1[1]
+    sta player_collision_flag                                         ; 2f12: 8d 33 24    .3$ :2de1[1]
 c2de4
     lda #wizard_fall_animation - wizard_transform_in_animation        ; 2f15: a9 96       ..  :2de4[1]
     cmp current_animation                                             ; 2f17: cd df 09    ... :2de6[1]
@@ -5996,7 +5996,7 @@ c302a
     and object_collision_flags                                        ; 316b: 2d d8 38    -.8 :303a[1]
     beq c3044                                                         ; 316e: f0 05       ..  :303d[1]
     lda #$80                                                          ; 3170: a9 80       ..  :303f[1]
-    sta l2433                                                         ; 3172: 8d 33 24    .3$ :3041[1]
+    sta player_collision_flag                                         ; 3172: 8d 33 24    .3$ :3041[1]
 c3044
     lda #cat_fall_animation - cat_transform_in_animation              ; 3175: a9 ae       ..  :3044[1]
     cmp current_animation                                             ; 3177: cd df 09    ... :3046[1]
@@ -8755,7 +8755,6 @@ pydis_end
 ;     l010b
 ;     l09eb
 ;     l0b00
-;     l2433
 ;     l288f
 ;     l2891
 ;     l2892
