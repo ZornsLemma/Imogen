@@ -26,6 +26,9 @@ set_label_maker_hook(my_label_maker)
 
 
 load(0x53c0, "orig/auxcode.dat", "6502", "4bb0d6da344653209ba062a544cf0e9c")
+
+common_to_all()
+
 entry(0x53c0)
 
 label(0x53ce, "check_password_loop")

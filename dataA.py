@@ -18,6 +18,9 @@ substitute_constants("jsr find_or_create_menu_slot_for_A", 'a', sprite_dict, Tru
 #substitute_constants("sta sprite_op_flags", 'a', sprite_op_flags_dict, True)
 
 load(0x3ad5, "orig/dataA.dat", "6502", "df027a3ac06abfed1878eaec3d2bbe5f")
+
+common_to_all()
+
 word(0x3ad7)
 expr(0x3ad7, "level_init_after_load_handler")
 word(0x3ad9)
@@ -162,8 +165,6 @@ expr(0x3f25, make_hi("envelope3"))
 envelope(0x444a, "envelope4")
 expr(0x4340, make_lo("envelope4"))
 expr(0x4342, make_hi("envelope4"))
-
-label(0x38c2, "object_something_table")
 
 go()
 

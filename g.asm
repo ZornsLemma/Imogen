@@ -574,7 +574,7 @@ object_reset_loop
     sta object_direction,y                                            ; 12cd: 99 be 09    ... :119c[1]
     lda #$ff                                                          ; 12d0: a9 ff       ..  :119f[1]
     sta object_sprite_mask_type,y                                     ; 12d2: 99 ac 38    ..8 :11a1[1]
-    sta envelope_2,y                                                  ; 12d5: 99 c2 38    ..8 :11a4[1]
+    sta object_z_order,y                                              ; 12d5: 99 c2 38    ..8 :11a4[1]
     iny                                                               ; 12d8: c8          .   :11a7[1]
     cpy #$0b                                                          ; 12d9: c0 0b       ..  :11a8[1]
     bcc object_reset_loop                                             ; 12db: 90 da       ..  :11aa[1]
@@ -3351,21 +3351,21 @@ c1fe9
     lda #$ff                                                          ; 2120: a9 ff       ..  :1fef[1]
     sta l0060                                                         ; 2122: 85 60       .`  :1ff1[1]
     stx l0061                                                         ; 2124: 86 61       .a  :1ff3[1]
-loop_c1ff5
+check_object_loop
     lda l0116,x                                                       ; 2126: bd 16 01    ... :1ff5[1]
-    bne c200d                                                         ; 2129: d0 13       ..  :1ff8[1]
+    bne try_next_object                                               ; 2129: d0 13       ..  :1ff8[1]
     lda object_spriteid,x                                             ; 212b: bd a8 09    ... :1ffa[1]
     ora object_spriteid_old,x                                         ; 212e: 1d b3 09    ... :1ffd[1]
-    beq c200d                                                         ; 2131: f0 0b       ..  :2000[1]
-    lda envelope_2,x                                                  ; 2133: bd c2 38    ..8 :2002[1]
+    beq try_next_object                                               ; 2131: f0 0b       ..  :2000[1]
+    lda object_z_order,x                                              ; 2133: bd c2 38    ..8 :2002[1]
     cmp l0061                                                         ; 2136: c5 61       .a  :2005[1]
-    bcc c200d                                                         ; 2138: 90 04       ..  :2007[1]
+    bcc try_next_object                                               ; 2138: 90 04       ..  :2007[1]
     sta l0061                                                         ; 213a: 85 61       .a  :2009[1]
     stx l0060                                                         ; 213c: 86 60       .`  :200b[1]
-c200d
+try_next_object
     inx                                                               ; 213e: e8          .   :200d[1]
     cpx #$0b                                                          ; 213f: e0 0b       ..  :200e[1]
-    bcc loop_c1ff5                                                    ; 2141: 90 e3       ..  :2010[1]
+    bcc check_object_loop                                             ; 2141: 90 e3       ..  :2010[1]
     ldx l0060                                                         ; 2143: a6 60       .`  :2012[1]
     bpl c2027                                                         ; 2145: 10 11       ..  :2014[1]
     ldx #$0a                                                          ; 2147: a2 0a       ..  :2016[1]
@@ -3393,7 +3393,7 @@ c2039
     ldx l0063                                                         ; 216a: a6 63       .c  :2039[1]
     ldy l0100,x                                                       ; 216c: bc 00 01    ... :203b[1]
     sty l0060                                                         ; 216f: 84 60       .`  :203e[1]
-    lda envelope_2,y                                                  ; 2171: b9 c2 38    ..8 :2040[1]
+    lda object_z_order,y                                              ; 2171: b9 c2 38    ..8 :2040[1]
     sta l0061                                                         ; 2174: 85 61       .a  :2043[1]
     ldx #0                                                            ; 2176: a2 00       ..  :2045[1]
 c2047
@@ -3405,7 +3405,7 @@ loop_c204a
     iny                                                               ; 2180: c8          .   :204f[1]
     cpy l0062                                                         ; 2181: c4 62       .b  :2050[1]
     bcc loop_c204a                                                    ; 2183: 90 f6       ..  :2052[1]
-    lda envelope_2,x                                                  ; 2185: bd c2 38    ..8 :2054[1]
+    lda object_z_order,x                                              ; 2185: bd c2 38    ..8 :2054[1]
     cmp l0061                                                         ; 2188: c5 61       .a  :2057[1]
     bcc c2061                                                         ; 218a: 90 06       ..  :2059[1]
     bne c208d                                                         ; 218c: d0 30       .0  :205b[1]
@@ -3455,7 +3455,7 @@ c209e
 loop_c20a6
     ldy l0100,x                                                       ; 21d7: bc 00 01    ... :20a6[1]
     bmi c20be                                                         ; 21da: 30 13       0.  :20a9[1]
-    lda envelope_2,y                                                  ; 21dc: b9 c2 38    ..8 :20ab[1]
+    lda object_z_order,y                                              ; 21dc: b9 c2 38    ..8 :20ab[1]
     cmp l0061                                                         ; 21df: c5 61       .a  :20ae[1]
     bcc c20b8                                                         ; 21e1: 90 06       ..  :20b0[1]
     bne c20be                                                         ; 21e3: d0 0a       ..  :20b2[1]
@@ -7096,8 +7096,8 @@ sound_data1
     !word 1                                                           ; 39db: 01 00       ..  :38aa[1]   ; duration
 ; The envelope definitions get overwritten after initialisation - this is harmless as
 ; they will have been copied into the OS workspace when they were defined.
-envelope_1
 object_sprite_mask_type
+envelope_1
     !byte 1                                                           ; 39dd: 01          .   :38ac[1]   ; envelope number
 some_spriteid
     !byte 3                                                           ; 39de: 03          .   :38ad[1]   ; step length (100ths of a second)
@@ -7118,6 +7118,7 @@ sound_data3
     !word 1                                                           ; 39ed: 01 00       ..  :38bc[1]   ; amplitude
     !word 7                                                           ; 39ef: 07 00       ..  :38be[1]   ; pitch
     !word 100                                                         ; 39f1: 64 00       d.  :38c0[1]   ; duration
+object_z_order
 envelope_2
     !byte 2                                                           ; 39f3: 02          .   :38c2[1]   ; envelope number
 l38c3
@@ -7703,7 +7704,7 @@ init_tiles_loop
     lda #spriteid_198                                                 ; 3d66: a9 c6       ..
     sta some_spriteid                                                 ; 3d68: 8d ad 38    ..8
     lda #$80                                                          ; 3d6b: a9 80       ..
-    sta envelope_2                                                    ; 3d6d: 8d c2 38    ..8
+    sta object_z_order                                                ; 3d6d: 8d c2 38    ..8
     lda #$7f                                                          ; 3d70: a9 7f       ..
     sta l38c3                                                         ; 3d72: 8d c3 38    ..8
 ; seed random number generation by reading the User VIA timers
@@ -8518,7 +8519,6 @@ pydis_end
 ;     c1d16
 ;     c1f06
 ;     c1fe9
-;     c200d
 ;     c2020
 ;     c2027
 ;     c2039
@@ -8713,7 +8713,6 @@ pydis_end
 ;     loop_c0ac6
 ;     loop_c1df7
 ;     loop_c1fe1
-;     loop_c1ff5
 ;     loop_c2018
 ;     loop_c204a
 ;     loop_c20a6

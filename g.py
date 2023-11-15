@@ -199,7 +199,6 @@ substitute_labels = {
 s = SubstituteLabels(substitute_labels)
 set_label_maker_hook(s.substitute_label_maker)
 
-
 label(0x287, "first_byte_break_intercept")
 
 load(0x1234, "orig/g.dat", "6502", "ac5feeac5c32a306d4a73ba393677385")
@@ -210,7 +209,10 @@ move(0xc00, 0x3fcb, 0x402c-0x3fcb) # code copies 256 bytes, but this is what we 
 move(0xab7, 0x4088, 0x48)
 move(0x8000, 0x3fbb, 16)
 
+common_to_all()
+
 entry(0x3c06, "execution_start")
+
 
 # Zero page variables
 label(0x0002, "error_code_on_brk")
@@ -839,6 +841,9 @@ binary(0x1ea7, 4)
 label(0x1ea7, "bitmask_of_bits_to_keep_from_collision_map_table")
 binary(0x1eab, 16)
 label(0x1eab, "value_to_write_into_collision_map_table")
+
+label(0x1ff5, "check_object_loop")
+label(0x200d, "try_next_object")
 
 label(0x1589, "check_within_vertical_range")
 expr(0x1570, make_lo("screen_width_in_pixels"))

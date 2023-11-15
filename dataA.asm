@@ -105,7 +105,7 @@ print_encrypted_string_at_yx_centred                = $37f3
 wait_one_second_then_check_keys                     = $388d
 object_sprite_mask_type                             = $38ac
 l38ae                                               = $38ae
-object_something_table                              = $38c2
+object_z_order                                      = $38c2
 l38d8                                               = $38d8
 play_sound_yx                                       = $38f6
 define_envelope                                     = $395e
@@ -320,7 +320,7 @@ level_unchanged
     lda #$cd                                                          ; 3c26: a9 cd       ..
     sta object_sprite_mask_type,x                                     ; 3c28: 9d ac 38    ..8
     lda #$c0                                                          ; 3c2b: a9 c0       ..
-    sta object_something_table,x                                      ; 3c2d: 9d c2 38    ..8
+    sta object_z_order,x                                              ; 3c2d: 9d c2 38    ..8
 ; Set up the right mouse
     lda #$ff                                                          ; 3c30: a9 ff       ..
     sta sprite_reflect_flag                                           ; 3c32: 85 1d       ..
@@ -341,7 +341,7 @@ level_unchanged
     lda #$ce                                                          ; 3c51: a9 ce       ..
     sta object_sprite_mask_type,x                                     ; 3c53: 9d ac 38    ..8
     lda #$c0                                                          ; 3c56: a9 c0       ..
-    sta object_something_table,x                                      ; 3c58: 9d c2 38    ..8
+    sta object_z_order,x                                              ; 3c58: 9d c2 38    ..8
 ; Set up the ball TODO: plausible guess
     ldx #objectid_mouse_ball                                          ; 3c5b: a2 04       ..
     lda #0                                                            ; 3c5d: a9 00       ..
@@ -352,7 +352,7 @@ level_unchanged
     lda #$cc                                                          ; 3c6a: a9 cc       ..
     sta object_sprite_mask_type,x                                     ; 3c6c: 9d ac 38    ..8
     lda #$40 ; '@'                                                    ; 3c6f: a9 40       .@
-    sta object_something_table,x                                      ; 3c71: 9d c2 38    ..8
+    sta object_z_order,x                                              ; 3c71: 9d c2 38    ..8
 ; $3c74 referenced 1 time by $3bfb
 move_mouse_ball_if_room_0_local
     jmp move_mouse_ball_if_room_0                                     ; 3c74: 4c a8 3c    L.<
@@ -1813,7 +1813,7 @@ pydis_end
 ;     draw_sprite_a_at_cell_xy:                               3
 ;     find_or_create_menu_slot_for_A:                         3
 ;     l2eb6:                                                  3
-;     object_something_table:                                 3
+;     object_z_order:                                         3
 ;     move_mouse_ball_if_room_0:                              3
 ;     return1:                                                3
 ;     c3f8a:                                                  3
