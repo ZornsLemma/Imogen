@@ -150,6 +150,12 @@ constant(0x80, "player_collision_flag_mouse_ball")
 expr(0x3d1c, "player_collision_flag_mouse_ball")
 expr(0x4116, "player_collision_flag_baby")
 
+entry(0x3dfc, "something1_handler")
+entry(0x3e6c, "something1_not_first_update")
+entry(0x3e11, "level_unchanged2")
+label(0x9ff, "something1_flag_maybe")
+label(0x3eee, "something1_three_byte_table")
+
 # TODO: slight guesswork
 constant(2, "objectid_left_mouse")
 constant(3, "objectid_right_mouse")

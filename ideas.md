@@ -8,6 +8,8 @@
 
 * Use non-slashed zero when showing the number of transformations remaining?
 
+* Maybe ask on e.g. stardot if there are any known bugs? Of course we might discover these independently or discover new ones during disassembly.
+
 # Hacks
 
 * Could the duck be made more widely available?
