@@ -166,10 +166,18 @@ expr(0x3c5c, "objectid_mouse_ball")
 expr(0x3cc7, "object_spriteid + objectid_left_mouse")
 expr(0x3cce, "object_spriteid + objectid_right_mouse")
 expr(0x3ceb, "object_spriteid + objectid_right_mouse")
+# TODO: Looks like object IDs might be re-used across rooms, so some of these below are probably
+# wrong
 expr(0x3cf2, "object_spriteid + objectid_left_mouse")
 expr(0x3ee8, "object_spriteid + objectid_left_mouse")
 expr(0x3eeb, "object_spriteid + objectid_right_mouse")
 expr_label(0x9ac, "object_spriteid + objectid_mouse_ball")
+entry(0x3e69, "something1_initial_setup_done")
+
+constant(0x2, "objectid_left_trapdoor")
+constant(0x3, "objectid_right_trapdoor")
+expr(0x3e23, "objectid_left_trapdoor")
+expr(0x3e30, "objectid_right_trapdoor")
 
 # TODO: Use this more?
 def ldx_ldy_jsr_play_sound_yx(jsr_runtime_addr, s):

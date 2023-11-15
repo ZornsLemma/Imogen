@@ -4,8 +4,10 @@ game_area_height_cells             = 24
 game_area_width_cells              = 40
 last_level_letter                  = 81
 objectid_left_mouse                = 2
+objectid_left_trapdoor             = 2
 objectid_mouse_ball                = 4
 objectid_right_mouse               = 3
+objectid_right_trapdoor            = 3
 opcode_jmp                         = 76
 player_collision_flag_baby         = 6
 player_collision_flag_mouse_ball   = 128
@@ -591,19 +593,19 @@ something1_handler
 level_unchanged2
     lda desired_room_index                                            ; 3e11: a5 30       .0
     cmp #1                                                            ; 3e13: c9 01       ..
-    bne c3e69                                                         ; 3e15: d0 52       .R
+    bne something1_initial_setup_done                                 ; 3e15: d0 52       .R
     ldx #<envelope2                                                   ; 3e17: a2 2c       .,
     ldy #>envelope2                                                   ; 3e19: a0 44       .D
     jsr define_envelope                                               ; 3e1b: 20 5e 39     ^9
     ldx #$11                                                          ; 3e1e: a2 11       ..
     ldy #7                                                            ; 3e20: a0 07       ..
-    lda #2                                                            ; 3e22: a9 02       ..
+    lda #objectid_left_trapdoor                                       ; 3e22: a9 02       ..
     jsr set_object_position_from_cell_xy                              ; 3e24: 20 5d 1f     ].
     tax                                                               ; 3e27: aa          .
     lda #1                                                            ; 3e28: a9 01       ..
     sta object_direction,x                                            ; 3e2a: 9d be 09    ...
     ldx #$17                                                          ; 3e2d: a2 17       ..
-    lda #3                                                            ; 3e2f: a9 03       ..
+    lda #objectid_right_trapdoor                                      ; 3e2f: a9 03       ..
     jsr set_object_position_from_cell_xy                              ; 3e31: 20 5d 1f     ].
     tax                                                               ; 3e34: aa          .
     lda #$ff                                                          ; 3e35: a9 ff       ..
@@ -619,7 +621,7 @@ level_unchanged2
     lda #1                                                            ; 3e4b: a9 01       ..
     sta height_in_cells                                               ; 3e4d: 85 3d       .=
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 3e4f: 20 44 1e     D.
-    jmp c3e69                                                         ; 3e52: 4c 69 3e    Li>
+    jmp something1_initial_setup_done                                 ; 3e52: 4c 69 3e    Li>
 
 ; $3e55 referenced 1 time by $3e41
 c3e55
@@ -633,7 +635,7 @@ c3e55
     ldx #$16                                                          ; 3e64: a2 16       ..
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 3e66: 20 44 1e     D.
 ; $3e69 referenced 2 times by $3e15, $3e52
-c3e69
+something1_initial_setup_done
     jmp c3ed7                                                         ; 3e69: 4c d7 3e    L.>
 
 ; $3e6c referenced 1 time by $3dff
@@ -1878,7 +1880,7 @@ pydis_end
 ;     l396f:                                                  2
 ;     c3b0e:                                                  2
 ;     level_unchanged2:                                       2
-;     c3e69:                                                  2
+;     something1_initial_setup_done:                          2
 ;     sub_c3ef1:                                              2
 ;     c3f51:                                                  2
 ;     l3fd5:                                                  2
@@ -1977,7 +1979,6 @@ pydis_end
 ;     c3de2
 ;     c3def
 ;     c3e55
-;     c3e69
 ;     c3ec1
 ;     c3ed2
 ;     c3ed4
@@ -2156,11 +2157,17 @@ pydis_end
 !if (objectid_left_mouse) != $02 {
     !error "Assertion failed: objectid_left_mouse == $02"
 }
+!if (objectid_left_trapdoor) != $02 {
+    !error "Assertion failed: objectid_left_trapdoor == $02"
+}
 !if (objectid_mouse_ball) != $04 {
     !error "Assertion failed: objectid_mouse_ball == $04"
 }
 !if (objectid_right_mouse) != $03 {
     !error "Assertion failed: objectid_right_mouse == $03"
+}
+!if (objectid_right_trapdoor) != $03 {
+    !error "Assertion failed: objectid_right_trapdoor == $03"
 }
 !if (player_collision_flag_baby) != $06 {
     !error "Assertion failed: player_collision_flag_baby == $06"
