@@ -9,8 +9,25 @@ sprite_dict = {
     0x3b: "spriteid_ball",
     0xc8: "spriteid_mouse",
     0xd3: "spriteid_saxophone",
+    0xd6: "spriteid_baby0",
+    0xd7: "spriteid_baby1",
+    0xd8: "spriteid_baby2",
+    0xd9: "spriteid_baby3",
+    0xda: "spriteid_baby4",
+    0xdb: "spriteid_baby5",
+    0xdc: "spriteid_baby6",
+    0xdd: "spriteid_baby7",
     0xde: "spriteid_table",
 }
+
+def spriteid(start_addr, end_addr=None):
+    if end_addr == None:
+        end_addr = start_addr
+    for addr in range(start_addr, end_addr):
+        v = get_u8_runtime(memorymanager.RuntimeAddr(addr))
+        if v in sprite_dict:
+            byte(addr)
+            expr(addr, sprite_dict[v])
 
 substitute_constants("jsr draw_sprite_a_at_cell_xy", 'a', sprite_dict, True)
 substitute_constants("jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map", 'a', sprite_dict, True)
@@ -32,7 +49,9 @@ entry(get_u16_binary(0x3ad9), "level_update_handler")
 label(get_u16_binary(0x3adb), "level_name")
 
 entry(0x3d21, "mouse_sprites_and_ball_movement_table") # TODO: improve
-label(0x4052, "some_data2")
+label(0x4052, "baby_spriteid_data")
+spriteid(0x4052, 0x407f)
+
 comment(0x4084, "redundant instruction", inline=True)
 comment(0x4086, "redundant instruction", inline=True)
 comment(0x4088, "redundant instruction", inline=True)

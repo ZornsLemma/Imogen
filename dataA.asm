@@ -7,6 +7,14 @@ objectid_left_mouse      = 2
 objectid_mouse_ball      = 4
 objectid_right_mouse     = 3
 opcode_jmp               = 76
+spriteid_baby0           = 214
+spriteid_baby1           = 215
+spriteid_baby2           = 216
+spriteid_baby3           = 217
+spriteid_baby4           = 218
+spriteid_baby5           = 219
+spriteid_baby6           = 220
+spriteid_baby7           = 221
 spriteid_ball            = 59
 spriteid_mouse           = 200
 spriteid_saxophone       = 211
@@ -901,11 +909,52 @@ loop_c4044
     jmp initialise_level                                              ; 404f: 4c 40 11    L@.
 
 ; $4052 referenced 2 times by $40ef, $4240
-some_data2
-    !byte $d6, $d7, $d8, $d9,   0, $dd, $dd, $dd, $dd, $dd, $dd, $dd  ; 4052: d6 d7 d8... ...
-    !byte $dd, $ff, $da, $da, $da, $da, $da, $da, $da, $da, $da, $da  ; 405e: dd ff da... ...
-    !byte   0, $db, $db, $db, $db, $db, $db, $db, $db, $ff, $d9, $d9  ; 406a: 00 db db... ...
-    !byte $d9, $d9, $d9, $d9, $d9, $d9,   0, $dc,   0                 ; 4076: d9 d9 d9... ...
+baby_spriteid_data
+    !byte spriteid_baby0                                              ; 4052: d6          .
+    !byte spriteid_baby1                                              ; 4053: d7          .
+    !byte spriteid_baby2                                              ; 4054: d8          .
+    !byte spriteid_baby3                                              ; 4055: d9          .
+    !byte 0                                                           ; 4056: 00          .
+    !byte spriteid_baby7                                              ; 4057: dd          .
+    !byte spriteid_baby7                                              ; 4058: dd          .
+    !byte spriteid_baby7                                              ; 4059: dd          .
+    !byte spriteid_baby7                                              ; 405a: dd          .
+    !byte spriteid_baby7                                              ; 405b: dd          .
+    !byte spriteid_baby7                                              ; 405c: dd          .
+    !byte spriteid_baby7                                              ; 405d: dd          .
+    !byte spriteid_baby7                                              ; 405e: dd          .
+    !byte $ff                                                         ; 405f: ff          .
+    !byte spriteid_baby4                                              ; 4060: da          .
+    !byte spriteid_baby4                                              ; 4061: da          .
+    !byte spriteid_baby4                                              ; 4062: da          .
+    !byte spriteid_baby4                                              ; 4063: da          .
+    !byte spriteid_baby4                                              ; 4064: da          .
+    !byte spriteid_baby4                                              ; 4065: da          .
+    !byte spriteid_baby4                                              ; 4066: da          .
+    !byte spriteid_baby4                                              ; 4067: da          .
+    !byte spriteid_baby4                                              ; 4068: da          .
+    !byte spriteid_baby4                                              ; 4069: da          .
+    !byte 0                                                           ; 406a: 00          .
+    !byte spriteid_baby5                                              ; 406b: db          .
+    !byte spriteid_baby5                                              ; 406c: db          .
+    !byte spriteid_baby5                                              ; 406d: db          .
+    !byte spriteid_baby5                                              ; 406e: db          .
+    !byte spriteid_baby5                                              ; 406f: db          .
+    !byte spriteid_baby5                                              ; 4070: db          .
+    !byte spriteid_baby5                                              ; 4071: db          .
+    !byte spriteid_baby5                                              ; 4072: db          .
+    !byte $ff                                                         ; 4073: ff          .
+    !byte spriteid_baby3                                              ; 4074: d9          .
+    !byte spriteid_baby3                                              ; 4075: d9          .
+    !byte spriteid_baby3                                              ; 4076: d9          .
+    !byte spriteid_baby3                                              ; 4077: d9          .
+    !byte spriteid_baby3                                              ; 4078: d9          .
+    !byte spriteid_baby3                                              ; 4079: d9          .
+    !byte spriteid_baby3                                              ; 407a: d9          .
+    !byte spriteid_baby3                                              ; 407b: d9          .
+    !byte 0                                                           ; 407c: 00          .
+    !byte spriteid_baby6                                              ; 407d: dc          .
+    !byte 0                                                           ; 407e: 00          .
 
 ; $407f referenced 1 time by $3b1d
 sub_c407f
@@ -973,7 +1022,7 @@ c40e4
 ; $40ee referenced 1 time by $40e9
 c40ee
     iny                                                               ; 40ee: c8          .
-    lda some_data2,y                                                  ; 40ef: b9 52 40    .R@
+    lda baby_spriteid_data,y                                          ; 40ef: b9 52 40    .R@
     bne c40f7                                                         ; 40f2: d0 03       ..
     ldy l0a72                                                         ; 40f4: ac 72 0a    .r.
 ; $40f7 referenced 1 time by $40f2
@@ -1161,7 +1210,7 @@ c4235
     lda l0a70                                                         ; 4237: ad 70 0a    .p.
     sta object_x_low,x                                                ; 423a: 9d 50 09    .P.
     ldy l0a73                                                         ; 423d: ac 73 0a    .s.
-    lda some_data2,y                                                  ; 4240: b9 52 40    .R@
+    lda baby_spriteid_data,y                                          ; 4240: b9 52 40    .R@
     sta object_spriteid,x                                             ; 4243: 9d a8 09    ...
     lda l0a04                                                         ; 4246: ad 04 0a    ...
     sta object_direction,x                                            ; 4249: 9d be 09    ...
@@ -1834,7 +1883,7 @@ pydis_end
 ;     c3f51:                                                  2
 ;     l3fd5:                                                  2
 ;     l3fd6:                                                  2
-;     some_data2:                                             2
+;     baby_spriteid_data:                                     2
 ;     l40e3:                                                  2
 ;     c412e:                                                  2
 ;     c415e:                                                  2
@@ -2136,6 +2185,30 @@ pydis_end
 }
 !if (sprite_data - level_data) != $09d1 {
     !error "Assertion failed: sprite_data - level_data == $09d1"
+}
+!if (spriteid_baby0) != $d6 {
+    !error "Assertion failed: spriteid_baby0 == $d6"
+}
+!if (spriteid_baby1) != $d7 {
+    !error "Assertion failed: spriteid_baby1 == $d7"
+}
+!if (spriteid_baby2) != $d8 {
+    !error "Assertion failed: spriteid_baby2 == $d8"
+}
+!if (spriteid_baby3) != $d9 {
+    !error "Assertion failed: spriteid_baby3 == $d9"
+}
+!if (spriteid_baby4) != $da {
+    !error "Assertion failed: spriteid_baby4 == $da"
+}
+!if (spriteid_baby5) != $db {
+    !error "Assertion failed: spriteid_baby5 == $db"
+}
+!if (spriteid_baby6) != $dc {
+    !error "Assertion failed: spriteid_baby6 == $dc"
+}
+!if (spriteid_baby7) != $dd {
+    !error "Assertion failed: spriteid_baby7 == $dd"
 }
 !if (spriteid_ball) != $3b {
     !error "Assertion failed: spriteid_ball == $3b"
