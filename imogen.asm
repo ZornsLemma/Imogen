@@ -93,7 +93,7 @@ print_encrypted_string_at_yx_centred                = &37f3
 wait_one_second_then_check_keys                     = &388d
 object_sprite_mask_type                             = &38ac
 play_sound_yx                                       = &38f6
-check_cursor_left_right_and_space                   = &3a8f
+check_menu_keys                                     = &3a8f
 level_data                                          = &3ad5
 level_init_after_load_handler_ptr                   = &3ad7
 update_room_ptr                                     = &3ad9
@@ -220,7 +220,7 @@ start_room = sub_c12ba+1
     iny                                                               ; 12d5: c8          .
     bne c12d1                                                         ; 12d6: d0 f9       ..
     inc l0071                                                         ; 12d8: e6 71       .q
-.something24_TODO
+.game_update
     inc l0073                                                         ; 12da: e6 73       .s
     dex                                                               ; 12dc: ca          .
     bne c12d1                                                         ; 12dd: d0 f2       ..

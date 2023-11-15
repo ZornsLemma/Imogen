@@ -708,6 +708,11 @@ label(0x129b, "skip_developer_mode_code1")
 comment(0x129b, "get room data address")
 comment(0x12a9, "read first byte into X and the second byte into Y. This is the player start position in cells")
 comment(0x12b6, "set player position")
+comment(0x12dd, "set screen colours (if not already set)")
+comment(0x12ee, "reset vsync counter")
+comment(0x12fc, "wait for vsync (if we can) before making any changes to the menu, to avoid flicker")
+label(0x12fc, "wait_for_vsync_if_we_have_time")
+label(0x1306, "no_time_to_wait")
 label(0x17f1, "skip_developer_mode_code2")
 label(0x181a, "skip_developer_mode_code3")
 label(0x137f, "reset_sprite_flags_and_exit")
@@ -1501,6 +1506,12 @@ comment(0x124f, "set current room number in level progress table")
 comment(0x125b, "set YX to the address of the room initialisation code, an address found in a table at start of the level data offset by twice the room number")
 comment(0x1266, "add two to the address in YX, to get past the two initial player position bytes")
 comment(0x126f, "call the room initialisation code")
+comment(0x12da, """*************************************************************************************
+
+Game Update
+
+*************************************************************************************""")
+
 
 comment(0x40d0, "Update the transformation count on screen at text position (35-37, 6). This takes care to update as few digits on screen as possible, probably to reduce flicker and to offset the relatively slow implementation of print_italic.")
 label(0x9ec, "current_transformations_remaining")
@@ -1636,7 +1647,7 @@ label(0x2a60, "skip_developer_escape_key_handling")
 label(0x2ab7, "skip_developer_shift_key_handling")
 label(0x2abd, "shift_key_detected")
 label(0x2ac4, "delay_loop1")
-label(0x3aa2, "read_jump_zx_keys")
+label(0x3aa2, "read_player_movement_keys")
 label(0x2890, "two_byte_table_based_on_left_right_direction")
 comment(0x2ac0, "wait for a bit", inline=True)
 label(0x36a8, "load_auxdata_loop")

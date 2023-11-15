@@ -766,28 +766,36 @@ return1
     rts                                                               ; 140a: 60          `   :12d9[1]
 
 ; TODO: This is called from level-specific machine code, e.g. see dataA.asm
-something24_TODO
+; *************************************************************************************
+; 
+; Game Update
+; 
+; *************************************************************************************
+game_update
     jsr something16_TODO                                              ; 140b: 20 d7 1f     .. :12da[1]
+; set screen colours (if not already set)
     lda gameplay_area_colour                                          ; 140e: ad 60 17    .`. :12dd[1]
-    bne c12fc                                                         ; 1411: d0 1a       ..  :12e0[1]
+    bne wait_for_vsync_if_we_have_time                                ; 1411: d0 1a       ..  :12e0[1]
     lda pending_toolbar_colour                                        ; 1413: ad 5d 17    .]. :12e2[1]
     sta toolbar_colour                                                ; 1416: 8d 5e 17    .^. :12e5[1]
     lda pending_gameplay_area_colour                                  ; 1419: ad 5f 17    ._. :12e8[1]
     sta gameplay_area_colour                                          ; 141c: 8d 60 17    .`. :12eb[1]
+; reset vsync counter
     jsr wait_for_vsync                                                ; 141f: 20 8c 17     .. :12ee[1]
     lda #0                                                            ; 1422: a9 00       ..  :12f1[1]
     sta vsync_counter                                                 ; 1424: 8d 8b 17    ... :12f3[1]
-    jsr check_cursor_left_right_and_space                             ; 1427: 20 8f 3a     .: :12f6[1]
-    jsr read_jump_zx_keys                                             ; 142a: 20 a2 3a     .: :12f9[1]
-c12fc
+    jsr check_menu_keys                                               ; 1427: 20 8f 3a     .: :12f6[1]
+    jsr read_player_movement_keys                                     ; 142a: 20 a2 3a     .: :12f9[1]
+; wait for vsync (if we can) before making any changes to the menu, to avoid flicker
+wait_for_vsync_if_we_have_time
     lda vsync_counter                                                 ; 142d: ad 8b 17    ... :12fc[1]
     cmp #4                                                            ; 1430: c9 04       ..  :12ff[1]
-    bcs c1306                                                         ; 1432: b0 03       ..  :1301[1]
+    bcs no_time_to_wait                                               ; 1432: b0 03       ..  :1301[1]
     jsr wait_for_vsync                                                ; 1434: 20 8c 17     .. :1303[1]
-c1306
+no_time_to_wait
     jsr update_menus                                                  ; 1437: 20 38 2a     8* :1306[1]
     jsr regulate_time_loop                                            ; 143a: 20 1e 13     .. :1309[1]
-    jsr read_jump_zx_keys                                             ; 143d: 20 a2 3a     .: :130c[1]
+    jsr read_player_movement_keys                                     ; 143d: 20 a2 3a     .: :130c[1]
     jsr check_for_next_player_animation                               ; 1440: 20 cd 22     ." :130f[1]
 ; update room
     ldx update_room_ptr                                               ; 1443: ae d9 3a    ..: :1312[1]
@@ -1576,7 +1584,7 @@ show_disk_error_dialog_if_display_is_initialised
     jsr wait_one_second_then_check_keys                               ; 1877: 20 8d 38     .8 :1746[1]
     jsr wait_one_second_then_check_keys                               ; 187a: 20 8d 38     .8 :1749[1]
 no_disk_error
-    jsr check_cursor_left_right_and_space                             ; 187d: 20 8f 3a     .: :174c[1]
+    jsr check_menu_keys                                               ; 187d: 20 8f 3a     .: :174c[1]
     lda error_code_on_brk                                             ; 1880: a5 02       ..  :174f[1]
     rts                                                               ; 1882: 60          `   :1751[1]
 
@@ -5022,7 +5030,7 @@ update_menus
     ldy timingA_counter_high                                          ; 2b6c: ac 05 11    ... :2a3b[1]
     jsr wait_for_timer_2_using_yx                                     ; 2b6f: 20 91 17     .. :2a3e[1]
     jsr draw_toolbar                                                  ; 2b72: 20 a1 29     .) :2a41[1]
-    jsr check_cursor_left_right_and_space                             ; 2b75: 20 8f 3a     .: :2a44[1]
+    jsr check_menu_keys                                               ; 2b75: 20 8f 3a     .: :2a44[1]
     lda developer_mode_sideways_ram_is_set_up_flag                    ; 2b78: a5 5b       .[  :2a47[1]
     beq skip_developer_escape_key_handling                            ; 2b7a: f0 15       ..  :2a49[1]
     lda developer_flags                                               ; 2b7c: ad 03 11    ... :2a4b[1]
@@ -5084,7 +5092,7 @@ skip_developer_shift_key_handling
     jmp update_menus                                                  ; 2beb: 4c 38 2a    L8* :2aba[1]
 
 shift_key_detected
-    jsr read_jump_zx_keys                                             ; 2bee: 20 a2 3a     .: :2abd[1]
+    jsr read_player_movement_keys                                     ; 2bee: 20 a2 3a     .: :2abd[1]
     ldx #$80                                                          ; 2bf1: a2 80       ..  :2ac0[1]   ; wait for a bit
     ldy #0                                                            ; 2bf3: a0 00       ..  :2ac2[1]
 delay_loop1
@@ -5098,7 +5106,7 @@ over_a_player_character_or_later_on_menu
     lda old_menu_index                                                ; 2bfe: a5 25       .%  :2acd[1]
     cmp menu_index_for_first_player_character                         ; 2c00: cd 6d 29    .m) :2acf[1]
     bcs return19                                                      ; 2c03: b0 06       ..  :2ad2[1]
-    jsr read_jump_zx_keys                                             ; 2c05: 20 a2 3a     .: :2ad4[1]
+    jsr read_player_movement_keys                                     ; 2c05: 20 a2 3a     .: :2ad4[1]
     jsr update_main_keys                                              ; 2c08: 20 12 3a     .: :2ad7[1]
 return19
     rts                                                               ; 2c0b: 60          `   :2ada[1]
@@ -6637,7 +6645,7 @@ c35d5
     bne c35e2                                                         ; 370e: d0 03       ..  :35dd[1]
     jsr prompt_user_to_insert_correct_disc                            ; 3710: 20 17 36     .6 :35df[1]
 c35e2
-    jsr check_cursor_left_right_and_space                             ; 3713: 20 8f 3a     .: :35e2[1]
+    jsr check_menu_keys                                               ; 3713: 20 8f 3a     .: :35e2[1]
     lda osfile_action_load_or_save                                    ; 3716: ad 97 34    ..4 :35e5[1]
     bne c35ed                                                         ; 3719: d0 03       ..  :35e8[1]
     jmp remove_dialog                                                 ; 371b: 4c 53 04    LS. :35ea[1]
@@ -7077,7 +7085,7 @@ wait_one_second_loop
     lda vsync_counter                                                 ; 39c3: ad 8b 17    ... :3892[1]
     cmp #50                                                           ; 39c6: c9 32       .2  :3895[1]
     bcc wait_one_second_loop                                          ; 39c8: 90 f9       ..  :3897[1]
-    jmp check_cursor_left_right_and_space                             ; 39ca: 4c 8f 3a    L.: :3899[1]
+    jmp check_menu_keys                                               ; 39ca: 4c 8f 3a    L.: :3899[1]
 
 auxcode_filename
     !text "auxcode", $0d                                              ; 39cd: 61 75 78... aux :389c[1]
@@ -7431,7 +7439,7 @@ z_key_pressed
 auto_repeat_delay
     !byte $10                                                         ; 3bbf: 10          .   :3a8e[1]
 
-check_cursor_left_right_and_space
+check_menu_keys
     lda space_bar_press_pending                                       ; 3bc0: a5 2a       .*  :3a8f[1]
     sta space_flag2                                                   ; 3bc2: 8d a0 3a    ..: :3a91[1]
     lda left_right_direction                                          ; 3bc5: a5 28       .(  :3a94[1]
@@ -7446,7 +7454,7 @@ space_flag2
 left_right_flag_pending
     !byte 0                                                           ; 3bd2: 00          .   :3aa1[1]
 
-read_jump_zx_keys
+read_player_movement_keys
     lda jump_requested                                                ; 3bd3: ad c7 3a    ..: :3aa2[1]
     sta jump_requested_previous_tick                                  ; 3bd6: 8d c8 3a    ..: :3aa5[1]
     lda return_key_pressed_pending                                    ; 3bd9: a5 46       .F  :3aa8[1]
@@ -8501,8 +8509,6 @@ pydis_end
 
 ; Automatically generated labels:
 ;     c0ae6
-;     c12fc
-;     c1306
 ;     c149c
 ;     c16aa
 ;     c19e5

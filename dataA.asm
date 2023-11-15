@@ -66,7 +66,7 @@ tile_all_set_pixels                                 = $0aa9
 developer_flags                                     = $1103
 initialise_level                                    = $1140
 start_room                                          = $12bb
-something24_TODO                                    = $12da
+game_update                                         = $12da
 update_room_first_update_flag                       = $132b
 pending_toolbar_colour                              = $175d
 toolbar_colour                                      = $175e
@@ -111,7 +111,7 @@ play_sound_yx                                       = $38f6
 define_envelope                                     = $395e
 l396f                                               = $396f
 l3970                                               = $3970
-check_cursor_left_right_and_space                   = $3a8f
+check_menu_keys                                     = $3a8f
 auxcode                                             = $53c0
 check_password                                      = $53c0
 
@@ -270,7 +270,7 @@ room_1_code
     jsr start_room                                                    ; 3bd1: 20 bb 12     ..
 ; $3bd4 referenced 1 time by $3bdb
 loop_c3bd4
-    jsr something24_TODO                                              ; 3bd4: 20 da 12     ..
+    jsr game_update                                                   ; 3bd4: 20 da 12     ..
     sta l0070                                                         ; 3bd7: 85 70       .p
     and #4                                                            ; 3bd9: 29 04       ).
     beq loop_c3bd4                                                    ; 3bdb: f0 f7       ..
@@ -543,7 +543,7 @@ room_2_code
     jsr start_room                                                    ; 3dcf: 20 bb 12     ..
 ; $3dd2 referenced 1 time by $3df3
 c3dd2
-    jsr something24_TODO                                              ; 3dd2: 20 da 12     ..
+    jsr game_update                                                   ; 3dd2: 20 da 12     ..
     sta l0070                                                         ; 3dd5: 85 70       .p
     and #1                                                            ; 3dd7: 29 01       ).
     beq c3de2                                                         ; 3dd9: f0 07       ..
@@ -894,7 +894,7 @@ room_3_code
     jsr start_room                                                    ; 4041: 20 bb 12     ..
 ; $4044 referenced 1 time by $4049
 loop_c4044
-    jsr something24_TODO                                              ; 4044: 20 da 12     ..
+    jsr game_update                                                   ; 4044: 20 da 12     ..
     and #8                                                            ; 4047: 29 08       ).
     beq loop_c4044                                                    ; 4049: f0 f9       ..
     ldx #1                                                            ; 404b: a2 01       ..
@@ -1248,7 +1248,7 @@ room_4_code
     jsr start_room                                                    ; 42e7: 20 bb 12     ..
 ; $42ea referenced 1 time by $42ef
 loop_c42ea
-    jsr something24_TODO                                              ; 42ea: 20 da 12     ..
+    jsr game_update                                                   ; 42ea: 20 da 12     ..
     and #1                                                            ; 42ed: 29 01       ).
     beq loop_c42ea                                                    ; 42ef: f0 f9       ..
     ldx #1                                                            ; 42f1: a2 01       ..
@@ -1799,7 +1799,7 @@ pydis_end
 ;     saxophone_collected_flag:                               4
 ;     mouse_ball_position:                                    4
 ;     start_room:                                             4
-;     something24_TODO:                                       4
+;     game_update:                                            4
 ;     draw_floor_walls_and_ceiling_around_solid_rock:         4
 ;     sub_c3f8b:                                              4
 ;     c41d9:                                                  4

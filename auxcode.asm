@@ -52,7 +52,7 @@ tile_all_set_pixels                                 = $0aa9
 developer_flags                                     = $1103
 initialise_level                                    = $1140
 start_room                                          = $12bb
-something24_TODO                                    = $12da
+game_update                                         = $12da
 update_room_first_update_flag                       = $132b
 pending_toolbar_colour                              = $175d
 toolbar_colour                                      = $175e
@@ -83,7 +83,7 @@ print_encrypted_string_at_yx_centred                = $37f3
 wait_one_second_then_check_keys                     = $388d
 object_sprite_mask_type                             = $38ac
 play_sound_yx                                       = $38f6
-check_cursor_left_right_and_space                   = $3a8f
+check_menu_keys                                     = $3a8f
 level_data                                          = $3ad5
 level_init_after_load_handler_ptr                   = $3ad7
 update_room_ptr                                     = $3ad9
@@ -512,7 +512,7 @@ line_feed_loop
     lda #osbyte_flush_buffer_class                                    ; 577c: a9 0f       ..
     ldx #1                                                            ; 577e: a2 01       ..
     jsr osbyte                                                        ; 5780: 20 f4 ff     ..            ; Flush input buffers (X non-zero)
-    jsr check_cursor_left_right_and_space                             ; 5783: 20 8f 3a     .:
+    jsr check_menu_keys                                               ; 5783: 20 8f 3a     .:
     lda #1                                                            ; 5786: a9 01       ..
     jmp return1                                                       ; 5788: 4c 4e 54    LNT
 
