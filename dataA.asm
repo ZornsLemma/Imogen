@@ -182,7 +182,7 @@ c3b0e
     rts                                                               ; 3b16: 60          `
 
 level_update_handler
-    jsr sub_c3be4                                                     ; 3b17: 20 e4 3b     .;
+    jsr mice_and_ball_handler                                         ; 3b17: 20 e4 3b     .;
     jsr sub_c3dfc                                                     ; 3b1a: 20 fc 3d     .=
     jsr sub_c407f                                                     ; 3b1d: 20 7f 40     .@
     jsr sub_c3f02                                                     ; 3b20: 20 02 3f     .?
@@ -288,7 +288,7 @@ loop_c3bd4
     ldy desired_level                                                 ; 3bdf: a4 31       .1
     jsr initialise_level                                              ; 3be1: 20 40 11     @.
 ; $3be4 referenced 1 time by $3b17
-sub_c3be4
+mice_and_ball_handler
     lda update_room_first_update_flag                                 ; 3be4: ad 2b 13    .+.
     bne initialise_mouse_ball_position_if_level_changed               ; 3be7: d0 03       ..
     jmp bump_and_wrap_mouse_ball_position                             ; 3be9: 4c 77 3c    Lw<
@@ -1919,7 +1919,7 @@ pydis_end
 ;     l3970:                                                  1
 ;     developer_mode_not_active:                              1
 ;     loop_c3bd4:                                             1
-;     sub_c3be4:                                              1
+;     mice_and_ball_handler:                                  1
 ;     initialise_mouse_ball_position_if_level_changed:        1
 ;     level_unchanged:                                        1
 ;     move_mouse_ball_if_room_0_local:                        1
@@ -2063,7 +2063,6 @@ pydis_end
 ;     loop_c3bd4
 ;     loop_c4044
 ;     loop_c42ea
-;     sub_c3be4
 ;     sub_c3dfc
 ;     sub_c3ef1
 ;     sub_c3f02
