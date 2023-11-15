@@ -11,6 +11,7 @@ bytes_per_cell                                  = 8
 bytes_per_character_row                         = 320
 caps_mask                                       = 223
 cells_per_line                                  = 40
+collision_map_length                            = 240
 colour_black                                    = 0
 colour_blue                                     = 4
 colour_cyan                                     = 6
@@ -2874,18 +2875,24 @@ restore_ay_and_return
     pla                                                               ; 1f23: 68          h   :1df2[1]
     rts                                                               ; 1f24: 60          `   :1df3[1]
 
-; clear the game area of the screen to 255, and also clear the collision map
+; *************************************************************************************
+; 
+; Clear the game area
+; 
+; Set all the game area pixels, and clear the collision map
+; 
+; *************************************************************************************
 clear_game_area
     lda #0                                                            ; 1f25: a9 00       ..  :1df4[1]
     tay                                                               ; 1f27: a8          .   :1df6[1]
-loop_c1df7
+clear_collision_map_loop
     sta collision_map,y                                               ; 1f28: 99 00 0c    ... :1df7[1]
     iny                                                               ; 1f2b: c8          .   :1dfa[1]
-    cpy #$f0                                                          ; 1f2c: c0 f0       ..  :1dfb[1]
-    bne loop_c1df7                                                    ; 1f2e: d0 f8       ..  :1dfd[1]
-    ldy #0                                                            ; 1f30: a0 00       ..  :1dff[1]
+    cpy #collision_map_length                                         ; 1f2c: c0 f0       ..  :1dfb[1]
+    bne clear_collision_map_loop                                      ; 1f2e: d0 f8       ..  :1dfd[1]
+    ldy #<game_area_screen_address                                    ; 1f30: a0 00       ..  :1dff[1]
     sty screen_address_low                                            ; 1f32: 84 70       .p  :1e01[1]
-    ldx #$62 ; 'b'                                                    ; 1f34: a2 62       .b  :1e03[1]
+    ldx #>game_area_screen_address                                    ; 1f34: a2 62       .b  :1e03[1]
     stx screen_address_high                                           ; 1f36: 86 71       .q  :1e05[1]
     lda #$ff                                                          ; 1f38: a9 ff       ..  :1e07[1]
     ldx #$80                                                          ; 1f3a: a2 80       ..  :1e09[1]
@@ -3112,9 +3119,17 @@ write_a_single_value_to_cell_in_collision_map
     lda temp_value                                                    ; 2028: a5 49       .I  :1ef7[1]
     rts                                                               ; 202a: 60          `   :1ef9[1]
 
-; TODO: speculating but think this is right - my skimming of existing collision map
-; disassembly suggests it stores 2 bits per cell, so we have 10 bytes per 40 column row
-; (4 cells per byte), which seems to fit with the constants in this code
+; *************************************************************************************
+; 
+; Read a two bit value from the collision map at X,Y
+; 
+; On Entry:
+;     (X,Y): cell position to read the collision map
+; 
+; On Exit:
+;     A: holds value 0-3 from the collision map
+; 
+; *************************************************************************************
 read_collision_map_value_for_xy
     cpx #game_area_width_cells                                        ; 202b: e0 28       .(  :1efa[1]
     bcs outside_game_area                                             ; 202d: b0 2f       ./  :1efc[1]
@@ -3123,7 +3138,7 @@ read_collision_map_value_for_xy
     stx saved_x                                                       ; 2033: 86 4a       .J  :1f02[1]
     sty saved_y                                                       ; 2035: 84 4b       .K  :1f04[1]
 ; Set temp_value=10*Y
-c1f06
+retry_read_collision_map
     tya                                                               ; 2037: 98          .   :1f06[1]
     asl                                                               ; 2038: 0a          .   :1f07[1]
     sta temp_value                                                    ; 2039: 85 49       .I  :1f08[1]
@@ -3162,18 +3177,22 @@ outside_game_area
     bpl return8                                                       ; 2060: 10 fb       ..  :1f2f[1]
     stx temp_coordinate                                               ; 2062: 86 4a       .J  :1f31[1]
     sty l004b                                                         ; 2064: 84 4b       .K  :1f33[1]
+; next time, read from leftmost column
     ldx #0                                                            ; 2066: a2 00       ..  :1f35[1]
     lda temp_coordinate                                               ; 2068: a5 4a       .J  :1f37[1]
-    bmi c1f06                                                         ; 206a: 30 cb       0.  :1f39[1]
-    ldx #$27 ; '''                                                    ; 206c: a2 27       .'  :1f3b[1]
-    cmp #$28 ; '('                                                    ; 206e: c9 28       .(  :1f3d[1]
-    bcs c1f06                                                         ; 2070: b0 c5       ..  :1f3f[1]
+    bmi retry_read_collision_map                                      ; 206a: 30 cb       0.  :1f39[1]
+; next time, read from rightmost column
+    ldx #game_area_width_cells-1                                      ; 206c: a2 27       .'  :1f3b[1]
+    cmp #game_area_width_cells                                        ; 206e: c9 28       .(  :1f3d[1]
+    bcs retry_read_collision_map                                      ; 2070: b0 c5       ..  :1f3f[1]
     tax                                                               ; 2072: aa          .   :1f41[1]
+; next time, read from topmost column
     ldy #0                                                            ; 2073: a0 00       ..  :1f42[1]
     lda l004b                                                         ; 2075: a5 4b       .K  :1f44[1]
-    bmi c1f06                                                         ; 2077: 30 be       0.  :1f46[1]
-    ldy #$17                                                          ; 2079: a0 17       ..  :1f48[1]
-    bne c1f06                                                         ; 207b: d0 ba       ..  :1f4a[1]
+    bmi retry_read_collision_map                                      ; 2077: 30 be       0.  :1f46[1]
+; next time, read from bottommost column
+    ldy #game_area_height_cells-1                                     ; 2079: a0 17       ..  :1f48[1]
+    bne retry_read_collision_map                                      ; 207b: d0 ba       ..  :1f4a[1]
 ; TODO: this is used by e.g. dataA
 ; *************************************************************************************
 ; 
@@ -8601,7 +8620,6 @@ pydis_end
 ;     c1a59
 ;     c1a8f
 ;     c1d16
-;     c1f06
 ;     c2047
 ;     c2061
 ;     c207d
@@ -8757,7 +8775,6 @@ pydis_end
 ;     lbf00
 ;     loop_c0aba
 ;     loop_c0ac6
-;     loop_c1df7
 ;     loop_c204a
 ;     loop_c20a6
 ;     loop_c20da
@@ -8886,6 +8903,9 @@ pydis_end
 }
 !if (<envelope_3) != $d8 {
     !error "Assertion failed: <envelope_3 == $d8"
+}
+!if (<game_area_screen_address) != $00 {
+    !error "Assertion failed: <game_area_screen_address == $00"
 }
 !if (<icodata) != $ff {
     !error "Assertion failed: <icodata == $ff"
@@ -9103,6 +9123,9 @@ pydis_end
 !if (>envelope_3) != $38 {
     !error "Assertion failed: >envelope_3 == $38"
 }
+!if (>game_area_screen_address) != $62 {
+    !error "Assertion failed: >game_area_screen_address == $62"
+}
 !if (>icodata) != $40 {
     !error "Assertion failed: >icodata == $40"
 }
@@ -9289,6 +9312,9 @@ pydis_end
 !if (check_password) != $53c0 {
     !error "Assertion failed: check_password == $53c0"
 }
+!if (collision_map_length) != $f0 {
+    !error "Assertion failed: collision_map_length == $f0"
+}
 !if (colour_black) != $00 {
     !error "Assertion failed: colour_black == $00"
 }
@@ -9346,11 +9372,17 @@ pydis_end
 !if (game_area_height_cells+1) != $19 {
     !error "Assertion failed: game_area_height_cells+1 == $19"
 }
+!if (game_area_height_cells-1) != $17 {
+    !error "Assertion failed: game_area_height_cells-1 == $17"
+}
 !if (game_area_width_cells) != $28 {
     !error "Assertion failed: game_area_width_cells == $28"
 }
 !if (game_area_width_cells+1) != $29 {
     !error "Assertion failed: game_area_width_cells+1 == $29"
+}
+!if (game_area_width_cells-1) != $27 {
+    !error "Assertion failed: game_area_width_cells-1 == $27"
 }
 !if (icodata) != $40ff {
     !error "Assertion failed: icodata == $40ff"

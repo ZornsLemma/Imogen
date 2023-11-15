@@ -47,6 +47,9 @@ constant(0x0b, "max_objects")
 
 constant(16, "num_levels")
 
+# grid of 40x24x2 bits = 240 bytes
+constant(240, "collision_map_length")
+
 # NOTE:
 #
 #   Ranges here are *binary* NOT the *runtime* addresses as used everywhere else.
@@ -878,9 +881,19 @@ expr(0x1e2a, "game_area_width_cells+1")
 expr(0x1e3a, "game_area_height_cells+1")
 expr(0x1e3e, "game_area_height_cells")
 
-comment(0x1df4, "clear the game area of the screen to 255, and also clear the collision map")
+comment(0x1df4, """*************************************************************************************
+
+Clear the game area
+
+Set all the game area pixels, and clear the collision map
+
+*************************************************************************************""")
 label(0x1df4, "clear_game_area")
+label(0x1df7, "clear_collision_map_loop")
+expr(0x1dfc, "collision_map_length")
 label(0x1e0b, "clear_screen_game_area_loop")
+expr(0x1e00, make_lo("game_area_screen_address"))
+expr(0x1e04, make_hi("game_area_screen_address"))
 
 binary(0x1ea7, 4)
 label(0x1ea7, "bitmask_of_bits_to_keep_from_collision_map_table")
@@ -2718,11 +2731,31 @@ Once the rocks of the room have been drawn, this function carves the floor, wall
 
 *************************************************************************************""")
 
-entry(0x1efa, "read_collision_map_value_for_xy")
-comment(0x1efa, "TODO: speculating but think this is right - my skimming of existing collision map disassembly suggests it stores 2 bits per cell, so we have 10 bytes per 40 column row (4 cells per byte), which seems to fit with the constants in this code")
+label(0x1efa, "read_collision_map_value_for_xy")
+label(0x1f06, "retry_read_collision_map")
+comment(0x1f35, "next time, read from leftmost column")
+comment(0x1f3b, "next time, read from rightmost column")
+comment(0x1f42, "next time, read from topmost column")
+comment(0x1f48, "next time, read from bottommost column")
+
+comment(0x1efa, """*************************************************************************************
+
+Read a two bit value from the collision map at X,Y
+
+On Entry:
+    (X,Y): cell position to read the collision map
+
+On Exit:
+    A: holds value 0-3 from the collision map
+
+*************************************************************************************""")
 expr(0x1efb, "game_area_width_cells")
 expr(0x1eff, "game_area_height_cells")
 entry(0x1f2d, "outside_game_area")
+expr(0x1f3c, "game_area_width_cells-1")
+expr(0x1f3e, "game_area_width_cells")
+expr(0x1f49, "game_area_height_cells-1")
+
 comment(0x1f4c, """*************************************************************************************
 
 Draw a sprite at a cell position
