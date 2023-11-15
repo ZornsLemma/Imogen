@@ -1,13 +1,12 @@
 from commands import *
 import acorn
-# TODO: Maybe we shouldn't import common here - does it mess things up too much? I did this to share game_area_height_characters - if that's all we gain, we should maybe just duplicate it.
-from common import *
 acorn.bbc()
 
 constant(21, "vdu_disable")
 constant(22, "vdu_set_mode")
 constant(31, "vdu_goto_xy")
 constant(0xffdd, "osfile")
+constant(24, "game_area_height_cells")
 
 # This code is loaded at &3900 at the end of the BASIC loader, but it is relocated down to &1200.
 # It's cleaner for the disassembly to pretend it's just loaded directly at &1200.

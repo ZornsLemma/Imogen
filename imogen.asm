@@ -5,14 +5,10 @@ crtc_screen_start_high                  = 12
 crtc_screen_start_low                   = 13
 crtc_vert_displayed                     = 6
 crtc_vert_sync_pos                      = 7
-first_level_letter                      = 65
 game_area_height_cells                  = 24
-game_area_width_cells                   = 40
 jmp_indirect_opcode                     = 108
 jsr_opcode                              = 32
-last_level_letter                       = 81
 load_address                            = 14592
-opcode_jmp                              = 76
 osbyte_opt                              = 139
 osbyte_read_write_escape_break_effect   = 200
 osbyte_tv                               = 144
@@ -26,87 +22,30 @@ vdu_goto_xy                             = 31
 vdu_set_mode                            = 22
 
 ; Memory locations
-l0000                                               = &0000
-l0001                                               = &0001
-l0002                                               = &0002
-l0003                                               = &0003
-l0004                                               = &0004
-characters_entered                                  = &0005
-sprite_reflect_flag                                 = &001d
-desired_room_index                                  = &0030
-desired_level                                       = &0031
-temp_sprite_x_offset                                = &003a
-temp_sprite_y_offset                                = &003b
-width_in_cells                                      = &003c
-height_in_cells                                     = &003d
-value_to_write_to_collision_map                     = &003e
-source_sprite_memory_low                            = &0040
-source_sprite_memory_high                           = &0041
-previous_room_index                                 = &0050
-previous_level                                      = &0051
-developer_mode_sideways_ram_is_set_up_flag          = &005b
-l0070                                               = &0070
-l0071                                               = &0071
-l0072                                               = &0072
-l0073                                               = &0073
-l0074                                               = &0074
-l0076                                               = &0076
-l0080                                               = &0080
-l0081                                               = &0081
-l0082                                               = &0082
-l0086                                               = &0086
-l0087                                               = &0087
-l0088                                               = &0088
-show_dialog_box                                     = &040a
-remove_dialog                                       = &0453
-object_x_low                                        = &0950
-object_x_low_old                                    = &095b
-object_x_high                                       = &0966
-object_x_high_old                                   = &0971
-object_y_low                                        = &097c
-object_y_low_old                                    = &0987
-object_y_high                                       = &0992
-object_y_high_old                                   = &099d
-object_spriteid                                     = &09a8
-object_spriteid_old                                 = &09b3
-object_direction                                    = &09be
-object_direction_old                                = &09c9
-level_progress_table                                = &09ef
-string_input_buffer                                 = &0a90
-tile_all_set_pixels                                 = &0aa9
-developer_flags                                     = &1103
-initialise_level                                    = &1140
-draw_rope                                           = &1db9
-write_value_to_a_rectangle_of_cells_in_collision_map = &1e44
-write_a_single_value_to_cell_in_collision_map       = &1ebb
-draw_sprite_a_at_cell_xy                            = &1f4c
-draw_sprite_a_at_cell_xy_and_write_to_collision_map = &1f57
-set_object_position_from_cell_xy                    = &1f5d
-set_object_position_from_current_sprite_position    = &1f6d
-play_landing_sound                                  = &23a9
-something59_TODO                                    = &2894
-something55_TODO                                    = &28e2
-insert_character_menu_item_into_toolbar             = &2b87
-find_or_create_menu_slot_for_A                      = &2bbd
-remove_item_from_toolbar_menu                       = &2be0
-print_encrypted_string_at_yx_centred                = &37f3
-wait_one_second_then_check_keys                     = &388d
-object_sprite_mask_type                             = &38ac
-play_sound_yx                                       = &38f6
-check_menu_keys                                     = &3a8f
-level_data                                          = &3ad5
-level_init_after_load_handler_ptr                   = &3ad7
-update_room_ptr                                     = &3ad9
-level_name_ptr                                      = &3adb
-level_header_data                                   = &3adf
-auxcode                                             = &53c0
-check_password                                      = &53c0
-crtc_address_register                               = &fe00
-crtc_address_write                                  = &fe01
-oswrch                                              = &ffee
-osword                                              = &fff1
-osbyte                                              = &fff4
-oscli                                               = &fff7
+l0000                   = &0000
+l0001                   = &0001
+l0002                   = &0002
+l0003                   = &0003
+l0004                   = &0004
+l0005                   = &0005
+l0070                   = &0070
+l0071                   = &0071
+l0072                   = &0072
+l0073                   = &0073
+l0074                   = &0074
+l0076                   = &0076
+l0080                   = &0080
+l0081                   = &0081
+l0082                   = &0082
+l0086                   = &0086
+l0087                   = &0087
+l0088                   = &0088
+crtc_address_register   = &fe00
+crtc_address_write      = &fe01
+oswrch                  = &ffee
+osword                  = &fff1
+osbyte                  = &fff4
+oscli                   = &fff7
 
     org &1200
 
@@ -199,8 +138,6 @@ oscli                                               = &fff7
     sty l0074                                                         ; 12b5: 84 74       .t
     lda #&e8                                                          ; 12b7: a9 e8       ..
     sec                                                               ; 12b9: 38          8
-.sub_c12ba
-start_room = sub_c12ba+1
     sbc l0074                                                         ; 12ba: e5 74       .t
     sta l0070                                                         ; 12bc: 85 70       .p
     lda #&13                                                          ; 12be: a9 13       ..
@@ -220,7 +157,6 @@ start_room = sub_c12ba+1
     iny                                                               ; 12d5: c8          .
     bne c12d1                                                         ; 12d6: d0 f9       ..
     inc l0071                                                         ; 12d8: e6 71       .q
-.game_update
     inc l0073                                                         ; 12da: e6 73       .s
     dex                                                               ; 12dc: ca          .
     bne c12d1                                                         ; 12dd: d0 f2       ..
@@ -269,8 +205,6 @@ start_room = sub_c12ba+1
     sta l0000                                                         ; 1324: 85 00       ..
     lda #<osfile                                                      ; 1326: a9 dd       ..
     sta l0001                                                         ; 1328: 85 01       ..
-.sub_c132a
-update_room_first_update_flag = sub_c132a+1
     lda #>osfile                                                      ; 132a: a9 ff       ..
     sta l0002                                                         ; 132c: 85 02       ..
     lda #jmp_indirect_opcode                                          ; 132e: a9 6c       .l
@@ -278,7 +212,7 @@ update_room_first_update_flag = sub_c132a+1
     lda #&76 ; 'v'                                                    ; 1332: a9 76       .v
     sta l0004                                                         ; 1334: 85 04       ..
     lda #0                                                            ; 1336: a9 00       ..
-    sta characters_entered                                            ; 1338: 85 05       ..
+    sta l0005                                                         ; 1338: 85 05       ..
     lda #<osfile_load_filename                                        ; 133a: a9 a7       ..
     sta l0070                                                         ; 133c: 85 70       .p
     lda #>osfile_load_filename                                        ; 133e: a9 13       ..
@@ -444,19 +378,9 @@ update_room_first_update_flag = sub_c132a+1
     equb   0,   0,   0,   0,   0,   0,   0,   0,   7,   7,   7,   7   ; 1738: 00 00 00... ...
     equb &0f, &0f, &0f, &1f, &f8, &f8, &f0, &f0, &ff, &ff, &ff, &e0   ; 1744: 0f 0f 0f... ...
     equb &0f, &1f, &3f, &ff, &fe, &fe, &fe, &fe,   0,   0,   0,   0   ; 1750: 0f 1f 3f... ..?
-    equb   0                                                          ; 175c: 00          .
-.pending_toolbar_colour
-    equb 0                                                            ; 175d: 00          .
-.toolbar_colour
-    equb 0                                                            ; 175e: 00          .
-.pending_gameplay_area_colour
-    equb 0                                                            ; 175f: 00          .
-.gameplay_area_colour
-    equb 0, 0, 0, 0, 0                                                ; 1760: 00 00 00... ...
-.use_colour_flag
-    equb 0                                                            ; 1765: 00          .
-.set_toolbar_and_gameplay_area_colours
-    equb 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1         ; 1766: 00 00 00... ...
+    equb   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0   ; 175c: 00 00 00... ...
+    equb   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0   ; 1768: 00 00 00... ...
+    equb   0,   0,   1,   1                                           ; 1774: 00 00 01... ...
     equs "xpp"                                                        ; 1778: 78 70 70    xpp
     equb &f0, &f0, &e0, &e0, &e0, &1f, &1f, &1f, &0f, &0f, &0f,   7   ; 177b: f0 f0 e0... ...
     equb   7, &c0, &e0, &e0, &e0, &f0, &f0, &f0, &f8, &0e, &0e, &1e   ; 1787: 07 c0 e0... ...
@@ -510,12 +434,9 @@ update_room_first_update_flag = sub_c132a+1
     equb &fe, &fe, &fe, &fe, &fc, &fc, &fc, &f8,   0,   0,   0,   0   ; 1940: fe fe fe... ...
     equb   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0   ; 194c: 00 00 00... ...
     equb   3,   3,   3,   3,   1,   1,   1,   0, &f8, &f8, &f8, &f8   ; 1958: 03 03 03... ...
-    equb &f8, &fc                                                     ; 1964: f8 fc       ..
-.jmp_yx
-    equb &fc, &fe,   0,   0,   0,   0,   0,   0,   0,   0,   7, &0f   ; 1966: fc fe 00... ...
-    equb &0f, &1f, &1f, &3f, &7f, &7f, &f8, &f0, &f0, &e0, &c0, &c0   ; 1972: 0f 1f 1f... ...
-    equb &80,   0,   0,   0,   0,   0,   0,   0,   0,   0             ; 197e: 80 00 00... ...
-.initialise_brazier_and_fire
+    equb &f8, &fc, &fc, &fe,   0,   0,   0,   0,   0,   0,   0,   0   ; 1964: f8 fc fc... ...
+    equb   7, &0f, &0f, &1f, &1f, &3f, &7f, &7f, &f8, &f0, &f0, &e0   ; 1970: 07 0f 0f... ...
+    equb &c0, &c0, &80,   0,   0,   0,   0,   0,   0,   0,   0,   0   ; 197c: c0 c0 80... ...
     equb   0,   0,   0,   0,   0,   0,   0,   0, &fe, &fe, &fe, &fe   ; 1988: 00 00 00... ...
     equb &7e, &7f, &7f, &3f,   0,   0,   0,   0,   0,   0,   0, &80   ; 1994: 7e 7f 7f... ~..
     equb   1,   3,   3,   7,   7, &0f, &1f, &1f, &fe, &fc, &f8, &f0   ; 19a0: 01 03 03... ...
@@ -530,7 +451,6 @@ update_room_first_update_flag = sub_c132a+1
     equb   0,   0,   0,   0,   0,   0,   0,   0,   0, &ff, &ff, &7f   ; 19ff: 00 00 00... ...
     equb &7f, &7f                                                     ; 1a0b: 7f 7f       ..
     equs "???"                                                        ; 1a0d: 3f 3f 3f    ???
-.something14_TODO
     equb &e0, &c0, &c0, &c0, &c0, &80, &80, &80,   0,   0,   0,   0   ; 1a10: e0 c0 c0... ...
     equb   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0   ; 1a1c: 00 00 00... ...
     equb   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0   ; 1a28: 00 00 00... ...
@@ -545,35 +465,34 @@ update_room_first_update_flag = sub_c132a+1
     equb   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0   ; 1a94: 00 00 00... ...
     equb &fe, &7f, &3f, &0f,   3,   0,   0,   0,   0,   3, &ff, &ff   ; 1aa0: fe 7f 3f... ..?
     equb &ff,   0,   0,   0, &fe, &fc, &f8, &e0,   0,   0,   0,   0   ; 1aac: ff 00 00... ...
-    equb   0,   0                                                     ; 1ab8: 00 00       ..
-.current_room_index
-    equb 0                                                            ; 1aba: 00          .
-.copy_rectangle_of_memory_to_screen
-    equb   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0   ; 1abb: 00 00 00... ...
-    equb   0,   0,   0,   0,   0,   0,   0,   0,   0, &3f, &1f, &0f   ; 1ac7: 00 00 00... ...
-    equb   3,   0,   0,   0,   0, &c0, &f0, &ff, &ff, &7f,   0,   0   ; 1ad3: 03 00 00... ...
-    equb   0, &3f, &ff, &fe, &f8, &c0,   0,   0,   0, &80,   0,   0   ; 1adf: 00 3f ff... .?.
-    equb   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0   ; 1aeb: 00 00 00... ...
-    equb   0,   3, &0f, &ff, &ff, &ff,   0,   0,   0, &fc, &fe, &ff   ; 1af7: 00 03 0f... ...
-    equb &ff, &ff,   0,   0,   0,   0,   1, &ff, &ff, &ff,   0,   0   ; 1b03: ff ff 00... ...
-    equb   0, &1f, &ff, &ff, &ff, &ff,   0,   0,   0, &e0, &c0, &c0   ; 1b0f: 00 1f ff... ...
-    equb &80, &80,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0   ; 1b1b: 80 80 00... ...
-    equb   0,   0,   0, &0f, &0f, &0f,   0,   0,   0, &3c, &ff, &ff   ; 1b27: 00 00 00... ...
-    equb &ff, &ff,   0,   0,   0,   0,   0, &e0, &e0, &e0,   0,   0   ; 1b33: ff ff 00... ...
-    equb   0,   0,   0,   0,   0,   0,   0,   0,   0, &1f, &1f, &1f   ; 1b3f: 00 00 00... ...
-    equb &0e, &0e,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0   ; 1b4b: 0e 0e 00... ...
-    equb   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0   ; 1b57: 00 00 00... ...
-    equb   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0   ; 1b63: 00 00 00... ...
-    equb   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0   ; 1b6f: 00 00 00... ...
-    equb   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0   ; 1b7b: 00 00 00... ...
-    equb   0,   0,   0,   0,   0,   0,   0,   0,   0                  ; 1b87: 00 00 00... ...
-.draw_floor_walls_and_ceiling_around_solid_rock
-    equb 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0   ; 1b90: 00 00 00... ...
-    equb 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0   ; 1ba4: 00 00 00... ...
-    equb 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0   ; 1bb8: 00 00 00... ...
-    equb 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0   ; 1bcc: 00 00 00... ...
-    equb 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0   ; 1be0: 00 00 00... ...
-    equb 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0                           ; 1bf4: 00 00 00... ...
+    equb   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0   ; 1ab8: 00 00 00... ...
+    equb   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0   ; 1ac4: 00 00 00... ...
+    equb &3f, &1f, &0f,   3,   0,   0,   0,   0, &c0, &f0, &ff, &ff   ; 1ad0: 3f 1f 0f... ?..
+    equb &7f,   0,   0,   0, &3f, &ff, &fe, &f8, &c0,   0,   0,   0   ; 1adc: 7f 00 00... ...
+    equb &80,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0   ; 1ae8: 80 00 00... ...
+    equb   0,   0,   0,   0,   3, &0f, &ff, &ff, &ff,   0,   0,   0   ; 1af4: 00 00 00... ...
+    equb &fc, &fe, &ff, &ff, &ff,   0,   0,   0,   0,   1, &ff, &ff   ; 1b00: fc fe ff... ...
+    equb &ff,   0,   0,   0, &1f, &ff, &ff, &ff, &ff,   0,   0,   0   ; 1b0c: ff 00 00... ...
+    equb &e0, &c0, &c0, &80, &80,   0,   0,   0,   0,   0,   0,   0   ; 1b18: e0 c0 c0... ...
+    equb   0,   0,   0,   0,   0,   0, &0f, &0f, &0f,   0,   0,   0   ; 1b24: 00 00 00... ...
+    equb &3c, &ff, &ff, &ff, &ff,   0,   0,   0,   0,   0, &e0, &e0   ; 1b30: 3c ff ff... <..
+    equb &e0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0   ; 1b3c: e0 00 00... ...
+    equb &1f, &1f, &1f, &0e, &0e,   0,   0,   0,   0,   0,   0,   0   ; 1b48: 1f 1f 1f... ...
+    equb   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0   ; 1b54: 00 00 00... ...
+    equb   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0   ; 1b60: 00 00 00... ...
+    equb   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0   ; 1b6c: 00 00 00... ...
+    equb   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0   ; 1b78: 00 00 00... ...
+    equb   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0   ; 1b84: 00 00 00... ...
+    equb   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0   ; 1b90: 00 00 00... ...
+    equb   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0   ; 1b9c: 00 00 00... ...
+    equb   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0   ; 1ba8: 00 00 00... ...
+    equb   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0   ; 1bb4: 00 00 00... ...
+    equb   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0   ; 1bc0: 00 00 00... ...
+    equb   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0   ; 1bcc: 00 00 00... ...
+    equb   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0   ; 1bd8: 00 00 00... ...
+    equb   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0   ; 1be4: 00 00 00... ...
+    equb   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0   ; 1bf0: 00 00 00... ...
+    equb   0,   0,   0,   0                                           ; 1bfc: 00 00 00... ...
 .pydis_end
 
 ; Label references by decreasing frequency:
@@ -596,7 +515,7 @@ update_room_first_update_flag = sub_c132a+1
 ;     l0002:                   1
 ;     l0003:                   1
 ;     l0004:                   1
-;     characters_entered:      1
+;     l0005:                   1
 ;     l0076:                   1
 ;     l0080:                   1
 ;     l0082:                   1
@@ -626,6 +545,7 @@ update_room_first_update_flag = sub_c132a+1
 ;     l0002
 ;     l0003
 ;     l0004
+;     l0005
 ;     l0070
 ;     l0071
 ;     l0072
@@ -642,8 +562,6 @@ update_room_first_update_flag = sub_c132a+1
 ;     loop_c130f
 ;     loop_c137a
 ;     loop_c139d
-;     sub_c12ba
-;     sub_c132a
 ;     sub_c134d
 ;     sub_c139b
     assert <(l0080) == &80
