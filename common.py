@@ -93,6 +93,11 @@ def label_word(addr, s):
     label(addr, s)
     expr_label(addr + 1, make_add(s, "1"))
 
+def ab(addr, message=""):
+    if message != "":
+        message = ". "+message
+    comment(addr, "ALWAYS branch" + message, inline=True)
+
 def common_to_all():
     constant(0x4c, "opcode_jmp")
 

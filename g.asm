@@ -2277,7 +2277,7 @@ copy_one_tile_loop
     bcc cell_copy_loop                                                ; 1c6b: 90 a7       ..  :1b3a[1]
     inc cell_screen_address_high                                      ; 1c6d: e6 77       .w  :1b3c[1]
     clc                                                               ; 1c6f: 18          .   :1b3e[1]
-    bcc cell_copy_loop                                                ; 1c70: 90 a2       ..  :1b3f[1]   ; always branch
+    bcc cell_copy_loop                                                ; 1c70: 90 a2       ..  :1b3f[1]   ; ALWAYS branch
 all_cells_in_row_copied
     inc current_row                                                   ; 1c72: e6 7d       .}  :1b41[1]
     dec height_in_cells_to_write                                      ; 1c74: c6 73       .s  :1b43[1]
@@ -2291,7 +2291,7 @@ all_cells_in_row_copied
     adc #>(cells_per_line * rows_per_cell)                            ; 1c82: 69 01       i.  :1b51[1]
     sta first_cell_in_row_screen_address_high                         ; 1c84: 85 75       .u  :1b53[1]
     sta cell_screen_address_high                                      ; 1c86: 85 77       .w  :1b55[1]
-    bcc row_copy_loop                                                 ; 1c88: 90 84       ..  :1b57[1]   ; always branch TODO: 99% confident
+    bcc row_copy_loop                                                 ; 1c88: 90 84       ..  :1b57[1]   ; ALWAYS branch
 now_write_to_collision_map
     ldx cell_x                                                        ; 1c8a: a6 70       .p  :1b59[1]
     ldy cell_y                                                        ; 1c8c: a4 71       .q  :1b5b[1]
@@ -5475,7 +5475,7 @@ menu_right_pending
     lda desired_menu_slots,x                                          ; 2da6: bd 5c 29    .\) :2c75[1]
     beq menu_right_pending                                            ; 2da9: f0 f6       ..  :2c78[1]
     stx new_menu_index                                                ; 2dab: 86 29       .)  :2c7a[1]
-    bne no_menu_motion                                                ; 2dad: d0 0a       ..  :2c7c[1]   ; always branch
+    bne no_menu_motion                                                ; 2dad: d0 0a       ..  :2c7c[1]   ; ALWAYS branch
 menu_left_pending
     dex                                                               ; 2daf: ca          .   :2c7e[1]
     bmi no_menu_motion                                                ; 2db0: 30 07       0.  :2c7f[1]
