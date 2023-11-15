@@ -2125,6 +2125,22 @@ comment(0x21dd, "special wizard processing - the level completion spell object?"
 
 label(0x221c, "add_movement_in_direction_to_player")
 comment(0x2217, "invert A if direction is left")
+comment(0x2392, "check for player collision with floor")
+comment(0x25f8, "clear collision flags")
+comment(0x26b7, "mark as collided with left wall")
+comment(0x26dc, "mark as collided with right wall")
+comment(0x2742, "mark as collided with ceiling")
+comment(0x2767, "mark as collided with floor")
+comment(0x2dd6, "check player for collision with left or right wall")
+comment(0x3036, "check player for collision with left or right wall")
+comment(0x3038, "why not just lda #5?", inline=True)
+comment(0x2dd8, "why not just lda #5?", inline=True)
+comment(0x38d8, """object_collision_flags has:
+
+    bit 1: collided with left wall
+    bit 2: collided with floor
+    bit 4: collided with right wall
+    bit 8: collided with ceiling""")
 
 entry(0x3f6f, "handle_developer_mode_setup")
 # TODO: DELETE? expr(0x3f73, "game_state_flag_have_spell")

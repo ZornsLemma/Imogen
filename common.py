@@ -190,7 +190,7 @@ def common_to_all():
     label(0x38f6, "play_sound_yx")
 
     label(0x38ac, "object_sprite_mask_type")
-    label(0x38d8, "object_flags")
+    label(0x38d8, "object_collision_flags")
 
     label(0x950, "object_x_low")
     label(0x951, "object_x_low+1")
