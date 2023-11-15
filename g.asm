@@ -368,12 +368,12 @@ l0125                                       = $0125
 l0126                                       = $0126
 l0127                                       = $0127
 l0128                                       = $0128
-l0129                                       = $0129
-l012a                                       = $012a
-l012b                                       = $012b
-l012c                                       = $012c
-l012d                                       = $012d
-l012e                                       = $012e
+old_object_left_low                         = $0129
+old_object_left_high                        = $012a
+old_object_right_low                        = $012b
+old_object_right_high                       = $012c
+old_object_left_cell                        = $012d
+old_object_right_cell                       = $012e
 brkv                                        = $0202
 irq1v                                       = $0204
 first_byte_break_intercept                  = $0287
@@ -4308,7 +4308,7 @@ temp_top_offset
 temp_bottom_offset
     !byte 0                                                           ; 2682: 00          .   :2551[1]
 
-c2552
+adjust_left_or_right_extent_due_to_holding_an_object
     cpx #0                                                            ; 2683: e0 00       ..  :2552[1]   ; Look for X=0 or X=11
     beq c255a                                                         ; 2685: f0 04       ..  :2554[1]
     cpx #$0b                                                          ; 2687: e0 0b       ..  :2556[1]
@@ -4325,58 +4325,65 @@ c255a
     ora #0                                                            ; 2694: 09 00       ..  :2563[1]
     beq return_zeroing_offsets                                        ; 2696: f0 6f       .o  :2565[1]
     inx                                                               ; 2698: e8          .   :2567[1]
-; copy four bytes (coordinates?)
+; remember old object_left and object_right coordinates (four bytes)
     ldy #3                                                            ; 2699: a0 03       ..  :2568[1]
-loop_c256a
+copy_coordinates_loop
     lda object_left_low,y                                             ; 269b: b9 70 00    .p. :256a[1]
-    sta l0129,y                                                       ; 269e: 99 29 01    .). :256d[1]
+    sta old_object_left_low,y                                         ; 269e: 99 29 01    .). :256d[1]
     dey                                                               ; 26a1: 88          .   :2570[1]
-    bpl loop_c256a                                                    ; 26a2: 10 f7       ..  :2571[1]
+    bpl copy_coordinates_loop                                         ; 26a2: 10 f7       ..  :2571[1]
+; remember old left and right cell coordinates
     lda object_left_cell_x                                            ; 26a4: a5 78       .x  :2573[1]
-    sta l012d                                                         ; 26a6: 8d 2d 01    .-. :2575[1]
+    sta old_object_left_cell                                          ; 26a6: 8d 2d 01    .-. :2575[1]
     lda object_right_cell_x                                           ; 26a9: a5 79       .y  :2578[1]
-    sta l012e                                                         ; 26ab: 8d 2e 01    ... :257a[1]
+    sta old_object_right_cell                                         ; 26ab: 8d 2e 01    ... :257a[1]
+; get held object's left/right extents
     jsr find_left_and_right_of_object                                 ; 26ae: 20 34 24     4$ :257d[1]
     lda object_direction,x                                            ; 26b1: bd be 09    ... :2580[1]
-    bpl c25a4                                                         ; 26b4: 10 1f       ..  :2583[1]
-; moving right
+    bpl looking_right                                                 ; 26b4: 10 1f       ..  :2583[1]
+; looking left. If held object's left is larger than the old left, then use the old
+; coordinates
     lda object_left_low                                               ; 26b6: a5 70       .p  :2585[1]
     sec                                                               ; 26b8: 38          8   :2587[1]
-    sbc l0129                                                         ; 26b9: ed 29 01    .). :2588[1]
+    sbc old_object_left_low                                           ; 26b9: ed 29 01    .). :2588[1]
     lda object_left_high                                              ; 26bc: a5 71       .q  :258b[1]
-    sbc l012a                                                         ; 26be: ed 2a 01    .*. :258d[1]
-    bpl c25c0                                                         ; 26c1: 10 2e       ..  :2590[1]
+    sbc old_object_left_high                                          ; 26be: ed 2a 01    .*. :258d[1]
+    bpl reset_old_values_back_into_object_left_and_right              ; 26c1: 10 2e       ..  :2590[1]
+; use the held object's left coordinate
     lda object_left_low                                               ; 26c3: a5 70       .p  :2592[1]
-    sta l0129                                                         ; 26c5: 8d 29 01    .). :2594[1]
+    sta old_object_left_low                                           ; 26c5: 8d 29 01    .). :2594[1]
     lda object_left_high                                              ; 26c8: a5 71       .q  :2597[1]
-    sta l012a                                                         ; 26ca: 8d 2a 01    .*. :2599[1]
+    sta old_object_left_high                                          ; 26ca: 8d 2a 01    .*. :2599[1]
     lda object_left_cell_x                                            ; 26cd: a5 78       .x  :259c[1]
-    sta l012d                                                         ; 26cf: 8d 2d 01    .-. :259e[1]
-    jmp c25c0                                                         ; 26d2: 4c c0 25    L.% :25a1[1]
+    sta old_object_left_cell                                          ; 26cf: 8d 2d 01    .-. :259e[1]
+    jmp reset_old_values_back_into_object_left_and_right              ; 26d2: 4c c0 25    L.% :25a1[1]
 
-c25a4
-    lda l012b                                                         ; 26d5: ad 2b 01    .+. :25a4[1]
+; looking right. If held object's right is smaller or equal to the old right, then use
+; the old coordinates
+looking_right
+    lda old_object_right_low                                          ; 26d5: ad 2b 01    .+. :25a4[1]
     sec                                                               ; 26d8: 38          8   :25a7[1]
     sbc object_right_low                                              ; 26d9: e5 72       .r  :25a8[1]
-    lda l012c                                                         ; 26db: ad 2c 01    .,. :25aa[1]
+    lda old_object_right_high                                         ; 26db: ad 2c 01    .,. :25aa[1]
     sbc object_right_high                                             ; 26de: e5 73       .s  :25ad[1]
-    bpl c25c0                                                         ; 26e0: 10 0f       ..  :25af[1]
+    bpl reset_old_values_back_into_object_left_and_right              ; 26e0: 10 0f       ..  :25af[1]
+; use the held object's right coordinate
     lda object_right_low                                              ; 26e2: a5 72       .r  :25b1[1]
-    sta l012b                                                         ; 26e4: 8d 2b 01    .+. :25b3[1]
+    sta old_object_right_low                                          ; 26e4: 8d 2b 01    .+. :25b3[1]
     lda object_right_high                                             ; 26e7: a5 73       .s  :25b6[1]
-    sta l012c                                                         ; 26e9: 8d 2c 01    .,. :25b8[1]
+    sta old_object_right_high                                         ; 26e9: 8d 2c 01    .,. :25b8[1]
     lda object_right_cell_x                                           ; 26ec: a5 79       .y  :25bb[1]
-    sta l012e                                                         ; 26ee: 8d 2e 01    ... :25bd[1]
-c25c0
+    sta old_object_right_cell                                         ; 26ee: 8d 2e 01    ... :25bd[1]
+reset_old_values_back_into_object_left_and_right
     ldy #3                                                            ; 26f1: a0 03       ..  :25c0[1]
-loop_c25c2
-    lda l0129,y                                                       ; 26f3: b9 29 01    .). :25c2[1]
+reset_coordinates_loop
+    lda old_object_left_low,y                                         ; 26f3: b9 29 01    .). :25c2[1]
     sta object_left_low,y                                             ; 26f6: 99 70 00    .p. :25c5[1]
     dey                                                               ; 26f9: 88          .   :25c8[1]
-    bpl loop_c25c2                                                    ; 26fa: 10 f7       ..  :25c9[1]
-    lda l012d                                                         ; 26fc: ad 2d 01    .-. :25cb[1]
+    bpl reset_coordinates_loop                                        ; 26fa: 10 f7       ..  :25c9[1]
+    lda old_object_left_cell                                          ; 26fc: ad 2d 01    .-. :25cb[1]
     sta object_left_cell_x                                            ; 26ff: 85 78       .x  :25ce[1]
-    lda l012e                                                         ; 2701: ad 2e 01    ... :25d0[1]
+    lda old_object_right_cell                                         ; 2701: ad 2e 01    ... :25d0[1]
     sta object_right_cell_x                                           ; 2704: 85 79       .y  :25d3[1]
     dex                                                               ; 2706: ca          .   :25d5[1]
 return_zeroing_offsets
@@ -4385,7 +4392,9 @@ return_zeroing_offsets
     sta temp_right_offset                                             ; 270c: 8d d1 24    ..$ :25db[1]
     rts                                                               ; 270f: 60          `   :25de[1]
 
-sub_c25df
+; remember temp_left and right offsets, since we will use them again to find the
+; attached object's left/right extents
+get_left_right_extents_including_any_held_object
     lda temp_left_offset                                              ; 2710: ad d0 24    ..$ :25df[1]
     pha                                                               ; 2713: 48          H   :25e2[1]
     lda temp_right_offset                                             ; 2714: ad d1 24    ..$ :25e3[1]
@@ -4395,7 +4404,7 @@ sub_c25df
     sta temp_right_offset                                             ; 271c: 8d d1 24    ..$ :25eb[1]
     pla                                                               ; 271f: 68          h   :25ee[1]
     sta temp_left_offset                                              ; 2720: 8d d0 24    ..$ :25ef[1]
-    jmp c2552                                                         ; 2723: 4c 52 25    LR% :25f2[1]
+    jmp adjust_left_or_right_extent_due_to_holding_an_object          ; 2723: 4c 52 25    LR% :25f2[1]
 
 sub_c25f5
     sta l0053                                                         ; 2726: 85 53       .S  :25f5[1]
@@ -4408,7 +4417,7 @@ sub_c25f5
     lda #1                                                            ; 2732: a9 01       ..  :2601[1]
     sta temp_bottom_offset                                            ; 2734: 8d 51 25    .Q% :2603[1]
     ldx l0053                                                         ; 2737: a6 53       .S  :2606[1]
-    jsr sub_c25df                                                     ; 2739: 20 df 25     .% :2608[1]
+    jsr get_left_right_extents_including_any_held_object              ; 2739: 20 df 25     .% :2608[1]
     lda l0053                                                         ; 273c: a5 53       .S  :260b[1]
     clc                                                               ; 273e: 18          .   :260d[1]
     adc #$0b                                                          ; 273f: 69 0b       i.  :260e[1]
@@ -4422,7 +4431,7 @@ sub_c25f5
     clc                                                               ; 2750: 18          .   :261f[1]
     adc #$0b                                                          ; 2751: 69 0b       i.  :2620[1]
     tax                                                               ; 2753: aa          .   :2622[1]
-    jsr sub_c25df                                                     ; 2754: 20 df 25     .% :2623[1]
+    jsr get_left_right_extents_including_any_held_object              ; 2754: 20 df 25     .% :2623[1]
 c2626
     lda #1                                                            ; 2757: a9 01       ..  :2626[1]
     sta temp_bottom_offset                                            ; 2759: 8d 51 25    .Q% :2628[1]
@@ -4436,7 +4445,7 @@ c2626
     lda #1                                                            ; 276d: a9 01       ..  :263c[1]
     sta temp_bottom_offset                                            ; 276f: 8d 51 25    .Q% :263e[1]
     ldx l0053                                                         ; 2772: a6 53       .S  :2641[1]
-    jsr sub_c25df                                                     ; 2774: 20 df 25     .% :2643[1]
+    jsr get_left_right_extents_including_any_held_object              ; 2774: 20 df 25     .% :2643[1]
     jsr find_top_and_bottom_of_object                                 ; 2777: 20 d2 24     .$ :2646[1]
     jsr sub_c265a                                                     ; 277a: 20 5a 26     Z& :2649[1]
     jsr sub_c2693                                                     ; 277d: 20 93 26     .& :264c[1]
@@ -4617,7 +4626,7 @@ sub_c2770
     tya                                                               ; 28a5: 98          .   :2774[1]
     pha                                                               ; 28a6: 48          H   :2775[1]
     ldx l0053                                                         ; 28a7: a6 53       .S  :2776[1]
-    jsr sub_c25df                                                     ; 28a9: 20 df 25     .% :2778[1]
+    jsr get_left_right_extents_including_any_held_object              ; 28a9: 20 df 25     .% :2778[1]
     lda #2                                                            ; 28ac: a9 02       ..  :277b[1]
     sta temp_bottom_offset                                            ; 28ae: 8d 51 25    .Q% :277d[1]
     jsr find_top_and_bottom_of_object                                 ; 28b1: 20 d2 24     .$ :2780[1]
@@ -4785,7 +4794,7 @@ something59_TODO
     tya                                                               ; 29ca: 98          .   :2899[1]
     pha                                                               ; 29cb: 48          H   :289a[1]
     ldx l295b                                                         ; 29cc: ae 5b 29    .[) :289b[1]
-    jsr sub_c25df                                                     ; 29cf: 20 df 25     .% :289e[1]
+    jsr get_left_right_extents_including_any_held_object              ; 29cf: 20 df 25     .% :289e[1]
     jsr find_top_and_bottom_of_object                                 ; 29d2: 20 d2 24     .$ :28a1[1]
     lda l28e1                                                         ; 29d5: ad e1 28    ..( :28a4[1]
     sta l0044                                                         ; 29d8: 85 44       .D  :28a7[1]
@@ -4831,7 +4840,7 @@ something55_TODO
     beq return_restoring_registers                                    ; 2a1f: f0 55       .U  :28ee[1]
     lda object_spriteid,y                                             ; 2a21: b9 a8 09    ... :28f0[1]
     beq return_restoring_registers                                    ; 2a24: f0 50       .P  :28f3[1]
-    jsr sub_c25df                                                     ; 2a26: 20 df 25     .% :28f5[1]
+    jsr get_left_right_extents_including_any_held_object              ; 2a26: 20 df 25     .% :28f5[1]
     jsr find_top_and_bottom_of_object                                 ; 2a29: 20 d2 24     .$ :28f8[1]
     ldx #7                                                            ; 2a2c: a2 07       ..  :28fb[1]
 loop_c28fd
@@ -4842,7 +4851,7 @@ loop_c28fd
     pla                                                               ; 2a36: 68          h   :2905[1]
     pha                                                               ; 2a37: 48          H   :2906[1]
     tax                                                               ; 2a38: aa          .   :2907[1]
-    jsr sub_c25df                                                     ; 2a39: 20 df 25     .% :2908[1]
+    jsr get_left_right_extents_including_any_held_object              ; 2a39: 20 df 25     .% :2908[1]
     jsr find_top_and_bottom_of_object                                 ; 2a3c: 20 d2 24     .$ :290b[1]
     lda l0123                                                         ; 2a3f: ad 23 01    .#. :290e[1]
     sec                                                               ; 2a42: 38          8   :2911[1]
@@ -8596,10 +8605,7 @@ pydis_end
 ;     c24eb
 ;     c2515
 ;     c2532
-;     c2552
 ;     c255a
-;     c25a4
-;     c25c0
 ;     c2626
 ;     c264f
 ;     c2676
@@ -8710,12 +8716,6 @@ pydis_end
 ;     l0126
 ;     l0127
 ;     l0128
-;     l0129
-;     l012a
-;     l012b
-;     l012c
-;     l012d
-;     l012e
 ;     l09eb
 ;     l0b00
 ;     l1aae
@@ -8752,8 +8752,6 @@ pydis_end
 ;     loop_c20e7
 ;     loop_c22b4
 ;     loop_c2406
-;     loop_c256a
-;     loop_c25c2
 ;     loop_c2668
 ;     loop_c2684
 ;     loop_c26f3
@@ -8769,7 +8767,6 @@ pydis_end
 ;     sub_c22ae
 ;     sub_c236b
 ;     sub_c23c4
-;     sub_c25df
 ;     sub_c25f5
 ;     sub_c265a
 ;     sub_c2693
