@@ -294,7 +294,7 @@ initialise_mouse_ball_position_if_level_changed
 level_unchanged
     lda desired_room_index                                            ; 3bf7: a5 30       .0
     cmp #0                                                            ; 3bf9: c9 00       ..
-    bne move_mouse_ball_if_room_0local                                ; 3bfb: d0 77       .w
+    bne move_mouse_ball_if_room_0_local                               ; 3bfb: d0 77       .w
     ldx #<envelope1                                                   ; 3bfd: a2 60       .`
     ldy #>envelope1                                                   ; 3bff: a0 44       .D
     jsr define_envelope                                               ; 3c01: 20 5e 39     ^9
@@ -354,7 +354,7 @@ level_unchanged
     lda #$40 ; '@'                                                    ; 3c6f: a9 40       .@
     sta object_something_table,x                                      ; 3c71: 9d c2 38    ..8
 ; $3c74 referenced 1 time by $3bfb
-move_mouse_ball_if_room_0local
+move_mouse_ball_if_room_0_local
     jmp move_mouse_ball_if_room_0                                     ; 3c74: 4c a8 3c    L.<
 
 ; $3c77 referenced 1 time by $3be9
@@ -393,11 +393,12 @@ move_mouse_ball_if_room_0
     bne return1                                                       ; 3cac: d0 72       .r
     lda mouse_ball_position                                           ; 3cae: ad 6f 0a    .o.
     cmp #8                                                            ; 3cb1: c9 08       ..
-    bcs c3cb9                                                         ; 3cb3: b0 04       ..
+    bcs mouse_ball_position_ge_8                                      ; 3cb3: b0 04       ..
     ldy #0                                                            ; 3cb5: a0 00       ..
-    beq c3cc3                                                         ; 3cb7: f0 0a       ..
+; always branch
+    beq mouse_ball_position_lt_8                                      ; 3cb7: f0 0a       ..
 ; $3cb9 referenced 1 time by $3cb3
-c3cb9
+mouse_ball_position_ge_8
     cmp #$0f                                                          ; 3cb9: c9 0f       ..
     bcs c3cd9                                                         ; 3cbb: b0 1c       ..
     sec                                                               ; 3cbd: 38          8
@@ -406,7 +407,7 @@ c3cb9
     asl                                                               ; 3cc1: 0a          .
     tay                                                               ; 3cc2: a8          .
 ; $3cc3 referenced 1 time by $3cb7
-c3cc3
+mouse_ball_position_lt_8
     lda some_data1,y                                                  ; 3cc3: b9 21 3d    .!=
     sta l09aa                                                         ; 3cc6: 8d aa 09    ...
     iny                                                               ; 3cc9: c8          .
@@ -1867,12 +1868,12 @@ pydis_end
 ;     sub_c3be4:                                              1
 ;     initialise_mouse_ball_position_if_level_changed:        1
 ;     level_unchanged:                                        1
-;     move_mouse_ball_if_room_0local:                         1
+;     move_mouse_ball_if_room_0_local:                        1
 ;     bump_and_wrap_mouse_ball_position:                      1
 ;     no_wrap_needed:                                         1
 ;     play_mouse_ball_sounds:                                 1
-;     c3cb9:                                                  1
-;     c3cc3:                                                  1
+;     mouse_ball_position_ge_8:                               1
+;     mouse_ball_position_lt_8:                               1
 ;     c3cd9:                                                  1
 ;     c3ce1:                                                  1
 ;     c3ce7:                                                  1
@@ -1921,8 +1922,6 @@ pydis_end
 
 ; Automatically generated labels:
 ;     c3b0e
-;     c3cb9
-;     c3cc3
 ;     c3cd9
 ;     c3ce1
 ;     c3ce7
