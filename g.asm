@@ -38,6 +38,7 @@ inkey_key_x                                     = 189
 inkey_key_z                                     = 158
 last_level_letter                               = 81
 max_filename_len                                = 7
+max_objects                                     = 11
 menu_slot_count                                 = 17
 num_levels                                      = 16
 opcode_clc                                      = 24
@@ -246,10 +247,10 @@ temp_sprite_offset                          = $5a
 developer_mode_sideways_ram_is_set_up_flag  = $5b
 displayed_transformations_remaining         = $5c
 initial_level_number_div4                   = $5f
-l0060                                       = $60
-l0061                                       = $61
-l0062                                       = $62
-l0063                                       = $63
+backmost_object_index                       = $60
+backmost_object_z_order                     = $61
+num_objects_to_process                      = $62
+processing_object_index                     = $63
 l0064                                       = $64
 remember_object_index                       = $65
 l0066                                       = $66
@@ -357,9 +358,9 @@ vertical_sprite_position_is_valid_flag      = $88
 romsel_copy                                 = $f4
 interrupt_accumulator                       = $fc
 l00fd                                       = $fd
-l0100                                       = $0100
+objects_to_process_table                    = $0100
 l010b                                       = $010b
-l0116                                       = $0116
+object_dealt_with_flag                      = $0116
 l0121                                       = $0121
 l0122                                       = $0122
 l0123                                       = $0123
@@ -772,7 +773,7 @@ return1
 ; 
 ; *************************************************************************************
 game_update
-    jsr something16_TODO                                              ; 140b: 20 d7 1f     .. :12da[1]
+    jsr update_objects                                                ; 140b: 20 d7 1f     .. :12da[1]
 ; set screen colours (if not already set)
     lda gameplay_area_colour                                          ; 140e: ad 60 17    .`. :12dd[1]
     bne wait_for_vsync_if_we_have_time                                ; 1411: d0 1a       ..  :12e0[1]
@@ -1768,17 +1769,17 @@ print_italic
     bcc print_italic_rts                                              ; 1999: 90 39       .9  :1868[1]
     cmp #$7f                                                          ; 199b: c9 7f       ..  :186a[1]
     bcs print_italic_rts                                              ; 199d: b0 35       .5  :186c[1]
-    sta l0060                                                         ; 199f: 85 60       .`  :186e[1]
+    sta backmost_object_index                                         ; 199f: 85 60       .`  :186e[1]
     txa                                                               ; 19a1: 8a          .   :1870[1]
     pha                                                               ; 19a2: 48          H   :1871[1]
     tya                                                               ; 19a3: 98          .   :1872[1]
     pha                                                               ; 19a4: 48          H   :1873[1]
     lda #osword_read_char                                             ; 19a5: a9 0a       ..  :1874[1]
-    ldx #<(l0060)                                                     ; 19a7: a2 60       .`  :1876[1]
-    ldy #>(l0060)                                                     ; 19a9: a0 00       ..  :1878[1]
+    ldx #<(backmost_object_index)                                     ; 19a7: a2 60       .`  :1876[1]
+    ldy #>(backmost_object_index)                                     ; 19a9: a0 00       ..  :1878[1]
     jsr osword                                                        ; 19ab: 20 f1 ff     .. :187a[1]   ; Read character definition
-    lsr l0061                                                         ; 19ae: 46 61       Fa  :187d[1]
-    lsr l0062                                                         ; 19b0: 46 62       Fb  :187f[1]
+    lsr backmost_object_z_order                                       ; 19ae: 46 61       Fa  :187d[1]
+    lsr num_objects_to_process                                        ; 19b0: 46 62       Fb  :187f[1]
     asl l0066                                                         ; 19b2: 06 66       .f  :1881[1]
     asl l0067                                                         ; 19b4: 06 67       .g  :1883[1]
     asl l0068                                                         ; 19b6: 06 68       .h  :1885[1]
@@ -1788,7 +1789,7 @@ print_italic
     jsr oswrch                                                        ; 19bf: 20 ee ff     .. :188e[1]   ; Write character 255
     ldx #0                                                            ; 19c2: a2 00       ..  :1891[1]
 define_character_ff_loop
-    lda l0061,x                                                       ; 19c4: b5 61       .a  :1893[1]
+    lda backmost_object_z_order,x                                     ; 19c4: b5 61       .a  :1893[1]
     jsr oswrch                                                        ; 19c6: 20 ee ff     .. :1895[1]   ; Write character
     inx                                                               ; 19c9: e8          .   :1898[1]
     cpx #8                                                            ; 19ca: e0 08       ..  :1899[1]
@@ -3332,84 +3333,101 @@ positive_y_pixel
     pla                                                               ; 2106: 68          h   :1fd5[1]
     rts                                                               ; 2107: 60          `   :1fd6[1]
 
-something16_TODO
+; *************************************************************************************
+; 
+; Update objects
+; 
+; *************************************************************************************
+update_objects
     lda player_held_item                                              ; 2108: a5 52       .R  :1fd7[1]
     pha                                                               ; 210a: 48          H   :1fd9[1]
     lda #0                                                            ; 210b: a9 00       ..  :1fda[1]
     sta player_held_item                                              ; 210d: 85 52       .R  :1fdc[1]
+; start with no objects dealt with
     lda #0                                                            ; 210f: a9 00       ..  :1fde[1]
     tax                                                               ; 2111: aa          .   :1fe0[1]
-loop_c1fe1
-    sta l0116,x                                                       ; 2112: 9d 16 01    ... :1fe1[1]
+reset_object_dealt_with_flags_loop
+    sta object_dealt_with_flag,x                                      ; 2112: 9d 16 01    ... :1fe1[1]
     inx                                                               ; 2115: e8          .   :1fe4[1]
-    cpx #$0b                                                          ; 2116: e0 0b       ..  :1fe5[1]
-    bcc loop_c1fe1                                                    ; 2118: 90 f8       ..  :1fe7[1]
-c1fe9
+    cpx #max_objects                                                  ; 2116: e0 0b       ..  :1fe5[1]
+    bcc reset_object_dealt_with_flags_loop                            ; 2118: 90 f8       ..  :1fe7[1]
+find_backmost_object_not_dealt_with_yet
     ldx #0                                                            ; 211a: a2 00       ..  :1fe9[1]
-    stx l0062                                                         ; 211c: 86 62       .b  :1feb[1]
-    stx l0063                                                         ; 211e: 86 63       .c  :1fed[1]
+    stx num_objects_to_process                                        ; 211c: 86 62       .b  :1feb[1]
+    stx processing_object_index                                       ; 211e: 86 63       .c  :1fed[1]
+; initialise the backmost object index to be $ff (nothing found yet), and at the front
+; (z-order $00)
     lda #$ff                                                          ; 2120: a9 ff       ..  :1fef[1]
-    sta l0060                                                         ; 2122: 85 60       .`  :1ff1[1]
-    stx l0061                                                         ; 2124: 86 61       .a  :1ff3[1]
-check_object_loop
-    lda l0116,x                                                       ; 2126: bd 16 01    ... :1ff5[1]
+    sta backmost_object_index                                         ; 2122: 85 60       .`  :1ff1[1]
+    stx backmost_object_z_order                                       ; 2124: 86 61       .a  :1ff3[1]
+find_backmost_object_loop
+    lda object_dealt_with_flag,x                                      ; 2126: bd 16 01    ... :1ff5[1]
     bne try_next_object                                               ; 2129: d0 13       ..  :1ff8[1]
+; object doesn't count if it has no sprites
     lda object_spriteid,x                                             ; 212b: bd a8 09    ... :1ffa[1]
     ora object_spriteid_old,x                                         ; 212e: 1d b3 09    ... :1ffd[1]
     beq try_next_object                                               ; 2131: f0 0b       ..  :2000[1]
+; check object X z-order against the best so far
     lda object_z_order,x                                              ; 2133: bd c2 38    ..8 :2002[1]
-    cmp l0061                                                         ; 2136: c5 61       .a  :2005[1]
+    cmp backmost_object_z_order                                       ; 2136: c5 61       .a  :2005[1]
     bcc try_next_object                                               ; 2138: 90 04       ..  :2007[1]
-    sta l0061                                                         ; 213a: 85 61       .a  :2009[1]
-    stx l0060                                                         ; 213c: 86 60       .`  :200b[1]
+; found new backmost object, store it's index and z-order
+    sta backmost_object_z_order                                       ; 213a: 85 61       .a  :2009[1]
+    stx backmost_object_index                                         ; 213c: 86 60       .`  :200b[1]
 try_next_object
     inx                                                               ; 213e: e8          .   :200d[1]
-    cpx #$0b                                                          ; 213f: e0 0b       ..  :200e[1]
-    bcc check_object_loop                                             ; 2141: 90 e3       ..  :2010[1]
-    ldx l0060                                                         ; 2143: a6 60       .`  :2012[1]
-    bpl c2027                                                         ; 2145: 10 11       ..  :2014[1]
-    ldx #$0a                                                          ; 2147: a2 0a       ..  :2016[1]
-loop_c2018
-    lda l0116,x                                                       ; 2149: bd 16 01    ... :2018[1]
-    bne c2020                                                         ; 214c: d0 03       ..  :201b[1]
+    cpx #max_objects                                                  ; 213f: e0 0b       ..  :200e[1]
+    bcc find_backmost_object_loop                                     ; 2141: 90 e3       ..  :2010[1]
+; check if we found a backmost object
+    ldx backmost_object_index                                         ; 2143: a6 60       .`  :2012[1]
+    bpl found_object_to_process                                       ; 2145: 10 11       ..  :2014[1]
+; after dealing with all active objects, update the state of the inactive ones
+    ldx #max_objects-1                                                ; 2147: a2 0a       ..  :2016[1]
+update_non_active_object_state_loop
+    lda object_dealt_with_flag,x                                      ; 2149: bd 16 01    ... :2018[1]
+    bne skip_objects_already_dealt_with                               ; 214c: d0 03       ..  :201b[1]
     jsr copy_object_state_to_old                                      ; 214e: 20 f7 20     .  :201d[1]
-c2020
+skip_objects_already_dealt_with
     dex                                                               ; 2151: ca          .   :2020[1]
-    bpl loop_c2018                                                    ; 2152: 10 f5       ..  :2021[1]
+    bpl update_non_active_object_state_loop                           ; 2152: 10 f5       ..  :2021[1]
+; restore the player held item
     pla                                                               ; 2154: 68          h   :2023[1]
     sta player_held_item                                              ; 2155: 85 52       .R  :2024[1]
     rts                                                               ; 2157: 60          `   :2026[1]
 
-c2027
-    lda #$ff                                                          ; 2158: a9 ff       ..  :2027[1]
-    sta l0116,x                                                       ; 215a: 9d 16 01    ... :2029[1]
+found_object_to_process
+    lda #$ff                                                          ; 2158: a9 ff       ..  :2027[1]   ; mark object as dealt with
+    sta object_dealt_with_flag,x                                      ; 215a: 9d 16 01    ... :2029[1]
+; if the object has not changed state, we don't need to do anything. Move on to the
+; next object
     jsr has_object_changed_state                                      ; 215d: 20 1e 21     .! :202c[1]
-    beq c1fe9                                                         ; 2160: f0 b8       ..  :202f[1]
+    beq find_backmost_object_not_dealt_with_yet                       ; 2160: f0 b8       ..  :202f[1]
+; record the object to process (by appending it to a table) and continue
     txa                                                               ; 2162: 8a          .   :2031[1]
-    ldx l0062                                                         ; 2163: a6 62       .b  :2032[1]
-    sta l0100,x                                                       ; 2165: 9d 00 01    ... :2034[1]
-    inc l0062                                                         ; 2168: e6 62       .b  :2037[1]
-c2039
-    ldx l0063                                                         ; 216a: a6 63       .c  :2039[1]
-    ldy l0100,x                                                       ; 216c: bc 00 01    ... :203b[1]
-    sty l0060                                                         ; 216f: 84 60       .`  :203e[1]
+    ldx num_objects_to_process                                        ; 2163: a6 62       .b  :2032[1]
+    sta objects_to_process_table,x                                    ; 2165: 9d 00 01    ... :2034[1]
+    inc num_objects_to_process                                        ; 2168: e6 62       .b  :2037[1]
+process_objects_loop
+    ldx processing_object_index                                       ; 216a: a6 63       .c  :2039[1]
+    ldy objects_to_process_table,x                                    ; 216c: bc 00 01    ... :203b[1]
+    sty backmost_object_index                                         ; 216f: 84 60       .`  :203e[1]
     lda object_z_order,y                                              ; 2171: b9 c2 38    ..8 :2040[1]
-    sta l0061                                                         ; 2174: 85 61       .a  :2043[1]
+    sta backmost_object_z_order                                       ; 2174: 85 61       .a  :2043[1]
     ldx #0                                                            ; 2176: a2 00       ..  :2045[1]
 c2047
     txa                                                               ; 2178: 8a          .   :2047[1]
     ldy #0                                                            ; 2179: a0 00       ..  :2048[1]
 loop_c204a
-    cmp l0100,y                                                       ; 217b: d9 00 01    ... :204a[1]
+    cmp objects_to_process_table,y                                    ; 217b: d9 00 01    ... :204a[1]
     beq c208d                                                         ; 217e: f0 3e       .>  :204d[1]
     iny                                                               ; 2180: c8          .   :204f[1]
-    cpy l0062                                                         ; 2181: c4 62       .b  :2050[1]
+    cpy num_objects_to_process                                        ; 2181: c4 62       .b  :2050[1]
     bcc loop_c204a                                                    ; 2183: 90 f6       ..  :2052[1]
     lda object_z_order,x                                              ; 2185: bd c2 38    ..8 :2054[1]
-    cmp l0061                                                         ; 2188: c5 61       .a  :2057[1]
+    cmp backmost_object_z_order                                       ; 2188: c5 61       .a  :2057[1]
     bcc c2061                                                         ; 218a: 90 06       ..  :2059[1]
     bne c208d                                                         ; 218c: d0 30       .0  :205b[1]
-    cpx l0060                                                         ; 218e: e4 60       .`  :205d[1]
+    cpx backmost_object_index                                         ; 218e: e4 60       .`  :205d[1]
     bcs c208d                                                         ; 2190: b0 2c       .,  :205f[1]
 c2061
     stx l0064                                                         ; 2192: 86 64       .d  :2061[1]
@@ -3417,7 +3435,7 @@ c2061
     clc                                                               ; 2195: 18          .   :2064[1]
     adc #$0b                                                          ; 2196: 69 0b       i.  :2065[1]
     tax                                                               ; 2198: aa          .   :2067[1]
-    ldy l0060                                                         ; 2199: a4 60       .`  :2068[1]
+    ldy backmost_object_index                                         ; 2199: a4 60       .`  :2068[1]
     jsr something55_TODO                                              ; 219b: 20 e2 28     .( :206a[1]
     bne c207d                                                         ; 219e: d0 0e       ..  :206d[1]
     tya                                                               ; 21a0: 98          .   :206f[1]
@@ -3431,53 +3449,53 @@ c2061
 c207d
     ldx l0064                                                         ; 21ae: a6 64       .d  :207d[1]
     lda #$ff                                                          ; 21b0: a9 ff       ..  :207f[1]
-    sta l0116,x                                                       ; 21b2: 9d 16 01    ... :2081[1]
+    sta object_dealt_with_flag,x                                      ; 21b2: 9d 16 01    ... :2081[1]
     txa                                                               ; 21b5: 8a          .   :2084[1]
-    ldx l0062                                                         ; 21b6: a6 62       .b  :2085[1]
-    sta l0100,x                                                       ; 21b8: 9d 00 01    ... :2087[1]
-    inc l0062                                                         ; 21bb: e6 62       .b  :208a[1]
+    ldx num_objects_to_process                                        ; 21b6: a6 62       .b  :2085[1]
+    sta objects_to_process_table,x                                    ; 21b8: 9d 00 01    ... :2087[1]
+    inc num_objects_to_process                                        ; 21bb: e6 62       .b  :208a[1]
     tax                                                               ; 21bd: aa          .   :208c[1]
 c208d
     inx                                                               ; 21be: e8          .   :208d[1]
-    cpx #$0b                                                          ; 21bf: e0 0b       ..  :208e[1]
+    cpx #max_objects                                                  ; 21bf: e0 0b       ..  :208e[1]
     bcc c2047                                                         ; 21c1: 90 b5       ..  :2090[1]
-    inc l0063                                                         ; 21c3: e6 63       .c  :2092[1]
-    lda l0063                                                         ; 21c5: a5 63       .c  :2094[1]
-    cmp l0062                                                         ; 21c7: c5 62       .b  :2096[1]
-    bcc c2039                                                         ; 21c9: 90 9f       ..  :2098[1]
+    inc processing_object_index                                       ; 21c3: e6 63       .c  :2092[1]
+    lda processing_object_index                                       ; 21c5: a5 63       .c  :2094[1]
+    cmp num_objects_to_process                                        ; 21c7: c5 62       .b  :2096[1]
+    bcc process_objects_loop                                          ; 21c9: 90 9f       ..  :2098[1]
     lda #0                                                            ; 21cb: a9 00       ..  :209a[1]
-    sta l0063                                                         ; 21cd: 85 63       .c  :209c[1]
+    sta processing_object_index                                       ; 21cd: 85 63       .c  :209c[1]
 c209e
     lda #$ff                                                          ; 21cf: a9 ff       ..  :209e[1]
-    sta l0060                                                         ; 21d1: 85 60       .`  :20a0[1]
-    sta l0061                                                         ; 21d3: 85 61       .a  :20a2[1]
+    sta backmost_object_index                                         ; 21d1: 85 60       .`  :20a0[1]
+    sta backmost_object_z_order                                       ; 21d3: 85 61       .a  :20a2[1]
     ldx #0                                                            ; 21d5: a2 00       ..  :20a4[1]
 loop_c20a6
-    ldy l0100,x                                                       ; 21d7: bc 00 01    ... :20a6[1]
+    ldy objects_to_process_table,x                                    ; 21d7: bc 00 01    ... :20a6[1]
     bmi c20be                                                         ; 21da: 30 13       0.  :20a9[1]
     lda object_z_order,y                                              ; 21dc: b9 c2 38    ..8 :20ab[1]
-    cmp l0061                                                         ; 21df: c5 61       .a  :20ae[1]
+    cmp backmost_object_z_order                                       ; 21df: c5 61       .a  :20ae[1]
     bcc c20b8                                                         ; 21e1: 90 06       ..  :20b0[1]
     bne c20be                                                         ; 21e3: d0 0a       ..  :20b2[1]
-    cpy l0060                                                         ; 21e5: c4 60       .`  :20b4[1]
+    cpy backmost_object_index                                         ; 21e5: c4 60       .`  :20b4[1]
     bcs c20be                                                         ; 21e7: b0 06       ..  :20b6[1]
 c20b8
-    sty l0060                                                         ; 21e9: 84 60       .`  :20b8[1]
-    sta l0061                                                         ; 21eb: 85 61       .a  :20ba[1]
+    sty backmost_object_index                                         ; 21e9: 84 60       .`  :20b8[1]
+    sta backmost_object_z_order                                       ; 21eb: 85 61       .a  :20ba[1]
     stx l0064                                                         ; 21ed: 86 64       .d  :20bc[1]
 c20be
     inx                                                               ; 21ef: e8          .   :20be[1]
-    cpx l0062                                                         ; 21f0: e4 62       .b  :20bf[1]
+    cpx num_objects_to_process                                        ; 21f0: e4 62       .b  :20bf[1]
     bcc loop_c20a6                                                    ; 21f2: 90 e3       ..  :20c1[1]
     ldx l0064                                                         ; 21f4: a6 64       .d  :20c3[1]
     lda #$ff                                                          ; 21f6: a9 ff       ..  :20c5[1]
-    sta l0100,x                                                       ; 21f8: 9d 00 01    ... :20c7[1]
-    ldx l0063                                                         ; 21fb: a6 63       .c  :20ca[1]
-    lda l0060                                                         ; 21fd: a5 60       .`  :20cc[1]
+    sta objects_to_process_table,x                                    ; 21f8: 9d 00 01    ... :20c7[1]
+    ldx processing_object_index                                       ; 21fb: a6 63       .c  :20ca[1]
+    lda backmost_object_index                                         ; 21fd: a5 60       .`  :20cc[1]
     sta l010b,x                                                       ; 21ff: 9d 0b 01    ... :20ce[1]
     inx                                                               ; 2202: e8          .   :20d1[1]
-    stx l0063                                                         ; 2203: 86 63       .c  :20d2[1]
-    cpx l0062                                                         ; 2205: e4 62       .b  :20d4[1]
+    stx processing_object_index                                       ; 2203: 86 63       .c  :20d2[1]
+    cpx num_objects_to_process                                        ; 2205: e4 62       .b  :20d4[1]
     bcc c209e                                                         ; 2207: 90 c6       ..  :20d6[1]
     ldy #0                                                            ; 2209: a0 00       ..  :20d8[1]
 loop_c20da
@@ -3485,7 +3503,7 @@ loop_c20da
     tax                                                               ; 220e: aa          .   :20dd[1]
     jsr sub_c2157                                                     ; 220f: 20 57 21     W! :20de[1]
     iny                                                               ; 2212: c8          .   :20e1[1]
-    cpy l0062                                                         ; 2213: c4 62       .b  :20e2[1]
+    cpy num_objects_to_process                                        ; 2213: c4 62       .b  :20e2[1]
     bcc loop_c20da                                                    ; 2215: 90 f4       ..  :20e4[1]
     dey                                                               ; 2217: 88          .   :20e6[1]
 loop_c20e7
@@ -3495,7 +3513,7 @@ loop_c20e7
     jsr copy_object_state_to_old                                      ; 221f: 20 f7 20     .  :20ee[1]
     dey                                                               ; 2222: 88          .   :20f1[1]
     bpl loop_c20e7                                                    ; 2223: 10 f3       ..  :20f2[1]
-    jmp c1fe9                                                         ; 2225: 4c e9 1f    L.. :20f4[1]
+    jmp find_backmost_object_not_dealt_with_yet                       ; 2225: 4c e9 1f    L.. :20f4[1]
 
 copy_object_state_to_old
     pha                                                               ; 2228: 48          H   :20f7[1]
@@ -3626,7 +3644,7 @@ draw_object_sprite
     ldx remember_object_index                                         ; 2315: a6 65       .e  :21e4[1]
     ora #0                                                            ; 2317: 09 00       ..  :21e6[1]
     beq c21ef                                                         ; 2319: f0 05       ..  :21e8[1]
-    lda l0116                                                         ; 231b: ad 16 01    ... :21ea[1]
+    lda object_dealt_with_flag                                        ; 231b: ad 16 01    ... :21ea[1]
     beq return9                                                       ; 231e: f0 10       ..  :21ed[1]
 c21ef
     lda object_direction,x                                            ; 2320: bd be 09    ... :21ef[1]
@@ -7121,7 +7139,6 @@ sound_data3
 object_z_order
 envelope_2
     !byte 2                                                           ; 39f3: 02          .   :38c2[1]   ; envelope number
-l38c3
     !byte 134                                                         ; 39f4: 86          .   :38c3[1]   ; step length (100ths of a second)
     !byte 1                                                           ; 39f5: 01          .   :38c4[1]   ; pitch change per step in section 1
     !byte 3                                                           ; 39f6: 03          .   :38c5[1]   ; pitch change per step in section 2
@@ -7703,10 +7720,13 @@ init_tiles_loop
     sta object_sprite_mask_type                                       ; 3d63: 8d ac 38    ..8
     lda #spriteid_198                                                 ; 3d66: a9 c6       ..
     sta some_spriteid                                                 ; 3d68: 8d ad 38    ..8
+; set z order for the player at the midway point so that objects can appear in front or
+; behind the player
     lda #$80                                                          ; 3d6b: a9 80       ..
     sta object_z_order                                                ; 3d6d: 8d c2 38    ..8
+; set z order for the player accessory object as being just in front of the player
     lda #$7f                                                          ; 3d70: a9 7f       ..
-    sta l38c3                                                         ; 3d72: 8d c3 38    ..8
+    sta object_z_order+1                                              ; 3d72: 8d c3 38    ..8
 ; seed random number generation by reading the User VIA timers
     lda user_via_t1c_l                                                ; 3d75: ad 64 fe    .d.
     sta rnd0                                                          ; 3d78: 85 06       ..
@@ -8518,10 +8538,6 @@ pydis_end
 ;     c1a9e
 ;     c1d16
 ;     c1f06
-;     c1fe9
-;     c2020
-;     c2027
-;     c2039
 ;     c2047
 ;     c2061
 ;     c207d
@@ -8654,19 +8670,13 @@ pydis_end
 ;     l003f
 ;     l0044
 ;     l0053
-;     l0060
-;     l0061
-;     l0062
-;     l0063
 ;     l0064
 ;     l0066
 ;     l0067
 ;     l0068
 ;     l0087
 ;     l00fd
-;     l0100
 ;     l010b
-;     l0116
 ;     l0121
 ;     l0122
 ;     l0123
@@ -8703,7 +8713,6 @@ pydis_end
 ;     l2ef2
 ;     l31d7
 ;     l3403
-;     l38c3
 ;     l3967
 ;     l396b
 ;     l3970
@@ -8712,8 +8721,6 @@ pydis_end
 ;     loop_c0aba
 ;     loop_c0ac6
 ;     loop_c1df7
-;     loop_c1fe1
-;     loop_c2018
 ;     loop_c204a
 ;     loop_c20a6
 ;     loop_c20da
@@ -8764,6 +8771,9 @@ pydis_end
 !if (<(address1_low)) != $70 {
     !error "Assertion failed: <(address1_low) == $70"
 }
+!if (<(backmost_object_index)) != $60 {
+    !error "Assertion failed: <(backmost_object_index) == $60"
+}
 !if (<(cells_per_line * rows_per_cell)) != $40 {
     !error "Assertion failed: <(cells_per_line * rows_per_cell) == $40"
 }
@@ -8775,9 +8785,6 @@ pydis_end
 }
 !if (<(filename_low)) != $70 {
     !error "Assertion failed: <(filename_low) == $70"
-}
-!if (<(l0060)) != $60 {
-    !error "Assertion failed: <(l0060) == $60"
 }
 !if (<(osword_7f_block_read)) != $f4 {
     !error "Assertion failed: <(osword_7f_block_read) == $f4"
@@ -8980,6 +8987,9 @@ pydis_end
 !if (>(address1_low)) != $00 {
     !error "Assertion failed: >(address1_low) == $00"
 }
+!if (>(backmost_object_index)) != $00 {
+    !error "Assertion failed: >(backmost_object_index) == $00"
+}
 !if (>(cells_per_line * rows_per_cell)) != $01 {
     !error "Assertion failed: >(cells_per_line * rows_per_cell) == $01"
 }
@@ -8991,9 +9001,6 @@ pydis_end
 }
 !if (>(filename_low)) != $00 {
     !error "Assertion failed: >(filename_low) == $00"
-}
-!if (>(l0060)) != $00 {
-    !error "Assertion failed: >(l0060) == $00"
 }
 !if (>(osword_7f_block_read)) != $3e {
     !error "Assertion failed: >(osword_7f_block_read) == $3e"
@@ -9361,6 +9368,12 @@ pydis_end
 !if (max_filename_len) != $07 {
     !error "Assertion failed: max_filename_len == $07"
 }
+!if (max_objects) != $0b {
+    !error "Assertion failed: max_objects == $0b"
+}
+!if (max_objects-1) != $0a {
+    !error "Assertion failed: max_objects-1 == $0a"
+}
 !if (menu_slot_count) != $11 {
     !error "Assertion failed: menu_slot_count == $11"
 }
@@ -9420,6 +9433,9 @@ pydis_end
 }
 !if (monkey_walk_cycle_animation - monkey_transform_in_animation) != $29 {
     !error "Assertion failed: monkey_walk_cycle_animation - monkey_transform_in_animation == $29"
+}
+!if (object_z_order+1) != $38c3 {
+    !error "Assertion failed: object_z_order+1 == $38c3"
 }
 !if (opcode_clc) != $18 {
     !error "Assertion failed: opcode_clc == $18"
