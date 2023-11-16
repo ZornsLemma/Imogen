@@ -43,6 +43,7 @@ spriteid_table                     = 222
 spriteid_trapdoor_diagonal         = 208
 spriteid_trapdoor_horizontal       = 207
 spriteid_trapdoor_vertical         = 209
+spriteid_zero_size1                = 204
 
 ; Memory locations
 characters_entered                                  = $05
@@ -1054,7 +1055,7 @@ c40c1
     sta temp_sprite_y_offset                                          ; 40d4: 85 3b       .;
     lda #objectid_TODO                                                ; 40d6: a9 02       ..
     jsr set_object_position_from_cell_xy                              ; 40d8: 20 5d 1f     ].
-    lda #$cc                                                          ; 40db: a9 cc       ..
+    lda #spriteid_zero_size1                                          ; 40db: a9 cc       ..
     sta object_sprite_mask_type + objectid_TODO                       ; 40dd: 8d ae 38    ..8
 ; $40e0 referenced 1 time by $40c5
 c40e0
@@ -2323,6 +2324,9 @@ pydis_end
 }
 !if (spriteid_trapdoor_vertical) != $d1 {
     !error "Assertion failed: spriteid_trapdoor_vertical == $d1"
+}
+!if (spriteid_zero_size1) != $cc {
+    !error "Assertion failed: spriteid_zero_size1 == $cc"
 }
 !if (toolbar_collectable_spriteids + 1) != $2ee9 {
     !error "Assertion failed: toolbar_collectable_spriteids + 1 == $2ee9"

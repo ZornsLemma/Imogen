@@ -11,6 +11,7 @@ sprite_dict = {
     0xc9: "spriteid_mouse_hands1",
     0xca: "spriteid_mouse_hands2",
     0xcb: "spriteid_small_ball",
+    0xcc: "spriteid_zero_size1", # TODO:!? Used as a mask?
     0xcf: "spriteid_trapdoor_horizontal",
     0xd0: "spriteid_trapdoor_diagonal",
     0xd1: "spriteid_trapdoor_vertical",
@@ -270,6 +271,7 @@ comment(0x407f, "Room 2 has the spell, guarded by a baby. TODO: Not too sure I h
 entry(0x407f, "room2_handler") # TODO: not too sure about this
 expr(0x4093, "objectid_spell")
 expr(0x40d7, "objectid_TODO")
+expr(0x40dc, "spriteid_zero_size1")
 
 # TODO: Use this more?
 def ldx_ldy_jsr_play_sound_yx(jsr_runtime_addr, s):
