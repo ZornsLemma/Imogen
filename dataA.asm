@@ -18,6 +18,7 @@ objectid_player                    = 0
 objectid_right_mouse               = 3
 objectid_right_trapdoor            = 3
 objectid_saxophone                 = 4
+objectid_spell                     = 5
 opcode_jmp                         = 76
 player_collision_flag_baby         = 6
 player_collision_flag_mouse_ball   = 128
@@ -1015,7 +1016,7 @@ sub_c407f
     lda #4                                                            ; 408c: a9 04       ..
     sta temp_sprite_x_offset                                          ; 408e: 85 3a       .:
     ldy #$16                                                          ; 4090: a0 16       ..
-    lda #5                                                            ; 4092: a9 05       ..
+    lda #objectid_spell                                               ; 4092: a9 05       ..
     jsr update_level_completion                                       ; 4094: 20 10 1a     ..
     lda update_room_first_update_flag                                 ; 4097: ad 2b 13    .+.
     beq c40e4                                                         ; 409a: f0 48       .H
@@ -2226,6 +2227,9 @@ pydis_end
 }
 !if (objectid_right_trapdoor) != $03 {
     !error "Assertion failed: objectid_right_trapdoor == $03"
+}
+!if (objectid_spell) != $05 {
+    !error "Assertion failed: objectid_spell == $05"
 }
 !if (player_collision_flag_baby) != $06 {
     !error "Assertion failed: player_collision_flag_baby == $06"

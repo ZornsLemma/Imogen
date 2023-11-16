@@ -215,6 +215,7 @@ expr(0x3f1d, make_add("collectable_spriteids", "1"))
 constant(2, "objectid_left_mouse")
 constant(3, "objectid_right_mouse")
 constant(4, "objectid_mouse_ball")
+constant(5, "objectid_spell")
 expr(0x3c22, "objectid_left_mouse")
 expr(0x3c48, "objectid_right_mouse")
 expr(0x3c5c, "objectid_mouse_ball")
@@ -261,6 +262,8 @@ entry(0x3ed2, "skip_play_sound")
 expr(0x3eee, "spriteid_trapdoor_horizontal")
 expr(0x3eef, "spriteid_trapdoor_diagonal")
 expr(0x3ef0, "spriteid_trapdoor_vertical")
+
+expr(0x4093, "objectid_spell")
 
 # TODO: Use this more?
 def ldx_ldy_jsr_play_sound_yx(jsr_runtime_addr, s):
