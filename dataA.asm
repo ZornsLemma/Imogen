@@ -729,6 +729,8 @@ c3ec1
     lda desired_room_index                                            ; 3ec9: a5 30       .0
     cmp #1                                                            ; 3ecb: c9 01       ..
     bne c3ed2                                                         ; 3ecd: d0 03       ..
+; TODO: Pretty confident this is the trapdoor opening sound, but this is called
+; elsewhere so don't want to rename subroutine yet
     jsr play_some_sound1_then_some_sound2                             ; 3ecf: 20 f1 3e     .>
 ; $3ed2 referenced 1 time by $3ecd
 c3ed2
