@@ -61,7 +61,7 @@ substitute_labels = {
 s = SubstituteLabels(substitute_labels)
 set_label_maker_hook(s.substitute_label_maker)
 
-expr_label(0x38ae, make_add("object_sprite_mask_type", "objectid_left_mouse"))
+expr(0x40de, make_add("object_sprite_mask_type", "objectid_TODO"))
 expr(0x3ff3, "copy_mode_simple")
 
 word(0x3ad7)
@@ -212,9 +212,12 @@ expr(0x3f18, make_add("toolbar_collectable_spriteids", "1"))
 expr(0x3f1d, make_add("collectable_spriteids", "1"))
 
 # TODO: slight guesswork
+# Room 0?
 constant(2, "objectid_left_mouse")
 constant(3, "objectid_right_mouse")
 constant(4, "objectid_mouse_ball")
+# Room 2?
+constant(2, "objectid_TODO")
 constant(5, "objectid_spell")
 expr(0x3c22, "objectid_left_mouse")
 expr(0x3c48, "objectid_right_mouse")
@@ -266,6 +269,7 @@ expr(0x3ef0, "spriteid_trapdoor_vertical")
 comment(0x407f, "Room 2 has the spell, guarded by a baby. TODO: Not too sure I have the room number correct etc.")
 entry(0x407f, "room2_handler") # TODO: not too sure about this
 expr(0x4093, "objectid_spell")
+expr(0x40d7, "objectid_TODO")
 
 # TODO: Use this more?
 def ldx_ldy_jsr_play_sound_yx(jsr_runtime_addr, s):

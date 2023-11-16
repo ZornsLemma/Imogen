@@ -11,6 +11,7 @@ first_level_letter                 = 65
 game_area_height_cells             = 24
 game_area_width_cells              = 40
 last_level_letter                  = 81
+objectid_TODO                      = 2
 objectid_left_mouse                = 2
 objectid_left_trapdoor             = 2
 objectid_mouse_ball                = 4
@@ -1051,10 +1052,10 @@ c40c1
     ldy #$14                                                          ; 40d0: a0 14       ..
     lda #$fe                                                          ; 40d2: a9 fe       ..
     sta temp_sprite_y_offset                                          ; 40d4: 85 3b       .;
-    lda #2                                                            ; 40d6: a9 02       ..
+    lda #objectid_TODO                                                ; 40d6: a9 02       ..
     jsr set_object_position_from_cell_xy                              ; 40d8: 20 5d 1f     ].
     lda #$cc                                                          ; 40db: a9 cc       ..
-    sta object_sprite_mask_type + objectid_left_mouse                 ; 40dd: 8d ae 38    ..8
+    sta object_sprite_mask_type + objectid_TODO                       ; 40dd: 8d ae 38    ..8
 ; $40e0 referenced 1 time by $40c5
 c40e0
     jmp c41d9                                                         ; 40e0: 4c d9 41    L.A
@@ -1963,7 +1964,7 @@ pydis_end
 ;     l2ee9:                                                  1
 ;     l2eee:                                                  1
 ;     l2ef3:                                                  1
-;     object_sprite_mask_type + objectid_left_mouse:          1
+;     l38ae:                                                  1
 ;     l3970:                                                  1
 ;     developer_mode_not_active:                              1
 ;     loop_c3bd4:                                             1
@@ -2084,6 +2085,7 @@ pydis_end
 ;     l2ee9
 ;     l2eee
 ;     l2ef3
+;     l38ae
 ;     l3970
 ;     l3fd5
 ;     l3fd6
@@ -2187,6 +2189,9 @@ pydis_end
 !if (level_update_handler) != $3b17 {
     !error "Assertion failed: level_update_handler == $3b17"
 }
+!if (object_sprite_mask_type + objectid_TODO) != $38ae {
+    !error "Assertion failed: object_sprite_mask_type + objectid_TODO == $38ae"
+}
 !if (object_spriteid + objectid_left_mouse) != $09aa {
     !error "Assertion failed: object_spriteid + objectid_left_mouse == $09aa"
 }
@@ -2210,6 +2215,9 @@ pydis_end
 }
 !if (object_y_low + objectid_mouse_ball) != $0980 {
     !error "Assertion failed: object_y_low + objectid_mouse_ball == $0980"
+}
+!if (objectid_TODO) != $02 {
+    !error "Assertion failed: objectid_TODO == $02"
 }
 !if (objectid_left_mouse) != $02 {
     !error "Assertion failed: objectid_left_mouse == $02"
