@@ -186,6 +186,9 @@ entry(0x3eed, "return2")
 constant(0x4, "objectid_saxophone") # TODO: guessing a bit
 expr(0x3f70, "object_spriteid + objectid_saxophone")
 expr(0x3f83, "object_spriteid + objectid_saxophone")
+entry(0x3ed4, "new_something1_trapdoor_open_flag_in_y")
+# TODO: I think something1_trapdoor_open_flag can have values $ff, 0 and 1 - just possibly this
+# increments to add a time delay to the trapdoor visibly opening, but that's a guess at this point.
 
 # TODO: Use this more?
 def ldx_ldy_jsr_play_sound_yx(jsr_runtime_addr, s):

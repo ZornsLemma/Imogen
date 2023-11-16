@@ -689,7 +689,7 @@ c3ec1
     ldy something1_trapdoor_open_flag                                 ; 3ec1: ac ff 09    ...
     iny                                                               ; 3ec4: c8          .
     cpy #2                                                            ; 3ec5: c0 02       ..
-    bcc c3ed4                                                         ; 3ec7: 90 0b       ..
+    bcc new_something1_trapdoor_open_flag_in_y                        ; 3ec7: 90 0b       ..
     lda desired_room_index                                            ; 3ec9: a5 30       .0
     cmp #1                                                            ; 3ecb: c9 01       ..
     bne c3ed2                                                         ; 3ecd: d0 03       ..
@@ -698,7 +698,7 @@ c3ec1
 c3ed2
     ldy #$ff                                                          ; 3ed2: a0 ff       ..
 ; $3ed4 referenced 1 time by $3ec7
-c3ed4
+new_something1_trapdoor_open_flag_in_y
     sty something1_trapdoor_open_flag                                 ; 3ed4: 8c ff 09    ...
 ; $3ed7 referenced 8 times by $3e69, $3e6f, $3e77, $3e7b, $3e80, $3e87, $3e8b, $3e97
 c3ed7
@@ -1944,7 +1944,7 @@ pydis_end
 ;     something1_not_first_update:                            1
 ;     c3ec1:                                                  1
 ;     c3ed2:                                                  1
-;     c3ed4:                                                  1
+;     new_something1_trapdoor_open_flag_in_y:                 1
 ;     c3ee4:                                                  1
 ;     return2:                                                1
 ;     something1_three_byte_table:                            1
@@ -1985,7 +1985,6 @@ pydis_end
 ;     c3def
 ;     c3ec1
 ;     c3ed2
-;     c3ed4
 ;     c3ed7
 ;     c3ee4
 ;     c3f51
