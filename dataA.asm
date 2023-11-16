@@ -681,7 +681,7 @@ room1_initial_setup_done
 room1_not_first_update
     ldy room1_trapdoor_open_flag                                      ; 3e6c: ac ff 09    ...
     bmi set_room1_trapdoor_sprites_if_required                        ; 3e6f: 30 66       0f
-    bne c3ec1                                                         ; 3e71: d0 4e       .N
+    bne increment_trapdoor_open_flag                                  ; 3e71: d0 4e       .N
     lda desired_room_index                                            ; 3e73: a5 30       .0
     cmp #1                                                            ; 3e75: c9 01       ..
     bne set_room1_trapdoor_sprites_if_required                        ; 3e77: d0 5e       .^
@@ -721,7 +721,7 @@ room1_not_first_update
     ldx #$16                                                          ; 3ebc: a2 16       ..
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 3ebe: 20 44 1e     D.
 ; $3ec1 referenced 1 time by $3e71
-c3ec1
+increment_trapdoor_open_flag
     ldy room1_trapdoor_open_flag                                      ; 3ec1: ac ff 09    ...
     iny                                                               ; 3ec4: c8          .
     cpy #2                                                            ; 3ec5: c0 02       ..
@@ -1983,7 +1983,7 @@ pydis_end
 ;     room1_handler:                                          1
 ;     set_up_open_trapdoor_collision_map:                     1
 ;     room1_not_first_update:                                 1
-;     c3ec1:                                                  1
+;     increment_trapdoor_open_flag:                           1
 ;     c3ed2:                                                  1
 ;     new_room1_trapdoor_open_flag_in_y:                      1
 ;     adjusted_room1_trapdoor_open_flag_in_y_is_ge_0:         1
@@ -2024,7 +2024,6 @@ pydis_end
 ;     c3dd2
 ;     c3de2
 ;     c3def
-;     c3ec1
 ;     c3ed2
 ;     c3f51
 ;     c3f52
