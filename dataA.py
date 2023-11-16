@@ -115,7 +115,8 @@ comment(0x3b29, "TODO: I suspect this next block up to and including the jsr is 
 comment(0x3b84, "TODO: I suspect we've finished drawing the ground fill and are now switching to another pattern.")
 
 label(0xa6f, "mouse_ball_position") # TODO: guesswork but fairly convinced - I think this runs from 0-$1d inclusive with 0 being (guess) far left, $f being far right
-entry(0x3be4, "mice_and_ball_handler")
+entry(0x3be4, "room0_handler")
+comment(0x3be4, "Room 0 has two mice throwing a ball back and forth.")
 entry(0x3bec, "initialise_mouse_ball_position_if_level_changed")
 entry(0x3bf7, "level_unchanged")
 entry(0x3c77, "bump_and_wrap_mouse_ball_position")
@@ -153,10 +154,11 @@ constant(0x80, "player_collision_flag_mouse_ball")
 expr(0x3d1c, "player_collision_flag_mouse_ball")
 expr(0x4116, "player_collision_flag_baby")
 
-entry(0x3dfc, "something1_handler")
-entry(0x3e6c, "something1_not_first_update")
+entry(0x3dfc, "room1_handler")
+comment(0x3dfc, "Room 1 has a trapdoor which opens when the wizard stands on it holding the saxophone.")
+entry(0x3e6c, "room1_not_first_update")
 entry(0x3e11, "level_unchanged2")
-label(0x9ff, "something1_trapdoor_open_flag")
+label(0x9ff, "room1_trapdoor_open_flag")
 label(0x3eee, "trapdoor_sprite_table") # TODO: Include "animation" in name? But not sure if this is different from "real" animations like animal tails
 for i in range(3): # TODO: Add a convenience function for this? Maybe in py8dis?
     byte(0x3eee+i)
@@ -177,7 +179,7 @@ expr(0x3cf2, "object_spriteid + objectid_left_mouse")
 expr(0x3ee8, "object_spriteid + objectid_left_trapdoor")
 expr(0x3eeb, "object_spriteid + objectid_right_trapdoor")
 # TODO expr_label(0x9ac, "object_spriteid + objectid_mouse_ball")
-entry(0x3e69, "something1_initial_setup_done")
+entry(0x3e69, "room1_initial_setup_done")
 
 constant(0x2, "objectid_left_trapdoor")
 constant(0x3, "objectid_right_trapdoor")
@@ -191,9 +193,9 @@ entry(0x3eed, "return2")
 constant(0x4, "objectid_saxophone") # TODO: guessing a bit
 expr(0x3f70, "object_spriteid + objectid_saxophone")
 expr(0x3f83, "object_spriteid + objectid_saxophone")
-entry(0x3ed4, "new_something1_trapdoor_open_flag_in_y")
-entry(0x3ee4, "adjusted_something1_trapdoor_open_flag_in_y_is_ge_0")
-# TODO: I think something1_trapdoor_open_flag can have values $ff, 0 and 1 - just possibly this
+entry(0x3ed4, "new_room1_trapdoor_open_flag_in_y")
+entry(0x3ee4, "adjusted_room1_trapdoor_open_flag_in_y_is_ge_0")
+# TODO: I think room1_trapdoor_open_flag can have values $ff, 0 and 1 - just possibly this
 # increments to add a time delay to the trapdoor visibly opening, but that's a guess at this point.
 # Looking at Colin's YT video frame by frame, I think there are states: fully closed, both open at
 # an angle, right fully open while left is still at an angle and both fully open. Not entirely sure

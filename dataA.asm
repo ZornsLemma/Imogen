@@ -64,7 +64,7 @@ object_spriteid_old                                 = $09b3
 object_direction                                    = $09be
 object_direction_old                                = $09c9
 level_progress_table                                = $09ef
-something1_trapdoor_open_flag                       = $09ff
+room1_trapdoor_open_flag                            = $09ff
 saxophone_collected_flag                            = $0a00
 l0a01                                               = $0a01
 l0a02                                               = $0a02
@@ -186,8 +186,8 @@ c3b0e
     rts                                                               ; 3b16: 60          `
 
 level_update_handler
-    jsr mice_and_ball_handler                                         ; 3b17: 20 e4 3b     .;
-    jsr something1_handler                                            ; 3b1a: 20 fc 3d     .=
+    jsr room0_handler                                                 ; 3b17: 20 e4 3b     .;
+    jsr room1_handler                                                 ; 3b1a: 20 fc 3d     .=
     jsr sub_c407f                                                     ; 3b1d: 20 7f 40     .@
     jsr sub_c3f02                                                     ; 3b20: 20 02 3f     .?
     jsr sub_c42f8                                                     ; 3b23: 20 f8 42     .B
@@ -291,8 +291,9 @@ loop_c3bd4
     ldx #1                                                            ; 3bdd: a2 01       ..
     ldy desired_level                                                 ; 3bdf: a4 31       .1
     jsr initialise_level                                              ; 3be1: 20 40 11     @.
+; Room 0 has two mice throwing a ball back and forth.
 ; $3be4 referenced 1 time by $3b17
-mice_and_ball_handler
+room0_handler
     lda update_room_first_update_flag                                 ; 3be4: ad 2b 13    .+.
     bne initialise_mouse_ball_position_if_level_changed               ; 3be7: d0 03       ..
     jmp bump_and_wrap_mouse_ball_position                             ; 3be9: 4c 77 3c    Lw<
@@ -583,22 +584,23 @@ c3def
     ldy desired_level                                                 ; 3df7: a4 31       .1
     jmp initialise_level                                              ; 3df9: 4c 40 11    L@.
 
+; Room 1 has a trapdoor which opens when the wizard stands on it holding the saxophone.
 ; $3dfc referenced 1 time by $3b1a
-something1_handler
+room1_handler
     lda update_room_first_update_flag                                 ; 3dfc: ad 2b 13    .+.
-    beq something1_not_first_update                                   ; 3dff: f0 6b       .k
+    beq room1_not_first_update                                        ; 3dff: f0 6b       .k
     lda previous_level                                                ; 3e01: a5 51       .Q
     cmp desired_level                                                 ; 3e03: c5 31       .1
     beq level_unchanged2                                              ; 3e05: f0 0a       ..
-    lda something1_trapdoor_open_flag                                 ; 3e07: ad ff 09    ...
+    lda room1_trapdoor_open_flag                                      ; 3e07: ad ff 09    ...
     beq level_unchanged2                                              ; 3e0a: f0 05       ..
     lda #$ff                                                          ; 3e0c: a9 ff       ..
-    sta something1_trapdoor_open_flag                                 ; 3e0e: 8d ff 09    ...
+    sta room1_trapdoor_open_flag                                      ; 3e0e: 8d ff 09    ...
 ; $3e11 referenced 2 times by $3e05, $3e0a
 level_unchanged2
     lda desired_room_index                                            ; 3e11: a5 30       .0
     cmp #1                                                            ; 3e13: c9 01       ..
-    bne something1_initial_setup_done                                 ; 3e15: d0 52       .R
+    bne room1_initial_setup_done                                      ; 3e15: d0 52       .R
     ldx #<envelope2                                                   ; 3e17: a2 2c       .,
     ldy #>envelope2                                                   ; 3e19: a0 44       .D
     jsr define_envelope                                               ; 3e1b: 20 5e 39     ^9
@@ -619,7 +621,7 @@ level_unchanged2
     lda #3                                                            ; 3e3a: a9 03       ..
     sta value_to_write_to_collision_map                               ; 3e3c: 85 3e       .>
 ; Set up the collision map for the two trapdoors.
-    lda something1_trapdoor_open_flag                                 ; 3e3e: ad ff 09    ...
+    lda room1_trapdoor_open_flag                                      ; 3e3e: ad ff 09    ...
     bne set_up_open_trapdoor_collision_map                            ; 3e41: d0 12       ..
 ; Set up the trapdoor collision map if they are closed.
     ldx #$11                                                          ; 3e43: a2 11       ..
@@ -629,7 +631,7 @@ level_unchanged2
     lda #1                                                            ; 3e4b: a9 01       ..
     sta height_in_cells                                               ; 3e4d: 85 3d       .=
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 3e4f: 20 44 1e     D.
-    jmp something1_initial_setup_done                                 ; 3e52: 4c 69 3e    Li>
+    jmp room1_initial_setup_done                                      ; 3e52: 4c 69 3e    Li>
 
 ; $3e55 referenced 1 time by $3e41
 set_up_open_trapdoor_collision_map
@@ -643,12 +645,12 @@ set_up_open_trapdoor_collision_map
     ldx #$16                                                          ; 3e64: a2 16       ..
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 3e66: 20 44 1e     D.
 ; $3e69 referenced 2 times by $3e15, $3e52
-something1_initial_setup_done
+room1_initial_setup_done
     jmp c3ed7                                                         ; 3e69: 4c d7 3e    L.>
 
 ; $3e6c referenced 1 time by $3dff
-something1_not_first_update
-    ldy something1_trapdoor_open_flag                                 ; 3e6c: ac ff 09    ...
+room1_not_first_update
+    ldy room1_trapdoor_open_flag                                      ; 3e6c: ac ff 09    ...
     bmi c3ed7                                                         ; 3e6f: 30 66       0f
     bne c3ec1                                                         ; 3e71: d0 4e       .N
     lda desired_room_index                                            ; 3e73: a5 30       .0
@@ -689,10 +691,10 @@ something1_not_first_update
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 3ebe: 20 44 1e     D.
 ; $3ec1 referenced 1 time by $3e71
 c3ec1
-    ldy something1_trapdoor_open_flag                                 ; 3ec1: ac ff 09    ...
+    ldy room1_trapdoor_open_flag                                      ; 3ec1: ac ff 09    ...
     iny                                                               ; 3ec4: c8          .
     cpy #2                                                            ; 3ec5: c0 02       ..
-    bcc new_something1_trapdoor_open_flag_in_y                        ; 3ec7: 90 0b       ..
+    bcc new_room1_trapdoor_open_flag_in_y                             ; 3ec7: 90 0b       ..
     lda desired_room_index                                            ; 3ec9: a5 30       .0
     cmp #1                                                            ; 3ecb: c9 01       ..
     bne c3ed2                                                         ; 3ecd: d0 03       ..
@@ -701,18 +703,18 @@ c3ec1
 c3ed2
     ldy #$ff                                                          ; 3ed2: a0 ff       ..
 ; $3ed4 referenced 1 time by $3ec7
-new_something1_trapdoor_open_flag_in_y
-    sty something1_trapdoor_open_flag                                 ; 3ed4: 8c ff 09    ...
+new_room1_trapdoor_open_flag_in_y
+    sty room1_trapdoor_open_flag                                      ; 3ed4: 8c ff 09    ...
 ; $3ed7 referenced 8 times by $3e69, $3e6f, $3e77, $3e7b, $3e80, $3e87, $3e8b, $3e97
 c3ed7
     lda desired_room_index                                            ; 3ed7: a5 30       .0
     cmp #1                                                            ; 3ed9: c9 01       ..
     bne return2                                                       ; 3edb: d0 10       ..
-    ldy something1_trapdoor_open_flag                                 ; 3edd: ac ff 09    ...
-    bpl adjusted_something1_trapdoor_open_flag_in_y_is_ge_0           ; 3ee0: 10 02       ..
+    ldy room1_trapdoor_open_flag                                      ; 3edd: ac ff 09    ...
+    bpl adjusted_room1_trapdoor_open_flag_in_y_is_ge_0                ; 3ee0: 10 02       ..
     ldy #2                                                            ; 3ee2: a0 02       ..
 ; $3ee4 referenced 1 time by $3ee0
-adjusted_something1_trapdoor_open_flag_in_y_is_ge_0
+adjusted_room1_trapdoor_open_flag_in_y_is_ge_0
     lda trapdoor_sprite_table,y                                       ; 3ee4: b9 ee 3e    ..>
     sta object_spriteid + objectid_left_trapdoor                      ; 3ee7: 8d aa 09    ...
     sta object_spriteid + objectid_right_trapdoor                     ; 3eea: 8d ab 09    ...
@@ -1837,7 +1839,7 @@ pydis_end
 ;     l0a02:                                                  8
 ;     l0a04:                                                  8
 ;     c3ed7:                                                  8
-;     something1_trapdoor_open_flag:                          7
+;     room1_trapdoor_open_flag:                               7
 ;     l0a01:                                                  7
 ;     play_sound_yx:                                          7
 ;     mouse_sprites_and_ball_movement_table:                  7
@@ -1890,7 +1892,7 @@ pydis_end
 ;     l396f:                                                  2
 ;     c3b0e:                                                  2
 ;     level_unchanged2:                                       2
-;     something1_initial_setup_done:                          2
+;     room1_initial_setup_done:                               2
 ;     sub_c3ef1:                                              2
 ;     c3f51:                                                  2
 ;     l3fd5:                                                  2
@@ -1928,7 +1930,7 @@ pydis_end
 ;     l3970:                                                  1
 ;     developer_mode_not_active:                              1
 ;     loop_c3bd4:                                             1
-;     mice_and_ball_handler:                                  1
+;     room0_handler:                                          1
 ;     initialise_mouse_ball_position_if_level_changed:        1
 ;     level_unchanged:                                        1
 ;     move_mouse_ball_if_room_0_local:                        1
@@ -1944,13 +1946,13 @@ pydis_end
 ;     c3dd2:                                                  1
 ;     c3de2:                                                  1
 ;     c3def:                                                  1
-;     something1_handler:                                     1
+;     room1_handler:                                          1
 ;     set_up_open_trapdoor_collision_map:                     1
-;     something1_not_first_update:                            1
+;     room1_not_first_update:                                 1
 ;     c3ec1:                                                  1
 ;     c3ed2:                                                  1
-;     new_something1_trapdoor_open_flag_in_y:                 1
-;     adjusted_something1_trapdoor_open_flag_in_y_is_ge_0:    1
+;     new_room1_trapdoor_open_flag_in_y:                      1
+;     adjusted_room1_trapdoor_open_flag_in_y_is_ge_0:         1
 ;     return2:                                                1
 ;     trapdoor_sprite_table:                                  1
 ;     sub_c3f02:                                              1
