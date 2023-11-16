@@ -10,6 +10,7 @@ sprite_dict = {
     0xc8: "spriteid_mouse",
     0xc9: "spriteid_mouse_hands1",
     0xca: "spriteid_mouse_hands2",
+    0xcb: "spriteid_small_ball",
     0xcf: "spriteid_trapdoor_horizontal",
     0xd0: "spriteid_trapdoor_diagonal",
     0xd1: "spriteid_trapdoor_vertical",
@@ -91,6 +92,7 @@ mouse_and_ball(0x3d39)
 
 label(0x4052, "baby_spriteid_data")
 spriteid(0x4052, 0x407f)
+expr(0x3d09, "spriteid_small_ball")
 
 comment(0x4084, "redundant instruction", inline=True)
 comment(0x4086, "redundant instruction", inline=True)
@@ -188,7 +190,9 @@ entry(0x3cfb, "finish_mouse_ball_movement")
 expr(0x3d06, make_add("object_y_low", "objectid_mouse_ball"))
 expr(0x3cfc, make_add("object_x_low", "objectid_mouse_ball"))
 expr(0x3d0b, make_add("object_spriteid", "objectid_mouse_ball"))
-comment(0x3d12, "Check for player-ball collision TODO: just a plausible guess")
+comment(0x3d12, "Check for player-ball collision")
+expr(0x3d13, "objectid_player")
+expr(0x3d15, "objectid_mouse_ball")
 constant(6, "player_collision_flag_baby")
 constant(0x80, "player_collision_flag_mouse_ball")
 expr(0x3d1c, "player_collision_flag_mouse_ball")

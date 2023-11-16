@@ -12,6 +12,7 @@ fixed_eor_key                                  = 203
 game_area_height_cells                         = 24
 game_area_width_cells                          = 40
 last_level_letter                              = 81
+objectid_player                                = 0
 opcode_jmp                                     = 76
 osbyte_flush_buffer_class                      = 15
 osbyte_read_write_escape_break_effect          = 200

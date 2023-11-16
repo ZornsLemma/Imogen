@@ -14,6 +14,7 @@ last_level_letter                  = 81
 objectid_left_mouse                = 2
 objectid_left_trapdoor             = 2
 objectid_mouse_ball                = 4
+objectid_player                    = 0
 objectid_right_mouse               = 3
 objectid_right_trapdoor            = 3
 objectid_saxophone                 = 4
@@ -35,6 +36,7 @@ spriteid_mouse_hands2              = 202
 spriteid_mouse_hands3              = 212
 spriteid_mouse_hands4              = 213
 spriteid_saxophone                 = 211
+spriteid_small_ball                = 203
 spriteid_table                     = 222
 spriteid_trapdoor_diagonal         = 208
 spriteid_trapdoor_horizontal       = 207
@@ -476,13 +478,13 @@ finish_mouse_ball_movement
     iny                                                               ; 3d01: c8          .
     sbc mouse_sprites_and_ball_movement_table,y                       ; 3d02: f9 21 3d    .!=
     sta object_y_low + objectid_mouse_ball                            ; 3d05: 8d 80 09    ...
-    lda #$cb                                                          ; 3d08: a9 cb       ..
+    lda #spriteid_small_ball                                          ; 3d08: a9 cb       ..
     sta object_spriteid + objectid_mouse_ball                         ; 3d0a: 8d ac 09    ...
     lda update_room_first_update_flag                                 ; 3d0d: ad 2b 13    .+.
     bne return1                                                       ; 3d10: d0 0e       ..
-; Check for player-ball collision TODO: just a plausible guess
-    ldx #0                                                            ; 3d12: a2 00       ..
-    ldy #4                                                            ; 3d14: a0 04       ..
+; Check for player-ball collision
+    ldx #objectid_player                                              ; 3d12: a2 00       ..
+    ldy #objectid_mouse_ball                                          ; 3d14: a0 04       ..
     jsr test_for_collision_between_objects_x_and_y                    ; 3d16: 20 e2 28     .(
     beq return1                                                       ; 3d19: f0 05       ..
     lda #player_collision_flag_mouse_ball                             ; 3d1b: a9 80       ..
@@ -2217,6 +2219,9 @@ pydis_end
 !if (objectid_mouse_ball) != $04 {
     !error "Assertion failed: objectid_mouse_ball == $04"
 }
+!if (objectid_player) != $00 {
+    !error "Assertion failed: objectid_player == $00"
+}
 !if (objectid_right_mouse) != $03 {
     !error "Assertion failed: objectid_right_mouse == $03"
 }
@@ -2291,6 +2296,9 @@ pydis_end
 }
 !if (spriteid_saxophone) != $d3 {
     !error "Assertion failed: spriteid_saxophone == $d3"
+}
+!if (spriteid_small_ball) != $cb {
+    !error "Assertion failed: spriteid_small_ball == $cb"
 }
 !if (spriteid_table) != $de {
     !error "Assertion failed: spriteid_table == $de"

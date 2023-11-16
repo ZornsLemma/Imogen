@@ -50,6 +50,7 @@ max_filename_len                                = 7
 max_objects                                     = 11
 menu_slot_count                                 = 17
 num_levels                                      = 16
+objectid_player                                 = 0
 opcode_clc                                      = 24
 opcode_jmp                                      = 76
 opcode_lda_imm                                  = 169
