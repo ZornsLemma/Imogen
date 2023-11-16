@@ -670,6 +670,7 @@ room1_not_first_update
     lda #$0b                                                          ; 3e92: a9 0b       ..
     jsr something59_TODO                                              ; 3e94: 20 94 28     .(
     beq c3ed7                                                         ; 3e97: f0 3e       .>
+; Remove the closed trapdoor from the collision map.
     ldx #$11                                                          ; 3e99: a2 11       ..
     ldy #7                                                            ; 3e9b: a0 07       ..
     lda #6                                                            ; 3e9d: a9 06       ..
@@ -679,6 +680,7 @@ room1_not_first_update
     lda #0                                                            ; 3ea5: a9 00       ..
     sta value_to_write_to_collision_map                               ; 3ea7: 85 3e       .>
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 3ea9: 20 44 1e     D.
+; Add the two open trapdoors to the collision map.
     iny                                                               ; 3eac: c8          .
     lda #1                                                            ; 3ead: a9 01       ..
     sta width_in_cells                                                ; 3eaf: 85 3c       .<

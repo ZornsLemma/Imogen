@@ -162,6 +162,8 @@ label(0x9ff, "room1_trapdoor_open_flag")
 label(0x3eee, "trapdoor_sprite_table") # TODO: Include "animation" in name? But not sure if this is different from "real" animations like animal tails
 for i in range(3): # TODO: Add a convenience function for this? Maybe in py8dis?
     byte(0x3eee+i)
+comment(0x3e99, "Remove the closed trapdoor from the collision map.")
+comment(0x3eac, "Add the two open trapdoors to the collision map.")
 
 # TODO: slight guesswork
 constant(2, "objectid_left_mouse")
