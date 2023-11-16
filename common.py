@@ -123,6 +123,7 @@ def common_to_all():
 
     label(0x0050, "previous_room_index")
     label(0x0051, "previous_level") # TODO: see use at initialise_level
+    label(0x0052, "player_held_item")
 
     label(0x003c, "width_in_cells")
     label(0x003d, "height_in_cells")
@@ -160,30 +161,37 @@ def common_to_all():
     label_word(0x3ad9, "update_room_ptr") # TODO: poor name
     label_word(0x3adb, "level_name_ptr") # TODO: poor name
 
-    label(0x1988, "initialise_brazier_and_fire")
-    label(0x1a10, "something14_TODO")
-    label(0x2b87, "insert_character_menu_item_into_toolbar")
-    label(0x2be0, "remove_item_from_toolbar_menu")
     label(0x12bb, "start_room")
     label(0x12da, "game_update")
-    label(0x1b90, "draw_floor_walls_and_ceiling_around_solid_rock")
+    label(0x1988, "initialise_brazier_and_fire")
+    label(0x1a10, "something14_TODO")
     label(0x1abb, "copy_rectangle_of_memory_to_screen")
-    label(0x1f57, "draw_sprite_a_at_cell_xy_and_write_to_collision_map")
+    label(0x1b90, "draw_floor_walls_and_ceiling_around_solid_rock")
     label(0x1db9, "draw_rope")
     label(0x1e44, "write_value_to_a_rectangle_of_cells_in_collision_map")
-    label(0x28e2, "test_for_collision_between_objects_x_and_y")
-    label(0x1f4c, "draw_sprite_a_at_cell_xy")
-    label(0x1f6d, "set_object_position_from_current_sprite_position")
-    label(0x1f5d, "set_object_position_from_cell_xy")
-    label(0x2894, "something59_TODO")
     label(0x1ebb, "write_a_single_value_to_cell_in_collision_map")
+    label(0x1f4c, "draw_sprite_a_at_cell_xy")
+    label(0x1f57, "draw_sprite_a_at_cell_xy_and_write_to_collision_map")
+    label(0x1f5d, "set_object_position_from_cell_xy")
+    label(0x1f6d, "set_object_position_from_current_sprite_position")
     label(0x23a9, "play_landing_sound")
+    label(0x24d0, "temp_left_offset")
+    label(0x24d1, "temp_right_offset")
+    label(0x2550, "temp_top_offset")
+    label(0x2551, "temp_bottom_offset")
+    label(0x2894, "something59_TODO")
+    label(0x28e2, "test_for_collision_between_objects_x_and_y")
+    label(0x2b87, "insert_character_menu_item_into_toolbar")
+    label(0x2be0, "remove_item_from_toolbar_menu")
+    label(0x2ee8, "toolbar_collectable_spriteids")
+    label(0x2eed, "collectable_spriteids")
 
     label(0x2bbd, "find_or_create_menu_slot_for_A")
 
 
     label(0x1140, "initialise_level")
 
+    label(0x396f, "sound_priority_per_channel_table")
     label(0x3adf, "level_header_data")
     expr_label(0x3ae0, make_add("level_header_data", "1"))
 

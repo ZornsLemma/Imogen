@@ -30,6 +30,10 @@ spriteid_baby6                     = 220
 spriteid_baby7                     = 221
 spriteid_ball                      = 59
 spriteid_mouse                     = 200
+spriteid_mouse_hands1              = 201
+spriteid_mouse_hands2              = 202
+spriteid_mouse_hands3              = 212
+spriteid_mouse_hands4              = 213
 spriteid_saxophone                 = 211
 spriteid_table                     = 222
 spriteid_trapdoor_diagonal         = 208
@@ -51,23 +55,21 @@ source_sprite_memory_high                           = $41
 copy_mode                                           = $42
 previous_room_index                                 = $50
 previous_level                                      = $51
-l0052                                               = $52
+player_held_item                                    = $52
 developer_mode_sideways_ram_is_set_up_flag          = $5b
 l0070                                               = $70
+room_exit_direction                                 = $70
 show_dialog_box                                     = $040a
 remove_dialog                                       = $0453
 object_x_low                                        = $0950
-l0954                                               = $0954
 object_x_low_old                                    = $095b
 object_x_high                                       = $0966
 object_x_high_old                                   = $0971
 object_y_low                                        = $097c
-l0980                                               = $0980
 object_y_low_old                                    = $0987
 object_y_high                                       = $0992
 object_y_high_old                                   = $099d
 object_spriteid                                     = $09a8
-l09ac                                               = $09ac
 object_spriteid_old                                 = $09b3
 object_direction                                    = $09be
 object_direction_old                                = $09c9
@@ -111,17 +113,18 @@ set_object_position_from_cell_xy                    = $1f5d
 set_object_position_from_current_sprite_position    = $1f6d
 play_landing_sound                                  = $23a9
 player_collision_flag                               = $2433
-l24d0                                               = $24d0
-l24d1                                               = $24d1
-l2551                                               = $2551
+temp_left_offset                                    = $24d0
+temp_right_offset                                   = $24d1
+temp_top_offset                                     = $2550
+temp_bottom_offset                                  = $2551
 something59_TODO                                    = $2894
 test_for_collision_between_objects_x_and_y          = $28e2
 insert_character_menu_item_into_toolbar             = $2b87
 find_or_create_menu_slot_for_A                      = $2bbd
 remove_item_from_toolbar_menu                       = $2be0
 l2eb6                                               = $2eb6
-l2ee9                                               = $2ee9
-l2eee                                               = $2eee
+toolbar_collectable_spriteids                       = $2ee8
+collectable_spriteids                               = $2eed
 l2ef3                                               = $2ef3
 print_encrypted_string_at_yx_centred                = $37f3
 wait_one_second_then_check_keys                     = $388d
@@ -130,8 +133,7 @@ object_z_order                                      = $38c2
 object_collision_flags                              = $38d8
 play_sound_yx                                       = $38f6
 define_envelope                                     = $395e
-l396f                                               = $396f
-l3970                                               = $3970
+sound_priority_per_channel_table                    = $396f
 check_menu_keys                                     = $3a8f
 auxcode                                             = $53c0
 check_password                                      = $53c0
@@ -292,7 +294,7 @@ room_1_code
 ; $3bd4 referenced 1 time by $3bdb
 loop_c3bd4
     jsr game_update                                                   ; 3bd4: 20 da 12     ..
-    sta l0070                                                         ; 3bd7: 85 70       .p
+    sta room_exit_direction                                           ; 3bd7: 85 70       .p
     and #4                                                            ; 3bd9: 29 04       ).
     beq loop_c3bd4                                                    ; 3bdb: f0 f7       ..
     ldx #1                                                            ; 3bdd: a2 01       ..
@@ -468,14 +470,14 @@ mouse_ball_position_ge_0xf_common_tail
     sbc mouse_sprites_and_ball_movement_table,y                       ; 3cf8: f9 21 3d    .!=
 ; $3cfb referenced 1 time by $3cd7
 finish_mouse_ball_movement
-    sta l0954                                                         ; 3cfb: 8d 54 09    .T.
+    sta object_x_low + objectid_mouse_ball                            ; 3cfb: 8d 54 09    .T.
     lda #$53 ; 'S'                                                    ; 3cfe: a9 53       .S
     sec                                                               ; 3d00: 38          8
     iny                                                               ; 3d01: c8          .
     sbc mouse_sprites_and_ball_movement_table,y                       ; 3d02: f9 21 3d    .!=
-    sta l0980                                                         ; 3d05: 8d 80 09    ...
+    sta object_y_low + objectid_mouse_ball                            ; 3d05: 8d 80 09    ...
     lda #$cb                                                          ; 3d08: a9 cb       ..
-    sta l09ac                                                         ; 3d0a: 8d ac 09    ...
+    sta object_spriteid + objectid_mouse_ball                         ; 3d0a: 8d ac 09    ...
     lda update_room_first_update_flag                                 ; 3d0d: ad 2b 13    .+.
     bne return1                                                       ; 3d10: d0 0e       ..
 ; Check for player-ball collision TODO: just a plausible guess
@@ -491,9 +493,27 @@ return1
 
 ; $3d21 referenced 7 times by $3cc3, $3cca, $3cd4, $3ce7, $3cee, $3cf8, $3d02
 mouse_sprites_and_ball_movement_table
-    !byte $d4, $c9,   0,   0, $ca, $c9,   8,   6, $ca, $c9, $10, $0a  ; 3d21: d4 c9 00... ...
-    !byte $ca, $d5, $18, $0c, $d5, $ca, $20, $0c, $c9, $ca, $28, $0a  ; 3d2d: ca d5 18... ...
-    !byte $c9, $ca, $30,   6                                          ; 3d39: c9 ca 30... ..0
+    !byte spriteid_mouse_hands3                                       ; 3d21: d4          .
+    !byte spriteid_mouse_hands1                                       ; 3d22: c9          .
+    !byte 0, 0                                                        ; 3d23: 00 00       ..
+    !byte spriteid_mouse_hands2                                       ; 3d25: ca          .
+    !byte spriteid_mouse_hands1                                       ; 3d26: c9          .
+    !byte 8, 6                                                        ; 3d27: 08 06       ..
+    !byte spriteid_mouse_hands2                                       ; 3d29: ca          .
+    !byte spriteid_mouse_hands1                                       ; 3d2a: c9          .
+    !byte 16, 10                                                      ; 3d2b: 10 0a       ..
+    !byte spriteid_mouse_hands2                                       ; 3d2d: ca          .
+    !byte spriteid_mouse_hands4                                       ; 3d2e: d5          .
+    !byte 24, 12                                                      ; 3d2f: 18 0c       ..
+    !byte spriteid_mouse_hands4                                       ; 3d31: d5          .
+    !byte spriteid_mouse_hands2                                       ; 3d32: ca          .
+    !byte 32, 12                                                      ; 3d33: 20 0c        .
+    !byte spriteid_mouse_hands1                                       ; 3d35: c9          .
+    !byte spriteid_mouse_hands2                                       ; 3d36: ca          .
+    !byte 40, 10                                                      ; 3d37: 28 0a       (.
+    !byte spriteid_mouse_hands1                                       ; 3d39: c9          .
+    !byte spriteid_mouse_hands2                                       ; 3d3a: ca          .
+    !byte 48,  6                                                      ; 3d3b: 30 06       0.
 room_2_data_ptr
     !byte 9                                                           ; 3d3d: 09          .              ; initial player X cell
     !byte 7                                                           ; 3d3e: 07          .              ; initial player Y cell
@@ -566,7 +586,7 @@ room_2_code
 ; $3dd2 referenced 1 time by $3df3
 c3dd2
     jsr game_update                                                   ; 3dd2: 20 da 12     ..
-    sta l0070                                                         ; 3dd5: 85 70       .p
+    sta room_exit_direction                                           ; 3dd5: 85 70       .p
     and #1                                                            ; 3dd7: 29 01       ).
     beq c3de2                                                         ; 3dd9: f0 07       ..
     ldx #0                                                            ; 3ddb: a2 00       ..
@@ -575,7 +595,7 @@ c3dd2
 
 ; $3de2 referenced 1 time by $3dd9
 c3de2
-    lda l0070                                                         ; 3de2: a5 70       .p
+    lda room_exit_direction                                           ; 3de2: a5 70       .p
     and #2                                                            ; 3de4: 29 02       ).
     beq c3def                                                         ; 3de6: f0 07       ..
     ldx #2                                                            ; 3de8: a2 02       ..
@@ -584,7 +604,7 @@ c3de2
 
 ; $3def referenced 1 time by $3de6
 c3def
-    lda l0070                                                         ; 3def: a5 70       .p
+    lda room_exit_direction                                           ; 3def: a5 70       .p
     and #4                                                            ; 3df1: 29 04       ).
     beq c3dd2                                                         ; 3df3: f0 dd       ..
     ldx #3                                                            ; 3df5: a2 03       ..
@@ -663,7 +683,7 @@ room1_not_first_update
     lda desired_room_index                                            ; 3e73: a5 30       .0
     cmp #1                                                            ; 3e75: c9 01       ..
     bne c3ed7                                                         ; 3e77: d0 5e       .^
-    lda l0052                                                         ; 3e79: a5 52       .R
+    lda player_held_item                                              ; 3e79: a5 52       .R
     beq c3ed7                                                         ; 3e7b: f0 5a       .Z
     lda object_x_high                                                 ; 3e7d: ad 66 09    .f.
     bne c3ed7                                                         ; 3e80: d0 55       .U
@@ -673,7 +693,7 @@ room1_not_first_update
     cmp #$b8                                                          ; 3e89: c9 b8       ..
     bcs c3ed7                                                         ; 3e8b: b0 4a       .J
     lda #2                                                            ; 3e8d: a9 02       ..
-    sta l2551                                                         ; 3e8f: 8d 51 25    .Q%
+    sta temp_bottom_offset                                            ; 3e8f: 8d 51 25    .Q%
     lda #$0b                                                          ; 3e92: a9 0b       ..
     jsr something59_TODO                                              ; 3e94: 20 94 28     .(
     beq c3ed7                                                         ; 3e97: f0 3e       .>
@@ -759,9 +779,9 @@ sub_c3f02
     lda update_room_first_update_flag                                 ; 3f10: ad 2b 13    .+.
     beq c3f52                                                         ; 3f13: f0 3d       .=
     lda #$d3                                                          ; 3f15: a9 d3       ..
-    sta l2ee9                                                         ; 3f17: 8d e9 2e    ...
+    sta toolbar_collectable_spriteids + 1                             ; 3f17: 8d e9 2e    ...
     lda #$d2                                                          ; 3f1a: a9 d2       ..
-    sta l2eee                                                         ; 3f1c: 8d ee 2e    ...
+    sta collectable_spriteids + 1                                     ; 3f1c: 8d ee 2e    ...
     sta l2ef3                                                         ; 3f1f: 8d f3 2e    ...
     ldx #<envelope3                                                   ; 3f22: a2 16       ..
     ldy #>envelope3                                                   ; 3f24: a0 44       .D
@@ -1393,7 +1413,7 @@ c4358
     and #4                                                            ; 436d: 29 04       ).
     beq c4355                                                         ; 436f: f0 e4       ..
     lda #1                                                            ; 4371: a9 01       ..
-    sta l24d1                                                         ; 4373: 8d d1 24    ..$
+    sta temp_right_offset                                             ; 4373: 8d d1 24    ..$
     ldx #0                                                            ; 4376: a2 00       ..
     ldy #2                                                            ; 4378: a0 02       ..
     jsr test_for_collision_between_objects_x_and_y                    ; 437a: 20 e2 28     .(
@@ -1407,7 +1427,7 @@ c4386
     and #1                                                            ; 4389: 29 01       ).
     beq c4355                                                         ; 438b: f0 c8       ..
     lda #$ff                                                          ; 438d: a9 ff       ..
-    sta l24d0                                                         ; 438f: 8d d0 24    ..$
+    sta temp_left_offset                                              ; 438f: 8d d0 24    ..$
     ldx #0                                                            ; 4392: a2 00       ..
     ldy #2                                                            ; 4394: a0 02       ..
     jsr test_for_collision_between_objects_x_and_y                    ; 4396: 20 e2 28     .(
@@ -1432,12 +1452,12 @@ c43b4
     lda desired_room_index                                            ; 43b9: a5 30       .0
     cmp #3                                                            ; 43bb: c9 03       ..
     bne c4415                                                         ; 43bd: d0 56       .V
-    lda l396f                                                         ; 43bf: ad 6f 39    .o9
+    lda sound_priority_per_channel_table                              ; 43bf: ad 6f 39    .o9
     cmp #$81                                                          ; 43c2: c9 81       ..
     bcs c43ce                                                         ; 43c4: b0 08       ..
     lda #0                                                            ; 43c6: a9 00       ..
-    sta l396f                                                         ; 43c8: 8d 6f 39    .o9
-    sta l3970                                                         ; 43cb: 8d 70 39    .p9
+    sta sound_priority_per_channel_table                              ; 43c8: 8d 6f 39    .o9
+    sta sound_priority_per_channel_table + 1                          ; 43cb: 8d 70 39    .p9
 ; $43ce referenced 1 time by $43c4
 c43ce
     jsr play_landing_sound                                            ; 43ce: 20 a9 23     .#
@@ -1898,7 +1918,7 @@ pydis_end
 ;     set_object_position_from_current_sprite_position:       2
 ;     player_collision_flag:                                  2
 ;     object_collision_flags:                                 2
-;     l396f:                                                  2
+;     sound_priority_per_channel_table:                       2
 ;     c3b0e:                                                  2
 ;     level_unchanged2:                                       2
 ;     room1_initial_setup_done:                               2
@@ -1919,7 +1939,7 @@ pydis_end
 ;     sprite_reflect_flag:                                    1
 ;     temp_sprite_x_offset:                                   1
 ;     copy_mode:                                              1
-;     l0052:                                                  1
+;     player_held_item:                                       1
 ;     l0954:                                                  1
 ;     object_y_low:                                           1
 ;     l0980:                                                  1
@@ -1928,9 +1948,9 @@ pydis_end
 ;     something14_TODO:                                       1
 ;     write_a_single_value_to_cell_in_collision_map:          1
 ;     play_landing_sound:                                     1
-;     l24d0:                                                  1
-;     l24d1:                                                  1
-;     l2551:                                                  1
+;     temp_left_offset:                                       1
+;     temp_right_offset:                                      1
+;     temp_bottom_offset:                                     1
 ;     something59_TODO:                                       1
 ;     l2ee9:                                                  1
 ;     l2eee:                                                  1
@@ -2042,8 +2062,6 @@ pydis_end
 ;     c43e3
 ;     c43f6
 ;     c4415
-;     l0052
-;     l0070
 ;     l0954
 ;     l0980
 ;     l09aa
@@ -2057,14 +2075,10 @@ pydis_end
 ;     l0a71
 ;     l0a72
 ;     l0a73
-;     l24d0
-;     l24d1
-;     l2551
 ;     l2eb6
 ;     l2ee9
 ;     l2eee
 ;     l2ef3
-;     l396f
 ;     l3970
 ;     l3fd5
 ;     l3fd6
@@ -2155,6 +2169,9 @@ pydis_end
 !if (>tile_all_set_pixels) != $0a {
     !error "Assertion failed: >tile_all_set_pixels == $0a"
 }
+!if (collectable_spriteids + 1) != $2eee {
+    !error "Assertion failed: collectable_spriteids + 1 == $2eee"
+}
 !if (copy_mode_simple) != $01 {
     !error "Assertion failed: copy_mode_simple == $01"
 }
@@ -2173,6 +2190,9 @@ pydis_end
 !if (object_spriteid + objectid_left_trapdoor) != $09aa {
     !error "Assertion failed: object_spriteid + objectid_left_trapdoor == $09aa"
 }
+!if (object_spriteid + objectid_mouse_ball) != $09ac {
+    !error "Assertion failed: object_spriteid + objectid_mouse_ball == $09ac"
+}
 !if (object_spriteid + objectid_right_mouse) != $09ab {
     !error "Assertion failed: object_spriteid + objectid_right_mouse == $09ab"
 }
@@ -2181,6 +2201,12 @@ pydis_end
 }
 !if (object_spriteid + objectid_saxophone) != $09ac {
     !error "Assertion failed: object_spriteid + objectid_saxophone == $09ac"
+}
+!if (object_x_low + objectid_mouse_ball) != $0954 {
+    !error "Assertion failed: object_x_low + objectid_mouse_ball == $0954"
+}
+!if (object_y_low + objectid_mouse_ball) != $0980 {
+    !error "Assertion failed: object_y_low + objectid_mouse_ball == $0980"
 }
 !if (objectid_left_mouse) != $02 {
     !error "Assertion failed: objectid_left_mouse == $02"
@@ -2215,6 +2241,9 @@ pydis_end
 !if (room_4_data_ptr) != $424d {
     !error "Assertion failed: room_4_data_ptr == $424d"
 }
+!if (sound_priority_per_channel_table + 1) != $3970 {
+    !error "Assertion failed: sound_priority_per_channel_table + 1 == $3970"
+}
 !if (sprite_data - level_data) != $09d1 {
     !error "Assertion failed: sprite_data - level_data == $09d1"
 }
@@ -2248,6 +2277,18 @@ pydis_end
 !if (spriteid_mouse) != $c8 {
     !error "Assertion failed: spriteid_mouse == $c8"
 }
+!if (spriteid_mouse_hands1) != $c9 {
+    !error "Assertion failed: spriteid_mouse_hands1 == $c9"
+}
+!if (spriteid_mouse_hands2) != $ca {
+    !error "Assertion failed: spriteid_mouse_hands2 == $ca"
+}
+!if (spriteid_mouse_hands3) != $d4 {
+    !error "Assertion failed: spriteid_mouse_hands3 == $d4"
+}
+!if (spriteid_mouse_hands4) != $d5 {
+    !error "Assertion failed: spriteid_mouse_hands4 == $d5"
+}
 !if (spriteid_saxophone) != $d3 {
     !error "Assertion failed: spriteid_saxophone == $d3"
 }
@@ -2262,4 +2303,7 @@ pydis_end
 }
 !if (spriteid_trapdoor_vertical) != $d1 {
     !error "Assertion failed: spriteid_trapdoor_vertical == $d1"
+}
+!if (toolbar_collectable_spriteids + 1) != $2ee9 {
+    !error "Assertion failed: toolbar_collectable_spriteids + 1 == $2ee9"
 }

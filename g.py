@@ -266,7 +266,6 @@ label(0x004a, "temp_coordinate")
 label(0x004d, "new_player_character")
 
 label(0x004c, "screen_base_address_high")
-label(0x0052, "player_held_item")
 label(0x0054, "sprdata_ptr")
 label(0x0056, "temp_rope_length")
 label(0x0058, "temp_sprite_address_low")
@@ -671,9 +670,6 @@ comment(0x24be, "divide by eight to get cell right position")
 comment(0x248f, "add temporary left offset to object left position")
 comment(0x24ac, "add temporary right offset to object right position")
 
-label(0x24d0, "temp_left_offset")
-label(0x24d1, "temp_right_offset")
-
 label(0x24d2, "find_top_and_bottom_of_object")
 comment(0x24d3, "remember object index")
 comment(0x24d4, "get address of current sprite for object")
@@ -687,9 +683,7 @@ comment(0x250f, "add temporary signed offset to object_top")
 comment(0x2521, "divide the bottom pixel coordinate by eight to get the cell Y")
 comment(0x252c, "add temporary signed offset to object_bottom")
 comment(0x2547, "zero the temporary offsets")
-label(0x2550, "temp_top_offset")
 comment(0x253e, "divide the bottom pixel coordinate by eight to get the cell Y")
-label(0x2551, "temp_bottom_offset")
 comment(0x2552, "Look for X=0 or X=11", inline=True)
 comment(0x255a, "if (player is not holding an object) then return")
 comment(0x255e, "get spriteid of object being held")
@@ -1737,6 +1731,7 @@ label(0x2325, "not_transforming_out")
 comment(0x232b, "start 'transform out' animation")
 label(0x2334, "not_transforming")
 label(0x2358, "start_of_transform_in_animation")
+expr(0x2365, make_add("sound_priority_per_channel_table", "1"))
 entry(0x2a38, "update_menus")
 label(0x2a73, "not_changing_menu_position")
 label(0x2a81, "no_space_bar_pressed")
@@ -2049,6 +2044,7 @@ Initialise level
 
 On Entry:
     X is the room index
+    Y is the level number
 
 *************************************************************************************""")
 
@@ -2089,8 +2085,6 @@ label(0x1107, "timingB_counter_high")
 label(0x1108, "timing_latch_low")
 label(0x1109, "timing_latch_high")
 label(0x110a, "display_initialised_flag")
-label(0x2ee9, "four_entry_table2") # TODO: write only, at least in 'g' itself?
-label(0x396f, "sound_priority_per_channel_table")
 label(0x3973, "remember_a")
 label(0xa6f, "sixteen_entry_table")
 label(0xa7f, "level_ordering_table")
@@ -2138,7 +2132,9 @@ comment(0x2980, "set standard set as nine menu items (including separators)", in
 comment(0x2985, "clear desired slots from slot eight upwards")
 label(0x2988, "clear_extra_menu_slots_loop")
 label(0x296d, "menu_index_for_first_player_character")
-comment(0x2990, "clear another table")
+comment(0x2990, "clear table of level specific collectables")
+label(0x2992, "clear_collectables_loop")
+expr(0x2993, "toolbar_collectable_spriteids+1")
 comment(0x2998, "set new menu position")
 
 comment(0x28eb, "make sure we have sprites for both objects X and Y")
@@ -2268,7 +2264,7 @@ for i in sprite_addr:
 
 def spriteid(start_addr, end_addr=None):
     if end_addr == None:
-        end_addr = start_addr
+        end_addr = start_addr+1
     for addr in range(start_addr, end_addr):
         v = get_u8_runtime(memorymanager.RuntimeAddr(addr))
         if v in sprite_dict:

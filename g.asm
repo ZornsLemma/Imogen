@@ -530,6 +530,7 @@ start_game
 ; 
 ; On Entry:
 ;     X is the room index
+;     Y is the level number
 ; 
 ; *************************************************************************************
 initialise_level
@@ -2091,10 +2092,10 @@ something14_TODO
     and #7                                                            ; 1b50: 29 07       ).  :1a1f[1]
     tay                                                               ; 1b52: a8          .   :1a21[1]
     lda diamond_sprite_cycle,y                                        ; 1b53: b9 b2 1a    ... :1a22[1]
-    sta l2eed                                                         ; 1b56: 8d ed 2e    ... :1a25[1]
+    sta collectable_spriteids                                         ; 1b56: 8d ed 2e    ... :1a25[1]
     sta l2ef2                                                         ; 1b59: 8d f2 2e    ... :1a28[1]
     lda #spriteid_menu_item_completion_spell                          ; 1b5c: a9 21       .!  :1a2b[1]
-    sta l2ee8                                                         ; 1b5e: 8d e8 2e    ... :1a2d[1]
+    sta toolbar_collectable_spriteids                                 ; 1b5e: 8d e8 2e    ... :1a2d[1]
     lda desired_room_index                                            ; 1b61: a5 30       .0  :1a30[1]
     cmp current_room_index                                            ; 1b63: cd ba 1a    ... :1a32[1]
     bne reset_offsets_and_exit                                        ; 1b66: d0 67       .g  :1a35[1]
@@ -3972,7 +3973,7 @@ start_of_transform_in_animation
     jsr osbyte                                                        ; 248d: 20 f4 ff     .. :235c[1]   ; Flush sound channel 0 (X=4)
     lda #0                                                            ; 2490: a9 00       ..  :235f[1]
     sta sound_priority_per_channel_table                              ; 2492: 8d 6f 39    .o9 :2361[1]
-    sta l3970                                                         ; 2495: 8d 70 39    .p9 :2364[1]
+    sta sound_priority_per_channel_table + 1                          ; 2495: 8d 70 39    .p9 :2364[1]
     sta player_collision_flag                                         ; 2498: 8d 33 24    .3$ :2367[1]
     rts                                                               ; 249b: 60          `   :236a[1]
 
@@ -4984,12 +4985,12 @@ clear_extra_menu_slots_loop
     inx                                                               ; 2abc: e8          .   :298b[1]
     cpx #$11                                                          ; 2abd: e0 11       ..  :298c[1]
     bcc clear_extra_menu_slots_loop                                   ; 2abf: 90 f8       ..  :298e[1]
-; clear another table
+; clear table of level specific collectables
     ldx #3                                                            ; 2ac1: a2 03       ..  :2990[1]
-loop_c2992
-    sta four_entry_table2,x                                           ; 2ac3: 9d e9 2e    ... :2992[1]
+clear_collectables_loop
+    sta toolbar_collectable_spriteids+1,x                             ; 2ac3: 9d e9 2e    ... :2992[1]
     dex                                                               ; 2ac6: ca          .   :2995[1]
-    bpl loop_c2992                                                    ; 2ac7: 10 fa       ..  :2996[1]
+    bpl clear_collectables_loop                                       ; 2ac7: 10 fa       ..  :2996[1]
 ; set new menu position
     lda menu_index_for_first_player_character                         ; 2ac9: ad 6d 29    .m) :2998[1]
     clc                                                               ; 2acc: 18          .   :299b[1]
@@ -5818,7 +5819,7 @@ sub_c2eb8
     lda player_held_item                                              ; 2ff6: a5 52       .R  :2ec5[1]
     ldy #0                                                            ; 2ff8: a0 00       ..  :2ec7[1]
 loop_c2ec9
-    cmp l2ee8,y                                                       ; 2ffa: d9 e8 2e    ... :2ec9[1]
+    cmp toolbar_collectable_spriteids,y                               ; 2ffa: d9 e8 2e    ... :2ec9[1]
     beq c2ed7                                                         ; 2ffd: f0 09       ..  :2ecc[1]
     iny                                                               ; 2fff: c8          .   :2ece[1]
     cpy #4                                                            ; 3000: c0 04       ..  :2ecf[1]
@@ -5830,16 +5831,15 @@ c2ed7
     lda object_spriteid                                               ; 300b: ad a8 09    ... :2eda[1]
     cmp #spriteid_wizard6                                             ; 300e: c9 35       .5  :2edd[1]
     beq c2ee4                                                         ; 3010: f0 03       ..  :2edf[1]
-    ldx l2eed,y                                                       ; 3012: be ed 2e    ... :2ee1[1]
+    ldx collectable_spriteids,y                                       ; 3012: be ed 2e    ... :2ee1[1]
 c2ee4
     stx object_spriteid+1                                             ; 3015: 8e a9 09    ... :2ee4[1]
     rts                                                               ; 3018: 60          `   :2ee7[1]
 
-l2ee8
+toolbar_collectable_spriteids
     !byte 0                                                           ; 3019: 00          .   :2ee8[1]
-four_entry_table2
     !byte 0, 0, 0, 0                                                  ; 301a: 00 00 00... ... :2ee9[1]
-l2eed
+collectable_spriteids
     !byte 0, 0, 0, 0, 0                                               ; 301e: 00 00 00... ... :2eed[1]
 l2ef2
     !byte 0, 0, 0, 0, 0                                               ; 3023: 00 00 00... ... :2ef2[1]
@@ -7358,7 +7358,6 @@ l396b
     !byte 0, 0, 0, 0                                                  ; 3a9c: 00 00 00... ... :396b[1]
 sound_priority_per_channel_table
     !byte 0                                                           ; 3aa0: 00          .   :396f[1]
-l3970
     !byte 0, 0, 0                                                     ; 3aa1: 00 00 00    ... :3970[1]
 remember_a
     !byte 0                                                           ; 3aa4: 00          .   :3973[1]
@@ -8771,14 +8770,11 @@ pydis_end
 ;     l2eb5
 ;     l2eb6
 ;     l2eb7
-;     l2ee8
-;     l2eed
 ;     l2ef2
 ;     l31d7
 ;     l3403
 ;     l3967
 ;     l396b
-;     l3970
 ;     lbe00
 ;     lbf00
 ;     loop_c0aba
@@ -8793,7 +8789,6 @@ pydis_end
 ;     loop_c2684
 ;     loop_c26f3
 ;     loop_c270f
-;     loop_c2992
 ;     loop_c2be9
 ;     loop_c2ec9
 ;     loop_c34b2
@@ -9599,6 +9594,9 @@ pydis_end
 !if (sideways_rom_image_source_end - sideways_rom_image_source_start - 1) != $0f {
     !error "Assertion failed: sideways_rom_image_source_end - sideways_rom_image_source_start - 1 == $0f"
 }
+!if (sound_priority_per_channel_table + 1) != $3970 {
+    !error "Assertion failed: sound_priority_per_channel_table + 1 == $3970"
+}
 !if (sprite_op_flags_copy_mask) != $01 {
     !error "Assertion failed: sprite_op_flags_copy_mask == $01"
 }
@@ -9856,6 +9854,9 @@ pydis_end
 }
 !if (spriteid_wizard_transform2) != $39 {
     !error "Assertion failed: spriteid_wizard_transform2 == $39"
+}
+!if (toolbar_collectable_spriteids+1) != $2ee9 {
+    !error "Assertion failed: toolbar_collectable_spriteids+1 == $2ee9"
 }
 !if (vdu_bell) != $07 {
     !error "Assertion failed: vdu_bell == $07"

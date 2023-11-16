@@ -8,10 +8,14 @@ acorn.bbc()
 sprite_dict = {
     0x3b: "spriteid_ball",
     0xc8: "spriteid_mouse",
+    0xc9: "spriteid_mouse_hands1",
+    0xca: "spriteid_mouse_hands2",
     0xcf: "spriteid_trapdoor_horizontal",
     0xd0: "spriteid_trapdoor_diagonal",
     0xd1: "spriteid_trapdoor_vertical",
     0xd3: "spriteid_saxophone",
+    0xd4: "spriteid_mouse_hands3",
+    0xd5: "spriteid_mouse_hands4",
     0xd6: "spriteid_baby0",
     0xd7: "spriteid_baby1",
     0xd8: "spriteid_baby2",
@@ -25,7 +29,7 @@ sprite_dict = {
 
 def spriteid(start_addr, end_addr=None):
     if end_addr == None:
-        end_addr = start_addr
+        end_addr = start_addr+1
     for addr in range(start_addr, end_addr):
         v = get_u8_runtime(memorymanager.RuntimeAddr(addr))
         if v in sprite_dict:
@@ -41,6 +45,21 @@ load(0x3ad5, "orig/dataA.dat", "6502", "df027a3ac06abfed1878eaec3d2bbe5f")
 
 common_to_all()
 
+# NOTE:
+#
+#   Ranges here are *binary* NOT the *runtime* addresses as used everywhere else.
+#   This is weird, but makes the addresses unique.
+#
+substitute_labels = {
+    (0x3bd4,0x3df9): {
+        "l0070": "room_exit_direction",
+    },
+}
+
+# (Class SubstituteLabels is defined in common.py to implement the substitute labels)
+s = SubstituteLabels(substitute_labels)
+set_label_maker_hook(s.substitute_label_maker)
+
 expr_label(0x38ae, make_add("object_sprite_mask_type", "objectid_left_mouse"))
 expr(0x3ff3, "copy_mode_simple")
 
@@ -54,7 +73,22 @@ entry(get_u16_binary(0x3ad7), "level_init_after_load_handler")
 entry(get_u16_binary(0x3ad9), "level_update_handler")
 label(get_u16_binary(0x3adb), "level_name")
 
-entry(0x3d21, "mouse_sprites_and_ball_movement_table") # TODO: improve
+entry(0x3d21, "mouse_sprites_and_ball_movement_table")
+def mouse_and_ball(addr):
+    byte(addr+2,2)
+    spriteid(addr)
+    spriteid(addr+1)
+    decimal(addr+2)
+    decimal(addr+3)
+
+mouse_and_ball(0x3d21)
+mouse_and_ball(0x3d25)
+mouse_and_ball(0x3d29)
+mouse_and_ball(0x3d2d)
+mouse_and_ball(0x3d31)
+mouse_and_ball(0x3d35)
+mouse_and_ball(0x3d39)
+
 label(0x4052, "baby_spriteid_data")
 spriteid(0x4052, 0x407f)
 
@@ -151,6 +185,9 @@ comment(0x3cc6, "Set the mouse sprites as a pair of values in the table")
 entry(0x3ce7, "mouse_ball_position_ge_0xf_common_tail")
 comment(0x3cd7, "TODO: always branch? not sure, but superficially it would seem nothing in mouse_sprites_and_ball_movement_table is -$88, i.e. $78")
 entry(0x3cfb, "finish_mouse_ball_movement")
+expr(0x3d06, make_add("object_y_low", "objectid_mouse_ball"))
+expr(0x3cfc, make_add("object_x_low", "objectid_mouse_ball"))
+expr(0x3d0b, make_add("object_spriteid", "objectid_mouse_ball"))
 comment(0x3d12, "Check for player-ball collision TODO: just a plausible guess")
 constant(6, "player_collision_flag_baby")
 constant(0x80, "player_collision_flag_mouse_ball")
@@ -167,6 +204,8 @@ for i in range(3): # TODO: Add a convenience function for this? Maybe in py8dis?
     byte(0x3eee+i)
 comment(0x3e99, "Remove the closed trapdoor from the collision map.")
 comment(0x3eac, "Add the two open trapdoors to the collision map.")
+expr(0x3f18, make_add("toolbar_collectable_spriteids", "1"))
+expr(0x3f1d, make_add("collectable_spriteids", "1"))
 
 # TODO: slight guesswork
 constant(2, "objectid_left_mouse")
@@ -230,6 +269,9 @@ ldx_ldy_jsr_play_sound_yx(0x43e0, "some_sound4")
 
 # TODO: envelope1/2/4 share the same envelope number (6) - maybe we should adopt a convention of using labels like envelopeA6b -> level A, OS env number 6, a/b/c/d suffix indicates competing envelopes for that OS env number
 entry(0x395e, "define_envelope") # TODO: duplicate of line in g.py, can't trivially put in common as it breaks imogen.py
+
+expr(0x43cc, make_add("sound_priority_per_channel_table","1"))
+
 envelope(0x4460, "envelope1")
 expr(0x3bfe, make_lo("envelope1"))
 expr(0x3c00, make_hi("envelope1"))
