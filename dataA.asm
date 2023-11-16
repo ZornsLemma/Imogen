@@ -728,12 +728,12 @@ increment_trapdoor_open_flag
     bcc new_room1_trapdoor_open_flag_in_y                             ; 3ec7: 90 0b       ..
     lda desired_room_index                                            ; 3ec9: a5 30       .0
     cmp #1                                                            ; 3ecb: c9 01       ..
-    bne c3ed2                                                         ; 3ecd: d0 03       ..
+    bne skip_play_sound                                               ; 3ecd: d0 03       ..
 ; TODO: Pretty confident this is the trapdoor opening sound, but this is called
 ; elsewhere so don't want to rename subroutine yet
     jsr play_some_sound1_then_some_sound2                             ; 3ecf: 20 f1 3e     .>
 ; $3ed2 referenced 1 time by $3ecd
-c3ed2
+skip_play_sound
     ldy #$ff                                                          ; 3ed2: a0 ff       ..
 ; $3ed4 referenced 1 time by $3ec7
 new_room1_trapdoor_open_flag_in_y
@@ -1984,7 +1984,7 @@ pydis_end
 ;     set_up_open_trapdoor_collision_map:                     1
 ;     room1_not_first_update:                                 1
 ;     increment_trapdoor_open_flag:                           1
-;     c3ed2:                                                  1
+;     skip_play_sound:                                        1
 ;     new_room1_trapdoor_open_flag_in_y:                      1
 ;     adjusted_room1_trapdoor_open_flag_in_y_is_ge_0:         1
 ;     return2:                                                1
@@ -2024,7 +2024,6 @@ pydis_end
 ;     c3dd2
 ;     c3de2
 ;     c3def
-;     c3ed2
 ;     c3f51
 ;     c3f52
 ;     c3f62
