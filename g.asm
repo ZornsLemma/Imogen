@@ -20,6 +20,14 @@ colour_magenta                                  = 5
 colour_red                                      = 1
 colour_white                                    = 7
 colour_yellow                                   = 3
+copy_mode_2x2                                   = 0
+copy_mode_random16                              = 16
+copy_mode_random2                               = 2
+copy_mode_random32                              = 32
+copy_mode_random4                               = 4
+copy_mode_random64                              = 64
+copy_mode_random8                               = 8
+copy_mode_simple                                = 1
 crtc_cursor_start                               = 10
 crtc_interlace_delay                            = 8
 crtc_screen_start_high                          = 12
@@ -579,7 +587,7 @@ object_reset_loop
     sta object_sprite_mask_type,y                                     ; 12d2: 99 ac 38    ..8 :11a1[1]
     sta object_z_order,y                                              ; 12d5: 99 c2 38    ..8 :11a4[1]
     iny                                                               ; 12d8: c8          .   :11a7[1]
-    cpy #$0b                                                          ; 12d9: c0 0b       ..  :11a8[1]
+    cpy #max_objects                                                  ; 12d9: c0 0b       ..  :11a8[1]
     bcc object_reset_loop                                             ; 12db: 90 da       ..  :11aa[1]
     lda desired_level                                                 ; 12dd: a5 31       .1  :11ac[1]
     cmp previous_level                                                ; 12df: c5 51       .Q  :11ae[1]
@@ -971,7 +979,7 @@ sprite_op
     stx src_sprite_address_low                                        ; 14c8: 86 70       .p  :1397[1]
     sty src_sprite_address_high                                       ; 14ca: 84 71       .q  :1399[1]
     lda sprite_op_flags                                               ; 14cc: a5 15       ..  :139b[1]
-    and #1                                                            ; 14ce: 29 01       ).  :139d[1]
+    and #sprite_op_flags_copy_mask                                    ; 14ce: 29 01       ).  :139d[1]
     beq skip_copying_sprite_header_to_destination_sprite              ; 14d0: f0 14       ..  :139f[1]   ; check flags to see if we are copying to another sprite
 ; get destination sprite address
     lda dest_sprite_id                                                ; 14d2: a5 14       ..  :13a1[1]
@@ -1078,15 +1086,15 @@ not_out_of_range
 ; load X and check flags to see if we are copying the mask to a destination sprite
     ldx l0087                                                         ; 156c: a6 87       ..  :143b[1]
     lda sprite_op_flags                                               ; 156e: a5 15       ..  :143d[1]
-    and #1                                                            ; 1570: 29 01       ).  :143f[1]
+    and #sprite_op_flags_copy_mask                                    ; 1570: 29 01       ).  :143f[1]
     beq sprite_op_without_copying_mask                                ; 1572: f0 03       ..  :1441[1]
     jmp draw_sprite                                                   ; 1574: 4c 0c 16    L.. :1443[1]
 
 sprite_op_without_copying_mask
     lda sprite_op_flags                                               ; 1577: a5 15       ..  :1446[1]
-    and #6                                                            ; 1579: 29 06       ).  :1448[1]
+    and #sprite_op_flags_ignore_mask | sprite_op_flags_erase          ; 1579: 29 06       ).  :1448[1]
     beq skip3                                                         ; 157b: f0 22       ."  :144a[1]
-    and #4                                                            ; 157d: 29 04       ).  :144c[1]
+    and #sprite_op_flags_ignore_mask                                  ; 157d: 29 04       ).  :144c[1]
     bne write_sprite_without_mask                                     ; 157f: d0 16       ..  :144e[1]
 ; Bit 1 of sprite_op_flags is set (but not bit 2).
 ; This erases the sprite from the screen.
@@ -1470,7 +1478,7 @@ sprite_clip_x_loop
     dex                                                               ; 17c7: ca          .   :1696[1]
     bpl c16aa                                                         ; 17c8: 10 11       ..  :1697[1]
     lda sprite_op_flags                                               ; 17ca: a5 15       ..  :1699[1]
-    and #1                                                            ; 17cc: 29 01       ).  :169b[1]
+    and #sprite_op_flags_copy_mask                                    ; 17cc: 29 01       ).  :169b[1]
     beq not_copying_to_destination_sprite                             ; 17ce: f0 06       ..  :169d[1]
     lda mask_sprite_byte                                              ; 17d0: a5 80       ..  :169f[1]
     sta (dest_sprite_address_low),y                                   ; 17d2: 91 7e       .~  :16a1[1]
@@ -3654,7 +3662,7 @@ draw_object
     cmp #$ff                                                          ; 22f7: c9 ff       ..  :21c6[1]
     beq draw_object_sprite                                            ; 22f9: f0 06       ..  :21c8[1]
     sta dest_sprite_id                                                ; 22fb: 85 14       ..  :21ca[1]
-    lda #3                                                            ; 22fd: a9 03       ..  :21cc[1]
+    lda #sprite_op_flags_erase | sprite_op_flags_copy_mask            ; 22fd: a9 03       ..  :21cc[1]
     sta sprite_op_flags                                               ; 22ff: 85 15       ..  :21ce[1]
 draw_object_sprite
     jsr sprite_op                                                     ; 2301: 20 8d 13     .. :21d0[1]
@@ -9591,11 +9599,20 @@ pydis_end
 !if (sideways_rom_image_source_end - sideways_rom_image_source_start - 1) != $0f {
     !error "Assertion failed: sideways_rom_image_source_end - sideways_rom_image_source_start - 1 == $0f"
 }
+!if (sprite_op_flags_copy_mask) != $01 {
+    !error "Assertion failed: sprite_op_flags_copy_mask == $01"
+}
 !if (sprite_op_flags_erase) != $02 {
     !error "Assertion failed: sprite_op_flags_erase == $02"
 }
+!if (sprite_op_flags_erase | sprite_op_flags_copy_mask) != $03 {
+    !error "Assertion failed: sprite_op_flags_erase | sprite_op_flags_copy_mask == $03"
+}
 !if (sprite_op_flags_ignore_mask) != $04 {
     !error "Assertion failed: sprite_op_flags_ignore_mask == $04"
+}
+!if (sprite_op_flags_ignore_mask | sprite_op_flags_erase) != $06 {
+    !error "Assertion failed: sprite_op_flags_ignore_mask | sprite_op_flags_erase == $06"
 }
 !if (sprite_op_flags_normal) != $00 {
     !error "Assertion failed: sprite_op_flags_normal == $00"

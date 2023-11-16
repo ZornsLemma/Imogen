@@ -1,4 +1,12 @@
 ; Constants
+copy_mode_2x2                      = 0
+copy_mode_random16                 = 16
+copy_mode_random2                  = 2
+copy_mode_random32                 = 32
+copy_mode_random4                  = 4
+copy_mode_random64                 = 64
+copy_mode_random8                  = 8
+copy_mode_simple                   = 1
 first_level_letter                 = 65
 game_area_height_cells             = 24
 game_area_width_cells              = 40
@@ -40,7 +48,7 @@ height_in_cells                                     = $3d
 value_to_write_to_collision_map                     = $3e
 source_sprite_memory_low                            = $40
 source_sprite_memory_high                           = $41
-l0042                                               = $42
+copy_mode                                           = $42
 previous_room_index                                 = $50
 previous_level                                      = $51
 l0052                                               = $52
@@ -118,7 +126,6 @@ l2ef3                                               = $2ef3
 print_encrypted_string_at_yx_centred                = $37f3
 wait_one_second_then_check_keys                     = $388d
 object_sprite_mask_type                             = $38ac
-l38ae                                               = $38ae
 object_z_order                                      = $38c2
 object_collision_flags                              = $38d8
 play_sound_yx                                       = $38f6
@@ -879,8 +886,8 @@ room_3_code
     sta source_sprite_memory_high                                     ; 3fec: 85 41       .A
     lda #0                                                            ; 3fee: a9 00       ..
     sta value_to_write_to_collision_map                               ; 3ff0: 85 3e       .>
-    lda #1                                                            ; 3ff2: a9 01       ..
-    sta l0042                                                         ; 3ff4: 85 42       .B
+    lda #copy_mode_simple                                             ; 3ff2: a9 01       ..
+    sta copy_mode                                                     ; 3ff4: 85 42       .B
     ldx #3                                                            ; 3ff6: a2 03       ..
     ldy #2                                                            ; 3ff8: a0 02       ..
     jsr sub_c3f8b                                                     ; 3ffa: 20 8b 3f     .?
@@ -1019,7 +1026,7 @@ c40c1
     lda #2                                                            ; 40d6: a9 02       ..
     jsr set_object_position_from_cell_xy                              ; 40d8: 20 5d 1f     ].
     lda #$cc                                                          ; 40db: a9 cc       ..
-    sta l38ae                                                         ; 40dd: 8d ae 38    ..8
+    sta object_sprite_mask_type + objectid_left_mouse                 ; 40dd: 8d ae 38    ..8
 ; $40e0 referenced 1 time by $40c5
 c40e0
     jmp c41d9                                                         ; 40e0: 4c d9 41    L.A
@@ -1911,7 +1918,7 @@ pydis_end
 ;     c43a0:                                                  2
 ;     sprite_reflect_flag:                                    1
 ;     temp_sprite_x_offset:                                   1
-;     l0042:                                                  1
+;     copy_mode:                                              1
 ;     l0052:                                                  1
 ;     l0954:                                                  1
 ;     object_y_low:                                           1
@@ -1928,7 +1935,7 @@ pydis_end
 ;     l2ee9:                                                  1
 ;     l2eee:                                                  1
 ;     l2ef3:                                                  1
-;     l38ae:                                                  1
+;     object_sprite_mask_type + objectid_left_mouse:          1
 ;     l3970:                                                  1
 ;     developer_mode_not_active:                              1
 ;     loop_c3bd4:                                             1
@@ -2035,7 +2042,6 @@ pydis_end
 ;     c43e3
 ;     c43f6
 ;     c4415
-;     l0042
 ;     l0052
 ;     l0070
 ;     l0954
@@ -2058,7 +2064,6 @@ pydis_end
 ;     l2ee9
 ;     l2eee
 ;     l2ef3
-;     l38ae
 ;     l396f
 ;     l3970
 ;     l3fd5
@@ -2149,6 +2154,9 @@ pydis_end
 }
 !if (>tile_all_set_pixels) != $0a {
     !error "Assertion failed: >tile_all_set_pixels == $0a"
+}
+!if (copy_mode_simple) != $01 {
+    !error "Assertion failed: copy_mode_simple == $01"
 }
 !if (level_init_after_load_handler) != $3af2 {
     !error "Assertion failed: level_init_after_load_handler == $3af2"

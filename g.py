@@ -257,7 +257,6 @@ label(0x0039, "bit_mask_for_random_number_limit")
 label(0x003f, "only_ever_written_to_with_zero")
 comment(0x04e3, "draw dialog box outline (calculate X plot position based on text width)")
 
-label(0x0042, "copy_mode")
 label(0x0043, "print_in_italics_flag")
 label(0x0045, "eor_key") # TODO: Is this *always* $cb in practice?
 label(0x0046, "return_key_pressed_pending")
@@ -1797,6 +1796,7 @@ entry(0x36db, "select_level_a")
 #comment(0x114f, "TODO: Why do we check desired_level against currently_loaded_level in this loop? The loop kind of makes sense as a retry if disc error sort of thing, but I don't see why we'd ever have the wrong level loaded or something like that. It still doesn't feel quite right, but could this maybe be some leftover hint of a tape version? - hmm, note that dataA.asm calls into initialise_level in several different places (with different values of X, indicating different level_header_data entries to be called) - it may be that this check is so that second and subsequent calls don't redo pointless or harmful initialisation?")
 comment(0x114f, "Load a new level if the desired_level has changed.\n\nAny time we want to load a new level, we just set the desired_level and let this code do the work. (It is a loop to allow for retries on a disk error.)")
 label(0x1186, "object_reset_loop")
+expr(0x11a9, "max_objects")
 label(0x1209, "same_level")
 label(0x11dd, "clear_sixteen_entry_table_loop")
 comment(0x11f8, "Blank the whole screen temporarily. The toolbar is blanked out here since we are moving to a different level (we need to redraw it to remove any level specific objects obtained). When moving between rooms on the same level the toolbar doesn't change, so remains visible.")
@@ -2436,6 +2436,12 @@ The behaviour of '11' shows that this is a compression scheme, where columns can
 
 *************************************************************************************""")
 label(0x138d, "sprite_op")
+expr(0x139e, "sprite_op_flags_copy_mask")
+expr(0x1440, "sprite_op_flags_copy_mask")
+expr(0x1449, make_or("sprite_op_flags_ignore_mask", "sprite_op_flags_erase"))
+expr(0x144d, "sprite_op_flags_ignore_mask")
+expr(0x169c, "sprite_op_flags_copy_mask")
+expr(0x21cd, make_or("sprite_op_flags_erase", "sprite_op_flags_copy_mask"))
 comment(0x13a1, "get destination sprite address")
 label(0x1446, "sprite_op_without_copying_mask")
 comment(0x1450, """Bit 1 of sprite_op_flags is set (but not bit 2).

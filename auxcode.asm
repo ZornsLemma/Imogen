@@ -1,4 +1,12 @@
 ; Constants
+copy_mode_2x2                                  = 0
+copy_mode_random16                             = 16
+copy_mode_random2                              = 2
+copy_mode_random32                             = 32
+copy_mode_random4                              = 4
+copy_mode_random64                             = 64
+copy_mode_random8                              = 8
+copy_mode_simple                               = 1
 first_level_letter                             = 65
 fixed_eor_key                                  = 203
 game_area_height_cells                         = 24
@@ -23,6 +31,7 @@ height_in_cells                                     = $3d
 value_to_write_to_collision_map                     = $3e
 source_sprite_memory_low                            = $40
 source_sprite_memory_high                           = $41
+copy_mode                                           = $42
 game_area_screen_address_high                       = $4c
 previous_room_index                                 = $50
 previous_level                                      = $51

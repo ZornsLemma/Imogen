@@ -88,6 +88,15 @@ sprite_op_flags_dict = {
     0x04: "sprite_op_flags_ignore_mask",
 }
 
+constant(0x0, "copy_mode_2x2")
+constant(0x1, "copy_mode_simple")
+constant(0x2, "copy_mode_random2")
+constant(0x4, "copy_mode_random4")
+constant(0x8, "copy_mode_random8")
+constant(0x10, "copy_mode_random16")
+constant(0x20, "copy_mode_random32")
+constant(0x40, "copy_mode_random64")
+
 # TODO: Use this more generally or maybe just get rid of it?
 def label_word(addr, s):
     label(addr, s)
@@ -109,6 +118,8 @@ def common_to_all():
 
     label(0x003a, "temp_sprite_x_offset")
     label(0x003b, "temp_sprite_y_offset")
+
+    label(0x0042, "copy_mode")
 
     label(0x0050, "previous_room_index")
     label(0x0051, "previous_level") # TODO: see use at initialise_level
