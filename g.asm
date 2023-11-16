@@ -2083,7 +2083,7 @@ fire_object_index
     !byte 0                                                           ; 1b40: 00          .   :1a0f[1]
 
 ; TODO: this is used by e.g. dataA
-something14_TODO
+update_level_completion
     sta remember_obj_index                                            ; 1b41: 8d ae 1a    ... :1a10[1]
     stx remember_cell_x                                               ; 1b44: 8e af 1a    ... :1a13[1]
     sty remember_cell_y                                               ; 1b47: 8c b0 1a    ... :1a16[1]

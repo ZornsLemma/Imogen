@@ -100,7 +100,7 @@ use_colour_flag                                     = $1765
 set_toolbar_and_gameplay_area_colours               = $1766
 jmp_yx                                              = $1966
 initialise_brazier_and_fire                         = $1988
-something14_TODO                                    = $1a10
+update_level_completion                             = $1a10
 current_room_index                                  = $1aba
 copy_rectangle_of_memory_to_screen                  = $1abb
 draw_floor_walls_and_ceiling_around_solid_rock      = $1b90
@@ -1011,7 +1011,7 @@ sub_c407f
     sta temp_sprite_x_offset                                          ; 408e: 85 3a       .:
     ldy #$16                                                          ; 4090: a0 16       ..
     lda #5                                                            ; 4092: a9 05       ..
-    jsr something14_TODO                                              ; 4094: 20 10 1a     ..
+    jsr update_level_completion                                       ; 4094: 20 10 1a     ..
     lda update_room_first_update_flag                                 ; 4097: ad 2b 13    .+.
     beq c40e4                                                         ; 409a: f0 48       .H
     lda desired_level                                                 ; 409c: a5 31       .1
@@ -1945,7 +1945,7 @@ pydis_end
 ;     l0980:                                                  1
 ;     object_y_high:                                          1
 ;     developer_flags:                                        1
-;     something14_TODO:                                       1
+;     update_level_completion:                                1
 ;     write_a_single_value_to_cell_in_collision_map:          1
 ;     play_landing_sound:                                     1
 ;     temp_left_offset:                                       1
