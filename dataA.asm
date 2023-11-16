@@ -729,7 +729,7 @@ c3ec1
     lda desired_room_index                                            ; 3ec9: a5 30       .0
     cmp #1                                                            ; 3ecb: c9 01       ..
     bne c3ed2                                                         ; 3ecd: d0 03       ..
-    jsr sub_c3ef1                                                     ; 3ecf: 20 f1 3e     .>
+    jsr play_some_sound1_then_some_sound2                             ; 3ecf: 20 f1 3e     .>
 ; $3ed2 referenced 1 time by $3ecd
 c3ed2
     ldy #$ff                                                          ; 3ed2: a0 ff       ..
@@ -760,7 +760,7 @@ trapdoor_sprite_table
     !byte spriteid_trapdoor_vertical                                  ; 3ef0: d1          .
 
 ; $3ef1 referenced 2 times by $3ecf, $41d6
-sub_c3ef1
+play_some_sound1_then_some_sound2
     lda #0                                                            ; 3ef1: a9 00       ..
     ldx #<some_sound1                                                 ; 3ef3: a2 42       .B
     ldy #>some_sound1                                                 ; 3ef5: a0 44       .D
@@ -1196,7 +1196,7 @@ c41c9
     bne c41d9                                                         ; 41d0: d0 07       ..
     cpy #$2b ; '+'                                                    ; 41d2: c0 2b       .+
     bne c41d9                                                         ; 41d4: d0 03       ..
-    jsr sub_c3ef1                                                     ; 41d6: 20 f1 3e     .>
+    jsr play_some_sound1_then_some_sound2                             ; 41d6: 20 f1 3e     .>
 ; $41d9 referenced 4 times by $40e0, $40eb, $41d0, $41d4
 c41d9
     lda desired_room_index                                            ; 41d9: a5 30       .0
@@ -1924,7 +1924,7 @@ pydis_end
 ;     c3b0e:                                                  2
 ;     level_unchanged2:                                       2
 ;     room1_initial_setup_done:                               2
-;     sub_c3ef1:                                              2
+;     play_some_sound1_then_some_sound2:                      2
 ;     c3f51:                                                  2
 ;     l3fd5:                                                  2
 ;     l3fd6:                                                  2
@@ -2087,7 +2087,6 @@ pydis_end
 ;     loop_c3bd4
 ;     loop_c4044
 ;     loop_c42ea
-;     sub_c3ef1
 ;     sub_c3f02
 ;     sub_c3f8b
 ;     sub_c407f
