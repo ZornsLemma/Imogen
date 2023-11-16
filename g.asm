@@ -782,6 +782,13 @@ return1
 ; 
 ; Game Update
 ; 
+; On Exit:
+;     A: 0=player is still within game area
+;        1=exit room left
+;        2=exit room bottom
+;        4=exit room right
+;        8=exit room top
+; 
 ; *************************************************************************************
 game_update
     jsr update_objects                                                ; 140b: 20 d7 1f     .. :12da[1]
@@ -813,7 +820,7 @@ no_time_to_wait
     ldx update_room_ptr                                               ; 1443: ae d9 3a    ..: :1312[1]
     ldy update_room_ptr + 1                                           ; 1446: ac da 3a    ..: :1315[1]
     jsr jmp_yx                                                        ; 1449: 20 66 19     f. :1318[1]
-    jmp try_to_ensure_player_is_on_screen                             ; 144c: 4c c3 18    L.. :131b[1]
+    jmp check_for_player_leaving_room                                 ; 144c: 4c c3 18    L.. :131b[1]
 
 ; wait until five vsyncs have elapsed before continuing
 regulate_time_loop
@@ -1846,13 +1853,24 @@ generate_random_bits_loop
     rts                                                               ; 19f3: 60          `   :18c2[1]
 
 ; *************************************************************************************
-try_to_ensure_player_is_on_screen
+; 
+; Check for player leaving room
+; 
+; On Exit:
+;     A: 0=player is still within game area
+;        1=exit room left
+;        2=exit room bottom
+;        4=exit room right
+;        8=exit room top
+; 
+; *************************************************************************************
+check_for_player_leaving_room
     lda object_x_high                                                 ; 19f4: ad 66 09    .f. :18c3[1]
-    bmi increase_player_x_coordinate_to_be_on_screen                  ; 19f7: 30 41       0A  :18c6[1]
+    bmi increase_player_x_coordinate_to_enter_next_room               ; 19f7: 30 41       0A  :18c6[1]
     beq get_delta_y                                                   ; 19f9: f0 07       ..  :18c8[1]
     lda object_x_low                                                  ; 19fb: ad 50 09    .P. :18ca[1]
     cmp #$40 ; '@'                                                    ; 19fe: c9 40       .@  :18cd[1]
-    bcs decrease_player_x_coordinate_to_be_on_screen                  ; 1a00: b0 4e       .N  :18cf[1]
+    bcs decrease_player_x_coordinate_to_enter_next_room               ; 1a00: b0 4e       .N  :18cf[1]
 get_delta_y
     lda object_y_low                                                  ; 1a02: ad 7c 09    .|. :18d1[1]
     sec                                                               ; 1a05: 38          8   :18d4[1]
@@ -1880,18 +1898,17 @@ get_delta_y
     lsr                                                               ; 1a2c: 4a          J   :18fb[1]
     ror object_top_cell_y                                             ; 1a2d: 66 7a       fz  :18fc[1]
     lda object_top_cell_y                                             ; 1a2f: a5 7a       .z  :18fe[1]
-    bmi increase_player_y_coordinate_to_be_on_screen                  ; 1a31: 30 35       05  :1900[1]
+    bmi increase_player_y_coordinate_to_enter_next_room               ; 1a31: 30 35       05  :1900[1]
     cmp #game_area_height_cells                                       ; 1a33: c9 18       ..  :1902[1]
-    bcs decrease_player_y_coordinate_to_be_on_screen                  ; 1a35: b0 4b       .K  :1904[1]
+    bcs decrease_player_y_coordinate_to_enter_next_room               ; 1a35: b0 4b       .K  :1904[1]
 return_with_a_zero
     lda #0                                                            ; 1a37: a9 00       ..  :1906[1]
     rts                                                               ; 1a39: 60          `   :1908[1]
 
-; If the player is off the left of the game play area, this is called. It tries to
-; increase the X coordinate by 320 pixels (but just stores one in the high byte of the
-; Y coordinate, presumably a bug?). It does the same for object one, the player's
-; accessory object. Returns with A=1.
-increase_player_x_coordinate_to_be_on_screen
+; If the player is off the left of the game play area, this is called. It increases the
+; X coordinate by 320 pixels. It does the same for object one, the player's accessory
+; object. Returns with A=1.
+increase_player_x_coordinate_to_enter_next_room
     ldx #1                                                            ; 1a3a: a2 01       ..  :1909[1]   ; object index (and loop counter)
 ; add one screen amount to the X coordinate
 add_to_player_x_loop
@@ -1907,10 +1924,9 @@ add_to_player_x_loop
     rts                                                               ; 1a4f: 60          `   :191e[1]
 
 ; If the player is off the right of the game play area, this is called. It decreases
-; the X coordinate by 64 pixels (probably meant to be 320 pixels, but high byte
-; calculation looks wrong). It does the same for object one, the player's accessory
-; object. Returns with A=4.
-decrease_player_x_coordinate_to_be_on_screen
+; the X coordinate by 320 pixels. It does the same for object one, the player's
+; accessory object. Returns with A=4.
+decrease_player_x_coordinate_to_enter_next_room
     ldx #1                                                            ; 1a50: a2 01       ..  :191f[1]   ; object index (and loop counter)
 subtract_from_player_x_loop
     lda object_x_low,x                                                ; 1a52: bd 50 09    .P. :1921[1]
@@ -1927,10 +1943,9 @@ subtract_from_player_x_loop
     rts                                                               ; 1a67: 60          `   :1936[1]
 
 ; If the player is off the top of the game play area, this is called. It increases the
-; Y coordinate by 192 pixels (why 192 pixels?) but just stores zero in the high byte of
-; the Y coordinate which could be a bug?. Does the same for object one, the player's
+; Y coordinate by 192 pixels = 24*8 pixels. Does the same for object one, the player's
 ; accessory object. Returns with A=8.
-increase_player_y_coordinate_to_be_on_screen
+increase_player_y_coordinate_to_enter_next_room
     lda object_y_delta                                                ; 1a68: a5 70       .p  :1937[1]
 ; return if the player is moving in the correct direction (down) to get back on screen
     bpl return_with_a_zero                                            ; 1a6a: 10 cb       ..  :1939[1]
@@ -1948,10 +1963,9 @@ add_to_player_y_loop
     rts                                                               ; 1a81: 60          `   :1950[1]
 
 ; If the player is off the bottom of the game play area, this is called. It reduces the
-; Y coordinate by 192 pixels (why 192 pixels?) but doesn't touch the high byte of the Y
-; coordinate which could be a bug?. Does the same for object one, the player's
+; Y coordinate by 192 pixels = 24*8 pixels. Does the same for object one, the player's
 ; accessory object. Returns with A=2.
-decrease_player_y_coordinate_to_be_on_screen
+decrease_player_y_coordinate_to_enter_next_room
     lda object_y_delta                                                ; 1a82: a5 70       .p  :1951[1]
 ; return if the player is moving in the correct direction (up) to get back on screen
     bmi return_with_a_zero                                            ; 1a84: 30 b1       0.  :1953[1]
@@ -2082,29 +2096,43 @@ changing_rooms2
 fire_object_index
     !byte 0                                                           ; 1b40: 00          .   :1a0f[1]
 
+; *************************************************************************************
+; 
+; Update the level completion detection
+; 
+; Checks for colliding with the level completion spell collectable, adds the spell to
+; the toolbar, and shows diamonds or sparkles as needed.
+; 
+; *************************************************************************************
 ; TODO: this is used by e.g. dataA
 update_level_completion
-    sta remember_obj_index                                            ; 1b41: 8d ae 1a    ... :1a10[1]
+    sta remember_obj_index                                            ; 1b41: 8d ae 1a    ... :1a10[1]   ; remember inputs
     stx remember_cell_x                                               ; 1b44: 8e af 1a    ... :1a13[1]
     sty remember_cell_y                                               ; 1b47: 8c b0 1a    ... :1a16[1]
+; update diamond sprite to use
     inc diamond_sprite_index                                          ; 1b4a: ee b1 1a    ... :1a19[1]
     lda diamond_sprite_index                                          ; 1b4d: ad b1 1a    ... :1a1c[1]
     and #7                                                            ; 1b50: 29 07       ).  :1a1f[1]
     tay                                                               ; 1b52: a8          .   :1a21[1]
+; set diamond sprite to use
     lda diamond_sprite_cycle,y                                        ; 1b53: b9 b2 1a    ... :1a22[1]
     sta collectable_spriteids                                         ; 1b56: 8d ed 2e    ... :1a25[1]
     sta l2ef2                                                         ; 1b59: 8d f2 2e    ... :1a28[1]
+; set toolbar sprite to use for diamond spell
     lda #spriteid_menu_item_completion_spell                          ; 1b5c: a9 21       .!  :1a2b[1]
     sta toolbar_collectable_spriteids                                 ; 1b5e: 8d e8 2e    ... :1a2d[1]
+; early out if room has just changed
     lda desired_room_index                                            ; 1b61: a5 30       .0  :1a30[1]
     cmp current_room_index                                            ; 1b63: cd ba 1a    ... :1a32[1]
     bne reset_offsets_and_exit                                        ; 1b66: d0 67       .g  :1a35[1]
     lda update_room_first_update_flag                                 ; 1b68: ad 2b 13    .+. :1a37[1]
-    bne c1a59                                                         ; 1b6b: d0 1d       ..  :1a3a[1]
+    bne skip_adding_level_completion_spell                            ; 1b6b: d0 1d       ..  :1a3a[1]
+; test for collision with spell collectable
     ldx remember_obj_index                                            ; 1b6d: ae ae 1a    ... :1a3c[1]
     ldy #$0b                                                          ; 1b70: a0 0b       ..  :1a3f[1]
     jsr test_for_collision_between_objects_x_and_y                    ; 1b72: 20 e2 28     .( :1a41[1]
-    beq c1a59                                                         ; 1b75: f0 13       ..  :1a44[1]
+    beq skip_adding_level_completion_spell                            ; 1b75: f0 13       ..  :1a44[1]
+; collided with level completion collectable, so mark level as completed
     lda desired_level                                                 ; 1b77: a5 31       .1  :1a46[1]
     sec                                                               ; 1b79: 38          8   :1a48[1]
     sbc #first_level_letter                                           ; 1b7a: e9 41       .A  :1a49[1]
@@ -2113,14 +2141,16 @@ update_level_completion
     lda level_progress_table,y                                        ; 1b7d: b9 ef 09    ... :1a4c[1]
     ora #$80                                                          ; 1b80: 09 80       ..  :1a4f[1]
     sta level_progress_table,y                                        ; 1b82: 99 ef 09    ... :1a51[1]
+; add level completion spell to toolbar
     lda #spriteid_menu_item_completion_spell                          ; 1b85: a9 21       .!  :1a54[1]
     jsr find_or_create_menu_slot_for_A                                ; 1b87: 20 bd 2b     .+ :1a56[1]
-c1a59
+skip_adding_level_completion_spell
     ldx remember_obj_index                                            ; 1b8a: ae ae 1a    ... :1a59[1]
     lda #spriteid_197                                                 ; 1b8d: a9 c5       ..  :1a5c[1]
     sta object_sprite_mask_type,x                                     ; 1b8f: 9d ac 38    ..8 :1a5e[1]
     lda #0                                                            ; 1b92: a9 00       ..  :1a61[1]
     sta object_spriteid,x                                             ; 1b94: 9d a8 09    ... :1a63[1]
+; exit if level is completed
     lda desired_level                                                 ; 1b97: a5 31       .1  :1a66[1]
     sec                                                               ; 1b99: 38          8   :1a68[1]
     sbc #first_level_letter                                           ; 1b9a: e9 41       .A  :1a69[1]
@@ -2134,7 +2164,8 @@ c1a59
     and #7                                                            ; 1bac: 29 07       ).  :1a7b[1]
     tay                                                               ; 1bae: a8          .   :1a7d[1]
     cpy #5                                                            ; 1baf: c0 05       ..  :1a7e[1]
-    bcc c1a8f                                                         ; 1bb1: 90 0d       ..  :1a80[1]
+    bcc show_sparkles                                                 ; 1bb1: 90 0d       ..  :1a80[1]
+; reverse direction of animation
     lda #$ff                                                          ; 1bb3: a9 ff       ..  :1a82[1]
     sta object_direction,x                                            ; 1bb5: 9d be 09    ... :1a84[1]
     inc temp_sprite_x_offset                                          ; 1bb8: e6 3a       .:  :1a87[1]
@@ -2142,9 +2173,10 @@ c1a59
     sbc #8                                                            ; 1bbb: e9 08       ..  :1a8a[1]
     eor #$ff                                                          ; 1bbd: 49 ff       I.  :1a8c[1]
     sec                                                               ; 1bbf: 38          8   :1a8e[1]
-c1a8f
+show_sparkles
     adc #spriteid_sparkles1                                           ; 1bc0: 69 22       i"  :1a8f[1]
     sta object_spriteid,x                                             ; 1bc2: 9d a8 09    ... :1a91[1]
+; A=object index
     txa                                                               ; 1bc5: 8a          .   :1a94[1]
     ldx remember_cell_x                                               ; 1bc6: ae af 1a    ... :1a95[1]
     ldy remember_cell_y                                               ; 1bc9: ac b0 1a    ... :1a98[1]
@@ -8625,8 +8657,6 @@ pydis_end
 ; Automatically generated labels:
 ;     c16aa
 ;     c19e5
-;     c1a59
-;     c1a8f
 ;     c1d16
 ;     c2047
 ;     c2061

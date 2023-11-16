@@ -593,12 +593,12 @@ comment(0x2d9b, "toggle player direction")
 comment(0x2fdc, "toggle player direction")
 comment(0x31ec, "toggle player direction")
 
-comment(0x1909, "If the player is off the left of the game play area, this is called. It tries to increase the X coordinate by 320 pixels (but just stores one in the high byte of the Y coordinate, presumably a bug?). It does the same for object one, the player's accessory object. Returns with A=1.")
-label(0x1909, "increase_player_x_coordinate_to_be_on_screen")
+comment(0x1909, "If the player is off the left of the game play area, this is called. It increases the X coordinate by 320 pixels. It does the same for object one, the player's accessory object. Returns with A=1.")
+label(0x1909, "increase_player_x_coordinate_to_enter_next_room")
 comment(0x190b, "add one screen amount to the X coordinate")
 label(0x190b, "add_to_player_x_loop")
-comment(0x191f, "If the player is off the right of the game play area, this is called. It decreases the X coordinate by 64 pixels (probably meant to be 320 pixels, but high byte calculation looks wrong). It does the same for object one, the player's accessory object. Returns with A=4.")
-label(0x191f, "decrease_player_x_coordinate_to_be_on_screen")
+comment(0x191f, "If the player is off the right of the game play area, this is called. It decreases the X coordinate by 320 pixels. It does the same for object one, the player's accessory object. Returns with A=4.")
+label(0x191f, "decrease_player_x_coordinate_to_enter_next_room")
 label(0x1921, "subtract_from_player_x_loop")
 comment(0x192c, "Shouldn't this be sbc #1? Possible bug?")
 label(0x18d1, "get_delta_y")
@@ -606,11 +606,11 @@ expr(0x1903, "game_area_height_cells")
 comment(0x18e7, "Find the average of object_true_bottom and object_bottom and convert to a cell Y value. Use this value to test if the player is off screen.")
 label(0x1906, "return_with_a_zero")
 
-label(0x1937, "increase_player_y_coordinate_to_be_on_screen")
-comment(0x1937, "If the player is off the top of the game play area, this is called. It increases the Y coordinate by 192 pixels (why 192 pixels?) but just stores zero in the high byte of the Y coordinate which could be a bug?. Does the same for object one, the player's accessory object. Returns with A=8.")
+label(0x1937, "increase_player_y_coordinate_to_enter_next_room")
+comment(0x1937, "If the player is off the top of the game play area, this is called. It increases the Y coordinate by 192 pixels = 24*8 pixels. Does the same for object one, the player's accessory object. Returns with A=8.")
 comment(0x1939, "return if the player is moving in the correct direction (down) to get back on screen")
-label(0x1951, "decrease_player_y_coordinate_to_be_on_screen")
-comment(0x1951, "If the player is off the bottom of the game play area, this is called. It reduces the Y coordinate by 192 pixels (why 192 pixels?) but doesn't touch the high byte of the Y coordinate which could be a bug?. Does the same for object one, the player's accessory object. Returns with A=2.")
+label(0x1951, "decrease_player_y_coordinate_to_enter_next_room")
+comment(0x1951, "If the player is off the bottom of the game play area, this is called. It reduces the Y coordinate by 192 pixels = 24*8 pixels. Does the same for object one, the player's accessory object. Returns with A=2.")
 label(0x193d, "add_to_player_y_loop")
 comment(0x1953, "return if the player is moving in the correct direction (up) to get back on screen")
 label(0x1957, "subtract_from_player_y_loop")
@@ -1597,6 +1597,13 @@ comment(0x12da, """*************************************************************
 
 Game Update
 
+On Exit:
+    A: 0=player is still within game area
+       1=exit room left
+       2=exit room bottom
+       4=exit room right
+       8=exit room top
+
 *************************************************************************************""")
 
 
@@ -1662,8 +1669,19 @@ label(0x1824, "gameplay_area_palette_set")
 
 entry(0x17a0, "irq1_routine")
 entry(0x1839, "reset_game_because_escape_pressed")
-comment(0x18c3, "*************************************************************************************")
-label(0x18c3, "try_to_ensure_player_is_on_screen")
+comment(0x18c3, """*************************************************************************************
+
+Check for player leaving room
+
+On Exit:
+    A: 0=player is still within game area
+       1=exit room left
+       2=exit room bottom
+       4=exit room right
+       8=exit room top
+
+*************************************************************************************""")
+label(0x18c3, "check_for_player_leaving_room")
 label(0x1b8a, "draw_right_facing_wall_local")
 comment(0x1fd7, """*************************************************************************************
 
@@ -2029,7 +2047,29 @@ label(0x3ade, "room_index_cheat2")
 
 # TODO: What does the shift key do in the game? Or Escape?
 
+comment(0x1a10, """*************************************************************************************
+
+Update the level completion detection
+
+Checks for colliding with the level completion spell collectable, adds the spell to the toolbar, and shows diamonds or sparkles as needed.
+
+*************************************************************************************""")
+comment(0x1a10, "remember inputs", inline=True)
+comment(0x1a19, "update diamond sprite to use")
+comment(0x1a22, "set diamond sprite to use")
+comment(0x1a2b, "set toolbar sprite to use for diamond spell")
+comment(0x1a30, "early out if room has just changed")
+comment(0x1a3c, "test for collision with spell collectable")
+comment(0x1a46, "collided with level completion collectable, so mark level as completed")
+comment(0x1a54, "add level completion spell to toolbar")
 comment(0x1a4c, "got completion spell")
+label(0x1a59, "skip_adding_level_completion_spell")
+comment(0x1a66, "exit if level is completed")
+label(0x1a73, "set direction of animation")
+comment(0x1a82, "reverse direction of animation")
+label(0x1a8f, "show_sparkles")
+comment(0x1a94, "A=object index")
+
 
 comment(0x1132, "choose a new starting level")
 comment(0x1140, "TODO: this is used by e.g. dataA")
