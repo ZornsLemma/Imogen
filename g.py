@@ -1827,7 +1827,7 @@ comment(0x274d, "player has hit floor. Adjust player position to align with the 
 
 comment(0x2894, """*************************************************************************************
 
-Get collision flags for object
+Get wall collision flags for object
 
 On Entry:
     A: object index
@@ -1837,7 +1837,6 @@ On Exit:
        A=2 means object collided with floor
        A=4 means object collided with right wall
        A=8 means object collided with ceiling
-
 
 *************************************************************************************""")
 

@@ -4024,7 +4024,7 @@ sub_c236b
     lda #2                                                            ; 24a4: a9 02       ..  :2373[1]
     sta temp_bottom_offset                                            ; 24a6: 8d 51 25    .Q% :2375[1]
     lda #0                                                            ; 24a9: a9 00       ..  :2378[1]
-    jsr get_wall_collision_flags_for_object_a                         ; 24ab: 20 94 28     .( :237a[1]
+    jsr get_wall_collision_for_object_a                               ; 24ab: 20 94 28     .( :237a[1]
     beq return12                                                      ; 24ae: f0 29       .)  :237d[1]
     lda object_y_low_old                                              ; 24b0: ad 87 09    ... :237f[1]
     sec                                                               ; 24b3: 38          8   :2382[1]
@@ -4042,7 +4042,7 @@ c2392
     lda #2                                                            ; 24ca: a9 02       ..  :2399[1]
     sta temp_bottom_offset                                            ; 24cc: 8d 51 25    .Q% :239b[1]
     lda #$0b                                                          ; 24cf: a9 0b       ..  :239e[1]
-    jsr get_wall_collision_flags_for_object_a                         ; 24d1: 20 94 28     .( :23a0[1]
+    jsr get_wall_collision_for_object_a                               ; 24d1: 20 94 28     .( :23a0[1]
     bne return12                                                      ; 24d4: d0 03       ..  :23a3[1]
 c23a5
     jsr play_landing_sound                                            ; 24d6: 20 a9 23     .# :23a5[1]
@@ -4093,7 +4093,7 @@ c23e7
     lda #1                                                            ; 2518: a9 01       ..  :23e7[1]
     sta temp_bottom_offset                                            ; 251a: 8d 51 25    .Q% :23e9[1]
     lda #0                                                            ; 251d: a9 00       ..  :23ec[1]
-    jsr get_wall_collision_flags_for_object_a                         ; 251f: 20 94 28     .( :23ee[1]
+    jsr get_wall_collision_for_object_a                               ; 251f: 20 94 28     .( :23ee[1]
     beq c23fa                                                         ; 2522: f0 07       ..  :23f1[1]
     lda #$80                                                          ; 2524: a9 80       ..  :23f3[1]
     sta player_collision_flag                                         ; 2526: 8d 33 24    .3$ :23f5[1]
@@ -4905,7 +4905,7 @@ l2893
 
 ; *************************************************************************************
 ; 
-; Get collision flags for object
+; Get wall collision flags for object
 ; 
 ; On Entry:
 ;     A: object index
@@ -4916,10 +4916,9 @@ l2893
 ;        A=4 means object collided with right wall
 ;        A=8 means object collided with ceiling
 ; 
-; 
 ; *************************************************************************************
 ; TODO: this is used by e.g. dataA
-get_wall_collision_flags_for_object_a
+get_wall_collision_for_object_a
     sta temp_collision_result                                         ; 29c5: 8d 5b 29    .[) :2894[1]
     txa                                                               ; 29c8: 8a          .   :2897[1]
     pha                                                               ; 29c9: 48          H   :2898[1]
@@ -5771,7 +5770,7 @@ wizard_not_changing_direction
     bne c2dca                                                         ; 2ee1: d0 18       ..  :2db0[1]
     dec temp_top_offset                                               ; 2ee3: ce 50 25    .P% :2db2[1]
     lda #0                                                            ; 2ee6: a9 00       ..  :2db5[1]
-    jsr get_wall_collision_flags_for_object_a                         ; 2ee8: 20 94 28     .( :2db7[1]
+    jsr get_wall_collision_for_object_a                               ; 2ee8: 20 94 28     .( :2db7[1]
     bne c2dc3                                                         ; 2eeb: d0 07       ..  :2dba[1]
     cpy #wizard_jump_animation - wizard_transform_in_animation        ; 2eed: c0 49       .I  :2dbc[1]
     beq c2dc3                                                         ; 2eef: f0 03       ..  :2dbe[1]
@@ -6061,7 +6060,7 @@ cat_not_changing_direction
     bne c3011                                                         ; 3122: d0 1e       ..  :2ff1[1]
     dec temp_top_offset                                               ; 3124: ce 50 25    .P% :2ff3[1]
     lda #0                                                            ; 3127: a9 00       ..  :2ff6[1]
-    jsr get_wall_collision_flags_for_object_a                         ; 3129: 20 94 28     .( :2ff8[1]
+    jsr get_wall_collision_for_object_a                               ; 3129: 20 94 28     .( :2ff8[1]
     bne c3023                                                         ; 312c: d0 26       .&  :2ffb[1]
     cpy #cat_jump_animation - cat_transform_in_animation              ; 312e: c0 45       .E  :2ffd[1]
     bne c300e                                                         ; 3130: d0 0d       ..  :2fff[1]
@@ -6078,7 +6077,7 @@ c3011
     bne c302a                                                         ; 3144: d0 15       ..  :3013[1]
     dec temp_top_offset                                               ; 3146: ce 50 25    .P% :3015[1]
     lda #0                                                            ; 3149: a9 00       ..  :3018[1]
-    jsr get_wall_collision_flags_for_object_a                         ; 314b: 20 94 28     .( :301a[1]
+    jsr get_wall_collision_for_object_a                               ; 314b: 20 94 28     .( :301a[1]
     bne c3023                                                         ; 314e: d0 04       ..  :301d[1]
     cpy #cat_jump_apex_animation - cat_transform_in_animation         ; 3150: c0 58       .X  :301f[1]
     bne c300e                                                         ; 3152: d0 eb       ..  :3021[1]
@@ -6360,7 +6359,7 @@ c3222
     beq c324c                                                         ; 335d: f0 1e       ..  :322c[1]
     dec temp_top_offset                                               ; 335f: ce 50 25    .P% :322e[1]
     lda #0                                                            ; 3362: a9 00       ..  :3231[1]
-    jsr get_wall_collision_flags_for_object_a                         ; 3364: 20 94 28     .( :3233[1]
+    jsr get_wall_collision_for_object_a                               ; 3364: 20 94 28     .( :3233[1]
     bne c3247                                                         ; 3367: d0 0f       ..  :3236[1]
     ldx #monkey_climb_animation - monkey_transform_in_animation       ; 3369: a2 51       .Q  :3238[1]
     lda l31d7                                                         ; 336b: ad d7 31    ..1 :323a[1]
@@ -6403,7 +6402,7 @@ c3276
     bne c328d                                                         ; 33ac: d0 10       ..  :327b[1]
     dec temp_top_offset                                               ; 33ae: ce 50 25    .P% :327d[1]
     lda #0                                                            ; 33b1: a9 00       ..  :3280[1]
-    jsr get_wall_collision_flags_for_object_a                         ; 33b3: 20 94 28     .( :3282[1]
+    jsr get_wall_collision_for_object_a                               ; 33b3: 20 94 28     .( :3282[1]
     bne c32ac                                                         ; 33b6: d0 25       .%  :3285[1]
     cpy #monkey_standing_jump_animation - monkey_transform_in_animation; 33b8: c0 7a       .z  :3287[1]
     beq c32ac                                                         ; 33ba: f0 21       .!  :3289[1]
@@ -6414,7 +6413,7 @@ c328d
     bne c32ac                                                         ; 33c3: d0 18       ..  :3292[1]
     dec temp_top_offset                                               ; 33c5: ce 50 25    .P% :3294[1]
     lda #0                                                            ; 33c8: a9 00       ..  :3297[1]
-    jsr get_wall_collision_flags_for_object_a                         ; 33ca: 20 94 28     .( :3299[1]
+    jsr get_wall_collision_for_object_a                               ; 33ca: 20 94 28     .( :3299[1]
     bne c32a5                                                         ; 33cd: d0 07       ..  :329c[1]
     cpy #monkey_jump_animation - monkey_transform_in_animation        ; 33cf: c0 87       ..  :329e[1]
     beq c32a5                                                         ; 33d1: f0 03       ..  :32a0[1]
