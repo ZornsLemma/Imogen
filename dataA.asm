@@ -8,6 +8,7 @@ objectid_left_trapdoor             = 2
 objectid_mouse_ball                = 4
 objectid_right_mouse               = 3
 objectid_right_trapdoor            = 3
+objectid_saxophone                 = 4
 opcode_jmp                         = 76
 player_collision_flag_baby         = 6
 player_collision_flag_mouse_ball   = 128
@@ -55,6 +56,7 @@ object_y_low_old                                    = $0987
 object_y_high                                       = $0992
 object_y_high_old                                   = $099d
 object_spriteid                                     = $09a8
+l09ac                                               = $09ac
 object_spriteid_old                                 = $09b3
 object_direction                                    = $09be
 object_direction_old                                = $09c9
@@ -462,7 +464,7 @@ finish_mouse_ball_movement
     sbc mouse_sprites_and_ball_movement_table,y                       ; 3d02: f9 21 3d    .!=
     sta l0980                                                         ; 3d05: 8d 80 09    ...
     lda #$cb                                                          ; 3d08: a9 cb       ..
-    sta object_spriteid + objectid_mouse_ball                         ; 3d0a: 8d ac 09    ...
+    sta l09ac                                                         ; 3d0a: 8d ac 09    ...
     lda update_room_first_update_flag                                 ; 3d0d: ad 2b 13    .+.
     bne return1                                                       ; 3d10: d0 0e       ..
 ; Check for player-ball collision TODO: just a plausible guess
@@ -702,17 +704,17 @@ c3ed4
 c3ed7
     lda desired_room_index                                            ; 3ed7: a5 30       .0
     cmp #1                                                            ; 3ed9: c9 01       ..
-    bne c3eed                                                         ; 3edb: d0 10       ..
+    bne return2                                                       ; 3edb: d0 10       ..
     ldy something1_trapdoor_open_flag                                 ; 3edd: ac ff 09    ...
     bpl c3ee4                                                         ; 3ee0: 10 02       ..
     ldy #2                                                            ; 3ee2: a0 02       ..
 ; $3ee4 referenced 1 time by $3ee0
 c3ee4
     lda something1_three_byte_table,y                                 ; 3ee4: b9 ee 3e    ..>
-    sta object_spriteid + objectid_left_mouse                         ; 3ee7: 8d aa 09    ...
-    sta object_spriteid + objectid_right_mouse                        ; 3eea: 8d ab 09    ...
+    sta object_spriteid + objectid_left_trapdoor                      ; 3ee7: 8d aa 09    ...
+    sta object_spriteid + objectid_right_trapdoor                     ; 3eea: 8d ab 09    ...
 ; $3eed referenced 1 time by $3edb
-c3eed
+return2
     rts                                                               ; 3eed: 60          `
 
 ; $3eee referenced 1 time by $3ee4
@@ -787,7 +789,7 @@ c3f62
     lda saxophone_collected_flag                                      ; 3f68: ad 00 0a    ...
     bne c3f8a                                                         ; 3f6b: d0 1d       ..
     lda #$d2                                                          ; 3f6d: a9 d2       ..
-    sta object_spriteid + objectid_mouse_ball                         ; 3f6f: 8d ac 09    ...
+    sta object_spriteid + objectid_saxophone                          ; 3f6f: 8d ac 09    ...
     ldx #$0b                                                          ; 3f72: a2 0b       ..
     ldy #4                                                            ; 3f74: a0 04       ..
     jsr test_for_collision_between_objects_x_and_y                    ; 3f76: 20 e2 28     .(
@@ -796,7 +798,7 @@ c3f62
     lda #spriteid_saxophone                                           ; 3f7b: a9 d3       ..
     jsr find_or_create_menu_slot_for_A                                ; 3f7d: 20 bd 2b     .+
     lda #0                                                            ; 3f80: a9 00       ..
-    sta object_spriteid + objectid_mouse_ball                         ; 3f82: 8d ac 09    ...
+    sta object_spriteid + objectid_saxophone                          ; 3f82: 8d ac 09    ...
     lda #$ff                                                          ; 3f85: a9 ff       ..
     sta saxophone_collected_flag                                      ; 3f87: 8d 00 0a    ...
 ; $3f8a referenced 3 times by $3f66, $3f6b, $3f79
@@ -1860,7 +1862,7 @@ pydis_end
 ;     object_spriteid:                                        3
 ;     l09aa:                                                  3
 ;     l09ab:                                                  3
-;     object_spriteid + objectid_mouse_ball:                  3
+;     l09ac:                                                  3
 ;     initialise_brazier_and_fire:                            3
 ;     current_room_index:                                     3
 ;     draw_sprite_a_at_cell_xy:                               3
@@ -1944,7 +1946,7 @@ pydis_end
 ;     c3ed2:                                                  1
 ;     c3ed4:                                                  1
 ;     c3ee4:                                                  1
-;     c3eed:                                                  1
+;     return2:                                                1
 ;     something1_three_byte_table:                            1
 ;     sub_c3f02:                                              1
 ;     c3f52:                                                  1
@@ -1986,7 +1988,6 @@ pydis_end
 ;     c3ed4
 ;     c3ed7
 ;     c3ee4
-;     c3eed
 ;     c3f51
 ;     c3f52
 ;     c3f62
@@ -2034,6 +2035,7 @@ pydis_end
 ;     l0980
 ;     l09aa
 ;     l09ab
+;     l09ac
 ;     l0a01
 ;     l0a02
 ;     l0a03
@@ -2153,8 +2155,17 @@ pydis_end
 !if (object_spriteid + objectid_left_mouse) != $09aa {
     !error "Assertion failed: object_spriteid + objectid_left_mouse == $09aa"
 }
+!if (object_spriteid + objectid_left_trapdoor) != $09aa {
+    !error "Assertion failed: object_spriteid + objectid_left_trapdoor == $09aa"
+}
 !if (object_spriteid + objectid_right_mouse) != $09ab {
     !error "Assertion failed: object_spriteid + objectid_right_mouse == $09ab"
+}
+!if (object_spriteid + objectid_right_trapdoor) != $09ab {
+    !error "Assertion failed: object_spriteid + objectid_right_trapdoor == $09ab"
+}
+!if (object_spriteid + objectid_saxophone) != $09ac {
+    !error "Assertion failed: object_spriteid + objectid_saxophone == $09ac"
 }
 !if (objectid_left_mouse) != $02 {
     !error "Assertion failed: objectid_left_mouse == $02"
