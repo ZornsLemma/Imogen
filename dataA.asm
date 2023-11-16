@@ -745,6 +745,7 @@ set_room1_trapdoor_sprites_if_required
     bne return2                                                       ; 3edb: d0 10       ..
     ldy room1_trapdoor_open_flag                                      ; 3edd: ac ff 09    ...
     bpl adjusted_room1_trapdoor_open_flag_in_y_is_ge_0                ; 3ee0: 10 02       ..
+; Use sprite index 2 (vertical) if room1_trapdoor_open_flag is $ff
     ldy #2                                                            ; 3ee2: a0 02       ..
 ; $3ee4 referenced 1 time by $3ee0
 adjusted_room1_trapdoor_open_flag_in_y_is_ge_0

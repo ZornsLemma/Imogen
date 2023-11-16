@@ -246,6 +246,7 @@ entry(0x3ed7, "set_room1_trapdoor_sprites_if_required")
 entry(0x3ee4, "adjusted_room1_trapdoor_open_flag_in_y_is_ge_0")
 entry(0x3ef1, "play_some_sound1_then_some_sound2")
 comment(0x3ecf, "TODO: Pretty confident this is the trapdoor opening sound, but this is called elsewhere so don't want to rename subroutine yet")
+comment(0x3ee2, "Use sprite index 2 (vertical) if room1_trapdoor_open_flag is $ff")
 # TODO: I think room1_trapdoor_open_flag can have values $ff, 0 and 1 - just possibly this
 # increments to add a time delay to the trapdoor visibly opening, but that's a guess at this point.
 # Looking at Colin's YT video frame by frame, I think there are states: fully closed, both open at
