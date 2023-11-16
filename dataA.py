@@ -8,6 +8,9 @@ acorn.bbc()
 sprite_dict = {
     0x3b: "spriteid_ball",
     0xc8: "spriteid_mouse",
+    0xcf: "spriteid_trapdoor_horizontal",
+    0xd0: "spriteid_trapdoor_diagonal",
+    0xd1: "spriteid_trapdoor_vertical",
     0xd3: "spriteid_saxophone",
     0xd6: "spriteid_baby0",
     0xd7: "spriteid_baby1",
@@ -154,7 +157,9 @@ entry(0x3dfc, "something1_handler")
 entry(0x3e6c, "something1_not_first_update")
 entry(0x3e11, "level_unchanged2")
 label(0x9ff, "something1_trapdoor_open_flag")
-label(0x3eee, "something1_three_byte_table")
+label(0x3eee, "trapdoor_sprite_table") # TODO: Include "animation" in name? But not sure if this is different from "real" animations like animal tails
+for i in range(3): # TODO: Add a convenience function for this? Maybe in py8dis?
+    byte(0x3eee+i)
 
 # TODO: slight guesswork
 constant(2, "objectid_left_mouse")
@@ -187,8 +192,17 @@ constant(0x4, "objectid_saxophone") # TODO: guessing a bit
 expr(0x3f70, "object_spriteid + objectid_saxophone")
 expr(0x3f83, "object_spriteid + objectid_saxophone")
 entry(0x3ed4, "new_something1_trapdoor_open_flag_in_y")
+entry(0x3ee4, "adjusted_something1_trapdoor_open_flag_in_y_is_ge_0")
 # TODO: I think something1_trapdoor_open_flag can have values $ff, 0 and 1 - just possibly this
 # increments to add a time delay to the trapdoor visibly opening, but that's a guess at this point.
+# Looking at Colin's YT video frame by frame, I think there are states: fully closed, both open at
+# an angle, right fully open while left is still at an angle and both fully open. Not entirely sure
+# if both open at an angle is a single state or two states with rhs one opening first. (Timestamp in
+# video ~ 17:54.) Looking at the code at 3ee4 I suspect any left-vs-right difference is just me
+# stepping through the frames and in reality we are "supposed" to see symmetric movement
+expr(0x3eee, "spriteid_trapdoor_horizontal")
+expr(0x3eef, "spriteid_trapdoor_diagonal")
+expr(0x3ef0, "spriteid_trapdoor_vertical")
 
 # TODO: Use this more?
 def ldx_ldy_jsr_play_sound_yx(jsr_runtime_addr, s):

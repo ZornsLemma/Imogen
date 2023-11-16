@@ -24,6 +24,9 @@ spriteid_ball                      = 59
 spriteid_mouse                     = 200
 spriteid_saxophone                 = 211
 spriteid_table                     = 222
+spriteid_trapdoor_diagonal         = 208
+spriteid_trapdoor_horizontal       = 207
+spriteid_trapdoor_vertical         = 209
 
 ; Memory locations
 characters_entered                                  = $05
@@ -706,11 +709,11 @@ c3ed7
     cmp #1                                                            ; 3ed9: c9 01       ..
     bne return2                                                       ; 3edb: d0 10       ..
     ldy something1_trapdoor_open_flag                                 ; 3edd: ac ff 09    ...
-    bpl c3ee4                                                         ; 3ee0: 10 02       ..
+    bpl adjusted_something1_trapdoor_open_flag_in_y_is_ge_0           ; 3ee0: 10 02       ..
     ldy #2                                                            ; 3ee2: a0 02       ..
 ; $3ee4 referenced 1 time by $3ee0
-c3ee4
-    lda something1_three_byte_table,y                                 ; 3ee4: b9 ee 3e    ..>
+adjusted_something1_trapdoor_open_flag_in_y_is_ge_0
+    lda trapdoor_sprite_table,y                                       ; 3ee4: b9 ee 3e    ..>
     sta object_spriteid + objectid_left_trapdoor                      ; 3ee7: 8d aa 09    ...
     sta object_spriteid + objectid_right_trapdoor                     ; 3eea: 8d ab 09    ...
 ; $3eed referenced 1 time by $3edb
@@ -718,8 +721,10 @@ return2
     rts                                                               ; 3eed: 60          `
 
 ; $3eee referenced 1 time by $3ee4
-something1_three_byte_table
-    !byte $cf, $d0, $d1                                               ; 3eee: cf d0 d1    ...
+trapdoor_sprite_table
+    !byte spriteid_trapdoor_horizontal                                ; 3eee: cf          .
+    !byte spriteid_trapdoor_diagonal                                  ; 3eef: d0          .
+    !byte spriteid_trapdoor_vertical                                  ; 3ef0: d1          .
 
 ; $3ef1 referenced 2 times by $3ecf, $41d6
 sub_c3ef1
@@ -1945,9 +1950,9 @@ pydis_end
 ;     c3ec1:                                                  1
 ;     c3ed2:                                                  1
 ;     new_something1_trapdoor_open_flag_in_y:                 1
-;     c3ee4:                                                  1
+;     adjusted_something1_trapdoor_open_flag_in_y_is_ge_0:    1
 ;     return2:                                                1
-;     something1_three_byte_table:                            1
+;     trapdoor_sprite_table:                                  1
 ;     sub_c3f02:                                              1
 ;     c3f52:                                                  1
 ;     c3f62:                                                  1
@@ -1986,7 +1991,6 @@ pydis_end
 ;     c3ec1
 ;     c3ed2
 ;     c3ed7
-;     c3ee4
 ;     c3f51
 ;     c3f52
 ;     c3f62
@@ -2237,4 +2241,13 @@ pydis_end
 }
 !if (spriteid_table) != $de {
     !error "Assertion failed: spriteid_table == $de"
+}
+!if (spriteid_trapdoor_diagonal) != $d0 {
+    !error "Assertion failed: spriteid_trapdoor_diagonal == $d0"
+}
+!if (spriteid_trapdoor_horizontal) != $cf {
+    !error "Assertion failed: spriteid_trapdoor_horizontal == $cf"
+}
+!if (spriteid_trapdoor_vertical) != $d1 {
+    !error "Assertion failed: spriteid_trapdoor_vertical == $d1"
 }
