@@ -181,7 +181,7 @@ def common_to_all():
     label(0x24d1, "temp_right_offset")
     label(0x2550, "temp_top_offset")
     label(0x2551, "temp_bottom_offset")
-    label(0x2894, "something59_TODO")
+    label(0x2894, "get_wall_collision_flags_for_object_a")
     label(0x28e2, "test_for_collision_between_objects_x_and_y")
     label(0x2b87, "insert_character_menu_item_into_toolbar")
     label(0x2be0, "remove_item_from_toolbar_menu")

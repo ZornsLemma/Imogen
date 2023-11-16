@@ -180,9 +180,33 @@ substitute_labels = {
         "l007a": "object_top_cell_y",
         "l007b": "object_bottom_cell_y",
     },
+    (0x278b, 0x27ca): {
+        "l007c": "player_hit_wall_on_left_flag",
+        "l007d": "player_hit_wall_on_right_flag",
+        "l0080": "player_height_in_cells",
+    },
+    (0x27c4, 0x2815): {
+        "l0080": "adjustment",
+    },
+    (0x2816, 0x287b): {
+        "address2_low": "player_has_hit_top_flag",
+        "address2_high": "player_has_hit_bottom_flag",
+    },
+    (0x2816, 0x284f): {
+        "l0080": "player_width_in_cells",
+    },
+    (0x284f, 0x28a0): {
+        "l0080": "adjustment",
+    },
     (0x28e2, 0x2a8b): {
         "l0121": "x_object_left_low",
         "l0122": "x_object_left_high",
+    },
+    (0x29c5,0x2a11): {
+        "l007c": "player_hit_wall_on_left_flag",
+        "l007d": "player_hit_wall_on_right_flag",
+        "address2_low": "player_has_hit_top_flag",
+        "address2_high": "player_has_hit_bottom_flag",
     },
     (0x2cb8, 0x2d3c): {
         "address1_low": "menu_item_to_use",
@@ -258,6 +282,7 @@ label(0x003f, "only_ever_written_to_with_zero")
 comment(0x04e3, "draw dialog box outline (calculate X plot position based on text width)")
 
 label(0x0043, "print_in_italics_flag")
+label(0x0044, "default_collision_map_option")
 label(0x0045, "eor_key") # TODO: Is this *always* $cb in practice?
 label(0x0046, "return_key_pressed_pending")
 label(0x0048, "current_player_character")
@@ -1750,6 +1775,72 @@ comment(0x232b, "start 'transform out' animation")
 label(0x2334, "not_transforming")
 label(0x2358, "start_of_transform_in_animation")
 expr(0x2365, make_add("sound_priority_per_channel_table", "1"))
+
+comment(0x265a, """*************************************************************************************
+
+Check for player intersecting wall to the left or right
+
+On Exit:
+     player_hit_wall_on_left_flag: Flag set ($ff) if player is intersecting wall on the left side of the player
+    player_hit_wall_on_right_flag: Flag set ($ff) if intersecting wall on the right side of the player
+
+*************************************************************************************""")
+label(0x265a, "check_for_player_intersecting_wall_left_or_right")
+comment(0x265e, "store player's cell height")
+comment(0x2668, "look at collision map at each cell up the player's height, looking for a solid wall")
+comment(0x2674, "mark that no collision was found on the left side")
+label(0x2668, "loop_up_player_cells_looking_for_solid_wall")
+label(0x2676, "found_wall_on_players_left_side")
+comment(0x267a, "store player's cell height (again)")
+comment(0x2684, "look at collision map at each cell up the player's height, looking for a solid wall")
+comment(0x2690, "mark that no collision was found on the right side")
+
+comment(0x2693, """*************************************************************************************
+
+If colliding with a wall, line up next to the wall instead of going through it.
+
+On Entry:
+    l0053: object index of player?
+
+*************************************************************************************""")
+label(0x2693, "handle_left_right_wall_collision")
+comment(0x269d, "player has hit wall on left side. Adjust player position to align with the cell next to the wall.")
+label(0x26c2, "player_has_hit_wall_on_right_side")
+comment(0x26c2, "player has hit wall on right side. Adjust player position to align with the cell next to the wall.")
+
+comment(0x26e9, "start at top right")
+comment(0x26eb, "get player width in cells")
+label(0x26f3, "look_for_wall_along_player_top_edge_loop")
+comment(0x26f3, "loop from top right to top left looking for a wall")
+comment(0x26ff, "no collision with top edge of player")
+label(0x2701, "found_wall")
+comment(0x2705, "start at bottom right")
+comment(0x2707, "get player width in cells (again)")
+label(0x270f, "look_for_wall_along_player_bottom_edge_loop")
+comment(0x271b, "no collision with bottom edge of player")
+label(0x26e5, "check_for_player_intersecting_floor_or_ceiling")
+
+label(0x271e, "handle_top_bottom_collision")
+label(0x274d, "player_has_hit_floor")
+comment(0x2728, "player has hit ceiling. Adjust player position to align with the cell below the ceiling.")
+comment(0x274d, "player has hit floor. Adjust player position to align with the cell above the floor.")
+
+comment(0x2894, """*************************************************************************************
+
+Get collision flags for object
+
+On Entry:
+    A: object index
+
+On Exit:
+    A: A=1 means object collided with left wall
+       A=2 means object collided with floor
+       A=4 means object collided with right wall
+       A=8 means object collided with ceiling
+
+
+*************************************************************************************""")
+
 entry(0x2a38, "update_menus")
 label(0x2a73, "not_changing_menu_position")
 label(0x2a81, "no_space_bar_pressed")
@@ -2257,10 +2348,10 @@ comment(0x3038, "why not just lda #5?", inline=True)
 comment(0x2dd8, "why not just lda #5?", inline=True)
 comment(0x38d8, """object_collision_flags is a per-object table that has:
 
-    bit 1: object collided with left wall
-    bit 2: object collided with floor
-    bit 4: object collided with right wall
-    bit 8: object collided with ceiling""")
+    bit 0: object collided with left wall
+    bit 1: object collided with floor
+    bit 2: object collided with right wall
+    bit 3: object collided with ceiling""")
 
 entry(0x3f6f, "handle_developer_mode_setup")
 # TODO: DELETE? expr(0x3f73, "game_state_flag_have_spell")
@@ -2780,6 +2871,7 @@ comment(0x1f35, "next time, read from leftmost column")
 comment(0x1f3b, "next time, read from rightmost column")
 comment(0x1f42, "next time, read from topmost column")
 comment(0x1f48, "next time, read from bottommost column")
+ab(0x1f4a)
 
 comment(0x1efa, """*************************************************************************************
 

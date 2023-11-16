@@ -119,7 +119,7 @@ temp_left_offset                                    = $24d0
 temp_right_offset                                   = $24d1
 temp_top_offset                                     = $2550
 temp_bottom_offset                                  = $2551
-something59_TODO                                    = $2894
+get_wall_collision_flags_for_object_a               = $2894
 test_for_collision_between_objects_x_and_y          = $28e2
 insert_character_menu_item_into_toolbar             = $2b87
 find_or_create_menu_slot_for_A                      = $2bbd
@@ -697,7 +697,7 @@ room1_not_first_update
     lda #2                                                            ; 3e8d: a9 02       ..
     sta temp_bottom_offset                                            ; 3e8f: 8d 51 25    .Q%
     lda #$0b                                                          ; 3e92: a9 0b       ..
-    jsr something59_TODO                                              ; 3e94: 20 94 28     .(
+    jsr get_wall_collision_flags_for_object_a                         ; 3e94: 20 94 28     .(
     beq set_room1_trapdoor_sprites_if_required                        ; 3e97: f0 3e       .>
 ; Remove the closed trapdoor from the collision map.
     ldx #$11                                                          ; 3e99: a2 11       ..
@@ -1956,7 +1956,7 @@ pydis_end
 ;     temp_left_offset:                                       1
 ;     temp_right_offset:                                      1
 ;     temp_bottom_offset:                                     1
-;     something59_TODO:                                       1
+;     get_wall_collision_flags_for_object_a:                  1
 ;     l2ee9:                                                  1
 ;     l2eee:                                                  1
 ;     l2ef3:                                                  1
