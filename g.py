@@ -1681,6 +1681,12 @@ char(0x1120)
 char(0x1125)
 char(0x2cc4)
 
+label(0x16aa, "read_next_source_pixel")
+label(0x19e5, "not_first_update")
+comment(0x1994, "initialise brazier and fire, if not changing rooms")
+comment(0x199b, "work out direction to draw brazier (left or right)")
+comment(0x19ba, "make the brazier solid")
+
 entry(0x1866, "print_italic")
 char(0x1867)
 expr(0x186a, "vdu_delete")
@@ -2610,7 +2616,10 @@ comment(0x1ef3, "restore X,Y and A")
 entry(0x1791, "wait_for_timer_2_using_yx")
 
 entry(0x385d, "turn_cursor_on")
+ab(0x3861)
 entry(0x3863, "turn_cursor_off")
+label(0x3867, "finish_cursor_on_off")
+label(0x388a, "return_with_zero_result")
 
 label(0x34a7, "get_filename_and_print_drive_number_prompt")
 # This string will be used for save and loads, but I'll use "save" here as a noun to refer to the file on disc.
@@ -3047,16 +3056,18 @@ comment(0x1c10, "restore Y")
 
 comment(0x1988, """*************************************************************************************
 
-Initialise a brazier and associated fire.
+Initialise or update a brazier and associated fire.
 
-Two objects are initialised, the brazier and the fire. It chooses a direction based on whether a wall is to the left or right. It sets a random initial animation state then draws them.
+On the first update, two objects are initialised, the brazier and the fire. It chooses a direction based on whether a wall is to the left or right. It sets a random initial animation state then draws them.
+On subsequent updates, the fire animation is advanced.
 
 On Entry:
     A: object index for brazier
+On Exit:
+    A,X,Y are preserved
 
 *************************************************************************************""")
 
-#comment(0x1bca, "TODO: This is looking like it takes the low two bits of A to get a value 0-3 inclusive. It then multiplies that by sixteen, selecting one of four possible two-character bitmap pairs. It plots the bottom six rows of the first bitmap at (X,Y-1) and the top six rows of the second bitmap at (X,Y). I'm sure I've got the details wrong, but something like that.")
 entry(0x1bca, "draw_floor")
 expr(0x1bd9, make_lo("tile_floor0_top"))
 expr(0x1bdf, make_hi("tile_floor0_top"))
@@ -3076,8 +3087,8 @@ comment(0x1c63, "just copy the rightmost six pixels")
 binary(0x1c64)
 
 expr(0x1a03, "spriteid_fire1")
-label(0x19f2, "changing_rooms1")
-label(0x1a07, "changing_rooms2")
+label(0x19f2, "set_fire_sprite_to_use")
+label(0x1a07, "return_with_result")
 label(0x1a0f, "fire_object_index")
 label(0x19b9, "brazier_position_already_blocked_so_look_left")
 comment(0x19c0, "draw brazier reflected to look left")

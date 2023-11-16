@@ -1492,7 +1492,7 @@ sprite_clip_x
     ldy byte_offset_within_sprite                                     ; 17c5: a4 79       .y  :1694[1]
 sprite_clip_x_loop
     dex                                                               ; 17c7: ca          .   :1696[1]
-    bpl c16aa                                                         ; 17c8: 10 11       ..  :1697[1]
+    bpl read_next_source_pixel                                        ; 17c8: 10 11       ..  :1697[1]
     lda sprite_op_flags                                               ; 17ca: a5 15       ..  :1699[1]
     and #sprite_op_flags_copy_mask                                    ; 17cc: 29 01       ).  :169b[1]
     beq not_copying_to_destination_sprite                             ; 17ce: f0 06       ..  :169d[1]
@@ -1503,7 +1503,7 @@ not_copying_to_destination_sprite
     iny                                                               ; 17d6: c8          .   :16a5[1]
     lda (src_sprite_address_low),y                                    ; 17d7: b1 70       .p  :16a6[1]
     ldx #3                                                            ; 17d9: a2 03       ..  :16a8[1]
-c16aa
+read_next_source_pixel
     asl                                                               ; 17db: 0a          .   :16aa[1]   ; get top bit
     bcs found_set_bit                                                 ; 17dc: b0 08       ..  :16ab[1]   ; if set then branch
     rol mask_sprite_byte                                              ; 17de: 26 80       &.  :16ad[1]   ; put clear bit into mask
@@ -2011,27 +2011,32 @@ sprdata_filename
 ; TODO: this is used by e.g. dataA
 ; *************************************************************************************
 ; 
-; Initialise a brazier and associated fire.
+; Initialise or update a brazier and associated fire.
 ; 
-; Two objects are initialised, the brazier and the fire. It chooses a direction based
-; on whether a wall is to the left or right. It sets a random initial animation state
-; then draws them.
+; On the first update, two objects are initialised, the brazier and the fire. It
+; chooses a direction based on whether a wall is to the left or right. It sets a random
+; initial animation state then draws them.
+; On subsequent updates, the fire animation is advanced.
 ; 
 ; On Entry:
 ;     A: object index for brazier
+; On Exit:
+;     A,X,Y are preserved
 ; 
 ; *************************************************************************************
-initialise_brazier_and_fire
+update_brazier_and_fire
     sta fire_object_index                                             ; 1ab9: 8d 0f 1a    ... :1988[1]
     txa                                                               ; 1abc: 8a          .   :198b[1]
     pha                                                               ; 1abd: 48          H   :198c[1]
     tya                                                               ; 1abe: 98          .   :198d[1]
     pha                                                               ; 1abf: 48          H   :198e[1]
     lda update_room_first_update_flag                                 ; 1ac0: ad 2b 13    .+. :198f[1]
-    beq c19e5                                                         ; 1ac3: f0 51       .Q  :1992[1]
+    beq not_first_update                                              ; 1ac3: f0 51       .Q  :1992[1]
+; initialise brazier and fire, if not changing rooms
     lda desired_room_index                                            ; 1ac5: a5 30       .0  :1994[1]
     cmp current_room_index                                            ; 1ac7: cd ba 1a    ... :1996[1]
     bne done_with_brazier_and_fire                                    ; 1aca: d0 47       .G  :1999[1]
+; work out direction to draw brazier (left or right)
     jsr read_collision_map_value_for_xy                               ; 1acc: 20 fa 1e     .. :199b[1]
     cmp #3                                                            ; 1acf: c9 03       ..  :199e[1]
     beq brazier_position_already_blocked_so_look_left                 ; 1ad1: f0 17       ..  :19a0[1]
@@ -2052,6 +2057,7 @@ initialise_brazier_and_fire
     bne set_fire_direction                                            ; 1ae8: d0 1b       ..  :19b7[1]   ; ALWAYS branch
 brazier_position_already_blocked_so_look_left
     dex                                                               ; 1aea: ca          .   :19b9[1]
+; make the brazier solid
     lda #3                                                            ; 1aeb: a9 03       ..  :19ba[1]
     jsr write_a_single_value_to_cell_in_collision_map                 ; 1aed: 20 bb 1e     .. :19bc[1]
     inx                                                               ; 1af0: e8          .   :19bf[1]
@@ -2075,25 +2081,25 @@ set_fire_direction
     jsr get_random_number_up_to_a                                     ; 1b0d: 20 a6 18     .. :19dc[1]
     sta object_current_index_in_animation,x                           ; 1b10: 9d d4 09    ... :19df[1]
 done_with_brazier_and_fire
-    jmp changing_rooms1                                               ; 1b13: 4c f2 19    L.. :19e2[1]
+    jmp set_fire_sprite_to_use                                        ; 1b13: 4c f2 19    L.. :19e2[1]
 
-c19e5
+not_first_update
     lda desired_room_index                                            ; 1b16: a5 30       .0  :19e5[1]
     cmp current_room_index                                            ; 1b18: cd ba 1a    ... :19e7[1]
-    bne changing_rooms1                                               ; 1b1b: d0 06       ..  :19ea[1]
+    bne set_fire_sprite_to_use                                        ; 1b1b: d0 06       ..  :19ea[1]
     ldx fire_object_index                                             ; 1b1d: ae 0f 1a    ... :19ec[1]
     inc object_current_index_in_animation,x                           ; 1b20: fe d4 09    ... :19ef[1]
-changing_rooms1
+set_fire_sprite_to_use
     lda desired_room_index                                            ; 1b23: a5 30       .0  :19f2[1]
     cmp current_room_index                                            ; 1b25: cd ba 1a    ... :19f4[1]
-    bne changing_rooms2                                               ; 1b28: d0 0e       ..  :19f7[1]
+    bne return_with_result                                            ; 1b28: d0 0e       ..  :19f7[1]
     ldx fire_object_index                                             ; 1b2a: ae 0f 1a    ... :19f9[1]
     lda object_current_index_in_animation,x                           ; 1b2d: bd d4 09    ... :19fc[1]
     and #7                                                            ; 1b30: 29 07       ).  :19ff[1]
     clc                                                               ; 1b32: 18          .   :1a01[1]
     adc #spriteid_fire1                                               ; 1b33: 69 3c       i<  :1a02[1]
     sta object_spriteid,x                                             ; 1b35: 9d a8 09    ... :1a04[1]
-changing_rooms2
+return_with_result
     pla                                                               ; 1b38: 68          h   :1a07[1]
     tay                                                               ; 1b39: a8          .   :1a08[1]
     pla                                                               ; 1b3a: 68          h   :1a09[1]
@@ -7234,12 +7240,12 @@ turn_cursor_on
     pha                                                               ; 398e: 48          H   :385d[1]
     lda #$67 ; 'g'                                                    ; 398f: a9 67       .g  :385e[1]
     pha                                                               ; 3991: 48          H   :3860[1]
-    bne c3867                                                         ; 3992: d0 04       ..  :3861[1]
+    bne finish_cursor_on_off                                          ; 3992: d0 04       ..  :3861[1]   ; ALWAYS branch
 turn_cursor_off
     pha                                                               ; 3994: 48          H   :3863[1]
     lda #$20 ; ' '                                                    ; 3995: a9 20       .   :3864[1]
     pha                                                               ; 3997: 48          H   :3866[1]
-c3867
+finish_cursor_on_off
     lda #crtc_cursor_start                                            ; 3998: a9 0a       ..  :3867[1]
     sta crtc_address_register                                         ; 399a: 8d 00 fe    ... :3869[1]
     pla                                                               ; 399d: 68          h   :386c[1]
@@ -7260,12 +7266,12 @@ inkey_0
     ldy #0                                                            ; 39b1: a0 00       ..  :3880[1]
     jsr osbyte                                                        ; 39b3: 20 f4 ff     .. :3882[1]   ; Wait for a key press within 0 centiseconds
     tya                                                               ; 39b6: 98          .   :3885[1]   ; Y is zero if key pressed; $ff if no key pressed; $1b if ESCAPE pressed
-    bne c388a                                                         ; 39b7: d0 02       ..  :3886[1]
+    bne return_with_zero_result                                       ; 39b7: d0 02       ..  :3886[1]
 ; X is the ASCII value of the key pressed (assuming Y=0)
     txa                                                               ; 39b9: 8a          .   :3888[1]
     rts                                                               ; 39ba: 60          `   :3889[1]
 
-c388a
+return_with_zero_result
     lda #0                                                            ; 39bb: a9 00       ..  :388a[1]
     rts                                                               ; 39bd: 60          `   :388c[1]
 
@@ -8716,8 +8722,6 @@ plot_move_x_high
 pydis_end
 
 ; Automatically generated labels:
-;     c16aa
-;     c19e5
 ;     c1d16
 ;     c2047
 ;     c2061
@@ -8828,8 +8832,6 @@ pydis_end
 ;     c35ed
 ;     c363f
 ;     c381a
-;     c3867
-;     c388a
 ;     c393c
 ;     c3997
 ;     c39b6

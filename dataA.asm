@@ -105,7 +105,7 @@ gameplay_area_colour                                = $1760
 use_colour_flag                                     = $1765
 set_toolbar_and_gameplay_area_colours               = $1766
 jmp_yx                                              = $1966
-initialise_brazier_and_fire                         = $1988
+update_brazier_and_fire                             = $1988
 update_level_completion                             = $1a10
 current_room_index                                  = $1aba
 copy_rectangle_of_memory_to_screen                  = $1abb
@@ -784,7 +784,7 @@ sub_c3f02
     lda #5                                                            ; 3f07: a9 05       ..
     ldx #$1a                                                          ; 3f09: a2 1a       ..
     ldy #$0e                                                          ; 3f0b: a0 0e       ..
-    jsr initialise_brazier_and_fire                                   ; 3f0d: 20 88 19     ..
+    jsr update_brazier_and_fire                                       ; 3f0d: 20 88 19     ..
     lda update_room_first_update_flag                                 ; 3f10: ad 2b 13    .+.
     beq c3f52                                                         ; 3f13: f0 3d       .=
     lda #$d3                                                          ; 3f15: a9 d3       ..
@@ -1364,10 +1364,10 @@ sub_c42f8
     lda #3                                                            ; 42fd: a9 03       ..
     ldx #$14                                                          ; 42ff: a2 14       ..
     ldy #$0c                                                          ; 4301: a0 0c       ..
-    jsr initialise_brazier_and_fire                                   ; 4303: 20 88 19     ..
+    jsr update_brazier_and_fire                                       ; 4303: 20 88 19     ..
     lda #4                                                            ; 4306: a9 04       ..
     inx                                                               ; 4308: e8          .
-    jsr initialise_brazier_and_fire                                   ; 4309: 20 88 19     ..
+    jsr update_brazier_and_fire                                       ; 4309: 20 88 19     ..
     lda update_room_first_update_flag                                 ; 430c: ad 2b 13    .+.
     beq c4358                                                         ; 430f: f0 47       .G
     lda previous_level                                                ; 4311: a5 51       .Q
@@ -1910,7 +1910,7 @@ pydis_end
 ;     l09aa:                                                  3
 ;     l09ab:                                                  3
 ;     l09ac:                                                  3
-;     initialise_brazier_and_fire:                            3
+;     update_brazier_and_fire:                                3
 ;     current_room_index:                                     3
 ;     draw_sprite_a_at_cell_xy:                               3
 ;     find_or_create_menu_slot_for_A:                         3

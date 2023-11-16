@@ -165,7 +165,7 @@ def common_to_all():
 
     label(0x12bb, "start_room")
     label(0x12da, "game_update")
-    label(0x1988, "initialise_brazier_and_fire")
+    label(0x1988, "update_brazier_and_fire")
     label(0x1a10, "update_level_completion")
     label(0x1abb, "copy_rectangle_of_memory_to_screen")
     label(0x1b90, "draw_floor_walls_and_ceiling_around_solid_rock")
