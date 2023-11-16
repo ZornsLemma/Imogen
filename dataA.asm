@@ -37,7 +37,8 @@ spriteid_mouse_hands1              = 201
 spriteid_mouse_hands2              = 202
 spriteid_mouse_hands3              = 212
 spriteid_mouse_hands4              = 213
-spriteid_saxophone                 = 211
+spriteid_saxophone1                = 210
+spriteid_saxophone2                = 211
 spriteid_small_ball                = 203
 spriteid_table                     = 222
 spriteid_trapdoor_diagonal         = 208
@@ -179,7 +180,7 @@ level_init_after_load_handler
     beq c3b0e                                                         ; 3af6: f0 16       ..
     lda developer_flags                                               ; 3af8: ad 03 11    ...
     bpl developer_mode_not_active                                     ; 3afb: 10 07       ..
-    lda #spriteid_saxophone                                           ; 3afd: a9 d3       ..
+    lda #spriteid_saxophone2                                          ; 3afd: a9 d3       ..
     jsr find_or_create_menu_slot_for_A                                ; 3aff: 20 bd 2b     .+
     lda #$ff                                                          ; 3b02: a9 ff       ..
 ; reset the saxaphone collected flag. The user can choose during the course of a game
@@ -189,7 +190,7 @@ level_init_after_load_handler
 developer_mode_not_active
     lda saxophone_collected_flag                                      ; 3b04: ad 00 0a    ...
     beq c3b0e                                                         ; 3b07: f0 05       ..
-    lda #spriteid_saxophone                                           ; 3b09: a9 d3       ..
+    lda #spriteid_saxophone2                                          ; 3b09: a9 d3       ..
     jsr find_or_create_menu_slot_for_A                                ; 3b0b: 20 bd 2b     .+
 ; $3b0e referenced 2 times by $3af6, $3b07
 c3b0e
@@ -808,9 +809,9 @@ sub_c3f02
     tax                                                               ; 3f41: aa          .
     lda #1                                                            ; 3f42: a9 01       ..
     sta object_direction,x                                            ; 3f44: 9d be 09    ...
-    lda #$cc                                                          ; 3f47: a9 cc       ..
+    lda #spriteid_zero_size1                                          ; 3f47: a9 cc       ..
     sta object_sprite_mask_type,x                                     ; 3f49: 9d ac 38    ..8
-    lda #$d2                                                          ; 3f4c: a9 d2       ..
+    lda #spriteid_saxophone1                                          ; 3f4c: a9 d2       ..
     sta object_spriteid,x                                             ; 3f4e: 9d a8 09    ...
 ; $3f51 referenced 2 times by $3f2d, $3f32
 return3
@@ -839,7 +840,7 @@ c3f62
     jsr test_for_collision_between_objects_x_and_y                    ; 3f76: 20 e2 28     .(
     beq c3f8a                                                         ; 3f79: f0 0f       ..
 ; TODO: I suspect this is handling 'collection of the saxophone'
-    lda #spriteid_saxophone                                           ; 3f7b: a9 d3       ..
+    lda #spriteid_saxophone2                                          ; 3f7b: a9 d3       ..
     jsr find_or_create_menu_slot_for_A                                ; 3f7d: 20 bd 2b     .+
     lda #0                                                            ; 3f80: a9 00       ..
     sta object_spriteid + objectid_saxophone                          ; 3f82: 8d ac 09    ...
@@ -2309,8 +2310,11 @@ pydis_end
 !if (spriteid_mouse_hands4) != $d5 {
     !error "Assertion failed: spriteid_mouse_hands4 == $d5"
 }
-!if (spriteid_saxophone) != $d3 {
-    !error "Assertion failed: spriteid_saxophone == $d3"
+!if (spriteid_saxophone1) != $d2 {
+    !error "Assertion failed: spriteid_saxophone1 == $d2"
+}
+!if (spriteid_saxophone2) != $d3 {
+    !error "Assertion failed: spriteid_saxophone2 == $d3"
 }
 !if (spriteid_small_ball) != $cb {
     !error "Assertion failed: spriteid_small_ball == $cb"

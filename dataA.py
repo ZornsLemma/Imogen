@@ -15,7 +15,8 @@ sprite_dict = {
     0xcf: "spriteid_trapdoor_horizontal",
     0xd0: "spriteid_trapdoor_diagonal",
     0xd1: "spriteid_trapdoor_vertical",
-    0xd3: "spriteid_saxophone",
+    0xd2: "spriteid_saxophone1",
+    0xd3: "spriteid_saxophone2",
     0xd4: "spriteid_mouse_hands3",
     0xd5: "spriteid_mouse_hands4",
     0xd6: "spriteid_baby0",
@@ -269,6 +270,8 @@ expr(0x3ef0, "spriteid_trapdoor_vertical")
 
 entry(0x3f51, "return3")
 expr(0x3f3d, "objectid_saxophone") # TODO: not entirely sure this is the right object ID 4, but the code does seem to check for desired_room_index being 1 - I am still a bit fuzzy as to what all the different room number variables mean
+expr(0x3f48, "spriteid_zero_size1")
+expr(0x3f4d, "spriteid_saxophone1")
 
 comment(0x407f, "Room 2 has the spell, guarded by a baby. TODO: Not too sure I have the room number correct etc.")
 entry(0x407f, "room2_handler") # TODO: not too sure about this
