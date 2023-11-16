@@ -242,6 +242,7 @@ constant(0x4, "objectid_saxophone") # TODO: guessing a bit
 expr(0x3f70, "object_spriteid + objectid_saxophone")
 expr(0x3f83, "object_spriteid + objectid_saxophone")
 entry(0x3ed4, "new_room1_trapdoor_open_flag_in_y")
+entry(0x3ed7, "set_room1_trapdoor_sprites_if_required")
 entry(0x3ee4, "adjusted_room1_trapdoor_open_flag_in_y_is_ge_0")
 # TODO: I think room1_trapdoor_open_flag can have values $ff, 0 and 1 - just possibly this
 # increments to add a time delay to the trapdoor visibly opening, but that's a guess at this point.

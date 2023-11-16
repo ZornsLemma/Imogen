@@ -675,30 +675,30 @@ set_up_open_trapdoor_collision_map
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 3e66: 20 44 1e     D.
 ; $3e69 referenced 2 times by $3e15, $3e52
 room1_initial_setup_done
-    jmp c3ed7                                                         ; 3e69: 4c d7 3e    L.>
+    jmp set_room1_trapdoor_sprites_if_required                        ; 3e69: 4c d7 3e    L.>
 
 ; $3e6c referenced 1 time by $3dff
 room1_not_first_update
     ldy room1_trapdoor_open_flag                                      ; 3e6c: ac ff 09    ...
-    bmi c3ed7                                                         ; 3e6f: 30 66       0f
+    bmi set_room1_trapdoor_sprites_if_required                        ; 3e6f: 30 66       0f
     bne c3ec1                                                         ; 3e71: d0 4e       .N
     lda desired_room_index                                            ; 3e73: a5 30       .0
     cmp #1                                                            ; 3e75: c9 01       ..
-    bne c3ed7                                                         ; 3e77: d0 5e       .^
+    bne set_room1_trapdoor_sprites_if_required                        ; 3e77: d0 5e       .^
     lda player_held_item                                              ; 3e79: a5 52       .R
-    beq c3ed7                                                         ; 3e7b: f0 5a       .Z
+    beq set_room1_trapdoor_sprites_if_required                        ; 3e7b: f0 5a       .Z
     lda object_x_high                                                 ; 3e7d: ad 66 09    .f.
-    bne c3ed7                                                         ; 3e80: d0 55       .U
+    bne set_room1_trapdoor_sprites_if_required                        ; 3e80: d0 55       .U
     lda object_x_low                                                  ; 3e82: ad 50 09    .P.
     cmp #$88                                                          ; 3e85: c9 88       ..
-    bcc c3ed7                                                         ; 3e87: 90 4e       .N
+    bcc set_room1_trapdoor_sprites_if_required                        ; 3e87: 90 4e       .N
     cmp #$b8                                                          ; 3e89: c9 b8       ..
-    bcs c3ed7                                                         ; 3e8b: b0 4a       .J
+    bcs set_room1_trapdoor_sprites_if_required                        ; 3e8b: b0 4a       .J
     lda #2                                                            ; 3e8d: a9 02       ..
     sta temp_bottom_offset                                            ; 3e8f: 8d 51 25    .Q%
     lda #$0b                                                          ; 3e92: a9 0b       ..
     jsr something59_TODO                                              ; 3e94: 20 94 28     .(
-    beq c3ed7                                                         ; 3e97: f0 3e       .>
+    beq set_room1_trapdoor_sprites_if_required                        ; 3e97: f0 3e       .>
 ; Remove the closed trapdoor from the collision map.
     ldx #$11                                                          ; 3e99: a2 11       ..
     ldy #7                                                            ; 3e9b: a0 07       ..
@@ -737,7 +737,7 @@ c3ed2
 new_room1_trapdoor_open_flag_in_y
     sty room1_trapdoor_open_flag                                      ; 3ed4: 8c ff 09    ...
 ; $3ed7 referenced 8 times by $3e69, $3e6f, $3e77, $3e7b, $3e80, $3e87, $3e8b, $3e97
-c3ed7
+set_room1_trapdoor_sprites_if_required
     lda desired_room_index                                            ; 3ed7: a5 30       .0
     cmp #1                                                            ; 3ed9: c9 01       ..
     bne return2                                                       ; 3edb: d0 10       ..
@@ -1869,7 +1869,7 @@ pydis_end
 ;     draw_sprite_a_at_cell_xy_and_write_to_collision_map:    9
 ;     l0a02:                                                  8
 ;     l0a04:                                                  8
-;     c3ed7:                                                  8
+;     set_room1_trapdoor_sprites_if_required:                 8
 ;     room1_trapdoor_open_flag:                               7
 ;     l0a01:                                                  7
 ;     play_sound_yx:                                          7
@@ -2023,7 +2023,6 @@ pydis_end
 ;     c3def
 ;     c3ec1
 ;     c3ed2
-;     c3ed7
 ;     c3f51
 ;     c3f52
 ;     c3f62
