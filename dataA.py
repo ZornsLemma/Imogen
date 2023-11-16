@@ -267,6 +267,9 @@ expr(0x3eee, "spriteid_trapdoor_horizontal")
 expr(0x3eef, "spriteid_trapdoor_diagonal")
 expr(0x3ef0, "spriteid_trapdoor_vertical")
 
+entry(0x3f51, "return3")
+expr(0x3f3d, "objectid_saxophone") # TODO: not entirely sure this is the right object ID 4, but the code does seem to check for desired_room_index being 1 - I am still a bit fuzzy as to what all the different room number variables mean
+
 comment(0x407f, "Room 2 has the spell, guarded by a baby. TODO: Not too sure I have the room number correct etc.")
 entry(0x407f, "room2_handler") # TODO: not too sure about this
 expr(0x4093, "objectid_spell")

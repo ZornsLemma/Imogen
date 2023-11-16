@@ -796,14 +796,14 @@ sub_c3f02
     jsr define_envelope                                               ; 3f26: 20 5e 39     ^9
     lda desired_room_index                                            ; 3f29: a5 30       .0
     cmp #1                                                            ; 3f2b: c9 01       ..
-    bne c3f51                                                         ; 3f2d: d0 22       ."
+    bne return3                                                       ; 3f2d: d0 22       ."
     lda saxophone_collected_flag                                      ; 3f2f: ad 00 0a    ...
-    bne c3f51                                                         ; 3f32: d0 1d       ..
+    bne return3                                                       ; 3f32: d0 1d       ..
     ldx #$1b                                                          ; 3f34: a2 1b       ..
     ldy #$12                                                          ; 3f36: a0 12       ..
     lda #7                                                            ; 3f38: a9 07       ..
     sta temp_sprite_y_offset                                          ; 3f3a: 85 3b       .;
-    lda #4                                                            ; 3f3c: a9 04       ..
+    lda #objectid_saxophone                                           ; 3f3c: a9 04       ..
     jsr set_object_position_from_cell_xy                              ; 3f3e: 20 5d 1f     ].
     tax                                                               ; 3f41: aa          .
     lda #1                                                            ; 3f42: a9 01       ..
@@ -813,7 +813,7 @@ sub_c3f02
     lda #$d2                                                          ; 3f4c: a9 d2       ..
     sta object_spriteid,x                                             ; 3f4e: 9d a8 09    ...
 ; $3f51 referenced 2 times by $3f2d, $3f32
-c3f51
+return3
     rts                                                               ; 3f51: 60          `
 
 ; $3f52 referenced 1 time by $3f13
@@ -1933,7 +1933,7 @@ pydis_end
 ;     level_unchanged2:                                       2
 ;     room1_initial_setup_done:                               2
 ;     play_some_sound1_then_some_sound2:                      2
-;     c3f51:                                                  2
+;     return3:                                                2
 ;     l3fd5:                                                  2
 ;     l3fd6:                                                  2
 ;     baby_spriteid_data:                                     2
@@ -2029,7 +2029,6 @@ pydis_end
 ;     c3dd2
 ;     c3de2
 ;     c3def
-;     c3f51
 ;     c3f52
 ;     c3f62
 ;     c3f8a
@@ -2237,6 +2236,9 @@ pydis_end
 }
 !if (objectid_right_trapdoor) != $03 {
     !error "Assertion failed: objectid_right_trapdoor == $03"
+}
+!if (objectid_saxophone) != $04 {
+    !error "Assertion failed: objectid_saxophone == $04"
 }
 !if (objectid_spell) != $05 {
     !error "Assertion failed: objectid_spell == $05"
