@@ -200,7 +200,7 @@ c3b0e
 level_update_handler
     jsr room0_handler                                                 ; 3b17: 20 e4 3b     .;
     jsr room1_handler                                                 ; 3b1a: 20 fc 3d     .=
-    jsr sub_c407f                                                     ; 3b1d: 20 7f 40     .@
+    jsr room2_handler                                                 ; 3b1d: 20 7f 40     .@
     jsr sub_c3f02                                                     ; 3b20: 20 02 3f     .?
     jsr sub_c42f8                                                     ; 3b23: 20 f8 42     .B
     rts                                                               ; 3b26: 60          `
@@ -1005,8 +1005,10 @@ baby_spriteid_data
     !byte spriteid_baby6                                              ; 407d: dc          .
     !byte 0                                                           ; 407e: 00          .
 
+; Room 2 has the spell, guarded by a baby. TODO: Not too sure I have the room number
+; correct etc.
 ; $407f referenced 1 time by $3b1d
-sub_c407f
+room2_handler
     lda #2                                                            ; 407f: a9 02       ..
     sta current_room_index                                            ; 4081: 8d ba 1a    ...
     lda #3                                                            ; 4084: a9 03       ..             ; redundant instruction
@@ -1994,7 +1996,7 @@ pydis_end
 ;     c3f52:                                                  1
 ;     c3f62:                                                  1
 ;     loop_c4044:                                             1
-;     sub_c407f:                                              1
+;     room2_handler:                                          1
 ;     c40b2:                                                  1
 ;     c40c1:                                                  1
 ;     c40e0:                                                  1
@@ -2091,7 +2093,6 @@ pydis_end
 ;     loop_c42ea
 ;     sub_c3f02
 ;     sub_c3f8b
-;     sub_c407f
 ;     sub_c42f8
 !if (<envelope1) != $60 {
     !error "Assertion failed: <envelope1 == $60"
