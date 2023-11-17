@@ -159,9 +159,13 @@ substitute_labels = {
         "address1_high": "animation_address_high",
     },
     (0x2379, 0x23fd): {
-        "l0072": "temp_animation_low",
-        "l0073": "temp_animation_high",
+        "l0072": "temp_sprite_list_low",
+        "l0073": "temp_sprite_list_high",
     },
+    (0x23df, 0x23f4): {
+        "l0074": "temp_spriteid",
+    },
+
     (0x2565, 0x2680): {
         "l0080": "sprite_addr_low",
         "l0081": "sprite_addr_high",
@@ -482,9 +486,9 @@ comment(0x2cd7, """*************************************************************
 Animation code
 
 *************************************************************************************""")
-label(0x2cd7, "wizard_animation1")
-expr(0x2ebd, make_lo("wizard_animation1"))
-expr(0x2ebf, make_hi("wizard_animation1"))
+label(0x2cd7, "wizard_sprite_list")
+expr(0x2ebd, make_lo("wizard_sprite_list"))
+expr(0x2ebf, make_hi("wizard_sprite_list"))
 
 expr(0x2d8d, make_lo("wizard_transform_in_animation"))
 expr(0x2d8f, make_hi("wizard_transform_in_animation"))
@@ -541,9 +545,9 @@ for x in range(0x3115, 0x3127, 3):
 expr(0x30aa, make_lo("cat_transform_in_animation"))
 expr(0x30ac, make_hi("cat_transform_in_animation"))
 
-label(0x2f00, "cat_animation1")
-expr(0x30d6, make_lo("cat_animation1"))
-expr(0x30d8, make_hi("cat_animation1"))
+label(0x2f00, "cat_sprite_list")
+expr(0x30d6, make_lo("cat_sprite_list"))
+expr(0x30d8, make_hi("cat_sprite_list"))
 
 
 ##################################################################################################
@@ -555,9 +559,9 @@ expr(0x31e0, make_hi("monkey_transform_in_animation"))
 expr(0x333b, make_lo("monkey_transform_in_animation"))
 expr(0x333d, make_hi("monkey_transform_in_animation"))
 
-label(0x30e6, "monkey_animation1")
-expr(0x3367, make_lo("monkey_animation1"))
-expr(0x3369, make_hi("monkey_animation1"))
+label(0x30e6, "monkey_sprite_list")
+expr(0x3367, make_lo("monkey_sprite_list"))
+expr(0x3369, make_hi("monkey_sprite_list"))
 
 label(0x3115, "monkey_transform_out_animation")
 label(0x3128, "monkey_walk_cycle_animation")
@@ -1817,6 +1821,27 @@ entry(0x22cd, "check_for_next_player_animation")
 comment(0x225b, "check for end of animation (loop if needed)")
 label(0x2267, "store_accessory_object_state")
 comment(0x2276, "add animation XY offset to player object position (inverted if looking left)")
+label(0x2284, "skip_invert_a")
+label(0x228b, "skip_decrement_high_byte1")
+label(0x229f, "skip_decrement_high_byte2")
+ab(0x22b2)
+comment(0x22ae, """*************************************************************************************
+
+Find the offset X,Y for a sprite in a list
+
+On Entry:
+    A: spriteid to search for
+    temp_animation: address of list to search
+
+On Exit:
+    X: X pixel offset from animation
+    Y: Y pixel offset from animation
+
+*************************************************************************************""")
+label(0x22ae, "find_sprite_xy_offset_from_spriteid")
+label(0x22bb, "start_search")
+label(0x22b4, "list_search_loop")
+label(0x22c4, "found_entry_in_list")
 
 comment(0x22ee, """*************************************************************************************
 
@@ -1848,6 +1873,9 @@ comment(0x232b, "start 'transform out' animation")
 label(0x2334, "not_transforming")
 label(0x2358, "start_of_transform_in_animation")
 expr(0x2365, make_add("sound_priority_per_channel_table", "1"))
+comment(0x237f, "wall collision found")
+
+#label(0x2392, "")
 
 comment(0x265a, """*************************************************************************************
 
@@ -2427,7 +2455,7 @@ comment(0x2dd6, "check player for collision with left or right wall")
 comment(0x3036, "check player for collision with left or right wall")
 comment(0x3038, "why not just lda #5?", inline=True)
 comment(0x2dd8, "why not just lda #5?", inline=True)
-comment(0x38d8, """object_collision_flags is a per-object table that has:
+comment(0x38d8, """object_room_collision_flags is a per-object table that has:
 
     bit 0: object collided with left wall
     bit 1: object collided with floor

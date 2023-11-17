@@ -138,7 +138,7 @@ print_encrypted_string_at_yx_centred                = $37f3
 wait_one_second_then_check_keys                     = $388d
 object_sprite_mask_type                             = $38ac
 object_z_order                                      = $38c2
-object_collision_flags                              = $38d8
+object_room_collision_flags                         = $38d8
 play_sound_yx                                       = $38f6
 define_envelope                                     = $395e
 sound_priority_per_channel_table                    = $396f
@@ -1422,7 +1422,7 @@ c4358
     lda l0a01                                                         ; 4363: ad 01 0a    ...
     cmp #$16                                                          ; 4366: c9 16       ..
     beq c4386                                                         ; 4368: f0 1c       ..
-    lda object_collision_flags                                        ; 436a: ad d8 38    ..8
+    lda object_room_collision_flags                                   ; 436a: ad d8 38    ..8
     and #4                                                            ; 436d: 29 04       ).
     beq c4355                                                         ; 436f: f0 e4       ..
     lda #1                                                            ; 4371: a9 01       ..
@@ -1436,7 +1436,7 @@ c4358
     bne c43a0                                                         ; 4384: d0 1a       ..
 ; $4386 referenced 1 time by $4368
 c4386
-    lda object_collision_flags                                        ; 4386: ad d8 38    ..8
+    lda object_room_collision_flags                                   ; 4386: ad d8 38    ..8
     and #1                                                            ; 4389: 29 01       ).
     beq c4355                                                         ; 438b: f0 c8       ..
     lda #$ff                                                          ; 438d: a9 ff       ..
@@ -1930,7 +1930,7 @@ pydis_end
 ;     l0a03:                                                  2
 ;     set_object_position_from_current_sprite_position:       2
 ;     player_collision_flag:                                  2
-;     object_collision_flags:                                 2
+;     object_room_collision_flags:                            2
 ;     sound_priority_per_channel_table:                       2
 ;     c3b0e:                                                  2
 ;     level_unchanged2:                                       2

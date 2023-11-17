@@ -291,20 +291,21 @@ l0072                                       = $72
 object_right_low                            = $72
 osfile_block_filename_low                   = $72
 sprite_screen_address_low                   = $72
-temp_animation_low                          = $72
+temp_sprite_list_low                        = $72
 width_in_cells_to_write                     = $72
 height_in_cells_to_write                    = $73
 l0073                                       = $73
 object_right_high                           = $73
 osfile_block_filename_high                  = $73
 sprite_screen_address_high                  = $73
-temp_animation_high                         = $73
+temp_sprite_list_high                       = $73
 first_cell_in_row_screen_address_low        = $74
 l0074                                       = $74
 object_top_low                              = $74
 offset_within_byte                          = $74
 osfile_block_load_address_low               = $74
 sprite_x_pos_low                            = $74
+temp_spriteid                               = $74
 first_cell_in_row_screen_address_high       = $75
 l0075                                       = $75
 object_top_high                             = $75
@@ -3876,8 +3877,8 @@ skip9
 ; 
 ; *************************************************************************************
 update_player_accessory_object_animation
-    stx temp_animation_low                                            ; 2379: 86 72       .r  :2248[1]
-    sty temp_animation_high                                           ; 237b: 84 73       .s  :224a[1]
+    stx temp_sprite_list_low                                          ; 2379: 86 72       .r  :2248[1]
+    sty temp_sprite_list_high                                         ; 237b: 84 73       .s  :224a[1]
     ldy #0                                                            ; 237d: a0 00       ..  :224c[1]
     ora #0                                                            ; 237f: 09 00       ..  :224e[1]
     bpl store_accessory_object_state                                  ; 2381: 10 15       ..  :2250[1]
@@ -3900,19 +3901,19 @@ store_accessory_object_state
     sta object_direction+1                                            ; 23a1: 8d bf 09    ... :2270[1]
     lda object_spriteid                                               ; 23a4: ad a8 09    ... :2273[1]
 ; add animation XY offset to player object position (inverted if looking left)
-    jsr sub_c22ae                                                     ; 23a7: 20 ae 22     ." :2276[1]
+    jsr find_sprite_xy_offset_from_spriteid                           ; 23a7: 20 ae 22     ." :2276[1]
     txa                                                               ; 23aa: 8a          .   :2279[1]
     ldx object_direction                                              ; 23ab: ae be 09    ... :227a[1]
-    bpl c2284                                                         ; 23ae: 10 05       ..  :227d[1]
+    bpl skip_invert_a                                                 ; 23ae: 10 05       ..  :227d[1]
     eor #$ff                                                          ; 23b0: 49 ff       I.  :227f[1]
     clc                                                               ; 23b2: 18          .   :2281[1]
     adc #1                                                            ; 23b3: 69 01       i.  :2282[1]
-c2284
+skip_invert_a
     ldx #0                                                            ; 23b5: a2 00       ..  :2284[1]
     ora #0                                                            ; 23b7: 09 00       ..  :2286[1]
-    bpl c228b                                                         ; 23b9: 10 01       ..  :2288[1]
+    bpl skip_decrement_high_byte1                                     ; 23b9: 10 01       ..  :2288[1]
     dex                                                               ; 23bb: ca          .   :228a[1]
-c228b
+skip_decrement_high_byte1
     clc                                                               ; 23bc: 18          .   :228b[1]
     adc object_x_low                                                  ; 23bd: 6d 50 09    mP. :228c[1]
     sta object_x_low+1                                                ; 23c0: 8d 51 09    .Q. :228f[1]
@@ -3921,9 +3922,9 @@ c228b
     sta object_x_high+1                                               ; 23c7: 8d 67 09    .g. :2296[1]
     ldx #0                                                            ; 23ca: a2 00       ..  :2299[1]
     tya                                                               ; 23cc: 98          .   :229b[1]
-    bpl c229f                                                         ; 23cd: 10 01       ..  :229c[1]
+    bpl skip_decrement_high_byte2                                     ; 23cd: 10 01       ..  :229c[1]
     dex                                                               ; 23cf: ca          .   :229e[1]
-c229f
+skip_decrement_high_byte2
     clc                                                               ; 23d0: 18          .   :229f[1]
     adc object_y_low                                                  ; 23d1: 6d 7c 09    m|. :22a0[1]
     sta object_y_low+1                                                ; 23d4: 8d 7d 09    .}. :22a3[1]
@@ -3932,29 +3933,42 @@ c229f
     sta object_y_high+1                                               ; 23db: 8d 93 09    ... :22aa[1]
     rts                                                               ; 23de: 60          `   :22ad[1]
 
-sub_c22ae
-    sta l0074                                                         ; 23df: 85 74       .t  :22ae[1]
+; *************************************************************************************
+; 
+; Find the offset X,Y for a sprite in a list
+; 
+; On Entry:
+;     A: spriteid to search for
+;     temp_animation: address of list to search
+; 
+; On Exit:
+;     X: X pixel offset from animation
+;     Y: Y pixel offset from animation
+; 
+; *************************************************************************************
+find_sprite_xy_offset_from_spriteid
+    sta temp_spriteid                                                 ; 23df: 85 74       .t  :22ae[1]
     ldy #0                                                            ; 23e1: a0 00       ..  :22b0[1]
-    beq c22bb                                                         ; 23e3: f0 07       ..  :22b2[1]
-loop_c22b4
-    cmp l0074                                                         ; 23e5: c5 74       .t  :22b4[1]
-    beq c22c4                                                         ; 23e7: f0 0c       ..  :22b6[1]
+    beq start_search                                                  ; 23e3: f0 07       ..  :22b2[1]   ; ALWAYS branch
+list_search_loop
+    cmp temp_spriteid                                                 ; 23e5: c5 74       .t  :22b4[1]
+    beq found_entry_in_list                                           ; 23e7: f0 0c       ..  :22b6[1]
     iny                                                               ; 23e9: c8          .   :22b8[1]
     iny                                                               ; 23ea: c8          .   :22b9[1]
     iny                                                               ; 23eb: c8          .   :22ba[1]
-c22bb
-    lda (temp_animation_low),y                                        ; 23ec: b1 72       .r  :22bb[1]
-    bne loop_c22b4                                                    ; 23ee: d0 f5       ..  :22bd[1]
+start_search
+    lda (temp_sprite_list_low),y                                      ; 23ec: b1 72       .r  :22bb[1]
+    bne list_search_loop                                              ; 23ee: d0 f5       ..  :22bd[1]
     ldx #0                                                            ; 23f0: a2 00       ..  :22bf[1]
     ldy #0                                                            ; 23f2: a0 00       ..  :22c1[1]
     rts                                                               ; 23f4: 60          `   :22c3[1]
 
-c22c4
+found_entry_in_list
     iny                                                               ; 23f5: c8          .   :22c4[1]
-    lda (temp_animation_low),y                                        ; 23f6: b1 72       .r  :22c5[1]
+    lda (temp_sprite_list_low),y                                      ; 23f6: b1 72       .r  :22c5[1]
     tax                                                               ; 23f8: aa          .   :22c7[1]
     iny                                                               ; 23f9: c8          .   :22c8[1]
-    lda (temp_animation_low),y                                        ; 23fa: b1 72       .r  :22c9[1]
+    lda (temp_sprite_list_low),y                                      ; 23fa: b1 72       .r  :22c9[1]
     tay                                                               ; 23fc: a8          .   :22cb[1]
     rts                                                               ; 23fd: 60          `   :22cc[1]
 
@@ -4102,6 +4116,7 @@ sub_c236b
     lda #0                                                            ; 24a9: a9 00       ..  :2378[1]
     jsr get_wall_collision_for_object_a                               ; 24ab: 20 94 28     .( :237a[1]
     beq return12                                                      ; 24ae: f0 29       .)  :237d[1]
+; wall collision found
     lda object_y_low_old                                              ; 24b0: ad 87 09    ... :237f[1]
     sec                                                               ; 24b3: 38          8   :2382[1]
     sbc object_y_low                                                  ; 24b4: ed 7c 09    .|. :2383[1]
@@ -4112,7 +4127,7 @@ sub_c236b
     bpl return12                                                      ; 24c1: 10 16       ..  :2390[1]
 ; check for player collision with floor
 c2392
-    lda object_collision_flags                                        ; 24c3: ad d8 38    ..8 :2392[1]
+    lda object_room_collision_flags                                   ; 24c3: ad d8 38    ..8 :2392[1]
     and #2                                                            ; 24c6: 29 02       ).  :2395[1]
     beq return12                                                      ; 24c8: f0 0f       ..  :2397[1]
     lda #2                                                            ; 24ca: a9 02       ..  :2399[1]
@@ -4565,7 +4580,7 @@ sub_c25f5
     tax                                                               ; 2728: aa          .   :25f7[1]
 ; clear collision flags
     lda #0                                                            ; 2729: a9 00       ..  :25f8[1]
-    sta object_collision_flags,x                                      ; 272b: 9d d8 38    ..8 :25fa[1]
+    sta object_room_collision_flags,x                                 ; 272b: 9d d8 38    ..8 :25fa[1]
     lda #$ff                                                          ; 272e: a9 ff       ..  :25fd[1]
     sta default_collision_map_option                                  ; 2730: 85 44       .D  :25ff[1]
     lda #1                                                            ; 2732: a9 01       ..  :2601[1]
@@ -4694,9 +4709,9 @@ handle_left_right_wall_collision
     adc object_x_high,x                                               ; 27e2: 7d 66 09    }f. :26b1[1]
     sta object_x_high,x                                               ; 27e5: 9d 66 09    .f. :26b4[1]
 ; mark object has collided with left wall
-    lda object_collision_flags,x                                      ; 27e8: bd d8 38    ..8 :26b7[1]
+    lda object_room_collision_flags,x                                 ; 27e8: bd d8 38    ..8 :26b7[1]
     ora #1                                                            ; 27eb: 09 01       ..  :26ba[1]
-    sta object_collision_flags,x                                      ; 27ed: 9d d8 38    ..8 :26bc[1]
+    sta object_room_collision_flags,x                                 ; 27ed: 9d d8 38    ..8 :26bc[1]
     jmp return15                                                      ; 27f0: 4c e4 26    L.& :26bf[1]
 
 ; player has hit wall on right side. Adjust player position to align with the cell next
@@ -4715,9 +4730,9 @@ player_has_hit_wall_on_right_side
     sbc #0                                                            ; 2808: e9 00       ..  :26d7[1]
     sta object_x_high,x                                               ; 280a: 9d 66 09    .f. :26d9[1]
 ; mark object has collided with right wall
-    lda object_collision_flags,x                                      ; 280d: bd d8 38    ..8 :26dc[1]
+    lda object_room_collision_flags,x                                 ; 280d: bd d8 38    ..8 :26dc[1]
     ora #4                                                            ; 2810: 09 04       ..  :26df[1]
-    sta object_collision_flags,x                                      ; 2812: 9d d8 38    ..8 :26e1[1]
+    sta object_room_collision_flags,x                                 ; 2812: 9d d8 38    ..8 :26e1[1]
 return15
     rts                                                               ; 2815: 60          `   :26e4[1]
 
@@ -4786,9 +4801,9 @@ handle_top_bottom_collision
     adc object_y_high,x                                               ; 286d: 7d 92 09    }.. :273c[1]
     sta object_y_high,x                                               ; 2870: 9d 92 09    ... :273f[1]
 ; mark object has collided with ceiling
-    lda object_collision_flags,x                                      ; 2873: bd d8 38    ..8 :2742[1]
+    lda object_room_collision_flags,x                                 ; 2873: bd d8 38    ..8 :2742[1]
     ora #8                                                            ; 2876: 09 08       ..  :2745[1]
-    sta object_collision_flags,x                                      ; 2878: 9d d8 38    ..8 :2747[1]
+    sta object_room_collision_flags,x                                 ; 2878: 9d d8 38    ..8 :2747[1]
     jmp return17                                                      ; 287b: 4c 6f 27    Lo' :274a[1]
 
 ; player has hit floor. Adjust player position to align with the cell above the floor.
@@ -4806,9 +4821,9 @@ player_has_hit_floor
     sbc #0                                                            ; 2893: e9 00       ..  :2762[1]
     sta object_y_high,x                                               ; 2895: 9d 92 09    ... :2764[1]
 ; mark object has collided with floor
-    lda object_collision_flags,x                                      ; 2898: bd d8 38    ..8 :2767[1]
+    lda object_room_collision_flags,x                                 ; 2898: bd d8 38    ..8 :2767[1]
     ora #2                                                            ; 289b: 09 02       ..  :276a[1]
-    sta object_collision_flags,x                                      ; 289d: 9d d8 38    ..8 :276c[1]
+    sta object_room_collision_flags,x                                 ; 289d: 9d d8 38    ..8 :276c[1]
 return17
     rts                                                               ; 28a0: 60          `   :276f[1]
 
@@ -5731,7 +5746,7 @@ decrement_current_tranformations_remaining_pla_rts
 ; Animation code
 ; 
 ; *************************************************************************************
-wizard_animation1
+wizard_sprite_list
     !byte spriteid_wizard1,                2,              $f8        ; 2e08: 30 02 f8    0.. :2cd7[1]
     !byte spriteid_wizard2,                4,              $f7        ; 2e0b: 31 04 f7    1.. :2cda[1]
     !byte spriteid_wizard3,                2,              $f8        ; 2e0e: 32 02 f8    2.. :2cdd[1]
@@ -5866,7 +5881,7 @@ c2dca
 ; check player for collision with left or right wall
     lda #4                                                            ; 2f07: a9 04       ..  :2dd6[1]
     ora #1                                                            ; 2f09: 09 01       ..  :2dd8[1]   ; why not just lda #5?
-    and object_collision_flags                                        ; 2f0b: 2d d8 38    -.8 :2dda[1]
+    and object_room_collision_flags                                   ; 2f0b: 2d d8 38    -.8 :2dda[1]
     beq c2de4                                                         ; 2f0e: f0 05       ..  :2ddd[1]
     lda #$80                                                          ; 2f10: a9 80       ..  :2ddf[1]
     sta player_collision_flag                                         ; 2f12: 8d 33 24    .3$ :2de1[1]
@@ -5945,7 +5960,7 @@ store_wizard_animation_state
     jsr sub_c2eb8                                                     ; 2fa5: 20 b8 2e     .. :2e74[1]
     lda #0                                                            ; 2fa8: a9 00       ..  :2e77[1]
     jsr sub_c25f5                                                     ; 2faa: 20 f5 25     .% :2e79[1]
-    lda object_collision_flags                                        ; 2fad: ad d8 38    ..8 :2e7c[1]
+    lda object_room_collision_flags                                   ; 2fad: ad d8 38    ..8 :2e7c[1]
     sta l2eb5                                                         ; 2fb0: 8d b5 2e    ... :2e7f[1]
 c2e82
     lda object_current_index_in_animation                             ; 2fb3: ad d4 09    ... :2e82[1]
@@ -5955,9 +5970,9 @@ c2e82
     jsr sub_c2eb8                                                     ; 2fbd: 20 b8 2e     .. :2e8c[1]
     lda #0                                                            ; 2fc0: a9 00       ..  :2e8f[1]
     jsr sub_c25f5                                                     ; 2fc2: 20 f5 25     .% :2e91[1]
-    lda object_collision_flags                                        ; 2fc5: ad d8 38    ..8 :2e94[1]
+    lda object_room_collision_flags                                   ; 2fc5: ad d8 38    ..8 :2e94[1]
     ora l2eb5                                                         ; 2fc8: 0d b5 2e    ... :2e97[1]
-    sta object_collision_flags                                        ; 2fcb: 8d d8 38    ..8 :2e9a[1]
+    sta object_room_collision_flags                                   ; 2fcb: 8d d8 38    ..8 :2e9a[1]
     lda l2eb6                                                         ; 2fce: ad b6 2e    ... :2e9d[1]
     sta l2eb7                                                         ; 2fd1: 8d b7 2e    ... :2ea0[1]
     ldx #0                                                            ; 2fd4: a2 00       ..  :2ea3[1]
@@ -5981,8 +5996,8 @@ l2eb7
 sub_c2eb8
     ldx player_held_object                                            ; 2fe9: a6 52       .R  :2eb8[1]
     beq c2ee4                                                         ; 2feb: f0 28       .(  :2eba[1]
-    ldx #<wizard_animation1                                           ; 2fed: a2 d7       ..  :2ebc[1]
-    ldy #>wizard_animation1                                           ; 2fef: a0 2c       .,  :2ebe[1]
+    ldx #<wizard_sprite_list                                          ; 2fed: a2 d7       ..  :2ebc[1]
+    ldy #>wizard_sprite_list                                          ; 2fef: a0 2c       .,  :2ebe[1]
     lda #0                                                            ; 2ff1: a9 00       ..  :2ec0[1]
     jsr update_player_accessory_object_animation                      ; 2ff3: 20 48 22     H" :2ec2[1]
     lda player_held_object                                            ; 2ff6: a5 52       .R  :2ec5[1]
@@ -6016,7 +6031,7 @@ cat_tail_spriteids
     !byte spriteid_cat_tail1, spriteid_cat_tail2, spriteid_cat_tail3  ; 3028: 12 13 14    ... :2ef7[1]
     !byte spriteid_cat_tail4, spriteid_cat_tail5, spriteid_cat_tail6  ; 302b: 15 16 17    ... :2efa[1]
     !byte spriteid_cat_tail7, spriteid_cat_tail8,                  0  ; 302e: 18 19 00    ... :2efd[1]
-cat_animation1
+cat_sprite_list
     !byte spriteid_cat_walk1,                $f9,                $f6  ; 3031: 0c f9 f6    ... :2f00[1]
     !byte spriteid_cat_walk2,                $f9,                $f5  ; 3034: 0d f9 f5    ... :2f03[1]
     !byte spriteid_cat_walk3,                $f9,                $f6  ; 3037: 0e f9 f6    ... :2f06[1]
@@ -6170,7 +6185,7 @@ c302a
 ; check player for collision with left or right wall
     lda #4                                                            ; 3167: a9 04       ..  :3036[1]
     ora #1                                                            ; 3169: 09 01       ..  :3038[1]   ; why not just lda #5?
-    and object_collision_flags                                        ; 316b: 2d d8 38    -.8 :303a[1]
+    and object_room_collision_flags                                   ; 316b: 2d d8 38    -.8 :303a[1]
     beq c3044                                                         ; 316e: f0 05       ..  :303d[1]
     lda #$80                                                          ; 3170: a9 80       ..  :303f[1]
     sta player_collision_flag                                         ; 3172: 8d 33 24    .3$ :3041[1]
@@ -6250,8 +6265,8 @@ c30ca
     bne c30d5                                                         ; 3202: d0 02       ..  :30d1[1]
     lda #$81                                                          ; 3204: a9 81       ..  :30d3[1]
 c30d5
-    ldx #<cat_animation1                                              ; 3206: a2 00       ..  :30d5[1]
-    ldy #>cat_animation1                                              ; 3208: a0 2f       ./  :30d7[1]
+    ldx #<cat_sprite_list                                             ; 3206: a2 00       ..  :30d5[1]
+    ldy #>cat_sprite_list                                             ; 3208: a0 2f       ./  :30d7[1]
     jsr update_player_accessory_object_animation                      ; 320a: 20 48 22     H" :30d9[1]
     rts                                                               ; 320d: 60          `   :30dc[1]
 
@@ -6261,7 +6276,7 @@ monkey_tail_spriteids
     !byte spriteid_monkey_tail5, spriteid_monkey_tail6                ; 3212: 4a 4b       JK  :30e1[1]
     !byte spriteid_monkey_tail7, spriteid_monkey_tail8                ; 3214: 4c 4d       LM  :30e3[1]
     !byte 0                                                           ; 3216: 00          .   :30e5[1]
-monkey_animation1
+monkey_sprite_list
     !byte spriteid_monkey5,              $f7,              $f9        ; 3217: 52 f7 f9    R.. :30e6[1]
     !byte spriteid_monkey1,              $f7,              $fa        ; 321a: 4e f7 fa    N.. :30e9[1]
     !byte spriteid_monkey2,              $f7,              $f9        ; 321d: 4f f7 f9    O.. :30ec[1]
@@ -6596,8 +6611,8 @@ c335b
     bne c3366                                                         ; 3493: d0 02       ..  :3362[1]
     lda #$87                                                          ; 3495: a9 87       ..  :3364[1]
 c3366
-    ldx #<monkey_animation1                                           ; 3497: a2 e6       ..  :3366[1]
-    ldy #>monkey_animation1                                           ; 3499: a0 30       .0  :3368[1]
+    ldx #<monkey_sprite_list                                          ; 3497: a2 e6       ..  :3366[1]
+    ldy #>monkey_sprite_list                                          ; 3499: a0 30       .0  :3368[1]
     jsr update_player_accessory_object_animation                      ; 349b: 20 48 22     H" :336a[1]
     rts                                                               ; 349e: 60          `   :336d[1]
 
@@ -7405,13 +7420,13 @@ sound_data2
     !word 2                                                           ; 3a03: 02 00       ..  :38d2[1]   ; amplitude
     !word 180                                                         ; 3a05: b4 00       ..  :38d4[1]   ; pitch
     !word 100                                                         ; 3a07: 64 00       d.  :38d6[1]   ; duration
-; object_collision_flags is a per-object table that has:
+; object_room_collision_flags is a per-object table that has:
 ; 
 ;     bit 0: object collided with left wall
 ;     bit 1: object collided with floor
 ;     bit 2: object collided with right wall
 ;     bit 3: object collided with ceiling
-object_collision_flags
+object_room_collision_flags
 envelope_3
     !byte 3                                                           ; 3a09: 03          .   :38d8[1]   ; envelope number
     !byte 1                                                           ; 3a0a: 01          .   :38d9[1]   ; step length (100ths of a second)
@@ -8792,11 +8807,6 @@ plot_move_x_high
 pydis_end
 
 ; Automatically generated labels:
-;     c2284
-;     c228b
-;     c229f
-;     c22bb
-;     c22c4
 ;     c2392
 ;     c23a5
 ;     c23e2
@@ -8925,7 +8935,6 @@ pydis_end
 ;     lbf00
 ;     loop_c0aba
 ;     loop_c0ac6
-;     loop_c22b4
 ;     loop_c2406
 ;     loop_c2684
 ;     loop_c2be9
@@ -8933,7 +8942,6 @@ pydis_end
 ;     loop_c34b2
 ;     loop_c39d2
 ;     loop_c3f87
-;     sub_c22ae
 ;     sub_c236b
 ;     sub_c23c4
 ;     sub_c25f5
@@ -9008,8 +9016,8 @@ pydis_end
 !if (<cache_of_screen_memory_under_dialog) != $30 {
     !error "Assertion failed: <cache_of_screen_memory_under_dialog == $30"
 }
-!if (<cat_animation1) != $00 {
-    !error "Assertion failed: <cat_animation1 == $00"
+!if (<cat_sprite_list) != $00 {
+    !error "Assertion failed: <cat_sprite_list == $00"
 }
 !if (<cat_tail_spriteids) != $f7 {
     !error "Assertion failed: <cat_tail_spriteids == $f7"
@@ -9065,8 +9073,8 @@ pydis_end
 !if (<loading_encrypted_string) != $fe {
     !error "Assertion failed: <loading_encrypted_string == $fe"
 }
-!if (<monkey_animation1) != $e6 {
-    !error "Assertion failed: <monkey_animation1 == $e6"
+!if (<monkey_sprite_list) != $e6 {
+    !error "Assertion failed: <monkey_sprite_list == $e6"
 }
 !if (<monkey_tail_spriteids) != $dd {
     !error "Assertion failed: <monkey_tail_spriteids == $dd"
@@ -9167,8 +9175,8 @@ pydis_end
 !if (<which_drive_encrypted_string) != $e3 {
     !error "Assertion failed: <which_drive_encrypted_string == $e3"
 }
-!if (<wizard_animation1) != $d7 {
-    !error "Assertion failed: <wizard_animation1 == $d7"
+!if (<wizard_sprite_list) != $d7 {
+    !error "Assertion failed: <wizard_sprite_list == $d7"
 }
 !if (<wizard_transform_in_animation) != $ed {
     !error "Assertion failed: <wizard_transform_in_animation == $ed"
@@ -9227,8 +9235,8 @@ pydis_end
 !if (>cache_of_screen_memory_under_dialog) != $05 {
     !error "Assertion failed: >cache_of_screen_memory_under_dialog == $05"
 }
-!if (>cat_animation1) != $2f {
-    !error "Assertion failed: >cat_animation1 == $2f"
+!if (>cat_sprite_list) != $2f {
+    !error "Assertion failed: >cat_sprite_list == $2f"
 }
 !if (>cat_tail_spriteids) != $2e {
     !error "Assertion failed: >cat_tail_spriteids == $2e"
@@ -9284,8 +9292,8 @@ pydis_end
 !if (>loading_encrypted_string) != $35 {
     !error "Assertion failed: >loading_encrypted_string == $35"
 }
-!if (>monkey_animation1) != $30 {
-    !error "Assertion failed: >monkey_animation1 == $30"
+!if (>monkey_sprite_list) != $30 {
+    !error "Assertion failed: >monkey_sprite_list == $30"
 }
 !if (>monkey_tail_spriteids) != $30 {
     !error "Assertion failed: >monkey_tail_spriteids == $30"
@@ -9386,8 +9394,8 @@ pydis_end
 !if (>which_drive_encrypted_string) != $34 {
     !error "Assertion failed: >which_drive_encrypted_string == $34"
 }
-!if (>wizard_animation1) != $2c {
-    !error "Assertion failed: >wizard_animation1 == $2c"
+!if (>wizard_sprite_list) != $2c {
+    !error "Assertion failed: >wizard_sprite_list == $2c"
 }
 !if (>wizard_transform_in_animation) != $2c {
     !error "Assertion failed: >wizard_transform_in_animation == $2c"
