@@ -788,7 +788,7 @@ sub_c3f02
     jsr update_brazier_and_fire                                       ; 3f0d: 20 88 19     ..
     lda update_room_first_update_flag                                 ; 3f10: ad 2b 13    .+.
     beq not_first_room_update                                         ; 3f13: f0 3d       .=
-    lda #$d3                                                          ; 3f15: a9 d3       ..
+    lda #spriteid_saxophone2                                          ; 3f15: a9 d3       ..
     sta toolbar_collectable_spriteids + 1                             ; 3f17: 8d e9 2e    ...
     lda #spriteid_saxophone1                                          ; 3f1a: a9 d2       ..
     sta collectable_spriteids + 1                                     ; 3f1c: 8d ee 2e    ...
