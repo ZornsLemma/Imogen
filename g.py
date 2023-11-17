@@ -150,7 +150,7 @@ substitute_labels = {
         "l0074": "offset_within_byte",
         "l0075": "offset_within_collision_map",
     },
-    (0x202b, 0x205e): {
+    (0x202b, 0x207b): {
          "temp_coordinate": "saved_x",
          "l004b": "saved_y",
     },
@@ -933,6 +933,8 @@ comment(0x2009, "found new backmost object, store it's index and z-order")
 expr(0x200f, "max_objects")
 label(0x2027, "found_object_to_process")
 label(0x2039, "process_objects_loop")
+label(0x2047, "loop_all_objects")
+label(0x204a, "find_object_to_process_loop")
 expr(0x208f, "max_objects")
 expr(0x2017, "max_objects-1")
 label(0x2018, "update_non_active_object_state_loop")
@@ -2322,7 +2324,9 @@ envelope(0x38d8, "envelope_3")
 
 label(0x20f7, "copy_object_state_to_old")
 label(0x211e, "has_object_changed_state")
-label(0x219a, "draw_object")
+label(0x2155, "pull_result_and_return")
+label(0x2157, "undraw_object_x")
+label(0x219a, "draw_object_x")
 label(0x21d0, "draw_object_sprite")
 
 ab(0x2182)
@@ -3085,6 +3089,7 @@ decimal(0x1c85)
 
 comment(0x1c63, "just copy the rightmost six pixels")
 binary(0x1c64)
+label(0x1d16, "return_with_result1")
 
 expr(0x1a03, "spriteid_fire1")
 label(0x19f2, "set_fire_sprite_to_use")

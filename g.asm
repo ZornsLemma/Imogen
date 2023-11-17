@@ -2677,7 +2677,7 @@ find_corner_spriteid
     jsr read_collision_map_value_for_xy                               ; 1e29: 20 fa 1e     .. :1cf8[1]
     iny                                                               ; 1e2c: c8          .   :1cfb[1]
     cmp #3                                                            ; 1e2d: c9 03       ..  :1cfc[1]
-    bne c1d16                                                         ; 1e2f: d0 16       ..  :1cfe[1]
+    bne return_with_result1                                           ; 1e2f: d0 16       ..  :1cfe[1]
     lda #spriteid_corner_bottom_left                                  ; 1e31: a9 2d       .-  :1d00[1]
     sta sprite_id                                                     ; 1e33: 85 16       ..  :1d02[1]
     iny                                                               ; 1e35: c8          .   :1d04[1]
@@ -2685,12 +2685,12 @@ find_corner_spriteid
     dey                                                               ; 1e39: 88          .   :1d08[1]
     cmp #3                                                            ; 1e3a: c9 03       ..  :1d09[1]
 found_corner_spriteid
-    bne c1d16                                                         ; 1e3c: d0 09       ..  :1d0b[1]
+    bne return_with_result1                                           ; 1e3c: d0 09       ..  :1d0b[1]
     sty cell_y                                                        ; 1e3e: 84 71       .q  :1d0d[1]
     jsr get_screen_address_from_cell_xy                               ; 1e40: 20 66 1b     f. :1d0f[1]
     lda #spriteid_one_pixel_masked_out                                ; 1e43: a9 00       ..  :1d12[1]
     sta sprite_id                                                     ; 1e45: 85 16       ..  :1d14[1]
-c1d16
+return_with_result1
     lda sprite_id                                                     ; 1e47: a5 16       ..  :1d16[1]
     rts                                                               ; 1e49: 60          `   :1d18[1]
 
@@ -3230,11 +3230,11 @@ return8
 outside_game_area
     lda default_collision_map_option                                  ; 205e: a5 44       .D  :1f2d[1]
     bpl return8                                                       ; 2060: 10 fb       ..  :1f2f[1]
-    stx temp_coordinate                                               ; 2062: 86 4a       .J  :1f31[1]
-    sty l004b                                                         ; 2064: 84 4b       .K  :1f33[1]
+    stx saved_x                                                       ; 2062: 86 4a       .J  :1f31[1]
+    sty saved_y                                                       ; 2064: 84 4b       .K  :1f33[1]
 ; next time, read from leftmost column
     ldx #0                                                            ; 2066: a2 00       ..  :1f35[1]
-    lda temp_coordinate                                               ; 2068: a5 4a       .J  :1f37[1]
+    lda saved_x                                                       ; 2068: a5 4a       .J  :1f37[1]
     bmi retry_read_collision_map                                      ; 206a: 30 cb       0.  :1f39[1]
 ; next time, read from rightmost column
     ldx #game_area_width_cells-1                                      ; 206c: a2 27       .'  :1f3b[1]
@@ -3243,7 +3243,7 @@ outside_game_area
     tax                                                               ; 2072: aa          .   :1f41[1]
 ; next time, read from topmost column
     ldy #0                                                            ; 2073: a0 00       ..  :1f42[1]
-    lda l004b                                                         ; 2075: a5 4b       .K  :1f44[1]
+    lda saved_y                                                       ; 2075: a5 4b       .K  :1f44[1]
     bmi retry_read_collision_map                                      ; 2077: 30 be       0.  :1f46[1]
 ; next time, read from bottommost column
     ldy #game_area_height_cells-1                                     ; 2079: a0 17       ..  :1f48[1]
@@ -3497,15 +3497,15 @@ process_objects_loop
     lda object_z_order,y                                              ; 2171: b9 c2 38    ..8 :2040[1]
     sta backmost_object_z_order                                       ; 2174: 85 61       .a  :2043[1]
     ldx #0                                                            ; 2176: a2 00       ..  :2045[1]
-c2047
+loop_all_objects
     txa                                                               ; 2178: 8a          .   :2047[1]
     ldy #0                                                            ; 2179: a0 00       ..  :2048[1]
-loop_c204a
+find_object_to_process_loop
     cmp objects_to_process_table,y                                    ; 217b: d9 00 01    ... :204a[1]
     beq c208d                                                         ; 217e: f0 3e       .>  :204d[1]
     iny                                                               ; 2180: c8          .   :204f[1]
     cpy num_objects_to_process                                        ; 2181: c4 62       .b  :2050[1]
-    bcc loop_c204a                                                    ; 2183: 90 f6       ..  :2052[1]
+    bcc find_object_to_process_loop                                   ; 2183: 90 f6       ..  :2052[1]
     lda object_z_order,x                                              ; 2185: bd c2 38    ..8 :2054[1]
     cmp backmost_object_z_order                                       ; 2188: c5 61       .a  :2057[1]
     bcc c2061                                                         ; 218a: 90 06       ..  :2059[1]
@@ -3541,7 +3541,7 @@ c207d
 c208d
     inx                                                               ; 21be: e8          .   :208d[1]
     cpx #max_objects                                                  ; 21bf: e0 0b       ..  :208e[1]
-    bcc c2047                                                         ; 21c1: 90 b5       ..  :2090[1]
+    bcc loop_all_objects                                              ; 21c1: 90 b5       ..  :2090[1]
     inc processing_object_index                                       ; 21c3: e6 63       .c  :2092[1]
     lda processing_object_index                                       ; 21c5: a5 63       .c  :2094[1]
     cmp num_objects_to_process                                        ; 21c7: c5 62       .b  :2096[1]
@@ -3584,7 +3584,7 @@ c20be
 loop_c20da
     lda l010b,y                                                       ; 220b: b9 0b 01    ... :20da[1]
     tax                                                               ; 220e: aa          .   :20dd[1]
-    jsr sub_c2157                                                     ; 220f: 20 57 21     W! :20de[1]
+    jsr undraw_object_x                                               ; 220f: 20 57 21     W! :20de[1]
     iny                                                               ; 2212: c8          .   :20e1[1]
     cpy num_objects_to_process                                        ; 2213: c4 62       .b  :20e2[1]
     bcc loop_c20da                                                    ; 2215: 90 f4       ..  :20e4[1]
@@ -3592,7 +3592,7 @@ loop_c20da
 loop_c20e7
     lda l010b,y                                                       ; 2218: b9 0b 01    ... :20e7[1]
     tax                                                               ; 221b: aa          .   :20ea[1]
-    jsr draw_object                                                   ; 221c: 20 9a 21     .! :20eb[1]
+    jsr draw_object_x                                                 ; 221c: 20 9a 21     .! :20eb[1]
     jsr copy_object_state_to_old                                      ; 221f: 20 f7 20     .  :20ee[1]
     dey                                                               ; 2222: 88          .   :20f1[1]
     bpl loop_c20e7                                                    ; 2223: 10 f3       ..  :20f2[1]
@@ -3620,30 +3620,30 @@ has_object_changed_state
     pha                                                               ; 2251: 48          H   :2120[1]
     lda object_x_low,x                                                ; 2252: bd 50 09    .P. :2121[1]
     cmp object_x_low_old,x                                            ; 2255: dd 5b 09    .[. :2124[1]
-    bne c2155                                                         ; 2258: d0 2c       .,  :2127[1]
+    bne pull_result_and_return                                        ; 2258: d0 2c       .,  :2127[1]
     lda object_x_high,x                                               ; 225a: bd 66 09    .f. :2129[1]
     cmp object_x_high_old,x                                           ; 225d: dd 71 09    .q. :212c[1]
-    bne c2155                                                         ; 2260: d0 24       .$  :212f[1]
+    bne pull_result_and_return                                        ; 2260: d0 24       .$  :212f[1]
     lda object_y_low,x                                                ; 2262: bd 7c 09    .|. :2131[1]
     cmp object_y_low_old,x                                            ; 2265: dd 87 09    ... :2134[1]
-    bne c2155                                                         ; 2268: d0 1c       ..  :2137[1]
+    bne pull_result_and_return                                        ; 2268: d0 1c       ..  :2137[1]
     lda object_y_high,x                                               ; 226a: bd 92 09    ... :2139[1]
     cmp object_y_high_old,x                                           ; 226d: dd 9d 09    ... :213c[1]
-    bne c2155                                                         ; 2270: d0 14       ..  :213f[1]
+    bne pull_result_and_return                                        ; 2270: d0 14       ..  :213f[1]
     lda object_spriteid,x                                             ; 2272: bd a8 09    ... :2141[1]
     cmp object_spriteid_old,x                                         ; 2275: dd b3 09    ... :2144[1]
-    bne c2155                                                         ; 2278: d0 0c       ..  :2147[1]
+    bne pull_result_and_return                                        ; 2278: d0 0c       ..  :2147[1]
     lda object_direction,x                                            ; 227a: bd be 09    ... :2149[1]
     cmp object_direction_old,x                                        ; 227d: dd c9 09    ... :214c[1]
-    bne c2155                                                         ; 2280: d0 04       ..  :214f[1]
+    bne pull_result_and_return                                        ; 2280: d0 04       ..  :214f[1]
     pla                                                               ; 2282: 68          h   :2151[1]
     lda #0                                                            ; 2283: a9 00       ..  :2152[1]
     pha                                                               ; 2285: 48          H   :2154[1]
-c2155
+pull_result_and_return
     pla                                                               ; 2286: 68          h   :2155[1]
     rts                                                               ; 2287: 60          `   :2156[1]
 
-sub_c2157
+undraw_object_x
     tya                                                               ; 2288: 98          .   :2157[1]
     pha                                                               ; 2289: 48          H   :2158[1]
 ; exit if object is not visible
@@ -3687,7 +3687,7 @@ done_drawing_object
     tay                                                               ; 22c9: a8          .   :2198[1]
     rts                                                               ; 22ca: 60          `   :2199[1]
 
-draw_object
+draw_object_x
     lda object_spriteid,x                                             ; 22cb: bd a8 09    ... :219a[1]
     beq return9                                                       ; 22ce: f0 60       .`  :219d[1]
     lda object_x_low,x                                                ; 22d0: bd 50 09    .P. :219f[1]
@@ -8722,15 +8722,12 @@ plot_move_x_high
 pydis_end
 
 ; Automatically generated labels:
-;     c1d16
-;     c2047
 ;     c2061
 ;     c207d
 ;     c208d
 ;     c209e
 ;     c20b8
 ;     c20be
-;     c2155
 ;     c21ef
 ;     c2284
 ;     c228b
@@ -8867,7 +8864,6 @@ pydis_end
 ;     lbf00
 ;     loop_c0aba
 ;     loop_c0ac6
-;     loop_c204a
 ;     loop_c20a6
 ;     loop_c20da
 ;     loop_c20e7
@@ -8879,7 +8875,6 @@ pydis_end
 ;     loop_c34b2
 ;     loop_c39d2
 ;     loop_c3f87
-;     sub_c2157
 ;     sub_c22ae
 ;     sub_c236b
 ;     sub_c23c4
