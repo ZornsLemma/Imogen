@@ -1777,6 +1777,8 @@ The algorithm used to do this is:
 10. Draw the active objects (back to front).
 11. Goto 2.
 
+Object state is stored in 'object_*' memory locations, and the state of the previously drawn objects is in 'object_*_old' memory locations.
+
 *************************************************************************************""")
 entry(0x1fd7, "update_objects")
 entry(0x2200, "set_player_spriteid_and_offset_from_animation_table")

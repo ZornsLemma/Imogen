@@ -3447,6 +3447,9 @@ positive_y_pixel
 ; 10. Draw the active objects (back to front).
 ; 11. Goto 2.
 ; 
+; Object state is stored in 'object_*' memory locations, and the state of the
+; previously drawn objects is in 'object_*_old' memory locations.
+; 
 ; *************************************************************************************
 update_objects
     lda player_held_item                                              ; 2108: a5 52       .R  :1fd7[1]
