@@ -2193,16 +2193,20 @@ comment(0x38f6, """*************************************************************
 Play a sound
 
 On Extry:
-    A: Sound priority ($FF always plays, $00 will not if sound already playing is $FF)
+    A: Sound priority ($ff always plays, $00 won't if sound already playing is $ff)
     YX: Address of SOUND block to play (eight bytes)
 
 On Exit:
     Preserves A
 
 *************************************************************************************""")
+comment(0x3903, "exit if sound is disabled")
+label(0x393c, "no_flush")
 label(0x394b, "play_sound")
 label(0x3932, "flush_sound_buffer_X")
-comment(0x3932, "add four to X to get sound buffer number", inline=True)
+comment(0x3941, "store the address of the new sound in tables")
+comment(0x3924, "if (the new sound is the same as the existing sound) then branch to play_sound")
+comment(0x3932, "add four to X to get sound buffer number")
 label(0x3954, "finish_play_sound")
 label(0x3966, "sound_enable_flag")
 label(0x2aff, "toggle_sound_on_off")
@@ -2213,8 +2217,12 @@ comment(0x2b14, "recall current sound flag", inline=True)
 comment(0x2b15, "toggle current flag", inline=True)
 comment(0x2b17, "save new sound flag", inline=True)
 
-comment(0x390c, "If flush is clear, then branch forward to play sound", inline=True)
-comment(0x3914, "X=channel (0-3)", inline=True)
+comment(0x390c, "If flush is clear, then branch forward to play sound")
+comment(0x3910, "Get channel number (0-3) into X")
+comment(0x3915, "update current sound priority as needed")
+comment(0x3920, "if sound channel is 2 or 3, branch forward")
+label(0x3967, "address_of_sounds_low_table")
+label(0x396b, "address_of_sounds_high_table")
 
 label(0x1213, "clear_sound_priorities_loop1")
 

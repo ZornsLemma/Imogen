@@ -7464,8 +7464,7 @@ sound_landing1
 ; Play a sound
 ; 
 ; On Extry:
-;     A: Sound priority ($FF always plays, $00 will not if sound already playing is
-; $FF)
+;     A: Sound priority ($ff always plays, $00 won't if sound already playing is $ff)
 ;     YX: Address of SOUND block to play (eight bytes)
 ; 
 ; On Exit:
@@ -7482,42 +7481,50 @@ play_sound_yx
 ; store YX address
     stx address1_low                                                  ; 3a30: 86 70       .p  :38ff[1]
     sty address1_high                                                 ; 3a32: 84 71       .q  :3901[1]
+; exit if sound is disabled
     lda sound_enable_flag                                             ; 3a34: ad 66 39    .f9 :3903[1]
     beq finish_play_sound                                             ; 3a37: f0 4c       .L  :3906[1]
     ldy #0                                                            ; 3a39: a0 00       ..  :3908[1]
     lda (address1_low),y                                              ; 3a3b: b1 70       .p  :390a[1]
-    and #$f0                                                          ; 3a3d: 29 f0       ).  :390c[1]   ; If flush is clear, then branch forward to play sound
-    beq c393c                                                         ; 3a3f: f0 2c       .,  :390e[1]
+; If flush is clear, then branch forward to play sound
+    and #$f0                                                          ; 3a3d: 29 f0       ).  :390c[1]
+    beq no_flush                                                      ; 3a3f: f0 2c       .,  :390e[1]
+; Get channel number (0-3) into X
     lda (address1_low),y                                              ; 3a41: b1 70       .p  :3910[1]
     and #3                                                            ; 3a43: 29 03       ).  :3912[1]
-    tax                                                               ; 3a45: aa          .   :3914[1]   ; X=channel (0-3)
+    tax                                                               ; 3a45: aa          .   :3914[1]
+; update current sound priority as needed
     lda remember_a                                                    ; 3a46: ad 73 39    .s9 :3915[1]
     cmp sound_priority_per_channel_table,x                            ; 3a49: dd 6f 39    .o9 :3918[1]
     bcc finish_play_sound                                             ; 3a4c: 90 37       .7  :391b[1]
     sta sound_priority_per_channel_table,x                            ; 3a4e: 9d 6f 39    .o9 :391d[1]
+; if sound channel is 2 or 3, branch forward
     cpx #2                                                            ; 3a51: e0 02       ..  :3920[1]
     bcs play_sound                                                    ; 3a53: b0 27       .'  :3922[1]
+; if (the new sound is the same as the existing sound) then branch to play_sound
     lda address1_low                                                  ; 3a55: a5 70       .p  :3924[1]
-    cmp l3967,x                                                       ; 3a57: dd 67 39    .g9 :3926[1]
+    cmp address_of_sounds_low_table,x                                 ; 3a57: dd 67 39    .g9 :3926[1]
     bne flush_sound_buffer_X                                          ; 3a5a: d0 07       ..  :3929[1]
     lda address1_high                                                 ; 3a5c: a5 71       .q  :392b[1]
-    cmp l396b,x                                                       ; 3a5e: dd 6b 39    .k9 :392d[1]
+    cmp address_of_sounds_high_table,x                                ; 3a5e: dd 6b 39    .k9 :392d[1]
     beq play_sound                                                    ; 3a61: f0 19       ..  :3930[1]
+; add four to X to get sound buffer number
 flush_sound_buffer_X
-    txa                                                               ; 3a63: 8a          .   :3932[1]   ; add four to X to get sound buffer number
+    txa                                                               ; 3a63: 8a          .   :3932[1]
     clc                                                               ; 3a64: 18          .   :3933[1]
     adc #4                                                            ; 3a65: 69 04       i.  :3934[1]
     tax                                                               ; 3a67: aa          .   :3936[1]
     lda #osbyte_flush_buffer                                          ; 3a68: a9 15       ..  :3937[1]
     jsr osbyte                                                        ; 3a6a: 20 f4 ff     .. :3939[1]   ; Flush specific buffer X
-c393c
+no_flush
     lda (address1_low),y                                              ; 3a6d: b1 70       .p  :393c[1]
     and #3                                                            ; 3a6f: 29 03       ).  :393e[1]
     tax                                                               ; 3a71: aa          .   :3940[1]
+; store the address of the new sound in tables
     lda address1_low                                                  ; 3a72: a5 70       .p  :3941[1]
-    sta l3967,x                                                       ; 3a74: 9d 67 39    .g9 :3943[1]
+    sta address_of_sounds_low_table,x                                 ; 3a74: 9d 67 39    .g9 :3943[1]
     lda address1_high                                                 ; 3a77: a5 71       .q  :3946[1]
-    sta l396b,x                                                       ; 3a79: 9d 6b 39    .k9 :3948[1]
+    sta address_of_sounds_high_table,x                                ; 3a79: 9d 6b 39    .k9 :3948[1]
 play_sound
     ldx address1_low                                                  ; 3a7c: a6 70       .p  :394b[1]
     ldy address1_high                                                 ; 3a7e: a4 71       .q  :394d[1]
@@ -7541,9 +7548,9 @@ define_envelope
 
 sound_enable_flag
     !byte $ff                                                         ; 3a97: ff          .   :3966[1]
-l3967
+address_of_sounds_low_table
     !byte 0, 0, 0, 0                                                  ; 3a98: 00 00 00... ... :3967[1]
-l396b
+address_of_sounds_high_table
     !byte 0, 0, 0, 0                                                  ; 3a9c: 00 00 00... ... :396b[1]
 sound_priority_per_channel_table
     !byte 0                                                           ; 3aa0: 00          .   :396f[1]
@@ -8897,7 +8904,6 @@ pydis_end
 ;     c35bc
 ;     c363f
 ;     c381a
-;     c393c
 ;     c3997
 ;     c39b6
 ;     c39c1
@@ -8922,8 +8928,6 @@ pydis_end
 ;     l2ef2
 ;     l31d7
 ;     l3403
-;     l3967
-;     l396b
 ;     lbe00
 ;     lbf00
 ;     loop_c0aba
