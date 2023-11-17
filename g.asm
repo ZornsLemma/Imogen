@@ -416,7 +416,7 @@ object_direction_old                        = $09c9
 object_current_index_in_animation           = $09d4
 current_animation                           = $09df
 save_game                                   = $09ea
-l09eb                                       = $09eb
+save_game_checksum                          = $09eb
 current_transformations_remaining           = $09ec
 level_progress_table                        = $09ef
 sixteen_entry_table                         = $0a6f
@@ -6726,7 +6726,7 @@ show_load_save_dialog
     ldx #<press_l_to_load_encrypted_string                            ; 354f: a2 3b       .;  :341e[1]
     ldy #>press_l_to_load_encrypted_string                            ; 3551: a0 34       .4  :3420[1]
     jsr print_encrypted_string_at_yx                                  ; 3553: 20 1c 38     .8 :3422[1]
-    jmp flush_input_buffers_and_zero_l0005                            ; 3556: 4c 72 38    Lr8 :3425[1]
+    jmp flush_input_buffers_and_zero_characters_entered               ; 3556: 4c 72 38    Lr8 :3425[1]
 
 remove_dialog_local1
     jmp remove_dialog                                                 ; 3559: 4c 53 04    LS. :3428[1]
@@ -6777,7 +6777,7 @@ ask_for_filename
     jsr print_encrypted_string_at_yx                                  ; 35bb: 20 1c 38     .8 :348a[1]
     jsr print_2xlf_cr                                                 ; 35be: 20 50 38     P8 :348d[1]
     jsr turn_cursor_on                                                ; 35c1: 20 5d 38     ]8 :3490[1]
-    jmp flush_input_buffers_and_zero_l0005                            ; 35c4: 4c 72 38    Lr8 :3493[1]
+    jmp flush_input_buffers_and_zero_characters_entered               ; 35c4: 4c 72 38    Lr8 :3493[1]
 
 return23
     rts                                                               ; 35c7: 60          `   :3496[1]
@@ -6809,7 +6809,7 @@ loop_c34b2
     ldx #<press_012_or_3_encrypted_string                             ; 35fd: a2 f0       ..  :34cc[1]
     ldy #>press_012_or_3_encrypted_string                             ; 35ff: a0 34       .4  :34ce[1]
     jsr print_encrypted_string_at_yx                                  ; 3601: 20 1c 38     .8 :34d0[1]
-    jmp flush_input_buffers_and_zero_l0005                            ; 3604: 4c 72 38    Lr8 :34d3[1]
+    jmp flush_input_buffers_and_zero_characters_entered               ; 3604: 4c 72 38    Lr8 :34d3[1]
 
 save_full_filename
     !text ":"                                                         ; 3607: 3a          :   :34d6[1]
@@ -6850,7 +6850,7 @@ drive_number_pressed
     ldx #<and_press_return_encrypted_string                           ; 365b: a2 46       .F  :352a[1]
     ldy #>and_press_return_encrypted_string                           ; 365d: a0 35       .5  :352c[1]
     jsr print_encrypted_string_at_yx                                  ; 365f: 20 1c 38     .8 :352e[1]
-    jmp flush_input_buffers_and_zero_l0005                            ; 3662: 4c 72 38    Lr8 :3531[1]
+    jmp flush_input_buffers_and_zero_characters_entered               ; 3662: 4c 72 38    Lr8 :3531[1]
 
 return24
     rts                                                               ; 3665: 60          `   :3534[1]
@@ -6886,7 +6886,7 @@ got_encrypted_string_to_show
     beq c359e                                                         ; 36b2: f0 1b       ..  :3581[1]
     lda #osfile_read_catalogue_info                                   ; 36b4: a9 05       ..  :3583[1]
     jsr osfile_wrapper                                                ; 36b6: 20 dc 16     .. :3585[1]
-    bne c359b                                                         ; 36b9: d0 11       ..  :3588[1]
+    bne show_load_save_dialog_local                                   ; 36b9: d0 11       ..  :3588[1]
     lda osfile_block_exec_address_high                                ; 36bb: a5 7b       .{  :358a[1]
     ora osfile_block_start_address_low                                ; 36bd: 05 7c       .|  :358c[1]
     ora osfile_block_start_address_mid1                               ; 36bf: 05 7d       .}  :358e[1]
@@ -6896,19 +6896,19 @@ got_encrypted_string_to_show
     beq c35bc                                                         ; 36c7: f0 24       .$  :3596[1]
 c3598
     jsr show_disk_error_dialog_if_display_is_initialised              ; 36c9: 20 28 17     (. :3598[1]
-c359b
+show_load_save_dialog_local
     jmp show_load_save_dialog                                         ; 36cc: 4c 0d 34    L.4 :359b[1]
 
 c359e
-    jsr something6_TODO                                               ; 36cf: 20 c3 0a     .. :359e[1]
-    sta l09eb                                                         ; 36d2: 8d eb 09    ... :35a1[1]
+    jsr get_checksum_of_save_game_data                                ; 36cf: 20 c3 0a     .. :359e[1]
+    sta save_game_checksum                                            ; 36d2: 8d eb 09    ... :35a1[1]
     ldx #0                                                            ; 36d5: a2 00       ..  :35a4[1]
     ldy #0                                                            ; 36d7: a0 00       ..  :35a6[1]
     stx osfile_block_load_address_mid2                                ; 36d9: 86 76       .v  :35a8[1]
     stx l0077                                                         ; 36db: 86 77       .w  :35aa[1]
-    lda #$ea                                                          ; 36dd: a9 ea       ..  :35ac[1]
+    lda #<save_game                                                   ; 36dd: a9 ea       ..  :35ac[1]
     sta osfile_block_exec_address_mid2                                ; 36df: 85 7a       .z  :35ae[1]
-    lda #9                                                            ; 36e1: a9 09       ..  :35b0[1]
+    lda #>save_game                                                   ; 36e1: a9 09       ..  :35b0[1]
     sta osfile_block_exec_address_high                                ; 36e3: 85 7b       .{  :35b2[1]
     lda #<sixteen_entry_table                                         ; 36e5: a9 6f       .o  :35b4[1]
     sta address2_low                                                  ; 36e7: 85 7e       .~  :35b6[1]
@@ -6919,26 +6919,26 @@ c35bc
     ldy #>save_game                                                   ; 36ef: a0 09       ..  :35be[1]
     lda osfile_action_load_or_save                                    ; 36f1: ad 97 34    ..4 :35c0[1]
     jsr osfile_wrapper                                                ; 36f4: 20 dc 16     .. :35c3[1]
-    bne c359b                                                         ; 36f7: d0 d3       ..  :35c6[1]
-    jsr something6_TODO                                               ; 36f9: 20 c3 0a     .. :35c8[1]
-    cmp l09eb                                                         ; 36fc: cd eb 09    ... :35cb[1]
-    beq c35d5                                                         ; 36ff: f0 05       ..  :35ce[1]
+    bne show_load_save_dialog_local                                   ; 36f7: d0 d3       ..  :35c6[1]
+    jsr get_checksum_of_save_game_data                                ; 36f9: 20 c3 0a     .. :35c8[1]
+    cmp save_game_checksum                                            ; 36fc: cd eb 09    ... :35cb[1]
+    beq check_drive_letter                                            ; 36ff: f0 05       ..  :35ce[1]
     lda #$ff                                                          ; 3701: a9 ff       ..  :35d0[1]
     sta save_game                                                     ; 3703: 8d ea 09    ... :35d2[1]
-c35d5
+check_drive_letter
     lda save_drive_number                                             ; 3706: ad d7 34    ..4 :35d5[1]
     sec                                                               ; 3709: 38          8   :35d8[1]
-    sbc #$30 ; '0'                                                    ; 370a: e9 30       .0  :35d9[1]
+    sbc #'0'                                                          ; 370a: e9 30       .0  :35d9[1]
     and #1                                                            ; 370c: 29 01       ).  :35db[1]
-    bne c35e2                                                         ; 370e: d0 03       ..  :35dd[1]
+    bne odd_drive_number                                              ; 370e: d0 03       ..  :35dd[1]
     jsr prompt_user_to_insert_correct_disc                            ; 3710: 20 17 36     .6 :35df[1]
-c35e2
+odd_drive_number
     jsr check_menu_keys                                               ; 3713: 20 8f 3a     .: :35e2[1]
     lda osfile_action_load_or_save                                    ; 3716: ad 97 34    ..4 :35e5[1]
-    bne c35ed                                                         ; 3719: d0 03       ..  :35e8[1]
+    bne drive_chosen                                                  ; 3719: d0 03       ..  :35e8[1]
     jmp remove_dialog                                                 ; 371b: 4c 53 04    LS. :35ea[1]
 
-c35ed
+drive_chosen
     lda #$ff                                                          ; 371e: a9 ff       ..  :35ed[1]
     sta desired_level                                                 ; 3720: 85 31       .1  :35ef[1]
     lda save_game                                                     ; 3722: ad ea 09    ... :35f1[1]
@@ -6961,7 +6961,7 @@ prompt_user_to_insert_correct_disc
     ldx #<and_press_return_encrypted_string                           ; 3755: a2 46       .F  :3624[1]
     ldy #>and_press_return_encrypted_string                           ; 3757: a0 35       .5  :3626[1]
     jsr print_encrypted_string_at_yx                                  ; 3759: 20 1c 38     .8 :3628[1]
-    jsr flush_input_buffers_and_zero_l0005                            ; 375c: 20 72 38     r8 :362b[1]
+    jsr flush_input_buffers_and_zero_characters_entered               ; 375c: 20 72 38     r8 :362b[1]
 wait_for_return
     jsr inkey_0                                                       ; 375f: 20 7c 38     |8 :362e[1]
     cmp #vdu_cr                                                       ; 3762: c9 0d       ..  :3631[1]
@@ -6980,7 +6980,7 @@ c363f
     jsr print_encrypted_string_at_yx                                  ; 3777: 20 1c 38     .8 :3646[1]
     jsr print_2xlf_cr                                                 ; 377a: 20 50 38     P8 :3649[1]
     jsr turn_cursor_on                                                ; 377d: 20 5d 38     ]8 :364c[1]
-    jmp flush_input_buffers_and_zero_l0005                            ; 3780: 4c 72 38    Lr8 :364f[1]
+    jmp flush_input_buffers_and_zero_characters_entered               ; 3780: 4c 72 38    Lr8 :364f[1]
 
 remove_dialog_local3
     jmp remove_dialog                                                 ; 3783: 4c 53 04    LS. :3652[1]
@@ -7344,7 +7344,7 @@ finish_cursor_on_off
     pla                                                               ; 39a1: 68          h   :3870[1]
     rts                                                               ; 39a2: 60          `   :3871[1]
 
-flush_input_buffers_and_zero_l0005
+flush_input_buffers_and_zero_characters_entered
     ldx #0                                                            ; 39a3: a2 00       ..  :3872[1]
     stx characters_entered                                            ; 39a5: 86 05       ..  :3874[1]
     lda #osbyte_flush_buffer_class                                    ; 39a7: a9 0f       ..  :3876[1]
@@ -8493,7 +8493,7 @@ loop_c0aba
     bcc loop_c0aba                                                    ; 4091: 90 f8       ..  :0ac0[5]
     rts                                                               ; 4093: 60          `   :0ac2[5]
 
-something6_TODO
+get_checksum_of_save_game_data
     lda #0                                                            ; 4094: a9 00       ..  :0ac3[5]
     tax                                                               ; 4096: aa          .   :0ac5[5]
 loop_c0ac6
@@ -8893,12 +8893,8 @@ pydis_end
 ;     c33f8
 ;     c33fa
 ;     c3598
-;     c359b
 ;     c359e
 ;     c35bc
-;     c35d5
-;     c35e2
-;     c35ed
 ;     c363f
 ;     c381a
 ;     c393c
@@ -8915,7 +8911,6 @@ pydis_end
 ;     l0068
 ;     l0087
 ;     l00fd
-;     l09eb
 ;     l0b00
 ;     l288f
 ;     l2891

@@ -1637,7 +1637,11 @@ label(0x4088, "relocation3_high_copy_start")
 label(0x4088+0x48, "relocation3_high_copy_end")
 expr(0x3c74, make_subtract("relocation3_high_copy_end", "relocation3_high_copy_start"))
 
-entry(0x4094, "something6_TODO")
+entry(0x4094, "get_checksum_of_save_game_data")
+
+expr(0x35ad, make_lo("save_game"))
+expr(0x35b1, make_hi("save_game"))
+
 comment(0x40a5, """*************************************************************************************
 
 Convert a level filename letter into the section letter as shown in-game
@@ -2119,6 +2123,7 @@ label(0x3546, "and_press_return_encrypted_string")
 label(0x3557, "if_return_pressed_do_load_or_save")
 comment(0x356a, "if (saving) then branch forwards")
 label(0x3573, "got_encrypted_string_to_show")
+label(0x359b, "show_load_save_dialog_local")
 label(0x3606, "insert_game_disk_encrypted_string")
 label(0x35fe, "loading_encrypted_string")
 label(0x3655, "enter_password_encrypted_string")
@@ -2597,8 +2602,11 @@ expr(0x35b5, make_lo("sixteen_entry_table"))
 expr(0x35b9, make_hi("sixteen_entry_table"))
 
 label(0x09ea, "save_game")
+label(0x09eb, "save_game_checksum")
 expr(0x35bd, make_lo("save_game"))
 expr(0x35bf, make_hi("save_game"))
+char(0x35da)
+label(0x35e2, "odd_drive_number")
 
 decimal(0x3f43)
 expr(0x3fa2, "opcode_jmp")
@@ -2786,6 +2794,9 @@ expr(0x3421, make_hi("press_l_to_load_encrypted_string"))
 # s="$9b, $b9, $ae, $b8, $b8, $eb, $fb, $e7, $fa, $e7, $f9, $eb, $a4, $b9, $eb, $f8, $c6"
 # [chr(0xcb ^ int(x.strip()[1:],16)) for x in s.split(",")]
 
+label(0x35ed, "drive_chosen")
+label(0x35d5, "check_drive_letter")
+
 comment(0x384d, "Print the character in A. This is patched at runtime to switch between normal and italic text.")
 entry(0x384d, "print_char")
 label(0x384e, "print_char_target")
@@ -2804,8 +2815,7 @@ entry(0x3838, "print_char_target_set")
 entry(0x383a, "print_char_loop")
 entry(0x3848, "print_done")
 
-# TODO: Mention l0005 in name until we know why
-entry(0x3872, "flush_input_buffers_and_zero_l0005")
+entry(0x3872, "flush_input_buffers_and_zero_characters_entered")
 
 entry(0x474, "remember_screen_memory_before_showing_dialog_box")
 comment(0x0474, "set screen addresses", inline=True)
