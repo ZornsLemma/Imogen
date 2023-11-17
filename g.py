@@ -94,6 +94,8 @@ substitute_labels = {
         "l0076": "osfile_block_load_address_mid2",
         "l0078": "osfile_block_exec_address_low",
         "l0079": "osfile_block_exec_address_mid1",
+        "l007a": "osfile_block_exec_address_mid2",
+        "l007b": "osfile_block_exec_address_high",
         "l007c": "osfile_block_start_address_low",
         "l007d": "osfile_block_start_address_mid1",
         "l0080": "osfile_block_end_address_low",
@@ -225,6 +227,21 @@ substitute_labels = {
         "l0077": "object_bottom_high",
         "l007a": "object_top_cell_y",
         "l007b": "object_bottom_cell_y",
+    },
+    (0x3688, 0x3725): {
+        "l0072": "osfile_block_filename_low",
+        "l0073": "osfile_block_filename_high",
+        "l0074": "osfile_block_load_address_low",
+        "l0075": "osfile_block_load_address_mid1",
+        "l0076": "osfile_block_load_address_mid2",
+        "l0078": "osfile_block_exec_address_low",
+        "l0079": "osfile_block_exec_address_mid1",
+        "l007a": "osfile_block_exec_address_mid2",
+        "l007b": "osfile_block_exec_address_high",
+        "l007c": "osfile_block_start_address_low",
+        "l007d": "osfile_block_start_address_mid1",
+        "l0080": "osfile_block_end_address_low",
+        "l0081": "osfile_block_end_address_mid1",
     },
     (0x3d3d, 0x3d41): {
         "object_sprite_mask_type": "envelope_1",
@@ -1873,7 +1890,11 @@ comment(0x232b, "start 'transform out' animation")
 label(0x2334, "not_transforming")
 label(0x2358, "start_of_transform_in_animation")
 expr(0x2365, make_add("sound_priority_per_channel_table", "1"))
-comment(0x237f, "wall collision found")
+label(0x236b, "handle_player_landing_sound")
+comment(0x237f, "wall collision found. if player was moving down at the time, we have hit the floor")
+ab(0x2390)
+label(0x2392, "player_y_is_unchanged")
+label(0x23a5, "has_landed")
 
 #label(0x2392, "")
 
@@ -1979,7 +2000,8 @@ entry(0x2be0)
 comment(0x2be0, "remember item to remove", inline=True)
 comment(0x2be2, "flag that nothing has changed yet")
 comment(0x2be6, "start index for non-standard menu items")
-
+label(0x2ee4, "store_object_held_and_return")
+label(0x2eb5, "temp_collision_results")
 label(0x114f, "level_load_loop")
 label(0x1171, "level_load_successful")
 label(0x3617, "prompt_user_to_insert_correct_disc")
@@ -2028,8 +2050,13 @@ expr(0x29d9, "menu_slot_count")
 expr(0x2bd1, "menu_slot_count")
 entry(0x29aa, "draw_menu_icon_loop")
 
-entry(0x2c0c, "plot_menu_icon")
+entry(0x2c0c, "plot_menu_item")
+label(0x2c35, "plot_menu_item_sprites")
+comment(0x2c2b, "erase where menu item used to be")
+comment(0x2c35, "draw background sprite")
+comment(0x2c38, "draw icon sprite")
 comment(0x2c11, "Save the current screen_base_address_high so we can temporarily set it to $58 to plot the menu icon. TODO: Is this just saving the old value because it's tidy/safe, or do we really not know what the old value was? I'd have naively thought we could just do lda #blah:sta screen_base_address_high at the end of this routine?")
+label(0x2c3d, "restore_variables_and_return")
 
 comment(0x3f78, "The following code assumes there may be a ROM image stored in sideways RAM at $8000. It copies 16 bytes of an empty ROM image to the start of sideways RAM. This overwrites any existing ROM image held in sideways RAM. Is this some copy protection, or a development environment?")
 label(0x3f7b, "copy_to_sideways_ram_loop")
@@ -2089,6 +2116,9 @@ label(0x35f7, "saving_encrypted_string")
 label(0x3498, "enter_filename_encrypted_string")
 label(0x3535, "insert_save_disk_encrypted_string")
 label(0x3546, "and_press_return_encrypted_string")
+label(0x3557, "if_return_pressed_do_load_or_save")
+comment(0x356a, "if (saving) then branch forwards")
+label(0x3573, "got_encrypted_string_to_show")
 label(0x3606, "insert_game_disk_encrypted_string")
 label(0x35fe, "loading_encrypted_string")
 label(0x3655, "enter_password_encrypted_string")

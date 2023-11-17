@@ -334,9 +334,11 @@ osfile_block_exec_address_mid1              = $79
 l007a                                       = $7a
 object_top_cell_y                           = $7a
 off_screen_address_low                      = $7a
+osfile_block_exec_address_mid2              = $7a
 l007b                                       = $7b
 object_bottom_cell_y                        = $7b
 off_screen_address_high                     = $7b
+osfile_block_exec_address_high              = $7b
 sprite_screen_address_for_column_low        = $7b
 cell_x_plus_current_cell_within_row         = $7c
 l007c                                       = $7c
@@ -4107,7 +4109,7 @@ start_of_transform_in_animation
     sta player_collision_flag                                         ; 2498: 8d 33 24    .3$ :2367[1]
     rts                                                               ; 249b: 60          `   :236a[1]
 
-sub_c236b
+handle_player_landing_sound
     lda object_spriteid                                               ; 249c: ad a8 09    ... :236b[1]
     and object_spriteid_old                                           ; 249f: 2d b3 09    -.. :236e[1]
     beq return12                                                      ; 24a2: f0 35       .5  :2371[1]
@@ -4116,17 +4118,17 @@ sub_c236b
     lda #0                                                            ; 24a9: a9 00       ..  :2378[1]
     jsr get_wall_collision_for_object_a                               ; 24ab: 20 94 28     .( :237a[1]
     beq return12                                                      ; 24ae: f0 29       .)  :237d[1]
-; wall collision found
+; wall collision found. if player was moving down at the time, we have hit the floor
     lda object_y_low_old                                              ; 24b0: ad 87 09    ... :237f[1]
     sec                                                               ; 24b3: 38          8   :2382[1]
     sbc object_y_low                                                  ; 24b4: ed 7c 09    .|. :2383[1]
-    beq c2392                                                         ; 24b7: f0 0a       ..  :2386[1]
+    beq player_y_is_unchanged                                         ; 24b7: f0 0a       ..  :2386[1]
     lda object_y_high_old                                             ; 24b9: ad 9d 09    ... :2388[1]
     sbc object_y_high                                                 ; 24bc: ed 92 09    ... :238b[1]
-    bmi c23a5                                                         ; 24bf: 30 15       0.  :238e[1]
-    bpl return12                                                      ; 24c1: 10 16       ..  :2390[1]
+    bmi has_landed                                                    ; 24bf: 30 15       0.  :238e[1]
+    bpl return12                                                      ; 24c1: 10 16       ..  :2390[1]   ; ALWAYS branch
 ; check for player collision with floor
-c2392
+player_y_is_unchanged
     lda object_room_collision_flags                                   ; 24c3: ad d8 38    ..8 :2392[1]
     and #2                                                            ; 24c6: 29 02       ).  :2395[1]
     beq return12                                                      ; 24c8: f0 0f       ..  :2397[1]
@@ -4135,7 +4137,7 @@ c2392
     lda #$0b                                                          ; 24cf: a9 0b       ..  :239e[1]
     jsr get_wall_collision_for_object_a                               ; 24d1: 20 94 28     .( :23a0[1]
     bne return12                                                      ; 24d4: d0 03       ..  :23a3[1]
-c23a5
+has_landed
     jsr play_landing_sound                                            ; 24d6: 20 a9 23     .# :23a5[1]
 return12
     rts                                                               ; 24d9: 60          `   :23a8[1]
@@ -4622,7 +4624,7 @@ c264f
     lda l0053                                                         ; 2780: a5 53       .S  :264f[1]
     bne return13                                                      ; 2782: d0 06       ..  :2651[1]
     jsr sub_c2eb8                                                     ; 2784: 20 b8 2e     .. :2653[1]
-    jsr sub_c236b                                                     ; 2787: 20 6b 23     k# :2656[1]
+    jsr handle_player_landing_sound                                   ; 2787: 20 6b 23     k# :2656[1]
 return13
     rts                                                               ; 278a: 60          `   :2659[1]
 
@@ -5209,7 +5211,7 @@ draw_menu_icon_loop
     jsr unplot_menu_pointer                                           ; 2aef: 20 eb 29     .) :29be[1]
 ; draw the new menu icon
 menu_pointer_not_present_on_slot
-    jsr plot_menu_icon                                                ; 2af2: 20 0c 2c     ., :29c1[1]
+    jsr plot_menu_item                                                ; 2af2: 20 0c 2c     ., :29c1[1]
     lda redraw_menu_pointer_flag                                      ; 2af5: ad dd 29    ..) :29c4[1]
     beq draw_next_menu_slot                                           ; 2af8: f0 0e       ..  :29c7[1]
 ; If there's a blank under the pointer in the new menu, bump the pointer left until we
@@ -5610,7 +5612,7 @@ return_with_flag_set_if_shuffled_left
     lda menu_has_changed_flag                                         ; 2d3a: a5 71       .q  :2c09[1]
     rts                                                               ; 2d3c: 60          `   :2c0b[1]
 
-plot_menu_icon
+plot_menu_item
     pha                                                               ; 2d3d: 48          H   :2c0c[1]
     txa                                                               ; 2d3e: 8a          .   :2c0d[1]
     pha                                                               ; 2d3f: 48          H   :2c0e[1]
@@ -5631,17 +5633,20 @@ plot_menu_icon
     sta sprite_id                                                     ; 2d52: 85 16       ..  :2c21[1]
     lda desired_menu_slots,x                                          ; 2d54: bd 5c 29    .\) :2c23[1]
     sta displayed_menu_slots,x                                        ; 2d57: 9d 6f 29    .o) :2c26[1]
-    bne c2c35                                                         ; 2d5a: d0 0a       ..  :2c29[1]
+    bne plot_menu_item_sprites                                        ; 2d5a: d0 0a       ..  :2c29[1]
+; erase where menu item used to be
     lda #sprite_op_flags_erase                                        ; 2d5c: a9 02       ..  :2c2b[1]
     sta sprite_op_flags                                               ; 2d5e: 85 15       ..  :2c2d[1]
     jsr sprite_op                                                     ; 2d60: 20 8d 13     .. :2c2f[1]
-    jmp c2c3d                                                         ; 2d63: 4c 3d 2c    L=, :2c32[1]
+    jmp restore_variables_and_return                                  ; 2d63: 4c 3d 2c    L=, :2c32[1]
 
-c2c35
+; draw background sprite
+plot_menu_item_sprites
     jsr sprite_op                                                     ; 2d66: 20 8d 13     .. :2c35[1]
+; draw icon sprite
     sta sprite_id                                                     ; 2d69: 85 16       ..  :2c38[1]
     jsr sprite_op                                                     ; 2d6b: 20 8d 13     .. :2c3a[1]
-c2c3d
+restore_variables_and_return
     pla                                                               ; 2d6e: 68          h   :2c3d[1]
     sta screen_base_address_high                                      ; 2d6f: 85 4c       .L  :2c3e[1]
     pla                                                               ; 2d71: 68          h   :2c40[1]
@@ -5951,7 +5956,7 @@ c2e4c
 store_wizard_animation_state
     sty object_current_index_in_animation                             ; 2f90: 8c d4 09    ... :2e5f[1]
     lda #0                                                            ; 2f93: a9 00       ..  :2e62[1]
-    sta l2eb5                                                         ; 2f95: 8d b5 2e    ... :2e64[1]
+    sta temp_collision_results                                        ; 2f95: 8d b5 2e    ... :2e64[1]
     lda player_held_object                                            ; 2f98: a5 52       .R  :2e67[1]
     beq c2e82                                                         ; 2f9a: f0 17       ..  :2e69[1]
     ldy object_current_index_in_animation                             ; 2f9c: ac d4 09    ... :2e6b[1]
@@ -5961,7 +5966,7 @@ store_wizard_animation_state
     lda #0                                                            ; 2fa8: a9 00       ..  :2e77[1]
     jsr sub_c25f5                                                     ; 2faa: 20 f5 25     .% :2e79[1]
     lda object_room_collision_flags                                   ; 2fad: ad d8 38    ..8 :2e7c[1]
-    sta l2eb5                                                         ; 2fb0: 8d b5 2e    ... :2e7f[1]
+    sta temp_collision_results                                        ; 2fb0: 8d b5 2e    ... :2e7f[1]
 c2e82
     lda object_current_index_in_animation                             ; 2fb3: ad d4 09    ... :2e82[1]
     ldx #<wizard_transform_in_animation                               ; 2fb6: a2 ed       ..  :2e85[1]
@@ -5971,7 +5976,7 @@ c2e82
     lda #0                                                            ; 2fc0: a9 00       ..  :2e8f[1]
     jsr sub_c25f5                                                     ; 2fc2: 20 f5 25     .% :2e91[1]
     lda object_room_collision_flags                                   ; 2fc5: ad d8 38    ..8 :2e94[1]
-    ora l2eb5                                                         ; 2fc8: 0d b5 2e    ... :2e97[1]
+    ora temp_collision_results                                        ; 2fc8: 0d b5 2e    ... :2e97[1]
     sta object_room_collision_flags                                   ; 2fcb: 8d d8 38    ..8 :2e9a[1]
     lda l2eb6                                                         ; 2fce: ad b6 2e    ... :2e9d[1]
     sta l2eb7                                                         ; 2fd1: 8d b7 2e    ... :2ea0[1]
@@ -5986,7 +5991,7 @@ c2eb1
     stx l2eb6                                                         ; 2fe2: 8e b6 2e    ... :2eb1[1]
     rts                                                               ; 2fe5: 60          `   :2eb4[1]
 
-l2eb5
+temp_collision_results
     !byte 0                                                           ; 2fe6: 00          .   :2eb5[1]
 l2eb6
     !byte 0                                                           ; 2fe7: 00          .   :2eb6[1]
@@ -5995,7 +6000,7 @@ l2eb7
 
 sub_c2eb8
     ldx player_held_object                                            ; 2fe9: a6 52       .R  :2eb8[1]
-    beq c2ee4                                                         ; 2feb: f0 28       .(  :2eba[1]
+    beq store_object_held_and_return                                  ; 2feb: f0 28       .(  :2eba[1]
     ldx #<wizard_sprite_list                                          ; 2fed: a2 d7       ..  :2ebc[1]
     ldy #>wizard_sprite_list                                          ; 2fef: a0 2c       .,  :2ebe[1]
     lda #0                                                            ; 2ff1: a9 00       ..  :2ec0[1]
@@ -6009,14 +6014,14 @@ loop_c2ec9
     cpy #4                                                            ; 3000: c0 04       ..  :2ecf[1]
     bcc loop_c2ec9                                                    ; 3002: 90 f6       ..  :2ed1[1]
     ldx #0                                                            ; 3004: a2 00       ..  :2ed3[1]
-    beq c2ee4                                                         ; 3006: f0 0d       ..  :2ed5[1]
+    beq store_object_held_and_return                                  ; 3006: f0 0d       ..  :2ed5[1]
 c2ed7
     ldx l2ef2,y                                                       ; 3008: be f2 2e    ... :2ed7[1]
     lda object_spriteid                                               ; 300b: ad a8 09    ... :2eda[1]
     cmp #spriteid_wizard6                                             ; 300e: c9 35       .5  :2edd[1]
-    beq c2ee4                                                         ; 3010: f0 03       ..  :2edf[1]
+    beq store_object_held_and_return                                  ; 3010: f0 03       ..  :2edf[1]
     ldx collectable_spriteids,y                                       ; 3012: be ed 2e    ... :2ee1[1]
-c2ee4
+store_object_held_and_return
     stx object_spriteid+1                                             ; 3015: 8e a9 09    ... :2ee4[1]
     rts                                                               ; 3018: 60          `   :2ee7[1]
 
@@ -6748,7 +6753,7 @@ update_disc_menu
     beq get_filename_and_print_drive_number_prompt                    ; 358f: f0 47       .G  :345e[1]
     cmp #3                                                            ; 3591: c9 03       ..  :3460[1]
     beq test_for_drive_number_key_press_local                         ; 3593: f0 03       ..  :3462[1]
-    jmp c3557                                                         ; 3595: 4c 57 35    LW5 :3464[1]
+    jmp if_return_pressed_do_load_or_save                             ; 3595: 4c 57 35    LW5 :3464[1]
 
 test_for_drive_number_key_press_local
     jmp test_for_drive_number_key_press                               ; 3598: 4c 01 35    L.5 :3467[1]
@@ -6857,7 +6862,7 @@ and_press_return_encrypted_string
     !byte $aa, $a5, $af, $eb, $bb, $b9, $ae, $b8, $b8, $eb, $99, $8e  ; 3677: aa a5 af... ... :3546[1]
     !byte $9f, $9e, $99, $85, $c6                                     ; 3683: 9f 9e 99... ... :3552[1]
 
-c3557
+if_return_pressed_do_load_or_save
     jsr inkey_0                                                       ; 3688: 20 7c 38     |8 :3557[1]
     cmp #vdu_cr                                                       ; 368b: c9 0d       ..  :355a[1]
     bne return24                                                      ; 368d: d0 d6       ..  :355c[1]
@@ -6866,11 +6871,12 @@ c3557
     jsr oswrch                                                        ; 3694: 20 ee ff     .. :3563[1]   ; Write character 10
     ldx #<saving_encrypted_string                                     ; 3697: a2 f7       ..  :3566[1]
     ldy #>saving_encrypted_string                                     ; 3699: a0 35       .5  :3568[1]
+; if (saving) then branch forwards
     lda osfile_action_load_or_save                                    ; 369b: ad 97 34    ..4 :356a[1]
-    beq c3573                                                         ; 369e: f0 04       ..  :356d[1]
+    beq got_encrypted_string_to_show                                  ; 369e: f0 04       ..  :356d[1]
     ldx #<loading_encrypted_string                                    ; 36a0: a2 fe       ..  :356f[1]
     ldy #>loading_encrypted_string                                    ; 36a2: a0 35       .5  :3571[1]
-c3573
+got_encrypted_string_to_show
     jsr print_encrypted_string_at_yx_centred                          ; 36a4: 20 f3 37     .7 :3573[1]
     lda #<save_full_filename                                          ; 36a7: a9 d6       ..  :3576[1]
     sta address1_low                                                  ; 36a9: 85 70       .p  :3578[1]
@@ -6881,11 +6887,11 @@ c3573
     lda #osfile_read_catalogue_info                                   ; 36b4: a9 05       ..  :3583[1]
     jsr osfile_wrapper                                                ; 36b6: 20 dc 16     .. :3585[1]
     bne c359b                                                         ; 36b9: d0 11       ..  :3588[1]
-    lda l007b                                                         ; 36bb: a5 7b       .{  :358a[1]
-    ora l007c                                                         ; 36bd: 05 7c       .|  :358c[1]
-    ora l007d                                                         ; 36bf: 05 7d       .}  :358e[1]
+    lda osfile_block_exec_address_high                                ; 36bb: a5 7b       .{  :358a[1]
+    ora osfile_block_start_address_low                                ; 36bd: 05 7c       .|  :358c[1]
+    ora osfile_block_start_address_mid1                               ; 36bf: 05 7d       .}  :358e[1]
     bne c3598                                                         ; 36c1: d0 06       ..  :3590[1]
-    lda l007a                                                         ; 36c3: a5 7a       .z  :3592[1]
+    lda osfile_block_exec_address_mid2                                ; 36c3: a5 7a       .z  :3592[1]
     cmp #$85                                                          ; 36c5: c9 85       ..  :3594[1]
     beq c35bc                                                         ; 36c7: f0 24       .$  :3596[1]
 c3598
@@ -6898,12 +6904,12 @@ c359e
     sta l09eb                                                         ; 36d2: 8d eb 09    ... :35a1[1]
     ldx #0                                                            ; 36d5: a2 00       ..  :35a4[1]
     ldy #0                                                            ; 36d7: a0 00       ..  :35a6[1]
-    stx l0076                                                         ; 36d9: 86 76       .v  :35a8[1]
+    stx osfile_block_load_address_mid2                                ; 36d9: 86 76       .v  :35a8[1]
     stx l0077                                                         ; 36db: 86 77       .w  :35aa[1]
     lda #$ea                                                          ; 36dd: a9 ea       ..  :35ac[1]
-    sta l007a                                                         ; 36df: 85 7a       .z  :35ae[1]
+    sta osfile_block_exec_address_mid2                                ; 36df: 85 7a       .z  :35ae[1]
     lda #9                                                            ; 36e1: a9 09       ..  :35b0[1]
-    sta l007b                                                         ; 36e3: 85 7b       .{  :35b2[1]
+    sta osfile_block_exec_address_high                                ; 36e3: 85 7b       .{  :35b2[1]
     lda #<sixteen_entry_table                                         ; 36e5: a9 6f       .o  :35b4[1]
     sta address2_low                                                  ; 36e7: 85 7e       .~  :35b6[1]
     lda #>sixteen_entry_table                                         ; 36e9: a9 0a       ..  :35b8[1]
@@ -8807,8 +8813,6 @@ plot_move_x_high
 pydis_end
 
 ; Automatically generated labels:
-;     c2392
-;     c23a5
 ;     c23e2
 ;     c23e7
 ;     c23fa
@@ -8833,8 +8837,6 @@ pydis_end
 ;     c2851
 ;     c287e
 ;     c288c
-;     c2c35
-;     c2c3d
 ;     c2dc3
 ;     c2dca
 ;     c2de4
@@ -8847,7 +8849,6 @@ pydis_end
 ;     c2e82
 ;     c2eb1
 ;     c2ed7
-;     c2ee4
 ;     c300e
 ;     c3011
 ;     c3023
@@ -8891,8 +8892,6 @@ pydis_end
 ;     c33ea
 ;     c33f8
 ;     c33fa
-;     c3557
-;     c3573
 ;     c3598
 ;     c359b
 ;     c359e
@@ -8923,7 +8922,6 @@ pydis_end
 ;     l2892
 ;     l2893
 ;     l28e1
-;     l2eb5
 ;     l2eb6
 ;     l2eb7
 ;     l2ef2
@@ -8942,7 +8940,6 @@ pydis_end
 ;     loop_c34b2
 ;     loop_c39d2
 ;     loop_c3f87
-;     sub_c236b
 ;     sub_c23c4
 ;     sub_c25f5
 ;     sub_c2770
