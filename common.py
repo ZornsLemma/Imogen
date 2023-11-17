@@ -244,3 +244,6 @@ def common_to_all():
     label(0x38c2, "object_z_order")
 
     label(0x2433, "player_collision_flag") # TODO: object_collision_flag?
+
+    label(0x2ef2, "five_byte_table") # TODO: size is a guess - it's at least two bytes though
+    expr_label(0x2ef3, make_add("five_byte_table", "1"))

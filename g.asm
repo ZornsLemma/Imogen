@@ -2135,7 +2135,7 @@ update_level_completion
 ; set diamond sprite to use
     lda diamond_sprite_cycle,y                                        ; 1b53: b9 b2 1a    ... :1a22[1]
     sta collectable_spriteids                                         ; 1b56: 8d ed 2e    ... :1a25[1]
-    sta l2ef2                                                         ; 1b59: 8d f2 2e    ... :1a28[1]
+    sta five_byte_table                                               ; 1b59: 8d f2 2e    ... :1a28[1]
 ; set toolbar sprite to use for diamond spell
     lda #spriteid_menu_item_completion_spell                          ; 1b5c: a9 21       .!  :1a2b[1]
     sta toolbar_collectable_spriteids                                 ; 1b5e: 8d e8 2e    ... :1a2d[1]
@@ -6016,7 +6016,7 @@ loop_c2ec9
     ldx #0                                                            ; 3004: a2 00       ..  :2ed3[1]
     beq store_object_held_and_return                                  ; 3006: f0 0d       ..  :2ed5[1]
 c2ed7
-    ldx l2ef2,y                                                       ; 3008: be f2 2e    ... :2ed7[1]
+    ldx five_byte_table,y                                             ; 3008: be f2 2e    ... :2ed7[1]
     lda object_spriteid                                               ; 300b: ad a8 09    ... :2eda[1]
     cmp #spriteid_wizard6                                             ; 300e: c9 35       .5  :2edd[1]
     beq store_object_held_and_return                                  ; 3010: f0 03       ..  :2edf[1]
@@ -6030,8 +6030,9 @@ toolbar_collectable_spriteids
     !byte 0, 0, 0, 0                                                  ; 301a: 00 00 00... ... :2ee9[1]
 collectable_spriteids
     !byte 0, 0, 0, 0, 0                                               ; 301e: 00 00 00... ... :2eed[1]
-l2ef2
-    !byte 0, 0, 0, 0, 0                                               ; 3023: 00 00 00... ... :2ef2[1]
+five_byte_table
+    !byte 0                                                           ; 3023: 00          .   :2ef2[1]
+    !byte 0, 0, 0, 0                                                  ; 3024: 00 00 00... ... :2ef3[1]
 cat_tail_spriteids
     !byte spriteid_cat_tail1, spriteid_cat_tail2, spriteid_cat_tail3  ; 3028: 12 13 14    ... :2ef7[1]
     !byte spriteid_cat_tail4, spriteid_cat_tail5, spriteid_cat_tail6  ; 302b: 15 16 17    ... :2efa[1]
@@ -8925,7 +8926,6 @@ pydis_end
 ;     l28e1
 ;     l2eb6
 ;     l2eb7
-;     l2ef2
 ;     l31d7
 ;     l3403
 ;     lbe00

@@ -133,7 +133,7 @@ remove_item_from_toolbar_menu                       = $2be0
 l2eb6                                               = $2eb6
 toolbar_collectable_spriteids                       = $2ee8
 collectable_spriteids                               = $2eed
-l2ef3                                               = $2ef3
+five_byte_table                                     = $2ef2
 print_encrypted_string_at_yx_centred                = $37f3
 wait_one_second_then_check_keys                     = $388d
 object_sprite_mask_type                             = $38ac
@@ -793,7 +793,7 @@ sub_c3f02
     sta toolbar_collectable_spriteids + 1                             ; 3f17: 8d e9 2e    ...
     lda #spriteid_saxophone1                                          ; 3f1a: a9 d2       ..
     sta collectable_spriteids + 1                                     ; 3f1c: 8d ee 2e    ...
-    sta l2ef3                                                         ; 3f1f: 8d f3 2e    ...
+    sta five_byte_table + 1                                           ; 3f1f: 8d f3 2e    ...
     ldx #<envelope3                                                   ; 3f22: a2 16       ..
     ldy #>envelope3                                                   ; 3f24: a0 44       .D
     jsr define_envelope                                               ; 3f26: 20 5e 39     ^9
@@ -1967,7 +1967,7 @@ pydis_end
 ;     get_wall_collision_for_object_a:                        1
 ;     l2ee9:                                                  1
 ;     l2eee:                                                  1
-;     l2ef3:                                                  1
+;     five_byte_table + 1:                                    1
 ;     l38ae:                                                  1
 ;     l3970:                                                  1
 ;     developer_mode_not_active:                              1
@@ -2086,7 +2086,6 @@ pydis_end
 ;     l2eb6
 ;     l2ee9
 ;     l2eee
-;     l2ef3
 ;     l38ae
 ;     l3970
 ;     l3fd5

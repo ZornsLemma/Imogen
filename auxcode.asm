@@ -98,6 +98,7 @@ find_or_create_menu_slot_for_A                      = $2bbd
 remove_item_from_toolbar_menu                       = $2be0
 toolbar_collectable_spriteids                       = $2ee8
 collectable_spriteids                               = $2eed
+five_byte_table                                     = $2ef2
 print_encrypted_string_at_yx_centred                = $37f3
 wait_one_second_then_check_keys                     = $388d
 object_sprite_mask_type                             = $38ac
