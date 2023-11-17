@@ -51,6 +51,7 @@ max_objects                                     = 11
 menu_slot_count                                 = 17
 num_levels                                      = 16
 objectid_player                                 = 0
+objectid_player_accessory                       = 1
 opcode_clc                                      = 24
 opcode_jmp                                      = 76
 opcode_lda_imm                                  = 169
@@ -160,7 +161,6 @@ spriteid_rope3                                  = 87
 spriteid_rope4                                  = 88
 spriteid_rope_end                               = 10
 spriteid_rope_hook                              = 11
-spriteid_some_small_blob                        = 55
 spriteid_sparkles1                              = 34
 spriteid_sparkles2                              = 35
 spriteid_sparkles3                              = 36
@@ -173,6 +173,7 @@ spriteid_wizard4                                = 51
 spriteid_wizard5                                = 52
 spriteid_wizard6                                = 53
 spriteid_wizard7                                = 54
+spriteid_wizard_hand                            = 55
 spriteid_wizard_transform1                      = 56
 spriteid_wizard_transform2                      = 57
 vdu_bell                                        = 7
@@ -261,7 +262,7 @@ backmost_object_z_order                     = $61
 num_active_objects                          = $62
 temp_active_object_index                    = $63
 temp_object_index                           = $64
-remember_object_index                       = $65
+remember_player_accessory_object_index      = $65
 l0066                                       = $66
 l0067                                       = $67
 l0068                                       = $68
@@ -950,7 +951,7 @@ reset_sprite_flags_and_exit
 ;            sprite_op_flags: These bits are mutually exclusive. If bit is set:
 ; 
 ;                             bit 0: also copy mask into sprite 'dest_sprite_id'
-;                             bit 1: erase the sprite from the screen (with mask)
+;                             bit 1: erase the sprite from the screen (using mask)
 ;                             bit 2: write to the screen without a mask
 ;                             bits 3-7: unused
 ; 
@@ -3780,27 +3781,30 @@ draw_object_x
 draw_object_sprite
     jsr sprite_op                                                     ; 2301: 20 8d 13     .. :21d0[1]
 ; return if not the player accessory object
-    cpx #1                                                            ; 2304: e0 01       ..  :21d3[1]
+    cpx #objectid_player_accessory                                    ; 2304: e0 01       ..  :21d3[1]
     bne return9                                                       ; 2306: d0 28       .(  :21d5[1]
 ; return if current player character is not the wizard
     lda current_player_character                                      ; 2308: a5 48       .H  :21d7[1]
     cmp #spriteid_icodata_wizard                                      ; 230a: c9 04       ..  :21d9[1]
     bne return9                                                       ; 230c: d0 22       ."  :21db[1]
-; special wizard processing - the level completion spell object?
-    stx remember_object_index                                         ; 230e: 86 65       .e  :21dd[1]
-    ldx #0                                                            ; 2310: a2 00       ..  :21df[1]
+; special wizard processing - if the player is carrying an accessory object, draw the
+; wizard's hand in front of that
+    stx remember_player_accessory_object_index                        ; 230e: 86 65       .e  :21dd[1]
+    ldx #objectid_player                                              ; 2310: a2 00       ..  :21df[1]
+; check if player state has changed
     jsr has_object_changed_state                                      ; 2312: 20 1e 21     .! :21e1[1]
-    ldx remember_object_index                                         ; 2315: a6 65       .e  :21e4[1]
+    ldx remember_player_accessory_object_index                        ; 2315: a6 65       .e  :21e4[1]
     ora #0                                                            ; 2317: 09 00       ..  :21e6[1]
-    beq c21ef                                                         ; 2319: f0 05       ..  :21e8[1]
+    beq player_state_unchanged                                        ; 2319: f0 05       ..  :21e8[1]
+; make sure the player has been dealt with first
     lda object_dealt_with_flag                                        ; 231b: ad 16 01    ... :21ea[1]
     beq return9                                                       ; 231e: f0 10       ..  :21ed[1]
-c21ef
+player_state_unchanged
     lda object_direction,x                                            ; 2320: bd be 09    ... :21ef[1]
     sta sprite_reflect_flag                                           ; 2323: 85 1d       ..  :21f2[1]
     lda #sprite_op_flags_normal                                       ; 2325: a9 00       ..  :21f4[1]
     sta sprite_op_flags                                               ; 2327: 85 15       ..  :21f6[1]
-    lda #spriteid_some_small_blob                                     ; 2329: a9 37       .7  :21f8[1]
+    lda #spriteid_wizard_hand                                         ; 2329: a9 37       .7  :21f8[1]
     sta sprite_id                                                     ; 232b: 85 16       ..  :21fa[1]
     jsr sprite_op                                                     ; 232d: 20 8d 13     .. :21fc[1]
 return9
@@ -7362,7 +7366,6 @@ sound_data1
 object_sprite_mask_type
 envelope_1
     !byte 1                                                           ; 39dd: 01          .   :38ac[1]   ; envelope number
-some_spriteid
     !byte 3                                                           ; 39de: 03          .   :38ad[1]   ; step length (100ths of a second)
     !byte 0                                                           ; 39df: 00          .   :38ae[1]   ; pitch change per step in section 1
     !byte 0                                                           ; 39e0: 00          .   :38af[1]   ; pitch change per step in section 2
@@ -7966,11 +7969,12 @@ init_tiles_loop
     sta tile_all_set_pixels,y                                         ; 3d5b: 99 a9 0a    ...
     dey                                                               ; 3d5e: 88          .
     bpl init_tiles_loop                                               ; 3d5f: 10 f3       ..
-; store something else now that envelopes have already been defined above?
+; store special spriteid used for preserving the background behind the player and the
+; player's accessory?
     lda #spriteid_199                                                 ; 3d61: a9 c7       ..
     sta object_sprite_mask_type                                       ; 3d63: 8d ac 38    ..8
     lda #spriteid_198                                                 ; 3d66: a9 c6       ..
-    sta some_spriteid                                                 ; 3d68: 8d ad 38    ..8
+    sta object_sprite_mask_type + objectid_player_accessory           ; 3d68: 8d ad 38    ..8
 ; set z order for the player at the midway point so that objects can appear in front or
 ; behind the player
     lda #$80                                                          ; 3d6b: a9 80       ..
@@ -8788,7 +8792,6 @@ plot_move_x_high
 pydis_end
 
 ; Automatically generated labels:
-;     c21ef
 ;     c2284
 ;     c228b
 ;     c229f
@@ -9635,6 +9638,12 @@ pydis_end
 !if (object_z_order+1) != $38c3 {
     !error "Assertion failed: object_z_order+1 == $38c3"
 }
+!if (objectid_player) != $00 {
+    !error "Assertion failed: objectid_player == $00"
+}
+!if (objectid_player_accessory) != $01 {
+    !error "Assertion failed: objectid_player_accessory == $01"
+}
 !if (opcode_clc) != $18 {
     !error "Assertion failed: opcode_clc == $18"
 }
@@ -9941,9 +9950,6 @@ pydis_end
 !if (spriteid_rope_hook) != $0b {
     !error "Assertion failed: spriteid_rope_hook == $0b"
 }
-!if (spriteid_some_small_blob) != $37 {
-    !error "Assertion failed: spriteid_some_small_blob == $37"
-}
 !if (spriteid_sparkles1) != $22 {
     !error "Assertion failed: spriteid_sparkles1 == $22"
 }
@@ -9979,6 +9985,9 @@ pydis_end
 }
 !if (spriteid_wizard7) != $36 {
     !error "Assertion failed: spriteid_wizard7 == $36"
+}
+!if (spriteid_wizard_hand) != $37 {
+    !error "Assertion failed: spriteid_wizard_hand == $37"
 }
 !if (spriteid_wizard_transform1) != $38 {
     !error "Assertion failed: spriteid_wizard_transform1 == $38"

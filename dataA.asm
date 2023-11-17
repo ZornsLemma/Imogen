@@ -17,6 +17,7 @@ objectid_left_mouse                = 2
 objectid_left_trapdoor             = 2
 objectid_mouse_ball                = 4
 objectid_player                    = 0
+objectid_player_accessory          = 1
 objectid_right_mouse               = 3
 objectid_right_trapdoor            = 3
 objectid_saxophone                 = 4

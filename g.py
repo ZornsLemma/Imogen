@@ -302,7 +302,7 @@ label(0x005f, "initial_level_number_div4")
 label(0x0062, "num_active_objects")
 label(0x0063, "temp_active_object_index")
 label(0x0064, "temp_object_index")
-label(0x0065, "remember_object_index")
+label(0x0065, "remember_player_accessory_object_index")
 
 label(0x0070, "address1_low")
 label(0x0071, "address1_high")
@@ -375,7 +375,7 @@ sprite_dict = {
     0x34: "spriteid_wizard5",
     0x35: "spriteid_wizard6",
     0x36: "spriteid_wizard7",
-    0x37: "spriteid_some_small_blob",        # TODO: better name
+    0x37: "spriteid_wizard_hand",        # Drawn in front of wizard accessory object
     0x38: "spriteid_wizard_transform1",
     0x39: "spriteid_wizard_transform2",
     0x3a: "spriteid_brazier",
@@ -986,6 +986,12 @@ Once an object is drawn to the screen, this remembers the current object state i
 
 *************************************************************************************""")
 
+expr(0x21d4, "objectid_player_accessory")
+comment(0x21ea, "make sure the player has been dealt with first")
+expr(0x21e0, "objectid_player")
+comment(0x21e1, "check if player state has changed")
+label(0x21ef, "player_state_unchanged")
+
 label(0x1589, "check_within_vertical_range")
 expr(0x1570, make_lo("screen_width_in_pixels"))
 label(0x160c, "draw_sprite")
@@ -1178,8 +1184,8 @@ comment(0x3d1a, "clear the display of remaining transformations")
 comment(0x3d3d, "define envelopes")
 comment(0x3d52, "initialise the 'all clear' and 'all set' tiles")
 label(0x3d54, "init_tiles_loop")
-label(0x38ad, "some_spriteid")
-comment(0x3d61, "store something else now that envelopes have already been defined above?")
+label(0x38ad, "object_sprite_mask_type + objectid_player_accessory")
+comment(0x3d61, "store special spriteid used for preserving the background behind the player and the player's accessory?")
 comment(0x3d75, "seed random number generation by reading the User VIA timers")
 comment(0x3d8d, "set base address for sprite rendering, $6200 is the main game area")
 label(0x110b, "vertical_sync_amount_for_crtc_register")
@@ -2407,7 +2413,7 @@ label(0x2190, "draw_or_erase_object")
 comment(0x21d3, "return if not the player accessory object")
 comment(0x21d7, "return if current player character is not the wizard")
 expr(0x21da, "spriteid_icodata_wizard")
-comment(0x21dd, "special wizard processing - the level completion spell object?")
+comment(0x21dd, "special wizard processing - if the player is carrying an accessory object, draw the wizard's hand in front of that")
 
 label(0x221c, "add_movement_in_direction_to_player")
 comment(0x2217, "invert A if direction is left")
@@ -2606,7 +2612,7 @@ On Entry:
            sprite_op_flags: These bits are mutually exclusive. If bit is set:
 
                             bit 0: also copy mask into sprite 'dest_sprite_id'
-                            bit 1: erase the sprite from the screen (with mask)
+                            bit 1: erase the sprite from the screen (using mask)
                             bit 2: write to the screen without a mask
                             bits 3-7: unused
 

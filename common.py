@@ -98,6 +98,7 @@ constant(0x20, "copy_mode_random32")
 constant(0x40, "copy_mode_random64")
 
 constant(0, "objectid_player")
+constant(1, "objectid_player_accessory")
 
 # TODO: Use this more generally or maybe just get rid of it?
 def label_word(addr, s):
