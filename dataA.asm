@@ -12,6 +12,7 @@ game_area_height_cells             = 24
 game_area_width_cells              = 40
 last_level_letter                  = 81
 objectid_TODO                      = 2
+objectid_brazier                   = 5
 objectid_left_mouse                = 2
 objectid_left_trapdoor             = 2
 objectid_mouse_ball                = 4
@@ -781,15 +782,15 @@ play_some_sound1_then_some_sound2
 sub_c3f02
     lda #1                                                            ; 3f02: a9 01       ..
     sta current_room_index                                            ; 3f04: 8d ba 1a    ...
-    lda #5                                                            ; 3f07: a9 05       ..
+    lda #objectid_brazier                                             ; 3f07: a9 05       ..
     ldx #$1a                                                          ; 3f09: a2 1a       ..
     ldy #$0e                                                          ; 3f0b: a0 0e       ..
     jsr update_brazier_and_fire                                       ; 3f0d: 20 88 19     ..
     lda update_room_first_update_flag                                 ; 3f10: ad 2b 13    .+.
-    beq c3f52                                                         ; 3f13: f0 3d       .=
+    beq not_first_room_update                                         ; 3f13: f0 3d       .=
     lda #$d3                                                          ; 3f15: a9 d3       ..
     sta toolbar_collectable_spriteids + 1                             ; 3f17: 8d e9 2e    ...
-    lda #$d2                                                          ; 3f1a: a9 d2       ..
+    lda #spriteid_saxophone1                                          ; 3f1a: a9 d2       ..
     sta collectable_spriteids + 1                                     ; 3f1c: 8d ee 2e    ...
     sta l2ef3                                                         ; 3f1f: 8d f3 2e    ...
     ldx #<envelope3                                                   ; 3f22: a2 16       ..
@@ -818,7 +819,7 @@ return3
     rts                                                               ; 3f51: 60          `
 
 ; $3f52 referenced 1 time by $3f13
-c3f52
+not_first_room_update
     lda l2eb6                                                         ; 3f52: ad b6 2e    ...
     cmp #$d3                                                          ; 3f55: c9 d3       ..
     bne c3f62                                                         ; 3f57: d0 09       ..
@@ -1996,7 +1997,7 @@ pydis_end
 ;     return2:                                                1
 ;     trapdoor_sprite_table:                                  1
 ;     sub_c3f02:                                              1
-;     c3f52:                                                  1
+;     not_first_room_update:                                  1
 ;     c3f62:                                                  1
 ;     loop_c4044:                                             1
 ;     room2_handler:                                          1
@@ -2030,7 +2031,6 @@ pydis_end
 ;     c3dd2
 ;     c3de2
 ;     c3def
-;     c3f52
 ;     c3f62
 ;     c3f8a
 ;     c40b2
@@ -2219,6 +2219,9 @@ pydis_end
 }
 !if (objectid_TODO) != $02 {
     !error "Assertion failed: objectid_TODO == $02"
+}
+!if (objectid_brazier) != $05 {
+    !error "Assertion failed: objectid_brazier == $05"
 }
 !if (objectid_left_mouse) != $02 {
     !error "Assertion failed: objectid_left_mouse == $02"

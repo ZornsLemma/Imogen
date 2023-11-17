@@ -221,6 +221,11 @@ constant(4, "objectid_mouse_ball")
 # Room 2?
 constant(2, "objectid_TODO")
 constant(5, "objectid_spell")
+# Room???
+constant(5, "objectid_brazier")
+expr(0x3f08, "objectid_brazier")
+entry(0x3f52, "not_first_room_update")
+expr(0x3f1b, "spriteid_saxophone1")
 expr(0x3c22, "objectid_left_mouse")
 expr(0x3c48, "objectid_right_mouse")
 expr(0x3c5c, "objectid_mouse_ball")
