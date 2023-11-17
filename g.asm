@@ -929,7 +929,7 @@ reset_sprite_flags_and_exit
     sta sprite_op_flags                                               ; 14b2: 85 15       ..  :1381[1]
     lda #1                                                            ; 14b4: a9 01       ..  :1383[1]
     sta sprite_reflect_flag                                           ; 14b6: 85 1d       ..  :1385[1]
-    pla                                                               ; 14b8: 68          h   :1387[1]
+    pla                                                               ; 14b8: 68          h   :1387[1]   ; recall A,X,Y
     tay                                                               ; 14b9: a8          .   :1388[1]
     pla                                                               ; 14ba: 68          h   :1389[1]
     tax                                                               ; 14bb: aa          .   :138a[1]
@@ -989,7 +989,7 @@ reset_sprite_flags_and_exit
 ; 
 ; *************************************************************************************
 sprite_op
-    pha                                                               ; 14be: 48          H   :138d[1]
+    pha                                                               ; 14be: 48          H   :138d[1]   ; remember A,X,Y
     txa                                                               ; 14bf: 8a          .   :138e[1]
     pha                                                               ; 14c0: 48          H   :138f[1]
     tya                                                               ; 14c1: 98          .   :1390[1]
@@ -1679,14 +1679,14 @@ delay_loop
 irq1_routine
     pha                                                               ; 18d1: 48          H   :17a0[1]
     lda interrupt_accumulator                                         ; 18d2: a5 fc       ..  :17a1[1]
-    pha                                                               ; 18d4: 48          H   :17a3[1]
+    pha                                                               ; 18d4: 48          H   :17a3[1]   ; remember A,X,Y
     txa                                                               ; 18d5: 8a          .   :17a4[1]
     pha                                                               ; 18d6: 48          H   :17a5[1]
     tya                                                               ; 18d7: 98          .   :17a6[1]
     pha                                                               ; 18d8: 48          H   :17a7[1]
     jsr if_vsync_elapsed_then_set_toolbar_area_palette                ; 18d9: 20 b9 17     .. :17a8[1]
     jsr if_timer1_elapsed_then_set_main_area_palette                  ; 18dc: 20 fa 17     .. :17ab[1]
-    pla                                                               ; 18df: 68          h   :17ae[1]
+    pla                                                               ; 18df: 68          h   :17ae[1]   ; recall A,X,Y
     tay                                                               ; 18e0: a8          .   :17af[1]
     pla                                                               ; 18e1: 68          h   :17b0[1]
     tax                                                               ; 18e2: aa          .   :17b1[1]
@@ -1800,7 +1800,7 @@ print_italic
     cmp #$7f                                                          ; 199b: c9 7f       ..  :186a[1]
     bcs print_italic_rts                                              ; 199d: b0 35       .5  :186c[1]
     sta backmost_object_index                                         ; 199f: 85 60       .`  :186e[1]
-    txa                                                               ; 19a1: 8a          .   :1870[1]
+    txa                                                               ; 19a1: 8a          .   :1870[1]   ; remember X,Y
     pha                                                               ; 19a2: 48          H   :1871[1]
     tya                                                               ; 19a3: 98          .   :1872[1]
     pha                                                               ; 19a4: 48          H   :1873[1]
@@ -1824,7 +1824,7 @@ define_character_ff_loop
     inx                                                               ; 19c9: e8          .   :1898[1]
     cpx #8                                                            ; 19ca: e0 08       ..  :1899[1]
     bcc define_character_ff_loop                                      ; 19cc: 90 f6       ..  :189b[1]
-    pla                                                               ; 19ce: 68          h   :189d[1]
+    pla                                                               ; 19ce: 68          h   :189d[1]   ; recall X,Y
     tay                                                               ; 19cf: a8          .   :189e[1]
     pla                                                               ; 19d0: 68          h   :189f[1]
     tax                                                               ; 19d1: aa          .   :18a0[1]
@@ -2030,7 +2030,7 @@ sprdata_filename
 ; *************************************************************************************
 update_brazier_and_fire
     sta fire_object_index                                             ; 1ab9: 8d 0f 1a    ... :1988[1]
-    txa                                                               ; 1abc: 8a          .   :198b[1]
+    txa                                                               ; 1abc: 8a          .   :198b[1]   ; remember X,Y
     pha                                                               ; 1abd: 48          H   :198c[1]
     tya                                                               ; 1abe: 98          .   :198d[1]
     pha                                                               ; 1abf: 48          H   :198e[1]
@@ -2104,7 +2104,7 @@ set_fire_sprite_to_use
     adc #spriteid_fire1                                               ; 1b33: 69 3c       i<  :1a02[1]
     sta object_spriteid,x                                             ; 1b35: 9d a8 09    ... :1a04[1]
 return_with_result
-    pla                                                               ; 1b38: 68          h   :1a07[1]
+    pla                                                               ; 1b38: 68          h   :1a07[1]   ; recall X,Y
     tay                                                               ; 1b39: a8          .   :1a08[1]
     pla                                                               ; 1b3a: 68          h   :1a09[1]
     tax                                                               ; 1b3b: aa          .   :1a0a[1]
@@ -2896,7 +2896,7 @@ tile_wall_right3
 ; *************************************************************************************
 draw_rope
     sta temp_rope_length                                              ; 1eea: 85 56       .V  :1db9[1]
-    pha                                                               ; 1eec: 48          H   :1dbb[1]
+    pha                                                               ; 1eec: 48          H   :1dbb[1]   ; remember A,Y
     tya                                                               ; 1eed: 98          .   :1dbc[1]
     pha                                                               ; 1eee: 48          H   :1dbd[1]
 ; Don't draw the rope hook if Y is zero
@@ -2929,7 +2929,7 @@ draw_end_of_rope
     lda #2                                                            ; 1f1c: a9 02       ..  :1deb[1]
     jsr write_a_single_value_to_cell_in_collision_map                 ; 1f1e: 20 bb 1e     .. :1ded[1]
 restore_ay_and_return
-    pla                                                               ; 1f21: 68          h   :1df0[1]
+    pla                                                               ; 1f21: 68          h   :1df0[1]   ; recall A,Y
     tay                                                               ; 1f22: a8          .   :1df1[1]
     pla                                                               ; 1f23: 68          h   :1df2[1]
     rts                                                               ; 1f24: 60          `   :1df3[1]
@@ -3127,7 +3127,7 @@ value_to_write_into_collision_map_table
 write_a_single_value_to_cell_in_collision_map
     and #3                                                            ; 1fec: 29 03       ).  :1ebb[1]
     sta temp_value                                                    ; 1fee: 85 49       .I  :1ebd[1]   ; remember value to write
-    txa                                                               ; 1ff0: 8a          .   :1ebf[1]
+    txa                                                               ; 1ff0: 8a          .   :1ebf[1]   ; remember X,Y
     pha                                                               ; 1ff1: 48          H   :1ec0[1]
     tya                                                               ; 1ff2: 98          .   :1ec1[1]
     pha                                                               ; 1ff3: 48          H   :1ec2[1]
@@ -3171,7 +3171,7 @@ write_a_single_value_to_cell_in_collision_map
     ora temp_coordinate                                               ; 201f: 05 4a       .J  :1eee[1]
     sta collision_map,y                                               ; 2021: 99 00 0c    ... :1ef0[1]
 ; restore X,Y and A
-    pla                                                               ; 2024: 68          h   :1ef3[1]
+    pla                                                               ; 2024: 68          h   :1ef3[1]   ; recall X,Y
     tay                                                               ; 2025: a8          .   :1ef4[1]
     pla                                                               ; 2026: 68          h   :1ef5[1]
     tax                                                               ; 2027: aa          .   :1ef6[1]
@@ -3359,7 +3359,7 @@ set_object_position_from_current_sprite_position
 ; 
 ; *************************************************************************************
 set_sprite_pixel_position_to_cell_xy_plus_pixel_offset
-    pha                                                               ; 20b5: 48          H   :1f84[1]
+    pha                                                               ; 20b5: 48          H   :1f84[1]   ; remember A,X,Y
     txa                                                               ; 20b6: 8a          .   :1f85[1]
     pha                                                               ; 20b7: 48          H   :1f86[1]
     tya                                                               ; 20b8: 98          .   :1f87[1]
@@ -3413,7 +3413,7 @@ positive_y_pixel
     lda #0                                                            ; 20fc: a9 00       ..  :1fcb[1]
     sta temp_sprite_x_offset                                          ; 20fe: 85 3a       .:  :1fcd[1]
     sta temp_sprite_y_offset                                          ; 2100: 85 3b       .;  :1fcf[1]
-    pla                                                               ; 2102: 68          h   :1fd1[1]
+    pla                                                               ; 2102: 68          h   :1fd1[1]   ; recall A,X,Y
     tay                                                               ; 2103: a8          .   :1fd2[1]
     pla                                                               ; 2104: 68          h   :1fd3[1]
     tax                                                               ; 2105: aa          .   :1fd4[1]
@@ -4144,7 +4144,7 @@ return12
 
 ; TODO: this is used by e.g. dataA
 play_landing_sound
-    pha                                                               ; 24da: 48          H   :23a9[1]
+    pha                                                               ; 24da: 48          H   :23a9[1]   ; remember A,X,Y
     txa                                                               ; 24db: 8a          .   :23aa[1]
     pha                                                               ; 24dc: 48          H   :23ab[1]
     tya                                                               ; 24dd: 98          .   :23ac[1]
@@ -4156,7 +4156,7 @@ play_landing_sound
     ldx #<sound_landing2                                              ; 24e8: a2 e6       ..  :23b7[1]
     ldy #>sound_landing2                                              ; 24ea: a0 38       .8  :23b9[1]
     jsr play_sound_yx                                                 ; 24ec: 20 f6 38     .8 :23bb[1]
-    pla                                                               ; 24ef: 68          h   :23be[1]
+    pla                                                               ; 24ef: 68          h   :23be[1]   ; recall A,X,Y
     tay                                                               ; 24f0: a8          .   :23bf[1]
     pla                                                               ; 24f1: 68          h   :23c0[1]
     tax                                                               ; 24f2: aa          .   :23c1[1]
@@ -4164,7 +4164,7 @@ play_landing_sound
     rts                                                               ; 24f4: 60          `   :23c3[1]
 
 sub_c23c4
-    txa                                                               ; 24f5: 8a          .   :23c4[1]
+    txa                                                               ; 24f5: 8a          .   :23c4[1]   ; remember X,Y
     pha                                                               ; 24f6: 48          H   :23c5[1]
     tya                                                               ; 24f7: 98          .   :23c6[1]
     pha                                                               ; 24f8: 48          H   :23c7[1]
@@ -4217,7 +4217,7 @@ c241a
     lda #0                                                            ; 2557: a9 00       ..  :2426[1]
     sta player_collision_flag                                         ; 2559: 8d 33 24    .3$ :2428[1]
 c242b
-    pla                                                               ; 255c: 68          h   :242b[1]
+    pla                                                               ; 255c: 68          h   :242b[1]   ; recall X,Y
     tay                                                               ; 255d: a8          .   :242c[1]
     pla                                                               ; 255e: 68          h   :242d[1]
     tax                                                               ; 255f: aa          .   :242e[1]
@@ -4831,7 +4831,7 @@ return17
 
 sub_c2770
     sta l0053                                                         ; 28a1: 85 53       .S  :2770[1]
-    txa                                                               ; 28a3: 8a          .   :2772[1]
+    txa                                                               ; 28a3: 8a          .   :2772[1]   ; remember X,Y
     pha                                                               ; 28a4: 48          H   :2773[1]
     tya                                                               ; 28a5: 98          .   :2774[1]
     pha                                                               ; 28a6: 48          H   :2775[1]
@@ -4940,7 +4940,7 @@ c2841
     bne c2851                                                         ; 297d: d0 03       ..  :284c[1]
     inc l2891                                                         ; 297f: ee 91 28    ..( :284e[1]
 c2851
-    pla                                                               ; 2982: 68          h   :2851[1]
+    pla                                                               ; 2982: 68          h   :2851[1]   ; recall X,Y
     tay                                                               ; 2983: a8          .   :2852[1]
     pla                                                               ; 2984: 68          h   :2853[1]
     tax                                                               ; 2985: aa          .   :2854[1]
@@ -5013,7 +5013,7 @@ l2893
 ; TODO: this is used by e.g. dataA
 get_wall_collision_for_object_a
     sta temp_collision_result                                         ; 29c5: 8d 5b 29    .[) :2894[1]
-    txa                                                               ; 29c8: 8a          .   :2897[1]
+    txa                                                               ; 29c8: 8a          .   :2897[1]   ; remember X,Y
     pha                                                               ; 29c9: 48          H   :2898[1]
     tya                                                               ; 29ca: 98          .   :2899[1]
     pha                                                               ; 29cb: 48          H   :289a[1]
@@ -5041,7 +5041,7 @@ get_wall_collision_for_object_a
     sta temp_collision_result                                         ; 2a02: 8d 5b 29    .[) :28d1[1]
     lda #0                                                            ; 2a05: a9 00       ..  :28d4[1]
     sta l28e1                                                         ; 2a07: 8d e1 28    ..( :28d6[1]
-    pla                                                               ; 2a0a: 68          h   :28d9[1]
+    pla                                                               ; 2a0a: 68          h   :28d9[1]   ; recall X,Y
     tay                                                               ; 2a0b: a8          .   :28da[1]
     pla                                                               ; 2a0c: 68          h   :28db[1]
     tax                                                               ; 2a0d: aa          .   :28dc[1]
@@ -5068,7 +5068,7 @@ l28e1
 ; 
 ; *************************************************************************************
 test_for_collision_between_objects_x_and_y
-    txa                                                               ; 2a13: 8a          .   :28e2[1]
+    txa                                                               ; 2a13: 8a          .   :28e2[1]   ; remember X,Y
     pha                                                               ; 2a14: 48          H   :28e3[1]
     tya                                                               ; 2a15: 98          .   :28e4[1]
     pha                                                               ; 2a16: 48          H   :28e5[1]
@@ -5128,7 +5128,7 @@ return_restoring_registers
     sta temp_bottom_offset                                            ; 2a7b: 8d 51 25    .Q% :294a[1]
     sta temp_right_offset                                             ; 2a7e: 8d d1 24    ..$ :294d[1]
     sta temp_left_offset                                              ; 2a81: 8d d0 24    ..$ :2950[1]
-    pla                                                               ; 2a84: 68          h   :2953[1]
+    pla                                                               ; 2a84: 68          h   :2953[1]   ; recall X,Y
     tay                                                               ; 2a85: a8          .   :2954[1]
     pla                                                               ; 2a86: 68          h   :2955[1]
     tax                                                               ; 2a87: aa          .   :2956[1]
@@ -5613,7 +5613,7 @@ return_with_flag_set_if_shuffled_left
     rts                                                               ; 2d3c: 60          `   :2c0b[1]
 
 plot_menu_item
-    pha                                                               ; 2d3d: 48          H   :2c0c[1]
+    pha                                                               ; 2d3d: 48          H   :2c0c[1]   ; remember A,X,Y
     txa                                                               ; 2d3e: 8a          .   :2c0d[1]
     pha                                                               ; 2d3f: 48          H   :2c0e[1]
     tya                                                               ; 2d40: 98          .   :2c0f[1]
@@ -5649,7 +5649,7 @@ plot_menu_item_sprites
 restore_variables_and_return
     pla                                                               ; 2d6e: 68          h   :2c3d[1]
     sta screen_base_address_high                                      ; 2d6f: 85 4c       .L  :2c3e[1]
-    pla                                                               ; 2d71: 68          h   :2c40[1]
+    pla                                                               ; 2d71: 68          h   :2c40[1]   ; recall A,X,Y
     tay                                                               ; 2d72: a8          .   :2c41[1]
     pla                                                               ; 2d73: 68          h   :2c42[1]
     tax                                                               ; 2d74: aa          .   :2c43[1]
@@ -6622,7 +6622,7 @@ c3366
     rts                                                               ; 349e: 60          `   :336d[1]
 
 sub_c336e
-    txa                                                               ; 349f: 8a          .   :336e[1]
+    txa                                                               ; 349f: 8a          .   :336e[1]   ; remember X,Y
     pha                                                               ; 34a0: 48          H   :336f[1]
     tya                                                               ; 34a1: 98          .   :3370[1]
     pha                                                               ; 34a2: 48          H   :3371[1]
@@ -6700,7 +6700,7 @@ c33f8
     lda #0                                                            ; 3529: a9 00       ..  :33f8[1]
 c33fa
     sta player_cell_y                                                 ; 352b: 85 70       .p  :33fa[1]
-    pla                                                               ; 352d: 68          h   :33fc[1]
+    pla                                                               ; 352d: 68          h   :33fc[1]   ; recall X,Y
     tay                                                               ; 352e: a8          .   :33fd[1]
     pla                                                               ; 352f: 68          h   :33fe[1]
     tax                                                               ; 3530: aa          .   :33ff[1]
@@ -8522,7 +8522,7 @@ loop_c0ac6
 convert_level_filename_letter_into_section_letter
     cpy #last_level_letter                                            ; 40a5: c0 51       .Q  :0ad4[5]
     beq return29                                                      ; 40a7: f0 26       .&  :0ad6[5]
-    pha                                                               ; 40a9: 48          H   :0ad8[5]
+    pha                                                               ; 40a9: 48          H   :0ad8[5]   ; remember A,X
     txa                                                               ; 40aa: 8a          .   :0ad9[5]
     pha                                                               ; 40ab: 48          H   :0ada[5]
     tya                                                               ; 40ac: 98          .   :0adb[5]
@@ -8537,7 +8537,7 @@ found_letter
     clc                                                               ; 40b8: 18          .   :0ae7[5]
     adc #first_level_letter                                           ; 40b9: 69 41       iA  :0ae8[5]
     tay                                                               ; 40bb: a8          .   :0aea[5]
-    pla                                                               ; 40bc: 68          h   :0aeb[5]
+    pla                                                               ; 40bc: 68          h   :0aeb[5]   ; recall A,X
     tax                                                               ; 40bd: aa          .   :0aec[5]
     pla                                                               ; 40be: 68          h   :0aed[5]
     rts                                                               ; 40bf: 60          `   :0aee[5]
@@ -8580,7 +8580,7 @@ relocation5_high_copy_start
 ; care to update as few digits on screen as possible, probably to reduce flicker and to
 ; offset the relatively slow implementation of print_italic.
 update_displayed_transformations_remaining
-    pha                                                               ; 40d0: 48          H   :0131[3]
+    pha                                                               ; 40d0: 48          H   :0131[3]   ; remember A,X
     txa                                                               ; 40d1: 8a          .   :0132[3]
     pha                                                               ; 40d2: 48          H   :0133[3]
     ldx #2                                                            ; 40d3: a2 02       ..  :0134[3]
@@ -8604,7 +8604,7 @@ digit_unchanged
     dex                                                               ; 40f6: ca          .   :0157[3]
     cpx #$ff                                                          ; 40f7: e0 ff       ..  :0158[3]
     bne digit_loop                                                    ; 40f9: d0 da       ..  :015a[3]
-    pla                                                               ; 40fb: 68          h   :015c[3]
+    pla                                                               ; 40fb: 68          h   :015c[3]   ; recall A,X
     tax                                                               ; 40fc: aa          .   :015d[3]
     pla                                                               ; 40fd: 68          h   :015e[3]
     rts                                                               ; 40fe: 60          `   :015f[3]

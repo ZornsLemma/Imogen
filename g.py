@@ -3,6 +3,7 @@ import acorn
 import re
 from common import *
 from memorymanager import get_u8_runtime, get_u16_runtime, get_u16_be_runtime, RuntimeAddr
+from movemanager import b2r
 
 acorn.bbc()
 
@@ -3282,6 +3283,39 @@ character_bitmap(0x1d99, "tile_wall_right0")
 character_bitmap(0x1da1, "tile_wall_right1")
 character_bitmap(0x1da9, "tile_wall_right2")
 character_bitmap(0x1db1, "tile_wall_right3")
+
+# Look for pushing or pulling multiple registers to comment them
+sequences = {
+    (0x48, 0x8a, 0x48, 0x98, 0x48): "remember A,X,Y",       # pha:txa:pha:tya:pha
+    (0x68, 0xa8, 0x68, 0xaa, 0x68): "recall A,X,Y",         # ply:tay:pla:tax:pla
+    (0x8a, 0x48, 0x98, 0x48): "remember X,Y",               # txa:pha:tya:pha
+    (0x68, 0xa8, 0x68, 0xaa): "recall X,Y",                 # ply:tay:pla:tax
+    (0x48, 0x8a, 0x48): "remember A,X",                     # pha:txa:pha
+    (0x68, 0xaa, 0x68): "recall A,X",                       # pla:tax:pla
+    (0x48, 0x98, 0x48): "remember A,Y",                     # pha:tya:pha
+    (0x68, 0xa8, 0x68): "recall A,Y",                       # ply:tay:pla
+}
+
+bin_range = range(0x1234, 0x4225)
+bin_addr = bin_range[0]
+while bin_addr < bin_range[-1]:
+    for s in sequences:
+
+        # Look for match in bytes in binary file against sequences
+        offset = 0
+        for j in s:
+            if (bin_addr + offset) >= bin_range[-1]:
+                break
+            v = get_u8_binary(memorymanager.BinaryAddr(bin_addr + offset))
+            if v != j:
+                break
+            offset += 1
+
+        if offset == len(s):
+            comment(b2r(memorymanager.BinaryAddr(bin_addr)), sequences[s], inline=True)
+            bin_addr += len(s)-1
+            break
+    bin_addr += 1
 
 print("""; *************************************************************************************
 ;
