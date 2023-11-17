@@ -62,7 +62,7 @@ source_sprite_memory_high                           = $41
 copy_mode                                           = $42
 previous_room_index                                 = $50
 previous_level                                      = $51
-player_held_item                                    = $52
+player_held_object                                  = $52
 developer_mode_sideways_ram_is_set_up_flag          = $5b
 l0070                                               = $70
 room_exit_direction                                 = $70
@@ -690,7 +690,7 @@ room1_not_first_update
     lda desired_room_index                                            ; 3e73: a5 30       .0
     cmp #1                                                            ; 3e75: c9 01       ..
     bne set_room1_trapdoor_sprites_if_required                        ; 3e77: d0 5e       .^
-    lda player_held_item                                              ; 3e79: a5 52       .R
+    lda player_held_object                                            ; 3e79: a5 52       .R
     beq set_room1_trapdoor_sprites_if_required                        ; 3e7b: f0 5a       .Z
     lda object_x_high                                                 ; 3e7d: ad 66 09    .f.
     bne set_room1_trapdoor_sprites_if_required                        ; 3e80: d0 55       .U
@@ -1951,7 +1951,7 @@ pydis_end
 ;     sprite_reflect_flag:                                    1
 ;     temp_sprite_x_offset:                                   1
 ;     copy_mode:                                              1
-;     player_held_item:                                       1
+;     player_held_object:                                     1
 ;     l0954:                                                  1
 ;     object_y_low:                                           1
 ;     l0980:                                                  1

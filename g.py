@@ -941,7 +941,7 @@ comment(0x2016, "after dealing with all active objects, update the state of the 
 expr(0x2017, "max_objects-1")
 label(0x2018, "update_non_active_object_state_loop")
 label(0x2020, "skip_objects_already_dealt_with")
-comment(0x2023, "restore the player held item")
+comment(0x2023, "restore the player held object")
 label(0x2027, "found_backmost_object")
 comment(0x2027, "mark object as dealt with", inline=True)
 comment(0x202c, "Look for active objects. If the object hasn't changed state, move to the next object")
@@ -1797,7 +1797,7 @@ comment(0x2248, """*************************************************************
 
 Update player accessory object animation
 
-The player is object zero, and can have an associated 'accessory' object at index one. This is often a tail, but otherwise can be an item the wizard is carrying (e.g. the whip)
+The player is object zero, and can have an associated 'accessory' object at index one. This is often a tail, but otherwise can be an object the wizard is carrying (e.g. the whip)
 
 On Entry:
     A: if +ve, it's a spriteid
@@ -2361,7 +2361,7 @@ On Exit:
 label(0x2945, "return_restoring_registers")
 label(0x295b, "temp_collision_result")
 
-comment(0x2177, """object_sprite_mask_type:
+comment(0x2177, """based on object_sprite_mask_type:
 
     00 means erase,
     ff means draw without mask,
@@ -2376,6 +2376,13 @@ expr(0x1341, "spriteid_197")
 
 comment(0x2159, "exit if object is not visible")
 comment(0x215e, "prepare to draw sprite")
+
+comment(0x21c1, """The object_sprite_mask_type determines the sprite operation:
+
+    $00: draw normally
+    $ff: draw normally
+    other value S: erase wheat's on screen, copy the mask to destination spriteid S
+""")
 
 envelope(0x38ac, "envelope_1")
 envelope(0x38c2, "envelope_2")
@@ -2397,7 +2404,7 @@ label(0x218b, "draw_object_without_mask")
 expr(0x218f, "sprite_op_flags_ignore_mask")
 label(0x2190, "draw_or_erase_object")
 
-comment(0x21d3, "return if not the object after the player")
+comment(0x21d3, "return if not the player accessory object")
 comment(0x21d7, "return if current player character is not the wizard")
 expr(0x21da, "spriteid_icodata_wizard")
 comment(0x21dd, "special wizard processing - the level completion spell object?")

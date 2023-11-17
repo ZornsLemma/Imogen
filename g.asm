@@ -246,7 +246,7 @@ screen_base_address_high                    = $4c
 new_player_character                        = $4d
 previous_room_index                         = $50
 previous_level                              = $51
-player_held_item                            = $52
+player_held_object                          = $52
 l0053                                       = $53
 sprdata_ptr                                 = $54
 temp_rope_length                            = $56
@@ -606,7 +606,7 @@ object_reset_loop
     sta current_player_character                                      ; 12e8: 85 48       .H  :11b7[1]
     sta new_player_character                                          ; 12ea: 85 4d       .M  :11b9[1]
     sta object_spriteid                                               ; 12ec: 8d a8 09    ... :11bb[1]
-    sta player_held_item                                              ; 12ef: 85 52       .R  :11be[1]
+    sta player_held_object                                            ; 12ef: 85 52       .R  :11be[1]
     sta l2eb6                                                         ; 12f1: 8d b6 2e    ... :11c0[1]
     sta l2eb7                                                         ; 12f4: 8d b7 2e    ... :11c3[1]
     sta object_current_index_in_animation+1                           ; 12f7: 8d d5 09    ... :11c6[1]
@@ -3452,10 +3452,10 @@ positive_y_pixel
 ; 
 ; *************************************************************************************
 update_objects
-    lda player_held_item                                              ; 2108: a5 52       .R  :1fd7[1]
+    lda player_held_object                                            ; 2108: a5 52       .R  :1fd7[1]
     pha                                                               ; 210a: 48          H   :1fd9[1]
     lda #0                                                            ; 210b: a9 00       ..  :1fda[1]
-    sta player_held_item                                              ; 210d: 85 52       .R  :1fdc[1]
+    sta player_held_object                                            ; 210d: 85 52       .R  :1fdc[1]
 ; mark all objects as 'not dealt with' yet
     lda #0                                                            ; 210f: a9 00       ..  :1fde[1]
     tax                                                               ; 2111: aa          .   :1fe0[1]
@@ -3504,9 +3504,9 @@ update_non_active_object_state_loop
 skip_objects_already_dealt_with
     dex                                                               ; 2151: ca          .   :2020[1]
     bpl update_non_active_object_state_loop                           ; 2152: 10 f5       ..  :2021[1]
-; restore the player held item
+; restore the player held object
     pla                                                               ; 2154: 68          h   :2023[1]
-    sta player_held_item                                              ; 2155: 85 52       .R  :2024[1]
+    sta player_held_object                                            ; 2155: 85 52       .R  :2024[1]
     rts                                                               ; 2157: 60          `   :2026[1]
 
 found_backmost_object
@@ -3720,7 +3720,7 @@ undraw_object_x
     sta sprite_y_base_high                                            ; 22a1: 85 1b       ..  :2170[1]
     lda object_direction_old,x                                        ; 22a3: bd c9 09    ... :2172[1]
     sta sprite_reflect_flag                                           ; 22a6: 85 1d       ..  :2175[1]
-; object_sprite_mask_type:
+; based on object_sprite_mask_type:
 ; 
 ;     00 means erase,
 ;     ff means draw without mask,
@@ -3764,6 +3764,12 @@ draw_object_x
     sta sprite_id                                                     ; 22ec: 85 16       ..  :21bb[1]
     lda #sprite_op_flags_normal                                       ; 22ee: a9 00       ..  :21bd[1]
     sta sprite_op_flags                                               ; 22f0: 85 15       ..  :21bf[1]
+; The object_sprite_mask_type determines the sprite operation:
+; 
+;     $00: draw normally
+;     $ff: draw normally
+;     other value S: erase wheat's on screen, copy the mask to destination spriteid S
+; 
     lda object_sprite_mask_type,x                                     ; 22f2: bd ac 38    ..8 :21c1[1]
     beq draw_object_sprite                                            ; 22f5: f0 0a       ..  :21c4[1]
     cmp #$ff                                                          ; 22f7: c9 ff       ..  :21c6[1]
@@ -3773,7 +3779,7 @@ draw_object_x
     sta sprite_op_flags                                               ; 22ff: 85 15       ..  :21ce[1]
 draw_object_sprite
     jsr sprite_op                                                     ; 2301: 20 8d 13     .. :21d0[1]
-; return if not the object after the player
+; return if not the player accessory object
     cpx #1                                                            ; 2304: e0 01       ..  :21d3[1]
     bne return9                                                       ; 2306: d0 28       .(  :21d5[1]
 ; return if current player character is not the wizard
@@ -3855,8 +3861,8 @@ skip9
 ; Update player accessory object animation
 ; 
 ; The player is object zero, and can have an associated 'accessory' object at index
-; one. This is often a tail, but otherwise can be an item the wizard is carrying (e.g.
-; the whip)
+; one. This is often a tail, but otherwise can be an object the wizard is carrying
+; (e.g. the whip)
 ; 
 ; On Entry:
 ;     A: if +ve, it's a spriteid
@@ -4056,7 +4062,7 @@ transform
     sta new_player_character                                          ; 2468: 85 4d       .M  :2337[1]
     lda #0                                                            ; 246a: a9 00       ..  :2339[1]
     sta player_collision_flag                                         ; 246c: 8d 33 24    .3$ :233b[1]
-    sta player_held_item                                              ; 246f: 85 52       .R  :233e[1]
+    sta player_held_object                                            ; 246f: 85 52       .R  :233e[1]
 ; if the current menu item is to the left of the player characters, then we have just
 ; loaded a level or something, so don't play the transform sounds.
     lda new_menu_index                                                ; 2471: a5 29       .)  :2340[1]
@@ -4459,7 +4465,7 @@ adjust_left_or_right_extent_due_to_holding_an_object
     bne return_zeroing_offsets                                        ; 2689: d0 7c       .|  :2558[1]
 ; if (player is not holding an object) then return
 c255a
-    lda player_held_item                                              ; 268b: a5 52       .R  :255a[1]
+    lda player_held_object                                            ; 268b: a5 52       .R  :255a[1]
     beq return_zeroing_offsets                                        ; 268d: f0 78       .x  :255c[1]
 ; get spriteid of object being held
     inx                                                               ; 268f: e8          .   :255e[1]
@@ -5436,7 +5442,7 @@ check_if_player_character_menu_item_chosen
     lda current_animation                                             ; 2c7a: ad df 09    ... :2b49[1]
     beq return21                                                      ; 2c7d: f0 16       ..  :2b4c[1]
     lda #0                                                            ; 2c7f: a9 00       ..  :2b4e[1]
-    sta player_held_item                                              ; 2c81: 85 52       .R  :2b50[1]
+    sta player_held_object                                            ; 2c81: 85 52       .R  :2b50[1]
 ; return if we are already this player character
     lda desired_menu_slots,x                                          ; 2c83: bd 5c 29    .\) :2b52[1]
     cmp current_player_character                                      ; 2c86: c5 48       .H  :2b55[1]
@@ -5461,11 +5467,11 @@ check_for_extra_menu_item_chosen
     lda current_animation                                             ; 2ca7: ad df 09    ... :2b76[1]
     beq return22                                                      ; 2caa: f0 0b       ..  :2b79[1]
     lda desired_menu_slots,x                                          ; 2cac: bd 5c 29    .\) :2b7b[1]
-    cmp player_held_item                                              ; 2caf: c5 52       .R  :2b7e[1]
+    cmp player_held_object                                            ; 2caf: c5 52       .R  :2b7e[1]
     bne skip6                                                         ; 2cb1: d0 02       ..  :2b80[1]
     lda #0                                                            ; 2cb3: a9 00       ..  :2b82[1]
 skip6
-    sta player_held_item                                              ; 2cb5: 85 52       .R  :2b84[1]
+    sta player_held_object                                            ; 2cb5: 85 52       .R  :2b84[1]
 return22
     rts                                                               ; 2cb7: 60          `   :2b86[1]
 
@@ -5898,7 +5904,7 @@ c2e1b
     beq c2e42                                                         ; 2f5a: f0 17       ..  :2e29[1]
     lda jump_requested                                                ; 2f5c: ad c7 3a    ..: :2e2b[1]
     beq c2e44                                                         ; 2f5f: f0 14       ..  :2e2e[1]
-    lda player_held_item                                              ; 2f61: a5 52       .R  :2e30[1]
+    lda player_held_object                                            ; 2f61: a5 52       .R  :2e30[1]
     beq c2e44                                                         ; 2f63: f0 10       ..  :2e32[1]
     ldy #wizard_animation8 - wizard_transform_in_animation            ; 2f65: a0 45       .E  :2e34[1]
     cmp #$21 ; '!'                                                    ; 2f67: c9 21       .!  :2e36[1]
@@ -5927,7 +5933,7 @@ store_wizard_animation_state
     sty object_current_index_in_animation                             ; 2f90: 8c d4 09    ... :2e5f[1]
     lda #0                                                            ; 2f93: a9 00       ..  :2e62[1]
     sta l2eb5                                                         ; 2f95: 8d b5 2e    ... :2e64[1]
-    lda player_held_item                                              ; 2f98: a5 52       .R  :2e67[1]
+    lda player_held_object                                            ; 2f98: a5 52       .R  :2e67[1]
     beq c2e82                                                         ; 2f9a: f0 17       ..  :2e69[1]
     ldy object_current_index_in_animation                             ; 2f9c: ac d4 09    ... :2e6b[1]
     lda wizard_transform_in_animation,y                               ; 2f9f: b9 ed 2c    .., :2e6e[1]
@@ -5954,7 +5960,7 @@ c2e82
     lda object_spriteid                                               ; 2fd6: ad a8 09    ... :2ea5[1]
     cmp #spriteid_wizard6                                             ; 2fd9: c9 35       .5  :2ea8[1]
     bne c2eb1                                                         ; 2fdb: d0 05       ..  :2eaa[1]
-    lda player_held_item                                              ; 2fdd: a5 52       .R  :2eac[1]
+    lda player_held_object                                            ; 2fdd: a5 52       .R  :2eac[1]
     beq c2eb1                                                         ; 2fdf: f0 01       ..  :2eae[1]
     tax                                                               ; 2fe1: aa          .   :2eb0[1]
 c2eb1
@@ -5969,13 +5975,13 @@ l2eb7
     !byte 0                                                           ; 2fe8: 00          .   :2eb7[1]
 
 sub_c2eb8
-    ldx player_held_item                                              ; 2fe9: a6 52       .R  :2eb8[1]
+    ldx player_held_object                                            ; 2fe9: a6 52       .R  :2eb8[1]
     beq c2ee4                                                         ; 2feb: f0 28       .(  :2eba[1]
     ldx #<wizard_animation1                                           ; 2fed: a2 d7       ..  :2ebc[1]
     ldy #>wizard_animation1                                           ; 2fef: a0 2c       .,  :2ebe[1]
     lda #0                                                            ; 2ff1: a9 00       ..  :2ec0[1]
     jsr update_player_accessory_object_animation                      ; 2ff3: 20 48 22     H" :2ec2[1]
-    lda player_held_item                                              ; 2ff6: a5 52       .R  :2ec5[1]
+    lda player_held_object                                            ; 2ff6: a5 52       .R  :2ec5[1]
     ldy #0                                                            ; 2ff8: a0 00       ..  :2ec7[1]
 loop_c2ec9
     cmp toolbar_collectable_spriteids,y                               ; 2ffa: d9 e8 2e    ... :2ec9[1]
