@@ -258,9 +258,9 @@ displayed_transformations_remaining         = $5c
 initial_level_number_div4                   = $5f
 backmost_object_index                       = $60
 backmost_object_z_order                     = $61
-num_objects_to_process                      = $62
-processing_object_index                     = $63
-l0064                                       = $64
+num_active_objects                          = $62
+temp_active_object_index                    = $63
+temp_object_index                           = $64
 remember_object_index                       = $65
 l0066                                       = $66
 l0067                                       = $67
@@ -374,8 +374,8 @@ vertical_sprite_position_is_valid_flag      = $88
 romsel_copy                                 = $f4
 interrupt_accumulator                       = $fc
 l00fd                                       = $fd
-objects_to_process_table                    = $0100
-l010b                                       = $010b
+active_objects_table                        = $0100
+frontmost_objects_table                     = $010b
 object_dealt_with_flag                      = $0116
 l0121                                       = $0121
 x_object_left_low                           = $0121
@@ -1805,7 +1805,7 @@ print_italic
     ldy #>(backmost_object_index)                                     ; 19a9: a0 00       ..  :1878[1]
     jsr osword                                                        ; 19ab: 20 f1 ff     .. :187a[1]   ; Read character definition
     lsr backmost_object_z_order                                       ; 19ae: 46 61       Fa  :187d[1]
-    lsr num_objects_to_process                                        ; 19b0: 46 62       Fb  :187f[1]
+    lsr num_active_objects                                            ; 19b0: 46 62       Fb  :187f[1]
     asl l0066                                                         ; 19b2: 06 66       .f  :1881[1]
     asl l0067                                                         ; 19b4: 06 67       .g  :1883[1]
     asl l0068                                                         ; 19b6: 06 68       .h  :1885[1]
@@ -3420,13 +3420,40 @@ positive_y_pixel
 ; 
 ; Update objects
 ; 
+; Draws and undraws objects, taking into account z-order.
+; 
+; The z-order values range from $00 at the front, $80 at the midpoint (where the player
+; is) and $ff at the back.
+; 
+; Objects are (a) undrawn from front to back, then (b) redrawn from back to front.
+; Objects are not redrawn if their state remains unchanged ('inactive'), unless they
+; need to be because there's an active object behind them.
+; 
+; The algorithm used to do this is:
+; 
+; 1. Mark all objects as 'not dealt with'
+; 2. Find the backmost object that is (a) undealt with (b) has a sprite and (c) has
+; changed state ('active').
+; 3. If none found (i.e. all that need to be dealt with have been), then update (copy)
+; the state of the inactive objects and return.
+; 4. Mark the active object as dealt with.
+; 5. Append the object to a list of active objects.
+; 6. Append any inactive objects that are in front of this active object. Those
+; inactive objects are marked as 'dealt with'.
+; 7. Goto 4 if more inactive objects were appended to the active list to deal with them
+; and append anything in front of them.
+; 8. Sort the active objects list from front to back.
+; 9. Undraw the active objects (front to back).
+; 10. Draw the active objects (back to front).
+; 11. Goto 2.
+; 
 ; *************************************************************************************
 update_objects
     lda player_held_item                                              ; 2108: a5 52       .R  :1fd7[1]
     pha                                                               ; 210a: 48          H   :1fd9[1]
     lda #0                                                            ; 210b: a9 00       ..  :1fda[1]
     sta player_held_item                                              ; 210d: 85 52       .R  :1fdc[1]
-; start with no objects dealt with
+; mark all objects as 'not dealt with' yet
     lda #0                                                            ; 210f: a9 00       ..  :1fde[1]
     tax                                                               ; 2111: aa          .   :1fe0[1]
 reset_object_dealt_with_flags_loop
@@ -3434,10 +3461,11 @@ reset_object_dealt_with_flags_loop
     inx                                                               ; 2115: e8          .   :1fe4[1]
     cpx #max_objects                                                  ; 2116: e0 0b       ..  :1fe5[1]
     bcc reset_object_dealt_with_flags_loop                            ; 2118: 90 f8       ..  :1fe7[1]
+; find the object that is at the back
 find_backmost_object_not_dealt_with_yet
     ldx #0                                                            ; 211a: a2 00       ..  :1fe9[1]
-    stx num_objects_to_process                                        ; 211c: 86 62       .b  :1feb[1]
-    stx processing_object_index                                       ; 211e: 86 63       .c  :1fed[1]
+    stx num_active_objects                                            ; 211c: 86 62       .b  :1feb[1]
+    stx temp_active_object_index                                      ; 211e: 86 63       .c  :1fed[1]
 ; initialise the backmost object index to be $ff (nothing found yet), and at the front
 ; (z-order $00)
     lda #$ff                                                          ; 2120: a9 ff       ..  :1fef[1]
@@ -3463,7 +3491,7 @@ try_next_object
     bcc find_backmost_object_loop                                     ; 2141: 90 e3       ..  :2010[1]
 ; check if we found a backmost object
     ldx backmost_object_index                                         ; 2143: a6 60       .`  :2012[1]
-    bpl found_object_to_process                                       ; 2145: 10 11       ..  :2014[1]
+    bpl found_backmost_object                                         ; 2145: 10 11       ..  :2014[1]
 ; after dealing with all active objects, update the state of the inactive ones
     ldx #max_objects-1                                                ; 2147: a2 0a       ..  :2016[1]
 update_non_active_object_state_loop
@@ -3478,126 +3506,155 @@ skip_objects_already_dealt_with
     sta player_held_item                                              ; 2155: 85 52       .R  :2024[1]
     rts                                                               ; 2157: 60          `   :2026[1]
 
-found_object_to_process
+found_backmost_object
     lda #$ff                                                          ; 2158: a9 ff       ..  :2027[1]   ; mark object as dealt with
     sta object_dealt_with_flag,x                                      ; 215a: 9d 16 01    ... :2029[1]
-; if the object has not changed state, we don't need to do anything. Move on to the
-; next object
+; Look for active objects. If the object hasn't changed state, move to the next object
     jsr has_object_changed_state                                      ; 215d: 20 1e 21     .! :202c[1]
     beq find_backmost_object_not_dealt_with_yet                       ; 2160: f0 b8       ..  :202f[1]
-; record the index of the object to process (by appending it to a table)
+; append the active object to the active_objects_table
     txa                                                               ; 2162: 8a          .   :2031[1]
-    ldx num_objects_to_process                                        ; 2163: a6 62       .b  :2032[1]
-    sta objects_to_process_table,x                                    ; 2165: 9d 00 01    ... :2034[1]
-    inc num_objects_to_process                                        ; 2168: e6 62       .b  :2037[1]
-process_objects_loop
-    ldx processing_object_index                                       ; 216a: a6 63       .c  :2039[1]
-    ldy objects_to_process_table,x                                    ; 216c: bc 00 01    ... :203b[1]
+    ldx num_active_objects                                            ; 2163: a6 62       .b  :2032[1]
+    sta active_objects_table,x                                        ; 2165: 9d 00 01    ... :2034[1]
+    inc num_active_objects                                            ; 2168: e6 62       .b  :2037[1]
+process_active_objects_loop
+    ldx temp_active_object_index                                      ; 216a: a6 63       .c  :2039[1]
+    ldy active_objects_table,x                                        ; 216c: bc 00 01    ... :203b[1]
     sty backmost_object_index                                         ; 216f: 84 60       .`  :203e[1]
     lda object_z_order,y                                              ; 2171: b9 c2 38    ..8 :2040[1]
     sta backmost_object_z_order                                       ; 2174: 85 61       .a  :2043[1]
+
+; this whole next section looks for any inactive objects that (a) are in front of and
+; (b) intersect with the latest active object. These are added to the active object
+; list too. This determines the drawing order.
     ldx #0                                                            ; 2176: a2 00       ..  :2045[1]
-loop_all_objects
+loop_over_all_objects_x
     txa                                                               ; 2178: 8a          .   :2047[1]
+; find inactive objects. i.e. if object x is found in the active objects table, skip it
+; and try the next object
     ldy #0                                                            ; 2179: a0 00       ..  :2048[1]
-find_object_to_process_loop
-    cmp objects_to_process_table,y                                    ; 217b: d9 00 01    ... :204a[1]
-    beq c208d                                                         ; 217e: f0 3e       .>  :204d[1]
+find_object_y_loop
+    cmp active_objects_table,y                                        ; 217b: d9 00 01    ... :204a[1]
+    beq move_to_next_object_x                                         ; 217e: f0 3e       .>  :204d[1]
     iny                                                               ; 2180: c8          .   :204f[1]
-    cpy num_objects_to_process                                        ; 2181: c4 62       .b  :2050[1]
-    bcc find_object_to_process_loop                                   ; 2183: 90 f6       ..  :2052[1]
+    cpy num_active_objects                                            ; 2181: c4 62       .b  :2050[1]
+    bcc find_object_y_loop                                            ; 2183: 90 f6       ..  :2052[1]
+; found an inactive object x. If it's in front of the backmost active object, test it
+; for collision
     lda object_z_order,x                                              ; 2185: bd c2 38    ..8 :2054[1]
     cmp backmost_object_z_order                                       ; 2188: c5 61       .a  :2057[1]
-    bcc c2061                                                         ; 218a: 90 06       ..  :2059[1]
-    bne c208d                                                         ; 218c: d0 30       .0  :205b[1]
+    bcc test_for_collision                                            ; 218a: 90 06       ..  :2059[1]
+; to resolve equal z orders, look at the index. i.e. if the object x has the same z
+; order as the backmost active object and a smaller index, also test for collision.
+    bne move_to_next_object_x                                         ; 218c: d0 30       .0  :205b[1]
     cpx backmost_object_index                                         ; 218e: e4 60       .`  :205d[1]
-    bcs c208d                                                         ; 2190: b0 2c       .,  :205f[1]
-c2061
-    stx l0064                                                         ; 2192: 86 64       .d  :2061[1]
+    bcs move_to_next_object_x                                         ; 2190: b0 2c       .,  :205f[1]
+test_for_collision
+    stx temp_object_index                                             ; 2192: 86 64       .d  :2061[1]
     txa                                                               ; 2194: 8a          .   :2063[1]
     clc                                                               ; 2195: 18          .   :2064[1]
     adc #$0b                                                          ; 2196: 69 0b       i.  :2065[1]
     tax                                                               ; 2198: aa          .   :2067[1]
     ldy backmost_object_index                                         ; 2199: a4 60       .`  :2068[1]
     jsr test_for_collision_between_objects_x_and_y                    ; 219b: 20 e2 28     .( :206a[1]
-    bne c207d                                                         ; 219e: d0 0e       ..  :206d[1]
+    bne found_collision                                               ; 219e: d0 0e       ..  :206d[1]
     tya                                                               ; 21a0: 98          .   :206f[1]
     clc                                                               ; 21a1: 18          .   :2070[1]
     adc #$0b                                                          ; 21a2: 69 0b       i.  :2071[1]
     tay                                                               ; 21a4: a8          .   :2073[1]
     jsr test_for_collision_between_objects_x_and_y                    ; 21a5: 20 e2 28     .( :2074[1]
-    ldx l0064                                                         ; 21a8: a6 64       .d  :2077[1]
+    ldx temp_object_index                                             ; 21a8: a6 64       .d  :2077[1]
     ora #0                                                            ; 21aa: 09 00       ..  :2079[1]
-    beq c208d                                                         ; 21ac: f0 10       ..  :207b[1]
-c207d
-    ldx l0064                                                         ; 21ae: a6 64       .d  :207d[1]
+    beq move_to_next_object_x                                         ; 21ac: f0 10       ..  :207b[1]
+found_collision
+    ldx temp_object_index                                             ; 21ae: a6 64       .d  :207d[1]
+; mark object x as dealt with
     lda #$ff                                                          ; 21b0: a9 ff       ..  :207f[1]
     sta object_dealt_with_flag,x                                      ; 21b2: 9d 16 01    ... :2081[1]
+; append to the active objects list
     txa                                                               ; 21b5: 8a          .   :2084[1]
-    ldx num_objects_to_process                                        ; 21b6: a6 62       .b  :2085[1]
-    sta objects_to_process_table,x                                    ; 21b8: 9d 00 01    ... :2087[1]
-    inc num_objects_to_process                                        ; 21bb: e6 62       .b  :208a[1]
+    ldx num_active_objects                                            ; 21b6: a6 62       .b  :2085[1]
+    sta active_objects_table,x                                        ; 21b8: 9d 00 01    ... :2087[1]
+    inc num_active_objects                                            ; 21bb: e6 62       .b  :208a[1]
     tax                                                               ; 21bd: aa          .   :208c[1]
-c208d
+move_to_next_object_x
     inx                                                               ; 21be: e8          .   :208d[1]
     cpx #max_objects                                                  ; 21bf: e0 0b       ..  :208e[1]
-    bcc loop_all_objects                                              ; 21c1: 90 b5       ..  :2090[1]
-    inc processing_object_index                                       ; 21c3: e6 63       .c  :2092[1]
-    lda processing_object_index                                       ; 21c5: a5 63       .c  :2094[1]
-    cmp num_objects_to_process                                        ; 21c7: c5 62       .b  :2096[1]
-    bcc process_objects_loop                                          ; 21c9: 90 9f       ..  :2098[1]
+    bcc loop_over_all_objects_x                                       ; 21c1: 90 b5       ..  :2090[1]
+    inc temp_active_object_index                                      ; 21c3: e6 63       .c  :2092[1]
+    lda temp_active_object_index                                      ; 21c5: a5 63       .c  :2094[1]
+    cmp num_active_objects                                            ; 21c7: c5 62       .b  :2096[1]
+    bcc process_active_objects_loop                                   ; 21c9: 90 9f       ..  :2098[1]
+
+; sort active objects, frontmost first
     lda #0                                                            ; 21cb: a9 00       ..  :209a[1]
-    sta processing_object_index                                       ; 21cd: 85 63       .c  :209c[1]
-c209e
+    sta temp_active_object_index                                      ; 21cd: 85 63       .c  :209c[1]
+sort_objects_loop
     lda #$ff                                                          ; 21cf: a9 ff       ..  :209e[1]
     sta backmost_object_index                                         ; 21d1: 85 60       .`  :20a0[1]
     sta backmost_object_z_order                                       ; 21d3: 85 61       .a  :20a2[1]
+
+; now find the frontmost of the active objects
     ldx #0                                                            ; 21d5: a2 00       ..  :20a4[1]
-loop_c20a6
-    ldy objects_to_process_table,x                                    ; 21d7: bc 00 01    ... :20a6[1]
-    bmi c20be                                                         ; 21da: 30 13       0.  :20a9[1]
+inner_object_loop
+    ldy active_objects_table,x                                        ; 21d7: bc 00 01    ... :20a6[1]
+    bmi move_to_next_active_object                                    ; 21da: 30 13       0.  :20a9[1]
     lda object_z_order,y                                              ; 21dc: b9 c2 38    ..8 :20ab[1]
     cmp backmost_object_z_order                                       ; 21df: c5 61       .a  :20ae[1]
-    bcc c20b8                                                         ; 21e1: 90 06       ..  :20b0[1]
-    bne c20be                                                         ; 21e3: d0 0a       ..  :20b2[1]
+    bcc found_an_object_further_front                                 ; 21e1: 90 06       ..  :20b0[1]
+    bne move_to_next_active_object                                    ; 21e3: d0 0a       ..  :20b2[1]
     cpy backmost_object_index                                         ; 21e5: c4 60       .`  :20b4[1]
-    bcs c20be                                                         ; 21e7: b0 06       ..  :20b6[1]
-c20b8
+    bcs move_to_next_active_object                                    ; 21e7: b0 06       ..  :20b6[1]
+found_an_object_further_front
     sty backmost_object_index                                         ; 21e9: 84 60       .`  :20b8[1]
     sta backmost_object_z_order                                       ; 21eb: 85 61       .a  :20ba[1]
-    stx l0064                                                         ; 21ed: 86 64       .d  :20bc[1]
-c20be
+    stx temp_object_index                                             ; 21ed: 86 64       .d  :20bc[1]
+move_to_next_active_object
     inx                                                               ; 21ef: e8          .   :20be[1]
-    cpx num_objects_to_process                                        ; 21f0: e4 62       .b  :20bf[1]
-    bcc loop_c20a6                                                    ; 21f2: 90 e3       ..  :20c1[1]
-    ldx l0064                                                         ; 21f4: a6 64       .d  :20c3[1]
+    cpx num_active_objects                                            ; 21f0: e4 62       .b  :20bf[1]
+    bcc inner_object_loop                                             ; 21f2: 90 e3       ..  :20c1[1]
+
+; mark object as done
+    ldx temp_object_index                                             ; 21f4: a6 64       .d  :20c3[1]
     lda #$ff                                                          ; 21f6: a9 ff       ..  :20c5[1]
-    sta objects_to_process_table,x                                    ; 21f8: 9d 00 01    ... :20c7[1]
-    ldx processing_object_index                                       ; 21fb: a6 63       .c  :20ca[1]
+    sta active_objects_table,x                                        ; 21f8: 9d 00 01    ... :20c7[1]
+; record frontmost object in table
+    ldx temp_active_object_index                                      ; 21fb: a6 63       .c  :20ca[1]
     lda backmost_object_index                                         ; 21fd: a5 60       .`  :20cc[1]
-    sta l010b,x                                                       ; 21ff: 9d 0b 01    ... :20ce[1]
+    sta frontmost_objects_table,x                                     ; 21ff: 9d 0b 01    ... :20ce[1]
     inx                                                               ; 2202: e8          .   :20d1[1]
-    stx processing_object_index                                       ; 2203: 86 63       .c  :20d2[1]
-    cpx num_objects_to_process                                        ; 2205: e4 62       .b  :20d4[1]
-    bcc c209e                                                         ; 2207: 90 c6       ..  :20d6[1]
+    stx temp_active_object_index                                      ; 2203: 86 63       .c  :20d2[1]
+    cpx num_active_objects                                            ; 2205: e4 62       .b  :20d4[1]
+    bcc sort_objects_loop                                             ; 2207: 90 c6       ..  :20d6[1]
+
+; undraw objects from front to back
     ldy #0                                                            ; 2209: a0 00       ..  :20d8[1]
-loop_c20da
-    lda l010b,y                                                       ; 220b: b9 0b 01    ... :20da[1]
+undraw_loop
+    lda frontmost_objects_table,y                                     ; 220b: b9 0b 01    ... :20da[1]
     tax                                                               ; 220e: aa          .   :20dd[1]
     jsr undraw_object_x                                               ; 220f: 20 57 21     W! :20de[1]
     iny                                                               ; 2212: c8          .   :20e1[1]
-    cpy num_objects_to_process                                        ; 2213: c4 62       .b  :20e2[1]
-    bcc loop_c20da                                                    ; 2215: 90 f4       ..  :20e4[1]
+    cpy num_active_objects                                            ; 2213: c4 62       .b  :20e2[1]
+    bcc undraw_loop                                                   ; 2215: 90 f4       ..  :20e4[1]
+
+; draw objects from back to front (aka 'painters algorithm')
     dey                                                               ; 2217: 88          .   :20e6[1]
-loop_c20e7
-    lda l010b,y                                                       ; 2218: b9 0b 01    ... :20e7[1]
+draw_loop
+    lda frontmost_objects_table,y                                     ; 2218: b9 0b 01    ... :20e7[1]
     tax                                                               ; 221b: aa          .   :20ea[1]
     jsr draw_object_x                                                 ; 221c: 20 9a 21     .! :20eb[1]
     jsr copy_object_state_to_old                                      ; 221f: 20 f7 20     .  :20ee[1]
     dey                                                               ; 2222: 88          .   :20f1[1]
-    bpl loop_c20e7                                                    ; 2223: 10 f3       ..  :20f2[1]
+    bpl draw_loop                                                     ; 2223: 10 f3       ..  :20f2[1]
     jmp find_backmost_object_not_dealt_with_yet                       ; 2225: 4c e9 1f    L.. :20f4[1]
 
+; *************************************************************************************
+; 
+; Once an object is drawn to the screen, this remembers the current object state in
+; "_old" variables. We use this later to detect whether the object state has changed
+; and to undraw if needed.
+; 
+; *************************************************************************************
 copy_object_state_to_old
     pha                                                               ; 2228: 48          H   :20f7[1]
     lda object_x_low,x                                                ; 2229: bd 50 09    .P. :20f8[1]
@@ -8722,12 +8779,6 @@ plot_move_x_high
 pydis_end
 
 ; Automatically generated labels:
-;     c2061
-;     c207d
-;     c208d
-;     c209e
-;     c20b8
-;     c20be
 ;     c21ef
 ;     c2284
 ;     c228b
@@ -8838,13 +8889,11 @@ pydis_end
 ;     c39f4
 ;     c3a08
 ;     l0053
-;     l0064
 ;     l0066
 ;     l0067
 ;     l0068
 ;     l0087
 ;     l00fd
-;     l010b
 ;     l09eb
 ;     l0b00
 ;     l288f
@@ -8864,9 +8913,6 @@ pydis_end
 ;     lbf00
 ;     loop_c0aba
 ;     loop_c0ac6
-;     loop_c20a6
-;     loop_c20da
-;     loop_c20e7
 ;     loop_c22b4
 ;     loop_c2406
 ;     loop_c2684

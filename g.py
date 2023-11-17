@@ -299,6 +299,9 @@ label(0x005a, "temp_sprite_offset")
 label(0x005c, "displayed_transformations_remaining")
 
 label(0x005f, "initial_level_number_div4")
+label(0x0062, "num_active_objects")
+label(0x0063, "temp_active_object_index")
+label(0x0064, "temp_object_index")
 label(0x0065, "remember_object_index")
 
 label(0x0070, "address1_low")
@@ -410,6 +413,7 @@ sprite_dict = {
     199: "spriteid_199",            # TODO: Better name
 }
 
+label(0x0100, "active_objects_table")
 label(0x0123, "x_object_right_low")
 label(0x0124, "x_object_right_high")
 label(0x0125, "x_object_top_low")
@@ -917,8 +921,9 @@ binary(0x1ea7, 4)
 label(0x1ea7, "bitmask_of_bits_to_keep_from_collision_map_table")
 binary(0x1eab, 16)
 label(0x1eab, "value_to_write_into_collision_map_table")
-comment(0x1fde, "start with no objects dealt with")
+comment(0x1fde, "mark all objects as 'not dealt with' yet")
 expr(0x1fe6, "max_objects")
+comment(0x1fe9, "find the object that is at the back")
 
 label(0x1fe1, "reset_object_dealt_with_flags_loop")
 label(0x0116, "object_dealt_with_flag")
@@ -931,24 +936,55 @@ comment(0x1ffa, "object doesn't count if it has no sprites")
 comment(0x2002, "check object X z-order against the best so far")
 comment(0x2009, "found new backmost object, store it's index and z-order")
 expr(0x200f, "max_objects")
-label(0x2027, "found_object_to_process")
-label(0x2039, "process_objects_loop")
-label(0x2047, "loop_all_objects")
-label(0x204a, "find_object_to_process_loop")
-expr(0x208f, "max_objects")
+comment(0x2012, "check if we found a backmost object")
+comment(0x2016, "after dealing with all active objects, update the state of the inactive ones")
 expr(0x2017, "max_objects-1")
 label(0x2018, "update_non_active_object_state_loop")
 label(0x2020, "skip_objects_already_dealt_with")
-comment(0x2012, "check if we found a backmost object")
-comment(0x2016, "after dealing with all active objects, update the state of the inactive ones")
 comment(0x2023, "restore the player held item")
-label(0x1fe9, "find_backmost_object_not_dealt_with_yet")
-label(0x0062, "num_objects_to_process")
-label(0x0100, "objects_to_process_table")
+label(0x2027, "found_backmost_object")
 comment(0x2027, "mark object as dealt with", inline=True)
-comment(0x202c, "if the object has not changed state, we don't need to do anything. Move on to the next object")
-comment(0x2031, "record the index of the object to process (by appending it to a table)")
-label(0x0063, "processing_object_index")
+comment(0x202c, "Look for active objects. If the object hasn't changed state, move to the next object")
+comment(0x2031, "append the active object to the active_objects_table")
+label(0x2039, "process_active_objects_loop")
+label(0x2047, "loop_over_all_objects_x")
+comment(0x2048, "find inactive objects. i.e. if object x is found in the active objects table, skip it and try the next object")
+comment(0x2054, "found an inactive object x. If it's in front of the backmost active object, test it for collision")
+comment(0x205b, "to resolve equal z orders, look at the index. i.e. if the object x has the same z order as the backmost active object and a smaller index, also test for collision.")
+label(0x207d, "found_collision")
+label(0x2061, "test_for_collision")
+label(0x204a, "find_object_y_loop")
+label(0x208d, "move_to_next_object_x")
+expr(0x208f, "max_objects")
+blank(0x209a)
+comment(0x209a, "sort active objects, frontmost first")
+label(0x209e, "sort_objects_loop")
+label(0x1fe9, "find_backmost_object_not_dealt_with_yet")
+blank(0x2045)
+comment(0x2045, "this whole next section looks for any inactive objects that (a) are in front of and (b) intersect with the latest active object. These are added to the active object list too. This determines the drawing order.")
+comment(0x207f, "mark object x as dealt with")
+comment(0x2084, "append to the active objects list")
+blank(0x20a4)
+comment(0x20a4, "now find the frontmost of the active objects")
+label(0x20b8, "found_an_object_further_front")
+label(0x20a6, "inner_object_loop")
+label(0x20be, "move_to_next_active_object")
+blank(0x20c3)
+comment(0x20c3, "mark object as done")
+blank(0x20d8)
+comment(0x20ca, "record frontmost object in table")
+label(0x010b, "frontmost_objects_table")
+comment(0x20d8, "undraw objects from front to back")
+label(0x20da, "undraw_loop")
+blank(0x20e6)
+comment(0x20e6, "draw objects from back to front (aka 'painters algorithm')")
+label(0x20e7, "draw_loop")
+
+comment(0x20f7, """*************************************************************************************
+
+Once an object is drawn to the screen, this remembers the current object state in "_old" variables. We use this later to detect whether the object state has changed and to undraw if needed.
+
+*************************************************************************************""")
 
 label(0x1589, "check_within_vertical_range")
 expr(0x1570, make_lo("screen_width_in_pixels"))
@@ -1719,6 +1755,27 @@ label(0x1b8a, "draw_right_facing_wall_local")
 comment(0x1fd7, """*************************************************************************************
 
 Update objects
+
+Draws and undraws objects, taking into account z-order.
+
+The z-order values range from $00 at the front, $80 at the midpoint (where the player is) and $ff at the back.
+
+Objects are (a) undrawn from front to back, then (b) redrawn from back to front.
+Objects are not redrawn if their state remains unchanged ('inactive'), unless they need to be because there's an active object behind them.
+
+The algorithm used to do this is:
+
+1. Mark all objects as 'not dealt with'
+2. Find the backmost object that is (a) undealt with (b) has a sprite and (c) has changed state ('active').
+3. If none found (i.e. all that need to be dealt with have been), then update (copy) the state of the inactive objects and return.
+4. Mark the active object as dealt with.
+5. Append the object to a list of active objects.
+6. Append any inactive objects that are in front of this active object. Those inactive objects are marked as 'dealt with'.
+7. Goto 4 if more inactive objects were appended to the active list to deal with them and append anything in front of them.
+8. Sort the active objects list from front to back.
+9. Undraw the active objects (front to back).
+10. Draw the active objects (back to front).
+11. Goto 2.
 
 *************************************************************************************""")
 entry(0x1fd7, "update_objects")
