@@ -1413,7 +1413,7 @@ set_table_x_position_to_right_side
 table_x_position_update_finished
     lda desired_room_index                                            ; 4339: a5 30       .0
     cmp #3                                                            ; 433b: c9 03       ..
-    bne c43f6_local                                                   ; 433d: d0 13       ..
+    bne add_table_to_collision_map_if_room_3_local                    ; 433d: d0 13       ..
     ldx #<envelope4                                                   ; 433f: a2 4a       .J
     ldy #>envelope4                                                   ; 4341: a0 44       .D
     jsr define_envelope                                               ; 4343: 20 5e 39     ^9
@@ -1423,7 +1423,7 @@ table_x_position_update_finished
     lda #spriteid_zero_size1                                          ; 434d: a9 cc       ..
     sta object_sprite_mask_type,x                                     ; 434f: 9d ac 38    ..8
 ; $4352 referenced 1 time by $433d
-c43f6_local
+add_table_to_collision_map_if_room_3_local
     jmp add_table_to_collision_map_if_room_3                          ; 4352: 4c f6 43    L.C
 
 ; $4355 referenced 5 times by $4361, $436f, $437d, $438b, $4399
@@ -2037,7 +2037,7 @@ pydis_end
 ;     c424c:                                                     1
 ;     loop_until_exit_room_left:                                 1
 ;     room3_handler:                                             1
-;     c43f6_local:                                               1
+;     add_table_to_collision_map_if_room_3_local:                1
 ;     room3_not_first_update:                                    1
 ;     table_at_max_x_position:                                   1
 ;     moving_table_hit_wall:                                     1
