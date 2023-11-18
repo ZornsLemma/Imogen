@@ -1398,14 +1398,14 @@ room3_handler
     beq table_x_position_update_finished                              ; 431f: f0 18       ..
     bpl set_table_x_position_to_right_side                            ; 4321: 10 0c       ..
 ; Set table_x_position to left side of screen
-    lda #$0a                                                          ; 4323: a9 0a       ..
+    lda #table_min_x                                                  ; 4323: a9 0a       ..
     sta table_x_position                                              ; 4325: 8d 01 0a    ...
     lda #0                                                            ; 4328: a9 00       ..
     sta table_x_speed                                                 ; 432a: 8d 02 0a    ...
     beq table_x_position_update_finished                              ; 432d: f0 0a       ..             ; ALWAYS branch
 ; $432f referenced 2 times by $431a, $4321
 set_table_x_position_to_right_side
-    lda #$16                                                          ; 432f: a9 16       ..
+    lda #table_max_x                                                  ; 432f: a9 16       ..
     sta table_x_position                                              ; 4331: 8d 01 0a    ...
     lda #0                                                            ; 4334: a9 00       ..
     sta table_x_speed                                                 ; 4336: 8d 02 0a    ...
