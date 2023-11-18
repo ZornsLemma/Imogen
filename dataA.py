@@ -57,6 +57,9 @@ substitute_labels = {
     (0x3bd4,0x3df9): {
         "l0070": "room_exit_direction",
     },
+    (0x43a0,0x43e5): {
+        "l0070": "old_table_x_position", # used during sliding
+    },
 }
 
 # (Class SubstituteLabels is defined in common.py to implement the substitute labels)
@@ -308,6 +311,7 @@ ab(0x4384)
 entry(0x4352, "c43f6_local")
 comment(0x43fc, "Add the table to the collision map and set its object position.")
 expr(0x4411, "objectid_table")
+entry(0x43e3, "remove_table_from_collision_map_at_old_table_x_position")
 
 comment(0x407f, "Room 2 has the spell, guarded by a baby. TODO: Not too sure I have the room number correct etc.")
 entry(0x407f, "room2_handler") # TODO: not too sure about this
