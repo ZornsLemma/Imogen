@@ -316,6 +316,10 @@ entry(0x43b4, "moving_table_hit_wall")
 entry(0x43d4, "moving_table_not_hit_wall")
 entry(0x43ce, "ready_to_play_table_hit_wall_sound")
 entry(0x43a0, "move_table")
+entry(0x43f6, "add_table_to_collision_map_if_room_3")
+constant(0x16, "table_max_x")
+expr(0x4367, "table_max_x")
+expr(0x43b1, "table_max_x")
 
 comment(0x407f, "Room 2 has the spell, guarded by a baby. TODO: Not too sure I have the room number correct etc.")
 entry(0x407f, "room2_handler") # TODO: not too sure about this

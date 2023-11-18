@@ -57,6 +57,7 @@ spriteid_trapdoor_diagonal         = 208
 spriteid_trapdoor_horizontal       = 207
 spriteid_trapdoor_vertical         = 209
 spriteid_zero_size1                = 204
+table_max_x                        = 22
 
 ; Memory locations
 characters_entered                                  = $05
@@ -1422,7 +1423,7 @@ table_x_position_update_finished
     sta object_sprite_mask_type,x                                     ; 434f: 9d ac 38    ..8
 ; $4352 referenced 1 time by $433d
 c43f6_local
-    jmp c43f6                                                         ; 4352: 4c f6 43    L.C
+    jmp add_table_to_collision_map_if_room_3                          ; 4352: 4c f6 43    L.C
 
 ; $4355 referenced 5 times by $4361, $436f, $437d, $438b, $4399
 return4_local
@@ -1436,7 +1437,7 @@ room3_not_first_update
     cmp #3                                                            ; 435f: c9 03       ..
     bne return4_local                                                 ; 4361: d0 f2       ..
     lda table_x_position                                              ; 4363: ad 01 0a    ...
-    cmp #$16                                                          ; 4366: c9 16       ..
+    cmp #table_max_x                                                  ; 4366: c9 16       ..
     beq c4386                                                         ; 4368: f0 1c       ..
     lda object_room_collision_flags                                   ; 436a: ad d8 38    ..8
     and #object_collided_right_wall                                   ; 436d: 29 04       ).
@@ -1472,7 +1473,7 @@ move_table
     sta table_x_position                                              ; 43a9: 8d 01 0a    ...
     cmp #$0a                                                          ; 43ac: c9 0a       ..
     beq moving_table_hit_wall                                         ; 43ae: f0 04       ..
-    cmp #$16                                                          ; 43b0: c9 16       ..
+    cmp #table_max_x                                                  ; 43b0: c9 16       ..
     bne moving_table_not_hit_wall                                     ; 43b2: d0 20       .
 ; $43b4 referenced 1 time by $43ae
 moving_table_hit_wall
@@ -1513,7 +1514,7 @@ remove_table_from_collision_map_at_old_table_x_position
     sta value_to_write_to_collision_map                               ; 43f1: 85 3e       .>
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 43f3: 20 44 1e     D.
 ; $43f6 referenced 1 time by $4352
-c43f6
+add_table_to_collision_map_if_room_3
     lda desired_room_index                                            ; 43f6: a5 30       .0
     cmp #3                                                            ; 43f8: c9 03       ..
     bne return4                                                       ; 43fa: d0 19       ..
@@ -2042,7 +2043,7 @@ pydis_end
 ;     ready_to_play_table_hit_wall_sound:                        1
 ;     moving_table_not_hit_wall:                                 1
 ;     remove_table_from_collision_map_at_old_table_x_position:   1
-;     c43f6:                                                     1
+;     add_table_to_collision_map_if_room_3:                      1
 
 ; Automatically generated labels:
 ;     c3b0e
@@ -2072,7 +2073,6 @@ pydis_end
 ;     c4235
 ;     c424c
 ;     c4386
-;     c43f6
 ;     l0954
 ;     l0980
 ;     l09aa
@@ -2356,6 +2356,9 @@ pydis_end
 }
 !if (spriteid_zero_size1) != $cc {
     !error "Assertion failed: spriteid_zero_size1 == $cc"
+}
+!if (table_max_x) != $16 {
+    !error "Assertion failed: table_max_x == $16"
 }
 !if (toolbar_collectable_spriteids + 1) != $2ee9 {
     !error "Assertion failed: toolbar_collectable_spriteids + 1 == $2ee9"
