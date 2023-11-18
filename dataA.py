@@ -278,6 +278,7 @@ expr(0x3f3d, "objectid_saxophone") # TODO: not entirely sure this is the right o
 expr(0x3f48, "spriteid_zero_size1")
 expr(0x3f4d, "spriteid_saxophone1")
 expr(0x3f16, "spriteid_saxophone2")
+comment(0x3f34, "The player has not collected the saxophone, so place it in the lower left of the room.")
 
 comment(0x407f, "Room 2 has the spell, guarded by a baby. TODO: Not too sure I have the room number correct etc.")
 entry(0x407f, "room2_handler") # TODO: not too sure about this

@@ -802,6 +802,8 @@ sub_c3f02
     bne return3                                                       ; 3f2d: d0 22       ."
     lda saxophone_collected_flag                                      ; 3f2f: ad 00 0a    ...
     bne return3                                                       ; 3f32: d0 1d       ..
+; The player has not collected the saxophone, so place it in the lower left of the
+; room.
     ldx #$1b                                                          ; 3f34: a2 1b       ..
     ldy #$12                                                          ; 3f36: a0 12       ..
     lda #7                                                            ; 3f38: a9 07       ..
