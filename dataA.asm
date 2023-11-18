@@ -13,6 +13,7 @@ game_area_width_cells              = 40
 last_level_letter                  = 81
 objectid_TODO                      = 2
 objectid_brazier                   = 5
+objectid_brazier2                  = 3
 objectid_left_mouse                = 2
 objectid_left_trapdoor             = 2
 objectid_mouse_ball                = 4
@@ -1362,11 +1363,12 @@ loop_c42ea
     ldy desired_level                                                 ; 42f3: a4 31       .1
     jmp initialise_level                                              ; 42f5: 4c 40 11    L@.
 
+; Room 3 has a table which can be pushed to the left or right side of the screen.
 ; $42f8 referenced 1 time by $3b23
 sub_c42f8
     lda #3                                                            ; 42f8: a9 03       ..
     sta current_room_index                                            ; 42fa: 8d ba 1a    ...
-    lda #3                                                            ; 42fd: a9 03       ..
+    lda #objectid_brazier2                                            ; 42fd: a9 03       ..
     ldx #$14                                                          ; 42ff: a2 14       ..
     ldy #$0c                                                          ; 4301: a0 0c       ..
     jsr update_brazier_and_fire                                       ; 4303: 20 88 19     ..
@@ -1374,7 +1376,7 @@ sub_c42f8
     inx                                                               ; 4308: e8          .
     jsr update_brazier_and_fire                                       ; 4309: 20 88 19     ..
     lda update_room_first_update_flag                                 ; 430c: ad 2b 13    .+.
-    beq c4358                                                         ; 430f: f0 47       .G
+    beq room3_not_first_update                                        ; 430f: f0 47       .G
     lda previous_level                                                ; 4311: a5 51       .Q
     cmp desired_level                                                 ; 4313: c5 31       .1
     beq c4339                                                         ; 4315: f0 22       ."
@@ -1403,9 +1405,9 @@ c4339
     ldy #>envelope4                                                   ; 4341: a0 44       .D
     jsr define_envelope                                               ; 4343: 20 5e 39     ^9
     ldx #2                                                            ; 4346: a2 02       ..
-    lda #$de                                                          ; 4348: a9 de       ..
+    lda #spriteid_table                                               ; 4348: a9 de       ..
     sta object_spriteid,x                                             ; 434a: 9d a8 09    ...
-    lda #$cc                                                          ; 434d: a9 cc       ..
+    lda #spriteid_zero_size1                                          ; 434d: a9 cc       ..
     sta object_sprite_mask_type,x                                     ; 434f: 9d ac 38    ..8
 ; $4352 referenced 1 time by $433d
 c4352
@@ -1416,7 +1418,7 @@ c4355
     jmp c4415                                                         ; 4355: 4c 15 44    L.D
 
 ; $4358 referenced 1 time by $430f
-c4358
+room3_not_first_update
     lda l0a02                                                         ; 4358: ad 02 0a    ...
     bne c43a0                                                         ; 435b: d0 43       .C
     lda desired_room_index                                            ; 435d: a5 30       .0
@@ -2022,7 +2024,7 @@ pydis_end
 ;     loop_c42ea:                                               1
 ;     sub_c42f8:                                                1
 ;     c4352:                                                    1
-;     c4358:                                                    1
+;     room3_not_first_update:                                   1
 ;     c4386:                                                    1
 ;     c43b4:                                                    1
 ;     c43ce:                                                    1
@@ -2064,7 +2066,6 @@ pydis_end
 ;     c4339
 ;     c4352
 ;     c4355
-;     c4358
 ;     c4386
 ;     c43a0
 ;     c43b4
@@ -2224,6 +2225,9 @@ pydis_end
 }
 !if (objectid_brazier) != $05 {
     !error "Assertion failed: objectid_brazier == $05"
+}
+!if (objectid_brazier2) != $03 {
+    !error "Assertion failed: objectid_brazier2 == $03"
 }
 !if (objectid_left_mouse) != $02 {
     !error "Assertion failed: objectid_left_mouse == $02"
