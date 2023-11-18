@@ -212,6 +212,7 @@ comment(0x3e99, "Remove the closed trapdoor from the collision map.")
 comment(0x3eac, "Add the two open trapdoors to the collision map.")
 expr(0x3f18, make_add("toolbar_collectable_spriteids", "1"))
 expr(0x3f1d, make_add("collectable_spriteids", "1"))
+entry(0x3bd4, "loop_until_exit_room_right")
 
 # TODO: slight guesswork
 # Room 0?
@@ -300,6 +301,8 @@ entry(0x407f, "room2_handler") # TODO: not too sure about this
 expr(0x4093, "objectid_spell")
 expr(0x40d7, "objectid_TODO")
 expr(0x40dc, "spriteid_zero_size1")
+
+entry(0x42ea, "loop_until_exit_room_left")
 
 # TODO: Use this more?
 def ldx_ldy_jsr_play_sound_yx(jsr_runtime_addr, s):

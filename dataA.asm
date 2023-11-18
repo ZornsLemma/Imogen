@@ -302,11 +302,11 @@ room_1_code
     jsr draw_rope                                                     ; 3bce: 20 b9 1d     ..
     jsr start_room                                                    ; 3bd1: 20 bb 12     ..
 ; $3bd4 referenced 1 time by $3bdb
-loop_c3bd4
+loop_until_exit_room_right
     jsr game_update                                                   ; 3bd4: 20 da 12     ..
     sta room_exit_direction                                           ; 3bd7: 85 70       .p
     and #4                                                            ; 3bd9: 29 04       ).
-    beq loop_c3bd4                                                    ; 3bdb: f0 f7       ..
+    beq loop_until_exit_room_right                                    ; 3bdb: f0 f7       ..
     ldx #1                                                            ; 3bdd: a2 01       ..
     ldy desired_level                                                 ; 3bdf: a4 31       .1
     jsr initialise_level                                              ; 3be1: 20 40 11     @.
@@ -1356,10 +1356,10 @@ room_4_code
     jsr draw_rope                                                     ; 42e4: 20 b9 1d     ..
     jsr start_room                                                    ; 42e7: 20 bb 12     ..
 ; $42ea referenced 1 time by $42ef
-loop_c42ea
+loop_until_exit_room_left
     jsr game_update                                                   ; 42ea: 20 da 12     ..
     and #1                                                            ; 42ed: 29 01       ).
-    beq loop_c42ea                                                    ; 42ef: f0 f9       ..
+    beq loop_until_exit_room_left                                     ; 42ef: f0 f9       ..
     ldx #1                                                            ; 42f1: a2 01       ..
     ldy desired_level                                                 ; 42f3: a4 31       .1
     jmp initialise_level                                              ; 42f5: 4c 40 11    L@.
@@ -1977,7 +1977,7 @@ pydis_end
 ;     l38ae:                                                    1
 ;     l3970:                                                    1
 ;     developer_mode_not_active:                                1
-;     loop_c3bd4:                                               1
+;     loop_until_exit_room_right:                               1
 ;     room0_handler:                                            1
 ;     initialise_mouse_ball_position_if_level_changed:          1
 ;     level_unchanged:                                          1
@@ -2022,7 +2022,7 @@ pydis_end
 ;     c420c:                                                    1
 ;     c4224:                                                    1
 ;     c424c:                                                    1
-;     loop_c42ea:                                               1
+;     loop_until_exit_room_left:                                1
 ;     room3_handler:                                            1
 ;     c4352:                                                    1
 ;     room3_not_first_update:                                   1
@@ -2096,8 +2096,6 @@ pydis_end
 ;     l3fd5
 ;     l3fd6
 ;     l40e3
-;     loop_c3bd4
-;     loop_c42ea
 ;     sub_c3f8b
 !if (<envelope1) != $60 {
     !error "Assertion failed: <envelope1 == $60"
