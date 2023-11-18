@@ -779,6 +779,7 @@ play_some_sound1_then_some_sound2
     jsr play_sound_yx                                                 ; 3efe: 20 f6 38     .8
     rts                                                               ; 3f01: 60          `
 
+; TODO: This forcing of current_room_index to 1 seems odd.
 ; $3f02 referenced 1 time by $3b20
 sub_c3f02
     lda #1                                                            ; 3f02: a9 01       ..
