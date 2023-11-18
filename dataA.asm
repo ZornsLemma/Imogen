@@ -1471,11 +1471,11 @@ c43a0
     adc table_x_speed                                                 ; 43a6: 6d 02 0a    m..
     sta table_x_position                                              ; 43a9: 8d 01 0a    ...
     cmp #$0a                                                          ; 43ac: c9 0a       ..
-    beq c43b4                                                         ; 43ae: f0 04       ..
+    beq moving_table_hit_wall                                         ; 43ae: f0 04       ..
     cmp #$16                                                          ; 43b0: c9 16       ..
-    bne c43d4                                                         ; 43b2: d0 20       .
+    bne moving_table_not_hit_wall                                     ; 43b2: d0 20       .
 ; $43b4 referenced 1 time by $43ae
-c43b4
+moving_table_hit_wall
     lda #0                                                            ; 43b4: a9 00       ..
     sta table_x_speed                                                 ; 43b6: 8d 02 0a    ...
     lda desired_room_index                                            ; 43b9: a5 30       .0
@@ -1483,17 +1483,17 @@ c43b4
     bne return4                                                       ; 43bd: d0 56       .V
     lda sound_priority_per_channel_table                              ; 43bf: ad 6f 39    .o9
     cmp #$81                                                          ; 43c2: c9 81       ..
-    bcs c43ce                                                         ; 43c4: b0 08       ..
+    bcs ready_to_play_table_hit_wall_sound                            ; 43c4: b0 08       ..
     lda #0                                                            ; 43c6: a9 00       ..
     sta sound_priority_per_channel_table                              ; 43c8: 8d 6f 39    .o9
     sta sound_priority_per_channel_table + 1                          ; 43cb: 8d 70 39    .p9
 ; $43ce referenced 1 time by $43c4
-c43ce
+ready_to_play_table_hit_wall_sound
     jsr play_landing_sound                                            ; 43ce: 20 a9 23     .#
     jmp remove_table_from_collision_map_at_old_table_x_position       ; 43d1: 4c e3 43    L.C
 
 ; $43d4 referenced 1 time by $43b2
-c43d4
+moving_table_not_hit_wall
     lda desired_room_index                                            ; 43d4: a5 30       .0
     cmp #3                                                            ; 43d6: c9 03       ..
     bne return4                                                       ; 43d8: d0 3b       .;
@@ -2038,9 +2038,9 @@ pydis_end
 ;     c43f6_local:                                               1
 ;     room3_not_first_update:                                    1
 ;     c4386:                                                     1
-;     c43b4:                                                     1
-;     c43ce:                                                     1
-;     c43d4:                                                     1
+;     moving_table_hit_wall:                                     1
+;     ready_to_play_table_hit_wall_sound:                        1
+;     moving_table_not_hit_wall:                                 1
 ;     remove_table_from_collision_map_at_old_table_x_position:   1
 ;     c43f6:                                                     1
 
@@ -2073,9 +2073,6 @@ pydis_end
 ;     c424c
 ;     c4386
 ;     c43a0
-;     c43b4
-;     c43ce
-;     c43d4
 ;     c43f6
 ;     l0954
 ;     l0980
