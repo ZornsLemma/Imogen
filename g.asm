@@ -8393,8 +8393,8 @@ sideways_rom_return
     !byte 0, 0, 0, 0, 0, 0, 0                                         ; 3fc4: 00 00 00... ... :8009[6]   ; unused bytes
 }
 
-relocation4_high_copy_start
 sideways_rom_image_source_end
+relocation4_high_copy_start
 
 !pseudopc $0c00 {
 ; Initialise display
@@ -8623,9 +8623,9 @@ digit_unchanged
 
 }
 
-relocation1_high_copy_start
-icodata
 relocation5_high_copy_end
+icodata
+relocation1_high_copy_start
 
 !pseudopc $0400 {
 wait_for_timingB_counter
@@ -9729,6 +9729,9 @@ pydis_end
 }
 !if (relocation3_high_copy_end - relocation3_high_copy_start) != $48 {
     !error "Assertion failed: relocation3_high_copy_end - relocation3_high_copy_start == $48"
+}
+!if (relocation4_high_copy_start) != $3fcb {
+    !error "Assertion failed: relocation4_high_copy_start == $3fcb"
 }
 !if (relocation5_high_copy_end - relocation5_high_copy_start) != $2f {
     !error "Assertion failed: relocation5_high_copy_end - relocation5_high_copy_start == $2f"
