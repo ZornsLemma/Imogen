@@ -3230,6 +3230,9 @@ print("""; *********************************************************************
 ;
 ; Memory map
 ; ----------
+;
+; After the memory gets relocated at initialisation:
+;
 ;   0100-012e: object data (object extents etc)
 ;   0131-0160: code to print transformations left
 ;   0400-0527: dialog box code
@@ -3242,7 +3245,12 @@ print("""; *********************************************************************
 ;   3ad5-4ad3: 'data*' file (level code/data) (it starts as initialisation code at first before being overwritten by a level)
 ;   4ad8-5bbf: 'sprdata' file (main sprites) OR
 ;   53c0-578a: 'auxcode' file (for password / cheat codes support)
-;   5bc0-7fff: screen memory
+;   5bc0-61ff: screen memory: toolbar
+;   6200-7fff: screen memory: main game area
+;
+; During initialisation:
+;   3c06-4225: initialisation code (which will get overwritten after initialisation by level data)
+;   40ff-4318: 'icodata' file (contains toolbar sprites that are only used once to render the toolbar)
 ;
 ; *************************************************************************************
 """)
