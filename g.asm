@@ -10,7 +10,7 @@
 ; Memory map
 ; ----------
 ;
-; After the memory gets relocated:
+; After the memory gets relocated at initialisation:
 ;
 ;   0100-012e: object data (object extents etc)
 ;   0131-0160: code to print transformations left

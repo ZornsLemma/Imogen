@@ -1410,7 +1410,7 @@ set_table_x_position_to_right_side
 table_x_position_update_finished
     lda desired_room_index                                            ; 4339: a5 30       .0
     cmp #3                                                            ; 433b: c9 03       ..
-    bne c4352                                                         ; 433d: d0 13       ..
+    bne c43f6_local                                                   ; 433d: d0 13       ..
     ldx #<envelope4                                                   ; 433f: a2 4a       .J
     ldy #>envelope4                                                   ; 4341: a0 44       .D
     jsr define_envelope                                               ; 4343: 20 5e 39     ^9
@@ -1420,7 +1420,7 @@ table_x_position_update_finished
     lda #spriteid_zero_size1                                          ; 434d: a9 cc       ..
     sta object_sprite_mask_type,x                                     ; 434f: 9d ac 38    ..8
 ; $4352 referenced 1 time by $433d
-c4352
+c43f6_local
     jmp c43f6                                                         ; 4352: 4c f6 43    L.C
 
 ; $4355 referenced 5 times by $4361, $436f, $437d, $438b, $4399
@@ -1516,6 +1516,7 @@ c43f6
     lda desired_room_index                                            ; 43f6: a5 30       .0
     cmp #3                                                            ; 43f8: c9 03       ..
     bne return4                                                       ; 43fa: d0 19       ..
+; Add the table to the collision map and set its object position.
     ldx table_x_position                                              ; 43fc: ae 01 0a    ...
     ldy #$14                                                          ; 43ff: a0 14       ..
     lda #3                                                            ; 4401: a9 03       ..
@@ -1525,7 +1526,7 @@ c43f6
     lda #3                                                            ; 4409: a9 03       ..
     sta value_to_write_to_collision_map                               ; 440b: 85 3e       .>
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 440d: 20 44 1e     D.
-    lda #2                                                            ; 4410: a9 02       ..
+    lda #objectid_table                                               ; 4410: a9 02       ..
     jsr set_object_position_from_cell_xy                              ; 4412: 20 5d 1f     ].
 ; $4415 referenced 4 times by $4355, $43bd, $43d8, $43fa
 return4
@@ -2033,7 +2034,7 @@ pydis_end
 ;     c424c:                                                    1
 ;     loop_until_exit_room_left:                                1
 ;     room3_handler:                                            1
-;     c4352:                                                    1
+;     c43f6_local:                                              1
 ;     room3_not_first_update:                                   1
 ;     c4386:                                                    1
 ;     c43b4:                                                    1
@@ -2069,7 +2070,6 @@ pydis_end
 ;     c4224
 ;     c4235
 ;     c424c
-;     c4352
 ;     c4386
 ;     c43a0
 ;     c43b4
