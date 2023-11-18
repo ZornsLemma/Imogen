@@ -1420,8 +1420,8 @@ c4352
     jmp c43f6                                                         ; 4352: 4c f6 43    L.C
 
 ; $4355 referenced 5 times by $4361, $436f, $437d, $438b, $4399
-c4415_local
-    jmp c4415                                                         ; 4355: 4c 15 44    L.D
+return4_local
+    jmp return4                                                       ; 4355: 4c 15 44    L.D
 
 ; $4358 referenced 1 time by $430f
 room3_not_first_update
@@ -1429,19 +1429,19 @@ room3_not_first_update
     bne c43a0                                                         ; 435b: d0 43       .C
     lda desired_room_index                                            ; 435d: a5 30       .0
     cmp #3                                                            ; 435f: c9 03       ..
-    bne c4415_local                                                   ; 4361: d0 f2       ..
+    bne return4_local                                                 ; 4361: d0 f2       ..
     lda table_x_position                                              ; 4363: ad 01 0a    ...
     cmp #$16                                                          ; 4366: c9 16       ..
     beq c4386                                                         ; 4368: f0 1c       ..
     lda object_room_collision_flags                                   ; 436a: ad d8 38    ..8
     and #4                                                            ; 436d: 29 04       ).
-    beq c4415_local                                                   ; 436f: f0 e4       ..
+    beq return4_local                                                 ; 436f: f0 e4       ..
     lda #1                                                            ; 4371: a9 01       ..
     sta temp_right_offset                                             ; 4373: 8d d1 24    ..$
     ldx #objectid_player                                              ; 4376: a2 00       ..
     ldy #objectid_table                                               ; 4378: a0 02       ..
     jsr test_for_collision_between_objects_x_and_y                    ; 437a: 20 e2 28     .(
-    beq c4415_local                                                   ; 437d: f0 d6       ..
+    beq return4_local                                                 ; 437d: f0 d6       ..
     lda #1                                                            ; 437f: a9 01       ..
     sta table_in_motion_flag                                          ; 4381: 8d 02 0a    ...
     bne c43a0                                                         ; 4384: d0 1a       ..
@@ -1449,13 +1449,13 @@ room3_not_first_update
 c4386
     lda object_room_collision_flags                                   ; 4386: ad d8 38    ..8
     and #1                                                            ; 4389: 29 01       ).
-    beq c4415_local                                                   ; 438b: f0 c8       ..
+    beq return4_local                                                 ; 438b: f0 c8       ..
     lda #$ff                                                          ; 438d: a9 ff       ..
     sta temp_left_offset                                              ; 438f: 8d d0 24    ..$
     ldx #0                                                            ; 4392: a2 00       ..
     ldy #2                                                            ; 4394: a0 02       ..
     jsr test_for_collision_between_objects_x_and_y                    ; 4396: 20 e2 28     .(
-    beq c4415_local                                                   ; 4399: f0 ba       ..
+    beq return4_local                                                 ; 4399: f0 ba       ..
     lda #$ff                                                          ; 439b: a9 ff       ..
     sta table_in_motion_flag                                          ; 439d: 8d 02 0a    ...
 ; $43a0 referenced 2 times by $435b, $4384
@@ -1475,7 +1475,7 @@ c43b4
     sta table_in_motion_flag                                          ; 43b6: 8d 02 0a    ...
     lda desired_room_index                                            ; 43b9: a5 30       .0
     cmp #3                                                            ; 43bb: c9 03       ..
-    bne c4415                                                         ; 43bd: d0 56       .V
+    bne return4                                                       ; 43bd: d0 56       .V
     lda sound_priority_per_channel_table                              ; 43bf: ad 6f 39    .o9
     cmp #$81                                                          ; 43c2: c9 81       ..
     bcs c43ce                                                         ; 43c4: b0 08       ..
@@ -1491,7 +1491,7 @@ c43ce
 c43d4
     lda desired_room_index                                            ; 43d4: a5 30       .0
     cmp #3                                                            ; 43d6: c9 03       ..
-    bne c4415                                                         ; 43d8: d0 3b       .;
+    bne return4                                                       ; 43d8: d0 3b       .;
     lda #$80                                                          ; 43da: a9 80       ..
     ldx #<some_sound4                                                 ; 43dc: a2 58       .X
     ldy #>some_sound4                                                 ; 43de: a0 44       .D
@@ -1511,7 +1511,7 @@ c43e3
 c43f6
     lda desired_room_index                                            ; 43f6: a5 30       .0
     cmp #3                                                            ; 43f8: c9 03       ..
-    bne c4415                                                         ; 43fa: d0 19       ..
+    bne return4                                                       ; 43fa: d0 19       ..
     ldx table_x_position                                              ; 43fc: ae 01 0a    ...
     ldy #$14                                                          ; 43ff: a0 14       ..
     lda #3                                                            ; 4401: a9 03       ..
@@ -1524,7 +1524,7 @@ c43f6
     lda #2                                                            ; 4410: a9 02       ..
     jsr set_object_position_from_cell_xy                              ; 4412: 20 5d 1f     ].
 ; $4415 referenced 4 times by $4355, $43bd, $43d8, $43fa
-c4415
+return4
     rts                                                               ; 4415: 60          `
 
 envelope3
@@ -1909,7 +1909,7 @@ pydis_end
 ;     object_sprite_mask_type:                                  5
 ;     define_envelope:                                          5
 ;     c41ae:                                                    5
-;     c4415_local:                                              5
+;     return4_local:                                            5
 ;     temp_sprite_y_offset:                                     4
 ;     saxophone_collected_flag:                                 4
 ;     mouse_ball_position:                                      4
@@ -1918,7 +1918,7 @@ pydis_end
 ;     draw_floor_walls_and_ceiling_around_solid_rock:           4
 ;     sub_c3f8b:                                                4
 ;     c41d9:                                                    4
-;     c4415:                                                    4
+;     return4:                                                  4
 ;     object_spriteid:                                          3
 ;     l09aa:                                                    3
 ;     l09ab:                                                    3
@@ -2073,7 +2073,6 @@ pydis_end
 ;     c43d4
 ;     c43e3
 ;     c43f6
-;     c4415
 ;     l0954
 ;     l0980
 ;     l09aa
