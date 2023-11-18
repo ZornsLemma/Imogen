@@ -286,18 +286,19 @@ entry(0x3f02, "room1_saxophone_and_brazier_handler") # TODO:?
 comment(0x3f02, "TODO: This forcing of current_room_index to 1 seems odd.")
 comment(0x3f34, "The player has not collected the saxophone, so place it in the lower left of the room.")
 
+comment(0x42f8, "Room 3 has a table which can be pushed to the left or right side of the screen.")
+entry(0x42f8, "room3_handler")
 expr(0x42fe, "objectid_brazier2")
 entry(0x4358, "room3_not_first_update")
-comment(0x42f8, "Room 3 has a table which can be pushed to the left or right side of the screen.")
 expr(0x4349, "spriteid_table")
 expr(0x434e, "spriteid_zero_size1")
+expr(0x4347, "objectid_table")
 
 comment(0x407f, "Room 2 has the spell, guarded by a baby. TODO: Not too sure I have the room number correct etc.")
 entry(0x407f, "room2_handler") # TODO: not too sure about this
 expr(0x4093, "objectid_spell")
 expr(0x40d7, "objectid_TODO")
 expr(0x40dc, "spriteid_zero_size1")
-expr(0x4347, "objectid_table")
 
 # TODO: Use this more?
 def ldx_ldy_jsr_play_sound_yx(jsr_runtime_addr, s):

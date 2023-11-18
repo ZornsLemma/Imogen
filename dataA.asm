@@ -209,7 +209,7 @@ level_update_handler
     jsr room1_handler                                                 ; 3b1a: 20 fc 3d     .=
     jsr room2_handler                                                 ; 3b1d: 20 7f 40     .@
     jsr room1_saxophone_and_brazier_handler                           ; 3b20: 20 02 3f     .?
-    jsr sub_c42f8                                                     ; 3b23: 20 f8 42     .B
+    jsr room3_handler                                                 ; 3b23: 20 f8 42     .B
     rts                                                               ; 3b26: 60          `
 
 room_1_data_ptr
@@ -1366,7 +1366,7 @@ loop_c42ea
 
 ; Room 3 has a table which can be pushed to the left or right side of the screen.
 ; $42f8 referenced 1 time by $3b23
-sub_c42f8
+room3_handler
     lda #3                                                            ; 42f8: a9 03       ..
     sta current_room_index                                            ; 42fa: 8d ba 1a    ...
     lda #objectid_brazier2                                            ; 42fd: a9 03       ..
@@ -2023,7 +2023,7 @@ pydis_end
 ;     c4224:                                                    1
 ;     c424c:                                                    1
 ;     loop_c42ea:                                               1
-;     sub_c42f8:                                                1
+;     room3_handler:                                            1
 ;     c4352:                                                    1
 ;     room3_not_first_update:                                   1
 ;     c4386:                                                    1
@@ -2100,7 +2100,6 @@ pydis_end
 ;     loop_c4044
 ;     loop_c42ea
 ;     sub_c3f8b
-;     sub_c42f8
 !if (<envelope1) != $60 {
     !error "Assertion failed: <envelope1 == $60"
 }
