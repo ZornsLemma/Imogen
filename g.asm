@@ -256,7 +256,7 @@ new_player_character                        = $4d
 previous_room_index                         = $50
 previous_level                              = $51
 player_held_object                          = $52
-l0053                                       = $53
+player_objectid                             = $53
 sprdata_ptr                                 = $54
 temp_rope_length                            = $56
 temp_sprite_address_low                     = $58
@@ -277,103 +277,105 @@ l0068                                       = $68
 address1_low                                = $70
 animation_address_low                       = $70
 cell_x                                      = $70
-filename_low                                = $70
 level_data_ptr_low                          = $70
 menu_item_to_use                            = $70
 object_left_low                             = $70
 object_y_delta                              = $70
+osfile_block_filename_low                   = $70
 player_cell_y                               = $70
 screen_address_low                          = $70
 src_sprite_address_low                      = $70
 address1_high                               = $71
 animation_address_high                      = $71
 cell_y                                      = $71
-filename_high                               = $71
 level_data_ptr_high                         = $71
 menu_has_changed_flag                       = $71
 object_left_high                            = $71
+osfile_block_filename_high                  = $71
 screen_address_high                         = $71
 src_sprite_address_high                     = $71
 temp                                        = $71
 l0072                                       = $72
 object_right_low                            = $72
-osfile_block_filename_low                   = $72
+osfile_block_load_address_low               = $72
 sprite_screen_address_low                   = $72
 temp_sprite_list_low                        = $72
 width_in_cells_to_write                     = $72
 height_in_cells_to_write                    = $73
 l0073                                       = $73
 object_right_high                           = $73
-osfile_block_filename_high                  = $73
+osfile_block_load_address_mid1              = $73
 sprite_screen_address_high                  = $73
 temp_sprite_list_high                       = $73
 first_cell_in_row_screen_address_low        = $74
 l0074                                       = $74
 object_top_low                              = $74
 offset_within_byte                          = $74
-osfile_block_load_address_low               = $74
+osfile_block_load_address_mid2              = $74
 sprite_x_pos_low                            = $74
 temp_spriteid                               = $74
 first_cell_in_row_screen_address_high       = $75
 l0075                                       = $75
 object_top_high                             = $75
 offset_within_collision_map                 = $75
-osfile_block_load_address_mid1              = $75
+osfile_block_load_address_high              = $75
 sprite_x_pos_high                           = $75
 cell_screen_address_low                     = $76
 l0076                                       = $76
 object_bottom_low                           = $76
-osfile_block_load_address_mid2              = $76
+osfile_block_exec_address_low               = $76
 sprite_y_pos_low                            = $76
 cell_screen_address_high                    = $77
 l0077                                       = $77
 object_bottom_high                          = $77
+osfile_block_exec_address_mid1              = $77
 sprite_y_pos_high                           = $77
 l0078                                       = $78
 object_left_cell_x                          = $78
 original_off_screen_address_low             = $78
-osfile_block_exec_address_low               = $78
+osfile_block_exec_address_mid2              = $78
 sprite_x_offset_within_byte                 = $78
 byte_offset_within_sprite                   = $79
 l0079                                       = $79
 object_right_cell_x                         = $79
 original_off_screen_address_high            = $79
-osfile_block_exec_address_mid1              = $79
+osfile_block_exec_address_high              = $79
 l007a                                       = $7a
 object_top_cell_y                           = $7a
 off_screen_address_low                      = $7a
-osfile_block_exec_address_mid2              = $7a
+osfile_block_start_address_low              = $7a
 l007b                                       = $7b
 object_bottom_cell_y                        = $7b
 off_screen_address_high                     = $7b
-osfile_block_exec_address_high              = $7b
+osfile_block_start_address_mid1             = $7b
 sprite_screen_address_for_column_low        = $7b
 cell_x_plus_current_cell_within_row         = $7c
 l007c                                       = $7c
-osfile_block_start_address_low              = $7c
+osfile_block_start_address_mid2             = $7c
 player_hit_wall_on_left_flag                = $7c
 sprite_screen_address_for_column_high       = $7c
 current_row                                 = $7d
 l007d                                       = $7d
-osfile_block_start_address_mid1             = $7d
+osfile_block_start_address_high             = $7d
 player_hit_wall_on_right_flag               = $7d
 sprite_data_byte                            = $7d
 address2_low                                = $7e
 dest_sprite_address_low                     = $7e
+osfile_block_end_address_mid1               = $7e
 pattern_length_cycle_counter                = $7e
-player_has_hit_top_flag                     = $7e
+player_has_hit_ceiling_flag                 = $7e
 address2_high                               = $7f
 dest_sprite_address_high                    = $7f
-player_has_hit_bottom_flag                  = $7f
+player_has_hit_floor_flag                   = $7f
 adjustment                                  = $80
 l0080                                       = $80
 mask_sprite_byte                            = $80
-osfile_block_end_address_low                = $80
+osfile_block_end_address_mid2               = $80
 player_height_in_cells                      = $80
 player_width_in_cells                       = $80
 sprite_addr_low                             = $80
 l0081                                       = $81
-osfile_block_end_address_mid1               = $81
+osfile_block_end_address_high               = $81
 sprite_addr_high                            = $81
 sprite_width                                = $81
 sprite_bit                                  = $82
@@ -572,9 +574,9 @@ level_load_loop
 ; load level in A
     sta data_filename_variable_letter                                 ; 1286: 8d 76 12    .v. :1155[1]
     lda #<data_filename                                               ; 1289: a9 72       .r  :1158[1]
-    sta filename_low                                                  ; 128b: 85 70       .p  :115a[1]
+    sta osfile_block_filename_low                                     ; 128b: 85 70       .p  :115a[1]
     lda #>data_filename                                               ; 128d: a9 12       ..  :115c[1]
-    sta filename_high                                                 ; 128f: 85 71       .q  :115e[1]
+    sta osfile_block_filename_high                                    ; 128f: 85 71       .q  :115e[1]
     ldx #<level_data                                                  ; 1291: a2 d5       ..  :1160[1]
     ldy #>level_data                                                  ; 1293: a0 3a       .:  :1162[1]
     lda #osfile_load                                                  ; 1295: a9 ff       ..  :1164[1]
@@ -1564,20 +1566,20 @@ brk_handler
 ; 
 ; *************************************************************************************
 osfile_wrapper
-    stx osfile_block_filename_low                                     ; 180d: 86 72       .r  :16dc[1]
-    sty osfile_block_filename_high                                    ; 180f: 84 73       .s  :16de[1]
+    stx osfile_block_load_address_low                                 ; 180d: 86 72       .r  :16dc[1]
+    sty osfile_block_load_address_mid1                                ; 180f: 84 73       .s  :16de[1]
     ldx #0                                                            ; 1811: a2 00       ..  :16e0[1]
-    stx osfile_block_load_address_low                                 ; 1813: 86 74       .t  :16e2[1]
-    stx osfile_block_load_address_mid1                                ; 1815: 86 75       .u  :16e4[1]
-    stx osfile_block_exec_address_low                                 ; 1817: 86 78       .x  :16e6[1]
-    stx osfile_block_exec_address_mid1                                ; 1819: 86 79       .y  :16e8[1]
-    stx osfile_block_start_address_low                                ; 181b: 86 7c       .|  :16ea[1]
-    stx osfile_block_start_address_mid1                               ; 181d: 86 7d       .}  :16ec[1]
-    stx osfile_block_end_address_low                                  ; 181f: 86 80       ..  :16ee[1]
-    stx osfile_block_end_address_mid1                                 ; 1821: 86 81       ..  :16f0[1]
+    stx osfile_block_load_address_mid2                                ; 1813: 86 74       .t  :16e2[1]
+    stx osfile_block_load_address_high                                ; 1815: 86 75       .u  :16e4[1]
+    stx osfile_block_exec_address_mid2                                ; 1817: 86 78       .x  :16e6[1]
+    stx osfile_block_exec_address_high                                ; 1819: 86 79       .y  :16e8[1]
+    stx osfile_block_start_address_mid2                               ; 181b: 86 7c       .|  :16ea[1]
+    stx osfile_block_start_address_high                               ; 181d: 86 7d       .}  :16ec[1]
+    stx osfile_block_end_address_mid2                                 ; 181f: 86 80       ..  :16ee[1]
+    stx osfile_block_end_address_high                                 ; 1821: 86 81       ..  :16f0[1]
     tay                                                               ; 1823: a8          .   :16f2[1]
     beq skip_if_saving                                                ; 1824: f0 02       ..  :16f3[1]
-    stx osfile_block_load_address_mid2                                ; 1826: 86 76       .v  :16f5[1]
+    stx osfile_block_exec_address_low                                 ; 1826: 86 76       .v  :16f5[1]
 skip_if_saving
     ldx #0                                                            ; 1828: a2 00       ..  :16f7[1]
     stx error_code_on_brk                                             ; 182a: 86 02       ..  :16f9[1]
@@ -1590,8 +1592,8 @@ skip_if_saving
     ldx old_brkv2+1                                                   ; 1836: ae b4 0a    ... :1705[1]
     stx brkv+1                                                        ; 1839: 8e 03 02    ... :1708[1]
     cli                                                               ; 183c: 58          X   :170b[1]
-    ldx #<(filename_low)                                              ; 183d: a2 70       .p  :170c[1]
-    ldy #>(filename_low)                                              ; 183f: a0 00       ..  :170e[1]
+    ldx #<(osfile_block_filename_low)                                 ; 183d: a2 70       .p  :170c[1]
+    ldy #>(osfile_block_filename_low)                                 ; 183f: a0 00       ..  :170e[1]
     jsr osfile                                                        ; 1841: 20 dd ff     .. :1710[1]
 restore_brk_handler_since_osfile_is_finished
     sei                                                               ; 1844: 78          x   :1713[1]
@@ -2009,9 +2011,9 @@ jmp_instruction
 
 load_sprdata
     lda #<sprdata_filename                                            ; 1aa0: a9 80       ..  :196f[1]
-    sta filename_low                                                  ; 1aa2: 85 70       .p  :1971[1]
+    sta osfile_block_filename_low                                     ; 1aa2: 85 70       .p  :1971[1]
     lda #>sprdata_filename                                            ; 1aa4: a9 19       ..  :1973[1]
-    sta filename_high                                                 ; 1aa6: 85 71       .q  :1975[1]
+    sta osfile_block_filename_high                                    ; 1aa6: 85 71       .q  :1975[1]
     ldx sprdata_ptr                                                   ; 1aa8: a6 54       .T  :1977[1]
     ldy sprdata_ptr + 1                                               ; 1aaa: a4 55       .U  :1979[1]
     lda #osfile_load                                                  ; 1aac: a9 ff       ..  :197b[1]
@@ -2962,7 +2964,7 @@ clear_collision_map_loop
     ldx #>game_area_screen_address                                    ; 1f34: a2 62       .b  :1e03[1]
     stx screen_address_high                                           ; 1f36: 86 71       .q  :1e05[1]
     lda #$ff                                                          ; 1f38: a9 ff       ..  :1e07[1]
-    ldx #$80                                                          ; 1f3a: a2 80       ..  :1e09[1]
+    ldx #>end_of_screen_memory                                        ; 1f3a: a2 80       ..  :1e09[1]
 clear_screen_game_area_loop
     sta (screen_address_low),y                                        ; 1f3c: 91 70       .p  :1e0b[1]
     iny                                                               ; 1f3e: c8          .   :1e0d[1]
@@ -4177,9 +4179,10 @@ sub_c23c4
     tya                                                               ; 24f7: 98          .   :23c6[1]
     pha                                                               ; 24f8: 48          H   :23c7[1]
     lda #0                                                            ; 24f9: a9 00       ..  :23c8[1]
-    jsr sub_c2770                                                     ; 24fb: 20 70 27     p' :23ca[1]
+    jsr handle_player_hitting_floor                                   ; 24fb: 20 70 27     p' :23ca[1]
+; if (no player collision with the room) then branch (return)
     lda player_collision_flag                                         ; 24fe: ad 33 24    .3$ :23cd[1]
-    beq c242b                                                         ; 2501: f0 59       .Y  :23d0[1]
+    beq recall_registers_and_return1                                  ; 2501: f0 59       .Y  :23d0[1]
     cmp #$80                                                          ; 2503: c9 80       ..  :23d2[1]
     beq c241a                                                         ; 2505: f0 44       .D  :23d4[1]
     lda player_collision_flag                                         ; 2507: ad 33 24    .3$ :23d6[1]
@@ -4219,12 +4222,12 @@ loop_c2406
 c241a
     lda player_collision_flag                                         ; 254b: ad 33 24    .3$ :241a[1]
     cmp #$80                                                          ; 254e: c9 80       ..  :241d[1]
-    bne c242b                                                         ; 2550: d0 0a       ..  :241f[1]
+    bne recall_registers_and_return1                                  ; 2550: d0 0a       ..  :241f[1]
     lda l288f                                                         ; 2552: ad 8f 28    ..( :2421[1]
-    beq c242b                                                         ; 2555: f0 05       ..  :2424[1]
+    beq recall_registers_and_return1                                  ; 2555: f0 05       ..  :2424[1]
     lda #0                                                            ; 2557: a9 00       ..  :2426[1]
     sta player_collision_flag                                         ; 2559: 8d 33 24    .3$ :2428[1]
-c242b
+recall_registers_and_return1
     pla                                                               ; 255c: 68          h   :242b[1]   ; recall X,Y
     tay                                                               ; 255d: a8          .   :242c[1]
     pla                                                               ; 255e: 68          h   :242d[1]
@@ -4252,8 +4255,8 @@ player_collision_flag
 ;        temp_right_offset: offset to add to result (zeroed on exit)
 ; 
 ; On Exit:
-;              object_left: Set to object's position X + sprite offset - sprite width
-;             object_right: Set to object's position X + sprite offset
+;              object_left: Set to object's position X + sprite offset
+;             object_right: Set to object's position X + sprite offset + sprite width
 ;       object_left_cell_x: Cell X for object_left
 ;      object_right_cell_x: Cell X for object_right
 ;      Preserves X
@@ -4586,7 +4589,7 @@ find_left_and_right_of_object_including_held_object
     jmp adjust_left_or_right_extent_due_to_holding_an_object          ; 2723: 4c 52 25    LR% :25f2[1]
 
 sub_c25f5
-    sta l0053                                                         ; 2726: 85 53       .S  :25f5[1]
+    sta player_objectid                                               ; 2726: 85 53       .S  :25f5[1]
     tax                                                               ; 2728: aa          .   :25f7[1]
 ; clear collision flags
     lda #0                                                            ; 2729: a9 00       ..  :25f8[1]
@@ -4595,9 +4598,9 @@ sub_c25f5
     sta default_collision_map_option                                  ; 2730: 85 44       .D  :25ff[1]
     lda #1                                                            ; 2732: a9 01       ..  :2601[1]
     sta temp_bottom_offset                                            ; 2734: 8d 51 25    .Q% :2603[1]
-    ldx l0053                                                         ; 2737: a6 53       .S  :2606[1]
+    ldx player_objectid                                               ; 2737: a6 53       .S  :2606[1]
     jsr find_left_and_right_of_object_including_held_object           ; 2739: 20 df 25     .% :2608[1]
-    lda l0053                                                         ; 273c: a5 53       .S  :260b[1]
+    lda player_objectid                                               ; 273c: a5 53       .S  :260b[1]
     clc                                                               ; 273e: 18          .   :260d[1]
     adc #$0b                                                          ; 273f: 69 0b       i.  :260e[1]
     tax                                                               ; 2741: aa          .   :2610[1]
@@ -4606,7 +4609,7 @@ sub_c25f5
     lda l007c                                                         ; 2748: a5 7c       .|  :2617[1]
     ora l007d                                                         ; 274a: 05 7d       .}  :2619[1]
     beq c2626                                                         ; 274c: f0 09       ..  :261b[1]
-    lda l0053                                                         ; 274e: a5 53       .S  :261d[1]
+    lda player_objectid                                               ; 274e: a5 53       .S  :261d[1]
     clc                                                               ; 2750: 18          .   :261f[1]
     adc #$0b                                                          ; 2751: 69 0b       i.  :2620[1]
     tax                                                               ; 2753: aa          .   :2622[1]
@@ -4614,7 +4617,7 @@ sub_c25f5
 c2626
     lda #1                                                            ; 2757: a9 01       ..  :2626[1]
     sta temp_bottom_offset                                            ; 2759: 8d 51 25    .Q% :2628[1]
-    ldx l0053                                                         ; 275c: a6 53       .S  :262b[1]
+    ldx player_objectid                                               ; 275c: a6 53       .S  :262b[1]
     jsr find_top_and_bottom_of_object                                 ; 275e: 20 d2 24     .$ :262d[1]
     jsr check_for_player_intersecting_floor_or_ceiling                ; 2761: 20 e5 26     .& :2630[1]
     jsr handle_top_bottom_collision                                   ; 2764: 20 1e 27     .' :2633[1]
@@ -4623,13 +4626,13 @@ c2626
     beq c264f                                                         ; 276b: f0 13       ..  :263a[1]
     lda #1                                                            ; 276d: a9 01       ..  :263c[1]
     sta temp_bottom_offset                                            ; 276f: 8d 51 25    .Q% :263e[1]
-    ldx l0053                                                         ; 2772: a6 53       .S  :2641[1]
+    ldx player_objectid                                               ; 2772: a6 53       .S  :2641[1]
     jsr find_left_and_right_of_object_including_held_object           ; 2774: 20 df 25     .% :2643[1]
     jsr find_top_and_bottom_of_object                                 ; 2777: 20 d2 24     .$ :2646[1]
     jsr check_for_player_intersecting_wall_left_or_right              ; 277a: 20 5a 26     Z& :2649[1]
     jsr handle_left_right_wall_collision                              ; 277d: 20 93 26     .& :264c[1]
 c264f
-    lda l0053                                                         ; 2780: a5 53       .S  :264f[1]
+    lda player_objectid                                               ; 2780: a5 53       .S  :264f[1]
     bne return13                                                      ; 2782: d0 06       ..  :2651[1]
     jsr sub_c2eb8                                                     ; 2784: 20 b8 2e     .. :2653[1]
     jsr handle_player_landing_sound                                   ; 2787: 20 6b 23     k# :2656[1]
@@ -4699,7 +4702,7 @@ return14
 ; 
 ; *************************************************************************************
 handle_left_right_wall_collision
-    ldx l0053                                                         ; 27c4: a6 53       .S  :2693[1]
+    ldx player_objectid                                               ; 27c4: a6 53       .S  :2693[1]
     lda player_hit_wall_on_left_flag                                  ; 27c6: a5 7c       .|  :2695[1]
     cmp player_hit_wall_on_right_flag                                 ; 27c8: c5 7d       .}  :2697[1]
     beq return15                                                      ; 27ca: f0 49       .I  :2699[1]
@@ -4746,9 +4749,25 @@ player_has_hit_wall_on_right_side
 return15
     rts                                                               ; 2815: 60          `   :26e4[1]
 
+; *************************************************************************************
+; 
+; Check for player intersecting floor or ceiling of the room
+; 
+; On Entry:
+;     The cell based extents of the player have been worked out previously:
+;           object_left_cell_x
+;          object_right_cell_x
+;            object_top_cell_y
+;         object_bottom_cell_y
+; 
+; On Exit:
+;       player_has_hit_floor_flag: $ff if hit, $00 otherwise
+;     player_has_hit_ceiling_flag: $ff if hit, $00 otherwise
+; 
+; *************************************************************************************
 check_for_player_intersecting_floor_or_ceiling
     lda #$ff                                                          ; 2816: a9 ff       ..  :26e5[1]
-    sta player_has_hit_top_flag                                       ; 2818: 85 7e       .~  :26e7[1]
+    sta player_has_hit_ceiling_flag                                   ; 2818: 85 7e       .~  :26e7[1]
 ; start at top right
     ldy object_top_cell_y                                             ; 281a: a4 7a       .z  :26e9[1]
 ; get player width in cells
@@ -4766,10 +4785,10 @@ look_for_wall_along_player_top_edge_loop
     dec player_width_in_cells                                         ; 282c: c6 80       ..  :26fb[1]
     bpl look_for_wall_along_player_top_edge_loop                      ; 282e: 10 f4       ..  :26fd[1]
 ; no collision with top edge of player
-    inc player_has_hit_top_flag                                       ; 2830: e6 7e       .~  :26ff[1]
+    inc player_has_hit_ceiling_flag                                   ; 2830: e6 7e       .~  :26ff[1]
 found_wall
     lda #$ff                                                          ; 2832: a9 ff       ..  :2701[1]
-    sta player_has_hit_bottom_flag                                    ; 2834: 85 7f       ..  :2703[1]
+    sta player_has_hit_floor_flag                                     ; 2834: 85 7f       ..  :2703[1]
 ; start at bottom right
     ldy object_bottom_cell_y                                          ; 2836: a4 7b       .{  :2705[1]
 ; get player width in cells (again)
@@ -4786,14 +4805,14 @@ look_for_wall_along_player_bottom_edge_loop
     dec player_width_in_cells                                         ; 2848: c6 80       ..  :2717[1]
     bpl look_for_wall_along_player_bottom_edge_loop                   ; 284a: 10 f4       ..  :2719[1]
 ; no collision with bottom edge of player
-    inc player_has_hit_bottom_flag                                    ; 284c: e6 7f       ..  :271b[1]
+    inc player_has_hit_floor_flag                                     ; 284c: e6 7f       ..  :271b[1]
 return16
     rts                                                               ; 284e: 60          `   :271d[1]
 
 handle_top_bottom_collision
-    ldx l0053                                                         ; 284f: a6 53       .S  :271e[1]
-    lda player_has_hit_top_flag                                       ; 2851: a5 7e       .~  :2720[1]
-    cmp player_has_hit_bottom_flag                                    ; 2853: c5 7f       ..  :2722[1]
+    ldx player_objectid                                               ; 284f: a6 53       .S  :271e[1]
+    lda player_has_hit_ceiling_flag                                   ; 2851: a5 7e       .~  :2720[1]
+    cmp player_has_hit_floor_flag                                     ; 2853: c5 7f       ..  :2722[1]
     beq return17                                                      ; 2855: f0 49       .I  :2724[1]
     bcc player_has_hit_floor                                          ; 2857: 90 25       .%  :2726[1]
 ; player has hit ceiling. Adjust player position to align with the cell below the
@@ -4837,35 +4856,49 @@ player_has_hit_floor
 return17
     rts                                                               ; 28a0: 60          `   :276f[1]
 
-sub_c2770
-    sta l0053                                                         ; 28a1: 85 53       .S  :2770[1]
+; *************************************************************************************
+; 
+; Handle player hitting the floor
+; 
+; On Entry:
+;     A: object id to test
+; 
+; *************************************************************************************
+handle_player_hitting_floor
+    sta player_objectid                                               ; 28a1: 85 53       .S  :2770[1]
     txa                                                               ; 28a3: 8a          .   :2772[1]   ; remember X,Y
     pha                                                               ; 28a4: 48          H   :2773[1]
     tya                                                               ; 28a5: 98          .   :2774[1]
     pha                                                               ; 28a6: 48          H   :2775[1]
-    ldx l0053                                                         ; 28a7: a6 53       .S  :2776[1]
+; check collision of player with room
+    ldx player_objectid                                               ; 28a7: a6 53       .S  :2776[1]
     jsr find_left_and_right_of_object_including_held_object           ; 28a9: 20 df 25     .% :2778[1]
     lda #2                                                            ; 28ac: a9 02       ..  :277b[1]
     sta temp_bottom_offset                                            ; 28ae: 8d 51 25    .Q% :277d[1]
     jsr find_top_and_bottom_of_object                                 ; 28b1: 20 d2 24     .$ :2780[1]
+; don't write values to the collision map
     lda #$ff                                                          ; 28b4: a9 ff       ..  :2783[1]
     sta default_collision_map_option                                  ; 28b6: 85 44       .D  :2785[1]
+; have we hit the floor?
     jsr check_for_player_intersecting_floor_or_ceiling                ; 28b8: 20 e5 26     .& :2787[1]
     lda #0                                                            ; 28bb: a9 00       ..  :278a[1]
     sta two_byte_table_based_on_left_right_direction                  ; 28bd: 8d 90 28    ..( :278c[1]
     sta l2891                                                         ; 28c0: 8d 91 28    ..( :278f[1]
-    lda address2_high                                                 ; 28c3: a5 7f       ..  :2792[1]
+; if (player hit floor) then branch
+    lda player_has_hit_floor_flag                                     ; 28c3: a5 7f       ..  :2792[1]
     sta l288f                                                         ; 28c5: 8d 8f 28    ..( :2794[1]
-    bne c279c                                                         ; 28c8: d0 03       ..  :2797[1]
-    jmp c2851                                                         ; 28ca: 4c 51 28    LQ( :2799[1]
+    bne player_hit_floor                                              ; 28c8: d0 03       ..  :2797[1]
+    jmp recall_registers_and_return2                                  ; 28ca: 4c 51 28    LQ( :2799[1]
 
-c279c
+player_hit_floor
     lda object_left_cell_x                                            ; 28cd: a5 78       .x  :279c[1]
     sta l0121                                                         ; 28cf: 8d 21 01    .!. :279e[1]
     lda object_right_cell_x                                           ; 28d2: a5 79       .y  :27a1[1]
     sta l0122                                                         ; 28d4: 8d 22 01    .". :27a3[1]
-    ldx l0053                                                         ; 28d7: a6 53       .S  :27a6[1]
+    ldx player_objectid                                               ; 28d7: a6 53       .S  :27a6[1]
+; find the left/right extents of player without the accessory object
     jsr find_left_and_right_of_object                                 ; 28d9: 20 34 24     4$ :27a8[1]
+; add one to the right pixel extent
     lda object_right_low                                              ; 28dc: a5 72       .r  :27ab[1]
     clc                                                               ; 28de: 18          .   :27ad[1]
     adc #1                                                            ; 28df: 69 01       i.  :27ae[1]
@@ -4873,6 +4906,7 @@ c279c
     lda object_right_high                                             ; 28e3: a5 73       .s  :27b2[1]
     adc #0                                                            ; 28e5: 69 00       i.  :27b4[1]
     sta object_right_high                                             ; 28e7: 85 73       .s  :27b6[1]
+; add the left and right extents together
     lda object_left_low                                               ; 28e9: a5 70       .p  :27b8[1]
     clc                                                               ; 28eb: 18          .   :27ba[1]
     adc object_right_low                                              ; 28ec: 65 72       er  :27bb[1]
@@ -4921,13 +4955,13 @@ c27fe
     lsr                                                               ; 2943: 4a          J   :2812[1]
     ror object_top_cell_y                                             ; 2944: 66 7a       fz  :2813[1]
     jsr sub_c286d                                                     ; 2946: 20 6d 28     m( :2815[1]
-    bne c2851                                                         ; 2949: d0 37       .7  :2818[1]
+    bne recall_registers_and_return2                                  ; 2949: d0 37       .7  :2818[1]
     inc two_byte_table_based_on_left_right_direction                  ; 294b: ee 90 28    ..( :281a[1]
 c281d
-    lda l0053                                                         ; 294e: a5 53       .S  :281d[1]
+    lda player_objectid                                               ; 294e: a5 53       .S  :281d[1]
     beq c2825                                                         ; 2950: f0 04       ..  :281f[1]
     cmp #$0b                                                          ; 2952: c9 0b       ..  :2821[1]
-    bne c2851                                                         ; 2954: d0 2c       .,  :2823[1]
+    bne recall_registers_and_return2                                  ; 2954: d0 2c       .,  :2823[1]
 c2825
     lsr l2893                                                         ; 2956: 4e 93 28    N.( :2825[1]
     ror l2892                                                         ; 2959: 6e 92 28    n.( :2828[1]
@@ -4939,15 +4973,15 @@ c2825
     jsr sub_c2859                                                     ; 2968: 20 59 28     Y( :2837[1]
     bne c2841                                                         ; 296b: d0 05       ..  :283a[1]
     dec l2891                                                         ; 296d: ce 91 28    ..( :283c[1]
-    bne c2851                                                         ; 2970: d0 10       ..  :283f[1]
+    bne recall_registers_and_return2                                  ; 2970: d0 10       ..  :283f[1]
 c2841
     lda l2892                                                         ; 2972: ad 92 28    ..( :2841[1]
     sta object_top_cell_y                                             ; 2975: 85 7a       .z  :2844[1]
     lda l2893                                                         ; 2977: ad 93 28    ..( :2846[1]
     jsr sub_c286d                                                     ; 297a: 20 6d 28     m( :2849[1]
-    bne c2851                                                         ; 297d: d0 03       ..  :284c[1]
+    bne recall_registers_and_return2                                  ; 297d: d0 03       ..  :284c[1]
     inc l2891                                                         ; 297f: ee 91 28    ..( :284e[1]
-c2851
+recall_registers_and_return2
     pla                                                               ; 2982: 68          h   :2851[1]   ; recall X,Y
     tay                                                               ; 2983: a8          .   :2852[1]
     pla                                                               ; 2984: 68          h   :2853[1]
@@ -5039,11 +5073,11 @@ get_wall_collision_for_object_a
     and #4                                                            ; 29e9: 29 04       ).  :28b8[1]
     ora temp_collision_result                                         ; 29eb: 0d 5b 29    .[) :28ba[1]
     sta temp_collision_result                                         ; 29ee: 8d 5b 29    .[) :28bd[1]
-    lda player_has_hit_top_flag                                       ; 29f1: a5 7e       .~  :28c0[1]
+    lda player_has_hit_ceiling_flag                                   ; 29f1: a5 7e       .~  :28c0[1]
     and #8                                                            ; 29f3: 29 08       ).  :28c2[1]
     ora temp_collision_result                                         ; 29f5: 0d 5b 29    .[) :28c4[1]
     sta temp_collision_result                                         ; 29f8: 8d 5b 29    .[) :28c7[1]
-    lda player_has_hit_bottom_flag                                    ; 29fb: a5 7f       ..  :28ca[1]
+    lda player_has_hit_floor_flag                                     ; 29fb: a5 7f       ..  :28ca[1]
     and #2                                                            ; 29fd: 29 02       ).  :28cc[1]
     ora temp_collision_result                                         ; 29ff: 0d 5b 29    .[) :28ce[1]
     sta temp_collision_result                                         ; 2a02: 8d 5b 29    .[) :28d1[1]
@@ -5525,7 +5559,7 @@ find_existing_item_loop
     cpx menu_index_for_extra_items                                    ; 2cc9: ec 6e 29    .n) :2b98[1]
     bcc find_existing_item_loop                                       ; 2ccc: 90 f3       ..  :2b9b[1]
 ; shuffle existing items right to make room for the new item
-    ldx #$10                                                          ; 2cce: a2 10       ..  :2b9d[1]
+    ldx #menu_slot_count - 1                                          ; 2cce: a2 10       ..  :2b9d[1]
     lda desired_menu_slots,x                                          ; 2cd0: bd 5c 29    .\) :2b9f[1]
     bne return_with_flag_set_if_item_inserted                         ; 2cd3: d0 16       ..  :2ba2[1]
 shuffle_menu_items_right_loop
@@ -6896,11 +6930,11 @@ got_encrypted_string_to_show
     lda #osfile_read_catalogue_info                                   ; 36b4: a9 05       ..  :3583[1]
     jsr osfile_wrapper                                                ; 36b6: 20 dc 16     .. :3585[1]
     bne show_load_save_dialog_local                                   ; 36b9: d0 11       ..  :3588[1]
-    lda osfile_block_exec_address_high                                ; 36bb: a5 7b       .{  :358a[1]
-    ora osfile_block_start_address_low                                ; 36bd: 05 7c       .|  :358c[1]
-    ora osfile_block_start_address_mid1                               ; 36bf: 05 7d       .}  :358e[1]
+    lda osfile_block_start_address_mid1                               ; 36bb: a5 7b       .{  :358a[1]
+    ora osfile_block_start_address_mid2                               ; 36bd: 05 7c       .|  :358c[1]
+    ora osfile_block_start_address_high                               ; 36bf: 05 7d       .}  :358e[1]
     bne c3598                                                         ; 36c1: d0 06       ..  :3590[1]
-    lda osfile_block_exec_address_mid2                                ; 36c3: a5 7a       .z  :3592[1]
+    lda osfile_block_start_address_low                                ; 36c3: a5 7a       .z  :3592[1]
     cmp #$85                                                          ; 36c5: c9 85       ..  :3594[1]
     beq c35bc                                                         ; 36c7: f0 24       .$  :3596[1]
 c3598
@@ -6913,14 +6947,14 @@ c359e
     sta save_game_checksum                                            ; 36d2: 8d eb 09    ... :35a1[1]
     ldx #0                                                            ; 36d5: a2 00       ..  :35a4[1]
     ldy #0                                                            ; 36d7: a0 00       ..  :35a6[1]
-    stx osfile_block_load_address_mid2                                ; 36d9: 86 76       .v  :35a8[1]
-    stx l0077                                                         ; 36db: 86 77       .w  :35aa[1]
+    stx osfile_block_exec_address_low                                 ; 36d9: 86 76       .v  :35a8[1]
+    stx osfile_block_exec_address_mid1                                ; 36db: 86 77       .w  :35aa[1]
     lda #<save_game                                                   ; 36dd: a9 ea       ..  :35ac[1]
-    sta osfile_block_exec_address_mid2                                ; 36df: 85 7a       .z  :35ae[1]
+    sta osfile_block_start_address_low                                ; 36df: 85 7a       .z  :35ae[1]
     lda #>save_game                                                   ; 36e1: a9 09       ..  :35b0[1]
-    sta osfile_block_exec_address_high                                ; 36e3: 85 7b       .{  :35b2[1]
+    sta osfile_block_start_address_mid1                               ; 36e3: 85 7b       .{  :35b2[1]
     lda #<sixteen_entry_table                                         ; 36e5: a9 6f       .o  :35b4[1]
-    sta address2_low                                                  ; 36e7: 85 7e       .~  :35b6[1]
+    sta osfile_block_end_address_mid1                                 ; 36e7: 85 7e       .~  :35b6[1]
     lda #>sixteen_entry_table                                         ; 36e9: a9 0a       ..  :35b8[1]
     sta address2_high                                                 ; 36eb: 85 7f       ..  :35ba[1]
 c35bc
@@ -8054,7 +8088,7 @@ clear_toolbar_part_of_screen
     lda #0                                                            ; 3da3: a9 00       ..             ; set start address to $5b00
     sta address1_low                                                  ; 3da5: 85 70       .p
     tay                                                               ; 3da7: a8          .
-    ldx #$5b ; '['                                                    ; 3da8: a2 5b       .[
+    ldx #>start_of_screen_memory                                      ; 3da8: a2 5b       .[
     stx address1_high                                                 ; 3daa: 86 71       .q
     ldx screen_base_address_high                                      ; 3dac: a6 4c       .L
 clear_toolbar_part_of_screen_loop
@@ -8346,7 +8380,7 @@ handle_developer_mode_setup
     sei                                                               ; 3f7a: 78          x
 copy_to_sideways_ram_loop
     lda sideways_rom_image_source_start,y                             ; 3f7b: b9 bb 3f    ..?
-    sta sideways_rom_image_dest,y                                     ; 3f7e: 99 00 80    ...
+    sta end_of_screen_memory,y                                        ; 3f7e: 99 00 80    ...
     dey                                                               ; 3f81: 88          .
     bpl copy_to_sideways_ram_loop                                     ; 3f82: 10 f7       ..
     cli                                                               ; 3f84: 58          X
@@ -8383,6 +8417,7 @@ return28
 sideways_rom_image_source_start
 
 !pseudopc $8000 {
+end_of_screen_memory
 sideways_rom_image_dest
     jmp sideways_rom_return                                           ; 3fbb: 4c 08 80    L.. :8000[6]   ; language entry point
 
@@ -8542,7 +8577,7 @@ convert_level_filename_letter_into_section_letter
     txa                                                               ; 40aa: 8a          .   :0ad9[5]
     pha                                                               ; 40ab: 48          H   :0ada[5]
     tya                                                               ; 40ac: 98          .   :0adb[5]
-    ldx #$0f                                                          ; 40ad: a2 0f       ..  :0adc[5]
+    ldx #num_levels-1                                                 ; 40ad: a2 0f       ..  :0adc[5]
 find_letter_loop
     cmp level_ordering_table+1,x                                      ; 40af: dd 80 0a    ... :0ade[5]
     beq found_letter                                                  ; 40b2: f0 03       ..  :0ae1[5]
@@ -8834,7 +8869,6 @@ pydis_end
 ;     c23fa
 ;     c2404
 ;     c241a
-;     c242b
 ;     c244d
 ;     c2454
 ;     c2495
@@ -8845,12 +8879,10 @@ pydis_end
 ;     c255a
 ;     c2626
 ;     c264f
-;     c279c
 ;     c27fe
 ;     c281d
 ;     c2825
 ;     c2841
-;     c2851
 ;     c287e
 ;     c288c
 ;     c2dc3
@@ -8920,7 +8952,6 @@ pydis_end
 ;     c39ec
 ;     c39f4
 ;     c3a08
-;     l0053
 ;     l0066
 ;     l0067
 ;     l0068
@@ -8949,7 +8980,6 @@ pydis_end
 ;     loop_c3f87
 ;     sub_c23c4
 ;     sub_c25f5
-;     sub_c2770
 ;     sub_c2859
 ;     sub_c286d
 ;     sub_c2eb8
@@ -8981,8 +9011,8 @@ pydis_end
 !if (<(drive_0_command)) != $ff {
     !error "Assertion failed: <(drive_0_command) == $ff"
 }
-!if (<(filename_low)) != $70 {
-    !error "Assertion failed: <(filename_low) == $70"
+!if (<(osfile_block_filename_low)) != $70 {
+    !error "Assertion failed: <(osfile_block_filename_low) == $70"
 }
 !if (<(osword_7f_block_read)) != $f4 {
     !error "Assertion failed: <(osword_7f_block_read) == $f4"
@@ -9200,8 +9230,8 @@ pydis_end
 !if (>(drive_0_command)) != $3e {
     !error "Assertion failed: >(drive_0_command) == $3e"
 }
-!if (>(filename_low)) != $00 {
-    !error "Assertion failed: >(filename_low) == $00"
+!if (>(osfile_block_filename_low)) != $00 {
+    !error "Assertion failed: >(osfile_block_filename_low) == $00"
 }
 !if (>(osword_7f_block_read)) != $3e {
     !error "Assertion failed: >(osword_7f_block_read) == $3e"
@@ -9256,6 +9286,9 @@ pydis_end
 }
 !if (>disk_error_encrypted_string) != $17 {
     !error "Assertion failed: >disk_error_encrypted_string == $17"
+}
+!if (>end_of_screen_memory) != $80 {
+    !error "Assertion failed: >end_of_screen_memory == $80"
 }
 !if (>enter_filename_encrypted_string) != $34 {
     !error "Assertion failed: >enter_filename_encrypted_string == $34"
@@ -9590,6 +9623,9 @@ pydis_end
 !if (menu_slot_count) != $11 {
     !error "Assertion failed: menu_slot_count == $11"
 }
+!if (menu_slot_count - 1) != $10 {
+    !error "Assertion failed: menu_slot_count - 1 == $10"
+}
 !if (mid_transform_circle_sprites - mid_transform_sprites_table) != $01 {
     !error "Assertion failed: mid_transform_circle_sprites - mid_transform_sprites_table == $01"
 }
@@ -9646,6 +9682,9 @@ pydis_end
 }
 !if (monkey_walk_cycle_animation - monkey_transform_in_animation) != $29 {
     !error "Assertion failed: monkey_walk_cycle_animation - monkey_transform_in_animation == $29"
+}
+!if (num_levels-1) != $0f {
+    !error "Assertion failed: num_levels-1 == $0f"
 }
 !if (object_z_order+1) != $38c3 {
     !error "Assertion failed: object_z_order+1 == $38c3"

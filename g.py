@@ -174,8 +174,8 @@ sprite_dict = {
 substitute_labels = {
 
     (0x114f,0x1297): {
-        "address1_low": "filename_low",
-        "address1_high": "filename_high",
+        "address1_low": "osfile_block_filename_low",
+        "address1_high": "osfile_block_filename_high",
     },
     (0x13a9, 0x140a): {
         "address1_low": "level_data_ptr_low",
@@ -203,23 +203,26 @@ substitute_labels = {
         "l0081": "sprite_width",
     },
     (0x180d, 0x1882): {
-        "l0072": "osfile_block_filename_low",
-        "l0073": "osfile_block_filename_high",
-        "l0074": "osfile_block_load_address_low",
-        "l0075": "osfile_block_load_address_mid1",
-        "l0076": "osfile_block_load_address_mid2",
-        "l0078": "osfile_block_exec_address_low",
-        "l0079": "osfile_block_exec_address_mid1",
-        "l007a": "osfile_block_exec_address_mid2",
-        "l007b": "osfile_block_exec_address_high",
-        "l007c": "osfile_block_start_address_low",
-        "l007d": "osfile_block_start_address_mid1",
-        "l0080": "osfile_block_end_address_low",
-        "l0081": "osfile_block_end_address_mid1",
+        "l0072": "osfile_block_load_address_low",
+        "l0073": "osfile_block_load_address_mid1",
+        "l0074": "osfile_block_load_address_mid2",
+        "l0075": "osfile_block_load_address_high",
+        "l0076": "osfile_block_exec_address_low",
+        "l0077": "osfile_block_exec_address_mid1",
+        "l0078": "osfile_block_exec_address_mid2",
+        "l0079": "osfile_block_exec_address_high",
+        "l007a": "osfile_block_start_address_low",
+        "l007b": "osfile_block_start_address_mid1",
+        "l007c": "osfile_block_start_address_mid2",
+        "l007d": "osfile_block_start_address_high",
+        "address2_low": "osfile_block_end_address_low",
+        "address2_low": "osfile_block_end_address_mid1",
+        "l0080": "osfile_block_end_address_mid2",
+        "l0081": "osfile_block_end_address_high",
     },
     (0x183d, 0x1841): {
-        "address1_low": "filename_low",
-        "address1_high": "filename_high",
+        "address1_low": "osfile_block_filename_low",
+        "address1_high": "osfile_block_filename_high",
     },
     (0x19f4, 0x1a96): {
         "address1_low": "object_y_delta",
@@ -231,8 +234,8 @@ substitute_labels = {
         "l007b": "object_bottom_cell_y",
     },
     (0x1aa0, 0x1aae): {
-        "address1_low": "filename_low",
-        "address1_high": "filename_high",
+        "address1_low": "osfile_block_filename_low",
+        "address1_high": "osfile_block_filename_high",
     },
     (0x1bec,0x1f24): {
         "address1_low": "cell_x",
@@ -310,9 +313,9 @@ substitute_labels = {
     (0x27c4, 0x2815): {
         "l0080": "adjustment",
     },
-    (0x2816, 0x287b): {
-        "address2_low": "player_has_hit_top_flag",
-        "address2_high": "player_has_hit_bottom_flag",
+    (0x2816, 0x2989): {
+        "address2_low": "player_has_hit_ceiling_flag",
+        "address2_high": "player_has_hit_floor_flag",
     },
     (0x2816, 0x284f): {
         "l0080": "player_width_in_cells",
@@ -327,8 +330,8 @@ substitute_labels = {
     (0x29c5,0x2a11): {
         "l007c": "player_hit_wall_on_left_flag",
         "l007d": "player_hit_wall_on_right_flag",
-        "address2_low": "player_has_hit_top_flag",
-        "address2_high": "player_has_hit_bottom_flag",
+        "address2_low": "player_has_hit_ceiling_flag",
+        "address2_high": "player_has_hit_floor_flag",
     },
     (0x2cb8, 0x2d3c): {
         "address1_low": "menu_item_to_use",
@@ -345,19 +348,22 @@ substitute_labels = {
         "l007b": "object_bottom_cell_y",
     },
     (0x3688, 0x3725): {
-        "l0072": "osfile_block_filename_low",
-        "l0073": "osfile_block_filename_high",
-        "l0074": "osfile_block_load_address_low",
-        "l0075": "osfile_block_load_address_mid1",
-        "l0076": "osfile_block_load_address_mid2",
-        "l0078": "osfile_block_exec_address_low",
-        "l0079": "osfile_block_exec_address_mid1",
-        "l007a": "osfile_block_exec_address_mid2",
-        "l007b": "osfile_block_exec_address_high",
-        "l007c": "osfile_block_start_address_low",
-        "l007d": "osfile_block_start_address_mid1",
-        "l0080": "osfile_block_end_address_low",
-        "l0081": "osfile_block_end_address_mid1",
+        "l0072": "osfile_block_load_address_low",
+        "l0073": "osfile_block_load_address_mid1",
+        "l0074": "osfile_block_load_address_mid2",
+        "l0075": "osfile_block_load_address_high",
+        "l0076": "osfile_block_exec_address_low",
+        "l0077": "osfile_block_exec_address_mid1",
+        "l0078": "osfile_block_exec_address_mid2",
+        "l0079": "osfile_block_exec_address_high",
+        "l007a": "osfile_block_start_address_low",
+        "l007b": "osfile_block_start_address_mid1",
+        "l007c": "osfile_block_start_address_mid2",
+        "l007d": "osfile_block_start_address_high",
+        "address2_low": "osfile_block_end_address_low",
+        "address2_low": "osfile_block_end_address_mid1",
+        "l0080": "osfile_block_end_address_mid2",
+        "l0081": "osfile_block_end_address_high",
     },
     (0x3d3d, 0x3d41): {
         "object_sprite_mask_type": "envelope_1",
@@ -443,6 +449,7 @@ label(0x0049, "temp_value")
 label(0x004a, "temp_coordinate")
 label(0x004c, "screen_base_address_high")
 label(0x004d, "new_player_character")
+label(0x0053, "player_objectid")
 label(0x0054, "sprdata_ptr")
 expr_label(0x55, make_add("sprdata_ptr", "1"))
 label(0x0056, "temp_rope_length")
@@ -607,6 +614,7 @@ On Exit:
 *************************************************************************************""")
     entry(0x0ad4, "convert_level_filename_letter_into_section_letter")
     expr(0x0ad5, "last_level_letter")
+    expr(0x0add, "num_levels-1")
     label(0x0ade, "find_letter_loop")
     label(0x0ae6, "found_letter")
     expr(0x0ae9, "first_level_letter")
@@ -1464,6 +1472,7 @@ Set all the game area pixels, and clear the collision map
 
     expr(0x1e00, make_lo("game_area_screen_address"))
     expr(0x1e04, make_hi("game_area_screen_address"))
+    expr(0x1e0a, make_hi("end_of_screen_memory"))
     label(0x1e0b, "clear_screen_game_area_loop")
     comment(0x1e17, """*************************************************************************************
 
@@ -1920,6 +1929,9 @@ On Entry:
     expr(0x23b8, make_lo("sound_landing2"))
     expr(0x23ba, make_hi("sound_landing2"))
 
+    comment(0x23cd, "if (no player collision with the room) then branch (return)")
+    label(0x242b, "recall_registers_and_return1")
+
     label(0x2434, "find_left_and_right_of_object")
     comment(0x2434, """*************************************************************************************
 
@@ -1936,8 +1948,8 @@ On Entry:
        temp_right_offset: offset to add to result (zeroed on exit)
 
 On Exit:
-             object_left: Set to object's position X + sprite offset - sprite width
-            object_right: Set to object's position X + sprite offset
+             object_left: Set to object's position X + sprite offset
+            object_right: Set to object's position X + sprite offset + sprite width
       object_left_cell_x: Cell X for object_left
      object_right_cell_x: Cell X for object_right
      Preserves X
@@ -2050,6 +2062,23 @@ On Entry:
     comment(0x26c2, "player has hit wall on right side. Adjust player position to align with the cell next to the wall.")
     comment(0x26dc, "mark object has collided with right wall")
     label(0x26e4, "return15")
+
+    comment(0x26e5, """*************************************************************************************
+
+Check for player intersecting floor or ceiling of the room
+
+On Entry:
+    The cell based extents of the player have been worked out previously:
+          object_left_cell_x
+         object_right_cell_x
+           object_top_cell_y
+        object_bottom_cell_y
+
+On Exit:
+      player_has_hit_floor_flag: $ff if hit, $00 otherwise
+    player_has_hit_ceiling_flag: $ff if hit, $00 otherwise
+
+*************************************************************************************""")
     label(0x26e5, "check_for_player_intersecting_floor_or_ceiling")
     comment(0x26e9, "start at top right")
     comment(0x26eb, "get player width in cells")
@@ -2070,6 +2099,25 @@ On Entry:
     comment(0x2767, "mark object has collided with floor")
     label(0x276f, "return17")
 
+    comment(0x2770, """*************************************************************************************
+
+Handle player hitting the floor
+
+On Entry:
+    A: object id to test
+
+*************************************************************************************""")
+    label(0x2770, "handle_player_hitting_floor")
+    comment(0x2776, "check collision of player with room")
+    comment(0x2783, "don't write values to the collision map")
+    comment(0x2787, "have we hit the floor?")
+    comment(0x2792, "if (player hit floor) then branch")
+    label(0x279c, "player_hit_floor")
+    comment(0x27a8, "find the left/right extents of player without the accessory object")
+    comment(0x27ab, "add one to the right pixel extent")
+    comment(0x27b8, "add the left and right extents together")
+
+    label(0x2851, "recall_registers_and_return2")
     label(0x2890, "two_byte_table_based_on_left_right_direction")
     comment(0x2894, """*************************************************************************************
 
@@ -2253,6 +2301,7 @@ Insert a player character menu item into the toolbar
     comment(0x2b8d, "start at first player character, and loop until we reach the extras or we find the character")
     label(0x2b90, "find_existing_item_loop")
     comment(0x2b9d, "shuffle existing items right to make room for the new item")
+    expr(0x2b9e, make_subtract("menu_slot_count", "1"))
     label(0x2ba4, "shuffle_menu_items_right_loop")
     expr(0x2ba5, "desired_menu_slots-1")
     comment(0x2bb0, "the start of the 'extra' menu items is now one to the right")
@@ -2940,6 +2989,7 @@ expr(0x3d97, "vdu_set_mode")
 label(0x3da3, "clear_toolbar_part_of_screen")
 comment(0x3da3, "Clear memory from $5b00 to $6200. This clears the toolbar area of the screen. The toolbar lives in screen memory from $5bc0 to $6200, so this routine clears a little before the start of screen memory, but this is OK as we are just about to load sprite data there anyway")
 comment(0x3da3, "set start address to $5b00", inline=True)
+expr(0x3da9, make_hi("start_of_screen_memory"))
 label(0x3dae, "clear_toolbar_part_of_screen_loop")
 comment(0x3db9, "Define text window that excludes the leftmost column (left 1, bottom 31, right: 39, top: 0). This simplifies printing text in dialog boxes.")
 label(0x3db9, "define_text_window")
@@ -3079,6 +3129,7 @@ label(0x40ff, "relocation1_high_copy_start")
 label(0x58c0, "toolbar_screen_address")
 
 label(0x5bc0, "start_of_screen_memory")
+label(0x8000, "end_of_screen_memory")
 
 label(0x6200, "game_area_screen_address")
 
