@@ -206,7 +206,7 @@ level_update_handler
     jsr room0_handler                                                 ; 3b17: 20 e4 3b     .;
     jsr room1_handler                                                 ; 3b1a: 20 fc 3d     .=
     jsr room2_handler                                                 ; 3b1d: 20 7f 40     .@
-    jsr sub_c3f02                                                     ; 3b20: 20 02 3f     .?
+    jsr room1_saxophone_and_brazier_handler                           ; 3b20: 20 02 3f     .?
     jsr sub_c42f8                                                     ; 3b23: 20 f8 42     .B
     rts                                                               ; 3b26: 60          `
 
@@ -781,7 +781,7 @@ play_some_sound1_then_some_sound2
 
 ; TODO: This forcing of current_room_index to 1 seems odd.
 ; $3f02 referenced 1 time by $3b20
-sub_c3f02
+room1_saxophone_and_brazier_handler
     lda #1                                                            ; 3f02: a9 01       ..
     sta current_room_index                                            ; 3f04: 8d ba 1a    ...
     lda #objectid_brazier                                             ; 3f07: a9 05       ..
@@ -2000,7 +2000,7 @@ pydis_end
 ;     adjusted_room1_trapdoor_open_flag_in_y_is_ge_0:           1
 ;     return2:                                                  1
 ;     trapdoor_sprite_table:                                    1
-;     sub_c3f02:                                                1
+;     room1_saxophone_and_brazier_handler:                      1
 ;     not_first_room_update:                                    1
 ;     c3f62:                                                    1
 ;     loop_c4044:                                               1
@@ -2097,7 +2097,6 @@ pydis_end
 ;     loop_c3bd4
 ;     loop_c4044
 ;     loop_c42ea
-;     sub_c3f02
 ;     sub_c3f8b
 ;     sub_c42f8
 !if (<envelope1) != $60 {

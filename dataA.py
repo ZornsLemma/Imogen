@@ -278,6 +278,7 @@ expr(0x3f3d, "objectid_saxophone") # TODO: not entirely sure this is the right o
 expr(0x3f48, "spriteid_zero_size1")
 expr(0x3f4d, "spriteid_saxophone1")
 expr(0x3f16, "spriteid_saxophone2")
+entry(0x3f02, "room1_saxophone_and_brazier_handler") # TODO:?
 comment(0x3f02, "TODO: This forcing of current_room_index to 1 seems odd.")
 comment(0x3f34, "The player has not collected the saxophone, so place it in the lower left of the room.")
 
