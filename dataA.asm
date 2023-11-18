@@ -1431,7 +1431,7 @@ return4_local
 ; $4358 referenced 1 time by $430f
 room3_not_first_update
     lda table_x_speed                                                 ; 4358: ad 02 0a    ...
-    bne c43a0                                                         ; 435b: d0 43       .C
+    bne move_table                                                    ; 435b: d0 43       .C
     lda desired_room_index                                            ; 435d: a5 30       .0
     cmp #3                                                            ; 435f: c9 03       ..
     bne return4_local                                                 ; 4361: d0 f2       ..
@@ -1449,7 +1449,7 @@ room3_not_first_update
     beq return4_local                                                 ; 437d: f0 d6       ..
     lda #1                                                            ; 437f: a9 01       ..
     sta table_x_speed                                                 ; 4381: 8d 02 0a    ...
-    bne c43a0                                                         ; 4384: d0 1a       ..             ; ALWAYS branch
+    bne move_table                                                    ; 4384: d0 1a       ..             ; ALWAYS branch
 ; $4386 referenced 1 time by $4368
 c4386
     lda object_room_collision_flags                                   ; 4386: ad d8 38    ..8
@@ -1464,7 +1464,7 @@ c4386
     lda #$ff                                                          ; 439b: a9 ff       ..
     sta table_x_speed                                                 ; 439d: 8d 02 0a    ...
 ; $43a0 referenced 2 times by $435b, $4384
-c43a0
+move_table
     lda table_x_position                                              ; 43a0: ad 01 0a    ...
     sta old_table_x_position                                          ; 43a3: 85 70       .p
     clc                                                               ; 43a5: 18          .
@@ -1965,7 +1965,7 @@ pydis_end
 ;     c41c9:                                                     2
 ;     c4235:                                                     2
 ;     set_table_x_position_to_right_side:                        2
-;     c43a0:                                                     2
+;     move_table:                                                2
 ;     sprite_reflect_flag:                                       1
 ;     temp_sprite_x_offset:                                      1
 ;     copy_mode:                                                 1
@@ -2072,7 +2072,6 @@ pydis_end
 ;     c4235
 ;     c424c
 ;     c4386
-;     c43a0
 ;     c43f6
 ;     l0954
 ;     l0980
