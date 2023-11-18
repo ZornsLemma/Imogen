@@ -58,6 +58,7 @@ spriteid_trapdoor_horizontal       = 207
 spriteid_trapdoor_vertical         = 209
 spriteid_zero_size1                = 204
 table_max_x                        = 22
+table_min_x                        = 10
 
 ; Memory locations
 characters_entered                                  = $05
@@ -1438,7 +1439,7 @@ room3_not_first_update
     bne return4_local                                                 ; 4361: d0 f2       ..
     lda table_x_position                                              ; 4363: ad 01 0a    ...
     cmp #table_max_x                                                  ; 4366: c9 16       ..
-    beq c4386                                                         ; 4368: f0 1c       ..
+    beq table_at_max_x_position                                       ; 4368: f0 1c       ..
     lda object_room_collision_flags                                   ; 436a: ad d8 38    ..8
     and #object_collided_right_wall                                   ; 436d: 29 04       ).
     beq return4_local                                                 ; 436f: f0 e4       ..
@@ -1452,14 +1453,14 @@ room3_not_first_update
     sta table_x_speed                                                 ; 4381: 8d 02 0a    ...
     bne move_table                                                    ; 4384: d0 1a       ..             ; ALWAYS branch
 ; $4386 referenced 1 time by $4368
-c4386
+table_at_max_x_position
     lda object_room_collision_flags                                   ; 4386: ad d8 38    ..8
     and #object_collided_left_wall                                    ; 4389: 29 01       ).
     beq return4_local                                                 ; 438b: f0 c8       ..
     lda #$ff                                                          ; 438d: a9 ff       ..
     sta temp_left_offset                                              ; 438f: 8d d0 24    ..$
-    ldx #0                                                            ; 4392: a2 00       ..
-    ldy #2                                                            ; 4394: a0 02       ..
+    ldx #objectid_player                                              ; 4392: a2 00       ..
+    ldy #objectid_table                                               ; 4394: a0 02       ..
     jsr test_for_collision_between_objects_x_and_y                    ; 4396: 20 e2 28     .(
     beq return4_local                                                 ; 4399: f0 ba       ..
     lda #$ff                                                          ; 439b: a9 ff       ..
@@ -1471,7 +1472,7 @@ move_table
     clc                                                               ; 43a5: 18          .
     adc table_x_speed                                                 ; 43a6: 6d 02 0a    m..
     sta table_x_position                                              ; 43a9: 8d 01 0a    ...
-    cmp #$0a                                                          ; 43ac: c9 0a       ..
+    cmp #table_min_x                                                  ; 43ac: c9 0a       ..
     beq moving_table_hit_wall                                         ; 43ae: f0 04       ..
     cmp #table_max_x                                                  ; 43b0: c9 16       ..
     bne moving_table_not_hit_wall                                     ; 43b2: d0 20       .
@@ -2038,7 +2039,7 @@ pydis_end
 ;     room3_handler:                                             1
 ;     c43f6_local:                                               1
 ;     room3_not_first_update:                                    1
-;     c4386:                                                     1
+;     table_at_max_x_position:                                   1
 ;     moving_table_hit_wall:                                     1
 ;     ready_to_play_table_hit_wall_sound:                        1
 ;     moving_table_not_hit_wall:                                 1
@@ -2072,7 +2073,6 @@ pydis_end
 ;     c4224
 ;     c4235
 ;     c424c
-;     c4386
 ;     l0954
 ;     l0980
 ;     l09aa
@@ -2359,6 +2359,9 @@ pydis_end
 }
 !if (table_max_x) != $16 {
     !error "Assertion failed: table_max_x == $16"
+}
+!if (table_min_x) != $0a {
+    !error "Assertion failed: table_min_x == $0a"
 }
 !if (toolbar_collectable_spriteids + 1) != $2ee9 {
     !error "Assertion failed: toolbar_collectable_spriteids + 1 == $2ee9"
