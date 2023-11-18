@@ -1448,7 +1448,7 @@ room3_not_first_update
     beq return4_local                                                 ; 437d: f0 d6       ..
     lda #1                                                            ; 437f: a9 01       ..
     sta table_x_speed                                                 ; 4381: 8d 02 0a    ...
-    bne c43a0                                                         ; 4384: d0 1a       ..
+    bne c43a0                                                         ; 4384: d0 1a       ..             ; ALWAYS branch
 ; $4386 referenced 1 time by $4368
 c4386
     lda object_room_collision_flags                                   ; 4386: ad d8 38    ..8

@@ -304,6 +304,7 @@ entry(0x4044, "loop_until_exit_room_top")
 expr(0x4048, "exit_room_top")
 expr(0x436e, "object_collided_right_wall")
 expr(0x438a, "object_collided_left_wall")
+ab(0x4384)
 
 comment(0x407f, "Room 2 has the spell, guarded by a baby. TODO: Not too sure I have the room number correct etc.")
 entry(0x407f, "room2_handler") # TODO: not too sure about this
