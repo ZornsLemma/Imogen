@@ -90,7 +90,7 @@ object_direction_old                                = $09c9
 level_progress_table                                = $09ef
 room1_trapdoor_open_flag                            = $09ff
 saxophone_collected_flag                            = $0a00
-l0a01                                               = $0a01
+table_x_position                                    = $0a01
 l0a02                                               = $0a02
 l0a03                                               = $0a03
 l0a04                                               = $0a04
@@ -1384,25 +1384,26 @@ room3_handler
     beq room3_not_first_update                                        ; 430f: f0 47       .G
     lda previous_level                                                ; 4311: a5 51       .Q
     cmp desired_level                                                 ; 4313: c5 31       .1
-    beq c4339                                                         ; 4315: f0 22       ."
-    lda l0a01                                                         ; 4317: ad 01 0a    ...
-    beq c432f                                                         ; 431a: f0 13       ..
+    beq table_x_position_update_finished                              ; 4315: f0 22       ."
+    lda table_x_position                                              ; 4317: ad 01 0a    ...
+    beq set_table_x_position_to_right_side                            ; 431a: f0 13       ..
     lda l0a02                                                         ; 431c: ad 02 0a    ...
-    beq c4339                                                         ; 431f: f0 18       ..
-    bpl c432f                                                         ; 4321: 10 0c       ..
+    beq table_x_position_update_finished                              ; 431f: f0 18       ..
+    bpl set_table_x_position_to_right_side                            ; 4321: 10 0c       ..
+; Set table_x_position to left side of screen
     lda #$0a                                                          ; 4323: a9 0a       ..
-    sta l0a01                                                         ; 4325: 8d 01 0a    ...
+    sta table_x_position                                              ; 4325: 8d 01 0a    ...
     lda #0                                                            ; 4328: a9 00       ..
     sta l0a02                                                         ; 432a: 8d 02 0a    ...
-    beq c4339                                                         ; 432d: f0 0a       ..
+    beq table_x_position_update_finished                              ; 432d: f0 0a       ..             ; ALWAYS branch
 ; $432f referenced 2 times by $431a, $4321
-c432f
+set_table_x_position_to_right_side
     lda #$16                                                          ; 432f: a9 16       ..
-    sta l0a01                                                         ; 4331: 8d 01 0a    ...
+    sta table_x_position                                              ; 4331: 8d 01 0a    ...
     lda #0                                                            ; 4334: a9 00       ..
     sta l0a02                                                         ; 4336: 8d 02 0a    ...
 ; $4339 referenced 3 times by $4315, $431f, $432d
-c4339
+table_x_position_update_finished
     lda desired_room_index                                            ; 4339: a5 30       .0
     cmp #3                                                            ; 433b: c9 03       ..
     bne c4352                                                         ; 433d: d0 13       ..
@@ -1429,7 +1430,7 @@ room3_not_first_update
     lda desired_room_index                                            ; 435d: a5 30       .0
     cmp #3                                                            ; 435f: c9 03       ..
     bne c4355                                                         ; 4361: d0 f2       ..
-    lda l0a01                                                         ; 4363: ad 01 0a    ...
+    lda table_x_position                                              ; 4363: ad 01 0a    ...
     cmp #$16                                                          ; 4366: c9 16       ..
     beq c4386                                                         ; 4368: f0 1c       ..
     lda object_room_collision_flags                                   ; 436a: ad d8 38    ..8
@@ -1459,11 +1460,11 @@ c4386
     sta l0a02                                                         ; 439d: 8d 02 0a    ...
 ; $43a0 referenced 2 times by $435b, $4384
 c43a0
-    lda l0a01                                                         ; 43a0: ad 01 0a    ...
+    lda table_x_position                                              ; 43a0: ad 01 0a    ...
     sta l0070                                                         ; 43a3: 85 70       .p
     clc                                                               ; 43a5: 18          .
     adc l0a02                                                         ; 43a6: 6d 02 0a    m..
-    sta l0a01                                                         ; 43a9: 8d 01 0a    ...
+    sta table_x_position                                              ; 43a9: 8d 01 0a    ...
     cmp #$0a                                                          ; 43ac: c9 0a       ..
     beq c43b4                                                         ; 43ae: f0 04       ..
     cmp #$16                                                          ; 43b0: c9 16       ..
@@ -1511,7 +1512,7 @@ c43f6
     lda desired_room_index                                            ; 43f6: a5 30       .0
     cmp #3                                                            ; 43f8: c9 03       ..
     bne c4415                                                         ; 43fa: d0 19       ..
-    ldx l0a01                                                         ; 43fc: ae 01 0a    ...
+    ldx table_x_position                                              ; 43fc: ae 01 0a    ...
     ldy #$14                                                          ; 43ff: a0 14       ..
     lda #3                                                            ; 4401: a9 03       ..
     sta width_in_cells                                                ; 4403: 85 3c       .<
@@ -1892,7 +1893,7 @@ pydis_end
 ;     l0a04:                                                    8
 ;     set_room1_trapdoor_sprites_if_required:                   8
 ;     room1_trapdoor_open_flag:                                 7
-;     l0a01:                                                    7
+;     table_x_position:                                         7
 ;     play_sound_yx:                                            7
 ;     mouse_sprites_and_ball_movement_table:                    7
 ;     l0070:                                                    6
@@ -1932,7 +1933,7 @@ pydis_end
 ;     return1:                                                  3
 ;     c3f8a:                                                    3
 ;     c419f:                                                    3
-;     c4339:                                                    3
+;     table_x_position_update_finished:                         3
 ;     source_sprite_memory_low:                                 2
 ;     source_sprite_memory_high:                                2
 ;     object_x_low:                                             2
@@ -1957,7 +1958,7 @@ pydis_end
 ;     c4194:                                                    2
 ;     c41c9:                                                    2
 ;     c4235:                                                    2
-;     c432f:                                                    2
+;     set_table_x_position_to_right_side:                       2
 ;     c43a0:                                                    2
 ;     sprite_reflect_flag:                                      1
 ;     temp_sprite_x_offset:                                     1
@@ -2064,8 +2065,6 @@ pydis_end
 ;     c4224
 ;     c4235
 ;     c424c
-;     c432f
-;     c4339
 ;     c4352
 ;     c4355
 ;     c4386
@@ -2081,7 +2080,6 @@ pydis_end
 ;     l09aa
 ;     l09ab
 ;     l09ac
-;     l0a01
 ;     l0a02
 ;     l0a03
 ;     l0a04

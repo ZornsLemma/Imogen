@@ -350,6 +350,13 @@ envelope(0x444a, "envelope4")
 expr(0x4340, make_lo("envelope4"))
 expr(0x4342, make_hi("envelope4"))
 
+# TODO: All this table_x_position stuff is speculative
+label(0xa01, "table_x_position")
+entry(0x432f, "set_table_x_position_to_right_side")
+comment(0x4323, "Set table_x_position to left side of screen")
+entry(0x4339, "table_x_position_update_finished") # if any...
+ab(0x432d)
+
 go()
 
 # vi: tw=100
