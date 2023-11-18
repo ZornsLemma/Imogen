@@ -91,7 +91,7 @@ level_progress_table                                = $09ef
 room1_trapdoor_open_flag                            = $09ff
 saxophone_collected_flag                            = $0a00
 table_x_position                                    = $0a01
-table_in_motion_flag                                = $0a02
+table_x_speed                                       = $0a02
 l0a03                                               = $0a03
 l0a04                                               = $0a04
 mouse_ball_position                                 = $0a6f
@@ -1387,21 +1387,21 @@ room3_handler
     beq table_x_position_update_finished                              ; 4315: f0 22       ."
     lda table_x_position                                              ; 4317: ad 01 0a    ...
     beq set_table_x_position_to_right_side                            ; 431a: f0 13       ..
-    lda table_in_motion_flag                                          ; 431c: ad 02 0a    ...
+    lda table_x_speed                                                 ; 431c: ad 02 0a    ...
     beq table_x_position_update_finished                              ; 431f: f0 18       ..
     bpl set_table_x_position_to_right_side                            ; 4321: 10 0c       ..
 ; Set table_x_position to left side of screen
     lda #$0a                                                          ; 4323: a9 0a       ..
     sta table_x_position                                              ; 4325: 8d 01 0a    ...
     lda #0                                                            ; 4328: a9 00       ..
-    sta table_in_motion_flag                                          ; 432a: 8d 02 0a    ...
+    sta table_x_speed                                                 ; 432a: 8d 02 0a    ...
     beq table_x_position_update_finished                              ; 432d: f0 0a       ..             ; ALWAYS branch
 ; $432f referenced 2 times by $431a, $4321
 set_table_x_position_to_right_side
     lda #$16                                                          ; 432f: a9 16       ..
     sta table_x_position                                              ; 4331: 8d 01 0a    ...
     lda #0                                                            ; 4334: a9 00       ..
-    sta table_in_motion_flag                                          ; 4336: 8d 02 0a    ...
+    sta table_x_speed                                                 ; 4336: 8d 02 0a    ...
 ; $4339 referenced 3 times by $4315, $431f, $432d
 table_x_position_update_finished
     lda desired_room_index                                            ; 4339: a5 30       .0
@@ -1425,7 +1425,7 @@ return4_local
 
 ; $4358 referenced 1 time by $430f
 room3_not_first_update
-    lda table_in_motion_flag                                          ; 4358: ad 02 0a    ...
+    lda table_x_speed                                                 ; 4358: ad 02 0a    ...
     bne c43a0                                                         ; 435b: d0 43       .C
     lda desired_room_index                                            ; 435d: a5 30       .0
     cmp #3                                                            ; 435f: c9 03       ..
@@ -1443,7 +1443,7 @@ room3_not_first_update
     jsr test_for_collision_between_objects_x_and_y                    ; 437a: 20 e2 28     .(
     beq return4_local                                                 ; 437d: f0 d6       ..
     lda #1                                                            ; 437f: a9 01       ..
-    sta table_in_motion_flag                                          ; 4381: 8d 02 0a    ...
+    sta table_x_speed                                                 ; 4381: 8d 02 0a    ...
     bne c43a0                                                         ; 4384: d0 1a       ..
 ; $4386 referenced 1 time by $4368
 c4386
@@ -1457,13 +1457,13 @@ c4386
     jsr test_for_collision_between_objects_x_and_y                    ; 4396: 20 e2 28     .(
     beq return4_local                                                 ; 4399: f0 ba       ..
     lda #$ff                                                          ; 439b: a9 ff       ..
-    sta table_in_motion_flag                                          ; 439d: 8d 02 0a    ...
+    sta table_x_speed                                                 ; 439d: 8d 02 0a    ...
 ; $43a0 referenced 2 times by $435b, $4384
 c43a0
     lda table_x_position                                              ; 43a0: ad 01 0a    ...
     sta l0070                                                         ; 43a3: 85 70       .p
     clc                                                               ; 43a5: 18          .
-    adc table_in_motion_flag                                          ; 43a6: 6d 02 0a    m..
+    adc table_x_speed                                                 ; 43a6: 6d 02 0a    m..
     sta table_x_position                                              ; 43a9: 8d 01 0a    ...
     cmp #$0a                                                          ; 43ac: c9 0a       ..
     beq c43b4                                                         ; 43ae: f0 04       ..
@@ -1472,7 +1472,7 @@ c43a0
 ; $43b4 referenced 1 time by $43ae
 c43b4
     lda #0                                                            ; 43b4: a9 00       ..
-    sta table_in_motion_flag                                          ; 43b6: 8d 02 0a    ...
+    sta table_x_speed                                                 ; 43b6: 8d 02 0a    ...
     lda desired_room_index                                            ; 43b9: a5 30       .0
     cmp #3                                                            ; 43bb: c9 03       ..
     bne return4                                                       ; 43bd: d0 56       .V
@@ -1889,7 +1889,7 @@ pydis_end
 ;     value_to_write_to_collision_map:                         10
 ;     l0a70:                                                   10
 ;     draw_sprite_a_at_cell_xy_and_write_to_collision_map:      9
-;     table_in_motion_flag:                                     8
+;     table_x_speed:                                            8
 ;     l0a04:                                                    8
 ;     set_room1_trapdoor_sprites_if_required:                   8
 ;     room1_trapdoor_open_flag:                                 7

@@ -247,7 +247,7 @@ expr(0x3eeb, "object_spriteid + objectid_right_trapdoor")
 entry(0x3e69, "room1_initial_setup_done")
 expr(0x4377, "objectid_player")
 expr(0x4379, "objectid_table")
-label(0xa02, "table_in_motion_flag")
+label(0xa02, "table_x_speed") # probably -1 ($ff), 0 or 1
 entry(0x4355, "return4_local")
 entry(0x4415, "return4")
 
