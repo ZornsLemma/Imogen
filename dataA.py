@@ -293,6 +293,7 @@ entry(0x4358, "room3_not_first_update")
 expr(0x4349, "spriteid_table")
 expr(0x434e, "spriteid_zero_size1")
 expr(0x4347, "objectid_table")
+entry(0x4044, "loop_until_exit_room_top")
 
 comment(0x407f, "Room 2 has the spell, guarded by a baby. TODO: Not too sure I have the room number correct etc.")
 entry(0x407f, "room2_handler") # TODO: not too sure about this

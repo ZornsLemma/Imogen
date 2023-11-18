@@ -959,10 +959,10 @@ room_3_code
     jsr draw_floor_walls_and_ceiling_around_solid_rock                ; 403e: 20 90 1b     ..
     jsr start_room                                                    ; 4041: 20 bb 12     ..
 ; $4044 referenced 1 time by $4049
-loop_c4044
+loop_until_exit_room_top
     jsr game_update                                                   ; 4044: 20 da 12     ..
     and #8                                                            ; 4047: 29 08       ).
-    beq loop_c4044                                                    ; 4049: f0 f9       ..
+    beq loop_until_exit_room_top                                      ; 4049: f0 f9       ..
     ldx #1                                                            ; 404b: a2 01       ..
     ldy desired_level                                                 ; 404d: a4 31       .1
     jmp initialise_level                                              ; 404f: 4c 40 11    L@.
@@ -2006,7 +2006,7 @@ pydis_end
 ;     room1_saxophone_and_brazier_handler:                      1
 ;     not_first_room_update:                                    1
 ;     c3f62:                                                    1
-;     loop_c4044:                                               1
+;     loop_until_exit_room_top:                                 1
 ;     room2_handler:                                            1
 ;     c40b2:                                                    1
 ;     c40c1:                                                    1
@@ -2097,7 +2097,6 @@ pydis_end
 ;     l3fd6
 ;     l40e3
 ;     loop_c3bd4
-;     loop_c4044
 ;     loop_c42ea
 ;     sub_c3f8b
 !if (<envelope1) != $60 {
