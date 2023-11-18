@@ -234,6 +234,8 @@ expr(0x3c5c, "objectid_mouse_ball")
 expr(0x3cc7, "object_spriteid + objectid_left_mouse")
 expr(0x3cce, "object_spriteid + objectid_right_mouse")
 expr(0x3ceb, "object_spriteid + objectid_right_mouse")
+# Room 3?
+constant(2, "objectid_table") # TODO: I think...
 # TODO: Looks like object IDs might be re-used across rooms, so some of these below are probably
 # wrong
 expr(0x3cf2, "object_spriteid + objectid_left_mouse")
@@ -295,6 +297,7 @@ entry(0x407f, "room2_handler") # TODO: not too sure about this
 expr(0x4093, "objectid_spell")
 expr(0x40d7, "objectid_TODO")
 expr(0x40dc, "spriteid_zero_size1")
+expr(0x4347, "objectid_table")
 
 # TODO: Use this more?
 def ldx_ldy_jsr_play_sound_yx(jsr_runtime_addr, s):

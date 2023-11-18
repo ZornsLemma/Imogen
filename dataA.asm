@@ -23,6 +23,7 @@ objectid_right_mouse               = 3
 objectid_right_trapdoor            = 3
 objectid_saxophone                 = 4
 objectid_spell                     = 5
+objectid_table                     = 2
 opcode_jmp                         = 76
 player_collision_flag_baby         = 6
 player_collision_flag_mouse_ball   = 128
@@ -1404,7 +1405,7 @@ c4339
     ldx #<envelope4                                                   ; 433f: a2 4a       .J
     ldy #>envelope4                                                   ; 4341: a0 44       .D
     jsr define_envelope                                               ; 4343: 20 5e 39     ^9
-    ldx #2                                                            ; 4346: a2 02       ..
+    ldx #objectid_table                                               ; 4346: a2 02       ..
     lda #spriteid_table                                               ; 4348: a9 de       ..
     sta object_spriteid,x                                             ; 434a: 9d a8 09    ...
     lda #spriteid_zero_size1                                          ; 434d: a9 cc       ..
@@ -2252,6 +2253,9 @@ pydis_end
 }
 !if (objectid_spell) != $05 {
     !error "Assertion failed: objectid_spell == $05"
+}
+!if (objectid_table) != $02 {
+    !error "Assertion failed: objectid_table == $02"
 }
 !if (player_collision_flag_baby) != $06 {
     !error "Assertion failed: player_collision_flag_baby == $06"
