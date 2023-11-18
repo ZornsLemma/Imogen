@@ -7,6 +7,10 @@ copy_mode_random4                  = 4
 copy_mode_random64                 = 64
 copy_mode_random8                  = 8
 copy_mode_simple                   = 1
+exit_room_bottom                   = 2
+exit_room_left                     = 1
+exit_room_right                    = 4
+exit_room_top                      = 8
 first_level_letter                 = 65
 game_area_height_cells             = 24
 game_area_width_cells              = 40
@@ -305,7 +309,7 @@ room_1_code
 loop_until_exit_room_right
     jsr game_update                                                   ; 3bd4: 20 da 12     ..
     sta room_exit_direction                                           ; 3bd7: 85 70       .p
-    and #4                                                            ; 3bd9: 29 04       ).
+    and #exit_room_right                                              ; 3bd9: 29 04       ).
     beq loop_until_exit_room_right                                    ; 3bdb: f0 f7       ..
     ldx #1                                                            ; 3bdd: a2 01       ..
     ldy desired_level                                                 ; 3bdf: a4 31       .1
@@ -594,29 +598,29 @@ room_2_code
     jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map           ; 3dcc: 20 57 1f     W.
     jsr start_room                                                    ; 3dcf: 20 bb 12     ..
 ; $3dd2 referenced 1 time by $3df3
-c3dd2
+loop_until_exited_room
     jsr game_update                                                   ; 3dd2: 20 da 12     ..
     sta room_exit_direction                                           ; 3dd5: 85 70       .p
-    and #1                                                            ; 3dd7: 29 01       ).
-    beq c3de2                                                         ; 3dd9: f0 07       ..
+    and #exit_room_left                                               ; 3dd7: 29 01       ).
+    beq exited_room_not_left                                          ; 3dd9: f0 07       ..
     ldx #0                                                            ; 3ddb: a2 00       ..
     ldy desired_level                                                 ; 3ddd: a4 31       .1
     jmp initialise_level                                              ; 3ddf: 4c 40 11    L@.
 
 ; $3de2 referenced 1 time by $3dd9
-c3de2
+exited_room_not_left
     lda room_exit_direction                                           ; 3de2: a5 70       .p
-    and #2                                                            ; 3de4: 29 02       ).
-    beq c3def                                                         ; 3de6: f0 07       ..
+    and #exit_room_bottom                                             ; 3de4: 29 02       ).
+    beq exited_room_not_bottom                                        ; 3de6: f0 07       ..
     ldx #2                                                            ; 3de8: a2 02       ..
     ldy desired_level                                                 ; 3dea: a4 31       .1
     jmp initialise_level                                              ; 3dec: 4c 40 11    L@.
 
 ; $3def referenced 1 time by $3de6
-c3def
+exited_room_not_bottom
     lda room_exit_direction                                           ; 3def: a5 70       .p
-    and #4                                                            ; 3df1: 29 04       ).
-    beq c3dd2                                                         ; 3df3: f0 dd       ..
+    and #exit_room_right                                              ; 3df1: 29 04       ).
+    beq loop_until_exited_room                                        ; 3df3: f0 dd       ..
     ldx #3                                                            ; 3df5: a2 03       ..
     ldy desired_level                                                 ; 3df7: a4 31       .1
     jmp initialise_level                                              ; 3df9: 4c 40 11    L@.
@@ -961,7 +965,7 @@ room_3_code
 ; $4044 referenced 1 time by $4049
 loop_until_exit_room_top
     jsr game_update                                                   ; 4044: 20 da 12     ..
-    and #8                                                            ; 4047: 29 08       ).
+    and #exit_room_top                                                ; 4047: 29 08       ).
     beq loop_until_exit_room_top                                      ; 4049: f0 f9       ..
     ldx #1                                                            ; 404b: a2 01       ..
     ldy desired_level                                                 ; 404d: a4 31       .1
@@ -1358,7 +1362,7 @@ room_4_code
 ; $42ea referenced 1 time by $42ef
 loop_until_exit_room_left
     jsr game_update                                                   ; 42ea: 20 da 12     ..
-    and #1                                                            ; 42ed: 29 01       ).
+    and #exit_room_left                                               ; 42ed: 29 01       ).
     beq loop_until_exit_room_left                                     ; 42ef: f0 f9       ..
     ldx #1                                                            ; 42f1: a2 01       ..
     ldy desired_level                                                 ; 42f3: a4 31       .1
@@ -1991,9 +1995,9 @@ pydis_end
 ;     mouse_ball_position_ge_0x17:                              1
 ;     mouse_ball_position_ge_0xf_common_tail:                   1
 ;     finish_mouse_ball_movement:                               1
-;     c3dd2:                                                    1
-;     c3de2:                                                    1
-;     c3def:                                                    1
+;     loop_until_exited_room:                                   1
+;     exited_room_not_left:                                     1
+;     exited_room_not_bottom:                                   1
 ;     room1_handler:                                            1
 ;     set_up_open_trapdoor_collision_map:                       1
 ;     room1_not_first_update:                                   1
@@ -2035,9 +2039,6 @@ pydis_end
 
 ; Automatically generated labels:
 ;     c3b0e
-;     c3dd2
-;     c3de2
-;     c3def
 ;     c3f62
 ;     c3f8a
 ;     c40b2
@@ -2180,6 +2181,18 @@ pydis_end
 }
 !if (copy_mode_simple) != $01 {
     !error "Assertion failed: copy_mode_simple == $01"
+}
+!if (exit_room_bottom) != $02 {
+    !error "Assertion failed: exit_room_bottom == $02"
+}
+!if (exit_room_left) != $01 {
+    !error "Assertion failed: exit_room_left == $01"
+}
+!if (exit_room_right) != $04 {
+    !error "Assertion failed: exit_room_right == $04"
+}
+!if (exit_room_top) != $08 {
+    !error "Assertion failed: exit_room_top == $08"
 }
 !if (level_init_after_load_handler) != $3af2 {
     !error "Assertion failed: level_init_after_load_handler == $3af2"

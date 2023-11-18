@@ -100,6 +100,11 @@ constant(0x40, "copy_mode_random64")
 constant(0, "objectid_player")
 constant(1, "objectid_player_accessory")
 
+constant(1, "exit_room_left")
+constant(2, "exit_room_bottom")
+constant(4, "exit_room_right")
+constant(8, "exit_room_top")
+
 # TODO: Use this more generally or maybe just get rid of it?
 def label_word(addr, s):
     label(addr, s)
