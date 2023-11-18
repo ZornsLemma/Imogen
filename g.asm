@@ -5,6 +5,26 @@
 ;
 ; *************************************************************************************
 
+; *************************************************************************************
+;
+; Memory map
+; ----------
+;   0100-012e: object data (object extents etc)
+;   0131-0160: code to print transformations left
+;   0400-0527: dialog box code
+;   0530-07ff: cache of screen memory under the dialog box
+;   0950-0ab5: data
+;   0ab7-0aff: level utils code
+;   0b00-0bff: special sprite data (sprites 197, 198, 199)
+;   0c00-0c60: collision map
+;   1103-3ad4: main code
+;   3ad5-4ad3: data* file (level code/data) (it's initialisation code at first before being overwritten)
+;   4ad8-5bbf: sprdata (main sprites) OR
+;   53c0-578a: auxcode (for password / cheat codes support)
+;   5bc0-7fff: screen memory
+;
+; *************************************************************************************
+
 ; Constants
 buffer_sound_channel_0                          = 4
 bytes_per_cell                                  = 8
@@ -1562,7 +1582,10 @@ brk_handler
 ; OSFILE wrapper
 ; 
 ; On Entry:
-;      A: OSFILE action (load / save / read catalogue)
+;      A: OSFILE action:
+;         $00 = save
+;         $05 = read catalogue
+;         $ff = load
 ;     YX: address of filename
 ; 
 ; *************************************************************************************
