@@ -359,13 +359,14 @@ l007d                                       = $7d
 osfile_block_start_address_high             = $7d
 player_hit_wall_on_right_flag               = $7d
 sprite_data_byte                            = $7d
-address2_low                                = $7e
 dest_sprite_address_low                     = $7e
-osfile_block_end_address_mid1               = $7e
+l007e                                       = $7e
+osfile_block_end_address_low                = $7e
 pattern_length_cycle_counter                = $7e
 player_has_hit_ceiling_flag                 = $7e
-address2_high                               = $7f
 dest_sprite_address_high                    = $7f
+l007f                                       = $7f
+osfile_block_end_address_mid1               = $7f
 player_has_hit_floor_flag                   = $7f
 adjustment                                  = $80
 l0080                                       = $80
@@ -6954,9 +6955,9 @@ c359e
     lda #>save_game                                                   ; 36e1: a9 09       ..  :35b0[1]
     sta osfile_block_start_address_mid1                               ; 36e3: 85 7b       .{  :35b2[1]
     lda #<sixteen_entry_table                                         ; 36e5: a9 6f       .o  :35b4[1]
-    sta osfile_block_end_address_mid1                                 ; 36e7: 85 7e       .~  :35b6[1]
+    sta osfile_block_end_address_low                                  ; 36e7: 85 7e       .~  :35b6[1]
     lda #>sixteen_entry_table                                         ; 36e9: a9 0a       ..  :35b8[1]
-    sta address2_high                                                 ; 36eb: 85 7f       ..  :35ba[1]
+    sta osfile_block_end_address_mid1                                 ; 36eb: 85 7f       ..  :35ba[1]
 c35bc
     ldx #<save_game                                                   ; 36ed: a2 ea       ..  :35bc[1]
     ldy #>save_game                                                   ; 36ef: a0 09       ..  :35be[1]

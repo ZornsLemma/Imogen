@@ -184,8 +184,8 @@ substitute_labels = {
     (0x145d,0x1800): {
         "address1_low":  "src_sprite_address_low",
         "address1_high": "src_sprite_address_high",
-        "address2_low":  "dest_sprite_address_low",
-        "address2_high": "dest_sprite_address_high",
+        "l007e":  "dest_sprite_address_low",
+        "l007f": "dest_sprite_address_high",
     },
     (0x14be, 0x1801): {
         "l0072": "sprite_screen_address_low",
@@ -215,8 +215,8 @@ substitute_labels = {
         "l007b": "osfile_block_start_address_mid1",
         "l007c": "osfile_block_start_address_mid2",
         "l007d": "osfile_block_start_address_high",
-        "address2_low": "osfile_block_end_address_low",
-        "address2_low": "osfile_block_end_address_mid1",
+        "l007e": "osfile_block_end_address_low",
+        "l007f": "osfile_block_end_address_mid1",
         "l0080": "osfile_block_end_address_mid2",
         "l0081": "osfile_block_end_address_high",
     },
@@ -240,7 +240,7 @@ substitute_labels = {
     (0x1bec,0x1f24): {
         "address1_low": "cell_x",
         "address1_high": "cell_y",
-        "address2_low": "pattern_length_cycle_counter",
+        "l007e": "pattern_length_cycle_counter",
         "l0072": "width_in_cells_to_write",
         "l0073": "height_in_cells_to_write",
         "l0074": "first_cell_in_row_screen_address_low",
@@ -314,8 +314,8 @@ substitute_labels = {
         "l0080": "adjustment",
     },
     (0x2816, 0x2989): {
-        "address2_low": "player_has_hit_ceiling_flag",
-        "address2_high": "player_has_hit_floor_flag",
+        "l007e": "player_has_hit_ceiling_flag",
+        "l007f": "player_has_hit_floor_flag",
     },
     (0x2816, 0x284f): {
         "l0080": "player_width_in_cells",
@@ -330,8 +330,8 @@ substitute_labels = {
     (0x29c5,0x2a11): {
         "l007c": "player_hit_wall_on_left_flag",
         "l007d": "player_hit_wall_on_right_flag",
-        "address2_low": "player_has_hit_ceiling_flag",
-        "address2_high": "player_has_hit_floor_flag",
+        "l007e": "player_has_hit_ceiling_flag",
+        "l007f": "player_has_hit_floor_flag",
     },
     (0x2cb8, 0x2d3c): {
         "address1_low": "menu_item_to_use",
@@ -360,8 +360,8 @@ substitute_labels = {
         "l007b": "osfile_block_start_address_mid1",
         "l007c": "osfile_block_start_address_mid2",
         "l007d": "osfile_block_start_address_high",
-        "address2_low": "osfile_block_end_address_low",
-        "address2_low": "osfile_block_end_address_mid1",
+        "l007e": "osfile_block_end_address_low",
+        "l007f": "osfile_block_end_address_mid1",
         "l0080": "osfile_block_end_address_mid2",
         "l0081": "osfile_block_end_address_high",
     },
@@ -468,8 +468,6 @@ label(0x0064, "temp_object_index")
 label(0x0065, "remember_player_accessory_object_index")
 label(0x0070, "address1_low")
 label(0x0071, "address1_high")
-label(0x007e, "address2_low")
-label(0x007f, "address2_high")
 label(0x0082, "sprite_bit")
 label(0x0083, "sprite_bit_mask")
 label(0x0084, "sprite_y_offset_within_character_row")
