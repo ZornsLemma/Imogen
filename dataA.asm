@@ -15,6 +15,10 @@ first_level_letter                 = 65
 game_area_height_cells             = 24
 game_area_width_cells              = 40
 last_level_letter                  = 81
+object_collided_ceiling            = 8
+object_collided_floor              = 2
+object_collided_left_wall          = 1
+object_collided_right_wall         = 4
 objectid_TODO                      = 2
 objectid_brazier                   = 5
 objectid_brazier2                  = 3
@@ -1434,7 +1438,7 @@ room3_not_first_update
     cmp #$16                                                          ; 4366: c9 16       ..
     beq c4386                                                         ; 4368: f0 1c       ..
     lda object_room_collision_flags                                   ; 436a: ad d8 38    ..8
-    and #4                                                            ; 436d: 29 04       ).
+    and #object_collided_right_wall                                   ; 436d: 29 04       ).
     beq return4_local                                                 ; 436f: f0 e4       ..
     lda #1                                                            ; 4371: a9 01       ..
     sta temp_right_offset                                             ; 4373: 8d d1 24    ..$
@@ -1448,7 +1452,7 @@ room3_not_first_update
 ; $4386 referenced 1 time by $4368
 c4386
     lda object_room_collision_flags                                   ; 4386: ad d8 38    ..8
-    and #1                                                            ; 4389: 29 01       ).
+    and #object_collided_left_wall                                    ; 4389: 29 01       ).
     beq return4_local                                                 ; 438b: f0 c8       ..
     lda #$ff                                                          ; 438d: a9 ff       ..
     sta temp_left_offset                                              ; 438f: 8d d0 24    ..$
@@ -2197,6 +2201,12 @@ pydis_end
 }
 !if (level_update_handler) != $3b17 {
     !error "Assertion failed: level_update_handler == $3b17"
+}
+!if (object_collided_left_wall) != $01 {
+    !error "Assertion failed: object_collided_left_wall == $01"
+}
+!if (object_collided_right_wall) != $04 {
+    !error "Assertion failed: object_collided_right_wall == $04"
 }
 !if (object_sprite_mask_type + objectid_TODO) != $38ae {
     !error "Assertion failed: object_sprite_mask_type + objectid_TODO == $38ae"

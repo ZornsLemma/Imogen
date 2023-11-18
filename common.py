@@ -105,6 +105,11 @@ constant(2, "exit_room_bottom")
 constant(4, "exit_room_right")
 constant(8, "exit_room_top")
 
+constant(1, "object_collided_left_wall")
+constant(2, "object_collided_floor")
+constant(4, "object_collided_right_wall")
+constant(8, "object_collided_ceiling")
+
 # TODO: Use this more generally or maybe just get rid of it?
 def label_word(addr, s):
     label(addr, s)
