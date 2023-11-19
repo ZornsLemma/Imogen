@@ -191,21 +191,24 @@ level_specific_password
 ; *************************************************************************************
 level_specific_initialisation
     lda desired_level                                                 ; 3af2: a5 31
+; if level is unchanged, skip forwards
     cmp previous_level                                                ; 3af4: c5 51
     beq saxophone_not_collected_yet                                   ; 3af6: f0 16
+; if not in developer mode, skip forwards
     lda developer_flags                                               ; 3af8: ad 03 11
     bpl developer_mode_not_active                                     ; 3afb: 10 07
-; add the saxophone menu item to the toolbar
+; add the saxophone menu item to the toolbar (due to being in developer mode)
     lda #spriteid_saxophone2                                          ; 3afd: a9 d3
     jsr find_or_create_menu_slot_for_A                                ; 3aff: 20 bd 2b
     lda #$ff                                                          ; 3b02: a9 ff                   ; redundant instruction
 ; check the saxophone collected flag. The user can choose during the course of a game
 ; to enter the password to continue playing this level having previously got the
-; saxophone.
+; saxophone. Or indeed may have just loaded a previously saved game.
 developer_mode_not_active
     lda saxophone_collected_flag                                      ; 3b04: ad 00 0a
     beq saxophone_not_collected_yet                                   ; 3b07: f0 05
-; add the saxophone menu item to the toolbar
+; add the saxophone menu item to the toolbar (due to having collected it on a previous
+; visit to the level)
     lda #spriteid_saxophone2                                          ; 3b09: a9 d3
     jsr find_or_create_menu_slot_for_A                                ; 3b0b: 20 bd 2b
 saxophone_not_collected_yet
