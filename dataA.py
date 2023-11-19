@@ -37,15 +37,13 @@ constant(2, "objectid_left_trapdoor")
 constant(3, "objectid_right_trapdoor")
 constant(4, "objectid_saxophone")
 constant(5, "objectid_brazier")
+constant(0xb, "objectid_something")
 # Room 2
 constant(2, "objectid_baby")
 constant(5, "objectid_spell")
 # Room 3
 constant(2, "objectid_table")
 constant(3, "objectid_brazier2")
-
-constant(0xb, "objectid_something")
-
 
 set_sprite_dict(sprite_dict)
 
@@ -264,6 +262,7 @@ expr(0x3f73, "objectid_something")
 expr(0x3f75, "objectid_saxophone")
 expr(0x3f83, "object_spriteid + objectid_saxophone")
 entry(0x3f8a, "return6")
+expr(0x3e93, "objectid_something")
 
 comment(0x42f8, """*************************************************************************************
 

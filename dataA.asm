@@ -721,7 +721,7 @@ room1_not_first_update
     bcs set_room1_trapdoor_sprites_if_required                        ; 3e8b: b0 4a
     lda #2                                                            ; 3e8d: a9 02
     sta temp_bottom_offset                                            ; 3e8f: 8d 51 25
-    lda #$0b                                                          ; 3e92: a9 0b
+    lda #objectid_something                                           ; 3e92: a9 0b
     jsr get_wall_collision_for_object_a                               ; 3e94: 20 94 28
     beq set_room1_trapdoor_sprites_if_required                        ; 3e97: f0 3e
 ; Remove the closed trapdoor from the collision map.
