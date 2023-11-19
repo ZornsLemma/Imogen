@@ -3233,9 +3233,8 @@ while bin_addr < bin_range[-1]:
 # [chr(0xcb ^ int(x.strip()[1:],16)) for x in s.split(",")]
 
 # Keypresses are checked in the IRQ routine every vsync.
-# Because the main game loop can be slow, multiple vsyncs can occur, so keypresses are accumulated and stored in "pending" variables
-# The main game can deal with these in the next tick.
-
+# Because the main game loop only updates once every 5 vsyncs, keypresses are accumulated and stored in "pending" variables.
+# The main game deals with these in the next tick of the game loop.
 
 print("""; *************************************************************************************
 ;
@@ -3260,15 +3259,24 @@ print("""; *********************************************************************
 ;   0b11-0bec: special sprite data (sprites 197, 198, 199)
 ;   0c00-0c60: collision map
 ;   1103-3ad4: main code
-;   3ad5-4ad3: 'data*' file (level code/data) (it starts as initialisation code at first before being overwritten by a level)
+;   3ad5-4ad3: 'data*' file (level code/data) (it starts as initialisation code before being overwritten by a level)
 ;   4ad8-5bbf: 'sprdata' file (main sprites) OR
 ;   53c0-578a: 'auxcode' file (for password / cheat codes support)
 ;   5bc0-61ff: screen memory: toolbar
 ;   6200-7fff: screen memory: main game area
 ;
-; During initialisation:
+; Only during initialisation:
+;
 ;   3c06-4225: initialisation code (which will get overwritten after initialisation by level data)
-;   40ff-4318: 'icodata' file (contains toolbar sprites that are only used once to render the toolbar)
+;   40ff-4318: 'icodata' file (contains toolbar sprites only used once to render the toolbar)
+;
+; The Auxcode Overlay
+; ---------------------
+; When the user submits a password, the 'sprdata' memory is temporarily overwritten by the 'auxcode'
+; file which contains code to handle password and cheat code recognition (including a screendump
+; facility for Epsom printers). Once finished, the 'sprdata' is reloaded back into memory so the
+; game can continue. Because both sets of code/data don't need to reside in memory at the same time,
+; this is a memory saving system known as an overlay.
 ;
 ; *************************************************************************************
 """)
