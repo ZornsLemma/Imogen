@@ -4211,7 +4211,7 @@ handle_player_landing_sound
 ; check for player collision with floor
 player_y_is_unchanged
     lda object_room_collision_flags                                   ; 24c3: ad d8 38    ..8 :2392[1]
-    and #2                                                            ; 24c6: 29 02       ).  :2395[1]
+    and #object_collided_floor                                        ; 24c6: 29 02       ).  :2395[1]
     beq return12                                                      ; 24c8: f0 0f       ..  :2397[1]
     lda #2                                                            ; 24ca: a9 02       ..  :2399[1]
     sta temp_bottom_offset                                            ; 24cc: 8d 51 25    .Q% :239b[1]
@@ -4794,7 +4794,7 @@ handle_left_right_wall_collision
     sta object_x_high,x                                               ; 27e5: 9d 66 09    .f. :26b4[1]
 ; mark object has collided with left wall
     lda object_room_collision_flags,x                                 ; 27e8: bd d8 38    ..8 :26b7[1]
-    ora #1                                                            ; 27eb: 09 01       ..  :26ba[1]
+    ora #object_collided_left_wall                                    ; 27eb: 09 01       ..  :26ba[1]
     sta object_room_collision_flags,x                                 ; 27ed: 9d d8 38    ..8 :26bc[1]
     jmp return15                                                      ; 27f0: 4c e4 26    L.& :26bf[1]
 
@@ -4815,7 +4815,7 @@ player_has_hit_wall_on_right_side
     sta object_x_high,x                                               ; 280a: 9d 66 09    .f. :26d9[1]
 ; mark object has collided with right wall
     lda object_room_collision_flags,x                                 ; 280d: bd d8 38    ..8 :26dc[1]
-    ora #4                                                            ; 2810: 09 04       ..  :26df[1]
+    ora #object_collided_right_wall                                   ; 2810: 09 04       ..  :26df[1]
     sta object_room_collision_flags,x                                 ; 2812: 9d d8 38    ..8 :26e1[1]
 return15
     rts                                                               ; 2815: 60          `   :26e4[1]
@@ -4902,7 +4902,7 @@ handle_top_bottom_collision
     sta object_y_high,x                                               ; 2870: 9d 92 09    ... :273f[1]
 ; mark object has collided with ceiling
     lda object_room_collision_flags,x                                 ; 2873: bd d8 38    ..8 :2742[1]
-    ora #8                                                            ; 2876: 09 08       ..  :2745[1]
+    ora #object_collided_ceiling                                      ; 2876: 09 08       ..  :2745[1]
     sta object_room_collision_flags,x                                 ; 2878: 9d d8 38    ..8 :2747[1]
     jmp return17                                                      ; 287b: 4c 6f 27    Lo' :274a[1]
 
@@ -4922,7 +4922,7 @@ player_has_hit_floor
     sta object_y_high,x                                               ; 2895: 9d 92 09    ... :2764[1]
 ; mark object has collided with floor
     lda object_room_collision_flags,x                                 ; 2898: bd d8 38    ..8 :2767[1]
-    ora #2                                                            ; 289b: 09 02       ..  :276a[1]
+    ora #object_collided_floor                                        ; 289b: 09 02       ..  :276a[1]
     sta object_room_collision_flags,x                                 ; 289d: 9d d8 38    ..8 :276c[1]
 return17
     rts                                                               ; 28a0: 60          `   :276f[1]
@@ -5967,14 +5967,14 @@ update_wizard_animation
     lda #3                                                            ; 2ec1: a9 03       ..  :2d90[1]
     jsr set_base_animation_address_and_handle_transform_in_out        ; 2ec3: 20 ee 22     ." :2d92[1]
 ; branch if transforming
-    bne store_wizard_animation_state_local                            ; 2ec6: d0 29       .)  :2d95[1]
+    bne wizard_got_index_in_animation_local                           ; 2ec6: d0 29       .)  :2d95[1]
     cpy #wizard_change_direction_animation_last_step - wizard_base_animation; 2ec8: c0 39       .9  :2d97[1]
     bne wizard_not_changing_direction                                 ; 2eca: d0 0b       ..  :2d99[1]
 ; toggle player direction
     lda object_direction                                              ; 2ecc: ad be 09    ... :2d9b[1]
     eor #$fe                                                          ; 2ecf: 49 fe       I.  :2d9e[1]
     sta object_direction                                              ; 2ed1: 8d be 09    ... :2da0[1]
-    jmp store_wizard_animation_state                                  ; 2ed4: 4c 5f 2e    L_. :2da3[1]
+    jmp wizard_got_index_in_animation                                 ; 2ed4: 4c 5f 2e    L_. :2da3[1]
 
 wizard_not_changing_direction
     jsr sub_c23c4                                                     ; 2ed7: 20 c4 23     .# :2da6[1]
@@ -5988,8 +5988,8 @@ wizard_not_changing_direction
     bne c2dc3                                                         ; 2eeb: d0 07       ..  :2dba[1]
     cpy #wizard_jump_animation - wizard_base_animation                ; 2eed: c0 49       .I  :2dbc[1]
     beq c2dc3                                                         ; 2eef: f0 03       ..  :2dbe[1]
-store_wizard_animation_state_local
-    jmp store_wizard_animation_state                                  ; 2ef1: 4c 5f 2e    L_. :2dc0[1]
+wizard_got_index_in_animation_local
+    jmp wizard_got_index_in_animation                                 ; 2ef1: 4c 5f 2e    L_. :2dc0[1]
 
 c2dc3
     lda #wizard_fall_animation - wizard_base_animation                ; 2ef4: a9 96       ..  :2dc3[1]
@@ -6002,8 +6002,8 @@ c2dca
     cmp #wizard_fall_animation - wizard_base_animation                ; 2f03: c9 96       ..  :2dd2[1]
     bne c2de4                                                         ; 2f05: d0 0e       ..  :2dd4[1]
 ; check player for collision with left or right wall
-    lda #4                                                            ; 2f07: a9 04       ..  :2dd6[1]
-    ora #1                                                            ; 2f09: 09 01       ..  :2dd8[1]   ; why not just lda #5?
+    lda #object_collided_right_wall                                   ; 2f07: a9 04       ..  :2dd6[1]
+    ora #object_collided_left_wall                                    ; 2f09: 09 01       ..  :2dd8[1]   ; why not just lda #5?
     and object_room_collision_flags                                   ; 2f0b: 2d d8 38    -.8 :2dda[1]
     beq c2de4                                                         ; 2f0e: f0 05       ..  :2ddd[1]
     lda #$80                                                          ; 2f10: a9 80       ..  :2ddf[1]
@@ -6011,10 +6011,10 @@ c2dca
 c2de4
     lda #wizard_fall_animation - wizard_base_animation                ; 2f15: a9 96       ..  :2de4[1]
     cmp current_animation                                             ; 2f17: cd df 09    ... :2de6[1]
-    beq store_wizard_animation_state_local                            ; 2f1a: f0 d5       ..  :2de9[1]
+    beq wizard_got_index_in_animation_local                           ; 2f1a: f0 d5       ..  :2de9[1]
     sta current_animation                                             ; 2f1c: 8d df 09    ... :2deb[1]
     ldy #$86                                                          ; 2f1f: a0 86       ..  :2dee[1]
-    jmp store_wizard_animation_state                                  ; 2f21: 4c 5f 2e    L_. :2df0[1]
+    jmp wizard_got_index_in_animation                                 ; 2f21: 4c 5f 2e    L_. :2df0[1]
 
 c2df3
     ldx player_move_direction_requested                               ; 2f24: ae c9 3a    ..: :2df3[1]
@@ -6064,14 +6064,14 @@ c2e44
     inx                                                               ; 2f7c: e8          .   :2e4b[1]
 c2e4c
     lda two_byte_table_based_on_left_right_direction,x                ; 2f7d: bd 90 28    ..( :2e4c[1]
-    beq store_wizard_animation_state                                  ; 2f80: f0 0e       ..  :2e4f[1]
+    beq wizard_got_index_in_animation                                 ; 2f80: f0 0e       ..  :2e4f[1]
     ldy #wizard_fall_animation - wizard_base_animation                ; 2f82: a0 96       ..  :2e51[1]
     sty current_animation                                             ; 2f84: 8c df 09    ... :2e53[1]
     ldy #wizard_animation11 - wizard_base_animation                   ; 2f87: a0 6c       .l  :2e56[1]
     cmp object_direction                                              ; 2f89: cd be 09    ... :2e58[1]
-    beq store_wizard_animation_state                                  ; 2f8c: f0 02       ..  :2e5b[1]
+    beq wizard_got_index_in_animation                                 ; 2f8c: f0 02       ..  :2e5b[1]
     ldy #wizard_animation12 - wizard_base_animation                   ; 2f8e: a0 79       .y  :2e5d[1]
-store_wizard_animation_state
+wizard_got_index_in_animation
     sty object_current_index_in_animation                             ; 2f90: 8c d4 09    ... :2e5f[1]
     lda #0                                                            ; 2f93: a9 00       ..  :2e62[1]
     sta temp_collision_results                                        ; 2f95: 8d b5 2e    ... :2e64[1]
@@ -6259,14 +6259,14 @@ update_cat_animation
     ldy #>cat_base_animation                                          ; 3100: a0 2f       ./  :2fcf[1]
     lda #3                                                            ; 3102: a9 03       ..  :2fd1[1]
     jsr set_base_animation_address_and_handle_transform_in_out        ; 3104: 20 ee 22     ." :2fd3[1]
-    bne c300e                                                         ; 3107: d0 36       .6  :2fd6[1]
+    bne cat_got_index_in_animation_local                              ; 3107: d0 36       .6  :2fd6[1]
     cpy #cat_change_direction_animation_last_step - cat_base_animation; 3109: c0 39       .9  :2fd8[1]
     bne cat_not_changing_direction                                    ; 310b: d0 0b       ..  :2fda[1]
 ; toggle player direction
     lda object_direction                                              ; 310d: ad be 09    ... :2fdc[1]
     eor #$fe                                                          ; 3110: 49 fe       I.  :2fdf[1]
     sta object_direction                                              ; 3112: 8d be 09    ... :2fe1[1]
-    jmp c30a5                                                         ; 3115: 4c a5 30    L.0 :2fe4[1]
+    jmp cat_got_index_in_animation                                    ; 3115: 4c a5 30    L.0 :2fe4[1]
 
 cat_not_changing_direction
     jsr sub_c23c4                                                     ; 3118: 20 c4 23     .# :2fe7[1]
@@ -6279,14 +6279,14 @@ cat_not_changing_direction
     jsr get_wall_collision_for_object_a                               ; 3129: 20 94 28     .( :2ff8[1]
     bne c3023                                                         ; 312c: d0 26       .&  :2ffb[1]
     cpy #cat_jump_animation - cat_base_animation                      ; 312e: c0 45       .E  :2ffd[1]
-    bne c300e                                                         ; 3130: d0 0d       ..  :2fff[1]
+    bne cat_got_index_in_animation_local                              ; 3130: d0 0d       ..  :2fff[1]
     lda player_move_direction_requested                               ; 3132: ad c9 3a    ..: :3001[1]
     cmp object_direction                                              ; 3135: cd be 09    ... :3004[1]
     bne c3023                                                         ; 3138: d0 1a       ..  :3007[1]
     ldy #cat_jump_apex_animation - cat_base_animation                 ; 313a: a0 58       .X  :3009[1]
     sty current_animation                                             ; 313c: 8c df 09    ... :300b[1]
-c300e
-    jmp c30a5                                                         ; 313f: 4c a5 30    L.0 :300e[1]
+cat_got_index_in_animation_local
+    jmp cat_got_index_in_animation                                    ; 313f: 4c a5 30    L.0 :300e[1]
 
 c3011
     cmp #cat_jump_apex_animation - cat_base_animation                 ; 3142: c9 58       .X  :3011[1]
@@ -6296,7 +6296,7 @@ c3011
     jsr get_wall_collision_for_object_a                               ; 314b: 20 94 28     .( :301a[1]
     bne c3023                                                         ; 314e: d0 04       ..  :301d[1]
     cpy #cat_jump_apex_animation - cat_base_animation                 ; 3150: c0 58       .X  :301f[1]
-    bne c300e                                                         ; 3152: d0 eb       ..  :3021[1]
+    bne cat_got_index_in_animation_local                              ; 3152: d0 eb       ..  :3021[1]
 c3023
     lda #$ae                                                          ; 3154: a9 ae       ..  :3023[1]
     sta current_animation                                             ; 3156: 8d df 09    ... :3025[1]
@@ -6308,8 +6308,8 @@ c302a
     cmp #cat_fall_animation - cat_base_animation                      ; 3163: c9 ae       ..  :3032[1]
     bne c3044                                                         ; 3165: d0 0e       ..  :3034[1]
 ; check player for collision with left or right wall
-    lda #4                                                            ; 3167: a9 04       ..  :3036[1]
-    ora #1                                                            ; 3169: 09 01       ..  :3038[1]   ; why not just lda #5?
+    lda #object_collided_right_wall                                   ; 3167: a9 04       ..  :3036[1]
+    ora #object_collided_left_wall                                    ; 3169: 09 01       ..  :3038[1]   ; why not just lda #5?
     and object_room_collision_flags                                   ; 316b: 2d d8 38    -.8 :303a[1]
     beq c3044                                                         ; 316e: f0 05       ..  :303d[1]
     lda #$80                                                          ; 3170: a9 80       ..  :303f[1]
@@ -6317,10 +6317,10 @@ c302a
 c3044
     lda #cat_fall_animation - cat_base_animation                      ; 3175: a9 ae       ..  :3044[1]
     cmp current_animation                                             ; 3177: cd df 09    ... :3046[1]
-    beq c300e                                                         ; 317a: f0 c3       ..  :3049[1]
+    beq cat_got_index_in_animation_local                              ; 317a: f0 c3       ..  :3049[1]
     sta current_animation                                             ; 317c: 8d df 09    ... :304b[1]
     ldy #cat_animation13 - cat_base_animation                         ; 317f: a0 9e       ..  :304e[1]
-    jmp c30a5                                                         ; 3181: 4c a5 30    L.0 :3050[1]
+    jmp cat_got_index_in_animation                                    ; 3181: 4c a5 30    L.0 :3050[1]
 
 c3053
     ldx player_move_direction_requested                               ; 3184: ae c9 3a    ..: :3053[1]
@@ -6358,14 +6358,14 @@ c308a
     inx                                                               ; 31c2: e8          .   :3091[1]
 c3092
     lda two_byte_table_based_on_left_right_direction,x                ; 31c3: bd 90 28    ..( :3092[1]
-    beq c30a5                                                         ; 31c6: f0 0e       ..  :3095[1]
+    beq cat_got_index_in_animation                                    ; 31c6: f0 0e       ..  :3095[1]
     ldy #cat_fall_animation - cat_base_animation                      ; 31c8: a0 ae       ..  :3097[1]
     sty current_animation                                             ; 31ca: 8c df 09    ... :3099[1]
     ldy #cat_animation11 - cat_base_animation                         ; 31cd: a0 84       ..  :309c[1]
     cmp object_direction                                              ; 31cf: cd be 09    ... :309e[1]
-    beq c30a5                                                         ; 31d2: f0 02       ..  :30a1[1]
+    beq cat_got_index_in_animation                                    ; 31d2: f0 02       ..  :30a1[1]
     ldy #cat_animation12 - cat_base_animation                         ; 31d4: a0 91       ..  :30a3[1]
-c30a5
+cat_got_index_in_animation
     sty object_current_index_in_animation                             ; 31d6: 8c d4 09    ... :30a5[1]
     tya                                                               ; 31d9: 98          .   :30a8[1]
     ldx #<cat_base_animation                                          ; 31da: a2 16       ..  :30a9[1]
@@ -8975,7 +8975,6 @@ pydis_end
 ;     c2e82
 ;     c2eb1
 ;     c2ed7
-;     c300e
 ;     c3011
 ;     c3023
 ;     c302a
@@ -8986,7 +8985,6 @@ pydis_end
 ;     c3088
 ;     c308a
 ;     c3092
-;     c30a5
 ;     c30ca
 ;     c30d5
 ;     c31f4
@@ -9762,6 +9760,18 @@ pydis_end
 }
 !if (num_levels-1) != $0f {
     !error "Assertion failed: num_levels-1 == $0f"
+}
+!if (object_collided_ceiling) != $08 {
+    !error "Assertion failed: object_collided_ceiling == $08"
+}
+!if (object_collided_floor) != $02 {
+    !error "Assertion failed: object_collided_floor == $02"
+}
+!if (object_collided_left_wall) != $01 {
+    !error "Assertion failed: object_collided_left_wall == $01"
+}
+!if (object_collided_right_wall) != $04 {
+    !error "Assertion failed: object_collided_right_wall == $04"
 }
 !if (object_z_order+1) != $38c3 {
     !error "Assertion failed: object_z_order+1 == $38c3"
