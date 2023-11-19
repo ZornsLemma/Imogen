@@ -688,8 +688,8 @@ object_reset_loop
     sta new_player_character                                          ; 12ea: 85 4d       .M  :11b9[1]
     sta object_spriteid                                               ; 12ec: 8d a8 09    ... :11bb[1]
     sta player_held_object                                            ; 12ef: 85 52       .R  :11be[1]
-    sta l2eb6                                                         ; 12f1: 8d b6 2e    ... :11c0[1]
-    sta l2eb7                                                         ; 12f4: 8d b7 2e    ... :11c3[1]
+    sta player_held_object_for_spriteid_wizard6                       ; 12f1: 8d b6 2e    ... :11c0[1]
+    sta previous_player_held_object_for_spriteid_wizard6              ; 12f4: 8d b7 2e    ... :11c3[1]
     sta object_current_index_in_animation+1                           ; 12f7: 8d d5 09    ... :11c6[1]
     sta object_spriteid+1                                             ; 12fa: 8d a9 09    ... :11c9[1]
     lda #4                                                            ; 12fd: a9 04       ..  :11cc[1]
@@ -6096,8 +6096,13 @@ c2e82
     lda object_room_collision_flags                                   ; 2fc5: ad d8 38    ..8 :2e94[1]
     ora temp_collision_results                                        ; 2fc8: 0d b5 2e    ... :2e97[1]
     sta object_room_collision_flags                                   ; 2fcb: 8d d8 38    ..8 :2e9a[1]
-    lda l2eb6                                                         ; 2fce: ad b6 2e    ... :2e9d[1]
-    sta l2eb7                                                         ; 2fd1: 8d b7 2e    ... :2ea0[1]
+; Save the current value of player_held_object_for_spriteid_wizard6 at
+; previous_player_held_object_for_spriteid_wizard6, then set
+; player_held_object_for_spriteid_wizard6 to 0 if object_spritid is not
+; spriteid_wizard6, otherwise set it to player_held_object. TODO: The code actually
+; tests if player_held_object is zero, but I think that's redundant.
+    lda player_held_object_for_spriteid_wizard6                       ; 2fce: ad b6 2e    ... :2e9d[1]
+    sta previous_player_held_object_for_spriteid_wizard6              ; 2fd1: 8d b7 2e    ... :2ea0[1]
     ldx #0                                                            ; 2fd4: a2 00       ..  :2ea3[1]
     lda object_spriteid                                               ; 2fd6: ad a8 09    ... :2ea5[1]
     cmp #spriteid_wizard6                                             ; 2fd9: c9 35       .5  :2ea8[1]
@@ -6106,14 +6111,14 @@ c2e82
     beq c2eb1                                                         ; 2fdf: f0 01       ..  :2eae[1]
     tax                                                               ; 2fe1: aa          .   :2eb0[1]
 c2eb1
-    stx l2eb6                                                         ; 2fe2: 8e b6 2e    ... :2eb1[1]
+    stx player_held_object_for_spriteid_wizard6                       ; 2fe2: 8e b6 2e    ... :2eb1[1]
     rts                                                               ; 2fe5: 60          `   :2eb4[1]
 
 temp_collision_results
     !byte 0                                                           ; 2fe6: 00          .   :2eb5[1]
-l2eb6
+player_held_object_for_spriteid_wizard6
     !byte 0                                                           ; 2fe7: 00          .   :2eb6[1]
-l2eb7
+previous_player_held_object_for_spriteid_wizard6
     !byte 0                                                           ; 2fe8: 00          .   :2eb7[1]
 
 sub_c2eb8
@@ -9040,8 +9045,6 @@ pydis_end
 ;     l2892
 ;     l2893
 ;     l28e1
-;     l2eb6
-;     l2eb7
 ;     l31d7
 ;     l3403
 ;     lbe00

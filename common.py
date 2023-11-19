@@ -258,5 +258,8 @@ def common_to_all():
 
     label(0x2433, "player_collision_flag") # TODO: object_collision_flag?
 
+    label(0x2eb6, "player_held_object_for_spriteid_wizard6") # TODO!?
+    label(0x2eb7, "previous_player_held_object_for_spriteid_wizard6")
+
     label(0x2ef2, "five_byte_table_paired_with_collectable_sprite_ids") # TODO: size is a guess - it's at least two bytes though
     expr_label(0x2ef3, make_add("five_byte_table_paired_with_collectable_sprite_ids", "1"))

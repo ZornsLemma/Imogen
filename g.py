@@ -2457,6 +2457,7 @@ Animation code
     label(0x2e5f, "store_wizard_animation_state")
     expr(0x2e86, make_lo("wizard_base_animation"))
     expr(0x2e88, make_hi("wizard_base_animation"))
+    comment(0x2e9d, "Save the current value of player_held_object_for_spriteid_wizard6 at previous_player_held_object_for_spriteid_wizard6, then set player_held_object_for_spriteid_wizard6 to 0 if object_spritid is not spriteid_wizard6, otherwise set it to player_held_object. TODO: The code actually tests if player_held_object is zero, but I think that's redundant.")
     expr(0x2ea9, "spriteid_wizard6")
     label(0x2eb5, "temp_collision_results")
     expr(0x2ebd, make_lo("wizard_sprite_list"))

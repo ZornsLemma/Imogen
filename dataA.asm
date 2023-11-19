@@ -144,7 +144,8 @@ test_for_collision_between_objects_x_and_y          = $28e2
 insert_character_menu_item_into_toolbar             = $2b87
 find_or_create_menu_slot_for_A                      = $2bbd
 remove_item_from_toolbar_menu                       = $2be0
-l2eb6                                               = $2eb6
+player_held_object_for_spriteid_wizard6             = $2eb6
+previous_player_held_object_for_spriteid_wizard6    = $2eb7
 toolbar_collectable_spriteids                       = $2ee8
 collectable_spriteids                               = $2eed
 five_byte_table_paired_with_collectable_sprite_ids  = $2ef2
@@ -831,7 +832,7 @@ return3
     rts                                                               ; 3f51: 60
 
 not_first_room_update
-    lda l2eb6                                                         ; 3f52: ad b6 2e
+    lda player_held_object_for_spriteid_wizard6                       ; 3f52: ad b6 2e
     cmp #$d3                                                          ; 3f55: c9 d3
     bne c3f62                                                         ; 3f57: d0 09
     lda #0                                                            ; 3f59: a9 00
@@ -1104,7 +1105,7 @@ c40f7
     lda #player_collision_flag_baby                                   ; 4115: a9 06
     sta player_collision_flag                                         ; 4117: 8d 33 24
     lda #0                                                            ; 411a: a9 00
-    sta l2eb6                                                         ; 411c: 8d b6 2e
+    sta player_held_object_for_spriteid_wizard6                       ; 411c: 8d b6 2e
     lda #1                                                            ; 411f: a9 01
     sta l0a04                                                         ; 4121: 8d 04 0a
     ldy #$22 ; '"'                                                    ; 4124: a0 22
@@ -1122,7 +1123,7 @@ c4137
     lda desired_room_index                                            ; 4137: a5 30
     cmp #2                                                            ; 4139: c9 02
     bne c415e                                                         ; 413b: d0 21
-    lda l2eb6                                                         ; 413d: ad b6 2e
+    lda player_held_object_for_spriteid_wizard6                       ; 413d: ad b6 2e
     cmp #$d3                                                          ; 4140: c9 d3
     bne c415e                                                         ; 4142: d0 1a
     ldy #$0e                                                          ; 4144: a0 0e
@@ -1800,7 +1801,6 @@ pydis_end
 ;     l0a71
 ;     l0a72
 ;     l0a73
-;     l2eb6
 ;     l3fd5
 ;     l3fd6
 ;     l40e3
