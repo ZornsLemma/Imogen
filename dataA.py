@@ -44,6 +44,8 @@ constant(5, "objectid_spell")
 constant(2, "objectid_table")
 constant(3, "objectid_brazier2")
 
+constant(0xb, "objectid_something")
+
 
 set_sprite_dict(sprite_dict)
 
@@ -225,6 +227,8 @@ comment(0x3e43, "Set up the trapdoor collision map if they are closed.")
 entry(0x3e55, "set_up_open_trapdoor_collision_map")
 entry(0x3eed, "return2")
 expr(0x3f70, "object_spriteid + objectid_saxophone")
+expr(0x3f73, "objectid_something")
+expr(0x3f75, "objectid_saxophone")
 expr(0x3f83, "object_spriteid + objectid_saxophone")
 entry(0x3ed4, "new_room1_trapdoor_open_flag_in_y")
 entry(0x3ed7, "set_room1_trapdoor_sprites_if_required")

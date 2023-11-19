@@ -30,6 +30,7 @@ objectid_player_accessory          = 1
 objectid_right_mouse               = 3
 objectid_right_trapdoor            = 3
 objectid_saxophone                 = 4
+objectid_something                 = 11
 objectid_spell                     = 5
 objectid_table                     = 2
 opcode_jmp                         = 76
@@ -840,8 +841,8 @@ c3f62
     bne c3f8a                                                         ; 3f6b: d0 1d
     lda #$d2                                                          ; 3f6d: a9 d2
     sta object_spriteid + objectid_saxophone                          ; 3f6f: 8d ac 09
-    ldx #$0b                                                          ; 3f72: a2 0b
-    ldy #4                                                            ; 3f74: a0 04
+    ldx #objectid_something                                           ; 3f72: a2 0b
+    ldy #objectid_saxophone                                           ; 3f74: a0 04
     jsr test_for_collision_between_objects_x_and_y                    ; 3f76: 20 e2 28
     beq c3f8a                                                         ; 3f79: f0 0f
 ; TODO: I suspect this is handling 'collection of the saxophone'
@@ -1968,6 +1969,9 @@ pydis_end
 }
 !if (objectid_saxophone) != $04 {
     !error "Assertion failed: objectid_saxophone == $04"
+}
+!if (objectid_something) != $0b {
+    !error "Assertion failed: objectid_something == $0b"
 }
 !if (objectid_spell) != $05 {
     !error "Assertion failed: objectid_spell == $05"
