@@ -1042,7 +1042,7 @@ room2_handler
     lda #objectid_spell                                               ; 4092: a9 05       ..
     jsr update_level_completion                                       ; 4094: 20 10 1a     ..
     lda update_room_first_update_flag                                 ; 4097: ad 2b 13    .+.
-    beq c40e4                                                         ; 409a: f0 48       .H
+    beq room2_not_first_update                                        ; 409a: f0 48       .H
     lda desired_level                                                 ; 409c: a5 31       .1
     cmp previous_level                                                ; 409e: c5 51       .Q
     beq c40c1                                                         ; 40a0: f0 1f       ..
@@ -1085,7 +1085,7 @@ l40e3
     !byte 0                                                           ; 40e3: 00          .
 
 ; $40e4 referenced 1 time by $409a
-c40e4
+room2_not_first_update
     ldy l0a73                                                         ; 40e4: ac 73 0a    .s.
     cpy #$2b ; '+'                                                    ; 40e7: c0 2b       .+
     bne c40ee                                                         ; 40e9: d0 03       ..
@@ -1228,7 +1228,7 @@ c41c9
 c41d9
     lda desired_room_index                                            ; 41d9: a5 30       .0
     cmp #2                                                            ; 41db: c9 02       ..
-    bne c424c                                                         ; 41dd: d0 6d       .m
+    bne return5                                                       ; 41dd: d0 6d       .m
     lda l0a72                                                         ; 41df: ad 72 0a    .r.
     cmp #$2b ; '+'                                                    ; 41e2: c9 2b       .+
     bne c4235                                                         ; 41e4: d0 4f       .O
@@ -1287,7 +1287,7 @@ c4235
     lda l0a04                                                         ; 4246: ad 04 0a    ...
     sta object_direction,x                                            ; 4249: 9d be 09    ...
 ; $424c referenced 1 time by $41dd
-c424c
+return5
     rts                                                               ; 424c: 60          `
 
 room_4_data_ptr
@@ -2024,7 +2024,7 @@ pydis_end
 ;     c40b2:                                                     1
 ;     c40c1:                                                     1
 ;     c40e0:                                                     1
-;     c40e4:                                                     1
+;     room2_not_first_update:                                    1
 ;     c40ee:                                                     1
 ;     c40f7:                                                     1
 ;     c412b:                                                     1
@@ -2034,7 +2034,7 @@ pydis_end
 ;     c41c1:                                                     1
 ;     c420c:                                                     1
 ;     c4224:                                                     1
-;     c424c:                                                     1
+;     return5:                                                   1
 ;     loop_until_exit_room_left:                                 1
 ;     room3_handler:                                             1
 ;     add_table_to_collision_map_if_room_3_local:                1
@@ -2053,7 +2053,6 @@ pydis_end
 ;     c40b2
 ;     c40c1
 ;     c40e0
-;     c40e4
 ;     c40ee
 ;     c40f7
 ;     c412b
@@ -2072,7 +2071,6 @@ pydis_end
 ;     c420c
 ;     c4224
 ;     c4235
-;     c424c
 ;     l0954
 ;     l0980
 ;     l09aa

@@ -339,6 +339,8 @@ expr(0x3de5, "exit_room_bottom")
 entry(0x3def, "exited_room_not_bottom")
 expr(0x3df2, "exit_room_right")
 entry(0x3dd2, "loop_until_exited_room")
+entry(0x40e4, "room2_not_first_update")
+entry(0x424c, "return5")
 
 entry(0x42ea, "loop_until_exit_room_left")
 expr(0x42ee, "exit_room_left")
