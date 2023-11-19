@@ -92,6 +92,8 @@ This generally calls individual functions to update the logic in each room.
 While updating the logic for a room, 'currently_updating_logic_for_room_index' is normally set. In practice this only actually needs to be set if it calls 'update_brazier_and_fire' or 'update_level_completion'
 
 *************************************************************************************""")
+    blank(get_u16_binary(start+6))
+    comment(get_u16_binary(start+6), "*************************************************************************************")
 
     for room in range(num_rooms):
         level_room_data_table_entry(start + 10 + 2*room, str(room))

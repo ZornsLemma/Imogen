@@ -181,6 +181,8 @@ level_room_data_table
     !word room_1_data                                                 ; 3ae1: 3d 3d
     !word room_2_data                                                 ; 3ae3: d7 3f
     !word room_3_data                                                 ; 3ae5: 4d 42
+
+; *************************************************************************************
 ; 'SAXOPHOBIA\r' EOR-encrypted with $cb
 level_specific_password
     !byte $98, $8a, $93, $84, $9b, $83, $84, $89, $82, $8a, $c6       ; 3ae7: 98 8a 93...
@@ -283,6 +285,7 @@ room_0_initialisation_code
     jsr copy_rectangle_of_memory_to_screen                            ; 3b81: 20 bb 1a
 ; Carve the floor, walls and ceiling into the rock
     jsr draw_floor_walls_and_ceiling_around_solid_rock                ; 3b84: 20 90 1b
+; Draw tables
     lda #3                                                            ; 3b87: a9 03
     sta width_in_cells                                                ; 3b89: 85 3c
     lda #2                                                            ; 3b8b: a9 02
@@ -300,6 +303,7 @@ room_0_initialisation_code
     jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map           ; 3ba6: 20 57 1f
     ldx #6                                                            ; 3ba9: a2 06
     jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map           ; 3bab: 20 57 1f
+; Draw ropes
     ldx #$0a                                                          ; 3bae: a2 0a
     ldy #2                                                            ; 3bb0: a0 02
     lda #$0a                                                          ; 3bb2: a9 0a
@@ -315,6 +319,7 @@ room_0_initialisation_code
     jsr draw_rope                                                     ; 3bc9: 20 b9 1d
     ldx #$19                                                          ; 3bcc: a2 19
     jsr draw_rope                                                     ; 3bce: 20 b9 1d
+; start main game loop for room 1
     jsr start_room                                                    ; 3bd1: 20 bb 12
 loop_until_exit_room_right
     jsr game_update                                                   ; 3bd4: 20 da 12
@@ -324,6 +329,7 @@ loop_until_exit_room_right
     ldx #1                                                            ; 3bdd: a2 01
     ldy desired_level                                                 ; 3bdf: a4 31
     jsr initialise_level                                              ; 3be1: 20 40 11
+
 ; *************************************************************************************
 ; 
 ; Room 0 update
@@ -393,14 +399,14 @@ level_unchanged
     sta object_sprite_mask_type,x                                     ; 3c53: 9d ac 38
     lda #$c0                                                          ; 3c56: a9 c0
     sta object_z_order,x                                              ; 3c58: 9d c2 38
-; Set up the ball TODO: plausible guess
+; Set up the ball
     ldx #objectid_mouse_ball                                          ; 3c5b: a2 04
     lda #0                                                            ; 3c5d: a9 00
     sta object_x_high,x                                               ; 3c5f: 9d 66 09
     sta object_y_high,x                                               ; 3c62: 9d 92 09
     lda #1                                                            ; 3c65: a9 01
     sta object_direction,x                                            ; 3c67: 9d be 09
-    lda #$cc                                                          ; 3c6a: a9 cc
+    lda #spriteid_zero_size1                                          ; 3c6a: a9 cc
     sta object_sprite_mask_type,x                                     ; 3c6c: 9d ac 38
     lda #$40 ; '@'                                                    ; 3c6f: a9 40
     sta object_z_order,x                                              ; 3c71: 9d c2 38
@@ -441,7 +447,7 @@ move_mouse_ball_if_room_0
     cmp #8                                                            ; 3cb1: c9 08
     bcs mouse_ball_position_ge_8                                      ; 3cb3: b0 04
     ldy #0                                                            ; 3cb5: a0 00
-    beq mouse_ball_position_lt_8                                      ; 3cb7: f0 0a                   ; always branch
+    beq mouse_ball_position_lt_8                                      ; 3cb7: f0 0a                   ; ALWAYS branch
 mouse_ball_position_ge_8
     cmp #$0f                                                          ; 3cb9: c9 0f
     bcs mouse_ball_position_ge_0xf                                    ; 3cbb: b0 1c
@@ -451,46 +457,44 @@ mouse_ball_position_ge_8
     asl                                                               ; 3cc1: 0a
     tay                                                               ; 3cc2: a8
 mouse_ball_position_lt_8
-    lda mouse_sprites_and_ball_movement_table,y                       ; 3cc3: b9 21 3d
+    lda mouse_hand_sprites_and_ball_movement_table,y                  ; 3cc3: b9 21 3d
 ; Set the mouse sprites as a pair of values in the table
     sta object_spriteid + objectid_left_mouse                         ; 3cc6: 8d aa 09
     iny                                                               ; 3cc9: c8
-    lda mouse_sprites_and_ball_movement_table,y                       ; 3cca: b9 21 3d
+    lda mouse_hand_sprites_and_ball_movement_table,y                  ; 3cca: b9 21 3d
     sta object_spriteid + objectid_right_mouse                        ; 3ccd: 8d ab 09
     lda #$88                                                          ; 3cd0: a9 88
     clc                                                               ; 3cd2: 18
     iny                                                               ; 3cd3: c8
-    adc mouse_sprites_and_ball_movement_table,y                       ; 3cd4: 79 21 3d
-; TODO: always branch? not sure, but superficially it would seem nothing in
-; mouse_sprites_and_ball_movement_table is -$88, i.e. $78
-    bne finish_mouse_ball_movement                                    ; 3cd7: d0 22
+    adc mouse_hand_sprites_and_ball_movement_table,y                  ; 3cd4: 79 21 3d
+    bne finish_mouse_ball_movement                                    ; 3cd7: d0 22                   ; ALWAYS branch
 mouse_ball_position_ge_0xf
     cmp #$17                                                          ; 3cd9: c9 17
     bcs mouse_ball_position_ge_0x17                                   ; 3cdb: b0 04
     ldy #0                                                            ; 3cdd: a0 00
-    beq mouse_ball_position_ge_0xf_common_tail                        ; 3cdf: f0 06                   ; always branch
+    beq c3ce7                                                         ; 3cdf: f0 06                   ; ALWAYS branch
 mouse_ball_position_ge_0x17
     sec                                                               ; 3ce1: 38
     sbc #$17                                                          ; 3ce2: e9 17
     asl                                                               ; 3ce4: 0a
     asl                                                               ; 3ce5: 0a
     tay                                                               ; 3ce6: a8
-mouse_ball_position_ge_0xf_common_tail
-    lda mouse_sprites_and_ball_movement_table,y                       ; 3ce7: b9 21 3d
+c3ce7
+    lda mouse_hand_sprites_and_ball_movement_table,y                  ; 3ce7: b9 21 3d
     sta object_spriteid + objectid_right_mouse                        ; 3cea: 8d ab 09
     iny                                                               ; 3ced: c8
-    lda mouse_sprites_and_ball_movement_table,y                       ; 3cee: b9 21 3d
+    lda mouse_hand_sprites_and_ball_movement_table,y                  ; 3cee: b9 21 3d
     sta object_spriteid + objectid_left_mouse                         ; 3cf1: 8d aa 09
     lda #$c0                                                          ; 3cf4: a9 c0
     sec                                                               ; 3cf6: 38
     iny                                                               ; 3cf7: c8
-    sbc mouse_sprites_and_ball_movement_table,y                       ; 3cf8: f9 21 3d
+    sbc mouse_hand_sprites_and_ball_movement_table,y                  ; 3cf8: f9 21 3d
 finish_mouse_ball_movement
     sta object_x_low + objectid_mouse_ball                            ; 3cfb: 8d 54 09
     lda #$53 ; 'S'                                                    ; 3cfe: a9 53
     sec                                                               ; 3d00: 38
     iny                                                               ; 3d01: c8
-    sbc mouse_sprites_and_ball_movement_table,y                       ; 3d02: f9 21 3d
+    sbc mouse_hand_sprites_and_ball_movement_table,y                  ; 3d02: f9 21 3d
     sta object_y_low + objectid_mouse_ball                            ; 3d05: 8d 80 09
     lda #spriteid_small_ball                                          ; 3d08: a9 cb
     sta object_spriteid + objectid_mouse_ball                         ; 3d0a: 8d ac 09
@@ -506,7 +510,7 @@ finish_mouse_ball_movement
 return1
     rts                                                               ; 3d20: 60
 
-mouse_sprites_and_ball_movement_table
+mouse_hand_sprites_and_ball_movement_table
     !byte spriteid_mouse_hands3                                       ; 3d21: d4
     !byte spriteid_mouse_hands1                                       ; 3d22: c9
     !byte 0, 0                                                        ; 3d23: 00 00
@@ -1762,6 +1766,7 @@ pydis_end
 
 ; Automatically generated labels:
 ;     c3b0e
+;     c3ce7
 ;     c3f62
 ;     c3f8a
 ;     c40b2

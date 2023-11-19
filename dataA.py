@@ -73,7 +73,7 @@ set_label_maker_hook(s.substitute_label_maker)
 expr(0x40de, make_add("object_sprite_mask_type", "objectid_baby"))
 expr(0x3ff3, "copy_mode_simple")
 
-entry(0x3d21, "mouse_sprites_and_ball_movement_table")
+entry(0x3d21, "mouse_hand_sprites_and_ball_movement_table")
 def mouse_and_ball(addr):
     byte(addr+2,2)
     spriteid(addr)
@@ -119,8 +119,12 @@ label(0xa00, "saxophone_collected_flag")
 
 comment(0x3b29, "Draw rectangles of ground fill rock with a 2x2 pattern. Also writes to the collision map.", inline=True)
 comment(0x3b84, "Carve the floor, walls and ceiling into the rock")
+comment(0x3b87, "Draw tables")
+comment(0x3bae, "Draw ropes")
 
 label(0xa6f, "mouse_ball_animation_position") # This runs from 0-$1d inclusive starting at 0 far left, reaching far right at $10 and returning to far left at $1d.
+blank(0x3be4)
+comment(0x3bd1, "start main game loop for room 1")
 comment(0x3be4, """*************************************************************************************
 
 Room 0 update
@@ -149,16 +153,16 @@ entry(0x3d20, "return1")
 comment(0x3c04, "Perform shared initialisation for both mice")
 comment(0x3c0e, "Set up the left mouse")
 comment(0x3c30, "Set up the right mouse")
-comment(0x3c5b, "Set up the ball TODO: plausible guess")
-comment(0x3cb7, "always branch", inline=True)
-comment(0x3cdf, "always branch", inline=True)
+comment(0x3c5b, "Set up the ball")
+expr(0x3c6b, "spriteid_zero_size1")
+ab(0x3cb7)
+ab(0x3cdf)
 entry(0x3cb9, "mouse_ball_position_ge_8")
 entry(0x3cc3, "mouse_ball_position_lt_8")
 entry(0x3cd9, "mouse_ball_position_ge_0xf") # TODO: this name kind of ignores the possibility of fall through to this label
 entry(0x3ce1, "mouse_ball_position_ge_0x17")
 comment(0x3cc6, "Set the mouse sprites as a pair of values in the table")
-entry(0x3ce7, "mouse_ball_position_ge_0xf_common_tail")
-comment(0x3cd7, "TODO: always branch? not sure, but superficially it would seem nothing in mouse_sprites_and_ball_movement_table is -$88, i.e. $78")
+ab(0x3cd7)
 entry(0x3cfb, "finish_mouse_ball_movement")
 expr(0x3d06, make_add("object_y_low", "objectid_mouse_ball"))
 expr(0x3cfc, make_add("object_x_low", "objectid_mouse_ball"))
