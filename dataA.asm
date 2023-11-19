@@ -850,7 +850,7 @@ c3f62
     ldy #objectid_saxophone                                           ; 3f74: a0 04
     jsr test_for_collision_between_objects_x_and_y                    ; 3f76: 20 e2 28
     beq return6                                                       ; 3f79: f0 0f
-; TODO: I suspect this is handling 'collection of the saxophone'
+; This is handling 'collection of the saxophone'
     lda #spriteid_saxophone2                                          ; 3f7b: a9 d3
     jsr find_or_create_menu_slot_for_A                                ; 3f7d: 20 bd 2b
     lda #0                                                            ; 3f80: a9 00

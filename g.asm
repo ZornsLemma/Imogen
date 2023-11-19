@@ -22,21 +22,21 @@
 ;   0c00-0c60: collision map
 ;   1103-3ad4: main code
 ;   3ad5-4ad3: 'data*' file (level code/data) (it starts as initialisation code before being overwritten by a level)
-;   4ad8-5bbf: 'sprdata' file (main sprites) OR
-;   53c0-578a: 'auxcode' file (for password / cheat codes support)
+;   4ad8-5bbf: SPRDATA file (main sprites) OR
+;   53c0-578a: AUXCODE file (for password / cheat codes support)
 ;   5bc0-61ff: screen memory: toolbar
 ;   6200-7fff: screen memory: main game area
 ;
 ; Only during initialisation:
 ;
 ;   3c06-4225: initialisation code (which will get overwritten after initialisation by level data)
-;   40ff-4318: 'icodata' file (contains toolbar sprites only used once to render the toolbar)
+;   40ff-4318: ICODATA file (contains toolbar sprites only used once to render the toolbar)
 ;
-; The Auxcode Overlay
-; ---------------------
-; When the user submits a password, the 'sprdata' memory is temporarily overwritten by the 'auxcode'
+; The AUXCODE Overlay
+; -------------------
+; When the user submits a password, the sprite memory is temporarily overwritten by the AUXCODE
 ; file which contains code to handle password and cheat code recognition (including a screendump
-; facility for Epsom printers). Once finished, the 'sprdata' is reloaded back into memory so the
+; facility for Epsom printers). Once finished, the SPRDATA is reloaded back into memory so the
 ; game can continue. Because both sets of code/data don't need to reside in memory at the same time,
 ; this is a memory saving system known as an overlay.
 ;
@@ -523,8 +523,8 @@ pydis_start
 !pseudopc $1103 {
 ; developer_flags
 ; 
-;     The 'developer flags byte' lives in ICODATA. When loaded, if bit 6 is set then
-; the variable 'developer_flags' is set to this value.
+;     The 'developer flags byte' lives in the ICODATA file. When loaded, if bit 6 is
+; set then the variable 'developer_flags' is set to this value.
 ; 
 ;     bit 0: "developer keys active", ESCAPE resets or exits the game I think, if you
 ; have the right sideways RAM set up. If the menu pointer is on one of the first four
@@ -927,7 +927,7 @@ update_room_first_update_flag
 ; 
 ; Get sprite address for sprite A
 ; 
-;     Sprites 0-196: are stored in sprdata (or icodata if loaded (*))
+;     Sprites 0-196: are stored in SPRDATA (or ICODATA if loaded (*))
 ;     Sprite 197: is stored at $0bc5
 ;     Sprite 198: is stored at $0b93
 ;     Sprite 199: is stored at $0b11
@@ -8260,7 +8260,7 @@ adjust_timing_variable_loop
     sta address1_high                                                 ; 3e65: 85 71       .q
     lda #osfile_read_catalogue_info                                   ; 3e67: a9 05       ..
     jsr osfile_wrapper                                                ; 3e69: 20 dc 16     ..
-; Load 'sprdata' file into memory so it ends just before screen memory at $5bc0.
+; Load SPRDATA file into memory so it ends just before screen memory at $5bc0.
     lda #<start_of_screen_memory                                      ; 3e6c: a9 c0       ..
     sec                                                               ; 3e6e: 38          8
     sbc l007a                                                         ; 3e6f: e5 7a       .z
@@ -8275,7 +8275,7 @@ adjust_timing_variable_loop
     lda sprdata_ptr + 1                                               ; 3e7f: a5 55       .U
     pha                                                               ; 3e81: 48          H
 ; 
-; Load 'icodata' file into memory at icodata
+; Load ICODATA file into memory at address icodata
 ; 
 ; ICODATA contains the standard set of sprites for the toolbar. These are drawn once
 ; and stay on screen permanently, so the the memory used by ICODATA is reused.
