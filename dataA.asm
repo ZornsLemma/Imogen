@@ -19,7 +19,7 @@ object_collided_ceiling            = 8
 object_collided_floor              = 2
 object_collided_left_wall          = 1
 object_collided_right_wall         = 4
-objectid_TODO                      = 2
+objectid_baby                      = 2
 objectid_brazier                   = 5
 objectid_brazier2                  = 3
 objectid_left_mouse                = 2
@@ -101,7 +101,7 @@ table_x_position                                    = $0a01
 table_x_speed                                       = $0a02
 l0a03                                               = $0a03
 l0a04                                               = $0a04
-mouse_ball_position                                 = $0a6f
+mouse_ball_animation_position                       = $0a6f
 l0a70                                               = $0a70
 l0a71                                               = $0a71
 l0a72                                               = $0a72
@@ -122,7 +122,7 @@ set_toolbar_and_gameplay_area_colours               = $1766
 jmp_yx                                              = $1966
 update_brazier_and_fire                             = $1988
 update_level_completion                             = $1a10
-current_room_index                                  = $1aba
+currently_updating_logic_for_room_index             = $1aba
 copy_rectangle_of_memory_to_screen                  = $1abb
 draw_floor_walls_and_ceiling_around_solid_rock      = $1b90
 draw_rope                                           = $1db9
@@ -161,35 +161,32 @@ check_password                                      = $53c0
 
     * = $3ad5
 
+; *************************************************************************************
+; 
+; Level header
+; 
+; *************************************************************************************
 level_data
 pydis_start
-    !word sprite_data - level_data                                    ; 3ad5: d1 09       ..
-level_init_after_load_handler_ptr
-    !word level_init_after_load_handler                               ; 3ad7: f2 3a       .:
-update_room_ptr
-    !word level_update_handler                                        ; 3ad9: 17 3b       .;
-level_name_ptr
-    !word level_name                                                  ; 3adb: e7 3a       .:
+    !word sprite_data - level_data                                    ; 3ad5: d1 09       ..             ; offset to sprite data
+level_specific_initialisation_ptr
+    !word level_specific_initialisation                               ; 3ad7: f2 3a       .:             ; address of level initialisation code
+level_specific_update_ptr
+    !word level_specific_update                                       ; 3ad9: 17 3b       .;             ; address of level update code
+level_specific_password_ptr
+    !word level_specific_password                                     ; 3adb: e7 3a       .:             ; address of level password
     !byte 0, 1                                                        ; 3add: 00 01       ..
-; This is a table of four words, used by code just below
-; 'skip_adding_completion_spell_to_toolbar' where the l030-th element *plus 2* is
-; called. TODO: Why +2? The code at c129b suggests the two bytes *at* the address in
-; this table is used as an address of some kind.
-; TODO: Speculation - could this be code to draw each of the screens making up the
-; level? AFAICT saxophobia does have four screens. I assume the *number* of entries in
-; this table is stored somewhere, but I can't see it. It is also possible that because
-; entering rooms is handled by level specific code, the player always starts in room 0
-; and there is no need to have a byte of data representing the maximum room number.
-level_header_data
-    !word room_1_data_ptr                                             ; 3adf: 27 3b       ';
-    !word room_2_data_ptr                                             ; 3ae1: 3d 3d       ==
-    !word room_3_data_ptr                                             ; 3ae3: d7 3f       .?
-    !word room_4_data_ptr                                             ; 3ae5: 4d 42       MB
+level_room_data_table
+    !word room_0_data                                                 ; 3adf: 27 3b       ';             ; table of room data/initialisation code
+    !word room_1_data                                                 ; 3ae1: 3d 3d       ==
+    !word room_2_data                                                 ; 3ae3: d7 3f       .?
+    !word room_3_data                                                 ; 3ae5: 4d 42       MB
 ; 'SAXOPHOBIA\r' EOR-encrypted with $cb
-level_name
+level_specific_password
     !byte $98, $8a, $93, $84, $9b, $83, $84, $89, $82, $8a, $c6       ; 3ae7: 98 8a 93... ...
 
-level_init_after_load_handler
+; *************************************************************************************
+level_specific_initialisation
     lda desired_level                                                 ; 3af2: a5 31       .1
     cmp previous_level                                                ; 3af4: c5 51       .Q
     beq c3b0e                                                         ; 3af6: f0 16       ..
@@ -201,13 +198,11 @@ level_init_after_load_handler
 ; reset the saxaphone collected flag. The user can choose during the course of a game
 ; to enter the password to continue playing this level having previously got the
 ; saxaphone.
-; $3b04 referenced 1 time by $3afb
 developer_mode_not_active
     lda saxophone_collected_flag                                      ; 3b04: ad 00 0a    ...
     beq c3b0e                                                         ; 3b07: f0 05       ..
     lda #spriteid_saxophone2                                          ; 3b09: a9 d3       ..
     jsr find_or_create_menu_slot_for_A                                ; 3b0b: 20 bd 2b     .+
-; $3b0e referenced 2 times by $3af6, $3b07
 c3b0e
     lda #<ground_fill_2x2_top_left                                    ; 3b0e: a9 86       ..
     sta source_sprite_memory_low                                      ; 3b10: 85 40       .@
@@ -215,21 +210,37 @@ c3b0e
     sta source_sprite_memory_high                                     ; 3b14: 85 41       .A
     rts                                                               ; 3b16: 60          `
 
-level_update_handler
-    jsr room0_handler                                                 ; 3b17: 20 e4 3b     .;
-    jsr room1_handler                                                 ; 3b1a: 20 fc 3d     .=
-    jsr room2_handler                                                 ; 3b1d: 20 7f 40     .@
+; *************************************************************************************
+; 
+; Level update
+; 
+; This calls individual functions to update the logic in each room.
+; 
+; While updating the logic for a room, 'currently_updating_logic_for_room_index' is
+; normally set. In practice it only actually needs to be set if it calls
+; 'update_brazier_and_fire' or 'update_level_completion'
+; 
+; *************************************************************************************
+level_specific_update
+    jsr room0_update_handler                                          ; 3b17: 20 e4 3b     .;
+    jsr room1_update_handler                                          ; 3b1a: 20 fc 3d     .=
+    jsr room2_update_handler                                          ; 3b1d: 20 7f 40     .@
     jsr room1_saxophone_and_brazier_handler                           ; 3b20: 20 02 3f     .?
-    jsr room3_handler                                                 ; 3b23: 20 f8 42     .B
+    jsr room3_update_handler                                          ; 3b23: 20 f8 42     .B
     rts                                                               ; 3b26: 60          `
 
-room_1_data_ptr
+; *************************************************************************************
+; 
+; Room 0 initialisation
+; 
+; *************************************************************************************
+room_0_data
     !byte 20                                                          ; 3b27: 14          .              ; initial player X cell
     !byte 22                                                          ; 3b28: 16          .              ; initial player Y cell
 
 ; TODO: I suspect this next block up to and including the jsr is drawing the 'wall'
 ; pattern on the top two rows of the opening screen
-room_1_code
+room_0_initialisation_code
     ldx #0                                                            ; 3b29: a2 00       ..
     ldy #0                                                            ; 3b2b: a0 00       ..
     lda #$ff                                                          ; 3b2d: a9 ff       ..
@@ -312,7 +323,6 @@ room_1_code
     ldx #$19                                                          ; 3bcc: a2 19       ..
     jsr draw_rope                                                     ; 3bce: 20 b9 1d     ..
     jsr start_room                                                    ; 3bd1: 20 bb 12     ..
-; $3bd4 referenced 1 time by $3bdb
 loop_until_exit_room_right
     jsr game_update                                                   ; 3bd4: 20 da 12     ..
     sta room_exit_direction                                           ; 3bd7: 85 70       .p
@@ -321,21 +331,24 @@ loop_until_exit_room_right
     ldx #1                                                            ; 3bdd: a2 01       ..
     ldy desired_level                                                 ; 3bdf: a4 31       .1
     jsr initialise_level                                              ; 3be1: 20 40 11     @.
+; *************************************************************************************
+; 
+; Room 0 update
+; 
 ; Room 0 has two mice throwing a ball back and forth.
-; $3be4 referenced 1 time by $3b17
-room0_handler
+; 
+; *************************************************************************************
+room0_update_handler
     lda update_room_first_update_flag                                 ; 3be4: ad 2b 13    .+.
     bne initialise_mouse_ball_position_if_level_changed               ; 3be7: d0 03       ..
     jmp bump_and_wrap_mouse_ball_position                             ; 3be9: 4c 77 3c    Lw<
 
-; $3bec referenced 1 time by $3be7
 initialise_mouse_ball_position_if_level_changed
     lda desired_level                                                 ; 3bec: a5 31       .1
     cmp previous_level                                                ; 3bee: c5 51       .Q
     beq level_unchanged                                               ; 3bf0: f0 05       ..
     lda #0                                                            ; 3bf2: a9 00       ..
-    sta mouse_ball_position                                           ; 3bf4: 8d 6f 0a    .o.
-; $3bf7 referenced 1 time by $3bf0
+    sta mouse_ball_animation_position                                 ; 3bf4: 8d 6f 0a    .o.
 level_unchanged
     lda desired_room_index                                            ; 3bf7: a5 30       .0
     cmp #0                                                            ; 3bf9: c9 00       ..
@@ -398,20 +411,17 @@ level_unchanged
     sta object_sprite_mask_type,x                                     ; 3c6c: 9d ac 38    ..8
     lda #$40 ; '@'                                                    ; 3c6f: a9 40       .@
     sta object_z_order,x                                              ; 3c71: 9d c2 38    ..8
-; $3c74 referenced 1 time by $3bfb
 move_mouse_ball_if_room_0_local
     jmp move_mouse_ball_if_room_0                                     ; 3c74: 4c a8 3c    L.<
 
-; $3c77 referenced 1 time by $3be9
 bump_and_wrap_mouse_ball_position
-    ldy mouse_ball_position                                           ; 3c77: ac 6f 0a    .o.
+    ldy mouse_ball_animation_position                                 ; 3c77: ac 6f 0a    .o.
     iny                                                               ; 3c7a: c8          .
     cpy #$1e                                                          ; 3c7b: c0 1e       ..
     bcc no_wrap_needed                                                ; 3c7d: 90 02       ..
     ldy #0                                                            ; 3c7f: a0 00       ..
-; $3c81 referenced 1 time by $3c7d
 no_wrap_needed
-    sty mouse_ball_position                                           ; 3c81: 8c 6f 0a    .o.
+    sty mouse_ball_animation_position                                 ; 3c81: 8c 6f 0a    .o.
     lda desired_room_index                                            ; 3c84: a5 30       .0
     cmp #0                                                            ; 3c86: c9 00       ..
     bne move_mouse_ball_if_room_0                                     ; 3c88: d0 1e       ..
@@ -419,7 +429,6 @@ no_wrap_needed
     beq play_mouse_ball_sounds                                        ; 3c8b: f0 04       ..
     cpy #$0f                                                          ; 3c8d: c0 0f       ..
     bne move_mouse_ball_if_room_0                                     ; 3c8f: d0 17       ..
-; $3c91 referenced 1 time by $3c8b
 play_mouse_ball_sounds
     lda #0                                                            ; 3c91: a9 00       ..
     ldx #<mouse_ball_sound1                                           ; 3c93: a2 7e       .~
@@ -431,17 +440,15 @@ play_mouse_ball_sounds
     ldx #<mouse_ball_sound3                                           ; 3ca1: a2 6e       .n
     ldy #>mouse_ball_sound3                                           ; 3ca3: a0 44       .D
     jsr play_sound_yx                                                 ; 3ca5: 20 f6 38     .8
-; $3ca8 referenced 3 times by $3c74, $3c88, $3c8f
 move_mouse_ball_if_room_0
     lda desired_room_index                                            ; 3ca8: a5 30       .0
     cmp #0                                                            ; 3caa: c9 00       ..
     bne return1                                                       ; 3cac: d0 72       .r
-    lda mouse_ball_position                                           ; 3cae: ad 6f 0a    .o.
+    lda mouse_ball_animation_position                                 ; 3cae: ad 6f 0a    .o.
     cmp #8                                                            ; 3cb1: c9 08       ..
     bcs mouse_ball_position_ge_8                                      ; 3cb3: b0 04       ..
     ldy #0                                                            ; 3cb5: a0 00       ..
     beq mouse_ball_position_lt_8                                      ; 3cb7: f0 0a       ..             ; always branch
-; $3cb9 referenced 1 time by $3cb3
 mouse_ball_position_ge_8
     cmp #$0f                                                          ; 3cb9: c9 0f       ..
     bcs mouse_ball_position_ge_0xf                                    ; 3cbb: b0 1c       ..
@@ -450,7 +457,6 @@ mouse_ball_position_ge_8
     asl                                                               ; 3cc0: 0a          .
     asl                                                               ; 3cc1: 0a          .
     tay                                                               ; 3cc2: a8          .
-; $3cc3 referenced 1 time by $3cb7
 mouse_ball_position_lt_8
     lda mouse_sprites_and_ball_movement_table,y                       ; 3cc3: b9 21 3d    .!=
 ; Set the mouse sprites as a pair of values in the table
@@ -465,20 +471,17 @@ mouse_ball_position_lt_8
 ; TODO: always branch? not sure, but superficially it would seem nothing in
 ; mouse_sprites_and_ball_movement_table is -$88, i.e. $78
     bne finish_mouse_ball_movement                                    ; 3cd7: d0 22       ."
-; $3cd9 referenced 1 time by $3cbb
 mouse_ball_position_ge_0xf
     cmp #$17                                                          ; 3cd9: c9 17       ..
     bcs mouse_ball_position_ge_0x17                                   ; 3cdb: b0 04       ..
     ldy #0                                                            ; 3cdd: a0 00       ..
     beq mouse_ball_position_ge_0xf_common_tail                        ; 3cdf: f0 06       ..             ; always branch
-; $3ce1 referenced 1 time by $3cdb
 mouse_ball_position_ge_0x17
     sec                                                               ; 3ce1: 38          8
     sbc #$17                                                          ; 3ce2: e9 17       ..
     asl                                                               ; 3ce4: 0a          .
     asl                                                               ; 3ce5: 0a          .
     tay                                                               ; 3ce6: a8          .
-; $3ce7 referenced 1 time by $3cdf
 mouse_ball_position_ge_0xf_common_tail
     lda mouse_sprites_and_ball_movement_table,y                       ; 3ce7: b9 21 3d    .!=
     sta object_spriteid + objectid_right_mouse                        ; 3cea: 8d ab 09    ...
@@ -489,7 +492,6 @@ mouse_ball_position_ge_0xf_common_tail
     sec                                                               ; 3cf6: 38          8
     iny                                                               ; 3cf7: c8          .
     sbc mouse_sprites_and_ball_movement_table,y                       ; 3cf8: f9 21 3d    .!=
-; $3cfb referenced 1 time by $3cd7
 finish_mouse_ball_movement
     sta object_x_low + objectid_mouse_ball                            ; 3cfb: 8d 54 09    .T.
     lda #$53 ; 'S'                                                    ; 3cfe: a9 53       .S
@@ -508,11 +510,9 @@ finish_mouse_ball_movement
     beq return1                                                       ; 3d19: f0 05       ..
     lda #player_collision_flag_mouse_ball                             ; 3d1b: a9 80       ..
     sta player_collision_flag                                         ; 3d1d: 8d 33 24    .3$
-; $3d20 referenced 3 times by $3cac, $3d10, $3d19
 return1
     rts                                                               ; 3d20: 60          `
 
-; $3d21 referenced 7 times by $3cc3, $3cca, $3cd4, $3ce7, $3cee, $3cf8, $3d02
 mouse_sprites_and_ball_movement_table
     !byte spriteid_mouse_hands3                                       ; 3d21: d4          .
     !byte spriteid_mouse_hands1                                       ; 3d22: c9          .
@@ -535,11 +535,16 @@ mouse_sprites_and_ball_movement_table
     !byte spriteid_mouse_hands1                                       ; 3d39: c9          .
     !byte spriteid_mouse_hands2                                       ; 3d3a: ca          .
     !byte 48,  6                                                      ; 3d3b: 30 06       0.
-room_2_data_ptr
+; *************************************************************************************
+; 
+; Room 1 initialisation
+; 
+; *************************************************************************************
+room_1_data
     !byte 9                                                           ; 3d3d: 09          .              ; initial player X cell
     !byte 7                                                           ; 3d3e: 07          .              ; initial player Y cell
 
-room_2_code
+room_1_initialisation_code
     ldx #0                                                            ; 3d3f: a2 00       ..
     ldy #0                                                            ; 3d41: a0 00       ..
     lda #$ff                                                          ; 3d43: a9 ff       ..
@@ -604,7 +609,6 @@ room_2_code
     ldy #$14                                                          ; 3dca: a0 14       ..
     jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map           ; 3dcc: 20 57 1f     W.
     jsr start_room                                                    ; 3dcf: 20 bb 12     ..
-; $3dd2 referenced 1 time by $3df3
 loop_until_exited_room
     jsr game_update                                                   ; 3dd2: 20 da 12     ..
     sta room_exit_direction                                           ; 3dd5: 85 70       .p
@@ -614,7 +618,6 @@ loop_until_exited_room
     ldy desired_level                                                 ; 3ddd: a4 31       .1
     jmp initialise_level                                              ; 3ddf: 4c 40 11    L@.
 
-; $3de2 referenced 1 time by $3dd9
 exited_room_not_left
     lda room_exit_direction                                           ; 3de2: a5 70       .p
     and #exit_room_bottom                                             ; 3de4: 29 02       ).
@@ -623,7 +626,6 @@ exited_room_not_left
     ldy desired_level                                                 ; 3dea: a4 31       .1
     jmp initialise_level                                              ; 3dec: 4c 40 11    L@.
 
-; $3def referenced 1 time by $3de6
 exited_room_not_bottom
     lda room_exit_direction                                           ; 3def: a5 70       .p
     and #exit_room_right                                              ; 3df1: 29 04       ).
@@ -632,9 +634,14 @@ exited_room_not_bottom
     ldy desired_level                                                 ; 3df7: a4 31       .1
     jmp initialise_level                                              ; 3df9: 4c 40 11    L@.
 
+; *************************************************************************************
+; 
+; Room 1 update
+; 
 ; Room 1 has a trapdoor which opens when the wizard stands on it holding the saxophone.
-; $3dfc referenced 1 time by $3b1a
-room1_handler
+; 
+; *************************************************************************************
+room1_update_handler
     lda update_room_first_update_flag                                 ; 3dfc: ad 2b 13    .+.
     beq room1_not_first_update                                        ; 3dff: f0 6b       .k
     lda previous_level                                                ; 3e01: a5 51       .Q
@@ -644,7 +651,6 @@ room1_handler
     beq level_unchanged2                                              ; 3e0a: f0 05       ..
     lda #$ff                                                          ; 3e0c: a9 ff       ..
     sta room1_trapdoor_open_flag                                      ; 3e0e: 8d ff 09    ...
-; $3e11 referenced 2 times by $3e05, $3e0a
 level_unchanged2
     lda desired_room_index                                            ; 3e11: a5 30       .0
     cmp #1                                                            ; 3e13: c9 01       ..
@@ -681,7 +687,6 @@ level_unchanged2
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 3e4f: 20 44 1e     D.
     jmp room1_initial_setup_done                                      ; 3e52: 4c 69 3e    Li>
 
-; $3e55 referenced 1 time by $3e41
 set_up_open_trapdoor_collision_map
     ldx #$11                                                          ; 3e55: a2 11       ..
     ldy #8                                                            ; 3e57: a0 08       ..
@@ -692,11 +697,9 @@ set_up_open_trapdoor_collision_map
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 3e61: 20 44 1e     D.
     ldx #$16                                                          ; 3e64: a2 16       ..
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 3e66: 20 44 1e     D.
-; $3e69 referenced 2 times by $3e15, $3e52
 room1_initial_setup_done
     jmp set_room1_trapdoor_sprites_if_required                        ; 3e69: 4c d7 3e    L.>
 
-; $3e6c referenced 1 time by $3dff
 room1_not_first_update
     ldy room1_trapdoor_open_flag                                      ; 3e6c: ac ff 09    ...
     bmi set_room1_trapdoor_sprites_if_required                        ; 3e6f: 30 66       0f
@@ -739,7 +742,6 @@ room1_not_first_update
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 3eb9: 20 44 1e     D.
     ldx #$16                                                          ; 3ebc: a2 16       ..
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 3ebe: 20 44 1e     D.
-; $3ec1 referenced 1 time by $3e71
 increment_trapdoor_open_flag
     ldy room1_trapdoor_open_flag                                      ; 3ec1: ac ff 09    ...
     iny                                                               ; 3ec4: c8          .
@@ -751,13 +753,10 @@ increment_trapdoor_open_flag
 ; TODO: Pretty confident this is the trapdoor opening sound, but this is called
 ; elsewhere so don't want to rename subroutine yet
     jsr play_some_sound1_then_some_sound2                             ; 3ecf: 20 f1 3e     .>
-; $3ed2 referenced 1 time by $3ecd
 skip_play_sound
     ldy #$ff                                                          ; 3ed2: a0 ff       ..
-; $3ed4 referenced 1 time by $3ec7
 new_room1_trapdoor_open_flag_in_y
     sty room1_trapdoor_open_flag                                      ; 3ed4: 8c ff 09    ...
-; $3ed7 referenced 8 times by $3e69, $3e6f, $3e77, $3e7b, $3e80, $3e87, $3e8b, $3e97
 set_room1_trapdoor_sprites_if_required
     lda desired_room_index                                            ; 3ed7: a5 30       .0
     cmp #1                                                            ; 3ed9: c9 01       ..
@@ -766,22 +765,18 @@ set_room1_trapdoor_sprites_if_required
     bpl adjusted_room1_trapdoor_open_flag_in_y_is_ge_0                ; 3ee0: 10 02       ..
 ; Use sprite index 2 (vertical) if room1_trapdoor_open_flag is $ff
     ldy #2                                                            ; 3ee2: a0 02       ..
-; $3ee4 referenced 1 time by $3ee0
 adjusted_room1_trapdoor_open_flag_in_y_is_ge_0
     lda trapdoor_sprite_table,y                                       ; 3ee4: b9 ee 3e    ..>
     sta object_spriteid + objectid_left_trapdoor                      ; 3ee7: 8d aa 09    ...
     sta object_spriteid + objectid_right_trapdoor                     ; 3eea: 8d ab 09    ...
-; $3eed referenced 1 time by $3edb
 return2
     rts                                                               ; 3eed: 60          `
 
-; $3eee referenced 1 time by $3ee4
 trapdoor_sprite_table
     !byte spriteid_trapdoor_horizontal                                ; 3eee: cf          .
     !byte spriteid_trapdoor_diagonal                                  ; 3eef: d0          .
     !byte spriteid_trapdoor_vertical                                  ; 3ef0: d1          .
 
-; $3ef1 referenced 2 times by $3ecf, $41d6
 play_some_sound1_then_some_sound2
     lda #0                                                            ; 3ef1: a9 00       ..
     ldx #<some_sound1                                                 ; 3ef3: a2 42       .B
@@ -793,10 +788,9 @@ play_some_sound1_then_some_sound2
     rts                                                               ; 3f01: 60          `
 
 ; TODO: This forcing of current_room_index to 1 seems odd.
-; $3f02 referenced 1 time by $3b20
 room1_saxophone_and_brazier_handler
     lda #1                                                            ; 3f02: a9 01       ..
-    sta current_room_index                                            ; 3f04: 8d ba 1a    ...
+    sta currently_updating_logic_for_room_index                       ; 3f04: 8d ba 1a    ...
     lda #objectid_brazier                                             ; 3f07: a9 05       ..
     ldx #$1a                                                          ; 3f09: a2 1a       ..
     ldy #$0e                                                          ; 3f0b: a0 0e       ..
@@ -831,11 +825,9 @@ room1_saxophone_and_brazier_handler
     sta object_sprite_mask_type,x                                     ; 3f49: 9d ac 38    ..8
     lda #spriteid_saxophone1                                          ; 3f4c: a9 d2       ..
     sta object_spriteid,x                                             ; 3f4e: 9d a8 09    ...
-; $3f51 referenced 2 times by $3f2d, $3f32
 return3
     rts                                                               ; 3f51: 60          `
 
-; $3f52 referenced 1 time by $3f13
 not_first_room_update
     lda l2eb6                                                         ; 3f52: ad b6 2e    ...
     cmp #$d3                                                          ; 3f55: c9 d3       ..
@@ -844,7 +836,6 @@ not_first_room_update
     ldx #<some_sound3                                                 ; 3f5b: a2 24       .$
     ldy #>some_sound3                                                 ; 3f5d: a0 44       .D
     jsr play_sound_yx                                                 ; 3f5f: 20 f6 38     .8
-; $3f62 referenced 1 time by $3f57
 c3f62
     lda desired_room_index                                            ; 3f62: a5 30       .0
     cmp #1                                                            ; 3f64: c9 01       ..
@@ -864,11 +855,9 @@ c3f62
     sta object_spriteid + objectid_saxophone                          ; 3f82: 8d ac 09    ...
     lda #$ff                                                          ; 3f85: a9 ff       ..
     sta saxophone_collected_flag                                      ; 3f87: 8d 00 0a    ...
-; $3f8a referenced 3 times by $3f66, $3f6b, $3f79
 c3f8a
     rts                                                               ; 3f8a: 60          `
 
-; $3f8b referenced 4 times by $3ffa, $3fff, $4004, $4009
 sub_c3f8b
     stx l3fd5                                                         ; 3f8b: 8e d5 3f    ..?
     sty l3fd6                                                         ; 3f8e: 8c d6 3f    ..?
@@ -910,17 +899,20 @@ sub_c3f8b
     ldy l3fd6                                                         ; 3fd1: ac d6 3f    ..?
     rts                                                               ; 3fd4: 60          `
 
-; $3fd5 referenced 2 times by $3f8b, $3fce
 l3fd5
     !byte 0                                                           ; 3fd5: 00          .
-; $3fd6 referenced 2 times by $3f8e, $3fd1
 l3fd6
     !byte 0                                                           ; 3fd6: 00          .
-room_3_data_ptr
+; *************************************************************************************
+; 
+; Room 2 initialisation
+; 
+; *************************************************************************************
+room_2_data
     !byte 20                                                          ; 3fd7: 14          .              ; initial player X cell
     !byte 9                                                           ; 3fd8: 09          .              ; initial player Y cell
 
-room_3_code
+room_2_initialisation_code
     ldx #0                                                            ; 3fd9: a2 00       ..
     ldy #0                                                            ; 3fdb: a0 00       ..
     lda #$ff                                                          ; 3fdd: a9 ff       ..
@@ -969,7 +961,6 @@ room_3_code
     jsr copy_rectangle_of_memory_to_screen                            ; 403b: 20 bb 1a     ..
     jsr draw_floor_walls_and_ceiling_around_solid_rock                ; 403e: 20 90 1b     ..
     jsr start_room                                                    ; 4041: 20 bb 12     ..
-; $4044 referenced 1 time by $4049
 loop_until_exit_room_top
     jsr game_update                                                   ; 4044: 20 da 12     ..
     and #exit_room_top                                                ; 4047: 29 08       ).
@@ -978,7 +969,6 @@ loop_until_exit_room_top
     ldy desired_level                                                 ; 404d: a4 31       .1
     jmp initialise_level                                              ; 404f: 4c 40 11    L@.
 
-; $4052 referenced 2 times by $40ef, $4240
 baby_spriteid_data
     !byte spriteid_baby0                                              ; 4052: d6          .
     !byte spriteid_baby1                                              ; 4053: d7          .
@@ -1026,12 +1016,16 @@ baby_spriteid_data
     !byte spriteid_baby6                                              ; 407d: dc          .
     !byte 0                                                           ; 407e: 00          .
 
-; Room 2 has the spell, guarded by a baby. TODO: Not too sure I have the room number
-; correct etc.
-; $407f referenced 1 time by $3b1d
-room2_handler
+; *************************************************************************************
+; 
+; Room 2 update
+; 
+; Room 2 has the spell, guarded by a baby.
+; 
+; *************************************************************************************
+room2_update_handler
     lda #2                                                            ; 407f: a9 02       ..
-    sta current_room_index                                            ; 4081: 8d ba 1a    ...
+    sta currently_updating_logic_for_room_index                       ; 4081: 8d ba 1a    ...
     lda #3                                                            ; 4084: a9 03       ..             ; redundant instruction
     ldx #3                                                            ; 4086: a2 03       ..             ; redundant instruction
     ldy #$11                                                          ; 4088: a0 11       ..             ; redundant instruction
@@ -1053,14 +1047,12 @@ room2_handler
     ldy #0                                                            ; 40ac: a0 00       ..
     lda #1                                                            ; 40ae: a9 01       ..
     ldx #$a0                                                          ; 40b0: a2 a0       ..
-; $40b2 referenced 1 time by $40aa
 c40b2
     sty l0a72                                                         ; 40b2: 8c 72 0a    .r.
     sty l0a73                                                         ; 40b5: 8c 73 0a    .s.
     sta l0a04                                                         ; 40b8: 8d 04 0a    ...
     sta l0a71                                                         ; 40bb: 8d 71 0a    .q.
     stx l0a70                                                         ; 40be: 8e 70 0a    .p.
-; $40c1 referenced 1 time by $40a0
 c40c1
     lda desired_room_index                                            ; 40c1: a5 30       .0
     cmp #2                                                            ; 40c3: c9 02       ..
@@ -1072,32 +1064,27 @@ c40c1
     ldy #$14                                                          ; 40d0: a0 14       ..
     lda #$fe                                                          ; 40d2: a9 fe       ..
     sta temp_sprite_y_offset                                          ; 40d4: 85 3b       .;
-    lda #objectid_TODO                                                ; 40d6: a9 02       ..
+    lda #objectid_baby                                                ; 40d6: a9 02       ..
     jsr set_object_position_from_cell_xy                              ; 40d8: 20 5d 1f     ].
     lda #spriteid_zero_size1                                          ; 40db: a9 cc       ..
-    sta object_sprite_mask_type + objectid_TODO                       ; 40dd: 8d ae 38    ..8
-; $40e0 referenced 1 time by $40c5
+    sta object_sprite_mask_type + objectid_baby                       ; 40dd: 8d ae 38    ..8
 c40e0
     jmp c41d9                                                         ; 40e0: 4c d9 41    L.A
 
-; $40e3 referenced 2 times by $4106, $410e
 l40e3
     !byte 0                                                           ; 40e3: 00          .
 
-; $40e4 referenced 1 time by $409a
 room2_not_first_update
     ldy l0a73                                                         ; 40e4: ac 73 0a    .s.
     cpy #$2b ; '+'                                                    ; 40e7: c0 2b       .+
     bne c40ee                                                         ; 40e9: d0 03       ..
     jmp c41d9                                                         ; 40eb: 4c d9 41    L.A
 
-; $40ee referenced 1 time by $40e9
 c40ee
     iny                                                               ; 40ee: c8          .
     lda baby_spriteid_data,y                                          ; 40ef: b9 52 40    .R@
     bne c40f7                                                         ; 40f2: d0 03       ..
     ldy l0a72                                                         ; 40f4: ac 72 0a    .r.
-; $40f7 referenced 1 time by $40f2
 c40f7
     lda desired_room_index                                            ; 40f7: a5 30       .0
     cmp #2                                                            ; 40f9: c9 02       ..
@@ -1121,17 +1108,14 @@ c40f7
     ldy #$22 ; '"'                                                    ; 4124: a0 22       ."
     lda #5                                                            ; 4126: a9 05       ..
     sta l0a72                                                         ; 4128: 8d 72 0a    .r.
-; $412b referenced 1 time by $4102
 c412b
     jmp c41ae                                                         ; 412b: 4c ae 41    L.A
 
-; $412e referenced 2 times by $40fb, $4113
 c412e
     cpy #$21 ; '!'                                                    ; 412e: c0 21       .!
     bne c4137                                                         ; 4130: d0 05       ..
     ldy #5                                                            ; 4132: a0 05       ..
     sty l0a72                                                         ; 4134: 8c 72 0a    .r.
-; $4137 referenced 1 time by $4130
 c4137
     lda desired_room_index                                            ; 4137: a5 30       .0
     cmp #2                                                            ; 4139: c9 02       ..
@@ -1151,13 +1135,11 @@ c4137
     sta l0a72                                                         ; 4158: 8d 72 0a    .r.
     jmp c41ae                                                         ; 415b: 4c ae 41    L.A
 
-; $415e referenced 2 times by $413b, $4142
 c415e
     cpy #$0d                                                          ; 415e: c0 0d       ..
     bne c4167                                                         ; 4160: d0 05       ..
     ldy #0                                                            ; 4162: a0 00       ..
     sty l0a72                                                         ; 4164: 8c 72 0a    .r.
-; $4167 referenced 1 time by $4160
 c4167
     lda l0a72                                                         ; 4167: ad 72 0a    .r.
     cmp #0                                                            ; 416a: c9 00       ..
@@ -1171,25 +1153,21 @@ c4167
     beq c418c                                                         ; 417e: f0 0c       ..
     bcc c419f                                                         ; 4180: 90 1d       ..
     bcs c4194                                                         ; 4182: b0 10       ..
-; $4184 referenced 1 time by $417a
 c4184
     cmp #$6c ; 'l'                                                    ; 4184: c9 6c       .l
     beq c418c                                                         ; 4186: f0 04       ..
     bcs c419f                                                         ; 4188: b0 15       ..
     bcc c4194                                                         ; 418a: 90 08       ..
-; $418c referenced 2 times by $417e, $4186
 c418c
     ldy #5                                                            ; 418c: a0 05       ..
     sty l0a72                                                         ; 418e: 8c 72 0a    .r.
     jmp c419f                                                         ; 4191: 4c 9f 41    L.A
 
-; $4194 referenced 2 times by $4182, $418a
 c4194
     lda l0a71                                                         ; 4194: ad 71 0a    .q.
     eor #$fe                                                          ; 4197: 49 fe       I.
     sta l0a71                                                         ; 4199: 8d 71 0a    .q.
     sta l0a04                                                         ; 419c: 8d 04 0a    ...
-; $419f referenced 3 times by $4180, $4188, $4191
 c419f
     lda l0a71                                                         ; 419f: ad 71 0a    .q.
     asl                                                               ; 41a2: 0a          .
@@ -1199,7 +1177,6 @@ c419f
     sta l0a70                                                         ; 41a8: 8d 70 0a    .p.
     jmp c41c9                                                         ; 41ab: 4c c9 41    L.A
 
-; $41ae referenced 5 times by $412b, $4150, $4154, $415b, $416c
 c41ae
     lda l0a04                                                         ; 41ae: ad 04 0a    ...
     bmi c41c1                                                         ; 41b1: 30 0e       0.
@@ -1210,12 +1187,10 @@ c41ae
     sta l0a70                                                         ; 41bb: 8d 70 0a    .p.
     jmp c41c9                                                         ; 41be: 4c c9 41    L.A
 
-; $41c1 referenced 1 time by $41b1
 c41c1
     lda l0a70                                                         ; 41c1: ad 70 0a    .p.
     and #$f8                                                          ; 41c4: 29 f8       ).
     sta l0a70                                                         ; 41c6: 8d 70 0a    .p.
-; $41c9 referenced 2 times by $41ab, $41be
 c41c9
     sty l0a73                                                         ; 41c9: 8c 73 0a    .s.
     lda desired_room_index                                            ; 41cc: a5 30       .0
@@ -1224,7 +1199,6 @@ c41c9
     cpy #$2b ; '+'                                                    ; 41d2: c0 2b       .+
     bne c41d9                                                         ; 41d4: d0 03       ..
     jsr play_some_sound1_then_some_sound2                             ; 41d6: 20 f1 3e     .>
-; $41d9 referenced 4 times by $40e0, $40eb, $41d0, $41d4
 c41d9
     lda desired_room_index                                            ; 41d9: a5 30       .0
     cmp #2                                                            ; 41db: c9 02       ..
@@ -1252,7 +1226,6 @@ c41d9
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 4206: 20 44 1e     D.
     jmp c4235                                                         ; 4209: 4c 35 42    L5B
 
-; $420c referenced 1 time by $41f5
 c420c
     dex                                                               ; 420c: ca          .
     ldy #$11                                                          ; 420d: a0 11       ..
@@ -1266,7 +1239,6 @@ c420c
     lda l0a04                                                         ; 421e: ad 04 0a    ...
     bmi c4224                                                         ; 4221: 30 01       0.
     dex                                                               ; 4223: ca          .
-; $4224 referenced 1 time by $4221
 c4224
     ldy #$13                                                          ; 4224: a0 13       ..
     lda #3                                                            ; 4226: a9 03       ..
@@ -1276,7 +1248,6 @@ c4224
     lda #3                                                            ; 422e: a9 03       ..
     sta value_to_write_to_collision_map                               ; 4230: 85 3e       .>
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 4232: 20 44 1e     D.
-; $4235 referenced 2 times by $41e4, $4209
 c4235
     ldx #2                                                            ; 4235: a2 02       ..
     lda l0a70                                                         ; 4237: ad 70 0a    .p.
@@ -1286,15 +1257,19 @@ c4235
     sta object_spriteid,x                                             ; 4243: 9d a8 09    ...
     lda l0a04                                                         ; 4246: ad 04 0a    ...
     sta object_direction,x                                            ; 4249: 9d be 09    ...
-; $424c referenced 1 time by $41dd
 return5
     rts                                                               ; 424c: 60          `
 
-room_4_data_ptr
+; *************************************************************************************
+; 
+; Room 3 initialisation
+; 
+; *************************************************************************************
+room_3_data
     !byte 20                                                          ; 424d: 14          .              ; initial player X cell
     !byte 7                                                           ; 424e: 07          .              ; initial player Y cell
 
-room_4_code
+room_3_initialisation_code
     ldx #0                                                            ; 424f: a2 00       ..
     ldy #0                                                            ; 4251: a0 00       ..
     lda #$ff                                                          ; 4253: a9 ff       ..
@@ -1366,7 +1341,6 @@ room_4_code
     lda #$0e                                                          ; 42e2: a9 0e       ..
     jsr draw_rope                                                     ; 42e4: 20 b9 1d     ..
     jsr start_room                                                    ; 42e7: 20 bb 12     ..
-; $42ea referenced 1 time by $42ef
 loop_until_exit_room_left
     jsr game_update                                                   ; 42ea: 20 da 12     ..
     and #exit_room_left                                               ; 42ed: 29 01       ).
@@ -1375,11 +1349,16 @@ loop_until_exit_room_left
     ldy desired_level                                                 ; 42f3: a4 31       .1
     jmp initialise_level                                              ; 42f5: 4c 40 11    L@.
 
+; *************************************************************************************
+; 
+; Room 3 update
+; 
 ; Room 3 has a table which can be pushed to the left or right side of the screen.
-; $42f8 referenced 1 time by $3b23
-room3_handler
+; 
+; *************************************************************************************
+room3_update_handler
     lda #3                                                            ; 42f8: a9 03       ..
-    sta current_room_index                                            ; 42fa: 8d ba 1a    ...
+    sta currently_updating_logic_for_room_index                       ; 42fa: 8d ba 1a    ...
     lda #objectid_brazier2                                            ; 42fd: a9 03       ..
     ldx #$14                                                          ; 42ff: a2 14       ..
     ldy #$0c                                                          ; 4301: a0 0c       ..
@@ -1403,13 +1382,11 @@ room3_handler
     lda #0                                                            ; 4328: a9 00       ..
     sta table_x_speed                                                 ; 432a: 8d 02 0a    ...
     beq table_x_position_update_finished                              ; 432d: f0 0a       ..             ; ALWAYS branch
-; $432f referenced 2 times by $431a, $4321
 set_table_x_position_to_right_side
     lda #table_max_x                                                  ; 432f: a9 16       ..
     sta table_x_position                                              ; 4331: 8d 01 0a    ...
     lda #0                                                            ; 4334: a9 00       ..
     sta table_x_speed                                                 ; 4336: 8d 02 0a    ...
-; $4339 referenced 3 times by $4315, $431f, $432d
 table_x_position_update_finished
     lda desired_room_index                                            ; 4339: a5 30       .0
     cmp #3                                                            ; 433b: c9 03       ..
@@ -1422,15 +1399,12 @@ table_x_position_update_finished
     sta object_spriteid,x                                             ; 434a: 9d a8 09    ...
     lda #spriteid_zero_size1                                          ; 434d: a9 cc       ..
     sta object_sprite_mask_type,x                                     ; 434f: 9d ac 38    ..8
-; $4352 referenced 1 time by $433d
 add_table_to_collision_map_if_room_3_local
     jmp add_table_to_collision_map_if_room_3                          ; 4352: 4c f6 43    L.C
 
-; $4355 referenced 5 times by $4361, $436f, $437d, $438b, $4399
 return4_local
     jmp return4                                                       ; 4355: 4c 15 44    L.D
 
-; $4358 referenced 1 time by $430f
 room3_not_first_update
     lda table_x_speed                                                 ; 4358: ad 02 0a    ...
     bne move_table                                                    ; 435b: d0 43       .C
@@ -1452,7 +1426,6 @@ room3_not_first_update
     lda #1                                                            ; 437f: a9 01       ..
     sta table_x_speed                                                 ; 4381: 8d 02 0a    ...
     bne move_table                                                    ; 4384: d0 1a       ..             ; ALWAYS branch
-; $4386 referenced 1 time by $4368
 table_at_max_x_position
     lda object_room_collision_flags                                   ; 4386: ad d8 38    ..8
     and #object_collided_left_wall                                    ; 4389: 29 01       ).
@@ -1465,7 +1438,6 @@ table_at_max_x_position
     beq return4_local                                                 ; 4399: f0 ba       ..
     lda #$ff                                                          ; 439b: a9 ff       ..
     sta table_x_speed                                                 ; 439d: 8d 02 0a    ...
-; $43a0 referenced 2 times by $435b, $4384
 move_table
     lda table_x_position                                              ; 43a0: ad 01 0a    ...
     sta old_table_x_position                                          ; 43a3: 85 70       .p
@@ -1476,7 +1448,6 @@ move_table
     beq moving_table_hit_wall                                         ; 43ae: f0 04       ..
     cmp #table_max_x                                                  ; 43b0: c9 16       ..
     bne moving_table_not_hit_wall                                     ; 43b2: d0 20       .
-; $43b4 referenced 1 time by $43ae
 moving_table_hit_wall
     lda #0                                                            ; 43b4: a9 00       ..
     sta table_x_speed                                                 ; 43b6: 8d 02 0a    ...
@@ -1489,12 +1460,10 @@ moving_table_hit_wall
     lda #0                                                            ; 43c6: a9 00       ..
     sta sound_priority_per_channel_table                              ; 43c8: 8d 6f 39    .o9
     sta sound_priority_per_channel_table + 1                          ; 43cb: 8d 70 39    .p9
-; $43ce referenced 1 time by $43c4
 ready_to_play_table_hit_wall_sound
     jsr play_landing_sound                                            ; 43ce: 20 a9 23     .#
     jmp remove_table_from_collision_map_at_old_table_x_position       ; 43d1: 4c e3 43    L.C
 
-; $43d4 referenced 1 time by $43b2
 moving_table_not_hit_wall
     lda desired_room_index                                            ; 43d4: a5 30       .0
     cmp #3                                                            ; 43d6: c9 03       ..
@@ -1503,7 +1472,6 @@ moving_table_not_hit_wall
     ldx #<some_sound4                                                 ; 43dc: a2 58       .X
     ldy #>some_sound4                                                 ; 43de: a0 44       .D
     jsr play_sound_yx                                                 ; 43e0: 20 f6 38     .8
-; $43e3 referenced 1 time by $43d1
 remove_table_from_collision_map_at_old_table_x_position
     ldx old_table_x_position                                          ; 43e3: a6 70       .p
     ldy #$14                                                          ; 43e5: a0 14       ..
@@ -1514,7 +1482,6 @@ remove_table_from_collision_map_at_old_table_x_position
     lda #0                                                            ; 43ef: a9 00       ..
     sta value_to_write_to_collision_map                               ; 43f1: 85 3e       .>
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 43f3: 20 44 1e     D.
-; $43f6 referenced 1 time by $4352
 add_table_to_collision_map_if_room_3
     lda desired_room_index                                            ; 43f6: a5 30       .0
     cmp #3                                                            ; 43f8: c9 03       ..
@@ -1531,7 +1498,6 @@ add_table_to_collision_map_if_room_3
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 440d: 20 44 1e     D.
     lda #objectid_table                                               ; 4410: a9 02       ..
     jsr set_object_position_from_cell_xy                              ; 4412: 20 5d 1f     ].
-; $4415 referenced 4 times by $4355, $43bd, $43d8, $43fa
 return4
     rts                                                               ; 4415: 60          `
 
@@ -1886,166 +1852,6 @@ sprite_data
     !byte $aa, $aa, $80,   0, $30                                     ; 4aaf: aa aa 80... ...
 pydis_end
 
-; Label references by decreasing frequency:
-;     copy_rectangle_of_memory_to_screen:                       43
-;     width_in_cells:                                           39
-;     height_in_cells:                                          38
-;     desired_room_index:                                       19
-;     write_value_to_a_rectangle_of_cells_in_collision_map:     13
-;     desired_level:                                            11
-;     l0a72:                                                    11
-;     value_to_write_to_collision_map:                          10
-;     l0a70:                                                    10
-;     draw_sprite_a_at_cell_xy_and_write_to_collision_map:       9
-;     table_x_speed:                                             8
-;     l0a04:                                                     8
-;     set_room1_trapdoor_sprites_if_required:                    8
-;     room1_trapdoor_open_flag:                                  7
-;     table_x_position:                                          7
-;     play_sound_yx:                                             7
-;     mouse_sprites_and_ball_movement_table:                     7
-;     l0070:                                                     6
-;     object_direction:                                          6
-;     l0a71:                                                     6
-;     initialise_level:                                          6
-;     update_room_first_update_flag:                             6
-;     draw_rope:                                                 6
-;     previous_level:                                            5
-;     l0a73:                                                     5
-;     set_object_position_from_cell_xy:                          5
-;     test_for_collision_between_objects_x_and_y:                5
-;     object_sprite_mask_type:                                   5
-;     define_envelope:                                           5
-;     c41ae:                                                     5
-;     return4_local:                                             5
-;     temp_sprite_y_offset:                                      4
-;     saxophone_collected_flag:                                  4
-;     mouse_ball_position:                                       4
-;     start_room:                                                4
-;     game_update:                                               4
-;     draw_floor_walls_and_ceiling_around_solid_rock:            4
-;     sub_c3f8b:                                                 4
-;     c41d9:                                                     4
-;     return4:                                                   4
-;     object_spriteid:                                           3
-;     l09aa:                                                     3
-;     l09ab:                                                     3
-;     l09ac:                                                     3
-;     update_brazier_and_fire:                                   3
-;     current_room_index:                                        3
-;     draw_sprite_a_at_cell_xy:                                  3
-;     find_or_create_menu_slot_for_A:                            3
-;     l2eb6:                                                     3
-;     object_z_order:                                            3
-;     move_mouse_ball_if_room_0:                                 3
-;     return1:                                                   3
-;     c3f8a:                                                     3
-;     c419f:                                                     3
-;     table_x_position_update_finished:                          3
-;     source_sprite_memory_low:                                  2
-;     source_sprite_memory_high:                                 2
-;     object_x_low:                                              2
-;     object_x_high:                                             2
-;     l0a03:                                                     2
-;     set_object_position_from_current_sprite_position:          2
-;     player_collision_flag:                                     2
-;     object_room_collision_flags:                               2
-;     sound_priority_per_channel_table:                          2
-;     c3b0e:                                                     2
-;     level_unchanged2:                                          2
-;     room1_initial_setup_done:                                  2
-;     play_some_sound1_then_some_sound2:                         2
-;     return3:                                                   2
-;     l3fd5:                                                     2
-;     l3fd6:                                                     2
-;     baby_spriteid_data:                                        2
-;     l40e3:                                                     2
-;     c412e:                                                     2
-;     c415e:                                                     2
-;     c418c:                                                     2
-;     c4194:                                                     2
-;     c41c9:                                                     2
-;     c4235:                                                     2
-;     set_table_x_position_to_right_side:                        2
-;     move_table:                                                2
-;     sprite_reflect_flag:                                       1
-;     temp_sprite_x_offset:                                      1
-;     copy_mode:                                                 1
-;     player_held_object:                                        1
-;     l0954:                                                     1
-;     object_y_low:                                              1
-;     l0980:                                                     1
-;     object_y_high:                                             1
-;     developer_flags:                                           1
-;     update_level_completion:                                   1
-;     write_a_single_value_to_cell_in_collision_map:             1
-;     play_landing_sound:                                        1
-;     temp_left_offset:                                          1
-;     temp_right_offset:                                         1
-;     temp_bottom_offset:                                        1
-;     get_wall_collision_for_object_a:                           1
-;     l2ee9:                                                     1
-;     l2eee:                                                     1
-;     five_byte_table_paired_with_collectable_sprite_ids + 1:    1
-;     l38ae:                                                     1
-;     l3970:                                                     1
-;     developer_mode_not_active:                                 1
-;     loop_until_exit_room_right:                                1
-;     room0_handler:                                             1
-;     initialise_mouse_ball_position_if_level_changed:           1
-;     level_unchanged:                                           1
-;     move_mouse_ball_if_room_0_local:                           1
-;     bump_and_wrap_mouse_ball_position:                         1
-;     no_wrap_needed:                                            1
-;     play_mouse_ball_sounds:                                    1
-;     mouse_ball_position_ge_8:                                  1
-;     mouse_ball_position_lt_8:                                  1
-;     mouse_ball_position_ge_0xf:                                1
-;     mouse_ball_position_ge_0x17:                               1
-;     mouse_ball_position_ge_0xf_common_tail:                    1
-;     finish_mouse_ball_movement:                                1
-;     loop_until_exited_room:                                    1
-;     exited_room_not_left:                                      1
-;     exited_room_not_bottom:                                    1
-;     room1_handler:                                             1
-;     set_up_open_trapdoor_collision_map:                        1
-;     room1_not_first_update:                                    1
-;     increment_trapdoor_open_flag:                              1
-;     skip_play_sound:                                           1
-;     new_room1_trapdoor_open_flag_in_y:                         1
-;     adjusted_room1_trapdoor_open_flag_in_y_is_ge_0:            1
-;     return2:                                                   1
-;     trapdoor_sprite_table:                                     1
-;     room1_saxophone_and_brazier_handler:                       1
-;     not_first_room_update:                                     1
-;     c3f62:                                                     1
-;     loop_until_exit_room_top:                                  1
-;     room2_handler:                                             1
-;     c40b2:                                                     1
-;     c40c1:                                                     1
-;     c40e0:                                                     1
-;     room2_not_first_update:                                    1
-;     c40ee:                                                     1
-;     c40f7:                                                     1
-;     c412b:                                                     1
-;     c4137:                                                     1
-;     c4167:                                                     1
-;     c4184:                                                     1
-;     c41c1:                                                     1
-;     c420c:                                                     1
-;     c4224:                                                     1
-;     return5:                                                   1
-;     loop_until_exit_room_left:                                 1
-;     room3_handler:                                             1
-;     add_table_to_collision_map_if_room_3_local:                1
-;     room3_not_first_update:                                    1
-;     table_at_max_x_position:                                   1
-;     moving_table_hit_wall:                                     1
-;     ready_to_play_table_hit_wall_sound:                        1
-;     moving_table_not_hit_wall:                                 1
-;     remove_table_from_collision_map_at_old_table_x_position:   1
-;     add_table_to_collision_map_if_room_3:                      1
-
 ; Automatically generated labels:
 ;     c3b0e
 ;     c3f62
@@ -2071,11 +1877,6 @@ pydis_end
 ;     c420c
 ;     c4224
 ;     c4235
-;     l0954
-;     l0980
-;     l09aa
-;     l09ab
-;     l09ac
 ;     l0a03
 ;     l0a04
 ;     l0a70
@@ -2083,10 +1884,6 @@ pydis_end
 ;     l0a72
 ;     l0a73
 ;     l2eb6
-;     l2ee9
-;     l2eee
-;     l38ae
-;     l3970
 ;     l3fd5
 ;     l3fd6
 ;     l40e3
@@ -2187,14 +1984,14 @@ pydis_end
 !if (exit_room_top) != $08 {
     !error "Assertion failed: exit_room_top == $08"
 }
-!if (level_init_after_load_handler) != $3af2 {
-    !error "Assertion failed: level_init_after_load_handler == $3af2"
+!if (level_specific_initialisation) != $3af2 {
+    !error "Assertion failed: level_specific_initialisation == $3af2"
 }
-!if (level_name) != $3ae7 {
-    !error "Assertion failed: level_name == $3ae7"
+!if (level_specific_password) != $3ae7 {
+    !error "Assertion failed: level_specific_password == $3ae7"
 }
-!if (level_update_handler) != $3b17 {
-    !error "Assertion failed: level_update_handler == $3b17"
+!if (level_specific_update) != $3b17 {
+    !error "Assertion failed: level_specific_update == $3b17"
 }
 !if (object_collided_left_wall) != $01 {
     !error "Assertion failed: object_collided_left_wall == $01"
@@ -2202,8 +1999,8 @@ pydis_end
 !if (object_collided_right_wall) != $04 {
     !error "Assertion failed: object_collided_right_wall == $04"
 }
-!if (object_sprite_mask_type + objectid_TODO) != $38ae {
-    !error "Assertion failed: object_sprite_mask_type + objectid_TODO == $38ae"
+!if (object_sprite_mask_type + objectid_baby) != $38ae {
+    !error "Assertion failed: object_sprite_mask_type + objectid_baby == $38ae"
 }
 !if (object_spriteid + objectid_left_mouse) != $09aa {
     !error "Assertion failed: object_spriteid + objectid_left_mouse == $09aa"
@@ -2229,8 +2026,8 @@ pydis_end
 !if (object_y_low + objectid_mouse_ball) != $0980 {
     !error "Assertion failed: object_y_low + objectid_mouse_ball == $0980"
 }
-!if (objectid_TODO) != $02 {
-    !error "Assertion failed: objectid_TODO == $02"
+!if (objectid_baby) != $02 {
+    !error "Assertion failed: objectid_baby == $02"
 }
 !if (objectid_brazier) != $05 {
     !error "Assertion failed: objectid_brazier == $05"
@@ -2271,17 +2068,17 @@ pydis_end
 !if (player_collision_flag_mouse_ball) != $80 {
     !error "Assertion failed: player_collision_flag_mouse_ball == $80"
 }
-!if (room_1_data_ptr) != $3b27 {
-    !error "Assertion failed: room_1_data_ptr == $3b27"
+!if (room_0_data) != $3b27 {
+    !error "Assertion failed: room_0_data == $3b27"
 }
-!if (room_2_data_ptr) != $3d3d {
-    !error "Assertion failed: room_2_data_ptr == $3d3d"
+!if (room_1_data) != $3d3d {
+    !error "Assertion failed: room_1_data == $3d3d"
 }
-!if (room_3_data_ptr) != $3fd7 {
-    !error "Assertion failed: room_3_data_ptr == $3fd7"
+!if (room_2_data) != $3fd7 {
+    !error "Assertion failed: room_2_data == $3fd7"
 }
-!if (room_4_data_ptr) != $424d {
-    !error "Assertion failed: room_4_data_ptr == $424d"
+!if (room_3_data) != $424d {
+    !error "Assertion failed: room_3_data == $424d"
 }
 !if (sound_priority_per_channel_table + 1) != $3970 {
     !error "Assertion failed: sound_priority_per_channel_table + 1 == $3970"

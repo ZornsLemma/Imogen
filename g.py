@@ -734,7 +734,7 @@ all that well explained, but it's a start) is as follows:
     label(0x1209, "same_level")
     label(0x1213, "clear_sound_priorities_loop1")
     expr(0x1226, "first_level_letter")
-    comment(0x1228, """level_progress_table has:
+    comment(0x1228, """level_progress_table has one entry per level:
 
     bits 0-2: current room number
     bit 6: if clear then override regular room number with a cheat room number (there are two cheat room numbers!)
@@ -1228,6 +1228,7 @@ On subsequent updates, the fire animation is advanced.
 
 On Entry:
     A: object index for brazier
+    X,Y: cell coordinates of brazier
 On Exit:
     A,X,Y are preserved
 

@@ -1,9 +1,6 @@
-from commands import *
-import acorn
-import re
-from common import *
-from memorymanager import get_u8_runtime, RuntimeAddr
-acorn.bbc()
+from common_to_levels import *
+
+config.set_label_references(False)
 
 sprite_dict = {
     0x3b: "spriteid_ball",
@@ -30,14 +27,24 @@ sprite_dict = {
     0xde: "spriteid_table",
 }
 
-def spriteid(start_addr, end_addr=None):
-    if end_addr == None:
-        end_addr = start_addr+1
-    for addr in range(start_addr, end_addr):
-        v = get_u8_runtime(memorymanager.RuntimeAddr(addr))
-        if v in sprite_dict:
-            byte(addr)
-            expr(addr, sprite_dict[v])
+# Room 0
+constant(2, "objectid_left_mouse")
+constant(3, "objectid_right_mouse")
+constant(4, "objectid_mouse_ball")
+# Room 1
+constant(2, "objectid_left_trapdoor")
+constant(3, "objectid_right_trapdoor")
+constant(4, "objectid_saxophone")
+constant(5, "objectid_brazier")
+# Room 2
+constant(2, "objectid_baby")
+constant(5, "objectid_spell")
+# Room 3
+constant(2, "objectid_table")
+constant(3, "objectid_brazier2")
+
+
+set_sprite_dict(sprite_dict)
 
 substitute_constants("jsr draw_sprite_a_at_cell_xy", 'a', sprite_dict, True)
 substitute_constants("jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map", 'a', sprite_dict, True)
@@ -47,6 +54,7 @@ substitute_constants("jsr find_or_create_menu_slot_for_A", 'a', sprite_dict, Tru
 load(0x3ad5, "orig/dataA.dat", "6502", "df027a3ac06abfed1878eaec3d2bbe5f")
 
 common_to_all()
+define_level(4)
 
 # NOTE:
 #
@@ -66,18 +74,8 @@ substitute_labels = {
 s = SubstituteLabels(substitute_labels)
 set_label_maker_hook(s.substitute_label_maker)
 
-expr(0x40de, make_add("object_sprite_mask_type", "objectid_TODO"))
+expr(0x40de, make_add("object_sprite_mask_type", "objectid_baby"))
 expr(0x3ff3, "copy_mode_simple")
-
-word(0x3ad7)
-expr(0x3ad7, "level_init_after_load_handler")
-word(0x3ad9)
-expr(0x3ad9, "level_update_handler") # TODO: rename
-word(0x3adb)
-expr(0x3adb, "level_name") # TODO: rename
-entry(get_u16_binary(0x3ad7), "level_init_after_load_handler")
-entry(get_u16_binary(0x3ad9), "level_update_handler")
-label(get_u16_binary(0x3adb), "level_name")
 
 entry(0x3d21, "mouse_sprites_and_ball_movement_table")
 def mouse_and_ball(addr):
@@ -115,36 +113,9 @@ character_bitmap(0x4496, "ground_fill_2x2_bottom_left")
 character_bitmap(0x449e, "ground_fill_2x2_bottom_right")
 
 
-label(0x44A6, "sprite_data")
-word(0x3ad5)
-expr(0x3ad5, "sprite_data - level_data")
-
 comment(0x3ae7, "'SAXOPHOBIA\\r' EOR-encrypted with $cb")
 
 entry(0x3b04, "developer_mode_not_active")
-
-comment(0x3adf, "This is a table of four words, used by code just below 'skip_adding_completion_spell_to_toolbar' where the l030-th element *plus 2* is called. TODO: Why +2? The code at c129b suggests the two bytes *at* the address in this table is used as an address of some kind.")
-comment(0x3adf, "TODO: Speculation - could this be code to draw each of the screens making up the level? AFAICT saxophobia does have four screens. I assume the *number* of entries in this table is stored somewhere, but I can't see it. It is also possible that because entering rooms is handled by level specific code, the player always starts in room 0 and there is no need to have a byte of data representing the maximum room number.")
-def level_header_data_table_entry(addr, s):
-    word(addr)
-    expr(addr, s + "_data_ptr")
-    target1 = get_u16_binary(addr)
-    target2 = target1 + 2
-    label(target1, s + "_data_ptr")
-    byte(target1)
-    byte(target1 + 1)
-    decimal(target1)
-    decimal(target1 + 1)
-    comment(target1, "initial player X cell", inline=True)
-    comment(target1 + 1, "initial player Y cell", inline=True)
-    target3 = get_u16_binary(target1)
-    #label(target3, s + "_data")
-    #expr(target1, s + "_data")
-    entry(target2, s + "_code")
-level_header_data_table_entry(0x3adf, "room_1")
-level_header_data_table_entry(0x3ae1, "room_2")
-level_header_data_table_entry(0x3ae3, "room_3")
-level_header_data_table_entry(0x3ae5, "room_4")
 
 comment(0x3f7b, "TODO: I suspect this is handling 'collection of the saxophone'")
 comment(0x3b04, "reset the saxaphone collected flag. The user can choose during the course of a game to enter the password to continue playing this level having previously got the saxaphone.")
@@ -158,9 +129,15 @@ comment(0x3b35, "TODO: Setting a breakpoint in b-em shows address1_high ($71) is
 comment(0x3b29, "TODO: I suspect this next block up to and including the jsr is drawing the 'wall' pattern on the top two rows of the opening screen")
 comment(0x3b84, "TODO: I suspect we've finished drawing the ground fill and are now switching to another pattern.")
 
-label(0xa6f, "mouse_ball_position") # TODO: guesswork but fairly convinced - I think this runs from 0-$1d inclusive with 0 being (guess) far left, $f being far right
-entry(0x3be4, "room0_handler")
-comment(0x3be4, "Room 0 has two mice throwing a ball back and forth.")
+label(0xa6f, "mouse_ball_animation_position") # This runs from 0-$1d inclusive starting at 0 far left, reaching far right at $10 and returning to far left at $1d.
+comment(0x3be4, """*************************************************************************************
+
+Room 0 update
+
+Room 0 has two mice throwing a ball back and forth.
+
+*************************************************************************************""")
+entry(0x3be4, "room0_update_handler")
 entry(0x3bec, "initialise_mouse_ball_position_if_level_changed")
 entry(0x3bf7, "level_unchanged")
 entry(0x3c77, "bump_and_wrap_mouse_ball_position")
@@ -203,8 +180,14 @@ constant(0x80, "player_collision_flag_mouse_ball")
 expr(0x3d1c, "player_collision_flag_mouse_ball")
 expr(0x4116, "player_collision_flag_baby")
 
-entry(0x3dfc, "room1_handler")
-comment(0x3dfc, "Room 1 has a trapdoor which opens when the wizard stands on it holding the saxophone.")
+comment(0x3dfc, """*************************************************************************************
+
+Room 1 update
+
+Room 1 has a trapdoor which opens when the wizard stands on it holding the saxophone.
+
+*************************************************************************************""")
+entry(0x3dfc, "room1_update_handler")
 entry(0x3e6c, "room1_not_first_update")
 entry(0x3e11, "level_unchanged2")
 label(0x9ff, "room1_trapdoor_open_flag")
@@ -219,17 +202,6 @@ entry(0x3bd4, "loop_until_exit_room_right")
 expr(0x3bda, "exit_room_right")
 
 # TODO: slight guesswork
-# Room 0?
-constant(2, "objectid_left_mouse")
-constant(3, "objectid_right_mouse")
-constant(4, "objectid_mouse_ball")
-# Room 2?
-constant(2, "objectid_TODO")
-constant(5, "objectid_spell")
-# Room???
-constant(5, "objectid_brazier")
-# Room?
-constant(3, "objectid_brazier2")
 expr(0x3f08, "objectid_brazier")
 entry(0x3f52, "not_first_room_update")
 expr(0x3f1b, "spriteid_saxophone1")
@@ -239,10 +211,6 @@ expr(0x3c5c, "objectid_mouse_ball")
 expr(0x3cc7, "object_spriteid + objectid_left_mouse")
 expr(0x3cce, "object_spriteid + objectid_right_mouse")
 expr(0x3ceb, "object_spriteid + objectid_right_mouse")
-# Room 3?
-constant(2, "objectid_table") # TODO: I think...
-# TODO: Looks like object IDs might be re-used across rooms, so some of these below are probably
-# wrong
 expr(0x3cf2, "object_spriteid + objectid_left_mouse")
 expr(0x3ee8, "object_spriteid + objectid_left_trapdoor")
 expr(0x3eeb, "object_spriteid + objectid_right_trapdoor")
@@ -254,8 +222,6 @@ label(0xa02, "table_x_speed") # probably -1 ($ff), 0 or 1
 entry(0x4355, "return4_local")
 entry(0x4415, "return4")
 
-constant(0x2, "objectid_left_trapdoor")
-constant(0x3, "objectid_right_trapdoor")
 expr(0x3e23, "objectid_left_trapdoor")
 expr(0x3e30, "objectid_right_trapdoor")
 comment(0x3e1e, "Set up the objects for the two trapdoors.")
@@ -263,7 +229,6 @@ comment(0x3e3e, "Set up the collision map for the two trapdoors.")
 comment(0x3e43, "Set up the trapdoor collision map if they are closed.")
 entry(0x3e55, "set_up_open_trapdoor_collision_map")
 entry(0x3eed, "return2")
-constant(0x4, "objectid_saxophone") # TODO: guessing a bit
 expr(0x3f70, "object_spriteid + objectid_saxophone")
 expr(0x3f83, "object_spriteid + objectid_saxophone")
 entry(0x3ed4, "new_room1_trapdoor_open_flag_in_y")
@@ -296,8 +261,14 @@ entry(0x3f02, "room1_saxophone_and_brazier_handler") # TODO:?
 comment(0x3f02, "TODO: This forcing of current_room_index to 1 seems odd.")
 comment(0x3f34, "The player has not collected the saxophone, so place it in the lower left of the room.")
 
-comment(0x42f8, "Room 3 has a table which can be pushed to the left or right side of the screen.")
-entry(0x42f8, "room3_handler")
+comment(0x42f8, """*************************************************************************************
+
+Room 3 update
+
+Room 3 has a table which can be pushed to the left or right side of the screen.
+
+*************************************************************************************""")
+entry(0x42f8, "room3_update_handler")
 expr(0x42fe, "objectid_brazier2")
 entry(0x4358, "room3_not_first_update")
 expr(0x4349, "spriteid_table")
@@ -328,10 +299,16 @@ entry(0x4386, "table_at_max_x_position")
 expr(0x4393, "objectid_player")
 expr(0x4395, "objectid_table")
 
-comment(0x407f, "Room 2 has the spell, guarded by a baby. TODO: Not too sure I have the room number correct etc.")
-entry(0x407f, "room2_handler") # TODO: not too sure about this
+comment(0x407f, """*************************************************************************************
+
+Room 2 update
+
+Room 2 has the spell, guarded by a baby.
+
+*************************************************************************************""")
+entry(0x407f, "room2_update_handler")
 expr(0x4093, "objectid_spell")
-expr(0x40d7, "objectid_TODO")
+expr(0x40d7, "objectid_baby")
 expr(0x40dc, "spriteid_zero_size1")
 expr(0x3dd8, "exit_room_left")
 entry(0x3de2, "exited_room_not_left")

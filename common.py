@@ -170,9 +170,9 @@ def common_to_all():
     constant(0x51, "last_level_letter") # TODO: would be nice to use 'Q' as constant
 
     label(0x3ad5, "level_data")
-    label_word(0x3ad7, "level_init_after_load_handler_ptr")
-    label_word(0x3ad9, "update_room_ptr") # TODO: poor name
-    label_word(0x3adb, "level_name_ptr") # TODO: poor name
+    label_word(0x3ad7, "level_specific_initialisation_ptr")
+    label_word(0x3ad9, "level_specific_update_ptr")
+    label_word(0x3adb, "level_specific_password_ptr")
 
     label(0x12bb, "start_room")
     label(0x12da, "game_update")
@@ -205,14 +205,17 @@ def common_to_all():
     label(0x1140, "initialise_level")
 
     label(0x396f, "sound_priority_per_channel_table")
-    label(0x3adf, "level_header_data")
-    expr_label(0x3ae0, make_add("level_header_data", "1"))
+    label(0x3adf, "level_room_data_table")
+    expr_label(0x3ae0, make_add("level_room_data_table", "1"))
 
     label(0x132b, "update_room_first_update_flag")
 
-    # TODO: Speculative but feels quite plausible looking at the code - 'current' and 'desirable' is extra-speculative
-    # Room index is within the level, 0-(n-1) if the level has n rooms
-    label(0x1aba, "current_room_index")
+    # The 'level_update_handler' function calls individual functions to update the logic in each room
+    # While updating the logic for a room, 'currently_updating_logic_for_room_index' is normally set
+    # It only needs to be set if it calls 'update_brazier_and_fire' or 'update_level_completion'
+    #
+    # A room index is within the level, 0-(n-1) if the level has n rooms
+    label(0x1aba, "currently_updating_logic_for_room_index")
     label(0x30, "desired_room_index")
 
     # TODO: Speculative - but note that dataA stores an address in its data-ish section here but never reads from it (except maybe via subroutines in g)

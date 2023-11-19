@@ -479,12 +479,12 @@ l0b00                                       = $0b00
 sprite_199                                  = $0b11
 sprite_198                                  = $0b93
 sprite_197                                  = $0bc5
-level_init_after_load_handler_ptr           = $3ad7
-update_room_ptr                             = $3ad9
-level_name_ptr                              = $3adb
+level_specific_initialisation_ptr           = $3ad7
+level_specific_update_ptr                   = $3ad9
+level_specific_password_ptr                 = $3adb
 room_index_cheat1                           = $3add
 room_index_cheat2                           = $3ade
-level_header_data                           = $3adf
+level_room_data_table                       = $3adf
 auxcode                                     = $53c0
 check_password                              = $53c0
 toolbar_screen_address                      = $58c0
@@ -731,14 +731,14 @@ clear_sound_priorities_loop1
     sta sound_priority_per_channel_table,x                            ; 1344: 9d 6f 39    .o9 :1213[1]
     dex                                                               ; 1347: ca          .   :1216[1]
     bpl clear_sound_priorities_loop1                                  ; 1348: 10 fa       ..  :1217[1]
-    ldx level_init_after_load_handler_ptr                             ; 134a: ae d7 3a    ..: :1219[1]
-    ldy level_init_after_load_handler_ptr + 1                         ; 134d: ac d8 3a    ..: :121c[1]
+    ldx level_specific_initialisation_ptr                             ; 134a: ae d7 3a    ..: :1219[1]
+    ldy level_specific_initialisation_ptr + 1                         ; 134d: ac d8 3a    ..: :121c[1]
     jsr jmp_yx                                                        ; 1350: 20 66 19     f. :121f[1]
     lda desired_level                                                 ; 1353: a5 31       .1  :1222[1]
     sec                                                               ; 1355: 38          8   :1224[1]
     sbc #first_level_letter                                           ; 1356: e9 41       .A  :1225[1]
     tax                                                               ; 1358: aa          .   :1227[1]
-; level_progress_table has:
+; level_progress_table has one entry per level:
 ; 
 ;     bits 0-2: current room number
 ;     bit 6: if clear then override regular room number with a cheat room number (there
@@ -783,8 +783,8 @@ skip_adding_completion_spell_to_toolbar
     lda desired_room_index                                            ; 138c: a5 30       .0  :125b[1]
     asl                                                               ; 138e: 0a          .   :125d[1]
     tay                                                               ; 138f: a8          .   :125e[1]
-    ldx level_header_data,y                                           ; 1390: be df 3a    ..: :125f[1]
-    lda level_header_data + 1,y                                       ; 1393: b9 e0 3a    ..: :1262[1]
+    ldx level_room_data_table,y                                       ; 1390: be df 3a    ..: :125f[1]
+    lda level_room_data_table + 1,y                                   ; 1393: b9 e0 3a    ..: :1262[1]
     tay                                                               ; 1396: a8          .   :1265[1]
 ; add two to the address in YX, to get past the two initial player position bytes
     txa                                                               ; 1397: 8a          .   :1266[1]
@@ -824,9 +824,9 @@ skip_developer_mode_code1
     lda desired_room_index                                            ; 13cc: a5 30       .0  :129b[1]
     asl                                                               ; 13ce: 0a          .   :129d[1]
     tay                                                               ; 13cf: a8          .   :129e[1]
-    lda level_header_data,y                                           ; 13d0: b9 df 3a    ..: :129f[1]
+    lda level_room_data_table,y                                       ; 13d0: b9 df 3a    ..: :129f[1]
     sta level_data_ptr_low                                            ; 13d3: 85 70       .p  :12a2[1]
-    lda level_header_data + 1,y                                       ; 13d5: b9 e0 3a    ..: :12a4[1]
+    lda level_room_data_table + 1,y                                   ; 13d5: b9 e0 3a    ..: :12a4[1]
     sta level_data_ptr_high                                           ; 13d8: 85 71       .q  :12a7[1]
 ; read first byte into X and the second byte into Y. This is the player start position
 ; in cells
@@ -852,8 +852,8 @@ start_room
     lda #$ff                                                          ; 13ec: a9 ff       ..  :12bb[1]
     sta update_room_first_update_flag                                 ; 13ee: 8d 2b 13    .+. :12bd[1]
 ; call room update for the first time
-    ldx update_room_ptr                                               ; 13f1: ae d9 3a    ..: :12c0[1]
-    ldy update_room_ptr + 1                                           ; 13f4: ac da 3a    ..: :12c3[1]
+    ldx level_specific_update_ptr                                     ; 13f1: ae d9 3a    ..: :12c0[1]
+    ldy level_specific_update_ptr + 1                                 ; 13f4: ac da 3a    ..: :12c3[1]
     jsr jmp_yx                                                        ; 13f7: 20 66 19     f. :12c6[1]
     lda #0                                                            ; 13fa: a9 00       ..  :12c9[1]
     sta update_room_first_update_flag                                 ; 13fc: 8d 2b 13    .+. :12cb[1]
@@ -906,8 +906,8 @@ no_time_to_wait
     jsr read_player_movement_keys                                     ; 143d: 20 a2 3a     .: :130c[1]
     jsr check_for_next_player_animation                               ; 1440: 20 cd 22     ." :130f[1]
 ; update room
-    ldx update_room_ptr                                               ; 1443: ae d9 3a    ..: :1312[1]
-    ldy update_room_ptr + 1                                           ; 1446: ac da 3a    ..: :1315[1]
+    ldx level_specific_update_ptr                                     ; 1443: ae d9 3a    ..: :1312[1]
+    ldy level_specific_update_ptr + 1                                 ; 1446: ac da 3a    ..: :1315[1]
     jsr jmp_yx                                                        ; 1449: 20 66 19     f. :1318[1]
     jmp check_for_player_leaving_room                                 ; 144c: 4c c3 18    L.. :131b[1]
 
@@ -2104,6 +2104,7 @@ sprdata_filename
 ; 
 ; On Entry:
 ;     A: object index for brazier
+;     X,Y: cell coordinates of brazier
 ; On Exit:
 ;     A,X,Y are preserved
 ; 
@@ -2118,7 +2119,7 @@ update_brazier_and_fire
     beq not_first_update                                              ; 1ac3: f0 51       .Q  :1992[1]
 ; initialise brazier and fire, if not changing rooms
     lda desired_room_index                                            ; 1ac5: a5 30       .0  :1994[1]
-    cmp current_room_index                                            ; 1ac7: cd ba 1a    ... :1996[1]
+    cmp currently_updating_logic_for_room_index                       ; 1ac7: cd ba 1a    ... :1996[1]
     bne done_with_brazier_and_fire                                    ; 1aca: d0 47       .G  :1999[1]
 ; work out direction to draw brazier (left or right)
     jsr read_collision_map_value_for_xy                               ; 1acc: 20 fa 1e     .. :199b[1]
@@ -2169,13 +2170,13 @@ done_with_brazier_and_fire
 
 not_first_update
     lda desired_room_index                                            ; 1b16: a5 30       .0  :19e5[1]
-    cmp current_room_index                                            ; 1b18: cd ba 1a    ... :19e7[1]
+    cmp currently_updating_logic_for_room_index                       ; 1b18: cd ba 1a    ... :19e7[1]
     bne set_fire_sprite_to_use                                        ; 1b1b: d0 06       ..  :19ea[1]
     ldx fire_object_index                                             ; 1b1d: ae 0f 1a    ... :19ec[1]
     inc object_current_index_in_animation,x                           ; 1b20: fe d4 09    ... :19ef[1]
 set_fire_sprite_to_use
     lda desired_room_index                                            ; 1b23: a5 30       .0  :19f2[1]
-    cmp current_room_index                                            ; 1b25: cd ba 1a    ... :19f4[1]
+    cmp currently_updating_logic_for_room_index                       ; 1b25: cd ba 1a    ... :19f4[1]
     bne return_with_result                                            ; 1b28: d0 0e       ..  :19f7[1]
     ldx fire_object_index                                             ; 1b2a: ae 0f 1a    ... :19f9[1]
     lda object_current_index_in_animation,x                           ; 1b2d: bd d4 09    ... :19fc[1]
@@ -2221,7 +2222,7 @@ update_level_completion
     sta toolbar_collectable_spriteids                                 ; 1b5e: 8d e8 2e    ... :1a2d[1]
 ; early out if room has just changed
     lda desired_room_index                                            ; 1b61: a5 30       .0  :1a30[1]
-    cmp current_room_index                                            ; 1b63: cd ba 1a    ... :1a32[1]
+    cmp currently_updating_logic_for_room_index                       ; 1b63: cd ba 1a    ... :1a32[1]
     bne reset_offsets_and_exit                                        ; 1b66: d0 67       .g  :1a35[1]
     lda update_room_first_update_flag                                 ; 1b68: ad 2b 13    .+. :1a37[1]
     bne skip_adding_level_completion_spell                            ; 1b6b: d0 1d       ..  :1a3a[1]
@@ -2305,7 +2306,7 @@ diamond_sprite_cycle
     !byte spriteid_diamond4                                           ; 1be8: 2a          *   :1ab7[1]
     !byte spriteid_diamond3                                           ; 1be9: 29          )   :1ab8[1]
     !byte spriteid_diamond2                                           ; 1bea: 28          (   :1ab9[1]
-current_room_index
+currently_updating_logic_for_room_index
     !byte 0                                                           ; 1beb: 00          .   :1aba[1]
 
 ; *************************************************************************************
@@ -7322,8 +7323,8 @@ show_section_letter_dialog
     tya                                                               ; 38d2: 98          .   :37a1[1]
     jsr print_italic                                                  ; 38d3: 20 66 18     f. :37a2[1]
     jsr print_2xlf_cr                                                 ; 38d6: 20 50 38     P8 :37a5[1]
-    ldx level_name_ptr                                                ; 38d9: ae db 3a    ..: :37a8[1]
-    ldy level_name_ptr + 1                                            ; 38dc: ac dc 3a    ..: :37ab[1]
+    ldx level_specific_password_ptr                                   ; 38d9: ae db 3a    ..: :37a8[1]
+    ldy level_specific_password_ptr + 1                               ; 38dc: ac dc 3a    ..: :37ab[1]
     jmp print_encrypted_string_at_yx                                  ; 38df: 4c 1c 38    L.8 :37ae[1]
 
 section_encrypted_string
