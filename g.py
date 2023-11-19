@@ -690,6 +690,24 @@ On Entry:
     X is the room index
     Y is the level number
 
+The control flow during gameplay is (TODO: based on partial understanding of dataA.asm only, and not
+all that well explained, but it's a start) is as follows:
+- initialise_level performs common setup tasks, including setting the current room to 0
+- initialise_level finishes by transferring control to level_header_data[room]+2, which is a
+  room-specific subroutine within the loaded level. Let's call this the level room handler.
+- The level room handler performs room-specific setup before calling the common start_room
+  subroutine.
+  - The start_room subroutine calls back into the level-specific code's level update handler, as
+    pointed to by update_room_ptr in the loaded level data. This is not room-specific. A flag
+    (update_room_first_update_flag) is set to indicate the level update handler is being called by
+    start_room.
+- On return from start_room, the level room handler enters a loop which typically calls the shared
+  game_update subroutine repeatedly until the player leaves the current room.
+  - game_update calls back into the level-specific code's level update handler to allow the level to
+    perform custom actions.
+  - initialise_level is called by the level-specific game loop to select the new room.
+
+
 *************************************************************************************""")
     entry(0x1140)
     label(0x114f, "level_load_loop")
