@@ -836,15 +836,15 @@ not_first_room_update
 c3f62
     lda desired_room_index                                            ; 3f62: a5 30
     cmp #1                                                            ; 3f64: c9 01
-    bne c3f8a                                                         ; 3f66: d0 22
+    bne return6                                                       ; 3f66: d0 22
     lda saxophone_collected_flag                                      ; 3f68: ad 00 0a
-    bne c3f8a                                                         ; 3f6b: d0 1d
+    bne return6                                                       ; 3f6b: d0 1d
     lda #$d2                                                          ; 3f6d: a9 d2
     sta object_spriteid + objectid_saxophone                          ; 3f6f: 8d ac 09
     ldx #objectid_something                                           ; 3f72: a2 0b
     ldy #objectid_saxophone                                           ; 3f74: a0 04
     jsr test_for_collision_between_objects_x_and_y                    ; 3f76: 20 e2 28
-    beq c3f8a                                                         ; 3f79: f0 0f
+    beq return6                                                       ; 3f79: f0 0f
 ; TODO: I suspect this is handling 'collection of the saxophone'
     lda #spriteid_saxophone2                                          ; 3f7b: a9 d3
     jsr find_or_create_menu_slot_for_A                                ; 3f7d: 20 bd 2b
@@ -852,7 +852,7 @@ c3f62
     sta object_spriteid + objectid_saxophone                          ; 3f82: 8d ac 09
     lda #$ff                                                          ; 3f85: a9 ff
     sta saxophone_collected_flag                                      ; 3f87: 8d 00 0a
-c3f8a
+return6
     rts                                                               ; 3f8a: 60
 
 sub_c3f8b
@@ -1769,7 +1769,6 @@ pydis_end
 ;     c3b0e
 ;     c3ce7
 ;     c3f62
-;     c3f8a
 ;     c40b2
 ;     c40c1
 ;     c40e0
