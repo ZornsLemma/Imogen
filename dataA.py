@@ -357,6 +357,10 @@ comment(0x4323, "Set table_x_position to left side of screen")
 entry(0x4339, "table_x_position_update_finished") # if any...
 ab(0x432d)
 
+entry(0x3f8b, "something2")
+label(0x3fd5, "something2_saved_x")
+label(0x3fd6, "something2_saved_y")
+
 go()
 
 # vi: tw=100

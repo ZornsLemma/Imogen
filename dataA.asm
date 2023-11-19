@@ -861,9 +861,9 @@ c3f62
 return6
     rts                                                               ; 3f8a: 60
 
-sub_c3f8b
-    stx l3fd5                                                         ; 3f8b: 8e d5 3f
-    sty l3fd6                                                         ; 3f8e: 8c d6 3f
+something2
+    stx something2_saved_x                                            ; 3f8b: 8e d5 3f
+    sty something2_saved_y                                            ; 3f8e: 8c d6 3f
     inx                                                               ; 3f91: e8
     inx                                                               ; 3f92: e8
     lda #5                                                            ; 3f93: a9 05
@@ -898,13 +898,13 @@ sub_c3f8b
     lda #5                                                            ; 3fc7: a9 05
     sta width_in_cells                                                ; 3fc9: 85 3c
     jsr copy_rectangle_of_memory_to_screen                            ; 3fcb: 20 bb 1a
-    ldx l3fd5                                                         ; 3fce: ae d5 3f
-    ldy l3fd6                                                         ; 3fd1: ac d6 3f
+    ldx something2_saved_x                                            ; 3fce: ae d5 3f
+    ldy something2_saved_y                                            ; 3fd1: ac d6 3f
     rts                                                               ; 3fd4: 60
 
-l3fd5
+something2_saved_x
     !byte 0                                                           ; 3fd5: 00
-l3fd6
+something2_saved_y
     !byte 0                                                           ; 3fd6: 00
 ; *************************************************************************************
 ; 
@@ -932,13 +932,13 @@ room_2_initialisation_code
     sta copy_mode                                                     ; 3ff4: 85 42
     ldx #3                                                            ; 3ff6: a2 03
     ldy #2                                                            ; 3ff8: a0 02
-    jsr sub_c3f8b                                                     ; 3ffa: 20 8b 3f
+    jsr something2                                                    ; 3ffa: 20 8b 3f
     ldx #$1c                                                          ; 3ffd: a2 1c
-    jsr sub_c3f8b                                                     ; 3fff: 20 8b 3f
+    jsr something2                                                    ; 3fff: 20 8b 3f
     ldy #$0d                                                          ; 4002: a0 0d
-    jsr sub_c3f8b                                                     ; 4004: 20 8b 3f
+    jsr something2                                                    ; 4004: 20 8b 3f
     ldx #3                                                            ; 4007: a2 03
-    jsr sub_c3f8b                                                     ; 4009: 20 8b 3f
+    jsr something2                                                    ; 4009: 20 8b 3f
     ldx #$11                                                          ; 400c: a2 11
     ldy #0                                                            ; 400e: a0 00
     lda #6                                                            ; 4010: a9 06
@@ -1801,10 +1801,7 @@ pydis_end
 ;     l0a71
 ;     l0a72
 ;     l0a73
-;     l3fd5
-;     l3fd6
 ;     l40e3
-;     sub_c3f8b
 !if (<envelope1) != $60 {
     !error "Assertion failed: <envelope1 == $60"
 }
