@@ -8213,8 +8213,8 @@ define_text_window
     sta crtc_address_write                                            ; 3e08: 8d 01 fe    ...
     lda #$0b                                                          ; 3e0b: a9 0b       ..             ; redundant
     lda #0                                                            ; 3e0d: a9 00       ..             ; redundant
-; Calculate 34+tv shift and store in vertical_sync_amount_for_crtc_register
-    lda #$23 ; '#'                                                    ; 3e0f: a9 23       .#
+; Calculate 35+tv shift and store in vertical_sync_amount_for_crtc_register
+    lda #35                                                           ; 3e0f: a9 23       .#
     clc                                                               ; 3e11: 18          .
     adc address1_low                                                  ; 3e12: 65 70       ep
     sec                                                               ; 3e14: 38          8

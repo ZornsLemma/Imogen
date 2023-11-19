@@ -192,21 +192,23 @@ level_specific_password
 level_specific_initialisation
     lda desired_level                                                 ; 3af2: a5 31
     cmp previous_level                                                ; 3af4: c5 51
-    beq c3b0e                                                         ; 3af6: f0 16
+    beq saxophone_not_collected_yet                                   ; 3af6: f0 16
     lda developer_flags                                               ; 3af8: ad 03 11
     bpl developer_mode_not_active                                     ; 3afb: 10 07
+; add the saxophone menu item to the toolbar
     lda #spriteid_saxophone2                                          ; 3afd: a9 d3
     jsr find_or_create_menu_slot_for_A                                ; 3aff: 20 bd 2b
-    lda #$ff                                                          ; 3b02: a9 ff
-; reset the saxaphone collected flag. The user can choose during the course of a game
+    lda #$ff                                                          ; 3b02: a9 ff                   ; redundant instruction
+; check the saxophone collected flag. The user can choose during the course of a game
 ; to enter the password to continue playing this level having previously got the
-; saxaphone.
+; saxophone.
 developer_mode_not_active
     lda saxophone_collected_flag                                      ; 3b04: ad 00 0a
-    beq c3b0e                                                         ; 3b07: f0 05
+    beq saxophone_not_collected_yet                                   ; 3b07: f0 05
+; add the saxophone menu item to the toolbar
     lda #spriteid_saxophone2                                          ; 3b09: a9 d3
     jsr find_or_create_menu_slot_for_A                                ; 3b0b: 20 bd 2b
-c3b0e
+saxophone_not_collected_yet
     lda #<ground_fill_2x2_top_left                                    ; 3b0e: a9 86
     sta source_sprite_memory_low                                      ; 3b10: 85 40
     lda #>ground_fill_2x2_top_left                                    ; 3b12: a9 44
@@ -1766,7 +1768,6 @@ sprite_data
 pydis_end
 
 ; Automatically generated labels:
-;     c3b0e
 ;     c3ce7
 ;     c3f62
 ;     c40b2

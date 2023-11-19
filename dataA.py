@@ -114,9 +114,13 @@ tile_bitmap(0x449e, "ground_fill_2x2_bottom_right")
 comment(0x3ae7, "'SAXOPHOBIA\\r' EOR-encrypted with $cb")
 
 entry(0x3b04, "developer_mode_not_active")
+label(0x3b0e, "saxophone_not_collected_yet")
+comment(0x3afd, "add the saxophone menu item to the toolbar")
+comment(0x3b09, "add the saxophone menu item to the toolbar")
 
 comment(0x3f7b, "TODO: I suspect this is handling 'collection of the saxophone'")
-comment(0x3b04, "reset the saxaphone collected flag. The user can choose during the course of a game to enter the password to continue playing this level having previously got the saxaphone.")
+comment(0x3b02, "redundant instruction", inline=True)
+comment(0x3b04, "check the saxophone collected flag. The user can choose during the course of a game to enter the password to continue playing this level having previously got the saxophone.")
 label(0xa00, "saxophone_collected_flag")
 
 comment(0x3b29, "Draw rectangles of ground fill rock with a 2x2 pattern. Also writes to the collision map.", inline=True)
