@@ -134,7 +134,7 @@ draw_sprite_a_at_cell_xy_and_write_to_collision_map = $1f57
 set_object_position_from_cell_xy                    = $1f5d
 set_object_position_from_current_sprite_position    = $1f6d
 play_landing_sound                                  = $23a9
-player_collision_flag                               = $2433
+player_wall_collision_flag                          = $2433
 temp_left_offset                                    = $24d0
 temp_right_offset                                   = $24d1
 temp_top_offset                                     = $2550
@@ -513,7 +513,7 @@ finish_mouse_ball_movement
     jsr test_for_collision_between_objects_x_and_y                    ; 3d16: 20 e2 28
     beq return1                                                       ; 3d19: f0 05
     lda #player_collision_flag_mouse_ball                             ; 3d1b: a9 80
-    sta player_collision_flag                                         ; 3d1d: 8d 33 24
+    sta player_wall_collision_flag                                    ; 3d1d: 8d 33 24
 return1
     rts                                                               ; 3d20: 60
 
@@ -1117,7 +1117,7 @@ c40f7
     ora #0                                                            ; 4111: 09 00
     beq c412e                                                         ; 4113: f0 19
     lda #player_collision_flag_baby                                   ; 4115: a9 06
-    sta player_collision_flag                                         ; 4117: 8d 33 24
+    sta player_wall_collision_flag                                    ; 4117: 8d 33 24
     lda #0                                                            ; 411a: a9 00
     sta player_held_object_for_spriteid_wizard6                       ; 411c: 8d b6 2e
     lda #1                                                            ; 411f: a9 01

@@ -389,22 +389,22 @@ sprite_screen_address_for_column_low        = $7b
 cell_x_plus_current_cell_within_row         = $7c
 l007c                                       = $7c
 osfile_block_start_address_mid2             = $7c
-player_hit_wall_on_left_flag                = $7c
+player_hit_wall_on_left_result_flag         = $7c
 sprite_screen_address_for_column_high       = $7c
 current_row                                 = $7d
 l007d                                       = $7d
 osfile_block_start_address_high             = $7d
-player_hit_wall_on_right_flag               = $7d
+player_hit_wall_on_right_result_flag        = $7d
 sprite_data_byte                            = $7d
 dest_sprite_address_low                     = $7e
 l007e                                       = $7e
 osfile_block_end_address_low                = $7e
 pattern_length_cycle_counter                = $7e
-player_has_hit_ceiling_flag                 = $7e
+player_hit_ceiling_result_flag              = $7e
 dest_sprite_address_high                    = $7f
 l007f                                       = $7f
 osfile_block_end_address_mid1               = $7f
-player_has_hit_floor_flag                   = $7f
+player_hit_floor_result_flag                = $7f
 adjustment                                  = $80
 l0080                                       = $80
 mask_sprite_byte                            = $80
@@ -683,7 +683,7 @@ object_reset_loop
     cmp previous_level                                                ; 12df: c5 51       .Q  :11ae[1]
     beq same_level                                                    ; 12e1: f0 57       .W  :11b0[1]
     lda #0                                                            ; 12e3: a9 00       ..  :11b2[1]
-    sta player_collision_flag                                         ; 12e5: 8d 33 24    .3$ :11b4[1]
+    sta player_wall_collision_flag                                    ; 12e5: 8d 33 24    .3$ :11b4[1]
     sta current_player_character                                      ; 12e8: 85 48       .H  :11b7[1]
     sta new_player_character                                          ; 12ea: 85 4d       .M  :11b9[1]
     sta object_spriteid                                               ; 12ec: 8d a8 09    ... :11bb[1]
@@ -3903,7 +3903,7 @@ set_player_spriteid_and_offset_from_animation_table
     sta object_spriteid                                               ; 2338: 8d a8 09    ... :2207[1]
 ; check if we should add offset x
     iny                                                               ; 233b: c8          .   :220a[1]
-    lda player_collision_flag                                         ; 233c: ad 33 24    .3$ :220b[1]
+    lda player_wall_collision_flag                                    ; 233c: ad 33 24    .3$ :220b[1]
     bne skip8                                                         ; 233f: d0 21       .!  :220e[1]
 ; load next byte from table, the X offset
     lda (animation_address_low),y                                     ; 2341: b1 70       .p  :2210[1]
@@ -4162,7 +4162,7 @@ not_transforming
 transform
     sta new_player_character                                          ; 2468: 85 4d       .M  :2337[1]
     lda #0                                                            ; 246a: a9 00       ..  :2339[1]
-    sta player_collision_flag                                         ; 246c: 8d 33 24    .3$ :233b[1]
+    sta player_wall_collision_flag                                    ; 246c: 8d 33 24    .3$ :233b[1]
     sta player_held_object                                            ; 246f: 85 52       .R  :233e[1]
 ; if the current menu item is to the left of the player characters, then we have just
 ; loaded a level or something, so don't play the transform sounds.
@@ -4187,7 +4187,7 @@ start_of_transform_in_animation
     lda #0                                                            ; 2490: a9 00       ..  :235f[1]
     sta sound_priority_per_channel_table                              ; 2492: 8d 6f 39    .o9 :2361[1]
     sta sound_priority_per_channel_table + 1                          ; 2495: 8d 70 39    .p9 :2364[1]
-    sta player_collision_flag                                         ; 2498: 8d 33 24    .3$ :2367[1]
+    sta player_wall_collision_flag                                    ; 2498: 8d 33 24    .3$ :2367[1]
     rts                                                               ; 249b: 60          `   :236a[1]
 
 handle_player_landing_sound
@@ -4250,13 +4250,13 @@ sub_c23c4
     tya                                                               ; 24f7: 98          .   :23c6[1]
     pha                                                               ; 24f8: 48          H   :23c7[1]
     lda #0                                                            ; 24f9: a9 00       ..  :23c8[1]
-    jsr handle_player_hitting_floor                                   ; 24fb: 20 70 27     p' :23ca[1]
-; if (no player collision with the room) then branch (return)
-    lda player_collision_flag                                         ; 24fe: ad 33 24    .3$ :23cd[1]
+    jsr check_and_handle_player_hitting_floor                         ; 24fb: 20 70 27     p' :23ca[1]
+; if (no player collision with the walls) then branch (return)
+    lda player_wall_collision_flag                                    ; 24fe: ad 33 24    .3$ :23cd[1]
     beq recall_registers_and_return1                                  ; 2501: f0 59       .Y  :23d0[1]
     cmp #$80                                                          ; 2503: c9 80       ..  :23d2[1]
     beq c241a                                                         ; 2505: f0 44       .D  :23d4[1]
-    lda player_collision_flag                                         ; 2507: ad 33 24    .3$ :23d6[1]
+    lda player_wall_collision_flag                                    ; 2507: ad 33 24    .3$ :23d6[1]
     bmi c23e2                                                         ; 250a: 30 07       0.  :23d9[1]
     inc temp_right_offset                                             ; 250c: ee d1 24    ..$ :23db[1]
     ldy #0                                                            ; 250f: a0 00       ..  :23de[1]
@@ -4271,17 +4271,17 @@ c23e7
     jsr get_wall_collision_for_object_a                               ; 251f: 20 94 28     .( :23ee[1]
     beq c23fa                                                         ; 2522: f0 07       ..  :23f1[1]
     lda #$80                                                          ; 2524: a9 80       ..  :23f3[1]
-    sta player_collision_flag                                         ; 2526: 8d 33 24    .3$ :23f5[1]
+    sta player_wall_collision_flag                                    ; 2526: 8d 33 24    .3$ :23f5[1]
     bne c241a                                                         ; 2529: d0 20       .   :23f8[1]
 c23fa
-    lda l288f                                                         ; 252b: ad 8f 28    ..( :23fa[1]
+    lda player_has_hit_floor_flag                                     ; 252b: ad 8f 28    ..( :23fa[1]
     beq c2404                                                         ; 252e: f0 05       ..  :23fd[1]
     lda #0                                                            ; 2530: a9 00       ..  :23ff[1]
     sta current_animation                                             ; 2532: 8d df 09    ... :2401[1]
 c2404
     ldx #1                                                            ; 2535: a2 01       ..  :2404[1]
 loop_c2406
-    lda player_collision_flag                                         ; 2537: ad 33 24    .3$ :2406[1]
+    lda player_wall_collision_flag                                    ; 2537: ad 33 24    .3$ :2406[1]
     clc                                                               ; 253a: 18          .   :2409[1]
     adc object_x_low,x                                                ; 253b: 7d 50 09    }P. :240a[1]
     sta object_x_low,x                                                ; 253e: 9d 50 09    .P. :240d[1]
@@ -4291,22 +4291,22 @@ loop_c2406
     dex                                                               ; 2548: ca          .   :2417[1]
     bpl loop_c2406                                                    ; 2549: 10 ec       ..  :2418[1]
 c241a
-    lda player_collision_flag                                         ; 254b: ad 33 24    .3$ :241a[1]
+    lda player_wall_collision_flag                                    ; 254b: ad 33 24    .3$ :241a[1]
     cmp #$80                                                          ; 254e: c9 80       ..  :241d[1]
     bne recall_registers_and_return1                                  ; 2550: d0 0a       ..  :241f[1]
-    lda l288f                                                         ; 2552: ad 8f 28    ..( :2421[1]
+    lda player_has_hit_floor_flag                                     ; 2552: ad 8f 28    ..( :2421[1]
     beq recall_registers_and_return1                                  ; 2555: f0 05       ..  :2424[1]
     lda #0                                                            ; 2557: a9 00       ..  :2426[1]
-    sta player_collision_flag                                         ; 2559: 8d 33 24    .3$ :2428[1]
+    sta player_wall_collision_flag                                    ; 2559: 8d 33 24    .3$ :2428[1]
 recall_registers_and_return1
     pla                                                               ; 255c: 68          h   :242b[1]   ; recall X,Y
     tay                                                               ; 255d: a8          .   :242c[1]
     pla                                                               ; 255e: 68          h   :242d[1]
     tax                                                               ; 255f: aa          .   :242e[1]
-    lda player_collision_flag                                         ; 2560: ad 33 24    .3$ :242f[1]
+    lda player_wall_collision_flag                                    ; 2560: ad 33 24    .3$ :242f[1]
     rts                                                               ; 2563: 60          `   :2432[1]
 
-player_collision_flag
+player_wall_collision_flag
     !byte 0                                                           ; 2564: 00          .   :2433[1]
 
 ; *************************************************************************************
@@ -4715,15 +4715,15 @@ return13
 ; Check for player intersecting wall to the left or right
 ; 
 ; On Exit:
-;      player_hit_wall_on_left_flag: Flag set ($ff) if player is intersecting wall on
-; the left side of the player
-;     player_hit_wall_on_right_flag: Flag set ($ff) if intersecting wall on the right
-; side of the player
+;      player_hit_wall_on_left_result_flag: Flag set ($ff) if player is intersecting
+; wall on the left side of the player
+;     player_hit_wall_on_right_result_flag: Flag set ($ff) if intersecting wall on the
+; right side of the player
 ; 
 ; *************************************************************************************
 check_for_player_intersecting_wall_left_or_right
     lda #$ff                                                          ; 278b: a9 ff       ..  :265a[1]
-    sta player_hit_wall_on_left_flag                                  ; 278d: 85 7c       .|  :265c[1]
+    sta player_hit_wall_on_left_result_flag                           ; 278d: 85 7c       .|  :265c[1]
 ; store player's cell height
     ldx object_left_cell_x                                            ; 278f: a6 78       .x  :265e[1]
     ldy object_bottom_cell_y                                          ; 2791: a4 7b       .{  :2660[1]
@@ -4740,10 +4740,10 @@ loop_up_player_cells_looking_for_solid_wall
     dec player_height_in_cells                                        ; 27a1: c6 80       ..  :2670[1]
     bpl loop_up_player_cells_looking_for_solid_wall                   ; 27a3: 10 f4       ..  :2672[1]
 ; mark that no collision was found on the left side
-    inc player_hit_wall_on_left_flag                                  ; 27a5: e6 7c       .|  :2674[1]
+    inc player_hit_wall_on_left_result_flag                           ; 27a5: e6 7c       .|  :2674[1]
 found_wall_on_players_left_side
     lda #$ff                                                          ; 27a7: a9 ff       ..  :2676[1]
-    sta player_hit_wall_on_right_flag                                 ; 27a9: 85 7d       .}  :2678[1]
+    sta player_hit_wall_on_right_result_flag                          ; 27a9: 85 7d       .}  :2678[1]
 ; store player's cell height (again)
     ldx object_right_cell_x                                           ; 27ab: a6 79       .y  :267a[1]
     ldy object_bottom_cell_y                                          ; 27ad: a4 7b       .{  :267c[1]
@@ -4760,7 +4760,7 @@ loop_c2684
     dec player_height_in_cells                                        ; 27bd: c6 80       ..  :268c[1]
     bpl loop_c2684                                                    ; 27bf: 10 f4       ..  :268e[1]
 ; mark that no collision was found on the right side
-    inc player_hit_wall_on_right_flag                                 ; 27c1: e6 7d       .}  :2690[1]
+    inc player_hit_wall_on_right_result_flag                          ; 27c1: e6 7d       .}  :2690[1]
 return14
     rts                                                               ; 27c3: 60          `   :2692[1]
 
@@ -4774,8 +4774,8 @@ return14
 ; *************************************************************************************
 handle_left_right_wall_collision
     ldx player_objectid                                               ; 27c4: a6 53       .S  :2693[1]
-    lda player_hit_wall_on_left_flag                                  ; 27c6: a5 7c       .|  :2695[1]
-    cmp player_hit_wall_on_right_flag                                 ; 27c8: c5 7d       .}  :2697[1]
+    lda player_hit_wall_on_left_result_flag                           ; 27c6: a5 7c       .|  :2695[1]
+    cmp player_hit_wall_on_right_result_flag                          ; 27c8: c5 7d       .}  :2697[1]
     beq return15                                                      ; 27ca: f0 49       .I  :2699[1]
     bcc player_has_hit_wall_on_right_side                             ; 27cc: 90 25       .%  :269b[1]
 ; player has hit wall on left side. Adjust player position to align with the cell next
@@ -4832,13 +4832,13 @@ return15
 ;         object_bottom_cell_y
 ; 
 ; On Exit:
-;       player_has_hit_floor_flag: $ff if hit, $00 otherwise
-;     player_has_hit_ceiling_flag: $ff if hit, $00 otherwise
+;       player_hit_floor_result_flag: $ff if hit, $00 otherwise
+;     player_hit_ceiling_result_flag: $ff if hit, $00 otherwise
 ; 
 ; *************************************************************************************
 check_for_player_intersecting_floor_or_ceiling
     lda #$ff                                                          ; 2816: a9 ff       ..  :26e5[1]
-    sta player_has_hit_ceiling_flag                                   ; 2818: 85 7e       .~  :26e7[1]
+    sta player_hit_ceiling_result_flag                                ; 2818: 85 7e       .~  :26e7[1]
 ; start at top right
     ldy object_top_cell_y                                             ; 281a: a4 7a       .z  :26e9[1]
 ; get player width in cells
@@ -4847,19 +4847,19 @@ check_for_player_intersecting_floor_or_ceiling
     sec                                                               ; 281f: 38          8   :26ee[1]
     sbc object_left_cell_x                                            ; 2820: e5 78       .x  :26ef[1]
     sta player_width_in_cells                                         ; 2822: 85 80       ..  :26f1[1]
-; loop from top right to top left looking for a wall
-look_for_wall_along_player_top_edge_loop
+; loop from top right to top left looking for a solid_rock
+look_for_solid_rock_along_player_top_edge_loop
     jsr read_collision_map_value_for_xy                               ; 2824: 20 fa 1e     .. :26f3[1]
     cmp #3                                                            ; 2827: c9 03       ..  :26f6[1]
-    beq found_wall                                                    ; 2829: f0 07       ..  :26f8[1]
+    beq found_solid_rock                                              ; 2829: f0 07       ..  :26f8[1]
     dex                                                               ; 282b: ca          .   :26fa[1]
     dec player_width_in_cells                                         ; 282c: c6 80       ..  :26fb[1]
-    bpl look_for_wall_along_player_top_edge_loop                      ; 282e: 10 f4       ..  :26fd[1]
+    bpl look_for_solid_rock_along_player_top_edge_loop                ; 282e: 10 f4       ..  :26fd[1]
 ; no collision with top edge of player
-    inc player_has_hit_ceiling_flag                                   ; 2830: e6 7e       .~  :26ff[1]
-found_wall
+    inc player_hit_ceiling_result_flag                                ; 2830: e6 7e       .~  :26ff[1]
+found_solid_rock
     lda #$ff                                                          ; 2832: a9 ff       ..  :2701[1]
-    sta player_has_hit_floor_flag                                     ; 2834: 85 7f       ..  :2703[1]
+    sta player_hit_floor_result_flag                                  ; 2834: 85 7f       ..  :2703[1]
 ; start at bottom right
     ldy object_bottom_cell_y                                          ; 2836: a4 7b       .{  :2705[1]
 ; get player width in cells (again)
@@ -4868,22 +4868,22 @@ found_wall
     sec                                                               ; 283b: 38          8   :270a[1]
     sbc object_left_cell_x                                            ; 283c: e5 78       .x  :270b[1]
     sta player_width_in_cells                                         ; 283e: 85 80       ..  :270d[1]
-look_for_wall_along_player_bottom_edge_loop
+look_for_solid_rock_along_player_bottom_edge_loop
     jsr read_collision_map_value_for_xy                               ; 2840: 20 fa 1e     .. :270f[1]
     cmp #3                                                            ; 2843: c9 03       ..  :2712[1]
     beq return16                                                      ; 2845: f0 07       ..  :2714[1]
     dex                                                               ; 2847: ca          .   :2716[1]
     dec player_width_in_cells                                         ; 2848: c6 80       ..  :2717[1]
-    bpl look_for_wall_along_player_bottom_edge_loop                   ; 284a: 10 f4       ..  :2719[1]
+    bpl look_for_solid_rock_along_player_bottom_edge_loop             ; 284a: 10 f4       ..  :2719[1]
 ; no collision with bottom edge of player
-    inc player_has_hit_floor_flag                                     ; 284c: e6 7f       ..  :271b[1]
+    inc player_hit_floor_result_flag                                  ; 284c: e6 7f       ..  :271b[1]
 return16
     rts                                                               ; 284e: 60          `   :271d[1]
 
 handle_top_bottom_collision
     ldx player_objectid                                               ; 284f: a6 53       .S  :271e[1]
-    lda player_has_hit_ceiling_flag                                   ; 2851: a5 7e       .~  :2720[1]
-    cmp player_has_hit_floor_flag                                     ; 2853: c5 7f       ..  :2722[1]
+    lda player_hit_ceiling_result_flag                                ; 2851: a5 7e       .~  :2720[1]
+    cmp player_hit_floor_result_flag                                  ; 2853: c5 7f       ..  :2722[1]
     beq return17                                                      ; 2855: f0 49       .I  :2724[1]
     bcc player_has_hit_floor                                          ; 2857: 90 25       .%  :2726[1]
 ; player has hit ceiling. Adjust player position to align with the cell below the
@@ -4929,13 +4929,13 @@ return17
 
 ; *************************************************************************************
 ; 
-; Handle player hitting the floor
+; Check if the player is hitting the floor, and if so, deal with it
 ; 
 ; On Entry:
 ;     A: object id to test
 ; 
 ; *************************************************************************************
-handle_player_hitting_floor
+check_and_handle_player_hitting_floor
     sta player_objectid                                               ; 28a1: 85 53       .S  :2770[1]
     txa                                                               ; 28a3: 8a          .   :2772[1]   ; remember X,Y
     pha                                                               ; 28a4: 48          H   :2773[1]
@@ -4956,8 +4956,8 @@ handle_player_hitting_floor
     sta two_byte_table_based_on_left_right_direction                  ; 28bd: 8d 90 28    ..( :278c[1]
     sta l2891                                                         ; 28c0: 8d 91 28    ..( :278f[1]
 ; if (player hit floor) then branch
-    lda player_has_hit_floor_flag                                     ; 28c3: a5 7f       ..  :2792[1]
-    sta l288f                                                         ; 28c5: 8d 8f 28    ..( :2794[1]
+    lda player_hit_floor_result_flag                                  ; 28c3: a5 7f       ..  :2792[1]
+    sta player_has_hit_floor_flag                                     ; 28c5: 8d 8f 28    ..( :2794[1]
     bne player_hit_floor                                              ; 28c8: d0 03       ..  :2797[1]
     jmp recall_registers_and_return2                                  ; 28ca: 4c 51 28    LQ( :2799[1]
 
@@ -5057,7 +5057,7 @@ recall_registers_and_return2
     tay                                                               ; 2983: a8          .   :2852[1]
     pla                                                               ; 2984: 68          h   :2853[1]
     tax                                                               ; 2985: aa          .   :2854[1]
-    lda l288f                                                         ; 2986: ad 8f 28    ..( :2855[1]
+    lda player_has_hit_floor_flag                                     ; 2986: ad 8f 28    ..( :2855[1]
     rts                                                               ; 2989: 60          `   :2858[1]
 
 sub_c2859
@@ -5098,7 +5098,7 @@ c288c
     ora #0                                                            ; 29bd: 09 00       ..  :288c[1]
     rts                                                               ; 29bf: 60          `   :288e[1]
 
-l288f
+player_has_hit_floor_flag
     !byte 0                                                           ; 29c0: 00          .   :288f[1]
 two_byte_table_based_on_left_right_direction
     !byte 0                                                           ; 29c1: 00          .   :2890[1]
@@ -5111,7 +5111,7 @@ l2893
 
 ; *************************************************************************************
 ; 
-; Get wall collision flags for object
+; Get solid_rock collision flags for object
 ; 
 ; On Entry:
 ;     A: object index
@@ -5137,18 +5137,18 @@ get_wall_collision_for_object_a
     sta default_collision_map_option                                  ; 29d8: 85 44       .D  :28a7[1]
     jsr check_for_player_intersecting_wall_left_or_right              ; 29da: 20 5a 26     Z& :28a9[1]
     jsr check_for_player_intersecting_floor_or_ceiling                ; 29dd: 20 e5 26     .& :28ac[1]
-    lda player_hit_wall_on_left_flag                                  ; 29e0: a5 7c       .|  :28af[1]
+    lda player_hit_wall_on_left_result_flag                           ; 29e0: a5 7c       .|  :28af[1]
     and #1                                                            ; 29e2: 29 01       ).  :28b1[1]
     sta temp_collision_result                                         ; 29e4: 8d 5b 29    .[) :28b3[1]
-    lda player_hit_wall_on_right_flag                                 ; 29e7: a5 7d       .}  :28b6[1]
+    lda player_hit_wall_on_right_result_flag                          ; 29e7: a5 7d       .}  :28b6[1]
     and #4                                                            ; 29e9: 29 04       ).  :28b8[1]
     ora temp_collision_result                                         ; 29eb: 0d 5b 29    .[) :28ba[1]
     sta temp_collision_result                                         ; 29ee: 8d 5b 29    .[) :28bd[1]
-    lda player_has_hit_ceiling_flag                                   ; 29f1: a5 7e       .~  :28c0[1]
+    lda player_hit_ceiling_result_flag                                ; 29f1: a5 7e       .~  :28c0[1]
     and #8                                                            ; 29f3: 29 08       ).  :28c2[1]
     ora temp_collision_result                                         ; 29f5: 0d 5b 29    .[) :28c4[1]
     sta temp_collision_result                                         ; 29f8: 8d 5b 29    .[) :28c7[1]
-    lda player_has_hit_floor_flag                                     ; 29fb: a5 7f       ..  :28ca[1]
+    lda player_hit_floor_result_flag                                  ; 29fb: a5 7f       ..  :28ca[1]
     and #2                                                            ; 29fd: 29 02       ).  :28cc[1]
     ora temp_collision_result                                         ; 29ff: 0d 5b 29    .[) :28ce[1]
     sta temp_collision_result                                         ; 2a02: 8d 5b 29    .[) :28d1[1]
@@ -5928,7 +5928,7 @@ wizard_jump_animation
     !byte spriteid_wizard5,                5,              $ff        ; 2e70: 34 05 ff    4.. :2d3f[1]
     !byte spriteid_wizard5,                4,                0        ; 2e73: 34 04 00    4.. :2d42[1]
     !byte                0                                            ; 2e76: 00          .   :2d45[1]
-wizard_animation10
+wizard_start_to_fall_animation
     !byte spriteid_wizard5,                4,                1        ; 2e77: 34 04 01    4.. :2d46[1]
     !byte spriteid_wizard5,                3,                2        ; 2e7a: 34 03 02    4.. :2d49[1]
     !byte spriteid_wizard5,                3,                3        ; 2e7d: 34 03 03    4.. :2d4c[1]
@@ -5948,14 +5948,14 @@ wizard_animation12
     !byte spriteid_wizard5,              $fe,                4        ; 2e9d: 34 fe 04    4.. :2d6c[1]
     !byte spriteid_wizard5,              $ff,                5        ; 2ea0: 34 ff 05    4.. :2d6f[1]
     !byte                0                                            ; 2ea3: 00          .   :2d72[1]
-wizard_animation13
+wizard_standing_fall_animation
     !byte spriteid_wizard5,                0,                1        ; 2ea4: 34 00 01    4.. :2d73[1]
     !byte spriteid_wizard5,                0,                2        ; 2ea7: 34 00 02    4.. :2d76[1]
     !byte spriteid_wizard5,                0,                3        ; 2eaa: 34 00 03    4.. :2d79[1]
     !byte spriteid_wizard5,                0,                4        ; 2ead: 34 00 04    4.. :2d7c[1]
     !byte spriteid_wizard5,                0,                5        ; 2eb0: 34 00 05    4.. :2d7f[1]
     !byte                0                                            ; 2eb3: 00          .   :2d82[1]
-wizard_fall_animation
+wizard_fall_continues_animation
     !byte spriteid_wizard5,                0,                7        ; 2eb4: 34 00 07    4.. :2d83[1]
     !byte                0                                            ; 2eb7: 00          .   :2d86[1]
 
@@ -5978,45 +5978,52 @@ update_wizard_animation
 
 wizard_not_changing_direction
     jsr sub_c23c4                                                     ; 2ed7: 20 c4 23     .# :2da6[1]
-    bne c2de4                                                         ; 2eda: d0 39       .9  :2da9[1]
+    bne wizard_continue_falling                                       ; 2eda: d0 39       .9  :2da9[1]
     lda current_animation                                             ; 2edc: ad df 09    ... :2dab[1]
     cmp #wizard_jump_animation - wizard_base_animation                ; 2edf: c9 49       .I  :2dae[1]
-    bne c2dca                                                         ; 2ee1: d0 18       ..  :2db0[1]
+    bne wizard_not_jumping                                            ; 2ee1: d0 18       ..  :2db0[1]
+; wizard is jumping
     dec temp_top_offset                                               ; 2ee3: ce 50 25    .P% :2db2[1]
+; if (collided with room while jumping) then branch (fall)
     lda #0                                                            ; 2ee6: a9 00       ..  :2db5[1]
     jsr get_wall_collision_for_object_a                               ; 2ee8: 20 94 28     .( :2db7[1]
-    bne c2dc3                                                         ; 2eeb: d0 07       ..  :2dba[1]
+    bne wizard_start_to_fall                                          ; 2eeb: d0 07       ..  :2dba[1]
+; if (jump animation has looped) then branch (fall)
     cpy #wizard_jump_animation - wizard_base_animation                ; 2eed: c0 49       .I  :2dbc[1]
-    beq c2dc3                                                         ; 2eef: f0 03       ..  :2dbe[1]
+    beq wizard_start_to_fall                                          ; 2eef: f0 03       ..  :2dbe[1]
 wizard_got_index_in_animation_local
     jmp wizard_got_index_in_animation                                 ; 2ef1: 4c 5f 2e    L_. :2dc0[1]
 
-c2dc3
-    lda #wizard_fall_animation - wizard_base_animation                ; 2ef4: a9 96       ..  :2dc3[1]
+wizard_start_to_fall
+    lda #wizard_fall_continues_animation - wizard_base_animation      ; 2ef4: a9 96       ..  :2dc3[1]
     sta current_animation                                             ; 2ef6: 8d df 09    ... :2dc5[1]
-    ldy #wizard_animation10 - wizard_base_animation                   ; 2ef9: a0 59       .Y  :2dc8[1]
-c2dca
-    lda l288f                                                         ; 2efb: ad 8f 28    ..( :2dca[1]
-    bne c2df3                                                         ; 2efe: d0 24       .$  :2dcd[1]
+    ldy #wizard_start_to_fall_animation - wizard_base_animation       ; 2ef9: a0 59       .Y  :2dc8[1]
+; if (player has hit floor) then branch
+wizard_not_jumping
+    lda player_has_hit_floor_flag                                     ; 2efb: ad 8f 28    ..( :2dca[1]
+    bne wizard_hits_ground_while_falling                              ; 2efe: d0 24       .$  :2dcd[1]
+; if (not already falling) then branch (start falling)
     lda current_animation                                             ; 2f00: ad df 09    ... :2dcf[1]
-    cmp #wizard_fall_animation - wizard_base_animation                ; 2f03: c9 96       ..  :2dd2[1]
-    bne c2de4                                                         ; 2f05: d0 0e       ..  :2dd4[1]
-; check player for collision with left or right wall
+    cmp #wizard_fall_continues_animation - wizard_base_animation      ; 2f03: c9 96       ..  :2dd2[1]
+    bne wizard_continue_falling                                       ; 2f05: d0 0e       ..  :2dd4[1]
+; if (player not hitting left or right wall) then branch (start falling)
     lda #object_collided_right_wall                                   ; 2f07: a9 04       ..  :2dd6[1]
     ora #object_collided_left_wall                                    ; 2f09: 09 01       ..  :2dd8[1]   ; why not just lda #5?
     and object_room_collision_flags                                   ; 2f0b: 2d d8 38    -.8 :2dda[1]
-    beq c2de4                                                         ; 2f0e: f0 05       ..  :2ddd[1]
+    beq wizard_continue_falling                                       ; 2f0e: f0 05       ..  :2ddd[1]
     lda #$80                                                          ; 2f10: a9 80       ..  :2ddf[1]
-    sta player_collision_flag                                         ; 2f12: 8d 33 24    .3$ :2de1[1]
-c2de4
-    lda #wizard_fall_animation - wizard_base_animation                ; 2f15: a9 96       ..  :2de4[1]
+    sta player_wall_collision_flag                                    ; 2f12: 8d 33 24    .3$ :2de1[1]
+wizard_continue_falling
+    lda #wizard_fall_continues_animation - wizard_base_animation      ; 2f15: a9 96       ..  :2de4[1]
     cmp current_animation                                             ; 2f17: cd df 09    ... :2de6[1]
     beq wizard_got_index_in_animation_local                           ; 2f1a: f0 d5       ..  :2de9[1]
+; wizard wasn't falling, but now is. It's a fall from a standing position, like through
+; a trapdoor that just opened up beneath you.
     sta current_animation                                             ; 2f1c: 8d df 09    ... :2deb[1]
-    ldy #$86                                                          ; 2f1f: a0 86       ..  :2dee[1]
+    ldy #wizard_standing_fall_animation - wizard_base_animation       ; 2f1f: a0 86       ..  :2dee[1]
     jmp wizard_got_index_in_animation                                 ; 2f21: 4c 5f 2e    L_. :2df0[1]
 
-c2df3
+wizard_hits_ground_while_falling
     ldx player_move_direction_requested                               ; 2f24: ae c9 3a    ..: :2df3[1]
     beq c2e1b                                                         ; 2f27: f0 23       .#  :2df6[1]
     lda #wizard_change_direction_animation - wizard_base_animation    ; 2f29: a9 36       .6  :2df8[1]
@@ -6026,7 +6033,7 @@ c2df3
     ldx jump_requested                                                ; 2f32: ae c7 3a    ..: :2e01[1]
     beq c2e0f                                                         ; 2f35: f0 09       ..  :2e04[1]
     ldx current_animation                                             ; 2f37: ae df 09    ... :2e06[1]
-    cpx #wizard_fall_animation - wizard_base_animation                ; 2f3a: e0 96       ..  :2e09[1]
+    cpx #wizard_fall_continues_animation - wizard_base_animation      ; 2f3a: e0 96       ..  :2e09[1]
     beq c2e0f                                                         ; 2f3c: f0 02       ..  :2e0b[1]
     lda #wizard_jump_animation - wizard_base_animation                ; 2f3e: a9 49       .I  :2e0d[1]
 c2e0f
@@ -6065,7 +6072,7 @@ c2e44
 c2e4c
     lda two_byte_table_based_on_left_right_direction,x                ; 2f7d: bd 90 28    ..( :2e4c[1]
     beq wizard_got_index_in_animation                                 ; 2f80: f0 0e       ..  :2e4f[1]
-    ldy #wizard_fall_animation - wizard_base_animation                ; 2f82: a0 96       ..  :2e51[1]
+    ldy #wizard_fall_continues_animation - wizard_base_animation      ; 2f82: a0 96       ..  :2e51[1]
     sty current_animation                                             ; 2f84: 8c df 09    ... :2e53[1]
     ldy #wizard_animation11 - wizard_base_animation                   ; 2f87: a0 6c       .l  :2e56[1]
     cmp object_direction                                              ; 2f89: cd be 09    ... :2e58[1]
@@ -6307,7 +6314,7 @@ c3023
     sta current_animation                                             ; 3156: 8d df 09    ... :3025[1]
     ldy #cat_animation10 - cat_base_animation                         ; 3159: a0 5f       ._  :3028[1]
 c302a
-    lda l288f                                                         ; 315b: ad 8f 28    ..( :302a[1]
+    lda player_has_hit_floor_flag                                     ; 315b: ad 8f 28    ..( :302a[1]
     bne c3053                                                         ; 315e: d0 24       .$  :302d[1]
     lda current_animation                                             ; 3160: ad df 09    ... :302f[1]
     cmp #cat_fall_animation - cat_base_animation                      ; 3163: c9 ae       ..  :3032[1]
@@ -6318,7 +6325,7 @@ c302a
     and object_room_collision_flags                                   ; 316b: 2d d8 38    -.8 :303a[1]
     beq c3044                                                         ; 316e: f0 05       ..  :303d[1]
     lda #$80                                                          ; 3170: a9 80       ..  :303f[1]
-    sta player_collision_flag                                         ; 3172: 8d 33 24    .3$ :3041[1]
+    sta player_wall_collision_flag                                    ; 3172: 8d 33 24    .3$ :3041[1]
 c3044
     lda #cat_fall_animation - cat_base_animation                      ; 3175: a9 ae       ..  :3044[1]
     cmp current_animation                                             ; 3177: cd df 09    ... :3046[1]
@@ -6599,7 +6606,7 @@ c324c
     cmp object_direction                                              ; 3382: cd be 09    ... :3251[1]
     beq c325f                                                         ; 3385: f0 09       ..  :3254[1]
     ldx #monkey_climb_down_animation - monkey_base_animation          ; 3387: a2 49       .I  :3256[1]
-    lda l288f                                                         ; 3389: ad 8f 28    ..( :3258[1]
+    lda player_has_hit_floor_flag                                     ; 3389: ad 8f 28    ..( :3258[1]
     beq c3269                                                         ; 338c: f0 0c       ..  :325b[1]
     bne c3276                                                         ; 338e: d0 17       ..  :325d[1]
 c325f
@@ -6646,7 +6653,7 @@ c32a5
     sta current_animation                                             ; 33d8: 8d df 09    ... :32a7[1]
     ldy #monkey_animation15 - monkey_base_animation                   ; 33db: a0 97       ..  :32aa[1]
 c32ac
-    lda l288f                                                         ; 33dd: ad 8f 28    ..( :32ac[1]
+    lda player_has_hit_floor_flag                                     ; 33dd: ad 8f 28    ..( :32ac[1]
     bne c32c8                                                         ; 33e0: d0 17       ..  :32af[1]
 c32b1
     lda #monkey_fall_animation - monkey_base_animation                ; 33e2: a9 d4       ..  :32b1[1]
@@ -8968,10 +8975,6 @@ pydis_end
 ;     c2841
 ;     c287e
 ;     c288c
-;     c2dc3
-;     c2dca
-;     c2de4
-;     c2df3
 ;     c2e0f
 ;     c2e1b
 ;     c2e42
@@ -9038,7 +9041,6 @@ pydis_end
 ;     l0068
 ;     l0087
 ;     l0b00
-;     l288f
 ;     l2891
 ;     l2892
 ;     l2893
@@ -10181,9 +10183,6 @@ pydis_end
 !if (vdu_set_text_colour) != $11 {
     !error "Assertion failed: vdu_set_text_colour == $11"
 }
-!if (wizard_animation10 - wizard_base_animation) != $59 {
-    !error "Assertion failed: wizard_animation10 - wizard_base_animation == $59"
-}
 !if (wizard_animation11 - wizard_base_animation) != $6c {
     !error "Assertion failed: wizard_animation11 - wizard_base_animation == $6c"
 }
@@ -10202,14 +10201,20 @@ pydis_end
 !if (wizard_change_direction_animation_last_step - wizard_base_animation) != $39 {
     !error "Assertion failed: wizard_change_direction_animation_last_step - wizard_base_animation == $39"
 }
-!if (wizard_fall_animation - wizard_base_animation) != $96 {
-    !error "Assertion failed: wizard_fall_animation - wizard_base_animation == $96"
+!if (wizard_fall_continues_animation - wizard_base_animation) != $96 {
+    !error "Assertion failed: wizard_fall_continues_animation - wizard_base_animation == $96"
 }
 !if (wizard_jump_animation - wizard_base_animation) != $49 {
     !error "Assertion failed: wizard_jump_animation - wizard_base_animation == $49"
 }
+!if (wizard_standing_fall_animation - wizard_base_animation) != $86 {
+    !error "Assertion failed: wizard_standing_fall_animation - wizard_base_animation == $86"
+}
 !if (wizard_standing_still_animation - wizard_base_animation) != $41 {
     !error "Assertion failed: wizard_standing_still_animation - wizard_base_animation == $41"
+}
+!if (wizard_start_to_fall_animation - wizard_base_animation) != $59 {
+    !error "Assertion failed: wizard_start_to_fall_animation - wizard_base_animation == $59"
 }
 !if (wizard_transform_out_animation - wizard_base_animation) != $16 {
     !error "Assertion failed: wizard_transform_out_animation - wizard_base_animation == $16"

@@ -256,7 +256,7 @@ def common_to_all():
 
     label(0x38c2, "object_z_order")
 
-    label(0x2433, "player_collision_flag") # TODO: object_collision_flag?
+    label(0x2433, "player_wall_collision_flag")
 
     label(0x2eb6, "player_held_object_for_spriteid_wizard6") # TODO!?
     label(0x2eb7, "previous_player_held_object_for_spriteid_wizard6")

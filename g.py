@@ -306,16 +306,16 @@ substitute_labels = {
         "l007b": "object_bottom_cell_y",
     },
     (0x278b, 0x27ca): {
-        "l007c": "player_hit_wall_on_left_flag",
-        "l007d": "player_hit_wall_on_right_flag",
+        "l007c": "player_hit_wall_on_left_result_flag",
+        "l007d": "player_hit_wall_on_right_result_flag",
         "l0080": "player_height_in_cells",
     },
     (0x27c4, 0x2815): {
         "l0080": "adjustment",
     },
     (0x2816, 0x2989): {
-        "l007e": "player_has_hit_ceiling_flag",
-        "l007f": "player_has_hit_floor_flag",
+        "l007e": "player_hit_ceiling_result_flag",
+        "l007f": "player_hit_floor_result_flag",
     },
     (0x2816, 0x284f): {
         "l0080": "player_width_in_cells",
@@ -328,10 +328,10 @@ substitute_labels = {
         "l0122": "x_object_left_high",
     },
     (0x29c5,0x2a11): {
-        "l007c": "player_hit_wall_on_left_flag",
-        "l007d": "player_hit_wall_on_right_flag",
-        "l007e": "player_has_hit_ceiling_flag",
-        "l007f": "player_has_hit_floor_flag",
+        "l007c": "player_hit_wall_on_left_result_flag",
+        "l007d": "player_hit_wall_on_right_result_flag",
+        "l007e": "player_hit_ceiling_result_flag",
+        "l007f": "player_hit_floor_result_flag",
     },
     (0x2cb8, 0x2d3c): {
         "address1_low": "menu_item_to_use",
@@ -1951,7 +1951,7 @@ On Entry:
     expr(0x23b8, make_lo("sound_landing2"))
     expr(0x23ba, make_hi("sound_landing2"))
 
-    comment(0x23cd, "if (no player collision with the room) then branch (return)")
+    comment(0x23cd, "if (no player collision with the walls) then branch (return)")
     label(0x242b, "recall_registers_and_return1")
 
     label(0x2434, "find_left_and_right_of_object")
@@ -2055,8 +2055,8 @@ On Exit:
 Check for player intersecting wall to the left or right
 
 On Exit:
-     player_hit_wall_on_left_flag: Flag set ($ff) if player is intersecting wall on the left side of the player
-    player_hit_wall_on_right_flag: Flag set ($ff) if intersecting wall on the right side of the player
+     player_hit_wall_on_left_result_flag: Flag set ($ff) if player is intersecting wall on the left side of the player
+    player_hit_wall_on_right_result_flag: Flag set ($ff) if intersecting wall on the right side of the player
 
 *************************************************************************************""")
     label(0x265a, "check_for_player_intersecting_wall_left_or_right")
@@ -2099,20 +2099,20 @@ On Entry:
         object_bottom_cell_y
 
 On Exit:
-      player_has_hit_floor_flag: $ff if hit, $00 otherwise
-    player_has_hit_ceiling_flag: $ff if hit, $00 otherwise
+      player_hit_floor_result_flag: $ff if hit, $00 otherwise
+    player_hit_ceiling_result_flag: $ff if hit, $00 otherwise
 
 *************************************************************************************""")
     label(0x26e5, "check_for_player_intersecting_floor_or_ceiling")
     comment(0x26e9, "start at top right")
     comment(0x26eb, "get player width in cells")
-    label(0x26f3, "look_for_wall_along_player_top_edge_loop")
-    comment(0x26f3, "loop from top right to top left looking for a wall")
+    label(0x26f3, "look_for_solid_rock_along_player_top_edge_loop")
+    comment(0x26f3, "loop from top right to top left looking for a solid_rock")
     comment(0x26ff, "no collision with top edge of player")
-    label(0x2701, "found_wall")
+    label(0x2701, "found_solid_rock")
     comment(0x2705, "start at bottom right")
     comment(0x2707, "get player width in cells (again)")
-    label(0x270f, "look_for_wall_along_player_bottom_edge_loop")
+    label(0x270f, "look_for_solid_rock_along_player_bottom_edge_loop")
     comment(0x271b, "no collision with bottom edge of player")
     label(0x271d, "return16")
     label(0x271e, "handle_top_bottom_collision")
@@ -2127,13 +2127,13 @@ On Exit:
 
     comment(0x2770, """*************************************************************************************
 
-Handle player hitting the floor
+Check if the player is hitting the floor, and if so, deal with it
 
 On Entry:
     A: object id to test
 
 *************************************************************************************""")
-    label(0x2770, "handle_player_hitting_floor")
+    label(0x2770, "check_and_handle_player_hitting_floor")
     comment(0x2776, "check collision of player with room")
     comment(0x2783, "don't write values to the collision map")
     comment(0x2787, "have we hit the floor?")
@@ -2144,10 +2144,11 @@ On Entry:
     comment(0x27b8, "add the left and right extents together")
 
     label(0x2851, "recall_registers_and_return2")
+    label(0x288f, "player_has_hit_floor_flag")
     label(0x2890, "two_byte_table_based_on_left_right_direction")
     comment(0x2894, """*************************************************************************************
 
-Get wall collision flags for object
+Get solid_rock collision flags for object
 
 On Entry:
     A: object index
@@ -2423,13 +2424,11 @@ Animation code
     label(0x2d2e, "wizard_standing_still_animation")
     label(0x2d32, "wizard_animation8")
     label(0x2d36, "wizard_jump_animation")
-    label(0x2d46, "wizard_animation10")
+    label(0x2d46, "wizard_start_to_fall_animation")
     label(0x2d59, "wizard_animation11")
     label(0x2d66, "wizard_animation12")
-    label(0x2d73, "wizard_animation13")
-    label(0x2d83, "wizard_fall_animation")
-    comment(0x2d9b, "toggle player direction")
-    label(0x2da6, "wizard_not_changing_direction")
+    label(0x2d73, "wizard_standing_fall_animation")
+    label(0x2d83, "wizard_fall_continues_animation")
 
     label(0x2d87, "update_wizard_animation")
     expr(0x2d88, "wizard_transform_out_animation - wizard_base_animation")
@@ -2437,28 +2436,41 @@ Animation code
     expr(0x2d8f, make_hi("wizard_base_animation"))
     comment(0x2d95, "branch if transforming")
     expr(0x2d98, "wizard_change_direction_animation_last_step - wizard_base_animation")
+    comment(0x2d9b, "toggle player direction")
+    label(0x2da6, "wizard_not_changing_direction")
     expr(0x2daf, "wizard_jump_animation - wizard_base_animation")
-    label(0x2dc0, "wizard_got_index_in_animation_local")
-    expr(0x2dc4, "wizard_fall_animation - wizard_base_animation")
-    expr(0x2dc9, "wizard_animation10 - wizard_base_animation")
+    comment(0x2db2, "wizard is jumping")
+    comment(0x2db5, "if (collided with room while jumping) then branch (fall)")
+    comment(0x2dbc, "if (jump animation has looped) then branch (fall)")
     expr(0x2dbd, "wizard_jump_animation - wizard_base_animation")
-    expr(0x2dd3, "wizard_fall_animation - wizard_base_animation")
-    comment(0x2dd6, "check player for collision with left or right wall")
-    comment(0x2dd8, "why not just lda #5?", inline=True)
+    label(0x2dc0, "wizard_got_index_in_animation_local")
+    label(0x2dc3, "wizard_start_to_fall")
+    expr(0x2dc4, "wizard_fall_continues_animation - wizard_base_animation")
+    expr(0x2dc9, "wizard_start_to_fall_animation - wizard_base_animation")
+    label(0x2dca, "wizard_not_jumping")
+    comment(0x2dca, "if (player has hit floor) then branch")
+    comment(0x2dcf, "if (not already falling) then branch (start falling)")
+    expr(0x2dd3, "wizard_fall_continues_animation - wizard_base_animation")
+    comment(0x2dd6, "if (player not hitting left or right wall) then branch (start falling)")
     expr(0x2dd7, "object_collided_right_wall")
+    comment(0x2dd8, "why not just lda #5?", inline=True)
     expr(0x2dd9, "object_collided_left_wall")
-    expr(0x2de5, "wizard_fall_animation - wizard_base_animation")
+    label(0x2de4, "wizard_continue_falling")
+    expr(0x2de5, "wizard_fall_continues_animation - wizard_base_animation")
+    comment(0x2deb, "wizard wasn't falling, but now is. It's a fall from a standing position, like through a trapdoor that just opened up beneath you.")
+    expr(0x2def, "wizard_standing_fall_animation - wizard_base_animation")
+    label(0x2df3, "wizard_hits_ground_while_falling")
     expr(0x2df9, "wizard_change_direction_animation - wizard_base_animation")
 
     expr(0x2e00, "wizard_walk_cycle_animation - wizard_base_animation")
-    expr(0x2e0a, "wizard_fall_animation - wizard_base_animation")
+    expr(0x2e0a, "wizard_fall_continues_animation - wizard_base_animation")
     expr(0x2e0e, "wizard_jump_animation - wizard_base_animation")
     expr(0x2e1f, "wizard_standing_still_animation - wizard_base_animation")
     expr(0x2e24, "wizard_walk_cycle_animation - wizard_base_animation")
     expr(0x2e28, "wizard_change_direction_animation - wizard_base_animation")
     expr(0x2e35, "wizard_animation8 - wizard_base_animation")
     expr(0x2e43, "wizard_animation6 - wizard_base_animation")
-    expr(0x2e52, "wizard_fall_animation - wizard_base_animation")
+    expr(0x2e52, "wizard_fall_continues_animation - wizard_base_animation")
     expr(0x2e57, "wizard_animation11 - wizard_base_animation")
     expr(0x2e5e, "wizard_animation12 - wizard_base_animation")
     label(0x2e5f, "wizard_got_index_in_animation")
