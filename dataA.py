@@ -204,6 +204,8 @@ expr(0x3bda, "exit_room_right")
 # TODO: slight guesswork
 expr(0x3f08, "objectid_brazier")
 entry(0x3f52, "not_first_room_update")
+expr(0x3f56, "spriteid_saxophone2") # TODO: this assumes player_held_object contains a sprite ID, it looks like it
+expr(0x4141, "spriteid_saxophone2") # TODO: this assumes player_held_object contains a sprite ID, it looks like it
 expr(0x3f1b, "spriteid_saxophone1")
 expr(0x3c22, "objectid_left_mouse")
 expr(0x3c48, "objectid_right_mouse")

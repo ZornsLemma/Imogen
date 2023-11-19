@@ -833,7 +833,7 @@ return3
 
 not_first_room_update
     lda player_held_object_for_spriteid_wizard6                       ; 3f52: ad b6 2e
-    cmp #$d3                                                          ; 3f55: c9 d3
+    cmp #spriteid_saxophone2                                          ; 3f55: c9 d3
     bne c3f62                                                         ; 3f57: d0 09
     lda #0                                                            ; 3f59: a9 00
     ldx #<some_sound3                                                 ; 3f5b: a2 24
@@ -1124,7 +1124,7 @@ c4137
     cmp #2                                                            ; 4139: c9 02
     bne c415e                                                         ; 413b: d0 21
     lda player_held_object_for_spriteid_wizard6                       ; 413d: ad b6 2e
-    cmp #$d3                                                          ; 4140: c9 d3
+    cmp #spriteid_saxophone2                                          ; 4140: c9 d3
     bne c415e                                                         ; 4142: d0 1a
     ldy #$0e                                                          ; 4144: a0 0e
     lda #$19                                                          ; 4146: a9 19
