@@ -357,9 +357,23 @@ comment(0x4323, "Set table_x_position to left side of screen")
 entry(0x4339, "table_x_position_update_finished") # if any...
 ab(0x432d)
 
-entry(0x3f8b, "something2")
-label(0x3fd5, "something2_saved_x")
-label(0x3fd6, "something2_saved_y")
+comment(0x3f8b, """*************************************************************************************
+
+Use copy_rectangle_of_memory_to_screen repeatedly to create a pseudo-circle shape -
+room 1 (the baby/spell room) has one of these in each corner.
+
+On Entry:
+    X and Y registers specify top left cell of pseudo-circle
+    Everything else except {width,height}_in_cells_to_write as for 
+        copy_rectangle_of_memory_to_screen
+
+On Exit:
+    Preserves X,Y
+
+*************************************************************************************""")
+entry(0x3f8b, "copy_pseudo_circle_to_screen")
+label(0x3fd5, "copy_pseudo_circle_to_screen_saved_x")
+label(0x3fd6, "copy_pseudo_circle_to_screen_saved_y")
 
 go()
 

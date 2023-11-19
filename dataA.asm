@@ -861,9 +861,23 @@ c3f62
 return6
     rts                                                               ; 3f8a: 60
 
-something2
-    stx something2_saved_x                                            ; 3f8b: 8e d5 3f
-    sty something2_saved_y                                            ; 3f8e: 8c d6 3f
+; *************************************************************************************
+; 
+; Use copy_rectangle_of_memory_to_screen repeatedly to create a pseudo-circle shape -
+; room 1 (the baby/spell room) has one of these in each corner.
+; 
+; On Entry:
+;     X and Y registers specify top left cell of pseudo-circle
+;     Everything else except {width,height}_in_cells_to_write as for
+;         copy_rectangle_of_memory_to_screen
+; 
+; On Exit:
+;     Preserves X,Y
+; 
+; *************************************************************************************
+copy_pseudo_circle_to_screen
+    stx copy_pseudo_circle_to_screen_saved_x                          ; 3f8b: 8e d5 3f
+    sty copy_pseudo_circle_to_screen_saved_y                          ; 3f8e: 8c d6 3f
     inx                                                               ; 3f91: e8
     inx                                                               ; 3f92: e8
     lda #5                                                            ; 3f93: a9 05
@@ -898,13 +912,13 @@ something2
     lda #5                                                            ; 3fc7: a9 05
     sta width_in_cells                                                ; 3fc9: 85 3c
     jsr copy_rectangle_of_memory_to_screen                            ; 3fcb: 20 bb 1a
-    ldx something2_saved_x                                            ; 3fce: ae d5 3f
-    ldy something2_saved_y                                            ; 3fd1: ac d6 3f
+    ldx copy_pseudo_circle_to_screen_saved_x                          ; 3fce: ae d5 3f
+    ldy copy_pseudo_circle_to_screen_saved_y                          ; 3fd1: ac d6 3f
     rts                                                               ; 3fd4: 60
 
-something2_saved_x
+copy_pseudo_circle_to_screen_saved_x
     !byte 0                                                           ; 3fd5: 00
-something2_saved_y
+copy_pseudo_circle_to_screen_saved_y
     !byte 0                                                           ; 3fd6: 00
 ; *************************************************************************************
 ; 
@@ -932,13 +946,13 @@ room_2_initialisation_code
     sta copy_mode                                                     ; 3ff4: 85 42
     ldx #3                                                            ; 3ff6: a2 03
     ldy #2                                                            ; 3ff8: a0 02
-    jsr something2                                                    ; 3ffa: 20 8b 3f
+    jsr copy_pseudo_circle_to_screen                                  ; 3ffa: 20 8b 3f
     ldx #$1c                                                          ; 3ffd: a2 1c
-    jsr something2                                                    ; 3fff: 20 8b 3f
+    jsr copy_pseudo_circle_to_screen                                  ; 3fff: 20 8b 3f
     ldy #$0d                                                          ; 4002: a0 0d
-    jsr something2                                                    ; 4004: 20 8b 3f
+    jsr copy_pseudo_circle_to_screen                                  ; 4004: 20 8b 3f
     ldx #3                                                            ; 4007: a2 03
-    jsr something2                                                    ; 4009: 20 8b 3f
+    jsr copy_pseudo_circle_to_screen                                  ; 4009: 20 8b 3f
     ldx #$11                                                          ; 400c: a2 11
     ldy #0                                                            ; 400e: a0 00
     lda #6                                                            ; 4010: a9 06
