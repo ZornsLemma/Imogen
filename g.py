@@ -323,7 +323,7 @@ substitute_labels = {
     (0x284f, 0x28a0): {
         "l0080": "adjustment",
     },
-    (0x28e2, 0x2a8b): {
+    (0x28cd, 0x2a8b): {
         "l0121": "x_object_left_low",
         "l0122": "x_object_left_high",
     },
@@ -475,6 +475,7 @@ label(0x0085, "sprite_cell_x_pos")
 label(0x0086, "amount_sprite_is_offscreen_x")
 label(0x0088, "vertical_sprite_position_is_valid_flag")
 label(0x00fc, "interrupt_accumulator")      # OS variable
+label(0x00fd, "brk_address_low")            # OS variable
 
 
 label(0x0100, "active_objects_table")

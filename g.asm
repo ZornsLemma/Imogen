@@ -425,7 +425,7 @@ l0087                                       = $87
 vertical_sprite_position_is_valid_flag      = $88
 romsel_copy                                 = $f4
 interrupt_accumulator                       = $fc
-l00fd                                       = $fd
+brk_address_low                             = $fd
 active_objects_table                        = $0100
 frontmost_objects_table                     = $010b
 object_dealt_with_flag                      = $0116
@@ -1619,7 +1619,7 @@ pull_values_and_exit_sprite_op
 ; just restore the stack pointer and continue (!)
 brk_handler
     ldy #0                                                            ; 1804: a0 00       ..  :16d3[1]
-    lda (l00fd),y                                                     ; 1806: b1 fd       ..  :16d5[1]
+    lda (brk_address_low),y                                           ; 1806: b1 fd       ..  :16d5[1]
     sta error_code_on_brk                                             ; 1808: 85 02       ..  :16d7[1]
     jmp restore_brk_handler_since_osfile_is_finished                  ; 180a: 4c 13 17    L.. :16d9[1]
 
@@ -4963,9 +4963,9 @@ handle_player_hitting_floor
 
 player_hit_floor
     lda object_left_cell_x                                            ; 28cd: a5 78       .x  :279c[1]
-    sta l0121                                                         ; 28cf: 8d 21 01    .!. :279e[1]
+    sta x_object_left_low                                             ; 28cf: 8d 21 01    .!. :279e[1]
     lda object_right_cell_x                                           ; 28d2: a5 79       .y  :27a1[1]
-    sta l0122                                                         ; 28d4: 8d 22 01    .". :27a3[1]
+    sta x_object_left_high                                            ; 28d4: 8d 22 01    .". :27a3[1]
     ldx player_objectid                                               ; 28d7: a6 53       .S  :27a6[1]
 ; find the left/right extents of player without the accessory object
     jsr find_left_and_right_of_object                                 ; 28d9: 20 34 24     4$ :27a8[1]
@@ -9027,7 +9027,6 @@ pydis_end
 ;     l0067
 ;     l0068
 ;     l0087
-;     l00fd
 ;     l0b00
 ;     l288f
 ;     l2891
