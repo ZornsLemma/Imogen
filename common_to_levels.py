@@ -10,6 +10,11 @@ def set_sprite_dict(sd):
     global sprite_dict
     sprite_dict = sd
 
+    substitute_constants("jsr draw_sprite_a_at_cell_xy", 'a', sprite_dict, True)
+    substitute_constants("jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map", 'a', sprite_dict, True)
+    substitute_constants("jsr find_or_create_menu_slot_for_A", 'a', sprite_dict, True)
+    #substitute_constants("sta sprite_op_flags", 'a', sprite_op_flags_dict, True)
+
 def spriteid(start_addr, end_addr=None):
     global sprite_dict
 
@@ -63,6 +68,9 @@ Level header
 
     sprite_data = start + get_u16_binary(start)
     label(sprite_data, "sprite_data")
+    r = memorymanager.get_entire_load_range()
+    end = r[1]
+    byte(sprite_data, end - sprite_data)
 
     word(start+2)
     expr(start+2, "level_specific_initialisation")
@@ -79,13 +87,25 @@ Level header
 
 Level update
 
-This calls individual functions to update the logic in each room.
+This generally calls individual functions to update the logic in each room.
 
-While updating the logic for a room, 'currently_updating_logic_for_room_index' is normally set. In practice it only actually needs to be set if it calls 'update_brazier_and_fire' or 'update_level_completion'
+While updating the logic for a room, 'currently_updating_logic_for_room_index' is normally set. In practice this only actually needs to be set if it calls 'update_brazier_and_fire' or 'update_level_completion'
 
 *************************************************************************************""")
 
     for room in range(num_rooms):
         level_room_data_table_entry(start + 10 + 2*room, str(room))
 
+    # Other common functions
+    entry(0x395e, "define_envelope") # Duplicate of line in g.py, can't trivially put in common as it breaks imogen.py
+
+def ldx_ldy_jsr_play_sound_yx(jsr_runtime_addr, s):
+    assert get_u8_runtime(RuntimeAddr(jsr_runtime_addr - 4)) == 0xa2 # ldx #
+    sound_addr_lo = get_u8_runtime(RuntimeAddr(jsr_runtime_addr - 3))
+    assert get_u8_runtime(RuntimeAddr(jsr_runtime_addr - 2)) == 0xa0 # ldy #
+    sound_addr_hi = get_u8_runtime(RuntimeAddr(jsr_runtime_addr - 1))
+    sound_addr = (sound_addr_hi << 8) | sound_addr_lo
+    sound(sound_addr, s)
+    expr(jsr_runtime_addr - 3, make_lo(s))
+    expr(jsr_runtime_addr - 1, make_hi(s))
 

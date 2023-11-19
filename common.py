@@ -36,7 +36,7 @@ class SubstituteLabels():
         return suggestion
 
 
-def character_bitmap(addr, s=None):
+def tile_bitmap(addr, s=None):
     if s is None:
         s = "character_bitmap_%04x" % addr
     label(addr, s)

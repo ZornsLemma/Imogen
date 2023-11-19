@@ -1,6 +1,7 @@
 from common_to_levels import *
 
 config.set_label_references(False)
+config.set_hex_dump_show_ascii(False)
 
 sprite_dict = {
     0x3b: "spriteid_ball",
@@ -45,11 +46,6 @@ constant(3, "objectid_brazier2")
 
 
 set_sprite_dict(sprite_dict)
-
-substitute_constants("jsr draw_sprite_a_at_cell_xy", 'a', sprite_dict, True)
-substitute_constants("jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map", 'a', sprite_dict, True)
-substitute_constants("jsr find_or_create_menu_slot_for_A", 'a', sprite_dict, True)
-#substitute_constants("sta sprite_op_flags", 'a', sprite_op_flags_dict, True)
 
 load(0x3ad5, "orig/dataA.dat", "6502", "df027a3ac06abfed1878eaec3d2bbe5f")
 
@@ -106,11 +102,11 @@ expr(0x3b13, make_hi("ground_fill_2x2_top_left"))
 label(0x4486, "ground_fill_2x2_top_left")
 expr(0x3fe7, make_lo("tile_all_set_pixels"))
 expr(0x3feb, make_hi("tile_all_set_pixels"))
-character_bitmap(0x4486, "ground_fill_2x2_top_left")
-comment(0x448e, "Note that the next three characters are all identical. I think this is done because the 'tiling' code in restore_rectangle_of_screen_memory for l0042=1 uses a 2x2 tiling arrangement.")
-character_bitmap(0x448e, "ground_fill_2x2_top_right")
-character_bitmap(0x4496, "ground_fill_2x2_bottom_left")
-character_bitmap(0x449e, "ground_fill_2x2_bottom_right")
+tile_bitmap(0x4486, "ground_fill_2x2_top_left")
+comment(0x448e, "Note that the next three tiles are all identical. This is done because the 'tiling' code in copy_rectangle_of_memory_to_screen for copy_mode=1 uses a 2x2 tiling arrangement.")
+tile_bitmap(0x448e, "ground_fill_2x2_top_right")
+tile_bitmap(0x4496, "ground_fill_2x2_bottom_left")
+tile_bitmap(0x449e, "ground_fill_2x2_bottom_right")
 
 
 comment(0x3ae7, "'SAXOPHOBIA\\r' EOR-encrypted with $cb")
@@ -121,13 +117,8 @@ comment(0x3f7b, "TODO: I suspect this is handling 'collection of the saxophone'"
 comment(0x3b04, "reset the saxaphone collected flag. The user can choose during the course of a game to enter the password to continue playing this level having previously got the saxaphone.")
 label(0xa00, "saxophone_collected_flag")
 
-comment(0x3b35, "TODO: Setting a breakpoint in b-em shows l0042 is 0 here")
-comment(0x3b35, "TODO: Setting a breakpoint in b-em shows some_data3_ptr ($40) is $4486 here")
-comment(0x3b35, "TODO: Setting a breakpoint in b-em shows address1_low ($70) is $00 here")
-comment(0x3b35, "TODO: Setting a breakpoint in b-em shows address1_high ($71) is $80 here")
-
-comment(0x3b29, "TODO: I suspect this next block up to and including the jsr is drawing the 'wall' pattern on the top two rows of the opening screen")
-comment(0x3b84, "TODO: I suspect we've finished drawing the ground fill and are now switching to another pattern.")
+comment(0x3b29, "Draw rectangles of ground fill rock with a 2x2 pattern. Also writes to the collision map.", inline=True)
+comment(0x3b84, "Carve the floor, walls and ceiling into the rock")
 
 label(0xa6f, "mouse_ball_animation_position") # This runs from 0-$1d inclusive starting at 0 far left, reaching far right at $10 and returning to far left at $1d.
 comment(0x3be4, """*************************************************************************************
@@ -239,8 +230,7 @@ comment(0x3ecf, "TODO: Pretty confident this is the trapdoor opening sound, but 
 comment(0x3ee2, "Use sprite index 2 (vertical) if room1_trapdoor_open_flag is $ff")
 entry(0x3ec1, "increment_trapdoor_open_flag")
 entry(0x3ed2, "skip_play_sound")
-# TODO: I find the constant checking of the room index in the "room handler" code strange - why isn't
-# this just done once at the start of the subroutine?
+
 # TODO: I think room1_trapdoor_open_flag can have values $ff, 0 and 1 - just possibly this
 # increments to add a time delay to the trapdoor visibly opening, but that's a guess at this point.
 # Looking at Colin's YT video frame by frame, I think there are states: fully closed, both open at
@@ -253,12 +243,11 @@ expr(0x3eef, "spriteid_trapdoor_diagonal")
 expr(0x3ef0, "spriteid_trapdoor_vertical")
 
 entry(0x3f51, "return3")
-expr(0x3f3d, "objectid_saxophone") # TODO: not entirely sure this is the right object ID 4, but the code does seem to check for desired_room_index being 1 - I am still a bit fuzzy as to what all the different room number variables mean
+expr(0x3f3d, "objectid_saxophone")
 expr(0x3f48, "spriteid_zero_size1")
 expr(0x3f4d, "spriteid_saxophone1")
 expr(0x3f16, "spriteid_saxophone2")
 entry(0x3f02, "room1_saxophone_and_brazier_handler") # TODO:?
-comment(0x3f02, "TODO: This forcing of current_room_index to 1 seems odd.")
 comment(0x3f34, "The player has not collected the saxophone, so place it in the lower left of the room.")
 
 comment(0x42f8, """*************************************************************************************
@@ -322,28 +311,14 @@ entry(0x424c, "return5")
 entry(0x42ea, "loop_until_exit_room_left")
 expr(0x42ee, "exit_room_left")
 
-# TODO: Use this more?
-def ldx_ldy_jsr_play_sound_yx(jsr_runtime_addr, s):
-    assert get_u8_runtime(RuntimeAddr(jsr_runtime_addr - 4)) == 0xa2 # ldx #
-    sound_addr_lo = get_u8_runtime(RuntimeAddr(jsr_runtime_addr - 3))
-    assert get_u8_runtime(RuntimeAddr(jsr_runtime_addr - 2)) == 0xa0 # ldy #
-    sound_addr_hi = get_u8_runtime(RuntimeAddr(jsr_runtime_addr - 1))
-    sound_addr = (sound_addr_hi << 8) | sound_addr_lo
-    sound(sound_addr, s)
-    expr(jsr_runtime_addr - 3, make_lo(s))
-    expr(jsr_runtime_addr - 1, make_hi(s))
 ldx_ldy_jsr_play_sound_yx(0x3ef7, "some_sound1")
 ldx_ldy_jsr_play_sound_yx(0x3efe, "some_sound2")
 ldx_ldy_jsr_play_sound_yx(0x3f5f, "some_sound3")
 ldx_ldy_jsr_play_sound_yx(0x43e0, "some_sound4")
 
-
-
-# TODO: envelope1/2/4 share the same envelope number (6) - maybe we should adopt a convention of using labels like envelopeA6b -> level A, OS env number 6, a/b/c/d suffix indicates competing envelopes for that OS env number
-entry(0x395e, "define_envelope") # TODO: duplicate of line in g.py, can't trivially put in common as it breaks imogen.py
-
 expr(0x43cc, make_add("sound_priority_per_channel_table","1"))
 
+# TODO: envelope1/2/4 share the same envelope number (6) - maybe we should adopt a convention of using labels like envelopeA6b -> level A, OS env number 6, a/b/c/d suffix indicates competing envelopes for that OS env number
 envelope(0x4460, "envelope1")
 expr(0x3bfe, make_lo("envelope1"))
 expr(0x3c00, make_hi("envelope1"))
