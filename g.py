@@ -305,7 +305,7 @@ substitute_labels = {
         "l007a": "object_top_cell_y",
         "l007b": "object_bottom_cell_y",
     },
-    (0x278b, 0x27ca): {
+    (0x2726, 0x27ca): {
         "l007c": "player_hit_wall_on_left_result_flag",
         "l007d": "player_hit_wall_on_right_result_flag",
         "l0080": "player_height_in_cells",
@@ -2011,15 +2011,19 @@ On Exit:
     comment(0x2440, "recall object index")
     comment(0x2442, "read the sprite's X offset")
     comment(0x2446, "add sprite Y offset to object position (or if looking left, subtract the sprite Y offset), then store in object_left.")
+    label(0x244d, "got_signed_offset_in_a_so_sign_extend_to_y")
     comment(0x2454, "update address1 based on sprite offset", inline=True)
+    label(0x2454, "add_ya_to_object_x_position")
     comment(0x2460, "get sprite width")
     comment(0x2464, "add sprite width-1 to address1 if looking right, or subtract if looking left storing result in object_right")
     comment(0x247a, "subtract sprite width")
     entry(0x247a, "subtract_sprite_width")
     entry(0x248d, "add_temporary_offsets")
     comment(0x248f, "add temporary left offset to object left position")
+    label(0x2495, "add_ya_to_object_left")
     comment(0x24a1, "divide by eight to get cell left position")
     comment(0x24ac, "add temporary right offset to object right position")
+    label(0x24b2, "add_ya_to_object_right")
     comment(0x24be, "divide by eight to get cell right position")
     comment(0x23c4, """*************************************************************************************
 
@@ -2061,11 +2065,13 @@ On Exit:
     comment(0x24de, "recall object index")
     comment(0x24e0, "get sprite Y offset")
     comment(0x24e4, "add sprite Y offset to object position, store in object_bottom")
+    label(0x24eb, "add_ya_to_object_bottom1")
     comment(0x24f7, "read sprite height")
     comment(0x24fb, "store sprite height minus one")
 
     comment(0x2500, "subtract (sprite height Y minus one) to get object_top")
     comment(0x250f, "add temporary signed offset to object_top")
+    label(0x2515, "add_ya_to_object_top")
     comment(0x2521, "divide the bottom pixel coordinate by eight to get the cell Y")
     comment(0x252c, "add temporary signed offset to object_bottom")
     comment(0x253e, "divide the bottom pixel coordinate by eight to get the cell Y")
@@ -2090,7 +2096,13 @@ On Exit:
     label(0x25df, "find_left_and_right_of_object_including_held_object")
     comment(0x25df, "remember temp_left and right offsets, since we will use them again to find the attached object's left/right extents")
     comment(0x25f8, "clear collision flags")
+    comment(0x25fd, "anything outside the game area returns collision map value $ff")
 
+    comment(0x2601, "raise from the floor one pixel")
+    comment(0x2606, "find extents of player and check for wall collisions")
+    comment(0x2617, "if (no collisions left or right) then branch")
+    label(0x2626, "check_top_and_bottom_for_collisions")
+    comment(0x263c, "handle wall collision")
     label(0x2659, "return13")
     comment(0x265a, """*************************************************************************************
 
@@ -2103,6 +2115,8 @@ On Exit:
 *************************************************************************************""")
     label(0x265a, "check_for_player_intersecting_wall_left_or_right")
     comment(0x265e, "store player's cell height")
+    label(0x2532, "add_ya_to_object_bottom2")
+    label(0x255a, "got_a_player_object")
     comment(0x2668, "look at collision map at each cell up the player's height, looking for a solid wall")
     comment(0x2674, "mark that no collision was found on the left side")
     label(0x2668, "loop_up_player_cells_looking_for_solid_wall")
@@ -2157,7 +2171,8 @@ On Exit:
     label(0x270f, "look_for_solid_rock_along_player_bottom_edge_loop")
     comment(0x271b, "no collision with bottom edge of player")
     label(0x271d, "return16")
-    label(0x271e, "handle_top_bottom_collision")
+    comment(0x271e, "*************************************************************************************")
+    label(0x271e, "update_floor_or_ceiling_collision")
     comment(0x2728, "player has hit ceiling. Adjust player position to align with the cell below the ceiling.")
     comment(0x2742, "mark object has collided with ceiling")
     expr(0x2746, "object_collided_ceiling")
@@ -2611,10 +2626,19 @@ if (not already falling) then branch (start falling)""")
     comment(0x2e9d, "Save the current value of player_held_object_for_spriteid_wizard6 at previous_player_held_object_for_spriteid_wizard6, then set player_held_object_for_spriteid_wizard6 to 0 if object_spritid is not spriteid_wizard6, otherwise set it to player_held_object. TODO: The code actually tests if player_held_object is zero, but I think that's redundant.")
     expr(0x2ea9, "spriteid_wizard6")
     label(0x2eb5, "temp_collision_results")
+    label(0x2ec9, "find_menu_index_given_spriteid_loop")
+    comment(0x2ec7, "find the menu index of the player accessory given its spriteid")
+    comment(0x2ed3, "menu index not found, give up")
+    ab(0x2ed5)
+    label(0x2ed7, "found_menu_index")
+    label(0x2eb8, "update_player_accessory_including_toolbar")
     expr(0x2ebd, make_lo("wizard_sprite_list"))
     expr(0x2ebf, make_hi("wizard_sprite_list"))
     expr(0x2ede, "spriteid_wizard6")
     label(0x2ee4, "store_object_held_and_return")
+    byte(0x2ee8, 5)
+    byte(0x2ef2, 5)
+    blank(0x2ef7)
 
     ##################################################################################################
     # Cat animations

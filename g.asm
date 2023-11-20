@@ -4374,14 +4374,14 @@ find_left_and_right_of_object
 ; add sprite Y offset to object position (or if looking left, subtract the sprite Y
 ; offset), then store in object_left.
     ldy object_direction,x                                            ; 2577: bc be 09    ... :2446[1]
-    bpl c244d                                                         ; 257a: 10 02       ..  :2449[1]
+    bpl got_signed_offset_in_a_so_sign_extend_to_y                    ; 257a: 10 02       ..  :2449[1]
     eor #$ff                                                          ; 257c: 49 ff       I.  :244b[1]
-c244d
+got_signed_offset_in_a_so_sign_extend_to_y
     ldy #0                                                            ; 257e: a0 00       ..  :244d[1]
     ora #0                                                            ; 2580: 09 00       ..  :244f[1]
-    bpl c2454                                                         ; 2582: 10 01       ..  :2451[1]
+    bpl add_ya_to_object_x_position                                   ; 2582: 10 01       ..  :2451[1]
     dey                                                               ; 2584: 88          .   :2453[1]
-c2454
+add_ya_to_object_x_position
     clc                                                               ; 2585: 18          .   :2454[1]   ; update address1 based on sprite offset
     adc object_x_low,x                                                ; 2586: 7d 50 09    }P. :2455[1]
     sta object_left_low                                               ; 2589: 85 70       .p  :2458[1]
@@ -4421,9 +4421,9 @@ add_temporary_offsets
     ldy #0                                                            ; 25be: a0 00       ..  :248d[1]
 ; add temporary left offset to object left position
     lda temp_left_offset                                              ; 25c0: ad d0 24    ..$ :248f[1]
-    bpl c2495                                                         ; 25c3: 10 01       ..  :2492[1]
+    bpl add_ya_to_object_left                                         ; 25c3: 10 01       ..  :2492[1]
     dey                                                               ; 25c5: 88          .   :2494[1]
-c2495
+add_ya_to_object_left
     clc                                                               ; 25c6: 18          .   :2495[1]
     adc object_left_low                                               ; 25c7: 65 70       ep  :2496[1]
     sta object_left_low                                               ; 25c9: 85 70       .p  :2498[1]
@@ -4441,9 +4441,9 @@ c2495
     ldy #0                                                            ; 25db: a0 00       ..  :24aa[1]
 ; add temporary right offset to object right position
     lda temp_right_offset                                             ; 25dd: ad d1 24    ..$ :24ac[1]
-    bpl c24b2                                                         ; 25e0: 10 01       ..  :24af[1]
+    bpl add_ya_to_object_right                                        ; 25e0: 10 01       ..  :24af[1]
     dey                                                               ; 25e2: 88          .   :24b1[1]
-c24b2
+add_ya_to_object_right
     clc                                                               ; 25e3: 18          .   :24b2[1]
     adc object_right_low                                              ; 25e4: 65 72       er  :24b3[1]
     sta object_right_low                                              ; 25e6: 85 72       .r  :24b5[1]
@@ -4509,9 +4509,9 @@ find_top_and_bottom_of_object
 ; add sprite Y offset to object position, store in object_bottom
     ldy #0                                                            ; 2615: a0 00       ..  :24e4[1]
     ora #0                                                            ; 2617: 09 00       ..  :24e6[1]
-    bpl c24eb                                                         ; 2619: 10 01       ..  :24e8[1]
+    bpl add_ya_to_object_bottom1                                      ; 2619: 10 01       ..  :24e8[1]
     dey                                                               ; 261b: 88          .   :24ea[1]
-c24eb
+add_ya_to_object_bottom1
     clc                                                               ; 261c: 18          .   :24eb[1]
     adc object_y_low,x                                                ; 261d: 7d 7c 09    }|. :24ec[1]
     sta object_bottom_low                                             ; 2620: 85 76       .v  :24ef[1]
@@ -4536,9 +4536,9 @@ c24eb
     ldy #0                                                            ; 263e: a0 00       ..  :250d[1]
 ; add temporary signed offset to object_top
     lda temp_top_offset                                               ; 2640: ad 50 25    .P% :250f[1]
-    bpl c2515                                                         ; 2643: 10 01       ..  :2512[1]
+    bpl add_ya_to_object_top                                          ; 2643: 10 01       ..  :2512[1]
     dey                                                               ; 2645: 88          .   :2514[1]
-c2515
+add_ya_to_object_top
     clc                                                               ; 2646: 18          .   :2515[1]
     adc object_top_low                                                ; 2647: 65 74       et  :2516[1]
     sta object_top_low                                                ; 2649: 85 74       .t  :2518[1]
@@ -4556,9 +4556,9 @@ c2515
     ldy #0                                                            ; 265b: a0 00       ..  :252a[1]
 ; add temporary signed offset to object_bottom
     lda temp_bottom_offset                                            ; 265d: ad 51 25    .Q% :252c[1]
-    bpl c2532                                                         ; 2660: 10 01       ..  :252f[1]
+    bpl add_ya_to_object_bottom2                                      ; 2660: 10 01       ..  :252f[1]
     dey                                                               ; 2662: 88          .   :2531[1]
-c2532
+add_ya_to_object_bottom2
     clc                                                               ; 2663: 18          .   :2532[1]
     adc object_bottom_low                                             ; 2664: 65 76       ev  :2533[1]
     sta object_bottom_low                                             ; 2666: 85 76       .v  :2535[1]
@@ -4586,11 +4586,11 @@ temp_bottom_offset
 
 adjust_left_or_right_extent_due_to_holding_an_object
     cpx #0                                                            ; 2683: e0 00       ..  :2552[1]   ; Look for X=0 or X=11
-    beq c255a                                                         ; 2685: f0 04       ..  :2554[1]
+    beq got_a_player_object                                           ; 2685: f0 04       ..  :2554[1]
     cpx #$0b                                                          ; 2687: e0 0b       ..  :2556[1]
     bne return_zeroing_offsets                                        ; 2689: d0 7c       .|  :2558[1]
 ; if (player is not holding an object) then return
-c255a
+got_a_player_object
     lda player_held_object_menu_item_spriteid                         ; 268b: a5 52       .R  :255a[1]
     beq return_zeroing_offsets                                        ; 268d: f0 78       .x  :255c[1]
 ; get spriteid of object being held
@@ -4688,10 +4688,13 @@ sub_c25f5
 ; clear collision flags
     lda #0                                                            ; 2729: a9 00       ..  :25f8[1]
     sta object_room_collision_flags,x                                 ; 272b: 9d d8 38    ..8 :25fa[1]
+; anything outside the game area returns collision map value $ff
     lda #$ff                                                          ; 272e: a9 ff       ..  :25fd[1]
     sta default_collision_map_option                                  ; 2730: 85 44       .D  :25ff[1]
+; raise from the floor one pixel
     lda #1                                                            ; 2732: a9 01       ..  :2601[1]
     sta temp_bottom_offset                                            ; 2734: 8d 51 25    .Q% :2603[1]
+; find extents of player and check for wall collisions
     ldx player_objectid                                               ; 2737: a6 53       .S  :2606[1]
     jsr find_left_and_right_of_object_including_held_object           ; 2739: 20 df 25     .% :2608[1]
     lda player_objectid                                               ; 273c: a5 53       .S  :260b[1]
@@ -4700,24 +4703,26 @@ sub_c25f5
     tax                                                               ; 2741: aa          .   :2610[1]
     jsr find_top_and_bottom_of_object                                 ; 2742: 20 d2 24     .$ :2611[1]
     jsr check_for_player_intersecting_wall_left_or_right              ; 2745: 20 5a 26     Z& :2614[1]
-    lda l007c                                                         ; 2748: a5 7c       .|  :2617[1]
-    ora l007d                                                         ; 274a: 05 7d       .}  :2619[1]
-    beq c2626                                                         ; 274c: f0 09       ..  :261b[1]
+; if (no collisions left or right) then branch
+    lda player_hit_wall_on_left_result_flag                           ; 2748: a5 7c       .|  :2617[1]
+    ora player_hit_wall_on_right_result_flag                          ; 274a: 05 7d       .}  :2619[1]
+    beq check_top_and_bottom_for_collisions                           ; 274c: f0 09       ..  :261b[1]
     lda player_objectid                                               ; 274e: a5 53       .S  :261d[1]
     clc                                                               ; 2750: 18          .   :261f[1]
     adc #$0b                                                          ; 2751: 69 0b       i.  :2620[1]
     tax                                                               ; 2753: aa          .   :2622[1]
     jsr find_left_and_right_of_object_including_held_object           ; 2754: 20 df 25     .% :2623[1]
-c2626
+check_top_and_bottom_for_collisions
     lda #1                                                            ; 2757: a9 01       ..  :2626[1]
     sta temp_bottom_offset                                            ; 2759: 8d 51 25    .Q% :2628[1]
     ldx player_objectid                                               ; 275c: a6 53       .S  :262b[1]
     jsr find_top_and_bottom_of_object                                 ; 275e: 20 d2 24     .$ :262d[1]
     jsr check_for_player_intersecting_floor_or_ceiling                ; 2761: 20 e5 26     .& :2630[1]
-    jsr handle_top_bottom_collision                                   ; 2764: 20 1e 27     .' :2633[1]
-    lda l007c                                                         ; 2767: a5 7c       .|  :2636[1]
-    ora l007d                                                         ; 2769: 05 7d       .}  :2638[1]
+    jsr update_floor_or_ceiling_collision                             ; 2764: 20 1e 27     .' :2633[1]
+    lda player_hit_wall_on_left_result_flag                           ; 2767: a5 7c       .|  :2636[1]
+    ora player_hit_wall_on_right_result_flag                          ; 2769: 05 7d       .}  :2638[1]
     beq c264f                                                         ; 276b: f0 13       ..  :263a[1]
+; handle wall collision
     lda #1                                                            ; 276d: a9 01       ..  :263c[1]
     sta temp_bottom_offset                                            ; 276f: 8d 51 25    .Q% :263e[1]
     ldx player_objectid                                               ; 2772: a6 53       .S  :2641[1]
@@ -4728,7 +4733,7 @@ c2626
 c264f
     lda player_objectid                                               ; 2780: a5 53       .S  :264f[1]
     bne return13                                                      ; 2782: d0 06       ..  :2651[1]
-    jsr sub_c2eb8                                                     ; 2784: 20 b8 2e     .. :2653[1]
+    jsr update_player_accessory_including_toolbar                     ; 2784: 20 b8 2e     .. :2653[1]
     jsr handle_player_landing_sound                                   ; 2787: 20 6b 23     k# :2656[1]
 return13
     rts                                                               ; 278a: 60          `   :2659[1]
@@ -4903,7 +4908,8 @@ look_for_solid_rock_along_player_bottom_edge_loop
 return16
     rts                                                               ; 284e: 60          `   :271d[1]
 
-handle_top_bottom_collision
+; *************************************************************************************
+update_floor_or_ceiling_collision
     ldx player_objectid                                               ; 284f: a6 53       .S  :271e[1]
     lda player_hit_ceiling_result_flag                                ; 2851: a5 7e       .~  :2720[1]
     cmp player_hit_floor_result_flag                                  ; 2853: c5 7f       ..  :2722[1]
@@ -6182,7 +6188,7 @@ wizard_got_index_in_animation
     ldy object_current_index_in_animation                             ; 2f9c: ac d4 09    ... :2e6b[1]
     lda wizard_base_animation,y                                       ; 2f9f: b9 ed 2c    .., :2e6e[1]
     sta object_spriteid                                               ; 2fa2: 8d a8 09    ... :2e71[1]
-    jsr sub_c2eb8                                                     ; 2fa5: 20 b8 2e     .. :2e74[1]
+    jsr update_player_accessory_including_toolbar                     ; 2fa5: 20 b8 2e     .. :2e74[1]
     lda #0                                                            ; 2fa8: a9 00       ..  :2e77[1]
     jsr sub_c25f5                                                     ; 2faa: 20 f5 25     .% :2e79[1]
     lda object_room_collision_flags                                   ; 2fad: ad d8 38    ..8 :2e7c[1]
@@ -6192,7 +6198,7 @@ c2e82
     ldx #<wizard_base_animation                                       ; 2fb6: a2 ed       ..  :2e85[1]
     ldy #>wizard_base_animation                                       ; 2fb8: a0 2c       .,  :2e87[1]
     jsr set_player_spriteid_and_offset_from_animation_table           ; 2fba: 20 00 22     ." :2e89[1]
-    jsr sub_c2eb8                                                     ; 2fbd: 20 b8 2e     .. :2e8c[1]
+    jsr update_player_accessory_including_toolbar                     ; 2fbd: 20 b8 2e     .. :2e8c[1]
     lda #0                                                            ; 2fc0: a9 00       ..  :2e8f[1]
     jsr sub_c25f5                                                     ; 2fc2: 20 f5 25     .% :2e91[1]
     lda object_room_collision_flags                                   ; 2fc5: ad d8 38    ..8 :2e94[1]
@@ -6223,7 +6229,7 @@ player_held_object_for_spriteid_wizard6
 previous_player_held_object_for_spriteid_wizard6
     !byte 0                                                           ; 2fe8: 00          .   :2eb7[1]
 
-sub_c2eb8
+update_player_accessory_including_toolbar
     ldx player_held_object_menu_item_spriteid                         ; 2fe9: a6 52       .R  :2eb8[1]
     beq store_object_held_and_return                                  ; 2feb: f0 28       .(  :2eba[1]
     ldx #<wizard_sprite_list                                          ; 2fed: a2 d7       ..  :2ebc[1]
@@ -6231,16 +6237,18 @@ sub_c2eb8
     lda #0                                                            ; 2ff1: a9 00       ..  :2ec0[1]
     jsr update_player_accessory_object_animation                      ; 2ff3: 20 48 22     H" :2ec2[1]
     lda player_held_object_menu_item_spriteid                         ; 2ff6: a5 52       .R  :2ec5[1]
+; find the menu index of the player accessory given its spriteid
     ldy #0                                                            ; 2ff8: a0 00       ..  :2ec7[1]
-loop_c2ec9
+find_menu_index_given_spriteid_loop
     cmp toolbar_collectable_spriteids,y                               ; 2ffa: d9 e8 2e    ... :2ec9[1]
-    beq c2ed7                                                         ; 2ffd: f0 09       ..  :2ecc[1]
+    beq found_menu_index                                              ; 2ffd: f0 09       ..  :2ecc[1]
     iny                                                               ; 2fff: c8          .   :2ece[1]
     cpy #4                                                            ; 3000: c0 04       ..  :2ecf[1]
-    bcc loop_c2ec9                                                    ; 3002: 90 f6       ..  :2ed1[1]
+    bcc find_menu_index_given_spriteid_loop                           ; 3002: 90 f6       ..  :2ed1[1]
+; menu index not found, give up
     ldx #0                                                            ; 3004: a2 00       ..  :2ed3[1]
-    beq store_object_held_and_return                                  ; 3006: f0 0d       ..  :2ed5[1]
-c2ed7
+    beq store_object_held_and_return                                  ; 3006: f0 0d       ..  :2ed5[1]   ; ALWAYS branch
+found_menu_index
     ldx five_byte_table_paired_with_collectable_sprite_ids,y          ; 3008: be f2 2e    ... :2ed7[1]
     lda object_spriteid                                               ; 300b: ad a8 09    ... :2eda[1]
     cmp #spriteid_wizard6                                             ; 300e: c9 35       .5  :2edd[1]
@@ -6251,13 +6259,12 @@ store_object_held_and_return
     rts                                                               ; 3018: 60          `   :2ee7[1]
 
 toolbar_collectable_spriteids
-    !byte 0                                                           ; 3019: 00          .   :2ee8[1]
-    !byte 0, 0, 0, 0                                                  ; 301a: 00 00 00... ... :2ee9[1]
+    !byte 0, 0, 0, 0, 0                                               ; 3019: 00 00 00... ... :2ee8[1]
 collectable_spriteids
     !byte 0, 0, 0, 0, 0                                               ; 301e: 00 00 00... ... :2eed[1]
 five_byte_table_paired_with_collectable_sprite_ids
-    !byte 0                                                           ; 3023: 00          .   :2ef2[1]
-    !byte 0, 0, 0, 0                                                  ; 3024: 00 00 00... ... :2ef3[1]
+    !byte 0, 0, 0, 0, 0                                               ; 3023: 00 00 00... ... :2ef2[1]
+
 cat_tail_spriteids
     !byte spriteid_cat_tail1, spriteid_cat_tail2, spriteid_cat_tail3  ; 3028: 12 13 14    ... :2ef7[1]
     !byte spriteid_cat_tail4, spriteid_cat_tail5, spriteid_cat_tail6  ; 302b: 15 16 17    ... :2efa[1]
@@ -9060,19 +9067,9 @@ plot_move_x_high
 pydis_end
 
 ; Automatically generated labels:
-;     c244d
-;     c2454
-;     c2495
-;     c24b2
-;     c24eb
-;     c2515
-;     c2532
-;     c255a
-;     c2626
 ;     c264f
 ;     c2e82
 ;     c2eb1
-;     c2ed7
 ;     c3011
 ;     c3023
 ;     c302a
@@ -9138,12 +9135,10 @@ pydis_end
 ;     loop_c0ac6
 ;     loop_c2684
 ;     loop_c2be9
-;     loop_c2ec9
 ;     loop_c34b2
 ;     loop_c39d2
 ;     loop_c3f87
 ;     sub_c25f5
-;     sub_c2eb8
 ;     sub_c336e
 !if (' ' + '0') != $50 {
     !error "Assertion failed: ' ' + '0' == $50"
