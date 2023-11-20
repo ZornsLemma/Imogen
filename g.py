@@ -2014,6 +2014,19 @@ On Exit:
     comment(0x24a1, "divide by eight to get cell left position")
     comment(0x24ac, "add temporary right offset to object right position")
     comment(0x24be, "divide by eight to get cell right position")
+    comment(0x23c4, """*************************************************************************************
+
+Check for player hitting the floor and deal with it.
+Check for player being pushed, and update if so.
+
+On Exit:
+    A and flags: $00 if no collision is happening
+                 $80 if player is hitting a wall (left or right)
+                 otherwise it's a signed byte for the velocity while being pushed.
+    Preserves X,Y
+
+*************************************************************************************""")
+    label(0x23c4, "update_player_hitting_floor_or_pushed")
     comment(0x24d2, """*************************************************************************************
 
 Find the top and bottom extents of the object
@@ -2165,7 +2178,7 @@ On Exit:
                                                $00 otherwise.
 
 *************************************************************************************""")
-    label(0x2770, "check_and_handle_player_hitting_floor")
+    label(0x2770, "update_player_hitting_floor")
     comment(0x2776, "check collision of player with room")
     comment(0x2783, "don't write values to the collision map")
     comment(0x2787, "have we hit the floor?")
@@ -2520,7 +2533,7 @@ Animation code
     label(0x2d16, "wizard_walk_cycle_animation")
     label(0x2d23, "wizard_change_direction_animation")
     label(0x2d26, "wizard_change_direction_animation_last_step")
-    label(0x2d2a, "wizard_animation6")
+    label(0x2d2a, "wizard_transition_to_standing_still_animation")
     label(0x2d2e, "wizard_standing_still_animation")
     label(0x2d32, "wizard_animation8")
     label(0x2d36, "wizard_jump_animation")
@@ -2557,9 +2570,9 @@ if (not already falling) then branch (start falling)""")
     expr(0x2dd7, "object_collided_right_wall")
     comment(0x2dd8, "why not just lda #5?", inline=True)
     expr(0x2dd9, "object_collided_left_wall")
-    label(0x2de4, "wizard_continue_falling")
+    label(0x2de4, "wizard_falling")
     expr(0x2de5, "wizard_fall_continues_animation - wizard_base_animation")
-    comment(0x2deb, "wizard wasn't falling, but now is. It's a fall from a standing position, like through a trapdoor that just opened up beneath you.")
+    comment(0x2deb, "wizard wasn't falling, but now is. It's a fall from a standing position, like through a trapdoor that just opened up beneath you. Also happens when being pushed.")
     expr(0x2def, "wizard_standing_fall_animation - wizard_base_animation")
     label(0x2df3, "wizard_hits_ground")
     expr(0x2df9, "wizard_change_direction_animation - wizard_base_animation")
@@ -2567,11 +2580,16 @@ if (not already falling) then branch (start falling)""")
     expr(0x2e00, "wizard_walk_cycle_animation - wizard_base_animation")
     expr(0x2e0a, "wizard_fall_continues_animation - wizard_base_animation")
     expr(0x2e0e, "wizard_jump_animation - wizard_base_animation")
+    label(0x2e0f, "wizard_changing_direction_or_jump_requested")
+    label(0x2e1b, "wizard_standing_still")
     expr(0x2e1f, "wizard_standing_still_animation - wizard_base_animation")
     expr(0x2e24, "wizard_walk_cycle_animation - wizard_base_animation")
     expr(0x2e28, "wizard_change_direction_animation - wizard_base_animation")
     expr(0x2e35, "wizard_animation8 - wizard_base_animation")
-    expr(0x2e43, "wizard_animation6 - wizard_base_animation")
+    expr(0x2e37, sprite_dict)
+    label(0x2e42, "wizard_transition_to_standing_still")
+    expr(0x2e43, "wizard_transition_to_standing_still_animation - wizard_base_animation")
+    label(0x2e44, "wizard_check_if_fallen_off_edge")
     expr(0x2e52, "wizard_fall_continues_animation - wizard_base_animation")
     expr(0x2e57, "wizard_animation11 - wizard_base_animation")
     expr(0x2e5e, "wizard_animation12 - wizard_base_animation")
@@ -2585,6 +2603,7 @@ if (not already falling) then branch (start falling)""")
     expr(0x2ebf, make_hi("wizard_sprite_list"))
     expr(0x2ede, "spriteid_wizard6")
     label(0x2ee4, "store_object_held_and_return")
+    comment(0x2e42, "transition from a walk cycle or change of direction animation to standing still")
 
     ##################################################################################################
     # Cat animations

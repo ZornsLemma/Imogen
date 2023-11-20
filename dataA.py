@@ -204,8 +204,8 @@ expr(0x3bda, "exit_room_right")
 # TODO: slight guesswork
 expr(0x3f08, "objectid_brazier")
 entry(0x3f52, "not_first_room_update")
-expr(0x3f56, "spriteid_saxophone2") # TODO: this assumes player_held_object contains a sprite ID, it looks like it
-expr(0x4141, "spriteid_saxophone2") # TODO: this assumes player_held_object contains a sprite ID, it looks like it
+expr(0x3f56, "spriteid_saxophone2")
+expr(0x4141, "spriteid_saxophone2")
 expr(0x3f1b, "spriteid_saxophone1")
 expr(0x3c22, "objectid_left_mouse")
 expr(0x3c48, "objectid_right_mouse")
@@ -364,7 +364,7 @@ room 1 (the baby/spell room) has one of these in each corner.
 
 On Entry:
     X and Y registers specify top left cell of pseudo-circle
-    Everything else except {width,height}_in_cells_to_write as for 
+    Everything else except {width,height}_in_cells_to_write as for
         copy_rectangle_of_memory_to_screen
 
 On Exit:

@@ -292,7 +292,7 @@ screen_base_address_high                    = $4c
 new_player_character                        = $4d
 previous_room_index                         = $50
 previous_level                              = $51
-player_held_object                          = $52
+player_held_object_menu_item_spriteid       = $52
 player_objectid                             = $53
 sprdata_ptr                                 = $54
 temp_rope_length                            = $56
@@ -690,7 +690,7 @@ object_reset_loop
     sta current_player_character                                      ; 12e8: 85 48       .H  :11b7[1]
     sta new_player_character                                          ; 12ea: 85 4d       .M  :11b9[1]
     sta object_spriteid                                               ; 12ec: 8d a8 09    ... :11bb[1]
-    sta player_held_object                                            ; 12ef: 85 52       .R  :11be[1]
+    sta player_held_object_menu_item_spriteid                         ; 12ef: 85 52       .R  :11be[1]
     sta player_held_object_for_spriteid_wizard6                       ; 12f1: 8d b6 2e    ... :11c0[1]
     sta previous_player_held_object_for_spriteid_wizard6              ; 12f4: 8d b7 2e    ... :11c3[1]
     sta object_current_index_in_animation+1                           ; 12f7: 8d d5 09    ... :11c6[1]
@@ -3540,10 +3540,10 @@ positive_y_pixel
 ; 
 ; *************************************************************************************
 update_objects
-    lda player_held_object                                            ; 2108: a5 52       .R  :1fd7[1]
+    lda player_held_object_menu_item_spriteid                         ; 2108: a5 52       .R  :1fd7[1]
     pha                                                               ; 210a: 48          H   :1fd9[1]
     lda #0                                                            ; 210b: a9 00       ..  :1fda[1]
-    sta player_held_object                                            ; 210d: 85 52       .R  :1fdc[1]
+    sta player_held_object_menu_item_spriteid                         ; 210d: 85 52       .R  :1fdc[1]
 ; mark all objects as 'not dealt with' yet
     lda #0                                                            ; 210f: a9 00       ..  :1fde[1]
     tax                                                               ; 2111: aa          .   :1fe0[1]
@@ -3594,7 +3594,7 @@ skip_objects_already_dealt_with
     bpl update_non_active_object_state_loop                           ; 2152: 10 f5       ..  :2021[1]
 ; restore the player held object
     pla                                                               ; 2154: 68          h   :2023[1]
-    sta player_held_object                                            ; 2155: 85 52       .R  :2024[1]
+    sta player_held_object_menu_item_spriteid                         ; 2155: 85 52       .R  :2024[1]
     rts                                                               ; 2157: 60          `   :2026[1]
 
 found_backmost_object
@@ -4166,7 +4166,7 @@ transform
     sta new_player_character                                          ; 2468: 85 4d       .M  :2337[1]
     lda #0                                                            ; 246a: a9 00       ..  :2339[1]
     sta player_wall_collision_flag                                    ; 246c: 8d 33 24    .3$ :233b[1]
-    sta player_held_object                                            ; 246f: 85 52       .R  :233e[1]
+    sta player_held_object_menu_item_spriteid                         ; 246f: 85 52       .R  :233e[1]
 ; if the current menu item is to the left of the player characters, then we have just
 ; loaded a level or something, so don't play the transform sounds.
     lda new_menu_index                                                ; 2471: a5 29       .)  :2340[1]
@@ -4247,13 +4247,25 @@ play_landing_sound
     pla                                                               ; 24f3: 68          h   :23c2[1]
     rts                                                               ; 24f4: 60          `   :23c3[1]
 
-sub_c23c4
+; *************************************************************************************
+; 
+; Check for player hitting the floor and deal with it.
+; Check for player being pushed, and update if so.
+; 
+; On Exit:
+;     A and flags: $00 if no collision is happening
+;                  $80 if player is hitting a wall (left or right)
+;                  otherwise it's a signed byte for the velocity while being pushed.
+;     Preserves X,Y
+; 
+; *************************************************************************************
+update_player_hitting_floor_or_pushed
     txa                                                               ; 24f5: 8a          .   :23c4[1]   ; remember X,Y
     pha                                                               ; 24f6: 48          H   :23c5[1]
     tya                                                               ; 24f7: 98          .   :23c6[1]
     pha                                                               ; 24f8: 48          H   :23c7[1]
     lda #0                                                            ; 24f9: a9 00       ..  :23c8[1]
-    jsr check_and_handle_player_hitting_floor                         ; 24fb: 20 70 27     p' :23ca[1]
+    jsr update_player_hitting_floor                                   ; 24fb: 20 70 27     p' :23ca[1]
 ; if (no player collision) then branch (return)
     lda player_wall_collision_flag                                    ; 24fe: ad 33 24    .3$ :23cd[1]
     beq recall_registers_and_return1                                  ; 2501: f0 59       .Y  :23d0[1]
@@ -4579,7 +4591,7 @@ adjust_left_or_right_extent_due_to_holding_an_object
     bne return_zeroing_offsets                                        ; 2689: d0 7c       .|  :2558[1]
 ; if (player is not holding an object) then return
 c255a
-    lda player_held_object                                            ; 268b: a5 52       .R  :255a[1]
+    lda player_held_object_menu_item_spriteid                         ; 268b: a5 52       .R  :255a[1]
     beq return_zeroing_offsets                                        ; 268d: f0 78       .x  :255c[1]
 ; get spriteid of object being held
     inx                                                               ; 268f: e8          .   :255e[1]
@@ -4956,7 +4968,7 @@ return17
 ;                                                $00 otherwise.
 ; 
 ; *************************************************************************************
-check_and_handle_player_hitting_floor
+update_player_hitting_floor
     sta player_objectid                                               ; 28a1: 85 53       .S  :2770[1]
     txa                                                               ; 28a3: 8a          .   :2772[1]   ; remember X,Y
     pha                                                               ; 28a4: 48          H   :2773[1]
@@ -5657,7 +5669,7 @@ check_if_player_character_menu_item_chosen
     lda current_animation                                             ; 2c7a: ad df 09    ... :2b49[1]
     beq return21                                                      ; 2c7d: f0 16       ..  :2b4c[1]
     lda #0                                                            ; 2c7f: a9 00       ..  :2b4e[1]
-    sta player_held_object                                            ; 2c81: 85 52       .R  :2b50[1]
+    sta player_held_object_menu_item_spriteid                         ; 2c81: 85 52       .R  :2b50[1]
 ; return if we are already this player character
     lda desired_menu_slots,x                                          ; 2c83: bd 5c 29    .\) :2b52[1]
     cmp current_player_character                                      ; 2c86: c5 48       .H  :2b55[1]
@@ -5682,11 +5694,11 @@ check_for_extra_menu_item_chosen
     lda current_animation                                             ; 2ca7: ad df 09    ... :2b76[1]
     beq return22                                                      ; 2caa: f0 0b       ..  :2b79[1]
     lda desired_menu_slots,x                                          ; 2cac: bd 5c 29    .\) :2b7b[1]
-    cmp player_held_object                                            ; 2caf: c5 52       .R  :2b7e[1]
+    cmp player_held_object_menu_item_spriteid                         ; 2caf: c5 52       .R  :2b7e[1]
     bne skip6                                                         ; 2cb1: d0 02       ..  :2b80[1]
     lda #0                                                            ; 2cb3: a9 00       ..  :2b82[1]
 skip6
-    sta player_held_object                                            ; 2cb5: 85 52       .R  :2b84[1]
+    sta player_held_object_menu_item_spriteid                         ; 2cb5: 85 52       .R  :2b84[1]
 return22
     rts                                                               ; 2cb7: 60          `   :2b86[1]
 
@@ -5989,7 +6001,7 @@ wizard_change_direction_animation
 wizard_change_direction_animation_last_step
     !byte spriteid_wizard4,                2,                0        ; 2e57: 33 02 00    3.. :2d26[1]
     !byte                0                                            ; 2e5a: 00          .   :2d29[1]
-wizard_animation6
+wizard_transition_to_standing_still_animation
     !byte spriteid_wizard7,                4,                0        ; 2e5b: 36 04 00    6.. :2d2a[1]
     !byte                0                                            ; 2e5e: 00          .   :2d2d[1]
 wizard_standing_still_animation
@@ -6055,8 +6067,8 @@ update_wizard_animation
     jmp wizard_got_index_in_animation                                 ; 2ed4: 4c 5f 2e    L_. :2da3[1]
 
 wizard_not_changing_direction
-    jsr sub_c23c4                                                     ; 2ed7: 20 c4 23     .# :2da6[1]
-    bne wizard_continue_falling                                       ; 2eda: d0 39       .9  :2da9[1]
+    jsr update_player_hitting_floor_or_pushed                         ; 2ed7: 20 c4 23     .# :2da6[1]
+    bne wizard_falling                                                ; 2eda: d0 39       .9  :2da9[1]
     lda current_animation                                             ; 2edc: ad df 09    ... :2dab[1]
     cmp #wizard_jump_animation - wizard_base_animation                ; 2edf: c9 49       .I  :2dae[1]
     bne wizard_not_jumping                                            ; 2ee1: d0 18       ..  :2db0[1]
@@ -6084,66 +6096,67 @@ wizard_not_jumping
 ; if (not already falling) then branch (start falling)
     lda current_animation                                             ; 2f00: ad df 09    ... :2dcf[1]
     cmp #wizard_fall_continues_animation - wizard_base_animation      ; 2f03: c9 96       ..  :2dd2[1]
-    bne wizard_continue_falling                                       ; 2f05: d0 0e       ..  :2dd4[1]
+    bne wizard_falling                                                ; 2f05: d0 0e       ..  :2dd4[1]
 ; if (player not hitting left or right wall) then branch (start falling)
     lda #object_collided_right_wall                                   ; 2f07: a9 04       ..  :2dd6[1]
     ora #object_collided_left_wall                                    ; 2f09: 09 01       ..  :2dd8[1]   ; why not just lda #5?
     and object_room_collision_flags                                   ; 2f0b: 2d d8 38    -.8 :2dda[1]
-    beq wizard_continue_falling                                       ; 2f0e: f0 05       ..  :2ddd[1]
+    beq wizard_falling                                                ; 2f0e: f0 05       ..  :2ddd[1]
     lda #$80                                                          ; 2f10: a9 80       ..  :2ddf[1]
     sta player_wall_collision_flag                                    ; 2f12: 8d 33 24    .3$ :2de1[1]
-wizard_continue_falling
+wizard_falling
     lda #wizard_fall_continues_animation - wizard_base_animation      ; 2f15: a9 96       ..  :2de4[1]
     cmp current_animation                                             ; 2f17: cd df 09    ... :2de6[1]
     beq wizard_got_index_in_animation_local                           ; 2f1a: f0 d5       ..  :2de9[1]
 ; wizard wasn't falling, but now is. It's a fall from a standing position, like through
-; a trapdoor that just opened up beneath you.
+; a trapdoor that just opened up beneath you. Also happens when being pushed.
     sta current_animation                                             ; 2f1c: 8d df 09    ... :2deb[1]
     ldy #wizard_standing_fall_animation - wizard_base_animation       ; 2f1f: a0 86       ..  :2dee[1]
     jmp wizard_got_index_in_animation                                 ; 2f21: 4c 5f 2e    L_. :2df0[1]
 
 wizard_hits_ground
     ldx player_move_direction_requested                               ; 2f24: ae c9 3a    ..: :2df3[1]
-    beq c2e1b                                                         ; 2f27: f0 23       .#  :2df6[1]
+    beq wizard_standing_still                                         ; 2f27: f0 23       .#  :2df6[1]
     lda #wizard_change_direction_animation - wizard_base_animation    ; 2f29: a9 36       .6  :2df8[1]
     cpx object_direction                                              ; 2f2b: ec be 09    ... :2dfa[1]
-    bne c2e0f                                                         ; 2f2e: d0 10       ..  :2dfd[1]
+    bne wizard_changing_direction_or_jump_requested                   ; 2f2e: d0 10       ..  :2dfd[1]
     lda #wizard_walk_cycle_animation - wizard_base_animation          ; 2f30: a9 29       .)  :2dff[1]
     ldx jump_requested                                                ; 2f32: ae c7 3a    ..: :2e01[1]
-    beq c2e0f                                                         ; 2f35: f0 09       ..  :2e04[1]
+    beq wizard_changing_direction_or_jump_requested                   ; 2f35: f0 09       ..  :2e04[1]
     ldx current_animation                                             ; 2f37: ae df 09    ... :2e06[1]
     cpx #wizard_fall_continues_animation - wizard_base_animation      ; 2f3a: e0 96       ..  :2e09[1]
-    beq c2e0f                                                         ; 2f3c: f0 02       ..  :2e0b[1]
+    beq wizard_changing_direction_or_jump_requested                   ; 2f3c: f0 02       ..  :2e0b[1]
     lda #wizard_jump_animation - wizard_base_animation                ; 2f3e: a9 49       .I  :2e0d[1]
-c2e0f
+wizard_changing_direction_or_jump_requested
     cmp current_animation                                             ; 2f40: cd df 09    ... :2e0f[1]
-    beq c2e44                                                         ; 2f43: f0 30       .0  :2e12[1]
+    beq wizard_check_if_fallen_off_edge                               ; 2f43: f0 30       .0  :2e12[1]
     sta current_animation                                             ; 2f45: 8d df 09    ... :2e14[1]
     tay                                                               ; 2f48: a8          .   :2e17[1]
-    jmp c2e44                                                         ; 2f49: 4c 44 2e    LD. :2e18[1]
+    jmp wizard_check_if_fallen_off_edge                               ; 2f49: 4c 44 2e    LD. :2e18[1]
 
-c2e1b
+wizard_standing_still
     lda current_animation                                             ; 2f4c: ad df 09    ... :2e1b[1]
     ldy #wizard_standing_still_animation - wizard_base_animation      ; 2f4f: a0 41       .A  :2e1e[1]
     sty current_animation                                             ; 2f51: 8c df 09    ... :2e20[1]
     cmp #wizard_walk_cycle_animation - wizard_base_animation          ; 2f54: c9 29       .)  :2e23[1]
-    beq c2e42                                                         ; 2f56: f0 1b       ..  :2e25[1]
+    beq wizard_transition_to_standing_still                           ; 2f56: f0 1b       ..  :2e25[1]
     cmp #wizard_change_direction_animation - wizard_base_animation    ; 2f58: c9 36       .6  :2e27[1]
-    beq c2e42                                                         ; 2f5a: f0 17       ..  :2e29[1]
+    beq wizard_transition_to_standing_still                           ; 2f5a: f0 17       ..  :2e29[1]
     lda jump_requested                                                ; 2f5c: ad c7 3a    ..: :2e2b[1]
-    beq c2e44                                                         ; 2f5f: f0 14       ..  :2e2e[1]
-    lda player_held_object                                            ; 2f61: a5 52       .R  :2e30[1]
-    beq c2e44                                                         ; 2f63: f0 10       ..  :2e32[1]
+    beq wizard_check_if_fallen_off_edge                               ; 2f5f: f0 14       ..  :2e2e[1]
+    lda player_held_object_menu_item_spriteid                         ; 2f61: a5 52       .R  :2e30[1]
+    beq wizard_check_if_fallen_off_edge                               ; 2f63: f0 10       ..  :2e32[1]
     ldy #wizard_animation8 - wizard_base_animation                    ; 2f65: a0 45       .E  :2e34[1]
-    cmp #$21 ; '!'                                                    ; 2f67: c9 21       .!  :2e36[1]
-    bne c2e44                                                         ; 2f69: d0 0a       ..  :2e38[1]
+    cmp #spriteid_menu_item_completion_spell                          ; 2f67: c9 21       .!  :2e36[1]
+    bne wizard_check_if_fallen_off_edge                               ; 2f69: d0 0a       ..  :2e38[1]
     lda #0                                                            ; 2f6b: a9 00       ..  :2e3a[1]
     jsr transform                                                     ; 2f6d: 20 37 23     7# :2e3c[1]
     jmp update_wizard_animation                                       ; 2f70: 4c 87 2d    L.- :2e3f[1]
 
-c2e42
-    ldy #wizard_animation6 - wizard_base_animation                    ; 2f73: a0 3d       .=  :2e42[1]
-c2e44
+; transition from a walk cycle or change of direction animation to standing still
+wizard_transition_to_standing_still
+    ldy #wizard_transition_to_standing_still_animation - wizard_base_animation; 2f73: a0 3d       .=  :2e42[1]
+wizard_check_if_fallen_off_edge
     ldx #0                                                            ; 2f75: a2 00       ..  :2e44[1]
     lda player_move_direction_requested                               ; 2f77: ad c9 3a    ..: :2e46[1]
     beq c2e4c                                                         ; 2f7a: f0 01       ..  :2e49[1]
@@ -6161,7 +6174,7 @@ wizard_got_index_in_animation
     sty object_current_index_in_animation                             ; 2f90: 8c d4 09    ... :2e5f[1]
     lda #0                                                            ; 2f93: a9 00       ..  :2e62[1]
     sta temp_collision_results                                        ; 2f95: 8d b5 2e    ... :2e64[1]
-    lda player_held_object                                            ; 2f98: a5 52       .R  :2e67[1]
+    lda player_held_object_menu_item_spriteid                         ; 2f98: a5 52       .R  :2e67[1]
     beq c2e82                                                         ; 2f9a: f0 17       ..  :2e69[1]
     ldy object_current_index_in_animation                             ; 2f9c: ac d4 09    ... :2e6b[1]
     lda wizard_base_animation,y                                       ; 2f9f: b9 ed 2c    .., :2e6e[1]
@@ -6193,7 +6206,7 @@ c2e82
     lda object_spriteid                                               ; 2fd6: ad a8 09    ... :2ea5[1]
     cmp #spriteid_wizard6                                             ; 2fd9: c9 35       .5  :2ea8[1]
     bne c2eb1                                                         ; 2fdb: d0 05       ..  :2eaa[1]
-    lda player_held_object                                            ; 2fdd: a5 52       .R  :2eac[1]
+    lda player_held_object_menu_item_spriteid                         ; 2fdd: a5 52       .R  :2eac[1]
     beq c2eb1                                                         ; 2fdf: f0 01       ..  :2eae[1]
     tax                                                               ; 2fe1: aa          .   :2eb0[1]
 c2eb1
@@ -6208,13 +6221,13 @@ previous_player_held_object_for_spriteid_wizard6
     !byte 0                                                           ; 2fe8: 00          .   :2eb7[1]
 
 sub_c2eb8
-    ldx player_held_object                                            ; 2fe9: a6 52       .R  :2eb8[1]
+    ldx player_held_object_menu_item_spriteid                         ; 2fe9: a6 52       .R  :2eb8[1]
     beq store_object_held_and_return                                  ; 2feb: f0 28       .(  :2eba[1]
     ldx #<wizard_sprite_list                                          ; 2fed: a2 d7       ..  :2ebc[1]
     ldy #>wizard_sprite_list                                          ; 2fef: a0 2c       .,  :2ebe[1]
     lda #0                                                            ; 2ff1: a9 00       ..  :2ec0[1]
     jsr update_player_accessory_object_animation                      ; 2ff3: 20 48 22     H" :2ec2[1]
-    lda player_held_object                                            ; 2ff6: a5 52       .R  :2ec5[1]
+    lda player_held_object_menu_item_spriteid                         ; 2ff6: a5 52       .R  :2ec5[1]
     ldy #0                                                            ; 2ff8: a0 00       ..  :2ec7[1]
 loop_c2ec9
     cmp toolbar_collectable_spriteids,y                               ; 2ffa: d9 e8 2e    ... :2ec9[1]
@@ -6360,7 +6373,7 @@ update_cat_animation
     jmp cat_got_index_in_animation                                    ; 3115: 4c a5 30    L.0 :2fe4[1]
 
 cat_not_changing_direction
-    jsr sub_c23c4                                                     ; 3118: 20 c4 23     .# :2fe7[1]
+    jsr update_player_hitting_floor_or_pushed                         ; 3118: 20 c4 23     .# :2fe7[1]
     bne c3044                                                         ; 311b: d0 58       .X  :2fea[1]
     lda current_animation                                             ; 311d: ad df 09    ... :2fec[1]
     cmp #cat_jump_animation - cat_base_animation                      ; 3120: c9 45       .E  :2fef[1]
@@ -6638,7 +6651,7 @@ c31f4
     jmp c3331                                                         ; 3325: 4c 31 33    L13 :31f4[1]
 
 monkey_not_changing_direction
-    jsr sub_c23c4                                                     ; 3328: 20 c4 23     .# :31f7[1]
+    jsr update_player_hitting_floor_or_pushed                         ; 3328: 20 c4 23     .# :31f7[1]
     beq c31ff                                                         ; 332b: f0 03       ..  :31fa[1]
     jmp c32b1                                                         ; 332d: 4c b1 32    L.2 :31fc[1]
 
@@ -9043,10 +9056,6 @@ pydis_end
 ;     c255a
 ;     c2626
 ;     c264f
-;     c2e0f
-;     c2e1b
-;     c2e42
-;     c2e44
 ;     c2e4c
 ;     c2e82
 ;     c2eb1
@@ -9122,7 +9131,6 @@ pydis_end
 ;     loop_c34b2
 ;     loop_c39d2
 ;     loop_c3f87
-;     sub_c23c4
 ;     sub_c25f5
 ;     sub_c2eb8
 ;     sub_c336e
@@ -10251,9 +10259,6 @@ pydis_end
 !if (wizard_animation12 - wizard_base_animation) != $79 {
     !error "Assertion failed: wizard_animation12 - wizard_base_animation == $79"
 }
-!if (wizard_animation6 - wizard_base_animation) != $3d {
-    !error "Assertion failed: wizard_animation6 - wizard_base_animation == $3d"
-}
 !if (wizard_animation8 - wizard_base_animation) != $45 {
     !error "Assertion failed: wizard_animation8 - wizard_base_animation == $45"
 }
@@ -10280,6 +10285,9 @@ pydis_end
 }
 !if (wizard_transform_out_animation - wizard_base_animation) != $16 {
     !error "Assertion failed: wizard_transform_out_animation - wizard_base_animation == $16"
+}
+!if (wizard_transition_to_standing_still_animation - wizard_base_animation) != $3d {
+    !error "Assertion failed: wizard_transition_to_standing_still_animation - wizard_base_animation == $3d"
 }
 !if (wizard_walk_cycle_animation - wizard_base_animation) != $29 {
     !error "Assertion failed: wizard_walk_cycle_animation - wizard_base_animation == $29"

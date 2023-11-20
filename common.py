@@ -136,7 +136,7 @@ def common_to_all():
 
     label(0x0050, "previous_room_index")
     label(0x0051, "previous_level") # TODO: see use at initialise_level
-    label(0x0052, "player_held_object")
+    label(0x0052, "player_held_object_menu_item_spriteid")
 
     label(0x003c, "width_in_cells")
     label(0x003d, "height_in_cells")
