@@ -6313,7 +6313,7 @@ cat_change_direction_animation
 cat_change_direction_animation_last_step
     !byte spriteid_cat_walk4,                  2,                  0  ; 3080: 0f 02 00    ... :2f4f[1]
     !byte                  0                                          ; 3083: 00          .   :2f52[1]
-cat_animation6
+cat_transition_to_standing_still_animation
     !byte spriteid_cat2,             4,             0,             0  ; 3084: 1c 04 00... ... :2f53[1]
 cat_standing_still_animation
     !byte spriteid_cat2,             0,             0,             0  ; 3088: 1c 00 00... ... :2f57[1]
@@ -6329,7 +6329,7 @@ cat_jump_apex_animation
     !byte spriteid_cat_jump,                 5,                 0     ; 309f: 1a 05 00    ... :2f6e[1]
     !byte spriteid_cat_jump,                 5,                 0     ; 30a2: 1a 05 00    ... :2f71[1]
     !byte                 0                                           ; 30a5: 00          .   :2f74[1]
-cat_animation10
+cat_start_to_fall_animation
     !byte spriteid_cat_walk4,                  5,                  1  ; 30a6: 0f 05 01    ... :2f75[1]
     !byte spriteid_cat_walk4,                  5,                  2  ; 30a9: 0f 05 02    ... :2f78[1]
     !byte spriteid_cat_walk4,                  4,                  3  ; 30ac: 0f 04 03    ... :2f7b[1]
@@ -6355,7 +6355,7 @@ cat_animation12
     !byte spriteid_cat_walk4,                $fe,                  4  ; 30de: 0f fe 04    ... :2fad[1]
     !byte spriteid_cat_walk4,                $ff,                  5  ; 30e1: 0f ff 05    ... :2fb0[1]
     !byte                  0                                          ; 30e4: 00          .   :2fb3[1]
-cat_animation13
+cat_standing_fall_animation
     !byte spriteid_cat_walk4,                  0,                  1  ; 30e5: 0f 00 01    ... :2fb4[1]
     !byte spriteid_cat_walk4,                  0,                  2  ; 30e8: 0f 00 02    ... :2fb7[1]
     !byte spriteid_cat_walk4,                  0,                  3  ; 30eb: 0f 00 03    ... :2fba[1]
@@ -6384,88 +6384,95 @@ update_cat_animation
 
 cat_not_changing_direction
     jsr update_player_hitting_floor_or_pushed                         ; 3118: 20 c4 23     .# :2fe7[1]
-    bne c3044                                                         ; 311b: d0 58       .X  :2fea[1]
+    bne cat_falling                                                   ; 311b: d0 58       .X  :2fea[1]
     lda current_animation                                             ; 311d: ad df 09    ... :2fec[1]
     cmp #cat_jump_animation - cat_base_animation                      ; 3120: c9 45       .E  :2fef[1]
-    bne c3011                                                         ; 3122: d0 1e       ..  :2ff1[1]
+    bne cat_not_jumping                                               ; 3122: d0 1e       ..  :2ff1[1]
+; cat is jumping
     dec temp_top_offset                                               ; 3124: ce 50 25    .P% :2ff3[1]
+; if (collided with room while jumping) then branch (fall)
     lda #0                                                            ; 3127: a9 00       ..  :2ff6[1]
     jsr get_solid_rock_collision_for_object_a                         ; 3129: 20 94 28     .( :2ff8[1]
-    bne c3023                                                         ; 312c: d0 26       .&  :2ffb[1]
+    bne cat_start_to_fall                                             ; 312c: d0 26       .&  :2ffb[1]
+; if (jump animation has looped) then branch (fall)
     cpy #cat_jump_animation - cat_base_animation                      ; 312e: c0 45       .E  :2ffd[1]
     bne cat_got_index_in_animation_local                              ; 3130: d0 0d       ..  :2fff[1]
     lda player_move_direction_requested                               ; 3132: ad c9 3a    ..: :3001[1]
     cmp object_direction                                              ; 3135: cd be 09    ... :3004[1]
-    bne c3023                                                         ; 3138: d0 1a       ..  :3007[1]
+    bne cat_start_to_fall                                             ; 3138: d0 1a       ..  :3007[1]
     ldy #cat_jump_apex_animation - cat_base_animation                 ; 313a: a0 58       .X  :3009[1]
     sty current_animation                                             ; 313c: 8c df 09    ... :300b[1]
 cat_got_index_in_animation_local
     jmp cat_got_index_in_animation                                    ; 313f: 4c a5 30    L.0 :300e[1]
 
-c3011
+cat_not_jumping
     cmp #cat_jump_apex_animation - cat_base_animation                 ; 3142: c9 58       .X  :3011[1]
-    bne c302a                                                         ; 3144: d0 15       ..  :3013[1]
+    bne cat_check_for_hitting_floor                                   ; 3144: d0 15       ..  :3013[1]
     dec temp_top_offset                                               ; 3146: ce 50 25    .P% :3015[1]
     lda #0                                                            ; 3149: a9 00       ..  :3018[1]
     jsr get_solid_rock_collision_for_object_a                         ; 314b: 20 94 28     .( :301a[1]
-    bne c3023                                                         ; 314e: d0 04       ..  :301d[1]
+    bne cat_start_to_fall                                             ; 314e: d0 04       ..  :301d[1]
     cpy #cat_jump_apex_animation - cat_base_animation                 ; 3150: c0 58       .X  :301f[1]
     bne cat_got_index_in_animation_local                              ; 3152: d0 eb       ..  :3021[1]
-c3023
-    lda #$ae                                                          ; 3154: a9 ae       ..  :3023[1]
+cat_start_to_fall
+    lda #cat_fall_animation - cat_base_animation                      ; 3154: a9 ae       ..  :3023[1]
     sta current_animation                                             ; 3156: 8d df 09    ... :3025[1]
-    ldy #cat_animation10 - cat_base_animation                         ; 3159: a0 5f       ._  :3028[1]
-c302a
+    ldy #cat_start_to_fall_animation - cat_base_animation             ; 3159: a0 5f       ._  :3028[1]
+; if (player has hit floor) then branch
+cat_check_for_hitting_floor
     lda player_has_hit_floor_flag                                     ; 315b: ad 8f 28    ..( :302a[1]
-    bne c3053                                                         ; 315e: d0 24       .$  :302d[1]
+    bne cat_hits_ground                                               ; 315e: d0 24       .$  :302d[1]
     lda current_animation                                             ; 3160: ad df 09    ... :302f[1]
     cmp #cat_fall_animation - cat_base_animation                      ; 3163: c9 ae       ..  :3032[1]
-    bne c3044                                                         ; 3165: d0 0e       ..  :3034[1]
+    bne cat_falling                                                   ; 3165: d0 0e       ..  :3034[1]
 ; check player for collision with left or right wall
     lda #object_collided_right_wall                                   ; 3167: a9 04       ..  :3036[1]
     ora #object_collided_left_wall                                    ; 3169: 09 01       ..  :3038[1]   ; why not just lda #5?
     and object_room_collision_flags                                   ; 316b: 2d d8 38    -.8 :303a[1]
-    beq c3044                                                         ; 316e: f0 05       ..  :303d[1]
+    beq cat_falling                                                   ; 316e: f0 05       ..  :303d[1]
     lda #$80                                                          ; 3170: a9 80       ..  :303f[1]
     sta player_wall_collision_flag                                    ; 3172: 8d 33 24    .3$ :3041[1]
-c3044
+cat_falling
     lda #cat_fall_animation - cat_base_animation                      ; 3175: a9 ae       ..  :3044[1]
     cmp current_animation                                             ; 3177: cd df 09    ... :3046[1]
     beq cat_got_index_in_animation_local                              ; 317a: f0 c3       ..  :3049[1]
+; cat wasn't falling, but now is. It's a fall from a standing position, like through a
+; trapdoor that just opened up beneath you. Also happens when being pushed.
     sta current_animation                                             ; 317c: 8d df 09    ... :304b[1]
-    ldy #cat_animation13 - cat_base_animation                         ; 317f: a0 9e       ..  :304e[1]
+    ldy #cat_standing_fall_animation - cat_base_animation             ; 317f: a0 9e       ..  :304e[1]
     jmp cat_got_index_in_animation                                    ; 3181: 4c a5 30    L.0 :3050[1]
 
-c3053
+cat_hits_ground
     ldx player_move_direction_requested                               ; 3184: ae c9 3a    ..: :3053[1]
-    beq c3074                                                         ; 3187: f0 1c       ..  :3056[1]
+    beq cat_standing_still                                            ; 3187: f0 1c       ..  :3056[1]
     lda #cat_change_direction_animation - cat_base_animation          ; 3189: a9 36       .6  :3058[1]
     cpx object_direction                                              ; 318b: ec be 09    ... :305a[1]
-    bne c3068                                                         ; 318e: d0 09       ..  :305d[1]
+    bne cat_changing_direction_or_jump_requested                      ; 318e: d0 09       ..  :305d[1]
     lda #cat_walk_cycle_animation - cat_base_animation                ; 3190: a9 29       .)  :305f[1]
     ldx jump_requested                                                ; 3192: ae c7 3a    ..: :3061[1]
-    beq c3068                                                         ; 3195: f0 02       ..  :3064[1]
+    beq cat_changing_direction_or_jump_requested                      ; 3195: f0 02       ..  :3064[1]
     lda #cat_jump_animation - cat_base_animation                      ; 3197: a9 45       .E  :3066[1]
-c3068
+cat_changing_direction_or_jump_requested
     cmp current_animation                                             ; 3199: cd df 09    ... :3068[1]
-    beq c308a                                                         ; 319c: f0 1d       ..  :306b[1]
+    beq cat_check_if_fallen_off_edge                                  ; 319c: f0 1d       ..  :306b[1]
     sta current_animation                                             ; 319e: 8d df 09    ... :306d[1]
     tay                                                               ; 31a1: a8          .   :3070[1]
-    jmp c308a                                                         ; 31a2: 4c 8a 30    L.0 :3071[1]
+    jmp cat_check_if_fallen_off_edge                                  ; 31a2: 4c 8a 30    L.0 :3071[1]
 
-c3074
+cat_standing_still
     lda current_animation                                             ; 31a5: ad df 09    ... :3074[1]
     cmp #cat_standing_still_animation - cat_base_animation            ; 31a8: c9 41       .A  :3077[1]
-    beq c308a                                                         ; 31aa: f0 0f       ..  :3079[1]
+    beq cat_check_if_fallen_off_edge                                  ; 31aa: f0 0f       ..  :3079[1]
     ldy #cat_standing_still_animation - cat_base_animation            ; 31ac: a0 41       .A  :307b[1]
     sty current_animation                                             ; 31ae: 8c df 09    ... :307d[1]
     cmp #cat_walk_cycle_animation - cat_base_animation                ; 31b1: c9 29       .)  :3080[1]
-    beq c3088                                                         ; 31b3: f0 04       ..  :3082[1]
+    beq cat_transition_to_standing_still                              ; 31b3: f0 04       ..  :3082[1]
     cmp #cat_change_direction_animation - cat_base_animation          ; 31b5: c9 36       .6  :3084[1]
-    bne c308a                                                         ; 31b7: d0 02       ..  :3086[1]
-c3088
-    ldy #cat_animation6 - cat_base_animation                          ; 31b9: a0 3d       .=  :3088[1]
-c308a
+    bne cat_check_if_fallen_off_edge                                  ; 31b7: d0 02       ..  :3086[1]
+; transition from a walk cycle or change of direction animation to standing still
+cat_transition_to_standing_still
+    ldy #cat_transition_to_standing_still_animation - cat_base_animation; 31b9: a0 3d       .=  :3088[1]
+cat_check_if_fallen_off_edge
     ldx #0                                                            ; 31bb: a2 00       ..  :308a[1]
 ; Read the 'player_just_fallen_off_edge_direction' if stationary, or the
 ; 'player_just_fallen_off_centrally_direction' if moving
@@ -9070,15 +9077,6 @@ pydis_end
 ;     c264f
 ;     c2e82
 ;     c2eb1
-;     c3011
-;     c3023
-;     c302a
-;     c3044
-;     c3053
-;     c3068
-;     c3074
-;     c3088
-;     c308a
 ;     c30ca
 ;     c30d5
 ;     c31f4
@@ -9599,20 +9597,11 @@ pydis_end
 !if (caps_mask) != $df {
     !error "Assertion failed: caps_mask == $df"
 }
-!if (cat_animation10 - cat_base_animation) != $5f {
-    !error "Assertion failed: cat_animation10 - cat_base_animation == $5f"
-}
 !if (cat_animation11 - cat_base_animation) != $84 {
     !error "Assertion failed: cat_animation11 - cat_base_animation == $84"
 }
 !if (cat_animation12 - cat_base_animation) != $91 {
     !error "Assertion failed: cat_animation12 - cat_base_animation == $91"
-}
-!if (cat_animation13 - cat_base_animation) != $9e {
-    !error "Assertion failed: cat_animation13 - cat_base_animation == $9e"
-}
-!if (cat_animation6 - cat_base_animation) != $3d {
-    !error "Assertion failed: cat_animation6 - cat_base_animation == $3d"
 }
 !if (cat_change_direction_animation - cat_base_animation) != $36 {
     !error "Assertion failed: cat_change_direction_animation - cat_base_animation == $36"
@@ -9629,14 +9618,23 @@ pydis_end
 !if (cat_jump_apex_animation - cat_base_animation) != $58 {
     !error "Assertion failed: cat_jump_apex_animation - cat_base_animation == $58"
 }
+!if (cat_standing_fall_animation - cat_base_animation) != $9e {
+    !error "Assertion failed: cat_standing_fall_animation - cat_base_animation == $9e"
+}
 !if (cat_standing_still_animation - cat_base_animation) != $41 {
     !error "Assertion failed: cat_standing_still_animation - cat_base_animation == $41"
+}
+!if (cat_start_to_fall_animation - cat_base_animation) != $5f {
+    !error "Assertion failed: cat_start_to_fall_animation - cat_base_animation == $5f"
 }
 !if (cat_transform_in_animation - cat_base_animation) != $00 {
     !error "Assertion failed: cat_transform_in_animation - cat_base_animation == $00"
 }
 !if (cat_transform_out_animation - cat_base_animation) != $16 {
     !error "Assertion failed: cat_transform_out_animation - cat_base_animation == $16"
+}
+!if (cat_transition_to_standing_still_animation - cat_base_animation) != $3d {
+    !error "Assertion failed: cat_transition_to_standing_still_animation - cat_base_animation == $3d"
 }
 !if (cat_walk_cycle_animation - cat_base_animation) != $29 {
     !error "Assertion failed: cat_walk_cycle_animation - cat_base_animation == $29"
