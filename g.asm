@@ -560,7 +560,7 @@ vertical_sync_amount_for_crtc_register
     !byte 0                                                           ; 123c: 00          .   :110b[1]
 
 start_game
-    jsr clear_128_bytes_at_l09ef                                      ; 123d: 20 b7 0a     .. :110c[1]
+    jsr clear_most_of_save_game                                       ; 123d: 20 b7 0a     .. :110c[1]
     lda #$ff                                                          ; 1240: a9 ff       ..  :110f[1]
     sta desired_level                                                 ; 1242: 85 31       .1  :1111[1]
     lda #osbyte_flush_buffer_class                                    ; 1244: a9 0f       ..  :1113[1]
@@ -6007,7 +6007,7 @@ wizard_transition_to_standing_still_animation
 wizard_standing_still_animation
     !byte spriteid_wizard7,                0,                0        ; 2e5f: 36 00 00    6.. :2d2e[1]
     !byte                0                                            ; 2e62: 00          .   :2d31[1]
-wizard_animation8
+wizard_transition_to_transforming_animation
     !byte spriteid_wizard6,                0,                0        ; 2e63: 35 00 00    5.. :2d32[1]
     !byte                0                                            ; 2e66: 00          .   :2d35[1]
 wizard_jump_animation
@@ -6146,10 +6146,11 @@ wizard_standing_still
     beq wizard_check_if_fallen_off_edge                               ; 2f5f: f0 14       ..  :2e2e[1]
     lda player_held_object_menu_item_spriteid                         ; 2f61: a5 52       .R  :2e30[1]
     beq wizard_check_if_fallen_off_edge                               ; 2f63: f0 10       ..  :2e32[1]
-    ldy #wizard_animation8 - wizard_base_animation                    ; 2f65: a0 45       .E  :2e34[1]
+    ldy #wizard_transition_to_transforming_animation - wizard_base_animation; 2f65: a0 45       .E  :2e34[1]
     cmp #spriteid_menu_item_completion_spell                          ; 2f67: c9 21       .!  :2e36[1]
     bne wizard_check_if_fallen_off_edge                               ; 2f69: d0 0a       ..  :2e38[1]
-    lda #0                                                            ; 2f6b: a9 00       ..  :2e3a[1]
+; transform to nothing (end of level spell)
+    lda #spriteid_one_pixel_masked_out                                ; 2f6b: a9 00       ..  :2e3a[1]
     jsr transform                                                     ; 2f6d: 20 37 23     7# :2e3c[1]
     jmp update_wizard_animation                                       ; 2f70: 4c 87 2d    L.- :2e3f[1]
 
@@ -6158,10 +6159,12 @@ wizard_transition_to_standing_still
     ldy #wizard_transition_to_standing_still_animation - wizard_base_animation; 2f73: a0 3d       .=  :2e42[1]
 wizard_check_if_fallen_off_edge
     ldx #0                                                            ; 2f75: a2 00       ..  :2e44[1]
+; Read the 'player_just_fallen_off_edge_direction' if stationary, or the
+; 'player_just_fallen_off_centrally_direction' if moving
     lda player_move_direction_requested                               ; 2f77: ad c9 3a    ..: :2e46[1]
-    beq c2e4c                                                         ; 2f7a: f0 01       ..  :2e49[1]
+    beq got_index_from_direction_requested                            ; 2f7a: f0 01       ..  :2e49[1]
     inx                                                               ; 2f7c: e8          .   :2e4b[1]
-c2e4c
+got_index_from_direction_requested
     lda player_just_fallen_off_edge_direction,x                       ; 2f7d: bd 90 28    ..( :2e4c[1]
     beq wizard_got_index_in_animation                                 ; 2f80: f0 0e       ..  :2e4f[1]
     ldy #wizard_fall_continues_animation - wizard_base_animation      ; 2f82: a0 96       ..  :2e51[1]
@@ -6457,10 +6460,12 @@ c3088
     ldy #cat_animation6 - cat_base_animation                          ; 31b9: a0 3d       .=  :3088[1]
 c308a
     ldx #0                                                            ; 31bb: a2 00       ..  :308a[1]
+; Read the 'player_just_fallen_off_edge_direction' if stationary, or the
+; 'player_just_fallen_off_centrally_direction' if moving
     lda player_move_direction_requested                               ; 31bd: ad c9 3a    ..: :308c[1]
-    beq c3092                                                         ; 31c0: f0 01       ..  :308f[1]
+    beq got_direction_index                                           ; 31c0: f0 01       ..  :308f[1]
     inx                                                               ; 31c2: e8          .   :3091[1]
-c3092
+got_direction_index
     lda player_just_fallen_off_edge_direction,x                       ; 31c3: bd 90 28    ..( :3092[1]
     beq cat_got_index_in_animation                                    ; 31c6: f0 0e       ..  :3095[1]
     ldy #cat_fall_animation - cat_base_animation                      ; 31c8: a0 ae       ..  :3097[1]
@@ -8100,7 +8105,7 @@ relocation3
     ldx #0                                                            ; 3c6a: a2 00       ..
 relocation3_loop
     lda relocation3_high_copy_start,x                                 ; 3c6c: bd 88 40    ..@
-    sta clear_128_bytes_at_l09ef,x                                    ; 3c6f: 9d b7 0a    ...
+    sta clear_most_of_save_game,x                                     ; 3c6f: 9d b7 0a    ...
     inx                                                               ; 3c72: e8          .
     cpx #relocation3_high_copy_end - relocation3_high_copy_start      ; 3c73: e0 48       .H
     bcc relocation3_loop                                              ; 3c75: 90 f5       ..
@@ -8716,16 +8721,25 @@ quit_to_basic
 relocation3_high_copy_start
 
 !pseudopc $0ab7 {
-clear_128_bytes_at_l09ef
+; *************************************************************************************
+; 
+; Clears $80 bytes from 'level_progress_table' to 'sixteen_entry_table'. This is almost
+; all of the save game area, bar five bytes at the start which contain the level
+; number, checksum, and three bytes for the ascii digits of the transformations
+; remaining. These are filled in later.
+; 
+; *************************************************************************************
+clear_most_of_save_game
     lda #0                                                            ; 4088: a9 00       ..  :0ab7[5]
     tax                                                               ; 408a: aa          .   :0ab9[5]
-loop_c0aba
+clear_most_of_save_game_data_loop
     sta level_progress_table,x                                        ; 408b: 9d ef 09    ... :0aba[5]
     inx                                                               ; 408e: e8          .   :0abd[5]
     cpx #$80                                                          ; 408f: e0 80       ..  :0abe[5]
-    bcc loop_c0aba                                                    ; 4091: 90 f8       ..  :0ac0[5]
+    bcc clear_most_of_save_game_data_loop                             ; 4091: 90 f8       ..  :0ac0[5]
     rts                                                               ; 4093: 60          `   :0ac2[5]
 
+; *************************************************************************************
 get_checksum_of_save_game_data
     lda #0                                                            ; 4094: a9 00       ..  :0ac3[5]
     tax                                                               ; 4096: aa          .   :0ac5[5]
@@ -9056,7 +9070,6 @@ pydis_end
 ;     c255a
 ;     c2626
 ;     c264f
-;     c2e4c
 ;     c2e82
 ;     c2eb1
 ;     c2ed7
@@ -9069,7 +9082,6 @@ pydis_end
 ;     c3074
 ;     c3088
 ;     c308a
-;     c3092
 ;     c30ca
 ;     c30d5
 ;     c31f4
@@ -9123,7 +9135,6 @@ pydis_end
 ;     l3403
 ;     lbe00
 ;     lbf00
-;     loop_c0aba
 ;     loop_c0ac6
 ;     loop_c2684
 ;     loop_c2be9
@@ -10259,9 +10270,6 @@ pydis_end
 !if (wizard_animation12 - wizard_base_animation) != $79 {
     !error "Assertion failed: wizard_animation12 - wizard_base_animation == $79"
 }
-!if (wizard_animation8 - wizard_base_animation) != $45 {
-    !error "Assertion failed: wizard_animation8 - wizard_base_animation == $45"
-}
 !if (wizard_change_direction_animation - wizard_base_animation) != $36 {
     !error "Assertion failed: wizard_change_direction_animation - wizard_base_animation == $36"
 }
@@ -10288,6 +10296,9 @@ pydis_end
 }
 !if (wizard_transition_to_standing_still_animation - wizard_base_animation) != $3d {
     !error "Assertion failed: wizard_transition_to_standing_still_animation - wizard_base_animation == $3d"
+}
+!if (wizard_transition_to_transforming_animation - wizard_base_animation) != $45 {
+    !error "Assertion failed: wizard_transition_to_transforming_animation - wizard_base_animation == $45"
 }
 !if (wizard_walk_cycle_animation - wizard_base_animation) != $29 {
     !error "Assertion failed: wizard_walk_cycle_animation - wizard_base_animation == $29"

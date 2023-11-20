@@ -602,7 +602,14 @@ label(0xab3, "old_brkv2")
 expr_label(0xab4, "old_brkv2+1")
 
 with level_utils_area:
-    entry(0x0ab7, "clear_128_bytes_at_l09ef") # TODO: improve name as things become clearer
+    comment(0x0ab7, """*************************************************************************************
+
+Clears $80 bytes from 'level_progress_table' to 'sixteen_entry_table'. This is almost all of the save game area, bar five bytes at the start which contain the level number, checksum, and three bytes for the ascii digits of the transformations remaining. These are filled in later.
+
+*************************************************************************************""")
+    entry(0x0ab7, "clear_most_of_save_game")
+    label(0x0aba, "clear_most_of_save_game_data_loop")
+    comment(0x0ac3, "*************************************************************************************")
     entry(0x0ac3, "get_checksum_of_save_game_data")
     comment(0x0ad4, """*************************************************************************************
 
@@ -2535,7 +2542,7 @@ Animation code
     label(0x2d26, "wizard_change_direction_animation_last_step")
     label(0x2d2a, "wizard_transition_to_standing_still_animation")
     label(0x2d2e, "wizard_standing_still_animation")
-    label(0x2d32, "wizard_animation8")
+    label(0x2d32, "wizard_transition_to_transforming_animation")
     label(0x2d36, "wizard_jump_animation")
     label(0x2d46, "wizard_start_to_fall_animation")
     label(0x2d59, "wizard_animation11")
@@ -2585,11 +2592,16 @@ if (not already falling) then branch (start falling)""")
     expr(0x2e1f, "wizard_standing_still_animation - wizard_base_animation")
     expr(0x2e24, "wizard_walk_cycle_animation - wizard_base_animation")
     expr(0x2e28, "wizard_change_direction_animation - wizard_base_animation")
-    expr(0x2e35, "wizard_animation8 - wizard_base_animation")
+    expr(0x2e35, "wizard_transition_to_transforming_animation - wizard_base_animation")
     expr(0x2e37, sprite_dict)
+    comment(0x2e3a, "transform to nothing (end of level spell)")
+    expr(0x2e3b, "spriteid_one_pixel_masked_out")
     label(0x2e42, "wizard_transition_to_standing_still")
+    comment(0x2e42, "transition from a walk cycle or change of direction animation to standing still")
     expr(0x2e43, "wizard_transition_to_standing_still_animation - wizard_base_animation")
     label(0x2e44, "wizard_check_if_fallen_off_edge")
+    comment(0x2e46, "Read the 'player_just_fallen_off_edge_direction' if stationary, or the 'player_just_fallen_off_centrally_direction' if moving")
+    label(0x2e4c, "got_index_from_direction_requested")
     expr(0x2e52, "wizard_fall_continues_animation - wizard_base_animation")
     expr(0x2e57, "wizard_animation11 - wizard_base_animation")
     expr(0x2e5e, "wizard_animation12 - wizard_base_animation")
@@ -2603,7 +2615,6 @@ if (not already falling) then branch (start falling)""")
     expr(0x2ebf, make_hi("wizard_sprite_list"))
     expr(0x2ede, "spriteid_wizard6")
     label(0x2ee4, "store_object_held_and_return")
-    comment(0x2e42, "transition from a walk cycle or change of direction animation to standing still")
 
     ##################################################################################################
     # Cat animations
@@ -2663,6 +2674,8 @@ if (not already falling) then branch (start falling)""")
     expr(0x3081, "cat_walk_cycle_animation - cat_base_animation")
     expr(0x3085, "cat_change_direction_animation - cat_base_animation")
     expr(0x3089, "cat_animation6 - cat_base_animation")
+    comment(0x308c, "Read the 'player_just_fallen_off_edge_direction' if stationary, or the 'player_just_fallen_off_centrally_direction' if moving")
+    label(0x3092, "got_direction_index")
     expr(0x3098, "cat_fall_animation - cat_base_animation")
     expr(0x309d, "cat_animation11 - cat_base_animation")
     expr(0x30a4, "cat_animation12 - cat_base_animation")
