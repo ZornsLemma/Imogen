@@ -406,6 +406,7 @@ l007f                                       = $7f
 osfile_block_end_address_mid1               = $7f
 player_hit_floor_result_flag                = $7f
 adjustment                                  = $80
+cell_based_loop_counter                     = $80
 l0080                                       = $80
 mask_sprite_byte                            = $80
 osfile_block_end_address_mid2               = $80
@@ -430,8 +431,10 @@ active_objects_table                        = $0100
 frontmost_objects_table                     = $010b
 object_dealt_with_flag                      = $0116
 l0121                                       = $0121
+temp_object_left_cell                       = $0121
 x_object_left_low                           = $0121
 l0122                                       = $0122
+temp_object_right_cell                      = $0122
 x_object_left_high                          = $0122
 x_object_right_low                          = $0123
 x_object_right_high                         = $0124
@@ -4197,7 +4200,7 @@ handle_player_landing_sound
     lda #2                                                            ; 24a4: a9 02       ..  :2373[1]
     sta temp_bottom_offset                                            ; 24a6: 8d 51 25    .Q% :2375[1]
     lda #0                                                            ; 24a9: a9 00       ..  :2378[1]
-    jsr get_wall_collision_for_object_a                               ; 24ab: 20 94 28     .( :237a[1]
+    jsr get_solid_rock_collision_for_object_a                         ; 24ab: 20 94 28     .( :237a[1]
     beq return12                                                      ; 24ae: f0 29       .)  :237d[1]
 ; wall collision found. if player was moving down at the time, we have hit the floor
     lda object_y_low_old                                              ; 24b0: ad 87 09    ... :237f[1]
@@ -4216,7 +4219,7 @@ player_y_is_unchanged
     lda #2                                                            ; 24ca: a9 02       ..  :2399[1]
     sta temp_bottom_offset                                            ; 24cc: 8d 51 25    .Q% :239b[1]
     lda #$0b                                                          ; 24cf: a9 0b       ..  :239e[1]
-    jsr get_wall_collision_for_object_a                               ; 24d1: 20 94 28     .( :23a0[1]
+    jsr get_solid_rock_collision_for_object_a                         ; 24d1: 20 94 28     .( :23a0[1]
     bne return12                                                      ; 24d4: d0 03       ..  :23a3[1]
 has_landed
     jsr play_landing_sound                                            ; 24d6: 20 a9 23     .# :23a5[1]
@@ -4251,36 +4254,42 @@ sub_c23c4
     pha                                                               ; 24f8: 48          H   :23c7[1]
     lda #0                                                            ; 24f9: a9 00       ..  :23c8[1]
     jsr check_and_handle_player_hitting_floor                         ; 24fb: 20 70 27     p' :23ca[1]
-; if (no player collision with the walls) then branch (return)
+; if (no player collision) then branch (return)
     lda player_wall_collision_flag                                    ; 24fe: ad 33 24    .3$ :23cd[1]
     beq recall_registers_and_return1                                  ; 2501: f0 59       .Y  :23d0[1]
+; if (player hit wall) then branch
     cmp #$80                                                          ; 2503: c9 80       ..  :23d2[1]
-    beq c241a                                                         ; 2505: f0 44       .D  :23d4[1]
+    beq if_player_hit_wall_and_floor_then_clear_wall_collision_flag   ; 2505: f0 44       .D  :23d4[1]
+; player is being pushed.
+; check direction of push.
     lda player_wall_collision_flag                                    ; 2507: ad 33 24    .3$ :23d6[1]
-    bmi c23e2                                                         ; 250a: 30 07       0.  :23d9[1]
+    bmi player_being_pushed_left                                      ; 250a: 30 07       0.  :23d9[1]
+; player being pushed right
     inc temp_right_offset                                             ; 250c: ee d1 24    ..$ :23db[1]
     ldy #0                                                            ; 250f: a0 00       ..  :23de[1]
-    beq c23e7                                                         ; 2511: f0 05       ..  :23e0[1]
-c23e2
+    beq check_for_collision_while_player_is_being_pushed              ; 2511: f0 05       ..  :23e0[1]   ; ALWAYS branch
+player_being_pushed_left
     dec temp_left_offset                                              ; 2513: ce d0 24    ..$ :23e2[1]
     ldy #$ff                                                          ; 2516: a0 ff       ..  :23e5[1]
-c23e7
+check_for_collision_while_player_is_being_pushed
     lda #1                                                            ; 2518: a9 01       ..  :23e7[1]
     sta temp_bottom_offset                                            ; 251a: 8d 51 25    .Q% :23e9[1]
+; if no player-rock collision, then branch
     lda #0                                                            ; 251d: a9 00       ..  :23ec[1]
-    jsr get_wall_collision_for_object_a                               ; 251f: 20 94 28     .( :23ee[1]
-    beq c23fa                                                         ; 2522: f0 07       ..  :23f1[1]
+    jsr get_solid_rock_collision_for_object_a                         ; 251f: 20 94 28     .( :23ee[1]
+    beq push_continues_no_collision                                   ; 2522: f0 07       ..  :23f1[1]
+; mark as a regular wall collision (no longer pushed)
     lda #$80                                                          ; 2524: a9 80       ..  :23f3[1]
     sta player_wall_collision_flag                                    ; 2526: 8d 33 24    .3$ :23f5[1]
-    bne c241a                                                         ; 2529: d0 20       .   :23f8[1]
-c23fa
+    bne if_player_hit_wall_and_floor_then_clear_wall_collision_flag   ; 2529: d0 20       .   :23f8[1]   ; ALWAYS branch
+push_continues_no_collision
     lda player_has_hit_floor_flag                                     ; 252b: ad 8f 28    ..( :23fa[1]
-    beq c2404                                                         ; 252e: f0 05       ..  :23fd[1]
+    beq move_player_because_of_push                                   ; 252e: f0 05       ..  :23fd[1]
     lda #0                                                            ; 2530: a9 00       ..  :23ff[1]
     sta current_animation                                             ; 2532: 8d df 09    ... :2401[1]
-c2404
+move_player_because_of_push
     ldx #1                                                            ; 2535: a2 01       ..  :2404[1]
-loop_c2406
+push_player_and_accessory_object_loop
     lda player_wall_collision_flag                                    ; 2537: ad 33 24    .3$ :2406[1]
     clc                                                               ; 253a: 18          .   :2409[1]
     adc object_x_low,x                                                ; 253b: 7d 50 09    }P. :240a[1]
@@ -4289,11 +4298,13 @@ loop_c2406
     adc object_x_high,x                                               ; 2542: 7d 66 09    }f. :2411[1]
     sta object_x_high,x                                               ; 2545: 9d 66 09    .f. :2414[1]
     dex                                                               ; 2548: ca          .   :2417[1]
-    bpl loop_c2406                                                    ; 2549: 10 ec       ..  :2418[1]
-c241a
+    bpl push_player_and_accessory_object_loop                         ; 2549: 10 ec       ..  :2418[1]
+; if no collision, or a push, branch (return)
+if_player_hit_wall_and_floor_then_clear_wall_collision_flag
     lda player_wall_collision_flag                                    ; 254b: ad 33 24    .3$ :241a[1]
     cmp #$80                                                          ; 254e: c9 80       ..  :241d[1]
     bne recall_registers_and_return1                                  ; 2550: d0 0a       ..  :241f[1]
+; if not hit floor, then branch
     lda player_has_hit_floor_flag                                     ; 2552: ad 8f 28    ..( :2421[1]
     beq recall_registers_and_return1                                  ; 2555: f0 05       ..  :2424[1]
     lda #0                                                            ; 2557: a9 00       ..  :2426[1]
@@ -4952,9 +4963,10 @@ check_and_handle_player_hitting_floor
     sta default_collision_map_option                                  ; 28b6: 85 44       .D  :2785[1]
 ; have we hit the floor?
     jsr check_for_player_intersecting_floor_or_ceiling                ; 28b8: 20 e5 26     .& :2787[1]
+; clear 'just fallen off' table
     lda #0                                                            ; 28bb: a9 00       ..  :278a[1]
-    sta two_byte_table_based_on_left_right_direction                  ; 28bd: 8d 90 28    ..( :278c[1]
-    sta l2891                                                         ; 28c0: 8d 91 28    ..( :278f[1]
+    sta player_just_fallen_off_edge_direction                         ; 28bd: 8d 90 28    ..( :278c[1]
+    sta player_just_fallen_off_edge_direction + 1                     ; 28c0: 8d 91 28    ..( :278f[1]
 ; if (player hit floor) then branch
     lda player_hit_floor_result_flag                                  ; 28c3: a5 7f       ..  :2792[1]
     sta player_has_hit_floor_flag                                     ; 28c5: 8d 8f 28    ..( :2794[1]
@@ -4963,9 +4975,9 @@ check_and_handle_player_hitting_floor
 
 player_hit_floor
     lda object_left_cell_x                                            ; 28cd: a5 78       .x  :279c[1]
-    sta x_object_left_low                                             ; 28cf: 8d 21 01    .!. :279e[1]
+    sta temp_object_left_cell                                         ; 28cf: 8d 21 01    .!. :279e[1]
     lda object_right_cell_x                                           ; 28d2: a5 79       .y  :27a1[1]
-    sta x_object_left_high                                            ; 28d4: 8d 22 01    .". :27a3[1]
+    sta temp_object_right_cell                                        ; 28d4: 8d 22 01    .". :27a3[1]
     ldx player_objectid                                               ; 28d7: a6 53       .S  :27a6[1]
 ; find the left/right extents of player without the accessory object
     jsr find_left_and_right_of_object                                 ; 28d9: 20 34 24     4$ :27a8[1]
@@ -4977,49 +4989,54 @@ player_hit_floor
     lda object_right_high                                             ; 28e3: a5 73       .s  :27b2[1]
     adc #0                                                            ; 28e5: 69 00       i.  :27b4[1]
     sta object_right_high                                             ; 28e7: 85 73       .s  :27b6[1]
-; add the left and right extents together
+; sum the left and right extents
     lda object_left_low                                               ; 28e9: a5 70       .p  :27b8[1]
     clc                                                               ; 28eb: 18          .   :27ba[1]
     adc object_right_low                                              ; 28ec: 65 72       er  :27bb[1]
-    sta l2892                                                         ; 28ee: 8d 92 28    ..( :27bd[1]
+    sta sum_of_left_and_right_extents_low                             ; 28ee: 8d 92 28    ..( :27bd[1]
     lda object_left_high                                              ; 28f1: a5 71       .q  :27c0[1]
     adc object_right_high                                             ; 28f3: 65 73       es  :27c2[1]
-    sta l2893                                                         ; 28f5: 8d 93 28    ..( :27c4[1]
-    lda x_object_left_low                                             ; 28f8: ad 21 01    .!. :27c7[1]
+    sta sum_of_left_and_right_extents_high                            ; 28f5: 8d 93 28    ..( :27c4[1]
+; restore original left right cells
+    lda temp_object_left_cell                                         ; 28f8: ad 21 01    .!. :27c7[1]
     sta object_left_cell_x                                            ; 28fb: 85 78       .x  :27ca[1]
-    lda x_object_left_high                                            ; 28fd: ad 22 01    .". :27cc[1]
+    lda temp_object_right_cell                                        ; 28fd: ad 22 01    .". :27cc[1]
     sta object_right_cell_x                                           ; 2900: 85 79       .y  :27cf[1]
+; set y to be the bottom cell (later we'll get a value from the collision map)
     ldy object_bottom_cell_y                                          ; 2902: a4 7b       .{  :27d1[1]
+; double the left extent, and add to the sum of left and right extents...
     asl object_left_low                                               ; 2904: 06 70       .p  :27d3[1]
     rol object_left_high                                              ; 2906: 26 71       &q  :27d5[1]
-    lda l2892                                                         ; 2908: ad 92 28    ..( :27d7[1]
+    lda sum_of_left_and_right_extents_low                             ; 2908: ad 92 28    ..( :27d7[1]
     clc                                                               ; 290b: 18          .   :27da[1]
     adc object_left_low                                               ; 290c: 65 70       ep  :27db[1]
     sta object_top_cell_y                                             ; 290e: 85 7a       .z  :27dd[1]
-    lda l2893                                                         ; 2910: ad 93 28    ..( :27df[1]
+    lda sum_of_left_and_right_extents_high                            ; 2910: ad 93 28    ..( :27df[1]
     adc object_left_high                                              ; 2913: 65 71       eq  :27e2[1]
+; ...then divide by four...
     lsr                                                               ; 2915: 4a          J   :27e4[1]
     ror object_top_cell_y                                             ; 2916: 66 7a       fz  :27e5[1]
     lsr                                                               ; 2918: 4a          J   :27e7[1]
     ror object_top_cell_y                                             ; 2919: 66 7a       fz  :27e8[1]
     tax                                                               ; 291b: aa          .   :27ea[1]
+; ...and round the result
     lda object_top_cell_y                                             ; 291c: a5 7a       .z  :27eb[1]
     sbc #0                                                            ; 291e: e9 00       ..  :27ed[1]
     sta object_top_cell_y                                             ; 2920: 85 7a       .z  :27ef[1]
     txa                                                               ; 2922: 8a          .   :27f1[1]
     sbc #0                                                            ; 2923: e9 00       ..  :27f2[1]
-    jsr sub_c2859                                                     ; 2925: 20 59 28     Y( :27f4[1]
+    jsr check_for_solid_rock_along_a_row_of_cells                     ; 2925: 20 59 28     Y( :27f4[1]
     bne c27fe                                                         ; 2928: d0 05       ..  :27f7[1]
-    dec two_byte_table_based_on_left_right_direction                  ; 292a: ce 90 28    ..( :27f9[1]
+    dec player_just_fallen_off_edge_direction                         ; 292a: ce 90 28    ..( :27f9[1]
     bne c281d                                                         ; 292d: d0 1f       ..  :27fc[1]
 c27fe
     asl object_right_low                                              ; 292f: 06 72       .r  :27fe[1]
     rol object_right_high                                             ; 2931: 26 73       &s  :2800[1]
-    lda l2892                                                         ; 2933: ad 92 28    ..( :2802[1]
+    lda sum_of_left_and_right_extents_low                             ; 2933: ad 92 28    ..( :2802[1]
     clc                                                               ; 2936: 18          .   :2805[1]
     adc object_right_low                                              ; 2937: 65 72       er  :2806[1]
     sta object_top_cell_y                                             ; 2939: 85 7a       .z  :2808[1]
-    lda l2893                                                         ; 293b: ad 93 28    ..( :280a[1]
+    lda sum_of_left_and_right_extents_high                            ; 293b: ad 93 28    ..( :280a[1]
     adc object_right_high                                             ; 293e: 65 73       es  :280d[1]
     lsr                                                               ; 2940: 4a          J   :280f[1]
     ror object_top_cell_y                                             ; 2941: 66 7a       fz  :2810[1]
@@ -5027,31 +5044,31 @@ c27fe
     ror object_top_cell_y                                             ; 2944: 66 7a       fz  :2813[1]
     jsr sub_c286d                                                     ; 2946: 20 6d 28     m( :2815[1]
     bne recall_registers_and_return2                                  ; 2949: d0 37       .7  :2818[1]
-    inc two_byte_table_based_on_left_right_direction                  ; 294b: ee 90 28    ..( :281a[1]
+    inc player_just_fallen_off_edge_direction                         ; 294b: ee 90 28    ..( :281a[1]
 c281d
     lda player_objectid                                               ; 294e: a5 53       .S  :281d[1]
     beq c2825                                                         ; 2950: f0 04       ..  :281f[1]
     cmp #$0b                                                          ; 2952: c9 0b       ..  :2821[1]
     bne recall_registers_and_return2                                  ; 2954: d0 2c       .,  :2823[1]
 c2825
-    lsr l2893                                                         ; 2956: 4e 93 28    N.( :2825[1]
-    ror l2892                                                         ; 2959: 6e 92 28    n.( :2828[1]
-    lda l2892                                                         ; 295c: ad 92 28    ..( :282b[1]
+    lsr sum_of_left_and_right_extents_high                            ; 2956: 4e 93 28    N.( :2825[1]
+    ror sum_of_left_and_right_extents_low                             ; 2959: 6e 92 28    n.( :2828[1]
+    lda sum_of_left_and_right_extents_low                             ; 295c: ad 92 28    ..( :282b[1]
     sbc #0                                                            ; 295f: e9 00       ..  :282e[1]
     sta object_top_cell_y                                             ; 2961: 85 7a       .z  :2830[1]
-    lda l2893                                                         ; 2963: ad 93 28    ..( :2832[1]
+    lda sum_of_left_and_right_extents_high                            ; 2963: ad 93 28    ..( :2832[1]
     sbc #0                                                            ; 2966: e9 00       ..  :2835[1]
-    jsr sub_c2859                                                     ; 2968: 20 59 28     Y( :2837[1]
+    jsr check_for_solid_rock_along_a_row_of_cells                     ; 2968: 20 59 28     Y( :2837[1]
     bne c2841                                                         ; 296b: d0 05       ..  :283a[1]
-    dec l2891                                                         ; 296d: ce 91 28    ..( :283c[1]
+    dec player_just_fallen_off_edge_direction + 1                     ; 296d: ce 91 28    ..( :283c[1]
     bne recall_registers_and_return2                                  ; 2970: d0 10       ..  :283f[1]
 c2841
-    lda l2892                                                         ; 2972: ad 92 28    ..( :2841[1]
+    lda sum_of_left_and_right_extents_low                             ; 2972: ad 92 28    ..( :2841[1]
     sta object_top_cell_y                                             ; 2975: 85 7a       .z  :2844[1]
-    lda l2893                                                         ; 2977: ad 93 28    ..( :2846[1]
+    lda sum_of_left_and_right_extents_high                            ; 2977: ad 93 28    ..( :2846[1]
     jsr sub_c286d                                                     ; 297a: 20 6d 28     m( :2849[1]
     bne recall_registers_and_return2                                  ; 297d: d0 03       ..  :284c[1]
-    inc l2891                                                         ; 297f: ee 91 28    ..( :284e[1]
+    inc player_just_fallen_off_edge_direction + 1                     ; 297f: ee 91 28    ..( :284e[1]
 recall_registers_and_return2
     pla                                                               ; 2982: 68          h   :2851[1]   ; recall X,Y
     tay                                                               ; 2983: a8          .   :2852[1]
@@ -5060,19 +5077,34 @@ recall_registers_and_return2
     lda player_has_hit_floor_flag                                     ; 2986: ad 8f 28    ..( :2855[1]
     rts                                                               ; 2989: 60          `   :2858[1]
 
-sub_c2859
+; *************************************************************************************
+; 
+; Read the collision cells along a row, looking for solid rock anywhere
+; 
+; On Entry:
+;     (A, object_top_cell_y): the right extent of the row (pixel X coordinate)
+;                          Y: cell Y coordinate to check
+;         object_left_cell_x: the left extent of the row (cell X coordinate)
+; 
+; On Exit:
+;     Zero flag: result is non-zero if collision took place
+; 
+; *************************************************************************************
+; divide the pixel coordinate by eight
+check_for_solid_rock_along_a_row_of_cells
     lsr                                                               ; 298a: 4a          J   :2859[1]
     ror object_top_cell_y                                             ; 298b: 66 7a       fz  :285a[1]
     lsr                                                               ; 298d: 4a          J   :285c[1]
     ror object_top_cell_y                                             ; 298e: 66 7a       fz  :285d[1]
     lsr                                                               ; 2990: 4a          J   :285f[1]
     ror object_top_cell_y                                             ; 2991: 66 7a       fz  :2860[1]
+; find width in cells of the row to check (this will be our loop counter)
     ldx object_top_cell_y                                             ; 2993: a6 7a       .z  :2862[1]
     txa                                                               ; 2995: 8a          .   :2864[1]
     sec                                                               ; 2996: 38          8   :2865[1]
     sbc object_left_cell_x                                            ; 2997: e5 78       .x  :2866[1]
-    sta l0080                                                         ; 2999: 85 80       ..  :2868[1]
-    jmp c287e                                                         ; 299b: 4c 7e 28    L~( :286a[1]
+    sta cell_based_loop_counter                                       ; 2999: 85 80       ..  :2868[1]
+    jmp cell_row_loop                                                 ; 299b: 4c 7e 28    L~( :286a[1]
 
 sub_c286d
     lsr                                                               ; 299e: 4a          J   :286d[1]
@@ -5085,28 +5117,28 @@ sub_c286d
     txa                                                               ; 29a9: 8a          .   :2878[1]
     sec                                                               ; 29aa: 38          8   :2879[1]
     sbc object_top_cell_y                                             ; 29ab: e5 7a       .z  :287a[1]
-    sta l0080                                                         ; 29ad: 85 80       ..  :287c[1]
-c287e
+    sta cell_based_loop_counter                                       ; 29ad: 85 80       ..  :287c[1]
+cell_row_loop
     jsr read_collision_map_value_for_xy                               ; 29af: 20 fa 1e     .. :287e[1]
     cmp #3                                                            ; 29b2: c9 03       ..  :2881[1]
-    beq c288c                                                         ; 29b4: f0 07       ..  :2883[1]
+    beq return_with_flags                                             ; 29b4: f0 07       ..  :2883[1]
     dex                                                               ; 29b6: ca          .   :2885[1]
-    dec l0080                                                         ; 29b7: c6 80       ..  :2886[1]
-    bpl c287e                                                         ; 29b9: 10 f4       ..  :2888[1]
+    dec cell_based_loop_counter                                       ; 29b7: c6 80       ..  :2886[1]
+    bpl cell_row_loop                                                 ; 29b9: 10 f4       ..  :2888[1]
+; no solid rock found
     lda #0                                                            ; 29bb: a9 00       ..  :288a[1]
-c288c
+return_with_flags
     ora #0                                                            ; 29bd: 09 00       ..  :288c[1]
     rts                                                               ; 29bf: 60          `   :288e[1]
 
 player_has_hit_floor_flag
     !byte 0                                                           ; 29c0: 00          .   :288f[1]
-two_byte_table_based_on_left_right_direction
+player_just_fallen_off_edge_direction
     !byte 0                                                           ; 29c1: 00          .   :2890[1]
-l2891
     !byte 0                                                           ; 29c2: 00          .   :2891[1]
-l2892
+sum_of_left_and_right_extents_low
     !byte 0                                                           ; 29c3: 00          .   :2892[1]
-l2893
+sum_of_left_and_right_extents_high
     !byte 0                                                           ; 29c4: 00          .   :2893[1]
 
 ; *************************************************************************************
@@ -5124,7 +5156,7 @@ l2893
 ; 
 ; *************************************************************************************
 ; TODO: this is used by e.g. dataA
-get_wall_collision_for_object_a
+get_solid_rock_collision_for_object_a
     sta temp_collision_result                                         ; 29c5: 8d 5b 29    .[) :2894[1]
     txa                                                               ; 29c8: 8a          .   :2897[1]   ; remember X,Y
     pha                                                               ; 29c9: 48          H   :2898[1]
@@ -5968,6 +6000,7 @@ update_wizard_animation
     jsr set_base_animation_address_and_handle_transform_in_out        ; 2ec3: 20 ee 22     ." :2d92[1]
 ; branch if transforming
     bne wizard_got_index_in_animation_local                           ; 2ec6: d0 29       .)  :2d95[1]
+; has the change of direction animation finished?
     cpy #wizard_change_direction_animation_last_step - wizard_base_animation; 2ec8: c0 39       .9  :2d97[1]
     bne wizard_not_changing_direction                                 ; 2eca: d0 0b       ..  :2d99[1]
 ; toggle player direction
@@ -5986,7 +6019,7 @@ wizard_not_changing_direction
     dec temp_top_offset                                               ; 2ee3: ce 50 25    .P% :2db2[1]
 ; if (collided with room while jumping) then branch (fall)
     lda #0                                                            ; 2ee6: a9 00       ..  :2db5[1]
-    jsr get_wall_collision_for_object_a                               ; 2ee8: 20 94 28     .( :2db7[1]
+    jsr get_solid_rock_collision_for_object_a                         ; 2ee8: 20 94 28     .( :2db7[1]
     bne wizard_start_to_fall                                          ; 2eeb: d0 07       ..  :2dba[1]
 ; if (jump animation has looped) then branch (fall)
     cpy #wizard_jump_animation - wizard_base_animation                ; 2eed: c0 49       .I  :2dbc[1]
@@ -6001,7 +6034,8 @@ wizard_start_to_fall
 ; if (player has hit floor) then branch
 wizard_not_jumping
     lda player_has_hit_floor_flag                                     ; 2efb: ad 8f 28    ..( :2dca[1]
-    bne wizard_hits_ground_while_falling                              ; 2efe: d0 24       .$  :2dcd[1]
+    bne wizard_hits_ground                                            ; 2efe: d0 24       .$  :2dcd[1]
+; Player is not jumping and not on the floor, so must be falling.
 ; if (not already falling) then branch (start falling)
     lda current_animation                                             ; 2f00: ad df 09    ... :2dcf[1]
     cmp #wizard_fall_continues_animation - wizard_base_animation      ; 2f03: c9 96       ..  :2dd2[1]
@@ -6023,7 +6057,7 @@ wizard_continue_falling
     ldy #wizard_standing_fall_animation - wizard_base_animation       ; 2f1f: a0 86       ..  :2dee[1]
     jmp wizard_got_index_in_animation                                 ; 2f21: 4c 5f 2e    L_. :2df0[1]
 
-wizard_hits_ground_while_falling
+wizard_hits_ground
     ldx player_move_direction_requested                               ; 2f24: ae c9 3a    ..: :2df3[1]
     beq c2e1b                                                         ; 2f27: f0 23       .#  :2df6[1]
     lda #wizard_change_direction_animation - wizard_base_animation    ; 2f29: a9 36       .6  :2df8[1]
@@ -6070,7 +6104,7 @@ c2e44
     beq c2e4c                                                         ; 2f7a: f0 01       ..  :2e49[1]
     inx                                                               ; 2f7c: e8          .   :2e4b[1]
 c2e4c
-    lda two_byte_table_based_on_left_right_direction,x                ; 2f7d: bd 90 28    ..( :2e4c[1]
+    lda player_just_fallen_off_edge_direction,x                       ; 2f7d: bd 90 28    ..( :2e4c[1]
     beq wizard_got_index_in_animation                                 ; 2f80: f0 0e       ..  :2e4f[1]
     ldy #wizard_fall_continues_animation - wizard_base_animation      ; 2f82: a0 96       ..  :2e51[1]
     sty current_animation                                             ; 2f84: 8c df 09    ... :2e53[1]
@@ -6288,7 +6322,7 @@ cat_not_changing_direction
     bne c3011                                                         ; 3122: d0 1e       ..  :2ff1[1]
     dec temp_top_offset                                               ; 3124: ce 50 25    .P% :2ff3[1]
     lda #0                                                            ; 3127: a9 00       ..  :2ff6[1]
-    jsr get_wall_collision_for_object_a                               ; 3129: 20 94 28     .( :2ff8[1]
+    jsr get_solid_rock_collision_for_object_a                         ; 3129: 20 94 28     .( :2ff8[1]
     bne c3023                                                         ; 312c: d0 26       .&  :2ffb[1]
     cpy #cat_jump_animation - cat_base_animation                      ; 312e: c0 45       .E  :2ffd[1]
     bne cat_got_index_in_animation_local                              ; 3130: d0 0d       ..  :2fff[1]
@@ -6305,7 +6339,7 @@ c3011
     bne c302a                                                         ; 3144: d0 15       ..  :3013[1]
     dec temp_top_offset                                               ; 3146: ce 50 25    .P% :3015[1]
     lda #0                                                            ; 3149: a9 00       ..  :3018[1]
-    jsr get_wall_collision_for_object_a                               ; 314b: 20 94 28     .( :301a[1]
+    jsr get_solid_rock_collision_for_object_a                         ; 314b: 20 94 28     .( :301a[1]
     bne c3023                                                         ; 314e: d0 04       ..  :301d[1]
     cpy #cat_jump_apex_animation - cat_base_animation                 ; 3150: c0 58       .X  :301f[1]
     bne cat_got_index_in_animation_local                              ; 3152: d0 eb       ..  :3021[1]
@@ -6369,7 +6403,7 @@ c308a
     beq c3092                                                         ; 31c0: f0 01       ..  :308f[1]
     inx                                                               ; 31c2: e8          .   :3091[1]
 c3092
-    lda two_byte_table_based_on_left_right_direction,x                ; 31c3: bd 90 28    ..( :3092[1]
+    lda player_just_fallen_off_edge_direction,x                       ; 31c3: bd 90 28    ..( :3092[1]
     beq cat_got_index_in_animation                                    ; 31c6: f0 0e       ..  :3095[1]
     ldy #cat_fall_animation - cat_base_animation                      ; 31c8: a0 ae       ..  :3097[1]
     sty current_animation                                             ; 31ca: 8c df 09    ... :3099[1]
@@ -6588,7 +6622,7 @@ c3222
     beq c324c                                                         ; 335d: f0 1e       ..  :322c[1]
     dec temp_top_offset                                               ; 335f: ce 50 25    .P% :322e[1]
     lda #0                                                            ; 3362: a9 00       ..  :3231[1]
-    jsr get_wall_collision_for_object_a                               ; 3364: 20 94 28     .( :3233[1]
+    jsr get_solid_rock_collision_for_object_a                         ; 3364: 20 94 28     .( :3233[1]
     bne c3247                                                         ; 3367: d0 0f       ..  :3236[1]
     ldx #monkey_climb_animation - monkey_base_animation               ; 3369: a2 51       .Q  :3238[1]
     lda l31d7                                                         ; 336b: ad d7 31    ..1 :323a[1]
@@ -6631,7 +6665,7 @@ c3276
     bne c328d                                                         ; 33ac: d0 10       ..  :327b[1]
     dec temp_top_offset                                               ; 33ae: ce 50 25    .P% :327d[1]
     lda #0                                                            ; 33b1: a9 00       ..  :3280[1]
-    jsr get_wall_collision_for_object_a                               ; 33b3: 20 94 28     .( :3282[1]
+    jsr get_solid_rock_collision_for_object_a                         ; 33b3: 20 94 28     .( :3282[1]
     bne c32ac                                                         ; 33b6: d0 25       .%  :3285[1]
     cpy #monkey_standing_jump_animation - monkey_base_animation       ; 33b8: c0 7a       .z  :3287[1]
     beq c32ac                                                         ; 33ba: f0 21       .!  :3289[1]
@@ -6642,7 +6676,7 @@ c328d
     bne c32ac                                                         ; 33c3: d0 18       ..  :3292[1]
     dec temp_top_offset                                               ; 33c5: ce 50 25    .P% :3294[1]
     lda #0                                                            ; 33c8: a9 00       ..  :3297[1]
-    jsr get_wall_collision_for_object_a                               ; 33ca: 20 94 28     .( :3299[1]
+    jsr get_solid_rock_collision_for_object_a                         ; 33ca: 20 94 28     .( :3299[1]
     bne c32a5                                                         ; 33cd: d0 07       ..  :329c[1]
     cpy #monkey_jump_animation - monkey_base_animation                ; 33cf: c0 87       ..  :329e[1]
     beq c32a5                                                         ; 33d1: f0 03       ..  :32a0[1]
@@ -6714,7 +6748,7 @@ c3316
     beq c331e                                                         ; 344c: f0 01       ..  :331b[1]
     inx                                                               ; 344e: e8          .   :331d[1]
 c331e
-    lda two_byte_table_based_on_left_right_direction,x                ; 344f: bd 90 28    ..( :331e[1]
+    lda player_just_fallen_off_edge_direction,x                       ; 344f: bd 90 28    ..( :331e[1]
     beq c3331                                                         ; 3452: f0 0e       ..  :3321[1]
     ldy #monkey_fall_animation - monkey_base_animation                ; 3454: a0 d4       ..  :3323[1]
     sty current_animation                                             ; 3456: 8c df 09    ... :3325[1]
@@ -8954,11 +8988,6 @@ plot_move_x_high
 pydis_end
 
 ; Automatically generated labels:
-;     c23e2
-;     c23e7
-;     c23fa
-;     c2404
-;     c241a
 ;     c244d
 ;     c2454
 ;     c2495
@@ -8973,8 +9002,6 @@ pydis_end
 ;     c281d
 ;     c2825
 ;     c2841
-;     c287e
-;     c288c
 ;     c2e0f
 ;     c2e1b
 ;     c2e42
@@ -9041,9 +9068,6 @@ pydis_end
 ;     l0068
 ;     l0087
 ;     l0b00
-;     l2891
-;     l2892
-;     l2893
 ;     l28e1
 ;     l31d7
 ;     l3403
@@ -9051,7 +9075,6 @@ pydis_end
 ;     lbf00
 ;     loop_c0aba
 ;     loop_c0ac6
-;     loop_c2406
 ;     loop_c2684
 ;     loop_c2be9
 ;     loop_c2ec9
@@ -9060,7 +9083,6 @@ pydis_end
 ;     loop_c3f87
 ;     sub_c23c4
 ;     sub_c25f5
-;     sub_c2859
 ;     sub_c286d
 ;     sub_c2eb8
 ;     sub_c336e

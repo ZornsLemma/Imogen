@@ -323,9 +323,16 @@ substitute_labels = {
     (0x284f, 0x28a0): {
         "l0080": "adjustment",
     },
-    (0x28cd, 0x2a8b): {
+    (0x28cd, 0x29bf): {
+        "l0121": "temp_object_left_cell",
+        "l0122": "temp_object_right_cell",
+    },
+    (0x2a13, 0x2a8b): {
         "l0121": "x_object_left_low",
         "l0122": "x_object_left_high",
+    },
+    (0x298a,0x29bf): {
+        "l0080": "cell_based_loop_counter",
     },
     (0x29c5,0x2a11): {
         "l007c": "player_hit_wall_on_left_result_flag",
@@ -1951,9 +1958,24 @@ On Entry:
     expr(0x23b8, make_lo("sound_landing2"))
     expr(0x23ba, make_hi("sound_landing2"))
 
-    comment(0x23cd, "if (no player collision with the walls) then branch (return)")
-    label(0x242b, "recall_registers_and_return1")
+    comment(0x23cd, "if (no player collision) then branch (return)")
+    comment(0x23d2, "if (player hit wall) then branch")
+    comment(0x23d6, "player is being pushed.\ncheck direction of push.")
+    comment(0x23db, "player being pushed right")
+    label(0x23e2, "player_being_pushed_left")
+    label(0x23e7, "check_for_collision_while_player_is_being_pushed")
+    comment(0x23ec, "if no player-rock collision, then branch")
+    comment(0x23f3, "mark as a regular wall collision (no longer pushed)")
+    label(0x23fa, "push_continues_no_collision")
+    ab(0x23e0)
+    ab(0x23f8)
+    label(0x2404, "move_player_because_of_push")
+    label(0x2406, "push_player_and_accessory_object_loop")
+    comment(0x241a, "if no collision, or a push, branch (return)")
+    comment(0x2421, "if not hit floor, then branch")
+    label(0x241a, "if_player_hit_wall_and_floor_then_clear_wall_collision_flag")
 
+    label(0x242b, "recall_registers_and_return1")
     label(0x2434, "find_left_and_right_of_object")
     comment(0x2434, """*************************************************************************************
 
@@ -2137,15 +2159,43 @@ On Entry:
     comment(0x2776, "check collision of player with room")
     comment(0x2783, "don't write values to the collision map")
     comment(0x2787, "have we hit the floor?")
+    comment(0x278a, "clear 'just fallen off' table")
     comment(0x2792, "if (player hit floor) then branch")
     label(0x279c, "player_hit_floor")
     comment(0x27a8, "find the left/right extents of player without the accessory object")
     comment(0x27ab, "add one to the right pixel extent")
-    comment(0x27b8, "add the left and right extents together")
+    comment(0x27b8, "sum the left and right extents")
+    comment(0x27c7, "restore original left right cells")
+    comment(0x27d1, "set y to be the bottom cell (later we'll get a value from the collision map)")
+    comment(0x27d3, "double the left extent, and add to the sum of left and right extents...")
+    comment(0x27e4, "...then divide by four...")
+    comment(0x27eb, "...and round the result")
 
     label(0x2851, "recall_registers_and_return2")
+    comment(0x2859, """*************************************************************************************
+
+Read the collision cells along a row, looking for solid rock anywhere
+
+On Entry:
+    (A, object_top_cell_y): the right extent of the row (pixel X coordinate)
+                         Y: cell Y coordinate to check
+        object_left_cell_x: the left extent of the row (cell X coordinate)
+
+On Exit:
+    Zero flag: result is non-zero if collision took place
+
+*************************************************************************************""")
+    comment(0x2859, "divide the pixel coordinate by eight")
+    label(0x2859, "check_for_solid_rock_along_a_row_of_cells")
+    comment(0x2862, "find width in cells of the row to check (this will be our loop counter)")
+    label(0x287e, "cell_row_loop")
+    comment(0x288a, "no solid rock found")
+    label(0x288c, "return_with_flags")
     label(0x288f, "player_has_hit_floor_flag")
-    label(0x2890, "two_byte_table_based_on_left_right_direction")
+    label(0x2890, "player_just_fallen_off_edge_direction")
+    expr_label(0x2891, make_add("player_just_fallen_off_edge_direction", "1"))
+    label(0x2892, "sum_of_left_and_right_extents_low")
+    label(0x2893, "sum_of_left_and_right_extents_high")
     comment(0x2894, """*************************************************************************************
 
 Get solid_rock collision flags for object
@@ -2435,6 +2485,7 @@ Animation code
     expr(0x2d8d, make_lo("wizard_base_animation"))
     expr(0x2d8f, make_hi("wizard_base_animation"))
     comment(0x2d95, "branch if transforming")
+    comment(0x2d97, "has the change of direction animation finished?")
     expr(0x2d98, "wizard_change_direction_animation_last_step - wizard_base_animation")
     comment(0x2d9b, "toggle player direction")
     label(0x2da6, "wizard_not_changing_direction")
@@ -2449,7 +2500,8 @@ Animation code
     expr(0x2dc9, "wizard_start_to_fall_animation - wizard_base_animation")
     label(0x2dca, "wizard_not_jumping")
     comment(0x2dca, "if (player has hit floor) then branch")
-    comment(0x2dcf, "if (not already falling) then branch (start falling)")
+    comment(0x2dcf, """Player is not jumping and not on the floor, so must be falling.
+if (not already falling) then branch (start falling)""")
     expr(0x2dd3, "wizard_fall_continues_animation - wizard_base_animation")
     comment(0x2dd6, "if (player not hitting left or right wall) then branch (start falling)")
     expr(0x2dd7, "object_collided_right_wall")
@@ -2459,7 +2511,7 @@ Animation code
     expr(0x2de5, "wizard_fall_continues_animation - wizard_base_animation")
     comment(0x2deb, "wizard wasn't falling, but now is. It's a fall from a standing position, like through a trapdoor that just opened up beneath you.")
     expr(0x2def, "wizard_standing_fall_animation - wizard_base_animation")
-    label(0x2df3, "wizard_hits_ground_while_falling")
+    label(0x2df3, "wizard_hits_ground")
     expr(0x2df9, "wizard_change_direction_animation - wizard_base_animation")
 
     expr(0x2e00, "wizard_walk_cycle_animation - wizard_base_animation")
