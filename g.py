@@ -611,6 +611,7 @@ Clears $80 bytes from 'level_progress_table' to 'sixteen_entry_table'. This is a
     label(0x0aba, "clear_most_of_save_game_data_loop")
     comment(0x0ac3, "*************************************************************************************")
     entry(0x0ac3, "get_checksum_of_save_game_data")
+    label(0x0ac6, "get_checksum_loop")
     comment(0x0ad4, """*************************************************************************************
 
 Convert a level filename letter into the section letter as shown in-game
@@ -1895,14 +1896,14 @@ On Exit:
     label(0x22b4, "list_search_loop")
     label(0x22bb, "start_search")
     label(0x22c4, "found_entry_in_list")
-    entry(0x22cd, "check_for_next_player_animation")
+    entry(0x22cd, "update_player")
     expr(0x22d2, sprite_dict[4])
     expr(0x22d6, sprite_dict[5])
     expr(0x22da, sprite_dict[6])
     label(0x22e0, "update_mid_transformation_local")
-    label(0x22e3, "update_wizard_animation_local")
-    label(0x22e6, "update_cat_animation_local")
-    label(0x22e9, "update_monkey_animation_local")
+    label(0x22e3, "update_wizard_local")
+    label(0x22e6, "update_cat_local")
+    label(0x22e9, "update_monkey_local")
     label(0x22ec, "return10")
     label(0x22ed, "transform_out_animation")
     comment(0x22ee, """*************************************************************************************
@@ -2095,6 +2096,7 @@ On Exit:
     label(0x25d6, "return_zeroing_offsets")
     label(0x25df, "find_left_and_right_of_object_including_held_object")
     comment(0x25df, "remember temp_left and right offsets, since we will use them again to find the attached object's left/right extents")
+    label(0x25f5, "update_player_solid_rock_collision")
     comment(0x25f8, "clear collision flags")
     comment(0x25fd, "anything outside the game area returns collision map value $ff")
 
@@ -2103,6 +2105,7 @@ On Exit:
     comment(0x2617, "if (no collisions left or right) then branch")
     label(0x2626, "check_top_and_bottom_for_collisions")
     comment(0x263c, "handle wall collision")
+    label(0x264f, "finished_collision_update")
     label(0x2659, "return13")
     comment(0x265a, """*************************************************************************************
 
@@ -2123,6 +2126,7 @@ On Exit:
     label(0x2676, "found_wall_on_players_left_side")
     comment(0x267a, "store player's cell height (again)")
     comment(0x2684, "look at collision map at each cell up the player's height, looking for a solid wall")
+    label(0x2684, "read_cells_in_column_loop")
     comment(0x2690, "mark that no collision was found on the right side")
     label(0x2692, "return14")
     comment(0x2693, """*************************************************************************************
@@ -2565,7 +2569,7 @@ Animation code
     label(0x2d73, "wizard_standing_fall_animation")
     label(0x2d83, "wizard_fall_continues_animation")
 
-    label(0x2d87, "update_wizard_animation")
+    label(0x2d87, "update_wizard")
     expr(0x2d88, "wizard_transform_out_animation - wizard_base_animation")
     expr(0x2d8d, make_lo("wizard_base_animation"))
     expr(0x2d8f, make_hi("wizard_base_animation"))
@@ -2655,7 +2659,7 @@ if (not already falling) then branch (start falling)""")
     label(0x2f00, "cat_sprite_list")
     label(0x2f16, "cat_base_animation")
     label(0x2f16, "cat_transform_in_animation")
-    label(0x2fc8, "update_cat_animation")
+    label(0x2fc8, "update_cat")
     label(0x2f2c, "cat_transform_out_animation")
     label(0x2f3f, "cat_walk_cycle_animation")
     label(0x2f4c, "cat_change_direction_animation")
@@ -2771,7 +2775,7 @@ if (not already falling) then branch (start falling)""")
     label(0x31b6, "monkey_animation17")
     label(0x31c3, "monkey_animation18")
     label(0x31d3, "monkey_fall_animation")
-    label(0x31d8, "update_monkey_animation")
+    label(0x31d8, "update_monkey")
     expr(0x31d9, "monkey_transform_out_animation - monkey_base_animation")
     expr(0x31de, make_lo("monkey_base_animation"))
     expr(0x31e0, make_hi("monkey_base_animation"))

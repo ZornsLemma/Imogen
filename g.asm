@@ -907,7 +907,7 @@ no_time_to_wait
     jsr update_menus                                                  ; 1437: 20 38 2a     8* :1306[1]
     jsr regulate_time_loop                                            ; 143a: 20 1e 13     .. :1309[1]
     jsr read_player_movement_keys                                     ; 143d: 20 a2 3a     .: :130c[1]
-    jsr check_for_next_player_animation                               ; 1440: 20 cd 22     ." :130f[1]
+    jsr update_player                                                 ; 1440: 20 cd 22     ." :130f[1]
 ; update room
     ldx level_specific_update_ptr                                     ; 1443: ae d9 3a    ..: :1312[1]
     ldy level_specific_update_ptr + 1                                 ; 1446: ac da 3a    ..: :1315[1]
@@ -4058,28 +4058,28 @@ found_entry_in_list
     tay                                                               ; 23fc: a8          .   :22cb[1]
     rts                                                               ; 23fd: 60          `   :22cc[1]
 
-check_for_next_player_animation
+update_player
     lda current_player_character                                      ; 23fe: a5 48       .H  :22cd[1]
     beq update_mid_transformation_local                               ; 2400: f0 0f       ..  :22cf[1]
     cmp #spriteid_icodata_wizard                                      ; 2402: c9 04       ..  :22d1[1]
-    beq update_wizard_animation_local                                 ; 2404: f0 0e       ..  :22d3[1]
+    beq update_wizard_local                                           ; 2404: f0 0e       ..  :22d3[1]
     cmp #spriteid_icodata_cat                                         ; 2406: c9 05       ..  :22d5[1]
-    beq update_cat_animation_local                                    ; 2408: f0 0d       ..  :22d7[1]
+    beq update_cat_local                                              ; 2408: f0 0d       ..  :22d7[1]
     cmp #spriteid_icodata_monkey                                      ; 240a: c9 06       ..  :22d9[1]
-    beq update_monkey_animation_local                                 ; 240c: f0 0c       ..  :22db[1]
+    beq update_monkey_local                                           ; 240c: f0 0c       ..  :22db[1]
     jmp return10                                                      ; 240e: 4c ec 22    L." :22dd[1]
 
 update_mid_transformation_local
     jmp update_mid_transformation                                     ; 2411: 4c 86 39    L.9 :22e0[1]
 
-update_wizard_animation_local
-    jmp update_wizard_animation                                       ; 2414: 4c 87 2d    L.- :22e3[1]
+update_wizard_local
+    jmp update_wizard                                                 ; 2414: 4c 87 2d    L.- :22e3[1]
 
-update_cat_animation_local
-    jmp update_cat_animation                                          ; 2417: 4c c8 2f    L./ :22e6[1]
+update_cat_local
+    jmp update_cat                                                    ; 2417: 4c c8 2f    L./ :22e6[1]
 
-update_monkey_animation_local
-    jmp update_monkey_animation                                       ; 241a: 4c d8 31    L.1 :22e9[1]
+update_monkey_local
+    jmp update_monkey                                                 ; 241a: 4c d8 31    L.1 :22e9[1]
 
 return10
     rts                                                               ; 241d: 60          `   :22ec[1]
@@ -4137,7 +4137,7 @@ not_the_transform_in_animation
 ; calling function
     pla                                                               ; 2451: 68          h   :2320[1]
     pla                                                               ; 2452: 68          h   :2321[1]
-    jmp check_for_next_player_animation                               ; 2453: 4c cd 22    L." :2322[1]
+    jmp update_player                                                 ; 2453: 4c cd 22    L." :2322[1]
 
 not_transforming_out
     lda current_player_character                                      ; 2456: a5 48       .H  :2325[1]
@@ -4682,7 +4682,7 @@ find_left_and_right_of_object_including_held_object
     sta temp_left_offset                                              ; 2720: 8d d0 24    ..$ :25ef[1]
     jmp adjust_left_or_right_extent_due_to_holding_an_object          ; 2723: 4c 52 25    LR% :25f2[1]
 
-sub_c25f5
+update_player_solid_rock_collision
     sta player_objectid                                               ; 2726: 85 53       .S  :25f5[1]
     tax                                                               ; 2728: aa          .   :25f7[1]
 ; clear collision flags
@@ -4721,7 +4721,7 @@ check_top_and_bottom_for_collisions
     jsr update_floor_or_ceiling_collision                             ; 2764: 20 1e 27     .' :2633[1]
     lda player_hit_wall_on_left_result_flag                           ; 2767: a5 7c       .|  :2636[1]
     ora player_hit_wall_on_right_result_flag                          ; 2769: 05 7d       .}  :2638[1]
-    beq c264f                                                         ; 276b: f0 13       ..  :263a[1]
+    beq finished_collision_update                                     ; 276b: f0 13       ..  :263a[1]
 ; handle wall collision
     lda #1                                                            ; 276d: a9 01       ..  :263c[1]
     sta temp_bottom_offset                                            ; 276f: 8d 51 25    .Q% :263e[1]
@@ -4730,7 +4730,7 @@ check_top_and_bottom_for_collisions
     jsr find_top_and_bottom_of_object                                 ; 2777: 20 d2 24     .$ :2646[1]
     jsr check_for_player_intersecting_wall_left_or_right              ; 277a: 20 5a 26     Z& :2649[1]
     jsr handle_left_right_wall_collision                              ; 277d: 20 93 26     .& :264c[1]
-c264f
+finished_collision_update
     lda player_objectid                                               ; 2780: a5 53       .S  :264f[1]
     bne return13                                                      ; 2782: d0 06       ..  :2651[1]
     jsr update_player_accessory_including_toolbar                     ; 2784: 20 b8 2e     .. :2653[1]
@@ -4780,13 +4780,13 @@ found_wall_on_players_left_side
     sbc object_top_cell_y                                             ; 27b1: e5 7a       .z  :2680[1]
     sta player_height_in_cells                                        ; 27b3: 85 80       ..  :2682[1]
 ; look at collision map at each cell up the player's height, looking for a solid wall
-loop_c2684
+read_cells_in_column_loop
     jsr read_collision_map_value_for_xy                               ; 27b5: 20 fa 1e     .. :2684[1]
     cmp #3                                                            ; 27b8: c9 03       ..  :2687[1]
     beq return14                                                      ; 27ba: f0 07       ..  :2689[1]
     dey                                                               ; 27bc: 88          .   :268b[1]
     dec player_height_in_cells                                        ; 27bd: c6 80       ..  :268c[1]
-    bpl loop_c2684                                                    ; 27bf: 10 f4       ..  :268e[1]
+    bpl read_cells_in_column_loop                                     ; 27bf: 10 f4       ..  :268e[1]
 ; mark that no collision was found on the right side
     inc player_hit_wall_on_right_result_flag                          ; 27c1: e6 7d       .}  :2690[1]
 return14
@@ -6054,7 +6054,7 @@ wizard_fall_continues_animation
     !byte spriteid_wizard5,                0,                7        ; 2eb4: 34 00 07    4.. :2d83[1]
     !byte                0                                            ; 2eb7: 00          .   :2d86[1]
 
-update_wizard_animation
+update_wizard
     lda #wizard_transform_out_animation - wizard_base_animation       ; 2eb8: a9 16       ..  :2d87[1]
     sta transform_out_animation                                       ; 2eba: 8d ed 22    .." :2d89[1]
     ldx #<wizard_base_animation                                       ; 2ebd: a2 ed       ..  :2d8c[1]
@@ -6158,7 +6158,7 @@ wizard_standing_still
 ; transform to nothing (end of level spell)
     lda #spriteid_one_pixel_masked_out                                ; 2f6b: a9 00       ..  :2e3a[1]
     jsr transform                                                     ; 2f6d: 20 37 23     7# :2e3c[1]
-    jmp update_wizard_animation                                       ; 2f70: 4c 87 2d    L.- :2e3f[1]
+    jmp update_wizard                                                 ; 2f70: 4c 87 2d    L.- :2e3f[1]
 
 ; transition from a walk cycle or change of direction animation to standing still
 wizard_transition_to_standing_still
@@ -6190,7 +6190,7 @@ wizard_got_index_in_animation
     sta object_spriteid                                               ; 2fa2: 8d a8 09    ... :2e71[1]
     jsr update_player_accessory_including_toolbar                     ; 2fa5: 20 b8 2e     .. :2e74[1]
     lda #0                                                            ; 2fa8: a9 00       ..  :2e77[1]
-    jsr sub_c25f5                                                     ; 2faa: 20 f5 25     .% :2e79[1]
+    jsr update_player_solid_rock_collision                            ; 2faa: 20 f5 25     .% :2e79[1]
     lda object_room_collision_flags                                   ; 2fad: ad d8 38    ..8 :2e7c[1]
     sta temp_collision_results                                        ; 2fb0: 8d b5 2e    ... :2e7f[1]
 c2e82
@@ -6200,7 +6200,7 @@ c2e82
     jsr set_player_spriteid_and_offset_from_animation_table           ; 2fba: 20 00 22     ." :2e89[1]
     jsr update_player_accessory_including_toolbar                     ; 2fbd: 20 b8 2e     .. :2e8c[1]
     lda #0                                                            ; 2fc0: a9 00       ..  :2e8f[1]
-    jsr sub_c25f5                                                     ; 2fc2: 20 f5 25     .% :2e91[1]
+    jsr update_player_solid_rock_collision                            ; 2fc2: 20 f5 25     .% :2e91[1]
     lda object_room_collision_flags                                   ; 2fc5: ad d8 38    ..8 :2e94[1]
     ora temp_collision_results                                        ; 2fc8: 0d b5 2e    ... :2e97[1]
     sta object_room_collision_flags                                   ; 2fcb: 8d d8 38    ..8 :2e9a[1]
@@ -6366,7 +6366,7 @@ cat_fall_animation
     !byte spriteid_cat_walk4,                  0,                  7  ; 30f5: 0f 00 07    ... :2fc4[1]
     !byte                  0                                          ; 30f8: 00          .   :2fc7[1]
 
-update_cat_animation
+update_cat
     lda #cat_transform_out_animation - cat_base_animation             ; 30f9: a9 16       ..  :2fc8[1]
     sta transform_out_animation                                       ; 30fb: 8d ed 22    .." :2fca[1]
     ldx #<cat_base_animation                                          ; 30fe: a2 16       ..  :2fcd[1]
@@ -6495,7 +6495,7 @@ cat_got_index_in_animation
     ldy #>cat_base_animation                                          ; 31dc: a0 2f       ./  :30ab[1]
     jsr set_player_spriteid_and_offset_from_animation_table           ; 31de: 20 00 22     ." :30ad[1]
     lda #0                                                            ; 31e1: a9 00       ..  :30b0[1]
-    jsr sub_c25f5                                                     ; 31e3: 20 f5 25     .% :30b2[1]
+    jsr update_player_solid_rock_collision                            ; 31e3: 20 f5 25     .% :30b2[1]
     lda #<cat_tail_spriteids                                          ; 31e6: a9 f7       ..  :30b5[1]
     sta address1_low                                                  ; 31e8: 85 70       .p  :30b7[1]
     lda #>cat_tail_spriteids                                          ; 31ea: a9 2e       ..  :30b9[1]
@@ -6652,7 +6652,7 @@ monkey_fall_animation
 l31d7
     !byte 0                                                           ; 3308: 00          .   :31d7[1]
 
-update_monkey_animation
+update_monkey
     lda #monkey_transform_out_animation - monkey_base_animation       ; 3309: a9 16       ..  :31d8[1]
     sta transform_out_animation                                       ; 330b: 8d ed 22    .." :31da[1]
     ldx #<monkey_base_animation                                       ; 330e: a2 ff       ..  :31dd[1]
@@ -6842,7 +6842,7 @@ c3331
     ldy #>monkey_base_animation                                       ; 346d: a0 30       .0  :333c[1]
     jsr set_player_spriteid_and_offset_from_animation_table           ; 346f: 20 00 22     ." :333e[1]
     lda #0                                                            ; 3472: a9 00       ..  :3341[1]
-    jsr sub_c25f5                                                     ; 3474: 20 f5 25     .% :3343[1]
+    jsr update_player_solid_rock_collision                            ; 3474: 20 f5 25     .% :3343[1]
     lda #<monkey_tail_spriteids                                       ; 3477: a9 dd       ..  :3346[1]
     sta address1_low                                                  ; 3479: 85 70       .p  :3348[1]
     lda #>monkey_tail_spriteids                                       ; 347b: a9 30       .0  :334a[1]
@@ -7853,7 +7853,7 @@ c39b6
     lda #0                                                            ; 3ae7: a9 00       ..  :39b6[1]
     sta current_animation                                             ; 3ae9: 8d df 09    ... :39b8[1]
     sta object_current_index_in_animation                             ; 3aec: 8d d4 09    ... :39bb[1]
-    jmp check_for_next_player_animation                               ; 3aef: 4c cd 22    L." :39be[1]
+    jmp update_player                                                 ; 3aef: 4c cd 22    L." :39be[1]
 
 c39c1
     cmp #$0b                                                          ; 3af2: c9 0b       ..  :39c1[1]
@@ -8757,11 +8757,11 @@ clear_most_of_save_game_data_loop
 get_checksum_of_save_game_data
     lda #0                                                            ; 4094: a9 00       ..  :0ac3[5]
     tax                                                               ; 4096: aa          .   :0ac5[5]
-loop_c0ac6
+get_checksum_loop
     eor level_progress_table,x                                        ; 4097: 5d ef 09    ].. :0ac6[5]
     inx                                                               ; 409a: e8          .   :0ac9[5]
     cpx #$80                                                          ; 409b: e0 80       ..  :0aca[5]
-    bcc loop_c0ac6                                                    ; 409d: 90 f8       ..  :0acc[5]
+    bcc get_checksum_loop                                             ; 409d: 90 f8       ..  :0acc[5]
     eor save_game                                                     ; 409f: 4d ea 09    M.. :0ace[5]
     eor #$ff                                                          ; 40a2: 49 ff       I.  :0ad1[5]
     rts                                                               ; 40a4: 60          `   :0ad3[5]
@@ -9074,7 +9074,6 @@ plot_move_x_high
 pydis_end
 
 ; Automatically generated labels:
-;     c264f
 ;     c2e82
 ;     c2eb1
 ;     c30ca
@@ -9130,13 +9129,10 @@ pydis_end
 ;     l3403
 ;     lbe00
 ;     lbf00
-;     loop_c0ac6
-;     loop_c2684
 ;     loop_c2be9
 ;     loop_c34b2
 ;     loop_c39d2
 ;     loop_c3f87
-;     sub_c25f5
 ;     sub_c336e
 !if (' ' + '0') != $50 {
     !error "Assertion failed: ' ' + '0' == $50"
