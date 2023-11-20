@@ -2174,7 +2174,8 @@ On Entry:
     label(0x2851, "recall_registers_and_return2")
     comment(0x2859, """*************************************************************************************
 
-Read the collision cells along a row, looking for solid rock anywhere
+Read the collision cells along a row, looking for solid rock anywhere.
+Pixel position is the right extent of the row.
 
 On Entry:
     (A, object_top_cell_y): the right extent of the row (pixel X coordinate)
@@ -2182,12 +2183,32 @@ On Entry:
         object_left_cell_x: the left extent of the row (cell X coordinate)
 
 On Exit:
-    Zero flag: result is non-zero if collision took place
+    Zero flag: result is non-zero if solid rock found
 
 *************************************************************************************""")
     comment(0x2859, "divide the pixel coordinate by eight")
-    label(0x2859, "check_for_solid_rock_along_a_row_of_cells")
+    label(0x2859, "check_for_solid_rock_along_a_row_of_cells1")
     comment(0x2862, "find width in cells of the row to check (this will be our loop counter)")
+
+    comment(0x286d, """*************************************************************************************
+
+Read the collision cells along a row, looking for solid rock anywhere.
+Pixel position is the left extent of the row.
+
+On Entry:
+    (A, object_top_cell_y): the left extent of the row (pixel X coordinate)
+                         Y: cell Y coordinate to check
+       object_right_cell_x: the right extent of the row (cell X coordinate)
+
+On Exit:
+    Zero flag: result is non-zero if solid rock found
+
+*************************************************************************************""")
+    label(0x286d, "check_for_solid_rock_along_a_row_of_cells2")
+    comment(0x286d, "divide the pixel coordinate by eight")
+    comment(0x2876, "find width in cells of the row to check (this will be our loop counter)")
+
+
     label(0x287e, "cell_row_loop")
     comment(0x288a, "no solid rock found")
     label(0x288c, "return_with_flags")

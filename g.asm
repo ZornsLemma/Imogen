@@ -5025,7 +5025,7 @@ player_hit_floor
     sta object_top_cell_y                                             ; 2920: 85 7a       .z  :27ef[1]
     txa                                                               ; 2922: 8a          .   :27f1[1]
     sbc #0                                                            ; 2923: e9 00       ..  :27f2[1]
-    jsr check_for_solid_rock_along_a_row_of_cells                     ; 2925: 20 59 28     Y( :27f4[1]
+    jsr check_for_solid_rock_along_a_row_of_cells1                    ; 2925: 20 59 28     Y( :27f4[1]
     bne c27fe                                                         ; 2928: d0 05       ..  :27f7[1]
     dec player_just_fallen_off_edge_direction                         ; 292a: ce 90 28    ..( :27f9[1]
     bne c281d                                                         ; 292d: d0 1f       ..  :27fc[1]
@@ -5042,7 +5042,7 @@ c27fe
     ror object_top_cell_y                                             ; 2941: 66 7a       fz  :2810[1]
     lsr                                                               ; 2943: 4a          J   :2812[1]
     ror object_top_cell_y                                             ; 2944: 66 7a       fz  :2813[1]
-    jsr sub_c286d                                                     ; 2946: 20 6d 28     m( :2815[1]
+    jsr check_for_solid_rock_along_a_row_of_cells2                    ; 2946: 20 6d 28     m( :2815[1]
     bne recall_registers_and_return2                                  ; 2949: d0 37       .7  :2818[1]
     inc player_just_fallen_off_edge_direction                         ; 294b: ee 90 28    ..( :281a[1]
 c281d
@@ -5058,7 +5058,7 @@ c2825
     sta object_top_cell_y                                             ; 2961: 85 7a       .z  :2830[1]
     lda sum_of_left_and_right_extents_high                            ; 2963: ad 93 28    ..( :2832[1]
     sbc #0                                                            ; 2966: e9 00       ..  :2835[1]
-    jsr check_for_solid_rock_along_a_row_of_cells                     ; 2968: 20 59 28     Y( :2837[1]
+    jsr check_for_solid_rock_along_a_row_of_cells1                    ; 2968: 20 59 28     Y( :2837[1]
     bne c2841                                                         ; 296b: d0 05       ..  :283a[1]
     dec player_just_fallen_off_edge_direction + 1                     ; 296d: ce 91 28    ..( :283c[1]
     bne recall_registers_and_return2                                  ; 2970: d0 10       ..  :283f[1]
@@ -5066,7 +5066,7 @@ c2841
     lda sum_of_left_and_right_extents_low                             ; 2972: ad 92 28    ..( :2841[1]
     sta object_top_cell_y                                             ; 2975: 85 7a       .z  :2844[1]
     lda sum_of_left_and_right_extents_high                            ; 2977: ad 93 28    ..( :2846[1]
-    jsr sub_c286d                                                     ; 297a: 20 6d 28     m( :2849[1]
+    jsr check_for_solid_rock_along_a_row_of_cells2                    ; 297a: 20 6d 28     m( :2849[1]
     bne recall_registers_and_return2                                  ; 297d: d0 03       ..  :284c[1]
     inc player_just_fallen_off_edge_direction + 1                     ; 297f: ee 91 28    ..( :284e[1]
 recall_registers_and_return2
@@ -5079,7 +5079,8 @@ recall_registers_and_return2
 
 ; *************************************************************************************
 ; 
-; Read the collision cells along a row, looking for solid rock anywhere
+; Read the collision cells along a row, looking for solid rock anywhere.
+; Pixel position is the right extent of the row.
 ; 
 ; On Entry:
 ;     (A, object_top_cell_y): the right extent of the row (pixel X coordinate)
@@ -5087,11 +5088,11 @@ recall_registers_and_return2
 ;         object_left_cell_x: the left extent of the row (cell X coordinate)
 ; 
 ; On Exit:
-;     Zero flag: result is non-zero if collision took place
+;     Zero flag: result is non-zero if solid rock found
 ; 
 ; *************************************************************************************
 ; divide the pixel coordinate by eight
-check_for_solid_rock_along_a_row_of_cells
+check_for_solid_rock_along_a_row_of_cells1
     lsr                                                               ; 298a: 4a          J   :2859[1]
     ror object_top_cell_y                                             ; 298b: 66 7a       fz  :285a[1]
     lsr                                                               ; 298d: 4a          J   :285c[1]
@@ -5106,13 +5107,29 @@ check_for_solid_rock_along_a_row_of_cells
     sta cell_based_loop_counter                                       ; 2999: 85 80       ..  :2868[1]
     jmp cell_row_loop                                                 ; 299b: 4c 7e 28    L~( :286a[1]
 
-sub_c286d
+; *************************************************************************************
+; 
+; Read the collision cells along a row, looking for solid rock anywhere.
+; Pixel position is the left extent of the row.
+; 
+; On Entry:
+;     (A, object_top_cell_y): the left extent of the row (pixel X coordinate)
+;                          Y: cell Y coordinate to check
+;        object_right_cell_x: the right extent of the row (cell X coordinate)
+; 
+; On Exit:
+;     Zero flag: result is non-zero if solid rock found
+; 
+; *************************************************************************************
+; divide the pixel coordinate by eight
+check_for_solid_rock_along_a_row_of_cells2
     lsr                                                               ; 299e: 4a          J   :286d[1]
     ror object_top_cell_y                                             ; 299f: 66 7a       fz  :286e[1]
     lsr                                                               ; 29a1: 4a          J   :2870[1]
     ror object_top_cell_y                                             ; 29a2: 66 7a       fz  :2871[1]
     lsr                                                               ; 29a4: 4a          J   :2873[1]
     ror object_top_cell_y                                             ; 29a5: 66 7a       fz  :2874[1]
+; find width in cells of the row to check (this will be our loop counter)
     ldx object_right_cell_x                                           ; 29a7: a6 79       .y  :2876[1]
     txa                                                               ; 29a9: 8a          .   :2878[1]
     sec                                                               ; 29aa: 38          8   :2879[1]
@@ -9083,7 +9100,6 @@ pydis_end
 ;     loop_c3f87
 ;     sub_c23c4
 ;     sub_c25f5
-;     sub_c286d
 ;     sub_c2eb8
 ;     sub_c336e
 !if (' ' + '0') != $50 {
