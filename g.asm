@@ -4945,6 +4945,16 @@ return17
 ; On Entry:
 ;     A: object id to test
 ; 
+; On Exit:
+;     player_has_hit_floor_flag and A and flags: $ff if player hit floor,
+;                                                $00 otherwise.
+;         player_just_fallen_off_edge_direction: $ff if player is off left edge,
+;                                                $01 if off right edge,
+;                                                $00 otherwise.
+;        player_just_fallen_centrally_direction: $ff if player is off the centre left,
+;                                                $01 if off the centre right,
+;                                                $00 otherwise.
+; 
 ; *************************************************************************************
 check_and_handle_player_hitting_floor
     sta player_objectid                                               ; 28a1: 85 53       .S  :2770[1]
@@ -4966,7 +4976,7 @@ check_and_handle_player_hitting_floor
 ; clear 'just fallen off' table
     lda #0                                                            ; 28bb: a9 00       ..  :278a[1]
     sta player_just_fallen_off_edge_direction                         ; 28bd: 8d 90 28    ..( :278c[1]
-    sta player_just_fallen_off_edge_direction + 1                     ; 28c0: 8d 91 28    ..( :278f[1]
+    sta player_just_fallen_centrally_direction                        ; 28c0: 8d 91 28    ..( :278f[1]
 ; if (player hit floor) then branch
     lda player_hit_floor_result_flag                                  ; 28c3: a5 7f       ..  :2792[1]
     sta player_has_hit_floor_flag                                     ; 28c5: 8d 8f 28    ..( :2794[1]
@@ -5004,7 +5014,11 @@ player_hit_floor
     sta object_right_cell_x                                           ; 2900: 85 79       .y  :27cf[1]
 ; set y to be the bottom cell (later we'll get a value from the collision map)
     ldy object_bottom_cell_y                                          ; 2902: a4 7b       .{  :27d1[1]
-; double the left extent, and add to the sum of left and right extents...
+; To see if the player should fall, the idea here is to look at the cell below the
+; player, 3/4 of the way to the left of the character. Calculating 3/4 of the way along
+; is done by calculating (2L+(L+R))/4 = (3L+R)/4 = (3/4)L + (1/4)R
+; the result is rounded, so that we look at two adjacent cells based on the rounding.
+; First double the left extent, and add to the sum of left and right extents...
     asl object_left_low                                               ; 2904: 06 70       .p  :27d3[1]
     rol object_left_high                                              ; 2906: 26 71       &q  :27d5[1]
     lda sum_of_left_and_right_extents_low                             ; 2908: ad 92 28    ..( :27d7[1]
@@ -5026,10 +5040,14 @@ player_hit_floor
     txa                                                               ; 2922: 8a          .   :27f1[1]
     sbc #0                                                            ; 2923: e9 00       ..  :27f2[1]
     jsr check_for_solid_rock_along_a_row_of_cells1                    ; 2925: 20 59 28     Y( :27f4[1]
-    bne c27fe                                                         ; 2928: d0 05       ..  :27f7[1]
+    bne check_for_solid_rock_under_player_to_right                    ; 2928: d0 05       ..  :27f7[1]
+; player has fallen off the edge to the left
     dec player_just_fallen_off_edge_direction                         ; 292a: ce 90 28    ..( :27f9[1]
-    bne c281d                                                         ; 292d: d0 1f       ..  :27fc[1]
-c27fe
+    bne player_has_fallen_off_either_edge                             ; 292d: d0 1f       ..  :27fc[1]   ; ALWAYS branch
+; solid rock was found three quarters to the left, now check three quarters right.
+; This is similar to above code, starting with: Double the right extent, and add to the
+; sum of left and right extents...
+check_for_solid_rock_under_player_to_right
     asl object_right_low                                              ; 292f: 06 72       .r  :27fe[1]
     rol object_right_high                                             ; 2931: 26 73       &s  :2800[1]
     lda sum_of_left_and_right_extents_low                             ; 2933: ad 92 28    ..( :2802[1]
@@ -5038,37 +5056,46 @@ c27fe
     sta object_top_cell_y                                             ; 2939: 85 7a       .z  :2808[1]
     lda sum_of_left_and_right_extents_high                            ; 293b: ad 93 28    ..( :280a[1]
     adc object_right_high                                             ; 293e: 65 73       es  :280d[1]
+; ...then divide by four...
     lsr                                                               ; 2940: 4a          J   :280f[1]
     ror object_top_cell_y                                             ; 2941: 66 7a       fz  :2810[1]
     lsr                                                               ; 2943: 4a          J   :2812[1]
     ror object_top_cell_y                                             ; 2944: 66 7a       fz  :2813[1]
+; check cells for solid rock
     jsr check_for_solid_rock_along_a_row_of_cells2                    ; 2946: 20 6d 28     m( :2815[1]
     bne recall_registers_and_return2                                  ; 2949: d0 37       .7  :2818[1]
+; player has fallen off the edge to the right
     inc player_just_fallen_off_edge_direction                         ; 294b: ee 90 28    ..( :281a[1]
-c281d
+player_has_fallen_off_either_edge
     lda player_objectid                                               ; 294e: a5 53       .S  :281d[1]
-    beq c2825                                                         ; 2950: f0 04       ..  :281f[1]
+    beq check_cell_centre_below_player                                ; 2950: f0 04       ..  :281f[1]
     cmp #$0b                                                          ; 2952: c9 0b       ..  :2821[1]
     bne recall_registers_and_return2                                  ; 2954: d0 2c       .,  :2823[1]
-c2825
+; divide the sum by two to find the centre position
+check_cell_centre_below_player
     lsr sum_of_left_and_right_extents_high                            ; 2956: 4e 93 28    N.( :2825[1]
     ror sum_of_left_and_right_extents_low                             ; 2959: 6e 92 28    n.( :2828[1]
+; round result
     lda sum_of_left_and_right_extents_low                             ; 295c: ad 92 28    ..( :282b[1]
     sbc #0                                                            ; 295f: e9 00       ..  :282e[1]
     sta object_top_cell_y                                             ; 2961: 85 7a       .z  :2830[1]
     lda sum_of_left_and_right_extents_high                            ; 2963: ad 93 28    ..( :2832[1]
     sbc #0                                                            ; 2966: e9 00       ..  :2835[1]
+; check cells for solid rock
     jsr check_for_solid_rock_along_a_row_of_cells1                    ; 2968: 20 59 28     Y( :2837[1]
-    bne c2841                                                         ; 296b: d0 05       ..  :283a[1]
-    dec player_just_fallen_off_edge_direction + 1                     ; 296d: ce 91 28    ..( :283c[1]
+    bne check_player_supported_to_centre_left                         ; 296b: d0 05       ..  :283a[1]
+; player fallen more centrally to the left
+    dec player_just_fallen_centrally_direction                        ; 296d: ce 91 28    ..( :283c[1]
     bne recall_registers_and_return2                                  ; 2970: d0 10       ..  :283f[1]
-c2841
+check_player_supported_to_centre_left
     lda sum_of_left_and_right_extents_low                             ; 2972: ad 92 28    ..( :2841[1]
     sta object_top_cell_y                                             ; 2975: 85 7a       .z  :2844[1]
     lda sum_of_left_and_right_extents_high                            ; 2977: ad 93 28    ..( :2846[1]
+; check cells for solid rock
     jsr check_for_solid_rock_along_a_row_of_cells2                    ; 297a: 20 6d 28     m( :2849[1]
     bne recall_registers_and_return2                                  ; 297d: d0 03       ..  :284c[1]
-    inc player_just_fallen_off_edge_direction + 1                     ; 297f: ee 91 28    ..( :284e[1]
+; player fallen more centrally to the right
+    inc player_just_fallen_centrally_direction                        ; 297f: ee 91 28    ..( :284e[1]
 recall_registers_and_return2
     pla                                                               ; 2982: 68          h   :2851[1]   ; recall X,Y
     tay                                                               ; 2983: a8          .   :2852[1]
@@ -5152,6 +5179,7 @@ player_has_hit_floor_flag
     !byte 0                                                           ; 29c0: 00          .   :288f[1]
 player_just_fallen_off_edge_direction
     !byte 0                                                           ; 29c1: 00          .   :2890[1]
+player_just_fallen_centrally_direction
     !byte 0                                                           ; 29c2: 00          .   :2891[1]
 sum_of_left_and_right_extents_low
     !byte 0                                                           ; 29c3: 00          .   :2892[1]
@@ -9015,10 +9043,6 @@ pydis_end
 ;     c255a
 ;     c2626
 ;     c264f
-;     c27fe
-;     c281d
-;     c2825
-;     c2841
 ;     c2e0f
 ;     c2e1b
 ;     c2e42

@@ -2154,6 +2154,16 @@ Check if the player is hitting the floor, and if so, deal with it
 On Entry:
     A: object id to test
 
+On Exit:
+    player_has_hit_floor_flag and A and flags: $ff if player hit floor,
+                                               $00 otherwise.
+        player_just_fallen_off_edge_direction: $ff if player is off left edge,
+                                               $01 if off right edge,
+                                               $00 otherwise.
+       player_just_fallen_centrally_direction: $ff if player is off the centre left,
+                                               $01 if off the centre right,
+                                               $00 otherwise.
+
 *************************************************************************************""")
     label(0x2770, "check_and_handle_player_hitting_floor")
     comment(0x2776, "check collision of player with room")
@@ -2167,9 +2177,28 @@ On Entry:
     comment(0x27b8, "sum the left and right extents")
     comment(0x27c7, "restore original left right cells")
     comment(0x27d1, "set y to be the bottom cell (later we'll get a value from the collision map)")
-    comment(0x27d3, "double the left extent, and add to the sum of left and right extents...")
+    comment(0x27d3, """To see if the player should fall, the idea here is to look at the cell below the player, 3/4 of the way to the left of the character. Calculating 3/4 of the way along is done by calculating (2L+(L+R))/4 = (3L+R)/4 = (3/4)L + (1/4)R
+the result is rounded, so that we look at two adjacent cells based on the rounding.
+First double the left extent, and add to the sum of left and right extents...""")
     comment(0x27e4, "...then divide by four...")
     comment(0x27eb, "...and round the result")
+    ab(0x27fc)
+    comment(0x27f9, "player has fallen off the edge to the left")
+    comment(0x27fe, """solid rock was found three quarters to the left, now check three quarters right.
+This is similar to above code, starting with: Double the right extent, and add to the sum of left and right extents...""")
+    label(0x27fe, "check_for_solid_rock_under_player_to_right")
+    comment(0x280f, "...then divide by four...")
+    comment(0x2815, "check cells for solid rock")
+    comment(0x281a, "player has fallen off the edge to the right")
+    label(0x281d, "player_has_fallen_off_either_edge")
+    label(0x2825, "check_cell_centre_below_player")
+    comment(0x2825, "divide the sum by two to find the centre position")
+    comment(0x282b, "round result")
+    comment(0x2837, "check cells for solid rock")
+    comment(0x283c, "player fallen more centrally to the left")
+    comment(0x2849, "check cells for solid rock")
+    comment(0x284e, "player fallen more centrally to the right")
+    label(0x2841, "check_player_supported_to_centre_left")
 
     label(0x2851, "recall_registers_and_return2")
     comment(0x2859, """*************************************************************************************
@@ -2214,7 +2243,7 @@ On Exit:
     label(0x288c, "return_with_flags")
     label(0x288f, "player_has_hit_floor_flag")
     label(0x2890, "player_just_fallen_off_edge_direction")
-    expr_label(0x2891, make_add("player_just_fallen_off_edge_direction", "1"))
+    label(0x2891, "player_just_fallen_centrally_direction")
     label(0x2892, "sum_of_left_and_right_extents_low")
     label(0x2893, "sum_of_left_and_right_extents_high")
     comment(0x2894, """*************************************************************************************
