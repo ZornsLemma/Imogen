@@ -1080,7 +1080,7 @@ c40b2
 room2_update_handler_not_new_level
     lda desired_room_index                                            ; 40c1: a5 30
     cmp #2                                                            ; 40c3: c9 02
-    bne c40e0                                                         ; 40c5: d0 19
+    bne c41d9_local                                                   ; 40c5: d0 19
     ldx #<envelope2                                                   ; 40c7: a2 2c
     ldy #>envelope2                                                   ; 40c9: a0 44
     jsr define_envelope                                               ; 40cb: 20 5e 39
@@ -1092,7 +1092,7 @@ room2_update_handler_not_new_level
     jsr set_object_position_from_cell_xy                              ; 40d8: 20 5d 1f
     lda #spriteid_zero_size1                                          ; 40db: a9 cc
     sta object_sprite_mask_type + objectid_baby                       ; 40dd: 8d ae 38
-c40e0
+c41d9_local
     jmp c41d9                                                         ; 40e0: 4c d9 41
 
 room2_update_handler_temp
@@ -1798,7 +1798,6 @@ pydis_end
 ;     c3ce7
 ;     c3f62
 ;     c40b2
-;     c40e0
 ;     c40ee
 ;     c412b
 ;     c4137
