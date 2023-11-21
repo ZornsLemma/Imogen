@@ -2898,7 +2898,7 @@ On Entry:
     entry(0x3804, "string_length_in_y")
     char(0x3813)
     entry(0x3814, "print_y_spaces_loop")
-    stars(0x381c, "Print the EOR-encrypted (with eor_key) CR-terminated string at YX. Print in italics iff l0043 is non-0.")
+    stars(0x381c, "Print the EOR-encrypted (with eor_key) CR-terminated string at YX. Print in italics iff print_in_italics_flag is non-0.")
     entry(0x381c, "print_encrypted_string_at_yx")
     expr(0x3821, make_lo("print_italic"))
     expr(0x3826, make_hi("print_italic"))

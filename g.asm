@@ -7605,7 +7605,7 @@ c381a
 ; *************************************************************************************
 ; 
 ; Print the EOR-encrypted (with eor_key) CR-terminated string at YX. Print in italics
-; iff l0043 is non-0.
+; iff print_in_italics_flag is non-0.
 ; 
 ; *************************************************************************************
 print_encrypted_string_at_yx
