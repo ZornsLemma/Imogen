@@ -1095,7 +1095,7 @@ room2_update_handler_not_new_level
     lda #spriteid_zero_size1                                          ; 40db: a9 cc
     sta object_sprite_mask_type + objectid_baby                       ; 40dd: 8d ae 38
 c41d9_local
-    jmp room2_skip_playing_sound                                      ; 40e0: 4c d9 41
+    jmp room2_update_second_part                                      ; 40e0: 4c d9 41
 
 room2_update_handler_temp
     !byte 0                                                           ; 40e3: 00
@@ -1104,7 +1104,7 @@ room2_not_first_update
     ldy baby_sprite_index                                             ; 40e4: ac 73 0a
     cpy #baby_spriteid_data_entries_minus_1                           ; 40e7: c0 2b
     bne not_at_last_baby_spriteid_entry                               ; 40e9: d0 03
-    jmp room2_skip_playing_sound                                      ; 40eb: 4c d9 41
+    jmp room2_update_second_part                                      ; 40eb: 4c d9 41
 
 not_at_last_baby_spriteid_entry
     iny                                                               ; 40ee: c8
@@ -1225,16 +1225,16 @@ c41c9
     sty baby_sprite_index                                             ; 41c9: 8c 73 0a
     lda desired_room_index                                            ; 41cc: a5 30
     cmp #2                                                            ; 41ce: c9 02
-    bne room2_skip_playing_sound                                      ; 41d0: d0 07
+    bne room2_update_second_part                                      ; 41d0: d0 07
     cpy #baby_spriteid_data_entries_minus_1                           ; 41d2: c0 2b
-    bne room2_skip_playing_sound                                      ; 41d4: d0 03
+    bne room2_update_second_part                                      ; 41d4: d0 03
     jsr play_some_sound1_then_some_sound2                             ; 41d6: 20 f1 3e
-room2_skip_playing_sound
+room2_update_second_part
     lda desired_room_index                                            ; 41d9: a5 30
     cmp #2                                                            ; 41db: c9 02
     bne return5                                                       ; 41dd: d0 6d
     lda baby_spriteid_index_if_baby_spriteid_data_is_zero             ; 41df: ad 72 0a
-    cmp #$2b ; '+'                                                    ; 41e2: c9 2b
+    cmp #baby_spriteid_data_entries_minus_1                           ; 41e2: c9 2b
     bne set_baby_object_properties                                    ; 41e4: d0 4f
     lda baby_pixel_x_coordinate                                       ; 41e6: ad 70 0a
     sta save_game_level_a_room_2_baby_pixel_x_coordinate              ; 41e9: 8d 03 0a
