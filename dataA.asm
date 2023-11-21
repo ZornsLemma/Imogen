@@ -100,8 +100,8 @@ room1_trapdoor_open_flag                            = $09ff
 saxophone_collected_flag                            = $0a00
 table_x_position                                    = $0a01
 table_x_speed                                       = $0a02
-l0a03                                               = $0a03
-l0a04                                               = $0a04
+save_game_level_a_room_2_thing1                     = $0a03
+save_game_level_a_room_2_thing2                     = $0a04
 mouse_ball_animation_position                       = $0a6f
 l0a70                                               = $0a70
 l0a71                                               = $0a71
@@ -1058,8 +1058,8 @@ room2_update_handler
     cmp previous_level                                                ; 409e: c5 51
     beq room2_update_handler_not_new_level                            ; 40a0: f0 1f
     ldy #$2b ; '+'                                                    ; 40a2: a0 2b
-    lda l0a04                                                         ; 40a4: ad 04 0a
-    ldx l0a03                                                         ; 40a7: ae 03 0a
+    lda save_game_level_a_room_2_thing2                               ; 40a4: ad 04 0a
+    ldx save_game_level_a_room_2_thing1                               ; 40a7: ae 03 0a
     bne c40b2                                                         ; 40aa: d0 06
     ldy #0                                                            ; 40ac: a0 00
     lda #1                                                            ; 40ae: a9 01
@@ -1067,7 +1067,7 @@ room2_update_handler
 c40b2
     sty l0a72                                                         ; 40b2: 8c 72 0a
     sty l0a73                                                         ; 40b5: 8c 73 0a
-    sta l0a04                                                         ; 40b8: 8d 04 0a
+    sta save_game_level_a_room_2_thing2                               ; 40b8: 8d 04 0a
     sta l0a71                                                         ; 40bb: 8d 71 0a
     stx l0a70                                                         ; 40be: 8e 70 0a
 room2_update_handler_not_new_level
@@ -1109,9 +1109,9 @@ c40f7
     lda l0a72                                                         ; 40fd: ad 72 0a
     cmp #$2b ; '+'                                                    ; 4100: c9 2b
     beq c412b                                                         ; 4102: f0 27
-    ldx #0                                                            ; 4104: a2 00
+    ldx #objectid_player                                              ; 4104: a2 00
     sty l40e3                                                         ; 4106: 8c e3 40
-    ldy #2                                                            ; 4109: a0 02
+    ldy #objectid_baby                                                ; 4109: a0 02
     jsr test_for_collision_between_objects_x_and_y                    ; 410b: 20 e2 28
     ldy l40e3                                                         ; 410e: ac e3 40
     ora #0                                                            ; 4111: 09 00
@@ -1121,7 +1121,7 @@ c40f7
     lda #0                                                            ; 411a: a9 00
     sta player_held_object_for_spriteid_wizard6                       ; 411c: 8d b6 2e
     lda #1                                                            ; 411f: a9 01
-    sta l0a04                                                         ; 4121: 8d 04 0a
+    sta save_game_level_a_room_2_thing2                               ; 4121: 8d 04 0a
     ldy #$22 ; '"'                                                    ; 4124: a0 22
     lda #5                                                            ; 4126: a9 05
     sta l0a72                                                         ; 4128: 8d 72 0a
@@ -1162,7 +1162,7 @@ c4167
     cmp #0                                                            ; 416a: c9 00
     bne c41ae                                                         ; 416c: d0 40
     lda l0a71                                                         ; 416e: ad 71 0a
-    sta l0a04                                                         ; 4171: 8d 04 0a
+    sta save_game_level_a_room_2_thing2                               ; 4171: 8d 04 0a
     lda l0a70                                                         ; 4174: ad 70 0a
     ldx l0a71                                                         ; 4177: ae 71 0a
     bmi c4184                                                         ; 417a: 30 08
@@ -1184,7 +1184,7 @@ c4194
     lda l0a71                                                         ; 4194: ad 71 0a
     eor #$fe                                                          ; 4197: 49 fe
     sta l0a71                                                         ; 4199: 8d 71 0a
-    sta l0a04                                                         ; 419c: 8d 04 0a
+    sta save_game_level_a_room_2_thing2                               ; 419c: 8d 04 0a
 c419f
     lda l0a71                                                         ; 419f: ad 71 0a
     asl                                                               ; 41a2: 0a
@@ -1195,7 +1195,7 @@ c419f
     jmp c41c9                                                         ; 41ab: 4c c9 41
 
 c41ae
-    lda l0a04                                                         ; 41ae: ad 04 0a
+    lda save_game_level_a_room_2_thing2                               ; 41ae: ad 04 0a
     bmi c41c1                                                         ; 41b1: 30 0e
     lda l0a70                                                         ; 41b3: ad 70 0a
     clc                                                               ; 41b6: 18
@@ -1224,7 +1224,7 @@ c41d9
     cmp #$2b ; '+'                                                    ; 41e2: c9 2b
     bne c4235                                                         ; 41e4: d0 4f
     lda l0a70                                                         ; 41e6: ad 70 0a
-    sta l0a03                                                         ; 41e9: 8d 03 0a
+    sta save_game_level_a_room_2_thing1                               ; 41e9: 8d 03 0a
     lsr                                                               ; 41ec: 4a
     lsr                                                               ; 41ed: 4a
     lsr                                                               ; 41ee: 4a
@@ -1253,7 +1253,7 @@ c420c
     lda #0                                                            ; 4217: a9 00
     sta value_to_write_to_collision_map                               ; 4219: 85 3e
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 421b: 20 44 1e
-    lda l0a04                                                         ; 421e: ad 04 0a
+    lda save_game_level_a_room_2_thing2                               ; 421e: ad 04 0a
     bmi c4224                                                         ; 4221: 30 01
     dex                                                               ; 4223: ca
 c4224
@@ -1272,7 +1272,7 @@ c4235
     ldy l0a73                                                         ; 423d: ac 73 0a
     lda baby_spriteid_data,y                                          ; 4240: b9 52 40
     sta object_spriteid,x                                             ; 4243: 9d a8 09
-    lda l0a04                                                         ; 4246: ad 04 0a
+    lda save_game_level_a_room_2_thing2                               ; 4246: ad 04 0a
     sta object_direction,x                                            ; 4249: 9d be 09
 return5
     rts                                                               ; 424c: 60
@@ -1808,8 +1808,6 @@ pydis_end
 ;     c420c
 ;     c4224
 ;     c4235
-;     l0a03
-;     l0a04
 ;     l0a70
 ;     l0a71
 ;     l0a72

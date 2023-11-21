@@ -311,6 +311,8 @@ Room 2 update
 Room 2 has the spell, guarded by a baby.
 
 *************************************************************************************""")
+label(0x0a03, "save_game_level_a_room_2_thing1")
+label(0x0a04, "save_game_level_a_room_2_thing2")
 entry(0x407f, "room2_update_handler")
 expr(0x4093, "objectid_spell")
 entry(0x40c1, "room2_update_handler_not_new_level")
@@ -323,6 +325,8 @@ entry(0x3def, "exited_room_not_bottom")
 expr(0x3df2, "exit_room_right")
 entry(0x3dd2, "loop_until_exited_room")
 entry(0x40e4, "room2_not_first_update")
+expr(0x4105, "objectid_player")
+expr(0x410a, "objectid_baby")
 entry(0x424c, "return5")
 
 entry(0x42ea, "loop_until_exit_room_left")
