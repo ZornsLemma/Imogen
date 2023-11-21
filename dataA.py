@@ -353,6 +353,8 @@ entry(0x4235, "set_baby_object_properties")
 comment(0x40f4, "TODO: I suspect what happens here is that there are multiple animation sequences and 0 means 'jump to a new sequence, identified by baby_sprite_index_if...'")
 label(0xa72, "baby_spriteid_index_if_baby_spriteid_data_is_zero")
 entry(0x40f7, "have_specific_baby_spriteid")
+entry(0x41d9, "room2_skip_playing_sound")
+expr(0x41d3, "baby_spriteid_data_entries_minus_1")
 
 entry(0x42ea, "loop_until_exit_room_left")
 expr(0x42ee, "exit_room_left")
