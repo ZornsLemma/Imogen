@@ -66,7 +66,7 @@ table_min_x                        = 10
 characters_entered                                  = $05
 sprite_reflect_flag                                 = $1d
 desired_room_index                                  = $30
-desired_level                                       = $31
+current_level                                       = $31
 temp_sprite_x_offset                                = $3a
 temp_sprite_y_offset                                = $3b
 width_in_cells                                      = $3c
@@ -76,7 +76,7 @@ source_sprite_memory_low                            = $40
 source_sprite_memory_high                           = $41
 copy_mode                                           = $42
 previous_room_index                                 = $50
-previous_level                                      = $51
+level_before_latest_level_and_room_initialisation   = $51
 player_held_object_menu_item_spriteid               = $52
 developer_mode_sideways_ram_is_set_up_flag          = $5b
 l0070                                               = $70
@@ -111,7 +111,7 @@ baby_sprite_index                                   = $0a73
 string_input_buffer                                 = $0a90
 tile_all_set_pixels                                 = $0aa9
 developer_flags                                     = $1103
-initialise_level                                    = $1140
+initialise_level_and_room                           = $1140
 start_room                                          = $12bb
 game_update                                         = $12da
 update_room_first_update_flag                       = $132b
@@ -191,10 +191,16 @@ level_specific_password
     !byte $98, $8a, $93, $84, $9b, $83, $84, $89, $82, $8a, $c6       ; 3ae7: 98 8a 93...
 
 ; *************************************************************************************
+; 
+; Level initialisation
+; 
+; This is called whenever a new room is entered.
+; 
+; *************************************************************************************
 level_specific_initialisation
-    lda desired_level                                                 ; 3af2: a5 31
+    lda current_level                                                 ; 3af2: a5 31
 ; if level is unchanged, skip forwards
-    cmp previous_level                                                ; 3af4: c5 51
+    cmp level_before_latest_level_and_room_initialisation             ; 3af4: c5 51
     beq saxophone_not_collected_yet                                   ; 3af6: f0 16
 ; if not in developer mode, skip forwards
     lda developer_flags                                               ; 3af8: ad 03 11
@@ -241,14 +247,14 @@ level_specific_update
 
 ; *************************************************************************************
 ; 
-; Room 0 initialisation
+; Room 0 initialisation and game loop
 ; 
 ; *************************************************************************************
 room_0_data
     !byte 20                                                          ; 3b27: 14                      ; initial player X cell
     !byte 22                                                          ; 3b28: 16                      ; initial player Y cell
 
-room_0_initialisation_code
+room_0_code
     ldx #0                                                            ; 3b29: a2 00                   ; Draw rectangles of ground fill rock with a 2x2 pattern. Also writes to the collision map.
     ldy #0                                                            ; 3b2b: a0 00
     lda #$ff                                                          ; 3b2d: a9 ff
@@ -335,8 +341,8 @@ loop_until_exit_room_right
     and #exit_room_right                                              ; 3bd9: 29 04
     beq loop_until_exit_room_right                                    ; 3bdb: f0 f7
     ldx #1                                                            ; 3bdd: a2 01
-    ldy desired_level                                                 ; 3bdf: a4 31
-    jsr initialise_level                                              ; 3be1: 20 40 11
+    ldy current_level                                                 ; 3bdf: a4 31
+    jsr initialise_level_and_room                                     ; 3be1: 20 40 11
 
 ; *************************************************************************************
 ; 
@@ -351,8 +357,8 @@ room0_update_handler
     jmp bump_and_wrap_mouse_ball_position                             ; 3be9: 4c 77 3c
 
 initialise_mouse_ball_position_if_level_changed
-    lda desired_level                                                 ; 3bec: a5 31
-    cmp previous_level                                                ; 3bee: c5 51
+    lda current_level                                                 ; 3bec: a5 31
+    cmp level_before_latest_level_and_room_initialisation             ; 3bee: c5 51
     beq level_unchanged                                               ; 3bf0: f0 05
     lda #0                                                            ; 3bf2: a9 00
     sta mouse_ball_animation_position                                 ; 3bf4: 8d 6f 0a
@@ -542,14 +548,14 @@ mouse_hand_sprites_and_ball_movement_table
     !byte 48,  6                                                      ; 3d3b: 30 06
 ; *************************************************************************************
 ; 
-; Room 1 initialisation
+; Room 1 initialisation and game loop
 ; 
 ; *************************************************************************************
 room_1_data
     !byte 9                                                           ; 3d3d: 09                      ; initial player X cell
     !byte 7                                                           ; 3d3e: 07                      ; initial player Y cell
 
-room_1_initialisation_code
+room_1_code
     ldx #0                                                            ; 3d3f: a2 00
     ldy #0                                                            ; 3d41: a0 00
     lda #$ff                                                          ; 3d43: a9 ff
@@ -620,24 +626,24 @@ loop_until_exited_room
     and #exit_room_left                                               ; 3dd7: 29 01
     beq exited_room_not_left                                          ; 3dd9: f0 07
     ldx #0                                                            ; 3ddb: a2 00
-    ldy desired_level                                                 ; 3ddd: a4 31
-    jmp initialise_level                                              ; 3ddf: 4c 40 11
+    ldy current_level                                                 ; 3ddd: a4 31
+    jmp initialise_level_and_room                                     ; 3ddf: 4c 40 11
 
 exited_room_not_left
     lda room_exit_direction                                           ; 3de2: a5 70
     and #exit_room_bottom                                             ; 3de4: 29 02
     beq exited_room_not_bottom                                        ; 3de6: f0 07
     ldx #2                                                            ; 3de8: a2 02
-    ldy desired_level                                                 ; 3dea: a4 31
-    jmp initialise_level                                              ; 3dec: 4c 40 11
+    ldy current_level                                                 ; 3dea: a4 31
+    jmp initialise_level_and_room                                     ; 3dec: 4c 40 11
 
 exited_room_not_bottom
     lda room_exit_direction                                           ; 3def: a5 70
     and #exit_room_right                                              ; 3df1: 29 04
     beq loop_until_exited_room                                        ; 3df3: f0 dd
     ldx #3                                                            ; 3df5: a2 03
-    ldy desired_level                                                 ; 3df7: a4 31
-    jmp initialise_level                                              ; 3df9: 4c 40 11
+    ldy current_level                                                 ; 3df7: a4 31
+    jmp initialise_level_and_room                                     ; 3df9: 4c 40 11
 
 ; *************************************************************************************
 ; 
@@ -649,8 +655,8 @@ exited_room_not_bottom
 room1_update_handler
     lda update_room_first_update_flag                                 ; 3dfc: ad 2b 13
     beq room1_not_first_update                                        ; 3dff: f0 6b
-    lda previous_level                                                ; 3e01: a5 51
-    cmp desired_level                                                 ; 3e03: c5 31
+    lda level_before_latest_level_and_room_initialisation             ; 3e01: a5 51
+    cmp current_level                                                 ; 3e03: c5 31
     beq level_unchanged2                                              ; 3e05: f0 0a
     lda room1_trapdoor_open_flag                                      ; 3e07: ad ff 09
     beq level_unchanged2                                              ; 3e0a: f0 05
@@ -923,14 +929,14 @@ copy_pseudo_circle_to_screen_saved_y
     !byte 0                                                           ; 3fd6: 00
 ; *************************************************************************************
 ; 
-; Room 2 initialisation
+; Room 2 initialisation and game loop
 ; 
 ; *************************************************************************************
 room_2_data
     !byte 20                                                          ; 3fd7: 14                      ; initial player X cell
     !byte 9                                                           ; 3fd8: 09                      ; initial player Y cell
 
-room_2_initialisation_code
+room_2_code
     ldx #0                                                            ; 3fd9: a2 00
     ldy #0                                                            ; 3fdb: a0 00
     lda #$ff                                                          ; 3fdd: a9 ff
@@ -984,8 +990,8 @@ loop_until_exit_room_top
     and #exit_room_top                                                ; 4047: 29 08
     beq loop_until_exit_room_top                                      ; 4049: f0 f9
     ldx #1                                                            ; 404b: a2 01
-    ldy desired_level                                                 ; 404d: a4 31
-    jmp initialise_level                                              ; 404f: 4c 40 11
+    ldy current_level                                                 ; 404d: a4 31
+    jmp initialise_level_and_room                                     ; 404f: 4c 40 11
 
 baby_spriteid_data
     !byte spriteid_baby0                                              ; 4052: d6
@@ -1055,8 +1061,8 @@ room2_update_handler
     jsr update_level_completion                                       ; 4094: 20 10 1a
     lda update_room_first_update_flag                                 ; 4097: ad 2b 13
     beq room2_not_first_update                                        ; 409a: f0 48
-    lda desired_level                                                 ; 409c: a5 31
-    cmp previous_level                                                ; 409e: c5 51
+    lda current_level                                                 ; 409c: a5 31
+    cmp level_before_latest_level_and_room_initialisation             ; 409e: c5 51
     beq room2_update_handler_not_new_level                            ; 40a0: f0 1f
     ldy #$2b ; '+'                                                    ; 40a2: a0 2b
     lda save_game_level_a_room_2_baby_direction                       ; 40a4: ad 04 0a
@@ -1282,14 +1288,14 @@ return5
 
 ; *************************************************************************************
 ; 
-; Room 3 initialisation
+; Room 3 initialisation and game loop
 ; 
 ; *************************************************************************************
 room_3_data
     !byte 20                                                          ; 424d: 14                      ; initial player X cell
     !byte 7                                                           ; 424e: 07                      ; initial player Y cell
 
-room_3_initialisation_code
+room_3_code
     ldx #0                                                            ; 424f: a2 00
     ldy #0                                                            ; 4251: a0 00
     lda #$ff                                                          ; 4253: a9 ff
@@ -1366,8 +1372,8 @@ loop_until_exit_room_left
     and #exit_room_left                                               ; 42ed: 29 01
     beq loop_until_exit_room_left                                     ; 42ef: f0 f9
     ldx #1                                                            ; 42f1: a2 01
-    ldy desired_level                                                 ; 42f3: a4 31
-    jmp initialise_level                                              ; 42f5: 4c 40 11
+    ldy current_level                                                 ; 42f3: a4 31
+    jmp initialise_level_and_room                                     ; 42f5: 4c 40 11
 
 ; *************************************************************************************
 ; 
@@ -1388,8 +1394,8 @@ room3_update_handler
     jsr update_brazier_and_fire                                       ; 4309: 20 88 19
     lda update_room_first_update_flag                                 ; 430c: ad 2b 13
     beq room3_not_first_update                                        ; 430f: f0 47
-    lda previous_level                                                ; 4311: a5 51
-    cmp desired_level                                                 ; 4313: c5 31
+    lda level_before_latest_level_and_room_initialisation             ; 4311: a5 51
+    cmp current_level                                                 ; 4313: c5 31
     beq table_x_position_update_finished                              ; 4315: f0 22
     lda table_x_position                                              ; 4317: ad 01 0a
     beq set_table_x_position_to_right_side                            ; 431a: f0 13

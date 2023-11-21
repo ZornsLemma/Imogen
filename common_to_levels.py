@@ -40,7 +40,7 @@ def level_room_data_table_entry(addr, s):
     decimal(target1 + 1)
     comment(target1, """*************************************************************************************
 
-Room """ + s + """ initialisation
+Room """ + s + """ initialisation and game loop
 
 *************************************************************************************""")
     comment(target1, "initial player X cell", inline=True)
@@ -48,7 +48,7 @@ Room """ + s + """ initialisation
     target3 = get_u16_binary(target1)
     #label(target3, room_n + "_data")
     #expr(target1, room_n + "_data")
-    entry(target2, room_n + "_initialisation_code")
+    entry(target2, room_n + "_code")
 
 
 def define_level(num_rooms):
@@ -82,7 +82,13 @@ Level header
     entry(get_u16_binary(start+4), "level_specific_update")
     label(get_u16_binary(start+6), "level_specific_password")
 
-    comment(get_u16_binary(start+2), "*************************************************************************************")
+    comment(get_u16_binary(start+2), """*************************************************************************************
+
+Level initialisation
+
+This is called whenever a new room is entered.
+
+*************************************************************************************""")
     comment(get_u16_binary(start+4), """*************************************************************************************
 
 Level update

@@ -127,7 +127,7 @@ def common_to_all():
     #
     label(0x0005, "characters_entered")
     label(0x001d, "sprite_reflect_flag")
-    label(0x0031, "desired_level") # TODO: This is not right but let's go with it for now - the way this is used it clearly contains *a* level (as a letter, I think), but I am not quite sure what it's used for - the use at 36df suggests this is more like "current level" actually - or maybe it's more like "level_to_load"
+    label(0x0031, "current_level")
 
     label(0x003a, "temp_sprite_x_offset")
     label(0x003b, "temp_sprite_y_offset")
@@ -135,7 +135,7 @@ def common_to_all():
     label(0x0042, "copy_mode")
 
     label(0x0050, "previous_room_index")
-    label(0x0051, "previous_level") # TODO: see use at initialise_level
+    label(0x0051, "level_before_latest_level_and_room_initialisation")
     label(0x0052, "player_held_object_menu_item_spriteid")
 
     label(0x003c, "width_in_cells")
@@ -202,10 +202,7 @@ def common_to_all():
     label(0x2bbd, "find_or_create_menu_slot_for_A")
 
 
-    # TODO: Should this be initialise_level_and_room or similar? The fact it is
-    # called when moving from one room to another within a level makes the
-    # current name seem a bit misleading.
-    label(0x1140, "initialise_level")
+    label(0x1140, "initialise_level_and_room")
 
     label(0x396f, "sound_priority_per_channel_table")
     label(0x3adf, "level_room_data_table")

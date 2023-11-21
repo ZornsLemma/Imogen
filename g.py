@@ -700,34 +700,42 @@ with main_code_area:
     comment(0x1140, "TODO: this is used by e.g. dataA")
     comment(0x1140, """*************************************************************************************
 
-Initialise level
+Initialise level and room
+
+Loads the new level if needed, resets objects and other related variables, and jumps to level specific code to execute the room.
 
 On Entry:
     X is the room index
     Y is the level number
 
-The control flow during gameplay is (TODO: based on partial understanding of dataA.asm only, and not
-all that well explained, but it's a start) is as follows:
-- initialise_level performs common setup tasks, including setting the current room to 0
-- initialise_level finishes by transferring control to level_header_data[room]+2, which is a
-  room-specific subroutine within the loaded level. Let's call this the level room handler.
-- The level room handler performs room-specific setup before calling the common start_room
-  subroutine.
-  - The start_room subroutine calls back into the level-specific code's level update handler, as
-    pointed to by update_room_ptr in the loaded level data. This is not room-specific. A flag
-    (update_room_first_update_flag) is set to indicate the level update handler is being called by
-    start_room.
-- On return from start_room, the level room handler enters a loop which typically calls the shared
-  game_update subroutine repeatedly until the player leaves the current room.
-  - game_update calls back into the level-specific code's level update handler to allow the level to
-    perform custom actions.
-  - initialise_level is called by the level-specific game loop to select the new room.
+The control flow during gameplay is as follows:
 
+- 'initialise_level_and_room' performs common setup tasks, including:
+    - loading the level if needed
+    - calling level specific initialisation code ('level_specific_initialisation', as
+      found in the level header) - which is called on every room change.
+    - It transfers control to a room-specific subroutine within the
+      loaded level. Let's call this the level room handler.
+      (at address 'level_room_data_table[room]+2' as found in the level header)
+
+- The level room handler does the following:
+    - Room specific initialisation (including drawing the room).
+    - Calls the common 'start_room' routine. 'start_room' calls the
+      'level_specific_update' handler once. This update handler will be called
+      every game tick while in the level. On this specific call, a flag is set to
+      indicate it's being called for the first time in this room.
+      ('update_room_first_update_flag')
+      Note the update handler is not room specific.
+  - Runs a game loop until the player leaves the current room. The game loop calls
+    the common 'game_update' routine to keep the game ticking. 'game_update'
+    (among other things) calls the 'level_specific_update' handler, allowing the
+    level to perform custom actions each tick.
+  - When the player leaves the current room, 'initialise_level_and_room' is called
+    to select the new room.
 
 *************************************************************************************""")
     entry(0x1140)
     label(0x114f, "level_load_loop")
-    comment(0x114f, "Load a new level if the desired_level has changed.\n\nAny time we want to load a new level, we just set the desired_level and let this code do the work. (It is a loop to allow for retries on a disk error.)")
     comment(0x1153, "if desired level is already loaded, skip forward", inline=True)
     comment(0x1155, "load level in A")
     expr(0x1159, make_lo("data_filename"))
@@ -770,7 +778,7 @@ all that well explained, but it's a start) is as follows:
     comment(0x124f, "set current room number in level progress table")
     comment(0x125b, "set YX to the address of the room initialisation code, an address found in a table at start of the level data offset by twice the room number")
     comment(0x1266, "add two to the address in YX, to get past the two initial player position bytes")
-    comment(0x126f, "call the room initialisation code")
+    comment(0x126f, "jump to the level specific room handler")
     label(0x1272, "data_filename")
     string(0x1272, 4)
     label(0x1276, "data_filename_variable_letter")
@@ -1896,10 +1904,16 @@ On Exit:
     label(0x22b4, "list_search_loop")
     label(0x22bb, "start_search")
     label(0x22c4, "found_entry_in_list")
+    comment(0x22cd, """*************************************************************************************
+
+Update player
+
+*************************************************************************************""")
     entry(0x22cd, "update_player")
     expr(0x22d2, sprite_dict[4])
     expr(0x22d6, sprite_dict[5])
     expr(0x22da, sprite_dict[6])
+    comment(0x22dd, "could just 'rts'? But maybe the bird modifies this code...?", inline=True)
     label(0x22e0, "update_mid_transformation_local")
     label(0x22e3, "update_wizard_local")
     label(0x22e6, "update_cat_local")
@@ -2573,10 +2587,10 @@ On Exit:
     char(0x2cb5)
     char(0x2cc0)
     char(0x2cc4)
-    label(0x2cca, "decrement_current_tranformations_remaining_middle_digit_now_zero")
+    label(0x2cca, "decrement_current_transformations_remaining_middle_digit_now_zero")
     char(0x2cce)
-    label(0x2cd4, "decrement_current_tranformations_remaining_no_borrow")
-    label(0x2cd5, "decrement_current_tranformations_remaining_pla_rts")
+    label(0x2cd4, "decrement_current_transformations_remaining_no_borrow")
+    label(0x2cd5, "decrement_current_transformations_remaining_pla_rts")
     comment(0x2cd7, """*************************************************************************************
 
 Animation code
@@ -3529,12 +3543,6 @@ print("""; *********************************************************************
 
 go()
 
-# TODO: Temp note:
-# - desired_level is set to the new (Y) level in initialise_level, and the old value is saved to
-#   previous_level - can't help feeling desired_level should be renamed current_level and
-#   previous_level should be renamed to something which indicates it is the value of current_level
-#   on the previous call to initialise_level (it does not appear to be updated anywhere else)
-# - currently_loaded_level tracks the level which is present in memory
 
 # vi: tw=100
 

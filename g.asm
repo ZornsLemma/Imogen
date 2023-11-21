@@ -236,288 +236,288 @@ vdu_set_mode                                    = 22
 vdu_set_text_colour                             = 17
 
 ; Memory locations
-error_code_on_brk                           = $02
-remember_stack_pointer                      = $03
-which_dialog_is_active                      = $04
-characters_entered                          = $05
-rnd0                                        = $06
-rnd1                                        = $07
-rnd2                                        = $08
-rnd3                                        = $09
-rnd4                                        = $0a
-dest_sprite_id                              = $14
-sprite_op_flags                             = $15
-sprite_id                                   = $16
-sprite_x_base_low                           = $18
-sprite_x_base_high                          = $19
-sprite_y_base_low                           = $1a
-sprite_y_base_high                          = $1b
-sprite_reflect_flag                         = $1d
-valid_direction_pending                     = $20
-old_menu_index                              = $25
-auto_repeat_counter                         = $26
-left_right_repeat_direction                 = $27
-left_right_direction                        = $28
-new_menu_index                              = $29
-space_bar_press_pending                     = $2a
-space_bar_pressed                           = $2b
-z_key_pressed_pending                       = $2c
-x_key_pressed_pending                       = $2d
-current_menu_index                          = $2e
-desired_room_index                          = $30
-desired_level                               = $31
-currently_loaded_level                      = $37
-bit_mask_for_random_number_limit            = $39
-temp_sprite_x_offset                        = $3a
-temp_sprite_y_offset                        = $3b
-width_in_cells                              = $3c
-height_in_cells                             = $3d
-value_to_write_to_collision_map             = $3e
-only_ever_written_to_with_zero              = $3f
-source_sprite_memory_low                    = $40
-source_sprite_memory_high                   = $41
-copy_mode                                   = $42
-print_in_italics_flag                       = $43
-default_collision_map_option                = $44
-eor_key                                     = $45
-return_key_pressed_pending                  = $46
-current_player_character                    = $48
-temp_value                                  = $49
-saved_x                                     = $4a
-temp_coordinate                             = $4a
-height_counter                              = $4b
-l004b                                       = $4b
-saved_y                                     = $4b
-screen_base_address_high                    = $4c
-new_player_character                        = $4d
-previous_room_index                         = $50
-previous_level                              = $51
-player_held_object_menu_item_spriteid       = $52
-player_objectid                             = $53
-sprdata_ptr                                 = $54
-temp_rope_length                            = $56
-temp_sprite_address_low                     = $58
-temp_sprite_address_high                    = $59
-temp_sprite_offset                          = $5a
-developer_mode_sideways_ram_is_set_up_flag  = $5b
-displayed_transformations_remaining         = $5c
-initial_level_number_div4                   = $5f
-backmost_object_index                       = $60
-backmost_object_z_order                     = $61
-num_active_objects                          = $62
-temp_active_object_index                    = $63
-temp_object_index                           = $64
-remember_player_accessory_object_index      = $65
-l0066                                       = $66
-l0067                                       = $67
-l0068                                       = $68
-address1_low                                = $70
-animation_address_low                       = $70
-cell_x                                      = $70
-level_data_ptr_low                          = $70
-menu_item_to_use                            = $70
-object_left_low                             = $70
-object_y_delta                              = $70
-osfile_block_filename_low                   = $70
-player_cell_y                               = $70
-screen_address_low                          = $70
-src_sprite_address_low                      = $70
-address1_high                               = $71
-animation_address_high                      = $71
-cell_y                                      = $71
-level_data_ptr_high                         = $71
-menu_has_changed_flag                       = $71
-object_left_high                            = $71
-osfile_block_filename_high                  = $71
-screen_address_high                         = $71
-src_sprite_address_high                     = $71
-temp                                        = $71
-l0072                                       = $72
-object_right_low                            = $72
-osfile_block_load_address_low               = $72
-sprite_screen_address_low                   = $72
-temp_sprite_list_low                        = $72
-width_in_cells_to_write                     = $72
-height_in_cells_to_write                    = $73
-l0073                                       = $73
-object_right_high                           = $73
-osfile_block_load_address_mid1              = $73
-sprite_screen_address_high                  = $73
-temp_sprite_list_high                       = $73
-first_cell_in_row_screen_address_low        = $74
-l0074                                       = $74
-object_top_low                              = $74
-offset_within_byte                          = $74
-osfile_block_load_address_mid2              = $74
-sprite_x_pos_low                            = $74
-temp_spriteid                               = $74
-first_cell_in_row_screen_address_high       = $75
-l0075                                       = $75
-object_top_high                             = $75
-offset_within_collision_map                 = $75
-osfile_block_load_address_high              = $75
-sprite_x_pos_high                           = $75
-cell_screen_address_low                     = $76
-l0076                                       = $76
-object_bottom_low                           = $76
-osfile_block_exec_address_low               = $76
-sprite_y_pos_low                            = $76
-cell_screen_address_high                    = $77
-l0077                                       = $77
-object_bottom_high                          = $77
-osfile_block_exec_address_mid1              = $77
-sprite_y_pos_high                           = $77
-l0078                                       = $78
-object_left_cell_x                          = $78
-original_off_screen_address_low             = $78
-osfile_block_exec_address_mid2              = $78
-sprite_x_offset_within_byte                 = $78
-byte_offset_within_sprite                   = $79
-l0079                                       = $79
-object_right_cell_x                         = $79
-original_off_screen_address_high            = $79
-osfile_block_exec_address_high              = $79
-l007a                                       = $7a
-object_top_cell_y                           = $7a
-off_screen_address_low                      = $7a
-osfile_block_start_address_low              = $7a
-l007b                                       = $7b
-object_bottom_cell_y                        = $7b
-off_screen_address_high                     = $7b
-osfile_block_start_address_mid1             = $7b
-sprite_screen_address_for_column_low        = $7b
-cell_x_plus_current_cell_within_row         = $7c
-l007c                                       = $7c
-osfile_block_start_address_mid2             = $7c
-player_hit_wall_on_left_result_flag         = $7c
-sprite_screen_address_for_column_high       = $7c
-current_row                                 = $7d
-l007d                                       = $7d
-osfile_block_start_address_high             = $7d
-player_hit_wall_on_right_result_flag        = $7d
-sprite_data_byte                            = $7d
-dest_sprite_address_low                     = $7e
-l007e                                       = $7e
-osfile_block_end_address_low                = $7e
-pattern_length_cycle_counter                = $7e
-player_hit_ceiling_result_flag              = $7e
-dest_sprite_address_high                    = $7f
-l007f                                       = $7f
-osfile_block_end_address_mid1               = $7f
-player_hit_floor_result_flag                = $7f
-adjustment                                  = $80
-cell_based_loop_counter                     = $80
-l0080                                       = $80
-mask_sprite_byte                            = $80
-osfile_block_end_address_mid2               = $80
-player_height_in_cells                      = $80
-player_width_in_cells                       = $80
-sprite_addr_low                             = $80
-l0081                                       = $81
-osfile_block_end_address_high               = $81
-sprite_addr_high                            = $81
-sprite_width                                = $81
-sprite_bit                                  = $82
-sprite_bit_mask                             = $83
-sprite_y_offset_within_character_row        = $84
-sprite_cell_x_pos                           = $85
-amount_sprite_is_offscreen_x                = $86
-l0087                                       = $87
-vertical_sprite_position_is_valid_flag      = $88
-romsel_copy                                 = $f4
-interrupt_accumulator                       = $fc
-brk_address_low                             = $fd
-active_objects_table                        = $0100
-frontmost_objects_table                     = $010b
-object_dealt_with_flag                      = $0116
-l0121                                       = $0121
-temp_object_left_cell                       = $0121
-x_object_left_low                           = $0121
-l0122                                       = $0122
-temp_object_right_cell                      = $0122
-x_object_left_high                          = $0122
-x_object_right_low                          = $0123
-x_object_right_high                         = $0124
-x_object_top_low                            = $0125
-x_object_top_high                           = $0126
-x_object_bottom_low                         = $0127
-x_object_bottom_high                        = $0128
-old_object_left_low                         = $0129
-old_object_left_high                        = $012a
-old_object_right_low                        = $012b
-old_object_right_high                       = $012c
-old_object_left_cell                        = $012d
-old_object_right_cell                       = $012e
-brkv                                        = $0202
-irq1v                                       = $0204
-first_byte_break_intercept                  = $0287
-cache_of_screen_memory_under_dialog         = $0530
-object_x_low                                = $0950
-object_x_low_old                            = $095b
-object_x_high                               = $0966
-object_x_high_old                           = $0971
-object_y_low                                = $097c
-object_y_low_old                            = $0987
-object_y_high                               = $0992
-object_y_high_old                           = $099d
-object_spriteid                             = $09a8
-object_spriteid_old                         = $09b3
-object_direction                            = $09be
-object_direction_old                        = $09c9
-object_current_index_in_animation           = $09d4
-current_animation                           = $09df
-save_game                                   = $09ea
-save_game_checksum                          = $09eb
-current_transformations_remaining           = $09ec
-level_progress_table                        = $09ef
-sixteen_entry_table                         = $0a6f
-level_ordering_table                        = $0a7f
-string_input_buffer                         = $0a90
-tile_all_clear_pixels                       = $0aa1
-tile_all_set_pixels                         = $0aa9
-old_brkv1                                   = $0ab1
-old_brkv2                                   = $0ab3
-old_irq1v                                   = $0ab5
-l0b00                                       = $0b00
-sprite_199                                  = $0b11
-sprite_198                                  = $0b93
-sprite_197                                  = $0bc5
-level_specific_initialisation_ptr           = $3ad7
-level_specific_update_ptr                   = $3ad9
-level_specific_password_ptr                 = $3adb
-room_index_cheat1                           = $3add
-room_index_cheat2                           = $3ade
-level_room_data_table                       = $3adf
-auxcode                                     = $53c0
-check_password                              = $53c0
-toolbar_screen_address                      = $58c0
-start_of_screen_memory                      = $5bc0
-game_area_screen_address                    = $6200
-lbe00                                       = $be00
-lbf00                                       = $bf00
-crtc_address_register                       = $fe00
-crtc_address_write                          = $fe01
-video_ula_palette                           = $fe21
-romsel                                      = $fe30
-system_via_t1c_l                            = $fe44
-system_via_t1c_h                            = $fe45
-system_via_t1l_l                            = $fe46
-system_via_t1l_h                            = $fe47
-system_via_t2c_l                            = $fe48
-system_via_t2c_h                            = $fe49
-system_via_acr                              = $fe4b
-system_via_ifr                              = $fe4d
-system_via_ier                              = $fe4e
-user_via_t1c_l                              = $fe64
-user_via_t1c_h                              = $fe65
-user_via_t2c_l                              = $fe68
-user_via_t2c_h                              = $fe69
-user_via_ier                                = $fe6e
-osfile                                      = $ffdd
-oswrch                                      = $ffee
-osword                                      = $fff1
-osbyte                                      = $fff4
-oscli                                       = $fff7
+error_code_on_brk                                   = $02
+remember_stack_pointer                              = $03
+which_dialog_is_active                              = $04
+characters_entered                                  = $05
+rnd0                                                = $06
+rnd1                                                = $07
+rnd2                                                = $08
+rnd3                                                = $09
+rnd4                                                = $0a
+dest_sprite_id                                      = $14
+sprite_op_flags                                     = $15
+sprite_id                                           = $16
+sprite_x_base_low                                   = $18
+sprite_x_base_high                                  = $19
+sprite_y_base_low                                   = $1a
+sprite_y_base_high                                  = $1b
+sprite_reflect_flag                                 = $1d
+valid_direction_pending                             = $20
+old_menu_index                                      = $25
+auto_repeat_counter                                 = $26
+left_right_repeat_direction                         = $27
+left_right_direction                                = $28
+new_menu_index                                      = $29
+space_bar_press_pending                             = $2a
+space_bar_pressed                                   = $2b
+z_key_pressed_pending                               = $2c
+x_key_pressed_pending                               = $2d
+current_menu_index                                  = $2e
+desired_room_index                                  = $30
+current_level                                       = $31
+currently_loaded_level                              = $37
+bit_mask_for_random_number_limit                    = $39
+temp_sprite_x_offset                                = $3a
+temp_sprite_y_offset                                = $3b
+width_in_cells                                      = $3c
+height_in_cells                                     = $3d
+value_to_write_to_collision_map                     = $3e
+only_ever_written_to_with_zero                      = $3f
+source_sprite_memory_low                            = $40
+source_sprite_memory_high                           = $41
+copy_mode                                           = $42
+print_in_italics_flag                               = $43
+default_collision_map_option                        = $44
+eor_key                                             = $45
+return_key_pressed_pending                          = $46
+current_player_character                            = $48
+temp_value                                          = $49
+saved_x                                             = $4a
+temp_coordinate                                     = $4a
+height_counter                                      = $4b
+l004b                                               = $4b
+saved_y                                             = $4b
+screen_base_address_high                            = $4c
+new_player_character                                = $4d
+previous_room_index                                 = $50
+level_before_latest_level_and_room_initialisation   = $51
+player_held_object_menu_item_spriteid               = $52
+player_objectid                                     = $53
+sprdata_ptr                                         = $54
+temp_rope_length                                    = $56
+temp_sprite_address_low                             = $58
+temp_sprite_address_high                            = $59
+temp_sprite_offset                                  = $5a
+developer_mode_sideways_ram_is_set_up_flag          = $5b
+displayed_transformations_remaining                 = $5c
+initial_level_number_div4                           = $5f
+backmost_object_index                               = $60
+backmost_object_z_order                             = $61
+num_active_objects                                  = $62
+temp_active_object_index                            = $63
+temp_object_index                                   = $64
+remember_player_accessory_object_index              = $65
+l0066                                               = $66
+l0067                                               = $67
+l0068                                               = $68
+address1_low                                        = $70
+animation_address_low                               = $70
+cell_x                                              = $70
+level_data_ptr_low                                  = $70
+menu_item_to_use                                    = $70
+object_left_low                                     = $70
+object_y_delta                                      = $70
+osfile_block_filename_low                           = $70
+player_cell_y                                       = $70
+screen_address_low                                  = $70
+src_sprite_address_low                              = $70
+address1_high                                       = $71
+animation_address_high                              = $71
+cell_y                                              = $71
+level_data_ptr_high                                 = $71
+menu_has_changed_flag                               = $71
+object_left_high                                    = $71
+osfile_block_filename_high                          = $71
+screen_address_high                                 = $71
+src_sprite_address_high                             = $71
+temp                                                = $71
+l0072                                               = $72
+object_right_low                                    = $72
+osfile_block_load_address_low                       = $72
+sprite_screen_address_low                           = $72
+temp_sprite_list_low                                = $72
+width_in_cells_to_write                             = $72
+height_in_cells_to_write                            = $73
+l0073                                               = $73
+object_right_high                                   = $73
+osfile_block_load_address_mid1                      = $73
+sprite_screen_address_high                          = $73
+temp_sprite_list_high                               = $73
+first_cell_in_row_screen_address_low                = $74
+l0074                                               = $74
+object_top_low                                      = $74
+offset_within_byte                                  = $74
+osfile_block_load_address_mid2                      = $74
+sprite_x_pos_low                                    = $74
+temp_spriteid                                       = $74
+first_cell_in_row_screen_address_high               = $75
+l0075                                               = $75
+object_top_high                                     = $75
+offset_within_collision_map                         = $75
+osfile_block_load_address_high                      = $75
+sprite_x_pos_high                                   = $75
+cell_screen_address_low                             = $76
+l0076                                               = $76
+object_bottom_low                                   = $76
+osfile_block_exec_address_low                       = $76
+sprite_y_pos_low                                    = $76
+cell_screen_address_high                            = $77
+l0077                                               = $77
+object_bottom_high                                  = $77
+osfile_block_exec_address_mid1                      = $77
+sprite_y_pos_high                                   = $77
+l0078                                               = $78
+object_left_cell_x                                  = $78
+original_off_screen_address_low                     = $78
+osfile_block_exec_address_mid2                      = $78
+sprite_x_offset_within_byte                         = $78
+byte_offset_within_sprite                           = $79
+l0079                                               = $79
+object_right_cell_x                                 = $79
+original_off_screen_address_high                    = $79
+osfile_block_exec_address_high                      = $79
+l007a                                               = $7a
+object_top_cell_y                                   = $7a
+off_screen_address_low                              = $7a
+osfile_block_start_address_low                      = $7a
+l007b                                               = $7b
+object_bottom_cell_y                                = $7b
+off_screen_address_high                             = $7b
+osfile_block_start_address_mid1                     = $7b
+sprite_screen_address_for_column_low                = $7b
+cell_x_plus_current_cell_within_row                 = $7c
+l007c                                               = $7c
+osfile_block_start_address_mid2                     = $7c
+player_hit_wall_on_left_result_flag                 = $7c
+sprite_screen_address_for_column_high               = $7c
+current_row                                         = $7d
+l007d                                               = $7d
+osfile_block_start_address_high                     = $7d
+player_hit_wall_on_right_result_flag                = $7d
+sprite_data_byte                                    = $7d
+dest_sprite_address_low                             = $7e
+l007e                                               = $7e
+osfile_block_end_address_low                        = $7e
+pattern_length_cycle_counter                        = $7e
+player_hit_ceiling_result_flag                      = $7e
+dest_sprite_address_high                            = $7f
+l007f                                               = $7f
+osfile_block_end_address_mid1                       = $7f
+player_hit_floor_result_flag                        = $7f
+adjustment                                          = $80
+cell_based_loop_counter                             = $80
+l0080                                               = $80
+mask_sprite_byte                                    = $80
+osfile_block_end_address_mid2                       = $80
+player_height_in_cells                              = $80
+player_width_in_cells                               = $80
+sprite_addr_low                                     = $80
+l0081                                               = $81
+osfile_block_end_address_high                       = $81
+sprite_addr_high                                    = $81
+sprite_width                                        = $81
+sprite_bit                                          = $82
+sprite_bit_mask                                     = $83
+sprite_y_offset_within_character_row                = $84
+sprite_cell_x_pos                                   = $85
+amount_sprite_is_offscreen_x                        = $86
+l0087                                               = $87
+vertical_sprite_position_is_valid_flag              = $88
+romsel_copy                                         = $f4
+interrupt_accumulator                               = $fc
+brk_address_low                                     = $fd
+active_objects_table                                = $0100
+frontmost_objects_table                             = $010b
+object_dealt_with_flag                              = $0116
+l0121                                               = $0121
+temp_object_left_cell                               = $0121
+x_object_left_low                                   = $0121
+l0122                                               = $0122
+temp_object_right_cell                              = $0122
+x_object_left_high                                  = $0122
+x_object_right_low                                  = $0123
+x_object_right_high                                 = $0124
+x_object_top_low                                    = $0125
+x_object_top_high                                   = $0126
+x_object_bottom_low                                 = $0127
+x_object_bottom_high                                = $0128
+old_object_left_low                                 = $0129
+old_object_left_high                                = $012a
+old_object_right_low                                = $012b
+old_object_right_high                               = $012c
+old_object_left_cell                                = $012d
+old_object_right_cell                               = $012e
+brkv                                                = $0202
+irq1v                                               = $0204
+first_byte_break_intercept                          = $0287
+cache_of_screen_memory_under_dialog                 = $0530
+object_x_low                                        = $0950
+object_x_low_old                                    = $095b
+object_x_high                                       = $0966
+object_x_high_old                                   = $0971
+object_y_low                                        = $097c
+object_y_low_old                                    = $0987
+object_y_high                                       = $0992
+object_y_high_old                                   = $099d
+object_spriteid                                     = $09a8
+object_spriteid_old                                 = $09b3
+object_direction                                    = $09be
+object_direction_old                                = $09c9
+object_current_index_in_animation                   = $09d4
+current_animation                                   = $09df
+save_game                                           = $09ea
+save_game_checksum                                  = $09eb
+current_transformations_remaining                   = $09ec
+level_progress_table                                = $09ef
+sixteen_entry_table                                 = $0a6f
+level_ordering_table                                = $0a7f
+string_input_buffer                                 = $0a90
+tile_all_clear_pixels                               = $0aa1
+tile_all_set_pixels                                 = $0aa9
+old_brkv1                                           = $0ab1
+old_brkv2                                           = $0ab3
+old_irq1v                                           = $0ab5
+l0b00                                               = $0b00
+sprite_199                                          = $0b11
+sprite_198                                          = $0b93
+sprite_197                                          = $0bc5
+level_specific_initialisation_ptr                   = $3ad7
+level_specific_update_ptr                           = $3ad9
+level_specific_password_ptr                         = $3adb
+room_index_cheat1                                   = $3add
+room_index_cheat2                                   = $3ade
+level_room_data_table                               = $3adf
+auxcode                                             = $53c0
+check_password                                      = $53c0
+toolbar_screen_address                              = $58c0
+start_of_screen_memory                              = $5bc0
+game_area_screen_address                            = $6200
+lbe00                                               = $be00
+lbf00                                               = $bf00
+crtc_address_register                               = $fe00
+crtc_address_write                                  = $fe01
+video_ula_palette                                   = $fe21
+romsel                                              = $fe30
+system_via_t1c_l                                    = $fe44
+system_via_t1c_h                                    = $fe45
+system_via_t1l_l                                    = $fe46
+system_via_t1l_h                                    = $fe47
+system_via_t2c_l                                    = $fe48
+system_via_t2c_h                                    = $fe49
+system_via_acr                                      = $fe4b
+system_via_ifr                                      = $fe4d
+system_via_ier                                      = $fe4e
+user_via_t1c_l                                      = $fe64
+user_via_t1c_h                                      = $fe65
+user_via_t2c_l                                      = $fe68
+user_via_t2c_h                                      = $fe69
+user_via_ier                                        = $fe6e
+osfile                                              = $ffdd
+oswrch                                              = $ffee
+osword                                              = $fff1
+osbyte                                              = $fff4
+oscli                                               = $fff7
 
     * = $1234
 
@@ -562,7 +562,7 @@ vertical_sync_amount_for_crtc_register
 start_game
     jsr clear_most_of_save_game                                       ; 123d: 20 b7 0a     .. :110c[1]
     lda #$ff                                                          ; 1240: a9 ff       ..  :110f[1]
-    sta desired_level                                                 ; 1242: 85 31       .1  :1111[1]
+    sta current_level                                                 ; 1242: 85 31       .1  :1111[1]
     lda #osbyte_flush_buffer_class                                    ; 1244: a9 0f       ..  :1113[1]
     ldx #0                                                            ; 1246: a2 00       ..  :1115[1]
     jsr osbyte                                                        ; 1248: 20 f4 ff     .. :1117[1]   ; Flush all buffers (X=0)
@@ -576,7 +576,7 @@ start_game
     ldx #0                                                            ; 125a: a2 00       ..  :1129[1]
     ldy level_ordering_table                                          ; 125c: ac 7f 0a    ... :112b[1]
     cpy #'R'                                                          ; 125f: c0 52       .R  :112e[1]
-    bne initialise_level                                              ; 1261: d0 0e       ..  :1130[1]
+    bne initialise_level_and_room                                     ; 1261: d0 0e       ..  :1130[1]
 ; choose a new starting level
     inc initial_level_number_div4                                     ; 1263: e6 5f       ._  :1132[1]
     lda initial_level_number_div4                                     ; 1265: a5 5f       ._  :1134[1]
@@ -589,56 +589,51 @@ start_game
 ; TODO: this is used by e.g. dataA
 ; *************************************************************************************
 ; 
-; Initialise level
+; Initialise level and room
+; 
+; Loads the new level if needed, resets objects and other related variables, and jumps
+; to level specific code to execute the room.
 ; 
 ; On Entry:
 ;     X is the room index
 ;     Y is the level number
 ; 
-; The control flow during gameplay is (TODO: based on partial understanding of
-; dataA.asm only, and not
-; all that well explained, but it's a start) is as follows:
-; - initialise_level performs common setup tasks, including setting the current room to
-; 0
-; - initialise_level finishes by transferring control to level_header_data[room]+2,
-; which is a
-;   room-specific subroutine within the loaded level. Let's call this the level room
-; handler.
-; - The level room handler performs room-specific setup before calling the common
-; start_room
-;   subroutine.
-;   - The start_room subroutine calls back into the level-specific code's level update
-; handler, as
-;     pointed to by update_room_ptr in the loaded level data. This is not room-
-; specific. A flag
-;     (update_room_first_update_flag) is set to indicate the level update handler is
-; being called by
-;     start_room.
-; - On return from start_room, the level room handler enters a loop which typically
-; calls the shared
-;   game_update subroutine repeatedly until the player leaves the current room.
-;   - game_update calls back into the level-specific code's level update handler to
-; allow the level to
-;     perform custom actions.
-;   - initialise_level is called by the level-specific game loop to select the new
-; room.
+; The control flow during gameplay is as follows:
 ; 
+; - 'initialise_level_and_room' performs common setup tasks, including:
+;     - loading the level if needed
+;     - calling level specific initialisation code ('level_specific_initialisation', as
+;       found in the level header) - which is called on every room change.
+;     - It transfers control to a room-specific subroutine within the
+;       loaded level. Let's call this the level room handler.
+;       (at address 'level_room_data_table[room]+2' as found in the level header)
+; 
+; - The level room handler does the following:
+;     - Room specific initialisation (including drawing the room).
+;     - Calls the common 'start_room' routine. 'start_room' calls the
+;       'level_specific_update' handler once. This update handler will be called
+;       every game tick while in the level. On this specific call, a flag is set to
+;       indicate it's being called for the first time in this room.
+;       ('update_room_first_update_flag')
+;       Note the update handler is not room specific.
+;   - Runs a game loop until the player leaves the current room. The game loop calls
+;     the common 'game_update' routine to keep the game ticking. 'game_update'
+;     (among other things) calls the 'level_specific_update' handler, allowing the
+;     level to perform custom actions each tick.
+;   - When the player leaves the current room, 'initialise_level_and_room' is called
+;     to select the new room.
 ; 
 ; *************************************************************************************
-initialise_level
+initialise_level_and_room
     lda desired_room_index                                            ; 1271: a5 30       .0  :1140[1]
     sta previous_room_index                                           ; 1273: 85 50       .P  :1142[1]
-    lda desired_level                                                 ; 1275: a5 31       .1  :1144[1]
-    sta previous_level                                                ; 1277: 85 51       .Q  :1146[1]
+    lda current_level                                                 ; 1275: a5 31       .1  :1144[1]
+    sta level_before_latest_level_and_room_initialisation             ; 1277: 85 51       .Q  :1146[1]
     stx desired_room_index                                            ; 1279: 86 30       .0  :1148[1]
-    sty desired_level                                                 ; 127b: 84 31       .1  :114a[1]
+    sty current_level                                                 ; 127b: 84 31       .1  :114a[1]
     sty save_game                                                     ; 127d: 8c ea 09    ... :114c[1]
-; Load a new level if the desired_level has changed.
-; 
-; Any time we want to load a new level, we just set the desired_level and let this code
-; do the work. (It is a loop to allow for retries on a disk error.)
 level_load_loop
-    lda desired_level                                                 ; 1280: a5 31       .1  :114f[1]
+    lda current_level                                                 ; 1280: a5 31       .1  :114f[1]
     cmp currently_loaded_level                                        ; 1282: c5 37       .7  :1151[1]
     beq level_already_loaded                                          ; 1284: f0 20       .   :1153[1]   ; if desired level is already loaded, skip forward
 ; load level in A
@@ -656,7 +651,7 @@ level_load_loop
     jmp level_load_loop                                               ; 129f: 4c 4f 11    LO. :116e[1]
 
 level_load_successful
-    lda desired_level                                                 ; 12a2: a5 31       .1  :1171[1]
+    lda current_level                                                 ; 12a2: a5 31       .1  :1171[1]
     sta currently_loaded_level                                        ; 12a4: 85 37       .7  :1173[1]
 level_already_loaded
     lda #osbyte_flush_buffer_class                                    ; 12a6: a9 0f       ..  :1175[1]
@@ -682,8 +677,8 @@ object_reset_loop
     iny                                                               ; 12d8: c8          .   :11a7[1]
     cpy #max_objects                                                  ; 12d9: c0 0b       ..  :11a8[1]
     bcc object_reset_loop                                             ; 12db: 90 da       ..  :11aa[1]
-    lda desired_level                                                 ; 12dd: a5 31       .1  :11ac[1]
-    cmp previous_level                                                ; 12df: c5 51       .Q  :11ae[1]
+    lda current_level                                                 ; 12dd: a5 31       .1  :11ac[1]
+    cmp level_before_latest_level_and_room_initialisation             ; 12df: c5 51       .Q  :11ae[1]
     beq same_level                                                    ; 12e1: f0 57       .W  :11b0[1]
     lda #0                                                            ; 12e3: a9 00       ..  :11b2[1]
     sta player_wall_collision_flag                                    ; 12e5: 8d 33 24    .3$ :11b4[1]
@@ -737,7 +732,7 @@ clear_sound_priorities_loop1
     ldx level_specific_initialisation_ptr                             ; 134a: ae d7 3a    ..: :1219[1]
     ldy level_specific_initialisation_ptr + 1                         ; 134d: ac d8 3a    ..: :121c[1]
     jsr jmp_yx                                                        ; 1350: 20 66 19     f. :121f[1]
-    lda desired_level                                                 ; 1353: a5 31       .1  :1222[1]
+    lda current_level                                                 ; 1353: a5 31       .1  :1222[1]
     sec                                                               ; 1355: 38          8   :1224[1]
     sbc #first_level_letter                                           ; 1356: e9 41       .A  :1225[1]
     tax                                                               ; 1358: aa          .   :1227[1]
@@ -771,7 +766,7 @@ skip_adding_completion_spell_to_toolbar
 ; 
     lda #0                                                            ; 1376: a9 00       ..  :1245[1]
     sta which_dialog_is_active                                        ; 1378: 85 04       ..  :1247[1]
-    lda desired_level                                                 ; 137a: a5 31       .1  :1249[1]
+    lda current_level                                                 ; 137a: a5 31       .1  :1249[1]
     sec                                                               ; 137c: 38          8   :124b[1]
     sbc #first_level_letter                                           ; 137d: e9 41       .A  :124c[1]
     tax                                                               ; 137f: aa          .   :124e[1]
@@ -797,7 +792,7 @@ skip_adding_completion_spell_to_toolbar
     tya                                                               ; 139c: 98          .   :126b[1]
     adc #0                                                            ; 139d: 69 00       i.  :126c[1]
     tay                                                               ; 139f: a8          .   :126e[1]
-; call the room initialisation code
+; jump to the level specific room handler
     jmp jmp_yx                                                        ; 13a0: 4c 66 19    Lf. :126f[1]
 
 data_filename
@@ -806,7 +801,7 @@ data_filename_variable_letter
     !text "A", $0d                                                    ; 13a7: 41 0d       A.  :1276[1]
 
 set_player_position_for_new_room
-    lda desired_level                                                 ; 13a9: a5 31       .1  :1278[1]
+    lda current_level                                                 ; 13a9: a5 31       .1  :1278[1]
     sec                                                               ; 13ab: 38          8   :127a[1]
     sbc #first_level_letter                                           ; 13ac: e9 41       .A  :127b[1]
     tax                                                               ; 13ae: aa          .   :127d[1]
@@ -860,8 +855,8 @@ start_room
     jsr jmp_yx                                                        ; 13f7: 20 66 19     f. :12c6[1]
     lda #0                                                            ; 13fa: a9 00       ..  :12c9[1]
     sta update_room_first_update_flag                                 ; 13fc: 8d 2b 13    .+. :12cb[1]
-    lda desired_level                                                 ; 13ff: a5 31       .1  :12ce[1]
-    cmp previous_level                                                ; 1401: c5 51       .Q  :12d0[1]
+    lda current_level                                                 ; 13ff: a5 31       .1  :12ce[1]
+    cmp level_before_latest_level_and_room_initialisation             ; 1401: c5 51       .Q  :12d0[1]
     beq return1                                                       ; 1403: f0 05       ..  :12d2[1]
 ; start transformation to the wizard if it's a new level
     lda #spriteid_icodata_wizard                                      ; 1405: a9 04       ..  :12d4[1]
@@ -1726,7 +1721,7 @@ set_toolbar_and_gameplay_area_colours
     sta pending_gameplay_area_colour                                  ; 189c: 8d 5f 17    ._. :176b[1]
     lda use_colour_flag                                               ; 189f: ad 65 17    .e. :176e[1]
     beq return4                                                       ; 18a2: f0 17       ..  :1771[1]
-    ldy desired_level                                                 ; 18a4: a4 31       .1  :1773[1]
+    ldy current_level                                                 ; 18a4: a4 31       .1  :1773[1]
     jsr convert_level_filename_letter_into_section_letter             ; 18a6: 20 d4 0a     .. :1775[1]
     tya                                                               ; 18a9: 98          .   :1778[1]
     sec                                                               ; 18aa: 38          8   :1779[1]
@@ -2235,7 +2230,7 @@ update_level_completion
     jsr test_for_collision_between_objects_x_and_y                    ; 1b72: 20 e2 28     .( :1a41[1]
     beq skip_adding_level_completion_spell                            ; 1b75: f0 13       ..  :1a44[1]
 ; collided with level completion collectable, so mark level as completed
-    lda desired_level                                                 ; 1b77: a5 31       .1  :1a46[1]
+    lda current_level                                                 ; 1b77: a5 31       .1  :1a46[1]
     sec                                                               ; 1b79: 38          8   :1a48[1]
     sbc #first_level_letter                                           ; 1b7a: e9 41       .A  :1a49[1]
     tay                                                               ; 1b7c: a8          .   :1a4b[1]
@@ -2253,7 +2248,7 @@ skip_adding_level_completion_spell
     lda #0                                                            ; 1b92: a9 00       ..  :1a61[1]
     sta object_spriteid,x                                             ; 1b94: 9d a8 09    ... :1a63[1]
 ; exit if level is completed
-    lda desired_level                                                 ; 1b97: a5 31       .1  :1a66[1]
+    lda current_level                                                 ; 1b97: a5 31       .1  :1a66[1]
     sec                                                               ; 1b99: 38          8   :1a68[1]
     sbc #first_level_letter                                           ; 1b9a: e9 41       .A  :1a69[1]
     tay                                                               ; 1b9c: a8          .   :1a6b[1]
@@ -4058,6 +4053,11 @@ found_entry_in_list
     tay                                                               ; 23fc: a8          .   :22cb[1]
     rts                                                               ; 23fd: 60          `   :22cc[1]
 
+; *************************************************************************************
+; 
+; Update player
+; 
+; *************************************************************************************
 update_player
     lda current_player_character                                      ; 23fe: a5 48       .H  :22cd[1]
     beq update_mid_transformation_local                               ; 2400: f0 0f       ..  :22cf[1]
@@ -4067,7 +4067,7 @@ update_player
     beq update_cat_local                                              ; 2408: f0 0d       ..  :22d7[1]
     cmp #spriteid_icodata_monkey                                      ; 240a: c9 06       ..  :22d9[1]
     beq update_monkey_local                                           ; 240c: f0 0c       ..  :22db[1]
-    jmp return10                                                      ; 240e: 4c ec 22    L." :22dd[1]
+    jmp return10                                                      ; 240e: 4c ec 22    L." :22dd[1]   ; could just 'rts'? But maybe the bird modifies this code...?
 
 update_mid_transformation_local
     jmp update_mid_transformation                                     ; 2411: 4c 86 39    L.9 :22e0[1]
@@ -5955,35 +5955,35 @@ decrement_current_transformations_remaining
     adc current_transformations_remaining+1                           ; 2dc2: 6d ed 09    m.. :2c91[1]
     cmp #' ' + '0'                                                    ; 2dc5: c9 50       .P  :2c94[1]
     clc                                                               ; 2dc7: 18          .   :2c96[1]
-    beq decrement_current_tranformations_remaining_pla_rts            ; 2dc8: f0 3c       .<  :2c97[1]
+    beq decrement_current_transformations_remaining_pla_rts           ; 2dc8: f0 3c       .<  :2c97[1]
     dec current_transformations_remaining                             ; 2dca: ce ec 09    ... :2c99[1]
     lda current_transformations_remaining                             ; 2dcd: ad ec 09    ... :2c9c[1]
     cmp #'0'                                                          ; 2dd0: c9 30       .0  :2c9f[1]
-    bcs decrement_current_tranformations_remaining_no_borrow          ; 2dd2: b0 31       .1  :2ca1[1]
+    bcs decrement_current_transformations_remaining_no_borrow         ; 2dd2: b0 31       .1  :2ca1[1]
     lda #'9'                                                          ; 2dd4: a9 39       .9  :2ca3[1]
     sta current_transformations_remaining                             ; 2dd6: 8d ec 09    ... :2ca5[1]
     dec current_transformations_remaining+1                           ; 2dd9: ce ed 09    ... :2ca8[1]
     lda current_transformations_remaining+1                           ; 2ddc: ad ed 09    ... :2cab[1]
     cmp #'0'                                                          ; 2ddf: c9 30       .0  :2cae[1]
-    beq decrement_current_tranformations_remaining_middle_digit_now_zero; 2de1: f0 18       ..  :2cb0[1]
-    bcs decrement_current_tranformations_remaining_no_borrow          ; 2de3: b0 20       .   :2cb2[1]
+    beq decrement_current_transformations_remaining_middle_digit_now_zero; 2de1: f0 18       ..  :2cb0[1]
+    bcs decrement_current_transformations_remaining_no_borrow         ; 2de3: b0 20       .   :2cb2[1]
     lda #'9'                                                          ; 2de5: a9 39       .9  :2cb4[1]
     sta current_transformations_remaining+1                           ; 2de7: 8d ed 09    ... :2cb6[1]
     dec current_transformations_remaining+2                           ; 2dea: ce ee 09    ... :2cb9[1]
     lda current_transformations_remaining+2                           ; 2ded: ad ee 09    ... :2cbc[1]
     cmp #'0'                                                          ; 2df0: c9 30       .0  :2cbf[1]
-    bne decrement_current_tranformations_remaining_no_borrow          ; 2df2: d0 11       ..  :2cc1[1]
+    bne decrement_current_transformations_remaining_no_borrow         ; 2df2: d0 11       ..  :2cc1[1]
     lda #' '                                                          ; 2df4: a9 20       .   :2cc3[1]
     sta current_transformations_remaining+2                           ; 2df6: 8d ee 09    ... :2cc5[1]
-    bne decrement_current_tranformations_remaining_no_borrow          ; 2df9: d0 0a       ..  :2cc8[1]
-decrement_current_tranformations_remaining_middle_digit_now_zero
+    bne decrement_current_transformations_remaining_no_borrow         ; 2df9: d0 0a       ..  :2cc8[1]
+decrement_current_transformations_remaining_middle_digit_now_zero
     lda current_transformations_remaining+2                           ; 2dfb: ad ee 09    ... :2cca[1]
     cmp #' '                                                          ; 2dfe: c9 20       .   :2ccd[1]
-    bne decrement_current_tranformations_remaining_no_borrow          ; 2e00: d0 03       ..  :2ccf[1]
+    bne decrement_current_transformations_remaining_no_borrow         ; 2e00: d0 03       ..  :2ccf[1]
     sta current_transformations_remaining+1                           ; 2e02: 8d ed 09    ... :2cd1[1]
-decrement_current_tranformations_remaining_no_borrow
+decrement_current_transformations_remaining_no_borrow
     sec                                                               ; 2e05: 38          8   :2cd4[1]
-decrement_current_tranformations_remaining_pla_rts
+decrement_current_transformations_remaining_pla_rts
     pla                                                               ; 2e06: 68          h   :2cd5[1]
     rts                                                               ; 2e07: 60          `   :2cd6[1]
 
@@ -7213,7 +7213,7 @@ odd_drive_number
 
 drive_chosen
     lda #$ff                                                          ; 371e: a9 ff       ..  :35ed[1]
-    sta desired_level                                                 ; 3720: 85 31       .1  :35ef[1]
+    sta current_level                                                 ; 3720: 85 31       .1  :35ef[1]
     lda save_game                                                     ; 3722: ad ea 09    ... :35f1[1]
     jmp select_level_a                                                ; 3725: 4c db 36    L.6 :35f4[1]
 
@@ -7346,7 +7346,7 @@ check_password_level
 select_level_a
     cmp #1                                                            ; 380c: c9 01       ..  :36db[1]
     beq remove_dialog_local2                                          ; 380e: f0 17       ..  :36dd[1]
-    cmp desired_level                                                 ; 3810: c5 31       .1  :36df[1]
+    cmp current_level                                                 ; 3810: c5 31       .1  :36df[1]
     beq remove_dialog_local2                                          ; 3812: f0 13       ..  :36e1[1]
     tay                                                               ; 3814: a8          .   :36e3[1]
     pla                                                               ; 3815: 68          h   :36e4[1]
@@ -7358,7 +7358,7 @@ select_level_a
     cpy #$ff                                                          ; 381b: c0 ff       ..  :36ea[1]
     beq start_game_local                                              ; 381d: f0 05       ..  :36ec[1]
     ldx #0                                                            ; 381f: a2 00       ..  :36ee[1]
-    jmp initialise_level                                              ; 3821: 4c 40 11    L@. :36f0[1]
+    jmp initialise_level_and_room                                     ; 3821: 4c 40 11    L@. :36f0[1]
 
 start_game_local
     jmp start_game                                                    ; 3824: 4c 0c 11    L.. :36f3[1]
@@ -7477,7 +7477,7 @@ show_section_letter_dialog
     ldx #<section_encrypted_string                                    ; 38c6: a2 b1       ..  :3795[1]
     ldy #>section_encrypted_string                                    ; 38c8: a0 37       .7  :3797[1]
     jsr print_encrypted_string_at_yx                                  ; 38ca: 20 1c 38     .8 :3799[1]
-    ldy desired_level                                                 ; 38cd: a4 31       .1  :379c[1]
+    ldy current_level                                                 ; 38cd: a4 31       .1  :379c[1]
     jsr convert_level_filename_letter_into_section_letter             ; 38cf: 20 d4 0a     .. :379e[1]
     tya                                                               ; 38d2: 98          .   :37a1[1]
     jsr print_italic                                                  ; 38d3: 20 66 18     f. :37a2[1]
@@ -7904,7 +7904,7 @@ loop_c39d2
     ldy #last_level_letter                                            ; 3b0d: a0 51       .Q  :39dc[1]
     bne c39ec                                                         ; 3b0f: d0 0c       ..  :39de[1]
 c39e0
-    ldy desired_level                                                 ; 3b11: a4 31       .1  :39e0[1]
+    ldy current_level                                                 ; 3b11: a4 31       .1  :39e0[1]
     jsr convert_level_filename_letter_into_section_letter             ; 3b13: 20 d4 0a     .. :39e2[1]
     iny                                                               ; 3b16: c8          .   :39e5[1]
     cpy #last_level_letter                                            ; 3b17: c0 51       .Q  :39e6[1]
@@ -7913,7 +7913,7 @@ c39e0
 c39ec
     ldx #0                                                            ; 3b1d: a2 00       ..  :39ec[1]
     jsr convert_section_letter_to_level_filename_letter               ; 3b1f: 20 ef 0a     .. :39ee[1]
-    jmp initialise_level                                              ; 3b22: 4c 40 11    L@. :39f1[1]
+    jmp initialise_level_and_room                                     ; 3b22: 4c 40 11    L@. :39f1[1]
 
 c39f4
     cpy #4                                                            ; 3b25: c0 04       ..  :39f4[1]

@@ -28,7 +28,7 @@ characters_entered                                  = $05
 l0015                                               = $15
 sprite_reflect_flag                                 = $1d
 desired_room_index                                  = $30
-desired_level                                       = $31
+current_level                                       = $31
 temp_sprite_x_offset                                = $3a
 temp_sprite_y_offset                                = $3b
 width_in_cells                                      = $3c
@@ -38,7 +38,7 @@ source_sprite_memory_low                            = $40
 source_sprite_memory_high                           = $41
 copy_mode                                           = $42
 previous_room_index                                 = $50
-previous_level                                      = $51
+level_before_latest_level_and_room_initialisation   = $51
 player_held_object_menu_item_spriteid               = $52
 developer_mode_sideways_ram_is_set_up_flag          = $5b
 l0070                                               = $70
@@ -78,7 +78,7 @@ l0a75                                               = $0a75
 string_input_buffer                                 = $0a90
 tile_all_set_pixels                                 = $0aa9
 developer_flags                                     = $1103
-initialise_level                                    = $1140
+initialise_level_and_room                           = $1140
 start_room                                          = $12bb
 game_update                                         = $12da
 update_room_first_update_flag                       = $132b
@@ -165,9 +165,15 @@ level_specific_password
     !byte $9f, $82, $86, $8e, $e6, $8d, $87, $82, $8e, $98, $c6       ; 3ae7: 9f 82 86...
 
 ; *************************************************************************************
+; 
+; Level initialisation
+; 
+; This is called whenever a new room is entered.
+; 
+; *************************************************************************************
 level_specific_initialisation
-    lda desired_level                                                 ; 3af2: a5 31
-    cmp previous_level                                                ; 3af4: c5 51
+    lda current_level                                                 ; 3af2: a5 31
+    cmp level_before_latest_level_and_room_initialisation             ; 3af4: c5 51
     beq c3b1b                                                         ; 3af6: f0 23
     lda developer_flags                                               ; 3af8: ad 03 11
     bpl c3b02                                                         ; 3afb: 10 05
@@ -210,14 +216,14 @@ level_specific_update
 
 ; *************************************************************************************
 ; 
-; Room 0 initialisation
+; Room 0 initialisation and game loop
 ; 
 ; *************************************************************************************
 room_0_data
     !byte 22                                                          ; 3b2f: 16                      ; initial player X cell
     !byte 20                                                          ; 3b30: 14                      ; initial player Y cell
 
-room_0_initialisation_code
+room_0_code
     lda #$26 ; '&'                                                    ; 3b31: a9 26
     sta source_sprite_memory_low                                      ; 3b33: 85 40
     lda #$45 ; 'E'                                                    ; 3b35: a9 45
@@ -308,22 +314,22 @@ loop_c3beb
     and #1                                                            ; 3bf0: 29 01
     beq c3bfb                                                         ; 3bf2: f0 07
     ldx #1                                                            ; 3bf4: a2 01
-    ldy desired_level                                                 ; 3bf6: a4 31
-    jmp initialise_level                                              ; 3bf8: 4c 40 11
+    ldy current_level                                                 ; 3bf6: a4 31
+    jmp initialise_level_and_room                                     ; 3bf8: 4c 40 11
 
 c3bfb
     lda l0070                                                         ; 3bfb: a5 70
     and #4                                                            ; 3bfd: 29 04
     beq loop_c3beb                                                    ; 3bff: f0 ea
     ldx #2                                                            ; 3c01: a2 02
-    ldy desired_level                                                 ; 3c03: a4 31
-    jmp initialise_level                                              ; 3c05: 4c 40 11
+    ldy current_level                                                 ; 3c03: a4 31
+    jmp initialise_level_and_room                                     ; 3c05: 4c 40 11
 
 sub_c3c08
     lda update_room_first_update_flag                                 ; 3c08: ad 2b 13
     beq c3c1a                                                         ; 3c0b: f0 0d
-    lda desired_level                                                 ; 3c0d: a5 31
-    cmp previous_level                                                ; 3c0f: c5 51
+    lda current_level                                                 ; 3c0d: a5 31
+    cmp level_before_latest_level_and_room_initialisation             ; 3c0f: c5 51
     beq c3c1a                                                         ; 3c11: f0 07
     ldx #8                                                            ; 3c13: a2 08
     ldy #$45 ; 'E'                                                    ; 3c15: a0 45
@@ -378,14 +384,14 @@ c3c80
 
 ; *************************************************************************************
 ; 
-; Room 1 initialisation
+; Room 1 initialisation and game loop
 ; 
 ; *************************************************************************************
 room_1_data
     !byte 13                                                          ; 3c81: 0d                      ; initial player X cell
     !byte 20                                                          ; 3c82: 14                      ; initial player Y cell
 
-room_1_initialisation_code
+room_1_code
     lda #$26 ; '&'                                                    ; 3c83: a9 26
     sta source_sprite_memory_low                                      ; 3c85: 85 40
     lda #$45 ; 'E'                                                    ; 3c87: a9 45
@@ -488,8 +494,8 @@ loop_c3d58
     and #4                                                            ; 3d5b: 29 04
     beq loop_c3d58                                                    ; 3d5d: f0 f9
     ldx #0                                                            ; 3d5f: a2 00
-    ldy desired_level                                                 ; 3d61: a4 31
-    jmp initialise_level                                              ; 3d63: 4c 40 11
+    ldy current_level                                                 ; 3d61: a4 31
+    jmp initialise_level_and_room                                     ; 3d63: 4c 40 11
 
 sub_c3d66
     lda #1                                                            ; 3d66: a9 01
@@ -516,8 +522,8 @@ sub_c3d66
     sta l0a71                                                         ; 3d9e: 8d 71 0a
     lda update_room_first_update_flag                                 ; 3da1: ad 2b 13
     beq c3dd1                                                         ; 3da4: f0 2b
-    lda previous_level                                                ; 3da6: a5 51
-    cmp desired_level                                                 ; 3da8: c5 31
+    lda level_before_latest_level_and_room_initialisation             ; 3da6: a5 51
+    cmp current_level                                                 ; 3da8: c5 31
     beq c3db6                                                         ; 3daa: f0 0a
     lda l0a05                                                         ; 3dac: ad 05 0a
     bmi c3db6                                                         ; 3daf: 30 05
@@ -603,8 +609,8 @@ sub_c3e47
     sta currently_updating_logic_for_room_index                       ; 3e47: 8d ba 1a
     lda update_room_first_update_flag                                 ; 3e4a: ad 2b 13
     beq c3e9d                                                         ; 3e4d: f0 4e
-    lda desired_level                                                 ; 3e4f: a5 31
-    cmp previous_level                                                ; 3e51: c5 51
+    lda current_level                                                 ; 3e4f: a5 31
+    cmp level_before_latest_level_and_room_initialisation             ; 3e51: c5 51
     beq c3e60                                                         ; 3e53: f0 0b
     lda #0                                                            ; 3e55: a9 00
     sta l3f1e                                                         ; 3e57: 8d 1e 3f
@@ -720,8 +726,8 @@ l3f2b
 sub_c3f2f
     lda update_room_first_update_flag                                 ; 3f2f: ad 2b 13
     beq c3f53                                                         ; 3f32: f0 1f
-    lda desired_level                                                 ; 3f34: a5 31
-    cmp previous_level                                                ; 3f36: c5 51
+    lda current_level                                                 ; 3f34: a5 31
+    cmp level_before_latest_level_and_room_initialisation             ; 3f36: c5 51
     beq c3f3f                                                         ; 3f38: f0 05
     lda #0                                                            ; 3f3a: a9 00
     sta l0a75                                                         ; 3f3c: 8d 75 0a
@@ -773,14 +779,14 @@ sub_c3f82
 
 ; *************************************************************************************
 ; 
-; Room 2 initialisation
+; Room 2 initialisation and game loop
 ; 
 ; *************************************************************************************
 room_2_data
     !byte 14                                                          ; 3f93: 0e                      ; initial player X cell
     !byte 20                                                          ; 3f94: 14                      ; initial player Y cell
 
-room_2_initialisation_code
+room_2_code
     lda #$26 ; '&'                                                    ; 3f95: a9 26
     sta source_sprite_memory_low                                      ; 3f97: 85 40
     lda #$45 ; 'E'                                                    ; 3f99: a9 45
@@ -872,16 +878,16 @@ loop_c4050
     and #1                                                            ; 4055: 29 01
     beq c4060                                                         ; 4057: f0 07
     ldx #0                                                            ; 4059: a2 00
-    ldy desired_level                                                 ; 405b: a4 31
-    jmp initialise_level                                              ; 405d: 4c 40 11
+    ldy current_level                                                 ; 405b: a4 31
+    jmp initialise_level_and_room                                     ; 405d: 4c 40 11
 
 c4060
     lda l0070                                                         ; 4060: a5 70
     and #4                                                            ; 4062: 29 04
     beq loop_c4050                                                    ; 4064: f0 ea
     ldx #3                                                            ; 4066: a2 03
-    ldy desired_level                                                 ; 4068: a4 31
-    jmp initialise_level                                              ; 406a: 4c 40 11
+    ldy current_level                                                 ; 4068: a4 31
+    jmp initialise_level_and_room                                     ; 406a: 4c 40 11
 
 sub_c406d
     lda l0a72                                                         ; 406d: ad 72 0a
@@ -902,8 +908,8 @@ sub_c406d
     sta l0a74                                                         ; 4097: 8d 74 0a
     lda update_room_first_update_flag                                 ; 409a: ad 2b 13
     beq c40d8                                                         ; 409d: f0 39
-    lda desired_level                                                 ; 409f: a5 31
-    cmp previous_level                                                ; 40a1: c5 51
+    lda current_level                                                 ; 409f: a5 31
+    cmp level_before_latest_level_and_room_initialisation             ; 40a1: c5 51
     beq c40b1                                                         ; 40a3: f0 0c
     lda l0a06                                                         ; 40a5: ad 06 0a
     cmp #2                                                            ; 40a8: c9 02
@@ -1055,8 +1061,8 @@ sub_c41d2
     sty l42da                                                         ; 41d8: 8c da 42
     lda update_room_first_update_flag                                 ; 41db: ad 2b 13
     beq c422d                                                         ; 41de: f0 4d
-    lda desired_level                                                 ; 41e0: a5 31
-    cmp previous_level                                                ; 41e2: c5 51
+    lda current_level                                                 ; 41e0: a5 31
+    cmp level_before_latest_level_and_room_initialisation             ; 41e2: c5 51
     beq c41f0                                                         ; 41e4: f0 0a
     lda l42d8                                                         ; 41e6: ad d8 42
     beq c41f0                                                         ; 41e9: f0 05
@@ -1239,14 +1245,14 @@ c433c
 
 ; *************************************************************************************
 ; 
-; Room 3 initialisation
+; Room 3 initialisation and game loop
 ; 
 ; *************************************************************************************
 room_3_data
     !byte 20                                                          ; 433d: 14                      ; initial player X cell
     !byte 7                                                           ; 433e: 07                      ; initial player Y cell
 
-room_3_initialisation_code
+room_3_code
     lda #$26 ; '&'                                                    ; 433f: a9 26
     sta source_sprite_memory_low                                      ; 4341: 85 40
     lda #$45 ; 'E'                                                    ; 4343: a9 45
@@ -1362,8 +1368,8 @@ loop_c442f
     and #1                                                            ; 4432: 29 01
     beq loop_c442f                                                    ; 4434: f0 f9
     ldx #2                                                            ; 4436: a2 02
-    ldy desired_level                                                 ; 4438: a4 31
-    jmp initialise_level                                              ; 443a: 4c 40 11
+    ldy current_level                                                 ; 4438: a4 31
+    jmp initialise_level_and_room                                     ; 443a: 4c 40 11
 
 sub_c443d
     lda #3                                                            ; 443d: a9 03
