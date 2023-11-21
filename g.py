@@ -352,8 +352,10 @@ substitute_labels = {
         "address1_high": "menu_has_changed_flag",
     },
     (0x349f, 0x3533): {
-        "address1_low": "player_cell_y",
-        "address1_high": "temp",
+        "address1_low": "cell_x",
+        "address1_high": "cell_y",
+        "l0072": "object_rope_low",
+        "l0073": "object_rope_high",
         "l0074": "object_top_low",
         "l0075": "object_top_high",
         "l0076": "object_bottom_low",
@@ -2861,12 +2863,14 @@ if (not already falling) then branch (start falling)""")
     label(0x3222, "update_monkey_climbing")
     expr(0x3223, "monkey_fall_animation - monkey_base_animation")
     expr(0x3239, "monkey_climb_animation - monkey_base_animation")
+    label(0x324c, "monkey_not_jumping")
     label(0x3247, "monkey_set_climb_idle")
     expr(0x3248, "monkey_climb_idle_animation - monkey_base_animation")
     expr(0x324d, "monkey_animation12 - monkey_base_animation")
     expr(0x3257, "monkey_climb_down_animation - monkey_base_animation")
     ab(0x325d)
     blank(0x325f)
+    label(0x325f, "monkey_start_falling")
     expr(0x3260, "monkey_fall_animation - monkey_base_animation")
     label(0x3269, "monkey_set_animation_x")
     label(0x3273, "monkey_got_index_in_animation_local2")
@@ -2901,12 +2905,44 @@ if (not already falling) then branch (start falling)""")
     expr(0x333d, make_hi("monkey_base_animation"))
     expr(0x3347, make_lo("monkey_tail_spriteids"))
     expr(0x334b, make_hi("monkey_tail_spriteids"))
+    comment(0x3346, "start updating the tail")
+    comment(0x334e, "check for a tail. If the player is transitioning, it may not have a tail.")
     expr(0x3358, "monkey_transform_out_animation - monkey_base_animation")
+    label(0x335b, "monkey_checking_for_tail")
     expr(0x3361, "spriteid_monkey4")
     comment(0x3364, "top bit set with lower 7 bits = 7, so setting offset 7 into monkey_sprite_list")
+    label(0x3366, "monkey_update_tail")
     expr(0x3367, make_lo("monkey_sprite_list"))
     expr(0x3369, make_hi("monkey_sprite_list"))
+    comment(0x336e, """*************************************************************************************
 
+Can monkey climb?
+
+Checks the collision map for
+
+On Exit:
+          A and flags: $ff if monkey can climb, else $00
+       cell_x, cell_y: cell position to climb at (only valid if monkey can climb, A=$ff)
+
+*************************************************************************************""")
+    label(0x336e, "can_monkey_climb")
+    comment(0x3372, "get top and bottom pixel position of player")
+    comment(0x3377, "find centre cell (vertically) of object from pixel position: (top+bottom) / 16, i.e. (average)/8")
+    comment(0x3390, "read $ff from collision map if out of game area")
+    comment(0x3394, "5 is the x offset to get to the rope")
+    label(0x3399, "can_monkey_climb_loop")
+    label(0x33b5, "adjust_position_because_looking_left")
+    label(0x33cb, "divide_by_eight_to_get_cells")
+    label(0x33ea, "monkey_can_climb")
+    comment(0x33ea, "set the player position to the rope position")
+    comment(0x33f4, "return $ff to say we found a rope")
+    ab(0x33f6)
+    blank(0x33f8)
+    comment(0x33f8, "return $00 to say we didn't find a rope")
+    label(0x33f8, "monkey_cant_climb")
+    label(0x33fa, "restore_xy_and_return_a")
+
+    label(0x3403, "rope_x_offset")
     label(0x3404, "toggle_load_save_dialog")
     label(0x340d, "show_load_save_dialog")
     expr(0x3415, make_lo("press_s_to_save_encrypted_string"))

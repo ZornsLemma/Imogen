@@ -320,7 +320,6 @@ menu_item_to_use                                    = $70
 object_left_low                                     = $70
 object_y_delta                                      = $70
 osfile_block_filename_low                           = $70
-player_cell_y                                       = $70
 screen_address_low                                  = $70
 src_sprite_address_low                              = $70
 address1_high                                       = $71
@@ -332,9 +331,9 @@ object_left_high                                    = $71
 osfile_block_filename_high                          = $71
 screen_address_high                                 = $71
 src_sprite_address_high                             = $71
-temp                                                = $71
 l0072                                               = $72
 object_right_low                                    = $72
+object_rope_low                                     = $72
 osfile_block_load_address_low                       = $72
 sprite_screen_address_low                           = $72
 temp_sprite_list_low                                = $72
@@ -342,6 +341,7 @@ width_in_cells_to_write                             = $72
 height_in_cells_to_write                            = $73
 l0073                                               = $73
 object_right_high                                   = $73
+object_rope_high                                    = $73
 osfile_block_load_address_mid1                      = $73
 sprite_screen_address_high                          = $73
 temp_sprite_list_high                               = $73
@@ -6724,7 +6724,7 @@ monkey_not_falling
     beq update_monkey_climbing                                        ; 333d: f0 14       ..  :320c[1]
     lda jump_requested                                                ; 333f: ad c7 3a    ..: :320e[1]
     beq c3276                                                         ; 3342: f0 63       .c  :3211[1]
-    jsr sub_c336e                                                     ; 3344: 20 6e 33     n3 :3213[1]
+    jsr can_monkey_climb                                              ; 3344: 20 6e 33     n3 :3213[1]
     beq c3276                                                         ; 3347: f0 5e       .^  :3216[1]
     lda #monkey_climb_animation - monkey_base_animation               ; 3349: a9 51       .Q  :3218[1]
     sta current_animation                                             ; 334b: 8d df 09    ... :321a[1]
@@ -6733,10 +6733,10 @@ monkey_not_falling
 
 update_monkey_climbing
     ldx #monkey_fall_animation - monkey_base_animation                ; 3353: a2 d4       ..  :3222[1]
-    jsr sub_c336e                                                     ; 3355: 20 6e 33     n3 :3224[1]
-    beq c325f                                                         ; 3358: f0 36       .6  :3227[1]
+    jsr can_monkey_climb                                              ; 3355: 20 6e 33     n3 :3224[1]
+    beq monkey_start_falling                                          ; 3358: f0 36       .6  :3227[1]
     lda jump_requested                                                ; 335a: ad c7 3a    ..: :3229[1]
-    beq c324c                                                         ; 335d: f0 1e       ..  :322c[1]
+    beq monkey_not_jumping                                            ; 335d: f0 1e       ..  :322c[1]
     dec temp_top_offset                                               ; 335f: ce 50 25    .P% :322e[1]
     lda #0                                                            ; 3362: a9 00       ..  :3231[1]
     jsr get_solid_rock_collision_for_object_a                         ; 3364: 20 94 28     .( :3233[1]
@@ -6751,17 +6751,17 @@ monkey_set_climb_idle
     ldx #monkey_climb_idle_animation - monkey_base_animation          ; 3378: a2 45       .E  :3247[1]
     jmp monkey_set_animation_x                                        ; 337a: 4c 69 32    Li2 :3249[1]
 
-c324c
+monkey_not_jumping
     ldx #monkey_animation12 - monkey_base_animation                   ; 337d: a2 58       .X  :324c[1]
     lda player_move_direction_requested                               ; 337f: ad c9 3a    ..: :324e[1]
     cmp object_direction                                              ; 3382: cd be 09    ... :3251[1]
-    beq c325f                                                         ; 3385: f0 09       ..  :3254[1]
+    beq monkey_start_falling                                          ; 3385: f0 09       ..  :3254[1]
     ldx #monkey_climb_down_animation - monkey_base_animation          ; 3387: a2 49       .I  :3256[1]
     lda player_has_hit_floor_flag                                     ; 3389: ad 8f 28    ..( :3258[1]
     beq monkey_set_animation_x                                        ; 338c: f0 0c       ..  :325b[1]
     bne c3276                                                         ; 338e: d0 17       ..  :325d[1]   ; ALWAYS branch
 
-c325f
+monkey_start_falling
     lda #monkey_fall_animation - monkey_base_animation                ; 3390: a9 d4       ..  :325f[1]
     sta current_animation                                             ; 3392: 8d df 09    ... :3261[1]
     txa                                                               ; 3395: 8a          .   :3264[1]
@@ -6885,116 +6885,139 @@ monkey_got_index_in_animation
     jsr set_player_spriteid_and_offset_from_animation_table           ; 346f: 20 00 22     ." :333e[1]
     lda #0                                                            ; 3472: a9 00       ..  :3341[1]
     jsr update_player_solid_rock_collision                            ; 3474: 20 f5 25     .% :3343[1]
+; start updating the tail
     lda #<monkey_tail_spriteids                                       ; 3477: a9 dd       ..  :3346[1]
     sta address1_low                                                  ; 3479: 85 70       .p  :3348[1]
     lda #>monkey_tail_spriteids                                       ; 347b: a9 30       .0  :334a[1]
     sta address1_high                                                 ; 347d: 85 71       .q  :334c[1]
+; check for a tail. If the player is transitioning, it may not have a tail.
     lda #$ff                                                          ; 347f: a9 ff       ..  :334e[1]
     ldx current_animation                                             ; 3481: ae df 09    ... :3350[1]
     cpx #0                                                            ; 3484: e0 00       ..  :3353[1]
-    beq c335b                                                         ; 3486: f0 04       ..  :3355[1]
+    beq monkey_checking_for_tail                                      ; 3486: f0 04       ..  :3355[1]
     cpx #monkey_transform_out_animation - monkey_base_animation       ; 3488: e0 16       ..  :3357[1]
-    bne c3366                                                         ; 348a: d0 0b       ..  :3359[1]
-c335b
+    bne monkey_update_tail                                            ; 348a: d0 0b       ..  :3359[1]
+monkey_checking_for_tail
     lda #0                                                            ; 348c: a9 00       ..  :335b[1]
     ldx object_spriteid                                               ; 348e: ae a8 09    ... :335d[1]
     cpx #spriteid_monkey4                                             ; 3491: e0 51       .Q  :3360[1]
-    bne c3366                                                         ; 3493: d0 02       ..  :3362[1]
+    bne monkey_update_tail                                            ; 3493: d0 02       ..  :3362[1]
 ; top bit set with lower 7 bits = 7, so setting offset 7 into monkey_sprite_list
     lda #$87                                                          ; 3495: a9 87       ..  :3364[1]
-c3366
+monkey_update_tail
     ldx #<monkey_sprite_list                                          ; 3497: a2 e6       ..  :3366[1]
     ldy #>monkey_sprite_list                                          ; 3499: a0 30       .0  :3368[1]
     jsr update_player_accessory_object_animation                      ; 349b: 20 48 22     H" :336a[1]
     rts                                                               ; 349e: 60          `   :336d[1]
 
-sub_c336e
+; *************************************************************************************
+; 
+; Can monkey climb?
+; 
+; Checks the collision map for
+; 
+; On Exit:
+;           A and flags: $ff if monkey can climb, else $00
+;        cell_x, cell_y: cell position to climb at (only valid if monkey can climb,
+; A=$ff)
+; 
+; *************************************************************************************
+can_monkey_climb
     txa                                                               ; 349f: 8a          .   :336e[1]   ; remember X,Y
     pha                                                               ; 34a0: 48          H   :336f[1]
     tya                                                               ; 34a1: 98          .   :3370[1]
     pha                                                               ; 34a2: 48          H   :3371[1]
+; get top and bottom pixel position of player
     ldx #0                                                            ; 34a3: a2 00       ..  :3372[1]
     jsr find_top_and_bottom_of_object                                 ; 34a5: 20 d2 24     .$ :3374[1]
+; find centre cell (vertically) of object from pixel position: (top+bottom) / 16, i.e.
+; (average)/8
     lda object_top_low                                                ; 34a8: a5 74       .t  :3377[1]
     clc                                                               ; 34aa: 18          .   :3379[1]
     adc object_bottom_low                                             ; 34ab: 65 76       ev  :337a[1]
-    sta temp                                                          ; 34ad: 85 71       .q  :337c[1]
+    sta cell_y                                                        ; 34ad: 85 71       .q  :337c[1]
     lda object_top_high                                               ; 34af: a5 75       .u  :337e[1]
     adc object_bottom_high                                            ; 34b1: 65 77       ew  :3380[1]
     ror                                                               ; 34b3: 6a          j   :3382[1]
-    ror temp                                                          ; 34b4: 66 71       fq  :3383[1]
+    ror cell_y                                                        ; 34b4: 66 71       fq  :3383[1]
     lsr                                                               ; 34b6: 4a          J   :3385[1]
-    ror temp                                                          ; 34b7: 66 71       fq  :3386[1]
+    ror cell_y                                                        ; 34b7: 66 71       fq  :3386[1]
     lsr                                                               ; 34b9: 4a          J   :3388[1]
-    ror temp                                                          ; 34ba: 66 71       fq  :3389[1]
+    ror cell_y                                                        ; 34ba: 66 71       fq  :3389[1]
     lsr                                                               ; 34bc: 4a          J   :338b[1]
-    ror temp                                                          ; 34bd: 66 71       fq  :338c[1]
-    ldy temp                                                          ; 34bf: a4 71       .q  :338e[1]
+    ror cell_y                                                        ; 34bd: 66 71       fq  :338c[1]
+    ldy cell_y                                                        ; 34bf: a4 71       .q  :338e[1]
+; read $ff from collision map if out of game area
     lda #$ff                                                          ; 34c1: a9 ff       ..  :3390[1]
     sta default_collision_map_option                                  ; 34c3: 85 44       .D  :3392[1]
+; 5 is the x offset to get to the rope
     lda #5                                                            ; 34c5: a9 05       ..  :3394[1]
-    sta l3403                                                         ; 34c7: 8d 03 34    ..4 :3396[1]
-c3399
+    sta rope_x_offset                                                 ; 34c7: 8d 03 34    ..4 :3396[1]
+can_monkey_climb_loop
     lda object_direction                                              ; 34ca: ad be 09    ... :3399[1]
-    bmi c33b5                                                         ; 34cd: 30 17       0.  :339c[1]
+    bmi adjust_position_because_looking_left                          ; 34cd: 30 17       0.  :339c[1]
     lda object_x_low                                                  ; 34cf: ad 50 09    .P. :339e[1]
     clc                                                               ; 34d2: 18          .   :33a1[1]
-    adc l3403                                                         ; 34d3: 6d 03 34    m.4 :33a2[1]
-    sta player_cell_y                                                 ; 34d6: 85 70       .p  :33a5[1]
+    adc rope_x_offset                                                 ; 34d3: 6d 03 34    m.4 :33a2[1]
+    sta cell_x                                                        ; 34d6: 85 70       .p  :33a5[1]
     and #$f8                                                          ; 34d8: 29 f8       ).  :33a7[1]
-    sta l0072                                                         ; 34da: 85 72       .r  :33a9[1]
+    sta object_rope_low                                               ; 34da: 85 72       .r  :33a9[1]
     lda object_x_high                                                 ; 34dc: ad 66 09    .f. :33ab[1]
     adc #0                                                            ; 34df: 69 00       i.  :33ae[1]
-    sta l0073                                                         ; 34e1: 85 73       .s  :33b0[1]
-    jmp c33cb                                                         ; 34e3: 4c cb 33    L.3 :33b2[1]
+    sta object_rope_high                                              ; 34e1: 85 73       .s  :33b0[1]
+    jmp divide_by_eight_to_get_cells                                  ; 34e3: 4c cb 33    L.3 :33b2[1]
 
-c33b5
+adjust_position_because_looking_left
     lda object_x_low                                                  ; 34e6: ad 50 09    .P. :33b5[1]
     sec                                                               ; 34e9: 38          8   :33b8[1]
-    sbc l3403                                                         ; 34ea: ed 03 34    ..4 :33b9[1]
-    sta player_cell_y                                                 ; 34ed: 85 70       .p  :33bc[1]
+    sbc rope_x_offset                                                 ; 34ea: ed 03 34    ..4 :33b9[1]
+    sta cell_x                                                        ; 34ed: 85 70       .p  :33bc[1]
     and #$f8                                                          ; 34ef: 29 f8       ).  :33be[1]
     ora #7                                                            ; 34f1: 09 07       ..  :33c0[1]
-    sta l0072                                                         ; 34f3: 85 72       .r  :33c2[1]
+    sta object_rope_low                                               ; 34f3: 85 72       .r  :33c2[1]
     lda object_x_high                                                 ; 34f5: ad 66 09    .f. :33c4[1]
     sbc #0                                                            ; 34f8: e9 00       ..  :33c7[1]
-    sta l0073                                                         ; 34fa: 85 73       .s  :33c9[1]
-c33cb
+    sta object_rope_high                                              ; 34fa: 85 73       .s  :33c9[1]
+divide_by_eight_to_get_cells
     lsr                                                               ; 34fc: 4a          J   :33cb[1]
-    ror player_cell_y                                                 ; 34fd: 66 70       fp  :33cc[1]
+    ror cell_x                                                        ; 34fd: 66 70       fp  :33cc[1]
     lsr                                                               ; 34ff: 4a          J   :33ce[1]
-    ror player_cell_y                                                 ; 3500: 66 70       fp  :33cf[1]
+    ror cell_x                                                        ; 3500: 66 70       fp  :33cf[1]
     lsr                                                               ; 3502: 4a          J   :33d1[1]
-    ror player_cell_y                                                 ; 3503: 66 70       fp  :33d2[1]
-    ldx player_cell_y                                                 ; 3505: a6 70       .p  :33d4[1]
+    ror cell_x                                                        ; 3503: 66 70       fp  :33d2[1]
+    ldx cell_x                                                        ; 3505: a6 70       .p  :33d4[1]
     jsr read_collision_map_value_for_xy                               ; 3507: 20 fa 1e     .. :33d6[1]
     cmp #2                                                            ; 350a: c9 02       ..  :33d9[1]
-    beq c33ea                                                         ; 350c: f0 0d       ..  :33db[1]
+    beq monkey_can_climb                                              ; 350c: f0 0d       ..  :33db[1]
     lda #2                                                            ; 350e: a9 02       ..  :33dd[1]
-    cmp l3403                                                         ; 3510: cd 03 34    ..4 :33df[1]
-    beq c33f8                                                         ; 3513: f0 14       ..  :33e2[1]
-    sta l3403                                                         ; 3515: 8d 03 34    ..4 :33e4[1]
-    jmp c3399                                                         ; 3518: 4c 99 33    L.3 :33e7[1]
+    cmp rope_x_offset                                                 ; 3510: cd 03 34    ..4 :33df[1]
+    beq monkey_cant_climb                                             ; 3513: f0 14       ..  :33e2[1]
+    sta rope_x_offset                                                 ; 3515: 8d 03 34    ..4 :33e4[1]
+    jmp can_monkey_climb_loop                                         ; 3518: 4c 99 33    L.3 :33e7[1]
 
-c33ea
-    lda l0072                                                         ; 351b: a5 72       .r  :33ea[1]
+; set the player position to the rope position
+monkey_can_climb
+    lda object_rope_low                                               ; 351b: a5 72       .r  :33ea[1]
     sta object_x_low                                                  ; 351d: 8d 50 09    .P. :33ec[1]
-    lda l0073                                                         ; 3520: a5 73       .s  :33ef[1]
+    lda object_rope_high                                              ; 3520: a5 73       .s  :33ef[1]
     sta object_x_high                                                 ; 3522: 8d 66 09    .f. :33f1[1]
+; return $ff to say we found a rope
     lda #$ff                                                          ; 3525: a9 ff       ..  :33f4[1]
-    bne c33fa                                                         ; 3527: d0 02       ..  :33f6[1]
-c33f8
+    bne restore_xy_and_return_a                                       ; 3527: d0 02       ..  :33f6[1]   ; ALWAYS branch
+
+; return $00 to say we didn't find a rope
+monkey_cant_climb
     lda #0                                                            ; 3529: a9 00       ..  :33f8[1]
-c33fa
-    sta player_cell_y                                                 ; 352b: 85 70       .p  :33fa[1]
+restore_xy_and_return_a
+    sta cell_x                                                        ; 352b: 85 70       .p  :33fa[1]
     pla                                                               ; 352d: 68          h   :33fc[1]   ; recall X,Y
     tay                                                               ; 352e: a8          .   :33fd[1]
     pla                                                               ; 352f: 68          h   :33fe[1]
     tax                                                               ; 3530: aa          .   :33ff[1]
-    lda player_cell_y                                                 ; 3531: a5 70       .p  :3400[1]
+    lda cell_x                                                        ; 3531: a5 70       .p  :3400[1]
     rts                                                               ; 3533: 60          `   :3402[1]
 
-l3403
+rope_x_offset
     !byte 0                                                           ; 3534: 00          .   :3403[1]
 
 toggle_load_save_dialog
@@ -9117,8 +9140,6 @@ plot_move_x_high
 pydis_end
 
 ; Automatically generated labels:
-;     c324c
-;     c325f
 ;     c3276
 ;     c328d
 ;     c32a5
@@ -9130,14 +9151,6 @@ pydis_end
 ;     c3311
 ;     c3316
 ;     c331e
-;     c335b
-;     c3366
-;     c3399
-;     c33b5
-;     c33cb
-;     c33ea
-;     c33f8
-;     c33fa
 ;     c3598
 ;     c359e
 ;     c35bc
@@ -9154,13 +9167,11 @@ pydis_end
 ;     l0b00
 ;     l28e1
 ;     l31d7
-;     l3403
 ;     lbe00
 ;     lbf00
 ;     loop_c34b2
 ;     loop_c39d2
 ;     loop_c3f87
-;     sub_c336e
 !if (' ' + '0') != $50 {
     !error "Assertion failed: ' ' + '0' == $50"
 }
