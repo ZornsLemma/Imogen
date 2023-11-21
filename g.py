@@ -1880,10 +1880,10 @@ Update player accessory object animation
 The player is object zero, and can have an associated 'accessory' object at index one. This is often a tail, but otherwise can be an object the wizard is carrying (e.g. the whip)
 
 On Entry:
-    A: if +ve, it's a spriteid
-       if -ve, it's TODO: some kind of offset to get a spriteid?
-
-    YX: Address of animation
+                    A: if top bit clear, it's a spriteid
+                       if top bit set, lower 7 bits are the offset into sprite array
+                   YX: Address of main sprite list
+    animation_address: accessory sprite list
 
 *************************************************************************************""")
     entry(0x2248, "update_player_accessory_object_animation")
@@ -2782,17 +2782,23 @@ if (not already falling) then branch (start falling)""")
     label(0x308a, "cat_check_if_fallen_off_edge")
     comment(0x308c, "Read the 'player_just_fallen_off_edge_direction' if stationary, or the 'player_just_fallen_off_centrally_direction' if moving")
     label(0x3092, "got_direction_index")
+    comment(0x3097, "cat is falling")
     expr(0x3098, "cat_fall_animation - cat_base_animation")
     expr(0x309d, "cat_animation11 - cat_base_animation")
     expr(0x30a4, "cat_animation12 - cat_base_animation")
     label(0x30a5, "cat_got_index_in_animation")
     expr(0x30aa, make_lo("cat_base_animation"))
     expr(0x30ac, make_hi("cat_base_animation"))
+    comment(0x30b5, "update cat tail")
     expr(0x30b6, make_lo("cat_tail_spriteids"))
     expr(0x30ba, make_hi("cat_tail_spriteids"))
     expr(0x30c3, "cat_transform_in_animation - cat_base_animation")
     expr(0x30c7, "cat_transform_out_animation - cat_base_animation")
+    comment(0x30ca, "don't draw cat tail while transforming until cat_walk4 sprite reached")
+    label(0x30ca, "cat_transforming_in_or_out")
     expr(0x30d0, "spriteid_cat_walk4")
+    comment(0x30d3, "top bit set with lower 7 bits = 1, so setting offset 1 into cat_sprite_list")
+    label(0x30d5, "cat_update_tail")
     expr(0x30d6, make_lo("cat_sprite_list"))
     expr(0x30d8, make_hi("cat_sprite_list"))
     label(0x30dd, "monkey_tail_spriteids")
@@ -2897,6 +2903,7 @@ if (not already falling) then branch (start falling)""")
     expr(0x334b, make_hi("monkey_tail_spriteids"))
     expr(0x3358, "monkey_transform_out_animation - monkey_base_animation")
     expr(0x3361, "spriteid_monkey4")
+    comment(0x3364, "top bit set with lower 7 bits = 7, so setting offset 7 into monkey_sprite_list")
     expr(0x3367, make_lo("monkey_sprite_list"))
     expr(0x3369, make_hi("monkey_sprite_list"))
 

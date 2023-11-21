@@ -3952,10 +3952,10 @@ skip9
 ; (e.g. the whip)
 ; 
 ; On Entry:
-;     A: if +ve, it's a spriteid
-;        if -ve, it's TODO: some kind of offset to get a spriteid?
-; 
-;     YX: Address of animation
+;                     A: if top bit clear, it's a spriteid
+;                        if top bit set, lower 7 bits are the offset into sprite array
+;                    YX: Address of main sprite list
+;     animation_address: accessory sprite list
 ; 
 ; *************************************************************************************
 update_player_accessory_object_animation
@@ -6518,6 +6518,7 @@ cat_check_if_fallen_off_edge
 got_direction_index
     lda player_just_fallen_off_edge_direction,x                       ; 31c3: bd 90 28    ..( :3092[1]
     beq cat_got_index_in_animation                                    ; 31c6: f0 0e       ..  :3095[1]
+; cat is falling
     ldy #cat_fall_animation - cat_base_animation                      ; 31c8: a0 ae       ..  :3097[1]
     sty current_animation                                             ; 31ca: 8c df 09    ... :3099[1]
     ldy #cat_animation11 - cat_base_animation                         ; 31cd: a0 84       ..  :309c[1]
@@ -6532,6 +6533,7 @@ cat_got_index_in_animation
     jsr set_player_spriteid_and_offset_from_animation_table           ; 31de: 20 00 22     ." :30ad[1]
     lda #0                                                            ; 31e1: a9 00       ..  :30b0[1]
     jsr update_player_solid_rock_collision                            ; 31e3: 20 f5 25     .% :30b2[1]
+; update cat tail
     lda #<cat_tail_spriteids                                          ; 31e6: a9 f7       ..  :30b5[1]
     sta address1_low                                                  ; 31e8: 85 70       .p  :30b7[1]
     lda #>cat_tail_spriteids                                          ; 31ea: a9 2e       ..  :30b9[1]
@@ -6539,16 +6541,18 @@ cat_got_index_in_animation
     lda #$ff                                                          ; 31ee: a9 ff       ..  :30bd[1]
     ldx current_animation                                             ; 31f0: ae df 09    ... :30bf[1]
     cpx #cat_transform_in_animation - cat_base_animation              ; 31f3: e0 00       ..  :30c2[1]
-    beq c30ca                                                         ; 31f5: f0 04       ..  :30c4[1]
+    beq cat_transforming_in_or_out                                    ; 31f5: f0 04       ..  :30c4[1]
     cpx #cat_transform_out_animation - cat_base_animation             ; 31f7: e0 16       ..  :30c6[1]
-    bne c30d5                                                         ; 31f9: d0 0b       ..  :30c8[1]
-c30ca
+    bne cat_update_tail                                               ; 31f9: d0 0b       ..  :30c8[1]
+; don't draw cat tail while transforming until cat_walk4 sprite reached
+cat_transforming_in_or_out
     lda #0                                                            ; 31fb: a9 00       ..  :30ca[1]
     ldx object_spriteid                                               ; 31fd: ae a8 09    ... :30cc[1]
     cpx #spriteid_cat_walk4                                           ; 3200: e0 0f       ..  :30cf[1]
-    bne c30d5                                                         ; 3202: d0 02       ..  :30d1[1]
+    bne cat_update_tail                                               ; 3202: d0 02       ..  :30d1[1]
+; top bit set with lower 7 bits = 1, so setting offset 1 into cat_sprite_list
     lda #$81                                                          ; 3204: a9 81       ..  :30d3[1]
-c30d5
+cat_update_tail
     ldx #<cat_sprite_list                                             ; 3206: a2 00       ..  :30d5[1]
     ldy #>cat_sprite_list                                             ; 3208: a0 2f       ./  :30d7[1]
     jsr update_player_accessory_object_animation                      ; 320a: 20 48 22     H" :30d9[1]
@@ -6896,6 +6900,7 @@ c335b
     ldx object_spriteid                                               ; 348e: ae a8 09    ... :335d[1]
     cpx #spriteid_monkey4                                             ; 3491: e0 51       .Q  :3360[1]
     bne c3366                                                         ; 3493: d0 02       ..  :3362[1]
+; top bit set with lower 7 bits = 7, so setting offset 7 into monkey_sprite_list
     lda #$87                                                          ; 3495: a9 87       ..  :3364[1]
 c3366
     ldx #<monkey_sprite_list                                          ; 3497: a2 e6       ..  :3366[1]
@@ -9112,8 +9117,6 @@ plot_move_x_high
 pydis_end
 
 ; Automatically generated labels:
-;     c30ca
-;     c30d5
 ;     c324c
 ;     c325f
 ;     c3276
