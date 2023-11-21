@@ -313,7 +313,7 @@ Room 2 has the spell, guarded by a baby.
 
 *************************************************************************************""")
 label(0x0a03, "save_game_level_a_room_2_thing1")
-label(0x0a04, "save_game_level_a_room_2_thing2") # TODO: not sure what this is, but it is set to 1 if the player collides with the baby
+label(0x0a04, "save_game_level_a_room_2_baby_direction")
 entry(0x407f, "room2_update_handler")
 expr(0x4093, "objectid_spell")
 entry(0x40c1, "room2_update_handler_not_new_level")
@@ -336,6 +336,8 @@ label(0xa70, "baby_pixel_x_coordinate") # TODO: speculative
 label(0xa71, "baby_pixel_x_speed") # TODO: speculative
 constant(0xd4, "baby_max_pixel_x")
 expr(0x417d, "baby_max_pixel_x")
+label(0xa73, "baby_sprite_index")
+entry(0x4235, "set_baby_object_properties")
 
 entry(0x42ea, "loop_until_exit_room_left")
 expr(0x42ee, "exit_room_left")

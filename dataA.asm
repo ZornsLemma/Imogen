@@ -102,12 +102,12 @@ saxophone_collected_flag                            = $0a00
 table_x_position                                    = $0a01
 table_x_speed                                       = $0a02
 save_game_level_a_room_2_thing1                     = $0a03
-save_game_level_a_room_2_thing2                     = $0a04
+save_game_level_a_room_2_baby_direction             = $0a04
 mouse_ball_animation_position                       = $0a6f
 baby_pixel_x_coordinate                             = $0a70
 baby_pixel_x_speed                                  = $0a71
 l0a72                                               = $0a72
-l0a73                                               = $0a73
+baby_sprite_index                                   = $0a73
 string_input_buffer                                 = $0a90
 tile_all_set_pixels                                 = $0aa9
 developer_flags                                     = $1103
@@ -1059,7 +1059,7 @@ room2_update_handler
     cmp previous_level                                                ; 409e: c5 51
     beq room2_update_handler_not_new_level                            ; 40a0: f0 1f
     ldy #$2b ; '+'                                                    ; 40a2: a0 2b
-    lda save_game_level_a_room_2_thing2                               ; 40a4: ad 04 0a
+    lda save_game_level_a_room_2_baby_direction                       ; 40a4: ad 04 0a
     ldx save_game_level_a_room_2_thing1                               ; 40a7: ae 03 0a
     bne c40b2                                                         ; 40aa: d0 06
     ldy #0                                                            ; 40ac: a0 00
@@ -1067,8 +1067,8 @@ room2_update_handler
     ldx #$a0                                                          ; 40b0: a2 a0
 c40b2
     sty l0a72                                                         ; 40b2: 8c 72 0a
-    sty l0a73                                                         ; 40b5: 8c 73 0a
-    sta save_game_level_a_room_2_thing2                               ; 40b8: 8d 04 0a
+    sty baby_sprite_index                                             ; 40b5: 8c 73 0a
+    sta save_game_level_a_room_2_baby_direction                       ; 40b8: 8d 04 0a
     sta baby_pixel_x_speed                                            ; 40bb: 8d 71 0a
     stx baby_pixel_x_coordinate                                       ; 40be: 8e 70 0a
 room2_update_handler_not_new_level
@@ -1093,7 +1093,7 @@ room2_update_handler_temp
     !byte 0                                                           ; 40e3: 00
 
 room2_not_first_update
-    ldy l0a73                                                         ; 40e4: ac 73 0a
+    ldy baby_sprite_index                                             ; 40e4: ac 73 0a
     cpy #$2b ; '+'                                                    ; 40e7: c0 2b
     bne c40ee                                                         ; 40e9: d0 03
     jmp c41d9                                                         ; 40eb: 4c d9 41
@@ -1122,7 +1122,7 @@ c40f7
     lda #0                                                            ; 411a: a9 00
     sta player_held_object_for_spriteid_wizard6                       ; 411c: 8d b6 2e
     lda #1                                                            ; 411f: a9 01
-    sta save_game_level_a_room_2_thing2                               ; 4121: 8d 04 0a
+    sta save_game_level_a_room_2_baby_direction                       ; 4121: 8d 04 0a
     ldy #$22 ; '"'                                                    ; 4124: a0 22
     lda #5                                                            ; 4126: a9 05
     sta l0a72                                                         ; 4128: 8d 72 0a
@@ -1163,7 +1163,7 @@ c4167
     cmp #0                                                            ; 416a: c9 00
     bne c41ae                                                         ; 416c: d0 40
     lda baby_pixel_x_speed                                            ; 416e: ad 71 0a
-    sta save_game_level_a_room_2_thing2                               ; 4171: 8d 04 0a
+    sta save_game_level_a_room_2_baby_direction                       ; 4171: 8d 04 0a
     lda baby_pixel_x_coordinate                                       ; 4174: ad 70 0a
     ldx baby_pixel_x_speed                                            ; 4177: ae 71 0a
     bmi c4184                                                         ; 417a: 30 08
@@ -1185,7 +1185,7 @@ c4194
     lda baby_pixel_x_speed                                            ; 4194: ad 71 0a
     eor #$fe                                                          ; 4197: 49 fe
     sta baby_pixel_x_speed                                            ; 4199: 8d 71 0a
-    sta save_game_level_a_room_2_thing2                               ; 419c: 8d 04 0a
+    sta save_game_level_a_room_2_baby_direction                       ; 419c: 8d 04 0a
 c419f
     lda baby_pixel_x_speed                                            ; 419f: ad 71 0a
     asl                                                               ; 41a2: 0a
@@ -1196,7 +1196,7 @@ c419f
     jmp c41c9                                                         ; 41ab: 4c c9 41
 
 c41ae
-    lda save_game_level_a_room_2_thing2                               ; 41ae: ad 04 0a
+    lda save_game_level_a_room_2_baby_direction                       ; 41ae: ad 04 0a
     bmi c41c1                                                         ; 41b1: 30 0e
     lda baby_pixel_x_coordinate                                       ; 41b3: ad 70 0a
     clc                                                               ; 41b6: 18
@@ -1210,7 +1210,7 @@ c41c1
     and #$f8                                                          ; 41c4: 29 f8
     sta baby_pixel_x_coordinate                                       ; 41c6: 8d 70 0a
 c41c9
-    sty l0a73                                                         ; 41c9: 8c 73 0a
+    sty baby_sprite_index                                             ; 41c9: 8c 73 0a
     lda desired_room_index                                            ; 41cc: a5 30
     cmp #2                                                            ; 41ce: c9 02
     bne c41d9                                                         ; 41d0: d0 07
@@ -1223,14 +1223,14 @@ c41d9
     bne return5                                                       ; 41dd: d0 6d
     lda l0a72                                                         ; 41df: ad 72 0a
     cmp #$2b ; '+'                                                    ; 41e2: c9 2b
-    bne c4235                                                         ; 41e4: d0 4f
+    bne set_baby_object_properties                                    ; 41e4: d0 4f
     lda baby_pixel_x_coordinate                                       ; 41e6: ad 70 0a
     sta save_game_level_a_room_2_thing1                               ; 41e9: 8d 03 0a
     lsr                                                               ; 41ec: 4a
     lsr                                                               ; 41ed: 4a
     lsr                                                               ; 41ee: 4a
     tax                                                               ; 41ef: aa
-    lda l0a73                                                         ; 41f0: ad 73 0a
+    lda baby_sprite_index                                             ; 41f0: ad 73 0a
     cmp #$2b ; '+'                                                    ; 41f3: c9 2b
     beq c420c                                                         ; 41f5: f0 15
     dex                                                               ; 41f7: ca
@@ -1242,7 +1242,7 @@ c41d9
     lda #3                                                            ; 4202: a9 03
     sta value_to_write_to_collision_map                               ; 4204: 85 3e
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 4206: 20 44 1e
-    jmp c4235                                                         ; 4209: 4c 35 42
+    jmp set_baby_object_properties                                    ; 4209: 4c 35 42
 
 c420c
     dex                                                               ; 420c: ca
@@ -1254,7 +1254,7 @@ c420c
     lda #0                                                            ; 4217: a9 00
     sta value_to_write_to_collision_map                               ; 4219: 85 3e
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 421b: 20 44 1e
-    lda save_game_level_a_room_2_thing2                               ; 421e: ad 04 0a
+    lda save_game_level_a_room_2_baby_direction                       ; 421e: ad 04 0a
     bmi c4224                                                         ; 4221: 30 01
     dex                                                               ; 4223: ca
 c4224
@@ -1266,14 +1266,14 @@ c4224
     lda #3                                                            ; 422e: a9 03
     sta value_to_write_to_collision_map                               ; 4230: 85 3e
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 4232: 20 44 1e
-c4235
+set_baby_object_properties
     ldx #2                                                            ; 4235: a2 02
     lda baby_pixel_x_coordinate                                       ; 4237: ad 70 0a
     sta object_x_low,x                                                ; 423a: 9d 50 09
-    ldy l0a73                                                         ; 423d: ac 73 0a
+    ldy baby_sprite_index                                             ; 423d: ac 73 0a
     lda baby_spriteid_data,y                                          ; 4240: b9 52 40
     sta object_spriteid,x                                             ; 4243: 9d a8 09
-    lda save_game_level_a_room_2_thing2                               ; 4246: ad 04 0a
+    lda save_game_level_a_room_2_baby_direction                       ; 4246: ad 04 0a
     sta object_direction,x                                            ; 4249: 9d be 09
 return5
     rts                                                               ; 424c: 60
@@ -1807,9 +1807,7 @@ pydis_end
 ;     c41d9
 ;     c420c
 ;     c4224
-;     c4235
 ;     l0a72
-;     l0a73
 !if (<envelope1) != $60 {
     !error "Assertion failed: <envelope1 == $60"
 }
