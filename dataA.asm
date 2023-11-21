@@ -106,7 +106,7 @@ save_game_level_a_room_2_baby_direction             = $0a04
 mouse_ball_animation_position                       = $0a6f
 baby_pixel_x_coordinate                             = $0a70
 baby_pixel_x_speed                                  = $0a71
-l0a72                                               = $0a72
+baby_spriteid_index_if_baby_spriteid_data_is_zero   = $0a72
 baby_sprite_index                                   = $0a73
 string_input_buffer                                 = $0a90
 tile_all_set_pixels                                 = $0aa9
@@ -1066,7 +1066,7 @@ room2_update_handler
     lda #1                                                            ; 40ae: a9 01
     ldx #$a0                                                          ; 40b0: a2 a0
 c40b2
-    sty l0a72                                                         ; 40b2: 8c 72 0a
+    sty baby_spriteid_index_if_baby_spriteid_data_is_zero             ; 40b2: 8c 72 0a
     sty baby_sprite_index                                             ; 40b5: 8c 73 0a
     sta save_game_level_a_room_2_baby_direction                       ; 40b8: 8d 04 0a
     sta baby_pixel_x_speed                                            ; 40bb: 8d 71 0a
@@ -1101,13 +1101,15 @@ room2_not_first_update
 c40ee
     iny                                                               ; 40ee: c8
     lda baby_spriteid_data,y                                          ; 40ef: b9 52 40
-    bne c40f7                                                         ; 40f2: d0 03
-    ldy l0a72                                                         ; 40f4: ac 72 0a
-c40f7
+    bne have_specific_baby_spriteid                                   ; 40f2: d0 03
+; TODO: I suspect what happens here is that there are multiple animation sequences and
+; 0 means 'jump to a new sequence, identified by baby_sprite_index_if...'
+    ldy baby_spriteid_index_if_baby_spriteid_data_is_zero             ; 40f4: ac 72 0a
+have_specific_baby_spriteid
     lda desired_room_index                                            ; 40f7: a5 30
     cmp #2                                                            ; 40f9: c9 02
     bne player_not_collided_with_baby                                 ; 40fb: d0 31
-    lda l0a72                                                         ; 40fd: ad 72 0a
+    lda baby_spriteid_index_if_baby_spriteid_data_is_zero             ; 40fd: ad 72 0a
     cmp #$2b ; '+'                                                    ; 4100: c9 2b
     beq c412b                                                         ; 4102: f0 27
     ldx #objectid_player                                              ; 4104: a2 00
@@ -1125,7 +1127,7 @@ c40f7
     sta save_game_level_a_room_2_baby_direction                       ; 4121: 8d 04 0a
     ldy #$22 ; '"'                                                    ; 4124: a0 22
     lda #5                                                            ; 4126: a9 05
-    sta l0a72                                                         ; 4128: 8d 72 0a
+    sta baby_spriteid_index_if_baby_spriteid_data_is_zero             ; 4128: 8d 72 0a
 c412b
     jmp c41ae                                                         ; 412b: 4c ae 41
 
@@ -1133,7 +1135,7 @@ player_not_collided_with_baby
     cpy #$21 ; '!'                                                    ; 412e: c0 21
     bne c4137                                                         ; 4130: d0 05
     ldy #5                                                            ; 4132: a0 05
-    sty l0a72                                                         ; 4134: 8c 72 0a
+    sty baby_spriteid_index_if_baby_spriteid_data_is_zero             ; 4134: 8c 72 0a
 c4137
     lda desired_room_index                                            ; 4137: a5 30
     cmp #2                                                            ; 4139: c9 02
@@ -1143,23 +1145,23 @@ c4137
     bne c415e                                                         ; 4142: d0 1a
     ldy #$0e                                                          ; 4144: a0 0e
     lda #$19                                                          ; 4146: a9 19
-    sta l0a72                                                         ; 4148: 8d 72 0a
+    sta baby_spriteid_index_if_baby_spriteid_data_is_zero             ; 4148: 8d 72 0a
     lda object_y_low                                                  ; 414b: ad 7c 09
     cmp #$a0                                                          ; 414e: c9 a0
     bcs c41ae                                                         ; 4150: b0 5c
     cmp #$78 ; 'x'                                                    ; 4152: c9 78
     bcc c41ae                                                         ; 4154: 90 58
     lda #$2b ; '+'                                                    ; 4156: a9 2b
-    sta l0a72                                                         ; 4158: 8d 72 0a
+    sta baby_spriteid_index_if_baby_spriteid_data_is_zero             ; 4158: 8d 72 0a
     jmp c41ae                                                         ; 415b: 4c ae 41
 
 c415e
     cpy #$0d                                                          ; 415e: c0 0d
     bne c4167                                                         ; 4160: d0 05
     ldy #0                                                            ; 4162: a0 00
-    sty l0a72                                                         ; 4164: 8c 72 0a
+    sty baby_spriteid_index_if_baby_spriteid_data_is_zero             ; 4164: 8c 72 0a
 c4167
-    lda l0a72                                                         ; 4167: ad 72 0a
+    lda baby_spriteid_index_if_baby_spriteid_data_is_zero             ; 4167: ad 72 0a
     cmp #0                                                            ; 416a: c9 00
     bne c41ae                                                         ; 416c: d0 40
     lda baby_pixel_x_speed                                            ; 416e: ad 71 0a
@@ -1178,7 +1180,7 @@ c4184
     bcc c4194                                                         ; 418a: 90 08
 c418c
     ldy #5                                                            ; 418c: a0 05
-    sty l0a72                                                         ; 418e: 8c 72 0a
+    sty baby_spriteid_index_if_baby_spriteid_data_is_zero             ; 418e: 8c 72 0a
     jmp c419f                                                         ; 4191: 4c 9f 41
 
 c4194
@@ -1221,7 +1223,7 @@ c41d9
     lda desired_room_index                                            ; 41d9: a5 30
     cmp #2                                                            ; 41db: c9 02
     bne return5                                                       ; 41dd: d0 6d
-    lda l0a72                                                         ; 41df: ad 72 0a
+    lda baby_spriteid_index_if_baby_spriteid_data_is_zero             ; 41df: ad 72 0a
     cmp #$2b ; '+'                                                    ; 41e2: c9 2b
     bne set_baby_object_properties                                    ; 41e4: d0 4f
     lda baby_pixel_x_coordinate                                       ; 41e6: ad 70 0a
@@ -1792,7 +1794,6 @@ pydis_end
 ;     c40b2
 ;     c40e0
 ;     c40ee
-;     c40f7
 ;     c412b
 ;     c4137
 ;     c415e
@@ -1807,7 +1808,6 @@ pydis_end
 ;     c41d9
 ;     c420c
 ;     c4224
-;     l0a72
 !if (<envelope1) != $60 {
     !error "Assertion failed: <envelope1 == $60"
 }
