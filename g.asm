@@ -7,7 +7,7 @@
 
 ; *************************************************************************************
 ;
-; Memory map
+; Memory Map
 ; ----------
 ;
 ; After the memory gets relocated at initialisation:
@@ -303,6 +303,7 @@ developer_mode_sideways_ram_is_set_up_flag          = $5b
 displayed_transformations_remaining                 = $5c
 initial_level_number_div4                           = $5f
 backmost_object_index                               = $60
+osword_read_character_block                         = $60
 backmost_object_z_order                             = $61
 num_active_objects                                  = $62
 temp_active_object_index                            = $63
@@ -604,9 +605,9 @@ start_game
 ;     - loading the level if needed
 ;     - calling level specific initialisation code ('level_specific_initialisation', as
 ;       found in the level header) - which is called on every room change.
-;     - It transfers control to a room-specific subroutine within the
+;     - It finally transfers control to a room-specific subroutine within the
 ;       loaded level. Let's call this the level room handler.
-;       (at address 'level_room_data_table[room]+2' as found in the level header)
+;     - (at address 'level_room_data_table[room]+2' as found in the level header)
 ; 
 ; - The level room handler does the following:
 ;     - Room specific initialisation (including drawing the room).
@@ -1877,27 +1878,27 @@ print_italic
     bcc print_italic_rts                                              ; 1999: 90 39       .9  :1868[1]
     cmp #$7f                                                          ; 199b: c9 7f       ..  :186a[1]
     bcs print_italic_rts                                              ; 199d: b0 35       .5  :186c[1]
-    sta backmost_object_index                                         ; 199f: 85 60       .`  :186e[1]
+    sta osword_read_character_block                                   ; 199f: 85 60       .`  :186e[1]
     txa                                                               ; 19a1: 8a          .   :1870[1]   ; remember X,Y
     pha                                                               ; 19a2: 48          H   :1871[1]
     tya                                                               ; 19a3: 98          .   :1872[1]
     pha                                                               ; 19a4: 48          H   :1873[1]
     lda #osword_read_char                                             ; 19a5: a9 0a       ..  :1874[1]
-    ldx #<(backmost_object_index)                                     ; 19a7: a2 60       .`  :1876[1]
-    ldy #>(backmost_object_index)                                     ; 19a9: a0 00       ..  :1878[1]
+    ldx #<(osword_read_character_block)                               ; 19a7: a2 60       .`  :1876[1]
+    ldy #>(osword_read_character_block)                               ; 19a9: a0 00       ..  :1878[1]
     jsr osword                                                        ; 19ab: 20 f1 ff     .. :187a[1]   ; Read character definition
-    lsr backmost_object_z_order                                       ; 19ae: 46 61       Fa  :187d[1]
+    lsr osword_read_character_block+1                                 ; 19ae: 46 61       Fa  :187d[1]
     lsr num_active_objects                                            ; 19b0: 46 62       Fb  :187f[1]
-    asl l0066                                                         ; 19b2: 06 66       .f  :1881[1]
-    asl l0067                                                         ; 19b4: 06 67       .g  :1883[1]
-    asl l0068                                                         ; 19b6: 06 68       .h  :1885[1]
+    asl osword_read_character_block+6                                 ; 19b2: 06 66       .f  :1881[1]
+    asl osword_read_character_block+7                                 ; 19b4: 06 67       .g  :1883[1]
+    asl osword_read_character_block+8                                 ; 19b6: 06 68       .h  :1885[1]
     lda #vdu_define_character                                         ; 19b8: a9 17       ..  :1887[1]
     jsr oswrch                                                        ; 19ba: 20 ee ff     .. :1889[1]   ; Write character 23
     lda #$ff                                                          ; 19bd: a9 ff       ..  :188c[1]
     jsr oswrch                                                        ; 19bf: 20 ee ff     .. :188e[1]   ; Write character 255
     ldx #0                                                            ; 19c2: a2 00       ..  :1891[1]
 define_character_ff_loop
-    lda backmost_object_z_order,x                                     ; 19c4: b5 61       .a  :1893[1]
+    lda osword_read_character_block+1,x                               ; 19c4: b5 61       .a  :1893[1]
     jsr oswrch                                                        ; 19c6: 20 ee ff     .. :1895[1]   ; Write character
     inx                                                               ; 19c9: e8          .   :1898[1]
     cpx #8                                                            ; 19ca: e0 08       ..  :1899[1]
@@ -9148,9 +9149,6 @@ pydis_end
 ;     c39ec
 ;     c39f4
 ;     c3a08
-;     l0066
-;     l0067
-;     l0068
 ;     l0087
 ;     l0b00
 ;     l28e1
@@ -9177,9 +9175,6 @@ pydis_end
 !if (<(address1_low)) != $70 {
     !error "Assertion failed: <(address1_low) == $70"
 }
-!if (<(backmost_object_index)) != $60 {
-    !error "Assertion failed: <(backmost_object_index) == $60"
-}
 !if (<(cells_per_line * rows_per_cell)) != $40 {
     !error "Assertion failed: <(cells_per_line * rows_per_cell) == $40"
 }
@@ -9200,6 +9195,9 @@ pydis_end
 }
 !if (<(osword_7f_block_write_special_register)) != $ea {
     !error "Assertion failed: <(osword_7f_block_write_special_register) == $ea"
+}
+!if (<(osword_read_character_block)) != $60 {
+    !error "Assertion failed: <(osword_read_character_block) == $60"
 }
 !if (<(screen_width_in_pixels-1)) != $3f {
     !error "Assertion failed: <(screen_width_in_pixels-1) == $3f"
@@ -9396,9 +9394,6 @@ pydis_end
 !if (>(address1_low)) != $00 {
     !error "Assertion failed: >(address1_low) == $00"
 }
-!if (>(backmost_object_index)) != $00 {
-    !error "Assertion failed: >(backmost_object_index) == $00"
-}
 !if (>(cells_per_line * rows_per_cell)) != $01 {
     !error "Assertion failed: >(cells_per_line * rows_per_cell) == $01"
 }
@@ -9419,6 +9414,9 @@ pydis_end
 }
 !if (>(osword_7f_block_write_special_register)) != $3e {
     !error "Assertion failed: >(osword_7f_block_write_special_register) == $3e"
+}
+!if (>(osword_read_character_block)) != $00 {
+    !error "Assertion failed: >(osword_read_character_block) == $00"
 }
 !if (>(screen_width_in_pixels-1)) != $01 {
     !error "Assertion failed: >(screen_width_in_pixels-1) == $01"

@@ -224,6 +224,13 @@ substitute_labels = {
         "address1_low": "osfile_block_filename_low",
         "address1_high": "osfile_block_filename_high",
     },
+    (0x1997, 0x19d4): {
+        "backmost_object_index": "osword_read_character_block",
+        "backmost_object_z_order": "osword_read_character_block+1",
+        "l0066": "osword_read_character_block+6",
+        "l0067": "osword_read_character_block+7",
+        "l0068": "osword_read_character_block+8",
+    },
     (0x19f4, 0x1a96): {
         "address1_low": "object_y_delta",
         "l0074": "object_top_low",
@@ -714,9 +721,9 @@ The control flow during gameplay is as follows:
     - loading the level if needed
     - calling level specific initialisation code ('level_specific_initialisation', as
       found in the level header) - which is called on every room change.
-    - It transfers control to a room-specific subroutine within the
+    - It finally transfers control to a room-specific subroutine within the
       loaded level. Let's call this the level room handler.
-      (at address 'level_room_data_table[room]+2' as found in the level header)
+    - (at address 'level_room_data_table[room]+2' as found in the level header)
 
 - The level room handler does the following:
     - Room specific initialisation (including drawing the room).
@@ -3505,7 +3512,7 @@ print("""; *********************************************************************
 
 ; *************************************************************************************
 ;
-; Memory map
+; Memory Map
 ; ----------
 ;
 ; After the memory gets relocated at initialisation:
