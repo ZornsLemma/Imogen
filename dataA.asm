@@ -1215,6 +1215,8 @@ move_baby
     sta baby_pixel_x_coordinate                                       ; 41bb: 8d 70 0a
     jmp c41c9                                                         ; 41be: 4c c9 41
 
+; TODO: This doesn't seem to be subtracting from baby_pixel_x_coordinate, suggesting
+; 'baby_direction' is not quite what I thought
 baby_direction_negative
     lda baby_pixel_x_coordinate                                       ; 41c1: ad 70 0a
     and #$f8                                                          ; 41c4: 29 f8
