@@ -120,6 +120,12 @@ def ab(addr, message=""):
         message = ". "+message
     comment(addr, "ALWAYS branch" + message, inline=True)
 
+def stars(addr, message=""):
+    c = "*************************************************************************************"
+    if message != "":
+        c = c + "\n\n" + message + "\n\n*************************************************************************************"
+    comment(addr, c)
+
 def common_to_all():
     constant(0x4c, "opcode_jmp")
 

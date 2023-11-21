@@ -612,19 +612,14 @@ label(0xab3, "old_brkv2")
 expr_label(0xab4, "old_brkv2+1")
 
 with level_utils_area:
-    comment(0x0ab7, """*************************************************************************************
-
-Clears $80 bytes from 'level_progress_table' to 'sixteen_entry_table'. This is almost all of the save game area, bar five bytes at the start which contain the level number, checksum, and three bytes for the ascii digits of the transformations remaining. These are filled in later.
-
-*************************************************************************************""")
+    stars(0x0ab7, """Clears $80 bytes from 'level_progress_table' to 'sixteen_entry_table'. This is almost all of the save game area, bar five bytes at the start which contain the level number, checksum, and three bytes for the ascii digits of the transformations remaining. These are filled in later.""")
     entry(0x0ab7, "clear_most_of_save_game")
     label(0x0aba, "clear_most_of_save_game_data_loop")
-    comment(0x0ac3, "*************************************************************************************")
+    stars(0x0ac3)
     entry(0x0ac3, "get_checksum_of_save_game_data")
     label(0x0ac6, "get_checksum_loop")
-    comment(0x0ad4, """*************************************************************************************
 
-Convert a level filename letter into the section letter as shown in-game
+    stars(0x0ad4, """Convert a level filename letter into the section letter as shown in-game
 
 The index within the level_ordering_table determines the letter returned.
 
@@ -633,18 +628,15 @@ On Entry:
 
 On Exit:
     Y: section letter (as seen in-game)
-    Preserves A, X
-
-*************************************************************************************""")
+    Preserves A, X""")
     entry(0x0ad4, "convert_level_filename_letter_into_section_letter")
     expr(0x0ad5, "last_level_letter")
     expr(0x0add, "num_levels-1")
     label(0x0ade, "find_letter_loop")
     label(0x0ae6, "found_letter")
     expr(0x0ae9, "first_level_letter")
-    comment(0x0aef, """*************************************************************************************
 
-Convert a section letter into the level file letter
+    stars(0x0aef, """Convert a section letter into the level file letter
 
 Simple look up.
 
@@ -653,9 +645,7 @@ On Entry:
 
 On Exit:
     Y: letter as seen in the level filename
-    Preserves A, X
-
-*************************************************************************************""")
+    Preserves A, X""")
     entry(0x0aef, "convert_section_letter_to_level_filename_letter")
     expr(0x0af0, "last_level_letter")
     expr(0x0af7, "first_level_letter")
@@ -708,9 +698,7 @@ with main_code_area:
     comment(0x1132, "choose a new starting level")
     expr(0x113b, "first_level_letter")
     comment(0x1140, "TODO: this is used by e.g. dataA")
-    comment(0x1140, """*************************************************************************************
-
-Initialise level and room
+    stars(0x1140, """Initialise level and room
 
 Loads the new level if needed, resets objects and other related variables, and jumps to level specific code to execute the room.
 
@@ -741,9 +729,7 @@ The control flow during gameplay is as follows:
       (among other things) calls the 'level_specific_update' handler, allowing the
       level to perform custom actions each tick.
     - When the player leaves the current room, 'initialise_level_and_room' is called
-      to select the new room.
-
-*************************************************************************************""")
+      to select the new room.""")
     entry(0x1140)
     label(0x114f, "level_load_loop")
     comment(0x1153, "if desired level is already loaded, skip forward", inline=True)
@@ -799,11 +785,7 @@ The control flow during gameplay is as follows:
     comment(0x129b, "get room data address")
     comment(0x12a9, "read first byte into X and the second byte into Y. This is the player start position in cells")
     comment(0x12b6, "set player position")
-    comment(0x12bb, """*************************************************************************************
-
-Start room
-
-*************************************************************************************""")
+    stars(0x12bb, "Start room")
     comment(0x12bb, "TODO: This is called from level-specific machine code, e.g. see dataA.asm")
     entry(0x12bb)
     comment(0x12c0, "call room update for the first time")
@@ -811,18 +793,14 @@ Start room
     expr(0x12d5, "spriteid_icodata_wizard")
     label(0x12d9, "return1")
     comment(0x12da, "TODO: This is called from level-specific machine code, e.g. see dataA.asm")
-    comment(0x12da, """*************************************************************************************
-
-Game Update
+    stars(0x12da, """Game Update
 
 On Exit:
     A: 0=player is still within game area
        1=exit room left
        2=exit room bottom
        4=exit room right
-       8=exit room top
-
-*************************************************************************************""")
+       8=exit room top""")
     entry(0x12da)
     comment(0x12dd, "set screen colours (if not already set)")
     comment(0x12ee, "reset vsync counter")
@@ -833,9 +811,7 @@ On Exit:
     comment(0x1312, "update room")
     label(0x131e, "regulate_time_loop")
     comment(0x131e, "wait until five vsyncs have elapsed before continuing")
-    comment(0x132c, """*************************************************************************************
-
-Get sprite address for sprite A
+    stars(0x132c, """Get sprite address for sprite A
 
     Sprites 0-196: are stored in SPRDATA (or ICODATA if loaded (*))
     Sprite 197: is stored at $0bc5
@@ -855,9 +831,7 @@ On Entry:
     A: sprite id
 
 On Exit:
-    YX: address of sprite
-
-*************************************************************************************""")
+    YX: address of sprite""")
     entry(0x132c, "get_address_of_sprite_a")
     expr(0x132d, make_lo("sprite_199"))
     expr(0x132f, make_hi("sprite_199"))
@@ -886,9 +860,7 @@ On Exit:
     label(0x1377, "power_of_2_table")
     hexadecimal(0x1377, 8)
     label(0x137f, "reset_sprite_flags_and_exit")
-    comment(0x138d, """*************************************************************************************
-
-Sprite Plotting
+    stars(0x138d, """Sprite Plotting
 
 Plots a sprite with a mask, optionally reflected about a vertical axis. Sprites can be any pixel width and height, can be drawn at any pixel position, and have an offset in X and Y pixels whenever drawn, which helps authoring animations.
 
@@ -930,9 +902,7 @@ Each pixel is encoded in two bits:
     10 - don't draw a pixel (it is masked off)
     11 - finish the current column and start the next column
 
-The behaviour of '11' shows that this is a compression scheme, where columns can finish early if they have no set pixels at the top of the sprite.
-
-*************************************************************************************""")
+The behaviour of '11' shows that this is a compression scheme, where columns can finish early if they have no set pixels at the top of the sprite.""")
     label(0x138d, "sprite_op")
     expr(0x139e, "sprite_op_flags_copy_mask")
     comment(0x139f, "check flags to see if we are copying to another sprite", inline=True)
@@ -980,11 +950,7 @@ This self-modifies code""")
     label(0x1466, "write_sprite_without_mask")
     expr(0x1467, "opcode_sec")
     label(0x146e, "skip3")
-    comment(0x1471, """*************************************************************************************
-
-Regular sprite routines
-
-*************************************************************************************""")
+    stars(0x1471, "Regular sprite routines")
     label(0x1471, "out_of_bounds_vertically2")
     label(0x1477, "record_that_we_are_out_of_screen_range_vertically2")
     label(0x147e, "write_one_pixel_to_the_screen2")
@@ -1006,11 +972,7 @@ Regular sprite routines
     comment(0x1529, "restore the original three bytes of code (self-modifying)", inline=True)
     comment(0x152b, "90 10='bcc and_byte_with_mask_and_write_to_screen2'", inline=True)
     comment(0x1533, "05 82='ora sprite_bit'", inline=True)
-    comment(0x1540, """*************************************************************************************
-
-Sprite routines that also copy the mask to a destination sprite (similar to code above)
-
-*************************************************************************************""")
+    stars(0x1540, "Sprite routines that also copy the mask to a destination sprite (similar to code above)")
     label(0x1540, "out_of_bounds_vertically")
     label(0x154a, "record_that_we_are_out_of_screen_range_vertically")
     label(0x1551, "write_one_pixel_to_the_screen")
@@ -1115,18 +1077,14 @@ Sprite routines that also copy the mask to a destination sprite (similar to code
     entry(0x16d3, "brk_handler")
     entry(0x16dc, "osfile_wrapper")
     comment(0x16d3, "Record the brk error code, but otherwise do nothing - don't return from interrupt, just restore the stack pointer and continue (!)")
-    comment(0x16dc, """*************************************************************************************
-
-OSFILE wrapper
+    stars(0x16dc, """OSFILE wrapper
 
 On Entry:
      A: OSFILE action:
         $00 = save
         $05 = read catalogue
         $ff = load
-    YX: address of filename
-
-*************************************************************************************""")
+    YX: address of filename""")
     label(0x16f7, "skip_if_saving")
     comment(0x16ff, "use our brk_handler (to trap disk errors)")
 
@@ -1184,17 +1142,13 @@ On Entry:
     expr(0x1888, "vdu_define_character")
     label(0x1893, "define_character_ff_loop")
     entry(0x18a3, "print_italic_rts")
-    comment(0x18a6, """*************************************************************************************
-
-Random Number Generator
+    stars(0x18a6, """Random Number Generator
 
 On Entry:
     A must be one less than a power of two, a mask to fill in with random bits
 
 On Exit:
-    A holds a random number up to the value of A on entry
-
-*************************************************************************************""")
+    A holds a random number up to the value of A on entry""")
     label(0x18a6, "get_random_number_up_to_a")
     comment(0x18a6, "store loop variable, all 1s in the lowest bits", inline=True)
     comment(0x18a8, "remember mask", inline=True)
@@ -1203,18 +1157,14 @@ On Exit:
     comment(0x18bd, "loop back until enough random bits are generated", inline=True)
     comment(0x18bf, "recall mask", inline=True)
     comment(0x18c0, "AND the mask with the random bits", inline=True)
-    comment(0x18c3, """*************************************************************************************
-
-Check for player leaving room
+    stars(0x18c3, """Check for player leaving room
 
 On Exit:
     A: 0=player is still within game area
        1=exit room left
        2=exit room bottom
        4=exit room right
-       8=exit room top
-
-*************************************************************************************""")
+       8=exit room top""")
     label(0x18c3, "check_for_player_leaving_room")
     label(0x18d1, "get_delta_y")
     comment(0x18e7, "Find the average of object_true_bottom and object_bottom and convert to a cell Y value. Use this value to test if the player is off screen.")
@@ -1253,9 +1203,7 @@ On Exit:
     label(0x1980, "sprdata_filename")
     stringcr(0x1980)
     comment(0x1988, "TODO: this is used by e.g. dataA")
-    comment(0x1988, """*************************************************************************************
-
-Initialise or update a brazier and associated fire.
+    stars(0x1988, """Initialise or update a brazier and associated fire.
 
 On the first update, two objects are initialised, the brazier and the fire. It chooses a direction based on whether a wall is to the left or right. It sets a random initial animation state then draws them.
 On subsequent updates, the fire animation is advanced.
@@ -1264,9 +1212,7 @@ On Entry:
     A: object index for brazier
     X,Y: cell coordinates of brazier
 On Exit:
-    A,X,Y are preserved
-
-*************************************************************************************""")
+    A,X,Y are preserved""")
     entry(0x1988)
     comment(0x1994, "initialise brazier and fire, if not changing rooms")
     comment(0x199b, "work out direction to draw brazier (left or right)")
@@ -1288,13 +1234,9 @@ On Exit:
     expr(0x1a03, "spriteid_fire1")
     label(0x1a07, "return_with_result")
     label(0x1a0f, "fire_object_index")
-    comment(0x1a10, """*************************************************************************************
+    stars(0x1a10, """Update the level completion detection
 
-Update the level completion detection
-
-Checks for colliding with the level completion spell collectable, adds the spell to the toolbar, and shows diamonds or sparkles as needed.
-
-*************************************************************************************""")
+Checks for colliding with the level completion spell collectable, adds the spell to the toolbar, and shows diamonds or sparkles as needed.""")
     comment(0x1a10, "TODO: this is used by e.g. dataA")
     entry(0x1a10)
     comment(0x1a10, "remember inputs", inline=True)
@@ -1325,9 +1267,7 @@ Checks for colliding with the level completion spell collectable, adds the spell
     label(0x1ab1, "diamond_sprite_index")
     spriteid(0x1ab2, 0x1aba)
     label(0x1ab2, "diamond_sprite_cycle")
-    comment(0x1abb, """*************************************************************************************
-
-Copy one or more tiles from off screen memory to a rectangular area of cells on screen. A 'tile' here means a bitmap of 8x8 pixels stored in eight bytes of memory.
+    stars(0x1abb, """Copy one or more tiles from off screen memory to a rectangular area of cells on screen. A 'tile' here means a bitmap of 8x8 pixels stored in eight bytes of memory.
 
 On Entry:
     X and Y registers specify top left cell
@@ -1339,9 +1279,7 @@ On Entry:
         1: simple copy
         power of two: choose random tile offsets less than the power of two
         negative: strip off top bit for length of tile offsets to cycle around
-    value_to_write_to_collision_map: if non-negative, write the value into the collision map using the same rectangle of cells
-
-*************************************************************************************""")
+    value_to_write_to_collision_map: if non-negative, write the value into the collision map using the same rectangle of cells""")
     entry(0x1add, "row_copy_loop")
     entry(0x1ae3, "cell_copy_loop")
     comment(0x1af0, "Subtract 1; note C cleared before beq", inline=True)
@@ -1370,11 +1308,7 @@ On Entry:
     label(0x1b8a, "draw_right_facing_wall_local")
     label(0x1b8d, "draw_left_wall_local")
     comment(0x1b90, "TODO: This is called from level-specific machine code, e.g. see dataA.asm")
-    comment(0x1b90, """*************************************************************************************
-
-Once the rocks of the room have been drawn, this function carves the floor, wall and ceiling tiles into the rock.
-
-*************************************************************************************""")
+    stars(0x1b90, "Once the rocks of the room have been drawn, this function carves the floor, wall and ceiling tiles into the rock.")
     entry(0x1b90)
     comment(0x1b94, "Y is loop counter over cell rows")
     expr(0x1b95, make_subtract("game_area_height_cells", "1"))
@@ -1383,14 +1317,10 @@ Once the rocks of the room have been drawn, this function carves the floor, wall
     expr(0x1b97, "screen_width_minus_one")
     entry(0x1b98, "draw_columns_loop")
     entry(0x1bc3, "next_cell_over")
-    comment(0x1bca, """*************************************************************************************
-
-Draw floor
+    stars(0x1bca, """Draw floor
 
 On Entry:
-    (X,Y): cell coordinates
-
-*************************************************************************************""")
+    (X,Y): cell coordinates""")
     entry(0x1bca, "draw_floor")
     comment(0x1bca, "remember Y", inline=True)
     comment(0x1bd0, "find tile index based on the cellX: tile index=(cellX AND 3)*2")
@@ -1410,26 +1340,18 @@ On Entry:
     comment(0x1c07, "copy tile upper 6 rows to screen")
     entry(0x1c09, "draw_floor_bottom_loop")
     comment(0x1c10, "restore Y")
-    comment(0x1c15, """*************************************************************************************
-
-Draw ceiling
+    stars(0x1c15, """Draw ceiling
 
 On Entry:
-    (X,Y): cell coordinates
-
-*************************************************************************************""")
+    (X,Y): cell coordinates""")
     label(0x1c15, "draw_ceiling")
     expr(0x1c20, make_lo("tile_ceiling0"))
     expr(0x1c26, make_hi("tile_ceiling0"))
     label(0x1c2d, "copy_ceiling_tile_loop")
-    comment(0x1c3b, """*************************************************************************************
-
-Draw right facing wall, including corner pieces
+    stars(0x1c3b, """Draw right facing wall, including corner pieces
 
 On Entry:
-    (X,Y): cell coordinates
-
-*************************************************************************************""")
+    (X,Y): cell coordinates""")
     label(0x1c3b, "draw_right_facing_wall")
     comment(0x1c4e, "no corner found, so the cell Y position is used to determine the tile to use")
     label(0x1c4e, "normal_right_wall_not_corner")
@@ -1444,14 +1366,10 @@ On Entry:
     decimal(0x1c85)
     comment(0x1c8f, "draw final corner")
     label(0x1c98, "finished_wall")
-    comment(0x1c9d, """*************************************************************************************
-
-Draw left facing wall, including corner pieces
+    stars(0x1c9d, """Draw left facing wall, including corner pieces
 
 On Entry:
-    (X,Y): cell coordinates
-
-*************************************************************************************""")
+    (X,Y): cell coordinates""")
     label(0x1c9d, "draw_left_wall")
     comment(0x1ca2, "draw corner sprite")
     comment(0x1ca8, "no corner found, so the cell Y position is used to determine the tile to use")
@@ -1491,9 +1409,7 @@ On Entry:
     tile_bitmap(0x1db1, "tile_wall_right3")
     comment(0x1db9, "TODO: This is called from e.g. data")
     entry(0x1db9)
-    comment(0x1db9, """*************************************************************************************
-
-Draw rope
+    stars(0x1db9, """Draw rope
     The top of the rope is a rope hook, which has collision map value 3 (solid)
     The rope itself has collision map value 2 (climbable), including the rope end
 
@@ -1502,9 +1418,7 @@ On Entry:
     (X,Y): cell coordinates for the top of the rope
 
 On Exit:
-    Preserves A,X,Y
-
-*************************************************************************************""")
+    Preserves A,X,Y""")
     comment(0x1dbe, "Don't draw the rope hook if Y is zero")
     label(0x1dc9, "draw_rope_loop")
     expr(0x1dd4, "spriteid_rope1")
@@ -1513,13 +1427,9 @@ On Exit:
     label(0x1dda, "write_to_collision_map")
     label(0x1df0, "restore_ay_and_return")
     expr(0x1de1, "game_area_height_cells")
-    comment(0x1df4, """*************************************************************************************
+    stars(0x1df4, """Clear the game area
 
-Clear the game area
-
-Set all the game area pixels, and clear the collision map
-
-*************************************************************************************""")
+Set all the game area pixels, and clear the collision map""")
     label(0x1df4, "clear_game_area")
     label(0x1df7, "clear_collision_map_loop")
     expr(0x1dfc, "collision_map_length")
@@ -1528,9 +1438,7 @@ Set all the game area pixels, and clear the collision map
     expr(0x1e04, make_hi("game_area_screen_address"))
     expr(0x1e0a, make_hi("end_of_screen_memory"))
     label(0x1e0b, "clear_screen_game_area_loop")
-    comment(0x1e17, """*************************************************************************************
-
-Clip the given rectangle of cells to the game area (right and bottom)
+    stars(0x1e17, """Clip the given rectangle of cells to the game area (right and bottom)
 
 The game area is a grid of 40x24 cells.
 
@@ -1542,9 +1450,7 @@ On Entry:
 
 On Exit:
     width_in_cells_to_write: Clipped rectangle width
-    height_in_cells_to_write: Clipped rectangle height
-
-*************************************************************************************""")
+    height_in_cells_to_write: Clipped rectangle height""")
     entry(0x1e17, "clip_cells_to_write_to_collision_map")
     decimal(0x1e2a)
     expr(0x1e2a, "game_area_width_cells+1")
@@ -1558,9 +1464,7 @@ On Exit:
     decimal(0x1e3e)
     expr(0x1e3e, "game_area_height_cells")
     label(0x1e43, "return7")
-    comment(0x1e44, """*************************************************************************************
-
-Write a value to a rectangle in the collision map
+    stars(0x1e44, """Write a value to a rectangle in the collision map
 
 On Entry:
     value_to_write_to_collision_map: Value to write
@@ -1570,9 +1474,7 @@ On Entry:
     height_in_cells: Rectangle height
 
 On Exit:
-    Preserves A,X,Y
-
-*************************************************************************************""")
+    Preserves A,X,Y""")
     label(0x1e4e, "write_value_to_rectangle_of_collision_map")
     comment(0x1e4e, "value is (0-3)")
     comment(0x1e53, "multiply Y by 10 and store in temp_coordinate")
@@ -1603,9 +1505,7 @@ On Exit:
     byte(0x1eaf, 4)
     byte(0x1eb3, 4)
     comment(0x1ebb, "TODO: this is used by e.g. dataA")
-    comment(0x1ebb, """*************************************************************************************
-
-Write a value to a single cell in the collision map
+    stars(0x1ebb, """Write a value to a single cell in the collision map
 
 On Entry:
     A: Value to write
@@ -1613,9 +1513,7 @@ On Entry:
     Y: Cell Y coordinate
 
 On Exit:
-    Preserves A,X,Y
-
-*************************************************************************************""")
+    Preserves A,X,Y""")
     comment(0x1ebd, "remember value to write", inline=True)
     comment(0x1ec3, "multiply A by ten, and store in temp_coordinate")
     comment(0x1ecc, "divide X by four and add temp_coordinate. This is the offset into the collision map, stored in Y.")
@@ -1626,17 +1524,13 @@ On Exit:
     comment(0x1ee8, "write the new value into the collision map, based on some bits from the old value and the new value bits being written, similar to the routine above.")
     comment(0x1ef3, "restore X,Y and A")
     label(0x1efa, "read_collision_map_value_for_xy")
-    comment(0x1efa, """*************************************************************************************
-
-Read a two bit value from the collision map at X,Y
+    stars(0x1efa, """Read a two bit value from the collision map at X,Y
 
 On Entry:
     (X,Y): cell position to read the collision map
 
 On Exit:
-    A: holds value 0-3 from the collision map
-
-*************************************************************************************""")
+    A: holds value 0-3 from the collision map""")
     expr(0x1efb, "game_area_width_cells")
     expr(0x1eff, "game_area_height_cells")
 
@@ -1657,23 +1551,17 @@ On Exit:
     expr(0x1f49, "game_area_height_cells-1")
     ab(0x1f4a)
     comment(0x1f4c, "TODO: this is used by e.g. dataA")
-    comment(0x1f4c, """*************************************************************************************
-
-Draw a sprite at a cell position
+    stars(0x1f4c, """Draw a sprite at a cell position
 
 On Entry:
     A: spriteid
     (X,Y): cell coordinates
 
 On Exit:
-    Preserves A,X,Y
-
-*************************************************************************************""")
+    Preserves A,X,Y""")
     label(0x1f4c, "draw_sprite_a_at_cell_xy")
     comment(0x1f57, "TODO: This is called from e.g. dataA")
-    comment(0x1f57, """*************************************************************************************
-
-Draw a sprite at a cell position, and write a rectangle of values into the collision map
+    stars(0x1f57, """Draw a sprite at a cell position, and write a rectangle of values into the collision map
 
 On Entry:
     A: spriteid
@@ -1683,40 +1571,28 @@ On Entry:
     height_in_cells: rectangle height
 
 On Exit:
-    Preserves A,X,Y
-
-*************************************************************************************""")
+    Preserves A,X,Y""")
     entry(0x1f57)
     comment(0x1f5d, "TODO: this is used by e.g. dataA")
-    comment(0x1f5d, """*************************************************************************************
-
-Set object's position based on a cell XY position
+    stars(0x1f5d, """Set object's position based on a cell XY position
 
 On Entry:
     A: object index
     (X,Y): cell coordinates
 
 On Exit:
-    Preserves A,X,Y
-
-*************************************************************************************""")
+    Preserves A,X,Y""")
     label(0x1f6c, "remember_x")
-    comment(0x1f6d, """*************************************************************************************
-
-Set object position from sprite coordinates
+    stars(0x1f6d, """Set object position from sprite coordinates
 
 On Entry:
     X: object index
     (sprite_x_base, sprite_y_base): pixel position to set
 
 On Exit:
-    Preserves A,X,Y
-
-*************************************************************************************""")
+    Preserves A,X,Y""")
     comment(0x1f6d, "TODO: this is used by e.g. dataA")
-    comment(0x1f84, """*************************************************************************************
-
-Set the current sprite position to a cell XY plus a pixel offset
+    stars(0x1f84, """Set the current sprite position to a cell XY plus a pixel offset
 
 On Entry:
     (X,Y): cell coordinates (can be negative)
@@ -1725,17 +1601,13 @@ On Entry:
 
 On Exit:
     (sprite_x_base, sprite_y_base): pixel position
-    Preserves A,X,Y
-
-*************************************************************************************""")
+    Preserves A,X,Y""")
     label(0x1f84, "set_sprite_pixel_position_to_cell_xy_plus_pixel_offset")
     label(0x1f96, "positive_x_cell")
     label(0x1fa0, "positive_x_pixel")
     label(0x1fb7, "positive_y_cell")
     label(0x1fc1, "positive_y_pixel")
-    comment(0x1fd7, """*************************************************************************************
-
-Update objects
+    stars(0x1fd7, """Update objects
 
 Draws and undraws objects, taking into account z-order.
 
@@ -1758,9 +1630,7 @@ The algorithm used to do this is:
 10. Draw the active objects (back to front).
 11. Goto 2.
 
-Object state is stored in 'object_*' memory locations, and the state of the previously drawn objects is in 'object_*_old' memory locations.
-
-*************************************************************************************""")
+Object state is stored in 'object_*' memory locations, and the state of the previously drawn objects is in 'object_*_old' memory locations.""")
     entry(0x1fd7, "update_objects")
     comment(0x1fde, "mark all objects as 'not dealt with' yet")
     label(0x1fe1, "reset_object_dealt_with_flags_loop")
@@ -1816,11 +1686,7 @@ Object state is stored in 'object_*' memory locations, and the state of the prev
     blank(0x20e6)
     comment(0x20e6, "draw objects from back to front (aka 'painters algorithm')")
     label(0x20e7, "draw_loop")
-    comment(0x20f7, """*************************************************************************************
-
-Once an object is drawn to the screen, this remembers the current object state in "_old" variables. We use this later to detect whether the object state has changed and to undraw if needed.
-
-*************************************************************************************""")
+    stars(0x20f7, "Once an object is drawn to the screen, this remembers the current object state in '_old' variables. We use this later to detect whether the object state has changed and to undraw if needed.")
     label(0x20f7, "copy_object_state_to_old")
 
     label(0x211e, "has_object_changed_state")
@@ -1876,9 +1742,7 @@ Once an object is drawn to the screen, this remembers the current object state i
     comment(0x2232, "load next byte from table, the Y offset")
     comment(0x2239, "add offset in Y to player position")
     label(0x2239, "skip9")
-    comment(0x2248, """*************************************************************************************
-
-Update player accessory object animation
+    stars(0x2248, """Update player accessory object animation
 
 The player is object zero, and can have an associated 'accessory' object at index one. This is often a tail, but otherwise can be an object the wizard is carrying (e.g. the whip)
 
@@ -1886,9 +1750,7 @@ On Entry:
                     A: if top bit clear, it's a spriteid
                        if top bit set, lower 7 bits are the offset into sprite array
                    YX: Address of main sprite list
-    animation_address: accessory sprite list
-
-*************************************************************************************""")
+    animation_address: accessory sprite list""")
     entry(0x2248, "update_player_accessory_object_animation")
     comment(0x225b, "check for end of animation (loop if needed)")
     label(0x2267, "store_accessory_object_state")
@@ -1896,9 +1758,7 @@ On Entry:
     label(0x2284, "skip_invert_a")
     label(0x228b, "skip_decrement_high_byte1")
     label(0x229f, "skip_decrement_high_byte2")
-    comment(0x22ae, """*************************************************************************************
-
-Find the offset X,Y for a sprite in a list
+    stars(0x22ae, """Find the offset X,Y for a sprite in a list
 
 On Entry:
     A: spriteid to search for
@@ -1906,19 +1766,13 @@ On Entry:
 
 On Exit:
     X: X pixel offset from animation
-    Y: Y pixel offset from animation
-
-*************************************************************************************""")
+    Y: Y pixel offset from animation""")
     label(0x22ae, "find_sprite_xy_offset_from_spriteid")
     ab(0x22b2)
     label(0x22b4, "list_search_loop")
     label(0x22bb, "start_search")
     label(0x22c4, "found_entry_in_list")
-    comment(0x22cd, """*************************************************************************************
-
-Update player
-
-*************************************************************************************""")
+    stars(0x22cd, "Update player")
     entry(0x22cd, "update_player")
     expr(0x22d2, sprite_dict[4])
     expr(0x22d6, sprite_dict[5])
@@ -1930,9 +1784,7 @@ Update player
     label(0x22e9, "update_monkey_local")
     label(0x22ec, "return10")
     label(0x22ed, "transform_out_animation")
-    comment(0x22ee, """*************************************************************************************
-
-Set the base animation address for the current player type and handle any transform in/out
+    stars(0x22ee, """Set the base animation address for the current player type and handle any transform in/out
 
 On Entry:
     XY: Address of start of animation data for the current player type
@@ -1940,9 +1792,7 @@ On Entry:
 
 On Exit:
     Y: set to the current offset of player animation
-    A: (for zero flag) $FF if transform in/out is in progress, $00 otherwise
-
-*************************************************************************************""")
+    A: (for zero flag) $FF if transform in/out is in progress, $00 otherwise""")
     entry(0x22ee, "set_base_animation_address_and_handle_transform_in_out")
     comment(0x22f2, "read next entry in animation")
     comment(0x22f9, "branch if not at the end of the animation")
@@ -1958,14 +1808,10 @@ On Exit:
     comment(0x232b, "start 'transform out' animation")
     label(0x2331, "transforming")
     label(0x2334, "not_transforming")
-    comment(0x2337, """*************************************************************************************
-
-Transform the player into a new form.
+    stars(0x2337, """Transform the player into a new form.
 
 On Entry:
-    A: spriteid of player character to transform into
-
-*************************************************************************************""")
+    A: spriteid of player character to transform into""")
     entry(0x2337, "transform")
     comment(0x2340, "if the current menu item is to the left of the player characters, then we have just loaded a level or something, so don't play the transform sounds.")
     comment(0x2347, "play transform sounds with priority")
@@ -2009,9 +1855,7 @@ On Entry:
 
     label(0x242b, "recall_registers_and_return1")
     label(0x2434, "find_left_and_right_of_object")
-    comment(0x2434, """*************************************************************************************
-
-Find the left and right extents of the object
+    stars(0x2434, """Find the left and right extents of the object
 
 Returns both the left and right Y coordinate of the object (found using the object position, sprite offset, current sprite width, and object direction).
 It also returns cell based versions of these two coordinates.
@@ -2028,9 +1872,7 @@ On Exit:
             object_right: Set to object's position X + sprite offset + sprite width
       object_left_cell_x: Cell X for object_left
      object_right_cell_x: Cell X for object_right
-     Preserves X
-
-*************************************************************************************""")
+     Preserves X""")
     comment(0x2435, "remember object index")
     comment(0x2439, "get address of current sprite for object")
     comment(0x2440, "recall object index")
@@ -2050,22 +1892,16 @@ On Exit:
     comment(0x24ac, "add temporary right offset to object right position")
     label(0x24b2, "add_ya_to_object_right")
     comment(0x24be, "divide by eight to get cell right position")
-    comment(0x23c4, """*************************************************************************************
-
-Check for player hitting the floor and deal with it.
+    stars(0x23c4, """Check for player hitting the floor and deal with it.
 Check for player being pushed, and update if so.
 
 On Exit:
     A and flags: $00 if no collision is happening
                  $80 if player is hitting a wall (left or right)
                  otherwise it's a signed byte for the velocity while being pushed.
-    Preserves X,Y
-
-*************************************************************************************""")
+    Preserves X,Y""")
     label(0x23c4, "update_player_hitting_floor_or_pushed")
-    comment(0x24d2, """*************************************************************************************
-
-Find the top and bottom extents of the object
+    stars(0x24d2, """Find the top and bottom extents of the object
 
 Returns both the top and bottom Y coordinate of the object (found using the object position, sprite offset and current sprite height).
 It also returns cell based versions of these two coordinates.
@@ -2081,9 +1917,7 @@ On Exit:
               object_top: Set to object's position Y + sprite offset - sprite height
            object_bottom: Set to object's position Y + sprite offset
        object_top_cell_y: Cell Y for object_top
-    object_bottom_cell_y: Cell Y for object_bottom
-
-*************************************************************************************""")
+    object_bottom_cell_y: Cell Y for object_bottom""")
     label(0x24d2, "find_top_and_bottom_of_object")
     comment(0x24d3, "remember object index")
     comment(0x24d4, "get address of current sprite for object")
@@ -2131,15 +1965,11 @@ On Exit:
     comment(0x263c, "handle wall collision")
     label(0x264f, "finished_collision_update")
     label(0x2659, "return13")
-    comment(0x265a, """*************************************************************************************
-
-Check for player intersecting wall to the left or right
+    stars(0x265a, """Check for player intersecting wall to the left or right
 
 On Exit:
      player_hit_wall_on_left_result_flag: Flag set ($ff) if player is intersecting wall on the left side of the player
-    player_hit_wall_on_right_result_flag: Flag set ($ff) if intersecting wall on the right side of the player
-
-*************************************************************************************""")
+    player_hit_wall_on_right_result_flag: Flag set ($ff) if intersecting wall on the right side of the player""")
     label(0x265a, "check_for_player_intersecting_wall_left_or_right")
     comment(0x265e, "store player's cell height")
     label(0x2532, "add_ya_to_object_bottom2")
@@ -2153,14 +1983,10 @@ On Exit:
     label(0x2684, "read_cells_in_column_loop")
     comment(0x2690, "mark that no collision was found on the right side")
     label(0x2692, "return14")
-    comment(0x2693, """*************************************************************************************
-
-If colliding with a wall, line up next to the wall instead of going through it.
+    stars(0x2693, """If colliding with a wall, line up next to the wall instead of going through it.
 
 On Entry:
-    l0053: object index of player?
-
-*************************************************************************************""")
+    l0053: object index of player?""")
     label(0x2693, "handle_left_right_wall_collision")
     comment(0x269d, "player has hit wall on left side. Adjust player position to align with the cell next to the wall.")
     comment(0x26b7, "mark object has collided with left wall")
@@ -2171,9 +1997,7 @@ On Entry:
     expr(0x26e0, "object_collided_right_wall")
     label(0x26e4, "return15")
 
-    comment(0x26e5, """*************************************************************************************
-
-Check for player intersecting floor or ceiling of the room
+    stars(0x26e5, """Check for player intersecting floor or ceiling of the room
 
 On Entry:
     The cell based extents of the player have been worked out previously:
@@ -2184,9 +2008,7 @@ On Entry:
 
 On Exit:
       player_hit_floor_result_flag: $ff if hit, $00 otherwise
-    player_hit_ceiling_result_flag: $ff if hit, $00 otherwise
-
-*************************************************************************************""")
+    player_hit_ceiling_result_flag: $ff if hit, $00 otherwise""")
     label(0x26e5, "check_for_player_intersecting_floor_or_ceiling")
     comment(0x26e9, "start at top right")
     comment(0x26eb, "get player width in cells")
@@ -2199,7 +2021,7 @@ On Exit:
     label(0x270f, "look_for_solid_rock_along_player_bottom_edge_loop")
     comment(0x271b, "no collision with bottom edge of player")
     label(0x271d, "return16")
-    comment(0x271e, "*************************************************************************************")
+    stars(0x271e)
     label(0x271e, "update_floor_or_ceiling_collision")
     comment(0x2728, "player has hit ceiling. Adjust player position to align with the cell below the ceiling.")
     comment(0x2742, "mark object has collided with ceiling")
@@ -2210,9 +2032,7 @@ On Exit:
     expr(0x276b, "object_collided_floor")
     label(0x276f, "return17")
 
-    comment(0x2770, """*************************************************************************************
-
-Check if the player is hitting the floor, and if so, deal with it
+    stars(0x2770, """Check if the player is hitting the floor, and if so, deal with it
 
 On Entry:
     A: object id to test
@@ -2225,9 +2045,7 @@ On Exit:
                                                $00 otherwise.
        player_just_fallen_centrally_direction: $ff if player is off the centre left,
                                                $01 if off the centre right,
-                                               $00 otherwise.
-
-*************************************************************************************""")
+                                               $00 otherwise.""")
     label(0x2770, "update_player_hitting_floor")
     comment(0x2776, "check collision of player with room")
     comment(0x2783, "don't write values to the collision map")
@@ -2264,9 +2082,7 @@ This is similar to above code, starting with: Double the right extent, and add t
     label(0x2841, "check_player_supported_to_centre_left")
 
     label(0x2851, "recall_registers_and_return2")
-    comment(0x2859, """*************************************************************************************
-
-Read the collision cells along a row, looking for solid rock anywhere.
+    stars(0x2859, """Read the collision cells along a row, looking for solid rock anywhere.
 Pixel position is the right extent of the row.
 
 On Entry:
@@ -2275,16 +2091,12 @@ On Entry:
         object_left_cell_x: the left extent of the row (cell X coordinate)
 
 On Exit:
-    Zero flag: result is non-zero if solid rock found
-
-*************************************************************************************""")
+    Zero flag: result is non-zero if solid rock found""")
     comment(0x2859, "divide the pixel coordinate by eight")
     label(0x2859, "check_for_solid_rock_along_a_row_of_cells1")
     comment(0x2862, "find width in cells of the row to check (this will be our loop counter)")
 
-    comment(0x286d, """*************************************************************************************
-
-Read the collision cells along a row, looking for solid rock anywhere.
+    stars(0x286d, """Read the collision cells along a row, looking for solid rock anywhere.
 Pixel position is the left extent of the row.
 
 On Entry:
@@ -2293,9 +2105,7 @@ On Entry:
        object_right_cell_x: the right extent of the row (cell X coordinate)
 
 On Exit:
-    Zero flag: result is non-zero if solid rock found
-
-*************************************************************************************""")
+    Zero flag: result is non-zero if solid rock found""")
     label(0x286d, "check_for_solid_rock_along_a_row_of_cells2")
     comment(0x286d, "divide the pixel coordinate by eight")
     comment(0x2876, "find width in cells of the row to check (this will be our loop counter)")
@@ -2309,9 +2119,7 @@ On Exit:
     label(0x2891, "player_just_fallen_centrally_direction")
     label(0x2892, "sum_of_left_and_right_extents_low")
     label(0x2893, "sum_of_left_and_right_extents_high")
-    comment(0x2894, """*************************************************************************************
-
-Get solid_rock collision flags for object
+    stars(0x2894, """Get solid_rock collision flags for object
 
 On Entry:
     A: object index
@@ -2320,15 +2128,11 @@ On Exit:
     A: A=1 means object collided with left wall
        A=2 means object collided with floor
        A=4 means object collided with right wall
-       A=8 means object collided with ceiling
-
-*************************************************************************************""")
+       A=8 means object collided with ceiling""")
     comment(0x2894, "TODO: this is used by e.g. dataA")
 #    label(0x28e1, "temp_remember_a")
     comment(0x28e2, "TODO: this is used by e.g. dataA")
-    comment(0x28e2, """*************************************************************************************
-
-Test for a collision between two objects
+    stars(0x28e2, """Test for a collision between two objects
 
 Calculate if the bounding boxes of the two objects overlap.
 
@@ -2338,9 +2142,7 @@ On Entry:
 On Exit:
     A: $ff if collision occcurs, else $00
     flags: reflect value in A
-    Preserves X,Y
-
-*************************************************************************************""")
+    Preserves X,Y""")
     comment(0x28eb, "make sure we have sprites for both objects X and Y")
     comment(0x28fb, "remember extents for object x (as 'x_' versions) (copy eight bytes)")
     label(0x28fd, "copy_extents_loop")
@@ -2376,11 +2178,7 @@ On Exit:
     comment(0x296e, "The 'extra' menu items are level specific items after the player character items")
     label(0x296e, "menu_index_for_extra_items")
     label(0x296f, "displayed_menu_slots") # see code at c29aa which pairs this with menu_slots1
-    comment(0x2980, """*************************************************************************************
-
-Reset menu items to defaults
-
-*************************************************************************************""")
+    stars(0x2980, "Reset menu items to defaults")
     label(0x2980, "reset_menu_items")
     comment(0x2980, "set standard set as nine menu items (including separators)", inline=True)
     comment(0x2985, "clear desired slots from slot eight upwards")
@@ -2391,11 +2189,7 @@ Reset menu items to defaults
     comment(0x2998, "set new menu position")
     entry(0x29a1, "draw_toolbar")
     # TODO: Inconsistent use of "toolbar" and "menu", fix up eventually - "toolbar" is probably better, but not thought much yet - also some inconsistency between "icon" and "slot", although these are arguably distinct (even if the disassembly doesn't respect it), a slot can be blank or have an icon in it - also maybe "slot" vs "index" is a bit sloppy
-    comment(0x29a8, """*************************************************************************************
-
-Update menu items (redrawing them if needed)
-
-*************************************************************************************""")
+    stars(0x29a8, "Update menu items (redrawing them if needed)")
     entry(0x29a8, "draw_menu_icons")
     comment(0x29aa, "check to see if menu icon has changed since last drawn")
     entry(0x29aa, "draw_menu_icon_loop")
@@ -2411,11 +2205,7 @@ Update menu items (redrawing them if needed)
     entry(0x29de, "apply_new_menu_index")
     label(0x29ea, "return18")
     entry(0x29eb, "unplot_menu_pointer")
-    comment(0x29eb, """*************************************************************************************
-
-Unplot Menu Hand Pointer
-
-*************************************************************************************""")
+    stars(0x29eb, "Unplot Menu Hand Pointer")
     comment(0x29ef, "remember currrent screen base address")
     comment(0x29f2, "select toolbar area for drawing")
     expr(0x29f3, make_hi("toolbar_screen_address"))
@@ -2426,11 +2216,7 @@ Unplot Menu Hand Pointer
     comment(0x2a0f, "restore original screen base address")
     label(0x2a12, "no_menu_item_selected")
     entry(0x2a17, "plot_menu_pointer")
-    comment(0x2a17, """*************************************************************************************
-
-Plot Menu Hand Pointer
-
-*************************************************************************************""")
+    stars(0x2a17, "Plot Menu Hand Pointer")
     comment(0x2a1b, "remember currrent screen base address")
     comment(0x2a1e, "select toolbar area for drawing")
     expr(0x2a1f, make_hi("toolbar_screen_address"))
@@ -2485,11 +2271,7 @@ Plot Menu Hand Pointer
     label(0x2b65, "check_for_extra_menu_item_chosen")
     label(0x2b84, "skip6")
     label(0x2b86, "return22")
-    comment(0x2b87, """*************************************************************************************
-
-Insert a player character menu item into the toolbar
-
-*************************************************************************************""")
+    stars(0x2b87, "Insert a player character menu item into the toolbar")
     entry(0x2b87)
     comment(0x2b87, "remember menu item to insert", inline=True)
     comment(0x2b89, "flag that nothing has changed yet")
@@ -2503,9 +2285,7 @@ Insert a player character menu item into the toolbar
     comment(0x2bb3, "store the new item")
     comment(0x2bb8, "flag that the menu has changed")
     label(0x2bba, "return_with_flag_set_if_item_inserted")
-    comment(0x2bbd, """*************************************************************************************
-
-Find or append menu item onto toolbar
+    stars(0x2bbd, """Find or append menu item onto toolbar
 
 Find an existing menu slot containing A, or fill the lowest empty slot if one hasn't been found yet. Only 'extra' slots are considered after the standard set, and there are no gaps beyond this point until the end of the menu.
 
@@ -2515,24 +2295,18 @@ On Exit:
     X is the index of the slot.
     Flags reflect A on exit.
 
-I am not sure the 'no empty slot and no match' behaviour is terribly sensible, but it should never actually happen.
-
-*************************************************************************************""")
+I am not sure the 'no empty slot and no match' behaviour is terribly sensible, but it should never actually happen.""")
     entry(0x2bc6, "find_slot_loop")
     entry(0x2bd6, "empty_slot_found")
     entry(0x2bdd, "matching_slot_found_or_no_empty_slot")
     expr(0x2bd1, "menu_slot_count")
-    comment(0x2be0, """*************************************************************************************
-
-Remove a menu item from the toolbar
+    stars(0x2be0, """Remove a menu item from the toolbar
 
 On Entry:
     A: menu item to remove
 
 On Exit:
-    Preserves Y
-
-*************************************************************************************""")
+    Preserves Y""")
     entry(0x2be0)
     comment(0x2be0, "remember item to remove", inline=True)
     comment(0x2be2, "flag that nothing has changed yet")
@@ -2546,17 +2320,13 @@ On Exit:
 
     comment(0x2c02, "make final menu slot empty")
     label(0x2c09, "return_with_flag_set_if_shuffled_left")
-    comment(0x2c0c, """*************************************************************************************
-
-Plot menu item
+    stars(0x2c0c, """Plot menu item
 
 On Entry:
     X: index of menu item to plot
 
 On Exit:
-    Preserves A,X,Y
-
-*************************************************************************************""")
+    Preserves A,X,Y""")
     entry(0x2c0c, "plot_menu_item")
     comment(0x2c11, "Save the current screen_base_address_high so we can temporarily set it to $58 to plot the menu icon. TODO: Is this just saving the old value because it's tidy/safe, or do we really not know what the old value was? I'd have naively thought we could just do lda #blah:sta screen_base_address_high at the end of this routine?")
     expr(0x2c15, make_hi("toolbar_screen_address"))
@@ -2565,18 +2335,14 @@ On Exit:
     comment(0x2c35, "draw background sprite")
     comment(0x2c38, "draw icon sprite")
     label(0x2c3d, "restore_variables_and_return")
-    comment(0x2c46, """*************************************************************************************
-
-Calculate the position of a menu item
+    stars(0x2c46, """Calculate the position of a menu item
 
 Calculate the X position of the toolbar menu item: 37 + index*20
 
 On Entry:
     X: index of menu index
 On Exit:
-    Preserves X
-
-*************************************************************************************""")
+    Preserves X""")
     label(0x2c46, "calculate_sprite_position_for_menu_item")
     decimal(0x2c49)
     label(0x2c58, "multiply_x_by_twenty_loop")
@@ -2601,11 +2367,7 @@ On Exit:
     char(0x2cce)
     label(0x2cd4, "decrement_current_transformations_remaining_no_borrow")
     label(0x2cd5, "decrement_current_transformations_remaining_pla_rts")
-    comment(0x2cd7, """*************************************************************************************
-
-Animation code
-
-*************************************************************************************""")
+    stars(0x2cd7, "Animation code")
     label(0x2cd7, "wizard_sprite_list")
 
     # Wizard animations
@@ -2915,17 +2677,13 @@ if (not already falling) then branch (start falling)""")
     label(0x3366, "monkey_update_tail")
     expr(0x3367, make_lo("monkey_sprite_list"))
     expr(0x3369, make_hi("monkey_sprite_list"))
-    comment(0x336e, """*************************************************************************************
-
-Can monkey climb?
+    stars(0x336e, """Can monkey climb?
 
 Checks the collision map for
 
 On Exit:
           A and flags: $ff if monkey can climb, else $00
-       cell_x, cell_y: cell position to climb at (only valid if monkey can climb, A=$ff)
-
-*************************************************************************************""")
+       cell_x, cell_y: cell position to climb at (only valid if monkey can climb, A=$ff)""")
     label(0x336e, "can_monkey_climb")
     comment(0x3372, "get top and bottom pixel position of player")
     comment(0x3377, "find centre cell (vertically) of object from pixel position: (top+bottom) / 16, i.e. (average)/8")
@@ -2944,6 +2702,7 @@ On Exit:
     label(0x33fa, "restore_xy_and_return_a")
 
     label(0x3403, "rope_x_offset")
+    stars(0x3404)
     label(0x3404, "toggle_load_save_dialog")
     label(0x340d, "show_load_save_dialog")
     expr(0x3415, make_lo("press_s_to_save_encrypted_string"))
@@ -2955,6 +2714,7 @@ On Exit:
     label(0x342b, "press_s_to_save_encrypted_string")
     comment(0x343b, "'Press L to load\\r' EOR-encrypted with $cb")
     label(0x343b, "press_l_to_load_encrypted_string")
+    stars(0x344b)
     label(0x344b, "update_disc_menu")
     expr(0x3451, "spriteid_icodata_disc")
     label(0x3467, "test_for_drive_number_key_press_local")
@@ -2975,6 +2735,7 @@ On Exit:
     expr(0x34c5, make_hi("which_drive_encrypted_string"))
     expr(0x34cd, make_lo("press_012_or_3_encrypted_string"))
     expr(0x34cf, make_hi("press_012_or_3_encrypted_string"))
+    stars(0x34d6)
     # This string will be used for save and loads, but I'll use "save" here as a noun to refer to the file on disc.
     label(0x34d6, "save_full_filename")
     string(0x34d6, 1)
@@ -3001,6 +2762,7 @@ On Exit:
     label(0x3534, "return24")
     label(0x3535, "insert_save_disk_encrypted_string")
     label(0x3546, "and_press_return_encrypted_string")
+    stars(0x3557)
     label(0x3557, "if_return_pressed_do_load_or_save")
     expr(0x355b, "vdu_cr")
     expr(0x3562, "vdu_lf")
@@ -3035,16 +2797,14 @@ On Exit:
     expr(0x3627, make_hi("and_press_return_encrypted_string"))
     label(0x362e, "wait_for_return")
     expr(0x3632, "vdu_cr")
+    stars(0x3636)
     label(0x3636, "show_password_entry_dialog")
+    label(0x363f, "show_password_entry_dialog_ready")
     expr(0x3643, make_lo("enter_password_encrypted_string"))
     expr(0x3645, make_hi("enter_password_encrypted_string"))
     label(0x3652, "remove_dialog_local3")
     label(0x3655, "enter_password_encrypted_string")
-    comment(0x3664, """*************************************************************************************
-
-Password dialogue update
-
-*************************************************************************************""")
+    stars(0x3664, "Password dialogue update")
     label(0x3664, "update_password_dialog")
     comment(0x3669, "return if not on the password menu item")
     expr(0x366a, "spriteid_icodata_password")
@@ -3071,22 +2831,19 @@ Password dialogue update
     label(0x36c7, "load_sprdata_loop")
     label(0x36d2, "sprdata_loaded_successfully")
     label(0x36da, "check_password_level")
+    stars(0x36db)
     entry(0x36db, "select_level_a")
     label(0x36f3, "start_game_local")
     label(0x36f6, "remove_dialog_local2")
     label(0x36f9, "character_too_low")
-    comment(0x36fc, """*************************************************************************************
-
-Input a character into a string
+    stars(0x36fc, """Input a character into a string
 
 Waits for the minimum time for a key to be pressed.
 
 If the RETURN key is pressed, the routine ends normally and the input can be processed. If another key (or no key) is pressed, the regular return address is pulled off the stack and control returns to the next routine up on the stack.
 
 On Entry:
-    A: maximum length of string
-
-*************************************************************************************""")
+    A: maximum length of string""")
     entry(0x36fc, "string_input_character")
 
     expr(0x3705, "vdu_cr")
@@ -3115,6 +2872,7 @@ On Entry:
     comment(0x377a, "take the return address off the stack and return to the routine above the callee")
     label(0x377c, "return26")
     label(0x377d, "max_input_length")
+    stars(0x377e)
     label(0x377e, "show_level_info_dialog")
     label(0x378e, "show_section_letter_dialog")
     expr(0x3796, make_lo("section_encrypted_string"))
@@ -3133,14 +2891,14 @@ On Entry:
     expr(0x37e9, "first_level_letter + num_levels/2 - 1")
     comment(0x37ec, "move to second row of letters")
     label(0x37f2, "return27")
-    entry(0x37f3) #print_encrypted_string_at_yx_centred
-    entry(0x37f9, "find_string_length_loop")
+    stars(0x37f3)
+    label(0x37f9, "find_string_length_loop")
     expr(0x37fe, "vdu_cr")
 
     entry(0x3804, "string_length_in_y")
     char(0x3813)
     entry(0x3814, "print_y_spaces_loop")
-    comment(0x381c, "Print the EOR-encrypted (with eor_key) CR-terminated string at YX. Print in italics iff l0043 is non-0.")
+    stars(0x381c, "Print the EOR-encrypted (with eor_key) CR-terminated string at YX. Print in italics iff l0043 is non-0.")
     entry(0x381c, "print_encrypted_string_at_yx")
     expr(0x3821, make_lo("print_italic"))
     expr(0x3826, make_hi("print_italic"))
@@ -3184,18 +2942,14 @@ On Entry:
     envelope(0x38d8, "envelope_3")
     sound(0x38e6, "sound_landing2")
     sound(0x38ee, "sound_landing1")
-    comment(0x38f6, """*************************************************************************************
-
-Play a sound
+    stars(0x38f6, """Play a sound
 
 On Extry:
     A: Sound priority ($ff always plays, $00 won't if sound already playing is $ff)
     YX: Address of SOUND block to play (eight bytes)
 
 On Exit:
-    Preserves A
-
-*************************************************************************************""")
+    Preserves A""")
     comment(0x38f9, "remember address1 on stack")
     comment(0x38ff, "store YX address")
 

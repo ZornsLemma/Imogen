@@ -3738,7 +3738,7 @@ draw_loop
 ; *************************************************************************************
 ; 
 ; Once an object is drawn to the screen, this remembers the current object state in
-; "_old" variables. We use this later to detect whether the object state has changed
+; '_old' variables. We use this later to detect whether the object state has changed
 ; and to undraw if needed.
 ; 
 ; *************************************************************************************
@@ -7020,6 +7020,7 @@ restore_xy_and_return_a
 rope_x_offset
     !byte 0                                                           ; 3534: 00          .   :3403[1]
 
+; *************************************************************************************
 toggle_load_save_dialog
     lda #$12                                                          ; 3535: a9 12       ..  :3404[1]
     sta current_text_width                                            ; 3537: 8d 09 04    ... :3406[1]
@@ -7050,6 +7051,7 @@ press_l_to_load_encrypted_string
     !byte $9b, $b9, $ae, $b8, $b8, $eb, $87, $eb, $bf, $a4, $eb, $a7  ; 356c: 9b b9 ae... ... :343b[1]
     !byte $a4, $aa, $af, $c6                                          ; 3578: a4 aa af... ... :3447[1]
 
+; *************************************************************************************
 update_disc_menu
     ldy new_menu_index                                                ; 357c: a4 29       .)  :344b[1]
     lda desired_menu_slots,y                                          ; 357e: b9 5c 29    .\) :344d[1]
@@ -7121,6 +7123,7 @@ loop_c34b2
     jsr print_encrypted_string_at_yx                                  ; 3601: 20 1c 38     .8 :34d0[1]
     jmp flush_input_buffers_and_zero_characters_entered               ; 3604: 4c 72 38    Lr8 :34d3[1]
 
+; *************************************************************************************
 save_full_filename
     !text ":"                                                         ; 3607: 3a          :   :34d6[1]
 save_drive_number
@@ -7172,6 +7175,7 @@ and_press_return_encrypted_string
     !byte $aa, $a5, $af, $eb, $bb, $b9, $ae, $b8, $b8, $eb, $99, $8e  ; 3677: aa a5 af... ... :3546[1]
     !byte $9f, $9e, $99, $85, $c6                                     ; 3683: 9f 9e 99... ... :3552[1]
 
+; *************************************************************************************
 if_return_pressed_do_load_or_save
     jsr inkey_0                                                       ; 3688: 20 7c 38     |8 :3557[1]
     cmp #vdu_cr                                                       ; 368b: c9 0d       ..  :355a[1]
@@ -7278,12 +7282,13 @@ wait_for_return
     bne wait_for_return                                               ; 3764: d0 f9       ..  :3633[1]
     rts                                                               ; 3766: 60          `   :3635[1]
 
+; *************************************************************************************
 show_password_entry_dialog
     lda #$12                                                          ; 3767: a9 12       ..  :3636[1]
     sta current_text_width                                            ; 3769: 8d 09 04    ... :3638[1]
     lda which_dialog_is_active                                        ; 376c: a5 04       ..  :363b[1]
     bne remove_dialog_local3                                          ; 376e: d0 13       ..  :363d[1]
-c363f
+show_password_entry_dialog_ready
     jsr show_dialog_box                                               ; 3770: 20 0a 04     .. :363f[1]
     ldx #<enter_password_encrypted_string                             ; 3773: a2 55       .U  :3642[1]
     ldy #>enter_password_encrypted_string                             ; 3775: a0 36       .6  :3644[1]
@@ -7375,11 +7380,12 @@ load_sprdata_loop
 sprdata_loaded_successfully
     lda check_password_level                                          ; 3803: ad da 36    ..6 :36d2[1]
     bne select_level_a                                                ; 3806: d0 04       ..  :36d5[1]
-    jmp c363f                                                         ; 3808: 4c 3f 36    L?6 :36d7[1]
+    jmp show_password_entry_dialog_ready                              ; 3808: 4c 3f 36    L?6 :36d7[1]
 
 check_password_level
     !byte 0                                                           ; 380b: 00          .   :36da[1]
 
+; *************************************************************************************
 select_level_a
     cmp #1                                                            ; 380c: c9 01       ..  :36db[1]
     beq remove_dialog_local2                                          ; 380e: f0 17       ..  :36dd[1]
@@ -7498,6 +7504,7 @@ return26
 max_input_length
     !byte 0                                                           ; 38ae: 00          .   :377d[1]
 
+; *************************************************************************************
 show_level_info_dialog
     lda #$11                                                          ; 38af: a9 11       ..  :377e[1]
     sta current_text_width                                            ; 38b1: 8d 09 04    ... :3780[1]
@@ -7567,6 +7574,7 @@ got_character_to_print
 return27
     rts                                                               ; 3923: 60          `   :37f2[1]
 
+; *************************************************************************************
 print_encrypted_string_at_yx_centred
     stx address1_low                                                  ; 3924: 86 70       .p  :37f3[1]
     sty address1_high                                                 ; 3926: 84 71       .q  :37f5[1]
@@ -7594,8 +7602,12 @@ print_y_spaces_loop
     bne print_y_spaces_loop                                           ; 3949: d0 fa       ..  :3818[1]
 c381a
     ldy address1_high                                                 ; 394b: a4 71       .q  :381a[1]
+; *************************************************************************************
+; 
 ; Print the EOR-encrypted (with eor_key) CR-terminated string at YX. Print in italics
 ; iff l0043 is non-0.
+; 
+; *************************************************************************************
 print_encrypted_string_at_yx
     stx address1_low                                                  ; 394d: 86 70       .p  :381c[1]
     sty address1_high                                                 ; 394f: 84 71       .q  :381e[1]
@@ -9154,7 +9166,6 @@ pydis_end
 ;     c3598
 ;     c359e
 ;     c35bc
-;     c363f
 ;     c381a
 ;     c3997
 ;     c39b6
