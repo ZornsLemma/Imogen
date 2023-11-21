@@ -1137,7 +1137,7 @@ have_specific_baby_spriteid
     lda #5                                                            ; 4126: a9 05
     sta baby_spriteid_index_if_baby_spriteid_data_is_zero             ; 4128: 8d 72 0a
 baby_spriteid_index_if_baby_spriteid_data_is_zero_set
-    jmp c41ae                                                         ; 412b: 4c ae 41
+    jmp move_baby                                                     ; 412b: 4c ae 41
 
 player_not_collided_with_baby
     cpy #$21 ; '!'                                                    ; 412e: c0 21
@@ -1156,12 +1156,12 @@ c4137
     sta baby_spriteid_index_if_baby_spriteid_data_is_zero             ; 4148: 8d 72 0a
     lda object_y_low                                                  ; 414b: ad 7c 09
     cmp #$a0                                                          ; 414e: c9 a0
-    bcs c41ae                                                         ; 4150: b0 5c
+    bcs move_baby                                                     ; 4150: b0 5c
     cmp #$78 ; 'x'                                                    ; 4152: c9 78
-    bcc c41ae                                                         ; 4154: 90 58
+    bcc move_baby                                                     ; 4154: 90 58
     lda #$2b ; '+'                                                    ; 4156: a9 2b
     sta baby_spriteid_index_if_baby_spriteid_data_is_zero             ; 4158: 8d 72 0a
-    jmp c41ae                                                         ; 415b: 4c ae 41
+    jmp move_baby                                                     ; 415b: 4c ae 41
 
 c415e
     cpy #$0d                                                          ; 415e: c0 0d
@@ -1171,7 +1171,7 @@ c415e
 c4167
     lda baby_spriteid_index_if_baby_spriteid_data_is_zero             ; 4167: ad 72 0a
     cmp #0                                                            ; 416a: c9 00
-    bne c41ae                                                         ; 416c: d0 40
+    bne move_baby                                                     ; 416c: d0 40
     lda baby_pixel_x_speed                                            ; 416e: ad 71 0a
     sta save_game_level_a_room_2_baby_direction                       ; 4171: 8d 04 0a
     lda baby_pixel_x_coordinate                                       ; 4174: ad 70 0a
@@ -1205,9 +1205,9 @@ c419f
     sta baby_pixel_x_coordinate                                       ; 41a8: 8d 70 0a
     jmp c41c9                                                         ; 41ab: 4c c9 41
 
-c41ae
+move_baby
     lda save_game_level_a_room_2_baby_direction                       ; 41ae: ad 04 0a
-    bmi c41c1                                                         ; 41b1: 30 0e
+    bmi baby_direction_negative                                       ; 41b1: 30 0e
     lda baby_pixel_x_coordinate                                       ; 41b3: ad 70 0a
     clc                                                               ; 41b6: 18
     adc #4                                                            ; 41b7: 69 04
@@ -1215,7 +1215,7 @@ c41ae
     sta baby_pixel_x_coordinate                                       ; 41bb: 8d 70 0a
     jmp c41c9                                                         ; 41be: 4c c9 41
 
-c41c1
+baby_direction_negative
     lda baby_pixel_x_coordinate                                       ; 41c1: ad 70 0a
     and #$f8                                                          ; 41c4: 29 f8
     sta baby_pixel_x_coordinate                                       ; 41c6: 8d 70 0a
@@ -1806,8 +1806,6 @@ pydis_end
 ;     c418c
 ;     c4194
 ;     c419f
-;     c41ae
-;     c41c1
 ;     c41c9
 ;     c41d9
 ;     c420c
