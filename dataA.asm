@@ -45,6 +45,7 @@ spriteid_baby5                     = 219
 spriteid_baby6                     = 220
 spriteid_baby7                     = 221
 spriteid_ball                      = 59
+spriteid_diamond5                  = 43
 spriteid_mouse                     = 200
 spriteid_mouse_hands1              = 201
 spriteid_mouse_hands2              = 202
@@ -1230,7 +1231,7 @@ c41d9
     lsr                                                               ; 41ee: 4a
     tax                                                               ; 41ef: aa
     lda l0a73                                                         ; 41f0: ad 73 0a
-    cmp #$2b ; '+'                                                    ; 41f3: c9 2b
+    cmp #spriteid_diamond5                                            ; 41f3: c9 2b
     beq c420c                                                         ; 41f5: f0 15
     dex                                                               ; 41f7: ca
     ldy #$11                                                          ; 41f8: a0 11
@@ -2038,6 +2039,9 @@ pydis_end
 }
 !if (spriteid_ball) != $3b {
     !error "Assertion failed: spriteid_ball == $3b"
+}
+!if (spriteid_diamond5) != $2b {
+    !error "Assertion failed: spriteid_diamond5 == $2b"
 }
 !if (spriteid_mouse) != $c8 {
     !error "Assertion failed: spriteid_mouse == $c8"

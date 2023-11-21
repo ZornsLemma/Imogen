@@ -4,6 +4,7 @@ config.set_label_references(False)
 config.set_hex_dump_show_ascii(False)
 
 sprite_dict = {
+    0x2b: "spriteid_diamond5",
     0x3b: "spriteid_ball",
     0xc8: "spriteid_mouse",
     0xc9: "spriteid_mouse_hands1",
@@ -312,7 +313,7 @@ Room 2 has the spell, guarded by a baby.
 
 *************************************************************************************""")
 label(0x0a03, "save_game_level_a_room_2_thing1")
-label(0x0a04, "save_game_level_a_room_2_thing2")
+label(0x0a04, "save_game_level_a_room_2_thing2") # TODO: not sure what this is, but it is set to 1 if the player collides with the baby
 entry(0x407f, "room2_update_handler")
 expr(0x4093, "objectid_spell")
 entry(0x40c1, "room2_update_handler_not_new_level")
@@ -331,6 +332,7 @@ entry(0x424c, "return5")
 label(0x40e3, "room2_update_handler_temp")
 comment(0x4111, "set flags to reflect value in set flags to reflect value in AA", inline=True)
 entry(0x412e, "player_not_collided_with_baby")
+expr(0x41f4, "spriteid_diamond5") # TODO: highly speculative
 
 entry(0x42ea, "loop_until_exit_room_left")
 expr(0x42ee, "exit_room_left")
