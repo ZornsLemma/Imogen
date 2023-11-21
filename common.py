@@ -202,6 +202,9 @@ def common_to_all():
     label(0x2bbd, "find_or_create_menu_slot_for_A")
 
 
+    # TODO: Should this be initialise_level_and_room or similar? The fact it is
+    # called when moving from one room to another within a level makes the
+    # current name seem a bit misleading.
     label(0x1140, "initialise_level")
 
     label(0x396f, "sound_priority_per_channel_table")

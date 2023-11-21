@@ -3496,6 +3496,13 @@ print("""; *********************************************************************
 
 go()
 
+# TODO: Temp note:
+# - desired_level is set to the new (Y) level in initialise_level, and the old value is saved to
+#   previous_level - can't help feeling desired_level should be renamed current_level and
+#   previous_level should be renamed to something which indicates it is the value of current_level
+#   on the previous call to initialise_level (it does not appear to be updated anywhere else)
+# - currently_loaded_level tracks the level which is present in memory
+
 # vi: tw=100
 
 # Local Variables:
