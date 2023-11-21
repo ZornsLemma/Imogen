@@ -613,15 +613,15 @@ start_game
 ;     - Calls the common 'start_room' routine. 'start_room' calls the
 ;       'level_specific_update' handler once. This update handler will be called
 ;       every game tick while in the level. On this specific call, a flag is set to
-;       indicate it's being called for the first time in this room.
-;       ('update_room_first_update_flag')
+;       indicate it's being called for the first time in this room
+;       ('update_room_first_update_flag').
 ;       Note the update handler is not room specific.
-;   - Runs a game loop until the player leaves the current room. The game loop calls
-;     the common 'game_update' routine to keep the game ticking. 'game_update'
-;     (among other things) calls the 'level_specific_update' handler, allowing the
-;     level to perform custom actions each tick.
-;   - When the player leaves the current room, 'initialise_level_and_room' is called
-;     to select the new room.
+;     - Runs a game loop until the player leaves the current room. The game loop calls
+;       the common 'game_update' routine to keep the game ticking. 'game_update'
+;       (among other things) calls the 'level_specific_update' handler, allowing the
+;       level to perform custom actions each tick.
+;     - When the player leaves the current room, 'initialise_level_and_room' is called
+;       to select the new room.
 ; 
 ; *************************************************************************************
 initialise_level_and_room
