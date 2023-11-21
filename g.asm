@@ -606,8 +606,8 @@ start_game
 ;     - calling level specific initialisation code ('level_specific_initialisation', as
 ;       found in the level header) - which is called on every room change.
 ;     - It finally transfers control to a room-specific subroutine within the
-;       loaded level. Let's call this the level room handler.
-;     - (at address 'level_room_data_table[room]+2' as found in the level header)
+;       loaded level (at address 'level_room_data_table[room]+2' as found in the level
+;       header). Let's call this the level room handler.
 ; 
 ; - The level room handler does the following:
 ;     - Room specific initialisation (including drawing the room).
