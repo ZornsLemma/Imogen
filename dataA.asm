@@ -1,4 +1,5 @@
 ; Constants
+baby_max_pixel_x                   = 212
 copy_mode_2x2                      = 0
 copy_mode_random16                 = 16
 copy_mode_random2                  = 2
@@ -104,7 +105,7 @@ save_game_level_a_room_2_thing1                     = $0a03
 save_game_level_a_room_2_thing2                     = $0a04
 mouse_ball_animation_position                       = $0a6f
 baby_pixel_x_coordinate                             = $0a70
-l0a71                                               = $0a71
+baby_pixel_x_speed                                  = $0a71
 l0a72                                               = $0a72
 l0a73                                               = $0a73
 string_input_buffer                                 = $0a90
@@ -1068,7 +1069,7 @@ c40b2
     sty l0a72                                                         ; 40b2: 8c 72 0a
     sty l0a73                                                         ; 40b5: 8c 73 0a
     sta save_game_level_a_room_2_thing2                               ; 40b8: 8d 04 0a
-    sta l0a71                                                         ; 40bb: 8d 71 0a
+    sta baby_pixel_x_speed                                            ; 40bb: 8d 71 0a
     stx baby_pixel_x_coordinate                                       ; 40be: 8e 70 0a
 room2_update_handler_not_new_level
     lda desired_room_index                                            ; 40c1: a5 30
@@ -1161,12 +1162,12 @@ c4167
     lda l0a72                                                         ; 4167: ad 72 0a
     cmp #0                                                            ; 416a: c9 00
     bne c41ae                                                         ; 416c: d0 40
-    lda l0a71                                                         ; 416e: ad 71 0a
+    lda baby_pixel_x_speed                                            ; 416e: ad 71 0a
     sta save_game_level_a_room_2_thing2                               ; 4171: 8d 04 0a
     lda baby_pixel_x_coordinate                                       ; 4174: ad 70 0a
-    ldx l0a71                                                         ; 4177: ae 71 0a
+    ldx baby_pixel_x_speed                                            ; 4177: ae 71 0a
     bmi c4184                                                         ; 417a: 30 08
-    cmp #$d4                                                          ; 417c: c9 d4
+    cmp #baby_max_pixel_x                                             ; 417c: c9 d4
     beq c418c                                                         ; 417e: f0 0c
     bcc c419f                                                         ; 4180: 90 1d
     bcs c4194                                                         ; 4182: b0 10
@@ -1181,12 +1182,12 @@ c418c
     jmp c419f                                                         ; 4191: 4c 9f 41
 
 c4194
-    lda l0a71                                                         ; 4194: ad 71 0a
+    lda baby_pixel_x_speed                                            ; 4194: ad 71 0a
     eor #$fe                                                          ; 4197: 49 fe
-    sta l0a71                                                         ; 4199: 8d 71 0a
+    sta baby_pixel_x_speed                                            ; 4199: 8d 71 0a
     sta save_game_level_a_room_2_thing2                               ; 419c: 8d 04 0a
 c419f
-    lda l0a71                                                         ; 419f: ad 71 0a
+    lda baby_pixel_x_speed                                            ; 419f: ad 71 0a
     asl                                                               ; 41a2: 0a
     asl                                                               ; 41a3: 0a
     clc                                                               ; 41a4: 18
@@ -1807,7 +1808,6 @@ pydis_end
 ;     c420c
 ;     c4224
 ;     c4235
-;     l0a71
 ;     l0a72
 ;     l0a73
 !if (<envelope1) != $60 {
@@ -1887,6 +1887,9 @@ pydis_end
 }
 !if (>tile_all_set_pixels) != $0a {
     !error "Assertion failed: >tile_all_set_pixels == $0a"
+}
+!if (baby_max_pixel_x) != $d4 {
+    !error "Assertion failed: baby_max_pixel_x == $d4"
 }
 !if (collectable_spriteids + 1) != $2eee {
     !error "Assertion failed: collectable_spriteids + 1 == $2eee"

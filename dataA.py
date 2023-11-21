@@ -333,6 +333,9 @@ label(0x40e3, "room2_update_handler_temp")
 comment(0x4111, "set flags to reflect value in set flags to reflect value in AA", inline=True)
 entry(0x412e, "player_not_collided_with_baby")
 label(0xa70, "baby_pixel_x_coordinate") # TODO: speculative
+label(0xa71, "baby_pixel_x_speed") # TODO: speculative
+constant(0xd4, "baby_max_pixel_x")
+expr(0x417d, "baby_max_pixel_x")
 
 entry(0x42ea, "loop_until_exit_room_left")
 expr(0x42ee, "exit_room_left")
