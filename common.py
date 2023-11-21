@@ -182,6 +182,7 @@ def common_to_all():
 
     label(0x12bb, "start_room")
     label(0x12da, "game_update")
+    label(0x18a6, "get_random_number_up_to_a")
     label(0x1988, "update_brazier_and_fire")
     label(0x1a10, "update_level_completion")
     label(0x1abb, "copy_rectangle_of_memory_to_screen")
@@ -203,7 +204,11 @@ def common_to_all():
     label(0x2b87, "insert_character_menu_item_into_toolbar")
     label(0x2be0, "remove_item_from_toolbar_menu")
     label(0x2ee8, "toolbar_collectable_spriteids")
+    label(0x2ee9, "toolbar_collectable_spriteids+1")
+    label(0x2eea, "toolbar_collectable_spriteids+2")
     label(0x2eed, "collectable_spriteids")
+    label(0x2eee, "collectable_spriteids+1")
+    label(0x2eef, "collectable_spriteids+2")
 
     label(0x2bbd, "find_or_create_menu_slot_for_A")
 

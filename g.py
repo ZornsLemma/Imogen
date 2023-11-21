@@ -1149,7 +1149,6 @@ On Entry:
 
 On Exit:
     A holds a random number up to the value of A on entry""")
-    label(0x18a6, "get_random_number_up_to_a")
     comment(0x18a6, "store loop variable, all 1s in the lowest bits", inline=True)
     comment(0x18a8, "remember mask", inline=True)
     label(0x18a9, "generate_random_bits_loop")
@@ -2185,7 +2184,6 @@ On Exit:
     label(0x2988, "clear_extra_menu_slots_loop")
     comment(0x2990, "clear table of level specific collectables")
     label(0x2992, "clear_collectables_loop")
-    expr(0x2993, "toolbar_collectable_spriteids+1")
     comment(0x2998, "set new menu position")
     entry(0x29a1, "draw_toolbar")
     # TODO: Inconsistent use of "toolbar" and "menu", fix up eventually - "toolbar" is probably better, but not thought much yet - also some inconsistency between "icon" and "slot", although these are arguably distinct (even if the disassembly doesn't respect it), a slot can be blank or have an icon in it - also maybe "slot" vs "index" is a bit sloppy

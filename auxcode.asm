@@ -80,6 +80,7 @@ pending_gameplay_area_colour                        = $175f
 gameplay_area_colour                                = $1760
 use_colour_flag                                     = $1765
 set_toolbar_and_gameplay_area_colours               = $1766
+get_random_number_up_to_a                           = $18a6
 jmp_yx                                              = $1966
 update_brazier_and_fire                             = $1988
 update_level_completion                             = $1a10

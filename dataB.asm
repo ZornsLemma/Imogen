@@ -88,6 +88,7 @@ pending_gameplay_area_colour                        = $175f
 gameplay_area_colour                                = $1760
 use_colour_flag                                     = $1765
 set_toolbar_and_gameplay_area_colours               = $1766
+get_random_number_up_to_a                           = $18a6
 jmp_yx                                              = $1966
 update_brazier_and_fire                             = $1988
 update_level_completion                             = $1a10
@@ -116,11 +117,7 @@ remove_item_from_toolbar_menu                       = $2be0
 player_using_object_spriteid                        = $2eb6
 previous_player_using_object_spriteid               = $2eb7
 toolbar_collectable_spriteids                       = $2ee8
-l2ee9                                               = $2ee9
-l2eea                                               = $2eea
 collectable_spriteids                               = $2eed
-l2eee                                               = $2eee
-l2eef                                               = $2eef
 five_byte_table_paired_with_collectable_sprite_ids  = $2ef2
 l2ef4                                               = $2ef4
 print_encrypted_string_at_yx_centred                = $37f3
@@ -736,9 +733,9 @@ c3f3f
     ldy #$44 ; 'D'                                                    ; 3f41: a0 44
     jsr define_envelope                                               ; 3f43: 20 5e 39
     lda #$d4                                                          ; 3f46: a9 d4
-    sta l2ee9                                                         ; 3f48: 8d e9 2e
+    sta toolbar_collectable_spriteids+1                               ; 3f48: 8d e9 2e
     lda #$d3                                                          ; 3f4b: a9 d3
-    sta l2eee                                                         ; 3f4d: 8d ee 2e
+    sta collectable_spriteids+1                                       ; 3f4d: 8d ee 2e
     jmp c3f6d                                                         ; 3f50: 4c 6d 3f
 
 c3f53
@@ -1199,9 +1196,9 @@ sub_c42dd
     lda update_room_first_update_flag                                 ; 42dd: ad 2b 13
     beq c4319                                                         ; 42e0: f0 37
     lda #$de                                                          ; 42e2: a9 de
-    sta l2eea                                                         ; 42e4: 8d ea 2e
+    sta toolbar_collectable_spriteids+2                               ; 42e4: 8d ea 2e
     lda #$dd                                                          ; 42e7: a9 dd
-    sta l2eef                                                         ; 42e9: 8d ef 2e
+    sta collectable_spriteids+2                                       ; 42e9: 8d ef 2e
     sta l2ef4                                                         ; 42ec: 8d f4 2e
     lda desired_room_index                                            ; 42ef: a5 30
     cmp #2                                                            ; 42f1: c9 02
@@ -1625,10 +1622,6 @@ pydis_end
 ;     l0a74
 ;     l0a75
 ;     l1efa
-;     l2ee9
-;     l2eea
-;     l2eee
-;     l2eef
 ;     l2ef4
 ;     l38b2
 ;     l38c8

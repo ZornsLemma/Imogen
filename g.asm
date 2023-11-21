@@ -6297,7 +6297,9 @@ store_object_held_and_return
 toolbar_collectable_spriteids
     !byte 0, 0, 0, 0, 0                                               ; 3019: 00 00 00... ... :2ee8[1]
 collectable_spriteids
-    !byte 0, 0, 0, 0, 0                                               ; 301e: 00 00 00... ... :2eed[1]
+    !byte 0                                                           ; 301e: 00          .   :2eed[1]
+    !byte 0                                                           ; 301f: 00          .   :2eee[1]
+    !byte 0, 0, 0                                                     ; 3020: 00 00 00    ... :2eef[1]
 five_byte_table_paired_with_collectable_sprite_ids
     !byte 0, 0, 0, 0, 0                                               ; 3023: 00 00 00... ... :2ef2[1]
 
@@ -10259,9 +10261,6 @@ pydis_end
 }
 !if (spriteid_wizard_using_object) != $35 {
     !error "Assertion failed: spriteid_wizard_using_object == $35"
-}
-!if (toolbar_collectable_spriteids+1) != $2ee9 {
-    !error "Assertion failed: toolbar_collectable_spriteids+1 == $2ee9"
 }
 !if (vdu_bell) != $07 {
     !error "Assertion failed: vdu_bell == $07"

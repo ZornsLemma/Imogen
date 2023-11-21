@@ -101,7 +101,7 @@ pending_gameplay_area_colour                        = $175f
 gameplay_area_colour                                = $1760
 use_colour_flag                                     = $1765
 set_toolbar_and_gameplay_area_colours               = $1766
-l18a6                                               = $18a6
+get_random_number_up_to_a                           = $18a6
 jmp_yx                                              = $1966
 update_brazier_and_fire                             = $1988
 update_level_completion                             = $1a10
@@ -129,9 +129,7 @@ remove_item_from_toolbar_menu                       = $2be0
 player_using_object_spriteid                        = $2eb6
 previous_player_using_object_spriteid               = $2eb7
 toolbar_collectable_spriteids                       = $2ee8
-l2ee9                                               = $2ee9
 collectable_spriteids                               = $2eed
-l2eee                                               = $2eee
 five_byte_table_paired_with_collectable_sprite_ids  = $2ef2
 print_encrypted_string_at_yx_centred                = $37f3
 wait_one_second_then_check_keys                     = $388d
@@ -836,9 +834,9 @@ sub_c3fe5
     lda update_room_first_update_flag                                 ; 3fe5: ad 2b 13
     beq c4035                                                         ; 3fe8: f0 4b
     lda #$cb                                                          ; 3fea: a9 cb
-    sta l2ee9                                                         ; 3fec: 8d e9 2e
+    sta toolbar_collectable_spriteids+1                               ; 3fec: 8d e9 2e
     lda #$ca                                                          ; 3fef: a9 ca
-    sta l2eee                                                         ; 3ff1: 8d ee 2e
+    sta collectable_spriteids+1                                       ; 3ff1: 8d ee 2e
     lda #$df                                                          ; 3ff4: a9 df
     sta five_byte_table_paired_with_collectable_sprite_ids + 1        ; 3ff6: 8d f3 2e
     lda current_level                                                 ; 3ff9: a5 31
@@ -1287,7 +1285,7 @@ c4374
     bne c43ca                                                         ; 4381: d0 47
 c4383
     lda #$0f                                                          ; 4383: a9 0f
-    jsr l18a6                                                         ; 4385: 20 a6 18
+    jsr get_random_number_up_to_a                                     ; 4385: 20 a6 18
     clc                                                               ; 4388: 18
     adc #$10                                                          ; 4389: 69 10
     sta l442f                                                         ; 438b: 8d 2f 44
@@ -1755,9 +1753,6 @@ pydis_end
 ;     l0a76
 ;     l0a77
 ;     l0a78
-;     l18a6
-;     l2ee9
-;     l2eee
 ;     l38ae
 ;     l38c4
 ;     l3d75
