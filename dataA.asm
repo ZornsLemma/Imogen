@@ -101,7 +101,7 @@ room1_trapdoor_open_flag                            = $09ff
 saxophone_collected_flag                            = $0a00
 table_x_position                                    = $0a01
 table_x_speed                                       = $0a02
-save_game_level_a_room_2_thing1                     = $0a03
+save_game_level_a_room_2_baby_pixel_x_coordinate    = $0a03
 save_game_level_a_room_2_baby_direction             = $0a04
 mouse_ball_animation_position                       = $0a6f
 baby_pixel_x_coordinate                             = $0a70
@@ -1066,7 +1066,7 @@ room2_update_handler
     beq room2_update_handler_not_new_level                            ; 40a0: f0 1f
     ldy #$2b ; '+'                                                    ; 40a2: a0 2b
     lda save_game_level_a_room_2_baby_direction                       ; 40a4: ad 04 0a
-    ldx save_game_level_a_room_2_thing1                               ; 40a7: ae 03 0a
+    ldx save_game_level_a_room_2_baby_pixel_x_coordinate              ; 40a7: ae 03 0a
     bne c40b2                                                         ; 40aa: d0 06
     ldy #0                                                            ; 40ac: a0 00
     lda #1                                                            ; 40ae: a9 01
@@ -1233,7 +1233,7 @@ c41d9
     cmp #$2b ; '+'                                                    ; 41e2: c9 2b
     bne set_baby_object_properties                                    ; 41e4: d0 4f
     lda baby_pixel_x_coordinate                                       ; 41e6: ad 70 0a
-    sta save_game_level_a_room_2_thing1                               ; 41e9: 8d 03 0a
+    sta save_game_level_a_room_2_baby_pixel_x_coordinate              ; 41e9: 8d 03 0a
     lsr                                                               ; 41ec: 4a
     lsr                                                               ; 41ed: 4a
     lsr                                                               ; 41ee: 4a

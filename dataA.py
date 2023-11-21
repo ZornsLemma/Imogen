@@ -312,7 +312,7 @@ Room 2 update
 Room 2 has the spell, guarded by a baby.
 
 *************************************************************************************""")
-label(0x0a03, "save_game_level_a_room_2_thing1")
+label(0x0a03, "save_game_level_a_room_2_baby_pixel_x_coordinate")
 label(0x0a04, "save_game_level_a_room_2_baby_direction")
 entry(0x407f, "room2_update_handler")
 expr(0x4093, "objectid_spell")
