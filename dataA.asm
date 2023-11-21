@@ -1088,7 +1088,7 @@ room2_update_handler_not_new_level
 c40e0
     jmp c41d9                                                         ; 40e0: 4c d9 41
 
-l40e3
+room2_update_handler_temp
     !byte 0                                                           ; 40e3: 00
 
 room2_not_first_update
@@ -1105,17 +1105,17 @@ c40ee
 c40f7
     lda desired_room_index                                            ; 40f7: a5 30
     cmp #2                                                            ; 40f9: c9 02
-    bne c412e                                                         ; 40fb: d0 31
+    bne player_not_collided_with_baby                                 ; 40fb: d0 31
     lda l0a72                                                         ; 40fd: ad 72 0a
     cmp #$2b ; '+'                                                    ; 4100: c9 2b
     beq c412b                                                         ; 4102: f0 27
     ldx #objectid_player                                              ; 4104: a2 00
-    sty l40e3                                                         ; 4106: 8c e3 40
+    sty room2_update_handler_temp                                     ; 4106: 8c e3 40
     ldy #objectid_baby                                                ; 4109: a0 02
     jsr test_for_collision_between_objects_x_and_y                    ; 410b: 20 e2 28
-    ldy l40e3                                                         ; 410e: ac e3 40
-    ora #0                                                            ; 4111: 09 00
-    beq c412e                                                         ; 4113: f0 19
+    ldy room2_update_handler_temp                                     ; 410e: ac e3 40
+    ora #0                                                            ; 4111: 09 00                   ; set flags to reflect value in set flags to reflect value in AA
+    beq player_not_collided_with_baby                                 ; 4113: f0 19
     lda #player_collision_flag_baby                                   ; 4115: a9 06
     sta player_wall_collision_flag                                    ; 4117: 8d 33 24
     lda #0                                                            ; 411a: a9 00
@@ -1128,7 +1128,7 @@ c40f7
 c412b
     jmp c41ae                                                         ; 412b: 4c ae 41
 
-c412e
+player_not_collided_with_baby
     cpy #$21 ; '!'                                                    ; 412e: c0 21
     bne c4137                                                         ; 4130: d0 05
     ldy #5                                                            ; 4132: a0 05
@@ -1793,7 +1793,6 @@ pydis_end
 ;     c40ee
 ;     c40f7
 ;     c412b
-;     c412e
 ;     c4137
 ;     c415e
 ;     c4167
@@ -1812,7 +1811,6 @@ pydis_end
 ;     l0a71
 ;     l0a72
 ;     l0a73
-;     l40e3
 !if (<envelope1) != $60 {
     !error "Assertion failed: <envelope1 == $60"
 }
