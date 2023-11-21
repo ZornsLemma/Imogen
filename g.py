@@ -2502,17 +2502,37 @@ I am not sure the 'no empty slot and no match' behaviour is terribly sensible, b
 
 Remove a menu item from the toolbar
 
+On Entry:
+    A: menu item to remove
+
+On Exit:
+    Preserves Y
+
 *************************************************************************************""")
     entry(0x2be0)
     comment(0x2be0, "remember item to remove", inline=True)
     comment(0x2be2, "flag that nothing has changed yet")
-    comment(0x2be6, "start index for non-standard menu items")
+    comment(0x2be6, "set X to the start index for non-standard menu items")
+    label(0x2be9, "find_menu_item_loop")
+    expr(0x2bf2, "menu_slot_count")
     ab(0x2bf5)
     label(0x2bf7, "shuffle_menu_items_left_loop")
     comment(0x2bf7, "shuffle menu items left")
+    expr(0x2bff, make_subtract("menu_slot_count", "1"))
 
     comment(0x2c02, "make final menu slot empty")
     label(0x2c09, "return_with_flag_set_if_shuffled_left")
+    comment(0x2c0c, """*************************************************************************************
+
+Plot menu item
+
+On Entry:
+    X: index of menu item to plot
+
+On Exit:
+    Preserves A,X,Y
+
+*************************************************************************************""")
     entry(0x2c0c, "plot_menu_item")
     comment(0x2c11, "Save the current screen_base_address_high so we can temporarily set it to $58 to plot the menu icon. TODO: Is this just saving the old value because it's tidy/safe, or do we really not know what the old value was? I'd have naively thought we could just do lda #blah:sta screen_base_address_high at the end of this routine?")
     expr(0x2c15, make_hi("toolbar_screen_address"))
@@ -2521,7 +2541,20 @@ Remove a menu item from the toolbar
     comment(0x2c35, "draw background sprite")
     comment(0x2c38, "draw icon sprite")
     label(0x2c3d, "restore_variables_and_return")
+    comment(0x2c46, """*************************************************************************************
+
+Calculate the position of a menu item
+
+Calculate the X position of the toolbar menu item: 37 + index*20
+
+On Entry:
+    X: index of menu index
+On Exit:
+    Preserves X
+
+*************************************************************************************""")
     label(0x2c46, "calculate_sprite_position_for_menu_item")
+    decimal(0x2c49)
     label(0x2c58, "multiply_x_by_twenty_loop")
     decimal(0x2c5a)
     label(0x2c5f, "skip_increment_high_byte")

@@ -5793,28 +5793,34 @@ matching_slot_found_or_no_empty_slot
 ; 
 ; Remove a menu item from the toolbar
 ; 
+; On Entry:
+;     A: menu item to remove
+; 
+; On Exit:
+;     Preserves Y
+; 
 ; *************************************************************************************
 remove_item_from_toolbar_menu
     sta menu_item_to_use                                              ; 2d11: 85 70       .p  :2be0[1]   ; remember item to remove
 ; flag that nothing has changed yet
     lda #0                                                            ; 2d13: a9 00       ..  :2be2[1]
     sta menu_has_changed_flag                                         ; 2d15: 85 71       .q  :2be4[1]
-; start index for non-standard menu items
+; set X to the start index for non-standard menu items
     ldx menu_index_for_extra_items                                    ; 2d17: ae 6e 29    .n) :2be6[1]
-loop_c2be9
+find_menu_item_loop
     lda desired_menu_slots,x                                          ; 2d1a: bd 5c 29    .\) :2be9[1]
     cmp menu_item_to_use                                              ; 2d1d: c5 70       .p  :2bec[1]
     beq shuffle_menu_items_left_loop                                  ; 2d1f: f0 07       ..  :2bee[1]
     inx                                                               ; 2d21: e8          .   :2bf0[1]
-    cpx #$11                                                          ; 2d22: e0 11       ..  :2bf1[1]
-    bcc loop_c2be9                                                    ; 2d24: 90 f4       ..  :2bf3[1]
+    cpx #menu_slot_count                                              ; 2d22: e0 11       ..  :2bf1[1]
+    bcc find_menu_item_loop                                           ; 2d24: 90 f4       ..  :2bf3[1]
     bcs return_with_flag_set_if_shuffled_left                         ; 2d26: b0 12       ..  :2bf5[1]   ; ALWAYS branch
 ; shuffle menu items left
 shuffle_menu_items_left_loop
     lda desired_menu_slots+1,x                                        ; 2d28: bd 5d 29    .]) :2bf7[1]
     sta desired_menu_slots,x                                          ; 2d2b: 9d 5c 29    .\) :2bfa[1]
     inx                                                               ; 2d2e: e8          .   :2bfd[1]
-    cpx #$10                                                          ; 2d2f: e0 10       ..  :2bfe[1]
+    cpx #menu_slot_count - 1                                          ; 2d2f: e0 10       ..  :2bfe[1]
     bcc shuffle_menu_items_left_loop                                  ; 2d31: 90 f5       ..  :2c00[1]
 ; make final menu slot empty
     lda #0                                                            ; 2d33: a9 00       ..  :2c02[1]
@@ -5824,6 +5830,17 @@ return_with_flag_set_if_shuffled_left
     lda menu_has_changed_flag                                         ; 2d3a: a5 71       .q  :2c09[1]
     rts                                                               ; 2d3c: 60          `   :2c0b[1]
 
+; *************************************************************************************
+; 
+; Plot menu item
+; 
+; On Entry:
+;     X: index of menu item to plot
+; 
+; On Exit:
+;     Preserves A,X,Y
+; 
+; *************************************************************************************
 plot_menu_item
     pha                                                               ; 2d3d: 48          H   :2c0c[1]   ; remember A,X,Y
     txa                                                               ; 2d3e: 8a          .   :2c0d[1]
@@ -5868,10 +5885,22 @@ restore_variables_and_return
     pla                                                               ; 2d75: 68          h   :2c44[1]
     rts                                                               ; 2d76: 60          `   :2c45[1]
 
+; *************************************************************************************
+; 
+; Calculate the position of a menu item
+; 
+; Calculate the X position of the toolbar menu item: 37 + index*20
+; 
+; On Entry:
+;     X: index of menu index
+; On Exit:
+;     Preserves X
+; 
+; *************************************************************************************
 calculate_sprite_position_for_menu_item
     txa                                                               ; 2d77: 8a          .   :2c46[1]
     pha                                                               ; 2d78: 48          H   :2c47[1]
-    lda #$25 ; '%'                                                    ; 2d79: a9 25       .%  :2c48[1]
+    lda #37                                                           ; 2d79: a9 25       .%  :2c48[1]
     sta sprite_y_base_low                                             ; 2d7b: 85 1a       ..  :2c4a[1]
     lda #0                                                            ; 2d7d: a9 00       ..  :2c4c[1]
     sta sprite_x_base_high                                            ; 2d7f: 85 19       ..  :2c4e[1]
@@ -9129,7 +9158,6 @@ pydis_end
 ;     l3403
 ;     lbe00
 ;     lbf00
-;     loop_c2be9
 ;     loop_c34b2
 ;     loop_c39d2
 ;     loop_c3f87
