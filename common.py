@@ -136,7 +136,7 @@ def common_to_all():
 
     label(0x0050, "previous_room_index")
     label(0x0051, "level_before_latest_level_and_room_initialisation")
-    label(0x0052, "player_held_object_menu_item_spriteid")
+    label(0x0052, "player_held_object_spriteid")
 
     label(0x003c, "width_in_cells")
     label(0x003d, "height_in_cells")
@@ -258,8 +258,8 @@ def common_to_all():
 
     label(0x2433, "player_wall_collision_flag")
 
-    label(0x2eb6, "player_held_object_for_spriteid_wizard6") # TODO!?
-    label(0x2eb7, "previous_player_held_object_for_spriteid_wizard6")
+    label(0x2eb6, "player_using_object_spriteid")
+    label(0x2eb7, "previous_player_using_object_spriteid")
 
     label(0x2ef2, "five_byte_table_paired_with_collectable_sprite_ids") # TODO: size is a guess - it's at least two bytes though
     expr_label(0x2ef3, make_add("five_byte_table_paired_with_collectable_sprite_ids", "1"))

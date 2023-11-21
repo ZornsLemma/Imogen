@@ -216,11 +216,11 @@ spriteid_wizard2                                = 49
 spriteid_wizard3                                = 50
 spriteid_wizard4                                = 51
 spriteid_wizard5                                = 52
-spriteid_wizard6                                = 53
 spriteid_wizard7                                = 54
 spriteid_wizard_hand                            = 55
 spriteid_wizard_transform1                      = 56
 spriteid_wizard_transform2                      = 57
+spriteid_wizard_using_object                    = 53
 vdu_bell                                        = 7
 vdu_cr                                          = 13
 vdu_define_character                            = 23
@@ -292,7 +292,7 @@ screen_base_address_high                            = $4c
 new_player_character                                = $4d
 previous_room_index                                 = $50
 level_before_latest_level_and_room_initialisation   = $51
-player_held_object_menu_item_spriteid               = $52
+player_held_object_spriteid                         = $52
 player_objectid                                     = $53
 sprdata_ptr                                         = $54
 temp_rope_length                                    = $56
@@ -686,9 +686,9 @@ object_reset_loop
     sta current_player_character                                      ; 12e8: 85 48       .H  :11b7[1]
     sta new_player_character                                          ; 12ea: 85 4d       .M  :11b9[1]
     sta object_spriteid                                               ; 12ec: 8d a8 09    ... :11bb[1]
-    sta player_held_object_menu_item_spriteid                         ; 12ef: 85 52       .R  :11be[1]
-    sta player_held_object_for_spriteid_wizard6                       ; 12f1: 8d b6 2e    ... :11c0[1]
-    sta previous_player_held_object_for_spriteid_wizard6              ; 12f4: 8d b7 2e    ... :11c3[1]
+    sta player_held_object_spriteid                                   ; 12ef: 85 52       .R  :11be[1]
+    sta player_using_object_spriteid                                  ; 12f1: 8d b6 2e    ... :11c0[1]
+    sta previous_player_using_object_spriteid                         ; 12f4: 8d b7 2e    ... :11c3[1]
     sta object_current_index_in_animation+1                           ; 12f7: 8d d5 09    ... :11c6[1]
     sta object_spriteid+1                                             ; 12fa: 8d a9 09    ... :11c9[1]
     lda #4                                                            ; 12fd: a9 04       ..  :11cc[1]
@@ -3536,10 +3536,10 @@ positive_y_pixel
 ; 
 ; *************************************************************************************
 update_objects
-    lda player_held_object_menu_item_spriteid                         ; 2108: a5 52       .R  :1fd7[1]
+    lda player_held_object_spriteid                                   ; 2108: a5 52       .R  :1fd7[1]
     pha                                                               ; 210a: 48          H   :1fd9[1]
     lda #0                                                            ; 210b: a9 00       ..  :1fda[1]
-    sta player_held_object_menu_item_spriteid                         ; 210d: 85 52       .R  :1fdc[1]
+    sta player_held_object_spriteid                                   ; 210d: 85 52       .R  :1fdc[1]
 ; mark all objects as 'not dealt with' yet
     lda #0                                                            ; 210f: a9 00       ..  :1fde[1]
     tax                                                               ; 2111: aa          .   :1fe0[1]
@@ -3590,7 +3590,7 @@ skip_objects_already_dealt_with
     bpl update_non_active_object_state_loop                           ; 2152: 10 f5       ..  :2021[1]
 ; restore the player held object
     pla                                                               ; 2154: 68          h   :2023[1]
-    sta player_held_object_menu_item_spriteid                         ; 2155: 85 52       .R  :2024[1]
+    sta player_held_object_spriteid                                   ; 2155: 85 52       .R  :2024[1]
     rts                                                               ; 2157: 60          `   :2026[1]
 
 found_backmost_object
@@ -4167,7 +4167,7 @@ transform
     sta new_player_character                                          ; 2468: 85 4d       .M  :2337[1]
     lda #0                                                            ; 246a: a9 00       ..  :2339[1]
     sta player_wall_collision_flag                                    ; 246c: 8d 33 24    .3$ :233b[1]
-    sta player_held_object_menu_item_spriteid                         ; 246f: 85 52       .R  :233e[1]
+    sta player_held_object_spriteid                                   ; 246f: 85 52       .R  :233e[1]
 ; if the current menu item is to the left of the player characters, then we have just
 ; loaded a level or something, so don't play the transform sounds.
     lda new_menu_index                                                ; 2471: a5 29       .)  :2340[1]
@@ -4592,7 +4592,7 @@ adjust_left_or_right_extent_due_to_holding_an_object
     bne return_zeroing_offsets                                        ; 2689: d0 7c       .|  :2558[1]
 ; if (player is not holding an object) then return
 got_a_player_object
-    lda player_held_object_menu_item_spriteid                         ; 268b: a5 52       .R  :255a[1]
+    lda player_held_object_spriteid                                   ; 268b: a5 52       .R  :255a[1]
     beq return_zeroing_offsets                                        ; 268d: f0 78       .x  :255c[1]
 ; get spriteid of object being held
     inx                                                               ; 268f: e8          .   :255e[1]
@@ -5676,7 +5676,7 @@ check_if_player_character_menu_item_chosen
     lda current_animation                                             ; 2c7a: ad df 09    ... :2b49[1]
     beq return21                                                      ; 2c7d: f0 16       ..  :2b4c[1]
     lda #0                                                            ; 2c7f: a9 00       ..  :2b4e[1]
-    sta player_held_object_menu_item_spriteid                         ; 2c81: 85 52       .R  :2b50[1]
+    sta player_held_object_spriteid                                   ; 2c81: 85 52       .R  :2b50[1]
 ; return if we are already this player character
     lda desired_menu_slots,x                                          ; 2c83: bd 5c 29    .\) :2b52[1]
     cmp current_player_character                                      ; 2c86: c5 48       .H  :2b55[1]
@@ -5701,11 +5701,11 @@ check_for_extra_menu_item_chosen
     lda current_animation                                             ; 2ca7: ad df 09    ... :2b76[1]
     beq return22                                                      ; 2caa: f0 0b       ..  :2b79[1]
     lda desired_menu_slots,x                                          ; 2cac: bd 5c 29    .\) :2b7b[1]
-    cmp player_held_object_menu_item_spriteid                         ; 2caf: c5 52       .R  :2b7e[1]
+    cmp player_held_object_spriteid                                   ; 2caf: c5 52       .R  :2b7e[1]
     bne skip6                                                         ; 2cb1: d0 02       ..  :2b80[1]
     lda #0                                                            ; 2cb3: a9 00       ..  :2b82[1]
 skip6
-    sta player_held_object_menu_item_spriteid                         ; 2cb5: 85 52       .R  :2b84[1]
+    sta player_held_object_spriteid                                   ; 2cb5: 85 52       .R  :2b84[1]
 return22
     rts                                                               ; 2cb7: 60          `   :2b86[1]
 
@@ -5994,14 +5994,17 @@ decrement_current_transformations_remaining_pla_rts
 ; 
 ; *************************************************************************************
 wizard_sprite_list
-    !byte spriteid_wizard1,                2,              $f8        ; 2e08: 30 02 f8    0.. :2cd7[1]
-    !byte spriteid_wizard2,                4,              $f7        ; 2e0b: 31 04 f7    1.. :2cda[1]
-    !byte spriteid_wizard3,                2,              $f8        ; 2e0e: 32 02 f8    2.. :2cdd[1]
-    !byte spriteid_wizard4,                0,              $f7        ; 2e11: 33 00 f7    3.. :2ce0[1]
-    !byte spriteid_wizard5,                3,              $f5        ; 2e14: 34 03 f5    4.. :2ce3[1]
-    !byte spriteid_wizard7,                2,              $f7        ; 2e17: 36 02 f7    6.. :2ce6[1]
-    !byte spriteid_wizard6,                4,              $f6        ; 2e1a: 35 04 f6    5.. :2ce9[1]
-    !byte                0                                            ; 2e1d: 00          .   :2cec[1]
+    !byte             spriteid_wizard1,                            2  ; 2e08: 30 02       0.  :2cd7[1]
+    !byte                          $f8,             spriteid_wizard2  ; 2e0a: f8 31       .1  :2cd9[1]
+    !byte                            4,                          $f7  ; 2e0c: 04 f7       ..  :2cdb[1]
+    !byte             spriteid_wizard3,                            2  ; 2e0e: 32 02       2.  :2cdd[1]
+    !byte                          $f8,             spriteid_wizard4  ; 2e10: f8 33       .3  :2cdf[1]
+    !byte                            0,                          $f7  ; 2e12: 00 f7       ..  :2ce1[1]
+    !byte             spriteid_wizard5,                            3  ; 2e14: 34 03       4.  :2ce3[1]
+    !byte                          $f5,             spriteid_wizard7  ; 2e16: f5 36       .6  :2ce5[1]
+    !byte                            2,                          $f7  ; 2e18: 02 f7       ..  :2ce7[1]
+    !byte spriteid_wizard_using_object,                            4  ; 2e1a: 35 04       5.  :2ce9[1]
+    !byte                          $f6,                            0  ; 2e1c: f6 00       ..  :2ceb[1]
 wizard_base_animation
 wizard_transform_in_animation
     !byte                          0,                          0      ; 2e1e: 00 00       ..  :2ced[1]
@@ -6044,8 +6047,8 @@ wizard_standing_still_animation
     !byte spriteid_wizard7,                0,                0        ; 2e5f: 36 00 00    6.. :2d2e[1]
     !byte                0                                            ; 2e62: 00          .   :2d31[1]
 wizard_transition_to_transforming_animation
-    !byte spriteid_wizard6,                0,                0        ; 2e63: 35 00 00    5.. :2d32[1]
-    !byte                0                                            ; 2e66: 00          .   :2d35[1]
+    !byte spriteid_wizard_using_object,                            0  ; 2e63: 35 00       5.  :2d32[1]
+    !byte                            0,                            0  ; 2e65: 00 00       ..  :2d34[1]
 wizard_jump_animation
     !byte spriteid_wizard5,                6,              $fc        ; 2e67: 34 06 fc    4.. :2d36[1]
     !byte spriteid_wizard5,                6,              $fd        ; 2e6a: 34 06 fd    4.. :2d39[1]
@@ -6180,7 +6183,7 @@ wizard_standing_still
     beq wizard_transition_to_standing_still                           ; 2f5a: f0 17       ..  :2e29[1]
     lda jump_requested                                                ; 2f5c: ad c7 3a    ..: :2e2b[1]
     beq wizard_check_if_fallen_off_edge                               ; 2f5f: f0 14       ..  :2e2e[1]
-    lda player_held_object_menu_item_spriteid                         ; 2f61: a5 52       .R  :2e30[1]
+    lda player_held_object_spriteid                                   ; 2f61: a5 52       .R  :2e30[1]
     beq wizard_check_if_fallen_off_edge                               ; 2f63: f0 10       ..  :2e32[1]
     ldy #wizard_transition_to_transforming_animation - wizard_base_animation; 2f65: a0 45       .E  :2e34[1]
     cmp #spriteid_menu_item_completion_spell                          ; 2f67: c9 21       .!  :2e36[1]
@@ -6213,8 +6216,9 @@ wizard_got_index_in_animation
     sty object_current_index_in_animation                             ; 2f90: 8c d4 09    ... :2e5f[1]
     lda #0                                                            ; 2f93: a9 00       ..  :2e62[1]
     sta temp_collision_results                                        ; 2f95: 8d b5 2e    ... :2e64[1]
-    lda player_held_object_menu_item_spriteid                         ; 2f98: a5 52       .R  :2e67[1]
-    beq c2e82                                                         ; 2f9a: f0 17       ..  :2e69[1]
+    lda player_held_object_spriteid                                   ; 2f98: a5 52       .R  :2e67[1]
+    beq wizard_skip_holding_object_handling                           ; 2f9a: f0 17       ..  :2e69[1]
+; wizard is holding an object
     ldy object_current_index_in_animation                             ; 2f9c: ac d4 09    ... :2e6b[1]
     lda wizard_base_animation,y                                       ; 2f9f: b9 ed 2c    .., :2e6e[1]
     sta object_spriteid                                               ; 2fa2: 8d a8 09    ... :2e71[1]
@@ -6223,50 +6227,52 @@ wizard_got_index_in_animation
     jsr update_player_solid_rock_collision                            ; 2faa: 20 f5 25     .% :2e79[1]
     lda object_room_collision_flags                                   ; 2fad: ad d8 38    ..8 :2e7c[1]
     sta temp_collision_results                                        ; 2fb0: 8d b5 2e    ... :2e7f[1]
-c2e82
+wizard_skip_holding_object_handling
     lda object_current_index_in_animation                             ; 2fb3: ad d4 09    ... :2e82[1]
+; update sprite for wizard
     ldx #<wizard_base_animation                                       ; 2fb6: a2 ed       ..  :2e85[1]
     ldy #>wizard_base_animation                                       ; 2fb8: a0 2c       .,  :2e87[1]
     jsr set_player_spriteid_and_offset_from_animation_table           ; 2fba: 20 00 22     ." :2e89[1]
     jsr update_player_accessory_including_toolbar                     ; 2fbd: 20 b8 2e     .. :2e8c[1]
+; update collision
     lda #0                                                            ; 2fc0: a9 00       ..  :2e8f[1]
     jsr update_player_solid_rock_collision                            ; 2fc2: 20 f5 25     .% :2e91[1]
     lda object_room_collision_flags                                   ; 2fc5: ad d8 38    ..8 :2e94[1]
     ora temp_collision_results                                        ; 2fc8: 0d b5 2e    ... :2e97[1]
     sta object_room_collision_flags                                   ; 2fcb: 8d d8 38    ..8 :2e9a[1]
-; Save the current value of player_held_object_for_spriteid_wizard6 at
-; previous_player_held_object_for_spriteid_wizard6, then set
-; player_held_object_for_spriteid_wizard6 to 0 if object_spritid is not
-; spriteid_wizard6, otherwise set it to player_held_object. TODO: The code actually
-; tests if player_held_object is zero, but I think that's redundant.
-    lda player_held_object_for_spriteid_wizard6                       ; 2fce: ad b6 2e    ... :2e9d[1]
-    sta previous_player_held_object_for_spriteid_wizard6              ; 2fd1: 8d b7 2e    ... :2ea0[1]
+; Save the current value of player_using_object at previous_player_using_object
+    lda player_using_object_spriteid                                  ; 2fce: ad b6 2e    ... :2e9d[1]
+    sta previous_player_using_object_spriteid                         ; 2fd1: 8d b7 2e    ... :2ea0[1]
+; Set player_using_object_spriteid to player_held_object_spriteid if player is using an
+; object, or zero otherwise.
     ldx #0                                                            ; 2fd4: a2 00       ..  :2ea3[1]
+; if (the player is not using an item) then branch
     lda object_spriteid                                               ; 2fd6: ad a8 09    ... :2ea5[1]
-    cmp #spriteid_wizard6                                             ; 2fd9: c9 35       .5  :2ea8[1]
-    bne c2eb1                                                         ; 2fdb: d0 05       ..  :2eaa[1]
-    lda player_held_object_menu_item_spriteid                         ; 2fdd: a5 52       .R  :2eac[1]
-    beq c2eb1                                                         ; 2fdf: f0 01       ..  :2eae[1]
+    cmp #spriteid_wizard_using_object                                 ; 2fd9: c9 35       .5  :2ea8[1]
+    bne store_object_being_used                                       ; 2fdb: d0 05       ..  :2eaa[1]
+; This test is redundant
+    lda player_held_object_spriteid                                   ; 2fdd: a5 52       .R  :2eac[1]
+    beq store_object_being_used                                       ; 2fdf: f0 01       ..  :2eae[1]
     tax                                                               ; 2fe1: aa          .   :2eb0[1]
-c2eb1
-    stx player_held_object_for_spriteid_wizard6                       ; 2fe2: 8e b6 2e    ... :2eb1[1]
+store_object_being_used
+    stx player_using_object_spriteid                                  ; 2fe2: 8e b6 2e    ... :2eb1[1]
     rts                                                               ; 2fe5: 60          `   :2eb4[1]
 
 temp_collision_results
     !byte 0                                                           ; 2fe6: 00          .   :2eb5[1]
-player_held_object_for_spriteid_wizard6
+player_using_object_spriteid
     !byte 0                                                           ; 2fe7: 00          .   :2eb6[1]
-previous_player_held_object_for_spriteid_wizard6
+previous_player_using_object_spriteid
     !byte 0                                                           ; 2fe8: 00          .   :2eb7[1]
 
 update_player_accessory_including_toolbar
-    ldx player_held_object_menu_item_spriteid                         ; 2fe9: a6 52       .R  :2eb8[1]
+    ldx player_held_object_spriteid                                   ; 2fe9: a6 52       .R  :2eb8[1]
     beq store_object_held_and_return                                  ; 2feb: f0 28       .(  :2eba[1]
     ldx #<wizard_sprite_list                                          ; 2fed: a2 d7       ..  :2ebc[1]
     ldy #>wizard_sprite_list                                          ; 2fef: a0 2c       .,  :2ebe[1]
     lda #0                                                            ; 2ff1: a9 00       ..  :2ec0[1]
     jsr update_player_accessory_object_animation                      ; 2ff3: 20 48 22     H" :2ec2[1]
-    lda player_held_object_menu_item_spriteid                         ; 2ff6: a5 52       .R  :2ec5[1]
+    lda player_held_object_spriteid                                   ; 2ff6: a5 52       .R  :2ec5[1]
 ; find the menu index of the player accessory given its spriteid
     ldy #0                                                            ; 2ff8: a0 00       ..  :2ec7[1]
 find_menu_index_given_spriteid_loop
@@ -6281,7 +6287,7 @@ find_menu_index_given_spriteid_loop
 found_menu_index
     ldx five_byte_table_paired_with_collectable_sprite_ids,y          ; 3008: be f2 2e    ... :2ed7[1]
     lda object_spriteid                                               ; 300b: ad a8 09    ... :2eda[1]
-    cmp #spriteid_wizard6                                             ; 300e: c9 35       .5  :2edd[1]
+    cmp #spriteid_wizard_using_object                                 ; 300e: c9 35       .5  :2edd[1]
     beq store_object_held_and_return                                  ; 3010: f0 03       ..  :2edf[1]
     ldx collectable_spriteids,y                                       ; 3012: be ed 2e    ... :2ee1[1]
 store_object_held_and_return
@@ -6636,7 +6642,7 @@ monkey_animation12
     !byte spriteid_monkey4,                1,                5        ; 32a3: 51 01 05    Q.. :3172[1]
     !byte spriteid_monkey4,                1,                6        ; 32a6: 51 01 06    Q.. :3175[1]
     !byte                0                                            ; 32a9: 00          .   :3178[1]
-monkey_standing_jump_animation
+monkey_standing_fall_animation
     !byte spriteid_monkey4,                0,              $fc        ; 32aa: 51 00 fc    Q.. :3179[1]
     !byte spriteid_monkey4,                0,              $fd        ; 32ad: 51 00 fd    Q.. :317c[1]
     !byte spriteid_monkey4,                0,              $fe        ; 32b0: 51 00 fe    Q.. :317f[1]
@@ -6689,29 +6695,29 @@ update_monkey
     ldy #>monkey_base_animation                                       ; 3310: a0 30       .0  :31df[1]
     lda #3                                                            ; 3312: a9 03       ..  :31e1[1]
     jsr set_base_animation_address_and_handle_transform_in_out        ; 3314: 20 ee 22     ." :31e3[1]
-    bne c31f4                                                         ; 3317: d0 0c       ..  :31e6[1]
+    bne monkey_got_index_in_animation_local1                          ; 3317: d0 0c       ..  :31e6[1]
     cpy #monkey_change_direction_animation_last_step - monkey_base_animation; 3319: c0 39       .9  :31e8[1]
     bne monkey_not_changing_direction                                 ; 331b: d0 0b       ..  :31ea[1]
 ; toggle player direction
     lda object_direction                                              ; 331d: ad be 09    ... :31ec[1]
     eor #$fe                                                          ; 3320: 49 fe       I.  :31ef[1]
     sta object_direction                                              ; 3322: 8d be 09    ... :31f1[1]
-c31f4
-    jmp c3331                                                         ; 3325: 4c 31 33    L13 :31f4[1]
+monkey_got_index_in_animation_local1
+    jmp monkey_got_index_in_animation                                 ; 3325: 4c 31 33    L13 :31f4[1]
 
 monkey_not_changing_direction
     jsr update_player_hitting_floor_or_pushed                         ; 3328: 20 c4 23     .# :31f7[1]
-    beq c31ff                                                         ; 332b: f0 03       ..  :31fa[1]
-    jmp c32b1                                                         ; 332d: 4c b1 32    L.2 :31fc[1]
+    beq monkey_not_falling                                            ; 332b: f0 03       ..  :31fa[1]
+    jmp monkey_falling                                                ; 332d: 4c b1 32    L.2 :31fc[1]
 
-c31ff
+monkey_not_falling
     lda current_animation                                             ; 3330: ad df 09    ... :31ff[1]
     cmp #monkey_climb_animation - monkey_base_animation               ; 3333: c9 51       .Q  :3202[1]
-    beq c3222                                                         ; 3335: f0 1c       ..  :3204[1]
+    beq update_monkey_climbing                                        ; 3335: f0 1c       ..  :3204[1]
     cmp #monkey_climb_down_animation - monkey_base_animation          ; 3337: c9 49       .I  :3206[1]
-    beq c3222                                                         ; 3339: f0 18       ..  :3208[1]
+    beq update_monkey_climbing                                        ; 3339: f0 18       ..  :3208[1]
     cmp #monkey_climb_idle_animation - monkey_base_animation          ; 333b: c9 45       .E  :320a[1]
-    beq c3222                                                         ; 333d: f0 14       ..  :320c[1]
+    beq update_monkey_climbing                                        ; 333d: f0 14       ..  :320c[1]
     lda jump_requested                                                ; 333f: ad c7 3a    ..: :320e[1]
     beq c3276                                                         ; 3342: f0 63       .c  :3211[1]
     jsr sub_c336e                                                     ; 3344: 20 6e 33     n3 :3213[1]
@@ -6719,9 +6725,9 @@ c31ff
     lda #monkey_climb_animation - monkey_base_animation               ; 3349: a9 51       .Q  :3218[1]
     sta current_animation                                             ; 334b: 8d df 09    ... :321a[1]
     ldy #monkey_animation10 - monkey_base_animation                   ; 334e: a0 4d       .M  :321d[1]
-    jmp c3331                                                         ; 3350: 4c 31 33    L13 :321f[1]
+    jmp monkey_got_index_in_animation                                 ; 3350: 4c 31 33    L13 :321f[1]
 
-c3222
+update_monkey_climbing
     ldx #monkey_fall_animation - monkey_base_animation                ; 3353: a2 d4       ..  :3222[1]
     jsr sub_c336e                                                     ; 3355: 20 6e 33     n3 :3224[1]
     beq c325f                                                         ; 3358: f0 36       .6  :3227[1]
@@ -6730,16 +6736,16 @@ c3222
     dec temp_top_offset                                               ; 335f: ce 50 25    .P% :322e[1]
     lda #0                                                            ; 3362: a9 00       ..  :3231[1]
     jsr get_solid_rock_collision_for_object_a                         ; 3364: 20 94 28     .( :3233[1]
-    bne c3247                                                         ; 3367: d0 0f       ..  :3236[1]
+    bne monkey_set_climb_idle                                         ; 3367: d0 0f       ..  :3236[1]
     ldx #monkey_climb_animation - monkey_base_animation               ; 3369: a2 51       .Q  :3238[1]
     lda l31d7                                                         ; 336b: ad d7 31    ..1 :323a[1]
-    bne c3247                                                         ; 336e: d0 08       ..  :323d[1]
+    bne monkey_set_climb_idle                                         ; 336e: d0 08       ..  :323d[1]
     lda move_left_requested                                           ; 3370: ad ca 3a    ..: :323f[1]
     ora move_right_requested                                          ; 3373: 0d cb 3a    ..: :3242[1]
-    beq c3269                                                         ; 3376: f0 22       ."  :3245[1]
-c3247
+    beq monkey_set_animation_x                                        ; 3376: f0 22       ."  :3245[1]
+monkey_set_climb_idle
     ldx #monkey_climb_idle_animation - monkey_base_animation          ; 3378: a2 45       .E  :3247[1]
-    jmp c3269                                                         ; 337a: 4c 69 32    Li2 :3249[1]
+    jmp monkey_set_animation_x                                        ; 337a: 4c 69 32    Li2 :3249[1]
 
 c324c
     ldx #monkey_animation12 - monkey_base_animation                   ; 337d: a2 58       .X  :324c[1]
@@ -6748,8 +6754,9 @@ c324c
     beq c325f                                                         ; 3385: f0 09       ..  :3254[1]
     ldx #monkey_climb_down_animation - monkey_base_animation          ; 3387: a2 49       .I  :3256[1]
     lda player_has_hit_floor_flag                                     ; 3389: ad 8f 28    ..( :3258[1]
-    beq c3269                                                         ; 338c: f0 0c       ..  :325b[1]
-    bne c3276                                                         ; 338e: d0 17       ..  :325d[1]
+    beq monkey_set_animation_x                                        ; 338c: f0 0c       ..  :325b[1]
+    bne c3276                                                         ; 338e: d0 17       ..  :325d[1]   ; ALWAYS branch
+
 c325f
     lda #monkey_fall_animation - monkey_base_animation                ; 3390: a9 d4       ..  :325f[1]
     sta current_animation                                             ; 3392: 8d df 09    ... :3261[1]
@@ -6757,26 +6764,27 @@ c325f
     tay                                                               ; 3396: a8          .   :3265[1]
     jmp c3276                                                         ; 3397: 4c 76 32    Lv2 :3266[1]
 
-c3269
+monkey_set_animation_x
     cpx current_animation                                             ; 339a: ec df 09    ... :3269[1]
-    beq c3273                                                         ; 339d: f0 05       ..  :326c[1]
+    beq monkey_got_index_in_animation_local2                          ; 339d: f0 05       ..  :326c[1]
     txa                                                               ; 339f: 8a          .   :326e[1]
     tay                                                               ; 33a0: a8          .   :326f[1]
     sty current_animation                                             ; 33a1: 8c df 09    ... :3270[1]
-c3273
-    jmp c3331                                                         ; 33a4: 4c 31 33    L13 :3273[1]
+monkey_got_index_in_animation_local2
+    jmp monkey_got_index_in_animation                                 ; 33a4: 4c 31 33    L13 :3273[1]
 
 c3276
     lda current_animation                                             ; 33a7: ad df 09    ... :3276[1]
-    cmp #monkey_standing_jump_animation - monkey_base_animation       ; 33aa: c9 7a       .z  :3279[1]
+    cmp #monkey_standing_fall_animation - monkey_base_animation       ; 33aa: c9 7a       .z  :3279[1]
     bne c328d                                                         ; 33ac: d0 10       ..  :327b[1]
     dec temp_top_offset                                               ; 33ae: ce 50 25    .P% :327d[1]
     lda #0                                                            ; 33b1: a9 00       ..  :3280[1]
     jsr get_solid_rock_collision_for_object_a                         ; 33b3: 20 94 28     .( :3282[1]
     bne c32ac                                                         ; 33b6: d0 25       .%  :3285[1]
-    cpy #monkey_standing_jump_animation - monkey_base_animation       ; 33b8: c0 7a       .z  :3287[1]
+    cpy #monkey_standing_fall_animation - monkey_base_animation       ; 33b8: c0 7a       .z  :3287[1]
     beq c32ac                                                         ; 33ba: f0 21       .!  :3289[1]
-    bne c3273                                                         ; 33bc: d0 e6       ..  :328b[1]
+    bne monkey_got_index_in_animation_local2                          ; 33bc: d0 e6       ..  :328b[1]   ; ALWAYS branch
+
 c328d
     lda current_animation                                             ; 33be: ad df 09    ... :328d[1]
     cmp #monkey_jump_animation - monkey_base_animation                ; 33c1: c9 87       ..  :3290[1]
@@ -6787,7 +6795,7 @@ c328d
     bne c32a5                                                         ; 33cd: d0 07       ..  :329c[1]
     cpy #monkey_jump_animation - monkey_base_animation                ; 33cf: c0 87       ..  :329e[1]
     beq c32a5                                                         ; 33d1: f0 03       ..  :32a0[1]
-    jmp c3331                                                         ; 33d3: 4c 31 33    L13 :32a2[1]
+    jmp monkey_got_index_in_animation                                 ; 33d3: 4c 31 33    L13 :32a2[1]
 
 c32a5
     lda #monkey_fall_animation - monkey_base_animation                ; 33d6: a9 d4       ..  :32a5[1]
@@ -6796,17 +6804,17 @@ c32a5
 c32ac
     lda player_has_hit_floor_flag                                     ; 33dd: ad 8f 28    ..( :32ac[1]
     bne c32c8                                                         ; 33e0: d0 17       ..  :32af[1]
-c32b1
+monkey_falling
     lda #monkey_fall_animation - monkey_base_animation                ; 33e2: a9 d4       ..  :32b1[1]
     cmp current_animation                                             ; 33e4: cd df 09    ... :32b3[1]
-    beq c3273                                                         ; 33e7: f0 bb       ..  :32b6[1]
+    beq monkey_got_index_in_animation_local2                          ; 33e7: f0 bb       ..  :32b6[1]
     ldx current_animation                                             ; 33e9: ae df 09    ... :32b8[1]
     sta current_animation                                             ; 33ec: 8d df 09    ... :32bb[1]
     ldy #monkey_animation18 - monkey_base_animation                   ; 33ef: a0 c4       ..  :32be[1]
     cpx #monkey_climb_down_animation - monkey_base_animation          ; 33f1: e0 49       .I  :32c0[1]
-    bne c3273                                                         ; 33f3: d0 af       ..  :32c2[1]
+    bne monkey_got_index_in_animation_local2                          ; 33f3: d0 af       ..  :32c2[1]
     tay                                                               ; 33f5: a8          .   :32c4[1]
-    jmp c3331                                                         ; 33f6: 4c 31 33    L13 :32c5[1]
+    jmp monkey_got_index_in_animation                                 ; 33f6: 4c 31 33    L13 :32c5[1]
 
 c32c8
     ldx player_move_direction_requested                               ; 33f9: ae c9 3a    ..: :32c8[1]
@@ -6816,7 +6824,7 @@ c32c8
     lda current_animation                                             ; 3403: ad df 09    ... :32d2[1]
     cmp #monkey_fall_animation - monkey_base_animation                ; 3406: c9 d4       ..  :32d5[1]
     beq c3301                                                         ; 3408: f0 28       .(  :32d7[1]
-    lda #monkey_standing_jump_animation - monkey_base_animation       ; 340a: a9 7a       .z  :32d9[1]
+    lda #monkey_standing_fall_animation - monkey_base_animation       ; 340a: a9 7a       .z  :32d9[1]
     jmp c32f5                                                         ; 340c: 4c f5 32    L.2 :32db[1]
 
 c32de
@@ -6856,14 +6864,14 @@ c3316
     inx                                                               ; 344e: e8          .   :331d[1]
 c331e
     lda player_just_fallen_off_edge_direction,x                       ; 344f: bd 90 28    ..( :331e[1]
-    beq c3331                                                         ; 3452: f0 0e       ..  :3321[1]
+    beq monkey_got_index_in_animation                                 ; 3452: f0 0e       ..  :3321[1]
     ldy #monkey_fall_animation - monkey_base_animation                ; 3454: a0 d4       ..  :3323[1]
     sty current_animation                                             ; 3456: 8c df 09    ... :3325[1]
     ldy #monkey_animation16 - monkey_base_animation                   ; 3459: a0 aa       ..  :3328[1]
     cmp object_direction                                              ; 345b: cd be 09    ... :332a[1]
-    beq c3331                                                         ; 345e: f0 02       ..  :332d[1]
+    beq monkey_got_index_in_animation                                 ; 345e: f0 02       ..  :332d[1]
     ldy #monkey_animation17 - monkey_base_animation                   ; 3460: a0 b7       ..  :332f[1]
-c3331
+monkey_got_index_in_animation
     lda #0                                                            ; 3462: a9 00       ..  :3331[1]
     sta l31d7                                                         ; 3464: 8d d7 31    ..1 :3333[1]
     sty object_current_index_in_animation                             ; 3467: 8c d4 09    ... :3336[1]
@@ -9104,23 +9112,14 @@ plot_move_x_high
 pydis_end
 
 ; Automatically generated labels:
-;     c2e82
-;     c2eb1
 ;     c30ca
 ;     c30d5
-;     c31f4
-;     c31ff
-;     c3222
-;     c3247
 ;     c324c
 ;     c325f
-;     c3269
-;     c3273
 ;     c3276
 ;     c328d
 ;     c32a5
 ;     c32ac
-;     c32b1
 ;     c32c8
 ;     c32de
 ;     c32f5
@@ -9128,7 +9127,6 @@ pydis_end
 ;     c3311
 ;     c3316
 ;     c331e
-;     c3331
 ;     c335b
 ;     c3366
 ;     c3399
@@ -9847,8 +9845,8 @@ pydis_end
 !if (monkey_jump_animation - monkey_base_animation) != $87 {
     !error "Assertion failed: monkey_jump_animation - monkey_base_animation == $87"
 }
-!if (monkey_standing_jump_animation - monkey_base_animation) != $7a {
-    !error "Assertion failed: monkey_standing_jump_animation - monkey_base_animation == $7a"
+!if (monkey_standing_fall_animation - monkey_base_animation) != $7a {
+    !error "Assertion failed: monkey_standing_fall_animation - monkey_base_animation == $7a"
 }
 !if (monkey_standing_still_animation - monkey_base_animation) != $41 {
     !error "Assertion failed: monkey_standing_still_animation - monkey_base_animation == $41"
@@ -10222,9 +10220,6 @@ pydis_end
 !if (spriteid_wizard5) != $34 {
     !error "Assertion failed: spriteid_wizard5 == $34"
 }
-!if (spriteid_wizard6) != $35 {
-    !error "Assertion failed: spriteid_wizard6 == $35"
-}
 !if (spriteid_wizard7) != $36 {
     !error "Assertion failed: spriteid_wizard7 == $36"
 }
@@ -10236,6 +10231,9 @@ pydis_end
 }
 !if (spriteid_wizard_transform2) != $39 {
     !error "Assertion failed: spriteid_wizard_transform2 == $39"
+}
+!if (spriteid_wizard_using_object) != $35 {
+    !error "Assertion failed: spriteid_wizard_using_object == $35"
 }
 !if (toolbar_collectable_spriteids+1) != $2ee9 {
     !error "Assertion failed: toolbar_collectable_spriteids+1 == $2ee9"

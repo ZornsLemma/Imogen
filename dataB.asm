@@ -39,7 +39,7 @@ source_sprite_memory_high                           = $41
 copy_mode                                           = $42
 previous_room_index                                 = $50
 level_before_latest_level_and_room_initialisation   = $51
-player_held_object_menu_item_spriteid               = $52
+player_held_object_spriteid                         = $52
 developer_mode_sideways_ram_is_set_up_flag          = $5b
 l0070                                               = $70
 show_dialog_box                                     = $040a
@@ -113,8 +113,8 @@ test_for_collision_between_objects_x_and_y          = $28e2
 insert_character_menu_item_into_toolbar             = $2b87
 find_or_create_menu_slot_for_A                      = $2bbd
 remove_item_from_toolbar_menu                       = $2be0
-player_held_object_for_spriteid_wizard6             = $2eb6
-previous_player_held_object_for_spriteid_wizard6    = $2eb7
+player_using_object_spriteid                        = $2eb6
+previous_player_using_object_spriteid               = $2eb7
 toolbar_collectable_spriteids                       = $2ee8
 l2ee9                                               = $2ee9
 l2eea                                               = $2eea
@@ -340,7 +340,7 @@ c3c1a
     lda desired_room_index                                            ; 3c1f: a5 30
     cmp #0                                                            ; 3c21: c9 00
     bne c3c51                                                         ; 3c23: d0 2c
-    lda player_held_object_menu_item_spriteid                         ; 3c25: a5 52
+    lda player_held_object_spriteid                                   ; 3c25: a5 52
     beq c3c51                                                         ; 3c27: f0 28
     lda object_y_low                                                  ; 3c29: ad 7c 09
     cmp #$40 ; '@'                                                    ; 3c2c: c9 40
@@ -743,7 +743,7 @@ c3f3f
 
 c3f53
     lda #$d4                                                          ; 3f53: a9 d4
-    cmp player_held_object_for_spriteid_wizard6                       ; 3f55: cd b6 2e
+    cmp player_using_object_spriteid                                  ; 3f55: cd b6 2e
     beq c3f62                                                         ; 3f58: f0 08
     lda #0                                                            ; 3f5a: a9 00
     sta l0a75                                                         ; 3f5c: 8d 75 0a
@@ -945,7 +945,7 @@ c40d8
     lda desired_room_index                                            ; 40e3: a5 30
     cmp #2                                                            ; 40e5: c9 02
     bne c4152                                                         ; 40e7: d0 69
-    lda player_held_object_for_spriteid_wizard6                       ; 40e9: ad b6 2e
+    lda player_using_object_spriteid                                  ; 40e9: ad b6 2e
     cmp #$d4                                                          ; 40ec: c9 d4
     bne c4152                                                         ; 40ee: d0 62
     lda object_y_low                                                  ; 40f0: ad 7c 09
@@ -962,13 +962,13 @@ c40d8
     lda #1                                                            ; 410a: a9 01
     sta l0a06                                                         ; 410c: 8d 06 0a
     lda #0                                                            ; 410f: a9 00
-    sta player_held_object_menu_item_spriteid                         ; 4111: 85 52
+    sta player_held_object_spriteid                                   ; 4111: 85 52
     sta object_spriteid+1                                             ; 4113: 8d a9 09
-    lda player_held_object_for_spriteid_wizard6                       ; 4116: ad b6 2e
+    lda player_using_object_spriteid                                  ; 4116: ad b6 2e
     cmp #$d4                                                          ; 4119: c9 d4
     bne c4127                                                         ; 411b: d0 0a
     lda #0                                                            ; 411d: a9 00
-    sta player_held_object_for_spriteid_wizard6                       ; 411f: 8d b6 2e
+    sta player_using_object_spriteid                                  ; 411f: 8d b6 2e
     lda #$36 ; '6'                                                    ; 4122: a9 36
     sta object_spriteid                                               ; 4124: 8d a8 09
 c4127

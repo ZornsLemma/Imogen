@@ -77,7 +77,7 @@ source_sprite_memory_high                           = $41
 copy_mode                                           = $42
 previous_room_index                                 = $50
 level_before_latest_level_and_room_initialisation   = $51
-player_held_object_menu_item_spriteid               = $52
+player_held_object_spriteid                         = $52
 developer_mode_sideways_ram_is_set_up_flag          = $5b
 l0070                                               = $70
 old_table_x_position                                = $70
@@ -145,8 +145,8 @@ test_for_collision_between_objects_x_and_y          = $28e2
 insert_character_menu_item_into_toolbar             = $2b87
 find_or_create_menu_slot_for_A                      = $2bbd
 remove_item_from_toolbar_menu                       = $2be0
-player_held_object_for_spriteid_wizard6             = $2eb6
-previous_player_held_object_for_spriteid_wizard6    = $2eb7
+player_using_object_spriteid                        = $2eb6
+previous_player_using_object_spriteid               = $2eb7
 toolbar_collectable_spriteids                       = $2ee8
 collectable_spriteids                               = $2eed
 five_byte_table_paired_with_collectable_sprite_ids  = $2ef2
@@ -718,7 +718,7 @@ room1_not_first_update
     lda desired_room_index                                            ; 3e73: a5 30
     cmp #1                                                            ; 3e75: c9 01
     bne set_room1_trapdoor_sprites_if_required                        ; 3e77: d0 5e
-    lda player_held_object_menu_item_spriteid                         ; 3e79: a5 52
+    lda player_held_object_spriteid                                   ; 3e79: a5 52
     beq set_room1_trapdoor_sprites_if_required                        ; 3e7b: f0 5a
     lda object_x_high                                                 ; 3e7d: ad 66 09
     bne set_room1_trapdoor_sprites_if_required                        ; 3e80: d0 55
@@ -839,7 +839,7 @@ return3
     rts                                                               ; 3f51: 60
 
 not_first_room_update
-    lda player_held_object_for_spriteid_wizard6                       ; 3f52: ad b6 2e
+    lda player_using_object_spriteid                                  ; 3f52: ad b6 2e
     cmp #spriteid_saxophone2                                          ; 3f55: c9 d3
     bne c3f62                                                         ; 3f57: d0 09
     lda #0                                                            ; 3f59: a9 00
@@ -1128,7 +1128,7 @@ have_specific_baby_spriteid
     lda #player_collision_flag_baby                                   ; 4115: a9 06
     sta player_wall_collision_flag                                    ; 4117: 8d 33 24
     lda #0                                                            ; 411a: a9 00
-    sta player_held_object_for_spriteid_wizard6                       ; 411c: 8d b6 2e
+    sta player_using_object_spriteid                                  ; 411c: 8d b6 2e
     lda #1                                                            ; 411f: a9 01
     sta save_game_level_a_room_2_baby_direction                       ; 4121: 8d 04 0a
     ldy #$22 ; '"'                                                    ; 4124: a0 22
@@ -1146,7 +1146,7 @@ c4137
     lda desired_room_index                                            ; 4137: a5 30
     cmp #2                                                            ; 4139: c9 02
     bne c415e                                                         ; 413b: d0 21
-    lda player_held_object_for_spriteid_wizard6                       ; 413d: ad b6 2e
+    lda player_using_object_spriteid                                  ; 413d: ad b6 2e
     cmp #spriteid_saxophone2                                          ; 4140: c9 d3
     bne c415e                                                         ; 4142: d0 1a
     ldy #$0e                                                          ; 4144: a0 0e
