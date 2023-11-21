@@ -1056,7 +1056,7 @@ room2_update_handler
     beq room2_not_first_update                                        ; 409a: f0 48
     lda desired_level                                                 ; 409c: a5 31
     cmp previous_level                                                ; 409e: c5 51
-    beq c40c1                                                         ; 40a0: f0 1f
+    beq room2_update_handler_not_new_level                            ; 40a0: f0 1f
     ldy #$2b ; '+'                                                    ; 40a2: a0 2b
     lda l0a04                                                         ; 40a4: ad 04 0a
     ldx l0a03                                                         ; 40a7: ae 03 0a
@@ -1070,7 +1070,7 @@ c40b2
     sta l0a04                                                         ; 40b8: 8d 04 0a
     sta l0a71                                                         ; 40bb: 8d 71 0a
     stx l0a70                                                         ; 40be: 8e 70 0a
-c40c1
+room2_update_handler_not_new_level
     lda desired_room_index                                            ; 40c1: a5 30
     cmp #2                                                            ; 40c3: c9 02
     bne c40e0                                                         ; 40c5: d0 19
@@ -1789,7 +1789,6 @@ pydis_end
 ;     c3ce7
 ;     c3f62
 ;     c40b2
-;     c40c1
 ;     c40e0
 ;     c40ee
 ;     c40f7

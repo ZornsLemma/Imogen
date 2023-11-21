@@ -313,6 +313,7 @@ Room 2 has the spell, guarded by a baby.
 *************************************************************************************""")
 entry(0x407f, "room2_update_handler")
 expr(0x4093, "objectid_spell")
+entry(0x40c1, "room2_update_handler_not_new_level")
 expr(0x40d7, "objectid_baby")
 expr(0x40dc, "spriteid_zero_size1")
 expr(0x3dd8, "exit_room_left")
