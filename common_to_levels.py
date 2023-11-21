@@ -38,11 +38,7 @@ def level_room_data_table_entry(addr, s):
     byte(target1 + 1)
     decimal(target1)
     decimal(target1 + 1)
-    comment(target1, """*************************************************************************************
-
-Room """ + s + """ initialisation and game loop
-
-*************************************************************************************""")
+    stars(target1, "Room " + s + " initialisation and game loop")
     comment(target1, "initial player X cell", inline=True)
     comment(target1 + 1, "initial player Y cell", inline=True)
     target3 = get_u16_binary(target1)
@@ -53,11 +49,7 @@ Room """ + s + """ initialisation and game loop
 
 def define_level(num_rooms):
     start = 0x3ad5
-    comment(start, """*************************************************************************************
-
-Level header
-
-*************************************************************************************""")
+    stars(start, "Level header")
     word(start)
     expr(start, "sprite_data - level_data")
     comment(start, "offset to sprite data", inline=True)
@@ -82,24 +74,16 @@ Level header
     entry(get_u16_binary(start+4), "level_specific_update")
     label(get_u16_binary(start+6), "level_specific_password")
 
-    comment(get_u16_binary(start+2), """*************************************************************************************
+    stars(get_u16_binary(start+2), """Level initialisation
 
-Level initialisation
-
-This is called whenever a new room is entered.
-
-*************************************************************************************""")
-    comment(get_u16_binary(start+4), """*************************************************************************************
-
-Level update
+This is called whenever a new room is entered.""")
+    stars(get_u16_binary(start+4), """Level update
 
 This generally calls individual functions to update the logic in each room.
 
-While updating the logic for a room, 'currently_updating_logic_for_room_index' is normally set. In practice this only actually needs to be set if it calls 'update_brazier_and_fire' or 'update_level_completion'
-
-*************************************************************************************""")
+While updating the logic for a room, 'currently_updating_logic_for_room_index' is normally set. In practice this only actually needs to be set if it calls 'update_brazier_and_fire' or 'update_level_completion'""")
     blank(get_u16_binary(start+6))
-    comment(get_u16_binary(start+6), "*************************************************************************************")
+    stars(get_u16_binary(start+6))
 
     for room in range(num_rooms):
         level_room_data_table_entry(start + 10 + 2*room, str(room))
