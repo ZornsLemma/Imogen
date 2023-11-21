@@ -4,7 +4,7 @@ config.set_label_references(False)
 config.set_hex_dump_show_ascii(False)
 
 sprite_dict = {
-    0x2b: "spriteid_diamond5",
+    #0x2b: "spriteid_diamond5",
     0x3b: "spriteid_ball",
     0xc8: "spriteid_mouse",
     0xc9: "spriteid_mouse_hands1",
@@ -332,7 +332,7 @@ entry(0x424c, "return5")
 label(0x40e3, "room2_update_handler_temp")
 comment(0x4111, "set flags to reflect value in set flags to reflect value in AA", inline=True)
 entry(0x412e, "player_not_collided_with_baby")
-expr(0x41f4, "spriteid_diamond5") # TODO: highly speculative
+label(0xa70, "baby_pixel_x_coordinate") # TODO: speculative
 
 entry(0x42ea, "loop_until_exit_room_left")
 expr(0x42ee, "exit_room_left")

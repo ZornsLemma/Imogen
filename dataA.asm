@@ -45,7 +45,6 @@ spriteid_baby5                     = 219
 spriteid_baby6                     = 220
 spriteid_baby7                     = 221
 spriteid_ball                      = 59
-spriteid_diamond5                  = 43
 spriteid_mouse                     = 200
 spriteid_mouse_hands1              = 201
 spriteid_mouse_hands2              = 202
@@ -104,7 +103,7 @@ table_x_speed                                       = $0a02
 save_game_level_a_room_2_thing1                     = $0a03
 save_game_level_a_room_2_thing2                     = $0a04
 mouse_ball_animation_position                       = $0a6f
-l0a70                                               = $0a70
+baby_pixel_x_coordinate                             = $0a70
 l0a71                                               = $0a71
 l0a72                                               = $0a72
 l0a73                                               = $0a73
@@ -1070,7 +1069,7 @@ c40b2
     sty l0a73                                                         ; 40b5: 8c 73 0a
     sta save_game_level_a_room_2_thing2                               ; 40b8: 8d 04 0a
     sta l0a71                                                         ; 40bb: 8d 71 0a
-    stx l0a70                                                         ; 40be: 8e 70 0a
+    stx baby_pixel_x_coordinate                                       ; 40be: 8e 70 0a
 room2_update_handler_not_new_level
     lda desired_room_index                                            ; 40c1: a5 30
     cmp #2                                                            ; 40c3: c9 02
@@ -1164,7 +1163,7 @@ c4167
     bne c41ae                                                         ; 416c: d0 40
     lda l0a71                                                         ; 416e: ad 71 0a
     sta save_game_level_a_room_2_thing2                               ; 4171: 8d 04 0a
-    lda l0a70                                                         ; 4174: ad 70 0a
+    lda baby_pixel_x_coordinate                                       ; 4174: ad 70 0a
     ldx l0a71                                                         ; 4177: ae 71 0a
     bmi c4184                                                         ; 417a: 30 08
     cmp #$d4                                                          ; 417c: c9 d4
@@ -1191,24 +1190,24 @@ c419f
     asl                                                               ; 41a2: 0a
     asl                                                               ; 41a3: 0a
     clc                                                               ; 41a4: 18
-    adc l0a70                                                         ; 41a5: 6d 70 0a
-    sta l0a70                                                         ; 41a8: 8d 70 0a
+    adc baby_pixel_x_coordinate                                       ; 41a5: 6d 70 0a
+    sta baby_pixel_x_coordinate                                       ; 41a8: 8d 70 0a
     jmp c41c9                                                         ; 41ab: 4c c9 41
 
 c41ae
     lda save_game_level_a_room_2_thing2                               ; 41ae: ad 04 0a
     bmi c41c1                                                         ; 41b1: 30 0e
-    lda l0a70                                                         ; 41b3: ad 70 0a
+    lda baby_pixel_x_coordinate                                       ; 41b3: ad 70 0a
     clc                                                               ; 41b6: 18
     adc #4                                                            ; 41b7: 69 04
     and #$f8                                                          ; 41b9: 29 f8
-    sta l0a70                                                         ; 41bb: 8d 70 0a
+    sta baby_pixel_x_coordinate                                       ; 41bb: 8d 70 0a
     jmp c41c9                                                         ; 41be: 4c c9 41
 
 c41c1
-    lda l0a70                                                         ; 41c1: ad 70 0a
+    lda baby_pixel_x_coordinate                                       ; 41c1: ad 70 0a
     and #$f8                                                          ; 41c4: 29 f8
-    sta l0a70                                                         ; 41c6: 8d 70 0a
+    sta baby_pixel_x_coordinate                                       ; 41c6: 8d 70 0a
 c41c9
     sty l0a73                                                         ; 41c9: 8c 73 0a
     lda desired_room_index                                            ; 41cc: a5 30
@@ -1224,14 +1223,14 @@ c41d9
     lda l0a72                                                         ; 41df: ad 72 0a
     cmp #$2b ; '+'                                                    ; 41e2: c9 2b
     bne c4235                                                         ; 41e4: d0 4f
-    lda l0a70                                                         ; 41e6: ad 70 0a
+    lda baby_pixel_x_coordinate                                       ; 41e6: ad 70 0a
     sta save_game_level_a_room_2_thing1                               ; 41e9: 8d 03 0a
     lsr                                                               ; 41ec: 4a
     lsr                                                               ; 41ed: 4a
     lsr                                                               ; 41ee: 4a
     tax                                                               ; 41ef: aa
     lda l0a73                                                         ; 41f0: ad 73 0a
-    cmp #spriteid_diamond5                                            ; 41f3: c9 2b
+    cmp #$2b ; '+'                                                    ; 41f3: c9 2b
     beq c420c                                                         ; 41f5: f0 15
     dex                                                               ; 41f7: ca
     ldy #$11                                                          ; 41f8: a0 11
@@ -1268,7 +1267,7 @@ c4224
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 4232: 20 44 1e
 c4235
     ldx #2                                                            ; 4235: a2 02
-    lda l0a70                                                         ; 4237: ad 70 0a
+    lda baby_pixel_x_coordinate                                       ; 4237: ad 70 0a
     sta object_x_low,x                                                ; 423a: 9d 50 09
     ldy l0a73                                                         ; 423d: ac 73 0a
     lda baby_spriteid_data,y                                          ; 4240: b9 52 40
@@ -1808,7 +1807,6 @@ pydis_end
 ;     c420c
 ;     c4224
 ;     c4235
-;     l0a70
 ;     l0a71
 ;     l0a72
 ;     l0a73
@@ -2039,9 +2037,6 @@ pydis_end
 }
 !if (spriteid_ball) != $3b {
     !error "Assertion failed: spriteid_ball == $3b"
-}
-!if (spriteid_diamond5) != $2b {
-    !error "Assertion failed: spriteid_diamond5 == $2b"
 }
 !if (spriteid_mouse) != $c8 {
     !error "Assertion failed: spriteid_mouse == $c8"
