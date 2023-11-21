@@ -227,6 +227,7 @@ substitute_labels = {
     (0x1997, 0x19d4): {
         "backmost_object_index": "osword_read_character_block",
         "backmost_object_z_order": "osword_read_character_block+1",
+        "num_active_objects": "osword_read_character_block+2",
         "l0066": "osword_read_character_block+6",
         "l0067": "osword_read_character_block+7",
         "l0068": "osword_read_character_block+8",

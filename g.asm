@@ -1888,7 +1888,7 @@ print_italic
     ldy #>(osword_read_character_block)                               ; 19a9: a0 00       ..  :1878[1]
     jsr osword                                                        ; 19ab: 20 f1 ff     .. :187a[1]   ; Read character definition
     lsr osword_read_character_block+1                                 ; 19ae: 46 61       Fa  :187d[1]
-    lsr num_active_objects                                            ; 19b0: 46 62       Fb  :187f[1]
+    lsr osword_read_character_block+2                                 ; 19b0: 46 62       Fb  :187f[1]
     asl osword_read_character_block+6                                 ; 19b2: 06 66       .f  :1881[1]
     asl osword_read_character_block+7                                 ; 19b4: 06 67       .g  :1883[1]
     asl osword_read_character_block+8                                 ; 19b6: 06 68       .h  :1885[1]
