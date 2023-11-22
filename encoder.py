@@ -86,6 +86,11 @@ def encode(infile, outfile):
                         if pixels[-1] != 3:
                             pixels.append(3)
 
+                    # Add any reserved space for sprite
+                    if len(pixels) == 0:
+                        for i in range(len(sprite['pixels'])):
+                            pixels.append(0)
+
                     while ((len(pixels) & 3) != 0):
                         pixels.append(0)
 

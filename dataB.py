@@ -38,7 +38,9 @@ set_label_maker_hook(s.substitute_label_maker)
 #comment(0x3b87, "Draw tables")
 #comment(0x3bae, "Draw ropes")
 
-go()
+result = go(False)
+result = remove_sprite_data(result)
+print(result)
 
 # vi: tw=100
 

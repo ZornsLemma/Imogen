@@ -101,3 +101,12 @@ def ldx_ldy_jsr_play_sound_yx(jsr_runtime_addr, s):
     expr(jsr_runtime_addr - 3, make_lo(s))
     expr(jsr_runtime_addr - 1, make_hi(s))
 
+def remove_sprite_data(result):
+    m1 = re.search('^sprite_data', result, re.MULTILINE)
+    m2 = re.search('^pydis_end', result, re.MULTILINE)
+    if m1:
+        if m2:
+            start = m1.span()[1]
+            end = m2.start()
+            result = result[0:start] + "\n" + result[end:]
+    return(result)

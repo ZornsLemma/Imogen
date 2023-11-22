@@ -413,7 +413,9 @@ entry(0x3f8b, "copy_pseudo_circle_to_screen")
 label(0x3fd5, "copy_pseudo_circle_to_screen_saved_x")
 label(0x3fd6, "copy_pseudo_circle_to_screen_saved_y")
 
-go()
+result = go(False)
+result = remove_sprite_data(result)
+print(result)
 
 # vi: tw=100
 

@@ -55,6 +55,8 @@ def decode(infile, outfile, level_flag, index_zero_is_level_order_data):
             offset = file_offset + data[file_offset + i*2] + 256*data[file_offset + 1 + i*2]
             sprites.append(offset)
 
+        sprites.append(file_size)
+
         spr_data = {}
         sprite_array = []
         for i in range(num_sprites):
@@ -103,7 +105,20 @@ def decode(infile, outfile, level_flag, index_zero_is_level_order_data):
                     lines = list(reversed(lines))
                     lines = lines[1:]       # Remove first line
 
+                    # move to start of next byte
+                    if start_bit != 128:
+                        start += 1
+
+                    # Check if there are reserved bytes, rather than a standard given set of pixel lines with a width, height
+                    if (start != sprites[i+1]):
+                        if len(lines) == 0:
+                            # set zeros when we have reserved space
+                            lines = '####' * (sprites[i+1] - start)
+                        else:
+                            error("wow! unknown difference in space found:", sprites[i+1] - start, i, len(lines))
+
                     sprite["pixels"] = lines
+
                 sprite_array.append(sprite)
         spr_data["sprites"] = sprite_array
         print(json.dumps(spr_data, indent=4), file=fout)

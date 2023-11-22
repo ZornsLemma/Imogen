@@ -24,22 +24,23 @@ python3 auxcode.py --acme > source/auxcode.asm
 acme -o disk/auxcode --report build/auxcode.lst source/auxcode.asm
 cmp orig/auxcode.dat disk/auxcode || echo auxcode.asm rebuild failed
 
-# Data A
-python3 dataA.py --acme > source/dataA.asm
-acme -o disk/dataA --report build/dataA.lst source/dataA.asm
-cmp orig/dataA.dat disk/dataA || echo dataA.asm rebuild failed
-
-# Data B
-python3 dataB.py --acme > source/dataB.asm
-acme -o disk/dataB --report build/dataB.lst source/dataB.asm
-cmp orig/dataB.dat disk/dataB || echo dataB.asm rebuild failed
-
-# Data C
-python3 dataC.py --acme > source/dataC.asm
-acme -o disk/dataC --report build/dataC.lst source/dataC.asm
-cmp orig/dataC.dat disk/dataC || echo dataC.asm rebuild failed
-
-
+# Take original sprite binaries and create text (json) versions
+#python3 decoder.py -i orig/dataA.dat -o source/levelA.txt -l
+#python3 decoder.py -i orig/dataB.dat -o source/levelB.txt -l
+#python3 decoder.py -i orig/dataC.dat -o source/levelC.txt -l
+#python3 decoder.py -i orig/dataD.dat -o source/levelD.txt -l
+#python3 decoder.py -i orig/dataE.dat -o source/levelE.txt -l
+#python3 decoder.py -i orig/dataF.dat -o source/levelF.txt -l
+#python3 decoder.py -i orig/dataG.dat -o source/levelG.txt -l
+#python3 decoder.py -i orig/dataH.dat -o source/levelH.txt -l
+#python3 decoder.py -i orig/dataI.dat -o source/levelI.txt -l
+#python3 decoder.py -i orig/dataJ.dat -o source/levelJ.txt -l
+#python3 decoder.py -i orig/dataK.dat -o source/levelK.txt -l
+#python3 decoder.py -i orig/dataL.dat -o source/levelL.txt -l
+#python3 decoder.py -i orig/dataM.dat -o source/levelM.txt -l
+#python3 decoder.py -i orig/dataN.dat -o source/levelN.txt -l
+#python3 decoder.py -i orig/dataO.dat -o source/levelO.txt -l
+#python3 decoder.py -i orig/dataP.dat -o source/levelP.txt -l
 
 # Encode sprite data from json text to binary
 python3 encoder.py -i source/sprdata.txt -o disk/sprdata
@@ -64,3 +65,22 @@ python3 encoder.py -i source/levelM.txt -o build/levelM
 python3 encoder.py -i source/levelN.txt -o build/levelN
 python3 encoder.py -i source/levelO.txt -o build/levelO
 python3 encoder.py -i source/levelP.txt -o build/levelP
+
+# Data A
+python3 dataA.py --acme > source/dataA.asm
+acme -o build/dataA --report build/dataA.lst source/dataA.asm
+cat build/dataA build/levelA >disk/dataA
+cmp orig/dataA.dat disk/dataA || echo dataA.asm rebuild failed
+
+# Data B
+python3 dataB.py --acme > source/dataB.asm
+acme -o build/dataB --report build/dataB.lst source/dataB.asm
+cat build/dataB build/levelB >disk/dataB
+cmp orig/dataB.dat disk/dataB || echo dataB.asm rebuild failed
+
+# Data C
+python3 dataC.py --acme > source/dataC.asm
+acme -o build/dataC --report build/dataC.lst source/dataC.asm
+cat build/dataC build/levelC >disk/dataC
+cmp orig/dataC.dat disk/dataC || echo dataC.asm rebuild failed
+

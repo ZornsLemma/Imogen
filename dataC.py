@@ -37,7 +37,9 @@ set_label_maker_hook(s.substitute_label_maker)
 
 
 
-go()
+result = go(False)
+result = remove_sprite_data(result)
+print(result)
 
 # vi: tw=100
 
