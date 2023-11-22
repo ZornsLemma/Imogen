@@ -321,7 +321,7 @@ entry(0x40b2, "have_valid_baby_properties_in_axy")
 entry(0x40c1, "room2_update_handler_not_new_level")
 expr(0x40d7, "objectid_baby")
 expr(0x40dc, "spriteid_zero_size1")
-entry(0x40e0, "c41d9_local")
+entry(0x40e0, "room2_update_second_part_local")
 # TODO: I feel I'm making an off-by-one error here but let's go with it while figuring the code out
 # - it's better than nothing
 constant(0x2b, "baby_spriteid_data_entries_minus_1")
