@@ -109,10 +109,11 @@ def decode(infile, outfile, level_flag, index_zero_is_level_order_data):
                     start += 1
 
                 # Check if there are reserved bytes, rather than a standard given set of pixel lines with a width, height
-                if (start != sprites[i+1]):
+                length_of_reserved_bytes = (sprites[i+1] - start)
+                if length_of_reserved_bytes > 0:
                     if len(lines) == 0:
                         # set zeros when we have reserved space
-                        lines = '####' * (sprites[i+1] - start)
+                        lines = '####' * length_of_reserved_bytes
 
                 sprite["pixels"] = lines
 
