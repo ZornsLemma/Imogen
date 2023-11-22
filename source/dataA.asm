@@ -1,68 +1,71 @@
 ; Constants
-baby_max_pixel_x                          = 212
-baby_spriteid_data_entries_minus_1        = 43
-copy_mode_2x2                             = 0
-copy_mode_random16                        = 16
-copy_mode_random2                         = 2
-copy_mode_random32                        = 32
-copy_mode_random4                         = 4
-copy_mode_random64                        = 64
-copy_mode_random8                         = 8
-copy_mode_simple                          = 1
-exit_room_bottom                          = 2
-exit_room_left                            = 1
-exit_room_right                           = 4
-exit_room_top                             = 8
-first_level_letter                        = 65
-game_area_height_cells                    = 24
-game_area_width_cells                     = 40
-last_level_letter                         = 81
-object_collided_ceiling                   = 8
-object_collided_floor                     = 2
-object_collided_left_wall                 = 1
-object_collided_right_wall                = 4
-objectid_baby                             = 2
-objectid_brazier                          = 5
-objectid_brazier2                         = 3
-objectid_left_mouse                       = 2
-objectid_left_trapdoor                    = 2
-objectid_mouse_ball                       = 4
-objectid_player                           = 0
-objectid_player_accessory                 = 1
-objectid_right_mouse                      = 3
-objectid_right_trapdoor                   = 3
-objectid_saxophone                        = 4
-objectid_something                        = 11
-objectid_spell                            = 5
-objectid_table                            = 2
-opcode_jmp                                = 76
-player_collision_flag_baby                = 6
-player_collision_flag_mouse_ball          = 128
-some_specific_baby_spriteid_index_entry   = 33
-spriteid_baby0                            = 214
-spriteid_baby1                            = 215
-spriteid_baby2                            = 216
-spriteid_baby3                            = 217
-spriteid_baby4                            = 218
-spriteid_baby5                            = 219
-spriteid_baby6                            = 220
-spriteid_baby7                            = 221
-spriteid_ball                             = 59
-spriteid_mouse                            = 200
-spriteid_mouse_hands1                     = 201
-spriteid_mouse_hands2                     = 202
-spriteid_mouse_hands3                     = 212
-spriteid_mouse_hands4                     = 213
-spriteid_saxophone1                       = 210
-spriteid_saxophone2                       = 211
-spriteid_small_ball                       = 203
-spriteid_table                            = 222
-spriteid_trapdoor_diagonal                = 208
-spriteid_trapdoor_horizontal              = 207
-spriteid_trapdoor_vertical                = 209
-spriteid_zero_size1                       = 204
-table_max_x                               = 22
-table_min_x                               = 10
+another_specific_baby_spriteid_index_entry       = 13
+baby_max_pixel_x                                 = 212
+baby_min_pixel_x                                 = 108
+baby_spriteid_data_entries_minus_1               = 43
+copy_mode_2x2                                    = 0
+copy_mode_random16                               = 16
+copy_mode_random2                                = 2
+copy_mode_random32                               = 32
+copy_mode_random4                                = 4
+copy_mode_random64                               = 64
+copy_mode_random8                                = 8
+copy_mode_simple                                 = 1
+exit_room_bottom                                 = 2
+exit_room_left                                   = 1
+exit_room_right                                  = 4
+exit_room_top                                    = 8
+first_level_letter                               = 65
+game_area_height_cells                           = 24
+game_area_width_cells                            = 40
+last_level_letter                                = 81
+object_collided_ceiling                          = 8
+object_collided_floor                            = 2
+object_collided_left_wall                        = 1
+object_collided_right_wall                       = 4
+objectid_baby                                    = 2
+objectid_brazier                                 = 5
+objectid_brazier2                                = 3
+objectid_left_mouse                              = 2
+objectid_left_trapdoor                           = 2
+objectid_mouse_ball                              = 4
+objectid_player                                  = 0
+objectid_player_accessory                        = 1
+objectid_right_mouse                             = 3
+objectid_right_trapdoor                          = 3
+objectid_saxophone                               = 4
+objectid_something                               = 11
+objectid_spell                                   = 5
+objectid_table                                   = 2
+opcode_jmp                                       = 76
+player_collision_flag_baby                       = 6
+player_collision_flag_mouse_ball                 = 128
+some_specific_baby_spriteid_index_entry          = 33
+spriteid_baby0                                   = 214
+spriteid_baby1                                   = 215
+spriteid_baby2                                   = 216
+spriteid_baby3                                   = 217
+spriteid_baby4                                   = 218
+spriteid_baby5                                   = 219
+spriteid_baby6                                   = 220
+spriteid_baby7                                   = 221
+spriteid_ball                                    = 59
+spriteid_mouse                                   = 200
+spriteid_mouse_hands1                            = 201
+spriteid_mouse_hands2                            = 202
+spriteid_mouse_hands3                            = 212
+spriteid_mouse_hands4                            = 213
+spriteid_saxophone1                              = 210
+spriteid_saxophone2                              = 211
+spriteid_small_ball                              = 203
+spriteid_table                                   = 222
+spriteid_trapdoor_diagonal                       = 208
+spriteid_trapdoor_horizontal                     = 207
+spriteid_trapdoor_vertical                       = 209
+spriteid_zero_size1                              = 204
+table_max_x                                      = 22
+table_min_x                                      = 10
+yet_another_specific_baby_spriteid_index_entry   = 25
 
 ; Memory locations
 characters_entered                                  = $05
@@ -1144,62 +1147,62 @@ baby_spriteid_index_if_baby_spriteid_data_is_zero_set
 ; Y contains an index into baby_spriteid_data
 player_not_collided_with_baby
     cpy #some_specific_baby_spriteid_index_entry                      ; 412e: c0 21
-    bne c4137                                                         ; 4130: d0 05
+    bne dont_adjust_baby_spriteid_index                               ; 4130: d0 05
     ldy #5                                                            ; 4132: a0 05
     sty baby_spriteid_index_if_baby_spriteid_data_is_zero             ; 4134: 8c 72 0a
-c4137
+dont_adjust_baby_spriteid_index
     lda desired_room_index                                            ; 4137: a5 30
     cmp #2                                                            ; 4139: c9 02
-    bne c415e                                                         ; 413b: d0 21
+    bne player_not_using_saxophone                                    ; 413b: d0 21
     lda player_using_object_spriteid                                  ; 413d: ad b6 2e
     cmp #spriteid_saxophone2                                          ; 4140: c9 d3
-    bne c415e                                                         ; 4142: d0 1a
+    bne player_not_using_saxophone                                    ; 4142: d0 1a
     ldy #$0e                                                          ; 4144: a0 0e
-    lda #$19                                                          ; 4146: a9 19
+    lda #yet_another_specific_baby_spriteid_index_entry               ; 4146: a9 19
     sta baby_spriteid_index_if_baby_spriteid_data_is_zero             ; 4148: 8d 72 0a
     lda object_y_low                                                  ; 414b: ad 7c 09
     cmp #$a0                                                          ; 414e: c9 a0
     bcs move_baby                                                     ; 4150: b0 5c
     cmp #$78 ; 'x'                                                    ; 4152: c9 78
     bcc move_baby                                                     ; 4154: 90 58
-    lda #$2b ; '+'                                                    ; 4156: a9 2b
+    lda #baby_spriteid_data_entries_minus_1                           ; 4156: a9 2b
     sta baby_spriteid_index_if_baby_spriteid_data_is_zero             ; 4158: 8d 72 0a
     jmp move_baby                                                     ; 415b: 4c ae 41
 
-c415e
-    cpy #$0d                                                          ; 415e: c0 0d
+player_not_using_saxophone
+    cpy #another_specific_baby_spriteid_index_entry                   ; 415e: c0 0d
     bne c4167                                                         ; 4160: d0 05
     ldy #0                                                            ; 4162: a0 00
     sty baby_spriteid_index_if_baby_spriteid_data_is_zero             ; 4164: 8c 72 0a
 c4167
     lda baby_spriteid_index_if_baby_spriteid_data_is_zero             ; 4167: ad 72 0a
-    cmp #0                                                            ; 416a: c9 00
+    cmp #0                                                            ; 416a: c9 00                   ; redundant
     bne move_baby                                                     ; 416c: d0 40
     lda baby_pixel_x_speed                                            ; 416e: ad 71 0a
     sta save_game_level_a_room_2_baby_direction                       ; 4171: 8d 04 0a
     lda baby_pixel_x_coordinate                                       ; 4174: ad 70 0a
     ldx baby_pixel_x_speed                                            ; 4177: ae 71 0a
-    bmi c4184                                                         ; 417a: 30 08
+    bmi baby_pixel_x_speed_negativbe                                  ; 417a: 30 08
     cmp #baby_max_pixel_x                                             ; 417c: c9 d4
-    beq c418c                                                         ; 417e: f0 0c
-    bcc c419f                                                         ; 4180: 90 1d
-    bcs c4194                                                         ; 4182: b0 10
-c4184
-    cmp #$6c ; 'l'                                                    ; 4184: c9 6c
-    beq c418c                                                         ; 4186: f0 04
-    bcs c419f                                                         ; 4188: b0 15
-    bcc c4194                                                         ; 418a: 90 08
-c418c
+    beq baby_pixel_x_coordinate_is_max_or_min                         ; 417e: f0 0c
+    bcc baby_pixel_x_coordinate_within_min_max                        ; 4180: 90 1d
+    bcs baby_pixel_x_coordinate_outside_min_max                       ; 4182: b0 10                   ; ALWAYS branch
+baby_pixel_x_speed_negativbe
+    cmp #baby_min_pixel_x                                             ; 4184: c9 6c
+    beq baby_pixel_x_coordinate_is_max_or_min                         ; 4186: f0 04
+    bcs baby_pixel_x_coordinate_within_min_max                        ; 4188: b0 15
+    bcc baby_pixel_x_coordinate_outside_min_max                       ; 418a: 90 08                   ; ALWAYS branch
+baby_pixel_x_coordinate_is_max_or_min
     ldy #5                                                            ; 418c: a0 05
     sty baby_spriteid_index_if_baby_spriteid_data_is_zero             ; 418e: 8c 72 0a
-    jmp c419f                                                         ; 4191: 4c 9f 41
+    jmp baby_pixel_x_coordinate_within_min_max                        ; 4191: 4c 9f 41
 
-c4194
+baby_pixel_x_coordinate_outside_min_max
     lda baby_pixel_x_speed                                            ; 4194: ad 71 0a
     eor #$fe                                                          ; 4197: 49 fe
     sta baby_pixel_x_speed                                            ; 4199: 8d 71 0a
     sta save_game_level_a_room_2_baby_direction                       ; 419c: 8d 04 0a
-c419f
+baby_pixel_x_coordinate_within_min_max
     lda baby_pixel_x_speed                                            ; 419f: ad 71 0a
     asl                                                               ; 41a2: 0a
     asl                                                               ; 41a3: 0a
@@ -1677,13 +1680,7 @@ pydis_end
 
 ; Automatically generated labels:
 ;     c3ce7
-;     c4137
-;     c415e
 ;     c4167
-;     c4184
-;     c418c
-;     c4194
-;     c419f
 ;     c41c9
 !if (<envelope1) != $60 {
     !error "Assertion failed: <envelope1 == $60"
@@ -1763,8 +1760,14 @@ pydis_end
 !if (>tile_all_set_pixels) != $0a {
     !error "Assertion failed: >tile_all_set_pixels == $0a"
 }
+!if (another_specific_baby_spriteid_index_entry) != $0d {
+    !error "Assertion failed: another_specific_baby_spriteid_index_entry == $0d"
+}
 !if (baby_max_pixel_x) != $d4 {
     !error "Assertion failed: baby_max_pixel_x == $d4"
+}
+!if (baby_min_pixel_x) != $6c {
+    !error "Assertion failed: baby_min_pixel_x == $6c"
 }
 !if (baby_spriteid_data_entries_minus_1) != $2b {
     !error "Assertion failed: baby_spriteid_data_entries_minus_1 == $2b"
@@ -1969,4 +1972,7 @@ pydis_end
 }
 !if (toolbar_collectable_spriteids + 1) != $2ee9 {
     !error "Assertion failed: toolbar_collectable_spriteids + 1 == $2ee9"
+}
+!if (yet_another_specific_baby_spriteid_index_entry) != $19 {
+    !error "Assertion failed: yet_another_specific_baby_spriteid_index_entry == $19"
 }
