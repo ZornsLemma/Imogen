@@ -48,79 +48,78 @@ def decode(infile, outfile, level_flag, index_zero_is_level_order_data):
             return
         sprite_index_offset = 200
 
-    with open(outfile, 'w') as fout:
-        sprites = []
-        num_sprites = (data[file_offset] + 256*data[file_offset + 1]) // 2
-        for i in range(num_sprites):
-            offset = file_offset + data[file_offset + i*2] + 256*data[file_offset + 1 + i*2]
-            sprites.append(offset)
+    sprites = []
+    num_sprites = (data[file_offset] + 256*data[file_offset + 1]) // 2
+    for i in range(num_sprites):
+        offset = file_offset + data[file_offset + i*2] + 256*data[file_offset + 1 + i*2]
+        sprites.append(offset)
 
-        sprites.append(file_size)
+    sprites.append(file_size)
 
-        spr_data = {}
-        sprite_array = []
-        for i in range(num_sprites):
-            start = sprites[i]
-            if i < (num_sprites-1):
-                end = sprites[i+1]
-            else:
-                end = file_size
+    spr_data = {}
+    sprite_array = []
+    for i in range(num_sprites):
+        start = sprites[i]
+        if i < (num_sprites-1):
+            end = sprites[i+1]
+        else:
+            end = file_size
 
-            if (i==0) and index_zero_is_level_order_data:
-                spr_data["level order data"] = {
-                    "developer_flags": hex(data[start]),
-                    "first level": chr(data[start+1]),
-                    "level order": "".join([chr(data[x]) for x in range(start+2, start+18)])
-                }
-            else:
-                sprite = { "sprite number": hex(sprite_index_offset + i) }
-                if (start != end):
-                    width = int(data[start+2])
-                    height = 1+int(data[start+3])
-                    sprite["offset x"] = sbyte(data[start])
-                    sprite["offset y"] = sbyte(data[start+1])
-                    sprite["sprite width"] = width
-                    sprite["sprite height"] = height-1
+        if (i==0) and index_zero_is_level_order_data:
+            spr_data["level order data"] = {
+                "developer_flags": hex(data[start]),
+                "first level": chr(data[start+1]),
+                "level order": "".join([chr(data[x]) for x in range(start+2, start+18)])
+            }
+        else:
+            sprite = { "sprite number": hex(sprite_index_offset + i) }
+            if (start != end):
+                width = int(data[start+2])
+                height = 1+int(data[start+3])
+                sprite["offset x"] = sbyte(data[start])
+                sprite["offset y"] = sbyte(data[start+1])
+                sprite["sprite width"] = width
+                sprite["sprite height"] = height-1
 
-                    start += 4
-                    start_bit = 128
-                    lines = [""]*height
-                    for x in range(width):
-                        for y in range(height):
-                            start, start_bit, sprite_bit = read_bit(data, start, start_bit)
-                            start, start_bit, mask_bit = read_bit(data, start, start_bit)
+                start += 4
+                start_bit = 128
+                lines = [""]*height
+                for x in range(width):
+                    for y in range(height):
+                        start, start_bit, sprite_bit = read_bit(data, start, start_bit)
+                        start, start_bit, mask_bit = read_bit(data, start, start_bit)
 
-                            if not sprite_bit:
-                                if mask_bit:
-                                    lines[y] += '.'
-                                else:
-                                    lines[y] += '#'
+                        if not sprite_bit:
+                            if mask_bit:
+                                lines[y] += '.'
                             else:
-                                lines[y] += ' '
-                                if mask_bit:
-                                    for y2 in range(y+1,height):
-                                        lines[y2] += ' '
-                                    break
-
-                    lines = list(reversed(lines))
-                    lines = lines[1:]       # Remove first line
-
-                    # move to start of next byte
-                    if start_bit != 128:
-                        start += 1
-
-                    # Check if there are reserved bytes, rather than a standard given set of pixel lines with a width, height
-                    if (start != sprites[i+1]):
-                        if len(lines) == 0:
-                            # set zeros when we have reserved space
-                            lines = '####' * (sprites[i+1] - start)
+                                lines[y] += '#'
                         else:
-                            error("wow! unknown difference in space found:", sprites[i+1] - start, i, len(lines))
+                            lines[y] += ' '
+                            if mask_bit:
+                                for y2 in range(y+1,height):
+                                    lines[y2] += ' '
+                                break
 
-                    sprite["pixels"] = lines
+                lines = list(reversed(lines))
+                lines = lines[1:]       # Remove first line
 
-                sprite_array.append(sprite)
-        spr_data["sprites"] = sprite_array
+                # move to start of next byte
+                if start_bit != 128:
+                    start += 1
+
+                # Check if there are reserved bytes, rather than a standard given set of pixel lines with a width, height
+                if (start != sprites[i+1]):
+                    if len(lines) == 0:
+                        # set zeros when we have reserved space
+                        lines = '####' * (sprites[i+1] - start)
+
+                sprite["pixels"] = lines
+
+            sprite_array.append(sprite)
+    spr_data["sprites"] = sprite_array
+
+    with open(outfile, 'w') as fout:
         print(json.dumps(spr_data, indent=4), file=fout)
 
 
