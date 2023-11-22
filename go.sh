@@ -9,8 +9,8 @@ mkdir -p disk
 # Imogen
 # TODO: Mix of acme and beebasm isn't ideal. I may just want to switch to acme later. For now I'm trying to get my head round the relocation in 'g', and py8dis's handling of this in beebasm is broken, so let's just stick with acme at least until I'm more confident I know what I want.
 python3 imogen.py > source/imogen.asm
-beebasm -o build/imogen.out -i source/imogen.asm -v > build/imogen.lst
-cmp orig/imogen-trailing-mc-3900.dat build/imogen.out || echo imogen.asm rebuild failed
+beebasm -o disk/imogen -i source/imogen.asm -v > build/imogen.lst
+cmp orig/imogen-trailing-mc-3900.dat disk/imogen || echo imogen.asm rebuild failed
 
 # G (main game)
 python3 g.py --acme > build/temp.asm
