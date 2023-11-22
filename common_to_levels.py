@@ -46,7 +46,6 @@ def level_room_data_table_entry(addr, s):
     #expr(target1, room_n + "_data")
     entry(target2, room_n + "_code")
 
-
 def define_level(num_rooms):
     start = 0x3ad5
     stars(start, "Level header")
@@ -71,24 +70,13 @@ def define_level(num_rooms):
     expr(start+4, "level_specific_update")
     word(start+6)
     expr(start+6, "level_specific_password")
-    password = ""
-    start_addr = get_u16_binary(start+6)
-    addr = start_addr
-    while True:
-        b = get_u8_runtime(RuntimeAddr(addr))
-        b = b ^ 0xcb
-        if (b < 32) or (b >= 127):
-            password += "[{:02x}]".format(b)
-        else:
-            password += chr(b)
-        addr += 1
 
-        if b == 0x0d:
-            break
+    password_addr = get_u16_binary(start+6)
+    password = get_password(password_addr)
 
     entry(get_u16_binary(start+2), "level_specific_initialisation")
     entry(get_u16_binary(start+4), "level_specific_update")
-    label(start_addr, "level_specific_password")
+    label(password_addr, "level_specific_password")
 
     stars(get_u16_binary(start+2), """Level initialisation
 
@@ -100,7 +88,7 @@ This generally calls individual functions to update the logic in each room.
 While updating the logic for a room, 'currently_updating_logic_for_room_index' is normally set. In practice this only actually needs to be set if it calls 'update_brazier_and_fire' or 'update_level_completion'""")
     blank(get_u16_binary(start+6))
     stars(get_u16_binary(start+6))
-    comment(start_addr, "'" + password + "' EOR-encrypted with $cb")
+    comment(password_addr, "'" + password + "' EOR-encrypted with $cb")
 
     for room in range(num_rooms):
         level_room_data_table_entry(start + 10 + 2*room, str(room))

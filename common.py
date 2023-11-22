@@ -1,5 +1,5 @@
 from commands import *
-
+from memorymanager import get_u8_runtime, RuntimeAddr
 
 class SubstituteLabels():
     def __init__(self, substitute_labels):
@@ -43,6 +43,22 @@ def tile_bitmap(addr, s=None):
     for i in range(8):
         picture_binary(addr + i)
         byte(addr + i)
+
+def get_password(start_addr):
+    password = ""
+    addr = start_addr
+    while True:
+        b = get_u8_runtime(RuntimeAddr(addr))
+        b = b ^ 0xcb
+        if (b < 32) or (b >= 127):
+            password += "[{:02x}]".format(b)
+        else:
+            password += chr(b)
+        addr += 1
+
+        if b == 0x0d:
+            break
+    return(password)
 
 
 def sound(addr, lab):
