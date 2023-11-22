@@ -362,6 +362,7 @@ entry(0x4184, "baby_pixel_x_speed_negativbe")
 ab(0x4182)
 ab(0x418a)
 entry(0x4194, "baby_pixel_x_coordinate_outside_min_max")
+entry(0x41c9, "baby_pixel_x_coordinate_updated")
 label(0xa70, "baby_pixel_x_coordinate") # TODO: speculative
 label(0xa71, "baby_pixel_x_speed") # TODO: speculative
 constant(0xd4, "baby_max_pixel_x")

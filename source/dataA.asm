@@ -1209,7 +1209,7 @@ baby_pixel_x_coordinate_within_min_max
     clc                                                               ; 41a4: 18
     adc baby_pixel_x_coordinate                                       ; 41a5: 6d 70 0a
     sta baby_pixel_x_coordinate                                       ; 41a8: 8d 70 0a
-    jmp c41c9                                                         ; 41ab: 4c c9 41
+    jmp baby_pixel_x_coordinate_updated                               ; 41ab: 4c c9 41
 
 move_baby
     lda save_game_level_a_room_2_baby_direction                       ; 41ae: ad 04 0a
@@ -1219,7 +1219,7 @@ move_baby
     adc #4                                                            ; 41b7: 69 04
     and #$f8                                                          ; 41b9: 29 f8
     sta baby_pixel_x_coordinate                                       ; 41bb: 8d 70 0a
-    jmp c41c9                                                         ; 41be: 4c c9 41
+    jmp baby_pixel_x_coordinate_updated                               ; 41be: 4c c9 41
 
 ; TODO: This doesn't seem to be subtracting from baby_pixel_x_coordinate, suggesting
 ; 'baby_direction' is not quite what I thought
@@ -1227,7 +1227,7 @@ baby_direction_negative
     lda baby_pixel_x_coordinate                                       ; 41c1: ad 70 0a
     and #$f8                                                          ; 41c4: 29 f8
     sta baby_pixel_x_coordinate                                       ; 41c6: 8d 70 0a
-c41c9
+baby_pixel_x_coordinate_updated
     sty baby_sprite_index                                             ; 41c9: 8c 73 0a
     lda desired_room_index                                            ; 41cc: a5 30
     cmp #2                                                            ; 41ce: c9 02
@@ -1681,7 +1681,6 @@ pydis_end
 ; Automatically generated labels:
 ;     c3ce7
 ;     c4167
-;     c41c9
 !if (<envelope1) != $60 {
     !error "Assertion failed: <envelope1 == $60"
 }
