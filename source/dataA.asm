@@ -1,67 +1,68 @@
 ; Constants
-baby_max_pixel_x                     = 212
-baby_spriteid_data_entries_minus_1   = 43
-copy_mode_2x2                        = 0
-copy_mode_random16                   = 16
-copy_mode_random2                    = 2
-copy_mode_random32                   = 32
-copy_mode_random4                    = 4
-copy_mode_random64                   = 64
-copy_mode_random8                    = 8
-copy_mode_simple                     = 1
-exit_room_bottom                     = 2
-exit_room_left                       = 1
-exit_room_right                      = 4
-exit_room_top                        = 8
-first_level_letter                   = 65
-game_area_height_cells               = 24
-game_area_width_cells                = 40
-last_level_letter                    = 81
-object_collided_ceiling              = 8
-object_collided_floor                = 2
-object_collided_left_wall            = 1
-object_collided_right_wall           = 4
-objectid_baby                        = 2
-objectid_brazier                     = 5
-objectid_brazier2                    = 3
-objectid_left_mouse                  = 2
-objectid_left_trapdoor               = 2
-objectid_mouse_ball                  = 4
-objectid_player                      = 0
-objectid_player_accessory            = 1
-objectid_right_mouse                 = 3
-objectid_right_trapdoor              = 3
-objectid_saxophone                   = 4
-objectid_something                   = 11
-objectid_spell                       = 5
-objectid_table                       = 2
-opcode_jmp                           = 76
-player_collision_flag_baby           = 6
-player_collision_flag_mouse_ball     = 128
-spriteid_baby0                       = 214
-spriteid_baby1                       = 215
-spriteid_baby2                       = 216
-spriteid_baby3                       = 217
-spriteid_baby4                       = 218
-spriteid_baby5                       = 219
-spriteid_baby6                       = 220
-spriteid_baby7                       = 221
-spriteid_ball                        = 59
-spriteid_mouse                       = 200
-spriteid_mouse_hands1                = 201
-spriteid_mouse_hands2                = 202
-spriteid_mouse_hands3                = 212
-spriteid_mouse_hands4                = 213
-spriteid_saxophone1                  = 210
-spriteid_saxophone2                  = 211
-spriteid_small_ball                  = 203
-spriteid_table                       = 222
-spriteid_trapdoor_diagonal           = 208
-spriteid_trapdoor_horizontal         = 207
-spriteid_trapdoor_vertical           = 209
-spriteid_zero_size1                  = 204
-table_max_x                          = 22
-table_min_x                          = 10
+baby_max_pixel_x                          = 212
+baby_spriteid_data_entries_minus_1        = 43
+copy_mode_2x2                             = 0
+copy_mode_random16                        = 16
+copy_mode_random2                         = 2
+copy_mode_random32                        = 32
+copy_mode_random4                         = 4
+copy_mode_random64                        = 64
+copy_mode_random8                         = 8
+copy_mode_simple                          = 1
+exit_room_bottom                          = 2
+exit_room_left                            = 1
+exit_room_right                           = 4
+exit_room_top                             = 8
+first_level_letter                        = 65
+game_area_height_cells                    = 24
+game_area_width_cells                     = 40
+last_level_letter                         = 81
+object_collided_ceiling                   = 8
+object_collided_floor                     = 2
+object_collided_left_wall                 = 1
+object_collided_right_wall                = 4
+objectid_baby                             = 2
+objectid_brazier                          = 5
+objectid_brazier2                         = 3
+objectid_left_mouse                       = 2
+objectid_left_trapdoor                    = 2
+objectid_mouse_ball                       = 4
+objectid_player                           = 0
+objectid_player_accessory                 = 1
+objectid_right_mouse                      = 3
+objectid_right_trapdoor                   = 3
+objectid_saxophone                        = 4
+objectid_something                        = 11
+objectid_spell                            = 5
+objectid_table                            = 2
+opcode_jmp                                = 76
+player_collision_flag_baby                = 6
+player_collision_flag_mouse_ball          = 128
+some_specific_baby_spriteid_index_entry   = 33
+spriteid_baby0                            = 214
+spriteid_baby1                            = 215
+spriteid_baby2                            = 216
+spriteid_baby3                            = 217
+spriteid_baby4                            = 218
+spriteid_baby5                            = 219
+spriteid_baby6                            = 220
+spriteid_baby7                            = 221
+spriteid_ball                             = 59
+spriteid_mouse                            = 200
+spriteid_mouse_hands1                     = 201
+spriteid_mouse_hands2                     = 202
+spriteid_mouse_hands3                     = 212
+spriteid_mouse_hands4                     = 213
+spriteid_saxophone1                       = 210
+spriteid_saxophone2                       = 211
+spriteid_small_ball                       = 203
+spriteid_table                            = 222
+spriteid_trapdoor_diagonal                = 208
+spriteid_trapdoor_horizontal              = 207
+spriteid_trapdoor_vertical                = 209
+spriteid_zero_size1                       = 204
+table_max_x                               = 22
+table_min_x                               = 10
 
 ; Memory locations
 characters_entered                                  = $05
@@ -1125,7 +1126,7 @@ have_specific_baby_spriteid
     ldy #objectid_baby                                                ; 4109: a0 02
     jsr test_for_collision_between_objects_x_and_y                    ; 410b: 20 e2 28
     ldy room2_update_handler_temp                                     ; 410e: ac e3 40
-    ora #0                                                            ; 4111: 09 00                   ; set flags to reflect value in set flags to reflect value in AA
+    ora #0                                                            ; 4111: 09 00                   ; set flags to reflect value in set flags to reflect value in A
     beq player_not_collided_with_baby                                 ; 4113: f0 19
     lda #player_collision_flag_baby                                   ; 4115: a9 06
     sta player_wall_collision_flag                                    ; 4117: 8d 33 24
@@ -1139,8 +1140,9 @@ have_specific_baby_spriteid
 baby_spriteid_index_if_baby_spriteid_data_is_zero_set
     jmp move_baby                                                     ; 412b: 4c ae 41
 
+; Y contains an index into baby_spriteid_data
 player_not_collided_with_baby
-    cpy #$21 ; '!'                                                    ; 412e: c0 21
+    cpy #some_specific_baby_spriteid_index_entry                      ; 412e: c0 21
     bne c4137                                                         ; 4130: d0 05
     ldy #5                                                            ; 4132: a0 05
     sty baby_spriteid_index_if_baby_spriteid_data_is_zero             ; 4134: 8c 72 0a
@@ -1882,6 +1884,9 @@ pydis_end
 }
 !if (room_3_data) != $424d {
     !error "Assertion failed: room_3_data == $424d"
+}
+!if (some_specific_baby_spriteid_index_entry) != $21 {
+    !error "Assertion failed: some_specific_baby_spriteid_index_entry == $21"
 }
 !if (sound_priority_per_channel_table + 1) != $3970 {
     !error "Assertion failed: sound_priority_per_channel_table + 1 == $3970"

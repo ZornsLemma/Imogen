@@ -343,8 +343,11 @@ expr(0x4105, "objectid_player")
 expr(0x410a, "objectid_baby")
 entry(0x424c, "return5")
 label(0x40e3, "room2_update_handler_temp")
-comment(0x4111, "set flags to reflect value in set flags to reflect value in AA", inline=True)
+comment(0x4111, "set flags to reflect value in set flags to reflect value in A", inline=True)
 entry(0x412e, "player_not_collided_with_baby")
+comment(0x412e, "Y contains an index into baby_spriteid_data")
+constant(0x21, "some_specific_baby_spriteid_index_entry")
+expr(0x412f, "some_specific_baby_spriteid_index_entry")
 label(0xa70, "baby_pixel_x_coordinate") # TODO: speculative
 label(0xa71, "baby_pixel_x_speed") # TODO: speculative
 constant(0xd4, "baby_max_pixel_x")
