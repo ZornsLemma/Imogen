@@ -119,7 +119,7 @@ draw_floor_walls_and_ceiling_around_solid_rock      = $1b90
 draw_rope                                           = $1db9
 write_value_to_a_rectangle_of_cells_in_collision_map = $1e44
 write_a_single_value_to_cell_in_collision_map       = $1ebb
-l1efa                                               = $1efa
+read_collision_map_value_for_xy                     = $1efa
 draw_sprite_a_at_cell_xy                            = $1f4c
 draw_sprite_a_at_cell_xy_and_write_to_collision_map = $1f57
 set_object_position_from_cell_xy                    = $1f5d
@@ -427,7 +427,7 @@ c3c58
     lda #0                                                            ; 3c83: a9 00
     sta value_to_write_to_collision_map                               ; 3c85: 85 3e
 c3c87
-    jsr l1efa                                                         ; 3c87: 20 fa 1e
+    jsr read_collision_map_value_for_xy                               ; 3c87: 20 fa 1e
     cmp value_to_write_to_collision_map                               ; 3c8a: c5 3e
     beq c3c91                                                         ; 3c8c: f0 03
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 3c8e: 20 44 1e
@@ -1353,7 +1353,7 @@ c43e0
     sta width_in_cells                                                ; 43ef: 85 3c
     lda #3                                                            ; 43f1: a9 03
     sta height_in_cells                                               ; 43f3: 85 3d
-    jsr l1efa                                                         ; 43f5: 20 fa 1e
+    jsr read_collision_map_value_for_xy                               ; 43f5: 20 fa 1e
     cmp value_to_write_to_collision_map                               ; 43f8: c5 3e
     beq c442b                                                         ; 43fa: f0 2f
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 43fc: 20 44 1e
@@ -1366,7 +1366,7 @@ c4402
     sta width_in_cells                                                ; 4408: 85 3c
     lda #2                                                            ; 440a: a9 02
     sta height_in_cells                                               ; 440c: 85 3d
-    jsr l1efa                                                         ; 440e: 20 fa 1e
+    jsr read_collision_map_value_for_xy                               ; 440e: 20 fa 1e
     cmp value_to_write_to_collision_map                               ; 4411: c5 3e
     beq c442b                                                         ; 4413: f0 16
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 4415: 20 44 1e
@@ -1551,7 +1551,6 @@ pydis_end
 ;     l0a6f
 ;     l0a70
 ;     l0a71
-;     l1efa
 ;     l20f7
 ;     l2434
 ;     l25f5

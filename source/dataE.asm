@@ -124,7 +124,7 @@ draw_floor_walls_and_ceiling_around_solid_rock      = $1b90
 draw_rope                                           = $1db9
 write_value_to_a_rectangle_of_cells_in_collision_map = $1e44
 write_a_single_value_to_cell_in_collision_map       = $1ebb
-l1efa                                               = $1efa
+read_collision_map_value_for_xy                     = $1efa
 draw_sprite_a_at_cell_xy                            = $1f4c
 draw_sprite_a_at_cell_xy_and_write_to_collision_map = $1f57
 set_object_position_from_cell_xy                    = $1f5d
@@ -1324,7 +1324,7 @@ c4551
     cmp #$a8                                                          ; 4592: c9 a8
     bcc c45a0                                                         ; 4594: 90 0a
 c4596
-    jsr l1efa                                                         ; 4596: 20 fa 1e
+    jsr read_collision_map_value_for_xy                               ; 4596: 20 fa 1e
     cmp value_to_write_to_collision_map                               ; 4599: c5 3e
     beq c45a0                                                         ; 459b: f0 03
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 459d: 20 44 1e
@@ -1480,7 +1480,6 @@ pydis_end
 ;     l0a79
 ;     l0a7a
 ;     l0a7b
-;     l1efa
 ;     l20f7
 ;     l22de
 ;     l22df
