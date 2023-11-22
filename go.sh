@@ -37,25 +37,28 @@ python3 dataC.py --acme > dataC.asm
 acme -o build/dataC.out --report build/dataC.lst dataC.asm
 cmp orig/dataC.dat build/dataC.out || echo dataC.asm rebuild failed
 
-# Decode sprite data
-python3 decoder.py -i orig/sprdata.dat -o sprdata.txt
-python3 decoder.py -i orig/icodata.dat -o icodata.txt -z
 
-# Decode levels (sprites only so far)
-python3 decoder.py -i orig/dataA.dat -o levelA.txt -l
-python3 decoder.py -i orig/dataB.dat -o levelB.txt -l
-python3 decoder.py -i orig/dataC.dat -o levelC.txt -l
-python3 decoder.py -i orig/dataD.dat -o levelD.txt -l
-python3 decoder.py -i orig/dataE.dat -o levelE.txt -l
-python3 decoder.py -i orig/dataF.dat -o levelF.txt -l
-python3 decoder.py -i orig/dataG.dat -o levelG.txt -l
-python3 decoder.py -i orig/dataH.dat -o levelH.txt -l
-python3 decoder.py -i orig/dataI.dat -o levelI.txt -l
-python3 decoder.py -i orig/dataJ.dat -o levelJ.txt -l
-python3 decoder.py -i orig/dataK.dat -o levelK.txt -l
-python3 decoder.py -i orig/dataL.dat -o levelL.txt -l
-python3 decoder.py -i orig/dataM.dat -o levelM.txt -l
-python3 decoder.py -i orig/dataN.dat -o levelN.txt -l
-python3 decoder.py -i orig/dataO.dat -o levelO.txt -l
-python3 decoder.py -i orig/dataP.dat -o levelP.txt -l
-python3 decoder.py -i orig/dataQ.dat -o levelQ.txt -l
+
+# Encode sprite data from json text to binary
+python3 encoder.py -i sprdata.txt -o build/sprdata
+cmp orig/sprdata.dat build/sprdata || echo sprdata rebuild failed
+
+python3 encoder.py -i icodata.txt -o build/icodata
+cmp orig/icodata.dat build/icodata || echo icodata rebuild failed
+
+python3 encoder.py -i levelA.txt -o build/levelA
+python3 encoder.py -i levelB.txt -o build/levelB
+python3 encoder.py -i levelC.txt -o build/levelC
+python3 encoder.py -i levelD.txt -o build/levelD
+python3 encoder.py -i levelE.txt -o build/levelE
+python3 encoder.py -i levelF.txt -o build/levelF
+python3 encoder.py -i levelG.txt -o build/levelG
+python3 encoder.py -i levelH.txt -o build/levelH
+python3 encoder.py -i levelI.txt -o build/levelI
+python3 encoder.py -i levelJ.txt -o build/levelJ
+python3 encoder.py -i levelK.txt -o build/levelK
+python3 encoder.py -i levelL.txt -o build/levelL
+python3 encoder.py -i levelM.txt -o build/levelM
+python3 encoder.py -i levelN.txt -o build/levelN
+python3 encoder.py -i levelO.txt -o build/levelO
+python3 encoder.py -i levelP.txt -o build/levelP
