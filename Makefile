@@ -22,7 +22,10 @@ src: directories source/g.asm source/auxcode.asm source/imogen.asm source/icodat
 game: directories disk/g disk/auxcode disk/icodata disk/sprdata disk/imogen disk/dataA disk/dataB disk/dataC disk/dataD disk/dataE disk/dataF disk/dataG disk/dataH disk/dataI disk/dataJ disk/dataK disk/dataL disk/dataM disk/dataN disk/dataO disk/dataP disk/dataQ check imogen.ssd
 
 imogen.ssd: ssd_maker.asm disk/g disk/auxcode disk/icodata disk/sprdata disk/imogen disk/dataA disk/dataB disk/dataC disk/dataD disk/dataE disk/dataF disk/dataG disk/dataH disk/dataI disk/dataJ disk/dataK disk/dataL disk/dataM disk/dataN disk/dataO disk/dataP disk/dataQ
-	beebasm -i ssd_maker.asm -do imogen.ssd -boot IMOGEN -v
+	# beebasm tends to leave partial output file around if it fails, so we
+	# build to a temporary file first.
+	beebasm -i ssd_maker.asm -do temp.ssd -boot IMOGEN -v
+	mv temp.ssd imogen.ssd
 
 directories: build source disk
 
