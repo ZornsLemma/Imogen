@@ -7108,11 +7108,11 @@ get_filename_and_print_drive_number_prompt
     ldy characters_entered                                            ; 35dd: a4 05       ..  :34ac[1]
     beq return23                                                      ; 35df: f0 e6       ..  :34ae[1]
     ldy #6                                                            ; 35e1: a0 06       ..  :34b0[1]
-loop_c34b2
+save_leafname_loop
     lda string_input_buffer,y                                         ; 35e3: b9 90 0a    ... :34b2[1]
     sta save_leaf_filename,y                                          ; 35e6: 99 db 34    ..4 :34b5[1]
     dey                                                               ; 35e9: 88          .   :34b8[1]
-    bpl loop_c34b2                                                    ; 35ea: 10 f7       ..  :34b9[1]
+    bpl save_leafname_loop                                            ; 35ea: 10 f7       ..  :34b9[1]
     jsr show_dialog_box                                               ; 35ec: 20 0a 04     .. :34bb[1]
     lda #3                                                            ; 35ef: a9 03       ..  :34be[1]
     sta which_dialog_is_active                                        ; 35f1: 85 04       ..  :34c0[1]
@@ -7946,22 +7946,23 @@ c39c1
     pla                                                               ; 3aff: 68          h   :39ce[1]
     pla                                                               ; 3b00: 68          h   :39cf[1]
     ldy #$0f                                                          ; 3b01: a0 0f       ..  :39d0[1]
-loop_c39d2
+find_uncompleted_level_loop
     lda level_progress_table,y                                        ; 3b03: b9 ef 09    ... :39d2[1]
     and #$80                                                          ; 3b06: 29 80       ).  :39d5[1]
-    beq c39e0                                                         ; 3b08: f0 07       ..  :39d7[1]
+    beq found_uncompleted_level                                       ; 3b08: f0 07       ..  :39d7[1]
     dey                                                               ; 3b0a: 88          .   :39d9[1]
-    bpl loop_c39d2                                                    ; 3b0b: 10 f6       ..  :39da[1]
+    bpl find_uncompleted_level_loop                                   ; 3b0b: 10 f6       ..  :39da[1]
     ldy #last_level_letter                                            ; 3b0d: a0 51       .Q  :39dc[1]
-    bne c39ec                                                         ; 3b0f: d0 0c       ..  :39de[1]
-c39e0
+    bne found_next_level                                              ; 3b0f: d0 0c       ..  :39de[1]   ; ALWAYS branch
+
+found_uncompleted_level
     ldy current_level                                                 ; 3b11: a4 31       .1  :39e0[1]
     jsr convert_level_filename_letter_into_section_letter             ; 3b13: 20 d4 0a     .. :39e2[1]
     iny                                                               ; 3b16: c8          .   :39e5[1]
     cpy #last_level_letter                                            ; 3b17: c0 51       .Q  :39e6[1]
-    bcc c39ec                                                         ; 3b19: 90 02       ..  :39e8[1]
+    bcc found_next_level                                              ; 3b19: 90 02       ..  :39e8[1]
     ldy #first_level_letter                                           ; 3b1b: a0 41       .A  :39ea[1]
-c39ec
+found_next_level
     ldx #0                                                            ; 3b1d: a2 00       ..  :39ec[1]
     jsr convert_section_letter_to_level_filename_letter               ; 3b1f: 20 ef 0a     .. :39ee[1]
     jmp initialise_level_and_room                                     ; 3b22: 4c 40 11    L@. :39f1[1]
@@ -8659,21 +8660,21 @@ handle_developer_mode_setup
 ; or a development environment?
     ldy #sideways_rom_image_source_end - sideways_rom_image_source_start - 1; 3f78: a0 0f       ..
     sei                                                               ; 3f7a: 78          x
-copy_to_sideways_ram_loop
+copy_to_sideways_ram_loop1
     lda sideways_rom_image_source_start,y                             ; 3f7b: b9 bb 3f    ..?
     sta end_of_screen_memory,y                                        ; 3f7e: 99 00 80    ...
     dey                                                               ; 3f81: 88          .
-    bpl copy_to_sideways_ram_loop                                     ; 3f82: 10 f7       ..
+    bpl copy_to_sideways_ram_loop1                                    ; 3f82: 10 f7       ..
     cli                                                               ; 3f84: 58          X
 ; Copy 256 bytes from quit_to_basic to $be00, and 256 bytes from $0b00 to $bf00.
     ldy #0                                                            ; 3f85: a0 00       ..
-loop_c3f87
+copy_to_sideways_ram_loop2
     lda quit_to_basic,y                                               ; 3f87: b9 2c 40    .,@
     sta lbe00,y                                                       ; 3f8a: 99 00 be    ...
     lda l0b00,y                                                       ; 3f8d: b9 00 0b    ...
     sta lbf00,y                                                       ; 3f90: 99 00 bf    ...
     iny                                                               ; 3f93: c8          .
-    bne loop_c3f87                                                    ; 3f94: d0 f1       ..
+    bne copy_to_sideways_ram_loop2                                    ; 3f94: d0 f1       ..
     lda #osbyte_read_write_escape_break_effect                        ; 3f96: a9 c8       ..
     ldx #1                                                            ; 3f98: a2 01       ..
     ldy #0                                                            ; 3f9a: a0 00       ..
@@ -9156,8 +9157,6 @@ pydis_end
 ; Automatically generated labels:
 ;     c39b6
 ;     c39c1
-;     c39e0
-;     c39ec
 ;     c39f4
 ;     c3a08
 ;     l0087
@@ -9166,9 +9165,6 @@ pydis_end
 ;     l31d7
 ;     lbe00
 ;     lbf00
-;     loop_c34b2
-;     loop_c39d2
-;     loop_c3f87
 !if (' ' + '0') != $50 {
     !error "Assertion failed: ' ' + '0' == $50"
 }
