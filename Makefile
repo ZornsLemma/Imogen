@@ -19,9 +19,9 @@ all: src game
 
 src: directories source/g.asm source/auxcode.asm source/imogen.asm source/icodata.txt source/sprdata.txt source/levelA.txt source/levelB.txt source/levelC.txt source/levelD.txt source/levelE.txt source/levelF.txt source/levelG.txt source/levelH.txt source/levelI.txt source/levelJ.txt source/levelK.txt source/levelL.txt source/levelM.txt source/levelN.txt source/levelO.txt source/levelP.txt source/dataA.asm source/dataB.asm source/dataC.asm source/dataD.asm source/dataE.asm source/dataF.asm source/dataG.asm source/dataH.asm source/dataI.asm source/dataJ.asm source/dataK.asm source/dataL.asm source/dataM.asm source/dataN.asm source/dataO.asm source/dataP.asm source/dataQ.asm
 
-game: directories disk/g disk/auxcode disk/icodata disk/sprdata disk/imogen disk/dataA disk/dataB disk/dataC disk/dataD disk/dataE disk/dataF disk/dataG disk/dataH disk/dataI disk/dataJ disk/dataK disk/dataL disk/dataM disk/dataN disk/dataO disk/dataP disk/dataQ check makessd
+game: directories disk/g disk/auxcode disk/icodata disk/sprdata disk/imogen disk/dataA disk/dataB disk/dataC disk/dataD disk/dataE disk/dataF disk/dataG disk/dataH disk/dataI disk/dataJ disk/dataK disk/dataL disk/dataM disk/dataN disk/dataO disk/dataP disk/dataQ check imogen.ssd
 
-makessd:
+imogen.ssd: ssd_maker.asm disk/g disk/auxcode disk/icodata disk/sprdata disk/imogen disk/dataA disk/dataB disk/dataC disk/dataD disk/dataE disk/dataF disk/dataG disk/dataH disk/dataI disk/dataJ disk/dataK disk/dataL disk/dataM disk/dataN disk/dataO disk/dataP disk/dataQ
 	beebasm -i ssd_maker.asm -do imogen.ssd -boot IMOGEN -v
 
 directories: build source disk

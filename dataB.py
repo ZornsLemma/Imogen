@@ -4,7 +4,17 @@ config.set_label_references(False)
 config.set_hex_dump_show_ascii(False)
 
 sprite_dict = {
-#    0xc8: "spriteid_mouse",
+    0xc8: "spriteid_clock",
+    0xc9: "spriteid_pendulum1",
+    0xca: "spriteid_pendulum2",
+    0xcb: "spriteid_pendulum3",
+    0xcc: "spriteid_pendulum4",
+    0xcd: "spriteid_pendulum5",
+
+    0xd1: "spriteid_clock_workings",
+    0xd2: "spriteid_table",
+
+    0xd5: "spriteid_boulder",
 }
 
 # Room 0
@@ -32,11 +42,12 @@ substitute_labels = {
 s = SubstituteLabels(substitute_labels)
 set_label_maker_hook(s.substitute_label_maker)
 
-#comment(0x3ae7, "'SAXOPHOBIA\\r' EOR-encrypted with $cb")
 #comment(0x3b29, "Draw rectangles of ground fill rock with a 2x2 pattern. Also writes to the collision map.", inline=True)
 #comment(0x3b84, "Carve the floor, walls and ceiling into the rock")
 #comment(0x3b87, "Draw tables")
 #comment(0x3bae, "Draw ropes")
+
+label(0x3b1b, "result1")
 
 result = go(False)
 result = remove_sprite_data(result)

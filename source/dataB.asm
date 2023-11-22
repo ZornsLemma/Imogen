@@ -22,6 +22,15 @@ object_collided_right_wall   = 4
 objectid_player              = 0
 objectid_player_accessory    = 1
 opcode_jmp                   = 76
+spriteid_boulder             = 213
+spriteid_clock               = 200
+spriteid_clock_workings      = 209
+spriteid_pendulum1           = 201
+spriteid_pendulum2           = 202
+spriteid_pendulum3           = 203
+spriteid_pendulum4           = 204
+spriteid_pendulum5           = 205
+spriteid_table               = 210
 
 ; Memory locations
 characters_entered                                  = $05
@@ -172,7 +181,7 @@ level_specific_password
 level_specific_initialisation
     lda current_level                                                 ; 3af2: a5 31
     cmp level_before_latest_level_and_room_initialisation             ; 3af4: c5 51
-    beq c3b1b                                                         ; 3af6: f0 23
+    beq result1                                                       ; 3af6: f0 23
     lda developer_flags                                               ; 3af8: ad 03 11
     bpl c3b02                                                         ; 3afb: 10 05
     lda #$ff                                                          ; 3afd: a9 ff
@@ -184,12 +193,12 @@ c3b02
     jsr find_or_create_menu_slot_for_A                                ; 3b09: 20 bd 2b
 c3b0c
     lda l0a05                                                         ; 3b0c: ad 05 0a
-    beq c3b1b                                                         ; 3b0f: f0 0a
+    beq result1                                                       ; 3b0f: f0 0a
     lda l0a06                                                         ; 3b11: ad 06 0a
-    bne c3b1b                                                         ; 3b14: d0 05
+    bne result1                                                       ; 3b14: d0 05
     lda #$d4                                                          ; 3b16: a9 d4
     jsr find_or_create_menu_slot_for_A                                ; 3b18: 20 bd 2b
-c3b1b
+result1
     rts                                                               ; 3b1b: 60
 
 ; *************************************************************************************
@@ -295,7 +304,7 @@ room_0_code
     sta height_in_cells                                               ; 3bca: 85 3d
     ldx #9                                                            ; 3bcc: a2 09
     ldy #$12                                                          ; 3bce: a0 12
-    lda #$d2                                                          ; 3bd0: a9 d2
+    lda #spriteid_table                                               ; 3bd0: a9 d2
     jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map           ; 3bd2: 20 57 1f
     ldx #$0c                                                          ; 3bd5: a2 0c
     jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map           ; 3bd7: 20 57 1f
@@ -476,7 +485,7 @@ room_1_code
     sta height_in_cells                                               ; 3d37: 85 3d
     ldx #6                                                            ; 3d39: a2 06
     ldy #$12                                                          ; 3d3b: a0 12
-    lda #$d2                                                          ; 3d3d: a9 d2
+    lda #spriteid_table                                               ; 3d3d: a9 d2
     jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map           ; 3d3f: 20 57 1f
     ldx #3                                                            ; 3d42: a2 03
     jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map           ; 3d44: 20 57 1f
@@ -620,7 +629,7 @@ c3e60
     bne c3e9a                                                         ; 3e65: d0 33
     lda #4                                                            ; 3e67: a9 04
     sta temp_sprite_x_offset                                          ; 3e69: 85 3a
-    lda #$c8                                                          ; 3e6b: a9 c8
+    lda #spriteid_clock                                               ; 3e6b: a9 c8
     jsr draw_sprite_a_at_cell_xy                                      ; 3e6d: 20 4c 1f
     dex                                                               ; 3e70: ca
     dey                                                               ; 3e71: 88
@@ -861,7 +870,7 @@ room_2_code
     sta height_in_cells                                               ; 4033: 85 3d
     ldx #$13                                                          ; 4035: a2 13
     ldy #$12                                                          ; 4037: a0 12
-    lda #$d5                                                          ; 4039: a9 d5
+    lda #spriteid_boulder                                             ; 4039: a9 d5
     jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map           ; 403b: 20 57 1f
     ldx #$1a                                                          ; 403e: a2 1a
     jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map           ; 4040: 20 57 1f
@@ -922,7 +931,7 @@ c40b1
     ldy #$0b                                                          ; 40b9: a0 0b
     lda #4                                                            ; 40bb: a9 04
     sta temp_sprite_x_offset                                          ; 40bd: 85 3a
-    lda #$d1                                                          ; 40bf: a9 d1
+    lda #spriteid_clock_workings                                      ; 40bf: a9 d1
     jsr draw_sprite_a_at_cell_xy                                      ; 40c1: 20 4c 1f
     ldx #3                                                            ; 40c4: a2 03
     lda #1                                                            ; 40c6: a9 01
@@ -1340,7 +1349,7 @@ room_3_code
     sta height_in_cells                                               ; 43f7: 85 3d
     ldx #$0f                                                          ; 43f9: a2 0f
     ldy #$12                                                          ; 43fb: a0 12
-    lda #$d2                                                          ; 43fd: a9 d2
+    lda #spriteid_table                                               ; 43fd: a9 d2
     jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map           ; 43ff: 20 57 1f
     ldx #$13                                                          ; 4402: a2 13
     jsr draw_sprite_a_at_cell_xy                                      ; 4404: 20 4c 1f
@@ -1350,7 +1359,7 @@ room_3_code
     sta width_in_cells                                                ; 440e: 85 3c
     ldx #$0f                                                          ; 4410: a2 0f
     ldy #$10                                                          ; 4412: a0 10
-    lda #$d5                                                          ; 4414: a9 d5
+    lda #spriteid_boulder                                             ; 4414: a9 d5
     jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map           ; 4416: 20 57 1f
     ldx #$17                                                          ; 4419: a2 17
     jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map           ; 441b: 20 57 1f
@@ -1443,7 +1452,6 @@ pydis_end
 ; Automatically generated labels:
 ;     c3b02
 ;     c3b0c
-;     c3b1b
 ;     c3bfb
 ;     c3c1a
 ;     c3c51
@@ -1571,4 +1579,16 @@ pydis_end
 }
 !if (sprite_data - level_data) != $0a71 {
     !error "Assertion failed: sprite_data - level_data == $0a71"
+}
+!if (spriteid_boulder) != $d5 {
+    !error "Assertion failed: spriteid_boulder == $d5"
+}
+!if (spriteid_clock) != $c8 {
+    !error "Assertion failed: spriteid_clock == $c8"
+}
+!if (spriteid_clock_workings) != $d1 {
+    !error "Assertion failed: spriteid_clock_workings == $d1"
+}
+!if (spriteid_table) != $d2 {
+    !error "Assertion failed: spriteid_table == $d2"
 }
