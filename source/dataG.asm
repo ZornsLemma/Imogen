@@ -179,6 +179,7 @@ level_room_data_table
     !word room_3_data                                                 ; 3ae5: 02 3d
 
 ; *************************************************************************************
+; 'BALLOONACY[0d]' EOR-encrypted with $cb
 level_specific_password
     !byte $89, $8a, $87, $87, $84, $84, $85, $8a, $88, $92, $c6       ; 3ae7: 89 8a 87...
 

@@ -174,6 +174,7 @@ level_room_data_table
     !word room_3_data                                                 ; 3ae5: 0a 40
 
 ; *************************************************************************************
+; 'APPLESOURCE[0d]' EOR-encrypted with $cb
 level_specific_password
     !byte $8a, $9b, $9b, $87, $8e, $98, $84, $9e, $99, $88, $8e, $c6  ; 3ae7: 8a 9b 9b...
 

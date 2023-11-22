@@ -194,6 +194,7 @@ level_room_data_table
     !word room_3_data                                                 ; 3ae5: ac 44
 
 ; *************************************************************************************
+; 'HAMSTER-JAM[0d]' EOR-encrypted with $cb
 level_specific_password
     !byte $83, $8a, $86, $98, $9f, $8e, $99, $e6, $81, $8a, $86, $c6  ; 3ae7: 83 8a 86...
 

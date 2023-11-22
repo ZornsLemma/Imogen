@@ -158,6 +158,7 @@ level_room_data_table
     !word room_3_data                                                 ; 3ae5: 3d 43
 
 ; *************************************************************************************
+; 'TIME-FLIES[0d]' EOR-encrypted with $cb
 level_specific_password
     !byte $9f, $82, $86, $8e, $e6, $8d, $87, $82, $8e, $98, $c6       ; 3ae7: 9f 82 86...
 

@@ -192,6 +192,7 @@ level_room_data_table
     !word room_3_data                                                 ; 3ae5: cc 3e
 
 ; *************************************************************************************
+; 'DRIPPING-STUFF[0d]' EOR-encrypted with $cb
 level_specific_password
     !byte $8f, $99, $82, $9b, $9b, $82, $85, $8c, $e6, $98, $9f, $9e  ; 3ae7: 8f 99 82...
     !byte $8d, $8d, $c6                                               ; 3af3: 8d 8d c6

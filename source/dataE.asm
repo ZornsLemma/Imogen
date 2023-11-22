@@ -191,6 +191,7 @@ level_room_data_table
     !word room_3_data                                                 ; 3ae5: f7 3d
 
 ; *************************************************************************************
+; 'DUCK-EGG-BLUES[0d]' EOR-encrypted with $cb
 level_specific_password
     !byte $8f, $9e, $88, $80, $e6, $8e, $8c, $8c, $e6, $89, $87, $9e  ; 3ae7: 8f 9e 88...
     !byte $8e, $98, $c6                                               ; 3af3: 8e 98 c6

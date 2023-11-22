@@ -190,6 +190,7 @@ level_room_data_table
     !word room_3_data                                                 ; 3ae5: b8 3f
 
 ; *************************************************************************************
+; 'TENDER-HOOKS[0d]' EOR-encrypted with $cb
 level_specific_password
     !byte $9f, $8e, $85, $8f, $8e, $99, $e6, $83, $84, $84, $80, $98  ; 3ae7: 9f 8e 85...
     !byte $c6                                                         ; 3af3: c6

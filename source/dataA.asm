@@ -189,7 +189,7 @@ level_room_data_table
     !word room_3_data                                                 ; 3ae5: 4d 42
 
 ; *************************************************************************************
-; 'SAXOPHOBIA\r' EOR-encrypted with $cb
+; 'SAXOPHOBIA[0d]' EOR-encrypted with $cb
 level_specific_password
     !byte $98, $8a, $93, $84, $9b, $83, $84, $89, $82, $8a, $c6       ; 3ae7: 98 8a 93...
 

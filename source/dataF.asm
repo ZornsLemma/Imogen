@@ -164,6 +164,7 @@ level_room_data_table
     !word room_3_data                                                 ; 3ae5: 6f 42
 
 ; *************************************************************************************
+; 'FOLLOW-ME[0d]' EOR-encrypted with $cb
 level_specific_password
     !byte $8d, $84, $87, $87, $84, $9c, $e6, $86, $8e, $c6            ; 3ae7: 8d 84 87...
 

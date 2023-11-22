@@ -150,6 +150,7 @@ level_room_data_table
     !word room_3_data                                                 ; 3ae5: fb 3f
 
 ; *************************************************************************************
+; 'GNU-PROBLEM[0d]' EOR-encrypted with $cb
 level_specific_password
     !byte $8c, $85, $9e, $e6, $9b, $99, $84, $89, $87, $8e, $86, $c6  ; 3ae7: 8c 85 9e...
 

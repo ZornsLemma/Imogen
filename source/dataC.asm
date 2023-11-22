@@ -169,6 +169,7 @@ level_room_data_table
     !word room_3_data                                                 ; 3ae5: 31 44
 
 ; *************************************************************************************
+; 'FIRE-WORKS[0d]' EOR-encrypted with $cb
 level_specific_password
     !byte $8d, $82, $99, $8e, $e6, $9c, $84, $99, $80, $98, $c6       ; 3ae7: 8d 82 99...
 

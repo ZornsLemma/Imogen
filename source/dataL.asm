@@ -178,6 +178,7 @@ level_room_data_table
     !word room_3_data                                                 ; 3ae5: 40 41
 
 ; *************************************************************************************
+; 'WHIP-IT[0d]' EOR-encrypted with $cb
 level_specific_password
     !byte $9c, $83, $82, $9b, $e6, $82, $9f, $c6                      ; 3ae7: 9c 83 82...
 

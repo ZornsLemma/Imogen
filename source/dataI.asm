@@ -196,6 +196,7 @@ level_room_data_table
     !word room_3_data                                                 ; 3ae5: aa 3e
 
 ; *************************************************************************************
+; 'SEE-SWORD[0d]' EOR-encrypted with $cb
 level_specific_password
     !byte $98, $8e, $8e, $e6, $98, $9c, $84, $99, $8f, $c6            ; 3ae7: 98 8e 8e...
 

@@ -195,6 +195,7 @@ level_room_data_table
     !word room_3_data                                                 ; 3ae5: d0 42
 
 ; *************************************************************************************
+; 'DOWN-AND-OUT[0d]' EOR-encrypted with $cb
 level_specific_password
     !byte $8f, $84, $9c, $85, $e6, $8a, $85, $8f, $e6, $84, $9e, $9f  ; 3ae7: 8f 84 9c...
     !byte $c6                                                         ; 3af3: c6

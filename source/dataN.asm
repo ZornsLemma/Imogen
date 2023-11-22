@@ -196,6 +196,7 @@ level_room_data_table
     !word room_3_data                                                 ; 3ae5: 55 43
 
 ; *************************************************************************************
+; 'PAVLOV-WAS-HERE[0d]' EOR-encrypted with $cb
 level_specific_password
     !byte $9b, $8a, $9d, $87, $84, $9d, $e6, $9c, $8a, $98, $e6, $83  ; 3ae7: 9b 8a 9d...
     !byte $8e, $99, $8e, $c6                                          ; 3af3: 8e 99 8e...

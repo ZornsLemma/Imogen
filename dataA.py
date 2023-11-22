@@ -110,8 +110,6 @@ tile_bitmap(0x4496, "ground_fill_2x2_bottom_left")
 tile_bitmap(0x449e, "ground_fill_2x2_bottom_right")
 
 
-comment(0x3ae7, "'SAXOPHOBIA\\r' EOR-encrypted with $cb")
-
 comment(0x3af4, "if level is unchanged, skip forwards")
 comment(0x3af8, "if not in developer mode, skip forwards")
 entry(0x3b04, "developer_mode_not_active")
