@@ -1,7 +1,7 @@
 # Makefile for Imogen
 #    (Introduction to writing makefiles: https://nullprogram.com/blog/2017/08/20/)
 
-# 'make source' creates the files in the source/ directory from the original binaries
+# 'make src' creates the files in the source/ directory from the original binaries
 # 'make game' takes the source files and creates binary files from them in the /disk directory. It checks the newly made binaries match the originals. (TODO: create an ssd from the binaries too)
 # 'make' or 'make all' does both
 #
