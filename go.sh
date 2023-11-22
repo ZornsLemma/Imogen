@@ -84,3 +84,81 @@ acme -o build/dataC --report build/dataC.lst source/dataC.asm
 cat build/dataC build/levelC >disk/dataC
 cmp orig/dataC.dat disk/dataC || echo dataC.asm rebuild failed
 
+# Data D
+python3 dataD.py --acme > source/dataD.asm
+acme -o build/dataD --report build/dataD.lst source/dataD.asm
+cat build/dataD build/levelD >disk/dataD
+cmp orig/dataD.dat disk/dataD || echo dataD.asm rebuild failed
+
+# Data E
+python3 dataE.py --acme > source/dataE.asm
+acme -o build/dataE --report build/dataE.lst source/dataE.asm
+cat build/dataE build/levelE >disk/dataE
+cmp orig/dataE.dat disk/dataE || echo dataE.asm rebuild failed
+
+# Data F
+python3 dataF.py --acme > source/dataF.asm
+acme -o build/dataF --report build/dataF.lst source/dataF.asm
+cat build/dataF build/levelF >disk/dataF
+cmp orig/dataF.dat disk/dataF || echo dataF.asm rebuild failed
+
+# Data G
+python3 dataG.py --acme > source/dataG.asm
+acme -o build/dataG --report build/dataG.lst source/dataG.asm
+cat build/dataG build/levelG >disk/dataG
+cmp orig/dataG.dat disk/dataG || echo dataG.asm rebuild failed
+
+# Data H
+python3 dataH.py --acme > source/dataH.asm
+acme -o build/dataH --report build/dataH.lst source/dataH.asm
+cat build/dataH build/levelH >disk/dataH
+cmp orig/dataH.dat disk/dataH || echo dataH.asm rebuild failed
+
+# Data I
+python3 dataI.py --acme > source/dataI.asm
+acme -o build/dataI --report build/dataI.lst source/dataI.asm
+cat build/dataI build/levelI >disk/dataI
+cmp orig/dataI.dat disk/dataI || echo dataI.asm rebuild failed
+
+# Data J
+python3 dataJ.py --acme > source/dataJ.asm
+acme -o build/dataJ --report build/dataJ.lst source/dataJ.asm
+cat build/dataJ build/levelJ >disk/dataJ
+cmp orig/dataJ.dat disk/dataJ || echo dataJ.asm rebuild failed
+
+# Data K
+python3 dataK.py --acme > source/dataK.asm
+acme -o build/dataK --report build/dataK.lst source/dataK.asm
+cat build/dataK build/levelK >disk/dataK
+cmp orig/dataK.dat disk/dataK || echo dataK.asm rebuild failed
+
+# Data L
+python3 dataL.py --acme > source/dataL.asm
+acme -o build/dataL --report build/dataL.lst source/dataL.asm
+cat build/dataL build/levelL >disk/dataL
+cmp orig/dataL.dat disk/dataL || echo dataL.asm rebuild failed
+
+# Data M
+python3 dataM.py --acme > source/dataM.asm
+acme -o build/dataM --report build/dataM.lst source/dataM.asm
+cat build/dataM build/levelM >disk/dataM
+cmp orig/dataM.dat disk/dataM || echo dataM.asm rebuild failed
+
+# Data N
+python3 dataN.py --acme > source/dataN.asm
+acme -o build/dataN --report build/dataN.lst source/dataN.asm
+cat build/dataN build/levelN >disk/dataN
+cmp orig/dataN.dat disk/dataN || echo dataN.asm rebuild failed
+
+# Data O
+python3 dataO.py --acme > source/dataO.asm
+acme -o build/dataO --report build/dataO.lst source/dataO.asm
+cat build/dataO build/levelO >disk/dataO
+cmp orig/dataO.dat disk/dataO || echo dataO.asm rebuild failed
+
+# Data P
+python3 dataP.py --acme > source/dataP.asm
+acme -o build/dataP --report build/dataP.lst source/dataP.asm
+cat build/dataP build/levelP >disk/dataP
+cmp orig/dataP.dat disk/dataP || echo dataP.asm rebuild failed
+
