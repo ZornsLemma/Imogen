@@ -1522,7 +1522,6 @@ On Exit:
     comment(0x1ee4, "store the value to write in temp_coordinate, but first put it's previous value (the offset within the byte) into X")
     comment(0x1ee8, "write the new value into the collision map, based on some bits from the old value and the new value bits being written, similar to the routine above.")
     comment(0x1ef3, "restore X,Y and A")
-    label(0x1efa, "read_collision_map_value_for_xy")
     stars(0x1efa, """Read a two bit value from the collision map at X,Y
 
 On Entry:
