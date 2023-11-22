@@ -78,7 +78,7 @@ def define_level(num_rooms):
         b = get_u8_runtime(RuntimeAddr(addr))
         b = b ^ 0xcb
         if b < 32:
-            password += "[" + ("0"+hex(b)[2:])[0:2] + "]"
+            password += "[{:02x}]".format(b)
         else:
             password += chr(b)
         addr += 1
