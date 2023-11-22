@@ -356,6 +356,11 @@ entry(0x40f7, "have_specific_baby_spriteid")
 entry(0x41d9, "room2_update_second_part")
 expr(0x41d3, "baby_spriteid_data_entries_minus_1")
 expr(0x41e3, "baby_spriteid_data_entries_minus_1")
+expr(0x41f4, "baby_spriteid_data_entries_minus_1")
+comment(0x41f7, "Add the baby to the collision map.")
+entry(0x420c, "update_collision_map_for_baby") # TODO?
+comment(0x420c, "Remove the baby from the collision map (TODO: at its old position?) and add it at its new position. TODO: Looking at the change in Y position and the change in width/heigh, I suspect this is handling the baby being killed and falling flat")
+entry(0x4224, "baby_direction_negative2")
 
 entry(0x42ea, "loop_until_exit_room_left")
 expr(0x42ee, "exit_room_left")

@@ -1243,8 +1243,9 @@ room2_update_second_part
     lsr                                                               ; 41ee: 4a
     tax                                                               ; 41ef: aa
     lda baby_sprite_index                                             ; 41f0: ad 73 0a
-    cmp #$2b ; '+'                                                    ; 41f3: c9 2b
-    beq c420c                                                         ; 41f5: f0 15
+    cmp #baby_spriteid_data_entries_minus_1                           ; 41f3: c9 2b
+    beq update_collision_map_for_baby                                 ; 41f5: f0 15
+; Add the baby to the collision map.
     dex                                                               ; 41f7: ca
     ldy #$11                                                          ; 41f8: a0 11
     lda #2                                                            ; 41fa: a9 02
@@ -1256,7 +1257,10 @@ room2_update_second_part
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 4206: 20 44 1e
     jmp set_baby_object_properties                                    ; 4209: 4c 35 42
 
-c420c
+; Remove the baby from the collision map (TODO: at its old position?) and add it at its
+; new position. TODO: Looking at the change in Y position and the change in
+; width/heigh, I suspect this is handling the baby being killed and falling flat
+update_collision_map_for_baby
     dex                                                               ; 420c: ca
     ldy #$11                                                          ; 420d: a0 11
     lda #2                                                            ; 420f: a9 02
@@ -1267,9 +1271,9 @@ c420c
     sta value_to_write_to_collision_map                               ; 4219: 85 3e
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 421b: 20 44 1e
     lda save_game_level_a_room_2_baby_direction                       ; 421e: ad 04 0a
-    bmi c4224                                                         ; 4221: 30 01
+    bmi baby_direction_negative2                                      ; 4221: 30 01
     dex                                                               ; 4223: ca
-c4224
+baby_direction_negative2
     ldy #$13                                                          ; 4224: a0 13
     lda #3                                                            ; 4226: a9 03
     sta width_in_cells                                                ; 4228: 85 3c
@@ -1809,8 +1813,6 @@ pydis_end
 ;     c4194
 ;     c419f
 ;     c41c9
-;     c420c
-;     c4224
 !if (<envelope1) != $60 {
     !error "Assertion failed: <envelope1 == $60"
 }
