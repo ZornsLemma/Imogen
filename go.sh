@@ -162,3 +162,8 @@ acme -o build/dataP --report build/dataP.lst source/dataP.asm
 cat build/dataP build/levelP >disk/dataP
 cmp orig/dataP.dat disk/dataP || echo dataP.asm rebuild failed
 
+# Data Q
+python3 dataQ.py --acme > source/dataQ.asm
+acme -o disk/dataQ --report build/dataQ.lst source/dataQ.asm
+cmp orig/dataQ.dat disk/dataQ || echo dataQ.asm rebuild failed
+

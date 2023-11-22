@@ -62,7 +62,8 @@ def define_level(num_rooms):
     label(sprite_data, "sprite_data")
     r = memorymanager.get_entire_load_range()
     end = r[1]
-    byte(sprite_data, end - sprite_data)
+    if end > sprite_data:
+        byte(sprite_data, end - sprite_data)
 
     word(start+2)
     expr(start+2, "level_specific_initialisation")
