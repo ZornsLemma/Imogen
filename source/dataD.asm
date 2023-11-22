@@ -92,7 +92,7 @@ draw_floor_walls_and_ceiling_around_solid_rock      = $1b90
 draw_rope                                           = $1db9
 write_value_to_a_rectangle_of_cells_in_collision_map = $1e44
 write_a_single_value_to_cell_in_collision_map       = $1ebb
-l1efa                                               = $1efa
+read_collision_map_value_for_xy                     = $1efa
 draw_sprite_a_at_cell_xy                            = $1f4c
 draw_sprite_a_at_cell_xy_and_write_to_collision_map = $1f57
 set_object_position_from_cell_xy                    = $1f5d
@@ -460,7 +460,7 @@ c3d22
     stx value_to_write_to_collision_map                               ; 3d22: 86 3e
     ldx #$14                                                          ; 3d24: a2 14
     ldy #3                                                            ; 3d26: a0 03
-    jsr l1efa                                                         ; 3d28: 20 fa 1e
+    jsr read_collision_map_value_for_xy                               ; 3d28: 20 fa 1e
     cmp value_to_write_to_collision_map                               ; 3d2b: c5 3e
     beq c3d3f                                                         ; 3d2d: f0 10
     lda #$11                                                          ; 3d2f: a9 11
@@ -483,7 +483,7 @@ c3d4d
     stx value_to_write_to_collision_map                               ; 3d4d: 86 3e
     ldx #$0e                                                          ; 3d4f: a2 0e
     ldy #3                                                            ; 3d51: a0 03
-    jsr l1efa                                                         ; 3d53: 20 fa 1e
+    jsr read_collision_map_value_for_xy                               ; 3d53: 20 fa 1e
     cmp value_to_write_to_collision_map                               ; 3d56: c5 3e
     beq c3d6a                                                         ; 3d58: f0 10
     lda #6                                                            ; 3d5a: a9 06
@@ -1236,7 +1236,7 @@ c4309
     sta height_in_cells                                               ; 4341: 85 3d
     ldx #4                                                            ; 4343: a2 04
     ldy #$15                                                          ; 4345: a0 15
-    jsr l1efa                                                         ; 4347: 20 fa 1e
+    jsr read_collision_map_value_for_xy                               ; 4347: 20 fa 1e
     bne c4366                                                         ; 434a: d0 1a
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 434c: 20 44 1e
     jmp c4366                                                         ; 434f: 4c 66 43
@@ -1248,7 +1248,7 @@ c4352
     sta height_in_cells                                               ; 4358: 85 3d
     ldx #6                                                            ; 435a: a2 06
     ldy #$13                                                          ; 435c: a0 13
-    jsr l1efa                                                         ; 435e: 20 fa 1e
+    jsr read_collision_map_value_for_xy                               ; 435e: 20 fa 1e
     bne c4366                                                         ; 4361: d0 03
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 4363: 20 44 1e
 c4366
@@ -1339,7 +1339,6 @@ pydis_end
 ;     l0a6f
 ;     l0a70
 ;     l0a71
-;     l1efa
 ;     l2ef4
 ;     l3fd6
 ;     l415c

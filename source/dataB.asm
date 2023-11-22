@@ -107,7 +107,7 @@ draw_floor_walls_and_ceiling_around_solid_rock      = $1b90
 draw_rope                                           = $1db9
 write_value_to_a_rectangle_of_cells_in_collision_map = $1e44
 write_a_single_value_to_cell_in_collision_map       = $1ebb
-l1efa                                               = $1efa
+read_collision_map_value_for_xy                     = $1efa
 draw_sprite_a_at_cell_xy                            = $1f4c
 draw_sprite_a_at_cell_xy_and_write_to_collision_map = $1f57
 set_object_position_from_cell_xy                    = $1f5d
@@ -1141,7 +1141,7 @@ c4258
     sta height_in_cells                                               ; 426f: 85 3d
     lda #0                                                            ; 4271: a9 00
     sta value_to_write_to_collision_map                               ; 4273: 85 3e
-    jsr l1efa                                                         ; 4275: 20 fa 1e
+    jsr read_collision_map_value_for_xy                               ; 4275: 20 fa 1e
     cmp value_to_write_to_collision_map                               ; 4278: c5 3e
     beq c427f                                                         ; 427a: f0 03
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 427c: 20 44 1e
@@ -1184,7 +1184,7 @@ c42b3
     sta height_in_cells                                               ; 42c7: 85 3d
     lda #3                                                            ; 42c9: a9 03
     sta value_to_write_to_collision_map                               ; 42cb: 85 3e
-    jsr l1efa                                                         ; 42cd: 20 fa 1e
+    jsr read_collision_map_value_for_xy                               ; 42cd: 20 fa 1e
     cmp value_to_write_to_collision_map                               ; 42d0: c5 3e
     beq c42d7                                                         ; 42d2: f0 03
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 42d4: 20 44 1e
@@ -1527,7 +1527,6 @@ pydis_end
 ;     l0a73
 ;     l0a74
 ;     l0a75
-;     l1efa
 ;     l2ef4
 ;     l38b2
 ;     l38c8

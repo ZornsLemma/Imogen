@@ -102,82 +102,82 @@ source/levelO.txt: decoder.py orig/dataO.dat
 source/levelP.txt: decoder.py orig/dataP.dat
 	python3 decoder.py -i orig/dataP.dat -o source/levelP.txt -l
 
-source/dataA.asm: dataA.py common_to_levels.py orig/dataA.dat
+source/dataA.asm: dataA.py common.py common_to_levels.py orig/dataA.dat
 	python3 dataA.py --acme > build/dataA_temp.asm
 	cp build/dataA_temp.asm source/dataA.asm
 	rm build/dataA_temp.asm
 
-source/dataB.asm: dataB.py common_to_levels.py orig/dataB.dat
+source/dataB.asm: dataB.py common.py common_to_levels.py orig/dataB.dat
 	python3 dataB.py --acme > build/dataB_temp.asm
 	cp build/dataB_temp.asm source/dataB.asm
 	rm build/dataB_temp.asm
 
-source/dataC.asm: dataC.py common_to_levels.py orig/dataC.dat
+source/dataC.asm: dataC.py common.py common_to_levels.py orig/dataC.dat
 	python3 dataC.py --acme > build/dataC_temp.asm
 	cp build/dataC_temp.asm source/dataC.asm
 	rm build/dataC_temp.asm
 
-source/dataD.asm: dataD.py common_to_levels.py orig/dataD.dat
+source/dataD.asm: dataD.py common.py common_to_levels.py orig/dataD.dat
 	python3 dataD.py --acme > build/dataD_temp.asm
 	cp build/dataD_temp.asm source/dataD.asm
 	rm build/dataD_temp.asm
 
-source/dataE.asm: dataE.py common_to_levels.py orig/dataE.dat
+source/dataE.asm: dataE.py common.py common_to_levels.py orig/dataE.dat
 	python3 dataE.py --acme > build/dataE_temp.asm
 	cp build/dataE_temp.asm source/dataE.asm
 	rm build/dataE_temp.asm
 
-source/dataF.asm: dataF.py common_to_levels.py orig/dataF.dat
+source/dataF.asm: dataF.py common.py common_to_levels.py orig/dataF.dat
 	python3 dataF.py --acme > build/dataF_temp.asm
 	cp build/dataF_temp.asm source/dataF.asm
 	rm build/dataF_temp.asm
 
-source/dataG.asm: dataG.py common_to_levels.py orig/dataG.dat
+source/dataG.asm: dataG.py common.py common_to_levels.py orig/dataG.dat
 	python3 dataG.py --acme > build/dataG_temp.asm
 	cp build/dataG_temp.asm source/dataG.asm
 	rm build/dataG_temp.asm
 
-source/dataH.asm: dataH.py common_to_levels.py orig/dataH.dat
+source/dataH.asm: dataH.py common.py common_to_levels.py orig/dataH.dat
 	python3 dataH.py --acme > build/dataH_temp.asm
 	cp build/dataH_temp.asm source/dataH.asm
 	rm build/dataH_temp.asm
 
-source/dataI.asm: dataI.py common_to_levels.py orig/dataI.dat
+source/dataI.asm: dataI.py common.py common_to_levels.py orig/dataI.dat
 	python3 dataI.py --acme > build/dataI_temp.asm
 	cp build/dataI_temp.asm source/dataI.asm
 	rm build/dataI_temp.asm
 
-source/dataJ.asm: dataJ.py common_to_levels.py orig/dataJ.dat
+source/dataJ.asm: dataJ.py common.py common_to_levels.py orig/dataJ.dat
 	python3 dataJ.py --acme > build/dataJ_temp.asm
 	cp build/dataJ_temp.asm source/dataJ.asm
 	rm build/dataJ_temp.asm
 
-source/dataK.asm: dataK.py common_to_levels.py orig/dataK.dat
+source/dataK.asm: dataK.py common.py common_to_levels.py orig/dataK.dat
 	python3 dataK.py --acme > build/dataK_temp.asm
 	cp build/dataK_temp.asm source/dataK.asm
 	rm build/dataK_temp.asm
 
-source/dataL.asm: dataL.py common_to_levels.py orig/dataL.dat
+source/dataL.asm: dataL.py common.py common_to_levels.py orig/dataL.dat
 	python3 dataL.py --acme > build/dataL_temp.asm
 	cp build/dataL_temp.asm source/dataL.asm
 	rm build/dataL_temp.asm
 
-source/dataM.asm: dataM.py common_to_levels.py orig/dataM.dat
+source/dataM.asm: dataM.py common.py common_to_levels.py orig/dataM.dat
 	python3 dataM.py --acme > build/dataM_temp.asm
 	cp build/dataM_temp.asm source/dataM.asm
 	rm build/dataM_temp.asm
 
-source/dataN.asm: dataN.py common_to_levels.py orig/dataN.dat
+source/dataN.asm: dataN.py common.py common_to_levels.py orig/dataN.dat
 	python3 dataN.py --acme > build/dataN_temp.asm
 	cp build/dataN_temp.asm source/dataN.asm
 	rm build/dataN_temp.asm
 
-source/dataO.asm: dataO.py common_to_levels.py orig/dataO.dat
+source/dataO.asm: dataO.py common.py common_to_levels.py orig/dataO.dat
 	python3 dataO.py --acme > build/dataO_temp.asm
 	cp build/dataO_temp.asm source/dataO.asm
 	rm build/dataO_temp.asm
 
-source/dataP.asm: dataP.py common_to_levels.py orig/dataP.dat
+source/dataP.asm: dataP.py common.py common_to_levels.py orig/dataP.dat
 	python3 dataP.py --acme > build/dataP_temp.asm
 	cp build/dataP_temp.asm source/dataP.asm
 	rm build/dataP_temp.asm
