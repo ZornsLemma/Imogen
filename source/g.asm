@@ -6725,9 +6725,9 @@ monkey_not_falling
     cmp #monkey_climb_idle_animation - monkey_base_animation          ; 333b: c9 45       .E  :320a[1]
     beq update_monkey_climbing                                        ; 333d: f0 14       ..  :320c[1]
     lda jump_requested                                                ; 333f: ad c7 3a    ..: :320e[1]
-    beq c3276                                                         ; 3342: f0 63       .c  :3211[1]
+    beq monkey_update_standing_fall                                   ; 3342: f0 63       .c  :3211[1]
     jsr can_monkey_climb                                              ; 3344: 20 6e 33     n3 :3213[1]
-    beq c3276                                                         ; 3347: f0 5e       .^  :3216[1]
+    beq monkey_update_standing_fall                                   ; 3347: f0 5e       .^  :3216[1]
     lda #monkey_climb_animation - monkey_base_animation               ; 3349: a9 51       .Q  :3218[1]
     sta current_animation                                             ; 334b: 8d df 09    ... :321a[1]
     ldy #monkey_animation10 - monkey_base_animation                   ; 334e: a0 4d       .M  :321d[1]
@@ -6761,14 +6761,14 @@ monkey_not_jumping
     ldx #monkey_climb_down_animation - monkey_base_animation          ; 3387: a2 49       .I  :3256[1]
     lda player_has_hit_floor_flag                                     ; 3389: ad 8f 28    ..( :3258[1]
     beq monkey_set_animation_x                                        ; 338c: f0 0c       ..  :325b[1]
-    bne c3276                                                         ; 338e: d0 17       ..  :325d[1]   ; ALWAYS branch
+    bne monkey_update_standing_fall                                   ; 338e: d0 17       ..  :325d[1]   ; ALWAYS branch
 
 monkey_start_falling
     lda #monkey_fall_animation - monkey_base_animation                ; 3390: a9 d4       ..  :325f[1]
     sta current_animation                                             ; 3392: 8d df 09    ... :3261[1]
     txa                                                               ; 3395: 8a          .   :3264[1]
     tay                                                               ; 3396: a8          .   :3265[1]
-    jmp c3276                                                         ; 3397: 4c 76 32    Lv2 :3266[1]
+    jmp monkey_update_standing_fall                                   ; 3397: 4c 76 32    Lv2 :3266[1]
 
 monkey_set_animation_x
     cpx current_animation                                             ; 339a: ec df 09    ... :3269[1]
@@ -6779,37 +6779,37 @@ monkey_set_animation_x
 monkey_got_index_in_animation_local2
     jmp monkey_got_index_in_animation                                 ; 33a4: 4c 31 33    L13 :3273[1]
 
-c3276
+monkey_update_standing_fall
     lda current_animation                                             ; 33a7: ad df 09    ... :3276[1]
     cmp #monkey_standing_fall_animation - monkey_base_animation       ; 33aa: c9 7a       .z  :3279[1]
-    bne c328d                                                         ; 33ac: d0 10       ..  :327b[1]
+    bne monkey_update_jump                                            ; 33ac: d0 10       ..  :327b[1]
     dec temp_top_offset                                               ; 33ae: ce 50 25    .P% :327d[1]
     lda #0                                                            ; 33b1: a9 00       ..  :3280[1]
     jsr get_solid_rock_collision_for_object_a                         ; 33b3: 20 94 28     .( :3282[1]
-    bne c32ac                                                         ; 33b6: d0 25       .%  :3285[1]
+    bne monkey_check_if_hit_floor                                     ; 33b6: d0 25       .%  :3285[1]
     cpy #monkey_standing_fall_animation - monkey_base_animation       ; 33b8: c0 7a       .z  :3287[1]
-    beq c32ac                                                         ; 33ba: f0 21       .!  :3289[1]
+    beq monkey_check_if_hit_floor                                     ; 33ba: f0 21       .!  :3289[1]
     bne monkey_got_index_in_animation_local2                          ; 33bc: d0 e6       ..  :328b[1]   ; ALWAYS branch
 
-c328d
+monkey_update_jump
     lda current_animation                                             ; 33be: ad df 09    ... :328d[1]
     cmp #monkey_jump_animation - monkey_base_animation                ; 33c1: c9 87       ..  :3290[1]
-    bne c32ac                                                         ; 33c3: d0 18       ..  :3292[1]
+    bne monkey_check_if_hit_floor                                     ; 33c3: d0 18       ..  :3292[1]
     dec temp_top_offset                                               ; 33c5: ce 50 25    .P% :3294[1]
     lda #0                                                            ; 33c8: a9 00       ..  :3297[1]
     jsr get_solid_rock_collision_for_object_a                         ; 33ca: 20 94 28     .( :3299[1]
-    bne c32a5                                                         ; 33cd: d0 07       ..  :329c[1]
+    bne monkey_fall                                                   ; 33cd: d0 07       ..  :329c[1]
     cpy #monkey_jump_animation - monkey_base_animation                ; 33cf: c0 87       ..  :329e[1]
-    beq c32a5                                                         ; 33d1: f0 03       ..  :32a0[1]
+    beq monkey_fall                                                   ; 33d1: f0 03       ..  :32a0[1]
     jmp monkey_got_index_in_animation                                 ; 33d3: 4c 31 33    L13 :32a2[1]
 
-c32a5
+monkey_fall
     lda #monkey_fall_animation - monkey_base_animation                ; 33d6: a9 d4       ..  :32a5[1]
     sta current_animation                                             ; 33d8: 8d df 09    ... :32a7[1]
     ldy #monkey_animation15 - monkey_base_animation                   ; 33db: a0 97       ..  :32aa[1]
-c32ac
+monkey_check_if_hit_floor
     lda player_has_hit_floor_flag                                     ; 33dd: ad 8f 28    ..( :32ac[1]
-    bne c32c8                                                         ; 33e0: d0 17       ..  :32af[1]
+    bne monkey_check_for_standing_fall                                ; 33e0: d0 17       ..  :32af[1]
 monkey_falling
     lda #monkey_fall_animation - monkey_base_animation                ; 33e2: a9 d4       ..  :32b1[1]
     cmp current_animation                                             ; 33e4: cd df 09    ... :32b3[1]
@@ -6822,53 +6822,53 @@ monkey_falling
     tay                                                               ; 33f5: a8          .   :32c4[1]
     jmp monkey_got_index_in_animation                                 ; 33f6: 4c 31 33    L13 :32c5[1]
 
-c32c8
+monkey_check_for_standing_fall
     ldx player_move_direction_requested                               ; 33f9: ae c9 3a    ..: :32c8[1]
-    bne c32de                                                         ; 33fc: d0 11       ..  :32cb[1]
+    bne monkey_check_change_direction                                 ; 33fc: d0 11       ..  :32cb[1]
     lda jump_requested                                                ; 33fe: ad c7 3a    ..: :32cd[1]
-    beq c3301                                                         ; 3401: f0 2f       ./  :32d0[1]
+    beq monkey_set_standing_still                                     ; 3401: f0 2f       ./  :32d0[1]
     lda current_animation                                             ; 3403: ad df 09    ... :32d2[1]
     cmp #monkey_fall_animation - monkey_base_animation                ; 3406: c9 d4       ..  :32d5[1]
-    beq c3301                                                         ; 3408: f0 28       .(  :32d7[1]
+    beq monkey_set_standing_still                                     ; 3408: f0 28       .(  :32d7[1]
     lda #monkey_standing_fall_animation - monkey_base_animation       ; 340a: a9 7a       .z  :32d9[1]
-    jmp c32f5                                                         ; 340c: 4c f5 32    L.2 :32db[1]
+    jmp monkey_set_animation                                          ; 340c: 4c f5 32    L.2 :32db[1]
 
-c32de
+monkey_check_change_direction
     lda #monkey_change_direction_animation - monkey_base_animation    ; 340f: a9 36       .6  :32de[1]
     cpx object_direction                                              ; 3411: ec be 09    ... :32e0[1]
-    bne c32f5                                                         ; 3414: d0 10       ..  :32e3[1]
+    bne monkey_set_animation                                          ; 3414: d0 10       ..  :32e3[1]
     lda #monkey_walk_cycle_animation - monkey_base_animation          ; 3416: a9 29       .)  :32e5[1]
     ldx jump_requested                                                ; 3418: ae c7 3a    ..: :32e7[1]
-    beq c32f5                                                         ; 341b: f0 09       ..  :32ea[1]
+    beq monkey_set_animation                                          ; 341b: f0 09       ..  :32ea[1]
     ldx current_animation                                             ; 341d: ae df 09    ... :32ec[1]
     cpx #monkey_fall_animation - monkey_base_animation                ; 3420: e0 d4       ..  :32ef[1]
-    beq c32f5                                                         ; 3422: f0 02       ..  :32f1[1]
+    beq monkey_set_animation                                          ; 3422: f0 02       ..  :32f1[1]
     lda #monkey_jump_animation - monkey_base_animation                ; 3424: a9 87       ..  :32f3[1]
-c32f5
+monkey_set_animation
     cmp current_animation                                             ; 3426: cd df 09    ... :32f5[1]
-    beq c3316                                                         ; 3429: f0 1c       ..  :32f8[1]
+    beq monkey_update_falling_off_edge                                ; 3429: f0 1c       ..  :32f8[1]
     sta current_animation                                             ; 342b: 8d df 09    ... :32fa[1]
     tay                                                               ; 342e: a8          .   :32fd[1]
-    jmp c3316                                                         ; 342f: 4c 16 33    L.3 :32fe[1]
+    jmp monkey_update_falling_off_edge                                ; 342f: 4c 16 33    L.3 :32fe[1]
 
-c3301
+monkey_set_standing_still
     lda current_animation                                             ; 3432: ad df 09    ... :3301[1]
     ldy #monkey_standing_still_animation - monkey_base_animation      ; 3435: a0 41       .A  :3304[1]
     sty current_animation                                             ; 3437: 8c df 09    ... :3306[1]
     cmp #monkey_walk_cycle_animation - monkey_base_animation          ; 343a: c9 29       .)  :3309[1]
-    beq c3311                                                         ; 343c: f0 04       ..  :330b[1]
+    beq monkey_was_walking_or_changing_direction                      ; 343c: f0 04       ..  :330b[1]
     cmp #monkey_change_direction_animation - monkey_base_animation    ; 343e: c9 36       .6  :330d[1]
-    bne c3316                                                         ; 3440: d0 05       ..  :330f[1]
-c3311
+    bne monkey_update_falling_off_edge                                ; 3440: d0 05       ..  :330f[1]
+monkey_was_walking_or_changing_direction
     ldy #monkey_animation6 - monkey_base_animation                    ; 3442: a0 3d       .=  :3311[1]
-    jmp c3316                                                         ; 3444: 4c 16 33    L.3 :3313[1]
+    jmp monkey_update_falling_off_edge                                ; 3444: 4c 16 33    L.3 :3313[1]
 
-c3316
+monkey_update_falling_off_edge
     ldx #0                                                            ; 3447: a2 00       ..  :3316[1]
     lda player_move_direction_requested                               ; 3449: ad c9 3a    ..: :3318[1]
-    beq c331e                                                         ; 344c: f0 01       ..  :331b[1]
+    beq skip5                                                         ; 344c: f0 01       ..  :331b[1]
     inx                                                               ; 344e: e8          .   :331d[1]
-c331e
+skip5
     lda player_just_fallen_off_edge_direction,x                       ; 344f: bd 90 28    ..( :331e[1]
     beq monkey_got_index_in_animation                                 ; 3452: f0 0e       ..  :3321[1]
     ldy #monkey_fall_animation - monkey_base_animation                ; 3454: a0 d4       ..  :3323[1]
@@ -7199,23 +7199,23 @@ got_encrypted_string_to_show
     lda #>save_full_filename                                          ; 36ab: a9 34       .4  :357a[1]
     sta address1_high                                                 ; 36ad: 85 71       .q  :357c[1]
     lda osfile_action_load_or_save                                    ; 36af: ad 97 34    ..4 :357e[1]
-    beq c359e                                                         ; 36b2: f0 1b       ..  :3581[1]
+    beq save                                                          ; 36b2: f0 1b       ..  :3581[1]
     lda #osfile_read_catalogue_info                                   ; 36b4: a9 05       ..  :3583[1]
     jsr osfile_wrapper                                                ; 36b6: 20 dc 16     .. :3585[1]
     bne show_load_save_dialog_local                                   ; 36b9: d0 11       ..  :3588[1]
     lda osfile_block_start_address_mid1                               ; 36bb: a5 7b       .{  :358a[1]
     ora osfile_block_start_address_mid2                               ; 36bd: 05 7c       .|  :358c[1]
     ora osfile_block_start_address_high                               ; 36bf: 05 7d       .}  :358e[1]
-    bne c3598                                                         ; 36c1: d0 06       ..  :3590[1]
+    bne wrong_start_address                                           ; 36c1: d0 06       ..  :3590[1]
     lda osfile_block_start_address_low                                ; 36c3: a5 7a       .z  :3592[1]
     cmp #$85                                                          ; 36c5: c9 85       ..  :3594[1]
-    beq c35bc                                                         ; 36c7: f0 24       .$  :3596[1]
-c3598
+    beq save_or_validated_load                                        ; 36c7: f0 24       .$  :3596[1]
+wrong_start_address
     jsr show_disk_error_dialog_if_display_is_initialised              ; 36c9: 20 28 17     (. :3598[1]
 show_load_save_dialog_local
     jmp show_load_save_dialog                                         ; 36cc: 4c 0d 34    L.4 :359b[1]
 
-c359e
+save
     jsr get_checksum_of_save_game_data                                ; 36cf: 20 c3 0a     .. :359e[1]
     sta save_game_checksum                                            ; 36d2: 8d eb 09    ... :35a1[1]
     ldx #0                                                            ; 36d5: a2 00       ..  :35a4[1]
@@ -7230,7 +7230,7 @@ c359e
     sta osfile_block_end_address_low                                  ; 36e7: 85 7e       .~  :35b6[1]
     lda #>sixteen_entry_table                                         ; 36e9: a9 0a       ..  :35b8[1]
     sta osfile_block_end_address_mid1                                 ; 36eb: 85 7f       ..  :35ba[1]
-c35bc
+save_or_validated_load
     ldx #<save_game                                                   ; 36ed: a2 ea       ..  :35bc[1]
     ldy #>save_game                                                   ; 36ef: a0 09       ..  :35be[1]
     lda osfile_action_load_or_save                                    ; 36f1: ad 97 34    ..4 :35c0[1]
@@ -7596,13 +7596,13 @@ string_length_in_y
     sbc address1_low                                                  ; 393d: e5 70       .p  :380c[1]
     lsr                                                               ; 393f: 4a          J   :380e[1]
     tay                                                               ; 3940: a8          .   :380f[1]
-    beq c381a                                                         ; 3941: f0 08       ..  :3810[1]
+    beq print_spaces_done                                             ; 3941: f0 08       ..  :3810[1]
     lda #' '                                                          ; 3943: a9 20       .   :3812[1]
 print_y_spaces_loop
     jsr oswrch                                                        ; 3945: 20 ee ff     .. :3814[1]   ; Write character 32
     dey                                                               ; 3948: 88          .   :3817[1]
     bne print_y_spaces_loop                                           ; 3949: d0 fa       ..  :3818[1]
-c381a
+print_spaces_done
     ldy address1_high                                                 ; 394b: a4 71       .q  :381a[1]
 ; *************************************************************************************
 ; 
@@ -7911,9 +7911,9 @@ update_mid_transformation
     tay                                                               ; 3abd: a8          .   :398c[1]
     lda mid_transform_sprites_table,y                                 ; 3abe: b9 74 39    .t9 :398d[1]
     cmp #$ff                                                          ; 3ac1: c9 ff       ..  :3990[1]
-    bne c3997                                                         ; 3ac3: d0 03       ..  :3992[1]
+    bne still_playing                                                 ; 3ac3: d0 03       ..  :3992[1]
     ldy current_animation                                             ; 3ac5: ac df 09    ... :3994[1]
-c3997
+still_playing
     lda current_animation                                             ; 3ac8: ad df 09    ... :3997[1]
     bne c39c1                                                         ; 3acb: d0 25       .%  :399a[1]
     tya                                                               ; 3acd: 98          .   :399c[1]
@@ -9154,22 +9154,6 @@ plot_move_x_high
 pydis_end
 
 ; Automatically generated labels:
-;     c3276
-;     c328d
-;     c32a5
-;     c32ac
-;     c32c8
-;     c32de
-;     c32f5
-;     c3301
-;     c3311
-;     c3316
-;     c331e
-;     c3598
-;     c359e
-;     c35bc
-;     c381a
-;     c3997
 ;     c39b6
 ;     c39c1
 ;     c39e0
