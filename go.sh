@@ -1,6 +1,6 @@
 #!/bin/bash
 set -e
-export PYTHONPATH+=$HOME/src/py8dis/py8dis
+export PYTHONPATH+=:$HOME/src/py8dis/py8dis
 
 mkdir -p build
 mkdir -p source
