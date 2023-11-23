@@ -261,6 +261,9 @@ entry(0x3ed2, "skip_play_sound")
 # if both open at an angle is a single state or two states with rhs one opening first. (Timestamp in
 # video ~ 17:54.) Looking at the code at 3ee4 I suspect any left-vs-right difference is just me
 # stepping through the frames and in reality we are "supposed" to see symmetric movement
+# - non-0 means open (see 3e3e), I suspect 1 means "partly open" (note that room1_update_handler
+# will force it to $ff if it's non-0 during setup, presumably to handle cases where the user
+# switched level while the trapdoor was opening)
 expr(0x3eee, "spriteid_trapdoor_horizontal")
 expr(0x3eef, "spriteid_trapdoor_diagonal")
 expr(0x3ef0, "spriteid_trapdoor_vertical")
