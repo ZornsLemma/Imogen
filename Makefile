@@ -185,7 +185,7 @@ source/dataP.asm: dataP.py common.py common_to_levels.py orig/dataP.dat
 	cp build/dataP_temp.asm source/dataP.asm
 	rm build/dataP_temp.asm
 
-source/dataQ.asm: dataQ.py common_to_levels.py orig/dataQ.dat
+source/dataQ.asm: dataQ.py common.py common_to_levels.py orig/dataQ.dat
 	python3 dataQ.py --acme > build/dataQ_temp.asm
 	cp build/dataQ_temp.asm source/dataQ.asm
 	rm build/dataQ_temp.asm

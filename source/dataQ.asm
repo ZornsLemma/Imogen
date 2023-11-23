@@ -128,6 +128,7 @@ previous_player_using_object_spriteid               = $2eb7
 toolbar_collectable_spriteids                       = $2ee8
 collectable_spriteids                               = $2eed
 five_byte_table_paired_with_collectable_sprite_ids  = $2ef2
+inhibit_monkey_climb_flag                           = $31d7
 l3617                                               = $3617
 print_encrypted_string_at_yx_centred                = $37f3
 l381c                                               = $381c
