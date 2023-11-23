@@ -129,7 +129,6 @@ previous_player_using_object_spriteid               = $2eb7
 toolbar_collectable_spriteids                       = $2ee8
 collectable_spriteids                               = $2eed
 five_byte_table_paired_with_collectable_sprite_ids  = $2ef2
-l2ef4                                               = $2ef4
 inhibit_monkey_climb_flag                           = $31d7
 print_encrypted_string_at_yx_centred                = $37f3
 wait_one_second_then_check_keys                     = $388d
@@ -687,8 +686,8 @@ c3ecd
     cpy #2                                                            ; 3ed7: c0 02
     bne c3ee7                                                         ; 3ed9: d0 0c
     lda #0                                                            ; 3edb: a9 00
-    ldx #$e2                                                          ; 3edd: a2 e2
-    ldy #$44 ; 'D'                                                    ; 3edf: a0 44
+    ldx #<sound1                                                      ; 3edd: a2 e2
+    ldy #>sound1                                                      ; 3edf: a0 44
     jsr play_sound_yx                                                 ; 3ee1: 20 f6 38
     jmp c3ef4                                                         ; 3ee4: 4c f4 3e
 
@@ -696,13 +695,13 @@ c3ee7
     cpy #7                                                            ; 3ee7: c0 07
     bne c3efd                                                         ; 3ee9: d0 12
     lda #0                                                            ; 3eeb: a9 00
-    ldx #$ea                                                          ; 3eed: a2 ea
-    ldy #$44 ; 'D'                                                    ; 3eef: a0 44
+    ldx #<sound2                                                      ; 3eed: a2 ea
+    ldy #>sound2                                                      ; 3eef: a0 44
     jsr play_sound_yx                                                 ; 3ef1: 20 f6 38
 c3ef4
     lda #0                                                            ; 3ef4: a9 00
-    ldx #$da                                                          ; 3ef6: a2 da
-    ldy #$44 ; 'D'                                                    ; 3ef8: a0 44
+    ldx #<sound3                                                      ; 3ef6: a2 da
+    ldy #>sound3                                                      ; 3ef8: a0 44
     jsr play_sound_yx                                                 ; 3efa: 20 f6 38
 c3efd
     lda desired_room_index                                            ; 3efd: a5 30
@@ -778,11 +777,11 @@ c3f81
 
 sub_c3f82
     lda #0                                                            ; 3f82: a9 00
-    ldx #$bc                                                          ; 3f84: a2 bc
-    ldy #$44 ; 'D'                                                    ; 3f86: a0 44
+    ldx #<sound4                                                      ; 3f84: a2 bc
+    ldy #>sound4                                                      ; 3f86: a0 44
     jsr play_sound_yx                                                 ; 3f88: 20 f6 38
-    ldx #$c4                                                          ; 3f8b: a2 c4
-    ldy #$44 ; 'D'                                                    ; 3f8d: a0 44
+    ldx #<sound5                                                      ; 3f8b: a2 c4
+    ldy #>sound5                                                      ; 3f8d: a0 44
     jsr play_sound_yx                                                 ; 3f8f: 20 f6 38
     rts                                                               ; 3f92: 60
 
@@ -1056,11 +1055,11 @@ c41c0
 
 sub_c41c1
     lda #0                                                            ; 41c1: a9 00
-    ldx #$1e                                                          ; 41c3: a2 1e
-    ldy #$45 ; 'E'                                                    ; 41c5: a0 45
+    ldx #<sound6                                                      ; 41c3: a2 1e
+    ldy #>sound6                                                      ; 41c5: a0 45
     jsr play_sound_yx                                                 ; 41c7: 20 f6 38
-    ldx #$16                                                          ; 41ca: a2 16
-    ldy #$45 ; 'E'                                                    ; 41cc: a0 45
+    ldx #<sound7                                                      ; 41ca: a2 16
+    ldy #>sound7                                                      ; 41cc: a0 45
     jsr play_sound_yx                                                 ; 41ce: 20 f6 38
     rts                                                               ; 41d1: 60
 
@@ -1211,7 +1210,7 @@ sub_c42dd
     sta toolbar_collectable_spriteids+2                               ; 42e4: 8d ea 2e
     lda #$dd                                                          ; 42e7: a9 dd
     sta collectable_spriteids+2                                       ; 42e9: 8d ef 2e
-    sta l2ef4                                                         ; 42ec: 8d f4 2e
+    sta five_byte_table_paired_with_collectable_sprite_ids+2          ; 42ec: 8d f4 2e
     lda desired_room_index                                            ; 42ef: a5 30
     cmp #2                                                            ; 42f1: c9 02
     bne c4318                                                         ; 42f3: d0 23
@@ -1436,15 +1435,47 @@ c44ad
     rts                                                               ; 44ad: 60
 
     !byte   5,   1,   0,   0,   0,   0,   0,   0, $28, $f6, $f6, $ec  ; 44ae: 05 01 00...
-    !byte $64,   0, $13,   0,   5,   0, $95,   0,   3,   0,   3,   0  ; 44ba: 64 00 13...
-    !byte   5,   0, $89,   0,   2,   0,   6,   1,   0,   0,   0,   0  ; 44c6: 05 00 89...
-    !byte   0,   0, $64, $ce, $ce, $9c, $64,   0, $10,   0,   6,   0  ; 44d2: 00 00 64...
-    !byte   7,   0,   1,   0, $11,   0,   0,   0, $fa,   0,   0,   0  ; 44de: 07 00 01...
-    !byte $11,   0,   0,   0, $be,   0,   0,   0,   7,   1, $ff,   0  ; 44ea: 11 00 00...
-    !byte   0,   1,   1,   0, $78, $fc,   0, $f8, $78,   0, $13,   0  ; 44f6: 00 01 01...
-    !byte   7,   0, $c8,   0,   1,   0,   7,   1,   0,   0,   0,   0  ; 4502: 07 00 c8...
-    !byte   0,   0, $37,   0,   0, $fa, $6e, $37, $10,   0,   7,   0  ; 450e: 00 00 37...
-    !byte   7,   0,   1,   0, $11,   0,   0,   0, $d2,   0,   1,   0  ; 451a: 07 00 01...
+    !byte $64,   0                                                    ; 44ba: 64 00
+sound4
+    !word $13                                                         ; 44bc: 13 00                   ; channel
+    !word 5                                                           ; 44be: 05 00                   ; amplitude
+    !word 149                                                         ; 44c0: 95 00                   ; pitch
+    !word 3                                                           ; 44c2: 03 00                   ; duration
+sound5
+    !word 3                                                           ; 44c4: 03 00                   ; channel
+    !word 5                                                           ; 44c6: 05 00                   ; amplitude
+    !word 137                                                         ; 44c8: 89 00                   ; pitch
+    !word 2                                                           ; 44ca: 02 00                   ; duration
+    !byte   6,   1,   0,   0,   0,   0,   0,   0, $64, $ce, $ce, $9c  ; 44cc: 06 01 00...
+    !byte $64,   0                                                    ; 44d8: 64 00
+sound3
+    !word $10                                                         ; 44da: 10 00                   ; channel
+    !word 6                                                           ; 44dc: 06 00                   ; amplitude
+    !word 7                                                           ; 44de: 07 00                   ; pitch
+    !word 1                                                           ; 44e0: 01 00                   ; duration
+sound1
+    !word $11                                                         ; 44e2: 11 00                   ; channel
+    !word 0                                                           ; 44e4: 00 00                   ; amplitude
+    !word 250                                                         ; 44e6: fa 00                   ; pitch
+    !word 0                                                           ; 44e8: 00 00                   ; duration
+sound2
+    !word $11                                                         ; 44ea: 11 00                   ; channel
+    !word 0                                                           ; 44ec: 00 00                   ; amplitude
+    !word 190                                                         ; 44ee: be 00                   ; pitch
+    !word 0                                                           ; 44f0: 00 00                   ; duration
+    !byte   7,   1, $ff,   0,   0,   1,   1,   0, $78, $fc,   0, $f8  ; 44f2: 07 01 ff...
+    !byte $78,   0, $13,   0,   7,   0, $c8,   0,   1,   0,   7,   1  ; 44fe: 78 00 13...
+    !byte   0,   0,   0,   0,   0,   0, $37,   0,   0, $fa, $6e, $37  ; 450a: 00 00 00...
+sound7
+    !word $10                                                         ; 4516: 10 00                   ; channel
+    !word 7                                                           ; 4518: 07 00                   ; amplitude
+    !word 7                                                           ; 451a: 07 00                   ; pitch
+    !word 1                                                           ; 451c: 01 00                   ; duration
+sound6
+    !word $11                                                         ; 451e: 11 00                   ; channel
+    !word 0                                                           ; 4520: 00 00                   ; amplitude
+    !word 210                                                         ; 4522: d2 00                   ; pitch
+    !word 1                                                           ; 4524: 01 00                   ; duration
     !byte $20, $10, $88, $44, $23, $10,   8,   8,   4,   8, $11, $e2  ; 4526: 20 10 88...
     !byte   4,   8,   8,   8, $10, $10, $10, $20, $47, $88, $10, $20  ; 4532: 04 08 08...
     !byte $10, $10,   8, $c4, $22, $11,   8,   4                      ; 453e: 10 10 08...
@@ -1529,7 +1560,6 @@ pydis_end
 ;     l0a73
 ;     l0a74
 ;     l0a75
-;     l2ef4
 ;     l38b2
 ;     l38c8
 ;     l3e41
@@ -1557,6 +1587,48 @@ pydis_end
 ;     sub_c41d2
 ;     sub_c42dd
 ;     sub_c443d
+!if (<sound1) != $e2 {
+    !error "Assertion failed: <sound1 == $e2"
+}
+!if (<sound2) != $ea {
+    !error "Assertion failed: <sound2 == $ea"
+}
+!if (<sound3) != $da {
+    !error "Assertion failed: <sound3 == $da"
+}
+!if (<sound4) != $bc {
+    !error "Assertion failed: <sound4 == $bc"
+}
+!if (<sound5) != $c4 {
+    !error "Assertion failed: <sound5 == $c4"
+}
+!if (<sound6) != $1e {
+    !error "Assertion failed: <sound6 == $1e"
+}
+!if (<sound7) != $16 {
+    !error "Assertion failed: <sound7 == $16"
+}
+!if (>sound1) != $44 {
+    !error "Assertion failed: >sound1 == $44"
+}
+!if (>sound2) != $44 {
+    !error "Assertion failed: >sound2 == $44"
+}
+!if (>sound3) != $44 {
+    !error "Assertion failed: >sound3 == $44"
+}
+!if (>sound4) != $44 {
+    !error "Assertion failed: >sound4 == $44"
+}
+!if (>sound5) != $44 {
+    !error "Assertion failed: >sound5 == $44"
+}
+!if (>sound6) != $45 {
+    !error "Assertion failed: >sound6 == $45"
+}
+!if (>sound7) != $45 {
+    !error "Assertion failed: >sound7 == $45"
+}
 !if (level_specific_initialisation) != $3af2 {
     !error "Assertion failed: level_specific_initialisation == $3af2"
 }

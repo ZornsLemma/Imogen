@@ -107,6 +107,16 @@ def ldx_ldy_jsr_play_sound_yx(jsr_runtime_addr, s):
     expr(jsr_runtime_addr - 3, make_lo(s))
     expr(jsr_runtime_addr - 1, make_hi(s))
 
+def ldx_ldy_jsr_define_envelope(jsr_runtime_addr, s):
+    assert get_u8_runtime(RuntimeAddr(jsr_runtime_addr - 4)) == 0xa2 # ldx #
+    envelope_addr_lo = get_u8_runtime(RuntimeAddr(jsr_runtime_addr - 3))
+    assert get_u8_runtime(RuntimeAddr(jsr_runtime_addr - 2)) == 0xa0 # ldy #
+    envelope_addr_hi = get_u8_runtime(RuntimeAddr(jsr_runtime_addr - 1))
+    envelope_addr = (envelope_addr_hi << 8) | envelope_addr_lo
+    envelope(envelope_addr, s)
+    expr(jsr_runtime_addr - 3, make_lo(s))
+    expr(jsr_runtime_addr - 1, make_hi(s))
+
 def remove_sprite_data(result):
     m1 = re.search('^sprite_data', result, re.MULTILINE)
     m2 = re.search('^pydis_end', result, re.MULTILINE)
