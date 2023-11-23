@@ -481,6 +481,7 @@ mouse_ball_position_ge_8
     bcs mouse_ball_position_ge_0xf                                    ; 3cbb: b0 1c
     sec                                                               ; 3cbd: 38
     sbc #8                                                            ; 3cbe: e9 08
+; Multiply by 4 because each table entry is 4 bytes.
     asl                                                               ; 3cc0: 0a
     asl                                                               ; 3cc1: 0a
     tay                                                               ; 3cc2: a8
@@ -504,6 +505,7 @@ mouse_ball_position_ge_0xf
 mouse_ball_position_ge_0x17
     sec                                                               ; 3ce1: 38
     sbc #$17                                                          ; 3ce2: e9 17
+; Multiply by 4 because each table entry is 4 bytes.
     asl                                                               ; 3ce4: 0a
     asl                                                               ; 3ce5: 0a
     tay                                                               ; 3ce6: a8
