@@ -382,6 +382,7 @@ l007a                                               = $7a
 object_top_cell_y                                   = $7a
 off_screen_address_low                              = $7a
 osfile_block_start_address_low                      = $7a
+temp_y                                              = $7a
 l007b                                               = $7b
 object_bottom_cell_y                                = $7b
 off_screen_address_high                             = $7b
@@ -423,7 +424,7 @@ sprite_bit_mask                                     = $83
 sprite_y_offset_within_character_row                = $84
 sprite_cell_x_pos                                   = $85
 amount_sprite_is_offscreen_x                        = $86
-l0087                                               = $87
+num_two_bit_offsets_within_byte                     = $87
 vertical_sprite_position_is_valid_flag              = $88
 romsel_copy                                         = $f4
 interrupt_accumulator                               = $fc
@@ -479,7 +480,7 @@ tile_all_set_pixels                                 = $0aa9
 old_brkv1                                           = $0ab1
 old_brkv2                                           = $0ab3
 old_irq1v                                           = $0ab5
-l0b00                                               = $0b00
+area_to_copy_to_or_from_sideways_ram                = $0b00
 sprite_199                                          = $0b11
 sprite_198                                          = $0b93
 sprite_197                                          = $0bc5
@@ -494,8 +495,8 @@ check_password                                      = $53c0
 toolbar_screen_address                              = $58c0
 start_of_screen_memory                              = $5bc0
 game_area_screen_address                            = $6200
-lbe00                                               = $be00
-lbf00                                               = $bf00
+sideways_ram_be00                                   = $be00
+sideways_ram_bf00                                   = $bf00
 crtc_address_register                               = $fe00
 crtc_address_write                                  = $fe01
 video_ula_palette                                   = $fe21
@@ -724,7 +725,7 @@ display_initialised
 same_level
     jsr set_toolbar_and_gameplay_area_colours                         ; 133a: 20 66 17     f. :1209[1]
     lda #0                                                            ; 133d: a9 00       ..  :120c[1]
-    sta l31d7                                                         ; 133f: 8d d7 31    ..1 :120e[1]
+    sta inhibit_monkey_climb_flag                                     ; 133f: 8d d7 31    ..1 :120e[1]
     ldx #3                                                            ; 1342: a2 03       ..  :1211[1]
 clear_sound_priorities_loop1
     sta sound_priority_per_channel_table,x                            ; 1344: 9d 6f 39    .o9 :1213[1]
@@ -1129,7 +1130,7 @@ non_negative_offset_in_y
     sta sprite_data_byte                                              ; 151c: 85 7d       .}  :13eb[1]
     sty byte_offset_within_sprite                                     ; 151e: 84 79       .y  :13ed[1]
     lda #4                                                            ; 1520: a9 04       ..  :13ef[1]
-    sta l0087                                                         ; 1522: 85 87       ..  :13f1[1]
+    sta num_two_bit_offsets_within_byte                               ; 1522: 85 87       ..  :13f1[1]
     jsr clamp_and_clip_x                                              ; 1524: 20 2f 16     /. :13f3[1]
 ; Take the Y position and round down to the previous character row
     lda sprite_y_pos_high                                             ; 1527: a5 77       .w  :13f6[1]
@@ -1180,7 +1181,7 @@ not_out_of_range
     and #7                                                            ; 1568: 29 07       ).  :1437[1]
     sta sprite_y_offset_within_character_row                          ; 156a: 85 84       ..  :1439[1]
 ; load X and check flags to see if we are copying the mask to a destination sprite
-    ldx l0087                                                         ; 156c: a6 87       ..  :143b[1]
+    ldx num_two_bit_offsets_within_byte                               ; 156c: a6 87       ..  :143b[1]
     lda sprite_op_flags                                               ; 156e: a5 15       ..  :143d[1]
     and #sprite_op_flags_copy_mask                                    ; 1570: 29 01       ).  :143f[1]
     beq sprite_op_without_copying_mask                                ; 1572: f0 03       ..  :1441[1]
@@ -1268,13 +1269,13 @@ check_within_vertical_range2
 y_coordinate_is_within_character_row2
     dex                                                               ; 15e8: ca          .   :14b7[1]
     bpl byte_not_finished_yet2                                        ; 15e9: 10 0e       ..  :14b8[1]
-    sty l007a                                                         ; 15eb: 84 7a       .z  :14ba[1]
+    sty temp_y                                                        ; 15eb: 84 7a       .z  :14ba[1]
     inc byte_offset_within_sprite                                     ; 15ed: e6 79       .y  :14bc[1]
     ldy byte_offset_within_sprite                                     ; 15ef: a4 79       .y  :14be[1]
     lda (src_sprite_address_low),y                                    ; 15f1: b1 70       .p  :14c0[1]
     sta sprite_data_byte                                              ; 15f3: 85 7d       .}  :14c2[1]
     ldx #3                                                            ; 15f5: a2 03       ..  :14c4[1]
-    ldy l007a                                                         ; 15f7: a4 7a       .z  :14c6[1]
+    ldy temp_y                                                        ; 15f7: a4 7a       .z  :14c6[1]
 byte_not_finished_yet2
     asl sprite_data_byte                                              ; 15f9: 06 7d       .}  :14c8[1]
     bcc write_one_pixel_to_the_screen2                                ; 15fb: 90 b2       ..  :14ca[1]
@@ -1405,7 +1406,7 @@ check_within_vertical_range
 y_coordinate_is_within_character_row
     dex                                                               ; 16c4: ca          .   :1593[1]
     bpl byte_not_finished_yet                                         ; 16c5: 10 15       ..  :1594[1]
-    sty l007a                                                         ; 16c7: 84 7a       .z  :1596[1]
+    sty temp_y                                                        ; 16c7: 84 7a       .z  :1596[1]
 ; copy mask byte to destination
     ldy byte_offset_within_sprite                                     ; 16c9: a4 79       .y  :1598[1]
     lda mask_sprite_byte                                              ; 16cb: a5 80       ..  :159a[1]
@@ -1417,7 +1418,7 @@ y_coordinate_is_within_character_row
     sta sprite_data_byte                                              ; 16d4: 85 7d       .}  :15a3[1]
     stx mask_sprite_byte                                              ; 16d6: 86 80       ..  :15a5[1]   ; set mask byte to 255
     ldx #3                                                            ; 16d8: a2 03       ..  :15a7[1]   ; reset loop counter
-    ldy l007a                                                         ; 16da: a4 7a       .z  :15a9[1]
+    ldy temp_y                                                        ; 16da: a4 7a       .z  :15a9[1]
 byte_not_finished_yet
     asl sprite_data_byte                                              ; 16dc: 06 7d       .}  :15ab[1]   ; check top bit
     bcc write_one_pixel_to_the_screen                                 ; 16de: 90 a2       ..  :15ad[1]   ; if (sprite bit is clear) then branch (to write pixel to screen)
@@ -1568,7 +1569,7 @@ sprite_clip_x
     cmp sprite_width                                                  ; 17bd: c5 81       ..  :168c[1]
     bcs pull_values_and_exit_sprite_op                                ; 17bf: b0 3e       .>  :168e[1]   ; exit if fully offscreen
     lda sprite_data_byte                                              ; 17c1: a5 7d       .}  :1690[1]
-    ldx l0087                                                         ; 17c3: a6 87       ..  :1692[1]
+    ldx num_two_bit_offsets_within_byte                               ; 17c3: a6 87       ..  :1692[1]
     ldy byte_offset_within_sprite                                     ; 17c5: a4 79       .y  :1694[1]
 sprite_clip_x_loop
     dex                                                               ; 17c7: ca          .   :1696[1]
@@ -1604,7 +1605,7 @@ found_second_set_bit
     dec amount_sprite_is_offscreen_x                                  ; 17f4: c6 86       ..  :16c3[1]
     bne sprite_clip_x_loop                                            ; 17f6: d0 cf       ..  :16c5[1]   ; jump back if not done
     sta sprite_data_byte                                              ; 17f8: 85 7d       .}  :16c7[1]
-    stx l0087                                                         ; 17fa: 86 87       ..  :16c9[1]
+    stx num_two_bit_offsets_within_byte                               ; 17fa: 86 87       ..  :16c9[1]
     sty byte_offset_within_sprite                                     ; 17fc: 84 79       .y  :16cb[1]
 return3
     rts                                                               ; 17fe: 60          `   :16cd[1]
@@ -1860,10 +1861,10 @@ reset_code
     sta romsel                                                        ; 1979: 8d 30 fe    .0. :1848[1]   ; select ROM in slot 13
     ldy #0                                                            ; 197c: a0 00       ..  :184b[1]
 copy_from_rom_c_loop
-    lda lbe00,y                                                       ; 197e: b9 00 be    ... :184d[1]
+    lda sideways_ram_be00,y                                           ; 197e: b9 00 be    ... :184d[1]
     sta initialise_display,y                                          ; 1981: 99 00 0c    ... :1850[1]
-    lda lbf00,y                                                       ; 1984: b9 00 bf    ... :1853[1]
-    sta l0b00,y                                                       ; 1987: 99 00 0b    ... :1856[1]
+    lda sideways_ram_bf00,y                                           ; 1984: b9 00 bf    ... :1853[1]
+    sta area_to_copy_to_or_from_sideways_ram,y                        ; 1987: 99 00 0b    ... :1856[1]
     iny                                                               ; 198a: c8          .   :1859[1]
     bne copy_from_rom_c_loop                                          ; 198b: d0 f1       ..  :185a[1]
     lda romsel_copy                                                   ; 198d: a5 f4       ..  :185c[1]
@@ -5229,7 +5230,7 @@ get_solid_rock_collision_for_object_a
     ldx temp_collision_result                                         ; 29cc: ae 5b 29    .[) :289b[1]
     jsr find_left_and_right_of_object_including_held_object           ; 29cf: 20 df 25     .% :289e[1]
     jsr find_top_and_bottom_of_object                                 ; 29d2: 20 d2 24     .$ :28a1[1]
-    lda l28e1                                                         ; 29d5: ad e1 28    ..( :28a4[1]
+    lda temp_default_collision_map_option                             ; 29d5: ad e1 28    ..( :28a4[1]
     sta default_collision_map_option                                  ; 29d8: 85 44       .D  :28a7[1]
     jsr check_for_player_intersecting_wall_left_or_right              ; 29da: 20 5a 26     Z& :28a9[1]
     jsr check_for_player_intersecting_floor_or_ceiling                ; 29dd: 20 e5 26     .& :28ac[1]
@@ -5249,7 +5250,7 @@ get_solid_rock_collision_for_object_a
     ora temp_collision_result                                         ; 29ff: 0d 5b 29    .[) :28ce[1]
     sta temp_collision_result                                         ; 2a02: 8d 5b 29    .[) :28d1[1]
     lda #0                                                            ; 2a05: a9 00       ..  :28d4[1]
-    sta l28e1                                                         ; 2a07: 8d e1 28    ..( :28d6[1]
+    sta temp_default_collision_map_option                             ; 2a07: 8d e1 28    ..( :28d6[1]
     pla                                                               ; 2a0a: 68          h   :28d9[1]   ; recall X,Y
     tay                                                               ; 2a0b: a8          .   :28da[1]
     pla                                                               ; 2a0c: 68          h   :28db[1]
@@ -5257,7 +5258,7 @@ get_solid_rock_collision_for_object_a
     lda temp_collision_result                                         ; 2a0e: ad 5b 29    .[) :28dd[1]
     rts                                                               ; 2a11: 60          `   :28e0[1]
 
-l28e1
+temp_default_collision_map_option
     !byte 0                                                           ; 2a12: 00          .   :28e1[1]
 
 ; TODO: this is used by e.g. dataA
@@ -6691,7 +6692,7 @@ monkey_animation18
 monkey_fall_animation
     !byte spriteid_monkey4,                0,                7        ; 3304: 51 00 07    Q.. :31d3[1]
     !byte                0                                            ; 3307: 00          .   :31d6[1]
-l31d7
+inhibit_monkey_climb_flag
     !byte 0                                                           ; 3308: 00          .   :31d7[1]
 
 update_monkey
@@ -6744,7 +6745,7 @@ update_monkey_climbing
     jsr get_solid_rock_collision_for_object_a                         ; 3364: 20 94 28     .( :3233[1]
     bne monkey_set_climb_idle                                         ; 3367: d0 0f       ..  :3236[1]
     ldx #monkey_climb_animation - monkey_base_animation               ; 3369: a2 51       .Q  :3238[1]
-    lda l31d7                                                         ; 336b: ad d7 31    ..1 :323a[1]
+    lda inhibit_monkey_climb_flag                                     ; 336b: ad d7 31    ..1 :323a[1]
     bne monkey_set_climb_idle                                         ; 336e: d0 08       ..  :323d[1]
     lda move_left_requested                                           ; 3370: ad ca 3a    ..: :323f[1]
     ora move_right_requested                                          ; 3373: 0d cb 3a    ..: :3242[1]
@@ -6879,7 +6880,7 @@ skip5
     ldy #monkey_animation17 - monkey_base_animation                   ; 3460: a0 b7       ..  :332f[1]
 monkey_got_index_in_animation
     lda #0                                                            ; 3462: a9 00       ..  :3331[1]
-    sta l31d7                                                         ; 3464: 8d d7 31    ..1 :3333[1]
+    sta inhibit_monkey_climb_flag                                     ; 3464: 8d d7 31    ..1 :3333[1]
     sty object_current_index_in_animation                             ; 3467: 8c d4 09    ... :3336[1]
     tya                                                               ; 346a: 98          .   :3339[1]
     ldx #<monkey_base_animation                                       ; 346b: a2 ff       ..  :333a[1]
@@ -7887,6 +7888,7 @@ mid_transform_circle_sprites
     !byte spriteid_circle                                             ; 3aa6: 20              :3975[1]
     !byte spriteid_circle                                             ; 3aa7: 20              :3976[1]
     !byte $ff                                                         ; 3aa8: ff          .   :3977[1]
+mid_transform_sparkles_in
     !byte spriteid_one_pixel_masked_out                               ; 3aa9: 00          .   :3978[1]
     !byte spriteid_sparkles5                                          ; 3aaa: 26          &   :3979[1]
     !byte spriteid_sparkles4                                          ; 3aab: 25          %   :397a[1]
@@ -7894,6 +7896,7 @@ mid_transform_circle_sprites
     !byte spriteid_sparkles2                                          ; 3aad: 23          #   :397c[1]
     !byte spriteid_sparkles1                                          ; 3aae: 22          "   :397d[1]
     !byte $ff                                                         ; 3aaf: ff          .   :397e[1]
+mid_transform_sparkles_out
     !byte spriteid_sparkles1                                          ; 3ab0: 22          "   :397f[1]
     !byte spriteid_sparkles2                                          ; 3ab1: 23          #   :3980[1]
     !byte spriteid_sparkles3                                          ; 3ab2: 24          $   :3981[1]
@@ -7915,37 +7918,42 @@ update_mid_transformation
     ldy current_animation                                             ; 3ac5: ac df 09    ... :3994[1]
 still_playing
     lda current_animation                                             ; 3ac8: ad df 09    ... :3997[1]
-    bne c39c1                                                         ; 3acb: d0 25       .%  :399a[1]
+    bne check_for_point_of_changing_level                             ; 3acb: d0 25       .%  :399a[1]
     tya                                                               ; 3acd: 98          .   :399c[1]
-    bne c3a08                                                         ; 3ace: d0 69       .i  :399d[1]
+    bne mid_transform_store_state                                     ; 3ace: d0 69       .i  :399d[1]
     lda new_player_character                                          ; 3ad0: a5 4d       .M  :399f[1]
     sta current_player_character                                      ; 3ad2: 85 48       .H  :39a1[1]
-    bne c39b6                                                         ; 3ad4: d0 11       ..  :39a3[1]
-    ldy #$0b                                                          ; 3ad6: a0 0b       ..  :39a5[1]
+    bne got_player_character                                          ; 3ad4: d0 11       ..  :39a3[1]
+    ldy #mid_transform_sparkles_out - mid_transform_sprites_table     ; 3ad6: a0 0b       ..  :39a5[1]
     sty current_animation                                             ; 3ad8: 8c df 09    ... :39a7[1]
     lda object_y_low                                                  ; 3adb: ad 7c 09    .|. :39aa[1]
     clc                                                               ; 3ade: 18          .   :39ad[1]
     adc #2                                                            ; 3adf: 69 02       i.  :39ae[1]
     sta object_y_low                                                  ; 3ae1: 8d 7c 09    .|. :39b0[1]
-    jmp c3a08                                                         ; 3ae4: 4c 08 3a    L.: :39b3[1]
+    jmp mid_transform_store_state                                     ; 3ae4: 4c 08 3a    L.: :39b3[1]
 
-c39b6
+got_player_character
     lda #0                                                            ; 3ae7: a9 00       ..  :39b6[1]
     sta current_animation                                             ; 3ae9: 8d df 09    ... :39b8[1]
     sta object_current_index_in_animation                             ; 3aec: 8d d4 09    ... :39bb[1]
     jmp update_player                                                 ; 3aef: 4c cd 22    L." :39be[1]
 
-c39c1
-    cmp #$0b                                                          ; 3af2: c9 0b       ..  :39c1[1]
-    bne c39f4                                                         ; 3af4: d0 2f       ./  :39c3[1]
-    cpy #$0b                                                          ; 3af6: c0 0b       ..  :39c5[1]
-    bne c3a08                                                         ; 3af8: d0 3f       .?  :39c7[1]
+check_for_point_of_changing_level
+    cmp #mid_transform_sparkles_out - mid_transform_sprites_table     ; 3af2: c9 0b       ..  :39c1[1]
+    bne check_for_circles_animation                                   ; 3af4: d0 2f       ./  :39c3[1]
+    cpy #mid_transform_sparkles_out - mid_transform_sprites_table     ; 3af6: c0 0b       ..  :39c5[1]
+    bne mid_transform_store_state                                     ; 3af8: d0 3f       .?  :39c7[1]
+; this is the point at which we move to the next level. First start the transform_in
+; animation
     jsr start_of_transform_in_animation                               ; 3afa: 20 58 23     X# :39c9[1]
+; stack shenanigans: Remove two addresses from the stack, so we don't fill up the stack
+; (taking us back to the stack level that called 'game_update')
     pla                                                               ; 3afd: 68          h   :39cc[1]
     pla                                                               ; 3afe: 68          h   :39cd[1]
     pla                                                               ; 3aff: 68          h   :39ce[1]
     pla                                                               ; 3b00: 68          h   :39cf[1]
-    ldy #$0f                                                          ; 3b01: a0 0f       ..  :39d0[1]
+; find the next uncompleted level
+    ldy #num_levels-1                                                 ; 3b01: a0 0f       ..  :39d0[1]
 find_uncompleted_level_loop
     lda level_progress_table,y                                        ; 3b03: b9 ef 09    ... :39d2[1]
     and #$80                                                          ; 3b06: 29 80       ).  :39d5[1]
@@ -7965,19 +7973,20 @@ found_uncompleted_level
 found_next_level
     ldx #0                                                            ; 3b1d: a2 00       ..  :39ec[1]
     jsr convert_section_letter_to_level_filename_letter               ; 3b1f: 20 ef 0a     .. :39ee[1]
+; start next level
     jmp initialise_level_and_room                                     ; 3b22: 4c 40 11    L@. :39f1[1]
 
-c39f4
-    cpy #4                                                            ; 3b25: c0 04       ..  :39f4[1]
-    bne c3a08                                                         ; 3b27: d0 10       ..  :39f6[1]
-    lda #0                                                            ; 3b29: a9 00       ..  :39f8[1]
+check_for_circles_animation
+    cpy #mid_transform_sparkles_in - mid_transform_sprites_table      ; 3b25: c0 04       ..  :39f4[1]
+    bne mid_transform_store_state                                     ; 3b27: d0 10       ..  :39f6[1]
+    lda #mid_transform_sprites_table - mid_transform_sprites_table    ; 3b29: a9 00       ..  :39f8[1]
     sta current_animation                                             ; 3b2b: 8d df 09    ... :39fa[1]
     ldy #mid_transform_circle_sprites - mid_transform_sprites_table   ; 3b2e: a0 01       ..  :39fd[1]
     lda object_y_low                                                  ; 3b30: ad 7c 09    .|. :39ff[1]
     sec                                                               ; 3b33: 38          8   :3a02[1]
     sbc #2                                                            ; 3b34: e9 02       ..  :3a03[1]
     sta object_y_low                                                  ; 3b36: 8d 7c 09    .|. :3a05[1]
-c3a08
+mid_transform_store_state
     sty object_current_index_in_animation                             ; 3b39: 8c d4 09    ... :3a08[1]
     lda mid_transform_sprites_table,y                                 ; 3b3c: b9 74 39    .t9 :3a0b[1]
     sta object_spriteid                                               ; 3b3f: 8d a8 09    ... :3a0e[1]
@@ -8474,10 +8483,10 @@ adjust_timing_variable_loop
 ; Load SPRDATA file into memory so it ends just before screen memory at $5bc0.
     lda #<start_of_screen_memory                                      ; 3e6c: a9 c0       ..
     sec                                                               ; 3e6e: 38          8
-    sbc l007a                                                         ; 3e6f: e5 7a       .z
+    sbc osfile_block_start_address_low                                ; 3e6f: e5 7a       .z
     sta sprdata_ptr                                                   ; 3e71: 85 54       .T
     lda #>start_of_screen_memory                                      ; 3e73: a9 5b       .[
-    sbc l007b                                                         ; 3e75: e5 7b       .{
+    sbc osfile_block_start_address_mid1                               ; 3e75: e5 7b       .{
     sta sprdata_ptr + 1                                               ; 3e77: 85 55       .U
     jsr load_sprdata                                                  ; 3e79: 20 6f 19     o.
 ; remember where sprite data is loaded
@@ -8670,16 +8679,16 @@ copy_to_sideways_ram_loop1
     ldy #0                                                            ; 3f85: a0 00       ..
 copy_to_sideways_ram_loop2
     lda quit_to_basic,y                                               ; 3f87: b9 2c 40    .,@
-    sta lbe00,y                                                       ; 3f8a: 99 00 be    ...
-    lda l0b00,y                                                       ; 3f8d: b9 00 0b    ...
-    sta lbf00,y                                                       ; 3f90: 99 00 bf    ...
+    sta sideways_ram_be00,y                                           ; 3f8a: 99 00 be    ...
+    lda area_to_copy_to_or_from_sideways_ram,y                        ; 3f8d: b9 00 0b    ...
+    sta sideways_ram_bf00,y                                           ; 3f90: 99 00 bf    ...
     iny                                                               ; 3f93: c8          .
     bne copy_to_sideways_ram_loop2                                    ; 3f94: d0 f1       ..
     lda #osbyte_read_write_escape_break_effect                        ; 3f96: a9 c8       ..
     ldx #1                                                            ; 3f98: a2 01       ..
     ldy #0                                                            ; 3f9a: a0 00       ..
     jsr osbyte                                                        ; 3f9c: 20 f4 ff     ..            ; Write Disable ESCAPE action, set normal BREAK action, value X=1
-; The reset intercept code is set to 'JMP $1845'
+; The reset intercept code is set to 'JMP reset_code'
     lda #osbyte_read_write_first_byte_break_intercept                 ; 3f9f: a9 f7       ..
 ; JMP opcode
     ldx #opcode_jmp                                                   ; 3fa1: a2 4c       .L
@@ -9034,59 +9043,59 @@ return30
 
 remember_screen_memory_before_showing_dialog_box
     lda #0                                                            ; 4173: a9 00       ..  :0474[2]   ; set screen addresses
-    sta l0074                                                         ; 4175: 85 74       .t  :0476[2]
-    sta l0076                                                         ; 4177: 85 76       .v  :0478[2]
+    sta first_cell_in_row_screen_address_low                          ; 4175: 85 74       .t  :0476[2]
+    sta cell_screen_address_low                                       ; 4177: 85 76       .v  :0478[2]
     lda screen_base_address_high                                      ; 4179: a5 4c       .L  :047a[2]
-    sta l0075                                                         ; 417b: 85 75       .u  :047c[2]
-    sta l0077                                                         ; 417d: 85 77       .w  :047e[2]
+    sta first_cell_in_row_screen_address_high                         ; 417b: 85 75       .u  :047c[2]
+    sta cell_screen_address_high                                      ; 417d: 85 77       .w  :047e[2]
 ; set destination address
     lda #<cache_of_screen_memory_under_dialog                         ; 417f: a9 30       .0  :0480[2]
-    sta l007a                                                         ; 4181: 85 7a       .z  :0482[2]
+    sta off_screen_address_low                                        ; 4181: 85 7a       .z  :0482[2]
     lda #>cache_of_screen_memory_under_dialog                         ; 4183: a9 05       ..  :0484[2]
-    sta l007b                                                         ; 4185: 85 7b       .{  :0486[2]
+    sta off_screen_address_high                                       ; 4185: 85 7b       .{  :0486[2]
     clc                                                               ; 4187: 18          .   :0488[2]
 ; set number of rows
     lda #5                                                            ; 4188: a9 05       ..  :0489[2]
-    sta l0073                                                         ; 418a: 85 73       .s  :048b[2]
+    sta height_in_cells_to_write                                      ; 418a: 85 73       .s  :048b[2]
 copy_row_loop
     ldx current_text_width                                            ; 418c: ae 09 04    ... :048d[2]
 copy_cells_loop
     ldy #7                                                            ; 418f: a0 07       ..  :0490[2]
 copy_cell_loop
-    lda (l0076),y                                                     ; 4191: b1 76       .v  :0492[2]
-    sta (l007a),y                                                     ; 4193: 91 7a       .z  :0494[2]
+    lda (cell_screen_address_low),y                                   ; 4191: b1 76       .v  :0492[2]
+    sta (off_screen_address_low),y                                    ; 4193: 91 7a       .z  :0494[2]
     dey                                                               ; 4195: 88          .   :0496[2]
     bpl copy_cell_loop                                                ; 4196: 10 f9       ..  :0497[2]
 ; move destination to next cell along
-    lda l007a                                                         ; 4198: a5 7a       .z  :0499[2]
+    lda off_screen_address_low                                        ; 4198: a5 7a       .z  :0499[2]
     adc #8                                                            ; 419a: 69 08       i.  :049b[2]
-    sta l007a                                                         ; 419c: 85 7a       .z  :049d[2]
+    sta off_screen_address_low                                        ; 419c: 85 7a       .z  :049d[2]
     bcc skip_high_byte1                                               ; 419e: 90 03       ..  :049f[2]
-    inc l007b                                                         ; 41a0: e6 7b       .{  :04a1[2]
+    inc off_screen_address_high                                       ; 41a0: e6 7b       .{  :04a1[2]
     clc                                                               ; 41a2: 18          .   :04a3[2]
 skip_high_byte1
     dex                                                               ; 41a3: ca          .   :04a4[2]
     beq move_to_next_row                                              ; 41a4: f0 0d       ..  :04a5[2]
 ; move source to next cell along
-    lda l0076                                                         ; 41a6: a5 76       .v  :04a7[2]
+    lda cell_screen_address_low                                       ; 41a6: a5 76       .v  :04a7[2]
     adc #8                                                            ; 41a8: 69 08       i.  :04a9[2]
-    sta l0076                                                         ; 41aa: 85 76       .v  :04ab[2]
+    sta cell_screen_address_low                                       ; 41aa: 85 76       .v  :04ab[2]
     bcc copy_cells_loop                                               ; 41ac: 90 e1       ..  :04ad[2]
-    inc l0077                                                         ; 41ae: e6 77       .w  :04af[2]
+    inc cell_screen_address_high                                      ; 41ae: e6 77       .w  :04af[2]
     clc                                                               ; 41b0: 18          .   :04b1[2]
     bcc copy_cells_loop                                               ; 41b1: 90 dc       ..  :04b2[2]
 move_to_next_row
-    dec l0073                                                         ; 41b3: c6 73       .s  :04b4[2]
+    dec height_in_cells_to_write                                      ; 41b3: c6 73       .s  :04b4[2]
     beq return31                                                      ; 41b5: f0 12       ..  :04b6[2]
 ; move to next screen row
-    lda l0074                                                         ; 41b7: a5 74       .t  :04b8[2]
+    lda first_cell_in_row_screen_address_low                          ; 41b7: a5 74       .t  :04b8[2]
     adc #$40 ; '@'                                                    ; 41b9: 69 40       i@  :04ba[2]
-    sta l0074                                                         ; 41bb: 85 74       .t  :04bc[2]
-    sta l0076                                                         ; 41bd: 85 76       .v  :04be[2]
-    lda l0075                                                         ; 41bf: a5 75       .u  :04c0[2]
+    sta first_cell_in_row_screen_address_low                          ; 41bb: 85 74       .t  :04bc[2]
+    sta cell_screen_address_low                                       ; 41bd: 85 76       .v  :04be[2]
+    lda first_cell_in_row_screen_address_high                         ; 41bf: a5 75       .u  :04c0[2]
     adc #1                                                            ; 41c1: 69 01       i.  :04c2[2]
-    sta l0075                                                         ; 41c3: 85 75       .u  :04c4[2]
-    sta l0077                                                         ; 41c5: 85 77       .w  :04c6[2]
+    sta first_cell_in_row_screen_address_high                         ; 41c3: 85 75       .u  :04c4[2]
+    sta cell_screen_address_high                                      ; 41c5: 85 77       .w  :04c6[2]
     bcc copy_row_loop                                                 ; 41c7: 90 c3       ..  :04c8[2]
 return31
     rts                                                               ; 41c9: 60          `   :04ca[2]
@@ -9153,18 +9162,6 @@ plot_move_x_high
 }
 
 pydis_end
-
-; Automatically generated labels:
-;     c39b6
-;     c39c1
-;     c39f4
-;     c3a08
-;     l0087
-;     l0b00
-;     l28e1
-;     l31d7
-;     lbe00
-;     lbf00
 !if (' ' + '0') != $50 {
     !error "Assertion failed: ' ' + '0' == $50"
 }
@@ -9810,6 +9807,15 @@ pydis_end
 !if (mid_transform_circle_sprites - mid_transform_sprites_table) != $01 {
     !error "Assertion failed: mid_transform_circle_sprites - mid_transform_sprites_table == $01"
 }
+!if (mid_transform_sparkles_in - mid_transform_sprites_table) != $04 {
+    !error "Assertion failed: mid_transform_sparkles_in - mid_transform_sprites_table == $04"
+}
+!if (mid_transform_sparkles_out - mid_transform_sprites_table) != $0b {
+    !error "Assertion failed: mid_transform_sparkles_out - mid_transform_sprites_table == $0b"
+}
+!if (mid_transform_sprites_table - mid_transform_sprites_table) != $00 {
+    !error "Assertion failed: mid_transform_sprites_table - mid_transform_sprites_table == $00"
+}
 !if (monkey_animation10 - monkey_base_animation) != $4d {
     !error "Assertion failed: monkey_animation10 - monkey_base_animation == $4d"
 }
@@ -9944,6 +9950,12 @@ pydis_end
 }
 !if (osbyte_vsync) != $13 {
     !error "Assertion failed: osbyte_vsync == $13"
+}
+!if (osfile_block_start_address_low) != $7a {
+    !error "Assertion failed: osfile_block_start_address_low == $7a"
+}
+!if (osfile_block_start_address_mid1) != $7b {
+    !error "Assertion failed: osfile_block_start_address_mid1 == $7b"
 }
 !if (osfile_load) != $ff {
     !error "Assertion failed: osfile_load == $ff"

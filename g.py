@@ -196,6 +196,7 @@ substitute_labels = {
         "l0077": "sprite_y_pos_high",
         "l0078": "sprite_x_offset_within_byte",
         "l0079": "byte_offset_within_sprite",
+        "l007a": "temp_y",
         "l007b": "sprite_screen_address_for_column_low",
         "l007c": "sprite_screen_address_for_column_high",
         "l007d": "sprite_data_byte",
@@ -385,6 +386,15 @@ substitute_labels = {
     (0x3d3d, 0x3d41): {
         "object_sprite_mask_type": "envelope_1",
     },
+    (0x4173, 0x41c9): {
+        "l0073": "height_in_cells_to_write",
+        "l0074": "first_cell_in_row_screen_address_low",
+        "l0075": "first_cell_in_row_screen_address_high",
+        "l0076": "cell_screen_address_low",
+        "l0077": "cell_screen_address_high",
+        "l007a": "off_screen_address_low",
+        "l007b": "off_screen_address_high",
+    },
 }
 
 def spriteid(start_addr, end_addr=None):
@@ -490,6 +500,7 @@ label(0x0083, "sprite_bit_mask")
 label(0x0084, "sprite_y_offset_within_character_row")
 label(0x0085, "sprite_cell_x_pos")
 label(0x0086, "amount_sprite_is_offscreen_x")
+label(0x0087, "num_two_bit_offsets_within_byte")
 label(0x0088, "vertical_sprite_position_is_valid_flag")
 label(0x00fc, "interrupt_accumulator")      # OS variable
 label(0x00fd, "brk_address_low")            # OS variable
@@ -651,6 +662,7 @@ On Exit:
     expr(0x0af7, "first_level_letter")
     label(0x0afe, "return29")
 
+label(0x0b00, "area_to_copy_to_or_from_sideways_ram")
 label(0x0b11, "sprite_199")
 label(0x0b93, "sprite_198")
 label(0x0bc5, "sprite_197")
@@ -2128,7 +2140,6 @@ On Exit:
        A=4 means object collided with right wall
        A=8 means object collided with ceiling""")
     comment(0x2894, "TODO: this is used by e.g. dataA")
-#    label(0x28e1, "temp_remember_a")
     comment(0x28e2, "TODO: this is used by e.g. dataA")
     stars(0x28e2, """Test for a collision between two objects
 
@@ -2987,19 +2998,35 @@ On Exit:
     spriteid(0x3974, 0x3986)
     label(0x3974, "mid_transform_sprites_table")
     label(0x3975, "mid_transform_circle_sprites")
+    label(0x3978, "mid_transform_sparkles_in")
+    label(0x397f, "mid_transform_sparkles_out")
     comment(0x3986, "During a transformation, 'object_current_index_in_animation' is the index into the sprite array above and ")
     label(0x3986, "update_mid_transformation")
     label(0x3997, "still_playing")
+    expr(0x39a6, "mid_transform_sparkles_out - mid_transform_sprites_table")
+    label(0x39b6, "got_player_character")
+    label(0x39c1, "check_for_point_of_changing_level")
+    expr(0x39c2, "mid_transform_sparkles_out - mid_transform_sprites_table")
+    expr(0x39c6, "mid_transform_sparkles_out - mid_transform_sprites_table")
+    comment(0x39c9, "this is the point at which we move to the next level. First start the transform_in animation")
+    comment(0x39cc, "stack shenanigans: Remove two addresses from the stack, so we don't fill up the stack (taking us back to the stack level that called 'game_update') ")
+    comment(0x39d0, "find the next uncompleted level")
+    expr(0x39d1, "num_levels-1")
     label(0x39d2, "find_uncompleted_level_loop")
-    label(0x39e0, "found_uncompleted_level")
     expr(0x39dd, "last_level_letter")
     ab(0x39de)
+    label(0x39e0, "found_uncompleted_level")
     blank(0x39e0)
     expr(0x39e7, "last_level_letter")
     expr(0x39eb, "first_level_letter")
     label(0x39ec, "found_next_level")
+    comment(0x39f1, "start next level")
+    label(0x39f4, "check_for_circles_animation")
+    expr(0x39f9, "mid_transform_sprites_table - mid_transform_sprites_table")
+    expr(0x39f5, "mid_transform_sparkles_in - mid_transform_sprites_table")
     expr(0x39fe, "mid_transform_circle_sprites - mid_transform_sprites_table")
 
+    label(0x3a08, "mid_transform_store_state")
     label(0x3a12, "update_main_keys")
     expr(0x3a13, "inkey_key_return")
     expr(0x3a1c, "inkey_key_z")
@@ -3144,6 +3171,8 @@ expr(0x3e64, make_hi("sprdata_filename"))
 expr(0x3e68, "osfile_read_catalogue_info")
 comment(0x3e6c, "Load SPRDATA file into memory so it ends just before screen memory at $5bc0.")
 expr(0x3e6d, make_lo("start_of_screen_memory"))
+expr(0x3e70, "osfile_block_start_address_low")
+expr(0x3e76, "osfile_block_start_address_mid1")
 expr(0x3e74, make_hi("start_of_screen_memory"))
 comment(0x3e7c, "remember where sprite data is loaded")
 comment(0x3e82, """
@@ -3221,7 +3250,7 @@ expr(0x3f79, "sideways_rom_image_source_end - sideways_rom_image_source_start - 
 label(0x3f7b, "copy_to_sideways_ram_loop1")
 comment(0x3f85, "Copy 256 bytes from quit_to_basic to $be00, and 256 bytes from $0b00 to $bf00. ")
 label(0x3f87, "copy_to_sideways_ram_loop2")
-comment(0x3f9f, "The reset intercept code is set to 'JMP $1845'")
+comment(0x3f9f, "The reset intercept code is set to 'JMP reset_code'")
 comment(0x3fa1, "JMP opcode")
 expr(0x3fa2, "opcode_jmp")
 expr(0x3fab, make_lo("reset_code"))
@@ -3256,6 +3285,9 @@ label(0x5bc0, "start_of_screen_memory")
 label(0x8000, "end_of_screen_memory")
 
 label(0x6200, "game_area_screen_address")
+
+label(0xbe00, "sideways_ram_be00")
+label(0xbf00, "sideways_ram_bf00")
 
 with sideways_ram_area:
     entry(0x8000, "sideways_rom_image_dest")

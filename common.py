@@ -239,6 +239,7 @@ def common_to_all():
     label(0x2550, "temp_top_offset")
     label(0x2551, "temp_bottom_offset")
     label(0x2894, "get_solid_rock_collision_for_object_a")
+    label(0x28e1, "temp_default_collision_map_option")
     label(0x28e2, "test_for_collision_between_objects_x_and_y")
     label(0x2b87, "insert_character_menu_item_into_toolbar")
     label(0x2bbd, "find_or_create_menu_slot_for_A")
@@ -253,6 +254,7 @@ def common_to_all():
     label(0x2eef, "collectable_spriteids+2")
     label(0x2ef2, "five_byte_table_paired_with_collectable_sprite_ids") # TODO: size is a guess - it's at least two bytes though
     expr_label(0x2ef3, make_add("five_byte_table_paired_with_collectable_sprite_ids", "1"))
+    label(0x31d7, "inhibit_monkey_climb_flag")
     label(0x37f3, "print_encrypted_string_at_yx_centred")
     label(0x388d, "wait_one_second_then_check_keys")
     label(0x38ac, "object_sprite_mask_type")

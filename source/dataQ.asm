@@ -115,6 +115,7 @@ temp_right_offset                                   = $24d1
 temp_top_offset                                     = $2550
 temp_bottom_offset                                  = $2551
 get_solid_rock_collision_for_object_a               = $2894
+temp_default_collision_map_option                   = $28e1
 test_for_collision_between_objects_x_and_y          = $28e2
 l296f                                               = $296f
 l2980                                               = $2980

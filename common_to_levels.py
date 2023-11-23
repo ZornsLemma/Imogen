@@ -96,6 +96,7 @@ While updating the logic for a room, 'currently_updating_logic_for_room_index' i
     # Other common functions
     entry(0x395e, "define_envelope") # Duplicate of line in g.py, can't trivially put in common as it breaks imogen.py
 
+
 def ldx_ldy_jsr_play_sound_yx(jsr_runtime_addr, s):
     assert get_u8_runtime(RuntimeAddr(jsr_runtime_addr - 4)) == 0xa2 # ldx #
     sound_addr_lo = get_u8_runtime(RuntimeAddr(jsr_runtime_addr - 3))

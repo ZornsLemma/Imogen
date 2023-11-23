@@ -136,7 +136,7 @@ temp_top_offset                                     = $2550
 temp_bottom_offset                                  = $2551
 l25f5                                               = $25f5
 get_solid_rock_collision_for_object_a               = $2894
-l28e1                                               = $28e1
+temp_default_collision_map_option                   = $28e1
 test_for_collision_between_objects_x_and_y          = $28e2
 insert_character_menu_item_into_toolbar             = $2b87
 find_or_create_menu_slot_for_A                      = $2bbd
@@ -146,6 +146,7 @@ previous_player_using_object_spriteid               = $2eb7
 toolbar_collectable_spriteids                       = $2ee8
 collectable_spriteids                               = $2eed
 five_byte_table_paired_with_collectable_sprite_ids  = $2ef2
+inhibit_monkey_climb_flag                           = $31d7
 print_encrypted_string_at_yx_centred                = $37f3
 wait_one_second_then_check_keys                     = $388d
 object_sprite_mask_type                             = $38ac
@@ -1127,7 +1128,7 @@ c421c
     lda #2                                                            ; 421c: a9 02
     sta temp_bottom_offset                                            ; 421e: 8d 51 25
     lda #3                                                            ; 4221: a9 03
-    sta l28e1                                                         ; 4223: 8d e1 28
+    sta temp_default_collision_map_option                             ; 4223: 8d e1 28
     lda #2                                                            ; 4226: a9 02
     jsr get_solid_rock_collision_for_object_a                         ; 4228: 20 94 28
     bne c4266                                                         ; 422b: d0 39
@@ -1616,7 +1617,6 @@ pydis_end
 ;     l2434
 ;     l24d2
 ;     l25f5
-;     l28e1
 ;     l38ae
 ;     l38af
 ;     l38b0
