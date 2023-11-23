@@ -383,6 +383,10 @@ substitute_labels = {
         "l0080": "osfile_block_end_address_mid2",
         "l0081": "osfile_block_end_address_high",
     },
+    (0x3c16, 0x3c68): {
+        "l0072": "destination_address_low",
+        "l0073": "destination_address_high",
+    },
     (0x3d3d, 0x3d41): {
         "object_sprite_mask_type": "envelope_1",
     },
@@ -1996,7 +2000,7 @@ On Exit:
     stars(0x2693, """If colliding with a wall, line up next to the wall instead of going through it.
 
 On Entry:
-    l0053: object index of player?""")
+    player_objectid: object index of player""")
     label(0x2693, "handle_left_right_wall_collision")
     comment(0x269d, "player has hit wall on left side. Adjust player position to align with the cell next to the wall.")
     comment(0x26b7, "mark object has collided with left wall")
@@ -3269,6 +3273,11 @@ expr(0x403b, "vdu_printer_off")
 expr(0x4040, "vdu_set_mode")
 for i in range(5):
     char(0x406a+i*4)
+expr(0x4070, "address1_low + 1")
+expr(0x4074, "address1_low + 2")
+expr(0x4078, "address1_low + 3")
+expr(0x407c, "address1_low + 4")
+expr(0x4080, "address1_low + 5")
 expr(0x407e, "vdu_cr")
 label(0x4088, "relocation3_high_copy_start")
 label(0x4088+0x48, "relocation3_high_copy_end")

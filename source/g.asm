@@ -331,6 +331,7 @@ object_left_high                                    = $71
 osfile_block_filename_high                          = $71
 screen_address_high                                 = $71
 src_sprite_address_high                             = $71
+destination_address_low                             = $72
 l0072                                               = $72
 object_right_low                                    = $72
 object_rope_low                                     = $72
@@ -338,6 +339,7 @@ osfile_block_load_address_low                       = $72
 sprite_screen_address_low                           = $72
 temp_sprite_list_low                                = $72
 width_in_cells_to_write                             = $72
+destination_address_high                            = $73
 height_in_cells_to_write                            = $73
 l0073                                               = $73
 object_right_high                                   = $73
@@ -4799,7 +4801,7 @@ return14
 ; If colliding with a wall, line up next to the wall instead of going through it.
 ; 
 ; On Entry:
-;     l0053: object index of player?
+;     player_objectid: object index of player
 ; 
 ; *************************************************************************************
 handle_left_right_wall_collision
@@ -8157,19 +8159,19 @@ execution_start
     lda #>relocation1_high_copy_start                                 ; 3c1a: a9 40       .@
     sta address1_high                                                 ; 3c1c: 85 71       .q
     lda #<wait_for_timingB_counter                                    ; 3c1e: a9 00       ..
-    sta l0072                                                         ; 3c20: 85 72       .r
+    sta destination_address_low                                       ; 3c20: 85 72       .r
     lda #>wait_for_timingB_counter                                    ; 3c22: a9 04       ..
-    sta l0073                                                         ; 3c24: 85 73       .s
+    sta destination_address_high                                      ; 3c24: 85 73       .s
     ldx #2                                                            ; 3c26: a2 02       ..
     beq relocation2                                                   ; 3c28: f0 10       ..             ; branch never taken
     ldy #0                                                            ; 3c2a: a0 00       ..
 relocation1_loop
     lda (address1_low),y                                              ; 3c2c: b1 70       .p
-    sta (l0072),y                                                     ; 3c2e: 91 72       .r
+    sta (destination_address_low),y                                   ; 3c2e: 91 72       .r
     iny                                                               ; 3c30: c8          .
     bne relocation1_loop                                              ; 3c31: d0 f9       ..
     inc address1_high                                                 ; 3c33: e6 71       .q
-    inc l0073                                                         ; 3c35: e6 73       .s
+    inc destination_address_high                                      ; 3c35: e6 73       .s
     dex                                                               ; 3c37: ca          .
     bne relocation1_loop                                              ; 3c38: d0 f2       ..
 
@@ -8181,14 +8183,14 @@ relocation2
     lda #>pydis_start                                                 ; 3c3e: a9 12       ..
     sta address1_high                                                 ; 3c40: 85 71       .q
     lda #<developer_flags                                             ; 3c42: a9 03       ..
-    sta l0072                                                         ; 3c44: 85 72       .r
+    sta destination_address_low                                       ; 3c44: 85 72       .r
     lda #>developer_flags                                             ; 3c46: a9 11       ..
-    sta l0073                                                         ; 3c48: 85 73       .s
+    sta destination_address_high                                      ; 3c48: 85 73       .s
     lda address1_high                                                 ; 3c4a: a5 71       .q
-    cmp l0073                                                         ; 3c4c: c5 73       .s
+    cmp destination_address_high                                      ; 3c4c: c5 73       .s
     bne skip4                                                         ; 3c4e: d0 06       ..             ; branch always taken
     lda address1_low                                                  ; 3c50: a5 70       .p
-    cmp l0072                                                         ; 3c52: c5 72       .r
+    cmp destination_address_low                                       ; 3c52: c5 72       .r
     beq relocation3                                                   ; 3c54: f0 14       ..
 skip4
     ldx #$2a ; '*'                                                    ; 3c56: a2 2a       .*
@@ -8196,11 +8198,11 @@ skip4
     ldy #0                                                            ; 3c5a: a0 00       ..
 relocation2_loop
     lda (address1_low),y                                              ; 3c5c: b1 70       .p
-    sta (l0072),y                                                     ; 3c5e: 91 72       .r
+    sta (destination_address_low),y                                   ; 3c5e: 91 72       .r
     iny                                                               ; 3c60: c8          .
     bne relocation2_loop                                              ; 3c61: d0 f9       ..
     inc address1_high                                                 ; 3c63: e6 71       .q
-    inc l0073                                                         ; 3c65: e6 73       .s
+    inc destination_address_high                                      ; 3c65: e6 73       .s
     dex                                                               ; 3c67: ca          .
     bne relocation2_loop                                              ; 3c68: d0 f2       ..
 
@@ -8809,15 +8811,15 @@ quit_to_basic
     lda #'B'                                                          ; 4069: a9 42       .B
     sta address1_low                                                  ; 406b: 85 70       .p
     lda #'A'                                                          ; 406d: a9 41       .A
-    sta address1_high                                                 ; 406f: 85 71       .q
+    sta address1_low + 1                                              ; 406f: 85 71       .q
     lda #'S'                                                          ; 4071: a9 53       .S
-    sta l0072                                                         ; 4073: 85 72       .r
+    sta address1_low + 2                                              ; 4073: 85 72       .r
     lda #'I'                                                          ; 4075: a9 49       .I
-    sta l0073                                                         ; 4077: 85 73       .s
+    sta address1_low + 3                                              ; 4077: 85 73       .s
     lda #'C'                                                          ; 4079: a9 43       .C
-    sta l0074                                                         ; 407b: 85 74       .t
+    sta address1_low + 4                                              ; 407b: 85 74       .t
     lda #vdu_cr                                                       ; 407d: a9 0d       ..
-    sta l0075                                                         ; 407f: 85 75       .u
+    sta address1_low + 5                                              ; 407f: 85 75       .u
     ldx #<(address1_low)                                              ; 4081: a2 70       .p
     ldy #>(address1_low)                                              ; 4083: a0 00       ..
     jmp oscli                                                         ; 4085: 4c f7 ff    L..
@@ -9614,6 +9616,21 @@ pydis_end
 }
 !if (>wizard_sprite_list) != $2c {
     !error "Assertion failed: >wizard_sprite_list == $2c"
+}
+!if (address1_low + 1) != $71 {
+    !error "Assertion failed: address1_low + 1 == $71"
+}
+!if (address1_low + 2) != $72 {
+    !error "Assertion failed: address1_low + 2 == $72"
+}
+!if (address1_low + 3) != $73 {
+    !error "Assertion failed: address1_low + 3 == $73"
+}
+!if (address1_low + 4) != $74 {
+    !error "Assertion failed: address1_low + 4 == $74"
+}
+!if (address1_low + 5) != $75 {
+    !error "Assertion failed: address1_low + 5 == $75"
 }
 !if (buffer_sound_channel_0) != $04 {
     !error "Assertion failed: buffer_sound_channel_0 == $04"
