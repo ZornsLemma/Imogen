@@ -208,7 +208,7 @@ level_specific_initialisation
     lda current_level                                                 ; 3af2: a5 31
 ; if level is unchanged, skip forwards
     cmp level_before_latest_level_and_room_initialisation             ; 3af4: c5 51
-    beq saxophone_not_collected_yet                                   ; 3af6: f0 16
+    beq set_ground_fill_2x2_as_source_sprite                          ; 3af6: f0 16
 ; if not in developer mode, skip forwards
     lda developer_flags                                               ; 3af8: ad 03 11
     bpl developer_mode_not_active                                     ; 3afb: 10 07
@@ -221,12 +221,12 @@ level_specific_initialisation
 ; saxophone. Or indeed may have just loaded a previously saved game.
 developer_mode_not_active
     lda saxophone_collected_flag                                      ; 3b04: ad 00 0a
-    beq saxophone_not_collected_yet                                   ; 3b07: f0 05
+    beq set_ground_fill_2x2_as_source_sprite                          ; 3b07: f0 05
 ; add the saxophone menu item to the toolbar (due to having collected it on a previous
 ; visit to the level)
     lda #spriteid_saxophone2                                          ; 3b09: a9 d3
     jsr find_or_create_menu_slot_for_A                                ; 3b0b: 20 bd 2b
-saxophone_not_collected_yet
+set_ground_fill_2x2_as_source_sprite
     lda #<ground_fill_2x2_top_left                                    ; 3b0e: a9 86
     sta source_sprite_memory_low                                      ; 3b10: 85 40
     lda #>ground_fill_2x2_top_left                                    ; 3b12: a9 44

@@ -113,7 +113,7 @@ tile_bitmap(0x449e, "ground_fill_2x2_bottom_right")
 comment(0x3af4, "if level is unchanged, skip forwards")
 comment(0x3af8, "if not in developer mode, skip forwards")
 entry(0x3b04, "developer_mode_not_active")
-label(0x3b0e, "saxophone_not_collected_yet")
+label(0x3b0e, "set_ground_fill_2x2_as_source_sprite")
 comment(0x3afd, "add the saxophone menu item to the toolbar (due to being in developer mode)")
 comment(0x3b09, "add the saxophone menu item to the toolbar (due to having collected it on a previous visit to the level)")
 
