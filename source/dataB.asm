@@ -1,36 +1,51 @@
 ; Constants
-copy_mode_2x2                = 0
-copy_mode_random16           = 16
-copy_mode_random2            = 2
-copy_mode_random32           = 32
-copy_mode_random4            = 4
-copy_mode_random64           = 64
-copy_mode_random8            = 8
-copy_mode_simple             = 1
-exit_room_bottom             = 2
-exit_room_left               = 1
-exit_room_right              = 4
-exit_room_top                = 8
-first_level_letter           = 65
-game_area_height_cells       = 24
-game_area_width_cells        = 40
-last_level_letter            = 81
-object_collided_ceiling      = 8
-object_collided_floor        = 2
-object_collided_left_wall    = 1
-object_collided_right_wall   = 4
-objectid_player              = 0
-objectid_player_accessory    = 1
-opcode_jmp                   = 76
-spriteid_boulder             = 213
-spriteid_clock               = 200
-spriteid_clock_workings      = 209
-spriteid_pendulum1           = 201
-spriteid_pendulum2           = 202
-spriteid_pendulum3           = 203
-spriteid_pendulum4           = 204
-spriteid_pendulum5           = 205
-spriteid_table               = 210
+copy_mode_2x2                   = 0
+copy_mode_random16              = 16
+copy_mode_random2               = 2
+copy_mode_random32              = 32
+copy_mode_random4               = 4
+copy_mode_random64              = 64
+copy_mode_random8               = 8
+copy_mode_simple                = 1
+exit_room_bottom                = 2
+exit_room_left                  = 1
+exit_room_right                 = 4
+exit_room_top                   = 8
+first_level_letter              = 65
+game_area_height_cells          = 24
+game_area_width_cells           = 40
+last_level_letter               = 81
+object_collided_ceiling         = 8
+object_collided_floor           = 2
+object_collided_left_wall       = 1
+object_collided_right_wall      = 4
+objectid_player                 = 0
+objectid_player_accessory       = 1
+opcode_jmp                      = 76
+spriteid_blob                   = 219
+spriteid_boulder                = 213
+spriteid_cache1                 = 215
+spriteid_cache2                 = 216
+spriteid_cache3                 = 223
+spriteid_clock                  = 200
+spriteid_clock_workings         = 209
+spriteid_cuckoo                 = 211
+spriteid_cuckoo_appear_full     = 208
+spriteid_cuckoo_appear_partly   = 207
+spriteid_cuckoo_menu_item       = 212
+spriteid_cuckoo_open_beak       = 214
+spriteid_hourglass              = 221
+spriteid_hourglass_menu_item    = 222
+spriteid_pendulum1              = 201
+spriteid_pendulum2              = 202
+spriteid_pendulum3              = 203
+spriteid_pendulum4              = 204
+spriteid_pendulum5              = 205
+spriteid_rope                   = 217
+spriteid_rope_broken1           = 218
+spriteid_rope_broken2           = 220
+spriteid_table                  = 210
+spriteid_vertical_rod           = 206
 
 ; Memory locations
 characters_entered                                  = $05
@@ -190,14 +205,14 @@ level_specific_initialisation
 c3b02
     lda l0a09                                                         ; 3b02: ad 09 0a
     beq c3b0c                                                         ; 3b05: f0 05
-    lda #$de                                                          ; 3b07: a9 de
+    lda #spriteid_hourglass_menu_item                                 ; 3b07: a9 de
     jsr find_or_create_menu_slot_for_A                                ; 3b09: 20 bd 2b
 c3b0c
     lda l0a05                                                         ; 3b0c: ad 05 0a
     beq result1                                                       ; 3b0f: f0 0a
     lda l0a06                                                         ; 3b11: ad 06 0a
     bne result1                                                       ; 3b14: d0 05
-    lda #$d4                                                          ; 3b16: a9 d4
+    lda #spriteid_cuckoo_menu_item                                    ; 3b16: a9 d4
     jsr find_or_create_menu_slot_for_A                                ; 3b18: 20 bd 2b
 result1
     rts                                                               ; 3b1b: 60
@@ -562,7 +577,7 @@ c3dd1
     ldy #3                                                            ; 3de0: a0 03
     jsr test_for_collision_between_objects_x_and_y                    ; 3de2: 20 e2 28
     beq c3e11                                                         ; 3de5: f0 2a
-    lda #$d4                                                          ; 3de7: a9 d4
+    lda #spriteid_cuckoo_menu_item                                    ; 3de7: a9 d4
     jsr find_or_create_menu_slot_for_A                                ; 3de9: 20 bd 2b
     lda #$ff                                                          ; 3dec: a9 ff
     sta l0a05                                                         ; 3dee: 8d 05 0a
@@ -1242,7 +1257,7 @@ c4319
     ldy #7                                                            ; 4326: a0 07
     jsr test_for_collision_between_objects_x_and_y                    ; 4328: 20 e2 28
     beq c433c                                                         ; 432b: f0 0f
-    lda #$de                                                          ; 432d: a9 de
+    lda #spriteid_hourglass_menu_item                                 ; 432d: a9 de
     jsr find_or_create_menu_slot_for_A                                ; 432f: 20 bd 2b
     lda #0                                                            ; 4332: a9 00
     sta l09af                                                         ; 4334: 8d af 09
@@ -1425,7 +1440,7 @@ c4495
     ldy #2                                                            ; 4497: a0 02
     jsr test_for_collision_between_objects_x_and_y                    ; 4499: 20 e2 28
     beq c44ad                                                         ; 449c: f0 0f
-    lda #$d4                                                          ; 449e: a9 d4
+    lda #spriteid_cuckoo_menu_item                                    ; 449e: a9 d4
     jsr find_or_create_menu_slot_for_A                                ; 44a0: 20 bd 2b
     lda #0                                                            ; 44a3: a9 00
     sta l09aa                                                         ; 44a5: 8d aa 09
@@ -1776,6 +1791,12 @@ pydis_end
 }
 !if (spriteid_clock_workings) != $d1 {
     !error "Assertion failed: spriteid_clock_workings == $d1"
+}
+!if (spriteid_cuckoo_menu_item) != $d4 {
+    !error "Assertion failed: spriteid_cuckoo_menu_item == $d4"
+}
+!if (spriteid_hourglass_menu_item) != $de {
+    !error "Assertion failed: spriteid_hourglass_menu_item == $de"
 }
 !if (spriteid_table) != $d2 {
     !error "Assertion failed: spriteid_table == $d2"

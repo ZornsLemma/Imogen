@@ -10,11 +10,24 @@ sprite_dict = {
     0xcb: "spriteid_pendulum3",
     0xcc: "spriteid_pendulum4",
     0xcd: "spriteid_pendulum5",
-
+    0xce: "spriteid_vertical_rod",
+    0xcf: "spriteid_cuckoo_appear_partly",
+    0xd0: "spriteid_cuckoo_appear_full",
     0xd1: "spriteid_clock_workings",
     0xd2: "spriteid_table",
-
+    0xd3: "spriteid_cuckoo",
+    0xd4: "spriteid_cuckoo_menu_item",
     0xd5: "spriteid_boulder",
+    0xd6: "spriteid_cuckoo_open_beak",
+    0xd7: "spriteid_cache1",
+    0xd8: "spriteid_cache2",
+    0xd9: "spriteid_rope",
+    0xda: "spriteid_rope_broken1",
+    0xdb: "spriteid_blob",
+    0xdc: "spriteid_rope_broken2",
+    0xdd: "spriteid_hourglass",
+    0xde: "spriteid_hourglass_menu_item",
+    0xdf: "spriteid_cache3",
 }
 
 # Room 0
