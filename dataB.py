@@ -65,8 +65,6 @@ label(0x3b0c, "check_got_cuckoo")
 label(0x3b1b, "return1")
 label(0x3c80, "return2")
 
-comment(0x3b39, "Draw rectangles of ground fill rock with a 2x2 pattern. Also writes to the collision map.")
-comment(0x3bc1, "Carve the floor, walls and ceiling into the rock")
 comment(0x3bc4, "Draw tables")
 expr(0x3bf1, "exit_room_left")
 comment(0x3bf4, "exit room left, to room 1")

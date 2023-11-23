@@ -125,7 +125,6 @@ comment(0x3b04, "check the saxophone collected flag. The user can choose during 
 label(0xa00, "saxophone_collected_flag")
 
 comment(0x3b29, "Draw rectangles of ground fill rock with a 2x2 pattern. Also writes to the collision map.")
-comment(0x3b84, "Carve the floor, walls and ceiling into the rock")
 comment(0x3b87, "Draw tables")
 comment(0x3bae, "Draw ropes")
 

@@ -45,7 +45,8 @@ def level_room_data_table_entry(addr, s):
     #label(target3, room_n + "_data")
     #expr(target1, room_n + "_data")
     entry(target2, room_n + "_code")
-    ground_fill(target2, (s == "0"))
+    if ground_fill(target2, (s == "0")):
+        comment(target2 + 8, "Draw rectangles of ground fill rock with a 2x2 pattern. Also writes to the collision map.")
 
     for a in range(target2, target2 + 200):
         # look for 'jsr draw_floor_walls_and_ceiling_around_solid_rock'
@@ -106,17 +107,17 @@ While updating the logic for a room, 'currently_updating_logic_for_room_index' i
 
 def ground_fill(addr, make_label=True):
     if get_u8_runtime(RuntimeAddr(addr)) != 0xa9: # lda #
-        return
+        return False
     if get_u8_runtime(RuntimeAddr(addr + 2)) != 0x85: # sta $41
-        return
+        return False
     if get_u8_runtime(RuntimeAddr(addr + 3)) != 0x40:
-        return
+        return False
     if get_u8_runtime(RuntimeAddr(addr + 4)) != 0xa9: # lda #
-        return
+        return False
     if get_u8_runtime(RuntimeAddr(addr + 6)) != 0x85: # sta $41
-        return
+        return False
     if get_u8_runtime(RuntimeAddr(addr + 7)) != 0x41: #
-        return
+        return False
 
     expr(addr + 1, make_lo("ground_fill_2x2_top_left"))
     expr(addr + 5, make_hi("ground_fill_2x2_top_left"))
@@ -125,6 +126,7 @@ def ground_fill(addr, make_label=True):
 
     if make_label:
         tile_bitmap2x2(tile_addr, "ground_fill_2x2")
+    return True
 
 def ldx_ldy_jsr_play_sound_yx(jsr_runtime_addr, s):
     assert get_u8_runtime(RuntimeAddr(jsr_runtime_addr - 4)) == 0xa2 # ldx #

@@ -232,6 +232,8 @@ room_0_code
     sta source_sprite_memory_low                                      ; 3b21: 85 40
     lda #>ground_fill_2x2_top_left                                    ; 3b23: a9 45
     sta source_sprite_memory_high                                     ; 3b25: 85 41
+; Draw rectangles of ground fill rock with a 2x2 pattern. Also writes to the collision
+; map.
     ldx #0                                                            ; 3b27: a2 00
     ldy #0                                                            ; 3b29: a0 00
     lda #3                                                            ; 3b2b: a9 03
@@ -544,6 +546,8 @@ room_1_code
     sta source_sprite_memory_low                                      ; 3d7e: 85 40
     lda #>ground_fill_2x2_top_left                                    ; 3d80: a9 45
     sta source_sprite_memory_high                                     ; 3d82: 85 41
+; Draw rectangles of ground fill rock with a 2x2 pattern. Also writes to the collision
+; map.
     ldx #0                                                            ; 3d84: a2 00
     ldy #0                                                            ; 3d86: a0 00
     lda #$ff                                                          ; 3d88: a9 ff
@@ -972,6 +976,8 @@ room_2_code
     sta source_sprite_memory_low                                      ; 40e1: 85 40
     lda #>ground_fill_2x2_top_left                                    ; 40e3: a9 45
     sta source_sprite_memory_high                                     ; 40e5: 85 41
+; Draw rectangles of ground fill rock with a 2x2 pattern. Also writes to the collision
+; map.
     ldx #0                                                            ; 40e7: a2 00
     ldy #0                                                            ; 40e9: a0 00
     lda #$ff                                                          ; 40eb: a9 ff
@@ -1410,6 +1416,8 @@ room_3_code
     sta source_sprite_memory_low                                      ; 4435: 85 40
     lda #>ground_fill_2x2_top_left                                    ; 4437: a9 45
     sta source_sprite_memory_high                                     ; 4439: 85 41
+; Draw rectangles of ground fill rock with a 2x2 pattern. Also writes to the collision
+; map.
     ldx #0                                                            ; 443b: a2 00
     ldy #0                                                            ; 443d: a0 00
     lda #$ff                                                          ; 443f: a9 ff
