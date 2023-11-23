@@ -448,12 +448,13 @@ no_wrap_needed
     lda desired_room_index                                            ; 3c84: a5 30
     cmp #0                                                            ; 3c86: c9 00
     bne move_mouse_ball_if_room_0                                     ; 3c88: d0 1e
+; Play the mouse ball sounds at positions 0 and $f
     tya                                                               ; 3c8a: 98
     beq play_mouse_ball_sounds                                        ; 3c8b: f0 04
     cpy #$0f                                                          ; 3c8d: c0 0f
     bne move_mouse_ball_if_room_0                                     ; 3c8f: d0 17
 play_mouse_ball_sounds
-    lda #0                                                            ; 3c91: a9 00
+    lda #0                                                            ; 3c91: a9 00                   ; redundant
     ldx #<mouse_ball_sound1                                           ; 3c93: a2 7e
     ldy #>mouse_ball_sound1                                           ; 3c95: a0 44
     jsr play_sound_yx                                                 ; 3c97: 20 f6 38
