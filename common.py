@@ -219,6 +219,7 @@ def common_to_all():
     label(0x12bb, "start_room")
     label(0x12da, "game_update")
     label(0x132b, "update_room_first_update_flag")
+    label(0x138d, "sprite_op")
     label(0x175d, "pending_toolbar_colour")
     label(0x175e, "toolbar_colour")
     label(0x175f, "pending_gameplay_area_colour")

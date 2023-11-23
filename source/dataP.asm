@@ -104,6 +104,7 @@ initialise_level_and_room                           = $1140
 start_room                                          = $12bb
 game_update                                         = $12da
 update_room_first_update_flag                       = $132b
+sprite_op                                           = $138d
 pending_toolbar_colour                              = $175d
 toolbar_colour                                      = $175e
 pending_gameplay_area_colour                        = $175f
@@ -244,6 +245,7 @@ level_specific_update
     jsr sub_c404a                                                     ; 3b26: 20 4a 40
     rts                                                               ; 3b29: 60
 
+; draw 1x1 rectangle at (3,2)
 sub_c3b2a
     ldx #3                                                            ; 3b2a: a2 03
     ldy #2                                                            ; 3b2c: a0 02
@@ -251,6 +253,7 @@ sub_c3b2a
     sta width_in_cells                                                ; 3b30: 85 3c
     sta height_in_cells                                               ; 3b32: 85 3d
     jsr copy_rectangle_of_memory_to_screen                            ; 3b34: 20 bb 1a
+; draw 1x1 rectangle at (36,2)
     ldx #$24 ; '$'                                                    ; 3b37: a2 24
     jmp copy_rectangle_of_memory_to_screen                            ; 3b39: 4c bb 1a
 
@@ -263,6 +266,31 @@ room_1_data
     !byte 20                                                          ; 3b3c: 14                      ; initial player X cell
     !byte 22                                                          ; 3b3d: 16                      ; initial player Y cell
 
+; draw 255x2 rectangle at (0,0)
+; ########################################
+; ########################################
+; ####                                ####
+; ###                                  ###
+; ###                                  ###
+; ###
+; ###
+; ###
+; ###
+; ######                            ######
+; ######              S             ######
+; ###                                  ###
+; ###                                  ###
+; ###                                  ###
+; ###                                  ###
+; ###                                  ###
+; ###                                  ###
+; 
+; 
+; 
+; 
+; ######                            ######
+; ########################################
+; ########################################
 room_1_code
     ldx #0                                                            ; 3b3e: a2 00
     ldy #0                                                            ; 3b40: a0 00
@@ -271,33 +299,41 @@ room_1_code
     lda #2                                                            ; 3b46: a9 02
     sta height_in_cells                                               ; 3b48: 85 3d
     jsr copy_rectangle_of_memory_to_screen                            ; 3b4a: 20 bb 1a
+; draw 255x2 rectangle at (0,22)
     ldy #$16                                                          ; 3b4d: a0 16
     jsr copy_rectangle_of_memory_to_screen                            ; 3b4f: 20 bb 1a
+; draw 3x15 rectangle at (0,2)
     ldy #2                                                            ; 3b52: a0 02
     lda #3                                                            ; 3b54: a9 03
     sta width_in_cells                                                ; 3b56: 85 3c
     lda #$0f                                                          ; 3b58: a9 0f
     sta height_in_cells                                               ; 3b5a: 85 3d
     jsr copy_rectangle_of_memory_to_screen                            ; 3b5c: 20 bb 1a
+; draw 3x3 rectangle at (37,2)
     ldx #$25 ; '%'                                                    ; 3b5f: a2 25
     lda #3                                                            ; 3b61: a9 03
     sta height_in_cells                                               ; 3b63: 85 3d
     jsr copy_rectangle_of_memory_to_screen                            ; 3b65: 20 bb 1a
+; draw 3x8 rectangle at (37,9)
     ldy #9                                                            ; 3b68: a0 09
     lda #8                                                            ; 3b6a: a9 08
     sta height_in_cells                                               ; 3b6c: 85 3d
     jsr copy_rectangle_of_memory_to_screen                            ; 3b6e: 20 bb 1a
+; draw 3x2 rectangle at (3,9)
     ldx #3                                                            ; 3b71: a2 03
     lda #2                                                            ; 3b73: a9 02
     sta height_in_cells                                               ; 3b75: 85 3d
     jsr copy_rectangle_of_memory_to_screen                            ; 3b77: 20 bb 1a
+; draw 3x2 rectangle at (34,9)
     ldx #$22 ; '"'                                                    ; 3b7a: a2 22
     jsr copy_rectangle_of_memory_to_screen                            ; 3b7c: 20 bb 1a
+; draw 6x1 rectangle at (34,21)
     ldy #$15                                                          ; 3b7f: a0 15
     lda #6                                                            ; 3b81: a9 06
     sta width_in_cells                                                ; 3b83: 85 3c
     dec height_in_cells                                               ; 3b85: c6 3d
     jsr copy_rectangle_of_memory_to_screen                            ; 3b87: 20 bb 1a
+; draw 6x1 rectangle at (0,21)
     ldx #0                                                            ; 3b8a: a2 00
     jsr copy_rectangle_of_memory_to_screen                            ; 3b8c: 20 bb 1a
     jsr sub_c3b2a                                                     ; 3b8f: 20 2a 3b
@@ -450,6 +486,31 @@ room_2_data
     !byte 20                                                          ; 3caf: 14                      ; initial player X cell
     !byte 22                                                          ; 3cb0: 16                      ; initial player Y cell
 
+; draw 255x2 rectangle at (0,0)
+; ########################################
+; ########################################
+; ####                                ####
+; ###                                  ###
+; ###                                  ###
+; 
+; 
+; 
+; 
+; ######         ##########         ######
+; ######         ##########         ######
+; ###                                  ###
+; ###                                  ###
+; ###                                  ###
+; ###                                  ###
+; ###                                  ###
+; ###                                  ###
+; 
+; 
+; 
+; 
+; ######                            ######
+; ########################################
+; ########################################
 room_2_code
     ldx #0                                                            ; 3cb1: a2 00
     ldy #0                                                            ; 3cb3: a0 00
@@ -458,38 +519,48 @@ room_2_code
     lda #2                                                            ; 3cb9: a9 02
     sta height_in_cells                                               ; 3cbb: 85 3d
     jsr copy_rectangle_of_memory_to_screen                            ; 3cbd: 20 bb 1a
+; draw 255x2 rectangle at (0,22)
     ldy #$16                                                          ; 3cc0: a0 16
     jsr copy_rectangle_of_memory_to_screen                            ; 3cc2: 20 bb 1a
+; draw 3x3 rectangle at (0,2)
     ldy #2                                                            ; 3cc5: a0 02
     lda #3                                                            ; 3cc7: a9 03
     sta width_in_cells                                                ; 3cc9: 85 3c
     sta height_in_cells                                               ; 3ccb: 85 3d
     jsr copy_rectangle_of_memory_to_screen                            ; 3ccd: 20 bb 1a
+; draw 3x3 rectangle at (37,2)
     ldx #$25 ; '%'                                                    ; 3cd0: a2 25
     jsr copy_rectangle_of_memory_to_screen                            ; 3cd2: 20 bb 1a
+; draw 3x8 rectangle at (0,9)
     ldx #0                                                            ; 3cd5: a2 00
     ldy #9                                                            ; 3cd7: a0 09
     lda #8                                                            ; 3cd9: a9 08
     sta height_in_cells                                               ; 3cdb: 85 3d
     jsr copy_rectangle_of_memory_to_screen                            ; 3cdd: 20 bb 1a
+; draw 3x8 rectangle at (37,9)
     ldx #$25 ; '%'                                                    ; 3ce0: a2 25
     jsr copy_rectangle_of_memory_to_screen                            ; 3ce2: 20 bb 1a
+; draw 3x2 rectangle at (3,9)
     ldx #3                                                            ; 3ce5: a2 03
     lda #2                                                            ; 3ce7: a9 02
     sta height_in_cells                                               ; 3ce9: 85 3d
     jsr copy_rectangle_of_memory_to_screen                            ; 3ceb: 20 bb 1a
+; draw 3x2 rectangle at (34,9)
     ldx #$22 ; '"'                                                    ; 3cee: a2 22
     jsr copy_rectangle_of_memory_to_screen                            ; 3cf0: 20 bb 1a
+; draw 10x2 rectangle at (15,9)
     ldx #$0f                                                          ; 3cf3: a2 0f
     lda #$0a                                                          ; 3cf5: a9 0a
     sta width_in_cells                                                ; 3cf7: 85 3c
     jsr copy_rectangle_of_memory_to_screen                            ; 3cf9: 20 bb 1a
+; draw 6x1 rectangle at (0,21)
     ldx #0                                                            ; 3cfc: a2 00
     ldy #$15                                                          ; 3cfe: a0 15
     lda #6                                                            ; 3d00: a9 06
     sta width_in_cells                                                ; 3d02: 85 3c
     dec height_in_cells                                               ; 3d04: c6 3d
     jsr copy_rectangle_of_memory_to_screen                            ; 3d06: 20 bb 1a
+; draw 6x1 rectangle at (34,21)
     ldx #$22 ; '"'                                                    ; 3d09: a2 22
     jsr copy_rectangle_of_memory_to_screen                            ; 3d0b: 20 bb 1a
     jsr sub_c3b2a                                                     ; 3d0e: 20 2a 3b
@@ -860,6 +931,31 @@ room_3_data
     !byte 20                                                          ; 3fb8: 14                      ; initial player X cell
     !byte 22                                                          ; 3fb9: 16                      ; initial player Y cell
 
+; draw 255x2 rectangle at (0,0)
+; ########################################
+; ########################################
+; ####      |    |                    ####
+; ###       |    |                     ###
+; ###       |    |                     ###
+;           |    |                     ###
+;           |    |                     ###
+;           |    |                     ###
+;           |    |                     ###
+; ######    |    |    ####################
+; ######    |    |    ####################
+; ###       |    |                     ###
+; ###       |    |                     ###
+; ###       |    |                     ###
+; ###       |    |                     ###
+; ###       |    |                     ###
+; ###       |    |                     ###
+;                                      ###
+;                                      ###
+;                                      ###
+;                                OOOOOO###
+; ######                         OOOOOO###
+; ########################################
+; ########################################
 room_3_code
     ldx #0                                                            ; 3fba: a2 00
     ldy #0                                                            ; 3fbc: a0 00
@@ -868,30 +964,37 @@ room_3_code
     lda #2                                                            ; 3fc2: a9 02
     sta height_in_cells                                               ; 3fc4: 85 3d
     jsr copy_rectangle_of_memory_to_screen                            ; 3fc6: 20 bb 1a
+; draw 255x2 rectangle at (0,22)
     ldy #$16                                                          ; 3fc9: a0 16
     jsr copy_rectangle_of_memory_to_screen                            ; 3fcb: 20 bb 1a
+; draw 255x20 rectangle at (37,2)
     ldx #$25 ; '%'                                                    ; 3fce: a2 25
     ldy #2                                                            ; 3fd0: a0 02
     lda #$14                                                          ; 3fd2: a9 14
     sta height_in_cells                                               ; 3fd4: 85 3d
     jsr copy_rectangle_of_memory_to_screen                            ; 3fd6: 20 bb 1a
+; draw 3x3 rectangle at (0,2)
     ldx #0                                                            ; 3fd9: a2 00
     lda #3                                                            ; 3fdb: a9 03
     sta width_in_cells                                                ; 3fdd: 85 3c
     sta height_in_cells                                               ; 3fdf: 85 3d
     jsr copy_rectangle_of_memory_to_screen                            ; 3fe1: 20 bb 1a
+; draw 3x8 rectangle at (0,9)
     ldy #9                                                            ; 3fe4: a0 09
     lda #8                                                            ; 3fe6: a9 08
     sta height_in_cells                                               ; 3fe8: 85 3d
     jsr copy_rectangle_of_memory_to_screen                            ; 3fea: 20 bb 1a
+; draw 3x2 rectangle at (3,9)
     ldx #3                                                            ; 3fed: a2 03
     lda #2                                                            ; 3fef: a9 02
     sta height_in_cells                                               ; 3ff1: 85 3d
     jsr copy_rectangle_of_memory_to_screen                            ; 3ff3: 20 bb 1a
+; draw 17x2 rectangle at (20,9)
     ldx #$14                                                          ; 3ff6: a2 14
     lda #$11                                                          ; 3ff8: a9 11
     sta width_in_cells                                                ; 3ffa: 85 3c
     jsr copy_rectangle_of_memory_to_screen                            ; 3ffc: 20 bb 1a
+; draw 6x1 rectangle at (0,21)
     ldx #0                                                            ; 3fff: a2 00
     ldy #$15                                                          ; 4001: a0 15
     lda #6                                                            ; 4003: a9 06
@@ -953,6 +1056,31 @@ room_0_data
     !byte 20                                                          ; 4068: 14                      ; initial player X cell
     !byte 22                                                          ; 4069: 16                      ; initial player Y cell
 
+; draw 255x2 rectangle at (0,0)
+; ########################################
+; ########################################
+; ####   |                        |   ####
+; ###    |                        |    ###
+; ###    |                        |    ###
+; ###    |                        |    ###
+; ###    |                        |    ###
+; ###    |                        |    ###
+; ###    |                        |    ###
+; ###    |                        |    ###
+; ###    |                        |    ###
+; ###    |                        |    ###
+; ###    |                        |    ###
+; ###    |                        |    ###
+; ###    |                        |    ###
+; ###    |     ##############     |    ###
+; ###    |     ##############     |    ###
+; ###    |                        |
+; ###    |                        |
+; ###    |
+; ###
+; ###                               ######
+; ########################################
+; ########################################
 room_0_code
     ldx #0                                                            ; 406a: a2 00
     ldy #0                                                            ; 406c: a0 00
@@ -961,18 +1089,22 @@ room_0_code
     lda #2                                                            ; 4072: a9 02
     sta height_in_cells                                               ; 4074: 85 3d
     jsr copy_rectangle_of_memory_to_screen                            ; 4076: 20 bb 1a
+; draw 255x2 rectangle at (0,22)
     ldy #$16                                                          ; 4079: a0 16
     jsr copy_rectangle_of_memory_to_screen                            ; 407b: 20 bb 1a
+; draw 3x20 rectangle at (0,2)
     ldy #2                                                            ; 407e: a0 02
     lda #3                                                            ; 4080: a9 03
     sta width_in_cells                                                ; 4082: 85 3c
     lda #$14                                                          ; 4084: a9 14
     sta height_in_cells                                               ; 4086: 85 3d
     jsr copy_rectangle_of_memory_to_screen                            ; 4088: 20 bb 1a
+; draw 3x15 rectangle at (37,2)
     ldx #$25 ; '%'                                                    ; 408b: a2 25
     lda #$0f                                                          ; 408d: a9 0f
     sta height_in_cells                                               ; 408f: 85 3d
     jsr copy_rectangle_of_memory_to_screen                            ; 4091: 20 bb 1a
+; draw 6x1 rectangle at (34,21)
     ldx #$22 ; '"'                                                    ; 4094: a2 22
     ldy #$15                                                          ; 4096: a0 15
     lda #6                                                            ; 4098: a9 06
@@ -980,6 +1112,7 @@ room_0_code
     lda #1                                                            ; 409c: a9 01
     sta height_in_cells                                               ; 409e: 85 3d
     jsr copy_rectangle_of_memory_to_screen                            ; 40a0: 20 bb 1a
+; draw 14x2 rectangle at (13,15)
     ldx #$0d                                                          ; 40a3: a2 0d
     ldy #$0f                                                          ; 40a5: a0 0f
     lda #$0e                                                          ; 40a7: a9 0e

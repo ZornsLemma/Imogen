@@ -83,6 +83,7 @@ initialise_level_and_room                           = $1140
 start_room                                          = $12bb
 game_update                                         = $12da
 update_room_first_update_flag                       = $132b
+sprite_op                                           = $138d
 l16dc                                               = $16dc
 pending_toolbar_colour                              = $175d
 toolbar_colour                                      = $175e

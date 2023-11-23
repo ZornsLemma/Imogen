@@ -105,7 +105,7 @@ initialise_level_and_room                           = $1140
 start_room                                          = $12bb
 game_update                                         = $12da
 update_room_first_update_flag                       = $132b
-l138d                                               = $138d
+sprite_op                                           = $138d
 pending_toolbar_colour                              = $175d
 toolbar_colour                                      = $175e
 pending_gameplay_area_colour                        = $175f
@@ -248,6 +248,30 @@ room_1_data
     !byte 20                                                          ; 3b1f: 14                      ; initial player X cell
     !byte 15                                                          ; 3b20: 0f                      ; initial player Y cell
 
+; ########################################
+; ########################################
+; ####      |                  |
+; ###       |                  |
+; ###       |                  |
+; ###       |                  |
+; ###       |                  |
+; ###       |                  |
+; ###       |   ############   |   #######
+; ###       |   ############   |   #######
+;           |                  |       ###
+;           |                  |       ###
+;           |                  |       ###
+;           |                  |       ###
+;           |                  |       ###
+; #######   |   ############   |       ###
+; #######   |   ############   |       ###
+; ###       |                  |       ###
+; ###       |                  |       ###
+; ###       |                  |       ###
+; ###                                  ###
+; ###                                  ###
+; ########################################
+; ########################################
 room_1_code
     lda #<ground_fill_2x2_top_left                                    ; 3b21: a9 da
     sta source_sprite_memory_low                                      ; 3b23: 85 40
@@ -255,6 +279,7 @@ room_1_code
     sta source_sprite_memory_high                                     ; 3b27: 85 41
 ; Draw rectangles of ground fill rock with a 2x2 pattern. Also writes to the collision
 ; map.
+; draw 255x2 rectangle at (0,0)
     ldx #0                                                            ; 3b29: a2 00
     ldy #0                                                            ; 3b2b: a0 00
     lda #$ff                                                          ; 3b2d: a9 ff
@@ -262,25 +287,31 @@ room_1_code
     lda #2                                                            ; 3b31: a9 02
     sta height_in_cells                                               ; 3b33: 85 3d
     jsr copy_rectangle_of_memory_to_screen                            ; 3b35: 20 bb 1a
+; draw 255x2 rectangle at (0,22)
     ldy #$16                                                          ; 3b38: a0 16
     jsr copy_rectangle_of_memory_to_screen                            ; 3b3a: 20 bb 1a
+; draw 4x1 rectangle at (0,2)
     ldy #2                                                            ; 3b3d: a0 02
     lda #4                                                            ; 3b3f: a9 04
     sta width_in_cells                                                ; 3b41: 85 3c
     dec height_in_cells                                               ; 3b43: c6 3d
     jsr copy_rectangle_of_memory_to_screen                            ; 3b45: 20 bb 1a
+; draw 3x7 rectangle at (0,3)
     iny                                                               ; 3b48: c8
     dec width_in_cells                                                ; 3b49: c6 3c
     lda #7                                                            ; 3b4b: a9 07
     sta height_in_cells                                               ; 3b4d: 85 3d
     jsr copy_rectangle_of_memory_to_screen                            ; 3b4f: 20 bb 1a
+; draw 3x7 rectangle at (0,15)
     ldy #$0f                                                          ; 3b52: a0 0f
     jsr copy_rectangle_of_memory_to_screen                            ; 3b54: 20 bb 1a
+; draw 3x14 rectangle at (37,8)
     ldx #$25 ; '%'                                                    ; 3b57: a2 25
     ldy #8                                                            ; 3b59: a0 08
     lda #$0e                                                          ; 3b5b: a9 0e
     sta height_in_cells                                               ; 3b5d: 85 3d
     jsr copy_rectangle_of_memory_to_screen                            ; 3b5f: 20 bb 1a
+; draw 4x2 rectangle at (3,15)
     ldx #3                                                            ; 3b62: a2 03
     ldy #$0f                                                          ; 3b64: a0 0f
     lda #4                                                            ; 3b66: a9 04
@@ -288,13 +319,16 @@ room_1_code
     lda #2                                                            ; 3b6a: a9 02
     sta height_in_cells                                               ; 3b6c: 85 3d
     jsr copy_rectangle_of_memory_to_screen                            ; 3b6e: 20 bb 1a
+; draw 4x2 rectangle at (33,8)
     ldx #$21 ; '!'                                                    ; 3b71: a2 21
     ldy #8                                                            ; 3b73: a0 08
     jsr copy_rectangle_of_memory_to_screen                            ; 3b75: 20 bb 1a
+; draw 12x2 rectangle at (14,8)
     ldx #$0e                                                          ; 3b78: a2 0e
     lda #$0c                                                          ; 3b7a: a9 0c
     sta width_in_cells                                                ; 3b7c: 85 3c
     jsr copy_rectangle_of_memory_to_screen                            ; 3b7e: 20 bb 1a
+; draw 12x2 rectangle at (14,15)
     ldy #$0f                                                          ; 3b81: a0 0f
     jsr copy_rectangle_of_memory_to_screen                            ; 3b83: 20 bb 1a
 ; Carve the floor, walls and ceiling into the rock
@@ -445,6 +479,30 @@ room_2_data
     !byte 16                                                          ; 3ca2: 10                      ; initial player X cell
     !byte 15                                                          ; 3ca3: 0f                      ; initial player Y cell
 
+; ########################################
+; ########################################
+;           |          |   |   |      ####
+;           |          |   |   |       ###
+;           |          |   |   |       ###
+;           |          |   |   |       ###
+;           |          |   |   |       ###
+;           |          |   |   |       ###
+; #######   |          |   |   |       ###
+; #######   |          |   |   |       ###
+; ###       |          |   |   |
+; ###       |          |   |   |
+; ###       |          |   |   |
+; ###       |
+; ###       |
+; ###       |   ####               #######
+; ###       |   ####               #######
+; ###       |                          ###
+; ###       |                          ###
+; ###       |                          ###
+; ###                                  ###
+; ###                                  ###
+; ########################################
+; ########################################
 room_2_code
     lda #<ground_fill_2x2_top_left                                    ; 3ca4: a9 da
     sta source_sprite_memory_low                                      ; 3ca6: 85 40
@@ -452,6 +510,7 @@ room_2_code
     sta source_sprite_memory_high                                     ; 3caa: 85 41
 ; Draw rectangles of ground fill rock with a 2x2 pattern. Also writes to the collision
 ; map.
+; draw 255x2 rectangle at (0,0)
     ldx #0                                                            ; 3cac: a2 00
     ldy #0                                                            ; 3cae: a0 00
     lda #$ff                                                          ; 3cb0: a9 ff
@@ -459,19 +518,24 @@ room_2_code
     lda #2                                                            ; 3cb4: a9 02
     sta height_in_cells                                               ; 3cb6: 85 3d
     jsr copy_rectangle_of_memory_to_screen                            ; 3cb8: 20 bb 1a
+; draw 255x2 rectangle at (0,22)
     ldy #$16                                                          ; 3cbb: a0 16
     jsr copy_rectangle_of_memory_to_screen                            ; 3cbd: 20 bb 1a
+; draw 255x1 rectangle at (36,2)
     ldx #$24 ; '$'                                                    ; 3cc0: a2 24
     ldy #2                                                            ; 3cc2: a0 02
     dec height_in_cells                                               ; 3cc4: c6 3d
     jsr copy_rectangle_of_memory_to_screen                            ; 3cc6: 20 bb 1a
+; draw 255x7 rectangle at (37,3)
     inx                                                               ; 3cc9: e8
     iny                                                               ; 3cca: c8
     lda #7                                                            ; 3ccb: a9 07
     sta height_in_cells                                               ; 3ccd: 85 3d
     jsr copy_rectangle_of_memory_to_screen                            ; 3ccf: 20 bb 1a
+; draw 255x7 rectangle at (37,15)
     ldy #$0f                                                          ; 3cd2: a0 0f
     jsr copy_rectangle_of_memory_to_screen                            ; 3cd4: 20 bb 1a
+; draw 3x14 rectangle at (0,8)
     ldx #0                                                            ; 3cd7: a2 00
     ldy #8                                                            ; 3cd9: a0 08
     lda #3                                                            ; 3cdb: a9 03
@@ -479,14 +543,17 @@ room_2_code
     lda #$0e                                                          ; 3cdf: a9 0e
     sta height_in_cells                                               ; 3ce1: 85 3d
     jsr copy_rectangle_of_memory_to_screen                            ; 3ce3: 20 bb 1a
+; draw 4x2 rectangle at (3,8)
     ldx #3                                                            ; 3ce6: a2 03
     inc width_in_cells                                                ; 3ce8: e6 3c
     lda #2                                                            ; 3cea: a9 02
     sta height_in_cells                                               ; 3cec: 85 3d
     jsr copy_rectangle_of_memory_to_screen                            ; 3cee: 20 bb 1a
+; draw 4x2 rectangle at (33,15)
     ldx #$21 ; '!'                                                    ; 3cf1: a2 21
     ldy #$0f                                                          ; 3cf3: a0 0f
     jsr copy_rectangle_of_memory_to_screen                            ; 3cf5: 20 bb 1a
+; draw 4x2 rectangle at (14,15)
     ldx #$0e                                                          ; 3cf8: a2 0e
     jsr copy_rectangle_of_memory_to_screen                            ; 3cfa: 20 bb 1a
 ; Carve the floor, walls and ceiling into the rock
@@ -638,6 +705,30 @@ room_3_data
     !byte 4                                                           ; 3e05: 04                      ; initial player X cell
     !byte 15                                                          ; 3e06: 0f                      ; initial player Y cell
 
+; ########################################
+; ########################################
+; ####      |                         ####
+; ###       |                          ###
+; ###       |                          ###
+; ###       |                          ###
+; ###       |                          ###
+; ###       |                          ###
+; ###       |   ##########################
+; ###       |   ##########################
+;           |                          ###
+;           |                          ###
+;           |                          ###
+;           |                          ###
+;           |                          ###
+; #######   |   ##########################
+; #######   |   ##########################
+; ###       |                          ###
+; ###       |                          ###
+; ###       |                          ###
+; ###                                  ###
+; ###                                  ###
+; ########################################
+; ########################################
 room_3_code
     lda #<ground_fill_2x2_top_left                                    ; 3e07: a9 da
     sta source_sprite_memory_low                                      ; 3e09: 85 40
@@ -645,6 +736,7 @@ room_3_code
     sta source_sprite_memory_high                                     ; 3e0d: 85 41
 ; Draw rectangles of ground fill rock with a 2x2 pattern. Also writes to the collision
 ; map.
+; draw 255x2 rectangle at (0,0)
     ldx #0                                                            ; 3e0f: a2 00
     ldy #0                                                            ; 3e11: a0 00
     lda #$ff                                                          ; 3e13: a9 ff
@@ -652,28 +744,35 @@ room_3_code
     lda #2                                                            ; 3e17: a9 02
     sta height_in_cells                                               ; 3e19: 85 3d
     jsr copy_rectangle_of_memory_to_screen                            ; 3e1b: 20 bb 1a
+; draw 255x2 rectangle at (0,22)
     ldy #$16                                                          ; 3e1e: a0 16
     jsr copy_rectangle_of_memory_to_screen                            ; 3e20: 20 bb 1a
+; draw 4x1 rectangle at (0,2)
     ldy #2                                                            ; 3e23: a0 02
     lda #4                                                            ; 3e25: a9 04
     sta width_in_cells                                                ; 3e27: 85 3c
     dec height_in_cells                                               ; 3e29: c6 3d
     jsr copy_rectangle_of_memory_to_screen                            ; 3e2b: 20 bb 1a
+; draw 4x1 rectangle at (36,2)
     ldx #$24 ; '$'                                                    ; 3e2e: a2 24
     jsr copy_rectangle_of_memory_to_screen                            ; 3e30: 20 bb 1a
+; draw 3x7 rectangle at (0,3)
     ldx #0                                                            ; 3e33: a2 00
     iny                                                               ; 3e35: c8
     dec width_in_cells                                                ; 3e36: c6 3c
     lda #7                                                            ; 3e38: a9 07
     sta height_in_cells                                               ; 3e3a: 85 3d
     jsr copy_rectangle_of_memory_to_screen                            ; 3e3c: 20 bb 1a
+; draw 3x7 rectangle at (0,15)
     ldy #$0f                                                          ; 3e3f: a0 0f
     jsr copy_rectangle_of_memory_to_screen                            ; 3e41: 20 bb 1a
+; draw 3x19 rectangle at (37,3)
     ldx #$25 ; '%'                                                    ; 3e44: a2 25
     ldy #3                                                            ; 3e46: a0 03
     lda #$13                                                          ; 3e48: a9 13
     sta height_in_cells                                               ; 3e4a: 85 3d
     jsr copy_rectangle_of_memory_to_screen                            ; 3e4c: 20 bb 1a
+; draw 4x2 rectangle at (3,15)
     ldx #3                                                            ; 3e4f: a2 03
     ldy #$0f                                                          ; 3e51: a0 0f
     lda #4                                                            ; 3e53: a9 04
@@ -681,10 +780,12 @@ room_3_code
     lda #2                                                            ; 3e57: a9 02
     sta height_in_cells                                               ; 3e59: 85 3d
     jsr copy_rectangle_of_memory_to_screen                            ; 3e5b: 20 bb 1a
+; draw 23x2 rectangle at (14,15)
     ldx #$0e                                                          ; 3e5e: a2 0e
     lda #$17                                                          ; 3e60: a9 17
     sta width_in_cells                                                ; 3e62: 85 3c
     jsr copy_rectangle_of_memory_to_screen                            ; 3e64: 20 bb 1a
+; draw 23x2 rectangle at (14,8)
     ldy #8                                                            ; 3e67: a0 08
     jsr copy_rectangle_of_memory_to_screen                            ; 3e69: 20 bb 1a
 ; Carve the floor, walls and ceiling into the rock
@@ -824,6 +925,30 @@ room_0_data
     !byte 20                                                          ; 3f73: 14                      ; initial player X cell
     !byte 22                                                          ; 3f74: 16                      ; initial player Y cell
 
+; ########################################
+; ########################################
+; ####      |                         ####
+; ###       |                          ###
+; ###       |                          ###
+; ###       |                          ###
+; ###       |                          ###
+; ###       |                          ###
+; ########  |  ###########################
+; ########  |  ###########################
+; ###       |                  |
+; ###       |                  |
+; ###       |                  |
+; ###       |                  |
+; ###       |                  |
+; ###       |                  |   #######
+; ###       |                  |   #######
+; ###       |                  |       ###
+; ###       |                  |       ###
+; ###       |                  |       ###
+; ###                                  ###
+; ###                                  ###
+; ########################################
+; ########################################
 room_0_code
     lda #<ground_fill_2x2_top_left                                    ; 3f75: a9 da
     sta source_sprite_memory_low                                      ; 3f77: 85 40
@@ -831,6 +956,7 @@ room_0_code
     sta source_sprite_memory_high                                     ; 3f7b: 85 41
 ; Draw rectangles of ground fill rock with a 2x2 pattern. Also writes to the collision
 ; map.
+; draw 255x2 rectangle at (0,0)
     ldx #0                                                            ; 3f7d: a2 00
     ldy #0                                                            ; 3f7f: a0 00
     lda #$ff                                                          ; 3f81: a9 ff
@@ -838,27 +964,34 @@ room_0_code
     lda #2                                                            ; 3f85: a9 02
     sta height_in_cells                                               ; 3f87: 85 3d
     jsr copy_rectangle_of_memory_to_screen                            ; 3f89: 20 bb 1a
+; draw 255x2 rectangle at (0,22)
     ldy #$16                                                          ; 3f8c: a0 16
     jsr copy_rectangle_of_memory_to_screen                            ; 3f8e: 20 bb 1a
+; draw 4x1 rectangle at (0,2)
     ldy #2                                                            ; 3f91: a0 02
     lda #4                                                            ; 3f93: a9 04
     sta width_in_cells                                                ; 3f95: 85 3c
     dec height_in_cells                                               ; 3f97: c6 3d
     jsr copy_rectangle_of_memory_to_screen                            ; 3f99: 20 bb 1a
+; draw 4x1 rectangle at (36,2)
     ldx #$24 ; '$'                                                    ; 3f9c: a2 24
     jsr copy_rectangle_of_memory_to_screen                            ; 3f9e: 20 bb 1a
+; draw 3x19 rectangle at (0,3)
     ldx #0                                                            ; 3fa1: a2 00
     iny                                                               ; 3fa3: c8
     dec width_in_cells                                                ; 3fa4: c6 3c
     lda #$13                                                          ; 3fa6: a9 13
     sta height_in_cells                                               ; 3fa8: 85 3d
     jsr copy_rectangle_of_memory_to_screen                            ; 3faa: 20 bb 1a
+; draw 3x5 rectangle at (37,3)
     ldx #$25 ; '%'                                                    ; 3fad: a2 25
     lda #5                                                            ; 3faf: a9 05
     sta height_in_cells                                               ; 3fb1: 85 3d
     jsr copy_rectangle_of_memory_to_screen                            ; 3fb3: 20 bb 1a
+; draw 3x5 rectangle at (37,17)
     ldy #$11                                                          ; 3fb6: a0 11
     jsr copy_rectangle_of_memory_to_screen                            ; 3fb8: 20 bb 1a
+; draw 5x2 rectangle at (3,8)
     ldx #3                                                            ; 3fbb: a2 03
     ldy #8                                                            ; 3fbd: a0 08
     lda #5                                                            ; 3fbf: a9 05
@@ -866,10 +999,12 @@ room_0_code
     lda #2                                                            ; 3fc3: a9 02
     sta height_in_cells                                               ; 3fc5: 85 3d
     jsr copy_rectangle_of_memory_to_screen                            ; 3fc7: 20 bb 1a
+; draw 255x2 rectangle at (13,8)
     ldx #$0d                                                          ; 3fca: a2 0d
     lda #$ff                                                          ; 3fcc: a9 ff
     sta width_in_cells                                                ; 3fce: 85 3c
     jsr copy_rectangle_of_memory_to_screen                            ; 3fd0: 20 bb 1a
+; draw 255x2 rectangle at (33,15)
     ldx #$21 ; '!'                                                    ; 3fd3: a2 21
     ldy #$0f                                                          ; 3fd5: a0 0f
     jsr copy_rectangle_of_memory_to_screen                            ; 3fd7: 20 bb 1a
@@ -894,7 +1029,7 @@ room_0_code
     sta l001a                                                         ; 3fff: 85 1a
     ldx #3                                                            ; 4001: a2 03
 loop_c4003
-    jsr l138d                                                         ; 4003: 20 8d 13
+    jsr sprite_op                                                     ; 4003: 20 8d 13
     lda l0018                                                         ; 4006: a5 18
     clc                                                               ; 4008: 18
     adc #8                                                            ; 4009: 69 08
@@ -909,7 +1044,7 @@ loop_c4003
     sta l001a                                                         ; 4019: 85 1a
     ldx #2                                                            ; 401b: a2 02
 loop_c401d
-    jsr l138d                                                         ; 401d: 20 8d 13
+    jsr sprite_op                                                     ; 401d: 20 8d 13
     lda l0018                                                         ; 4020: a5 18
     clc                                                               ; 4022: 18
     adc #8                                                            ; 4023: 69 08
@@ -922,7 +1057,7 @@ loop_c401d
     sec                                                               ; 4030: 38
     sbc #6                                                            ; 4031: e9 06
     sta l001a                                                         ; 4033: 85 1a
-    jsr l138d                                                         ; 4035: 20 8d 13
+    jsr sprite_op                                                     ; 4035: 20 8d 13
     jsr start_room                                                    ; 4038: 20 bb 12
 room_0_game_update_loop
     jsr game_update                                                   ; 403b: 20 da 12
@@ -1576,7 +1711,6 @@ pydis_end
 ;     l0a7c
 ;     l0a7d
 ;     l0a7e
-;     l138d
 ;     l20f7
 ;     l2434
 ;     l24d2

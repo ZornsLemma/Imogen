@@ -39,8 +39,169 @@ def find_sequence(addr, length, sequence):
             return a
     return None
 
+global room
+global state
+global tile
+
+def write_room(x, y, w, h, v):
+    global room
+
+    for j in range(y, y+h):
+        if j >= 24:
+            break
+        for i in range(x, x + w):
+            if i >= 40:
+                break
+            room[j] = room[j][0:i] + v + room[j][i+1:]
+
+def map_room(start_tracking, end_tracking, output_descriptions):
+    global room
+    global state
+    global tile
+
+    a = start_tracking
+    while a < end_tracking:
+        opcode  = get_u8_runtime(RuntimeAddr(a))
+        operand = get_u8_runtime(RuntimeAddr(a+1))
+        operand16 = 256*get_u8_runtime(RuntimeAddr(a+2)) + operand
+
+        jmp_or_jsr = (opcode == 0x20) or (opcode == 0x4c)
+
+        if opcode == 0x98:  # tya
+            state["A"] = state["Y"]
+            a += 1
+        elif opcode == 0xa8: # tay
+            state["Y"] = state["A"]
+            a += 1
+        elif opcode == 0x18: # clc
+            state["carry"] = 0
+            a += 1
+        elif opcode == 0x69: # adc #
+            state["A"] += operand + state["carry"]
+            if state["A"] > 255:
+                state["A"] = state["A"] - 256
+                state["carry"] = 1
+            else:
+                state["carry"] = 0
+            a += 2
+        elif opcode == 0xa9: # lda #
+            state["A"] = operand
+            a += 2
+        elif opcode == 0xa2: # ldx #
+            state["X"] = operand
+            a += 2
+        elif opcode == 0xa0: # ldy #
+            state["Y"] = operand
+            a += 2
+        elif (opcode == 0x85): # sta zp
+            state[operand] = state["A"]
+            a += 2
+            # check if set source_sprite_memory_high?
+            if operand == 0x41:
+                # check if set to 'tile_all_set_pixels', in which case set the tile to a space.
+                #    lda #<tile_all_set_pixels                                         ; 3fe6: a9 a9
+                #    sta source_sprite_memory_low                                      ; 3fe8: 85 40
+                #    lda #>tile_all_set_pixels                                         ; 3fea: a9 0a
+                #    sta source_sprite_memory_high                                     ; 3fec: 85 41
+                tile_address = state[0x41]*256 + state[0x40]
+                if tile_address == 0x0aa9:
+                    tile = ' '
+                else:
+                    tile = '#'
+        elif opcode == 0x8e: # stx addr
+            state[operand16] = state["X"]
+            a += 3
+        elif opcode == 0x8c: # sty addr
+            state[operand16] = state["Y"]
+            a += 3
+        elif opcode == 0xae: # ldx addr
+            state["X"] = state[operand16]
+            a += 3
+        elif opcode == 0xac: # ldy addr
+            state["Y"] = state[operand16]
+            a += 3
+        elif (opcode == 0x86): # stx zp
+            state[operand] = state["X"]
+            a += 2
+        elif (opcode == 0x84): # sty zp
+            state[operand] = state["Y"]
+            a += 2
+        elif (opcode == 0xc6): # dec zp
+            state[operand] -= 1
+            a += 2
+        elif (opcode == 0xe6): # inc zp
+            state[operand] += 1
+            a += 2
+        elif (opcode == 0xe8): # inx
+            state["X"] += 1
+            a += 1
+        elif (opcode == 0xc8): # iny
+            state["Y"] += 1
+            a += 1
+        elif (opcode == 0xca): # dex
+            state["X"] -= 1
+            a += 1
+        elif (opcode == 0x88): # dey
+            state["Y"] -= 1
+            a += 1
+        elif jmp_or_jsr and (operand16 == 0x1abb):
+            comment(start_tracking, "draw {0}x{1} rectangle at ({2},{3})".format(state[0x3c], state[0x3d], state["X"], state["Y"]))
+            write_room(state["X"], state["Y"], state[0x3c], state[0x3d], tile)
+            a += 3
+            start_tracking = a
+        elif jmp_or_jsr and (operand16 == 0x1b90):
+            # skip 'jsr draw_floor_walls_and_ceiling_around_solid_rock'
+            a += 3
+        elif jmp_or_jsr and (operand16 == 0x1f57):
+            # 'jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map'
+            x = state["X"]
+            y = state["Y"]
+            write_room(x, y, state[0x3c], state[0x3d], 'O')
+            a += 3
+        elif jmp_or_jsr and (operand16 == 0x1db9):
+            x = state["X"]
+            y = state["Y"]
+            # draw_rope
+            write_room(x, y, 1, state["A"], '|')
+            a += 3
+        elif jmp_or_jsr and (operand16 == 0x1f4c):
+            # jsr draw_sprite_a_at_cell_xy
+            x = state["X"]
+            y = state["Y"]
+            room[y] = room[y][0:x] + 'S' + room[y][x+1:]
+            a += 3
+        elif jmp_or_jsr and (operand16 == 0x1ebb):
+            # skip jsr write_a_single_value_to_cell_in_collision_map
+            a += 3
+        elif jmp_or_jsr and (operand16 == 0x1e44):
+            # skip write_value_to_a_rectangle_of_cells_in_collision_map
+            a += 3
+        elif jmp_or_jsr and (operand16 == 0x138d):
+            # skip jsr sprite_op
+            a += 3
+        elif jmp_or_jsr and (operand16 == 0x12bb):
+            # jsr start_room
+            break
+        elif jmp_or_jsr and (operand16 == 0x42fa):
+            # skip jsr in datai
+            break
+        elif jmp_or_jsr:
+            map_room(operand16, 0xffff, False)
+            a += 3
+        else:
+            break
+
+        if opcode == 0x4c: # jmp
+            break
+
 
 def level_room_data_table_entry(addr, s):
+    global room
+    global state
+    global tile
+
+    limit = 400     # bytes to search
+
     room_n = "room_" + s
     word(addr)
     expr(addr, room_n + "_data")
@@ -58,18 +219,30 @@ def level_room_data_table_entry(addr, s):
     #label(target3, room_n + "_data")
     #expr(target1, room_n + "_data")
     entry(target2, room_n + "_code")
+    start_tracking = target2
     if ground_fill(target2, (s == "0")):
         comment(target2 + 8, "Draw rectangles of ground fill rock with a 2x2 pattern. Also writes to the collision map.")
+        start_tracking += 8
 
     # look for 'jsr draw_floor_walls_and_ceiling_around_solid_rock'
-    a = find_sequence(target2, 200, [0x20, 0x90, 0x1b])
+    end_tracking = None
+    a = find_sequence(target2, limit, [0x20, 0x90, 0x1b])
     if a:
         comment(a, "Carve the floor, walls and ceiling into the rock")
 
     # look for 'jsr game_update'
-    a = find_sequence(target2, 200, [0x20, 0xda, 0x12])
+    a = find_sequence(target2, limit, [0x20, 0xda, 0x12])
     if a:
         label(a, room_n + "_game_update_loop")
+        end_tracking = a
+
+    if end_tracking:
+        room = [" " * 40] * 24
+        tile = '#'
+        state = { "A": None, "X": None, "Y": None }
+        map_room(start_tracking, end_tracking, True)
+
+        comment(target2, "\n".join(room))
 
 
 def define_level(num_rooms):

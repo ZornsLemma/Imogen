@@ -919,7 +919,6 @@ Each pixel is encoded in two bits:
     11 - finish the current column and start the next column
 
 The behaviour of '11' shows that this is a compression scheme, where columns can finish early if they have no set pixels at the top of the sprite.""")
-    label(0x138d, "sprite_op")
     expr(0x139e, "sprite_op_flags_copy_mask")
     comment(0x139f, "check flags to see if we are copying to another sprite", inline=True)
     comment(0x13a1, "get destination sprite address")

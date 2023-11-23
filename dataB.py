@@ -4,6 +4,7 @@ config.set_label_references(False)
 config.set_hex_dump_show_ascii(False)
 
 sprite_dict = {
+    0x3b: "spriteid_ball",
     0xc8: "spriteid_clock",
     0xc9: "spriteid_pendulum1",
     0xca: "spriteid_pendulum2",
@@ -64,7 +65,6 @@ label(0x3b0c, "check_got_cuckoo")
 label(0x3b1b, "return1")
 comment(0x3bc4, "draw tables")
 comment(0x3bdf, "draw rope")
-#label(0x3beb, "room0_game_update_loop")
 expr(0x3bf1, "exit_room_left")
 comment(0x3bf4, "exit room left, to room 1")
 label(0x3bfb, "not_exited_room_left")
@@ -72,9 +72,6 @@ expr(0x3bfe, "exit_room_right")
 comment(0x3c01, "exit room right, to room 2")
 ldx_ldy_jsr_define_envelope(0x3c17, "envelope1")
 label(0x3c80, "return2")
-#label(0x3d58, "room1_game_update_loop")
-#label(0x4050, "room2_game_update_loop")
-#label(0x442f, "room3_game_update_loop")
 ldx_ldy_jsr_define_envelope(0x3e97, "envelope2")
 ldx_ldy_jsr_play_sound_yx(0x3ee1, "sound1")
 ldx_ldy_jsr_play_sound_yx(0x3ef1, "sound2")
