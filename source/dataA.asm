@@ -477,7 +477,7 @@ move_mouse_ball_if_room_0
     cmp #8                                                            ; 3cb1: c9 08
     bcs mouse_ball_position_ge_8                                      ; 3cb3: b0 04
     ldy #0                                                            ; 3cb5: a0 00
-    beq mouse_ball_position_lt_8                                      ; 3cb7: f0 0a                   ; ALWAYS branch
+    beq set_mouse_hand_and_ball_sprites_from_left                     ; 3cb7: f0 0a                   ; ALWAYS branch
 mouse_ball_position_ge_8
     cmp #$0f                                                          ; 3cb9: c9 0f
     bcs mouse_ball_position_ge_0xf                                    ; 3cbb: b0 1c
@@ -487,7 +487,7 @@ mouse_ball_position_ge_8
     asl                                                               ; 3cc0: 0a
     asl                                                               ; 3cc1: 0a
     tay                                                               ; 3cc2: a8
-mouse_ball_position_lt_8
+set_mouse_hand_and_ball_sprites_from_left
     lda mouse_hand_sprites_and_ball_movement_table,y                  ; 3cc3: b9 21 3d
 ; Set the mouse sprites as a pair of values in the table
     sta object_spriteid + objectid_left_mouse                         ; 3cc6: 8d aa 09
@@ -503,7 +503,7 @@ mouse_ball_position_ge_0xf
     cmp #$17                                                          ; 3cd9: c9 17
     bcs mouse_ball_position_ge_0x17                                   ; 3cdb: b0 04
     ldy #0                                                            ; 3cdd: a0 00
-    beq c3ce7                                                         ; 3cdf: f0 06                   ; ALWAYS branch
+    beq set_mouse_hand_and_ball_sprites_from_right                    ; 3cdf: f0 06                   ; ALWAYS branch
 mouse_ball_position_ge_0x17
     sec                                                               ; 3ce1: 38
     sbc #$17                                                          ; 3ce2: e9 17
@@ -511,7 +511,7 @@ mouse_ball_position_ge_0x17
     asl                                                               ; 3ce4: 0a
     asl                                                               ; 3ce5: 0a
     tay                                                               ; 3ce6: a8
-c3ce7
+set_mouse_hand_and_ball_sprites_from_right
     lda mouse_hand_sprites_and_ball_movement_table,y                  ; 3ce7: b9 21 3d
     sta object_spriteid + objectid_right_mouse                        ; 3cea: 8d ab 09
     iny                                                               ; 3ced: c8
@@ -1701,7 +1701,6 @@ sprite_data
 pydis_end
 
 ; Automatically generated labels:
-;     c3ce7
 ;     c4167
 !if (<envelope1) != $60 {
     !error "Assertion failed: <envelope1 == $60"
