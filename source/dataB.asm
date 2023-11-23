@@ -65,7 +65,7 @@ previous_room_index                                 = $50
 level_before_latest_level_and_room_initialisation   = $51
 player_held_object_spriteid                         = $52
 developer_mode_sideways_ram_is_set_up_flag          = $5b
-l0070                                               = $70
+room_exit_direction                                 = $70
 show_dialog_box                                     = $040a
 remove_dialog                                       = $0453
 object_x_low                                        = $0950
@@ -91,7 +91,7 @@ l0a05                                               = $0a05
 l0a06                                               = $0a06
 l0a07                                               = $0a07
 l0a08                                               = $0a08
-l0a09                                               = $0a09
+got_hourglass_flag                                  = $0a09
 l0a6f                                               = $0a6f
 l0a70                                               = $0a70
 l0a71                                               = $0a71
@@ -197,24 +197,24 @@ level_specific_password
 level_specific_initialisation
     lda current_level                                                 ; 3af2: a5 31
     cmp level_before_latest_level_and_room_initialisation             ; 3af4: c5 51
-    beq result1                                                       ; 3af6: f0 23
+    beq return1                                                       ; 3af6: f0 23
     lda developer_flags                                               ; 3af8: ad 03 11
     bpl c3b02                                                         ; 3afb: 10 05
     lda #$ff                                                          ; 3afd: a9 ff
     sta l0a05                                                         ; 3aff: 8d 05 0a
 c3b02
-    lda l0a09                                                         ; 3b02: ad 09 0a
-    beq c3b0c                                                         ; 3b05: f0 05
+    lda got_hourglass_flag                                            ; 3b02: ad 09 0a
+    beq check_got_cuckoo                                              ; 3b05: f0 05
     lda #spriteid_hourglass_menu_item                                 ; 3b07: a9 de
     jsr find_or_create_menu_slot_for_A                                ; 3b09: 20 bd 2b
-c3b0c
+check_got_cuckoo
     lda l0a05                                                         ; 3b0c: ad 05 0a
-    beq result1                                                       ; 3b0f: f0 0a
+    beq return1                                                       ; 3b0f: f0 0a
     lda l0a06                                                         ; 3b11: ad 06 0a
-    bne result1                                                       ; 3b14: d0 05
+    bne return1                                                       ; 3b14: d0 05
     lda #spriteid_cuckoo_menu_item                                    ; 3b16: a9 d4
     jsr find_or_create_menu_slot_for_A                                ; 3b18: 20 bd 2b
-result1
+return1
     rts                                                               ; 3b1b: 60
 
 ; *************************************************************************************
@@ -251,6 +251,8 @@ room_0_code
     sta source_sprite_memory_low                                      ; 3b33: 85 40
     lda #>ground_fill_2x2_top_left                                    ; 3b35: a9 45
     sta source_sprite_memory_high                                     ; 3b37: 85 41
+; Draw rectangles of ground fill rock with a 2x2 pattern. Also writes to the collision
+; map.
     ldx #0                                                            ; 3b39: a2 00
     ldy #0                                                            ; 3b3b: a0 00
     lda #$ff                                                          ; 3b3d: a9 ff
@@ -313,7 +315,9 @@ room_0_code
     lda #2                                                            ; 3bba: a9 02
     sta height_in_cells                                               ; 3bbc: 85 3d
     jsr copy_rectangle_of_memory_to_screen                            ; 3bbe: 20 bb 1a
+; Carve the floor, walls and ceiling into the rock
     jsr draw_floor_walls_and_ceiling_around_solid_rock                ; 3bc1: 20 90 1b
+; Draw tables
     lda #3                                                            ; 3bc4: a9 03
     sta width_in_cells                                                ; 3bc6: 85 3c
     lda #2                                                            ; 3bc8: a9 02
@@ -326,24 +330,27 @@ room_0_code
     jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map           ; 3bd7: 20 57 1f
     ldx #$0f                                                          ; 3bda: a2 0f
     jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map           ; 3bdc: 20 57 1f
+; Draw rope
     ldx #$1c                                                          ; 3bdf: a2 1c
     ldy #2                                                            ; 3be1: a0 02
     lda #$10                                                          ; 3be3: a9 10
     jsr draw_rope                                                     ; 3be5: 20 b9 1d
     jsr start_room                                                    ; 3be8: 20 bb 12
-loop_c3beb
+game_update_loop
     jsr game_update                                                   ; 3beb: 20 da 12
-    sta l0070                                                         ; 3bee: 85 70
-    and #1                                                            ; 3bf0: 29 01
-    beq c3bfb                                                         ; 3bf2: f0 07
+    sta room_exit_direction                                           ; 3bee: 85 70
+    and #exit_room_left                                               ; 3bf0: 29 01
+    beq not_exited_room_left                                          ; 3bf2: f0 07
+; exit room left, to room 1
     ldx #1                                                            ; 3bf4: a2 01
     ldy current_level                                                 ; 3bf6: a4 31
     jmp initialise_level_and_room                                     ; 3bf8: 4c 40 11
 
-c3bfb
-    lda l0070                                                         ; 3bfb: a5 70
-    and #4                                                            ; 3bfd: 29 04
-    beq loop_c3beb                                                    ; 3bff: f0 ea
+not_exited_room_left
+    lda room_exit_direction                                           ; 3bfb: a5 70
+    and #exit_room_right                                              ; 3bfd: 29 04
+    beq game_update_loop                                              ; 3bff: f0 ea
+; exit room right, to room 2
     ldx #2                                                            ; 3c01: a2 02
     ldy current_level                                                 ; 3c03: a4 31
     jmp initialise_level_and_room                                     ; 3c05: 4c 40 11
@@ -394,15 +401,15 @@ c3c51
     lda l42d8                                                         ; 3c65: ad d8 42
     sta l0a08                                                         ; 3c68: 8d 08 0a
     lda update_room_first_update_flag                                 ; 3c6b: ad 2b 13
-    bne c3c80                                                         ; 3c6e: d0 10
+    bne return2                                                       ; 3c6e: d0 10
     lda desired_room_index                                            ; 3c70: a5 30
     cmp #0                                                            ; 3c72: c9 00
-    bne c3c80                                                         ; 3c74: d0 0a
+    bne return2                                                       ; 3c74: d0 0a
     lda l0a08                                                         ; 3c76: ad 08 0a
     cmp #$10                                                          ; 3c79: c9 10
-    bne c3c80                                                         ; 3c7b: d0 03
+    bne return2                                                       ; 3c7b: d0 03
     jsr sub_c41c1                                                     ; 3c7d: 20 c1 41
-c3c80
+return2
     rts                                                               ; 3c80: 60
 
 ; *************************************************************************************
@@ -415,9 +422,9 @@ room_1_data
     !byte 20                                                          ; 3c82: 14                      ; initial player Y cell
 
 room_1_code
-    lda #$26 ; '&'                                                    ; 3c83: a9 26
+    lda #<ground_fill_2x2_top_left                                    ; 3c83: a9 26
     sta source_sprite_memory_low                                      ; 3c85: 85 40
-    lda #$45 ; 'E'                                                    ; 3c87: a9 45
+    lda #>ground_fill_2x2_top_left                                    ; 3c87: a9 45
     sta source_sprite_memory_high                                     ; 3c89: 85 41
     ldx #0                                                            ; 3c8b: a2 00
     ldy #0                                                            ; 3c8d: a0 00
@@ -494,6 +501,7 @@ room_1_code
     lda #2                                                            ; 3d27: a9 02
     sta height_in_cells                                               ; 3d29: 85 3d
     jsr copy_rectangle_of_memory_to_screen                            ; 3d2b: 20 bb 1a
+; Carve the floor, walls and ceiling into the rock
     jsr draw_floor_walls_and_ceiling_around_solid_rock                ; 3d2e: 20 90 1b
     lda #3                                                            ; 3d31: a9 03
     sta width_in_cells                                                ; 3d33: 85 3c
@@ -810,9 +818,9 @@ room_2_data
     !byte 20                                                          ; 3f94: 14                      ; initial player Y cell
 
 room_2_code
-    lda #$26 ; '&'                                                    ; 3f95: a9 26
+    lda #<ground_fill_2x2_top_left                                    ; 3f95: a9 26
     sta source_sprite_memory_low                                      ; 3f97: 85 40
-    lda #$45 ; 'E'                                                    ; 3f99: a9 45
+    lda #>ground_fill_2x2_top_left                                    ; 3f99: a9 45
     sta source_sprite_memory_high                                     ; 3f9b: 85 41
     ldx #0                                                            ; 3f9d: a2 00
     ldy #0                                                            ; 3f9f: a0 00
@@ -875,6 +883,7 @@ room_2_code
     lda #5                                                            ; 401a: a9 05
     sta height_in_cells                                               ; 401c: 85 3d
     jsr copy_rectangle_of_memory_to_screen                            ; 401e: 20 bb 1a
+; Carve the floor, walls and ceiling into the rock
     jsr draw_floor_walls_and_ceiling_around_solid_rock                ; 4021: 20 90 1b
     ldx #9                                                            ; 4024: a2 09
     ldy #2                                                            ; 4026: a0 02
@@ -897,7 +906,7 @@ room_2_code
     jsr start_room                                                    ; 404d: 20 bb 12
 loop_c4050
     jsr game_update                                                   ; 4050: 20 da 12
-    sta l0070                                                         ; 4053: 85 70
+    sta room_exit_direction                                           ; 4053: 85 70
     and #1                                                            ; 4055: 29 01
     beq c4060                                                         ; 4057: f0 07
     ldx #0                                                            ; 4059: a2 00
@@ -905,7 +914,7 @@ loop_c4050
     jmp initialise_level_and_room                                     ; 405d: 4c 40 11
 
 c4060
-    lda l0070                                                         ; 4060: a5 70
+    lda room_exit_direction                                           ; 4060: a5 70
     and #4                                                            ; 4062: 29 04
     beq loop_c4050                                                    ; 4064: f0 ea
     ldx #3                                                            ; 4066: a2 03
@@ -1135,7 +1144,7 @@ c422d
     bne c4246                                                         ; 4244: d0 00
 c4246
     ldy l42d8                                                         ; 4246: ac d8 42
-    sty l0070                                                         ; 4249: 84 70
+    sty room_exit_direction                                           ; 4249: 84 70
     cpy l42db                                                         ; 424b: cc db 42
     bcc c4258                                                         ; 424e: 90 08
     lda #$ff                                                          ; 4250: a9 ff
@@ -1150,7 +1159,7 @@ c4258
     bne c42d7                                                         ; 4261: d0 74
     ldx l42d9                                                         ; 4263: ae d9 42
     dex                                                               ; 4266: ca
-    ldy l0070                                                         ; 4267: a4 70
+    ldy room_exit_direction                                           ; 4267: a4 70
     lda #3                                                            ; 4269: a9 03
     sta width_in_cells                                                ; 426b: 85 3c
     lda #2                                                            ; 426d: a9 02
@@ -1229,7 +1238,7 @@ sub_c42dd
     lda desired_room_index                                            ; 42ef: a5 30
     cmp #2                                                            ; 42f1: c9 02
     bne c4318                                                         ; 42f3: d0 23
-    lda l0a09                                                         ; 42f5: ad 09 0a
+    lda got_hourglass_flag                                            ; 42f5: ad 09 0a
     bne c4318                                                         ; 42f8: d0 1e
     ldx #$14                                                          ; 42fa: a2 14
     ldy #$11                                                          ; 42fc: a0 11
@@ -1251,7 +1260,7 @@ c4319
     lda desired_room_index                                            ; 4319: a5 30
     cmp #2                                                            ; 431b: c9 02
     bne c433c                                                         ; 431d: d0 1d
-    lda l0a09                                                         ; 431f: ad 09 0a
+    lda got_hourglass_flag                                            ; 431f: ad 09 0a
     bne c433c                                                         ; 4322: d0 18
     ldx #$0b                                                          ; 4324: a2 0b
     ldy #7                                                            ; 4326: a0 07
@@ -1262,7 +1271,7 @@ c4319
     lda #0                                                            ; 4332: a9 00
     sta l09af                                                         ; 4334: 8d af 09
     lda #$ff                                                          ; 4337: a9 ff
-    sta l0a09                                                         ; 4339: 8d 09 0a
+    sta got_hourglass_flag                                            ; 4339: 8d 09 0a
 c433c
     rts                                                               ; 433c: 60
 
@@ -1276,9 +1285,9 @@ room_3_data
     !byte 7                                                           ; 433e: 07                      ; initial player Y cell
 
 room_3_code
-    lda #$26 ; '&'                                                    ; 433f: a9 26
+    lda #<ground_fill_2x2_top_left                                    ; 433f: a9 26
     sta source_sprite_memory_low                                      ; 4341: 85 40
-    lda #$45 ; 'E'                                                    ; 4343: a9 45
+    lda #>ground_fill_2x2_top_left                                    ; 4343: a9 45
     sta source_sprite_memory_high                                     ; 4345: 85 41
     ldx #0                                                            ; 4347: a2 00
     ldy #0                                                            ; 4349: a0 00
@@ -1352,6 +1361,7 @@ room_3_code
     lda #2                                                            ; 43d9: a9 02
     sta height_in_cells                                               ; 43db: 85 3d
     jsr copy_rectangle_of_memory_to_screen                            ; 43dd: 20 bb 1a
+; Carve the floor, walls and ceiling into the rock
     jsr draw_floor_walls_and_ceiling_around_solid_rock                ; 43e0: 20 90 1b
     ldx #9                                                            ; 43e3: a2 09
     ldy #2                                                            ; 43e5: a0 02
@@ -1590,11 +1600,8 @@ pydis_end
 
 ; Automatically generated labels:
 ;     c3b02
-;     c3b0c
-;     c3bfb
 ;     c3c1a
 ;     c3c51
-;     c3c80
 ;     c3db6
 ;     c3dce
 ;     c3dd1
@@ -1647,7 +1654,6 @@ pydis_end
 ;     c4495
 ;     c44ad
 ;     l0015
-;     l0070
 ;     l09aa
 ;     l09ab
 ;     l09ac
@@ -1658,7 +1664,6 @@ pydis_end
 ;     l0a06
 ;     l0a07
 ;     l0a08
-;     l0a09
 ;     l0a6f
 ;     l0a70
 ;     l0a71
@@ -1679,7 +1684,6 @@ pydis_end
 ;     l42da
 ;     l42db
 ;     l42dc
-;     loop_c3beb
 ;     loop_c3d58
 ;     loop_c4050
 ;     loop_c442f
@@ -1758,6 +1762,12 @@ pydis_end
 }
 !if (>sound7) != $45 {
     !error "Assertion failed: >sound7 == $45"
+}
+!if (exit_room_left) != $01 {
+    !error "Assertion failed: exit_room_left == $01"
+}
+!if (exit_room_right) != $04 {
+    !error "Assertion failed: exit_room_right == $04"
 }
 !if (level_specific_initialisation) != $3af2 {
     !error "Assertion failed: level_specific_initialisation == $3af2"

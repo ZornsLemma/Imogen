@@ -45,6 +45,14 @@ def level_room_data_table_entry(addr, s):
     #label(target3, room_n + "_data")
     #expr(target1, room_n + "_data")
     entry(target2, room_n + "_code")
+    ground_fill(target2, (s == "0"))
+
+    for a in range(target2, target2 + 200):
+        # look for 'jsr draw_floor_walls_and_ceiling_around_solid_rock'
+        if get_u8_runtime(RuntimeAddr(a)) == 0x20:
+            if get_u8_runtime(RuntimeAddr(a+1)) == 0x90:
+                if get_u8_runtime(RuntimeAddr(a+2)) == 0x1b:
+                    comment(a, "Carve the floor, walls and ceiling into the rock")
 
 def define_level(num_rooms):
     start = 0x3ad5
@@ -96,6 +104,27 @@ While updating the logic for a room, 'currently_updating_logic_for_room_index' i
     # Other common functions
     entry(0x395e, "define_envelope") # Duplicate of line in g.py, can't trivially put in common as it breaks imogen.py
 
+def ground_fill(addr, make_label=True):
+    if get_u8_runtime(RuntimeAddr(addr)) != 0xa9: # lda #
+        return
+    if get_u8_runtime(RuntimeAddr(addr + 2)) != 0x85: # sta $41
+        return
+    if get_u8_runtime(RuntimeAddr(addr + 3)) != 0x40:
+        return
+    if get_u8_runtime(RuntimeAddr(addr + 4)) != 0xa9: # lda #
+        return
+    if get_u8_runtime(RuntimeAddr(addr + 6)) != 0x85: # sta $41
+        return
+    if get_u8_runtime(RuntimeAddr(addr + 7)) != 0x41: #
+        return
+
+    expr(addr + 1, make_lo("ground_fill_2x2_top_left"))
+    expr(addr + 5, make_hi("ground_fill_2x2_top_left"))
+    tile_addr = get_u8_runtime(RuntimeAddr(addr + 1))
+    tile_addr += get_u8_runtime(RuntimeAddr(addr + 5)) << 8
+
+    if make_label:
+        tile_bitmap2x2(tile_addr, "ground_fill_2x2")
 
 def ldx_ldy_jsr_play_sound_yx(jsr_runtime_addr, s):
     assert get_u8_runtime(RuntimeAddr(jsr_runtime_addr - 4)) == 0xa2 # ldx #

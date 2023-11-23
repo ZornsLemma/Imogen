@@ -215,9 +215,9 @@ room_0_data
     !byte 22                                                          ; 3b2e: 16                      ; initial player Y cell
 
 room_0_code
-    lda #$a4                                                          ; 3b2f: a9 a4
+    lda #<ground_fill_2x2_top_left                                    ; 3b2f: a9 a4
     sta source_sprite_memory_low                                      ; 3b31: 85 40
-    lda #$43 ; 'C'                                                    ; 3b33: a9 43
+    lda #>ground_fill_2x2_top_left                                    ; 3b33: a9 43
     sta source_sprite_memory_high                                     ; 3b35: 85 41
     ldx #0                                                            ; 3b37: a2 00
     ldy #0                                                            ; 3b39: a0 00
@@ -274,6 +274,7 @@ room_0_code
     lda #2                                                            ; 3ba5: a9 02
     sta height_in_cells                                               ; 3ba7: 85 3d
     jsr copy_rectangle_of_memory_to_screen                            ; 3ba9: 20 bb 1a
+; Carve the floor, walls and ceiling into the rock
     jsr draw_floor_walls_and_ceiling_around_solid_rock                ; 3bac: 20 90 1b
     lda #3                                                            ; 3baf: a9 03
     sta width_in_cells                                                ; 3bb1: 85 3c
@@ -519,9 +520,9 @@ room_1_data
     !byte 22                                                          ; 3d7f: 16                      ; initial player Y cell
 
 room_1_code
-    lda #$a4                                                          ; 3d80: a9 a4
+    lda #<ground_fill_2x2_top_left                                    ; 3d80: a9 a4
     sta source_sprite_memory_low                                      ; 3d82: 85 40
-    lda #$43 ; 'C'                                                    ; 3d84: a9 43
+    lda #>ground_fill_2x2_top_left                                    ; 3d84: a9 43
     sta source_sprite_memory_high                                     ; 3d86: 85 41
     ldx #0                                                            ; 3d88: a2 00
     ldy #0                                                            ; 3d8a: a0 00
@@ -569,6 +570,7 @@ room_1_code
     jsr copy_rectangle_of_memory_to_screen                            ; 3de2: 20 bb 1a
     ldx #$1d                                                          ; 3de5: a2 1d
     jsr copy_rectangle_of_memory_to_screen                            ; 3de7: 20 bb 1a
+; Carve the floor, walls and ceiling into the rock
     jsr draw_floor_walls_and_ceiling_around_solid_rock                ; 3dea: 20 90 1b
     lda #4                                                            ; 3ded: a9 04
     sta width_in_cells                                                ; 3def: 85 3c
@@ -619,9 +621,9 @@ room_2_data
     !byte 22                                                          ; 3e3a: 16                      ; initial player Y cell
 
 room_2_code
-    lda #$a4                                                          ; 3e3b: a9 a4
+    lda #<ground_fill_2x2_top_left                                    ; 3e3b: a9 a4
     sta source_sprite_memory_low                                      ; 3e3d: 85 40
-    lda #$43 ; 'C'                                                    ; 3e3f: a9 43
+    lda #>ground_fill_2x2_top_left                                    ; 3e3f: a9 43
     sta source_sprite_memory_high                                     ; 3e41: 85 41
     ldx #0                                                            ; 3e43: a2 00
     ldy #0                                                            ; 3e45: a0 00
@@ -671,6 +673,7 @@ room_2_code
     lda #1                                                            ; 3ea0: a9 01
     sta height_in_cells                                               ; 3ea2: 85 3d
     jsr copy_rectangle_of_memory_to_screen                            ; 3ea4: 20 bb 1a
+; Carve the floor, walls and ceiling into the rock
     jsr draw_floor_walls_and_ceiling_around_solid_rock                ; 3ea7: 20 90 1b
     lda #3                                                            ; 3eaa: a9 03
     sta width_in_cells                                                ; 3eac: 85 3c
@@ -857,9 +860,9 @@ room_3_data
     !byte 22                                                          ; 3ffc: 16                      ; initial player Y cell
 
 room_3_code
-    lda #$a4                                                          ; 3ffd: a9 a4
+    lda #<ground_fill_2x2_top_left                                    ; 3ffd: a9 a4
     sta source_sprite_memory_low                                      ; 3fff: 85 40
-    lda #$43 ; 'C'                                                    ; 4001: a9 43
+    lda #>ground_fill_2x2_top_left                                    ; 4001: a9 43
     sta source_sprite_memory_high                                     ; 4003: 85 41
     ldx #0                                                            ; 4005: a2 00
     ldy #0                                                            ; 4007: a0 00
@@ -925,6 +928,7 @@ room_3_code
     lda #$ff                                                          ; 4088: a9 ff
     sta width_in_cells                                                ; 408a: 85 3c
     jsr copy_rectangle_of_memory_to_screen                            ; 408c: 20 bb 1a
+; Carve the floor, walls and ceiling into the rock
     jsr draw_floor_walls_and_ceiling_around_solid_rock                ; 408f: 20 90 1b
     lda #3                                                            ; 4092: a9 03
     sta width_in_cells                                                ; 4094: 85 3c
@@ -1262,11 +1266,43 @@ l4367
     !byte   0,   0,   0, $c8,   0,   1,   0,   6,   1,   0,   0,   0  ; 437f: 00 00 00...
     !byte   0,   0,   0, $50,   0,   0, $fa, $73,   0, $10,   0,   6  ; 438b: 00 00 00...
     !byte   0,   7,   0,   1,   0, $11,   0,   0,   0, $d2,   0,   1  ; 4397: 00 07 00...
-    !byte   0,   8, $14, $22, $41, $80, $40, $20, $10, $10, $20, $c0  ; 43a3: 00 08 14...
-    !byte $20, $11, $0a,   4,   4                                     ; 43af: 20 11 0a...
-    !text "  P"                                                       ; 43b4: 20 20 50
-    !byte $88,   4,   3,   4,   8,   8,   4,   2,   1, $82, $44, $28  ; 43b7: 88 04 03...
-    !byte $10                                                         ; 43c3: 10
+    !byte   0                                                         ; 43a3: 00
+ground_fill_2x2_top_left
+    !byte %....#...                                                   ; 43a4: 08
+    !byte %...#.#..                                                   ; 43a5: 14
+    !byte %..#...#.                                                   ; 43a6: 22
+    !byte %.#.....#                                                   ; 43a7: 41
+    !byte %#.......                                                   ; 43a8: 80
+    !byte %.#......                                                   ; 43a9: 40
+    !byte %..#.....                                                   ; 43aa: 20
+    !byte %...#....                                                   ; 43ab: 10
+ground_fill_2x2_top_right
+    !byte %...#....                                                   ; 43ac: 10
+    !byte %..#.....                                                   ; 43ad: 20
+    !byte %##......                                                   ; 43ae: c0
+    !byte %..#.....                                                   ; 43af: 20
+    !byte %...#...#                                                   ; 43b0: 11
+    !byte %....#.#.                                                   ; 43b1: 0a
+    !byte %.....#..                                                   ; 43b2: 04
+    !byte %.....#..                                                   ; 43b3: 04
+ground_fill_2x2_bottom_left
+    !byte %..#.....                                                   ; 43b4: 20
+    !byte %..#.....                                                   ; 43b5: 20
+    !byte %.#.#....                                                   ; 43b6: 50
+    !byte %#...#...                                                   ; 43b7: 88
+    !byte %.....#..                                                   ; 43b8: 04
+    !byte %......##                                                   ; 43b9: 03
+    !byte %.....#..                                                   ; 43ba: 04
+    !byte %....#...                                                   ; 43bb: 08
+ground_fill_2x2_bottom_right
+    !byte %....#...                                                   ; 43bc: 08
+    !byte %.....#..                                                   ; 43bd: 04
+    !byte %......#.                                                   ; 43be: 02
+    !byte %.......#                                                   ; 43bf: 01
+    !byte %#.....#.                                                   ; 43c0: 82
+    !byte %.#...#..                                                   ; 43c1: 44
+    !byte %..#.#...                                                   ; 43c2: 28
+    !byte %...#....                                                   ; 43c3: 10
 sprite_data
 pydis_end
 
@@ -1358,6 +1394,12 @@ pydis_end
 ;     sub_c3fea
 ;     sub_c40c2
 ;     sub_c41ac
+!if (<ground_fill_2x2_top_left) != $a4 {
+    !error "Assertion failed: <ground_fill_2x2_top_left == $a4"
+}
+!if (>ground_fill_2x2_top_left) != $43 {
+    !error "Assertion failed: >ground_fill_2x2_top_left == $43"
+}
 !if (level_specific_initialisation) != $3af3 {
     !error "Assertion failed: level_specific_initialisation == $3af3"
 }

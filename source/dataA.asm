@@ -629,6 +629,7 @@ room_1_code
     ldy #$12                                                          ; 3da3: a0 12
     inc height_in_cells                                               ; 3da5: e6 3d
     jsr copy_rectangle_of_memory_to_screen                            ; 3da7: 20 bb 1a
+; Carve the floor, walls and ceiling into the rock
     jsr draw_floor_walls_and_ceiling_around_solid_rock                ; 3daa: 20 90 1b
     lda #3                                                            ; 3dad: a9 03
     sta width_in_cells                                                ; 3daf: 85 3c
@@ -1009,6 +1010,7 @@ room_2_code
     lda #2                                                            ; 4037: a9 02
     sta height_in_cells                                               ; 4039: 85 3d
     jsr copy_rectangle_of_memory_to_screen                            ; 403b: 20 bb 1a
+; Carve the floor, walls and ceiling into the rock
     jsr draw_floor_walls_and_ceiling_around_solid_rock                ; 403e: 20 90 1b
     jsr start_room                                                    ; 4041: 20 bb 12
 loop_until_exit_room_top
@@ -1388,6 +1390,7 @@ room_3_code
     lda #4                                                            ; 42c6: a9 04
     sta height_in_cells                                               ; 42c8: 85 3d
     jsr copy_rectangle_of_memory_to_screen                            ; 42ca: 20 bb 1a
+; Carve the floor, walls and ceiling into the rock
     jsr draw_floor_walls_and_ceiling_around_solid_rock                ; 42cd: 20 90 1b
     ldx #$14                                                          ; 42d0: a2 14
     ldy #$0c                                                          ; 42d2: a0 0c

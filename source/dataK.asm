@@ -320,6 +320,7 @@ room_2_code
     sta width_in_cells                                                ; 3ba7: 85 3c
     sta height_in_cells                                               ; 3ba9: 85 3d
     jsr copy_rectangle_of_memory_to_screen                            ; 3bab: 20 bb 1a
+; Carve the floor, walls and ceiling into the rock
     jsr draw_floor_walls_and_ceiling_around_solid_rock                ; 3bae: 20 90 1b
     jsr start_room                                                    ; 3bb1: 20 bb 12
 loop_c3bb4
@@ -794,6 +795,7 @@ room_3_code
     sta width_in_cells                                                ; 3f10: 85 3c
     sta height_in_cells                                               ; 3f12: 85 3d
     jsr copy_rectangle_of_memory_to_screen                            ; 3f14: 20 bb 1a
+; Carve the floor, walls and ceiling into the rock
     jsr draw_floor_walls_and_ceiling_around_solid_rock                ; 3f17: 20 90 1b
     ldx #$25 ; '%'                                                    ; 3f1a: a2 25
     ldy #7                                                            ; 3f1c: a0 07
@@ -888,6 +890,7 @@ room_0_code
     sta width_in_cells                                                ; 3fc4: 85 3c
     jsr copy_rectangle_of_memory_to_screen                            ; 3fc6: 20 bb 1a
     jsr sub_c3b4e                                                     ; 3fc9: 20 4e 3b
+; Carve the floor, walls and ceiling into the rock
     jsr draw_floor_walls_and_ceiling_around_solid_rock                ; 3fcc: 20 90 1b
     lda #4                                                            ; 3fcf: a9 04
     sta width_in_cells                                                ; 3fd1: 85 3c
@@ -1318,6 +1321,7 @@ room_1_code
     ldx #$22 ; '"'                                                    ; 4362: a2 22
     jsr copy_rectangle_of_memory_to_screen                            ; 4364: 20 bb 1a
     jsr sub_c3b4e                                                     ; 4367: 20 4e 3b
+; Carve the floor, walls and ceiling into the rock
     jsr draw_floor_walls_and_ceiling_around_solid_rock                ; 436a: 20 90 1b
     ldx #$1a                                                          ; 436d: a2 1a
     ldy #2                                                            ; 436f: a0 02
