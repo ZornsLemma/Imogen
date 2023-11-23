@@ -74,6 +74,13 @@ set_label_maker_hook(s.substitute_label_maker)
 expr(0x40de, make_add("object_sprite_mask_type", "objectid_baby"))
 expr(0x3ff3, "copy_mode_simple")
 
+comment(0x3d21, """This table is indexed by a function of mouse_ball_position (it's not directly indexed
+to exploit the symmetry of the animation). Each table entry consists of four bytes:
+0) left mouse hands sprite ID
+1) right mouse hands sprite ID
+2) ball X offset (applied to mouse_ball_left_x_base or mouse_ball_right_x_base depending on
+   mouse_ball_position)
+3) ball Y offset (applied to mouse_ball_top_y_base)""")
 entry(0x3d21, "mouse_hand_sprites_and_ball_movement_table")
 def mouse_and_ball(addr):
     byte(addr+2,2)
@@ -157,6 +164,12 @@ expr(0x3c9b, make_lo("mouse_ball_sound2"))
 expr(0x3c9d, make_hi("mouse_ball_sound2"))
 expr(0x3ca2, make_lo("mouse_ball_sound3"))
 expr(0x3ca4, make_hi("mouse_ball_sound3"))
+constant(0x88, "mouse_ball_left_x_base")
+constant(0xc0, "mouse_ball_right_x_base")
+constant(0x53, "mouse_ball_top_y_base")
+expr(0x3cd1, "mouse_ball_left_x_base")
+expr(0x3cf5, "mouse_ball_right_x_base")
+expr(0x3cff, "mouse_ball_top_y_base")
 entry(0x3d20, "return1")
 comment(0x3c04, "Perform shared initialisation for both mice")
 comment(0x3c0e, "Set up the left mouse")

@@ -20,6 +20,9 @@ game_area_height_cells                           = 24
 game_area_width_cells                            = 40
 last_level_letter                                = 81
 max_mouse_ball_animation_position                = 29
+mouse_ball_left_x_base                           = 136
+mouse_ball_right_x_base                          = 192
+mouse_ball_top_y_base                            = 83
 object_collided_ceiling                          = 8
 object_collided_floor                            = 2
 object_collided_left_wall                        = 1
@@ -488,7 +491,7 @@ mouse_ball_position_lt_8
     iny                                                               ; 3cc9: c8
     lda mouse_hand_sprites_and_ball_movement_table,y                  ; 3cca: b9 21 3d
     sta object_spriteid + objectid_right_mouse                        ; 3ccd: 8d ab 09
-    lda #$88                                                          ; 3cd0: a9 88
+    lda #mouse_ball_left_x_base                                       ; 3cd0: a9 88
     clc                                                               ; 3cd2: 18
     iny                                                               ; 3cd3: c8
     adc mouse_hand_sprites_and_ball_movement_table,y                  ; 3cd4: 79 21 3d
@@ -510,13 +513,13 @@ c3ce7
     iny                                                               ; 3ced: c8
     lda mouse_hand_sprites_and_ball_movement_table,y                  ; 3cee: b9 21 3d
     sta object_spriteid + objectid_left_mouse                         ; 3cf1: 8d aa 09
-    lda #$c0                                                          ; 3cf4: a9 c0
+    lda #mouse_ball_right_x_base                                      ; 3cf4: a9 c0
     sec                                                               ; 3cf6: 38
     iny                                                               ; 3cf7: c8
     sbc mouse_hand_sprites_and_ball_movement_table,y                  ; 3cf8: f9 21 3d
 finish_mouse_ball_movement
     sta object_x_low + objectid_mouse_ball                            ; 3cfb: 8d 54 09
-    lda #$53 ; 'S'                                                    ; 3cfe: a9 53
+    lda #mouse_ball_top_y_base                                        ; 3cfe: a9 53
     sec                                                               ; 3d00: 38
     iny                                                               ; 3d01: c8
     sbc mouse_hand_sprites_and_ball_movement_table,y                  ; 3d02: f9 21 3d
@@ -535,6 +538,14 @@ finish_mouse_ball_movement
 return1
     rts                                                               ; 3d20: 60
 
+; This table is indexed by a function of mouse_ball_position (it's not directly indexed
+; to exploit the symmetry of the animation). Each table entry consists of four bytes:
+; 0) left mouse hands sprite ID
+; 1) right mouse hands sprite ID
+; 2) ball X offset (applied to mouse_ball_left_x_base or mouse_ball_right_x_base
+; depending on
+;    mouse_ball_position)
+; 3) ball Y offset (applied to mouse_ball_top_y_base)
 mouse_hand_sprites_and_ball_movement_table
     !byte spriteid_mouse_hands3                                       ; 3d21: d4
     !byte spriteid_mouse_hands1                                       ; 3d22: c9
@@ -1804,6 +1815,15 @@ pydis_end
 }
 !if (max_mouse_ball_animation_position + 1) != $1e {
     !error "Assertion failed: max_mouse_ball_animation_position + 1 == $1e"
+}
+!if (mouse_ball_left_x_base) != $88 {
+    !error "Assertion failed: mouse_ball_left_x_base == $88"
+}
+!if (mouse_ball_right_x_base) != $c0 {
+    !error "Assertion failed: mouse_ball_right_x_base == $c0"
+}
+!if (mouse_ball_top_y_base) != $53 {
+    !error "Assertion failed: mouse_ball_top_y_base == $53"
 }
 !if (object_collided_left_wall) != $01 {
     !error "Assertion failed: object_collided_left_wall == $01"
