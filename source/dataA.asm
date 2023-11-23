@@ -19,6 +19,7 @@ first_level_letter                               = 65
 game_area_height_cells                           = 24
 game_area_width_cells                            = 40
 last_level_letter                                = 81
+max_mouse_ball_animation_position                = 29
 object_collided_ceiling                          = 8
 object_collided_floor                            = 2
 object_collided_left_wall                        = 1
@@ -439,7 +440,7 @@ move_mouse_ball_if_room_0_local
 bump_and_wrap_mouse_ball_position
     ldy mouse_ball_animation_position                                 ; 3c77: ac 6f 0a
     iny                                                               ; 3c7a: c8
-    cpy #$1e                                                          ; 3c7b: c0 1e
+    cpy #max_mouse_ball_animation_position + 1                        ; 3c7b: c0 1e
     bcc no_wrap_needed                                                ; 3c7d: 90 02
     ldy #0                                                            ; 3c7f: a0 00
 no_wrap_needed
@@ -1799,6 +1800,9 @@ pydis_end
 }
 !if (level_specific_update) != $3b17 {
     !error "Assertion failed: level_specific_update == $3b17"
+}
+!if (max_mouse_ball_animation_position + 1) != $1e {
+    !error "Assertion failed: max_mouse_ball_animation_position + 1 == $1e"
 }
 !if (object_collided_left_wall) != $01 {
     !error "Assertion failed: object_collided_left_wall == $01"

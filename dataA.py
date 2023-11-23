@@ -140,6 +140,8 @@ entry(0x3be4, "room0_update_handler")
 entry(0x3bec, "room0_first_update")
 entry(0x3bf7, "level_unchanged")
 entry(0x3c77, "bump_and_wrap_mouse_ball_position")
+constant(0x1d, "max_mouse_ball_animation_position") # 0-0x1d inclusive
+expr(0x3c7c, make_add("max_mouse_ball_animation_position", "1"))
 entry(0x3c81, "no_wrap_needed")
 entry(0x3ca8, "move_mouse_ball_if_room_0")
 entry(0x3c74, "move_mouse_ball_if_room_0_local")
