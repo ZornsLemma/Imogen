@@ -107,14 +107,10 @@ comment(0x4088, "redundant instruction", inline=True)
 
 expr(0x3b0f, make_lo("ground_fill_2x2_top_left"))
 expr(0x3b13, make_hi("ground_fill_2x2_top_left"))
-label(0x4486, "ground_fill_2x2_top_left")
 expr(0x3fe7, make_lo("tile_all_set_pixels"))
 expr(0x3feb, make_hi("tile_all_set_pixels"))
-tile_bitmap(0x4486, "ground_fill_2x2_top_left")
+tile_bitmap2x2(0x4486, "ground_fill_2x2")
 comment(0x448e, "Note that the next three tiles are all identical. This is done because the 'tiling' code in copy_rectangle_of_memory_to_screen for copy_mode=1 uses a 2x2 tiling arrangement.")
-tile_bitmap(0x448e, "ground_fill_2x2_top_right")
-tile_bitmap(0x4496, "ground_fill_2x2_bottom_left")
-tile_bitmap(0x449e, "ground_fill_2x2_bottom_right")
 
 
 comment(0x3af4, "if level is unchanged, skip forwards")

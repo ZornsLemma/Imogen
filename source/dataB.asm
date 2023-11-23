@@ -232,9 +232,9 @@ room_0_data
     !byte 20                                                          ; 3b30: 14                      ; initial player Y cell
 
 room_0_code
-    lda #$26 ; '&'                                                    ; 3b31: a9 26
+    lda #<ground_fill_2x2_top_left                                    ; 3b31: a9 26
     sta source_sprite_memory_low                                      ; 3b33: 85 40
-    lda #$45 ; 'E'                                                    ; 3b35: a9 45
+    lda #>ground_fill_2x2_top_left                                    ; 3b35: a9 45
     sta source_sprite_memory_high                                     ; 3b37: 85 41
     ldx #0                                                            ; 3b39: a2 00
     ldy #0                                                            ; 3b3b: a0 00
@@ -339,8 +339,8 @@ sub_c3c08
     lda current_level                                                 ; 3c0d: a5 31
     cmp level_before_latest_level_and_room_initialisation             ; 3c0f: c5 51
     beq c3c1a                                                         ; 3c11: f0 07
-    ldx #8                                                            ; 3c13: a2 08
-    ldy #$45 ; 'E'                                                    ; 3c15: a0 45
+    ldx #<envelope1                                                   ; 3c13: a2 08
+    ldy #>envelope1                                                   ; 3c15: a0 45
     jsr define_envelope                                               ; 3c17: 20 5e 39
 c3c1a
     lda #0                                                            ; 3c1a: a9 00
@@ -649,8 +649,8 @@ c3e60
     lda #$ff                                                          ; 3e8b: a9 ff
     sta object_sprite_mask_type,x                                     ; 3e8d: 9d ac 38
     sta object_z_order,x                                              ; 3e90: 9d c2 38
-    ldx #$cc                                                          ; 3e93: a2 cc
-    ldy #$44 ; 'D'                                                    ; 3e95: a0 44
+    ldx #<envelope2                                                   ; 3e93: a2 cc
+    ldy #>envelope2                                                   ; 3e95: a0 44
     jsr define_envelope                                               ; 3e97: 20 5e 39
 c3e9a
     jmp c3efd                                                         ; 3e9a: 4c fd 3e
@@ -740,8 +740,8 @@ sub_c3f2f
     lda #0                                                            ; 3f3a: a9 00
     sta l0a75                                                         ; 3f3c: 8d 75 0a
 c3f3f
-    ldx #$ae                                                          ; 3f3f: a2 ae
-    ldy #$44 ; 'D'                                                    ; 3f41: a0 44
+    ldx #<envelope3                                                   ; 3f3f: a2 ae
+    ldy #>envelope3                                                   ; 3f41: a0 44
     jsr define_envelope                                               ; 3f43: 20 5e 39
     lda #$d4                                                          ; 3f46: a9 d4
     sta toolbar_collectable_spriteids+1                               ; 3f48: 8d e9 2e
@@ -1434,8 +1434,21 @@ c4495
 c44ad
     rts                                                               ; 44ad: 60
 
-    !byte   5,   1,   0,   0,   0,   0,   0,   0, $28, $f6, $f6, $ec  ; 44ae: 05 01 00...
-    !byte $64,   0                                                    ; 44ba: 64 00
+envelope3
+    !byte 5                                                           ; 44ae: 05                      ; envelope number
+    !byte 1                                                           ; 44af: 01                      ; step length (100ths of a second)
+    !byte 0                                                           ; 44b0: 00                      ; pitch change per step in section 1
+    !byte 0                                                           ; 44b1: 00                      ; pitch change per step in section 2
+    !byte 0                                                           ; 44b2: 00                      ; pitch change per step in section 3
+    !byte 0                                                           ; 44b3: 00                      ; number of steps in section 1
+    !byte 0                                                           ; 44b4: 00                      ; number of steps in section 2
+    !byte 0                                                           ; 44b5: 00                      ; number of steps in section 3
+    !byte 40                                                          ; 44b6: 28                      ; change of amplitude per step during attack phase
+    !byte 246                                                         ; 44b7: f6                      ; change of amplitude per step during decay phase
+    !byte 246                                                         ; 44b8: f6                      ; change of amplitude per step during sustain phase
+    !byte 236                                                         ; 44b9: ec                      ; change of amplitude per step during release phase
+    !byte 100                                                         ; 44ba: 64                      ; target of level at end of attack phase
+    !byte 0                                                           ; 44bb: 00                      ; target of level at end of decay phase
 sound4
     !word $13                                                         ; 44bc: 13 00                   ; channel
     !word 5                                                           ; 44be: 05 00                   ; amplitude
@@ -1446,8 +1459,21 @@ sound5
     !word 5                                                           ; 44c6: 05 00                   ; amplitude
     !word 137                                                         ; 44c8: 89 00                   ; pitch
     !word 2                                                           ; 44ca: 02 00                   ; duration
-    !byte   6,   1,   0,   0,   0,   0,   0,   0, $64, $ce, $ce, $9c  ; 44cc: 06 01 00...
-    !byte $64,   0                                                    ; 44d8: 64 00
+envelope2
+    !byte 6                                                           ; 44cc: 06                      ; envelope number
+    !byte 1                                                           ; 44cd: 01                      ; step length (100ths of a second)
+    !byte 0                                                           ; 44ce: 00                      ; pitch change per step in section 1
+    !byte 0                                                           ; 44cf: 00                      ; pitch change per step in section 2
+    !byte 0                                                           ; 44d0: 00                      ; pitch change per step in section 3
+    !byte 0                                                           ; 44d1: 00                      ; number of steps in section 1
+    !byte 0                                                           ; 44d2: 00                      ; number of steps in section 2
+    !byte 0                                                           ; 44d3: 00                      ; number of steps in section 3
+    !byte 100                                                         ; 44d4: 64                      ; change of amplitude per step during attack phase
+    !byte 206                                                         ; 44d5: ce                      ; change of amplitude per step during decay phase
+    !byte 206                                                         ; 44d6: ce                      ; change of amplitude per step during sustain phase
+    !byte 156                                                         ; 44d7: 9c                      ; change of amplitude per step during release phase
+    !byte 100                                                         ; 44d8: 64                      ; target of level at end of attack phase
+    !byte 0                                                           ; 44d9: 00                      ; target of level at end of decay phase
 sound3
     !word $10                                                         ; 44da: 10 00                   ; channel
     !word 6                                                           ; 44dc: 06 00                   ; amplitude
@@ -1463,9 +1489,41 @@ sound2
     !word 0                                                           ; 44ec: 00 00                   ; amplitude
     !word 190                                                         ; 44ee: be 00                   ; pitch
     !word 0                                                           ; 44f0: 00 00                   ; duration
-    !byte   7,   1, $ff,   0,   0,   1,   1,   0, $78, $fc,   0, $f8  ; 44f2: 07 01 ff...
-    !byte $78,   0, $13,   0,   7,   0, $c8,   0,   1,   0,   7,   1  ; 44fe: 78 00 13...
-    !byte   0,   0,   0,   0,   0,   0, $37,   0,   0, $fa, $6e, $37  ; 450a: 00 00 00...
+envelope_unused
+    !byte 7                                                           ; 44f2: 07                      ; envelope number
+    !byte 1                                                           ; 44f3: 01                      ; step length (100ths of a second)
+    !byte 255                                                         ; 44f4: ff                      ; pitch change per step in section 1
+    !byte 0                                                           ; 44f5: 00                      ; pitch change per step in section 2
+    !byte 0                                                           ; 44f6: 00                      ; pitch change per step in section 3
+    !byte 1                                                           ; 44f7: 01                      ; number of steps in section 1
+    !byte 1                                                           ; 44f8: 01                      ; number of steps in section 2
+    !byte 0                                                           ; 44f9: 00                      ; number of steps in section 3
+    !byte 120                                                         ; 44fa: 78                      ; change of amplitude per step during attack phase
+    !byte 252                                                         ; 44fb: fc                      ; change of amplitude per step during decay phase
+    !byte 0                                                           ; 44fc: 00                      ; change of amplitude per step during sustain phase
+    !byte 248                                                         ; 44fd: f8                      ; change of amplitude per step during release phase
+    !byte 120                                                         ; 44fe: 78                      ; target of level at end of attack phase
+    !byte 0                                                           ; 44ff: 00                      ; target of level at end of decay phase
+sound_unused
+    !word $13                                                         ; 4500: 13 00                   ; channel
+    !word 7                                                           ; 4502: 07 00                   ; amplitude
+    !word 200                                                         ; 4504: c8 00                   ; pitch
+    !word 1                                                           ; 4506: 01 00                   ; duration
+envelope1
+    !byte 7                                                           ; 4508: 07                      ; envelope number
+    !byte 1                                                           ; 4509: 01                      ; step length (100ths of a second)
+    !byte 0                                                           ; 450a: 00                      ; pitch change per step in section 1
+    !byte 0                                                           ; 450b: 00                      ; pitch change per step in section 2
+    !byte 0                                                           ; 450c: 00                      ; pitch change per step in section 3
+    !byte 0                                                           ; 450d: 00                      ; number of steps in section 1
+    !byte 0                                                           ; 450e: 00                      ; number of steps in section 2
+    !byte 0                                                           ; 450f: 00                      ; number of steps in section 3
+    !byte 55                                                          ; 4510: 37                      ; change of amplitude per step during attack phase
+    !byte 0                                                           ; 4511: 00                      ; change of amplitude per step during decay phase
+    !byte 0                                                           ; 4512: 00                      ; change of amplitude per step during sustain phase
+    !byte 250                                                         ; 4513: fa                      ; change of amplitude per step during release phase
+    !byte 110                                                         ; 4514: 6e                      ; target of level at end of attack phase
+    !byte 55                                                          ; 4515: 37                      ; target of level at end of decay phase
 sound7
     !word $10                                                         ; 4516: 10 00                   ; channel
     !word 7                                                           ; 4518: 07 00                   ; amplitude
@@ -1476,9 +1534,42 @@ sound6
     !word 0                                                           ; 4520: 00 00                   ; amplitude
     !word 210                                                         ; 4522: d2 00                   ; pitch
     !word 1                                                           ; 4524: 01 00                   ; duration
-    !byte $20, $10, $88, $44, $23, $10,   8,   8,   4,   8, $11, $e2  ; 4526: 20 10 88...
-    !byte   4,   8,   8,   8, $10, $10, $10, $20, $47, $88, $10, $20  ; 4532: 04 08 08...
-    !byte $10, $10,   8, $c4, $22, $11,   8,   4                      ; 453e: 10 10 08...
+ground_fill_2x2_top_left
+    !byte %..#.....                                                   ; 4526: 20
+    !byte %...#....                                                   ; 4527: 10
+    !byte %#...#...                                                   ; 4528: 88
+    !byte %.#...#..                                                   ; 4529: 44
+    !byte %..#...##                                                   ; 452a: 23
+    !byte %...#....                                                   ; 452b: 10
+    !byte %....#...                                                   ; 452c: 08
+    !byte %....#...                                                   ; 452d: 08
+ground_fill_2x2_top_right
+    !byte %.....#..                                                   ; 452e: 04
+    !byte %....#...                                                   ; 452f: 08
+    !byte %...#...#                                                   ; 4530: 11
+    !byte %###...#.                                                   ; 4531: e2
+    !byte %.....#..                                                   ; 4532: 04
+    !byte %....#...                                                   ; 4533: 08
+    !byte %....#...                                                   ; 4534: 08
+    !byte %....#...                                                   ; 4535: 08
+ground_fill_2x2_bottom_left
+    !byte %...#....                                                   ; 4536: 10
+    !byte %...#....                                                   ; 4537: 10
+    !byte %...#....                                                   ; 4538: 10
+    !byte %..#.....                                                   ; 4539: 20
+    !byte %.#...###                                                   ; 453a: 47
+    !byte %#...#...                                                   ; 453b: 88
+    !byte %...#....                                                   ; 453c: 10
+    !byte %..#.....                                                   ; 453d: 20
+ground_fill_2x2_bottom_right
+    !byte %...#....                                                   ; 453e: 10
+    !byte %...#....                                                   ; 453f: 10
+    !byte %....#...                                                   ; 4540: 08
+    !byte %##...#..                                                   ; 4541: c4
+    !byte %..#...#.                                                   ; 4542: 22
+    !byte %...#...#                                                   ; 4543: 11
+    !byte %....#...                                                   ; 4544: 08
+    !byte %.....#..                                                   ; 4545: 04
 sprite_data
 pydis_end
 
@@ -1587,6 +1678,18 @@ pydis_end
 ;     sub_c41d2
 ;     sub_c42dd
 ;     sub_c443d
+!if (<envelope1) != $08 {
+    !error "Assertion failed: <envelope1 == $08"
+}
+!if (<envelope2) != $cc {
+    !error "Assertion failed: <envelope2 == $cc"
+}
+!if (<envelope3) != $ae {
+    !error "Assertion failed: <envelope3 == $ae"
+}
+!if (<ground_fill_2x2_top_left) != $26 {
+    !error "Assertion failed: <ground_fill_2x2_top_left == $26"
+}
 !if (<sound1) != $e2 {
     !error "Assertion failed: <sound1 == $e2"
 }
@@ -1607,6 +1710,18 @@ pydis_end
 }
 !if (<sound7) != $16 {
     !error "Assertion failed: <sound7 == $16"
+}
+!if (>envelope1) != $45 {
+    !error "Assertion failed: >envelope1 == $45"
+}
+!if (>envelope2) != $44 {
+    !error "Assertion failed: >envelope2 == $44"
+}
+!if (>envelope3) != $44 {
+    !error "Assertion failed: >envelope3 == $44"
+}
+!if (>ground_fill_2x2_top_left) != $45 {
+    !error "Assertion failed: >ground_fill_2x2_top_left == $45"
 }
 !if (>sound1) != $44 {
     !error "Assertion failed: >sound1 == $44"

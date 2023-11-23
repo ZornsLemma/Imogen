@@ -44,6 +44,14 @@ def tile_bitmap(addr, s=None):
         picture_binary(addr + i)
         byte(addr + i)
 
+def tile_bitmap2x2(addr, s=None):
+    if s is None:
+        s = "character_bitmap_%04x" % addr
+    tile_bitmap(addr, s + "_top_left")
+    tile_bitmap(addr+8, s + "_top_right")
+    tile_bitmap(addr+16, s + "_bottom_left")
+    tile_bitmap(addr+24, s + "_bottom_right")
+
 def get_password(start_addr):
     password = ""
     addr = start_addr
