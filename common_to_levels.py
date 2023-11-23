@@ -26,6 +26,19 @@ def spriteid(start_addr, end_addr=None):
             byte(addr)
             expr(addr, sprite_dict[v])
 
+def find_sequence(addr, length, sequence):
+    for a in range(addr, addr+length):
+        i = 0
+        found = True
+        for s in sequence:
+            if get_u8_runtime(RuntimeAddr(a+i)) != s:
+                found = False
+                break
+            i += 1
+        if found:
+            return a
+    return None
+
 
 def level_room_data_table_entry(addr, s):
     room_n = "room_" + s
@@ -48,12 +61,16 @@ def level_room_data_table_entry(addr, s):
     if ground_fill(target2, (s == "0")):
         comment(target2 + 8, "Draw rectangles of ground fill rock with a 2x2 pattern. Also writes to the collision map.")
 
-    for a in range(target2, target2 + 200):
-        # look for 'jsr draw_floor_walls_and_ceiling_around_solid_rock'
-        if get_u8_runtime(RuntimeAddr(a)) == 0x20:
-            if get_u8_runtime(RuntimeAddr(a+1)) == 0x90:
-                if get_u8_runtime(RuntimeAddr(a+2)) == 0x1b:
-                    comment(a, "Carve the floor, walls and ceiling into the rock")
+    # look for 'jsr draw_floor_walls_and_ceiling_around_solid_rock'
+    a = find_sequence(target2, 200, [0x20, 0x90, 0x1b])
+    if a:
+        comment(a, "Carve the floor, walls and ceiling into the rock")
+
+    # look for 'jsr game_update'
+    a = find_sequence(target2, 200, [0x20, 0xda, 0x12])
+    if a:
+        label(a, room_n + "_game_update_loop")
+
 
 def define_level(num_rooms):
     start = 0x3ad5

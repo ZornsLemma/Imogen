@@ -350,11 +350,11 @@ room_0_code
     jsr draw_rope                                                     ; 3bce: 20 b9 1d
 ; start main game loop for room 1
     jsr start_room                                                    ; 3bd1: 20 bb 12
-loop_until_exit_room_right
+room_0_game_update_loop
     jsr game_update                                                   ; 3bd4: 20 da 12
     sta room_exit_direction                                           ; 3bd7: 85 70
     and #exit_room_right                                              ; 3bd9: 29 04
-    beq loop_until_exit_room_right                                    ; 3bdb: f0 f7
+    beq room_0_game_update_loop                                       ; 3bdb: f0 f7
     ldx #1                                                            ; 3bdd: a2 01
     ldy current_level                                                 ; 3bdf: a4 31
     jsr initialise_level_and_room                                     ; 3be1: 20 40 11
@@ -647,7 +647,7 @@ room_1_code
     ldy #$14                                                          ; 3dca: a0 14
     jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map           ; 3dcc: 20 57 1f
     jsr start_room                                                    ; 3dcf: 20 bb 12
-loop_until_exited_room
+room_1_game_update_loop
     jsr game_update                                                   ; 3dd2: 20 da 12
     sta room_exit_direction                                           ; 3dd5: 85 70
     and #exit_room_left                                               ; 3dd7: 29 01
@@ -667,7 +667,7 @@ exited_room_not_left
 exited_room_not_bottom
     lda room_exit_direction                                           ; 3def: a5 70
     and #exit_room_right                                              ; 3df1: 29 04
-    beq loop_until_exited_room                                        ; 3df3: f0 dd
+    beq room_1_game_update_loop                                       ; 3df3: f0 dd
     ldx #3                                                            ; 3df5: a2 03
     ldy current_level                                                 ; 3df7: a4 31
     jmp initialise_level_and_room                                     ; 3df9: 4c 40 11
@@ -1013,10 +1013,10 @@ room_2_code
 ; Carve the floor, walls and ceiling into the rock
     jsr draw_floor_walls_and_ceiling_around_solid_rock                ; 403e: 20 90 1b
     jsr start_room                                                    ; 4041: 20 bb 12
-loop_until_exit_room_top
+room_2_game_update_loop
     jsr game_update                                                   ; 4044: 20 da 12
     and #exit_room_top                                                ; 4047: 29 08
-    beq loop_until_exit_room_top                                      ; 4049: f0 f9
+    beq room_2_game_update_loop                                       ; 4049: f0 f9
     ldx #1                                                            ; 404b: a2 01
     ldy current_level                                                 ; 404d: a4 31
     jmp initialise_level_and_room                                     ; 404f: 4c 40 11
@@ -1403,10 +1403,10 @@ room_3_code
     lda #$0e                                                          ; 42e2: a9 0e
     jsr draw_rope                                                     ; 42e4: 20 b9 1d
     jsr start_room                                                    ; 42e7: 20 bb 12
-loop_until_exit_room_left
+room_3_game_update_loop
     jsr game_update                                                   ; 42ea: 20 da 12
     and #exit_room_left                                               ; 42ed: 29 01
-    beq loop_until_exit_room_left                                     ; 42ef: f0 f9
+    beq room_3_game_update_loop                                       ; 42ef: f0 f9
     ldx #1                                                            ; 42f1: a2 01
     ldy current_level                                                 ; 42f3: a4 31
     jmp initialise_level_and_room                                     ; 42f5: 4c 40 11

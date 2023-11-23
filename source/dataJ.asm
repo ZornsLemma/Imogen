@@ -306,7 +306,7 @@ room_1_code
     ldx #$1d                                                          ; 3b92: a2 1d
     jsr draw_rope                                                     ; 3b94: 20 b9 1d
     jsr start_room                                                    ; 3b97: 20 bb 12
-loop_c3b9a
+room_1_game_update_loop
     jsr game_update                                                   ; 3b9a: 20 da 12
     sta l0070                                                         ; 3b9d: 85 70
     and #1                                                            ; 3b9f: 29 01
@@ -318,7 +318,7 @@ loop_c3b9a
 c3baa
     lda l0070                                                         ; 3baa: a5 70
     and #4                                                            ; 3bac: 29 04
-    beq loop_c3b9a                                                    ; 3bae: f0 ea
+    beq room_1_game_update_loop                                       ; 3bae: f0 ea
     ldx #2                                                            ; 3bb0: a2 02
     ldy current_level                                                 ; 3bb2: a4 31
     jmp initialise_level_and_room                                     ; 3bb4: 4c 40 11
@@ -503,7 +503,7 @@ room_2_code
     ldx #$1d                                                          ; 3d15: a2 1d
     jsr draw_rope                                                     ; 3d17: 20 b9 1d
     jsr start_room                                                    ; 3d1a: 20 bb 12
-loop_c3d1d
+room_2_game_update_loop
     jsr game_update                                                   ; 3d1d: 20 da 12
     sta l0070                                                         ; 3d20: 85 70
     and #1                                                            ; 3d22: 29 01
@@ -515,7 +515,7 @@ loop_c3d1d
 c3d2d
     lda l0070                                                         ; 3d2d: a5 70
     and #4                                                            ; 3d2f: 29 04
-    beq loop_c3d1d                                                    ; 3d31: f0 ea
+    beq room_2_game_update_loop                                       ; 3d31: f0 ea
     ldx #3                                                            ; 3d33: a2 03
     ldy current_level                                                 ; 3d35: a4 31
     jmp initialise_level_and_room                                     ; 3d37: 4c 40 11
@@ -694,10 +694,10 @@ room_3_code
     lda #$12                                                          ; 3e73: a9 12
     jsr draw_rope                                                     ; 3e75: 20 b9 1d
     jsr start_room                                                    ; 3e78: 20 bb 12
-loop_c3e7b
+room_3_game_update_loop
     jsr game_update                                                   ; 3e7b: 20 da 12
     and #1                                                            ; 3e7e: 29 01
-    beq loop_c3e7b                                                    ; 3e80: f0 f9
+    beq room_3_game_update_loop                                       ; 3e80: f0 f9
     ldx #2                                                            ; 3e82: a2 02
     ldy current_level                                                 ; 3e84: a4 31
     jmp initialise_level_and_room                                     ; 3e86: 4c 40 11
@@ -924,10 +924,10 @@ loop_c401d
     sta l001a                                                         ; 4033: 85 1a
     jsr l138d                                                         ; 4035: 20 8d 13
     jsr start_room                                                    ; 4038: 20 bb 12
-loop_c403b
+room_0_game_update_loop
     jsr game_update                                                   ; 403b: 20 da 12
     and #4                                                            ; 403e: 29 04
-    beq loop_c403b                                                    ; 4040: f0 f9
+    beq room_0_game_update_loop                                       ; 4040: f0 f9
     ldx #1                                                            ; 4042: a2 01
     ldy current_level                                                 ; 4044: a4 31
     jmp initialise_level_and_room                                     ; 4046: 4c 40 11
@@ -1594,12 +1594,8 @@ pydis_end
 ;     l408b
 ;     l422d
 ;     l4463
-;     loop_c3b9a
-;     loop_c3d1d
-;     loop_c3e7b
 ;     loop_c4003
 ;     loop_c401d
-;     loop_c403b
 ;     loop_c427f
 ;     sub_c3bc3
 ;     sub_c3d3a

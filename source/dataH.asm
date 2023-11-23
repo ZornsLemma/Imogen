@@ -288,10 +288,10 @@ room_0_code
     ldx #$1e                                                          ; 3b94: a2 1e
     jsr draw_rope                                                     ; 3b96: 20 b9 1d
     jsr start_room                                                    ; 3b99: 20 bb 12
-loop_c3b9c
+room_0_game_update_loop
     jsr game_update                                                   ; 3b9c: 20 da 12
     and #4                                                            ; 3b9f: 29 04
-    beq loop_c3b9c                                                    ; 3ba1: f0 f9
+    beq room_0_game_update_loop                                       ; 3ba1: f0 f9
     ldx #1                                                            ; 3ba3: a2 01
     ldy current_level                                                 ; 3ba5: a4 31
     jmp initialise_level_and_room                                     ; 3ba7: 4c 40 11
@@ -598,7 +598,7 @@ room_1_code
     lda #$d5                                                          ; 3df0: a9 d5
     jsr draw_sprite_a_at_cell_xy                                      ; 3df2: 20 4c 1f
     jsr start_room                                                    ; 3df5: 20 bb 12
-c3df8
+room_1_game_update_loop
     jsr game_update                                                   ; 3df8: 20 da 12
     sta l0070                                                         ; 3dfb: 85 70
     and #8                                                            ; 3dfd: 29 08
@@ -618,7 +618,7 @@ c3e08
 c3e15
     lda l0070                                                         ; 3e15: a5 70
     and #4                                                            ; 3e17: 29 04
-    beq c3df8                                                         ; 3e19: f0 dd
+    beq room_1_game_update_loop                                       ; 3e19: f0 dd
     ldx #2                                                            ; 3e1b: a2 02
     ldy current_level                                                 ; 3e1d: a4 31
     jmp initialise_level_and_room                                     ; 3e1f: 4c 40 11
@@ -701,10 +701,10 @@ room_2_code
     lda #$12                                                          ; 3ead: a9 12
     jsr draw_rope                                                     ; 3eaf: 20 b9 1d
     jsr start_room                                                    ; 3eb2: 20 bb 12
-loop_c3eb5
+room_2_game_update_loop
     jsr game_update                                                   ; 3eb5: 20 da 12
     and #1                                                            ; 3eb8: 29 01
-    beq loop_c3eb5                                                    ; 3eba: f0 f9
+    beq room_2_game_update_loop                                       ; 3eba: f0 f9
     ldx #1                                                            ; 3ebc: a2 01
     ldy current_level                                                 ; 3ebe: a4 31
     jmp initialise_level_and_room                                     ; 3ec0: 4c 40 11
@@ -946,10 +946,10 @@ room_3_code
     lda #$ff                                                          ; 40a3: a9 ff
     jsr draw_rope                                                     ; 40a5: 20 b9 1d
     jsr start_room                                                    ; 40a8: 20 bb 12
-loop_c40ab
+room_3_game_update_loop
     jsr game_update                                                   ; 40ab: 20 da 12
     and #2                                                            ; 40ae: 29 02
-    beq loop_c40ab                                                    ; 40b0: f0 f9
+    beq room_3_game_update_loop                                       ; 40b0: f0 f9
     ldx #1                                                            ; 40b2: a2 01
     ldy current_level                                                 ; 40b4: a4 31
     jmp initialise_level_and_room                                     ; 40b6: 4c 40 11
@@ -1450,7 +1450,6 @@ pydis_end
 ;     c3d05
 ;     c3d16
 ;     c3d49
-;     c3df8
 ;     c3e08
 ;     c3e15
 ;     c3ef9
@@ -1548,10 +1547,7 @@ pydis_end
 ;     l40b9
 ;     l43b5
 ;     l4464
-;     loop_c3b9c
 ;     loop_c3c1e
-;     loop_c3eb5
-;     loop_c40ab
 ;     loop_c4146
 ;     loop_c442e
 ;     sub_c3baa

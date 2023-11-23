@@ -323,10 +323,10 @@ room_0_code
     lda #$de                                                          ; 3bc9: a9 de
     jsr draw_sprite_a_at_cell_xy                                      ; 3bcb: 20 4c 1f
     jsr start_room                                                    ; 3bce: 20 bb 12
-loop_c3bd1
+room_0_game_update_loop
     jsr game_update                                                   ; 3bd1: 20 da 12
     and #4                                                            ; 3bd4: 29 04
-    beq loop_c3bd1                                                    ; 3bd6: f0 f9
+    beq room_0_game_update_loop                                       ; 3bd6: f0 f9
     ldx #1                                                            ; 3bd8: a2 01
 c3bda
     ldy current_level                                                 ; 3bda: a4 31
@@ -417,7 +417,7 @@ room_1_code
     lda #$e0                                                          ; 3c7a: a9 e0
     jsr draw_sprite_a_at_cell_xy                                      ; 3c7c: 20 4c 1f
     jsr start_room                                                    ; 3c7f: 20 bb 12
-loop_c3c82
+room_1_game_update_loop
     jsr game_update                                                   ; 3c82: 20 da 12
     sta l0070                                                         ; 3c85: 85 70
     and #1                                                            ; 3c87: 29 01
@@ -428,7 +428,7 @@ loop_c3c82
 c3c90
     lda l0070                                                         ; 3c90: a5 70
     and #4                                                            ; 3c92: 29 04
-    beq loop_c3c82                                                    ; 3c94: f0 ec
+    beq room_1_game_update_loop                                       ; 3c94: f0 ec
     ldx #2                                                            ; 3c96: a2 02
     jmp c3bda                                                         ; 3c98: 4c da 3b
 
@@ -803,7 +803,7 @@ room_2_code
     ldy #2                                                            ; 3f75: a0 02
     jsr draw_rope                                                     ; 3f77: 20 b9 1d
     jsr start_room                                                    ; 3f7a: 20 bb 12
-loop_c3f7d
+room_2_game_update_loop
     jsr game_update                                                   ; 3f7d: 20 da 12
     sta l0070                                                         ; 3f80: 85 70
     and #1                                                            ; 3f82: 29 01
@@ -814,7 +814,7 @@ loop_c3f7d
 c3f8b
     lda l0070                                                         ; 3f8b: a5 70
     and #4                                                            ; 3f8d: 29 04
-    beq loop_c3f7d                                                    ; 3f8f: f0 ec
+    beq room_2_game_update_loop                                       ; 3f8f: f0 ec
     ldx #3                                                            ; 3f91: a2 03
     jmp c3bda                                                         ; 3f93: 4c da 3b
 
@@ -1052,10 +1052,10 @@ room_3_code
     ldx #$1e                                                          ; 4190: a2 1e
     jsr draw_rope                                                     ; 4192: 20 b9 1d
     jsr start_room                                                    ; 4195: 20 bb 12
-loop_c4198
+room_3_game_update_loop
     jsr game_update                                                   ; 4198: 20 da 12
     and #1                                                            ; 419b: 29 01
-    beq loop_c4198                                                    ; 419d: f0 f9
+    beq room_3_game_update_loop                                       ; 419d: f0 f9
     ldx #2                                                            ; 419f: a2 02
     jmp c3bda                                                         ; 41a1: 4c da 3b
 
@@ -1478,13 +1478,9 @@ pydis_end
 ;     l413f
 ;     l41a4
 ;     l435c
-;     loop_c3bd1
-;     loop_c3c82
 ;     loop_c3d03
 ;     loop_c3d21
 ;     loop_c3d42
-;     loop_c3f7d
-;     loop_c4198
 ;     sub_c3b32
 ;     sub_c3bdf
 ;     sub_c3cbb

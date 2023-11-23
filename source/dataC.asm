@@ -292,10 +292,10 @@ room_0_code
     ldy #$12                                                          ; 3b9d: a0 12
     jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map           ; 3b9f: 20 57 1f
     jsr start_room                                                    ; 3ba2: 20 bb 12
-loop_c3ba5
+room_0_game_update_loop
     jsr game_update                                                   ; 3ba5: 20 da 12
     and #8                                                            ; 3ba8: 29 08
-    beq loop_c3ba5                                                    ; 3baa: f0 f9
+    beq room_0_game_update_loop                                       ; 3baa: f0 f9
     ldx #2                                                            ; 3bac: a2 02
     ldy current_level                                                 ; 3bae: a4 31
     jmp initialise_level_and_room                                     ; 3bb0: 4c 40 11
@@ -630,10 +630,10 @@ room_1_code
     ldy #$14                                                          ; 3e2f: a0 14
     jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map           ; 3e31: 20 57 1f
     jsr start_room                                                    ; 3e34: 20 bb 12
-loop_c3e37
+room_1_game_update_loop
     jsr game_update                                                   ; 3e37: 20 da 12
     and #1                                                            ; 3e3a: 29 01
-    beq loop_c3e37                                                    ; 3e3c: f0 f9
+    beq room_1_game_update_loop                                       ; 3e3c: f0 f9
     ldx #2                                                            ; 3e3e: a2 02
     ldy current_level                                                 ; 3e40: a4 31
     jmp initialise_level_and_room                                     ; 3e42: 4c 40 11
@@ -1044,7 +1044,7 @@ room_2_code
     lda #$ff                                                          ; 416f: a9 ff
     jsr draw_rope                                                     ; 4171: 20 b9 1d
     jsr start_room                                                    ; 4174: 20 bb 12
-c4177
+room_2_game_update_loop
     jsr game_update                                                   ; 4177: 20 da 12
     sta l0070                                                         ; 417a: 85 70
     and #1                                                            ; 417c: 29 01
@@ -1064,7 +1064,7 @@ c4187
 c4194
     lda l0070                                                         ; 4194: a5 70
     and #4                                                            ; 4196: 29 04
-    beq c4177                                                         ; 4198: f0 dd
+    beq room_2_game_update_loop                                       ; 4198: f0 dd
     ldx #1                                                            ; 419a: a2 01
     ldy current_level                                                 ; 419c: a4 31
     jmp initialise_level_and_room                                     ; 419e: 4c 40 11
@@ -1497,10 +1497,10 @@ room_3_code
     lda #$10                                                          ; 44da: a9 10
     jsr draw_rope                                                     ; 44dc: 20 b9 1d
     jsr start_room                                                    ; 44df: 20 bb 12
-loop_c44e2
+room_3_game_update_loop
     jsr game_update                                                   ; 44e2: 20 da 12
     and #4                                                            ; 44e5: 29 04
-    beq loop_c44e2                                                    ; 44e7: f0 f9
+    beq room_3_game_update_loop                                       ; 44e7: f0 f9
     ldx #2                                                            ; 44e9: a2 02
     ldy current_level                                                 ; 44eb: a4 31
     jmp initialise_level_and_room                                     ; 44ed: 4c 40 11
@@ -1624,7 +1624,6 @@ pydis_end
 ;     c40ae
 ;     c40bf
 ;     c40d0
-;     c4177
 ;     c4187
 ;     c4194
 ;     c41d0
@@ -1711,9 +1710,6 @@ pydis_end
 ;     l442e
 ;     l442f
 ;     l4430
-;     loop_c3ba5
-;     loop_c3e37
-;     loop_c44e2
 ;     sub_c3bb3
 ;     sub_c3bea
 ;     sub_c3e45

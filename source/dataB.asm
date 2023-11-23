@@ -317,7 +317,7 @@ room_0_code
     jsr copy_rectangle_of_memory_to_screen                            ; 3bbe: 20 bb 1a
 ; Carve the floor, walls and ceiling into the rock
     jsr draw_floor_walls_and_ceiling_around_solid_rock                ; 3bc1: 20 90 1b
-; Draw tables
+; draw tables
     lda #3                                                            ; 3bc4: a9 03
     sta width_in_cells                                                ; 3bc6: 85 3c
     lda #2                                                            ; 3bc8: a9 02
@@ -330,13 +330,13 @@ room_0_code
     jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map           ; 3bd7: 20 57 1f
     ldx #$0f                                                          ; 3bda: a2 0f
     jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map           ; 3bdc: 20 57 1f
-; Draw rope
+; draw rope
     ldx #$1c                                                          ; 3bdf: a2 1c
     ldy #2                                                            ; 3be1: a0 02
     lda #$10                                                          ; 3be3: a9 10
     jsr draw_rope                                                     ; 3be5: 20 b9 1d
     jsr start_room                                                    ; 3be8: 20 bb 12
-game_update_loop
+room_0_game_update_loop
     jsr game_update                                                   ; 3beb: 20 da 12
     sta room_exit_direction                                           ; 3bee: 85 70
     and #exit_room_left                                               ; 3bf0: 29 01
@@ -349,7 +349,7 @@ game_update_loop
 not_exited_room_left
     lda room_exit_direction                                           ; 3bfb: a5 70
     and #exit_room_right                                              ; 3bfd: 29 04
-    beq game_update_loop                                              ; 3bff: f0 ea
+    beq room_0_game_update_loop                                       ; 3bff: f0 ea
 ; exit room right, to room 2
     ldx #2                                                            ; 3c01: a2 02
     ldy current_level                                                 ; 3c03: a4 31
@@ -908,7 +908,7 @@ room_2_code
     ldx #$20 ; ' '                                                    ; 4048: a2 20
     jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map           ; 404a: 20 57 1f
     jsr start_room                                                    ; 404d: 20 bb 12
-loop_c4050
+room_2_game_update_loop
     jsr game_update                                                   ; 4050: 20 da 12
     sta room_exit_direction                                           ; 4053: 85 70
     and #1                                                            ; 4055: 29 01
@@ -920,7 +920,7 @@ loop_c4050
 c4060
     lda room_exit_direction                                           ; 4060: a5 70
     and #4                                                            ; 4062: 29 04
-    beq loop_c4050                                                    ; 4064: f0 ea
+    beq room_2_game_update_loop                                       ; 4064: f0 ea
     ldx #3                                                            ; 4066: a2 03
     ldy current_level                                                 ; 4068: a4 31
     jmp initialise_level_and_room                                     ; 406a: 4c 40 11
@@ -1369,6 +1369,7 @@ room_3_code
     jsr copy_rectangle_of_memory_to_screen                            ; 43dd: 20 bb 1a
 ; Carve the floor, walls and ceiling into the rock
     jsr draw_floor_walls_and_ceiling_around_solid_rock                ; 43e0: 20 90 1b
+; draw rope
     ldx #9                                                            ; 43e3: a2 09
     ldy #2                                                            ; 43e5: a0 02
     lda #$12                                                          ; 43e7: a9 12
@@ -1691,7 +1692,6 @@ pydis_end
 ;     l42db
 ;     l42dc
 ;     loop_c3d58
-;     loop_c4050
 ;     loop_c442f
 ;     sub_c3c08
 ;     sub_c3d66
