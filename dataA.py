@@ -121,7 +121,7 @@ comment(0x3b02, "redundant instruction", inline=True)
 comment(0x3b04, "check the saxophone collected flag. The user can choose during the course of a game to enter the password to continue playing this level having previously got the saxophone. Or indeed may have just loaded a previously saved game.")
 label(0xa00, "saxophone_collected_flag")
 
-comment(0x3b29, "Draw rectangles of ground fill rock with a 2x2 pattern. Also writes to the collision map.", inline=True)
+comment(0x3b29, "Draw rectangles of ground fill rock with a 2x2 pattern. Also writes to the collision map.")
 comment(0x3b84, "Carve the floor, walls and ceiling into the rock")
 comment(0x3b87, "Draw tables")
 comment(0x3bae, "Draw ropes")
@@ -137,7 +137,7 @@ Room 0 has two mice throwing a ball back and forth.
 
 *************************************************************************************""")
 entry(0x3be4, "room0_update_handler")
-entry(0x3bec, "initialise_mouse_ball_position_if_level_changed")
+entry(0x3bec, "room0_first_update")
 entry(0x3bf7, "level_unchanged")
 entry(0x3c77, "bump_and_wrap_mouse_ball_position")
 entry(0x3c81, "no_wrap_needed")

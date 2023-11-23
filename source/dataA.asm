@@ -261,8 +261,10 @@ room_0_data
     !byte 20                                                          ; 3b27: 14                      ; initial player X cell
     !byte 22                                                          ; 3b28: 16                      ; initial player Y cell
 
+; Draw rectangles of ground fill rock with a 2x2 pattern. Also writes to the collision
+; map.
 room_0_code
-    ldx #0                                                            ; 3b29: a2 00                   ; Draw rectangles of ground fill rock with a 2x2 pattern. Also writes to the collision map.
+    ldx #0                                                            ; 3b29: a2 00
     ldy #0                                                            ; 3b2b: a0 00
     lda #$ff                                                          ; 3b2d: a9 ff
     sta width_in_cells                                                ; 3b2f: 85 3c
@@ -360,10 +362,10 @@ loop_until_exit_room_right
 ; *************************************************************************************
 room0_update_handler
     lda update_room_first_update_flag                                 ; 3be4: ad 2b 13
-    bne initialise_mouse_ball_position_if_level_changed               ; 3be7: d0 03
+    bne room0_first_update                                            ; 3be7: d0 03
     jmp bump_and_wrap_mouse_ball_position                             ; 3be9: 4c 77 3c
 
-initialise_mouse_ball_position_if_level_changed
+room0_first_update
     lda current_level                                                 ; 3bec: a5 31
     cmp level_before_latest_level_and_room_initialisation             ; 3bee: c5 51
     beq level_unchanged                                               ; 3bf0: f0 05
