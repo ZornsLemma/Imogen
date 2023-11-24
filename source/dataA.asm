@@ -294,7 +294,7 @@ room_0_data
 ; ###OOOOOOOOO        P                ###
 ; ########################################
 ; ########################################
-; Draw rectangles of ground fill rock with a 2x2 pattern. Also writes to the collision
+; draw rectangles of ground fill rock with a 2x2 pattern. Also writes to the collision
 ; map.
 ; draw 255x2 rectangle at (0,0)
 room_0_code
@@ -648,7 +648,7 @@ room_1_data
 ; ###    OOO    ###      ###OOO     OOO###
 ; #################      #################
 ; #################      #################
-; Draw rectangles of ground fill rock with a 2x2 pattern. Also writes to the collision
+; draw rectangles of ground fill rock with a 2x2 pattern. Also writes to the collision
 ; map.
 ; draw 255x2 rectangle at (0,0)
 room_1_code
@@ -1082,7 +1082,7 @@ room_2_data
 ; #####     ####################     #####
 ; ########################################
 ; ########################################
-; Draw rectangles of ground fill rock with a 2x2 pattern. Also writes to the collision
+; draw rectangles of ground fill rock with a 2x2 pattern. Also writes to the collision
 ; map.
 ; draw 255x255 rectangle at (0,0)
 room_2_code
@@ -1092,6 +1092,7 @@ room_2_code
     sta width_in_cells                                                ; 3fdf: 85 3c
     sta height_in_cells                                               ; 3fe1: 85 3d
     jsr copy_rectangle_of_memory_to_screen                            ; 3fe3: 20 bb 1a
+; set ground fill tile to use
     lda #<tile_all_set_pixels                                         ; 3fe6: a9 a9
     sta source_sprite_memory_low                                      ; 3fe8: 85 40
     lda #>tile_all_set_pixels                                         ; 3fea: a9 0a
@@ -1480,7 +1481,7 @@ room_3_data
 ; ##########               ###############
 ; ########################################
 ; ########################################
-; Draw rectangles of ground fill rock with a 2x2 pattern. Also writes to the collision
+; draw rectangles of ground fill rock with a 2x2 pattern. Also writes to the collision
 ; map.
 ; draw 255x2 rectangle at (0,0)
 room_3_code

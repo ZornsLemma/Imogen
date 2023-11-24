@@ -116,6 +116,9 @@ def map_room(start_tracking, end_tracking, output_descriptions, sprite_dict):
                     tile = ' '
                 else:
                     tile = '#'
+                room_comments[start_tracking] = "set ground fill tile to use"
+                start_tracking = a
+
         elif opcode == 0x8e: # stx addr
             state[operand16] = state["X"]
             a += 3
@@ -271,7 +274,7 @@ def level_room_data_table_entry(addr, s, sprite_dict):
 
         comment(target2, "\n".join(room))
 
-    comment(start_tracking, "Draw rectangles of ground fill rock with a 2x2 pattern. Also writes to the collision map.")
+    comment(start_tracking, "draw rectangles of ground fill rock with a 2x2 pattern. Also writes to the collision map.")
     for addr in room_comments:
         comment(addr, room_comments[addr])
 

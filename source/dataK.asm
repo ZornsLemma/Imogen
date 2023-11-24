@@ -309,7 +309,7 @@ room_2_data
 ;               P
 ; ########################################
 ; ########################################
-; Draw rectangles of ground fill rock with a 2x2 pattern. Also writes to the collision
+; draw rectangles of ground fill rock with a 2x2 pattern. Also writes to the collision
 ; map.
 room_2_code
     jsr sub_c3b3a                                                     ; 3b62: 20 3a 3b
@@ -818,7 +818,7 @@ room_3_data
 ;                     P                ###
 ; ########################################
 ; ########################################
-; Draw rectangles of ground fill rock with a 2x2 pattern. Also writes to the collision
+; draw rectangles of ground fill rock with a 2x2 pattern. Also writes to the collision
 ; map.
 room_3_code
     jsr sub_c3b3a                                                     ; 3ece: 20 3a 3b
@@ -958,7 +958,7 @@ room_0_data
 ; ###                 P
 ; ########################################
 ; ########################################
-; Draw rectangles of ground fill rock with a 2x2 pattern. Also writes to the collision
+; draw rectangles of ground fill rock with a 2x2 pattern. Also writes to the collision
 ; map.
 room_0_code
     jsr sub_c3b3a                                                     ; 3f98: 20 3a 3b
@@ -1418,7 +1418,7 @@ room_1_data
 ;                     P
 ; ########################################
 ; ########################################
-; Draw rectangles of ground fill rock with a 2x2 pattern. Also writes to the collision
+; draw rectangles of ground fill rock with a 2x2 pattern. Also writes to the collision
 ; map.
 room_1_code
     jsr sub_c3b3a                                                     ; 432a: 20 3a 3b
