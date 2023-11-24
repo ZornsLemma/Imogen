@@ -221,9 +221,9 @@ def level_room_data_table_entry(addr, s):
     stars(target1, "Room " + s + " initialisation and game loop")
     comment(target1, "initial player X cell", inline=True)
     comment(target1 + 1, "initial player Y cell", inline=True)
+    player_x = get_u8_binary(target1)
+    player_y = get_u8_binary(target1+1)
     target3 = get_u16_binary(target1)
-    #label(target3, room_n + "_data")
-    #expr(target1, room_n + "_data")
     entry(target2, room_n + "_code")
     start_tracking = target2
     if ground_fill(target2, (s == "0")):
@@ -242,6 +242,7 @@ def level_room_data_table_entry(addr, s):
         state = { "A": None, "X": None, "Y": None }
         room_comments = {}
         map_room(start_tracking, end_tracking, True)
+        write_room(player_x, player_y-1, 1, 1, "P")
 
         comment(target2, "\n".join(room))
 
