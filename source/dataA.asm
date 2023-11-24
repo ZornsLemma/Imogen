@@ -832,13 +832,15 @@ room1_not_first_update
     bcc set_room1_trapdoor_sprites_if_required                        ; 3e87: 90 4e
     cmp #trapdoor_right_x                                             ; 3e89: c9 b8
     bcs set_room1_trapdoor_sprites_if_required                        ; 3e8b: b0 4a
-; Yes.
+; Yes. Is the player colliding with solid rock? (We probably 'should' only check for
+; collision below, but in practice the other directions aren't possible.)
     lda #2                                                            ; 3e8d: a9 02
     sta temp_bottom_offset                                            ; 3e8f: 8d 51 25
     lda #objectid_something                                           ; 3e92: a9 0b
     jsr get_solid_rock_collision_for_object_a                         ; 3e94: 20 94 28
     beq set_room1_trapdoor_sprites_if_required                        ; 3e97: f0 3e
-; Remove the closed trapdoor from the collision map.
+; Yes, so we need to open the trapdoor. Remove the closed trapdoor from the collision
+; map.
     ldx #$11                                                          ; 3e99: a2 11
     ldy #7                                                            ; 3e9b: a0 07
     lda #6                                                            ; 3e9d: a9 06

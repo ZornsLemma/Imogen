@@ -5225,6 +5225,7 @@ sum_of_left_and_right_extents_high
 ;        A=2 means object collided with floor
 ;        A=4 means object collided with right wall
 ;        A=8 means object collided with ceiling
+;     Flags reflect A on exit.
 ; 
 ; *************************************************************************************
 ; TODO: this is used by e.g. dataA

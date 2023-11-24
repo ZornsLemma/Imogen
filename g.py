@@ -2146,7 +2146,8 @@ On Exit:
     A: A=1 means object collided with left wall
        A=2 means object collided with floor
        A=4 means object collided with right wall
-       A=8 means object collided with ceiling""")
+       A=8 means object collided with ceiling
+    Flags reflect A on exit.""")
     comment(0x2894, "TODO: this is used by e.g. dataA")
     comment(0x28e2, "TODO: this is used by e.g. dataA")
     stars(0x28e2, """Test for a collision between two objects
