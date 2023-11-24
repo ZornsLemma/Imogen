@@ -270,7 +270,6 @@ room_0_data
     !byte 20                                                          ; 3b27: 14                      ; initial player X cell
     !byte 22                                                          ; 3b28: 16                      ; initial player Y cell
 
-; draw 255x2 rectangle at (0,0)
 ; ########################################
 ; ########################################
 ; ####      |         |         |
@@ -297,6 +296,7 @@ room_0_data
 ; ########################################
 ; Draw rectangles of ground fill rock with a 2x2 pattern. Also writes to the collision
 ; map.
+; draw 255x2 rectangle at (0,0)
 room_0_code
     ldx #0                                                            ; 3b29: a2 00
     ldy #0                                                            ; 3b2b: a0 00
@@ -616,7 +616,6 @@ room_1_data
     !byte 9                                                           ; 3d3d: 09                      ; initial player X cell
     !byte 7                                                           ; 3d3e: 07                      ; initial player Y cell
 
-; draw 255x2 rectangle at (0,0)
 ; ########################################
 ; ########################################
 ; 
@@ -641,6 +640,9 @@ room_1_data
 ; ###    OOO    ###      ###OOO     OOO###
 ; #################      #################
 ; #################      #################
+; Draw rectangles of ground fill rock with a 2x2 pattern. Also writes to the collision
+; map.
+; draw 255x2 rectangle at (0,0)
 room_1_code
     ldx #0                                                            ; 3d3f: a2 00
     ldy #0                                                            ; 3d41: a0 00
@@ -976,10 +978,6 @@ dont_play_sound3
 return6
     rts                                                               ; 3f8a: 60
 
-; draw 5x1 rectangle at (5,2)
-; draw 5x1 rectangle at (30,2)
-; draw 5x1 rectangle at (30,13)
-; draw 5x1 rectangle at (5,13)
 ; *************************************************************************************
 ; 
 ; Use copy_rectangle_of_memory_to_screen repeatedly to create a pseudo-circle shape -
@@ -1004,19 +1002,11 @@ copy_pseudo_circle_to_screen
     lda #1                                                            ; 3f97: a9 01
     sta height_in_cells                                               ; 3f99: 85 3d
     jsr copy_rectangle_of_memory_to_screen                            ; 3f9b: 20 bb 1a
-; draw 7x1 rectangle at (4,3)
-; draw 7x1 rectangle at (29,3)
-; draw 7x1 rectangle at (29,14)
-; draw 7x1 rectangle at (4,14)
     dex                                                               ; 3f9e: ca
     iny                                                               ; 3f9f: c8
     lda #7                                                            ; 3fa0: a9 07
     sta width_in_cells                                                ; 3fa2: 85 3c
     jsr copy_rectangle_of_memory_to_screen                            ; 3fa4: 20 bb 1a
-; draw 9x5 rectangle at (3,4)
-; draw 9x5 rectangle at (28,4)
-; draw 9x5 rectangle at (28,15)
-; draw 9x5 rectangle at (3,15)
     dex                                                               ; 3fa7: ca
     iny                                                               ; 3fa8: c8
     lda #9                                                            ; 3fa9: a9 09
@@ -1024,10 +1014,6 @@ copy_pseudo_circle_to_screen
     lda #5                                                            ; 3fad: a9 05
     sta height_in_cells                                               ; 3faf: 85 3d
     jsr copy_rectangle_of_memory_to_screen                            ; 3fb1: 20 bb 1a
-; draw 7x1 rectangle at (4,9)
-; draw 7x1 rectangle at (29,9)
-; draw 7x1 rectangle at (29,20)
-; draw 7x1 rectangle at (4,20)
     inx                                                               ; 3fb4: e8
     tya                                                               ; 3fb5: 98
     clc                                                               ; 3fb6: 18
@@ -1038,10 +1024,6 @@ copy_pseudo_circle_to_screen
     lda #1                                                            ; 3fbe: a9 01
     sta height_in_cells                                               ; 3fc0: 85 3d
     jsr copy_rectangle_of_memory_to_screen                            ; 3fc2: 20 bb 1a
-; draw 5x1 rectangle at (5,10)
-; draw 5x1 rectangle at (30,10)
-; draw 5x1 rectangle at (30,21)
-; draw 5x1 rectangle at (5,21)
     inx                                                               ; 3fc5: e8
     iny                                                               ; 3fc6: c8
     lda #5                                                            ; 3fc7: a9 05
@@ -1064,7 +1046,6 @@ room_2_data
     !byte 20                                                          ; 3fd7: 14                      ; initial player X cell
     !byte 9                                                           ; 3fd8: 09                      ; initial player Y cell
 
-; draw 255x255 rectangle at (0,0)
 ; #################      #################
 ; #################      #################
 ; #####     #######      #######     #####
@@ -1089,6 +1070,9 @@ room_2_data
 ; #####     ####################     #####
 ; ########################################
 ; ########################################
+; Draw rectangles of ground fill rock with a 2x2 pattern. Also writes to the collision
+; map.
+; draw 255x255 rectangle at (0,0)
 room_2_code
     ldx #0                                                            ; 3fd9: a2 00
     ldy #0                                                            ; 3fdb: a0 00
@@ -1460,7 +1444,6 @@ room_3_data
     !byte 20                                                          ; 424d: 14                      ; initial player X cell
     !byte 7                                                           ; 424e: 07                      ; initial player Y cell
 
-; draw 255x2 rectangle at (0,0)
 ; ########################################
 ; ########################################
 ;                                  |  ####
@@ -1485,6 +1468,9 @@ room_3_data
 ; ##########               ###############
 ; ########################################
 ; ########################################
+; Draw rectangles of ground fill rock with a 2x2 pattern. Also writes to the collision
+; map.
+; draw 255x2 rectangle at (0,0)
 room_3_code
     ldx #0                                                            ; 424f: a2 00
     ldy #0                                                            ; 4251: a0 00

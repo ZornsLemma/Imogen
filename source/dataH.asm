@@ -227,7 +227,6 @@ room_0_data
     !byte 20                                                          ; 3b14: 14                      ; initial player X cell
     !byte 22                                                          ; 3b15: 16                      ; initial player Y cell
 
-; draw 255x2 rectangle at (0,0)
 ; ########################################
 ; ########################################
 ; ####     |                    |     ####
@@ -252,6 +251,9 @@ room_0_data
 ; ###OOO                            OOO###
 ; ########################################
 ; ########################################
+; Draw rectangles of ground fill rock with a 2x2 pattern. Also writes to the collision
+; map.
+; draw 255x2 rectangle at (0,0)
 room_0_code
     ldx #0                                                            ; 3b16: a2 00
     ldy #0                                                            ; 3b18: a0 00
@@ -554,7 +556,6 @@ room_1_data
     !byte 20                                                          ; 3d4b: 14                      ; initial player X cell
     !byte 22                                                          ; 3d4c: 16                      ; initial player Y cell
 
-; draw 28x2 rectangle at (0,0)
 ; ############################  |  #######
 ; ############################  |  #######
 ; ####     |     #####          |     ####
@@ -579,6 +580,9 @@ room_1_data
 ; ###
 ; ########################################
 ; ########################################
+; Draw rectangles of ground fill rock with a 2x2 pattern. Also writes to the collision
+; map.
+; draw 28x2 rectangle at (0,0)
 room_1_code
     ldx #0                                                            ; 3d4d: a2 00
     ldy #0                                                            ; 3d4f: a0 00
@@ -713,7 +717,6 @@ room_2_data
     !byte 20                                                          ; 3e31: 14                      ; initial player X cell
     !byte 21                                                          ; 3e32: 15                      ; initial player Y cell
 
-; draw 255x2 rectangle at (0,0)
 ; ########################################
 ; ########################################
 ; ####     |  ################  |     ####
@@ -738,6 +741,9 @@ room_2_data
 ;             ################         ###
 ; ########################################
 ; ########################################
+; Draw rectangles of ground fill rock with a 2x2 pattern. Also writes to the collision
+; map.
+; draw 255x2 rectangle at (0,0)
 room_2_code
     ldx #0                                                            ; 3e33: a2 00
     ldy #0                                                            ; 3e35: a0 00
@@ -979,7 +985,6 @@ room_3_data
     !byte 20                                                          ; 400a: 14                      ; initial player X cell
     !byte 22                                                          ; 400b: 16                      ; initial player Y cell
 
-; draw 255x2 rectangle at (0,0)
 ; ########################################
 ; ########################################
 ; ####     |  ################  |     ####
@@ -1004,6 +1009,9 @@ room_3_data
 ; #######                       |   OOO###
 ; ############################  |  #######
 ; ############################  |  #######
+; Draw rectangles of ground fill rock with a 2x2 pattern. Also writes to the collision
+; map.
+; draw 255x2 rectangle at (0,0)
 room_3_code
     ldx #0                                                            ; 400c: a2 00
     ldy #0                                                            ; 400e: a0 00

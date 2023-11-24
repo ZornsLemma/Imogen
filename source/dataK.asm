@@ -255,7 +255,6 @@ level_specific_update
     jsr sub_c4044                                                     ; 3b36: 20 44 40
     rts                                                               ; 3b39: 60
 
-; draw 255x2 rectangle at (0,0)
 sub_c3b3a
     ldx #0                                                            ; 3b3a: a2 00
     ldy #0                                                            ; 3b3c: a0 00
@@ -264,11 +263,9 @@ sub_c3b3a
     lda #2                                                            ; 3b42: a9 02
     sta height_in_cells                                               ; 3b44: 85 3d
     jsr copy_rectangle_of_memory_to_screen                            ; 3b46: 20 bb 1a
-; draw 255x2 rectangle at (0,22)
     ldy #$16                                                          ; 3b49: a0 16
     jmp copy_rectangle_of_memory_to_screen                            ; 3b4b: 4c bb 1a
 
-; draw 1x1 rectangle at (3,2)
 sub_c3b4e
     ldx #3                                                            ; 3b4e: a2 03
     ldy #2                                                            ; 3b50: a0 02
@@ -276,7 +273,6 @@ sub_c3b4e
     sta width_in_cells                                                ; 3b54: 85 3c
     sta height_in_cells                                               ; 3b56: 85 3d
     jsr copy_rectangle_of_memory_to_screen                            ; 3b58: 20 bb 1a
-; draw 1x1 rectangle at (36,2)
     ldx #$24 ; '$'                                                    ; 3b5b: a2 24
     jmp copy_rectangle_of_memory_to_screen                            ; 3b5d: 4c bb 1a
 
@@ -289,7 +285,6 @@ room_2_data
     !byte 14                                                          ; 3b60: 0e                      ; initial player X cell
     !byte 22                                                          ; 3b61: 16                      ; initial player Y cell
 
-; draw 3x15 rectangle at (0,2)
 ; ########################################
 ; ########################################
 ; ####
@@ -314,6 +309,9 @@ room_2_data
 ; 
 ; ########################################
 ; ########################################
+; Draw rectangles of ground fill rock with a 2x2 pattern. Also writes to the collision
+; map.
+; draw 3x15 rectangle at (0,2)
 room_2_code
     jsr sub_c3b3a                                                     ; 3b62: 20 3a 3b
     ldy #2                                                            ; 3b65: a0 02
@@ -796,7 +794,6 @@ room_3_data
     !byte 20                                                          ; 3ecc: 14                      ; initial player X cell
     !byte 22                                                          ; 3ecd: 16                      ; initial player Y cell
 
-; draw 255x20 rectangle at (37,2)
 ; ########################################
 ; ########################################
 ;                                     ####
@@ -821,6 +818,9 @@ room_3_data
 ;                                      ###
 ; ########################################
 ; ########################################
+; Draw rectangles of ground fill rock with a 2x2 pattern. Also writes to the collision
+; map.
+; draw 255x20 rectangle at (37,2)
 room_3_code
     jsr sub_c3b3a                                                     ; 3ece: 20 3a 3b
     ldx #$25 ; '%'                                                    ; 3ed1: a2 25
@@ -931,7 +931,6 @@ room_0_data
     !byte 20                                                          ; 3f96: 14                      ; initial player X cell
     !byte 22                                                          ; 3f97: 16                      ; initial player Y cell
 
-; draw 3x20 rectangle at (0,2)
 ; ########################################
 ; ########################################
 ; ####      |                   |     ####
@@ -956,6 +955,9 @@ room_0_data
 ; ###
 ; ########################################
 ; ########################################
+; Draw rectangles of ground fill rock with a 2x2 pattern. Also writes to the collision
+; map.
+; draw 3x20 rectangle at (0,2)
 room_0_code
     jsr sub_c3b3a                                                     ; 3f98: 20 3a 3b
     ldy #2                                                            ; 3f9b: a0 02
@@ -1385,7 +1387,6 @@ room_1_data
     !byte 20                                                          ; 4328: 14                      ; initial player X cell
     !byte 22                                                          ; 4329: 16                      ; initial player Y cell
 
-; draw 3x15 rectangle at (0,2)
 ; ########################################
 ; ########################################
 ; ####                      |         ####
@@ -1410,6 +1411,9 @@ room_1_data
 ; 
 ; ########################################
 ; ########################################
+; Draw rectangles of ground fill rock with a 2x2 pattern. Also writes to the collision
+; map.
+; draw 3x15 rectangle at (0,2)
 room_1_code
     jsr sub_c3b3a                                                     ; 432a: 20 3a 3b
     ldy #2                                                            ; 432d: a0 02

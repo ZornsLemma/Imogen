@@ -124,7 +124,6 @@ comment(0x3b02, "redundant instruction", inline=True)
 comment(0x3b04, "check the saxophone collected flag. The user can choose during the course of a game to enter the password to continue playing this level having previously got the saxophone. Or indeed may have just loaded a previously saved game.")
 label(0xa00, "saxophone_collected_flag")
 
-comment(0x3b29, "Draw rectangles of ground fill rock with a 2x2 pattern. Also writes to the collision map.")
 comment(0x3b87, "Draw tables")
 comment(0x3bae, "Draw ropes")
 

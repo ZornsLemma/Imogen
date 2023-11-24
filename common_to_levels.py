@@ -42,6 +42,7 @@ def find_sequence(addr, length, sequence):
 global room
 global state
 global tile
+global room_comments
 
 def write_room(x, y, w, h, v):
     global room
@@ -58,6 +59,7 @@ def map_room(start_tracking, end_tracking, output_descriptions):
     global room
     global state
     global tile
+    global room_comments
 
     a = start_tracking
     while a < end_tracking:
@@ -99,6 +101,7 @@ def map_room(start_tracking, end_tracking, output_descriptions):
             # check if set source_sprite_memory_high?
             if operand == 0x41:
                 # check if set to 'tile_all_set_pixels', in which case set the tile to a space.
+                # e.g.
                 #    lda #<tile_all_set_pixels                                         ; 3fe6: a9 a9
                 #    sta source_sprite_memory_low                                      ; 3fe8: 85 40
                 #    lda #>tile_all_set_pixels                                         ; 3fea: a9 0a
@@ -145,12 +148,14 @@ def map_room(start_tracking, end_tracking, output_descriptions):
             state["Y"] -= 1
             a += 1
         elif jmp_or_jsr and (operand16 == 0x1abb):
-            comment(start_tracking, "draw {0}x{1} rectangle at ({2},{3})".format(state[0x3c], state[0x3d], state["X"], state["Y"]))
+            if output_descriptions:
+                room_comments[start_tracking] = "draw {0}x{1} rectangle at ({2},{3})".format(state[0x3c], state[0x3d], state["X"], state["Y"])
             write_room(state["X"], state["Y"], state[0x3c], state[0x3d], tile)
             a += 3
             start_tracking = a
         elif jmp_or_jsr and (operand16 == 0x1b90):
             # skip 'jsr draw_floor_walls_and_ceiling_around_solid_rock'
+            comment(a, "Carve the floor, walls and ceiling into the rock")
             a += 3
         elif jmp_or_jsr and (operand16 == 0x1f57):
             # 'jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map'
@@ -199,6 +204,7 @@ def level_room_data_table_entry(addr, s):
     global room
     global state
     global tile
+    global room_comments
 
     limit = 400     # bytes to search
 
@@ -221,15 +227,9 @@ def level_room_data_table_entry(addr, s):
     entry(target2, room_n + "_code")
     start_tracking = target2
     if ground_fill(target2, (s == "0")):
-        comment(target2 + 8, "Draw rectangles of ground fill rock with a 2x2 pattern. Also writes to the collision map.")
         start_tracking += 8
 
-    # look for 'jsr draw_floor_walls_and_ceiling_around_solid_rock'
     end_tracking = None
-    a = find_sequence(target2, limit, [0x20, 0x90, 0x1b])
-    if a:
-        comment(a, "Carve the floor, walls and ceiling into the rock")
-
     # look for 'jsr game_update'
     a = find_sequence(target2, limit, [0x20, 0xda, 0x12])
     if a:
@@ -240,9 +240,14 @@ def level_room_data_table_entry(addr, s):
         room = [" " * 40] * 24
         tile = '#'
         state = { "A": None, "X": None, "Y": None }
+        room_comments = {}
         map_room(start_tracking, end_tracking, True)
 
         comment(target2, "\n".join(room))
+
+    comment(start_tracking, "Draw rectangles of ground fill rock with a 2x2 pattern. Also writes to the collision map.")
+    for addr in room_comments:
+        comment(addr, room_comments[addr])
 
 
 def define_level(num_rooms):
