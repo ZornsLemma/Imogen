@@ -186,10 +186,10 @@ object_spriteid_old                                 = $09b3
 object_direction                                    = $09be
 object_direction_old                                = $09c9
 level_progress_table                                = $09ef
-l0a05                                               = $0a05
-cuckoo_thrown                                       = $0a06
+cuckoo_room_1_progress                              = $0a05
+cuckoo_room_0_progress                              = $0a06
 l0a07                                               = $0a07
-l0a08                                               = $0a08
+falling_rock_progress                               = $0a08
 got_hourglass_flag                                  = $0a09
 sixteen_entry_table                                 = $0a6f
 l0a70                                               = $0a70
@@ -249,7 +249,6 @@ print_encrypted_string_at_yx_centred                = $37f3
 wait_one_second_then_check_keys                     = $388d
 object_sprite_mask_type                             = $38ac
 object_z_order                                      = $38c2
-l38c8                                               = $38c8
 object_room_collision_flags                         = $38d8
 play_sound_yx                                       = $38f6
 define_envelope                                     = $395e
@@ -300,16 +299,16 @@ level_specific_initialisation
     lda developer_flags                                               ; 3af8: ad 03 11
     bpl no_developer_top_bit_flag                                     ; 3afb: 10 05
     lda #$ff                                                          ; 3afd: a9 ff
-    sta l0a05                                                         ; 3aff: 8d 05 0a
+    sta cuckoo_room_1_progress                                        ; 3aff: 8d 05 0a
 no_developer_top_bit_flag
     lda got_hourglass_flag                                            ; 3b02: ad 09 0a
     beq check_got_cuckoo                                              ; 3b05: f0 05
     lda #spriteid_hourglass_menu_item                                 ; 3b07: a9 de
     jsr find_or_create_menu_slot_for_A                                ; 3b09: 20 bd 2b
 check_got_cuckoo
-    lda l0a05                                                         ; 3b0c: ad 05 0a
+    lda cuckoo_room_1_progress                                        ; 3b0c: ad 05 0a
     beq return1                                                       ; 3b0f: f0 0a
-    lda cuckoo_thrown                                                 ; 3b11: ad 06 0a
+    lda cuckoo_room_0_progress                                        ; 3b11: ad 06 0a
     bne return1                                                       ; 3b14: d0 05
     lda #spriteid_cuckoo_menu_item                                    ; 3b16: a9 d4
     jsr find_or_create_menu_slot_for_A                                ; 3b18: 20 bd 2b
@@ -538,7 +537,7 @@ not_first_update
     dec room_0_player_on_left_rope                                    ; 3c4e: ce dc 42
 
 after_room_0_code
-    lda l0a08                                                         ; 3c51: ad 08 0a
+    lda falling_rock_progress                                         ; 3c51: ad 08 0a
     sta l42d8                                                         ; 3c54: 8d d8 42
     ldy #$10                                                          ; 3c57: a0 10
     sty l42db                                                         ; 3c59: 8c db 42
@@ -547,13 +546,13 @@ after_room_0_code
     ldy #8                                                            ; 3c60: a0 08
     jsr sub_c41d2                                                     ; 3c62: 20 d2 41
     lda l42d8                                                         ; 3c65: ad d8 42
-    sta l0a08                                                         ; 3c68: 8d 08 0a
+    sta falling_rock_progress                                         ; 3c68: 8d 08 0a
     lda update_room_first_update_flag                                 ; 3c6b: ad 2b 13
     bne return2                                                       ; 3c6e: d0 10
     lda desired_room_index                                            ; 3c70: a5 30
     cmp #0                                                            ; 3c72: c9 00
     bne return2                                                       ; 3c74: d0 0a
-    lda l0a08                                                         ; 3c76: ad 08 0a
+    lda falling_rock_progress                                         ; 3c76: ad 08 0a
     cmp #$10                                                          ; 3c79: c9 10
     bne return2                                                       ; 3c7b: d0 03
     jsr play_two_sounds                                               ; 3c7d: 20 c1 41
@@ -752,10 +751,10 @@ sub_c3d66
     lda level_before_latest_level_and_room_initialisation             ; 3da6: a5 51
     cmp current_level                                                 ; 3da8: c5 31
     beq c3db6                                                         ; 3daa: f0 0a
-    lda l0a05                                                         ; 3dac: ad 05 0a
+    lda cuckoo_room_1_progress                                        ; 3dac: ad 05 0a
     bmi c3db6                                                         ; 3daf: 30 05
     lda #0                                                            ; 3db1: a9 00
-    sta l0a05                                                         ; 3db3: 8d 05 0a
+    sta cuckoo_room_1_progress                                        ; 3db3: 8d 05 0a
 c3db6
     lda desired_room_index                                            ; 3db6: a5 30
     cmp #1                                                            ; 3db8: c9 01
@@ -771,7 +770,7 @@ c3dce
     jmp c3e2b                                                         ; 3dce: 4c 2b 3e
 
 c3dd1
-    lda l0a05                                                         ; 3dd1: ad 05 0a
+    lda cuckoo_room_1_progress                                        ; 3dd1: ad 05 0a
     bmi c3e2b                                                         ; 3dd4: 30 55
     beq c3df3                                                         ; 3dd6: f0 1b
     lda desired_room_index                                            ; 3dd8: a5 30
@@ -784,7 +783,7 @@ c3dd1
     lda #spriteid_cuckoo_menu_item                                    ; 3de7: a9 d4
     jsr find_or_create_menu_slot_for_A                                ; 3de9: 20 bd 2b
     lda #$ff                                                          ; 3dec: a9 ff
-    sta l0a05                                                         ; 3dee: 8d 05 0a
+    sta cuckoo_room_1_progress                                        ; 3dee: 8d 05 0a
     bmi c3e2b                                                         ; 3df1: 30 38
 c3df3
     lda sixteen_entry_table                                           ; 3df3: ad 6f 0a
@@ -801,13 +800,13 @@ c3df3
     lda l0a71                                                         ; 3e0c: ad 71 0a
     bne c3e2b                                                         ; 3e0f: d0 1a
 c3e11
-    ldy l0a05                                                         ; 3e11: ac 05 0a
+    ldy cuckoo_room_1_progress                                        ; 3e11: ac 05 0a
     iny                                                               ; 3e14: c8
     cpy #6                                                            ; 3e15: c0 06
     bcc c3e1b                                                         ; 3e17: 90 02
     ldy #0                                                            ; 3e19: a0 00
 c3e1b
-    sty l0a05                                                         ; 3e1b: 8c 05 0a
+    sty cuckoo_room_1_progress                                        ; 3e1b: 8c 05 0a
     lda desired_room_index                                            ; 3e1e: a5 30
     cmp #1                                                            ; 3e20: c9 01
     bne c3e2b                                                         ; 3e22: d0 07
@@ -818,7 +817,7 @@ c3e2b
     lda desired_room_index                                            ; 3e2b: a5 30
     cmp #1                                                            ; 3e2d: c9 01
     bne c3e40                                                         ; 3e2f: d0 0f
-    ldy l0a05                                                         ; 3e31: ac 05 0a
+    ldy cuckoo_room_1_progress                                        ; 3e31: ac 05 0a
     bpl c3e3a                                                         ; 3e34: 10 04
     lda #$d1                                                          ; 3e36: a9 d1
     bne c3e3d                                                         ; 3e38: d0 03
@@ -1194,11 +1193,11 @@ sub_c406d
     lda current_level                                                 ; 409f: a5 31
     cmp level_before_latest_level_and_room_initialisation             ; 40a1: c5 51
     beq c40b1                                                         ; 40a3: f0 0c
-    lda cuckoo_thrown                                                 ; 40a5: ad 06 0a
+    lda cuckoo_room_0_progress                                        ; 40a5: ad 06 0a
     cmp #2                                                            ; 40a8: c9 02
     bcc c40b1                                                         ; 40aa: 90 05
     lda #$ff                                                          ; 40ac: a9 ff
-    sta cuckoo_thrown                                                 ; 40ae: 8d 06 0a
+    sta cuckoo_room_0_progress                                        ; 40ae: 8d 06 0a
 c40b1
     lda desired_room_index                                            ; 40b1: a5 30
     cmp #2                                                            ; 40b3: c9 02
@@ -1220,7 +1219,7 @@ c40d5
     jmp c4152                                                         ; 40d5: 4c 52 41
 
 c40d8
-    lda cuckoo_thrown                                                 ; 40d8: ad 06 0a
+    lda cuckoo_room_0_progress                                        ; 40d8: ad 06 0a
     bmi c4152                                                         ; 40db: 30 75
     cmp #1                                                            ; 40dd: c9 01
     beq c4127                                                         ; 40df: f0 46
@@ -1243,7 +1242,7 @@ c40d8
     lda #spriteid_cuckoo_menu_item                                    ; 4105: a9 d4
     jsr remove_item_from_toolbar_menu                                 ; 4107: 20 e0 2b
     lda #1                                                            ; 410a: a9 01
-    sta cuckoo_thrown                                                 ; 410c: 8d 06 0a
+    sta cuckoo_room_0_progress                                        ; 410c: 8d 06 0a
     lda #0                                                            ; 410f: a9 00
     sta player_held_object_spriteid                                   ; 4111: 85 52
     sta object_spriteid+1                                             ; 4113: 8d a9 09
@@ -1259,7 +1258,7 @@ c4127
     cmp l0a73                                                         ; 412a: cd 73 0a
     beq c4152                                                         ; 412d: f0 23
     lda #$0f                                                          ; 412f: a9 0f
-    sta cuckoo_thrown                                                 ; 4131: 8d 06 0a
+    sta cuckoo_room_0_progress                                        ; 4131: 8d 06 0a
     lda desired_room_index                                            ; 4134: a5 30
     cmp #2                                                            ; 4136: c9 02
     bne c4152                                                         ; 4138: d0 18
@@ -1267,21 +1266,21 @@ c4127
     jmp c4152                                                         ; 413d: 4c 52 41
 
 c4140
-    lda cuckoo_thrown                                                 ; 4140: ad 06 0a
+    lda cuckoo_room_0_progress                                        ; 4140: ad 06 0a
     clc                                                               ; 4143: 18
     adc #2                                                            ; 4144: 69 02
-    sta cuckoo_thrown                                                 ; 4146: 8d 06 0a
+    sta cuckoo_room_0_progress                                        ; 4146: 8d 06 0a
     cmp #$28 ; '('                                                    ; 4149: c9 28
     bcc c4152                                                         ; 414b: 90 05
     lda #$ff                                                          ; 414d: a9 ff
-    sta cuckoo_thrown                                                 ; 414f: 8d 06 0a
+    sta cuckoo_room_0_progress                                        ; 414f: 8d 06 0a
 c4152
     lda desired_room_index                                            ; 4152: a5 30
     cmp #2                                                            ; 4154: c9 02
     bne c4182                                                         ; 4156: d0 2a
     lda #0                                                            ; 4158: a9 00
     sta object_spriteid + objectid_clock_workings                     ; 415a: 8d ab 09
-    lda cuckoo_thrown                                                 ; 415d: ad 06 0a
+    lda cuckoo_room_0_progress                                        ; 415d: ad 06 0a
     bmi c4182                                                         ; 4160: 30 20
     cmp #2                                                            ; 4162: c9 02
     bcc c4182                                                         ; 4164: 90 1c
@@ -1301,7 +1300,7 @@ c4152
 c4182
     lda #0                                                            ; 4182: a9 00
     sta room_0_player_on_left_rope                                    ; 4184: 8d dc 42
-    lda cuckoo_thrown                                                 ; 4187: ad 06 0a
+    lda cuckoo_room_0_progress                                        ; 4187: ad 06 0a
     cmp #$1b                                                          ; 418a: c9 1b
     bcc c4191                                                         ; 418c: 90 03
     dec room_0_player_on_left_rope                                    ; 418e: ce dc 42
@@ -1375,7 +1374,7 @@ c41f0
     lda #spriteid_cache2                                              ; 421d: a9 d8
     sta object_sprite_mask_type + objectid_rope_broken_bottom_end     ; 421f: 8d b2 38
     lda #$e0                                                          ; 4222: a9 e0
-    sta l38c8                                                         ; 4224: 8d c8 38
+    sta object_z_order + objectid_rope_broken_bottom_end              ; 4224: 8d c8 38
 c4227
     jmp c427f                                                         ; 4227: 4c 7f 42
 
@@ -1504,7 +1503,7 @@ sub_c42dd
     sta object_sprite_mask_type,x                                     ; 430b: 9d ac 38
     lda #$c0                                                          ; 430e: a9 c0
     sta object_z_order,x                                              ; 4310: 9d c2 38
-    lda #$dd                                                          ; 4313: a9 dd
+    lda #spriteid_hourglass                                           ; 4313: a9 dd
     sta object_spriteid,x                                             ; 4315: 9d a8 09
 return3
     rts                                                               ; 4318: 60
@@ -1733,7 +1732,7 @@ room_3_update_handler
     lda update_room_first_update_flag                                 ; 4464: ad 2b 13
     beq room_3_not_first_update                                       ; 4467: f0 2c
 ; first update in room 3
-    lda cuckoo_thrown                                                 ; 4469: ad 06 0a
+    lda cuckoo_room_0_progress                                        ; 4469: ad 06 0a
     cmp #2                                                            ; 446c: c9 02
     bcc return4                                                       ; 446e: 90 3d
     ldx #$23 ; '#'                                                    ; 4470: a2 23
@@ -1746,7 +1745,7 @@ room_3_update_handler
     tax                                                               ; 447d: aa
     lda #1                                                            ; 447e: a9 01
     sta object_direction,x                                            ; 4480: 9d be 09
-    lda #$d7                                                          ; 4483: a9 d7
+    lda #spriteid_cache1                                              ; 4483: a9 d7
     sta object_sprite_mask_type,x                                     ; 4485: 9d ac 38
     lda #$c0                                                          ; 4488: a9 c0
     sta object_z_order,x                                              ; 448a: 9d c2 38
@@ -1764,7 +1763,7 @@ room_3_not_first_update
     lda #0                                                            ; 44a3: a9 00
     sta object_spriteid + objectid_pendulum                           ; 44a5: 8d aa 09
     lda #0                                                            ; 44a8: a9 00
-    sta cuckoo_thrown                                                 ; 44aa: 8d 06 0a
+    sta cuckoo_room_0_progress                                        ; 44aa: 8d 06 0a
 return4
     rts                                                               ; 44ad: 60
 
@@ -1956,16 +1955,13 @@ pydis_end
 ;     c4319
 ;     c433c
 ;     l0015
-;     l0a05
 ;     l0a07
-;     l0a08
 ;     l0a70
 ;     l0a71
 ;     l0a72
 ;     l0a73
 ;     l0a74
 ;     l0a75
-;     l38c8
 ;     l3e41
 ;     l3f1e
 ;     l3f1f
