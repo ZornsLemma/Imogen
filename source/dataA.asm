@@ -349,7 +349,7 @@ room_0_code
     jsr copy_rectangle_of_memory_to_screen                            ; 3b81: 20 bb 1a
 ; carve the floor, walls and ceiling into the rock
     jsr draw_floor_walls_and_ceiling_around_solid_rock                ; 3b84: 20 90 1b
-; draw spriteid_table at (3,20) of size (3x2)
+; draw table at (3,20) of size (3x2)
     lda #3                                                            ; 3b87: a9 03
     sta width_in_cells                                                ; 3b89: 85 3c
     lda #2                                                            ; 3b8b: a9 02
@@ -358,17 +358,17 @@ room_0_code
     ldx #3                                                            ; 3b91: a2 03
     ldy #$14                                                          ; 3b93: a0 14
     jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map           ; 3b95: 20 57 1f
-; draw spriteid_table at (6,20) of size (3x2)
+; draw table at (6,20) of size (3x2)
     ldx #6                                                            ; 3b98: a2 06
     jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map           ; 3b9a: 20 57 1f
-; draw spriteid_table at (9,20) of size (3x2)
+; draw table at (9,20) of size (3x2)
     ldx #9                                                            ; 3b9d: a2 09
     jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map           ; 3b9f: 20 57 1f
-; draw spriteid_table at (3,18) of size (3x2)
+; draw table at (3,18) of size (3x2)
     ldx #3                                                            ; 3ba2: a2 03
     ldy #$12                                                          ; 3ba4: a0 12
     jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map           ; 3ba6: 20 57 1f
-; draw spriteid_table at (6,18) of size (3x2)
+; draw table at (6,18) of size (3x2)
     ldx #6                                                            ; 3ba9: a2 06
     jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map           ; 3bab: 20 57 1f
 ; draw rope at (10,2) length 10
@@ -714,7 +714,7 @@ room_1_code
     jsr copy_rectangle_of_memory_to_screen                            ; 3da7: 20 bb 1a
 ; carve the floor, walls and ceiling into the rock
     jsr draw_floor_walls_and_ceiling_around_solid_rock                ; 3daa: 20 90 1b
-; draw spriteid_table at (26,20) of size (3x2)
+; draw table at (26,20) of size (3x2)
     lda #3                                                            ; 3dad: a9 03
     sta width_in_cells                                                ; 3daf: 85 3c
     lda #2                                                            ; 3db1: a9 02
@@ -723,13 +723,13 @@ room_1_code
     ldx #$1a                                                          ; 3db7: a2 1a
     ldy #$14                                                          ; 3db9: a0 14
     jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map           ; 3dbb: 20 57 1f
-; draw spriteid_table at (34,20) of size (3x2)
+; draw table at (34,20) of size (3x2)
     ldx #$22 ; '"'                                                    ; 3dbe: a2 22
     jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map           ; 3dc0: 20 57 1f
-; draw spriteid_table at (34,18) of size (3x2)
+; draw table at (34,18) of size (3x2)
     ldy #$12                                                          ; 3dc3: a0 12
     jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map           ; 3dc5: 20 57 1f
-; draw spriteid_table at (7,20) of size (3x2)
+; draw table at (7,20) of size (3x2)
     ldx #7                                                            ; 3dc8: a2 07
     ldy #$14                                                          ; 3dca: a0 14
     jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map           ; 3dcc: 20 57 1f
@@ -1556,7 +1556,7 @@ room_3_code
     jsr copy_rectangle_of_memory_to_screen                            ; 42ca: 20 bb 1a
 ; carve the floor, walls and ceiling into the rock
     jsr draw_floor_walls_and_ceiling_around_solid_rock                ; 42cd: 20 90 1b
-; draw spriteid_ball at (20,12)
+; draw ball at (20,12)
     ldx #$14                                                          ; 42d0: a2 14
     ldy #$0c                                                          ; 42d2: a0 0c
     lda #spriteid_ball                                                ; 42d4: a9 3b

@@ -57,6 +57,8 @@ def write_room(x, y, w, h, v):
 
 def get_sprite_name(spriteid, sprite_dict):
     if spriteid in sprite_dict:
+        if sprite_dict[spriteid].startswith("spriteid_"):
+            return sprite_dict[spriteid][9:].replace('_', ' ')
         return sprite_dict[spriteid]
     return "sprite ${0}".format(hex(spriteid)[2:])
 
