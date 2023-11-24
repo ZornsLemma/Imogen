@@ -348,12 +348,12 @@ room_1_game_update_loop
     jsr game_update                                                   ; 3b9a: 20 da 12
     sta room_exit_direction                                           ; 3b9d: 85 70
     and #exit_room_left                                               ; 3b9f: 29 01
-    beq check_room_1_right_exit                                       ; 3ba1: f0 07
+    beq room_1_check_right_exit                                       ; 3ba1: f0 07
     ldx #0                                                            ; 3ba3: a2 00
     ldy current_level                                                 ; 3ba5: a4 31
     jmp initialise_level_and_room                                     ; 3ba7: 4c 40 11
 
-check_room_1_right_exit
+room_1_check_right_exit
     lda room_exit_direction                                           ; 3baa: a5 70
     and #exit_room_right                                              ; 3bac: 29 04
     beq room_1_game_update_loop                                       ; 3bae: f0 ea
@@ -583,12 +583,12 @@ room_2_game_update_loop
     jsr game_update                                                   ; 3d1d: 20 da 12
     sta room_exit_direction                                           ; 3d20: 85 70
     and #exit_room_left                                               ; 3d22: 29 01
-    beq check_room_2_right_exit                                       ; 3d24: f0 07
+    beq room_2_check_right_exit                                       ; 3d24: f0 07
     ldx #1                                                            ; 3d26: a2 01
     ldy current_level                                                 ; 3d28: a4 31
     jmp initialise_level_and_room                                     ; 3d2a: 4c 40 11
 
-check_room_2_right_exit
+room_2_check_right_exit
     lda room_exit_direction                                           ; 3d2d: a5 70
     and #exit_room_right                                              ; 3d2f: 29 04
     beq room_2_game_update_loop                                       ; 3d31: f0 ea

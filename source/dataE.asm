@@ -414,12 +414,12 @@ room_2_game_update_loop
     jsr game_update                                                   ; 3cc3: 20 da 12
     sta room_exit_direction                                           ; 3cc6: 85 70
     and #exit_room_top                                                ; 3cc8: 29 08
-    beq room_2_update                                                 ; 3cca: f0 07
+    beq room_2_check_right_exit                                       ; 3cca: f0 07
     ldx #3                                                            ; 3ccc: a2 03
     ldy current_level                                                 ; 3cce: a4 31
     jmp initialise_level_and_room                                     ; 3cd0: 4c 40 11
 
-room_2_update
+room_2_check_right_exit
     lda room_exit_direction                                           ; 3cd3: a5 70
     and #exit_room_right                                              ; 3cd5: 29 04
     beq room_2_game_update_loop                                       ; 3cd7: f0 ea
@@ -1317,12 +1317,12 @@ room_1_game_update_loop
     jsr game_update                                                   ; 442f: 20 da 12
     sta room_exit_direction                                           ; 4432: 85 70
     and #exit_room_left                                               ; 4434: 29 01
-    beq room_1_update                                                 ; 4436: f0 07
+    beq room_1_check_right_exit                                       ; 4436: f0 07
     ldx #2                                                            ; 4438: a2 02
     ldy current_level                                                 ; 443a: a4 31
     jmp initialise_level_and_room                                     ; 443c: 4c 40 11
 
-room_1_update
+room_1_check_right_exit
     lda room_exit_direction                                           ; 443f: a5 70
     and #exit_room_right                                              ; 4441: 29 04
     beq room_1_game_update_loop                                       ; 4443: f0 ea
