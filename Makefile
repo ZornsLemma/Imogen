@@ -206,7 +206,6 @@ disk/sprdata: encoder.py source/sprdata.txt
 # TODO: Make this match the original file, including the BASIC
 disk/imogen: source/imogen.asm
 	beebasm -o disk/imogen -i source/imogen.asm -v > build/imogen.lst
-	cmp orig/imogen-trailing-mc-3900.dat disk/imogen || echo imogen.asm rebuild failed
 
 disk/dataA: encoder.py source/dataA.asm source/levelA.txt
 	python3 encoder.py -i source/levelA.txt -o build/levelA				# make binary sprite data

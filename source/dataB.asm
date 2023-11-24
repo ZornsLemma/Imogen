@@ -1,62 +1,155 @@
 ; Constants
-collision_map_none                 = 0
-collision_map_rope                 = 2
-collision_map_solid_rock           = 3
-collision_map_unknown              = 1
-copy_mode_2x2                      = 0
-copy_mode_random16                 = 16
-copy_mode_random2                  = 2
-copy_mode_random32                 = 32
-copy_mode_random4                  = 4
-copy_mode_random64                 = 64
-copy_mode_random8                  = 8
-copy_mode_simple                   = 1
-exit_room_bottom                   = 2
-exit_room_left                     = 1
-exit_room_right                    = 4
-exit_room_top                      = 8
-first_level_letter                 = 65
-game_area_height_cells             = 24
-game_area_width_cells              = 40
-last_level_letter                  = 81
-object_collided_ceiling            = 8
-object_collided_floor              = 2
-object_collided_left_wall          = 1
-object_collided_right_wall         = 4
-objectid_clock_workings            = 3
-objectid_hourglass                 = 7
-objectid_pendulum                  = 2
-objectid_player                    = 0
-objectid_player_accessory          = 1
-objectid_rope_broken_bottom_end    = 6
-objectid_rope_broken_top_end       = 5
-objectid_suspended_boulder         = 4
-opcode_jmp                         = 76
-spriteid_ball                      = 59
-spriteid_boulder                   = 213
-spriteid_cache1                    = 215
-spriteid_cache2                    = 216
-spriteid_cache3                    = 223
-spriteid_clock                     = 200
-spriteid_clock_workings            = 209
-spriteid_cuckoo                    = 211
-spriteid_cuckoo_appear_full        = 208
-spriteid_cuckoo_appear_partly      = 207
-spriteid_cuckoo_menu_item          = 212
-spriteid_cuckoo_open_beak          = 214
-spriteid_hourglass                 = 221
-spriteid_hourglass_menu_item       = 222
-spriteid_pendulum1                 = 201
-spriteid_pendulum2                 = 202
-spriteid_pendulum3                 = 203
-spriteid_pendulum4                 = 204
-spriteid_pendulum5                 = 205
-spriteid_rope_broken_bottom_end    = 219
-spriteid_rope_broken_falling_end   = 218
-spriteid_rope_broken_top_end       = 220
-spriteid_rope_end_at_object        = 217
-spriteid_table                     = 210
-spriteid_vertical_rod              = 206
+collision_map_none                    = 0
+collision_map_rope                    = 2
+collision_map_solid_rock              = 3
+collision_map_unknown                 = 1
+copy_mode_2x2                         = 0
+copy_mode_random16                    = 16
+copy_mode_random2                     = 2
+copy_mode_random32                    = 32
+copy_mode_random4                     = 4
+copy_mode_random64                    = 64
+copy_mode_random8                     = 8
+copy_mode_simple                      = 1
+exit_room_bottom                      = 2
+exit_room_left                        = 1
+exit_room_right                       = 4
+exit_room_top                         = 8
+first_level_letter                    = 65
+game_area_height_cells                = 24
+game_area_width_cells                 = 40
+last_level_letter                     = 81
+object_collided_ceiling               = 8
+object_collided_floor                 = 2
+object_collided_left_wall             = 1
+object_collided_right_wall            = 4
+objectid_clock_workings               = 3
+objectid_cuckoo                       = 2
+objectid_hourglass                    = 7
+objectid_pendulum                     = 2
+objectid_player                       = 0
+objectid_player_accessory             = 1
+objectid_rope_broken_bottom_end       = 6
+objectid_rope_broken_top_end          = 5
+objectid_spell                        = 5
+objectid_suspended_boulder            = 4
+opcode_jmp                            = 76
+spriteid_197                          = 197
+spriteid_198                          = 198
+spriteid_199                          = 199
+spriteid_ball                         = 59
+spriteid_boulder                      = 213
+spriteid_brazier                      = 58
+spriteid_cache1                       = 215
+spriteid_cache2                       = 216
+spriteid_cache3                       = 223
+spriteid_cat1                         = 27
+spriteid_cat2                         = 28
+spriteid_cat_jump                     = 26
+spriteid_cat_tail1                    = 18
+spriteid_cat_tail2                    = 19
+spriteid_cat_tail3                    = 20
+spriteid_cat_tail4                    = 21
+spriteid_cat_tail5                    = 22
+spriteid_cat_tail6                    = 23
+spriteid_cat_tail7                    = 24
+spriteid_cat_tail8                    = 25
+spriteid_cat_transform1               = 16
+spriteid_cat_transform2               = 17
+spriteid_cat_walk1                    = 12
+spriteid_cat_walk2                    = 13
+spriteid_cat_walk3                    = 14
+spriteid_cat_walk4                    = 15
+spriteid_circle                       = 32
+spriteid_clock                        = 200
+spriteid_clock_workings               = 209
+spriteid_corner_bottom_left           = 45
+spriteid_corner_bottom_right          = 46
+spriteid_corner_top_left              = 44
+spriteid_corner_top_right             = 47
+spriteid_cuckoo                       = 211
+spriteid_cuckoo_appear_full           = 208
+spriteid_cuckoo_appear_partly         = 207
+spriteid_cuckoo_menu_item             = 212
+spriteid_cuckoo_open_beak             = 214
+spriteid_diamond1                     = 39
+spriteid_diamond2                     = 40
+spriteid_diamond3                     = 41
+spriteid_diamond4                     = 42
+spriteid_diamond5                     = 43
+spriteid_fingertip_tile_restoration   = 30
+spriteid_fire1                        = 60
+spriteid_fire2                        = 61
+spriteid_fire3                        = 62
+spriteid_fire4                        = 63
+spriteid_fire5                        = 64
+spriteid_fire6                        = 65
+spriteid_fire7                        = 66
+spriteid_fire8                        = 67
+spriteid_hourglass                    = 221
+spriteid_hourglass_menu_item          = 222
+spriteid_icodata_box                  = 9
+spriteid_icodata_cat                  = 5
+spriteid_icodata_disc                 = 3
+spriteid_icodata_info                 = 7
+spriteid_icodata_monkey               = 6
+spriteid_icodata_password             = 8
+spriteid_icodata_sound                = 2
+spriteid_icodata_wizard               = 4
+spriteid_icon_background              = 1
+spriteid_menu_item_completion_spell   = 33
+spriteid_monkey1                      = 78
+spriteid_monkey2                      = 79
+spriteid_monkey3                      = 80
+spriteid_monkey4                      = 81
+spriteid_monkey5                      = 82
+spriteid_monkey_climb1                = 83
+spriteid_monkey_climb2                = 84
+spriteid_monkey_tail1                 = 70
+spriteid_monkey_tail2                 = 71
+spriteid_monkey_tail3                 = 72
+spriteid_monkey_tail4                 = 73
+spriteid_monkey_tail5                 = 74
+spriteid_monkey_tail6                 = 75
+spriteid_monkey_tail7                 = 76
+spriteid_monkey_tail8                 = 77
+spriteid_monkey_transform1            = 68
+spriteid_monkey_transform2            = 69
+spriteid_one_pixel_masked_out         = 0
+spriteid_one_pixel_set                = 31
+spriteid_pendulum1                    = 201
+spriteid_pendulum2                    = 202
+spriteid_pendulum3                    = 203
+spriteid_pendulum4                    = 204
+spriteid_pendulum5                    = 205
+spriteid_pointer_hand                 = 29
+spriteid_rope1                        = 85
+spriteid_rope2                        = 86
+spriteid_rope3                        = 87
+spriteid_rope4                        = 88
+spriteid_rope_broken_bottom_end       = 219
+spriteid_rope_broken_falling_end      = 218
+spriteid_rope_broken_top_end          = 220
+spriteid_rope_end                     = 10
+spriteid_rope_end_at_object           = 217
+spriteid_rope_hook                    = 11
+spriteid_sparkles1                    = 34
+spriteid_sparkles2                    = 35
+spriteid_sparkles3                    = 36
+spriteid_sparkles4                    = 37
+spriteid_sparkles5                    = 38
+spriteid_table                        = 210
+spriteid_vertical_rod                 = 206
+spriteid_wizard1                      = 48
+spriteid_wizard2                      = 49
+spriteid_wizard3                      = 50
+spriteid_wizard4                      = 51
+spriteid_wizard5                      = 52
+spriteid_wizard7                      = 54
+spriteid_wizard_hand                  = 55
+spriteid_wizard_transform1            = 56
+spriteid_wizard_transform2            = 57
+spriteid_wizard_using_object          = 53
 
 ; Memory locations
 characters_entered                                  = $05
@@ -93,7 +186,7 @@ object_direction                                    = $09be
 object_direction_old                                = $09c9
 level_progress_table                                = $09ef
 l0a05                                               = $0a05
-l0a06                                               = $0a06
+cuckoo_thrown                                       = $0a06
 l0a07                                               = $0a07
 l0a08                                               = $0a08
 got_hourglass_flag                                  = $0a09
@@ -216,7 +309,7 @@ c3b02
 check_got_cuckoo
     lda l0a05                                                         ; 3b0c: ad 05 0a
     beq return1                                                       ; 3b0f: f0 0a
-    lda l0a06                                                         ; 3b11: ad 06 0a
+    lda cuckoo_thrown                                                 ; 3b11: ad 06 0a
     bne return1                                                       ; 3b14: d0 05
     lda #spriteid_cuckoo_menu_item                                    ; 3b16: a9 d4
     jsr find_or_create_menu_slot_for_A                                ; 3b18: 20 bd 2b
@@ -239,7 +332,7 @@ level_specific_update
     jsr sub_c406d                                                     ; 3b1f: 20 6d 40
     jsr sub_c42dd                                                     ; 3b22: 20 dd 42
     jsr sub_c3c08                                                     ; 3b25: 20 08 3c
-    jsr sub_c443d                                                     ; 3b28: 20 3d 44
+    jsr room_3_update_handler                                         ; 3b28: 20 3d 44
     jsr sub_c3f2f                                                     ; 3b2b: 20 2f 3f
     rts                                                               ; 3b2e: 60
 
@@ -834,7 +927,7 @@ c3efd
     cmp currently_updating_logic_for_room_index                       ; 3eff: cd ba 1a
     bne c3f0d                                                         ; 3f02: d0 09
     ldy l3f20                                                         ; 3f04: ac 20 3f
-    lda l3f21,y                                                       ; 3f07: b9 21 3f
+    lda swinging_pendulum_spriteids,y                                 ; 3f07: b9 21 3f
     sta object_spriteid + objectid_pendulum                           ; 3f0a: 8d aa 09
 c3f0d
     lda l3f1e                                                         ; 3f0d: ad 1e 3f
@@ -852,10 +945,14 @@ l3f1f
     !byte 0                                                           ; 3f1f: 00
 l3f20
     !byte 0                                                           ; 3f20: 00
-l3f21
-    !byte $c9, $ca, $cb, $cb, $ca, $c9, $cc, $cd, $cd, $cc            ; 3f21: c9 ca cb...
-l3f2b
-    !byte $d6, $d6, $d6, $d3                                          ; 3f2b: d6 d6 d6...
+swinging_pendulum_spriteids
+    !byte spriteid_pendulum1, spriteid_pendulum2, spriteid_pendulum3  ; 3f21: c9 ca cb
+    !byte spriteid_pendulum3, spriteid_pendulum2, spriteid_pendulum1  ; 3f24: cb ca c9
+    !byte spriteid_pendulum4, spriteid_pendulum5, spriteid_pendulum5  ; 3f27: cc cd cd
+    !byte spriteid_pendulum4                                          ; 3f2a: cc
+cuckoo_tweeting_spriteids
+    !byte spriteid_cuckoo_open_beak, spriteid_cuckoo_open_beak        ; 3f2b: d6 d6
+    !byte spriteid_cuckoo_open_beak,           spriteid_cuckoo        ; 3f2d: d6 d3
 
 sub_c3f2f
     lda update_room_first_update_flag                                 ; 3f2f: ad 2b 13
@@ -869,14 +966,14 @@ c3f3f
     ldx #<envelope3                                                   ; 3f3f: a2 ae
     ldy #>envelope3                                                   ; 3f41: a0 44
     jsr define_envelope                                               ; 3f43: 20 5e 39
-    lda #$d4                                                          ; 3f46: a9 d4
+    lda #spriteid_cuckoo_menu_item                                    ; 3f46: a9 d4
     sta toolbar_collectable_spriteids+1                               ; 3f48: 8d e9 2e
-    lda #$d3                                                          ; 3f4b: a9 d3
+    lda #spriteid_cuckoo                                              ; 3f4b: a9 d3
     sta collectable_spriteids+1                                       ; 3f4d: 8d ee 2e
     jmp c3f6d                                                         ; 3f50: 4c 6d 3f
 
 c3f53
-    lda #$d4                                                          ; 3f53: a9 d4
+    lda #spriteid_cuckoo_menu_item                                    ; 3f53: a9 d4
     cmp player_using_object_spriteid                                  ; 3f55: cd b6 2e
     beq c3f62                                                         ; 3f58: f0 08
     lda #0                                                            ; 3f5a: a9 00
@@ -891,7 +988,7 @@ c3f62
     sty l0a75                                                         ; 3f6a: 8c 75 0a
 c3f6d
     ldy l0a75                                                         ; 3f6d: ac 75 0a
-    lda l3f2b,y                                                       ; 3f70: b9 2b 3f
+    lda cuckoo_tweeting_spriteids,y                                   ; 3f70: b9 2b 3f
     sta five_byte_table_paired_with_collectable_sprite_ids + 1        ; 3f73: 8d f3 2e
     lda update_room_first_update_flag                                 ; 3f76: ad 2b 13
     bne c3f81                                                         ; 3f79: d0 06
@@ -1092,11 +1189,11 @@ sub_c406d
     lda current_level                                                 ; 409f: a5 31
     cmp level_before_latest_level_and_room_initialisation             ; 40a1: c5 51
     beq c40b1                                                         ; 40a3: f0 0c
-    lda l0a06                                                         ; 40a5: ad 06 0a
+    lda cuckoo_thrown                                                 ; 40a5: ad 06 0a
     cmp #2                                                            ; 40a8: c9 02
     bcc c40b1                                                         ; 40aa: 90 05
     lda #$ff                                                          ; 40ac: a9 ff
-    sta l0a06                                                         ; 40ae: 8d 06 0a
+    sta cuckoo_thrown                                                 ; 40ae: 8d 06 0a
 c40b1
     lda desired_room_index                                            ; 40b1: a5 30
     cmp #2                                                            ; 40b3: c9 02
@@ -1112,13 +1209,13 @@ c40b1
     sta object_direction,x                                            ; 40c8: 9d be 09
     lda #$c0                                                          ; 40cb: a9 c0
     sta object_z_order,x                                              ; 40cd: 9d c2 38
-    lda #$d7                                                          ; 40d0: a9 d7
+    lda #spriteid_cache1                                              ; 40d0: a9 d7
     sta object_sprite_mask_type,x                                     ; 40d2: 9d ac 38
 c40d5
     jmp c4152                                                         ; 40d5: 4c 52 41
 
 c40d8
-    lda l0a06                                                         ; 40d8: ad 06 0a
+    lda cuckoo_thrown                                                 ; 40d8: ad 06 0a
     bmi c4152                                                         ; 40db: 30 75
     cmp #1                                                            ; 40dd: c9 01
     beq c4127                                                         ; 40df: f0 46
@@ -1138,26 +1235,26 @@ c40d8
     jsr get_solid_rock_collision_for_object_a                         ; 40fe: 20 94 28
     and #2                                                            ; 4101: 29 02
     beq c4152                                                         ; 4103: f0 4d
-    lda #$d4                                                          ; 4105: a9 d4
+    lda #spriteid_cuckoo_menu_item                                    ; 4105: a9 d4
     jsr remove_item_from_toolbar_menu                                 ; 4107: 20 e0 2b
     lda #1                                                            ; 410a: a9 01
-    sta l0a06                                                         ; 410c: 8d 06 0a
+    sta cuckoo_thrown                                                 ; 410c: 8d 06 0a
     lda #0                                                            ; 410f: a9 00
     sta player_held_object_spriteid                                   ; 4111: 85 52
     sta object_spriteid+1                                             ; 4113: 8d a9 09
     lda player_using_object_spriteid                                  ; 4116: ad b6 2e
-    cmp #$d4                                                          ; 4119: c9 d4
+    cmp #spriteid_cuckoo_menu_item                                    ; 4119: c9 d4
     bne c4127                                                         ; 411b: d0 0a
     lda #0                                                            ; 411d: a9 00
     sta player_using_object_spriteid                                  ; 411f: 8d b6 2e
-    lda #$36 ; '6'                                                    ; 4122: a9 36
+    lda #spriteid_wizard7                                             ; 4122: a9 36
     sta object_spriteid                                               ; 4124: 8d a8 09
 c4127
     lda l0a72                                                         ; 4127: ad 72 0a
     cmp l0a73                                                         ; 412a: cd 73 0a
     beq c4152                                                         ; 412d: f0 23
     lda #$0f                                                          ; 412f: a9 0f
-    sta l0a06                                                         ; 4131: 8d 06 0a
+    sta cuckoo_thrown                                                 ; 4131: 8d 06 0a
     lda desired_room_index                                            ; 4134: a5 30
     cmp #2                                                            ; 4136: c9 02
     bne c4152                                                         ; 4138: d0 18
@@ -1165,21 +1262,21 @@ c4127
     jmp c4152                                                         ; 413d: 4c 52 41
 
 c4140
-    lda l0a06                                                         ; 4140: ad 06 0a
+    lda cuckoo_thrown                                                 ; 4140: ad 06 0a
     clc                                                               ; 4143: 18
     adc #2                                                            ; 4144: 69 02
-    sta l0a06                                                         ; 4146: 8d 06 0a
+    sta cuckoo_thrown                                                 ; 4146: 8d 06 0a
     cmp #$28 ; '('                                                    ; 4149: c9 28
     bcc c4152                                                         ; 414b: 90 05
     lda #$ff                                                          ; 414d: a9 ff
-    sta l0a06                                                         ; 414f: 8d 06 0a
+    sta cuckoo_thrown                                                 ; 414f: 8d 06 0a
 c4152
     lda desired_room_index                                            ; 4152: a5 30
     cmp #2                                                            ; 4154: c9 02
     bne c4182                                                         ; 4156: d0 2a
     lda #0                                                            ; 4158: a9 00
     sta object_spriteid + objectid_clock_workings                     ; 415a: 8d ab 09
-    lda l0a06                                                         ; 415d: ad 06 0a
+    lda cuckoo_thrown                                                 ; 415d: ad 06 0a
     bmi c4182                                                         ; 4160: 30 20
     cmp #2                                                            ; 4162: c9 02
     bcc c4182                                                         ; 4164: 90 1c
@@ -1199,7 +1296,7 @@ c4152
 c4182
     lda #0                                                            ; 4182: a9 00
     sta room_0_player_on_left_rope                                    ; 4184: 8d dc 42
-    lda l0a06                                                         ; 4187: ad 06 0a
+    lda cuckoo_thrown                                                 ; 4187: ad 06 0a
     cmp #$1b                                                          ; 418a: c9 1b
     bcc c4191                                                         ; 418c: 90 03
     dec room_0_player_on_left_rope                                    ; 418e: ce dc 42
@@ -1264,7 +1361,7 @@ c41f0
     dey                                                               ; 4209: 88
     lda #4                                                            ; 420a: a9 04
     sta l0015                                                         ; 420c: 85 15
-    lda #$0a                                                          ; 420e: a9 0a
+    lda #spriteid_rope_end                                            ; 420e: a9 0a
     jsr draw_sprite_a_at_cell_xy                                      ; 4210: 20 4c 1f
     lda #5                                                            ; 4213: a9 05
     jsr set_object_position_from_cell_xy                              ; 4215: 20 5d 1f
@@ -1604,9 +1701,10 @@ room_3_game_update_loop
     ldy current_level                                                 ; 4438: a4 31
     jmp initialise_level_and_room                                     ; 443a: 4c 40 11
 
-sub_c443d
+room_3_update_handler
     lda #3                                                            ; 443d: a9 03
     sta currently_updating_logic_for_room_index                       ; 443f: 8d ba 1a
+; update fire
     lda #3                                                            ; 4442: a9 03
     ldx #$14                                                          ; 4444: a2 14
     ldy #$0b                                                          ; 4446: a0 0b
@@ -1614,26 +1712,30 @@ sub_c443d
     lda #4                                                            ; 444b: a9 04
     inx                                                               ; 444d: e8
     jsr update_brazier_and_fire                                       ; 444e: 20 88 19
+; position and update the spell collectable object
     ldx #$14                                                          ; 4451: a2 14
     lda #4                                                            ; 4453: a9 04
     sta temp_sprite_x_offset                                          ; 4455: 85 3a
     ldy #$12                                                          ; 4457: a0 12
-    lda #5                                                            ; 4459: a9 05
+    lda #objectid_spell                                               ; 4459: a9 05
     jsr update_level_completion                                       ; 445b: 20 10 1a
+; check for room 3 (return if not)
     lda desired_room_index                                            ; 445e: a5 30
     cmp #3                                                            ; 4460: c9 03
-    bne c44ad                                                         ; 4462: d0 49
+    bne return3                                                       ; 4462: d0 49
     lda update_room_first_update_flag                                 ; 4464: ad 2b 13
-    beq c4495                                                         ; 4467: f0 2c
-    lda l0a06                                                         ; 4469: ad 06 0a
+    beq room_3_not_first_update                                       ; 4467: f0 2c
+; first update in room 3
+    lda cuckoo_thrown                                                 ; 4469: ad 06 0a
     cmp #2                                                            ; 446c: c9 02
-    bcc c44ad                                                         ; 446e: 90 3d
+    bcc return3                                                       ; 446e: 90 3d
     ldx #$23 ; '#'                                                    ; 4470: a2 23
     lda #3                                                            ; 4472: a9 03
     sta temp_sprite_x_offset                                          ; 4474: 85 3a
     ldy #$15                                                          ; 4476: a0 15
-    lda #2                                                            ; 4478: a9 02
+    lda #objectid_cuckoo                                              ; 4478: a9 02
     jsr set_object_position_from_cell_xy                              ; 447a: 20 5d 1f
+; set properties of the cuckoo in room 3
     tax                                                               ; 447d: aa
     lda #1                                                            ; 447e: a9 01
     sta object_direction,x                                            ; 4480: 9d be 09
@@ -1641,22 +1743,22 @@ sub_c443d
     sta object_sprite_mask_type,x                                     ; 4485: 9d ac 38
     lda #$c0                                                          ; 4488: a9 c0
     sta object_z_order,x                                              ; 448a: 9d c2 38
-    lda #$d3                                                          ; 448d: a9 d3
+    lda #spriteid_cuckoo                                              ; 448d: a9 d3
     sta object_spriteid,x                                             ; 448f: 9d a8 09
-    jmp c44ad                                                         ; 4492: 4c ad 44
+    jmp return3                                                       ; 4492: 4c ad 44
 
-c4495
+room_3_not_first_update
     ldx #$0b                                                          ; 4495: a2 0b
     ldy #2                                                            ; 4497: a0 02
     jsr test_for_collision_between_objects_x_and_y                    ; 4499: 20 e2 28
-    beq c44ad                                                         ; 449c: f0 0f
+    beq return3                                                       ; 449c: f0 0f
     lda #spriteid_cuckoo_menu_item                                    ; 449e: a9 d4
     jsr find_or_create_menu_slot_for_A                                ; 44a0: 20 bd 2b
     lda #0                                                            ; 44a3: a9 00
     sta object_spriteid + objectid_pendulum                           ; 44a5: 8d aa 09
     lda #0                                                            ; 44a8: a9 00
-    sta l0a06                                                         ; 44aa: 8d 06 0a
-c44ad
+    sta cuckoo_thrown                                                 ; 44aa: 8d 06 0a
+return3
     rts                                                               ; 44ad: 60
 
 envelope3
@@ -1848,11 +1950,8 @@ pydis_end
 ;     c4318
 ;     c4319
 ;     c433c
-;     c4495
-;     c44ad
 ;     l0015
 ;     l0a05
-;     l0a06
 ;     l0a07
 ;     l0a08
 ;     l0a6f
@@ -1868,8 +1967,6 @@ pydis_end
 ;     l3f1e
 ;     l3f1f
 ;     l3f20
-;     l3f21
-;     l3f2b
 ;     l42d8
 ;     l42d9
 ;     l42da
@@ -1882,7 +1979,6 @@ pydis_end
 ;     sub_c406d
 ;     sub_c41d2
 ;     sub_c42dd
-;     sub_c443d
 !if (<envelope1) != $08 {
     !error "Assertion failed: <envelope1 == $08"
 }
@@ -1967,6 +2063,12 @@ pydis_end
 !if (level_specific_update) != $3b1c {
     !error "Assertion failed: level_specific_update == $3b1c"
 }
+!if (objectid_cuckoo) != $02 {
+    !error "Assertion failed: objectid_cuckoo == $02"
+}
+!if (objectid_spell) != $05 {
+    !error "Assertion failed: objectid_spell == $05"
+}
 !if (room_0_data) != $3b2f {
     !error "Assertion failed: room_0_data == $3b2f"
 }
@@ -1988,17 +2090,41 @@ pydis_end
 !if (spriteid_boulder) != $d5 {
     !error "Assertion failed: spriteid_boulder == $d5"
 }
+!if (spriteid_cache1) != $d7 {
+    !error "Assertion failed: spriteid_cache1 == $d7"
+}
 !if (spriteid_clock) != $c8 {
     !error "Assertion failed: spriteid_clock == $c8"
 }
 !if (spriteid_clock_workings) != $d1 {
     !error "Assertion failed: spriteid_clock_workings == $d1"
 }
+!if (spriteid_cuckoo) != $d3 {
+    !error "Assertion failed: spriteid_cuckoo == $d3"
+}
 !if (spriteid_cuckoo_menu_item) != $d4 {
     !error "Assertion failed: spriteid_cuckoo_menu_item == $d4"
 }
+!if (spriteid_cuckoo_open_beak) != $d6 {
+    !error "Assertion failed: spriteid_cuckoo_open_beak == $d6"
+}
 !if (spriteid_hourglass_menu_item) != $de {
     !error "Assertion failed: spriteid_hourglass_menu_item == $de"
+}
+!if (spriteid_pendulum1) != $c9 {
+    !error "Assertion failed: spriteid_pendulum1 == $c9"
+}
+!if (spriteid_pendulum2) != $ca {
+    !error "Assertion failed: spriteid_pendulum2 == $ca"
+}
+!if (spriteid_pendulum3) != $cb {
+    !error "Assertion failed: spriteid_pendulum3 == $cb"
+}
+!if (spriteid_pendulum4) != $cc {
+    !error "Assertion failed: spriteid_pendulum4 == $cc"
+}
+!if (spriteid_pendulum5) != $cd {
+    !error "Assertion failed: spriteid_pendulum5 == $cd"
 }
 !if (spriteid_rope_broken_bottom_end) != $db {
     !error "Assertion failed: spriteid_rope_broken_bottom_end == $db"
@@ -2009,9 +2135,15 @@ pydis_end
 !if (spriteid_rope_broken_top_end) != $dc {
     !error "Assertion failed: spriteid_rope_broken_top_end == $dc"
 }
+!if (spriteid_rope_end) != $0a {
+    !error "Assertion failed: spriteid_rope_end == $0a"
+}
 !if (spriteid_rope_end_at_object) != $d9 {
     !error "Assertion failed: spriteid_rope_end_at_object == $d9"
 }
 !if (spriteid_table) != $d2 {
     !error "Assertion failed: spriteid_table == $d2"
+}
+!if (spriteid_wizard7) != $36 {
+    !error "Assertion failed: spriteid_wizard7 == $36"
 }

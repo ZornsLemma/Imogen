@@ -55,14 +55,16 @@ def write_room(x, y, w, h, v):
                 break
             room[j] = room[j][0:i] + v + room[j][i+1:]
 
-def get_sprite_name(spriteid, sprite_dict):
+def get_sprite_name(spriteid):
+    global sprite_dict
+
     if spriteid in sprite_dict:
         if sprite_dict[spriteid].startswith("spriteid_"):
             return sprite_dict[spriteid][9:].replace('_', ' ')
         return sprite_dict[spriteid]
     return "sprite ${0}".format(hex(spriteid)[2:])
 
-def map_room(start_tracking, end_tracking, output_descriptions, sprite_dict):
+def map_room(start_tracking, end_tracking, output_descriptions):
     global room
     global state
     global tile
@@ -175,7 +177,7 @@ def map_room(start_tracking, end_tracking, output_descriptions, sprite_dict):
             x = state["X"]
             y = state["Y"]
             if output_descriptions:
-                comment(start_tracking, "draw {4} at ({0},{1}) of size ({2}x{3})".format(x, y, state[0x3c], state[0x3d], get_sprite_name(state["A"], sprite_dict)))
+                comment(start_tracking, "draw {4} at ({0},{1}) of size ({2}x{3})".format(x, y, state[0x3c], state[0x3d], get_sprite_name(state["A"])))
             write_room(x, y, state[0x3c], state[0x3d], 'O')
             a += 3
             start_tracking = a
@@ -195,7 +197,7 @@ def map_room(start_tracking, end_tracking, output_descriptions, sprite_dict):
             x = state["X"]
             y = state["Y"]
             if output_descriptions:
-                comment(start_tracking, "draw {2} at ({0},{1})".format(x, y, get_sprite_name(state["A"], sprite_dict)))
+                comment(start_tracking, "draw {2} at ({0},{1})".format(x, y, get_sprite_name(state["A"])))
             write_room(x, y, 1, 1, 'S')
             a += 3
             start_tracking = a
@@ -218,7 +220,7 @@ def map_room(start_tracking, end_tracking, output_descriptions, sprite_dict):
             # skip jsr found in 'datai'
             break
         elif jmp_or_jsr:
-            map_room(operand16, 0xffff, False, sprite_dict)
+            map_room(operand16, 0xffff, False)
             a += 3
             start_tracking = a
         else:
@@ -228,7 +230,7 @@ def map_room(start_tracking, end_tracking, output_descriptions, sprite_dict):
             break
 
 
-def level_room_data_table_entry(addr, s, sprite_dict):
+def level_room_data_table_entry(addr, s):
     global room
     global state
     global tile
@@ -285,7 +287,7 @@ def level_room_data_table_entry(addr, s, sprite_dict):
         tile = '#'
         state = { "A": None, "X": None, "Y": None }
         room_comments = {}
-        map_room(target2, end_tracking, True, sprite_dict)
+        map_room(target2, end_tracking, True)
 
         # Show player start position
         write_room(player_x, player_y-1, 1, 1, "P")
@@ -298,7 +300,7 @@ def level_room_data_table_entry(addr, s, sprite_dict):
         comment(addr, room_comments[addr])
 
 
-def define_level(num_rooms, sprite_dict):
+def define_level(num_rooms):
     start = 0x3ad5
     stars(start, "Level header")
     word(start)
@@ -343,7 +345,7 @@ While updating the logic for a room, 'currently_updating_logic_for_room_index' i
     comment(password_addr, "'" + password + "' EOR-encrypted with $cb")
 
     for room in range(num_rooms):
-        level_room_data_table_entry(start + 10 + 2*room, str(room), sprite_dict)
+        level_room_data_table_entry(start + 10 + 2*room, str(room))
 
     # Other common functions
     entry(0x395e, "define_envelope") # Duplicate of line in g.py, can't trivially put in common as it breaks imogen.py

@@ -31,20 +31,26 @@ sprite_dict = {
     0xdf: "spriteid_cache3",
 }
 
-# Room 0
+# Merge with common sprite dictionary
+sprite_dict = {**common_sprite_dict, **sprite_dict}
+
 constant(2, "objectid_pendulum")
 constant(3, "objectid_clock_workings")
 constant(4, "objectid_suspended_boulder")
 constant(5, "objectid_rope_broken_top_end")
+constant(5, "objectid_spell")
 constant(6, "objectid_rope_broken_bottom_end")
 constant(7, "objectid_hourglass")
+
+# Room 3
+constant(2, "objectid_cuckoo")
 
 set_sprite_dict(sprite_dict)
 
 load(0x3ad5, "orig/dataB.dat", "6502", "879a85aaab89fe8ab2005698a0353a0b")
 
 common_to_all()
-define_level(4, sprite_dict)
+define_level(4)
 
 # NOTE:
 #
@@ -63,12 +69,15 @@ set_label_maker_hook(s.substitute_label_maker)
 
 label(0x0070, "room_exit_direction")
 
+
 label(0x09aa, "object_spriteid + objectid_pendulum")
 label(0x09ab, "object_spriteid + objectid_clock_workings")
 label(0x09ac, "object_spriteid + objectid_suspended_boulder")
 label(0x09ad, "object_spriteid + objectid_rope_broken_top_end")
 label(0x09ae, "object_spriteid + objectid_rope_broken_bottom_end")
 label(0x09af, "object_spriteid + objectid_hourglass")
+
+label(0x0a06, "cuckoo_thrown")
 label(0x0a09, "got_hourglass_flag")
 
 label(0x2ef4, "five_byte_table_paired_with_collectable_sprite_ids+2")
@@ -97,13 +106,25 @@ ldx_ldy_jsr_play_sound_yx(0x3ee1, "sound1")
 ldx_ldy_jsr_play_sound_yx(0x3ef1, "sound2")
 ldx_ldy_jsr_play_sound_yx(0x3efa, "sound3")
 ldx_ldy_jsr_define_envelope(0x3f43, "envelope3")
+expr(0x3f47, sprite_dict)
+expr(0x3f4c, sprite_dict)
+expr(0x3f54, sprite_dict)
+label(0x3f21, "swinging_pendulum_spriteids")
+for addr in range(0x3f21, 0x3f21 + 14):
+    expr(addr, sprite_dict)
+label(0x3f2b, "cuckoo_tweeting_spriteids")
 ldx_ldy_jsr_play_sound_yx(0x3f88, "sound4")
 ldx_ldy_jsr_play_sound_yx(0x3f8f, "sound5")
 label(0x4060, "room_2_check_right_exit")
 expr(0x4063, "exit_room_right")
+expr(0x40d1, sprite_dict)
+expr(0x4106, sprite_dict)
+expr(0x411a, sprite_dict)
+expr(0x4123, common_sprite_dict)
 label(0x41c1, "play_two_sounds")
 ldx_ldy_jsr_play_sound_yx(0x41c7, "sound6")
 ldx_ldy_jsr_play_sound_yx(0x41ce, "sound7")
+expr(0x420f, sprite_dict)
 expr(0x428e, sprite_dict)
 expr(0x429a, sprite_dict)
 expr(0x429f, sprite_dict)
@@ -111,6 +132,17 @@ expr(0x42a7, sprite_dict)
 expr(0x42ac, sprite_dict)
 label(0x42dc, "room_0_player_on_left_rope")
 comment(0x43e3, "draw rope")
+label(0x443d, "room_3_update_handler")
+comment(0x4442, "update fire")
+comment(0x4451, "position and update the spell collectable object")
+expr(0x445a, "objectid_spell")
+comment(0x445e, "check for room 3 (return if not)")
+comment(0x4469, "first update in room 3")
+expr(0x4479, "objectid_cuckoo")
+comment(0x447d, "set properties of the cuckoo in room 3")
+expr(0x448e, sprite_dict)
+label(0x4495, "room_3_not_first_update")
+label(0x44ad, "return3")
 envelope(0x44f2, "envelope_unused")
 sound(0x4500, "sound_unused")
 

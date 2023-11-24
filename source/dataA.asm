@@ -49,6 +49,9 @@ opcode_jmp                                       = 76
 player_collision_flag_baby                       = 6
 player_collision_flag_mouse_ball                 = 128
 some_specific_baby_spriteid_index_entry          = 33
+spriteid_197                                     = 197
+spriteid_198                                     = 198
+spriteid_199                                     = 199
 spriteid_baby0                                   = 214
 spriteid_baby1                                   = 215
 spriteid_baby2                                   = 216
@@ -58,18 +61,106 @@ spriteid_baby5                                   = 219
 spriteid_baby6                                   = 220
 spriteid_baby7                                   = 221
 spriteid_ball                                    = 59
+spriteid_brazier                                 = 58
+spriteid_cat1                                    = 27
+spriteid_cat2                                    = 28
+spriteid_cat_jump                                = 26
+spriteid_cat_tail1                               = 18
+spriteid_cat_tail2                               = 19
+spriteid_cat_tail3                               = 20
+spriteid_cat_tail4                               = 21
+spriteid_cat_tail5                               = 22
+spriteid_cat_tail6                               = 23
+spriteid_cat_tail7                               = 24
+spriteid_cat_tail8                               = 25
+spriteid_cat_transform1                          = 16
+spriteid_cat_transform2                          = 17
+spriteid_cat_walk1                               = 12
+spriteid_cat_walk2                               = 13
+spriteid_cat_walk3                               = 14
+spriteid_cat_walk4                               = 15
+spriteid_circle                                  = 32
+spriteid_corner_bottom_left                      = 45
+spriteid_corner_bottom_right                     = 46
+spriteid_corner_top_left                         = 44
+spriteid_corner_top_right                        = 47
+spriteid_diamond1                                = 39
+spriteid_diamond2                                = 40
+spriteid_diamond3                                = 41
+spriteid_diamond4                                = 42
+spriteid_diamond5                                = 43
+spriteid_fingertip_tile_restoration              = 30
+spriteid_fire1                                   = 60
+spriteid_fire2                                   = 61
+spriteid_fire3                                   = 62
+spriteid_fire4                                   = 63
+spriteid_fire5                                   = 64
+spriteid_fire6                                   = 65
+spriteid_fire7                                   = 66
+spriteid_fire8                                   = 67
+spriteid_icodata_box                             = 9
+spriteid_icodata_cat                             = 5
+spriteid_icodata_disc                            = 3
+spriteid_icodata_info                            = 7
+spriteid_icodata_monkey                          = 6
+spriteid_icodata_password                        = 8
+spriteid_icodata_sound                           = 2
+spriteid_icodata_wizard                          = 4
+spriteid_icon_background                         = 1
+spriteid_menu_item_completion_spell              = 33
+spriteid_monkey1                                 = 78
+spriteid_monkey2                                 = 79
+spriteid_monkey3                                 = 80
+spriteid_monkey4                                 = 81
+spriteid_monkey5                                 = 82
+spriteid_monkey_climb1                           = 83
+spriteid_monkey_climb2                           = 84
+spriteid_monkey_tail1                            = 70
+spriteid_monkey_tail2                            = 71
+spriteid_monkey_tail3                            = 72
+spriteid_monkey_tail4                            = 73
+spriteid_monkey_tail5                            = 74
+spriteid_monkey_tail6                            = 75
+spriteid_monkey_tail7                            = 76
+spriteid_monkey_tail8                            = 77
+spriteid_monkey_transform1                       = 68
+spriteid_monkey_transform2                       = 69
 spriteid_mouse                                   = 200
 spriteid_mouse_hands1                            = 201
 spriteid_mouse_hands2                            = 202
 spriteid_mouse_hands3                            = 212
 spriteid_mouse_hands4                            = 213
+spriteid_one_pixel_masked_out                    = 0
+spriteid_one_pixel_set                           = 31
+spriteid_pointer_hand                            = 29
+spriteid_rope1                                   = 85
+spriteid_rope2                                   = 86
+spriteid_rope3                                   = 87
+spriteid_rope4                                   = 88
+spriteid_rope_end                                = 10
+spriteid_rope_hook                               = 11
 spriteid_saxophone1                              = 210
 spriteid_saxophone2                              = 211
 spriteid_small_ball                              = 203
+spriteid_sparkles1                               = 34
+spriteid_sparkles2                               = 35
+spriteid_sparkles3                               = 36
+spriteid_sparkles4                               = 37
+spriteid_sparkles5                               = 38
 spriteid_table                                   = 222
 spriteid_trapdoor_diagonal                       = 208
 spriteid_trapdoor_horizontal                     = 207
 spriteid_trapdoor_vertical                       = 209
+spriteid_wizard1                                 = 48
+spriteid_wizard2                                 = 49
+spriteid_wizard3                                 = 50
+spriteid_wizard4                                 = 51
+spriteid_wizard5                                 = 52
+spriteid_wizard7                                 = 54
+spriteid_wizard_hand                             = 55
+spriteid_wizard_transform1                       = 56
+spriteid_wizard_transform2                       = 57
+spriteid_wizard_using_object                     = 53
 spriteid_zero_size1                              = 204
 table_max_x                                      = 22
 table_min_x                                      = 10
@@ -1157,7 +1248,7 @@ baby_spriteid_data
     !byte spriteid_baby1                                              ; 4053: d7
     !byte spriteid_baby2                                              ; 4054: d8
     !byte spriteid_baby3                                              ; 4055: d9
-    !byte 0                                                           ; 4056: 00
+    !byte spriteid_one_pixel_masked_out                               ; 4056: 00
     !byte spriteid_baby7                                              ; 4057: dd
     !byte spriteid_baby7                                              ; 4058: dd
     !byte spriteid_baby7                                              ; 4059: dd
@@ -1177,7 +1268,7 @@ baby_spriteid_data
     !byte spriteid_baby4                                              ; 4067: da
     !byte spriteid_baby4                                              ; 4068: da
     !byte spriteid_baby4                                              ; 4069: da
-    !byte 0                                                           ; 406a: 00
+    !byte spriteid_one_pixel_masked_out                               ; 406a: 00
     !byte spriteid_baby5                                              ; 406b: db
     !byte spriteid_baby5                                              ; 406c: db
     !byte spriteid_baby5                                              ; 406d: db
@@ -1195,9 +1286,9 @@ baby_spriteid_data
     !byte spriteid_baby3                                              ; 4079: d9
     !byte spriteid_baby3                                              ; 407a: d9
     !byte spriteid_baby3                                              ; 407b: d9
-    !byte 0                                                           ; 407c: 00
+    !byte spriteid_one_pixel_masked_out                               ; 407c: 00
     !byte spriteid_baby6                                              ; 407d: dc
-    !byte 0                                                           ; 407e: 00
+    !byte spriteid_one_pixel_masked_out                               ; 407e: 00
 
 ; *************************************************************************************
 ; 
@@ -2147,6 +2238,9 @@ pydis_end
 }
 !if (spriteid_mouse_hands4) != $d5 {
     !error "Assertion failed: spriteid_mouse_hands4 == $d5"
+}
+!if (spriteid_one_pixel_masked_out) != $00 {
+    !error "Assertion failed: spriteid_one_pixel_masked_out == $00"
 }
 !if (spriteid_saxophone1) != $d2 {
     !error "Assertion failed: spriteid_saxophone1 == $d2"

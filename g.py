@@ -72,99 +72,6 @@ negative_constant(-99, "inkey_key_space")
 negative_constant(-26, "inkey_key_left")
 negative_constant(-122, "inkey_key_right")
 
-sprite_dict = {
-    0x00: "spriteid_one_pixel_masked_out",
-    0x01: "spriteid_icon_background",
-    0x02: "spriteid_icodata_sound",
-    0x03: "spriteid_icodata_disc",
-    0x04: "spriteid_icodata_wizard",
-    0x05: "spriteid_icodata_cat",
-    0x06: "spriteid_icodata_monkey",
-    0x07: "spriteid_icodata_info",
-    0x08: "spriteid_icodata_password",
-    0x09: "spriteid_icodata_box",
-    0x0a: "spriteid_rope_end",
-    0x0b: "spriteid_rope_hook",
-    0x0c: "spriteid_cat_walk1",
-    0x0d: "spriteid_cat_walk2",
-    0x0e: "spriteid_cat_walk3",
-    0x0f: "spriteid_cat_walk4",
-    0x10: "spriteid_cat_transform1",
-    0x11: "spriteid_cat_transform2",
-    0x12: "spriteid_cat_tail1",
-    0x13: "spriteid_cat_tail2",
-    0x14: "spriteid_cat_tail3",
-    0x15: "spriteid_cat_tail4",
-    0x16: "spriteid_cat_tail5",
-    0x17: "spriteid_cat_tail6",
-    0x18: "spriteid_cat_tail7",
-    0x19: "spriteid_cat_tail8",
-    0x1a: "spriteid_cat_jump",
-    0x1b: "spriteid_cat1",
-    0x1c: "spriteid_cat2",
-    0x1d: "spriteid_pointer_hand",
-    0x1e: "spriteid_fingertip_tile_restoration",
-    0x1f: "spriteid_one_pixel_set",
-    0x20: "spriteid_circle",
-    0x21: "spriteid_menu_item_completion_spell",
-    0x22: "spriteid_sparkles1",
-    0x23: "spriteid_sparkles2",
-    0x24: "spriteid_sparkles3",
-    0x25: "spriteid_sparkles4",
-    0x26: "spriteid_sparkles5",
-    0x27: "spriteid_diamond1",
-    0x28: "spriteid_diamond2",
-    0x29: "spriteid_diamond3",
-    0x2a: "spriteid_diamond4",
-    0x2b: "spriteid_diamond5",
-    0x2c: "spriteid_corner_top_left",
-    0x2d: "spriteid_corner_bottom_left",
-    0x2e: "spriteid_corner_bottom_right",
-    0x2f: "spriteid_corner_top_right",
-    0x30: "spriteid_wizard1",
-    0x31: "spriteid_wizard2",
-    0x32: "spriteid_wizard3",
-    0x33: "spriteid_wizard4",
-    0x34: "spriteid_wizard5",
-    0x35: "spriteid_wizard_using_object",
-    0x36: "spriteid_wizard7",
-    0x37: "spriteid_wizard_hand",        # Drawn in front of wizard accessory object
-    0x38: "spriteid_wizard_transform1",
-    0x39: "spriteid_wizard_transform2",
-    0x3a: "spriteid_brazier",
-    0x3c: "spriteid_fire1",
-    0x3d: "spriteid_fire2",
-    0x3e: "spriteid_fire3",
-    0x3f: "spriteid_fire4",
-    0x40: "spriteid_fire5",
-    0x41: "spriteid_fire6",
-    0x42: "spriteid_fire7",
-    0x43: "spriteid_fire8",
-    0x44: "spriteid_monkey_transform1",
-    0x45: "spriteid_monkey_transform2",
-    0x46: "spriteid_monkey_tail1",
-    0x47: "spriteid_monkey_tail2",
-    0x48: "spriteid_monkey_tail3",
-    0x49: "spriteid_monkey_tail4",
-    0x4a: "spriteid_monkey_tail5",
-    0x4b: "spriteid_monkey_tail6",
-    0x4c: "spriteid_monkey_tail7",
-    0x4d: "spriteid_monkey_tail8",
-    0x4e: "spriteid_monkey1",
-    0x4f: "spriteid_monkey2",
-    0x50: "spriteid_monkey3",
-    0x51: "spriteid_monkey4",
-    0x52: "spriteid_monkey5",
-    0x53: "spriteid_monkey_climb1",
-    0x54: "spriteid_monkey_climb2",
-    0x55: "spriteid_rope1",
-    0x56: "spriteid_rope2",
-    0x57: "spriteid_rope3",
-    0x58: "spriteid_rope4",
-    197: "spriteid_197",            # TODO: Better name
-    198: "spriteid_198",            # TODO: Better name
-    199: "spriteid_199",            # TODO: Better name
-}
 
 # NOTE:
 #
@@ -406,9 +313,9 @@ def spriteid(start_addr, end_addr=None):
         end_addr = start_addr+1
     for addr in range(start_addr, end_addr):
         v = get_u8_runtime(memorymanager.RuntimeAddr(addr))
-        if v in sprite_dict:
+        if v in common_sprite_dict:
             byte(addr)
-            expr(addr, sprite_dict[v])
+            expr(addr, common_sprite_dict[v])
 
 def do_osword_7f_block_partial(addr):
     byte(addr)
@@ -436,9 +343,9 @@ common_to_all()
 
 entry(0x3c06, "execution_start")
 
-substitute_constants("sta sprite_id", 'a', sprite_dict, True)
-substitute_constants("jsr draw_sprite_a_at_cell_xy", 'a', sprite_dict, True)
-substitute_constants("jsr find_or_create_menu_slot_for_A", 'a', sprite_dict, True)
+substitute_constants("sta sprite_id", 'a', common_sprite_dict, True)
+substitute_constants("jsr draw_sprite_a_at_cell_xy", 'a', common_sprite_dict, True)
+substitute_constants("jsr find_or_create_menu_slot_for_A", 'a', common_sprite_dict, True)
 substitute_constants("sta sprite_op_flags", 'a', sprite_op_flags_dict, True)
 
 # Zero page variables
@@ -1250,7 +1157,11 @@ On Exit:
     label(0x1a0f, "fire_object_index")
     stars(0x1a10, """Update the level completion detection
 
-Checks for colliding with the level completion spell collectable, adds the spell to the toolbar, and shows diamonds or sparkles as needed.""")
+Checks for colliding with the level completion spell collectable, adds the spell to the toolbar, and shows diamonds or sparkles as needed.
+
+On Entry:
+    A: objectid of the spell collectable
+    (X,Y): cell position of the spell collectable""")
     comment(0x1a10, "TODO: this is used by e.g. dataA")
     entry(0x1a10)
     comment(0x1a10, "remember inputs", inline=True)
@@ -1787,9 +1698,9 @@ On Exit:
     label(0x22c4, "found_entry_in_list")
     stars(0x22cd, "Update player")
     entry(0x22cd, "update_player")
-    expr(0x22d2, sprite_dict[4])
-    expr(0x22d6, sprite_dict[5])
-    expr(0x22da, sprite_dict[6])
+    expr(0x22d2, common_sprite_dict[4])
+    expr(0x22d6, common_sprite_dict[5])
+    expr(0x22da, common_sprite_dict[6])
     comment(0x22dd, "could just 'rts'? But maybe the bird modifies this code...?", inline=True)
     label(0x22e0, "update_mid_transformation_local")
     label(0x22e3, "update_wizard_local")
@@ -2173,21 +2084,21 @@ On Exit:
     label(0x295b, "temp_collision_result")
     label(0x295c, "desired_menu_slots")
     blank(0x295c)
-    expr(0x295c, sprite_dict[3])
+    expr(0x295c, common_sprite_dict[3])
     byte(0x295c)
     label(0x295d, "desired_menu_slots+1")
-    expr(0x295d, sprite_dict[2])
+    expr(0x295d, common_sprite_dict[2])
     byte(0x295d)
-    expr(0x295e, sprite_dict[8])
+    expr(0x295e, common_sprite_dict[8])
     byte(0x295e)
-    expr(0x295f, sprite_dict[7])
+    expr(0x295f, common_sprite_dict[7])
     byte(0x295f)
     byte(0x2960)
-    expr(0x2961, sprite_dict[5])
+    expr(0x2961, common_sprite_dict[5])
     byte(0x2961)
-    expr(0x2962, sprite_dict[6])
+    expr(0x2962, common_sprite_dict[6])
     byte(0x2962)
-    expr(0x2963, sprite_dict[4])
+    expr(0x2963, common_sprite_dict[4])
     byte(0x2963)
     blank(0x296d)
     label(0x296d, "menu_index_for_first_player_character")
@@ -2448,7 +2359,7 @@ if (not already falling) then branch (start falling)""")
     expr(0x2e24, "wizard_walk_cycle_animation - wizard_base_animation")
     expr(0x2e28, "wizard_change_direction_animation - wizard_base_animation")
     expr(0x2e35, "wizard_transition_to_transforming_animation - wizard_base_animation")
-    expr(0x2e37, sprite_dict)
+    expr(0x2e37, common_sprite_dict)
     comment(0x2e3a, "transform to nothing (end of level spell)")
     expr(0x2e3b, "spriteid_one_pixel_masked_out")
     label(0x2e42, "wizard_transition_to_standing_still")
@@ -3337,13 +3248,13 @@ sprite_addr = [ 0x2cd7, 0x2cda, 0x2cdd, 0x2ce0, 0x2ce3, 0x2ce6, 0x2ce9,
 
 for i in sprite_addr:
     v = get_u8_runtime(memorymanager.RuntimeAddr(i))
-    expr(i, sprite_dict[v])
+    expr(i, common_sprite_dict[v])
 
 #for i in range(0x30e6, 0x30ff):
 #    v = get_u8_runtime(memorymanager.RuntimeAddr(i))
 #    if v >= 0x40 and v < 0x60:
 #        print(hex(i))
-#        expr(i, sprite_dict[v])
+#        expr(i, common_sprite_dict[v])
 
 # Look for pushing or pulling multiple registers to comment them
 sequences = {

@@ -2208,6 +2208,10 @@ fire_object_index
 ; Checks for colliding with the level completion spell collectable, adds the spell to
 ; the toolbar, and shows diamonds or sparkles as needed.
 ; 
+; On Entry:
+;     A: objectid of the spell collectable
+;     (X,Y): cell position of the spell collectable
+; 
 ; *************************************************************************************
 ; TODO: this is used by e.g. dataA
 update_level_completion

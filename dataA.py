@@ -29,6 +29,10 @@ sprite_dict = {
     0xde: "spriteid_table",
 }
 
+# Merge with common sprite dictionary
+sprite_dict = {**common_sprite_dict, **sprite_dict}
+
+
 # Room 0
 constant(2, "objectid_left_mouse")
 constant(3, "objectid_right_mouse")
@@ -51,7 +55,7 @@ set_sprite_dict(sprite_dict)
 load(0x3ad5, "orig/dataA.dat", "6502", "df027a3ac06abfed1878eaec3d2bbe5f")
 
 common_to_all()
-define_level(4, sprite_dict)
+define_level(4)
 
 # NOTE:
 #
