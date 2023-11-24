@@ -69,6 +69,8 @@ spriteid_trapdoor_vertical                       = 209
 spriteid_zero_size1                              = 204
 table_max_x                                      = 22
 table_min_x                                      = 10
+trapdoor_left_x                                  = 136
+trapdoor_right_x                                 = 184
 yet_another_specific_baby_spriteid_index_entry   = 25
 
 ; Memory locations
@@ -817,15 +819,20 @@ room1_not_first_update
     lda desired_room_index                                            ; 3e73: a5 30
     cmp #1                                                            ; 3e75: c9 01
     bne set_room1_trapdoor_sprites_if_required                        ; 3e77: d0 5e
+; Is the player holding something?
     lda player_held_object_spriteid                                   ; 3e79: a5 52
     beq set_room1_trapdoor_sprites_if_required                        ; 3e7b: f0 5a
+; Yes. Is the player standing over the trapdoor? TODO: Do we check the player's Y
+; coordinate? I guess not needed as the wizard can't jump and other characters can't
+; hold things.
     lda object_x_high + objectid_player                               ; 3e7d: ad 66 09
     bne set_room1_trapdoor_sprites_if_required                        ; 3e80: d0 55
     lda object_x_low + objectid_player                                ; 3e82: ad 50 09
-    cmp #$88                                                          ; 3e85: c9 88
+    cmp #trapdoor_left_x                                              ; 3e85: c9 88
     bcc set_room1_trapdoor_sprites_if_required                        ; 3e87: 90 4e
-    cmp #$b8                                                          ; 3e89: c9 b8
+    cmp #trapdoor_right_x                                             ; 3e89: c9 b8
     bcs set_room1_trapdoor_sprites_if_required                        ; 3e8b: b0 4a
+; Yes.
     lda #2                                                            ; 3e8d: a9 02
     sta temp_bottom_offset                                            ; 3e8f: 8d 51 25
     lda #objectid_something                                           ; 3e92: a9 0b
@@ -2166,6 +2173,12 @@ pydis_end
 }
 !if (toolbar_collectable_spriteids + 1) != $2ee9 {
     !error "Assertion failed: toolbar_collectable_spriteids + 1 == $2ee9"
+}
+!if (trapdoor_left_x) != $88 {
+    !error "Assertion failed: trapdoor_left_x == $88"
+}
+!if (trapdoor_right_x) != $b8 {
+    !error "Assertion failed: trapdoor_right_x == $b8"
 }
 !if (yet_another_specific_baby_spriteid_index_entry) != $19 {
     !error "Assertion failed: yet_another_specific_baby_spriteid_index_entry == $19"

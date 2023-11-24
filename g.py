@@ -2135,7 +2135,12 @@ On Exit:
     stars(0x2894, """Get solid_rock collision flags for object
 
 On Entry:
-    A: object index
+                       A: object index
+        temp_left_offset: offset to add to result (zeroed on exit)
+       temp_right_offset: offset to add to result (zeroed on exit)
+         temp_top_offset: offset to add to result (zeroed on exit)
+      temp_bottom_offset: offset to add to result (zeroed on exit)
+
 
 On Exit:
     A: A=1 means object collided with left wall
