@@ -331,12 +331,14 @@ room_1_code
 ; draw 12x2 rectangle at (14,15)
     ldy #$0f                                                          ; 3b81: a0 0f
     jsr copy_rectangle_of_memory_to_screen                            ; 3b83: 20 bb 1a
-; Carve the floor, walls and ceiling into the rock
+; carve the floor, walls and ceiling into the rock
     jsr draw_floor_walls_and_ceiling_around_solid_rock                ; 3b86: 20 90 1b
+; draw rope at (10,2) length 18
     ldx #$0a                                                          ; 3b89: a2 0a
     ldy #2                                                            ; 3b8b: a0 02
     lda #$12                                                          ; 3b8d: a9 12
     jsr draw_rope                                                     ; 3b8f: 20 b9 1d
+; draw rope at (29,2) length 18
     ldx #$1d                                                          ; 3b92: a2 1d
     jsr draw_rope                                                     ; 3b94: 20 b9 1d
     jsr start_room                                                    ; 3b97: 20 bb 12
@@ -556,17 +558,21 @@ room_2_code
 ; draw 4x2 rectangle at (14,15)
     ldx #$0e                                                          ; 3cf8: a2 0e
     jsr copy_rectangle_of_memory_to_screen                            ; 3cfa: 20 bb 1a
-; Carve the floor, walls and ceiling into the rock
+; carve the floor, walls and ceiling into the rock
     jsr draw_floor_walls_and_ceiling_around_solid_rock                ; 3cfd: 20 90 1b
+; draw rope at (10,2) length 18
     ldx #$0a                                                          ; 3d00: a2 0a
     ldy #2                                                            ; 3d02: a0 02
     lda #$12                                                          ; 3d04: a9 12
     jsr draw_rope                                                     ; 3d06: 20 b9 1d
+; draw rope at (21,2) length 11
     ldx #$15                                                          ; 3d09: a2 15
     lda #$0b                                                          ; 3d0b: a9 0b
     jsr draw_rope                                                     ; 3d0d: 20 b9 1d
+; draw rope at (25,2) length 11
     ldx #$19                                                          ; 3d10: a2 19
     jsr draw_rope                                                     ; 3d12: 20 b9 1d
+; draw rope at (29,2) length 11
     ldx #$1d                                                          ; 3d15: a2 1d
     jsr draw_rope                                                     ; 3d17: 20 b9 1d
     jsr start_room                                                    ; 3d1a: 20 bb 12
@@ -788,8 +794,9 @@ room_3_code
 ; draw 23x2 rectangle at (14,8)
     ldy #8                                                            ; 3e67: a0 08
     jsr copy_rectangle_of_memory_to_screen                            ; 3e69: 20 bb 1a
-; Carve the floor, walls and ceiling into the rock
+; carve the floor, walls and ceiling into the rock
     jsr draw_floor_walls_and_ceiling_around_solid_rock                ; 3e6c: 20 90 1b
+; draw rope at (10,2) length 18
     ldx #$0a                                                          ; 3e6f: a2 0a
     ldy #2                                                            ; 3e71: a0 02
     lda #$12                                                          ; 3e73: a9 12
@@ -1008,12 +1015,14 @@ room_0_code
     ldx #$21 ; '!'                                                    ; 3fd3: a2 21
     ldy #$0f                                                          ; 3fd5: a0 0f
     jsr copy_rectangle_of_memory_to_screen                            ; 3fd7: 20 bb 1a
-; Carve the floor, walls and ceiling into the rock
+; carve the floor, walls and ceiling into the rock
     jsr draw_floor_walls_and_ceiling_around_solid_rock                ; 3fda: 20 90 1b
+; draw rope at (10,2) length 18
     ldx #$0a                                                          ; 3fdd: a2 0a
     ldy #2                                                            ; 3fdf: a0 02
     lda #$12                                                          ; 3fe1: a9 12
     jsr draw_rope                                                     ; 3fe3: 20 b9 1d
+; draw rope at (29,10) length 10
     ldx #$1d                                                          ; 3fe6: a2 1d
     ldy #$0a                                                          ; 3fe8: a0 0a
     lda #$0a                                                          ; 3fea: a9 0a

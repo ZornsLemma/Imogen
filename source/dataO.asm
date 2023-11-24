@@ -353,8 +353,9 @@ room_0_code
     lda #$13                                                          ; 3ba0: a9 13
     sta width_in_cells                                                ; 3ba2: 85 3c
     jsr copy_rectangle_of_memory_to_screen                            ; 3ba4: 20 bb 1a
-; Carve the floor, walls and ceiling into the rock
+; carve the floor, walls and ceiling into the rock
     jsr draw_floor_walls_and_ceiling_around_solid_rock                ; 3ba7: 20 90 1b
+; draw sprite $cd at (3,20) of size (3x2)
     lda #3                                                            ; 3baa: a9 03
     sta width_in_cells                                                ; 3bac: 85 3c
     lda #2                                                            ; 3bae: a9 02
@@ -565,8 +566,9 @@ room_1_code
     lda #8                                                            ; 3cf2: a9 08
     sta height_in_cells                                               ; 3cf4: 85 3d
     jsr copy_rectangle_of_memory_to_screen                            ; 3cf6: 20 bb 1a
-; Carve the floor, walls and ceiling into the rock
+; carve the floor, walls and ceiling into the rock
     jsr draw_floor_walls_and_ceiling_around_solid_rock                ; 3cf9: 20 90 1b
+; draw sprite $cd at (3,20) of size (3x2)
     lda #3                                                            ; 3cfc: a9 03
     sta width_in_cells                                                ; 3cfe: 85 3c
     lda #2                                                            ; 3d00: a9 02
@@ -575,10 +577,12 @@ room_1_code
     ldy #$14                                                          ; 3d06: a0 14
     lda #$cd                                                          ; 3d08: a9 cd
     jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map           ; 3d0a: 20 57 1f
+; draw rope at (19,2) length 10
     ldx #$13                                                          ; 3d0d: a2 13
     ldy #2                                                            ; 3d0f: a0 02
     lda #$0a                                                          ; 3d11: a9 0a
     jsr draw_rope                                                     ; 3d13: 20 b9 1d
+; draw rope at (33,2) length 18
     ldx #$21 ; '!'                                                    ; 3d16: a2 21
     lda #$12                                                          ; 3d18: a9 12
     jsr draw_rope                                                     ; 3d1a: 20 b9 1d
@@ -1082,12 +1086,14 @@ room_2_code
     lda #$18                                                          ; 40db: a9 18
     sta width_in_cells                                                ; 40dd: 85 3c
     jsr copy_rectangle_of_memory_to_screen                            ; 40df: 20 bb 1a
-; Carve the floor, walls and ceiling into the rock
+; carve the floor, walls and ceiling into the rock
     jsr draw_floor_walls_and_ceiling_around_solid_rock                ; 40e2: 20 90 1b
+; draw rope at (6,2) length 18
     ldx #6                                                            ; 40e5: a2 06
     ldy #2                                                            ; 40e7: a0 02
     lda #$12                                                          ; 40e9: a9 12
     jsr draw_rope                                                     ; 40eb: 20 b9 1d
+; draw rope at (20,2) length 10
     ldx #$14                                                          ; 40ee: a2 14
     lda #$0a                                                          ; 40f0: a9 0a
     jsr draw_rope                                                     ; 40f2: 20 b9 1d
@@ -1404,8 +1410,9 @@ room_3_code
     lda #$0a                                                          ; 432a: a9 0a
     sta width_in_cells                                                ; 432c: 85 3c
     jsr copy_rectangle_of_memory_to_screen                            ; 432e: 20 bb 1a
-; Carve the floor, walls and ceiling into the rock
+; carve the floor, walls and ceiling into the rock
     jsr draw_floor_walls_and_ceiling_around_solid_rock                ; 4331: 20 90 1b
+; draw rope at (20,8) length 12
     ldx #$14                                                          ; 4334: a2 14
     ldy #8                                                            ; 4336: a0 08
     lda #$0c                                                          ; 4338: a9 0c

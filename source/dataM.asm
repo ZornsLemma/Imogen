@@ -300,9 +300,9 @@ room_0_data
 ; ########################################
 ; Draw rectangles of ground fill rock with a 2x2 pattern. Also writes to the collision
 ; map.
-; draw 3x20 rectangle at (0,2)
 room_0_code
     jsr sub_c3b24                                                     ; 3b4c: 20 24 3b
+; draw 3x20 rectangle at (0,2)
     ldx #0                                                            ; 3b4f: a2 00
     ldy #2                                                            ; 3b51: a0 02
     lda #3                                                            ; 3b53: a9 03
@@ -345,12 +345,14 @@ room_0_code
     lda #$0a                                                          ; 3b96: a9 0a
     sta width_in_cells                                                ; 3b98: 85 3c
     jsr copy_rectangle_of_memory_to_screen                            ; 3b9a: 20 bb 1a
-; Carve the floor, walls and ceiling into the rock
+; carve the floor, walls and ceiling into the rock
     jsr draw_floor_walls_and_ceiling_around_solid_rock                ; 3b9d: 20 90 1b
+; draw rope at (10,2) length 17
     ldx #$0a                                                          ; 3ba0: a2 0a
     ldy #2                                                            ; 3ba2: a0 02
     lda #$11                                                          ; 3ba4: a9 11
     jsr draw_rope                                                     ; 3ba6: 20 b9 1d
+; draw rope at (15,2) length 12
     lda #3                                                            ; 3ba9: a9 03
     sta width_in_cells                                                ; 3bab: 85 3c
     lda #2                                                            ; 3bad: a9 02
@@ -359,21 +361,26 @@ room_0_code
     ldy #2                                                            ; 3bb3: a0 02
     lda #$0c                                                          ; 3bb5: a9 0c
     jsr draw_rope                                                     ; 3bb7: 20 b9 1d
+; draw sprite $ce at (14,13) of size (3x2)
     dex                                                               ; 3bba: ca
     ldy #$0d                                                          ; 3bbb: a0 0d
     lda #$ce                                                          ; 3bbd: a9 ce
     jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map           ; 3bbf: 20 57 1f
+; draw sprite $e2 at (15,13)
     inx                                                               ; 3bc2: e8
     lda #$e2                                                          ; 3bc3: a9 e2
     jsr draw_sprite_a_at_cell_xy                                      ; 3bc5: 20 4c 1f
+; draw rope at (20,2) length 6
     ldx #$14                                                          ; 3bc8: a2 14
     ldy #2                                                            ; 3bca: a0 02
     lda #6                                                            ; 3bcc: a9 06
     jsr draw_rope                                                     ; 3bce: 20 b9 1d
+; draw sprite $ce at (19,7) of size (3x2)
     dex                                                               ; 3bd1: ca
     ldy #7                                                            ; 3bd2: a0 07
     lda #$ce                                                          ; 3bd4: a9 ce
     jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map           ; 3bd6: 20 57 1f
+; draw sprite $e2 at (20,7)
     inx                                                               ; 3bd9: e8
     lda #$e2                                                          ; 3bda: a9 e2
     jsr draw_sprite_a_at_cell_xy                                      ; 3bdc: 20 4c 1f
@@ -433,9 +440,9 @@ room_1_data
 ; ########################################
 ; Draw rectangles of ground fill rock with a 2x2 pattern. Also writes to the collision
 ; map.
-; draw 3x7 rectangle at (0,2)
 room_1_code
     jsr sub_c3b24                                                     ; 3c09: 20 24 3b
+; draw 3x7 rectangle at (0,2)
     ldx #0                                                            ; 3c0c: a2 00
     ldy #2                                                            ; 3c0e: a0 02
     lda #3                                                            ; 3c10: a9 03
@@ -474,7 +481,7 @@ room_1_code
     lda #1                                                            ; 3c4c: a9 01
     sta height_in_cells                                               ; 3c4e: 85 3d
     jsr copy_rectangle_of_memory_to_screen                            ; 3c50: 20 bb 1a
-; Carve the floor, walls and ceiling into the rock
+; carve the floor, walls and ceiling into the rock
     jsr draw_floor_walls_and_ceiling_around_solid_rock                ; 3c53: 20 90 1b
     jsr start_room                                                    ; 3c56: 20 bb 12
 room_1_game_update_loop
@@ -1138,9 +1145,9 @@ room_2_data
 ; ########################################
 ; Draw rectangles of ground fill rock with a 2x2 pattern. Also writes to the collision
 ; map.
-; draw 3x7 rectangle at (0,2)
 room_2_code
     jsr sub_c3b24                                                     ; 4130: 20 24 3b
+; draw 3x7 rectangle at (0,2)
     ldx #0                                                            ; 4133: a2 00
     ldy #2                                                            ; 4135: a0 02
     lda #3                                                            ; 4137: a9 03
@@ -1180,14 +1187,17 @@ room_2_code
     lda #1                                                            ; 4175: a9 01
     sta height_in_cells                                               ; 4177: 85 3d
     jsr copy_rectangle_of_memory_to_screen                            ; 4179: 20 bb 1a
-; Carve the floor, walls and ceiling into the rock
+; carve the floor, walls and ceiling into the rock
     jsr draw_floor_walls_and_ceiling_around_solid_rock                ; 417c: 20 90 1b
+; draw rope at (8,2) length 18
     ldx #8                                                            ; 417f: a2 08
     ldy #2                                                            ; 4181: a0 02
     lda #$12                                                          ; 4183: a9 12
     jsr draw_rope                                                     ; 4185: 20 b9 1d
+; draw rope at (31,2) length 18
     ldx #$1f                                                          ; 4188: a2 1f
     jsr draw_rope                                                     ; 418a: 20 b9 1d
+; draw rope at (20,2) length 4
     lda #3                                                            ; 418d: a9 03
     sta width_in_cells                                                ; 418f: 85 3c
     lda #2                                                            ; 4191: a9 02
@@ -1196,6 +1206,7 @@ room_2_code
     ldy #2                                                            ; 4197: a0 02
     lda #4                                                            ; 4199: a9 04
     jsr draw_rope                                                     ; 419b: 20 b9 1d
+; draw sprite $db at (19,5)
     dex                                                               ; 419e: ca
     ldy #5                                                            ; 419f: a0 05
     lda #$db                                                          ; 41a1: a9 db
@@ -1601,9 +1612,9 @@ room_3_data
 ; ########################################
 ; Draw rectangles of ground fill rock with a 2x2 pattern. Also writes to the collision
 ; map.
-; draw 3x7 rectangle at (0,2)
 room_3_code
     jsr sub_c3b24                                                     ; 44ae: 20 24 3b
+; draw 3x7 rectangle at (0,2)
     ldx #0                                                            ; 44b1: a2 00
     ldy #2                                                            ; 44b3: a0 02
     lda #3                                                            ; 44b5: a9 03
@@ -1639,8 +1650,9 @@ room_3_code
 ; draw 5x2 rectangle at (24,12)
     ldx #$18                                                          ; 44ee: a2 18
     jsr copy_rectangle_of_memory_to_screen                            ; 44f0: 20 bb 1a
-; Carve the floor, walls and ceiling into the rock
+; carve the floor, walls and ceiling into the rock
     jsr draw_floor_walls_and_ceiling_around_solid_rock                ; 44f3: 20 90 1b
+; draw sprite $ce at (13,10) of size (3x2)
     lda #3                                                            ; 44f6: a9 03
     sta width_in_cells                                                ; 44f8: 85 3c
     lda #2                                                            ; 44fa: a9 02
@@ -1649,17 +1661,22 @@ room_3_code
     ldy #$0a                                                          ; 4500: a0 0a
     lda #$ce                                                          ; 4502: a9 ce
     jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map           ; 4504: 20 57 1f
+; draw sprite $ce at (25,10) of size (3x2)
     ldx #$19                                                          ; 4507: a2 19
     jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map           ; 4509: 20 57 1f
+; draw sprite $ce at (34,20) of size (3x2)
     ldx #$22 ; '"'                                                    ; 450c: a2 22
     ldy #$14                                                          ; 450e: a0 14
     jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map           ; 4510: 20 57 1f
+; draw rope at (8,2) length 16
     ldx #8                                                            ; 4513: a2 08
     ldy #2                                                            ; 4515: a0 02
     lda #$10                                                          ; 4517: a9 10
     jsr draw_rope                                                     ; 4519: 20 b9 1d
+; draw rope at (32,2) length 16
     ldx #$20 ; ' '                                                    ; 451c: a2 20
     jsr draw_rope                                                     ; 451e: 20 b9 1d
+; draw rope at (20,2) length 9
     ldx #$14                                                          ; 4521: a2 14
     lda #9                                                            ; 4523: a9 09
     jsr draw_rope                                                     ; 4525: 20 b9 1d

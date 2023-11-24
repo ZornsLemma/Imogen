@@ -51,7 +51,7 @@ set_sprite_dict(sprite_dict)
 load(0x3ad5, "orig/dataA.dat", "6502", "df027a3ac06abfed1878eaec3d2bbe5f")
 
 common_to_all()
-define_level(4)
+define_level(4, sprite_dict)
 
 # NOTE:
 #
@@ -123,9 +123,6 @@ comment(0x3b09, "add the saxophone menu item to the toolbar (due to having colle
 comment(0x3b02, "redundant instruction", inline=True)
 comment(0x3b04, "check the saxophone collected flag. The user can choose during the course of a game to enter the password to continue playing this level having previously got the saxophone. Or indeed may have just loaded a previously saved game.")
 label(0xa00, "saxophone_collected_flag")
-
-comment(0x3b87, "Draw tables")
-comment(0x3bae, "Draw ropes")
 
 label(0xa6f, "mouse_ball_animation_position") # This runs from 0-$1d inclusive starting at 0 far left, reaching far right at $10 and returning to far left at $1d.
 blank(0x3be4)

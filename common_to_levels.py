@@ -55,7 +55,12 @@ def write_room(x, y, w, h, v):
                 break
             room[j] = room[j][0:i] + v + room[j][i+1:]
 
-def map_room(start_tracking, end_tracking, output_descriptions):
+def get_sprite_name(spriteid, sprite_dict):
+    if spriteid in sprite_dict:
+        return sprite_dict[spriteid]
+    return "sprite ${0}".format(hex(spriteid)[2:])
+
+def map_room(start_tracking, end_tracking, output_descriptions, sprite_dict):
     global room
     global state
     global tile
@@ -155,35 +160,50 @@ def map_room(start_tracking, end_tracking, output_descriptions):
             start_tracking = a
         elif jmp_or_jsr and (operand16 == 0x1b90):
             # skip 'jsr draw_floor_walls_and_ceiling_around_solid_rock'
-            comment(a, "Carve the floor, walls and ceiling into the rock")
+            if output_descriptions:
+                comment(a, "carve the floor, walls and ceiling into the rock")
             a += 3
+            start_tracking = a
         elif jmp_or_jsr and (operand16 == 0x1f57):
             # 'jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map'
             x = state["X"]
             y = state["Y"]
+            if output_descriptions:
+                comment(start_tracking, "draw {4} at ({0},{1}) of size ({2}x{3})".format(x, y, state[0x3c], state[0x3d], get_sprite_name(state["A"], sprite_dict)))
             write_room(x, y, state[0x3c], state[0x3d], 'O')
             a += 3
+            start_tracking = a
         elif jmp_or_jsr and (operand16 == 0x1db9):
             x = state["X"]
             y = state["Y"]
+            length = state["A"]
+            if output_descriptions:
+                comment(start_tracking, "draw rope at ({0},{1}) length {2}".format(x, y, length))
             # draw_rope
-            write_room(x, y, 1, state["A"], '|')
+            write_room(x, y, 1, length, '|')
             a += 3
+            start_tracking = a
         elif jmp_or_jsr and (operand16 == 0x1f4c):
             # jsr draw_sprite_a_at_cell_xy
             x = state["X"]
             y = state["Y"]
-            room[y] = room[y][0:x] + 'S' + room[y][x+1:]
+            if output_descriptions:
+                comment(start_tracking, "draw {2} at ({0},{1})".format(x, y, get_sprite_name(state["A"], sprite_dict)))
+            write_room(x, y, 1, 1, 'S')
             a += 3
+            start_tracking = a
         elif jmp_or_jsr and (operand16 == 0x1ebb):
             # skip jsr write_a_single_value_to_cell_in_collision_map
             a += 3
+            start_tracking = a
         elif jmp_or_jsr and (operand16 == 0x1e44):
             # skip write_value_to_a_rectangle_of_cells_in_collision_map
             a += 3
+            start_tracking = a
         elif jmp_or_jsr and (operand16 == 0x138d):
             # skip jsr sprite_op
             a += 3
+            start_tracking = a
         elif jmp_or_jsr and (operand16 == 0x12bb):
             # jsr start_room
             break
@@ -191,8 +211,9 @@ def map_room(start_tracking, end_tracking, output_descriptions):
             # skip jsr in datai
             break
         elif jmp_or_jsr:
-            map_room(operand16, 0xffff, False)
+            map_room(operand16, 0xffff, False, sprite_dict)
             a += 3
+            start_tracking = a
         else:
             break
 
@@ -200,7 +221,7 @@ def map_room(start_tracking, end_tracking, output_descriptions):
             break
 
 
-def level_room_data_table_entry(addr, s):
+def level_room_data_table_entry(addr, s, sprite_dict):
     global room
     global state
     global tile
@@ -241,7 +262,9 @@ def level_room_data_table_entry(addr, s):
         tile = '#'
         state = { "A": None, "X": None, "Y": None }
         room_comments = {}
-        map_room(start_tracking, end_tracking, True)
+        map_room(start_tracking, end_tracking, True, sprite_dict)
+
+        # Show player start position
         write_room(player_x, player_y-1, 1, 1, "P")
 
         comment(target2, "\n".join(room))
@@ -251,7 +274,7 @@ def level_room_data_table_entry(addr, s):
         comment(addr, room_comments[addr])
 
 
-def define_level(num_rooms):
+def define_level(num_rooms, sprite_dict):
     start = 0x3ad5
     stars(start, "Level header")
     word(start)
@@ -296,7 +319,7 @@ While updating the logic for a room, 'currently_updating_logic_for_room_index' i
     comment(password_addr, "'" + password + "' EOR-encrypted with $cb")
 
     for room in range(num_rooms):
-        level_room_data_table_entry(start + 10 + 2*room, str(room))
+        level_room_data_table_entry(start + 10 + 2*room, str(room), sprite_dict)
 
     # Other common functions
     entry(0x395e, "define_envelope") # Duplicate of line in g.py, can't trivially put in common as it breaks imogen.py

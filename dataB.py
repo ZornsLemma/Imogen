@@ -39,7 +39,7 @@ set_sprite_dict(sprite_dict)
 load(0x3ad5, "orig/dataB.dat", "6502", "879a85aaab89fe8ab2005698a0353a0b")
 
 common_to_all()
-define_level(4)
+define_level(4, sprite_dict)
 
 # NOTE:
 #
@@ -63,8 +63,6 @@ label(0x0a09, "got_hourglass_flag")
 label(0x2ef4, "five_byte_table_paired_with_collectable_sprite_ids+2")
 label(0x3b0c, "check_got_cuckoo")
 label(0x3b1b, "return1")
-comment(0x3bc4, "draw tables")
-comment(0x3bdf, "draw rope")
 expr(0x3bf1, "exit_room_left")
 comment(0x3bf4, "exit room left, to room 1")
 label(0x3bfb, "not_exited_room_left")

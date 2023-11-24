@@ -306,8 +306,9 @@ room_0_code
     lda #8                                                            ; 3b6c: a9 08
     sta width_in_cells                                                ; 3b6e: 85 3c
     jsr copy_rectangle_of_memory_to_screen                            ; 3b70: 20 bb 1a
-; Carve the floor, walls and ceiling into the rock
+; carve the floor, walls and ceiling into the rock
     jsr draw_floor_walls_and_ceiling_around_solid_rock                ; 3b73: 20 90 1b
+; draw sprite $ce at (3,20) of size (3x2)
     ldx #2                                                            ; 3b76: a2 02
     stx height_in_cells                                               ; 3b78: 86 3d
     inx                                                               ; 3b7a: e8
@@ -315,13 +316,16 @@ room_0_code
     ldy #$14                                                          ; 3b7d: a0 14
     lda #$ce                                                          ; 3b7f: a9 ce
     jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map           ; 3b81: 20 57 1f
+; draw sprite $cf at (34,20) of size (3x2)
     ldx #$22 ; '"'                                                    ; 3b84: a2 22
     lda #$cf                                                          ; 3b86: a9 cf
     jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map           ; 3b88: 20 57 1f
+; draw rope at (9,2) length 16
     ldx #9                                                            ; 3b8b: a2 09
     ldy #2                                                            ; 3b8d: a0 02
     lda #$10                                                          ; 3b8f: a9 10
     jsr draw_rope                                                     ; 3b91: 20 b9 1d
+; draw rope at (30,2) length 16
     ldx #$1e                                                          ; 3b94: a2 1e
     jsr draw_rope                                                     ; 3b96: 20 b9 1d
     jsr start_room                                                    ; 3b99: 20 bb 12
@@ -656,12 +660,14 @@ room_1_code
     lda #7                                                            ; 3dca: a9 07
     sta height_in_cells                                               ; 3dcc: 85 3d
     jsr copy_rectangle_of_memory_to_screen                            ; 3dce: 20 bb 1a
-; Carve the floor, walls and ceiling into the rock
+; carve the floor, walls and ceiling into the rock
     jsr draw_floor_walls_and_ceiling_around_solid_rock                ; 3dd1: 20 90 1b
+; draw rope at (9,2) length 16
     ldx #9                                                            ; 3dd4: a2 09
     ldy #2                                                            ; 3dd6: a0 02
     lda #$10                                                          ; 3dd8: a9 10
     jsr draw_rope                                                     ; 3dda: 20 b9 1d
+; draw rope at (30,0) length 11
     ldx #$1e                                                          ; 3ddd: a2 1e
     ldy #0                                                            ; 3ddf: a0 00
     lda #$0b                                                          ; 3de1: a9 0b
@@ -670,6 +676,7 @@ room_1_code
     ldy #6                                                            ; 3de8: a0 06
     lda #3                                                            ; 3dea: a9 03
     jsr write_a_single_value_to_cell_in_collision_map                 ; 3dec: 20 bb 1e
+; draw sprite $d5 at (9,7)
     iny                                                               ; 3def: c8
     lda #$d5                                                          ; 3df0: a9 d5
     jsr draw_sprite_a_at_cell_xy                                      ; 3df2: 20 4c 1f
@@ -804,12 +811,14 @@ room_2_code
 ; draw 16x1 rectangle at (12,21)
     ldy #$15                                                          ; 3e9a: a0 15
     jsr copy_rectangle_of_memory_to_screen                            ; 3e9c: 20 bb 1a
-; Carve the floor, walls and ceiling into the rock
+; carve the floor, walls and ceiling into the rock
     jsr draw_floor_walls_and_ceiling_around_solid_rock                ; 3e9f: 20 90 1b
+; draw rope at (9,2) length 9
     ldx #9                                                            ; 3ea2: a2 09
     ldy #2                                                            ; 3ea4: a0 02
     lda #9                                                            ; 3ea6: a9 09
     jsr draw_rope                                                     ; 3ea8: 20 b9 1d
+; draw rope at (30,2) length 18
     ldx #$1e                                                          ; 3eab: a2 1e
     lda #$12                                                          ; 3ead: a9 12
     jsr draw_rope                                                     ; 3eaf: 20 b9 1d
@@ -1077,8 +1086,9 @@ room_3_code
     lda #$10                                                          ; 4079: a9 10
     sta width_in_cells                                                ; 407b: 85 3c
     jsr copy_rectangle_of_memory_to_screen                            ; 407d: 20 bb 1a
-; Carve the floor, walls and ceiling into the rock
+; carve the floor, walls and ceiling into the rock
     jsr draw_floor_walls_and_ceiling_around_solid_rock                ; 4080: 20 90 1b
+; draw sprite $d0 at (3,11) of size (3x2)
     ldx #2                                                            ; 4083: a2 02
     stx height_in_cells                                               ; 4085: 86 3d
     inx                                                               ; 4087: e8
@@ -1086,13 +1096,16 @@ room_3_code
     ldy #$0b                                                          ; 408a: a0 0b
     lda #$d0                                                          ; 408c: a9 d0
     jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map           ; 408e: 20 57 1f
+; draw sprite $d0 at (34,20) of size (3x2)
     ldx #$22 ; '"'                                                    ; 4091: a2 22
     ldy #$14                                                          ; 4093: a0 14
     jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map           ; 4095: 20 57 1f
+; draw rope at (9,2) length 18
     ldx #9                                                            ; 4098: a2 09
     ldy #2                                                            ; 409a: a0 02
     lda #$12                                                          ; 409c: a9 12
     jsr draw_rope                                                     ; 409e: 20 b9 1d
+; draw rope at (30,2) length 255
     ldx #$1e                                                          ; 40a1: a2 1e
     lda #$ff                                                          ; 40a3: a9 ff
     jsr draw_rope                                                     ; 40a5: 20 b9 1d

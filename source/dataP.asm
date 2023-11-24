@@ -337,8 +337,9 @@ room_1_code
     ldx #0                                                            ; 3b8a: a2 00
     jsr copy_rectangle_of_memory_to_screen                            ; 3b8c: 20 bb 1a
     jsr sub_c3b2a                                                     ; 3b8f: 20 2a 3b
-; Carve the floor, walls and ceiling into the rock
+; carve the floor, walls and ceiling into the rock
     jsr draw_floor_walls_and_ceiling_around_solid_rock                ; 3b92: 20 90 1b
+; draw sprite $3b at (20,10)
     ldx #$14                                                          ; 3b95: a2 14
     ldy #$0a                                                          ; 3b97: a0 0a
     lda #$3b ; ';'                                                    ; 3b99: a9 3b
@@ -566,7 +567,7 @@ room_2_code
     ldx #$22 ; '"'                                                    ; 3d09: a2 22
     jsr copy_rectangle_of_memory_to_screen                            ; 3d0b: 20 bb 1a
     jsr sub_c3b2a                                                     ; 3d0e: 20 2a 3b
-; Carve the floor, walls and ceiling into the rock
+; carve the floor, walls and ceiling into the rock
     jsr draw_floor_walls_and_ceiling_around_solid_rock                ; 3d11: 20 90 1b
     jsr start_room                                                    ; 3d14: 20 bb 12
 room_2_game_update_loop
@@ -1006,8 +1007,9 @@ room_3_code
     dec height_in_cells                                               ; 4007: c6 3d
     jsr copy_rectangle_of_memory_to_screen                            ; 4009: 20 bb 1a
     jsr sub_c3b2a                                                     ; 400c: 20 2a 3b
-; Carve the floor, walls and ceiling into the rock
+; carve the floor, walls and ceiling into the rock
     jsr draw_floor_walls_and_ceiling_around_solid_rock                ; 400f: 20 90 1b
+; draw sprite $dc at (34,20) of size (3x2)
     lda #3                                                            ; 4012: a9 03
     sta width_in_cells                                                ; 4014: 85 3c
     lda #2                                                            ; 4016: a9 02
@@ -1016,15 +1018,18 @@ room_3_code
     ldy #$14                                                          ; 401c: a0 14
     lda #$dc                                                          ; 401e: a9 dc
     jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map           ; 4020: 20 57 1f
+; draw sprite $d2 at (31,20) of size (3x2)
     dex                                                               ; 4023: ca
     dex                                                               ; 4024: ca
     dex                                                               ; 4025: ca
     lda #$d2                                                          ; 4026: a9 d2
     jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map           ; 4028: 20 57 1f
+; draw rope at (10,2) length 15
     ldx #$0a                                                          ; 402b: a2 0a
     ldy #2                                                            ; 402d: a0 02
     lda #$0f                                                          ; 402f: a9 0f
     jsr draw_rope                                                     ; 4031: 20 b9 1d
+; draw rope at (15,2) length 15
     ldx #$0f                                                          ; 4034: a2 0f
     jsr draw_rope                                                     ; 4036: 20 b9 1d
     jsr start_room                                                    ; 4039: 20 bb 12
@@ -1127,12 +1132,14 @@ room_0_code
     sta height_in_cells                                               ; 40ad: 85 3d
     jsr copy_rectangle_of_memory_to_screen                            ; 40af: 20 bb 1a
     jsr sub_c3b2a                                                     ; 40b2: 20 2a 3b
-; Carve the floor, walls and ceiling into the rock
+; carve the floor, walls and ceiling into the rock
     jsr draw_floor_walls_and_ceiling_around_solid_rock                ; 40b5: 20 90 1b
+; draw rope at (7,2) length 18
     ldx #7                                                            ; 40b8: a2 07
     ldy #2                                                            ; 40ba: a0 02
     lda #$12                                                          ; 40bc: a9 12
     jsr draw_rope                                                     ; 40be: 20 b9 1d
+; draw rope at (32,2) length 17
     ldx #$20 ; ' '                                                    ; 40c1: a2 20
     lda #$11                                                          ; 40c3: a9 11
     jsr draw_rope                                                     ; 40c5: 20 b9 1d

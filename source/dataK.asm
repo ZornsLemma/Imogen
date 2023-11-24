@@ -311,9 +311,9 @@ room_2_data
 ; ########################################
 ; Draw rectangles of ground fill rock with a 2x2 pattern. Also writes to the collision
 ; map.
-; draw 3x15 rectangle at (0,2)
 room_2_code
     jsr sub_c3b3a                                                     ; 3b62: 20 3a 3b
+; draw 3x15 rectangle at (0,2)
     ldy #2                                                            ; 3b65: a0 02
     lda #3                                                            ; 3b67: a9 03
     sta width_in_cells                                                ; 3b69: 85 3c
@@ -353,7 +353,7 @@ room_2_code
     sta width_in_cells                                                ; 3ba7: 85 3c
     sta height_in_cells                                               ; 3ba9: 85 3d
     jsr copy_rectangle_of_memory_to_screen                            ; 3bab: 20 bb 1a
-; Carve the floor, walls and ceiling into the rock
+; carve the floor, walls and ceiling into the rock
     jsr draw_floor_walls_and_ceiling_around_solid_rock                ; 3bae: 20 90 1b
     jsr start_room                                                    ; 3bb1: 20 bb 12
 room_2_game_update_loop
@@ -820,9 +820,9 @@ room_3_data
 ; ########################################
 ; Draw rectangles of ground fill rock with a 2x2 pattern. Also writes to the collision
 ; map.
-; draw 255x20 rectangle at (37,2)
 room_3_code
     jsr sub_c3b3a                                                     ; 3ece: 20 3a 3b
+; draw 255x20 rectangle at (37,2)
     ldx #$25 ; '%'                                                    ; 3ed1: a2 25
     ldy #2                                                            ; 3ed3: a0 02
     lda #$14                                                          ; 3ed5: a9 14
@@ -860,8 +860,9 @@ room_3_code
     sta width_in_cells                                                ; 3f10: 85 3c
     sta height_in_cells                                               ; 3f12: 85 3d
     jsr copy_rectangle_of_memory_to_screen                            ; 3f14: 20 bb 1a
-; Carve the floor, walls and ceiling into the rock
+; carve the floor, walls and ceiling into the rock
     jsr draw_floor_walls_and_ceiling_around_solid_rock                ; 3f17: 20 90 1b
+; draw sprite $e5 at (37,7)
     ldx #$25 ; '%'                                                    ; 3f1a: a2 25
     ldy #7                                                            ; 3f1c: a0 07
     lda #4                                                            ; 3f1e: a9 04
@@ -870,12 +871,14 @@ room_3_code
     sta sprite_reflect_flag                                           ; 3f24: 85 1d
     lda #$e5                                                          ; 3f26: a9 e5
     jsr draw_sprite_a_at_cell_xy                                      ; 3f28: 20 4c 1f
+; draw sprite $e6 at (37,7)
     lda #4                                                            ; 3f2b: a9 04
     sta temp_sprite_y_offset                                          ; 3f2d: 85 3b
     lda #$ff                                                          ; 3f2f: a9 ff
     sta sprite_reflect_flag                                           ; 3f31: 85 1d
     lda #$e6                                                          ; 3f33: a9 e6
     jsr draw_sprite_a_at_cell_xy                                      ; 3f35: 20 4c 1f
+; draw sprite $cc at (34,7)
     ldx #$22 ; '"'                                                    ; 3f38: a2 22
     lda #4                                                            ; 3f3a: a9 04
     sta temp_sprite_x_offset                                          ; 3f3c: 85 3a
@@ -957,9 +960,9 @@ room_0_data
 ; ########################################
 ; Draw rectangles of ground fill rock with a 2x2 pattern. Also writes to the collision
 ; map.
-; draw 3x20 rectangle at (0,2)
 room_0_code
     jsr sub_c3b3a                                                     ; 3f98: 20 3a 3b
+; draw 3x20 rectangle at (0,2)
     ldy #2                                                            ; 3f9b: a0 02
     lda #3                                                            ; 3f9d: a9 03
     sta width_in_cells                                                ; 3f9f: 85 3c
@@ -985,8 +988,9 @@ room_0_code
     sta width_in_cells                                                ; 3fc4: 85 3c
     jsr copy_rectangle_of_memory_to_screen                            ; 3fc6: 20 bb 1a
     jsr sub_c3b4e                                                     ; 3fc9: 20 4e 3b
-; Carve the floor, walls and ceiling into the rock
+; carve the floor, walls and ceiling into the rock
     jsr draw_floor_walls_and_ceiling_around_solid_rock                ; 3fcc: 20 90 1b
+; draw sprite $e5 at (3,7) of size (4x1)
     lda #4                                                            ; 3fcf: a9 04
     sta width_in_cells                                                ; 3fd1: 85 3c
     lda #1                                                            ; 3fd3: a9 01
@@ -995,12 +999,15 @@ room_0_code
     ldx #3                                                            ; 3fd9: a2 03
     ldy #7                                                            ; 3fdb: a0 07
     jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map           ; 3fdd: 20 57 1f
+; draw sprite $e6 at (3,7)
     lda #$e6                                                          ; 3fe0: a9 e6
     jsr draw_sprite_a_at_cell_xy                                      ; 3fe2: 20 4c 1f
+; draw rope at (10,2) length 11
     ldx #$0a                                                          ; 3fe5: a2 0a
     ldy #2                                                            ; 3fe7: a0 02
     lda #$0b                                                          ; 3fe9: a9 0b
     jsr draw_rope                                                     ; 3feb: 20 b9 1d
+; draw rope at (30,2) length 18
     ldx #$1e                                                          ; 3fee: a2 1e
     lda #$12                                                          ; 3ff0: a9 12
     jsr draw_rope                                                     ; 3ff2: 20 b9 1d
@@ -1413,9 +1420,9 @@ room_1_data
 ; ########################################
 ; Draw rectangles of ground fill rock with a 2x2 pattern. Also writes to the collision
 ; map.
-; draw 3x15 rectangle at (0,2)
 room_1_code
     jsr sub_c3b3a                                                     ; 432a: 20 3a 3b
+; draw 3x15 rectangle at (0,2)
     ldy #2                                                            ; 432d: a0 02
     lda #3                                                            ; 432f: a9 03
     sta width_in_cells                                                ; 4331: 85 3c
@@ -1448,8 +1455,9 @@ room_1_code
     ldx #$22 ; '"'                                                    ; 4362: a2 22
     jsr copy_rectangle_of_memory_to_screen                            ; 4364: 20 bb 1a
     jsr sub_c3b4e                                                     ; 4367: 20 4e 3b
-; Carve the floor, walls and ceiling into the rock
+; carve the floor, walls and ceiling into the rock
     jsr draw_floor_walls_and_ceiling_around_solid_rock                ; 436a: 20 90 1b
+; draw rope at (26,2) length 9
     ldx #$1a                                                          ; 436d: a2 1a
     ldy #2                                                            ; 436f: a0 02
     lda #9                                                            ; 4371: a9 09
@@ -1457,6 +1465,7 @@ room_1_code
     lda #4                                                            ; 4376: a9 04
     sta l0015                                                         ; 4378: 85 15
     jsr sprite_op                                                     ; 437a: 20 8d 13
+; draw sprite $d8 at (26,10)
     ldy #$0a                                                          ; 437d: a0 0a
     lda #$d8                                                          ; 437f: a9 d8
     jsr draw_sprite_a_at_cell_xy                                      ; 4381: 20 4c 1f

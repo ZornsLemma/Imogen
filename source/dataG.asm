@@ -305,8 +305,9 @@ room_2_code
     sta width_in_cells                                                ; 3b64: 85 3c
     sta height_in_cells                                               ; 3b66: 85 3d
     jsr copy_rectangle_of_memory_to_screen                            ; 3b68: 20 bb 1a
-; Carve the floor, walls and ceiling into the rock
+; carve the floor, walls and ceiling into the rock
     jsr draw_floor_walls_and_ceiling_around_solid_rock                ; 3b6b: 20 90 1b
+; draw sprite $d8 at (23,20) of size (3x2)
     lda #3                                                            ; 3b6e: a9 03
     sta width_in_cells                                                ; 3b70: 85 3c
     lda #2                                                            ; 3b72: a9 02
@@ -315,8 +316,10 @@ room_2_code
     ldy #$14                                                          ; 3b78: a0 14
     lda #$d8                                                          ; 3b7a: a9 d8
     jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map           ; 3b7c: 20 57 1f
+; draw sprite $d8 at (26,20) of size (3x2)
     ldx #$1a                                                          ; 3b7f: a2 1a
     jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map           ; 3b81: 20 57 1f
+; draw rope at (6,2) length 18
     ldx #6                                                            ; 3b84: a2 06
     ldy #2                                                            ; 3b86: a0 02
     lda #$12                                                          ; 3b88: a9 12
@@ -597,15 +600,18 @@ room_3_code
     lda #$0a                                                          ; 3d57: a9 0a
     sta width_in_cells                                                ; 3d59: 85 3c
     jsr copy_rectangle_of_memory_to_screen                            ; 3d5b: 20 bb 1a
-; Carve the floor, walls and ceiling into the rock
+; carve the floor, walls and ceiling into the rock
     jsr draw_floor_walls_and_ceiling_around_solid_rock                ; 3d5e: 20 90 1b
+; draw rope at (6,2) length 11
     ldx #6                                                            ; 3d61: a2 06
     ldy #2                                                            ; 3d63: a0 02
     lda #$0b                                                          ; 3d65: a9 0b
     jsr draw_rope                                                     ; 3d67: 20 b9 1d
+; draw rope at (16,2) length 8
     ldx #$10                                                          ; 3d6a: a2 10
     lda #8                                                            ; 3d6c: a9 08
     jsr draw_rope                                                     ; 3d6e: 20 b9 1d
+; draw rope at (28,10) length 10
     ldx #$1c                                                          ; 3d71: a2 1c
     ldy #$0a                                                          ; 3d73: a0 0a
     lda #$0a                                                          ; 3d75: a9 0a
@@ -906,8 +912,9 @@ room_0_code
     ldx #$1a                                                          ; 3f90: a2 1a
     ldy #8                                                            ; 3f92: a0 08
     jsr copy_rectangle_of_memory_to_screen                            ; 3f94: 20 bb 1a
-; Carve the floor, walls and ceiling into the rock
+; carve the floor, walls and ceiling into the rock
     jsr draw_floor_walls_and_ceiling_around_solid_rock                ; 3f97: 20 90 1b
+; draw sprite $ce at (3,6) of size (3x2)
     lda #3                                                            ; 3f9a: a9 03
     sta width_in_cells                                                ; 3f9c: 85 3c
     lda #2                                                            ; 3f9e: a9 02
@@ -916,14 +923,17 @@ room_0_code
     ldy #6                                                            ; 3fa4: a0 06
     lda #$ce                                                          ; 3fa6: a9 ce
     jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map           ; 3fa8: 20 57 1f
+; draw rope at (6,10) length 10
     ldx #6                                                            ; 3fab: a2 06
     ldy #$0a                                                          ; 3fad: a0 0a
     lda #$0a                                                          ; 3faf: a9 0a
     jsr draw_rope                                                     ; 3fb1: 20 b9 1d
+; draw rope at (17,2) length 13
     ldx #$11                                                          ; 3fb4: a2 11
     ldy #2                                                            ; 3fb6: a0 02
     lda #$0d                                                          ; 3fb8: a9 0d
     jsr draw_rope                                                     ; 3fba: 20 b9 1d
+; draw rope at (33,2) length 11
     ldx #$21 ; '!'                                                    ; 3fbd: a2 21
     ldy #2                                                            ; 3fbf: a0 02
     lda #$0b                                                          ; 3fc1: a9 0b
@@ -1367,12 +1377,14 @@ room_1_code
     sta width_in_cells                                                ; 42f5: 85 3c
     sta height_in_cells                                               ; 42f7: 85 3d
     jsr copy_rectangle_of_memory_to_screen                            ; 42f9: 20 bb 1a
-; Carve the floor, walls and ceiling into the rock
+; carve the floor, walls and ceiling into the rock
     jsr draw_floor_walls_and_ceiling_around_solid_rock                ; 42fc: 20 90 1b
+; draw rope at (6,2) length 18
     ldx #6                                                            ; 42ff: a2 06
     ldy #2                                                            ; 4301: a0 02
     lda #$12                                                          ; 4303: a9 12
     jsr draw_rope                                                     ; 4305: 20 b9 1d
+; draw rope at (33,2) length 18
     ldx #$21 ; '!'                                                    ; 4308: a2 21
     jsr draw_rope                                                     ; 430a: 20 b9 1d
     ldx #$0a                                                          ; 430d: a2 0a
