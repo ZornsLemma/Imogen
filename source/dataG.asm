@@ -259,6 +259,7 @@ room_2_data
 ;                    P   OOOOOO###
 ; ########################################
 ; ########################################
+; set ground fill tile to use
 room_2_code
     lda #<ground_fill_2x2_top_left                                    ; 3b1c: a9 89
     sta source_sprite_memory_low                                      ; 3b1e: 85 40
@@ -548,6 +549,7 @@ room_3_data
 ;                     P                ###
 ; ########################################
 ; ########################################
+; set ground fill tile to use
 room_3_code
     lda #<ground_fill_2x2_top_left                                    ; 3d04: a9 89
     sta source_sprite_memory_low                                      ; 3d06: 85 40
@@ -861,6 +863,7 @@ room_0_data
 ; ###                 P
 ; ########################################
 ; ########################################
+; set ground fill tile to use
 room_0_code
     lda #<ground_fill_2x2_top_left                                    ; 3f3f: a9 89
     sta source_sprite_memory_low                                      ; 3f41: 85 40
@@ -1327,6 +1330,7 @@ room_1_data
 ;                ###        P
 ; ########################################
 ; ########################################
+; set ground fill tile to use
 room_1_code
     lda #<ground_fill_2x2_top_left                                    ; 42a6: a9 89
     sta source_sprite_memory_low                                      ; 42a8: 85 40

@@ -253,9 +253,9 @@ def level_room_data_table_entry(addr, s, sprite_dict):
     player_y = get_u8_binary(target1+1)
     target3 = get_u16_binary(target1)
     entry(target2, room_n + "_code")
-    start_tracking = target2
+    draw_rectangles = target2
     if ground_fill(target2, (s == "0")):
-        start_tracking += 8
+        draw_rectangles += 8
 
     end_tracking = None
     # look for 'jsr game_update'
@@ -269,14 +269,15 @@ def level_room_data_table_entry(addr, s, sprite_dict):
         tile = '#'
         state = { "A": None, "X": None, "Y": None }
         room_comments = {}
-        map_room(start_tracking, end_tracking, True, sprite_dict)
+        map_room(target2, end_tracking, True, sprite_dict)
 
         # Show player start position
         write_room(player_x, player_y-1, 1, 1, "P")
 
         comment(target2, "\n".join(room))
 
-    comment(start_tracking, "draw rectangles of ground fill rock with a 2x2 pattern. Also writes to the collision map.")
+    comment(draw_rectangles, "draw rectangles of ground fill rock with a 2x2 pattern. Also writes to the collision map.")
+
     for addr in room_comments:
         comment(addr, room_comments[addr])
 
