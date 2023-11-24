@@ -169,6 +169,7 @@ previous_room_index                                 = $50
 level_before_latest_level_and_room_initialisation   = $51
 player_held_object_spriteid                         = $52
 developer_mode_sideways_ram_is_set_up_flag          = $5b
+l0070                                               = $70
 room_exit_direction                                 = $70
 show_dialog_box                                     = $040a
 remove_dialog                                       = $0453
@@ -829,7 +830,12 @@ c3e40
     rts                                                               ; 3e40: 60
 
 l3e41
-    !byte $ce, $cf, $d0, $d0, $d0, $cf                                ; 3e41: ce cf d0...
+    !byte         spriteid_vertical_rod                               ; 3e41: ce
+    !byte spriteid_cuckoo_appear_partly                               ; 3e42: cf
+    !byte   spriteid_cuckoo_appear_full                               ; 3e43: d0
+    !byte   spriteid_cuckoo_appear_full                               ; 3e44: d0
+    !byte   spriteid_cuckoo_appear_full                               ; 3e45: d0
+    !byte spriteid_cuckoo_appear_partly                               ; 3e46: cf
 
 sub_c3e47
     sta currently_updating_logic_for_room_index                       ; 3e47: 8d ba 1a
@@ -1389,7 +1395,7 @@ c422d
     bne c4246                                                         ; 4244: d0 00
 c4246
     ldy l42d8                                                         ; 4246: ac d8 42
-    sty room_exit_direction                                           ; 4249: 84 70
+    sty l0070                                                         ; 4249: 84 70
     cpy l42db                                                         ; 424b: cc db 42
     bcc c4258                                                         ; 424e: 90 08
     lda #$ff                                                          ; 4250: a9 ff
@@ -1404,7 +1410,7 @@ c4258
     bne c42d7                                                         ; 4261: d0 74
     ldx l42d9                                                         ; 4263: ae d9 42
     dex                                                               ; 4266: ca
-    ldy room_exit_direction                                           ; 4267: a4 70
+    ldy l0070                                                         ; 4267: a4 70
     lda #3                                                            ; 4269: a9 03
     sta width_in_cells                                                ; 426b: 85 3c
     lda #2                                                            ; 426d: a9 02
@@ -2110,6 +2116,12 @@ pydis_end
 !if (spriteid_cuckoo) != $d3 {
     !error "Assertion failed: spriteid_cuckoo == $d3"
 }
+!if (spriteid_cuckoo_appear_full) != $d0 {
+    !error "Assertion failed: spriteid_cuckoo_appear_full == $d0"
+}
+!if (spriteid_cuckoo_appear_partly) != $cf {
+    !error "Assertion failed: spriteid_cuckoo_appear_partly == $cf"
+}
 !if (spriteid_cuckoo_menu_item) != $d4 {
     !error "Assertion failed: spriteid_cuckoo_menu_item == $d4"
 }
@@ -2154,6 +2166,9 @@ pydis_end
 }
 !if (spriteid_table) != $d2 {
     !error "Assertion failed: spriteid_table == $d2"
+}
+!if (spriteid_vertical_rod) != $ce {
+    !error "Assertion failed: spriteid_vertical_rod == $ce"
 }
 !if (spriteid_wizard7) != $36 {
     !error "Assertion failed: spriteid_wizard7 == $36"

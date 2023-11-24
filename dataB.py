@@ -58,16 +58,14 @@ define_level(4)
 #   This is weird, but makes the addresses unique.
 #
 substitute_labels = {
-#    (0x3bd4,0x3df9): {
-#        "l0070": "room_exit_direction",
-#    },
+    (0x3ad5,0x406a): {
+        "l0070": "room_exit_direction",
+    },
 }
 
 # (Class SubstituteLabels is defined in common.py to implement the substitute labels)
 s = SubstituteLabels(substitute_labels)
 set_label_maker_hook(s.substitute_label_maker)
-
-label(0x0070, "room_exit_direction")
 
 
 label(0x09aa, "object_spriteid + objectid_pendulum")
@@ -102,6 +100,8 @@ expr(0x3c4b, "collision_map_rope")
 blank(0x3c51)
 label(0x3c51, "after_room_0_code")
 label(0x3c80, "return2")
+for i in range(6):
+    expr(0x3e41 + i, sprite_dict)
 ldx_ldy_jsr_define_envelope(0x3e97, "envelope2")
 ldx_ldy_jsr_play_sound_yx(0x3ee1, "sound1")
 ldx_ldy_jsr_play_sound_yx(0x3ef1, "sound2")
