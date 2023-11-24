@@ -738,20 +738,20 @@ room_1_game_update_loop
     jsr game_update                                                   ; 3dd2: 20 da 12
     sta room_exit_direction                                           ; 3dd5: 85 70
     and #exit_room_left                                               ; 3dd7: 29 01
-    beq exited_room_not_left                                          ; 3dd9: f0 07
+    beq room_1_check_bottom_exit                                      ; 3dd9: f0 07
     ldx #0                                                            ; 3ddb: a2 00
     ldy current_level                                                 ; 3ddd: a4 31
     jmp initialise_level_and_room                                     ; 3ddf: 4c 40 11
 
-exited_room_not_left
+room_1_check_bottom_exit
     lda room_exit_direction                                           ; 3de2: a5 70
     and #exit_room_bottom                                             ; 3de4: 29 02
-    beq exited_room_not_bottom                                        ; 3de6: f0 07
+    beq room_1_check_right_exit                                       ; 3de6: f0 07
     ldx #2                                                            ; 3de8: a2 02
     ldy current_level                                                 ; 3dea: a4 31
     jmp initialise_level_and_room                                     ; 3dec: 4c 40 11
 
-exited_room_not_bottom
+room_1_check_right_exit
     lda room_exit_direction                                           ; 3def: a5 70
     and #exit_room_right                                              ; 3df1: 29 04
     beq room_1_game_update_loop                                       ; 3df3: f0 dd
