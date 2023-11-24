@@ -16,6 +16,7 @@ load(0x3ad5, "orig/dataO.dat", "6502", "ddadc2eb1bfb98e14b769a9851db5513")
 
 common_to_all()
 define_level(4, sprite_dict)
+label(0x0070, "room_exit_direction")
 
 # NOTE:
 #
@@ -32,6 +33,8 @@ substitute_labels = {
 s = SubstituteLabels(substitute_labels)
 set_label_maker_hook(s.substitute_label_maker)
 
+expr(0x3d33, "exit_room_right")
+expr(0x410b, "exit_room_right")
 
 
 

@@ -42,6 +42,7 @@ level_before_latest_level_and_room_initialisation   = $51
 player_held_object_spriteid                         = $52
 developer_mode_sideways_ram_is_set_up_flag          = $5b
 l0070                                               = $70
+room_exit_direction                                 = $70
 l0071                                               = $71
 show_dialog_box                                     = $040a
 remove_dialog                                       = $0453
@@ -1165,7 +1166,7 @@ room_2_code
     jsr start_room                                                    ; 4174: 20 bb 12
 room_2_game_update_loop
     jsr game_update                                                   ; 4177: 20 da 12
-    sta l0070                                                         ; 417a: 85 70
+    sta room_exit_direction                                           ; 417a: 85 70
     and #exit_room_left                                               ; 417c: 29 01
     beq c4187                                                         ; 417e: f0 07
     ldx #3                                                            ; 4180: a2 03
@@ -1173,16 +1174,16 @@ room_2_game_update_loop
     jmp initialise_level_and_room                                     ; 4184: 4c 40 11
 
 c4187
-    lda l0070                                                         ; 4187: a5 70
-    and #2                                                            ; 4189: 29 02
+    lda room_exit_direction                                           ; 4187: a5 70
+    and #exit_room_bottom                                             ; 4189: 29 02
     beq c4194                                                         ; 418b: f0 07
     ldx #0                                                            ; 418d: a2 00
     ldy current_level                                                 ; 418f: a4 31
     jmp initialise_level_and_room                                     ; 4191: 4c 40 11
 
 c4194
-    lda l0070                                                         ; 4194: a5 70
-    and #4                                                            ; 4196: 29 04
+    lda room_exit_direction                                           ; 4194: a5 70
+    and #exit_room_right                                              ; 4196: 29 04
     beq room_2_game_update_loop                                       ; 4198: f0 dd
     ldx #1                                                            ; 419a: a2 01
     ldy current_level                                                 ; 419c: a4 31
@@ -1819,7 +1820,6 @@ pydis_end
 ;     c43ec
 ;     c4424
 ;     l0015
-;     l0070
 ;     l0071
 ;     l0955
 ;     l096b
@@ -1884,6 +1884,9 @@ pydis_end
 }
 !if (>ground_fill_2x2_top_left) != $45 {
     !error "Assertion failed: >ground_fill_2x2_top_left == $45"
+}
+!if (exit_room_bottom) != $02 {
+    !error "Assertion failed: exit_room_bottom == $02"
 }
 !if (exit_room_left) != $01 {
     !error "Assertion failed: exit_room_left == $01"

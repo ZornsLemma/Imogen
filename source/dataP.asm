@@ -43,6 +43,7 @@ level_before_latest_level_and_room_initialisation   = $51
 player_held_object_spriteid                         = $52
 developer_mode_sideways_ram_is_set_up_flag          = $5b
 l0070                                               = $70
+room_exit_direction                                 = $70
 l0078                                               = $78
 l0079                                               = $79
 show_dialog_box                                     = $040a
@@ -349,7 +350,7 @@ room_1_code
     jsr start_room                                                    ; 3ba3: 20 bb 12
 room_1_game_update_loop
     jsr game_update                                                   ; 3ba6: 20 da 12
-    sta l0070                                                         ; 3ba9: 85 70
+    sta room_exit_direction                                           ; 3ba9: 85 70
     and #exit_room_left                                               ; 3bab: 29 01
     beq c3bb6                                                         ; 3bad: f0 07
     ldx #0                                                            ; 3baf: a2 00
@@ -357,8 +358,8 @@ room_1_game_update_loop
     jmp initialise_level_and_room                                     ; 3bb3: 4c 40 11
 
 c3bb6
-    lda l0070                                                         ; 3bb6: a5 70
-    and #4                                                            ; 3bb8: 29 04
+    lda room_exit_direction                                           ; 3bb6: a5 70
+    and #exit_room_right                                              ; 3bb8: 29 04
     beq room_1_game_update_loop                                       ; 3bba: f0 ea
     ldx #2                                                            ; 3bbc: a2 02
     ldy current_level                                                 ; 3bbe: a4 31
@@ -572,7 +573,7 @@ room_2_code
     jsr start_room                                                    ; 3d14: 20 bb 12
 room_2_game_update_loop
     jsr game_update                                                   ; 3d17: 20 da 12
-    sta l0070                                                         ; 3d1a: 85 70
+    sta room_exit_direction                                           ; 3d1a: 85 70
     and #exit_room_left                                               ; 3d1c: 29 01
     beq c3d27                                                         ; 3d1e: f0 07
     ldx #1                                                            ; 3d20: a2 01
@@ -580,8 +581,8 @@ room_2_game_update_loop
     jmp initialise_level_and_room                                     ; 3d24: 4c 40 11
 
 c3d27
-    lda l0070                                                         ; 3d27: a5 70
-    and #4                                                            ; 3d29: 29 04
+    lda room_exit_direction                                           ; 3d27: a5 70
+    and #exit_room_right                                              ; 3d29: 29 04
     beq room_2_game_update_loop                                       ; 3d2b: f0 ea
     ldx #3                                                            ; 3d2d: a2 03
     ldy current_level                                                 ; 3d2f: a4 31
@@ -1881,7 +1882,6 @@ pydis_end
 ;     c45bd
 ;     l0015
 ;     l0048
-;     l0070
 ;     l0078
 ;     l0079
 ;     l0952
