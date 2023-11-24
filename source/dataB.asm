@@ -613,7 +613,7 @@ room_1_code
     jsr start_room                                                    ; 3d55: 20 bb 12
 room_1_game_update_loop
     jsr game_update                                                   ; 3d58: 20 da 12
-    and #4                                                            ; 3d5b: 29 04
+    and #exit_room_right                                              ; 3d5b: 29 04
     beq room_1_game_update_loop                                       ; 3d5d: f0 f9
     ldx #0                                                            ; 3d5f: a2 00
     ldy current_level                                                 ; 3d61: a4 31
@@ -1044,7 +1044,7 @@ room_2_code
 room_2_game_update_loop
     jsr game_update                                                   ; 4050: 20 da 12
     sta room_exit_direction                                           ; 4053: 85 70
-    and #1                                                            ; 4055: 29 01
+    and #exit_room_left                                               ; 4055: 29 01
     beq c4060                                                         ; 4057: f0 07
     ldx #0                                                            ; 4059: a2 00
     ldy current_level                                                 ; 405b: a4 31
@@ -1586,7 +1586,7 @@ room_3_code
     jsr start_room                                                    ; 442c: 20 bb 12
 room_3_game_update_loop
     jsr game_update                                                   ; 442f: 20 da 12
-    and #1                                                            ; 4432: 29 01
+    and #exit_room_left                                               ; 4432: 29 01
     beq room_3_game_update_loop                                       ; 4434: f0 f9
     ldx #2                                                            ; 4436: a2 02
     ldy current_level                                                 ; 4438: a4 31

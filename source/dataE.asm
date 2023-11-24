@@ -412,7 +412,7 @@ room_2_code
 room_2_game_update_loop
     jsr game_update                                                   ; 3cc3: 20 da 12
     sta l0070                                                         ; 3cc6: 85 70
-    and #8                                                            ; 3cc8: 29 08
+    and #exit_room_top                                                ; 3cc8: 29 08
     beq c3cd3                                                         ; 3cca: f0 07
     ldx #3                                                            ; 3ccc: a2 03
     ldy current_level                                                 ; 3cce: a4 31
@@ -675,7 +675,7 @@ room_3_code
     jsr start_room                                                    ; 3e85: 20 bb 12
 room_3_game_update_loop
     jsr game_update                                                   ; 3e88: 20 da 12
-    and #2                                                            ; 3e8b: 29 02
+    and #exit_room_bottom                                             ; 3e8b: 29 02
     beq room_3_game_update_loop                                       ; 3e8d: f0 f9
     ldx #2                                                            ; 3e8f: a2 02
     ldy current_level                                                 ; 3e91: a4 31
@@ -847,7 +847,7 @@ room_0_code
     jsr start_room                                                    ; 4088: 20 bb 12
 room_0_game_update_loop
     jsr game_update                                                   ; 408b: 20 da 12
-    and #1                                                            ; 408e: 29 01
+    and #exit_room_left                                               ; 408e: 29 01
     beq room_0_game_update_loop                                       ; 4090: f0 f9
     ldx #1                                                            ; 4092: a2 01
     ldy current_level                                                 ; 4094: a4 31
@@ -1315,7 +1315,7 @@ room_1_code
 room_1_game_update_loop
     jsr game_update                                                   ; 442f: 20 da 12
     sta l0070                                                         ; 4432: 85 70
-    and #1                                                            ; 4434: 29 01
+    and #exit_room_left                                               ; 4434: 29 01
     beq c443f                                                         ; 4436: f0 07
     ldx #2                                                            ; 4438: a2 02
     ldy current_level                                                 ; 443a: a4 31
@@ -1667,6 +1667,15 @@ pydis_end
 ;     sub_c433b
 ;     sub_c446a
 ;     sub_c45a1
+!if (exit_room_bottom) != $02 {
+    !error "Assertion failed: exit_room_bottom == $02"
+}
+!if (exit_room_left) != $01 {
+    !error "Assertion failed: exit_room_left == $01"
+}
+!if (exit_room_top) != $08 {
+    !error "Assertion failed: exit_room_top == $08"
+}
 !if (level_specific_initialisation) != $3af6 {
     !error "Assertion failed: level_specific_initialisation == $3af6"
 }

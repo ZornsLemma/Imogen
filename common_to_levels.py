@@ -262,6 +262,22 @@ def level_room_data_table_entry(addr, s, sprite_dict):
     a = find_sequence(target2, limit, [0x20, 0xda, 0x12])
     if a:
         label(a, room_n + "_game_update_loop")
+
+        opcode = get_u8_binary(a+3)
+        if opcode == 0x85:  # 'sta zp'
+            a += 2
+            opcode = get_u8_binary(a+3)
+        operand = get_u8_binary(a+4)
+        if opcode == 0x29:  # 'and #'
+            exits = {
+                1: "exit_room_left",
+                2: "exit_room_bottom",
+                4: "exit_room_right",
+                8: "exit_room_top",
+            }
+            if operand in exits:
+                expr(a+4, exits[operand])
+
         end_tracking = a
 
     if end_tracking:

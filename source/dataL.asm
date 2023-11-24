@@ -363,7 +363,7 @@ room_0_code
     jsr start_room                                                    ; 3bce: 20 bb 12
 room_0_game_update_loop
     jsr game_update                                                   ; 3bd1: 20 da 12
-    and #4                                                            ; 3bd4: 29 04
+    and #exit_room_right                                              ; 3bd4: 29 04
     beq room_0_game_update_loop                                       ; 3bd6: f0 f9
     ldx #1                                                            ; 3bd8: a2 01
 c3bda
@@ -496,7 +496,7 @@ room_1_code
 room_1_game_update_loop
     jsr game_update                                                   ; 3c82: 20 da 12
     sta l0070                                                         ; 3c85: 85 70
-    and #1                                                            ; 3c87: 29 01
+    and #exit_room_left                                               ; 3c87: 29 01
     beq c3c90                                                         ; 3c89: f0 05
     ldx #0                                                            ; 3c8b: a2 00
     jmp c3bda                                                         ; 3c8d: 4c da 3b
@@ -917,7 +917,7 @@ room_2_code
 room_2_game_update_loop
     jsr game_update                                                   ; 3f7d: 20 da 12
     sta l0070                                                         ; 3f80: 85 70
-    and #1                                                            ; 3f82: 29 01
+    and #exit_room_left                                               ; 3f82: 29 01
     beq c3f8b                                                         ; 3f84: f0 05
     ldx #1                                                            ; 3f86: a2 01
     jmp c3bda                                                         ; 3f88: 4c da 3b
@@ -1200,7 +1200,7 @@ room_3_code
     jsr start_room                                                    ; 4195: 20 bb 12
 room_3_game_update_loop
     jsr game_update                                                   ; 4198: 20 da 12
-    and #1                                                            ; 419b: 29 01
+    and #exit_room_left                                               ; 419b: 29 01
     beq room_3_game_update_loop                                       ; 419d: f0 f9
     ldx #2                                                            ; 419f: a2 02
     jmp c3bda                                                         ; 41a1: 4c da 3b
@@ -1636,6 +1636,12 @@ pydis_end
 ;     sub_c4350
 ;     sub_c4361
 ;     sub_c43d8
+!if (exit_room_left) != $01 {
+    !error "Assertion failed: exit_room_left == $01"
+}
+!if (exit_room_right) != $04 {
+    !error "Assertion failed: exit_room_right == $04"
+}
 !if (level_specific_initialisation) != $3aef {
     !error "Assertion failed: level_specific_initialisation == $3aef"
 }
