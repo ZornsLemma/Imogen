@@ -129,6 +129,11 @@ constant(2, "exit_room_bottom")
 constant(4, "exit_room_right")
 constant(8, "exit_room_top")
 
+constant(0, "collision_map_none")
+constant(1, "collision_map_unknown") # TODO: does anything use this?
+constant(2, "collision_map_rope")
+constant(3, "collision_map_solid_rock")
+
 constant(1, "object_collided_left_wall")
 constant(2, "object_collided_floor")
 constant(4, "object_collided_right_wall")

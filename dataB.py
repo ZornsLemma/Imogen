@@ -22,17 +22,22 @@ sprite_dict = {
     0xd6: "spriteid_cuckoo_open_beak",
     0xd7: "spriteid_cache1",
     0xd8: "spriteid_cache2",
-    0xd9: "spriteid_rope",
-    0xda: "spriteid_rope_broken1",
-    0xdb: "spriteid_blob",
-    0xdc: "spriteid_rope_broken2",
+    0xd9: "spriteid_rope_end_at_object",
+    0xda: "spriteid_rope_broken_falling_end",
+    0xdb: "spriteid_rope_broken_bottom_end",
+    0xdc: "spriteid_rope_broken_top_end",
     0xdd: "spriteid_hourglass",
     0xde: "spriteid_hourglass_menu_item",
     0xdf: "spriteid_cache3",
 }
 
 # Room 0
-#constant(2, "objectid_left_mouse")
+constant(2, "objectid_pendulum")
+constant(3, "objectid_clock_workings")
+constant(4, "objectid_suspended_boulder")
+constant(5, "objectid_rope_broken_top_end")
+constant(6, "objectid_rope_broken_bottom_end")
+constant(7, "objectid_hourglass")
 
 set_sprite_dict(sprite_dict)
 
@@ -58,6 +63,12 @@ set_label_maker_hook(s.substitute_label_maker)
 
 label(0x0070, "room_exit_direction")
 
+label(0x09aa, "object_spriteid + objectid_pendulum")
+label(0x09ab, "object_spriteid + objectid_clock_workings")
+label(0x09ac, "object_spriteid + objectid_suspended_boulder")
+label(0x09ad, "object_spriteid + objectid_rope_broken_top_end")
+label(0x09ae, "object_spriteid + objectid_rope_broken_bottom_end")
+label(0x09af, "object_spriteid + objectid_hourglass")
 label(0x0a09, "got_hourglass_flag")
 
 label(0x2ef4, "five_byte_table_paired_with_collectable_sprite_ids+2")
@@ -68,7 +79,18 @@ comment(0x3bf4, "exit room left, to room 1")
 label(0x3bfb, "room_0_check_right_exit")
 expr(0x3bfe, "exit_room_right")
 comment(0x3c01, "exit room right, to room 2")
+comment(0x3c0d, "on the first update, if we have changed levels, then define the envelope")
 ldx_ldy_jsr_define_envelope(0x3c17, "envelope1")
+blank(0x3c1a)
+label(0x3c1a, "not_first_update")
+comment(0x3c1f, "check if in room 0")
+comment(0x3c25, "check the player is holding something")
+comment(0x3c29, "check the player Y coordinate is less than 64")
+comment(0x3c35, "check the player X coordinate is between 96 and 127")
+comment(0x3c40, "with a bottom offset of 2 pixels, look if we are on the rope")
+expr(0x3c4b, "collision_map_rope")
+blank(0x3c51)
+label(0x3c51, "after_room_0_code")
 label(0x3c80, "return2")
 ldx_ldy_jsr_define_envelope(0x3e97, "envelope2")
 ldx_ldy_jsr_play_sound_yx(0x3ee1, "sound1")
@@ -79,8 +101,15 @@ ldx_ldy_jsr_play_sound_yx(0x3f88, "sound4")
 ldx_ldy_jsr_play_sound_yx(0x3f8f, "sound5")
 label(0x4060, "room_2_check_right_exit")
 expr(0x4063, "exit_room_right")
+label(0x41c1, "play_two_sounds")
 ldx_ldy_jsr_play_sound_yx(0x41c7, "sound6")
 ldx_ldy_jsr_play_sound_yx(0x41ce, "sound7")
+expr(0x428e, sprite_dict)
+expr(0x429a, sprite_dict)
+expr(0x429f, sprite_dict)
+expr(0x42a7, sprite_dict)
+expr(0x42ac, sprite_dict)
+label(0x42dc, "room_0_player_on_left_rope")
 comment(0x43e3, "draw rope")
 envelope(0x44f2, "envelope_unused")
 sound(0x4500, "sound_unused")

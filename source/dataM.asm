@@ -1,4 +1,8 @@
 ; Constants
+collision_map_none           = 0
+collision_map_rope           = 2
+collision_map_solid_rock     = 3
+collision_map_unknown        = 1
 copy_mode_2x2                = 0
 copy_mode_random16           = 16
 copy_mode_random2            = 2

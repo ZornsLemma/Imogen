@@ -1,52 +1,62 @@
 ; Constants
-copy_mode_2x2                   = 0
-copy_mode_random16              = 16
-copy_mode_random2               = 2
-copy_mode_random32              = 32
-copy_mode_random4               = 4
-copy_mode_random64              = 64
-copy_mode_random8               = 8
-copy_mode_simple                = 1
-exit_room_bottom                = 2
-exit_room_left                  = 1
-exit_room_right                 = 4
-exit_room_top                   = 8
-first_level_letter              = 65
-game_area_height_cells          = 24
-game_area_width_cells           = 40
-last_level_letter               = 81
-object_collided_ceiling         = 8
-object_collided_floor           = 2
-object_collided_left_wall       = 1
-object_collided_right_wall      = 4
-objectid_player                 = 0
-objectid_player_accessory       = 1
-opcode_jmp                      = 76
-spriteid_ball                   = 59
-spriteid_blob                   = 219
-spriteid_boulder                = 213
-spriteid_cache1                 = 215
-spriteid_cache2                 = 216
-spriteid_cache3                 = 223
-spriteid_clock                  = 200
-spriteid_clock_workings         = 209
-spriteid_cuckoo                 = 211
-spriteid_cuckoo_appear_full     = 208
-spriteid_cuckoo_appear_partly   = 207
-spriteid_cuckoo_menu_item       = 212
-spriteid_cuckoo_open_beak       = 214
-spriteid_hourglass              = 221
-spriteid_hourglass_menu_item    = 222
-spriteid_pendulum1              = 201
-spriteid_pendulum2              = 202
-spriteid_pendulum3              = 203
-spriteid_pendulum4              = 204
-spriteid_pendulum5              = 205
-spriteid_rope                   = 217
-spriteid_rope_broken1           = 218
-spriteid_rope_broken2           = 220
-spriteid_table                  = 210
-spriteid_vertical_rod           = 206
+collision_map_none                 = 0
+collision_map_rope                 = 2
+collision_map_solid_rock           = 3
+collision_map_unknown              = 1
+copy_mode_2x2                      = 0
+copy_mode_random16                 = 16
+copy_mode_random2                  = 2
+copy_mode_random32                 = 32
+copy_mode_random4                  = 4
+copy_mode_random64                 = 64
+copy_mode_random8                  = 8
+copy_mode_simple                   = 1
+exit_room_bottom                   = 2
+exit_room_left                     = 1
+exit_room_right                    = 4
+exit_room_top                      = 8
+first_level_letter                 = 65
+game_area_height_cells             = 24
+game_area_width_cells              = 40
+last_level_letter                  = 81
+object_collided_ceiling            = 8
+object_collided_floor              = 2
+object_collided_left_wall          = 1
+object_collided_right_wall         = 4
+objectid_clock_workings            = 3
+objectid_hourglass                 = 7
+objectid_pendulum                  = 2
+objectid_player                    = 0
+objectid_player_accessory          = 1
+objectid_rope_broken_bottom_end    = 6
+objectid_rope_broken_top_end       = 5
+objectid_suspended_boulder         = 4
+opcode_jmp                         = 76
+spriteid_ball                      = 59
+spriteid_boulder                   = 213
+spriteid_cache1                    = 215
+spriteid_cache2                    = 216
+spriteid_cache3                    = 223
+spriteid_clock                     = 200
+spriteid_clock_workings            = 209
+spriteid_cuckoo                    = 211
+spriteid_cuckoo_appear_full        = 208
+spriteid_cuckoo_appear_partly      = 207
+spriteid_cuckoo_menu_item          = 212
+spriteid_cuckoo_open_beak          = 214
+spriteid_hourglass                 = 221
+spriteid_hourglass_menu_item       = 222
+spriteid_pendulum1                 = 201
+spriteid_pendulum2                 = 202
+spriteid_pendulum3                 = 203
+spriteid_pendulum4                 = 204
+spriteid_pendulum5                 = 205
+spriteid_rope_broken_bottom_end    = 219
+spriteid_rope_broken_falling_end   = 218
+spriteid_rope_broken_top_end       = 220
+spriteid_rope_end_at_object        = 217
+spriteid_table                     = 210
+spriteid_vertical_rod              = 206
 
 ; Memory locations
 characters_entered                                  = $05
@@ -78,12 +88,6 @@ object_y_low_old                                    = $0987
 object_y_high                                       = $0992
 object_y_high_old                                   = $099d
 object_spriteid                                     = $09a8
-l09aa                                               = $09aa
-l09ab                                               = $09ab
-l09ac                                               = $09ac
-l09ad                                               = $09ad
-l09ae                                               = $09ae
-l09af                                               = $09af
 object_spriteid_old                                 = $09b3
 object_direction                                    = $09be
 object_direction_old                                = $09c9
@@ -400,39 +404,47 @@ room_0_check_right_exit
 
 sub_c3c08
     lda update_room_first_update_flag                                 ; 3c08: ad 2b 13
-    beq c3c1a                                                         ; 3c0b: f0 0d
+    beq not_first_update                                              ; 3c0b: f0 0d
+; on the first update, if we have changed levels, then define the envelope
     lda current_level                                                 ; 3c0d: a5 31
     cmp level_before_latest_level_and_room_initialisation             ; 3c0f: c5 51
-    beq c3c1a                                                         ; 3c11: f0 07
+    beq not_first_update                                              ; 3c11: f0 07
     ldx #<envelope1                                                   ; 3c13: a2 08
     ldy #>envelope1                                                   ; 3c15: a0 45
     jsr define_envelope                                               ; 3c17: 20 5e 39
-c3c1a
+
+not_first_update
     lda #0                                                            ; 3c1a: a9 00
-    sta l42dc                                                         ; 3c1c: 8d dc 42
+    sta room_0_player_on_left_rope                                    ; 3c1c: 8d dc 42
+; check if in room 0
     lda desired_room_index                                            ; 3c1f: a5 30
     cmp #0                                                            ; 3c21: c9 00
-    bne c3c51                                                         ; 3c23: d0 2c
+    bne after_room_0_code                                             ; 3c23: d0 2c
+; check the player is holding something
     lda player_held_object_spriteid                                   ; 3c25: a5 52
-    beq c3c51                                                         ; 3c27: f0 28
+    beq after_room_0_code                                             ; 3c27: f0 28
+; check the player Y coordinate is less than 64
     lda object_y_low                                                  ; 3c29: ad 7c 09
     cmp #$40 ; '@'                                                    ; 3c2c: c9 40
-    bcs c3c51                                                         ; 3c2e: b0 21
+    bcs after_room_0_code                                             ; 3c2e: b0 21
     lda object_x_high                                                 ; 3c30: ad 66 09
-    bne c3c51                                                         ; 3c33: d0 1c
+    bne after_room_0_code                                             ; 3c33: d0 1c
+; check the player X coordinate is between 96 and 127
     lda object_x_low                                                  ; 3c35: ad 50 09
     cmp #$60 ; '`'                                                    ; 3c38: c9 60
-    bcc c3c51                                                         ; 3c3a: 90 15
+    bcc after_room_0_code                                             ; 3c3a: 90 15
     cmp #$80                                                          ; 3c3c: c9 80
-    bcs c3c51                                                         ; 3c3e: b0 11
+    bcs after_room_0_code                                             ; 3c3e: b0 11
+; with a bottom offset of 2 pixels, look if we are on the rope
     lda #2                                                            ; 3c40: a9 02
     sta temp_bottom_offset                                            ; 3c42: 8d 51 25
     lda #0                                                            ; 3c45: a9 00
     jsr get_solid_rock_collision_for_object_a                         ; 3c47: 20 94 28
-    and #2                                                            ; 3c4a: 29 02
-    beq c3c51                                                         ; 3c4c: f0 03
-    dec l42dc                                                         ; 3c4e: ce dc 42
-c3c51
+    and #collision_map_rope                                           ; 3c4a: 29 02
+    beq after_room_0_code                                             ; 3c4c: f0 03
+    dec room_0_player_on_left_rope                                    ; 3c4e: ce dc 42
+
+after_room_0_code
     lda l0a08                                                         ; 3c51: ad 08 0a
     sta l42d8                                                         ; 3c54: 8d d8 42
     ldy #$10                                                          ; 3c57: a0 10
@@ -451,7 +463,7 @@ c3c51
     lda l0a08                                                         ; 3c76: ad 08 0a
     cmp #$10                                                          ; 3c79: c9 10
     bne return2                                                       ; 3c7b: d0 03
-    jsr sub_c41c1                                                     ; 3c7d: 20 c1 41
+    jsr play_two_sounds                                               ; 3c7d: 20 c1 41
 return2
     rts                                                               ; 3c80: 60
 
@@ -720,7 +732,7 @@ c3e2b
 c3e3a
     lda l3e41,y                                                       ; 3e3a: b9 41 3e
 c3e3d
-    sta l09ab                                                         ; 3e3d: 8d ab 09
+    sta object_spriteid + objectid_clock_workings                     ; 3e3d: 8d ab 09
 c3e40
     rts                                                               ; 3e40: 60
 
@@ -823,7 +835,7 @@ c3efd
     bne c3f0d                                                         ; 3f02: d0 09
     ldy l3f20                                                         ; 3f04: ac 20 3f
     lda l3f21,y                                                       ; 3f07: b9 21 3f
-    sta l09aa                                                         ; 3f0a: 8d aa 09
+    sta object_spriteid + objectid_pendulum                           ; 3f0a: 8d aa 09
 c3f0d
     lda l3f1e                                                         ; 3f0d: ad 1e 3f
     cmp l3f1f                                                         ; 3f10: cd 1f 3f
@@ -1166,7 +1178,7 @@ c4152
     cmp #2                                                            ; 4154: c9 02
     bne c4182                                                         ; 4156: d0 2a
     lda #0                                                            ; 4158: a9 00
-    sta l09ab                                                         ; 415a: 8d ab 09
+    sta object_spriteid + objectid_clock_workings                     ; 415a: 8d ab 09
     lda l0a06                                                         ; 415d: ad 06 0a
     bmi c4182                                                         ; 4160: 30 20
     cmp #2                                                            ; 4162: c9 02
@@ -1179,18 +1191,18 @@ c4152
     lda #3                                                            ; 416f: a9 03
     jsr set_object_position_from_cell_xy                              ; 4171: 20 5d 1f
     lda #$d6                                                          ; 4174: a9 d6
-    sta l09ab                                                         ; 4176: 8d ab 09
+    sta object_spriteid + objectid_clock_workings                     ; 4176: 8d ab 09
     cpx #$15                                                          ; 4179: e0 15
     bcc c4182                                                         ; 417b: 90 05
     lda #$d3                                                          ; 417d: a9 d3
-    sta l09ab                                                         ; 417f: 8d ab 09
+    sta object_spriteid + objectid_clock_workings                     ; 417f: 8d ab 09
 c4182
     lda #0                                                            ; 4182: a9 00
-    sta l42dc                                                         ; 4184: 8d dc 42
+    sta room_0_player_on_left_rope                                    ; 4184: 8d dc 42
     lda l0a06                                                         ; 4187: ad 06 0a
     cmp #$1b                                                          ; 418a: c9 1b
     bcc c4191                                                         ; 418c: 90 03
-    dec l42dc                                                         ; 418e: ce dc 42
+    dec room_0_player_on_left_rope                                    ; 418e: ce dc 42
 c4191
     lda l0a07                                                         ; 4191: ad 07 0a
     sta l42d8                                                         ; 4194: 8d d8 42
@@ -1210,11 +1222,11 @@ c4191
     lda l0a07                                                         ; 41b6: ad 07 0a
     cmp #$10                                                          ; 41b9: c9 10
     bne c41c0                                                         ; 41bb: d0 03
-    jsr sub_c41c1                                                     ; 41bd: 20 c1 41
+    jsr play_two_sounds                                               ; 41bd: 20 c1 41
 c41c0
     rts                                                               ; 41c0: 60
 
-sub_c41c1
+play_two_sounds
     lda #0                                                            ; 41c1: a9 00
     ldx #<sound6                                                      ; 41c3: a2 1e
     ldy #>sound6                                                      ; 41c5: a0 45
@@ -1257,7 +1269,7 @@ c41f0
     lda #5                                                            ; 4213: a9 05
     jsr set_object_position_from_cell_xy                              ; 4215: 20 5d 1f
     lda #$d5                                                          ; 4218: a9 d5
-    sta l09ac                                                         ; 421a: 8d ac 09
+    sta object_spriteid + objectid_suspended_boulder                  ; 421a: 8d ac 09
     lda #$d8                                                          ; 421d: a9 d8
     sta l38b2                                                         ; 421f: 8d b2 38
     lda #$e0                                                          ; 4222: a9 e0
@@ -1272,7 +1284,7 @@ c422d
     lda l42d8                                                         ; 422d: ad d8 42
     bmi c422a                                                         ; 4230: 30 f8
     bne c4246                                                         ; 4232: d0 12
-    lda l42dc                                                         ; 4234: ad dc 42
+    lda room_0_player_on_left_rope                                    ; 4234: ad dc 42
     beq c422a                                                         ; 4237: f0 f1
     lda l42da                                                         ; 4239: ad da 42
     sta l42d8                                                         ; 423c: 8d d8 42
@@ -1314,24 +1326,24 @@ c427f
     lda l42d8                                                         ; 4286: ad d8 42
     bmi c42a6                                                         ; 4289: 30 1b
     bne c4298                                                         ; 428b: d0 0b
-    lda #$d9                                                          ; 428d: a9 d9
-    sta l09ae                                                         ; 428f: 8d ae 09
+    lda #spriteid_rope_end_at_object                                  ; 428d: a9 d9
+    sta object_spriteid + objectid_rope_broken_bottom_end             ; 428f: 8d ae 09
     ldy l42da                                                         ; 4292: ac da 42
     jmp c42b3                                                         ; 4295: 4c b3 42
 
 c4298
     tay                                                               ; 4298: a8
-    lda #$dc                                                          ; 4299: a9 dc
-    sta l09ad                                                         ; 429b: 8d ad 09
-    lda #$da                                                          ; 429e: a9 da
-    sta l09ae                                                         ; 42a0: 8d ae 09
+    lda #spriteid_rope_broken_top_end                                 ; 4299: a9 dc
+    sta object_spriteid + objectid_rope_broken_top_end                ; 429b: 8d ad 09
+    lda #spriteid_rope_broken_falling_end                             ; 429e: a9 da
+    sta object_spriteid + objectid_rope_broken_bottom_end             ; 42a0: 8d ae 09
     jmp c42b3                                                         ; 42a3: 4c b3 42
 
 c42a6
-    lda #$dc                                                          ; 42a6: a9 dc
-    sta l09ad                                                         ; 42a8: 8d ad 09
-    lda #$db                                                          ; 42ab: a9 db
-    sta l09ae                                                         ; 42ad: 8d ae 09
+    lda #spriteid_rope_broken_top_end                                 ; 42a6: a9 dc
+    sta object_spriteid + objectid_rope_broken_top_end                ; 42a8: 8d ad 09
+    lda #spriteid_rope_broken_bottom_end                              ; 42ab: a9 db
+    sta object_spriteid + objectid_rope_broken_bottom_end             ; 42ad: 8d ae 09
     ldy l42db                                                         ; 42b0: ac db 42
 c42b3
     ldx l42d9                                                         ; 42b3: ae d9 42
@@ -1361,7 +1373,7 @@ l42da
     !byte 0                                                           ; 42da: 00
 l42db
     !byte 0                                                           ; 42db: 00
-l42dc
+room_0_player_on_left_rope
     !byte 0                                                           ; 42dc: 00
 
 sub_c42dd
@@ -1406,7 +1418,7 @@ c4319
     lda #spriteid_hourglass_menu_item                                 ; 432d: a9 de
     jsr find_or_create_menu_slot_for_A                                ; 432f: 20 bd 2b
     lda #0                                                            ; 4332: a9 00
-    sta l09af                                                         ; 4334: 8d af 09
+    sta object_spriteid + objectid_hourglass                          ; 4334: 8d af 09
     lda #$ff                                                          ; 4337: a9 ff
     sta got_hourglass_flag                                            ; 4339: 8d 09 0a
 c433c
@@ -1641,7 +1653,7 @@ c4495
     lda #spriteid_cuckoo_menu_item                                    ; 449e: a9 d4
     jsr find_or_create_menu_slot_for_A                                ; 44a0: 20 bd 2b
     lda #0                                                            ; 44a3: a9 00
-    sta l09aa                                                         ; 44a5: 8d aa 09
+    sta object_spriteid + objectid_pendulum                           ; 44a5: 8d aa 09
     lda #0                                                            ; 44a8: a9 00
     sta l0a06                                                         ; 44aa: 8d 06 0a
 c44ad
@@ -1788,8 +1800,6 @@ pydis_end
 
 ; Automatically generated labels:
 ;     c3b02
-;     c3c1a
-;     c3c51
 ;     c3db6
 ;     c3dce
 ;     c3dd1
@@ -1841,12 +1851,6 @@ pydis_end
 ;     c4495
 ;     c44ad
 ;     l0015
-;     l09aa
-;     l09ab
-;     l09ac
-;     l09ad
-;     l09ae
-;     l09af
 ;     l0a05
 ;     l0a06
 ;     l0a07
@@ -1870,14 +1874,12 @@ pydis_end
 ;     l42d9
 ;     l42da
 ;     l42db
-;     l42dc
 ;     sub_c3c08
 ;     sub_c3d66
 ;     sub_c3e47
 ;     sub_c3f2f
 ;     sub_c3f82
 ;     sub_c406d
-;     sub_c41c1
 ;     sub_c41d2
 ;     sub_c42dd
 ;     sub_c443d
@@ -1947,6 +1949,9 @@ pydis_end
 !if (>sound7) != $45 {
     !error "Assertion failed: >sound7 == $45"
 }
+!if (collision_map_rope) != $02 {
+    !error "Assertion failed: collision_map_rope == $02"
+}
 !if (exit_room_left) != $01 {
     !error "Assertion failed: exit_room_left == $01"
 }
@@ -1994,6 +1999,18 @@ pydis_end
 }
 !if (spriteid_hourglass_menu_item) != $de {
     !error "Assertion failed: spriteid_hourglass_menu_item == $de"
+}
+!if (spriteid_rope_broken_bottom_end) != $db {
+    !error "Assertion failed: spriteid_rope_broken_bottom_end == $db"
+}
+!if (spriteid_rope_broken_falling_end) != $da {
+    !error "Assertion failed: spriteid_rope_broken_falling_end == $da"
+}
+!if (spriteid_rope_broken_top_end) != $dc {
+    !error "Assertion failed: spriteid_rope_broken_top_end == $dc"
+}
+!if (spriteid_rope_end_at_object) != $d9 {
+    !error "Assertion failed: spriteid_rope_end_at_object == $d9"
 }
 !if (spriteid_table) != $d2 {
     !error "Assertion failed: spriteid_table == $d2"
