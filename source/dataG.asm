@@ -171,7 +171,7 @@ level_progress_table                                = $09ef
 l0a17                                               = $0a17
 l0a18                                               = $0a18
 l0a19                                               = $0a19
-l0a6f                                               = $0a6f
+sixteen_entry_table                                 = $0a6f
 l0a70                                               = $0a70
 l0a71                                               = $0a71
 l0a72                                               = $0a72
@@ -1190,7 +1190,7 @@ c40f3
     lda desired_room_index                                            ; 40fb: a5 30
     sta l0a73                                                         ; 40fd: 8d 73 0a
     lda object_direction                                              ; 4100: ad be 09
-    sta l0a6f                                                         ; 4103: 8d 6f 0a
+    sta sixteen_entry_table                                           ; 4103: 8d 6f 0a
     lda object_x_low+1                                                ; 4106: ad 51 09
     sta l0a70                                                         ; 4109: 8d 70 0a
     lda object_x_high+1                                               ; 410c: ad 67 09
@@ -1276,7 +1276,7 @@ sub_c418a
 
 c41ac
     lda #8                                                            ; 41ac: a9 08
-    ldx l0a6f                                                         ; 41ae: ae 6f 0a
+    ldx sixteen_entry_table                                           ; 41ae: ae 6f 0a
     bpl c41b8                                                         ; 41b1: 10 05
     eor #$ff                                                          ; 41b3: 49 ff
     clc                                                               ; 41b5: 18
@@ -1299,7 +1299,7 @@ c41bf
     lda #2                                                            ; 41d5: a9 02
     jsr get_solid_rock_collision_for_object_a                         ; 41d7: 20 94 28
     beq c4206                                                         ; 41da: f0 2a
-    lda l0a6f                                                         ; 41dc: ad 6f 0a
+    lda sixteen_entry_table                                           ; 41dc: ad 6f 0a
     bpl c41f5                                                         ; 41df: 10 14
     lda l0952                                                         ; 41e1: ad 52 09
     clc                                                               ; 41e4: 18
@@ -1327,7 +1327,7 @@ c4206
     sta l0a72                                                         ; 4215: 8d 72 0a
     ldx #2                                                            ; 4218: a2 02
     jsr l2434                                                         ; 421a: 20 34 24
-    lda l0a6f                                                         ; 421d: ad 6f 0a
+    lda sixteen_entry_table                                           ; 421d: ad 6f 0a
     bmi c423e                                                         ; 4220: 30 1c
     lda l0078                                                         ; 4222: a5 78
     cmp #$28 ; '('                                                    ; 4224: c9 28
@@ -1367,7 +1367,7 @@ sub_c4259
     sta l097e                                                         ; 4268: 8d 7e 09
     lda #0                                                            ; 426b: a9 00
     sta l0994                                                         ; 426d: 8d 94 09
-    lda l0a6f                                                         ; 4270: ad 6f 0a
+    lda sixteen_entry_table                                           ; 4270: ad 6f 0a
     sta l09c0                                                         ; 4273: 8d c0 09
     lda #$cc                                                          ; 4276: a9 cc
     sta l09aa                                                         ; 4278: 8d aa 09
@@ -1876,7 +1876,6 @@ pydis_end
 ;     l0a17
 ;     l0a18
 ;     l0a19
-;     l0a6f
 ;     l0a70
 ;     l0a71
 ;     l0a72

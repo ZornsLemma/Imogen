@@ -193,7 +193,7 @@ l0a2c                                               = $0a2c
 l0a2d                                               = $0a2d
 l0a2e                                               = $0a2e
 l0a2f                                               = $0a2f
-l0a6f                                               = $0a6f
+sixteen_entry_table                                 = $0a6f
 string_input_buffer                                 = $0a90
 tile_all_set_pixels                                 = $0aa9
 developer_flags                                     = $1103
@@ -1525,13 +1525,13 @@ c433f
     cmp level_before_latest_level_and_room_initialisation             ; 434e: c5 51
     beq c4365                                                         ; 4350: f0 13
     lda #0                                                            ; 4352: a9 00
-    sta l0a6f                                                         ; 4354: 8d 6f 0a
+    sta sixteen_entry_table                                           ; 4354: 8d 6f 0a
     lda l0a24                                                         ; 4357: ad 24 0a
     beq c4365                                                         ; 435a: f0 09
     bmi c4365                                                         ; 435c: 30 07
     cmp #$1e                                                          ; 435e: c9 1e
     beq c4365                                                         ; 4360: f0 03
-    dec l0a6f                                                         ; 4362: ce 6f 0a
+    dec sixteen_entry_table                                           ; 4362: ce 6f 0a
 c4365
     lda desired_room_index                                            ; 4365: a5 30
     cmp l0a2d                                                         ; 4367: cd 2d 0a
@@ -1544,9 +1544,9 @@ loop_c4376
     lda desired_room_index                                            ; 4376: a5 30
     cmp l0a2d                                                         ; 4378: cd 2d 0a
     bne c4390                                                         ; 437b: d0 13
-    lda l0a6f                                                         ; 437d: ad 6f 0a
+    lda sixteen_entry_table                                           ; 437d: ad 6f 0a
     beq c4390                                                         ; 4380: f0 0e
-    dec l0a6f                                                         ; 4382: ce 6f 0a
+    dec sixteen_entry_table                                           ; 4382: ce 6f 0a
     ldx #2                                                            ; 4385: a2 02
     jsr l20f7                                                         ; 4387: 20 f7 20
     jsr sub_c449d                                                     ; 438a: 20 9d 44
@@ -1571,9 +1571,9 @@ c4398
     lda desired_room_index                                            ; 43af: a5 30
     cmp l0a2d                                                         ; 43b1: cd 2d 0a
     beq c440a                                                         ; 43b4: f0 54
-    lda l0a6f                                                         ; 43b6: ad 6f 0a
+    lda sixteen_entry_table                                           ; 43b6: ad 6f 0a
     bmi c4395                                                         ; 43b9: 30 da
-    inc l0a6f                                                         ; 43bb: ee 6f 0a
+    inc sixteen_entry_table                                           ; 43bb: ee 6f 0a
     jmp c449c                                                         ; 43be: 4c 9c 44
 
 c43c1
@@ -1610,7 +1610,7 @@ c440a
     cmp l0a2d                                                         ; 440f: cd 2d 0a
     beq c4419                                                         ; 4412: f0 05
     lda #0                                                            ; 4414: a9 00
-    sta l0a6f                                                         ; 4416: 8d 6f 0a
+    sta sixteen_entry_table                                           ; 4416: 8d 6f 0a
 c4419
     lda l4620                                                         ; 4419: ad 20 46
     sta l09b5                                                         ; 441c: 8d b5 09
@@ -1743,7 +1743,7 @@ c451d
     cmp #$1e                                                          ; 4523: c9 1e
     bne c452c                                                         ; 4525: d0 05
     lda #0                                                            ; 4527: a9 00
-    sta l0a6f                                                         ; 4529: 8d 6f 0a
+    sta sixteen_entry_table                                           ; 4529: 8d 6f 0a
 c452c
     lda l430d,y                                                       ; 452c: b9 0d 43
     ldx l0a2e                                                         ; 452f: ae 2e 0a
@@ -2009,7 +2009,6 @@ pydis_end
 ;     l0a2d
 ;     l0a2e
 ;     l0a2f
-;     l0a6f
 ;     l20f7
 ;     l2434
 ;     l24d2

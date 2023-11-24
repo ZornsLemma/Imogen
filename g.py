@@ -521,7 +521,6 @@ label(0x09eb, "save_game_checksum")
 expr_label(0x09ed, "current_transformations_remaining+1")
 expr_label(0x09ee, "current_transformations_remaining+2")
 
-label(0x0a6f, "sixteen_entry_table")
 label(0x0a7f, "level_ordering_table")
 label(0x0a80, "level_ordering_table+1")
 label(0x0ab5, "old_irq1v")

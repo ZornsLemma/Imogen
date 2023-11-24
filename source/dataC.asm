@@ -174,7 +174,7 @@ l0a0a                                               = $0a0a
 l0a0b                                               = $0a0b
 l0a0c                                               = $0a0c
 l0a0d                                               = $0a0d
-l0a6f                                               = $0a6f
+sixteen_entry_table                                 = $0a6f
 l0a70                                               = $0a70
 l0a71                                               = $0a71
 l0a72                                               = $0a72
@@ -444,7 +444,7 @@ sub_c3bb3
     ldx #$25 ; '%'                                                    ; 3bc1: a2 25
     lda #7                                                            ; 3bc3: a9 07
     jsr update_brazier_and_fire                                       ; 3bc5: 20 88 19
-    lda l0a6f                                                         ; 3bc8: ad 6f 0a
+    lda sixteen_entry_table                                           ; 3bc8: ad 6f 0a
     sta l3d76                                                         ; 3bcb: 8d 76 3d
     lda l0a0c                                                         ; 3bce: ad 0c 0a
     sta l3d75                                                         ; 3bd1: 8d 75 3d
@@ -453,7 +453,7 @@ sub_c3bb3
     lda #$10                                                          ; 3bd8: a9 10
     jsr sub_c3bea                                                     ; 3bda: 20 ea 3b
     lda l3d76                                                         ; 3bdd: ad 76 3d
-    sta l0a6f                                                         ; 3be0: 8d 6f 0a
+    sta sixteen_entry_table                                           ; 3be0: 8d 6f 0a
     lda l3d75                                                         ; 3be3: ad 75 3d
     sta l0a0c                                                         ; 3be6: 8d 0c 0a
     rts                                                               ; 3be9: 60
@@ -1934,7 +1934,6 @@ pydis_end
 ;     l0a0b
 ;     l0a0c
 ;     l0a0d
-;     l0a6f
 ;     l0a70
 ;     l0a71
 ;     l0a72

@@ -191,7 +191,7 @@ cuckoo_thrown                                       = $0a06
 l0a07                                               = $0a07
 l0a08                                               = $0a08
 got_hourglass_flag                                  = $0a09
-l0a6f                                               = $0a6f
+sixteen_entry_table                                 = $0a6f
 l0a70                                               = $0a70
 l0a71                                               = $0a71
 l0a72                                               = $0a72
@@ -298,10 +298,10 @@ level_specific_initialisation
     cmp level_before_latest_level_and_room_initialisation             ; 3af4: c5 51
     beq return1                                                       ; 3af6: f0 23
     lda developer_flags                                               ; 3af8: ad 03 11
-    bpl c3b02                                                         ; 3afb: 10 05
+    bpl no_developer_top_bit_flag                                     ; 3afb: 10 05
     lda #$ff                                                          ; 3afd: a9 ff
     sta l0a05                                                         ; 3aff: 8d 05 0a
-c3b02
+no_developer_top_bit_flag
     lda got_hourglass_flag                                            ; 3b02: ad 09 0a
     beq check_got_cuckoo                                              ; 3b05: f0 05
     lda #spriteid_hourglass_menu_item                                 ; 3b07: a9 de
@@ -731,7 +731,7 @@ sub_c3d66
     ldx #$25 ; '%'                                                    ; 3d6d: a2 25
     ldy #7                                                            ; 3d6f: a0 07
     jsr update_brazier_and_fire                                       ; 3d71: 20 88 19
-    lda l0a6f                                                         ; 3d74: ad 6f 0a
+    lda sixteen_entry_table                                           ; 3d74: ad 6f 0a
     sta l3f1e                                                         ; 3d77: 8d 1e 3f
     lda l0a70                                                         ; 3d7a: ad 70 0a
     sta l3f1f                                                         ; 3d7d: 8d 1f 3f
@@ -742,7 +742,7 @@ sub_c3d66
     ldy #$0b                                                          ; 3d8a: a0 0b
     jsr sub_c3e47                                                     ; 3d8c: 20 47 3e
     lda l3f1e                                                         ; 3d8f: ad 1e 3f
-    sta l0a6f                                                         ; 3d92: 8d 6f 0a
+    sta sixteen_entry_table                                           ; 3d92: 8d 6f 0a
     lda l3f1f                                                         ; 3d95: ad 1f 3f
     sta l0a70                                                         ; 3d98: 8d 70 0a
     lda l3f20                                                         ; 3d9b: ad 20 3f
@@ -787,15 +787,15 @@ c3dd1
     sta l0a05                                                         ; 3dee: 8d 05 0a
     bmi c3e2b                                                         ; 3df1: 30 38
 c3df3
-    lda l0a6f                                                         ; 3df3: ad 6f 0a
+    lda sixteen_entry_table                                           ; 3df3: ad 6f 0a
     cmp #3                                                            ; 3df6: c9 03
     bcc c3e2b                                                         ; 3df8: 90 31
     lda l0a70                                                         ; 3dfa: ad 70 0a
     sec                                                               ; 3dfd: 38
-    sbc l0a6f                                                         ; 3dfe: ed 6f 0a
+    sbc sixteen_entry_table                                           ; 3dfe: ed 6f 0a
     cmp #3                                                            ; 3e01: c9 03
     bcc c3e2b                                                         ; 3e03: 90 26
-    lda l0a6f                                                         ; 3e05: ad 6f 0a
+    lda sixteen_entry_table                                           ; 3e05: ad 6f 0a
     and #3                                                            ; 3e08: 29 03
     bne c3e2b                                                         ; 3e0a: d0 1f
     lda l0a71                                                         ; 3e0c: ad 71 0a
@@ -1908,7 +1908,6 @@ sprite_data
 pydis_end
 
 ; Automatically generated labels:
-;     c3b02
 ;     c3db6
 ;     c3dce
 ;     c3dd1
@@ -1960,7 +1959,6 @@ pydis_end
 ;     l0a05
 ;     l0a07
 ;     l0a08
-;     l0a6f
 ;     l0a70
 ;     l0a71
 ;     l0a72

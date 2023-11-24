@@ -190,7 +190,7 @@ l0a6b                                               = $0a6b
 l0a6c                                               = $0a6c
 l0a6d                                               = $0a6d
 l0a6e                                               = $0a6e
-l0a6f                                               = $0a6f
+sixteen_entry_table                                 = $0a6f
 l0a70                                               = $0a70
 l0a71                                               = $0a71
 string_input_buffer                                 = $0a90
@@ -1551,7 +1551,7 @@ c432c
     bcc c434f                                                         ; 4346: 90 07
     cmp #$25 ; '%'                                                    ; 4348: c9 25
     beq c434f                                                         ; 434a: f0 03
-    dec l0a6f                                                         ; 434c: ce 6f 0a
+    dec sixteen_entry_table                                           ; 434c: ce 6f 0a
 c434f
     lda desired_room_index                                            ; 434f: a5 30
     cmp l0a68                                                         ; 4351: cd 68 0a
@@ -1565,9 +1565,9 @@ loop_c4362
     lda desired_room_index                                            ; 4362: a5 30
     cmp l0a68                                                         ; 4364: cd 68 0a
     bne c437c                                                         ; 4367: d0 13
-    lda l0a6f                                                         ; 4369: ad 6f 0a
+    lda sixteen_entry_table                                           ; 4369: ad 6f 0a
     beq c437c                                                         ; 436c: f0 0e
-    dec l0a6f                                                         ; 436e: ce 6f 0a
+    dec sixteen_entry_table                                           ; 436e: ce 6f 0a
     ldx #2                                                            ; 4371: a2 02
     jsr l20f7                                                         ; 4373: 20 f7 20
     jsr sub_c4490                                                     ; 4376: 20 90 44
@@ -1593,9 +1593,9 @@ c4384
     lda desired_room_index                                            ; 439d: a5 30
     cmp l0a68                                                         ; 439f: cd 68 0a
     beq c43f8                                                         ; 43a2: f0 54
-    lda l0a6f                                                         ; 43a4: ad 6f 0a
+    lda sixteen_entry_table                                           ; 43a4: ad 6f 0a
     bmi c4381                                                         ; 43a7: 30 d8
-    inc l0a6f                                                         ; 43a9: ee 6f 0a
+    inc sixteen_entry_table                                           ; 43a9: ee 6f 0a
     jmp c448f                                                         ; 43ac: 4c 8f 44
 
 c43af
@@ -1632,7 +1632,7 @@ c43f8
     cmp l0a68                                                         ; 43fd: cd 68 0a
     beq c4407                                                         ; 4400: f0 05
     lda #0                                                            ; 4402: a9 00
-    sta l0a6f                                                         ; 4404: 8d 6f 0a
+    sta sixteen_entry_table                                           ; 4404: 8d 6f 0a
 c4407
     lda l45ee                                                         ; 4407: ad ee 45
     sta l09b5                                                         ; 440a: 8d b5 09
@@ -1767,7 +1767,7 @@ c4510
     cmp #$25 ; '%'                                                    ; 4516: c9 25
     bne c451f                                                         ; 4518: d0 05
     lda #0                                                            ; 451a: a9 00
-    sta l0a6f                                                         ; 451c: 8d 6f 0a
+    sta sixteen_entry_table                                           ; 451c: 8d 6f 0a
 c451f
     lda l42f3,y                                                       ; 451f: b9 f3 42
     ldx l0a67                                                         ; 4522: ae 67 0a
@@ -2011,7 +2011,6 @@ pydis_end
 ;     l0a6c
 ;     l0a6d
 ;     l0a6e
-;     l0a6f
 ;     l0a70
 ;     l0a71
 ;     l20f7

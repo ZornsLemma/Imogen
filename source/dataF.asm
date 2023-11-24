@@ -167,7 +167,7 @@ object_direction_old                                = $09c9
 l09df                                               = $09df
 level_progress_table                                = $09ef
 l0a16                                               = $0a16
-l0a6f                                               = $0a6f
+sixteen_entry_table                                 = $0a6f
 l0a70                                               = $0a70
 l0a71                                               = $0a71
 l0a72                                               = $0a72
@@ -564,7 +564,7 @@ c3c62
     cmp level_before_latest_level_and_room_initialisation             ; 3c64: c5 51
     beq c3c6d                                                         ; 3c66: f0 05
     lda #$48 ; 'H'                                                    ; 3c68: a9 48
-    sta l0a6f                                                         ; 3c6a: 8d 6f 0a
+    sta sixteen_entry_table                                           ; 3c6a: 8d 6f 0a
 c3c6d
     lda desired_room_index                                            ; 3c6d: a5 30
     cmp #1                                                            ; 3c6f: c9 01
@@ -601,7 +601,7 @@ loop_c3ca2
     ldx #$0d                                                          ; 3caa: a2 0d
     lda #$48 ; 'H'                                                    ; 3cac: a9 48
     sec                                                               ; 3cae: 38
-    sbc l0a6f                                                         ; 3caf: ed 6f 0a
+    sbc sixteen_entry_table                                           ; 3caf: ed 6f 0a
     clc                                                               ; 3cb2: 18
     adc #$6c ; 'l'                                                    ; 3cb3: 69 6c
     lsr                                                               ; 3cb5: 4a
@@ -623,10 +623,10 @@ loop_c3cba
     lda #$cd                                                          ; 3ccf: a9 cd
     sta object_spriteid,x                                             ; 3cd1: 9d a8 09
     ldx #$22 ; '"'                                                    ; 3cd4: a2 22
-    lda l0a6f                                                         ; 3cd6: ad 6f 0a
+    lda sixteen_entry_table                                           ; 3cd6: ad 6f 0a
     and #4                                                            ; 3cd9: 29 04
     beq c3cec                                                         ; 3cdb: f0 0f
-    lda l0a6f                                                         ; 3cdd: ad 6f 0a
+    lda sixteen_entry_table                                           ; 3cdd: ad 6f 0a
     sec                                                               ; 3ce0: 38
     sbc #$0c                                                          ; 3ce1: e9 0c
     lsr                                                               ; 3ce3: 4a
@@ -636,7 +636,7 @@ loop_c3cba
     lda #$cb                                                          ; 3ce7: a9 cb
     jsr draw_sprite_a_at_cell_xy                                      ; 3ce9: 20 4c 1f
 c3cec
-    lda l0a6f                                                         ; 3cec: ad 6f 0a
+    lda sixteen_entry_table                                           ; 3cec: ad 6f 0a
     and #$f8                                                          ; 3cef: 29 f8
     cmp #$20 ; ' '                                                    ; 3cf1: c9 20
     beq c3d05                                                         ; 3cf3: f0 10
@@ -691,7 +691,7 @@ c3d41
     cmp #$56 ; 'V'                                                    ; 3d4f: c9 56
     bne c3d72                                                         ; 3d51: d0 1f
 c3d53
-    lda l0a6f                                                         ; 3d53: ad 6f 0a
+    lda sixteen_entry_table                                           ; 3d53: ad 6f 0a
     cmp #$20 ; ' '                                                    ; 3d56: c9 20
     beq c3d6f                                                         ; 3d58: f0 15
     lda l0a71                                                         ; 3d5a: ad 71 0a
@@ -722,7 +722,7 @@ c3d72
     cmp #$49 ; 'I'                                                    ; 3d89: c9 49
     bne c3dd0                                                         ; 3d8b: d0 43
 c3d8d
-    lda l0a6f                                                         ; 3d8d: ad 6f 0a
+    lda sixteen_entry_table                                           ; 3d8d: ad 6f 0a
     cmp #$20 ; ' '                                                    ; 3d90: c9 20
     beq c3d6f                                                         ; 3d92: f0 db
     lda object_y_low                                                  ; 3d94: ad 7c 09
@@ -734,16 +734,16 @@ c3d8d
     adc #4                                                            ; 3da1: 69 04
     sta object_y_low+1                                                ; 3da3: 8d 7d 09
 c3da6
-    lda l0a6f                                                         ; 3da6: ad 6f 0a
+    lda sixteen_entry_table                                           ; 3da6: ad 6f 0a
     sec                                                               ; 3da9: 38
     sbc #4                                                            ; 3daa: e9 04
-    sta l0a6f                                                         ; 3dac: 8d 6f 0a
+    sta sixteen_entry_table                                           ; 3dac: 8d 6f 0a
     lda desired_room_index                                            ; 3daf: a5 30
     cmp #1                                                            ; 3db1: c9 01
     bne c3d6f                                                         ; 3db3: d0 ba
     jsr sub_c3ea9                                                     ; 3db5: 20 a9 3e
     ldx #4                                                            ; 3db8: a2 04
-    lda l0a6f                                                         ; 3dba: ad 6f 0a
+    lda sixteen_entry_table                                           ; 3dba: ad 6f 0a
     sec                                                               ; 3dbd: 38
     sbc #8                                                            ; 3dbe: e9 08
     sta object_y_low_old,x                                            ; 3dc0: 9d 87 09
@@ -754,7 +754,7 @@ c3da6
     jmp c3e2d                                                         ; 3dcd: 4c 2d 3e
 
 c3dd0
-    lda l0a6f                                                         ; 3dd0: ad 6f 0a
+    lda sixteen_entry_table                                           ; 3dd0: ad 6f 0a
     cmp #$48 ; 'H'                                                    ; 3dd3: c9 48
     bne c3dda                                                         ; 3dd5: d0 03
     jmp c3ea6                                                         ; 3dd7: 4c a6 3e
@@ -769,13 +769,13 @@ c3dda
     ldy #$cc                                                          ; 3de6: a0 cc
     adc #4                                                            ; 3de8: 69 04
 c3dea
-    sta l0a6f                                                         ; 3dea: 8d 6f 0a
+    sta sixteen_entry_table                                           ; 3dea: 8d 6f 0a
     stx l3ea7                                                         ; 3ded: 8e a7 3e
     sty l3ea8                                                         ; 3df0: 8c a8 3e
     lda desired_room_index                                            ; 3df3: a5 30
     cmp #1                                                            ; 3df5: c9 01
     bne c3e2d                                                         ; 3df7: d0 34
-    lda l0a6f                                                         ; 3df9: ad 6f 0a
+    lda sixteen_entry_table                                           ; 3df9: ad 6f 0a
     cmp #$48 ; 'H'                                                    ; 3dfc: c9 48
     beq c3e06                                                         ; 3dfe: f0 06
     jsr sub_c3ea9                                                     ; 3e00: 20 a9 3e
@@ -791,7 +791,7 @@ c3e06
     jsr play_sound_yx                                                 ; 3e13: 20 f6 38
 c3e16
     ldx #4                                                            ; 3e16: a2 04
-    lda l0a6f                                                         ; 3e18: ad 6f 0a
+    lda sixteen_entry_table                                           ; 3e18: ad 6f 0a
     sec                                                               ; 3e1b: 38
     sbc l3ea7                                                         ; 3e1c: ed a7 3e
     sta object_y_low,x                                                ; 3e1f: 9d 7c 09
@@ -808,7 +808,7 @@ c3e2d
     sta object_spriteid_old,x                                         ; 3e37: 9d b3 09
     lda #$48 ; 'H'                                                    ; 3e3a: a9 48
     sec                                                               ; 3e3c: 38
-    sbc l0a6f                                                         ; 3e3d: ed 6f 0a
+    sbc sixteen_entry_table                                           ; 3e3d: ed 6f 0a
     clc                                                               ; 3e40: 18
     adc #$68 ; 'h'                                                    ; 3e41: 69 68
     sta object_y_low,x                                                ; 3e43: 9d 7c 09
@@ -824,7 +824,7 @@ c3e2d
     iny                                                               ; 3e54: c8
     lda #0                                                            ; 3e55: a9 00
     jsr write_a_single_value_to_cell_in_collision_map                 ; 3e57: 20 bb 1e
-    lda l0a6f                                                         ; 3e5a: ad 6f 0a
+    lda sixteen_entry_table                                           ; 3e5a: ad 6f 0a
     sta l097f                                                         ; 3e5d: 8d 7f 09
     ldx #$22 ; '"'                                                    ; 3e60: a2 22
     ldy #9                                                            ; 3e62: a0 09
@@ -834,7 +834,7 @@ c3e2d
     sta height_in_cells                                               ; 3e6a: 85 3d
     lda #3                                                            ; 3e6c: a9 03
     sta value_to_write_to_collision_map                               ; 3e6e: 85 3e
-    lda l0a6f                                                         ; 3e70: ad 6f 0a
+    lda sixteen_entry_table                                           ; 3e70: ad 6f 0a
     cmp #$48 ; 'H'                                                    ; 3e73: c9 48
     beq c3e7b                                                         ; 3e75: f0 04
     lda #0                                                            ; 3e77: a9 00
@@ -1113,7 +1113,7 @@ c407a
     lda l0a70                                                         ; 407a: ad 70 0a
     cmp #$5a ; 'Z'                                                    ; 407d: c9 5a
     bne c4095                                                         ; 407f: d0 14
-    lda l0a6f                                                         ; 4081: ad 6f 0a
+    lda sixteen_entry_table                                           ; 4081: ad 6f 0a
     cmp #$20 ; ' '                                                    ; 4084: c9 20
     bne c4092                                                         ; 4086: d0 0a
     ldy #$56 ; 'V'                                                    ; 4088: a0 56
@@ -1143,7 +1143,7 @@ c40a9
     beq c40e1                                                         ; 40b8: f0 27
     cpx #3                                                            ; 40ba: e0 03
     bcs c40d7                                                         ; 40bc: b0 19
-    lda l0a6f                                                         ; 40be: ad 6f 0a
+    lda sixteen_entry_table                                           ; 40be: ad 6f 0a
     cmp #$20 ; ' '                                                    ; 40c1: c9 20
     beq c40e1                                                         ; 40c3: f0 1c
     cpx #2                                                            ; 40c5: e0 02
@@ -1667,7 +1667,6 @@ pydis_end
 ;     l09c3
 ;     l09df
 ;     l0a16
-;     l0a6f
 ;     l0a70
 ;     l0a71
 ;     l0a72

@@ -184,7 +184,7 @@ level_progress_table                                = $09ef
 l0a13                                               = $0a13
 l0a14                                               = $0a14
 l0a15                                               = $0a15
-l0a6f                                               = $0a6f
+sixteen_entry_table                                 = $0a6f
 l0a70                                               = $0a70
 l0a71                                               = $0a71
 l0a72                                               = $0a72
@@ -995,7 +995,7 @@ c40e5
     sta l0a13                                                         ; 411f: 8d 13 0a
     sta l0a74                                                         ; 4122: 8d 74 0a
     lda #0                                                            ; 4125: a9 00
-    sta l0a6f                                                         ; 4127: 8d 6f 0a
+    sta sixteen_entry_table                                           ; 4127: 8d 6f 0a
 c412a
     lda #$d6                                                          ; 412a: a9 d6
     sta l38ae                                                         ; 412c: 8d ae 38
@@ -1014,9 +1014,9 @@ loop_c414c
     lda desired_room_index                                            ; 414c: a5 30
     cmp l0a75                                                         ; 414e: cd 75 0a
     bne c4166                                                         ; 4151: d0 13
-    lda l0a6f                                                         ; 4153: ad 6f 0a
+    lda sixteen_entry_table                                           ; 4153: ad 6f 0a
     beq c4166                                                         ; 4156: f0 0e
-    dec l0a6f                                                         ; 4158: ce 6f 0a
+    dec sixteen_entry_table                                           ; 4158: ce 6f 0a
     ldx #2                                                            ; 415b: a2 02
     jsr l20f7                                                         ; 415d: 20 f7 20
     jsr sub_c4231                                                     ; 4160: 20 31 42
@@ -1039,9 +1039,9 @@ c416e
     lda desired_room_index                                            ; 4183: a5 30
     cmp l0a75                                                         ; 4185: cd 75 0a
     beq c41dd                                                         ; 4188: f0 53
-    lda l0a6f                                                         ; 418a: ad 6f 0a
+    lda sixteen_entry_table                                           ; 418a: ad 6f 0a
     bmi c4192                                                         ; 418d: 30 03
-    inc l0a6f                                                         ; 418f: ee 6f 0a
+    inc sixteen_entry_table                                           ; 418f: ee 6f 0a
 c4192
     jmp c4230                                                         ; 4192: 4c 30 42
 
@@ -1079,7 +1079,7 @@ c41dd
     cmp l0a75                                                         ; 41e2: cd 75 0a
     beq c41ec                                                         ; 41e5: f0 05
     lda #0                                                            ; 41e7: a9 00
-    sta l0a6f                                                         ; 41e9: 8d 6f 0a
+    sta sixteen_entry_table                                           ; 41e9: 8d 6f 0a
 c41ec
     lda l438b                                                         ; 41ec: ad 8b 43
     sta l09b5                                                         ; 41ef: 8d b5 09
@@ -1155,7 +1155,7 @@ c426a
     sty l0a13                                                         ; 427c: 8c 13 0a
 c427f
     lda #0                                                            ; 427f: a9 00
-    sta l0a6f                                                         ; 4281: 8d 6f 0a
+    sta sixteen_entry_table                                           ; 4281: 8d 6f 0a
 c4284
     sty l0a74                                                         ; 4284: 8c 74 0a
     lda l4099,y                                                       ; 4287: b9 99 40
@@ -1720,7 +1720,6 @@ pydis_end
 ;     l0a13
 ;     l0a14
 ;     l0a15
-;     l0a6f
 ;     l0a70
 ;     l0a71
 ;     l0a72

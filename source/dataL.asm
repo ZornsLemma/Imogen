@@ -177,7 +177,7 @@ l0a3b                                               = $0a3b
 l0a3c                                               = $0a3c
 l0a3d                                               = $0a3d
 l0a3e                                               = $0a3e
-l0a6f                                               = $0a6f
+sixteen_entry_table                                 = $0a6f
 l0a70                                               = $0a70
 l0a71                                               = $0a71
 l0a72                                               = $0a72
@@ -1041,7 +1041,7 @@ sub_c3fd7
     cmp level_before_latest_level_and_room_initialisation             ; 3fde: c5 51
     beq c3ff9                                                         ; 3fe0: f0 17
     lda #1                                                            ; 3fe2: a9 01
-    sta l0a6f                                                         ; 3fe4: 8d 6f 0a
+    sta sixteen_entry_table                                           ; 3fe4: 8d 6f 0a
     sta l0a70                                                         ; 3fe7: 8d 70 0a
     lda l0a3a                                                         ; 3fea: ad 3a 0a
     bne c3ff1                                                         ; 3fed: d0 02
@@ -1077,22 +1077,22 @@ c401e
     lda l3f96,y                                                       ; 4025: b9 96 3f
     cmp #0                                                            ; 4028: c9 00
     bne c402f                                                         ; 402a: d0 03
-    ldy l0a6f                                                         ; 402c: ac 6f 0a
+    ldy sixteen_entry_table                                           ; 402c: ac 6f 0a
 c402f
     cpy #5                                                            ; 402f: c0 05
     bne c403d                                                         ; 4031: d0 0a
     dec l0a78                                                         ; 4033: ce 78 0a
     bpl c4053                                                         ; 4036: 10 1b
     ldy #1                                                            ; 4038: a0 01
-    sty l0a6f                                                         ; 403a: 8c 6f 0a
+    sty sixteen_entry_table                                           ; 403a: 8c 6f 0a
 c403d
-    lda l0a6f                                                         ; 403d: ad 6f 0a
+    lda sixteen_entry_table                                           ; 403d: ad 6f 0a
     cmp #$22 ; '"'                                                    ; 4040: c9 22
     bne c4053                                                         ; 4042: d0 0f
-    cpy l0a6f                                                         ; 4044: cc 6f 0a
+    cpy sixteen_entry_table                                           ; 4044: cc 6f 0a
     bne c4094                                                         ; 4047: d0 4b
     ldy #5                                                            ; 4049: a0 05
-    sty l0a6f                                                         ; 404b: 8c 6f 0a
+    sty sixteen_entry_table                                           ; 404b: 8c 6f 0a
     lda #9                                                            ; 404e: a9 09
     sta l0a78                                                         ; 4050: 8d 78 0a
 c4053
@@ -1118,13 +1118,13 @@ c4053
     cmp #$8c                                                          ; 407f: c9 8c
     bcc c408f                                                         ; 4081: 90 0c
     ldy #5                                                            ; 4083: a0 05
-    sty l0a6f                                                         ; 4085: 8c 6f 0a
+    sty sixteen_entry_table                                           ; 4085: 8c 6f 0a
     lda #9                                                            ; 4088: a9 09
     sta l0a78                                                         ; 408a: 8d 78 0a
     bpl c4094                                                         ; 408d: 10 05
 c408f
     ldy #$22 ; '"'                                                    ; 408f: a0 22
-    sty l0a6f                                                         ; 4091: 8c 6f 0a
+    sty sixteen_entry_table                                           ; 4091: 8c 6f 0a
 c4094
     lda desired_room_index                                            ; 4094: a5 30
     cmp #2                                                            ; 4096: c9 02
@@ -1160,7 +1160,7 @@ c40d2
     sta player_wall_collision_flag                                    ; 40d4: 8d 33 24
     ldy #9                                                            ; 40d7: a0 09
     lda #1                                                            ; 40d9: a9 01
-    sta l0a6f                                                         ; 40db: 8d 6f 0a
+    sta sixteen_entry_table                                           ; 40db: 8d 6f 0a
 c40de
     sty l0a70                                                         ; 40de: 8c 70 0a
     iny                                                               ; 40e1: c8
@@ -1691,7 +1691,6 @@ pydis_end
 ;     l0a3c
 ;     l0a3d
 ;     l0a3e
-;     l0a6f
 ;     l0a70
 ;     l0a71
 ;     l0a72
