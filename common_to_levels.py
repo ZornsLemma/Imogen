@@ -153,6 +153,7 @@ def map_room(start_tracking, end_tracking, output_descriptions, sprite_dict):
             state["Y"] -= 1
             a += 1
         elif jmp_or_jsr and (operand16 == 0x1abb):
+            # 'jsr copy_rectangle_of_memory_to_screen'
             if output_descriptions:
                 room_comments[start_tracking] = "draw {0}x{1} rectangle at ({2},{3})".format(state[0x3c], state[0x3d], state["X"], state["Y"])
             write_room(state["X"], state["Y"], state[0x3c], state[0x3d], tile)
@@ -174,6 +175,7 @@ def map_room(start_tracking, end_tracking, output_descriptions, sprite_dict):
             a += 3
             start_tracking = a
         elif jmp_or_jsr and (operand16 == 0x1db9):
+            # 'jsr draw_rope'
             x = state["X"]
             y = state["Y"]
             length = state["A"]
@@ -184,7 +186,7 @@ def map_room(start_tracking, end_tracking, output_descriptions, sprite_dict):
             a += 3
             start_tracking = a
         elif jmp_or_jsr and (operand16 == 0x1f4c):
-            # jsr draw_sprite_a_at_cell_xy
+            # 'jsr draw_sprite_a_at_cell_xy'
             x = state["X"]
             y = state["Y"]
             if output_descriptions:
@@ -193,22 +195,22 @@ def map_room(start_tracking, end_tracking, output_descriptions, sprite_dict):
             a += 3
             start_tracking = a
         elif jmp_or_jsr and (operand16 == 0x1ebb):
-            # skip jsr write_a_single_value_to_cell_in_collision_map
+            # skip 'jsr write_a_single_value_to_cell_in_collision_map'
             a += 3
             start_tracking = a
         elif jmp_or_jsr and (operand16 == 0x1e44):
-            # skip write_value_to_a_rectangle_of_cells_in_collision_map
+            # skip 'jsr write_value_to_a_rectangle_of_cells_in_collision_map'
             a += 3
             start_tracking = a
         elif jmp_or_jsr and (operand16 == 0x138d):
-            # skip jsr sprite_op
+            # skip 'jsr sprite_op'
             a += 3
             start_tracking = a
         elif jmp_or_jsr and (operand16 == 0x12bb):
-            # jsr start_room
+            # ends at 'jsr start_room'
             break
         elif jmp_or_jsr and (operand16 == 0x42fa):
-            # skip jsr in datai
+            # skip jsr found in 'datai'
             break
         elif jmp_or_jsr:
             map_room(operand16, 0xffff, False, sprite_dict)
