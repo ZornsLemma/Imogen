@@ -811,16 +811,17 @@ room1_initial_setup_done
 
 room1_not_first_update
     ldy room1_trapdoor_open_flag                                      ; 3e6c: ac ff 09
-    bmi set_room1_trapdoor_sprites_if_required                        ; 3e6f: 30 66
-    bne increment_trapdoor_open_flag                                  ; 3e71: d0 4e
+    bmi set_room1_trapdoor_sprites_if_required                        ; 3e6f: 30 66                   ; branch if trapdoor fully open
+    bne increment_trapdoor_open_flag                                  ; 3e71: d0 4e                   ; branch if trapdoor partially open
+; The trapdoor is closed.
     lda desired_room_index                                            ; 3e73: a5 30
     cmp #1                                                            ; 3e75: c9 01
     bne set_room1_trapdoor_sprites_if_required                        ; 3e77: d0 5e
     lda player_held_object_spriteid                                   ; 3e79: a5 52
     beq set_room1_trapdoor_sprites_if_required                        ; 3e7b: f0 5a
-    lda object_x_high                                                 ; 3e7d: ad 66 09
+    lda object_x_high + objectid_player                               ; 3e7d: ad 66 09
     bne set_room1_trapdoor_sprites_if_required                        ; 3e80: d0 55
-    lda object_x_low                                                  ; 3e82: ad 50 09
+    lda object_x_low + objectid_player                                ; 3e82: ad 50 09
     cmp #$88                                                          ; 3e85: c9 88
     bcc set_room1_trapdoor_sprites_if_required                        ; 3e87: 90 4e
     cmp #$b8                                                          ; 3e89: c9 b8
@@ -2013,8 +2014,14 @@ pydis_end
 !if (object_spriteid + objectid_saxophone) != $09ac {
     !error "Assertion failed: object_spriteid + objectid_saxophone == $09ac"
 }
+!if (object_x_high + objectid_player) != $0966 {
+    !error "Assertion failed: object_x_high + objectid_player == $0966"
+}
 !if (object_x_low + objectid_mouse_ball) != $0954 {
     !error "Assertion failed: object_x_low + objectid_mouse_ball == $0954"
+}
+!if (object_x_low + objectid_player) != $0950 {
+    !error "Assertion failed: object_x_low + objectid_player == $0950"
 }
 !if (object_y_low + objectid_mouse_ball) != $0980 {
     !error "Assertion failed: object_y_low + objectid_mouse_ball == $0980"
