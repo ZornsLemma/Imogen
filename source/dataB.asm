@@ -383,13 +383,13 @@ room_0_game_update_loop
     jsr game_update                                                   ; 3beb: 20 da 12
     sta room_exit_direction                                           ; 3bee: 85 70
     and #exit_room_left                                               ; 3bf0: 29 01
-    beq not_exited_room_left                                          ; 3bf2: f0 07
+    beq room_0_update                                                 ; 3bf2: f0 07
 ; exit room left, to room 1
     ldx #1                                                            ; 3bf4: a2 01
     ldy current_level                                                 ; 3bf6: a4 31
     jmp initialise_level_and_room                                     ; 3bf8: 4c 40 11
 
-not_exited_room_left
+room_0_update
     lda room_exit_direction                                           ; 3bfb: a5 70
     and #exit_room_right                                              ; 3bfd: 29 04
     beq room_0_game_update_loop                                       ; 3bff: f0 ea
@@ -1045,12 +1045,12 @@ room_2_game_update_loop
     jsr game_update                                                   ; 4050: 20 da 12
     sta room_exit_direction                                           ; 4053: 85 70
     and #exit_room_left                                               ; 4055: 29 01
-    beq c4060                                                         ; 4057: f0 07
+    beq room_2_update                                                 ; 4057: f0 07
     ldx #0                                                            ; 4059: a2 00
     ldy current_level                                                 ; 405b: a4 31
     jmp initialise_level_and_room                                     ; 405d: 4c 40 11
 
-c4060
+room_2_update
     lda room_exit_direction                                           ; 4060: a5 70
     and #4                                                            ; 4062: 29 04
     beq room_2_game_update_loop                                       ; 4064: f0 ea
@@ -1815,7 +1815,6 @@ pydis_end
 ;     c3f62
 ;     c3f6d
 ;     c3f81
-;     c4060
 ;     c40b1
 ;     c40d5
 ;     c40d8

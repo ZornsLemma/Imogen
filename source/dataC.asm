@@ -1168,12 +1168,12 @@ room_2_game_update_loop
     jsr game_update                                                   ; 4177: 20 da 12
     sta room_exit_direction                                           ; 417a: 85 70
     and #exit_room_left                                               ; 417c: 29 01
-    beq c4187                                                         ; 417e: f0 07
+    beq room_2_update                                                 ; 417e: f0 07
     ldx #3                                                            ; 4180: a2 03
     ldy current_level                                                 ; 4182: a4 31
     jmp initialise_level_and_room                                     ; 4184: 4c 40 11
 
-c4187
+room_2_update
     lda room_exit_direction                                           ; 4187: a5 70
     and #exit_room_bottom                                             ; 4189: 29 02
     beq c4194                                                         ; 418b: f0 07
@@ -1787,7 +1787,6 @@ pydis_end
 ;     c40ae
 ;     c40bf
 ;     c40d0
-;     c4187
 ;     c4194
 ;     c41d0
 ;     c41d5

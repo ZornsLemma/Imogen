@@ -34,7 +34,8 @@ set_label_maker_hook(s.substitute_label_maker)
 
 expr(0x3e2f, "exit_room_right")
 expr(0x3edf, "exit_room_right")
-
+label(0x3e2c, "room_1_update")
+label(0x3edc, "room_2_update")
 
 
 

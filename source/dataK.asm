@@ -42,6 +42,7 @@ level_before_latest_level_and_room_initialisation   = $51
 player_held_object_spriteid                         = $52
 developer_mode_sideways_ram_is_set_up_flag          = $5b
 l0070                                               = $70
+room_exit_direction                                 = $70
 l0078                                               = $78
 l0079                                               = $79
 show_dialog_box                                     = $040a
@@ -358,16 +359,16 @@ room_2_code
     jsr start_room                                                    ; 3bb1: 20 bb 12
 room_2_game_update_loop
     jsr game_update                                                   ; 3bb4: 20 da 12
-    sta l0070                                                         ; 3bb7: 85 70
+    sta room_exit_direction                                           ; 3bb7: 85 70
     and #exit_room_left                                               ; 3bb9: 29 01
-    beq c3bc4                                                         ; 3bbb: f0 07
+    beq room_2_check_right_exit                                       ; 3bbb: f0 07
     ldx #1                                                            ; 3bbd: a2 01
     ldy current_level                                                 ; 3bbf: a4 31
     jmp initialise_level_and_room                                     ; 3bc1: 4c 40 11
 
-c3bc4
-    lda l0070                                                         ; 3bc4: a5 70
-    and #4                                                            ; 3bc6: 29 04
+room_2_check_right_exit
+    lda room_exit_direction                                           ; 3bc4: a5 70
+    and #exit_room_right                                              ; 3bc6: 29 04
     beq room_2_game_update_loop                                       ; 3bc8: f0 ea
     ldx #3                                                            ; 3bca: a2 03
     ldy current_level                                                 ; 3bcc: a4 31
@@ -1670,7 +1671,6 @@ pydis_end
 ;     c3b0b
 ;     c3b1c
 ;     c3b21
-;     c3bc4
 ;     c3bf6
 ;     c3c0d
 ;     c3c25

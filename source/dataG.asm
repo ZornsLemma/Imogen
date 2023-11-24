@@ -331,12 +331,12 @@ room_2_game_update_loop
     jsr game_update                                                   ; 3b90: 20 da 12
     sta room_exit_direction                                           ; 3b93: 85 70
     and #exit_room_left                                               ; 3b95: 29 01
-    beq c3ba0                                                         ; 3b97: f0 07
+    beq room_2_update                                                 ; 3b97: f0 07
     ldx #1                                                            ; 3b99: a2 01
     ldy current_level                                                 ; 3b9b: a4 31
     jmp initialise_level_and_room                                     ; 3b9d: 4c 40 11
 
-c3ba0
+room_2_update
     lda room_exit_direction                                           ; 3ba0: a5 70
     and #exit_room_right                                              ; 3ba2: 29 04
     beq room_2_game_update_loop                                       ; 3ba4: f0 ea
@@ -1399,12 +1399,12 @@ room_1_game_update_loop
     jsr game_update                                                   ; 4314: 20 da 12
     sta room_exit_direction                                           ; 4317: 85 70
     and #exit_room_left                                               ; 4319: 29 01
-    beq c4324                                                         ; 431b: f0 07
+    beq room_1_update                                                 ; 431b: f0 07
     ldx #0                                                            ; 431d: a2 00
     ldy current_level                                                 ; 431f: a4 31
     jmp initialise_level_and_room                                     ; 4321: 4c 40 11
 
-c4324
+room_1_update
     lda room_exit_direction                                           ; 4324: a5 70
     and #exit_room_right                                              ; 4326: 29 04
     beq room_1_game_update_loop                                       ; 4328: f0 ea
@@ -1692,7 +1692,6 @@ pydis_end
 ; Automatically generated labels:
 ;     c3b02
 ;     c3b0c
-;     c3ba0
 ;     c3bd7
 ;     c3bf8
 ;     c3bfb
@@ -1751,7 +1750,6 @@ pydis_end
 ;     c4253
 ;     c4258
 ;     c42a3
-;     c4324
 ;     c437d
 ;     c43ad
 ;     c43b0

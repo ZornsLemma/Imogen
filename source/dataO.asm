@@ -591,12 +591,12 @@ room_1_game_update_loop
     jsr game_update                                                   ; 3d20: 20 da 12
     sta room_exit_direction                                           ; 3d23: 85 70
     and #exit_room_left                                               ; 3d25: 29 01
-    beq c3d30                                                         ; 3d27: f0 07
+    beq room_1_check_right_exit                                       ; 3d27: f0 07
     ldx #0                                                            ; 3d29: a2 00
     ldy current_level                                                 ; 3d2b: a4 31
     jmp initialise_level_and_room                                     ; 3d2d: 4c 40 11
 
-c3d30
+room_1_check_right_exit
     lda room_exit_direction                                           ; 3d30: a5 70
     and #exit_room_right                                              ; 3d32: 29 04
     beq room_1_game_update_loop                                       ; 3d34: f0 ea
@@ -1102,12 +1102,12 @@ room_2_game_update_loop
     jsr game_update                                                   ; 40f8: 20 da 12
     sta room_exit_direction                                           ; 40fb: 85 70
     and #exit_room_left                                               ; 40fd: 29 01
-    beq c4108                                                         ; 40ff: f0 07
+    beq room_2_check_right_exit                                       ; 40ff: f0 07
     ldx #1                                                            ; 4101: a2 01
     ldy current_level                                                 ; 4103: a4 31
     jmp initialise_level_and_room                                     ; 4105: 4c 40 11
 
-c4108
+room_2_check_right_exit
     lda room_exit_direction                                           ; 4108: a5 70
     and #exit_room_right                                              ; 410a: 29 04
     beq room_2_game_update_loop                                       ; 410c: f0 ea
@@ -1602,7 +1602,6 @@ pydis_end
 ;     c3c58
 ;     c3c87
 ;     c3c91
-;     c3d30
 ;     c3d77
 ;     c3dab
 ;     c3dcf
@@ -1638,7 +1637,6 @@ pydis_end
 ;     c406e
 ;     c4071
 ;     c4082
-;     c4108
 ;     c414e
 ;     c4180
 ;     c4183

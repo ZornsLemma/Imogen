@@ -414,12 +414,12 @@ room_2_game_update_loop
     jsr game_update                                                   ; 3cc3: 20 da 12
     sta room_exit_direction                                           ; 3cc6: 85 70
     and #exit_room_top                                                ; 3cc8: 29 08
-    beq c3cd3                                                         ; 3cca: f0 07
+    beq room_2_update                                                 ; 3cca: f0 07
     ldx #3                                                            ; 3ccc: a2 03
     ldy current_level                                                 ; 3cce: a4 31
     jmp initialise_level_and_room                                     ; 3cd0: 4c 40 11
 
-c3cd3
+room_2_update
     lda room_exit_direction                                           ; 3cd3: a5 70
     and #exit_room_right                                              ; 3cd5: 29 04
     beq room_2_game_update_loop                                       ; 3cd7: f0 ea
@@ -1317,12 +1317,12 @@ room_1_game_update_loop
     jsr game_update                                                   ; 442f: 20 da 12
     sta room_exit_direction                                           ; 4432: 85 70
     and #exit_room_left                                               ; 4434: 29 01
-    beq c443f                                                         ; 4436: f0 07
+    beq room_1_update                                                 ; 4436: f0 07
     ldx #2                                                            ; 4438: a2 02
     ldy current_level                                                 ; 443a: a4 31
     jmp initialise_level_and_room                                     ; 443c: 4c 40 11
 
-c443f
+room_1_update
     lda room_exit_direction                                           ; 443f: a5 70
     and #exit_room_right                                              ; 4441: 29 04
     beq room_1_game_update_loop                                       ; 4443: f0 ea
@@ -1537,7 +1537,6 @@ pydis_end
 ;     c3b0b
 ;     c3b15
 ;     c3b21
-;     c3cd3
 ;     c3d12
 ;     c3d34
 ;     c3d37
@@ -1579,7 +1578,6 @@ pydis_end
 ;     c4370
 ;     c4373
 ;     c4388
-;     c443f
 ;     c448d
 ;     c4493
 ;     c449f

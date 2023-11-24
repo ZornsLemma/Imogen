@@ -324,12 +324,12 @@ room_0_game_update_loop
     jsr game_update                                                   ; 3b9e: 20 da 12
     sta room_exit_direction                                           ; 3ba1: 85 70
     and #exit_room_bottom                                             ; 3ba3: 29 02
-    beq c3bae                                                         ; 3ba5: f0 07
+    beq room_0_update                                                 ; 3ba5: f0 07
     ldx #3                                                            ; 3ba7: a2 03
     ldy current_level                                                 ; 3ba9: a4 31
     jmp initialise_level_and_room                                     ; 3bab: 4c 40 11
 
-c3bae
+room_0_update
     lda room_exit_direction                                           ; 3bae: a5 70
     and #exit_room_right                                              ; 3bb0: 29 04
     beq room_0_game_update_loop                                       ; 3bb2: f0 ea
@@ -440,12 +440,12 @@ room_1_game_update_loop
     jsr game_update                                                   ; 3c2f: 20 da 12
     sta room_exit_direction                                           ; 3c32: 85 70
     and #exit_room_left                                               ; 3c34: 29 01
-    beq c3c3f                                                         ; 3c36: f0 07
+    beq room_1_update                                                 ; 3c36: f0 07
     ldx #0                                                            ; 3c38: a2 00
     ldy current_level                                                 ; 3c3a: a4 31
     jmp initialise_level_and_room                                     ; 3c3c: 4c 40 11
 
-c3c3f
+room_1_update
     lda room_exit_direction                                           ; 3c3f: a5 70
     and #exit_room_right                                              ; 3c41: 29 04
     beq room_1_game_update_loop                                       ; 3c43: f0 ea
@@ -1496,8 +1496,6 @@ pydis_end
 ; Automatically generated labels:
 ;     c3b01
 ;     c3b0d
-;     c3bae
-;     c3c3f
 ;     c3c62
 ;     c3c6d
 ;     c3c76

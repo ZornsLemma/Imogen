@@ -32,7 +32,9 @@ substitute_labels = {
 s = SubstituteLabels(substitute_labels)
 set_label_maker_hook(s.substitute_label_maker)
 
+label(0x3cd3, "room_2_update")
 expr(0x3cd6, "exit_room_right")
+label(0x443f, "room_1_update")
 expr(0x4442, "exit_room_right")
 
 

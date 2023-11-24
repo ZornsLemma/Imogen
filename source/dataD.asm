@@ -685,12 +685,12 @@ room_1_game_update_loop
     jsr game_update                                                   ; 3e1c: 20 da 12
     sta room_exit_direction                                           ; 3e1f: 85 70
     and #exit_room_left                                               ; 3e21: 29 01
-    beq c3e2c                                                         ; 3e23: f0 07
+    beq room_1_update                                                 ; 3e23: f0 07
     ldx #0                                                            ; 3e25: a2 00
     ldy current_level                                                 ; 3e27: a4 31
     jmp initialise_level_and_room                                     ; 3e29: 4c 40 11
 
-c3e2c
+room_1_update
     lda room_exit_direction                                           ; 3e2c: a5 70
     and #exit_room_right                                              ; 3e2e: 29 04
     beq room_1_game_update_loop                                       ; 3e30: f0 ea
@@ -820,12 +820,12 @@ room_2_game_update_loop
     jsr game_update                                                   ; 3ecc: 20 da 12
     sta room_exit_direction                                           ; 3ecf: 85 70
     and #exit_room_left                                               ; 3ed1: 29 01
-    beq c3edc                                                         ; 3ed3: f0 07
+    beq room_2_update                                                 ; 3ed3: f0 07
     ldx #1                                                            ; 3ed5: a2 01
     ldy current_level                                                 ; 3ed7: a4 31
     jmp initialise_level_and_room                                     ; 3ed9: 4c 40 11
 
-c3edc
+room_2_update
     lda room_exit_direction                                           ; 3edc: a5 70
     and #exit_room_right                                              ; 3ede: 29 04
     beq room_2_game_update_loop                                       ; 3ee0: f0 ea
@@ -1496,8 +1496,6 @@ pydis_end
 ;     c3d6a
 ;     c3d70
 ;     c3d7d
-;     c3e2c
-;     c3edc
 ;     c3f1c
 ;     c3f56
 ;     c3f63

@@ -23,7 +23,7 @@ define_level(4, sprite_dict)
 #   This is weird, but makes the addresses unique.
 #
 substitute_labels = {
-    (0xabd5,0x3bce): {
+    (0x3ad5,0x3bce): {
         "l0070": "room_exit_direction",
     },
 }
@@ -32,7 +32,8 @@ substitute_labels = {
 s = SubstituteLabels(substitute_labels)
 set_label_maker_hook(s.substitute_label_maker)
 
-
+label(0x3bc4, "room_2_check_right_exit")
+expr(0x3bc7, "exit_room_right")
 
 
 

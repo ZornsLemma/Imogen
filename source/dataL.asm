@@ -498,11 +498,11 @@ room_1_game_update_loop
     jsr game_update                                                   ; 3c82: 20 da 12
     sta room_exit_direction                                           ; 3c85: 85 70
     and #exit_room_left                                               ; 3c87: 29 01
-    beq c3c90                                                         ; 3c89: f0 05
+    beq room_1_check_right_exit                                       ; 3c89: f0 05
     ldx #0                                                            ; 3c8b: a2 00
     jmp c3bda                                                         ; 3c8d: 4c da 3b
 
-c3c90
+room_1_check_right_exit
     lda room_exit_direction                                           ; 3c90: a5 70
     and #exit_room_right                                              ; 3c92: 29 04
     beq room_1_game_update_loop                                       ; 3c94: f0 ec
@@ -919,11 +919,11 @@ room_2_game_update_loop
     jsr game_update                                                   ; 3f7d: 20 da 12
     sta room_exit_direction                                           ; 3f80: 85 70
     and #exit_room_left                                               ; 3f82: 29 01
-    beq c3f8b                                                         ; 3f84: f0 05
+    beq room_2_check_right_exit                                       ; 3f84: f0 05
     ldx #1                                                            ; 3f86: a2 01
     jmp c3bda                                                         ; 3f88: 4c da 3b
 
-c3f8b
+room_2_check_right_exit
     lda room_exit_direction                                           ; 3f8b: a5 70
     and #exit_room_right                                              ; 3f8d: 29 04
     beq room_2_game_update_loop                                       ; 3f8f: f0 ec
@@ -1507,7 +1507,6 @@ pydis_end
 ;     c3b0c
 ;     c3b16
 ;     c3bda
-;     c3c90
 ;     c3cc3
 ;     c3cd5
 ;     c3ce0
@@ -1530,7 +1529,6 @@ pydis_end
 ;     c3ef3
 ;     c3f00
 ;     c3f1a
-;     c3f8b
 ;     c3ff1
 ;     c3ff9
 ;     c401b

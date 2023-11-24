@@ -489,12 +489,12 @@ room_1_game_update_loop
     jsr game_update                                                   ; 3c59: 20 da 12
     sta room_exit_direction                                           ; 3c5c: 85 70
     and #exit_room_left                                               ; 3c5e: 29 01
-    beq c3c69                                                         ; 3c60: f0 07
+    beq room_1_check_right_exit                                       ; 3c60: f0 07
     ldx #0                                                            ; 3c62: a2 00
     ldy current_level                                                 ; 3c64: a4 31
     jmp initialise_level_and_room                                     ; 3c66: 4c 40 11
 
-c3c69
+room_1_check_right_exit
     lda room_exit_direction                                           ; 3c69: a5 70
     and #exit_room_right                                              ; 3c6b: 29 04
     beq room_1_game_update_loop                                       ; 3c6d: f0 ea
@@ -1217,12 +1217,12 @@ room_2_game_update_loop
     jsr game_update                                                   ; 41a9: 20 da 12
     sta room_exit_direction                                           ; 41ac: 85 70
     and #exit_room_left                                               ; 41ae: 29 01
-    beq c41b9                                                         ; 41b0: f0 07
+    beq room_2_check_right_exit                                       ; 41b0: f0 07
     ldx #1                                                            ; 41b2: a2 01
     ldy current_level                                                 ; 41b4: a4 31
     jmp initialise_level_and_room                                     ; 41b6: 4c 40 11
 
-c41b9
+room_2_check_right_exit
     lda room_exit_direction                                           ; 41b9: a5 70
     and #exit_room_right                                              ; 41bb: 29 04
     beq room_2_game_update_loop                                       ; 41bd: f0 ea
@@ -1717,7 +1717,6 @@ pydis_end
 ; Automatically generated labels:
 ;     c3afe
 ;     c3b08
-;     c3c69
 ;     c3ccd
 ;     c3ce1
 ;     c3cf2
@@ -1761,7 +1760,6 @@ pydis_end
 ;     c4107
 ;     c411c
 ;     c412d
-;     c41b9
 ;     c4200
 ;     c4220
 ;     c4244

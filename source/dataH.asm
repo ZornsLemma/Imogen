@@ -686,20 +686,20 @@ room_1_game_update_loop
     jsr game_update                                                   ; 3df8: 20 da 12
     sta room_exit_direction                                           ; 3dfb: 85 70
     and #exit_room_top                                                ; 3dfd: 29 08
-    beq c3e08                                                         ; 3dff: f0 07
+    beq room_1_check_left_exit                                        ; 3dff: f0 07
     ldx #3                                                            ; 3e01: a2 03
     ldy current_level                                                 ; 3e03: a4 31
     jmp initialise_level_and_room                                     ; 3e05: 4c 40 11
 
-c3e08
+room_1_check_left_exit
     lda room_exit_direction                                           ; 3e08: a5 70
     and #exit_room_left                                               ; 3e0a: 29 01
-    beq c3e15                                                         ; 3e0c: f0 07
+    beq room_1_check_right_exit                                       ; 3e0c: f0 07
     ldx #0                                                            ; 3e0e: a2 00
     ldy current_level                                                 ; 3e10: a4 31
     jmp initialise_level_and_room                                     ; 3e12: 4c 40 11
 
-c3e15
+room_1_check_right_exit
     lda room_exit_direction                                           ; 3e15: a5 70
     and #exit_room_right                                              ; 3e17: 29 04
     beq room_1_game_update_loop                                       ; 3e19: f0 dd
@@ -1615,8 +1615,6 @@ pydis_end
 ;     c3d05
 ;     c3d16
 ;     c3d49
-;     c3e08
-;     c3e15
 ;     c3ef9
 ;     c3f19
 ;     c3f1c
