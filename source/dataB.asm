@@ -247,7 +247,6 @@ inhibit_monkey_climb_flag                           = $31d7
 print_encrypted_string_at_yx_centred                = $37f3
 wait_one_second_then_check_keys                     = $388d
 object_sprite_mask_type                             = $38ac
-l38b2                                               = $38b2
 object_z_order                                      = $38c2
 l38c8                                               = $38c8
 object_room_collision_flags                         = $38d8
@@ -1365,10 +1364,10 @@ c41f0
     jsr draw_sprite_a_at_cell_xy                                      ; 4210: 20 4c 1f
     lda #5                                                            ; 4213: a9 05
     jsr set_object_position_from_cell_xy                              ; 4215: 20 5d 1f
-    lda #$d5                                                          ; 4218: a9 d5
+    lda #spriteid_boulder                                             ; 4218: a9 d5
     sta object_spriteid + objectid_suspended_boulder                  ; 421a: 8d ac 09
-    lda #$d8                                                          ; 421d: a9 d8
-    sta l38b2                                                         ; 421f: 8d b2 38
+    lda #spriteid_cache2                                              ; 421d: a9 d8
+    sta object_sprite_mask_type + objectid_rope_broken_bottom_end     ; 421f: 8d b2 38
     lda #$e0                                                          ; 4222: a9 e0
     sta l38c8                                                         ; 4224: 8d c8 38
 c4227
@@ -1476,30 +1475,32 @@ room_0_player_on_left_rope
 sub_c42dd
     lda update_room_first_update_flag                                 ; 42dd: ad 2b 13
     beq c4319                                                         ; 42e0: f0 37
-    lda #$de                                                          ; 42e2: a9 de
+    lda #spriteid_hourglass_menu_item                                 ; 42e2: a9 de
     sta toolbar_collectable_spriteids+2                               ; 42e4: 8d ea 2e
-    lda #$dd                                                          ; 42e7: a9 dd
+    lda #spriteid_hourglass                                           ; 42e7: a9 dd
     sta collectable_spriteids+2                                       ; 42e9: 8d ef 2e
     sta five_byte_table_paired_with_collectable_sprite_ids+2          ; 42ec: 8d f4 2e
+; check for being in room 2
     lda desired_room_index                                            ; 42ef: a5 30
     cmp #2                                                            ; 42f1: c9 02
-    bne c4318                                                         ; 42f3: d0 23
+    bne return3                                                       ; 42f3: d0 23
+; room 2 update
     lda got_hourglass_flag                                            ; 42f5: ad 09 0a
-    bne c4318                                                         ; 42f8: d0 1e
+    bne return3                                                       ; 42f8: d0 1e
     ldx #$14                                                          ; 42fa: a2 14
     ldy #$11                                                          ; 42fc: a0 11
-    lda #7                                                            ; 42fe: a9 07
+    lda #objectid_hourglass                                           ; 42fe: a9 07
     jsr set_object_position_from_cell_xy                              ; 4300: 20 5d 1f
     tax                                                               ; 4303: aa
     lda #1                                                            ; 4304: a9 01
     sta object_direction,x                                            ; 4306: 9d be 09
-    lda #$df                                                          ; 4309: a9 df
+    lda #spriteid_cache3                                              ; 4309: a9 df
     sta object_sprite_mask_type,x                                     ; 430b: 9d ac 38
     lda #$c0                                                          ; 430e: a9 c0
     sta object_z_order,x                                              ; 4310: 9d c2 38
     lda #$dd                                                          ; 4313: a9 dd
     sta object_spriteid,x                                             ; 4315: 9d a8 09
-c4318
+return3
     rts                                                               ; 4318: 60
 
 c4319
@@ -1722,13 +1723,13 @@ room_3_update_handler
 ; check for room 3 (return if not)
     lda desired_room_index                                            ; 445e: a5 30
     cmp #3                                                            ; 4460: c9 03
-    bne return3                                                       ; 4462: d0 49
+    bne return4                                                       ; 4462: d0 49
     lda update_room_first_update_flag                                 ; 4464: ad 2b 13
     beq room_3_not_first_update                                       ; 4467: f0 2c
 ; first update in room 3
     lda cuckoo_thrown                                                 ; 4469: ad 06 0a
     cmp #2                                                            ; 446c: c9 02
-    bcc return3                                                       ; 446e: 90 3d
+    bcc return4                                                       ; 446e: 90 3d
     ldx #$23 ; '#'                                                    ; 4470: a2 23
     lda #3                                                            ; 4472: a9 03
     sta temp_sprite_x_offset                                          ; 4474: 85 3a
@@ -1745,20 +1746,20 @@ room_3_update_handler
     sta object_z_order,x                                              ; 448a: 9d c2 38
     lda #spriteid_cuckoo                                              ; 448d: a9 d3
     sta object_spriteid,x                                             ; 448f: 9d a8 09
-    jmp return3                                                       ; 4492: 4c ad 44
+    jmp return4                                                       ; 4492: 4c ad 44
 
 room_3_not_first_update
     ldx #$0b                                                          ; 4495: a2 0b
     ldy #2                                                            ; 4497: a0 02
     jsr test_for_collision_between_objects_x_and_y                    ; 4499: 20 e2 28
-    beq return3                                                       ; 449c: f0 0f
+    beq return4                                                       ; 449c: f0 0f
     lda #spriteid_cuckoo_menu_item                                    ; 449e: a9 d4
     jsr find_or_create_menu_slot_for_A                                ; 44a0: 20 bd 2b
     lda #0                                                            ; 44a3: a9 00
     sta object_spriteid + objectid_pendulum                           ; 44a5: 8d aa 09
     lda #0                                                            ; 44a8: a9 00
     sta cuckoo_thrown                                                 ; 44aa: 8d 06 0a
-return3
+return4
     rts                                                               ; 44ad: 60
 
 envelope3
@@ -1947,7 +1948,6 @@ pydis_end
 ;     c42a6
 ;     c42b3
 ;     c42d7
-;     c4318
 ;     c4319
 ;     c433c
 ;     l0015
@@ -1961,7 +1961,6 @@ pydis_end
 ;     l0a73
 ;     l0a74
 ;     l0a75
-;     l38b2
 ;     l38c8
 ;     l3e41
 ;     l3f1e
@@ -2066,6 +2065,9 @@ pydis_end
 !if (objectid_cuckoo) != $02 {
     !error "Assertion failed: objectid_cuckoo == $02"
 }
+!if (objectid_hourglass) != $07 {
+    !error "Assertion failed: objectid_hourglass == $07"
+}
 !if (objectid_spell) != $05 {
     !error "Assertion failed: objectid_spell == $05"
 }
@@ -2093,6 +2095,12 @@ pydis_end
 !if (spriteid_cache1) != $d7 {
     !error "Assertion failed: spriteid_cache1 == $d7"
 }
+!if (spriteid_cache2) != $d8 {
+    !error "Assertion failed: spriteid_cache2 == $d8"
+}
+!if (spriteid_cache3) != $df {
+    !error "Assertion failed: spriteid_cache3 == $df"
+}
 !if (spriteid_clock) != $c8 {
     !error "Assertion failed: spriteid_clock == $c8"
 }
@@ -2107,6 +2115,9 @@ pydis_end
 }
 !if (spriteid_cuckoo_open_beak) != $d6 {
     !error "Assertion failed: spriteid_cuckoo_open_beak == $d6"
+}
+!if (spriteid_hourglass) != $dd {
+    !error "Assertion failed: spriteid_hourglass == $dd"
 }
 !if (spriteid_hourglass_menu_item) != $de {
     !error "Assertion failed: spriteid_hourglass_menu_item == $de"
