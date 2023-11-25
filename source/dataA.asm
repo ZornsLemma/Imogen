@@ -947,7 +947,7 @@ room1_not_first_update
     cmp #trapdoor_right_x                                             ; 3e89: c9 b8
     bcs set_room1_trapdoor_sprites_if_required                        ; 3e8b: b0 4a
 ; Yes. Is the player colliding with solid rock? (We probably 'should' only check for
-; collision below, but in practice the other directions aren't possible.)
+; collision below the player, but in practice the other directions aren't possible.)
     lda #2                                                            ; 3e8d: a9 02
     sta temp_bottom_offset                                            ; 3e8f: 8d 51 25
 ; This is the state of the player as currently drawn on the screen, before being
@@ -1258,6 +1258,7 @@ baby_spriteid_data
     !byte spriteid_baby2                                              ; 4054: d8
     !byte spriteid_baby3                                              ; 4055: d9
     !byte spriteid_one_pixel_masked_out                               ; 4056: 00
+baby_spriteid_subseq2
     !byte spriteid_baby7                                              ; 4057: dd
     !byte spriteid_baby7                                              ; 4058: dd
     !byte spriteid_baby7                                              ; 4059: dd
@@ -1400,7 +1401,7 @@ baby_spriteid_index_if_baby_spriteid_data_is_zero_set
 player_not_collided_with_baby
     cpy #some_specific_baby_spriteid_index_entry                      ; 412e: c0 21
     bne dont_adjust_baby_spriteid_index                               ; 4130: d0 05
-    ldy #5                                                            ; 4132: a0 05
+    ldy #baby_spriteid_subseq2 - baby_spriteid_data                   ; 4132: a0 05
     sty baby_spriteid_index_if_baby_spriteid_data_is_zero             ; 4134: 8c 72 0a
 dont_adjust_baby_spriteid_index
     lda desired_room_index                                            ; 4137: a5 30
@@ -1445,7 +1446,7 @@ baby_pixel_x_speed_negativbe
     bcs baby_pixel_x_coordinate_within_min_max                        ; 4188: b0 15
     bcc baby_pixel_x_coordinate_outside_min_max                       ; 418a: 90 08                   ; ALWAYS branch
 baby_pixel_x_coordinate_is_max_or_min
-    ldy #5                                                            ; 418c: a0 05
+    ldy #baby_spriteid_subseq2 - baby_spriteid_data                   ; 418c: a0 05
     sty baby_spriteid_index_if_baby_spriteid_data_is_zero             ; 418e: 8c 72 0a
     jmp baby_pixel_x_coordinate_within_min_max                        ; 4191: 4c 9f 41
 
@@ -2061,6 +2062,9 @@ pydis_end
 }
 !if (baby_spriteid_data_entries_minus_1) != $2b {
     !error "Assertion failed: baby_spriteid_data_entries_minus_1 == $2b"
+}
+!if (baby_spriteid_subseq2 - baby_spriteid_data) != $05 {
+    !error "Assertion failed: baby_spriteid_subseq2 - baby_spriteid_data == $05"
 }
 !if (collectable_spriteids + 1) != $2eee {
     !error "Assertion failed: collectable_spriteids + 1 == $2eee"
