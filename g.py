@@ -3347,6 +3347,14 @@ print("""; *********************************************************************
 
 go()
 
+# TODO: Crude notes on how to use room_index_cheat1:
+# - set a debugger breakpoint on 127e
+# - enter level password (I think you need to be on a different level beforehand)
+# - poke 2 to 9ef+level index (which is in X) - 2 is a bit arbitrary, key thing is b6 clear
+# - poke room number to 3add
+# - continue
+# I am sure there is a better way to do it, but this does seem to work.
+
 
 # vi: tw=100
 
