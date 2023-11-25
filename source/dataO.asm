@@ -189,7 +189,7 @@ l0a5e                                               = $0a5e
 l0a5f                                               = $0a5f
 l0a60                                               = $0a60
 l0a61                                               = $0a61
-sixteen_entry_table                                 = $0a6f
+level_workspace                                     = $0a6f
 l0a70                                               = $0a70
 l0a71                                               = $0a71
 string_input_buffer                                 = $0a90
@@ -736,7 +736,7 @@ c3d77
     lda l0a55                                                         ; 3d9e: ad 55 0a
     beq c3dab                                                         ; 3da1: f0 08
     bmi c3dcf                                                         ; 3da3: 30 2a
-    dec sixteen_entry_table                                           ; 3da5: ce 6f 0a
+    dec level_workspace                                               ; 3da5: ce 6f 0a
     jmp c3dcf                                                         ; 3da8: 4c cf 3d
 
 c3dab
@@ -765,9 +765,9 @@ loop_c3dde
     lda desired_room_index                                            ; 3dde: a5 30
     cmp l0a5b                                                         ; 3de0: cd 5b 0a
     bne c3df8                                                         ; 3de3: d0 13
-    lda sixteen_entry_table                                           ; 3de5: ad 6f 0a
+    lda level_workspace                                               ; 3de5: ad 6f 0a
     beq c3df8                                                         ; 3de8: f0 0e
-    dec sixteen_entry_table                                           ; 3dea: ce 6f 0a
+    dec level_workspace                                               ; 3dea: ce 6f 0a
     ldx #2                                                            ; 3ded: a2 02
     jsr l20f7                                                         ; 3def: 20 f7 20
     jsr sub_c3f28                                                     ; 3df2: 20 28 3f
@@ -791,9 +791,9 @@ c3e00
     lda desired_room_index                                            ; 3e15: a5 30
     cmp l0a5b                                                         ; 3e17: cd 5b 0a
     beq c3e70                                                         ; 3e1a: f0 54
-    lda sixteen_entry_table                                           ; 3e1c: ad 6f 0a
+    lda level_workspace                                               ; 3e1c: ad 6f 0a
     bmi c3dfd                                                         ; 3e1f: 30 dc
-    inc sixteen_entry_table                                           ; 3e21: ee 6f 0a
+    inc level_workspace                                               ; 3e21: ee 6f 0a
     jmp c3f27                                                         ; 3e24: 4c 27 3f
 
 c3e27
@@ -832,7 +832,7 @@ c3e70
     cmp l0a5b                                                         ; 3e75: cd 5b 0a
     beq c3e7f                                                         ; 3e78: f0 05
     lda #0                                                            ; 3e7a: a9 00
-    sta sixteen_entry_table                                           ; 3e7c: 8d 6f 0a
+    sta level_workspace                                               ; 3e7c: 8d 6f 0a
 c3e7f
     lda l4033                                                         ; 3e7f: ad 33 40
     sta l09b5                                                         ; 3e82: 8d b5 09
@@ -956,7 +956,7 @@ c3f6d
     ldy #$21 ; '!'                                                    ; 3f6d: a0 21
     sty l0a55                                                         ; 3f6f: 8c 55 0a
     lda #0                                                            ; 3f72: a9 00
-    sta sixteen_entry_table                                           ; 3f74: 8d 6f 0a
+    sta level_workspace                                               ; 3f74: 8d 6f 0a
 c3f77
     sty l0a56                                                         ; 3f77: 8c 56 0a
     lda l3d3d,y                                                       ; 3f7a: b9 3d 3d

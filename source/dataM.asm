@@ -192,7 +192,7 @@ l0a46                                               = $0a46
 l0a47                                               = $0a47
 l0a48                                               = $0a48
 l0a49                                               = $0a49
-sixteen_entry_table                                 = $0a6f
+level_workspace                                     = $0a6f
 l0a70                                               = $0a70
 l0a71                                               = $0a71
 l0a72                                               = $0a72
@@ -690,7 +690,7 @@ c3d53
     beq c3d62                                                         ; 3d55: f0 0b
     cpx #$9c                                                          ; 3d57: e0 9c
     bne c3d6a                                                         ; 3d59: d0 0f
-    lda sixteen_entry_table                                           ; 3d5b: ad 6f 0a
+    lda level_workspace                                               ; 3d5b: ad 6f 0a
     cmp #$48 ; 'H'                                                    ; 3d5e: c9 48
     bcc c3d6a                                                         ; 3d60: 90 08
 c3d62
@@ -766,7 +766,7 @@ c3dee
     cmp level_before_latest_level_and_room_initialisation             ; 3df0: c5 51
     beq c3df9                                                         ; 3df2: f0 05
     lda #$50 ; 'P'                                                    ; 3df4: a9 50
-    sta sixteen_entry_table                                           ; 3df6: 8d 6f 0a
+    sta level_workspace                                               ; 3df6: 8d 6f 0a
 c3df9
     lda desired_room_index                                            ; 3df9: a5 30
     cmp #1                                                            ; 3dfb: c9 01
@@ -805,7 +805,7 @@ loop_c3e2b
     jsr write_a_single_value_to_cell_in_collision_map                 ; 3e3b: 20 bb 1e
     lda #$50 ; 'P'                                                    ; 3e3e: a9 50
     sec                                                               ; 3e40: 38
-    sbc sixteen_entry_table                                           ; 3e41: ed 6f 0a
+    sbc level_workspace                                               ; 3e41: ed 6f 0a
     clc                                                               ; 3e44: 18
     adc #$5c ; '\'                                                    ; 3e45: 69 5c
     lsr                                                               ; 3e47: 4a
@@ -826,10 +826,10 @@ loop_c3e4c
     lda #$cd                                                          ; 3e60: a9 cd
     sta l09aa                                                         ; 3e62: 8d aa 09
     ldx #$10                                                          ; 3e65: a2 10
-    lda sixteen_entry_table                                           ; 3e67: ad 6f 0a
+    lda level_workspace                                               ; 3e67: ad 6f 0a
     and #4                                                            ; 3e6a: 29 04
     beq c3e7d                                                         ; 3e6c: f0 0f
-    lda sixteen_entry_table                                           ; 3e6e: ad 6f 0a
+    lda level_workspace                                               ; 3e6e: ad 6f 0a
     sec                                                               ; 3e71: 38
     sbc #$0c                                                          ; 3e72: e9 0c
     lsr                                                               ; 3e74: 4a
@@ -839,7 +839,7 @@ loop_c3e4c
     lda #$cc                                                          ; 3e78: a9 cc
     jsr draw_sprite_a_at_cell_xy                                      ; 3e7a: 20 4c 1f
 c3e7d
-    lda sixteen_entry_table                                           ; 3e7d: ad 6f 0a
+    lda level_workspace                                               ; 3e7d: ad 6f 0a
     lsr                                                               ; 3e80: 4a
     lsr                                                               ; 3e81: 4a
     lsr                                                               ; 3e82: 4a
@@ -911,7 +911,7 @@ c3ed3
     cmp #$49 ; 'I'                                                    ; 3eff: c9 49
     bne c3f3e                                                         ; 3f01: d0 3b
 c3f03
-    lda sixteen_entry_table                                           ; 3f03: ad 6f 0a
+    lda level_workspace                                               ; 3f03: ad 6f 0a
     cmp #$20 ; ' '                                                    ; 3f06: c9 20
     beq c3ed0                                                         ; 3f08: f0 c6
     lda object_y_low                                                  ; 3f0a: ad 7c 09
@@ -922,10 +922,10 @@ c3f03
     clc                                                               ; 3f16: 18
     adc #4                                                            ; 3f17: 69 04
     sta object_y_low+1                                                ; 3f19: 8d 7d 09
-    lda sixteen_entry_table                                           ; 3f1c: ad 6f 0a
+    lda level_workspace                                               ; 3f1c: ad 6f 0a
     sec                                                               ; 3f1f: 38
     sbc #4                                                            ; 3f20: e9 04
-    sta sixteen_entry_table                                           ; 3f22: 8d 6f 0a
+    sta level_workspace                                               ; 3f22: 8d 6f 0a
     lda desired_room_index                                            ; 3f25: a5 30
     cmp #1                                                            ; 3f27: c9 01
     bne c3ed0                                                         ; 3f29: d0 a5
@@ -938,7 +938,7 @@ c3f03
     jmp c3fe8                                                         ; 3f3b: 4c e8 3f
 
 c3f3e
-    lda sixteen_entry_table                                           ; 3f3e: ad 6f 0a
+    lda level_workspace                                               ; 3f3e: ad 6f 0a
     cmp #$50 ; 'P'                                                    ; 3f41: c9 50
     bcs c3ed0                                                         ; 3f43: b0 8b
     ldx #$0c                                                          ; 3f45: a2 0c
@@ -950,7 +950,7 @@ c3f3e
     ldy #$cb                                                          ; 3f51: a0 cb
     adc #4                                                            ; 3f53: 69 04
 c3f55
-    sta sixteen_entry_table                                           ; 3f55: 8d 6f 0a
+    sta level_workspace                                               ; 3f55: 8d 6f 0a
     stx l4018                                                         ; 3f58: 8e 18 40
     sty l4019                                                         ; 3f5b: 8c 19 40
     lda desired_room_index                                            ; 3f5e: a5 30
@@ -963,7 +963,7 @@ c3f55
     lda #0                                                            ; 3f6e: a9 00
     sta l09b5                                                         ; 3f70: 8d b5 09
 c3f73
-    lda sixteen_entry_table                                           ; 3f73: ad 6f 0a
+    lda level_workspace                                               ; 3f73: ad 6f 0a
     cmp #$50 ; 'P'                                                    ; 3f76: c9 50
     beq c3f86                                                         ; 3f78: f0 0c
     lda desired_room_index                                            ; 3f7a: a5 30
@@ -1026,7 +1026,7 @@ c3fe8
     bne c4017                                                         ; 3fec: d0 29
     lda #$50 ; 'P'                                                    ; 3fee: a9 50
     sec                                                               ; 3ff0: 38
-    sbc sixteen_entry_table                                           ; 3ff1: ed 6f 0a
+    sbc level_workspace                                               ; 3ff1: ed 6f 0a
     clc                                                               ; 3ff4: 18
     adc #$58 ; 'X'                                                    ; 3ff5: 69 58
     sta l097e                                                         ; 3ff7: 8d 7e 09
@@ -1042,7 +1042,7 @@ c3fe8
     iny                                                               ; 4008: c8
     lda #0                                                            ; 4009: a9 00
     jsr write_a_single_value_to_cell_in_collision_map                 ; 400b: 20 bb 1e
-    lda sixteen_entry_table                                           ; 400e: ad 6f 0a
+    lda level_workspace                                               ; 400e: ad 6f 0a
     sta l097f                                                         ; 4011: 8d 7f 09
     sta l0980                                                         ; 4014: 8d 80 09
 c4017

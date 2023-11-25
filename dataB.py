@@ -75,10 +75,25 @@ label(0x09ad, "object_spriteid + objectid_rope_broken_top_end")
 label(0x09ae, "object_spriteid + objectid_rope_broken_bottom_end")
 label(0x09af, "object_spriteid + objectid_hourglass")
 
-label(0x0a05, "cuckoo_room_1_progress")    # 0: hidden in clock, 1+: cuckooing, $ff: got cuckoo
-label(0x0a06, "cuckoo_room_0_progress")    # 0: in room 1 clock or held, 1: installed in clock, 2+: animation thrown into room3, $ff: in room 3
+label(0x0a05, "cuckoo_room_1_progress")    # 0: hidden in room 1 clock, 1+: cuckooing, $ff: got cuckoo (cuckoo object created)
+label(0x0a06, "cuckoo_room_2_progress")    # 0: in room 2 clock or held, 1: installed in clock, 2+: animation thrown into room3, $ff: in room 3
+label(0x0a07, "room_2_boulder_progress")   # 0: suspended, 1+: falling, $ff: finished falling
 label(0x0a08, "falling_rock_progress")
 label(0x0a09, "got_hourglass_flag")
+
+label(0x0a6f, "room_1_clock_repeat_counter")    # Counts up the number of repeats of the pendulum swing
+label(0x0a70, "room_1_clock_repeat_limit")      # Set to $10 to play the clock animations until repeat counter reaches 16
+label(0x0a71, "room_1_pendulum_swing_index")    # Animation index for the pendulum swing
+
+label(0x3f1e, "clock_repeat_counter")    # Counts up the number of repeats of the pendulum swing
+label(0x3f1f, "clock_repeat_limit")      # Set to $10 to play the clock animations until repeat counter reaches 16
+label(0x3f20, "pendulum_swing_index")    # Animation index for the pendulum swing
+
+
+label(0x0a72, "room_2_clock_repeat_counter")    # Counts up the number of repeats of the pendulum swing
+label(0x0a73, "room_2_clock_repeat_limit")      # Set to $10 to play the clock animations until repeat counter reaches 16
+label(0x0a74, "room_2_pendulum_swing_index")    # Animation index for the pendulum swing
+#label(0x0a75, "level_workspace+6")
 
 label(0x2ef4, "five_byte_table_paired_with_collectable_sprite_ids+2")
 label(0x38b2, "object_sprite_mask_type + objectid_rope_broken_bottom_end")
@@ -104,6 +119,12 @@ expr(0x3c4b, "collision_map_rope")
 blank(0x3c51)
 label(0x3c51, "after_room_0_code")
 label(0x3c80, "return2")
+label(0x3d66, "room_1_update_handler")
+comment(0x3d74, "update room 1 clock")
+expr(0x3e37, sprite_dict)
+ab(0x3e38)
+blank(0x3e3a)
+label(0x3e47, "update_clock")
 for i in range(6):
     expr(0x3e41 + i, sprite_dict)
 ldx_ldy_jsr_define_envelope(0x3e97, "envelope2")
@@ -111,17 +132,22 @@ ldx_ldy_jsr_play_sound_yx(0x3ee1, "sound1")
 ldx_ldy_jsr_play_sound_yx(0x3ef1, "sound2")
 ldx_ldy_jsr_play_sound_yx(0x3efa, "sound3")
 label(0x3f21, "swinging_pendulum_spriteids")
+for addr in range(0x3f21, 0x3f21 + 14):
+    expr(addr, sprite_dict)
 ldx_ldy_jsr_define_envelope(0x3f43, "envelope3")
 expr(0x3f47, sprite_dict)
 expr(0x3f4c, sprite_dict)
 expr(0x3f54, sprite_dict)
-for addr in range(0x3f21, 0x3f21 + 14):
-    expr(addr, sprite_dict)
 label(0x3f2b, "cuckoo_tweeting_spriteids")
+label(0x3f62, "player_using_cuckoo")
 ldx_ldy_jsr_play_sound_yx(0x3f88, "sound4")
 ldx_ldy_jsr_play_sound_yx(0x3f8f, "sound5")
 label(0x4060, "room_2_check_right_exit")
 expr(0x4063, "exit_room_right")
+label(0x406d, "room_2_update_handler")
+comment(0x406d, "update room 2 clock")
+comment(0x409a, "check for first update")
+expr(0x40c5, "objectid_clock_workings")
 expr(0x40d1, sprite_dict)
 expr(0x4106, sprite_dict)
 expr(0x411a, sprite_dict)

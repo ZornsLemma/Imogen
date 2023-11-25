@@ -179,7 +179,7 @@ level_progress_table                                = $09ef
 l0a30                                               = $0a30
 l0a31                                               = $0a31
 l0a32                                               = $0a32
-sixteen_entry_table                                 = $0a6f
+level_workspace                                     = $0a6f
 l0a70                                               = $0a70
 l0a71                                               = $0a71
 l0a72                                               = $0a72
@@ -1282,7 +1282,7 @@ c4142
     lda desired_room_index                                            ; 4153: a5 30
     cmp l0a75                                                         ; 4155: cd 75 0a
     beq c4166                                                         ; 4158: f0 0c
-    lda sixteen_entry_table                                           ; 415a: ad 6f 0a
+    lda level_workspace                                               ; 415a: ad 6f 0a
     cmp #4                                                            ; 415d: c9 04
     bcc c4166                                                         ; 415f: 90 05
 c4161
@@ -1417,9 +1417,9 @@ loop_c427f
     lda desired_room_index                                            ; 427f: a5 30
     cmp l0a75                                                         ; 4281: cd 75 0a
     bne c4299                                                         ; 4284: d0 13
-    lda sixteen_entry_table                                           ; 4286: ad 6f 0a
+    lda level_workspace                                               ; 4286: ad 6f 0a
     beq c4299                                                         ; 4289: f0 0e
-    dec sixteen_entry_table                                           ; 428b: ce 6f 0a
+    dec level_workspace                                               ; 428b: ce 6f 0a
     ldx #2                                                            ; 428e: a2 02
     jsr l20f7                                                         ; 4290: 20 f7 20
     jsr sub_c4373                                                     ; 4293: 20 73 43
@@ -1440,9 +1440,9 @@ c42a1
     lda desired_room_index                                            ; 42ae: a5 30
     cmp l0a75                                                         ; 42b0: cd 75 0a
     beq c4310                                                         ; 42b3: f0 5b
-    lda sixteen_entry_table                                           ; 42b5: ad 6f 0a
+    lda level_workspace                                               ; 42b5: ad 6f 0a
     bmi c429e                                                         ; 42b8: 30 e4
-    inc sixteen_entry_table                                           ; 42ba: ee 6f 0a
+    inc level_workspace                                               ; 42ba: ee 6f 0a
     jmp c4332                                                         ; 42bd: 4c 32 43
 
 c42c0
@@ -1484,7 +1484,7 @@ c4310
     cmp l0a75                                                         ; 431b: cd 75 0a
     beq c4328                                                         ; 431e: f0 08
     lda #0                                                            ; 4320: a9 00
-    sta sixteen_entry_table                                           ; 4322: 8d 6f 0a
+    sta level_workspace                                               ; 4322: 8d 6f 0a
     jmp c4332                                                         ; 4325: 4c 32 43
 
 c4328
@@ -1544,7 +1544,7 @@ c4384
     sta l0a76                                                         ; 4392: 8d 76 0a
     sta l0a30                                                         ; 4395: 8d 30 0a
     sta l09aa                                                         ; 4398: 8d aa 09
-    sta sixteen_entry_table                                           ; 439b: 8d 6f 0a
+    sta level_workspace                                               ; 439b: 8d 6f 0a
     jmp c4462                                                         ; 439e: 4c 62 44
 
 c43a1

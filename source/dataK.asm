@@ -187,7 +187,7 @@ l0a35                                               = $0a35
 l0a36                                               = $0a36
 l0a37                                               = $0a37
 l0a38                                               = $0a38
-sixteen_entry_table                                 = $0a6f
+level_workspace                                     = $0a6f
 l0a70                                               = $0a70
 l0a71                                               = $0a71
 l0a72                                               = $0a72
@@ -1612,9 +1612,9 @@ sub_c43a4
     sta l44ee                                                         ; 43d6: 8d ee 44
     ldx #$d0                                                          ; 43d9: a2 d0
     ldy #0                                                            ; 43db: a0 00
-    lda sixteen_entry_table                                           ; 43dd: ad 6f 0a
+    lda level_workspace                                               ; 43dd: ad 6f 0a
     jsr sub_c43ec                                                     ; 43e0: 20 ec 43
-    sta sixteen_entry_table                                           ; 43e3: 8d 6f 0a
+    sta level_workspace                                               ; 43e3: 8d 6f 0a
     rts                                                               ; 43e6: 60
 
 l43e7

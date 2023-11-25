@@ -163,7 +163,7 @@ l0a0f                                               = $0a0f
 l0a10                                               = $0a10
 l0a11                                               = $0a11
 l0a12                                               = $0a12
-sixteen_entry_table                                 = $0a6f
+level_workspace                                     = $0a6f
 l0a70                                               = $0a70
 l0a71                                               = $0a71
 string_input_buffer                                 = $0a90
@@ -1332,7 +1332,7 @@ sub_c41ac
 c41df
     lda l0070                                                         ; 41df: a5 70
     sta l0a12                                                         ; 41e1: 8d 12 0a
-    sta sixteen_entry_table                                           ; 41e4: 8d 6f 0a
+    sta level_workspace                                               ; 41e4: 8d 6f 0a
     stx l0a70                                                         ; 41e7: 8e 70 0a
     sty l0a71                                                         ; 41ea: 8c 71 0a
 c41ed
@@ -1354,7 +1354,7 @@ c420a
     jmp c42eb                                                         ; 420a: 4c eb 42
 
 c420d
-    lda sixteen_entry_table                                           ; 420d: ad 6f 0a
+    lda level_workspace                                               ; 420d: ad 6f 0a
     clc                                                               ; 4210: 18
     adc #1                                                            ; 4211: 69 01
     tay                                                               ; 4213: a8
@@ -1466,7 +1466,7 @@ c42e6
     ldy #$2c ; ','                                                    ; 42e6: a0 2c
     sty l0a12                                                         ; 42e8: 8c 12 0a
 c42eb
-    sty sixteen_entry_table                                           ; 42eb: 8c 6f 0a
+    sty level_workspace                                               ; 42eb: 8c 6f 0a
     lda l0a12                                                         ; 42ee: ad 12 0a
     cmp #0                                                            ; 42f1: c9 00
     bne c4309                                                         ; 42f3: d0 14
@@ -1482,7 +1482,7 @@ c4309
     lda desired_room_index                                            ; 4309: a5 30
     cmp #3                                                            ; 430b: c9 03
     bne c4366                                                         ; 430d: d0 57
-    ldy sixteen_entry_table                                           ; 430f: ac 6f 0a
+    ldy level_workspace                                               ; 430f: ac 6f 0a
     lda l417e,y                                                       ; 4312: b9 7e 41
     sta l09ad                                                         ; 4315: 8d ad 09
     lda l0a70                                                         ; 4318: ad 70 0a

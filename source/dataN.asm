@@ -189,7 +189,7 @@ l0a51                                               = $0a51
 l0a52                                               = $0a52
 l0a53                                               = $0a53
 l0a54                                               = $0a54
-sixteen_entry_table                                 = $0a6f
+level_workspace                                     = $0a6f
 l0a70                                               = $0a70
 l0a71                                               = $0a71
 l0a72                                               = $0a72
@@ -590,20 +590,20 @@ c3ce5
     clc                                                               ; 3ced: 18
     adc l0a71                                                         ; 3cee: 6d 71 0a
     sta l0a71                                                         ; 3cf1: 8d 71 0a
-    ldy sixteen_entry_table                                           ; 3cf4: ac 6f 0a
+    ldy level_workspace                                               ; 3cf4: ac 6f 0a
     iny                                                               ; 3cf7: c8
     lda l3bf2,y                                                       ; 3cf8: b9 f2 3b
     cmp #$ff                                                          ; 3cfb: c9 ff
     bne c3d01                                                         ; 3cfd: d0 02
     ldy #0                                                            ; 3cff: a0 00
 c3d01
-    sty sixteen_entry_table                                           ; 3d01: 8c 6f 0a
+    sty level_workspace                                               ; 3d01: 8c 6f 0a
     ldy l0a70                                                         ; 3d04: ac 70 0a
     lda l3bba,y                                                       ; 3d07: b9 ba 3b
     cmp #$d5                                                          ; 3d0a: c9 d5
     beq c3d13                                                         ; 3d0c: f0 05
     lda #0                                                            ; 3d0e: a9 00
-    sta sixteen_entry_table                                           ; 3d10: 8d 6f 0a
+    sta level_workspace                                               ; 3d10: 8d 6f 0a
 c3d13
     lda desired_room_index                                            ; 3d13: a5 30
     cmp #0                                                            ; 3d15: c9 00
@@ -616,7 +616,7 @@ c3d13
     sta l09af                                                         ; 3d26: 8d af 09
     lda l0a71                                                         ; 3d29: ad 71 0a
     sta l0983                                                         ; 3d2c: 8d 83 09
-    ldy sixteen_entry_table                                           ; 3d2f: ac 6f 0a
+    ldy level_workspace                                               ; 3d2f: ac 6f 0a
     lda l3bf2,y                                                       ; 3d32: b9 f2 3b
     sta l09b0                                                         ; 3d35: 8d b0 09
 c3d38

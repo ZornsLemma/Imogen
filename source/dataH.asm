@@ -178,7 +178,7 @@ l0a20                                               = $0a20
 l0a21                                               = $0a21
 l0a22                                               = $0a22
 l0a23                                               = $0a23
-sixteen_entry_table                                 = $0a6f
+level_workspace                                     = $0a6f
 l0a70                                               = $0a70
 l0a71                                               = $0a71
 l0a72                                               = $0a72
@@ -1233,16 +1233,16 @@ c40de
     ldy #$44 ; 'D'                                                    ; 40e6: a0 44
     jsr define_envelope                                               ; 40e8: 20 5e 39
     lda #0                                                            ; 40eb: a9 00
-    sta sixteen_entry_table                                           ; 40ed: 8d 6f 0a
+    sta level_workspace                                               ; 40ed: 8d 6f 0a
     lda l0a1c                                                         ; 40f0: ad 1c 0a
     cmp #$0d                                                          ; 40f3: c9 0d
     beq c4126                                                         ; 40f5: f0 2f
     cmp #1                                                            ; 40f7: c9 01
     beq c4126                                                         ; 40f9: f0 2b
-    dec sixteen_entry_table                                           ; 40fb: ce 6f 0a
+    dec level_workspace                                               ; 40fb: ce 6f 0a
     ora #0                                                            ; 40fe: 09 00
     bne c4126                                                         ; 4100: d0 24
-    inc sixteen_entry_table                                           ; 4102: ee 6f 0a
+    inc level_workspace                                               ; 4102: ee 6f 0a
     lda #3                                                            ; 4105: a9 03
     sta l0a22                                                         ; 4107: 8d 22 0a
     lda #$98                                                          ; 410a: a9 98
@@ -1276,11 +1276,11 @@ loop_c4146
     lda desired_room_index                                            ; 4146: a5 30
     cmp l0a22                                                         ; 4148: cd 22 0a
     bne c415f                                                         ; 414b: d0 12
-    lda sixteen_entry_table                                           ; 414d: ad 6f 0a
+    lda level_workspace                                               ; 414d: ad 6f 0a
     beq c415f                                                         ; 4150: f0 0d
     cmp #$ff                                                          ; 4152: c9 ff
     beq c4159                                                         ; 4154: f0 03
-    dec sixteen_entry_table                                           ; 4156: ce 6f 0a
+    dec level_workspace                                               ; 4156: ce 6f 0a
 c4159
     jsr sub_c420e                                                     ; 4159: 20 0e 42
     jmp loop_c4146                                                    ; 415c: 4c 46 41
@@ -1294,9 +1294,9 @@ c4167
     lda desired_room_index                                            ; 4167: a5 30
     cmp l0a22                                                         ; 4169: cd 22 0a
     beq c4179                                                         ; 416c: f0 0b
-    lda sixteen_entry_table                                           ; 416e: ad 6f 0a
+    lda level_workspace                                               ; 416e: ad 6f 0a
     bmi c4176                                                         ; 4171: 30 03
-    inc sixteen_entry_table                                           ; 4173: ee 6f 0a
+    inc level_workspace                                               ; 4173: ee 6f 0a
 c4176
     jmp c420d                                                         ; 4176: 4c 0d 42
 
@@ -1313,7 +1313,7 @@ c4188
     cmp l0a22                                                         ; 418d: cd 22 0a
     beq c419a                                                         ; 4190: f0 08
     lda #0                                                            ; 4192: a9 00
-    sta sixteen_entry_table                                           ; 4194: 8d 6f 0a
+    sta level_workspace                                               ; 4194: 8d 6f 0a
     jmp c420d                                                         ; 4197: 4c 0d 42
 
 c419a
@@ -1497,7 +1497,7 @@ c42ed
     beq c4314                                                         ; 4308: f0 0a
 c430a
     lda #0                                                            ; 430a: a9 00
-    sta sixteen_entry_table                                           ; 430c: 8d 6f 0a
+    sta level_workspace                                               ; 430c: 8d 6f 0a
     ldy #$0d                                                          ; 430f: a0 0d
     sty l0a1c                                                         ; 4311: 8c 1c 0a
 c4314

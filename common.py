@@ -311,7 +311,7 @@ def common_to_all():
     label(0x09c9, "object_direction_old")
     label(0x09ef, "level_progress_table")
 
-    optional_label(0x0a6f, "sixteen_entry_table")
+    optional_label(0x0a6f, "level_workspace")
     label(0x0a90, "string_input_buffer")
     label(0x0aa9, "tile_all_set_pixels")
 

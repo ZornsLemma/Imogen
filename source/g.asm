@@ -479,7 +479,7 @@ save_game                                           = $09ea
 save_game_checksum                                  = $09eb
 current_transformations_remaining                   = $09ec
 level_progress_table                                = $09ef
-sixteen_entry_table                                 = $0a6f
+level_workspace                                     = $0a6f
 level_ordering_table                                = $0a7f
 string_input_buffer                                 = $0a90
 tile_all_clear_pixels                               = $0aa1
@@ -706,10 +706,10 @@ object_reset_loop
     sta object_direction                                              ; 1307: 8d be 09    ... :11d6[1]
     lda #0                                                            ; 130a: a9 00       ..  :11d9[1]
     ldy #$0f                                                          ; 130c: a0 0f       ..  :11db[1]
-clear_sixteen_entry_table_loop
-    sta sixteen_entry_table,y                                         ; 130e: 99 6f 0a    .o. :11dd[1]
+clear_level_workspace_loop
+    sta level_workspace,y                                             ; 130e: 99 6f 0a    .o. :11dd[1]
     dey                                                               ; 1311: 88          .   :11e0[1]
-    bpl clear_sixteen_entry_table_loop                                ; 1312: 10 fa       ..  :11e1[1]
+    bpl clear_level_workspace_loop                                    ; 1312: 10 fa       ..  :11e1[1]
     jsr set_player_position_for_new_room                              ; 1314: 20 78 12     x. :11e3[1]
     lda #<brk_handler                                                 ; 1317: a9 d3       ..  :11e6[1]
     sta old_brkv2                                                     ; 1319: 8d b3 0a    ... :11e8[1]
@@ -7244,9 +7244,9 @@ save
     sta osfile_block_start_address_low                                ; 36df: 85 7a       .z  :35ae[1]
     lda #>save_game                                                   ; 36e1: a9 09       ..  :35b0[1]
     sta osfile_block_start_address_mid1                               ; 36e3: 85 7b       .{  :35b2[1]
-    lda #<sixteen_entry_table                                         ; 36e5: a9 6f       .o  :35b4[1]
+    lda #<level_workspace                                             ; 36e5: a9 6f       .o  :35b4[1]
     sta osfile_block_end_address_low                                  ; 36e7: 85 7e       .~  :35b6[1]
-    lda #>sixteen_entry_table                                         ; 36e9: a9 0a       ..  :35b8[1]
+    lda #>level_workspace                                             ; 36e9: a9 0a       ..  :35b8[1]
     sta osfile_block_end_address_mid1                                 ; 36eb: 85 7f       ..  :35ba[1]
 save_or_validated_load
     ldx #<save_game                                                   ; 36ed: a2 ea       ..  :35bc[1]
@@ -8844,10 +8844,10 @@ relocation3_high_copy_start
 !pseudopc $0ab7 {
 ; *************************************************************************************
 ; 
-; Clears $80 bytes from 'level_progress_table' to 'sixteen_entry_table'. This is almost
-; all of the save game area, bar five bytes at the start which contain the level
-; number, checksum, and three bytes for the ascii digits of the transformations
-; remaining. These are filled in later.
+; Clears $80 bytes from 'level_progress_table' to 'level_workspace'. This is almost all
+; of the save game area, bar five bytes at the start which contain the level number,
+; checksum, and three bytes for the ascii digits of the transformations remaining.
+; These are filled in later.
 ; 
 ; *************************************************************************************
 clear_most_of_save_game
@@ -9299,6 +9299,9 @@ pydis_end
 !if (<level_data) != $d5 {
     !error "Assertion failed: <level_data == $d5"
 }
+!if (<level_workspace) != $6f {
+    !error "Assertion failed: <level_workspace == $6f"
+}
 !if (<loading_encrypted_string) != $fe {
     !error "Assertion failed: <loading_encrypted_string == $fe"
 }
@@ -9349,9 +9352,6 @@ pydis_end
 }
 !if (<section_encrypted_string) != $b1 {
     !error "Assertion failed: <section_encrypted_string == $b1"
-}
-!if (<sixteen_entry_table) != $6f {
-    !error "Assertion failed: <sixteen_entry_table == $6f"
 }
 !if (<sound_data1) != $a4 {
     !error "Assertion failed: <sound_data1 == $a4"
@@ -9521,6 +9521,9 @@ pydis_end
 !if (>level_data) != $3a {
     !error "Assertion failed: >level_data == $3a"
 }
+!if (>level_workspace) != $0a {
+    !error "Assertion failed: >level_workspace == $0a"
+}
 !if (>loading_encrypted_string) != $35 {
     !error "Assertion failed: >loading_encrypted_string == $35"
 }
@@ -9568,9 +9571,6 @@ pydis_end
 }
 !if (>section_encrypted_string) != $37 {
     !error "Assertion failed: >section_encrypted_string == $37"
-}
-!if (>sixteen_entry_table) != $0a {
-    !error "Assertion failed: >sixteen_entry_table == $0a"
 }
 !if (>sound_data1) != $38 {
     !error "Assertion failed: >sound_data1 == $38"
