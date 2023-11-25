@@ -6,6 +6,8 @@ config.set_hex_dump_show_ascii(False)
 sprite_dict = {
 #    0xc8: "spriteid_mouse",
     0xd1: "spriteid_duck_toolbar",
+    0xd2: "spriteid_egg_toolbar",
+    0xd3: "spriteid_egg_mask_toolbar", # TODO: "mask" is a guess
 }
 
 # Merge with common sprite dictionary
@@ -18,7 +20,8 @@ set_sprite_dict(sprite_dict)
 
 load(0x3ad5, "orig/dataE.dat", "6502", "1fd692ce17c1ae2c858ed57730c9c081")
 
-label(0x0a13, "save_game_level_e_something")
+label(0x0a13, "save_game_level_e_holding_egg_flag") # TODO: other uses? not checked yet
+label(0x0a15, "save_game_level_e_duck_captured_flag") # TODO: might be used for other things too, not checked yet
 
 common_to_all()
 define_level(4)
@@ -45,6 +48,10 @@ expr(0x4442, "exit_room_right")
 
 expr(0x3b07, "spriteid_duck_toolbar")
 entry(0x3b0b, "developer_mode_not_active")
+expr(0x3b11, "spriteid_egg_mask_toolbar")
+entry(0x3b15, "dont_have_egg")
+expr(0x3b1d, "spriteid_duck_toolbar")
+entry(0x3b21, "duck_not_captured_yet")
 
 
 

@@ -64,6 +64,8 @@ spriteid_diamond3                     = 41
 spriteid_diamond4                     = 42
 spriteid_diamond5                     = 43
 spriteid_duck_toolbar                 = 209
+spriteid_egg_mask_toolbar             = 211
+spriteid_egg_toolbar                  = 210
 spriteid_fingertip_tile_restoration   = 30
 spriteid_fire1                        = 60
 spriteid_fire2                        = 61
@@ -188,9 +190,9 @@ l09c2                                               = $09c2
 l09c3                                               = $09c3
 object_direction_old                                = $09c9
 level_progress_table                                = $09ef
-save_game_level_e_something                         = $0a13
+save_game_level_e_holding_egg_flag                  = $0a13
 l0a14                                               = $0a14
-l0a15                                               = $0a15
+save_game_level_e_duck_captured_flag                = $0a15
 level_workspace                                     = $0a6f
 l0a70                                               = $0a70
 l0a71                                               = $0a71
@@ -315,25 +317,25 @@ level_specific_password
 level_specific_initialisation
     lda current_level                                                 ; 3af6: a5 31
     cmp level_before_latest_level_and_room_initialisation             ; 3af8: c5 51
-    beq c3b21                                                         ; 3afa: f0 25
+    beq duck_not_captured_yet                                         ; 3afa: f0 25
     lda developer_flags                                               ; 3afc: ad 03 11
     bpl developer_mode_not_active                                     ; 3aff: 10 0a
     lda #$ff                                                          ; 3b01: a9 ff
-    sta save_game_level_e_something                                   ; 3b03: 8d 13 0a
+    sta save_game_level_e_holding_egg_flag                            ; 3b03: 8d 13 0a
     lda #spriteid_duck_toolbar                                        ; 3b06: a9 d1
     jsr insert_character_menu_item_into_toolbar                       ; 3b08: 20 87 2b
 developer_mode_not_active
-    lda save_game_level_e_something                                   ; 3b0b: ad 13 0a
-    bpl c3b15                                                         ; 3b0e: 10 05
-    lda #$d3                                                          ; 3b10: a9 d3
+    lda save_game_level_e_holding_egg_flag                            ; 3b0b: ad 13 0a
+    bpl dont_have_egg                                                 ; 3b0e: 10 05
+    lda #spriteid_egg_mask_toolbar                                    ; 3b10: a9 d3
     jsr find_or_create_menu_slot_for_A                                ; 3b12: 20 bd 2b
-c3b15
-    lda l0a15                                                         ; 3b15: ad 15 0a
+dont_have_egg
+    lda save_game_level_e_duck_captured_flag                          ; 3b15: ad 15 0a
     cmp #$ff                                                          ; 3b18: c9 ff
-    bne c3b21                                                         ; 3b1a: d0 05
-    lda #$d1                                                          ; 3b1c: a9 d1
+    bne duck_not_captured_yet                                         ; 3b1a: d0 05
+    lda #spriteid_duck_toolbar                                        ; 3b1c: a9 d1
     jsr insert_character_menu_item_into_toolbar                       ; 3b1e: 20 87 2b
-c3b21
+duck_not_captured_yet
     lda #$b8                                                          ; 3b21: a9 b8
     sta l22de                                                         ; 3b23: 8d de 22
     lda #$3e ; '>'                                                    ; 3b26: a9 3e
@@ -541,14 +543,14 @@ sub_c3ce0
     jsr update_brazier_and_fire                                       ; 3ceb: 20 88 19
     lda update_room_first_update_flag                                 ; 3cee: ad 2b 13
     beq c3d3a                                                         ; 3cf1: f0 47
-    lda l0a15                                                         ; 3cf3: ad 15 0a
+    lda save_game_level_e_duck_captured_flag                          ; 3cf3: ad 15 0a
     cmp #$ff                                                          ; 3cf6: c9 ff
     beq c3d34                                                         ; 3cf8: f0 3a
     lda current_level                                                 ; 3cfa: a5 31
     cmp level_before_latest_level_and_room_initialisation             ; 3cfc: c5 51
     beq c3d12                                                         ; 3cfe: f0 12
     lda #$73 ; 's'                                                    ; 3d00: a9 73
-    sta l0a15                                                         ; 3d02: 8d 15 0a
+    sta save_game_level_e_duck_captured_flag                          ; 3d02: 8d 15 0a
     lda #$ff                                                          ; 3d05: a9 ff
     sta l0a79                                                         ; 3d07: 8d 79 0a
     sta l0a7a                                                         ; 3d0a: 8d 7a 0a
@@ -576,7 +578,7 @@ c3d37
     jmp c3df6                                                         ; 3d37: 4c f6 3d
 
 c3d3a
-    lda l0a15                                                         ; 3d3a: ad 15 0a
+    lda save_game_level_e_duck_captured_flag                          ; 3d3a: ad 15 0a
     cmp #$ff                                                          ; 3d3d: c9 ff
     beq c3d37                                                         ; 3d3f: f0 f6
     lda desired_room_index                                            ; 3d41: a5 30
@@ -592,7 +594,7 @@ c3d3a
     sta l09ac                                                         ; 3d57: 8d ac 09
     sta l09ad                                                         ; 3d5a: 8d ad 09
     lda #$ff                                                          ; 3d5d: a9 ff
-    sta l0a15                                                         ; 3d5f: 8d 15 0a
+    sta save_game_level_e_duck_captured_flag                          ; 3d5f: 8d 15 0a
     bmi c3d37                                                         ; 3d62: 30 d3
 c3d64
     ldy l0a7b                                                         ; 3d64: ac 7b 0a
@@ -611,7 +613,7 @@ c3d6f
     jmp c3d95                                                         ; 3d82: 4c 95 3d
 
 c3d85
-    lda l0a15                                                         ; 3d85: ad 15 0a
+    lda save_game_level_e_duck_captured_flag                          ; 3d85: ad 15 0a
     cmp #$1e                                                          ; 3d88: c9 1e
     beq c3d90                                                         ; 3d8a: f0 04
     cmp #$74 ; 't'                                                    ; 3d8c: c9 74
@@ -620,12 +622,12 @@ c3d90
     lda #0                                                            ; 3d90: a9 00
     sta l0a7a                                                         ; 3d92: 8d 7a 0a
 c3d95
-    lda l0a15                                                         ; 3d95: ad 15 0a
+    lda save_game_level_e_duck_captured_flag                          ; 3d95: ad 15 0a
     clc                                                               ; 3d98: 18
     adc l0a7a                                                         ; 3d99: 6d 7a 0a
-    sta l0a15                                                         ; 3d9c: 8d 15 0a
+    sta save_game_level_e_duck_captured_flag                          ; 3d9c: 8d 15 0a
 c3d9f
-    lda l0a15                                                         ; 3d9f: ad 15 0a
+    lda save_game_level_e_duck_captured_flag                          ; 3d9f: ad 15 0a
     cmp #$ff                                                          ; 3da2: c9 ff
     beq c3df6                                                         ; 3da4: f0 50
     lda desired_room_index                                            ; 3da6: a5 30
@@ -641,7 +643,7 @@ c3db7
     ldy l0a7b                                                         ; 3dba: ac 7b 0a
     lda l3b40,y                                                       ; 3dbd: b9 40 3b
     sta l09ad                                                         ; 3dc0: 8d ad 09
-    lda l0a15                                                         ; 3dc3: ad 15 0a
+    lda save_game_level_e_duck_captured_flag                          ; 3dc3: ad 15 0a
     ldx desired_room_index                                            ; 3dc6: a6 30
     cpx #2                                                            ; 3dc8: e0 02
     beq c3dcf                                                         ; 3dca: f0 03
@@ -989,7 +991,7 @@ c40e5
     lda current_level                                                 ; 40f9: a5 31
     cmp level_before_latest_level_and_room_initialisation             ; 40fb: c5 51
     beq c412a                                                         ; 40fd: f0 2b
-    lda save_game_level_e_something                                   ; 40ff: ad 13 0a
+    lda save_game_level_e_holding_egg_flag                            ; 40ff: ad 13 0a
     bmi c412a                                                         ; 4102: 30 26
     lda #0                                                            ; 4104: a9 00
     sta l0a75                                                         ; 4106: 8d 75 0a
@@ -1002,7 +1004,7 @@ c40e5
     lda #$3a ; ':'                                                    ; 4118: a9 3a
     sta l0a72                                                         ; 411a: 8d 72 0a
     lda #1                                                            ; 411d: a9 01
-    sta save_game_level_e_something                                   ; 411f: 8d 13 0a
+    sta save_game_level_e_holding_egg_flag                            ; 411f: 8d 13 0a
     sta l0a74                                                         ; 4122: 8d 74 0a
     lda #0                                                            ; 4125: a9 00
     sta level_workspace                                               ; 4127: 8d 6f 0a
@@ -1014,7 +1016,7 @@ c412a
     lda desired_room_index                                            ; 4134: a5 30
     cmp l0a75                                                         ; 4136: cd 75 0a
     bne c4166                                                         ; 4139: d0 2b
-    lda save_game_level_e_something                                   ; 413b: ad 13 0a
+    lda save_game_level_e_holding_egg_flag                            ; 413b: ad 13 0a
     bmi c4166                                                         ; 413e: 30 26
     jsr sub_c431d                                                     ; 4140: 20 1d 43
     ldy l0a74                                                         ; 4143: ac 74 0a
@@ -1044,7 +1046,7 @@ c416e
     sta l438a                                                         ; 4175: 8d 8a 43
     lda l09b5                                                         ; 4178: ad b5 09
     sta l438b                                                         ; 417b: 8d 8b 43
-    lda save_game_level_e_something                                   ; 417e: ad 13 0a
+    lda save_game_level_e_holding_egg_flag                            ; 417e: ad 13 0a
     bmi c4195                                                         ; 4181: 30 12
     lda desired_room_index                                            ; 4183: a5 30
     cmp l0a75                                                         ; 4185: cd 75 0a
@@ -1073,7 +1075,7 @@ c4195
     lda object_y_low+1                                                ; 41bb: ad 7d 09
     sta l0a72                                                         ; 41be: 8d 72 0a
     lda #$0c                                                          ; 41c1: a9 0c
-    sta save_game_level_e_something                                   ; 41c3: 8d 13 0a
+    sta save_game_level_e_holding_egg_flag                            ; 41c3: 8d 13 0a
     lda #5                                                            ; 41c6: a9 05
     sta l0a74                                                         ; 41c8: 8d 74 0a
     jsr sub_c431d                                                     ; 41cb: 20 1d 43
@@ -1102,13 +1104,13 @@ c41ec
     beq c4219                                                         ; 4200: f0 17
     lda l4389                                                         ; 4202: ad 89 43
     bne c420c                                                         ; 4205: d0 05
-    lda #$d3                                                          ; 4207: a9 d3
+    lda #spriteid_egg_mask_toolbar                                    ; 4207: a9 d3
     jsr find_or_create_menu_slot_for_A                                ; 4209: 20 bd 2b
 c420c
     lda #0                                                            ; 420c: a9 00
     sta l09aa                                                         ; 420e: 8d aa 09
     lda #$ff                                                          ; 4211: a9 ff
-    sta save_game_level_e_something                                   ; 4213: 8d 13 0a
+    sta save_game_level_e_holding_egg_flag                            ; 4213: 8d 13 0a
     jmp c4230                                                         ; 4216: 4c 30 42
 
 c4219
@@ -1131,9 +1133,9 @@ sub_c4231
     tay                                                               ; 4237: a8
     lda l4099,y                                                       ; 4238: b9 99 40
     bne c4240                                                         ; 423b: d0 03
-    ldy save_game_level_e_something                                   ; 423d: ac 13 0a
+    ldy save_game_level_e_holding_egg_flag                            ; 423d: ac 13 0a
 c4240
-    lda save_game_level_e_something                                   ; 4240: ad 13 0a
+    lda save_game_level_e_holding_egg_flag                            ; 4240: ad 13 0a
     cmp #$0c                                                          ; 4243: c9 0c
     bne c426a                                                         ; 4245: d0 23
     lda l0a73                                                         ; 4247: ad 73 0a
@@ -1149,7 +1151,7 @@ c4254
     jsr get_solid_rock_collision_for_object_a                         ; 425b: 20 94 28
     beq c4284                                                         ; 425e: f0 24
     lda #$32 ; '2'                                                    ; 4260: a9 32
-    sta save_game_level_e_something                                   ; 4262: 8d 13 0a
+    sta save_game_level_e_holding_egg_flag                            ; 4262: 8d 13 0a
     ldy #$25 ; '%'                                                    ; 4265: a0 25
     jmp c4284                                                         ; 4267: 4c 84 42
 
@@ -1162,7 +1164,7 @@ c426a
     jsr get_solid_rock_collision_for_object_a                         ; 4275: 20 94 28
     beq c4284                                                         ; 4278: f0 0a
     ldy #1                                                            ; 427a: a0 01
-    sty save_game_level_e_something                                   ; 427c: 8c 13 0a
+    sty save_game_level_e_holding_egg_flag                            ; 427c: 8c 13 0a
 c427f
     lda #0                                                            ; 427f: a9 00
     sta level_workspace                                               ; 4281: 8d 6f 0a
@@ -1203,7 +1205,7 @@ c42a2
     sta l0a71                                                         ; 42cc: 8d 71 0a
     lda l097e                                                         ; 42cf: ad 7e 09
     sta l0a72                                                         ; 42d2: 8d 72 0a
-    lda save_game_level_e_something                                   ; 42d5: ad 13 0a
+    lda save_game_level_e_holding_egg_flag                            ; 42d5: ad 13 0a
     cmp #$0c                                                          ; 42d8: c9 0c
     bne c431c                                                         ; 42da: d0 40
     ldx #2                                                            ; 42dc: a2 02
@@ -1639,8 +1641,6 @@ sprite_data
 pydis_end
 
 ; Automatically generated labels:
-;     c3b15
-;     c3b21
 ;     c3d12
 ;     c3d34
 ;     c3d37
@@ -1727,7 +1727,6 @@ pydis_end
 ;     l09c2
 ;     l09c3
 ;     l0a14
-;     l0a15
 ;     l0a70
 ;     l0a71
 ;     l0a72
@@ -1811,4 +1810,7 @@ pydis_end
 }
 !if (spriteid_duck_toolbar) != $d1 {
     !error "Assertion failed: spriteid_duck_toolbar == $d1"
+}
+!if (spriteid_egg_mask_toolbar) != $d3 {
+    !error "Assertion failed: spriteid_egg_mask_toolbar == $d3"
 }
