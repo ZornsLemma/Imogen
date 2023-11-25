@@ -381,6 +381,9 @@ def common_to_all():
     label_word(0x3ad7, "level_specific_initialisation_ptr")
     label_word(0x3ad9, "level_specific_update_ptr")
     label_word(0x3adb, "level_specific_password_ptr")
+    # TODO: This gives poor output in dataQ but is probably clearer for all other levels
+    label(0x3add, "room_index_cheat1")
+    label(0x3ade, "room_index_cheat2")
     label(0x3adf, "level_room_data_table")
     expr_label(0x3ae0, make_add("level_room_data_table", "1"))
 

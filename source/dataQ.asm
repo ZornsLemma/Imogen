@@ -170,9 +170,10 @@ level_specific_update_ptr
     pla                                                               ; 3ad9: 68
     pla                                                               ; 3ada: 68
 level_specific_password_ptr
+room_index_cheat1 = level_specific_password_ptr+2
     jsr l178c                                                         ; 3adb: 20 8c 17
-sub_c3ade
-level_room_data_table = sub_c3ade+1
+room_index_cheat2
+level_room_data_table = room_index_cheat2+1
     jsr l178c                                                         ; 3ade: 20 8c 17
     jsr sub_c3cc9                                                     ; 3ae1: 20 c9 3c
     lda #7                                                            ; 3ae4: a9 07
@@ -881,7 +882,6 @@ pydis_end
 ;     loop_c42c9
 ;     loop_c42e6
 ;     loop_c432a
-;     sub_c3ade
 ;     sub_c3cc9
 ;     sub_c3ce3
 ;     sub_c4325

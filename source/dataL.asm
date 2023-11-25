@@ -276,7 +276,10 @@ level_specific_update_ptr
     !word level_specific_update                                       ; 3ad9: 1f 3b                   ; address of level update code
 level_specific_password_ptr
     !word level_specific_password                                     ; 3adb: e7 3a                   ; address of level password
-    !byte 2, 1                                                        ; 3add: 02 01
+room_index_cheat1
+    !byte 2                                                           ; 3add: 02
+room_index_cheat2
+    !byte 1                                                           ; 3ade: 01
 level_room_data_table
     !word room_0_data                                                 ; 3adf: 47 3b                   ; table of room data/initialisation code
     !word room_1_data                                                 ; 3ae1: fe 3b
