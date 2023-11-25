@@ -104,6 +104,9 @@ mouse_and_ball(0x3d39)
 # zeroes to indicate "end of sequence".
 label(0x4052, "baby_spriteid_data")
 label(0x4057, "baby_spriteid_subseq2")
+label(0x406b, "baby_spriteid_subseq3") # TODO: not used?
+label(0x407d, "baby_spriteid_subseq4")
+expr(0x40a3, make_subtract("baby_spriteid_subseq4", "baby_spriteid_data"))
 expr(0x4133, make_subtract("baby_spriteid_subseq2", "baby_spriteid_data"))
 expr(0x418d, make_subtract("baby_spriteid_subseq2", "baby_spriteid_data"))
 spriteid(0x4052, 0x407f)

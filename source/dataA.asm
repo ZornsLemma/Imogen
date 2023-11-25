@@ -1279,6 +1279,7 @@ baby_spriteid_subseq2
     !byte spriteid_baby4                                              ; 4068: da
     !byte spriteid_baby4                                              ; 4069: da
     !byte spriteid_one_pixel_masked_out                               ; 406a: 00
+baby_spriteid_subseq3
     !byte spriteid_baby5                                              ; 406b: db
     !byte spriteid_baby5                                              ; 406c: db
     !byte spriteid_baby5                                              ; 406d: db
@@ -1297,6 +1298,7 @@ baby_spriteid_subseq2
     !byte spriteid_baby3                                              ; 407a: d9
     !byte spriteid_baby3                                              ; 407b: d9
     !byte spriteid_one_pixel_masked_out                               ; 407c: 00
+baby_spriteid_subseq4
     !byte spriteid_baby6                                              ; 407d: dc
     !byte spriteid_one_pixel_masked_out                               ; 407e: 00
 
@@ -1324,7 +1326,7 @@ room2_update_handler
     lda current_level                                                 ; 409c: a5 31
     cmp level_before_latest_level_and_room_initialisation             ; 409e: c5 51
     beq room2_update_handler_not_new_level                            ; 40a0: f0 1f
-    ldy #$2b ; '+'                                                    ; 40a2: a0 2b
+    ldy #baby_spriteid_subseq4 - baby_spriteid_data                   ; 40a2: a0 2b
     lda save_game_level_a_room_2_baby_direction                       ; 40a4: ad 04 0a
     ldx save_game_level_a_room_2_baby_pixel_x_coordinate              ; 40a7: ae 03 0a
     bne have_valid_baby_properties_in_axy                             ; 40aa: d0 06
@@ -2065,6 +2067,9 @@ pydis_end
 }
 !if (baby_spriteid_subseq2 - baby_spriteid_data) != $05 {
     !error "Assertion failed: baby_spriteid_subseq2 - baby_spriteid_data == $05"
+}
+!if (baby_spriteid_subseq4 - baby_spriteid_data) != $2b {
+    !error "Assertion failed: baby_spriteid_subseq4 - baby_spriteid_data == $2b"
 }
 !if (collectable_spriteids + 1) != $2eee {
     !error "Assertion failed: collectable_spriteids + 1 == $2eee"
