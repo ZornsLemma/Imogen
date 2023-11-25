@@ -694,6 +694,8 @@ The control flow during gameplay is as follows:
 """)
     expr(0x124d, "first_level_letter")
     comment(0x124f, "set current room number in level progress table")
+    binary(0x1253)
+    binary(0x1257)
     comment(0x125b, "set YX to the address of the room initialisation code, an address found in a table at start of the level data offset by twice the room number")
     comment(0x1266, "add two to the address in YX, to get past the two initial player position bytes")
     comment(0x126f, "jump to the level specific room handler")

@@ -781,9 +781,9 @@ skip_adding_completion_spell_to_toolbar
     tax                                                               ; 137f: aa          .   :124e[1]
 ; set current room number in level progress table
     lda level_progress_table,x                                        ; 1380: bd ef 09    ... :124f[1]
-    and #$f8                                                          ; 1383: 29 f8       ).  :1252[1]
+    and #%11111000                                                    ; 1383: 29 f8       ).  :1252[1]
     ora desired_room_index                                            ; 1385: 05 30       .0  :1254[1]
-    ora #$40 ; '@'                                                    ; 1387: 09 40       .@  :1256[1]
+    ora #%01000000                                                    ; 1387: 09 40       .@  :1256[1]
     sta level_progress_table,x                                        ; 1389: 9d ef 09    ... :1258[1]
 ; set YX to the address of the room initialisation code, an address found in a table at
 ; start of the level data offset by twice the room number
