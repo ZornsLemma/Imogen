@@ -175,6 +175,7 @@ level_before_latest_level_and_room_initialisation   = $51
 player_held_object_spriteid                         = $52
 developer_mode_sideways_ram_is_set_up_flag          = $5b
 l0070                                               = $70
+previous_boulder_progress                           = $70
 room_exit_direction                                 = $70
 show_dialog_box                                     = $040a
 remove_dialog                                       = $0453
@@ -193,8 +194,8 @@ object_direction_old                                = $09c9
 level_progress_table                                = $09ef
 cuckoo_room_1_progress                              = $0a05
 cuckoo_room_2_progress                              = $0a06
-room_2_falling_rock_progress                        = $0a07
-room_0_falling_rock_progress                        = $0a08
+room_2_falling_boulder_progress                     = $0a07
+room_0_falling_boulder_progress                     = $0a08
 got_hourglass_flag                                  = $0a09
 room_1_clock_repeat_counter                         = $0a6f
 room_1_clock_repeat_limit                           = $0a70
@@ -334,7 +335,7 @@ return1
 level_specific_update
     jsr room_1_update_handler                                         ; 3b1c: 20 66 3d
     jsr room_2_update_handler                                         ; 3b1f: 20 6d 40
-    jsr sub_c42dd                                                     ; 3b22: 20 dd 42
+    jsr update_hourglass_handler                                      ; 3b22: 20 dd 42
     jsr room_0_update_handler                                         ; 3b25: 20 08 3c
     jsr room_3_update_handler                                         ; 3b28: 20 3d 44
     jsr update_playing_cuckoo_handler                                 ; 3b2b: 20 2f 3f
@@ -517,51 +518,51 @@ room_0_update_suspended_boulder_puzzle
 ; check if in room 0
     lda desired_room_index                                            ; 3c1f: a5 30
     cmp #0                                                            ; 3c21: c9 00
-    bne room_0_update_rock_falling_progress                           ; 3c23: d0 2c
+    bne room_0_update_boulder_falling_progress                        ; 3c23: d0 2c
 ; check the player is holding something
     lda player_held_object_spriteid                                   ; 3c25: a5 52
-    beq room_0_update_rock_falling_progress                           ; 3c27: f0 28
+    beq room_0_update_boulder_falling_progress                        ; 3c27: f0 28
 ; check the player Y coordinate is less than 64
     lda object_y_low                                                  ; 3c29: ad 7c 09
     cmp #$40 ; '@'                                                    ; 3c2c: c9 40
-    bcs room_0_update_rock_falling_progress                           ; 3c2e: b0 21
+    bcs room_0_update_boulder_falling_progress                        ; 3c2e: b0 21
     lda object_x_high                                                 ; 3c30: ad 66 09
-    bne room_0_update_rock_falling_progress                           ; 3c33: d0 1c
+    bne room_0_update_boulder_falling_progress                        ; 3c33: d0 1c
 ; check the player X coordinate is between 96 and 127
     lda object_x_low                                                  ; 3c35: ad 50 09
     cmp #$60 ; '`'                                                    ; 3c38: c9 60
-    bcc room_0_update_rock_falling_progress                           ; 3c3a: 90 15
+    bcc room_0_update_boulder_falling_progress                        ; 3c3a: 90 15
     cmp #$80                                                          ; 3c3c: c9 80
-    bcs room_0_update_rock_falling_progress                           ; 3c3e: b0 11
+    bcs room_0_update_boulder_falling_progress                        ; 3c3e: b0 11
 ; with a bottom offset of 2 pixels, look if we are on the rope
     lda #2                                                            ; 3c40: a9 02
     sta temp_bottom_offset                                            ; 3c42: 8d 51 25
     lda #0                                                            ; 3c45: a9 00
     jsr get_solid_rock_collision_for_object_a                         ; 3c47: 20 94 28
     and #collision_map_rope                                           ; 3c4a: 29 02
-    beq room_0_update_rock_falling_progress                           ; 3c4c: f0 03
+    beq room_0_update_boulder_falling_progress                        ; 3c4c: f0 03
     dec player_on_suspended_boulder_holding_object                    ; 3c4e: ce dc 42
 
-room_0_update_rock_falling_progress
-    lda room_0_falling_rock_progress                                  ; 3c51: ad 08 0a
-    sta falling_rock_progress                                         ; 3c54: 8d d8 42
+room_0_update_boulder_falling_progress
+    lda room_0_falling_boulder_progress                               ; 3c51: ad 08 0a
+    sta falling_boulder_progress                                      ; 3c54: 8d d8 42
     ldy #$10                                                          ; 3c57: a0 10
-    sty l42db                                                         ; 3c59: 8c db 42
+    sty fallen_boulder_y                                              ; 3c59: 8c db 42
     lda #0                                                            ; 3c5c: a9 00
     ldx #$0d                                                          ; 3c5e: a2 0d
     ldy #8                                                            ; 3c60: a0 08
     jsr update_suspended_boulder_at_xy_in_room_a                      ; 3c62: 20 d2 41
-    lda falling_rock_progress                                         ; 3c65: ad d8 42
-    sta room_0_falling_rock_progress                                  ; 3c68: 8d 08 0a
+    lda falling_boulder_progress                                      ; 3c65: ad d8 42
+    sta room_0_falling_boulder_progress                               ; 3c68: 8d 08 0a
     lda update_room_first_update_flag                                 ; 3c6b: ad 2b 13
     bne return2                                                       ; 3c6e: d0 10
     lda desired_room_index                                            ; 3c70: a5 30
     cmp #0                                                            ; 3c72: c9 00
     bne return2                                                       ; 3c74: d0 0a
-    lda room_0_falling_rock_progress                                  ; 3c76: ad 08 0a
+    lda room_0_falling_boulder_progress                               ; 3c76: ad 08 0a
     cmp #$10                                                          ; 3c79: c9 10
     bne return2                                                       ; 3c7b: d0 03
-    jsr play_rock_landing_sounds                                      ; 3c7d: 20 c1 41
+    jsr play_boulder_landing_sounds                                   ; 3c7d: 20 c1 41
 return2
     rts                                                               ; 3c80: 60
 
@@ -1318,32 +1319,32 @@ room_2_update_suspended_boulder_puzzle
     sta player_on_suspended_boulder_holding_object                    ; 4184: 8d dc 42
     lda cuckoo_room_2_progress                                        ; 4187: ad 06 0a
     cmp #$1b                                                          ; 418a: c9 1b
-    bcc room_2_update_rock_falling_progress                           ; 418c: 90 03
+    bcc room_2_update_boulder_falling_progress                        ; 418c: 90 03
     dec player_on_suspended_boulder_holding_object                    ; 418e: ce dc 42
-room_2_update_rock_falling_progress
-    lda room_2_falling_rock_progress                                  ; 4191: ad 07 0a
-    sta falling_rock_progress                                         ; 4194: 8d d8 42
+room_2_update_boulder_falling_progress
+    lda room_2_falling_boulder_progress                               ; 4191: ad 07 0a
+    sta falling_boulder_progress                                      ; 4194: 8d d8 42
     ldy #$10                                                          ; 4197: a0 10
-    sty l42db                                                         ; 4199: 8c db 42
+    sty fallen_boulder_y                                              ; 4199: 8c db 42
     lda #2                                                            ; 419c: a9 02
     ldx #$1b                                                          ; 419e: a2 1b
     ldy #$0b                                                          ; 41a0: a0 0b
     jsr update_suspended_boulder_at_xy_in_room_a                      ; 41a2: 20 d2 41
-    lda falling_rock_progress                                         ; 41a5: ad d8 42
-    sta room_2_falling_rock_progress                                  ; 41a8: 8d 07 0a
+    lda falling_boulder_progress                                      ; 41a5: ad d8 42
+    sta room_2_falling_boulder_progress                               ; 41a8: 8d 07 0a
     lda update_room_first_update_flag                                 ; 41ab: ad 2b 13
     bne return6                                                       ; 41ae: d0 10
     lda desired_room_index                                            ; 41b0: a5 30
     cmp #2                                                            ; 41b2: c9 02
     bne return6                                                       ; 41b4: d0 0a
-    lda room_2_falling_rock_progress                                  ; 41b6: ad 07 0a
+    lda room_2_falling_boulder_progress                               ; 41b6: ad 07 0a
     cmp #$10                                                          ; 41b9: c9 10
     bne return6                                                       ; 41bb: d0 03
-    jsr play_rock_landing_sounds                                      ; 41bd: 20 c1 41
+    jsr play_boulder_landing_sounds                                   ; 41bd: 20 c1 41
 return6
     rts                                                               ; 41c0: 60
 
-play_rock_landing_sounds
+play_boulder_landing_sounds
     lda #0                                                            ; 41c1: a9 00
     ldx #<sound6                                                      ; 41c3: a2 1e
     ldy #>sound6                                                      ; 41c5: a0 45
@@ -1357,18 +1358,19 @@ update_suspended_boulder_at_xy_in_room_a
     sta currently_updating_logic_for_room_index                       ; 41d2: 8d ba 1a
     stx suspended_boulder_x                                           ; 41d5: 8e d9 42
     sty suspended_boulder_y                                           ; 41d8: 8c da 42
+; branch if not the first room update
     lda update_room_first_update_flag                                 ; 41db: ad 2b 13
-    beq c422d                                                         ; 41de: f0 4d
+    beq update_falling_boulder                                        ; 41de: f0 4d
 ; check if level just changed
     lda current_level                                                 ; 41e0: a5 31
     cmp level_before_latest_level_and_room_initialisation             ; 41e2: c5 51
-    beq room_2_update_suspended_boulder                               ; 41e4: f0 0a
-; new level, finish any falling rock progress immediately
-    lda falling_rock_progress                                         ; 41e6: ad d8 42
-    beq room_2_update_suspended_boulder                               ; 41e9: f0 05
+    beq room_2_initialise_suspended_boulder                           ; 41e4: f0 0a
+; new level, finish any falling boulder progress immediately
+    lda falling_boulder_progress                                      ; 41e6: ad d8 42
+    beq room_2_initialise_suspended_boulder                           ; 41e9: f0 05
     lda #$ff                                                          ; 41eb: a9 ff
-    sta falling_rock_progress                                         ; 41ed: 8d d8 42
-room_2_update_suspended_boulder
+    sta falling_boulder_progress                                      ; 41ed: 8d d8 42
+room_2_initialise_suspended_boulder
     lda desired_room_index                                            ; 41f0: a5 30
     cmp currently_updating_logic_for_room_index                       ; 41f2: cd ba 1a
     bne c4227                                                         ; 41f5: d0 30
@@ -1386,49 +1388,55 @@ room_2_update_suspended_boulder
     sta sprite_op_flags                                               ; 420c: 85 15
     lda #spriteid_rope_end                                            ; 420e: a9 0a
     jsr draw_sprite_a_at_cell_xy                                      ; 4210: 20 4c 1f
-    lda #5                                                            ; 4213: a9 05
+    lda #objectid_rope_broken_top_end                                 ; 4213: a9 05
     jsr set_object_position_from_cell_xy                              ; 4215: 20 5d 1f
+; set boulder sprite for object
     lda #spriteid_boulder                                             ; 4218: a9 d5
     sta object_spriteid + objectid_suspended_boulder                  ; 421a: 8d ac 09
+; broken rope in front of boulder needs offscreen cache
     lda #spriteid_cache2                                              ; 421d: a9 d8
     sta object_sprite_mask_type + objectid_rope_broken_bottom_end     ; 421f: 8d b2 38
     lda #$e0                                                          ; 4222: a9 e0
     sta object_z_order + objectid_rope_broken_bottom_end              ; 4224: 8d c8 38
 c4227
-    jmp c427f                                                         ; 4227: 4c 7f 42
+    jmp check_in_correct_room                                         ; 4227: 4c 7f 42
 
-c422a
-    jmp c42d7                                                         ; 422a: 4c d7 42
+return7_local
+    jmp return7                                                       ; 422a: 4c d7 42
 
-c422d
-    lda falling_rock_progress                                         ; 422d: ad d8 42
-    bmi c422a                                                         ; 4230: 30 f8
-    bne c4246                                                         ; 4232: d0 12
+update_falling_boulder
+    lda falling_boulder_progress                                      ; 422d: ad d8 42
+    bmi return7_local                                                 ; 4230: 30 f8
+    bne boulder_is_falling                                            ; 4232: d0 12
+; is the player on the boulder and holding an object?
     lda player_on_suspended_boulder_holding_object                    ; 4234: ad dc 42
-    beq c422a                                                         ; 4237: f0 f1
+    beq return7_local                                                 ; 4237: f0 f1
+; start the boulder falling
     lda suspended_boulder_y                                           ; 4239: ad da 42
-    sta falling_rock_progress                                         ; 423c: 8d d8 42
+    sta falling_boulder_progress                                      ; 423c: 8d d8 42
     lda desired_room_index                                            ; 423f: a5 30
     cmp currently_updating_logic_for_room_index                       ; 4241: cd ba 1a
-    bne c4246                                                         ; 4244: d0 00
-c4246
-    ldy falling_rock_progress                                         ; 4246: ac d8 42
-    sty l0070                                                         ; 4249: 84 70
-    cpy l42db                                                         ; 424b: cc db 42
-    bcc c4258                                                         ; 424e: 90 08
+    bne boulder_is_falling                                            ; 4244: d0 00
+boulder_is_falling
+    ldy falling_boulder_progress                                      ; 4246: ac d8 42
+    sty previous_boulder_progress                                     ; 4249: 84 70
+    cpy fallen_boulder_y                                              ; 424b: cc db 42
+    bcc move_falling_boulder_down                                     ; 424e: 90 08
     lda #$ff                                                          ; 4250: a9 ff
-    sta falling_rock_progress                                         ; 4252: 8d d8 42
-    jmp c427f                                                         ; 4255: 4c 7f 42
+    sta falling_boulder_progress                                      ; 4252: 8d d8 42
+    jmp check_in_correct_room                                         ; 4255: 4c 7f 42
 
-c4258
+move_falling_boulder_down
     iny                                                               ; 4258: c8
-    sty falling_rock_progress                                         ; 4259: 8c d8 42
+    sty falling_boulder_progress                                      ; 4259: 8c d8 42
+; check we are in the right room
     lda desired_room_index                                            ; 425c: a5 30
     cmp currently_updating_logic_for_room_index                       ; 425e: cd ba 1a
-    bne c42d7                                                         ; 4261: d0 74
+    bne return7                                                       ; 4261: d0 74
+; clear collision where the boulder was
     ldx suspended_boulder_x                                           ; 4263: ae d9 42
     dex                                                               ; 4266: ca
-    ldy l0070                                                         ; 4267: a4 70
+    ldy previous_boulder_progress                                     ; 4267: a4 70
     lda #3                                                            ; 4269: a9 03
     sta width_in_cells                                                ; 426b: 85 3c
     lda #2                                                            ; 426d: a9 02
@@ -1437,35 +1445,37 @@ c4258
     sta value_to_write_to_collision_map                               ; 4273: 85 3e
     jsr read_collision_map_value_for_xy                               ; 4275: 20 fa 1e
     cmp value_to_write_to_collision_map                               ; 4278: c5 3e
-    beq c427f                                                         ; 427a: f0 03
+    beq check_in_correct_room                                         ; 427a: f0 03
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 427c: 20 44 1e
-c427f
+check_in_correct_room
     lda desired_room_index                                            ; 427f: a5 30
     cmp currently_updating_logic_for_room_index                       ; 4281: cd ba 1a
-    bne c42d7                                                         ; 4284: d0 51
-    lda falling_rock_progress                                         ; 4286: ad d8 42
-    bmi c42a6                                                         ; 4289: 30 1b
-    bne c4298                                                         ; 428b: d0 0b
+    bne return7                                                       ; 4284: d0 51
+; check progress
+    lda falling_boulder_progress                                      ; 4286: ad d8 42
+    bmi set_rope_ends_once_boulder_landed                             ; 4289: 30 1b
+    bne set_rope_ends_while_boulder_falling                           ; 428b: d0 0b
+; set rope and collision when suspended
     lda #spriteid_rope_end_at_object                                  ; 428d: a9 d9
     sta object_spriteid + objectid_rope_broken_bottom_end             ; 428f: 8d ae 09
     ldy suspended_boulder_y                                           ; 4292: ac da 42
-    jmp c42b3                                                         ; 4295: 4c b3 42
+    jmp write_boulder_position_to_collision_map                       ; 4295: 4c b3 42
 
-c4298
+set_rope_ends_while_boulder_falling
     tay                                                               ; 4298: a8
     lda #spriteid_rope_broken_top_end                                 ; 4299: a9 dc
     sta object_spriteid + objectid_rope_broken_top_end                ; 429b: 8d ad 09
     lda #spriteid_rope_broken_falling_end                             ; 429e: a9 da
     sta object_spriteid + objectid_rope_broken_bottom_end             ; 42a0: 8d ae 09
-    jmp c42b3                                                         ; 42a3: 4c b3 42
+    jmp write_boulder_position_to_collision_map                       ; 42a3: 4c b3 42
 
-c42a6
+set_rope_ends_once_boulder_landed
     lda #spriteid_rope_broken_top_end                                 ; 42a6: a9 dc
     sta object_spriteid + objectid_rope_broken_top_end                ; 42a8: 8d ad 09
     lda #spriteid_rope_broken_bottom_end                              ; 42ab: a9 db
     sta object_spriteid + objectid_rope_broken_bottom_end             ; 42ad: 8d ae 09
-    ldy l42db                                                         ; 42b0: ac db 42
-c42b3
+    ldy fallen_boulder_y                                              ; 42b0: ac db 42
+write_boulder_position_to_collision_map
     ldx suspended_boulder_x                                           ; 42b3: ae d9 42
     dex                                                               ; 42b6: ca
     lda #4                                                            ; 42b7: a9 04
@@ -1480,25 +1490,25 @@ c42b3
     sta value_to_write_to_collision_map                               ; 42cb: 85 3e
     jsr read_collision_map_value_for_xy                               ; 42cd: 20 fa 1e
     cmp value_to_write_to_collision_map                               ; 42d0: c5 3e
-    beq c42d7                                                         ; 42d2: f0 03
+    beq return7                                                       ; 42d2: f0 03
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 42d4: 20 44 1e
-c42d7
+return7
     rts                                                               ; 42d7: 60
 
-falling_rock_progress
+falling_boulder_progress
     !byte 0                                                           ; 42d8: 00
 suspended_boulder_x
     !byte 0                                                           ; 42d9: 00
 suspended_boulder_y
     !byte 0                                                           ; 42da: 00
-l42db
+fallen_boulder_y
     !byte 0                                                           ; 42db: 00
 player_on_suspended_boulder_holding_object
     !byte 0                                                           ; 42dc: 00
 
-sub_c42dd
+update_hourglass_handler
     lda update_room_first_update_flag                                 ; 42dd: ad 2b 13
-    beq c4319                                                         ; 42e0: f0 37
+    beq room_2_update_hourglass                                       ; 42e0: f0 37
     lda #spriteid_hourglass_menu_item                                 ; 42e2: a9 de
     sta toolbar_collectable_spriteids+2                               ; 42e4: 8d ea 2e
     lda #spriteid_hourglass                                           ; 42e7: a9 dd
@@ -1527,23 +1537,23 @@ sub_c42dd
 return4
     rts                                                               ; 4318: 60
 
-c4319
+room_2_update_hourglass
     lda desired_room_index                                            ; 4319: a5 30
     cmp #2                                                            ; 431b: c9 02
-    bne c433c                                                         ; 431d: d0 1d
+    bne return7                                                       ; 431d: d0 1d
     lda got_hourglass_flag                                            ; 431f: ad 09 0a
-    bne c433c                                                         ; 4322: d0 18
+    bne return7                                                       ; 4322: d0 18
     ldx #$0b                                                          ; 4324: a2 0b
     ldy #7                                                            ; 4326: a0 07
     jsr test_for_collision_between_objects_x_and_y                    ; 4328: 20 e2 28
-    beq c433c                                                         ; 432b: f0 0f
+    beq return7                                                       ; 432b: f0 0f
     lda #spriteid_hourglass_menu_item                                 ; 432d: a9 de
     jsr find_or_create_menu_slot_for_A                                ; 432f: 20 bd 2b
     lda #0                                                            ; 4332: a9 00
     sta object_spriteid + objectid_hourglass                          ; 4334: 8d af 09
     lda #$ff                                                          ; 4337: a9 ff
     sta got_hourglass_flag                                            ; 4339: 8d 09 0a
-c433c
+return7
     rts                                                               ; 433c: 60
 
 ; *************************************************************************************
@@ -1950,20 +1960,7 @@ pydis_end
 ;     c40d5
 ;     c40d8
 ;     c4227
-;     c422a
-;     c422d
-;     c4246
-;     c4258
-;     c427f
-;     c4298
-;     c42a6
-;     c42b3
-;     c42d7
-;     c4319
-;     c433c
 ;     l3e41
-;     l42db
-;     sub_c42dd
 !if (<envelope1) != $08 {
     !error "Assertion failed: <envelope1 == $08"
 }
@@ -2056,6 +2053,9 @@ pydis_end
 }
 !if (objectid_hourglass) != $07 {
     !error "Assertion failed: objectid_hourglass == $07"
+}
+!if (objectid_rope_broken_top_end) != $05 {
+    !error "Assertion failed: objectid_rope_broken_top_end == $05"
 }
 !if (objectid_spell) != $05 {
     !error "Assertion failed: objectid_spell == $05"
