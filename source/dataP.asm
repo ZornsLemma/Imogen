@@ -27,6 +27,10 @@ objectid_player                       = 0
 objectid_player_accessory             = 1
 objectid_something                    = 11
 opcode_jmp                            = 76
+sprite_op_flags_copy_mask             = 1
+sprite_op_flags_erase                 = 2
+sprite_op_flags_ignore_mask           = 4
+sprite_op_flags_normal                = 0
 spriteid_197                          = 197
 spriteid_198                          = 198
 spriteid_199                          = 199
@@ -121,7 +125,7 @@ spriteid_wizard_using_object          = 53
 
 ; Memory locations
 characters_entered                                  = $05
-l0015                                               = $15
+sprite_op_flags                                     = $15
 sprite_reflect_flag                                 = $1d
 desired_room_index                                  = $30
 current_level                                       = $31
@@ -481,8 +485,8 @@ sub_c3bc3
     lda #$0e                                                          ; 3be6: a9 0e
     jsr draw_rope                                                     ; 3be8: 20 b9 1d
     ldy #$0f                                                          ; 3beb: a0 0f
-    lda #4                                                            ; 3bed: a9 04
-    sta l0015                                                         ; 3bef: 85 15
+    lda #sprite_op_flags_ignore_mask                                  ; 3bed: a9 04
+    sta sprite_op_flags                                               ; 3bef: 85 15
     lda #spriteid_rope_end                                            ; 3bf1: a9 0a
     jsr draw_sprite_a_at_cell_xy                                      ; 3bf3: 20 4c 1f
     lda #5                                                            ; 3bf6: a9 05
@@ -492,8 +496,8 @@ sub_c3bc3
     lda #$0e                                                          ; 3bff: a9 0e
     jsr draw_rope                                                     ; 3c01: 20 b9 1d
     ldy #$0f                                                          ; 3c04: a0 0f
-    lda #4                                                            ; 3c06: a9 04
-    sta l0015                                                         ; 3c08: 85 15
+    lda #sprite_op_flags_ignore_mask                                  ; 3c06: a9 04
+    sta sprite_op_flags                                               ; 3c08: 85 15
     lda #spriteid_rope_end                                            ; 3c0a: a9 0a
     jsr draw_sprite_a_at_cell_xy                                      ; 3c0c: 20 4c 1f
     lda #6                                                            ; 3c0f: a9 06
@@ -1974,7 +1978,6 @@ pydis_end
 ;     c45a3
 ;     c45b8
 ;     c45bd
-;     l0015
 ;     l0048
 ;     l0078
 ;     l0079
@@ -2081,6 +2084,9 @@ pydis_end
 }
 !if (sprite_data - level_data) != $0b67 {
     !error "Assertion failed: sprite_data - level_data == $0b67"
+}
+!if (sprite_op_flags_ignore_mask) != $04 {
+    !error "Assertion failed: sprite_op_flags_ignore_mask == $04"
 }
 !if (spriteid_rope_end) != $0a {
     !error "Assertion failed: spriteid_rope_end == $0a"

@@ -27,6 +27,10 @@ objectid_player                       = 0
 objectid_player_accessory             = 1
 objectid_something                    = 11
 opcode_jmp                            = 76
+sprite_op_flags_copy_mask             = 1
+sprite_op_flags_erase                 = 2
+sprite_op_flags_ignore_mask           = 4
+sprite_op_flags_normal                = 0
 spriteid_197                          = 197
 spriteid_198                          = 198
 spriteid_199                          = 199
@@ -121,7 +125,7 @@ spriteid_wizard_using_object          = 53
 
 ; Memory locations
 characters_entered                                  = $05
-l0015                                               = $15
+sprite_op_flags                                     = $15
 sprite_reflect_flag                                 = $1d
 desired_room_index                                  = $30
 current_level                                       = $31
@@ -515,8 +519,8 @@ c3c3d
     clc                                                               ; 3c55: 18
     adc l3d78                                                         ; 3c56: 6d 78 3d
     tay                                                               ; 3c59: a8
-    lda #4                                                            ; 3c5a: a9 04
-    sta l0015                                                         ; 3c5c: 85 15
+    lda #sprite_op_flags_ignore_mask                                  ; 3c5a: a9 04
+    sta sprite_op_flags                                               ; 3c5c: 85 15
     lda #spriteid_rope_end                                            ; 3c5e: a9 0a
     jsr draw_sprite_a_at_cell_xy                                      ; 3c60: 20 4c 1f
     lda #0                                                            ; 3c63: a9 00
@@ -1913,7 +1917,6 @@ pydis_end
 ;     c43e5
 ;     c43ec
 ;     c4424
-;     l0015
 ;     l0071
 ;     l0955
 ;     l096b
@@ -2013,6 +2016,9 @@ pydis_end
 }
 !if (sprite_data - level_data) != $0aac {
     !error "Assertion failed: sprite_data - level_data == $0aac"
+}
+!if (sprite_op_flags_ignore_mask) != $04 {
+    !error "Assertion failed: sprite_op_flags_ignore_mask == $04"
 }
 !if (spriteid_rope_end) != $0a {
     !error "Assertion failed: spriteid_rope_end == $0a"

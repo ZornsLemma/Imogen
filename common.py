@@ -264,6 +264,7 @@ def common_to_all():
     # TODO: Some of these constants are not common to *all* files which currently include common (e.g. first/last_level_letter are probably not needed by data*) - may not be worth fussing with, or may be better to have different common files for different things to minimise label noise.
     #
     label(0x0005, "characters_entered")
+    optional_label(0x0015, "sprite_op_flags")
     label(0x001d, "sprite_reflect_flag")
 
     # The 'level_update_handler' function calls individual functions to update the logic in each room

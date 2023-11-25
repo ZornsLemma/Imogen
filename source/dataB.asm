@@ -35,6 +35,10 @@ objectid_something                    = 11
 objectid_spell                        = 5
 objectid_suspended_boulder            = 4
 opcode_jmp                            = 76
+sprite_op_flags_copy_mask             = 1
+sprite_op_flags_erase                 = 2
+sprite_op_flags_ignore_mask           = 4
+sprite_op_flags_normal                = 0
 spriteid_197                          = 197
 spriteid_198                          = 198
 spriteid_199                          = 199
@@ -154,7 +158,7 @@ spriteid_wizard_using_object          = 53
 
 ; Memory locations
 characters_entered                                  = $05
-l0015                                               = $15
+sprite_op_flags                                     = $15
 sprite_reflect_flag                                 = $1d
 desired_room_index                                  = $30
 current_level                                       = $31
@@ -189,8 +193,8 @@ object_direction_old                                = $09c9
 level_progress_table                                = $09ef
 cuckoo_room_1_progress                              = $0a05
 cuckoo_room_2_progress                              = $0a06
-room_2_boulder_progress                             = $0a07
-falling_rock_progress                               = $0a08
+room_2_falling_rock_progress                        = $0a07
+room_0_falling_rock_progress                        = $0a08
 got_hourglass_flag                                  = $0a09
 room_1_clock_repeat_counter                         = $0a6f
 room_1_clock_repeat_limit                           = $0a70
@@ -331,9 +335,9 @@ level_specific_update
     jsr room_1_update_handler                                         ; 3b1c: 20 66 3d
     jsr room_2_update_handler                                         ; 3b1f: 20 6d 40
     jsr sub_c42dd                                                     ; 3b22: 20 dd 42
-    jsr sub_c3c08                                                     ; 3b25: 20 08 3c
+    jsr room_0_update_handler                                         ; 3b25: 20 08 3c
     jsr room_3_update_handler                                         ; 3b28: 20 3d 44
-    jsr sub_c3f2f                                                     ; 3b2b: 20 2f 3f
+    jsr update_playing_cuckoo_handler                                 ; 3b2b: 20 2f 3f
     rts                                                               ; 3b2e: 60
 
 ; *************************************************************************************
@@ -495,68 +499,69 @@ room_0_check_right_exit
     ldy current_level                                                 ; 3c03: a4 31
     jmp initialise_level_and_room                                     ; 3c05: 4c 40 11
 
-sub_c3c08
+room_0_update_handler
     lda update_room_first_update_flag                                 ; 3c08: ad 2b 13
-    beq not_first_update                                              ; 3c0b: f0 0d
+    beq room_0_update_suspended_boulder_puzzle                        ; 3c0b: f0 0d
 ; on the first update, if we have changed levels, then define the envelope
     lda current_level                                                 ; 3c0d: a5 31
     cmp level_before_latest_level_and_room_initialisation             ; 3c0f: c5 51
-    beq not_first_update                                              ; 3c11: f0 07
+    beq room_0_update_suspended_boulder_puzzle                        ; 3c11: f0 07
+; level changed, define the envelope
     ldx #<envelope1                                                   ; 3c13: a2 08
     ldy #>envelope1                                                   ; 3c15: a0 45
     jsr define_envelope                                               ; 3c17: 20 5e 39
 
-not_first_update
+room_0_update_suspended_boulder_puzzle
     lda #0                                                            ; 3c1a: a9 00
-    sta room_0_player_on_left_rope                                    ; 3c1c: 8d dc 42
+    sta player_on_suspended_boulder_holding_object                    ; 3c1c: 8d dc 42
 ; check if in room 0
     lda desired_room_index                                            ; 3c1f: a5 30
     cmp #0                                                            ; 3c21: c9 00
-    bne after_room_0_code                                             ; 3c23: d0 2c
+    bne room_0_update_rock_falling_progress                           ; 3c23: d0 2c
 ; check the player is holding something
     lda player_held_object_spriteid                                   ; 3c25: a5 52
-    beq after_room_0_code                                             ; 3c27: f0 28
+    beq room_0_update_rock_falling_progress                           ; 3c27: f0 28
 ; check the player Y coordinate is less than 64
     lda object_y_low                                                  ; 3c29: ad 7c 09
     cmp #$40 ; '@'                                                    ; 3c2c: c9 40
-    bcs after_room_0_code                                             ; 3c2e: b0 21
+    bcs room_0_update_rock_falling_progress                           ; 3c2e: b0 21
     lda object_x_high                                                 ; 3c30: ad 66 09
-    bne after_room_0_code                                             ; 3c33: d0 1c
+    bne room_0_update_rock_falling_progress                           ; 3c33: d0 1c
 ; check the player X coordinate is between 96 and 127
     lda object_x_low                                                  ; 3c35: ad 50 09
     cmp #$60 ; '`'                                                    ; 3c38: c9 60
-    bcc after_room_0_code                                             ; 3c3a: 90 15
+    bcc room_0_update_rock_falling_progress                           ; 3c3a: 90 15
     cmp #$80                                                          ; 3c3c: c9 80
-    bcs after_room_0_code                                             ; 3c3e: b0 11
+    bcs room_0_update_rock_falling_progress                           ; 3c3e: b0 11
 ; with a bottom offset of 2 pixels, look if we are on the rope
     lda #2                                                            ; 3c40: a9 02
     sta temp_bottom_offset                                            ; 3c42: 8d 51 25
     lda #0                                                            ; 3c45: a9 00
     jsr get_solid_rock_collision_for_object_a                         ; 3c47: 20 94 28
     and #collision_map_rope                                           ; 3c4a: 29 02
-    beq after_room_0_code                                             ; 3c4c: f0 03
-    dec room_0_player_on_left_rope                                    ; 3c4e: ce dc 42
+    beq room_0_update_rock_falling_progress                           ; 3c4c: f0 03
+    dec player_on_suspended_boulder_holding_object                    ; 3c4e: ce dc 42
 
-after_room_0_code
-    lda falling_rock_progress                                         ; 3c51: ad 08 0a
-    sta l42d8                                                         ; 3c54: 8d d8 42
+room_0_update_rock_falling_progress
+    lda room_0_falling_rock_progress                                  ; 3c51: ad 08 0a
+    sta falling_rock_progress                                         ; 3c54: 8d d8 42
     ldy #$10                                                          ; 3c57: a0 10
     sty l42db                                                         ; 3c59: 8c db 42
     lda #0                                                            ; 3c5c: a9 00
     ldx #$0d                                                          ; 3c5e: a2 0d
     ldy #8                                                            ; 3c60: a0 08
-    jsr sub_c41d2                                                     ; 3c62: 20 d2 41
-    lda l42d8                                                         ; 3c65: ad d8 42
-    sta falling_rock_progress                                         ; 3c68: 8d 08 0a
+    jsr update_suspended_boulder_at_xy_in_room_a                      ; 3c62: 20 d2 41
+    lda falling_rock_progress                                         ; 3c65: ad d8 42
+    sta room_0_falling_rock_progress                                  ; 3c68: 8d 08 0a
     lda update_room_first_update_flag                                 ; 3c6b: ad 2b 13
     bne return2                                                       ; 3c6e: d0 10
     lda desired_room_index                                            ; 3c70: a5 30
     cmp #0                                                            ; 3c72: c9 00
     bne return2                                                       ; 3c74: d0 0a
-    lda falling_rock_progress                                         ; 3c76: ad 08 0a
+    lda room_0_falling_rock_progress                                  ; 3c76: ad 08 0a
     cmp #$10                                                          ; 3c79: c9 10
     bne return2                                                       ; 3c7b: d0 03
-    jsr play_two_sounds                                               ; 3c7d: 20 c1 41
+    jsr play_rock_landing_sounds                                      ; 3c7d: 20 c1 41
 return2
     rts                                                               ; 3c80: 60
 
@@ -814,7 +819,7 @@ c3e1b
     bne c3e2b                                                         ; 3e22: d0 07
     cpy #2                                                            ; 3e24: c0 02
     bne c3e2b                                                         ; 3e26: d0 03
-    jsr sub_c3f82                                                     ; 3e28: 20 82 3f
+    jsr play_cuckoo_two_sounds                                        ; 3e28: 20 82 3f
 c3e2b
     lda desired_room_index                                            ; 3e2b: a5 30
     cmp #1                                                            ; 3e2d: c9 01
@@ -961,15 +966,15 @@ cuckoo_tweeting_spriteids
     !byte spriteid_cuckoo_open_beak, spriteid_cuckoo_open_beak        ; 3f2b: d6 d6
     !byte spriteid_cuckoo_open_beak,           spriteid_cuckoo        ; 3f2d: d6 d3
 
-sub_c3f2f
+update_playing_cuckoo_handler
     lda update_room_first_update_flag                                 ; 3f2f: ad 2b 13
-    beq c3f53                                                         ; 3f32: f0 1f
+    beq update_playing_cuckoo_not_first_update                        ; 3f32: f0 1f
     lda current_level                                                 ; 3f34: a5 31
     cmp level_before_latest_level_and_room_initialisation             ; 3f36: c5 51
-    beq c3f3f                                                         ; 3f38: f0 05
+    beq initialise_cuckoo                                             ; 3f38: f0 05
     lda #0                                                            ; 3f3a: a9 00
     sta player_playing_cuckoo_progress                                ; 3f3c: 8d 75 0a
-c3f3f
+initialise_cuckoo
     ldx #<envelope3                                                   ; 3f3f: a2 ae
     ldy #>envelope3                                                   ; 3f41: a0 44
     jsr define_envelope                                               ; 3f43: 20 5e 39
@@ -977,41 +982,41 @@ c3f3f
     sta toolbar_collectable_spriteids+1                               ; 3f48: 8d e9 2e
     lda #spriteid_cuckoo                                              ; 3f4b: a9 d3
     sta collectable_spriteids+1                                       ; 3f4d: 8d ee 2e
-    jmp c3f6d                                                         ; 3f50: 4c 6d 3f
+    jmp set_cuckoo_sprite                                             ; 3f50: 4c 6d 3f
 
-c3f53
+update_playing_cuckoo_not_first_update
     lda #spriteid_cuckoo_menu_item                                    ; 3f53: a9 d4
     cmp player_using_object_spriteid                                  ; 3f55: cd b6 2e
     beq player_using_cuckoo                                           ; 3f58: f0 08
     lda #0                                                            ; 3f5a: a9 00
     sta player_playing_cuckoo_progress                                ; 3f5c: 8d 75 0a
-    jmp c3f6d                                                         ; 3f5f: 4c 6d 3f
+    jmp set_cuckoo_sprite                                             ; 3f5f: 4c 6d 3f
 
 player_using_cuckoo
     ldy player_playing_cuckoo_progress                                ; 3f62: ac 75 0a
     cpy #3                                                            ; 3f65: c0 03
-    beq c3f6d                                                         ; 3f67: f0 04
+    beq set_cuckoo_sprite                                             ; 3f67: f0 04
     iny                                                               ; 3f69: c8
     sty player_playing_cuckoo_progress                                ; 3f6a: 8c 75 0a
-c3f6d
+set_cuckoo_sprite
     ldy player_playing_cuckoo_progress                                ; 3f6d: ac 75 0a
     lda cuckoo_tweeting_spriteids,y                                   ; 3f70: b9 2b 3f
     sta five_byte_table_paired_with_collectable_sprite_ids + 1        ; 3f73: 8d f3 2e
     lda update_room_first_update_flag                                 ; 3f76: ad 2b 13
-    bne c3f81                                                         ; 3f79: d0 06
+    bne return3                                                       ; 3f79: d0 06
     dey                                                               ; 3f7b: 88
-    bne c3f81                                                         ; 3f7c: d0 03
-    jsr sub_c3f82                                                     ; 3f7e: 20 82 3f
-c3f81
+    bne return3                                                       ; 3f7c: d0 03
+    jsr play_cuckoo_two_sounds                                        ; 3f7e: 20 82 3f
+return3
     rts                                                               ; 3f81: 60
 
-sub_c3f82
+play_cuckoo_two_sounds
     lda #0                                                            ; 3f82: a9 00
-    ldx #<sound4                                                      ; 3f84: a2 bc
-    ldy #>sound4                                                      ; 3f86: a0 44
+    ldx #<sound_cuckoo1                                               ; 3f84: a2 bc
+    ldy #>sound_cuckoo1                                               ; 3f86: a0 44
     jsr play_sound_yx                                                 ; 3f88: 20 f6 38
-    ldx #<sound5                                                      ; 3f8b: a2 c4
-    ldy #>sound5                                                      ; 3f8d: a0 44
+    ldx #<sound_cuckoo2                                               ; 3f8b: a2 c4
+    ldy #>sound_cuckoo2                                               ; 3f8d: a0 44
     jsr play_sound_yx                                                 ; 3f8f: 20 f6 38
     rts                                                               ; 3f92: 60
 
@@ -1221,29 +1226,29 @@ c40b1
     lda #spriteid_cache1                                              ; 40d0: a9 d7
     sta object_sprite_mask_type,x                                     ; 40d2: 9d ac 38
 c40d5
-    jmp c4152                                                         ; 40d5: 4c 52 41
+    jmp room_2_update_clock_workings                                  ; 40d5: 4c 52 41
 
 c40d8
     lda cuckoo_room_2_progress                                        ; 40d8: ad 06 0a
-    bmi c4152                                                         ; 40db: 30 75
+    bmi room_2_update_clock_workings                                  ; 40db: 30 75
     cmp #1                                                            ; 40dd: c9 01
-    beq c4127                                                         ; 40df: f0 46
-    bcs c4140                                                         ; 40e1: b0 5d
+    beq room_2_update_cuckoo_in_clock                                 ; 40df: f0 46
+    bcs room_2_update_cuckoo_being_thrown_into_room_3                 ; 40e1: b0 5d
     lda desired_room_index                                            ; 40e3: a5 30
     cmp #2                                                            ; 40e5: c9 02
-    bne c4152                                                         ; 40e7: d0 69
+    bne room_2_update_clock_workings                                  ; 40e7: d0 69
     lda player_using_object_spriteid                                  ; 40e9: ad b6 2e
     cmp #$d4                                                          ; 40ec: c9 d4
-    bne c4152                                                         ; 40ee: d0 62
+    bne room_2_update_clock_workings                                  ; 40ee: d0 62
     lda object_y_low                                                  ; 40f0: ad 7c 09
     cmp #$40 ; '@'                                                    ; 40f3: c9 40
-    bcs c4152                                                         ; 40f5: b0 5b
+    bcs room_2_update_clock_workings                                  ; 40f5: b0 5b
     lda #2                                                            ; 40f7: a9 02
     sta temp_bottom_offset                                            ; 40f9: 8d 51 25
     lda #0                                                            ; 40fc: a9 00
     jsr get_solid_rock_collision_for_object_a                         ; 40fe: 20 94 28
     and #2                                                            ; 4101: 29 02
-    beq c4152                                                         ; 4103: f0 4d
+    beq room_2_update_clock_workings                                  ; 4103: f0 4d
     lda #spriteid_cuckoo_menu_item                                    ; 4105: a9 d4
     jsr remove_item_from_toolbar_menu                                 ; 4107: 20 e0 2b
     lda #1                                                            ; 410a: a9 01
@@ -1253,42 +1258,47 @@ c40d8
     sta object_spriteid+1                                             ; 4113: 8d a9 09
     lda player_using_object_spriteid                                  ; 4116: ad b6 2e
     cmp #spriteid_cuckoo_menu_item                                    ; 4119: c9 d4
-    bne c4127                                                         ; 411b: d0 0a
+    bne room_2_update_cuckoo_in_clock                                 ; 411b: d0 0a
     lda #0                                                            ; 411d: a9 00
     sta player_using_object_spriteid                                  ; 411f: 8d b6 2e
     lda #spriteid_wizard7                                             ; 4122: a9 36
     sta object_spriteid                                               ; 4124: 8d a8 09
-c4127
+; check if clock in room 2 is running (branch if not)
+room_2_update_cuckoo_in_clock
     lda room_2_clock_repeat_counter                                   ; 4127: ad 72 0a
     cmp room_2_clock_repeat_limit                                     ; 412a: cd 73 0a
-    beq c4152                                                         ; 412d: f0 23
+    beq room_2_update_clock_workings                                  ; 412d: f0 23
+; mark the cuckoo in room 2 as launched
     lda #$0f                                                          ; 412f: a9 0f
     sta cuckoo_room_2_progress                                        ; 4131: 8d 06 0a
+; if player is in room 2 then play the cuckoo sound
     lda desired_room_index                                            ; 4134: a5 30
     cmp #2                                                            ; 4136: c9 02
-    bne c4152                                                         ; 4138: d0 18
-    jsr sub_c3f82                                                     ; 413a: 20 82 3f
-    jmp c4152                                                         ; 413d: 4c 52 41
+    bne room_2_update_clock_workings                                  ; 4138: d0 18
+    jsr play_cuckoo_two_sounds                                        ; 413a: 20 82 3f
+    jmp room_2_update_clock_workings                                  ; 413d: 4c 52 41
 
-c4140
+room_2_update_cuckoo_being_thrown_into_room_3
     lda cuckoo_room_2_progress                                        ; 4140: ad 06 0a
     clc                                                               ; 4143: 18
     adc #2                                                            ; 4144: 69 02
     sta cuckoo_room_2_progress                                        ; 4146: 8d 06 0a
     cmp #$28 ; '('                                                    ; 4149: c9 28
-    bcc c4152                                                         ; 414b: 90 05
+    bcc room_2_update_clock_workings                                  ; 414b: 90 05
+; cuckoo finished being thrown animation, now in room 3
     lda #$ff                                                          ; 414d: a9 ff
     sta cuckoo_room_2_progress                                        ; 414f: 8d 06 0a
-c4152
+
+room_2_update_clock_workings
     lda desired_room_index                                            ; 4152: a5 30
     cmp #2                                                            ; 4154: c9 02
-    bne c4182                                                         ; 4156: d0 2a
+    bne room_2_update_suspended_boulder_puzzle                        ; 4156: d0 2a
     lda #0                                                            ; 4158: a9 00
     sta object_spriteid + objectid_clock_workings                     ; 415a: 8d ab 09
     lda cuckoo_room_2_progress                                        ; 415d: ad 06 0a
-    bmi c4182                                                         ; 4160: 30 20
+    bmi room_2_update_suspended_boulder_puzzle                        ; 4160: 30 20
     cmp #2                                                            ; 4162: c9 02
-    bcc c4182                                                         ; 4164: 90 1c
+    bcc room_2_update_suspended_boulder_puzzle                        ; 4164: 90 1c
     tax                                                               ; 4166: aa
     lda #5                                                            ; 4167: a9 05
     sta temp_sprite_x_offset                                          ; 4169: 85 3a
@@ -1296,43 +1306,44 @@ c4152
     sta temp_sprite_y_offset                                          ; 416d: 85 3b
     lda #3                                                            ; 416f: a9 03
     jsr set_object_position_from_cell_xy                              ; 4171: 20 5d 1f
-    lda #$d6                                                          ; 4174: a9 d6
+    lda #spriteid_cuckoo_open_beak                                    ; 4174: a9 d6
     sta object_spriteid + objectid_clock_workings                     ; 4176: 8d ab 09
     cpx #$15                                                          ; 4179: e0 15
-    bcc c4182                                                         ; 417b: 90 05
-    lda #$d3                                                          ; 417d: a9 d3
+    bcc room_2_update_suspended_boulder_puzzle                        ; 417b: 90 05
+    lda #spriteid_cuckoo                                              ; 417d: a9 d3
     sta object_spriteid + objectid_clock_workings                     ; 417f: 8d ab 09
-c4182
+
+room_2_update_suspended_boulder_puzzle
     lda #0                                                            ; 4182: a9 00
-    sta room_0_player_on_left_rope                                    ; 4184: 8d dc 42
+    sta player_on_suspended_boulder_holding_object                    ; 4184: 8d dc 42
     lda cuckoo_room_2_progress                                        ; 4187: ad 06 0a
     cmp #$1b                                                          ; 418a: c9 1b
-    bcc c4191                                                         ; 418c: 90 03
-    dec room_0_player_on_left_rope                                    ; 418e: ce dc 42
-c4191
-    lda room_2_boulder_progress                                       ; 4191: ad 07 0a
-    sta l42d8                                                         ; 4194: 8d d8 42
+    bcc room_2_update_rock_falling_progress                           ; 418c: 90 03
+    dec player_on_suspended_boulder_holding_object                    ; 418e: ce dc 42
+room_2_update_rock_falling_progress
+    lda room_2_falling_rock_progress                                  ; 4191: ad 07 0a
+    sta falling_rock_progress                                         ; 4194: 8d d8 42
     ldy #$10                                                          ; 4197: a0 10
     sty l42db                                                         ; 4199: 8c db 42
     lda #2                                                            ; 419c: a9 02
     ldx #$1b                                                          ; 419e: a2 1b
     ldy #$0b                                                          ; 41a0: a0 0b
-    jsr sub_c41d2                                                     ; 41a2: 20 d2 41
-    lda l42d8                                                         ; 41a5: ad d8 42
-    sta room_2_boulder_progress                                       ; 41a8: 8d 07 0a
+    jsr update_suspended_boulder_at_xy_in_room_a                      ; 41a2: 20 d2 41
+    lda falling_rock_progress                                         ; 41a5: ad d8 42
+    sta room_2_falling_rock_progress                                  ; 41a8: 8d 07 0a
     lda update_room_first_update_flag                                 ; 41ab: ad 2b 13
-    bne c41c0                                                         ; 41ae: d0 10
+    bne return6                                                       ; 41ae: d0 10
     lda desired_room_index                                            ; 41b0: a5 30
     cmp #2                                                            ; 41b2: c9 02
-    bne c41c0                                                         ; 41b4: d0 0a
-    lda room_2_boulder_progress                                       ; 41b6: ad 07 0a
+    bne return6                                                       ; 41b4: d0 0a
+    lda room_2_falling_rock_progress                                  ; 41b6: ad 07 0a
     cmp #$10                                                          ; 41b9: c9 10
-    bne c41c0                                                         ; 41bb: d0 03
-    jsr play_two_sounds                                               ; 41bd: 20 c1 41
-c41c0
+    bne return6                                                       ; 41bb: d0 03
+    jsr play_rock_landing_sounds                                      ; 41bd: 20 c1 41
+return6
     rts                                                               ; 41c0: 60
 
-play_two_sounds
+play_rock_landing_sounds
     lda #0                                                            ; 41c1: a9 00
     ldx #<sound6                                                      ; 41c3: a2 1e
     ldy #>sound6                                                      ; 41c5: a0 45
@@ -1342,34 +1353,37 @@ play_two_sounds
     jsr play_sound_yx                                                 ; 41ce: 20 f6 38
     rts                                                               ; 41d1: 60
 
-sub_c41d2
+update_suspended_boulder_at_xy_in_room_a
     sta currently_updating_logic_for_room_index                       ; 41d2: 8d ba 1a
-    stx l42d9                                                         ; 41d5: 8e d9 42
-    sty l42da                                                         ; 41d8: 8c da 42
+    stx suspended_boulder_x                                           ; 41d5: 8e d9 42
+    sty suspended_boulder_y                                           ; 41d8: 8c da 42
     lda update_room_first_update_flag                                 ; 41db: ad 2b 13
     beq c422d                                                         ; 41de: f0 4d
+; check if level just changed
     lda current_level                                                 ; 41e0: a5 31
     cmp level_before_latest_level_and_room_initialisation             ; 41e2: c5 51
-    beq c41f0                                                         ; 41e4: f0 0a
-    lda l42d8                                                         ; 41e6: ad d8 42
-    beq c41f0                                                         ; 41e9: f0 05
+    beq room_2_update_suspended_boulder                               ; 41e4: f0 0a
+; new level, finish any falling rock progress immediately
+    lda falling_rock_progress                                         ; 41e6: ad d8 42
+    beq room_2_update_suspended_boulder                               ; 41e9: f0 05
     lda #$ff                                                          ; 41eb: a9 ff
-    sta l42d8                                                         ; 41ed: 8d d8 42
-c41f0
+    sta falling_rock_progress                                         ; 41ed: 8d d8 42
+room_2_update_suspended_boulder
     lda desired_room_index                                            ; 41f0: a5 30
     cmp currently_updating_logic_for_room_index                       ; 41f2: cd ba 1a
     bne c4227                                                         ; 41f5: d0 30
-    ldx l42d9                                                         ; 41f7: ae d9 42
+; draw rope above boulder
+    ldx suspended_boulder_x                                           ; 41f7: ae d9 42
     ldy #2                                                            ; 41fa: a0 02
-    lda l42da                                                         ; 41fc: ad da 42
+    lda suspended_boulder_y                                           ; 41fc: ad da 42
     sec                                                               ; 41ff: 38
     sbc #3                                                            ; 4200: e9 03
     jsr draw_rope                                                     ; 4202: 20 b9 1d
-    ldy l42da                                                         ; 4205: ac da 42
+    ldy suspended_boulder_y                                           ; 4205: ac da 42
     dey                                                               ; 4208: 88
     dey                                                               ; 4209: 88
-    lda #4                                                            ; 420a: a9 04
-    sta l0015                                                         ; 420c: 85 15
+    lda #sprite_op_flags_ignore_mask                                  ; 420a: a9 04
+    sta sprite_op_flags                                               ; 420c: 85 15
     lda #spriteid_rope_end                                            ; 420e: a9 0a
     jsr draw_sprite_a_at_cell_xy                                      ; 4210: 20 4c 1f
     lda #5                                                            ; 4213: a9 05
@@ -1387,32 +1401,32 @@ c422a
     jmp c42d7                                                         ; 422a: 4c d7 42
 
 c422d
-    lda l42d8                                                         ; 422d: ad d8 42
+    lda falling_rock_progress                                         ; 422d: ad d8 42
     bmi c422a                                                         ; 4230: 30 f8
     bne c4246                                                         ; 4232: d0 12
-    lda room_0_player_on_left_rope                                    ; 4234: ad dc 42
+    lda player_on_suspended_boulder_holding_object                    ; 4234: ad dc 42
     beq c422a                                                         ; 4237: f0 f1
-    lda l42da                                                         ; 4239: ad da 42
-    sta l42d8                                                         ; 423c: 8d d8 42
+    lda suspended_boulder_y                                           ; 4239: ad da 42
+    sta falling_rock_progress                                         ; 423c: 8d d8 42
     lda desired_room_index                                            ; 423f: a5 30
     cmp currently_updating_logic_for_room_index                       ; 4241: cd ba 1a
     bne c4246                                                         ; 4244: d0 00
 c4246
-    ldy l42d8                                                         ; 4246: ac d8 42
+    ldy falling_rock_progress                                         ; 4246: ac d8 42
     sty l0070                                                         ; 4249: 84 70
     cpy l42db                                                         ; 424b: cc db 42
     bcc c4258                                                         ; 424e: 90 08
     lda #$ff                                                          ; 4250: a9 ff
-    sta l42d8                                                         ; 4252: 8d d8 42
+    sta falling_rock_progress                                         ; 4252: 8d d8 42
     jmp c427f                                                         ; 4255: 4c 7f 42
 
 c4258
     iny                                                               ; 4258: c8
-    sty l42d8                                                         ; 4259: 8c d8 42
+    sty falling_rock_progress                                         ; 4259: 8c d8 42
     lda desired_room_index                                            ; 425c: a5 30
     cmp currently_updating_logic_for_room_index                       ; 425e: cd ba 1a
     bne c42d7                                                         ; 4261: d0 74
-    ldx l42d9                                                         ; 4263: ae d9 42
+    ldx suspended_boulder_x                                           ; 4263: ae d9 42
     dex                                                               ; 4266: ca
     ldy l0070                                                         ; 4267: a4 70
     lda #3                                                            ; 4269: a9 03
@@ -1429,12 +1443,12 @@ c427f
     lda desired_room_index                                            ; 427f: a5 30
     cmp currently_updating_logic_for_room_index                       ; 4281: cd ba 1a
     bne c42d7                                                         ; 4284: d0 51
-    lda l42d8                                                         ; 4286: ad d8 42
+    lda falling_rock_progress                                         ; 4286: ad d8 42
     bmi c42a6                                                         ; 4289: 30 1b
     bne c4298                                                         ; 428b: d0 0b
     lda #spriteid_rope_end_at_object                                  ; 428d: a9 d9
     sta object_spriteid + objectid_rope_broken_bottom_end             ; 428f: 8d ae 09
-    ldy l42da                                                         ; 4292: ac da 42
+    ldy suspended_boulder_y                                           ; 4292: ac da 42
     jmp c42b3                                                         ; 4295: 4c b3 42
 
 c4298
@@ -1452,7 +1466,7 @@ c42a6
     sta object_spriteid + objectid_rope_broken_bottom_end             ; 42ad: 8d ae 09
     ldy l42db                                                         ; 42b0: ac db 42
 c42b3
-    ldx l42d9                                                         ; 42b3: ae d9 42
+    ldx suspended_boulder_x                                           ; 42b3: ae d9 42
     dex                                                               ; 42b6: ca
     lda #4                                                            ; 42b7: a9 04
     jsr set_object_position_from_cell_xy                              ; 42b9: 20 5d 1f
@@ -1471,15 +1485,15 @@ c42b3
 c42d7
     rts                                                               ; 42d7: 60
 
-l42d8
+falling_rock_progress
     !byte 0                                                           ; 42d8: 00
-l42d9
+suspended_boulder_x
     !byte 0                                                           ; 42d9: 00
-l42da
+suspended_boulder_y
     !byte 0                                                           ; 42da: 00
 l42db
     !byte 0                                                           ; 42db: 00
-room_0_player_on_left_rope
+player_on_suspended_boulder_holding_object
     !byte 0                                                           ; 42dc: 00
 
 sub_c42dd
@@ -1493,10 +1507,10 @@ sub_c42dd
 ; check for being in room 2
     lda desired_room_index                                            ; 42ef: a5 30
     cmp #2                                                            ; 42f1: c9 02
-    bne return3                                                       ; 42f3: d0 23
+    bne return4                                                       ; 42f3: d0 23
 ; room 2 update
     lda got_hourglass_flag                                            ; 42f5: ad 09 0a
-    bne return3                                                       ; 42f8: d0 1e
+    bne return4                                                       ; 42f8: d0 1e
     ldx #$14                                                          ; 42fa: a2 14
     ldy #$11                                                          ; 42fc: a0 11
     lda #objectid_hourglass                                           ; 42fe: a9 07
@@ -1510,7 +1524,7 @@ sub_c42dd
     sta object_z_order,x                                              ; 4310: 9d c2 38
     lda #spriteid_hourglass                                           ; 4313: a9 dd
     sta object_spriteid,x                                             ; 4315: 9d a8 09
-return3
+return4
     rts                                                               ; 4318: 60
 
 c4319
@@ -1733,13 +1747,13 @@ room_3_update_handler
 ; check for room 3 (return if not)
     lda desired_room_index                                            ; 445e: a5 30
     cmp #3                                                            ; 4460: c9 03
-    bne return4                                                       ; 4462: d0 49
+    bne return5                                                       ; 4462: d0 49
     lda update_room_first_update_flag                                 ; 4464: ad 2b 13
     beq room_3_not_first_update                                       ; 4467: f0 2c
 ; first update in room 3
     lda cuckoo_room_2_progress                                        ; 4469: ad 06 0a
     cmp #2                                                            ; 446c: c9 02
-    bcc return4                                                       ; 446e: 90 3d
+    bcc return5                                                       ; 446e: 90 3d
     ldx #$23 ; '#'                                                    ; 4470: a2 23
     lda #3                                                            ; 4472: a9 03
     sta temp_sprite_x_offset                                          ; 4474: 85 3a
@@ -1756,20 +1770,20 @@ room_3_update_handler
     sta object_z_order,x                                              ; 448a: 9d c2 38
     lda #spriteid_cuckoo                                              ; 448d: a9 d3
     sta object_spriteid,x                                             ; 448f: 9d a8 09
-    jmp return4                                                       ; 4492: 4c ad 44
+    jmp return5                                                       ; 4492: 4c ad 44
 
 room_3_not_first_update
     ldx #$0b                                                          ; 4495: a2 0b
     ldy #2                                                            ; 4497: a0 02
     jsr test_for_collision_between_objects_x_and_y                    ; 4499: 20 e2 28
-    beq return4                                                       ; 449c: f0 0f
+    beq return5                                                       ; 449c: f0 0f
     lda #spriteid_cuckoo_menu_item                                    ; 449e: a9 d4
     jsr find_or_create_menu_slot_for_A                                ; 44a0: 20 bd 2b
     lda #0                                                            ; 44a3: a9 00
     sta object_spriteid + objectid_pendulum                           ; 44a5: 8d aa 09
     lda #0                                                            ; 44a8: a9 00
     sta cuckoo_room_2_progress                                        ; 44aa: 8d 06 0a
-return4
+return5
     rts                                                               ; 44ad: 60
 
 envelope3
@@ -1787,12 +1801,12 @@ envelope3
     !byte 236                                                         ; 44b9: ec                      ; change of amplitude per step during release phase
     !byte 100                                                         ; 44ba: 64                      ; target of level at end of attack phase
     !byte 0                                                           ; 44bb: 00                      ; target of level at end of decay phase
-sound4
+sound_cuckoo1
     !word $13                                                         ; 44bc: 13 00                   ; channel
     !word 5                                                           ; 44be: 05 00                   ; amplitude
     !word 149                                                         ; 44c0: 95 00                   ; pitch
     !word 3                                                           ; 44c2: 03 00                   ; duration
-sound5
+sound_cuckoo2
     !word 3                                                           ; 44c4: 03 00                   ; channel
     !word 5                                                           ; 44c6: 05 00                   ; amplitude
     !word 137                                                         ; 44c8: 89 00                   ; pitch
@@ -1932,20 +1946,9 @@ pydis_end
 ;     c3efd
 ;     c3f0d
 ;     c3f1d
-;     c3f3f
-;     c3f53
-;     c3f6d
-;     c3f81
 ;     c40b1
 ;     c40d5
 ;     c40d8
-;     c4127
-;     c4140
-;     c4152
-;     c4182
-;     c4191
-;     c41c0
-;     c41f0
 ;     c4227
 ;     c422a
 ;     c422d
@@ -1958,16 +1961,8 @@ pydis_end
 ;     c42d7
 ;     c4319
 ;     c433c
-;     l0015
 ;     l3e41
-;     l42d8
-;     l42d9
-;     l42da
 ;     l42db
-;     sub_c3c08
-;     sub_c3f2f
-;     sub_c3f82
-;     sub_c41d2
 ;     sub_c42dd
 !if (<envelope1) != $08 {
     !error "Assertion failed: <envelope1 == $08"
@@ -1990,17 +1985,17 @@ pydis_end
 !if (<sound3) != $da {
     !error "Assertion failed: <sound3 == $da"
 }
-!if (<sound4) != $bc {
-    !error "Assertion failed: <sound4 == $bc"
-}
-!if (<sound5) != $c4 {
-    !error "Assertion failed: <sound5 == $c4"
-}
 !if (<sound6) != $1e {
     !error "Assertion failed: <sound6 == $1e"
 }
 !if (<sound7) != $16 {
     !error "Assertion failed: <sound7 == $16"
+}
+!if (<sound_cuckoo1) != $bc {
+    !error "Assertion failed: <sound_cuckoo1 == $bc"
+}
+!if (<sound_cuckoo2) != $c4 {
+    !error "Assertion failed: <sound_cuckoo2 == $c4"
 }
 !if (>envelope1) != $45 {
     !error "Assertion failed: >envelope1 == $45"
@@ -2023,17 +2018,17 @@ pydis_end
 !if (>sound3) != $44 {
     !error "Assertion failed: >sound3 == $44"
 }
-!if (>sound4) != $44 {
-    !error "Assertion failed: >sound4 == $44"
-}
-!if (>sound5) != $44 {
-    !error "Assertion failed: >sound5 == $44"
-}
 !if (>sound6) != $45 {
     !error "Assertion failed: >sound6 == $45"
 }
 !if (>sound7) != $45 {
     !error "Assertion failed: >sound7 == $45"
+}
+!if (>sound_cuckoo1) != $44 {
+    !error "Assertion failed: >sound_cuckoo1 == $44"
+}
+!if (>sound_cuckoo2) != $44 {
+    !error "Assertion failed: >sound_cuckoo2 == $44"
 }
 !if (collision_map_rope) != $02 {
     !error "Assertion failed: collision_map_rope == $02"
@@ -2079,6 +2074,9 @@ pydis_end
 }
 !if (sprite_data - level_data) != $0a71 {
     !error "Assertion failed: sprite_data - level_data == $0a71"
+}
+!if (sprite_op_flags_ignore_mask) != $04 {
+    !error "Assertion failed: sprite_op_flags_ignore_mask == $04"
 }
 !if (spriteid_ball) != $3b {
     !error "Assertion failed: spriteid_ball == $3b"

@@ -27,6 +27,10 @@ objectid_player                       = 0
 objectid_player_accessory             = 1
 objectid_something                    = 11
 opcode_jmp                            = 76
+sprite_op_flags_copy_mask             = 1
+sprite_op_flags_erase                 = 2
+sprite_op_flags_ignore_mask           = 4
+sprite_op_flags_normal                = 0
 spriteid_197                          = 197
 spriteid_198                          = 198
 spriteid_199                          = 199
@@ -121,7 +125,7 @@ spriteid_wizard_using_object          = 53
 
 ; Memory locations
 characters_entered                                  = $05
-l0015                                               = $15
+sprite_op_flags                                     = $15
 sprite_reflect_flag                                 = $1d
 desired_room_index                                  = $30
 current_level                                       = $31
@@ -1559,8 +1563,8 @@ room_1_code
     ldy #2                                                            ; 436f: a0 02
     lda #9                                                            ; 4371: a9 09
     jsr draw_rope                                                     ; 4373: 20 b9 1d
-    lda #4                                                            ; 4376: a9 04
-    sta l0015                                                         ; 4378: 85 15
+    lda #sprite_op_flags_ignore_mask                                  ; 4376: a9 04
+    sta sprite_op_flags                                               ; 4378: 85 15
     jsr sprite_op                                                     ; 437a: 20 8d 13
 ; draw sprite $d8 at (26,10)
     ldy #$0a                                                          ; 437d: a0 0a
@@ -1840,7 +1844,6 @@ pydis_end
 ;     c4464
 ;     c448c
 ;     c44e6
-;     l0015
 ;     l0078
 ;     l0079
 ;     l0952
@@ -1950,4 +1953,7 @@ pydis_end
 }
 !if (sprite_data - level_data) != $0a58 {
     !error "Assertion failed: sprite_data - level_data == $0a58"
+}
+!if (sprite_op_flags_ignore_mask) != $04 {
+    !error "Assertion failed: sprite_op_flags_ignore_mask == $04"
 }
