@@ -1069,7 +1069,7 @@ dont_play_saxophone_sound
     bne return6                                                       ; 3f66: d0 22
     lda saxophone_collected_flag                                      ; 3f68: ad 00 0a
     bne return6                                                       ; 3f6b: d0 1d
-    lda #$d2                                                          ; 3f6d: a9 d2
+    lda #spriteid_saxophone1                                          ; 3f6d: a9 d2
     sta object_spriteid + objectid_saxophone                          ; 3f6f: 8d ac 09
     ldx #objectid_something                                           ; 3f72: a2 0b
     ldy #objectid_saxophone                                           ; 3f74: a0 04
