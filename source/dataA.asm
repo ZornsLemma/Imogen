@@ -1058,12 +1058,12 @@ return3
 not_first_room_update
     lda player_using_object_spriteid                                  ; 3f52: ad b6 2e
     cmp #spriteid_saxophone2                                          ; 3f55: c9 d3
-    bne dont_play_sound3                                              ; 3f57: d0 09
+    bne dont_play_saxophone_sound                                     ; 3f57: d0 09
     lda #0                                                            ; 3f59: a9 00
     ldx #<saxophone_sound                                             ; 3f5b: a2 24
     ldy #>saxophone_sound                                             ; 3f5d: a0 44
     jsr play_sound_yx                                                 ; 3f5f: 20 f6 38
-dont_play_sound3
+dont_play_saxophone_sound
     lda desired_room_index                                            ; 3f62: a5 30
     cmp #1                                                            ; 3f64: c9 01
     bne return6                                                       ; 3f66: d0 22
