@@ -53,6 +53,13 @@ entry(0x3b15, "dont_have_egg")
 expr(0x3b1d, "spriteid_duck_toolbar")
 entry(0x3b21, "duck_not_captured_yet")
 
+label(0x3eb8, "some_table")
+expr(0x3b22, make_lo("some_table"))
+expr(0x3b27, make_hi("some_table"))
+#label(0x460c, "sprite_data2")
+#expr(0x3b2c, make_lo("sprite_data2"))
+#expr(0x3b30, make_hi("sprite_data2"))
+
 
 
 

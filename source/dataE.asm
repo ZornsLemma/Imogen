@@ -336,9 +336,9 @@ dont_have_egg
     lda #spriteid_duck_toolbar                                        ; 3b1c: a9 d1
     jsr insert_character_menu_item_into_toolbar                       ; 3b1e: 20 87 2b
 duck_not_captured_yet
-    lda #$b8                                                          ; 3b21: a9 b8
+    lda #<some_table                                                  ; 3b21: a9 b8
     sta l22de                                                         ; 3b23: 8d de 22
-    lda #$3e ; '>'                                                    ; 3b26: a9 3e
+    lda #>some_table                                                  ; 3b26: a9 3e
     sta l22df                                                         ; 3b28: 8d df 22
     lda #$0c                                                          ; 3b2b: a9 0c
     sta source_sprite_memory_low                                      ; 3b2d: 85 40
@@ -806,6 +806,7 @@ c3e96
     lda #5                                                            ; 3eb3: a9 05
     jmp update_level_completion                                       ; 3eb5: 4c 10 1a
 
+some_table
     !byte $a9, $1d, $8d, $ed, $22, $a2, $46, $a0, $3b, $a9,   4, $20  ; 3eb8: a9 1d 8d...
     !byte $ee, $22, $d0, $72, $c0, $3f, $f0,   4, $c0, $61, $d0, $0b  ; 3ec4: ee 22 d0...
     !byte $ad, $be,   9, $49, $fe, $8d, $be,   9, $4c, $ca, $3f, $20  ; 3ed0: ad be 09...
@@ -1766,6 +1767,12 @@ pydis_end
 ;     sub_c433b
 ;     sub_c446a
 ;     sub_c45a1
+!if (<some_table) != $b8 {
+    !error "Assertion failed: <some_table == $b8"
+}
+!if (>some_table) != $3e {
+    !error "Assertion failed: >some_table == $3e"
+}
 !if (collision_map_none) != $00 {
     !error "Assertion failed: collision_map_none == $00"
 }
