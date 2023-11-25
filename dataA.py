@@ -289,11 +289,13 @@ expr(0x3f4d, "spriteid_saxophone1")
 entry(0x3f51, "return3")
 comment(0x3f7b, "Collect the saxophone.")
 expr(0x3f70, "object_spriteid + objectid_saxophone")
-expr(0x3f73, "objectid_something")
+comment(0x3f72, "This is the state of the player as currently drawn on the screen, before being updated in the current game tick.")
+expr(0x3f73, "objectid_old_player")
 expr(0x3f75, "objectid_saxophone")
 expr(0x3f83, "object_spriteid + objectid_saxophone")
 entry(0x3f8a, "return6")
-expr(0x3e93, "objectid_something")
+comment(0x3e92, "This is the state of the player as currently drawn on the screen, before being updated in the current game tick.")
+expr(0x3e93, "objectid_old_player")
 
 comment(0x42f8, """*************************************************************************************
 

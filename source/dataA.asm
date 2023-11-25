@@ -38,12 +38,12 @@ objectid_brazier2                                = 3
 objectid_left_mouse                              = 2
 objectid_left_trapdoor                           = 2
 objectid_mouse_ball                              = 4
+objectid_old_player                              = 11
 objectid_player                                  = 0
 objectid_player_accessory                        = 1
 objectid_right_mouse                             = 3
 objectid_right_trapdoor                          = 3
 objectid_saxophone                               = 4
-objectid_something                               = 11
 objectid_spell                                   = 5
 objectid_table                                   = 2
 opcode_jmp                                       = 76
@@ -950,7 +950,9 @@ room1_not_first_update
 ; collision below, but in practice the other directions aren't possible.)
     lda #2                                                            ; 3e8d: a9 02
     sta temp_bottom_offset                                            ; 3e8f: 8d 51 25
-    lda #objectid_something                                           ; 3e92: a9 0b
+; This is the state of the player as currently drawn on the screen, before being
+; updated in the current game tick.
+    lda #objectid_old_player                                          ; 3e92: a9 0b
     jsr get_solid_rock_collision_for_object_a                         ; 3e94: 20 94 28
     beq set_room1_trapdoor_sprites_if_required                        ; 3e97: f0 3e
 ; Yes, so we need to open the trapdoor. Remove the closed trapdoor from the collision
@@ -1076,7 +1078,9 @@ dont_play_saxophone_sound
     bne return6                                                       ; 3f6b: d0 1d
     lda #spriteid_saxophone1                                          ; 3f6d: a9 d2
     sta object_spriteid + objectid_saxophone                          ; 3f6f: 8d ac 09
-    ldx #objectid_something                                           ; 3f72: a2 0b
+; This is the state of the player as currently drawn on the screen, before being
+; updated in the current game tick.
+    ldx #objectid_old_player                                          ; 3f72: a2 0b
     ldy #objectid_saxophone                                           ; 3f74: a0 04
     jsr test_for_collision_between_objects_x_and_y                    ; 3f76: 20 e2 28
     beq return6                                                       ; 3f79: f0 0f
@@ -2160,6 +2164,9 @@ pydis_end
 !if (objectid_mouse_ball) != $04 {
     !error "Assertion failed: objectid_mouse_ball == $04"
 }
+!if (objectid_old_player) != $0b {
+    !error "Assertion failed: objectid_old_player == $0b"
+}
 !if (objectid_player) != $00 {
     !error "Assertion failed: objectid_player == $00"
 }
@@ -2171,9 +2178,6 @@ pydis_end
 }
 !if (objectid_saxophone) != $04 {
     !error "Assertion failed: objectid_saxophone == $04"
-}
-!if (objectid_something) != $0b {
-    !error "Assertion failed: objectid_something == $0b"
 }
 !if (objectid_spell) != $05 {
     !error "Assertion failed: objectid_spell == $05"
