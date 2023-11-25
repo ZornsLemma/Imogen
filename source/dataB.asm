@@ -1,5 +1,6 @@
 ; Constants
 collision_map_none                    = 0
+collision_map_out_of_bounds           = 255
 collision_map_rope                    = 2
 collision_map_solid_rock              = 3
 collision_map_unknown                 = 1
@@ -824,20 +825,20 @@ c3e1b
 c3e2b
     lda desired_room_index                                            ; 3e2b: a5 30
     cmp #1                                                            ; 3e2d: c9 01
-    bne c3e40                                                         ; 3e2f: d0 0f
+    bne return9                                                       ; 3e2f: d0 0f
     ldy cuckoo_room_1_progress                                        ; 3e31: ac 05 0a
-    bpl c3e3a                                                         ; 3e34: 10 04
+    bpl set_cuckooing_animation_to_index_y                            ; 3e34: 10 04
     lda #spriteid_clock_workings                                      ; 3e36: a9 d1
-    bne c3e3d                                                         ; 3e38: d0 03                   ; ALWAYS branch
+    bne set_cuckooing_animation_spriteid                              ; 3e38: d0 03                   ; ALWAYS branch
 
-c3e3a
-    lda l3e41,y                                                       ; 3e3a: b9 41 3e
-c3e3d
+set_cuckooing_animation_to_index_y
+    lda cuckooing_spriteid_table,y                                    ; 3e3a: b9 41 3e
+set_cuckooing_animation_spriteid
     sta object_spriteid + objectid_clock_workings                     ; 3e3d: 8d ab 09
-c3e40
+return9
     rts                                                               ; 3e40: 60
 
-l3e41
+cuckooing_spriteid_table
     !byte         spriteid_vertical_rod                               ; 3e41: ce
     !byte spriteid_cuckoo_appear_partly                               ; 3e42: cf
     !byte   spriteid_cuckoo_appear_full                               ; 3e43: d0
@@ -848,22 +849,26 @@ l3e41
 update_clock
     sta currently_updating_logic_for_room_index                       ; 3e47: 8d ba 1a
     lda update_room_first_update_flag                                 ; 3e4a: ad 2b 13
-    beq c3e9d                                                         ; 3e4d: f0 4e
+    beq update_clock_not_first_update                                 ; 3e4d: f0 4e
+; first update in room
     lda current_level                                                 ; 3e4f: a5 31
     cmp level_before_latest_level_and_room_initialisation             ; 3e51: c5 51
-    beq c3e60                                                         ; 3e53: f0 0b
+    beq update_clock_first_update_same_level                          ; 3e53: f0 0b
+; changed level, so reset clock (reset pendulum swings)
     lda #0                                                            ; 3e55: a9 00
     sta clock_repeat_counter                                          ; 3e57: 8d 1e 3f
     sta clock_repeat_limit                                            ; 3e5a: 8d 1f 3f
     sta pendulum_swing_index                                          ; 3e5d: 8d 20 3f
-c3e60
+update_clock_first_update_same_level
     lda desired_room_index                                            ; 3e60: a5 30
     cmp currently_updating_logic_for_room_index                       ; 3e62: cd ba 1a
-    bne c3e9a                                                         ; 3e65: d0 33
+    bne not_in_clock_room                                             ; 3e65: d0 33
+; player is in the same room as the clock. Draw the clock.
     lda #4                                                            ; 3e67: a9 04
     sta temp_sprite_x_offset                                          ; 3e69: 85 3a
     lda #spriteid_clock                                               ; 3e6b: a9 c8
     jsr draw_sprite_a_at_cell_xy                                      ; 3e6d: 20 4c 1f
+; write clock to collison map
     dex                                                               ; 3e70: ca
     dey                                                               ; 3e71: 88
     dey                                                               ; 3e72: 88
@@ -871,7 +876,7 @@ c3e60
     lda #3                                                            ; 3e74: a9 03
     sta width_in_cells                                                ; 3e76: 85 3c
     sta height_in_cells                                               ; 3e78: 85 3d
-    lda #3                                                            ; 3e7a: a9 03
+    lda #collision_map_solid_rock                                     ; 3e7a: a9 03
     sta value_to_write_to_collision_map                               ; 3e7c: 85 3e
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 3e7e: 20 44 1e
     ldx #2                                                            ; 3e81: a2 02
@@ -884,10 +889,10 @@ c3e60
     ldx #<envelope2                                                   ; 3e93: a2 cc
     ldy #>envelope2                                                   ; 3e95: a0 44
     jsr define_envelope                                               ; 3e97: 20 5e 39
-c3e9a
+not_in_clock_room
     jmp c3efd                                                         ; 3e9a: 4c fd 3e
 
-c3e9d
+update_clock_not_first_update
     lda desired_room_index                                            ; 3e9d: a5 30
     cmp currently_updating_logic_for_room_index                       ; 3e9f: cd ba 1a
     bne c3eb6                                                         ; 3ea2: d0 12
@@ -1441,7 +1446,7 @@ move_falling_boulder_down
     sta width_in_cells                                                ; 426b: 85 3c
     lda #2                                                            ; 426d: a9 02
     sta height_in_cells                                               ; 426f: 85 3d
-    lda #0                                                            ; 4271: a9 00
+    lda #collision_map_none                                           ; 4271: a9 00
     sta value_to_write_to_collision_map                               ; 4273: 85 3e
     jsr read_collision_map_value_for_xy                               ; 4275: 20 fa 1e
     cmp value_to_write_to_collision_map                               ; 4278: c5 3e
@@ -1486,7 +1491,7 @@ write_boulder_position_to_collision_map
     sta width_in_cells                                                ; 42c3: 85 3c
     lda #2                                                            ; 42c5: a9 02
     sta height_in_cells                                               ; 42c7: 85 3d
-    lda #3                                                            ; 42c9: a9 03
+    lda #collision_map_solid_rock                                     ; 42c9: a9 03
     sta value_to_write_to_collision_map                               ; 42cb: 85 3e
     jsr read_collision_map_value_for_xy                               ; 42cd: 20 fa 1e
     cmp value_to_write_to_collision_map                               ; 42d0: c5 3e
@@ -1943,12 +1948,6 @@ pydis_end
 ;     c3e11
 ;     c3e1b
 ;     c3e2b
-;     c3e3a
-;     c3e3d
-;     c3e40
-;     c3e60
-;     c3e9a
-;     c3e9d
 ;     c3eb6
 ;     c3ecd
 ;     c3ee7
@@ -1960,7 +1959,6 @@ pydis_end
 ;     c40d5
 ;     c40d8
 ;     c4227
-;     l3e41
 !if (<envelope1) != $08 {
     !error "Assertion failed: <envelope1 == $08"
 }
@@ -2027,8 +2025,14 @@ pydis_end
 !if (>sound_cuckoo2) != $44 {
     !error "Assertion failed: >sound_cuckoo2 == $44"
 }
+!if (collision_map_none) != $00 {
+    !error "Assertion failed: collision_map_none == $00"
+}
 !if (collision_map_rope) != $02 {
     !error "Assertion failed: collision_map_rope == $02"
+}
+!if (collision_map_solid_rock) != $03 {
+    !error "Assertion failed: collision_map_solid_rock == $03"
 }
 !if (exit_room_left) != $01 {
     !error "Assertion failed: exit_room_left == $01"

@@ -1,5 +1,6 @@
 ; Constants
 collision_map_none                    = 0
+collision_map_out_of_bounds           = 255
 collision_map_rope                    = 2
 collision_map_solid_rock              = 3
 collision_map_unknown                 = 1
@@ -557,7 +558,7 @@ c3c58
     sta width_in_cells                                                ; 3c6c: 85 3c
     lda #1                                                            ; 3c6e: a9 01
     sta height_in_cells                                               ; 3c70: 85 3d
-    lda #3                                                            ; 3c72: a9 03
+    lda #collision_map_solid_rock                                     ; 3c72: a9 03
     sta value_to_write_to_collision_map                               ; 3c74: 85 3e
     lda l0a5e                                                         ; 3c76: ad 5e 0a
     cmp #$70 ; 'p'                                                    ; 3c79: c9 70
@@ -565,7 +566,7 @@ c3c58
     cmp #$a8                                                          ; 3c7d: c9 a8
     beq c3c87                                                         ; 3c7f: f0 06
     ldy #$0e                                                          ; 3c81: a0 0e
-    lda #0                                                            ; 3c83: a9 00
+    lda #collision_map_none                                           ; 3c83: a9 00
     sta value_to_write_to_collision_map                               ; 3c85: 85 3e
 c3c87
     jsr read_collision_map_value_for_xy                               ; 3c87: 20 fa 1e
@@ -1068,7 +1069,7 @@ sub_c4035
     sta width_in_cells                                                ; 4046: 85 3c
     lda #4                                                            ; 4048: a9 04
     sta height_in_cells                                               ; 404a: 85 3d
-    lda #3                                                            ; 404c: a9 03
+    lda #collision_map_solid_rock                                     ; 404c: a9 03
     sta value_to_write_to_collision_map                               ; 404e: 85 3e
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 4050: 20 44 1e
     ldy #$0e                                                          ; 4053: a0 0e
@@ -1598,7 +1599,7 @@ c43c8
     lda #$d3                                                          ; 43db: a9 d3
     sta l09ac                                                         ; 43dd: 8d ac 09
 c43e0
-    lda #3                                                            ; 43e0: a9 03
+    lda #collision_map_solid_rock                                     ; 43e0: a9 03
     sta value_to_write_to_collision_map                               ; 43e2: 85 3e
     lda l0a5f                                                         ; 43e4: ad 5f 0a
     bne c4402                                                         ; 43e7: d0 19
@@ -1625,7 +1626,7 @@ c4402
     cmp value_to_write_to_collision_map                               ; 4411: c5 3e
     beq c442b                                                         ; 4413: f0 16
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 4415: 20 44 1e
-    lda #0                                                            ; 4418: a9 00
+    lda #collision_map_none                                           ; 4418: a9 00
     sta value_to_write_to_collision_map                               ; 441a: 85 3e
     ldx #$0e                                                          ; 441c: a2 0e
     ldy #$13                                                          ; 441e: a0 13
@@ -1836,6 +1837,12 @@ pydis_end
 ;     sub_c4115
 ;     sub_c434e
 ;     sub_c4465
+!if (collision_map_none) != $00 {
+    !error "Assertion failed: collision_map_none == $00"
+}
+!if (collision_map_solid_rock) != $03 {
+    !error "Assertion failed: collision_map_solid_rock == $03"
+}
 !if (exit_room_left) != $01 {
     !error "Assertion failed: exit_room_left == $01"
 }

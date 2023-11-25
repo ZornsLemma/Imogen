@@ -130,10 +130,13 @@ constant(2, "exit_room_bottom")
 constant(4, "exit_room_right")
 constant(8, "exit_room_top")
 
-constant(0, "collision_map_none")
-constant(1, "collision_map_unknown") # TODO: does anything use this?
-constant(2, "collision_map_rope")
-constant(3, "collision_map_solid_rock")
+collision_map_dict = {
+    0: "collision_map_none",
+    1: "collision_map_unknown",
+    2: "collision_map_rope",
+    3: "collision_map_solid_rock",
+    255: "collision_map_out_of_bounds",
+}
 
 constant(1, "object_collided_left_wall")
 constant(2, "object_collided_floor")

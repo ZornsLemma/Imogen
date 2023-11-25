@@ -50,6 +50,7 @@ caps_mask                                       = 223
 cells_per_line                                  = 40
 collision_map_length                            = 240
 collision_map_none                              = 0
+collision_map_out_of_bounds                     = 255
 collision_map_rope                              = 2
 collision_map_solid_rock                        = 3
 collision_map_unknown                           = 1
@@ -758,7 +759,7 @@ clear_sound_priorities_loop1
     lda #spriteid_menu_item_completion_spell                          ; 1360: a9 21       .!  :122f[1]
     jsr find_or_create_menu_slot_for_A                                ; 1362: 20 bd 2b     .+ :1231[1]
 skip_adding_completion_spell_to_toolbar
-    lda #3                                                            ; 1365: a9 03       ..  :1234[1]
+    lda #collision_map_solid_rock                                     ; 1365: a9 03       ..  :1234[1]
     sta value_to_write_to_collision_map                               ; 1367: 85 3e       .>  :1236[1]
     lda #colour_black                                                 ; 1369: a9 00       ..  :1238[1]
     sta copy_mode                                                     ; 136b: 85 42       .B  :123a[1]
@@ -9000,7 +9001,7 @@ show_dialog_box
     jsr turn_cursor_off                                               ; 4110: 20 63 38     c8 :0411[2]
 ; Replace dialog box
 ; Don't write to collision map
-    ldx #$ff                                                          ; 4113: a2 ff       ..  :0414[2]
+    ldx #collision_map_out_of_bounds                                  ; 4113: a2 ff       ..  :0414[2]
     stx value_to_write_to_collision_map                               ; 4115: 86 3e       .>  :0416[2]
     inx                                                               ; 4117: e8          .   :0418[2]
     stx only_ever_written_to_with_zero                                ; 4118: 86 3f       .?  :0419[2]
@@ -9041,7 +9042,7 @@ remove_dialog
 ; clear away the active dialog
     jsr wait_for_timingB_counter                                      ; 4156: 20 00 04     .. :0457[2]
     jsr turn_cursor_off                                               ; 4159: 20 63 38     c8 :045a[2]
-    ldx #$ff                                                          ; 415c: a2 ff       ..  :045d[2]
+    ldx #collision_map_out_of_bounds                                  ; 415c: a2 ff       ..  :045d[2]
     stx value_to_write_to_collision_map                               ; 415e: 86 3e       .>  :045f[2]
 ; copy_mode = 255 (just copy from memory in sequence)
     stx copy_mode                                                     ; 4160: 86 42       .B  :0461[2]
@@ -9118,7 +9119,7 @@ return31
     rts                                                               ; 41c9: 60          `   :04ca[2]
 
 plot_dialog_box
-    ldx #$ff                                                          ; 41ca: a2 ff       ..  :04cb[2]
+    ldx #collision_map_out_of_bounds                                  ; 41ca: a2 ff       ..  :04cb[2]
     stx value_to_write_to_collision_map                               ; 41cc: 86 3e       .>  :04cd[2]
     inx                                                               ; 41ce: e8          .   :04cf[2]
     stx only_ever_written_to_with_zero                                ; 41cf: 86 3f       .?  :04d0[2]
@@ -9706,6 +9707,12 @@ pydis_end
 }
 !if (collision_map_length) != $f0 {
     !error "Assertion failed: collision_map_length == $f0"
+}
+!if (collision_map_out_of_bounds) != $ff {
+    !error "Assertion failed: collision_map_out_of_bounds == $ff"
+}
+!if (collision_map_solid_rock) != $03 {
+    !error "Assertion failed: collision_map_solid_rock == $03"
 }
 !if (colour_black) != $00 {
     !error "Assertion failed: colour_black == $00"

@@ -1,5 +1,6 @@
 ; Constants
 collision_map_none                    = 0
+collision_map_out_of_bounds           = 255
 collision_map_rope                    = 2
 collision_map_solid_rock              = 3
 collision_map_unknown                 = 1
@@ -812,7 +813,7 @@ c3e06
     sta width_in_cells                                                ; 3e35: 85 3c
     lda #5                                                            ; 3e37: a9 05
     sta height_in_cells                                               ; 3e39: 85 3d
-    lda #3                                                            ; 3e3b: a9 03
+    lda #collision_map_solid_rock                                     ; 3e3b: a9 03
     sta value_to_write_to_collision_map                               ; 3e3d: 85 3e
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 3e3f: 20 44 1e
     tya                                                               ; 3e42: 98
@@ -825,7 +826,7 @@ c3e06
     sbc l0070                                                         ; 3e4c: e5 70
     beq c3e59                                                         ; 3e4e: f0 09
     sta height_in_cells                                               ; 3e50: 85 3d
-    lda #0                                                            ; 3e52: a9 00
+    lda #collision_map_none                                           ; 3e52: a9 00
     sta value_to_write_to_collision_map                               ; 3e54: 85 3e
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 3e56: 20 44 1e
 c3e59
@@ -1733,6 +1734,12 @@ pydis_end
 ;     sub_c4350
 ;     sub_c4361
 ;     sub_c43d8
+!if (collision_map_none) != $00 {
+    !error "Assertion failed: collision_map_none == $00"
+}
+!if (collision_map_solid_rock) != $03 {
+    !error "Assertion failed: collision_map_solid_rock == $03"
+}
 !if (exit_room_left) != $01 {
     !error "Assertion failed: exit_room_left == $01"
 }

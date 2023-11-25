@@ -1,5 +1,6 @@
 ; Constants
 collision_map_none                    = 0
+collision_map_out_of_bounds           = 255
 collision_map_rope                    = 2
 collision_map_solid_rock              = 3
 collision_map_unknown                 = 1
@@ -1001,22 +1002,22 @@ c3fb5
     lda #0                                                            ; 3fba: a9 00
     sta l09ae                                                         ; 3fbc: 8d ae 09
     sta l09af                                                         ; 3fbf: 8d af 09
-    lda #0                                                            ; 3fc2: a9 00
+    lda #collision_map_none                                           ; 3fc2: a9 00
     sta value_to_write_to_collision_map                               ; 3fc4: 85 3e
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 3fc6: 20 44 1e
-    lda #0                                                            ; 3fc9: a9 00
+    lda #collision_map_none                                           ; 3fc9: a9 00
     sta value_to_write_to_collision_map                               ; 3fcb: 85 3e
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 3fcd: 20 44 1e
     jmp c3fe4                                                         ; 3fd0: 4c e4 3f
 
 c3fd3
     dec height_in_cells                                               ; 3fd3: c6 3d
-    lda #0                                                            ; 3fd5: a9 00
+    lda #collision_map_none                                           ; 3fd5: a9 00
     sta value_to_write_to_collision_map                               ; 3fd7: 85 3e
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 3fd9: 20 44 1e
     iny                                                               ; 3fdc: c8
 c3fdd
-    lda #3                                                            ; 3fdd: a9 03
+    lda #collision_map_solid_rock                                     ; 3fdd: a9 03
     sta value_to_write_to_collision_map                               ; 3fdf: 85 3e
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 3fe1: 20 44 1e
 c3fe4
@@ -1980,6 +1981,12 @@ pydis_end
 }
 !if (>ground_fill_2x2_top_left) != $45 {
     !error "Assertion failed: >ground_fill_2x2_top_left == $45"
+}
+!if (collision_map_none) != $00 {
+    !error "Assertion failed: collision_map_none == $00"
+}
+!if (collision_map_solid_rock) != $03 {
+    !error "Assertion failed: collision_map_solid_rock == $03"
 }
 !if (exit_room_bottom) != $02 {
     !error "Assertion failed: exit_room_bottom == $02"

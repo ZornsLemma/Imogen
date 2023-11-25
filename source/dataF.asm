@@ -1,5 +1,6 @@
 ; Constants
 collision_map_none                    = 0
+collision_map_out_of_bounds           = 255
 collision_map_rope                    = 2
 collision_map_solid_rock              = 3
 collision_map_unknown                 = 1
@@ -586,7 +587,7 @@ c3c76
     lda #1                                                            ; 3c84: a9 01
     sta width_in_cells                                                ; 3c86: 85 3c
     sta height_in_cells                                               ; 3c88: 85 3d
-    lda #3                                                            ; 3c8a: a9 03
+    lda #collision_map_solid_rock                                     ; 3c8a: a9 03
     sta value_to_write_to_collision_map                               ; 3c8c: 85 3e
     ldx #$0d                                                          ; 3c8e: a2 0d
     ldy #2                                                            ; 3c90: a0 02
@@ -837,12 +838,12 @@ c3e2d
     sta width_in_cells                                                ; 3e66: 85 3c
     lda #5                                                            ; 3e68: a9 05
     sta height_in_cells                                               ; 3e6a: 85 3d
-    lda #3                                                            ; 3e6c: a9 03
+    lda #collision_map_solid_rock                                     ; 3e6c: a9 03
     sta value_to_write_to_collision_map                               ; 3e6e: 85 3e
     lda level_workspace                                               ; 3e70: ad 6f 0a
     cmp #$48 ; 'H'                                                    ; 3e73: c9 48
     beq c3e7b                                                         ; 3e75: f0 04
-    lda #0                                                            ; 3e77: a9 00
+    lda #collision_map_none                                           ; 3e77: a9 00
     sta value_to_write_to_collision_map                               ; 3e79: 85 3e
 c3e7b
     jsr read_collision_map_value_for_xy                               ; 3e7b: 20 fa 1e
@@ -1699,6 +1700,12 @@ pydis_end
 ;     sub_c3fd3
 ;     sub_c4261
 ;     sub_c42f8
+!if (collision_map_none) != $00 {
+    !error "Assertion failed: collision_map_none == $00"
+}
+!if (collision_map_solid_rock) != $03 {
+    !error "Assertion failed: collision_map_solid_rock == $03"
+}
 !if (exit_room_bottom) != $02 {
     !error "Assertion failed: exit_room_bottom == $02"
 }

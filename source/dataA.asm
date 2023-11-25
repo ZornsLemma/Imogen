@@ -4,6 +4,7 @@ baby_max_pixel_x                                 = 212
 baby_min_pixel_x                                 = 108
 baby_spriteid_data_entries_minus_1               = 43
 collision_map_none                               = 0
+collision_map_out_of_bounds                      = 255
 collision_map_rope                               = 2
 collision_map_solid_rock                         = 3
 collision_map_unknown                            = 1
@@ -530,7 +531,7 @@ level_unchanged
     lda #2                                                            ; 3c04: a9 02
     sta width_in_cells                                                ; 3c06: 85 3c
     sta height_in_cells                                               ; 3c08: 85 3d
-    lda #3                                                            ; 3c0a: a9 03
+    lda #collision_map_solid_rock                                     ; 3c0a: a9 03
     sta value_to_write_to_collision_map                               ; 3c0c: 85 3e
 ; Set up the left mouse
     ldx #$10                                                          ; 3c0e: a2 10
@@ -896,7 +897,7 @@ level_unchanged2
     tax                                                               ; 3e34: aa
     lda #$ff                                                          ; 3e35: a9 ff
     sta object_direction,x                                            ; 3e37: 9d be 09
-    lda #3                                                            ; 3e3a: a9 03
+    lda #collision_map_solid_rock                                     ; 3e3a: a9 03
     sta value_to_write_to_collision_map                               ; 3e3c: 85 3e
 ; Set up the collision map for the two trapdoors.
     lda room1_trapdoor_open_flag                                      ; 3e3e: ad ff 09
@@ -960,7 +961,7 @@ room1_not_first_update
     sta width_in_cells                                                ; 3e9f: 85 3c
     lda #1                                                            ; 3ea1: a9 01
     sta height_in_cells                                               ; 3ea3: 85 3d
-    lda #0                                                            ; 3ea5: a9 00
+    lda #collision_map_none                                           ; 3ea5: a9 00
     sta value_to_write_to_collision_map                               ; 3ea7: 85 3e
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 3ea9: 20 44 1e
 ; Add the two open trapdoors to the collision map.
@@ -969,7 +970,7 @@ room1_not_first_update
     sta width_in_cells                                                ; 3eaf: 85 3c
     lda #2                                                            ; 3eb1: a9 02
     sta height_in_cells                                               ; 3eb3: 85 3d
-    lda #3                                                            ; 3eb5: a9 03
+    lda #collision_map_solid_rock                                     ; 3eb5: a9 03
     sta value_to_write_to_collision_map                               ; 3eb7: 85 3e
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 3eb9: 20 44 1e
     ldx #$16                                                          ; 3ebc: a2 16
@@ -1196,7 +1197,7 @@ room_2_code
     sta source_sprite_memory_low                                      ; 3fe8: 85 40
     lda #>tile_all_set_pixels                                         ; 3fea: a9 0a
     sta source_sprite_memory_high                                     ; 3fec: 85 41
-    lda #0                                                            ; 3fee: a9 00
+    lda #collision_map_none                                           ; 3fee: a9 00
     sta value_to_write_to_collision_map                               ; 3ff0: 85 3e
     lda #copy_mode_simple                                             ; 3ff2: a9 01
     sta copy_mode                                                     ; 3ff4: 85 42
@@ -1505,7 +1506,7 @@ room2_update_second_part
     sta width_in_cells                                                ; 41fc: 85 3c
     lda #3                                                            ; 41fe: a9 03
     sta height_in_cells                                               ; 4200: 85 3d
-    lda #3                                                            ; 4202: a9 03
+    lda #collision_map_solid_rock                                     ; 4202: a9 03
     sta value_to_write_to_collision_map                               ; 4204: 85 3e
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 4206: 20 44 1e
     jmp set_baby_object_properties                                    ; 4209: 4c 35 42
@@ -1520,7 +1521,7 @@ update_collision_map_for_baby
     sta width_in_cells                                                ; 4211: 85 3c
     lda #3                                                            ; 4213: a9 03
     sta height_in_cells                                               ; 4215: 85 3d
-    lda #0                                                            ; 4217: a9 00
+    lda #collision_map_none                                           ; 4217: a9 00
     sta value_to_write_to_collision_map                               ; 4219: 85 3e
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 421b: 20 44 1e
     lda save_game_level_a_room_2_baby_direction                       ; 421e: ad 04 0a
@@ -1532,7 +1533,7 @@ baby_direction_negative2
     sta width_in_cells                                                ; 4228: 85 3c
     lda #1                                                            ; 422a: a9 01
     sta height_in_cells                                               ; 422c: 85 3d
-    lda #3                                                            ; 422e: a9 03
+    lda #collision_map_solid_rock                                     ; 422e: a9 03
     sta value_to_write_to_collision_map                               ; 4230: 85 3e
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 4232: 20 44 1e
 set_baby_object_properties
@@ -1806,7 +1807,7 @@ remove_table_from_collision_map_at_old_table_x_position
     sta width_in_cells                                                ; 43e9: 85 3c
     lda #2                                                            ; 43eb: a9 02
     sta height_in_cells                                               ; 43ed: 85 3d
-    lda #0                                                            ; 43ef: a9 00
+    lda #collision_map_none                                           ; 43ef: a9 00
     sta value_to_write_to_collision_map                               ; 43f1: 85 3e
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 43f3: 20 44 1e
 add_table_to_collision_map_if_room_3
@@ -1820,7 +1821,7 @@ add_table_to_collision_map_if_room_3
     sta width_in_cells                                                ; 4403: 85 3c
     lda #2                                                            ; 4405: a9 02
     sta height_in_cells                                               ; 4407: 85 3d
-    lda #3                                                            ; 4409: a9 03
+    lda #collision_map_solid_rock                                     ; 4409: a9 03
     sta value_to_write_to_collision_map                               ; 440b: 85 3e
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 440d: 20 44 1e
     lda #objectid_table                                               ; 4410: a9 02
@@ -2059,6 +2060,12 @@ pydis_end
 }
 !if (collectable_spriteids + 1) != $2eee {
     !error "Assertion failed: collectable_spriteids + 1 == $2eee"
+}
+!if (collision_map_none) != $00 {
+    !error "Assertion failed: collision_map_none == $00"
+}
+!if (collision_map_solid_rock) != $03 {
+    !error "Assertion failed: collision_map_solid_rock == $03"
 }
 !if (copy_mode_simple) != $01 {
     !error "Assertion failed: copy_mode_simple == $01"

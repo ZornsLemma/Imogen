@@ -1,5 +1,6 @@
 ; Constants
 collision_map_none                    = 0
+collision_map_out_of_bounds           = 255
 collision_map_rope                    = 2
 collision_map_solid_rock              = 3
 collision_map_unknown                 = 1
@@ -984,7 +985,7 @@ c3ef7
     sta width_in_cells                                                ; 3f13: 85 3c
     lda #5                                                            ; 3f15: a9 05
     sta height_in_cells                                               ; 3f17: 85 3d
-    lda #0                                                            ; 3f19: a9 00
+    lda #collision_map_none                                           ; 3f19: a9 00
     sta value_to_write_to_collision_map                               ; 3f1b: 85 3e
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 3f1d: 20 44 1e
     jmp c3f33                                                         ; 3f20: 4c 33 3f
@@ -1008,7 +1009,7 @@ c3f40
     sta width_in_cells                                                ; 3f4c: 85 3c
     lda #5                                                            ; 3f4e: a9 05
     sta height_in_cells                                               ; 3f50: 85 3d
-    lda #3                                                            ; 3f52: a9 03
+    lda #collision_map_solid_rock                                     ; 3f52: a9 03
     sta value_to_write_to_collision_map                               ; 3f54: 85 3e
     lda l0a32                                                         ; 3f56: ad 32 0a
     bpl c3f65                                                         ; 3f59: 10 0a
@@ -1855,6 +1856,12 @@ pydis_end
 }
 !if (>ground_fill_2x2_top_left) != $44 {
     !error "Assertion failed: >ground_fill_2x2_top_left == $44"
+}
+!if (collision_map_none) != $00 {
+    !error "Assertion failed: collision_map_none == $00"
+}
+!if (collision_map_solid_rock) != $03 {
+    !error "Assertion failed: collision_map_solid_rock == $03"
 }
 !if (exit_room_left) != $01 {
     !error "Assertion failed: exit_room_left == $01"

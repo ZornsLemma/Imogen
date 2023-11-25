@@ -1,5 +1,6 @@
 ; Constants
 collision_map_none                    = 0
+collision_map_out_of_bounds           = 255
 collision_map_rope                    = 2
 collision_map_solid_rock              = 3
 collision_map_unknown                 = 1
@@ -1503,7 +1504,7 @@ c44df
     lda desired_room_index                                            ; 44e8: a5 30
     cmp #1                                                            ; 44ea: c9 01
     bne c4501                                                         ; 44ec: d0 13
-    lda #0                                                            ; 44ee: a9 00
+    lda #collision_map_none                                           ; 44ee: a9 00
     sta value_to_write_to_collision_map                               ; 44f0: 85 3e
     ldx #$0e                                                          ; 44f2: a2 0e
     ldy #$0b                                                          ; 44f4: a0 0b
@@ -1564,7 +1565,7 @@ c4551
     sta l0953                                                         ; 4563: 8d 53 09
     lda l0a78                                                         ; 4566: ad 78 0a
     sta l097f                                                         ; 4569: 8d 7f 09
-    lda #3                                                            ; 456c: a9 03
+    lda #collision_map_solid_rock                                     ; 456c: a9 03
     sta value_to_write_to_collision_map                               ; 456e: 85 3e
     ldx #$0e                                                          ; 4570: a2 0e
     ldy #$0b                                                          ; 4572: a0 0b
@@ -1764,6 +1765,12 @@ pydis_end
 ;     sub_c433b
 ;     sub_c446a
 ;     sub_c45a1
+!if (collision_map_none) != $00 {
+    !error "Assertion failed: collision_map_none == $00"
+}
+!if (collision_map_solid_rock) != $03 {
+    !error "Assertion failed: collision_map_solid_rock == $03"
+}
 !if (exit_room_bottom) != $02 {
     !error "Assertion failed: exit_room_bottom == $02"
 }

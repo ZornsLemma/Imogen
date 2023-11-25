@@ -1,5 +1,6 @@
 ; Constants
 collision_map_none            = 0
+collision_map_out_of_bounds   = 255
 collision_map_rope            = 2
 collision_map_solid_rock      = 3
 collision_map_unknown         = 1

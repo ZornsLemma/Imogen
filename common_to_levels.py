@@ -14,6 +14,9 @@ def set_sprite_dict(sd):
     substitute_constants("jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map", 'a', sprite_dict, True)
     substitute_constants("jsr find_or_create_menu_slot_for_A", 'a', sprite_dict, True)
     substitute_constants("sta sprite_op_flags", 'a', sprite_op_flags_dict, True)
+    substitute_constants("sta value_to_write_to_collision_map", 'a', collision_map_dict, True)
+    substitute_constants("stx value_to_write_to_collision_map", 'x', collision_map_dict, True)
+    substitute_constants("sty value_to_write_to_collision_map", 'y', collision_map_dict, True)
 
 def spriteid(start_addr, end_addr=None):
     global sprite_dict
