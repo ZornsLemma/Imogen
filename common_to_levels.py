@@ -18,13 +18,15 @@ def set_sprite_dict(sd):
     substitute_constants("stx value_to_write_to_collision_map", 'x', collision_map_dict, True)
     substitute_constants("sty value_to_write_to_collision_map", 'y', collision_map_dict, True)
 
-def spriteid(start_addr, end_addr=None):
+def spriteid(start_addr, end_addr=None, ignore_zero=False):
     global sprite_dict
 
     if end_addr == None:
         end_addr = start_addr+1
     for addr in range(start_addr, end_addr):
         v = get_u8_runtime(memorymanager.RuntimeAddr(addr))
+        if (v == 0) and ignore_zero:
+            continue
         if v in sprite_dict:
             byte(addr)
             expr(addr, sprite_dict[v])

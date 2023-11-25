@@ -121,7 +121,7 @@ expr(0x41d3, make_subtract("baby_spriteid_subseq4", "baby_spriteid_data"))
 expr(0x41e3, make_subtract("baby_spriteid_subseq4", "baby_spriteid_data"))
 expr(0x41f4, make_subtract("baby_spriteid_subseq4", "baby_spriteid_data"))
 entry(0x40ee, "not_at_last_baby_spriteid_entry")
-spriteid(0x4052, 0x407f)
+spriteid(0x4052, 0x407f, True)
 expr(0x3d09, "spriteid_small_ball")
 
 comment(0x4084, "redundant instruction", inline=True)

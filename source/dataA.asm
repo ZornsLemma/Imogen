@@ -1253,7 +1253,7 @@ baby_spriteid_data
     !byte spriteid_baby1                                              ; 4053: d7
     !byte spriteid_baby2                                              ; 4054: d8
     !byte spriteid_baby3                                              ; 4055: d9
-    !byte spriteid_one_pixel_masked_out                               ; 4056: 00
+    !byte 0                                                           ; 4056: 00
 baby_spriteid_subseq2
     !byte spriteid_baby7                                              ; 4057: dd
     !byte spriteid_baby7                                              ; 4058: dd
@@ -1275,7 +1275,7 @@ baby_spriteid_subseq5
     !byte spriteid_baby4                                              ; 4067: da
     !byte spriteid_baby4                                              ; 4068: da
     !byte spriteid_baby4                                              ; 4069: da
-    !byte spriteid_one_pixel_masked_out                               ; 406a: 00
+    !byte 0                                                           ; 406a: 00
 baby_spriteid_subseq3
     !byte spriteid_baby5                                              ; 406b: db
     !byte spriteid_baby5                                              ; 406c: db
@@ -1295,10 +1295,10 @@ baby_spriteid_subseq6
     !byte spriteid_baby3                                              ; 4079: d9
     !byte spriteid_baby3                                              ; 407a: d9
     !byte spriteid_baby3                                              ; 407b: d9
-    !byte spriteid_one_pixel_masked_out                               ; 407c: 00
+    !byte 0                                                           ; 407c: 00
 baby_spriteid_subseq4
     !byte spriteid_baby6                                              ; 407d: dc
-    !byte spriteid_one_pixel_masked_out                               ; 407e: 00
+    !byte 0                                                           ; 407e: 00
 
 ; *************************************************************************************
 ; 
@@ -2257,9 +2257,6 @@ pydis_end
 }
 !if (spriteid_mouse_hands4) != $d5 {
     !error "Assertion failed: spriteid_mouse_hands4 == $d5"
-}
-!if (spriteid_one_pixel_masked_out) != $00 {
-    !error "Assertion failed: spriteid_one_pixel_masked_out == $00"
 }
 !if (spriteid_saxophone1) != $d2 {
     !error "Assertion failed: spriteid_saxophone1 == $d2"

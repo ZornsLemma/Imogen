@@ -35,7 +35,21 @@ sprite_op_flags_normal                = 0
 spriteid_197                          = 197
 spriteid_198                          = 198
 spriteid_199                          = 199
+spriteid_blob                         = 215
+spriteid_boulder                      = 200
 spriteid_brazier                      = 58
+spriteid_brazier_menu_item            = 203
+spriteid_brazier_object               = 202
+spriteid_brazier_object2              = 221
+spriteid_cache1                       = 204
+spriteid_cache2                       = 205
+spriteid_cache3                       = 206
+spriteid_cache4                       = 207
+spriteid_cache5                       = 208
+spriteid_cache6                       = 209
+spriteid_cache7                       = 210
+spriteid_cache8                       = 211
+spriteid_cache9                       = 217
 spriteid_cat1                         = 27
 spriteid_cat2                         = 28
 spriteid_cat_jump                     = 26
@@ -63,6 +77,7 @@ spriteid_diamond2                     = 40
 spriteid_diamond3                     = 41
 spriteid_diamond4                     = 42
 spriteid_diamond5                     = 43
+spriteid_empty_hook                   = 216
 spriteid_fingertip_tile_restoration   = 30
 spriteid_fire1                        = 60
 spriteid_fire2                        = 61
@@ -101,6 +116,9 @@ spriteid_monkey_transform1            = 68
 spriteid_monkey_transform2            = 69
 spriteid_one_pixel_masked_out         = 0
 spriteid_one_pixel_set                = 31
+spriteid_parrot1                      = 218
+spriteid_parrot2                      = 219
+spriteid_parrot_squawk                = 220
 spriteid_pointer_hand                 = 29
 spriteid_rope1                        = 85
 spriteid_rope2                        = 86
@@ -113,6 +131,10 @@ spriteid_sparkles2                    = 35
 spriteid_sparkles3                    = 36
 spriteid_sparkles4                    = 37
 spriteid_sparkles5                    = 38
+spriteid_table                        = 201
+spriteid_table_burnt1                 = 212
+spriteid_table_burnt2                 = 213
+spriteid_table_burnt3                 = 214
 spriteid_wizard1                      = 48
 spriteid_wizard2                      = 49
 spriteid_wizard3                      = 50
@@ -297,7 +319,7 @@ level_specific_initialisation
 c3b02
     lda l0a0a                                                         ; 3b02: ad 0a 0a
     beq c3b0c                                                         ; 3b05: f0 05
-    lda #$cb                                                          ; 3b07: a9 cb
+    lda #spriteid_brazier_menu_item                                   ; 3b07: a9 cb
     jsr find_or_create_menu_slot_for_A                                ; 3b09: 20 bd 2b
 c3b0c
     rts                                                               ; 3b0c: 60
@@ -415,19 +437,19 @@ room_0_code
     ldy #0                                                            ; 3b7e: a0 00
     lda #$10                                                          ; 3b80: a9 10
     jsr draw_rope                                                     ; 3b82: 20 b9 1d
-; draw sprite $c8 at (34,20) of size (3x2)
+; draw boulder at (34,20) of size (3x2)
     lda #3                                                            ; 3b85: a9 03
     sta width_in_cells                                                ; 3b87: 85 3c
     lda #2                                                            ; 3b89: a9 02
     sta height_in_cells                                               ; 3b8b: 85 3d
     ldx #$22 ; '"'                                                    ; 3b8d: a2 22
     ldy #$14                                                          ; 3b8f: a0 14
-    lda #$c8                                                          ; 3b91: a9 c8
+    lda #spriteid_boulder                                             ; 3b91: a9 c8
     jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map           ; 3b93: 20 57 1f
-; draw sprite $c8 at (31,20) of size (3x2)
+; draw boulder at (31,20) of size (3x2)
     ldx #$1f                                                          ; 3b96: a2 1f
     jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map           ; 3b98: 20 57 1f
-; draw sprite $c8 at (34,18) of size (3x2)
+; draw boulder at (34,18) of size (3x2)
     ldx #$22 ; '"'                                                    ; 3b9b: a2 22
     ldy #$12                                                          ; 3b9d: a0 12
     jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map           ; 3b9f: 20 57 1f
@@ -496,7 +518,7 @@ c3c0b
     bpl c3c3d                                                         ; 3c29: 10 12
     lda l3d78                                                         ; 3c2b: ad 78 3d
     beq c3c83                                                         ; 3c2e: f0 53
-    lda #$d8                                                          ; 3c30: a9 d8
+    lda #spriteid_empty_hook                                          ; 3c30: a9 d8
     jsr draw_sprite_a_at_cell_xy                                      ; 3c32: 20 4c 1f
     lda #3                                                            ; 3c35: a9 03
     jsr write_a_single_value_to_cell_in_collision_map                 ; 3c37: 20 bb 1e
@@ -784,31 +806,31 @@ room_1_code
     jsr copy_rectangle_of_memory_to_screen                            ; 3dfc: 20 bb 1a
 ; carve the floor, walls and ceiling into the rock
     jsr draw_floor_walls_and_ceiling_around_solid_rock                ; 3dff: 20 90 1b
-; draw sprite $c9 at (34,9) of size (3x2)
+; draw table at (34,9) of size (3x2)
     lda #3                                                            ; 3e02: a9 03
     sta width_in_cells                                                ; 3e04: 85 3c
     lda #2                                                            ; 3e06: a9 02
     sta height_in_cells                                               ; 3e08: 85 3d
     ldx #$22 ; '"'                                                    ; 3e0a: a2 22
     ldy #9                                                            ; 3e0c: a0 09
-    lda #$c9                                                          ; 3e0e: a9 c9
+    lda #spriteid_table                                               ; 3e0e: a9 c9
     jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map           ; 3e10: 20 57 1f
-; draw sprite $c8 at (31,9) of size (3x2)
+; draw boulder at (31,9) of size (3x2)
     ldx #$1f                                                          ; 3e13: a2 1f
-    lda #$c8                                                          ; 3e15: a9 c8
+    lda #spriteid_boulder                                             ; 3e15: a9 c8
     jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map           ; 3e17: 20 57 1f
-; draw sprite $c8 at (6,9) of size (3x2)
+; draw boulder at (6,9) of size (3x2)
     ldx #6                                                            ; 3e1a: a2 06
     jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map           ; 3e1c: 20 57 1f
-; draw sprite $c9 at (3,9) of size (3x2)
+; draw table at (3,9) of size (3x2)
     ldx #3                                                            ; 3e1f: a2 03
-    lda #$c9                                                          ; 3e21: a9 c9
+    lda #spriteid_table                                               ; 3e21: a9 c9
     jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map           ; 3e23: 20 57 1f
-; draw sprite $c8 at (3,7) of size (3x2)
+; draw boulder at (3,7) of size (3x2)
     ldy #7                                                            ; 3e26: a0 07
-    lda #$c8                                                          ; 3e28: a9 c8
+    lda #spriteid_boulder                                             ; 3e28: a9 c8
     jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map           ; 3e2a: 20 57 1f
-; draw sprite $c8 at (5,20) of size (3x2)
+; draw boulder at (5,20) of size (3x2)
     ldx #5                                                            ; 3e2d: a2 05
     ldy #$14                                                          ; 3e2f: a0 14
     jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map           ; 3e31: 20 57 1f
@@ -1074,7 +1096,7 @@ c4035
     ldy #2                                                            ; 4042: a0 02
     jsr test_for_collision_between_objects_x_and_y                    ; 4044: 20 e2 28
     beq c4032                                                         ; 4047: f0 e9
-    lda #$cb                                                          ; 4049: a9 cb
+    lda #spriteid_brazier_menu_item                                   ; 4049: a9 cb
     jsr find_or_create_menu_slot_for_A                                ; 404b: 20 bd 2b
     lda #$ff                                                          ; 404e: a9 ff
     sta l0a0a                                                         ; 4050: 8d 0a 0a
@@ -1143,8 +1165,17 @@ c40d0
 
 l40d1
     !byte 0                                                           ; 40d1: 00
-    !text "<=>?@ABC"                                                  ; 40d2: 3c 3d 3e...
-    !byte   0, $ce,   0                                               ; 40da: 00 ce 00
+    !byte spriteid_fire1                                              ; 40d2: 3c
+    !byte spriteid_fire2                                              ; 40d3: 3d
+    !byte spriteid_fire3                                              ; 40d4: 3e
+    !byte spriteid_fire4                                              ; 40d5: 3f
+    !byte spriteid_fire5                                              ; 40d6: 40
+    !byte spriteid_fire6                                              ; 40d7: 41
+    !byte spriteid_fire7                                              ; 40d8: 42
+    !byte spriteid_fire8                                              ; 40d9: 43
+    !byte 0                                                           ; 40da: 00
+    !byte spriteid_cache3                                             ; 40db: ce
+    !byte 0                                                           ; 40dc: 00
 ; *************************************************************************************
 ; 
 ; Room 2 initialisation and game loop
@@ -1306,7 +1337,7 @@ sub_c41a1
     ldy #2                                                            ; 41bc: a0 02
     lda l0a0c                                                         ; 41be: ad 0c 0a
     beq c41d0                                                         ; 41c1: f0 0d
-    lda #$d8                                                          ; 41c3: a9 d8
+    lda #spriteid_empty_hook                                          ; 41c3: a9 d8
     jsr draw_sprite_a_at_cell_xy                                      ; 41c5: 20 4c 1f
     lda #3                                                            ; 41c8: a9 03
     jsr write_a_single_value_to_cell_in_collision_map                 ; 41ca: 20 bb 1e
@@ -1345,8 +1376,21 @@ c41d5
     rts                                                               ; 421d: 60
 
 l421e
-    !byte $db, $da,   0, $db, $da,   0, $da,   0, $dc, $dc, $dc, $dc  ; 421e: db da 00...
-    !byte $dc, $dc,   0                                               ; 422a: dc dc 00
+    !byte spriteid_parrot2                                            ; 421e: db
+    !byte spriteid_parrot1                                            ; 421f: da
+    !byte 0                                                           ; 4220: 00
+    !byte spriteid_parrot2                                            ; 4221: db
+    !byte spriteid_parrot1                                            ; 4222: da
+    !byte 0                                                           ; 4223: 00
+    !byte spriteid_parrot1                                            ; 4224: da
+    !byte 0                                                           ; 4225: 00
+    !byte spriteid_parrot_squawk                                      ; 4226: dc
+    !byte spriteid_parrot_squawk                                      ; 4227: dc
+    !byte spriteid_parrot_squawk                                      ; 4228: dc
+    !byte spriteid_parrot_squawk                                      ; 4229: dc
+    !byte spriteid_parrot_squawk                                      ; 422a: dc
+    !byte spriteid_parrot_squawk                                      ; 422b: dc
+    !byte 0                                                           ; 422c: 00
 
 sub_c422d
     sta l4427                                                         ; 422d: 8d 27 44
@@ -1725,26 +1769,26 @@ room_3_code
     jsr copy_rectangle_of_memory_to_screen                            ; 449c: 20 bb 1a
 ; carve the floor, walls and ceiling into the rock
     jsr draw_floor_walls_and_ceiling_around_solid_rock                ; 449f: 20 90 1b
-; draw sprite $c8 at (34,19) of size (3x2)
+; draw boulder at (34,19) of size (3x2)
     lda #3                                                            ; 44a2: a9 03
     sta width_in_cells                                                ; 44a4: 85 3c
     lda #2                                                            ; 44a6: a9 02
     sta height_in_cells                                               ; 44a8: 85 3d
     ldx #$22 ; '"'                                                    ; 44aa: a2 22
     ldy #$13                                                          ; 44ac: a0 13
-    lda #$c8                                                          ; 44ae: a9 c8
+    lda #spriteid_boulder                                             ; 44ae: a9 c8
     jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map           ; 44b0: 20 57 1f
-; draw sprite $c8 at (22,19) of size (3x2)
+; draw boulder at (22,19) of size (3x2)
     ldx #$16                                                          ; 44b3: a2 16
     jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map           ; 44b5: 20 57 1f
-; draw sprite $c8 at (6,20) of size (3x2)
+; draw boulder at (6,20) of size (3x2)
     ldx #6                                                            ; 44b8: a2 06
     iny                                                               ; 44ba: c8
     jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map           ; 44bb: 20 57 1f
-; draw sprite $c8 at (3,20) of size (3x2)
+; draw boulder at (3,20) of size (3x2)
     ldx #3                                                            ; 44be: a2 03
     jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map           ; 44c0: 20 57 1f
-; draw sprite $c8 at (3,18) of size (3x2)
+; draw boulder at (3,18) of size (3x2)
     ldy #$12                                                          ; 44c3: a0 12
     jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map           ; 44c5: 20 57 1f
 ; draw rope at (8,2) length 14
@@ -2027,6 +2071,54 @@ pydis_end
 !if (sprite_op_flags_ignore_mask) != $04 {
     !error "Assertion failed: sprite_op_flags_ignore_mask == $04"
 }
+!if (spriteid_boulder) != $c8 {
+    !error "Assertion failed: spriteid_boulder == $c8"
+}
+!if (spriteid_brazier_menu_item) != $cb {
+    !error "Assertion failed: spriteid_brazier_menu_item == $cb"
+}
+!if (spriteid_cache3) != $ce {
+    !error "Assertion failed: spriteid_cache3 == $ce"
+}
+!if (spriteid_empty_hook) != $d8 {
+    !error "Assertion failed: spriteid_empty_hook == $d8"
+}
+!if (spriteid_fire1) != $3c {
+    !error "Assertion failed: spriteid_fire1 == $3c"
+}
+!if (spriteid_fire2) != $3d {
+    !error "Assertion failed: spriteid_fire2 == $3d"
+}
+!if (spriteid_fire3) != $3e {
+    !error "Assertion failed: spriteid_fire3 == $3e"
+}
+!if (spriteid_fire4) != $3f {
+    !error "Assertion failed: spriteid_fire4 == $3f"
+}
+!if (spriteid_fire5) != $40 {
+    !error "Assertion failed: spriteid_fire5 == $40"
+}
+!if (spriteid_fire6) != $41 {
+    !error "Assertion failed: spriteid_fire6 == $41"
+}
+!if (spriteid_fire7) != $42 {
+    !error "Assertion failed: spriteid_fire7 == $42"
+}
+!if (spriteid_fire8) != $43 {
+    !error "Assertion failed: spriteid_fire8 == $43"
+}
+!if (spriteid_parrot1) != $da {
+    !error "Assertion failed: spriteid_parrot1 == $da"
+}
+!if (spriteid_parrot2) != $db {
+    !error "Assertion failed: spriteid_parrot2 == $db"
+}
+!if (spriteid_parrot_squawk) != $dc {
+    !error "Assertion failed: spriteid_parrot_squawk == $dc"
+}
 !if (spriteid_rope_end) != $0a {
     !error "Assertion failed: spriteid_rope_end == $0a"
+}
+!if (spriteid_table) != $c9 {
+    !error "Assertion failed: spriteid_table == $c9"
 }
