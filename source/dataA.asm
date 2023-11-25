@@ -1,5 +1,4 @@
 ; Constants
-another_specific_baby_spriteid_index_entry       = 13
 baby_max_pixel_x                                 = 212
 baby_min_pixel_x                                 = 108
 baby_spriteid_data_entries_minus_1               = 43
@@ -1267,6 +1266,7 @@ baby_spriteid_subseq2
     !byte spriteid_baby7                                              ; 405c: dd
     !byte spriteid_baby7                                              ; 405d: dd
     !byte spriteid_baby7                                              ; 405e: dd
+baby_spriteid_subseq5
     !byte $ff                                                         ; 405f: ff
     !byte spriteid_baby4                                              ; 4060: da
     !byte spriteid_baby4                                              ; 4061: da
@@ -1425,11 +1425,11 @@ dont_adjust_baby_spriteid_index
     jmp move_baby                                                     ; 415b: 4c ae 41
 
 player_not_using_saxophone
-    cpy #another_specific_baby_spriteid_index_entry                   ; 415e: c0 0d
-    bne c4167                                                         ; 4160: d0 05
+    cpy #baby_spriteid_subseq5 - baby_spriteid_data                   ; 415e: c0 0d
+    bne not_at_subseq5                                                ; 4160: d0 05
     ldy #0                                                            ; 4162: a0 00
     sty baby_spriteid_index_if_baby_spriteid_data_is_zero             ; 4164: 8c 72 0a
-c4167
+not_at_subseq5
     lda baby_spriteid_index_if_baby_spriteid_data_is_zero             ; 4167: ad 72 0a
     cmp #0                                                            ; 416a: c9 00                   ; redundant
     bne move_baby                                                     ; 416c: d0 40
@@ -1972,9 +1972,6 @@ ground_fill_2x2_bottom_right
     !byte %...#....                                                   ; 44a5: 10
 sprite_data
 pydis_end
-
-; Automatically generated labels:
-;     c4167
 !if (<envelope1) != $60 {
     !error "Assertion failed: <envelope1 == $60"
 }
@@ -2053,9 +2050,6 @@ pydis_end
 !if (>tile_all_set_pixels) != $0a {
     !error "Assertion failed: >tile_all_set_pixels == $0a"
 }
-!if (another_specific_baby_spriteid_index_entry) != $0d {
-    !error "Assertion failed: another_specific_baby_spriteid_index_entry == $0d"
-}
 !if (baby_max_pixel_x) != $d4 {
     !error "Assertion failed: baby_max_pixel_x == $d4"
 }
@@ -2070,6 +2064,9 @@ pydis_end
 }
 !if (baby_spriteid_subseq4 - baby_spriteid_data) != $2b {
     !error "Assertion failed: baby_spriteid_subseq4 - baby_spriteid_data == $2b"
+}
+!if (baby_spriteid_subseq5 - baby_spriteid_data) != $0d {
+    !error "Assertion failed: baby_spriteid_subseq5 - baby_spriteid_data == $0d"
 }
 !if (collectable_spriteids + 1) != $2eee {
     !error "Assertion failed: collectable_spriteids + 1 == $2eee"
