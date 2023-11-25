@@ -412,7 +412,7 @@ expr(0x42ee, "exit_room_left")
 
 ldx_ldy_jsr_play_sound_yx(0x3ef7, "some_sound1")
 ldx_ldy_jsr_play_sound_yx(0x3efe, "some_sound2")
-ldx_ldy_jsr_play_sound_yx(0x3f5f, "some_sound3")
+ldx_ldy_jsr_play_sound_yx(0x3f5f, "saxophone_sound")
 ldx_ldy_jsr_play_sound_yx(0x43e0, "some_sound4")
 
 expr(0x43cc, make_add("sound_priority_per_channel_table","1"))

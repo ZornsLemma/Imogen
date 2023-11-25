@@ -1060,8 +1060,8 @@ not_first_room_update
     cmp #spriteid_saxophone2                                          ; 3f55: c9 d3
     bne dont_play_sound3                                              ; 3f57: d0 09
     lda #0                                                            ; 3f59: a9 00
-    ldx #<some_sound3                                                 ; 3f5b: a2 24
-    ldy #>some_sound3                                                 ; 3f5d: a0 44
+    ldx #<saxophone_sound                                             ; 3f5b: a2 24
+    ldy #>saxophone_sound                                             ; 3f5d: a0 44
     jsr play_sound_yx                                                 ; 3f5f: 20 f6 38
 dont_play_sound3
     lda desired_room_index                                            ; 3f62: a5 30
@@ -1839,7 +1839,7 @@ envelope3
     !byte 246                                                         ; 4421: f6                      ; change of amplitude per step during release phase
     !byte 100                                                         ; 4422: 64                      ; target of level at end of attack phase
     !byte 0                                                           ; 4423: 00                      ; target of level at end of decay phase
-some_sound3
+saxophone_sound
     !word $13                                                         ; 4424: 13 00                   ; channel
     !word 5                                                           ; 4426: 05 00                   ; amplitude
     !word 0                                                           ; 4428: 00 00                   ; pitch
@@ -1987,14 +1987,14 @@ pydis_end
 !if (<mouse_ball_sound3) != $6e {
     !error "Assertion failed: <mouse_ball_sound3 == $6e"
 }
+!if (<saxophone_sound) != $24 {
+    !error "Assertion failed: <saxophone_sound == $24"
+}
 !if (<some_sound1) != $42 {
     !error "Assertion failed: <some_sound1 == $42"
 }
 !if (<some_sound2) != $3a {
     !error "Assertion failed: <some_sound2 == $3a"
-}
-!if (<some_sound3) != $24 {
-    !error "Assertion failed: <some_sound3 == $24"
 }
 !if (<some_sound4) != $58 {
     !error "Assertion failed: <some_sound4 == $58"
@@ -2026,14 +2026,14 @@ pydis_end
 !if (>mouse_ball_sound3) != $44 {
     !error "Assertion failed: >mouse_ball_sound3 == $44"
 }
+!if (>saxophone_sound) != $44 {
+    !error "Assertion failed: >saxophone_sound == $44"
+}
 !if (>some_sound1) != $44 {
     !error "Assertion failed: >some_sound1 == $44"
 }
 !if (>some_sound2) != $44 {
     !error "Assertion failed: >some_sound2 == $44"
-}
-!if (>some_sound3) != $44 {
-    !error "Assertion failed: >some_sound3 == $44"
 }
 !if (>some_sound4) != $44 {
     !error "Assertion failed: >some_sound4 == $44"
