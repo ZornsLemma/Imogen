@@ -198,7 +198,7 @@ room_1_pendulum_swing_index                         = $0a71
 room_2_clock_repeat_counter                         = $0a72
 room_2_clock_repeat_limit                           = $0a73
 room_2_pendulum_swing_index                         = $0a74
-l0a75                                               = $0a75
+player_playing_cuckoo_progress                      = $0a75
 string_input_buffer                                 = $0a90
 tile_all_set_pixels                                 = $0aa9
 developer_flags                                     = $1103
@@ -968,7 +968,7 @@ sub_c3f2f
     cmp level_before_latest_level_and_room_initialisation             ; 3f36: c5 51
     beq c3f3f                                                         ; 3f38: f0 05
     lda #0                                                            ; 3f3a: a9 00
-    sta l0a75                                                         ; 3f3c: 8d 75 0a
+    sta player_playing_cuckoo_progress                                ; 3f3c: 8d 75 0a
 c3f3f
     ldx #<envelope3                                                   ; 3f3f: a2 ae
     ldy #>envelope3                                                   ; 3f41: a0 44
@@ -984,17 +984,17 @@ c3f53
     cmp player_using_object_spriteid                                  ; 3f55: cd b6 2e
     beq player_using_cuckoo                                           ; 3f58: f0 08
     lda #0                                                            ; 3f5a: a9 00
-    sta l0a75                                                         ; 3f5c: 8d 75 0a
+    sta player_playing_cuckoo_progress                                ; 3f5c: 8d 75 0a
     jmp c3f6d                                                         ; 3f5f: 4c 6d 3f
 
 player_using_cuckoo
-    ldy l0a75                                                         ; 3f62: ac 75 0a
+    ldy player_playing_cuckoo_progress                                ; 3f62: ac 75 0a
     cpy #3                                                            ; 3f65: c0 03
     beq c3f6d                                                         ; 3f67: f0 04
     iny                                                               ; 3f69: c8
-    sty l0a75                                                         ; 3f6a: 8c 75 0a
+    sty player_playing_cuckoo_progress                                ; 3f6a: 8c 75 0a
 c3f6d
-    ldy l0a75                                                         ; 3f6d: ac 75 0a
+    ldy player_playing_cuckoo_progress                                ; 3f6d: ac 75 0a
     lda cuckoo_tweeting_spriteids,y                                   ; 3f70: b9 2b 3f
     sta five_byte_table_paired_with_collectable_sprite_ids + 1        ; 3f73: 8d f3 2e
     lda update_room_first_update_flag                                 ; 3f76: ad 2b 13
@@ -1959,7 +1959,6 @@ pydis_end
 ;     c4319
 ;     c433c
 ;     l0015
-;     l0a75
 ;     l3e41
 ;     l42d8
 ;     l42d9
