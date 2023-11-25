@@ -16,12 +16,12 @@
 ;             $ff: in room 3
 ;     room_2_falling_boulder_progress ($0a07):
 ;               0: suspended
-;              1+: falling (Y coordinate)
 ;             $ff: finished falling
+;       otherwise: falling (Y coordinate)
 ;     room_0_falling_boulder_progress ($0a08):
 ;               0: suspended
-;              1+: falling (Y coordinate)
 ;             $ff: finished falling
+;       otherwise: falling (Y coordinate)
 ;     got_hourglass_flag ($0a09)
 ;
 ; Solution:
