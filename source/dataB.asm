@@ -832,8 +832,8 @@ update_room_1_cuckoo
     cmp #1                                                            ; 3dda: c9 01
     bne update_room_1_cuckooing                                       ; 3ddc: d0 33
 ; check for collision in room 1 with cuckoo
-    ldx #$0b                                                          ; 3dde: a2 0b
-    ldy #3                                                            ; 3de0: a0 03
+    ldx #objectid_old_player                                          ; 3dde: a2 0b
+    ldy #objectid_clock_workings                                      ; 3de0: a0 03
     jsr test_for_collision_between_objects_x_and_y                    ; 3de2: 20 e2 28
     beq update_room_1_cuckooing                                       ; 3de5: f0 2a
     lda #spriteid_cuckoo_menu_item                                    ; 3de7: a9 d4
@@ -943,10 +943,11 @@ update_clock_not_first_update
     lda desired_room_index                                            ; 3e9d: a5 30
     cmp currently_updating_logic_for_room_index                       ; 3e9f: cd ba 1a
     bne update_swinging_pendulum                                      ; 3ea2: d0 12
-    ldx #$0b                                                          ; 3ea4: a2 0b
-    ldy #2                                                            ; 3ea6: a0 02
+    ldx #objectid_old_player                                          ; 3ea4: a2 0b
+    ldy #objectid_pendulum                                            ; 3ea6: a0 02
     jsr test_for_collision_between_objects_x_and_y                    ; 3ea8: 20 e2 28
     beq update_swinging_pendulum                                      ; 3eab: f0 09
+; add to clock counter
     lda clock_repeat_counter                                          ; 3ead: ad 1e 3f
     clc                                                               ; 3eb0: 18
     adc #$10                                                          ; 3eb1: 69 10
@@ -1612,8 +1613,8 @@ room_2_update_hourglass
     bne return8                                                       ; 431d: d0 1d
     lda got_hourglass_flag                                            ; 431f: ad 09 0a
     bne return8                                                       ; 4322: d0 18
-    ldx #$0b                                                          ; 4324: a2 0b
-    ldy #7                                                            ; 4326: a0 07
+    ldx #objectid_old_player                                          ; 4324: a2 0b
+    ldy #objectid_hourglass                                           ; 4326: a0 07
     jsr test_for_collision_between_objects_x_and_y                    ; 4328: 20 e2 28
     beq return8                                                       ; 432b: f0 0f
     lda #spriteid_hourglass_menu_item                                 ; 432d: a9 de
@@ -1852,8 +1853,8 @@ room_3_update_handler
     jmp return5                                                       ; 4492: 4c ad 44
 
 room_3_not_first_update
-    ldx #$0b                                                          ; 4495: a2 0b
-    ldy #2                                                            ; 4497: a0 02
+    ldx #objectid_old_player                                          ; 4495: a2 0b
+    ldy #objectid_cuckoo                                              ; 4497: a0 02
     jsr test_for_collision_between_objects_x_and_y                    ; 4499: 20 e2 28
     beq return5                                                       ; 449c: f0 0f
     lda #spriteid_cuckoo_menu_item                                    ; 449e: a9 d4
@@ -2101,6 +2102,12 @@ pydis_end
 }
 !if (objectid_hourglass) != $07 {
     !error "Assertion failed: objectid_hourglass == $07"
+}
+!if (objectid_old_player) != $0b {
+    !error "Assertion failed: objectid_old_player == $0b"
+}
+!if (objectid_pendulum) != $02 {
+    !error "Assertion failed: objectid_pendulum == $02"
 }
 !if (objectid_rope_broken_top_end) != $05 {
     !error "Assertion failed: objectid_rope_broken_top_end == $05"
