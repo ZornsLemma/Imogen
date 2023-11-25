@@ -340,9 +340,9 @@ duck_not_captured_yet
     sta l22de                                                         ; 3b23: 8d de 22
     lda #>some_table                                                  ; 3b26: a9 3e
     sta l22df                                                         ; 3b28: 8d df 22
-    lda #$0c                                                          ; 3b2b: a9 0c
+    lda #<source_sprite_data                                          ; 3b2b: a9 0c
     sta source_sprite_memory_low                                      ; 3b2d: 85 40
-    lda #$46 ; 'F'                                                    ; 3b2f: a9 46
+    lda #>source_sprite_data                                          ; 3b2f: a9 46
     sta source_sprite_memory_high                                     ; 3b31: 85 41
     rts                                                               ; 3b33: 60
 
@@ -1632,8 +1632,9 @@ l45d7
     !byte $f8, $6e,   0, $13,   0,   5,   0, $c9,   0,   1,   0,   6  ; 45e3: f8 6e 00...
     !byte   1,   0,   0,   0,   0,   0,   0, $37,   0,   0, $fa, $6e  ; 45ef: 01 00 00...
     !byte $37, $10,   0,   6,   0,   7,   0,   1,   0, $11,   0,   0  ; 45fb: 37 10 00...
-    !byte   0, $d2,   0,   1,   0, $20, $10, $90, $61,   2,   2, $0c  ; 4607: 00 d2 00...
-    !byte $10,   4,   8,   9, $86                                     ; 4613: 10 04 08...
+    !byte   0, $d2,   0,   1,   0                                     ; 4607: 00 d2 00...
+source_sprite_data
+    !byte $20, $10, $90, $61,   2,   2, $0c, $10,   4,   8,   9, $86  ; 460c: 20 10 90...
     !text "@@0"                                                       ; 4618: 40 40 30
     !byte   8, $10, $0c,   2,   2, $61, $90, $10, $20,   8            ; 461b: 08 10 0c...
     !text "0@@"                                                       ; 4625: 30 40 40
@@ -1770,8 +1771,14 @@ pydis_end
 !if (<some_table) != $b8 {
     !error "Assertion failed: <some_table == $b8"
 }
+!if (<source_sprite_data) != $0c {
+    !error "Assertion failed: <source_sprite_data == $0c"
+}
 !if (>some_table) != $3e {
     !error "Assertion failed: >some_table == $3e"
+}
+!if (>source_sprite_data) != $46 {
+    !error "Assertion failed: >source_sprite_data == $46"
 }
 !if (collision_map_none) != $00 {
     !error "Assertion failed: collision_map_none == $00"
