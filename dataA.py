@@ -100,8 +100,6 @@ mouse_and_ball(0x3d31)
 mouse_and_ball(0x3d35)
 mouse_and_ball(0x3d39)
 
-# TODO: Don't use spriteid_one_pixel_masked_out inside baby_spriteid_data? I think these are just
-# zeroes to indicate "end of sequence".
 label(0x4052, "baby_spriteid_data")
 label(0x4057, "baby_spriteid_subseq2")
 label(0x405f, "baby_spriteid_subseq5")
