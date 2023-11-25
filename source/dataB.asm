@@ -1540,20 +1540,20 @@ return4
 room_2_update_hourglass
     lda desired_room_index                                            ; 4319: a5 30
     cmp #2                                                            ; 431b: c9 02
-    bne return7                                                       ; 431d: d0 1d
+    bne return8                                                       ; 431d: d0 1d
     lda got_hourglass_flag                                            ; 431f: ad 09 0a
-    bne return7                                                       ; 4322: d0 18
+    bne return8                                                       ; 4322: d0 18
     ldx #$0b                                                          ; 4324: a2 0b
     ldy #7                                                            ; 4326: a0 07
     jsr test_for_collision_between_objects_x_and_y                    ; 4328: 20 e2 28
-    beq return7                                                       ; 432b: f0 0f
+    beq return8                                                       ; 432b: f0 0f
     lda #spriteid_hourglass_menu_item                                 ; 432d: a9 de
     jsr find_or_create_menu_slot_for_A                                ; 432f: 20 bd 2b
     lda #0                                                            ; 4332: a9 00
     sta object_spriteid + objectid_hourglass                          ; 4334: 8d af 09
     lda #$ff                                                          ; 4337: a9 ff
     sta got_hourglass_flag                                            ; 4339: 8d 09 0a
-return7
+return8
     rts                                                               ; 433c: 60
 
 ; *************************************************************************************
