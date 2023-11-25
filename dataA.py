@@ -435,7 +435,7 @@ ab(0x432d)
 comment(0x3f8b, """*************************************************************************************
 
 Use copy_rectangle_of_memory_to_screen repeatedly to create a pseudo-circle shape -
-room 1 (the baby/spell room) has one of these in each corner.
+room 2 (the baby/spell room) has one of these in each corner.
 
 On Entry:
     X and Y registers specify top left cell of pseudo-circle
