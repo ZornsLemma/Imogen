@@ -101,6 +101,7 @@ object_collided_left_wall                       = 1
 object_collided_right_wall                      = 4
 objectid_player                                 = 0
 objectid_player_accessory                       = 1
+objectid_something                              = 11
 opcode_clc                                      = 24
 opcode_jmp                                      = 76
 opcode_lda_imm                                  = 169
@@ -2238,7 +2239,7 @@ update_level_completion
     bne skip_adding_level_completion_spell                            ; 1b6b: d0 1d       ..  :1a3a[1]
 ; test for collision with spell collectable
     ldx remember_obj_index                                            ; 1b6d: ae ae 1a    ... :1a3c[1]
-    ldy #$0b                                                          ; 1b70: a0 0b       ..  :1a3f[1]
+    ldy #objectid_something                                           ; 1b70: a0 0b       ..  :1a3f[1]
     jsr test_for_collision_between_objects_x_and_y                    ; 1b72: 20 e2 28     .( :1a41[1]
     beq skip_adding_level_completion_spell                            ; 1b75: f0 13       ..  :1a44[1]
 ; collided with level completion collectable, so mark level as completed
@@ -9924,6 +9925,9 @@ pydis_end
 }
 !if (objectid_player_accessory) != $01 {
     !error "Assertion failed: objectid_player_accessory == $01"
+}
+!if (objectid_something) != $0b {
+    !error "Assertion failed: objectid_something == $0b"
 }
 !if (opcode_clc) != $18 {
     !error "Assertion failed: opcode_clc == $18"

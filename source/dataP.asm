@@ -25,6 +25,7 @@ object_collided_left_wall             = 1
 object_collided_right_wall            = 4
 objectid_player                       = 0
 objectid_player_accessory             = 1
+objectid_something                    = 11
 opcode_jmp                            = 76
 spriteid_197                          = 197
 spriteid_198                          = 198

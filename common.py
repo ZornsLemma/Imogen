@@ -123,6 +123,7 @@ constant(0x40, "copy_mode_random64")
 
 constant(0, "objectid_player")
 constant(1, "objectid_player_accessory")
+constant(0xb, "objectid_something") # TODO: is this "the player, but somehow different"?
 
 constant(1, "exit_room_left")
 constant(2, "exit_room_bottom")

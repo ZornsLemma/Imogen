@@ -1171,6 +1171,7 @@ On Entry:
     comment(0x1a30, "early out if room has just changed")
     comment(0x1ae5, "Choose the pattern based on copy_mode")
     comment(0x1a3c, "test for collision with spell collectable")
+    expr(0x1a40, "objectid_something")
     comment(0x1a46, "collided with level completion collectable, so mark level as completed")
     expr(0x1a4a, "first_level_letter")
     comment(0x1a4c, "got completion spell")

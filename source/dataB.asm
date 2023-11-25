@@ -31,6 +31,7 @@ objectid_player                       = 0
 objectid_player_accessory             = 1
 objectid_rope_broken_bottom_end       = 6
 objectid_rope_broken_top_end          = 5
+objectid_something                    = 11
 objectid_spell                        = 5
 objectid_suspended_boulder            = 4
 opcode_jmp                            = 76
