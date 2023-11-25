@@ -78,10 +78,11 @@ label(0x09ad, "object_spriteid + objectid_rope_broken_top_end")
 label(0x09ae, "object_spriteid + objectid_rope_broken_bottom_end")
 label(0x09af, "object_spriteid + objectid_hourglass")
 
-label(0x0a05, "cuckoo_room_1_progress")         # 0: hidden in room 1 clock, 1+: cuckooing, $ff: got cuckoo (cuckoo object created)
-label(0x0a06, "cuckoo_room_2_progress")         # 0: in room 2 clock or held, 1: installed in clock, 15: just launched, 16-40 (the odd numbers): animation being thrown into room3, $ff: in room 3
-label(0x0a07, "room_2_falling_boulder_progress")   # 0: suspended, 1+: falling (Y coordinate), $ff: finished falling
-label(0x0a08, "room_0_falling_boulder_progress")   # ditto
+# save game variables
+label(0x0a05, "cuckoo_room_1_progress")             # 0: hidden in room 1 clock, 1+: cuckooing, $ff: got cuckoo (cuckoo object created)
+label(0x0a06, "cuckoo_room_2_progress")             # 0: in room 2 clock or held, 1: installed in clock, 15: just launched, 16-40 (the odd numbers): animation being thrown into room3, $ff: in room 3
+label(0x0a07, "room_2_falling_boulder_progress")    # 0: suspended, 1+: falling (Y coordinate), $ff: finished falling
+label(0x0a08, "room_0_falling_boulder_progress")    # ditto
 label(0x0a09, "got_hourglass_flag")
 
 label(0x0a6f, "room_1_clock_repeat_counter")    # Counts up the number of repeats of the pendulum swing
@@ -288,6 +289,46 @@ label(0x44ad, "return5")
 envelope(0x44f2, "envelope_unused")
 sound(0x4500, "sound_unused")
 
+print("""; *************************************************************************************
+;
+; Level B
+;
+; Save game variables:
+;
+;     cuckoo_room_1_progress ($0a05):
+;               0: hidden in room 1 clock,
+;              1+: cuckooing
+;             $ff: got cuckoo (cuckoo object created)
+;     cuckoo_room_2_progress ($0a06):
+;               0: in room 2 clock or held
+;               1: installed in clock
+;              15: just launched
+;           16-40: animation being thrown into room3 (just the odd numbers)
+;             $ff: in room 3
+;     room_2_falling_boulder_progress ($0a07):
+;               0: suspended
+;              1+: falling (Y coordinate)
+;             $ff: finished falling
+;     room_0_falling_boulder_progress ($0a08):
+;               0: suspended
+;              1+: falling (Y coordinate)
+;             $ff: finished falling
+;     got_hourglass_flag ($0a09)
+;
+; Solution:
+;
+;   1. Get the hourglass collectable from room 2 (to the right of the start room 0)
+;   2. Stand as the wizard on top of the suspended boulder in room 0 holding the hourglass
+;       (The boulder falls)
+;   3. Jump left into room 1 from the fallen boulder, and go to the far left edge
+;   4. Jump into the pendulum to set it ticking for a short time
+;   5. As the cat, jump back to the right of the room, up onto the ledge and as the monkey jump into the cuckoo before the clock stops. Timing is tight here.
+;   6. Take the cuckoo to the clock in room 2 and us it on top of the clock to fix the clock.
+;   7. Set the clock ticking by jumping into the pendulum. (The cuckoo is thrown into room 3, the boulder falls)
+;   8. Jump into room 3 from the fallen boulder
+;   9. Climb the rope over to the right side of the room and jump into the spell collectable.
+;
+; *************************************************************************************""")
 
 result = go(False)
 result = remove_sprite_data(result)
