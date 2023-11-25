@@ -1,7 +1,6 @@
 ; Constants
 baby_max_pixel_x                      = 212
 baby_min_pixel_x                      = 108
-baby_spriteid_data_entries_minus_1    = 43
 collision_map_none                    = 0
 collision_map_out_of_bounds           = 255
 collision_map_rope                    = 2
@@ -1361,7 +1360,7 @@ room2_update_handler_temp
 
 room2_not_first_update
     ldy baby_sprite_index                                             ; 40e4: ac 73 0a
-    cpy #baby_spriteid_data_entries_minus_1                           ; 40e7: c0 2b
+    cpy #baby_spriteid_subseq4 - baby_spriteid_data                   ; 40e7: c0 2b
     bne not_at_last_baby_spriteid_entry                               ; 40e9: d0 03
     jmp room2_update_second_part                                      ; 40eb: 4c d9 41
 
@@ -1377,7 +1376,7 @@ have_specific_baby_spriteid
     cmp #2                                                            ; 40f9: c9 02
     bne player_not_collided_with_baby                                 ; 40fb: d0 31
     lda baby_spriteid_index_if_baby_spriteid_data_is_zero             ; 40fd: ad 72 0a
-    cmp #baby_spriteid_data_entries_minus_1                           ; 4100: c9 2b
+    cmp #baby_spriteid_subseq4 - baby_spriteid_data                   ; 4100: c9 2b
     beq baby_spriteid_index_if_baby_spriteid_data_is_zero_set         ; 4102: f0 27
     ldx #objectid_player                                              ; 4104: a2 00
     sty room2_update_handler_temp                                     ; 4106: 8c e3 40
@@ -1419,7 +1418,7 @@ dont_adjust_baby_spriteid_index
     bcs move_baby                                                     ; 4150: b0 5c
     cmp #$78 ; 'x'                                                    ; 4152: c9 78
     bcc move_baby                                                     ; 4154: 90 58
-    lda #baby_spriteid_data_entries_minus_1                           ; 4156: a9 2b
+    lda #baby_spriteid_subseq4 - baby_spriteid_data                   ; 4156: a9 2b
     sta baby_spriteid_index_if_baby_spriteid_data_is_zero             ; 4158: 8d 72 0a
     jmp move_baby                                                     ; 415b: 4c ae 41
 
@@ -1486,7 +1485,7 @@ baby_pixel_x_coordinate_updated
     lda desired_room_index                                            ; 41cc: a5 30
     cmp #2                                                            ; 41ce: c9 02
     bne room2_update_second_part                                      ; 41d0: d0 07
-    cpy #baby_spriteid_data_entries_minus_1                           ; 41d2: c0 2b
+    cpy #baby_spriteid_subseq4 - baby_spriteid_data                   ; 41d2: c0 2b
     bne room2_update_second_part                                      ; 41d4: d0 03
     jsr play_some_sound1_then_some_sound2                             ; 41d6: 20 f1 3e
 room2_update_second_part
@@ -1494,7 +1493,7 @@ room2_update_second_part
     cmp #2                                                            ; 41db: c9 02
     bne return5                                                       ; 41dd: d0 6d
     lda baby_spriteid_index_if_baby_spriteid_data_is_zero             ; 41df: ad 72 0a
-    cmp #baby_spriteid_data_entries_minus_1                           ; 41e2: c9 2b
+    cmp #baby_spriteid_subseq4 - baby_spriteid_data                   ; 41e2: c9 2b
     bne set_baby_object_properties                                    ; 41e4: d0 4f
     lda baby_pixel_x_coordinate                                       ; 41e6: ad 70 0a
     sta save_game_level_a_room_2_baby_pixel_x_coordinate              ; 41e9: 8d 03 0a
@@ -1503,7 +1502,7 @@ room2_update_second_part
     lsr                                                               ; 41ee: 4a
     tax                                                               ; 41ef: aa
     lda baby_sprite_index                                             ; 41f0: ad 73 0a
-    cmp #baby_spriteid_data_entries_minus_1                           ; 41f3: c9 2b
+    cmp #baby_spriteid_subseq4 - baby_spriteid_data                   ; 41f3: c9 2b
     beq update_collision_map_for_baby                                 ; 41f5: f0 15
 ; Add the baby to the collision map.
     dex                                                               ; 41f7: ca
@@ -2054,9 +2053,6 @@ pydis_end
 }
 !if (baby_min_pixel_x) != $6c {
     !error "Assertion failed: baby_min_pixel_x == $6c"
-}
-!if (baby_spriteid_data_entries_minus_1) != $2b {
-    !error "Assertion failed: baby_spriteid_data_entries_minus_1 == $2b"
 }
 !if (baby_spriteid_subseq2 - baby_spriteid_data) != $05 {
     !error "Assertion failed: baby_spriteid_subseq2 - baby_spriteid_data == $05"
