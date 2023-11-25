@@ -28,12 +28,15 @@
 ;
 ;   1. Get the hourglass collectable from room 2 (to the right of the start room 0)
 ;   2. Stand as the wizard on top of the suspended boulder in room 0 holding the hourglass
-;       (The boulder falls)
+;           (The boulder falls)
 ;   3. Jump left into room 1 from the fallen boulder, and go to the far left edge
 ;   4. Jump into the pendulum to set it ticking for a short time
-;   5. As the cat, jump back to the right of the room, up onto the ledge and as the monkey jump into the cuckoo before the clock stops. Timing is tight here.
+;   5. As the cat, jump back to the right of the room, up onto the ledge and as the monkey jump
+;      into the cuckoo before the clock stops. Timing is tight here.
+;           (The cuckoo is obtained)
 ;   6. Take the cuckoo to the clock in room 2 and us it on top of the clock to fix the clock.
-;   7. Set the clock ticking by jumping into the pendulum. (The cuckoo is thrown into room 3, the boulder falls)
+;   7. Set the clock ticking by jumping into the pendulum.
+;           (The cuckoo is thrown into room 3, the boulder falls)
 ;   8. Jump into room 3 from the fallen boulder
 ;   9. Climb the rope over to the right side of the room and jump into the spell collectable.
 ;
@@ -307,9 +310,9 @@ check_password                                      = $53c0
     * = $3ad5
 
 ; *************************************************************************************
-; 
+;
 ; Level header
-; 
+;
 ; *************************************************************************************
 level_data
 pydis_start
@@ -333,11 +336,11 @@ level_specific_password
     !byte $9f, $82, $86, $8e, $e6, $8d, $87, $82, $8e, $98, $c6       ; 3ae7: 9f 82 86...
 
 ; *************************************************************************************
-; 
+;
 ; Level initialisation
-; 
+;
 ; This is called whenever a new room is entered.
-; 
+;
 ; *************************************************************************************
 level_specific_initialisation
     lda current_level                                                 ; 3af2: a5 31
@@ -363,15 +366,15 @@ return1
     rts                                                               ; 3b1b: 60
 
 ; *************************************************************************************
-; 
+;
 ; Level update
-; 
+;
 ; This generally calls individual functions to update the logic in each room.
-; 
+;
 ; While updating the logic for a room, 'currently_updating_logic_for_room_index' is
 ; normally set. In practice this only actually needs to be set if it calls
 ; 'update_brazier_and_fire' or 'update_level_completion'
-; 
+;
 ; *************************************************************************************
 level_specific_update
     jsr room_1_update_handler                                         ; 3b1c: 20 66 3d
@@ -383,9 +386,9 @@ level_specific_update
     rts                                                               ; 3b2e: 60
 
 ; *************************************************************************************
-; 
+;
 ; Room 0 initialisation and game loop
-; 
+;
 ; *************************************************************************************
 room_0_data
     !byte 22                                                          ; 3b2f: 16                      ; initial player X cell
@@ -608,9 +611,9 @@ return2
     rts                                                               ; 3c80: 60
 
 ; *************************************************************************************
-; 
+;
 ; Room 1 initialisation and game loop
-; 
+;
 ; *************************************************************************************
 room_1_data
     !byte 13                                                          ; 3c81: 0d                      ; initial player X cell
@@ -1083,9 +1086,9 @@ play_cuckoo_two_sounds
     rts                                                               ; 3f92: 60
 
 ; *************************************************************************************
-; 
+;
 ; Room 2 initialisation and game loop
-; 
+;
 ; *************************************************************************************
 room_2_data
     !byte 14                                                          ; 3f93: 0e                      ; initial player X cell
@@ -1624,9 +1627,9 @@ return8
     rts                                                               ; 433c: 60
 
 ; *************************************************************************************
-; 
+;
 ; Room 3 initialisation and game loop
-; 
+;
 ; *************************************************************************************
 room_3_data
     !byte 20                                                          ; 433d: 14                      ; initial player X cell
