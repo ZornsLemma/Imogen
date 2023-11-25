@@ -44,6 +44,7 @@ label(0x443f, "room_1_check_right_exit")
 expr(0x4442, "exit_room_right")
 
 expr(0x3b07, "spriteid_duck_toolbar")
+entry(0x3b0b, "developer_mode_not_active")
 
 
 

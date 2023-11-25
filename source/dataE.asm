@@ -317,12 +317,12 @@ level_specific_initialisation
     cmp level_before_latest_level_and_room_initialisation             ; 3af8: c5 51
     beq c3b21                                                         ; 3afa: f0 25
     lda developer_flags                                               ; 3afc: ad 03 11
-    bpl c3b0b                                                         ; 3aff: 10 0a
+    bpl developer_mode_not_active                                     ; 3aff: 10 0a
     lda #$ff                                                          ; 3b01: a9 ff
     sta save_game_level_e_something                                   ; 3b03: 8d 13 0a
     lda #spriteid_duck_toolbar                                        ; 3b06: a9 d1
     jsr insert_character_menu_item_into_toolbar                       ; 3b08: 20 87 2b
-c3b0b
+developer_mode_not_active
     lda save_game_level_e_something                                   ; 3b0b: ad 13 0a
     bpl c3b15                                                         ; 3b0e: 10 05
     lda #$d3                                                          ; 3b10: a9 d3
@@ -1639,7 +1639,6 @@ sprite_data
 pydis_end
 
 ; Automatically generated labels:
-;     c3b0b
 ;     c3b15
 ;     c3b21
 ;     c3d12
