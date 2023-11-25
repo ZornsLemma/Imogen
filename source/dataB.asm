@@ -70,6 +70,7 @@ objectid_clock_workings               = 3
 objectid_cuckoo                       = 2
 objectid_hourglass                    = 7
 objectid_old_player                   = 11
+objectid_old_player_accessory         = 12
 objectid_pendulum                     = 2
 objectid_player                       = 0
 objectid_player_accessory             = 1

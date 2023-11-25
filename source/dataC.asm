@@ -25,6 +25,7 @@ object_collided_floor                 = 2
 object_collided_left_wall             = 1
 object_collided_right_wall            = 4
 objectid_old_player                   = 11
+objectid_old_player_accessory         = 12
 objectid_player                       = 0
 objectid_player_accessory             = 1
 opcode_jmp                            = 76
@@ -314,17 +315,17 @@ level_specific_password
 level_specific_initialisation
     lda current_level                                                 ; 3af2: a5 31
     cmp level_before_latest_level_and_room_initialisation             ; 3af4: c5 51
-    beq c3b0c                                                         ; 3af6: f0 14
+    beq return1                                                       ; 3af6: f0 14
     lda developer_flags                                               ; 3af8: ad 03 11
     bpl c3b02                                                         ; 3afb: 10 05
     lda #$ff                                                          ; 3afd: a9 ff
     sta l0a0a                                                         ; 3aff: 8d 0a 0a
 c3b02
     lda l0a0a                                                         ; 3b02: ad 0a 0a
-    beq c3b0c                                                         ; 3b05: f0 05
+    beq return1                                                       ; 3b05: f0 05
     lda #spriteid_brazier_menu_item                                   ; 3b07: a9 cb
     jsr find_or_create_menu_slot_for_A                                ; 3b09: 20 bd 2b
-c3b0c
+return1
     rts                                                               ; 3b0c: 60
 
 ; *************************************************************************************
@@ -570,7 +571,7 @@ c3c83
     jmp c3d26                                                         ; 3c83: 4c 26 3d
 
 c3c86
-    jmp c3d74                                                         ; 3c86: 4c 74 3d
+    jmp return2                                                       ; 3c86: 4c 74 3d
 
 c3c89
     lda l3d75                                                         ; 3c89: ad 75 3d
@@ -650,10 +651,10 @@ c3d12
 c3d26
     lda desired_room_index                                            ; 3d26: a5 30
     cmp currently_updating_logic_for_room_index                       ; 3d28: cd ba 1a
-    bne c3d74                                                         ; 3d2b: d0 47
+    bne return2                                                       ; 3d2b: d0 47
     lda l3d75                                                         ; 3d2d: ad 75 3d
     cmp #1                                                            ; 3d30: c9 01
-    bne c3d74                                                         ; 3d32: d0 40
+    bne return2                                                       ; 3d32: d0 40
     lda #$d7                                                          ; 3d34: a9 d7
     sta l09ab                                                         ; 3d36: 8d ab 09
     lda l3d76                                                         ; 3d39: ad 76 3d
@@ -684,7 +685,7 @@ c3d26
     tay                                                               ; 3d6e: a8
     lda #0                                                            ; 3d6f: a9 00
     jsr write_a_single_value_to_cell_in_collision_map                 ; 3d71: 20 bb 1e
-c3d74
+return2
     rts                                                               ; 3d74: 60
 
 l3d75
@@ -915,7 +916,7 @@ c3ed8
     jmp c3f04                                                         ; 3ed8: 4c 04 3f
 
 c3edb
-    jmp c3fe4                                                         ; 3edb: 4c e4 3f
+    jmp return3                                                       ; 3edb: 4c e4 3f
 
 c3ede
     ldy l0a0b                                                         ; 3ede: ac 0b 0a
@@ -1033,7 +1034,7 @@ c3fb5
     lda #collision_map_none                                           ; 3fc9: a9 00
     sta value_to_write_to_collision_map                               ; 3fcb: 85 3e
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 3fcd: 20 44 1e
-    jmp c3fe4                                                         ; 3fd0: 4c e4 3f
+    jmp return3                                                       ; 3fd0: 4c e4 3f
 
 c3fd3
     dec height_in_cells                                               ; 3fd3: c6 3d
@@ -1045,7 +1046,7 @@ c3fdd
     lda #collision_map_solid_rock                                     ; 3fdd: a9 03
     sta value_to_write_to_collision_map                               ; 3fdf: 85 3e
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 3fe1: 20 44 1e
-c3fe4
+return3
     rts                                                               ; 3fe4: 60
 
 sub_c3fe5
@@ -1071,7 +1072,7 @@ c4009
     bne c4053                                                         ; 4011: d0 40
     lda desired_room_index                                            ; 4013: a5 30
     cmp #1                                                            ; 4015: c9 01
-    bne c4031                                                         ; 4017: d0 18
+    bne return4                                                       ; 4017: d0 18
     ldx #$23 ; '#'                                                    ; 4019: a2 23
     ldy #8                                                            ; 401b: a0 08
     lda #1                                                            ; 401d: a9 01
@@ -1083,11 +1084,11 @@ c4009
     sta l38c4                                                         ; 4029: 8d c4 38
     lda #$ca                                                          ; 402c: a9 ca
     sta l09aa                                                         ; 402e: 8d aa 09
-c4031
+return4
     rts                                                               ; 4031: 60
 
 c4032
-    jmp c40d0                                                         ; 4032: 4c d0 40
+    jmp return5                                                       ; 4032: 4c d0 40
 
 c4035
     lda l0a0a                                                         ; 4035: ad 0a 0a
@@ -1121,7 +1122,7 @@ c4068
 
 c4071
     iny                                                               ; 4071: c8
-    lda l40d1,y                                                       ; 4072: b9 d1 40
+    lda fire_spriteid_table,y                                         ; 4072: b9 d1 40
     bne c4079                                                         ; 4075: d0 02
     ldy #1                                                            ; 4077: a0 01
 c4079
@@ -1129,9 +1130,9 @@ c4079
     lda #0                                                            ; 407c: a9 00
     sta l09aa                                                         ; 407e: 8d aa 09
     cpy #$ff                                                          ; 4081: c0 ff
-    beq c40d0                                                         ; 4083: f0 4b
+    beq return5                                                       ; 4083: f0 4b
     ldx #2                                                            ; 4085: a2 02
-    lda l40d1,y                                                       ; 4087: b9 d1 40
+    lda fire_spriteid_table,y                                         ; 4087: b9 d1 40
     sta object_spriteid,x                                             ; 408a: 9d a8 09
     lda #$40 ; '@'                                                    ; 408d: a9 40
     sta object_z_order,x                                              ; 408f: 9d c2 38
@@ -1163,10 +1164,10 @@ c40bf
     lda object_y_high+1                                               ; 40c8: ad 93 09
     adc #$ff                                                          ; 40cb: 69 ff
     sta object_y_high,x                                               ; 40cd: 9d 92 09
-c40d0
+return5
     rts                                                               ; 40d0: 60
 
-l40d1
+fire_spriteid_table
     !byte 0                                                           ; 40d1: 00
     !byte spriteid_fire1                                              ; 40d2: 3c
     !byte spriteid_fire2                                              ; 40d3: 3d
@@ -1378,7 +1379,7 @@ c41d5
     sta l0a73                                                         ; 421a: 8d 73 0a
     rts                                                               ; 421d: 60
 
-l421e
+parrot_spriteid_table
     !byte spriteid_parrot2                                            ; 421e: db
     !byte spriteid_parrot1                                            ; 421f: da
     !byte 0                                                           ; 4220: 00
@@ -1410,8 +1411,8 @@ c4242
     lda current_level                                                 ; 4247: a5 31
     cmp level_before_latest_level_and_room_initialisation             ; 4249: c5 51
     beq c4278                                                         ; 424b: f0 2b
-    ldx #$4b ; 'K'                                                    ; 424d: a2 4b
-    ldy #$45 ; 'E'                                                    ; 424f: a0 45
+    ldx #<envelope1                                                   ; 424d: a2 4b
+    ldy #>envelope1                                                   ; 424f: a0 45
     jsr define_envelope                                               ; 4251: 20 5e 39
     lda l0a0c                                                         ; 4254: ad 0c 0a
     beq c4265                                                         ; 4257: f0 0c
@@ -1441,7 +1442,7 @@ c428a
     jmp c43cd                                                         ; 428a: 4c cd 43
 
 c428d
-    jmp c4424                                                         ; 428d: 4c 24 44
+    jmp return6                                                       ; 428d: 4c 24 44
 
 c4290
     lda object_y_high                                                 ; 4290: ad 92 09
@@ -1498,7 +1499,7 @@ c42ef
     clc                                                               ; 42f2: 18
     adc #1                                                            ; 42f3: 69 01
     tay                                                               ; 42f5: a8
-    lda l421e,y                                                       ; 42f6: b9 1e 42
+    lda parrot_spriteid_table,y                                       ; 42f6: b9 1e 42
     bne c42fe                                                         ; 42f9: d0 03
     ldy l442d                                                         ; 42fb: ac 2d 44
 c42fe
@@ -1596,8 +1597,8 @@ c43b8
     bcs c43c5                                                         ; 43ba: b0 09
 c43bc
     lda #0                                                            ; 43bc: a9 00
-    ldx #$59 ; 'Y'                                                    ; 43be: a2 59
-    ldy #$45 ; 'E'                                                    ; 43c0: a0 45
+    ldx #<sound1                                                      ; 43be: a2 59
+    ldy #>sound1                                                      ; 43c0: a0 45
     jsr play_sound_yx                                                 ; 43c2: 20 f6 38
 c43c5
     ldy #8                                                            ; 43c5: a0 08
@@ -1610,10 +1611,10 @@ c43cd
     cpx currently_updating_logic_for_room_index                       ; 43d2: ec ba 1a
     beq c43e5                                                         ; 43d5: f0 0e
     cpx #0                                                            ; 43d7: e0 00
-    bne c4424                                                         ; 43d9: d0 49
+    bne return6                                                       ; 43d9: d0 49
     ldx currently_updating_logic_for_room_index                       ; 43db: ae ba 1a
     cpx #2                                                            ; 43de: e0 02
-    bne c4424                                                         ; 43e0: d0 42
+    bne return6                                                       ; 43e0: d0 42
     sec                                                               ; 43e2: 38
     sbc #$60 ; '`'                                                    ; 43e3: e9 60
 c43e5
@@ -1633,17 +1634,17 @@ c43ec
     lda l4429                                                         ; 4402: ad 29 44
     sta l096b                                                         ; 4405: 8d 6b 09
     ldy l442e                                                         ; 4408: ac 2e 44
-    lda l421e,y                                                       ; 440b: b9 1e 42
+    lda parrot_spriteid_table,y                                       ; 440b: b9 1e 42
     sta l09ad                                                         ; 440e: 8d ad 09
     lda update_room_first_update_flag                                 ; 4411: ad 2b 13
-    bne c4424                                                         ; 4414: d0 0e
+    bne return6                                                       ; 4414: d0 0e
     ldx #0                                                            ; 4416: a2 00
     ldy #5                                                            ; 4418: a0 05
     jsr test_for_collision_between_objects_x_and_y                    ; 441a: 20 e2 28
-    beq c4424                                                         ; 441d: f0 05
+    beq return6                                                       ; 441d: f0 05
     lda #$80                                                          ; 441f: a9 80
     sta player_wall_collision_flag                                    ; 4421: 8d 33 24
-c4424
+return6
     rts                                                               ; 4424: 60
 
 l4425
@@ -1853,8 +1854,26 @@ sub_c44f0
     sta l0a77                                                         ; 4547: 8d 77 0a
     rts                                                               ; 454a: 60
 
-    !byte   5, $81,   1, $fe, $fc,   8,   8,   8, $3c, $ff,   0, $fc  ; 454b: 05 81 01...
-    !byte $5a,   0, $13,   0,   5,   0, $e6,   0,   1,   0            ; 4557: 5a 00 13...
+envelope1
+    !byte 5                                                           ; 454b: 05                      ; envelope number
+    !byte 129                                                         ; 454c: 81                      ; step length (100ths of a second)
+    !byte 1                                                           ; 454d: 01                      ; pitch change per step in section 1
+    !byte 254                                                         ; 454e: fe                      ; pitch change per step in section 2
+    !byte 252                                                         ; 454f: fc                      ; pitch change per step in section 3
+    !byte 8                                                           ; 4550: 08                      ; number of steps in section 1
+    !byte 8                                                           ; 4551: 08                      ; number of steps in section 2
+    !byte 8                                                           ; 4552: 08                      ; number of steps in section 3
+    !byte 60                                                          ; 4553: 3c                      ; change of amplitude per step during attack phase
+    !byte 255                                                         ; 4554: ff                      ; change of amplitude per step during decay phase
+    !byte 0                                                           ; 4555: 00                      ; change of amplitude per step during sustain phase
+    !byte 252                                                         ; 4556: fc                      ; change of amplitude per step during release phase
+    !byte 90                                                          ; 4557: 5a                      ; target of level at end of attack phase
+    !byte 0                                                           ; 4558: 00                      ; target of level at end of decay phase
+sound1
+    !word $13                                                         ; 4559: 13 00                   ; channel
+    !word 5                                                           ; 455b: 05 00                   ; amplitude
+    !word 230                                                         ; 455d: e6 00                   ; pitch
+    !word 1                                                           ; 455f: 01 00                   ; duration
 ground_fill_2x2_top_left
     !byte %.#......                                                   ; 4561: 40
     !byte %##......                                                   ; 4562: c0
@@ -1896,7 +1915,6 @@ pydis_end
 
 ; Automatically generated labels:
 ;     c3b02
-;     c3b0c
 ;     c3bfb
 ;     c3c0b
 ;     c3c3d
@@ -1908,7 +1926,6 @@ pydis_end
 ;     c3cee
 ;     c3d12
 ;     c3d26
-;     c3d74
 ;     c3e89
 ;     c3ed8
 ;     c3edb
@@ -1923,9 +1940,7 @@ pydis_end
 ;     c3fb5
 ;     c3fd3
 ;     c3fdd
-;     c3fe4
 ;     c4009
-;     c4031
 ;     c4032
 ;     c4035
 ;     c4053
@@ -1934,7 +1949,6 @@ pydis_end
 ;     c4079
 ;     c40ae
 ;     c40bf
-;     c40d0
 ;     c41d0
 ;     c41d5
 ;     c4242
@@ -1964,7 +1978,6 @@ pydis_end
 ;     c43cd
 ;     c43e5
 ;     c43ec
-;     c4424
 ;     l0071
 ;     l0955
 ;     l096b
@@ -2002,8 +2015,6 @@ pydis_end
 ;     l3d77
 ;     l3d78
 ;     l3d79
-;     l40d1
-;     l421e
 ;     l4425
 ;     l4426
 ;     l4427
@@ -2023,11 +2034,23 @@ pydis_end
 ;     sub_c41a1
 ;     sub_c422d
 ;     sub_c44f0
+!if (<envelope1) != $4b {
+    !error "Assertion failed: <envelope1 == $4b"
+}
 !if (<ground_fill_2x2_top_left) != $61 {
     !error "Assertion failed: <ground_fill_2x2_top_left == $61"
 }
+!if (<sound1) != $59 {
+    !error "Assertion failed: <sound1 == $59"
+}
+!if (>envelope1) != $45 {
+    !error "Assertion failed: >envelope1 == $45"
+}
 !if (>ground_fill_2x2_top_left) != $45 {
     !error "Assertion failed: >ground_fill_2x2_top_left == $45"
+}
+!if (>sound1) != $45 {
+    !error "Assertion failed: >sound1 == $45"
 }
 !if (collision_map_none) != $00 {
     !error "Assertion failed: collision_map_none == $00"

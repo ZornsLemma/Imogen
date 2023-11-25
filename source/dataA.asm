@@ -37,6 +37,7 @@ objectid_left_mouse                   = 2
 objectid_left_trapdoor                = 2
 objectid_mouse_ball                   = 4
 objectid_old_player                   = 11
+objectid_old_player_accessory         = 12
 objectid_player                       = 0
 objectid_player_accessory             = 1
 objectid_right_mouse                  = 3
@@ -64,6 +65,9 @@ spriteid_baby6                        = 220
 spriteid_baby7                        = 221
 spriteid_ball                         = 59
 spriteid_brazier                      = 58
+spriteid_cache1                       = 204
+spriteid_cache2                       = 205
+spriteid_cache3                       = 206
 spriteid_cat1                         = 27
 spriteid_cat2                         = 28
 spriteid_cat_jump                     = 26
@@ -163,7 +167,6 @@ spriteid_wizard_hand                  = 55
 spriteid_wizard_transform1            = 56
 spriteid_wizard_transform2            = 57
 spriteid_wizard_using_object          = 53
-spriteid_zero_size1                   = 204
 table_max_x                           = 22
 table_min_x                           = 10
 trapdoor_left_x                       = 136
@@ -545,7 +548,7 @@ level_unchanged
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 3c1e: 20 44 1e
     ldx #objectid_left_mouse                                          ; 3c21: a2 02
     jsr set_object_position_from_current_sprite_position              ; 3c23: 20 6d 1f
-    lda #$cd                                                          ; 3c26: a9 cd
+    lda #spriteid_cache2                                              ; 3c26: a9 cd
     sta object_sprite_mask_type,x                                     ; 3c28: 9d ac 38
     lda #$c0                                                          ; 3c2b: a9 c0
     sta object_z_order,x                                              ; 3c2d: 9d c2 38
@@ -566,7 +569,7 @@ level_unchanged
     jsr set_object_position_from_current_sprite_position              ; 3c49: 20 6d 1f
     lda #$ff                                                          ; 3c4c: a9 ff
     sta object_direction,x                                            ; 3c4e: 9d be 09
-    lda #$ce                                                          ; 3c51: a9 ce
+    lda #spriteid_cache3                                              ; 3c51: a9 ce
     sta object_sprite_mask_type,x                                     ; 3c53: 9d ac 38
     lda #$c0                                                          ; 3c56: a9 c0
     sta object_z_order,x                                              ; 3c58: 9d c2 38
@@ -577,7 +580,7 @@ level_unchanged
     sta object_y_high,x                                               ; 3c62: 9d 92 09
     lda #1                                                            ; 3c65: a9 01
     sta object_direction,x                                            ; 3c67: 9d be 09
-    lda #spriteid_zero_size1                                          ; 3c6a: a9 cc
+    lda #spriteid_cache1                                              ; 3c6a: a9 cc
     sta object_sprite_mask_type,x                                     ; 3c6c: 9d ac 38
     lda #$40 ; '@'                                                    ; 3c6f: a9 40
     sta object_z_order,x                                              ; 3c71: 9d c2 38
@@ -1054,7 +1057,7 @@ room1_saxophone_and_brazier_handler
     tax                                                               ; 3f41: aa
     lda #1                                                            ; 3f42: a9 01
     sta object_direction,x                                            ; 3f44: 9d be 09
-    lda #spriteid_zero_size1                                          ; 3f47: a9 cc
+    lda #spriteid_cache1                                              ; 3f47: a9 cc
     sta object_sprite_mask_type,x                                     ; 3f49: 9d ac 38
     lda #spriteid_saxophone1                                          ; 3f4c: a9 d2
     sta object_spriteid,x                                             ; 3f4e: 9d a8 09
@@ -1354,7 +1357,7 @@ room2_update_handler_not_new_level
     sta temp_sprite_y_offset                                          ; 40d4: 85 3b
     lda #objectid_baby                                                ; 40d6: a9 02
     jsr set_object_position_from_cell_xy                              ; 40d8: 20 5d 1f
-    lda #spriteid_zero_size1                                          ; 40db: a9 cc
+    lda #spriteid_cache1                                              ; 40db: a9 cc
     sta object_sprite_mask_type + objectid_baby                       ; 40dd: 8d ae 38
 room2_update_second_part_local
     jmp room2_update_second_part                                      ; 40e0: 4c d9 41
@@ -1734,7 +1737,7 @@ table_x_position_update_finished
     ldx #objectid_table                                               ; 4346: a2 02
     lda #spriteid_table                                               ; 4348: a9 de
     sta object_spriteid,x                                             ; 434a: 9d a8 09
-    lda #spriteid_zero_size1                                          ; 434d: a9 cc
+    lda #spriteid_cache1                                              ; 434d: a9 cc
     sta object_sprite_mask_type,x                                     ; 434f: 9d ac 38
 add_table_to_collision_map_if_room_3_local
     jmp add_table_to_collision_map_if_room_3                          ; 4352: 4c f6 43
@@ -2250,6 +2253,15 @@ pydis_end
 !if (spriteid_ball) != $3b {
     !error "Assertion failed: spriteid_ball == $3b"
 }
+!if (spriteid_cache1) != $cc {
+    !error "Assertion failed: spriteid_cache1 == $cc"
+}
+!if (spriteid_cache2) != $cd {
+    !error "Assertion failed: spriteid_cache2 == $cd"
+}
+!if (spriteid_cache3) != $ce {
+    !error "Assertion failed: spriteid_cache3 == $ce"
+}
 !if (spriteid_mouse) != $c8 {
     !error "Assertion failed: spriteid_mouse == $c8"
 }
@@ -2285,9 +2297,6 @@ pydis_end
 }
 !if (spriteid_trapdoor_vertical) != $d1 {
     !error "Assertion failed: spriteid_trapdoor_vertical == $d1"
-}
-!if (spriteid_zero_size1) != $cc {
-    !error "Assertion failed: spriteid_zero_size1 == $cc"
 }
 !if (table_max_x) != $16 {
     !error "Assertion failed: table_max_x == $16"

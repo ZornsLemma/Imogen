@@ -21,6 +21,7 @@ object_collided_floor                          = 2
 object_collided_left_wall                      = 1
 object_collided_right_wall                     = 4
 objectid_old_player                            = 11
+objectid_old_player_accessory                  = 12
 objectid_player                                = 0
 objectid_player_accessory                      = 1
 opcode_jmp                                     = 76

@@ -124,6 +124,7 @@ constant(0x40, "copy_mode_random64")
 constant(0, "objectid_player")
 constant(1, "objectid_player_accessory")
 constant(0xb, "objectid_old_player")    # This is the state of the player as currently drawn on the screen, before being updated in the current game tick.
+constant(0xc, "objectid_old_player_accessory")
 
 constant(1, "exit_room_left")
 constant(2, "exit_room_bottom")

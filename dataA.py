@@ -10,7 +10,9 @@ sprite_dict = {
     0xc9: "spriteid_mouse_hands1",
     0xca: "spriteid_mouse_hands2",
     0xcb: "spriteid_small_ball",
-    0xcc: "spriteid_zero_size1", # TODO:!? Used as a mask?
+    0xcc: "spriteid_cache1", # TODO:!? Used as a mask?
+    0xcd: "spriteid_cache2", # TODO:!? Used as a mask?
+    0xce: "spriteid_cache3", # TODO:!? Used as a mask?
     0xcf: "spriteid_trapdoor_horizontal",
     0xd0: "spriteid_trapdoor_diagonal",
     0xd1: "spriteid_trapdoor_vertical",
@@ -187,9 +189,11 @@ expr(0x3cff, "mouse_ball_top_y_base")
 entry(0x3d20, "return1")
 comment(0x3c04, "Perform shared initialisation for both mice")
 comment(0x3c0e, "Set up the left mouse")
+expr(0x3c27, sprite_dict)
 comment(0x3c30, "Set up the right mouse")
+expr(0x3c52, sprite_dict)
 comment(0x3c5b, "Set up the ball")
-expr(0x3c6b, "spriteid_zero_size1")
+expr(0x3c6b, sprite_dict)
 ab(0x3cb7)
 ab(0x3cdf)
 comment(0x3cc0, "Multiply by 4 because each table entry is 4 bytes.")
@@ -304,7 +308,7 @@ entry(0x3f02, "room1_saxophone_and_brazier_handler")
 expr(0x3f16, "spriteid_saxophone2")
 comment(0x3f34, "The player has not collected the saxophone, so place it in the lower left of the room.")
 expr(0x3f3d, "objectid_saxophone")
-expr(0x3f48, "spriteid_zero_size1")
+expr(0x3f48, sprite_dict)
 expr(0x3f4d, "spriteid_saxophone1")
 entry(0x3f51, "return3")
 comment(0x3f7b, "Collect the saxophone.")
@@ -328,7 +332,7 @@ entry(0x42f8, "room3_update_handler")
 expr(0x42fe, "objectid_brazier2")
 entry(0x4358, "room3_not_first_update")
 expr(0x4349, "spriteid_table")
-expr(0x434e, "spriteid_zero_size1")
+expr(0x434e, sprite_dict)
 expr(0x4347, "objectid_table")
 expr(0x4048, "exit_room_top")
 expr(0x436e, "object_collided_right_wall")
@@ -368,7 +372,7 @@ expr(0x4093, "objectid_spell")
 entry(0x40b2, "have_valid_baby_properties_in_axy")
 entry(0x40c1, "room2_update_handler_not_new_level")
 expr(0x40d7, "objectid_baby")
-expr(0x40dc, "spriteid_zero_size1")
+expr(0x40dc, sprite_dict)
 entry(0x40e0, "room2_update_second_part_local")
 entry(0x412b, "baby_spriteid_index_if_baby_spriteid_data_is_zero_set")
 entry(0x41ae, "move_baby")
