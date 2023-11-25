@@ -1287,6 +1287,7 @@ baby_spriteid_subseq3
     !byte spriteid_baby5                                              ; 4072: db
 baby_spriteid_subseq6
     !byte $ff                                                         ; 4073: ff
+baby_spriteid_subseq7
     !byte spriteid_baby3                                              ; 4074: d9
     !byte spriteid_baby3                                              ; 4075: d9
     !byte spriteid_baby3                                              ; 4076: d9
@@ -1391,7 +1392,7 @@ have_specific_baby_spriteid
     sta player_using_object_spriteid                                  ; 411c: 8d b6 2e
     lda #1                                                            ; 411f: a9 01
     sta save_game_level_a_room_2_baby_direction                       ; 4121: 8d 04 0a
-    ldy #$22 ; '"'                                                    ; 4124: a0 22
+    ldy #baby_spriteid_subseq7 - baby_spriteid_data                   ; 4124: a0 22
     lda #5                                                            ; 4126: a9 05
     sta baby_spriteid_index_if_baby_spriteid_data_is_zero             ; 4128: 8d 72 0a
 baby_spriteid_index_if_baby_spriteid_data_is_zero_set
@@ -2068,6 +2069,9 @@ pydis_end
 }
 !if (baby_spriteid_subseq6 - baby_spriteid_data) != $21 {
     !error "Assertion failed: baby_spriteid_subseq6 - baby_spriteid_data == $21"
+}
+!if (baby_spriteid_subseq7 - baby_spriteid_data) != $22 {
+    !error "Assertion failed: baby_spriteid_subseq7 - baby_spriteid_data == $22"
 }
 !if (collectable_spriteids + 1) != $2eee {
     !error "Assertion failed: collectable_spriteids + 1 == $2eee"
