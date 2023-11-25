@@ -63,6 +63,7 @@ spriteid_diamond2                     = 40
 spriteid_diamond3                     = 41
 spriteid_diamond4                     = 42
 spriteid_diamond5                     = 43
+spriteid_duck_toolbar                 = 209
 spriteid_fingertip_tile_restoration   = 30
 spriteid_fire1                        = 60
 spriteid_fire2                        = 61
@@ -316,7 +317,7 @@ level_specific_initialisation
     bpl c3b0b                                                         ; 3aff: 10 0a
     lda #$ff                                                          ; 3b01: a9 ff
     sta l0a13                                                         ; 3b03: 8d 13 0a
-    lda #$d1                                                          ; 3b06: a9 d1
+    lda #spriteid_duck_toolbar                                        ; 3b06: a9 d1
     jsr insert_character_menu_item_into_toolbar                       ; 3b08: 20 87 2b
 c3b0b
     lda l0a13                                                         ; 3b0b: ad 13 0a
@@ -1806,4 +1807,7 @@ pydis_end
 }
 !if (sprite_data - level_data) != $0b57 {
     !error "Assertion failed: sprite_data - level_data == $0b57"
+}
+!if (spriteid_duck_toolbar) != $d1 {
+    !error "Assertion failed: spriteid_duck_toolbar == $d1"
 }
