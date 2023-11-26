@@ -68,6 +68,10 @@ comment(0x435a, "check for level change (branch if not)")
 label(0x4461, "return6")
 ldx_ldy_jsr_play_sound_yx(0x446b, "sound4")
 
+label(0x3bcc, "room_0_update_handler")
+label(0x3d61, "room_1_update_handler")
+label(0x4115, "room_2_update_handler")
+
 # TODO: replace "+ n" with "+ objectid_*" once objects have been named
 expr(0x3c08, "object_x_low + 4")
 expr(0x3c0d, "object_spriteid + 4")

@@ -74,6 +74,9 @@ ldx_ldy_jsr_play_sound_yx(0x43de, "sound4")
 ldx_ldy_jsr_play_sound_yx(0x43e5, "sound5")
 ldx_ldy_jsr_play_sound_yx(0x43ec, "sound6")
 
+label(0x3bdf, "room_0_update_handler")
+label(0x41d8, "room_3_update_handler")
+
 # TODO: replace "+ n" with "+ objectid_*" once objects have been named
 expr(0x3d31, "object_spriteid + 4")
 expr(0x3d57, "object_spriteid + 5")

@@ -326,13 +326,13 @@ c3b11
 ; 
 ; *************************************************************************************
 level_specific_update
-    jsr sub_c3f35                                                     ; 3b1a: 20 35 3f
+    jsr room_1_update_handler                                         ; 3b1a: 20 35 3f
     jsr sub_c3d3a                                                     ; 3b1d: 20 3a 3d
-    jsr sub_c3bf7                                                     ; 3b20: 20 f7 3b
+    jsr room_0_update_handler                                         ; 3b20: 20 f7 3b
     lda #0                                                            ; 3b23: a9 00
     sta l0a74                                                         ; 3b25: 8d 74 0a
-    jsr sub_c4058                                                     ; 3b28: 20 58 40
-    jsr sub_c43fb                                                     ; 3b2b: 20 fb 43
+    jsr room_2_update_handler                                         ; 3b28: 20 58 40
+    jsr room_3_update_handler                                         ; 3b2b: 20 fb 43
     rts                                                               ; 3b2e: 60
 
 ; *************************************************************************************
@@ -455,7 +455,7 @@ l3bba
 l3bf2
     !byte $db, $dc, $dd, $de, $ff                                     ; 3bf2: db dc dd...
 
-sub_c3bf7
+room_0_update_handler
     lda #0                                                            ; 3bf7: a9 00
     sta currently_updating_logic_for_room_index                       ; 3bf9: 8d ba 1a
     ldx #$23 ; '#'                                                    ; 3bfc: a2 23
@@ -929,7 +929,7 @@ room_1_check_right_exit
     ldy current_level                                                 ; 3f30: a4 31
     jmp initialise_level_and_room                                     ; 3f32: 4c 40 11
 
-sub_c3f35
+room_1_update_handler
     lda #1                                                            ; 3f35: a9 01
     sta currently_updating_logic_for_room_index                       ; 3f37: 8d ba 1a
     ldx #3                                                            ; 3f3a: a2 03
@@ -1114,7 +1114,7 @@ l4041
     !byte   0,   0,   0, $80,   8,   0, $80,   8,   2,   8,   2,   8  ; 4041: 00 00 00...
     !byte   4,   8,   4,   8,   6,   8,   6, $80,   0,   8, $80       ; 404d: 04 08 04...
 
-sub_c4058
+room_2_update_handler
     lda #2                                                            ; 4058: a9 02
     sta currently_updating_logic_for_room_index                       ; 405a: 8d ba 1a
     ldx #3                                                            ; 405d: a2 03
@@ -1624,7 +1624,7 @@ room_3_game_update_loop
     ldy current_level                                                 ; 43f6: a4 31
     jmp initialise_level_and_room                                     ; 43f8: 4c 40 11
 
-sub_c43fb
+room_3_update_handler
     lda #3                                                            ; 43fb: a9 03
     sta currently_updating_logic_for_room_index                       ; 43fd: 8d ba 1a
     ldx #$25 ; '%'                                                    ; 4400: a2 25
@@ -1925,17 +1925,13 @@ pydis_end
 ;     loop_c3d96
 ;     loop_c3db6
 ;     loop_c40c5
-;     sub_c3bf7
 ;     sub_c3d3a
 ;     sub_c3e85
-;     sub_c3f35
 ;     sub_c3f4a
 ;     sub_c3f5c
-;     sub_c4058
 ;     sub_c417b
 ;     sub_c42f0
 ;     sub_c430e
-;     sub_c43fb
 !if (<envelope1) != $0a {
     !error "Assertion failed: <envelope1 == $0a"
 }

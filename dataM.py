@@ -68,6 +68,10 @@ expr(0x42fa, "objectid_old_player")
 label(0x4370, "return5")
 label(0x447f, "return6")
 
+label(0x3bf0, "room_0_update_handler")
+label(0x41de, "room_2_update_handler")
+label(0x4539, "room_3_update_handler")
+
 # TODO: replace "+ n" with "+ objectid_*" once objects have been named
 expr(0x3db6, "object_x_low + 5")
 expr(0x3db9, "object_x_low + 7")

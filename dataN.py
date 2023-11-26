@@ -69,6 +69,11 @@ expr(0x44f0, make_lo("sound4"))
 expr(0x44f2, make_hi("sound4"))
 label(0x4508, "return7")
 
+label(0x3bf7, "room_0_update_handler")
+label(0x3f35, "room_1_update_handler")
+label(0x4058, "room_2_update_handler")
+label(0x43fb, "room_3_update_handler")
+
 # TODO: replace "+ n" with "+ objectid_*" once objects have been named
 expr(0x3c48, "object_x_low + 7")
 expr(0x3d20, "object_spriteid + 9")

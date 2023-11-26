@@ -326,8 +326,8 @@ level_specific_update
     jsr sub_c3fd7                                                     ; 3b22: 20 d7 3f
     jsr sub_c4361                                                     ; 3b25: 20 61 43
     jsr sub_c3cbb                                                     ; 3b28: 20 bb 3c
-    jsr sub_c41d8                                                     ; 3b2b: 20 d8 41
-    jsr sub_c3bdf                                                     ; 3b2e: 20 df 3b
+    jsr room_3_update_handler                                         ; 3b2b: 20 d8 41
+    jsr room_0_update_handler                                         ; 3b2e: 20 df 3b
     rts                                                               ; 3b31: 60
 
 sub_c3b32
@@ -461,7 +461,7 @@ c3bda
     ldy current_level                                                 ; 3bda: a4 31
     jmp initialise_level_and_room                                     ; 3bdc: 4c 40 11
 
-sub_c3bdf
+room_0_update_handler
     lda #0                                                            ; 3bdf: a9 00
     sta currently_updating_logic_for_room_index                       ; 3be1: 8d ba 1a
     ldx #$14                                                          ; 3be4: a2 14
@@ -1310,7 +1310,7 @@ l41a4
     !byte $f0,   8,   1, $f0,   8,   2, $f0,   8,   4, $f0,   8,   5  ; 41c8: f0 08 01...
     !byte $f0,   8, $0a, $ff                                          ; 41d4: f0 08 0a...
 
-sub_c41d8
+room_3_update_handler
     lda #3                                                            ; 41d8: a9 03
     sta currently_updating_logic_for_room_index                       ; 41da: 8d ba 1a
     ldx #3                                                            ; 41dd: a2 03
@@ -1801,11 +1801,9 @@ pydis_end
 ;     loop_c3d21
 ;     loop_c3d42
 ;     sub_c3b32
-;     sub_c3bdf
 ;     sub_c3cbb
 ;     sub_c3e5f
 ;     sub_c3fd7
-;     sub_c41d8
 ;     sub_c4350
 ;     sub_c4361
 ;     sub_c43d8

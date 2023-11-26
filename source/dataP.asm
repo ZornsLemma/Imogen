@@ -328,8 +328,8 @@ level_specific_update
     jsr sub_c41a5                                                     ; 3b1a: 20 a5 41
     jsr sub_c4324                                                     ; 3b1d: 20 24 43
     jsr sub_c3d34                                                     ; 3b20: 20 34 3d
-    jsr sub_c3bc3                                                     ; 3b23: 20 c3 3b
-    jsr sub_c404a                                                     ; 3b26: 20 4a 40
+    jsr room_1_update_handler                                         ; 3b23: 20 c3 3b
+    jsr room_3_update_handler                                         ; 3b26: 20 4a 40
     rts                                                               ; 3b29: 60
 
 sub_c3b2a
@@ -451,7 +451,7 @@ room_1_check_right_exit
     ldy current_level                                                 ; 3bbe: a4 31
     jmp initialise_level_and_room                                     ; 3bc0: 4c 40 11
 
-sub_c3bc3
+room_1_update_handler
     lda #1                                                            ; 3bc3: a9 01
     sta currently_updating_logic_for_room_index                       ; 3bc5: 8d ba 1a
     ldx #$14                                                          ; 3bc8: a2 14
@@ -1131,7 +1131,7 @@ room_3_game_update_loop
     ldy current_level                                                 ; 4045: a4 31
     jmp initialise_level_and_room                                     ; 4047: 4c 40 11
 
-sub_c404a
+room_3_update_handler
     lda #3                                                            ; 404a: a9 03
     sta currently_updating_logic_for_room_index                       ; 404c: 8d ba 1a
     ldx #3                                                            ; 404f: a2 03
@@ -2042,7 +2042,6 @@ pydis_end
 ;     loop_c41e1
 ;     loop_c4362
 ;     sub_c3b2a
-;     sub_c3bc3
 ;     sub_c3d34
 ;     sub_c3dd7
 ;     sub_c3e56
@@ -2050,7 +2049,6 @@ pydis_end
 ;     sub_c3f4b
 ;     sub_c3f5f
 ;     sub_c3faf
-;     sub_c404a
 ;     sub_c40e2
 ;     sub_c41a5
 ;     sub_c4324

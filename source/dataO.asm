@@ -338,11 +338,11 @@ c3b27
 ; 
 ; *************************************************************************************
 level_specific_update
-    jsr sub_c3bcc                                                     ; 3b30: 20 cc 3b
-    jsr sub_c3d61                                                     ; 3b33: 20 61 3d
+    jsr room_0_update_handler                                         ; 3b30: 20 cc 3b
+    jsr room_1_update_handler                                         ; 3b33: 20 61 3d
     jsr sub_c434e                                                     ; 3b36: 20 4e 43
     jsr sub_c4035                                                     ; 3b39: 20 35 40
-    jsr sub_c4115                                                     ; 3b3c: 20 15 41
+    jsr room_2_update_handler                                         ; 3b3c: 20 15 41
     rts                                                               ; 3b3f: 60
 
 ; *************************************************************************************
@@ -457,7 +457,7 @@ room_0_game_update_loop
     ldy current_level                                                 ; 3bc7: a4 31
     jmp initialise_level_and_room                                     ; 3bc9: 4c 40 11
 
-sub_c3bcc
+room_0_update_handler
     lda #0                                                            ; 3bcc: a9 00
     sta currently_updating_logic_for_room_index                       ; 3bce: 8d ba 1a
     ldx #4                                                            ; 3bd1: a2 04
@@ -695,7 +695,7 @@ l3d3d
     !byte   4,   1,   3,   2,   2,   4,   1,   6, $80,   0,   1,   0  ; 3d49: 04 01 03...
     !byte   2,   0,   4,   0,   6, $80,   0,   8, $80,   0,   0, $80  ; 3d55: 02 00 04...
 
-sub_c3d61
+room_1_update_handler
     lda #1                                                            ; 3d61: a9 01
     sta currently_updating_logic_for_room_index                       ; 3d63: 8d ba 1a
     ldx #3                                                            ; 3d66: a2 03
@@ -1204,7 +1204,7 @@ room_2_check_right_exit
     ldy current_level                                                 ; 4110: a4 31
     jmp initialise_level_and_room                                     ; 4112: 4c 40 11
 
-sub_c4115
+room_2_update_handler
     lda #2                                                            ; 4115: a9 02
     sta currently_updating_logic_for_room_index                       ; 4117: 8d ba 1a
     ldx #$25 ; '%'                                                    ; 411a: a2 25
@@ -1852,12 +1852,9 @@ pydis_end
 ;     l42cd
 ;     l4462
 ;     loop_c3dde
-;     sub_c3bcc
-;     sub_c3d61
 ;     sub_c3f28
 ;     sub_c4002
 ;     sub_c4035
-;     sub_c4115
 ;     sub_c434e
 ;     sub_c4465
 !if (<envelope1) != $75 {

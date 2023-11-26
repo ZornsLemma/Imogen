@@ -59,6 +59,11 @@ comment(0x4481, "check for first update in room (branch if so)")
 comment(0x449b, "check for first update in room (branch if so)")
 expr(0x44ad, "objectid_old_player_accessory")
 
+label(0x3bd9, "room_2_update_handler")
+label(0x3f56, "room_3_update_handler")
+label(0x419f, "room_0_update_handler")
+label(0x43a4, "room_1_update_handler")
+
 # TODO: replace "+ n" with "+ objectid_*" once objects have been named
 expr(0x3ccb, "object_direction + 5")
 expr(0x3d2c, "object_spriteid + 2")
