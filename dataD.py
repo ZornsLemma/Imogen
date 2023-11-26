@@ -56,9 +56,9 @@ s = SubstituteLabels(substitute_labels)
 set_label_maker_hook(s.substitute_label_maker)
 
 label(0xa0f, "save_game_level_d_got_gun")
-label(0xa10, "save_game_level_d_gnu_sign_position")    #$20-$30: X position of sign
-label(0xa11, "save_game_level_d_partition_progress")   #0: normal position, 1: falling, $ff: fallen
-label(0xa12, "save_game_level_d_baby_progress")        #0: not started, $12: sleeping, $14: blocking exit, $21: surprised, $2c: dead
+label(0xa10, "save_game_level_d_gnu_sign_position")
+label(0xa11, "save_game_level_d_partition_progress")
+label(0xa12, "save_game_level_d_baby_progress")
 
 comment(0x3af3, "check for level change (branch if not)")
 label(0x3b1c, "return1")
@@ -131,11 +131,6 @@ expr(0x4322, "object_y_low + 5")
 #expr(0x4140, sprite_dict)
 #expr(0x41fe, sprite_dict)
 
-
-label(0xa0f, "save_game_level_d_got_gun")
-label(0xa10, "save_game_level_d_gnu_sign_position")
-label(0xa11, "save_game_level_d_partition_progress")
-label(0xa12, "save_game_level_d_baby_progress")
 
 print("""; *************************************************************************************
 ;
