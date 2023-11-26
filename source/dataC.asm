@@ -555,7 +555,7 @@ c3c6b
     adc l3d79                                                         ; 3c73: 6d 79 3d
     tay                                                               ; 3c76: a8
     dey                                                               ; 3c77: 88
-    lda #3                                                            ; 3c78: a9 03
+    lda #objectid_rope_end                                            ; 3c78: a9 03
     jsr set_object_position_from_cell_xy                              ; 3c7a: 20 5d 1f
     tax                                                               ; 3c7d: aa
     lda #spriteid_rope_end                                            ; 3c7e: a9 0a
@@ -624,7 +624,7 @@ c3cee
     bne c3d26                                                         ; 3cf8: d0 2c
     ldx l3d77                                                         ; 3cfa: ae 77 3d
     ldy l3d78                                                         ; 3cfd: ac 78 3d
-    lda #3                                                            ; 3d00: a9 03
+    lda #objectid_rope_end                                            ; 3d00: a9 03
     jsr set_object_position_from_cell_xy                              ; 3d02: 20 5d 1f
     lda #spriteid_empty_hook                                          ; 3d05: a9 d8
     sta object_spriteid + objectid_rope_end                           ; 3d07: 8d ab 09
@@ -661,11 +661,11 @@ c3d26
     lda #3                                                            ; 3d49: a9 03
     sta temp_sprite_x_offset                                          ; 3d4b: 85 3a
     ldy #0                                                            ; 3d4d: a0 00
-    lda #3                                                            ; 3d4f: a9 03
+    lda #objectid_rope_end                                            ; 3d4f: a9 03
     jsr set_object_position_from_cell_xy                              ; 3d51: 20 5d 1f
     lda #3                                                            ; 3d54: a9 03
     sta temp_sprite_x_offset                                          ; 3d56: 85 3a
-    lda #4                                                            ; 3d58: a9 04
+    lda #objectid_rope_fire                                           ; 3d58: a9 04
     jsr set_object_position_from_cell_xy                              ; 3d5a: 20 5d 1f
     lda l3d76                                                         ; 3d5d: ad 76 3d
     sta object_y_low + objectid_rope_end                              ; 3d60: 8d 7f 09
@@ -861,22 +861,22 @@ room_1_update_handler
     sta save_game_level_c_room_1_burning_rope_progress                ; 3e71: 8d 0d 0a
 ; check for first update in room (branch if not)
     lda update_room_first_update_flag                                 ; 3e74: ad 2b 13
-    beq c3ede                                                         ; 3e77: f0 65
+    beq update_table_state                                            ; 3e77: f0 65
 ; check for level change (branch if not)
     lda current_level                                                 ; 3e79: a5 31
     cmp level_before_latest_level_and_room_initialisation             ; 3e7b: c5 51
-    beq c3e89                                                         ; 3e7d: f0 0a
+    beq set_room_1_objects                                            ; 3e7d: f0 0a
     lda save_game_level_c_burning_table_progress                      ; 3e7f: ad 0b 0a
-    beq c3e89                                                         ; 3e82: f0 05
+    beq set_room_1_objects                                            ; 3e82: f0 05
     lda #$ff                                                          ; 3e84: a9 ff
     sta save_game_level_c_burning_table_progress                      ; 3e86: 8d 0b 0a
-c3e89
+set_room_1_objects
     lda desired_room_index                                            ; 3e89: a5 30
     cmp #1                                                            ; 3e8b: c9 01
     bne c3ed8                                                         ; 3e8d: d0 49
     ldx #5                                                            ; 3e8f: a2 05
     ldy #$12                                                          ; 3e91: a0 12
-    lda #5                                                            ; 3e93: a9 05
+    lda #objectid_table                                               ; 3e93: a9 05
     jsr set_object_position_from_cell_xy                              ; 3e95: 20 5d 1f
     tax                                                               ; 3e98: aa
     lda #spriteid_cache5                                              ; 3e99: a9 d1
@@ -887,7 +887,7 @@ c3e89
     lda #6                                                            ; 3ea5: a9 06
     sta temp_sprite_x_offset                                          ; 3ea7: 85 3a
     ldy #$12                                                          ; 3ea9: a0 12
-    lda #6                                                            ; 3eab: a9 06
+    lda #objectid_fire1                                               ; 3eab: a9 06
     jsr set_object_position_from_cell_xy                              ; 3ead: 20 5d 1f
     tax                                                               ; 3eb0: aa
     lda #$ff                                                          ; 3eb1: a9 ff
@@ -900,7 +900,7 @@ c3e89
     lda #2                                                            ; 3ec2: a9 02
     sta temp_sprite_x_offset                                          ; 3ec4: 85 3a
     ldy #$12                                                          ; 3ec6: a0 12
-    lda #7                                                            ; 3ec8: a9 07
+    lda #objectid_fire2                                               ; 3ec8: a9 07
     jsr set_object_position_from_cell_xy                              ; 3eca: 20 5d 1f
     tax                                                               ; 3ecd: aa
     lda #spriteid_cache7                                              ; 3ece: a9 d3
@@ -913,7 +913,7 @@ c3ed8
 return3_local
     jmp return3                                                       ; 3edb: 4c e4 3f
 
-c3ede
+update_table_state
     ldy save_game_level_c_burning_table_progress                      ; 3ede: ac 0b 0a
     bmi update_table                                                  ; 3ee1: 30 21
     bne update_table_burning_progress                                 ; 3ee3: d0 0f
@@ -1074,7 +1074,7 @@ c4009
     ldy #8                                                            ; 401b: a0 08
     lda #1                                                            ; 401d: a9 01
     sta temp_sprite_y_offset                                          ; 401f: 85 3b
-    lda #2                                                            ; 4021: a9 02
+    lda #objectid_brazier                                             ; 4021: a9 02
     jsr set_object_position_from_cell_xy                              ; 4023: 20 5d 1f
     tax                                                               ; 4026: aa
     lda #$c0                                                          ; 4027: a9 c0
@@ -1927,9 +1927,7 @@ pydis_end
 ;     c3cee
 ;     c3d12
 ;     c3d26
-;     c3e89
 ;     c3ed8
-;     c3ede
 ;     c3f76
 ;     c3f86
 ;     c3f96
@@ -2101,11 +2099,29 @@ pydis_end
 !if (object_y_low + objectid_rope_fire) != $0980 {
     !error "Assertion failed: object_y_low + objectid_rope_fire == $0980"
 }
+!if (objectid_brazier) != $02 {
+    !error "Assertion failed: objectid_brazier == $02"
+}
+!if (objectid_fire1) != $06 {
+    !error "Assertion failed: objectid_fire1 == $06"
+}
+!if (objectid_fire2) != $07 {
+    !error "Assertion failed: objectid_fire2 == $07"
+}
 !if (objectid_old_player) != $0b {
     !error "Assertion failed: objectid_old_player == $0b"
 }
 !if (objectid_player) != $00 {
     !error "Assertion failed: objectid_player == $00"
+}
+!if (objectid_rope_end) != $03 {
+    !error "Assertion failed: objectid_rope_end == $03"
+}
+!if (objectid_rope_fire) != $04 {
+    !error "Assertion failed: objectid_rope_fire == $04"
+}
+!if (objectid_table) != $05 {
+    !error "Assertion failed: objectid_table == $05"
 }
 !if (room_0_data) != $3b1d {
     !error "Assertion failed: room_0_data == $3b1d"
