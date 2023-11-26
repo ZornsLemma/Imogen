@@ -79,7 +79,6 @@ sprite_op_flags_normal                = 0
 spriteid_197                          = 197
 spriteid_198                          = 198
 spriteid_199                          = 199
-spriteid_blob                         = 215
 spriteid_boulder                      = 200
 spriteid_brazier                      = 58
 spriteid_cache1                       = 204
@@ -128,6 +127,7 @@ spriteid_fire5                        = 64
 spriteid_fire6                        = 65
 spriteid_fire7                        = 66
 spriteid_fire8                        = 67
+spriteid_fire_bottom                  = 215
 spriteid_icodata_box                  = 9
 spriteid_icodata_cat                  = 5
 spriteid_icodata_disc                 = 3
@@ -504,16 +504,16 @@ room_0_update_handler
     lda #objectid_fire2                                               ; 3bc3: a9 07
     jsr update_brazier_and_fire                                       ; 3bc5: 20 88 19
     lda level_workspace                                               ; 3bc8: ad 6f 0a
-    sta l3d76                                                         ; 3bcb: 8d 76 3d
+    sta burning_rope_pixel_y                                          ; 3bcb: 8d 76 3d
     lda save_game_level_c_room_0_and_2_burning_rope_progress          ; 3bce: ad 0c 0a
-    sta l3d75                                                         ; 3bd1: 8d 75 3d
+    sta burning_rope_progress                                         ; 3bd1: 8d 75 3d
     ldx #objectid_fire3                                               ; 3bd4: a2 08
     ldy #0                                                            ; 3bd6: a0 00
     lda #$10                                                          ; 3bd8: a9 10
     jsr update_burnable_rope                                          ; 3bda: 20 ea 3b
-    lda l3d76                                                         ; 3bdd: ad 76 3d
+    lda burning_rope_pixel_y                                          ; 3bdd: ad 76 3d
     sta level_workspace                                               ; 3be0: 8d 6f 0a
-    lda l3d75                                                         ; 3be3: ad 75 3d
+    lda burning_rope_progress                                         ; 3be3: ad 75 3d
     sta save_game_level_c_room_0_and_2_burning_rope_progress          ; 3be6: 8d 0c 0a
     rts                                                               ; 3be9: 60
 
@@ -540,10 +540,10 @@ update_burnable_rope_first_update
     lda current_level                                                 ; 3bfb: a5 31
     cmp level_before_latest_level_and_room_initialisation             ; 3bfd: c5 51
     beq no_level_change                                               ; 3bff: f0 0a
-    lda l3d75                                                         ; 3c01: ad 75 3d
+    lda burning_rope_progress                                         ; 3c01: ad 75 3d
     beq no_level_change                                               ; 3c04: f0 05
     lda #$ff                                                          ; 3c06: a9 ff
-    sta l3d75                                                         ; 3c08: 8d 75 3d
+    sta burning_rope_progress                                         ; 3c08: 8d 75 3d
 no_level_change
     lda desired_room_index                                            ; 3c0b: a5 30
     cmp currently_updating_logic_for_room_index                       ; 3c0d: cd ba 1a
@@ -555,7 +555,7 @@ no_level_change
     sta object_z_order,x                                              ; 3c1b: 9d c2 38
     ldx burnable_rope_cell_x                                          ; 3c1e: ae 77 3d
     ldy burnable_rope_cell_y                                          ; 3c21: ac 78 3d
-    lda l3d75                                                         ; 3c24: ad 75 3d
+    lda burning_rope_progress                                         ; 3c24: ad 75 3d
     beq c3c6b                                                         ; 3c27: f0 42
     bpl c3c3d                                                         ; 3c29: 10 12
     lda burnable_rope_cell_y                                          ; 3c2b: ad 78 3d
@@ -567,7 +567,7 @@ no_level_change
     jmp c3c83                                                         ; 3c3a: 4c 83 3c
 
 c3c3d
-    lda l3d76                                                         ; 3c3d: ad 76 3d
+    lda burning_rope_pixel_y                                          ; 3c3d: ad 76 3d
     clc                                                               ; 3c40: 18
     adc #3                                                            ; 3c41: 69 03
     lsr                                                               ; 3c43: 4a
@@ -612,7 +612,7 @@ c3c86
     jmp return2                                                       ; 3c86: 4c 74 3d
 
 update_burnable_rope_not_first_update
-    lda l3d75                                                         ; 3c89: ad 75 3d
+    lda burning_rope_progress                                         ; 3c89: ad 75 3d
     bmi c3c86                                                         ; 3c8c: 30 f8
     bne c3cbf                                                         ; 3c8e: d0 2f
     lda desired_room_index                                            ; 3c90: a5 30
@@ -633,19 +633,19 @@ update_burnable_rope_not_first_update
     asl                                                               ; 3cb0: 0a
     asl                                                               ; 3cb1: 0a
     ora #5                                                            ; 3cb2: 09 05
-    sta l3d76                                                         ; 3cb4: 8d 76 3d
+    sta burning_rope_pixel_y                                          ; 3cb4: 8d 76 3d
     lda #1                                                            ; 3cb7: a9 01
-    sta l3d75                                                         ; 3cb9: 8d 75 3d
+    sta burning_rope_progress                                         ; 3cb9: 8d 75 3d
     jmp c3d26                                                         ; 3cbc: 4c 26 3d
 
 c3cbf
-    lda l3d75                                                         ; 3cbf: ad 75 3d
+    lda burning_rope_progress                                         ; 3cbf: ad 75 3d
     cmp #2                                                            ; 3cc2: c9 02
     beq c3cee                                                         ; 3cc4: f0 28
-    lda l3d76                                                         ; 3cc6: ad 76 3d
+    lda burning_rope_pixel_y                                          ; 3cc6: ad 76 3d
     sec                                                               ; 3cc9: 38
     sbc #4                                                            ; 3cca: e9 04
-    sta l3d76                                                         ; 3ccc: 8d 76 3d
+    sta burning_rope_pixel_y                                          ; 3ccc: 8d 76 3d
     cmp #$c0                                                          ; 3ccf: c9 c0
     bcs c3d12                                                         ; 3cd1: b0 3f
     lsr                                                               ; 3cd3: 4a
@@ -655,7 +655,7 @@ c3cbf
     cmp burnable_rope_cell_y                                          ; 3cd8: cd 78 3d
     bne c3d26                                                         ; 3cdb: d0 49
     lda #2                                                            ; 3cdd: a9 02
-    sta l3d75                                                         ; 3cdf: 8d 75 3d
+    sta burning_rope_progress                                         ; 3cdf: 8d 75 3d
     lda desired_room_index                                            ; 3ce2: a5 30
     cmp currently_updating_logic_for_room_index                       ; 3ce4: cd ba 1a
     bne c3d26                                                         ; 3ce7: d0 3d
@@ -663,7 +663,7 @@ c3cbf
     sta object_spriteid + objectid_rope_fire                          ; 3ceb: 8d ac 09
 c3cee
     lda #$ff                                                          ; 3cee: a9 ff
-    sta l3d75                                                         ; 3cf0: 8d 75 3d
+    sta burning_rope_progress                                         ; 3cf0: 8d 75 3d
     lda desired_room_index                                            ; 3cf3: a5 30
     cmp currently_updating_logic_for_room_index                       ; 3cf5: cd ba 1a
     bne c3d26                                                         ; 3cf8: d0 2c
@@ -679,7 +679,7 @@ c3cee
 
 c3d12
     lda #$ff                                                          ; 3d12: a9 ff
-    sta l3d75                                                         ; 3d14: 8d 75 3d
+    sta burning_rope_progress                                         ; 3d14: 8d 75 3d
     lda desired_room_index                                            ; 3d17: a5 30
     cmp currently_updating_logic_for_room_index                       ; 3d19: cd ba 1a
     bne c3d26                                                         ; 3d1c: d0 08
@@ -690,12 +690,12 @@ c3d26
     lda desired_room_index                                            ; 3d26: a5 30
     cmp currently_updating_logic_for_room_index                       ; 3d28: cd ba 1a
     bne return2                                                       ; 3d2b: d0 47
-    lda l3d75                                                         ; 3d2d: ad 75 3d
+    lda burning_rope_progress                                         ; 3d2d: ad 75 3d
     cmp #1                                                            ; 3d30: c9 01
     bne return2                                                       ; 3d32: d0 40
-    lda #spriteid_blob                                                ; 3d34: a9 d7
+    lda #spriteid_fire_bottom                                         ; 3d34: a9 d7
     sta object_spriteid + objectid_rope_end                           ; 3d36: 8d ab 09
-    lda l3d76                                                         ; 3d39: ad 76 3d
+    lda burning_rope_pixel_y                                          ; 3d39: ad 76 3d
     lsr                                                               ; 3d3c: 4a
     lsr                                                               ; 3d3d: 4a
     and #7                                                            ; 3d3e: 29 07
@@ -712,11 +712,11 @@ c3d26
     sta temp_sprite_x_offset                                          ; 3d56: 85 3a
     lda #objectid_rope_fire                                           ; 3d58: a9 04
     jsr set_object_position_from_cell_xy                              ; 3d5a: 20 5d 1f
-    lda l3d76                                                         ; 3d5d: ad 76 3d
+    lda burning_rope_pixel_y                                          ; 3d5d: ad 76 3d
     sta object_y_low + objectid_rope_end                              ; 3d60: 8d 7f 09
     sta object_y_low + objectid_rope_fire                             ; 3d63: 8d 80 09
     ldx #8                                                            ; 3d66: a2 08
-    lda l3d76                                                         ; 3d68: ad 76 3d
+    lda burning_rope_pixel_y                                          ; 3d68: ad 76 3d
     lsr                                                               ; 3d6b: 4a
     lsr                                                               ; 3d6c: 4a
     lsr                                                               ; 3d6d: 4a
@@ -726,9 +726,9 @@ c3d26
 return2
     rts                                                               ; 3d74: 60
 
-l3d75
+burning_rope_progress
     !byte 0                                                           ; 3d75: 00
-l3d76
+burning_rope_pixel_y
     !byte 0                                                           ; 3d76: 00
 burnable_rope_cell_x
     !byte 0                                                           ; 3d77: 00
@@ -893,16 +893,16 @@ room_1_update_handler
     ldy #$11                                                          ; 3e4e: a0 11
     jsr update_brazier_and_fire                                       ; 3e50: 20 88 19
     lda l0a70                                                         ; 3e53: ad 70 0a
-    sta l3d76                                                         ; 3e56: 8d 76 3d
+    sta burning_rope_pixel_y                                          ; 3e56: 8d 76 3d
     lda save_game_level_c_room_1_burning_rope_progress                ; 3e59: ad 0d 0a
-    sta l3d75                                                         ; 3e5c: 8d 75 3d
+    sta burning_rope_progress                                         ; 3e5c: 8d 75 3d
     ldx #$14                                                          ; 3e5f: a2 14
     ldy #3                                                            ; 3e61: a0 03
     lda #$11                                                          ; 3e63: a9 11
     jsr update_burnable_rope                                          ; 3e65: 20 ea 3b
-    lda l3d76                                                         ; 3e68: ad 76 3d
+    lda burning_rope_pixel_y                                          ; 3e68: ad 76 3d
     sta l0a70                                                         ; 3e6b: 8d 70 0a
-    lda l3d75                                                         ; 3e6e: ad 75 3d
+    lda burning_rope_progress                                         ; 3e6e: ad 75 3d
     sta save_game_level_c_room_1_burning_rope_progress                ; 3e71: 8d 0d 0a
 ; check for first update in room (branch if not)
     lda update_room_first_update_flag                                 ; 3e74: ad 2b 13
@@ -2023,8 +2023,6 @@ pydis_end
 ;     l0a78
 ;     l38ae
 ;     l38c4
-;     l3d75
-;     l3d76
 ;     l4425
 ;     l4426
 ;     l4427
@@ -2180,9 +2178,6 @@ pydis_end
 !if (sprite_op_flags_ignore_mask) != $04 {
     !error "Assertion failed: sprite_op_flags_ignore_mask == $04"
 }
-!if (spriteid_blob) != $d7 {
-    !error "Assertion failed: spriteid_blob == $d7"
-}
 !if (spriteid_boulder) != $c8 {
     !error "Assertion failed: spriteid_boulder == $c8"
 }
@@ -2230,6 +2225,9 @@ pydis_end
 }
 !if (spriteid_fire8) != $43 {
     !error "Assertion failed: spriteid_fire8 == $43"
+}
+!if (spriteid_fire_bottom) != $d7 {
+    !error "Assertion failed: spriteid_fire_bottom == $d7"
 }
 !if (spriteid_one_pixel_masked_out) != $00 {
     !error "Assertion failed: spriteid_one_pixel_masked_out == $00"

@@ -19,7 +19,7 @@ sprite_dict = {
     0xd4: "spriteid_table_burnt1",
     0xd5: "spriteid_table_burnt2",
     0xd6: "spriteid_table_burnt3",
-    0xd7: "spriteid_blob",
+    0xd7: "spriteid_fire_bottom",
     0xd8: "spriteid_empty_hook",
     0xd9: "spriteid_cache8",
     0xda: "spriteid_parrot1",
@@ -112,6 +112,8 @@ expr(0x3d59, "objectid_rope_fire")
 expr(0x3d61, "object_y_low + objectid_rope_end")
 expr(0x3d64, "object_y_low + objectid_rope_fire")
 label(0x3d74, "return2")
+label(0x3d75, "burning_rope_progress")
+label(0x3d76, "burning_rope_pixel_y")
 label(0x3d77, "burnable_rope_cell_x")
 label(0x3d78, "burnable_rope_cell_y")
 label(0x3d79, "burnable_rope_length")
