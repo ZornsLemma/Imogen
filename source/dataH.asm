@@ -293,6 +293,7 @@ level_specific_password
 ; This is called whenever a new room is entered.
 ; 
 ; *************************************************************************************
+; check for level change (branch if not)
 level_specific_initialisation
     lda current_level                                                 ; 3af3: a5 31
     cmp level_before_latest_level_and_room_initialisation             ; 3af5: c5 51
@@ -454,16 +455,18 @@ sub_c3baa
     ldy #$0d                                                          ; 3bba: a0 0d
     lda #5                                                            ; 3bbc: a9 05
     jsr update_level_completion                                       ; 3bbe: 20 10 1a
+; check for first update in room (branch if so)
     lda update_room_first_update_flag                                 ; 3bc1: ad 2b 13
     bne c3bc9                                                         ; 3bc4: d0 03
     jmp c3c38                                                         ; 3bc6: 4c 38 3c
 
+; check for level change (branch if not)
 c3bc9
     lda current_level                                                 ; 3bc9: a5 31
     cmp level_before_latest_level_and_room_initialisation             ; 3bcb: c5 51
     beq c3bfc                                                         ; 3bcd: f0 2d
-    ldx #$65 ; 'e'                                                    ; 3bcf: a2 65
-    ldy #$44 ; 'D'                                                    ; 3bd1: a0 44
+    ldx #<envelope1                                                   ; 3bcf: a2 65
+    ldy #>envelope1                                                   ; 3bd1: a0 44
     jsr define_envelope                                               ; 3bd3: 20 5e 39
     lda l0a1a                                                         ; 3bd6: ad 1a 0a
     beq c3bf2                                                         ; 3bd9: f0 17
@@ -526,7 +529,7 @@ c3c38
     lda l0048                                                         ; 3c43: a5 48
     cmp #6                                                            ; 3c45: c9 06
     bne c3c64                                                         ; 3c47: d0 1b
-    ldx #0                                                            ; 3c49: a2 00
+    ldx #objectid_player                                              ; 3c49: a2 00
     ldy #3                                                            ; 3c4b: a0 03
     jsr test_for_collision_between_objects_x_and_y                    ; 3c4d: 20 e2 28
     beq c3c64                                                         ; 3c50: f0 12
@@ -602,8 +605,8 @@ c3cce
     cmp #0                                                            ; 3cdb: c9 00
     bne c3d16                                                         ; 3cdd: d0 37
     lda #$40 ; '@'                                                    ; 3cdf: a9 40
-    ldx #$73 ; 's'                                                    ; 3ce1: a2 73
-    ldy #$44 ; 'D'                                                    ; 3ce3: a0 44
+    ldx #<sound1                                                      ; 3ce1: a2 73
+    ldy #>sound1                                                      ; 3ce3: a0 44
     jsr play_sound_yx                                                 ; 3ce5: 20 f6 38
     jmp c3d16                                                         ; 3ce8: 4c 16 3d
 
@@ -630,7 +633,7 @@ c3d05
 c3d16
     lda desired_room_index                                            ; 3d16: a5 30
     cmp #0                                                            ; 3d18: c9 00
-    bne c3d49                                                         ; 3d1a: d0 2d
+    bne return1                                                       ; 3d1a: d0 2d
     ldx l0a1a                                                         ; 3d1c: ae 1a 0a
     ldy #3                                                            ; 3d1f: a0 03
     lda #3                                                            ; 3d21: a9 03
@@ -643,7 +646,7 @@ c3d16
     sta value_to_write_to_collision_map                               ; 3d30: 85 3e
     jsr read_collision_map_value_for_xy                               ; 3d32: 20 fa 1e
     cmp value_to_write_to_collision_map                               ; 3d35: c5 3e
-    beq c3d49                                                         ; 3d37: f0 10
+    beq return1                                                       ; 3d37: f0 10
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 3d39: 20 44 1e
     lda #collision_map_none                                           ; 3d3c: a9 00
     sta value_to_write_to_collision_map                               ; 3d3e: 85 3e
@@ -652,7 +655,7 @@ c3d16
     inx                                                               ; 3d44: e8
     inx                                                               ; 3d45: e8
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 3d46: 20 44 1e
-c3d49
+return1
     rts                                                               ; 3d49: 60
 
 l3d4a
@@ -941,9 +944,11 @@ l3ec3
     !byte   0, $d7, $d8, $d9, $da, $ff, $da, $ff, $db, $db, $db, $db  ; 3ec3: 00 d7 d8...
     !byte $db, $db, $db, $db, $ff                                     ; 3ecf: db db db...
 
+; check for first update in room (branch if not)
 sub_c3ed4
     lda update_room_first_update_flag                                 ; 3ed4: ad 2b 13
     beq c3f1c                                                         ; 3ed7: f0 43
+; check for level change (branch if not)
     lda current_level                                                 ; 3ed9: a5 31
     cmp level_before_latest_level_and_room_initialisation             ; 3edb: c5 51
     beq c3ef9                                                         ; 3edd: f0 1a
@@ -958,8 +963,8 @@ sub_c3ed4
     sta l0a73                                                         ; 3ef3: 8d 73 0a
     sta l0a74                                                         ; 3ef6: 8d 74 0a
 c3ef9
-    ldx #$99                                                          ; 3ef9: a2 99
-    ldy #$44 ; 'D'                                                    ; 3efb: a0 44
+    ldx #<envelope2                                                   ; 3ef9: a2 99
+    ldy #>envelope2                                                   ; 3efb: a0 44
     jsr define_envelope                                               ; 3efd: 20 5e 39
     lda desired_room_index                                            ; 3f00: a5 30
     cmp #2                                                            ; 3f02: c9 02
@@ -1047,14 +1052,14 @@ c3f9e
     bne c3fcc                                                         ; 3fad: d0 1d
     sty l4009                                                         ; 3faf: 8c 09 40
     lda #0                                                            ; 3fb2: a9 00
-    ldx #$b7                                                          ; 3fb4: a2 b7
-    ldy #$44 ; 'D'                                                    ; 3fb6: a0 44
+    ldx #<sound2                                                      ; 3fb4: a2 b7
+    ldy #>sound2                                                      ; 3fb6: a0 44
     jsr play_sound_yx                                                 ; 3fb8: 20 f6 38
-    ldx #$af                                                          ; 3fbb: a2 af
-    ldy #$44 ; 'D'                                                    ; 3fbd: a0 44
+    ldx #<sound3                                                      ; 3fbb: a2 af
+    ldy #>sound3                                                      ; 3fbd: a0 44
     jsr play_sound_yx                                                 ; 3fbf: 20 f6 38
-    ldx #$a7                                                          ; 3fc2: a2 a7
-    ldy #$44 ; 'D'                                                    ; 3fc4: a0 44
+    ldx #<sound4                                                      ; 3fc2: a2 a7
+    ldy #>sound4                                                      ; 3fc4: a0 44
     jsr play_sound_yx                                                 ; 3fc6: 20 f6 38
     ldy l4009                                                         ; 3fc9: ac 09 40
 c3fcc
@@ -1078,7 +1083,7 @@ c3fea
 c3fed
     lda desired_room_index                                            ; 3fed: a5 30
     cmp #2                                                            ; 3fef: c9 02
-    bne c4008                                                         ; 3ff1: d0 15
+    bne return2                                                       ; 3ff1: d0 15
     ldy l0a71                                                         ; 3ff3: ac 71 0a
     lda l3ec3,y                                                       ; 3ff6: b9 c3 3e
     sta l09ab                                                         ; 3ff9: 8d ab 09
@@ -1086,7 +1091,7 @@ c3fed
     sta l0953                                                         ; 3fff: 8d 53 09
     lda l0a73                                                         ; 4002: ad 73 0a
     sta l09c1                                                         ; 4005: 8d c1 09
-c4008
+return2
     rts                                                               ; 4008: 60
 
 l4009
@@ -1229,17 +1234,19 @@ l40b9
     !byte $80,   0,   0, $80,   8,   0, $80,   8,   2,   8,   2,   8  ; 40c5: 80 00 00...
     !byte   4, $80,   0,   8, $80                                     ; 40d1: 04 80 00...
 
+; check for first update in room (branch if so)
 sub_c40d6
     lda update_room_first_update_flag                                 ; 40d6: ad 2b 13
     bne c40de                                                         ; 40d9: d0 03
     jmp c4167                                                         ; 40db: 4c 67 41
 
+; check for level change (branch if not)
 c40de
     lda current_level                                                 ; 40de: a5 31
     cmp level_before_latest_level_and_room_initialisation             ; 40e0: c5 51
     beq c4126                                                         ; 40e2: f0 42
-    ldx #$7b ; '{'                                                    ; 40e4: a2 7b
-    ldy #$44 ; 'D'                                                    ; 40e6: a0 44
+    ldx #<envelope3                                                   ; 40e4: a2 7b
+    ldy #>envelope3                                                   ; 40e6: a0 44
     jsr define_envelope                                               ; 40e8: 20 5e 39
     lda #0                                                            ; 40eb: a9 00
     sta level_workspace                                               ; 40ed: 8d 6f 0a
@@ -1297,7 +1304,7 @@ c4159
 c415f
     lda #3                                                            ; 415f: a9 03
     jsr sub_c43d4                                                     ; 4161: 20 d4 43
-    jmp c420d                                                         ; 4164: 4c 0d 42
+    jmp return3                                                       ; 4164: 4c 0d 42
 
 c4167
     lda desired_room_index                                            ; 4167: a5 30
@@ -1307,7 +1314,7 @@ c4167
     bmi c4176                                                         ; 4171: 30 03
     inc level_workspace                                               ; 4173: ee 6f 0a
 c4176
-    jmp c420d                                                         ; 4176: 4c 0d 42
+    jmp return3                                                       ; 4176: 4c 0d 42
 
 c4179
     lda sound_priority_per_channel_table                              ; 4179: ad 6f 39
@@ -1323,7 +1330,7 @@ c4188
     beq c419a                                                         ; 4190: f0 08
     lda #0                                                            ; 4192: a9 00
     sta level_workspace                                               ; 4194: 8d 6f 0a
-    jmp c420d                                                         ; 4197: 4c 0d 42
+    jmp return3                                                       ; 4197: 4c 0d 42
 
 c419a
     lda l0a1c                                                         ; 419a: ad 1c 0a
@@ -1342,7 +1349,7 @@ c41af
     lda #2                                                            ; 41b4: a9 02
     jsr get_solid_rock_collision_for_object_a                         ; 41b6: 20 94 28
     bne c41e5                                                         ; 41b9: d0 2a
-    jmp c420d                                                         ; 41bb: 4c 0d 42
+    jmp return3                                                       ; 41bb: 4c 0d 42
 
 c41be
     lda l0a1d                                                         ; 41be: ad 1d 0a
@@ -1358,10 +1365,10 @@ c41be
     bne c41e5                                                         ; 41d7: d0 0c
 c41d9
     lda #$40 ; '@'                                                    ; 41d9: a9 40
-    ldx #$73 ; 's'                                                    ; 41db: a2 73
-    ldy #$44 ; 'D'                                                    ; 41dd: a0 44
+    ldx #<sound1                                                      ; 41db: a2 73
+    ldy #>sound1                                                      ; 41dd: a0 44
     jsr play_sound_yx                                                 ; 41df: 20 f6 38
-    jmp c420d                                                         ; 41e2: 4c 0d 42
+    jmp return3                                                       ; 41e2: 4c 0d 42
 
 c41e5
     jmp play_landing_sound                                            ; 41e5: 4c a9 23
@@ -1373,10 +1380,10 @@ c41e8
     sta temp_bottom_offset                                            ; 41ee: 8d 51 25
     lda #2                                                            ; 41f1: a9 02
     jsr get_solid_rock_collision_for_object_a                         ; 41f3: 20 94 28
-    beq c420d                                                         ; 41f6: f0 15
+    beq return3                                                       ; 41f6: f0 15
     lda #0                                                            ; 41f8: a9 00
-    ldx #$91                                                          ; 41fa: a2 91
-    ldy #$44 ; 'D'                                                    ; 41fc: a0 44
+    ldx #<sound5                                                      ; 41fa: a2 91
+    ldy #>sound5                                                      ; 41fc: a0 44
     jsr play_sound_yx                                                 ; 41fe: 20 f6 38
     ldx #$89                                                          ; 4201: a2 89
     ldy #$44 ; 'D'                                                    ; 4203: a0 44
@@ -1385,7 +1392,7 @@ c41e8
 c4208
     lda #3                                                            ; 4208: a9 03
     jsr sub_c43d4                                                     ; 420a: 20 d4 43
-c420d
+return3
     rts                                                               ; 420d: 60
 
 sub_c420e
@@ -1422,6 +1429,7 @@ c424c
     lda l0a1c                                                         ; 424c: ad 1c 0a
     cmp #$0d                                                          ; 424f: c9 0d
     bne c429d                                                         ; 4251: d0 4a
+; check for first update in room (branch if so)
     lda update_room_first_update_flag                                 ; 4253: ad 2b 13
     bne c4249                                                         ; 4256: d0 f1
     dec temp_left_offset                                              ; 4258: ce d0 24
@@ -1545,12 +1553,12 @@ c432b
     cmp #$1a                                                          ; 435a: c9 1a
     beq c439b                                                         ; 435c: f0 3d
     cmp #$10                                                          ; 435e: c9 10
-    bne c43b4                                                         ; 4360: d0 52
+    bne return4                                                       ; 4360: d0 52
     lda l0a23                                                         ; 4362: ad 23 0a
     bmi c4383                                                         ; 4365: 30 1c
     lda l0078                                                         ; 4367: a5 78
     cmp #$28 ; '('                                                    ; 4369: c9 28
-    bcc c43b4                                                         ; 436b: 90 47
+    bcc return4                                                       ; 436b: 90 47
     lda l0a1e                                                         ; 436d: ad 1e 0a
     sec                                                               ; 4370: 38
     sbc #$40 ; '@'                                                    ; 4371: e9 40
@@ -1563,7 +1571,7 @@ c432b
 
 c4383
     lda l0079                                                         ; 4383: a5 79
-    bpl c43b4                                                         ; 4385: 10 2d
+    bpl return4                                                       ; 4385: 10 2d
     lda l0a1e                                                         ; 4387: ad 1e 0a
     clc                                                               ; 438a: 18
     adc #$40 ; '@'                                                    ; 438b: 69 40
@@ -1576,7 +1584,7 @@ c4383
 c439b
     lda l007a                                                         ; 439b: a5 7a
     cmp #$18                                                          ; 439d: c9 18
-    bcc c43b4                                                         ; 439f: 90 13
+    bcc return4                                                       ; 439f: 90 13
     lda l0a20                                                         ; 43a1: ad 20 0a
     sec                                                               ; 43a4: 38
     sbc #$c0                                                          ; 43a5: e9 c0
@@ -1586,7 +1594,7 @@ c439b
 c43af
     lda #0                                                            ; 43af: a9 00
     sta l09aa                                                         ; 43b1: 8d aa 09
-c43b4
+return4
     rts                                                               ; 43b4: 60
 
 l43b5
@@ -1611,11 +1619,11 @@ sub_c43d4
     beq c43e1                                                         ; 43d8: f0 07
     lda l0a1c                                                         ; 43da: ad 1c 0a
     cmp #$0d                                                          ; 43dd: c9 0d
-    bne c441c                                                         ; 43df: d0 3b
+    bne return5                                                       ; 43df: d0 3b
 c43e1
     lda desired_room_index                                            ; 43e1: a5 30
     cmp l0a22                                                         ; 43e3: cd 22 0a
-    bne c441c                                                         ; 43e6: d0 34
+    bne return5                                                       ; 43e6: d0 34
     lda l0a1f                                                         ; 43e8: ad 1f 0a
     lsr                                                               ; 43eb: 4a
     sta l0070                                                         ; 43ec: 85 70
@@ -1642,9 +1650,9 @@ c43e1
     sta height_in_cells                                               ; 4410: 85 3d
     jsr read_collision_map_value_for_xy                               ; 4412: 20 fa 1e
     cmp value_to_write_to_collision_map                               ; 4415: c5 3e
-    beq c441c                                                         ; 4417: f0 03
+    beq return5                                                       ; 4417: f0 03
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 4419: 20 44 1e
-c441c
+return5
     rts                                                               ; 441c: 60
 
 sub_c441d
@@ -1686,17 +1694,81 @@ loop_c442e
     jmp draw_sprite_a_at_cell_xy                                      ; 4461: 4c 4c 1f
 
 l4464
-    !byte   0,   5,   1,   0,   0,   0,   0,   0,   0, $0a,   0,   0  ; 4464: 00 05 01...
-    !byte $d8, $28,   0, $10,   0,   5,   0,   4,   0,   4,   0,   6  ; 4470: d8 28 00...
-    !byte   1,   0,   0,   0,   0,   0,   0, $6e, $ff,   0, $f8, $6e  ; 447c: 01 00 00...
-    !byte $37, $10,   0,   6,   0,   7,   0,   1,   0, $11,   0,   0  ; 4488: 37 10 00...
-    !byte   0, $d2,   0,   1,   0,   7,   1,   0,   0,   0,   0,   0  ; 4494: 00 d2 00...
-    !byte   0, $28, $d8, $d8, $b0, $50,   0, $10,   0,   7,   0,   7  ; 44a0: 00 28 d8...
-    !byte   0,   1,   0, $11,   0,   0,   0, $be,   0,   1,   0, $10  ; 44ac: 00 01 00...
-    !byte   0,   0,   0,   0,   0,   0,   0,   8,   8, $10, $23, $c4  ; 44b8: 00 00 00...
-    !byte   8, $10, $10, $10, $10, $20, $c0,   3,   4,   8,   8, $10  ; 44c4: 08 10 10...
-    !byte $10, $20, $c0,   3,   4,   8,   8,   8,   8, $10, $23, $c4  ; 44d0: 10 20 c0...
-    !byte   8, $10, $10                                               ; 44dc: 08 10 10
+    !byte 0                                                           ; 4464: 00
+envelope1
+    !byte 5                                                           ; 4465: 05                      ; envelope number
+    !byte 1                                                           ; 4466: 01                      ; step length (100ths of a second)
+    !byte 0                                                           ; 4467: 00                      ; pitch change per step in section 1
+    !byte 0                                                           ; 4468: 00                      ; pitch change per step in section 2
+    !byte 0                                                           ; 4469: 00                      ; pitch change per step in section 3
+    !byte 0                                                           ; 446a: 00                      ; number of steps in section 1
+    !byte 0                                                           ; 446b: 00                      ; number of steps in section 2
+    !byte 0                                                           ; 446c: 00                      ; number of steps in section 3
+    !byte 10                                                          ; 446d: 0a                      ; change of amplitude per step during attack phase
+    !byte 0                                                           ; 446e: 00                      ; change of amplitude per step during decay phase
+    !byte 0                                                           ; 446f: 00                      ; change of amplitude per step during sustain phase
+    !byte 216                                                         ; 4470: d8                      ; change of amplitude per step during release phase
+    !byte 40                                                          ; 4471: 28                      ; target of level at end of attack phase
+    !byte 0                                                           ; 4472: 00                      ; target of level at end of decay phase
+sound1
+    !word $10                                                         ; 4473: 10 00                   ; channel
+    !word 5                                                           ; 4475: 05 00                   ; amplitude
+    !word 4                                                           ; 4477: 04 00                   ; pitch
+    !word 4                                                           ; 4479: 04 00                   ; duration
+envelope3
+    !byte 6                                                           ; 447b: 06                      ; envelope number
+    !byte 1                                                           ; 447c: 01                      ; step length (100ths of a second)
+    !byte 0                                                           ; 447d: 00                      ; pitch change per step in section 1
+    !byte 0                                                           ; 447e: 00                      ; pitch change per step in section 2
+    !byte 0                                                           ; 447f: 00                      ; pitch change per step in section 3
+    !byte 0                                                           ; 4480: 00                      ; number of steps in section 1
+    !byte 0                                                           ; 4481: 00                      ; number of steps in section 2
+    !byte 0                                                           ; 4482: 00                      ; number of steps in section 3
+    !byte 110                                                         ; 4483: 6e                      ; change of amplitude per step during attack phase
+    !byte 255                                                         ; 4484: ff                      ; change of amplitude per step during decay phase
+    !byte 0                                                           ; 4485: 00                      ; change of amplitude per step during sustain phase
+    !byte 248                                                         ; 4486: f8                      ; change of amplitude per step during release phase
+    !byte 110                                                         ; 4487: 6e                      ; target of level at end of attack phase
+    !byte 55                                                          ; 4488: 37                      ; target of level at end of decay phase
+    !byte $10,   0,   6,   0,   7,   0,   1,   0                      ; 4489: 10 00 06...
+sound5
+    !word $11                                                         ; 4491: 11 00                   ; channel
+    !word 0                                                           ; 4493: 00 00                   ; amplitude
+    !word 210                                                         ; 4495: d2 00                   ; pitch
+    !word 1                                                           ; 4497: 01 00                   ; duration
+envelope2
+    !byte 7                                                           ; 4499: 07                      ; envelope number
+    !byte 1                                                           ; 449a: 01                      ; step length (100ths of a second)
+    !byte 0                                                           ; 449b: 00                      ; pitch change per step in section 1
+    !byte 0                                                           ; 449c: 00                      ; pitch change per step in section 2
+    !byte 0                                                           ; 449d: 00                      ; pitch change per step in section 3
+    !byte 0                                                           ; 449e: 00                      ; number of steps in section 1
+    !byte 0                                                           ; 449f: 00                      ; number of steps in section 2
+    !byte 0                                                           ; 44a0: 00                      ; number of steps in section 3
+    !byte 40                                                          ; 44a1: 28                      ; change of amplitude per step during attack phase
+    !byte 216                                                         ; 44a2: d8                      ; change of amplitude per step during decay phase
+    !byte 216                                                         ; 44a3: d8                      ; change of amplitude per step during sustain phase
+    !byte 176                                                         ; 44a4: b0                      ; change of amplitude per step during release phase
+    !byte 80                                                          ; 44a5: 50                      ; target of level at end of attack phase
+    !byte 0                                                           ; 44a6: 00                      ; target of level at end of decay phase
+sound4
+    !word $10                                                         ; 44a7: 10 00                   ; channel
+    !word 7                                                           ; 44a9: 07 00                   ; amplitude
+    !word 7                                                           ; 44ab: 07 00                   ; pitch
+    !word 1                                                           ; 44ad: 01 00                   ; duration
+sound3
+    !word $11                                                         ; 44af: 11 00                   ; channel
+    !word 0                                                           ; 44b1: 00 00                   ; amplitude
+    !word 190                                                         ; 44b3: be 00                   ; pitch
+    !word 1                                                           ; 44b5: 01 00                   ; duration
+sound2
+    !word $10                                                         ; 44b7: 10 00                   ; channel
+    !word 0                                                           ; 44b9: 00 00                   ; amplitude
+    !word 0                                                           ; 44bb: 00 00                   ; pitch
+    !word 0                                                           ; 44bd: 00 00                   ; duration
+    !byte   8,   8, $10, $23, $c4,   8, $10, $10, $10, $10, $20, $c0  ; 44bf: 08 08 10...
+    !byte   3,   4,   8,   8, $10, $10, $20, $c0,   3,   4,   8,   8  ; 44cb: 03 04 08...
+    !byte   8,   8, $10, $23, $c4,   8, $10, $10                      ; 44d7: 08 08 10...
 sprite_data
 pydis_end
 
@@ -1719,7 +1791,6 @@ pydis_end
 ;     c3ceb
 ;     c3d05
 ;     c3d16
-;     c3d49
 ;     c3ef9
 ;     c3f19
 ;     c3f1c
@@ -1733,7 +1804,6 @@ pydis_end
 ;     c3fe0
 ;     c3fea
 ;     c3fed
-;     c4008
 ;     c40de
 ;     c4126
 ;     c4137
@@ -1751,7 +1821,6 @@ pydis_end
 ;     c41e5
 ;     c41e8
 ;     c4208
-;     c420d
 ;     c421f
 ;     c4249
 ;     c424c
@@ -1768,9 +1837,7 @@ pydis_end
 ;     c4383
 ;     c439b
 ;     c43af
-;     c43b4
 ;     c43e1
-;     c441c
 ;     l0048
 ;     l0071
 ;     l0078
@@ -1824,6 +1891,54 @@ pydis_end
 ;     sub_c43b6
 ;     sub_c43d4
 ;     sub_c441d
+!if (<envelope1) != $65 {
+    !error "Assertion failed: <envelope1 == $65"
+}
+!if (<envelope2) != $99 {
+    !error "Assertion failed: <envelope2 == $99"
+}
+!if (<envelope3) != $7b {
+    !error "Assertion failed: <envelope3 == $7b"
+}
+!if (<sound1) != $73 {
+    !error "Assertion failed: <sound1 == $73"
+}
+!if (<sound2) != $b7 {
+    !error "Assertion failed: <sound2 == $b7"
+}
+!if (<sound3) != $af {
+    !error "Assertion failed: <sound3 == $af"
+}
+!if (<sound4) != $a7 {
+    !error "Assertion failed: <sound4 == $a7"
+}
+!if (<sound5) != $91 {
+    !error "Assertion failed: <sound5 == $91"
+}
+!if (>envelope1) != $44 {
+    !error "Assertion failed: >envelope1 == $44"
+}
+!if (>envelope2) != $44 {
+    !error "Assertion failed: >envelope2 == $44"
+}
+!if (>envelope3) != $44 {
+    !error "Assertion failed: >envelope3 == $44"
+}
+!if (>sound1) != $44 {
+    !error "Assertion failed: >sound1 == $44"
+}
+!if (>sound2) != $44 {
+    !error "Assertion failed: >sound2 == $44"
+}
+!if (>sound3) != $44 {
+    !error "Assertion failed: >sound3 == $44"
+}
+!if (>sound4) != $44 {
+    !error "Assertion failed: >sound4 == $44"
+}
+!if (>sound5) != $44 {
+    !error "Assertion failed: >sound5 == $44"
+}
 !if (collision_map_none) != $00 {
     !error "Assertion failed: collision_map_none == $00"
 }
@@ -1853,6 +1968,9 @@ pydis_end
 }
 !if (level_specific_update) != $3b07 {
     !error "Assertion failed: level_specific_update == $3b07"
+}
+!if (objectid_player) != $00 {
+    !error "Assertion failed: objectid_player == $00"
 }
 !if (room_0_data) != $3b14 {
     !error "Assertion failed: room_0_data == $3b14"
