@@ -55,6 +55,11 @@ substitute_labels = {
 s = SubstituteLabels(substitute_labels)
 set_label_maker_hook(s.substitute_label_maker)
 
+label(0xa0f, "save_game_level_d_got_gun")
+label(0xa10, "save_game_level_d_gnu_sign_position")    #$20-$30: X position of sign
+label(0xa11, "save_game_level_d_partition_progress")   #0: normal position, 1: falling, $ff: fallen
+label(0xa12, "save_game_level_d_baby_progress")        #0: not started, $12: sleeping, $14: blocking exit, $21: surprised, $2c: dead
+
 comment(0x3af3, "check for level change (branch if not)")
 label(0x3b1c, "return1")
 comment(0x3c0a, "check for first update in room (branch if not)")
@@ -126,6 +131,46 @@ expr(0x4322, "object_y_low + 5")
 #expr(0x4140, sprite_dict)
 #expr(0x41fe, sprite_dict)
 
+
+label(0xa0f, "save_game_level_d_got_gun")
+label(0xa10, "save_game_level_d_gnu_sign_position")
+label(0xa11, "save_game_level_d_partition_progress")
+label(0xa12, "save_game_level_d_baby_progress")
+
+print("""; *************************************************************************************
+;
+; Level D: 'GNU-PROBLEM'
+;
+; Save game variables:
+;
+;     save_game_level_d_got_gun ($0a0f):
+;               0: not got
+;             $ff: got
+;     save_game_level_d_gnu_sign_position ($0a10):
+;             $20-$30: X position of 'GNU CLIMBING' sign
+;     save_game_level_d_partition_progress ($0a11):
+;               0: normal position
+;               1: falling
+;             $ff: fallen
+;     save_game_level_d_baby_progress ($0a12):
+;               0: not started
+;             $12: sleeping
+;             $14: blocking exit
+;             $21: surprised
+;             $2c: dead
+;
+; Solution:
+;
+;   1. Get gun in the far right room
+;   2. Shoot the baby to escape the room
+;   3. In the far left room, shoot the gnu climbing sign until it is no longer visible
+;   4. Get the axe
+;   5. Move two rooms to the right, climb up the rope and move into the room to the left.
+;   6. Shoot the sign until it's back offscreen to the left.
+;   7. Climb up the rope, over the gnu head, then back to exit the room at the top right.
+;   8. Chop down the wooden partition wall with the axe, and collect the spell.
+;
+; *************************************************************************************""")
 
 result = go(False)
 result = remove_sprite_data(result)

@@ -1,3 +1,37 @@
+; *************************************************************************************
+;
+; Level D: 'GNU-PROBLEM'
+;
+; Save game variables:
+;
+;     save_game_level_d_got_gun ($0a0f):
+;               0: not got
+;             $ff: got
+;     save_game_level_d_gnu_sign_position ($0a10):
+;             $20-$30: X position of 'GNU CLIMBING' sign
+;     save_game_level_d_partition_progress ($0a11):
+;               0: normal position
+;               1: falling
+;             $ff: fallen
+;     save_game_level_d_baby_progress ($0a12):
+;               0: not started
+;             $12: sleeping
+;             $14: blocking exit
+;             $21: surprised
+;             $2c: dead
+;
+; Solution:
+;
+;   1. Get gun in the far right room
+;   2. Shoot the baby to escape the room
+;   3. In the far left room, shoot the gnu climbing sign until it is no longer visible
+;   4. Get the axe
+;   5. Move two rooms to the right, climb up the rope and move into the room to the left.
+;   6. Shoot the sign until it's back offscreen to the left.
+;   7. Climb up the rope, over the gnu head, then back to exit the room at the top right.
+;   8. Chop down the wooden partition wall with the axe, and collect the spell.
+;
+; *************************************************************************************
 ; Constants
 collision_map_none                    = 0
 collision_map_out_of_bounds           = 255
@@ -181,10 +215,10 @@ object_direction                                    = $09be
 object_direction_old                                = $09c9
 level_progress_table                                = $09ef
 l0a0e                                               = $0a0e
-l0a0f                                               = $0a0f
-l0a10                                               = $0a10
-l0a11                                               = $0a11
-l0a12                                               = $0a12
+save_game_level_d_got_gun                           = $0a0f
+save_game_level_d_gnu_sign_position                 = $0a10
+save_game_level_d_partition_progress                = $0a11
+save_game_level_d_baby_progress                     = $0a12
 level_workspace                                     = $0a6f
 l0a70                                               = $0a70
 l0a71                                               = $0a71
@@ -294,11 +328,11 @@ level_specific_initialisation
     lda developer_flags                                               ; 3af9: ad 03 11
     bpl c3b08                                                         ; 3afc: 10 0a
     lda #$ff                                                          ; 3afe: a9 ff
-    sta l0a0f                                                         ; 3b00: 8d 0f 0a
+    sta save_game_level_d_got_gun                                     ; 3b00: 8d 0f 0a
     lda #$ff                                                          ; 3b03: a9 ff
     sta l0a0e                                                         ; 3b05: 8d 0e 0a
 c3b08
-    lda l0a0f                                                         ; 3b08: ad 0f 0a
+    lda save_game_level_d_got_gun                                     ; 3b08: ad 0f 0a
     beq c3b12                                                         ; 3b0b: f0 05
     lda #spriteid_menu_item                                           ; 3b0d: a9 cf
     jsr find_or_create_menu_slot_for_A                                ; 3b0f: 20 bd 2b
@@ -546,10 +580,10 @@ return3
 sub_c3c73
     lda update_room_first_update_flag                                 ; 3c73: ad 2b 13
     beq c3ccd                                                         ; 3c76: f0 55
-    lda l0a10                                                         ; 3c78: ad 10 0a
+    lda save_game_level_d_gnu_sign_position                           ; 3c78: ad 10 0a
     bne c3c82                                                         ; 3c7b: d0 05
     lda #$21 ; '!'                                                    ; 3c7d: a9 21
-    sta l0a10                                                         ; 3c7f: 8d 10 0a
+    sta save_game_level_d_gnu_sign_position                           ; 3c7f: 8d 10 0a
 c3c82
     ldy #$0e                                                          ; 3c82: a0 0e
     lda #1                                                            ; 3c84: a9 01
@@ -606,23 +640,23 @@ c3ccd
     bne c3cfc                                                         ; 3ce8: d0 12
     lda object_direction                                              ; 3cea: ad be 09
     bmi c3d0b                                                         ; 3ced: 30 1c
-    lda l0a10                                                         ; 3cef: ad 10 0a
+    lda save_game_level_d_gnu_sign_position                           ; 3cef: ad 10 0a
     cmp #$30 ; '0'                                                    ; 3cf2: c9 30
     beq c3d0b                                                         ; 3cf4: f0 15
-    inc l0a10                                                         ; 3cf6: ee 10 0a
+    inc save_game_level_d_gnu_sign_position                           ; 3cf6: ee 10 0a
     jmp c3d0b                                                         ; 3cf9: 4c 0b 3d
 
 c3cfc
     lda object_direction                                              ; 3cfc: ad be 09
     bpl c3d0b                                                         ; 3cff: 10 0a
-    lda l0a10                                                         ; 3d01: ad 10 0a
+    lda save_game_level_d_gnu_sign_position                           ; 3d01: ad 10 0a
     cmp #$20 ; ' '                                                    ; 3d04: c9 20
     beq c3d0b                                                         ; 3d06: f0 03
-    dec l0a10                                                         ; 3d08: ce 10 0a
+    dec save_game_level_d_gnu_sign_position                           ; 3d08: ce 10 0a
 c3d0b
     lda #1                                                            ; 3d0b: a9 01
     sta width_in_cells                                                ; 3d0d: 85 3c
-    lda l0a10                                                         ; 3d0f: ad 10 0a
+    lda save_game_level_d_gnu_sign_position                           ; 3d0f: ad 10 0a
     ldx desired_room_index                                            ; 3d12: a6 30
     cpx #1                                                            ; 3d14: e0 01
     beq c3d45                                                         ; 3d16: f0 2d
@@ -646,7 +680,7 @@ c3d22
     sta height_in_cells                                               ; 3d3a: 85 3d
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 3d3c: 20 44 1e
 c3d3f
-    lda l0a10                                                         ; 3d3f: ad 10 0a
+    lda save_game_level_d_gnu_sign_position                           ; 3d3f: ad 10 0a
     jmp c3d70                                                         ; 3d42: 4c 70 3d
 
 c3d45
@@ -669,7 +703,7 @@ c3d4d
     sta height_in_cells                                               ; 3d65: 85 3d
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 3d67: 20 44 1e
 c3d6a
-    lda l0a10                                                         ; 3d6a: ad 10 0a
+    lda save_game_level_d_gnu_sign_position                           ; 3d6a: ad 10 0a
     sec                                                               ; 3d6d: 38
     sbc #$28 ; '('                                                    ; 3d6e: e9 28
 c3d70
@@ -979,10 +1013,10 @@ room_2_update_handler
     lda current_level                                                 ; 3f0c: a5 31
     cmp level_before_latest_level_and_room_initialisation             ; 3f0e: c5 51
     beq c3f1c                                                         ; 3f10: f0 0a
-    lda l0a11                                                         ; 3f12: ad 11 0a
+    lda save_game_level_d_partition_progress                          ; 3f12: ad 11 0a
     beq c3f1c                                                         ; 3f15: f0 05
     lda #$ff                                                          ; 3f17: a9 ff
-    sta l0a11                                                         ; 3f19: 8d 11 0a
+    sta save_game_level_d_partition_progress                          ; 3f19: 8d 11 0a
 c3f1c
     lda desired_room_index                                            ; 3f1c: a5 30
     cmp #2                                                            ; 3f1e: c9 02
@@ -1001,7 +1035,7 @@ c3f1c
     ldx #$14                                                          ; 3f3b: a2 14
     lda #collision_map_solid_rock                                     ; 3f3d: a9 03
     sta value_to_write_to_collision_map                               ; 3f3f: 85 3e
-    lda l0a11                                                         ; 3f41: ad 11 0a
+    lda save_game_level_d_partition_progress                          ; 3f41: ad 11 0a
     bne c3f56                                                         ; 3f44: d0 10
     ldy #2                                                            ; 3f46: a0 02
     lda #1                                                            ; 3f48: a9 01
@@ -1022,7 +1056,7 @@ c3f63
     jmp c3fc2                                                         ; 3f63: 4c c2 3f
 
 c3f66
-    lda l0a11                                                         ; 3f66: ad 11 0a
+    lda save_game_level_d_partition_progress                          ; 3f66: ad 11 0a
     bmi c3fc2                                                         ; 3f69: 30 57
     bne c3faf                                                         ; 3f6b: d0 42
     lda desired_room_index                                            ; 3f6d: a5 30
@@ -1056,7 +1090,7 @@ c3f66
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 3fa9: 20 44 1e
     jsr sub_c3fd9                                                     ; 3fac: 20 d9 3f
 c3faf
-    ldy l0a11                                                         ; 3faf: ac 11 0a
+    ldy save_game_level_d_partition_progress                          ; 3faf: ac 11 0a
     iny                                                               ; 3fb2: c8
     cpy #2                                                            ; 3fb3: c0 02
     bcc c3fbf                                                         ; 3fb5: 90 08
@@ -1066,12 +1100,12 @@ c3faf
 c3fbd
     ldy #$ff                                                          ; 3fbd: a0 ff
 c3fbf
-    sty l0a11                                                         ; 3fbf: 8c 11 0a
+    sty save_game_level_d_partition_progress                          ; 3fbf: 8c 11 0a
 c3fc2
     lda desired_room_index                                            ; 3fc2: a5 30
     cmp #2                                                            ; 3fc4: c9 02
     bne return5                                                       ; 3fc6: d0 0d
-    ldy l0a11                                                         ; 3fc8: ac 11 0a
+    ldy save_game_level_d_partition_progress                          ; 3fc8: ac 11 0a
     bpl c3fcf                                                         ; 3fcb: 10 02
     ldy #2                                                            ; 3fcd: a0 02
 c3fcf
@@ -1270,12 +1304,12 @@ room_3_update_handler
     lda current_level                                                 ; 40e9: a5 31
     cmp level_before_latest_level_and_room_initialisation             ; 40eb: c5 51
     beq c40f9                                                         ; 40ed: f0 0a
-    lda l0a0f                                                         ; 40ef: ad 0f 0a
+    lda save_game_level_d_got_gun                                     ; 40ef: ad 0f 0a
     beq c40f9                                                         ; 40f2: f0 05
     lda #$ff                                                          ; 40f4: a9 ff
-    sta l0a0f                                                         ; 40f6: 8d 0f 0a
+    sta save_game_level_d_got_gun                                     ; 40f6: 8d 0f 0a
 c40f9
-    lda l0a0f                                                         ; 40f9: ad 0f 0a
+    lda save_game_level_d_got_gun                                     ; 40f9: ad 0f 0a
     bne return6                                                       ; 40fc: d0 27
     lda desired_room_index                                            ; 40fe: a5 30
     cmp #3                                                            ; 4100: c9 03
@@ -1299,7 +1333,7 @@ return6
     rts                                                               ; 4125: 60
 
 c4126
-    lda l0a0f                                                         ; 4126: ad 0f 0a
+    lda save_game_level_d_got_gun                                     ; 4126: ad 0f 0a
     bne c414c                                                         ; 4129: d0 21
     lda desired_room_index                                            ; 412b: a5 30
     cmp #3                                                            ; 412d: c9 03
@@ -1313,7 +1347,7 @@ c4126
     lda #0                                                            ; 413f: a9 00
     sta object_spriteid + 3                                           ; 4141: 8d ab 09
     lda #$ff                                                          ; 4144: a9 ff
-    sta l0a0f                                                         ; 4146: 8d 0f 0a
+    sta save_game_level_d_got_gun                                     ; 4146: 8d 0f 0a
     jmp return7                                                       ; 4149: 4c 5b 41
 
 c414c
@@ -1349,7 +1383,7 @@ sub_c41ac
     sta l0070                                                         ; 41b9: 85 70
     ldx #$20 ; ' '                                                    ; 41bb: a2 20
     ldy #$76 ; 'v'                                                    ; 41bd: a0 76
-    lda l0a12                                                         ; 41bf: ad 12 0a
+    lda save_game_level_d_baby_progress                               ; 41bf: ad 12 0a
     beq c41df                                                         ; 41c2: f0 1b
     cmp #$12                                                          ; 41c4: c9 12
     beq c41df                                                         ; 41c6: f0 17
@@ -1357,7 +1391,7 @@ sub_c41ac
     sta l0070                                                         ; 41ca: 85 70
     ldx #$38 ; '8'                                                    ; 41cc: a2 38
     ldy #$ae                                                          ; 41ce: a0 ae
-    lda l0a12                                                         ; 41d0: ad 12 0a
+    lda save_game_level_d_baby_progress                               ; 41d0: ad 12 0a
     cmp #$2c ; ','                                                    ; 41d3: c9 2c
     beq c41df                                                         ; 41d5: f0 08
     cmp #$21 ; '!'                                                    ; 41d7: c9 21
@@ -1366,7 +1400,7 @@ sub_c41ac
     sta l0070                                                         ; 41dd: 85 70
 c41df
     lda l0070                                                         ; 41df: a5 70
-    sta l0a12                                                         ; 41e1: 8d 12 0a
+    sta save_game_level_d_baby_progress                               ; 41e1: 8d 12 0a
     sta level_workspace                                               ; 41e4: 8d 6f 0a
     stx l0a70                                                         ; 41e7: 8e 70 0a
     sty l0a71                                                         ; 41ea: 8c 71 0a
@@ -1395,9 +1429,9 @@ c420d
     tay                                                               ; 4213: a8
     lda l417e,y                                                       ; 4214: b9 7e 41
     bne c421c                                                         ; 4217: d0 03
-    ldy l0a12                                                         ; 4219: ac 12 0a
+    ldy save_game_level_d_baby_progress                               ; 4219: ac 12 0a
 c421c
-    lda l0a12                                                         ; 421c: ad 12 0a
+    lda save_game_level_d_baby_progress                               ; 421c: ad 12 0a
     cmp #$12                                                          ; 421f: c9 12
     bne c423d                                                         ; 4221: d0 1a
     lda desired_room_index                                            ; 4223: a5 30
@@ -1409,7 +1443,7 @@ c421c
     cmp #$80                                                          ; 4231: c9 80
     bcc c420a                                                         ; 4233: 90 d5
     ldy #0                                                            ; 4235: a0 00
-    sty l0a12                                                         ; 4237: 8c 12 0a
+    sty save_game_level_d_baby_progress                               ; 4237: 8c 12 0a
     jmp c42eb                                                         ; 423a: 4c eb 42
 
 c423d
@@ -1431,7 +1465,7 @@ c424c
 
 c425a
     lda #$14                                                          ; 425a: a9 14
-    sta l0a12                                                         ; 425c: 8d 12 0a
+    sta save_game_level_d_baby_progress                               ; 425c: 8d 12 0a
     tay                                                               ; 425f: a8
 c4260
     cmp #$14                                                          ; 4260: c9 14
@@ -1455,7 +1489,7 @@ c4260
     cmp #$d0                                                          ; 428a: c9 d0
     bcs c4296                                                         ; 428c: b0 08
     ldy #$21 ; '!'                                                    ; 428e: a0 21
-    sty l0a12                                                         ; 4290: 8c 12 0a
+    sty save_game_level_d_baby_progress                               ; 4290: 8c 12 0a
     jmp c42eb                                                         ; 4293: 4c eb 42
 
 c4296
@@ -1499,10 +1533,10 @@ c42c2
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 42e3: 20 44 1e
 c42e6
     ldy #$2c ; ','                                                    ; 42e6: a0 2c
-    sty l0a12                                                         ; 42e8: 8c 12 0a
+    sty save_game_level_d_baby_progress                               ; 42e8: 8c 12 0a
 c42eb
     sty level_workspace                                               ; 42eb: 8c 6f 0a
-    lda l0a12                                                         ; 42ee: ad 12 0a
+    lda save_game_level_d_baby_progress                               ; 42ee: ad 12 0a
     cmp #0                                                            ; 42f1: c9 00
     bne c4309                                                         ; 42f3: d0 14
     lda l415c,y                                                       ; 42f5: b9 5c 41
@@ -1526,7 +1560,7 @@ c4309
     sta object_y_low + 5                                              ; 4321: 8d 81 09
     lda #collision_map_solid_rock                                     ; 4324: a9 03
     sta value_to_write_to_collision_map                               ; 4326: 85 3e
-    lda l0a12                                                         ; 4328: ad 12 0a
+    lda save_game_level_d_baby_progress                               ; 4328: ad 12 0a
     cmp #$14                                                          ; 432b: c9 14
     beq c4352                                                         ; 432d: f0 23
     cmp #$21 ; '!'                                                    ; 432f: c9 21
@@ -1698,10 +1732,6 @@ pydis_end
 ;     c4309
 ;     c4352
 ;     l0a0e
-;     l0a0f
-;     l0a10
-;     l0a11
-;     l0a12
 ;     l0a70
 ;     l0a71
 ;     l2ef4
