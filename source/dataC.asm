@@ -43,13 +43,13 @@ spriteid_brazier_menu_item            = 203
 spriteid_brazier_object               = 202
 spriteid_brazier_object2              = 221
 spriteid_cache1                       = 204
-spriteid_cache3                       = 206
-spriteid_cache4                       = 207
-spriteid_cache5                       = 208
-spriteid_cache6                       = 209
-spriteid_cache7                       = 210
-spriteid_cache8                       = 211
-spriteid_cache9                       = 217
+spriteid_cache2                       = 206
+spriteid_cache3                       = 207
+spriteid_cache4                       = 208
+spriteid_cache5                       = 209
+spriteid_cache6                       = 210
+spriteid_cache7                       = 211
+spriteid_cache8                       = 217
 spriteid_cat1                         = 27
 spriteid_cat2                         = 28
 spriteid_cat_jump                     = 26
@@ -497,7 +497,7 @@ c3c0b
     cmp currently_updating_logic_for_room_index                       ; 3c0d: cd ba 1a
     bne c3c83                                                         ; 3c10: d0 71
     ldx #4                                                            ; 3c12: a2 04
-    lda #spriteid_cache9                                              ; 3c14: a9 d9
+    lda #spriteid_cache8                                              ; 3c14: a9 d9
     sta object_sprite_mask_type,x                                     ; 3c16: 9d ac 38
     lda #$e0                                                          ; 3c19: a9 e0
     sta object_z_order,x                                              ; 3c1b: 9d c2 38
@@ -607,7 +607,7 @@ c3cbf
     lda desired_room_index                                            ; 3ce2: a5 30
     cmp currently_updating_logic_for_room_index                       ; 3ce4: cd ba 1a
     bne c3d26                                                         ; 3ce7: d0 3d
-    lda #spriteid_cache3                                              ; 3ce9: a9 ce
+    lda #spriteid_cache2                                              ; 3ce9: a9 ce
     sta object_spriteid + 4                                           ; 3ceb: 8d ac 09
 c3cee
     lda #$ff                                                          ; 3cee: a9 ff
@@ -872,7 +872,7 @@ c3e89
     lda #5                                                            ; 3e93: a9 05
     jsr set_object_position_from_cell_xy                              ; 3e95: 20 5d 1f
     tax                                                               ; 3e98: aa
-    lda #spriteid_cache6                                              ; 3e99: a9 d1
+    lda #spriteid_cache5                                              ; 3e99: a9 d1
     sta object_sprite_mask_type,x                                     ; 3e9b: 9d ac 38
     lda #$c0                                                          ; 3e9e: a9 c0
     sta object_z_order,x                                              ; 3ea0: 9d c2 38
@@ -885,7 +885,7 @@ c3e89
     tax                                                               ; 3eb0: aa
     lda #$ff                                                          ; 3eb1: a9 ff
     sta object_direction,x                                            ; 3eb3: 9d be 09
-    lda #spriteid_cache7                                              ; 3eb6: a9 d2
+    lda #spriteid_cache6                                              ; 3eb6: a9 d2
     sta object_sprite_mask_type,x                                     ; 3eb8: 9d ac 38
     lda #$a0                                                          ; 3ebb: a9 a0
     sta object_z_order,x                                              ; 3ebd: 9d c2 38
@@ -896,7 +896,7 @@ c3e89
     lda #7                                                            ; 3ec8: a9 07
     jsr set_object_position_from_cell_xy                              ; 3eca: 20 5d 1f
     tax                                                               ; 3ecd: aa
-    lda #spriteid_cache8                                              ; 3ece: a9 d3
+    lda #spriteid_cache7                                              ; 3ece: a9 d3
     sta object_sprite_mask_type,x                                     ; 3ed0: 9d ac 38
     lda #$a0                                                          ; 3ed3: a9 a0
     sta object_z_order,x                                              ; 3ed5: 9d c2 38
@@ -975,7 +975,7 @@ c3f30
     lda l0a0b                                                         ; 3f64: ad 0b 0a
     cmp #2                                                            ; 3f67: c9 02
     bcs c3fdd                                                         ; 3f69: b0 72
-    lda #spriteid_cache3                                              ; 3f6b: a9 ce
+    lda #spriteid_cache2                                              ; 3f6b: a9 ce
     sta object_spriteid + 6                                           ; 3f6d: 8d ae 09
     sta object_spriteid + 7                                           ; 3f70: 8d af 09
     jmp c3fdd                                                         ; 3f73: 4c dd 3f
@@ -1005,7 +1005,7 @@ c3f96
     lda l0a0b                                                         ; 3fa3: ad 0b 0a
     cmp #$2f ; '/'                                                    ; 3fa6: c9 2f
     bcc c3fd3                                                         ; 3fa8: 90 29
-    lda #spriteid_cache3                                              ; 3faa: a9 ce
+    lda #spriteid_cache2                                              ; 3faa: a9 ce
     sta object_spriteid + 6                                           ; 3fac: 8d ae 09
     sta object_spriteid + 7                                           ; 3faf: 8d af 09
     jmp c3fd3                                                         ; 3fb2: 4c d3 3f
@@ -1169,7 +1169,7 @@ fire_spriteid_table
     !byte spriteid_fire7                                              ; 40d8: 42
     !byte spriteid_fire8                                              ; 40d9: 43
     !byte 0                                                           ; 40da: 00
-    !byte spriteid_cache3                                             ; 40db: ce
+    !byte spriteid_cache2                                             ; 40db: ce
     !byte 0                                                           ; 40dc: 00
 ; *************************************************************************************
 ; 
@@ -1428,7 +1428,7 @@ c4278
     cmp #1                                                            ; 427a: c9 01
     beq c428a                                                         ; 427c: f0 0c
     ldx #5                                                            ; 427e: a2 05
-    lda #spriteid_cache6                                              ; 4280: a9 d1
+    lda #spriteid_cache5                                              ; 4280: a9 d1
     sta object_sprite_mask_type,x                                     ; 4282: 9d ac 38
     lda #$f0                                                          ; 4285: a9 f0
     sta object_z_order,x                                              ; 4287: 9d c2 38
@@ -2137,20 +2137,20 @@ pydis_end
 !if (spriteid_brazier_object) != $ca {
     !error "Assertion failed: spriteid_brazier_object == $ca"
 }
-!if (spriteid_cache3) != $ce {
-    !error "Assertion failed: spriteid_cache3 == $ce"
+!if (spriteid_cache2) != $ce {
+    !error "Assertion failed: spriteid_cache2 == $ce"
 }
-!if (spriteid_cache6) != $d1 {
-    !error "Assertion failed: spriteid_cache6 == $d1"
+!if (spriteid_cache5) != $d1 {
+    !error "Assertion failed: spriteid_cache5 == $d1"
 }
-!if (spriteid_cache7) != $d2 {
-    !error "Assertion failed: spriteid_cache7 == $d2"
+!if (spriteid_cache6) != $d2 {
+    !error "Assertion failed: spriteid_cache6 == $d2"
 }
-!if (spriteid_cache8) != $d3 {
-    !error "Assertion failed: spriteid_cache8 == $d3"
+!if (spriteid_cache7) != $d3 {
+    !error "Assertion failed: spriteid_cache7 == $d3"
 }
-!if (spriteid_cache9) != $d9 {
-    !error "Assertion failed: spriteid_cache9 == $d9"
+!if (spriteid_cache8) != $d9 {
+    !error "Assertion failed: spriteid_cache8 == $d9"
 }
 !if (spriteid_empty_hook) != $d8 {
     !error "Assertion failed: spriteid_empty_hook == $d8"

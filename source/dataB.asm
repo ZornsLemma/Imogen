@@ -4,25 +4,25 @@
 ;
 ; Save game variables:
 ;
-;     cuckoo_room_1_progress ($0a05):
+;     save_game_level_b_cuckoo_room_1_progress ($0a05):
 ;               0: hidden in room 1 clock,
 ;              1+: cuckooing
 ;             $ff: got cuckoo (cuckoo object created)
-;     cuckoo_room_2_progress ($0a06):
+;     save_game_level_b_cuckoo_room_2_progress ($0a06):
 ;               0: in room 2 clock or held
 ;               1: installed in clock
 ;              15: just launched
 ;           16-40: animation being thrown into room3 (just the odd numbers)
 ;             $ff: in room 3
-;     room_2_falling_boulder_progress ($0a07):
+;     save_game_level_b_room_2_falling_boulder_progress ($0a07):
 ;               0: suspended
 ;             $ff: finished falling
 ;       otherwise: falling (Y coordinate)
-;     room_0_falling_boulder_progress ($0a08):
+;     save_game_level_b_room_0_falling_boulder_progress ($0a08):
 ;               0: suspended
 ;             $ff: finished falling
 ;       otherwise: falling (Y coordinate)
-;     got_hourglass_flag ($0a09)
+;     save_game_level_b_got_hourglass_flag ($0a09)
 ;
 ; Solution:
 ;
@@ -236,11 +236,11 @@ object_spriteid_old                                 = $09b3
 object_direction                                    = $09be
 object_direction_old                                = $09c9
 level_progress_table                                = $09ef
-cuckoo_room_1_progress                              = $0a05
-cuckoo_room_2_progress                              = $0a06
-room_2_falling_boulder_progress                     = $0a07
-room_0_falling_boulder_progress                     = $0a08
-got_hourglass_flag                                  = $0a09
+save_game_level_b_cuckoo_room_1_progress            = $0a05
+save_game_level_b_cuckoo_room_2_progress            = $0a06
+save_game_level_b_room_2_falling_boulder_progress   = $0a07
+save_game_level_b_room_0_falling_boulder_progress   = $0a08
+save_game_level_b_got_hourglass_flag                = $0a09
 room_1_clock_repeat_counter                         = $0a6f
 room_1_clock_repeat_limit                           = $0a70
 room_1_pendulum_swing_index                         = $0a71
@@ -352,16 +352,16 @@ level_specific_initialisation
     lda developer_flags                                               ; 3af8: ad 03 11
     bpl no_developer_top_bit_flag                                     ; 3afb: 10 05
     lda #$ff                                                          ; 3afd: a9 ff
-    sta cuckoo_room_1_progress                                        ; 3aff: 8d 05 0a
+    sta save_game_level_b_cuckoo_room_1_progress                      ; 3aff: 8d 05 0a
 no_developer_top_bit_flag
-    lda got_hourglass_flag                                            ; 3b02: ad 09 0a
+    lda save_game_level_b_got_hourglass_flag                          ; 3b02: ad 09 0a
     beq check_got_cuckoo                                              ; 3b05: f0 05
     lda #spriteid_hourglass_menu_item                                 ; 3b07: a9 de
     jsr find_or_create_menu_slot_for_A                                ; 3b09: 20 bd 2b
 check_got_cuckoo
-    lda cuckoo_room_1_progress                                        ; 3b0c: ad 05 0a
+    lda save_game_level_b_cuckoo_room_1_progress                      ; 3b0c: ad 05 0a
     beq return1                                                       ; 3b0f: f0 0a
-    lda cuckoo_room_2_progress                                        ; 3b11: ad 06 0a
+    lda save_game_level_b_cuckoo_room_2_progress                      ; 3b11: ad 06 0a
     bne return1                                                       ; 3b14: d0 05
     lda #spriteid_cuckoo_menu_item                                    ; 3b16: a9 d4
     jsr find_or_create_menu_slot_for_A                                ; 3b18: 20 bd 2b
@@ -591,7 +591,7 @@ room_0_update_suspended_boulder_puzzle
     dec player_on_suspended_boulder_holding_object                    ; 3c4e: ce dc 42
 
 room_0_update_boulder_falling_progress
-    lda room_0_falling_boulder_progress                               ; 3c51: ad 08 0a
+    lda save_game_level_b_room_0_falling_boulder_progress             ; 3c51: ad 08 0a
     sta falling_boulder_progress                                      ; 3c54: 8d d8 42
     ldy #$10                                                          ; 3c57: a0 10
     sty fallen_boulder_y                                              ; 3c59: 8c db 42
@@ -600,13 +600,13 @@ room_0_update_boulder_falling_progress
     ldy #8                                                            ; 3c60: a0 08
     jsr update_suspended_boulder_at_xy_in_room_a                      ; 3c62: 20 d2 41
     lda falling_boulder_progress                                      ; 3c65: ad d8 42
-    sta room_0_falling_boulder_progress                               ; 3c68: 8d 08 0a
+    sta save_game_level_b_room_0_falling_boulder_progress             ; 3c68: 8d 08 0a
     lda update_room_first_update_flag                                 ; 3c6b: ad 2b 13
     bne return2                                                       ; 3c6e: d0 10
     lda desired_room_index                                            ; 3c70: a5 30
     cmp #0                                                            ; 3c72: c9 00
     bne return2                                                       ; 3c74: d0 0a
-    lda room_0_falling_boulder_progress                               ; 3c76: ad 08 0a
+    lda save_game_level_b_room_0_falling_boulder_progress             ; 3c76: ad 08 0a
     cmp #$10                                                          ; 3c79: c9 10
     bne return2                                                       ; 3c7b: d0 03
     jsr play_boulder_landing_sounds                                   ; 3c7d: 20 c1 41
@@ -810,10 +810,10 @@ room_1_update_handler
     beq set_clock_workings_in_room_1                                  ; 3daa: f0 0a
 ; the level has changed. If we don't actually have the cuckoo, then reset any cuckoo
 ; progress to zero
-    lda cuckoo_room_1_progress                                        ; 3dac: ad 05 0a
+    lda save_game_level_b_cuckoo_room_1_progress                      ; 3dac: ad 05 0a
     bmi set_clock_workings_in_room_1                                  ; 3daf: 30 05
     lda #0                                                            ; 3db1: a9 00
-    sta cuckoo_room_1_progress                                        ; 3db3: 8d 05 0a
+    sta save_game_level_b_cuckoo_room_1_progress                      ; 3db3: 8d 05 0a
 set_clock_workings_in_room_1
     lda desired_room_index                                            ; 3db6: a5 30
     cmp #1                                                            ; 3db8: c9 01
@@ -829,7 +829,7 @@ update_room_1_cuckooing_animation_local
     jmp update_room_1_cuckooing_animation                             ; 3dce: 4c 2b 3e
 
 update_room_1_cuckoo
-    lda cuckoo_room_1_progress                                        ; 3dd1: ad 05 0a
+    lda save_game_level_b_cuckoo_room_1_progress                      ; 3dd1: ad 05 0a
     bmi update_room_1_cuckooing_animation                             ; 3dd4: 30 55
     beq room_1_increment_the_clock_timers                             ; 3dd6: f0 1b
     lda desired_room_index                                            ; 3dd8: a5 30
@@ -843,7 +843,7 @@ update_room_1_cuckoo
     lda #spriteid_cuckoo_menu_item                                    ; 3de7: a9 d4
     jsr find_or_create_menu_slot_for_A                                ; 3de9: 20 bd 2b
     lda #$ff                                                          ; 3dec: a9 ff
-    sta cuckoo_room_1_progress                                        ; 3dee: 8d 05 0a
+    sta save_game_level_b_cuckoo_room_1_progress                      ; 3dee: 8d 05 0a
     bmi update_room_1_cuckooing_animation                             ; 3df1: 30 38
 room_1_increment_the_clock_timers
     lda room_1_clock_repeat_counter                                   ; 3df3: ad 6f 0a
@@ -860,13 +860,13 @@ room_1_increment_the_clock_timers
     lda room_1_pendulum_swing_index                                   ; 3e0c: ad 71 0a
     bne update_room_1_cuckooing_animation                             ; 3e0f: d0 1a
 update_room_1_cuckooing
-    ldy cuckoo_room_1_progress                                        ; 3e11: ac 05 0a
+    ldy save_game_level_b_cuckoo_room_1_progress                      ; 3e11: ac 05 0a
     iny                                                               ; 3e14: c8
     cpy #6                                                            ; 3e15: c0 06
     bcc save_cuckooing_progress                                       ; 3e17: 90 02
     ldy #0                                                            ; 3e19: a0 00
 save_cuckooing_progress
-    sty cuckoo_room_1_progress                                        ; 3e1b: 8c 05 0a
+    sty save_game_level_b_cuckoo_room_1_progress                      ; 3e1b: 8c 05 0a
     lda desired_room_index                                            ; 3e1e: a5 30
     cmp #1                                                            ; 3e20: c9 01
     bne update_room_1_cuckooing_animation                             ; 3e22: d0 07
@@ -877,7 +877,7 @@ update_room_1_cuckooing_animation
     lda desired_room_index                                            ; 3e2b: a5 30
     cmp #1                                                            ; 3e2d: c9 01
     bne return9                                                       ; 3e2f: d0 0f
-    ldy cuckoo_room_1_progress                                        ; 3e31: ac 05 0a
+    ldy save_game_level_b_cuckoo_room_1_progress                      ; 3e31: ac 05 0a
     bpl set_cuckooing_animation_to_index_y                            ; 3e34: 10 04
     lda #spriteid_clock_workings                                      ; 3e36: a9 d1
     bne set_cuckooing_animation_spriteid                              ; 3e38: d0 03                   ; ALWAYS branch
@@ -1274,11 +1274,11 @@ room_2_update_handler
     cmp level_before_latest_level_and_room_initialisation             ; 40a1: c5 51
     beq room_2_draw_clock_workings                                    ; 40a3: f0 0c
 ; level changed. if cuckoo in room 2 had enough progress, then set as completed.
-    lda cuckoo_room_2_progress                                        ; 40a5: ad 06 0a
+    lda save_game_level_b_cuckoo_room_2_progress                      ; 40a5: ad 06 0a
     cmp #2                                                            ; 40a8: c9 02
     bcc room_2_draw_clock_workings                                    ; 40aa: 90 05
     lda #$ff                                                          ; 40ac: a9 ff
-    sta cuckoo_room_2_progress                                        ; 40ae: 8d 06 0a
+    sta save_game_level_b_cuckoo_room_2_progress                      ; 40ae: 8d 06 0a
 room_2_draw_clock_workings
     lda desired_room_index                                            ; 40b1: a5 30
     cmp #2                                                            ; 40b3: c9 02
@@ -1300,7 +1300,7 @@ skip_draw_workings
     jmp room_2_update_clock_workings                                  ; 40d5: 4c 52 41
 
 room_2_update_clock_puzzle
-    lda cuckoo_room_2_progress                                        ; 40d8: ad 06 0a
+    lda save_game_level_b_cuckoo_room_2_progress                      ; 40d8: ad 06 0a
     bmi room_2_update_clock_workings                                  ; 40db: 30 75
     cmp #1                                                            ; 40dd: c9 01
     beq room_2_update_cuckoo_in_clock                                 ; 40df: f0 46
@@ -1327,7 +1327,7 @@ room_2_update_clock_puzzle
     lda #spriteid_cuckoo_menu_item                                    ; 4105: a9 d4
     jsr remove_item_from_toolbar_menu                                 ; 4107: 20 e0 2b
     lda #1                                                            ; 410a: a9 01
-    sta cuckoo_room_2_progress                                        ; 410c: 8d 06 0a
+    sta save_game_level_b_cuckoo_room_2_progress                      ; 410c: 8d 06 0a
     lda #0                                                            ; 410f: a9 00
     sta player_held_object_spriteid                                   ; 4111: 85 52
     sta object_spriteid+1                                             ; 4113: 8d a9 09
@@ -1345,7 +1345,7 @@ room_2_update_cuckoo_in_clock
     beq room_2_update_clock_workings                                  ; 412d: f0 23
 ; mark the cuckoo in room 2 as launched
     lda #$0f                                                          ; 412f: a9 0f
-    sta cuckoo_room_2_progress                                        ; 4131: 8d 06 0a
+    sta save_game_level_b_cuckoo_room_2_progress                      ; 4131: 8d 06 0a
 ; if player is in room 2 then play the cuckoo sound
     lda desired_room_index                                            ; 4134: a5 30
     cmp #2                                                            ; 4136: c9 02
@@ -1354,15 +1354,15 @@ room_2_update_cuckoo_in_clock
     jmp room_2_update_clock_workings                                  ; 413d: 4c 52 41
 
 room_2_update_cuckoo_being_thrown_into_room_3
-    lda cuckoo_room_2_progress                                        ; 4140: ad 06 0a
+    lda save_game_level_b_cuckoo_room_2_progress                      ; 4140: ad 06 0a
     clc                                                               ; 4143: 18
     adc #2                                                            ; 4144: 69 02
-    sta cuckoo_room_2_progress                                        ; 4146: 8d 06 0a
+    sta save_game_level_b_cuckoo_room_2_progress                      ; 4146: 8d 06 0a
     cmp #$28 ; '('                                                    ; 4149: c9 28
     bcc room_2_update_clock_workings                                  ; 414b: 90 05
 ; cuckoo finished being thrown animation, now in room 3
     lda #$ff                                                          ; 414d: a9 ff
-    sta cuckoo_room_2_progress                                        ; 414f: 8d 06 0a
+    sta save_game_level_b_cuckoo_room_2_progress                      ; 414f: 8d 06 0a
 
 room_2_update_clock_workings
     lda desired_room_index                                            ; 4152: a5 30
@@ -1370,7 +1370,7 @@ room_2_update_clock_workings
     bne room_2_update_suspended_boulder_puzzle                        ; 4156: d0 2a
     lda #0                                                            ; 4158: a9 00
     sta object_spriteid + objectid_clock_workings                     ; 415a: 8d ab 09
-    lda cuckoo_room_2_progress                                        ; 415d: ad 06 0a
+    lda save_game_level_b_cuckoo_room_2_progress                      ; 415d: ad 06 0a
     bmi room_2_update_suspended_boulder_puzzle                        ; 4160: 30 20
     cmp #2                                                            ; 4162: c9 02
     bcc room_2_update_suspended_boulder_puzzle                        ; 4164: 90 1c
@@ -1391,12 +1391,12 @@ room_2_update_clock_workings
 room_2_update_suspended_boulder_puzzle
     lda #0                                                            ; 4182: a9 00
     sta player_on_suspended_boulder_holding_object                    ; 4184: 8d dc 42
-    lda cuckoo_room_2_progress                                        ; 4187: ad 06 0a
+    lda save_game_level_b_cuckoo_room_2_progress                      ; 4187: ad 06 0a
     cmp #$1b                                                          ; 418a: c9 1b
     bcc room_2_update_boulder_falling_progress                        ; 418c: 90 03
     dec player_on_suspended_boulder_holding_object                    ; 418e: ce dc 42
 room_2_update_boulder_falling_progress
-    lda room_2_falling_boulder_progress                               ; 4191: ad 07 0a
+    lda save_game_level_b_room_2_falling_boulder_progress             ; 4191: ad 07 0a
     sta falling_boulder_progress                                      ; 4194: 8d d8 42
     ldy #$10                                                          ; 4197: a0 10
     sty fallen_boulder_y                                              ; 4199: 8c db 42
@@ -1405,13 +1405,13 @@ room_2_update_boulder_falling_progress
     ldy #$0b                                                          ; 41a0: a0 0b
     jsr update_suspended_boulder_at_xy_in_room_a                      ; 41a2: 20 d2 41
     lda falling_boulder_progress                                      ; 41a5: ad d8 42
-    sta room_2_falling_boulder_progress                               ; 41a8: 8d 07 0a
+    sta save_game_level_b_room_2_falling_boulder_progress             ; 41a8: 8d 07 0a
     lda update_room_first_update_flag                                 ; 41ab: ad 2b 13
     bne return6                                                       ; 41ae: d0 10
     lda desired_room_index                                            ; 41b0: a5 30
     cmp #2                                                            ; 41b2: c9 02
     bne return6                                                       ; 41b4: d0 0a
-    lda room_2_falling_boulder_progress                               ; 41b6: ad 07 0a
+    lda save_game_level_b_room_2_falling_boulder_progress             ; 41b6: ad 07 0a
     cmp #$10                                                          ; 41b9: c9 10
     bne return6                                                       ; 41bb: d0 03
     jsr play_boulder_landing_sounds                                   ; 41bd: 20 c1 41
@@ -1593,7 +1593,7 @@ update_hourglass_handler
     cmp #2                                                            ; 42f1: c9 02
     bne return4                                                       ; 42f3: d0 23
 ; room 2 update
-    lda got_hourglass_flag                                            ; 42f5: ad 09 0a
+    lda save_game_level_b_got_hourglass_flag                          ; 42f5: ad 09 0a
     bne return4                                                       ; 42f8: d0 1e
     ldx #$14                                                          ; 42fa: a2 14
     ldy #$11                                                          ; 42fc: a0 11
@@ -1615,7 +1615,7 @@ room_2_update_hourglass
     lda desired_room_index                                            ; 4319: a5 30
     cmp #2                                                            ; 431b: c9 02
     bne return8                                                       ; 431d: d0 1d
-    lda got_hourglass_flag                                            ; 431f: ad 09 0a
+    lda save_game_level_b_got_hourglass_flag                          ; 431f: ad 09 0a
     bne return8                                                       ; 4322: d0 18
     ldx #objectid_old_player                                          ; 4324: a2 0b
     ldy #objectid_hourglass                                           ; 4326: a0 07
@@ -1626,7 +1626,7 @@ room_2_update_hourglass
     lda #0                                                            ; 4332: a9 00
     sta object_spriteid + objectid_hourglass                          ; 4334: 8d af 09
     lda #$ff                                                          ; 4337: a9 ff
-    sta got_hourglass_flag                                            ; 4339: 8d 09 0a
+    sta save_game_level_b_got_hourglass_flag                          ; 4339: 8d 09 0a
 return8
     rts                                                               ; 433c: 60
 
@@ -1835,7 +1835,7 @@ room_3_update_handler
     lda update_room_first_update_flag                                 ; 4464: ad 2b 13
     beq room_3_not_first_update                                       ; 4467: f0 2c
 ; first update in room 3
-    lda cuckoo_room_2_progress                                        ; 4469: ad 06 0a
+    lda save_game_level_b_cuckoo_room_2_progress                      ; 4469: ad 06 0a
     cmp #2                                                            ; 446c: c9 02
     bcc return5                                                       ; 446e: 90 3d
     ldx #$23 ; '#'                                                    ; 4470: a2 23
@@ -1866,7 +1866,7 @@ room_3_not_first_update
     lda #0                                                            ; 44a3: a9 00
     sta object_spriteid + objectid_pendulum                           ; 44a5: 8d aa 09
     lda #0                                                            ; 44a8: a9 00
-    sta cuckoo_room_2_progress                                        ; 44aa: 8d 06 0a
+    sta save_game_level_b_cuckoo_room_2_progress                      ; 44aa: 8d 06 0a
 return5
     rts                                                               ; 44ad: 60
 

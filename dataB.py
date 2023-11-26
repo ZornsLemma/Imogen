@@ -79,11 +79,11 @@ label(0x09ae, "object_spriteid + objectid_rope_broken_bottom_end")
 label(0x09af, "object_spriteid + objectid_hourglass")
 
 # save game variables
-label(0x0a05, "cuckoo_room_1_progress")             # 0: hidden in room 1 clock, 1+: cuckooing, $ff: got cuckoo (cuckoo object created)
-label(0x0a06, "cuckoo_room_2_progress")             # 0: in room 2 clock or held, 1: installed in clock, 15: just launched, 16-40 (the odd numbers): animation being thrown into room3, $ff: in room 3
-label(0x0a07, "room_2_falling_boulder_progress")    # 0: suspended, 1+: falling (Y coordinate), $ff: finished falling
-label(0x0a08, "room_0_falling_boulder_progress")    # ditto
-label(0x0a09, "got_hourglass_flag")
+label(0x0a05, "save_game_level_b_cuckoo_room_1_progress")             # 0: hidden in room 1 clock, 1+: cuckooing, $ff: got cuckoo (cuckoo object created)
+label(0x0a06, "save_game_level_b_cuckoo_room_2_progress")             # 0: in room 2 clock or held, 1: installed in clock, 15: just launched, 16-40 (the odd numbers): animation being thrown into room3, $ff: in room 3
+label(0x0a07, "save_game_level_b_room_2_falling_boulder_progress")    # 0: suspended, 1+: falling (Y coordinate), $ff: finished falling
+label(0x0a08, "save_game_level_b_room_0_falling_boulder_progress")    # ditto
+label(0x0a09, "save_game_level_b_got_hourglass_flag")
 
 label(0x0a6f, "room_1_clock_repeat_counter")    # Counts up the number of repeats of the pendulum swing
 label(0x0a70, "room_1_clock_repeat_limit")      # Set to $10 to play the clock animations until repeat counter reaches 16
@@ -304,25 +304,25 @@ print("""; *********************************************************************
 ;
 ; Save game variables:
 ;
-;     cuckoo_room_1_progress ($0a05):
+;     save_game_level_b_cuckoo_room_1_progress ($0a05):
 ;               0: hidden in room 1 clock,
 ;              1+: cuckooing
 ;             $ff: got cuckoo (cuckoo object created)
-;     cuckoo_room_2_progress ($0a06):
+;     save_game_level_b_cuckoo_room_2_progress ($0a06):
 ;               0: in room 2 clock or held
 ;               1: installed in clock
 ;              15: just launched
 ;           16-40: animation being thrown into room3 (just the odd numbers)
 ;             $ff: in room 3
-;     room_2_falling_boulder_progress ($0a07):
+;     save_game_level_b_room_2_falling_boulder_progress ($0a07):
 ;               0: suspended
 ;             $ff: finished falling
 ;       otherwise: falling (Y coordinate)
-;     room_0_falling_boulder_progress ($0a08):
+;     save_game_level_b_room_0_falling_boulder_progress ($0a08):
 ;               0: suspended
 ;             $ff: finished falling
 ;       otherwise: falling (Y coordinate)
-;     got_hourglass_flag ($0a09)
+;     save_game_level_b_got_hourglass_flag ($0a09)
 ;
 ; Solution:
 ;
