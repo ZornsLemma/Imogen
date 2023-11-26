@@ -126,11 +126,11 @@ expr(0x4564, "object_x_low + 3")
 expr(0x456a, "object_y_low + 3")
 
 # TODO: uncomment once sprite_dict has been populated
+#expr(0x3d56, sprite_dict)
 #expr(0x40e6, sprite_dict)
+#expr(0x4167, sprite_dict)
 #expr(0x420d, sprite_dict)
 #expr(0x4318, sprite_dict)
-#expr(0x3d56, sprite_dict)
-#expr(0x4167, sprite_dict)
 
 result = go(False)
 result = remove_sprite_data(result)

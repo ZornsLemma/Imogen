@@ -152,25 +152,16 @@ l007a                                               = $7a
 show_dialog_box                                     = $040a
 remove_dialog                                       = $0453
 object_x_low                                        = $0950
-l0952                                               = $0952
-l0953                                               = $0953
 object_x_low_old                                    = $095b
 object_x_high                                       = $0966
-l0968                                               = $0968
 object_x_high_old                                   = $0971
 object_y_low                                        = $097c
-l097e                                               = $097e
-l097f                                               = $097f
 object_y_low_old                                    = $0987
 object_y_high                                       = $0992
-l0994                                               = $0994
 object_y_high_old                                   = $099d
 object_spriteid                                     = $09a8
-l09aa                                               = $09aa
-l09ab                                               = $09ab
 object_spriteid_old                                 = $09b3
 object_direction                                    = $09be
-l09c1                                               = $09c1
 object_direction_old                                = $09c9
 l09df                                               = $09df
 level_progress_table                                = $09ef
@@ -514,7 +505,7 @@ loop_c3c1e
     lda #$ca                                                          ; 3c26: a9 ca
     jsr draw_sprite_a_at_cell_xy                                      ; 3c28: 20 4c 1f
     lda #$cc                                                          ; 3c2b: a9 cc
-    sta l09ab                                                         ; 3c2d: 8d ab 09
+    sta object_spriteid + 3                                           ; 3c2d: 8d ab 09
     lda #$cb                                                          ; 3c30: a9 cb
     sta l38af                                                         ; 3c32: 8d af 38
 c3c35
@@ -976,7 +967,7 @@ c3ef9
     lda #$cd                                                          ; 3f0f: a9 cd
     sta l38af                                                         ; 3f11: 8d af 38
     lda #$66 ; 'f'                                                    ; 3f14: a9 66
-    sta l097f                                                         ; 3f16: 8d 7f 09
+    sta object_y_low + 3                                              ; 3f16: 8d 7f 09
 c3f19
     jmp c3fed                                                         ; 3f19: 4c ed 3f
 
@@ -1006,7 +997,7 @@ c3f2d
     lda #$0c                                                          ; 3f4b: a9 0c
     sta l0a75                                                         ; 3f4d: 8d 75 0a
     lda object_x_low                                                  ; 3f50: ad 50 09
-    cmp l0953                                                         ; 3f53: cd 53 09
+    cmp object_x_low + 3                                              ; 3f53: cd 53 09
     bcc c3f64                                                         ; 3f56: 90 0c
     lda #6                                                            ; 3f58: a9 06
     sta player_wall_collision_flag                                    ; 3f5a: 8d 33 24
@@ -1086,11 +1077,11 @@ c3fed
     bne return2                                                       ; 3ff1: d0 15
     ldy l0a71                                                         ; 3ff3: ac 71 0a
     lda l3ec3,y                                                       ; 3ff6: b9 c3 3e
-    sta l09ab                                                         ; 3ff9: 8d ab 09
+    sta object_spriteid + 3                                           ; 3ff9: 8d ab 09
     lda l0a72                                                         ; 3ffc: ad 72 0a
-    sta l0953                                                         ; 3fff: 8d 53 09
+    sta object_x_low + 3                                              ; 3fff: 8d 53 09
     lda l0a73                                                         ; 4002: ad 73 0a
-    sta l09c1                                                         ; 4005: 8d c1 09
+    sta object_direction + 3                                          ; 4005: 8d c1 09
 return2
     rts                                                               ; 4008: 60
 
@@ -1593,7 +1584,7 @@ c439b
     sta l0a22                                                         ; 43ac: 8d 22 0a
 c43af
     lda #0                                                            ; 43af: a9 00
-    sta l09aa                                                         ; 43b1: 8d aa 09
+    sta object_spriteid + 2                                           ; 43b1: 8d aa 09
 return4
     rts                                                               ; 43b4: 60
 
@@ -1602,15 +1593,15 @@ l43b5
 
 sub_c43b6
     lda l0a1e                                                         ; 43b6: ad 1e 0a
-    sta l0952                                                         ; 43b9: 8d 52 09
+    sta object_x_low + 2                                              ; 43b9: 8d 52 09
     lda l0a1f                                                         ; 43bc: ad 1f 0a
-    sta l0968                                                         ; 43bf: 8d 68 09
+    sta object_x_high + 2                                             ; 43bf: 8d 68 09
     lda l0a20                                                         ; 43c2: ad 20 0a
-    sta l097e                                                         ; 43c5: 8d 7e 09
+    sta object_y_low + 2                                              ; 43c5: 8d 7e 09
     lda l0a21                                                         ; 43c8: ad 21 0a
-    sta l0994                                                         ; 43cb: 8d 94 09
+    sta object_y_high + 2                                             ; 43cb: 8d 94 09
     lda #$d0                                                          ; 43ce: a9 d0
-    sta l09aa                                                         ; 43d0: 8d aa 09
+    sta object_spriteid + 2                                           ; 43d0: 8d aa 09
     rts                                                               ; 43d3: 60
 
 sub_c43d4
@@ -1843,15 +1834,6 @@ pydis_end
 ;     l0078
 ;     l0079
 ;     l007a
-;     l0952
-;     l0953
-;     l0968
-;     l097e
-;     l097f
-;     l0994
-;     l09aa
-;     l09ab
-;     l09c1
 ;     l09df
 ;     l0a1a
 ;     l0a1b
@@ -1968,6 +1950,33 @@ pydis_end
 }
 !if (level_specific_update) != $3b07 {
     !error "Assertion failed: level_specific_update == $3b07"
+}
+!if (object_direction + 3) != $09c1 {
+    !error "Assertion failed: object_direction + 3 == $09c1"
+}
+!if (object_spriteid + 2) != $09aa {
+    !error "Assertion failed: object_spriteid + 2 == $09aa"
+}
+!if (object_spriteid + 3) != $09ab {
+    !error "Assertion failed: object_spriteid + 3 == $09ab"
+}
+!if (object_x_high + 2) != $0968 {
+    !error "Assertion failed: object_x_high + 2 == $0968"
+}
+!if (object_x_low + 2) != $0952 {
+    !error "Assertion failed: object_x_low + 2 == $0952"
+}
+!if (object_x_low + 3) != $0953 {
+    !error "Assertion failed: object_x_low + 3 == $0953"
+}
+!if (object_y_high + 2) != $0994 {
+    !error "Assertion failed: object_y_high + 2 == $0994"
+}
+!if (object_y_low + 2) != $097e {
+    !error "Assertion failed: object_y_low + 2 == $097e"
+}
+!if (object_y_low + 3) != $097f {
+    !error "Assertion failed: object_y_low + 3 == $097f"
 }
 !if (objectid_player) != $00 {
     !error "Assertion failed: objectid_player == $00"

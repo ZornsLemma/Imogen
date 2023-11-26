@@ -112,6 +112,7 @@ ldx_ldy_jsr_play_sound_yx(0x43c2, "sound1")
 expr(0x4417, "objectid_player")
 label(0x4424, "return6")
 
+# TODO: replace "+ n" with "+ objectid_*" once objects have been named
 expr(0x3ca3, "object_spriteid_old + 3")
 expr(0x3cec, "object_spriteid + 4")
 expr(0x3d08, "object_spriteid + 3")
