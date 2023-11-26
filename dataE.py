@@ -79,6 +79,10 @@ ldx_ldy_jsr_play_sound_yx(0x4524, "sound2")
 ldx_ldy_jsr_play_sound_yx(0x452b, "sound3")
 label(0x45a0, "return5")
 
+label(0x3ce0, "room_2_update_handler")
+label(0x3e96, "room_3_update_handler")
+label(0x40cf, "room_0_update_handler")
+
 # TODO: replace "+ n" with "+ objectid_*" once objects have been named
 expr(0x3d27, "object_y_low + 4")
 expr(0x3d2a, "object_y_low + 5")

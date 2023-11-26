@@ -332,10 +332,10 @@ duck_not_captured_yet
 ; 
 ; *************************************************************************************
 level_specific_update
-    jsr sub_c40cf                                                     ; 3b34: 20 cf 40
+    jsr room_0_update_handler                                         ; 3b34: 20 cf 40
     jsr sub_c446a                                                     ; 3b37: 20 6a 44
-    jsr sub_c3ce0                                                     ; 3b3a: 20 e0 3c
-    jmp c3e96                                                         ; 3b3d: 4c 96 3e
+    jsr room_2_update_handler                                         ; 3b3a: 20 e0 3c
+    jmp room_3_update_handler                                         ; 3b3d: 4c 96 3e
 
 l3b40
     !byte $ce, $cf, $d0, $cf,   0,   0,   0,   0,   0,   0, $cd,   0  ; 3b40: ce cf d0...
@@ -508,7 +508,7 @@ room_2_check_right_exit
     ldy current_level                                                 ; 3cdb: a4 31
     jmp initialise_level_and_room                                     ; 3cdd: 4c 40 11
 
-sub_c3ce0
+room_2_update_handler
     lda #2                                                            ; 3ce0: a9 02
     sta currently_updating_logic_for_room_index                       ; 3ce2: 8d ba 1a
     lda #3                                                            ; 3ce5: a9 03
@@ -765,7 +765,7 @@ room_3_game_update_loop
     ldy current_level                                                 ; 3e91: a4 31
     jmp initialise_level_and_room                                     ; 3e93: 4c 40 11
 
-c3e96
+room_3_update_handler
     lda #3                                                            ; 3e96: a9 03
     sta currently_updating_logic_for_room_index                       ; 3e98: 8d ba 1a
     lda #3                                                            ; 3e9b: a9 03
@@ -945,7 +945,7 @@ l4099
     !byte   0, $d7, $fc,   0, $da, $fe,   2, $da, $fe,   4, $da,   0  ; 40bd: 00 d7 fc...
     !byte   6,   0, $da,   0,   8,   0                                ; 40c9: 06 00 da...
 
-sub_c40cf
+room_0_update_handler
     lda #0                                                            ; 40cf: a9 00
     sta currently_updating_logic_for_room_index                       ; 40d1: 8d ba 1a
     ldx #$25 ; '%'                                                    ; 40d4: a2 25
@@ -1677,7 +1677,6 @@ pydis_end
 ;     c3db7
 ;     c3dcf
 ;     c3dd6
-;     c3e96
 ;     c40e5
 ;     c412a
 ;     c4166
@@ -1750,8 +1749,6 @@ pydis_end
 ;     l45d7
 ;     loop_c414c
 ;     sub_c3c0b
-;     sub_c3ce0
-;     sub_c40cf
 ;     sub_c4231
 ;     sub_c431d
 ;     sub_c433b
