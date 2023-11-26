@@ -553,7 +553,7 @@ c3c22
     ldy #5                                                            ; 3c33: a0 05
     lda #1                                                            ; 3c35: a9 01
     sta temp_sprite_y_offset                                          ; 3c37: 85 3b
-    lda #3                                                            ; 3c39: a9 03
+    lda #objectid_axe                                                 ; 3c39: a9 03
     jsr set_object_position_from_cell_xy                              ; 3c3b: 20 5d 1f
     tax                                                               ; 3c3e: aa
     lda #spriteid_axe                                                 ; 3c3f: a9 c9
@@ -717,9 +717,9 @@ c3d6a
 c3d70
     tax                                                               ; 3d70: aa
     ldy #$0e                                                          ; 3d71: a0 0e
-    lda #4                                                            ; 3d73: a9 04
+    lda #objectid_sign_stand                                          ; 3d73: a9 04
     jsr set_object_position_from_cell_xy                              ; 3d75: 20 5d 1f
-    lda #5                                                            ; 3d78: a9 05
+    lda #objectid_sign                                                ; 3d78: a9 05
     jsr set_object_position_from_cell_xy                              ; 3d7a: 20 5d 1f
 return4
     rts                                                               ; 3d7d: 60
@@ -1033,7 +1033,7 @@ c3f1c
     ldy #7                                                            ; 3f24: a0 07
     lda #spriteid_broken_partition_base                               ; 3f26: a9 d4
     jsr draw_sprite_a_at_cell_xy                                      ; 3f28: 20 4c 1f
-    lda #4                                                            ; 3f2b: a9 04
+    lda #objectid_partition                                           ; 3f2b: a9 04
     jsr set_object_position_from_cell_xy                              ; 3f2d: 20 5d 1f
     tax                                                               ; 3f30: aa
     lda #spriteid_cache1                                              ; 3f31: a9 d0
@@ -1330,7 +1330,7 @@ c40f9
     ldy #$14                                                          ; 410a: a0 14
     lda #$fd                                                          ; 410c: a9 fd
     sta temp_sprite_y_offset                                          ; 410e: 85 3b
-    lda #3                                                            ; 4110: a9 03
+    lda #objectid_axe                                                 ; 4110: a9 03
     jsr set_object_position_from_cell_xy                              ; 4112: 20 5d 1f
     tax                                                               ; 4115: aa
     lda #spriteid_gun                                                 ; 4116: a9 cd
@@ -1873,11 +1873,23 @@ pydis_end
 !if (object_y_low + objectid_baby) != $0981 {
     !error "Assertion failed: object_y_low + objectid_baby == $0981"
 }
+!if (objectid_axe) != $03 {
+    !error "Assertion failed: objectid_axe == $03"
+}
 !if (objectid_old_player) != $0b {
     !error "Assertion failed: objectid_old_player == $0b"
 }
+!if (objectid_partition) != $04 {
+    !error "Assertion failed: objectid_partition == $04"
+}
 !if (objectid_player_accessory) != $01 {
     !error "Assertion failed: objectid_player_accessory == $01"
+}
+!if (objectid_sign) != $05 {
+    !error "Assertion failed: objectid_sign == $05"
+}
+!if (objectid_sign_stand) != $04 {
+    !error "Assertion failed: objectid_sign_stand == $04"
 }
 !if (room_0_data) != $3b2d {
     !error "Assertion failed: room_0_data == $3b2d"

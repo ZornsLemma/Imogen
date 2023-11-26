@@ -141,6 +141,11 @@ expr(0x431c, "object_x_low + objectid_baby")
 expr(0x4322, "object_y_low + objectid_baby")
 label(0x4366, "return8")
 
+expr(0x3c3a, "objectid_axe")
+expr(0x3d74, "objectid_sign_stand")
+expr(0x3d79, "objectid_sign")
+expr(0x3f2c, "objectid_partition")
+expr(0x4111, "objectid_axe")
 
 print("""; *************************************************************************************
 ;

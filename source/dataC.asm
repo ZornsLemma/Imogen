@@ -178,7 +178,7 @@ spriteid_table_burnt2                 = 213
 spriteid_table_burnt3                 = 214
 spriteid_torch_menu_item              = 203
 spriteid_torch_object                 = 202
-spriteid_torch_object2                = 221
+spriteid_torch_object2                = 223
 spriteid_wizard1                      = 48
 spriteid_wizard2                      = 49
 spriteid_wizard3                      = 50
@@ -1097,7 +1097,7 @@ sub_c3fe5
     sta toolbar_collectable_spriteids+1                               ; 3fec: 8d e9 2e
     lda #spriteid_torch_object                                        ; 3fef: a9 ca
     sta collectable_spriteids+1                                       ; 3ff1: 8d ee 2e
-    lda #$df                                                          ; 3ff4: a9 df
+    lda #spriteid_torch_object2                                       ; 3ff4: a9 df
     sta five_byte_table_paired_with_collectable_sprite_ids + 1        ; 3ff6: 8d f3 2e
 ; check for level change (branch if not)
     lda current_level                                                 ; 3ff9: a5 31
@@ -2263,4 +2263,7 @@ pydis_end
 }
 !if (spriteid_torch_object) != $ca {
     !error "Assertion failed: spriteid_torch_object == $ca"
+}
+!if (spriteid_torch_object2) != $df {
+    !error "Assertion failed: spriteid_torch_object2 == $df"
 }

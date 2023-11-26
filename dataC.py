@@ -25,7 +25,7 @@ sprite_dict = {
     0xda: "spriteid_parrot1",
     0xdb: "spriteid_parrot2",
     0xdc: "spriteid_parrot_squawk",
-    0xdd: "spriteid_torch_object2",
+    0xdf: "spriteid_torch_object2",
 }
 
 # Merge with common sprite dictionary
@@ -174,6 +174,7 @@ label(0x3fe4, "return3")
 comment(0x3fe5, "check for first update in room (branch if not)")
 expr(0x3feb, sprite_dict)
 expr(0x3ff0, sprite_dict)
+expr(0x3ff5, sprite_dict)
 comment(0x3ff9, "check for level change (branch if not)")
 label(0x4009, "update_room_1_torch")
 expr(0x400a, sprite_dict)
