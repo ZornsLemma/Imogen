@@ -147,19 +147,14 @@ room_exit_direction                                 = $70
 show_dialog_box                                     = $040a
 remove_dialog                                       = $0453
 object_x_low                                        = $0950
-l0955                                               = $0955
 object_x_low_old                                    = $095b
 object_x_high                                       = $0966
 object_x_high_old                                   = $0971
 object_y_low                                        = $097c
-l0981                                               = $0981
 object_y_low_old                                    = $0987
 object_y_high                                       = $0992
 object_y_high_old                                   = $099d
 object_spriteid                                     = $09a8
-l09ab                                               = $09ab
-l09ac                                               = $09ac
-l09ad                                               = $09ad
 object_spriteid_old                                 = $09b3
 object_direction                                    = $09be
 object_direction_old                                = $09c9
@@ -522,7 +517,7 @@ c3c4f
     lda #$ca                                                          ; 3c68: a9 ca
     jsr find_or_create_menu_slot_for_A                                ; 3c6a: 20 bd 2b
     lda #0                                                            ; 3c6d: a9 00
-    sta l09ab                                                         ; 3c6f: 8d ab 09
+    sta object_spriteid + 3                                           ; 3c6f: 8d ab 09
 return3
     rts                                                               ; 3c72: 60
 
@@ -570,7 +565,7 @@ c3caf
     lda #$c0                                                          ; 3cc0: a9 c0
     sta object_z_order,x                                              ; 3cc2: 9d c2 38
     lda #$d3                                                          ; 3cc5: a9 d3
-    sta l09ad                                                         ; 3cc7: 8d ad 09
+    sta object_spriteid + 5                                           ; 3cc7: 8d ad 09
 c3cca
     jmp c3d0b                                                         ; 3cca: 4c 0b 3d
 
@@ -1060,7 +1055,7 @@ c3fc2
     ldy #2                                                            ; 3fcd: a0 02
 c3fcf
     lda l3fd6,y                                                       ; 3fcf: b9 d6 3f
-    sta l09ac                                                         ; 3fd2: 8d ac 09
+    sta object_spriteid + 4                                           ; 3fd2: 8d ac 09
 return5
     rts                                                               ; 3fd5: 60
 
@@ -1295,7 +1290,7 @@ c4126
     lda #$cf                                                          ; 413a: a9 cf
     jsr find_or_create_menu_slot_for_A                                ; 413c: 20 bd 2b
     lda #0                                                            ; 413f: a9 00
-    sta l09ab                                                         ; 4141: 8d ab 09
+    sta object_spriteid + 3                                           ; 4141: 8d ab 09
     lda #$ff                                                          ; 4144: a9 ff
     sta l0a0f                                                         ; 4146: 8d 0f 0a
     jmp return7                                                       ; 4149: 4c 5b 41
@@ -1503,11 +1498,11 @@ c4309
     bne return8                                                       ; 430d: d0 57
     ldy level_workspace                                               ; 430f: ac 6f 0a
     lda l417e,y                                                       ; 4312: b9 7e 41
-    sta l09ad                                                         ; 4315: 8d ad 09
+    sta object_spriteid + 5                                           ; 4315: 8d ad 09
     lda l0a70                                                         ; 4318: ad 70 0a
-    sta l0955                                                         ; 431b: 8d 55 09
+    sta object_x_low + 5                                              ; 431b: 8d 55 09
     lda l0a71                                                         ; 431e: ad 71 0a
-    sta l0981                                                         ; 4321: 8d 81 09
+    sta object_y_low + 5                                              ; 4321: 8d 81 09
     lda #collision_map_solid_rock                                     ; 4324: a9 03
     sta value_to_write_to_collision_map                               ; 4326: 85 3e
     lda l0a12                                                         ; 4328: ad 12 0a
@@ -1681,11 +1676,6 @@ pydis_end
 ;     c42eb
 ;     c4309
 ;     c4352
-;     l0955
-;     l0981
-;     l09ab
-;     l09ac
-;     l09ad
 ;     l0a0e
 ;     l0a0f
 ;     l0a10
@@ -1768,6 +1758,21 @@ pydis_end
 }
 !if (level_specific_update) != $3b1d {
     !error "Assertion failed: level_specific_update == $3b1d"
+}
+!if (object_spriteid + 3) != $09ab {
+    !error "Assertion failed: object_spriteid + 3 == $09ab"
+}
+!if (object_spriteid + 4) != $09ac {
+    !error "Assertion failed: object_spriteid + 4 == $09ac"
+}
+!if (object_spriteid + 5) != $09ad {
+    !error "Assertion failed: object_spriteid + 5 == $09ad"
+}
+!if (object_x_low + 5) != $0955 {
+    !error "Assertion failed: object_x_low + 5 == $0955"
+}
+!if (object_y_low + 5) != $0981 {
+    !error "Assertion failed: object_y_low + 5 == $0981"
 }
 !if (objectid_old_player) != $0b {
     !error "Assertion failed: objectid_old_player == $0b"
