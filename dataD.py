@@ -4,7 +4,27 @@ config.set_label_references(False)
 config.set_hex_dump_show_ascii(False)
 
 sprite_dict = {
-#    0xc8: "spriteid_mouse",
+    0xc8: "spriteid_wood_block",
+    0xc9: "spriteid_axe",
+    0xca: "spriteid_axe_menu_item",
+    0xcb: "spriteid_gnu_head",
+    0xcc: "spriteid_rock",
+    0xcd: "spriteid_gun",
+    0xce: "spriteid_gun_held",
+    0xcf: "spriteid_menu_item",
+    0xd0: "spriteid_cache1",
+    0xd1: "spriteid_cache2",
+    0xd2: "spriteid_sign_stand",
+    0xd3: "spriteid_sign",
+    0xd4: "spriteid_broken_partition_base",
+    0xd5: "spriteid_partition",
+    0xd6: "spriteid_falling_partition",
+    0xd7: "spriteid_fallen_partition",
+    0xd8: "spriteid_baby_smile",
+    0xd9: "spriteid_baby_surprise",
+    0xda: "spriteid_baby_dead",
+    0xdb: "spriteid_baby_walk",
+    0xdc: "spriteid_baby_sit",
 }
 
 # Merge with common sprite dictionary

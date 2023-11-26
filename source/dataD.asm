@@ -36,7 +36,17 @@ sprite_op_flags_normal                = 0
 spriteid_197                          = 197
 spriteid_198                          = 198
 spriteid_199                          = 199
+spriteid_axe                          = 201
+spriteid_axe_menu_item                = 202
+spriteid_baby_dead                    = 218
+spriteid_baby_sit                     = 220
+spriteid_baby_smile                   = 216
+spriteid_baby_surprise                = 217
+spriteid_baby_walk                    = 219
 spriteid_brazier                      = 58
+spriteid_broken_partition_base        = 212
+spriteid_cache1                       = 208
+spriteid_cache2                       = 209
 spriteid_cat1                         = 27
 spriteid_cat2                         = 28
 spriteid_cat_jump                     = 26
@@ -64,6 +74,8 @@ spriteid_diamond2                     = 40
 spriteid_diamond3                     = 41
 spriteid_diamond4                     = 42
 spriteid_diamond5                     = 43
+spriteid_fallen_partition             = 215
+spriteid_falling_partition            = 214
 spriteid_fingertip_tile_restoration   = 30
 spriteid_fire1                        = 60
 spriteid_fire2                        = 61
@@ -73,6 +85,9 @@ spriteid_fire5                        = 64
 spriteid_fire6                        = 65
 spriteid_fire7                        = 66
 spriteid_fire8                        = 67
+spriteid_gnu_head                     = 203
+spriteid_gun                          = 205
+spriteid_gun_held                     = 206
 spriteid_icodata_box                  = 9
 spriteid_icodata_cat                  = 5
 spriteid_icodata_disc                 = 3
@@ -82,6 +97,7 @@ spriteid_icodata_password             = 8
 spriteid_icodata_sound                = 2
 spriteid_icodata_wizard               = 4
 spriteid_icon_background              = 1
+spriteid_menu_item                    = 207
 spriteid_menu_item_completion_spell   = 33
 spriteid_monkey1                      = 78
 spriteid_monkey2                      = 79
@@ -102,13 +118,17 @@ spriteid_monkey_transform1            = 68
 spriteid_monkey_transform2            = 69
 spriteid_one_pixel_masked_out         = 0
 spriteid_one_pixel_set                = 31
+spriteid_partition                    = 213
 spriteid_pointer_hand                 = 29
+spriteid_rock                         = 204
 spriteid_rope1                        = 85
 spriteid_rope2                        = 86
 spriteid_rope3                        = 87
 spriteid_rope4                        = 88
 spriteid_rope_end                     = 10
 spriteid_rope_hook                    = 11
+spriteid_sign                         = 211
+spriteid_sign_stand                   = 210
 spriteid_sparkles1                    = 34
 spriteid_sparkles2                    = 35
 spriteid_sparkles3                    = 36
@@ -124,6 +144,7 @@ spriteid_wizard_hand                  = 55
 spriteid_wizard_transform1            = 56
 spriteid_wizard_transform2            = 57
 spriteid_wizard_using_object          = 53
+spriteid_wood_block                   = 200
 
 ; Memory locations
 characters_entered                                  = $05
@@ -279,12 +300,12 @@ level_specific_initialisation
 c3b08
     lda l0a0f                                                         ; 3b08: ad 0f 0a
     beq c3b12                                                         ; 3b0b: f0 05
-    lda #$cf                                                          ; 3b0d: a9 cf
+    lda #spriteid_menu_item                                           ; 3b0d: a9 cf
     jsr find_or_create_menu_slot_for_A                                ; 3b0f: 20 bd 2b
 c3b12
     lda l0a0e                                                         ; 3b12: ad 0e 0a
     beq return1                                                       ; 3b15: f0 05
-    lda #$ca                                                          ; 3b17: a9 ca
+    lda #spriteid_axe_menu_item                                       ; 3b17: a9 ca
     jsr find_or_create_menu_slot_for_A                                ; 3b19: 20 bd 2b
 return1
     rts                                                               ; 3b1c: 60
@@ -416,28 +437,28 @@ room_0_code
     jsr copy_rectangle_of_memory_to_screen                            ; 3ba9: 20 bb 1a
 ; carve the floor, walls and ceiling into the rock
     jsr draw_floor_walls_and_ceiling_around_solid_rock                ; 3bac: 20 90 1b
-; draw sprite $c8 at (13,20) of size (3x2)
+; draw wood block at (13,20) of size (3x2)
     lda #3                                                            ; 3baf: a9 03
     sta width_in_cells                                                ; 3bb1: 85 3c
     lda #2                                                            ; 3bb3: a9 02
     sta height_in_cells                                               ; 3bb5: 85 3d
-    lda #$c8                                                          ; 3bb7: a9 c8
+    lda #spriteid_wood_block                                          ; 3bb7: a9 c8
     ldx #$0d                                                          ; 3bb9: a2 0d
     ldy #$14                                                          ; 3bbb: a0 14
     jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map           ; 3bbd: 20 57 1f
-; draw sprite $c8 at (10,20) of size (3x2)
+; draw wood block at (10,20) of size (3x2)
     ldx #$0a                                                          ; 3bc0: a2 0a
     jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map           ; 3bc2: 20 57 1f
-; draw sprite $c8 at (7,20) of size (3x2)
+; draw wood block at (7,20) of size (3x2)
     ldx #7                                                            ; 3bc5: a2 07
     jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map           ; 3bc7: 20 57 1f
-; draw sprite $c8 at (7,18) of size (3x2)
+; draw wood block at (7,18) of size (3x2)
     ldy #$12                                                          ; 3bca: a0 12
     jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map           ; 3bcc: 20 57 1f
-; draw sprite $c8 at (10,18) of size (3x2)
+; draw wood block at (10,18) of size (3x2)
     ldx #$0a                                                          ; 3bcf: a2 0a
     jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map           ; 3bd1: 20 57 1f
-; draw sprite $c8 at (7,16) of size (3x2)
+; draw wood block at (7,16) of size (3x2)
     ldx #7                                                            ; 3bd4: a2 07
     ldy #$10                                                          ; 3bd6: a0 10
     jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map           ; 3bd8: 20 57 1f
@@ -514,7 +535,7 @@ c3c4f
     beq return3                                                       ; 3c61: f0 0f
     lda #$ff                                                          ; 3c63: a9 ff
     sta l0a0e                                                         ; 3c65: 8d 0e 0a
-    lda #$ca                                                          ; 3c68: a9 ca
+    lda #spriteid_axe_menu_item                                       ; 3c68: a9 ca
     jsr find_or_create_menu_slot_for_A                                ; 3c6a: 20 bd 2b
     lda #0                                                            ; 3c6d: a9 00
     sta object_spriteid + 3                                           ; 3c6f: 8d ab 09
@@ -542,7 +563,7 @@ c3c82
     beq c3ca3                                                         ; 3c94: f0 0d
     bcs c3cca                                                         ; 3c96: b0 32
     ldx #$1e                                                          ; 3c98: a2 1e
-    lda #$cc                                                          ; 3c9a: a9 cc
+    lda #spriteid_rock                                                ; 3c9a: a9 cc
     jsr draw_sprite_a_at_cell_xy                                      ; 3c9c: 20 4c 1f
     dex                                                               ; 3c9f: ca
     jmp c3caf                                                         ; 3ca0: 4c af 3c
@@ -551,7 +572,7 @@ c3ca3
     ldx #9                                                            ; 3ca3: a2 09
     lda #4                                                            ; 3ca5: a9 04
     sta temp_sprite_x_offset                                          ; 3ca7: 85 3a
-    lda #$cc                                                          ; 3ca9: a9 cc
+    lda #spriteid_rock                                                ; 3ca9: a9 cc
     jsr draw_sprite_a_at_cell_xy                                      ; 3cab: 20 4c 1f
     inx                                                               ; 3cae: e8
 c3caf
@@ -760,14 +781,14 @@ room_1_code
     jsr copy_rectangle_of_memory_to_screen                            ; 3de7: 20 bb 1a
 ; carve the floor, walls and ceiling into the rock
     jsr draw_floor_walls_and_ceiling_around_solid_rock                ; 3dea: 20 90 1b
-; draw sprite $cb at (18,7) of size (4x1)
+; draw gnu head at (18,7) of size (4x1)
     lda #4                                                            ; 3ded: a9 04
     sta width_in_cells                                                ; 3def: 85 3c
     lda #1                                                            ; 3df1: a9 01
     sta height_in_cells                                               ; 3df3: 85 3d
     ldx #$12                                                          ; 3df5: a2 12
     ldy #7                                                            ; 3df7: a0 07
-    lda #$cb                                                          ; 3df9: a9 cb
+    lda #spriteid_gnu_head                                            ; 3df9: a9 cb
     jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map           ; 3dfb: 20 57 1f
     inx                                                               ; 3dfe: e8
     iny                                                               ; 3dff: c8
@@ -902,16 +923,16 @@ room_2_code
     jsr copy_rectangle_of_memory_to_screen                            ; 3ea4: 20 bb 1a
 ; carve the floor, walls and ceiling into the rock
     jsr draw_floor_walls_and_ceiling_around_solid_rock                ; 3ea7: 20 90 1b
-; draw sprite $c8 at (21,20) of size (3x2)
+; draw wood block at (21,20) of size (3x2)
     lda #3                                                            ; 3eaa: a9 03
     sta width_in_cells                                                ; 3eac: 85 3c
     lda #2                                                            ; 3eae: a9 02
     sta height_in_cells                                               ; 3eb0: 85 3d
     ldx #$15                                                          ; 3eb2: a2 15
     ldy #$14                                                          ; 3eb4: a0 14
-    lda #$c8                                                          ; 3eb6: a9 c8
+    lda #spriteid_wood_block                                          ; 3eb6: a9 c8
     jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map           ; 3eb8: 20 57 1f
-; draw sprite $c8 at (18,20) of size (3x2)
+; draw wood block at (18,20) of size (3x2)
     ldx #$12                                                          ; 3ebb: a2 12
     jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map           ; 3ebd: 20 57 1f
 ; draw rope at (14,9) length 11
@@ -968,7 +989,7 @@ c3f1c
     bne c3f63                                                         ; 3f20: d0 41
     ldx #$14                                                          ; 3f22: a2 14
     ldy #7                                                            ; 3f24: a0 07
-    lda #$d4                                                          ; 3f26: a9 d4
+    lda #spriteid_broken_partition_base                               ; 3f26: a9 d4
     jsr draw_sprite_a_at_cell_xy                                      ; 3f28: 20 4c 1f
     lda #4                                                            ; 3f2b: a9 04
     jsr set_object_position_from_cell_xy                              ; 3f2d: 20 5d 1f
@@ -1201,14 +1222,14 @@ room_3_code
     jsr copy_rectangle_of_memory_to_screen                            ; 408c: 20 bb 1a
 ; carve the floor, walls and ceiling into the rock
     jsr draw_floor_walls_and_ceiling_around_solid_rock                ; 408f: 20 90 1b
-; draw sprite $c8 at (28,20) of size (3x2)
+; draw wood block at (28,20) of size (3x2)
     lda #3                                                            ; 4092: a9 03
     sta width_in_cells                                                ; 4094: 85 3c
     lda #2                                                            ; 4096: a9 02
     sta height_in_cells                                               ; 4098: 85 3d
     ldx #$1c                                                          ; 409a: a2 1c
     ldy #$14                                                          ; 409c: a0 14
-    lda #$c8                                                          ; 409e: a9 c8
+    lda #spriteid_wood_block                                          ; 409e: a9 c8
     jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map           ; 40a0: 20 57 1f
 ; draw rope at (19,2) length 18
     ldx #$13                                                          ; 40a3: a2 13
@@ -1287,7 +1308,7 @@ c4126
     ldy #3                                                            ; 4133: a0 03
     jsr test_for_collision_between_objects_x_and_y                    ; 4135: 20 e2 28
     beq return7                                                       ; 4138: f0 21
-    lda #$cf                                                          ; 413a: a9 cf
+    lda #spriteid_menu_item                                           ; 413a: a9 cf
     jsr find_or_create_menu_slot_for_A                                ; 413c: 20 bd 2b
     lda #0                                                            ; 413f: a9 00
     sta object_spriteid + 3                                           ; 4141: 8d ab 09
@@ -1791,4 +1812,22 @@ pydis_end
 }
 !if (sprite_data - level_data) != $08ef {
     !error "Assertion failed: sprite_data - level_data == $08ef"
+}
+!if (spriteid_axe_menu_item) != $ca {
+    !error "Assertion failed: spriteid_axe_menu_item == $ca"
+}
+!if (spriteid_broken_partition_base) != $d4 {
+    !error "Assertion failed: spriteid_broken_partition_base == $d4"
+}
+!if (spriteid_gnu_head) != $cb {
+    !error "Assertion failed: spriteid_gnu_head == $cb"
+}
+!if (spriteid_menu_item) != $cf {
+    !error "Assertion failed: spriteid_menu_item == $cf"
+}
+!if (spriteid_rock) != $cc {
+    !error "Assertion failed: spriteid_rock == $cc"
+}
+!if (spriteid_wood_block) != $c8 {
+    !error "Assertion failed: spriteid_wood_block == $c8"
 }
