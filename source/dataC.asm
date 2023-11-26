@@ -27,6 +27,7 @@ object_collided_right_wall            = 4
 objectid_brazier                      = 2
 objectid_fire1                        = 6
 objectid_fire2                        = 7
+objectid_fire3                        = 8
 objectid_old_player                   = 11
 objectid_old_player_accessory         = 12
 objectid_parrot                       = 5
@@ -462,16 +463,16 @@ room_0_update_handler
     sta currently_updating_logic_for_room_index                       ; 3bb5: 8d ba 1a
     ldx #3                                                            ; 3bb8: a2 03
     ldy #$0a                                                          ; 3bba: a0 0a
-    lda #6                                                            ; 3bbc: a9 06
+    lda #objectid_fire1                                               ; 3bbc: a9 06
     jsr update_brazier_and_fire                                       ; 3bbe: 20 88 19
     ldx #$25 ; '%'                                                    ; 3bc1: a2 25
-    lda #7                                                            ; 3bc3: a9 07
+    lda #objectid_fire2                                               ; 3bc3: a9 07
     jsr update_brazier_and_fire                                       ; 3bc5: 20 88 19
     lda level_workspace                                               ; 3bc8: ad 6f 0a
     sta l3d76                                                         ; 3bcb: 8d 76 3d
     lda save_game_level_c_room_0_and_2_burning_rope_progress          ; 3bce: ad 0c 0a
     sta l3d75                                                         ; 3bd1: 8d 75 3d
-    ldx #8                                                            ; 3bd4: a2 08
+    ldx #objectid_fire3                                               ; 3bd4: a2 08
     ldy #0                                                            ; 3bd6: a0 00
     lda #$10                                                          ; 3bd8: a9 10
     jsr sub_c3bea                                                     ; 3bda: 20 ea 3b
@@ -1328,7 +1329,7 @@ room_2_update_handler
     sta currently_updating_logic_for_room_index                       ; 41a3: 8d ba 1a
     ldx #$25 ; '%'                                                    ; 41a6: a2 25
     ldy #7                                                            ; 41a8: a0 07
-    lda #6                                                            ; 41aa: a9 06
+    lda #objectid_fire1                                               ; 41aa: a9 06
     jsr update_brazier_and_fire                                       ; 41ac: 20 88 19
 ; check for first update in room (branch if not)
     lda update_room_first_update_flag                                 ; 41af: ad 2b 13
@@ -2107,6 +2108,9 @@ pydis_end
 }
 !if (objectid_fire2) != $07 {
     !error "Assertion failed: objectid_fire2 == $07"
+}
+!if (objectid_fire3) != $08 {
+    !error "Assertion failed: objectid_fire3 == $08"
 }
 !if (objectid_old_player) != $0b {
     !error "Assertion failed: objectid_old_player == $0b"
