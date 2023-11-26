@@ -196,6 +196,41 @@ label(0x4424, "return6")
 label(0x44f0, "room_3_update_handler")
 
 
+print("""; *************************************************************************************
+;
+; Level C: FIRE-WORKS
+;
+; Save game variables:
+;
+;     save_game_level_c_got_brazier ($0a0a):
+;               0: not got
+;             1-8: brazier lit (animation state)
+;             $ff: got
+;     save_game_level_c_burning_table_progress ($0a0b):
+;               0: not burnt
+;              1+: burn in progress
+;             $ff: got
+;     save_game_level_c_room_0_and_2_burning_rope_progress ($0a0c):
+;               0: not burnt
+;              1+: burn in progress
+;             $ff: got
+;     save_game_level_c_room_1_burning_rope_progress ($0a0d):
+;               0: not burnt
+;              1+: burn in progress
+;             $ff: got
+;
+; Solution:
+;
+;   1. Climb right hand rope up top the room above and exit to enter the right side room.
+;   2. Climb rope to get brazier object.
+;   3. Use the brazier to lit the table in the lower left corner.
+;   4. Go back down to the start room and light the left hand rope.
+;   5. Climb back up the right hand rope and at the top exit to the left room.
+;   6. From the top of the bottom left rock pile, climb the leftmost rope to the top.
+;   7. Fall to the bottom of the rope (ahead of the parrot) and quickly jump across the
+;      ropes to the spell.
+;
+; *************************************************************************************""")
 
 result = go(False)
 result = remove_sprite_data(result)

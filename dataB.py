@@ -300,7 +300,7 @@ sound(0x4500, "sound_unused")
 
 print("""; *************************************************************************************
 ;
-; Level B
+; Level B: TIME-FLIES
 ;
 ; Save game variables:
 ;
