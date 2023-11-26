@@ -4,9 +4,9 @@
 ;
 ; Save game variables:
 ;
-;     save_game_level_c_got_brazier ($0a0a):
+;     save_game_level_c_got_torch ($0a0a):
 ;               0: not got
-;             1-8: brazier lit (animation state)
+;             1-8: torch lit (animation state)
 ;             $ff: got
 ;     save_game_level_c_burning_table_progress ($0a0b):
 ;               0: not burnt
@@ -24,8 +24,8 @@
 ; Solution:
 ;
 ;   1. Climb right hand rope up top the room above and exit to enter the right side room.
-;   2. Climb rope to get brazier object.
-;   3. Use the brazier to lit the table in the lower left corner.
+;   2. Climb rope to get torch object.
+;   3. Use the torch to lit the table in the lower left corner.
 ;   4. Go back down to the start room and light the left hand rope.
 ;   5. Climb back up the right hand rope and at the top exit to the left room.
 ;   6. From the top of the bottom left rock pile, climb the leftmost rope to the top.
@@ -59,7 +59,6 @@ object_collided_ceiling               = 8
 object_collided_floor                 = 2
 object_collided_left_wall             = 1
 object_collided_right_wall            = 4
-objectid_brazier                      = 2
 objectid_fire1                        = 6
 objectid_fire2                        = 7
 objectid_fire3                        = 8
@@ -71,6 +70,7 @@ objectid_player_accessory             = 1
 objectid_rope_end                     = 3
 objectid_rope_fire                    = 4
 objectid_table                        = 5
+objectid_torch                        = 2
 opcode_jmp                            = 76
 sprite_op_flags_copy_mask             = 1
 sprite_op_flags_erase                 = 2
@@ -82,9 +82,6 @@ spriteid_199                          = 199
 spriteid_blob                         = 215
 spriteid_boulder                      = 200
 spriteid_brazier                      = 58
-spriteid_brazier_menu_item            = 203
-spriteid_brazier_object               = 202
-spriteid_brazier_object2              = 221
 spriteid_cache1                       = 204
 spriteid_cache2                       = 206
 spriteid_cache3                       = 207
@@ -179,6 +176,9 @@ spriteid_table                        = 201
 spriteid_table_burnt1                 = 212
 spriteid_table_burnt2                 = 213
 spriteid_table_burnt3                 = 214
+spriteid_torch_menu_item              = 203
+spriteid_torch_object                 = 202
+spriteid_torch_object2                = 221
 spriteid_wizard1                      = 48
 spriteid_wizard2                      = 49
 spriteid_wizard3                      = 50
@@ -226,7 +226,7 @@ object_spriteid_old                                 = $09b3
 object_direction                                    = $09be
 object_direction_old                                = $09c9
 level_progress_table                                = $09ef
-save_game_level_c_got_brazier                       = $0a0a
+save_game_level_c_got_torch                         = $0a0a
 save_game_level_c_burning_table_progress            = $0a0b
 save_game_level_c_room_0_and_2_burning_rope_progress = $0a0c
 save_game_level_c_room_1_burning_rope_progress      = $0a0d
@@ -344,13 +344,13 @@ level_specific_initialisation
     cmp level_before_latest_level_and_room_initialisation             ; 3af4: c5 51
     beq return1                                                       ; 3af6: f0 14
     lda developer_flags                                               ; 3af8: ad 03 11
-    bpl c3b02                                                         ; 3afb: 10 05
+    bpl developer_mode_inactive                                       ; 3afb: 10 05
     lda #$ff                                                          ; 3afd: a9 ff
-    sta save_game_level_c_got_brazier                                 ; 3aff: 8d 0a 0a
-c3b02
-    lda save_game_level_c_got_brazier                                 ; 3b02: ad 0a 0a
+    sta save_game_level_c_got_torch                                   ; 3aff: 8d 0a 0a
+developer_mode_inactive
+    lda save_game_level_c_got_torch                                   ; 3b02: ad 0a 0a
     beq return1                                                       ; 3b05: f0 05
-    lda #spriteid_brazier_menu_item                                   ; 3b07: a9 cb
+    lda #spriteid_torch_menu_item                                     ; 3b07: a9 cb
     jsr find_or_create_menu_slot_for_A                                ; 3b09: 20 bd 2b
 return1
     rts                                                               ; 3b0c: 60
@@ -1084,24 +1084,24 @@ return3
 sub_c3fe5
     lda update_room_first_update_flag                                 ; 3fe5: ad 2b 13
     beq c4035                                                         ; 3fe8: f0 4b
-    lda #spriteid_brazier_menu_item                                   ; 3fea: a9 cb
+    lda #spriteid_torch_menu_item                                     ; 3fea: a9 cb
     sta toolbar_collectable_spriteids+1                               ; 3fec: 8d e9 2e
-    lda #$ca                                                          ; 3fef: a9 ca
+    lda #spriteid_torch_object                                        ; 3fef: a9 ca
     sta collectable_spriteids+1                                       ; 3ff1: 8d ee 2e
     lda #$df                                                          ; 3ff4: a9 df
     sta five_byte_table_paired_with_collectable_sprite_ids + 1        ; 3ff6: 8d f3 2e
 ; check for level change (branch if not)
     lda current_level                                                 ; 3ff9: a5 31
     cmp level_before_latest_level_and_room_initialisation             ; 3ffb: c5 51
-    beq c4009                                                         ; 3ffd: f0 0a
-    lda save_game_level_c_got_brazier                                 ; 3fff: ad 0a 0a
-    beq c4009                                                         ; 4002: f0 05
+    beq update_room_1_torch                                           ; 3ffd: f0 0a
+    lda save_game_level_c_got_torch                                   ; 3fff: ad 0a 0a
+    beq update_room_1_torch                                           ; 4002: f0 05
     lda #$ff                                                          ; 4004: a9 ff
-    sta save_game_level_c_got_brazier                                 ; 4006: 8d 0a 0a
-c4009
-    lda #$cc                                                          ; 4009: a9 cc
+    sta save_game_level_c_got_torch                                   ; 4006: 8d 0a 0a
+update_room_1_torch
+    lda #spriteid_cache1                                              ; 4009: a9 cc
     sta l38ae                                                         ; 400b: 8d ae 38
-    lda save_game_level_c_got_brazier                                 ; 400e: ad 0a 0a
+    lda save_game_level_c_got_torch                                   ; 400e: ad 0a 0a
     bne c4053                                                         ; 4011: d0 40
     lda desired_room_index                                            ; 4013: a5 30
     cmp #1                                                            ; 4015: c9 01
@@ -1110,13 +1110,13 @@ c4009
     ldy #8                                                            ; 401b: a0 08
     lda #1                                                            ; 401d: a9 01
     sta temp_sprite_y_offset                                          ; 401f: 85 3b
-    lda #objectid_brazier                                             ; 4021: a9 02
+    lda #objectid_torch                                               ; 4021: a9 02
     jsr set_object_position_from_cell_xy                              ; 4023: 20 5d 1f
     tax                                                               ; 4026: aa
     lda #$c0                                                          ; 4027: a9 c0
     sta l38c4                                                         ; 4029: 8d c4 38
-    lda #spriteid_brazier_object                                      ; 402c: a9 ca
-    sta object_spriteid + objectid_brazier                            ; 402e: 8d aa 09
+    lda #spriteid_torch_object                                        ; 402c: a9 ca
+    sta object_spriteid + objectid_torch                              ; 402e: 8d aa 09
 return4
     rts                                                               ; 4031: 60
 
@@ -1124,7 +1124,7 @@ c4032
     jmp return5                                                       ; 4032: 4c d0 40
 
 c4035
-    lda save_game_level_c_got_brazier                                 ; 4035: ad 0a 0a
+    lda save_game_level_c_got_torch                                   ; 4035: ad 0a 0a
     bne c4053                                                         ; 4038: d0 19
     lda desired_room_index                                            ; 403a: a5 30
     cmp #1                                                            ; 403c: c9 01
@@ -1133,18 +1133,18 @@ c4035
     ldy #2                                                            ; 4042: a0 02
     jsr test_for_collision_between_objects_x_and_y                    ; 4044: 20 e2 28
     beq c4032                                                         ; 4047: f0 e9
-    lda #spriteid_brazier_menu_item                                   ; 4049: a9 cb
+    lda #spriteid_torch_menu_item                                     ; 4049: a9 cb
     jsr find_or_create_menu_slot_for_A                                ; 404b: 20 bd 2b
     lda #$ff                                                          ; 404e: a9 ff
-    sta save_game_level_c_got_brazier                                 ; 4050: 8d 0a 0a
+    sta save_game_level_c_got_torch                                   ; 4050: 8d 0a 0a
 c4053
-    ldy save_game_level_c_got_brazier                                 ; 4053: ac 0a 0a
+    ldy save_game_level_c_got_torch                                   ; 4053: ac 0a 0a
     beq c4032                                                         ; 4056: f0 da
 ; check for first update in room (branch if so)
     lda update_room_first_update_flag                                 ; 4058: ad 2b 13
     bne c4079                                                         ; 405b: d0 1c
     lda player_using_object_spriteid                                  ; 405d: ad b6 2e
-    cmp #spriteid_brazier_menu_item                                   ; 4060: c9 cb
+    cmp #spriteid_torch_menu_item                                     ; 4060: c9 cb
     beq c4068                                                         ; 4062: f0 04
     ldy #$ff                                                          ; 4064: a0 ff
     bne c4079                                                         ; 4066: d0 11
@@ -1160,9 +1160,9 @@ c4071
     bne c4079                                                         ; 4075: d0 02
     ldy #1                                                            ; 4077: a0 01
 c4079
-    sty save_game_level_c_got_brazier                                 ; 4079: 8c 0a 0a
+    sty save_game_level_c_got_torch                                   ; 4079: 8c 0a 0a
     lda #spriteid_one_pixel_masked_out                                ; 407c: a9 00
-    sta object_spriteid + objectid_brazier                            ; 407e: 8d aa 09
+    sta object_spriteid + objectid_torch                              ; 407e: 8d aa 09
     cpy #$ff                                                          ; 4081: c0 ff
     beq return5                                                       ; 4083: f0 4b
     ldx #2                                                            ; 4085: a2 02
@@ -1951,7 +1951,6 @@ sprite_data
 pydis_end
 
 ; Automatically generated labels:
-;     c3b02
 ;     c3bfb
 ;     c3c0b
 ;     c3c3d
@@ -1969,7 +1968,6 @@ pydis_end
 ;     c3f96
 ;     c3fd3
 ;     c3fdd
-;     c4009
 ;     c4032
 ;     c4035
 ;     c4053
@@ -2087,9 +2085,6 @@ pydis_end
 !if (object_direction + objectid_parrot) != $09c3 {
     !error "Assertion failed: object_direction + objectid_parrot == $09c3"
 }
-!if (object_spriteid + objectid_brazier) != $09aa {
-    !error "Assertion failed: object_spriteid + objectid_brazier == $09aa"
-}
 !if (object_spriteid + objectid_fire1) != $09ae {
     !error "Assertion failed: object_spriteid + objectid_fire1 == $09ae"
 }
@@ -2107,6 +2102,9 @@ pydis_end
 }
 !if (object_spriteid + objectid_table) != $09ad {
     !error "Assertion failed: object_spriteid + objectid_table == $09ad"
+}
+!if (object_spriteid + objectid_torch) != $09aa {
+    !error "Assertion failed: object_spriteid + objectid_torch == $09aa"
 }
 !if (object_spriteid_old + objectid_rope_end) != $09b6 {
     !error "Assertion failed: object_spriteid_old + objectid_rope_end == $09b6"
@@ -2135,9 +2133,6 @@ pydis_end
 !if (object_y_low + objectid_rope_fire) != $0980 {
     !error "Assertion failed: object_y_low + objectid_rope_fire == $0980"
 }
-!if (objectid_brazier) != $02 {
-    !error "Assertion failed: objectid_brazier == $02"
-}
 !if (objectid_fire1) != $06 {
     !error "Assertion failed: objectid_fire1 == $06"
 }
@@ -2161,6 +2156,9 @@ pydis_end
 }
 !if (objectid_table) != $05 {
     !error "Assertion failed: objectid_table == $05"
+}
+!if (objectid_torch) != $02 {
+    !error "Assertion failed: objectid_torch == $02"
 }
 !if (room_0_data) != $3b1d {
     !error "Assertion failed: room_0_data == $3b1d"
@@ -2186,11 +2184,8 @@ pydis_end
 !if (spriteid_boulder) != $c8 {
     !error "Assertion failed: spriteid_boulder == $c8"
 }
-!if (spriteid_brazier_menu_item) != $cb {
-    !error "Assertion failed: spriteid_brazier_menu_item == $cb"
-}
-!if (spriteid_brazier_object) != $ca {
-    !error "Assertion failed: spriteid_brazier_object == $ca"
+!if (spriteid_cache1) != $cc {
+    !error "Assertion failed: spriteid_cache1 == $cc"
 }
 !if (spriteid_cache2) != $ce {
     !error "Assertion failed: spriteid_cache2 == $ce"
@@ -2260,4 +2255,10 @@ pydis_end
 }
 !if (spriteid_table_burnt3) != $d6 {
     !error "Assertion failed: spriteid_table_burnt3 == $d6"
+}
+!if (spriteid_torch_menu_item) != $cb {
+    !error "Assertion failed: spriteid_torch_menu_item == $cb"
+}
+!if (spriteid_torch_object) != $ca {
+    !error "Assertion failed: spriteid_torch_object == $ca"
 }

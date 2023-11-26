@@ -6,8 +6,8 @@ config.set_hex_dump_show_ascii(False)
 sprite_dict = {
     0xc8: "spriteid_boulder",
     0xc9: "spriteid_table",
-    0xca: "spriteid_brazier_object",
-    0xcb: "spriteid_brazier_menu_item",
+    0xca: "spriteid_torch_object",
+    0xcb: "spriteid_torch_menu_item",
     0xcc: "spriteid_cache1",
     0xcd: "spriteid_fire",
     0xce: "spriteid_cache2",
@@ -25,13 +25,13 @@ sprite_dict = {
     0xda: "spriteid_parrot1",
     0xdb: "spriteid_parrot2",
     0xdc: "spriteid_parrot_squawk",
-    0xdd: "spriteid_brazier_object2",
+    0xdd: "spriteid_torch_object2",
 }
 
 # Merge with common sprite dictionary
 sprite_dict = {**common_sprite_dict, **sprite_dict}
 
-constant(2, "objectid_brazier")
+constant(2, "objectid_torch")
 constant(3, "objectid_rope_end")
 constant(4, "objectid_rope_fire")
 constant(5, "objectid_parrot")
@@ -63,11 +63,12 @@ s = SubstituteLabels(substitute_labels)
 set_label_maker_hook(s.substitute_label_maker)
 
 # save game variables
-label(0x0a0a, "save_game_level_c_got_brazier")                          # 0: not got,  1-8: lit (animation state), $ff: got
+label(0x0a0a, "save_game_level_c_got_torch")                            # 0: not got,  1-8: lit (animation state), $ff: got
 label(0x0a0b, "save_game_level_c_burning_table_progress")               # 0: not burnt: 1+: in progress, $ff: burnt
 label(0x0a0c, "save_game_level_c_room_0_and_2_burning_rope_progress")   # 0: not burnt,  1: in progress, $ff: burnt
 label(0x0a0d, "save_game_level_c_room_1_burning_rope_progress")         # 0: not burnt,  1: in progress, $ff: burnt
 
+label(0x3b02, "developer_mode_inactive")
 label(0x3b0c, "return1")
 label(0x3bb3, "room_0_update_handler")
 expr(0x3bbd, "objectid_fire1")
@@ -157,16 +158,19 @@ expr(0x3fc0, "object_spriteid + objectid_fire2")
 label(0x3fe4, "return3")
 comment(0x3fe5, "check for first update in room (branch if not)")
 expr(0x3feb, sprite_dict)
+expr(0x3ff0, sprite_dict)
 comment(0x3ff9, "check for level change (branch if not)")
-expr(0x4022, "objectid_brazier")
+label(0x4009, "update_room_1_torch")
+expr(0x400a, sprite_dict)
+expr(0x4022, "objectid_torch")
 expr(0x402d, sprite_dict)
-expr(0x402f, "object_spriteid + objectid_brazier")
+expr(0x402f, "object_spriteid + objectid_torch")
 label(0x4031, "return4")
 expr(0x4041, "objectid_old_player")
 comment(0x4058, "check for first update in room (branch if so)")
 expr(0x4061, sprite_dict)
 expr(0x407d, sprite_dict)
-expr(0x407f, "object_spriteid + objectid_brazier")
+expr(0x407f, "object_spriteid + objectid_torch")
 label(0x40d0, "return5")
 label(0x40d1, "fire_spriteid_table")
 spriteid(0x40d1, 0x40d1 + 12, True)
@@ -202,9 +206,9 @@ print("""; *********************************************************************
 ;
 ; Save game variables:
 ;
-;     save_game_level_c_got_brazier ($0a0a):
+;     save_game_level_c_got_torch ($0a0a):
 ;               0: not got
-;             1-8: brazier lit (animation state)
+;             1-8: torch lit (animation state)
 ;             $ff: got
 ;     save_game_level_c_burning_table_progress ($0a0b):
 ;               0: not burnt
@@ -222,8 +226,8 @@ print("""; *********************************************************************
 ; Solution:
 ;
 ;   1. Climb right hand rope up top the room above and exit to enter the right side room.
-;   2. Climb rope to get brazier object.
-;   3. Use the brazier to lit the table in the lower left corner.
+;   2. Climb rope to get torch object.
+;   3. Use the torch to lit the table in the lower left corner.
 ;   4. Go back down to the start room and light the left hand rope.
 ;   5. Climb back up the right hand rope and at the top exit to the left room.
 ;   6. From the top of the bottom left rock pile, climb the leftmost rope to the top.
