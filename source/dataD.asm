@@ -58,10 +58,14 @@ object_collided_ceiling               = 8
 object_collided_floor                 = 2
 object_collided_left_wall             = 1
 object_collided_right_wall            = 4
+objectid_baby                         = 5
 objectid_old_player                   = 11
 objectid_old_player_accessory         = 12
+objectid_partition                    = 4
 objectid_player                       = 0
 objectid_player_accessory             = 1
+objectid_sign                         = 5
+objectid_sign_stand                   = 4
 opcode_jmp                            = 76
 sprite_op_flags_copy_mask             = 1
 sprite_op_flags_erase                 = 2
@@ -360,7 +364,7 @@ level_specific_update
     jsr room_2_update_handler                                         ; 3b20: 20 e9 3e
     jsr room_3_update_handler                                         ; 3b23: 20 c2 40
     jsr sub_c3c73                                                     ; 3b26: 20 73 3c
-    jsr sub_c41ac                                                     ; 3b29: 20 ac 41
+    jsr update_baby                                                   ; 3b29: 20 ac 41
     rts                                                               ; 3b2c: 60
 
 ; *************************************************************************************
@@ -528,7 +532,7 @@ room_0_update_handler
     lda current_level                                                 ; 3c0f: a5 31
     cmp level_before_latest_level_and_room_initialisation             ; 3c11: c5 51
     beq c3c22                                                         ; 3c13: f0 0d
-    lda #$ca                                                          ; 3c15: a9 ca
+    lda #spriteid_axe_menu_item                                       ; 3c15: a9 ca
     sta toolbar_collectable_spriteids+2                               ; 3c17: 8d ea 2e
     lda #$c9                                                          ; 3c1a: a9 c9
     sta collectable_spriteids+2                                       ; 3c1c: 8d ef 2e
@@ -548,9 +552,9 @@ c3c22
     lda #3                                                            ; 3c39: a9 03
     jsr set_object_position_from_cell_xy                              ; 3c3b: 20 5d 1f
     tax                                                               ; 3c3e: aa
-    lda #$c9                                                          ; 3c3f: a9 c9
+    lda #spriteid_axe                                                 ; 3c3f: a9 c9
     sta object_spriteid,x                                             ; 3c41: 9d a8 09
-    lda #$d0                                                          ; 3c44: a9 d0
+    lda #spriteid_cache1                                              ; 3c44: a9 d0
     sta object_sprite_mask_type,x                                     ; 3c46: 9d ac 38
     lda #$c0                                                          ; 3c49: a9 c0
     sta object_z_order,x                                              ; 3c4b: 9d c2 38
@@ -571,7 +575,7 @@ c3c4f
     sta l0a0e                                                         ; 3c65: 8d 0e 0a
     lda #spriteid_axe_menu_item                                       ; 3c68: a9 ca
     jsr find_or_create_menu_slot_for_A                                ; 3c6a: 20 bd 2b
-    lda #0                                                            ; 3c6d: a9 00
+    lda #spriteid_one_pixel_masked_out                                ; 3c6d: a9 00
     sta object_spriteid + 3                                           ; 3c6f: 8d ab 09
 return3
     rts                                                               ; 3c72: 60
@@ -613,13 +617,13 @@ c3caf
     ldy #9                                                            ; 3caf: a0 09
     jsr write_a_single_value_to_cell_in_collision_map                 ; 3cb1: 20 bb 1e
     ldx #4                                                            ; 3cb4: a2 04
-    lda #$d2                                                          ; 3cb6: a9 d2
+    lda #spriteid_sign_stand                                          ; 3cb6: a9 d2
     sta object_spriteid,x                                             ; 3cb8: 9d a8 09
-    lda #$d1                                                          ; 3cbb: a9 d1
+    lda #spriteid_cache2                                              ; 3cbb: a9 d1
     sta object_sprite_mask_type,x                                     ; 3cbd: 9d ac 38
     lda #$c0                                                          ; 3cc0: a9 c0
     sta object_z_order,x                                              ; 3cc2: 9d c2 38
-    lda #$d3                                                          ; 3cc5: a9 d3
+    lda #spriteid_sign                                                ; 3cc5: a9 d3
     sta object_spriteid + 5                                           ; 3cc7: 8d ad 09
 c3cca
     jmp c3d0b                                                         ; 3cca: 4c 0b 3d
@@ -1028,7 +1032,7 @@ c3f1c
     lda #4                                                            ; 3f2b: a9 04
     jsr set_object_position_from_cell_xy                              ; 3f2d: 20 5d 1f
     tax                                                               ; 3f30: aa
-    lda #$d0                                                          ; 3f31: a9 d0
+    lda #spriteid_cache1                                              ; 3f31: a9 d0
     sta object_sprite_mask_type,x                                     ; 3f33: 9d ac 38
     lda #$c0                                                          ; 3f36: a9 c0
     sta object_z_order,x                                              ; 3f38: 9d c2 38
@@ -1063,7 +1067,7 @@ c3f66
     cmp #2                                                            ; 3f6f: c9 02
     bne c3fc2                                                         ; 3f71: d0 4f
     lda player_using_object_spriteid                                  ; 3f73: ad b6 2e
-    cmp #$ca                                                          ; 3f76: c9 ca
+    cmp #spriteid_axe_menu_item                                       ; 3f76: c9 ca
     bne c3fc2                                                         ; 3f78: d0 48
     lda #1                                                            ; 3f7a: a9 01
     sta temp_right_offset                                             ; 3f7c: 8d d1 24
@@ -1109,13 +1113,15 @@ c3fc2
     bpl c3fcf                                                         ; 3fcb: 10 02
     ldy #2                                                            ; 3fcd: a0 02
 c3fcf
-    lda l3fd6,y                                                       ; 3fcf: b9 d6 3f
+    lda partition_spriteid_table,y                                    ; 3fcf: b9 d6 3f
     sta object_spriteid + 4                                           ; 3fd2: 8d ac 09
 return5
     rts                                                               ; 3fd5: 60
 
-l3fd6
-    !byte $d5, $d6, $d7                                               ; 3fd6: d5 d6 d7
+partition_spriteid_table
+    !byte spriteid_partition                                          ; 3fd6: d5
+    !byte spriteid_falling_partition                                  ; 3fd7: d6
+    !byte spriteid_fallen_partition                                   ; 3fd8: d7
 
 sub_c3fd9
     lda #0                                                            ; 3fd9: a9 00
@@ -1292,7 +1298,7 @@ room_3_update_handler
 ; check for first update in room (branch if not)
     lda update_room_first_update_flag                                 ; 40d0: ad 2b 13
     beq c4126                                                         ; 40d3: f0 51
-    lda #$cf                                                          ; 40d5: a9 cf
+    lda #spriteid_menu_item                                           ; 40d5: a9 cf
     sta toolbar_collectable_spriteids+1                               ; 40d7: 8d e9 2e
     lda #$ce                                                          ; 40da: a9 ce
     sta collectable_spriteids+1                                       ; 40dc: 8d ee 2e
@@ -1323,9 +1329,9 @@ c40f9
     lda #3                                                            ; 4110: a9 03
     jsr set_object_position_from_cell_xy                              ; 4112: 20 5d 1f
     tax                                                               ; 4115: aa
-    lda #$cd                                                          ; 4116: a9 cd
+    lda #spriteid_gun                                                 ; 4116: a9 cd
     sta object_spriteid,x                                             ; 4118: 9d a8 09
-    lda #$d0                                                          ; 411b: a9 d0
+    lda #spriteid_cache1                                              ; 411b: a9 d0
     sta object_sprite_mask_type,x                                     ; 411d: 9d ac 38
     lda #$c0                                                          ; 4120: a9 c0
     sta object_z_order,x                                              ; 4122: 9d c2 38
@@ -1344,7 +1350,7 @@ c4126
     beq return7                                                       ; 4138: f0 21
     lda #spriteid_menu_item                                           ; 413a: a9 cf
     jsr find_or_create_menu_slot_for_A                                ; 413c: 20 bd 2b
-    lda #0                                                            ; 413f: a9 00
+    lda #spriteid_one_pixel_masked_out                                ; 413f: a9 00
     sta object_spriteid + 3                                           ; 4141: 8d ab 09
     lda #$ff                                                          ; 4144: a9 ff
     sta save_game_level_d_got_gun                                     ; 4146: 8d 0f 0a
@@ -1365,14 +1371,56 @@ l415c
 l416d
     !byte   0,   0,   0,   0,   0,   0, $fa, $fe,   2,   6,   8,   8  ; 416d: 00 00 00...
     !byte   8,   8,   8,   8,   8                                     ; 4179: 08 08 08...
-l417e
-    !byte $d8, $d8, $d8, $d8, $d8, $d8, $db, $db, $db, $db, $db, $db  ; 417e: d8 d8 d8...
-    !byte $db, $db, $db, $db, $db,   0, $dc,   0, $d8,   0, $db, $db  ; 418a: db db db...
-    !byte $db, $db, $db, $db, $db, $db, $db, $db,   0, $d9, $d9, $d9  ; 4196: db db db...
-    !byte $d9, $d9, $d9, $d9, $d9, $d9, $d9,   0, $da,   0            ; 41a2: d9 d9 d9...
+baby_spriteid_table
+    !byte spriteid_baby_smile                                         ; 417e: d8
+    !byte spriteid_baby_smile                                         ; 417f: d8
+    !byte spriteid_baby_smile                                         ; 4180: d8
+    !byte spriteid_baby_smile                                         ; 4181: d8
+    !byte spriteid_baby_smile                                         ; 4182: d8
+    !byte spriteid_baby_smile                                         ; 4183: d8
+    !byte spriteid_baby_walk                                          ; 4184: db
+    !byte spriteid_baby_walk                                          ; 4185: db
+    !byte spriteid_baby_walk                                          ; 4186: db
+    !byte spriteid_baby_walk                                          ; 4187: db
+    !byte spriteid_baby_walk                                          ; 4188: db
+    !byte spriteid_baby_walk                                          ; 4189: db
+    !byte spriteid_baby_walk                                          ; 418a: db
+    !byte spriteid_baby_walk                                          ; 418b: db
+    !byte spriteid_baby_walk                                          ; 418c: db
+    !byte spriteid_baby_walk                                          ; 418d: db
+    !byte spriteid_baby_walk                                          ; 418e: db
+    !byte 0                                                           ; 418f: 00
+    !byte spriteid_baby_sit                                           ; 4190: dc
+    !byte 0                                                           ; 4191: 00
+    !byte spriteid_baby_smile                                         ; 4192: d8
+    !byte 0                                                           ; 4193: 00
+    !byte spriteid_baby_walk                                          ; 4194: db
+    !byte spriteid_baby_walk                                          ; 4195: db
+    !byte spriteid_baby_walk                                          ; 4196: db
+    !byte spriteid_baby_walk                                          ; 4197: db
+    !byte spriteid_baby_walk                                          ; 4198: db
+    !byte spriteid_baby_walk                                          ; 4199: db
+    !byte spriteid_baby_walk                                          ; 419a: db
+    !byte spriteid_baby_walk                                          ; 419b: db
+    !byte spriteid_baby_walk                                          ; 419c: db
+    !byte spriteid_baby_walk                                          ; 419d: db
+    !byte 0                                                           ; 419e: 00
+    !byte spriteid_baby_surprise                                      ; 419f: d9
+    !byte spriteid_baby_surprise                                      ; 41a0: d9
+    !byte spriteid_baby_surprise                                      ; 41a1: d9
+    !byte spriteid_baby_surprise                                      ; 41a2: d9
+    !byte spriteid_baby_surprise                                      ; 41a3: d9
+    !byte spriteid_baby_surprise                                      ; 41a4: d9
+    !byte spriteid_baby_surprise                                      ; 41a5: d9
+    !byte spriteid_baby_surprise                                      ; 41a6: d9
+    !byte spriteid_baby_surprise                                      ; 41a7: d9
+    !byte spriteid_baby_surprise                                      ; 41a8: d9
+    !byte 0                                                           ; 41a9: 00
+    !byte spriteid_baby_dead                                          ; 41aa: da
+    !byte 0                                                           ; 41ab: 00
 
 ; check for first update in room (branch if not)
-sub_c41ac
+update_baby
     lda update_room_first_update_flag                                 ; 41ac: ad 2b 13
     beq c420d                                                         ; 41af: f0 5c
 ; check for level change (branch if not)
@@ -1412,7 +1460,7 @@ c41ed
     lda #0                                                            ; 41f5: a9 00
     sta object_x_high,x                                               ; 41f7: 9d 66 09
     sta object_y_high,x                                               ; 41fa: 9d 92 09
-    lda #$d1                                                          ; 41fd: a9 d1
+    lda #spriteid_cache2                                              ; 41fd: a9 d1
     sta object_sprite_mask_type,x                                     ; 41ff: 9d ac 38
     lda #$c0                                                          ; 4202: a9 c0
     sta object_z_order,x                                              ; 4204: 9d c2 38
@@ -1427,7 +1475,7 @@ c420d
     clc                                                               ; 4210: 18
     adc #1                                                            ; 4211: 69 01
     tay                                                               ; 4213: a8
-    lda l417e,y                                                       ; 4214: b9 7e 41
+    lda baby_spriteid_table,y                                         ; 4214: b9 7e 41
     bne c421c                                                         ; 4217: d0 03
     ldy save_game_level_d_baby_progress                               ; 4219: ac 12 0a
 c421c
@@ -1552,7 +1600,7 @@ c4309
     cmp #3                                                            ; 430b: c9 03
     bne return8                                                       ; 430d: d0 57
     ldy level_workspace                                               ; 430f: ac 6f 0a
-    lda l417e,y                                                       ; 4312: b9 7e 41
+    lda baby_spriteid_table,y                                         ; 4312: b9 7e 41
     sta object_spriteid + 5                                           ; 4315: 8d ad 09
     lda l0a70                                                         ; 4318: ad 70 0a
     sta object_x_low + 5                                              ; 431b: 8d 55 09
@@ -1735,15 +1783,12 @@ pydis_end
 ;     l0a70
 ;     l0a71
 ;     l2ef4
-;     l3fd6
 ;     l415c
 ;     l416d
-;     l417e
 ;     l4367
 ;     sub_c3c73
 ;     sub_c3fd9
 ;     sub_c3fea
-;     sub_c41ac
 !if (<envelope1) != $86 {
     !error "Assertion failed: <envelope1 == $86"
 }
@@ -1843,20 +1888,65 @@ pydis_end
 !if (sprite_data - level_data) != $08ef {
     !error "Assertion failed: sprite_data - level_data == $08ef"
 }
+!if (spriteid_axe) != $c9 {
+    !error "Assertion failed: spriteid_axe == $c9"
+}
 !if (spriteid_axe_menu_item) != $ca {
     !error "Assertion failed: spriteid_axe_menu_item == $ca"
+}
+!if (spriteid_baby_dead) != $da {
+    !error "Assertion failed: spriteid_baby_dead == $da"
+}
+!if (spriteid_baby_sit) != $dc {
+    !error "Assertion failed: spriteid_baby_sit == $dc"
+}
+!if (spriteid_baby_smile) != $d8 {
+    !error "Assertion failed: spriteid_baby_smile == $d8"
+}
+!if (spriteid_baby_surprise) != $d9 {
+    !error "Assertion failed: spriteid_baby_surprise == $d9"
+}
+!if (spriteid_baby_walk) != $db {
+    !error "Assertion failed: spriteid_baby_walk == $db"
 }
 !if (spriteid_broken_partition_base) != $d4 {
     !error "Assertion failed: spriteid_broken_partition_base == $d4"
 }
+!if (spriteid_cache1) != $d0 {
+    !error "Assertion failed: spriteid_cache1 == $d0"
+}
+!if (spriteid_cache2) != $d1 {
+    !error "Assertion failed: spriteid_cache2 == $d1"
+}
+!if (spriteid_fallen_partition) != $d7 {
+    !error "Assertion failed: spriteid_fallen_partition == $d7"
+}
+!if (spriteid_falling_partition) != $d6 {
+    !error "Assertion failed: spriteid_falling_partition == $d6"
+}
 !if (spriteid_gnu_head) != $cb {
     !error "Assertion failed: spriteid_gnu_head == $cb"
+}
+!if (spriteid_gun) != $cd {
+    !error "Assertion failed: spriteid_gun == $cd"
 }
 !if (spriteid_menu_item) != $cf {
     !error "Assertion failed: spriteid_menu_item == $cf"
 }
+!if (spriteid_one_pixel_masked_out) != $00 {
+    !error "Assertion failed: spriteid_one_pixel_masked_out == $00"
+}
+!if (spriteid_partition) != $d5 {
+    !error "Assertion failed: spriteid_partition == $d5"
+}
 !if (spriteid_rock) != $cc {
     !error "Assertion failed: spriteid_rock == $cc"
+}
+!if (spriteid_sign) != $d3 {
+    !error "Assertion failed: spriteid_sign == $d3"
+}
+!if (spriteid_sign_stand) != $d2 {
+    !error "Assertion failed: spriteid_sign_stand == $d2"
 }
 !if (spriteid_wood_block) != $c8 {
     !error "Assertion failed: spriteid_wood_block == $c8"

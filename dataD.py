@@ -31,7 +31,14 @@ sprite_dict = {
 sprite_dict = {**common_sprite_dict, **sprite_dict}
 
 # Room 0
-#constant(2, "objectid_left_mouse")
+constant(4, "objectid_sign_stand")
+constant(5, "objectid_sign")
+
+# Room 2
+constant(4, "objectid_partition")
+
+# Room 3
+constant(5, "objectid_baby")
 
 set_sprite_dict(sprite_dict)
 
@@ -95,6 +102,12 @@ label(0x4366, "return8")
 label(0x3bfc, "room_0_update_handler")
 label(0x3ee9, "room_2_update_handler")
 label(0x40c2, "room_3_update_handler")
+label(0x41ac, "update_baby")
+
+label(0x3fd6, "partition_spriteid_table")
+spriteid(0x3fd6, 0x3fd6+3)
+label(0x417e, "baby_spriteid_table")
+spriteid(0x417e, 0x41ac, True)
 
 # TODO: replace "+ n" with "+ objectid_*" once objects have been named
 expr(0x3c70, "object_spriteid + 3")
@@ -105,31 +118,30 @@ expr(0x4316, "object_spriteid + 5")
 expr(0x431c, "object_x_low + 5")
 expr(0x4322, "object_y_low + 5")
 
-# TODO: uncomment once sprite_dict has been populated
-#expr(0x3b0e, sprite_dict)
-#expr(0x3b18, sprite_dict)
-#expr(0x3c16, sprite_dict)
-#expr(0x3c40, sprite_dict)
-#expr(0x3c45, sprite_dict)
-#expr(0x3c69, sprite_dict)
-#expr(0x3c6e, sprite_dict)
-#expr(0x3c9b, sprite_dict)
-#expr(0x3cb7, sprite_dict)
-#expr(0x3cbc, sprite_dict)
-#expr(0x3cc6, sprite_dict)
-#expr(0x3caa, sprite_dict)
-#expr(0x3dfa, sprite_dict)
-#expr(0x3eb7, sprite_dict)
-#expr(0x3f27, sprite_dict)
-#expr(0x3f32, sprite_dict)
-#expr(0x3f77, sprite_dict)
-#expr(0x409f, sprite_dict)
-#expr(0x40d6, sprite_dict)
-#expr(0x4117, sprite_dict)
-#expr(0x411c, sprite_dict)
-#expr(0x413b, sprite_dict)
-#expr(0x4140, sprite_dict)
-#expr(0x41fe, sprite_dict)
+expr(0x3b0e, sprite_dict)
+expr(0x3b18, sprite_dict)
+expr(0x3c16, sprite_dict)
+expr(0x3c40, sprite_dict)
+expr(0x3c45, sprite_dict)
+expr(0x3c69, sprite_dict)
+expr(0x3c6e, sprite_dict)
+expr(0x3c9b, sprite_dict)
+expr(0x3cb7, sprite_dict)
+expr(0x3cbc, sprite_dict)
+expr(0x3cc6, sprite_dict)
+expr(0x3caa, sprite_dict)
+expr(0x3dfa, sprite_dict)
+expr(0x3eb7, sprite_dict)
+expr(0x3f27, sprite_dict)
+expr(0x3f32, sprite_dict)
+expr(0x3f77, sprite_dict)
+expr(0x409f, sprite_dict)
+expr(0x40d6, sprite_dict)
+expr(0x4117, sprite_dict)
+expr(0x411c, sprite_dict)
+expr(0x413b, sprite_dict)
+expr(0x4140, sprite_dict)
+expr(0x41fe, sprite_dict)
 
 
 print("""; *************************************************************************************
