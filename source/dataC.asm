@@ -23,9 +23,9 @@
 ;
 ; Solution:
 ;
-;   1. Climb right hand rope up top the room above and exit to enter the right side room.
-;   2. Climb rope to get torch object.
-;   3. Use the torch to lit the table in the lower left corner.
+;   1. Climb the right hand rope up to the room above and enter the right side room.
+;   2. Climb rope to get the torch object.
+;   3. Use the torch to light the table in the lower left corner.
 ;   4. Go back down to the start room and light the left hand rope.
 ;   5. Climb back up the right hand rope and at the top exit to the left room.
 ;   6. From the top of the bottom left rock pile, climb the leftmost rope to the top.

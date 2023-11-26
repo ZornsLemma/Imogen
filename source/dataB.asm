@@ -32,11 +32,11 @@
 ;   3. Jump left into room 1 from the fallen boulder, and go to the far left edge
 ;   4. Jump into the pendulum to set it ticking for a short time
 ;   5. As the cat, jump back to the right of the room, up onto the ledge and as the monkey jump
-;      into the cuckoo before the clock stops. Timing is tight here.
-;   6. Take the cuckoo to the clock in room 2 and us it on top of the clock to fix the clock.
+;      onto the rope and into the cuckoo before the clock stops. Timing is tight here.
+;   6. Take the cuckoo to the clock in room 2 and use it on top of the clock to fix the clock.
 ;   7. Set the clock ticking by jumping into the pendulum.
-;           (The cuckoo is thrown into room 3, the boulder falls)
-;   8. Jump into room 3 from the fallen boulder
+;           (The cuckoo is thrown into room 3, and the suspended boulder falls)
+;   8. Jump to the right into room 3 from the fallen boulder
 ;   9. Climb the rope over to the right side of the room and jump into the spell collectable.
 ;
 ; *************************************************************************************
