@@ -494,10 +494,12 @@ sub_c3bea
     sta l3d79                                                         ; 3bea: 8d 79 3d
     stx l3d77                                                         ; 3bed: 8e 77 3d
     sty l3d78                                                         ; 3bf0: 8c 78 3d
+; check for first update in room (branch if so)
     lda update_room_first_update_flag                                 ; 3bf3: ad 2b 13
     bne c3bfb                                                         ; 3bf6: d0 03
     jmp c3c89                                                         ; 3bf8: 4c 89 3c
 
+; check for level change (branch if not)
 c3bfb
     lda current_level                                                 ; 3bfb: a5 31
     cmp level_before_latest_level_and_room_initialisation             ; 3bfd: c5 51
@@ -511,7 +513,7 @@ c3c0b
     cmp currently_updating_logic_for_room_index                       ; 3c0d: cd ba 1a
     bne c3c83                                                         ; 3c10: d0 71
     ldx #4                                                            ; 3c12: a2 04
-    lda #$d9                                                          ; 3c14: a9 d9
+    lda #spriteid_cache9                                              ; 3c14: a9 d9
     sta object_sprite_mask_type,x                                     ; 3c16: 9d ac 38
     lda #$e0                                                          ; 3c19: a9 e0
     sta object_z_order,x                                              ; 3c1b: 9d c2 38
@@ -565,7 +567,7 @@ c3c6b
     lda #3                                                            ; 3c78: a9 03
     jsr set_object_position_from_cell_xy                              ; 3c7a: 20 5d 1f
     tax                                                               ; 3c7d: aa
-    lda #$0a                                                          ; 3c7e: a9 0a
+    lda #spriteid_rope_end                                            ; 3c7e: a9 0a
     sta object_spriteid,x                                             ; 3c80: 9d a8 09
 c3c83
     jmp c3d26                                                         ; 3c83: 4c 26 3d
@@ -866,8 +868,10 @@ sub_c3e45
     sta l0a70                                                         ; 3e6b: 8d 70 0a
     lda l3d75                                                         ; 3e6e: ad 75 3d
     sta l0a0d                                                         ; 3e71: 8d 0d 0a
+; check for first update in room (branch if not)
     lda update_room_first_update_flag                                 ; 3e74: ad 2b 13
     beq c3ede                                                         ; 3e77: f0 65
+; check for level change (branch if not)
     lda current_level                                                 ; 3e79: a5 31
     cmp level_before_latest_level_and_room_initialisation             ; 3e7b: c5 51
     beq c3e89                                                         ; 3e7d: f0 0a
@@ -884,7 +888,7 @@ c3e89
     lda #5                                                            ; 3e93: a9 05
     jsr set_object_position_from_cell_xy                              ; 3e95: 20 5d 1f
     tax                                                               ; 3e98: aa
-    lda #$d1                                                          ; 3e99: a9 d1
+    lda #spriteid_cache6                                              ; 3e99: a9 d1
     sta object_sprite_mask_type,x                                     ; 3e9b: 9d ac 38
     lda #$c0                                                          ; 3e9e: a9 c0
     sta object_z_order,x                                              ; 3ea0: 9d c2 38
@@ -897,7 +901,7 @@ c3e89
     tax                                                               ; 3eb0: aa
     lda #$ff                                                          ; 3eb1: a9 ff
     sta object_direction,x                                            ; 3eb3: 9d be 09
-    lda #$d2                                                          ; 3eb6: a9 d2
+    lda #spriteid_cache7                                              ; 3eb6: a9 d2
     sta object_sprite_mask_type,x                                     ; 3eb8: 9d ac 38
     lda #$a0                                                          ; 3ebb: a9 a0
     sta object_z_order,x                                              ; 3ebd: 9d c2 38
@@ -908,7 +912,7 @@ c3e89
     lda #7                                                            ; 3ec8: a9 07
     jsr set_object_position_from_cell_xy                              ; 3eca: 20 5d 1f
     tax                                                               ; 3ecd: aa
-    lda #$d3                                                          ; 3ece: a9 d3
+    lda #spriteid_cache8                                              ; 3ece: a9 d3
     sta object_sprite_mask_type,x                                     ; 3ed0: 9d ac 38
     lda #$a0                                                          ; 3ed3: a9 a0
     sta object_z_order,x                                              ; 3ed5: 9d c2 38
@@ -1049,15 +1053,17 @@ c3fdd
 return3
     rts                                                               ; 3fe4: 60
 
+; check for first update in room (branch if not)
 sub_c3fe5
     lda update_room_first_update_flag                                 ; 3fe5: ad 2b 13
     beq c4035                                                         ; 3fe8: f0 4b
-    lda #$cb                                                          ; 3fea: a9 cb
+    lda #spriteid_brazier_menu_item                                   ; 3fea: a9 cb
     sta toolbar_collectable_spriteids+1                               ; 3fec: 8d e9 2e
     lda #$ca                                                          ; 3fef: a9 ca
     sta collectable_spriteids+1                                       ; 3ff1: 8d ee 2e
     lda #$df                                                          ; 3ff4: a9 df
     sta five_byte_table_paired_with_collectable_sprite_ids + 1        ; 3ff6: 8d f3 2e
+; check for level change (branch if not)
     lda current_level                                                 ; 3ff9: a5 31
     cmp level_before_latest_level_and_room_initialisation             ; 3ffb: c5 51
     beq c4009                                                         ; 3ffd: f0 0a
@@ -1096,7 +1102,7 @@ c4035
     lda desired_room_index                                            ; 403a: a5 30
     cmp #1                                                            ; 403c: c9 01
     bne c4032                                                         ; 403e: d0 f2
-    ldx #$0b                                                          ; 4040: a2 0b
+    ldx #objectid_old_player                                          ; 4040: a2 0b
     ldy #2                                                            ; 4042: a0 02
     jsr test_for_collision_between_objects_x_and_y                    ; 4044: 20 e2 28
     beq c4032                                                         ; 4047: f0 e9
@@ -1107,10 +1113,11 @@ c4035
 c4053
     ldy l0a0a                                                         ; 4053: ac 0a 0a
     beq c4032                                                         ; 4056: f0 da
+; check for first update in room (branch if so)
     lda update_room_first_update_flag                                 ; 4058: ad 2b 13
     bne c4079                                                         ; 405b: d0 1c
     lda player_using_object_spriteid                                  ; 405d: ad b6 2e
-    cmp #$cb                                                          ; 4060: c9 cb
+    cmp #spriteid_brazier_menu_item                                   ; 4060: c9 cb
     beq c4068                                                         ; 4062: f0 04
     ldy #$ff                                                          ; 4064: a0 ff
     bne c4079                                                         ; 4066: d0 11
@@ -1332,6 +1339,7 @@ sub_c41a1
     ldy #7                                                            ; 41a8: a0 07
     lda #6                                                            ; 41aa: a9 06
     jsr update_brazier_and_fire                                       ; 41ac: 20 88 19
+; check for first update in room (branch if not)
     lda update_room_first_update_flag                                 ; 41af: ad 2b 13
     beq c41d5                                                         ; 41b2: f0 21
     lda desired_room_index                                            ; 41b4: a5 30
@@ -1405,9 +1413,11 @@ sub_c422d
     beq c4242                                                         ; 423b: f0 05
     lda l0a0c                                                         ; 423d: ad 0c 0a
     bmi c428d                                                         ; 4240: 30 4b
+; check for first update in room (branch if not)
 c4242
     lda update_room_first_update_flag                                 ; 4242: ad 2b 13
     beq c4290                                                         ; 4245: f0 49
+; check for level change (branch if not)
     lda current_level                                                 ; 4247: a5 31
     cmp level_before_latest_level_and_room_initialisation             ; 4249: c5 51
     beq c4278                                                         ; 424b: f0 2b
@@ -1434,7 +1444,7 @@ c4278
     cmp #1                                                            ; 427a: c9 01
     beq c428a                                                         ; 427c: f0 0c
     ldx #5                                                            ; 427e: a2 05
-    lda #$d1                                                          ; 4280: a9 d1
+    lda #spriteid_cache6                                              ; 4280: a9 d1
     sta object_sprite_mask_type,x                                     ; 4282: 9d ac 38
     lda #$f0                                                          ; 4285: a9 f0
     sta object_z_order,x                                              ; 4287: 9d c2 38
@@ -1638,7 +1648,7 @@ c43ec
     sta l09ad                                                         ; 440e: 8d ad 09
     lda update_room_first_update_flag                                 ; 4411: ad 2b 13
     bne return6                                                       ; 4414: d0 0e
-    ldx #0                                                            ; 4416: a2 00
+    ldx #objectid_player                                              ; 4416: a2 00
     ldy #5                                                            ; 4418: a0 05
     jsr test_for_collision_between_objects_x_and_y                    ; 441a: 20 e2 28
     beq return6                                                       ; 441d: f0 05
@@ -2079,6 +2089,12 @@ pydis_end
 !if (level_specific_update) != $3b0d {
     !error "Assertion failed: level_specific_update == $3b0d"
 }
+!if (objectid_old_player) != $0b {
+    !error "Assertion failed: objectid_old_player == $0b"
+}
+!if (objectid_player) != $00 {
+    !error "Assertion failed: objectid_player == $00"
+}
 !if (room_0_data) != $3b1d {
     !error "Assertion failed: room_0_data == $3b1d"
 }
@@ -2105,6 +2121,18 @@ pydis_end
 }
 !if (spriteid_cache3) != $ce {
     !error "Assertion failed: spriteid_cache3 == $ce"
+}
+!if (spriteid_cache6) != $d1 {
+    !error "Assertion failed: spriteid_cache6 == $d1"
+}
+!if (spriteid_cache7) != $d2 {
+    !error "Assertion failed: spriteid_cache7 == $d2"
+}
+!if (spriteid_cache8) != $d3 {
+    !error "Assertion failed: spriteid_cache8 == $d3"
+}
+!if (spriteid_cache9) != $d9 {
+    !error "Assertion failed: spriteid_cache9 == $d9"
 }
 !if (spriteid_empty_hook) != $d8 {
     !error "Assertion failed: spriteid_empty_hook == $d8"
