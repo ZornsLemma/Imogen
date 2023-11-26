@@ -4,6 +4,9 @@
 ;
 ; Save game variables:
 ;
+;     save_game_level_d_got_axe ($0a03):
+;               0: not got
+;             $ff: got
 ;     save_game_level_d_got_gun ($0a0f):
 ;               0: not got
 ;             $ff: got
@@ -58,6 +61,7 @@ object_collided_ceiling               = 8
 object_collided_floor                 = 2
 object_collided_left_wall             = 1
 object_collided_right_wall            = 4
+objectid_axe                          = 3
 objectid_baby                         = 5
 objectid_old_player                   = 11
 objectid_old_player_accessory         = 12
@@ -218,7 +222,7 @@ object_spriteid_old                                 = $09b3
 object_direction                                    = $09be
 object_direction_old                                = $09c9
 level_progress_table                                = $09ef
-l0a0e                                               = $0a0e
+save_game_level_d_got_axe                           = $0a0e
 save_game_level_d_got_gun                           = $0a0f
 save_game_level_d_gnu_sign_position                 = $0a10
 save_game_level_d_partition_progress                = $0a11
@@ -334,14 +338,14 @@ level_specific_initialisation
     lda #$ff                                                          ; 3afe: a9 ff
     sta save_game_level_d_got_gun                                     ; 3b00: 8d 0f 0a
     lda #$ff                                                          ; 3b03: a9 ff
-    sta l0a0e                                                         ; 3b05: 8d 0e 0a
+    sta save_game_level_d_got_axe                                     ; 3b05: 8d 0e 0a
 c3b08
     lda save_game_level_d_got_gun                                     ; 3b08: ad 0f 0a
     beq c3b12                                                         ; 3b0b: f0 05
     lda #spriteid_menu_item                                           ; 3b0d: a9 cf
     jsr find_or_create_menu_slot_for_A                                ; 3b0f: 20 bd 2b
 c3b12
-    lda l0a0e                                                         ; 3b12: ad 0e 0a
+    lda save_game_level_d_got_axe                                     ; 3b12: ad 0e 0a
     beq return1                                                       ; 3b15: f0 05
     lda #spriteid_axe_menu_item                                       ; 3b17: a9 ca
     jsr find_or_create_menu_slot_for_A                                ; 3b19: 20 bd 2b
@@ -541,7 +545,7 @@ c3c22
     lda desired_room_index                                            ; 3c22: a5 30
     cmp #0                                                            ; 3c24: c9 00
     bne return2                                                       ; 3c26: d0 26
-    lda l0a0e                                                         ; 3c28: ad 0e 0a
+    lda save_game_level_d_got_axe                                     ; 3c28: ad 0e 0a
     bne return2                                                       ; 3c2b: d0 21
     ldx #$23 ; '#'                                                    ; 3c2d: a2 23
     lda #5                                                            ; 3c2f: a9 05
@@ -565,18 +569,18 @@ c3c4f
     lda desired_room_index                                            ; 3c4f: a5 30
     cmp #0                                                            ; 3c51: c9 00
     bne return3                                                       ; 3c53: d0 1d
-    lda l0a0e                                                         ; 3c55: ad 0e 0a
+    lda save_game_level_d_got_axe                                     ; 3c55: ad 0e 0a
     bne return3                                                       ; 3c58: d0 18
     ldx #objectid_old_player                                          ; 3c5a: a2 0b
     ldy #3                                                            ; 3c5c: a0 03
     jsr test_for_collision_between_objects_x_and_y                    ; 3c5e: 20 e2 28
     beq return3                                                       ; 3c61: f0 0f
     lda #$ff                                                          ; 3c63: a9 ff
-    sta l0a0e                                                         ; 3c65: 8d 0e 0a
+    sta save_game_level_d_got_axe                                     ; 3c65: 8d 0e 0a
     lda #spriteid_axe_menu_item                                       ; 3c68: a9 ca
     jsr find_or_create_menu_slot_for_A                                ; 3c6a: 20 bd 2b
     lda #spriteid_one_pixel_masked_out                                ; 3c6d: a9 00
-    sta object_spriteid + 3                                           ; 3c6f: 8d ab 09
+    sta object_spriteid + objectid_axe                                ; 3c6f: 8d ab 09
 return3
     rts                                                               ; 3c72: 60
 
@@ -624,7 +628,7 @@ c3caf
     lda #$c0                                                          ; 3cc0: a9 c0
     sta object_z_order,x                                              ; 3cc2: 9d c2 38
     lda #spriteid_sign                                                ; 3cc5: a9 d3
-    sta object_spriteid + 5                                           ; 3cc7: 8d ad 09
+    sta object_spriteid + objectid_sign                               ; 3cc7: 8d ad 09
 c3cca
     jmp c3d0b                                                         ; 3cca: 4c 0b 3d
 
@@ -1114,7 +1118,7 @@ c3fc2
     ldy #2                                                            ; 3fcd: a0 02
 c3fcf
     lda partition_spriteid_table,y                                    ; 3fcf: b9 d6 3f
-    sta object_spriteid + 4                                           ; 3fd2: 8d ac 09
+    sta object_spriteid + objectid_partition                          ; 3fd2: 8d ac 09
 return5
     rts                                                               ; 3fd5: 60
 
@@ -1351,7 +1355,7 @@ c4126
     lda #spriteid_menu_item                                           ; 413a: a9 cf
     jsr find_or_create_menu_slot_for_A                                ; 413c: 20 bd 2b
     lda #spriteid_one_pixel_masked_out                                ; 413f: a9 00
-    sta object_spriteid + 3                                           ; 4141: 8d ab 09
+    sta object_spriteid + objectid_axe                                ; 4141: 8d ab 09
     lda #$ff                                                          ; 4144: a9 ff
     sta save_game_level_d_got_gun                                     ; 4146: 8d 0f 0a
     jmp return7                                                       ; 4149: 4c 5b 41
@@ -1601,11 +1605,11 @@ c4309
     bne return8                                                       ; 430d: d0 57
     ldy level_workspace                                               ; 430f: ac 6f 0a
     lda baby_spriteid_table,y                                         ; 4312: b9 7e 41
-    sta object_spriteid + 5                                           ; 4315: 8d ad 09
+    sta object_spriteid + objectid_baby                               ; 4315: 8d ad 09
     lda l0a70                                                         ; 4318: ad 70 0a
-    sta object_x_low + 5                                              ; 431b: 8d 55 09
+    sta object_x_low + objectid_baby                                  ; 431b: 8d 55 09
     lda l0a71                                                         ; 431e: ad 71 0a
-    sta object_y_low + 5                                              ; 4321: 8d 81 09
+    sta object_y_low + objectid_baby                                  ; 4321: 8d 81 09
     lda #collision_map_solid_rock                                     ; 4324: a9 03
     sta value_to_write_to_collision_map                               ; 4326: 85 3e
     lda save_game_level_d_baby_progress                               ; 4328: ad 12 0a
@@ -1779,7 +1783,6 @@ pydis_end
 ;     c42eb
 ;     c4309
 ;     c4352
-;     l0a0e
 ;     l0a70
 ;     l0a71
 ;     l2ef4
@@ -1852,20 +1855,23 @@ pydis_end
 !if (level_specific_update) != $3b1d {
     !error "Assertion failed: level_specific_update == $3b1d"
 }
-!if (object_spriteid + 3) != $09ab {
-    !error "Assertion failed: object_spriteid + 3 == $09ab"
+!if (object_spriteid + objectid_axe) != $09ab {
+    !error "Assertion failed: object_spriteid + objectid_axe == $09ab"
 }
-!if (object_spriteid + 4) != $09ac {
-    !error "Assertion failed: object_spriteid + 4 == $09ac"
+!if (object_spriteid + objectid_baby) != $09ad {
+    !error "Assertion failed: object_spriteid + objectid_baby == $09ad"
 }
-!if (object_spriteid + 5) != $09ad {
-    !error "Assertion failed: object_spriteid + 5 == $09ad"
+!if (object_spriteid + objectid_partition) != $09ac {
+    !error "Assertion failed: object_spriteid + objectid_partition == $09ac"
 }
-!if (object_x_low + 5) != $0955 {
-    !error "Assertion failed: object_x_low + 5 == $0955"
+!if (object_spriteid + objectid_sign) != $09ad {
+    !error "Assertion failed: object_spriteid + objectid_sign == $09ad"
 }
-!if (object_y_low + 5) != $0981 {
-    !error "Assertion failed: object_y_low + 5 == $0981"
+!if (object_x_low + objectid_baby) != $0955 {
+    !error "Assertion failed: object_x_low + objectid_baby == $0955"
+}
+!if (object_y_low + objectid_baby) != $0981 {
+    !error "Assertion failed: object_y_low + objectid_baby == $0981"
 }
 !if (objectid_old_player) != $0b {
     !error "Assertion failed: objectid_old_player == $0b"
