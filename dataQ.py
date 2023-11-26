@@ -34,8 +34,8 @@ set_label_maker_hook(s.substitute_label_maker)
 
 
 entry(0x3ad9)
+label(0x3cfa, "return1")
 entry(0x42ad)
-
 
 result = go(False)
 result = remove_sprite_data(result)

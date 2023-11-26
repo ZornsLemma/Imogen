@@ -440,18 +440,18 @@ c3cd7
 
 sub_c3ce3
     lda developer_mode_sideways_ram_is_set_up_flag                    ; 3ce3: a5 5b
-    beq c3cfa                                                         ; 3ce5: f0 13
+    beq return1                                                       ; 3ce5: f0 13
     lda developer_flags                                               ; 3ce7: ad 03 11
     and #1                                                            ; 3cea: 29 01
-    beq c3cfa                                                         ; 3cec: f0 0c
+    beq return1                                                       ; 3cec: f0 0c
     ldx #$8f                                                          ; 3cee: a2 8f
     jsr l3acc                                                         ; 3cf0: 20 cc 3a
-    beq c3cfa                                                         ; 3cf3: f0 05
+    beq return1                                                       ; 3cf3: f0 05
     pla                                                               ; 3cf5: 68
     pla                                                               ; 3cf6: 68
     jmp l1839                                                         ; 3cf7: 4c 39 18
 
-c3cfa
+return1
     rts                                                               ; 3cfa: 60
 
 l3cfb
@@ -841,7 +841,6 @@ pydis_end
 ;     c3c14
 ;     c3c39
 ;     c3cd7
-;     c3cfa
 ;     c42aa
 ;     c4301
 ;     l002e
