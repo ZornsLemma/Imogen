@@ -510,32 +510,41 @@ room_0_update_handler
     ldx #objectid_fire3                                               ; 3bd4: a2 08
     ldy #0                                                            ; 3bd6: a0 00
     lda #$10                                                          ; 3bd8: a9 10
-    jsr sub_c3bea                                                     ; 3bda: 20 ea 3b
+    jsr update_burnable_rope                                          ; 3bda: 20 ea 3b
     lda l3d76                                                         ; 3bdd: ad 76 3d
     sta level_workspace                                               ; 3be0: 8d 6f 0a
     lda l3d75                                                         ; 3be3: ad 75 3d
     sta save_game_level_c_room_0_and_2_burning_rope_progress          ; 3be6: 8d 0c 0a
     rts                                                               ; 3be9: 60
 
-sub_c3bea
-    sta l3d79                                                         ; 3bea: 8d 79 3d
-    stx l3d77                                                         ; 3bed: 8e 77 3d
-    sty l3d78                                                         ; 3bf0: 8c 78 3d
+; *************************************************************************************
+; 
+; Update a burnable rope
+; 
+; On Entry:
+;     A: length of rope
+;     (X,Y): cell position of top of rope
+; 
+; *************************************************************************************
+update_burnable_rope
+    sta burnable_rope_length                                          ; 3bea: 8d 79 3d
+    stx burnable_rope_cell_x                                          ; 3bed: 8e 77 3d
+    sty burnable_rope_cell_y                                          ; 3bf0: 8c 78 3d
 ; check for first update in room (branch if so)
     lda update_room_first_update_flag                                 ; 3bf3: ad 2b 13
-    bne c3bfb                                                         ; 3bf6: d0 03
-    jmp c3c89                                                         ; 3bf8: 4c 89 3c
+    bne update_burnable_rope_first_update                             ; 3bf6: d0 03
+    jmp update_burnable_rope_not_first_update                         ; 3bf8: 4c 89 3c
 
 ; check for level change (branch if not)
-c3bfb
+update_burnable_rope_first_update
     lda current_level                                                 ; 3bfb: a5 31
     cmp level_before_latest_level_and_room_initialisation             ; 3bfd: c5 51
-    beq c3c0b                                                         ; 3bff: f0 0a
+    beq no_level_change                                               ; 3bff: f0 0a
     lda l3d75                                                         ; 3c01: ad 75 3d
-    beq c3c0b                                                         ; 3c04: f0 05
+    beq no_level_change                                               ; 3c04: f0 05
     lda #$ff                                                          ; 3c06: a9 ff
     sta l3d75                                                         ; 3c08: 8d 75 3d
-c3c0b
+no_level_change
     lda desired_room_index                                            ; 3c0b: a5 30
     cmp currently_updating_logic_for_room_index                       ; 3c0d: cd ba 1a
     bne c3c83                                                         ; 3c10: d0 71
@@ -544,12 +553,12 @@ c3c0b
     sta object_sprite_mask_type,x                                     ; 3c16: 9d ac 38
     lda #$e0                                                          ; 3c19: a9 e0
     sta object_z_order,x                                              ; 3c1b: 9d c2 38
-    ldx l3d77                                                         ; 3c1e: ae 77 3d
-    ldy l3d78                                                         ; 3c21: ac 78 3d
+    ldx burnable_rope_cell_x                                          ; 3c1e: ae 77 3d
+    ldy burnable_rope_cell_y                                          ; 3c21: ac 78 3d
     lda l3d75                                                         ; 3c24: ad 75 3d
     beq c3c6b                                                         ; 3c27: f0 42
     bpl c3c3d                                                         ; 3c29: 10 12
-    lda l3d78                                                         ; 3c2b: ad 78 3d
+    lda burnable_rope_cell_y                                          ; 3c2b: ad 78 3d
     beq c3c83                                                         ; 3c2e: f0 53
     lda #spriteid_empty_hook                                          ; 3c30: a9 d8
     jsr draw_sprite_a_at_cell_xy                                      ; 3c32: 20 4c 1f
@@ -565,7 +574,7 @@ c3c3d
     lsr                                                               ; 3c44: 4a
     lsr                                                               ; 3c45: 4a
     sec                                                               ; 3c46: 38
-    sbc l3d78                                                         ; 3c47: ed 78 3d
+    sbc burnable_rope_cell_y                                          ; 3c47: ed 78 3d
     beq c3c83                                                         ; 3c4a: f0 37
     clc                                                               ; 3c4c: 18
     adc #1                                                            ; 3c4d: 69 01
@@ -573,7 +582,7 @@ c3c3d
     sec                                                               ; 3c52: 38
     sbc #1                                                            ; 3c53: e9 01
     clc                                                               ; 3c55: 18
-    adc l3d78                                                         ; 3c56: 6d 78 3d
+    adc burnable_rope_cell_y                                          ; 3c56: 6d 78 3d
     tay                                                               ; 3c59: a8
     lda #sprite_op_flags_ignore_mask                                  ; 3c5a: a9 04
     sta sprite_op_flags                                               ; 3c5c: 85 15
@@ -584,11 +593,11 @@ c3c3d
     jmp c3c83                                                         ; 3c68: 4c 83 3c
 
 c3c6b
-    lda l3d79                                                         ; 3c6b: ad 79 3d
+    lda burnable_rope_length                                          ; 3c6b: ad 79 3d
     jsr draw_rope                                                     ; 3c6e: 20 b9 1d
     tya                                                               ; 3c71: 98
     clc                                                               ; 3c72: 18
-    adc l3d79                                                         ; 3c73: 6d 79 3d
+    adc burnable_rope_length                                          ; 3c73: 6d 79 3d
     tay                                                               ; 3c76: a8
     dey                                                               ; 3c77: 88
     lda #objectid_rope_end                                            ; 3c78: a9 03
@@ -602,22 +611,22 @@ c3c83
 c3c86
     jmp return2                                                       ; 3c86: 4c 74 3d
 
-c3c89
+update_burnable_rope_not_first_update
     lda l3d75                                                         ; 3c89: ad 75 3d
     bmi c3c86                                                         ; 3c8c: 30 f8
     bne c3cbf                                                         ; 3c8e: d0 2f
     lda desired_room_index                                            ; 3c90: a5 30
     cmp currently_updating_logic_for_room_index                       ; 3c92: cd ba 1a
     bne c3c86                                                         ; 3c95: d0 ef
-    ldx #2                                                            ; 3c97: a2 02
-    ldy #3                                                            ; 3c99: a0 03
+    ldx #objectid_torch                                               ; 3c97: a2 02
+    ldy #objectid_rope_end                                            ; 3c99: a0 03
     jsr test_for_collision_between_objects_x_and_y                    ; 3c9b: 20 e2 28
     beq c3c86                                                         ; 3c9e: f0 e6
     lda #spriteid_one_pixel_masked_out                                ; 3ca0: a9 00
     sta object_spriteid_old + objectid_rope_end                       ; 3ca2: 8d b6 09
-    lda l3d78                                                         ; 3ca5: ad 78 3d
+    lda burnable_rope_cell_y                                          ; 3ca5: ad 78 3d
     clc                                                               ; 3ca8: 18
-    adc l3d79                                                         ; 3ca9: 6d 79 3d
+    adc burnable_rope_length                                          ; 3ca9: 6d 79 3d
     sec                                                               ; 3cac: 38
     sbc #1                                                            ; 3cad: e9 01
     asl                                                               ; 3caf: 0a
@@ -643,7 +652,7 @@ c3cbf
     lsr                                                               ; 3cd4: 4a
     lsr                                                               ; 3cd5: 4a
     beq c3d26                                                         ; 3cd6: f0 4e
-    cmp l3d78                                                         ; 3cd8: cd 78 3d
+    cmp burnable_rope_cell_y                                          ; 3cd8: cd 78 3d
     bne c3d26                                                         ; 3cdb: d0 49
     lda #2                                                            ; 3cdd: a9 02
     sta l3d75                                                         ; 3cdf: 8d 75 3d
@@ -658,8 +667,8 @@ c3cee
     lda desired_room_index                                            ; 3cf3: a5 30
     cmp currently_updating_logic_for_room_index                       ; 3cf5: cd ba 1a
     bne c3d26                                                         ; 3cf8: d0 2c
-    ldx l3d77                                                         ; 3cfa: ae 77 3d
-    ldy l3d78                                                         ; 3cfd: ac 78 3d
+    ldx burnable_rope_cell_x                                          ; 3cfa: ae 77 3d
+    ldy burnable_rope_cell_y                                          ; 3cfd: ac 78 3d
     lda #objectid_rope_end                                            ; 3d00: a9 03
     jsr set_object_position_from_cell_xy                              ; 3d02: 20 5d 1f
     lda #spriteid_empty_hook                                          ; 3d05: a9 d8
@@ -693,7 +702,7 @@ c3d26
     clc                                                               ; 3d40: 18
     adc #spriteid_fire1                                               ; 3d41: 69 3c
     sta object_spriteid + objectid_rope_fire                          ; 3d43: 8d ac 09
-    ldx l3d77                                                         ; 3d46: ae 77 3d
+    ldx burnable_rope_cell_x                                          ; 3d46: ae 77 3d
     lda #3                                                            ; 3d49: a9 03
     sta temp_sprite_x_offset                                          ; 3d4b: 85 3a
     ldy #0                                                            ; 3d4d: a0 00
@@ -721,11 +730,11 @@ l3d75
     !byte 0                                                           ; 3d75: 00
 l3d76
     !byte 0                                                           ; 3d76: 00
-l3d77
+burnable_rope_cell_x
     !byte 0                                                           ; 3d77: 00
-l3d78
+burnable_rope_cell_y
     !byte 0                                                           ; 3d78: 00
-l3d79
+burnable_rope_length
     !byte 0                                                           ; 3d79: 00
 ; *************************************************************************************
 ; 
@@ -890,7 +899,7 @@ room_1_update_handler
     ldx #$14                                                          ; 3e5f: a2 14
     ldy #3                                                            ; 3e61: a0 03
     lda #$11                                                          ; 3e63: a9 11
-    jsr sub_c3bea                                                     ; 3e65: 20 ea 3b
+    jsr update_burnable_rope                                          ; 3e65: 20 ea 3b
     lda l3d76                                                         ; 3e68: ad 76 3d
     sta l0a70                                                         ; 3e6b: 8d 70 0a
     lda l3d75                                                         ; 3e6e: ad 75 3d
@@ -956,7 +965,7 @@ update_table_state
     lda desired_room_index                                            ; 3ee5: a5 30
     cmp #1                                                            ; 3ee7: c9 01
     bne update_table                                                  ; 3ee9: d0 19
-    ldx #2                                                            ; 3eeb: a2 02
+    ldx #objectid_torch                                               ; 3eeb: a2 02
     ldy #5                                                            ; 3eed: a0 05
     jsr test_for_collision_between_objects_x_and_y                    ; 3eef: 20 e2 28
     beq update_table                                                  ; 3ef2: f0 10
@@ -1951,13 +1960,10 @@ sprite_data
 pydis_end
 
 ; Automatically generated labels:
-;     c3bfb
-;     c3c0b
 ;     c3c3d
 ;     c3c6b
 ;     c3c83
 ;     c3c86
-;     c3c89
 ;     c3cbf
 ;     c3cee
 ;     c3d12
@@ -2019,9 +2025,6 @@ pydis_end
 ;     l38c4
 ;     l3d75
 ;     l3d76
-;     l3d77
-;     l3d78
-;     l3d79
 ;     l4425
 ;     l4426
 ;     l4427
@@ -2034,7 +2037,6 @@ pydis_end
 ;     l442e
 ;     l442f
 ;     l4430
-;     sub_c3bea
 ;     sub_c3fe5
 ;     sub_c422d
 !if (<envelope1) != $4b {

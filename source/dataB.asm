@@ -1379,7 +1379,7 @@ room_2_update_clock_workings
     sta temp_sprite_x_offset                                          ; 4169: 85 3a
     ldy #9                                                            ; 416b: a0 09
     sta temp_sprite_y_offset                                          ; 416d: 85 3b
-    lda #3                                                            ; 416f: a9 03
+    lda #objectid_clock_workings                                      ; 416f: a9 03
     jsr set_object_position_from_cell_xy                              ; 4171: 20 5d 1f
     lda #spriteid_cuckoo_open_beak                                    ; 4174: a9 d6
     sta object_spriteid + objectid_clock_workings                     ; 4176: 8d ab 09
@@ -1552,9 +1552,9 @@ set_rope_ends_once_boulder_landed
 write_boulder_position_to_collision_map
     ldx suspended_boulder_x                                           ; 42b3: ae d9 42
     dex                                                               ; 42b6: ca
-    lda #4                                                            ; 42b7: a9 04
+    lda #objectid_suspended_boulder                                   ; 42b7: a9 04
     jsr set_object_position_from_cell_xy                              ; 42b9: 20 5d 1f
-    lda #6                                                            ; 42bc: a9 06
+    lda #objectid_rope_broken_bottom_end                              ; 42bc: a9 06
     jsr set_object_position_from_cell_xy                              ; 42be: 20 5d 1f
     lda #3                                                            ; 42c1: a9 03
     sta width_in_cells                                                ; 42c3: 85 3c
@@ -2113,11 +2113,17 @@ pydis_end
 !if (objectid_pendulum) != $02 {
     !error "Assertion failed: objectid_pendulum == $02"
 }
+!if (objectid_rope_broken_bottom_end) != $06 {
+    !error "Assertion failed: objectid_rope_broken_bottom_end == $06"
+}
 !if (objectid_rope_broken_top_end) != $05 {
     !error "Assertion failed: objectid_rope_broken_top_end == $05"
 }
 !if (objectid_spell) != $05 {
     !error "Assertion failed: objectid_spell == $05"
+}
+!if (objectid_suspended_boulder) != $04 {
+    !error "Assertion failed: objectid_suspended_boulder == $04"
 }
 !if (room_0_data) != $3b2f {
     !error "Assertion failed: room_0_data == $3b2f"
