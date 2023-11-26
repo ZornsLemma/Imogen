@@ -59,6 +59,10 @@ comment(0x430a, "check for level change (branch if not)")
 expr(0x3e86, "objectid_player")
 expr(0x4375, "objectid_old_player")
 
+label(0x3bbb, "room_0_update_handler")
+label(0x3c4c, "room_1_update_handler")
+label(0x3f5a, "room_2_update_handler")
+
 # TODO: replace "+ n" with "+ objectid_*" once objects have been named
 expr(0x433e, "object_x_low + 2")
 expr(0x422d, "object_x_low + 5")

@@ -76,6 +76,11 @@ comment(0x436c, "check for first update in room (branch if not)")
 comment(0x4371, "check for level change (branch if not)")
 label(0x44f3, "return7")
 
+label(0x3bad, "room_2_update_handler")
+label(0x3da9, "room_3_update_handler")
+label(0x3fd7, "room_0_update_handler")
+label(0x4331, "room_1_update_handler")
+
 # TODO: replace "+ n" with "+ objectid_*" once objects have been named
 expr(0x41e2, "object_x_low + 2")
 expr(0x41e8, "object_x_low + 2")

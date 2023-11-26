@@ -64,6 +64,9 @@ comment(0x4253, "check for first update in room (branch if so)")
 label(0x43b4, "return4")
 label(0x441c, "return5")
 
+label(0x3baa, "room_0_update_handler")
+label(0x3e22, "room_1_update_handler")
+
 # TODO: replace "+ n" with "+ objectid_*" once objects have been named
 expr(0x3c2e, "object_spriteid + 3")
 expr(0x3f17, "object_y_low + 3")

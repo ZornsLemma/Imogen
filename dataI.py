@@ -65,6 +65,9 @@ label(0x449c, "return4")
 label(0x45ef, "return5")
 ldx_ldy_jsr_play_sound_yx(0x4628, "sound3")
 
+label(0x3bdf, "room_1_update_handler")
+label(0x3c67, "room_2_update_handler")
+
 # TODO: replace "+ n" with "+ objectid_*" once objects have been named
 expr(0x3cc2, "object_spriteid + 3")
 expr(0x3d3b, "object_spriteid + 6")

@@ -327,7 +327,7 @@ level_specific_update
     jsr sub_c40a1                                                     ; 3b12: 20 a1 40
     jsr sub_c3bc3                                                     ; 3b15: 20 c3 3b
     jsr sub_c3d3a                                                     ; 3b18: 20 3a 3d
-    jsr sub_c3e89                                                     ; 3b1b: 20 89 3e
+    jsr room_3_update_handler                                         ; 3b1b: 20 89 3e
     rts                                                               ; 3b1e: 60
 
 ; *************************************************************************************
@@ -910,7 +910,7 @@ room_3_game_update_loop
     ldy current_level                                                 ; 3e84: a4 31
     jmp initialise_level_and_room                                     ; 3e86: 4c 40 11
 
-sub_c3e89
+room_3_update_handler
     lda #3                                                            ; 3e89: a9 03
     sta currently_updating_logic_for_room_index                       ; 3e8b: 8d ba 1a
     ldx #$1d                                                          ; 3e8e: a2 1d
@@ -1859,7 +1859,6 @@ pydis_end
 ;     sub_c3bc3
 ;     sub_c3d3a
 ;     sub_c3db4
-;     sub_c3e89
 ;     sub_c40a1
 ;     sub_c4241
 ;     sub_c4333

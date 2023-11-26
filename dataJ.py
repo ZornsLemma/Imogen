@@ -73,6 +73,8 @@ label(0x4372, "return8")
 label(0x4462, "return9")
 label(0x449d, "return10")
 
+label(0x3e89, "room_3_update_handler")
+
 # TODO: replace "+ n" with "+ objectid_*" once objects have been named
 expr(0x3bee, "object_x_low + 3")
 expr(0x3bf3, "object_direction + 3")
