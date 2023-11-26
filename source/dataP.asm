@@ -297,10 +297,10 @@ level_specific_initialisation
     cmp level_before_latest_level_and_room_initialisation             ; 3af6: c5 51
     beq c3b0e                                                         ; 3af8: f0 14
     lda developer_flags                                               ; 3afa: ad 03 11
-    bpl c3b04                                                         ; 3afd: 10 05
+    bpl developer_mode_inactive                                       ; 3afd: 10 05
     lda #$ff                                                          ; 3aff: a9 ff
     sta l0a62                                                         ; 3b01: 8d 62 0a
-c3b04
+developer_mode_inactive
     lda l0a62                                                         ; 3b04: ad 62 0a
     bpl c3b0e                                                         ; 3b07: 10 05
     lda #$c9                                                          ; 3b09: a9 c9
@@ -1914,7 +1914,6 @@ sprite_data
 pydis_end
 
 ; Automatically generated labels:
-;     c3b04
 ;     c3b0e
 ;     c3c33
 ;     c3c36

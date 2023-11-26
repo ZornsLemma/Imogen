@@ -288,10 +288,10 @@ level_specific_password
 level_specific_initialisation
     lda current_level                                                 ; 3af3: a5 31
     cmp level_before_latest_level_and_room_initialisation             ; 3af5: c5 51
-    beq c3afe                                                         ; 3af7: f0 05
+    beq developer_mode_inactive                                       ; 3af7: f0 05
     lda developer_flags                                               ; 3af9: ad 03 11
-    bpl c3afe                                                         ; 3afc: 10 00
-c3afe
+    bpl developer_mode_inactive                                       ; 3afc: 10 00
+developer_mode_inactive
     lda #$bf                                                          ; 3afe: a9 bf
     sta source_sprite_memory_low                                      ; 3b00: 85 40
     lda #$44 ; 'D'                                                    ; 3b02: a9 44
@@ -1764,7 +1764,6 @@ sprite_data
 pydis_end
 
 ; Automatically generated labels:
-;     c3afe
 ;     c3bc9
 ;     c3bea
 ;     c3bf2

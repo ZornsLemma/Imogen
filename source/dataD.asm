@@ -334,12 +334,12 @@ level_specific_initialisation
     cmp level_before_latest_level_and_room_initialisation             ; 3af5: c5 51
     beq return1                                                       ; 3af7: f0 23
     lda developer_flags                                               ; 3af9: ad 03 11
-    bpl c3b08                                                         ; 3afc: 10 0a
+    bpl developer_mode_inactive                                       ; 3afc: 10 0a
     lda #$ff                                                          ; 3afe: a9 ff
     sta save_game_level_d_got_gun                                     ; 3b00: 8d 0f 0a
     lda #$ff                                                          ; 3b03: a9 ff
     sta save_game_level_d_got_axe                                     ; 3b05: 8d 0e 0a
-c3b08
+developer_mode_inactive
     lda save_game_level_d_got_gun                                     ; 3b08: ad 0f 0a
     beq c3b12                                                         ; 3b0b: f0 05
     lda #spriteid_menu_item                                           ; 3b0d: a9 cf
@@ -1737,7 +1737,6 @@ sprite_data
 pydis_end
 
 ; Automatically generated labels:
-;     c3b08
 ;     c3b12
 ;     c3c22
 ;     c3c4f

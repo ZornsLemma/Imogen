@@ -294,12 +294,12 @@ level_specific_initialisation
     cmp level_before_latest_level_and_room_initialisation             ; 3af8: c5 51
     beq c3b21                                                         ; 3afa: f0 25
     lda developer_flags                                               ; 3afc: ad 03 11
-    bpl c3b0b                                                         ; 3aff: 10 0a
+    bpl developer_mode_inactive1                                      ; 3aff: 10 0a
     lda #$ff                                                          ; 3b01: a9 ff
     sta l0a35                                                         ; 3b03: 8d 35 0a
     lda #$ff                                                          ; 3b06: a9 ff
     sta l0a36                                                         ; 3b08: 8d 36 0a
-c3b0b
+developer_mode_inactive1
     lda l0a35                                                         ; 3b0b: ad 35 0a
     beq c3b21                                                         ; 3b0e: f0 11
     cmp #$ff                                                          ; 3b10: c9 ff
@@ -645,14 +645,14 @@ c3d0d
     cmp #2                                                            ; 3d14: c9 02
     bne c3d0a                                                         ; 3d16: d0 f2
     lda developer_flags                                               ; 3d18: ad 03 11
-    bpl c3d2b                                                         ; 3d1b: 10 0e
+    bpl developer_mode_inactive2                                      ; 3d1b: 10 0e
     ldx #$ac                                                          ; 3d1d: a2 ac
     jsr l3acc                                                         ; 3d1f: 20 cc 3a
     bne c3d48                                                         ; 3d22: d0 24
     ldx #$c8                                                          ; 3d24: a2 c8
     jsr l3acc                                                         ; 3d26: 20 cc 3a
     bne c3d52                                                         ; 3d29: d0 27
-c3d2b
+developer_mode_inactive2
     lda object_spriteid + 2                                           ; 3d2b: ad aa 09
     cmp #$d9                                                          ; 3d2e: c9 d9
     bne c3d0a                                                         ; 3d30: d0 d8
@@ -1780,7 +1780,6 @@ sprite_data
 pydis_end
 
 ; Automatically generated labels:
-;     c3b0b
 ;     c3b1c
 ;     c3b21
 ;     c3bf6
@@ -1795,7 +1794,6 @@ pydis_end
 ;     c3cdc
 ;     c3d0a
 ;     c3d0d
-;     c3d2b
 ;     c3d48
 ;     c3d52
 ;     c3d63

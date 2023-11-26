@@ -36,6 +36,7 @@ s = SubstituteLabels(substitute_labels)
 set_label_maker_hook(s.substitute_label_maker)
 
 comment(0x3af3, "check for level change (branch if not)")
+label(0x3afe, "developer_mode_inactive")
 comment(0x3bc1, "check for first update in room (branch if so)")
 comment(0x3bc9, "check for level change (branch if not)")
 ldx_ldy_jsr_define_envelope(0x3bd3, "envelope1")

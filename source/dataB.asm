@@ -350,10 +350,10 @@ level_specific_initialisation
     cmp level_before_latest_level_and_room_initialisation             ; 3af4: c5 51
     beq return1                                                       ; 3af6: f0 23
     lda developer_flags                                               ; 3af8: ad 03 11
-    bpl no_developer_top_bit_flag                                     ; 3afb: 10 05
+    bpl developer_mode_inactive                                       ; 3afb: 10 05
     lda #$ff                                                          ; 3afd: a9 ff
     sta save_game_level_b_cuckoo_room_1_progress                      ; 3aff: 8d 05 0a
-no_developer_top_bit_flag
+developer_mode_inactive
     lda save_game_level_b_got_hourglass_flag                          ; 3b02: ad 09 0a
     beq check_got_cuckoo                                              ; 3b05: f0 05
     lda #spriteid_hourglass_menu_item                                 ; 3b07: a9 de

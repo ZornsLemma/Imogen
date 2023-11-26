@@ -36,6 +36,7 @@ s = SubstituteLabels(substitute_labels)
 set_label_maker_hook(s.substitute_label_maker)
 
 comment(0x3af1, "check for level change (branch if not)")
+label(0x3b06, "developer_mode_inactive")
 label(0x3bc5, "room_1_check_left_exit")
 expr(0x3bc8, "exit_room_left")
 label(0x3bd2, "room_1_check_right_exit")

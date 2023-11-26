@@ -299,10 +299,10 @@ level_specific_initialisation
     cmp level_before_latest_level_and_room_initialisation             ; 3af9: c5 51
     beq c3b11                                                         ; 3afb: f0 14
     lda developer_flags                                               ; 3afd: ad 03 11
-    bpl c3b07                                                         ; 3b00: 10 05
+    bpl developer_mode_inactive1                                      ; 3b00: 10 05
     lda #$ff                                                          ; 3b02: a9 ff
     sta l0a4c                                                         ; 3b04: 8d 4c 0a
-c3b07
+developer_mode_inactive1
     lda l0a4c                                                         ; 3b07: ad 4c 0a
     beq c3b11                                                         ; 3b0a: f0 05
     lda #$e0                                                          ; 3b0c: a9 e0
@@ -525,7 +525,7 @@ c3c77
     clc                                                               ; 3c7d: 18
     adc #$4c ; 'L'                                                    ; 3c7e: 69 4c
     cmp l0a71                                                         ; 3c80: cd 71 0a
-    bcs c3ce5                                                         ; 3c83: b0 60
+    bcs developer_mode_inactive2                                      ; 3c83: b0 60
     lda desired_room_index                                            ; 3c85: a5 30
     cmp #0                                                            ; 3c87: c9 00
     bne c3c8e                                                         ; 3c89: d0 03
@@ -539,14 +539,14 @@ c3c8e
     sta l0a72                                                         ; 3c9a: 8d 72 0a
     lda l0a4a                                                         ; 3c9d: ad 4a 0a
     cmp #$60 ; '`'                                                    ; 3ca0: c9 60
-    bne c3ce5                                                         ; 3ca2: d0 41
+    bne developer_mode_inactive2                                      ; 3ca2: d0 41
     lda #$18                                                          ; 3ca4: a9 18
     sta l0a72                                                         ; 3ca6: 8d 72 0a
     lda l0a4a                                                         ; 3ca9: ad 4a 0a
     sec                                                               ; 3cac: 38
     sbc #4                                                            ; 3cad: e9 04
     sta l0a4a                                                         ; 3caf: 8d 4a 0a
-    jmp c3ce5                                                         ; 3cb2: 4c e5 3c
+    jmp developer_mode_inactive2                                      ; 3cb2: 4c e5 3c
 
 c3cb5
     dec l0a72                                                         ; 3cb5: ce 72 0a
@@ -556,22 +556,22 @@ c3cb5
 c3cbf
     lda desired_room_index                                            ; 3cbf: a5 30
     cmp #0                                                            ; 3cc1: c9 00
-    bne c3ce5                                                         ; 3cc3: d0 20
+    bne developer_mode_inactive2                                      ; 3cc3: d0 20
     lda l0a74                                                         ; 3cc5: ad 74 0a
     bne c3cde                                                         ; 3cc8: d0 14
     lda developer_flags                                               ; 3cca: ad 03 11
-    bpl c3ce5                                                         ; 3ccd: 10 16
+    bpl developer_mode_inactive2                                      ; 3ccd: 10 16
     ldx #$c9                                                          ; 3ccf: a2 c9
     sty l3d39                                                         ; 3cd1: 8c 39 3d
     jsr l3acc                                                         ; 3cd4: 20 cc 3a
     ldy l3d39                                                         ; 3cd7: ac 39 3d
     ora #0                                                            ; 3cda: 09 00
-    beq c3ce5                                                         ; 3cdc: f0 07
+    beq developer_mode_inactive2                                      ; 3cdc: f0 07
 c3cde
     ldy #5                                                            ; 3cde: a0 05
     lda #$30 ; '0'                                                    ; 3ce0: a9 30
     sta l0a4b                                                         ; 3ce2: 8d 4b 0a
-c3ce5
+developer_mode_inactive2
     sty l0a70                                                         ; 3ce5: 8c 70 0a
     iny                                                               ; 3ce8: c8
     iny                                                               ; 3ce9: c8
@@ -1821,7 +1821,6 @@ sprite_data
 pydis_end
 
 ; Automatically generated labels:
-;     c3b07
 ;     c3b11
 ;     c3c1d
 ;     c3c54
@@ -1832,7 +1831,6 @@ pydis_end
 ;     c3cb5
 ;     c3cbf
 ;     c3cde
-;     c3ce5
 ;     c3d01
 ;     c3d13
 ;     c3d42

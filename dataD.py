@@ -71,6 +71,7 @@ label(0xa11, "save_game_level_d_partition_progress")
 label(0xa12, "save_game_level_d_baby_progress")
 
 comment(0x3af3, "check for level change (branch if not)")
+label(0x3b08, "developer_mode_inactive")
 expr(0x3b0e, sprite_dict)
 expr(0x3b18, sprite_dict)
 label(0x3b1c, "return1")

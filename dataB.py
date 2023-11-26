@@ -102,7 +102,7 @@ label(0x0a75, "player_playing_cuckoo_progress") # 0: not playing, 1-3: animation
 label(0x2ef4, "five_byte_table_paired_with_collectable_sprite_ids+2")
 label(0x38b2, "object_sprite_mask_type + objectid_rope_broken_bottom_end")
 label(0x38c8, "object_z_order + objectid_rope_broken_bottom_end")
-label(0x3b02, "no_developer_top_bit_flag")
+label(0x3b02, "developer_mode_inactive")
 label(0x3b0c, "check_got_cuckoo")
 label(0x3b1b, "return1")
 expr(0x3bf1, "exit_room_left")

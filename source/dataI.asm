@@ -296,12 +296,12 @@ level_specific_initialisation
     cmp level_before_latest_level_and_room_initialisation             ; 3af3: c5 51
     beq c3b31                                                         ; 3af5: f0 3a
     lda developer_flags                                               ; 3af7: ad 03 11
-    bpl c3b06                                                         ; 3afa: 10 0a
+    bpl developer_mode_inactive                                       ; 3afa: 10 0a
     lda #$ff                                                          ; 3afc: a9 ff
     sta l0a24                                                         ; 3afe: 8d 24 0a
     lda #$d1                                                          ; 3b01: a9 d1
     jsr find_or_create_menu_slot_for_A                                ; 3b03: 20 bd 2b
-c3b06
+developer_mode_inactive
     lda l0a24                                                         ; 3b06: ad 24 0a
     bpl c3b10                                                         ; 3b09: 10 05
     lda #$ca                                                          ; 3b0b: a9 ca
@@ -1937,7 +1937,6 @@ sprite_data
 pydis_end
 
 ; Automatically generated labels:
-;     c3b06
 ;     c3b10
 ;     c3b1a
 ;     c3b31
