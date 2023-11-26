@@ -150,42 +150,16 @@ l007a                                               = $7a
 show_dialog_box                                     = $040a
 remove_dialog                                       = $0453
 object_x_low                                        = $0950
-l0952                                               = $0952
-l0954                                               = $0954
-l0955                                               = $0955
 object_x_low_old                                    = $095b
-l095d                                               = $095d
 object_x_high                                       = $0966
-l0968                                               = $0968
-l096a                                               = $096a
 object_x_high_old                                   = $0971
 object_y_low                                        = $097c
-l097e                                               = $097e
-l0980                                               = $0980
-l0981                                               = $0981
-l0982                                               = $0982
-l0983                                               = $0983
 object_y_low_old                                    = $0987
-l0989                                               = $0989
-l098d                                               = $098d
 object_y_high                                       = $0992
-l0994                                               = $0994
 object_y_high_old                                   = $099d
 object_spriteid                                     = $09a8
-l09aa                                               = $09aa
-l09ab                                               = $09ab
-l09ac                                               = $09ac
-l09ad                                               = $09ad
-l09ae                                               = $09ae
-l09af                                               = $09af
-l09b0                                               = $09b0
 object_spriteid_old                                 = $09b3
-l09b5                                               = $09b5
-l09b9                                               = $09b9
 object_direction                                    = $09be
-l09c0                                               = $09c0
-l09c1                                               = $09c1
-l09c2                                               = $09c2
 object_direction_old                                = $09c9
 level_progress_table                                = $09ef
 l0a24                                               = $0a24
@@ -644,7 +618,7 @@ c3c9a
     lda #3                                                            ; 3cba: a9 03
     jsr set_object_position_from_cell_xy                              ; 3cbc: 20 5d 1f
     lda #$ce                                                          ; 3cbf: a9 ce
-    sta l09ab                                                         ; 3cc1: 8d ab 09
+    sta object_spriteid + 3                                           ; 3cc1: 8d ab 09
     lda #1                                                            ; 3cc4: a9 01
     sta width_in_cells                                                ; 3cc6: 85 3c
     sta height_in_cells                                               ; 3cc8: 85 3d
@@ -706,13 +680,13 @@ loop_c3d30
     cpy #3                                                            ; 3d34: c0 03
     bcs loop_c3d30                                                    ; 3d36: b0 f8
     lda #$de                                                          ; 3d38: a9 de
-    sta l09ae                                                         ; 3d3a: 8d ae 09
+    sta object_spriteid + 6                                           ; 3d3a: 8d ae 09
     lda #6                                                            ; 3d3d: a9 06
     jsr set_object_position_from_cell_xy                              ; 3d3f: 20 5d 1f
     lda #$c0                                                          ; 3d42: a9 c0
     sta l38c8                                                         ; 3d44: 8d c8 38
     lda #$dd                                                          ; 3d47: a9 dd
-    sta l09ad                                                         ; 3d49: 8d ad 09
+    sta object_spriteid + 5                                           ; 3d49: 8d ad 09
     lda #5                                                            ; 3d4c: a9 05
     dex                                                               ; 3d4e: ca
     jsr set_object_position_from_cell_xy                              ; 3d4f: 20 5d 1f
@@ -775,7 +749,7 @@ c3db1
     bcc c3de6                                                         ; 3dc0: 90 24
     cmp #$1f                                                          ; 3dc2: c9 1f
     bne c3df5                                                         ; 3dc4: d0 2f
-    lda l09ac                                                         ; 3dc6: ad ac 09
+    lda object_spriteid + 4                                           ; 3dc6: ad ac 09
     beq c3df5                                                         ; 3dc9: f0 2a
     jsr play_landing_sound                                            ; 3dcb: 20 a9 23
     jmp c3df5                                                         ; 3dce: 4c f5 3d
@@ -813,13 +787,13 @@ c3df5
     ldx #1                                                            ; 3e06: a2 01
 c3e08
     sta l3ea9                                                         ; 3e08: 8d a9 3e
-    stx l09c1                                                         ; 3e0b: 8e c1 09
+    stx object_direction + 3                                          ; 3e0b: 8e c1 09
     lda l3ea9                                                         ; 3e0e: ad a9 3e
     bne c3e3a                                                         ; 3e11: d0 27
     lda #0                                                            ; 3e13: a9 00
-    sta l09af                                                         ; 3e15: 8d af 09
+    sta object_spriteid + 7                                           ; 3e15: 8d af 09
     lda #$db                                                          ; 3e18: a9 db
-    sta l09b0                                                         ; 3e1a: 8d b0 09
+    sta object_spriteid + 8                                           ; 3e1a: 8d b0 09
     ldx #$0d                                                          ; 3e1d: a2 0d
     ldy #$13                                                          ; 3e1f: a0 13
     lda #1                                                            ; 3e21: a9 01
@@ -843,11 +817,11 @@ c3e3a
     asl                                                               ; 3e41: 0a
     asl                                                               ; 3e42: 0a
     asl                                                               ; 3e43: 0a
-    sta l0983                                                         ; 3e44: 8d 83 09
+    sta object_y_low + 7                                              ; 3e44: 8d 83 09
     lda #$0a                                                          ; 3e47: a9 0a
-    sta l09af                                                         ; 3e49: 8d af 09
+    sta object_spriteid + 7                                           ; 3e49: 8d af 09
     lda #$dc                                                          ; 3e4c: a9 dc
-    sta l09b0                                                         ; 3e4e: 8d b0 09
+    sta object_spriteid + 8                                           ; 3e4e: 8d b0 09
     ldx #$0d                                                          ; 3e51: a2 0d
     iny                                                               ; 3e53: c8
     lda #0                                                            ; 3e54: a9 00
@@ -865,15 +839,15 @@ c3e59
     clc                                                               ; 3e69: 18
     adc #4                                                            ; 3e6a: 69 04
 c3e6c
-    sta l0982                                                         ; 3e6c: 8d 82 09
+    sta object_y_low + 6                                              ; 3e6c: 8d 82 09
     clc                                                               ; 3e6f: 18
     adc #8                                                            ; 3e70: 69 08
-    sta l0981                                                         ; 3e72: 8d 81 09
-    lda l0982                                                         ; 3e75: ad 82 09
-    cmp l098d                                                         ; 3e78: cd 8d 09
+    sta object_y_low + 5                                              ; 3e72: 8d 81 09
+    lda object_y_low + 6                                              ; 3e75: ad 82 09
+    cmp object_y_low_old + 6                                          ; 3e78: cd 8d 09
     beq c3e82                                                         ; 3e7b: f0 05
     lda #0                                                            ; 3e7d: a9 00
-    sta l09b9                                                         ; 3e7f: 8d b9 09
+    sta object_spriteid_old + 6                                       ; 3e7f: 8d b9 09
 c3e82
     lda l0a26                                                         ; 3e82: ad 26 0a
     cmp #$0a                                                          ; 3e85: c9 0a
@@ -888,12 +862,12 @@ c3e82
     lda #$f0                                                          ; 3e92: a9 f0
     sec                                                               ; 3e94: 38
     sbc l0070                                                         ; 3e95: e5 70
-    sta l0954                                                         ; 3e97: 8d 54 09
+    sta object_x_low + 4                                              ; 3e97: 8d 54 09
     lda l3c51,x                                                       ; 3e9a: bd 51 3c
-    sta l0980                                                         ; 3e9d: 8d 80 09
-    lda l09c2                                                         ; 3ea0: ad c2 09
+    sta object_y_low + 4                                              ; 3e9d: 8d 80 09
+    lda object_direction + 4                                          ; 3ea0: ad c2 09
     bpl return1                                                       ; 3ea3: 10 03
-    inc l0954                                                         ; 3ea5: ee 54 09
+    inc object_x_low + 4                                              ; 3ea5: ee 54 09
 return1
     rts                                                               ; 3ea8: 60
 
@@ -1074,7 +1048,7 @@ c3fbd
     lda #$e0                                                          ; 3fc8: a9 e0
     sta l38c6                                                         ; 3fca: 8d c6 38
     lda #$cb                                                          ; 3fcd: a9 cb
-    sta l09ac                                                         ; 3fcf: 8d ac 09
+    sta object_spriteid + 4                                           ; 3fcf: 8d ac 09
     lda #$cd                                                          ; 3fd2: a9 cd
     sta l38af                                                         ; 3fd4: 8d af 38
     ldx #$14                                                          ; 3fd7: a2 14
@@ -1082,7 +1056,7 @@ c3fbd
     lda #3                                                            ; 3fdb: a9 03
     jsr set_object_position_from_cell_xy                              ; 3fdd: 20 5d 1f
     lda #$ce                                                          ; 3fe0: a9 ce
-    sta l09ab                                                         ; 3fe2: 8d ab 09
+    sta object_spriteid + 3                                           ; 3fe2: 8d ab 09
 c3fe5
     jmp c4045                                                         ; 3fe5: 4c 45 40
 
@@ -1131,19 +1105,19 @@ c4024
     sta l0a2f                                                         ; 403a: 8d 2f 0a
     sta l0a24                                                         ; 403d: 8d 24 0a
     lda #0                                                            ; 4040: a9 00
-    sta l09aa                                                         ; 4042: 8d aa 09
+    sta object_spriteid + 2                                           ; 4042: 8d aa 09
 c4045
     lda desired_room_index                                            ; 4045: a5 30
     cmp #3                                                            ; 4047: c9 03
     bne return2                                                       ; 4049: d0 76
     lda #1                                                            ; 404b: a9 01
-    sta l09c1                                                         ; 404d: 8d c1 09
+    sta object_direction + 3                                          ; 404d: 8d c1 09
     ldx l0a2f                                                         ; 4050: ae 2f 0a
     ldy #0                                                            ; 4053: a0 00
     cpx #5                                                            ; 4055: e0 05
     bcc c4068                                                         ; 4057: 90 0f
     lda #$ff                                                          ; 4059: a9 ff
-    sta l09c1                                                         ; 405b: 8d c1 09
+    sta object_direction + 3                                          ; 405b: 8d c1 09
     ldx #5                                                            ; 405e: a2 05
     lda l0a2f                                                         ; 4060: ad 2f 0a
     sec                                                               ; 4063: 38
@@ -1157,13 +1131,13 @@ c4068
     lda l3f6c,x                                                       ; 406b: bd 6c 3f
     clc                                                               ; 406e: 18
     adc #$c4                                                          ; 406f: 69 c4
-    sta l0954                                                         ; 4071: 8d 54 09
+    sta object_x_low + 4                                              ; 4071: 8d 54 09
     inx                                                               ; 4074: e8
     lda l3f6c,x                                                       ; 4075: bd 6c 3f
     dex                                                               ; 4078: ca
     clc                                                               ; 4079: 18
     adc #$5e ; '^'                                                    ; 407a: 69 5e
-    sta l0980                                                         ; 407c: 8d 80 09
+    sta object_y_low + 4                                              ; 407c: 8d 80 09
     ldx #$18                                                          ; 407f: a2 18
     sty l4621                                                         ; 4081: 8c 21 46
     ldy #$0b                                                          ; 4084: a0 0b
@@ -1178,22 +1152,22 @@ c4068
     lda #$a0                                                          ; 409a: a9 a0
     sta l38c4                                                         ; 409c: 8d c4 38
     lda #$c8                                                          ; 409f: a9 c8
-    sta l09aa                                                         ; 40a1: 8d aa 09
+    sta object_spriteid + 2                                           ; 40a1: 8d aa 09
     tya                                                               ; 40a4: 98
     asl                                                               ; 40a5: 0a
     tay                                                               ; 40a6: a8
     lda l3f78,y                                                       ; 40a7: b9 78 3f
     clc                                                               ; 40aa: 18
     adc #$90                                                          ; 40ab: 69 90
-    sta l0952                                                         ; 40ad: 8d 52 09
+    sta object_x_low + 2                                              ; 40ad: 8d 52 09
     lda #0                                                            ; 40b0: a9 00
     adc #0                                                            ; 40b2: 69 00
-    sta l0968                                                         ; 40b4: 8d 68 09
+    sta object_x_high + 2                                             ; 40b4: 8d 68 09
     iny                                                               ; 40b7: c8
     lda l3f78,y                                                       ; 40b8: b9 78 3f
     clc                                                               ; 40bb: 18
     adc #$38 ; '8'                                                    ; 40bc: 69 38
-    sta l097e                                                         ; 40be: 8d 7e 09
+    sta object_y_low + 2                                              ; 40be: 8d 7e 09
 return2
     rts                                                               ; 40c1: 60
 
@@ -1362,7 +1336,7 @@ c41ca
     lda #$e0                                                          ; 41dc: a9 e0
     sta l38c7                                                         ; 41de: 8d c7 38
     lda #$cb                                                          ; 41e1: a9 cb
-    sta l09ad                                                         ; 41e3: 8d ad 09
+    sta object_spriteid + 5                                           ; 41e3: 8d ad 09
     lda #$cd                                                          ; 41e6: a9 cd
     sta l38af                                                         ; 41e8: 8d af 38
     ldx #$14                                                          ; 41eb: a2 14
@@ -1372,7 +1346,7 @@ c41ca
     lda #3                                                            ; 41f3: a9 03
     jsr set_object_position_from_cell_xy                              ; 41f5: 20 5d 1f
     lda #$ce                                                          ; 41f8: a9 ce
-    sta l09ab                                                         ; 41fa: 8d ab 09
+    sta object_spriteid + 3                                           ; 41fa: 8d ab 09
     lda #$cf                                                          ; 41fd: a9 cf
     sta l38b0                                                         ; 41ff: 8d b0 38
     lda #$c0                                                          ; 4202: a9 c0
@@ -1437,13 +1411,13 @@ c426c
 
 c4275
     lda #1                                                            ; 4275: a9 01
-    sta l09c1                                                         ; 4277: 8d c1 09
+    sta object_direction + 3                                          ; 4277: 8d c1 09
     ldx l0a25                                                         ; 427a: ae 25 0a
     ldy #0                                                            ; 427d: a0 00
     cpx #7                                                            ; 427f: e0 07
     bcc c4292                                                         ; 4281: 90 0f
     lda #$ff                                                          ; 4283: a9 ff
-    sta l09c1                                                         ; 4285: 8d c1 09
+    sta object_direction + 3                                          ; 4285: 8d c1 09
     ldx #7                                                            ; 4288: a2 07
     lda l0a25                                                         ; 428a: ad 25 0a
     sec                                                               ; 428d: 38
@@ -1457,20 +1431,20 @@ c4292
     lda l4164,x                                                       ; 4295: bd 64 41
     clc                                                               ; 4298: 18
     adc #$d4                                                          ; 4299: 69 d4
-    sta l0955                                                         ; 429b: 8d 55 09
+    sta object_x_low + 5                                              ; 429b: 8d 55 09
     inx                                                               ; 429e: e8
     lda l4164,x                                                       ; 429f: bd 64 41
     dex                                                               ; 42a2: ca
     clc                                                               ; 42a3: 18
     adc #$8e                                                          ; 42a4: 69 8e
-    sta l0981                                                         ; 42a6: 8d 81 09
+    sta object_y_low + 5                                              ; 42a6: 8d 81 09
     tya                                                               ; 42a9: 98
     pha                                                               ; 42aa: 48
     jsr sub_c42fa                                                     ; 42ab: 20 fa 42
     pla                                                               ; 42ae: 68
     tay                                                               ; 42af: a8
     lda #0                                                            ; 42b0: a9 00
-    sta l09ac                                                         ; 42b2: 8d ac 09
+    sta object_spriteid + 4                                           ; 42b2: 8d ac 09
     lda l0a25                                                         ; 42b5: ad 25 0a
     cmp #$ff                                                          ; 42b8: c9 ff
     beq return3                                                       ; 42ba: f0 3d
@@ -1478,18 +1452,18 @@ c4292
     bmi c42cf                                                         ; 42bf: 30 0e
     clc                                                               ; 42c1: 18
     adc #$c8                                                          ; 42c2: 69 c8
-    sta l09ac                                                         ; 42c4: 8d ac 09
+    sta object_spriteid + 4                                           ; 42c4: 8d ac 09
     lda #1                                                            ; 42c7: a9 01
-    sta l09c2                                                         ; 42c9: 8d c2 09
+    sta object_direction + 4                                          ; 42c9: 8d c2 09
     jmp c42dc                                                         ; 42cc: 4c dc 42
 
 c42cf
     eor #$ff                                                          ; 42cf: 49 ff
     sec                                                               ; 42d1: 38
     adc #$c8                                                          ; 42d2: 69 c8
-    sta l09ac                                                         ; 42d4: 8d ac 09
+    sta object_spriteid + 4                                           ; 42d4: 8d ac 09
     lda #$ff                                                          ; 42d7: a9 ff
-    sta l09c2                                                         ; 42d9: 8d c2 09
+    sta object_direction + 4                                          ; 42d9: 8d c2 09
 c42dc
     tya                                                               ; 42dc: 98
     asl                                                               ; 42dd: 0a
@@ -1497,15 +1471,15 @@ c42dc
     lda l4174,y                                                       ; 42df: b9 74 41
     clc                                                               ; 42e2: 18
     adc #$90                                                          ; 42e3: 69 90
-    sta l0954                                                         ; 42e5: 8d 54 09
+    sta object_x_low + 4                                              ; 42e5: 8d 54 09
     lda #0                                                            ; 42e8: a9 00
     adc #0                                                            ; 42ea: 69 00
-    sta l096a                                                         ; 42ec: 8d 6a 09
+    sta object_x_high + 4                                             ; 42ec: 8d 6a 09
     iny                                                               ; 42ef: c8
     lda l4174,y                                                       ; 42f0: b9 74 41
     clc                                                               ; 42f3: 18
     adc #$58 ; 'X'                                                    ; 42f4: 69 58
-    sta l0980                                                         ; 42f6: 8d 80 09
+    sta object_y_low + 4                                              ; 42f6: 8d 80 09
 return3
     rts                                                               ; 42f9: 60
 
@@ -1573,7 +1547,7 @@ loop_c4376
 
 c4390
     lda #0                                                            ; 4390: a9 00
-    sta l09b5                                                         ; 4392: 8d b5 09
+    sta object_spriteid_old + 2                                       ; 4392: 8d b5 09
 c4395
     jmp return4                                                       ; 4395: 4c 9c 44
 
@@ -1582,7 +1556,7 @@ c4398
     sta l461e                                                         ; 439a: 8d 1e 46
     lda player_held_object_spriteid                                   ; 439d: a5 52
     sta l461f                                                         ; 439f: 8d 1f 46
-    lda l09b5                                                         ; 43a2: ad b5 09
+    lda object_spriteid_old + 2                                       ; 43a2: ad b5 09
     sta l4620                                                         ; 43a5: 8d 20 46
     lda l0a24                                                         ; 43a8: ad 24 0a
     beq c4395                                                         ; 43ab: f0 e8
@@ -1632,7 +1606,7 @@ c440a
     sta level_workspace                                               ; 4416: 8d 6f 0a
 c4419
     lda l4620                                                         ; 4419: ad 20 46
-    sta l09b5                                                         ; 441c: 8d b5 09
+    sta object_spriteid_old + 2                                       ; 441c: 8d b5 09
     ldx #objectid_old_player                                          ; 441f: a2 0b
     ldy #2                                                            ; 4421: a0 02
     jsr test_for_collision_between_objects_x_and_y                    ; 4423: 20 e2 28
@@ -1646,7 +1620,7 @@ c4419
     jsr find_or_create_menu_slot_for_A                                ; 4436: 20 bd 2b
 c4439
     lda #0                                                            ; 4439: a9 00
-    sta l09aa                                                         ; 443b: 8d aa 09
+    sta object_spriteid + 2                                           ; 443b: 8d aa 09
     lda #$ff                                                          ; 443e: a9 ff
     sta l0a24                                                         ; 4440: 8d 24 0a
     jmp return4                                                       ; 4443: 4c 9c 44
@@ -1661,8 +1635,8 @@ c4446
     sta player_using_object_spriteid                                  ; 4455: 8d b6 2e
     sta player_held_object_spriteid                                   ; 4458: 85 52
 c445a
-    lda l0952                                                         ; 445a: ad 52 09
-    cmp l095d                                                         ; 445d: cd 5d 09
+    lda object_x_low + 2                                              ; 445a: ad 52 09
+    cmp object_x_low_old + 2                                          ; 445d: cd 5d 09
     beq c4482                                                         ; 4460: f0 20
     lda l0a2e                                                         ; 4462: ad 2e 0a
     bmi c446d                                                         ; 4465: 30 06
@@ -1681,8 +1655,8 @@ c4470
     jmp return4                                                       ; 447f: 4c 9c 44
 
 c4482
-    lda l097e                                                         ; 4482: ad 7e 09
-    cmp l0989                                                         ; 4485: cd 89 09
+    lda object_y_low + 2                                              ; 4482: ad 7e 09
+    cmp object_y_low_old + 2                                          ; 4485: cd 89 09
     beq return4                                                       ; 4488: f0 12
     dec temp_top_offset                                               ; 448a: ce 50 25
     lda #2                                                            ; 448d: a9 02
@@ -1798,13 +1772,13 @@ c4559
     jsr sub_c45f0                                                     ; 4567: 20 f0 45
     lda #2                                                            ; 456a: a9 02
     jsr l25f5                                                         ; 456c: 20 f5 25
-    lda l0952                                                         ; 456f: ad 52 09
+    lda object_x_low + 2                                              ; 456f: ad 52 09
     sta l0a27                                                         ; 4572: 8d 27 0a
-    lda l0968                                                         ; 4575: ad 68 09
+    lda object_x_high + 2                                             ; 4575: ad 68 09
     sta l0a28                                                         ; 4578: 8d 28 0a
-    lda l097e                                                         ; 457b: ad 7e 09
+    lda object_y_low + 2                                              ; 457b: ad 7e 09
     sta l0a29                                                         ; 457e: 8d 29 0a
-    lda l0994                                                         ; 4581: ad 94 09
+    lda object_y_high + 2                                             ; 4581: ad 94 09
     sta l0a2a                                                         ; 4584: 8d 2a 0a
     ldx #2                                                            ; 4587: a2 02
     jsr l2434                                                         ; 4589: 20 34 24
@@ -1854,7 +1828,7 @@ c45cf
     sta l0a2d                                                         ; 45e7: 8d 2d 0a
 c45ea
     lda #0                                                            ; 45ea: a9 00
-    sta l09aa                                                         ; 45ec: 8d aa 09
+    sta object_spriteid + 2                                           ; 45ec: 8d aa 09
 return5
     rts                                                               ; 45ef: 60
 
@@ -1864,17 +1838,17 @@ sub_c45f0
     lda #$a0                                                          ; 45f5: a9 a0
     sta l38c4                                                         ; 45f7: 8d c4 38
     lda l0a27                                                         ; 45fa: ad 27 0a
-    sta l0952                                                         ; 45fd: 8d 52 09
+    sta object_x_low + 2                                              ; 45fd: 8d 52 09
     lda l0a28                                                         ; 4600: ad 28 0a
-    sta l0968                                                         ; 4603: 8d 68 09
+    sta object_x_high + 2                                             ; 4603: 8d 68 09
     lda l0a29                                                         ; 4606: ad 29 0a
-    sta l097e                                                         ; 4609: 8d 7e 09
+    sta object_y_low + 2                                              ; 4609: 8d 7e 09
     lda l0a2a                                                         ; 460c: ad 2a 0a
-    sta l0994                                                         ; 460f: 8d 94 09
+    sta object_y_high + 2                                             ; 460f: 8d 94 09
     lda #$c8                                                          ; 4612: a9 c8
-    sta l09aa                                                         ; 4614: 8d aa 09
+    sta object_spriteid + 2                                           ; 4614: 8d aa 09
     lda l0a2b                                                         ; 4617: ad 2b 0a
-    sta l09c0                                                         ; 461a: 8d c0 09
+    sta object_direction + 2                                          ; 461a: 8d c0 09
     rts                                                               ; 461d: 60
 
 l461e
@@ -2040,32 +2014,6 @@ pydis_end
 ;     l0078
 ;     l0079
 ;     l007a
-;     l0952
-;     l0954
-;     l0955
-;     l095d
-;     l0968
-;     l096a
-;     l097e
-;     l0980
-;     l0981
-;     l0982
-;     l0983
-;     l0989
-;     l098d
-;     l0994
-;     l09aa
-;     l09ab
-;     l09ac
-;     l09ad
-;     l09ae
-;     l09af
-;     l09b0
-;     l09b5
-;     l09b9
-;     l09c0
-;     l09c1
-;     l09c2
 ;     l0a24
 ;     l0a25
 ;     l0a26
@@ -2187,6 +2135,84 @@ pydis_end
 }
 !if (level_specific_update) != $3b3a {
     !error "Assertion failed: level_specific_update == $3b3a"
+}
+!if (object_direction + 2) != $09c0 {
+    !error "Assertion failed: object_direction + 2 == $09c0"
+}
+!if (object_direction + 3) != $09c1 {
+    !error "Assertion failed: object_direction + 3 == $09c1"
+}
+!if (object_direction + 4) != $09c2 {
+    !error "Assertion failed: object_direction + 4 == $09c2"
+}
+!if (object_spriteid + 2) != $09aa {
+    !error "Assertion failed: object_spriteid + 2 == $09aa"
+}
+!if (object_spriteid + 3) != $09ab {
+    !error "Assertion failed: object_spriteid + 3 == $09ab"
+}
+!if (object_spriteid + 4) != $09ac {
+    !error "Assertion failed: object_spriteid + 4 == $09ac"
+}
+!if (object_spriteid + 5) != $09ad {
+    !error "Assertion failed: object_spriteid + 5 == $09ad"
+}
+!if (object_spriteid + 6) != $09ae {
+    !error "Assertion failed: object_spriteid + 6 == $09ae"
+}
+!if (object_spriteid + 7) != $09af {
+    !error "Assertion failed: object_spriteid + 7 == $09af"
+}
+!if (object_spriteid + 8) != $09b0 {
+    !error "Assertion failed: object_spriteid + 8 == $09b0"
+}
+!if (object_spriteid_old + 2) != $09b5 {
+    !error "Assertion failed: object_spriteid_old + 2 == $09b5"
+}
+!if (object_spriteid_old + 6) != $09b9 {
+    !error "Assertion failed: object_spriteid_old + 6 == $09b9"
+}
+!if (object_x_high + 2) != $0968 {
+    !error "Assertion failed: object_x_high + 2 == $0968"
+}
+!if (object_x_high + 4) != $096a {
+    !error "Assertion failed: object_x_high + 4 == $096a"
+}
+!if (object_x_low + 2) != $0952 {
+    !error "Assertion failed: object_x_low + 2 == $0952"
+}
+!if (object_x_low + 4) != $0954 {
+    !error "Assertion failed: object_x_low + 4 == $0954"
+}
+!if (object_x_low + 5) != $0955 {
+    !error "Assertion failed: object_x_low + 5 == $0955"
+}
+!if (object_x_low_old + 2) != $095d {
+    !error "Assertion failed: object_x_low_old + 2 == $095d"
+}
+!if (object_y_high + 2) != $0994 {
+    !error "Assertion failed: object_y_high + 2 == $0994"
+}
+!if (object_y_low + 2) != $097e {
+    !error "Assertion failed: object_y_low + 2 == $097e"
+}
+!if (object_y_low + 4) != $0980 {
+    !error "Assertion failed: object_y_low + 4 == $0980"
+}
+!if (object_y_low + 5) != $0981 {
+    !error "Assertion failed: object_y_low + 5 == $0981"
+}
+!if (object_y_low + 6) != $0982 {
+    !error "Assertion failed: object_y_low + 6 == $0982"
+}
+!if (object_y_low + 7) != $0983 {
+    !error "Assertion failed: object_y_low + 7 == $0983"
+}
+!if (object_y_low_old + 2) != $0989 {
+    !error "Assertion failed: object_y_low_old + 2 == $0989"
+}
+!if (object_y_low_old + 6) != $098d {
+    !error "Assertion failed: object_y_low_old + 6 == $098d"
 }
 !if (objectid_old_player) != $0b {
     !error "Assertion failed: objectid_old_player == $0b"

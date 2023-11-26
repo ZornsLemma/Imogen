@@ -154,32 +154,16 @@ l0079                                               = $79
 show_dialog_box                                     = $040a
 remove_dialog                                       = $0453
 object_x_low                                        = $0950
-l0952                                               = $0952
-l0953                                               = $0953
-l0954                                               = $0954
-l0955                                               = $0955
 object_x_low_old                                    = $095b
 object_x_high                                       = $0966
-l0968                                               = $0968
 object_x_high_old                                   = $0971
 object_y_low                                        = $097c
-l097e                                               = $097e
-l097f                                               = $097f
 object_y_low_old                                    = $0987
 object_y_high                                       = $0992
-l0994                                               = $0994
 object_y_high_old                                   = $099d
 object_spriteid                                     = $09a8
-l09aa                                               = $09aa
-l09ab                                               = $09ab
-l09ac                                               = $09ac
 object_spriteid_old                                 = $09b3
-l09b5                                               = $09b5
 object_direction                                    = $09be
-l09c0                                               = $09c0
-l09c1                                               = $09c1
-l09c2                                               = $09c2
-l09c3                                               = $09c3
 object_direction_old                                = $09c9
 level_progress_table                                = $09ef
 l0a30                                               = $0a30
@@ -492,9 +476,9 @@ c3bdb
     lda #$c0                                                          ; 3be6: a9 c0
     sta l38c5                                                         ; 3be8: 8d c5 38
     lda #$ef                                                          ; 3beb: a9 ef
-    sta l0953                                                         ; 3bed: 8d 53 09
+    sta object_x_low + 3                                              ; 3bed: 8d 53 09
     lda #$ff                                                          ; 3bf0: a9 ff
-    sta l09c1                                                         ; 3bf2: 8d c1 09
+    sta object_direction + 3                                          ; 3bf2: 8d c1 09
 c3bf5
     jmp c3c65                                                         ; 3bf5: 4c 65 3c
 
@@ -559,9 +543,9 @@ c3c65
     bne return2                                                       ; 3c69: d0 36
     ldy l0a7c                                                         ; 3c6b: ac 7c 0a
     lda l3bb7,y                                                       ; 3c6e: b9 b7 3b
-    sta l09ab                                                         ; 3c71: 8d ab 09
+    sta object_spriteid + 3                                           ; 3c71: 8d ab 09
     lda l0a7a                                                         ; 3c74: ad 7a 0a
-    sta l097f                                                         ; 3c77: 8d 7f 09
+    sta object_y_low + 3                                              ; 3c77: 8d 7f 09
 ; check for first update in room (branch if so)
     lda update_room_first_update_flag                                 ; 3c7a: ad 2b 13
     bne return2                                                       ; 3c7d: d0 22
@@ -726,17 +710,17 @@ c3d4a
     lda #$d7                                                          ; 3d5a: a9 d7
     sta l38b1                                                         ; 3d5c: 8d b1 38
     lda #$af                                                          ; 3d5f: a9 af
-    sta l0953                                                         ; 3d61: 8d 53 09
+    sta object_x_low + 3                                              ; 3d61: 8d 53 09
     lda #$ff                                                          ; 3d64: a9 ff
-    sta l09c1                                                         ; 3d66: 8d c1 09
+    sta object_direction + 3                                          ; 3d66: 8d c1 09
     lda #$cf                                                          ; 3d69: a9 cf
-    sta l0954                                                         ; 3d6b: 8d 54 09
+    sta object_x_low + 4                                              ; 3d6b: 8d 54 09
     lda #$ff                                                          ; 3d6e: a9 ff
-    sta l09c2                                                         ; 3d70: 8d c2 09
+    sta object_direction + 4                                          ; 3d70: 8d c2 09
     lda #$ef                                                          ; 3d73: a9 ef
-    sta l0955                                                         ; 3d75: 8d 55 09
+    sta object_x_low + 5                                              ; 3d75: 8d 55 09
     lda #$ff                                                          ; 3d78: a9 ff
-    sta l09c3                                                         ; 3d7a: 8d c3 09
+    sta object_direction + 5                                          ; 3d7a: 8d c3 09
 c3d7d
     jmp c3d8f                                                         ; 3d7d: 4c 8f 3d
 
@@ -1015,7 +999,7 @@ c3f33
     ldy #2                                                            ; 3f3e: a0 02
 c3f40
     lda l3f70,y                                                       ; 3f40: b9 70 3f
-    sta l09ac                                                         ; 3f43: 8d ac 09
+    sta object_spriteid + 4                                           ; 3f43: 8d ac 09
     ldx #$11                                                          ; 3f46: a2 11
     ldy #$0a                                                          ; 3f48: a0 0a
     lda #1                                                            ; 3f4a: a9 01
@@ -1230,7 +1214,7 @@ c40b9
     lda #$c0                                                          ; 40c4: a9 c0
     sta l38c5                                                         ; 40c6: 8d c5 38
     lda #$50 ; 'P'                                                    ; 40c9: a9 50
-    sta l0953                                                         ; 40cb: 8d 53 09
+    sta object_x_low + 3                                              ; 40cb: 8d 53 09
 c40ce
     jmp c417a                                                         ; 40ce: 4c 7a 41
 
@@ -1287,7 +1271,7 @@ c411e
     cmp #0                                                            ; 4136: c9 00
     bne c4166                                                         ; 4138: d0 2c
     lda #0                                                            ; 413a: a9 00
-    sta l09aa                                                         ; 413c: 8d aa 09
+    sta object_spriteid + 2                                           ; 413c: 8d aa 09
     jmp c4166                                                         ; 413f: 4c 66 41
 
 c4142
@@ -1326,9 +1310,9 @@ c417a
     bne c4177                                                         ; 417e: d0 f7
     ldy l0a77                                                         ; 4180: ac 77 0a
     lda l4049,y                                                       ; 4183: b9 49 40
-    sta l09ab                                                         ; 4186: 8d ab 09
+    sta object_spriteid + 3                                           ; 4186: 8d ab 09
     lda l0a78                                                         ; 4189: ad 78 0a
-    sta l097f                                                         ; 418c: 8d 7f 09
+    sta object_y_low + 3                                              ; 418c: 8d 7f 09
 ; check for first update in room (branch if so)
     lda update_room_first_update_flag                                 ; 418f: ad 2b 13
     bne c41a2                                                         ; 4192: d0 0e
@@ -1345,37 +1329,37 @@ c41a2
     sta l38ae                                                         ; 41a9: 8d ae 38
     lda #$40 ; '@'                                                    ; 41ac: a9 40
     sta l38c4                                                         ; 41ae: 8d c4 38
-    lda l0953                                                         ; 41b1: ad 53 09
-    sta l0952                                                         ; 41b4: 8d 52 09
+    lda object_x_low + 3                                              ; 41b1: ad 53 09
+    sta object_x_low + 2                                              ; 41b4: 8d 52 09
     lda #0                                                            ; 41b7: a9 00
-    sta l0968                                                         ; 41b9: 8d 68 09
-    lda l097f                                                         ; 41bc: ad 7f 09
-    sta l097e                                                         ; 41bf: 8d 7e 09
+    sta object_x_high + 2                                             ; 41b9: 8d 68 09
+    lda object_y_low + 3                                              ; 41bc: ad 7f 09
+    sta object_y_low + 2                                              ; 41bf: 8d 7e 09
     lda #0                                                            ; 41c2: a9 00
-    sta l0994                                                         ; 41c4: 8d 94 09
+    sta object_y_high + 2                                             ; 41c4: 8d 94 09
     lda #1                                                            ; 41c7: a9 01
-    sta l09c0                                                         ; 41c9: 8d c0 09
+    sta object_direction + 2                                          ; 41c9: 8d c0 09
     lda #$d1                                                          ; 41cc: a9 d1
-    sta l09aa                                                         ; 41ce: 8d aa 09
+    sta object_spriteid + 2                                           ; 41ce: 8d aa 09
     cpx #$ff                                                          ; 41d1: e0 ff
     beq c4177                                                         ; 41d3: f0 a2
     lda l408b,x                                                       ; 41d5: bd 8b 40
     clc                                                               ; 41d8: 18
     adc #$58 ; 'X'                                                    ; 41d9: 69 58
-    sta l0952                                                         ; 41db: 8d 52 09
+    sta object_x_low + 2                                              ; 41db: 8d 52 09
     inx                                                               ; 41de: e8
     lda l408b,x                                                       ; 41df: bd 8b 40
     clc                                                               ; 41e2: 18
     adc #$68 ; 'h'                                                    ; 41e3: 69 68
-    sta l097e                                                         ; 41e5: 8d 7e 09
+    sta object_y_low + 2                                              ; 41e5: 8d 7e 09
     lda #$d0                                                          ; 41e8: a9 d0
-    sta l09aa                                                         ; 41ea: 8d aa 09
+    sta object_spriteid + 2                                           ; 41ea: 8d aa 09
     inx                                                               ; 41ed: e8
     lda l408b,x                                                       ; 41ee: bd 8b 40
     cmp #0                                                            ; 41f1: c9 00
     bne c41fa                                                         ; 41f3: d0 05
     lda #$cb                                                          ; 41f5: a9 cb
-    sta l09aa                                                         ; 41f7: 8d aa 09
+    sta object_spriteid + 2                                           ; 41f7: 8d aa 09
 ; check for first update in room (branch if so)
 c41fa
     lda update_room_first_update_flag                                 ; 41fa: ad 2b 13
@@ -1387,14 +1371,14 @@ c41fa
     lda #$ca                                                          ; 4208: a9 ca
     jsr find_or_create_menu_slot_for_A                                ; 420a: 20 bd 2b
     lda #0                                                            ; 420d: a9 00
-    sta l09aa                                                         ; 420f: 8d aa 09
+    sta object_spriteid + 2                                           ; 420f: 8d aa 09
     sta l0a79                                                         ; 4212: 8d 79 0a
     lda #$ff                                                          ; 4215: a9 ff
     sta l0a30                                                         ; 4217: 8d 30 0a
     jmp return6                                                       ; 421a: 4c 2c 42
 
 c421d
-    lda l09aa                                                         ; 421d: ad aa 09
+    lda object_spriteid + 2                                           ; 421d: ad aa 09
     cmp #$cb                                                          ; 4220: c9 cb
     bne return6                                                       ; 4222: d0 08
     jsr sub_c4333                                                     ; 4224: 20 33 43
@@ -1451,12 +1435,12 @@ loop_c427f
 
 c4299
     lda #0                                                            ; 4299: a9 00
-    sta l09b5                                                         ; 429b: 8d b5 09
+    sta object_spriteid_old + 2                                       ; 429b: 8d b5 09
 c429e
     jmp return7                                                       ; 429e: 4c 32 43
 
 c42a1
-    lda l09b5                                                         ; 42a1: ad b5 09
+    lda object_spriteid_old + 2                                       ; 42a1: ad b5 09
     sta l4463                                                         ; 42a4: 8d 63 44
     lda l0a30                                                         ; 42a7: ad 30 0a
     beq c429e                                                         ; 42aa: f0 f2
@@ -1503,7 +1487,7 @@ c42c0
 c4310
     jsr sub_c4373                                                     ; 4310: 20 73 43
     lda l4463                                                         ; 4313: ad 63 44
-    sta l09b5                                                         ; 4316: 8d b5 09
+    sta object_spriteid_old + 2                                       ; 4316: 8d b5 09
     lda desired_room_index                                            ; 4319: a5 30
     cmp l0a75                                                         ; 431b: cd 75 0a
     beq c4328                                                         ; 431e: f0 08
@@ -1521,7 +1505,7 @@ return7
 
 sub_c4333
     lda #$cb                                                          ; 4333: a9 cb
-    sta l09aa                                                         ; 4335: 8d aa 09
+    sta object_spriteid + 2                                           ; 4335: 8d aa 09
     lda #$11                                                          ; 4338: a9 11
     sta l0a30                                                         ; 433a: 8d 30 0a
     sta l0a76                                                         ; 433d: 8d 76 0a
@@ -1538,10 +1522,10 @@ sub_c4333
     beq return8                                                       ; 4357: f0 19
     lda #$fa                                                          ; 4359: a9 fa
     sta player_wall_collision_flag                                    ; 435b: 8d 33 24
-    lda l0952                                                         ; 435e: ad 52 09
+    lda object_x_low + 2                                              ; 435e: ad 52 09
     sec                                                               ; 4361: 38
     sbc object_x_low                                                  ; 4362: ed 50 09
-    lda l0968                                                         ; 4365: ad 68 09
+    lda object_x_high + 2                                             ; 4365: ad 68 09
     sbc object_x_high                                                 ; 4368: ed 66 09
     bpl return8                                                       ; 436b: 10 05
     lda #6                                                            ; 436d: a9 06
@@ -1567,7 +1551,7 @@ c4384
     lda #0                                                            ; 4390: a9 00
     sta l0a76                                                         ; 4392: 8d 76 0a
     sta l0a30                                                         ; 4395: 8d 30 0a
-    sta l09aa                                                         ; 4398: 8d aa 09
+    sta object_spriteid + 2                                           ; 4398: 8d aa 09
     sta level_workspace                                               ; 439b: 8d 6f 0a
     jmp return9                                                       ; 439e: 4c 62 44
 
@@ -1607,13 +1591,13 @@ c43d1
     jsr sub_c4464                                                     ; 43df: 20 64 44
     lda #2                                                            ; 43e2: a9 02
     jsr l25f5                                                         ; 43e4: 20 f5 25
-    lda l0952                                                         ; 43e7: ad 52 09
+    lda object_x_low + 2                                              ; 43e7: ad 52 09
     sta l0a70                                                         ; 43ea: 8d 70 0a
-    lda l0968                                                         ; 43ed: ad 68 09
+    lda object_x_high + 2                                             ; 43ed: ad 68 09
     sta l0a71                                                         ; 43f0: 8d 71 0a
-    lda l097e                                                         ; 43f3: ad 7e 09
+    lda object_y_low + 2                                              ; 43f3: ad 7e 09
     sta l0a72                                                         ; 43f6: 8d 72 0a
-    lda l0994                                                         ; 43f9: ad 94 09
+    lda object_y_high + 2                                             ; 43f9: ad 94 09
     sta l0a73                                                         ; 43fc: 8d 73 0a
     dec temp_top_offset                                               ; 43ff: ce 50 25
     lda #2                                                            ; 4402: a9 02
@@ -1658,7 +1642,7 @@ c4448
     dec l0a75                                                         ; 445a: ce 75 0a
 c445d
     lda #0                                                            ; 445d: a9 00
-    sta l09aa                                                         ; 445f: 8d aa 09
+    sta object_spriteid + 2                                           ; 445f: 8d aa 09
 return9
     rts                                                               ; 4462: 60
 
@@ -1671,22 +1655,22 @@ sub_c4464
     lda #$40 ; '@'                                                    ; 4469: a9 40
     sta l38c4                                                         ; 446b: 8d c4 38
     lda l0a70                                                         ; 446e: ad 70 0a
-    sta l0952                                                         ; 4471: 8d 52 09
+    sta object_x_low + 2                                              ; 4471: 8d 52 09
     lda l0a71                                                         ; 4474: ad 71 0a
-    sta l0968                                                         ; 4477: 8d 68 09
+    sta object_x_high + 2                                             ; 4477: 8d 68 09
     lda l0a72                                                         ; 447a: ad 72 0a
-    sta l097e                                                         ; 447d: 8d 7e 09
+    sta object_y_low + 2                                              ; 447d: 8d 7e 09
     lda l0a73                                                         ; 4480: ad 73 0a
-    sta l0994                                                         ; 4483: 8d 94 09
+    sta object_y_high + 2                                             ; 4483: 8d 94 09
     lda l0a74                                                         ; 4486: ad 74 0a
-    sta l09c0                                                         ; 4489: 8d c0 09
+    sta object_direction + 2                                          ; 4489: 8d c0 09
     lda #$c8                                                          ; 448c: a9 c8
-    sta l09aa                                                         ; 448e: 8d aa 09
+    sta object_spriteid + 2                                           ; 448e: 8d aa 09
     lda l0a30                                                         ; 4491: ad 30 0a
     cmp #$11                                                          ; 4494: c9 11
     bne return10                                                      ; 4496: d0 05
     lda #$cb                                                          ; 4498: a9 cb
-    sta l09aa                                                         ; 449a: 8d aa 09
+    sta object_spriteid + 2                                           ; 449a: 8d aa 09
 return10
     rts                                                               ; 449d: 60
 
@@ -1834,22 +1818,6 @@ pydis_end
 ;     l001b
 ;     l0078
 ;     l0079
-;     l0952
-;     l0953
-;     l0954
-;     l0955
-;     l0968
-;     l097e
-;     l097f
-;     l0994
-;     l09aa
-;     l09ab
-;     l09ac
-;     l09b5
-;     l09c0
-;     l09c1
-;     l09c2
-;     l09c3
 ;     l0a30
 ;     l0a31
 ;     l0a32
@@ -1947,6 +1915,54 @@ pydis_end
 }
 !if (level_specific_update) != $3b0f {
     !error "Assertion failed: level_specific_update == $3b0f"
+}
+!if (object_direction + 2) != $09c0 {
+    !error "Assertion failed: object_direction + 2 == $09c0"
+}
+!if (object_direction + 3) != $09c1 {
+    !error "Assertion failed: object_direction + 3 == $09c1"
+}
+!if (object_direction + 4) != $09c2 {
+    !error "Assertion failed: object_direction + 4 == $09c2"
+}
+!if (object_direction + 5) != $09c3 {
+    !error "Assertion failed: object_direction + 5 == $09c3"
+}
+!if (object_spriteid + 2) != $09aa {
+    !error "Assertion failed: object_spriteid + 2 == $09aa"
+}
+!if (object_spriteid + 3) != $09ab {
+    !error "Assertion failed: object_spriteid + 3 == $09ab"
+}
+!if (object_spriteid + 4) != $09ac {
+    !error "Assertion failed: object_spriteid + 4 == $09ac"
+}
+!if (object_spriteid_old + 2) != $09b5 {
+    !error "Assertion failed: object_spriteid_old + 2 == $09b5"
+}
+!if (object_x_high + 2) != $0968 {
+    !error "Assertion failed: object_x_high + 2 == $0968"
+}
+!if (object_x_low + 2) != $0952 {
+    !error "Assertion failed: object_x_low + 2 == $0952"
+}
+!if (object_x_low + 3) != $0953 {
+    !error "Assertion failed: object_x_low + 3 == $0953"
+}
+!if (object_x_low + 4) != $0954 {
+    !error "Assertion failed: object_x_low + 4 == $0954"
+}
+!if (object_x_low + 5) != $0955 {
+    !error "Assertion failed: object_x_low + 5 == $0955"
+}
+!if (object_y_high + 2) != $0994 {
+    !error "Assertion failed: object_y_high + 2 == $0994"
+}
+!if (object_y_low + 2) != $097e {
+    !error "Assertion failed: object_y_low + 2 == $097e"
+}
+!if (object_y_low + 3) != $097f {
+    !error "Assertion failed: object_y_low + 3 == $097f"
 }
 !if (objectid_old_player) != $0b {
     !error "Assertion failed: objectid_old_player == $0b"
