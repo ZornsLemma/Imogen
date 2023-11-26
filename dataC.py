@@ -93,6 +93,11 @@ ldx_ldy_jsr_play_sound_yx(0x43c2, "sound1")
 expr(0x4417, "objectid_player")
 label(0x4424, "return6")
 
+label(0x3bb3, "room_0_update_handler")
+label(0x3e45, "room_1_update_handler")
+label(0x41a1, "room_2_update_handler")
+label(0x44f0, "room_3_update_handler")
+
 result = go(False)
 result = remove_sprite_data(result)
 print(result)
