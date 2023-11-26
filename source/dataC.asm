@@ -24,10 +24,16 @@ object_collided_ceiling               = 8
 object_collided_floor                 = 2
 object_collided_left_wall             = 1
 object_collided_right_wall            = 4
+objectid_brazier                      = 2
+objectid_fire1                        = 6
+objectid_fire2                        = 7
 objectid_old_player                   = 11
 objectid_old_player_accessory         = 12
+objectid_parrot                       = 5
 objectid_player                       = 0
 objectid_player_accessory             = 1
+objectid_rope_end                     = 3
+objectid_table                        = 5
 opcode_jmp                            = 76
 sprite_op_flags_copy_mask             = 1
 sprite_op_flags_erase                 = 2
@@ -183,10 +189,10 @@ object_spriteid_old                                 = $09b3
 object_direction                                    = $09be
 object_direction_old                                = $09c9
 level_progress_table                                = $09ef
-l0a0a                                               = $0a0a
-l0a0b                                               = $0a0b
-l0a0c                                               = $0a0c
-l0a0d                                               = $0a0d
+save_game_level_c_got_brazier                       = $0a0a
+save_game_level_c_burning_table_progress            = $0a0b
+save_game_level_c_room_0_and_2_burning_rope_progress = $0a0c
+save_game_level_c_room_1_burning_rope_progress      = $0a0d
 level_workspace                                     = $0a6f
 l0a70                                               = $0a70
 l0a71                                               = $0a71
@@ -303,9 +309,9 @@ level_specific_initialisation
     lda developer_flags                                               ; 3af8: ad 03 11
     bpl c3b02                                                         ; 3afb: 10 05
     lda #$ff                                                          ; 3afd: a9 ff
-    sta l0a0a                                                         ; 3aff: 8d 0a 0a
+    sta save_game_level_c_got_brazier                                 ; 3aff: 8d 0a 0a
 c3b02
-    lda l0a0a                                                         ; 3b02: ad 0a 0a
+    lda save_game_level_c_got_brazier                                 ; 3b02: ad 0a 0a
     beq return1                                                       ; 3b05: f0 05
     lda #spriteid_brazier_menu_item                                   ; 3b07: a9 cb
     jsr find_or_create_menu_slot_for_A                                ; 3b09: 20 bd 2b
@@ -462,7 +468,7 @@ room_0_update_handler
     jsr update_brazier_and_fire                                       ; 3bc5: 20 88 19
     lda level_workspace                                               ; 3bc8: ad 6f 0a
     sta l3d76                                                         ; 3bcb: 8d 76 3d
-    lda l0a0c                                                         ; 3bce: ad 0c 0a
+    lda save_game_level_c_room_0_and_2_burning_rope_progress          ; 3bce: ad 0c 0a
     sta l3d75                                                         ; 3bd1: 8d 75 3d
     ldx #8                                                            ; 3bd4: a2 08
     ldy #0                                                            ; 3bd6: a0 00
@@ -471,7 +477,7 @@ room_0_update_handler
     lda l3d76                                                         ; 3bdd: ad 76 3d
     sta level_workspace                                               ; 3be0: 8d 6f 0a
     lda l3d75                                                         ; 3be3: ad 75 3d
-    sta l0a0c                                                         ; 3be6: 8d 0c 0a
+    sta save_game_level_c_room_0_and_2_burning_rope_progress          ; 3be6: 8d 0c 0a
     rts                                                               ; 3be9: 60
 
 sub_c3bea
@@ -571,7 +577,7 @@ c3c89
     jsr test_for_collision_between_objects_x_and_y                    ; 3c9b: 20 e2 28
     beq c3c86                                                         ; 3c9e: f0 e6
     lda #spriteid_one_pixel_masked_out                                ; 3ca0: a9 00
-    sta object_spriteid_old + 3                                       ; 3ca2: 8d b6 09
+    sta object_spriteid_old + objectid_rope_end                       ; 3ca2: 8d b6 09
     lda l3d78                                                         ; 3ca5: ad 78 3d
     clc                                                               ; 3ca8: 18
     adc l3d79                                                         ; 3ca9: 6d 79 3d
@@ -620,7 +626,7 @@ c3cee
     lda #3                                                            ; 3d00: a9 03
     jsr set_object_position_from_cell_xy                              ; 3d02: 20 5d 1f
     lda #spriteid_empty_hook                                          ; 3d05: a9 d8
-    sta object_spriteid + 3                                           ; 3d07: 8d ab 09
+    sta object_spriteid + objectid_rope_end                           ; 3d07: 8d ab 09
     lda #spriteid_one_pixel_masked_out                                ; 3d0a: a9 00
     sta object_spriteid + 4                                           ; 3d0c: 8d ac 09
     jmp c3d26                                                         ; 3d0f: 4c 26 3d
@@ -632,7 +638,7 @@ c3d12
     cmp currently_updating_logic_for_room_index                       ; 3d19: cd ba 1a
     bne c3d26                                                         ; 3d1c: d0 08
     lda #spriteid_one_pixel_masked_out                                ; 3d1e: a9 00
-    sta object_spriteid + 3                                           ; 3d20: 8d ab 09
+    sta object_spriteid + objectid_rope_end                           ; 3d20: 8d ab 09
     sta object_spriteid + 4                                           ; 3d23: 8d ac 09
 c3d26
     lda desired_room_index                                            ; 3d26: a5 30
@@ -642,13 +648,13 @@ c3d26
     cmp #1                                                            ; 3d30: c9 01
     bne return2                                                       ; 3d32: d0 40
     lda #spriteid_blob                                                ; 3d34: a9 d7
-    sta object_spriteid + 3                                           ; 3d36: 8d ab 09
+    sta object_spriteid + objectid_rope_end                           ; 3d36: 8d ab 09
     lda l3d76                                                         ; 3d39: ad 76 3d
     lsr                                                               ; 3d3c: 4a
     lsr                                                               ; 3d3d: 4a
     and #7                                                            ; 3d3e: 29 07
     clc                                                               ; 3d40: 18
-    adc #$3c ; '<'                                                    ; 3d41: 69 3c
+    adc #spriteid_fire1                                               ; 3d41: 69 3c
     sta object_spriteid + 4                                           ; 3d43: 8d ac 09
     ldx l3d77                                                         ; 3d46: ae 77 3d
     lda #3                                                            ; 3d49: a9 03
@@ -661,7 +667,7 @@ c3d26
     lda #4                                                            ; 3d58: a9 04
     jsr set_object_position_from_cell_xy                              ; 3d5a: 20 5d 1f
     lda l3d76                                                         ; 3d5d: ad 76 3d
-    sta object_y_low + 3                                              ; 3d60: 8d 7f 09
+    sta object_y_low + objectid_rope_end                              ; 3d60: 8d 7f 09
     sta object_y_low + 4                                              ; 3d63: 8d 80 09
     ldx #8                                                            ; 3d66: a2 08
     lda l3d76                                                         ; 3d68: ad 76 3d
@@ -842,7 +848,7 @@ room_1_update_handler
     jsr update_brazier_and_fire                                       ; 3e50: 20 88 19
     lda l0a70                                                         ; 3e53: ad 70 0a
     sta l3d76                                                         ; 3e56: 8d 76 3d
-    lda l0a0d                                                         ; 3e59: ad 0d 0a
+    lda save_game_level_c_room_1_burning_rope_progress                ; 3e59: ad 0d 0a
     sta l3d75                                                         ; 3e5c: 8d 75 3d
     ldx #$14                                                          ; 3e5f: a2 14
     ldy #3                                                            ; 3e61: a0 03
@@ -851,7 +857,7 @@ room_1_update_handler
     lda l3d76                                                         ; 3e68: ad 76 3d
     sta l0a70                                                         ; 3e6b: 8d 70 0a
     lda l3d75                                                         ; 3e6e: ad 75 3d
-    sta l0a0d                                                         ; 3e71: 8d 0d 0a
+    sta save_game_level_c_room_1_burning_rope_progress                ; 3e71: 8d 0d 0a
 ; check for first update in room (branch if not)
     lda update_room_first_update_flag                                 ; 3e74: ad 2b 13
     beq c3ede                                                         ; 3e77: f0 65
@@ -859,10 +865,10 @@ room_1_update_handler
     lda current_level                                                 ; 3e79: a5 31
     cmp level_before_latest_level_and_room_initialisation             ; 3e7b: c5 51
     beq c3e89                                                         ; 3e7d: f0 0a
-    lda l0a0b                                                         ; 3e7f: ad 0b 0a
+    lda save_game_level_c_burning_table_progress                      ; 3e7f: ad 0b 0a
     beq c3e89                                                         ; 3e82: f0 05
     lda #$ff                                                          ; 3e84: a9 ff
-    sta l0a0b                                                         ; 3e86: 8d 0b 0a
+    sta save_game_level_c_burning_table_progress                      ; 3e86: 8d 0b 0a
 c3e89
     lda desired_room_index                                            ; 3e89: a5 30
     cmp #1                                                            ; 3e8b: c9 01
@@ -901,66 +907,66 @@ c3e89
     lda #$a0                                                          ; 3ed3: a9 a0
     sta object_z_order,x                                              ; 3ed5: 9d c2 38
 c3ed8
-    jmp c3f04                                                         ; 3ed8: 4c 04 3f
+    jmp update_table                                                  ; 3ed8: 4c 04 3f
 
-c3edb
+return3_local
     jmp return3                                                       ; 3edb: 4c e4 3f
 
 c3ede
-    ldy l0a0b                                                         ; 3ede: ac 0b 0a
-    bmi c3f04                                                         ; 3ee1: 30 21
-    bne c3ef4                                                         ; 3ee3: d0 0f
+    ldy save_game_level_c_burning_table_progress                      ; 3ede: ac 0b 0a
+    bmi update_table                                                  ; 3ee1: 30 21
+    bne update_table_burning_progress                                 ; 3ee3: d0 0f
     lda desired_room_index                                            ; 3ee5: a5 30
     cmp #1                                                            ; 3ee7: c9 01
-    bne c3f04                                                         ; 3ee9: d0 19
+    bne update_table                                                  ; 3ee9: d0 19
     ldx #2                                                            ; 3eeb: a2 02
     ldy #5                                                            ; 3eed: a0 05
     jsr test_for_collision_between_objects_x_and_y                    ; 3eef: 20 e2 28
-    beq c3f04                                                         ; 3ef2: f0 10
-c3ef4
-    ldy l0a0b                                                         ; 3ef4: ac 0b 0a
+    beq update_table                                                  ; 3ef2: f0 10
+update_table_burning_progress
+    ldy save_game_level_c_burning_table_progress                      ; 3ef4: ac 0b 0a
     iny                                                               ; 3ef7: c8
-    sty l0a0b                                                         ; 3ef8: 8c 0b 0a
+    sty save_game_level_c_burning_table_progress                      ; 3ef8: 8c 0b 0a
     cpy #$30 ; '0'                                                    ; 3efb: c0 30
-    bcc c3f04                                                         ; 3efd: 90 05
+    bcc update_table                                                  ; 3efd: 90 05
     ldy #$ff                                                          ; 3eff: a0 ff
-    sty l0a0b                                                         ; 3f01: 8c 0b 0a
-c3f04
+    sty save_game_level_c_burning_table_progress                      ; 3f01: 8c 0b 0a
+update_table
     lda desired_room_index                                            ; 3f04: a5 30
     cmp #1                                                            ; 3f06: c9 01
-    bne c3edb                                                         ; 3f08: d0 d1
+    bne return3_local                                                 ; 3f08: d0 d1
     ldx #5                                                            ; 3f0a: a2 05
     ldy #$12                                                          ; 3f0c: a0 12
     lda #3                                                            ; 3f0e: a9 03
     sta width_in_cells                                                ; 3f10: 85 3c
     lda #2                                                            ; 3f12: a9 02
     sta height_in_cells                                               ; 3f14: 85 3d
-    lda l0a0b                                                         ; 3f16: ad 0b 0a
-    beq c3f20                                                         ; 3f19: f0 05
-    bpl c3f30                                                         ; 3f1b: 10 13
-    jmp c3fb5                                                         ; 3f1d: 4c b5 3f
+    lda save_game_level_c_burning_table_progress                      ; 3f16: ad 0b 0a
+    beq table_is_unburnt                                              ; 3f19: f0 05
+    bpl update_burning_table                                          ; 3f1b: 10 13
+    jmp set_table_fully_burnt                                         ; 3f1d: 4c b5 3f
 
-c3f20
+table_is_unburnt
     lda #spriteid_table                                               ; 3f20: a9 c9
-    sta object_spriteid + 5                                           ; 3f22: 8d ad 09
+    sta object_spriteid + objectid_table                              ; 3f22: 8d ad 09
     lda #spriteid_one_pixel_masked_out                                ; 3f25: a9 00
-    sta object_spriteid + 6                                           ; 3f27: 8d ae 09
-    sta object_spriteid + 7                                           ; 3f2a: 8d af 09
+    sta object_spriteid + objectid_fire1                              ; 3f27: 8d ae 09
+    sta object_spriteid + objectid_fire2                              ; 3f2a: 8d af 09
     jmp c3fdd                                                         ; 3f2d: 4c dd 3f
 
-c3f30
-    lda l0a0b                                                         ; 3f30: ad 0b 0a
+update_burning_table
+    lda save_game_level_c_burning_table_progress                      ; 3f30: ad 0b 0a
     and #7                                                            ; 3f33: 29 07
     clc                                                               ; 3f35: 18
-    adc #$3c ; '<'                                                    ; 3f36: 69 3c
-    sta object_spriteid + 6                                           ; 3f38: 8d ae 09
-    lda l0a0b                                                         ; 3f3b: ad 0b 0a
+    adc #spriteid_fire1                                               ; 3f36: 69 3c
+    sta object_spriteid + objectid_fire1                              ; 3f38: 8d ae 09
+    lda save_game_level_c_burning_table_progress                      ; 3f3b: ad 0b 0a
     clc                                                               ; 3f3e: 18
     adc #4                                                            ; 3f3f: 69 04
     and #7                                                            ; 3f41: 29 07
-    adc #$3c ; '<'                                                    ; 3f43: 69 3c
-    sta object_spriteid + 7                                           ; 3f45: 8d af 09
-    lda l0a0b                                                         ; 3f48: ad 0b 0a
+    adc #spriteid_fire1                                               ; 3f43: 69 3c
+    sta object_spriteid + objectid_fire2                              ; 3f45: 8d af 09
+    lda save_game_level_c_burning_table_progress                      ; 3f48: ad 0b 0a
     cmp #$24 ; '$'                                                    ; 3f4b: c9 24
     bcs c3f96                                                         ; 3f4d: b0 47
     cmp #$18                                                          ; 3f4f: c9 18
@@ -968,54 +974,54 @@ c3f30
     cmp #$0c                                                          ; 3f53: c9 0c
     bcs c3f76                                                         ; 3f55: b0 1f
     lda #spriteid_table                                               ; 3f57: a9 c9
-    sta object_spriteid + 5                                           ; 3f59: 8d ad 09
+    sta object_spriteid + objectid_table                              ; 3f59: 8d ad 09
     lda #$8e                                                          ; 3f5c: a9 8e
-    sta object_y_low + 6                                              ; 3f5e: 8d 82 09
-    sta object_y_low + 7                                              ; 3f61: 8d 83 09
-    lda l0a0b                                                         ; 3f64: ad 0b 0a
+    sta object_y_low + objectid_fire1                                 ; 3f5e: 8d 82 09
+    sta object_y_low + objectid_fire2                                 ; 3f61: 8d 83 09
+    lda save_game_level_c_burning_table_progress                      ; 3f64: ad 0b 0a
     cmp #2                                                            ; 3f67: c9 02
     bcs c3fdd                                                         ; 3f69: b0 72
     lda #spriteid_cache2                                              ; 3f6b: a9 ce
-    sta object_spriteid + 6                                           ; 3f6d: 8d ae 09
-    sta object_spriteid + 7                                           ; 3f70: 8d af 09
+    sta object_spriteid + objectid_fire1                              ; 3f6d: 8d ae 09
+    sta object_spriteid + objectid_fire2                              ; 3f70: 8d af 09
     jmp c3fdd                                                         ; 3f73: 4c dd 3f
 
 c3f76
     lda #spriteid_table_burnt1                                        ; 3f76: a9 d4
-    sta object_spriteid + 5                                           ; 3f78: 8d ad 09
+    sta object_spriteid + objectid_table                              ; 3f78: 8d ad 09
     lda #$92                                                          ; 3f7b: a9 92
-    sta object_y_low + 6                                              ; 3f7d: 8d 82 09
-    sta object_y_low + 7                                              ; 3f80: 8d 83 09
+    sta object_y_low + objectid_fire1                                 ; 3f7d: 8d 82 09
+    sta object_y_low + objectid_fire2                                 ; 3f80: 8d 83 09
     jmp c3fdd                                                         ; 3f83: 4c dd 3f
 
 c3f86
     lda #spriteid_table_burnt2                                        ; 3f86: a9 d5
-    sta object_spriteid + 5                                           ; 3f88: 8d ad 09
+    sta object_spriteid + objectid_table                              ; 3f88: 8d ad 09
     lda #$97                                                          ; 3f8b: a9 97
-    sta object_y_low + 6                                              ; 3f8d: 8d 82 09
-    sta object_y_low + 7                                              ; 3f90: 8d 83 09
+    sta object_y_low + objectid_fire1                                 ; 3f8d: 8d 82 09
+    sta object_y_low + objectid_fire2                                 ; 3f90: 8d 83 09
     jmp c3fd3                                                         ; 3f93: 4c d3 3f
 
 c3f96
     lda #spriteid_table_burnt3                                        ; 3f96: a9 d6
-    sta object_spriteid + 5                                           ; 3f98: 8d ad 09
+    sta object_spriteid + objectid_table                              ; 3f98: 8d ad 09
     lda #$9d                                                          ; 3f9b: a9 9d
-    sta object_y_low + 6                                              ; 3f9d: 8d 82 09
-    sta object_y_low + 7                                              ; 3fa0: 8d 83 09
-    lda l0a0b                                                         ; 3fa3: ad 0b 0a
+    sta object_y_low + objectid_fire1                                 ; 3f9d: 8d 82 09
+    sta object_y_low + objectid_fire2                                 ; 3fa0: 8d 83 09
+    lda save_game_level_c_burning_table_progress                      ; 3fa3: ad 0b 0a
     cmp #$2f ; '/'                                                    ; 3fa6: c9 2f
     bcc c3fd3                                                         ; 3fa8: 90 29
     lda #spriteid_cache2                                              ; 3faa: a9 ce
-    sta object_spriteid + 6                                           ; 3fac: 8d ae 09
-    sta object_spriteid + 7                                           ; 3faf: 8d af 09
+    sta object_spriteid + objectid_fire1                              ; 3fac: 8d ae 09
+    sta object_spriteid + objectid_fire2                              ; 3faf: 8d af 09
     jmp c3fd3                                                         ; 3fb2: 4c d3 3f
 
-c3fb5
+set_table_fully_burnt
     lda #spriteid_table_burnt3                                        ; 3fb5: a9 d6
-    sta object_spriteid + 5                                           ; 3fb7: 8d ad 09
+    sta object_spriteid + objectid_table                              ; 3fb7: 8d ad 09
     lda #spriteid_one_pixel_masked_out                                ; 3fba: a9 00
-    sta object_spriteid + 6                                           ; 3fbc: 8d ae 09
-    sta object_spriteid + 7                                           ; 3fbf: 8d af 09
+    sta object_spriteid + objectid_fire1                              ; 3fbc: 8d ae 09
+    sta object_spriteid + objectid_fire2                              ; 3fbf: 8d af 09
     lda #collision_map_none                                           ; 3fc2: a9 00
     sta value_to_write_to_collision_map                               ; 3fc4: 85 3e
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 3fc6: 20 44 1e
@@ -1051,14 +1057,14 @@ sub_c3fe5
     lda current_level                                                 ; 3ff9: a5 31
     cmp level_before_latest_level_and_room_initialisation             ; 3ffb: c5 51
     beq c4009                                                         ; 3ffd: f0 0a
-    lda l0a0a                                                         ; 3fff: ad 0a 0a
+    lda save_game_level_c_got_brazier                                 ; 3fff: ad 0a 0a
     beq c4009                                                         ; 4002: f0 05
     lda #$ff                                                          ; 4004: a9 ff
-    sta l0a0a                                                         ; 4006: 8d 0a 0a
+    sta save_game_level_c_got_brazier                                 ; 4006: 8d 0a 0a
 c4009
     lda #$cc                                                          ; 4009: a9 cc
     sta l38ae                                                         ; 400b: 8d ae 38
-    lda l0a0a                                                         ; 400e: ad 0a 0a
+    lda save_game_level_c_got_brazier                                 ; 400e: ad 0a 0a
     bne c4053                                                         ; 4011: d0 40
     lda desired_room_index                                            ; 4013: a5 30
     cmp #1                                                            ; 4015: c9 01
@@ -1073,7 +1079,7 @@ c4009
     lda #$c0                                                          ; 4027: a9 c0
     sta l38c4                                                         ; 4029: 8d c4 38
     lda #spriteid_brazier_object                                      ; 402c: a9 ca
-    sta object_spriteid + 2                                           ; 402e: 8d aa 09
+    sta object_spriteid + objectid_brazier                            ; 402e: 8d aa 09
 return4
     rts                                                               ; 4031: 60
 
@@ -1081,7 +1087,7 @@ c4032
     jmp return5                                                       ; 4032: 4c d0 40
 
 c4035
-    lda l0a0a                                                         ; 4035: ad 0a 0a
+    lda save_game_level_c_got_brazier                                 ; 4035: ad 0a 0a
     bne c4053                                                         ; 4038: d0 19
     lda desired_room_index                                            ; 403a: a5 30
     cmp #1                                                            ; 403c: c9 01
@@ -1093,9 +1099,9 @@ c4035
     lda #spriteid_brazier_menu_item                                   ; 4049: a9 cb
     jsr find_or_create_menu_slot_for_A                                ; 404b: 20 bd 2b
     lda #$ff                                                          ; 404e: a9 ff
-    sta l0a0a                                                         ; 4050: 8d 0a 0a
+    sta save_game_level_c_got_brazier                                 ; 4050: 8d 0a 0a
 c4053
-    ldy l0a0a                                                         ; 4053: ac 0a 0a
+    ldy save_game_level_c_got_brazier                                 ; 4053: ac 0a 0a
     beq c4032                                                         ; 4056: f0 da
 ; check for first update in room (branch if so)
     lda update_room_first_update_flag                                 ; 4058: ad 2b 13
@@ -1117,9 +1123,9 @@ c4071
     bne c4079                                                         ; 4075: d0 02
     ldy #1                                                            ; 4077: a0 01
 c4079
-    sty l0a0a                                                         ; 4079: 8c 0a 0a
+    sty save_game_level_c_got_brazier                                 ; 4079: 8c 0a 0a
     lda #spriteid_one_pixel_masked_out                                ; 407c: a9 00
-    sta object_spriteid + 2                                           ; 407e: 8d aa 09
+    sta object_spriteid + objectid_brazier                            ; 407e: 8d aa 09
     cpy #$ff                                                          ; 4081: c0 ff
     beq return5                                                       ; 4083: f0 4b
     ldx #2                                                            ; 4085: a2 02
@@ -1331,7 +1337,7 @@ room_2_update_handler
     bne c41d5                                                         ; 41b8: d0 1b
     ldx #8                                                            ; 41ba: a2 08
     ldy #2                                                            ; 41bc: a0 02
-    lda l0a0c                                                         ; 41be: ad 0c 0a
+    lda save_game_level_c_room_0_and_2_burning_rope_progress          ; 41be: ad 0c 0a
     beq c41d0                                                         ; 41c1: f0 0d
     lda #spriteid_empty_hook                                          ; 41c3: a9 d8
     jsr draw_sprite_a_at_cell_xy                                      ; 41c5: 20 4c 1f
@@ -1395,7 +1401,7 @@ sub_c422d
     lda currently_updating_logic_for_room_index                       ; 4236: ad ba 1a
     cmp #3                                                            ; 4239: c9 03
     beq c4242                                                         ; 423b: f0 05
-    lda l0a0c                                                         ; 423d: ad 0c 0a
+    lda save_game_level_c_room_0_and_2_burning_rope_progress          ; 423d: ad 0c 0a
     bmi c428d                                                         ; 4240: 30 4b
 ; check for first update in room (branch if not)
 c4242
@@ -1408,10 +1414,10 @@ c4242
     ldx #<envelope1                                                   ; 424d: a2 4b
     ldy #>envelope1                                                   ; 424f: a0 45
     jsr define_envelope                                               ; 4251: 20 5e 39
-    lda l0a0c                                                         ; 4254: ad 0c 0a
+    lda save_game_level_c_room_0_and_2_burning_rope_progress          ; 4254: ad 0c 0a
     beq c4265                                                         ; 4257: f0 0c
     lda #$ff                                                          ; 4259: a9 ff
-    sta l0a0c                                                         ; 425b: 8d 0c 0a
+    sta save_game_level_c_room_0_and_2_burning_rope_progress          ; 425b: 8d 0c 0a
     lda currently_updating_logic_for_room_index                       ; 425e: ad ba 1a
     cmp #3                                                            ; 4261: c9 03
     bne c428d                                                         ; 4263: d0 28
@@ -1504,7 +1510,7 @@ c42fe
     lda currently_updating_logic_for_room_index                       ; 4308: ad ba 1a
     cmp #3                                                            ; 430b: c9 03
     beq c4314                                                         ; 430d: f0 05
-    lda l0a0c                                                         ; 430f: ad 0c 0a
+    lda save_game_level_c_room_0_and_2_burning_rope_progress          ; 430f: ad 0c 0a
     bne c4328                                                         ; 4312: d0 14
 c4314
     lda l442c                                                         ; 4314: ad 2c 44
@@ -1617,19 +1623,19 @@ c43e5
     bpl c43ec                                                         ; 43e9: 10 01
     dex                                                               ; 43eb: ca
 c43ec
-    stx object_y_high + 5                                             ; 43ec: 8e 97 09
+    stx object_y_high + objectid_parrot                               ; 43ec: 8e 97 09
     asl                                                               ; 43ef: 0a
-    rol object_y_high + 5                                             ; 43f0: 2e 97 09
-    sta object_y_low + 5                                              ; 43f3: 8d 81 09
+    rol object_y_high + objectid_parrot                               ; 43f0: 2e 97 09
+    sta object_y_low + objectid_parrot                                ; 43f3: 8d 81 09
     lda l4427                                                         ; 43f6: ad 27 44
-    sta object_direction + 5                                          ; 43f9: 8d c3 09
+    sta object_direction + objectid_parrot                            ; 43f9: 8d c3 09
     lda l4428                                                         ; 43fc: ad 28 44
-    sta object_x_low + 5                                              ; 43ff: 8d 55 09
+    sta object_x_low + objectid_parrot                                ; 43ff: 8d 55 09
     lda l4429                                                         ; 4402: ad 29 44
-    sta object_x_high + 5                                             ; 4405: 8d 6b 09
+    sta object_x_high + objectid_parrot                               ; 4405: 8d 6b 09
     ldy l442e                                                         ; 4408: ac 2e 44
     lda parrot_spriteid_table,y                                       ; 440b: b9 1e 42
-    sta object_spriteid + 5                                           ; 440e: 8d ad 09
+    sta object_spriteid + objectid_parrot                             ; 440e: 8d ad 09
     lda update_room_first_update_flag                                 ; 4411: ad 2b 13
     bne return6                                                       ; 4414: d0 0e
     ldx #objectid_player                                              ; 4416: a2 00
@@ -1922,16 +1928,10 @@ pydis_end
 ;     c3d26
 ;     c3e89
 ;     c3ed8
-;     c3edb
 ;     c3ede
-;     c3ef4
-;     c3f04
-;     c3f20
-;     c3f30
 ;     c3f76
 ;     c3f86
 ;     c3f96
-;     c3fb5
 ;     c3fd3
 ;     c3fdd
 ;     c4009
@@ -1973,10 +1973,6 @@ pydis_end
 ;     c43e5
 ;     c43ec
 ;     l0071
-;     l0a0a
-;     l0a0b
-;     l0a0c
-;     l0a0d
 ;     l0a70
 ;     l0a71
 ;     l0a72
@@ -2053,53 +2049,56 @@ pydis_end
 !if (level_specific_update) != $3b0d {
     !error "Assertion failed: level_specific_update == $3b0d"
 }
-!if (object_direction + 5) != $09c3 {
-    !error "Assertion failed: object_direction + 5 == $09c3"
-}
-!if (object_spriteid + 2) != $09aa {
-    !error "Assertion failed: object_spriteid + 2 == $09aa"
-}
-!if (object_spriteid + 3) != $09ab {
-    !error "Assertion failed: object_spriteid + 3 == $09ab"
+!if (object_direction + objectid_parrot) != $09c3 {
+    !error "Assertion failed: object_direction + objectid_parrot == $09c3"
 }
 !if (object_spriteid + 4) != $09ac {
     !error "Assertion failed: object_spriteid + 4 == $09ac"
 }
-!if (object_spriteid + 5) != $09ad {
-    !error "Assertion failed: object_spriteid + 5 == $09ad"
+!if (object_spriteid + objectid_brazier) != $09aa {
+    !error "Assertion failed: object_spriteid + objectid_brazier == $09aa"
 }
-!if (object_spriteid + 6) != $09ae {
-    !error "Assertion failed: object_spriteid + 6 == $09ae"
+!if (object_spriteid + objectid_fire1) != $09ae {
+    !error "Assertion failed: object_spriteid + objectid_fire1 == $09ae"
 }
-!if (object_spriteid + 7) != $09af {
-    !error "Assertion failed: object_spriteid + 7 == $09af"
+!if (object_spriteid + objectid_fire2) != $09af {
+    !error "Assertion failed: object_spriteid + objectid_fire2 == $09af"
 }
-!if (object_spriteid_old + 3) != $09b6 {
-    !error "Assertion failed: object_spriteid_old + 3 == $09b6"
+!if (object_spriteid + objectid_parrot) != $09ad {
+    !error "Assertion failed: object_spriteid + objectid_parrot == $09ad"
 }
-!if (object_x_high + 5) != $096b {
-    !error "Assertion failed: object_x_high + 5 == $096b"
+!if (object_spriteid + objectid_rope_end) != $09ab {
+    !error "Assertion failed: object_spriteid + objectid_rope_end == $09ab"
 }
-!if (object_x_low + 5) != $0955 {
-    !error "Assertion failed: object_x_low + 5 == $0955"
+!if (object_spriteid + objectid_table) != $09ad {
+    !error "Assertion failed: object_spriteid + objectid_table == $09ad"
 }
-!if (object_y_high + 5) != $0997 {
-    !error "Assertion failed: object_y_high + 5 == $0997"
+!if (object_spriteid_old + objectid_rope_end) != $09b6 {
+    !error "Assertion failed: object_spriteid_old + objectid_rope_end == $09b6"
 }
-!if (object_y_low + 3) != $097f {
-    !error "Assertion failed: object_y_low + 3 == $097f"
+!if (object_x_high + objectid_parrot) != $096b {
+    !error "Assertion failed: object_x_high + objectid_parrot == $096b"
+}
+!if (object_x_low + objectid_parrot) != $0955 {
+    !error "Assertion failed: object_x_low + objectid_parrot == $0955"
+}
+!if (object_y_high + objectid_parrot) != $0997 {
+    !error "Assertion failed: object_y_high + objectid_parrot == $0997"
 }
 !if (object_y_low + 4) != $0980 {
     !error "Assertion failed: object_y_low + 4 == $0980"
 }
-!if (object_y_low + 5) != $0981 {
-    !error "Assertion failed: object_y_low + 5 == $0981"
+!if (object_y_low + objectid_fire1) != $0982 {
+    !error "Assertion failed: object_y_low + objectid_fire1 == $0982"
 }
-!if (object_y_low + 6) != $0982 {
-    !error "Assertion failed: object_y_low + 6 == $0982"
+!if (object_y_low + objectid_fire2) != $0983 {
+    !error "Assertion failed: object_y_low + objectid_fire2 == $0983"
 }
-!if (object_y_low + 7) != $0983 {
-    !error "Assertion failed: object_y_low + 7 == $0983"
+!if (object_y_low + objectid_parrot) != $0981 {
+    !error "Assertion failed: object_y_low + objectid_parrot == $0981"
+}
+!if (object_y_low + objectid_rope_end) != $097f {
+    !error "Assertion failed: object_y_low + objectid_rope_end == $097f"
 }
 !if (objectid_old_player) != $0b {
     !error "Assertion failed: objectid_old_player == $0b"
