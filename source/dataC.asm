@@ -33,6 +33,7 @@ objectid_parrot                       = 5
 objectid_player                       = 0
 objectid_player_accessory             = 1
 objectid_rope_end                     = 3
+objectid_rope_fire                    = 4
 objectid_table                        = 5
 opcode_jmp                            = 76
 sprite_op_flags_copy_mask             = 1
@@ -614,7 +615,7 @@ c3cbf
     cmp currently_updating_logic_for_room_index                       ; 3ce4: cd ba 1a
     bne c3d26                                                         ; 3ce7: d0 3d
     lda #spriteid_cache2                                              ; 3ce9: a9 ce
-    sta object_spriteid + 4                                           ; 3ceb: 8d ac 09
+    sta object_spriteid + objectid_rope_fire                          ; 3ceb: 8d ac 09
 c3cee
     lda #$ff                                                          ; 3cee: a9 ff
     sta l3d75                                                         ; 3cf0: 8d 75 3d
@@ -628,7 +629,7 @@ c3cee
     lda #spriteid_empty_hook                                          ; 3d05: a9 d8
     sta object_spriteid + objectid_rope_end                           ; 3d07: 8d ab 09
     lda #spriteid_one_pixel_masked_out                                ; 3d0a: a9 00
-    sta object_spriteid + 4                                           ; 3d0c: 8d ac 09
+    sta object_spriteid + objectid_rope_fire                          ; 3d0c: 8d ac 09
     jmp c3d26                                                         ; 3d0f: 4c 26 3d
 
 c3d12
@@ -639,7 +640,7 @@ c3d12
     bne c3d26                                                         ; 3d1c: d0 08
     lda #spriteid_one_pixel_masked_out                                ; 3d1e: a9 00
     sta object_spriteid + objectid_rope_end                           ; 3d20: 8d ab 09
-    sta object_spriteid + 4                                           ; 3d23: 8d ac 09
+    sta object_spriteid + objectid_rope_fire                          ; 3d23: 8d ac 09
 c3d26
     lda desired_room_index                                            ; 3d26: a5 30
     cmp currently_updating_logic_for_room_index                       ; 3d28: cd ba 1a
@@ -655,7 +656,7 @@ c3d26
     and #7                                                            ; 3d3e: 29 07
     clc                                                               ; 3d40: 18
     adc #spriteid_fire1                                               ; 3d41: 69 3c
-    sta object_spriteid + 4                                           ; 3d43: 8d ac 09
+    sta object_spriteid + objectid_rope_fire                          ; 3d43: 8d ac 09
     ldx l3d77                                                         ; 3d46: ae 77 3d
     lda #3                                                            ; 3d49: a9 03
     sta temp_sprite_x_offset                                          ; 3d4b: 85 3a
@@ -668,7 +669,7 @@ c3d26
     jsr set_object_position_from_cell_xy                              ; 3d5a: 20 5d 1f
     lda l3d76                                                         ; 3d5d: ad 76 3d
     sta object_y_low + objectid_rope_end                              ; 3d60: 8d 7f 09
-    sta object_y_low + 4                                              ; 3d63: 8d 80 09
+    sta object_y_low + objectid_rope_fire                             ; 3d63: 8d 80 09
     ldx #8                                                            ; 3d66: a2 08
     lda l3d76                                                         ; 3d68: ad 76 3d
     lsr                                                               ; 3d6b: 4a
@@ -2052,9 +2053,6 @@ pydis_end
 !if (object_direction + objectid_parrot) != $09c3 {
     !error "Assertion failed: object_direction + objectid_parrot == $09c3"
 }
-!if (object_spriteid + 4) != $09ac {
-    !error "Assertion failed: object_spriteid + 4 == $09ac"
-}
 !if (object_spriteid + objectid_brazier) != $09aa {
     !error "Assertion failed: object_spriteid + objectid_brazier == $09aa"
 }
@@ -2069,6 +2067,9 @@ pydis_end
 }
 !if (object_spriteid + objectid_rope_end) != $09ab {
     !error "Assertion failed: object_spriteid + objectid_rope_end == $09ab"
+}
+!if (object_spriteid + objectid_rope_fire) != $09ac {
+    !error "Assertion failed: object_spriteid + objectid_rope_fire == $09ac"
 }
 !if (object_spriteid + objectid_table) != $09ad {
     !error "Assertion failed: object_spriteid + objectid_table == $09ad"
@@ -2085,9 +2086,6 @@ pydis_end
 !if (object_y_high + objectid_parrot) != $0997 {
     !error "Assertion failed: object_y_high + objectid_parrot == $0997"
 }
-!if (object_y_low + 4) != $0980 {
-    !error "Assertion failed: object_y_low + 4 == $0980"
-}
 !if (object_y_low + objectid_fire1) != $0982 {
     !error "Assertion failed: object_y_low + objectid_fire1 == $0982"
 }
@@ -2099,6 +2097,9 @@ pydis_end
 }
 !if (object_y_low + objectid_rope_end) != $097f {
     !error "Assertion failed: object_y_low + objectid_rope_end == $097f"
+}
+!if (object_y_low + objectid_rope_fire) != $0980 {
+    !error "Assertion failed: object_y_low + objectid_rope_fire == $0980"
 }
 !if (objectid_old_player) != $0b {
     !error "Assertion failed: objectid_old_player == $0b"
