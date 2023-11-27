@@ -29,6 +29,8 @@ label(0x0a14, "save_game_level_e_something_room_1")
 label(0x0a15, "save_game_level_e_duck_captured_flag") # TODO: might be used for other things too, not checked yet
 
 label(0xa76, "room_1_data_table_index")
+label(0xa77, "room_1_egg_x")
+label(0xa78, "room_1_egg_y")
 
 common_to_all()
 define_level(4)

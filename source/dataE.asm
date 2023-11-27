@@ -180,8 +180,8 @@ l0a73                                               = $0a73
 l0a74                                               = $0a74
 l0a75                                               = $0a75
 room_1_data_table_index                             = $0a76
-l0a77                                               = $0a77
-l0a78                                               = $0a78
+room_1_egg_x                                        = $0a77
+room_1_egg_y                                        = $0a78
 l0a79                                               = $0a79
 l0a7a                                               = $0a7a
 l0a7b                                               = $0a7b
@@ -1485,8 +1485,8 @@ c448d
 room_1_axy_set
     sta save_game_level_e_something_room_1                            ; 4493: 8d 14 0a
     sta room_1_data_table_index                                       ; 4496: 8d 76 0a
-    stx l0a77                                                         ; 4499: 8e 77 0a
-    sty l0a78                                                         ; 449c: 8c 78 0a
+    stx room_1_egg_x                                                  ; 4499: 8e 77 0a
+    sty room_1_egg_y                                                  ; 449c: 8c 78 0a
 room_1_not_this_room1
     lda desired_room_index                                            ; 449f: a5 30
     cmp #1                                                            ; 44a1: c9 01
@@ -1546,7 +1546,7 @@ room_1_not_this_room3
 c450b
     cmp #$16                                                          ; 450b: c9 16
     bne c4538                                                         ; 450d: d0 29
-    lda l0a78                                                         ; 450f: ad 78 0a
+    lda room_1_egg_y                                                  ; 450f: ad 78 0a
     cmp #$a0                                                          ; 4512: c9 a0
     bcc c4538                                                         ; 4514: 90 22
     bne c4533                                                         ; 4516: d0 1b
@@ -1571,13 +1571,13 @@ c4538
     iny                                                               ; 453b: c8
     lda room_1_data_table,y                                           ; 453c: b9 4c 44
     clc                                                               ; 453f: 18
-    adc l0a77                                                         ; 4540: 6d 77 0a
-    sta l0a77                                                         ; 4543: 8d 77 0a
+    adc room_1_egg_x                                                  ; 4540: 6d 77 0a
+    sta room_1_egg_x                                                  ; 4543: 8d 77 0a
     iny                                                               ; 4546: c8
     lda room_1_data_table,y                                           ; 4547: b9 4c 44
     clc                                                               ; 454a: 18
-    adc l0a78                                                         ; 454b: 6d 78 0a
-    sta l0a78                                                         ; 454e: 8d 78 0a
+    adc room_1_egg_y                                                  ; 454b: 6d 78 0a
+    sta room_1_egg_y                                                  ; 454e: 8d 78 0a
 c4551
     lda desired_room_index                                            ; 4551: a5 30
     cmp #1                                                            ; 4553: c9 01
@@ -1585,9 +1585,9 @@ c4551
     ldy room_1_data_table_index                                       ; 4557: ac 76 0a
     lda room_1_data_table,y                                           ; 455a: b9 4c 44
     sta object_spriteid + objectid_egg                                ; 455d: 8d ab 09
-    lda l0a77                                                         ; 4560: ad 77 0a
+    lda room_1_egg_x                                                  ; 4560: ad 77 0a
     sta object_x_low + objectid_egg                                   ; 4563: 8d 53 09
-    lda l0a78                                                         ; 4566: ad 78 0a
+    lda room_1_egg_y                                                  ; 4566: ad 78 0a
     sta object_y_low + objectid_egg                                   ; 4569: 8d 7f 09
     lda #collision_map_solid_rock                                     ; 456c: a9 03
     sta value_to_write_to_collision_map                               ; 456e: 85 3e
@@ -1606,7 +1606,7 @@ c4551
     ldy #$15                                                          ; 4589: a0 15
     inc width_in_cells                                                ; 458b: e6 3c
     dec height_in_cells                                               ; 458d: c6 3d
-    lda l0a78                                                         ; 458f: ad 78 0a
+    lda room_1_egg_y                                                  ; 458f: ad 78 0a
     cmp #$a8                                                          ; 4592: c9 a8
     bcc return5                                                       ; 4594: 90 0a
 c4596
@@ -1754,8 +1754,6 @@ pydis_end
 ;     l0a73
 ;     l0a74
 ;     l0a75
-;     l0a77
-;     l0a78
 ;     l0a79
 ;     l0a7a
 ;     l0a7b
