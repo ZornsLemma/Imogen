@@ -116,7 +116,6 @@ spriteid_rope3                        = 87
 spriteid_rope4                        = 88
 spriteid_rope_end                     = 10
 spriteid_rope_hook                    = 11
-spriteid_something                    = 248
 spriteid_sparkles1                    = 34
 spriteid_sparkles2                    = 35
 spriteid_sparkles3                    = 36
@@ -183,7 +182,7 @@ l0a72                                               = $0a72
 l0a73                                               = $0a73
 l0a74                                               = $0a74
 l0a75                                               = $0a75
-room_1_data_table_index                             = $0a76
+egg_animation_index                                 = $0a76
 room_1_egg_x                                        = $0a77
 room_1_egg_y                                        = $0a78
 l0a79                                               = $0a79
@@ -1569,42 +1568,46 @@ room_1_check_right_exit
     ldy current_level                                                 ; 4447: a4 31
     jmp initialise_level_and_room                                     ; 4449: 4c 40 11
 
-; TODO: seems to be three bytes per entry. First byte is a sprite ID. Second and third
-; bytes of each entry appear to be added to a77 and a78 respectively. This seems to
-; control sprite and probably X/Y poss of object 3 - the egg? But the sprite IDs only
-; work if I assume each entry is four bytes, so I've got something wrong here. They
-; don't even work then - I'm clearly halfway there, but this is not right.
-room_1_data_table
-    !byte                             0                               ; 444c: 00
-    !byte    spriteid_large_egg_upright                               ; 444d: db
-    !byte                             0                               ; 444e: 00
-    !byte                             0                               ; 444f: 00
-    !byte                             0                               ; 4450: 00
-    !byte     spriteid_large_egg_tilted                               ; 4451: dc
-    !byte                             0                               ; 4452: 00
-    !byte                             0                               ; 4453: 00
-    !byte                             0                               ; 4454: 00
-    !byte     spriteid_large_egg_tilted                               ; 4455: dc
-    !byte                           $f8                               ; 4456: f8
-    !byte                             0                               ; 4457: 00
-    !byte                           $dd                               ; 4458: dd
-    !byte            spriteid_something                               ; 4459: f8
-    !byte                             8                               ; 445a: 08
-    !byte                           $dd                               ; 445b: dd
-    !byte                           $fc                               ; 445c: fc
-    !byte       spriteid_icodata_wizard                               ; 445d: 04
-    !byte                           $dd                               ; 445e: dd
-    !byte                           $fc                               ; 445f: fc
-    !byte                             4                               ; 4460: 04
-    !byte spriteid_one_pixel_masked_out                               ; 4461: 00
-    !byte                           $dd                               ; 4462: dd
-    !byte                             0                               ; 4463: 00
-    !byte                             8                               ; 4464: 08
-    !byte spriteid_one_pixel_masked_out                               ; 4465: 00
-    !byte                           $dd                               ; 4466: dd
-    !byte                             0                               ; 4467: 00
-    !byte                             0                               ; 4468: 00
-    !byte spriteid_one_pixel_masked_out                               ; 4469: 00
+; Animation table for the egg. There are three bytes per entry. First byte is a sprite
+; ID. Second and third bytes of each entry are signed (X,Y) position offsets, added to
+; a77 and a78 respectively. This seems to control sprite and probably X/Y poss of
+; object 3, the egg. Each animation is terminated with an extra zero byte.
+egg_animations_table
+    !byte 0                                                           ; 444c: 00
+
+    !byte spriteid_large_egg_upright                                  ; 444d: db
+    !byte 0                                                           ; 444e: 00
+    !byte 0                                                           ; 444f: 00
+    !byte 0                                                           ; 4450: 00                      ; terminator
+
+    !byte spriteid_large_egg_tilted                                   ; 4451: dc
+    !byte 0                                                           ; 4452: 00
+    !byte 0                                                           ; 4453: 00
+    !byte 0                                                           ; 4454: 00                      ; terminator
+
+    !byte spriteid_large_egg_tilted                                   ; 4455: dc
+    !byte $f8                                                         ; 4456: f8
+    !byte 0                                                           ; 4457: 00
+    !byte spriteid_large_egg_sideways                                 ; 4458: dd
+    !byte $f8                                                         ; 4459: f8
+    !byte 8                                                           ; 445a: 08
+    !byte spriteid_large_egg_sideways                                 ; 445b: dd
+    !byte $fc                                                         ; 445c: fc
+    !byte 4                                                           ; 445d: 04
+    !byte spriteid_large_egg_sideways                                 ; 445e: dd
+    !byte $fc                                                         ; 445f: fc
+    !byte 4                                                           ; 4460: 04
+    !byte 0                                                           ; 4461: 00                      ; terminator
+
+    !byte spriteid_large_egg_sideways                                 ; 4462: dd
+    !byte 0                                                           ; 4463: 00
+    !byte 8                                                           ; 4464: 08
+    !byte 0                                                           ; 4465: 00                      ; terminator
+
+    !byte spriteid_large_egg_sideways                                 ; 4466: dd
+    !byte 0                                                           ; 4467: 00
+    !byte 0                                                           ; 4468: 00
+    !byte 0                                                           ; 4469: 00                      ; terminator
 
 ; check for first update in room (branch if not)
 room_1_update_handler
@@ -1632,7 +1635,7 @@ c448d
     lda #$1a                                                          ; 4491: a9 1a
 room_1_axy_set
     sta save_game_level_e_room_1_egg_state                            ; 4493: 8d 14 0a
-    sta room_1_data_table_index                                       ; 4496: 8d 76 0a
+    sta egg_animation_index                                           ; 4496: 8d 76 0a
     stx room_1_egg_x                                                  ; 4499: 8e 77 0a
     sty room_1_egg_y                                                  ; 449c: 8c 78 0a
 room_1_not_this_room1
@@ -1651,11 +1654,11 @@ room_1_not_this_room2
     jmp c4551                                                         ; 44b9: 4c 51 45
 
 room_1_not_first_update
-    lda room_1_data_table_index                                       ; 44bc: ad 76 0a
+    lda egg_animation_index                                           ; 44bc: ad 76 0a
     clc                                                               ; 44bf: 18
     adc #3                                                            ; 44c0: 69 03
     tay                                                               ; 44c2: a8
-    lda room_1_data_table,y                                           ; 44c3: b9 4c 44
+    lda egg_animations_table,y                                        ; 44c3: b9 4c 44
     bne c44cb                                                         ; 44c6: d0 03
     ldy save_game_level_e_room_1_egg_state                            ; 44c8: ac 14 0a
 c44cb
@@ -1715,14 +1718,14 @@ c4533
     ldy #$1a                                                          ; 4533: a0 1a
     sty save_game_level_e_room_1_egg_state                            ; 4535: 8c 14 0a
 c4538
-    sty room_1_data_table_index                                       ; 4538: 8c 76 0a
+    sty egg_animation_index                                           ; 4538: 8c 76 0a
     iny                                                               ; 453b: c8
-    lda room_1_data_table,y                                           ; 453c: b9 4c 44
+    lda egg_animations_table,y                                        ; 453c: b9 4c 44
     clc                                                               ; 453f: 18
     adc room_1_egg_x                                                  ; 4540: 6d 77 0a
     sta room_1_egg_x                                                  ; 4543: 8d 77 0a
     iny                                                               ; 4546: c8
-    lda room_1_data_table,y                                           ; 4547: b9 4c 44
+    lda egg_animations_table,y                                        ; 4547: b9 4c 44
     clc                                                               ; 454a: 18
     adc room_1_egg_y                                                  ; 454b: 6d 78 0a
     sta room_1_egg_y                                                  ; 454e: 8d 78 0a
@@ -1730,8 +1733,8 @@ c4551
     lda desired_room_index                                            ; 4551: a5 30
     cmp #1                                                            ; 4553: c9 01
     bne return5                                                       ; 4555: d0 49
-    ldy room_1_data_table_index                                       ; 4557: ac 76 0a
-    lda room_1_data_table,y                                           ; 455a: b9 4c 44
+    ldy egg_animation_index                                           ; 4557: ac 76 0a
+    lda egg_animations_table,y                                        ; 455a: b9 4c 44
     sta object_spriteid + objectid_egg                                ; 455d: 8d ab 09
     lda room_1_egg_x                                                  ; 4560: ad 77 0a
     sta object_x_low + objectid_egg                                   ; 4563: 8d 53 09
@@ -2140,18 +2143,12 @@ pydis_end
 !if (spriteid_egg_mask_toolbar) != $d3 {
     !error "Assertion failed: spriteid_egg_mask_toolbar == $d3"
 }
-!if (spriteid_icodata_wizard) != $04 {
-    !error "Assertion failed: spriteid_icodata_wizard == $04"
+!if (spriteid_large_egg_sideways) != $dd {
+    !error "Assertion failed: spriteid_large_egg_sideways == $dd"
 }
 !if (spriteid_large_egg_tilted) != $dc {
     !error "Assertion failed: spriteid_large_egg_tilted == $dc"
 }
 !if (spriteid_large_egg_upright) != $db {
     !error "Assertion failed: spriteid_large_egg_upright == $db"
-}
-!if (spriteid_one_pixel_masked_out) != $00 {
-    !error "Assertion failed: spriteid_one_pixel_masked_out == $00"
-}
-!if (spriteid_something) != $f8 {
-    !error "Assertion failed: spriteid_something == $f8"
 }

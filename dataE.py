@@ -11,7 +11,6 @@ sprite_dict = {
     0xdb: "spriteid_large_egg_upright",
     0xdc: "spriteid_large_egg_tilted",
     0xdd: "spriteid_large_egg_sideways",
-    0xf8: "spriteid_something", # TODO: just added to make room_1_data_table expr() happy for now
 }
 
 # Merge with common sprite dictionary
@@ -28,7 +27,7 @@ label(0x0a13, "save_game_level_e_holding_egg_flag") # TODO: other uses? not chec
 label(0x0a14, "save_game_level_e_room_1_egg_state") # TODO: other uses? not checked yet? egg state slightly speculative but prob right
 label(0x0a15, "save_game_level_e_duck_captured_flag") # TODO: might be used for other things too, not checked yet
 
-label(0xa76, "room_1_data_table_index")
+label(0xa76, "egg_animation_index")
 label(0xa77, "room_1_egg_x")
 label(0xa78, "room_1_egg_y")
 
@@ -101,12 +100,51 @@ entry(0x4493, "room_1_axy_set")
 comment(0x4484, "set flags based on A", inline=True)
 entry(0x44b9, "room_1_not_this_room2")
 label(0x38af, "envelope_1_pitch_change_per_step_section_2") # TODO?
-comment(0x444c, "TODO: seems to be three bytes per entry. First byte is a sprite ID. Second and third bytes of each entry appear to be added to a77 and a78 respectively. This seems to control sprite and probably X/Y poss of object 3 - the egg? But the sprite IDs only work if I assume each entry is four bytes, so I've got something wrong here. They don't even work then - I'm clearly halfway there, but this is not right.")
-for i in range(8): # TODO GUESS LIMIT
-    addr = 0x444c + i*4
-    uint(addr, 3)
-    expr(addr+1, sprite_dict) # TODO: 0 should probably be left as 0 not treated as a sprite ID - see code at 44c3
-label(0x444c, "room_1_data_table")
+comment(0x444c, "Animation table for the egg. There are three bytes per entry. First byte is a sprite ID. Second and third bytes of each entry are signed (X,Y) position offsets, added to a77 and a78 respectively. This seems to control sprite and probably X/Y poss of object 3, the egg. Each animation is terminated with an extra zero byte.")
+
+blank(0x444d)
+blank(0x4451)
+blank(0x4455)
+blank(0x4462)
+blank(0x4466)
+# TODO: Ideally this table would be formatted something like this, but the formatting of py8dis is limited atm.
+#egg_animations_table
+#    !byte 0
+#    !byte spriteid_large_egg_upright ,   0, 0
+#    !byte 0                                                ; terminator
+#    !byte spriteid_large_egg_tilted  ,   0, 0
+#    !byte 0                                                ; terminator
+#    !byte spriteid_large_egg_tilted  ,  -8, 0
+#    !byte spriteid_large_egg_sideways,  -8, 8
+#    !byte spriteid_large_egg_sideways,  -4, 4
+#    !byte spriteid_large_egg_sideways,  -4, 4
+#    !byte 0                                                ; terminator
+#    !byte spriteid_large_egg_sideways,   0, 8
+#    !byte 0                                                ; terminator
+#    !byte spriteid_large_egg_sideways,   0, 0
+#    !byte 0                                                ; terminator
+
+
+comment(0x4450, "terminator", inline=True)
+comment(0x4454, "terminator", inline=True)
+comment(0x4461, "terminator", inline=True)
+comment(0x4465, "terminator", inline=True)
+comment(0x4469, "terminator", inline=True)
+expr(0x444d, sprite_dict)
+for i in range(0x444d, 0x4469):
+    byte(i)
+expr(0x4451, sprite_dict)
+expr(0x4455, sprite_dict)
+expr(0x4458, sprite_dict)
+expr(0x445b, sprite_dict)
+expr(0x445e, sprite_dict)
+expr(0x4462, sprite_dict)
+expr(0x4466, sprite_dict)
+#for i in range(8): # TODO GUESS LIMIT
+#    addr = 0x444c + i*4
+#    uint(addr, 3)
+#    expr(addr+1, sprite_dict) # TODO: 0 should probably be left as 0 not treated as a sprite ID - see code at 44c3
+label(0x444c, "egg_animations_table")
 entry(0x4501, "room_1_not_this_room3")
 
 entry(0x3eb8)
