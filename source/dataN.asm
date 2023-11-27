@@ -1690,7 +1690,7 @@ c4475
     cmp player_using_object_spriteid                                  ; 447c: cd b6 2e
     bne c4472                                                         ; 447f: d0 f1
     lda #$e6                                                          ; 4481: a9 e6
-    sta object_spriteid+1                                             ; 4483: 8d a9 09
+    sta object_spriteid + objectid_player_accessory                   ; 4483: 8d a9 09
     lda #1                                                            ; 4486: a9 01
     jsr get_solid_rock_collision_for_object_a                         ; 4488: 20 94 28
     beq c4472                                                         ; 448b: f0 e5
@@ -1703,16 +1703,16 @@ c4475
     jsr test_for_collision_between_objects_x_and_y                    ; 449c: 20 e2 28
     beq c44f9                                                         ; 449f: f0 58
     lda #$e3                                                          ; 44a1: a9 e3
-    sta object_spriteid+1                                             ; 44a3: 8d a9 09
-    lda object_x_low+1                                                ; 44a6: ad 51 09
+    sta object_spriteid + objectid_player_accessory                   ; 44a3: 8d a9 09
+    lda object_x_low + objectid_player_accessory                      ; 44a6: ad 51 09
     sta object_x_low + 3                                              ; 44a9: 8d 53 09
-    lda object_x_high+1                                               ; 44ac: ad 67 09
+    lda object_x_high + objectid_player_accessory                     ; 44ac: ad 67 09
     sta object_x_high + 3                                             ; 44af: 8d 69 09
-    lda object_y_low+1                                                ; 44b2: ad 7d 09
+    lda object_y_low + objectid_player_accessory                      ; 44b2: ad 7d 09
     sta object_y_low + 3                                              ; 44b5: 8d 7f 09
-    lda object_y_high+1                                               ; 44b8: ad 93 09
+    lda object_y_high + objectid_player_accessory                     ; 44b8: ad 93 09
     sta object_y_high + 3                                             ; 44bb: 8d 95 09
-    lda object_direction+1                                            ; 44be: ad bf 09
+    lda object_direction + objectid_player_accessory                  ; 44be: ad bf 09
     sta object_direction + 3                                          ; 44c1: 8d c1 09
     lda #$e4                                                          ; 44c4: a9 e4
     sta object_spriteid + 3                                           ; 44c6: 8d ab 09

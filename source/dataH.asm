@@ -580,13 +580,13 @@ c3caa
     lda object_x_high                                                 ; 3cb5: ad 66 09
     adc l0071                                                         ; 3cb8: 65 71
     sta object_x_high                                                 ; 3cba: 8d 66 09
-    lda object_x_low+1                                                ; 3cbd: ad 51 09
+    lda object_x_low + objectid_player_accessory                      ; 3cbd: ad 51 09
     clc                                                               ; 3cc0: 18
     adc l0070                                                         ; 3cc1: 65 70
-    sta object_x_low+1                                                ; 3cc3: 8d 51 09
-    lda object_x_high+1                                               ; 3cc6: ad 67 09
+    sta object_x_low + objectid_player_accessory                      ; 3cc3: 8d 51 09
+    lda object_x_high + objectid_player_accessory                     ; 3cc6: ad 67 09
     adc l0071                                                         ; 3cc9: 65 71
-    sta object_x_high+1                                               ; 3ccb: 8d 67 09
+    sta object_x_high + objectid_player_accessory                     ; 3ccb: 8d 67 09
 c3cce
     lda l0a1a                                                         ; 3cce: ad 1a 0a
     cmp #$0c                                                          ; 3cd1: c9 0c

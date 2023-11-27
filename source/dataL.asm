@@ -1105,7 +1105,7 @@ c4053
     lda #$c8                                                          ; 4059: a9 c8
     cmp previous_player_using_object_spriteid                         ; 405b: cd b7 2e
     bne c4094                                                         ; 405e: d0 34
-    lda object_spriteid_old+1                                         ; 4060: ad b4 09
+    lda object_spriteid_old + objectid_player_accessory               ; 4060: ad b4 09
     cmp #$cb                                                          ; 4063: c9 cb
     beq c4094                                                         ; 4065: f0 2d
     lda #8                                                            ; 4067: a9 08

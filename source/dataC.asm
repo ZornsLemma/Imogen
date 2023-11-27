@@ -548,7 +548,7 @@ update_burnable_rope_first_update
 no_level_change
     lda desired_room_index                                            ; 3c0b: a5 30
     cmp currently_updating_logic_for_room_index                       ; 3c0d: cd ba 1a
-    bne c3c83                                                         ; 3c10: d0 71
+    bne check_rope_fire_starting_local                                ; 3c10: d0 71
     ldx #4                                                            ; 3c12: a2 04
     lda #spriteid_cache8                                              ; 3c14: a9 d9
     sta object_sprite_mask_type,x                                     ; 3c16: 9d ac 38
@@ -560,12 +560,12 @@ no_level_change
     beq not_burnt_yet                                                 ; 3c27: f0 42
     bpl burning_in_progress                                           ; 3c29: 10 12
     lda burnable_rope_cell_y                                          ; 3c2b: ad 78 3d
-    beq c3c83                                                         ; 3c2e: f0 53
+    beq check_rope_fire_starting_local                                ; 3c2e: f0 53
     lda #spriteid_empty_hook                                          ; 3c30: a9 d8
     jsr draw_sprite_a_at_cell_xy                                      ; 3c32: 20 4c 1f
     lda #3                                                            ; 3c35: a9 03
     jsr write_a_single_value_to_cell_in_collision_map                 ; 3c37: 20 bb 1e
-    jmp c3c83                                                         ; 3c3a: 4c 83 3c
+    jmp check_rope_fire_starting_local                                ; 3c3a: 4c 83 3c
 
 burning_in_progress
     lda burning_rope_pixel_y                                          ; 3c3d: ad 76 3d
@@ -576,7 +576,7 @@ burning_in_progress
     lsr                                                               ; 3c45: 4a
     sec                                                               ; 3c46: 38
     sbc burnable_rope_cell_y                                          ; 3c47: ed 78 3d
-    beq c3c83                                                         ; 3c4a: f0 37
+    beq check_rope_fire_starting_local                                ; 3c4a: f0 37
     clc                                                               ; 3c4c: 18
     adc #1                                                            ; 3c4d: 69 01
     jsr draw_rope                                                     ; 3c4f: 20 b9 1d
@@ -591,7 +591,7 @@ burning_in_progress
     jsr draw_sprite_a_at_cell_xy                                      ; 3c60: 20 4c 1f
     lda #0                                                            ; 3c63: a9 00
     jsr write_a_single_value_to_cell_in_collision_map                 ; 3c65: 20 bb 1e
-    jmp c3c83                                                         ; 3c68: 4c 83 3c
+    jmp check_rope_fire_starting_local                                ; 3c68: 4c 83 3c
 
 not_burnt_yet
     lda burnable_rope_length                                          ; 3c6b: ad 79 3d
@@ -606,23 +606,23 @@ not_burnt_yet
     tax                                                               ; 3c7d: aa
     lda #spriteid_rope_end                                            ; 3c7e: a9 0a
     sta object_spriteid,x                                             ; 3c80: 9d a8 09
-c3c83
+check_rope_fire_starting_local
     jmp check_rope_fire_starting                                      ; 3c83: 4c 26 3d
 
-c3c86
+return2_local
     jmp return2                                                       ; 3c86: 4c 74 3d
 
 update_burnable_rope_not_first_update
     lda burning_rope_progress                                         ; 3c89: ad 75 3d
-    bmi c3c86                                                         ; 3c8c: 30 f8
-    bne c3cbf                                                         ; 3c8e: d0 2f
+    bmi return2_local                                                 ; 3c8c: 30 f8
+    bne rope_is_burning                                               ; 3c8e: d0 2f
     lda desired_room_index                                            ; 3c90: a5 30
     cmp currently_updating_logic_for_room_index                       ; 3c92: cd ba 1a
-    bne c3c86                                                         ; 3c95: d0 ef
+    bne return2_local                                                 ; 3c95: d0 ef
     ldx #objectid_torch                                               ; 3c97: a2 02
     ldy #objectid_rope_end                                            ; 3c99: a0 03
     jsr test_for_collision_between_objects_x_and_y                    ; 3c9b: 20 e2 28
-    beq c3c86                                                         ; 3c9e: f0 e6
+    beq return2_local                                                 ; 3c9e: f0 e6
     lda #spriteid_one_pixel_masked_out                                ; 3ca0: a9 00
     sta object_spriteid_old + objectid_rope_end                       ; 3ca2: 8d b6 09
     lda burnable_rope_cell_y                                          ; 3ca5: ad 78 3d
@@ -639,7 +639,7 @@ update_burnable_rope_not_first_update
     sta burning_rope_progress                                         ; 3cb9: 8d 75 3d
     jmp check_rope_fire_starting                                      ; 3cbc: 4c 26 3d
 
-c3cbf
+rope_is_burning
     lda burning_rope_progress                                         ; 3cbf: ad 75 3d
     cmp #2                                                            ; 3cc2: c9 02
     beq finish_rope_all_burnt                                         ; 3cc4: f0 28
@@ -924,7 +924,7 @@ room_1_update_handler
 set_room_1_objects
     lda desired_room_index                                            ; 3e89: a5 30
     cmp #1                                                            ; 3e8b: c9 01
-    bne c3ed8                                                         ; 3e8d: d0 49
+    bne update_table_local                                            ; 3e8d: d0 49
     ldx #5                                                            ; 3e8f: a2 05
     ldy #$12                                                          ; 3e91: a0 12
     lda #objectid_table                                               ; 3e93: a9 05
@@ -958,7 +958,7 @@ set_room_1_objects
     sta object_sprite_mask_type,x                                     ; 3ed0: 9d ac 38
     lda #$a0                                                          ; 3ed3: a9 a0
     sta object_z_order,x                                              ; 3ed5: 9d c2 38
-c3ed8
+update_table_local
     jmp update_table                                                  ; 3ed8: 4c 04 3f
 
 return3_local
@@ -1004,7 +1004,7 @@ table_is_unburnt
     lda #spriteid_one_pixel_masked_out                                ; 3f25: a9 00
     sta object_spriteid + objectid_fire1                              ; 3f27: 8d ae 09
     sta object_spriteid + objectid_fire2                              ; 3f2a: 8d af 09
-    jmp c3fdd                                                         ; 3f2d: 4c dd 3f
+    jmp write_solid_table_collision_map                               ; 3f2d: 4c dd 3f
 
 update_burning_table
     lda save_game_level_c_burning_table_progress                      ; 3f30: ad 0b 0a
@@ -1020,11 +1020,11 @@ update_burning_table
     sta object_spriteid + objectid_fire2                              ; 3f45: 8d af 09
     lda save_game_level_c_burning_table_progress                      ; 3f48: ad 0b 0a
     cmp #$24 ; '$'                                                    ; 3f4b: c9 24
-    bcs c3f96                                                         ; 3f4d: b0 47
+    bcs table_at_burn_level3                                          ; 3f4d: b0 47
     cmp #$18                                                          ; 3f4f: c9 18
-    bcs c3f86                                                         ; 3f51: b0 33
+    bcs table_at_burn_level2                                          ; 3f51: b0 33
     cmp #$0c                                                          ; 3f53: c9 0c
-    bcs c3f76                                                         ; 3f55: b0 1f
+    bcs table_at_burn_level1                                          ; 3f55: b0 1f
     lda #spriteid_table                                               ; 3f57: a9 c9
     sta object_spriteid + objectid_table                              ; 3f59: 8d ad 09
     lda #$8e                                                          ; 3f5c: a9 8e
@@ -1032,29 +1032,29 @@ update_burning_table
     sta object_y_low + objectid_fire2                                 ; 3f61: 8d 83 09
     lda save_game_level_c_burning_table_progress                      ; 3f64: ad 0b 0a
     cmp #2                                                            ; 3f67: c9 02
-    bcs c3fdd                                                         ; 3f69: b0 72
+    bcs write_solid_table_collision_map                               ; 3f69: b0 72
     lda #spriteid_cache2                                              ; 3f6b: a9 ce
     sta object_spriteid + objectid_fire1                              ; 3f6d: 8d ae 09
     sta object_spriteid + objectid_fire2                              ; 3f70: 8d af 09
-    jmp c3fdd                                                         ; 3f73: 4c dd 3f
+    jmp write_solid_table_collision_map                               ; 3f73: 4c dd 3f
 
-c3f76
+table_at_burn_level1
     lda #spriteid_table_burnt1                                        ; 3f76: a9 d4
     sta object_spriteid + objectid_table                              ; 3f78: 8d ad 09
     lda #$92                                                          ; 3f7b: a9 92
     sta object_y_low + objectid_fire1                                 ; 3f7d: 8d 82 09
     sta object_y_low + objectid_fire2                                 ; 3f80: 8d 83 09
-    jmp c3fdd                                                         ; 3f83: 4c dd 3f
+    jmp write_solid_table_collision_map                               ; 3f83: 4c dd 3f
 
-c3f86
+table_at_burn_level2
     lda #spriteid_table_burnt2                                        ; 3f86: a9 d5
     sta object_spriteid + objectid_table                              ; 3f88: 8d ad 09
     lda #$97                                                          ; 3f8b: a9 97
     sta object_y_low + objectid_fire1                                 ; 3f8d: 8d 82 09
     sta object_y_low + objectid_fire2                                 ; 3f90: 8d 83 09
-    jmp c3fd3                                                         ; 3f93: 4c d3 3f
+    jmp table_height_reduced_due_to_burning                           ; 3f93: 4c d3 3f
 
-c3f96
+table_at_burn_level3
     lda #spriteid_table_burnt3                                        ; 3f96: a9 d6
     sta object_spriteid + objectid_table                              ; 3f98: 8d ad 09
     lda #$9d                                                          ; 3f9b: a9 9d
@@ -1062,11 +1062,11 @@ c3f96
     sta object_y_low + objectid_fire2                                 ; 3fa0: 8d 83 09
     lda save_game_level_c_burning_table_progress                      ; 3fa3: ad 0b 0a
     cmp #$2f ; '/'                                                    ; 3fa6: c9 2f
-    bcc c3fd3                                                         ; 3fa8: 90 29
+    bcc table_height_reduced_due_to_burning                           ; 3fa8: 90 29
     lda #spriteid_cache2                                              ; 3faa: a9 ce
     sta object_spriteid + objectid_fire1                              ; 3fac: 8d ae 09
     sta object_spriteid + objectid_fire2                              ; 3faf: 8d af 09
-    jmp c3fd3                                                         ; 3fb2: 4c d3 3f
+    jmp table_height_reduced_due_to_burning                           ; 3fb2: 4c d3 3f
 
 set_table_fully_burnt
     lda #spriteid_table_burnt3                                        ; 3fb5: a9 d6
@@ -1082,13 +1082,13 @@ set_table_fully_burnt
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 3fcd: 20 44 1e
     jmp return3                                                       ; 3fd0: 4c e4 3f
 
-c3fd3
+table_height_reduced_due_to_burning
     dec height_in_cells                                               ; 3fd3: c6 3d
     lda #collision_map_none                                           ; 3fd5: a9 00
     sta value_to_write_to_collision_map                               ; 3fd7: 85 3e
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 3fd9: 20 44 1e
     iny                                                               ; 3fdc: c8
-c3fdd
+write_solid_table_collision_map
     lda #collision_map_solid_rock                                     ; 3fdd: a9 03
     sta value_to_write_to_collision_map                               ; 3fdf: 85 3e
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 3fe1: 20 44 1e
@@ -1098,7 +1098,7 @@ return3
 ; check for first update in room (branch if not)
 update_torch
     lda update_room_first_update_flag                                 ; 3fe5: ad 2b 13
-    beq c4035                                                         ; 3fe8: f0 4b
+    beq check_for_collecting_torch_in_room_1                          ; 3fe8: f0 4b
     lda #spriteid_torch_menu_item                                     ; 3fea: a9 cb
     sta toolbar_collectable_spriteids+1                               ; 3fec: 8d e9 2e
     lda #spriteid_torch_object                                        ; 3fef: a9 ca
@@ -1117,7 +1117,7 @@ update_room_1_torch
     lda #spriteid_cache1                                              ; 4009: a9 cc
     sta l38ae                                                         ; 400b: 8d ae 38
     lda save_game_level_c_got_torch                                   ; 400e: ad 0a 0a
-    bne c4053                                                         ; 4011: d0 40
+    bne check_for_player_using_torch                                  ; 4011: d0 40
     lda desired_room_index                                            ; 4013: a5 30
     cmp #1                                                            ; 4015: c9 01
     bne return4                                                       ; 4017: d0 18
@@ -1135,82 +1135,86 @@ update_room_1_torch
 return4
     rts                                                               ; 4031: 60
 
-c4032
+return5_local
     jmp return5                                                       ; 4032: 4c d0 40
 
-c4035
+check_for_collecting_torch_in_room_1
     lda save_game_level_c_got_torch                                   ; 4035: ad 0a 0a
-    bne c4053                                                         ; 4038: d0 19
+    bne check_for_player_using_torch                                  ; 4038: d0 19
     lda desired_room_index                                            ; 403a: a5 30
     cmp #1                                                            ; 403c: c9 01
-    bne c4032                                                         ; 403e: d0 f2
+    bne return5_local                                                 ; 403e: d0 f2
+; check for collision with torch collectable
     ldx #objectid_old_player                                          ; 4040: a2 0b
-    ldy #2                                                            ; 4042: a0 02
+    ldy #objectid_torch                                               ; 4042: a0 02
     jsr test_for_collision_between_objects_x_and_y                    ; 4044: 20 e2 28
-    beq c4032                                                         ; 4047: f0 e9
+    beq return5_local                                                 ; 4047: f0 e9
+; add torch to toolbar
     lda #spriteid_torch_menu_item                                     ; 4049: a9 cb
     jsr find_or_create_menu_slot_for_A                                ; 404b: 20 bd 2b
     lda #$ff                                                          ; 404e: a9 ff
     sta save_game_level_c_got_torch                                   ; 4050: 8d 0a 0a
-c4053
+check_for_player_using_torch
     ldy save_game_level_c_got_torch                                   ; 4053: ac 0a 0a
-    beq c4032                                                         ; 4056: f0 da
+    beq return5_local                                                 ; 4056: f0 da
 ; check for first update in room (branch if so)
     lda update_room_first_update_flag                                 ; 4058: ad 2b 13
-    bne c4079                                                         ; 405b: d0 1c
+    bne store_animation_state_y                                       ; 405b: d0 1c
     lda player_using_object_spriteid                                  ; 405d: ad b6 2e
     cmp #spriteid_torch_menu_item                                     ; 4060: c9 cb
-    beq c4068                                                         ; 4062: f0 04
+    beq player_is_using_torch                                         ; 4062: f0 04
     ldy #$ff                                                          ; 4064: a0 ff
-    bne c4079                                                         ; 4066: d0 11
-c4068
+    bne store_animation_state_y                                       ; 4066: d0 11
+player_is_using_torch
     cpy #$ff                                                          ; 4068: c0 ff
-    bne c4071                                                         ; 406a: d0 05
+    bne get_fire_sprite                                               ; 406a: d0 05
     ldy #$0a                                                          ; 406c: a0 0a
-    jmp c4079                                                         ; 406e: 4c 79 40
+    jmp store_animation_state_y                                       ; 406e: 4c 79 40
 
-c4071
+get_fire_sprite
     iny                                                               ; 4071: c8
     lda fire_spriteid_table,y                                         ; 4072: b9 d1 40
-    bne c4079                                                         ; 4075: d0 02
+    bne store_animation_state_y                                       ; 4075: d0 02
     ldy #1                                                            ; 4077: a0 01
-c4079
+store_animation_state_y
     sty save_game_level_c_got_torch                                   ; 4079: 8c 0a 0a
     lda #spriteid_one_pixel_masked_out                                ; 407c: a9 00
     sta object_spriteid + objectid_torch                              ; 407e: 8d aa 09
     cpy #$ff                                                          ; 4081: c0 ff
     beq return5                                                       ; 4083: f0 4b
-    ldx #2                                                            ; 4085: a2 02
+; set fire sprite for the torch object, setting the direction, position and z-order too
+; based on the player's accessory object
+    ldx #objectid_torch                                               ; 4085: a2 02
     lda fire_spriteid_table,y                                         ; 4087: b9 d1 40
     sta object_spriteid,x                                             ; 408a: 9d a8 09
     lda #$40 ; '@'                                                    ; 408d: a9 40
     sta object_z_order,x                                              ; 408f: 9d c2 38
-    lda object_direction+1                                            ; 4092: ad bf 09
+    lda object_direction + objectid_player_accessory                  ; 4092: ad bf 09
     sta object_direction,x                                            ; 4095: 9d be 09
-    bmi c40ae                                                         ; 4098: 30 14
-    lda object_x_low+1                                                ; 409a: ad 51 09
+    bmi looking_left_so_adjust_x_position_of_accessory                ; 4098: 30 14
+    lda object_x_low + objectid_player_accessory                      ; 409a: ad 51 09
     clc                                                               ; 409d: 18
     adc #6                                                            ; 409e: 69 06
     sta object_x_low,x                                                ; 40a0: 9d 50 09
-    lda object_x_high+1                                               ; 40a3: ad 67 09
+    lda object_x_high + objectid_player_accessory                     ; 40a3: ad 67 09
     adc #0                                                            ; 40a6: 69 00
     sta object_x_high,x                                               ; 40a8: 9d 66 09
-    jmp c40bf                                                         ; 40ab: 4c bf 40
+    jmp move_accessory_down                                           ; 40ab: 4c bf 40
 
-c40ae
-    lda object_x_low+1                                                ; 40ae: ad 51 09
+looking_left_so_adjust_x_position_of_accessory
+    lda object_x_low + objectid_player_accessory                      ; 40ae: ad 51 09
     sec                                                               ; 40b1: 38
     sbc #6                                                            ; 40b2: e9 06
     sta object_x_low,x                                                ; 40b4: 9d 50 09
-    lda object_x_high+1                                               ; 40b7: ad 67 09
+    lda object_x_high + objectid_player_accessory                     ; 40b7: ad 67 09
     sbc #0                                                            ; 40ba: e9 00
     sta object_x_high,x                                               ; 40bc: 9d 66 09
-c40bf
-    lda object_y_low+1                                                ; 40bf: ad 7d 09
+move_accessory_down
+    lda object_y_low + objectid_player_accessory                      ; 40bf: ad 7d 09
     clc                                                               ; 40c2: 18
     adc #$fd                                                          ; 40c3: 69 fd
     sta object_y_low,x                                                ; 40c5: 9d 7c 09
-    lda object_y_high+1                                               ; 40c8: ad 93 09
+    lda object_y_high + objectid_player_accessory                     ; 40c8: ad 93 09
     adc #$ff                                                          ; 40cb: 69 ff
     sta object_y_high,x                                               ; 40cd: 9d 92 09
 return5
@@ -1691,7 +1695,7 @@ c43ec
     lda update_room_first_update_flag                                 ; 4411: ad 2b 13
     bne return6                                                       ; 4414: d0 0e
     ldx #objectid_player                                              ; 4416: a2 00
-    ldy #5                                                            ; 4418: a0 05
+    ldy #objectid_parrot                                              ; 4418: a0 05
     jsr test_for_collision_between_objects_x_and_y                    ; 441a: 20 e2 28
     beq return6                                                       ; 441d: f0 05
     lda #$80                                                          ; 441f: a9 80
@@ -1966,23 +1970,6 @@ sprite_data
 pydis_end
 
 ; Automatically generated labels:
-;     c3c83
-;     c3c86
-;     c3cbf
-;     c3ed8
-;     c3f76
-;     c3f86
-;     c3f96
-;     c3fd3
-;     c3fdd
-;     c4032
-;     c4035
-;     c4053
-;     c4068
-;     c4071
-;     c4079
-;     c40ae
-;     c40bf
 ;     c41d0
 ;     c41d5
 ;     c4242
@@ -2144,6 +2131,9 @@ pydis_end
 }
 !if (objectid_old_player) != $0b {
     !error "Assertion failed: objectid_old_player == $0b"
+}
+!if (objectid_parrot) != $05 {
+    !error "Assertion failed: objectid_parrot == $05"
 }
 !if (objectid_player) != $00 {
     !error "Assertion failed: objectid_player == $00"

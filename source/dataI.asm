@@ -711,7 +711,7 @@ c3d69
     lda player_using_object_spriteid                                  ; 3d6f: ad b6 2e
     cmp #$d1                                                          ; 3d72: c9 d1
     bne c3d57                                                         ; 3d74: d0 e1
-    lda object_direction+1                                            ; 3d76: ad bf 09
+    lda object_direction + objectid_player_accessory                  ; 3d76: ad bf 09
     bmi c3d88                                                         ; 3d79: 30 0d
     lda #1                                                            ; 3d7b: a9 01
     sta temp_right_offset                                             ; 3d7d: 8d d1 24
@@ -1582,13 +1582,13 @@ c43c1
     lda object_direction                                              ; 43d5: ad be 09
     sta l0a2b                                                         ; 43d8: 8d 2b 0a
     sta l0a2e                                                         ; 43db: 8d 2e 0a
-    lda object_x_low+1                                                ; 43de: ad 51 09
+    lda object_x_low + objectid_player_accessory                      ; 43de: ad 51 09
     sta l0a27                                                         ; 43e1: 8d 27 0a
-    lda object_x_high+1                                               ; 43e4: ad 67 09
+    lda object_x_high + objectid_player_accessory                     ; 43e4: ad 67 09
     sta l0a28                                                         ; 43e7: 8d 28 0a
-    lda object_y_low+1                                                ; 43ea: ad 7d 09
+    lda object_y_low + objectid_player_accessory                      ; 43ea: ad 7d 09
     sta l0a29                                                         ; 43ed: 8d 29 0a
-    lda object_y_high+1                                               ; 43f0: ad 93 09
+    lda object_y_high + objectid_player_accessory                     ; 43f0: ad 93 09
     sta l0a2a                                                         ; 43f3: 8d 2a 0a
     lda #1                                                            ; 43f6: a9 01
     sta l0a2c                                                         ; 43f8: 8d 2c 0a
@@ -1632,7 +1632,7 @@ c4446
     lda #$ca                                                          ; 444b: a9 ca
     jsr remove_item_from_toolbar_menu                                 ; 444d: 20 e0 2b
     lda #0                                                            ; 4450: a9 00
-    sta object_spriteid+1                                             ; 4452: 8d a9 09
+    sta object_spriteid + objectid_player_accessory                   ; 4452: 8d a9 09
     sta player_using_object_spriteid                                  ; 4455: 8d b6 2e
     sta player_held_object_spriteid                                   ; 4458: 85 52
 c445a

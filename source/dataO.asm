@@ -804,11 +804,11 @@ c3e32
     lda object_direction                                              ; 3e3f: ad be 09
     sta l0a5a                                                         ; 3e42: 8d 5a 0a
     sta l0a5c                                                         ; 3e45: 8d 5c 0a
-    lda object_x_low+1                                                ; 3e48: ad 51 09
+    lda object_x_low + objectid_player_accessory                      ; 3e48: ad 51 09
     sta l0a57                                                         ; 3e4b: 8d 57 0a
-    lda object_x_high+1                                               ; 3e4e: ad 67 09
+    lda object_x_high + objectid_player_accessory                     ; 3e4e: ad 67 09
     sta l0a58                                                         ; 3e51: 8d 58 0a
-    lda object_y_low+1                                                ; 3e54: ad 7d 09
+    lda object_y_low + objectid_player_accessory                      ; 3e54: ad 7d 09
     sta l0a59                                                         ; 3e57: 8d 59 0a
     lda #1                                                            ; 3e5a: a9 01
     sta l0a56                                                         ; 3e5c: 8d 56 0a
@@ -871,7 +871,7 @@ c3ec7
 c3ed5
     jsr remove_item_from_toolbar_menu                                 ; 3ed5: 20 e0 2b
     lda #0                                                            ; 3ed8: a9 00
-    sta object_spriteid+1                                             ; 3eda: 8d a9 09
+    sta object_spriteid + objectid_player_accessory                   ; 3eda: 8d a9 09
     sta player_using_object_spriteid                                  ; 3edd: 8d b6 2e
     sta player_held_object_spriteid                                   ; 3ee0: 85 52
 c3ee2
@@ -1387,13 +1387,13 @@ c4260
     clc                                                               ; 428d: 18
     adc #$db                                                          ; 428e: 69 db
     sta object_spriteid + 5                                           ; 4290: 8d ad 09
-    lda object_x_low+1                                                ; 4293: ad 51 09
+    lda object_x_low + objectid_player_accessory                      ; 4293: ad 51 09
     sta object_x_low + 5                                              ; 4296: 8d 55 09
-    lda object_x_high+1                                               ; 4299: ad 67 09
+    lda object_x_high + objectid_player_accessory                     ; 4299: ad 67 09
     sta object_x_high + 5                                             ; 429c: 8d 6b 09
-    lda object_y_low+1                                                ; 429f: ad 7d 09
+    lda object_y_low + objectid_player_accessory                      ; 429f: ad 7d 09
     sta object_y_low + 5                                              ; 42a2: 8d 81 09
-    lda object_direction+1                                            ; 42a5: ad bf 09
+    lda object_direction + objectid_player_accessory                  ; 42a5: ad bf 09
     sta object_direction + 5                                          ; 42a8: 8d c3 09
     lda player_using_object_spriteid                                  ; 42ab: ad b6 2e
     cmp #$d4                                                          ; 42ae: c9 d4

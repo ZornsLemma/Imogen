@@ -1463,7 +1463,7 @@ c42c0
     lda #$ca                                                          ; 42cc: a9 ca
     jsr remove_item_from_toolbar_menu                                 ; 42ce: 20 e0 2b
     lda #0                                                            ; 42d1: a9 00
-    sta object_spriteid+1                                             ; 42d3: 8d a9 09
+    sta object_spriteid + objectid_player_accessory                   ; 42d3: 8d a9 09
     sta player_using_object_spriteid                                  ; 42d6: 8d b6 2e
     sta player_held_object_spriteid                                   ; 42d9: 85 52
     lda desired_room_index                                            ; 42db: a5 30
@@ -1472,13 +1472,13 @@ c42c0
     sta l0a76                                                         ; 42e2: 8d 76 0a
     lda #$0e                                                          ; 42e5: a9 0e
     sta l0a30                                                         ; 42e7: 8d 30 0a
-    lda object_x_low+1                                                ; 42ea: ad 51 09
+    lda object_x_low + objectid_player_accessory                      ; 42ea: ad 51 09
     sta l0a70                                                         ; 42ed: 8d 70 0a
-    lda object_x_high+1                                               ; 42f0: ad 67 09
+    lda object_x_high + objectid_player_accessory                     ; 42f0: ad 67 09
     sta l0a71                                                         ; 42f3: 8d 71 0a
-    lda object_y_low+1                                                ; 42f6: ad 7d 09
+    lda object_y_low + objectid_player_accessory                      ; 42f6: ad 7d 09
     sta l0a72                                                         ; 42f9: 8d 72 0a
-    lda object_y_high+1                                               ; 42fc: ad 93 09
+    lda object_y_high + objectid_player_accessory                     ; 42fc: ad 93 09
     sta l0a73                                                         ; 42ff: 8d 73 0a
     lda object_direction                                              ; 4302: ad be 09
     sta l0a74                                                         ; 4305: 8d 74 0a

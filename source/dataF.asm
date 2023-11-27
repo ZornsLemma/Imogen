@@ -731,10 +731,10 @@ c3d8d
     clc                                                               ; 3d97: 18
     adc #4                                                            ; 3d98: 69 04
     sta object_y_low                                                  ; 3d9a: 8d 7c 09
-    lda object_y_low+1                                                ; 3d9d: ad 7d 09
+    lda object_y_low + objectid_player_accessory                      ; 3d9d: ad 7d 09
     clc                                                               ; 3da0: 18
     adc #4                                                            ; 3da1: 69 04
-    sta object_y_low+1                                                ; 3da3: 8d 7d 09
+    sta object_y_low + objectid_player_accessory                      ; 3da3: 8d 7d 09
 c3da6
     lda level_workspace                                               ; 3da6: ad 6f 0a
     sec                                                               ; 3da9: 38
@@ -1243,7 +1243,7 @@ c4152
     jsr remove_item_from_toolbar_menu                                 ; 4176: 20 e0 2b
     lda #0                                                            ; 4179: a9 00
     sta player_held_object_spriteid                                   ; 417b: 85 52
-    sta object_spriteid+1                                             ; 417d: 8d a9 09
+    sta object_spriteid + objectid_player_accessory                   ; 417d: 8d a9 09
     sta player_using_object_spriteid                                  ; 4180: 8d b6 2e
     sta l0a16                                                         ; 4183: 8d 16 0a
 c4186

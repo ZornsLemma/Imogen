@@ -1331,7 +1331,7 @@ room_2_update_clock_puzzle
     sta save_game_level_b_cuckoo_room_2_progress                      ; 410c: 8d 06 0a
     lda #0                                                            ; 410f: a9 00
     sta player_held_object_spriteid                                   ; 4111: 85 52
-    sta object_spriteid+1                                             ; 4113: 8d a9 09
+    sta object_spriteid + objectid_player_accessory                   ; 4113: 8d a9 09
     lda player_using_object_spriteid                                  ; 4116: ad b6 2e
     cmp #spriteid_cuckoo_menu_item                                    ; 4119: c9 d4
     bne room_2_update_cuckoo_in_clock                                 ; 411b: d0 0a

@@ -670,7 +670,7 @@ level_already_loaded
     jsr osbyte                                                        ; 12aa: 20 f4 ff     .. :1179[1]   ; Flush all buffers (X=0)
     lda #0                                                            ; 12ad: a9 00       ..  :117c[1]
     sta object_spriteid_old                                           ; 12af: 8d b3 09    ... :117e[1]
-    sta object_spriteid_old+1                                         ; 12b2: 8d b4 09    ... :1181[1]
+    sta object_spriteid_old + objectid_player_accessory               ; 12b2: 8d b4 09    ... :1181[1]
     ldy #2                                                            ; 12b5: a0 02       ..  :1184[1]
 object_reset_loop
     lda #0                                                            ; 12b7: a9 00       ..  :1186[1]
@@ -700,7 +700,7 @@ object_reset_loop
     sta player_using_object_spriteid                                  ; 12f1: 8d b6 2e    ... :11c0[1]
     sta previous_player_using_object_spriteid                         ; 12f4: 8d b7 2e    ... :11c3[1]
     sta object_current_index_in_animation+1                           ; 12f7: 8d d5 09    ... :11c6[1]
-    sta object_spriteid+1                                             ; 12fa: 8d a9 09    ... :11c9[1]
+    sta object_spriteid + objectid_player_accessory                   ; 12fa: 8d a9 09    ... :11c9[1]
     lda #4                                                            ; 12fd: a9 04       ..  :11cc[1]
     sta current_animation                                             ; 12ff: 8d df 09    ... :11ce[1]
     sta object_current_index_in_animation                             ; 1302: 8d d4 09    ... :11d1[1]
@@ -3992,9 +3992,9 @@ update_player_accessory_object_animation
     lda (animation_address_low),y                                     ; 2396: b1 70       .p  :2265[1]
 store_accessory_object_state
     sty object_current_index_in_animation+1                           ; 2398: 8c d5 09    ... :2267[1]
-    sta object_spriteid+1                                             ; 239b: 8d a9 09    ... :226a[1]
+    sta object_spriteid + objectid_player_accessory                   ; 239b: 8d a9 09    ... :226a[1]
     lda object_direction                                              ; 239e: ad be 09    ... :226d[1]
-    sta object_direction+1                                            ; 23a1: 8d bf 09    ... :2270[1]
+    sta object_direction + objectid_player_accessory                  ; 23a1: 8d bf 09    ... :2270[1]
     lda object_spriteid                                               ; 23a4: ad a8 09    ... :2273[1]
 ; add animation XY offset to player object position (inverted if looking left)
     jsr find_sprite_xy_offset_from_spriteid                           ; 23a7: 20 ae 22     ." :2276[1]
@@ -4012,10 +4012,10 @@ skip_invert_a
 skip_decrement_high_byte1
     clc                                                               ; 23bc: 18          .   :228b[1]
     adc object_x_low                                                  ; 23bd: 6d 50 09    mP. :228c[1]
-    sta object_x_low+1                                                ; 23c0: 8d 51 09    .Q. :228f[1]
+    sta object_x_low + objectid_player_accessory                      ; 23c0: 8d 51 09    .Q. :228f[1]
     txa                                                               ; 23c3: 8a          .   :2292[1]
     adc object_x_high                                                 ; 23c4: 6d 66 09    mf. :2293[1]
-    sta object_x_high+1                                               ; 23c7: 8d 67 09    .g. :2296[1]
+    sta object_x_high + objectid_player_accessory                     ; 23c7: 8d 67 09    .g. :2296[1]
     ldx #0                                                            ; 23ca: a2 00       ..  :2299[1]
     tya                                                               ; 23cc: 98          .   :229b[1]
     bpl skip_decrement_high_byte2                                     ; 23cd: 10 01       ..  :229c[1]
@@ -4023,10 +4023,10 @@ skip_decrement_high_byte1
 skip_decrement_high_byte2
     clc                                                               ; 23d0: 18          .   :229f[1]
     adc object_y_low                                                  ; 23d1: 6d 7c 09    m|. :22a0[1]
-    sta object_y_low+1                                                ; 23d4: 8d 7d 09    .}. :22a3[1]
+    sta object_y_low + objectid_player_accessory                      ; 23d4: 8d 7d 09    .}. :22a3[1]
     txa                                                               ; 23d7: 8a          .   :22a6[1]
     adc object_y_high                                                 ; 23d8: 6d 92 09    m.. :22a7[1]
-    sta object_y_high+1                                               ; 23db: 8d 93 09    ... :22aa[1]
+    sta object_y_high + objectid_player_accessory                     ; 23db: 8d 93 09    ... :22aa[1]
     rts                                                               ; 23de: 60          `   :22ad[1]
 
 ; *************************************************************************************
@@ -6312,7 +6312,7 @@ found_menu_index
     beq store_object_held_and_return                                  ; 3010: f0 03       ..  :2edf[1]
     ldx collectable_spriteids,y                                       ; 3012: be ed 2e    ... :2ee1[1]
 store_object_held_and_return
-    stx object_spriteid+1                                             ; 3015: 8e a9 09    ... :2ee4[1]
+    stx object_spriteid + objectid_player_accessory                   ; 3015: 8e a9 09    ... :2ee4[1]
     rts                                                               ; 3018: 60          `   :2ee7[1]
 
 toolbar_collectable_spriteids

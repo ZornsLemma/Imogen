@@ -1396,10 +1396,10 @@ c4274
     dex                                                               ; 427a: ca
 c427b
     clc                                                               ; 427b: 18
-    adc object_x_low+1                                                ; 427c: 6d 51 09
+    adc object_x_low + objectid_player_accessory                      ; 427c: 6d 51 09
     sta l0a70                                                         ; 427f: 8d 70 0a
     txa                                                               ; 4282: 8a
-    adc object_x_high+1                                               ; 4283: 6d 67 09
+    adc object_x_high + objectid_player_accessory                     ; 4283: 6d 67 09
     sta l0a71                                                         ; 4286: 8d 71 0a
     ldx #0                                                            ; 4289: a2 00
     lda #$fc                                                          ; 428b: a9 fc
@@ -1407,7 +1407,7 @@ c427b
     dex                                                               ; 428f: ca
 c4290
     clc                                                               ; 4290: 18
-    adc object_y_low+1                                                ; 4291: 6d 7d 09
+    adc object_y_low + objectid_player_accessory                      ; 4291: 6d 7d 09
     sta l0a72                                                         ; 4294: 8d 72 0a
     lda object_direction                                              ; 4297: ad be 09
     sta l0a74                                                         ; 429a: 8d 74 0a
@@ -1709,7 +1709,7 @@ c448c
 ; check for first update in room (branch if so)
     lda update_room_first_update_flag                                 ; 449b: ad 2b 13
     bne c44e6                                                         ; 449e: d0 46
-    lda object_spriteid+1                                             ; 44a0: ad a9 09
+    lda object_spriteid + objectid_player_accessory                   ; 44a0: ad a9 09
     cmp #$d3                                                          ; 44a3: c9 d3
     bne c44e6                                                         ; 44a5: d0 3f
     lda l0a73                                                         ; 44a7: ad 73 0a
@@ -1719,7 +1719,7 @@ c448c
     jsr test_for_collision_between_objects_x_and_y                    ; 44b0: 20 e2 28
     beq c44e6                                                         ; 44b3: f0 31
     lda #$d4                                                          ; 44b5: a9 d4
-    sta object_spriteid+1                                             ; 44b7: 8d a9 09
+    sta object_spriteid + objectid_player_accessory                   ; 44b7: 8d a9 09
     lda #$d7                                                          ; 44ba: a9 d7
     sta player_held_object_spriteid                                   ; 44bc: 85 52
     ldx l296e                                                         ; 44be: ae 6e 29

@@ -1199,18 +1199,18 @@ c4195
     sta l0a75                                                         ; 41a6: 8d 75 0a
     lda object_direction                                              ; 41a9: ad be 09
     sta l0a73                                                         ; 41ac: 8d 73 0a
-    lda object_x_low+1                                                ; 41af: ad 51 09
+    lda object_x_low + objectid_player_accessory                      ; 41af: ad 51 09
     sta l0a70                                                         ; 41b2: 8d 70 0a
-    lda object_x_high+1                                               ; 41b5: ad 67 09
+    lda object_x_high + objectid_player_accessory                     ; 41b5: ad 67 09
     sta l0a71                                                         ; 41b8: 8d 71 0a
-    lda object_y_low+1                                                ; 41bb: ad 7d 09
+    lda object_y_low + objectid_player_accessory                      ; 41bb: ad 7d 09
     sta l0a72                                                         ; 41be: 8d 72 0a
     lda #$0c                                                          ; 41c1: a9 0c
     sta save_game_level_e_holding_egg_flag                            ; 41c3: 8d 13 0a
     lda #5                                                            ; 41c6: a9 05
     sta l0a74                                                         ; 41c8: 8d 74 0a
     jsr sub_c431d                                                     ; 41cb: 20 1d 43
-    lda object_spriteid+1                                             ; 41ce: ad a9 09
+    lda object_spriteid + objectid_player_accessory                   ; 41ce: ad a9 09
     sta object_spriteid + 2                                           ; 41d1: 8d aa 09
     ldx #2                                                            ; 41d4: a2 02
     jsr l20f7                                                         ; 41d6: 20 f7 20
@@ -1251,7 +1251,7 @@ c4219
     lda #$d3                                                          ; 4221: a9 d3
     jsr remove_item_from_toolbar_menu                                 ; 4223: 20 e0 2b
     lda #0                                                            ; 4226: a9 00
-    sta object_spriteid+1                                             ; 4228: 8d a9 09
+    sta object_spriteid + objectid_player_accessory                   ; 4228: 8d a9 09
     sta player_using_object_spriteid                                  ; 422b: 8d b6 2e
     sta player_held_object_spriteid                                   ; 422e: 85 52
 return2

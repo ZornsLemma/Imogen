@@ -1197,11 +1197,11 @@ c40f3
     sta l0a73                                                         ; 40fd: 8d 73 0a
     lda object_direction                                              ; 4100: ad be 09
     sta level_workspace                                               ; 4103: 8d 6f 0a
-    lda object_x_low+1                                                ; 4106: ad 51 09
+    lda object_x_low + objectid_player_accessory                      ; 4106: ad 51 09
     sta l0a70                                                         ; 4109: 8d 70 0a
-    lda object_x_high+1                                               ; 410c: ad 67 09
+    lda object_x_high + objectid_player_accessory                     ; 410c: ad 67 09
     sta l0a71                                                         ; 410f: 8d 71 0a
-    lda object_y_low+1                                                ; 4112: ad 7d 09
+    lda object_y_low + objectid_player_accessory                      ; 4112: ad 7d 09
     sta l0a72                                                         ; 4115: 8d 72 0a
     lda #0                                                            ; 4118: a9 00
     sta l0a74                                                         ; 411a: 8d 74 0a
@@ -1587,8 +1587,8 @@ c43b3
     sta object_y_low                                                  ; 43cb: 8d 7c 09
     lda l44a7                                                         ; 43ce: ad a7 44
     clc                                                               ; 43d1: 18
-    adc object_y_low+1                                                ; 43d2: 6d 7d 09
-    sta object_y_low+1                                                ; 43d5: 8d 7d 09
+    adc object_y_low + objectid_player_accessory                      ; 43d2: 6d 7d 09
+    sta object_y_low + objectid_player_accessory                      ; 43d5: 8d 7d 09
 loop_c43d8
     lda #1                                                            ; 43d8: a9 01
     sta temp_bottom_offset                                            ; 43da: 8d 51 25
@@ -1597,7 +1597,7 @@ loop_c43d8
     beq c43f0                                                         ; 43e2: f0 0c
     dec l44a7                                                         ; 43e4: ce a7 44
     dec object_y_low                                                  ; 43e7: ce 7c 09
-    dec object_y_low+1                                                ; 43ea: ce 7d 09
+    dec object_y_low + objectid_player_accessory                      ; 43ea: ce 7d 09
     jmp loop_c43d8                                                    ; 43ed: 4c d8 43
 
 c43f0
