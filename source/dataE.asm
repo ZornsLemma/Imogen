@@ -174,7 +174,7 @@ l0a72                                               = $0a72
 l0a73                                               = $0a73
 l0a74                                               = $0a74
 l0a75                                               = $0a75
-l0a76                                               = $0a76
+room_1_data_table_index                             = $0a76
 l0a77                                               = $0a77
 l0a78                                               = $0a78
 l0a79                                               = $0a79
@@ -1416,7 +1416,8 @@ room_1_check_right_exit
     ldy current_level                                                 ; 4447: a4 31
     jmp initialise_level_and_room                                     ; 4449: 4c 40 11
 
-l444c
+; TODO: seems to be three bytes per entry
+room_1_data_table
     !byte   0, $db,   0,   0,   0, $dc,   0,   0,   0, $dc, $f8,   0  ; 444c: 00 db 00...
     !byte $dd, $f8,   8, $dd, $fc,   4, $dd, $fc,   4,   0, $dd,   0  ; 4458: dd f8 08...
     !byte   8,   0, $dd,   0,   0,   0                                ; 4464: 08 00 dd...
@@ -1447,7 +1448,7 @@ c448d
     lda #$1a                                                          ; 4491: a9 1a
 room_1_axy_set
     sta save_game_level_e_something_room_1                            ; 4493: 8d 14 0a
-    sta l0a76                                                         ; 4496: 8d 76 0a
+    sta room_1_data_table_index                                       ; 4496: 8d 76 0a
     stx l0a77                                                         ; 4499: 8e 77 0a
     sty l0a78                                                         ; 449c: 8c 78 0a
 room_1_not_this_room1
@@ -1466,11 +1467,11 @@ room_1_not_this_room2
     jmp c4551                                                         ; 44b9: 4c 51 45
 
 room_1_not_first_update
-    lda l0a76                                                         ; 44bc: ad 76 0a
+    lda room_1_data_table_index                                       ; 44bc: ad 76 0a
     clc                                                               ; 44bf: 18
     adc #3                                                            ; 44c0: 69 03
     tay                                                               ; 44c2: a8
-    lda l444c,y                                                       ; 44c3: b9 4c 44
+    lda room_1_data_table,y                                           ; 44c3: b9 4c 44
     bne c44cb                                                         ; 44c6: d0 03
     ldy save_game_level_e_something_room_1                            ; 44c8: ac 14 0a
 c44cb
@@ -1490,7 +1491,7 @@ c44df
     beq c4538                                                         ; 44e6: f0 50
     lda desired_room_index                                            ; 44e8: a5 30
     cmp #1                                                            ; 44ea: c9 01
-    bne c4501                                                         ; 44ec: d0 13
+    bne room_1_not_this_room3                                         ; 44ec: d0 13
     lda #collision_map_none                                           ; 44ee: a9 00
     sta value_to_write_to_collision_map                               ; 44f0: 85 3e
     ldx #$0e                                                          ; 44f2: a2 0e
@@ -1500,7 +1501,7 @@ c44df
     lda #2                                                            ; 44fa: a9 02
     sta height_in_cells                                               ; 44fc: 85 3d
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 44fe: 20 44 1e
-c4501
+room_1_not_this_room3
     lda #$16                                                          ; 4501: a9 16
     sta save_game_level_e_something_room_1                            ; 4503: 8d 14 0a
     ldy #9                                                            ; 4506: a0 09
@@ -1530,14 +1531,14 @@ c4533
     ldy #$1a                                                          ; 4533: a0 1a
     sty save_game_level_e_something_room_1                            ; 4535: 8c 14 0a
 c4538
-    sty l0a76                                                         ; 4538: 8c 76 0a
+    sty room_1_data_table_index                                       ; 4538: 8c 76 0a
     iny                                                               ; 453b: c8
-    lda l444c,y                                                       ; 453c: b9 4c 44
+    lda room_1_data_table,y                                           ; 453c: b9 4c 44
     clc                                                               ; 453f: 18
     adc l0a77                                                         ; 4540: 6d 77 0a
     sta l0a77                                                         ; 4543: 8d 77 0a
     iny                                                               ; 4546: c8
-    lda l444c,y                                                       ; 4547: b9 4c 44
+    lda room_1_data_table,y                                           ; 4547: b9 4c 44
     clc                                                               ; 454a: 18
     adc l0a78                                                         ; 454b: 6d 78 0a
     sta l0a78                                                         ; 454e: 8d 78 0a
@@ -1545,8 +1546,8 @@ c4551
     lda desired_room_index                                            ; 4551: a5 30
     cmp #1                                                            ; 4553: c9 01
     bne return5                                                       ; 4555: d0 49
-    ldy l0a76                                                         ; 4557: ac 76 0a
-    lda l444c,y                                                       ; 455a: b9 4c 44
+    ldy room_1_data_table_index                                       ; 4557: ac 76 0a
+    lda room_1_data_table,y                                           ; 455a: b9 4c 44
     sta object_spriteid + 3                                           ; 455d: 8d ab 09
     lda l0a77                                                         ; 4560: ad 77 0a
     sta object_x_low + 3                                              ; 4563: 8d 53 09
@@ -1703,7 +1704,6 @@ pydis_end
 ;     c448d
 ;     c44cb
 ;     c44df
-;     c4501
 ;     c450b
 ;     c4533
 ;     c4538
@@ -1718,7 +1718,6 @@ pydis_end
 ;     l0a73
 ;     l0a74
 ;     l0a75
-;     l0a76
 ;     l0a77
 ;     l0a78
 ;     l0a79
@@ -1738,7 +1737,6 @@ pydis_end
 ;     l4389
 ;     l438a
 ;     l438b
-;     l444c
 ;     l45d6
 ;     l45d7
 ;     loop_c414c

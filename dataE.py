@@ -24,6 +24,8 @@ label(0x0a13, "save_game_level_e_holding_egg_flag") # TODO: other uses? not chec
 label(0x0a14, "save_game_level_e_something_room_1")
 label(0x0a15, "save_game_level_e_duck_captured_flag") # TODO: might be used for other things too, not checked yet
 
+label(0xa76, "room_1_data_table_index")
+
 common_to_all()
 define_level(4)
 
@@ -91,6 +93,9 @@ entry(0x4493, "room_1_axy_set")
 comment(0x4484, "set flags based on A", inline=True)
 entry(0x44b9, "room_1_not_this_room2")
 label(0x38af, "envelope_1_pitch_change_per_step_section_2") # TODO?
+comment(0x444c, "TODO: seems to be three bytes per entry")
+label(0x444c, "room_1_data_table")
+entry(0x4501, "room_1_not_this_room3")
 
 # TODO: replace "+ n" with "+ objectid_*" once objects have been named
 expr(0x3d27, "object_y_low + 4")
