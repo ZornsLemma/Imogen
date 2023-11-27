@@ -1568,10 +1568,10 @@ room_1_check_right_exit
     ldy current_level                                                 ; 4447: a4 31
     jmp initialise_level_and_room                                     ; 4449: 4c 40 11
 
-; Animation table for the egg. There are three bytes per entry. First byte is a sprite
-; ID. Second and third bytes of each entry are signed (X,Y) position offsets, added to
-; a77 and a78 respectively. This seems to control sprite and probably X/Y poss of
-; object 3, the egg. Each animation is terminated with an extra zero byte.
+; Table of animations for the egg. There are three bytes per entry. First byte is a
+; sprite ID. Second and third bytes of each entry are signed (X,Y) position offsets,
+; added to a77 and a78 respectively. This seems to control sprite and probably X/Y poss
+; of object 3, the egg. Each animation is terminated with an extra zero byte.
 egg_animations_table
     !byte 0                                                           ; 444c: 00
 

@@ -100,27 +100,31 @@ entry(0x4493, "room_1_axy_set")
 comment(0x4484, "set flags based on A", inline=True)
 entry(0x44b9, "room_1_not_this_room2")
 label(0x38af, "envelope_1_pitch_change_per_step_section_2") # TODO?
-comment(0x444c, "Animation table for the egg. There are three bytes per entry. First byte is a sprite ID. Second and third bytes of each entry are signed (X,Y) position offsets, added to a77 and a78 respectively. This seems to control sprite and probably X/Y poss of object 3, the egg. Each animation is terminated with an extra zero byte.")
-
+comment(0x444c, "Table of animations for the egg. There are three bytes per entry. First byte is a sprite ID. Second and third bytes of each entry are signed (X,Y) position offsets, added to a77 and a78 respectively. This seems to control sprite and probably X/Y poss of object 3, the egg. Each animation is terminated with an extra zero byte.")
 blank(0x444d)
 blank(0x4451)
 blank(0x4455)
 blank(0x4462)
 blank(0x4466)
+
 # TODO: Ideally this table would be formatted something like this, but the formatting of py8dis is limited atm.
 #egg_animations_table
 #    !byte 0
 #    !byte spriteid_large_egg_upright ,   0, 0
 #    !byte 0                                                ; terminator
+#
 #    !byte spriteid_large_egg_tilted  ,   0, 0
 #    !byte 0                                                ; terminator
+#
 #    !byte spriteid_large_egg_tilted  ,  -8, 0
 #    !byte spriteid_large_egg_sideways,  -8, 8
 #    !byte spriteid_large_egg_sideways,  -4, 4
 #    !byte spriteid_large_egg_sideways,  -4, 4
 #    !byte 0                                                ; terminator
+#
 #    !byte spriteid_large_egg_sideways,   0, 8
 #    !byte 0                                                ; terminator
+#
 #    !byte spriteid_large_egg_sideways,   0, 0
 #    !byte 0                                                ; terminator
 
