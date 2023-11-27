@@ -8,7 +8,10 @@ sprite_dict = {
     0xd1: "spriteid_duck_toolbar",
     0xd2: "spriteid_egg_toolbar",
     0xd3: "spriteid_egg_mask_toolbar", # TODO: "mask" is a guess
-    0xdb: "spriteid_large_egg",
+    0xdb: "spriteid_large_egg_upright",
+    0xdc: "spriteid_large_egg_tilted",
+    0xdd: "spriteid_large_egg_sideways",
+    0xf8: "spriteid_something", # TODO: just added to make room_1_data_table expr() happy for now
 }
 
 # Merge with common sprite dictionary
@@ -94,11 +97,11 @@ entry(0x4493, "room_1_axy_set")
 comment(0x4484, "set flags based on A", inline=True)
 entry(0x44b9, "room_1_not_this_room2")
 label(0x38af, "envelope_1_pitch_change_per_step_section_2") # TODO?
-comment(0x444c, "TODO: seems to be three bytes per entry. First byte is a sprite ID. Second and third bytes of each entry appear to be added to a77 and a78 respectively. This seems to control sprite and probably X/Y poss of object 3 - the egg?")
-for i in range(3): # TODO GUESS LIMIT
-    addr = 0x444c + i*3
+comment(0x444c, "TODO: seems to be three bytes per entry. First byte is a sprite ID. Second and third bytes of each entry appear to be added to a77 and a78 respectively. This seems to control sprite and probably X/Y poss of object 3 - the egg? But the sprite IDs only work if I assume each entry is four bytes, so I've got something wrong here. They don't even work then - I'm clearly halfway there, but this is not right.")
+for i in range(8): # TODO GUESS LIMIT
+    addr = 0x444c + i*4
     uint(addr, 3)
-    expr(addr, sprite_dict)
+    expr(addr+1, sprite_dict)
 label(0x444c, "room_1_data_table")
 entry(0x4501, "room_1_not_this_room3")
 

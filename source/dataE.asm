@@ -86,7 +86,9 @@ spriteid_icodata_password             = 8
 spriteid_icodata_sound                = 2
 spriteid_icodata_wizard               = 4
 spriteid_icon_background              = 1
-spriteid_large_egg                    = 219
+spriteid_large_egg_sideways           = 221
+spriteid_large_egg_tilted             = 220
+spriteid_large_egg_upright            = 219
 spriteid_menu_item_completion_spell   = 33
 spriteid_monkey1                      = 78
 spriteid_monkey2                      = 79
@@ -114,6 +116,7 @@ spriteid_rope3                        = 87
 spriteid_rope4                        = 88
 spriteid_rope_end                     = 10
 spriteid_rope_hook                    = 11
+spriteid_something                    = 248
 spriteid_sparkles1                    = 34
 spriteid_sparkles2                    = 35
 spriteid_sparkles3                    = 36
@@ -1420,38 +1423,40 @@ room_1_check_right_exit
 
 ; TODO: seems to be three bytes per entry. First byte is a sprite ID. Second and third
 ; bytes of each entry appear to be added to a77 and a78 respectively. This seems to
-; control sprite and probably X/Y poss of object 3 - the egg?
+; control sprite and probably X/Y poss of object 3 - the egg? But the sprite IDs only
+; work if I assume each entry is four bytes, so I've got something wrong here. They
+; don't even work then - I'm clearly halfway there, but this is not right.
 room_1_data_table
-    !byte spriteid_one_pixel_masked_out                               ; 444c: 00
-    !byte                           $db                               ; 444d: db
+    !byte                             0                               ; 444c: 00
+    !byte    spriteid_large_egg_upright                               ; 444d: db
     !byte                             0                               ; 444e: 00
-    !byte spriteid_one_pixel_masked_out                               ; 444f: 00
+    !byte                             0                               ; 444f: 00
     !byte                             0                               ; 4450: 00
-    !byte                           $dc                               ; 4451: dc
-    !byte spriteid_one_pixel_masked_out                               ; 4452: 00
+    !byte     spriteid_large_egg_tilted                               ; 4451: dc
+    !byte                             0                               ; 4452: 00
     !byte                             0                               ; 4453: 00
     !byte                             0                               ; 4454: 00
-    !byte                           $dc                               ; 4455: dc
+    !byte     spriteid_large_egg_tilted                               ; 4455: dc
     !byte                           $f8                               ; 4456: f8
     !byte                             0                               ; 4457: 00
     !byte                           $dd                               ; 4458: dd
-    !byte                           $f8                               ; 4459: f8
+    !byte            spriteid_something                               ; 4459: f8
     !byte                             8                               ; 445a: 08
     !byte                           $dd                               ; 445b: dd
     !byte                           $fc                               ; 445c: fc
-    !byte                             4                               ; 445d: 04
+    !byte       spriteid_icodata_wizard                               ; 445d: 04
     !byte                           $dd                               ; 445e: dd
     !byte                           $fc                               ; 445f: fc
     !byte                             4                               ; 4460: 04
-    !byte                             0                               ; 4461: 00
+    !byte spriteid_one_pixel_masked_out                               ; 4461: 00
     !byte                           $dd                               ; 4462: dd
     !byte                             0                               ; 4463: 00
     !byte                             8                               ; 4464: 08
-    !byte                             0                               ; 4465: 00
+    !byte spriteid_one_pixel_masked_out                               ; 4465: 00
     !byte                           $dd                               ; 4466: dd
     !byte                             0                               ; 4467: 00
     !byte                             0                               ; 4468: 00
-    !byte                             0                               ; 4469: 00
+    !byte spriteid_one_pixel_masked_out                               ; 4469: 00
 
 ; check for first update in room (branch if not)
 room_1_update_handler
@@ -1950,6 +1955,18 @@ pydis_end
 !if (spriteid_egg_mask_toolbar) != $d3 {
     !error "Assertion failed: spriteid_egg_mask_toolbar == $d3"
 }
+!if (spriteid_icodata_wizard) != $04 {
+    !error "Assertion failed: spriteid_icodata_wizard == $04"
+}
+!if (spriteid_large_egg_tilted) != $dc {
+    !error "Assertion failed: spriteid_large_egg_tilted == $dc"
+}
+!if (spriteid_large_egg_upright) != $db {
+    !error "Assertion failed: spriteid_large_egg_upright == $db"
+}
 !if (spriteid_one_pixel_masked_out) != $00 {
     !error "Assertion failed: spriteid_one_pixel_masked_out == $00"
+}
+!if (spriteid_something) != $f8 {
+    !error "Assertion failed: spriteid_something == $f8"
 }
