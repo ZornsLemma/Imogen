@@ -107,7 +107,7 @@ substitute_labels = {
         "l007b": "sprite_screen_address_for_column_low",
         "l007c": "sprite_screen_address_for_column_high",
         "l007d": "sprite_data_byte",
-        "l0080": "mask_sprite_byte",
+        "l0080": "erase_sprite_byte",
         "l0081": "sprite_width",
     },
     (0x180d, 0x1882): {
@@ -788,7 +788,11 @@ On Exit:
     label(0x137f, "reset_sprite_flags_and_exit")
     stars(0x138d, """Sprite Plotting
 
-Plots a sprite with a mask, optionally reflected about a vertical axis. Sprites can be any pixel width and height, can be drawn at any pixel position, and have an offset in X and Y pixels whenever drawn, which helps authoring animations.
+Plots or erases a sprite, optionally with a mask, optionally reflected about a vertical axis. Sprites can be any pixel width and height, can be drawn at any pixel position (including partially offscreen), and have an offset in X and Y pixels whenever drawn, to help run animations.
+
+Sprites are stored in a compressed format, as detailed below.
+
+While plotting the sprite, the code can also optionally remember the previous contents of the screen behind the sprite that's being drawn into a compressed sprite area in memory (the 'destination sprite'). This is so the screen background can be restored later by drawing the destination sprite.
 
 Conventionally, sprite characters are authored looking to the right.
 
@@ -799,7 +803,7 @@ On Entry:
 
            sprite_op_flags: These bits are mutually exclusive. If bit is set:
 
-                            bit 0: also copy mask into sprite 'dest_sprite_id'
+                            bit 0: also copy the screen into sprite 'dest_sprite_id'
                             bit 1: erase the sprite from the screen (using mask)
                             bit 2: write to the screen without a mask
                             bits 3-7: unused
@@ -825,15 +829,15 @@ Each pixel is encoded in two bits:
 
     00 - draw the background colour (colour 0)
     01 - draw the foreground colour (colour 1)
-    10 - don't draw a pixel (it is masked off)
+    10 - don't draw a pixel (it is a masked pixel)
     11 - finish the current column and start the next column
 
 The behaviour of '11' shows that this is a compression scheme, where columns can finish early if they have no set pixels at the top of the sprite.""")
-    expr(0x139e, "sprite_op_flags_copy_mask")
+    expr(0x139e, "sprite_op_flags_copy_screen")
     comment(0x139f, "check flags to see if we are copying to another sprite", inline=True)
     comment(0x13a1, "get destination sprite address")
     label(0x13ac, "copy_sprite_header_loop")
-    comment(0x13b3, "Y=0", inline=True)
+    comment(0x13b3, "Y=255", inline=True)
     label(0x13b5, "skip_copying_sprite_header_to_destination_sprite")
     comment(0x13b5, "add the x and y offset in the sprite header to the sprite position")
     comment(0x13b7, "read byte 0 of sprite, a start x offset", inline=True)
@@ -850,7 +854,7 @@ The behaviour of '11' shows that this is a compression scheme, where columns can
     comment(0x13fe, "Then multiply by eight and store in ($72)")
     comment(0x13aa, "copy the first four bytes from source sprite to destination sprite (the header)")
 
-    expr(0x1440, "sprite_op_flags_copy_mask")
+    expr(0x1440, "sprite_op_flags_copy_screen")
     comment(0x1409, "Multiply by four")
     comment(0x1411, "Add eight times the x position as a character row")
     comment(0x141a, "Add high byte including X")
@@ -899,13 +903,15 @@ This self-modifies code""")
     comment(0x1533, "05 82='ora sprite_bit'", inline=True)
     stars(0x1540, "Sprite routines that also copy the mask to a destination sprite (similar to code above)")
     label(0x1540, "out_of_bounds_vertically")
+    comment(0x1542, "shift '10' pair of bits into the 'erase' byte, which means 'don't draw' the pixel when erasing")
     label(0x154a, "record_that_we_are_out_of_screen_range_vertically")
     label(0x1551, "write_one_pixel_to_the_screen")
-    comment(0x1555, "update carry flag with the mask pixel", inline=True)
+    comment(0x1555, "shift a 0 bit into the 'erase' byte, the first of a pair of bits: 00=draw bg colour, 01=draw fg colour. This is used to erase the sprite. Carry is set, since the initial value of the 'erase' byte is $ff")
     comment(0x1557, "read byte from screen")
     comment(0x1559, "read the screen pixel into Z", inline=True)
-    comment(0x155b, "if (screen pixel is set) then branch (this preserves carry, the mask pixel)", inline=True)
+    comment(0x155b, "if (screen pixel is set) then branch.", inline=True)
     label(0x155e, "skip1")
+    comment(0x155e, "at this point carry holds the screen pixel value, which we write to the 'erase' byte so we can restore the screen contents later")
     comment(0x1564, "OR in (set) the appropriate bit and write back to screen memory")
     comment(0x1566, "write byte to screen", inline=True)
     label(0x1568, "move_up_to_next_pixel_row")
@@ -920,22 +926,22 @@ This self-modifies code""")
     comment(0x1589, "check if Y coordinate is above or below the screen area", inline=True)
     comment(0x158b, "$8000 is end of screen memory", inline=True)
     label(0x1593, "y_coordinate_is_within_character_row")
-    comment(0x1598, "copy mask byte to destination")
+    comment(0x1598, "copy 'erase' byte to destination")
     comment(0x15a1, "load next source byte from sprite")
-    comment(0x15a5, "set mask byte to 255", inline=True)
+    comment(0x15a5, "set 'erase' byte to 255")
     comment(0x15a7, "reset loop counter", inline=True)
     label(0x15ab, "byte_not_finished_yet")
     comment(0x15ab, "check top bit", inline=True)
     comment(0x15ad, "if (sprite bit is clear) then branch (to write pixel to screen)", inline=True)
-    comment(0x15af, "add set bit to mask", inline=True)
+    comment(0x15af, "add set bit to 'erase' byte", inline=True)
     comment(0x15b1, "get next bit", inline=True)
     comment(0x15b3, "if bit set then branch", inline=True)
-    comment(0x15b5, "add clear bit to mask", inline=True)
+    comment(0x15b5, "'rol'-in a clear bit to the 'erase' byte. Now the 'erase' byte has a 10 pair of bits, which is the code for 'don't draw'. This makes sense as this is a pixel we didn't draw.")
     comment(0x15b8, "if still in same character row, then branch back")
     comment(0x15bc, "move up to previous character row")
     expr(0x15bf, make_lo("screen_width_in_pixels"))
     label(0x15c3, "found_second_bit_set")
-    comment(0x15c3, "add set bit to mask")
+    comment(0x15c3, "add set bit to 'erase' byte. Now the 'erase' byte has a 11 pair of bits, meaning the end of the column.")
     comment(0x15c5, "check if we are done", inline=True)
     comment(0x15c9, "reset sprite address")
     comment(0x15d5, "move to next column")
@@ -952,7 +958,7 @@ This self-modifies code""")
     comment(0x1615, "store every other bit in the byte other than the one we are interested in (it's a mask)", inline=True)
     label(0x161e, "finish_off_sprite")
     label(0x1623, "shift_mask_byte_loop")
-    label(0x1628, "write_last_byte")
+    label(0x1628, "write_last_byte_to_destination_sprite")
     label(0x162f, "clamp_and_clip_x")
     comment(0x162f, "exit if X position is 512 or more", inline=True)
     comment(0x1636, "exit if Y position is 512 or more", inline=True)
@@ -977,7 +983,7 @@ This self-modifies code""")
     label(0x168a, "sprite_clip_x")
     comment(0x168e, "exit if fully offscreen", inline=True)
     label(0x1696, "sprite_clip_x_loop")
-    expr(0x169c, "sprite_op_flags_copy_mask")
+    expr(0x169c, "sprite_op_flags_copy_screen")
     comment(0x16a3, "set dest sprite byte to 255", inline=True)
     label(0x16a5, "not_copying_to_destination_sprite")
     label(0x16aa, "read_next_source_pixel")
@@ -1643,7 +1649,7 @@ Object state is stored in 'object_*' memory locations, and the state of the prev
     $ff: draw normally
     other value S: erase wheat's on screen, copy the mask to destination spriteid S
 """)
-    expr(0x21cd, make_or("sprite_op_flags_erase", "sprite_op_flags_copy_mask"))
+    expr(0x21cd, make_or("sprite_op_flags_erase", "sprite_op_flags_copy_screen"))
     label(0x21d0, "draw_object_sprite")
     comment(0x21d3, "return if not the player accessory object")
     expr(0x21d4, "objectid_player_accessory")

@@ -72,7 +72,7 @@ objectid_rope_fire                    = 4
 objectid_table                        = 5
 objectid_torch                        = 2
 opcode_jmp                            = 76
-sprite_op_flags_copy_mask             = 1
+sprite_op_flags_copy_screen           = 1
 sprite_op_flags_erase                 = 2
 sprite_op_flags_ignore_mask           = 4
 sprite_op_flags_normal                = 0
@@ -1394,14 +1394,14 @@ room_2_update_handler
     ldx #8                                                            ; 41ba: a2 08
     ldy #2                                                            ; 41bc: a0 02
     lda save_game_level_c_room_0_and_2_burning_rope_progress          ; 41be: ad 0c 0a
-    beq c41d0                                                         ; 41c1: f0 0d
+    beq room_2_draw_full_length_rope                                  ; 41c1: f0 0d
     lda #spriteid_empty_hook                                          ; 41c3: a9 d8
     jsr draw_sprite_a_at_cell_xy                                      ; 41c5: 20 4c 1f
     lda #3                                                            ; 41c8: a9 03
     jsr write_a_single_value_to_cell_in_collision_map                 ; 41ca: 20 bb 1e
     jmp c41d5                                                         ; 41cd: 4c d5 41
 
-c41d0
+room_2_draw_full_length_rope
     lda #$ff                                                          ; 41d0: a9 ff
     jsr draw_rope                                                     ; 41d2: 20 b9 1d
 c41d5
@@ -1422,7 +1422,7 @@ c41d5
     ldx #$40 ; '@'                                                    ; 41fc: a2 40
     ldy #0                                                            ; 41fe: a0 00
     lda #1                                                            ; 4200: a9 01
-    jsr sub_c422d                                                     ; 4202: 20 2d 42
+    jsr update_parrot                                                 ; 4202: 20 2d 42
     lda l442c                                                         ; 4205: ad 2c 44
     sta l0a71                                                         ; 4208: 8d 71 0a
     lda l442f                                                         ; 420b: ad 2f 44
@@ -1450,7 +1450,7 @@ parrot_spriteid_table
     !byte spriteid_parrot_squawk                                      ; 422b: dc
     !byte 0                                                           ; 422c: 00
 
-sub_c422d
+update_parrot
     sta l4427                                                         ; 422d: 8d 27 44
     stx l4428                                                         ; 4230: 8e 28 44
     sty l4429                                                         ; 4233: 8c 29 44
@@ -1489,7 +1489,7 @@ c4278
     lda desired_room_index                                            ; 4278: a5 30
     cmp #1                                                            ; 427a: c9 01
     beq c428a                                                         ; 427c: f0 0c
-    ldx #5                                                            ; 427e: a2 05
+    ldx #objectid_parrot                                              ; 427e: a2 05
     lda #spriteid_cache5                                              ; 4280: a9 d1
     sta object_sprite_mask_type,x                                     ; 4282: 9d ac 38
     lda #$f0                                                          ; 4285: a9 f0
@@ -1899,7 +1899,7 @@ room_3_update_handler
     ldx #$6f ; 'o'                                                    ; 4529: a2 6f
     ldy #0                                                            ; 452b: a0 00
     lda #$ff                                                          ; 452d: a9 ff
-    jsr sub_c422d                                                     ; 452f: 20 2d 42
+    jsr update_parrot                                                 ; 452f: 20 2d 42
     lda l442c                                                         ; 4532: ad 2c 44
     sta l0a75                                                         ; 4535: 8d 75 0a
     lda l442f                                                         ; 4538: ad 2f 44
@@ -1970,7 +1970,6 @@ sprite_data
 pydis_end
 
 ; Automatically generated labels:
-;     c41d0
 ;     c41d5
 ;     c4242
 ;     c4265
@@ -2023,7 +2022,6 @@ pydis_end
 ;     l442e
 ;     l442f
 ;     l4430
-;     sub_c422d
 !if (<envelope1) != $4b {
     !error "Assertion failed: <envelope1 == $4b"
 }

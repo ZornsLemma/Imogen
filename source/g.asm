@@ -133,7 +133,7 @@ osword_sound                                    = 7
 rows_per_cell                                   = 8
 screen_width_in_pixels                          = 320
 screen_width_minus_one                          = 39
-sprite_op_flags_copy_mask                       = 1
+sprite_op_flags_copy_screen                     = 1
 sprite_op_flags_erase                           = 2
 sprite_op_flags_ignore_mask                     = 4
 sprite_op_flags_normal                          = 0
@@ -418,8 +418,8 @@ osfile_block_end_address_mid1                       = $7f
 player_hit_floor_result_flag                        = $7f
 adjustment                                          = $80
 cell_based_loop_counter                             = $80
+erase_sprite_byte                                   = $80
 l0080                                               = $80
-mask_sprite_byte                                    = $80
 osfile_block_end_address_mid2                       = $80
 player_height_in_cells                              = $80
 player_width_in_cells                               = $80
@@ -1026,9 +1026,17 @@ reset_sprite_flags_and_exit
 ; 
 ; Sprite Plotting
 ; 
-; Plots a sprite with a mask, optionally reflected about a vertical axis. Sprites can
-; be any pixel width and height, can be drawn at any pixel position, and have an offset
-; in X and Y pixels whenever drawn, which helps authoring animations.
+; Plots or erases a sprite, optionally with a mask, optionally reflected about a
+; vertical axis. Sprites can be any pixel width and height, can be drawn at any pixel
+; position (including partially offscreen), and have an offset in X and Y pixels
+; whenever drawn, to help run animations.
+; 
+; Sprites are stored in a compressed format, as detailed below.
+; 
+; While plotting the sprite, the code can also optionally remember the previous
+; contents of the screen behind the sprite that's being drawn into a compressed sprite
+; area in memory (the 'destination sprite'). This is so the screen background can be
+; restored later by drawing the destination sprite.
 ; 
 ; Conventionally, sprite characters are authored looking to the right.
 ; 
@@ -1039,7 +1047,7 @@ reset_sprite_flags_and_exit
 ; 
 ;            sprite_op_flags: These bits are mutually exclusive. If bit is set:
 ; 
-;                             bit 0: also copy mask into sprite 'dest_sprite_id'
+;                             bit 0: also copy the screen into sprite 'dest_sprite_id'
 ;                             bit 1: erase the sprite from the screen (using mask)
 ;                             bit 2: write to the screen without a mask
 ;                             bits 3-7: unused
@@ -1067,7 +1075,7 @@ reset_sprite_flags_and_exit
 ; 
 ;     00 - draw the background colour (colour 0)
 ;     01 - draw the foreground colour (colour 1)
-;     10 - don't draw a pixel (it is masked off)
+;     10 - don't draw a pixel (it is a masked pixel)
 ;     11 - finish the current column and start the next column
 ; 
 ; The behaviour of '11' shows that this is a compression scheme, where columns can
@@ -1085,7 +1093,7 @@ sprite_op
     stx src_sprite_address_low                                        ; 14c8: 86 70       .p  :1397[1]
     sty src_sprite_address_high                                       ; 14ca: 84 71       .q  :1399[1]
     lda sprite_op_flags                                               ; 14cc: a5 15       ..  :139b[1]
-    and #sprite_op_flags_copy_mask                                    ; 14ce: 29 01       ).  :139d[1]
+    and #sprite_op_flags_copy_screen                                  ; 14ce: 29 01       ).  :139d[1]
     beq skip_copying_sprite_header_to_destination_sprite              ; 14d0: f0 14       ..  :139f[1]   ; check flags to see if we are copying to another sprite
 ; get destination sprite address
     lda dest_sprite_id                                                ; 14d2: a5 14       ..  :13a1[1]
@@ -1099,7 +1107,7 @@ copy_sprite_header_loop
     sta (dest_sprite_address_low),y                                   ; 14df: 91 7e       .~  :13ae[1]
     dey                                                               ; 14e1: 88          .   :13b0[1]
     bpl copy_sprite_header_loop                                       ; 14e2: 10 f9       ..  :13b1[1]
-    sty mask_sprite_byte                                              ; 14e4: 84 80       ..  :13b3[1]   ; Y=0
+    sty erase_sprite_byte                                             ; 14e4: 84 80       ..  :13b3[1]   ; Y=255
 ; add the x and y offset in the sprite header to the sprite position
 skip_copying_sprite_header_to_destination_sprite
     ldy #0                                                            ; 14e6: a0 00       ..  :13b5[1]
@@ -1192,7 +1200,7 @@ not_out_of_range
 ; load X and check flags to see if we are copying the mask to a destination sprite
     ldx num_two_bit_offsets_within_byte                               ; 156c: a6 87       ..  :143b[1]
     lda sprite_op_flags                                               ; 156e: a5 15       ..  :143d[1]
-    and #sprite_op_flags_copy_mask                                    ; 1570: 29 01       ).  :143f[1]
+    and #sprite_op_flags_copy_screen                                  ; 1570: 29 01       ).  :143f[1]
     beq sprite_op_without_copying_mask                                ; 1572: f0 03       ..  :1441[1]
     jmp draw_sprite                                                   ; 1574: 4c 0c 16    L.. :1443[1]
 
@@ -1357,9 +1365,11 @@ finish_off_sprite2
 ; *************************************************************************************
 out_of_bounds_vertically
     asl sprite_data_byte                                              ; 1671: 06 7d       .}  :1540[1]
+; shift '10' pair of bits into the 'erase' byte, which means 'don't draw' the pixel
+; when erasing
     sec                                                               ; 1673: 38          8   :1542[1]
-    rol mask_sprite_byte                                              ; 1674: 26 80       &.  :1543[1]
-    asl mask_sprite_byte                                              ; 1676: 06 80       ..  :1545[1]
+    rol erase_sprite_byte                                             ; 1674: 26 80       &.  :1543[1]
+    asl erase_sprite_byte                                             ; 1676: 06 80       ..  :1545[1]
     jmp move_up_to_next_pixel_row                                     ; 1678: 4c 68 15    Lh. :1547[1]
 
 record_that_we_are_out_of_screen_range_vertically
@@ -1370,14 +1380,19 @@ record_that_we_are_out_of_screen_range_vertically
 write_one_pixel_to_the_screen
     lda vertical_sprite_position_is_valid_flag                        ; 1682: a5 88       ..  :1551[1]
     beq out_of_bounds_vertically                                      ; 1684: f0 eb       ..  :1553[1]
-    asl mask_sprite_byte                                              ; 1686: 06 80       ..  :1555[1]   ; update carry flag with the mask pixel
+; shift a 0 bit into the 'erase' byte, the first of a pair of bits: 00=draw bg colour,
+; 01=draw fg colour. This is used to erase the sprite. Carry is set, since the initial
+; value of the 'erase' byte is $ff
+    asl erase_sprite_byte                                             ; 1686: 06 80       ..  :1555[1]
 ; read byte from screen
     lda (sprite_screen_address_low),y                                 ; 1688: b1 72       .r  :1557[1]
     bit sprite_bit                                                    ; 168a: 24 82       $.  :1559[1]   ; read the screen pixel into Z
-    bne skip1                                                         ; 168c: d0 01       ..  :155b[1]   ; if (screen pixel is set) then branch (this preserves carry, the mask pixel)
+    bne skip1                                                         ; 168c: d0 01       ..  :155b[1]   ; if (screen pixel is set) then branch.
     clc                                                               ; 168e: 18          .   :155d[1]
+; at this point carry holds the screen pixel value, which we write to the 'erase' byte
+; so we can restore the screen contents later
 skip1
-    rol mask_sprite_byte                                              ; 168f: 26 80       &.  :155e[1]
+    rol erase_sprite_byte                                             ; 168f: 26 80       &.  :155e[1]
     asl sprite_data_byte                                              ; 1691: 06 7d       .}  :1560[1]
     bcc and_byte_with_mask_and_write_to_screen                        ; 1693: 90 10       ..  :1562[1]
 ; OR in (set) the appropriate bit and write back to screen memory
@@ -1416,25 +1431,29 @@ y_coordinate_is_within_character_row
     dex                                                               ; 16c4: ca          .   :1593[1]
     bpl byte_not_finished_yet                                         ; 16c5: 10 15       ..  :1594[1]
     sty temp_y                                                        ; 16c7: 84 7a       .z  :1596[1]
-; copy mask byte to destination
+; copy 'erase' byte to destination
     ldy byte_offset_within_sprite                                     ; 16c9: a4 79       .y  :1598[1]
-    lda mask_sprite_byte                                              ; 16cb: a5 80       ..  :159a[1]
+    lda erase_sprite_byte                                             ; 16cb: a5 80       ..  :159a[1]
     sta (dest_sprite_address_low),y                                   ; 16cd: 91 7e       .~  :159c[1]
     iny                                                               ; 16cf: c8          .   :159e[1]
     sty byte_offset_within_sprite                                     ; 16d0: 84 79       .y  :159f[1]
 ; load next source byte from sprite
     lda (src_sprite_address_low),y                                    ; 16d2: b1 70       .p  :15a1[1]
     sta sprite_data_byte                                              ; 16d4: 85 7d       .}  :15a3[1]
-    stx mask_sprite_byte                                              ; 16d6: 86 80       ..  :15a5[1]   ; set mask byte to 255
+; set 'erase' byte to 255
+    stx erase_sprite_byte                                             ; 16d6: 86 80       ..  :15a5[1]
     ldx #3                                                            ; 16d8: a2 03       ..  :15a7[1]   ; reset loop counter
     ldy temp_y                                                        ; 16da: a4 7a       .z  :15a9[1]
 byte_not_finished_yet
     asl sprite_data_byte                                              ; 16dc: 06 7d       .}  :15ab[1]   ; check top bit
     bcc write_one_pixel_to_the_screen                                 ; 16de: 90 a2       ..  :15ad[1]   ; if (sprite bit is clear) then branch (to write pixel to screen)
-    rol mask_sprite_byte                                              ; 16e0: 26 80       &.  :15af[1]   ; add set bit to mask
+    rol erase_sprite_byte                                             ; 16e0: 26 80       &.  :15af[1]   ; add set bit to 'erase' byte
     asl sprite_data_byte                                              ; 16e2: 06 7d       .}  :15b1[1]   ; get next bit
     bcs found_second_bit_set                                          ; 16e4: b0 0e       ..  :15b3[1]   ; if bit set then branch
-    rol mask_sprite_byte                                              ; 16e6: 26 80       &.  :15b5[1]   ; add clear bit to mask
+; 'rol'-in a clear bit to the 'erase' byte. Now the 'erase' byte has a 10 pair of bits,
+; which is the code for 'don't draw'. This makes sense as this is a pixel we didn't
+; draw.
+    rol erase_sprite_byte                                             ; 16e6: 26 80       &.  :15b5[1]
     dey                                                               ; 16e8: 88          .   :15b7[1]
 ; if still in same character row, then branch back
     bpl y_coordinate_is_within_character_row                          ; 16e9: 10 d9       ..  :15b8[1]
@@ -1444,9 +1463,10 @@ byte_not_finished_yet
     sbc #<screen_width_in_pixels                                      ; 16ef: e9 40       .@  :15be[1]
     jmp move_up_to_previous_character_row                             ; 16f1: 4c 81 15    L.. :15c0[1]
 
-; add set bit to mask
+; add set bit to 'erase' byte. Now the 'erase' byte has a 11 pair of bits, meaning the
+; end of the column.
 found_second_bit_set
-    rol mask_sprite_byte                                              ; 16f4: 26 80       &.  :15c3[1]
+    rol erase_sprite_byte                                             ; 16f4: 26 80       &.  :15c3[1]
     dec sprite_width                                                  ; 16f6: c6 81       ..  :15c5[1]   ; check if we are done
     beq finish_off_sprite                                             ; 16f8: f0 55       .U  :15c7[1]
 ; reset sprite address
@@ -1500,15 +1520,15 @@ draw_sprite
     jmp check_within_vertical_range                                   ; 174c: 4c 89 15    L.. :161b[1]
 
 finish_off_sprite
-    lda mask_sprite_byte                                              ; 174f: a5 80       ..  :161e[1]
+    lda erase_sprite_byte                                             ; 174f: a5 80       ..  :161e[1]
     dex                                                               ; 1751: ca          .   :1620[1]
-    bmi write_last_byte                                               ; 1752: 30 05       0.  :1621[1]
+    bmi write_last_byte_to_destination_sprite                         ; 1752: 30 05       0.  :1621[1]
 shift_mask_byte_loop
     asl                                                               ; 1754: 0a          .   :1623[1]
     asl                                                               ; 1755: 0a          .   :1624[1]
     dex                                                               ; 1756: ca          .   :1625[1]
     bpl shift_mask_byte_loop                                          ; 1757: 10 fb       ..  :1626[1]
-write_last_byte
+write_last_byte_to_destination_sprite
     ldy byte_offset_within_sprite                                     ; 1759: a4 79       .y  :1628[1]
     sta (dest_sprite_address_low),y                                   ; 175b: 91 7e       .~  :162a[1]
     jmp reset_sprite_flags_and_exit                                   ; 175d: 4c 7f 13    L.. :162c[1]
@@ -1584,11 +1604,11 @@ sprite_clip_x_loop
     dex                                                               ; 17c7: ca          .   :1696[1]
     bpl read_next_source_pixel                                        ; 17c8: 10 11       ..  :1697[1]
     lda sprite_op_flags                                               ; 17ca: a5 15       ..  :1699[1]
-    and #sprite_op_flags_copy_mask                                    ; 17cc: 29 01       ).  :169b[1]
+    and #sprite_op_flags_copy_screen                                  ; 17cc: 29 01       ).  :169b[1]
     beq not_copying_to_destination_sprite                             ; 17ce: f0 06       ..  :169d[1]
-    lda mask_sprite_byte                                              ; 17d0: a5 80       ..  :169f[1]
+    lda erase_sprite_byte                                             ; 17d0: a5 80       ..  :169f[1]
     sta (dest_sprite_address_low),y                                   ; 17d2: 91 7e       .~  :16a1[1]
-    stx mask_sprite_byte                                              ; 17d4: 86 80       ..  :16a3[1]   ; set dest sprite byte to 255
+    stx erase_sprite_byte                                             ; 17d4: 86 80       ..  :16a3[1]   ; set dest sprite byte to 255
 not_copying_to_destination_sprite
     iny                                                               ; 17d6: c8          .   :16a5[1]
     lda (src_sprite_address_low),y                                    ; 17d7: b1 70       .p  :16a6[1]
@@ -1596,20 +1616,20 @@ not_copying_to_destination_sprite
 read_next_source_pixel
     asl                                                               ; 17db: 0a          .   :16aa[1]   ; get top bit
     bcs found_set_bit                                                 ; 17dc: b0 08       ..  :16ab[1]   ; if set then branch
-    rol mask_sprite_byte                                              ; 17de: 26 80       &.  :16ad[1]   ; put clear bit into mask
+    rol erase_sprite_byte                                             ; 17de: 26 80       &.  :16ad[1]   ; put clear bit into mask
     asl                                                               ; 17e0: 0a          .   :16af[1]   ; read next bit
-    rol mask_sprite_byte                                              ; 17e1: 26 80       &.  :16b0[1]   ; put next bit into mask
+    rol erase_sprite_byte                                             ; 17e1: 26 80       &.  :16b0[1]   ; put next bit into mask
     jmp sprite_clip_x_loop                                            ; 17e3: 4c 96 16    L.. :16b2[1]   ; loop back
 
 found_set_bit
-    rol mask_sprite_byte                                              ; 17e6: 26 80       &.  :16b5[1]   ; put set bit into mask
+    rol erase_sprite_byte                                             ; 17e6: 26 80       &.  :16b5[1]   ; put set bit into mask
     asl                                                               ; 17e8: 0a          .   :16b7[1]   ; get next bit
     bcs found_second_set_bit                                          ; 17e9: b0 05       ..  :16b8[1]   ; if set then branch
-    rol mask_sprite_byte                                              ; 17eb: 26 80       &.  :16ba[1]   ; put zero bit into mask
+    rol erase_sprite_byte                                             ; 17eb: 26 80       &.  :16ba[1]   ; put zero bit into mask
     jmp sprite_clip_x_loop                                            ; 17ed: 4c 96 16    L.. :16bc[1]   ; loop back
 
 found_second_set_bit
-    rol mask_sprite_byte                                              ; 17f0: 26 80       &.  :16bf[1]   ; put another set bit into mask
+    rol erase_sprite_byte                                             ; 17f0: 26 80       &.  :16bf[1]   ; put another set bit into mask
     dec sprite_width                                                  ; 17f2: c6 81       ..  :16c1[1]   ; decrement loop counters
     dec amount_sprite_is_offscreen_x                                  ; 17f4: c6 86       ..  :16c3[1]
     bne sprite_clip_x_loop                                            ; 17f6: d0 cf       ..  :16c5[1]   ; jump back if not done
@@ -3873,7 +3893,7 @@ draw_object_x
     cmp #$ff                                                          ; 22f7: c9 ff       ..  :21c6[1]
     beq draw_object_sprite                                            ; 22f9: f0 06       ..  :21c8[1]
     sta dest_sprite_id                                                ; 22fb: 85 14       ..  :21ca[1]
-    lda #sprite_op_flags_erase | sprite_op_flags_copy_mask            ; 22fd: a9 03       ..  :21cc[1]
+    lda #sprite_op_flags_erase | sprite_op_flags_copy_screen          ; 22fd: a9 03       ..  :21cc[1]
     sta sprite_op_flags                                               ; 22ff: 85 15       ..  :21ce[1]
 draw_object_sprite
     jsr sprite_op                                                     ; 2301: 20 8d 13     .. :21d0[1]
@@ -10040,14 +10060,14 @@ pydis_end
 !if (sound_priority_per_channel_table + 1) != $3970 {
     !error "Assertion failed: sound_priority_per_channel_table + 1 == $3970"
 }
-!if (sprite_op_flags_copy_mask) != $01 {
-    !error "Assertion failed: sprite_op_flags_copy_mask == $01"
+!if (sprite_op_flags_copy_screen) != $01 {
+    !error "Assertion failed: sprite_op_flags_copy_screen == $01"
 }
 !if (sprite_op_flags_erase) != $02 {
     !error "Assertion failed: sprite_op_flags_erase == $02"
 }
-!if (sprite_op_flags_erase | sprite_op_flags_copy_mask) != $03 {
-    !error "Assertion failed: sprite_op_flags_erase | sprite_op_flags_copy_mask == $03"
+!if (sprite_op_flags_erase | sprite_op_flags_copy_screen) != $03 {
+    !error "Assertion failed: sprite_op_flags_erase | sprite_op_flags_copy_screen == $03"
 }
 !if (sprite_op_flags_ignore_mask) != $04 {
     !error "Assertion failed: sprite_op_flags_ignore_mask == $04"

@@ -107,7 +107,7 @@ def envelope(addr, lab):
 
 sprite_op_flags_dict = {
     0x00: "sprite_op_flags_normal",
-    0x01: "sprite_op_flags_copy_mask",
+    0x01: "sprite_op_flags_copy_screen",
     0x02: "sprite_op_flags_erase",
     0x04: "sprite_op_flags_ignore_mask",
 }
