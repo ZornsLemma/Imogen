@@ -170,7 +170,7 @@ object_direction                                    = $09be
 object_direction_old                                = $09c9
 level_progress_table                                = $09ef
 save_game_level_e_holding_egg_flag                  = $0a13
-save_game_level_e_something_room_1                  = $0a14
+save_game_level_e_room_1_egg_state                  = $0a14
 save_game_level_e_duck_captured_flag                = $0a15
 level_workspace                                     = $0a6f
 l0a70                                               = $0a70
@@ -1468,7 +1468,7 @@ room_1_update_handler
     beq room_1_not_this_room1                                         ; 4473: f0 2a
     ldx #$70 ; 'p'                                                    ; 4475: a2 70
     ldy #$58 ; 'X'                                                    ; 4477: a0 58
-    lda save_game_level_e_something_room_1                            ; 4479: ad 14 0a
+    lda save_game_level_e_room_1_egg_state                            ; 4479: ad 14 0a
     cmp #1                                                            ; 447c: c9 01
     beq room_1_axy_set                                                ; 447e: f0 13
     cmp #5                                                            ; 4480: c9 05
@@ -1483,7 +1483,7 @@ c448d
     ldy #$a8                                                          ; 448f: a0 a8
     lda #$1a                                                          ; 4491: a9 1a
 room_1_axy_set
-    sta save_game_level_e_something_room_1                            ; 4493: 8d 14 0a
+    sta save_game_level_e_room_1_egg_state                            ; 4493: 8d 14 0a
     sta room_1_data_table_index                                       ; 4496: 8d 76 0a
     stx room_1_egg_x                                                  ; 4499: 8e 77 0a
     sty room_1_egg_y                                                  ; 449c: 8c 78 0a
@@ -1509,15 +1509,15 @@ room_1_not_first_update
     tay                                                               ; 44c2: a8
     lda room_1_data_table,y                                           ; 44c3: b9 4c 44
     bne c44cb                                                         ; 44c6: d0 03
-    ldy save_game_level_e_something_room_1                            ; 44c8: ac 14 0a
+    ldy save_game_level_e_room_1_egg_state                            ; 44c8: ac 14 0a
 c44cb
-    lda save_game_level_e_something_room_1                            ; 44cb: ad 14 0a
+    lda save_game_level_e_room_1_egg_state                            ; 44cb: ad 14 0a
     cmp #1                                                            ; 44ce: c9 01
     bne c44df                                                         ; 44d0: d0 0d
     jsr sub_c45a1                                                     ; 44d2: 20 a1 45
     beq c4538                                                         ; 44d5: f0 61
     ldy #5                                                            ; 44d7: a0 05
-    sty save_game_level_e_something_room_1                            ; 44d9: 8c 14 0a
+    sty save_game_level_e_room_1_egg_state                            ; 44d9: 8c 14 0a
     jmp c4538                                                         ; 44dc: 4c 38 45
 
 c44df
@@ -1539,7 +1539,7 @@ c44df
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 44fe: 20 44 1e
 room_1_not_this_room3
     lda #$16                                                          ; 4501: a9 16
-    sta save_game_level_e_something_room_1                            ; 4503: 8d 14 0a
+    sta save_game_level_e_room_1_egg_state                            ; 4503: 8d 14 0a
     ldy #9                                                            ; 4506: a0 09
     jmp c4538                                                         ; 4508: 4c 38 45
 
@@ -1565,7 +1565,7 @@ c450b
 
 c4533
     ldy #$1a                                                          ; 4533: a0 1a
-    sty save_game_level_e_something_room_1                            ; 4535: 8c 14 0a
+    sty save_game_level_e_room_1_egg_state                            ; 4535: 8c 14 0a
 c4538
     sty room_1_data_table_index                                       ; 4538: 8c 76 0a
     iny                                                               ; 453b: c8
@@ -1597,7 +1597,7 @@ c4551
     sta width_in_cells                                                ; 4576: 85 3c
     lda #2                                                            ; 4578: a9 02
     sta height_in_cells                                               ; 457a: 85 3d
-    lda save_game_level_e_something_room_1                            ; 457c: ad 14 0a
+    lda save_game_level_e_room_1_egg_state                            ; 457c: ad 14 0a
     cmp #1                                                            ; 457f: c9 01
     beq c4596                                                         ; 4581: f0 13
     cmp #5                                                            ; 4583: c9 05

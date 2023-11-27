@@ -25,7 +25,7 @@ set_sprite_dict(sprite_dict)
 load(0x3ad5, "orig/dataE.dat", "6502", "1fd692ce17c1ae2c858ed57730c9c081")
 
 label(0x0a13, "save_game_level_e_holding_egg_flag") # TODO: other uses? not checked yet
-label(0x0a14, "save_game_level_e_something_room_1")
+label(0x0a14, "save_game_level_e_room_1_egg_state") # TODO: other uses? not checked yet? egg state slightly speculative but prob right
 label(0x0a15, "save_game_level_e_duck_captured_flag") # TODO: might be used for other things too, not checked yet
 
 label(0xa76, "room_1_data_table_index")
@@ -103,7 +103,7 @@ comment(0x444c, "TODO: seems to be three bytes per entry. First byte is a sprite
 for i in range(8): # TODO GUESS LIMIT
     addr = 0x444c + i*4
     uint(addr, 3)
-    expr(addr+1, sprite_dict)
+    expr(addr+1, sprite_dict) # TODO: 0 should probably be left as 0 not treated as a sprite ID - see code at 44c3
 label(0x444c, "room_1_data_table")
 entry(0x4501, "room_1_not_this_room3")
 
