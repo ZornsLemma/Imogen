@@ -269,6 +269,7 @@ draw_sprite_a_at_cell_xy                            = $1f4c
 draw_sprite_a_at_cell_xy_and_write_to_collision_map = $1f57
 set_object_position_from_cell_xy                    = $1f5d
 set_object_position_from_current_sprite_position    = $1f6d
+jmp_for_update_extra_player_character               = $22dd
 play_landing_sound                                  = $23a9
 player_wall_collision_flag                          = $2433
 temp_left_offset                                    = $24d0
@@ -371,7 +372,7 @@ level_specific_update
     jsr room_1_update_handler                                         ; 3b10: 20 45 3e
     jsr room_2_update_handler                                         ; 3b13: 20 a1 41
     jsr room_3_update_handler                                         ; 3b16: 20 f0 44
-    jsr sub_c3fe5                                                     ; 3b19: 20 e5 3f
+    jsr update_torch                                                  ; 3b19: 20 e5 3f
     rts                                                               ; 3b1c: 60
 
 ; *************************************************************************************
@@ -1090,7 +1091,7 @@ return3
     rts                                                               ; 3fe4: 60
 
 ; check for first update in room (branch if not)
-sub_c3fe5
+update_torch
     lda update_room_first_update_flag                                 ; 3fe5: ad 2b 13
     beq c4035                                                         ; 3fe8: f0 4b
     lda #spriteid_torch_menu_item                                     ; 3fea: a9 cb
@@ -2035,7 +2036,6 @@ pydis_end
 ;     l442e
 ;     l442f
 ;     l4430
-;     sub_c3fe5
 ;     sub_c422d
 !if (<envelope1) != $4b {
     !error "Assertion failed: <envelope1 == $4b"

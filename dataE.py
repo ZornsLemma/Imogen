@@ -62,9 +62,11 @@ entry(0x3b15, "dont_have_egg")
 expr(0x3b1d, "spriteid_duck_toolbar")
 entry(0x3b21, "duck_not_captured_yet")
 
-label(0x3eb8, "some_table")
-expr(0x3b22, make_lo("some_table"))
-expr(0x3b27, make_hi("some_table"))
+label(0x3eb8, "update_bird")
+expr(0x3b24, "jmp_for_update_extra_player_character + 1")
+expr(0x3b29, "jmp_for_update_extra_player_character + 2")
+expr(0x3b22, make_lo("update_bird"))
+expr(0x3b27, make_hi("update_bird"))
 label(0x460c, "source_sprite_data")
 expr(0x3b2c, make_lo("source_sprite_data"))
 expr(0x3b30, make_hi("source_sprite_data"))
@@ -106,6 +108,8 @@ for i in range(8): # TODO GUESS LIMIT
     expr(addr+1, sprite_dict) # TODO: 0 should probably be left as 0 not treated as a sprite ID - see code at 44c3
 label(0x444c, "room_1_data_table")
 entry(0x4501, "room_1_not_this_room3")
+
+entry(0x3eb8)
 
 # TODO: replace "+ n" with "+ objectid_*" once objects have been named
 expr(0x3d27, "object_y_low + 4")

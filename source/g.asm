@@ -4082,6 +4082,7 @@ update_player
     beq update_cat_local                                              ; 2408: f0 0d       ..  :22d7[1]
     cmp #spriteid_icodata_monkey                                      ; 240a: c9 06       ..  :22d9[1]
     beq update_monkey_local                                           ; 240c: f0 0c       ..  :22db[1]
+jmp_for_update_extra_player_character
     jmp return10                                                      ; 240e: 4c ec 22    L." :22dd[1]   ; could just 'rts'? But maybe the bird modifies this code...?
 
 update_mid_transformation_local

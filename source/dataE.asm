@@ -136,6 +136,7 @@ spriteid_wizard_using_object          = 53
 ; Memory locations
 characters_entered                                  = $05
 sprite_reflect_flag                                 = $1d
+l0023                                               = $23
 desired_room_index                                  = $30
 current_level                                       = $31
 temp_sprite_x_offset                                = $3a
@@ -152,6 +153,7 @@ player_held_object_spriteid                         = $52
 developer_mode_sideways_ram_is_set_up_flag          = $5b
 l0070                                               = $70
 room_exit_direction                                 = $70
+l0071                                               = $71
 l0078                                               = $78
 l0079                                               = $79
 show_dialog_box                                     = $040a
@@ -168,6 +170,8 @@ object_spriteid                                     = $09a8
 object_spriteid_old                                 = $09b3
 object_direction                                    = $09be
 object_direction_old                                = $09c9
+l09d4                                               = $09d4
+l09df                                               = $09df
 level_progress_table                                = $09ef
 save_game_level_e_holding_egg_flag                  = $0a13
 save_game_level_e_room_1_egg_state                  = $0a14
@@ -215,9 +219,13 @@ draw_sprite_a_at_cell_xy_and_write_to_collision_map = $1f57
 set_object_position_from_cell_xy                    = $1f5d
 set_object_position_from_current_sprite_position    = $1f6d
 l20f7                                               = $20f7
-l22de                                               = $22de
-l22df                                               = $22df
+l2200                                               = $2200
+l2248                                               = $2248
+jmp_for_update_extra_player_character               = $22dd
+l22ed                                               = $22ed
+l22ee                                               = $22ee
 play_landing_sound                                  = $23a9
+l23c4                                               = $23c4
 player_wall_collision_flag                          = $2433
 l2434                                               = $2434
 temp_left_offset                                    = $24d0
@@ -225,6 +233,8 @@ temp_right_offset                                   = $24d1
 temp_top_offset                                     = $2550
 temp_bottom_offset                                  = $2551
 l25f5                                               = $25f5
+l288f                                               = $288f
+l2890                                               = $2890
 get_solid_rock_collision_for_object_a               = $2894
 temp_default_collision_map_option                   = $28e1
 test_for_collision_between_objects_x_and_y          = $28e2
@@ -251,6 +261,10 @@ play_sound_yx                                       = $38f6
 define_envelope                                     = $395e
 sound_priority_per_channel_table                    = $396f
 check_menu_keys                                     = $3a8f
+l3ac7                                               = $3ac7
+l3ac9                                               = $3ac9
+l3aca                                               = $3aca
+l3acb                                               = $3acb
 auxcode                                             = $53c0
 check_password                                      = $53c0
 
@@ -315,10 +329,10 @@ dont_have_egg
     lda #spriteid_duck_toolbar                                        ; 3b1c: a9 d1
     jsr insert_character_menu_item_into_toolbar                       ; 3b1e: 20 87 2b
 duck_not_captured_yet
-    lda #<some_table                                                  ; 3b21: a9 b8
-    sta l22de                                                         ; 3b23: 8d de 22
-    lda #>some_table                                                  ; 3b26: a9 3e
-    sta l22df                                                         ; 3b28: 8d df 22
+    lda #<update_bird                                                 ; 3b21: a9 b8
+    sta jmp_for_update_extra_player_character + 1                     ; 3b23: 8d de 22
+    lda #>update_bird                                                 ; 3b26: a9 3e
+    sta jmp_for_update_extra_player_character + 2                     ; 3b28: 8d df 22
     lda #<source_sprite_data                                          ; 3b2b: a9 0c
     sta source_sprite_memory_low                                      ; 3b2d: 85 40
     lda #>source_sprite_data                                          ; 3b2f: a9 46
@@ -343,23 +357,25 @@ level_specific_update
     jmp room_3_update_handler                                         ; 3b3d: 4c 96 3e
 
 l3b40
-    !byte $ce, $cf, $d0, $cf,   0,   0,   0,   0,   0,   0, $cd,   0  ; 3b40: ce cf d0...
-    !byte   0,   0, $cd,   0,   0,   0, $cc,   0,   0,   0, $cc,   0  ; 3b4c: 00 00 cd...
-    !byte   0,   0, $c8,   0,   0,   0, $c8,   0,   0,   0,   0, $c8  ; 3b58: 00 00 c8...
-    !byte   0,   0,   0, $c8,   0,   0,   0, $cc,   0,   0,   0, $cc  ; 3b64: 00 00 00...
-    !byte   0,   0,   0, $cd,   0,   0,   0, $cd,   0,   0,   0,   0  ; 3b70: 00 00 00...
-    !byte $c8,   0,   0,   0,   0, $ca,   0, $fc,   0, $c9,   2, $fe  ; 3b7c: c8 00 00...
-    !byte   0,   0, $c8,   0,   0,   0,   0, $c9,   0,   0, $ff,   0  ; 3b88: 00 00 c8...
-    !byte $c9,   0, $fc, $ff,   0, $c9,   4,   0, $ff,   0, $c9,   4  ; 3b94: c9 00 fc...
-    !byte $fc, $ff,   0, $ca,   0,   0, $ff, $c9,   2,   0, $ff,   0  ; 3ba0: fc ff 00...
-    !byte $c9,   4, $fc,   0, $c9,   4, $fe,   0,   0, $c8,   4,   2  ; 3bac: c9 04 fc...
-    !byte   0, $c8,   4,   4,   0, $c8,   2,   4,   0,   0, $c8,   3  ; 3bb8: 00 c8 04...
-    !byte   1,   0, $c8,   2,   3,   0, $c8,   1,   5,   0,   0, $c8  ; 3bc4: 01 00 c8...
-    !byte   4,   2,   0, $c8,   3,   3,   0, $c8,   2,   4,   0, $c8  ; 3bd0: 04 02 00...
-    !byte   1,   5,   0,   0, $c8, $fc,   2,   0, $c8, $fd,   3,   0  ; 3bdc: 01 05 00...
-    !byte $c8, $fe,   4,   0, $c8, $ff,   5,   0,   0, $c8,   0,   1  ; 3be8: c8 fe 04...
-    !byte   0, $c8,   0,   2,   0, $c8,   0,   3,   0, $c8,   0,   4  ; 3bf4: 00 c8 00...
-    !byte   0, $c8,   0,   5,   0,   0, $c8,   0,   7,   0,   0       ; 3c00: 00 c8 00...
+    !byte $ce, $cf, $d0, $cf,   0,   0                                ; 3b40: ce cf d0...
+l3b46
+    !byte   0,   0,   0,   0, $cd,   0,   0,   0, $cd,   0,   0,   0  ; 3b46: 00 00 00...
+    !byte $cc,   0,   0,   0, $cc,   0,   0,   0, $c8,   0,   0,   0  ; 3b52: cc 00 00...
+    !byte $c8,   0,   0,   0,   0, $c8,   0,   0,   0, $c8,   0,   0  ; 3b5e: c8 00 00...
+    !byte   0, $cc,   0,   0,   0, $cc,   0,   0,   0, $cd,   0,   0  ; 3b6a: 00 cc 00...
+    !byte   0, $cd,   0,   0,   0,   0, $c8,   0,   0,   0,   0, $ca  ; 3b76: 00 cd 00...
+    !byte   0, $fc,   0, $c9,   2, $fe,   0,   0, $c8,   0,   0,   0  ; 3b82: 00 fc 00...
+    !byte   0, $c9,   0,   0, $ff,   0, $c9,   0, $fc, $ff,   0, $c9  ; 3b8e: 00 c9 00...
+    !byte   4,   0, $ff,   0, $c9,   4, $fc, $ff,   0, $ca,   0,   0  ; 3b9a: 04 00 ff...
+    !byte $ff, $c9,   2,   0, $ff,   0, $c9,   4, $fc,   0, $c9,   4  ; 3ba6: ff c9 02...
+    !byte $fe,   0,   0, $c8,   4,   2,   0, $c8,   4,   4,   0, $c8  ; 3bb2: fe 00 00...
+    !byte   2,   4,   0,   0, $c8,   3,   1,   0, $c8,   2,   3,   0  ; 3bbe: 02 04 00...
+    !byte $c8,   1,   5,   0,   0, $c8,   4,   2,   0, $c8,   3,   3  ; 3bca: c8 01 05...
+    !byte   0, $c8,   2,   4,   0, $c8,   1,   5,   0,   0, $c8, $fc  ; 3bd6: 00 c8 02...
+    !byte   2,   0, $c8, $fd,   3,   0, $c8, $fe,   4,   0, $c8, $ff  ; 3be2: 02 00 c8...
+    !byte   5,   0,   0, $c8,   0,   1,   0, $c8,   0,   2,   0, $c8  ; 3bee: 05 00 00...
+    !byte   0,   3,   0, $c8,   0,   4,   0, $c8,   0,   5,   0,   0  ; 3bfa: 00 03 00...
+    !byte $c8,   0,   7,   0,   0                                     ; 3c06: c8 00 07...
 
 sub_c3c0b
     lda #3                                                            ; 3c0b: a9 03
@@ -787,37 +803,169 @@ room_3_update_handler
     lda #5                                                            ; 3eb3: a9 05
     jmp update_level_completion                                       ; 3eb5: 4c 10 1a
 
-some_table
-    !byte $a9, $1d, $8d, $ed, $22, $a2, $46, $a0, $3b, $a9,   4, $20  ; 3eb8: a9 1d 8d...
-    !byte $ee, $22, $d0, $72, $c0, $3f, $f0,   4, $c0, $61, $d0, $0b  ; 3ec4: ee 22 d0...
-    !byte $ad, $be,   9, $49, $fe, $8d, $be,   9, $4c, $ca, $3f, $20  ; 3ed0: ad be 09...
-    !byte $c4, $23, $f0,   3                                          ; 3edc: c4 23 f0...
-    !text "La?"                                                       ; 3ee0: 4c 61 3f
-    !byte $ad, $c7, $3a, $f0, $55, $a2, $4e, $ad, $ca, $3a, $0d, $cb  ; 3ee3: ad c7 3a...
-    !byte $3a, $d0,   5, $ce, $50, $25, $d0, $2a, $a2, $49, $ad, $ca  ; 3eef: 3a d0 05...
-    !byte $3a, $2d, $cb, $3a, $d0, $2f, $a2, $5d, $ad, $c9, $3a, $cd  ; 3efb: 3a 2d cb...
-    !byte $be,   9, $d0, $25, $a2, $53, $a9,   1, $8d, $51, $25, $ad  ; 3f07: be 09 d0...
-    !byte $be,   9, $c9, $ff, $f0,   5, $ee, $d1, $24, $d0,   3, $ce  ; 3f13: be 09 c9...
-    !byte $d0, $24, $a9,   0, $20, $94, $28, $f0,   8, $8e, $df,   9  ; 3f1f: d0 24 a9...
-    !byte $a0                                                         ; 3f2b: a0
-    !text "XL:?"                                                      ; 3f2c: 58 4c 3a...
-    !byte $ec, $df,   9, $f0,   5, $8e, $df,   9, $8a, $a8, $4c, $ca  ; 3f30: ec df 09...
-    !byte $3f, $ad, $df,   9, $c9, $66, $d0, $18, $ce, $50, $25, $a9  ; 3f3c: 3f ad df...
-    !byte   0, $20, $94, $28, $d0,   7, $c0, $66, $f0,   3, $4c, $ca  ; 3f48: 00 20 94...
-    !byte $3f, $a9, $c0, $8d, $df,   9, $a0, $6f, $ad, $8f, $28, $d0  ; 3f54: 3f a9 c0...
-    !byte $18, $a9, $c0, $cd, $df,   9, $f0, $d2, $ae, $df,   9, $8d  ; 3f60: 18 a9 c0...
-    !byte $df,   9, $a0, $7c, $e0, $53, $f0, $c6, $a0, $ab, $4c, $ca  ; 3f6c: df 09 a0...
-    !byte $3f, $ae, $c9, $3a, $f0, $11, $a0, $3b, $ec, $be,   9, $d0  ; 3f78: 3f ae c9...
-    !byte   2, $a0, $66, $a9, $66, $8d, $df,   9, $4c, $af, $3f, $ad  ; 3f84: 02 a0 66...
-    !byte $df,   9, $c9, $44, $f0, $10, $c9, $36, $f0, $15, $a0, $40  ; 3f90: df 09 c9...
-    !byte $84, $23, $a0, $44, $8c, $df,   9, $4c, $af, $3f, $c6, $23  ; 3f9c: 84 23 a0...
-    !byte $d0,   5, $a0, $36, $8c, $df,   9, $a2,   0, $ad, $c9, $3a  ; 3fa8: d0 05 a0...
-    !byte $f0,   1, $e8, $bd, $90, $28, $f0, $0e, $a0, $c0, $8c, $df  ; 3fb4: f0 01 e8...
-    !byte   9, $a0, $89, $cd, $be,   9, $f0,   2, $a0, $9a, $8c, $d4  ; 3fc0: 09 a0 89...
-    !byte   9, $98, $a2, $46, $a0, $3b, $20,   0, $22, $a9,   0, $20  ; 3fcc: 09 98 a2...
-    !byte $f5, $25, $a9, $40, $85, $70, $a9, $3b, $85, $71, $ae, $d4  ; 3fd8: f5 25 a9...
-    !byte   9, $e8, $e8, $e8, $bd, $46, $3b, $a2, $45, $a0            ; 3fe4: 09 e8 e8...
-    !text ";LH", '"'                                                  ; 3fee: 3b 4c 48...
+update_bird
+    lda #$1d                                                          ; 3eb8: a9 1d
+    sta l22ed                                                         ; 3eba: 8d ed 22
+    ldx #$46 ; 'F'                                                    ; 3ebd: a2 46
+    ldy #$3b ; ';'                                                    ; 3ebf: a0 3b
+    lda #4                                                            ; 3ec1: a9 04
+    jsr l22ee                                                         ; 3ec3: 20 ee 22
+    bne c3f3a                                                         ; 3ec6: d0 72
+    cpy #$3f ; '?'                                                    ; 3ec8: c0 3f
+    beq c3ed0                                                         ; 3eca: f0 04
+    cpy #$61 ; 'a'                                                    ; 3ecc: c0 61
+    bne c3edb                                                         ; 3ece: d0 0b
+c3ed0
+    lda object_direction                                              ; 3ed0: ad be 09
+    eor #$fe                                                          ; 3ed3: 49 fe
+    sta object_direction                                              ; 3ed5: 8d be 09
+    jmp c3fca                                                         ; 3ed8: 4c ca 3f
+
+c3edb
+    jsr l23c4                                                         ; 3edb: 20 c4 23
+    beq c3ee3                                                         ; 3ede: f0 03
+    jmp c3f61                                                         ; 3ee0: 4c 61 3f
+
+c3ee3
+    lda l3ac7                                                         ; 3ee3: ad c7 3a
+    beq c3f3d                                                         ; 3ee6: f0 55
+    ldx #$4e ; 'N'                                                    ; 3ee8: a2 4e
+    lda l3aca                                                         ; 3eea: ad ca 3a
+    ora l3acb                                                         ; 3eed: 0d cb 3a
+    bne c3ef7                                                         ; 3ef0: d0 05
+    dec temp_top_offset                                               ; 3ef2: ce 50 25
+    bne c3f21                                                         ; 3ef5: d0 2a
+c3ef7
+    ldx #$49 ; 'I'                                                    ; 3ef7: a2 49
+    lda l3aca                                                         ; 3ef9: ad ca 3a
+    and l3acb                                                         ; 3efc: 2d cb 3a
+    bne c3f30                                                         ; 3eff: d0 2f
+    ldx #$5d ; ']'                                                    ; 3f01: a2 5d
+    lda l3ac9                                                         ; 3f03: ad c9 3a
+    cmp object_direction                                              ; 3f06: cd be 09
+    bne c3f30                                                         ; 3f09: d0 25
+    ldx #$53 ; 'S'                                                    ; 3f0b: a2 53
+    lda #1                                                            ; 3f0d: a9 01
+    sta temp_bottom_offset                                            ; 3f0f: 8d 51 25
+    lda object_direction                                              ; 3f12: ad be 09
+    cmp #$ff                                                          ; 3f15: c9 ff
+    beq c3f1e                                                         ; 3f17: f0 05
+    inc temp_right_offset                                             ; 3f19: ee d1 24
+    bne c3f21                                                         ; 3f1c: d0 03
+c3f1e
+    dec temp_left_offset                                              ; 3f1e: ce d0 24
+c3f21
+    lda #0                                                            ; 3f21: a9 00
+    jsr get_solid_rock_collision_for_object_a                         ; 3f23: 20 94 28
+    beq c3f30                                                         ; 3f26: f0 08
+    stx l09df                                                         ; 3f28: 8e df 09
+    ldy #$58 ; 'X'                                                    ; 3f2b: a0 58
+    jmp c3f3a                                                         ; 3f2d: 4c 3a 3f
+
+c3f30
+    cpx l09df                                                         ; 3f30: ec df 09
+    beq c3f3a                                                         ; 3f33: f0 05
+    stx l09df                                                         ; 3f35: 8e df 09
+    txa                                                               ; 3f38: 8a
+    tay                                                               ; 3f39: a8
+c3f3a
+    jmp c3fca                                                         ; 3f3a: 4c ca 3f
+
+c3f3d
+    lda l09df                                                         ; 3f3d: ad df 09
+    cmp #$66 ; 'f'                                                    ; 3f40: c9 66
+    bne c3f5c                                                         ; 3f42: d0 18
+    dec temp_top_offset                                               ; 3f44: ce 50 25
+    lda #0                                                            ; 3f47: a9 00
+    jsr get_solid_rock_collision_for_object_a                         ; 3f49: 20 94 28
+    bne c3f55                                                         ; 3f4c: d0 07
+    cpy #$66 ; 'f'                                                    ; 3f4e: c0 66
+    beq c3f55                                                         ; 3f50: f0 03
+    jmp c3fca                                                         ; 3f52: 4c ca 3f
+
+c3f55
+    lda #$c0                                                          ; 3f55: a9 c0
+    sta l09df                                                         ; 3f57: 8d df 09
+    ldy #$6f ; 'o'                                                    ; 3f5a: a0 6f
+c3f5c
+    lda l288f                                                         ; 3f5c: ad 8f 28
+    bne c3f79                                                         ; 3f5f: d0 18
+c3f61
+    lda #$c0                                                          ; 3f61: a9 c0
+    cmp l09df                                                         ; 3f63: cd df 09
+    beq c3f3a                                                         ; 3f66: f0 d2
+    ldx l09df                                                         ; 3f68: ae df 09
+    sta l09df                                                         ; 3f6b: 8d df 09
+    ldy #$7c ; '|'                                                    ; 3f6e: a0 7c
+    cpx #$53 ; 'S'                                                    ; 3f70: e0 53
+    beq c3f3a                                                         ; 3f72: f0 c6
+    ldy #$ab                                                          ; 3f74: a0 ab
+    jmp c3fca                                                         ; 3f76: 4c ca 3f
+
+c3f79
+    ldx l3ac9                                                         ; 3f79: ae c9 3a
+    beq c3f8f                                                         ; 3f7c: f0 11
+    ldy #$3b ; ';'                                                    ; 3f7e: a0 3b
+    cpx object_direction                                              ; 3f80: ec be 09
+    bne c3f87                                                         ; 3f83: d0 02
+    ldy #$66 ; 'f'                                                    ; 3f85: a0 66
+c3f87
+    lda #$66 ; 'f'                                                    ; 3f87: a9 66
+    sta l09df                                                         ; 3f89: 8d df 09
+    jmp c3faf                                                         ; 3f8c: 4c af 3f
+
+c3f8f
+    lda l09df                                                         ; 3f8f: ad df 09
+    cmp #$44 ; 'D'                                                    ; 3f92: c9 44
+    beq c3fa6                                                         ; 3f94: f0 10
+    cmp #$36 ; '6'                                                    ; 3f96: c9 36
+    beq c3faf                                                         ; 3f98: f0 15
+    ldy #$40 ; '@'                                                    ; 3f9a: a0 40
+    sty l0023                                                         ; 3f9c: 84 23
+    ldy #$44 ; 'D'                                                    ; 3f9e: a0 44
+    sty l09df                                                         ; 3fa0: 8c df 09
+    jmp c3faf                                                         ; 3fa3: 4c af 3f
+
+c3fa6
+    dec l0023                                                         ; 3fa6: c6 23
+    bne c3faf                                                         ; 3fa8: d0 05
+    ldy #$36 ; '6'                                                    ; 3faa: a0 36
+    sty l09df                                                         ; 3fac: 8c df 09
+c3faf
+    ldx #0                                                            ; 3faf: a2 00
+    lda l3ac9                                                         ; 3fb1: ad c9 3a
+    beq c3fb7                                                         ; 3fb4: f0 01
+    inx                                                               ; 3fb6: e8
+c3fb7
+    lda l2890,x                                                       ; 3fb7: bd 90 28
+    beq c3fca                                                         ; 3fba: f0 0e
+    ldy #$c0                                                          ; 3fbc: a0 c0
+    sty l09df                                                         ; 3fbe: 8c df 09
+    ldy #$89                                                          ; 3fc1: a0 89
+    cmp object_direction                                              ; 3fc3: cd be 09
+    beq c3fca                                                         ; 3fc6: f0 02
+    ldy #$9a                                                          ; 3fc8: a0 9a
+c3fca
+    sty l09d4                                                         ; 3fca: 8c d4 09
+    tya                                                               ; 3fcd: 98
+    ldx #$46 ; 'F'                                                    ; 3fce: a2 46
+    ldy #$3b ; ';'                                                    ; 3fd0: a0 3b
+    jsr l2200                                                         ; 3fd2: 20 00 22
+    lda #0                                                            ; 3fd5: a9 00
+    jsr l25f5                                                         ; 3fd7: 20 f5 25
+    lda #$40 ; '@'                                                    ; 3fda: a9 40
+    sta room_exit_direction                                           ; 3fdc: 85 70
+    lda #$3b ; ';'                                                    ; 3fde: a9 3b
+    sta l0071                                                         ; 3fe0: 85 71
+    ldx l09d4                                                         ; 3fe2: ae d4 09
+    inx                                                               ; 3fe5: e8
+    inx                                                               ; 3fe6: e8
+    inx                                                               ; 3fe7: e8
+    lda l3b46,x                                                       ; 3fe8: bd 46 3b
+    ldx #$45 ; 'E'                                                    ; 3feb: a2 45
+    ldy #$3b ; ';'                                                    ; 3fed: a0 3b
+    jmp l2248                                                         ; 3fef: 4c 48 22
+
 ; *************************************************************************************
 ; 
 ; Room 0 initialisation and game loop
@@ -1714,6 +1862,25 @@ pydis_end
 ;     c3db7
 ;     c3dcf
 ;     c3dd6
+;     c3ed0
+;     c3edb
+;     c3ee3
+;     c3ef7
+;     c3f1e
+;     c3f21
+;     c3f30
+;     c3f3a
+;     c3f3d
+;     c3f55
+;     c3f5c
+;     c3f61
+;     c3f79
+;     c3f87
+;     c3f8f
+;     c3fa6
+;     c3faf
+;     c3fb7
+;     c3fca
 ;     c40e5
 ;     c412a
 ;     c4166
@@ -1746,8 +1913,12 @@ pydis_end
 ;     c4551
 ;     c4596
 ;     c45d2
+;     l0023
+;     l0071
 ;     l0078
 ;     l0079
+;     l09d4
+;     l09df
 ;     l0a70
 ;     l0a71
 ;     l0a72
@@ -1758,15 +1929,25 @@ pydis_end
 ;     l0a7a
 ;     l0a7b
 ;     l20f7
-;     l22de
-;     l22df
+;     l2200
+;     l2248
+;     l22ed
+;     l22ee
+;     l23c4
 ;     l2434
 ;     l25f5
+;     l288f
+;     l2890
 ;     l38ae
 ;     l38b1
 ;     l38c4
 ;     l38c7
+;     l3ac7
+;     l3ac9
+;     l3aca
+;     l3acb
 ;     l3b40
+;     l3b46
 ;     l4099
 ;     l4389
 ;     l438a
@@ -1785,9 +1966,6 @@ pydis_end
 !if (<envelope2) != $ee {
     !error "Assertion failed: <envelope2 == $ee"
 }
-!if (<some_table) != $b8 {
-    !error "Assertion failed: <some_table == $b8"
-}
 !if (<sound1) != $e6 {
     !error "Assertion failed: <sound1 == $e6"
 }
@@ -1800,14 +1978,14 @@ pydis_end
 !if (<source_sprite_data) != $0c {
     !error "Assertion failed: <source_sprite_data == $0c"
 }
+!if (<update_bird) != $b8 {
+    !error "Assertion failed: <update_bird == $b8"
+}
 !if (>envelope1) != $45 {
     !error "Assertion failed: >envelope1 == $45"
 }
 !if (>envelope2) != $45 {
     !error "Assertion failed: >envelope2 == $45"
-}
-!if (>some_table) != $3e {
-    !error "Assertion failed: >some_table == $3e"
 }
 !if (>sound1) != $45 {
     !error "Assertion failed: >sound1 == $45"
@@ -1820,6 +1998,9 @@ pydis_end
 }
 !if (>source_sprite_data) != $46 {
     !error "Assertion failed: >source_sprite_data == $46"
+}
+!if (>update_bird) != $3e {
+    !error "Assertion failed: >update_bird == $3e"
 }
 !if (collision_map_none) != $00 {
     !error "Assertion failed: collision_map_none == $00"
@@ -1838,6 +2019,12 @@ pydis_end
 }
 !if (exit_room_top) != $08 {
     !error "Assertion failed: exit_room_top == $08"
+}
+!if (jmp_for_update_extra_player_character + 1) != $22de {
+    !error "Assertion failed: jmp_for_update_extra_player_character + 1 == $22de"
+}
+!if (jmp_for_update_extra_player_character + 2) != $22df {
+    !error "Assertion failed: jmp_for_update_extra_player_character + 2 == $22df"
 }
 !if (level_specific_initialisation) != $3af6 {
     !error "Assertion failed: level_specific_initialisation == $3af6"

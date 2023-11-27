@@ -347,6 +347,7 @@ def common_to_all():
     label(0x1f57, "draw_sprite_a_at_cell_xy_and_write_to_collision_map")
     label(0x1f5d, "set_object_position_from_cell_xy")
     label(0x1f6d, "set_object_position_from_current_sprite_position")
+    label(0x22dd, "jmp_for_update_extra_player_character")
     label(0x23a9, "play_landing_sound")
     label(0x2433, "player_wall_collision_flag")
     label(0x24d0, "temp_left_offset")
