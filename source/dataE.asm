@@ -165,7 +165,7 @@ object_direction                                    = $09be
 object_direction_old                                = $09c9
 level_progress_table                                = $09ef
 save_game_level_e_holding_egg_flag                  = $0a13
-l0a14                                               = $0a14
+save_game_level_e_something_room_1                  = $0a14
 save_game_level_e_duck_captured_flag                = $0a15
 level_workspace                                     = $0a6f
 l0a70                                               = $0a70
@@ -236,7 +236,7 @@ print_encrypted_string_at_yx_centred                = $37f3
 wait_one_second_then_check_keys                     = $388d
 object_sprite_mask_type                             = $38ac
 l38ae                                               = $38ae
-l38af                                               = $38af
+envelope_1_pitch_change_per_step_section_2          = $38af
 l38b1                                               = $38b1
 object_z_order                                      = $38c2
 l38c4                                               = $38c4
@@ -1428,41 +1428,41 @@ room_1_update_handler
 ; check for level change (branch if not)
     lda current_level                                                 ; 446f: a5 31
     cmp level_before_latest_level_and_room_initialisation             ; 4471: c5 51
-    beq room_1_not_this_room                                          ; 4473: f0 2a
+    beq room_1_not_this_room1                                         ; 4473: f0 2a
     ldx #$70 ; 'p'                                                    ; 4475: a2 70
     ldy #$58 ; 'X'                                                    ; 4477: a0 58
-    lda l0a14                                                         ; 4479: ad 14 0a
+    lda save_game_level_e_something_room_1                            ; 4479: ad 14 0a
     cmp #1                                                            ; 447c: c9 01
-    beq c4493                                                         ; 447e: f0 13
+    beq room_1_axy_set                                                ; 447e: f0 13
     cmp #5                                                            ; 4480: c9 05
-    beq c4493                                                         ; 4482: f0 0f
-    ora #0                                                            ; 4484: 09 00
+    beq room_1_axy_set                                                ; 4482: f0 0f
+    ora #0                                                            ; 4484: 09 00                   ; set flags based on A
     bne c448d                                                         ; 4486: d0 05
     lda #1                                                            ; 4488: a9 01
-    jmp c4493                                                         ; 448a: 4c 93 44
+    jmp room_1_axy_set                                                ; 448a: 4c 93 44
 
 c448d
     ldx #$58 ; 'X'                                                    ; 448d: a2 58
     ldy #$a8                                                          ; 448f: a0 a8
     lda #$1a                                                          ; 4491: a9 1a
-c4493
-    sta l0a14                                                         ; 4493: 8d 14 0a
+room_1_axy_set
+    sta save_game_level_e_something_room_1                            ; 4493: 8d 14 0a
     sta l0a76                                                         ; 4496: 8d 76 0a
     stx l0a77                                                         ; 4499: 8e 77 0a
     sty l0a78                                                         ; 449c: 8c 78 0a
-room_1_not_this_room
+room_1_not_this_room1
     lda desired_room_index                                            ; 449f: a5 30
     cmp #1                                                            ; 44a1: c9 01
-    bne c44b9                                                         ; 44a3: d0 14
+    bne room_1_not_this_room2                                         ; 44a3: d0 14
     ldx #<envelope2                                                   ; 44a5: a2 ee
     ldy #>envelope2                                                   ; 44a7: a0 45
     jsr define_envelope                                               ; 44a9: 20 5e 39
     lda #$de                                                          ; 44ac: a9 de
-    sta l38af                                                         ; 44ae: 8d af 38
+    sta envelope_1_pitch_change_per_step_section_2                    ; 44ae: 8d af 38
     lda #0                                                            ; 44b1: a9 00
     sta object_x_high + 3                                             ; 44b3: 8d 69 09
     sta object_y_high + 3                                             ; 44b6: 8d 95 09
-c44b9
+room_1_not_this_room2
     jmp c4551                                                         ; 44b9: 4c 51 45
 
 room_1_not_first_update
@@ -1472,15 +1472,15 @@ room_1_not_first_update
     tay                                                               ; 44c2: a8
     lda l444c,y                                                       ; 44c3: b9 4c 44
     bne c44cb                                                         ; 44c6: d0 03
-    ldy l0a14                                                         ; 44c8: ac 14 0a
+    ldy save_game_level_e_something_room_1                            ; 44c8: ac 14 0a
 c44cb
-    lda l0a14                                                         ; 44cb: ad 14 0a
+    lda save_game_level_e_something_room_1                            ; 44cb: ad 14 0a
     cmp #1                                                            ; 44ce: c9 01
     bne c44df                                                         ; 44d0: d0 0d
     jsr sub_c45a1                                                     ; 44d2: 20 a1 45
     beq c4538                                                         ; 44d5: f0 61
     ldy #5                                                            ; 44d7: a0 05
-    sty l0a14                                                         ; 44d9: 8c 14 0a
+    sty save_game_level_e_something_room_1                            ; 44d9: 8c 14 0a
     jmp c4538                                                         ; 44dc: 4c 38 45
 
 c44df
@@ -1502,7 +1502,7 @@ c44df
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 44fe: 20 44 1e
 c4501
     lda #$16                                                          ; 4501: a9 16
-    sta l0a14                                                         ; 4503: 8d 14 0a
+    sta save_game_level_e_something_room_1                            ; 4503: 8d 14 0a
     ldy #9                                                            ; 4506: a0 09
     jmp c4538                                                         ; 4508: 4c 38 45
 
@@ -1528,7 +1528,7 @@ c450b
 
 c4533
     ldy #$1a                                                          ; 4533: a0 1a
-    sty l0a14                                                         ; 4535: 8c 14 0a
+    sty save_game_level_e_something_room_1                            ; 4535: 8c 14 0a
 c4538
     sty l0a76                                                         ; 4538: 8c 76 0a
     iny                                                               ; 453b: c8
@@ -1560,7 +1560,7 @@ c4551
     sta width_in_cells                                                ; 4576: 85 3c
     lda #2                                                            ; 4578: a9 02
     sta height_in_cells                                               ; 457a: 85 3d
-    lda l0a14                                                         ; 457c: ad 14 0a
+    lda save_game_level_e_something_room_1                            ; 457c: ad 14 0a
     cmp #1                                                            ; 457f: c9 01
     beq c4596                                                         ; 4581: f0 13
     cmp #5                                                            ; 4583: c9 05
@@ -1701,8 +1701,6 @@ pydis_end
 ;     c4370
 ;     c4373
 ;     c448d
-;     c4493
-;     c44b9
 ;     c44cb
 ;     c44df
 ;     c4501
@@ -1714,7 +1712,6 @@ pydis_end
 ;     c45d2
 ;     l0078
 ;     l0079
-;     l0a14
 ;     l0a70
 ;     l0a71
 ;     l0a72
@@ -1733,7 +1730,6 @@ pydis_end
 ;     l2434
 ;     l25f5
 ;     l38ae
-;     l38af
 ;     l38b1
 ;     l38c4
 ;     l38c7

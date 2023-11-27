@@ -21,6 +21,7 @@ set_sprite_dict(sprite_dict)
 load(0x3ad5, "orig/dataE.dat", "6502", "1fd692ce17c1ae2c858ed57730c9c081")
 
 label(0x0a13, "save_game_level_e_holding_egg_flag") # TODO: other uses? not checked yet
+label(0x0a14, "save_game_level_e_something_room_1")
 label(0x0a15, "save_game_level_e_duck_captured_flag") # TODO: might be used for other things too, not checked yet
 
 common_to_all()
@@ -85,7 +86,11 @@ label(0x40cf, "room_0_update_handler")
 label(0x446a, "room_1_update_handler")
 
 entry(0x44bc, "room_1_not_first_update")
-entry(0x449f, "room_1_not_this_room")
+entry(0x449f, "room_1_not_this_room1")
+entry(0x4493, "room_1_axy_set")
+comment(0x4484, "set flags based on A", inline=True)
+entry(0x44b9, "room_1_not_this_room2")
+label(0x38af, "envelope_1_pitch_change_per_step_section_2") # TODO?
 
 # TODO: replace "+ n" with "+ objectid_*" once objects have been named
 expr(0x3d27, "object_y_low + 4")
