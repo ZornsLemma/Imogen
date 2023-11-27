@@ -557,8 +557,8 @@ no_level_change
     ldx burnable_rope_cell_x                                          ; 3c1e: ae 77 3d
     ldy burnable_rope_cell_y                                          ; 3c21: ac 78 3d
     lda burning_rope_progress                                         ; 3c24: ad 75 3d
-    beq c3c6b                                                         ; 3c27: f0 42
-    bpl c3c3d                                                         ; 3c29: 10 12
+    beq not_burnt_yet                                                 ; 3c27: f0 42
+    bpl burning_in_progress                                           ; 3c29: 10 12
     lda burnable_rope_cell_y                                          ; 3c2b: ad 78 3d
     beq c3c83                                                         ; 3c2e: f0 53
     lda #spriteid_empty_hook                                          ; 3c30: a9 d8
@@ -567,7 +567,7 @@ no_level_change
     jsr write_a_single_value_to_cell_in_collision_map                 ; 3c37: 20 bb 1e
     jmp c3c83                                                         ; 3c3a: 4c 83 3c
 
-c3c3d
+burning_in_progress
     lda burning_rope_pixel_y                                          ; 3c3d: ad 76 3d
     clc                                                               ; 3c40: 18
     adc #3                                                            ; 3c41: 69 03
@@ -593,7 +593,7 @@ c3c3d
     jsr write_a_single_value_to_cell_in_collision_map                 ; 3c65: 20 bb 1e
     jmp c3c83                                                         ; 3c68: 4c 83 3c
 
-c3c6b
+not_burnt_yet
     lda burnable_rope_length                                          ; 3c6b: ad 79 3d
     jsr draw_rope                                                     ; 3c6e: 20 b9 1d
     tya                                                               ; 3c71: 98
@@ -607,7 +607,7 @@ c3c6b
     lda #spriteid_rope_end                                            ; 3c7e: a9 0a
     sta object_spriteid,x                                             ; 3c80: 9d a8 09
 c3c83
-    jmp c3d26                                                         ; 3c83: 4c 26 3d
+    jmp check_rope_fire_starting                                      ; 3c83: 4c 26 3d
 
 c3c86
     jmp return2                                                       ; 3c86: 4c 74 3d
@@ -637,37 +637,41 @@ update_burnable_rope_not_first_update
     sta burning_rope_pixel_y                                          ; 3cb4: 8d 76 3d
     lda #1                                                            ; 3cb7: a9 01
     sta burning_rope_progress                                         ; 3cb9: 8d 75 3d
-    jmp c3d26                                                         ; 3cbc: 4c 26 3d
+    jmp check_rope_fire_starting                                      ; 3cbc: 4c 26 3d
 
 c3cbf
     lda burning_rope_progress                                         ; 3cbf: ad 75 3d
     cmp #2                                                            ; 3cc2: c9 02
-    beq c3cee                                                         ; 3cc4: f0 28
+    beq finish_rope_all_burnt                                         ; 3cc4: f0 28
     lda burning_rope_pixel_y                                          ; 3cc6: ad 76 3d
     sec                                                               ; 3cc9: 38
     sbc #4                                                            ; 3cca: e9 04
     sta burning_rope_pixel_y                                          ; 3ccc: 8d 76 3d
     cmp #$c0                                                          ; 3ccf: c9 c0
-    bcs c3d12                                                         ; 3cd1: b0 3f
+    bcs finish_rope_burning_gone_off_top_of_screen                    ; 3cd1: b0 3f
+; check for fire reaching the top of the rope
     lsr                                                               ; 3cd3: 4a
     lsr                                                               ; 3cd4: 4a
     lsr                                                               ; 3cd5: 4a
-    beq c3d26                                                         ; 3cd6: f0 4e
+    beq check_rope_fire_starting                                      ; 3cd6: f0 4e
     cmp burnable_rope_cell_y                                          ; 3cd8: cd 78 3d
-    bne c3d26                                                         ; 3cdb: d0 49
+    bne check_rope_fire_starting                                      ; 3cdb: d0 49
+; fire has reached the top of the rope
     lda #2                                                            ; 3cdd: a9 02
     sta burning_rope_progress                                         ; 3cdf: 8d 75 3d
     lda desired_room_index                                            ; 3ce2: a5 30
     cmp currently_updating_logic_for_room_index                       ; 3ce4: cd ba 1a
-    bne c3d26                                                         ; 3ce7: d0 3d
+    bne check_rope_fire_starting                                      ; 3ce7: d0 3d
+; put out fire, replace with cache of what was there before
     lda #spriteid_cache2                                              ; 3ce9: a9 ce
     sta object_spriteid + objectid_rope_fire                          ; 3ceb: 8d ac 09
-c3cee
+finish_rope_all_burnt
     lda #$ff                                                          ; 3cee: a9 ff
     sta burning_rope_progress                                         ; 3cf0: 8d 75 3d
     lda desired_room_index                                            ; 3cf3: a5 30
     cmp currently_updating_logic_for_room_index                       ; 3cf5: cd ba 1a
-    bne c3d26                                                         ; 3cf8: d0 2c
+    bne check_rope_fire_starting                                      ; 3cf8: d0 2c
+; position and show the empty hook as the rope end
     ldx burnable_rope_cell_x                                          ; 3cfa: ae 77 3d
     ldy burnable_rope_cell_y                                          ; 3cfd: ac 78 3d
     lda #objectid_rope_end                                            ; 3d00: a9 03
@@ -676,24 +680,25 @@ c3cee
     sta object_spriteid + objectid_rope_end                           ; 3d07: 8d ab 09
     lda #spriteid_one_pixel_masked_out                                ; 3d0a: a9 00
     sta object_spriteid + objectid_rope_fire                          ; 3d0c: 8d ac 09
-    jmp c3d26                                                         ; 3d0f: 4c 26 3d
+    jmp check_rope_fire_starting                                      ; 3d0f: 4c 26 3d
 
-c3d12
+finish_rope_burning_gone_off_top_of_screen
     lda #$ff                                                          ; 3d12: a9 ff
     sta burning_rope_progress                                         ; 3d14: 8d 75 3d
     lda desired_room_index                                            ; 3d17: a5 30
     cmp currently_updating_logic_for_room_index                       ; 3d19: cd ba 1a
-    bne c3d26                                                         ; 3d1c: d0 08
+    bne check_rope_fire_starting                                      ; 3d1c: d0 08
     lda #spriteid_one_pixel_masked_out                                ; 3d1e: a9 00
     sta object_spriteid + objectid_rope_end                           ; 3d20: 8d ab 09
     sta object_spriteid + objectid_rope_fire                          ; 3d23: 8d ac 09
-c3d26
+check_rope_fire_starting
     lda desired_room_index                                            ; 3d26: a5 30
     cmp currently_updating_logic_for_room_index                       ; 3d28: cd ba 1a
     bne return2                                                       ; 3d2b: d0 47
     lda burning_rope_progress                                         ; 3d2d: ad 75 3d
     cmp #1                                                            ; 3d30: c9 01
     bne return2                                                       ; 3d32: d0 40
+; show rope fire starting
     lda #spriteid_fire_bottom                                         ; 3d34: a9 d7
     sta object_spriteid + objectid_rope_end                           ; 3d36: 8d ab 09
     lda burning_rope_pixel_y                                          ; 3d39: ad 76 3d
@@ -1961,14 +1966,9 @@ sprite_data
 pydis_end
 
 ; Automatically generated labels:
-;     c3c3d
-;     c3c6b
 ;     c3c83
 ;     c3c86
 ;     c3cbf
-;     c3cee
-;     c3d12
-;     c3d26
 ;     c3ed8
 ;     c3f76
 ;     c3f86
