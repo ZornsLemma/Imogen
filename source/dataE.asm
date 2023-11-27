@@ -24,6 +24,7 @@ object_collided_ceiling               = 8
 object_collided_floor                 = 2
 object_collided_left_wall             = 1
 object_collided_right_wall            = 4
+objectid_egg                          = 3
 objectid_old_player                   = 11
 objectid_old_player_accessory         = 12
 objectid_player                       = 0
@@ -85,6 +86,7 @@ spriteid_icodata_password             = 8
 spriteid_icodata_sound                = 2
 spriteid_icodata_wizard               = 4
 spriteid_icon_background              = 1
+spriteid_large_egg                    = 219
 spriteid_menu_item_completion_spell   = 33
 spriteid_monkey1                      = 78
 spriteid_monkey2                      = 79
@@ -1416,11 +1418,40 @@ room_1_check_right_exit
     ldy current_level                                                 ; 4447: a4 31
     jmp initialise_level_and_room                                     ; 4449: 4c 40 11
 
-; TODO: seems to be three bytes per entry
+; TODO: seems to be three bytes per entry. First byte is a sprite ID. Second and third
+; bytes of each entry appear to be added to a77 and a78 respectively. This seems to
+; control sprite and probably X/Y poss of object 3 - the egg?
 room_1_data_table
-    !byte   0, $db,   0,   0,   0, $dc,   0,   0,   0, $dc, $f8,   0  ; 444c: 00 db 00...
-    !byte $dd, $f8,   8, $dd, $fc,   4, $dd, $fc,   4,   0, $dd,   0  ; 4458: dd f8 08...
-    !byte   8,   0, $dd,   0,   0,   0                                ; 4464: 08 00 dd...
+    !byte spriteid_one_pixel_masked_out                               ; 444c: 00
+    !byte                           $db                               ; 444d: db
+    !byte                             0                               ; 444e: 00
+    !byte spriteid_one_pixel_masked_out                               ; 444f: 00
+    !byte                             0                               ; 4450: 00
+    !byte                           $dc                               ; 4451: dc
+    !byte spriteid_one_pixel_masked_out                               ; 4452: 00
+    !byte                             0                               ; 4453: 00
+    !byte                             0                               ; 4454: 00
+    !byte                           $dc                               ; 4455: dc
+    !byte                           $f8                               ; 4456: f8
+    !byte                             0                               ; 4457: 00
+    !byte                           $dd                               ; 4458: dd
+    !byte                           $f8                               ; 4459: f8
+    !byte                             8                               ; 445a: 08
+    !byte                           $dd                               ; 445b: dd
+    !byte                           $fc                               ; 445c: fc
+    !byte                             4                               ; 445d: 04
+    !byte                           $dd                               ; 445e: dd
+    !byte                           $fc                               ; 445f: fc
+    !byte                             4                               ; 4460: 04
+    !byte                             0                               ; 4461: 00
+    !byte                           $dd                               ; 4462: dd
+    !byte                             0                               ; 4463: 00
+    !byte                             8                               ; 4464: 08
+    !byte                             0                               ; 4465: 00
+    !byte                           $dd                               ; 4466: dd
+    !byte                             0                               ; 4467: 00
+    !byte                             0                               ; 4468: 00
+    !byte                             0                               ; 4469: 00
 
 ; check for first update in room (branch if not)
 room_1_update_handler
@@ -1461,8 +1492,8 @@ room_1_not_this_room1
     lda #$de                                                          ; 44ac: a9 de
     sta envelope_1_pitch_change_per_step_section_2                    ; 44ae: 8d af 38
     lda #0                                                            ; 44b1: a9 00
-    sta object_x_high + 3                                             ; 44b3: 8d 69 09
-    sta object_y_high + 3                                             ; 44b6: 8d 95 09
+    sta object_x_high + objectid_egg                                  ; 44b3: 8d 69 09
+    sta object_y_high + objectid_egg                                  ; 44b6: 8d 95 09
 room_1_not_this_room2
     jmp c4551                                                         ; 44b9: 4c 51 45
 
@@ -1548,11 +1579,11 @@ c4551
     bne return5                                                       ; 4555: d0 49
     ldy room_1_data_table_index                                       ; 4557: ac 76 0a
     lda room_1_data_table,y                                           ; 455a: b9 4c 44
-    sta object_spriteid + 3                                           ; 455d: 8d ab 09
+    sta object_spriteid + objectid_egg                                ; 455d: 8d ab 09
     lda l0a77                                                         ; 4560: ad 77 0a
-    sta object_x_low + 3                                              ; 4563: 8d 53 09
+    sta object_x_low + objectid_egg                                   ; 4563: 8d 53 09
     lda l0a78                                                         ; 4566: ad 78 0a
-    sta object_y_low + 3                                              ; 4569: 8d 7f 09
+    sta object_y_low + objectid_egg                                   ; 4569: 8d 7f 09
     lda #collision_map_solid_rock                                     ; 456c: a9 03
     sta value_to_write_to_collision_map                               ; 456e: 85 3e
     ldx #$0e                                                          ; 4570: a2 0e
@@ -1826,14 +1857,14 @@ pydis_end
 !if (object_spriteid + 2) != $09aa {
     !error "Assertion failed: object_spriteid + 2 == $09aa"
 }
-!if (object_spriteid + 3) != $09ab {
-    !error "Assertion failed: object_spriteid + 3 == $09ab"
-}
 !if (object_spriteid + 4) != $09ac {
     !error "Assertion failed: object_spriteid + 4 == $09ac"
 }
 !if (object_spriteid + 5) != $09ad {
     !error "Assertion failed: object_spriteid + 5 == $09ad"
+}
+!if (object_spriteid + objectid_egg) != $09ab {
+    !error "Assertion failed: object_spriteid + objectid_egg == $09ab"
 }
 !if (object_spriteid_old + 2) != $09b5 {
     !error "Assertion failed: object_spriteid_old + 2 == $09b5"
@@ -1841,14 +1872,14 @@ pydis_end
 !if (object_x_high + 2) != $0968 {
     !error "Assertion failed: object_x_high + 2 == $0968"
 }
-!if (object_x_high + 3) != $0969 {
-    !error "Assertion failed: object_x_high + 3 == $0969"
-}
 !if (object_x_high + 4) != $096a {
     !error "Assertion failed: object_x_high + 4 == $096a"
 }
 !if (object_x_high + 5) != $096b {
     !error "Assertion failed: object_x_high + 5 == $096b"
+}
+!if (object_x_high + objectid_egg) != $0969 {
+    !error "Assertion failed: object_x_high + objectid_egg == $0969"
 }
 !if (object_x_high_old + 2) != $0973 {
     !error "Assertion failed: object_x_high_old + 2 == $0973"
@@ -1856,14 +1887,14 @@ pydis_end
 !if (object_x_low + 2) != $0952 {
     !error "Assertion failed: object_x_low + 2 == $0952"
 }
-!if (object_x_low + 3) != $0953 {
-    !error "Assertion failed: object_x_low + 3 == $0953"
-}
 !if (object_x_low + 4) != $0954 {
     !error "Assertion failed: object_x_low + 4 == $0954"
 }
 !if (object_x_low + 5) != $0955 {
     !error "Assertion failed: object_x_low + 5 == $0955"
+}
+!if (object_x_low + objectid_egg) != $0953 {
+    !error "Assertion failed: object_x_low + objectid_egg == $0953"
 }
 !if (object_x_low_old + 2) != $095d {
     !error "Assertion failed: object_x_low_old + 2 == $095d"
@@ -1871,26 +1902,26 @@ pydis_end
 !if (object_y_high + 2) != $0994 {
     !error "Assertion failed: object_y_high + 2 == $0994"
 }
-!if (object_y_high + 3) != $0995 {
-    !error "Assertion failed: object_y_high + 3 == $0995"
-}
 !if (object_y_high + 4) != $0996 {
     !error "Assertion failed: object_y_high + 4 == $0996"
 }
 !if (object_y_high + 5) != $0997 {
     !error "Assertion failed: object_y_high + 5 == $0997"
 }
+!if (object_y_high + objectid_egg) != $0995 {
+    !error "Assertion failed: object_y_high + objectid_egg == $0995"
+}
 !if (object_y_low + 2) != $097e {
     !error "Assertion failed: object_y_low + 2 == $097e"
-}
-!if (object_y_low + 3) != $097f {
-    !error "Assertion failed: object_y_low + 3 == $097f"
 }
 !if (object_y_low + 4) != $0980 {
     !error "Assertion failed: object_y_low + 4 == $0980"
 }
 !if (object_y_low + 5) != $0981 {
     !error "Assertion failed: object_y_low + 5 == $0981"
+}
+!if (object_y_low + objectid_egg) != $097f {
+    !error "Assertion failed: object_y_low + objectid_egg == $097f"
 }
 !if (object_y_low_old + 2) != $0989 {
     !error "Assertion failed: object_y_low_old + 2 == $0989"
@@ -1918,4 +1949,7 @@ pydis_end
 }
 !if (spriteid_egg_mask_toolbar) != $d3 {
     !error "Assertion failed: spriteid_egg_mask_toolbar == $d3"
+}
+!if (spriteid_one_pixel_masked_out) != $00 {
+    !error "Assertion failed: spriteid_one_pixel_masked_out == $00"
 }

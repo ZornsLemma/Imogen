@@ -8,13 +8,14 @@ sprite_dict = {
     0xd1: "spriteid_duck_toolbar",
     0xd2: "spriteid_egg_toolbar",
     0xd3: "spriteid_egg_mask_toolbar", # TODO: "mask" is a guess
+    0xdb: "spriteid_large_egg",
 }
 
 # Merge with common sprite dictionary
 sprite_dict = {**common_sprite_dict, **sprite_dict}
 
-# Room 0
-#constant(2, "objectid_left_mouse")
+# Room 1
+constant(3, "objectid_egg")
 
 set_sprite_dict(sprite_dict)
 
@@ -93,7 +94,11 @@ entry(0x4493, "room_1_axy_set")
 comment(0x4484, "set flags based on A", inline=True)
 entry(0x44b9, "room_1_not_this_room2")
 label(0x38af, "envelope_1_pitch_change_per_step_section_2") # TODO?
-comment(0x444c, "TODO: seems to be three bytes per entry")
+comment(0x444c, "TODO: seems to be three bytes per entry. First byte is a sprite ID. Second and third bytes of each entry appear to be added to a77 and a78 respectively. This seems to control sprite and probably X/Y poss of object 3 - the egg?")
+for i in range(3): # TODO GUESS LIMIT
+    addr = 0x444c + i*3
+    uint(addr, 3)
+    expr(addr, sprite_dict)
 label(0x444c, "room_1_data_table")
 entry(0x4501, "room_1_not_this_room3")
 
@@ -137,11 +142,11 @@ expr(0x435a, "object_x_low + 2")
 expr(0x435e, "object_x_low_old + 2")
 expr(0x4363, "object_x_high + 2")
 expr(0x4366, "object_x_high_old + 2")
-expr(0x44b4, "object_x_high + 3")
-expr(0x44b7, "object_y_high + 3")
-expr(0x455e, "object_spriteid + 3")
-expr(0x4564, "object_x_low + 3")
-expr(0x456a, "object_y_low + 3")
+expr(0x44b4, "object_x_high + objectid_egg")
+expr(0x44b7, "object_y_high + objectid_egg")
+expr(0x455e, "object_spriteid + objectid_egg")
+expr(0x4564, "object_x_low + objectid_egg")
+expr(0x456a, "object_y_low + objectid_egg")
 
 # TODO: uncomment once sprite_dict has been populated
 #expr(0x3d56, sprite_dict)
