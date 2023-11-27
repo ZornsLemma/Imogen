@@ -82,6 +82,10 @@ label(0x45a0, "return5")
 label(0x3ce0, "room_2_update_handler")
 label(0x3e96, "room_3_update_handler")
 label(0x40cf, "room_0_update_handler")
+label(0x446a, "room_1_update_handler")
+
+entry(0x44bc, "room_1_not_first_update")
+entry(0x449f, "room_1_not_this_room")
 
 # TODO: replace "+ n" with "+ objectid_*" once objects have been named
 expr(0x3d27, "object_y_low + 4")

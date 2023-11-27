@@ -333,7 +333,7 @@ duck_not_captured_yet
 ; *************************************************************************************
 level_specific_update
     jsr room_0_update_handler                                         ; 3b34: 20 cf 40
-    jsr sub_c446a                                                     ; 3b37: 20 6a 44
+    jsr room_1_update_handler                                         ; 3b37: 20 6a 44
     jsr room_2_update_handler                                         ; 3b3a: 20 e0 3c
     jmp room_3_update_handler                                         ; 3b3d: 4c 96 3e
 
@@ -1422,13 +1422,13 @@ l444c
     !byte   8,   0, $dd,   0,   0,   0                                ; 4464: 08 00 dd...
 
 ; check for first update in room (branch if not)
-sub_c446a
+room_1_update_handler
     lda update_room_first_update_flag                                 ; 446a: ad 2b 13
-    beq c44bc                                                         ; 446d: f0 4d
+    beq room_1_not_first_update                                       ; 446d: f0 4d
 ; check for level change (branch if not)
     lda current_level                                                 ; 446f: a5 31
     cmp level_before_latest_level_and_room_initialisation             ; 4471: c5 51
-    beq c449f                                                         ; 4473: f0 2a
+    beq room_1_not_this_room                                          ; 4473: f0 2a
     ldx #$70 ; 'p'                                                    ; 4475: a2 70
     ldy #$58 ; 'X'                                                    ; 4477: a0 58
     lda l0a14                                                         ; 4479: ad 14 0a
@@ -1450,7 +1450,7 @@ c4493
     sta l0a76                                                         ; 4496: 8d 76 0a
     stx l0a77                                                         ; 4499: 8e 77 0a
     sty l0a78                                                         ; 449c: 8c 78 0a
-c449f
+room_1_not_this_room
     lda desired_room_index                                            ; 449f: a5 30
     cmp #1                                                            ; 44a1: c9 01
     bne c44b9                                                         ; 44a3: d0 14
@@ -1465,7 +1465,7 @@ c449f
 c44b9
     jmp c4551                                                         ; 44b9: 4c 51 45
 
-c44bc
+room_1_not_first_update
     lda l0a76                                                         ; 44bc: ad 76 0a
     clc                                                               ; 44bf: 18
     adc #3                                                            ; 44c0: 69 03
@@ -1702,9 +1702,7 @@ pydis_end
 ;     c4373
 ;     c448d
 ;     c4493
-;     c449f
 ;     c44b9
-;     c44bc
 ;     c44cb
 ;     c44df
 ;     c4501
@@ -1752,7 +1750,6 @@ pydis_end
 ;     sub_c4231
 ;     sub_c431d
 ;     sub_c433b
-;     sub_c446a
 ;     sub_c45a1
 !if (<envelope1) != $d8 {
     !error "Assertion failed: <envelope1 == $d8"
