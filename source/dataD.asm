@@ -72,8 +72,8 @@ objectid_sign                         = 5
 objectid_sign_stand                   = 4
 opcode_jmp                            = 76
 sprite_op_flags_copy_screen           = 1
-sprite_op_flags_erase                 = 2
-sprite_op_flags_ignore_mask           = 4
+sprite_op_flags_erase_to_bg_colour    = 2
+sprite_op_flags_erase_to_fg_colour    = 4
 sprite_op_flags_normal                = 0
 spriteid_197                          = 197
 spriteid_axe                          = 201
@@ -276,12 +276,12 @@ player_using_object_spriteid                        = $2eb6
 previous_player_using_object_spriteid               = $2eb7
 toolbar_collectable_spriteids                       = $2ee8
 collectable_spriteids                               = $2eed
-five_byte_table_paired_with_collectable_sprite_ids  = $2ef2
+collectable_being_used_spriteids                    = $2ef2
 l2ef4                                               = $2ef4
 inhibit_monkey_climb_flag                           = $31d7
 print_encrypted_string_at_yx_centred                = $37f3
 wait_one_second_then_check_keys                     = $388d
-object_sprite_mask_type                             = $38ac
+object_erase_type                                   = $38ac
 object_z_order                                      = $38c2
 object_room_collision_flags                         = $38d8
 play_sound_yx                                       = $38f6
@@ -560,7 +560,7 @@ c3c22
     lda #spriteid_axe                                                 ; 3c3f: a9 c9
     sta object_spriteid,x                                             ; 3c41: 9d a8 09
     lda #spriteid_cache1                                              ; 3c44: a9 d0
-    sta object_sprite_mask_type,x                                     ; 3c46: 9d ac 38
+    sta object_erase_type,x                                           ; 3c46: 9d ac 38
     lda #$c0                                                          ; 3c49: a9 c0
     sta object_z_order,x                                              ; 3c4b: 9d c2 38
 return2
@@ -625,7 +625,7 @@ c3caf
     lda #spriteid_sign_stand                                          ; 3cb6: a9 d2
     sta object_spriteid,x                                             ; 3cb8: 9d a8 09
     lda #spriteid_cache2                                              ; 3cbb: a9 d1
-    sta object_sprite_mask_type,x                                     ; 3cbd: 9d ac 38
+    sta object_erase_type,x                                           ; 3cbd: 9d ac 38
     lda #$c0                                                          ; 3cc0: a9 c0
     sta object_z_order,x                                              ; 3cc2: 9d c2 38
     lda #spriteid_sign                                                ; 3cc5: a9 d3
@@ -1038,7 +1038,7 @@ c3f1c
     jsr set_object_position_from_cell_xy                              ; 3f2d: 20 5d 1f
     tax                                                               ; 3f30: aa
     lda #spriteid_cache1                                              ; 3f31: a9 d0
-    sta object_sprite_mask_type,x                                     ; 3f33: 9d ac 38
+    sta object_erase_type,x                                           ; 3f33: 9d ac 38
     lda #$c0                                                          ; 3f36: a9 c0
     sta object_z_order,x                                              ; 3f38: 9d c2 38
     ldx #$14                                                          ; 3f3b: a2 14
@@ -1307,7 +1307,7 @@ room_3_update_handler
     sta toolbar_collectable_spriteids+1                               ; 40d7: 8d e9 2e
     lda #$ce                                                          ; 40da: a9 ce
     sta collectable_spriteids+1                                       ; 40dc: 8d ee 2e
-    sta five_byte_table_paired_with_collectable_sprite_ids + 1        ; 40df: 8d f3 2e
+    sta collectable_being_used_spriteids + 1                          ; 40df: 8d f3 2e
     ldx #<envelope2                                                   ; 40e2: a2 68
     ldy #>envelope2                                                   ; 40e4: a0 43
     jsr define_envelope                                               ; 40e6: 20 5e 39
@@ -1337,7 +1337,7 @@ c40f9
     lda #spriteid_gun                                                 ; 4116: a9 cd
     sta object_spriteid,x                                             ; 4118: 9d a8 09
     lda #spriteid_cache1                                              ; 411b: a9 d0
-    sta object_sprite_mask_type,x                                     ; 411d: 9d ac 38
+    sta object_erase_type,x                                           ; 411d: 9d ac 38
     lda #$c0                                                          ; 4120: a9 c0
     sta object_z_order,x                                              ; 4122: 9d c2 38
 return6
@@ -1466,7 +1466,7 @@ c41ed
     sta object_x_high,x                                               ; 41f7: 9d 66 09
     sta object_y_high,x                                               ; 41fa: 9d 92 09
     lda #spriteid_cache2                                              ; 41fd: a9 d1
-    sta object_sprite_mask_type,x                                     ; 41ff: 9d ac 38
+    sta object_erase_type,x                                           ; 41ff: 9d ac 38
     lda #$c0                                                          ; 4202: a9 c0
     sta object_z_order,x                                              ; 4204: 9d c2 38
 c4207

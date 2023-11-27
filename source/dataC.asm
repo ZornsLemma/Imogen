@@ -73,8 +73,8 @@ objectid_table                        = 5
 objectid_torch                        = 2
 opcode_jmp                            = 76
 sprite_op_flags_copy_screen           = 1
-sprite_op_flags_erase                 = 2
-sprite_op_flags_ignore_mask           = 4
+sprite_op_flags_erase_to_bg_colour    = 2
+sprite_op_flags_erase_to_fg_colour    = 4
 sprite_op_flags_normal                = 0
 spriteid_197                          = 197
 spriteid_boulder                      = 200
@@ -286,11 +286,11 @@ player_using_object_spriteid                        = $2eb6
 previous_player_using_object_spriteid               = $2eb7
 toolbar_collectable_spriteids                       = $2ee8
 collectable_spriteids                               = $2eed
-five_byte_table_paired_with_collectable_sprite_ids  = $2ef2
+collectable_being_used_spriteids                    = $2ef2
 inhibit_monkey_climb_flag                           = $31d7
 print_encrypted_string_at_yx_centred                = $37f3
 wait_one_second_then_check_keys                     = $388d
-object_sprite_mask_type                             = $38ac
+object_erase_type                                   = $38ac
 l38ae                                               = $38ae
 object_z_order                                      = $38c2
 l38c4                                               = $38c4
@@ -551,7 +551,7 @@ no_level_change
     bne check_rope_fire_starting_local                                ; 3c10: d0 71
     ldx #4                                                            ; 3c12: a2 04
     lda #spriteid_cache8                                              ; 3c14: a9 d9
-    sta object_sprite_mask_type,x                                     ; 3c16: 9d ac 38
+    sta object_erase_type,x                                           ; 3c16: 9d ac 38
     lda #$e0                                                          ; 3c19: a9 e0
     sta object_z_order,x                                              ; 3c1b: 9d c2 38
     ldx burnable_rope_cell_x                                          ; 3c1e: ae 77 3d
@@ -585,7 +585,7 @@ burning_in_progress
     clc                                                               ; 3c55: 18
     adc burnable_rope_cell_y                                          ; 3c56: 6d 78 3d
     tay                                                               ; 3c59: a8
-    lda #sprite_op_flags_ignore_mask                                  ; 3c5a: a9 04
+    lda #sprite_op_flags_erase_to_fg_colour                           ; 3c5a: a9 04
     sta sprite_op_flags                                               ; 3c5c: 85 15
     lda #spriteid_rope_end                                            ; 3c5e: a9 0a
     jsr draw_sprite_a_at_cell_xy                                      ; 3c60: 20 4c 1f
@@ -931,7 +931,7 @@ set_room_1_objects
     jsr set_object_position_from_cell_xy                              ; 3e95: 20 5d 1f
     tax                                                               ; 3e98: aa
     lda #spriteid_cache5                                              ; 3e99: a9 d1
-    sta object_sprite_mask_type,x                                     ; 3e9b: 9d ac 38
+    sta object_erase_type,x                                           ; 3e9b: 9d ac 38
     lda #$c0                                                          ; 3e9e: a9 c0
     sta object_z_order,x                                              ; 3ea0: 9d c2 38
     ldx #5                                                            ; 3ea3: a2 05
@@ -944,7 +944,7 @@ set_room_1_objects
     lda #$ff                                                          ; 3eb1: a9 ff
     sta object_direction,x                                            ; 3eb3: 9d be 09
     lda #spriteid_cache6                                              ; 3eb6: a9 d2
-    sta object_sprite_mask_type,x                                     ; 3eb8: 9d ac 38
+    sta object_erase_type,x                                           ; 3eb8: 9d ac 38
     lda #$a0                                                          ; 3ebb: a9 a0
     sta object_z_order,x                                              ; 3ebd: 9d c2 38
     ldx #7                                                            ; 3ec0: a2 07
@@ -955,7 +955,7 @@ set_room_1_objects
     jsr set_object_position_from_cell_xy                              ; 3eca: 20 5d 1f
     tax                                                               ; 3ecd: aa
     lda #spriteid_cache7                                              ; 3ece: a9 d3
-    sta object_sprite_mask_type,x                                     ; 3ed0: 9d ac 38
+    sta object_erase_type,x                                           ; 3ed0: 9d ac 38
     lda #$a0                                                          ; 3ed3: a9 a0
     sta object_z_order,x                                              ; 3ed5: 9d c2 38
 update_table_local
@@ -1104,7 +1104,7 @@ update_torch
     lda #spriteid_torch_object                                        ; 3fef: a9 ca
     sta collectable_spriteids+1                                       ; 3ff1: 8d ee 2e
     lda #spriteid_torch_object2                                       ; 3ff4: a9 df
-    sta five_byte_table_paired_with_collectable_sprite_ids + 1        ; 3ff6: 8d f3 2e
+    sta collectable_being_used_spriteids + 1                          ; 3ff6: 8d f3 2e
 ; check for level change (branch if not)
     lda current_level                                                 ; 3ff9: a5 31
     cmp level_before_latest_level_and_room_initialisation             ; 3ffb: c5 51
@@ -1491,7 +1491,7 @@ c4278
     beq c428a                                                         ; 427c: f0 0c
     ldx #objectid_parrot                                              ; 427e: a2 05
     lda #spriteid_cache5                                              ; 4280: a9 d1
-    sta object_sprite_mask_type,x                                     ; 4282: 9d ac 38
+    sta object_erase_type,x                                           ; 4282: 9d ac 38
     lda #$f0                                                          ; 4285: a9 f0
     sta object_z_order,x                                              ; 4287: 9d c2 38
 c428a
@@ -2163,8 +2163,8 @@ pydis_end
 !if (sprite_data - level_data) != $0aac {
     !error "Assertion failed: sprite_data - level_data == $0aac"
 }
-!if (sprite_op_flags_ignore_mask) != $04 {
-    !error "Assertion failed: sprite_op_flags_ignore_mask == $04"
+!if (sprite_op_flags_erase_to_fg_colour) != $04 {
+    !error "Assertion failed: sprite_op_flags_erase_to_fg_colour == $04"
 }
 !if (spriteid_boulder) != $c8 {
     !error "Assertion failed: spriteid_boulder == $c8"

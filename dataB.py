@@ -99,8 +99,8 @@ label(0x0a73, "room_2_clock_repeat_limit")      # Set to $10 to play the clock a
 label(0x0a74, "room_2_pendulum_swing_index")    # Animation index for the pendulum swing
 label(0x0a75, "player_playing_cuckoo_progress") # 0: not playing, 1-3: animation step for cuckoo in player's hand singing
 
-label(0x2ef4, "five_byte_table_paired_with_collectable_sprite_ids+2")
-label(0x38b2, "object_sprite_mask_type + objectid_rope_broken_bottom_end")
+label(0x2ef4, "collectable_being_used_spriteids+2")
+label(0x38b2, "object_erase_type + objectid_rope_broken_bottom_end")
 label(0x38c8, "object_z_order + objectid_rope_broken_bottom_end")
 label(0x3b02, "developer_mode_inactive")
 label(0x3b0c, "check_got_cuckoo")

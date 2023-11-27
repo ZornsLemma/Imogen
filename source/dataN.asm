@@ -30,8 +30,8 @@ objectid_player                       = 0
 objectid_player_accessory             = 1
 opcode_jmp                            = 76
 sprite_op_flags_copy_screen           = 1
-sprite_op_flags_erase                 = 2
-sprite_op_flags_ignore_mask           = 4
+sprite_op_flags_erase_to_bg_colour    = 2
+sprite_op_flags_erase_to_fg_colour    = 4
 sprite_op_flags_normal                = 0
 spriteid_197                          = 197
 spriteid_brazier                      = 58
@@ -227,11 +227,11 @@ player_using_object_spriteid                        = $2eb6
 previous_player_using_object_spriteid               = $2eb7
 toolbar_collectable_spriteids                       = $2ee8
 collectable_spriteids                               = $2eed
-five_byte_table_paired_with_collectable_sprite_ids  = $2ef2
+collectable_being_used_spriteids                    = $2ef2
 inhibit_monkey_climb_flag                           = $31d7
 print_encrypted_string_at_yx_centred                = $37f3
 wait_one_second_then_check_keys                     = $388d
-object_sprite_mask_type                             = $38ac
+object_erase_type                                   = $38ac
 l38ae                                               = $38ae
 l38af                                               = $38af
 l38b0                                               = $38b0
@@ -1643,7 +1643,7 @@ room_3_update_handler
     lda #$df                                                          ; 441a: a9 df
     sta collectable_spriteids+1                                       ; 441c: 8d ee 2e
     lda #$e3                                                          ; 441f: a9 e3
-    sta five_byte_table_paired_with_collectable_sprite_ids + 1        ; 4421: 8d f3 2e
+    sta collectable_being_used_spriteids + 1                          ; 4421: 8d f3 2e
     lda #$e5                                                          ; 4424: a9 e5
     sta l38af                                                         ; 4426: 8d af 38
     lda #$40 ; '@'                                                    ; 4429: a9 40
@@ -1739,11 +1739,11 @@ c4475
 
 c44f9
     lda #$e6                                                          ; 44f9: a9 e6
-    sta five_byte_table_paired_with_collectable_sprite_ids + 1        ; 44fb: 8d f3 2e
+    sta collectable_being_used_spriteids + 1                          ; 44fb: 8d f3 2e
     lda #0                                                            ; 44fe: a9 00
     jsr l25f5                                                         ; 4500: 20 f5 25
     lda #$e3                                                          ; 4503: a9 e3
-    sta five_byte_table_paired_with_collectable_sprite_ids + 1        ; 4505: 8d f3 2e
+    sta collectable_being_used_spriteids + 1                          ; 4505: 8d f3 2e
 return7
     rts                                                               ; 4508: 60
 

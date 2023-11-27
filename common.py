@@ -108,8 +108,8 @@ def envelope(addr, lab):
 sprite_op_flags_dict = {
     0x00: "sprite_op_flags_normal",
     0x01: "sprite_op_flags_copy_screen",
-    0x02: "sprite_op_flags_erase",
-    0x04: "sprite_op_flags_ignore_mask",
+    0x02: "sprite_op_flags_erase_to_bg_colour",
+    0x04: "sprite_op_flags_erase_to_fg_colour",
 }
 
 constant(0x0, "copy_mode_2x2")
@@ -368,12 +368,12 @@ def common_to_all():
     label(0x2eed, "collectable_spriteids")
     label(0x2eee, "collectable_spriteids+1")
     label(0x2eef, "collectable_spriteids+2")
-    label(0x2ef2, "five_byte_table_paired_with_collectable_sprite_ids") # TODO: size is a guess - it's at least two bytes though
-    expr_label(0x2ef3, make_add("five_byte_table_paired_with_collectable_sprite_ids", "1"))
+    label(0x2ef2, "collectable_being_used_spriteids")
+    expr_label(0x2ef3, make_add("collectable_being_used_spriteids", "1"))
     label(0x31d7, "inhibit_monkey_climb_flag")
     label(0x37f3, "print_encrypted_string_at_yx_centred")
     label(0x388d, "wait_one_second_then_check_keys")
-    label(0x38ac, "object_sprite_mask_type")
+    label(0x38ac, "object_erase_type")
     label(0x38c2, "object_z_order")
     label(0x38d8, "object_room_collision_flags")
     label(0x38f6, "play_sound_yx")

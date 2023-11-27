@@ -49,8 +49,8 @@ opcode_jmp                            = 76
 player_collision_flag_baby            = 6
 player_collision_flag_mouse_ball      = 128
 sprite_op_flags_copy_screen           = 1
-sprite_op_flags_erase                 = 2
-sprite_op_flags_ignore_mask           = 4
+sprite_op_flags_erase_to_bg_colour    = 2
+sprite_op_flags_erase_to_fg_colour    = 4
 sprite_op_flags_normal                = 0
 spriteid_197                          = 197
 spriteid_baby0                        = 214
@@ -264,11 +264,11 @@ player_using_object_spriteid                        = $2eb6
 previous_player_using_object_spriteid               = $2eb7
 toolbar_collectable_spriteids                       = $2ee8
 collectable_spriteids                               = $2eed
-five_byte_table_paired_with_collectable_sprite_ids  = $2ef2
+collectable_being_used_spriteids                    = $2ef2
 inhibit_monkey_climb_flag                           = $31d7
 print_encrypted_string_at_yx_centred                = $37f3
 wait_one_second_then_check_keys                     = $388d
-object_sprite_mask_type                             = $38ac
+object_erase_type                                   = $38ac
 object_z_order                                      = $38c2
 object_room_collision_flags                         = $38d8
 play_sound_yx                                       = $38f6
@@ -550,7 +550,7 @@ level_unchanged
     ldx #objectid_left_mouse                                          ; 3c21: a2 02
     jsr set_object_position_from_current_sprite_position              ; 3c23: 20 6d 1f
     lda #spriteid_cache2                                              ; 3c26: a9 cd
-    sta object_sprite_mask_type,x                                     ; 3c28: 9d ac 38
+    sta object_erase_type,x                                           ; 3c28: 9d ac 38
     lda #$c0                                                          ; 3c2b: a9 c0
     sta object_z_order,x                                              ; 3c2d: 9d c2 38
 ; Set up the right mouse
@@ -571,7 +571,7 @@ level_unchanged
     lda #$ff                                                          ; 3c4c: a9 ff
     sta object_direction,x                                            ; 3c4e: 9d be 09
     lda #spriteid_cache3                                              ; 3c51: a9 ce
-    sta object_sprite_mask_type,x                                     ; 3c53: 9d ac 38
+    sta object_erase_type,x                                           ; 3c53: 9d ac 38
     lda #$c0                                                          ; 3c56: a9 c0
     sta object_z_order,x                                              ; 3c58: 9d c2 38
 ; Set up the ball
@@ -582,7 +582,7 @@ level_unchanged
     lda #1                                                            ; 3c65: a9 01
     sta object_direction,x                                            ; 3c67: 9d be 09
     lda #spriteid_cache1                                              ; 3c6a: a9 cc
-    sta object_sprite_mask_type,x                                     ; 3c6c: 9d ac 38
+    sta object_erase_type,x                                           ; 3c6c: 9d ac 38
     lda #$40 ; '@'                                                    ; 3c6f: a9 40
     sta object_z_order,x                                              ; 3c71: 9d c2 38
 move_mouse_ball_if_room_0_local
@@ -1038,7 +1038,7 @@ room1_saxophone_and_brazier_handler
     sta toolbar_collectable_spriteids + 1                             ; 3f17: 8d e9 2e
     lda #spriteid_saxophone1                                          ; 3f1a: a9 d2
     sta collectable_spriteids + 1                                     ; 3f1c: 8d ee 2e
-    sta five_byte_table_paired_with_collectable_sprite_ids + 1        ; 3f1f: 8d f3 2e
+    sta collectable_being_used_spriteids + 1                          ; 3f1f: 8d f3 2e
     ldx #<envelope3                                                   ; 3f22: a2 16
     ldy #>envelope3                                                   ; 3f24: a0 44
     jsr define_envelope                                               ; 3f26: 20 5e 39
@@ -1059,7 +1059,7 @@ room1_saxophone_and_brazier_handler
     lda #1                                                            ; 3f42: a9 01
     sta object_direction,x                                            ; 3f44: 9d be 09
     lda #spriteid_cache1                                              ; 3f47: a9 cc
-    sta object_sprite_mask_type,x                                     ; 3f49: 9d ac 38
+    sta object_erase_type,x                                           ; 3f49: 9d ac 38
     lda #spriteid_saxophone1                                          ; 3f4c: a9 d2
     sta object_spriteid,x                                             ; 3f4e: 9d a8 09
 return3
@@ -1359,7 +1359,7 @@ room2_update_handler_not_new_level
     lda #objectid_baby                                                ; 40d6: a9 02
     jsr set_object_position_from_cell_xy                              ; 40d8: 20 5d 1f
     lda #spriteid_cache1                                              ; 40db: a9 cc
-    sta object_sprite_mask_type + objectid_baby                       ; 40dd: 8d ae 38
+    sta object_erase_type + objectid_baby                             ; 40dd: 8d ae 38
 room2_update_second_part_local
     jmp room2_update_second_part                                      ; 40e0: 4c d9 41
 
@@ -1739,7 +1739,7 @@ table_x_position_update_finished
     lda #spriteid_table                                               ; 4348: a9 de
     sta object_spriteid,x                                             ; 434a: 9d a8 09
     lda #spriteid_cache1                                              ; 434d: a9 cc
-    sta object_sprite_mask_type,x                                     ; 434f: 9d ac 38
+    sta object_erase_type,x                                           ; 434f: 9d ac 38
 add_table_to_collision_map_if_room_3_local
     jmp add_table_to_collision_map_if_room_3                          ; 4352: 4c f6 43
 
@@ -2131,8 +2131,8 @@ pydis_end
 !if (object_collided_right_wall) != $04 {
     !error "Assertion failed: object_collided_right_wall == $04"
 }
-!if (object_sprite_mask_type + objectid_baby) != $38ae {
-    !error "Assertion failed: object_sprite_mask_type + objectid_baby == $38ae"
+!if (object_erase_type + objectid_baby) != $38ae {
+    !error "Assertion failed: object_erase_type + objectid_baby == $38ae"
 }
 !if (object_spriteid + objectid_left_mouse) != $09aa {
     !error "Assertion failed: object_spriteid + objectid_left_mouse == $09aa"

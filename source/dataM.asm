@@ -30,8 +30,8 @@ objectid_player                       = 0
 objectid_player_accessory             = 1
 opcode_jmp                            = 76
 sprite_op_flags_copy_screen           = 1
-sprite_op_flags_erase                 = 2
-sprite_op_flags_ignore_mask           = 4
+sprite_op_flags_erase_to_bg_colour    = 2
+sprite_op_flags_erase_to_fg_colour    = 4
 sprite_op_flags_normal                = 0
 spriteid_197                          = 197
 spriteid_brazier                      = 58
@@ -231,11 +231,11 @@ player_using_object_spriteid                        = $2eb6
 previous_player_using_object_spriteid               = $2eb7
 toolbar_collectable_spriteids                       = $2ee8
 collectable_spriteids                               = $2eed
-five_byte_table_paired_with_collectable_sprite_ids  = $2ef2
+collectable_being_used_spriteids                    = $2ef2
 inhibit_monkey_climb_flag                           = $31d7
 print_encrypted_string_at_yx_centred                = $37f3
 wait_one_second_then_check_keys                     = $388d
-object_sprite_mask_type                             = $38ac
+object_erase_type                                   = $38ac
 l38af                                               = $38af
 l38b1                                               = $38b1
 l38b2                                               = $38b2
@@ -1351,7 +1351,7 @@ c4200
     sta toolbar_collectable_spriteids+1                               ; 4202: 8d e9 2e
     lda #$d9                                                          ; 4205: a9 d9
     sta collectable_spriteids+1                                       ; 4207: 8d ee 2e
-    sta five_byte_table_paired_with_collectable_sprite_ids + 1        ; 420a: 8d f3 2e
+    sta collectable_being_used_spriteids + 1                          ; 420a: 8d f3 2e
 ; check for level change (branch if not)
     lda current_level                                                 ; 420d: a5 31
     cmp level_before_latest_level_and_room_initialisation             ; 420f: c5 51

@@ -30,8 +30,8 @@ objectid_player                       = 0
 objectid_player_accessory             = 1
 opcode_jmp                            = 76
 sprite_op_flags_copy_screen           = 1
-sprite_op_flags_erase                 = 2
-sprite_op_flags_ignore_mask           = 4
+sprite_op_flags_erase_to_bg_colour    = 2
+sprite_op_flags_erase_to_fg_colour    = 4
 sprite_op_flags_normal                = 0
 spriteid_197                          = 197
 spriteid_brazier                      = 58
@@ -229,13 +229,13 @@ toolbar_collectable_spriteids                       = $2ee8
 l2eeb                                               = $2eeb
 collectable_spriteids                               = $2eed
 l2ef0                                               = $2ef0
-five_byte_table_paired_with_collectable_sprite_ids  = $2ef2
+collectable_being_used_spriteids                    = $2ef2
 l2ef4                                               = $2ef4
 l2ef5                                               = $2ef5
 inhibit_monkey_climb_flag                           = $31d7
 print_encrypted_string_at_yx_centred                = $37f3
 wait_one_second_then_check_keys                     = $388d
-object_sprite_mask_type                             = $38ac
+object_erase_type                                   = $38ac
 l38ae                                               = $38ae
 l38af                                               = $38af
 l38b0                                               = $38b0
@@ -716,7 +716,7 @@ c3d77
     sta toolbar_collectable_spriteids+1                               ; 3d80: 8d e9 2e
     lda #$c8                                                          ; 3d83: a9 c8
     sta collectable_spriteids+1                                       ; 3d85: 8d ee 2e
-    sta five_byte_table_paired_with_collectable_sprite_ids + 1        ; 3d88: 8d f3 2e
+    sta collectable_being_used_spriteids + 1                          ; 3d88: 8d f3 2e
     lda #$cb                                                          ; 3d8b: a9 cb
     sta toolbar_collectable_spriteids+2                               ; 3d8d: 8d ea 2e
     lda #$c9                                                          ; 3d90: a9 c9

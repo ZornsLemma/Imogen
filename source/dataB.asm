@@ -80,8 +80,8 @@ objectid_spell                        = 5
 objectid_suspended_boulder            = 4
 opcode_jmp                            = 76
 sprite_op_flags_copy_screen           = 1
-sprite_op_flags_erase                 = 2
-sprite_op_flags_ignore_mask           = 4
+sprite_op_flags_erase_to_bg_colour    = 2
+sprite_op_flags_erase_to_fg_colour    = 4
 sprite_op_flags_normal                = 0
 spriteid_197                          = 197
 spriteid_ball                         = 59
@@ -294,11 +294,11 @@ player_using_object_spriteid                        = $2eb6
 previous_player_using_object_spriteid               = $2eb7
 toolbar_collectable_spriteids                       = $2ee8
 collectable_spriteids                               = $2eed
-five_byte_table_paired_with_collectable_sprite_ids  = $2ef2
+collectable_being_used_spriteids                    = $2ef2
 inhibit_monkey_climb_flag                           = $31d7
 print_encrypted_string_at_yx_centred                = $37f3
 wait_one_second_then_check_keys                     = $388d
-object_sprite_mask_type                             = $38ac
+object_erase_type                                   = $38ac
 object_z_order                                      = $38c2
 object_room_collision_flags                         = $38d8
 play_sound_yx                                       = $38f6
@@ -824,7 +824,7 @@ set_clock_workings_in_room_1
     lda #1                                                            ; 3dc1: a9 01
     sta object_direction,x                                            ; 3dc3: 9d be 09
     lda #$ff                                                          ; 3dc6: a9 ff
-    sta object_sprite_mask_type,x                                     ; 3dc8: 9d ac 38
+    sta object_erase_type,x                                           ; 3dc8: 9d ac 38
     sta object_z_order,x                                              ; 3dcb: 9d c2 38
 update_room_1_cuckooing_animation_local
     jmp update_room_1_cuckooing_animation                             ; 3dce: 4c 2b 3e
@@ -936,7 +936,7 @@ update_clock_first_update_same_level
     lda #1                                                            ; 3e86: a9 01
     sta object_direction,x                                            ; 3e88: 9d be 09
     lda #$ff                                                          ; 3e8b: a9 ff
-    sta object_sprite_mask_type,x                                     ; 3e8d: 9d ac 38
+    sta object_erase_type,x                                           ; 3e8d: 9d ac 38
     sta object_z_order,x                                              ; 3e90: 9d c2 38
     ldx #<envelope2                                                   ; 3e93: a2 cc
     ldy #>envelope2                                                   ; 3e95: a0 44
@@ -1071,7 +1071,7 @@ player_using_cuckoo
 set_cuckoo_sprite
     ldy player_playing_cuckoo_progress                                ; 3f6d: ac 75 0a
     lda cuckoo_tweeting_spriteids,y                                   ; 3f70: b9 2b 3f
-    sta five_byte_table_paired_with_collectable_sprite_ids + 1        ; 3f73: 8d f3 2e
+    sta collectable_being_used_spriteids + 1                          ; 3f73: 8d f3 2e
     lda update_room_first_update_flag                                 ; 3f76: ad 2b 13
     bne return3                                                       ; 3f79: d0 06
     dey                                                               ; 3f7b: 88
@@ -1296,7 +1296,7 @@ room_2_draw_clock_workings
     lda #$c0                                                          ; 40cb: a9 c0
     sta object_z_order,x                                              ; 40cd: 9d c2 38
     lda #spriteid_cache1                                              ; 40d0: a9 d7
-    sta object_sprite_mask_type,x                                     ; 40d2: 9d ac 38
+    sta object_erase_type,x                                           ; 40d2: 9d ac 38
 skip_draw_workings
     jmp room_2_update_clock_workings                                  ; 40d5: 4c 52 41
 
@@ -1459,7 +1459,7 @@ room_2_initialise_suspended_boulder
     ldy suspended_boulder_y                                           ; 4205: ac da 42
     dey                                                               ; 4208: 88
     dey                                                               ; 4209: 88
-    lda #sprite_op_flags_ignore_mask                                  ; 420a: a9 04
+    lda #sprite_op_flags_erase_to_fg_colour                           ; 420a: a9 04
     sta sprite_op_flags                                               ; 420c: 85 15
     lda #spriteid_rope_end                                            ; 420e: a9 0a
     jsr draw_sprite_a_at_cell_xy                                      ; 4210: 20 4c 1f
@@ -1470,7 +1470,7 @@ room_2_initialise_suspended_boulder
     sta object_spriteid + objectid_suspended_boulder                  ; 421a: 8d ac 09
 ; broken rope in front of boulder needs offscreen cache
     lda #spriteid_cache2                                              ; 421d: a9 d8
-    sta object_sprite_mask_type + objectid_rope_broken_bottom_end     ; 421f: 8d b2 38
+    sta object_erase_type + objectid_rope_broken_bottom_end           ; 421f: 8d b2 38
     lda #$e0                                                          ; 4222: a9 e0
     sta object_z_order + objectid_rope_broken_bottom_end              ; 4224: 8d c8 38
 update_rope_sprites_and_boulder_collision_map_local
@@ -1588,7 +1588,7 @@ update_hourglass_handler
     sta toolbar_collectable_spriteids+2                               ; 42e4: 8d ea 2e
     lda #spriteid_hourglass                                           ; 42e7: a9 dd
     sta collectable_spriteids+2                                       ; 42e9: 8d ef 2e
-    sta five_byte_table_paired_with_collectable_sprite_ids+2          ; 42ec: 8d f4 2e
+    sta collectable_being_used_spriteids+2                            ; 42ec: 8d f4 2e
 ; check for being in room 2
     lda desired_room_index                                            ; 42ef: a5 30
     cmp #2                                                            ; 42f1: c9 02
@@ -1604,7 +1604,7 @@ update_hourglass_handler
     lda #1                                                            ; 4304: a9 01
     sta object_direction,x                                            ; 4306: 9d be 09
     lda #spriteid_cache3                                              ; 4309: a9 df
-    sta object_sprite_mask_type,x                                     ; 430b: 9d ac 38
+    sta object_erase_type,x                                           ; 430b: 9d ac 38
     lda #$c0                                                          ; 430e: a9 c0
     sta object_z_order,x                                              ; 4310: 9d c2 38
     lda #spriteid_hourglass                                           ; 4313: a9 dd
@@ -1850,7 +1850,7 @@ room_3_update_handler
     lda #1                                                            ; 447e: a9 01
     sta object_direction,x                                            ; 4480: 9d be 09
     lda #spriteid_cache1                                              ; 4483: a9 d7
-    sta object_sprite_mask_type,x                                     ; 4485: 9d ac 38
+    sta object_erase_type,x                                           ; 4485: 9d ac 38
     lda #$c0                                                          ; 4488: a9 c0
     sta object_z_order,x                                              ; 448a: 9d c2 38
     lda #spriteid_cuckoo                                              ; 448d: a9 d3
@@ -2141,8 +2141,8 @@ pydis_end
 !if (sprite_data - level_data) != $0a71 {
     !error "Assertion failed: sprite_data - level_data == $0a71"
 }
-!if (sprite_op_flags_ignore_mask) != $04 {
-    !error "Assertion failed: sprite_op_flags_ignore_mask == $04"
+!if (sprite_op_flags_erase_to_fg_colour) != $04 {
+    !error "Assertion failed: sprite_op_flags_erase_to_fg_colour == $04"
 }
 !if (spriteid_ball) != $3b {
     !error "Assertion failed: spriteid_ball == $3b"

@@ -30,8 +30,8 @@ objectid_player                       = 0
 objectid_player_accessory             = 1
 opcode_jmp                            = 76
 sprite_op_flags_copy_screen           = 1
-sprite_op_flags_erase                 = 2
-sprite_op_flags_ignore_mask           = 4
+sprite_op_flags_erase_to_bg_colour    = 2
+sprite_op_flags_erase_to_fg_colour    = 4
 sprite_op_flags_normal                = 0
 spriteid_197                          = 197
 spriteid_brazier                      = 58
@@ -225,12 +225,12 @@ player_using_object_spriteid                        = $2eb6
 previous_player_using_object_spriteid               = $2eb7
 toolbar_collectable_spriteids                       = $2ee8
 collectable_spriteids                               = $2eed
-five_byte_table_paired_with_collectable_sprite_ids  = $2ef2
+collectable_being_used_spriteids                    = $2ef2
 l2ef4                                               = $2ef4
 inhibit_monkey_climb_flag                           = $31d7
 print_encrypted_string_at_yx_centred                = $37f3
 wait_one_second_then_check_keys                     = $388d
-object_sprite_mask_type                             = $38ac
+object_erase_type                                   = $38ac
 l38ae                                               = $38ae
 l38af                                               = $38af
 l38b2                                               = $38b2
@@ -908,7 +908,7 @@ c3ef3
     beq c3f00                                                         ; 3efb: f0 03
     lda l3e5a,y                                                       ; 3efd: b9 5a 3e
 c3f00
-    sta five_byte_table_paired_with_collectable_sprite_ids + 1        ; 3f00: 8d f3 2e
+    sta collectable_being_used_spriteids + 1                          ; 3f00: 8d f3 2e
 ; check for first update in room (branch if so)
     lda update_room_first_update_flag                                 ; 3f03: ad 2b 13
     bne return2                                                       ; 3f06: d0 12

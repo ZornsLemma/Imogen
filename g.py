@@ -295,7 +295,7 @@ substitute_labels = {
         "l0073": "destination_address_high",
     },
     (0x3d3d, 0x3d41): {
-        "object_sprite_mask_type": "envelope_1",
+        "object_erase_type": "envelope_1",
     },
     (0x4173, 0x41c9): {
         "l0073": "height_in_cells_to_write",
@@ -863,10 +863,10 @@ The behaviour of '11' shows that this is a compression scheme, where columns can
     comment(0x1435, "set the vertical offset within a character row (0-7) of the sprite Y position")
     comment(0x143b, "load X and check flags to see if we are copying the mask to a destination sprite")
     label(0x1446, "sprite_op_without_copying_mask")
-    expr(0x1449, make_or("sprite_op_flags_ignore_mask", "sprite_op_flags_erase"))
-    expr(0x144d, "sprite_op_flags_ignore_mask")
+    expr(0x1449, make_or("sprite_op_flags_erase_to_fg_colour", "sprite_op_flags_erase_to_bg_colour"))
+    expr(0x144d, "sprite_op_flags_erase_to_fg_colour")
     comment(0x1450, """Bit 1 of sprite_op_flags is set (but not bit 2).
-This erases the sprite from the screen.
+This erases the sprite from the screen, setting pixels to the background colour.
 This self-modifies code""")
     expr(0x1451, "opcode_clc")
     comment(0x1455, "Write JMP and_byte_with_mask_and_write_to_screen2")
@@ -876,7 +876,7 @@ This self-modifies code""")
     ab(0x1464)
     blank(0x1466)
     comment(0x1466, "Write 'SEC; SEC'")
-    label(0x1466, "write_sprite_without_mask")
+    label(0x1466, "erase_sprite_to_fg_colour")
     expr(0x1467, "opcode_sec")
     label(0x146e, "skip3")
     stars(0x1471, "Regular sprite routines")
@@ -1628,28 +1628,28 @@ Object state is stored in 'object_*' memory locations, and the state of the prev
     label(0x2157, "undraw_object_x")
     comment(0x2159, "exit if object is not visible")
     comment(0x215e, "prepare to draw sprite")
-    comment(0x2177, """based on object_sprite_mask_type:
+    comment(0x2177, """based on object_erase_type:
 
-    00 means erase,
-    ff means draw without mask,
-    otherwise draw normally with mask""")
+    00 means erase to bg colour,
+    ff means erase to fg colour,
+    otherwise erase by drawing an 'erase' spriteid""")
     expr(0x2181, "sprite_op_flags_normal")
     ab(0x2182)
-    label(0x2184, "erase_object")
-    expr(0x2188, "sprite_op_flags_erase")
+    label(0x2184, "erase_object_to_bg_colour")
+    expr(0x2188, "sprite_op_flags_erase_to_bg_colour")
     ab(0x2189)
-    label(0x218b, "draw_object_without_mask")
-    expr(0x218f, "sprite_op_flags_ignore_mask")
+    label(0x218b, "erase_object_to_fg_colour")
+    expr(0x218f, "sprite_op_flags_erase_to_fg_colour")
     label(0x2190, "draw_or_erase_object")
     label(0x2197, "done_drawing_object")
     label(0x219a, "draw_object_x")
-    comment(0x21c1, """The object_sprite_mask_type determines the sprite operation:
+    comment(0x21c1, """The object_erase_type determines the sprite operation:
 
     $00: draw normally
     $ff: draw normally
-    other value S: erase wheat's on screen, copy the mask to destination spriteid S
+    other value S: copy what's on screen to this destination spriteid (used when erasing)
 """)
-    expr(0x21cd, make_or("sprite_op_flags_erase", "sprite_op_flags_copy_screen"))
+    expr(0x21cd, make_or("sprite_op_flags_erase_to_bg_colour", "sprite_op_flags_copy_screen"))
     label(0x21d0, "draw_object_sprite")
     comment(0x21d3, "return if not the player accessory object")
     expr(0x21d4, "objectid_player_accessory")
@@ -2406,6 +2406,7 @@ if (not already falling) then branch (start falling)""")
     expr(0x2ede, "spriteid_wizard_using_object")
     label(0x2ee4, "store_object_held_and_return")
     byte(0x2ee8, 5)
+    byte(0x2eed, 5)
     byte(0x2ef2, 5)
     blank(0x2ef7)
 
@@ -2883,7 +2884,7 @@ On Entry:
     sound(0x38a4, "sound_data1")
     comment(0x38ac, "The envelope definitions get overwritten after initialisation - this is harmless as they will have been copied into the OS workspace when they were defined.")
     envelope(0x38ac, "envelope_1")
-    label(0x38ad, "object_sprite_mask_type + objectid_player_accessory")
+    label(0x38ad, "object_erase_type + objectid_player_accessory")
     sound(0x38ba, "sound_data3")
     envelope(0x38c2, "envelope_2")
     sound(0x38d0, "sound_data2")
@@ -3053,12 +3054,12 @@ expr(0x3d4c, make_lo("envelope_3"))
 expr(0x3d4e, make_hi("envelope_3"))
 comment(0x3d52, "initialise the 'all clear' and 'all set' tiles")
 label(0x3d54, "init_tiles_loop")
-comment(0x3d61, "store special spriteid used for preserving the background behind the player and the player's accessory?")
+comment(0x3d61, "store special spriteid used for preserving the background behind the player and the player's accessory")
 expr(0x3d62, "spriteid_erase_player")
 expr(0x3d67, "spriteid_erase_player_accessory")
 comment(0x3d6b, "set z order for the player at the midway point so that objects can appear in front or behind the player")
 comment(0x3d70, "set z order for the player accessory object as being just in front of the player")
-expr(0x3d73, "object_z_order+1")
+expr(0x3d73, "object_z_order + objectid_player_accessory")
 comment(0x3d75, "seed random number generation by reading the User VIA timers")
 comment(0x3d8d, "set base address for sprite rendering, $6200 is the main game area")
 comment(0x3d91, "Check to see if VDU output was disabled (VDU 21) when we first started to execute, before we re-enabled output (VDU 6) ourselves.")

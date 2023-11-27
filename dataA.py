@@ -76,7 +76,7 @@ substitute_labels = {
 s = SubstituteLabels(substitute_labels)
 set_label_maker_hook(s.substitute_label_maker)
 
-expr(0x40de, make_add("object_sprite_mask_type", "objectid_baby"))
+expr(0x40de, make_add("object_erase_type", "objectid_baby"))
 expr(0x3ff3, "copy_mode_simple")
 
 comment(0x3d21, """This table is indexed by a function of mouse_ball_position (it's not directly indexed

@@ -30,8 +30,8 @@ objectid_player                       = 0
 objectid_player_accessory             = 1
 opcode_jmp                            = 76
 sprite_op_flags_copy_screen           = 1
-sprite_op_flags_erase                 = 2
-sprite_op_flags_ignore_mask           = 4
+sprite_op_flags_erase_to_bg_colour    = 2
+sprite_op_flags_erase_to_fg_colour    = 4
 sprite_op_flags_normal                = 0
 spriteid_197                          = 197
 spriteid_brazier                      = 58
@@ -226,12 +226,12 @@ player_using_object_spriteid                        = $2eb6
 previous_player_using_object_spriteid               = $2eb7
 toolbar_collectable_spriteids                       = $2ee8
 collectable_spriteids                               = $2eed
-five_byte_table_paired_with_collectable_sprite_ids  = $2ef2
+collectable_being_used_spriteids                    = $2ef2
 l2ef4                                               = $2ef4
 inhibit_monkey_climb_flag                           = $31d7
 print_encrypted_string_at_yx_centred                = $37f3
 wait_one_second_then_check_keys                     = $388d
-object_sprite_mask_type                             = $38ac
+object_erase_type                                   = $38ac
 l38ae                                               = $38ae
 l38af                                               = $38af
 l38b2                                               = $38b2
@@ -1303,7 +1303,7 @@ room_0_update_handler
     lda #$d3                                                          ; 41b7: a9 d3
     sta collectable_spriteids+1                                       ; 41b9: 8d ee 2e
     lda #$d5                                                          ; 41bc: a9 d5
-    sta five_byte_table_paired_with_collectable_sprite_ids + 1        ; 41be: 8d f3 2e
+    sta collectable_being_used_spriteids + 1                          ; 41be: 8d f3 2e
     lda #$d7                                                          ; 41c1: a9 d7
     sta toolbar_collectable_spriteids+2                               ; 41c3: 8d ea 2e
     lda #$d4                                                          ; 41c6: a9 d4
@@ -1553,7 +1553,7 @@ room_1_code
     ldy #2                                                            ; 436f: a0 02
     lda #9                                                            ; 4371: a9 09
     jsr draw_rope                                                     ; 4373: 20 b9 1d
-    lda #sprite_op_flags_ignore_mask                                  ; 4376: a9 04
+    lda #sprite_op_flags_erase_to_fg_colour                           ; 4376: a9 04
     sta sprite_op_flags                                               ; 4378: 85 15
     jsr sprite_op                                                     ; 437a: 20 8d 13
 ; draw sprite $d8 at (26,10)
@@ -2031,6 +2031,6 @@ pydis_end
 !if (sprite_data - level_data) != $0a58 {
     !error "Assertion failed: sprite_data - level_data == $0a58"
 }
-!if (sprite_op_flags_ignore_mask) != $04 {
-    !error "Assertion failed: sprite_op_flags_ignore_mask == $04"
+!if (sprite_op_flags_erase_to_fg_colour) != $04 {
+    !error "Assertion failed: sprite_op_flags_erase_to_fg_colour == $04"
 }

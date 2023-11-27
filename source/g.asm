@@ -134,8 +134,8 @@ rows_per_cell                                   = 8
 screen_width_in_pixels                          = 320
 screen_width_minus_one                          = 39
 sprite_op_flags_copy_screen                     = 1
-sprite_op_flags_erase                           = 2
-sprite_op_flags_ignore_mask                     = 4
+sprite_op_flags_erase_to_bg_colour              = 2
+sprite_op_flags_erase_to_fg_colour              = 4
 sprite_op_flags_normal                          = 0
 spriteid_197                                    = 197
 spriteid_brazier                                = 58
@@ -683,7 +683,7 @@ object_reset_loop
     lda #1                                                            ; 12cb: a9 01       ..  :119a[1]
     sta object_direction,y                                            ; 12cd: 99 be 09    ... :119c[1]
     lda #$ff                                                          ; 12d0: a9 ff       ..  :119f[1]
-    sta object_sprite_mask_type,y                                     ; 12d2: 99 ac 38    ..8 :11a1[1]
+    sta object_erase_type,y                                           ; 12d2: 99 ac 38    ..8 :11a1[1]
     sta object_z_order,y                                              ; 12d5: 99 c2 38    ..8 :11a4[1]
     iny                                                               ; 12d8: c8          .   :11a7[1]
     cpy #max_objects                                                  ; 12d9: c0 0b       ..  :11a8[1]
@@ -1206,12 +1206,12 @@ not_out_of_range
 
 sprite_op_without_copying_mask
     lda sprite_op_flags                                               ; 1577: a5 15       ..  :1446[1]
-    and #sprite_op_flags_ignore_mask | sprite_op_flags_erase          ; 1579: 29 06       ).  :1448[1]
+    and #sprite_op_flags_erase_to_fg_colour | sprite_op_flags_erase_to_bg_colour; 1579: 29 06       ).  :1448[1]
     beq skip3                                                         ; 157b: f0 22       ."  :144a[1]
-    and #sprite_op_flags_ignore_mask                                  ; 157d: 29 04       ).  :144c[1]
-    bne write_sprite_without_mask                                     ; 157f: d0 16       ..  :144e[1]
+    and #sprite_op_flags_erase_to_fg_colour                           ; 157d: 29 04       ).  :144c[1]
+    bne erase_sprite_to_fg_colour                                     ; 157f: d0 16       ..  :144e[1]
 ; Bit 1 of sprite_op_flags is set (but not bit 2).
-; This erases the sprite from the screen.
+; This erases the sprite from the screen, setting pixels to the background colour.
 ; This self-modifies code
     lda #opcode_clc                                                   ; 1581: a9 18       ..  :1450[1]
     sta smc_sprite_opcode                                             ; 1583: 8d 86 14    ... :1452[1]
@@ -1225,7 +1225,7 @@ sprite_op_without_copying_mask
     bne skip3                                                         ; 1595: d0 08       ..  :1464[1]   ; ALWAYS branch
 
 ; Write 'SEC; SEC'
-write_sprite_without_mask
+erase_sprite_to_fg_colour
     lda #opcode_sec                                                   ; 1597: a9 38       .8  :1466[1]
     sta smc_sprite_opcode                                             ; 1599: 8d 86 14    ... :1468[1]
     sta smc_sprite_opcode+1                                           ; 159c: 8d 87 14    ... :146b[1]
@@ -2249,7 +2249,7 @@ update_level_completion
 ; set diamond sprite to use
     lda diamond_sprite_cycle,y                                        ; 1b53: b9 b2 1a    ... :1a22[1]
     sta collectable_spriteids                                         ; 1b56: 8d ed 2e    ... :1a25[1]
-    sta five_byte_table_paired_with_collectable_sprite_ids            ; 1b59: 8d f2 2e    ... :1a28[1]
+    sta collectable_being_used_spriteids                              ; 1b59: 8d f2 2e    ... :1a28[1]
 ; set toolbar sprite to use for diamond spell
     lda #spriteid_menu_item_completion_spell                          ; 1b5c: a9 21       .!  :1a2b[1]
     sta toolbar_collectable_spriteids                                 ; 1b5e: 8d e8 2e    ... :1a2d[1]
@@ -2279,7 +2279,7 @@ update_level_completion
 skip_adding_level_completion_spell
     ldx remember_obj_index                                            ; 1b8a: ae ae 1a    ... :1a59[1]
     lda #spriteid_197                                                 ; 1b8d: a9 c5       ..  :1a5c[1]
-    sta object_sprite_mask_type,x                                     ; 1b8f: 9d ac 38    ..8 :1a5e[1]
+    sta object_erase_type,x                                           ; 1b8f: 9d ac 38    ..8 :1a5e[1]
     lda #0                                                            ; 1b92: a9 00       ..  :1a61[1]
     sta object_spriteid,x                                             ; 1b94: 9d a8 09    ... :1a63[1]
 ; exit if level is completed
@@ -3838,24 +3838,24 @@ undraw_object_x
     sta sprite_y_base_high                                            ; 22a1: 85 1b       ..  :2170[1]
     lda object_direction_old,x                                        ; 22a3: bd c9 09    ... :2172[1]
     sta sprite_reflect_flag                                           ; 22a6: 85 1d       ..  :2175[1]
-; based on object_sprite_mask_type:
+; based on object_erase_type:
 ; 
-;     00 means erase,
-;     ff means draw without mask,
-;     otherwise draw normally with mask
-    lda object_sprite_mask_type,x                                     ; 22a8: bd ac 38    ..8 :2177[1]
-    beq erase_object                                                  ; 22ab: f0 08       ..  :217a[1]
+;     00 means erase to bg colour,
+;     ff means erase to fg colour,
+;     otherwise erase by drawing an 'erase' spriteid
+    lda object_erase_type,x                                           ; 22a8: bd ac 38    ..8 :2177[1]
+    beq erase_object_to_bg_colour                                     ; 22ab: f0 08       ..  :217a[1]
     cmp #$ff                                                          ; 22ad: c9 ff       ..  :217c[1]
-    beq draw_object_without_mask                                      ; 22af: f0 0b       ..  :217e[1]
+    beq erase_object_to_fg_colour                                     ; 22af: f0 0b       ..  :217e[1]
     ldy #sprite_op_flags_normal                                       ; 22b1: a0 00       ..  :2180[1]
     beq draw_or_erase_object                                          ; 22b3: f0 0c       ..  :2182[1]   ; ALWAYS branch
-erase_object
+erase_object_to_bg_colour
     lda object_spriteid_old,x                                         ; 22b5: bd b3 09    ... :2184[1]
-    ldy #sprite_op_flags_erase                                        ; 22b8: a0 02       ..  :2187[1]
+    ldy #sprite_op_flags_erase_to_bg_colour                           ; 22b8: a0 02       ..  :2187[1]
     bne draw_or_erase_object                                          ; 22ba: d0 05       ..  :2189[1]   ; ALWAYS branch
-draw_object_without_mask
+erase_object_to_fg_colour
     lda object_spriteid_old,x                                         ; 22bc: bd b3 09    ... :218b[1]
-    ldy #sprite_op_flags_ignore_mask                                  ; 22bf: a0 04       ..  :218e[1]
+    ldy #sprite_op_flags_erase_to_fg_colour                           ; 22bf: a0 04       ..  :218e[1]
 draw_or_erase_object
     sta sprite_id                                                     ; 22c1: 85 16       ..  :2190[1]
     sty sprite_op_flags                                               ; 22c3: 84 15       ..  :2192[1]
@@ -3882,18 +3882,19 @@ draw_object_x
     sta sprite_id                                                     ; 22ec: 85 16       ..  :21bb[1]
     lda #sprite_op_flags_normal                                       ; 22ee: a9 00       ..  :21bd[1]
     sta sprite_op_flags                                               ; 22f0: 85 15       ..  :21bf[1]
-; The object_sprite_mask_type determines the sprite operation:
+; The object_erase_type determines the sprite operation:
 ; 
 ;     $00: draw normally
 ;     $ff: draw normally
-;     other value S: erase wheat's on screen, copy the mask to destination spriteid S
+;     other value S: copy what's on screen to this destination spriteid (used when
+; erasing)
 ; 
-    lda object_sprite_mask_type,x                                     ; 22f2: bd ac 38    ..8 :21c1[1]
+    lda object_erase_type,x                                           ; 22f2: bd ac 38    ..8 :21c1[1]
     beq draw_object_sprite                                            ; 22f5: f0 0a       ..  :21c4[1]
     cmp #$ff                                                          ; 22f7: c9 ff       ..  :21c6[1]
     beq draw_object_sprite                                            ; 22f9: f0 06       ..  :21c8[1]
     sta dest_sprite_id                                                ; 22fb: 85 14       ..  :21ca[1]
-    lda #sprite_op_flags_erase | sprite_op_flags_copy_screen          ; 22fd: a9 03       ..  :21cc[1]
+    lda #sprite_op_flags_erase_to_bg_colour | sprite_op_flags_copy_screen; 22fd: a9 03       ..  :21cc[1]
     sta sprite_op_flags                                               ; 22ff: 85 15       ..  :21ce[1]
 draw_object_sprite
     jsr sprite_op                                                     ; 2301: 20 8d 13     .. :21d0[1]
@@ -5515,7 +5516,7 @@ unplot_menu_pointer
 ; erase the hand
     lda #spriteid_pointer_hand                                        ; 2b2a: a9 1d       ..  :29f9[1]
     sta sprite_id                                                     ; 2b2c: 85 16       ..  :29fb[1]
-    lda #sprite_op_flags_erase                                        ; 2b2e: a9 02       ..  :29fd[1]
+    lda #sprite_op_flags_erase_to_bg_colour                           ; 2b2e: a9 02       ..  :29fd[1]
     sta sprite_op_flags                                               ; 2b30: 85 15       ..  :29ff[1]
     jsr sprite_op                                                     ; 2b32: 20 8d 13     .. :2a01[1]
 ; restore the background tile where the fingertip overlaps the tile
@@ -5695,7 +5696,7 @@ toggle_sound_on_off
     lda #sprite_op_flags_normal                                       ; 2c56: a9 00       ..  :2b25[1]
     ldx sound_enable_flag                                             ; 2c58: ae 66 39    .f9 :2b27[1]
     bne set_normal_or_erase_mode                                      ; 2c5b: d0 02       ..  :2b2a[1]
-    lda #sprite_op_flags_erase                                        ; 2c5d: a9 02       ..  :2b2c[1]
+    lda #sprite_op_flags_erase_to_bg_colour                           ; 2c5d: a9 02       ..  :2b2c[1]
 set_normal_or_erase_mode
     sta sprite_op_flags                                               ; 2c5f: 85 15       ..  :2b2e[1]
     jsr sprite_op                                                     ; 2c61: 20 8d 13     .. :2b30[1]
@@ -5906,7 +5907,7 @@ plot_menu_item
     sta displayed_menu_slots,x                                        ; 2d57: 9d 6f 29    .o) :2c26[1]
     bne plot_menu_item_sprites                                        ; 2d5a: d0 0a       ..  :2c29[1]
 ; erase where menu item used to be
-    lda #sprite_op_flags_erase                                        ; 2d5c: a9 02       ..  :2c2b[1]
+    lda #sprite_op_flags_erase_to_bg_colour                           ; 2d5c: a9 02       ..  :2c2b[1]
     sta sprite_op_flags                                               ; 2d5e: 85 15       ..  :2c2d[1]
     jsr sprite_op                                                     ; 2d60: 20 8d 13     .. :2c2f[1]
     jmp restore_variables_and_return                                  ; 2d63: 4c 3d 2c    L=, :2c32[1]
@@ -6326,7 +6327,7 @@ find_menu_index_given_spriteid_loop
     ldx #0                                                            ; 3004: a2 00       ..  :2ed3[1]
     beq store_object_held_and_return                                  ; 3006: f0 0d       ..  :2ed5[1]   ; ALWAYS branch
 found_menu_index
-    ldx five_byte_table_paired_with_collectable_sprite_ids,y          ; 3008: be f2 2e    ... :2ed7[1]
+    ldx collectable_being_used_spriteids,y                            ; 3008: be f2 2e    ... :2ed7[1]
     lda object_spriteid                                               ; 300b: ad a8 09    ... :2eda[1]
     cmp #spriteid_wizard_using_object                                 ; 300e: c9 35       .5  :2edd[1]
     beq store_object_held_and_return                                  ; 3010: f0 03       ..  :2edf[1]
@@ -6338,10 +6339,8 @@ store_object_held_and_return
 toolbar_collectable_spriteids
     !byte 0, 0, 0, 0, 0                                               ; 3019: 00 00 00... ... :2ee8[1]
 collectable_spriteids
-    !byte 0                                                           ; 301e: 00          .   :2eed[1]
-    !byte 0                                                           ; 301f: 00          .   :2eee[1]
-    !byte 0, 0, 0                                                     ; 3020: 00 00 00    ... :2eef[1]
-five_byte_table_paired_with_collectable_sprite_ids
+    !byte 0, 0, 0, 0, 0                                               ; 301e: 00 00 00... ... :2eed[1]
+collectable_being_used_spriteids
     !byte 0, 0, 0, 0, 0                                               ; 3023: 00 00 00... ... :2ef2[1]
 
 cat_tail_spriteids
@@ -7749,7 +7748,7 @@ sound_data1
     !word 1                                                           ; 39db: 01 00       ..  :38aa[1]   ; duration
 ; The envelope definitions get overwritten after initialisation - this is harmless as
 ; they will have been copied into the OS workspace when they were defined.
-object_sprite_mask_type
+object_erase_type
 envelope_1
     !byte 1                                                           ; 39dd: 01          .   :38ac[1]   ; envelope number
     !byte 3                                                           ; 39de: 03          .   :38ad[1]   ; step length (100ths of a second)
@@ -8372,18 +8371,18 @@ init_tiles_loop
     dey                                                               ; 3d5e: 88          .
     bpl init_tiles_loop                                               ; 3d5f: 10 f3       ..
 ; store special spriteid used for preserving the background behind the player and the
-; player's accessory?
+; player's accessory
     lda #spriteid_erase_player                                        ; 3d61: a9 c7       ..
-    sta object_sprite_mask_type                                       ; 3d63: 8d ac 38    ..8
+    sta object_erase_type                                             ; 3d63: 8d ac 38    ..8
     lda #spriteid_erase_player_accessory                              ; 3d66: a9 c6       ..
-    sta object_sprite_mask_type + objectid_player_accessory           ; 3d68: 8d ad 38    ..8
+    sta object_erase_type + objectid_player_accessory                 ; 3d68: 8d ad 38    ..8
 ; set z order for the player at the midway point so that objects can appear in front or
 ; behind the player
     lda #$80                                                          ; 3d6b: a9 80       ..
     sta object_z_order                                                ; 3d6d: 8d c2 38    ..8
 ; set z order for the player accessory object as being just in front of the player
     lda #$7f                                                          ; 3d70: a9 7f       ..
-    sta object_z_order+1                                              ; 3d72: 8d c3 38    ..8
+    sta object_z_order + objectid_player_accessory                    ; 3d72: 8d c3 38    ..8
 ; seed random number generation by reading the User VIA timers
     lda user_via_t1c_l                                                ; 3d75: ad 64 fe    .d.
     sta rnd0                                                          ; 3d78: 85 06       ..
@@ -9946,8 +9945,8 @@ pydis_end
 !if (object_collided_right_wall) != $04 {
     !error "Assertion failed: object_collided_right_wall == $04"
 }
-!if (object_z_order+1) != $38c3 {
-    !error "Assertion failed: object_z_order+1 == $38c3"
+!if (object_z_order + objectid_player_accessory) != $38c3 {
+    !error "Assertion failed: object_z_order + objectid_player_accessory == $38c3"
 }
 !if (objectid_old_player) != $0b {
     !error "Assertion failed: objectid_old_player == $0b"
@@ -10063,17 +10062,17 @@ pydis_end
 !if (sprite_op_flags_copy_screen) != $01 {
     !error "Assertion failed: sprite_op_flags_copy_screen == $01"
 }
-!if (sprite_op_flags_erase) != $02 {
-    !error "Assertion failed: sprite_op_flags_erase == $02"
+!if (sprite_op_flags_erase_to_bg_colour) != $02 {
+    !error "Assertion failed: sprite_op_flags_erase_to_bg_colour == $02"
 }
-!if (sprite_op_flags_erase | sprite_op_flags_copy_screen) != $03 {
-    !error "Assertion failed: sprite_op_flags_erase | sprite_op_flags_copy_screen == $03"
+!if (sprite_op_flags_erase_to_bg_colour | sprite_op_flags_copy_screen) != $03 {
+    !error "Assertion failed: sprite_op_flags_erase_to_bg_colour | sprite_op_flags_copy_screen == $03"
 }
-!if (sprite_op_flags_ignore_mask) != $04 {
-    !error "Assertion failed: sprite_op_flags_ignore_mask == $04"
+!if (sprite_op_flags_erase_to_fg_colour) != $04 {
+    !error "Assertion failed: sprite_op_flags_erase_to_fg_colour == $04"
 }
-!if (sprite_op_flags_ignore_mask | sprite_op_flags_erase) != $06 {
-    !error "Assertion failed: sprite_op_flags_ignore_mask | sprite_op_flags_erase == $06"
+!if (sprite_op_flags_erase_to_fg_colour | sprite_op_flags_erase_to_bg_colour) != $06 {
+    !error "Assertion failed: sprite_op_flags_erase_to_fg_colour | sprite_op_flags_erase_to_bg_colour == $06"
 }
 !if (sprite_op_flags_normal) != $00 {
     !error "Assertion failed: sprite_op_flags_normal == $00"
