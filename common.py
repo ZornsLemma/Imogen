@@ -250,8 +250,8 @@ common_sprite_dict = {
     0x57: "spriteid_rope3",
     0x58: "spriteid_rope4",
     197: "spriteid_197",            # TODO: Better name
-    198: "spriteid_198",            # TODO: Better name
-    199: "spriteid_199",            # TODO: Better name
+    198: "spriteid_erase_player_accessory",
+    199: "spriteid_erase_player",
 }
 
 def common_to_all():

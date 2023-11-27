@@ -138,8 +138,6 @@ sprite_op_flags_erase                           = 2
 sprite_op_flags_ignore_mask                     = 4
 sprite_op_flags_normal                          = 0
 spriteid_197                                    = 197
-spriteid_198                                    = 198
-spriteid_199                                    = 199
 spriteid_brazier                                = 58
 spriteid_cat1                                   = 27
 spriteid_cat2                                   = 28
@@ -168,6 +166,8 @@ spriteid_diamond2                               = 40
 spriteid_diamond3                               = 41
 spriteid_diamond4                               = 42
 spriteid_diamond5                               = 43
+spriteid_erase_player                           = 199
+spriteid_erase_player_accessory                 = 198
 spriteid_fingertip_tile_restoration             = 30
 spriteid_fire1                                  = 60
 spriteid_fire2                                  = 61
@@ -490,8 +490,8 @@ old_brkv1                                           = $0ab1
 old_brkv2                                           = $0ab3
 old_irq1v                                           = $0ab5
 area_to_copy_to_or_from_sideways_ram                = $0b00
-sprite_199                                          = $0b11
-sprite_198                                          = $0b93
+sprite_erase_player                                 = $0b11
+sprite_erase_player_accessory                       = $0b93
 sprite_197                                          = $0bc5
 level_specific_initialisation_ptr                   = $3ad7
 level_specific_update_ptr                           = $3ad9
@@ -958,13 +958,13 @@ update_room_first_update_flag
 ; 
 ; *************************************************************************************
 get_address_of_sprite_a
-    ldx #<sprite_199                                                  ; 145d: a2 11       ..  :132c[1]
-    ldy #>sprite_199                                                  ; 145f: a0 0b       ..  :132e[1]
-    cmp #spriteid_199                                                 ; 1461: c9 c7       ..  :1330[1]
+    ldx #<sprite_erase_player                                         ; 145d: a2 11       ..  :132c[1]
+    ldy #>sprite_erase_player                                         ; 145f: a0 0b       ..  :132e[1]
+    cmp #spriteid_erase_player                                        ; 1461: c9 c7       ..  :1330[1]
     beq return2                                                       ; 1463: f0 42       .B  :1332[1]
-    ldx #<sprite_198                                                  ; 1465: a2 93       ..  :1334[1]
-    ldy #>sprite_198                                                  ; 1467: a0 0b       ..  :1336[1]
-    cmp #spriteid_198                                                 ; 1469: c9 c6       ..  :1338[1]
+    ldx #<sprite_erase_player_accessory                               ; 1465: a2 93       ..  :1334[1]
+    ldy #>sprite_erase_player_accessory                               ; 1467: a0 0b       ..  :1336[1]
+    cmp #spriteid_erase_player_accessory                              ; 1469: c9 c6       ..  :1338[1]
     beq return2                                                       ; 146b: f0 3a       .:  :133a[1]
     ldx #<sprite_197                                                  ; 146d: a2 c5       ..  :133c[1]
     ldy #>sprite_197                                                  ; 146f: a0 0b       ..  :133e[1]
@@ -8373,9 +8373,9 @@ init_tiles_loop
     bpl init_tiles_loop                                               ; 3d5f: 10 f3       ..
 ; store special spriteid used for preserving the background behind the player and the
 ; player's accessory?
-    lda #spriteid_199                                                 ; 3d61: a9 c7       ..
+    lda #spriteid_erase_player                                        ; 3d61: a9 c7       ..
     sta object_sprite_mask_type                                       ; 3d63: 8d ac 38    ..8
-    lda #spriteid_198                                                 ; 3d66: a9 c6       ..
+    lda #spriteid_erase_player_accessory                              ; 3d66: a9 c6       ..
     sta object_sprite_mask_type + objectid_player_accessory           ; 3d68: 8d ad 38    ..8
 ; set z order for the player at the midway point so that objects can appear in front or
 ; behind the player
@@ -9397,11 +9397,11 @@ pydis_end
 !if (<sprite_197) != $c5 {
     !error "Assertion failed: <sprite_197 == $c5"
 }
-!if (<sprite_198) != $93 {
-    !error "Assertion failed: <sprite_198 == $93"
+!if (<sprite_erase_player) != $11 {
+    !error "Assertion failed: <sprite_erase_player == $11"
 }
-!if (<sprite_199) != $11 {
-    !error "Assertion failed: <sprite_199 == $11"
+!if (<sprite_erase_player_accessory) != $93 {
+    !error "Assertion failed: <sprite_erase_player_accessory == $93"
 }
 !if (<start_of_screen_memory) != $c0 {
     !error "Assertion failed: <start_of_screen_memory == $c0"
@@ -9616,11 +9616,11 @@ pydis_end
 !if (>sprite_197) != $0b {
     !error "Assertion failed: >sprite_197 == $0b"
 }
-!if (>sprite_198) != $0b {
-    !error "Assertion failed: >sprite_198 == $0b"
+!if (>sprite_erase_player) != $0b {
+    !error "Assertion failed: >sprite_erase_player == $0b"
 }
-!if (>sprite_199) != $0b {
-    !error "Assertion failed: >sprite_199 == $0b"
+!if (>sprite_erase_player_accessory) != $0b {
+    !error "Assertion failed: >sprite_erase_player_accessory == $0b"
 }
 !if (>start_of_screen_memory) != $5b {
     !error "Assertion failed: >start_of_screen_memory == $5b"
@@ -10081,12 +10081,6 @@ pydis_end
 !if (spriteid_197) != $c5 {
     !error "Assertion failed: spriteid_197 == $c5"
 }
-!if (spriteid_198) != $c6 {
-    !error "Assertion failed: spriteid_198 == $c6"
-}
-!if (spriteid_199) != $c7 {
-    !error "Assertion failed: spriteid_199 == $c7"
-}
 !if (spriteid_brazier) != $3a {
     !error "Assertion failed: spriteid_brazier == $3a"
 }
@@ -10167,6 +10161,12 @@ pydis_end
 }
 !if (spriteid_diamond5) != $2b {
     !error "Assertion failed: spriteid_diamond5 == $2b"
+}
+!if (spriteid_erase_player) != $c7 {
+    !error "Assertion failed: spriteid_erase_player == $c7"
+}
+!if (spriteid_erase_player_accessory) != $c6 {
+    !error "Assertion failed: spriteid_erase_player_accessory == $c6"
 }
 !if (spriteid_fingertip_tile_restoration) != $1e {
     !error "Assertion failed: spriteid_fingertip_tile_restoration == $1e"
