@@ -291,9 +291,7 @@ inhibit_monkey_climb_flag                           = $31d7
 print_encrypted_string_at_yx_centred                = $37f3
 wait_one_second_then_check_keys                     = $388d
 object_erase_type                                   = $38ac
-l38ae                                               = $38ae
 object_z_order                                      = $38c2
-l38c4                                               = $38c4
 object_room_collision_flags                         = $38d8
 play_sound_yx                                       = $38f6
 define_envelope                                     = $395e
@@ -972,7 +970,7 @@ update_table_state
     cmp #1                                                            ; 3ee7: c9 01
     bne update_table                                                  ; 3ee9: d0 19
     ldx #objectid_torch                                               ; 3eeb: a2 02
-    ldy #5                                                            ; 3eed: a0 05
+    ldy #objectid_table                                               ; 3eed: a0 05
     jsr test_for_collision_between_objects_x_and_y                    ; 3eef: 20 e2 28
     beq update_table                                                  ; 3ef2: f0 10
 update_table_burning_progress
@@ -1115,7 +1113,7 @@ update_torch
     sta save_game_level_c_got_torch                                   ; 4006: 8d 0a 0a
 update_room_1_torch
     lda #spriteid_cache1                                              ; 4009: a9 cc
-    sta l38ae                                                         ; 400b: 8d ae 38
+    sta object_erase_type + objectid_torch                            ; 400b: 8d ae 38
     lda save_game_level_c_got_torch                                   ; 400e: ad 0a 0a
     bne check_for_player_using_torch                                  ; 4011: d0 40
     lda desired_room_index                                            ; 4013: a5 30
@@ -1129,7 +1127,7 @@ update_room_1_torch
     jsr set_object_position_from_cell_xy                              ; 4023: 20 5d 1f
     tax                                                               ; 4026: aa
     lda #$c0                                                          ; 4027: a9 c0
-    sta l38c4                                                         ; 4029: 8d c4 38
+    sta object_z_order + objectid_torch                               ; 4029: 8d c4 38
     lda #spriteid_torch_object                                        ; 402c: a9 ca
     sta object_spriteid + objectid_torch                              ; 402e: 8d aa 09
 return4
@@ -1414,22 +1412,23 @@ c41d5
     lda l0a71                                                         ; 41e4: ad 71 0a
     sta l442c                                                         ; 41e7: 8d 2c 44
     lda l0a74                                                         ; 41ea: ad 74 0a
-    sta l442f                                                         ; 41ed: 8d 2f 44
+    sta parrot_delay_before_chirp                                     ; 41ed: 8d 2f 44
     lda l0a72                                                         ; 41f0: ad 72 0a
-    sta l442d                                                         ; 41f3: 8d 2d 44
+    sta parrot_animation_index                                        ; 41f3: 8d 2d 44
     lda l0a73                                                         ; 41f6: ad 73 0a
-    sta l442e                                                         ; 41f9: 8d 2e 44
+    sta parrot_animation_step                                         ; 41f9: 8d 2e 44
+; X,Y: the X coordinate of the rope/parrot, A: the direction of the parrot
     ldx #$40 ; '@'                                                    ; 41fc: a2 40
     ldy #0                                                            ; 41fe: a0 00
     lda #1                                                            ; 4200: a9 01
-    jsr update_parrot                                                 ; 4202: 20 2d 42
+    jsr update_parrot_and_burnable_rope                               ; 4202: 20 2d 42
     lda l442c                                                         ; 4205: ad 2c 44
     sta l0a71                                                         ; 4208: 8d 71 0a
-    lda l442f                                                         ; 420b: ad 2f 44
+    lda parrot_delay_before_chirp                                     ; 420b: ad 2f 44
     sta l0a74                                                         ; 420e: 8d 74 0a
-    lda l442d                                                         ; 4211: ad 2d 44
+    lda parrot_animation_index                                        ; 4211: ad 2d 44
     sta l0a72                                                         ; 4214: 8d 72 0a
-    lda l442e                                                         ; 4217: ad 2e 44
+    lda parrot_animation_step                                         ; 4217: ad 2e 44
     sta l0a73                                                         ; 421a: 8d 73 0a
     rts                                                               ; 421d: 60
 
@@ -1442,6 +1441,7 @@ parrot_spriteid_table
     !byte 0                                                           ; 4223: 00
     !byte spriteid_parrot1                                            ; 4224: da
     !byte 0                                                           ; 4225: 00
+parrot_squawk_spriteids
     !byte spriteid_parrot_squawk                                      ; 4226: dc
     !byte spriteid_parrot_squawk                                      ; 4227: dc
     !byte spriteid_parrot_squawk                                      ; 4228: dc
@@ -1450,42 +1450,44 @@ parrot_spriteid_table
     !byte spriteid_parrot_squawk                                      ; 422b: dc
     !byte 0                                                           ; 422c: 00
 
-update_parrot
-    sta l4427                                                         ; 422d: 8d 27 44
-    stx l4428                                                         ; 4230: 8e 28 44
-    sty l4429                                                         ; 4233: 8c 29 44
+update_parrot_and_burnable_rope
+    sta parrot_direction                                              ; 422d: 8d 27 44
+    stx parrot_x_low                                                  ; 4230: 8e 28 44
+    sty parrot_x_high                                                 ; 4233: 8c 29 44
     lda currently_updating_logic_for_room_index                       ; 4236: ad ba 1a
     cmp #3                                                            ; 4239: c9 03
-    beq c4242                                                         ; 423b: f0 05
+    beq update_parrot_with_rope                                       ; 423b: f0 05
     lda save_game_level_c_room_0_and_2_burning_rope_progress          ; 423d: ad 0c 0a
-    bmi c428d                                                         ; 4240: 30 4b
+    bmi return6_local                                                 ; 4240: 30 4b
 ; check for first update in room (branch if not)
-c4242
+update_parrot_with_rope
     lda update_room_first_update_flag                                 ; 4242: ad 2b 13
-    beq c4290                                                         ; 4245: f0 49
+    beq update_parrot_not_first_update                                ; 4245: f0 49
 ; check for level change (branch if not)
     lda current_level                                                 ; 4247: a5 31
     cmp level_before_latest_level_and_room_initialisation             ; 4249: c5 51
-    beq c4278                                                         ; 424b: f0 2b
+    beq only_the_room_changed                                         ; 424b: f0 2b
+; level changed, set the envelope.
     ldx #<envelope1                                                   ; 424d: a2 4b
     ldy #>envelope1                                                   ; 424f: a0 45
     jsr define_envelope                                               ; 4251: 20 5e 39
+; if the rope burning is in progress, set it done.
     lda save_game_level_c_room_0_and_2_burning_rope_progress          ; 4254: ad 0c 0a
-    beq c4265                                                         ; 4257: f0 0c
+    beq rope_is_not_burned                                            ; 4257: f0 0c
     lda #$ff                                                          ; 4259: a9 ff
     sta save_game_level_c_room_0_and_2_burning_rope_progress          ; 425b: 8d 0c 0a
     lda currently_updating_logic_for_room_index                       ; 425e: ad ba 1a
     cmp #3                                                            ; 4261: c9 03
-    bne c428d                                                         ; 4263: d0 28
-c4265
+    bne return6_local                                                 ; 4263: d0 28
+rope_is_not_burned
     lda l442a                                                         ; 4265: ad 2a 44
     sta l442c                                                         ; 4268: 8d 2c 44
     lda #6                                                            ; 426b: a9 06
-    sta l442d                                                         ; 426d: 8d 2d 44
-    sta l442e                                                         ; 4270: 8d 2e 44
+    sta parrot_animation_index                                        ; 426d: 8d 2d 44
+    sta parrot_animation_step                                         ; 4270: 8d 2e 44
     lda #$10                                                          ; 4273: a9 10
-    sta l442f                                                         ; 4275: 8d 2f 44
-c4278
+    sta parrot_delay_before_chirp                                     ; 4275: 8d 2f 44
+only_the_room_changed
     lda desired_room_index                                            ; 4278: a5 30
     cmp #1                                                            ; 427a: c9 01
     beq c428a                                                         ; 427c: f0 0c
@@ -1497,10 +1499,10 @@ c4278
 c428a
     jmp c43cd                                                         ; 428a: 4c cd 43
 
-c428d
+return6_local
     jmp return6                                                       ; 428d: 4c 24 44
 
-c4290
+update_parrot_not_first_update
     lda object_y_high                                                 ; 4290: ad 92 09
     sta l0070                                                         ; 4293: 85 70
     lda object_y_low                                                  ; 4295: ad 7c 09
@@ -1518,7 +1520,7 @@ c42ad
     lda l442a                                                         ; 42ad: ad 2a 44
     sta l4425                                                         ; 42b0: 8d 25 44
     lda #0                                                            ; 42b3: a9 00
-    sta l4426                                                         ; 42b5: 8d 26 44
+    sta parrot_cell_distance_to_player_x                              ; 42b5: 8d 26 44
     jmp c42ef                                                         ; 42b8: 4c ef 42
 
 c42bb
@@ -1526,14 +1528,16 @@ c42bb
     adc #$60 ; '`'                                                    ; 42bc: 69 60
 c42be
     sta l4425                                                         ; 42be: 8d 25 44
+; get difference between player and parrot x position
     lda object_x_low                                                  ; 42c1: ad 50 09
     sec                                                               ; 42c4: 38
-    sbc l4428                                                         ; 42c5: ed 28 44
+    sbc parrot_x_low                                                  ; 42c5: ed 28 44
     sta l0070                                                         ; 42c8: 85 70
     lda object_x_high                                                 ; 42ca: ad 66 09
-    sbc l4429                                                         ; 42cd: ed 29 44
+    sbc parrot_x_high                                                 ; 42cd: ed 29 44
     sta l0071                                                         ; 42d0: 85 71
-    bpl c42e5                                                         ; 42d2: 10 11
+    bpl got_distance_from_player_to_parrot                            ; 42d2: 10 11
+; invert $70,71
     lda l0070                                                         ; 42d4: a5 70
     eor #$ff                                                          ; 42d6: 49 ff
     clc                                                               ; 42d8: 18
@@ -1543,22 +1547,24 @@ c42be
     eor #$ff                                                          ; 42df: 49 ff
     adc #0                                                            ; 42e1: 69 00
     sta l0071                                                         ; 42e3: 85 71
-c42e5
+; divide to difference by eight to get a cell distance
+got_distance_from_player_to_parrot
     lsr l0071                                                         ; 42e5: 46 71
     lda l0070                                                         ; 42e7: a5 70
     ror                                                               ; 42e9: 6a
     lsr                                                               ; 42ea: 4a
     lsr                                                               ; 42eb: 4a
-    sta l4426                                                         ; 42ec: 8d 26 44
+    sta parrot_cell_distance_to_player_x                              ; 42ec: 8d 26 44
 c42ef
-    lda l442e                                                         ; 42ef: ad 2e 44
+    lda parrot_animation_step                                         ; 42ef: ad 2e 44
+; increment animation step, loop back to start of animation if at end
     clc                                                               ; 42f2: 18
     adc #1                                                            ; 42f3: 69 01
     tay                                                               ; 42f5: a8
     lda parrot_spriteid_table,y                                       ; 42f6: b9 1e 42
-    bne c42fe                                                         ; 42f9: d0 03
-    ldy l442d                                                         ; 42fb: ac 2d 44
-c42fe
+    bne skip1                                                         ; 42f9: d0 03
+    ldy parrot_animation_index                                        ; 42fb: ac 2d 44
+skip1
     lda l442c                                                         ; 42fe: ad 2c 44
     cmp l442a                                                         ; 4301: cd 2a 44
     beq c4340                                                         ; 4304: f0 3a
@@ -1574,7 +1580,7 @@ c4314
     beq c4374                                                         ; 431a: f0 58
     bcc c4340                                                         ; 431c: 90 22
     sbc l4425                                                         ; 431e: ed 25 44
-    cmp l4426                                                         ; 4321: cd 26 44
+    cmp parrot_cell_distance_to_player_x                              ; 4321: cd 26 44
     beq c4374                                                         ; 4324: f0 4e
     bcc c4374                                                         ; 4326: 90 4c
 c4328
@@ -1583,9 +1589,9 @@ c4328
     sbc l4430                                                         ; 432c: ed 30 44
     sta l442c                                                         ; 432f: 8d 2c 44
     lda #0                                                            ; 4332: a9 00
-    cmp l442d                                                         ; 4334: cd 2d 44
+    cmp parrot_animation_index                                        ; 4334: cd 2d 44
     beq c433d                                                         ; 4337: f0 04
-    sta l442d                                                         ; 4339: 8d 2d 44
+    sta parrot_animation_index                                        ; 4339: 8d 2d 44
     tay                                                               ; 433c: a8
 c433d
     jmp c43ca                                                         ; 433d: 4c ca 43
@@ -1599,7 +1605,7 @@ c4340
     beq c4374                                                         ; 434e: f0 24
     bcc c4374                                                         ; 4350: 90 22
     sbc l442c                                                         ; 4352: ed 2c 44
-    cmp l4426                                                         ; 4355: cd 26 44
+    cmp parrot_cell_distance_to_player_x                              ; 4355: cd 26 44
     beq c4374                                                         ; 4358: f0 1a
     bcc c4374                                                         ; 435a: 90 18
     lda l442c                                                         ; 435c: ad 2c 44
@@ -1607,60 +1613,63 @@ c4340
     adc l4430                                                         ; 4360: 6d 30 44
     sta l442c                                                         ; 4363: 8d 2c 44
     lda #3                                                            ; 4366: a9 03
-    cmp l442d                                                         ; 4368: cd 2d 44
+    cmp parrot_animation_index                                        ; 4368: cd 2d 44
     beq c433d                                                         ; 436b: f0 d0
-    sta l442d                                                         ; 436d: 8d 2d 44
+    sta parrot_animation_index                                        ; 436d: 8d 2d 44
     tay                                                               ; 4370: a8
     jmp c43ca                                                         ; 4371: 4c ca 43
 
 c4374
-    lda l442d                                                         ; 4374: ad 2d 44
+    lda parrot_animation_index                                        ; 4374: ad 2d 44
     cmp #6                                                            ; 4377: c9 06
     beq c4393                                                         ; 4379: f0 18
     cmp #8                                                            ; 437b: c9 08
-    bne c4383                                                         ; 437d: d0 04
+    bne get_new_delay_before_chirp                                    ; 437d: d0 04
     cpy #8                                                            ; 437f: c0 08
     bne c43ca                                                         ; 4381: d0 47
-c4383
+get_new_delay_before_chirp
     lda #$0f                                                          ; 4383: a9 0f
     jsr get_random_number_up_to_a                                     ; 4385: 20 a6 18
     clc                                                               ; 4388: 18
     adc #$10                                                          ; 4389: 69 10
-    sta l442f                                                         ; 438b: 8d 2f 44
+    sta parrot_delay_before_chirp                                     ; 438b: 8d 2f 44
     ldy #6                                                            ; 438e: a0 06
-    sty l442d                                                         ; 4390: 8c 2d 44
+    sty parrot_animation_index                                        ; 4390: 8c 2d 44
 c4393
-    dec l442f                                                         ; 4393: ce 2f 44
+    dec parrot_delay_before_chirp                                     ; 4393: ce 2f 44
     bpl c43ca                                                         ; 4396: 10 32
     lda currently_updating_logic_for_room_index                       ; 4398: ad ba 1a
     cmp #3                                                            ; 439b: c9 03
-    bne c43a5                                                         ; 439d: d0 06
+    bne room_0_or_2_rope                                              ; 439d: d0 06
     cmp desired_room_index                                            ; 439f: c5 30
-    beq c43bc                                                         ; 43a1: f0 19
-    bne c43c5                                                         ; 43a3: d0 20
-c43a5
+    beq chirp_sound                                                   ; 43a1: f0 19
+    bne reset_parrot_animation                                        ; 43a3: d0 20                   ; ALWAYS branch
+
+room_0_or_2_rope
     ldy l0a71                                                         ; 43a5: ac 71 0a
     lda desired_room_index                                            ; 43a8: a5 30
     cmp #2                                                            ; 43aa: c9 02
-    beq c43b8                                                         ; 43ac: f0 0a
+    beq room_2_parrot                                                 ; 43ac: f0 0a
     cmp #0                                                            ; 43ae: c9 00
-    bne c43c5                                                         ; 43b0: d0 13
+    bne reset_parrot_animation                                        ; 43b0: d0 13
+; room 0 rope
     cpy #$66 ; 'f'                                                    ; 43b2: c0 66
-    bcs c43bc                                                         ; 43b4: b0 06
-    bcc c43c5                                                         ; 43b6: 90 0d
-c43b8
+    bcs chirp_sound                                                   ; 43b4: b0 06
+    bcc reset_parrot_animation                                        ; 43b6: 90 0d                   ; ALWAYS branch
+
+room_2_parrot
     cpy #$68 ; 'h'                                                    ; 43b8: c0 68
-    bcs c43c5                                                         ; 43ba: b0 09
-c43bc
+    bcs reset_parrot_animation                                        ; 43ba: b0 09
+chirp_sound
     lda #0                                                            ; 43bc: a9 00
     ldx #<sound1                                                      ; 43be: a2 59
     ldy #>sound1                                                      ; 43c0: a0 45
     jsr play_sound_yx                                                 ; 43c2: 20 f6 38
-c43c5
-    ldy #8                                                            ; 43c5: a0 08
-    sty l442d                                                         ; 43c7: 8c 2d 44
+reset_parrot_animation
+    ldy #parrot_squawk_spriteids - parrot_spriteid_table              ; 43c5: a0 08
+    sty parrot_animation_index                                        ; 43c7: 8c 2d 44
 c43ca
-    sty l442e                                                         ; 43ca: 8c 2e 44
+    sty parrot_animation_step                                         ; 43ca: 8c 2e 44
 c43cd
     lda l442c                                                         ; 43cd: ad 2c 44
     ldx desired_room_index                                            ; 43d0: a6 30
@@ -1683,13 +1692,13 @@ c43ec
     asl                                                               ; 43ef: 0a
     rol object_y_high + objectid_parrot                               ; 43f0: 2e 97 09
     sta object_y_low + objectid_parrot                                ; 43f3: 8d 81 09
-    lda l4427                                                         ; 43f6: ad 27 44
+    lda parrot_direction                                              ; 43f6: ad 27 44
     sta object_direction + objectid_parrot                            ; 43f9: 8d c3 09
-    lda l4428                                                         ; 43fc: ad 28 44
+    lda parrot_x_low                                                  ; 43fc: ad 28 44
     sta object_x_low + objectid_parrot                                ; 43ff: 8d 55 09
-    lda l4429                                                         ; 4402: ad 29 44
+    lda parrot_x_high                                                 ; 4402: ad 29 44
     sta object_x_high + objectid_parrot                               ; 4405: 8d 6b 09
-    ldy l442e                                                         ; 4408: ac 2e 44
+    ldy parrot_animation_step                                         ; 4408: ac 2e 44
     lda parrot_spriteid_table,y                                       ; 440b: b9 1e 42
     sta object_spriteid + objectid_parrot                             ; 440e: 8d ad 09
     lda update_room_first_update_flag                                 ; 4411: ad 2b 13
@@ -1705,13 +1714,13 @@ return6
 
 l4425
     !byte 0                                                           ; 4425: 00
-l4426
+parrot_cell_distance_to_player_x
     !byte 0                                                           ; 4426: 00
-l4427
+parrot_direction
     !byte 0                                                           ; 4427: 00
-l4428
+parrot_x_low
     !byte 0                                                           ; 4428: 00
-l4429
+parrot_x_high
     !byte 0                                                           ; 4429: 00
 l442a
     !byte 0                                                           ; 442a: 00
@@ -1719,11 +1728,11 @@ l442b
     !byte 0                                                           ; 442b: 00
 l442c
     !byte 0                                                           ; 442c: 00
-l442d
+parrot_animation_index
     !byte 0                                                           ; 442d: 00
-l442e
+parrot_animation_step
     !byte 0                                                           ; 442e: 00
-l442f
+parrot_delay_before_chirp
     !byte 0                                                           ; 442f: 00
 l4430
     !byte 0                                                           ; 4430: 00
@@ -1891,22 +1900,23 @@ room_3_update_handler
     lda l0a75                                                         ; 4511: ad 75 0a
     sta l442c                                                         ; 4514: 8d 2c 44
     lda l0a78                                                         ; 4517: ad 78 0a
-    sta l442f                                                         ; 451a: 8d 2f 44
+    sta parrot_delay_before_chirp                                     ; 451a: 8d 2f 44
     lda l0a76                                                         ; 451d: ad 76 0a
-    sta l442d                                                         ; 4520: 8d 2d 44
+    sta parrot_animation_index                                        ; 4520: 8d 2d 44
     lda l0a77                                                         ; 4523: ad 77 0a
-    sta l442e                                                         ; 4526: 8d 2e 44
+    sta parrot_animation_step                                         ; 4526: 8d 2e 44
+; X,Y: the X coordinate of the rope/parrot, A: the direction of the parrot
     ldx #$6f ; 'o'                                                    ; 4529: a2 6f
     ldy #0                                                            ; 452b: a0 00
     lda #$ff                                                          ; 452d: a9 ff
-    jsr update_parrot                                                 ; 452f: 20 2d 42
+    jsr update_parrot_and_burnable_rope                               ; 452f: 20 2d 42
     lda l442c                                                         ; 4532: ad 2c 44
     sta l0a75                                                         ; 4535: 8d 75 0a
-    lda l442f                                                         ; 4538: ad 2f 44
+    lda parrot_delay_before_chirp                                     ; 4538: ad 2f 44
     sta l0a78                                                         ; 453b: 8d 78 0a
-    lda l442d                                                         ; 453e: ad 2d 44
+    lda parrot_animation_index                                        ; 453e: ad 2d 44
     sta l0a76                                                         ; 4541: 8d 76 0a
-    lda l442e                                                         ; 4544: ad 2e 44
+    lda parrot_animation_step                                         ; 4544: ad 2e 44
     sta l0a77                                                         ; 4547: 8d 77 0a
     rts                                                               ; 454a: 60
 
@@ -1971,29 +1981,17 @@ pydis_end
 
 ; Automatically generated labels:
 ;     c41d5
-;     c4242
-;     c4265
-;     c4278
 ;     c428a
-;     c428d
-;     c4290
 ;     c42ad
 ;     c42bb
 ;     c42be
-;     c42e5
 ;     c42ef
-;     c42fe
 ;     c4314
 ;     c4328
 ;     c433d
 ;     c4340
 ;     c4374
-;     c4383
 ;     c4393
-;     c43a5
-;     c43b8
-;     c43bc
-;     c43c5
 ;     c43ca
 ;     c43cd
 ;     c43e5
@@ -2008,19 +2006,10 @@ pydis_end
 ;     l0a76
 ;     l0a77
 ;     l0a78
-;     l38ae
-;     l38c4
 ;     l4425
-;     l4426
-;     l4427
-;     l4428
-;     l4429
 ;     l442a
 ;     l442b
 ;     l442c
-;     l442d
-;     l442e
-;     l442f
 ;     l4430
 !if (<envelope1) != $4b {
     !error "Assertion failed: <envelope1 == $4b"
@@ -2070,6 +2059,9 @@ pydis_end
 !if (object_direction + objectid_parrot) != $09c3 {
     !error "Assertion failed: object_direction + objectid_parrot == $09c3"
 }
+!if (object_erase_type + objectid_torch) != $38ae {
+    !error "Assertion failed: object_erase_type + objectid_torch == $38ae"
+}
 !if (object_spriteid + objectid_fire1) != $09ae {
     !error "Assertion failed: object_spriteid + objectid_fire1 == $09ae"
 }
@@ -2118,6 +2110,9 @@ pydis_end
 !if (object_y_low + objectid_rope_fire) != $0980 {
     !error "Assertion failed: object_y_low + objectid_rope_fire == $0980"
 }
+!if (object_z_order + objectid_torch) != $38c4 {
+    !error "Assertion failed: object_z_order + objectid_torch == $38c4"
+}
 !if (objectid_fire1) != $06 {
     !error "Assertion failed: objectid_fire1 == $06"
 }
@@ -2147,6 +2142,9 @@ pydis_end
 }
 !if (objectid_torch) != $02 {
     !error "Assertion failed: objectid_torch == $02"
+}
+!if (parrot_squawk_spriteids - parrot_spriteid_table) != $08 {
+    !error "Assertion failed: parrot_squawk_spriteids - parrot_spriteid_table == $08"
 }
 !if (room_0_data) != $3b1d {
     !error "Assertion failed: room_0_data == $3b1d"
