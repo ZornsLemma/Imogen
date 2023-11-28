@@ -218,9 +218,13 @@ player_wall_collision_reaction_speed                = $2433
 find_left_and_right_of_object                       = $2434
 temp_left_offset                                    = $24d0
 temp_right_offset                                   = $24d1
-l24d2                                               = $24d2
+find_top_and_bottom_of_object                       = $24d2
 temp_top_offset                                     = $2550
 temp_bottom_offset                                  = $2551
+update_player_solid_rock_collision                  = $25f5
+update_player_hitting_floor                         = $2770
+player_has_hit_floor_flag                           = $288f
+player_just_fallen_off_edge_direction               = $2890
 get_solid_rock_collision_for_object_a               = $2894
 temp_default_collision_map_option                   = $28e1
 test_for_collision_between_objects_x_and_y          = $28e2
@@ -1541,7 +1545,7 @@ c432b
     jsr sub_c43b6                                                     ; 434c: 20 b6 43
     ldx #2                                                            ; 434f: a2 02
     jsr find_left_and_right_of_object                                 ; 4351: 20 34 24
-    jsr l24d2                                                         ; 4354: 20 d2 24
+    jsr find_top_and_bottom_of_object                                 ; 4354: 20 d2 24
     lda l0a1c                                                         ; 4357: ad 1c 0a
     cmp #$1a                                                          ; 435a: c9 1a
     beq c439b                                                         ; 435c: f0 3d
@@ -1885,7 +1889,6 @@ pydis_end
 ;     l0a73
 ;     l0a74
 ;     l0a75
-;     l24d2
 ;     l38ae
 ;     l38af
 ;     l3970

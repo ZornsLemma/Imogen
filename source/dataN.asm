@@ -214,10 +214,13 @@ player_wall_collision_reaction_speed                = $2433
 find_left_and_right_of_object                       = $2434
 temp_left_offset                                    = $24d0
 temp_right_offset                                   = $24d1
-l24d2                                               = $24d2
+find_top_and_bottom_of_object                       = $24d2
 temp_top_offset                                     = $2550
 temp_bottom_offset                                  = $2551
-l25f5                                               = $25f5
+update_player_solid_rock_collision                  = $25f5
+update_player_hitting_floor                         = $2770
+player_has_hit_floor_flag                           = $288f
+player_just_fallen_off_edge_direction               = $2890
 get_solid_rock_collision_for_object_a               = $2894
 temp_default_collision_map_option                   = $28e1
 test_for_collision_between_objects_x_and_y          = $28e2
@@ -1408,7 +1411,7 @@ c427d
     jsr sub_c42f0                                                     ; 429e: 20 f0 42
     ldx #2                                                            ; 42a1: a2 02
     jsr find_left_and_right_of_object                                 ; 42a3: 20 34 24
-    jsr l24d2                                                         ; 42a6: 20 d2 24
+    jsr find_top_and_bottom_of_object                                 ; 42a6: 20 d2 24
     lda l0a4d                                                         ; 42a9: ad 4d 0a
     cmp #4                                                            ; 42ac: c9 04
     bne return5                                                       ; 42ae: d0 3e
@@ -1742,7 +1745,7 @@ c44f9
     lda #$e6                                                          ; 44f9: a9 e6
     sta collectable_being_used_spriteids + 1                          ; 44fb: 8d f3 2e
     lda #0                                                            ; 44fe: a9 00
-    jsr l25f5                                                         ; 4500: 20 f5 25
+    jsr update_player_solid_rock_collision                            ; 4500: 20 f5 25
     lda #$e3                                                          ; 4503: a9 e3
     sta collectable_being_used_spriteids + 1                          ; 4505: 8d f3 2e
 return7
@@ -1930,8 +1933,6 @@ pydis_end
 ;     l0a72
 ;     l0a73
 ;     l0a74
-;     l24d2
-;     l25f5
 ;     l38ae
 ;     l38af
 ;     l38b0

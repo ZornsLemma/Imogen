@@ -216,13 +216,13 @@ player_wall_collision_reaction_speed                = $2433
 find_left_and_right_of_object                       = $2434
 temp_left_offset                                    = $24d0
 temp_right_offset                                   = $24d1
-l24d2                                               = $24d2
+find_top_and_bottom_of_object                       = $24d2
 temp_top_offset                                     = $2550
 temp_bottom_offset                                  = $2551
-l25f5                                               = $25f5
-l2770                                               = $2770
-l288f                                               = $288f
-l2890                                               = $2890
+update_player_solid_rock_collision                  = $25f5
+update_player_hitting_floor                         = $2770
+player_has_hit_floor_flag                           = $288f
+player_just_fallen_off_edge_direction               = $2890
 get_solid_rock_collision_for_object_a               = $2894
 temp_default_collision_map_option                   = $28e1
 test_for_collision_between_objects_x_and_y          = $28e2
@@ -1743,16 +1743,16 @@ c44d9
     ldy #$15                                                          ; 44de: a0 15
 c44e0
     lda #2                                                            ; 44e0: a9 02
-    jsr l2770                                                         ; 44e2: 20 70 27
+    jsr update_player_hitting_floor                                   ; 44e2: 20 70 27
     lda l0a62                                                         ; 44e5: ad 62 0a
     cmp #$22 ; '"'                                                    ; 44e8: c9 22
     bne c44f6                                                         ; 44ea: d0 0a
-    lda l288f                                                         ; 44ec: ad 8f 28
+    lda player_has_hit_floor_flag                                     ; 44ec: ad 8f 28
     beq c4510                                                         ; 44ef: f0 1f
     ldy #$25 ; '%'                                                    ; 44f1: a0 25
     sty l0a62                                                         ; 44f3: 8c 62 0a
 c44f6
-    lda l2890                                                         ; 44f6: ad 90 28
+    lda player_just_fallen_off_edge_direction                         ; 44f6: ad 90 28
     beq c4510                                                         ; 44f9: f0 15
     ldy #$22 ; '"'                                                    ; 44fb: a0 22
     sty l0a62                                                         ; 44fd: 8c 62 0a
@@ -1804,7 +1804,7 @@ c454c
     sta l0a6a                                                         ; 4557: 8d 6a 0a
     jsr sub_c45be                                                     ; 455a: 20 be 45
     lda #2                                                            ; 455d: a9 02
-    jsr l25f5                                                         ; 455f: 20 f5 25
+    jsr update_player_solid_rock_collision                            ; 455f: 20 f5 25
     lda object_x_low + 2                                              ; 4562: ad 52 09
     sta l0a64                                                         ; 4565: 8d 64 0a
     lda object_x_high + 2                                             ; 4568: ad 68 09
@@ -1815,7 +1815,7 @@ c454c
     sta l0a6a                                                         ; 4577: 8d 6a 0a
     ldx #2                                                            ; 457a: a2 02
     jsr find_left_and_right_of_object                                 ; 457c: 20 34 24
-    jsr l24d2                                                         ; 457f: 20 d2 24
+    jsr find_top_and_bottom_of_object                                 ; 457f: 20 d2 24
     lda l0a67                                                         ; 4582: ad 67 0a
     bmi c45a3                                                         ; 4585: 30 1c
     lda l0078                                                         ; 4587: a5 78
@@ -2055,11 +2055,6 @@ pydis_end
 ;     l0a6e
 ;     l0a70
 ;     l0a71
-;     l24d2
-;     l25f5
-;     l2770
-;     l288f
-;     l2890
 ;     l38ae
 ;     l38c4
 ;     l38c6

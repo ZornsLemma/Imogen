@@ -249,11 +249,13 @@ player_wall_collision_reaction_speed                = $2433
 find_left_and_right_of_object                       = $2434
 temp_left_offset                                    = $24d0
 temp_right_offset                                   = $24d1
+find_top_and_bottom_of_object                       = $24d2
 temp_top_offset                                     = $2550
 temp_bottom_offset                                  = $2551
-l25f5                                               = $25f5
-l288f                                               = $288f
-l2890                                               = $2890
+update_player_solid_rock_collision                  = $25f5
+update_player_hitting_floor                         = $2770
+player_has_hit_floor_flag                           = $288f
+player_just_fallen_off_edge_direction               = $2890
 get_solid_rock_collision_for_object_a               = $2894
 temp_default_collision_map_option                   = $28e1
 test_for_collision_between_objects_x_and_y          = $28e2
@@ -907,7 +909,7 @@ c3f55
     sta l09df                                                         ; 3f57: 8d df 09
     ldy #$6f ; 'o'                                                    ; 3f5a: a0 6f
 c3f5c
-    lda l288f                                                         ; 3f5c: ad 8f 28
+    lda player_has_hit_floor_flag                                     ; 3f5c: ad 8f 28
     bne c3f79                                                         ; 3f5f: d0 18
 c3f61
     lda #$c0                                                          ; 3f61: a9 c0
@@ -956,7 +958,7 @@ c3faf
     beq c3fb7                                                         ; 3fb4: f0 01
     inx                                                               ; 3fb6: e8
 c3fb7
-    lda l2890,x                                                       ; 3fb7: bd 90 28
+    lda player_just_fallen_off_edge_direction,x                       ; 3fb7: bd 90 28
     beq c3fca                                                         ; 3fba: f0 0e
     ldy #$c0                                                          ; 3fbc: a0 c0
     sty l09df                                                         ; 3fbe: 8c df 09
@@ -971,7 +973,7 @@ c3fca
     ldy #$3b ; ';'                                                    ; 3fd0: a0 3b
     jsr l2200                                                         ; 3fd2: 20 00 22
     lda #0                                                            ; 3fd5: a9 00
-    jsr l25f5                                                         ; 3fd7: 20 f5 25
+    jsr update_player_solid_rock_collision                            ; 3fd7: 20 f5 25
     lda #$40 ; '@'                                                    ; 3fda: a9 40
     sta room_exit_direction                                           ; 3fdc: 85 70
     lda #$3b ; ';'                                                    ; 3fde: a9 3b
@@ -1349,7 +1351,7 @@ c42a2
     sta thrown_egg_y_low                                              ; 42b8: 8d 72 0a
     jsr sub_c431d                                                     ; 42bb: 20 1d 43
     lda #2                                                            ; 42be: a9 02
-    jsr l25f5                                                         ; 42c0: 20 f5 25
+    jsr update_player_solid_rock_collision                            ; 42c0: 20 f5 25
     lda object_x_low + 2                                              ; 42c3: ad 52 09
     sta thrown_egg_x_low                                              ; 42c6: 8d 70 0a
     lda object_x_high + 2                                             ; 42c9: ad 68 09
@@ -1951,9 +1953,6 @@ pydis_end
 ;     l22ed
 ;     l22ee
 ;     l23c4
-;     l25f5
-;     l288f
-;     l2890
 ;     l38ae
 ;     l38b1
 ;     l38c4

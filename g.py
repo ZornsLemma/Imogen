@@ -1850,7 +1850,6 @@ On Exit:
            object_bottom: Set to object's position Y + sprite offset
        object_top_cell_y: Cell Y for object_top
     object_bottom_cell_y: Cell Y for object_bottom""")
-    label(0x24d2, "find_top_and_bottom_of_object")
     comment(0x24d3, "remember object index")
     comment(0x24d4, "get address of current sprite for object")
     comment(0x24de, "recall object index")
@@ -1886,7 +1885,6 @@ On Exit:
     label(0x25d6, "return_zeroing_offsets")
     label(0x25df, "find_left_and_right_of_object_including_held_object")
     comment(0x25df, "remember temp_left and right offsets, since we will use them again to find the attached object's left/right extents")
-    label(0x25f5, "update_player_solid_rock_collision")
     comment(0x25f8, "clear collision flags")
     comment(0x25fd, "anything outside the game area returns collision map value $ff")
 
@@ -1978,7 +1976,6 @@ On Exit:
        player_just_fallen_centrally_direction: $ff if player is off the centre left,
                                                $01 if off the centre right,
                                                $00 otherwise.""")
-    label(0x2770, "update_player_hitting_floor")
     comment(0x2776, "check collision of player with room")
     comment(0x2783, "don't write values to the collision map")
     comment(0x2787, "have we hit the floor?")
@@ -2046,8 +2043,6 @@ On Exit:
     label(0x287e, "cell_row_loop")
     comment(0x288a, "no solid rock found")
     label(0x288c, "return_with_flags")
-    label(0x288f, "player_has_hit_floor_flag")
-    label(0x2890, "player_just_fallen_off_edge_direction")
     label(0x2891, "player_just_fallen_centrally_direction")
     label(0x2892, "sum_of_left_and_right_extents_low")
     label(0x2893, "sum_of_left_and_right_extents_high")

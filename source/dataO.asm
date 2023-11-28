@@ -212,11 +212,13 @@ player_wall_collision_reaction_speed                = $2433
 find_left_and_right_of_object                       = $2434
 temp_left_offset                                    = $24d0
 temp_right_offset                                   = $24d1
+find_top_and_bottom_of_object                       = $24d2
 temp_top_offset                                     = $2550
 temp_bottom_offset                                  = $2551
-l25f5                                               = $25f5
-l2770                                               = $2770
-l2890                                               = $2890
+update_player_solid_rock_collision                  = $25f5
+update_player_hitting_floor                         = $2770
+player_has_hit_floor_flag                           = $288f
+player_just_fallen_off_edge_direction               = $2890
 get_solid_rock_collision_for_object_a               = $2894
 temp_default_collision_map_option                   = $28e1
 test_for_collision_between_objects_x_and_y          = $28e2
@@ -922,7 +924,7 @@ sub_c3f28
     ldy l0a55                                                         ; 3f36: ac 55 0a
 c3f39
     lda #2                                                            ; 3f39: a9 02
-    jsr l2770                                                         ; 3f3b: 20 70 27
+    jsr update_player_hitting_floor                                   ; 3f3b: 20 70 27
     bne c3f51                                                         ; 3f3e: d0 11
     lda l0a55                                                         ; 3f40: ad 55 0a
     cmp #$1e                                                          ; 3f43: c9 1e
@@ -933,7 +935,7 @@ c3f39
     jmp c3f77                                                         ; 3f4e: 4c 77 3f
 
 c3f51
-    lda l2890                                                         ; 3f51: ad 90 28
+    lda player_just_fallen_off_edge_direction                         ; 3f51: ad 90 28
     beq c3f6d                                                         ; 3f54: f0 17
     ldy #$1e                                                          ; 3f56: a0 1e
     sty l0a55                                                         ; 3f58: 8c 55 0a
@@ -977,7 +979,7 @@ c3f8e
     sta l0a59                                                         ; 3fa4: 8d 59 0a
     jsr sub_c4002                                                     ; 3fa7: 20 02 40
     lda #2                                                            ; 3faa: a9 02
-    jsr l25f5                                                         ; 3fac: 20 f5 25
+    jsr update_player_solid_rock_collision                            ; 3fac: 20 f5 25
     lda object_x_low + 2                                              ; 3faf: ad 52 09
     sta l0a57                                                         ; 3fb2: 8d 57 0a
     lda object_x_high + 2                                             ; 3fb5: ad 68 09
@@ -1855,9 +1857,6 @@ pydis_end
 ;     l0a61
 ;     l0a70
 ;     l0a71
-;     l25f5
-;     l2770
-;     l2890
 ;     l2eeb
 ;     l2ef0
 ;     l2ef4

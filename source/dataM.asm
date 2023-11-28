@@ -216,11 +216,13 @@ player_wall_collision_reaction_speed                = $2433
 find_left_and_right_of_object                       = $2434
 temp_left_offset                                    = $24d0
 temp_right_offset                                   = $24d1
+find_top_and_bottom_of_object                       = $24d2
 temp_top_offset                                     = $2550
 temp_bottom_offset                                  = $2551
-l25f5                                               = $25f5
-l2770                                               = $2770
-l2890                                               = $2890
+update_player_solid_rock_collision                  = $25f5
+update_player_hitting_floor                         = $2770
+player_has_hit_floor_flag                           = $288f
+player_just_fallen_off_edge_direction               = $2890
 get_solid_rock_collision_for_object_a               = $2894
 temp_default_collision_map_option                   = $28e1
 test_for_collision_between_objects_x_and_y          = $28e2
@@ -1556,9 +1558,9 @@ c43b5
     sty l0a40                                                         ; 43bb: 8c 40 0a
 c43be
     lda #6                                                            ; 43be: a9 06
-    jsr l2770                                                         ; 43c0: 20 70 27
+    jsr update_player_hitting_floor                                   ; 43c0: 20 70 27
     beq c43cf                                                         ; 43c3: f0 0a
-    lda l2890                                                         ; 43c5: ad 90 28
+    lda player_just_fallen_off_edge_direction                         ; 43c5: ad 90 28
     beq c43cf                                                         ; 43c8: f0 05
     ldy #9                                                            ; 43ca: a0 09
     sty l0a40                                                         ; 43cc: 8c 40 0a
@@ -1607,7 +1609,7 @@ c4422
     sty l0a48                                                         ; 4422: 8c 48 0a
     jsr sub_c4480                                                     ; 4425: 20 80 44
     lda #6                                                            ; 4428: a9 06
-    jsr l25f5                                                         ; 442a: 20 f5 25
+    jsr update_player_solid_rock_collision                            ; 442a: 20 f5 25
     lda object_x_low + 6                                              ; 442d: ad 56 09
     sta l0a42                                                         ; 4430: 8d 42 0a
     lda object_x_high + 6                                             ; 4433: ad 6c 09
@@ -1999,9 +2001,6 @@ pydis_end
 ;     l0a72
 ;     l0a73
 ;     l0a74
-;     l25f5
-;     l2770
-;     l2890
 ;     l38af
 ;     l38b1
 ;     l38b2
