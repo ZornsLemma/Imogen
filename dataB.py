@@ -336,6 +336,8 @@ print("""; *********************************************************************
 ;   4. Jump into the pendulum to set it ticking for a short time
 ;   5. As the cat, jump back to the right of the room, up onto the ledge and as the monkey jump
 ;      onto the rope and into the cuckoo before the clock stops. Timing is tight here.
+;      Alternatively, jump as the cat towards the rope from the right below the rope and
+;      change mid-air into the monkey to grab onto the rope.
 ;   6. Take the cuckoo to the clock in room 2 and use it on top of the clock to fix the clock.
 ;   7. Set the clock ticking by jumping into the pendulum.
 ;           (The cuckoo is thrown into room 3, and the suspended boulder falls)
