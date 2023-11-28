@@ -247,6 +247,7 @@ draw_sprite_a_at_cell_xy                            = $1f4c
 draw_sprite_a_at_cell_xy_and_write_to_collision_map = $1f57
 set_object_position_from_cell_xy                    = $1f5d
 set_object_position_from_current_sprite_position    = $1f6d
+copy_object_state_to_old                            = $20f7
 jmp_for_update_extra_player_character               = $22dd
 play_landing_sound                                  = $23a9
 player_wall_collision_reaction_speed                = $2433

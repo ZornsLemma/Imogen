@@ -237,7 +237,7 @@ draw_sprite_a_at_cell_xy                            = $1f4c
 draw_sprite_a_at_cell_xy_and_write_to_collision_map = $1f57
 set_object_position_from_cell_xy                    = $1f5d
 set_object_position_from_current_sprite_position    = $1f6d
-l20f7                                               = $20f7
+copy_object_state_to_old                            = $20f7
 l2200                                               = $2200
 l2248                                               = $2248
 jmp_for_update_extra_player_character               = $22dd
@@ -1181,7 +1181,7 @@ loop_c414c
     beq c4166                                                         ; 4156: f0 0e
     dec level_workspace                                               ; 4158: ce 6f 0a
     ldx #2                                                            ; 415b: a2 02
-    jsr l20f7                                                         ; 415d: 20 f7 20
+    jsr copy_object_state_to_old                                      ; 415d: 20 f7 20
     jsr sub_c4231                                                     ; 4160: 20 31 42
     jmp loop_c414c                                                    ; 4163: 4c 4c 41
 
@@ -1233,7 +1233,7 @@ c4195
     lda object_spriteid + objectid_player_accessory                   ; 41ce: ad a9 09
     sta object_spriteid + 2                                           ; 41d1: 8d aa 09
     ldx #2                                                            ; 41d4: a2 02
-    jsr l20f7                                                         ; 41d6: 20 f7 20
+    jsr copy_object_state_to_old                                      ; 41d6: 20 f7 20
     lda #0                                                            ; 41d9: a9 00
     sta player_held_object_spriteid                                   ; 41db: 85 52
 c41dd
@@ -1946,7 +1946,6 @@ pydis_end
 ;     l0a79
 ;     l0a7a
 ;     l0a7b
-;     l20f7
 ;     l2200
 ;     l2248
 ;     l22ed

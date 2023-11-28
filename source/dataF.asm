@@ -198,7 +198,7 @@ draw_sprite_a_at_cell_xy                            = $1f4c
 draw_sprite_a_at_cell_xy_and_write_to_collision_map = $1f57
 set_object_position_from_cell_xy                    = $1f5d
 set_object_position_from_current_sprite_position    = $1f6d
-l20f7                                               = $20f7
+copy_object_state_to_old                            = $20f7
 jmp_for_update_extra_player_character               = $22dd
 play_landing_sound                                  = $23a9
 player_wall_collision_reaction_speed                = $2433
@@ -661,7 +661,7 @@ c3d05
     lda #4                                                            ; 3d0a: a9 04
     jsr set_object_position_from_cell_xy                              ; 3d0c: 20 5d 1f
     tax                                                               ; 3d0f: aa
-    jsr l20f7                                                         ; 3d10: 20 f7 20
+    jsr copy_object_state_to_old                                      ; 3d10: 20 f7 20
     lda #$c1                                                          ; 3d13: a9 c1
     sta object_z_order,x                                              ; 3d15: 9d c2 38
     ldx #3                                                            ; 3d18: a2 03
@@ -1739,7 +1739,6 @@ pydis_end
 ;     l0a73
 ;     l0a74
 ;     l0a75
-;     l20f7
 ;     l38ae
 ;     l38b1
 ;     l38c4

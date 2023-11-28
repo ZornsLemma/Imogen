@@ -209,7 +209,7 @@ draw_sprite_a_at_cell_xy                            = $1f4c
 draw_sprite_a_at_cell_xy_and_write_to_collision_map = $1f57
 set_object_position_from_cell_xy                    = $1f5d
 set_object_position_from_current_sprite_position    = $1f6d
-l20f7                                               = $20f7
+copy_object_state_to_old                            = $20f7
 jmp_for_update_extra_player_character               = $22dd
 play_landing_sound                                  = $23a9
 player_wall_collision_reaction_speed                = $2433
@@ -859,7 +859,7 @@ c3e94
     lda #4                                                            ; 3eaa: a9 04
     jsr set_object_position_from_cell_xy                              ; 3eac: 20 5d 1f
     tax                                                               ; 3eaf: aa
-    jsr l20f7                                                         ; 3eb0: 20 f7 20
+    jsr copy_object_state_to_old                                      ; 3eb0: 20 f7 20
     lda #$e2                                                          ; 3eb3: a9 e2
     sta object_spriteid + 4                                           ; 3eb5: 8d ac 09
     lda #$bf                                                          ; 3eb8: a9 bf
@@ -1392,7 +1392,7 @@ loop_c4253
     beq c426d                                                         ; 425d: f0 0e
     dec l0a74                                                         ; 425f: ce 74 0a
     ldx #6                                                            ; 4262: a2 06
-    jsr l20f7                                                         ; 4264: 20 f7 20
+    jsr copy_object_state_to_old                                      ; 4264: 20 f7 20
     jsr sub_c4371                                                     ; 4267: 20 71 43
     jmp loop_c4253                                                    ; 426a: 4c 53 42
 
@@ -1444,7 +1444,7 @@ c429c
     sta l0a48                                                         ; 42d5: 8d 48 0a
     jsr sub_c4480                                                     ; 42d8: 20 80 44
     ldx #6                                                            ; 42db: a2 06
-    jsr l20f7                                                         ; 42dd: 20 f7 20
+    jsr copy_object_state_to_old                                      ; 42dd: 20 f7 20
     lda #0                                                            ; 42e0: a9 00
     sta player_held_object_spriteid                                   ; 42e2: 85 52
 c42e4
@@ -1999,7 +1999,6 @@ pydis_end
 ;     l0a72
 ;     l0a73
 ;     l0a74
-;     l20f7
 ;     l25f5
 ;     l2770
 ;     l2890

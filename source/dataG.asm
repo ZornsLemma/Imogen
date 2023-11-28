@@ -207,7 +207,7 @@ draw_sprite_a_at_cell_xy                            = $1f4c
 draw_sprite_a_at_cell_xy_and_write_to_collision_map = $1f57
 set_object_position_from_cell_xy                    = $1f5d
 set_object_position_from_current_sprite_position    = $1f6d
-l20f7                                               = $20f7
+copy_object_state_to_old                            = $20f7
 jmp_for_update_extra_player_character               = $22dd
 play_landing_sound                                  = $23a9
 player_wall_collision_reaction_speed                = $2433
@@ -1130,7 +1130,7 @@ loop_c406c
     beq c4086                                                         ; 4076: f0 0e
     dec l0a74                                                         ; 4078: ce 74 0a
     ldx #2                                                            ; 407b: a2 02
-    jsr l20f7                                                         ; 407d: 20 f7 20
+    jsr copy_object_state_to_old                                      ; 407d: 20 f7 20
     jsr sub_c418a                                                     ; 4080: 20 8a 41
     jmp loop_c406c                                                    ; 4083: 4c 6c 40
 
@@ -1207,7 +1207,7 @@ c40f3
     sta l0a74                                                         ; 411a: 8d 74 0a
     jsr sub_c4259                                                     ; 411d: 20 59 42
     ldx #2                                                            ; 4120: a2 02
-    jsr l20f7                                                         ; 4122: 20 f7 20
+    jsr copy_object_state_to_old                                      ; 4122: 20 f7 20
 c4125
     jsr sub_c418a                                                     ; 4125: 20 8a 41
     lda desired_room_index                                            ; 4128: a5 30
@@ -1993,7 +1993,6 @@ pydis_end
 ;     l0a78
 ;     l0a79
 ;     l0a7a
-;     l20f7
 ;     l25f5
 ;     l38ae
 ;     l38b0
