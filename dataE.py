@@ -4,13 +4,28 @@ config.set_label_references(False)
 config.set_hex_dump_show_ascii(False)
 
 sprite_dict = {
-#    0xc8: "spriteid_mouse",
+    0xc8: "spriteid_duck_1",
+    0xc9: "spriteid_duck_2",
+    0xca: "spriteid_duck_3",
+    0xcc: "spriteid_duck_transform_1",
+    0xcd: "spriteid_duck_transform_2",
+    0xce: "spriteid_duck_wing_1",
+    0xcf: "spriteid_duck_wing_2",
+    0xd0: "spriteid_duck_wing_3",
     0xd1: "spriteid_duck_toolbar",
-    0xd2: "spriteid_egg_toolbar",
-    0xd3: "spriteid_egg_mask_toolbar", # TODO: "mask" is a guess
+    0xd2: "spriteid_egg",
+    0xd3: "spriteid_egg_toolbar",
+    0xd4: "spriteid_nest",
+    0xd6: "spriteid_cache1",
+    0xd7: "spriteid_small_egg_right",
+    0xd8: "spriteid_small_egg_down",
+    0xd9: "spriteid_small_egg_left",
+    0xda: "spriteid_small_egg_upright",
     0xdb: "spriteid_large_egg_upright",
     0xdc: "spriteid_large_egg_tilted",
     0xdd: "spriteid_large_egg_sideways",
+    0xde: "spriteid_cache2",
+    0xdf: "spriteid_cache3",
 }
 
 # Merge with common sprite dictionary
@@ -63,7 +78,7 @@ entry(0x44cb, "not_end_of_egg_animation_sequence")
 
 expr(0x3b07, "spriteid_duck_toolbar")
 entry(0x3b0b, "developer_mode_not_active")
-expr(0x3b11, "spriteid_egg_mask_toolbar")
+expr(0x3b11, "spriteid_egg_toolbar")
 entry(0x3b15, "dont_have_egg")
 expr(0x3b1d, "spriteid_duck_toolbar")
 entry(0x3b21, "duck_not_captured_yet")
@@ -84,7 +99,7 @@ label(0x3df6, "return1")
 comment(0x40dd, "check for first update in room (branch if so)")
 ldx_ldy_jsr_define_envelope(0x40f6, "envelope1")
 comment(0x40f9, "check for level change (branch if not)")
-expr(0x4196, "spriteid_egg_mask_toolbar")
+expr(0x4196, "spriteid_egg_toolbar")
 expr(0x41f3, "objectid_old_player")
 label(0x4230, "return2")
 label(0x431c, "return3")
@@ -237,12 +252,11 @@ expr(0x455e, "object_spriteid + objectid_egg")
 expr(0x4564, "object_x_low + objectid_egg")
 expr(0x456a, "object_y_low + objectid_egg")
 
-# TODO: uncomment once sprite_dict has been populated
-#expr(0x3d56, sprite_dict)
-#expr(0x40e6, sprite_dict)
-#expr(0x4167, sprite_dict)
-#expr(0x420d, sprite_dict)
-#expr(0x4318, sprite_dict)
+expr(0x3d56, sprite_dict)
+expr(0x40e6, sprite_dict)
+expr(0x4167, sprite_dict)
+expr(0x420d, sprite_dict)
+expr(0x4318, sprite_dict)
 
 result = go(False)
 result = remove_sprite_data(result)

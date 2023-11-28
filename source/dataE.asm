@@ -37,6 +37,9 @@ sprite_op_flags_erase_to_fg_colour          = 4
 sprite_op_flags_normal                      = 0
 spriteid_197                                = 197
 spriteid_brazier                            = 58
+spriteid_cache1                             = 214
+spriteid_cache2                             = 222
+spriteid_cache3                             = 223
 spriteid_cat1                               = 27
 spriteid_cat2                               = 28
 spriteid_cat_jump                           = 26
@@ -64,9 +67,17 @@ spriteid_diamond2                           = 40
 spriteid_diamond3                           = 41
 spriteid_diamond4                           = 42
 spriteid_diamond5                           = 43
+spriteid_duck_1                             = 200
+spriteid_duck_2                             = 201
+spriteid_duck_3                             = 202
 spriteid_duck_toolbar                       = 209
-spriteid_egg_mask_toolbar                   = 211
-spriteid_egg_toolbar                        = 210
+spriteid_duck_transform_1                   = 204
+spriteid_duck_transform_2                   = 205
+spriteid_duck_wing_1                        = 206
+spriteid_duck_wing_2                        = 207
+spriteid_duck_wing_3                        = 208
+spriteid_egg                                = 210
+spriteid_egg_toolbar                        = 211
 spriteid_erase_player                       = 199
 spriteid_erase_player_accessory             = 198
 spriteid_fingertip_tile_restoration         = 30
@@ -108,6 +119,7 @@ spriteid_monkey_tail7                       = 76
 spriteid_monkey_tail8                       = 77
 spriteid_monkey_transform1                  = 68
 spriteid_monkey_transform2                  = 69
+spriteid_nest                               = 212
 spriteid_one_pixel_masked_out               = 0
 spriteid_one_pixel_set                      = 31
 spriteid_pointer_hand                       = 29
@@ -117,6 +129,10 @@ spriteid_rope3                              = 87
 spriteid_rope4                              = 88
 spriteid_rope_end                           = 10
 spriteid_rope_hook                          = 11
+spriteid_small_egg_down                     = 216
+spriteid_small_egg_left                     = 217
+spriteid_small_egg_right                    = 215
+spriteid_small_egg_upright                  = 218
 spriteid_sparkles1                          = 34
 spriteid_sparkles2                          = 35
 spriteid_sparkles3                          = 36
@@ -323,7 +339,7 @@ level_specific_initialisation
 developer_mode_not_active
     lda save_game_level_e_holding_egg_flag                            ; 3b0b: ad 13 0a
     bpl dont_have_egg                                                 ; 3b0e: 10 05
-    lda #spriteid_egg_mask_toolbar                                    ; 3b10: a9 d3
+    lda #spriteid_egg_toolbar                                         ; 3b10: a9 d3
     jsr find_or_create_menu_slot_for_A                                ; 3b12: 20 bd 2b
 dont_have_egg
     lda save_game_level_e_duck_captured_flag                          ; 3b15: ad 15 0a
@@ -590,7 +606,7 @@ c3d3a
     beq c3d64                                                         ; 3d4e: f0 14
     lda #$d1                                                          ; 3d50: a9 d1
     jsr insert_character_menu_item_into_toolbar                       ; 3d52: 20 87 2b
-    lda #0                                                            ; 3d55: a9 00
+    lda #spriteid_one_pixel_masked_out                                ; 3d55: a9 00
     sta object_spriteid + 4                                           ; 3d57: 8d ac 09
     sta object_spriteid + 5                                           ; 3d5a: 8d ad 09
     lda #$ff                                                          ; 3d5d: a9 ff
@@ -1114,7 +1130,7 @@ room_0_update_handler
     jmp c416e                                                         ; 40e2: 4c 6e 41
 
 c40e5
-    lda #$d3                                                          ; 40e5: a9 d3
+    lda #spriteid_egg_toolbar                                         ; 40e5: a9 d3
     sta toolbar_collectable_spriteids+1                               ; 40e7: 8d e9 2e
     lda #$d2                                                          ; 40ea: a9 d2
     sta collectable_spriteids+1                                       ; 40ec: 8d ee 2e
@@ -1170,7 +1186,7 @@ loop_c414c
     jmp loop_c414c                                                    ; 4163: 4c 4c 41
 
 c4166
-    lda #0                                                            ; 4166: a9 00
+    lda #spriteid_one_pixel_masked_out                                ; 4166: a9 00
     sta object_spriteid_old + 2                                       ; 4168: 8d b5 09
     jmp return2                                                       ; 416b: 4c 30 42
 
@@ -1193,7 +1209,7 @@ c4192
     jmp return2                                                       ; 4192: 4c 30 42
 
 c4195
-    lda #spriteid_egg_mask_toolbar                                    ; 4195: a9 d3
+    lda #spriteid_egg_toolbar                                         ; 4195: a9 d3
     cmp player_using_object_spriteid                                  ; 4197: cd b6 2e
     bne c4192                                                         ; 419a: d0 f6
     cmp previous_player_using_object_spriteid                         ; 419c: cd b7 2e
@@ -1239,10 +1255,10 @@ c41ec
     beq c4219                                                         ; 4200: f0 17
     lda l4389                                                         ; 4202: ad 89 43
     bne c420c                                                         ; 4205: d0 05
-    lda #spriteid_egg_mask_toolbar                                    ; 4207: a9 d3
+    lda #spriteid_egg_toolbar                                         ; 4207: a9 d3
     jsr find_or_create_menu_slot_for_A                                ; 4209: 20 bd 2b
 c420c
-    lda #0                                                            ; 420c: a9 00
+    lda #spriteid_one_pixel_masked_out                                ; 420c: a9 00
     sta object_spriteid + 2                                           ; 420e: 8d aa 09
     lda #$ff                                                          ; 4211: a9 ff
     sta save_game_level_e_holding_egg_flag                            ; 4213: 8d 13 0a
@@ -1371,7 +1387,7 @@ c4302
     sta thrown_egg_x_high                                             ; 4311: 8d 71 0a
     inc l0a75                                                         ; 4314: ee 75 0a
 c4317
-    lda #0                                                            ; 4317: a9 00
+    lda #spriteid_one_pixel_masked_out                                ; 4317: a9 00
     sta object_spriteid + 2                                           ; 4319: 8d aa 09
 return3
     rts                                                               ; 431c: 60
@@ -2150,8 +2166,8 @@ pydis_end
 !if (spriteid_duck_toolbar) != $d1 {
     !error "Assertion failed: spriteid_duck_toolbar == $d1"
 }
-!if (spriteid_egg_mask_toolbar) != $d3 {
-    !error "Assertion failed: spriteid_egg_mask_toolbar == $d3"
+!if (spriteid_egg_toolbar) != $d3 {
+    !error "Assertion failed: spriteid_egg_toolbar == $d3"
 }
 !if (spriteid_large_egg_sideways) != $dd {
     !error "Assertion failed: spriteid_large_egg_sideways == $dd"
@@ -2161,4 +2177,7 @@ pydis_end
 }
 !if (spriteid_large_egg_upright) != $db {
     !error "Assertion failed: spriteid_large_egg_upright == $db"
+}
+!if (spriteid_one_pixel_masked_out) != $00 {
+    !error "Assertion failed: spriteid_one_pixel_masked_out == $00"
 }
