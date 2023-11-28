@@ -1723,7 +1723,7 @@ c450b
     jmp new_egg_animation_index_in_y                                  ; 4530: 4c 38 45
 
 c4533
-    ldy #$1a                                                          ; 4533: a0 1a
+    ldy #egg_animation_subseq4 - egg_animations_table                 ; 4533: a0 1a
     sty save_game_level_e_room_1_egg_state                            ; 4535: 8c 14 0a
 new_egg_animation_index_in_y
     sty egg_animation_index                                           ; 4538: 8c 76 0a
