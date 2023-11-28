@@ -1775,31 +1775,31 @@ return5
 ; Returns with some flag in Z; if Z is set, Y contains a new egg animation index
 something_to_do_with_egg_animation
     lda #0                                                            ; 45a1: a9 00
-    sta l45d6                                                         ; 45a3: 8d d6 45
+    sta saved_a                                                       ; 45a3: 8d d6 45
     lda l0a75                                                         ; 45a6: ad 75 0a
     cmp #1                                                            ; 45a9: c9 01
-    bne c45d2                                                         ; 45ab: d0 25
+    bne restore_a_and_return                                          ; 45ab: d0 25
 ; TODO: Why not lda object_spriteid+2? And similarly for following lda abs,x
     ldx #objectid_something_maybe_small_thrown_egg                    ; 45ad: a2 02
     lda object_spriteid,x                                             ; 45af: bd a8 09
-    beq c45d2                                                         ; 45b2: f0 1e
+    beq restore_a_and_return                                          ; 45b2: f0 1e
     lda object_x_high,x                                               ; 45b4: bd 66 09
-    bne c45d2                                                         ; 45b7: d0 19
+    bne restore_a_and_return                                          ; 45b7: d0 19
     lda object_y_low,x                                                ; 45b9: bd 7c 09
     cmp #$70 ; 'p'                                                    ; 45bc: c9 70
-    bcs c45d2                                                         ; 45be: b0 12
+    bcs restore_a_and_return                                          ; 45be: b0 12
     sty l45d7                                                         ; 45c0: 8c d7 45
     jsr l2434                                                         ; 45c3: 20 34 24
     ldy l45d7                                                         ; 45c6: ac d7 45
     lda l0070                                                         ; 45c9: a5 70
     cmp #$78 ; 'x'                                                    ; 45cb: c9 78
-    bne c45d2                                                         ; 45cd: d0 03
-    dec l45d6                                                         ; 45cf: ce d6 45
-c45d2
-    lda l45d6                                                         ; 45d2: ad d6 45
+    bne restore_a_and_return                                          ; 45cd: d0 03
+    dec saved_a                                                       ; 45cf: ce d6 45
+restore_a_and_return
+    lda saved_a                                                       ; 45d2: ad d6 45
     rts                                                               ; 45d5: 60
 
-l45d6
+saved_a
     !byte 0                                                           ; 45d6: 00
 l45d7
     !byte 0                                                           ; 45d7: 00
@@ -1919,7 +1919,6 @@ pydis_end
 ;     c4533
 ;     c4551
 ;     c4596
-;     c45d2
 ;     l0023
 ;     l0071
 ;     l0078
@@ -1959,7 +1958,6 @@ pydis_end
 ;     l4389
 ;     l438a
 ;     l438b
-;     l45d6
 ;     l45d7
 ;     loop_c414c
 ;     sub_c3c0b
