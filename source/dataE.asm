@@ -1193,7 +1193,7 @@ c4192
     jmp return2                                                       ; 4192: 4c 30 42
 
 c4195
-    lda #$d3                                                          ; 4195: a9 d3
+    lda #spriteid_egg_mask_toolbar                                    ; 4195: a9 d3
     cmp player_using_object_spriteid                                  ; 4197: cd b6 2e
     bne c4192                                                         ; 419a: d0 f6
     cmp previous_player_using_object_spriteid                         ; 419c: cd b7 2e
