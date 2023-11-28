@@ -692,7 +692,7 @@ object_reset_loop
     cmp level_before_latest_level_and_room_initialisation             ; 12df: c5 51       .Q  :11ae[1]
     beq same_level                                                    ; 12e1: f0 57       .W  :11b0[1]
     lda #0                                                            ; 12e3: a9 00       ..  :11b2[1]
-    sta player_wall_collision_flag                                    ; 12e5: 8d 33 24    .3$ :11b4[1]
+    sta player_wall_collision_reaction_speed                          ; 12e5: 8d 33 24    .3$ :11b4[1]
     sta current_player_character                                      ; 12e8: 85 48       .H  :11b7[1]
     sta new_player_character                                          ; 12ea: 85 4d       .M  :11b9[1]
     sta object_spriteid                                               ; 12ec: 8d a8 09    ... :11bb[1]
@@ -3937,7 +3937,7 @@ set_player_spriteid_and_offset_from_animation_table
     sta object_spriteid                                               ; 2338: 8d a8 09    ... :2207[1]
 ; check if we should add offset x
     iny                                                               ; 233b: c8          .   :220a[1]
-    lda player_wall_collision_flag                                    ; 233c: ad 33 24    .3$ :220b[1]
+    lda player_wall_collision_reaction_speed                          ; 233c: ad 33 24    .3$ :220b[1]
     bne skip8                                                         ; 233f: d0 21       .!  :220e[1]
 ; load next byte from table, the X offset
     lda (animation_address_low),y                                     ; 2341: b1 70       .p  :2210[1]
@@ -4202,7 +4202,7 @@ not_transforming
 transform
     sta new_player_character                                          ; 2468: 85 4d       .M  :2337[1]
     lda #0                                                            ; 246a: a9 00       ..  :2339[1]
-    sta player_wall_collision_flag                                    ; 246c: 8d 33 24    .3$ :233b[1]
+    sta player_wall_collision_reaction_speed                          ; 246c: 8d 33 24    .3$ :233b[1]
     sta player_held_object_spriteid                                   ; 246f: 85 52       .R  :233e[1]
 ; if the current menu item is to the left of the player characters, then we have just
 ; loaded a level or something, so don't play the transform sounds.
@@ -4227,7 +4227,7 @@ start_of_transform_in_animation
     lda #0                                                            ; 2490: a9 00       ..  :235f[1]
     sta sound_priority_per_channel_table                              ; 2492: 8d 6f 39    .o9 :2361[1]
     sta sound_priority_per_channel_table + 1                          ; 2495: 8d 70 39    .p9 :2364[1]
-    sta player_wall_collision_flag                                    ; 2498: 8d 33 24    .3$ :2367[1]
+    sta player_wall_collision_reaction_speed                          ; 2498: 8d 33 24    .3$ :2367[1]
     rts                                                               ; 249b: 60          `   :236a[1]
 
 handle_player_landing_sound
@@ -4304,14 +4304,14 @@ update_player_hitting_floor_or_pushed
     lda #0                                                            ; 24f9: a9 00       ..  :23c8[1]
     jsr update_player_hitting_floor                                   ; 24fb: 20 70 27     p' :23ca[1]
 ; if (no player collision) then branch (return)
-    lda player_wall_collision_flag                                    ; 24fe: ad 33 24    .3$ :23cd[1]
+    lda player_wall_collision_reaction_speed                          ; 24fe: ad 33 24    .3$ :23cd[1]
     beq recall_registers_and_return1                                  ; 2501: f0 59       .Y  :23d0[1]
 ; if (player hit wall) then branch
     cmp #$80                                                          ; 2503: c9 80       ..  :23d2[1]
     beq if_player_hit_wall_and_floor_then_clear_wall_collision_flag   ; 2505: f0 44       .D  :23d4[1]
 ; player is being pushed.
 ; check direction of push.
-    lda player_wall_collision_flag                                    ; 2507: ad 33 24    .3$ :23d6[1]
+    lda player_wall_collision_reaction_speed                          ; 2507: ad 33 24    .3$ :23d6[1]
     bmi player_being_pushed_left                                      ; 250a: 30 07       0.  :23d9[1]
 ; player being pushed right
     inc temp_right_offset                                             ; 250c: ee d1 24    ..$ :23db[1]
@@ -4329,7 +4329,7 @@ check_for_collision_while_player_is_being_pushed
     beq push_continues_no_collision                                   ; 2522: f0 07       ..  :23f1[1]
 ; mark as a regular wall collision (no longer pushed)
     lda #$80                                                          ; 2524: a9 80       ..  :23f3[1]
-    sta player_wall_collision_flag                                    ; 2526: 8d 33 24    .3$ :23f5[1]
+    sta player_wall_collision_reaction_speed                          ; 2526: 8d 33 24    .3$ :23f5[1]
     bne if_player_hit_wall_and_floor_then_clear_wall_collision_flag   ; 2529: d0 20       .   :23f8[1]   ; ALWAYS branch
 push_continues_no_collision
     lda player_has_hit_floor_flag                                     ; 252b: ad 8f 28    ..( :23fa[1]
@@ -4339,7 +4339,7 @@ push_continues_no_collision
 move_player_because_of_push
     ldx #1                                                            ; 2535: a2 01       ..  :2404[1]
 push_player_and_accessory_object_loop
-    lda player_wall_collision_flag                                    ; 2537: ad 33 24    .3$ :2406[1]
+    lda player_wall_collision_reaction_speed                          ; 2537: ad 33 24    .3$ :2406[1]
     clc                                                               ; 253a: 18          .   :2409[1]
     adc object_x_low,x                                                ; 253b: 7d 50 09    }P. :240a[1]
     sta object_x_low,x                                                ; 253e: 9d 50 09    .P. :240d[1]
@@ -4350,23 +4350,23 @@ push_player_and_accessory_object_loop
     bpl push_player_and_accessory_object_loop                         ; 2549: 10 ec       ..  :2418[1]
 ; if no collision, or a push, branch (return)
 if_player_hit_wall_and_floor_then_clear_wall_collision_flag
-    lda player_wall_collision_flag                                    ; 254b: ad 33 24    .3$ :241a[1]
+    lda player_wall_collision_reaction_speed                          ; 254b: ad 33 24    .3$ :241a[1]
     cmp #$80                                                          ; 254e: c9 80       ..  :241d[1]
     bne recall_registers_and_return1                                  ; 2550: d0 0a       ..  :241f[1]
 ; if not hit floor, then branch
     lda player_has_hit_floor_flag                                     ; 2552: ad 8f 28    ..( :2421[1]
     beq recall_registers_and_return1                                  ; 2555: f0 05       ..  :2424[1]
     lda #0                                                            ; 2557: a9 00       ..  :2426[1]
-    sta player_wall_collision_flag                                    ; 2559: 8d 33 24    .3$ :2428[1]
+    sta player_wall_collision_reaction_speed                          ; 2559: 8d 33 24    .3$ :2428[1]
 recall_registers_and_return1
     pla                                                               ; 255c: 68          h   :242b[1]   ; recall X,Y
     tay                                                               ; 255d: a8          .   :242c[1]
     pla                                                               ; 255e: 68          h   :242d[1]
     tax                                                               ; 255f: aa          .   :242e[1]
-    lda player_wall_collision_flag                                    ; 2560: ad 33 24    .3$ :242f[1]
+    lda player_wall_collision_reaction_speed                          ; 2560: ad 33 24    .3$ :242f[1]
     rts                                                               ; 2563: 60          `   :2432[1]
 
-player_wall_collision_flag
+player_wall_collision_reaction_speed
     !byte 0                                                           ; 2564: 00          .   :2433[1]
 
 ; *************************************************************************************
@@ -6184,7 +6184,7 @@ wizard_not_jumping
     and object_room_collision_flags                                   ; 2f0b: 2d d8 38    -.8 :2dda[1]
     beq wizard_falling                                                ; 2f0e: f0 05       ..  :2ddd[1]
     lda #$80                                                          ; 2f10: a9 80       ..  :2ddf[1]
-    sta player_wall_collision_flag                                    ; 2f12: 8d 33 24    .3$ :2de1[1]
+    sta player_wall_collision_reaction_speed                          ; 2f12: 8d 33 24    .3$ :2de1[1]
 wizard_falling
     lda #wizard_fall_continues_animation - wizard_base_animation      ; 2f15: a9 96       ..  :2de4[1]
     cmp current_animation                                             ; 2f17: cd df 09    ... :2de6[1]
@@ -6509,7 +6509,7 @@ cat_check_for_hitting_floor
     and object_room_collision_flags                                   ; 316b: 2d d8 38    -.8 :303a[1]
     beq cat_falling                                                   ; 316e: f0 05       ..  :303d[1]
     lda #$80                                                          ; 3170: a9 80       ..  :303f[1]
-    sta player_wall_collision_flag                                    ; 3172: 8d 33 24    .3$ :3041[1]
+    sta player_wall_collision_reaction_speed                          ; 3172: 8d 33 24    .3$ :3041[1]
 cat_falling
     lda #cat_fall_animation - cat_base_animation                      ; 3175: a9 ae       ..  :3044[1]
     cmp current_animation                                             ; 3177: cd df 09    ... :3046[1]

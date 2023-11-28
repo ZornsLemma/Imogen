@@ -262,7 +262,7 @@ set_object_position_from_cell_xy                    = $1f5d
 set_object_position_from_current_sprite_position    = $1f6d
 jmp_for_update_extra_player_character               = $22dd
 play_landing_sound                                  = $23a9
-player_wall_collision_flag                          = $2433
+player_wall_collision_reaction_speed                = $2433
 find_left_and_right_of_object                       = $2434
 temp_left_offset                                    = $24d0
 temp_right_offset                                   = $24d1
@@ -1481,33 +1481,33 @@ update_baby_puzzle
 ; check for level change (branch if not)
     lda current_level                                                 ; 41b1: a5 31
     cmp level_before_latest_level_and_room_initialisation             ; 41b3: c5 51
-    beq c41ed                                                         ; 41b5: f0 36
+    beq update_baby_object_if_in_room_3                               ; 41b5: f0 36
     lda #baby_sit_animation - baby_base_spriteids                     ; 41b7: a9 12
     sta l0070                                                         ; 41b9: 85 70
     ldx #$20 ; ' '                                                    ; 41bb: a2 20
     ldy #$76 ; 'v'                                                    ; 41bd: a0 76
     lda save_game_level_d_baby_progress                               ; 41bf: ad 12 0a
-    beq c41df                                                         ; 41c2: f0 1b
+    beq set_baby_position_and_animation                               ; 41c2: f0 1b
     cmp #baby_sit_animation - baby_base_spriteids                     ; 41c4: c9 12
-    beq c41df                                                         ; 41c6: f0 17
+    beq set_baby_position_and_animation                               ; 41c6: f0 17
     lda #baby_dead_animation - baby_base_spriteids                    ; 41c8: a9 2c
     sta l0070                                                         ; 41ca: 85 70
     ldx #$38 ; '8'                                                    ; 41cc: a2 38
     ldy #$ae                                                          ; 41ce: a0 ae
     lda save_game_level_d_baby_progress                               ; 41d0: ad 12 0a
     cmp #baby_dead_animation - baby_base_spriteids                    ; 41d3: c9 2c
-    beq c41df                                                         ; 41d5: f0 08
+    beq set_baby_position_and_animation                               ; 41d5: f0 08
     cmp #baby_surprise_animation - baby_base_spriteids                ; 41d7: c9 21
-    beq c41df                                                         ; 41d9: f0 04
+    beq set_baby_position_and_animation                               ; 41d9: f0 04
     lda #baby_smile_animation - baby_base_spriteids                   ; 41db: a9 14
     sta l0070                                                         ; 41dd: 85 70
-c41df
+set_baby_position_and_animation
     lda l0070                                                         ; 41df: a5 70
     sta save_game_level_d_baby_progress                               ; 41e1: 8d 12 0a
     sta baby_animation_step_index                                     ; 41e4: 8d 6f 0a
     stx baby_x_position                                               ; 41e7: 8e 70 0a
     sty baby_y_position                                               ; 41ea: 8c 71 0a
-c41ed
+update_baby_object_if_in_room_3
     lda desired_room_index                                            ; 41ed: a5 30
     cmp #3                                                            ; 41ef: c9 03
     bne c4207                                                         ; 41f1: d0 14
@@ -1520,7 +1520,7 @@ c41ed
     lda #$c0                                                          ; 4202: a9 c0
     sta object_z_order,x                                              ; 4204: 9d c2 38
 c4207
-    jmp c4309                                                         ; 4207: 4c 09 43
+    jmp copy_new_baby_state_back_to_object                            ; 4207: 4c 09 43
 
 set_baby_animation_step_local
     jmp set_baby_animation_step                                       ; 420a: 4c eb 42
@@ -1578,41 +1578,41 @@ c4260
     bne set_baby_animation_step_local                                 ; 4268: d0 a0
     lda #spriteid_gun_menu_item                                       ; 426a: a9 cf
     cmp player_using_object_spriteid                                  ; 426c: cd b6 2e
-    bne c4296                                                         ; 426f: d0 25
+    bne check_for_player_baby_collision                               ; 426f: d0 25
     cmp previous_player_using_object_spriteid                         ; 4271: cd b7 2e
-    beq c4296                                                         ; 4274: f0 20
+    beq check_for_player_baby_collision                               ; 4274: f0 20
     lda object_direction                                              ; 4276: ad be 09
-    bpl c4296                                                         ; 4279: 10 1b
+    bpl check_for_player_baby_collision                               ; 4279: 10 1b
     lda object_y_low                                                  ; 427b: ad 7c 09
     cmp #$a8                                                          ; 427e: c9 a8
-    bcc c4296                                                         ; 4280: 90 14
+    bcc check_for_player_baby_collision                               ; 4280: 90 14
     lda object_x_high                                                 ; 4282: ad 66 09
-    bne c4296                                                         ; 4285: d0 0f
+    bne check_for_player_baby_collision                               ; 4285: d0 0f
     lda object_x_low                                                  ; 4287: ad 50 09
     cmp #$d0                                                          ; 428a: c9 d0
-    bcs c4296                                                         ; 428c: b0 08
+    bcs check_for_player_baby_collision                               ; 428c: b0 08
     ldy #baby_surprise_animation - baby_base_spriteids                ; 428e: a0 21
     sty save_game_level_d_baby_progress                               ; 4290: 8c 12 0a
     jmp set_baby_animation_step                                       ; 4293: 4c eb 42
 
-c4296
-    ldx #0                                                            ; 4296: a2 00
-    sty l4367                                                         ; 4298: 8c 67 43
+check_for_player_baby_collision
+    ldx #objectid_player                                              ; 4296: a2 00
+    sty temp_animation_index                                          ; 4298: 8c 67 43
     ldy #objectid_baby                                                ; 429b: a0 05
     jsr test_for_collision_between_objects_x_and_y                    ; 429d: 20 e2 28
-    ldy l4367                                                         ; 42a0: ac 67 43
+    ldy temp_animation_index                                          ; 42a0: ac 67 43
     ora #0                                                            ; 42a3: 09 00
-    bne c42b8                                                         ; 42a5: d0 11
-    ldx #1                                                            ; 42a7: a2 01
-    sty l4367                                                         ; 42a9: 8c 67 43
+    bne got_player_baby_collision                                     ; 42a5: d0 11
+    ldx #objectid_player_accessory                                    ; 42a7: a2 01
+    sty temp_animation_index                                          ; 42a9: 8c 67 43
     ldy #objectid_baby                                                ; 42ac: a0 05
     jsr test_for_collision_between_objects_x_and_y                    ; 42ae: 20 e2 28
-    ldy l4367                                                         ; 42b1: ac 67 43
+    ldy temp_animation_index                                          ; 42b1: ac 67 43
     ora #0                                                            ; 42b4: 09 00
     beq set_baby_animation_step                                       ; 42b6: f0 33
-c42b8
+got_player_baby_collision
     lda #6                                                            ; 42b8: a9 06
-    sta player_wall_collision_flag                                    ; 42ba: 8d 33 24
+    sta player_wall_collision_reaction_speed                          ; 42ba: 8d 33 24
     ldy #baby_walk_animation - baby_base_spriteids                    ; 42bd: a0 16
     jmp set_baby_animation_step                                       ; 42bf: 4c eb 42
 
@@ -1641,7 +1641,7 @@ set_baby_animation_step
     sty baby_animation_step_index                                     ; 42eb: 8c 6f 0a
     lda save_game_level_d_baby_progress                               ; 42ee: ad 12 0a
     cmp #0                                                            ; 42f1: c9 00
-    bne c4309                                                         ; 42f3: d0 14
+    bne copy_new_baby_state_back_to_object                            ; 42f3: d0 14
     lda baby_x_offsets,y                                              ; 42f5: b9 5c 41
     clc                                                               ; 42f8: 18
     adc baby_x_position                                               ; 42f9: 6d 70 0a
@@ -1650,7 +1650,7 @@ set_baby_animation_step
     clc                                                               ; 4302: 18
     adc baby_y_position                                               ; 4303: 6d 71 0a
     sta baby_y_position                                               ; 4306: 8d 71 0a
-c4309
+copy_new_baby_state_back_to_object
     lda desired_room_index                                            ; 4309: a5 30
     cmp #3                                                            ; 430b: c9 03
     bne return8                                                       ; 430d: d0 57
@@ -1672,6 +1672,7 @@ c4309
     beq add_baby_to_collision_map                                     ; 4335: f0 1b
     cmp #baby_dead_animation - baby_base_spriteids                    ; 4337: c9 2c
     bne return8                                                       ; 4339: d0 2b
+; write sold rock values into the collision map for the dead baby
     lda #3                                                            ; 433b: a9 03
     sta width_in_cells                                                ; 433d: 85 3c
     lda #1                                                            ; 433f: a9 01
@@ -1696,7 +1697,7 @@ add_baby_to_collision_map
 return8
     rts                                                               ; 4366: 60
 
-l4367
+temp_animation_index
     !byte 0                                                           ; 4367: 00
 envelope2
     !byte 5                                                           ; 4368: 05                      ; envelope number
@@ -1800,19 +1801,13 @@ pydis_end
 ;     c3fbf
 ;     c3fc2
 ;     c40f9
-;     c41df
-;     c41ed
 ;     c4207
 ;     c421c
 ;     c423d
 ;     c424c
 ;     c425a
 ;     c4260
-;     c4296
-;     c42b8
 ;     c42c2
-;     c4309
-;     l4367
 !if (<envelope1) != $86 {
     !error "Assertion failed: <envelope1 == $86"
 }
@@ -1938,6 +1933,9 @@ pydis_end
 }
 !if (objectid_partition) != $04 {
     !error "Assertion failed: objectid_partition == $04"
+}
+!if (objectid_player) != $00 {
+    !error "Assertion failed: objectid_player == $00"
 }
 !if (objectid_player_accessory) != $01 {
     !error "Assertion failed: objectid_player_accessory == $01"

@@ -209,7 +209,7 @@ set_object_position_from_cell_xy                    = $1f5d
 set_object_position_from_current_sprite_position    = $1f6d
 jmp_for_update_extra_player_character               = $22dd
 play_landing_sound                                  = $23a9
-player_wall_collision_flag                          = $2433
+player_wall_collision_reaction_speed                = $2433
 find_left_and_right_of_object                       = $2434
 temp_left_offset                                    = $24d0
 temp_right_offset                                   = $24d1
@@ -1161,7 +1161,7 @@ c40aa
     beq c40de                                                         ; 40d0: f0 0c
 c40d2
     lda #$fa                                                          ; 40d2: a9 fa
-    sta player_wall_collision_flag                                    ; 40d4: 8d 33 24
+    sta player_wall_collision_reaction_speed                          ; 40d4: 8d 33 24
     ldy #9                                                            ; 40d7: a0 09
     lda #1                                                            ; 40d9: a9 01
     sta level_workspace                                               ; 40db: 8d 6f 0a

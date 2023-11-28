@@ -213,7 +213,7 @@ set_object_position_from_cell_xy                    = $1f5d
 set_object_position_from_current_sprite_position    = $1f6d
 jmp_for_update_extra_player_character               = $22dd
 play_landing_sound                                  = $23a9
-player_wall_collision_flag                          = $2433
+player_wall_collision_reaction_speed                = $2433
 find_left_and_right_of_object                       = $2434
 temp_left_offset                                    = $24d0
 temp_right_offset                                   = $24d1
@@ -1001,13 +1001,13 @@ c3f2d
     cmp object_x_low + 3                                              ; 3f53: cd 53 09
     bcc c3f64                                                         ; 3f56: 90 0c
     lda #6                                                            ; 3f58: a9 06
-    sta player_wall_collision_flag                                    ; 3f5a: 8d 33 24
+    sta player_wall_collision_reaction_speed                          ; 3f5a: 8d 33 24
     lda #1                                                            ; 3f5d: a9 01
     sta l0a73                                                         ; 3f5f: 8d 73 0a
     bne c3f6e                                                         ; 3f62: d0 0a
 c3f64
     lda #$fa                                                          ; 3f64: a9 fa
-    sta player_wall_collision_flag                                    ; 3f66: 8d 33 24
+    sta player_wall_collision_reaction_speed                          ; 3f66: 8d 33 24
     lda #$ff                                                          ; 3f69: a9 ff
     sta l0a73                                                         ; 3f6b: 8d 73 0a
 c3f6e
@@ -1408,7 +1408,7 @@ c421f
     ora #0                                                            ; 4233: 09 00
     beq c4249                                                         ; 4235: f0 12
     lda #$80                                                          ; 4237: a9 80
-    sta player_wall_collision_flag                                    ; 4239: 8d 33 24
+    sta player_wall_collision_reaction_speed                          ; 4239: 8d 33 24
     lda object_direction                                              ; 423c: ad be 09
     sta l0a23                                                         ; 423f: 8d 23 0a
     ldy #4                                                            ; 4242: a0 04

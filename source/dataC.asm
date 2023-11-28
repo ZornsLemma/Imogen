@@ -274,7 +274,7 @@ set_object_position_from_cell_xy                    = $1f5d
 set_object_position_from_current_sprite_position    = $1f6d
 jmp_for_update_extra_player_character               = $22dd
 play_landing_sound                                  = $23a9
-player_wall_collision_flag                          = $2433
+player_wall_collision_reaction_speed                = $2433
 find_left_and_right_of_object                       = $2434
 temp_left_offset                                    = $24d0
 temp_right_offset                                   = $24d1
@@ -1719,7 +1719,7 @@ store_parrot_object_y_position
     jsr test_for_collision_between_objects_x_and_y                    ; 441a: 20 e2 28
     beq return6                                                       ; 441d: f0 05
     lda #$80                                                          ; 441f: a9 80
-    sta player_wall_collision_flag                                    ; 4421: 8d 33 24
+    sta player_wall_collision_reaction_speed                          ; 4421: 8d 33 24
 return6
     rts                                                               ; 4424: 60
 

@@ -201,7 +201,7 @@ set_object_position_from_current_sprite_position    = $1f6d
 l20f7                                               = $20f7
 jmp_for_update_extra_player_character               = $22dd
 play_landing_sound                                  = $23a9
-player_wall_collision_flag                          = $2433
+player_wall_collision_reaction_speed                = $2433
 find_left_and_right_of_object                       = $2434
 temp_left_offset                                    = $24d0
 temp_right_offset                                   = $24d1
@@ -853,7 +853,7 @@ c3e85
     jsr test_for_collision_between_objects_x_and_y                    ; 3e89: 20 e2 28
     beq return1                                                       ; 3e8c: f0 18
     lda #$fa                                                          ; 3e8e: a9 fa
-    sta player_wall_collision_flag                                    ; 3e90: 8d 33 24
+    sta player_wall_collision_reaction_speed                          ; 3e90: 8d 33 24
     lda object_x_high                                                 ; 3e93: ad 66 09
     cmp #1                                                            ; 3e96: c9 01
     bne return1                                                       ; 3e98: d0 0c
@@ -861,7 +861,7 @@ c3e85
     cmp #$14                                                          ; 3e9d: c9 14
     bcc return1                                                       ; 3e9f: 90 05
     lda #6                                                            ; 3ea1: a9 06
-    sta player_wall_collision_flag                                    ; 3ea3: 8d 33 24
+    sta player_wall_collision_reaction_speed                          ; 3ea3: 8d 33 24
 return1
     rts                                                               ; 3ea6: 60
 
@@ -1249,7 +1249,7 @@ c4152
     sta l0a16                                                         ; 4183: 8d 16 0a
 c4186
     lda #$80                                                          ; 4186: a9 80
-    sta player_wall_collision_flag                                    ; 4188: 8d 33 24
+    sta player_wall_collision_reaction_speed                          ; 4188: 8d 33 24
     lda l0a70                                                         ; 418b: ad 70 0a
     cmp #$5a ; 'Z'                                                    ; 418e: c9 5a
     beq c41c3                                                         ; 4190: f0 31
@@ -1260,7 +1260,7 @@ c4186
     bpl c419f                                                         ; 419b: 10 02
     lda #$fa                                                          ; 419d: a9 fa
 c419f
-    sta player_wall_collision_flag                                    ; 419f: 8d 33 24
+    sta player_wall_collision_reaction_speed                          ; 419f: 8d 33 24
     lda l0a70                                                         ; 41a2: ad 70 0a
     cmp #$2a ; '*'                                                    ; 41a5: c9 2a
     beq c41c3                                                         ; 41a7: f0 1a

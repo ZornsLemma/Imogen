@@ -210,7 +210,7 @@ set_object_position_from_current_sprite_position    = $1f6d
 l20f7                                               = $20f7
 jmp_for_update_extra_player_character               = $22dd
 play_landing_sound                                  = $23a9
-player_wall_collision_flag                          = $2433
+player_wall_collision_reaction_speed                = $2433
 find_left_and_right_of_object                       = $2434
 temp_left_offset                                    = $24d0
 temp_right_offset                                   = $24d1
@@ -824,7 +824,7 @@ c3e47
     ora #0                                                            ; 3e5f: 09 00
     beq c3ea7                                                         ; 3e61: f0 44
     lda #6                                                            ; 3e63: a9 06
-    sta player_wall_collision_flag                                    ; 3e65: 8d 33 24
+    sta player_wall_collision_reaction_speed                          ; 3e65: 8d 33 24
     ldy #4                                                            ; 3e68: a0 04
     jmp c3ea7                                                         ; 3e6a: 4c a7 3e
 

@@ -208,7 +208,7 @@ set_object_position_from_current_sprite_position    = $1f6d
 l20f7                                               = $20f7
 jmp_for_update_extra_player_character               = $22dd
 play_landing_sound                                  = $23a9
-player_wall_collision_flag                          = $2433
+player_wall_collision_speed                         = $2433
 find_left_and_right_of_object                       = $2434
 temp_left_offset                                    = $24d0
 temp_right_offset                                   = $24d1
@@ -1352,12 +1352,12 @@ c41fc
     sbc object_x_high + 2                                             ; 423b: ed 68 09
     bmi c4248                                                         ; 423e: 30 08
     lda #6                                                            ; 4240: a9 06
-    sta player_wall_collision_flag                                    ; 4242: 8d 33 24
+    sta player_wall_collision_speed                                   ; 4242: 8d 33 24
     jmp c424d                                                         ; 4245: 4c 4d 42
 
 c4248
     lda #$fa                                                          ; 4248: a9 fa
-    sta player_wall_collision_flag                                    ; 424a: 8d 33 24
+    sta player_wall_collision_speed                                   ; 424a: 8d 33 24
 c424d
     lda #6                                                            ; 424d: a9 06
     sta temp_left_offset                                              ; 424f: 8d d0 24

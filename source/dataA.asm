@@ -249,7 +249,7 @@ set_object_position_from_cell_xy                    = $1f5d
 set_object_position_from_current_sprite_position    = $1f6d
 jmp_for_update_extra_player_character               = $22dd
 play_landing_sound                                  = $23a9
-player_wall_collision_flag                          = $2433
+player_wall_collision_reaction_speed                = $2433
 find_left_and_right_of_object                       = $2434
 temp_left_offset                                    = $24d0
 temp_right_offset                                   = $24d1
@@ -685,7 +685,7 @@ finish_mouse_ball_movement
     jsr test_for_collision_between_objects_x_and_y                    ; 3d16: 20 e2 28
     beq return1                                                       ; 3d19: f0 05
     lda #player_collision_flag_mouse_ball                             ; 3d1b: a9 80
-    sta player_wall_collision_flag                                    ; 3d1d: 8d 33 24
+    sta player_wall_collision_reaction_speed                          ; 3d1d: 8d 33 24
 return1
     rts                                                               ; 3d20: 60
 
@@ -1395,7 +1395,7 @@ have_specific_baby_spriteid
     ora #0                                                            ; 4111: 09 00                   ; set flags to reflect value in set flags to reflect value in A
     beq player_not_collided_with_baby                                 ; 4113: f0 19
     lda #player_collision_flag_baby                                   ; 4115: a9 06
-    sta player_wall_collision_flag                                    ; 4117: 8d 33 24
+    sta player_wall_collision_reaction_speed                          ; 4117: 8d 33 24
     lda #0                                                            ; 411a: a9 00
     sta player_using_object_spriteid                                  ; 411c: 8d b6 2e
     lda #1                                                            ; 411f: a9 01
