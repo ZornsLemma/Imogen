@@ -1788,9 +1788,9 @@ something_to_do_with_egg_animation
     lda object_y_low,x                                                ; 45b9: bd 7c 09
     cmp #$70 ; 'p'                                                    ; 45bc: c9 70
     bcs restore_a_and_return                                          ; 45be: b0 12
-    sty l45d7                                                         ; 45c0: 8c d7 45
+    sty saved_y                                                       ; 45c0: 8c d7 45
     jsr l2434                                                         ; 45c3: 20 34 24
-    ldy l45d7                                                         ; 45c6: ac d7 45
+    ldy saved_y                                                       ; 45c6: ac d7 45
     lda l0070                                                         ; 45c9: a5 70
     cmp #$78 ; 'x'                                                    ; 45cb: c9 78
     bne restore_a_and_return                                          ; 45cd: d0 03
@@ -1801,7 +1801,7 @@ restore_a_and_return
 
 saved_a
     !byte 0                                                           ; 45d6: 00
-l45d7
+saved_y
     !byte 0                                                           ; 45d7: 00
 envelope1
     !byte 5                                                           ; 45d8: 05                      ; envelope number
@@ -1958,7 +1958,6 @@ pydis_end
 ;     l4389
 ;     l438a
 ;     l438b
-;     l45d7
 ;     loop_c414c
 ;     sub_c3c0b
 ;     sub_c4231

@@ -166,6 +166,7 @@ comment(0x45ad, "TODO: Why not lda object_spriteid+2? And similarly for followin
 expr(0x45ae, "objectid_something_maybe_small_thrown_egg")
 entry(0x45d2, "restore_a_and_return")
 label(0x45d6, "saved_a")
+label(0x45d7, "saved_y")
 
 entry(0x3eb8)
 
