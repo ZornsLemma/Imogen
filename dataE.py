@@ -28,6 +28,10 @@ label(0x0a13, "save_game_level_e_holding_egg_flag") # TODO: other uses? not chec
 label(0x0a14, "save_game_level_e_room_1_egg_state") # TODO: other uses? not checked yet? egg state slightly speculative but prob right
 label(0x0a15, "save_game_level_e_duck_captured_flag") # TODO: might be used for other things too, not checked yet
 
+label(0xa73, "thrown_egg_direction")
+label(0xa70, "thrown_egg_x_low")
+label(0xa71, "thrown_egg_x_high")
+label(0xa72, "thrown_egg_y_low")
 label(0xa76, "egg_animation_index")
 label(0xa77, "room_1_egg_x")
 label(0xa78, "room_1_egg_y")

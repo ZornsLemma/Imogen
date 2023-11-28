@@ -180,10 +180,10 @@ save_game_level_e_holding_egg_flag                  = $0a13
 save_game_level_e_room_1_egg_state                  = $0a14
 save_game_level_e_duck_captured_flag                = $0a15
 level_workspace                                     = $0a6f
-l0a70                                               = $0a70
-l0a71                                               = $0a71
-l0a72                                               = $0a72
-l0a73                                               = $0a73
+thrown_egg_x_low                                    = $0a70
+thrown_egg_x_high                                   = $0a71
+thrown_egg_y_low                                    = $0a72
+thrown_egg_direction                                = $0a73
 l0a74                                               = $0a74
 l0a75                                               = $0a75
 egg_animation_index                                 = $0a76
@@ -1131,13 +1131,13 @@ c40e5
     lda #0                                                            ; 4104: a9 00
     sta l0a75                                                         ; 4106: 8d 75 0a
     lda #1                                                            ; 4109: a9 01
-    sta l0a73                                                         ; 410b: 8d 73 0a
+    sta thrown_egg_direction                                          ; 410b: 8d 73 0a
     lda #$da                                                          ; 410e: a9 da
-    sta l0a70                                                         ; 4110: 8d 70 0a
+    sta thrown_egg_x_low                                              ; 4110: 8d 70 0a
     lda #0                                                            ; 4113: a9 00
-    sta l0a71                                                         ; 4115: 8d 71 0a
+    sta thrown_egg_x_high                                             ; 4115: 8d 71 0a
     lda #$3a ; ':'                                                    ; 4118: a9 3a
-    sta l0a72                                                         ; 411a: 8d 72 0a
+    sta thrown_egg_y_low                                              ; 411a: 8d 72 0a
     lda #1                                                            ; 411d: a9 01
     sta save_game_level_e_holding_egg_flag                            ; 411f: 8d 13 0a
     sta l0a74                                                         ; 4122: 8d 74 0a
@@ -1202,13 +1202,13 @@ c4195
     lda desired_room_index                                            ; 41a4: a5 30
     sta l0a75                                                         ; 41a6: 8d 75 0a
     lda object_direction                                              ; 41a9: ad be 09
-    sta l0a73                                                         ; 41ac: 8d 73 0a
+    sta thrown_egg_direction                                          ; 41ac: 8d 73 0a
     lda object_x_low + objectid_player_accessory                      ; 41af: ad 51 09
-    sta l0a70                                                         ; 41b2: 8d 70 0a
+    sta thrown_egg_x_low                                              ; 41b2: 8d 70 0a
     lda object_x_high + objectid_player_accessory                     ; 41b5: ad 67 09
-    sta l0a71                                                         ; 41b8: 8d 71 0a
+    sta thrown_egg_x_high                                             ; 41b8: 8d 71 0a
     lda object_y_low + objectid_player_accessory                      ; 41bb: ad 7d 09
-    sta l0a72                                                         ; 41be: 8d 72 0a
+    sta thrown_egg_y_low                                              ; 41be: 8d 72 0a
     lda #$0c                                                          ; 41c1: a9 0c
     sta save_game_level_e_holding_egg_flag                            ; 41c3: 8d 13 0a
     lda #5                                                            ; 41c6: a9 05
@@ -1273,7 +1273,7 @@ c4240
     lda save_game_level_e_holding_egg_flag                            ; 4240: ad 13 0a
     cmp #$0c                                                          ; 4243: c9 0c
     bne c426a                                                         ; 4245: d0 23
-    lda l0a73                                                         ; 4247: ad 73 0a
+    lda thrown_egg_direction                                          ; 4247: ad 73 0a
     bmi c4251                                                         ; 424a: 30 05
     inc temp_right_offset                                             ; 424c: ee d1 24
     bne c4254                                                         ; 424f: d0 03
@@ -1309,7 +1309,7 @@ c4284
     sta object_spriteid + 2                                           ; 428a: 8d aa 09
     iny                                                               ; 428d: c8
     lda l4099,y                                                       ; 428e: b9 99 40
-    ldx l0a73                                                         ; 4291: ae 73 0a
+    ldx thrown_egg_direction                                          ; 4291: ae 73 0a
     bpl c429b                                                         ; 4294: 10 05
     eor #$ff                                                          ; 4296: 49 ff
     clc                                                               ; 4298: 18
@@ -1321,54 +1321,54 @@ c429b
     dex                                                               ; 42a1: ca
 c42a2
     clc                                                               ; 42a2: 18
-    adc l0a70                                                         ; 42a3: 6d 70 0a
-    sta l0a70                                                         ; 42a6: 8d 70 0a
+    adc thrown_egg_x_low                                              ; 42a3: 6d 70 0a
+    sta thrown_egg_x_low                                              ; 42a6: 8d 70 0a
     txa                                                               ; 42a9: 8a
-    adc l0a71                                                         ; 42aa: 6d 71 0a
-    sta l0a71                                                         ; 42ad: 8d 71 0a
+    adc thrown_egg_x_high                                             ; 42aa: 6d 71 0a
+    sta thrown_egg_x_high                                             ; 42ad: 8d 71 0a
     iny                                                               ; 42b0: c8
     lda l4099,y                                                       ; 42b1: b9 99 40
     clc                                                               ; 42b4: 18
-    adc l0a72                                                         ; 42b5: 6d 72 0a
-    sta l0a72                                                         ; 42b8: 8d 72 0a
+    adc thrown_egg_y_low                                              ; 42b5: 6d 72 0a
+    sta thrown_egg_y_low                                              ; 42b8: 8d 72 0a
     jsr sub_c431d                                                     ; 42bb: 20 1d 43
     lda #2                                                            ; 42be: a9 02
     jsr l25f5                                                         ; 42c0: 20 f5 25
     lda object_x_low + 2                                              ; 42c3: ad 52 09
-    sta l0a70                                                         ; 42c6: 8d 70 0a
+    sta thrown_egg_x_low                                              ; 42c6: 8d 70 0a
     lda object_x_high + 2                                             ; 42c9: ad 68 09
-    sta l0a71                                                         ; 42cc: 8d 71 0a
+    sta thrown_egg_x_high                                             ; 42cc: 8d 71 0a
     lda object_y_low + 2                                              ; 42cf: ad 7e 09
-    sta l0a72                                                         ; 42d2: 8d 72 0a
+    sta thrown_egg_y_low                                              ; 42d2: 8d 72 0a
     lda save_game_level_e_holding_egg_flag                            ; 42d5: ad 13 0a
     cmp #$0c                                                          ; 42d8: c9 0c
     bne return3                                                       ; 42da: d0 40
     ldx #objectid_something_maybe_small_thrown_egg                    ; 42dc: a2 02
     jsr find_left_and_right_of_object                                 ; 42de: 20 34 24
-    lda l0a73                                                         ; 42e1: ad 73 0a
+    lda thrown_egg_direction                                          ; 42e1: ad 73 0a
     bmi c4302                                                         ; 42e4: 30 1c
     lda object_left_cell_x                                            ; 42e6: a5 78
     cmp #$28 ; '('                                                    ; 42e8: c9 28
     bcc return3                                                       ; 42ea: 90 30
-    lda l0a70                                                         ; 42ec: ad 70 0a
+    lda thrown_egg_x_low                                              ; 42ec: ad 70 0a
     sec                                                               ; 42ef: 38
     sbc #$40 ; '@'                                                    ; 42f0: e9 40
-    sta l0a70                                                         ; 42f2: 8d 70 0a
+    sta thrown_egg_x_low                                              ; 42f2: 8d 70 0a
     lda #0                                                            ; 42f5: a9 00
     sbc #0                                                            ; 42f7: e9 00
-    sta l0a71                                                         ; 42f9: 8d 71 0a
+    sta thrown_egg_x_high                                             ; 42f9: 8d 71 0a
     dec l0a75                                                         ; 42fc: ce 75 0a
     jmp c4317                                                         ; 42ff: 4c 17 43
 
 c4302
     lda object_right_cell_x                                           ; 4302: a5 79
     bpl return3                                                       ; 4304: 10 16
-    lda l0a70                                                         ; 4306: ad 70 0a
+    lda thrown_egg_x_low                                              ; 4306: ad 70 0a
     clc                                                               ; 4309: 18
     adc #$40 ; '@'                                                    ; 430a: 69 40
-    sta l0a70                                                         ; 430c: 8d 70 0a
+    sta thrown_egg_x_low                                              ; 430c: 8d 70 0a
     lda #1                                                            ; 430f: a9 01
-    sta l0a71                                                         ; 4311: 8d 71 0a
+    sta thrown_egg_x_high                                             ; 4311: 8d 71 0a
     inc l0a75                                                         ; 4314: ee 75 0a
 c4317
     lda #0                                                            ; 4317: a9 00
@@ -1377,15 +1377,15 @@ return3
     rts                                                               ; 431c: 60
 
 sub_c431d
-    lda l0a70                                                         ; 431d: ad 70 0a
+    lda thrown_egg_x_low                                              ; 431d: ad 70 0a
     sta object_x_low + 2                                              ; 4320: 8d 52 09
-    lda l0a71                                                         ; 4323: ad 71 0a
+    lda thrown_egg_x_high                                             ; 4323: ad 71 0a
     sta object_x_high + 2                                             ; 4326: 8d 68 09
-    lda l0a72                                                         ; 4329: ad 72 0a
+    lda thrown_egg_y_low                                              ; 4329: ad 72 0a
     sta object_y_low + 2                                              ; 432c: 8d 7e 09
     lda #0                                                            ; 432f: a9 00
     sta object_y_high + 2                                             ; 4331: 8d 94 09
-    lda l0a73                                                         ; 4334: ad 73 0a
+    lda thrown_egg_direction                                          ; 4334: ad 73 0a
     sta object_direction + 2                                          ; 4337: 8d c0 09
     rts                                                               ; 433a: 60
 
@@ -1925,10 +1925,6 @@ pydis_end
 ;     l0023
 ;     l09d4
 ;     l09df
-;     l0a70
-;     l0a71
-;     l0a72
-;     l0a73
 ;     l0a74
 ;     l0a75
 ;     l0a79
