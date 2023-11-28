@@ -1659,7 +1659,7 @@ room_1_not_this_room1
     sta object_x_high + objectid_egg                                  ; 44b3: 8d 69 09
     sta object_y_high + objectid_egg                                  ; 44b6: 8d 95 09
 room_1_not_this_room2
-    jmp c4551                                                         ; 44b9: 4c 51 45
+    jmp finish_setting_up_egg                                         ; 44b9: 4c 51 45
 
 room_1_not_first_update
     lda egg_animation_index                                           ; 44bc: ad 76 0a
@@ -1737,7 +1737,7 @@ new_egg_animation_index_in_y
     clc                                                               ; 454a: 18
     adc room_1_egg_y                                                  ; 454b: 6d 78 0a
     sta room_1_egg_y                                                  ; 454e: 8d 78 0a
-c4551
+finish_setting_up_egg
     lda desired_room_index                                            ; 4551: a5 30
     cmp #1                                                            ; 4553: c9 01
     bne return5                                                       ; 4555: d0 49
@@ -1920,7 +1920,6 @@ pydis_end
 ;     c44df
 ;     c450b
 ;     c4533
-;     c4551
 ;     c4596
 ;     l0023
 ;     l09d4
