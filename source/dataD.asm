@@ -130,6 +130,7 @@ spriteid_fire8                        = 67
 spriteid_gnu_head                     = 203
 spriteid_gun                          = 205
 spriteid_gun_held                     = 206
+spriteid_gun_menu_item                = 207
 spriteid_icodata_box                  = 9
 spriteid_icodata_cat                  = 5
 spriteid_icodata_disc                 = 3
@@ -139,7 +140,6 @@ spriteid_icodata_password             = 8
 spriteid_icodata_sound                = 2
 spriteid_icodata_wizard               = 4
 spriteid_icon_background              = 1
-spriteid_menu_item                    = 207
 spriteid_menu_item_completion_spell   = 33
 spriteid_monkey1                      = 78
 spriteid_monkey2                      = 79
@@ -344,7 +344,7 @@ level_specific_initialisation
 developer_mode_inactive
     lda save_game_level_d_got_gun                                     ; 3b08: ad 0f 0a
     beq c3b12                                                         ; 3b0b: f0 05
-    lda #spriteid_menu_item                                           ; 3b0d: a9 cf
+    lda #spriteid_gun_menu_item                                       ; 3b0d: a9 cf
     jsr find_or_create_menu_slot_for_A                                ; 3b0f: 20 bd 2b
 c3b12
     lda save_game_level_d_got_axe                                     ; 3b12: ad 0e 0a
@@ -1098,7 +1098,7 @@ c3f66
     lda #collision_map_solid_rock                                     ; 3fa5: a9 03
     sta value_to_write_to_collision_map                               ; 3fa7: 85 3e
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 3fa9: 20 44 1e
-    jsr sub_c3fd9                                                     ; 3fac: 20 d9 3f
+    jsr play_baby_dying_or_partition_landing_sounds                   ; 3fac: 20 d9 3f
 c3faf
     ldy save_game_level_d_partition_progress                          ; 3faf: ac 11 0a
     iny                                                               ; 3fb2: c8
@@ -1129,7 +1129,7 @@ partition_spriteid_table
     !byte spriteid_falling_partition                                  ; 3fd7: d6
     !byte spriteid_fallen_partition                                   ; 3fd8: d7
 
-sub_c3fd9
+play_baby_dying_or_partition_landing_sounds
     lda #0                                                            ; 3fd9: a9 00
     ldx #<sound1                                                      ; 3fdb: a2 9c
     ldy #>sound1                                                      ; 3fdd: a0 43
@@ -1139,7 +1139,7 @@ sub_c3fd9
     jsr play_sound_yx                                                 ; 3fe6: 20 f6 38
     rts                                                               ; 3fe9: 60
 
-sub_c3fea
+play_gunshot_sound
     lda #0                                                            ; 3fea: a9 00
     ldx #<sound3                                                      ; 3fec: a2 7e
     ldy #>sound3                                                      ; 3fee: a0 43
@@ -1304,7 +1304,7 @@ room_3_update_handler
 ; check for first update in room (branch if not)
     lda update_room_first_update_flag                                 ; 40d0: ad 2b 13
     beq c4126                                                         ; 40d3: f0 51
-    lda #spriteid_menu_item                                           ; 40d5: a9 cf
+    lda #spriteid_gun_menu_item                                       ; 40d5: a9 cf
     sta toolbar_collectable_spriteids+1                               ; 40d7: 8d e9 2e
     lda #$ce                                                          ; 40da: a9 ce
     sta collectable_spriteids+1                                       ; 40dc: 8d ee 2e
@@ -1354,7 +1354,7 @@ c4126
     ldy #3                                                            ; 4133: a0 03
     jsr test_for_collision_between_objects_x_and_y                    ; 4135: 20 e2 28
     beq return7                                                       ; 4138: f0 21
-    lda #spriteid_menu_item                                           ; 413a: a9 cf
+    lda #spriteid_gun_menu_item                                       ; 413a: a9 cf
     jsr find_or_create_menu_slot_for_A                                ; 413c: 20 bd 2b
     lda #spriteid_one_pixel_masked_out                                ; 413f: a9 00
     sta object_spriteid + objectid_axe                                ; 4141: 8d ab 09
@@ -1363,12 +1363,12 @@ c4126
     jmp return7                                                       ; 4149: 4c 5b 41
 
 c414c
-    lda #$cf                                                          ; 414c: a9 cf
+    lda #spriteid_gun_menu_item                                       ; 414c: a9 cf
     cmp player_using_object_spriteid                                  ; 414e: cd b6 2e
     bne return7                                                       ; 4151: d0 08
     cmp previous_player_using_object_spriteid                         ; 4153: cd b7 2e
     beq return7                                                       ; 4156: f0 03
-    jsr sub_c3fea                                                     ; 4158: 20 ea 3f
+    jsr play_gunshot_sound                                            ; 4158: 20 ea 3f
 return7
     rts                                                               ; 415b: 60
 
@@ -1575,7 +1575,7 @@ c42c2
     lda desired_room_index                                            ; 42ca: a5 30
     cmp #3                                                            ; 42cc: c9 03
     bne c42e6                                                         ; 42ce: d0 16
-    jsr sub_c3fd9                                                     ; 42d0: 20 d9 3f
+    jsr play_baby_dying_or_partition_landing_sounds                   ; 42d0: 20 d9 3f
     lda #collision_map_none                                           ; 42d3: a9 00
     sta value_to_write_to_collision_map                               ; 42d5: 85 3e
     ldx #6                                                            ; 42d7: a2 06
@@ -1791,8 +1791,6 @@ pydis_end
 ;     l416d
 ;     l4367
 ;     sub_c3c73
-;     sub_c3fd9
-;     sub_c3fea
 !if (<envelope1) != $86 {
     !error "Assertion failed: <envelope1 == $86"
 }
@@ -1949,8 +1947,8 @@ pydis_end
 !if (spriteid_gun) != $cd {
     !error "Assertion failed: spriteid_gun == $cd"
 }
-!if (spriteid_menu_item) != $cf {
-    !error "Assertion failed: spriteid_menu_item == $cf"
+!if (spriteid_gun_menu_item) != $cf {
+    !error "Assertion failed: spriteid_gun_menu_item == $cf"
 }
 !if (spriteid_one_pixel_masked_out) != $00 {
     !error "Assertion failed: spriteid_one_pixel_masked_out == $00"
