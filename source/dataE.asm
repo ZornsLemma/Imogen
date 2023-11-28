@@ -1340,7 +1340,7 @@ c42a2
     lda save_game_level_e_holding_egg_flag                            ; 42d5: ad 13 0a
     cmp #$0c                                                          ; 42d8: c9 0c
     bne return3                                                       ; 42da: d0 40
-    ldx #2                                                            ; 42dc: a2 02
+    ldx #objectid_something_maybe_small_thrown_egg                    ; 42dc: a2 02
     jsr find_left_and_right_of_object                                 ; 42de: 20 34 24
     lda l0a73                                                         ; 42e1: ad 73 0a
     bmi c4302                                                         ; 42e4: 30 1c
