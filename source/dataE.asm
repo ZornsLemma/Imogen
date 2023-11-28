@@ -1814,7 +1814,7 @@ something_to_do_with_egg_animation
     sty saved_y                                                       ; 45c0: 8c d7 45
     jsr find_left_and_right_of_object                                 ; 45c3: 20 34 24
     ldy saved_y                                                       ; 45c6: ac d7 45
-    lda l0070                                                         ; 45c9: a5 70
+    lda object_left_low                                               ; 45c9: a5 70
     cmp #$78 ; 'x'                                                    ; 45cb: c9 78
     bne restore_a_and_return                                          ; 45cd: d0 03
     dec saved_a                                                       ; 45cf: ce d6 45

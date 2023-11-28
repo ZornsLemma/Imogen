@@ -63,6 +63,9 @@ substitute_labels = {
     (0x3ad5,0x4449): {
         "l0070": "room_exit_direction",
     },
+    (0x45a1, 0x45d5): {
+        "l0070": "object_left_low",
+    },
 }
 
 # (Class SubstituteLabels is defined in common.py to implement the substitute labels)
