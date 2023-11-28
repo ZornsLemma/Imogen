@@ -1668,7 +1668,7 @@ not_end_of_egg_animation_sequence
     lda save_game_level_e_room_1_egg_state                            ; 44cb: ad 14 0a
     cmp #1                                                            ; 44ce: c9 01
     bne c44df                                                         ; 44d0: d0 0d
-    jsr sub_c45a1                                                     ; 44d2: 20 a1 45
+    jsr something_to_do_with_egg_animation                            ; 44d2: 20 a1 45
     beq new_egg_animation_index_in_y                                  ; 44d5: f0 61
     ldy #egg_animation_subseq2 - egg_animations_table                 ; 44d7: a0 05
     sty save_game_level_e_room_1_egg_state                            ; 44d9: 8c 14 0a
@@ -1677,7 +1677,7 @@ not_end_of_egg_animation_sequence
 c44df
     cmp #5                                                            ; 44df: c9 05
     bne c450b                                                         ; 44e1: d0 28
-    jsr sub_c45a1                                                     ; 44e3: 20 a1 45
+    jsr something_to_do_with_egg_animation                            ; 44e3: 20 a1 45
     beq new_egg_animation_index_in_y                                  ; 44e6: f0 50
     lda desired_room_index                                            ; 44e8: a5 30
     cmp #1                                                            ; 44ea: c9 01
@@ -1771,7 +1771,8 @@ c4596
 return5
     rts                                                               ; 45a0: 60
 
-sub_c45a1
+; Returns with some flag in Z; if Z is set, Y contains a new egg animation index
+something_to_do_with_egg_animation
     lda #0                                                            ; 45a1: a9 00
     sta l45d6                                                         ; 45a3: 8d d6 45
     lda l0a75                                                         ; 45a6: ad 75 0a
@@ -1963,7 +1964,6 @@ pydis_end
 ;     sub_c4231
 ;     sub_c431d
 ;     sub_c433b
-;     sub_c45a1
 !if (<envelope1) != $d8 {
     !error "Assertion failed: <envelope1 == $d8"
 }

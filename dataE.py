@@ -159,6 +159,9 @@ expr(0x44d8, make_subtract("egg_animation_subseq2", "egg_animations_table"))
 expr(0x452f, make_subtract("egg_animation_subseq3", "egg_animations_table"))
 entry(0x4538, "new_egg_animation_index_in_y")
 
+comment(0x45a1, "Returns with some flag in Z; if Z is set, Y contains a new egg animation index")
+entry(0x45a1, "something_to_do_with_egg_animation")
+
 entry(0x3eb8)
 
 # TODO: replace "+ n" with "+ objectid_*" once objects have been named
