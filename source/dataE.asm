@@ -1585,6 +1585,7 @@ egg_animations_table
     !byte 0                                                           ; 4453: 00
     !byte 0                                                           ; 4454: 00                      ; terminator
 
+egg_animation_subseq1
     !byte spriteid_large_egg_tilted                                   ; 4455: dc
     !byte $f8                                                         ; 4456: f8
     !byte 0                                                           ; 4457: 00
@@ -1659,9 +1660,9 @@ room_1_not_first_update
     adc #3                                                            ; 44c0: 69 03
     tay                                                               ; 44c2: a8
     lda egg_animations_table,y                                        ; 44c3: b9 4c 44
-    bne c44cb                                                         ; 44c6: d0 03
+    bne not_end_of_egg_animation_sequence                             ; 44c6: d0 03
     ldy save_game_level_e_room_1_egg_state                            ; 44c8: ac 14 0a
-c44cb
+not_end_of_egg_animation_sequence
     lda save_game_level_e_room_1_egg_state                            ; 44cb: ad 14 0a
     cmp #1                                                            ; 44ce: c9 01
     bne c44df                                                         ; 44d0: d0 0d
@@ -1691,7 +1692,7 @@ c44df
 room_1_not_this_room3
     lda #$16                                                          ; 4501: a9 16
     sta save_game_level_e_room_1_egg_state                            ; 4503: 8d 14 0a
-    ldy #9                                                            ; 4506: a0 09
+    ldy #egg_animation_subseq1 - egg_animations_table                 ; 4506: a0 09
     jmp c4538                                                         ; 4508: 4c 38 45
 
 c450b
@@ -1908,7 +1909,6 @@ pydis_end
 ;     c4370
 ;     c4373
 ;     c448d
-;     c44cb
 ;     c44df
 ;     c450b
 ;     c4533
@@ -2010,6 +2010,9 @@ pydis_end
 }
 !if (collision_map_solid_rock) != $03 {
     !error "Assertion failed: collision_map_solid_rock == $03"
+}
+!if (egg_animation_subseq1 - egg_animations_table) != $09 {
+    !error "Assertion failed: egg_animation_subseq1 - egg_animations_table == $09"
 }
 !if (exit_room_bottom) != $02 {
     !error "Assertion failed: exit_room_bottom == $02"

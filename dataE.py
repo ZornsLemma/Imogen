@@ -53,6 +53,7 @@ label(0x3cd3, "room_2_check_right_exit")
 expr(0x3cd6, "exit_room_right")
 label(0x443f, "room_1_check_right_exit")
 expr(0x4442, "exit_room_right")
+entry(0x44cb, "not_end_of_egg_animation_sequence")
 
 expr(0x3b07, "spriteid_duck_toolbar")
 entry(0x3b0b, "developer_mode_not_active")
@@ -150,6 +151,8 @@ expr(0x4466, sprite_dict)
 #    expr(addr+1, sprite_dict) # TODO: 0 should probably be left as 0 not treated as a sprite ID - see code at 44c3
 label(0x444c, "egg_animations_table")
 entry(0x4501, "room_1_not_this_room3")
+label(0x444c+9, "egg_animation_subseq1")
+expr(0x4507, make_subtract("egg_animation_subseq1", "egg_animations_table"))
 
 entry(0x3eb8)
 
