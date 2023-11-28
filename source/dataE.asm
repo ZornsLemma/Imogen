@@ -1611,6 +1611,7 @@ egg_animation_subseq3
     !byte 8                                                           ; 4464: 08
     !byte 0                                                           ; 4465: 00                      ; terminator
 
+egg_animation_subseq4
     !byte spriteid_large_egg_sideways                                 ; 4466: dd
     !byte 0                                                           ; 4467: 00
     !byte 0                                                           ; 4468: 00
@@ -1632,14 +1633,14 @@ room_1_update_handler
     cmp #5                                                            ; 4480: c9 05
     beq room_1_axy_set                                                ; 4482: f0 0f
     ora #0                                                            ; 4484: 09 00                   ; set flags based on A
-    bne c448d                                                         ; 4486: d0 05
+    bne egg_on_floor                                                  ; 4486: d0 05
     lda #1                                                            ; 4488: a9 01
     jmp room_1_axy_set                                                ; 448a: 4c 93 44
 
-c448d
+egg_on_floor
     ldx #$58 ; 'X'                                                    ; 448d: a2 58
     ldy #$a8                                                          ; 448f: a0 a8
-    lda #$1a                                                          ; 4491: a9 1a
+    lda #egg_animation_subseq4 - egg_animations_table                 ; 4491: a9 1a
 room_1_axy_set
     sta save_game_level_e_room_1_egg_state                            ; 4493: 8d 14 0a
     sta egg_animation_index                                           ; 4496: 8d 76 0a
@@ -1916,7 +1917,6 @@ pydis_end
 ;     c4359
 ;     c4370
 ;     c4373
-;     c448d
 ;     c44df
 ;     c450b
 ;     c4533
@@ -2014,6 +2014,9 @@ pydis_end
 }
 !if (egg_animation_subseq3 - egg_animations_table) != $16 {
     !error "Assertion failed: egg_animation_subseq3 - egg_animations_table == $16"
+}
+!if (egg_animation_subseq4 - egg_animations_table) != $1a {
+    !error "Assertion failed: egg_animation_subseq4 - egg_animations_table == $1a"
 }
 !if (exit_room_bottom) != $02 {
     !error "Assertion failed: exit_room_bottom == $02"
