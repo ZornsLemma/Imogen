@@ -1338,12 +1338,12 @@ room_3_update_handler
 ; check for level change (branch if not)
     lda current_level                                                 ; 40e9: a5 31
     cmp level_before_latest_level_and_room_initialisation             ; 40eb: c5 51
-    beq c40f9                                                         ; 40ed: f0 0a
+    beq initialise_gun_in_room_3                                      ; 40ed: f0 0a
     lda save_game_level_d_got_gun                                     ; 40ef: ad 0f 0a
-    beq c40f9                                                         ; 40f2: f0 05
+    beq initialise_gun_in_room_3                                      ; 40f2: f0 05
     lda #$ff                                                          ; 40f4: a9 ff
     sta save_game_level_d_got_gun                                     ; 40f6: 8d 0f 0a
-c40f9
+initialise_gun_in_room_3
     lda save_game_level_d_got_gun                                     ; 40f9: ad 0f 0a
     bne return6                                                       ; 40fc: d0 27
     lda desired_room_index                                            ; 40fe: a5 30
@@ -1355,7 +1355,7 @@ c40f9
     ldy #$14                                                          ; 410a: a0 14
     lda #$fd                                                          ; 410c: a9 fd
     sta temp_sprite_y_offset                                          ; 410e: 85 3b
-    lda #objectid_axe                                                 ; 4110: a9 03
+    lda #objectid_gun                                                 ; 4110: a9 03
     jsr set_object_position_from_cell_xy                              ; 4112: 20 5d 1f
     tax                                                               ; 4115: aa
     lda #spriteid_gun                                                 ; 4116: a9 cd
@@ -1521,7 +1521,7 @@ set_baby_position_and_animation
 update_baby_object_if_in_room_3
     lda desired_room_index                                            ; 41ed: a5 30
     cmp #3                                                            ; 41ef: c9 03
-    bne c4207                                                         ; 41f1: d0 14
+    bne copy_new_baby_state_back_to_object_local                      ; 41f1: d0 14
     ldx #objectid_baby                                                ; 41f3: a2 05
     lda #0                                                            ; 41f5: a9 00
     sta object_x_high,x                                               ; 41f7: 9d 66 09
@@ -1530,7 +1530,7 @@ update_baby_object_if_in_room_3
     sta object_erase_type,x                                           ; 41ff: 9d ac 38
     lda #$c0                                                          ; 4202: a9 c0
     sta object_z_order,x                                              ; 4204: 9d c2 38
-c4207
+copy_new_baby_state_back_to_object_local
     jmp copy_new_baby_state_back_to_object                            ; 4207: 4c 09 43
 
 set_baby_animation_step_local
@@ -1542,12 +1542,12 @@ update_baby_animation_step
     adc #1                                                            ; 4211: 69 01
     tay                                                               ; 4213: a8
     lda baby_base_spriteids,y                                         ; 4214: b9 7e 41
-    bne c421c                                                         ; 4217: d0 03
+    bne baby_animation_in_progress                                    ; 4217: d0 03
     ldy save_game_level_d_baby_progress                               ; 4219: ac 12 0a
-c421c
+baby_animation_in_progress
     lda save_game_level_d_baby_progress                               ; 421c: ad 12 0a
     cmp #baby_sit_animation - baby_base_spriteids                     ; 421f: c9 12
-    bne c423d                                                         ; 4221: d0 1a
+    bne baby_is_not_sitting                                           ; 4221: d0 1a
     lda desired_room_index                                            ; 4223: a5 30
     cmp #3                                                            ; 4225: c9 03
     bne set_baby_animation_step_local                                 ; 4227: d0 e1
@@ -1560,16 +1560,17 @@ c421c
     sty save_game_level_d_baby_progress                               ; 4237: 8c 12 0a
     jmp set_baby_animation_step                                       ; 423a: 4c eb 42
 
-c423d
+baby_is_not_sitting
     cmp #baby_walk_to_block_exit_animation - baby_base_spriteids      ; 423d: c9 00
-    bne c4260                                                         ; 423f: d0 1f
+    bne baby_is_not_walking_to_block_exit                             ; 423f: d0 1f
+; check if we have reached the end of the 'walk to block exit' animation (branch if so)
     cpy #baby_walk_to_block_exit_animation+16 - baby_base_spriteids   ; 4241: c0 10
-    beq c424c                                                         ; 4243: f0 07
+    beq reached_end_of_walk_to_block_exit_animation                   ; 4243: f0 07
     cpy #baby_walk_to_block_exit_animation - baby_base_spriteids      ; 4245: c0 00
-    beq c425a                                                         ; 4247: f0 11
+    beq start_of_walk_to_block_exit_animation                         ; 4247: f0 11
     jmp set_baby_animation_step                                       ; 4249: 4c eb 42
 
-c424c
+reached_end_of_walk_to_block_exit_animation
     lda desired_room_index                                            ; 424c: a5 30
     cmp #3                                                            ; 424e: c9 03
     bne set_baby_animation_step_local                                 ; 4250: d0 b8
@@ -1577,13 +1578,13 @@ c424c
     ldy #baby_walk_to_block_exit_animation+16 - baby_base_spriteids   ; 4255: a0 10
     jmp set_baby_animation_step                                       ; 4257: 4c eb 42
 
-c425a
+start_of_walk_to_block_exit_animation
     lda #baby_smile_animation - baby_base_spriteids                   ; 425a: a9 14
     sta save_game_level_d_baby_progress                               ; 425c: 8d 12 0a
     tay                                                               ; 425f: a8
-c4260
+baby_is_not_walking_to_block_exit
     cmp #baby_smile_animation - baby_base_spriteids                   ; 4260: c9 14
-    bne c42c2                                                         ; 4262: d0 5e
+    bne baby_is_not_smiling                                           ; 4262: d0 5e
     lda desired_room_index                                            ; 4264: a5 30
     cmp #3                                                            ; 4266: c9 03
     bne set_baby_animation_step_local                                 ; 4268: d0 a0
@@ -1627,11 +1628,12 @@ got_player_baby_collision
     ldy #baby_walk_animation - baby_base_spriteids                    ; 42bd: a0 16
     jmp set_baby_animation_step                                       ; 42bf: 4c eb 42
 
-c42c2
+baby_is_not_smiling
     cmp #baby_surprise_animation - baby_base_spriteids                ; 42c2: c9 21
     bne set_baby_animation_step                                       ; 42c4: d0 25
     cpy #baby_surprise_animation - baby_base_spriteids                ; 42c6: c0 21
     bne set_baby_animation_step                                       ; 42c8: d0 21
+; beginning the surprise animation, clear collision map for baby
     lda desired_room_index                                            ; 42ca: a5 30
     cmp #3                                                            ; 42cc: c9 03
     bne set_dead_baby_animation                                       ; 42ce: d0 16
@@ -1798,16 +1800,6 @@ ground_fill_2x2_bottom_right
     !byte %...#....                                                   ; 43c3: 10
 sprite_data
 pydis_end
-
-; Automatically generated labels:
-;     c40f9
-;     c4207
-;     c421c
-;     c423d
-;     c424c
-;     c425a
-;     c4260
-;     c42c2
 !if (<envelope1) != $86 {
     !error "Assertion failed: <envelope1 == $86"
 }
