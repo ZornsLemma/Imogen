@@ -63,6 +63,7 @@ object_collided_left_wall             = 1
 object_collided_right_wall            = 4
 objectid_axe                          = 3
 objectid_baby                         = 5
+objectid_gun                          = 3
 objectid_old_player                   = 11
 objectid_old_player_accessory         = 12
 objectid_partition                    = 4
@@ -227,9 +228,9 @@ save_game_level_d_got_gun                           = $0a0f
 save_game_level_d_gnu_sign_position                 = $0a10
 save_game_level_d_partition_progress                = $0a11
 save_game_level_d_baby_progress                     = $0a12
-level_workspace                                     = $0a6f
-l0a70                                               = $0a70
-l0a71                                               = $0a71
+baby_animation_step_index                           = $0a6f
+baby_x_position                                     = $0a70
+baby_y_position                                     = $0a71
 string_input_buffer                                 = $0a90
 tile_all_set_pixels                                 = $0aa9
 developer_flags                                     = $1103
@@ -278,7 +279,6 @@ previous_player_using_object_spriteid               = $2eb7
 toolbar_collectable_spriteids                       = $2ee8
 collectable_spriteids                               = $2eed
 collectable_being_used_spriteids                    = $2ef2
-l2ef4                                               = $2ef4
 inhibit_monkey_climb_flag                           = $31d7
 print_encrypted_string_at_yx_centred                = $37f3
 wait_one_second_then_check_keys                     = $388d
@@ -343,10 +343,10 @@ level_specific_initialisation
     sta save_game_level_d_got_axe                                     ; 3b05: 8d 0e 0a
 developer_mode_inactive
     lda save_game_level_d_got_gun                                     ; 3b08: ad 0f 0a
-    beq c3b12                                                         ; 3b0b: f0 05
+    beq no_gun                                                        ; 3b0b: f0 05
     lda #spriteid_gun_menu_item                                       ; 3b0d: a9 cf
     jsr find_or_create_menu_slot_for_A                                ; 3b0f: 20 bd 2b
-c3b12
+no_gun
     lda save_game_level_d_got_axe                                     ; 3b12: ad 0e 0a
     beq return1                                                       ; 3b15: f0 05
     lda #spriteid_axe_menu_item                                       ; 3b17: a9 ca
@@ -533,22 +533,26 @@ room_0_update_handler
     jsr update_brazier_and_fire                                       ; 3c07: 20 88 19
 ; check for first update in room (branch if not)
     lda update_room_first_update_flag                                 ; 3c0a: ad 2b 13
-    beq c3c4f                                                         ; 3c0d: f0 40
+    beq room_0_not_first_update                                       ; 3c0d: f0 40
 ; check for level change (branch if not)
     lda current_level                                                 ; 3c0f: a5 31
     cmp level_before_latest_level_and_room_initialisation             ; 3c11: c5 51
     beq c3c22                                                         ; 3c13: f0 0d
+; new level
     lda #spriteid_axe_menu_item                                       ; 3c15: a9 ca
     sta toolbar_collectable_spriteids+2                               ; 3c17: 8d ea 2e
-    lda #$c9                                                          ; 3c1a: a9 c9
+    lda #spriteid_axe                                                 ; 3c1a: a9 c9
     sta collectable_spriteids+2                                       ; 3c1c: 8d ef 2e
-    sta l2ef4                                                         ; 3c1f: 8d f4 2e
+    sta collectable_being_used_spriteids+2                            ; 3c1f: 8d f4 2e
+; no_level_change, just a room change only
 c3c22
     lda desired_room_index                                            ; 3c22: a5 30
     cmp #0                                                            ; 3c24: c9 00
     bne return2                                                       ; 3c26: d0 26
+; in room 0
     lda save_game_level_d_got_axe                                     ; 3c28: ad 0e 0a
     bne return2                                                       ; 3c2b: d0 21
+; not got axe yet, position the axe
     ldx #$23 ; '#'                                                    ; 3c2d: a2 23
     lda #5                                                            ; 3c2f: a9 05
     sta temp_sprite_x_offset                                          ; 3c31: 85 3a
@@ -567,14 +571,14 @@ c3c22
 return2
     rts                                                               ; 3c4e: 60
 
-c3c4f
+room_0_not_first_update
     lda desired_room_index                                            ; 3c4f: a5 30
     cmp #0                                                            ; 3c51: c9 00
     bne return3                                                       ; 3c53: d0 1d
     lda save_game_level_d_got_axe                                     ; 3c55: ad 0e 0a
     bne return3                                                       ; 3c58: d0 18
     ldx #objectid_old_player                                          ; 3c5a: a2 0b
-    ldy #3                                                            ; 3c5c: a0 03
+    ldy #objectid_axe                                                 ; 3c5c: a0 03
     jsr test_for_collision_between_objects_x_and_y                    ; 3c5e: 20 e2 28
     beq return3                                                       ; 3c61: f0 0f
     lda #$ff                                                          ; 3c63: a9 ff
@@ -590,11 +594,13 @@ return3
 sub_c3c73
     lda update_room_first_update_flag                                 ; 3c73: ad 2b 13
     beq c3ccd                                                         ; 3c76: f0 55
+; initialise sign position
     lda save_game_level_d_gnu_sign_position                           ; 3c78: ad 10 0a
-    bne c3c82                                                         ; 3c7b: d0 05
+    bne draw_rock_and_block_entrance                                  ; 3c7b: d0 05
+; initial position of the sign
     lda #$21 ; '!'                                                    ; 3c7d: a9 21
     sta save_game_level_d_gnu_sign_position                           ; 3c7f: 8d 10 0a
-c3c82
+draw_rock_and_block_entrance
     ldy #$0e                                                          ; 3c82: a0 0e
     lda #1                                                            ; 3c84: a9 01
     sta width_in_cells                                                ; 3c86: 85 3c
@@ -604,15 +610,16 @@ c3c82
     sta value_to_write_to_collision_map                               ; 3c8e: 85 3e
     lda desired_room_index                                            ; 3c90: a5 30
     cmp #1                                                            ; 3c92: c9 01
-    beq c3ca3                                                         ; 3c94: f0 0d
+    beq draw_rock_in_room_1                                           ; 3c94: f0 0d
     bcs c3cca                                                         ; 3c96: b0 32
+; draw rock in room 0
     ldx #$1e                                                          ; 3c98: a2 1e
     lda #spriteid_rock                                                ; 3c9a: a9 cc
     jsr draw_sprite_a_at_cell_xy                                      ; 3c9c: 20 4c 1f
     dex                                                               ; 3c9f: ca
     jmp c3caf                                                         ; 3ca0: 4c af 3c
 
-c3ca3
+draw_rock_in_room_1
     ldx #9                                                            ; 3ca3: a2 09
     lda #4                                                            ; 3ca5: a9 04
     sta temp_sprite_x_offset                                          ; 3ca7: 85 3a
@@ -1116,9 +1123,9 @@ c3fc2
     cmp #2                                                            ; 3fc4: c9 02
     bne return5                                                       ; 3fc6: d0 0d
     ldy save_game_level_d_partition_progress                          ; 3fc8: ac 11 0a
-    bpl c3fcf                                                         ; 3fcb: 10 02
+    bpl set_partition_sprite                                          ; 3fcb: 10 02
     ldy #2                                                            ; 3fcd: a0 02
-c3fcf
+set_partition_sprite
     lda partition_spriteid_table,y                                    ; 3fcf: b9 d6 3f
     sta object_spriteid + objectid_partition                          ; 3fd2: 8d ac 09
 return5
@@ -1303,10 +1310,10 @@ room_3_update_handler
     jsr update_brazier_and_fire                                       ; 40cd: 20 88 19
 ; check for first update in room (branch if not)
     lda update_room_first_update_flag                                 ; 40d0: ad 2b 13
-    beq c4126                                                         ; 40d3: f0 51
+    beq update_gun                                                    ; 40d3: f0 51
     lda #spriteid_gun_menu_item                                       ; 40d5: a9 cf
     sta toolbar_collectable_spriteids+1                               ; 40d7: 8d e9 2e
-    lda #$ce                                                          ; 40da: a9 ce
+    lda #spriteid_gun_held                                            ; 40da: a9 ce
     sta collectable_spriteids+1                                       ; 40dc: 8d ee 2e
     sta collectable_being_used_spriteids + 1                          ; 40df: 8d f3 2e
     ldx #<envelope2                                                   ; 40e2: a2 68
@@ -1344,25 +1351,25 @@ c40f9
 return6
     rts                                                               ; 4125: 60
 
-c4126
+update_gun
     lda save_game_level_d_got_gun                                     ; 4126: ad 0f 0a
-    bne c414c                                                         ; 4129: d0 21
+    bne update_gunshot                                                ; 4129: d0 21
     lda desired_room_index                                            ; 412b: a5 30
     cmp #3                                                            ; 412d: c9 03
     bne return7                                                       ; 412f: d0 2a
     ldx #objectid_old_player                                          ; 4131: a2 0b
-    ldy #3                                                            ; 4133: a0 03
+    ldy #objectid_gun                                                 ; 4133: a0 03
     jsr test_for_collision_between_objects_x_and_y                    ; 4135: 20 e2 28
     beq return7                                                       ; 4138: f0 21
     lda #spriteid_gun_menu_item                                       ; 413a: a9 cf
     jsr find_or_create_menu_slot_for_A                                ; 413c: 20 bd 2b
     lda #spriteid_one_pixel_masked_out                                ; 413f: a9 00
-    sta object_spriteid + objectid_axe                                ; 4141: 8d ab 09
+    sta object_spriteid + objectid_gun                                ; 4141: 8d ab 09
     lda #$ff                                                          ; 4144: a9 ff
     sta save_game_level_d_got_gun                                     ; 4146: 8d 0f 0a
     jmp return7                                                       ; 4149: 4c 5b 41
 
-c414c
+update_gunshot
     lda #spriteid_gun_menu_item                                       ; 414c: a9 cf
     cmp player_using_object_spriteid                                  ; 414e: cd b6 2e
     bne return7                                                       ; 4151: d0 08
@@ -1372,12 +1379,44 @@ c414c
 return7
     rts                                                               ; 415b: 60
 
-l415c
-    !byte 4, 0, 0, 0, 0, 0, 6, 5, 5, 4, 0, 0, 0, 0, 0, 0, 0           ; 415c: 04 00 00...
-l416d
-    !byte   0,   0,   0,   0,   0,   0, $fa, $fe,   2,   6,   8,   8  ; 416d: 00 00 00...
-    !byte   8,   8,   8,   8,   8                                     ; 4179: 08 08 08...
-baby_spriteid_table
+baby_x_offsets
+    !byte 4                                                           ; 415c: 04
+    !byte 0                                                           ; 415d: 00
+    !byte 0                                                           ; 415e: 00
+    !byte 0                                                           ; 415f: 00
+    !byte 0                                                           ; 4160: 00
+    !byte 0                                                           ; 4161: 00
+    !byte 6                                                           ; 4162: 06
+    !byte 5                                                           ; 4163: 05
+    !byte 5                                                           ; 4164: 05
+    !byte 4                                                           ; 4165: 04
+    !byte 0                                                           ; 4166: 00
+    !byte 0                                                           ; 4167: 00
+    !byte 0                                                           ; 4168: 00
+    !byte 0                                                           ; 4169: 00
+    !byte 0                                                           ; 416a: 00
+    !byte 0                                                           ; 416b: 00
+    !byte 0                                                           ; 416c: 00
+baby_y_offsets
+    !byte 0                                                           ; 416d: 00
+    !byte 0                                                           ; 416e: 00
+    !byte 0                                                           ; 416f: 00
+    !byte 0                                                           ; 4170: 00
+    !byte 0                                                           ; 4171: 00
+    !byte 0                                                           ; 4172: 00
+    !byte $fa                                                         ; 4173: fa
+    !byte $fe                                                         ; 4174: fe
+    !byte 2                                                           ; 4175: 02
+    !byte 6                                                           ; 4176: 06
+    !byte 8                                                           ; 4177: 08
+    !byte 8                                                           ; 4178: 08
+    !byte 8                                                           ; 4179: 08
+    !byte 8                                                           ; 417a: 08
+    !byte 8                                                           ; 417b: 08
+    !byte 8                                                           ; 417c: 08
+    !byte 8                                                           ; 417d: 08
+baby_base_spriteids
+baby_walk_to_block_exit_animation
     !byte spriteid_baby_smile                                         ; 417e: d8
     !byte spriteid_baby_smile                                         ; 417f: d8
     !byte spriteid_baby_smile                                         ; 4180: d8
@@ -1396,10 +1435,13 @@ baby_spriteid_table
     !byte spriteid_baby_walk                                          ; 418d: db
     !byte spriteid_baby_walk                                          ; 418e: db
     !byte 0                                                           ; 418f: 00
+baby_sit_animation
     !byte spriteid_baby_sit                                           ; 4190: dc
     !byte 0                                                           ; 4191: 00
+baby_smile_animation
     !byte spriteid_baby_smile                                         ; 4192: d8
     !byte 0                                                           ; 4193: 00
+baby_walk_animation
     !byte spriteid_baby_walk                                          ; 4194: db
     !byte spriteid_baby_walk                                          ; 4195: db
     !byte spriteid_baby_walk                                          ; 4196: db
@@ -1411,6 +1453,7 @@ baby_spriteid_table
     !byte spriteid_baby_walk                                          ; 419c: db
     !byte spriteid_baby_walk                                          ; 419d: db
     !byte 0                                                           ; 419e: 00
+baby_surprise_animation
     !byte spriteid_baby_surprise                                      ; 419f: d9
     !byte spriteid_baby_surprise                                      ; 41a0: d9
     !byte spriteid_baby_surprise                                      ; 41a1: d9
@@ -1422,47 +1465,48 @@ baby_spriteid_table
     !byte spriteid_baby_surprise                                      ; 41a7: d9
     !byte spriteid_baby_surprise                                      ; 41a8: d9
     !byte 0                                                           ; 41a9: 00
+baby_dead_animation
     !byte spriteid_baby_dead                                          ; 41aa: da
     !byte 0                                                           ; 41ab: 00
 
 ; check for first update in room (branch if not)
 update_baby
     lda update_room_first_update_flag                                 ; 41ac: ad 2b 13
-    beq c420d                                                         ; 41af: f0 5c
+    beq update_baby_animation_step                                    ; 41af: f0 5c
 ; check for level change (branch if not)
     lda current_level                                                 ; 41b1: a5 31
     cmp level_before_latest_level_and_room_initialisation             ; 41b3: c5 51
     beq c41ed                                                         ; 41b5: f0 36
-    lda #$12                                                          ; 41b7: a9 12
+    lda #baby_sit_animation - baby_base_spriteids                     ; 41b7: a9 12
     sta l0070                                                         ; 41b9: 85 70
     ldx #$20 ; ' '                                                    ; 41bb: a2 20
     ldy #$76 ; 'v'                                                    ; 41bd: a0 76
     lda save_game_level_d_baby_progress                               ; 41bf: ad 12 0a
     beq c41df                                                         ; 41c2: f0 1b
-    cmp #$12                                                          ; 41c4: c9 12
+    cmp #baby_sit_animation - baby_base_spriteids                     ; 41c4: c9 12
     beq c41df                                                         ; 41c6: f0 17
-    lda #$2c ; ','                                                    ; 41c8: a9 2c
+    lda #baby_dead_animation - baby_base_spriteids                    ; 41c8: a9 2c
     sta l0070                                                         ; 41ca: 85 70
     ldx #$38 ; '8'                                                    ; 41cc: a2 38
     ldy #$ae                                                          ; 41ce: a0 ae
     lda save_game_level_d_baby_progress                               ; 41d0: ad 12 0a
-    cmp #$2c ; ','                                                    ; 41d3: c9 2c
+    cmp #baby_dead_animation - baby_base_spriteids                    ; 41d3: c9 2c
     beq c41df                                                         ; 41d5: f0 08
-    cmp #$21 ; '!'                                                    ; 41d7: c9 21
+    cmp #baby_surprise_animation - baby_base_spriteids                ; 41d7: c9 21
     beq c41df                                                         ; 41d9: f0 04
-    lda #$14                                                          ; 41db: a9 14
+    lda #baby_smile_animation - baby_base_spriteids                   ; 41db: a9 14
     sta l0070                                                         ; 41dd: 85 70
 c41df
     lda l0070                                                         ; 41df: a5 70
     sta save_game_level_d_baby_progress                               ; 41e1: 8d 12 0a
-    sta level_workspace                                               ; 41e4: 8d 6f 0a
-    stx l0a70                                                         ; 41e7: 8e 70 0a
-    sty l0a71                                                         ; 41ea: 8c 71 0a
+    sta baby_animation_step_index                                     ; 41e4: 8d 6f 0a
+    stx baby_x_position                                               ; 41e7: 8e 70 0a
+    sty baby_y_position                                               ; 41ea: 8c 71 0a
 c41ed
     lda desired_room_index                                            ; 41ed: a5 30
     cmp #3                                                            ; 41ef: c9 03
     bne c4207                                                         ; 41f1: d0 14
-    ldx #5                                                            ; 41f3: a2 05
+    ldx #objectid_baby                                                ; 41f3: a2 05
     lda #0                                                            ; 41f5: a9 00
     sta object_x_high,x                                               ; 41f7: 9d 66 09
     sta object_y_high,x                                               ; 41fa: 9d 92 09
@@ -1473,61 +1517,61 @@ c41ed
 c4207
     jmp c4309                                                         ; 4207: 4c 09 43
 
-c420a
-    jmp c42eb                                                         ; 420a: 4c eb 42
+set_baby_animation_step_local
+    jmp set_baby_animation_step                                       ; 420a: 4c eb 42
 
-c420d
-    lda level_workspace                                               ; 420d: ad 6f 0a
+update_baby_animation_step
+    lda baby_animation_step_index                                     ; 420d: ad 6f 0a
     clc                                                               ; 4210: 18
     adc #1                                                            ; 4211: 69 01
     tay                                                               ; 4213: a8
-    lda baby_spriteid_table,y                                         ; 4214: b9 7e 41
+    lda baby_base_spriteids,y                                         ; 4214: b9 7e 41
     bne c421c                                                         ; 4217: d0 03
     ldy save_game_level_d_baby_progress                               ; 4219: ac 12 0a
 c421c
     lda save_game_level_d_baby_progress                               ; 421c: ad 12 0a
-    cmp #$12                                                          ; 421f: c9 12
+    cmp #baby_sit_animation - baby_base_spriteids                     ; 421f: c9 12
     bne c423d                                                         ; 4221: d0 1a
     lda desired_room_index                                            ; 4223: a5 30
     cmp #3                                                            ; 4225: c9 03
-    bne c420a                                                         ; 4227: d0 e1
+    bne set_baby_animation_step_local                                 ; 4227: d0 e1
     lda object_x_high                                                 ; 4229: ad 66 09
-    bne c420a                                                         ; 422c: d0 dc
+    bne set_baby_animation_step_local                                 ; 422c: d0 dc
     lda object_x_low                                                  ; 422e: ad 50 09
     cmp #$80                                                          ; 4231: c9 80
-    bcc c420a                                                         ; 4233: 90 d5
-    ldy #0                                                            ; 4235: a0 00
+    bcc set_baby_animation_step_local                                 ; 4233: 90 d5
+    ldy #baby_walk_to_block_exit_animation - baby_base_spriteids      ; 4235: a0 00
     sty save_game_level_d_baby_progress                               ; 4237: 8c 12 0a
-    jmp c42eb                                                         ; 423a: 4c eb 42
+    jmp set_baby_animation_step                                       ; 423a: 4c eb 42
 
 c423d
-    cmp #0                                                            ; 423d: c9 00
+    cmp #baby_walk_to_block_exit_animation - baby_base_spriteids      ; 423d: c9 00
     bne c4260                                                         ; 423f: d0 1f
-    cpy #$10                                                          ; 4241: c0 10
+    cpy #baby_walk_to_block_exit_animation+16 - baby_base_spriteids   ; 4241: c0 10
     beq c424c                                                         ; 4243: f0 07
-    cpy #0                                                            ; 4245: c0 00
+    cpy #baby_walk_to_block_exit_animation - baby_base_spriteids      ; 4245: c0 00
     beq c425a                                                         ; 4247: f0 11
-    jmp c42eb                                                         ; 4249: 4c eb 42
+    jmp set_baby_animation_step                                       ; 4249: 4c eb 42
 
 c424c
     lda desired_room_index                                            ; 424c: a5 30
     cmp #3                                                            ; 424e: c9 03
-    bne c420a                                                         ; 4250: d0 b8
+    bne set_baby_animation_step_local                                 ; 4250: d0 b8
     jsr play_landing_sound                                            ; 4252: 20 a9 23
-    ldy #$10                                                          ; 4255: a0 10
-    jmp c42eb                                                         ; 4257: 4c eb 42
+    ldy #baby_walk_to_block_exit_animation+16 - baby_base_spriteids   ; 4255: a0 10
+    jmp set_baby_animation_step                                       ; 4257: 4c eb 42
 
 c425a
-    lda #$14                                                          ; 425a: a9 14
+    lda #baby_smile_animation - baby_base_spriteids                   ; 425a: a9 14
     sta save_game_level_d_baby_progress                               ; 425c: 8d 12 0a
     tay                                                               ; 425f: a8
 c4260
-    cmp #$14                                                          ; 4260: c9 14
+    cmp #baby_smile_animation - baby_base_spriteids                   ; 4260: c9 14
     bne c42c2                                                         ; 4262: d0 5e
     lda desired_room_index                                            ; 4264: a5 30
     cmp #3                                                            ; 4266: c9 03
-    bne c420a                                                         ; 4268: d0 a0
-    lda #$cf                                                          ; 426a: a9 cf
+    bne set_baby_animation_step_local                                 ; 4268: d0 a0
+    lda #spriteid_gun_menu_item                                       ; 426a: a9 cf
     cmp player_using_object_spriteid                                  ; 426c: cd b6 2e
     bne c4296                                                         ; 426f: d0 25
     cmp previous_player_using_object_spriteid                         ; 4271: cd b7 2e
@@ -1542,39 +1586,39 @@ c4260
     lda object_x_low                                                  ; 4287: ad 50 09
     cmp #$d0                                                          ; 428a: c9 d0
     bcs c4296                                                         ; 428c: b0 08
-    ldy #$21 ; '!'                                                    ; 428e: a0 21
+    ldy #baby_surprise_animation - baby_base_spriteids                ; 428e: a0 21
     sty save_game_level_d_baby_progress                               ; 4290: 8c 12 0a
-    jmp c42eb                                                         ; 4293: 4c eb 42
+    jmp set_baby_animation_step                                       ; 4293: 4c eb 42
 
 c4296
     ldx #0                                                            ; 4296: a2 00
     sty l4367                                                         ; 4298: 8c 67 43
-    ldy #5                                                            ; 429b: a0 05
+    ldy #objectid_baby                                                ; 429b: a0 05
     jsr test_for_collision_between_objects_x_and_y                    ; 429d: 20 e2 28
     ldy l4367                                                         ; 42a0: ac 67 43
     ora #0                                                            ; 42a3: 09 00
     bne c42b8                                                         ; 42a5: d0 11
     ldx #1                                                            ; 42a7: a2 01
     sty l4367                                                         ; 42a9: 8c 67 43
-    ldy #5                                                            ; 42ac: a0 05
+    ldy #objectid_baby                                                ; 42ac: a0 05
     jsr test_for_collision_between_objects_x_and_y                    ; 42ae: 20 e2 28
     ldy l4367                                                         ; 42b1: ac 67 43
     ora #0                                                            ; 42b4: 09 00
-    beq c42eb                                                         ; 42b6: f0 33
+    beq set_baby_animation_step                                       ; 42b6: f0 33
 c42b8
     lda #6                                                            ; 42b8: a9 06
     sta player_wall_collision_flag                                    ; 42ba: 8d 33 24
-    ldy #$16                                                          ; 42bd: a0 16
-    jmp c42eb                                                         ; 42bf: 4c eb 42
+    ldy #baby_walk_animation - baby_base_spriteids                    ; 42bd: a0 16
+    jmp set_baby_animation_step                                       ; 42bf: 4c eb 42
 
 c42c2
-    cmp #$21 ; '!'                                                    ; 42c2: c9 21
-    bne c42eb                                                         ; 42c4: d0 25
-    cpy #$21 ; '!'                                                    ; 42c6: c0 21
-    bne c42eb                                                         ; 42c8: d0 21
+    cmp #baby_surprise_animation - baby_base_spriteids                ; 42c2: c9 21
+    bne set_baby_animation_step                                       ; 42c4: d0 25
+    cpy #baby_surprise_animation - baby_base_spriteids                ; 42c6: c0 21
+    bne set_baby_animation_step                                       ; 42c8: d0 21
     lda desired_room_index                                            ; 42ca: a5 30
     cmp #3                                                            ; 42cc: c9 03
-    bne c42e6                                                         ; 42ce: d0 16
+    bne set_dead_baby_animation                                       ; 42ce: d0 16
     jsr play_baby_dying_or_partition_landing_sounds                   ; 42d0: 20 d9 3f
     lda #collision_map_none                                           ; 42d3: a9 00
     sta value_to_write_to_collision_map                               ; 42d5: 85 3e
@@ -1585,43 +1629,43 @@ c42c2
     lda #3                                                            ; 42df: a9 03
     sta height_in_cells                                               ; 42e1: 85 3d
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 42e3: 20 44 1e
-c42e6
-    ldy #$2c ; ','                                                    ; 42e6: a0 2c
+set_dead_baby_animation
+    ldy #baby_dead_animation - baby_base_spriteids                    ; 42e6: a0 2c
     sty save_game_level_d_baby_progress                               ; 42e8: 8c 12 0a
-c42eb
-    sty level_workspace                                               ; 42eb: 8c 6f 0a
+set_baby_animation_step
+    sty baby_animation_step_index                                     ; 42eb: 8c 6f 0a
     lda save_game_level_d_baby_progress                               ; 42ee: ad 12 0a
     cmp #0                                                            ; 42f1: c9 00
     bne c4309                                                         ; 42f3: d0 14
-    lda l415c,y                                                       ; 42f5: b9 5c 41
+    lda baby_x_offsets,y                                              ; 42f5: b9 5c 41
     clc                                                               ; 42f8: 18
-    adc l0a70                                                         ; 42f9: 6d 70 0a
-    sta l0a70                                                         ; 42fc: 8d 70 0a
-    lda l416d,y                                                       ; 42ff: b9 6d 41
+    adc baby_x_position                                               ; 42f9: 6d 70 0a
+    sta baby_x_position                                               ; 42fc: 8d 70 0a
+    lda baby_y_offsets,y                                              ; 42ff: b9 6d 41
     clc                                                               ; 4302: 18
-    adc l0a71                                                         ; 4303: 6d 71 0a
-    sta l0a71                                                         ; 4306: 8d 71 0a
+    adc baby_y_position                                               ; 4303: 6d 71 0a
+    sta baby_y_position                                               ; 4306: 8d 71 0a
 c4309
     lda desired_room_index                                            ; 4309: a5 30
     cmp #3                                                            ; 430b: c9 03
     bne return8                                                       ; 430d: d0 57
-    ldy level_workspace                                               ; 430f: ac 6f 0a
-    lda baby_spriteid_table,y                                         ; 4312: b9 7e 41
+    ldy baby_animation_step_index                                     ; 430f: ac 6f 0a
+    lda baby_base_spriteids,y                                         ; 4312: b9 7e 41
     sta object_spriteid + objectid_baby                               ; 4315: 8d ad 09
-    lda l0a70                                                         ; 4318: ad 70 0a
+    lda baby_x_position                                               ; 4318: ad 70 0a
     sta object_x_low + objectid_baby                                  ; 431b: 8d 55 09
-    lda l0a71                                                         ; 431e: ad 71 0a
+    lda baby_y_position                                               ; 431e: ad 71 0a
     sta object_y_low + objectid_baby                                  ; 4321: 8d 81 09
     lda #collision_map_solid_rock                                     ; 4324: a9 03
     sta value_to_write_to_collision_map                               ; 4326: 85 3e
     lda save_game_level_d_baby_progress                               ; 4328: ad 12 0a
-    cmp #$14                                                          ; 432b: c9 14
-    beq c4352                                                         ; 432d: f0 23
-    cmp #$21 ; '!'                                                    ; 432f: c9 21
-    beq c4352                                                         ; 4331: f0 1f
-    cmp #0                                                            ; 4333: c9 00
-    beq c4352                                                         ; 4335: f0 1b
-    cmp #$2c ; ','                                                    ; 4337: c9 2c
+    cmp #baby_smile_animation - baby_base_spriteids                   ; 432b: c9 14
+    beq add_baby_to_collision_map                                     ; 432d: f0 23
+    cmp #baby_surprise_animation - baby_base_spriteids                ; 432f: c9 21
+    beq add_baby_to_collision_map                                     ; 4331: f0 1f
+    cmp #baby_walk_to_block_exit_animation - baby_base_spriteids      ; 4333: c9 00
+    beq add_baby_to_collision_map                                     ; 4335: f0 1b
+    cmp #baby_dead_animation - baby_base_spriteids                    ; 4337: c9 2c
     bne return8                                                       ; 4339: d0 2b
     lda #3                                                            ; 433b: a9 03
     sta width_in_cells                                                ; 433d: 85 3c
@@ -1634,7 +1678,7 @@ c4309
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 434c: 20 44 1e
     jmp return8                                                       ; 434f: 4c 66 43
 
-c4352
+add_baby_to_collision_map
     lda #2                                                            ; 4352: a9 02
     sta width_in_cells                                                ; 4354: 85 3c
     lda #3                                                            ; 4356: a9 03
@@ -1739,11 +1783,7 @@ sprite_data
 pydis_end
 
 ; Automatically generated labels:
-;     c3b12
 ;     c3c22
-;     c3c4f
-;     c3c82
-;     c3ca3
 ;     c3caf
 ;     c3cca
 ;     c3ccd
@@ -1763,15 +1803,10 @@ pydis_end
 ;     c3fbd
 ;     c3fbf
 ;     c3fc2
-;     c3fcf
 ;     c40f9
-;     c4126
-;     c414c
 ;     c41df
 ;     c41ed
 ;     c4207
-;     c420a
-;     c420d
 ;     c421c
 ;     c423d
 ;     c424c
@@ -1780,15 +1815,7 @@ pydis_end
 ;     c4296
 ;     c42b8
 ;     c42c2
-;     c42e6
-;     c42eb
 ;     c4309
-;     c4352
-;     l0a70
-;     l0a71
-;     l2ef4
-;     l415c
-;     l416d
 ;     l4367
 ;     sub_c3c73
 !if (<envelope1) != $86 {
@@ -1833,6 +1860,30 @@ pydis_end
 !if (>sound4) != $43 {
     !error "Assertion failed: >sound4 == $43"
 }
+!if (baby_dead_animation - baby_base_spriteids) != $2c {
+    !error "Assertion failed: baby_dead_animation - baby_base_spriteids == $2c"
+}
+!if (baby_sit_animation - baby_base_spriteids) != $12 {
+    !error "Assertion failed: baby_sit_animation - baby_base_spriteids == $12"
+}
+!if (baby_smile_animation - baby_base_spriteids) != $14 {
+    !error "Assertion failed: baby_smile_animation - baby_base_spriteids == $14"
+}
+!if (baby_surprise_animation - baby_base_spriteids) != $21 {
+    !error "Assertion failed: baby_surprise_animation - baby_base_spriteids == $21"
+}
+!if (baby_walk_animation - baby_base_spriteids) != $16 {
+    !error "Assertion failed: baby_walk_animation - baby_base_spriteids == $16"
+}
+!if (baby_walk_to_block_exit_animation - baby_base_spriteids) != $00 {
+    !error "Assertion failed: baby_walk_to_block_exit_animation - baby_base_spriteids == $00"
+}
+!if (baby_walk_to_block_exit_animation+16 - baby_base_spriteids) != $10 {
+    !error "Assertion failed: baby_walk_to_block_exit_animation+16 - baby_base_spriteids == $10"
+}
+!if (collectable_being_used_spriteids+2) != $2ef4 {
+    !error "Assertion failed: collectable_being_used_spriteids+2 == $2ef4"
+}
 !if (collision_map_none) != $00 {
     !error "Assertion failed: collision_map_none == $00"
 }
@@ -1860,6 +1911,9 @@ pydis_end
 !if (object_spriteid + objectid_baby) != $09ad {
     !error "Assertion failed: object_spriteid + objectid_baby == $09ad"
 }
+!if (object_spriteid + objectid_gun) != $09ab {
+    !error "Assertion failed: object_spriteid + objectid_gun == $09ab"
+}
 !if (object_spriteid + objectid_partition) != $09ac {
     !error "Assertion failed: object_spriteid + objectid_partition == $09ac"
 }
@@ -1874,6 +1928,12 @@ pydis_end
 }
 !if (objectid_axe) != $03 {
     !error "Assertion failed: objectid_axe == $03"
+}
+!if (objectid_baby) != $05 {
+    !error "Assertion failed: objectid_baby == $05"
+}
+!if (objectid_gun) != $03 {
+    !error "Assertion failed: objectid_gun == $03"
 }
 !if (objectid_old_player) != $0b {
     !error "Assertion failed: objectid_old_player == $0b"
@@ -1946,6 +2006,9 @@ pydis_end
 }
 !if (spriteid_gun) != $cd {
     !error "Assertion failed: spriteid_gun == $cd"
+}
+!if (spriteid_gun_held) != $ce {
+    !error "Assertion failed: spriteid_gun_held == $ce"
 }
 !if (spriteid_gun_menu_item) != $cf {
     !error "Assertion failed: spriteid_gun_menu_item == $cf"
