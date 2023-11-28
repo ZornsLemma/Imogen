@@ -151,8 +151,13 @@ expr(0x4466, sprite_dict)
 #    expr(addr+1, sprite_dict) # TODO: 0 should probably be left as 0 not treated as a sprite ID - see code at 44c3
 label(0x444c, "egg_animations_table")
 entry(0x4501, "room_1_not_this_room3")
+label(0x444c+5, "egg_animation_subseq2")
 label(0x444c+9, "egg_animation_subseq1")
+label(0x444c+0x16, "egg_animation_subseq3")
 expr(0x4507, make_subtract("egg_animation_subseq1", "egg_animations_table"))
+expr(0x44d8, make_subtract("egg_animation_subseq2", "egg_animations_table"))
+expr(0x452f, make_subtract("egg_animation_subseq3", "egg_animations_table"))
+entry(0x4538, "new_egg_animation_index_in_y")
 
 entry(0x3eb8)
 

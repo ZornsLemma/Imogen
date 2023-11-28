@@ -1580,6 +1580,7 @@ egg_animations_table
     !byte 0                                                           ; 444f: 00
     !byte 0                                                           ; 4450: 00                      ; terminator
 
+egg_animation_subseq2
     !byte spriteid_large_egg_tilted                                   ; 4451: dc
     !byte 0                                                           ; 4452: 00
     !byte 0                                                           ; 4453: 00
@@ -1600,6 +1601,7 @@ egg_animation_subseq1
     !byte 4                                                           ; 4460: 04
     !byte 0                                                           ; 4461: 00                      ; terminator
 
+egg_animation_subseq3
     !byte spriteid_large_egg_sideways                                 ; 4462: dd
     !byte 0                                                           ; 4463: 00
     !byte 8                                                           ; 4464: 08
@@ -1667,16 +1669,16 @@ not_end_of_egg_animation_sequence
     cmp #1                                                            ; 44ce: c9 01
     bne c44df                                                         ; 44d0: d0 0d
     jsr sub_c45a1                                                     ; 44d2: 20 a1 45
-    beq c4538                                                         ; 44d5: f0 61
-    ldy #5                                                            ; 44d7: a0 05
+    beq new_egg_animation_index_in_y                                  ; 44d5: f0 61
+    ldy #egg_animation_subseq2 - egg_animations_table                 ; 44d7: a0 05
     sty save_game_level_e_room_1_egg_state                            ; 44d9: 8c 14 0a
-    jmp c4538                                                         ; 44dc: 4c 38 45
+    jmp new_egg_animation_index_in_y                                  ; 44dc: 4c 38 45
 
 c44df
     cmp #5                                                            ; 44df: c9 05
     bne c450b                                                         ; 44e1: d0 28
     jsr sub_c45a1                                                     ; 44e3: 20 a1 45
-    beq c4538                                                         ; 44e6: f0 50
+    beq new_egg_animation_index_in_y                                  ; 44e6: f0 50
     lda desired_room_index                                            ; 44e8: a5 30
     cmp #1                                                            ; 44ea: c9 01
     bne room_1_not_this_room3                                         ; 44ec: d0 13
@@ -1693,18 +1695,18 @@ room_1_not_this_room3
     lda #$16                                                          ; 4501: a9 16
     sta save_game_level_e_room_1_egg_state                            ; 4503: 8d 14 0a
     ldy #egg_animation_subseq1 - egg_animations_table                 ; 4506: a0 09
-    jmp c4538                                                         ; 4508: 4c 38 45
+    jmp new_egg_animation_index_in_y                                  ; 4508: 4c 38 45
 
 c450b
     cmp #$16                                                          ; 450b: c9 16
-    bne c4538                                                         ; 450d: d0 29
+    bne new_egg_animation_index_in_y                                  ; 450d: d0 29
     lda room_1_egg_y                                                  ; 450f: ad 78 0a
     cmp #$a0                                                          ; 4512: c9 a0
-    bcc c4538                                                         ; 4514: 90 22
+    bcc new_egg_animation_index_in_y                                  ; 4514: 90 22
     bne c4533                                                         ; 4516: d0 1b
     lda desired_room_index                                            ; 4518: a5 30
     cmp #1                                                            ; 451a: c9 01
-    bne c4538                                                         ; 451c: d0 1a
+    bne new_egg_animation_index_in_y                                  ; 451c: d0 1a
     lda #0                                                            ; 451e: a9 00
     ldx #<sound2                                                      ; 4520: a2 04
     ldy #>sound2                                                      ; 4522: a0 46
@@ -1712,13 +1714,13 @@ c450b
     ldx #<sound3                                                      ; 4527: a2 fc
     ldy #>sound3                                                      ; 4529: a0 45
     jsr play_sound_yx                                                 ; 452b: 20 f6 38
-    ldy #$16                                                          ; 452e: a0 16
-    jmp c4538                                                         ; 4530: 4c 38 45
+    ldy #egg_animation_subseq3 - egg_animations_table                 ; 452e: a0 16
+    jmp new_egg_animation_index_in_y                                  ; 4530: 4c 38 45
 
 c4533
     ldy #$1a                                                          ; 4533: a0 1a
     sty save_game_level_e_room_1_egg_state                            ; 4535: 8c 14 0a
-c4538
+new_egg_animation_index_in_y
     sty egg_animation_index                                           ; 4538: 8c 76 0a
     iny                                                               ; 453b: c8
     lda egg_animations_table,y                                        ; 453c: b9 4c 44
@@ -1912,7 +1914,6 @@ pydis_end
 ;     c44df
 ;     c450b
 ;     c4533
-;     c4538
 ;     c4551
 ;     c4596
 ;     c45d2
@@ -2013,6 +2014,12 @@ pydis_end
 }
 !if (egg_animation_subseq1 - egg_animations_table) != $09 {
     !error "Assertion failed: egg_animation_subseq1 - egg_animations_table == $09"
+}
+!if (egg_animation_subseq2 - egg_animations_table) != $05 {
+    !error "Assertion failed: egg_animation_subseq2 - egg_animations_table == $05"
+}
+!if (egg_animation_subseq3 - egg_animations_table) != $16 {
+    !error "Assertion failed: egg_animation_subseq3 - egg_animations_table == $16"
 }
 !if (exit_room_bottom) != $02 {
     !error "Assertion failed: exit_room_bottom == $02"
