@@ -615,7 +615,7 @@ draw_rock_and_block_passage
     lda desired_room_index                                            ; 3c90: a5 30
     cmp #1                                                            ; 3c92: c9 01
     beq draw_rock_in_room_1                                           ; 3c94: f0 0d
-    bcs c3cca                                                         ; 3c96: b0 32
+    bcs deal_with_sign_position_consequences_local                    ; 3c96: b0 32
 ; draw rock in room 0
     ldx #$1e                                                          ; 3c98: a2 1e
     lda #spriteid_rock                                                ; 3c9a: a9 cc
@@ -642,39 +642,49 @@ set_up_sign_object
     sta object_z_order,x                                              ; 3cc2: 9d c2 38
     lda #spriteid_sign                                                ; 3cc5: a9 d3
     sta object_spriteid + objectid_sign                               ; 3cc7: 8d ad 09
-c3cca
-    jmp c3d0b                                                         ; 3cca: 4c 0b 3d
+deal_with_sign_position_consequences_local
+    jmp deal_with_sign_position_consequences                          ; 3cca: 4c 0b 3d
 
 update_gnu_sign_puzzle_not_first_update
     lda desired_room_index                                            ; 3ccd: a5 30
     cmp #3                                                            ; 3ccf: c9 03
-    beq c3d0b                                                         ; 3cd1: f0 38
+    beq deal_with_sign_position_consequences                          ; 3cd1: f0 38
+; check if player is currently using the gun, and branch if not
     lda #spriteid_gun_menu_item                                       ; 3cd3: a9 cf
     cmp player_using_object_spriteid                                  ; 3cd5: cd b6 2e
-    bne c3d0b                                                         ; 3cd8: d0 31
+    bne deal_with_sign_position_consequences                          ; 3cd8: d0 31
+; check if player just used the gun this game tick
     cmp previous_player_using_object_spriteid                         ; 3cda: cd b7 2e
-    beq c3d0b                                                         ; 3cdd: f0 2c
+    beq deal_with_sign_position_consequences                          ; 3cdd: f0 2c
+; check the Y coordinate of theplayer to see if it at the same height as the sign
     lda object_y_low                                                  ; 3cdf: ad 7c 09
     cmp #$6e ; 'n'                                                    ; 3ce2: c9 6e
-    bne c3d0b                                                         ; 3ce4: d0 25
+    bne deal_with_sign_position_consequences                          ; 3ce4: d0 25
+; if not in room 0 then branch
     lda desired_room_index                                            ; 3ce6: a5 30
-    bne c3cfc                                                         ; 3ce8: d0 12
+    bne check_for_gun_in_rooms_other_than_0                           ; 3ce8: d0 12
+; in room 0, make sure we are pointing right (branch if not)
     lda object_direction                                              ; 3cea: ad be 09
-    bmi c3d0b                                                         ; 3ced: 30 1c
+    bmi deal_with_sign_position_consequences                          ; 3ced: 30 1c
+; move the sign to the right if not already fully to the right (position $30 is fully
+; right)
     lda save_game_level_d_gnu_sign_position                           ; 3cef: ad 10 0a
     cmp #$30 ; '0'                                                    ; 3cf2: c9 30
-    beq c3d0b                                                         ; 3cf4: f0 15
+    beq deal_with_sign_position_consequences                          ; 3cf4: f0 15
     inc save_game_level_d_gnu_sign_position                           ; 3cf6: ee 10 0a
-    jmp c3d0b                                                         ; 3cf9: 4c 0b 3d
+    jmp deal_with_sign_position_consequences                          ; 3cf9: 4c 0b 3d
 
-c3cfc
+; rooms other than room 0 need the player to look left for the gun to work (branch
+; otherwise)
+check_for_gun_in_rooms_other_than_0
     lda object_direction                                              ; 3cfc: ad be 09
-    bpl c3d0b                                                         ; 3cff: 10 0a
+    bpl deal_with_sign_position_consequences                          ; 3cff: 10 0a
+; move sign left not already all the way left (position $20 is fully left)
     lda save_game_level_d_gnu_sign_position                           ; 3d01: ad 10 0a
     cmp #$20 ; ' '                                                    ; 3d04: c9 20
-    beq c3d0b                                                         ; 3d06: f0 03
+    beq deal_with_sign_position_consequences                          ; 3d06: f0 03
     dec save_game_level_d_gnu_sign_position                           ; 3d08: ce 10 0a
-c3d0b
+deal_with_sign_position_consequences
     lda #1                                                            ; 3d0b: a9 01
     sta width_in_cells                                                ; 3d0d: 85 3c
     lda save_game_level_d_gnu_sign_position                           ; 3d0f: ad 10 0a
@@ -682,7 +692,7 @@ c3d0b
     cpx #1                                                            ; 3d14: e0 01
     beq check_if_gnu_sign_is_in_room_1                                ; 3d16: f0 2d
     bcs return4                                                       ; 3d18: b0 63
-; player in room 0
+; player in room 0. if (sign is in position >= $29) then add collision map for ropes
     ldx #collision_map_rope                                           ; 3d1a: a2 02
     cmp #$29 ; ')'                                                    ; 3d1c: c9 29
     bcs add_ropes_to_collision_map_room_0                             ; 3d1e: b0 02
@@ -1027,22 +1037,23 @@ room_2_update_handler
     jsr update_level_completion                                       ; 3efd: 20 10 1a
 ; check for first update in room (branch if not)
     lda update_room_first_update_flag                                 ; 3f00: ad 2b 13
-    beq c3f66                                                         ; 3f03: f0 61
+    beq update_partition_puzzle                                       ; 3f03: f0 61
     ldx #<envelope1                                                   ; 3f05: a2 86
     ldy #>envelope1                                                   ; 3f07: a0 43
     jsr define_envelope                                               ; 3f09: 20 5e 39
 ; check for level change (branch if not)
     lda current_level                                                 ; 3f0c: a5 31
     cmp level_before_latest_level_and_room_initialisation             ; 3f0e: c5 51
-    beq c3f1c                                                         ; 3f10: f0 0a
+    beq level_changed                                                 ; 3f10: f0 0a
+; if partition is partly fallen over, make it fully fallen
     lda save_game_level_d_partition_progress                          ; 3f12: ad 11 0a
-    beq c3f1c                                                         ; 3f15: f0 05
+    beq level_changed                                                 ; 3f15: f0 05
     lda #$ff                                                          ; 3f17: a9 ff
     sta save_game_level_d_partition_progress                          ; 3f19: 8d 11 0a
-c3f1c
+level_changed
     lda desired_room_index                                            ; 3f1c: a5 30
     cmp #2                                                            ; 3f1e: c9 02
-    bne c3f63                                                         ; 3f20: d0 41
+    bne update_partition_sprite_local                                 ; 3f20: d0 41
     ldx #$14                                                          ; 3f22: a2 14
     ldy #7                                                            ; 3f24: a0 07
     lda #spriteid_broken_partition_base                               ; 3f26: a9 d4
@@ -1058,41 +1069,41 @@ c3f1c
     lda #collision_map_solid_rock                                     ; 3f3d: a9 03
     sta value_to_write_to_collision_map                               ; 3f3f: 85 3e
     lda save_game_level_d_partition_progress                          ; 3f41: ad 11 0a
-    bne c3f56                                                         ; 3f44: d0 10
+    bne set_partition_to_solid_collision_map                          ; 3f44: d0 10
     ldy #2                                                            ; 3f46: a0 02
     lda #1                                                            ; 3f48: a9 01
     sta width_in_cells                                                ; 3f4a: 85 3c
     lda #5                                                            ; 3f4c: a9 05
     sta height_in_cells                                               ; 3f4e: 85 3d
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 3f50: 20 44 1e
-    jmp c3f63                                                         ; 3f53: 4c 63 3f
+    jmp update_partition_sprite_local                                 ; 3f53: 4c 63 3f
 
-c3f56
+set_partition_to_solid_collision_map
     ldy #6                                                            ; 3f56: a0 06
     lda #6                                                            ; 3f58: a9 06
     sta width_in_cells                                                ; 3f5a: 85 3c
     lda #1                                                            ; 3f5c: a9 01
     sta height_in_cells                                               ; 3f5e: 85 3d
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 3f60: 20 44 1e
-c3f63
-    jmp c3fc2                                                         ; 3f63: 4c c2 3f
+update_partition_sprite_local
+    jmp update_partition_sprite                                       ; 3f63: 4c c2 3f
 
-c3f66
+update_partition_puzzle
     lda save_game_level_d_partition_progress                          ; 3f66: ad 11 0a
-    bmi c3fc2                                                         ; 3f69: 30 57
-    bne c3faf                                                         ; 3f6b: d0 42
+    bmi update_partition_sprite                                       ; 3f69: 30 57
+    bne update_partition_progress                                     ; 3f6b: d0 42
     lda desired_room_index                                            ; 3f6d: a5 30
     cmp #2                                                            ; 3f6f: c9 02
-    bne c3fc2                                                         ; 3f71: d0 4f
+    bne update_partition_sprite                                       ; 3f71: d0 4f
     lda player_using_object_spriteid                                  ; 3f73: ad b6 2e
     cmp #spriteid_axe_menu_item                                       ; 3f76: c9 ca
-    bne c3fc2                                                         ; 3f78: d0 48
+    bne update_partition_sprite                                       ; 3f78: d0 48
     lda #1                                                            ; 3f7a: a9 01
     sta temp_right_offset                                             ; 3f7c: 8d d1 24
     ldx #objectid_player_accessory                                    ; 3f7f: a2 01
     ldy #4                                                            ; 3f81: a0 04
     jsr test_for_collision_between_objects_x_and_y                    ; 3f83: 20 e2 28
-    beq c3fc2                                                         ; 3f86: f0 3a
+    beq update_partition_sprite                                       ; 3f86: f0 3a
     ldx #$14                                                          ; 3f88: a2 14
     ldy #2                                                            ; 3f8a: a0 02
     lda #1                                                            ; 3f8c: a9 01
@@ -1111,19 +1122,19 @@ c3f66
     sta value_to_write_to_collision_map                               ; 3fa7: 85 3e
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 3fa9: 20 44 1e
     jsr play_baby_dying_or_partition_landing_sounds                   ; 3fac: 20 d9 3f
-c3faf
+update_partition_progress
     ldy save_game_level_d_partition_progress                          ; 3faf: ac 11 0a
     iny                                                               ; 3fb2: c8
     cpy #2                                                            ; 3fb3: c0 02
-    bcc c3fbf                                                         ; 3fb5: 90 08
+    bcc partition_is_falling                                          ; 3fb5: 90 08
     lda desired_room_index                                            ; 3fb7: a5 30
     cmp #2                                                            ; 3fb9: c9 02
-    bne c3fbd                                                         ; 3fbb: d0 00
-c3fbd
+    bne redundant_branch                                              ; 3fbb: d0 00
+redundant_branch
     ldy #$ff                                                          ; 3fbd: a0 ff
-c3fbf
+partition_is_falling
     sty save_game_level_d_partition_progress                          ; 3fbf: 8c 11 0a
-c3fc2
+update_partition_sprite
     lda desired_room_index                                            ; 3fc2: a5 30
     cmp #2                                                            ; 3fc4: c9 02
     bne return5                                                       ; 3fc6: d0 0d
@@ -1789,17 +1800,6 @@ sprite_data
 pydis_end
 
 ; Automatically generated labels:
-;     c3cca
-;     c3cfc
-;     c3d0b
-;     c3f1c
-;     c3f56
-;     c3f63
-;     c3f66
-;     c3faf
-;     c3fbd
-;     c3fbf
-;     c3fc2
 ;     c40f9
 ;     c4207
 ;     c421c
