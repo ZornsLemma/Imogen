@@ -369,8 +369,8 @@ level_specific_update
     jsr room_0_update_handler                                         ; 3b1d: 20 fc 3b
     jsr room_2_update_handler                                         ; 3b20: 20 e9 3e
     jsr room_3_update_handler                                         ; 3b23: 20 c2 40
-    jsr update_sign_and_rock_boundaries                               ; 3b26: 20 73 3c
-    jsr update_baby                                                   ; 3b29: 20 ac 41
+    jsr update_gnu_sign_puzzle                                        ; 3b26: 20 73 3c
+    jsr update_baby_puzzle                                            ; 3b29: 20 ac 41
     rts                                                               ; 3b2c: 60
 
 ; *************************************************************************************
@@ -595,9 +595,9 @@ return3
     rts                                                               ; 3c72: 60
 
 ; check for first update in room (branch if not)
-update_sign_and_rock_boundaries
+update_gnu_sign_puzzle
     lda update_room_first_update_flag                                 ; 3c73: ad 2b 13
-    beq c3ccd                                                         ; 3c76: f0 55
+    beq update_gnu_sign_puzzle_not_first_update                       ; 3c76: f0 55
 ; initialise sign position
     lda save_game_level_d_gnu_sign_position                           ; 3c78: ad 10 0a
     bne draw_rock_and_block_passage                                   ; 3c7b: d0 05
@@ -621,7 +621,7 @@ draw_rock_and_block_passage
     lda #spriteid_rock                                                ; 3c9a: a9 cc
     jsr draw_sprite_a_at_cell_xy                                      ; 3c9c: 20 4c 1f
     dex                                                               ; 3c9f: ca
-    jmp c3caf                                                         ; 3ca0: 4c af 3c
+    jmp set_up_sign_object                                            ; 3ca0: 4c af 3c
 
 draw_rock_in_room_1
     ldx #9                                                            ; 3ca3: a2 09
@@ -630,7 +630,7 @@ draw_rock_in_room_1
     lda #spriteid_rock                                                ; 3ca9: a9 cc
     jsr draw_sprite_a_at_cell_xy                                      ; 3cab: 20 4c 1f
     inx                                                               ; 3cae: e8
-c3caf
+set_up_sign_object
     ldy #9                                                            ; 3caf: a0 09
     jsr write_a_single_value_to_cell_in_collision_map                 ; 3cb1: 20 bb 1e
     ldx #4                                                            ; 3cb4: a2 04
@@ -645,11 +645,11 @@ c3caf
 c3cca
     jmp c3d0b                                                         ; 3cca: 4c 0b 3d
 
-c3ccd
+update_gnu_sign_puzzle_not_first_update
     lda desired_room_index                                            ; 3ccd: a5 30
     cmp #3                                                            ; 3ccf: c9 03
     beq c3d0b                                                         ; 3cd1: f0 38
-    lda #$cf                                                          ; 3cd3: a9 cf
+    lda #spriteid_gun_menu_item                                       ; 3cd3: a9 cf
     cmp player_using_object_spriteid                                  ; 3cd5: cd b6 2e
     bne c3d0b                                                         ; 3cd8: d0 31
     cmp previous_player_using_object_spriteid                         ; 3cda: cd b7 2e
@@ -680,19 +680,20 @@ c3d0b
     lda save_game_level_d_gnu_sign_position                           ; 3d0f: ad 10 0a
     ldx desired_room_index                                            ; 3d12: a6 30
     cpx #1                                                            ; 3d14: e0 01
-    beq c3d45                                                         ; 3d16: f0 2d
+    beq check_if_gnu_sign_is_in_room_1                                ; 3d16: f0 2d
     bcs return4                                                       ; 3d18: b0 63
-    ldx #2                                                            ; 3d1a: a2 02
+; player in room 0
+    ldx #collision_map_rope                                           ; 3d1a: a2 02
     cmp #$29 ; ')'                                                    ; 3d1c: c9 29
-    bcs c3d22                                                         ; 3d1e: b0 02
+    bcs add_ropes_to_collision_map_room_0                             ; 3d1e: b0 02
     ldx #collision_map_none                                           ; 3d20: a2 00
-c3d22
+add_ropes_to_collision_map_room_0
     stx value_to_write_to_collision_map                               ; 3d22: 86 3e
     ldx #$14                                                          ; 3d24: a2 14
     ldy #3                                                            ; 3d26: a0 03
     jsr read_collision_map_value_for_xy                               ; 3d28: 20 fa 1e
     cmp value_to_write_to_collision_map                               ; 3d2b: c5 3e
-    beq c3d3f                                                         ; 3d2d: f0 10
+    beq already_written_to_collision_map_room_0                       ; 3d2d: f0 10
     lda #$11                                                          ; 3d2f: a9 11
     sta height_in_cells                                               ; 3d31: 85 3d
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 3d33: 20 44 1e
@@ -700,22 +701,22 @@ c3d22
     lda #6                                                            ; 3d38: a9 06
     sta height_in_cells                                               ; 3d3a: 85 3d
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 3d3c: 20 44 1e
-c3d3f
+already_written_to_collision_map_room_0
     lda save_game_level_d_gnu_sign_position                           ; 3d3f: ad 10 0a
-    jmp c3d70                                                         ; 3d42: 4c 70 3d
+    jmp set_sign_object_position                                      ; 3d42: 4c 70 3d
 
-c3d45
-    ldx #2                                                            ; 3d45: a2 02
+check_if_gnu_sign_is_in_room_1
+    ldx #collision_map_rope                                           ; 3d45: a2 02
     cmp #$28 ; '('                                                    ; 3d47: c9 28
-    bcc c3d4d                                                         ; 3d49: 90 02
+    bcc add_ropes_to_collision_map_room_1                             ; 3d49: 90 02
     ldx #collision_map_none                                           ; 3d4b: a2 00
-c3d4d
+add_ropes_to_collision_map_room_1
     stx value_to_write_to_collision_map                               ; 3d4d: 86 3e
     ldx #$0e                                                          ; 3d4f: a2 0e
     ldy #3                                                            ; 3d51: a0 03
     jsr read_collision_map_value_for_xy                               ; 3d53: 20 fa 1e
     cmp value_to_write_to_collision_map                               ; 3d56: c5 3e
-    beq c3d6a                                                         ; 3d58: f0 10
+    beq already_written_to_collision_map_room_1                       ; 3d58: f0 10
     lda #6                                                            ; 3d5a: a9 06
     sta height_in_cells                                               ; 3d5c: 85 3d
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 3d5e: 20 44 1e
@@ -723,11 +724,11 @@ c3d4d
     lda #$0d                                                          ; 3d63: a9 0d
     sta height_in_cells                                               ; 3d65: 85 3d
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 3d67: 20 44 1e
-c3d6a
+already_written_to_collision_map_room_1
     lda save_game_level_d_gnu_sign_position                           ; 3d6a: ad 10 0a
     sec                                                               ; 3d6d: 38
     sbc #$28 ; '('                                                    ; 3d6e: e9 28
-c3d70
+set_sign_object_position
     tax                                                               ; 3d70: aa
     ldy #$0e                                                          ; 3d71: a0 0e
     lda #objectid_sign_stand                                          ; 3d73: a9 04
@@ -1474,7 +1475,7 @@ baby_dead_animation
     !byte 0                                                           ; 41ab: 00
 
 ; check for first update in room (branch if not)
-update_baby
+update_baby_puzzle
     lda update_room_first_update_flag                                 ; 41ac: ad 2b 13
     beq update_baby_animation_step                                    ; 41af: f0 5c
 ; check for level change (branch if not)
@@ -1787,17 +1788,9 @@ sprite_data
 pydis_end
 
 ; Automatically generated labels:
-;     c3caf
 ;     c3cca
-;     c3ccd
 ;     c3cfc
 ;     c3d0b
-;     c3d22
-;     c3d3f
-;     c3d45
-;     c3d4d
-;     c3d6a
-;     c3d70
 ;     c3f1c
 ;     c3f56
 ;     c3f63
@@ -1888,6 +1881,9 @@ pydis_end
 }
 !if (collision_map_none) != $00 {
     !error "Assertion failed: collision_map_none == $00"
+}
+!if (collision_map_rope) != $02 {
+    !error "Assertion failed: collision_map_rope == $02"
 }
 !if (collision_map_solid_rock) != $03 {
     !error "Assertion failed: collision_map_solid_rock == $03"
