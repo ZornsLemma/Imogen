@@ -325,9 +325,9 @@ c3b1a
     lda #0                                                            ; 3b2c: a9 00
     jsr set_object_position_from_cell_xy                              ; 3b2e: 20 5d 1f
 c3b31
-    lda #$7c ; '|'                                                    ; 3b31: a9 7c
+    lda #<ground_fill_2x2_top_left                                    ; 3b31: a9 7c
     sta source_sprite_memory_low                                      ; 3b33: 85 40
-    lda #$46 ; 'F'                                                    ; 3b35: a9 46
+    lda #>ground_fill_2x2_top_left                                    ; 3b35: a9 46
     sta source_sprite_memory_high                                     ; 3b37: 85 41
     rts                                                               ; 3b39: 60
 
@@ -1866,8 +1866,8 @@ sub_c4622
     ldx #<sound3                                                      ; 4624: a2 74
     ldy #>sound3                                                      ; 4626: a0 46
     jsr play_sound_yx                                                 ; 4628: 20 f6 38
-    ldx #$6c ; 'l'                                                    ; 462b: a2 6c
-    ldy #$46 ; 'F'                                                    ; 462d: a0 46
+    ldx #<sound4                                                      ; 462b: a2 6c
+    ldy #>sound4                                                      ; 462d: a0 46
     jmp play_sound_yx                                                 ; 462f: 4c f6 38
 
 envelope3
@@ -1925,15 +1925,52 @@ envelope2
     !byte 250                                                         ; 4669: fa                      ; change of amplitude per step during release phase
     !byte 110                                                         ; 466a: 6e                      ; target of level at end of attack phase
     !byte 55                                                          ; 466b: 37                      ; target of level at end of decay phase
-    !byte $10,   0,   6,   0,   7,   0,   1,   0                      ; 466c: 10 00 06...
+sound4
+    !word $10                                                         ; 466c: 10 00                   ; channel
+    !word 6                                                           ; 466e: 06 00                   ; amplitude
+    !word 7                                                           ; 4670: 07 00                   ; pitch
+    !word 1                                                           ; 4672: 01 00                   ; duration
 sound3
     !word $11                                                         ; 4674: 11 00                   ; channel
     !word 0                                                           ; 4676: 00 00                   ; amplitude
     !word 210                                                         ; 4678: d2 00                   ; pitch
     !word 1                                                           ; 467a: 01 00                   ; duration
-    !byte   8,   8, $14, $23, $c0, $20, $10, $10, $10, $10, $28, $c4  ; 467c: 08 08 14...
-    !byte   3,   4,   8,   8, $10, $10, $20, $c0, $23, $14,   8,   8  ; 4688: 03 04 08...
-    !byte   8,   8,   4,   3, $c4, $28, $10, $10                      ; 4694: 08 08 04...
+ground_fill_2x2_top_left
+    !byte %....#...                                                   ; 467c: 08
+    !byte %....#...                                                   ; 467d: 08
+    !byte %...#.#..                                                   ; 467e: 14
+    !byte %..#...##                                                   ; 467f: 23
+    !byte %##......                                                   ; 4680: c0
+    !byte %..#.....                                                   ; 4681: 20
+    !byte %...#....                                                   ; 4682: 10
+    !byte %...#....                                                   ; 4683: 10
+ground_fill_2x2_top_right
+    !byte %...#....                                                   ; 4684: 10
+    !byte %...#....                                                   ; 4685: 10
+    !byte %..#.#...                                                   ; 4686: 28
+    !byte %##...#..                                                   ; 4687: c4
+    !byte %......##                                                   ; 4688: 03
+    !byte %.....#..                                                   ; 4689: 04
+    !byte %....#...                                                   ; 468a: 08
+    !byte %....#...                                                   ; 468b: 08
+ground_fill_2x2_bottom_left
+    !byte %...#....                                                   ; 468c: 10
+    !byte %...#....                                                   ; 468d: 10
+    !byte %..#.....                                                   ; 468e: 20
+    !byte %##......                                                   ; 468f: c0
+    !byte %..#...##                                                   ; 4690: 23
+    !byte %...#.#..                                                   ; 4691: 14
+    !byte %....#...                                                   ; 4692: 08
+    !byte %....#...                                                   ; 4693: 08
+ground_fill_2x2_bottom_right
+    !byte %....#...                                                   ; 4694: 08
+    !byte %....#...                                                   ; 4695: 08
+    !byte %.....#..                                                   ; 4696: 04
+    !byte %......##                                                   ; 4697: 03
+    !byte %##...#..                                                   ; 4698: c4
+    !byte %..#.#...                                                   ; 4699: 28
+    !byte %...#....                                                   ; 469a: 10
+    !byte %...#....                                                   ; 469b: 10
 sprite_data
 pydis_end
 
@@ -2076,6 +2113,9 @@ pydis_end
 !if (<envelope3) != $32 {
     !error "Assertion failed: <envelope3 == $32"
 }
+!if (<ground_fill_2x2_top_left) != $7c {
+    !error "Assertion failed: <ground_fill_2x2_top_left == $7c"
+}
 !if (<sound1) != $56 {
     !error "Assertion failed: <sound1 == $56"
 }
@@ -2084,6 +2124,9 @@ pydis_end
 }
 !if (<sound3) != $74 {
     !error "Assertion failed: <sound3 == $74"
+}
+!if (<sound4) != $6c {
+    !error "Assertion failed: <sound4 == $6c"
 }
 !if (>envelope1) != $46 {
     !error "Assertion failed: >envelope1 == $46"
@@ -2094,6 +2137,9 @@ pydis_end
 !if (>envelope3) != $46 {
     !error "Assertion failed: >envelope3 == $46"
 }
+!if (>ground_fill_2x2_top_left) != $46 {
+    !error "Assertion failed: >ground_fill_2x2_top_left == $46"
+}
 !if (>sound1) != $46 {
     !error "Assertion failed: >sound1 == $46"
 }
@@ -2102,6 +2148,9 @@ pydis_end
 }
 !if (>sound3) != $46 {
     !error "Assertion failed: >sound3 == $46"
+}
+!if (>sound4) != $46 {
+    !error "Assertion failed: >sound4 == $46"
 }
 !if (collision_map_none) != $00 {
     !error "Assertion failed: collision_map_none == $00"

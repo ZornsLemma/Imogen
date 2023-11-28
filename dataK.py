@@ -46,6 +46,7 @@ label(0x3d2b, "developer_mode_inactive2")
 comment(0x3e7c, "check for first update in room (branch if so)")
 label(0x3ecb, "return2")
 ldx_ldy_jsr_play_sound_yx(0x3f8c, "sound1")
+ldx_ldy_jsr_play_sound_yx(0x3f93, "sound2")
 comment(0x4044, "check for first update in room (branch if not)")
 comment(0x4049, "check for level change (branch if not)")
 ldx_ldy_jsr_define_envelope(0x4071, "envelope1")
@@ -128,6 +129,8 @@ expr(0x4490, "object_spriteid + 3")
 expr(0x4493, "object_y_low + 3")
 expr(0x4499, "object_y_low + 3")
 expr(0x44e4, "object_spriteid + 3")
+
+ground_fill(0x3b21)
 
 # TODO: uncomment once sprite_dict has been populated
 #expr(0x3b15, sprite_dict)

@@ -304,9 +304,9 @@ developer_mode_inactive
     lda #$d8                                                          ; 3b03: a9 d8
     jsr find_or_create_menu_slot_for_A                                ; 3b05: 20 bd 2b
 c3b08
-    lda #$a7                                                          ; 3b08: a9 a7
+    lda #<ground_fill_2x2_top_left                                    ; 3b08: a9 a7
     sta source_sprite_memory_low                                      ; 3b0a: 85 40
-    lda #$45 ; 'E'                                                    ; 3b0c: a9 45
+    lda #>ground_fill_2x2_top_left                                    ; 3b0c: a9 45
     sta source_sprite_memory_high                                     ; 3b0e: 85 41
     rts                                                               ; 3b10: 60
 
@@ -1871,11 +1871,42 @@ sound1
     !word 8                                                           ; 45a1: 08 00                   ; amplitude
     !word 128                                                         ; 45a3: 80 00                   ; pitch
     !word 2                                                           ; 45a5: 02 00                   ; duration
-    !byte $81,   6, $18, $60, $80, $80, $43, $4c, $89                 ; 45a7: 81 06 18...
-    !text "F@  "                                                      ; 45b0: 46 40 20...
-    !byte $c0,   0, $0c, $30,   0, $0e, $11, $91, $91                 ; 45b4: c0 00 0c...
-    !text "N@2BA! "                                                   ; 45bd: 4e 40 32...
-    !byte $10, $10,   8                                               ; 45c4: 10 10 08
+ground_fill_2x2_top_left
+    !byte %#......#                                                   ; 45a7: 81
+    !byte %.....##.                                                   ; 45a8: 06
+    !byte %...##...                                                   ; 45a9: 18
+    !byte %.##.....                                                   ; 45aa: 60
+    !byte %#.......                                                   ; 45ab: 80
+    !byte %#.......                                                   ; 45ac: 80
+    !byte %.#....##                                                   ; 45ad: 43
+    !byte %.#..##..                                                   ; 45ae: 4c
+ground_fill_2x2_top_right
+    !byte %#...#..#                                                   ; 45af: 89
+    !byte %.#...##.                                                   ; 45b0: 46
+    !byte %.#......                                                   ; 45b1: 40
+    !byte %..#.....                                                   ; 45b2: 20
+    !byte %..#.....                                                   ; 45b3: 20
+    !byte %##......                                                   ; 45b4: c0
+    !byte %........                                                   ; 45b5: 00
+    !byte %....##..                                                   ; 45b6: 0c
+ground_fill_2x2_bottom_left
+    !byte %..##....                                                   ; 45b7: 30
+    !byte %........                                                   ; 45b8: 00
+    !byte %....###.                                                   ; 45b9: 0e
+    !byte %...#...#                                                   ; 45ba: 11
+    !byte %#..#...#                                                   ; 45bb: 91
+    !byte %#..#...#                                                   ; 45bc: 91
+    !byte %.#..###.                                                   ; 45bd: 4e
+    !byte %.#......                                                   ; 45be: 40
+ground_fill_2x2_bottom_right
+    !byte %..##..#.                                                   ; 45bf: 32
+    !byte %.#....#.                                                   ; 45c0: 42
+    !byte %.#.....#                                                   ; 45c1: 41
+    !byte %..#....#                                                   ; 45c2: 21
+    !byte %..#.....                                                   ; 45c3: 20
+    !byte %...#....                                                   ; 45c4: 10
+    !byte %...#....                                                   ; 45c5: 10
+    !byte %....#...                                                   ; 45c6: 08
 sprite_data
 pydis_end
 
@@ -2015,6 +2046,9 @@ pydis_end
 !if (<envelope4) != $7b {
     !error "Assertion failed: <envelope4 == $7b"
 }
+!if (<ground_fill_2x2_top_left) != $a7 {
+    !error "Assertion failed: <ground_fill_2x2_top_left == $a7"
+}
 !if (<sound1) != $9f {
     !error "Assertion failed: <sound1 == $9f"
 }
@@ -2038,6 +2072,9 @@ pydis_end
 }
 !if (>envelope4) != $45 {
     !error "Assertion failed: >envelope4 == $45"
+}
+!if (>ground_fill_2x2_top_left) != $45 {
+    !error "Assertion failed: >ground_fill_2x2_top_left == $45"
 }
 !if (>sound1) != $45 {
     !error "Assertion failed: >sound1 == $45"

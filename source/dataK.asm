@@ -313,9 +313,9 @@ c3b1c
     lda #$d7                                                          ; 3b1c: a9 d7
     jsr find_or_create_menu_slot_for_A                                ; 3b1e: 20 bd 2b
 c3b21
-    lda #$0d                                                          ; 3b21: a9 0d
+    lda #<ground_fill_2x2_top_left                                    ; 3b21: a9 0d
     sta source_sprite_memory_low                                      ; 3b23: 85 40
-    lda #$45 ; 'E'                                                    ; 3b25: a9 45
+    lda #>ground_fill_2x2_top_left                                    ; 3b25: a9 45
     sta source_sprite_memory_high                                     ; 3b27: 85 41
     rts                                                               ; 3b29: 60
 
@@ -1007,8 +1007,8 @@ sub_c3f86
     ldx #<sound1                                                      ; 3f88: a2 05
     ldy #>sound1                                                      ; 3f8a: a0 45
     jsr play_sound_yx                                                 ; 3f8c: 20 f6 38
-    ldx #$fd                                                          ; 3f8f: a2 fd
-    ldy #$44 ; 'D'                                                    ; 3f91: a0 44
+    ldx #<sound2                                                      ; 3f8f: a2 fd
+    ldy #>sound2                                                      ; 3f91: a0 44
     jmp play_sound_yx                                                 ; 3f93: 4c f6 38
 
 ; *************************************************************************************
@@ -1768,15 +1768,52 @@ envelope1
     !byte 246                                                         ; 44fa: f6                      ; change of amplitude per step during release phase
     !byte 120                                                         ; 44fb: 78                      ; target of level at end of attack phase
     !byte 60                                                          ; 44fc: 3c                      ; target of level at end of decay phase
-    !byte $10,   0,   5,   0,   7,   0,   2,   0                      ; 44fd: 10 00 05...
+sound2
+    !word $10                                                         ; 44fd: 10 00                   ; channel
+    !word 5                                                           ; 44ff: 05 00                   ; amplitude
+    !word 7                                                           ; 4501: 07 00                   ; pitch
+    !word 2                                                           ; 4503: 02 00                   ; duration
 sound1
     !word $11                                                         ; 4505: 11 00                   ; channel
     !word 0                                                           ; 4507: 00 00                   ; amplitude
     !word 180                                                         ; 4509: b4 00                   ; pitch
     !word 2                                                           ; 450b: 02 00                   ; duration
-    !byte   8,   8, $10, $70, $80,   7,   4,   8,   8,   4,   4,   6  ; 450d: 08 08 10...
-    !byte $c1, $30, $10, $10,   8,   4,   4,   6, $c1, $30, $10, $10  ; 4519: c1 30 10...
-    !byte   8,   8, $10, $70, $80,   7,   4,   8                      ; 4525: 08 08 10...
+ground_fill_2x2_top_left
+    !byte %....#...                                                   ; 450d: 08
+    !byte %....#...                                                   ; 450e: 08
+    !byte %...#....                                                   ; 450f: 10
+    !byte %.###....                                                   ; 4510: 70
+    !byte %#.......                                                   ; 4511: 80
+    !byte %.....###                                                   ; 4512: 07
+    !byte %.....#..                                                   ; 4513: 04
+    !byte %....#...                                                   ; 4514: 08
+ground_fill_2x2_top_right
+    !byte %....#...                                                   ; 4515: 08
+    !byte %.....#..                                                   ; 4516: 04
+    !byte %.....#..                                                   ; 4517: 04
+    !byte %.....##.                                                   ; 4518: 06
+    !byte %##.....#                                                   ; 4519: c1
+    !byte %..##....                                                   ; 451a: 30
+    !byte %...#....                                                   ; 451b: 10
+    !byte %...#....                                                   ; 451c: 10
+ground_fill_2x2_bottom_left
+    !byte %....#...                                                   ; 451d: 08
+    !byte %.....#..                                                   ; 451e: 04
+    !byte %.....#..                                                   ; 451f: 04
+    !byte %.....##.                                                   ; 4520: 06
+    !byte %##.....#                                                   ; 4521: c1
+    !byte %..##....                                                   ; 4522: 30
+    !byte %...#....                                                   ; 4523: 10
+    !byte %...#....                                                   ; 4524: 10
+ground_fill_2x2_bottom_right
+    !byte %....#...                                                   ; 4525: 08
+    !byte %....#...                                                   ; 4526: 08
+    !byte %...#....                                                   ; 4527: 10
+    !byte %.###....                                                   ; 4528: 70
+    !byte %#.......                                                   ; 4529: 80
+    !byte %.....###                                                   ; 452a: 07
+    !byte %.....#..                                                   ; 452b: 04
+    !byte %....#...                                                   ; 452c: 08
 sprite_data
 pydis_end
 
@@ -1904,14 +1941,26 @@ pydis_end
 !if (<envelope1) != $ef {
     !error "Assertion failed: <envelope1 == $ef"
 }
+!if (<ground_fill_2x2_top_left) != $0d {
+    !error "Assertion failed: <ground_fill_2x2_top_left == $0d"
+}
 !if (<sound1) != $05 {
     !error "Assertion failed: <sound1 == $05"
+}
+!if (<sound2) != $fd {
+    !error "Assertion failed: <sound2 == $fd"
 }
 !if (>envelope1) != $44 {
     !error "Assertion failed: >envelope1 == $44"
 }
+!if (>ground_fill_2x2_top_left) != $45 {
+    !error "Assertion failed: >ground_fill_2x2_top_left == $45"
+}
 !if (>sound1) != $45 {
     !error "Assertion failed: >sound1 == $45"
+}
+!if (>sound2) != $44 {
+    !error "Assertion failed: >sound2 == $44"
 }
 !if (collision_map_rope) != $02 {
     !error "Assertion failed: collision_map_rope == $02"

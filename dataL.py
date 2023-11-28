@@ -108,6 +108,8 @@ expr(0x4344, "object_x_low + 2")
 expr(0x434a, "object_y_low + 2")
 expr(0x434d, "object_y_low + 2")
 
+ground_fill(0x3b16)
+
 # TODO: uncomment once sprite_dict has been populated
 #expr(0x3b08, sprite_dict)
 #expr(0x3b12, sprite_dict)

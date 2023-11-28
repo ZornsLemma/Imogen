@@ -87,6 +87,8 @@ expr(0x43cd, "object_spriteid + 2")
 expr(0x4202, "object_spriteid + 5")
 expr(0x4208, "object_direction + 5")
 
+ground_fill(0x3b0d)
+
 # TODO: uncomment once sprite_dict has been populated
 #expr(0x3b09, sprite_dict)
 #expr(0x3c93, sprite_dict)

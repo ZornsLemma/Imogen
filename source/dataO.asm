@@ -208,7 +208,7 @@ set_object_position_from_current_sprite_position    = $1f6d
 l20f7                                               = $20f7
 jmp_for_update_extra_player_character               = $22dd
 play_landing_sound                                  = $23a9
-player_wall_collision_speed                         = $2433
+player_wall_collision_reaction_speed                = $2433
 find_left_and_right_of_object                       = $2434
 temp_left_offset                                    = $24d0
 temp_right_offset                                   = $24d1
@@ -321,9 +321,9 @@ c3b1d
     lda #$d4                                                          ; 3b22: a9 d4
     jsr find_or_create_menu_slot_for_A                                ; 3b24: 20 bd 2b
 c3b27
-    lda #$c7                                                          ; 3b27: a9 c7
+    lda #<ground_fill_2x2_top_left                                    ; 3b27: a9 c7
     sta source_sprite_memory_low                                      ; 3b29: 85 40
-    lda #$44 ; 'D'                                                    ; 3b2b: a9 44
+    lda #>ground_fill_2x2_top_left                                    ; 3b2b: a9 44
     sta source_sprite_memory_high                                     ; 3b2d: 85 41
     rts                                                               ; 3b2f: 60
 
@@ -1352,12 +1352,12 @@ c41fc
     sbc object_x_high + 2                                             ; 423b: ed 68 09
     bmi c4248                                                         ; 423e: 30 08
     lda #6                                                            ; 4240: a9 06
-    sta player_wall_collision_speed                                   ; 4242: 8d 33 24
+    sta player_wall_collision_reaction_speed                          ; 4242: 8d 33 24
     jmp c424d                                                         ; 4245: 4c 4d 42
 
 c4248
     lda #$fa                                                          ; 4248: a9 fa
-    sta player_wall_collision_speed                                   ; 424a: 8d 33 24
+    sta player_wall_collision_reaction_speed                          ; 424a: 8d 33 24
 c424d
     lda #6                                                            ; 424d: a9 06
     sta temp_left_offset                                              ; 424f: 8d d0 24
@@ -1733,11 +1733,42 @@ sound2
     !word 0                                                           ; 44c1: 00 00                   ; amplitude
     !word 220                                                         ; 44c3: dc 00                   ; pitch
     !word 1                                                           ; 44c5: 01 00                   ; duration
-    !byte $10, $10, $20, $d3, $0c,   8, $10, $10,   8,   4, $e2, $11  ; 44c7: 10 10 20...
-    !byte   8,   4,   4,   4                                          ; 44d3: 08 04 04...
-    !text "   "                                                       ; 44d7: 20 20 20
-    !byte $10, $88, $47, $20, $10,   8,   8, $10, $30, $cb,   4,   8  ; 44da: 10 88 47...
-    !byte   8                                                         ; 44e6: 08
+ground_fill_2x2_top_left
+    !byte %...#....                                                   ; 44c7: 10
+    !byte %...#....                                                   ; 44c8: 10
+    !byte %..#.....                                                   ; 44c9: 20
+    !byte %##.#..##                                                   ; 44ca: d3
+    !byte %....##..                                                   ; 44cb: 0c
+    !byte %....#...                                                   ; 44cc: 08
+    !byte %...#....                                                   ; 44cd: 10
+    !byte %...#....                                                   ; 44ce: 10
+ground_fill_2x2_top_right
+    !byte %....#...                                                   ; 44cf: 08
+    !byte %.....#..                                                   ; 44d0: 04
+    !byte %###...#.                                                   ; 44d1: e2
+    !byte %...#...#                                                   ; 44d2: 11
+    !byte %....#...                                                   ; 44d3: 08
+    !byte %.....#..                                                   ; 44d4: 04
+    !byte %.....#..                                                   ; 44d5: 04
+    !byte %.....#..                                                   ; 44d6: 04
+ground_fill_2x2_bottom_left
+    !byte %..#.....                                                   ; 44d7: 20
+    !byte %..#.....                                                   ; 44d8: 20
+    !byte %..#.....                                                   ; 44d9: 20
+    !byte %...#....                                                   ; 44da: 10
+    !byte %#...#...                                                   ; 44db: 88
+    !byte %.#...###                                                   ; 44dc: 47
+    !byte %..#.....                                                   ; 44dd: 20
+    !byte %...#....                                                   ; 44de: 10
+ground_fill_2x2_bottom_right
+    !byte %....#...                                                   ; 44df: 08
+    !byte %....#...                                                   ; 44e0: 08
+    !byte %...#....                                                   ; 44e1: 10
+    !byte %..##....                                                   ; 44e2: 30
+    !byte %##..#.##                                                   ; 44e3: cb
+    !byte %.....#..                                                   ; 44e4: 04
+    !byte %....#...                                                   ; 44e5: 08
+    !byte %....#...                                                   ; 44e6: 08
 sprite_data
 pydis_end
 
@@ -1863,6 +1894,9 @@ pydis_end
 !if (<envelope3) != $8b {
     !error "Assertion failed: <envelope3 == $8b"
 }
+!if (<ground_fill_2x2_top_left) != $c7 {
+    !error "Assertion failed: <ground_fill_2x2_top_left == $c7"
+}
 !if (<sound1) != $83 {
     !error "Assertion failed: <sound1 == $83"
 }
@@ -1883,6 +1917,9 @@ pydis_end
 }
 !if (>envelope3) != $44 {
     !error "Assertion failed: >envelope3 == $44"
+}
+!if (>ground_fill_2x2_top_left) != $44 {
+    !error "Assertion failed: >ground_fill_2x2_top_left == $44"
 }
 !if (>sound1) != $44 {
     !error "Assertion failed: >sound1 == $44"

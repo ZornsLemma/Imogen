@@ -65,6 +65,7 @@ expr(0x4420, "objectid_old_player")
 label(0x449c, "return4")
 label(0x45ef, "return5")
 ldx_ldy_jsr_play_sound_yx(0x4628, "sound3")
+ldx_ldy_jsr_play_sound_yx(0x462f, "sound4")
 
 label(0x3bdf, "room_1_update_handler")
 label(0x3c67, "room_2_update_handler")
@@ -133,6 +134,8 @@ expr(0x460a, "object_y_low + 2")
 expr(0x4610, "object_y_high + 2")
 expr(0x4615, "object_spriteid + 2")
 expr(0x461b, "object_direction + 2")
+
+ground_fill(0x3b31)
 
 # TODO: uncomment once sprite_dict has been populated
 #expr(0x3b02, sprite_dict)

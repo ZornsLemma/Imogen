@@ -129,6 +129,8 @@ expr(0x449a, "object_y_low + 6")
 expr(0x449f, "object_spriteid + 6")
 expr(0x44a5, "object_direction + 6")
 
+ground_fill(0x3b08)
+
 # TODO: uncomment once sprite_dict has been populated
 #expr(0x3b04, sprite_dict)
 #expr(0x3bbe, sprite_dict)
