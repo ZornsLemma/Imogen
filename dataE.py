@@ -17,6 +17,7 @@ sprite_dict = {
 sprite_dict = {**common_sprite_dict, **sprite_dict}
 
 # Room 1
+constant(2, "objectid_something_maybe_small_thrown_egg") # TODO: guessing
 constant(3, "objectid_egg")
 
 set_sprite_dict(sprite_dict)
@@ -161,6 +162,8 @@ entry(0x4538, "new_egg_animation_index_in_y")
 
 comment(0x45a1, "Returns with some flag in Z; if Z is set, Y contains a new egg animation index")
 entry(0x45a1, "something_to_do_with_egg_animation")
+comment(0x45ad, "TODO: Why not lda object_spriteid+2? And similarly for following lda abs,x")
+expr(0x45ae, "objectid_something_maybe_small_thrown_egg")
 
 entry(0x3eb8)
 
