@@ -169,6 +169,15 @@ label(0x45d6, "saved_a")
 label(0x45d7, "saved_y")
 expr(0x42dd, "objectid_something_maybe_small_thrown_egg")
 
+# TODO: These are copied carelessly from g.py, need to make these available consistently to all code
+# in a sensible way.
+label(0x70, "object_left_low")
+label(0x71, "object_left_high")
+label(0x72, "object_right_low")
+label(0x73, "object_right_high")
+label(0x78, "object_left_cell_x")
+label(0x79, "object_right_cell_x")
+
 entry(0x3eb8)
 
 # TODO: replace "+ n" with "+ objectid_*" once objects have been named

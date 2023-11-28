@@ -152,10 +152,13 @@ level_before_latest_level_and_room_initialisation   = $51
 player_held_object_spriteid                         = $52
 developer_mode_sideways_ram_is_set_up_flag          = $5b
 l0070                                               = $70
+object_left_low                                     = $70
 room_exit_direction                                 = $70
-l0071                                               = $71
-l0078                                               = $78
-l0079                                               = $79
+object_left_high                                    = $71
+object_right_low                                    = $72
+object_right_high                                   = $73
+object_left_cell_x                                  = $78
+object_right_cell_x                                 = $79
 show_dialog_box                                     = $040a
 remove_dialog                                       = $0453
 object_x_low                                        = $0950
@@ -956,7 +959,7 @@ c3fca
     lda #$40 ; '@'                                                    ; 3fda: a9 40
     sta room_exit_direction                                           ; 3fdc: 85 70
     lda #$3b ; ';'                                                    ; 3fde: a9 3b
-    sta l0071                                                         ; 3fe0: 85 71
+    sta object_left_high                                              ; 3fe0: 85 71
     ldx l09d4                                                         ; 3fe2: ae d4 09
     inx                                                               ; 3fe5: e8
     inx                                                               ; 3fe6: e8
@@ -1344,7 +1347,7 @@ c42a2
     jsr find_left_and_right_of_object                                 ; 42de: 20 34 24
     lda l0a73                                                         ; 42e1: ad 73 0a
     bmi c4302                                                         ; 42e4: 30 1c
-    lda l0078                                                         ; 42e6: a5 78
+    lda object_left_cell_x                                            ; 42e6: a5 78
     cmp #$28 ; '('                                                    ; 42e8: c9 28
     bcc return3                                                       ; 42ea: 90 30
     lda l0a70                                                         ; 42ec: ad 70 0a
@@ -1358,7 +1361,7 @@ c42a2
     jmp c4317                                                         ; 42ff: 4c 17 43
 
 c4302
-    lda l0079                                                         ; 4302: a5 79
+    lda object_right_cell_x                                           ; 4302: a5 79
     bpl return3                                                       ; 4304: 10 16
     lda l0a70                                                         ; 4306: ad 70 0a
     clc                                                               ; 4309: 18
@@ -1920,9 +1923,6 @@ pydis_end
 ;     c4551
 ;     c4596
 ;     l0023
-;     l0071
-;     l0078
-;     l0079
 ;     l09d4
 ;     l09df
 ;     l0a70
