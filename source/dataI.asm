@@ -208,7 +208,7 @@ l20f7                                               = $20f7
 jmp_for_update_extra_player_character               = $22dd
 play_landing_sound                                  = $23a9
 player_wall_collision_flag                          = $2433
-l2434                                               = $2434
+find_left_and_right_of_object                       = $2434
 temp_left_offset                                    = $24d0
 temp_right_offset                                   = $24d1
 l24d2                                               = $24d2
@@ -1782,7 +1782,7 @@ c4559
     lda object_y_high + 2                                             ; 4581: ad 94 09
     sta l0a2a                                                         ; 4584: 8d 2a 0a
     ldx #2                                                            ; 4587: a2 02
-    jsr l2434                                                         ; 4589: 20 34 24
+    jsr find_left_and_right_of_object                                 ; 4589: 20 34 24
     jsr l24d2                                                         ; 458c: 20 d2 24
     lda l0a2d                                                         ; 458f: ad 2d 0a
     cmp #3                                                            ; 4592: c9 03
@@ -2026,7 +2026,6 @@ pydis_end
 ;     l0a2e
 ;     l0a2f
 ;     l20f7
-;     l2434
 ;     l24d2
 ;     l25f5
 ;     l2770

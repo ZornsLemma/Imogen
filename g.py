@@ -1788,7 +1788,6 @@ On Entry:
     label(0x241a, "if_player_hit_wall_and_floor_then_clear_wall_collision_flag")
 
     label(0x242b, "recall_registers_and_return1")
-    label(0x2434, "find_left_and_right_of_object")
     stars(0x2434, """Find the left and right extents of the object
 
 Returns both the left and right Y coordinate of the object (found using the object position, sprite offset, current sprite width, and object direction).

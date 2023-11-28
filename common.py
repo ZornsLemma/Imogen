@@ -350,6 +350,7 @@ def common_to_all():
     label(0x22dd, "jmp_for_update_extra_player_character")
     label(0x23a9, "play_landing_sound")
     label(0x2433, "player_wall_collision_flag")
+    label(0x2434, "find_left_and_right_of_object")
     label(0x24d0, "temp_left_offset")
     label(0x24d1, "temp_right_offset")
     label(0x2550, "temp_top_offset")

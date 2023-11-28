@@ -209,7 +209,7 @@ l20f7                                               = $20f7
 jmp_for_update_extra_player_character               = $22dd
 play_landing_sound                                  = $23a9
 player_wall_collision_flag                          = $2433
-l2434                                               = $2434
+find_left_and_right_of_object                       = $2434
 temp_left_offset                                    = $24d0
 temp_right_offset                                   = $24d1
 temp_top_offset                                     = $2550
@@ -658,7 +658,7 @@ developer_mode_inactive2
     cmp #$d9                                                          ; 3d2e: c9 d9
     bne c3d0a                                                         ; 3d30: d0 d8
     ldx #2                                                            ; 3d32: a2 02
-    jsr l2434                                                         ; 3d34: 20 34 24
+    jsr find_left_and_right_of_object                                 ; 3d34: 20 34 24
     lda l0078                                                         ; 3d37: a5 78
     cmp #$15                                                          ; 3d39: c9 15
     bcs c3d0a                                                         ; 3d3b: b0 cd
@@ -1461,7 +1461,7 @@ c42ae
     jsr play_landing_sound                                            ; 4309: 20 a9 23
 c430c
     ldx #2                                                            ; 430c: a2 02
-    jsr l2434                                                         ; 430e: 20 34 24
+    jsr find_left_and_right_of_object                                 ; 430e: 20 34 24
     lda l0078                                                         ; 4311: a5 78
     cmp #$28 ; '('                                                    ; 4313: c9 28
     bcc return4                                                       ; 4315: 90 10
@@ -1867,7 +1867,6 @@ pydis_end
 ;     l0a75
 ;     l0a76
 ;     l20f7
-;     l2434
 ;     l295c
 ;     l296e
 ;     l2ef4

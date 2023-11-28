@@ -227,7 +227,7 @@ l22ee                                               = $22ee
 play_landing_sound                                  = $23a9
 l23c4                                               = $23c4
 player_wall_collision_flag                          = $2433
-l2434                                               = $2434
+find_left_and_right_of_object                       = $2434
 temp_left_offset                                    = $24d0
 temp_right_offset                                   = $24d1
 temp_top_offset                                     = $2550
@@ -1341,7 +1341,7 @@ c42a2
     cmp #$0c                                                          ; 42d8: c9 0c
     bne return3                                                       ; 42da: d0 40
     ldx #2                                                            ; 42dc: a2 02
-    jsr l2434                                                         ; 42de: 20 34 24
+    jsr find_left_and_right_of_object                                 ; 42de: 20 34 24
     lda l0a73                                                         ; 42e1: ad 73 0a
     bmi c4302                                                         ; 42e4: 30 1c
     lda l0078                                                         ; 42e6: a5 78
@@ -1789,7 +1789,7 @@ something_to_do_with_egg_animation
     cmp #$70 ; 'p'                                                    ; 45bc: c9 70
     bcs restore_a_and_return                                          ; 45be: b0 12
     sty saved_y                                                       ; 45c0: 8c d7 45
-    jsr l2434                                                         ; 45c3: 20 34 24
+    jsr find_left_and_right_of_object                                 ; 45c3: 20 34 24
     ldy saved_y                                                       ; 45c6: ac d7 45
     lda l0070                                                         ; 45c9: a5 70
     cmp #$78 ; 'x'                                                    ; 45cb: c9 78
@@ -1940,7 +1940,6 @@ pydis_end
 ;     l22ed
 ;     l22ee
 ;     l23c4
-;     l2434
 ;     l25f5
 ;     l288f
 ;     l2890

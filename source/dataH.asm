@@ -214,7 +214,7 @@ set_object_position_from_current_sprite_position    = $1f6d
 jmp_for_update_extra_player_character               = $22dd
 play_landing_sound                                  = $23a9
 player_wall_collision_flag                          = $2433
-l2434                                               = $2434
+find_left_and_right_of_object                       = $2434
 temp_left_offset                                    = $24d0
 temp_right_offset                                   = $24d1
 l24d2                                               = $24d2
@@ -1539,7 +1539,7 @@ c432b
     sta l0a21                                                         ; 4349: 8d 21 0a
     jsr sub_c43b6                                                     ; 434c: 20 b6 43
     ldx #2                                                            ; 434f: a2 02
-    jsr l2434                                                         ; 4351: 20 34 24
+    jsr find_left_and_right_of_object                                 ; 4351: 20 34 24
     jsr l24d2                                                         ; 4354: 20 d2 24
     lda l0a1c                                                         ; 4357: ad 1c 0a
     cmp #$1a                                                          ; 435a: c9 1a
@@ -1851,7 +1851,6 @@ pydis_end
 ;     l0a73
 ;     l0a74
 ;     l0a75
-;     l2434
 ;     l24d2
 ;     l38ae
 ;     l38af
