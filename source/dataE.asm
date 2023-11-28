@@ -1776,7 +1776,8 @@ c4596
 return5
     rts                                                               ; 45a0: 60
 
-; Returns with some flag in Z; if Z is set, Y contains a new egg animation index
+; Preserves Y. A is either preserved or decremented by 1 depending on something. Flags
+; reflect A on exit.
 something_to_do_with_egg_animation
     lda #0                                                            ; 45a1: a9 00
     sta saved_a                                                       ; 45a3: 8d d6 45

@@ -171,7 +171,7 @@ expr(0x452f, make_subtract("egg_animation_subseq3", "egg_animations_table"))
 entry(0x4538, "new_egg_animation_index_in_y")
 entry(0x4551, "finish_setting_up_egg")
 
-comment(0x45a1, "Returns with some flag in Z; if Z is set, Y contains a new egg animation index")
+comment(0x45a1, "Preserves Y. A is either preserved or decremented by 1 depending on something. Flags reflect A on exit.")
 entry(0x45a1, "something_to_do_with_egg_animation")
 comment(0x45ad, "TODO: Why not lda object_spriteid+2? And similarly for following lda abs,x")
 expr(0x45ae, "objectid_something_maybe_small_thrown_egg")
