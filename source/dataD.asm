@@ -369,7 +369,7 @@ level_specific_update
     jsr room_0_update_handler                                         ; 3b1d: 20 fc 3b
     jsr room_2_update_handler                                         ; 3b20: 20 e9 3e
     jsr room_3_update_handler                                         ; 3b23: 20 c2 40
-    jsr sub_c3c73                                                     ; 3b26: 20 73 3c
+    jsr update_sign_and_rock_boundaries                               ; 3b26: 20 73 3c
     jsr update_baby                                                   ; 3b29: 20 ac 41
     rts                                                               ; 3b2c: 60
 
@@ -537,7 +537,7 @@ room_0_update_handler
 ; check for level change (branch if not)
     lda current_level                                                 ; 3c0f: a5 31
     cmp level_before_latest_level_and_room_initialisation             ; 3c11: c5 51
-    beq c3c22                                                         ; 3c13: f0 0d
+    beq room_change_only                                              ; 3c13: f0 0d
 ; new level
     lda #spriteid_axe_menu_item                                       ; 3c15: a9 ca
     sta toolbar_collectable_spriteids+2                               ; 3c17: 8d ea 2e
@@ -545,7 +545,7 @@ room_0_update_handler
     sta collectable_spriteids+2                                       ; 3c1c: 8d ef 2e
     sta collectable_being_used_spriteids+2                            ; 3c1f: 8d f4 2e
 ; no_level_change, just a room change only
-c3c22
+room_change_only
     lda desired_room_index                                            ; 3c22: a5 30
     cmp #0                                                            ; 3c24: c9 00
     bne return2                                                       ; 3c26: d0 26
@@ -577,30 +577,34 @@ room_0_not_first_update
     bne return3                                                       ; 3c53: d0 1d
     lda save_game_level_d_got_axe                                     ; 3c55: ad 0e 0a
     bne return3                                                       ; 3c58: d0 18
+; not got axe. check for collision with axe
     ldx #objectid_old_player                                          ; 3c5a: a2 0b
     ldy #objectid_axe                                                 ; 3c5c: a0 03
     jsr test_for_collision_between_objects_x_and_y                    ; 3c5e: 20 e2 28
     beq return3                                                       ; 3c61: f0 0f
+; player has collided with axe. mark axe as collected.
     lda #$ff                                                          ; 3c63: a9 ff
     sta save_game_level_d_got_axe                                     ; 3c65: 8d 0e 0a
+; add axe to toolbar
     lda #spriteid_axe_menu_item                                       ; 3c68: a9 ca
     jsr find_or_create_menu_slot_for_A                                ; 3c6a: 20 bd 2b
+; mark axe object as invisible
     lda #spriteid_one_pixel_masked_out                                ; 3c6d: a9 00
     sta object_spriteid + objectid_axe                                ; 3c6f: 8d ab 09
 return3
     rts                                                               ; 3c72: 60
 
 ; check for first update in room (branch if not)
-sub_c3c73
+update_sign_and_rock_boundaries
     lda update_room_first_update_flag                                 ; 3c73: ad 2b 13
     beq c3ccd                                                         ; 3c76: f0 55
 ; initialise sign position
     lda save_game_level_d_gnu_sign_position                           ; 3c78: ad 10 0a
-    bne draw_rock_and_block_entrance                                  ; 3c7b: d0 05
+    bne draw_rock_and_block_passage                                   ; 3c7b: d0 05
 ; initial position of the sign
     lda #$21 ; '!'                                                    ; 3c7d: a9 21
     sta save_game_level_d_gnu_sign_position                           ; 3c7f: 8d 10 0a
-draw_rock_and_block_entrance
+draw_rock_and_block_passage
     ldy #$0e                                                          ; 3c82: a0 0e
     lda #1                                                            ; 3c84: a9 01
     sta width_in_cells                                                ; 3c86: 85 3c
@@ -1783,7 +1787,6 @@ sprite_data
 pydis_end
 
 ; Automatically generated labels:
-;     c3c22
 ;     c3caf
 ;     c3cca
 ;     c3ccd
@@ -1817,7 +1820,6 @@ pydis_end
 ;     c42c2
 ;     c4309
 ;     l4367
-;     sub_c3c73
 !if (<envelope1) != $86 {
     !error "Assertion failed: <envelope1 == $86"
 }
