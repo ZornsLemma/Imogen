@@ -3322,7 +3322,7 @@ print("""; *********************************************************************
 ;   0530-07ff: cache of screen memory under the dialog box
 ;   0950-0ab5: data
 ;   0ab7-0aff: level utils code
-;   0b11-0bec: special sprite data (sprites 197, 198, 199)
+;   0b11-0bec: special 'erase' sprite data (sprites 197, 198, 199: the contents of screen behind sprites)
 ;   0c00-0c60: collision map
 ;   1103-3ad4: main code
 ;   3ad5-4ad3: 'data*' file (level code/data) (it starts as initialisation code before being overwritten by a level)

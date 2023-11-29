@@ -220,6 +220,7 @@ common_sprite_dict = {
     0x38: "spriteid_wizard_transform1",
     0x39: "spriteid_wizard_transform2",
     0x3a: "spriteid_brazier",
+    0x3b: "spriteid_ball",
     0x3c: "spriteid_fire1",
     0x3d: "spriteid_fire2",
     0x3e: "spriteid_fire3",

@@ -34,6 +34,7 @@ sprite_op_flags_erase_to_bg_colour    = 2
 sprite_op_flags_erase_to_fg_colour    = 4
 sprite_op_flags_normal                = 0
 spriteid_197                          = 197
+spriteid_ball                         = 59
 spriteid_brazier                      = 58
 spriteid_cat1                         = 27
 spriteid_cat2                         = 28
@@ -427,10 +428,10 @@ room_1_code
     jsr sub_c3b2a                                                     ; 3b8f: 20 2a 3b
 ; carve the floor, walls and ceiling into the rock
     jsr draw_floor_walls_and_ceiling_around_solid_rock                ; 3b92: 20 90 1b
-; draw sprite $3b at (20,10)
+; draw ball at (20,10)
     ldx #$14                                                          ; 3b95: a2 14
     ldy #$0a                                                          ; 3b97: a0 0a
-    lda #$3b ; ';'                                                    ; 3b99: a9 3b
+    lda #spriteid_ball                                                ; 3b99: a9 3b
     jsr draw_sprite_a_at_cell_xy                                      ; 3b9b: 20 4c 1f
     lda #3                                                            ; 3b9e: a9 03
     jsr write_a_single_value_to_cell_in_collision_map                 ; 3ba0: 20 bb 1e
@@ -2221,6 +2222,9 @@ pydis_end
 }
 !if (sprite_op_flags_erase_to_fg_colour) != $04 {
     !error "Assertion failed: sprite_op_flags_erase_to_fg_colour == $04"
+}
+!if (spriteid_ball) != $3b {
+    !error "Assertion failed: spriteid_ball == $3b"
 }
 !if (spriteid_rope_end) != $0a {
     !error "Assertion failed: spriteid_rope_end == $0a"

@@ -4,8 +4,6 @@ config.set_label_references(False)
 config.set_hex_dump_show_ascii(False)
 
 sprite_dict = {
-    #0x2b: "spriteid_diamond5",
-    0x3b: "spriteid_ball",
     0xc8: "spriteid_mouse",
     0xc9: "spriteid_mouse_hands1",
     0xca: "spriteid_mouse_hands2",
