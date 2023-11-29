@@ -745,7 +745,7 @@ c3d53
     ldx desired_room_index                                            ; 3d63: a6 30
     cpx #1                                                            ; 3d65: e0 01
     bne c3da6                                                         ; 3d67: d0 3d
-    sta object_y_low + 5                                              ; 3d69: 8d 81 09
+    sta object_y_low + objectid_gorilla                               ; 3d69: 8d 81 09
     jmp c3da6                                                         ; 3d6c: 4c a6 3d
 
 return1_local
@@ -1156,7 +1156,7 @@ c3ff8
     lda #$c0                                                          ; 4003: a9 c0
     sta l38c7                                                         ; 4005: 8d c7 38
     lda #0                                                            ; 4008: a9 00
-    sta object_y_high + 5                                             ; 400a: 8d 97 09
+    sta object_y_high + objectid_gorilla                              ; 400a: 8d 97 09
 c400d
     jmp c41f5                                                         ; 400d: 4c f5 41
 
@@ -1407,11 +1407,11 @@ c41f5
     bcs return2                                                       ; 41f9: b0 65
     ldy l0a74                                                         ; 41fb: ac 74 0a
     lda gorilla_animations_table,y                                    ; 41fe: b9 72 3f
-    sta object_spriteid + 5                                           ; 4201: 8d ad 09
+    sta object_spriteid + objectid_gorilla                            ; 4201: 8d ad 09
     lda l0a73                                                         ; 4204: ad 73 0a
-    sta object_direction + 5                                          ; 4207: 8d c3 09
+    sta object_direction + objectid_gorilla                           ; 4207: 8d c3 09
     lda l0a71                                                         ; 420a: ad 71 0a
-    sta object_y_low + 5                                              ; 420d: 8d 81 09
+    sta object_y_low + objectid_gorilla                               ; 420d: 8d 81 09
     lda l0a72                                                         ; 4210: ad 72 0a
     ldx desired_room_index                                            ; 4213: a6 30
     beq c421a                                                         ; 4215: f0 03
@@ -1423,21 +1423,21 @@ c421a
     bcc c4221                                                         ; 421e: 90 01
     dex                                                               ; 4220: ca
 c4221
-    stx object_x_high + 5                                             ; 4221: 8e 6b 09
+    stx object_x_high + objectid_gorilla                              ; 4221: 8e 6b 09
     asl                                                               ; 4224: 0a
-    rol object_x_high + 5                                             ; 4225: 2e 6b 09
+    rol object_x_high + objectid_gorilla                              ; 4225: 2e 6b 09
     asl                                                               ; 4228: 0a
-    rol object_x_high + 5                                             ; 4229: 2e 6b 09
-    sta object_x_low + 5                                              ; 422c: 8d 55 09
+    rol object_x_high + objectid_gorilla                              ; 4229: 2e 6b 09
+    sta object_x_low + objectid_gorilla                               ; 422c: 8d 55 09
     lda l0a73                                                         ; 422f: ad 73 0a
     bpl c4245                                                         ; 4232: 10 11
-    lda object_x_low + 5                                              ; 4234: ad 55 09
+    lda object_x_low + objectid_gorilla                               ; 4234: ad 55 09
     sec                                                               ; 4237: 38
     sbc #1                                                            ; 4238: e9 01
-    sta object_x_low + 5                                              ; 423a: 8d 55 09
-    lda object_x_high + 5                                             ; 423d: ad 6b 09
+    sta object_x_low + objectid_gorilla                               ; 423a: 8d 55 09
+    lda object_x_high + objectid_gorilla                              ; 423d: ad 6b 09
     sbc #0                                                            ; 4240: e9 00
-    sta object_x_high + 5                                             ; 4242: 8d 6b 09
+    sta object_x_high + objectid_gorilla                              ; 4242: 8d 6b 09
 ; check for first update in room (branch if so)
 c4245
     lda update_room_first_update_flag                                 ; 4245: ad 2b 13
@@ -1905,38 +1905,38 @@ pydis_end
 !if (level_specific_update) != $3b16 {
     !error "Assertion failed: level_specific_update == $3b16"
 }
-!if (object_direction + 5) != $09c3 {
-    !error "Assertion failed: object_direction + 5 == $09c3"
-}
-!if (object_spriteid + 5) != $09ad {
-    !error "Assertion failed: object_spriteid + 5 == $09ad"
+!if (object_direction + objectid_gorilla) != $09c3 {
+    !error "Assertion failed: object_direction + objectid_gorilla == $09c3"
 }
 !if (object_spriteid + objectid_banana) != $09aa {
     !error "Assertion failed: object_spriteid + objectid_banana == $09aa"
 }
-!if (object_x_high + 5) != $096b {
-    !error "Assertion failed: object_x_high + 5 == $096b"
+!if (object_spriteid + objectid_gorilla) != $09ad {
+    !error "Assertion failed: object_spriteid + objectid_gorilla == $09ad"
 }
 !if (object_x_high + objectid_banana) != $0968 {
     !error "Assertion failed: object_x_high + objectid_banana == $0968"
 }
-!if (object_x_low + 5) != $0955 {
-    !error "Assertion failed: object_x_low + 5 == $0955"
+!if (object_x_high + objectid_gorilla) != $096b {
+    !error "Assertion failed: object_x_high + objectid_gorilla == $096b"
 }
 !if (object_x_low + objectid_banana) != $0952 {
     !error "Assertion failed: object_x_low + objectid_banana == $0952"
 }
-!if (object_y_high + 5) != $0997 {
-    !error "Assertion failed: object_y_high + 5 == $0997"
+!if (object_x_low + objectid_gorilla) != $0955 {
+    !error "Assertion failed: object_x_low + objectid_gorilla == $0955"
 }
 !if (object_y_high + objectid_banana) != $0994 {
     !error "Assertion failed: object_y_high + objectid_banana == $0994"
 }
-!if (object_y_low + 5) != $0981 {
-    !error "Assertion failed: object_y_low + 5 == $0981"
+!if (object_y_high + objectid_gorilla) != $0997 {
+    !error "Assertion failed: object_y_high + objectid_gorilla == $0997"
 }
 !if (object_y_low + objectid_banana) != $097e {
     !error "Assertion failed: object_y_low + objectid_banana == $097e"
+}
+!if (object_y_low + objectid_gorilla) != $0981 {
+    !error "Assertion failed: object_y_low + objectid_gorilla == $0981"
 }
 !if (object_y_low + objectid_partition) != $097f {
     !error "Assertion failed: object_y_low + objectid_partition == $097f"
