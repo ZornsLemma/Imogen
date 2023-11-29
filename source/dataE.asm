@@ -196,8 +196,11 @@ save_game_level_e_holding_egg_flag                  = $0a13
 save_game_level_e_room_1_egg_state                  = $0a14
 save_game_level_e_duck_captured_flag                = $0a15
 level_workspace                                     = $0a6f
+l0a70                                               = $0a70
 thrown_egg_x_low                                    = $0a70
+l0a71                                               = $0a71
 thrown_egg_x_high                                   = $0a71
+l0a72                                               = $0a72
 thrown_egg_y_low                                    = $0a72
 thrown_egg_direction                                = $0a73
 l0a74                                               = $0a74
@@ -1151,11 +1154,11 @@ room0_first_update
     lda #1                                                            ; 4109: a9 01
     sta thrown_egg_direction                                          ; 410b: 8d 73 0a
     lda #$da                                                          ; 410e: a9 da
-    sta thrown_egg_x_low                                              ; 4110: 8d 70 0a
+    sta l0a70                                                         ; 4110: 8d 70 0a
     lda #0                                                            ; 4113: a9 00
-    sta thrown_egg_x_high                                             ; 4115: 8d 71 0a
+    sta l0a71                                                         ; 4115: 8d 71 0a
     lda #$3a ; ':'                                                    ; 4118: a9 3a
-    sta thrown_egg_y_low                                              ; 411a: 8d 72 0a
+    sta l0a72                                                         ; 411a: 8d 72 0a
     lda #1                                                            ; 411d: a9 01
     sta save_game_level_e_holding_egg_flag                            ; 411f: 8d 13 0a
     sta l0a74                                                         ; 4122: 8d 74 0a
