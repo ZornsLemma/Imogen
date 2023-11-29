@@ -34,6 +34,7 @@ sprite_op_flags_erase_to_bg_colour    = 2
 sprite_op_flags_erase_to_fg_colour    = 4
 sprite_op_flags_normal                = 0
 spriteid_197                          = 197
+spriteid_ball                         = 59
 spriteid_brazier                      = 58
 spriteid_cat1                         = 27
 spriteid_cat2                         = 28

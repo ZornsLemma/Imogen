@@ -319,4 +319,4 @@ clean:
 	rm -rf disk
 	rm -rf build
 	rm -rf source
-	rm imogen.ssd
+	rm -f imogen.ssd

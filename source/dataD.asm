@@ -84,6 +84,7 @@ spriteid_baby_sit                     = 220
 spriteid_baby_smile                   = 216
 spriteid_baby_surprise                = 217
 spriteid_baby_walk                    = 219
+spriteid_ball                         = 59
 spriteid_brazier                      = 58
 spriteid_broken_partition_base        = 212
 spriteid_cache1                       = 208
