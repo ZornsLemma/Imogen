@@ -194,9 +194,9 @@ current_animation                                   = $09df
 level_progress_table                                = $09ef
 save_game_level_f_got_banana                        = $0a16
 partition_position_y                                = $0a6f
-l0a70                                               = $0a70
+gorilla_state                                       = $0a70
 l0a71                                               = $0a71
-l0a72                                               = $0a72
+gorilla_x_position                                  = $0a72
 l0a73                                               = $0a73
 l0a74                                               = $0a74
 l0a75                                               = $0a75
@@ -260,16 +260,11 @@ inhibit_monkey_climb_flag                           = $31d7
 print_encrypted_string_at_yx_centred                = $37f3
 wait_one_second_then_check_keys                     = $388d
 object_erase_type                                   = $38ac
-l38ae                                               = $38ae
-l38b1                                               = $38b1
 object_z_order                                      = $38c2
-l38c4                                               = $38c4
-l38c7                                               = $38c7
 object_room_collision_flags                         = $38d8
 play_sound_yx                                       = $38f6
 define_envelope                                     = $395e
 sound_priority_per_channel_table                    = $396f
-l3970                                               = $3970
 check_menu_keys                                     = $3a8f
 auxcode                                             = $53c0
 check_password                                      = $53c0
@@ -597,7 +592,7 @@ room_1_update_handler
 ; check for first update in room (branch if so)
     lda update_room_first_update_flag                                 ; 3c5a: ad 2b 13
     bne room_1_first_update                                           ; 3c5d: d0 03
-    jmp c3d2c                                                         ; 3c5f: 4c 2c 3d
+    jmp update_partition_puzzle                                       ; 3c5f: 4c 2c 3d
 
 ; check for level change (branch if not)
 room_1_first_update
@@ -613,12 +608,13 @@ skip_level_change
     jmp c3d29                                                         ; 3c73: 4c 29 3d
 
 room_1_initialise
-    ldx #<envelope1                                                   ; 3c76: a2 d0
-    ldy #>envelope1                                                   ; 3c78: a0 43
+    ldx #<partition_moving_envelope                                   ; 3c76: a2 d0
+    ldy #>partition_moving_envelope                                   ; 3c78: a0 43
     jsr define_envelope                                               ; 3c7a: 20 5e 39
-    ldx #<envelope2                                                   ; 3c7d: a2 e6
-    ldy #>envelope2                                                   ; 3c7f: a0 43
+    ldx #<partition_landing_envelope                                  ; 3c7d: a2 e6
+    ldy #>partition_landing_envelope                                  ; 3c7f: a0 43
     jsr define_envelope                                               ; 3c81: 20 5e 39
+; draw hooks, including collision map
     lda #1                                                            ; 3c84: a9 01
     sta width_in_cells                                                ; 3c86: 85 3c
     sta height_in_cells                                               ; 3c88: 85 3d
@@ -696,6 +692,7 @@ draw_right_vertical_rope_loop
     dey                                                               ; 3d00: 88
     cpy #3                                                            ; 3d01: c0 03
     bcs draw_right_vertical_rope_loop                                 ; 3d03: b0 f8
+; write values to partition object
 skip_right_hand_rope_drawing_as_partition_already_fully_up
     lda #objectid_partition                                           ; 3d05: a9 03
     jsr set_object_position_from_cell_xy                              ; 3d07: 20 5d 1f
@@ -715,21 +712,22 @@ skip_right_hand_rope_drawing_as_partition_already_fully_up
 c3d29
     jmp c3e2d                                                         ; 3d29: 4c 2d 3e
 
-c3d2c
+update_partition_puzzle
     lda desired_room_index                                            ; 3d2c: a5 30
     cmp #1                                                            ; 3d2e: c9 01
     bne c3d41                                                         ; 3d30: d0 0f
+; update room 1 sound priorities
     lda sound_priority_per_channel_table                              ; 3d32: ad 6f 39
     cmp #$41 ; 'A'                                                    ; 3d35: c9 41
     bcs c3d41                                                         ; 3d37: b0 08
     lda #0                                                            ; 3d39: a9 00
     sta sound_priority_per_channel_table                              ; 3d3b: 8d 6f 39
-    sta l3970                                                         ; 3d3e: 8d 70 39
+    sta sound_priority_per_channel_table + 1                          ; 3d3e: 8d 70 39
 c3d41
-    lda l0a72                                                         ; 3d41: ad 72 0a
+    lda gorilla_x_position                                            ; 3d41: ad 72 0a
     cmp #$50 ; 'P'                                                    ; 3d44: c9 50
     bcc c3d72                                                         ; 3d46: 90 2a
-    lda l0a70                                                         ; 3d48: ad 70 0a
+    lda gorilla_state                                                 ; 3d48: ad 70 0a
     cmp #$5a ; 'Z'                                                    ; 3d4b: c9 5a
     beq c3d53                                                         ; 3d4d: f0 04
     cmp #$56 ; 'V'                                                    ; 3d4f: c9 56
@@ -785,7 +783,7 @@ c3da6
     lda desired_room_index                                            ; 3daf: a5 30
     cmp #1                                                            ; 3db1: c9 01
     bne return1_local                                                 ; 3db3: d0 ba
-    jsr play_sound3                                                   ; 3db5: 20 a9 3e
+    jsr play_partition_moving_sound                                   ; 3db5: 20 a9 3e
     ldx #4                                                            ; 3db8: a2 04
     lda partition_position_y                                          ; 3dba: ad 6f 0a
     sec                                                               ; 3dbd: 38
@@ -805,49 +803,49 @@ c3dd0
 
 c3dda
     ldx #$0c                                                          ; 3dda: a2 0c
-    ldy #$cb                                                          ; 3ddc: a0 cb
+    ldy #spriteid_rope_short_vertical                                 ; 3ddc: a0 cb
     adc #4                                                            ; 3dde: 69 04
     cmp #$48 ; 'H'                                                    ; 3de0: c9 48
     beq c3dea                                                         ; 3de2: f0 06
     ldx #$10                                                          ; 3de4: a2 10
-    ldy #$cc                                                          ; 3de6: a0 cc
+    ldy #spriteid_rope_vertical                                       ; 3de6: a0 cc
     adc #4                                                            ; 3de8: 69 04
 c3dea
     sta partition_position_y                                          ; 3dea: 8d 6f 0a
-    stx l3ea7                                                         ; 3ded: 8e a7 3e
-    sty l3ea8                                                         ; 3df0: 8c a8 3e
+    stx remembered_rope_y_offset                                      ; 3ded: 8e a7 3e
+    sty remembered_rope_spriteid                                      ; 3df0: 8c a8 3e
     lda desired_room_index                                            ; 3df3: a5 30
     cmp #1                                                            ; 3df5: c9 01
     bne c3e2d                                                         ; 3df7: d0 34
     lda partition_position_y                                          ; 3df9: ad 6f 0a
     cmp #$48 ; 'H'                                                    ; 3dfc: c9 48
-    beq c3e06                                                         ; 3dfe: f0 06
-    jsr play_sound3                                                   ; 3e00: 20 a9 3e
+    beq play_partition_landing_sound                                  ; 3dfe: f0 06
+    jsr play_partition_moving_sound                                   ; 3e00: 20 a9 3e
     jmp c3e16                                                         ; 3e03: 4c 16 3e
 
-c3e06
+play_partition_landing_sound
     lda #0                                                            ; 3e06: a9 00
-    ldx #<sound1                                                      ; 3e08: a2 fc
-    ldy #>sound1                                                      ; 3e0a: a0 43
+    ldx #<partition_landing_sound1                                    ; 3e08: a2 fc
+    ldy #>partition_landing_sound1                                    ; 3e0a: a0 43
     jsr play_sound_yx                                                 ; 3e0c: 20 f6 38
-    ldx #<sound2                                                      ; 3e0f: a2 f4
-    ldy #>sound2                                                      ; 3e11: a0 43
+    ldx #<partition_landing_sound2                                    ; 3e0f: a2 f4
+    ldy #>partition_landing_sound2                                    ; 3e11: a0 43
     jsr play_sound_yx                                                 ; 3e13: 20 f6 38
 c3e16
-    ldx #4                                                            ; 3e16: a2 04
+    ldx #objectid_partition2                                          ; 3e16: a2 04
     lda partition_position_y                                          ; 3e18: ad 6f 0a
     sec                                                               ; 3e1b: 38
-    sbc l3ea7                                                         ; 3e1c: ed a7 3e
+    sbc remembered_rope_y_offset                                      ; 3e1c: ed a7 3e
     sta object_y_low,x                                                ; 3e1f: 9d 7c 09
     lda #0                                                            ; 3e22: a9 00
     sta object_spriteid_old,x                                         ; 3e24: 9d b3 09
-    lda l3ea8                                                         ; 3e27: ad a8 3e
+    lda remembered_rope_spriteid                                      ; 3e27: ad a8 3e
     sta object_spriteid,x                                             ; 3e2a: 9d a8 09
 c3e2d
     lda desired_room_index                                            ; 3e2d: a5 30
     cmp #1                                                            ; 3e2f: c9 01
     bne return1                                                       ; 3e31: d0 73
-    ldx #2                                                            ; 3e33: a2 02
+    ldx #objectid_rope_end                                            ; 3e33: a2 02
     lda #0                                                            ; 3e35: a9 00
     sta object_spriteid_old,x                                         ; 3e37: 9d b3 09
     lda #$48 ; 'H'                                                    ; 3e3a: a9 48
@@ -906,15 +904,15 @@ c3e85
 return1
     rts                                                               ; 3ea6: 60
 
-l3ea7
+remembered_rope_y_offset
     !byte 0                                                           ; 3ea7: 00
-l3ea8
+remembered_rope_spriteid
     !byte 0                                                           ; 3ea8: 00
 
-play_sound3
+play_partition_moving_sound
     lda #$40 ; '@'                                                    ; 3ea9: a9 40
-    ldx #<sound3                                                      ; 3eab: a2 de
-    ldy #>sound3                                                      ; 3ead: a0 43
+    ldx #<partition_moving_sound                                      ; 3eab: a2 de
+    ldy #>partition_moving_sound                                      ; 3ead: a0 43
     jsr play_sound_yx                                                 ; 3eaf: 20 f6 38
     rts                                                               ; 3eb2: 60
 
@@ -1060,6 +1058,7 @@ room_2_update_handler
     rts                                                               ; 3f71: 60
 
 gorilla_animations_table
+gorilla_push_animation
     !byte spriteid_gorilla_pushes,                       0            ; 3f72: de 00
     !byte                       0                                     ; 3f74: 00
     !byte spriteid_gorilla_pushes,                       0            ; 3f75: de 00
@@ -1077,16 +1076,16 @@ gorilla_animations_table
     !byte spriteid_gorilla_pushes,                       0            ; 3f87: de 00
     !byte                       0                                     ; 3f89: 00
     !byte 0                                                           ; 3f8a: 00
-gorilla_animation1
+gorilla_idle_animation
     !byte spriteid_gorilla5,                 0,                 0     ; 3f8b: d6 00 00
     !byte 0                                                           ; 3f8e: 00
-gorilla_animation2
+gorilla_walk_cycle_animation
     !byte spriteid_gorilla1,                 1,                 0     ; 3f8f: d2 01 00
     !byte spriteid_gorilla2,                 1,                 0     ; 3f92: d3 01 00
     !byte spriteid_gorilla3,                 1,                 0     ; 3f95: d4 01 00
     !byte spriteid_gorilla4,                 1,                 0     ; 3f98: d5 01 00
     !byte 0                                                           ; 3f9b: 00
-gorilla_animation3
+gorilla_jump_on_rope_animation
     !byte spriteid_gorilla_jump,                     1                ; 3f9c: d9 01
     !byte                   $fb                                       ; 3f9e: fb
     !byte spriteid_gorilla_jump,                     1                ; 3f9f: d9 01
@@ -1102,7 +1101,7 @@ gorilla_animation3
     !byte spriteid_gorilla_jump,                     1                ; 3fae: d9 01
     !byte                   $ff                                       ; 3fb0: ff
     !byte 0                                                           ; 3fb1: 00
-gorilla_animation4
+gorilla_jump_off_rope_animation
     !byte spriteid_gorilla_jump,                     1                ; 3fb2: d9 01
     !byte                     1                                       ; 3fb4: 01
     !byte spriteid_gorilla_jump,                     1                ; 3fb5: d9 01
@@ -1118,11 +1117,11 @@ gorilla_animation4
     !byte spriteid_gorilla_jump,                     1                ; 3fc4: d9 01
     !byte                     5                                       ; 3fc6: 05
     !byte 0                                                           ; 3fc7: 00
-gorilla_animation5
+gorilla_on_rope_animation
     !byte spriteid_gorilla_climb1,                       0            ; 3fc8: d7 00
     !byte                       0                                     ; 3fca: 00
     !byte 0                                                           ; 3fcb: 00
-gorilla_animation6
+gorilla_climbing_rope_animation
     !byte spriteid_gorilla_climb2,                       0            ; 3fcc: d8 00
     !byte                     $fc                                     ; 3fce: fc
     !byte spriteid_gorilla_climb1,                       0            ; 3fcf: d7 00
@@ -1136,28 +1135,28 @@ update_gorilla
 ; check for level change (branch if not)
     lda current_level                                                 ; 3fd8: a5 31
     cmp level_before_latest_level_and_room_initialisation             ; 3fda: c5 51
-    beq c3ff8                                                         ; 3fdc: f0 1a
+    beq initialise_room_only                                          ; 3fdc: f0 1a
     lda #$22 ; '"'                                                    ; 3fde: a9 22
-    sta l0a72                                                         ; 3fe0: 8d 72 0a
+    sta gorilla_x_position                                            ; 3fe0: 8d 72 0a
     lda #$6e ; 'n'                                                    ; 3fe3: a9 6e
     sta l0a71                                                         ; 3fe5: 8d 71 0a
     lda #1                                                            ; 3fe8: a9 01
     sta l0a73                                                         ; 3fea: 8d 73 0a
     lda #$19                                                          ; 3fed: a9 19
-    sta l0a70                                                         ; 3fef: 8d 70 0a
+    sta gorilla_state                                                 ; 3fef: 8d 70 0a
     sta l0a74                                                         ; 3ff2: 8d 74 0a
     jsr sub_c4261                                                     ; 3ff5: 20 61 42
-c3ff8
+initialise_room_only
     lda desired_room_index                                            ; 3ff8: a5 30
     cmp #2                                                            ; 3ffa: c9 02
-    bcs c400d                                                         ; 3ffc: b0 0f
+    bcs initialise_room_2_or_3                                        ; 3ffc: b0 0f
     lda #$d1                                                          ; 3ffe: a9 d1
-    sta l38b1                                                         ; 4000: 8d b1 38
+    sta object_erase_type + objectid_gorilla                          ; 4000: 8d b1 38
     lda #$c0                                                          ; 4003: a9 c0
-    sta l38c7                                                         ; 4005: 8d c7 38
+    sta object_z_order + objectid_gorilla                             ; 4005: 8d c7 38
     lda #0                                                            ; 4008: a9 00
     sta object_y_high + objectid_gorilla                              ; 400a: 8d 97 09
-c400d
+initialise_room_2_or_3
     jmp c41f5                                                         ; 400d: 4c f5 41
 
 c4010
@@ -1179,7 +1178,7 @@ c4010
 c402b
     ldx #0                                                            ; 402b: a2 00
     sec                                                               ; 402d: 38
-    sbc l0a72                                                         ; 402e: ed 72 0a
+    sbc gorilla_x_position                                            ; 402e: ed 72 0a
     beq c4039                                                         ; 4031: f0 06
     ldx #1                                                            ; 4033: a2 01
     bcs c4039                                                         ; 4035: b0 02
@@ -1192,50 +1191,50 @@ c4039
     tay                                                               ; 4042: a8
     lda gorilla_animations_table,y                                    ; 4043: b9 72 3f
     bne c404b                                                         ; 4046: d0 03
-    ldy l0a70                                                         ; 4048: ac 70 0a
+    ldy gorilla_state                                                 ; 4048: ac 70 0a
 c404b
     lda l0a75                                                         ; 404b: ad 75 0a
     beq c4053                                                         ; 404e: f0 03
     dec l0a75                                                         ; 4050: ce 75 0a
 c4053
-    lda l0a70                                                         ; 4053: ad 70 0a
+    lda gorilla_state                                                 ; 4053: ad 70 0a
     cmp #$2a ; '*'                                                    ; 4056: c9 2a
     bne c407a                                                         ; 4058: d0 20
-    cpy l0a70                                                         ; 405a: cc 70 0a
+    cpy gorilla_state                                                 ; 405a: cc 70 0a
     bne c4092                                                         ; 405d: d0 33
     ldy #$56 ; 'V'                                                    ; 405f: a0 56
-    sty l0a70                                                         ; 4061: 8c 70 0a
+    sty gorilla_state                                                 ; 4061: 8c 70 0a
     lda #4                                                            ; 4064: a9 04
     sta l0a75                                                         ; 4066: 8d 75 0a
-    lda l0a72                                                         ; 4069: ad 72 0a
+    lda gorilla_x_position                                            ; 4069: ad 72 0a
     cmp #$50 ; 'P'                                                    ; 406c: c9 50
     bcc c4092                                                         ; 406e: 90 22
     ldy #$5a ; 'Z'                                                    ; 4070: a0 5a
-    sty l0a70                                                         ; 4072: 8c 70 0a
+    sty gorilla_state                                                 ; 4072: 8c 70 0a
     lda #0                                                            ; 4075: a9 00
     sta l0a75                                                         ; 4077: 8d 75 0a
 c407a
-    lda l0a70                                                         ; 407a: ad 70 0a
+    lda gorilla_state                                                 ; 407a: ad 70 0a
     cmp #$5a ; 'Z'                                                    ; 407d: c9 5a
     bne c4095                                                         ; 407f: d0 14
     lda partition_position_y                                          ; 4081: ad 6f 0a
     cmp #$20 ; ' '                                                    ; 4084: c9 20
     bne c4092                                                         ; 4086: d0 0a
     ldy #$56 ; 'V'                                                    ; 4088: a0 56
-    sty l0a70                                                         ; 408a: 8c 70 0a
+    sty gorilla_state                                                 ; 408a: 8c 70 0a
     lda #4                                                            ; 408d: a9 04
     sta l0a75                                                         ; 408f: 8d 75 0a
 c4092
     jmp c4152                                                         ; 4092: 4c 52 41
 
 c4095
-    lda l0a70                                                         ; 4095: ad 70 0a
+    lda gorilla_state                                                 ; 4095: ad 70 0a
     cmp #$40 ; '@'                                                    ; 4098: c9 40
     bne c40a9                                                         ; 409a: d0 0d
-    cpy l0a70                                                         ; 409c: cc 70 0a
+    cpy gorilla_state                                                 ; 409c: cc 70 0a
     bne c4092                                                         ; 409f: d0 f1
     ldy #$19                                                          ; 40a1: a0 19
-    sty l0a70                                                         ; 40a3: 8c 70 0a
+    sty gorilla_state                                                 ; 40a3: 8c 70 0a
     jsr sub_c4261                                                     ; 40a6: 20 61 42
 c40a9
     lda player_held_object_spriteid                                   ; 40a9: a5 52
@@ -1260,7 +1259,7 @@ c40a9
     cmp #$10                                                          ; 40d3: c9 10
     bcc c40e1                                                         ; 40d5: 90 0a
 c40d7
-    lda l0a70                                                         ; 40d7: ad 70 0a
+    lda gorilla_state                                                 ; 40d7: ad 70 0a
     cmp #$56 ; 'V'                                                    ; 40da: c9 56
     beq c4092                                                         ; 40dc: f0 b4
     jmp c4144                                                         ; 40de: 4c 44 41
@@ -1269,19 +1268,19 @@ c40e1
     lda l426d                                                         ; 40e1: ad 6d 42
     beq c4152                                                         ; 40e4: f0 6c
     sta l0a73                                                         ; 40e6: 8d 73 0a
-    lda l0a70                                                         ; 40e9: ad 70 0a
+    lda gorilla_state                                                 ; 40e9: ad 70 0a
     cmp #$56 ; 'V'                                                    ; 40ec: c9 56
     bne c40fd                                                         ; 40ee: d0 0d
     lda l0a75                                                         ; 40f0: ad 75 0a
     bne c4152                                                         ; 40f3: d0 5d
     ldy #$40 ; '@'                                                    ; 40f5: a0 40
-    sty l0a70                                                         ; 40f7: 8c 70 0a
+    sty gorilla_state                                                 ; 40f7: 8c 70 0a
     jmp c4152                                                         ; 40fa: 4c 52 41
 
 c40fd
     lda l0a73                                                         ; 40fd: ad 73 0a
     bmi c4118                                                         ; 4100: 30 16
-    lda l0a72                                                         ; 4102: ad 72 0a
+    lda gorilla_x_position                                            ; 4102: ad 72 0a
     cmp #$2e ; '.'                                                    ; 4105: c9 2e
     bcc c4136                                                         ; 4107: 90 2d
     beq c412e                                                         ; 4109: f0 23
@@ -1293,7 +1292,7 @@ c40fd
     jmp c4144                                                         ; 4115: 4c 44 41
 
 c4118
-    lda l0a72                                                         ; 4118: ad 72 0a
+    lda gorilla_x_position                                            ; 4118: ad 72 0a
     cmp #$72 ; 'r'                                                    ; 411b: c9 72
     beq c412e                                                         ; 411d: f0 0f
     bcs c4136                                                         ; 411f: b0 15
@@ -1306,23 +1305,23 @@ c4118
 
 c412e
     ldy #$2a ; '*'                                                    ; 412e: a0 2a
-    sty l0a70                                                         ; 4130: 8c 70 0a
+    sty gorilla_state                                                 ; 4130: 8c 70 0a
     jmp c4152                                                         ; 4133: 4c 52 41
 
 c4136
     lda #$1d                                                          ; 4136: a9 1d
-    cmp l0a70                                                         ; 4138: cd 70 0a
+    cmp gorilla_state                                                 ; 4138: cd 70 0a
     beq c4152                                                         ; 413b: f0 15
     tay                                                               ; 413d: a8
-    sty l0a70                                                         ; 413e: 8c 70 0a
+    sty gorilla_state                                                 ; 413e: 8c 70 0a
     jmp c4152                                                         ; 4141: 4c 52 41
 
 c4144
     lda #$19                                                          ; 4144: a9 19
-    cmp l0a70                                                         ; 4146: cd 70 0a
+    cmp gorilla_state                                                 ; 4146: cd 70 0a
     beq c4152                                                         ; 4149: f0 07
     tay                                                               ; 414b: a8
-    sty l0a70                                                         ; 414c: 8c 70 0a
+    sty gorilla_state                                                 ; 414c: 8c 70 0a
     jsr sub_c4261                                                     ; 414f: 20 61 42
 c4152
     lda desired_room_index                                            ; 4152: a5 30
@@ -1350,7 +1349,7 @@ c4152
 c4186
     lda #$80                                                          ; 4186: a9 80
     sta player_wall_collision_reaction_speed                          ; 4188: 8d 33 24
-    lda l0a70                                                         ; 418b: ad 70 0a
+    lda gorilla_state                                                 ; 418b: ad 70 0a
     cmp #$5a ; 'Z'                                                    ; 418e: c9 5a
     beq c41c3                                                         ; 4190: f0 31
     cmp #$56 ; 'V'                                                    ; 4192: c9 56
@@ -1361,7 +1360,7 @@ c4186
     lda #$fa                                                          ; 419d: a9 fa
 c419f
     sta player_wall_collision_reaction_speed                          ; 419f: 8d 33 24
-    lda l0a70                                                         ; 41a2: ad 70 0a
+    lda gorilla_state                                                 ; 41a2: ad 70 0a
     cmp #$2a ; '*'                                                    ; 41a5: c9 2a
     beq c41c3                                                         ; 41a7: f0 1a
     cmp #$40 ; '@'                                                    ; 41a9: c9 40
@@ -1373,11 +1372,11 @@ c419f
 c41b6
     sta l0a73                                                         ; 41b6: 8d 73 0a
     ldy #$19                                                          ; 41b9: a0 19
-    sty l0a70                                                         ; 41bb: 8c 70 0a
+    sty gorilla_state                                                 ; 41bb: 8c 70 0a
     ldy #0                                                            ; 41be: a0 00
     jsr sub_c4261                                                     ; 41c0: 20 61 42
 c41c3
-    lda l0a70                                                         ; 41c3: ad 70 0a
+    lda gorilla_state                                                 ; 41c3: ad 70 0a
     cmp #$19                                                          ; 41c6: c9 19
     bne c41d2                                                         ; 41c8: d0 08
     lda l0a75                                                         ; 41ca: ad 75 0a
@@ -1394,8 +1393,8 @@ c41d2
     adc #1                                                            ; 41e1: 69 01
 c41e3
     clc                                                               ; 41e3: 18
-    adc l0a72                                                         ; 41e4: 6d 72 0a
-    sta l0a72                                                         ; 41e7: 8d 72 0a
+    adc gorilla_x_position                                            ; 41e4: 6d 72 0a
+    sta gorilla_x_position                                            ; 41e7: 8d 72 0a
     iny                                                               ; 41ea: c8
     lda gorilla_animations_table,y                                    ; 41eb: b9 72 3f
     clc                                                               ; 41ee: 18
@@ -1412,7 +1411,7 @@ c41f5
     sta object_direction + objectid_gorilla                           ; 4207: 8d c3 09
     lda l0a71                                                         ; 420a: ad 71 0a
     sta object_y_low + objectid_gorilla                               ; 420d: 8d 81 09
-    lda l0a72                                                         ; 4210: ad 72 0a
+    lda gorilla_x_position                                            ; 4210: ad 72 0a
     ldx desired_room_index                                            ; 4213: a6 30
     beq c421a                                                         ; 4215: f0 03
     sec                                                               ; 4217: 38
@@ -1442,7 +1441,7 @@ c4221
 c4245
     lda update_room_first_update_flag                                 ; 4245: ad 2b 13
     bne return2                                                       ; 4248: d0 16
-    lda l0a70                                                         ; 424a: ad 70 0a
+    lda gorilla_state                                                 ; 424a: ad 70 0a
     cmp #$40 ; '@'                                                    ; 424d: c9 40
     bne return2                                                       ; 424f: d0 0f
     lda #2                                                            ; 4251: a9 02
@@ -1605,10 +1604,10 @@ c431e
     ldy #2                                                            ; 432a: a0 02
     lda #spriteid_banana_bunch                                        ; 432c: a9 dc
     jsr draw_sprite_a_at_cell_xy                                      ; 432e: 20 4c 1f
-    lda #$cf                                                          ; 4331: a9 cf
-    sta l38ae                                                         ; 4333: 8d ae 38
+    lda #spriteid_erase_partition                                     ; 4331: a9 cf
+    sta object_erase_type + objectid_banana                           ; 4333: 8d ae 38
     lda #$c0                                                          ; 4336: a9 c0
-    sta l38c4                                                         ; 4338: 8d c4 38
+    sta object_z_order + objectid_banana                              ; 4338: 8d c4 38
     lda #$0c                                                          ; 433b: a9 0c
     sta object_x_low + objectid_banana                                ; 433d: 8d 52 09
     lda #1                                                            ; 4340: a9 01
@@ -1694,7 +1693,7 @@ banana_already_landed_or_taken
 return3
     rts                                                               ; 43cf: 60
 
-envelope1
+partition_moving_envelope
     !byte 5                                                           ; 43d0: 05                      ; envelope number
     !byte 1                                                           ; 43d1: 01                      ; step length (100ths of a second)
     !byte 0                                                           ; 43d2: 00                      ; pitch change per step in section 1
@@ -1709,12 +1708,12 @@ envelope1
     !byte 216                                                         ; 43db: d8                      ; change of amplitude per step during release phase
     !byte 40                                                          ; 43dc: 28                      ; target of level at end of attack phase
     !byte 0                                                           ; 43dd: 00                      ; target of level at end of decay phase
-sound3
+partition_moving_sound
     !word $10                                                         ; 43de: 10 00                   ; channel
     !word 5                                                           ; 43e0: 05 00                   ; amplitude
     !word 4                                                           ; 43e2: 04 00                   ; pitch
     !word 4                                                           ; 43e4: 04 00                   ; duration
-envelope2
+partition_landing_envelope
     !byte 6                                                           ; 43e6: 06                      ; envelope number
     !byte 1                                                           ; 43e7: 01                      ; step length (100ths of a second)
     !byte 0                                                           ; 43e8: 00                      ; pitch change per step in section 1
@@ -1729,12 +1728,12 @@ envelope2
     !byte 250                                                         ; 43f1: fa                      ; change of amplitude per step during release phase
     !byte 110                                                         ; 43f2: 6e                      ; target of level at end of attack phase
     !byte 55                                                          ; 43f3: 37                      ; target of level at end of decay phase
-sound2
+partition_landing_sound2
     !word $10                                                         ; 43f4: 10 00                   ; channel
     !word 6                                                           ; 43f6: 06 00                   ; amplitude
     !word 7                                                           ; 43f8: 07 00                   ; pitch
     !word 1                                                           ; 43fa: 01 00                   ; duration
-sound1
+partition_landing_sound1
     !word $11                                                         ; 43fc: 11 00                   ; channel
     !word 0                                                           ; 43fe: 00 00                   ; amplitude
     !word 210                                                         ; 4400: d2 00                   ; pitch
@@ -1780,7 +1779,6 @@ pydis_end
 
 ; Automatically generated labels:
 ;     c3d29
-;     c3d2c
 ;     c3d41
 ;     c3d53
 ;     c3d72
@@ -1789,13 +1787,10 @@ pydis_end
 ;     c3dd0
 ;     c3dda
 ;     c3dea
-;     c3e06
 ;     c3e16
 ;     c3e2d
 ;     c3e7b
 ;     c3e85
-;     c3ff8
-;     c400d
 ;     c4010
 ;     c402b
 ;     c4039
@@ -1826,57 +1821,48 @@ pydis_end
 ;     c431e
 ;     c434a
 ;     c434d
-;     l0a70
 ;     l0a71
-;     l0a72
 ;     l0a73
 ;     l0a74
 ;     l0a75
-;     l38ae
-;     l38b1
-;     l38c4
-;     l38c7
-;     l3970
-;     l3ea7
-;     l3ea8
 ;     l426d
 ;     l426e
 ;     sub_c4261
-!if (<envelope1) != $d0 {
-    !error "Assertion failed: <envelope1 == $d0"
-}
-!if (<envelope2) != $e6 {
-    !error "Assertion failed: <envelope2 == $e6"
-}
 !if (<ground_fill_2x2_top_left) != $04 {
     !error "Assertion failed: <ground_fill_2x2_top_left == $04"
 }
-!if (<sound1) != $fc {
-    !error "Assertion failed: <sound1 == $fc"
+!if (<partition_landing_envelope) != $e6 {
+    !error "Assertion failed: <partition_landing_envelope == $e6"
 }
-!if (<sound2) != $f4 {
-    !error "Assertion failed: <sound2 == $f4"
+!if (<partition_landing_sound1) != $fc {
+    !error "Assertion failed: <partition_landing_sound1 == $fc"
 }
-!if (<sound3) != $de {
-    !error "Assertion failed: <sound3 == $de"
+!if (<partition_landing_sound2) != $f4 {
+    !error "Assertion failed: <partition_landing_sound2 == $f4"
 }
-!if (>envelope1) != $43 {
-    !error "Assertion failed: >envelope1 == $43"
+!if (<partition_moving_envelope) != $d0 {
+    !error "Assertion failed: <partition_moving_envelope == $d0"
 }
-!if (>envelope2) != $43 {
-    !error "Assertion failed: >envelope2 == $43"
+!if (<partition_moving_sound) != $de {
+    !error "Assertion failed: <partition_moving_sound == $de"
 }
 !if (>ground_fill_2x2_top_left) != $44 {
     !error "Assertion failed: >ground_fill_2x2_top_left == $44"
 }
-!if (>sound1) != $43 {
-    !error "Assertion failed: >sound1 == $43"
+!if (>partition_landing_envelope) != $43 {
+    !error "Assertion failed: >partition_landing_envelope == $43"
 }
-!if (>sound2) != $43 {
-    !error "Assertion failed: >sound2 == $43"
+!if (>partition_landing_sound1) != $43 {
+    !error "Assertion failed: >partition_landing_sound1 == $43"
 }
-!if (>sound3) != $43 {
-    !error "Assertion failed: >sound3 == $43"
+!if (>partition_landing_sound2) != $43 {
+    !error "Assertion failed: >partition_landing_sound2 == $43"
+}
+!if (>partition_moving_envelope) != $43 {
+    !error "Assertion failed: >partition_moving_envelope == $43"
+}
+!if (>partition_moving_sound) != $43 {
+    !error "Assertion failed: >partition_moving_sound == $43"
 }
 !if (collision_map_none) != $00 {
     !error "Assertion failed: collision_map_none == $00"
