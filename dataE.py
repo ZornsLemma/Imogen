@@ -26,15 +26,15 @@ sprite_dict = {
     0xdd: "spriteid_large_egg_sideways",
     0xde: "spriteid_cache2",
     0xdf: "spriteid_cache3",
-    0xfc: "spriteid_todo", # TODO: added to make something_table expr happy
-    0xfe: "spriteid_todo2", # TODO: added to make something_table expr happy
+    0xfc: "spriteid_todo", # TODO: added to make small_egg_animation_table expr happy
+    0xfe: "spriteid_todo2", # TODO: added to make small_egg_animation_table expr happy
 }
 
 # Merge with common sprite dictionary
 sprite_dict = {**common_sprite_dict, **sprite_dict}
 
 # Room 1
-constant(2, "objectid_something_maybe_small_thrown_egg") # TODO: guessing
+constant(2, "objectid_small_egg") # TODO: guessing
 constant(3, "objectid_egg")
 
 set_sprite_dict(sprite_dict)
@@ -46,7 +46,7 @@ label(0x0a14, "save_game_level_e_room_1_egg_state") # TODO: other uses? not chec
 label(0x0a15, "save_game_level_e_duck_captured_flag") # TODO: might be used for other things too, not checked yet
 
 label(0xa73, "thrown_egg_direction")
-label(0xa74, "something_table_index")
+label(0xa74, "small_egg_animation_table_index")
 label(0xa76, "egg_animation_index")
 label(0xa77, "room_1_egg_x")
 label(0xa78, "room_1_egg_y")
@@ -146,12 +146,12 @@ blank(0x4462)
 blank(0x4466)
 
 comment(0x4099, "Table of animations for TODO: what?. There are three bytes per entry. First byte is a sprite ID. Second and third bytes of each entry are signed (X,Y) position offsets, added to a77 and a78 respectively. This seems to control sprite and probably X/Y poss of object TODO. Each animation is terminated with an extra zero byte.")
-label(0x4099, "something_table")
-label(0x4099+1, "something_table_subseq2") # TODO: 411d uses this offset, but shares it with holding_egg_flag - I wonder if this is a micro-optimisation and 1 vs 0 in holding_egg_flag are equivalent
-label(0x4099+5, "something_table_subseq1")
+label(0x4099, "small_egg_animation_table")
+label(0x4099+1, "small_egg_animation_table_subseq2") # TODO: 411d uses this offset, but shares it with holding_egg_flag - I wonder if this is a micro-optimisation and 1 vs 0 in holding_egg_flag are equivalent
+label(0x4099+5, "small_egg_animation_table_subseq1")
 for i in range(0x4099, 0x40cf):
     byte(i)
-expr(0x41c7, make_subtract("something_table_subseq1", "something_table"))
+expr(0x41c7, make_subtract("small_egg_animation_table_subseq1", "small_egg_animation_table"))
 expr(0x409a, sprite_dict)
 expr(0x40a1, sprite_dict)
 expr(0x40a5, sprite_dict)
@@ -228,11 +228,11 @@ entry(0x4551, "finish_setting_up_egg")
 comment(0x45a1, "Preserves Y. A is either preserved or decremented by 1 depending on something. Flags reflect A on exit.")
 entry(0x45a1, "something_to_do_with_egg_animation")
 comment(0x45ad, "TODO: Why not lda object_spriteid+2? And similarly for following lda abs,x")
-expr(0x45ae, "objectid_something_maybe_small_thrown_egg")
+expr(0x45ae, "objectid_small_egg")
 entry(0x45d2, "restore_a_and_return")
 label(0x45d6, "saved_a")
 label(0x45d7, "saved_y")
-expr(0x42dd, "objectid_something_maybe_small_thrown_egg")
+expr(0x42dd, "objectid_small_egg")
 
 # TODO: These are copied carelessly from g.py, need to make these available consistently to all code
 # in a sensible way.
@@ -263,28 +263,28 @@ expr(0x3de8, "object_x_high + 4")
 expr(0x3deb, "object_x_high + 5")
 expr(0x3df1, "object_direction + 4")
 expr(0x3df4, "object_direction + 5")
-expr(0x414a, "object_spriteid + 2")
-expr(0x4169, "object_spriteid_old + 2")
-expr(0x4179, "object_spriteid_old + 2")
-expr(0x41d2, "object_spriteid + 2")
-expr(0x41f0, "object_spriteid_old + 2")
-expr(0x420f, "object_spriteid + 2")
-expr(0x428b, "object_spriteid + 2")
-expr(0x42c4, "object_x_low + 2")
-expr(0x42ca, "object_x_high + 2")
-expr(0x42d0, "object_y_low + 2")
-expr(0x431a, "object_spriteid + 2")
-expr(0x4321, "object_x_low + 2")
-expr(0x4327, "object_x_high + 2")
-expr(0x432d, "object_y_low + 2")
-expr(0x4332, "object_y_high + 2")
-expr(0x4338, "object_direction + 2")
-expr(0x434f, "object_y_low + 2")
-expr(0x4352, "object_y_low_old + 2")
-expr(0x435a, "object_x_low + 2")
-expr(0x435e, "object_x_low_old + 2")
-expr(0x4363, "object_x_high + 2")
-expr(0x4366, "object_x_high_old + 2")
+expr(0x414a, "object_spriteid + objectid_small_egg")
+expr(0x4169, "object_spriteid_old + objectid_small_egg")
+expr(0x4179, "object_spriteid_old + objectid_small_egg")
+expr(0x41d2, "object_spriteid + objectid_small_egg")
+expr(0x41f0, "object_spriteid_old + objectid_small_egg")
+expr(0x420f, "object_spriteid + objectid_small_egg")
+expr(0x428b, "object_spriteid + objectid_small_egg")
+expr(0x42c4, "object_x_low + objectid_small_egg")
+expr(0x42ca, "object_x_high + objectid_small_egg")
+expr(0x42d0, "object_y_low + objectid_small_egg")
+expr(0x431a, "object_spriteid + objectid_small_egg")
+expr(0x4321, "object_x_low + objectid_small_egg")
+expr(0x4327, "object_x_high + objectid_small_egg")
+expr(0x432d, "object_y_low + objectid_small_egg")
+expr(0x4332, "object_y_high + objectid_small_egg")
+expr(0x4338, "object_direction + objectid_small_egg")
+expr(0x434f, "object_y_low + objectid_small_egg")
+expr(0x4352, "object_y_low_old + objectid_small_egg")
+expr(0x435a, "object_x_low + objectid_small_egg")
+expr(0x435e, "object_x_low_old + objectid_small_egg")
+expr(0x4363, "object_x_high + objectid_small_egg")
+expr(0x4366, "object_x_high_old + objectid_small_egg")
 expr(0x44b4, "object_x_high + objectid_egg")
 expr(0x44b7, "object_y_high + objectid_egg")
 expr(0x455e, "object_spriteid + objectid_egg")
