@@ -1155,11 +1155,11 @@ room0_first_update
     lda #1                                                            ; 4109: a9 01
     sta thrown_egg_direction                                          ; 410b: 8d 73 0a
     lda #$da                                                          ; 410e: a9 da
-    sta l0a70                                                         ; 4110: 8d 70 0a
+    sta thrown_egg_x_low                                              ; 4110: 8d 70 0a
     lda #0                                                            ; 4113: a9 00
-    sta l0a71                                                         ; 4115: 8d 71 0a
+    sta thrown_egg_x_high                                             ; 4115: 8d 71 0a
     lda #$3a ; ':'                                                    ; 4118: a9 3a
-    sta l0a72                                                         ; 411a: 8d 72 0a
+    sta thrown_egg_y_low                                              ; 411a: 8d 72 0a
     lda #1                                                            ; 411d: a9 01
     sta save_game_level_e_holding_egg_flag                            ; 411f: 8d 13 0a
     sta l0a74                                                         ; 4122: 8d 74 0a

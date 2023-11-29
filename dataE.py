@@ -60,7 +60,7 @@ substitute_labels = {
     (0x3ad5,0x4449): {
         "l0070": "room_exit_direction",
     },
-    (0x4195, 0x433a): {
+    (0x40f9, 0x433a): { # TODO: these are in fact probably the same for the entire file and don't need this mechanism
         "l0a70": "thrown_egg_x_low",
         "l0a71": "thrown_egg_x_high",
         "l0a72": "thrown_egg_y_low",
@@ -121,7 +121,6 @@ entry(0x40e5, "room0_first_update")
 entry(0x416e, "room0_not_first_update")
 expr(0x40eb, sprite_dict)
 comment(0x4102, "branch if have collected egg", inline=True)
-#expr(0x410f, sprite_dict)
 
 label(0x3ce0, "room_2_update_handler")
 label(0x3e96, "room_3_update_handler")
