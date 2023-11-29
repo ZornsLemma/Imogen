@@ -35,6 +35,8 @@ substitute_labels = {
 s = SubstituteLabels(substitute_labels)
 set_label_maker_hook(s.substitute_label_maker)
 
+label(0x2ef4, "collectable_being_used_spriteids + 2")
+
 comment(0x3af6, "check for level change (branch if not)")
 label(0x3b0b, "developer_mode_inactive1")
 label(0x3bc4, "room_2_check_right_exit")

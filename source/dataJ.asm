@@ -144,6 +144,7 @@ value_to_write_to_collision_map                     = $3e
 source_sprite_memory_low                            = $40
 source_sprite_memory_high                           = $41
 copy_mode                                           = $42
+current_player_character                            = $48
 previous_room_index                                 = $50
 level_before_latest_level_and_room_initialisation   = $51
 player_held_object_spriteid                         = $52
@@ -166,6 +167,7 @@ object_spriteid                                     = $09a8
 object_spriteid_old                                 = $09b3
 object_direction                                    = $09be
 object_direction_old                                = $09c9
+current_animation                                   = $09df
 level_progress_table                                = $09ef
 l0a30                                               = $0a30
 l0a31                                               = $0a31
@@ -232,6 +234,8 @@ player_just_fallen_off_edge_direction               = $2890
 get_solid_rock_collision_for_object_a               = $2894
 temp_default_collision_map_option                   = $28e1
 test_for_collision_between_objects_x_and_y          = $28e2
+desired_menu_slots                                  = $295c
+menu_index_for_extra_items                          = $296e
 insert_character_menu_item_into_toolbar             = $2b87
 find_or_create_menu_slot_for_A                      = $2bbd
 remove_item_from_toolbar_menu                       = $2be0
@@ -1719,8 +1723,16 @@ envelope1
     !byte 250                                                         ; 44c7: fa                      ; change of amplitude per step during release phase
     !byte 115                                                         ; 44c8: 73                      ; target of level at end of attack phase
     !byte 0                                                           ; 44c9: 00                      ; target of level at end of decay phase
-    !byte $10,   0,   6,   0,   7,   0,   1,   0, $11,   0,   0,   0  ; 44ca: 10 00 06...
-    !byte $f0,   0,   1,   0                                          ; 44d6: f0 00 01...
+unused1
+    !word $10                                                         ; 44ca: 10 00                   ; channel
+    !word 6                                                           ; 44cc: 06 00                   ; amplitude
+    !word 7                                                           ; 44ce: 07 00                   ; pitch
+    !word 1                                                           ; 44d0: 01 00                   ; duration
+unused2
+    !word $11                                                         ; 44d2: 11 00                   ; channel
+    !word 0                                                           ; 44d4: 00 00                   ; amplitude
+    !word 240                                                         ; 44d6: f0 00                   ; pitch
+    !word 1                                                           ; 44d8: 01 00                   ; duration
 ground_fill_2x2_top_left
     !byte %.#....#.                                                   ; 44da: 42
     !byte %#......#                                                   ; 44db: 81

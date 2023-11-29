@@ -74,6 +74,7 @@ label(0x43d7, "return5")
 ldx_ldy_jsr_play_sound_yx(0x43de, "sound4")
 ldx_ldy_jsr_play_sound_yx(0x43e5, "sound5")
 ldx_ldy_jsr_play_sound_yx(0x43ec, "sound6")
+ldx_ldy_jsr_play_sound_yx(0x43f3, "sound7")
 
 label(0x3bdf, "room_0_update_handler")
 label(0x41d8, "room_3_update_handler")

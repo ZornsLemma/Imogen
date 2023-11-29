@@ -139,7 +139,7 @@ value_to_write_to_collision_map                     = $3e
 source_sprite_memory_low                            = $40
 source_sprite_memory_high                           = $41
 copy_mode                                           = $42
-l0048                                               = $48
+current_player_character                            = $48
 previous_room_index                                 = $50
 level_before_latest_level_and_room_initialisation   = $51
 player_held_object_spriteid                         = $52
@@ -162,7 +162,7 @@ object_spriteid                                     = $09a8
 object_spriteid_old                                 = $09b3
 object_direction                                    = $09be
 object_direction_old                                = $09c9
-l09df                                               = $09df
+current_animation                                   = $09df
 level_progress_table                                = $09ef
 l0a17                                               = $0a17
 l0a18                                               = $0a18
@@ -225,6 +225,8 @@ player_just_fallen_off_edge_direction               = $2890
 get_solid_rock_collision_for_object_a               = $2894
 temp_default_collision_map_option                   = $28e1
 test_for_collision_between_objects_x_and_y          = $28e2
+desired_menu_slots                                  = $295c
+menu_index_for_extra_items                          = $296e
 insert_character_menu_item_into_toolbar             = $2b87
 find_or_create_menu_slot_for_A                      = $2bbd
 remove_item_from_toolbar_menu                       = $2be0
@@ -1708,7 +1710,7 @@ l44ac
 sub_c44ad
     lda #0                                                            ; 44ad: a9 00
     sta l44f4                                                         ; 44af: 8d f4 44
-    lda l0048                                                         ; 44b2: a5 48
+    lda current_player_character                                      ; 44b2: a5 48
     cmp #6                                                            ; 44b4: c9 06
     bne return7                                                       ; 44b6: d0 3b
     lda object_x_high                                                 ; 44b8: ad 66 09
@@ -1730,7 +1732,7 @@ sub_c44ad
     adc #1                                                            ; 44d5: 69 01
     cmp l44a8                                                         ; 44d7: cd a8 44
     bcc return7                                                       ; 44da: 90 17
-    lda l09df                                                         ; 44dc: ad df 09
+    lda current_animation                                             ; 44dc: ad df 09
     cmp #$51 ; 'Q'                                                    ; 44df: c9 51
     beq c44eb                                                         ; 44e1: f0 08
     cmp #$45 ; 'E'                                                    ; 44e3: c9 45
@@ -1980,10 +1982,8 @@ pydis_end
 ;     c449b
 ;     c44a0
 ;     c44eb
-;     l0048
 ;     l0078
 ;     l0079
-;     l09df
 ;     l0a17
 ;     l0a18
 ;     l0a19

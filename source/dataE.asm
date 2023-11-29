@@ -166,6 +166,7 @@ value_to_write_to_collision_map                     = $3e
 source_sprite_memory_low                            = $40
 source_sprite_memory_high                           = $41
 copy_mode                                           = $42
+current_player_character                            = $48
 previous_room_index                                 = $50
 level_before_latest_level_and_room_initialisation   = $51
 player_held_object_spriteid                         = $52
@@ -193,7 +194,7 @@ object_spriteid_old                                 = $09b3
 object_direction                                    = $09be
 object_direction_old                                = $09c9
 l09d4                                               = $09d4
-l09df                                               = $09df
+current_animation                                   = $09df
 level_progress_table                                = $09ef
 save_game_level_e_holding_egg_flag                  = $0a13
 save_game_level_e_room_1_egg_state                  = $0a14
@@ -265,6 +266,8 @@ player_just_fallen_off_edge_direction               = $2890
 get_solid_rock_collision_for_object_a               = $2894
 temp_default_collision_map_option                   = $28e1
 test_for_collision_between_objects_x_and_y          = $28e2
+desired_menu_slots                                  = $295c
+menu_index_for_extra_items                          = $296e
 insert_character_menu_item_into_toolbar             = $2b87
 find_or_create_menu_slot_for_A                      = $2bbd
 remove_item_from_toolbar_menu                       = $2be0
@@ -885,21 +888,21 @@ c3f21
     lda #0                                                            ; 3f21: a9 00
     jsr get_solid_rock_collision_for_object_a                         ; 3f23: 20 94 28
     beq c3f30                                                         ; 3f26: f0 08
-    stx l09df                                                         ; 3f28: 8e df 09
+    stx current_animation                                             ; 3f28: 8e df 09
     ldy #$58 ; 'X'                                                    ; 3f2b: a0 58
     jmp c3f3a                                                         ; 3f2d: 4c 3a 3f
 
 c3f30
-    cpx l09df                                                         ; 3f30: ec df 09
+    cpx current_animation                                             ; 3f30: ec df 09
     beq c3f3a                                                         ; 3f33: f0 05
-    stx l09df                                                         ; 3f35: 8e df 09
+    stx current_animation                                             ; 3f35: 8e df 09
     txa                                                               ; 3f38: 8a
     tay                                                               ; 3f39: a8
 c3f3a
     jmp c3fca                                                         ; 3f3a: 4c ca 3f
 
 c3f3d
-    lda l09df                                                         ; 3f3d: ad df 09
+    lda current_animation                                             ; 3f3d: ad df 09
     cmp #$66 ; 'f'                                                    ; 3f40: c9 66
     bne c3f5c                                                         ; 3f42: d0 18
     dec temp_top_offset                                               ; 3f44: ce 50 25
@@ -912,17 +915,17 @@ c3f3d
 
 c3f55
     lda #$c0                                                          ; 3f55: a9 c0
-    sta l09df                                                         ; 3f57: 8d df 09
+    sta current_animation                                             ; 3f57: 8d df 09
     ldy #$6f ; 'o'                                                    ; 3f5a: a0 6f
 c3f5c
     lda player_has_hit_floor_flag                                     ; 3f5c: ad 8f 28
     bne c3f79                                                         ; 3f5f: d0 18
 c3f61
     lda #$c0                                                          ; 3f61: a9 c0
-    cmp l09df                                                         ; 3f63: cd df 09
+    cmp current_animation                                             ; 3f63: cd df 09
     beq c3f3a                                                         ; 3f66: f0 d2
-    ldx l09df                                                         ; 3f68: ae df 09
-    sta l09df                                                         ; 3f6b: 8d df 09
+    ldx current_animation                                             ; 3f68: ae df 09
+    sta current_animation                                             ; 3f6b: 8d df 09
     ldy #$7c ; '|'                                                    ; 3f6e: a0 7c
     cpx #$53 ; 'S'                                                    ; 3f70: e0 53
     beq c3f3a                                                         ; 3f72: f0 c6
@@ -938,11 +941,11 @@ c3f79
     ldy #$66 ; 'f'                                                    ; 3f85: a0 66
 c3f87
     lda #$66 ; 'f'                                                    ; 3f87: a9 66
-    sta l09df                                                         ; 3f89: 8d df 09
+    sta current_animation                                             ; 3f89: 8d df 09
     jmp c3faf                                                         ; 3f8c: 4c af 3f
 
 c3f8f
-    lda l09df                                                         ; 3f8f: ad df 09
+    lda current_animation                                             ; 3f8f: ad df 09
     cmp #$44 ; 'D'                                                    ; 3f92: c9 44
     beq c3fa6                                                         ; 3f94: f0 10
     cmp #$36 ; '6'                                                    ; 3f96: c9 36
@@ -950,14 +953,14 @@ c3f8f
     ldy #$40 ; '@'                                                    ; 3f9a: a0 40
     sty l0023                                                         ; 3f9c: 84 23
     ldy #$44 ; 'D'                                                    ; 3f9e: a0 44
-    sty l09df                                                         ; 3fa0: 8c df 09
+    sty current_animation                                             ; 3fa0: 8c df 09
     jmp c3faf                                                         ; 3fa3: 4c af 3f
 
 c3fa6
     dec l0023                                                         ; 3fa6: c6 23
     bne c3faf                                                         ; 3fa8: d0 05
     ldy #$36 ; '6'                                                    ; 3faa: a0 36
-    sty l09df                                                         ; 3fac: 8c df 09
+    sty current_animation                                             ; 3fac: 8c df 09
 c3faf
     ldx #0                                                            ; 3faf: a2 00
     lda l3ac9                                                         ; 3fb1: ad c9 3a
@@ -967,7 +970,7 @@ c3fb7
     lda player_just_fallen_off_edge_direction,x                       ; 3fb7: bd 90 28
     beq c3fca                                                         ; 3fba: f0 0e
     ldy #$c0                                                          ; 3fbc: a0 c0
-    sty l09df                                                         ; 3fbe: 8c df 09
+    sty current_animation                                             ; 3fbe: 8c df 09
     ldy #$89                                                          ; 3fc1: a0 89
     cmp object_direction                                              ; 3fc3: cd be 09
     beq c3fca                                                         ; 3fc6: f0 02
@@ -1935,11 +1938,42 @@ sound2
     !word 210                                                         ; 4608: d2 00                   ; pitch
     !word 1                                                           ; 460a: 01 00                   ; duration
 source_sprite_data
-    !byte $20, $10, $90, $61,   2,   2, $0c, $10,   4,   8,   9, $86  ; 460c: 20 10 90...
-    !text "@@0"                                                       ; 4618: 40 40 30
-    !byte   8, $10, $0c,   2,   2, $61, $90, $10, $20,   8            ; 461b: 08 10 0c...
-    !text "0@@"                                                       ; 4625: 30 40 40
-    !byte $86,   9,   8,   4                                          ; 4628: 86 09 08...
+ground_fill_2x2_top_left
+    !byte %..#.....                                                   ; 460c: 20
+    !byte %...#....                                                   ; 460d: 10
+    !byte %#..#....                                                   ; 460e: 90
+    !byte %.##....#                                                   ; 460f: 61
+    !byte %......#.                                                   ; 4610: 02
+    !byte %......#.                                                   ; 4611: 02
+    !byte %....##..                                                   ; 4612: 0c
+    !byte %...#....                                                   ; 4613: 10
+ground_fill_2x2_top_right
+    !byte %.....#..                                                   ; 4614: 04
+    !byte %....#...                                                   ; 4615: 08
+    !byte %....#..#                                                   ; 4616: 09
+    !byte %#....##.                                                   ; 4617: 86
+    !byte %.#......                                                   ; 4618: 40
+    !byte %.#......                                                   ; 4619: 40
+    !byte %..##....                                                   ; 461a: 30
+    !byte %....#...                                                   ; 461b: 08
+ground_fill_2x2_bottom_left
+    !byte %...#....                                                   ; 461c: 10
+    !byte %....##..                                                   ; 461d: 0c
+    !byte %......#.                                                   ; 461e: 02
+    !byte %......#.                                                   ; 461f: 02
+    !byte %.##....#                                                   ; 4620: 61
+    !byte %#..#....                                                   ; 4621: 90
+    !byte %...#....                                                   ; 4622: 10
+    !byte %..#.....                                                   ; 4623: 20
+ground_fill_2x2_bottom_right
+    !byte %....#...                                                   ; 4624: 08
+    !byte %..##....                                                   ; 4625: 30
+    !byte %.#......                                                   ; 4626: 40
+    !byte %.#......                                                   ; 4627: 40
+    !byte %#....##.                                                   ; 4628: 86
+    !byte %....#..#                                                   ; 4629: 09
+    !byte %....#...                                                   ; 462a: 08
+    !byte %.....#..                                                   ; 462b: 04
 sprite_data
 pydis_end
 
@@ -2003,7 +2037,6 @@ pydis_end
 ;     c4596
 ;     l0023
 ;     l09d4
-;     l09df
 ;     l0a75
 ;     l0a79
 ;     l0a7a

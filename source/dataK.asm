@@ -140,6 +140,7 @@ value_to_write_to_collision_map                     = $3e
 source_sprite_memory_low                            = $40
 source_sprite_memory_high                           = $41
 copy_mode                                           = $42
+current_player_character                            = $48
 previous_room_index                                 = $50
 level_before_latest_level_and_room_initialisation   = $51
 player_held_object_spriteid                         = $52
@@ -162,6 +163,7 @@ object_spriteid                                     = $09a8
 object_spriteid_old                                 = $09b3
 object_direction                                    = $09be
 object_direction_old                                = $09c9
+current_animation                                   = $09df
 level_progress_table                                = $09ef
 l0a33                                               = $0a33
 l0a34                                               = $0a34
@@ -223,8 +225,8 @@ player_just_fallen_off_edge_direction               = $2890
 get_solid_rock_collision_for_object_a               = $2894
 temp_default_collision_map_option                   = $28e1
 test_for_collision_between_objects_x_and_y          = $28e2
-l295c                                               = $295c
-l296e                                               = $296e
+desired_menu_slots                                  = $295c
+menu_index_for_extra_items                          = $296e
 insert_character_menu_item_into_toolbar             = $2b87
 find_or_create_menu_slot_for_A                      = $2bbd
 remove_item_from_toolbar_menu                       = $2be0
@@ -233,7 +235,6 @@ previous_player_using_object_spriteid               = $2eb7
 toolbar_collectable_spriteids                       = $2ee8
 collectable_spriteids                               = $2eed
 collectable_being_used_spriteids                    = $2ef2
-l2ef4                                               = $2ef4
 inhibit_monkey_climb_flag                           = $31d7
 print_encrypted_string_at_yx_centred                = $37f3
 wait_one_second_then_check_keys                     = $388d
@@ -1315,7 +1316,7 @@ room_0_update_handler
     lda #$d4                                                          ; 41c6: a9 d4
     sta collectable_spriteids+2                                       ; 41c8: 8d ef 2e
     lda #$d5                                                          ; 41cb: a9 d5
-    sta l2ef4                                                         ; 41cd: 8d f4 2e
+    sta collectable_being_used_spriteids + 2                          ; 41cd: 8d f4 2e
 ; check for level change (branch if not)
     lda current_level                                                 ; 41d0: a5 31
     cmp level_before_latest_level_and_room_initialisation             ; 41d2: c5 51
@@ -1383,8 +1384,8 @@ c4245
     lda #$d6                                                          ; 4251: a9 d6
     sta player_held_object_spriteid                                   ; 4253: 85 52
     sta player_using_object_spriteid                                  ; 4255: 8d b6 2e
-    ldx l296e                                                         ; 4258: ae 6e 29
-    sta l295c,x                                                       ; 425b: 9d 5c 29
+    ldx menu_index_for_extra_items                                    ; 4258: ae 6e 29
+    sta desired_menu_slots,x                                          ; 425b: 9d 5c 29
     lda #1                                                            ; 425e: a9 01
     sta l0a73                                                         ; 4260: 8d 73 0a
     lda #1                                                            ; 4263: a9 01
@@ -1728,8 +1729,8 @@ c448c
     sta object_spriteid + objectid_player_accessory                   ; 44b7: 8d a9 09
     lda #$d7                                                          ; 44ba: a9 d7
     sta player_held_object_spriteid                                   ; 44bc: 85 52
-    ldx l296e                                                         ; 44be: ae 6e 29
-    sta l295c,x                                                       ; 44c1: 9d 5c 29
+    ldx menu_index_for_extra_items                                    ; 44be: ae 6e 29
+    sta desired_menu_slots,x                                          ; 44c1: 9d 5c 29
     lda #$ff                                                          ; 44c4: a9 ff
     sta l0a35                                                         ; 44c6: 8d 35 0a
     lda l44ec                                                         ; 44c9: ad ec 44
@@ -1909,9 +1910,6 @@ pydis_end
 ;     l0a74
 ;     l0a75
 ;     l0a76
-;     l295c
-;     l296e
-;     l2ef4
 ;     l38ae
 ;     l38af
 ;     l38b2

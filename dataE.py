@@ -291,6 +291,8 @@ expr(0x455e, "object_spriteid + objectid_egg")
 expr(0x4564, "object_x_low + objectid_egg")
 expr(0x456a, "object_y_low + objectid_egg")
 
+ground_fill(0x3b2b)
+
 expr(0x3d56, sprite_dict)
 expr(0x40e6, sprite_dict)
 expr(0x4167, sprite_dict)

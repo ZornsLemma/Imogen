@@ -139,7 +139,7 @@ value_to_write_to_collision_map                     = $3e
 source_sprite_memory_low                            = $40
 source_sprite_memory_high                           = $41
 copy_mode                                           = $42
-l0048                                               = $48
+current_player_character                            = $48
 previous_room_index                                 = $50
 level_before_latest_level_and_room_initialisation   = $51
 player_held_object_spriteid                         = $52
@@ -162,6 +162,7 @@ object_spriteid                                     = $09a8
 object_spriteid_old                                 = $09b3
 object_direction                                    = $09be
 object_direction_old                                = $09c9
+current_animation                                   = $09df
 level_progress_table                                = $09ef
 l0a39                                               = $0a39
 l0a3a                                               = $0a3a
@@ -225,6 +226,8 @@ player_just_fallen_off_edge_direction               = $2890
 get_solid_rock_collision_for_object_a               = $2894
 temp_default_collision_map_option                   = $28e1
 test_for_collision_between_objects_x_and_y          = $28e2
+desired_menu_slots                                  = $295c
+menu_index_for_extra_items                          = $296e
 insert_character_menu_item_into_toolbar             = $2b87
 find_or_create_menu_slot_for_A                      = $2bbd
 remove_item_from_toolbar_menu                       = $2be0
@@ -1157,7 +1160,7 @@ c40aa
     tax                                                               ; 40bc: aa
     bne c40d2                                                         ; 40bd: d0 13
     lda #4                                                            ; 40bf: a9 04
-    cmp l0048                                                         ; 40c1: c5 48
+    cmp current_player_character                                      ; 40c1: c5 48
     beq c40de                                                         ; 40c3: f0 19
     ldx #objectid_player_accessory                                    ; 40c5: a2 01
     ldy #2                                                            ; 40c7: a0 02
@@ -1591,8 +1594,8 @@ sub_c43d8
     ldx #<sound6                                                      ; 43e8: a2 6c
     ldy #>sound6                                                      ; 43ea: a0 44
     jsr play_sound_yx                                                 ; 43ec: 20 f6 38
-    ldx #$56 ; 'V'                                                    ; 43ef: a2 56
-    ldy #$44 ; 'D'                                                    ; 43f1: a0 44
+    ldx #<sound7                                                      ; 43ef: a2 56
+    ldy #>sound7                                                      ; 43f1: a0 44
     jmp play_sound_yx                                                 ; 43f3: 4c f6 38
 
 envelope1
@@ -1680,7 +1683,11 @@ sound4
     !word 7                                                           ; 4450: 07 00                   ; amplitude
     !word 80                                                          ; 4452: 50 00                   ; pitch
     !word 4                                                           ; 4454: 04 00                   ; duration
-    !byte   0,   0, $f1,   0,   3,   0,   2,   0                      ; 4456: 00 00 f1...
+sound7
+    !word 0                                                           ; 4456: 00 00                   ; channel
+    !word 241                                                         ; 4458: f1 00                   ; amplitude
+    !word 3                                                           ; 445a: 03 00                   ; pitch
+    !word 2                                                           ; 445c: 02 00                   ; duration
 envelope4
     !byte 8                                                           ; 445e: 08                      ; envelope number
     !byte 129                                                         ; 445f: 81                      ; step length (100ths of a second)
@@ -1803,7 +1810,6 @@ pydis_end
 ;     c43b8
 ;     c43bc
 ;     c43c9
-;     l0048
 ;     l007a
 ;     l007b
 ;     l0a39
@@ -1882,6 +1888,9 @@ pydis_end
 !if (<sound6) != $6c {
     !error "Assertion failed: <sound6 == $6c"
 }
+!if (<sound7) != $56 {
+    !error "Assertion failed: <sound7 == $56"
+}
 !if (>envelope1) != $43 {
     !error "Assertion failed: >envelope1 == $43"
 }
@@ -1917,6 +1926,9 @@ pydis_end
 }
 !if (>sound6) != $44 {
     !error "Assertion failed: >sound6 == $44"
+}
+!if (>sound7) != $44 {
+    !error "Assertion failed: >sound7 == $44"
 }
 !if (collision_map_none) != $00 {
     !error "Assertion failed: collision_map_none == $00"

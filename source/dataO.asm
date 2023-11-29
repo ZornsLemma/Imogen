@@ -139,6 +139,7 @@ value_to_write_to_collision_map                     = $3e
 source_sprite_memory_low                            = $40
 source_sprite_memory_high                           = $41
 copy_mode                                           = $42
+current_player_character                            = $48
 previous_room_index                                 = $50
 level_before_latest_level_and_room_initialisation   = $51
 player_held_object_spriteid                         = $52
@@ -160,6 +161,7 @@ object_spriteid                                     = $09a8
 object_spriteid_old                                 = $09b3
 object_direction                                    = $09be
 object_direction_old                                = $09c9
+current_animation                                   = $09df
 level_progress_table                                = $09ef
 l0a55                                               = $0a55
 l0a56                                               = $0a56
@@ -223,6 +225,8 @@ player_just_fallen_off_edge_direction               = $2890
 get_solid_rock_collision_for_object_a               = $2894
 temp_default_collision_map_option                   = $28e1
 test_for_collision_between_objects_x_and_y          = $28e2
+desired_menu_slots                                  = $295c
+menu_index_for_extra_items                          = $296e
 insert_character_menu_item_into_toolbar             = $2b87
 find_or_create_menu_slot_for_A                      = $2bbd
 remove_item_from_toolbar_menu                       = $2be0
@@ -1666,8 +1670,8 @@ sub_c4465
     ldx #<sound4                                                      ; 4467: a2 a1
     ldy #>sound4                                                      ; 4469: a0 44
     jsr play_sound_yx                                                 ; 446b: 20 f6 38
-    ldx #$99                                                          ; 446e: a2 99
-    ldy #$44 ; 'D'                                                    ; 4470: a0 44
+    ldx #<sound5                                                      ; 446e: a2 99
+    ldy #>sound5                                                      ; 4470: a0 44
     jmp play_sound_yx                                                 ; 4472: 4c f6 38
 
 envelope1
@@ -1705,7 +1709,11 @@ envelope3
     !byte 250                                                         ; 4496: fa                      ; change of amplitude per step during release phase
     !byte 110                                                         ; 4497: 6e                      ; target of level at end of attack phase
     !byte 55                                                          ; 4498: 37                      ; target of level at end of decay phase
-    !byte $10,   0,   6,   0,   7,   0,   1,   0                      ; 4499: 10 00 06...
+sound5
+    !word $10                                                         ; 4499: 10 00                   ; channel
+    !word 6                                                           ; 449b: 06 00                   ; amplitude
+    !word 7                                                           ; 449d: 07 00                   ; pitch
+    !word 1                                                           ; 449f: 01 00                   ; duration
 sound4
     !word $11                                                         ; 44a1: 11 00                   ; channel
     !word 0                                                           ; 44a3: 00 00                   ; amplitude
@@ -1908,6 +1916,9 @@ pydis_end
 !if (<sound4) != $a1 {
     !error "Assertion failed: <sound4 == $a1"
 }
+!if (<sound5) != $99 {
+    !error "Assertion failed: <sound5 == $99"
+}
 !if (>envelope1) != $44 {
     !error "Assertion failed: >envelope1 == $44"
 }
@@ -1931,6 +1942,9 @@ pydis_end
 }
 !if (>sound4) != $44 {
     !error "Assertion failed: >sound4 == $44"
+}
+!if (>sound5) != $44 {
+    !error "Assertion failed: >sound5 == $44"
 }
 !if (collision_map_none) != $00 {
     !error "Assertion failed: collision_map_none == $00"

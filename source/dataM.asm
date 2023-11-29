@@ -139,7 +139,7 @@ value_to_write_to_collision_map                     = $3e
 source_sprite_memory_low                            = $40
 source_sprite_memory_high                           = $41
 copy_mode                                           = $42
-l0048                                               = $48
+current_player_character                            = $48
 previous_room_index                                 = $50
 level_before_latest_level_and_room_initialisation   = $51
 player_held_object_spriteid                         = $52
@@ -162,7 +162,7 @@ object_spriteid                                     = $09a8
 object_spriteid_old                                 = $09b3
 object_direction                                    = $09be
 object_direction_old                                = $09c9
-l09df                                               = $09df
+current_animation                                   = $09df
 level_progress_table                                = $09ef
 l0a3f                                               = $0a3f
 l0a40                                               = $0a40
@@ -227,6 +227,8 @@ player_just_fallen_off_edge_direction               = $2890
 get_solid_rock_collision_for_object_a               = $2894
 temp_default_collision_map_option                   = $28e1
 test_for_collision_between_objects_x_and_y          = $28e2
+desired_menu_slots                                  = $295c
+menu_index_for_extra_items                          = $296e
 insert_character_menu_item_into_toolbar             = $2b87
 find_or_create_menu_slot_for_A                      = $2bbd
 remove_item_from_toolbar_menu                       = $2be0
@@ -883,7 +885,7 @@ c3ed3
     lda desired_room_index                                            ; 3ed3: a5 30
     cmp #1                                                            ; 3ed5: c9 01
     bne c3f3e                                                         ; 3ed7: d0 65
-    lda l0048                                                         ; 3ed9: a5 48
+    lda current_player_character                                      ; 3ed9: a5 48
     cmp #6                                                            ; 3edb: c9 06
     bne c3f3e                                                         ; 3edd: d0 5f
     lda object_x_high                                                 ; 3edf: ad 66 09
@@ -897,7 +899,7 @@ c3ed3
     ror                                                               ; 3eef: 6a
     cmp #$14                                                          ; 3ef0: c9 14
     bcc c3f3e                                                         ; 3ef2: 90 4a
-    lda l09df                                                         ; 3ef4: ad df 09
+    lda current_animation                                             ; 3ef4: ad df 09
     cmp #$51 ; 'Q'                                                    ; 3ef7: c9 51
     beq c3f03                                                         ; 3ef9: f0 08
     cmp #$45 ; 'E'                                                    ; 3efb: c9 45
@@ -1049,8 +1051,8 @@ l4019
 
 sub_c401a
     lda #0                                                            ; 401a: a9 00
-    ldx #$55 ; 'U'                                                    ; 401c: a2 55
-    ldy #$45 ; 'E'                                                    ; 401e: a0 45
+    ldx #<sound5                                                      ; 401c: a2 55
+    ldy #>sound5                                                      ; 401e: a0 45
     jmp play_sound_yx                                                 ; 4020: 4c f6 38
 
 l4023
@@ -1808,7 +1810,11 @@ envelope1
     !byte 216                                                         ; 4552: d8                      ; change of amplitude per step during release phase
     !byte 40                                                          ; 4553: 28                      ; target of level at end of attack phase
     !byte 0                                                           ; 4554: 00                      ; target of level at end of decay phase
-    !byte $10,   0,   5,   0,   4,   0,   4,   0                      ; 4555: 10 00 05...
+sound5
+    !word $10                                                         ; 4555: 10 00                   ; channel
+    !word 5                                                           ; 4557: 05 00                   ; amplitude
+    !word 4                                                           ; 4559: 04 00                   ; pitch
+    !word 4                                                           ; 455b: 04 00                   ; duration
 envelope2
     !byte 6                                                           ; 455d: 06                      ; envelope number
     !byte 1                                                           ; 455e: 01                      ; step length (100ths of a second)
@@ -1982,10 +1988,8 @@ pydis_end
 ;     c4422
 ;     c4465
 ;     c447a
-;     l0048
 ;     l0078
 ;     l0079
-;     l09df
 ;     l0a3f
 ;     l0a40
 ;     l0a41
@@ -2060,6 +2064,9 @@ pydis_end
 !if (<sound4) != $6b {
     !error "Assertion failed: <sound4 == $6b"
 }
+!if (<sound5) != $55 {
+    !error "Assertion failed: <sound5 == $55"
+}
 !if (>envelope1) != $45 {
     !error "Assertion failed: >envelope1 == $45"
 }
@@ -2086,6 +2093,9 @@ pydis_end
 }
 !if (>sound4) != $45 {
     !error "Assertion failed: >sound4 == $45"
+}
+!if (>sound5) != $45 {
+    !error "Assertion failed: >sound5 == $45"
 }
 !if (collision_map_rope) != $02 {
     !error "Assertion failed: collision_map_rope == $02"

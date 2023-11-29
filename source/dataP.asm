@@ -140,7 +140,7 @@ value_to_write_to_collision_map                     = $3e
 source_sprite_memory_low                            = $40
 source_sprite_memory_high                           = $41
 copy_mode                                           = $42
-l0048                                               = $48
+current_player_character                            = $48
 previous_room_index                                 = $50
 level_before_latest_level_and_room_initialisation   = $51
 player_held_object_spriteid                         = $52
@@ -163,7 +163,7 @@ object_spriteid                                     = $09a8
 object_spriteid_old                                 = $09b3
 object_direction                                    = $09be
 object_direction_old                                = $09c9
-l09df                                               = $09df
+current_animation                                   = $09df
 level_progress_table                                = $09ef
 l0a62                                               = $0a62
 l0a63                                               = $0a63
@@ -227,6 +227,8 @@ player_just_fallen_off_edge_direction               = $2890
 get_solid_rock_collision_for_object_a               = $2894
 temp_default_collision_map_option                   = $28e1
 test_for_collision_between_objects_x_and_y          = $28e2
+desired_menu_slots                                  = $295c
+menu_index_for_extra_items                          = $296e
 insert_character_menu_item_into_toolbar             = $2b87
 find_or_create_menu_slot_for_A                      = $2bbd
 remove_item_from_toolbar_menu                       = $2be0
@@ -968,10 +970,10 @@ l3f5e
     !byte 0                                                           ; 3f5e: 00
 
 sub_c3f5f
-    lda l0048                                                         ; 3f5f: a5 48
+    lda current_player_character                                      ; 3f5f: a5 48
     cmp #6                                                            ; 3f61: c9 06
     bne return4                                                       ; 3f63: d0 49
-    lda l09df                                                         ; 3f65: ad df 09
+    lda current_animation                                             ; 3f65: ad df 09
     cmp #$51 ; 'Q'                                                    ; 3f68: c9 51
     beq c3f74                                                         ; 3f6a: f0 08
     cmp #$45 ; 'E'                                                    ; 3f6c: c9 45
@@ -2037,10 +2039,8 @@ pydis_end
 ;     c454c
 ;     c45a3
 ;     c45b8
-;     l0048
 ;     l0078
 ;     l0079
-;     l09df
 ;     l0a62
 ;     l0a63
 ;     l0a64

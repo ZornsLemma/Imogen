@@ -126,6 +126,9 @@ expr(0x448a, "object_direction + 2")
 expr(0x448f, "object_spriteid + 2")
 expr(0x449b, "object_spriteid + 2")
 
+sound(0x44ca, "unused1")
+sound(0x44d2, "unused2")
+
 # TODO: uncomment once sprite_dict has been populated
 #expr(0x3b0a, sprite_dict)
 #expr(0x3dc1, sprite_dict)
