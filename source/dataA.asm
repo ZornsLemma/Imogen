@@ -951,8 +951,8 @@ room1_not_first_update
     lda player_held_object_spriteid                                   ; 3e79: a5 52
     beq set_room1_trapdoor_sprites_if_required                        ; 3e7b: f0 5a
 ; Yes. Is the player standing over the trapdoor? TODO: Do we check the player's Y
-; coordinate? I guess not needed as the wizard can't jump and other characters can't
-; hold things.
+; coordinate? (The wizard can jump - does the trapdoor trigger even if the wizard is in
+; the air?
     lda object_x_high + objectid_player                               ; 3e7d: ad 66 09
     bne set_room1_trapdoor_sprites_if_required                        ; 3e80: d0 55
     lda object_x_low + objectid_player                                ; 3e82: ad 50 09
