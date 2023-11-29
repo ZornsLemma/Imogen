@@ -1120,16 +1120,67 @@ room_0_game_update_loop
 
 ; TODO: table with entries in groups of three bytes, probably similar to the table in
 ; the other level
+; Table of animations for TODO: what?. There are three bytes per entry. First byte is a
+; sprite ID. Second and third bytes of each entry are signed (X,Y) position offsets,
+; added to a77 and a78 respectively. This seems to control sprite and probably X/Y poss
+; of object TODO. Each animation is terminated with an extra zero byte.
 something_table
     !byte 0                                                           ; 4099: 00
 something_table_subseq2
-    !byte $da,   0,   0,   0                                          ; 409a: da 00 00...
+    !byte spriteid_small_egg_upright                                  ; 409a: da
+    !byte 0                                                           ; 409b: 00
+    !byte 0                                                           ; 409c: 00
+    !byte 0                                                           ; 409d: 00
 something_table_subseq1
-    !byte   0,   0,   0, $d7, $0a,   1,   0, $d7,   8,   0, $d8,   8  ; 409e: 00 00 00...
-    !byte   0, $d8,   8,   0, $d9,   8,   0, $d9,   8,   0, $da,   8  ; 40aa: 00 d8 08...
-    !byte   0, $da,   8,   0, $d7,   8,   0,   0, $d7, $fc,   0, $da  ; 40b6: 00 da 08...
-    !byte $fe,   2, $da, $fe,   4, $da,   0,   6,   0, $da,   0,   8  ; 40c2: fe 02 da...
-    !byte   0                                                         ; 40ce: 00
+    !byte 0                                                           ; 409e: 00
+    !byte 0                                                           ; 409f: 00
+    !byte 0                                                           ; 40a0: 00
+    !byte spriteid_small_egg_right                                    ; 40a1: d7
+    !byte $0a                                                         ; 40a2: 0a
+    !byte 1                                                           ; 40a3: 01
+    !byte 0                                                           ; 40a4: 00
+    !byte spriteid_small_egg_right                                    ; 40a5: d7
+    !byte 8                                                           ; 40a6: 08
+    !byte 0                                                           ; 40a7: 00
+    !byte spriteid_small_egg_down                                     ; 40a8: d8
+    !byte 8                                                           ; 40a9: 08
+    !byte 0                                                           ; 40aa: 00
+    !byte spriteid_small_egg_down                                     ; 40ab: d8
+    !byte 8                                                           ; 40ac: 08
+    !byte 0                                                           ; 40ad: 00
+    !byte spriteid_small_egg_left                                     ; 40ae: d9
+    !byte 8                                                           ; 40af: 08
+    !byte 0                                                           ; 40b0: 00
+    !byte spriteid_small_egg_left                                     ; 40b1: d9
+    !byte 8                                                           ; 40b2: 08
+    !byte 0                                                           ; 40b3: 00
+    !byte spriteid_small_egg_upright                                  ; 40b4: da
+    !byte 8                                                           ; 40b5: 08
+    !byte 0                                                           ; 40b6: 00
+    !byte spriteid_small_egg_upright                                  ; 40b7: da
+    !byte 8                                                           ; 40b8: 08
+    !byte 0                                                           ; 40b9: 00
+    !byte spriteid_small_egg_right                                    ; 40ba: d7
+    !byte 8                                                           ; 40bb: 08
+    !byte 0                                                           ; 40bc: 00
+    !byte 0                                                           ; 40bd: 00
+    !byte spriteid_small_egg_right                                    ; 40be: d7
+    !byte $fc                                                         ; 40bf: fc
+    !byte 0                                                           ; 40c0: 00
+    !byte spriteid_small_egg_upright                                  ; 40c1: da
+    !byte $fe                                                         ; 40c2: fe
+    !byte 2                                                           ; 40c3: 02
+    !byte spriteid_small_egg_upright                                  ; 40c4: da
+    !byte $fe                                                         ; 40c5: fe
+    !byte 4                                                           ; 40c6: 04
+    !byte spriteid_small_egg_upright                                  ; 40c7: da
+    !byte 0                                                           ; 40c8: 00
+    !byte 6                                                           ; 40c9: 06
+    !byte 0                                                           ; 40ca: 00
+    !byte spriteid_small_egg_upright                                  ; 40cb: da
+    !byte 0                                                           ; 40cc: 00
+    !byte 8                                                           ; 40cd: 08
+    !byte 0                                                           ; 40ce: 00
 
 room_0_update_handler
     lda #0                                                            ; 40cf: a9 00
@@ -2192,4 +2243,16 @@ pydis_end
 }
 !if (spriteid_one_pixel_masked_out) != $00 {
     !error "Assertion failed: spriteid_one_pixel_masked_out == $00"
+}
+!if (spriteid_small_egg_down) != $d8 {
+    !error "Assertion failed: spriteid_small_egg_down == $d8"
+}
+!if (spriteid_small_egg_left) != $d9 {
+    !error "Assertion failed: spriteid_small_egg_left == $d9"
+}
+!if (spriteid_small_egg_right) != $d7 {
+    !error "Assertion failed: spriteid_small_egg_right == $d7"
+}
+!if (spriteid_small_egg_upright) != $da {
+    !error "Assertion failed: spriteid_small_egg_upright == $da"
 }
