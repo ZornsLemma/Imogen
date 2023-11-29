@@ -1145,7 +1145,7 @@ room0_first_update
     cmp level_before_latest_level_and_room_initialisation             ; 40fb: c5 51
     beq c412a                                                         ; 40fd: f0 2b
     lda save_game_level_e_holding_egg_flag                            ; 40ff: ad 13 0a
-    bmi c412a                                                         ; 4102: 30 26
+    bmi c412a                                                         ; 4102: 30 26                   ; branch if have collected egg
     lda #0                                                            ; 4104: a9 00
     sta l0a75                                                         ; 4106: 8d 75 0a
     lda #1                                                            ; 4109: a9 01
