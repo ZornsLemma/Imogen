@@ -115,6 +115,10 @@ ldx_ldy_jsr_play_sound_yx(0x4524, "sound2")
 ldx_ldy_jsr_play_sound_yx(0x452b, "sound3")
 label(0x45a0, "return5")
 
+entry(0x40e5, "room0_first_update")
+entry(0x416e, "room0_not_first_update")
+expr(0x40eb, sprite_dict)
+
 label(0x3ce0, "room_2_update_handler")
 label(0x3e96, "room_3_update_handler")
 label(0x40cf, "room_0_update_handler")
