@@ -1248,7 +1248,7 @@ loop_c414c
     lda level_workspace                                               ; 4153: ad 6f 0a
     beq c4166                                                         ; 4156: f0 0e
     dec level_workspace                                               ; 4158: ce 6f 0a
-    ldx #2                                                            ; 415b: a2 02
+    ldx #objectid_small_egg                                           ; 415b: a2 02
     jsr copy_object_state_to_old                                      ; 415d: 20 f7 20
     jsr sub_c4231                                                     ; 4160: 20 31 42
     jmp loop_c414c                                                    ; 4163: 4c 4c 41
