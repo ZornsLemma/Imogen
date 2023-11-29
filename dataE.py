@@ -124,6 +124,7 @@ ldx_ldy_jsr_play_sound_yx(0x452b, "sound3")
 label(0x45a0, "return5")
 
 entry(0x40e5, "room0_first_update")
+entry(0x4166, "skip_small_egg_setup")
 entry(0x416e, "room0_not_first_update")
 expr(0x40eb, sprite_dict)
 comment(0x4102, "branch if have collected egg", inline=True)

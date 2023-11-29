@@ -1234,9 +1234,9 @@ c412a
     sta l38c4                                                         ; 4131: 8d c4 38
     lda desired_room_index                                            ; 4134: a5 30
     cmp room_containing_small_egg                                     ; 4136: cd 75 0a
-    bne c4166                                                         ; 4139: d0 2b
+    bne skip_small_egg_setup                                          ; 4139: d0 2b
     lda save_game_level_e_holding_egg_flag                            ; 413b: ad 13 0a
-    bmi c4166                                                         ; 413e: 30 26                   ; branch if have collected egg
+    bmi skip_small_egg_setup                                          ; 413e: 30 26                   ; branch if have collected egg
     jsr sub_c431d                                                     ; 4140: 20 1d 43
     ldy small_egg_animation_table_index                               ; 4143: ac 74 0a
     lda small_egg_animation_table,y                                   ; 4146: b9 99 40
@@ -1244,16 +1244,16 @@ c412a
 loop_c414c
     lda desired_room_index                                            ; 414c: a5 30
     cmp room_containing_small_egg                                     ; 414e: cd 75 0a
-    bne c4166                                                         ; 4151: d0 13
+    bne skip_small_egg_setup                                          ; 4151: d0 13
     lda level_workspace                                               ; 4153: ad 6f 0a
-    beq c4166                                                         ; 4156: f0 0e
+    beq skip_small_egg_setup                                          ; 4156: f0 0e
     dec level_workspace                                               ; 4158: ce 6f 0a
     ldx #objectid_small_egg                                           ; 415b: a2 02
     jsr copy_object_state_to_old                                      ; 415d: 20 f7 20
     jsr sub_c4231                                                     ; 4160: 20 31 42
     jmp loop_c414c                                                    ; 4163: 4c 4c 41
 
-c4166
+skip_small_egg_setup
     lda #spriteid_one_pixel_masked_out                                ; 4166: a9 00
     sta object_spriteid_old + objectid_small_egg                      ; 4168: 8d b5 09
     jmp return2                                                       ; 416b: 4c 30 42
@@ -2011,7 +2011,6 @@ pydis_end
 ;     c3fb7
 ;     c3fca
 ;     c412a
-;     c4166
 ;     c4192
 ;     c4195
 ;     c41dd
