@@ -1250,7 +1250,7 @@ loop_c414c
     dec level_workspace                                               ; 4158: ce 6f 0a
     ldx #objectid_small_egg                                           ; 415b: a2 02
     jsr copy_object_state_to_old                                      ; 415d: 20 f7 20
-    jsr sub_c4231                                                     ; 4160: 20 31 42
+    jsr small_egg_animation_update                                    ; 4160: 20 31 42
     jmp loop_c414c                                                    ; 4163: 4c 4c 41
 
 skip_small_egg_setup
@@ -1305,7 +1305,7 @@ c4195
     lda #0                                                            ; 41d9: a9 00
     sta player_held_object_spriteid                                   ; 41db: 85 52
 c41dd
-    jsr sub_c4231                                                     ; 41dd: 20 31 42
+    jsr small_egg_animation_update                                    ; 41dd: 20 31 42
     lda desired_room_index                                            ; 41e0: a5 30
     cmp room_containing_small_egg                                     ; 41e2: cd 75 0a
     beq c41ec                                                         ; 41e5: f0 05
@@ -1345,7 +1345,7 @@ c4219
 return2
     rts                                                               ; 4230: 60
 
-sub_c4231
+small_egg_animation_update
     lda small_egg_animation_table_index                               ; 4231: ad 74 0a
     clc                                                               ; 4234: 18
     adc #3                                                            ; 4235: 69 03
@@ -2057,7 +2057,6 @@ pydis_end
 ;     l438b
 ;     loop_c414c
 ;     sub_c3c0b
-;     sub_c4231
 ;     sub_c431d
 ;     sub_c433b
 !if (<envelope1) != $d8 {
