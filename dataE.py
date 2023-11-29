@@ -47,6 +47,7 @@ label(0x0a15, "save_game_level_e_duck_captured_flag") # TODO: might be used for 
 
 label(0xa73, "thrown_egg_direction")
 label(0xa74, "small_egg_animation_table_index")
+label(0xa75, "room_containing_small_egg") # TODO: speculation
 label(0xa76, "egg_animation_index")
 label(0xa77, "room_1_egg_x")
 label(0xa78, "room_1_egg_y")

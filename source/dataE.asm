@@ -208,7 +208,7 @@ l0a72                                               = $0a72
 thrown_egg_y_low                                    = $0a72
 thrown_egg_direction                                = $0a73
 small_egg_animation_table_index                     = $0a74
-l0a75                                               = $0a75
+room_containing_small_egg                           = $0a75
 egg_animation_index                                 = $0a76
 room_1_egg_x                                        = $0a77
 room_1_egg_y                                        = $0a78
@@ -1213,7 +1213,7 @@ room0_first_update
     lda save_game_level_e_holding_egg_flag                            ; 40ff: ad 13 0a
     bmi c412a                                                         ; 4102: 30 26                   ; branch if have collected egg
     lda #0                                                            ; 4104: a9 00
-    sta l0a75                                                         ; 4106: 8d 75 0a
+    sta room_containing_small_egg                                     ; 4106: 8d 75 0a
     lda #1                                                            ; 4109: a9 01
     sta thrown_egg_direction                                          ; 410b: 8d 73 0a
     lda #$da                                                          ; 410e: a9 da
@@ -1233,7 +1233,7 @@ c412a
     lda #$c0                                                          ; 412f: a9 c0
     sta l38c4                                                         ; 4131: 8d c4 38
     lda desired_room_index                                            ; 4134: a5 30
-    cmp l0a75                                                         ; 4136: cd 75 0a
+    cmp room_containing_small_egg                                     ; 4136: cd 75 0a
     bne c4166                                                         ; 4139: d0 2b
     lda save_game_level_e_holding_egg_flag                            ; 413b: ad 13 0a
     bmi c4166                                                         ; 413e: 30 26                   ; branch if have collected egg
@@ -1243,7 +1243,7 @@ c412a
     sta object_spriteid + objectid_small_egg                          ; 4149: 8d aa 09
 loop_c414c
     lda desired_room_index                                            ; 414c: a5 30
-    cmp l0a75                                                         ; 414e: cd 75 0a
+    cmp room_containing_small_egg                                     ; 414e: cd 75 0a
     bne c4166                                                         ; 4151: d0 13
     lda level_workspace                                               ; 4153: ad 6f 0a
     beq c4166                                                         ; 4156: f0 0e
@@ -1268,7 +1268,7 @@ room0_not_first_update
     lda save_game_level_e_holding_egg_flag                            ; 417e: ad 13 0a
     bmi c4195                                                         ; 4181: 30 12
     lda desired_room_index                                            ; 4183: a5 30
-    cmp l0a75                                                         ; 4185: cd 75 0a
+    cmp room_containing_small_egg                                     ; 4185: cd 75 0a
     beq c41dd                                                         ; 4188: f0 53
     lda level_workspace                                               ; 418a: ad 6f 0a
     bmi c4192                                                         ; 418d: 30 03
@@ -1284,7 +1284,7 @@ c4195
     beq c4192                                                         ; 419f: f0 f1
     dec l4389                                                         ; 41a1: ce 89 43
     lda desired_room_index                                            ; 41a4: a5 30
-    sta l0a75                                                         ; 41a6: 8d 75 0a
+    sta room_containing_small_egg                                     ; 41a6: 8d 75 0a
     lda object_direction                                              ; 41a9: ad be 09
     sta thrown_egg_direction                                          ; 41ac: 8d 73 0a
     lda object_x_low + objectid_player_accessory                      ; 41af: ad 51 09
@@ -1307,7 +1307,7 @@ c4195
 c41dd
     jsr sub_c4231                                                     ; 41dd: 20 31 42
     lda desired_room_index                                            ; 41e0: a5 30
-    cmp l0a75                                                         ; 41e2: cd 75 0a
+    cmp room_containing_small_egg                                     ; 41e2: cd 75 0a
     beq c41ec                                                         ; 41e5: f0 05
     lda #0                                                            ; 41e7: a9 00
     sta level_workspace                                               ; 41e9: 8d 6f 0a
@@ -1441,7 +1441,7 @@ c42a2
     lda #0                                                            ; 42f5: a9 00
     sbc #0                                                            ; 42f7: e9 00
     sta thrown_egg_x_high                                             ; 42f9: 8d 71 0a
-    dec l0a75                                                         ; 42fc: ce 75 0a
+    dec room_containing_small_egg                                     ; 42fc: ce 75 0a
     jmp c4317                                                         ; 42ff: 4c 17 43
 
 c4302
@@ -1453,7 +1453,7 @@ c4302
     sta thrown_egg_x_low                                              ; 430c: 8d 70 0a
     lda #1                                                            ; 430f: a9 01
     sta thrown_egg_x_high                                             ; 4311: 8d 71 0a
-    inc l0a75                                                         ; 4314: ee 75 0a
+    inc room_containing_small_egg                                     ; 4314: ee 75 0a
 c4317
     lda #spriteid_one_pixel_masked_out                                ; 4317: a9 00
     sta object_spriteid + objectid_small_egg                          ; 4319: 8d aa 09
@@ -1475,7 +1475,7 @@ sub_c431d
 
 sub_c433b
     lda desired_room_index                                            ; 433b: a5 30
-    cmp l0a75                                                         ; 433d: cd 75 0a
+    cmp room_containing_small_egg                                     ; 433d: cd 75 0a
     bne return4                                                       ; 4340: d0 46
     lda #2                                                            ; 4342: a9 02
     sta temp_bottom_offset                                            ; 4344: 8d 51 25
@@ -1865,7 +1865,7 @@ return5
 something_to_do_with_egg_animation
     lda #0                                                            ; 45a1: a9 00
     sta saved_a                                                       ; 45a3: 8d d6 45
-    lda l0a75                                                         ; 45a6: ad 75 0a
+    lda room_containing_small_egg                                     ; 45a6: ad 75 0a
     cmp #1                                                            ; 45a9: c9 01
     bne restore_a_and_return                                          ; 45ab: d0 25
 ; TODO: Why not lda object_spriteid+2? And similarly for following lda abs,x
@@ -2037,7 +2037,6 @@ pydis_end
 ;     c4596
 ;     l0023
 ;     l09d4
-;     l0a75
 ;     l0a79
 ;     l0a7a
 ;     l0a7b
