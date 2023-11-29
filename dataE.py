@@ -26,6 +26,8 @@ sprite_dict = {
     0xdd: "spriteid_large_egg_sideways",
     0xde: "spriteid_cache2",
     0xdf: "spriteid_cache3",
+    0xfc: "spriteid_todo", # TODO: added to make spriteid_table expr happy
+    0xfe: "spriteid_todo2", # TODO: added to make spriteid_table expr happy
 }
 
 # Merge with common sprite dictionary
@@ -39,11 +41,12 @@ set_sprite_dict(sprite_dict)
 
 load(0x3ad5, "orig/dataE.dat", "6502", "1fd692ce17c1ae2c858ed57730c9c081")
 
-label(0x0a13, "save_game_level_e_holding_egg_flag") # TODO: other uses? not checked yet
+label(0x0a13, "save_game_level_e_holding_egg_flag") # TODO: other uses? not checked yet - can have values 0, 1 and &ff at least, b7 seems to be a key check
 label(0x0a14, "save_game_level_e_room_1_egg_state") # TODO: other uses? not checked yet? egg state slightly speculative but prob right
 label(0x0a15, "save_game_level_e_duck_captured_flag") # TODO: might be used for other things too, not checked yet
 
 label(0xa73, "thrown_egg_direction")
+label(0xa74, "spriteid_table_index")
 label(0xa76, "egg_animation_index")
 label(0xa77, "room_1_egg_x")
 label(0xa78, "room_1_egg_y")
@@ -101,6 +104,9 @@ comment(0x3cee, "check for first update in room (branch if not)")
 comment(0x3cfa, "check for level change (branch if not)")
 expr(0x3d48, "objectid_old_player")
 label(0x3df6, "return1")
+label(0x4099, "spriteid_table")
+#for addr in range(0x4099, 0x40cf):
+#    expr(addr, sprite_dict)
 comment(0x40dd, "check for first update in room (branch if so)")
 ldx_ldy_jsr_define_envelope(0x40f6, "envelope1")
 comment(0x40f9, "check for level change (branch if not)")
@@ -121,6 +127,7 @@ entry(0x40e5, "room0_first_update")
 entry(0x416e, "room0_not_first_update")
 expr(0x40eb, sprite_dict)
 comment(0x4102, "branch if have collected egg", inline=True)
+comment(0x413e, "branch if have collected egg", inline=True)
 
 label(0x3ce0, "room_2_update_handler")
 label(0x3e96, "room_3_update_handler")
