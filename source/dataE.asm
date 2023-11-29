@@ -1358,12 +1358,12 @@ c4240
     cmp #$0c                                                          ; 4243: c9 0c
     bne c426a                                                         ; 4245: d0 23
     lda thrown_egg_direction                                          ; 4247: ad 73 0a
-    bmi c4251                                                         ; 424a: 30 05
+    bmi small_egg_thrown_left                                         ; 424a: 30 05
     inc temp_right_offset                                             ; 424c: ee d1 24
-    bne c4254                                                         ; 424f: d0 03
-c4251
+    bne small_egg_temp_left_right_offset_set                          ; 424f: d0 03                   ; ALWAYS branch
+small_egg_thrown_left
     dec temp_left_offset                                              ; 4251: ce d0 24
-c4254
+small_egg_temp_left_right_offset_set
     lda #1                                                            ; 4254: a9 01
     sta temp_bottom_offset                                            ; 4256: 8d 51 25
     lda #2                                                            ; 4259: a9 02
@@ -2018,8 +2018,6 @@ pydis_end
 ;     c420c
 ;     c4219
 ;     c4240
-;     c4251
-;     c4254
 ;     c426a
 ;     c427f
 ;     c4284

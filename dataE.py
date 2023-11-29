@@ -41,7 +41,7 @@ set_sprite_dict(sprite_dict)
 
 load(0x3ad5, "orig/dataE.dat", "6502", "1fd692ce17c1ae2c858ed57730c9c081")
 
-label(0x0a13, "save_game_level_e_holding_egg_flag") # TODO: other uses? not checked yet - can have values 0, 1 and &ff at least, b7 seems to be a key check
+label(0x0a13, "save_game_level_e_holding_egg_flag") # TODO: other uses? not checked yet - can have values 0, 1 and &ff at least, b7 seems to be a key check - value also checked against &c at 4243
 label(0x0a14, "save_game_level_e_room_1_egg_state") # TODO: other uses? not checked yet? egg state slightly speculative but prob right
 label(0x0a15, "save_game_level_e_duck_captured_flag") # TODO: might be used for other things too, not checked yet
 
@@ -112,6 +112,9 @@ comment(0x40f9, "check for level change (branch if not)")
 expr(0x4196, "spriteid_egg_toolbar")
 expr(0x415c, "objectid_small_egg")
 expr(0x41f3, "objectid_old_player")
+entry(0x4251, "small_egg_thrown_left")
+ab(0x424f)
+entry(0x4254, "small_egg_temp_left_right_offset_set")
 label(0x4230, "return2")
 label(0x431c, "return3")
 ldx_ldy_jsr_play_sound_yx(0x4385, "sound1")
