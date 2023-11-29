@@ -206,7 +206,7 @@ thrown_egg_x_high                                   = $0a71
 l0a72                                               = $0a72
 thrown_egg_y_low                                    = $0a72
 thrown_egg_direction                                = $0a73
-spriteid_table_index                                = $0a74
+something_table_index                               = $0a74
 l0a75                                               = $0a75
 egg_animation_index                                 = $0a76
 room_1_egg_x                                        = $0a77
@@ -1118,12 +1118,18 @@ room_0_game_update_loop
     ldy current_level                                                 ; 4094: a4 31
     jmp initialise_level_and_room                                     ; 4096: 4c 40 11
 
-spriteid_table
-    !byte   0, $da,   0,   0,   0,   0,   0,   0, $d7, $0a,   1,   0  ; 4099: 00 da 00...
-    !byte $d7,   8,   0, $d8,   8,   0, $d8,   8,   0, $d9,   8,   0  ; 40a5: d7 08 00...
-    !byte $d9,   8,   0, $da,   8,   0, $da,   8,   0, $d7,   8,   0  ; 40b1: d9 08 00...
-    !byte   0, $d7, $fc,   0, $da, $fe,   2, $da, $fe,   4, $da,   0  ; 40bd: 00 d7 fc...
-    !byte   6,   0, $da,   0,   8,   0                                ; 40c9: 06 00 da...
+; TODO: table with entries in groups of three bytes, probably similar to the table in
+; the other level
+something_table
+    !byte 0                                                           ; 4099: 00
+something_table_subseq2
+    !byte $da,   0,   0,   0                                          ; 409a: da 00 00...
+something_table_subseq1
+    !byte   0,   0,   0, $d7, $0a,   1,   0, $d7,   8,   0, $d8,   8  ; 409e: 00 00 00...
+    !byte   0, $d8,   8,   0, $d9,   8,   0, $d9,   8,   0, $da,   8  ; 40aa: 00 d8 08...
+    !byte   0, $da,   8,   0, $d7,   8,   0,   0, $d7, $fc,   0, $da  ; 40b6: 00 da 08...
+    !byte $fe,   2, $da, $fe,   4, $da,   0,   6,   0, $da,   0,   8  ; 40c2: fe 02 da...
+    !byte   0                                                         ; 40ce: 00
 
 room_0_update_handler
     lda #0                                                            ; 40cf: a9 00
@@ -1164,7 +1170,7 @@ room0_first_update
     sta thrown_egg_y_low                                              ; 411a: 8d 72 0a
     lda #1                                                            ; 411d: a9 01
     sta save_game_level_e_holding_egg_flag                            ; 411f: 8d 13 0a
-    sta spriteid_table_index                                          ; 4122: 8d 74 0a
+    sta something_table_index                                         ; 4122: 8d 74 0a
     lda #0                                                            ; 4125: a9 00
     sta level_workspace                                               ; 4127: 8d 6f 0a
 c412a
@@ -1178,8 +1184,8 @@ c412a
     lda save_game_level_e_holding_egg_flag                            ; 413b: ad 13 0a
     bmi c4166                                                         ; 413e: 30 26                   ; branch if have collected egg
     jsr sub_c431d                                                     ; 4140: 20 1d 43
-    ldy spriteid_table_index                                          ; 4143: ac 74 0a
-    lda spriteid_table,y                                              ; 4146: b9 99 40
+    ldy something_table_index                                         ; 4143: ac 74 0a
+    lda something_table,y                                             ; 4146: b9 99 40
     sta object_spriteid + 2                                           ; 4149: 8d aa 09
 loop_c414c
     lda desired_room_index                                            ; 414c: a5 30
@@ -1235,8 +1241,8 @@ c4195
     sta thrown_egg_y_low                                              ; 41be: 8d 72 0a
     lda #$0c                                                          ; 41c1: a9 0c
     sta save_game_level_e_holding_egg_flag                            ; 41c3: 8d 13 0a
-    lda #5                                                            ; 41c6: a9 05
-    sta spriteid_table_index                                          ; 41c8: 8d 74 0a
+    lda #something_table_subseq1 - something_table                    ; 41c6: a9 05
+    sta something_table_index                                         ; 41c8: 8d 74 0a
     jsr sub_c431d                                                     ; 41cb: 20 1d 43
     lda object_spriteid + objectid_player_accessory                   ; 41ce: ad a9 09
     sta object_spriteid + 2                                           ; 41d1: 8d aa 09
@@ -1286,11 +1292,11 @@ return2
     rts                                                               ; 4230: 60
 
 sub_c4231
-    lda spriteid_table_index                                          ; 4231: ad 74 0a
+    lda something_table_index                                         ; 4231: ad 74 0a
     clc                                                               ; 4234: 18
     adc #3                                                            ; 4235: 69 03
     tay                                                               ; 4237: a8
-    lda spriteid_table,y                                              ; 4238: b9 99 40
+    lda something_table,y                                             ; 4238: b9 99 40
     bne c4240                                                         ; 423b: d0 03
     ldy save_game_level_e_holding_egg_flag                            ; 423d: ac 13 0a
 c4240
@@ -1328,11 +1334,11 @@ c427f
     lda #0                                                            ; 427f: a9 00
     sta level_workspace                                               ; 4281: 8d 6f 0a
 c4284
-    sty spriteid_table_index                                          ; 4284: 8c 74 0a
-    lda spriteid_table,y                                              ; 4287: b9 99 40
+    sty something_table_index                                         ; 4284: 8c 74 0a
+    lda something_table,y                                             ; 4287: b9 99 40
     sta object_spriteid + 2                                           ; 428a: 8d aa 09
     iny                                                               ; 428d: c8
-    lda spriteid_table,y                                              ; 428e: b9 99 40
+    lda something_table,y                                             ; 428e: b9 99 40
     ldx thrown_egg_direction                                          ; 4291: ae 73 0a
     bpl c429b                                                         ; 4294: 10 05
     eor #$ff                                                          ; 4296: 49 ff
@@ -1351,7 +1357,7 @@ c42a2
     adc thrown_egg_x_high                                             ; 42aa: 6d 71 0a
     sta thrown_egg_x_high                                             ; 42ad: 8d 71 0a
     iny                                                               ; 42b0: c8
-    lda spriteid_table,y                                              ; 42b1: b9 99 40
+    lda something_table,y                                             ; 42b1: b9 99 40
     clc                                                               ; 42b4: 18
     adc thrown_egg_y_low                                              ; 42b5: 6d 72 0a
     sta thrown_egg_y_low                                              ; 42b8: 8d 72 0a
@@ -2159,6 +2165,9 @@ pydis_end
 }
 !if (room_3_data) != $3df7 {
     !error "Assertion failed: room_3_data == $3df7"
+}
+!if (something_table_subseq1 - something_table) != $05 {
+    !error "Assertion failed: something_table_subseq1 - something_table == $05"
 }
 !if (sprite_data - level_data) != $0b57 {
     !error "Assertion failed: sprite_data - level_data == $0b57"

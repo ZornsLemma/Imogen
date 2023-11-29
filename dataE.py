@@ -26,8 +26,8 @@ sprite_dict = {
     0xdd: "spriteid_large_egg_sideways",
     0xde: "spriteid_cache2",
     0xdf: "spriteid_cache3",
-    0xfc: "spriteid_todo", # TODO: added to make spriteid_table expr happy
-    0xfe: "spriteid_todo2", # TODO: added to make spriteid_table expr happy
+    0xfc: "spriteid_todo", # TODO: added to make something_table expr happy
+    0xfe: "spriteid_todo2", # TODO: added to make something_table expr happy
 }
 
 # Merge with common sprite dictionary
@@ -46,7 +46,7 @@ label(0x0a14, "save_game_level_e_room_1_egg_state") # TODO: other uses? not chec
 label(0x0a15, "save_game_level_e_duck_captured_flag") # TODO: might be used for other things too, not checked yet
 
 label(0xa73, "thrown_egg_direction")
-label(0xa74, "spriteid_table_index")
+label(0xa74, "something_table_index")
 label(0xa76, "egg_animation_index")
 label(0xa77, "room_1_egg_x")
 label(0xa78, "room_1_egg_y")
@@ -104,9 +104,11 @@ comment(0x3cee, "check for first update in room (branch if not)")
 comment(0x3cfa, "check for level change (branch if not)")
 expr(0x3d48, "objectid_old_player")
 label(0x3df6, "return1")
-label(0x4099, "spriteid_table")
-#for addr in range(0x4099, 0x40cf):
-#    expr(addr, sprite_dict)
+comment(0x4099, "TODO: table with entries in groups of three bytes, probably similar to the table in the other level")
+label(0x4099, "something_table")
+label(0x4099+1, "something_table_subseq2") # TODO: 411d uses this offset, but shares it with holding_egg_flag - I wonder if this is a micro-optimisation and 1 vs 0 in holding_egg_flag are equivalent
+label(0x4099+5, "something_table_subseq1")
+expr(0x41c7, make_subtract("something_table_subseq1", "something_table"))
 comment(0x40dd, "check for first update in room (branch if so)")
 ldx_ldy_jsr_define_envelope(0x40f6, "envelope1")
 comment(0x40f9, "check for level change (branch if not)")
