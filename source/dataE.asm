@@ -1128,13 +1128,13 @@ room_0_update_handler
     jsr update_brazier_and_fire                                       ; 40da: 20 88 19
 ; check for first update in room (branch if so)
     lda update_room_first_update_flag                                 ; 40dd: ad 2b 13
-    bne c40e5                                                         ; 40e0: d0 03
-    jmp c416e                                                         ; 40e2: 4c 6e 41
+    bne room0_first_update                                            ; 40e0: d0 03
+    jmp room0_not_first_update                                        ; 40e2: 4c 6e 41
 
-c40e5
+room0_first_update
     lda #spriteid_egg_toolbar                                         ; 40e5: a9 d3
     sta toolbar_collectable_spriteids+1                               ; 40e7: 8d e9 2e
-    lda #$d2                                                          ; 40ea: a9 d2
+    lda #spriteid_egg                                                 ; 40ea: a9 d2
     sta collectable_spriteids+1                                       ; 40ec: 8d ee 2e
     sta collectable_being_used_spriteids + 1                          ; 40ef: 8d f3 2e
     ldx #<envelope1                                                   ; 40f2: a2 d8
@@ -1192,7 +1192,7 @@ c4166
     sta object_spriteid_old + 2                                       ; 4168: 8d b5 09
     jmp return2                                                       ; 416b: 4c 30 42
 
-c416e
+room0_not_first_update
     lda #0                                                            ; 416e: a9 00
     sta l4389                                                         ; 4170: 8d 89 43
     lda player_held_object_spriteid                                   ; 4173: a5 52
@@ -1913,10 +1913,8 @@ pydis_end
 ;     c3faf
 ;     c3fb7
 ;     c3fca
-;     c40e5
 ;     c412a
 ;     c4166
-;     c416e
 ;     c4192
 ;     c4195
 ;     c41dd
@@ -2163,6 +2161,9 @@ pydis_end
 }
 !if (spriteid_duck_toolbar) != $d1 {
     !error "Assertion failed: spriteid_duck_toolbar == $d1"
+}
+!if (spriteid_egg) != $d2 {
+    !error "Assertion failed: spriteid_egg == $d2"
 }
 !if (spriteid_egg_toolbar) != $d3 {
     !error "Assertion failed: spriteid_egg_toolbar == $d3"
