@@ -728,9 +728,9 @@ c3d41
     cmp #$50 ; 'P'                                                    ; 3d44: c9 50
     bcc c3d72                                                         ; 3d46: 90 2a
     lda gorilla_state                                                 ; 3d48: ad 70 0a
-    cmp #$5a ; 'Z'                                                    ; 3d4b: c9 5a
+    cmp #gorilla_climbing_rope_animation - gorilla_animations_table   ; 3d4b: c9 5a
     beq c3d53                                                         ; 3d4d: f0 04
-    cmp #$56 ; 'V'                                                    ; 3d4f: c9 56
+    cmp #gorilla_on_rope_animation - gorilla_animations_table         ; 3d4f: c9 56
     bne c3d72                                                         ; 3d51: d0 1f
 c3d53
     lda partition_position_y                                          ; 3d53: ad 6f 0a
@@ -1142,7 +1142,7 @@ update_gorilla
     sta l0a71                                                         ; 3fe5: 8d 71 0a
     lda #1                                                            ; 3fe8: a9 01
     sta l0a73                                                         ; 3fea: 8d 73 0a
-    lda #$19                                                          ; 3fed: a9 19
+    lda #gorilla_idle_animation - gorilla_animations_table            ; 3fed: a9 19
     sta gorilla_state                                                 ; 3fef: 8d 70 0a
     sta l0a74                                                         ; 3ff2: 8d 74 0a
     jsr sub_c4261                                                     ; 3ff5: 20 61 42
@@ -1198,29 +1198,29 @@ c404b
     dec l0a75                                                         ; 4050: ce 75 0a
 c4053
     lda gorilla_state                                                 ; 4053: ad 70 0a
-    cmp #$2a ; '*'                                                    ; 4056: c9 2a
+    cmp #gorilla_jump_on_rope_animation - gorilla_animations_table    ; 4056: c9 2a
     bne c407a                                                         ; 4058: d0 20
     cpy gorilla_state                                                 ; 405a: cc 70 0a
     bne c4092                                                         ; 405d: d0 33
-    ldy #$56 ; 'V'                                                    ; 405f: a0 56
+    ldy #gorilla_on_rope_animation - gorilla_animations_table         ; 405f: a0 56
     sty gorilla_state                                                 ; 4061: 8c 70 0a
     lda #4                                                            ; 4064: a9 04
     sta l0a75                                                         ; 4066: 8d 75 0a
     lda gorilla_x_position                                            ; 4069: ad 72 0a
     cmp #$50 ; 'P'                                                    ; 406c: c9 50
     bcc c4092                                                         ; 406e: 90 22
-    ldy #$5a ; 'Z'                                                    ; 4070: a0 5a
+    ldy #gorilla_climbing_rope_animation - gorilla_animations_table   ; 4070: a0 5a
     sty gorilla_state                                                 ; 4072: 8c 70 0a
     lda #0                                                            ; 4075: a9 00
     sta l0a75                                                         ; 4077: 8d 75 0a
 c407a
     lda gorilla_state                                                 ; 407a: ad 70 0a
-    cmp #$5a ; 'Z'                                                    ; 407d: c9 5a
+    cmp #gorilla_climbing_rope_animation - gorilla_animations_table   ; 407d: c9 5a
     bne c4095                                                         ; 407f: d0 14
     lda partition_position_y                                          ; 4081: ad 6f 0a
     cmp #$20 ; ' '                                                    ; 4084: c9 20
     bne c4092                                                         ; 4086: d0 0a
-    ldy #$56 ; 'V'                                                    ; 4088: a0 56
+    ldy #gorilla_on_rope_animation - gorilla_animations_table         ; 4088: a0 56
     sty gorilla_state                                                 ; 408a: 8c 70 0a
     lda #4                                                            ; 408d: a9 04
     sta l0a75                                                         ; 408f: 8d 75 0a
@@ -1229,11 +1229,11 @@ c4092
 
 c4095
     lda gorilla_state                                                 ; 4095: ad 70 0a
-    cmp #$40 ; '@'                                                    ; 4098: c9 40
+    cmp #gorilla_jump_off_rope_animation - gorilla_animations_table   ; 4098: c9 40
     bne c40a9                                                         ; 409a: d0 0d
     cpy gorilla_state                                                 ; 409c: cc 70 0a
     bne c4092                                                         ; 409f: d0 f1
-    ldy #$19                                                          ; 40a1: a0 19
+    ldy #gorilla_idle_animation - gorilla_animations_table            ; 40a1: a0 19
     sty gorilla_state                                                 ; 40a3: 8c 70 0a
     jsr sub_c4261                                                     ; 40a6: 20 61 42
 c40a9
@@ -1260,7 +1260,7 @@ c40a9
     bcc c40e1                                                         ; 40d5: 90 0a
 c40d7
     lda gorilla_state                                                 ; 40d7: ad 70 0a
-    cmp #$56 ; 'V'                                                    ; 40da: c9 56
+    cmp #gorilla_on_rope_animation - gorilla_animations_table         ; 40da: c9 56
     beq c4092                                                         ; 40dc: f0 b4
     jmp c4144                                                         ; 40de: 4c 44 41
 
@@ -1269,11 +1269,11 @@ c40e1
     beq c4152                                                         ; 40e4: f0 6c
     sta l0a73                                                         ; 40e6: 8d 73 0a
     lda gorilla_state                                                 ; 40e9: ad 70 0a
-    cmp #$56 ; 'V'                                                    ; 40ec: c9 56
+    cmp #gorilla_on_rope_animation - gorilla_animations_table         ; 40ec: c9 56
     bne c40fd                                                         ; 40ee: d0 0d
     lda l0a75                                                         ; 40f0: ad 75 0a
     bne c4152                                                         ; 40f3: d0 5d
-    ldy #$40 ; '@'                                                    ; 40f5: a0 40
+    ldy #gorilla_jump_off_rope_animation - gorilla_animations_table   ; 40f5: a0 40
     sty gorilla_state                                                 ; 40f7: 8c 70 0a
     jmp c4152                                                         ; 40fa: 4c 52 41
 
@@ -1304,12 +1304,12 @@ c4118
     jmp c4144                                                         ; 412b: 4c 44 41
 
 c412e
-    ldy #$2a ; '*'                                                    ; 412e: a0 2a
+    ldy #gorilla_jump_on_rope_animation - gorilla_animations_table    ; 412e: a0 2a
     sty gorilla_state                                                 ; 4130: 8c 70 0a
     jmp c4152                                                         ; 4133: 4c 52 41
 
 c4136
-    lda #$1d                                                          ; 4136: a9 1d
+    lda #gorilla_walk_cycle_animation - gorilla_animations_table      ; 4136: a9 1d
     cmp gorilla_state                                                 ; 4138: cd 70 0a
     beq c4152                                                         ; 413b: f0 15
     tay                                                               ; 413d: a8
@@ -1317,7 +1317,7 @@ c4136
     jmp c4152                                                         ; 4141: 4c 52 41
 
 c4144
-    lda #$19                                                          ; 4144: a9 19
+    lda #gorilla_idle_animation - gorilla_animations_table            ; 4144: a9 19
     cmp gorilla_state                                                 ; 4146: cd 70 0a
     beq c4152                                                         ; 4149: f0 07
     tay                                                               ; 414b: a8
@@ -1350,9 +1350,9 @@ c4186
     lda #$80                                                          ; 4186: a9 80
     sta player_wall_collision_reaction_speed                          ; 4188: 8d 33 24
     lda gorilla_state                                                 ; 418b: ad 70 0a
-    cmp #$5a ; 'Z'                                                    ; 418e: c9 5a
+    cmp #gorilla_climbing_rope_animation - gorilla_animations_table   ; 418e: c9 5a
     beq c41c3                                                         ; 4190: f0 31
-    cmp #$56 ; 'V'                                                    ; 4192: c9 56
+    cmp #gorilla_on_rope_animation - gorilla_animations_table         ; 4192: c9 56
     beq c41c3                                                         ; 4194: f0 2d
     lda #6                                                            ; 4196: a9 06
     ldx l426d                                                         ; 4198: ae 6d 42
@@ -1361,9 +1361,9 @@ c4186
 c419f
     sta player_wall_collision_reaction_speed                          ; 419f: 8d 33 24
     lda gorilla_state                                                 ; 41a2: ad 70 0a
-    cmp #$2a ; '*'                                                    ; 41a5: c9 2a
+    cmp #gorilla_jump_on_rope_animation - gorilla_animations_table    ; 41a5: c9 2a
     beq c41c3                                                         ; 41a7: f0 1a
-    cmp #$40 ; '@'                                                    ; 41a9: c9 40
+    cmp #gorilla_jump_off_rope_animation - gorilla_animations_table   ; 41a9: c9 40
     beq c41c3                                                         ; 41ab: f0 16
     lda #1                                                            ; 41ad: a9 01
     ldx l426d                                                         ; 41af: ae 6d 42
@@ -1371,13 +1371,13 @@ c419f
     lda #$ff                                                          ; 41b4: a9 ff
 c41b6
     sta l0a73                                                         ; 41b6: 8d 73 0a
-    ldy #$19                                                          ; 41b9: a0 19
+    ldy #gorilla_idle_animation - gorilla_animations_table            ; 41b9: a0 19
     sty gorilla_state                                                 ; 41bb: 8c 70 0a
     ldy #0                                                            ; 41be: a0 00
     jsr sub_c4261                                                     ; 41c0: 20 61 42
 c41c3
     lda gorilla_state                                                 ; 41c3: ad 70 0a
-    cmp #$19                                                          ; 41c6: c9 19
+    cmp #gorilla_idle_animation - gorilla_animations_table            ; 41c6: c9 19
     bne c41d2                                                         ; 41c8: d0 08
     lda l0a75                                                         ; 41ca: ad 75 0a
     bne c41d2                                                         ; 41cd: d0 03
@@ -1442,7 +1442,7 @@ c4245
     lda update_room_first_update_flag                                 ; 4245: ad 2b 13
     bne return2                                                       ; 4248: d0 16
     lda gorilla_state                                                 ; 424a: ad 70 0a
-    cmp #$40 ; '@'                                                    ; 424d: c9 40
+    cmp #gorilla_jump_off_rope_animation - gorilla_animations_table   ; 424d: c9 40
     bne return2                                                       ; 424f: d0 0f
     lda #2                                                            ; 4251: a9 02
     sta temp_bottom_offset                                            ; 4253: 8d 51 25
@@ -1881,6 +1881,24 @@ pydis_end
 }
 !if (exit_room_top) != $08 {
     !error "Assertion failed: exit_room_top == $08"
+}
+!if (gorilla_climbing_rope_animation - gorilla_animations_table) != $5a {
+    !error "Assertion failed: gorilla_climbing_rope_animation - gorilla_animations_table == $5a"
+}
+!if (gorilla_idle_animation - gorilla_animations_table) != $19 {
+    !error "Assertion failed: gorilla_idle_animation - gorilla_animations_table == $19"
+}
+!if (gorilla_jump_off_rope_animation - gorilla_animations_table) != $40 {
+    !error "Assertion failed: gorilla_jump_off_rope_animation - gorilla_animations_table == $40"
+}
+!if (gorilla_jump_on_rope_animation - gorilla_animations_table) != $2a {
+    !error "Assertion failed: gorilla_jump_on_rope_animation - gorilla_animations_table == $2a"
+}
+!if (gorilla_on_rope_animation - gorilla_animations_table) != $56 {
+    !error "Assertion failed: gorilla_on_rope_animation - gorilla_animations_table == $56"
+}
+!if (gorilla_walk_cycle_animation - gorilla_animations_table) != $1d {
+    !error "Assertion failed: gorilla_walk_cycle_animation - gorilla_animations_table == $1d"
 }
 !if (level_specific_initialisation) != $3af1 {
     !error "Assertion failed: level_specific_initialisation == $3af1"
