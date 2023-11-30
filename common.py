@@ -268,7 +268,6 @@ def common_to_all(level_letter):
 
     # TODO: Some of these constants are not common to *all* files which currently include common (e.g. first/last_level_letter are probably not needed by data*) - may not be worth fussing with, or may be better to have different common files for different things to minimise label noise.
     #
-    label(0x0005, "characters_entered")
     optional_label(0x0015, "sprite_op_flags")
     label(0x001d, "sprite_reflect_flag")
 
@@ -293,9 +292,6 @@ def common_to_all(level_letter):
     label(0x0052, "player_held_object_spriteid")
     label(0x005b, "developer_mode_sideways_ram_is_set_up_flag")
 
-    label(0x040a, "show_dialog_box") # TODO: guesswork
-    label(0x0453, "remove_dialog")
-
     label(0x0950, "object_x_low")
     label(0x0951, "object_x_low + objectid_player_accessory")
     label(0x095b, "object_x_low_old")
@@ -308,19 +304,15 @@ def common_to_all(level_letter):
 
     label(0x0992, "object_y_high")
     label(0x0993, "object_y_high + objectid_player_accessory")
-    label(0x099d, "object_y_high_old")
     label(0x09a8, "object_spriteid")
     label(0x09a9, "object_spriteid + objectid_player_accessory")
     label(0x09b3, "object_spriteid_old")
     label(0x09b4, "object_spriteid_old + objectid_player_accessory")
     label(0x09be, "object_direction")
     label(0x09bf, "object_direction + objectid_player_accessory")
-    label(0x09c9, "object_direction_old")
     label(0x09df, "current_animation")
-    label(0x09ef, "level_progress_table")
 
     optional_label(0x0a6f, "level_workspace")
-    label(0x0a90, "string_input_buffer")
     label(0x0aa9, "tile_all_set_pixels")
 
     label(0x1103, "developer_flags")
@@ -329,14 +321,9 @@ def common_to_all(level_letter):
     label(0x12da, "game_update")
     label(0x132b, "update_room_first_update_flag")
     label(0x138d, "sprite_op")
-    label(0x175d, "pending_toolbar_colour")
     label(0x175e, "toolbar_colour")
-    label(0x175f, "pending_gameplay_area_colour")
     label(0x1760, "gameplay_area_colour")
-    label(0x1765, "use_colour_flag")    # See mono_handler and colour_handler in auxcode.asm
-    label(0x1766, "set_toolbar_and_gameplay_area_colours")
     label(0x18a6, "get_random_number_up_to_a")
-    label(0x1966, "jmp_yx")
     label(0x1988, "update_brazier_and_fire")
     label(0x1a10, "update_level_completion")
     label(0x1aba, "currently_updating_logic_for_room_index")
@@ -387,27 +374,43 @@ def common_to_all(level_letter):
     label(0x3148, "monkey_climb_down_animation")
     label(0x3150, "monkey_climb_animation")
     label(0x31d7, "inhibit_monkey_climb_flag")
-    label(0x37f3, "print_encrypted_string_at_yx_centred")
-    label(0x388d, "wait_one_second_then_check_keys")
     label(0x38ac, "object_erase_type")
     label(0x38c2, "object_z_order")
     label(0x38d8, "object_room_collision_flags")
     label(0x38f6, "play_sound_yx")
     label(0x396f, "sound_priority_per_channel_table")
-    label(0x3a8f, "check_menu_keys")
     label(0x3ad5, "level_data")
     label_word(0x3ad7, "level_specific_initialisation_ptr")
     label_word(0x3ad9, "level_specific_update_ptr")
     label_word(0x3adb, "level_specific_password_ptr")
-    # TODO: This gives poor output in dataQ but is probably clearer for all other levels
-    label(0x3add, "room_index_cheat1")
-    label(0x3ade, "room_index_cheat2")
-    label(0x3adf, "level_room_data_table")
-    expr_label(0x3ae0, make_add("level_room_data_table", "1"))
 
-    # Used by dataQ only
+    # Shared between all levels except 'dataQ' (and they mess up the tidy output of Q):
+    if level_letter != 'Q':
+        label(0x3add, "room_index_cheat1")
+        label(0x3ade, "room_index_cheat2")
+        label(0x3adf, "level_room_data_table")
+        expr_label(0x3ae0, make_add("level_room_data_table", "1"))
+
+    # Shared between 'g' and 'auxcode' only:
+    if level_letter == '' or level_letter == 'auxcode':
+        label(0x0005, "characters_entered")
+        label(0x040a, "show_dialog_box")
+        label(0x0453, "remove_dialog")
+        label(0x099d, "object_y_high_old")
+        label(0x09c9, "object_direction_old")
+        label(0x09ef, "level_progress_table")
+        label(0x0a90, "string_input_buffer")
+        label(0x175d, "pending_toolbar_colour")
+        label(0x175f, "pending_gameplay_area_colour")
+        label(0x1765, "use_colour_flag")    # See mono_handler and colour_handler in auxcode.asm
+        label(0x1766, "set_toolbar_and_gameplay_area_colours")
+        label(0x1966, "jmp_yx")
+        label(0x37f3, "print_encrypted_string_at_yx_centred")
+        label(0x388d, "wait_one_second_then_check_keys")
+        label(0x3a8f, "check_menu_keys")
+        label(0x53c0, "auxcode")
+        label(0x53c0, "check_password")
+
+    # Shared between 'g' and 'dataQ' only:
     if level_letter == '' or level_letter == 'Q':
         label(0x110c, "start_game")
-
-    label(0x53c0, "auxcode")
-    label(0x53c0, "check_password")

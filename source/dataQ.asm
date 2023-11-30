@@ -36,7 +36,6 @@ sprite_op_flags_erase_to_fg_colour   = 4
 sprite_op_flags_normal               = 0
 
 ; Memory locations
-characters_entered                                  = $05
 sprite_reflect_flag                                 = $1d
 l002e                                               = $2e
 desired_room_index                                  = $30
@@ -70,8 +69,6 @@ l007a                                               = $7a
 l007b                                               = $7b
 l007c                                               = $7c
 l007d                                               = $7d
-show_dialog_box                                     = $040a
-remove_dialog                                       = $0453
 object_x_low                                        = $0950
 object_x_low_old                                    = $095b
 object_x_high                                       = $0966
@@ -79,14 +76,10 @@ object_x_high_old                                   = $0971
 object_y_low                                        = $097c
 object_y_low_old                                    = $0987
 object_y_high                                       = $0992
-object_y_high_old                                   = $099d
 object_spriteid                                     = $09a8
 object_spriteid_old                                 = $09b3
 object_direction                                    = $09be
-object_direction_old                                = $09c9
 current_animation                                   = $09df
-level_progress_table                                = $09ef
-string_input_buffer                                 = $0a90
 tile_all_set_pixels                                 = $0aa9
 l0ab1                                               = $0ab1
 l0ab2                                               = $0ab2
@@ -98,17 +91,12 @@ game_update                                         = $12da
 update_room_first_update_flag                       = $132b
 sprite_op                                           = $138d
 l16dc                                               = $16dc
-pending_toolbar_colour                              = $175d
 toolbar_colour                                      = $175e
-pending_gameplay_area_colour                        = $175f
 gameplay_area_colour                                = $1760
-use_colour_flag                                     = $1765
-set_toolbar_and_gameplay_area_colours               = $1766
 l178b                                               = $178b
 l178c                                               = $178c
 l1839                                               = $1839
 get_random_number_up_to_a                           = $18a6
-jmp_yx                                              = $1966
 update_brazier_and_fire                             = $1988
 update_level_completion                             = $1a10
 currently_updating_logic_for_room_index             = $1aba
@@ -158,19 +146,14 @@ monkey_climb_down_animation                         = $3148
 monkey_climb_animation                              = $3150
 inhibit_monkey_climb_flag                           = $31d7
 l3617                                               = $3617
-print_encrypted_string_at_yx_centred                = $37f3
 l381c                                               = $381c
 l387c                                               = $387c
-wait_one_second_then_check_keys                     = $388d
 object_erase_type                                   = $38ac
 object_z_order                                      = $38c2
 object_room_collision_flags                         = $38d8
 play_sound_yx                                       = $38f6
 sound_priority_per_channel_table                    = $396f
-check_menu_keys                                     = $3a8f
 l3acc                                               = $3acc
-auxcode                                             = $53c0
-check_password                                      = $53c0
 oswrch                                              = $ffee
 osbyte                                              = $fff4
 
@@ -187,10 +170,7 @@ level_specific_update_ptr
     pla                                                               ; 3ad9: 68
     pla                                                               ; 3ada: 68
 level_specific_password_ptr
-room_index_cheat1 = level_specific_password_ptr+2
     jsr l178c                                                         ; 3adb: 20 8c 17
-room_index_cheat2
-level_room_data_table = room_index_cheat2+1
     jsr l178c                                                         ; 3ade: 20 8c 17
     jsr sub_c3cc9                                                     ; 3ae1: 20 c9 3c
     lda #7                                                            ; 3ae4: a9 07
