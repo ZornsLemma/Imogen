@@ -109,6 +109,8 @@ comment(0x4099, "TODO: table with entries in groups of three bytes, probably sim
 comment(0x40dd, "check for first update in room (branch if so)")
 ldx_ldy_jsr_define_envelope(0x40f6, "envelope1")
 comment(0x40f9, "check for level change (branch if not)")
+entry(0x4192, "return2_local")
+entry(0x4195, "have_small_egg")
 expr(0x4196, "spriteid_egg_toolbar")
 expr(0x415c, "objectid_small_egg")
 expr(0x41f3, "objectid_old_player")

@@ -1266,22 +1266,22 @@ room0_not_first_update
     lda object_spriteid_old + objectid_small_egg                      ; 4178: ad b5 09
     sta l438b                                                         ; 417b: 8d 8b 43
     lda save_game_level_e_holding_egg_flag                            ; 417e: ad 13 0a
-    bmi c4195                                                         ; 4181: 30 12
+    bmi have_small_egg                                                ; 4181: 30 12
     lda desired_room_index                                            ; 4183: a5 30
     cmp room_containing_small_egg                                     ; 4185: cd 75 0a
     beq c41dd                                                         ; 4188: f0 53
     lda level_workspace                                               ; 418a: ad 6f 0a
-    bmi c4192                                                         ; 418d: 30 03
+    bmi return2_local                                                 ; 418d: 30 03
     inc level_workspace                                               ; 418f: ee 6f 0a
-c4192
+return2_local
     jmp return2                                                       ; 4192: 4c 30 42
 
-c4195
+have_small_egg
     lda #spriteid_egg_toolbar                                         ; 4195: a9 d3
     cmp player_using_object_spriteid                                  ; 4197: cd b6 2e
-    bne c4192                                                         ; 419a: d0 f6
+    bne return2_local                                                 ; 419a: d0 f6
     cmp previous_player_using_object_spriteid                         ; 419c: cd b7 2e
-    beq c4192                                                         ; 419f: f0 f1
+    beq return2_local                                                 ; 419f: f0 f1
     dec l4389                                                         ; 41a1: ce 89 43
     lda desired_room_index                                            ; 41a4: a5 30
     sta room_containing_small_egg                                     ; 41a6: 8d 75 0a
@@ -2011,8 +2011,6 @@ pydis_end
 ;     c3fb7
 ;     c3fca
 ;     c412a
-;     c4192
-;     c4195
 ;     c41dd
 ;     c41ec
 ;     c420c
