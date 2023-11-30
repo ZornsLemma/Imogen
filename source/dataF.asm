@@ -347,9 +347,9 @@ set_rock
 ; *************************************************************************************
 level_specific_update
     jsr room_0_update_handler                                         ; 3b16: 20 bb 3b
-    jsr update_gorilla                                                ; 3b19: 20 d3 3f
+    jsr update_gorilla_puzzle                                         ; 3b19: 20 d3 3f
     jsr room_1_update_handler                                         ; 3b1c: 20 4c 3c
-    jsr update_banana                                                 ; 3b1f: 20 f8 42
+    jsr update_banana_puzzle                                          ; 3b1f: 20 f8 42
     jsr room_2_update_handler                                         ; 3b22: 20 5a 3f
     rts                                                               ; 3b25: 60
 
@@ -1146,7 +1146,7 @@ gorilla_climbing_rope_animation
     !byte 0                                                           ; 3fd2: 00
 
 ; check for first update in room (branch if not)
-update_gorilla
+update_gorilla_puzzle
     lda update_room_first_update_flag                                 ; 3fd3: ad 2b 13
     beq update_gorilla_not_first_update                               ; 3fd6: f0 38
 ; check for level change (branch if not)
@@ -1607,7 +1607,7 @@ room_3_game_update_loop
     jmp initialise_level_and_room                                     ; 42f5: 4c 40 11
 
 ; check for first update in room (branch if not)
-update_banana
+update_banana_puzzle
     lda update_room_first_update_flag                                 ; 42f8: ad 2b 13
     beq update_banana_not_first_update                                ; 42fb: f0 50
 ; initialise banana
