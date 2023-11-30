@@ -195,10 +195,10 @@ level_progress_table                                = $09ef
 save_game_level_f_got_banana_or_banana_y_position   = $0a16
 partition_position_y                                = $0a6f
 gorilla_animation                                   = $0a70
-gorilla_animation_step                              = $0a71
+gorilla_y_position                                  = $0a71
 gorilla_x_position                                  = $0a72
 gorilla_direction                                   = $0a73
-l0a74                                               = $0a74
+gorilla_animation_step                              = $0a74
 delay_before_gorilla_state_change                   = $0a75
 string_input_buffer                                 = $0a90
 tile_all_set_pixels                                 = $0aa9
@@ -740,10 +740,10 @@ gorilla_on_rope
     lda partition_position_y                                          ; 3d53: ad 6f 0a
     cmp #$20 ; ' '                                                    ; 3d56: c9 20
     beq return1_local                                                 ; 3d58: f0 15
-    lda gorilla_animation_step                                        ; 3d5a: ad 71 0a
+    lda gorilla_y_position                                            ; 3d5a: ad 71 0a
     clc                                                               ; 3d5d: 18
     adc #4                                                            ; 3d5e: 69 04
-    sta gorilla_animation_step                                        ; 3d60: 8d 71 0a
+    sta gorilla_y_position                                            ; 3d60: 8d 71 0a
     ldx desired_room_index                                            ; 3d63: a6 30
     cpx #1                                                            ; 3d65: e0 01
     bne move_partition_up                                             ; 3d67: d0 3d
@@ -1155,12 +1155,12 @@ update_gorilla
     lda #$22 ; '"'                                                    ; 3fde: a9 22
     sta gorilla_x_position                                            ; 3fe0: 8d 72 0a
     lda #$6e ; 'n'                                                    ; 3fe3: a9 6e
-    sta gorilla_animation_step                                        ; 3fe5: 8d 71 0a
+    sta gorilla_y_position                                            ; 3fe5: 8d 71 0a
     lda #1                                                            ; 3fe8: a9 01
     sta gorilla_direction                                             ; 3fea: 8d 73 0a
     lda #gorilla_idle_animation - gorilla_animations_table            ; 3fed: a9 19
     sta gorilla_animation                                             ; 3fef: 8d 70 0a
-    sta l0a74                                                         ; 3ff2: 8d 74 0a
+    sta gorilla_animation_step                                        ; 3ff2: 8d 74 0a
     jsr sub_c4261                                                     ; 3ff5: 20 61 42
 initialise_room_only
     lda desired_room_index                                            ; 3ff8: a5 30
@@ -1201,7 +1201,7 @@ c402b
     ldx #$ff                                                          ; 4037: a2 ff
 c4039
     stx gorilla_to_player_direction                                   ; 4039: 8e 6d 42
-    lda l0a74                                                         ; 403c: ad 74 0a
+    lda gorilla_animation_step                                        ; 403c: ad 74 0a
     clc                                                               ; 403f: 18
     adc #3                                                            ; 4040: 69 03
     tay                                                               ; 4042: a8
@@ -1399,7 +1399,7 @@ c41c3
     bne c41d2                                                         ; 41cd: d0 03
     jsr sub_c4261                                                     ; 41cf: 20 61 42
 c41d2
-    sty l0a74                                                         ; 41d2: 8c 74 0a
+    sty gorilla_animation_step                                        ; 41d2: 8c 74 0a
     iny                                                               ; 41d5: c8
     lda gorilla_animations_table,y                                    ; 41d6: b9 72 3f
     ldx gorilla_direction                                             ; 41d9: ae 73 0a
@@ -1414,18 +1414,18 @@ c41e3
     iny                                                               ; 41ea: c8
     lda gorilla_animations_table,y                                    ; 41eb: b9 72 3f
     clc                                                               ; 41ee: 18
-    adc gorilla_animation_step                                        ; 41ef: 6d 71 0a
-    sta gorilla_animation_step                                        ; 41f2: 8d 71 0a
+    adc gorilla_y_position                                            ; 41ef: 6d 71 0a
+    sta gorilla_y_position                                            ; 41f2: 8d 71 0a
 c41f5
     lda desired_room_index                                            ; 41f5: a5 30
     cmp #2                                                            ; 41f7: c9 02
     bcs return2                                                       ; 41f9: b0 65
-    ldy l0a74                                                         ; 41fb: ac 74 0a
+    ldy gorilla_animation_step                                        ; 41fb: ac 74 0a
     lda gorilla_animations_table,y                                    ; 41fe: b9 72 3f
     sta object_spriteid + objectid_gorilla                            ; 4201: 8d ad 09
     lda gorilla_direction                                             ; 4204: ad 73 0a
     sta object_direction + objectid_gorilla                           ; 4207: 8d c3 09
-    lda gorilla_animation_step                                        ; 420a: ad 71 0a
+    lda gorilla_y_position                                            ; 420a: ad 71 0a
     sta object_y_low + objectid_gorilla                               ; 420d: 8d 81 09
     lda gorilla_x_position                                            ; 4210: ad 72 0a
     ldx desired_room_index                                            ; 4213: a6 30
@@ -1824,7 +1824,6 @@ pydis_end
 ;     c4221
 ;     c4245
 ;     c434d
-;     l0a74
 ;     sub_c4261
 !if (<ground_fill_2x2_top_left) != $04 {
     !error "Assertion failed: <ground_fill_2x2_top_left == $04"
