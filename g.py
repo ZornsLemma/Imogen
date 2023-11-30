@@ -2513,7 +2513,6 @@ if (not already falling) then branch (start falling)""")
     ##################################################################################################
     # Monkey animations
     label(0x30e6, "monkey_sprite_list")
-    label(0x30ff, "monkey_base_animation")
     label(0x30ff, "monkey_transform_in_animation")
 
     label(0x3115, "monkey_transform_out_animation")
@@ -2524,10 +2523,7 @@ if (not already falling) then branch (start falling)""")
     label(0x3138, "monkey_change_direction_animation_last_step")
     label(0x313c, "monkey_animation6")
     label(0x3140, "monkey_standing_still_animation")
-    label(0x3144, "monkey_climb_idle_animation")
-    label(0x3148, "monkey_climb_down_animation")
     label(0x314c, "monkey_animation10")
-    label(0x3150, "monkey_climb_animation")
     label(0x3157, "monkey_animation12")
     label(0x3179, "monkey_standing_fall_animation")
     label(0x3186, "monkey_jump_animation")

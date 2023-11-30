@@ -27,11 +27,11 @@ object_collided_right_wall            = 4
 objectid_banana                       = 2
 objectid_brazier                      = 2
 objectid_brazier_room_1               = 6
+objectid_connecting_rope              = 4
 objectid_gorilla                      = 5
 objectid_old_player                   = 11
 objectid_old_player_accessory         = 12
 objectid_partition                    = 3
-objectid_partition2                   = 4
 objectid_player                       = 0
 objectid_player_accessory             = 1
 objectid_rope_end                     = 2
@@ -48,7 +48,6 @@ spriteid_banana_menu_item             = 219
 spriteid_banana_on_ground             = 221
 spriteid_boulder                      = 208
 spriteid_brazier                      = 58
-spriteid_cache2                       = 209
 spriteid_cat1                         = 27
 spriteid_cat2                         = 28
 spriteid_cat_jump                     = 26
@@ -76,6 +75,7 @@ spriteid_diamond2                     = 40
 spriteid_diamond3                     = 41
 spriteid_diamond4                     = 42
 spriteid_diamond5                     = 43
+spriteid_erase_gorilla                = 209
 spriteid_erase_partition              = 207
 spriteid_erase_player                 = 199
 spriteid_erase_player_accessory       = 198
@@ -192,7 +192,7 @@ object_direction                                    = $09be
 object_direction_old                                = $09c9
 current_animation                                   = $09df
 level_progress_table                                = $09ef
-save_game_level_f_got_banana                        = $0a16
+save_game_level_f_got_banana_or_banana_y_position   = $0a16
 partition_position_y                                = $0a6f
 gorilla_state                                       = $0a70
 l0a71                                               = $0a71
@@ -256,6 +256,10 @@ previous_player_using_object_spriteid               = $2eb7
 toolbar_collectable_spriteids                       = $2ee8
 collectable_spriteids                               = $2eed
 collectable_being_used_spriteids                    = $2ef2
+monkey_base_animation                               = $30ff
+monkey_climb_idle_animation                         = $3144
+monkey_climb_down_animation                         = $3148
+monkey_climb_animation                              = $3150
 inhibit_monkey_climb_flag                           = $31d7
 print_encrypted_string_at_yx_centred                = $37f3
 wait_one_second_then_check_keys                     = $388d
@@ -315,9 +319,9 @@ level_specific_initialisation
     lda developer_flags                                               ; 3af7: ad 03 11
     bpl developer_mode_inactive                                       ; 3afa: 10 05
     lda #$ff                                                          ; 3afc: a9 ff
-    sta save_game_level_f_got_banana                                  ; 3afe: 8d 16 0a
+    sta save_game_level_f_got_banana_or_banana_y_position             ; 3afe: 8d 16 0a
 developer_mode_inactive
-    lda save_game_level_f_got_banana                                  ; 3b01: ad 16 0a
+    lda save_game_level_f_got_banana_or_banana_y_position             ; 3b01: ad 16 0a
     cmp #$ff                                                          ; 3b04: c9 ff
     bne set_rock                                                      ; 3b06: d0 05
     lda #spriteid_banana_menu_item                                    ; 3b08: a9 db
@@ -696,7 +700,7 @@ draw_right_vertical_rope_loop
 skip_right_hand_rope_drawing_as_partition_already_fully_up
     lda #objectid_partition                                           ; 3d05: a9 03
     jsr set_object_position_from_cell_xy                              ; 3d07: 20 5d 1f
-    lda #objectid_partition2                                          ; 3d0a: a9 04
+    lda #objectid_connecting_rope                                     ; 3d0a: a9 04
     jsr set_object_position_from_cell_xy                              ; 3d0c: 20 5d 1f
     tax                                                               ; 3d0f: aa
     jsr copy_object_state_to_old                                      ; 3d10: 20 f7 20
@@ -742,9 +746,9 @@ c3d53
     sta l0a71                                                         ; 3d60: 8d 71 0a
     ldx desired_room_index                                            ; 3d63: a6 30
     cpx #1                                                            ; 3d65: e0 01
-    bne c3da6                                                         ; 3d67: d0 3d
+    bne move_partition_up                                             ; 3d67: d0 3d
     sta object_y_low + objectid_gorilla                               ; 3d69: 8d 81 09
-    jmp c3da6                                                         ; 3d6c: 4c a6 3d
+    jmp move_partition_up                                             ; 3d6c: 4c a6 3d
 
 return1_local
     jmp return1                                                       ; 3d6f: 4c a6 3e
@@ -753,20 +757,24 @@ c3d72
     lda desired_room_index                                            ; 3d72: a5 30
     cmp #1                                                            ; 3d74: c9 01
     bne c3dd0                                                         ; 3d76: d0 58
+; check player is the monkey
     lda current_player_character                                      ; 3d78: a5 48
-    cmp #6                                                            ; 3d7a: c9 06
+    cmp #spriteid_icodata_monkey                                      ; 3d7a: c9 06
     bne c3dd0                                                         ; 3d7c: d0 52
+; check player animation
     lda current_animation                                             ; 3d7e: ad df 09
-    cmp #$51 ; 'Q'                                                    ; 3d81: c9 51
-    beq c3d8d                                                         ; 3d83: f0 08
-    cmp #$45 ; 'E'                                                    ; 3d85: c9 45
-    beq c3d8d                                                         ; 3d87: f0 04
-    cmp #$49 ; 'I'                                                    ; 3d89: c9 49
+    cmp #monkey_climb_animation - monkey_base_animation               ; 3d81: c9 51
+    beq player_is_monkey_on_rope                                      ; 3d83: f0 08
+    cmp #monkey_climb_idle_animation - monkey_base_animation          ; 3d85: c9 45
+    beq player_is_monkey_on_rope                                      ; 3d87: f0 04
+    cmp #monkey_climb_down_animation - monkey_base_animation          ; 3d89: c9 49
     bne c3dd0                                                         ; 3d8b: d0 43
-c3d8d
+; check partition position. If fully raised, then return
+player_is_monkey_on_rope
     lda partition_position_y                                          ; 3d8d: ad 6f 0a
     cmp #$20 ; ' '                                                    ; 3d90: c9 20
     beq return1_local                                                 ; 3d92: f0 db
+; move player down rope as it moves
     lda object_y_low                                                  ; 3d94: ad 7c 09
     clc                                                               ; 3d97: 18
     adc #4                                                            ; 3d98: 69 04
@@ -775,20 +783,22 @@ c3d8d
     clc                                                               ; 3da0: 18
     adc #4                                                            ; 3da1: 69 04
     sta object_y_low + objectid_player_accessory                      ; 3da3: 8d 7d 09
-c3da6
+move_partition_up
     lda partition_position_y                                          ; 3da6: ad 6f 0a
     sec                                                               ; 3da9: 38
     sbc #4                                                            ; 3daa: e9 04
     sta partition_position_y                                          ; 3dac: 8d 6f 0a
+; check if we are in room 1
     lda desired_room_index                                            ; 3daf: a5 30
     cmp #1                                                            ; 3db1: c9 01
     bne return1_local                                                 ; 3db3: d0 ba
     jsr play_partition_moving_sound                                   ; 3db5: 20 a9 3e
-    ldx #4                                                            ; 3db8: a2 04
+    ldx #objectid_connecting_rope                                     ; 3db8: a2 04
     lda partition_position_y                                          ; 3dba: ad 6f 0a
     sec                                                               ; 3dbd: 38
     sbc #8                                                            ; 3dbe: e9 08
     sta object_y_low_old,x                                            ; 3dc0: 9d 87 09
+; while partition is moving, remove the short vertical rope
     lda #spriteid_rope_short_vertical                                 ; 3dc3: a9 cb
     sta object_spriteid_old,x                                         ; 3dc5: 9d b3 09
     lda #0                                                            ; 3dc8: a9 00
@@ -814,9 +824,11 @@ c3dea
     sta partition_position_y                                          ; 3dea: 8d 6f 0a
     stx remembered_rope_y_offset                                      ; 3ded: 8e a7 3e
     sty remembered_rope_spriteid                                      ; 3df0: 8c a8 3e
+; check if we are in room 1
     lda desired_room_index                                            ; 3df3: a5 30
     cmp #1                                                            ; 3df5: c9 01
     bne c3e2d                                                         ; 3df7: d0 34
+; check for partition landing or moving (for playing sound)
     lda partition_position_y                                          ; 3df9: ad 6f 0a
     cmp #$48 ; 'H'                                                    ; 3dfc: c9 48
     beq play_partition_landing_sound                                  ; 3dfe: f0 06
@@ -832,11 +844,12 @@ play_partition_landing_sound
     ldy #>partition_landing_sound2                                    ; 3e11: a0 43
     jsr play_sound_yx                                                 ; 3e13: 20 f6 38
 c3e16
-    ldx #objectid_partition2                                          ; 3e16: a2 04
+    ldx #objectid_connecting_rope                                     ; 3e16: a2 04
     lda partition_position_y                                          ; 3e18: ad 6f 0a
     sec                                                               ; 3e1b: 38
     sbc remembered_rope_y_offset                                      ; 3e1c: ed a7 3e
     sta object_y_low,x                                                ; 3e1f: 9d 7c 09
+; restore the connecting rope
     lda #0                                                            ; 3e22: a9 00
     sta object_spriteid_old,x                                         ; 3e24: 9d b3 09
     lda remembered_rope_spriteid                                      ; 3e27: ad a8 3e
@@ -1150,7 +1163,7 @@ initialise_room_only
     lda desired_room_index                                            ; 3ff8: a5 30
     cmp #2                                                            ; 3ffa: c9 02
     bcs initialise_room_2_or_3                                        ; 3ffc: b0 0f
-    lda #$d1                                                          ; 3ffe: a9 d1
+    lda #spriteid_erase_gorilla                                       ; 3ffe: a9 d1
     sta object_erase_type + objectid_gorilla                          ; 4000: 8d b1 38
     lda #$c0                                                          ; 4003: a9 c0
     sta object_z_order + objectid_gorilla                             ; 4005: 8d c7 38
@@ -1334,7 +1347,7 @@ c4152
     ldy l426e                                                         ; 4162: ac 6e 42
     ora #0                                                            ; 4165: 09 00
     beq c41c3                                                         ; 4167: f0 5a
-    lda save_game_level_f_got_banana                                  ; 4169: ad 16 0a
+    lda save_game_level_f_got_banana_or_banana_y_position             ; 4169: ad 16 0a
     cmp #$ff                                                          ; 416c: c9 ff
     bne c4186                                                         ; 416e: d0 16
     lda player_held_object_spriteid                                   ; 4170: a5 52
@@ -1345,7 +1358,7 @@ c4152
     sta player_held_object_spriteid                                   ; 417b: 85 52
     sta object_spriteid + objectid_player_accessory                   ; 417d: 8d a9 09
     sta player_using_object_spriteid                                  ; 4180: 8d b6 2e
-    sta save_game_level_f_got_banana                                  ; 4183: 8d 16 0a
+    sta save_game_level_f_got_banana_or_banana_y_position             ; 4183: 8d 16 0a
 c4186
     lda #$80                                                          ; 4186: a9 80
     sta player_wall_collision_reaction_speed                          ; 4188: 8d 33 24
@@ -1588,12 +1601,12 @@ update_banana
     lda current_level                                                 ; 430a: a5 31
     cmp level_before_latest_level_and_room_initialisation             ; 430c: c5 51
     beq c431e                                                         ; 430e: f0 0e
-    lda save_game_level_f_got_banana                                  ; 4310: ad 16 0a
+    lda save_game_level_f_got_banana_or_banana_y_position             ; 4310: ad 16 0a
     beq c431e                                                         ; 4313: f0 09
     cmp #$ff                                                          ; 4315: c9 ff
     beq c431e                                                         ; 4317: f0 05
     lda #$86                                                          ; 4319: a9 86
-    sta save_game_level_f_got_banana                                  ; 431b: 8d 16 0a
+    sta save_game_level_f_got_banana_or_banana_y_position             ; 431b: 8d 16 0a
 c431e
     lda desired_room_index                                            ; 431e: a5 30
     cmp #3                                                            ; 4320: c9 03
@@ -1618,7 +1631,7 @@ c434a
     jmp banana_already_landed_or_taken                                ; 434a: 4c aa 43
 
 c434d
-    lda save_game_level_f_got_banana                                  ; 434d: ad 16 0a
+    lda save_game_level_f_got_banana_or_banana_y_position             ; 434d: ad 16 0a
     cmp #$ff                                                          ; 4350: c9 ff
     beq banana_already_landed_or_taken                                ; 4352: f0 56
     ora #0                                                            ; 4354: 09 00
@@ -1649,7 +1662,7 @@ update_banana_in_room_3
     bne set_banana_y                                                  ; 4384: d0 21                   ; ALWAYS branch
 
 no_banana_collision
-    lda save_game_level_f_got_banana                                  ; 4386: ad 16 0a
+    lda save_game_level_f_got_banana_or_banana_y_position             ; 4386: ad 16 0a
     cmp #$86                                                          ; 4389: c9 86
     beq banana_already_landed_or_taken                                ; 438b: f0 1d
     clc                                                               ; 438d: 18
@@ -1657,7 +1670,7 @@ no_banana_collision
     cmp #$80                                                          ; 4390: c9 80
     bcc set_banana_y                                                  ; 4392: 90 13
     bne banana_on_ground                                              ; 4394: d0 0f
-    sta save_game_level_f_got_banana                                  ; 4396: 8d 16 0a
+    sta save_game_level_f_got_banana_or_banana_y_position             ; 4396: 8d 16 0a
     lda desired_room_index                                            ; 4399: a5 30
     cmp #3                                                            ; 439b: c9 03
     bne banana_already_landed_or_taken                                ; 439d: d0 0b
@@ -1667,7 +1680,7 @@ no_banana_collision
 banana_on_ground
     lda #$86                                                          ; 43a5: a9 86
 set_banana_y
-    sta save_game_level_f_got_banana                                  ; 43a7: 8d 16 0a
+    sta save_game_level_f_got_banana_or_banana_y_position             ; 43a7: 8d 16 0a
 banana_already_landed_or_taken
     lda desired_room_index                                            ; 43aa: a5 30
     cmp #3                                                            ; 43ac: c9 03
@@ -1675,7 +1688,7 @@ banana_already_landed_or_taken
 ; don't show the banana object if there's no banana visible yet
     lda #spriteid_one_pixel_masked_out                                ; 43b0: a9 00
     sta object_spriteid + objectid_banana                             ; 43b2: 8d aa 09
-    lda save_game_level_f_got_banana                                  ; 43b5: ad 16 0a
+    lda save_game_level_f_got_banana_or_banana_y_position             ; 43b5: ad 16 0a
     beq return3                                                       ; 43b8: f0 15
 ; don't show the banana object if it's already taken
     cmp #$ff                                                          ; 43ba: c9 ff
@@ -1782,8 +1795,6 @@ pydis_end
 ;     c3d41
 ;     c3d53
 ;     c3d72
-;     c3d8d
-;     c3da6
 ;     c3dd0
 ;     c3dda
 ;     c3dea
@@ -1909,6 +1920,15 @@ pydis_end
 !if (level_specific_update) != $3b16 {
     !error "Assertion failed: level_specific_update == $3b16"
 }
+!if (monkey_climb_animation - monkey_base_animation) != $51 {
+    !error "Assertion failed: monkey_climb_animation - monkey_base_animation == $51"
+}
+!if (monkey_climb_down_animation - monkey_base_animation) != $49 {
+    !error "Assertion failed: monkey_climb_down_animation - monkey_base_animation == $49"
+}
+!if (monkey_climb_idle_animation - monkey_base_animation) != $45 {
+    !error "Assertion failed: monkey_climb_idle_animation - monkey_base_animation == $45"
+}
 !if (object_direction + objectid_gorilla) != $09c3 {
     !error "Assertion failed: object_direction + objectid_gorilla == $09c3"
 }
@@ -1951,14 +1971,14 @@ pydis_end
 !if (objectid_brazier_room_1) != $06 {
     !error "Assertion failed: objectid_brazier_room_1 == $06"
 }
+!if (objectid_connecting_rope) != $04 {
+    !error "Assertion failed: objectid_connecting_rope == $04"
+}
 !if (objectid_old_player) != $0b {
     !error "Assertion failed: objectid_old_player == $0b"
 }
 !if (objectid_partition) != $03 {
     !error "Assertion failed: objectid_partition == $03"
-}
-!if (objectid_partition2) != $04 {
-    !error "Assertion failed: objectid_partition2 == $04"
 }
 !if (objectid_player) != $00 {
     !error "Assertion failed: objectid_player == $00"
@@ -1996,6 +2016,9 @@ pydis_end
 !if (spriteid_boulder) != $d0 {
     !error "Assertion failed: spriteid_boulder == $d0"
 }
+!if (spriteid_erase_gorilla) != $d1 {
+    !error "Assertion failed: spriteid_erase_gorilla == $d1"
+}
 !if (spriteid_erase_partition) != $cf {
     !error "Assertion failed: spriteid_erase_partition == $cf"
 }
@@ -2025,6 +2048,9 @@ pydis_end
 }
 !if (spriteid_gorilla_pushes) != $de {
     !error "Assertion failed: spriteid_gorilla_pushes == $de"
+}
+!if (spriteid_icodata_monkey) != $06 {
+    !error "Assertion failed: spriteid_icodata_monkey == $06"
 }
 !if (spriteid_one_pixel_masked_out) != $00 {
     !error "Assertion failed: spriteid_one_pixel_masked_out == $00"
