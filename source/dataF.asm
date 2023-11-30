@@ -714,7 +714,7 @@ skip_right_hand_rope_drawing_as_partition_already_fully_up
     lda #$c0                                                          ; 3d24: a9 c0
     sta object_z_order,x                                              ; 3d26: 9d c2 38
 c3d29
-    jmp c3e2d                                                         ; 3d29: 4c 2d 3e
+    jmp update_rope_end_position                                      ; 3d29: 4c 2d 3e
 
 update_partition_puzzle
     lda desired_room_index                                            ; 3d2c: a5 30
@@ -803,7 +803,7 @@ move_partition_up
     sta object_spriteid_old,x                                         ; 3dc5: 9d b3 09
     lda #0                                                            ; 3dc8: a9 00
     sta object_spriteid,x                                             ; 3dca: 9d a8 09
-    jmp c3e2d                                                         ; 3dcd: 4c 2d 3e
+    jmp update_rope_end_position                                      ; 3dcd: 4c 2d 3e
 
 c3dd0
     lda partition_position_y                                          ; 3dd0: ad 6f 0a
@@ -827,13 +827,13 @@ c3dea
 ; check if we are in room 1
     lda desired_room_index                                            ; 3df3: a5 30
     cmp #1                                                            ; 3df5: c9 01
-    bne c3e2d                                                         ; 3df7: d0 34
+    bne update_rope_end_position                                      ; 3df7: d0 34
 ; check for partition landing or moving (for playing sound)
     lda partition_position_y                                          ; 3df9: ad 6f 0a
     cmp #$48 ; 'H'                                                    ; 3dfc: c9 48
     beq play_partition_landing_sound                                  ; 3dfe: f0 06
     jsr play_partition_moving_sound                                   ; 3e00: 20 a9 3e
-    jmp c3e16                                                         ; 3e03: 4c 16 3e
+    jmp update_connecting_rope_position                               ; 3e03: 4c 16 3e
 
 play_partition_landing_sound
     lda #0                                                            ; 3e06: a9 00
@@ -843,7 +843,7 @@ play_partition_landing_sound
     ldx #<partition_landing_sound2                                    ; 3e0f: a2 f4
     ldy #>partition_landing_sound2                                    ; 3e11: a0 43
     jsr play_sound_yx                                                 ; 3e13: 20 f6 38
-c3e16
+update_connecting_rope_position
     ldx #objectid_connecting_rope                                     ; 3e16: a2 04
     lda partition_position_y                                          ; 3e18: ad 6f 0a
     sec                                                               ; 3e1b: 38
@@ -854,7 +854,7 @@ c3e16
     sta object_spriteid_old,x                                         ; 3e24: 9d b3 09
     lda remembered_rope_spriteid                                      ; 3e27: ad a8 3e
     sta object_spriteid,x                                             ; 3e2a: 9d a8 09
-c3e2d
+update_rope_end_position
     lda desired_room_index                                            ; 3e2d: a5 30
     cmp #1                                                            ; 3e2f: c9 01
     bne return1                                                       ; 3e31: d0 73
@@ -867,6 +867,7 @@ c3e2d
     clc                                                               ; 3e40: 18
     adc #$68 ; 'h'                                                    ; 3e41: 69 68
     sta object_y_low,x                                                ; 3e43: 9d 7c 09
+; update collision map for rope and partition
     ldx #$0d                                                          ; 3e46: a2 0d
     clc                                                               ; 3e48: 18
     adc #4                                                            ; 3e49: 69 04
@@ -891,21 +892,23 @@ c3e2d
     sta value_to_write_to_collision_map                               ; 3e6e: 85 3e
     lda partition_position_y                                          ; 3e70: ad 6f 0a
     cmp #$48 ; 'H'                                                    ; 3e73: c9 48
-    beq c3e7b                                                         ; 3e75: f0 04
+    beq partition_is_closed                                           ; 3e75: f0 04
     lda #collision_map_none                                           ; 3e77: a9 00
     sta value_to_write_to_collision_map                               ; 3e79: 85 3e
-c3e7b
+partition_is_closed
     jsr read_collision_map_value_for_xy                               ; 3e7b: 20 fa 1e
     cmp value_to_write_to_collision_map                               ; 3e7e: c5 3e
-    beq c3e85                                                         ; 3e80: f0 03
+    beq collision_map_written                                         ; 3e80: f0 03
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 3e82: 20 44 1e
-c3e85
+collision_map_written
     ldx #objectid_player                                              ; 3e85: a2 00
-    ldy #3                                                            ; 3e87: a0 03
+    ldy #objectid_partition                                           ; 3e87: a0 03
     jsr test_for_collision_between_objects_x_and_y                    ; 3e89: 20 e2 28
     beq return1                                                       ; 3e8c: f0 18
+; player collided with partition, get pushed left
     lda #$fa                                                          ; 3e8e: a9 fa
     sta player_wall_collision_reaction_speed                          ; 3e90: 8d 33 24
+; but if player is to the right of the wall, the get pushed right
     lda object_x_high                                                 ; 3e93: ad 66 09
     cmp #1                                                            ; 3e96: c9 01
     bne return1                                                       ; 3e98: d0 0c
@@ -1798,10 +1801,6 @@ pydis_end
 ;     c3dd0
 ;     c3dda
 ;     c3dea
-;     c3e16
-;     c3e2d
-;     c3e7b
-;     c3e85
 ;     c4010
 ;     c402b
 ;     c4039
