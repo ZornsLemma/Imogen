@@ -4,7 +4,24 @@ config.set_label_references(False)
 config.set_hex_dump_show_ascii(False)
 
 sprite_dict = {
-#    0xc8: "spriteid_mouse",
+    0xc8: "spriteid_balloon",
+    0xc9: "spriteid_rope_end1",
+    0xca: "spriteid_bow",
+    0xcb: "spriteid_bow_menu_item",
+    0xcc: "spriteid_arrow",
+    0xcd: "spriteid_cache1",
+    0xce: "spriteid_table",
+    0xcf: "spriteid_cache2",
+    0xd0: "spriteid_rope_bottom",
+    0xd1: "spriteid_rope_top",
+    0xd2: "spriteid_blob",
+    0xd3: "spriteid_bits",
+    0xd4: "spriteid_baby",
+    0xd5: "spriteid_baby_surprise",
+    0xd6: "spriteid_baby_fall",
+    0xd7: "spriteid_baby_dead",
+    0xd8: "spriteid_wood_block",
+    0xd9: "spriteid_baby_smile",
 }
 
 # Merge with common sprite dictionary
@@ -125,30 +142,36 @@ expr(0x4089, "object_spriteid_old + 2")
 expr(0x40bb, "object_spriteid_old + 2")
 expr(0x4138, "object_spriteid_old + 2")
 expr(0x4274, "object_direction + 2")
+label(0x38ae, "object_erase_type+2")
+label(0x38b0, "object_erase_type+4")
+label(0x38b1, "object_erase_type+5")
+label(0x38c4, "object_z_order+2")
+label(0x38c5, "object_z_order+3")
+label(0x38c6, "object_z_order+4")
+label(0x38c7, "object_z_order+5")
 
-# TODO: uncomment once sprite_dict has been populated
-#expr(0x3b08, sprite_dict)
-#expr(0x3b7b, sprite_dict)
-#expr(0x3bf4, sprite_dict)
-#expr(0x3c9a, sprite_dict)
-#expr(0x3c9f, sprite_dict)
-#expr(0x3ca9, sprite_dict)
-#expr(0x3cae, sprite_dict)
-#expr(0x3cb9, sprite_dict)
-#expr(0x3cbe, sprite_dict)
-#expr(0x3cc6, sprite_dict)
-#expr(0x3ccb, sprite_dict)
-#expr(0x3e2f, sprite_dict)
-#expr(0x3fa7, sprite_dict)
-#expr(0x4005, sprite_dict)
-#expr(0x4059, sprite_dict)
-#expr(0x4087, sprite_dict)
-#expr(0x40a6, sprite_dict)
-#expr(0x40ab, sprite_dict)
-#expr(0x4172, sprite_dict)
-#expr(0x419d, sprite_dict)
-#expr(0x4254, sprite_dict)
-#expr(0x4277, sprite_dict)
+expr(0x3b08, sprite_dict)
+expr(0x3b7b, sprite_dict)
+expr(0x3bf4, sprite_dict)
+expr(0x3c9a, sprite_dict)
+expr(0x3c9f, sprite_dict)
+expr(0x3ca9, sprite_dict)
+expr(0x3cae, sprite_dict)
+expr(0x3cb9, sprite_dict)
+expr(0x3cbe, sprite_dict)
+expr(0x3cc6, sprite_dict)
+expr(0x3ccb, sprite_dict)
+expr(0x3e2f, sprite_dict)
+expr(0x3fa7, sprite_dict)
+expr(0x4005, sprite_dict)
+expr(0x4059, sprite_dict)
+expr(0x4087, sprite_dict)
+expr(0x40a6, sprite_dict)
+expr(0x40ab, sprite_dict)
+expr(0x4172, sprite_dict)
+expr(0x419d, sprite_dict)
+expr(0x4254, sprite_dict)
+expr(0x4277, sprite_dict)
 
 
 result = go(False)
