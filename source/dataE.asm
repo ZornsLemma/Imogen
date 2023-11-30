@@ -1377,10 +1377,11 @@ small_egg_temp_left_right_offset_set
 c426a
     cmp #$32 ; '2'                                                    ; 426a: c9 32
     bne c427f                                                         ; 426c: d0 11
-    lda #2                                                            ; 426e: a9 02
+    lda #objectid_small_egg                                           ; 426e: a9 02
     sta temp_bottom_offset                                            ; 4270: 8d 51 25
     lda #2                                                            ; 4273: a9 02
     jsr get_solid_rock_collision_for_object_a                         ; 4275: 20 94 28
+; branch if not collided with anything
     beq c4284                                                         ; 4278: f0 0a
     ldy #1                                                            ; 427a: a0 01
     sty save_game_level_e_holding_egg_flag                            ; 427c: 8c 13 0a
