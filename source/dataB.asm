@@ -42,6 +42,7 @@
 ;   9. Climb the rope over to the right side of the room and jump into the spell collectable.
 ;
 ; *************************************************************************************
+
 ; Constants
 collision_map_none                    = 0
 collision_map_out_of_bounds           = 255

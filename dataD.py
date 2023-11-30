@@ -311,7 +311,8 @@ print("""; *********************************************************************
 ;   7. Climb up the rope, over the gnu head, then back to exit the room at the top right.
 ;   8. Chop down the wooden partition wall with the axe, and collect the spell.
 ;
-; *************************************************************************************""")
+; *************************************************************************************
+""")
 
 result = go(False)
 result = remove_sprite_data(result)

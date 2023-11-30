@@ -1,3 +1,26 @@
+; *************************************************************************************
+;
+; Level F: 'FOLLOW-ME'
+;
+; Save game variables:
+;
+;     save_game_level_f_got_banana_or_banana_y_position ($0a16):
+;               0: not got
+;              1+: banana y position
+;             $ff: got
+;
+; Solution:
+;
+;   1. Head to the left room and down the ladder
+;   2. Collect the banana that's fallen on the right side of the room
+;   3. Head up the rope to the right of the gorilla in the room above, and exit the room to the right
+;   4. Jump on the rope and climb until the partition is raised
+;   5. Jump off the rope to the right. Hold the banana as the wizard until the gorilla starts to climb the left rope.
+;   6. Stop holding the banana.
+;   7. Jump right as the cat to get through to the right hand room, and collect the spell.
+;
+; *************************************************************************************
+
 ; Constants
 collision_map_none                    = 0
 collision_map_out_of_bounds           = 255

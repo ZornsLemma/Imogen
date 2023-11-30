@@ -344,7 +344,8 @@ print("""; *********************************************************************
 ;   8. Jump to the right into room 3 from the fallen boulder
 ;   9. Climb the rope over to the right side of the room and jump into the spell collectable.
 ;
-; *************************************************************************************""")
+; *************************************************************************************
+""")
 
 result = go(False)
 result = remove_sprite_data(result)

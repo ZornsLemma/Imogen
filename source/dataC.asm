@@ -33,6 +33,7 @@
 ;      ropes to the spell.
 ;
 ; *************************************************************************************
+
 ; Constants
 collision_map_none                    = 0
 collision_map_out_of_bounds           = 255
