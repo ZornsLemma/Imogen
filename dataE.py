@@ -37,6 +37,8 @@ sprite_dict = {**common_sprite_dict, **sprite_dict}
 constant(2, "objectid_small_egg") # TODO: guessing
 constant(3, "objectid_egg")
 
+label(0xa6f, "level_workspace_something_to_do_with_small_egg")
+
 set_sprite_dict(sprite_dict)
 
 load(0x3ad5, "orig/dataE.dat", "6502", "1fd692ce17c1ae2c858ed57730c9c081")
