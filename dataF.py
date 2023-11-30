@@ -65,8 +65,11 @@ set_label_maker_hook(s.substitute_label_maker)
 label(0x0a16, "save_game_level_f_got_banana_or_banana_y_position")
 
 label(0x0a6f, "partition_position_y")
-label(0x0a70, "gorilla_state")
+label(0x0a70, "gorilla_animation")
+label(0x0a71, "gorilla_y_position")
 label(0x0a72, "gorilla_x_position")
+label(0x0a73, "gorilla_direction")
+label(0x0a74, "gorilla_animation_step")
 label(0x0a75, "delay_before_gorilla_state_change")
 
 label(0x38ae, "object_erase_type + objectid_banana")
