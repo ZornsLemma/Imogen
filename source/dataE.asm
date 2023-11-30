@@ -1237,7 +1237,7 @@ c412a
     bne skip_small_egg_setup                                          ; 4139: d0 2b
     lda save_game_level_e_holding_egg_flag                            ; 413b: ad 13 0a
     bmi skip_small_egg_setup                                          ; 413e: 30 26                   ; branch if have collected egg
-    jsr sub_c431d                                                     ; 4140: 20 1d 43
+    jsr update_object_properties_for_small_egg                        ; 4140: 20 1d 43
     ldy small_egg_animation_table_index                               ; 4143: ac 74 0a
     lda small_egg_animation_table,y                                   ; 4146: b9 99 40
     sta object_spriteid + objectid_small_egg                          ; 4149: 8d aa 09
@@ -1297,7 +1297,7 @@ have_small_egg
     sta save_game_level_e_holding_egg_flag                            ; 41c3: 8d 13 0a
     lda #small_egg_animation_table_subseq1 - small_egg_animation_table; 41c6: a9 05
     sta small_egg_animation_table_index                               ; 41c8: 8d 74 0a
-    jsr sub_c431d                                                     ; 41cb: 20 1d 43
+    jsr update_object_properties_for_small_egg                        ; 41cb: 20 1d 43
     lda object_spriteid + objectid_player_accessory                   ; 41ce: ad a9 09
     sta object_spriteid + objectid_small_egg                          ; 41d1: 8d aa 09
     ldx #2                                                            ; 41d4: a2 02
@@ -1421,7 +1421,7 @@ adding_positive_value_to_x
     clc                                                               ; 42b4: 18
     adc thrown_egg_y_low                                              ; 42b5: 6d 72 0a
     sta thrown_egg_y_low                                              ; 42b8: 8d 72 0a
-    jsr sub_c431d                                                     ; 42bb: 20 1d 43
+    jsr update_object_properties_for_small_egg                        ; 42bb: 20 1d 43
     lda #2                                                            ; 42be: a9 02
     jsr update_player_solid_rock_collision                            ; 42c0: 20 f5 25
     lda object_x_low + objectid_small_egg                             ; 42c3: ad 52 09
@@ -1466,7 +1466,7 @@ c4317
 return3
     rts                                                               ; 431c: 60
 
-sub_c431d
+update_object_properties_for_small_egg
     lda thrown_egg_x_low                                              ; 431d: ad 70 0a
     sta object_x_low + objectid_small_egg                             ; 4320: 8d 52 09
     lda thrown_egg_x_high                                             ; 4323: ad 71 0a
@@ -2059,7 +2059,6 @@ pydis_end
 ;     l438b
 ;     loop_c414c
 ;     sub_c3c0b
-;     sub_c431d
 ;     sub_c433b
 !if (<envelope1) != $d8 {
     !error "Assertion failed: <envelope1 == $d8"
