@@ -1414,6 +1414,8 @@ adding_positive_value_to_x
     txa                                                               ; 42a9: 8a
     adc thrown_egg_x_high                                             ; 42aa: 6d 71 0a
     sta thrown_egg_x_high                                             ; 42ad: 8d 71 0a
+; Get the Y offset from the animation table and add it to thrown_egg_y_low. This is an
+; 8-bit value so no need to mess around with high byte.
     iny                                                               ; 42b0: c8
     lda small_egg_animation_table,y                                   ; 42b1: b9 99 40
     clc                                                               ; 42b4: 18
