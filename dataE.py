@@ -43,7 +43,7 @@ set_sprite_dict(sprite_dict)
 
 load(0x3ad5, "orig/dataE.dat", "6502", "1fd692ce17c1ae2c858ed57730c9c081")
 
-label(0x0a13, "save_game_level_e_holding_egg_flag") # TODO: other uses? not checked yet - can have values 0, 1 and &ff at least, b7 seems to be a key check - value also checked against &c at 4243
+label(0x0a13, "save_game_level_e_holding_egg_flag") # TODO: other uses? not checked yet - can have values 0, 1 and &ff at least, b7 seems to be a key check - value also checked against &c at 4243 - judging from 427a, 1 means 'the egg has just collided with something'
 label(0x0a14, "save_game_level_e_room_1_egg_state") # TODO: other uses? not checked yet? egg state slightly speculative but prob right
 label(0x0a15, "save_game_level_e_duck_captured_flag") # TODO: might be used for other things too, not checked yet
 
@@ -119,10 +119,17 @@ expr(0x41f3, "objectid_old_player")
 entry(0x4231, "small_egg_animation_update")
 entry(0x4251, "small_egg_thrown_left")
 expr(0x426f, "objectid_small_egg")
-comment(0x4278, "branch if not collided with anything")
+comment(0x4278, "branch if not collided with anything", inline=True)
 ab(0x424f)
 entry(0x4254, "small_egg_temp_left_right_offset_set")
 label(0x4230, "return2")
+comment(0x428d, "get the X offset from the animation table")
+entry(0x429b, "egg_thrown_to_right")
+comment(0x4296, "the egg has been thrown left, so negate the X offset from the animation table")
+comment(0x429d, "set flags based on A", inline=True)
+comment(0x429b, "Set X to the high byte of the X offset")
+entry(0x42a2, "adding_positive_value_to_x")
+comment(0x42a2, "Add 16-bit offset in XA to thrown_egg_x.")
 label(0x431c, "return3")
 ldx_ldy_jsr_play_sound_yx(0x4385, "sound1")
 label(0x4388, "return4")

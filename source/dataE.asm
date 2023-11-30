@@ -1381,8 +1381,7 @@ c426a
     sta temp_bottom_offset                                            ; 4270: 8d 51 25
     lda #2                                                            ; 4273: a9 02
     jsr get_solid_rock_collision_for_object_a                         ; 4275: 20 94 28
-; branch if not collided with anything
-    beq c4284                                                         ; 4278: f0 0a
+    beq c4284                                                         ; 4278: f0 0a                   ; branch if not collided with anything
     ldy #1                                                            ; 427a: a0 01
     sty save_game_level_e_holding_egg_flag                            ; 427c: 8c 13 0a
 c427f
@@ -1392,19 +1391,23 @@ c4284
     sty small_egg_animation_table_index                               ; 4284: 8c 74 0a
     lda small_egg_animation_table,y                                   ; 4287: b9 99 40
     sta object_spriteid + objectid_small_egg                          ; 428a: 8d aa 09
+; get the X offset from the animation table
     iny                                                               ; 428d: c8
     lda small_egg_animation_table,y                                   ; 428e: b9 99 40
     ldx thrown_egg_direction                                          ; 4291: ae 73 0a
-    bpl c429b                                                         ; 4294: 10 05
+    bpl egg_thrown_to_right                                           ; 4294: 10 05
+; the egg has been thrown left, so negate the X offset from the animation table
     eor #$ff                                                          ; 4296: 49 ff
     clc                                                               ; 4298: 18
     adc #1                                                            ; 4299: 69 01
-c429b
+; Set X to the high byte of the X offset
+egg_thrown_to_right
     ldx #0                                                            ; 429b: a2 00
-    ora #0                                                            ; 429d: 09 00
-    bpl c42a2                                                         ; 429f: 10 01
+    ora #0                                                            ; 429d: 09 00                   ; set flags based on A
+    bpl adding_positive_value_to_x                                    ; 429f: 10 01
     dex                                                               ; 42a1: ca
-c42a2
+; Add 16-bit offset in XA to thrown_egg_x.
+adding_positive_value_to_x
     clc                                                               ; 42a2: 18
     adc thrown_egg_x_low                                              ; 42a3: 6d 70 0a
     sta thrown_egg_x_low                                              ; 42a6: 8d 70 0a
@@ -2020,8 +2023,6 @@ pydis_end
 ;     c426a
 ;     c427f
 ;     c4284
-;     c429b
-;     c42a2
 ;     c4302
 ;     c4317
 ;     c4359
