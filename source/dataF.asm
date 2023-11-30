@@ -1147,7 +1147,7 @@ gorilla_climbing_rope_animation
 ; check for first update in room (branch if not)
 update_gorilla
     lda update_room_first_update_flag                                 ; 3fd3: ad 2b 13
-    beq c4010                                                         ; 3fd6: f0 38
+    beq update_gorilla_not_first_update                               ; 3fd6: f0 38
 ; check for level change (branch if not)
     lda current_level                                                 ; 3fd8: a5 31
     cmp level_before_latest_level_and_room_initialisation             ; 3fda: c5 51
@@ -1161,7 +1161,7 @@ update_gorilla
     lda #gorilla_idle_animation - gorilla_animations_table            ; 3fed: a9 19
     sta gorilla_animation                                             ; 3fef: 8d 70 0a
     sta gorilla_animation_step                                        ; 3ff2: 8d 74 0a
-    jsr sub_c4261                                                     ; 3ff5: 20 61 42
+    jsr get_random_gorilla_idle_delay                                 ; 3ff5: 20 61 42
 initialise_room_only
     lda desired_room_index                                            ; 3ff8: a5 30
     cmp #2                                                            ; 3ffa: c9 02
@@ -1173,9 +1173,11 @@ initialise_room_only
     lda #0                                                            ; 4008: a9 00
     sta object_y_high + objectid_gorilla                              ; 400a: 8d 97 09
 initialise_room_2_or_3
-    jmp c41f5                                                         ; 400d: 4c f5 41
+    jmp update_gorilla_object                                         ; 400d: 4c f5 41
 
-c4010
+; take the player x position, divide by four to get an x position that ranges from
+; (0-79)
+update_gorilla_not_first_update
     lda object_x_high                                                 ; 4010: ad 66 09
     lsr                                                               ; 4013: 4a
     sta l0070                                                         ; 4014: 85 70
@@ -1183,240 +1185,251 @@ c4010
     ror                                                               ; 4019: 6a
     lsr l0070                                                         ; 401a: 46 70
     ror                                                               ; 401c: 6a
+; add 80 for room 1 and another 80 for room 2
     ldx desired_room_index                                            ; 401d: a6 30
-    beq c402b                                                         ; 401f: f0 0a
+    beq got_the_player_position                                       ; 401f: f0 0a
     clc                                                               ; 4021: 18
     adc #$50 ; 'P'                                                    ; 4022: 69 50
     cpx #1                                                            ; 4024: e0 01
-    beq c402b                                                         ; 4026: f0 03
+    beq got_the_player_position                                       ; 4026: f0 03
     clc                                                               ; 4028: 18
     adc #$50 ; 'P'                                                    ; 4029: 69 50
-c402b
+got_the_player_position
     ldx #0                                                            ; 402b: a2 00
     sec                                                               ; 402d: 38
     sbc gorilla_x_position                                            ; 402e: ed 72 0a
-    beq c4039                                                         ; 4031: f0 06
+    beq got_direction_for_the_gorilla                                 ; 4031: f0 06
     ldx #1                                                            ; 4033: a2 01
-    bcs c4039                                                         ; 4035: b0 02
+    bcs got_direction_for_the_gorilla                                 ; 4035: b0 02
     ldx #$ff                                                          ; 4037: a2 ff
-c4039
+got_direction_for_the_gorilla
     stx gorilla_to_player_direction                                   ; 4039: 8e 6d 42
+; set Y to next animation step
     lda gorilla_animation_step                                        ; 403c: ad 74 0a
     clc                                                               ; 403f: 18
     adc #3                                                            ; 4040: 69 03
     tay                                                               ; 4042: a8
     lda gorilla_animations_table,y                                    ; 4043: b9 72 3f
-    bne c404b                                                         ; 4046: d0 03
+    bne loop_animation_if_needed                                      ; 4046: d0 03
     ldy gorilla_animation                                             ; 4048: ac 70 0a
-c404b
+loop_animation_if_needed
     lda delay_before_gorilla_state_change                             ; 404b: ad 75 0a
-    beq c4053                                                         ; 404e: f0 03
+    beq update_gorilla_delay                                          ; 404e: f0 03
     dec delay_before_gorilla_state_change                             ; 4050: ce 75 0a
-c4053
+update_gorilla_delay
     lda gorilla_animation                                             ; 4053: ad 70 0a
     cmp #gorilla_jump_on_rope_animation - gorilla_animations_table    ; 4056: c9 2a
-    bne c407a                                                         ; 4058: d0 20
+    bne not_jump_on_rope                                              ; 4058: d0 20
+; gorilla is jumping onto a rope. Are we at the end of the animation?
     cpy gorilla_animation                                             ; 405a: cc 70 0a
-    bne c4092                                                         ; 405d: d0 33
+    bne gorilla_in_room_0_local                                       ; 405d: d0 33
+; set (loop) the animation to the on rope animation. [not technically needed, isnt it
+; already set?]
     ldy #gorilla_on_rope_animation - gorilla_animations_table         ; 405f: a0 56
     sty gorilla_animation                                             ; 4061: 8c 70 0a
+; set a 4 frame delay before changing state
     lda #4                                                            ; 4064: a9 04
     sta delay_before_gorilla_state_change                             ; 4066: 8d 75 0a
     lda gorilla_x_position                                            ; 4069: ad 72 0a
     cmp #$50 ; 'P'                                                    ; 406c: c9 50
-    bcc c4092                                                         ; 406e: 90 22
+    bcc gorilla_in_room_0_local                                       ; 406e: 90 22
     ldy #gorilla_climbing_rope_animation - gorilla_animations_table   ; 4070: a0 5a
     sty gorilla_animation                                             ; 4072: 8c 70 0a
     lda #0                                                            ; 4075: a9 00
     sta delay_before_gorilla_state_change                             ; 4077: 8d 75 0a
-c407a
+not_jump_on_rope
     lda gorilla_animation                                             ; 407a: ad 70 0a
     cmp #gorilla_climbing_rope_animation - gorilla_animations_table   ; 407d: c9 5a
-    bne c4095                                                         ; 407f: d0 14
+    bne gorilla_check_jumping_off_rope                                ; 407f: d0 14
     lda partition_position_y                                          ; 4081: ad 6f 0a
     cmp #$20 ; ' '                                                    ; 4084: c9 20
-    bne c4092                                                         ; 4086: d0 0a
+    bne gorilla_in_room_0_local                                       ; 4086: d0 0a
     ldy #gorilla_on_rope_animation - gorilla_animations_table         ; 4088: a0 56
     sty gorilla_animation                                             ; 408a: 8c 70 0a
     lda #4                                                            ; 408d: a9 04
     sta delay_before_gorilla_state_change                             ; 408f: 8d 75 0a
-c4092
-    jmp c4152                                                         ; 4092: 4c 52 41
+gorilla_in_room_0_local
+    jmp update_gorilla_state                                          ; 4092: 4c 52 41
 
-c4095
+gorilla_check_jumping_off_rope
     lda gorilla_animation                                             ; 4095: ad 70 0a
     cmp #gorilla_jump_off_rope_animation - gorilla_animations_table   ; 4098: c9 40
-    bne c40a9                                                         ; 409a: d0 0d
+    bne update_gorilla_if_banana_held                                 ; 409a: d0 0d
+; are we at the end of the animation?
     cpy gorilla_animation                                             ; 409c: cc 70 0a
-    bne c4092                                                         ; 409f: d0 f1
+    bne gorilla_in_room_0_local                                       ; 409f: d0 f1
     ldy #gorilla_idle_animation - gorilla_animations_table            ; 40a1: a0 19
     sty gorilla_animation                                             ; 40a3: 8c 70 0a
-    jsr sub_c4261                                                     ; 40a6: 20 61 42
-c40a9
+    jsr get_random_gorilla_idle_delay                                 ; 40a6: 20 61 42
+update_gorilla_if_banana_held
     lda player_held_object_spriteid                                   ; 40a9: a5 52
-    cmp #$db                                                          ; 40ab: c9 db
-    bne c40d7                                                         ; 40ad: d0 28
+    cmp #spriteid_banana_menu_item                                    ; 40ab: c9 db
+    bne check_for_gorilla_on_rope                                     ; 40ad: d0 28
     lda object_y_low                                                  ; 40af: ad 7c 09
     cmp #$70 ; 'p'                                                    ; 40b2: c9 70
-    bcs c40d7                                                         ; 40b4: b0 21
+    bcs check_for_gorilla_on_rope                                     ; 40b4: b0 21
     ldx desired_room_index                                            ; 40b6: a6 30
-    beq c40e1                                                         ; 40b8: f0 27
+    beq update_gorilla_jumping_off_rope                               ; 40b8: f0 27
     cpx #3                                                            ; 40ba: e0 03
-    bcs c40d7                                                         ; 40bc: b0 19
+    bcs check_for_gorilla_on_rope                                     ; 40bc: b0 19
     lda partition_position_y                                          ; 40be: ad 6f 0a
     cmp #$20 ; ' '                                                    ; 40c1: c9 20
-    beq c40e1                                                         ; 40c3: f0 1c
+    beq update_gorilla_jumping_off_rope                               ; 40c3: f0 1c
     cpx #2                                                            ; 40c5: e0 02
-    beq c40d7                                                         ; 40c7: f0 0e
+    beq check_for_gorilla_on_rope                                     ; 40c7: f0 0e
     lda object_x_high                                                 ; 40c9: ad 66 09
     cmp #1                                                            ; 40cc: c9 01
-    bne c40e1                                                         ; 40ce: d0 11
+    bne update_gorilla_jumping_off_rope                               ; 40ce: d0 11
     lda object_x_low                                                  ; 40d0: ad 50 09
     cmp #$10                                                          ; 40d3: c9 10
-    bcc c40e1                                                         ; 40d5: 90 0a
-c40d7
+    bcc update_gorilla_jumping_off_rope                               ; 40d5: 90 0a
+check_for_gorilla_on_rope
     lda gorilla_animation                                             ; 40d7: ad 70 0a
     cmp #gorilla_on_rope_animation - gorilla_animations_table         ; 40da: c9 56
-    beq c4092                                                         ; 40dc: f0 b4
-    jmp c4144                                                         ; 40de: 4c 44 41
+    beq gorilla_in_room_0_local                                       ; 40dc: f0 b4
+    jmp update_gorilla_if_not_idle                                    ; 40de: 4c 44 41
 
-c40e1
+update_gorilla_jumping_off_rope
     lda gorilla_to_player_direction                                   ; 40e1: ad 6d 42
-    beq c4152                                                         ; 40e4: f0 6c
+    beq update_gorilla_state                                          ; 40e4: f0 6c
     sta gorilla_direction                                             ; 40e6: 8d 73 0a
     lda gorilla_animation                                             ; 40e9: ad 70 0a
     cmp #gorilla_on_rope_animation - gorilla_animations_table         ; 40ec: c9 56
-    bne c40fd                                                         ; 40ee: d0 0d
+    bne check_gorilla_x_position                                      ; 40ee: d0 0d
     lda delay_before_gorilla_state_change                             ; 40f0: ad 75 0a
-    bne c4152                                                         ; 40f3: d0 5d
+    bne update_gorilla_state                                          ; 40f3: d0 5d
     ldy #gorilla_jump_off_rope_animation - gorilla_animations_table   ; 40f5: a0 40
     sty gorilla_animation                                             ; 40f7: 8c 70 0a
-    jmp c4152                                                         ; 40fa: 4c 52 41
+    jmp update_gorilla_state                                          ; 40fa: 4c 52 41
 
-c40fd
+check_gorilla_x_position
     lda gorilla_direction                                             ; 40fd: ad 73 0a
-    bmi c4118                                                         ; 4100: 30 16
+    bmi check_gorilla_x_position_moving_left                          ; 4100: 30 16
+; check gorilla x position moving right
     lda gorilla_x_position                                            ; 4102: ad 72 0a
     cmp #$2e ; '.'                                                    ; 4105: c9 2e
-    bcc c4136                                                         ; 4107: 90 2d
-    beq c412e                                                         ; 4109: f0 23
+    bcc update_gorilla_if_walk_cycle                                  ; 4107: 90 2d
+    beq gorilla_set_jump_on_rope                                      ; 4109: f0 23
     cmp #$64 ; 'd'                                                    ; 410b: c9 64
-    bcc c4136                                                         ; 410d: 90 27
-    beq c412e                                                         ; 410f: f0 1d
+    bcc update_gorilla_if_walk_cycle                                  ; 410d: 90 27
+    beq gorilla_set_jump_on_rope                                      ; 410f: f0 1d
     cmp #$86                                                          ; 4111: c9 86
-    bcc c4136                                                         ; 4113: 90 21
-    jmp c4144                                                         ; 4115: 4c 44 41
+    bcc update_gorilla_if_walk_cycle                                  ; 4113: 90 21
+    jmp update_gorilla_if_not_idle                                    ; 4115: 4c 44 41
 
-c4118
+check_gorilla_x_position_moving_left
     lda gorilla_x_position                                            ; 4118: ad 72 0a
     cmp #$72 ; 'r'                                                    ; 411b: c9 72
-    beq c412e                                                         ; 411d: f0 0f
-    bcs c4136                                                         ; 411f: b0 15
+    beq gorilla_set_jump_on_rope                                      ; 411d: f0 0f
+    bcs update_gorilla_if_walk_cycle                                  ; 411f: b0 15
     cmp #$3c ; '<'                                                    ; 4121: c9 3c
-    beq c412e                                                         ; 4123: f0 09
-    bcs c4136                                                         ; 4125: b0 0f
+    beq gorilla_set_jump_on_rope                                      ; 4123: f0 09
+    bcs update_gorilla_if_walk_cycle                                  ; 4125: b0 0f
     cmp #$17                                                          ; 4127: c9 17
-    bcs c4136                                                         ; 4129: b0 0b
-    jmp c4144                                                         ; 412b: 4c 44 41
+    bcs update_gorilla_if_walk_cycle                                  ; 4129: b0 0b
+    jmp update_gorilla_if_not_idle                                    ; 412b: 4c 44 41
 
-c412e
+gorilla_set_jump_on_rope
     ldy #gorilla_jump_on_rope_animation - gorilla_animations_table    ; 412e: a0 2a
     sty gorilla_animation                                             ; 4130: 8c 70 0a
-    jmp c4152                                                         ; 4133: 4c 52 41
+    jmp update_gorilla_state                                          ; 4133: 4c 52 41
 
-c4136
+update_gorilla_if_walk_cycle
     lda #gorilla_walk_cycle_animation - gorilla_animations_table      ; 4136: a9 1d
     cmp gorilla_animation                                             ; 4138: cd 70 0a
-    beq c4152                                                         ; 413b: f0 15
+    beq update_gorilla_state                                          ; 413b: f0 15
     tay                                                               ; 413d: a8
     sty gorilla_animation                                             ; 413e: 8c 70 0a
-    jmp c4152                                                         ; 4141: 4c 52 41
+    jmp update_gorilla_state                                          ; 4141: 4c 52 41
 
-c4144
+update_gorilla_if_not_idle
     lda #gorilla_idle_animation - gorilla_animations_table            ; 4144: a9 19
     cmp gorilla_animation                                             ; 4146: cd 70 0a
-    beq c4152                                                         ; 4149: f0 07
+    beq update_gorilla_state                                          ; 4149: f0 07
     tay                                                               ; 414b: a8
     sty gorilla_animation                                             ; 414c: 8c 70 0a
-    jsr sub_c4261                                                     ; 414f: 20 61 42
-c4152
+    jsr get_random_gorilla_idle_delay                                 ; 414f: 20 61 42
+update_gorilla_state
     lda desired_room_index                                            ; 4152: a5 30
     cmp #3                                                            ; 4154: c9 03
-    bcs c41c3                                                         ; 4156: b0 6b
+    bcs update_gorilla_idle_delay                                     ; 4156: b0 6b
     ldx #0                                                            ; 4158: a2 00
     sty remember_gorilla_state                                        ; 415a: 8c 6e 42
     ldy #5                                                            ; 415d: a0 05
     jsr test_for_collision_between_objects_x_and_y                    ; 415f: 20 e2 28
     ldy remember_gorilla_state                                        ; 4162: ac 6e 42
     ora #0                                                            ; 4165: 09 00
-    beq c41c3                                                         ; 4167: f0 5a
+    beq update_gorilla_idle_delay                                     ; 4167: f0 5a
     lda save_game_level_f_got_banana_or_banana_y_position             ; 4169: ad 16 0a
     cmp #$ff                                                          ; 416c: c9 ff
-    bne c4186                                                         ; 416e: d0 16
+    bne set_player_reaction_speed                                     ; 416e: d0 16
     lda player_held_object_spriteid                                   ; 4170: a5 52
     cmp #$db                                                          ; 4172: c9 db
-    bne c4186                                                         ; 4174: d0 10
+    bne set_player_reaction_speed                                     ; 4174: d0 10
     jsr remove_item_from_toolbar_menu                                 ; 4176: 20 e0 2b
     lda #0                                                            ; 4179: a9 00
     sta player_held_object_spriteid                                   ; 417b: 85 52
     sta object_spriteid + objectid_player_accessory                   ; 417d: 8d a9 09
     sta player_using_object_spriteid                                  ; 4180: 8d b6 2e
     sta save_game_level_f_got_banana_or_banana_y_position             ; 4183: 8d 16 0a
-c4186
+; if gorilla is climbing or on rope then fall off gorilla
+set_player_reaction_speed
     lda #$80                                                          ; 4186: a9 80
     sta player_wall_collision_reaction_speed                          ; 4188: 8d 33 24
+; branch if climbing or on rope
     lda gorilla_animation                                             ; 418b: ad 70 0a
     cmp #gorilla_climbing_rope_animation - gorilla_animations_table   ; 418e: c9 5a
-    beq c41c3                                                         ; 4190: f0 31
+    beq update_gorilla_idle_delay                                     ; 4190: f0 31
     cmp #gorilla_on_rope_animation - gorilla_animations_table         ; 4192: c9 56
-    beq c41c3                                                         ; 4194: f0 2d
+    beq update_gorilla_idle_delay                                     ; 4194: f0 2d
     lda #6                                                            ; 4196: a9 06
     ldx gorilla_to_player_direction                                   ; 4198: ae 6d 42
-    bpl c419f                                                         ; 419b: 10 02
+    bpl set_player_reaction_speed_bounce_off_gorilla                  ; 419b: 10 02
     lda #$fa                                                          ; 419d: a9 fa
-c419f
+set_player_reaction_speed_bounce_off_gorilla
     sta player_wall_collision_reaction_speed                          ; 419f: 8d 33 24
     lda gorilla_animation                                             ; 41a2: ad 70 0a
     cmp #gorilla_jump_on_rope_animation - gorilla_animations_table    ; 41a5: c9 2a
-    beq c41c3                                                         ; 41a7: f0 1a
+    beq update_gorilla_idle_delay                                     ; 41a7: f0 1a
     cmp #gorilla_jump_off_rope_animation - gorilla_animations_table   ; 41a9: c9 40
-    beq c41c3                                                         ; 41ab: f0 16
+    beq update_gorilla_idle_delay                                     ; 41ab: f0 16
     lda #1                                                            ; 41ad: a9 01
     ldx gorilla_to_player_direction                                   ; 41af: ae 6d 42
-    bpl c41b6                                                         ; 41b2: 10 02
+    bpl set_gorilla_direction                                         ; 41b2: 10 02
     lda #$ff                                                          ; 41b4: a9 ff
-c41b6
+set_gorilla_direction
     sta gorilla_direction                                             ; 41b6: 8d 73 0a
     ldy #gorilla_idle_animation - gorilla_animations_table            ; 41b9: a0 19
     sty gorilla_animation                                             ; 41bb: 8c 70 0a
     ldy #0                                                            ; 41be: a0 00
-    jsr sub_c4261                                                     ; 41c0: 20 61 42
-c41c3
+    jsr get_random_gorilla_idle_delay                                 ; 41c0: 20 61 42
+update_gorilla_idle_delay
     lda gorilla_animation                                             ; 41c3: ad 70 0a
     cmp #gorilla_idle_animation - gorilla_animations_table            ; 41c6: c9 19
-    bne c41d2                                                         ; 41c8: d0 08
+    bne update_gorilla_state_based_on_animation_step                  ; 41c8: d0 08
     lda delay_before_gorilla_state_change                             ; 41ca: ad 75 0a
-    bne c41d2                                                         ; 41cd: d0 03
-    jsr sub_c4261                                                     ; 41cf: 20 61 42
-c41d2
+    bne update_gorilla_state_based_on_animation_step                  ; 41cd: d0 03
+    jsr get_random_gorilla_idle_delay                                 ; 41cf: 20 61 42
+update_gorilla_state_based_on_animation_step
     sty gorilla_animation_step                                        ; 41d2: 8c 74 0a
     iny                                                               ; 41d5: c8
     lda gorilla_animations_table,y                                    ; 41d6: b9 72 3f
     ldx gorilla_direction                                             ; 41d9: ae 73 0a
-    bpl c41e3                                                         ; 41dc: 10 05
+    bpl add_offset_to_x_position                                      ; 41dc: 10 05
     eor #$ff                                                          ; 41de: 49 ff
     clc                                                               ; 41e0: 18
     adc #1                                                            ; 41e1: 69 01
-c41e3
+add_offset_to_x_position
     clc                                                               ; 41e3: 18
     adc gorilla_x_position                                            ; 41e4: 6d 72 0a
     sta gorilla_x_position                                            ; 41e7: 8d 72 0a
     iny                                                               ; 41ea: c8
+; add offset to y position
     lda gorilla_animations_table,y                                    ; 41eb: b9 72 3f
     clc                                                               ; 41ee: 18
     adc gorilla_y_position                                            ; 41ef: 6d 71 0a
     sta gorilla_y_position                                            ; 41f2: 8d 71 0a
-c41f5
+update_gorilla_object
     lda desired_room_index                                            ; 41f5: a5 30
     cmp #2                                                            ; 41f7: c9 02
     bcs return2                                                       ; 41f9: b0 65
@@ -1428,16 +1441,17 @@ c41f5
     lda gorilla_y_position                                            ; 420a: ad 71 0a
     sta object_y_low + objectid_gorilla                               ; 420d: 8d 81 09
     lda gorilla_x_position                                            ; 4210: ad 72 0a
+; reduce gorilla position to room position
     ldx desired_room_index                                            ; 4213: a6 30
-    beq c421a                                                         ; 4215: f0 03
+    beq reduced_to_room_0                                             ; 4215: f0 03
     sec                                                               ; 4217: 38
     sbc #$50 ; 'P'                                                    ; 4218: e9 50
-c421a
+reduced_to_room_0
     ldx #0                                                            ; 421a: a2 00
     cmp #$a0                                                          ; 421c: c9 a0
-    bcc c4221                                                         ; 421e: 90 01
+    bcc set_gorilla_x_position                                        ; 421e: 90 01
     dex                                                               ; 4220: ca
-c4221
+set_gorilla_x_position
     stx object_x_high + objectid_gorilla                              ; 4221: 8e 6b 09
     asl                                                               ; 4224: 0a
     rol object_x_high + objectid_gorilla                              ; 4225: 2e 6b 09
@@ -1445,7 +1459,7 @@ c4221
     rol object_x_high + objectid_gorilla                              ; 4229: 2e 6b 09
     sta object_x_low + objectid_gorilla                               ; 422c: 8d 55 09
     lda gorilla_direction                                             ; 422f: ad 73 0a
-    bpl c4245                                                         ; 4232: 10 11
+    bpl update_gorilla_jump_off_rope                                  ; 4232: 10 11
     lda object_x_low + objectid_gorilla                               ; 4234: ad 55 09
     sec                                                               ; 4237: 38
     sbc #1                                                            ; 4238: e9 01
@@ -1454,7 +1468,7 @@ c4221
     sbc #0                                                            ; 4240: e9 00
     sta object_x_high + objectid_gorilla                              ; 4242: 8d 6b 09
 ; check for first update in room (branch if so)
-c4245
+update_gorilla_jump_off_rope
     lda update_room_first_update_flag                                 ; 4245: ad 2b 13
     bne return2                                                       ; 4248: d0 16
     lda gorilla_animation                                             ; 424a: ad 70 0a
@@ -1469,7 +1483,7 @@ c4245
 return2
     rts                                                               ; 4260: 60
 
-sub_c4261
+get_random_gorilla_idle_delay
     lda #$1f                                                          ; 4261: a9 1f
     jsr get_random_number_up_to_a                                     ; 4263: 20 a6 18
     clc                                                               ; 4266: 18
@@ -1594,7 +1608,7 @@ room_3_game_update_loop
 ; check for first update in room (branch if not)
 update_banana
     lda update_room_first_update_flag                                 ; 42f8: ad 2b 13
-    beq c434d                                                         ; 42fb: f0 50
+    beq update_banana_not_first_update                                ; 42fb: f0 50
 ; initialise banana
     lda #spriteid_banana_menu_item                                    ; 42fd: a9 db
     sta toolbar_collectable_spriteids+1                               ; 42ff: 8d e9 2e
@@ -1635,7 +1649,7 @@ initialise_banana_new_room
 banana_already_landed_or_taken_local
     jmp banana_already_landed_or_taken                                ; 434a: 4c aa 43
 
-c434d
+update_banana_not_first_update
     lda save_game_level_f_got_banana_or_banana_y_position             ; 434d: ad 16 0a
     cmp #$ff                                                          ; 4350: c9 ff
     beq banana_already_landed_or_taken                                ; 4352: f0 56
@@ -1794,37 +1808,6 @@ ground_fill_2x2_bottom_right
     !byte %....#...                                                   ; 4423: 08
 sprite_data
 pydis_end
-
-; Automatically generated labels:
-;     c4010
-;     c402b
-;     c4039
-;     c404b
-;     c4053
-;     c407a
-;     c4092
-;     c4095
-;     c40a9
-;     c40d7
-;     c40e1
-;     c40fd
-;     c4118
-;     c412e
-;     c4136
-;     c4144
-;     c4152
-;     c4186
-;     c419f
-;     c41b6
-;     c41c3
-;     c41d2
-;     c41e3
-;     c41f5
-;     c421a
-;     c4221
-;     c4245
-;     c434d
-;     sub_c4261
 !if (<ground_fill_2x2_top_left) != $04 {
     !error "Assertion failed: <ground_fill_2x2_top_left == $04"
 }
