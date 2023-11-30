@@ -27,7 +27,7 @@ set_label_maker_hook(my_label_maker)
 
 load(0x53c0, "orig/auxcode.dat", "6502", "4bb0d6da344653209ba062a544cf0e9c")
 
-common_to_all()
+common_to_all('auxcode')
 
 entry(0x53c0)
 

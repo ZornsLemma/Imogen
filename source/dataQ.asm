@@ -91,7 +91,7 @@ tile_all_set_pixels                                 = $0aa9
 l0ab1                                               = $0ab1
 l0ab2                                               = $0ab2
 developer_flags                                     = $1103
-l110c                                               = $110c
+start_game                                          = $110c
 initialise_level_and_room                           = $1140
 start_room                                          = $12bb
 game_update                                         = $12da
@@ -722,7 +722,7 @@ c4301
     sta l0055                                                         ; 4313: 85 55
     pla                                                               ; 4315: 68
     sta l0054                                                         ; 4316: 85 54
-    jmp l110c                                                         ; 4318: 4c 0c 11
+    jmp start_game                                                    ; 4318: 4c 0c 11
 
     !text "icodata"                                                   ; 431b: 69 63 6f...
     !byte $0d                                                         ; 4322: 0d
@@ -878,7 +878,6 @@ pydis_end
 ;     l007d
 ;     l0ab1
 ;     l0ab2
-;     l110c
 ;     l16dc
 ;     l178b
 ;     l178c

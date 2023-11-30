@@ -255,7 +255,7 @@ common_sprite_dict = {
     199: "spriteid_erase_player",
 }
 
-def common_to_all():
+def common_to_all(level_letter):
 
     constant(40, "game_area_width_cells")
     constant(24, "game_area_height_cells")
@@ -404,6 +404,10 @@ def common_to_all():
     label(0x3ade, "room_index_cheat2")
     label(0x3adf, "level_room_data_table")
     expr_label(0x3ae0, make_add("level_room_data_table", "1"))
+
+    # Used by dataQ only
+    if level_letter == '' or level_letter == 'Q':
+        label(0x110c, "start_game")
 
     label(0x53c0, "auxcode")
     label(0x53c0, "check_password")

@@ -339,7 +339,7 @@ collision_map_area = move(0x0c00, 0x3fcb, 0x402c-0x3fcb) # code copies 256 bytes
 level_utils_area   = move(0x0ab7, 0x4088, 0x48)
 sideways_ram_area  = move(0x8000, 0x3fbb, 16)
 
-common_to_all()
+common_to_all('')
 
 entry(0x3c06, "execution_start")
 
@@ -611,7 +611,6 @@ with main_code_area:
     label(0x1109, "timing_latch_high")
     label(0x110a, "display_initialised_flag")
     label(0x110b, "vertical_sync_amount_for_crtc_register")
-    label(0x110c, "start_game")
     comment(0x111a, "Initialise the number of remaining transformations to 150.")
     char(0x111b)
     char(0x1120)

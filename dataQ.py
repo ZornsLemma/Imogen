@@ -14,7 +14,7 @@ set_sprite_dict(sprite_dict)
 
 load(0x3ad5, "orig/dataQ.dat", "6502", "dff117f00b8f8cbd07939320d753fcdf")
 
-common_to_all()
+common_to_all('Q')
 
 # NOTE:
 #
@@ -36,6 +36,7 @@ set_label_maker_hook(s.substitute_label_maker)
 entry(0x3ad9)
 label(0x3cfa, "return1")
 entry(0x42ad)
+
 
 result = go(False)
 result = remove_sprite_data(result)

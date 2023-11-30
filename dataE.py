@@ -54,7 +54,7 @@ label(0xa76, "egg_animation_index")
 label(0xa77, "room_1_egg_x")
 label(0xa78, "room_1_egg_y")
 
-common_to_all()
+common_to_all('E')
 define_level(4)
 
 # NOTE:

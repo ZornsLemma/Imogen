@@ -17,7 +17,7 @@ set_sprite_dict(sprite_dict)
 
 load(0x3ad5, "orig/dataJ.dat", "6502", "c73d7e405d93cdcff53385132a68323b")
 
-common_to_all()
+common_to_all('J')
 define_level(4)
 
 # NOTE:

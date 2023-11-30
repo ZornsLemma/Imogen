@@ -17,7 +17,7 @@ set_sprite_dict(sprite_dict)
 
 load(0x3ad5, "orig/dataO.dat", "6502", "ddadc2eb1bfb98e14b769a9851db5513")
 
-common_to_all()
+common_to_all('O')
 define_level(4)
 label(0x0070, "room_exit_direction")
 

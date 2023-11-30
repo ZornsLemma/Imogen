@@ -203,8 +203,8 @@ room_1_left_hand_balloon_y_position                 = $0a75
 room_1_right_hand_balloon_y_position                = $0a76
 room_3_balloon_y_position                           = $0a77
 room_0_balloon_y_position                           = $0a78
-l0a79                                               = $0a79
-l0a7a                                               = $0a7a
+room_3_baby_progress                                = $0a79
+room_3_baby_y_position                              = $0a7a
 string_input_buffer                                 = $0a90
 tile_all_set_pixels                                 = $0aa9
 developer_flags                                     = $1103
@@ -498,9 +498,9 @@ initialise_if_room_2
     ldy #>envelope2                                                   ; 3bdf: a0 45
     jsr define_envelope                                               ; 3be1: 20 5e 39
     lda #spriteid_cache2                                              ; 3be4: a9 cf
-    sta object_erase_type + 4                                         ; 3be6: 8d b0 38
+    sta object_erase_type + objectid_balloon1_rope                    ; 3be6: 8d b0 38
     lda #$c0                                                          ; 3be9: a9 c0
-    sta object_z_order + 4                                            ; 3beb: 8d c6 38
+    sta object_z_order + objectid_balloon1_rope                       ; 3beb: 8d c6 38
     lda #$bf                                                          ; 3bee: a9 bf
     sta object_z_order + 3                                            ; 3bf0: 8d c5 38
     lda #spriteid_table                                               ; 3bf3: a9 ce
@@ -583,45 +583,45 @@ c3c86
     cmp #2                                                            ; 3c88: c9 02
     bne return2                                                       ; 3c8a: d0 74
     lda save_game_level_g_dropped_table_progress                      ; 3c8c: ad 18 0a
-    bmi c3cc5                                                         ; 3c8f: 30 34
+    bmi end_of_table_falling                                          ; 3c8f: 30 34
     cmp #9                                                            ; 3c91: c9 09
-    bcs c3cb7                                                         ; 3c93: b0 22
+    bcs end_of_balloon                                                ; 3c93: b0 22
     cmp #1                                                            ; 3c95: c9 01
-    beq c3ca8                                                         ; 3c97: f0 0f
+    beq burst_the_balloon                                             ; 3c97: f0 0f
     lda #spriteid_balloon                                             ; 3c99: a9 c8
     sta object_spriteid + objectid_balloon1                           ; 3c9b: 8d ab 09
     lda #spriteid_rope_bottom                                         ; 3c9e: a9 d0
     sta object_spriteid + objectid_balloon1_rope                      ; 3ca0: 8d ac 09
     ldy #9                                                            ; 3ca3: a0 09
-    jmp c3cd1                                                         ; 3ca5: 4c d1 3c
+    jmp update_table_and_rope_objects                                 ; 3ca5: 4c d1 3c
 
-c3ca8
+burst_the_balloon
     lda #spriteid_burst_balloon                                       ; 3ca8: a9 d3
     sta object_spriteid + objectid_balloon1                           ; 3caa: 8d ab 09
     lda #spriteid_rope_top                                            ; 3cad: a9 d1
     sta object_spriteid + objectid_balloon1_rope                      ; 3caf: 8d ac 09
     ldy #9                                                            ; 3cb2: a0 09
-    jmp c3cd1                                                         ; 3cb4: 4c d1 3c
+    jmp update_table_and_rope_objects                                 ; 3cb4: 4c d1 3c
 
-c3cb7
+end_of_balloon
     tay                                                               ; 3cb7: a8
     lda #spriteid_one_pixel_masked_out                                ; 3cb8: a9 00
     sta object_spriteid + objectid_balloon1                           ; 3cba: 8d ab 09
     lda #spriteid_rope_top                                            ; 3cbd: a9 d1
     sta object_spriteid + objectid_balloon1_rope                      ; 3cbf: 8d ac 09
-    jmp c3cd1                                                         ; 3cc2: 4c d1 3c
+    jmp update_table_and_rope_objects                                 ; 3cc2: 4c d1 3c
 
-c3cc5
+end_of_table_falling
     lda #spriteid_one_pixel_masked_out                                ; 3cc5: a9 00
     sta object_spriteid + objectid_balloon1                           ; 3cc7: 8d ab 09
     lda #spriteid_rope_top_broken                                     ; 3cca: a9 d2
     sta object_spriteid + objectid_balloon1_rope                      ; 3ccc: 8d ac 09
     ldy #$12                                                          ; 3ccf: a0 12
-c3cd1
+update_table_and_rope_objects
     ldx #$1a                                                          ; 3cd1: a2 1a
-    lda #5                                                            ; 3cd3: a9 05
+    lda #objectid_table                                               ; 3cd3: a9 05
     jsr set_object_position_from_cell_xy                              ; 3cd5: 20 5d 1f
-    lda #4                                                            ; 3cd8: a9 04
+    lda #objectid_balloon1_rope                                       ; 3cd8: a9 04
     jsr set_object_position_from_cell_xy                              ; 3cda: 20 5d 1f
     lda #8                                                            ; 3cdd: a9 08
     sta temp_sprite_x_offset                                          ; 3cdf: 85 3a
@@ -755,10 +755,32 @@ room_3_game_update_loop
     ldy current_level                                                 ; 3d86: a4 31
     jmp initialise_level_and_room                                     ; 3d88: 4c 40 11
 
-l3d8b
-    !byte   0, $d4,   0,   0, $d9,   0, $d9,   0, $d9,   0, $d9,   0  ; 3d8b: 00 d4 00...
-    !byte $d9,   0, $d9,   0, $d9,   0, $d9,   0,   0, $d5,   0,   0  ; 3d97: d9 00 d9...
-    !byte $d6,   8,   0, $d7,   0,   0                                ; 3da3: d6 08 00...
+baby_spriteids
+    !byte 0                                                           ; 3d8b: 00
+    !byte spriteid_baby                                               ; 3d8c: d4
+    !byte 0, 0                                                        ; 3d8d: 00 00
+    !byte spriteid_baby_smile                                         ; 3d8f: d9
+    !byte 0                                                           ; 3d90: 00
+    !byte spriteid_baby_smile                                         ; 3d91: d9
+    !byte 0                                                           ; 3d92: 00
+    !byte spriteid_baby_smile                                         ; 3d93: d9
+    !byte 0                                                           ; 3d94: 00
+    !byte spriteid_baby_smile                                         ; 3d95: d9
+    !byte 0                                                           ; 3d96: 00
+    !byte spriteid_baby_smile                                         ; 3d97: d9
+    !byte 0                                                           ; 3d98: 00
+    !byte spriteid_baby_smile                                         ; 3d99: d9
+    !byte 0                                                           ; 3d9a: 00
+    !byte spriteid_baby_smile                                         ; 3d9b: d9
+    !byte 0                                                           ; 3d9c: 00
+    !byte spriteid_baby_smile                                         ; 3d9d: d9
+    !byte 0, 0                                                        ; 3d9e: 00 00
+    !byte spriteid_baby_surprise                                      ; 3da0: d5
+    !byte 0, 0                                                        ; 3da1: 00 00
+    !byte spriteid_baby_fall                                          ; 3da3: d6
+    !byte 8, 0                                                        ; 3da4: 08 00
+    !byte spriteid_baby_dead                                          ; 3da6: d7
+    !byte 0, 0                                                        ; 3da7: 00 00
 
 room_3_update_handler
     lda #3                                                            ; 3da9: a9 03
@@ -782,7 +804,7 @@ room_3_update_handler
     ldy #$1b                                                          ; 3dcd: a0 1b
 c3dcf
     sty save_game_level_g_baby_progress                               ; 3dcf: 8c 19 0a
-    sty l0a79                                                         ; 3dd2: 8c 79 0a
+    sty room_3_baby_progress                                          ; 3dd2: 8c 79 0a
 c3dd5
     lda desired_room_index                                            ; 3dd5: a5 30
     cmp #3                                                            ; 3dd7: c9 03
@@ -790,7 +812,7 @@ c3dd5
     ldx #<envelope3                                                   ; 3ddb: a2 47
     ldy #>envelope3                                                   ; 3ddd: a0 45
     jsr define_envelope                                               ; 3ddf: 20 5e 39
-    lda #$cf                                                          ; 3de2: a9 cf
+    lda #spriteid_cache2                                              ; 3de2: a9 cf
     sta object_erase_type + 5                                         ; 3de4: 8d b1 38
     lda #$58 ; 'X'                                                    ; 3de7: a9 58
     sta object_x_low + 5                                              ; 3de9: 8d 55 09
@@ -798,11 +820,11 @@ c3dec
     jmp c3eb5                                                         ; 3dec: 4c b5 3e
 
 c3def
-    lda l0a79                                                         ; 3def: ad 79 0a
+    lda room_3_baby_progress                                          ; 3def: ad 79 0a
     clc                                                               ; 3df2: 18
     adc #2                                                            ; 3df3: 69 02
     tay                                                               ; 3df5: a8
-    lda l3d8b,y                                                       ; 3df6: b9 8b 3d
+    lda baby_spriteids,y                                              ; 3df6: b9 8b 3d
     cmp #0                                                            ; 3df9: c9 00
     bne c3e00                                                         ; 3dfb: d0 03
     ldy save_game_level_g_baby_progress                               ; 3dfd: ac 19 0a
@@ -834,7 +856,7 @@ c3e0e
     lda #$ff                                                          ; 3e33: a9 ff
     sta save_game_level_g_got_bow                                     ; 3e35: 8d 17 0a
     lda #$60 ; '`'                                                    ; 3e38: a9 60
-    sta l0a7a                                                         ; 3e3a: 8d 7a 0a
+    sta room_3_baby_y_position                                        ; 3e3a: 8d 7a 0a
     ldy #$15                                                          ; 3e3d: a0 15
     lda #$18                                                          ; 3e3f: a9 18
     sta save_game_level_g_baby_progress                               ; 3e41: 8d 19 0a
@@ -859,7 +881,7 @@ c3e47
     jmp c3ea7                                                         ; 3e6a: 4c a7 3e
 
 c3e6d
-    lda l0a7a                                                         ; 3e6d: ad 7a 0a
+    lda room_3_baby_y_position                                        ; 3e6d: ad 7a 0a
     cmp #$98                                                          ; 3e70: c9 98
     bcc c3ea7                                                         ; 3e72: 90 33
     lda desired_room_index                                            ; 3e74: a5 30
@@ -888,18 +910,18 @@ c3e92
     sta sound_priority_per_channel_table                              ; 3ea1: 8d 6f 39
     sta sound_priority_per_channel_table+1                            ; 3ea4: 8d 70 39
 c3ea7
-    sty l0a79                                                         ; 3ea7: 8c 79 0a
+    sty room_3_baby_progress                                          ; 3ea7: 8c 79 0a
     iny                                                               ; 3eaa: c8
-    lda l3d8b,y                                                       ; 3eab: b9 8b 3d
+    lda baby_spriteids,y                                              ; 3eab: b9 8b 3d
     clc                                                               ; 3eae: 18
-    adc l0a7a                                                         ; 3eaf: 6d 7a 0a
-    sta l0a7a                                                         ; 3eb2: 8d 7a 0a
+    adc room_3_baby_y_position                                        ; 3eaf: 6d 7a 0a
+    sta room_3_baby_y_position                                        ; 3eb2: 8d 7a 0a
 c3eb5
     lda desired_room_index                                            ; 3eb5: a5 30
     cmp #3                                                            ; 3eb7: c9 03
     bne c3f0c                                                         ; 3eb9: d0 51
-    ldy l0a79                                                         ; 3ebb: ac 79 0a
-    lda l3d8b,y                                                       ; 3ebe: b9 8b 3d
+    ldy room_3_baby_progress                                          ; 3ebb: ac 79 0a
+    lda baby_spriteids,y                                              ; 3ebe: b9 8b 3d
     sta object_spriteid + 5                                           ; 3ec1: 8d ad 09
     lda save_game_level_g_baby_progress                               ; 3ec4: ad 19 0a
     cmp #$1b                                                          ; 3ec7: c9 1b
@@ -914,7 +936,7 @@ c3eb5
     jmp c3f0c                                                         ; 3edc: 4c 0c 3f
 
 c3edf
-    lda l0a7a                                                         ; 3edf: ad 7a 0a
+    lda room_3_baby_y_position                                        ; 3edf: ad 7a 0a
     sta object_y_low + 5                                              ; 3ee2: 8d 81 09
     jmp c3f0c                                                         ; 3ee5: 4c 0c 3f
 
@@ -946,7 +968,7 @@ c3f0c
     lda save_game_level_g_baby_progress                               ; 3f1d: ad 19 0a
     cmp #1                                                            ; 3f20: c9 01
     beq c3f2d                                                         ; 3f22: f0 09
-    lda l0a79                                                         ; 3f24: ad 79 0a
+    lda room_3_baby_progress                                          ; 3f24: ad 79 0a
     cmp #$15                                                          ; 3f27: c9 15
     beq c3f2d                                                         ; 3f29: f0 02
     ldy #$20 ; ' '                                                    ; 3f2b: a0 20
@@ -1125,7 +1147,7 @@ c4004
     lda #$ff                                                          ; 4031: a9 ff
     sta save_game_level_g_got_bow                                     ; 4033: 8d 17 0a
 c4036
-    lda #$cd                                                          ; 4036: a9 cd
+    lda #spriteid_cache1                                              ; 4036: a9 cd
     sta object_erase_type + 2                                         ; 4038: 8d ae 38
     lda #0                                                            ; 403b: a9 00
     sta object_y_high + 2                                             ; 403d: 8d 94 09
@@ -1949,10 +1971,6 @@ pydis_end
 ;     c3c47
 ;     c3c65
 ;     c3c86
-;     c3ca8
-;     c3cb7
-;     c3cc5
-;     c3cd1
 ;     c3dcf
 ;     c3dd5
 ;     c3dec
@@ -2006,10 +2024,7 @@ pydis_end
 ;     c44eb
 ;     l0078
 ;     l0079
-;     l0a79
-;     l0a7a
 ;     l3d01
-;     l3d8b
 ;     l3f3c
 ;     l4187
 ;     l4188
@@ -2181,8 +2196,14 @@ pydis_end
 !if (object_y_low + 5) != $0981 {
     !error "Assertion failed: object_y_low + 5 == $0981"
 }
+!if (objectid_balloon1_rope) != $04 {
+    !error "Assertion failed: objectid_balloon1_rope == $04"
+}
 !if (objectid_old_player) != $0b {
     !error "Assertion failed: objectid_old_player == $0b"
+}
+!if (objectid_table) != $05 {
+    !error "Assertion failed: objectid_table == $05"
 }
 !if (room_0_data) != $3f3d {
     !error "Assertion failed: room_0_data == $3f3d"
@@ -2202,6 +2223,21 @@ pydis_end
 !if (spriteid_arrow) != $cc {
     !error "Assertion failed: spriteid_arrow == $cc"
 }
+!if (spriteid_baby) != $d4 {
+    !error "Assertion failed: spriteid_baby == $d4"
+}
+!if (spriteid_baby_dead) != $d7 {
+    !error "Assertion failed: spriteid_baby_dead == $d7"
+}
+!if (spriteid_baby_fall) != $d6 {
+    !error "Assertion failed: spriteid_baby_fall == $d6"
+}
+!if (spriteid_baby_smile) != $d9 {
+    !error "Assertion failed: spriteid_baby_smile == $d9"
+}
+!if (spriteid_baby_surprise) != $d5 {
+    !error "Assertion failed: spriteid_baby_surprise == $d5"
+}
 !if (spriteid_balloon) != $c8 {
     !error "Assertion failed: spriteid_balloon == $c8"
 }
@@ -2213,6 +2249,9 @@ pydis_end
 }
 !if (spriteid_burst_balloon) != $d3 {
     !error "Assertion failed: spriteid_burst_balloon == $d3"
+}
+!if (spriteid_cache1) != $cd {
+    !error "Assertion failed: spriteid_cache1 == $cd"
 }
 !if (spriteid_cache2) != $cf {
     !error "Assertion failed: spriteid_cache2 == $cf"
