@@ -176,6 +176,7 @@ player_held_object_spriteid                         = $52
 developer_mode_sideways_ram_is_set_up_flag          = $5b
 l0070                                               = $70
 room_exit_direction                                 = $70
+temp_x                                              = $70
 show_dialog_box                                     = $040a
 remove_dialog                                       = $0453
 object_x_low                                        = $0950
@@ -1180,10 +1181,10 @@ initialise_room_2_or_3
 update_gorilla_not_first_update
     lda object_x_high                                                 ; 4010: ad 66 09
     lsr                                                               ; 4013: 4a
-    sta l0070                                                         ; 4014: 85 70
+    sta temp_x                                                        ; 4014: 85 70
     lda object_x_low                                                  ; 4016: ad 50 09
     ror                                                               ; 4019: 6a
-    lsr l0070                                                         ; 401a: 46 70
+    lsr temp_x                                                        ; 401a: 46 70
     ror                                                               ; 401c: 6a
 ; add 80 for room 1 and another 80 for room 2
     ldx desired_room_index                                            ; 401d: a6 30
