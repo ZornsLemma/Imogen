@@ -154,8 +154,10 @@ def ab(addr, message=""):
         message = ". "+message
     comment(addr, "ALWAYS branch" + message, inline=True)
 
-def ri(addr):
-    comment(addr, "redundant instruction", inline=True)
+def ri(addr, message=""):
+    if message == "":
+        message = "redundant instruction"
+    comment(addr, message, inline=True)
 
 def stars(addr, message=""):
     c = "*************************************************************************************"
