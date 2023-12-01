@@ -2056,7 +2056,6 @@ subtract_from_player_x_loop
     sbc #$40 ; '@'                                                    ; 1a56: e9 40       .@  :1925[1]
     sta object_x_low,x                                                ; 1a58: 9d 50 09    .P. :1927[1]
     lda #0                                                            ; 1a5b: a9 00       ..  :192a[1]
-; Shouldn't this be sbc #1? Possible bug?
     sbc #0                                                            ; 1a5d: e9 00       ..  :192c[1]
     sta object_x_high,x                                               ; 1a5f: 9d 66 09    .f. :192e[1]
     dex                                                               ; 1a62: ca          .   :1931[1]
@@ -3675,14 +3674,14 @@ test_for_collision
     stx temp_object_index                                             ; 2192: 86 64       .d  :2061[1]
     txa                                                               ; 2194: 8a          .   :2063[1]
     clc                                                               ; 2195: 18          .   :2064[1]
-    adc #$0b                                                          ; 2196: 69 0b       i.  :2065[1]
+    adc #max_objects                                                  ; 2196: 69 0b       i.  :2065[1]
     tax                                                               ; 2198: aa          .   :2067[1]
     ldy backmost_object_index                                         ; 2199: a4 60       .`  :2068[1]
     jsr test_for_collision_between_objects_x_and_y                    ; 219b: 20 e2 28     .( :206a[1]
     bne found_collision                                               ; 219e: d0 0e       ..  :206d[1]
     tya                                                               ; 21a0: 98          .   :206f[1]
     clc                                                               ; 21a1: 18          .   :2070[1]
-    adc #$0b                                                          ; 21a2: 69 0b       i.  :2071[1]
+    adc #max_objects                                                  ; 21a2: 69 0b       i.  :2071[1]
     tay                                                               ; 21a4: a8          .   :2073[1]
     jsr test_for_collision_between_objects_x_and_y                    ; 21a5: 20 e2 28     .( :2074[1]
     ldx temp_object_index                                             ; 21a8: a6 64       .d  :2077[1]
@@ -4256,7 +4255,7 @@ player_y_is_unchanged
     beq return12                                                      ; 24c8: f0 0f       ..  :2397[1]
     lda #2                                                            ; 24ca: a9 02       ..  :2399[1]
     sta temp_bottom_offset                                            ; 24cc: 8d 51 25    .Q% :239b[1]
-    lda #$0b                                                          ; 24cf: a9 0b       ..  :239e[1]
+    lda #objectid_old_player                                          ; 24cf: a9 0b       ..  :239e[1]
     jsr get_solid_rock_collision_for_object_a                         ; 24d1: 20 94 28     .( :23a0[1]
     bne return12                                                      ; 24d4: d0 03       ..  :23a3[1]
 has_landed
@@ -4623,9 +4622,9 @@ temp_bottom_offset
     !byte 0                                                           ; 2682: 00          .   :2551[1]
 
 adjust_left_or_right_extent_due_to_holding_an_object
-    cpx #0                                                            ; 2683: e0 00       ..  :2552[1]   ; Look for X=0 or X=11
+    cpx #objectid_player                                              ; 2683: e0 00       ..  :2552[1]   ; Look for X=0 or X=11
     beq got_a_player_object                                           ; 2685: f0 04       ..  :2554[1]
-    cpx #$0b                                                          ; 2687: e0 0b       ..  :2556[1]
+    cpx #objectid_old_player                                          ; 2687: e0 0b       ..  :2556[1]
     bne return_zeroing_offsets                                        ; 2689: d0 7c       .|  :2558[1]
 ; if (player is not holding an object) then return
 got_a_player_object
@@ -4720,6 +4719,7 @@ find_left_and_right_of_object_including_held_object
     sta temp_left_offset                                              ; 2720: 8d d0 24    ..$ :25ef[1]
     jmp adjust_left_or_right_extent_due_to_holding_an_object          ; 2723: 4c 52 25    LR% :25f2[1]
 
+; *************************************************************************************
 update_object_a_solid_rock_collision
     sta objectid_to_test                                              ; 2726: 85 53       .S  :25f5[1]
     tax                                                               ; 2728: aa          .   :25f7[1]
@@ -4737,7 +4737,7 @@ update_object_a_solid_rock_collision
     jsr find_left_and_right_of_object_including_held_object           ; 2739: 20 df 25     .% :2608[1]
     lda objectid_to_test                                              ; 273c: a5 53       .S  :260b[1]
     clc                                                               ; 273e: 18          .   :260d[1]
-    adc #$0b                                                          ; 273f: 69 0b       i.  :260e[1]
+    adc #max_objects                                                  ; 273f: 69 0b       i.  :260e[1]
     tax                                                               ; 2741: aa          .   :2610[1]
     jsr find_top_and_bottom_of_object                                 ; 2742: 20 d2 24     .$ :2611[1]
     jsr check_for_object_intersecting_wall_left_or_right              ; 2745: 20 5a 26     Z& :2614[1]
@@ -4747,7 +4747,7 @@ update_object_a_solid_rock_collision
     beq check_top_and_bottom_for_collisions                           ; 274c: f0 09       ..  :261b[1]
     lda objectid_to_test                                              ; 274e: a5 53       .S  :261d[1]
     clc                                                               ; 2750: 18          .   :261f[1]
-    adc #$0b                                                          ; 2751: 69 0b       i.  :2620[1]
+    adc #max_objects                                                  ; 2751: 69 0b       i.  :2620[1]
     tax                                                               ; 2753: aa          .   :2622[1]
     jsr find_left_and_right_of_object_including_held_object           ; 2754: 20 df 25     .% :2623[1]
 check_top_and_bottom_for_collisions
@@ -5132,7 +5132,7 @@ check_for_solid_rock_under_player_to_right
 player_has_fallen_off_either_edge
     lda objectid_to_test                                              ; 294e: a5 53       .S  :281d[1]
     beq check_cell_centre_below_player                                ; 2950: f0 04       ..  :281f[1]
-    cmp #$0b                                                          ; 2952: c9 0b       ..  :2821[1]
+    cmp #objectid_old_player                                          ; 2952: c9 0b       ..  :2821[1]
     bne recall_registers_and_return2                                  ; 2954: d0 2c       .,  :2823[1]
 ; divide the sum by two to find the centre position
 check_cell_centre_below_player
@@ -8478,8 +8478,8 @@ define_text_window
     sta crtc_address_register                                         ; 3e03: 8d 00 fe    ...
     lda #$20 ; ' '                                                    ; 3e06: a9 20       .
     sta crtc_address_write                                            ; 3e08: 8d 01 fe    ...
-    lda #$0b                                                          ; 3e0b: a9 0b       ..             ; redundant
-    lda #0                                                            ; 3e0d: a9 00       ..             ; redundant
+    lda #$0b                                                          ; 3e0b: a9 0b       ..             ; redundant instruction
+    lda #0                                                            ; 3e0d: a9 00       ..             ; redundant instruction
 ; Calculate 35+tv shift and store in vertical_sync_amount_for_crtc_register
     lda #35                                                           ; 3e0f: a9 23       .#
     clc                                                               ; 3e11: 18          .
