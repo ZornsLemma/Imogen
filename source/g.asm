@@ -4771,6 +4771,7 @@ check_top_and_bottom_for_collisions
 finished_collision_update
     lda objectid_to_test                                              ; 2780: a5 53       .S  :264f[1]
     bne return13                                                      ; 2782: d0 06       ..  :2651[1]
+; player specific update
     jsr update_player_accessory_including_toolbar                     ; 2784: 20 b8 2e     .. :2653[1]
     jsr handle_player_landing_sound                                   ; 2787: 20 6b 23     k# :2656[1]
 return13

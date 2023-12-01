@@ -1367,9 +1367,10 @@ add_offset_to_arrow_object_position
     jsr update_object_a_solid_rock_collision                          ; 41d2: 20 f5 25
     lda #objectid_arrow                                               ; 41d5: a9 02
     jsr get_solid_rock_collision_for_object_a                         ; 41d7: 20 94 28
-    beq c4206                                                         ; 41da: f0 2a
+    beq copy_arrow_position                                           ; 41da: f0 2a
+; move arrow
     lda arrow_direction                                               ; 41dc: ad 6f 0a
-    bpl c41f5                                                         ; 41df: 10 14
+    bpl arrow_going_left                                              ; 41df: 10 14
     lda object_x_low + objectid_arrow                                 ; 41e1: ad 52 09
     clc                                                               ; 41e4: 18
     adc #8                                                            ; 41e5: 69 08
@@ -1377,9 +1378,9 @@ add_offset_to_arrow_object_position
     lda object_x_high + objectid_arrow                                ; 41ea: ad 68 09
     adc #0                                                            ; 41ed: 69 00
     sta object_x_high + objectid_arrow                                ; 41ef: 8d 68 09
-    jmp c4206                                                         ; 41f2: 4c 06 42
+    jmp copy_arrow_position                                           ; 41f2: 4c 06 42
 
-c41f5
+arrow_going_left
     lda object_x_low + objectid_arrow                                 ; 41f5: ad 52 09
     sec                                                               ; 41f8: 38
     sbc #8                                                            ; 41f9: e9 08
@@ -1387,7 +1388,7 @@ c41f5
     lda object_x_high + objectid_arrow                                ; 41fe: ad 68 09
     sbc #0                                                            ; 4201: e9 00
     sta object_x_high + objectid_arrow                                ; 4203: 8d 68 09
-c4206
+copy_arrow_position
     lda object_x_low + objectid_arrow                                 ; 4206: ad 52 09
     sta arrow_x_position_low                                          ; 4209: 8d 70 0a
     lda object_x_high + objectid_arrow                                ; 420c: ad 68 09
@@ -1396,11 +1397,15 @@ c4206
     sta arrow_y_position_low                                          ; 4215: 8d 72 0a
     ldx #2                                                            ; 4218: a2 02
     jsr find_left_and_right_of_object                                 ; 421a: 20 34 24
+; check arrow direction, and check if off the edge of the room
     lda arrow_direction                                               ; 421d: ad 6f 0a
-    bmi c423e                                                         ; 4220: 30 1c
+    bmi check_if_arrow_is_off_the_left_edge_of_the_room               ; 4220: 30 1c
+; check if arrow is off the right edge of the room
     lda object_left_cell_x                                            ; 4222: a5 78
-    cmp #$28 ; '('                                                    ; 4224: c9 28
+    cmp #game_area_width_cells                                        ; 4224: c9 28
     bcc return5                                                       ; 4226: 90 30
+; subtract 320 from the arrow x position and increment the arrow room number to move it
+; one room to the right
     lda arrow_x_position_low                                          ; 4228: ad 70 0a
     sec                                                               ; 422b: 38
     sbc #$40 ; '@'                                                    ; 422c: e9 40
@@ -1409,11 +1414,13 @@ c4206
     sbc #0                                                            ; 4233: e9 00
     sta arrow_x_position_high                                         ; 4235: 8d 71 0a
     inc arrow_room                                                    ; 4238: ee 73 0a
-    jmp c4253                                                         ; 423b: 4c 53 42
+    jmp hide_arrow_object_sprite                                      ; 423b: 4c 53 42
 
-c423e
+check_if_arrow_is_off_the_left_edge_of_the_room
     lda object_right_cell_x                                           ; 423e: a5 79
     bpl return5                                                       ; 4240: 10 16
+; add 320 to the arrow x position and decrement the arrow room number to move it one
+; room to the left
     lda arrow_x_position_low                                          ; 4242: ad 70 0a
     clc                                                               ; 4245: 18
     adc #$40 ; '@'                                                    ; 4246: 69 40
@@ -1421,7 +1428,7 @@ c423e
     lda #1                                                            ; 424b: a9 01
     sta arrow_x_position_high                                         ; 424d: 8d 71 0a
     dec arrow_room                                                    ; 4250: ce 73 0a
-c4253
+hide_arrow_object_sprite
     lda #spriteid_one_pixel_masked_out                                ; 4253: a9 00
     sta object_spriteid + objectid_arrow                              ; 4255: 8d aa 09
 return5
@@ -1997,10 +2004,6 @@ pydis_end
 ;     c4125
 ;     c4134
 ;     c416b
-;     c41f5
-;     c4206
-;     c423e
-;     c4253
 ;     c437d
 ;     c43ad
 ;     c43b0
@@ -2138,6 +2141,9 @@ pydis_end
 }
 !if (exit_room_right) != $04 {
     !error "Assertion failed: exit_room_right == $04"
+}
+!if (game_area_width_cells) != $28 {
+    !error "Assertion failed: game_area_width_cells == $28"
 }
 !if (level_specific_initialisation) != $3af2 {
     !error "Assertion failed: level_specific_initialisation == $3af2"
