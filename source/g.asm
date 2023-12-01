@@ -400,30 +400,30 @@ osfile_block_start_address_mid1                     = $7b
 sprite_screen_address_for_column_low                = $7b
 cell_x_plus_current_cell_within_row                 = $7c
 l007c                                               = $7c
+object_hit_wall_on_left_result_flag                 = $7c
 osfile_block_start_address_mid2                     = $7c
-player_hit_wall_on_left_result_flag                 = $7c
 sprite_screen_address_for_column_high               = $7c
 current_row                                         = $7d
 l007d                                               = $7d
+object_hit_wall_on_right_result_flag                = $7d
 osfile_block_start_address_high                     = $7d
-player_hit_wall_on_right_result_flag                = $7d
 sprite_data_byte                                    = $7d
 dest_sprite_address_low                             = $7e
 l007e                                               = $7e
+object_hit_ceiling_result_flag                      = $7e
 osfile_block_end_address_low                        = $7e
 pattern_length_cycle_counter                        = $7e
-player_hit_ceiling_result_flag                      = $7e
 dest_sprite_address_high                            = $7f
 l007f                                               = $7f
+object_hit_floor_result_flag                        = $7f
 osfile_block_end_address_mid1                       = $7f
-player_hit_floor_result_flag                        = $7f
 adjustment                                          = $80
 cell_based_loop_counter                             = $80
 erase_sprite_byte                                   = $80
 l0080                                               = $80
+object_height_in_cells                              = $80
+object_width_in_cells                               = $80
 osfile_block_end_address_mid2                       = $80
-player_height_in_cells                              = $80
-player_width_in_cells                               = $80
 sprite_addr_low                                     = $80
 l0081                                               = $81
 osfile_block_end_address_high                       = $81
@@ -4302,7 +4302,7 @@ update_player_hitting_floor_or_pushed
     pha                                                               ; 24f6: 48          H   :23c5[1]
     tya                                                               ; 24f7: 98          .   :23c6[1]
     pha                                                               ; 24f8: 48          H   :23c7[1]
-    lda #0                                                            ; 24f9: a9 00       ..  :23c8[1]
+    lda #objectid_player                                              ; 24f9: a9 00       ..  :23c8[1]
     jsr update_player_hitting_floor                                   ; 24fb: 20 70 27     p' :23ca[1]
 ; if (no player collision) then branch (return)
     lda player_wall_collision_reaction_speed                          ; 24fe: ad 33 24    .3$ :23cd[1]
@@ -4740,10 +4740,10 @@ update_object_a_solid_rock_collision
     adc #$0b                                                          ; 273f: 69 0b       i.  :260e[1]
     tax                                                               ; 2741: aa          .   :2610[1]
     jsr find_top_and_bottom_of_object                                 ; 2742: 20 d2 24     .$ :2611[1]
-    jsr check_for_player_intersecting_wall_left_or_right              ; 2745: 20 5a 26     Z& :2614[1]
+    jsr check_for_object_intersecting_wall_left_or_right              ; 2745: 20 5a 26     Z& :2614[1]
 ; if (no collisions left or right) then branch
-    lda player_hit_wall_on_left_result_flag                           ; 2748: a5 7c       .|  :2617[1]
-    ora player_hit_wall_on_right_result_flag                          ; 274a: 05 7d       .}  :2619[1]
+    lda object_hit_wall_on_left_result_flag                           ; 2748: a5 7c       .|  :2617[1]
+    ora object_hit_wall_on_right_result_flag                          ; 274a: 05 7d       .}  :2619[1]
     beq check_top_and_bottom_for_collisions                           ; 274c: f0 09       ..  :261b[1]
     lda objectid_to_test                                              ; 274e: a5 53       .S  :261d[1]
     clc                                                               ; 2750: 18          .   :261f[1]
@@ -4755,10 +4755,10 @@ check_top_and_bottom_for_collisions
     sta temp_bottom_offset                                            ; 2759: 8d 51 25    .Q% :2628[1]
     ldx objectid_to_test                                              ; 275c: a6 53       .S  :262b[1]
     jsr find_top_and_bottom_of_object                                 ; 275e: 20 d2 24     .$ :262d[1]
-    jsr check_for_player_intersecting_floor_or_ceiling                ; 2761: 20 e5 26     .& :2630[1]
+    jsr check_for_object_intersecting_floor_or_ceiling                ; 2761: 20 e5 26     .& :2630[1]
     jsr update_floor_or_ceiling_collision                             ; 2764: 20 1e 27     .' :2633[1]
-    lda player_hit_wall_on_left_result_flag                           ; 2767: a5 7c       .|  :2636[1]
-    ora player_hit_wall_on_right_result_flag                          ; 2769: 05 7d       .}  :2638[1]
+    lda object_hit_wall_on_left_result_flag                           ; 2767: a5 7c       .|  :2636[1]
+    ora object_hit_wall_on_right_result_flag                          ; 2769: 05 7d       .}  :2638[1]
     beq finished_collision_update                                     ; 276b: f0 13       ..  :263a[1]
 ; handle wall collision
     lda #1                                                            ; 276d: a9 01       ..  :263c[1]
@@ -4766,7 +4766,7 @@ check_top_and_bottom_for_collisions
     ldx objectid_to_test                                              ; 2772: a6 53       .S  :2641[1]
     jsr find_left_and_right_of_object_including_held_object           ; 2774: 20 df 25     .% :2643[1]
     jsr find_top_and_bottom_of_object                                 ; 2777: 20 d2 24     .$ :2646[1]
-    jsr check_for_player_intersecting_wall_left_or_right              ; 277a: 20 5a 26     Z& :2649[1]
+    jsr check_for_object_intersecting_wall_left_or_right              ; 277a: 20 5a 26     Z& :2649[1]
     jsr handle_left_right_wall_collision                              ; 277d: 20 93 26     .& :264c[1]
 finished_collision_update
     lda objectid_to_test                                              ; 2780: a5 53       .S  :264f[1]
@@ -4778,55 +4778,62 @@ return13
 
 ; *************************************************************************************
 ; 
-; Check for player intersecting wall to the left or right
+; Check for object intersecting wall to the left or right
+; 
+; On Entry:
+;     The cell based extents of the object have been worked out previously:
+;           object_left_cell_x
+;          object_right_cell_x
+;            object_top_cell_y
+;         object_bottom_cell_y
 ; 
 ; On Exit:
-;      player_hit_wall_on_left_result_flag: Flag set ($ff) if player is intersecting
-; wall on the left side of the player
-;     player_hit_wall_on_right_result_flag: Flag set ($ff) if intersecting wall on the
-; right side of the player
+;      object_hit_wall_on_left_result_flag: Flag set ($ff) if object is intersecting
+; wall on the left side of the object
+;     object_hit_wall_on_right_result_flag: Flag set ($ff) if intersecting wall on the
+; right side of the object
 ; 
 ; *************************************************************************************
-check_for_player_intersecting_wall_left_or_right
+check_for_object_intersecting_wall_left_or_right
     lda #$ff                                                          ; 278b: a9 ff       ..  :265a[1]
-    sta player_hit_wall_on_left_result_flag                           ; 278d: 85 7c       .|  :265c[1]
-; store player's cell height
+    sta object_hit_wall_on_left_result_flag                           ; 278d: 85 7c       .|  :265c[1]
+; store objects's cell height
     ldx object_left_cell_x                                            ; 278f: a6 78       .x  :265e[1]
     ldy object_bottom_cell_y                                          ; 2791: a4 7b       .{  :2660[1]
     tya                                                               ; 2793: 98          .   :2662[1]
     sec                                                               ; 2794: 38          8   :2663[1]
     sbc object_top_cell_y                                             ; 2795: e5 7a       .z  :2664[1]
-    sta player_height_in_cells                                        ; 2797: 85 80       ..  :2666[1]
-; look at collision map at each cell up the player's height, looking for a solid wall
-loop_up_player_cells_looking_for_solid_wall
+    sta object_height_in_cells                                        ; 2797: 85 80       ..  :2666[1]
+; look at collision map at each cell up the object's height, looking for a solid wall
+loop_up_object_cells_looking_for_solid_wall
     jsr read_collision_map_value_for_xy                               ; 2799: 20 fa 1e     .. :2668[1]
     cmp #3                                                            ; 279c: c9 03       ..  :266b[1]
-    beq found_wall_on_players_left_side                               ; 279e: f0 07       ..  :266d[1]
+    beq found_wall_on_objects_left_side                               ; 279e: f0 07       ..  :266d[1]
     dey                                                               ; 27a0: 88          .   :266f[1]
-    dec player_height_in_cells                                        ; 27a1: c6 80       ..  :2670[1]
-    bpl loop_up_player_cells_looking_for_solid_wall                   ; 27a3: 10 f4       ..  :2672[1]
+    dec object_height_in_cells                                        ; 27a1: c6 80       ..  :2670[1]
+    bpl loop_up_object_cells_looking_for_solid_wall                   ; 27a3: 10 f4       ..  :2672[1]
 ; mark that no collision was found on the left side
-    inc player_hit_wall_on_left_result_flag                           ; 27a5: e6 7c       .|  :2674[1]
-found_wall_on_players_left_side
+    inc object_hit_wall_on_left_result_flag                           ; 27a5: e6 7c       .|  :2674[1]
+found_wall_on_objects_left_side
     lda #$ff                                                          ; 27a7: a9 ff       ..  :2676[1]
-    sta player_hit_wall_on_right_result_flag                          ; 27a9: 85 7d       .}  :2678[1]
-; store player's cell height (again)
+    sta object_hit_wall_on_right_result_flag                          ; 27a9: 85 7d       .}  :2678[1]
+; store object's cell height (again)
     ldx object_right_cell_x                                           ; 27ab: a6 79       .y  :267a[1]
     ldy object_bottom_cell_y                                          ; 27ad: a4 7b       .{  :267c[1]
     tya                                                               ; 27af: 98          .   :267e[1]
     sec                                                               ; 27b0: 38          8   :267f[1]
     sbc object_top_cell_y                                             ; 27b1: e5 7a       .z  :2680[1]
-    sta player_height_in_cells                                        ; 27b3: 85 80       ..  :2682[1]
-; look at collision map at each cell up the player's height, looking for a solid wall
+    sta object_height_in_cells                                        ; 27b3: 85 80       ..  :2682[1]
+; look at collision map at each cell up the object's height, looking for a solid wall
 read_cells_in_column_loop
     jsr read_collision_map_value_for_xy                               ; 27b5: 20 fa 1e     .. :2684[1]
     cmp #3                                                            ; 27b8: c9 03       ..  :2687[1]
     beq return14                                                      ; 27ba: f0 07       ..  :2689[1]
     dey                                                               ; 27bc: 88          .   :268b[1]
-    dec player_height_in_cells                                        ; 27bd: c6 80       ..  :268c[1]
+    dec object_height_in_cells                                        ; 27bd: c6 80       ..  :268c[1]
     bpl read_cells_in_column_loop                                     ; 27bf: 10 f4       ..  :268e[1]
 ; mark that no collision was found on the right side
-    inc player_hit_wall_on_right_result_flag                          ; 27c1: e6 7d       .}  :2690[1]
+    inc object_hit_wall_on_right_result_flag                          ; 27c1: e6 7d       .}  :2690[1]
 return14
     rts                                                               ; 27c3: 60          `   :2692[1]
 
@@ -4840,8 +4847,8 @@ return14
 ; *************************************************************************************
 handle_left_right_wall_collision
     ldx objectid_to_test                                              ; 27c4: a6 53       .S  :2693[1]
-    lda player_hit_wall_on_left_result_flag                           ; 27c6: a5 7c       .|  :2695[1]
-    cmp player_hit_wall_on_right_result_flag                          ; 27c8: c5 7d       .}  :2697[1]
+    lda object_hit_wall_on_left_result_flag                           ; 27c6: a5 7c       .|  :2695[1]
+    cmp object_hit_wall_on_right_result_flag                          ; 27c8: c5 7d       .}  :2697[1]
     beq return15                                                      ; 27ca: f0 49       .I  :2699[1]
     bcc object_has_hit_wall_on_right_side                             ; 27cc: 90 25       .%  :269b[1]
 ; object has hit wall on left side. Adjust object position to align with the cell next
@@ -4888,69 +4895,69 @@ return15
 
 ; *************************************************************************************
 ; 
-; Check for player intersecting floor or ceiling of the room
+; Check for object intersecting floor or ceiling of the room
 ; 
 ; On Entry:
-;     The cell based extents of the player have been worked out previously:
+;     The cell based extents of the object have been worked out previously:
 ;           object_left_cell_x
 ;          object_right_cell_x
 ;            object_top_cell_y
 ;         object_bottom_cell_y
 ; 
 ; On Exit:
-;       player_hit_floor_result_flag: $ff if hit, $00 otherwise
-;     player_hit_ceiling_result_flag: $ff if hit, $00 otherwise
+;       object_hit_floor_result_flag: $ff if hit, $00 otherwise
+;     object_hit_ceiling_result_flag: $ff if hit, $00 otherwise
 ; 
 ; *************************************************************************************
-check_for_player_intersecting_floor_or_ceiling
+check_for_object_intersecting_floor_or_ceiling
     lda #$ff                                                          ; 2816: a9 ff       ..  :26e5[1]
-    sta player_hit_ceiling_result_flag                                ; 2818: 85 7e       .~  :26e7[1]
+    sta object_hit_ceiling_result_flag                                ; 2818: 85 7e       .~  :26e7[1]
 ; start at top right
     ldy object_top_cell_y                                             ; 281a: a4 7a       .z  :26e9[1]
-; get player width in cells
+; get object width in cells
     ldx object_right_cell_x                                           ; 281c: a6 79       .y  :26eb[1]
     txa                                                               ; 281e: 8a          .   :26ed[1]
     sec                                                               ; 281f: 38          8   :26ee[1]
     sbc object_left_cell_x                                            ; 2820: e5 78       .x  :26ef[1]
-    sta player_width_in_cells                                         ; 2822: 85 80       ..  :26f1[1]
+    sta object_width_in_cells                                         ; 2822: 85 80       ..  :26f1[1]
 ; loop from top right to top left looking for a solid_rock
-look_for_solid_rock_along_player_top_edge_loop
+look_for_solid_rock_along_object_top_edge_loop
     jsr read_collision_map_value_for_xy                               ; 2824: 20 fa 1e     .. :26f3[1]
     cmp #3                                                            ; 2827: c9 03       ..  :26f6[1]
     beq found_solid_rock                                              ; 2829: f0 07       ..  :26f8[1]
     dex                                                               ; 282b: ca          .   :26fa[1]
-    dec player_width_in_cells                                         ; 282c: c6 80       ..  :26fb[1]
-    bpl look_for_solid_rock_along_player_top_edge_loop                ; 282e: 10 f4       ..  :26fd[1]
-; no collision with top edge of player
-    inc player_hit_ceiling_result_flag                                ; 2830: e6 7e       .~  :26ff[1]
+    dec object_width_in_cells                                         ; 282c: c6 80       ..  :26fb[1]
+    bpl look_for_solid_rock_along_object_top_edge_loop                ; 282e: 10 f4       ..  :26fd[1]
+; no collision with top edge of object
+    inc object_hit_ceiling_result_flag                                ; 2830: e6 7e       .~  :26ff[1]
 found_solid_rock
     lda #$ff                                                          ; 2832: a9 ff       ..  :2701[1]
-    sta player_hit_floor_result_flag                                  ; 2834: 85 7f       ..  :2703[1]
+    sta object_hit_floor_result_flag                                  ; 2834: 85 7f       ..  :2703[1]
 ; start at bottom right
     ldy object_bottom_cell_y                                          ; 2836: a4 7b       .{  :2705[1]
-; get player width in cells (again)
+; get object width in cells (again)
     ldx object_right_cell_x                                           ; 2838: a6 79       .y  :2707[1]
     txa                                                               ; 283a: 8a          .   :2709[1]
     sec                                                               ; 283b: 38          8   :270a[1]
     sbc object_left_cell_x                                            ; 283c: e5 78       .x  :270b[1]
-    sta player_width_in_cells                                         ; 283e: 85 80       ..  :270d[1]
-look_for_solid_rock_along_player_bottom_edge_loop
+    sta object_width_in_cells                                         ; 283e: 85 80       ..  :270d[1]
+look_for_solid_rock_along_object_bottom_edge_loop
     jsr read_collision_map_value_for_xy                               ; 2840: 20 fa 1e     .. :270f[1]
     cmp #3                                                            ; 2843: c9 03       ..  :2712[1]
     beq return16                                                      ; 2845: f0 07       ..  :2714[1]
     dex                                                               ; 2847: ca          .   :2716[1]
-    dec player_width_in_cells                                         ; 2848: c6 80       ..  :2717[1]
-    bpl look_for_solid_rock_along_player_bottom_edge_loop             ; 284a: 10 f4       ..  :2719[1]
-; no collision with bottom edge of player
-    inc player_hit_floor_result_flag                                  ; 284c: e6 7f       ..  :271b[1]
+    dec object_width_in_cells                                         ; 2848: c6 80       ..  :2717[1]
+    bpl look_for_solid_rock_along_object_bottom_edge_loop             ; 284a: 10 f4       ..  :2719[1]
+; no collision with bottom edge of object
+    inc object_hit_floor_result_flag                                  ; 284c: e6 7f       ..  :271b[1]
 return16
     rts                                                               ; 284e: 60          `   :271d[1]
 
 ; *************************************************************************************
 update_floor_or_ceiling_collision
     ldx objectid_to_test                                              ; 284f: a6 53       .S  :271e[1]
-    lda player_hit_ceiling_result_flag                                ; 2851: a5 7e       .~  :2720[1]
-    cmp player_hit_floor_result_flag                                  ; 2853: c5 7f       ..  :2722[1]
+    lda object_hit_ceiling_result_flag                                ; 2851: a5 7e       .~  :2720[1]
+    cmp object_hit_floor_result_flag                                  ; 2853: c5 7f       ..  :2722[1]
     beq return17                                                      ; 2855: f0 49       .I  :2724[1]
     bcc object_has_hit_floor                                          ; 2857: 90 25       .%  :2726[1]
 ; object has hit ceiling. Adjust object position to align with the cell below the
@@ -4999,7 +5006,7 @@ return17
 ; Check if the player is hitting the floor, and if so, deal with it
 ; 
 ; On Entry:
-;     A: object id to test
+;     A: object id to test (in practice always zero for the player)
 ; 
 ; On Exit:
 ;     player_has_hit_floor_flag and A and flags: $ff if player hit floor,
@@ -5028,13 +5035,13 @@ update_player_hitting_floor
     lda #$ff                                                          ; 28b4: a9 ff       ..  :2783[1]
     sta default_collision_map_option                                  ; 28b6: 85 44       .D  :2785[1]
 ; have we hit the floor?
-    jsr check_for_player_intersecting_floor_or_ceiling                ; 28b8: 20 e5 26     .& :2787[1]
+    jsr check_for_object_intersecting_floor_or_ceiling                ; 28b8: 20 e5 26     .& :2787[1]
 ; clear 'just fallen off' table
     lda #0                                                            ; 28bb: a9 00       ..  :278a[1]
     sta player_just_fallen_off_edge_direction                         ; 28bd: 8d 90 28    ..( :278c[1]
     sta player_just_fallen_centrally_direction                        ; 28c0: 8d 91 28    ..( :278f[1]
 ; if (player hit floor) then branch
-    lda player_hit_floor_result_flag                                  ; 28c3: a5 7f       ..  :2792[1]
+    lda object_hit_floor_result_flag                                  ; 28c3: a5 7f       ..  :2792[1]
     sta player_has_hit_floor_flag                                     ; 28c5: 8d 8f 28    ..( :2794[1]
     bne player_hit_floor                                              ; 28c8: d0 03       ..  :2797[1]
     jmp recall_registers_and_return2                                  ; 28ca: 4c 51 28    LQ( :2799[1]
@@ -5274,20 +5281,20 @@ get_solid_rock_collision_for_object_a
     jsr find_top_and_bottom_of_object                                 ; 29d2: 20 d2 24     .$ :28a1[1]
     lda temp_default_collision_map_option                             ; 29d5: ad e1 28    ..( :28a4[1]
     sta default_collision_map_option                                  ; 29d8: 85 44       .D  :28a7[1]
-    jsr check_for_player_intersecting_wall_left_or_right              ; 29da: 20 5a 26     Z& :28a9[1]
-    jsr check_for_player_intersecting_floor_or_ceiling                ; 29dd: 20 e5 26     .& :28ac[1]
-    lda player_hit_wall_on_left_result_flag                           ; 29e0: a5 7c       .|  :28af[1]
+    jsr check_for_object_intersecting_wall_left_or_right              ; 29da: 20 5a 26     Z& :28a9[1]
+    jsr check_for_object_intersecting_floor_or_ceiling                ; 29dd: 20 e5 26     .& :28ac[1]
+    lda object_hit_wall_on_left_result_flag                           ; 29e0: a5 7c       .|  :28af[1]
     and #1                                                            ; 29e2: 29 01       ).  :28b1[1]
     sta temp_collision_result                                         ; 29e4: 8d 5b 29    .[) :28b3[1]
-    lda player_hit_wall_on_right_result_flag                          ; 29e7: a5 7d       .}  :28b6[1]
+    lda object_hit_wall_on_right_result_flag                          ; 29e7: a5 7d       .}  :28b6[1]
     and #4                                                            ; 29e9: 29 04       ).  :28b8[1]
     ora temp_collision_result                                         ; 29eb: 0d 5b 29    .[) :28ba[1]
     sta temp_collision_result                                         ; 29ee: 8d 5b 29    .[) :28bd[1]
-    lda player_hit_ceiling_result_flag                                ; 29f1: a5 7e       .~  :28c0[1]
+    lda object_hit_ceiling_result_flag                                ; 29f1: a5 7e       .~  :28c0[1]
     and #8                                                            ; 29f3: 29 08       ).  :28c2[1]
     ora temp_collision_result                                         ; 29f5: 0d 5b 29    .[) :28c4[1]
     sta temp_collision_result                                         ; 29f8: 8d 5b 29    .[) :28c7[1]
-    lda player_hit_floor_result_flag                                  ; 29fb: a5 7f       ..  :28ca[1]
+    lda object_hit_floor_result_flag                                  ; 29fb: a5 7f       ..  :28ca[1]
     and #2                                                            ; 29fd: 29 02       ).  :28cc[1]
     ora temp_collision_result                                         ; 29ff: 0d 5b 29    .[) :28ce[1]
     sta temp_collision_result                                         ; 2a02: 8d 5b 29    .[) :28d1[1]

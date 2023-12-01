@@ -222,19 +222,19 @@ substitute_labels = {
         "l007b": "object_bottom_cell_y",
     },
     (0x2726, 0x27ca): {
-        "l007c": "player_hit_wall_on_left_result_flag",
-        "l007d": "player_hit_wall_on_right_result_flag",
-        "l0080": "player_height_in_cells",
+        "l007c": "object_hit_wall_on_left_result_flag",
+        "l007d": "object_hit_wall_on_right_result_flag",
+        "l0080": "object_height_in_cells",
     },
     (0x27c4, 0x2815): {
         "l0080": "adjustment",
     },
     (0x2816, 0x2989): {
-        "l007e": "player_hit_ceiling_result_flag",
-        "l007f": "player_hit_floor_result_flag",
+        "l007e": "object_hit_ceiling_result_flag",
+        "l007f": "object_hit_floor_result_flag",
     },
     (0x2816, 0x284f): {
-        "l0080": "player_width_in_cells",
+        "l0080": "object_width_in_cells",
     },
     (0x284f, 0x28a0): {
         "l0080": "adjustment",
@@ -251,10 +251,10 @@ substitute_labels = {
         "l0080": "cell_based_loop_counter",
     },
     (0x29c5,0x2a11): {
-        "l007c": "player_hit_wall_on_left_result_flag",
-        "l007d": "player_hit_wall_on_right_result_flag",
-        "l007e": "player_hit_ceiling_result_flag",
-        "l007f": "player_hit_floor_result_flag",
+        "l007c": "object_hit_wall_on_left_result_flag",
+        "l007d": "object_hit_wall_on_right_result_flag",
+        "l007e": "object_hit_ceiling_result_flag",
+        "l007f": "object_hit_floor_result_flag",
     },
     (0x2cb8, 0x2d3c): {
         "address1_low": "menu_item_to_use",
@@ -1847,6 +1847,7 @@ On Exit:
            object_bottom: Set to object's position Y + sprite offset
        object_top_cell_y: Cell Y for object_top
     object_bottom_cell_y: Cell Y for object_bottom""")
+    expr(0x23c9, "objectid_player")
     comment(0x24d3, "remember object index")
     comment(0x24d4, "get address of current sprite for object")
     comment(0x24de, "recall object index")
@@ -1892,21 +1893,28 @@ On Exit:
     comment(0x263c, "handle wall collision")
     label(0x264f, "finished_collision_update")
     label(0x2659, "return13")
-    stars(0x265a, """Check for player intersecting wall to the left or right
+    stars(0x265a, """Check for object intersecting wall to the left or right
+
+On Entry:
+    The cell based extents of the object have been worked out previously:
+          object_left_cell_x
+         object_right_cell_x
+           object_top_cell_y
+        object_bottom_cell_y
 
 On Exit:
-     player_hit_wall_on_left_result_flag: Flag set ($ff) if player is intersecting wall on the left side of the player
-    player_hit_wall_on_right_result_flag: Flag set ($ff) if intersecting wall on the right side of the player""")
-    label(0x265a, "check_for_player_intersecting_wall_left_or_right")
-    comment(0x265e, "store player's cell height")
+     object_hit_wall_on_left_result_flag: Flag set ($ff) if object is intersecting wall on the left side of the object
+    object_hit_wall_on_right_result_flag: Flag set ($ff) if intersecting wall on the right side of the object""")
+    label(0x265a, "check_for_object_intersecting_wall_left_or_right")
+    comment(0x265e, "store objects's cell height")
     label(0x2532, "add_ya_to_object_bottom2")
     label(0x255a, "got_a_player_object")
-    comment(0x2668, "look at collision map at each cell up the player's height, looking for a solid wall")
+    comment(0x2668, "look at collision map at each cell up the object's height, looking for a solid wall")
     comment(0x2674, "mark that no collision was found on the left side")
-    label(0x2668, "loop_up_player_cells_looking_for_solid_wall")
-    label(0x2676, "found_wall_on_players_left_side")
-    comment(0x267a, "store player's cell height (again)")
-    comment(0x2684, "look at collision map at each cell up the player's height, looking for a solid wall")
+    label(0x2668, "loop_up_object_cells_looking_for_solid_wall")
+    label(0x2676, "found_wall_on_objects_left_side")
+    comment(0x267a, "store object's cell height (again)")
+    comment(0x2684, "look at collision map at each cell up the object's height, looking for a solid wall")
     label(0x2684, "read_cells_in_column_loop")
     comment(0x2690, "mark that no collision was found on the right side")
     label(0x2692, "return14")
@@ -1924,29 +1932,29 @@ On Entry:
     expr(0x26e0, "object_collided_right_wall")
     label(0x26e4, "return15")
 
-    stars(0x26e5, """Check for player intersecting floor or ceiling of the room
+    stars(0x26e5, """Check for object intersecting floor or ceiling of the room
 
 On Entry:
-    The cell based extents of the player have been worked out previously:
+    The cell based extents of the object have been worked out previously:
           object_left_cell_x
          object_right_cell_x
            object_top_cell_y
         object_bottom_cell_y
 
 On Exit:
-      player_hit_floor_result_flag: $ff if hit, $00 otherwise
-    player_hit_ceiling_result_flag: $ff if hit, $00 otherwise""")
-    label(0x26e5, "check_for_player_intersecting_floor_or_ceiling")
+      object_hit_floor_result_flag: $ff if hit, $00 otherwise
+    object_hit_ceiling_result_flag: $ff if hit, $00 otherwise""")
+    label(0x26e5, "check_for_object_intersecting_floor_or_ceiling")
     comment(0x26e9, "start at top right")
-    comment(0x26eb, "get player width in cells")
-    label(0x26f3, "look_for_solid_rock_along_player_top_edge_loop")
+    comment(0x26eb, "get object width in cells")
+    label(0x26f3, "look_for_solid_rock_along_object_top_edge_loop")
     comment(0x26f3, "loop from top right to top left looking for a solid_rock")
-    comment(0x26ff, "no collision with top edge of player")
+    comment(0x26ff, "no collision with top edge of object")
     label(0x2701, "found_solid_rock")
     comment(0x2705, "start at bottom right")
-    comment(0x2707, "get player width in cells (again)")
-    label(0x270f, "look_for_solid_rock_along_player_bottom_edge_loop")
-    comment(0x271b, "no collision with bottom edge of player")
+    comment(0x2707, "get object width in cells (again)")
+    label(0x270f, "look_for_solid_rock_along_object_bottom_edge_loop")
+    comment(0x271b, "no collision with bottom edge of object")
     label(0x271d, "return16")
     stars(0x271e)
     label(0x271e, "update_floor_or_ceiling_collision")
@@ -1962,7 +1970,7 @@ On Exit:
     stars(0x2770, """Check if the player is hitting the floor, and if so, deal with it
 
 On Entry:
-    A: object id to test
+    A: object id to test (in practice always zero for the player)
 
 On Exit:
     player_has_hit_floor_flag and A and flags: $ff if player hit floor,

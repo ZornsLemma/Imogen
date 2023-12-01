@@ -1365,7 +1365,7 @@ add_offset_to_arrow_object_position
     jsr set_arrow_object                                              ; 41cd: 20 59 42
     lda #objectid_arrow                                               ; 41d0: a9 02
     jsr update_object_a_solid_rock_collision                          ; 41d2: 20 f5 25
-    lda #2                                                            ; 41d5: a9 02
+    lda #objectid_arrow                                               ; 41d5: a9 02
     jsr get_solid_rock_collision_for_object_a                         ; 41d7: 20 94 28
     beq c4206                                                         ; 41da: f0 2a
     lda arrow_direction                                               ; 41dc: ad 6f 0a
