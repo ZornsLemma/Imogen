@@ -158,7 +158,7 @@ object_y_high                                       = $0992
 object_spriteid                                     = $09a8
 object_spriteid_old                                 = $09b3
 object_direction                                    = $09be
-current_animation                                   = $09df
+current_player_animation                            = $09df
 l0a62                                               = $0a62
 l0a63                                               = $0a63
 l0a64                                               = $0a64
@@ -960,7 +960,7 @@ sub_c3f5f
     lda current_player_character                                      ; 3f5f: a5 48
     cmp #6                                                            ; 3f61: c9 06
     bne return4                                                       ; 3f63: d0 49
-    lda current_animation                                             ; 3f65: ad df 09
+    lda current_player_animation                                      ; 3f65: ad df 09
     cmp #$51 ; 'Q'                                                    ; 3f68: c9 51
     beq c3f74                                                         ; 3f6a: f0 08
     cmp #$45 ; 'E'                                                    ; 3f6c: c9 45

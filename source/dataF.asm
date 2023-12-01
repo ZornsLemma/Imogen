@@ -209,7 +209,7 @@ object_y_high                                       = $0992
 object_spriteid                                     = $09a8
 object_spriteid_old                                 = $09b3
 object_direction                                    = $09be
-current_animation                                   = $09df
+current_player_animation                            = $09df
 save_game_level_f_got_banana_or_banana_y_position   = $0a16
 partition_position_y                                = $0a6f
 gorilla_animation                                   = $0a70
@@ -769,7 +769,7 @@ gorilla_not_on_rope
     cmp #spriteid_icodata_monkey                                      ; 3d7a: c9 06
     bne player_not_on_rope                                            ; 3d7c: d0 52
 ; check player animation
-    lda current_animation                                             ; 3d7e: ad df 09
+    lda current_player_animation                                      ; 3d7e: ad df 09
     cmp #monkey_climb_animation - monkey_base_animation               ; 3d81: c9 51
     beq player_is_monkey_on_rope                                      ; 3d83: f0 08
     cmp #monkey_climb_idle_animation - monkey_base_animation          ; 3d85: c9 45

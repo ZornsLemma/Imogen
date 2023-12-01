@@ -310,7 +310,7 @@ def common_to_all(level_letter):
     label(0x09b4, "object_spriteid_old + objectid_player_accessory")
     label(0x09be, "object_direction")
     label(0x09bf, "object_direction + objectid_player_accessory")
-    label(0x09df, "current_animation")
+    label(0x09df, "current_player_animation")
 
     optional_label(0x0a6f, "level_workspace")
     label(0x0aa9, "tile_all_set_pixels")

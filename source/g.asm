@@ -477,7 +477,7 @@ object_spriteid_old                                 = $09b3
 object_direction                                    = $09be
 object_direction_old                                = $09c9
 object_current_index_in_animation                   = $09d4
-current_animation                                   = $09df
+current_player_animation                            = $09df
 save_game                                           = $09ea
 save_game_checksum                                  = $09eb
 current_transformations_remaining                   = $09ec
@@ -703,7 +703,7 @@ object_reset_loop
     sta object_current_index_in_animation+1                           ; 12f7: 8d d5 09    ... :11c6[1]
     sta object_spriteid + objectid_player_accessory                   ; 12fa: 8d a9 09    ... :11c9[1]
     lda #4                                                            ; 12fd: a9 04       ..  :11cc[1]
-    sta current_animation                                             ; 12ff: 8d df 09    ... :11ce[1]
+    sta current_player_animation                                      ; 12ff: 8d df 09    ... :11ce[1]
     sta object_current_index_in_animation                             ; 1302: 8d d4 09    ... :11d1[1]
     lda #1                                                            ; 1305: a9 01       ..  :11d4[1]
     sta object_direction                                              ; 1307: 8d be 09    ... :11d6[1]
@@ -4151,24 +4151,24 @@ set_base_animation_address_and_handle_transform_in_out
 ; branch if not at the end of the animation
     bne not_at_end_of_animation                                       ; 242a: d0 03       ..  :22f9[1]
 ; restart the animation
-    ldy current_animation                                             ; 242c: ac df 09    ... :22fb[1]
+    ldy current_player_animation                                      ; 242c: ac df 09    ... :22fb[1]
 ; check for 'transform in' animation
 not_at_end_of_animation
-    lda current_animation                                             ; 242f: ad df 09    ... :22fe[1]
+    lda current_player_animation                                      ; 242f: ad df 09    ... :22fe[1]
     bne not_the_transform_in_animation                                ; 2432: d0 06       ..  :2301[1]
     tya                                                               ; 2434: 98          .   :2303[1]
     bne transforming                                                  ; 2435: d0 2b       .+  :2304[1]
     jsr start_of_transform_in_animation                               ; 2437: 20 58 23     X# :2306[1]
 ; check for 'transform out' animation
 not_the_transform_in_animation
-    lda current_animation                                             ; 243a: ad df 09    ... :2309[1]
+    lda current_player_animation                                      ; 243a: ad df 09    ... :2309[1]
     cmp transform_out_animation                                       ; 243d: cd ed 22    .." :230c[1]
     bne not_transforming_out                                          ; 2440: d0 14       ..  :230f[1]
-    cpy current_animation                                             ; 2442: cc df 09    ... :2311[1]
+    cpy current_player_animation                                      ; 2442: cc df 09    ... :2311[1]
     bne transforming                                                  ; 2445: d0 1b       ..  :2314[1]
 ; start the 'transform in' animation, having finished the 'transform out'
     lda #0                                                            ; 2447: a9 00       ..  :2316[1]
-    sta current_animation                                             ; 2449: 8d df 09    ... :2318[1]
+    sta current_player_animation                                      ; 2449: 8d df 09    ... :2318[1]
     sta object_current_index_in_animation                             ; 244c: 8d d4 09    ... :231b[1]
     sta current_player_character                                      ; 244f: 85 48       .H  :231e[1]
 ; stack shenanigans: remove the latest return address from the stack to restart the
@@ -4183,7 +4183,7 @@ not_transforming_out
     beq not_transforming                                              ; 245a: f0 09       ..  :2329[1]
 ; start 'transform out' animation
     ldy transform_out_animation                                       ; 245c: ac ed 22    .." :232b[1]
-    sty current_animation                                             ; 245f: 8c df 09    ... :232e[1]
+    sty current_player_animation                                      ; 245f: 8c df 09    ... :232e[1]
 transforming
     lda #$ff                                                          ; 2462: a9 ff       ..  :2331[1]
     rts                                                               ; 2464: 60          `   :2333[1]
@@ -4336,7 +4336,7 @@ push_continues_no_collision
     lda player_has_hit_floor_flag                                     ; 252b: ad 8f 28    ..( :23fa[1]
     beq move_player_because_of_push                                   ; 252e: f0 05       ..  :23fd[1]
     lda #0                                                            ; 2530: a9 00       ..  :23ff[1]
-    sta current_animation                                             ; 2532: 8d df 09    ... :2401[1]
+    sta current_player_animation                                      ; 2532: 8d df 09    ... :2401[1]
 move_player_because_of_push
     ldx #1                                                            ; 2535: a2 01       ..  :2404[1]
 push_player_and_accessory_object_loop
@@ -5716,7 +5716,7 @@ check_if_player_character_menu_item_chosen
     cmp new_player_character                                          ; 2c76: c5 4d       .M  :2b45[1]
     bne return21                                                      ; 2c78: d0 1b       ..  :2b47[1]
 ; return if transforming-in
-    lda current_animation                                             ; 2c7a: ad df 09    ... :2b49[1]
+    lda current_player_animation                                      ; 2c7a: ad df 09    ... :2b49[1]
     beq return21                                                      ; 2c7d: f0 16       ..  :2b4c[1]
     lda #0                                                            ; 2c7f: a9 00       ..  :2b4e[1]
     sta player_held_object_spriteid                                   ; 2c81: 85 52       .R  :2b50[1]
@@ -5741,7 +5741,7 @@ check_for_extra_menu_item_chosen
     bne return22                                                      ; 2ca1: d0 14       ..  :2b70[1]
     cmp new_player_character                                          ; 2ca3: c5 4d       .M  :2b72[1]
     bne return22                                                      ; 2ca5: d0 10       ..  :2b74[1]
-    lda current_animation                                             ; 2ca7: ad df 09    ... :2b76[1]
+    lda current_player_animation                                      ; 2ca7: ad df 09    ... :2b76[1]
     beq return22                                                      ; 2caa: f0 0b       ..  :2b79[1]
     lda desired_menu_slots,x                                          ; 2cac: bd 5c 29    .\) :2b7b[1]
     cmp player_held_object_spriteid                                   ; 2caf: c5 52       .R  :2b7e[1]
@@ -6151,7 +6151,7 @@ update_wizard
 wizard_not_changing_direction
     jsr update_player_hitting_floor_or_pushed                         ; 2ed7: 20 c4 23     .# :2da6[1]
     bne wizard_falling                                                ; 2eda: d0 39       .9  :2da9[1]
-    lda current_animation                                             ; 2edc: ad df 09    ... :2dab[1]
+    lda current_player_animation                                      ; 2edc: ad df 09    ... :2dab[1]
     cmp #wizard_jump_animation - wizard_base_animation                ; 2edf: c9 49       .I  :2dae[1]
     bne wizard_not_jumping                                            ; 2ee1: d0 18       ..  :2db0[1]
 ; wizard is jumping
@@ -6168,7 +6168,7 @@ wizard_got_index_in_animation_local
 
 wizard_start_to_fall
     lda #wizard_fall_continues_animation - wizard_base_animation      ; 2ef4: a9 96       ..  :2dc3[1]
-    sta current_animation                                             ; 2ef6: 8d df 09    ... :2dc5[1]
+    sta current_player_animation                                      ; 2ef6: 8d df 09    ... :2dc5[1]
     ldy #wizard_start_to_fall_animation - wizard_base_animation       ; 2ef9: a0 59       .Y  :2dc8[1]
 ; if (player has hit floor) then branch
 wizard_not_jumping
@@ -6176,7 +6176,7 @@ wizard_not_jumping
     bne wizard_hits_ground                                            ; 2efe: d0 24       .$  :2dcd[1]
 ; Player is not jumping and not on the floor, so must be falling.
 ; if (not already falling) then branch (start falling)
-    lda current_animation                                             ; 2f00: ad df 09    ... :2dcf[1]
+    lda current_player_animation                                      ; 2f00: ad df 09    ... :2dcf[1]
     cmp #wizard_fall_continues_animation - wizard_base_animation      ; 2f03: c9 96       ..  :2dd2[1]
     bne wizard_falling                                                ; 2f05: d0 0e       ..  :2dd4[1]
 ; if (player not hitting left or right wall) then branch (start falling)
@@ -6188,11 +6188,11 @@ wizard_not_jumping
     sta player_wall_collision_reaction_speed                          ; 2f12: 8d 33 24    .3$ :2de1[1]
 wizard_falling
     lda #wizard_fall_continues_animation - wizard_base_animation      ; 2f15: a9 96       ..  :2de4[1]
-    cmp current_animation                                             ; 2f17: cd df 09    ... :2de6[1]
+    cmp current_player_animation                                      ; 2f17: cd df 09    ... :2de6[1]
     beq wizard_got_index_in_animation_local                           ; 2f1a: f0 d5       ..  :2de9[1]
 ; wizard wasn't falling, but now is. It's a fall from a standing position, like through
 ; a trapdoor that just opened up beneath you. Also happens when being pushed.
-    sta current_animation                                             ; 2f1c: 8d df 09    ... :2deb[1]
+    sta current_player_animation                                      ; 2f1c: 8d df 09    ... :2deb[1]
     ldy #wizard_standing_fall_animation - wizard_base_animation       ; 2f1f: a0 86       ..  :2dee[1]
     jmp wizard_got_index_in_animation                                 ; 2f21: 4c 5f 2e    L_. :2df0[1]
 
@@ -6205,21 +6205,21 @@ wizard_hits_ground
     lda #wizard_walk_cycle_animation - wizard_base_animation          ; 2f30: a9 29       .)  :2dff[1]
     ldx jump_requested                                                ; 2f32: ae c7 3a    ..: :2e01[1]
     beq wizard_changing_direction_or_jump_requested                   ; 2f35: f0 09       ..  :2e04[1]
-    ldx current_animation                                             ; 2f37: ae df 09    ... :2e06[1]
+    ldx current_player_animation                                      ; 2f37: ae df 09    ... :2e06[1]
     cpx #wizard_fall_continues_animation - wizard_base_animation      ; 2f3a: e0 96       ..  :2e09[1]
     beq wizard_changing_direction_or_jump_requested                   ; 2f3c: f0 02       ..  :2e0b[1]
     lda #wizard_jump_animation - wizard_base_animation                ; 2f3e: a9 49       .I  :2e0d[1]
 wizard_changing_direction_or_jump_requested
-    cmp current_animation                                             ; 2f40: cd df 09    ... :2e0f[1]
+    cmp current_player_animation                                      ; 2f40: cd df 09    ... :2e0f[1]
     beq wizard_check_if_fallen_off_edge                               ; 2f43: f0 30       .0  :2e12[1]
-    sta current_animation                                             ; 2f45: 8d df 09    ... :2e14[1]
+    sta current_player_animation                                      ; 2f45: 8d df 09    ... :2e14[1]
     tay                                                               ; 2f48: a8          .   :2e17[1]
     jmp wizard_check_if_fallen_off_edge                               ; 2f49: 4c 44 2e    LD. :2e18[1]
 
 wizard_standing_still
-    lda current_animation                                             ; 2f4c: ad df 09    ... :2e1b[1]
+    lda current_player_animation                                      ; 2f4c: ad df 09    ... :2e1b[1]
     ldy #wizard_standing_still_animation - wizard_base_animation      ; 2f4f: a0 41       .A  :2e1e[1]
-    sty current_animation                                             ; 2f51: 8c df 09    ... :2e20[1]
+    sty current_player_animation                                      ; 2f51: 8c df 09    ... :2e20[1]
     cmp #wizard_walk_cycle_animation - wizard_base_animation          ; 2f54: c9 29       .)  :2e23[1]
     beq wizard_transition_to_standing_still                           ; 2f56: f0 1b       ..  :2e25[1]
     cmp #wizard_change_direction_animation - wizard_base_animation    ; 2f58: c9 36       .6  :2e27[1]
@@ -6250,7 +6250,7 @@ got_index_from_direction_requested
     lda player_just_fallen_off_edge_direction,x                       ; 2f7d: bd 90 28    ..( :2e4c[1]
     beq wizard_got_index_in_animation                                 ; 2f80: f0 0e       ..  :2e4f[1]
     ldy #wizard_fall_continues_animation - wizard_base_animation      ; 2f82: a0 96       ..  :2e51[1]
-    sty current_animation                                             ; 2f84: 8c df 09    ... :2e53[1]
+    sty current_player_animation                                      ; 2f84: 8c df 09    ... :2e53[1]
     ldy #wizard_animation11 - wizard_base_animation                   ; 2f87: a0 6c       .l  :2e56[1]
     cmp object_direction                                              ; 2f89: cd be 09    ... :2e58[1]
     beq wizard_got_index_in_animation                                 ; 2f8c: f0 02       ..  :2e5b[1]
@@ -6464,7 +6464,7 @@ update_cat
 cat_not_changing_direction
     jsr update_player_hitting_floor_or_pushed                         ; 3118: 20 c4 23     .# :2fe7[1]
     bne cat_falling                                                   ; 311b: d0 58       .X  :2fea[1]
-    lda current_animation                                             ; 311d: ad df 09    ... :2fec[1]
+    lda current_player_animation                                      ; 311d: ad df 09    ... :2fec[1]
     cmp #cat_jump_animation - cat_base_animation                      ; 3120: c9 45       .E  :2fef[1]
     bne cat_not_jumping                                               ; 3122: d0 1e       ..  :2ff1[1]
 ; cat is jumping
@@ -6480,7 +6480,7 @@ cat_not_changing_direction
     cmp object_direction                                              ; 3135: cd be 09    ... :3004[1]
     bne cat_start_to_fall                                             ; 3138: d0 1a       ..  :3007[1]
     ldy #cat_jump_apex_animation - cat_base_animation                 ; 313a: a0 58       .X  :3009[1]
-    sty current_animation                                             ; 313c: 8c df 09    ... :300b[1]
+    sty current_player_animation                                      ; 313c: 8c df 09    ... :300b[1]
 cat_got_index_in_animation_local
     jmp cat_got_index_in_animation                                    ; 313f: 4c a5 30    L.0 :300e[1]
 
@@ -6495,13 +6495,13 @@ cat_not_jumping
     bne cat_got_index_in_animation_local                              ; 3152: d0 eb       ..  :3021[1]
 cat_start_to_fall
     lda #cat_fall_animation - cat_base_animation                      ; 3154: a9 ae       ..  :3023[1]
-    sta current_animation                                             ; 3156: 8d df 09    ... :3025[1]
+    sta current_player_animation                                      ; 3156: 8d df 09    ... :3025[1]
     ldy #cat_start_to_fall_animation - cat_base_animation             ; 3159: a0 5f       ._  :3028[1]
 ; if (player has hit floor) then branch
 cat_check_for_hitting_floor
     lda player_has_hit_floor_flag                                     ; 315b: ad 8f 28    ..( :302a[1]
     bne cat_hits_ground                                               ; 315e: d0 24       .$  :302d[1]
-    lda current_animation                                             ; 3160: ad df 09    ... :302f[1]
+    lda current_player_animation                                      ; 3160: ad df 09    ... :302f[1]
     cmp #cat_fall_animation - cat_base_animation                      ; 3163: c9 ae       ..  :3032[1]
     bne cat_falling                                                   ; 3165: d0 0e       ..  :3034[1]
 ; check player for collision with left or right wall
@@ -6513,11 +6513,11 @@ cat_check_for_hitting_floor
     sta player_wall_collision_reaction_speed                          ; 3172: 8d 33 24    .3$ :3041[1]
 cat_falling
     lda #cat_fall_animation - cat_base_animation                      ; 3175: a9 ae       ..  :3044[1]
-    cmp current_animation                                             ; 3177: cd df 09    ... :3046[1]
+    cmp current_player_animation                                      ; 3177: cd df 09    ... :3046[1]
     beq cat_got_index_in_animation_local                              ; 317a: f0 c3       ..  :3049[1]
 ; cat wasn't falling, but now is. It's a fall from a standing position, like through a
 ; trapdoor that just opened up beneath you. Also happens when being pushed.
-    sta current_animation                                             ; 317c: 8d df 09    ... :304b[1]
+    sta current_player_animation                                      ; 317c: 8d df 09    ... :304b[1]
     ldy #cat_standing_fall_animation - cat_base_animation             ; 317f: a0 9e       ..  :304e[1]
     jmp cat_got_index_in_animation                                    ; 3181: 4c a5 30    L.0 :3050[1]
 
@@ -6532,18 +6532,18 @@ cat_hits_ground
     beq cat_changing_direction_or_jump_requested                      ; 3195: f0 02       ..  :3064[1]
     lda #cat_jump_animation - cat_base_animation                      ; 3197: a9 45       .E  :3066[1]
 cat_changing_direction_or_jump_requested
-    cmp current_animation                                             ; 3199: cd df 09    ... :3068[1]
+    cmp current_player_animation                                      ; 3199: cd df 09    ... :3068[1]
     beq cat_check_if_fallen_off_edge                                  ; 319c: f0 1d       ..  :306b[1]
-    sta current_animation                                             ; 319e: 8d df 09    ... :306d[1]
+    sta current_player_animation                                      ; 319e: 8d df 09    ... :306d[1]
     tay                                                               ; 31a1: a8          .   :3070[1]
     jmp cat_check_if_fallen_off_edge                                  ; 31a2: 4c 8a 30    L.0 :3071[1]
 
 cat_standing_still
-    lda current_animation                                             ; 31a5: ad df 09    ... :3074[1]
+    lda current_player_animation                                      ; 31a5: ad df 09    ... :3074[1]
     cmp #cat_standing_still_animation - cat_base_animation            ; 31a8: c9 41       .A  :3077[1]
     beq cat_check_if_fallen_off_edge                                  ; 31aa: f0 0f       ..  :3079[1]
     ldy #cat_standing_still_animation - cat_base_animation            ; 31ac: a0 41       .A  :307b[1]
-    sty current_animation                                             ; 31ae: 8c df 09    ... :307d[1]
+    sty current_player_animation                                      ; 31ae: 8c df 09    ... :307d[1]
     cmp #cat_walk_cycle_animation - cat_base_animation                ; 31b1: c9 29       .)  :3080[1]
     beq cat_transition_to_standing_still                              ; 31b3: f0 04       ..  :3082[1]
     cmp #cat_change_direction_animation - cat_base_animation          ; 31b5: c9 36       .6  :3084[1]
@@ -6563,7 +6563,7 @@ got_direction_index
     beq cat_got_index_in_animation                                    ; 31c6: f0 0e       ..  :3095[1]
 ; cat is falling
     ldy #cat_fall_animation - cat_base_animation                      ; 31c8: a0 ae       ..  :3097[1]
-    sty current_animation                                             ; 31ca: 8c df 09    ... :3099[1]
+    sty current_player_animation                                      ; 31ca: 8c df 09    ... :3099[1]
     ldy #cat_animation11 - cat_base_animation                         ; 31cd: a0 84       ..  :309c[1]
     cmp object_direction                                              ; 31cf: cd be 09    ... :309e[1]
     beq cat_got_index_in_animation                                    ; 31d2: f0 02       ..  :30a1[1]
@@ -6582,7 +6582,7 @@ cat_got_index_in_animation
     lda #>cat_tail_spriteids                                          ; 31ea: a9 2e       ..  :30b9[1]
     sta address1_high                                                 ; 31ec: 85 71       .q  :30bb[1]
     lda #$ff                                                          ; 31ee: a9 ff       ..  :30bd[1]
-    ldx current_animation                                             ; 31f0: ae df 09    ... :30bf[1]
+    ldx current_player_animation                                      ; 31f0: ae df 09    ... :30bf[1]
     cpx #cat_transform_in_animation - cat_base_animation              ; 31f3: e0 00       ..  :30c2[1]
     beq cat_transforming_in_or_out                                    ; 31f5: f0 04       ..  :30c4[1]
     cpx #cat_transform_out_animation - cat_base_animation             ; 31f7: e0 16       ..  :30c6[1]
@@ -6758,7 +6758,7 @@ monkey_not_changing_direction
     jmp monkey_falling                                                ; 332d: 4c b1 32    L.2 :31fc[1]
 
 monkey_not_falling
-    lda current_animation                                             ; 3330: ad df 09    ... :31ff[1]
+    lda current_player_animation                                      ; 3330: ad df 09    ... :31ff[1]
     cmp #monkey_climb_animation - monkey_base_animation               ; 3333: c9 51       .Q  :3202[1]
     beq update_monkey_climbing                                        ; 3335: f0 1c       ..  :3204[1]
     cmp #monkey_climb_down_animation - monkey_base_animation          ; 3337: c9 49       .I  :3206[1]
@@ -6770,7 +6770,7 @@ monkey_not_falling
     jsr can_monkey_climb                                              ; 3344: 20 6e 33     n3 :3213[1]
     beq monkey_update_standing_fall                                   ; 3347: f0 5e       .^  :3216[1]
     lda #monkey_climb_animation - monkey_base_animation               ; 3349: a9 51       .Q  :3218[1]
-    sta current_animation                                             ; 334b: 8d df 09    ... :321a[1]
+    sta current_player_animation                                      ; 334b: 8d df 09    ... :321a[1]
     ldy #monkey_animation10 - monkey_base_animation                   ; 334e: a0 4d       .M  :321d[1]
     jmp monkey_got_index_in_animation                                 ; 3350: 4c 31 33    L13 :321f[1]
 
@@ -6806,22 +6806,22 @@ monkey_not_jumping
 
 monkey_start_falling
     lda #monkey_fall_animation - monkey_base_animation                ; 3390: a9 d4       ..  :325f[1]
-    sta current_animation                                             ; 3392: 8d df 09    ... :3261[1]
+    sta current_player_animation                                      ; 3392: 8d df 09    ... :3261[1]
     txa                                                               ; 3395: 8a          .   :3264[1]
     tay                                                               ; 3396: a8          .   :3265[1]
     jmp monkey_update_standing_fall                                   ; 3397: 4c 76 32    Lv2 :3266[1]
 
 monkey_set_animation_x
-    cpx current_animation                                             ; 339a: ec df 09    ... :3269[1]
+    cpx current_player_animation                                      ; 339a: ec df 09    ... :3269[1]
     beq monkey_got_index_in_animation_local2                          ; 339d: f0 05       ..  :326c[1]
     txa                                                               ; 339f: 8a          .   :326e[1]
     tay                                                               ; 33a0: a8          .   :326f[1]
-    sty current_animation                                             ; 33a1: 8c df 09    ... :3270[1]
+    sty current_player_animation                                      ; 33a1: 8c df 09    ... :3270[1]
 monkey_got_index_in_animation_local2
     jmp monkey_got_index_in_animation                                 ; 33a4: 4c 31 33    L13 :3273[1]
 
 monkey_update_standing_fall
-    lda current_animation                                             ; 33a7: ad df 09    ... :3276[1]
+    lda current_player_animation                                      ; 33a7: ad df 09    ... :3276[1]
     cmp #monkey_standing_fall_animation - monkey_base_animation       ; 33aa: c9 7a       .z  :3279[1]
     bne monkey_update_jump                                            ; 33ac: d0 10       ..  :327b[1]
     dec temp_top_offset                                               ; 33ae: ce 50 25    .P% :327d[1]
@@ -6833,7 +6833,7 @@ monkey_update_standing_fall
     bne monkey_got_index_in_animation_local2                          ; 33bc: d0 e6       ..  :328b[1]   ; ALWAYS branch
 
 monkey_update_jump
-    lda current_animation                                             ; 33be: ad df 09    ... :328d[1]
+    lda current_player_animation                                      ; 33be: ad df 09    ... :328d[1]
     cmp #monkey_jump_animation - monkey_base_animation                ; 33c1: c9 87       ..  :3290[1]
     bne monkey_check_if_hit_floor                                     ; 33c3: d0 18       ..  :3292[1]
     dec temp_top_offset                                               ; 33c5: ce 50 25    .P% :3294[1]
@@ -6846,17 +6846,17 @@ monkey_update_jump
 
 monkey_fall
     lda #monkey_fall_animation - monkey_base_animation                ; 33d6: a9 d4       ..  :32a5[1]
-    sta current_animation                                             ; 33d8: 8d df 09    ... :32a7[1]
+    sta current_player_animation                                      ; 33d8: 8d df 09    ... :32a7[1]
     ldy #monkey_animation15 - monkey_base_animation                   ; 33db: a0 97       ..  :32aa[1]
 monkey_check_if_hit_floor
     lda player_has_hit_floor_flag                                     ; 33dd: ad 8f 28    ..( :32ac[1]
     bne monkey_check_for_standing_fall                                ; 33e0: d0 17       ..  :32af[1]
 monkey_falling
     lda #monkey_fall_animation - monkey_base_animation                ; 33e2: a9 d4       ..  :32b1[1]
-    cmp current_animation                                             ; 33e4: cd df 09    ... :32b3[1]
+    cmp current_player_animation                                      ; 33e4: cd df 09    ... :32b3[1]
     beq monkey_got_index_in_animation_local2                          ; 33e7: f0 bb       ..  :32b6[1]
-    ldx current_animation                                             ; 33e9: ae df 09    ... :32b8[1]
-    sta current_animation                                             ; 33ec: 8d df 09    ... :32bb[1]
+    ldx current_player_animation                                      ; 33e9: ae df 09    ... :32b8[1]
+    sta current_player_animation                                      ; 33ec: 8d df 09    ... :32bb[1]
     ldy #monkey_animation18 - monkey_base_animation                   ; 33ef: a0 c4       ..  :32be[1]
     cpx #monkey_climb_down_animation - monkey_base_animation          ; 33f1: e0 49       .I  :32c0[1]
     bne monkey_got_index_in_animation_local2                          ; 33f3: d0 af       ..  :32c2[1]
@@ -6868,7 +6868,7 @@ monkey_check_for_standing_fall
     bne monkey_check_change_direction                                 ; 33fc: d0 11       ..  :32cb[1]
     lda jump_requested                                                ; 33fe: ad c7 3a    ..: :32cd[1]
     beq monkey_set_standing_still                                     ; 3401: f0 2f       ./  :32d0[1]
-    lda current_animation                                             ; 3403: ad df 09    ... :32d2[1]
+    lda current_player_animation                                      ; 3403: ad df 09    ... :32d2[1]
     cmp #monkey_fall_animation - monkey_base_animation                ; 3406: c9 d4       ..  :32d5[1]
     beq monkey_set_standing_still                                     ; 3408: f0 28       .(  :32d7[1]
     lda #monkey_standing_fall_animation - monkey_base_animation       ; 340a: a9 7a       .z  :32d9[1]
@@ -6881,21 +6881,21 @@ monkey_check_change_direction
     lda #monkey_walk_cycle_animation - monkey_base_animation          ; 3416: a9 29       .)  :32e5[1]
     ldx jump_requested                                                ; 3418: ae c7 3a    ..: :32e7[1]
     beq monkey_set_animation                                          ; 341b: f0 09       ..  :32ea[1]
-    ldx current_animation                                             ; 341d: ae df 09    ... :32ec[1]
+    ldx current_player_animation                                      ; 341d: ae df 09    ... :32ec[1]
     cpx #monkey_fall_animation - monkey_base_animation                ; 3420: e0 d4       ..  :32ef[1]
     beq monkey_set_animation                                          ; 3422: f0 02       ..  :32f1[1]
     lda #monkey_jump_animation - monkey_base_animation                ; 3424: a9 87       ..  :32f3[1]
 monkey_set_animation
-    cmp current_animation                                             ; 3426: cd df 09    ... :32f5[1]
+    cmp current_player_animation                                      ; 3426: cd df 09    ... :32f5[1]
     beq monkey_update_falling_off_edge                                ; 3429: f0 1c       ..  :32f8[1]
-    sta current_animation                                             ; 342b: 8d df 09    ... :32fa[1]
+    sta current_player_animation                                      ; 342b: 8d df 09    ... :32fa[1]
     tay                                                               ; 342e: a8          .   :32fd[1]
     jmp monkey_update_falling_off_edge                                ; 342f: 4c 16 33    L.3 :32fe[1]
 
 monkey_set_standing_still
-    lda current_animation                                             ; 3432: ad df 09    ... :3301[1]
+    lda current_player_animation                                      ; 3432: ad df 09    ... :3301[1]
     ldy #monkey_standing_still_animation - monkey_base_animation      ; 3435: a0 41       .A  :3304[1]
-    sty current_animation                                             ; 3437: 8c df 09    ... :3306[1]
+    sty current_player_animation                                      ; 3437: 8c df 09    ... :3306[1]
     cmp #monkey_walk_cycle_animation - monkey_base_animation          ; 343a: c9 29       .)  :3309[1]
     beq monkey_was_walking_or_changing_direction                      ; 343c: f0 04       ..  :330b[1]
     cmp #monkey_change_direction_animation - monkey_base_animation    ; 343e: c9 36       .6  :330d[1]
@@ -6913,7 +6913,7 @@ skip5
     lda player_just_fallen_off_edge_direction,x                       ; 344f: bd 90 28    ..( :331e[1]
     beq monkey_got_index_in_animation                                 ; 3452: f0 0e       ..  :3321[1]
     ldy #monkey_fall_animation - monkey_base_animation                ; 3454: a0 d4       ..  :3323[1]
-    sty current_animation                                             ; 3456: 8c df 09    ... :3325[1]
+    sty current_player_animation                                      ; 3456: 8c df 09    ... :3325[1]
     ldy #monkey_animation16 - monkey_base_animation                   ; 3459: a0 aa       ..  :3328[1]
     cmp object_direction                                              ; 345b: cd be 09    ... :332a[1]
     beq monkey_got_index_in_animation                                 ; 345e: f0 02       ..  :332d[1]
@@ -6935,7 +6935,7 @@ monkey_got_index_in_animation
     sta address1_high                                                 ; 347d: 85 71       .q  :334c[1]
 ; check for a tail. If the player is transitioning, it may not have a tail.
     lda #$ff                                                          ; 347f: a9 ff       ..  :334e[1]
-    ldx current_animation                                             ; 3481: ae df 09    ... :3350[1]
+    ldx current_player_animation                                      ; 3481: ae df 09    ... :3350[1]
     cpx #0                                                            ; 3484: e0 00       ..  :3353[1]
     beq monkey_checking_for_tail                                      ; 3486: f0 04       ..  :3355[1]
     cpx #monkey_transform_out_animation - monkey_base_animation       ; 3488: e0 16       ..  :3357[1]
@@ -7955,9 +7955,9 @@ update_mid_transformation
     lda mid_transform_sprites_table,y                                 ; 3abe: b9 74 39    .t9 :398d[1]
     cmp #$ff                                                          ; 3ac1: c9 ff       ..  :3990[1]
     bne still_playing                                                 ; 3ac3: d0 03       ..  :3992[1]
-    ldy current_animation                                             ; 3ac5: ac df 09    ... :3994[1]
+    ldy current_player_animation                                      ; 3ac5: ac df 09    ... :3994[1]
 still_playing
-    lda current_animation                                             ; 3ac8: ad df 09    ... :3997[1]
+    lda current_player_animation                                      ; 3ac8: ad df 09    ... :3997[1]
     bne check_for_point_of_changing_level                             ; 3acb: d0 25       .%  :399a[1]
     tya                                                               ; 3acd: 98          .   :399c[1]
     bne mid_transform_store_state                                     ; 3ace: d0 69       .i  :399d[1]
@@ -7965,7 +7965,7 @@ still_playing
     sta current_player_character                                      ; 3ad2: 85 48       .H  :39a1[1]
     bne got_player_character                                          ; 3ad4: d0 11       ..  :39a3[1]
     ldy #mid_transform_sparkles_out - mid_transform_sprites_table     ; 3ad6: a0 0b       ..  :39a5[1]
-    sty current_animation                                             ; 3ad8: 8c df 09    ... :39a7[1]
+    sty current_player_animation                                      ; 3ad8: 8c df 09    ... :39a7[1]
     lda object_y_low                                                  ; 3adb: ad 7c 09    .|. :39aa[1]
     clc                                                               ; 3ade: 18          .   :39ad[1]
     adc #2                                                            ; 3adf: 69 02       i.  :39ae[1]
@@ -7974,7 +7974,7 @@ still_playing
 
 got_player_character
     lda #0                                                            ; 3ae7: a9 00       ..  :39b6[1]
-    sta current_animation                                             ; 3ae9: 8d df 09    ... :39b8[1]
+    sta current_player_animation                                      ; 3ae9: 8d df 09    ... :39b8[1]
     sta object_current_index_in_animation                             ; 3aec: 8d d4 09    ... :39bb[1]
     jmp update_player                                                 ; 3aef: 4c cd 22    L." :39be[1]
 
@@ -8020,7 +8020,7 @@ check_for_circles_animation
     cpy #mid_transform_sparkles_in - mid_transform_sprites_table      ; 3b25: c0 04       ..  :39f4[1]
     bne mid_transform_store_state                                     ; 3b27: d0 10       ..  :39f6[1]
     lda #mid_transform_sprites_table - mid_transform_sprites_table    ; 3b29: a9 00       ..  :39f8[1]
-    sta current_animation                                             ; 3b2b: 8d df 09    ... :39fa[1]
+    sta current_player_animation                                      ; 3b2b: 8d df 09    ... :39fa[1]
     ldy #mid_transform_circle_sprites - mid_transform_sprites_table   ; 3b2e: a0 01       ..  :39fd[1]
     lda object_y_low                                                  ; 3b30: ad 7c 09    .|. :39ff[1]
     sec                                                               ; 3b33: 38          8   :3a02[1]

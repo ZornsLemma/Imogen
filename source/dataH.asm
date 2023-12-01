@@ -159,7 +159,7 @@ object_y_high                                       = $0992
 object_spriteid                                     = $09a8
 object_spriteid_old                                 = $09b3
 object_direction                                    = $09be
-current_animation                                   = $09df
+current_player_animation                            = $09df
 l0a1a                                               = $0a1a
 l0a1b                                               = $0a1b
 l0a1c                                               = $0a1c
@@ -520,7 +520,7 @@ c3c38
     ldy #3                                                            ; 3c4b: a0 03
     jsr test_for_collision_between_objects_x_and_y                    ; 3c4d: 20 e2 28
     beq c3c64                                                         ; 3c50: f0 12
-    lda current_animation                                             ; 3c52: ad df 09
+    lda current_player_animation                                      ; 3c52: ad df 09
     cmp #$51 ; 'Q'                                                    ; 3c55: c9 51
     beq c3c61                                                         ; 3c57: f0 08
     cmp #$45 ; 'E'                                                    ; 3c59: c9 45

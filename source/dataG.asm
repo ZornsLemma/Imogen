@@ -185,7 +185,7 @@ object_y_high                                       = $0992
 object_spriteid                                     = $09a8
 object_spriteid_old                                 = $09b3
 object_direction                                    = $09be
-current_animation                                   = $09df
+current_player_animation                            = $09df
 save_game_level_g_got_bow                           = $0a17
 save_game_level_g_dropped_table_progress            = $0a18
 save_game_level_g_baby_progress                     = $0a19
@@ -1746,7 +1746,7 @@ sub_c44ad
     lda #0                                                            ; 44ad: a9 00
     sta l44f4                                                         ; 44af: 8d f4 44
     lda current_player_character                                      ; 44b2: a5 48
-    cmp #6                                                            ; 44b4: c9 06
+    cmp #spriteid_icodata_monkey                                      ; 44b4: c9 06
     bne return7                                                       ; 44b6: d0 3b
     lda object_x_high                                                 ; 44b8: ad 66 09
     lsr                                                               ; 44bb: 4a
@@ -1767,12 +1767,12 @@ sub_c44ad
     adc #1                                                            ; 44d5: 69 01
     cmp l44a8                                                         ; 44d7: cd a8 44
     bcc return7                                                       ; 44da: 90 17
-    lda current_animation                                             ; 44dc: ad df 09
-    cmp #$51 ; 'Q'                                                    ; 44df: c9 51
+    lda current_player_animation                                      ; 44dc: ad df 09
+    cmp #monkey_climb_animation - monkey_base_animation               ; 44df: c9 51
     beq c44eb                                                         ; 44e1: f0 08
-    cmp #$45 ; 'E'                                                    ; 44e3: c9 45
+    cmp #monkey_climb_idle_animation - monkey_base_animation          ; 44e3: c9 45
     beq c44eb                                                         ; 44e5: f0 04
-    cmp #$49 ; 'I'                                                    ; 44e7: c9 49
+    cmp #monkey_climb_down_animation - monkey_base_animation          ; 44e7: c9 49
     bne return7                                                       ; 44e9: d0 08
 c44eb
     lda #$ff                                                          ; 44eb: a9 ff
@@ -2133,6 +2133,15 @@ pydis_end
 !if (level_specific_update) != $3b0d {
     !error "Assertion failed: level_specific_update == $3b0d"
 }
+!if (monkey_climb_animation - monkey_base_animation) != $51 {
+    !error "Assertion failed: monkey_climb_animation - monkey_base_animation == $51"
+}
+!if (monkey_climb_down_animation - monkey_base_animation) != $49 {
+    !error "Assertion failed: monkey_climb_down_animation - monkey_base_animation == $49"
+}
+!if (monkey_climb_idle_animation - monkey_base_animation) != $45 {
+    !error "Assertion failed: monkey_climb_idle_animation - monkey_base_animation == $45"
+}
 !if (object_direction + objectid_arrow) != $09c0 {
     !error "Assertion failed: object_direction + objectid_arrow == $09c0"
 }
@@ -2267,6 +2276,9 @@ pydis_end
 }
 !if (spriteid_cache2) != $cf {
     !error "Assertion failed: spriteid_cache2 == $cf"
+}
+!if (spriteid_icodata_monkey) != $06 {
+    !error "Assertion failed: spriteid_icodata_monkey == $06"
 }
 !if (spriteid_one_pixel_masked_out) != $00 {
     !error "Assertion failed: spriteid_one_pixel_masked_out == $00"

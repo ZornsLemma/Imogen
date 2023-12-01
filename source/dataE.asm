@@ -189,7 +189,7 @@ object_spriteid                                     = $09a8
 object_spriteid_old                                 = $09b3
 object_direction                                    = $09be
 l09d4                                               = $09d4
-current_animation                                   = $09df
+current_player_animation                            = $09df
 save_game_level_e_holding_egg_flag                  = $0a13
 save_game_level_e_room_1_egg_state                  = $0a14
 save_game_level_e_duck_captured_flag                = $0a15
@@ -875,21 +875,21 @@ c3f21
     lda #0                                                            ; 3f21: a9 00
     jsr get_solid_rock_collision_for_object_a                         ; 3f23: 20 94 28
     beq c3f30                                                         ; 3f26: f0 08
-    stx current_animation                                             ; 3f28: 8e df 09
+    stx current_player_animation                                      ; 3f28: 8e df 09
     ldy #$58 ; 'X'                                                    ; 3f2b: a0 58
     jmp c3f3a                                                         ; 3f2d: 4c 3a 3f
 
 c3f30
-    cpx current_animation                                             ; 3f30: ec df 09
+    cpx current_player_animation                                      ; 3f30: ec df 09
     beq c3f3a                                                         ; 3f33: f0 05
-    stx current_animation                                             ; 3f35: 8e df 09
+    stx current_player_animation                                      ; 3f35: 8e df 09
     txa                                                               ; 3f38: 8a
     tay                                                               ; 3f39: a8
 c3f3a
     jmp c3fca                                                         ; 3f3a: 4c ca 3f
 
 c3f3d
-    lda current_animation                                             ; 3f3d: ad df 09
+    lda current_player_animation                                      ; 3f3d: ad df 09
     cmp #$66 ; 'f'                                                    ; 3f40: c9 66
     bne c3f5c                                                         ; 3f42: d0 18
     dec temp_top_offset                                               ; 3f44: ce 50 25
@@ -902,17 +902,17 @@ c3f3d
 
 c3f55
     lda #$c0                                                          ; 3f55: a9 c0
-    sta current_animation                                             ; 3f57: 8d df 09
+    sta current_player_animation                                      ; 3f57: 8d df 09
     ldy #$6f ; 'o'                                                    ; 3f5a: a0 6f
 c3f5c
     lda player_has_hit_floor_flag                                     ; 3f5c: ad 8f 28
     bne c3f79                                                         ; 3f5f: d0 18
 c3f61
     lda #$c0                                                          ; 3f61: a9 c0
-    cmp current_animation                                             ; 3f63: cd df 09
+    cmp current_player_animation                                      ; 3f63: cd df 09
     beq c3f3a                                                         ; 3f66: f0 d2
-    ldx current_animation                                             ; 3f68: ae df 09
-    sta current_animation                                             ; 3f6b: 8d df 09
+    ldx current_player_animation                                      ; 3f68: ae df 09
+    sta current_player_animation                                      ; 3f6b: 8d df 09
     ldy #$7c ; '|'                                                    ; 3f6e: a0 7c
     cpx #$53 ; 'S'                                                    ; 3f70: e0 53
     beq c3f3a                                                         ; 3f72: f0 c6
@@ -928,11 +928,11 @@ c3f79
     ldy #$66 ; 'f'                                                    ; 3f85: a0 66
 c3f87
     lda #$66 ; 'f'                                                    ; 3f87: a9 66
-    sta current_animation                                             ; 3f89: 8d df 09
+    sta current_player_animation                                      ; 3f89: 8d df 09
     jmp c3faf                                                         ; 3f8c: 4c af 3f
 
 c3f8f
-    lda current_animation                                             ; 3f8f: ad df 09
+    lda current_player_animation                                      ; 3f8f: ad df 09
     cmp #$44 ; 'D'                                                    ; 3f92: c9 44
     beq c3fa6                                                         ; 3f94: f0 10
     cmp #$36 ; '6'                                                    ; 3f96: c9 36
@@ -940,14 +940,14 @@ c3f8f
     ldy #$40 ; '@'                                                    ; 3f9a: a0 40
     sty l0023                                                         ; 3f9c: 84 23
     ldy #$44 ; 'D'                                                    ; 3f9e: a0 44
-    sty current_animation                                             ; 3fa0: 8c df 09
+    sty current_player_animation                                      ; 3fa0: 8c df 09
     jmp c3faf                                                         ; 3fa3: 4c af 3f
 
 c3fa6
     dec l0023                                                         ; 3fa6: c6 23
     bne c3faf                                                         ; 3fa8: d0 05
     ldy #$36 ; '6'                                                    ; 3faa: a0 36
-    sty current_animation                                             ; 3fac: 8c df 09
+    sty current_player_animation                                      ; 3fac: 8c df 09
 c3faf
     ldx #0                                                            ; 3faf: a2 00
     lda l3ac9                                                         ; 3fb1: ad c9 3a
@@ -957,7 +957,7 @@ c3fb7
     lda player_just_fallen_off_edge_direction,x                       ; 3fb7: bd 90 28
     beq c3fca                                                         ; 3fba: f0 0e
     ldy #$c0                                                          ; 3fbc: a0 c0
-    sty current_animation                                             ; 3fbe: 8c df 09
+    sty current_player_animation                                      ; 3fbe: 8c df 09
     ldy #$89                                                          ; 3fc1: a0 89
     cmp object_direction                                              ; 3fc3: cd be 09
     beq c3fca                                                         ; 3fc6: f0 02
