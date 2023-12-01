@@ -1109,7 +1109,7 @@ room_0_update_handler
 c4004
     lda #spriteid_bow_menu_item                                       ; 4004: a9 cb
     sta toolbar_collectable_spriteids+1                               ; 4006: 8d e9 2e
-    lda #$ca                                                          ; 4009: a9 ca
+    lda #spriteid_bow                                                 ; 4009: a9 ca
     sta collectable_spriteids+1                                       ; 400b: 8d ee 2e
     sta collectable_being_used_spriteids + 1                          ; 400e: 8d f3 2e
     ldx #<envelope4                                                   ; 4011: a2 f5
@@ -1201,7 +1201,7 @@ c40b5
     lda object_spriteid_old + 2                                       ; 40ba: ad b5 09
     sta l4189                                                         ; 40bd: 8d 89 41
     ldx #0                                                            ; 40c0: a2 00
-    lda #$cb                                                          ; 40c2: a9 cb
+    lda #spriteid_bow_menu_item                                       ; 40c2: a9 cb
     cmp player_using_object_spriteid                                  ; 40c4: cd b6 2e
     bne c40cf                                                         ; 40c7: d0 06
     cmp previous_player_using_object_spriteid                         ; 40c9: cd b7 2e
