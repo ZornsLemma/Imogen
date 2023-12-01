@@ -462,7 +462,7 @@ room_2_update_handler
     jsr update_brazier_and_fire                                       ; 3bb8: 20 88 19
 ; check for first update in room (branch if not)
     lda update_room_first_update_flag                                 ; 3bbb: ad 2b 13
-    beq c3bfe                                                         ; 3bbe: f0 3e
+    beq update_table_not_first_update                                 ; 3bbe: f0 3e
     ldx #<envelope1                                                   ; 3bc0: a2 0b
     ldy #>envelope1                                                   ; 3bc2: a0 45
     jsr define_envelope                                               ; 3bc4: 20 5e 39
@@ -487,29 +487,30 @@ initialise_if_room_2
     lda #$c0                                                          ; 3be9: a9 c0
     sta object_z_order + objectid_balloon1_rope                       ; 3beb: 8d c6 38
     lda #$bf                                                          ; 3bee: a9 bf
-    sta object_z_order + 3                                            ; 3bf0: 8d c5 38
+    sta object_z_order + objectid_balloon1                            ; 3bf0: 8d c5 38
     lda #spriteid_table                                               ; 3bf3: a9 ce
     sta object_spriteid + objectid_table                              ; 3bf5: 8d ad 09
 c3bf8
-    jmp c3c86                                                         ; 3bf8: 4c 86 3c
+    jmp update_balloon_bursting                                       ; 3bf8: 4c 86 3c
 
-c3bfb
+return2_local
     jmp return2                                                       ; 3bfb: 4c 00 3d
 
-c3bfe
+update_table_not_first_update
     lda save_game_level_g_dropped_table_progress                      ; 3bfe: ad 18 0a
-    bmi c3bfb                                                         ; 3c01: 30 f8
+    bmi return2_local                                                 ; 3c01: 30 f8
     cmp #9                                                            ; 3c03: c9 09
-    bcs c3c35                                                         ; 3c05: b0 2e
+    bcs continue_dropping_table                                       ; 3c05: b0 2e
     cmp #1                                                            ; 3c07: c9 01
-    beq c3c30                                                         ; 3c09: f0 25
+    beq start_dropping_table                                          ; 3c09: f0 25
     lda desired_room_index                                            ; 3c0b: a5 30
     cmp #2                                                            ; 3c0d: c9 02
-    bne c3bfb                                                         ; 3c0f: d0 ea
-    ldx #2                                                            ; 3c11: a2 02
-    ldy #3                                                            ; 3c13: a0 03
+    bne return2_local                                                 ; 3c0f: d0 ea
+; check for arrow colliding with balloon
+    ldx #objectid_arrow                                               ; 3c11: a2 02
+    ldy #objectid_balloon1                                            ; 3c13: a0 03
     jsr test_for_collision_between_objects_x_and_y                    ; 3c15: 20 e2 28
-    beq c3bfb                                                         ; 3c18: f0 e1
+    beq return2_local                                                 ; 3c18: f0 e1
     inc save_game_level_g_dropped_table_progress                      ; 3c1a: ee 18 0a
     lda #0                                                            ; 3c1d: a9 00
     ldx #<sound1                                                      ; 3c1f: a2 3f
@@ -518,28 +519,31 @@ c3bfe
     ldx #<sound2                                                      ; 3c26: a2 37
     ldy #>sound2                                                      ; 3c28: a0 45
     jsr play_sound_yx                                                 ; 3c2a: 20 f6 38
-    jmp c3c86                                                         ; 3c2d: 4c 86 3c
+    jmp update_balloon_bursting                                       ; 3c2d: 4c 86 3c
 
-c3c30
+start_dropping_table
     lda #9                                                            ; 3c30: a9 09
     sta save_game_level_g_dropped_table_progress                      ; 3c32: 8d 18 0a
-c3c35
+continue_dropping_table
     ldy save_game_level_g_dropped_table_progress                      ; 3c35: ac 18 0a
-    sty l3d01                                                         ; 3c38: 8c 01 3d
+    sty dropped_table_y                                               ; 3c38: 8c 01 3d
     cpy #$12                                                          ; 3c3b: c0 12
-    bcc c3c47                                                         ; 3c3d: 90 08
+    bcc table_dropping_in_progress                                    ; 3c3d: 90 08
+; finished dropping table
     lda #$ff                                                          ; 3c3f: a9 ff
     sta save_game_level_g_dropped_table_progress                      ; 3c41: 8d 18 0a
-    jmp c3c86                                                         ; 3c44: 4c 86 3c
+    jmp update_balloon_bursting                                       ; 3c44: 4c 86 3c
 
-c3c47
+table_dropping_in_progress
     iny                                                               ; 3c47: c8
     sty save_game_level_g_dropped_table_progress                      ; 3c48: 8c 18 0a
     cpy #$12                                                          ; 3c4b: c0 12
-    bcc c3c65                                                         ; 3c4d: 90 16
+    bcc write_fallen_table_to_collision_map                           ; 3c4d: 90 16
+; are we in room 2? branch if not
     lda desired_room_index                                            ; 3c4f: a5 30
     cmp #2                                                            ; 3c51: c9 02
-    bne c3c65                                                         ; 3c53: d0 10
+    bne write_fallen_table_to_collision_map                           ; 3c53: d0 10
+; play table landing sounds
     lda #0                                                            ; 3c55: a9 00
     ldx #<sound3                                                      ; 3c57: a2 21
     ldy #>sound3                                                      ; 3c59: a0 45
@@ -547,23 +551,24 @@ c3c47
     ldx #<sound4                                                      ; 3c5e: a2 19
     ldy #>sound4                                                      ; 3c60: a0 45
     jsr play_sound_yx                                                 ; 3c62: 20 f6 38
-c3c65
+write_fallen_table_to_collision_map
     lda desired_room_index                                            ; 3c65: a5 30
     cmp #2                                                            ; 3c67: c9 02
-    bne c3bfb                                                         ; 3c69: d0 90
+    bne return2_local                                                 ; 3c69: d0 90
     ldx #$1a                                                          ; 3c6b: a2 1a
-    ldy l3d01                                                         ; 3c6d: ac 01 3d
+    ldy dropped_table_y                                               ; 3c6d: ac 01 3d
     lda #3                                                            ; 3c70: a9 03
     sta width_in_cells                                                ; 3c72: 85 3c
     lda #2                                                            ; 3c74: a9 02
     sta height_in_cells                                               ; 3c76: 85 3d
     lda #collision_map_none                                           ; 3c78: a9 00
     sta value_to_write_to_collision_map                               ; 3c7a: 85 3e
+; read collision map and skip if already written
     jsr read_collision_map_value_for_xy                               ; 3c7c: 20 fa 1e
     cmp value_to_write_to_collision_map                               ; 3c7f: c5 3e
-    beq c3c86                                                         ; 3c81: f0 03
+    beq update_balloon_bursting                                       ; 3c81: f0 03
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 3c83: 20 44 1e
-c3c86
+update_balloon_bursting
     lda desired_room_index                                            ; 3c86: a5 30
     cmp #2                                                            ; 3c88: c9 02
     bne return2                                                       ; 3c8a: d0 74
@@ -627,7 +632,7 @@ update_table_and_rope_objects
 return2
     rts                                                               ; 3d00: 60
 
-l3d01
+dropped_table_y
     !byte 0                                                           ; 3d01: 00
 ; *************************************************************************************
 ; 
@@ -798,9 +803,9 @@ c3dd5
     ldy #>envelope3                                                   ; 3ddd: a0 45
     jsr define_envelope                                               ; 3ddf: 20 5e 39
     lda #spriteid_cache2                                              ; 3de2: a9 cf
-    sta object_erase_type + 5                                         ; 3de4: 8d b1 38
+    sta object_erase_type + objectid_baby                             ; 3de4: 8d b1 38
     lda #$58 ; 'X'                                                    ; 3de7: a9 58
-    sta object_x_low + 5                                              ; 3de9: 8d 55 09
+    sta object_x_low + objectid_baby                                  ; 3de9: 8d 55 09
 c3dec
     jmp c3eb5                                                         ; 3dec: 4c b5 3e
 
@@ -825,9 +830,9 @@ c3e0e
     lda desired_room_index                                            ; 3e0e: a5 30
     cmp #3                                                            ; 3e10: c9 03
     bne c3e47                                                         ; 3e12: d0 33
-    ldx #5                                                            ; 3e14: a2 05
+    ldx #objectid_baby                                                ; 3e14: a2 05
     sty l3f3c                                                         ; 3e16: 8c 3c 3f
-    ldy #2                                                            ; 3e19: a0 02
+    ldy #objectid_arrow                                               ; 3e19: a0 02
     jsr test_for_collision_between_objects_x_and_y                    ; 3e1b: 20 e2 28
     ldy l3f3c                                                         ; 3e1e: ac 3c 3f
     ora #0                                                            ; 3e21: 09 00
@@ -837,7 +842,7 @@ c3e0e
     ldy #>sound5                                                      ; 3e29: a0 45
     jsr play_sound_yx                                                 ; 3e2b: 20 f6 38
     lda #spriteid_one_pixel_masked_out                                ; 3e2e: a9 00
-    sta object_spriteid + 2                                           ; 3e30: 8d aa 09
+    sta object_spriteid + objectid_bow                                ; 3e30: 8d aa 09
     lda #$ff                                                          ; 3e33: a9 ff
     sta save_game_level_g_got_bow                                     ; 3e35: 8d 17 0a
     lda #$60 ; '`'                                                    ; 3e38: a9 60
@@ -853,9 +858,9 @@ c3e47
     bne c3ea7                                                         ; 3e4b: d0 5a
     lda #8                                                            ; 3e4d: a9 08
     sta temp_top_offset                                               ; 3e4f: 8d 50 25
-    ldx #5                                                            ; 3e52: a2 05
+    ldx #objectid_baby                                                ; 3e52: a2 05
     sty l3f3c                                                         ; 3e54: 8c 3c 3f
-    ldy #0                                                            ; 3e57: a0 00
+    ldy #objectid_player                                              ; 3e57: a0 00
     jsr test_for_collision_between_objects_x_and_y                    ; 3e59: 20 e2 28
     ldy l3f3c                                                         ; 3e5c: ac 3c 3f
     ora #0                                                            ; 3e5f: 09 00
@@ -1133,9 +1138,9 @@ c4004
     sta save_game_level_g_got_bow                                     ; 4033: 8d 17 0a
 c4036
     lda #spriteid_cache1                                              ; 4036: a9 cd
-    sta object_erase_type + 2                                         ; 4038: 8d ae 38
+    sta object_erase_type + objectid_bow                              ; 4038: 8d ae 38
     lda #0                                                            ; 403b: a9 00
-    sta object_y_high + 2                                             ; 403d: 8d 94 09
+    sta object_y_high + objectid_bow                                  ; 403d: 8d 94 09
     lda save_game_level_g_got_bow                                     ; 4040: ad 17 0a
     bne c405e                                                         ; 4043: d0 19
     lda desired_room_index                                            ; 4045: a5 30
@@ -1148,7 +1153,7 @@ c4036
     lda #2                                                            ; 4053: a9 02
     jsr set_object_position_from_cell_xy                              ; 4055: 20 5d 1f
     lda #spriteid_bow                                                 ; 4058: a9 ca
-    sta object_spriteid + 2                                           ; 405a: 8d aa 09
+    sta object_spriteid + objectid_bow                                ; 405a: 8d aa 09
 return3
     rts                                                               ; 405d: 60
 
@@ -1158,7 +1163,7 @@ c405e
     lda desired_room_index                                            ; 4062: a5 30
     cmp arrow_room                                                    ; 4064: cd 73 0a
     bne c4086                                                         ; 4067: d0 1d
-    jsr sub_c4259                                                     ; 4069: 20 59 42
+    jsr set_arrow_object                                              ; 4069: 20 59 42
 loop_c406c
     lda desired_room_index                                            ; 406c: a5 30
     cmp arrow_room                                                    ; 406e: cd 73 0a
@@ -1173,7 +1178,7 @@ loop_c406c
 
 c4086
     lda #spriteid_one_pixel_masked_out                                ; 4086: a9 00
-    sta object_spriteid_old + 2                                       ; 4088: 8d b5 09
+    sta object_spriteid_old + objectid_bow                            ; 4088: 8d b5 09
 c408b
     jmp return4                                                       ; 408b: 4c 86 41
 
@@ -1187,20 +1192,20 @@ c4091
     cmp #0                                                            ; 4098: c9 00
     bne c408b                                                         ; 409a: d0 ef
     ldx #objectid_old_player                                          ; 409c: a2 0b
-    ldy #2                                                            ; 409e: a0 02
+    ldy #objectid_bow                                                 ; 409e: a0 02
     jsr test_for_collision_between_objects_x_and_y                    ; 40a0: 20 e2 28
     beq c408b                                                         ; 40a3: f0 e6
     lda #spriteid_bow_menu_item                                       ; 40a5: a9 cb
     jsr find_or_create_menu_slot_for_A                                ; 40a7: 20 bd 2b
     lda #spriteid_one_pixel_masked_out                                ; 40aa: a9 00
-    sta object_spriteid + 2                                           ; 40ac: 8d aa 09
+    sta object_spriteid + objectid_bow                                ; 40ac: 8d aa 09
     dec save_game_level_g_got_bow                                     ; 40af: ce 17 0a
     jmp return4                                                       ; 40b2: 4c 86 41
 
 c40b5
     lda #0                                                            ; 40b5: a9 00
     sta l4188                                                         ; 40b7: 8d 88 41
-    lda object_spriteid_old + 2                                       ; 40ba: ad b5 09
+    lda object_spriteid_old + objectid_bow                            ; 40ba: ad b5 09
     sta l4189                                                         ; 40bd: 8d 89 41
     ldx #0                                                            ; 40c0: a2 00
     lda #spriteid_bow_menu_item                                       ; 40c2: a9 cb
@@ -1242,7 +1247,7 @@ c40f3
     sta arrow_y_position_low                                          ; 4115: 8d 72 0a
     lda #0                                                            ; 4118: a9 00
     sta arrow_active_flag                                             ; 411a: 8d 74 0a
-    jsr sub_c4259                                                     ; 411d: 20 59 42
+    jsr set_arrow_object                                              ; 411d: 20 59 42
     ldx #2                                                            ; 4120: a2 02
     jsr copy_object_state_to_old                                      ; 4122: 20 f7 20
 c4125
@@ -1254,9 +1259,9 @@ c4125
     sta arrow_active_flag                                             ; 4131: 8d 74 0a
 c4134
     lda l4189                                                         ; 4134: ad 89 41
-    sta object_spriteid_old + 2                                       ; 4137: 8d b5 09
+    sta object_spriteid_old + objectid_bow                            ; 4137: 8d b5 09
     ldx #objectid_old_player                                          ; 413a: a2 0b
-    ldy #2                                                            ; 413c: a0 02
+    ldy #objectid_bow                                                 ; 413c: a0 02
     jsr test_for_collision_between_objects_x_and_y                    ; 413e: 20 e2 28
     bne c4171                                                         ; 4141: d0 2e
     lda #2                                                            ; 4143: a9 02
@@ -1267,7 +1272,7 @@ c4134
     lda desired_room_index                                            ; 414f: a5 30
     cmp arrow_room                                                    ; 4151: cd 73 0a
     bne c415b                                                         ; 4154: d0 05
-    lda object_spriteid + 2                                           ; 4156: ad aa 09
+    lda object_spriteid + objectid_bow                                ; 4156: ad aa 09
     beq c416b                                                         ; 4159: f0 10
 c415b
     lda #0                                                            ; 415b: a9 00
@@ -1283,7 +1288,7 @@ c416b
 
 c4171
     lda #spriteid_one_pixel_masked_out                                ; 4171: a9 00
-    sta object_spriteid + 2                                           ; 4173: 8d aa 09
+    sta object_spriteid + objectid_bow                                ; 4173: 8d aa 09
     lda #$ff                                                          ; 4176: a9 ff
     sta save_game_level_g_got_bow                                     ; 4178: 8d 17 0a
     jmp return4                                                       ; 417b: 4c 86 41
@@ -1336,37 +1341,37 @@ c41bf
     txa                                                               ; 41c6: 8a
     adc arrow_x_position_high                                         ; 41c7: 6d 71 0a
     sta arrow_x_position_high                                         ; 41ca: 8d 71 0a
-    jsr sub_c4259                                                     ; 41cd: 20 59 42
-    lda #2                                                            ; 41d0: a9 02
+    jsr set_arrow_object                                              ; 41cd: 20 59 42
+    lda #objectid_arrow                                               ; 41d0: a9 02
     jsr update_player_solid_rock_collision                            ; 41d2: 20 f5 25
     lda #2                                                            ; 41d5: a9 02
     jsr get_solid_rock_collision_for_object_a                         ; 41d7: 20 94 28
     beq c4206                                                         ; 41da: f0 2a
     lda arrow_direction                                               ; 41dc: ad 6f 0a
     bpl c41f5                                                         ; 41df: 10 14
-    lda object_x_low + 2                                              ; 41e1: ad 52 09
+    lda object_x_low + objectid_arrow                                 ; 41e1: ad 52 09
     clc                                                               ; 41e4: 18
     adc #8                                                            ; 41e5: 69 08
-    sta object_x_low + 2                                              ; 41e7: 8d 52 09
-    lda object_x_high + 2                                             ; 41ea: ad 68 09
+    sta object_x_low + objectid_arrow                                 ; 41e7: 8d 52 09
+    lda object_x_high + objectid_arrow                                ; 41ea: ad 68 09
     adc #0                                                            ; 41ed: 69 00
-    sta object_x_high + 2                                             ; 41ef: 8d 68 09
+    sta object_x_high + objectid_arrow                                ; 41ef: 8d 68 09
     jmp c4206                                                         ; 41f2: 4c 06 42
 
 c41f5
-    lda object_x_low + 2                                              ; 41f5: ad 52 09
+    lda object_x_low + objectid_arrow                                 ; 41f5: ad 52 09
     sec                                                               ; 41f8: 38
     sbc #8                                                            ; 41f9: e9 08
-    sta object_x_low + 2                                              ; 41fb: 8d 52 09
-    lda object_x_high + 2                                             ; 41fe: ad 68 09
+    sta object_x_low + objectid_arrow                                 ; 41fb: 8d 52 09
+    lda object_x_high + objectid_arrow                                ; 41fe: ad 68 09
     sbc #0                                                            ; 4201: e9 00
-    sta object_x_high + 2                                             ; 4203: 8d 68 09
+    sta object_x_high + objectid_arrow                                ; 4203: 8d 68 09
 c4206
-    lda object_x_low + 2                                              ; 4206: ad 52 09
+    lda object_x_low + objectid_arrow                                 ; 4206: ad 52 09
     sta arrow_x_position_low                                          ; 4209: 8d 70 0a
-    lda object_x_high + 2                                             ; 420c: ad 68 09
+    lda object_x_high + objectid_arrow                                ; 420c: ad 68 09
     sta arrow_x_position_high                                         ; 420f: 8d 71 0a
-    lda object_y_low + 2                                              ; 4212: ad 7e 09
+    lda object_y_low + objectid_arrow                                 ; 4212: ad 7e 09
     sta arrow_y_position_low                                          ; 4215: 8d 72 0a
     ldx #2                                                            ; 4218: a2 02
     jsr find_left_and_right_of_object                                 ; 421a: 20 34 24
@@ -1397,25 +1402,25 @@ c423e
     dec arrow_room                                                    ; 4250: ce 73 0a
 c4253
     lda #spriteid_one_pixel_masked_out                                ; 4253: a9 00
-    sta object_spriteid + 2                                           ; 4255: 8d aa 09
+    sta object_spriteid + objectid_arrow                              ; 4255: 8d aa 09
 return5
     rts                                                               ; 4258: 60
 
-sub_c4259
+set_arrow_object
     lda arrow_x_position_low                                          ; 4259: ad 70 0a
-    sta object_x_low + 2                                              ; 425c: 8d 52 09
+    sta object_x_low + objectid_arrow                                 ; 425c: 8d 52 09
     lda arrow_x_position_high                                         ; 425f: ad 71 0a
-    sta object_x_high + 2                                             ; 4262: 8d 68 09
+    sta object_x_high + objectid_arrow                                ; 4262: 8d 68 09
     lda arrow_y_position_low                                          ; 4265: ad 72 0a
-    sta object_y_low + 2                                              ; 4268: 8d 7e 09
+    sta object_y_low + objectid_arrow                                 ; 4268: 8d 7e 09
     lda #0                                                            ; 426b: a9 00
-    sta object_y_high + 2                                             ; 426d: 8d 94 09
+    sta object_y_high + objectid_arrow                                ; 426d: 8d 94 09
     lda arrow_direction                                               ; 4270: ad 6f 0a
-    sta object_direction + 2                                          ; 4273: 8d c0 09
+    sta object_direction + objectid_arrow                             ; 4273: 8d c0 09
     lda #spriteid_arrow                                               ; 4276: a9 cc
     sta object_spriteid + objectid_arrow                              ; 4278: 8d aa 09
     lda #$40 ; '@'                                                    ; 427b: a9 40
-    sta object_z_order + 2                                            ; 427d: 8d c4 38
+    sta object_z_order + objectid_arrow                               ; 427d: 8d c4 38
     rts                                                               ; 4280: 60
 
 sub_c4281
@@ -1949,13 +1954,6 @@ pydis_end
 
 ; Automatically generated labels:
 ;     c3bf8
-;     c3bfb
-;     c3bfe
-;     c3c30
-;     c3c35
-;     c3c47
-;     c3c65
-;     c3c86
 ;     c3dcf
 ;     c3dd5
 ;     c3dec
@@ -2007,7 +2005,6 @@ pydis_end
 ;     c449b
 ;     c44a0
 ;     c44eb
-;     l3d01
 ;     l3f3c
 ;     l4187
 ;     l4188
@@ -2022,7 +2019,6 @@ pydis_end
 ;     loop_c406c
 ;     loop_c43d8
 ;     sub_c418a
-;     sub_c4259
 ;     sub_c4281
 ;     sub_c4366
 ;     sub_c44ad
@@ -2137,11 +2133,14 @@ pydis_end
 !if (level_specific_update) != $3b0d {
     !error "Assertion failed: level_specific_update == $3b0d"
 }
-!if (object_direction + 2) != $09c0 {
-    !error "Assertion failed: object_direction + 2 == $09c0"
+!if (object_direction + objectid_arrow) != $09c0 {
+    !error "Assertion failed: object_direction + objectid_arrow == $09c0"
 }
-!if (object_spriteid + 2) != $09aa {
-    !error "Assertion failed: object_spriteid + 2 == $09aa"
+!if (object_erase_type + objectid_baby) != $38b1 {
+    !error "Assertion failed: object_erase_type + objectid_baby == $38b1"
+}
+!if (object_erase_type + objectid_bow) != $38ae {
+    !error "Assertion failed: object_erase_type + objectid_bow == $38ae"
 }
 !if (object_spriteid + objectid_arrow) != $09aa {
     !error "Assertion failed: object_spriteid + objectid_arrow == $09aa"
@@ -2155,35 +2154,65 @@ pydis_end
 !if (object_spriteid + objectid_balloon1_rope) != $09ac {
     !error "Assertion failed: object_spriteid + objectid_balloon1_rope == $09ac"
 }
+!if (object_spriteid + objectid_bow) != $09aa {
+    !error "Assertion failed: object_spriteid + objectid_bow == $09aa"
+}
 !if (object_spriteid + objectid_table) != $09ad {
     !error "Assertion failed: object_spriteid + objectid_table == $09ad"
 }
-!if (object_spriteid_old + 2) != $09b5 {
-    !error "Assertion failed: object_spriteid_old + 2 == $09b5"
+!if (object_spriteid_old + objectid_bow) != $09b5 {
+    !error "Assertion failed: object_spriteid_old + objectid_bow == $09b5"
 }
-!if (object_x_high + 2) != $0968 {
-    !error "Assertion failed: object_x_high + 2 == $0968"
+!if (object_x_high + objectid_arrow) != $0968 {
+    !error "Assertion failed: object_x_high + objectid_arrow == $0968"
 }
-!if (object_x_low + 2) != $0952 {
-    !error "Assertion failed: object_x_low + 2 == $0952"
+!if (object_x_low + objectid_arrow) != $0952 {
+    !error "Assertion failed: object_x_low + objectid_arrow == $0952"
 }
-!if (object_x_low + 5) != $0955 {
-    !error "Assertion failed: object_x_low + 5 == $0955"
+!if (object_x_low + objectid_baby) != $0955 {
+    !error "Assertion failed: object_x_low + objectid_baby == $0955"
 }
-!if (object_y_high + 2) != $0994 {
-    !error "Assertion failed: object_y_high + 2 == $0994"
+!if (object_y_high + objectid_arrow) != $0994 {
+    !error "Assertion failed: object_y_high + objectid_arrow == $0994"
 }
-!if (object_y_low + 2) != $097e {
-    !error "Assertion failed: object_y_low + 2 == $097e"
+!if (object_y_high + objectid_bow) != $0994 {
+    !error "Assertion failed: object_y_high + objectid_bow == $0994"
+}
+!if (object_y_low + objectid_arrow) != $097e {
+    !error "Assertion failed: object_y_low + objectid_arrow == $097e"
 }
 !if (object_y_low + objectid_baby) != $0981 {
     !error "Assertion failed: object_y_low + objectid_baby == $0981"
 }
+!if (object_z_order + objectid_arrow) != $38c4 {
+    !error "Assertion failed: object_z_order + objectid_arrow == $38c4"
+}
+!if (object_z_order + objectid_baby) != $38c7 {
+    !error "Assertion failed: object_z_order + objectid_baby == $38c7"
+}
+!if (object_z_order + objectid_balloon1) != $38c5 {
+    !error "Assertion failed: object_z_order + objectid_balloon1 == $38c5"
+}
+!if (objectid_arrow) != $02 {
+    !error "Assertion failed: objectid_arrow == $02"
+}
+!if (objectid_baby) != $05 {
+    !error "Assertion failed: objectid_baby == $05"
+}
+!if (objectid_balloon1) != $03 {
+    !error "Assertion failed: objectid_balloon1 == $03"
+}
 !if (objectid_balloon1_rope) != $04 {
     !error "Assertion failed: objectid_balloon1_rope == $04"
 }
+!if (objectid_bow) != $02 {
+    !error "Assertion failed: objectid_bow == $02"
+}
 !if (objectid_old_player) != $0b {
     !error "Assertion failed: objectid_old_player == $0b"
+}
+!if (objectid_player) != $00 {
+    !error "Assertion failed: objectid_player == $00"
 }
 !if (objectid_table) != $05 {
     !error "Assertion failed: objectid_table == $05"
