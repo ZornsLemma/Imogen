@@ -171,8 +171,8 @@ player_held_object_spriteid                         = $52
 developer_mode_sideways_ram_is_set_up_flag          = $5b
 l0070                                               = $70
 room_exit_direction                                 = $70
-l0078                                               = $78
-l0079                                               = $79
+object_left_cell_x                                  = $78
+object_right_cell_x                                 = $79
 object_x_low                                        = $0950
 object_x_low_old                                    = $095b
 object_x_high                                       = $0966
@@ -1370,7 +1370,7 @@ c4206
     jsr find_left_and_right_of_object                                 ; 421a: 20 34 24
     lda arrow_direction                                               ; 421d: ad 6f 0a
     bmi c423e                                                         ; 4220: 30 1c
-    lda l0078                                                         ; 4222: a5 78
+    lda object_left_cell_x                                            ; 4222: a5 78
     cmp #$28 ; '('                                                    ; 4224: c9 28
     bcc return5                                                       ; 4226: 90 30
     lda arrow_x_position_low                                          ; 4228: ad 70 0a
@@ -1384,7 +1384,7 @@ c4206
     jmp c4253                                                         ; 423b: 4c 53 42
 
 c423e
-    lda l0079                                                         ; 423e: a5 79
+    lda object_right_cell_x                                           ; 423e: a5 79
     bpl return5                                                       ; 4240: 10 16
     lda arrow_x_position_low                                          ; 4242: ad 70 0a
     clc                                                               ; 4245: 18
@@ -2005,8 +2005,6 @@ pydis_end
 ;     c449b
 ;     c44a0
 ;     c44eb
-;     l0078
-;     l0079
 ;     l3d01
 ;     l3f3c
 ;     l4187

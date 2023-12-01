@@ -61,6 +61,10 @@ constant(6, "objectid_table_rope")
 s = SubstituteLabels(substitute_labels)
 set_label_maker_hook(s.substitute_label_maker)
 
+# Copied from g, where it's a 'local' substituted variable
+label(0x0078, "object_left_cell_x")
+label(0x0079, "object_right_cell_x")
+
 label(0x0a17, "save_game_level_g_got_bow")
 label(0x0a18, "save_game_level_g_dropped_table_progress")
 label(0x0a19, "save_game_level_g_baby_progress")
