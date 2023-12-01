@@ -247,7 +247,7 @@ temp_right_offset                                   = $24d1
 find_top_and_bottom_of_object                       = $24d2
 temp_top_offset                                     = $2550
 temp_bottom_offset                                  = $2551
-update_player_solid_rock_collision                  = $25f5
+update_object_a_solid_rock_collision                = $25f5
 update_player_hitting_floor                         = $2770
 player_has_hit_floor_flag                           = $288f
 player_just_fallen_off_edge_direction               = $2890
@@ -969,7 +969,7 @@ c3fca
     ldy #$3b ; ';'                                                    ; 3fd0: a0 3b
     jsr l2200                                                         ; 3fd2: 20 00 22
     lda #0                                                            ; 3fd5: a9 00
-    jsr update_player_solid_rock_collision                            ; 3fd7: 20 f5 25
+    jsr update_object_a_solid_rock_collision                          ; 3fd7: 20 f5 25
     lda #$40 ; '@'                                                    ; 3fda: a9 40
     sta room_exit_direction                                           ; 3fdc: 85 70
     lda #$3b ; ';'                                                    ; 3fde: a9 3b
@@ -1410,7 +1410,7 @@ adding_positive_value_to_x
     sta thrown_egg_y_low                                              ; 42b8: 8d 72 0a
     jsr update_object_properties_for_small_egg                        ; 42bb: 20 1d 43
     lda #2                                                            ; 42be: a9 02
-    jsr update_player_solid_rock_collision                            ; 42c0: 20 f5 25
+    jsr update_object_a_solid_rock_collision                          ; 42c0: 20 f5 25
     lda object_x_low + objectid_small_egg                             ; 42c3: ad 52 09
     sta thrown_egg_x_low                                              ; 42c6: 8d 70 0a
     lda object_x_high + objectid_small_egg                            ; 42c9: ad 68 09

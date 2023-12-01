@@ -154,6 +154,9 @@ def ab(addr, message=""):
         message = ". "+message
     comment(addr, "ALWAYS branch" + message, inline=True)
 
+def ri(addr):
+    comment(addr, "redundant instruction", inline=True)
+
 def stars(addr, message=""):
     c = "*************************************************************************************"
     if message != "":
@@ -347,7 +350,7 @@ def common_to_all(level_letter):
     label(0x24d2, "find_top_and_bottom_of_object")
     label(0x2550, "temp_top_offset")
     label(0x2551, "temp_bottom_offset")
-    label(0x25f5, "update_player_solid_rock_collision")
+    label(0x25f5, "update_object_a_solid_rock_collision")
     label(0x2770, "update_player_hitting_floor")
     label(0x288f, "player_has_hit_floor_flag")
     label(0x2890, "player_just_fallen_off_edge_direction")

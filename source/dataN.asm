@@ -208,7 +208,7 @@ temp_right_offset                                   = $24d1
 find_top_and_bottom_of_object                       = $24d2
 temp_top_offset                                     = $2550
 temp_bottom_offset                                  = $2551
-update_player_solid_rock_collision                  = $25f5
+update_object_a_solid_rock_collision                = $25f5
 update_player_hitting_floor                         = $2770
 player_has_hit_floor_flag                           = $288f
 player_just_fallen_off_edge_direction               = $2890
@@ -1737,7 +1737,7 @@ c44f9
     lda #$e6                                                          ; 44f9: a9 e6
     sta collectable_being_used_spriteids + 1                          ; 44fb: 8d f3 2e
     lda #0                                                            ; 44fe: a9 00
-    jsr update_player_solid_rock_collision                            ; 4500: 20 f5 25
+    jsr update_object_a_solid_rock_collision                          ; 4500: 20 f5 25
     lda #$e3                                                          ; 4503: a9 e3
     sta collectable_being_used_spriteids + 1                          ; 4505: 8d f3 2e
 return7

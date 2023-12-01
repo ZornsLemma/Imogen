@@ -208,7 +208,7 @@ temp_right_offset                                   = $24d1
 find_top_and_bottom_of_object                       = $24d2
 temp_top_offset                                     = $2550
 temp_bottom_offset                                  = $2551
-update_player_solid_rock_collision                  = $25f5
+update_object_a_solid_rock_collision                = $25f5
 update_player_hitting_floor                         = $2770
 player_has_hit_floor_flag                           = $288f
 player_just_fallen_off_edge_direction               = $2890
@@ -1599,7 +1599,7 @@ c4422
     sty l0a48                                                         ; 4422: 8c 48 0a
     jsr sub_c4480                                                     ; 4425: 20 80 44
     lda #6                                                            ; 4428: a9 06
-    jsr update_player_solid_rock_collision                            ; 442a: 20 f5 25
+    jsr update_object_a_solid_rock_collision                          ; 442a: 20 f5 25
     lda object_x_low + 6                                              ; 442d: ad 56 09
     sta l0a42                                                         ; 4430: 8d 42 0a
     lda object_x_high + 6                                             ; 4433: ad 6c 09

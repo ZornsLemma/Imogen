@@ -301,7 +301,7 @@ new_player_character                                = $4d
 previous_room_index                                 = $50
 level_before_latest_level_and_room_initialisation   = $51
 player_held_object_spriteid                         = $52
-player_objectid                                     = $53
+objectid_to_test                                    = $53
 sprdata_ptr                                         = $54
 temp_rope_length                                    = $56
 temp_sprite_address_low                             = $58
@@ -4720,8 +4720,8 @@ find_left_and_right_of_object_including_held_object
     sta temp_left_offset                                              ; 2720: 8d d0 24    ..$ :25ef[1]
     jmp adjust_left_or_right_extent_due_to_holding_an_object          ; 2723: 4c 52 25    LR% :25f2[1]
 
-update_player_solid_rock_collision
-    sta player_objectid                                               ; 2726: 85 53       .S  :25f5[1]
+update_object_a_solid_rock_collision
+    sta objectid_to_test                                              ; 2726: 85 53       .S  :25f5[1]
     tax                                                               ; 2728: aa          .   :25f7[1]
 ; clear collision flags
     lda #0                                                            ; 2729: a9 00       ..  :25f8[1]
@@ -4732,10 +4732,10 @@ update_player_solid_rock_collision
 ; raise from the floor one pixel
     lda #1                                                            ; 2732: a9 01       ..  :2601[1]
     sta temp_bottom_offset                                            ; 2734: 8d 51 25    .Q% :2603[1]
-; find extents of player and check for wall collisions
-    ldx player_objectid                                               ; 2737: a6 53       .S  :2606[1]
+; find extents of object and check for wall collisions
+    ldx objectid_to_test                                              ; 2737: a6 53       .S  :2606[1]
     jsr find_left_and_right_of_object_including_held_object           ; 2739: 20 df 25     .% :2608[1]
-    lda player_objectid                                               ; 273c: a5 53       .S  :260b[1]
+    lda objectid_to_test                                              ; 273c: a5 53       .S  :260b[1]
     clc                                                               ; 273e: 18          .   :260d[1]
     adc #$0b                                                          ; 273f: 69 0b       i.  :260e[1]
     tax                                                               ; 2741: aa          .   :2610[1]
@@ -4745,7 +4745,7 @@ update_player_solid_rock_collision
     lda player_hit_wall_on_left_result_flag                           ; 2748: a5 7c       .|  :2617[1]
     ora player_hit_wall_on_right_result_flag                          ; 274a: 05 7d       .}  :2619[1]
     beq check_top_and_bottom_for_collisions                           ; 274c: f0 09       ..  :261b[1]
-    lda player_objectid                                               ; 274e: a5 53       .S  :261d[1]
+    lda objectid_to_test                                              ; 274e: a5 53       .S  :261d[1]
     clc                                                               ; 2750: 18          .   :261f[1]
     adc #$0b                                                          ; 2751: 69 0b       i.  :2620[1]
     tax                                                               ; 2753: aa          .   :2622[1]
@@ -4753,7 +4753,7 @@ update_player_solid_rock_collision
 check_top_and_bottom_for_collisions
     lda #1                                                            ; 2757: a9 01       ..  :2626[1]
     sta temp_bottom_offset                                            ; 2759: 8d 51 25    .Q% :2628[1]
-    ldx player_objectid                                               ; 275c: a6 53       .S  :262b[1]
+    ldx objectid_to_test                                              ; 275c: a6 53       .S  :262b[1]
     jsr find_top_and_bottom_of_object                                 ; 275e: 20 d2 24     .$ :262d[1]
     jsr check_for_player_intersecting_floor_or_ceiling                ; 2761: 20 e5 26     .& :2630[1]
     jsr update_floor_or_ceiling_collision                             ; 2764: 20 1e 27     .' :2633[1]
@@ -4763,13 +4763,13 @@ check_top_and_bottom_for_collisions
 ; handle wall collision
     lda #1                                                            ; 276d: a9 01       ..  :263c[1]
     sta temp_bottom_offset                                            ; 276f: 8d 51 25    .Q% :263e[1]
-    ldx player_objectid                                               ; 2772: a6 53       .S  :2641[1]
+    ldx objectid_to_test                                              ; 2772: a6 53       .S  :2641[1]
     jsr find_left_and_right_of_object_including_held_object           ; 2774: 20 df 25     .% :2643[1]
     jsr find_top_and_bottom_of_object                                 ; 2777: 20 d2 24     .$ :2646[1]
     jsr check_for_player_intersecting_wall_left_or_right              ; 277a: 20 5a 26     Z& :2649[1]
     jsr handle_left_right_wall_collision                              ; 277d: 20 93 26     .& :264c[1]
 finished_collision_update
-    lda player_objectid                                               ; 2780: a5 53       .S  :264f[1]
+    lda objectid_to_test                                              ; 2780: a5 53       .S  :264f[1]
     bne return13                                                      ; 2782: d0 06       ..  :2651[1]
     jsr update_player_accessory_including_toolbar                     ; 2784: 20 b8 2e     .. :2653[1]
     jsr handle_player_landing_sound                                   ; 2787: 20 6b 23     k# :2656[1]
@@ -4835,16 +4835,16 @@ return14
 ; If colliding with a wall, line up next to the wall instead of going through it.
 ; 
 ; On Entry:
-;     player_objectid: object index of player
+;     objectid_to_test: object index to test
 ; 
 ; *************************************************************************************
 handle_left_right_wall_collision
-    ldx player_objectid                                               ; 27c4: a6 53       .S  :2693[1]
+    ldx objectid_to_test                                              ; 27c4: a6 53       .S  :2693[1]
     lda player_hit_wall_on_left_result_flag                           ; 27c6: a5 7c       .|  :2695[1]
     cmp player_hit_wall_on_right_result_flag                          ; 27c8: c5 7d       .}  :2697[1]
     beq return15                                                      ; 27ca: f0 49       .I  :2699[1]
-    bcc player_has_hit_wall_on_right_side                             ; 27cc: 90 25       .%  :269b[1]
-; player has hit wall on left side. Adjust player position to align with the cell next
+    bcc object_has_hit_wall_on_right_side                             ; 27cc: 90 25       .%  :269b[1]
+; object has hit wall on left side. Adjust object position to align with the cell next
 ; to the wall.
     lda object_left_low                                               ; 27ce: a5 70       .p  :269d[1]
     and #7                                                            ; 27d0: 29 07       ).  :269f[1]
@@ -4864,9 +4864,9 @@ handle_left_right_wall_collision
     sta object_room_collision_flags,x                                 ; 27ed: 9d d8 38    ..8 :26bc[1]
     jmp return15                                                      ; 27f0: 4c e4 26    L.& :26bf[1]
 
-; player has hit wall on right side. Adjust player position to align with the cell next
+; object has hit wall on right side. Adjust object position to align with the cell next
 ; to the wall.
-player_has_hit_wall_on_right_side
+object_has_hit_wall_on_right_side
     lda object_right_low                                              ; 27f3: a5 72       .r  :26c2[1]
     and #7                                                            ; 27f5: 29 07       ).  :26c4[1]
     clc                                                               ; 27f7: 18          .   :26c6[1]
@@ -4948,12 +4948,12 @@ return16
 
 ; *************************************************************************************
 update_floor_or_ceiling_collision
-    ldx player_objectid                                               ; 284f: a6 53       .S  :271e[1]
+    ldx objectid_to_test                                              ; 284f: a6 53       .S  :271e[1]
     lda player_hit_ceiling_result_flag                                ; 2851: a5 7e       .~  :2720[1]
     cmp player_hit_floor_result_flag                                  ; 2853: c5 7f       ..  :2722[1]
     beq return17                                                      ; 2855: f0 49       .I  :2724[1]
-    bcc player_has_hit_floor                                          ; 2857: 90 25       .%  :2726[1]
-; player has hit ceiling. Adjust player position to align with the cell below the
+    bcc object_has_hit_floor                                          ; 2857: 90 25       .%  :2726[1]
+; object has hit ceiling. Adjust object position to align with the cell below the
 ; ceiling.
     lda object_top_low                                                ; 2859: a5 74       .t  :2728[1]
     and #7                                                            ; 285b: 29 07       ).  :272a[1]
@@ -4973,8 +4973,8 @@ update_floor_or_ceiling_collision
     sta object_room_collision_flags,x                                 ; 2878: 9d d8 38    ..8 :2747[1]
     jmp return17                                                      ; 287b: 4c 6f 27    Lo' :274a[1]
 
-; player has hit floor. Adjust player position to align with the cell above the floor.
-player_has_hit_floor
+; object has hit floor. Adjust object position to align with the cell above the floor.
+object_has_hit_floor
     lda object_bottom_low                                             ; 287e: a5 76       .v  :274d[1]
     and #7                                                            ; 2880: 29 07       ).  :274f[1]
     clc                                                               ; 2882: 18          .   :2751[1]
@@ -5013,13 +5013,13 @@ return17
 ; 
 ; *************************************************************************************
 update_player_hitting_floor
-    sta player_objectid                                               ; 28a1: 85 53       .S  :2770[1]
+    sta objectid_to_test                                              ; 28a1: 85 53       .S  :2770[1]
     txa                                                               ; 28a3: 8a          .   :2772[1]   ; remember X,Y
     pha                                                               ; 28a4: 48          H   :2773[1]
     tya                                                               ; 28a5: 98          .   :2774[1]
     pha                                                               ; 28a6: 48          H   :2775[1]
 ; check collision of player with room
-    ldx player_objectid                                               ; 28a7: a6 53       .S  :2776[1]
+    ldx objectid_to_test                                              ; 28a7: a6 53       .S  :2776[1]
     jsr find_left_and_right_of_object_including_held_object           ; 28a9: 20 df 25     .% :2778[1]
     lda #2                                                            ; 28ac: a9 02       ..  :277b[1]
     sta temp_bottom_offset                                            ; 28ae: 8d 51 25    .Q% :277d[1]
@@ -5044,7 +5044,7 @@ player_hit_floor
     sta temp_object_left_cell                                         ; 28cf: 8d 21 01    .!. :279e[1]
     lda object_right_cell_x                                           ; 28d2: a5 79       .y  :27a1[1]
     sta temp_object_right_cell                                        ; 28d4: 8d 22 01    .". :27a3[1]
-    ldx player_objectid                                               ; 28d7: a6 53       .S  :27a6[1]
+    ldx objectid_to_test                                              ; 28d7: a6 53       .S  :27a6[1]
 ; find the left/right extents of player without the accessory object
     jsr find_left_and_right_of_object                                 ; 28d9: 20 34 24     4$ :27a8[1]
 ; add one to the right pixel extent
@@ -5123,7 +5123,7 @@ check_for_solid_rock_under_player_to_right
 ; player has fallen off the edge to the right
     inc player_just_fallen_off_edge_direction                         ; 294b: ee 90 28    ..( :281a[1]
 player_has_fallen_off_either_edge
-    lda player_objectid                                               ; 294e: a5 53       .S  :281d[1]
+    lda objectid_to_test                                              ; 294e: a5 53       .S  :281d[1]
     beq check_cell_centre_below_player                                ; 2950: f0 04       ..  :281f[1]
     cmp #$0b                                                          ; 2952: c9 0b       ..  :2821[1]
     bne recall_registers_and_return2                                  ; 2954: d0 2c       .,  :2823[1]
@@ -6267,7 +6267,7 @@ wizard_got_index_in_animation
     sta object_spriteid                                               ; 2fa2: 8d a8 09    ... :2e71[1]
     jsr update_player_accessory_including_toolbar                     ; 2fa5: 20 b8 2e     .. :2e74[1]
     lda #0                                                            ; 2fa8: a9 00       ..  :2e77[1]
-    jsr update_player_solid_rock_collision                            ; 2faa: 20 f5 25     .% :2e79[1]
+    jsr update_object_a_solid_rock_collision                          ; 2faa: 20 f5 25     .% :2e79[1]
     lda object_room_collision_flags                                   ; 2fad: ad d8 38    ..8 :2e7c[1]
     sta temp_collision_results                                        ; 2fb0: 8d b5 2e    ... :2e7f[1]
 wizard_skip_holding_object_handling
@@ -6279,7 +6279,7 @@ wizard_skip_holding_object_handling
     jsr update_player_accessory_including_toolbar                     ; 2fbd: 20 b8 2e     .. :2e8c[1]
 ; update collision
     lda #0                                                            ; 2fc0: a9 00       ..  :2e8f[1]
-    jsr update_player_solid_rock_collision                            ; 2fc2: 20 f5 25     .% :2e91[1]
+    jsr update_object_a_solid_rock_collision                          ; 2fc2: 20 f5 25     .% :2e91[1]
     lda object_room_collision_flags                                   ; 2fc5: ad d8 38    ..8 :2e94[1]
     ora temp_collision_results                                        ; 2fc8: 0d b5 2e    ... :2e97[1]
     sta object_room_collision_flags                                   ; 2fcb: 8d d8 38    ..8 :2e9a[1]
@@ -6575,7 +6575,7 @@ cat_got_index_in_animation
     ldy #>cat_base_animation                                          ; 31dc: a0 2f       ./  :30ab[1]
     jsr set_player_spriteid_and_offset_from_animation_table           ; 31de: 20 00 22     ." :30ad[1]
     lda #0                                                            ; 31e1: a9 00       ..  :30b0[1]
-    jsr update_player_solid_rock_collision                            ; 31e3: 20 f5 25     .% :30b2[1]
+    jsr update_object_a_solid_rock_collision                          ; 31e3: 20 f5 25     .% :30b2[1]
 ; update cat tail
     lda #<cat_tail_spriteids                                          ; 31e6: a9 f7       ..  :30b5[1]
     sta address1_low                                                  ; 31e8: 85 70       .p  :30b7[1]
@@ -6927,7 +6927,7 @@ monkey_got_index_in_animation
     ldy #>monkey_base_animation                                       ; 346d: a0 30       .0  :333c[1]
     jsr set_player_spriteid_and_offset_from_animation_table           ; 346f: 20 00 22     ." :333e[1]
     lda #0                                                            ; 3472: a9 00       ..  :3341[1]
-    jsr update_player_solid_rock_collision                            ; 3474: 20 f5 25     .% :3343[1]
+    jsr update_object_a_solid_rock_collision                          ; 3474: 20 f5 25     .% :3343[1]
 ; start updating the tail
     lda #<monkey_tail_spriteids                                       ; 3477: a9 dd       ..  :3346[1]
     sta address1_low                                                  ; 3479: 85 70       .p  :3348[1]

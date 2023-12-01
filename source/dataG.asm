@@ -47,7 +47,7 @@ spriteid_arrow                        = 204
 spriteid_baby                         = 212
 spriteid_baby_dead                    = 215
 spriteid_baby_fall                    = 214
-spriteid_baby_smile                   = 217
+spriteid_baby_push                    = 217
 spriteid_baby_surprise                = 213
 spriteid_ball                         = 59
 spriteid_balloon                      = 200
@@ -55,8 +55,6 @@ spriteid_bow                          = 202
 spriteid_bow_menu_item                = 203
 spriteid_brazier                      = 58
 spriteid_burst_balloon                = 211
-spriteid_cache1                       = 205
-spriteid_cache2                       = 207
 spriteid_cat1                         = 27
 spriteid_cat2                         = 28
 spriteid_cat_jump                     = 26
@@ -84,6 +82,8 @@ spriteid_diamond2                     = 40
 spriteid_diamond3                     = 41
 spriteid_diamond4                     = 42
 spriteid_diamond5                     = 43
+spriteid_erase_cache1                 = 205
+spriteid_erase_cache2                 = 207
 spriteid_erase_player                 = 199
 spriteid_erase_player_accessory       = 198
 spriteid_fingertip_tile_restoration   = 30
@@ -154,114 +154,114 @@ spriteid_wizard_using_object          = 53
 spriteid_wood_block                   = 216
 
 ; Memory locations
-sprite_reflect_flag                                 = $1d
-desired_room_index                                  = $30
-current_level                                       = $31
-temp_sprite_x_offset                                = $3a
-temp_sprite_y_offset                                = $3b
-width_in_cells                                      = $3c
-height_in_cells                                     = $3d
-value_to_write_to_collision_map                     = $3e
-source_sprite_memory_low                            = $40
-source_sprite_memory_high                           = $41
-copy_mode                                           = $42
-current_player_character                            = $48
-previous_room_index                                 = $50
-level_before_latest_level_and_room_initialisation   = $51
-player_held_object_spriteid                         = $52
-developer_mode_sideways_ram_is_set_up_flag          = $5b
-l0070                                               = $70
-room_exit_direction                                 = $70
-temp_player_x                                       = $70
-object_left_cell_x                                  = $78
-object_right_cell_x                                 = $79
-object_x_low                                        = $0950
-object_x_low_old                                    = $095b
-object_x_high                                       = $0966
-object_x_high_old                                   = $0971
-object_y_low                                        = $097c
-object_y_low_old                                    = $0987
-object_y_high                                       = $0992
-object_spriteid                                     = $09a8
-object_spriteid_old                                 = $09b3
-object_direction                                    = $09be
-current_player_animation                            = $09df
-save_game_level_g_got_bow                           = $0a17
-save_game_level_g_dropped_table_progress            = $0a18
-save_game_level_g_baby_progress                     = $0a19
-arrow_direction                                     = $0a6f
-arrow_x_position_low                                = $0a70
-arrow_x_position_high                               = $0a71
-arrow_y_position_low                                = $0a72
-arrow_room                                          = $0a73
-arrow_active_flag                                   = $0a74
-room_1_left_hand_balloon_y_position                 = $0a75
-room_1_right_hand_balloon_y_position                = $0a76
-room_3_balloon_y_position                           = $0a77
-room_0_balloon_y_position                           = $0a78
-room_3_baby_progress                                = $0a79
-room_3_baby_y_position                              = $0a7a
-tile_all_set_pixels                                 = $0aa9
-developer_flags                                     = $1103
-initialise_level_and_room                           = $1140
-start_room                                          = $12bb
-game_update                                         = $12da
-update_room_first_update_flag                       = $132b
-sprite_op                                           = $138d
-toolbar_colour                                      = $175e
-gameplay_area_colour                                = $1760
-get_random_number_up_to_a                           = $18a6
-update_brazier_and_fire                             = $1988
-update_level_completion                             = $1a10
-currently_updating_logic_for_room_index             = $1aba
-copy_rectangle_of_memory_to_screen                  = $1abb
-draw_floor_walls_and_ceiling_around_solid_rock      = $1b90
-draw_rope                                           = $1db9
-write_value_to_a_rectangle_of_cells_in_collision_map = $1e44
-write_a_single_value_to_cell_in_collision_map       = $1ebb
-read_collision_map_value_for_xy                     = $1efa
-draw_sprite_a_at_cell_xy                            = $1f4c
-draw_sprite_a_at_cell_xy_and_write_to_collision_map = $1f57
-set_object_position_from_cell_xy                    = $1f5d
-set_object_position_from_current_sprite_position    = $1f6d
-copy_object_state_to_old                            = $20f7
-jmp_for_update_extra_player_character               = $22dd
-play_landing_sound                                  = $23a9
-player_wall_collision_reaction_speed                = $2433
-find_left_and_right_of_object                       = $2434
-temp_left_offset                                    = $24d0
-temp_right_offset                                   = $24d1
-find_top_and_bottom_of_object                       = $24d2
-temp_top_offset                                     = $2550
-temp_bottom_offset                                  = $2551
-update_player_solid_rock_collision                  = $25f5
-update_player_hitting_floor                         = $2770
-player_has_hit_floor_flag                           = $288f
-player_just_fallen_off_edge_direction               = $2890
-get_solid_rock_collision_for_object_a               = $2894
-temp_default_collision_map_option                   = $28e1
-test_for_collision_between_objects_x_and_y          = $28e2
-desired_menu_slots                                  = $295c
-menu_index_for_extra_items                          = $296e
-insert_character_menu_item_into_toolbar             = $2b87
-find_or_create_menu_slot_for_A                      = $2bbd
-remove_item_from_toolbar_menu                       = $2be0
-player_using_object_spriteid                        = $2eb6
-previous_player_using_object_spriteid               = $2eb7
-toolbar_collectable_spriteids                       = $2ee8
-collectable_spriteids                               = $2eed
-collectable_being_used_spriteids                    = $2ef2
-monkey_base_animation                               = $30ff
-monkey_climb_idle_animation                         = $3144
-monkey_climb_down_animation                         = $3148
-monkey_climb_animation                              = $3150
-inhibit_monkey_climb_flag                           = $31d7
-object_erase_type                                   = $38ac
-object_z_order                                      = $38c2
-object_room_collision_flags                         = $38d8
-play_sound_yx                                       = $38f6
-define_envelope                                     = $395e
-sound_priority_per_channel_table                    = $396f
+sprite_reflect_flag                                     = $1d
+desired_room_index                                      = $30
+current_level                                           = $31
+temp_sprite_x_offset                                    = $3a
+temp_sprite_y_offset                                    = $3b
+width_in_cells                                          = $3c
+height_in_cells                                         = $3d
+value_to_write_to_collision_map                         = $3e
+source_sprite_memory_low                                = $40
+source_sprite_memory_high                               = $41
+copy_mode                                               = $42
+current_player_character                                = $48
+previous_room_index                                     = $50
+level_before_latest_level_and_room_initialisation       = $51
+player_held_object_spriteid                             = $52
+developer_mode_sideways_ram_is_set_up_flag              = $5b
+l0070                                                   = $70
+room_exit_direction                                     = $70
+temp_player_x                                           = $70
+object_left_cell_x                                      = $78
+object_right_cell_x                                     = $79
+object_x_low                                            = $0950
+object_x_low_old                                        = $095b
+object_x_high                                           = $0966
+object_x_high_old                                       = $0971
+object_y_low                                            = $097c
+object_y_low_old                                        = $0987
+object_y_high                                           = $0992
+object_spriteid                                         = $09a8
+object_spriteid_old                                     = $09b3
+object_direction                                        = $09be
+current_player_animation                                = $09df
+save_game_level_g_got_bow_or_arrow_in_flight_progress   = $0a17
+save_game_level_g_dropped_table_progress                = $0a18
+save_game_level_g_baby_progress                         = $0a19
+arrow_direction                                         = $0a6f
+arrow_x_position_low                                    = $0a70
+arrow_x_position_high                                   = $0a71
+arrow_y_position_low                                    = $0a72
+arrow_room                                              = $0a73
+arrow_active_progress                                   = $0a74
+room_1_left_hand_balloon_y_position                     = $0a75
+room_1_right_hand_balloon_y_position                    = $0a76
+room_3_balloon_y_position                               = $0a77
+room_0_balloon_y_position                               = $0a78
+room_3_baby_animation_step                              = $0a79
+room_3_baby_y_position                                  = $0a7a
+tile_all_set_pixels                                     = $0aa9
+developer_flags                                         = $1103
+initialise_level_and_room                               = $1140
+start_room                                              = $12bb
+game_update                                             = $12da
+update_room_first_update_flag                           = $132b
+sprite_op                                               = $138d
+toolbar_colour                                          = $175e
+gameplay_area_colour                                    = $1760
+get_random_number_up_to_a                               = $18a6
+update_brazier_and_fire                                 = $1988
+update_level_completion                                 = $1a10
+currently_updating_logic_for_room_index                 = $1aba
+copy_rectangle_of_memory_to_screen                      = $1abb
+draw_floor_walls_and_ceiling_around_solid_rock          = $1b90
+draw_rope                                               = $1db9
+write_value_to_a_rectangle_of_cells_in_collision_map    = $1e44
+write_a_single_value_to_cell_in_collision_map           = $1ebb
+read_collision_map_value_for_xy                         = $1efa
+draw_sprite_a_at_cell_xy                                = $1f4c
+draw_sprite_a_at_cell_xy_and_write_to_collision_map     = $1f57
+set_object_position_from_cell_xy                        = $1f5d
+set_object_position_from_current_sprite_position        = $1f6d
+copy_object_state_to_old                                = $20f7
+jmp_for_update_extra_player_character                   = $22dd
+play_landing_sound                                      = $23a9
+player_wall_collision_reaction_speed                    = $2433
+find_left_and_right_of_object                           = $2434
+temp_left_offset                                        = $24d0
+temp_right_offset                                       = $24d1
+find_top_and_bottom_of_object                           = $24d2
+temp_top_offset                                         = $2550
+temp_bottom_offset                                      = $2551
+update_object_a_solid_rock_collision                    = $25f5
+update_player_hitting_floor                             = $2770
+player_has_hit_floor_flag                               = $288f
+player_just_fallen_off_edge_direction                   = $2890
+get_solid_rock_collision_for_object_a                   = $2894
+temp_default_collision_map_option                       = $28e1
+test_for_collision_between_objects_x_and_y              = $28e2
+desired_menu_slots                                      = $295c
+menu_index_for_extra_items                              = $296e
+insert_character_menu_item_into_toolbar                 = $2b87
+find_or_create_menu_slot_for_A                          = $2bbd
+remove_item_from_toolbar_menu                           = $2be0
+player_using_object_spriteid                            = $2eb6
+previous_player_using_object_spriteid                   = $2eb7
+toolbar_collectable_spriteids                           = $2ee8
+collectable_spriteids                                   = $2eed
+collectable_being_used_spriteids                        = $2ef2
+monkey_base_animation                                   = $30ff
+monkey_climb_idle_animation                             = $3144
+monkey_climb_down_animation                             = $3148
+monkey_climb_animation                                  = $3150
+inhibit_monkey_climb_flag                               = $31d7
+object_erase_type                                       = $38ac
+object_z_order                                          = $38c2
+object_room_collision_flags                             = $38d8
+play_sound_yx                                           = $38f6
+define_envelope                                         = $395e
+sound_priority_per_channel_table                        = $396f
 
     * = $3ad5
 
@@ -309,9 +309,9 @@ level_specific_initialisation
     lda developer_flags                                               ; 3af8: ad 03 11
     bpl developer_mode_inactive                                       ; 3afb: 10 05
     lda #$ff                                                          ; 3afd: a9 ff
-    sta save_game_level_g_got_bow                                     ; 3aff: 8d 17 0a
+    sta save_game_level_g_got_bow_or_arrow_in_flight_progress         ; 3aff: 8d 17 0a
 developer_mode_inactive
-    lda save_game_level_g_got_bow                                     ; 3b02: ad 17 0a
+    lda save_game_level_g_got_bow_or_arrow_in_flight_progress         ; 3b02: ad 17 0a
     beq return1                                                       ; 3b05: f0 05
     lda #spriteid_bow_menu_item                                       ; 3b07: a9 cb
     jsr find_or_create_menu_slot_for_A                                ; 3b09: 20 bd 2b
@@ -482,7 +482,7 @@ initialise_if_room_2
     ldx #<envelope2                                                   ; 3bdd: a2 29
     ldy #>envelope2                                                   ; 3bdf: a0 45
     jsr define_envelope                                               ; 3be1: 20 5e 39
-    lda #spriteid_cache2                                              ; 3be4: a9 cf
+    lda #spriteid_erase_cache2                                        ; 3be4: a9 cf
     sta object_erase_type + objectid_balloon1_rope                    ; 3be6: 8d b0 38
     lda #$c0                                                          ; 3be9: a9 c0
     sta object_z_order + objectid_balloon1_rope                       ; 3beb: 8d c6 38
@@ -745,30 +745,37 @@ room_3_game_update_loop
     ldy current_level                                                 ; 3d86: a4 31
     jmp initialise_level_and_room                                     ; 3d88: 4c 40 11
 
-baby_spriteids
+; Baby animations. Each frame of animation is two bytes, the first byte for the sprite
+; id and the second for the Y offset. Each animation is zero terminated.
+baby_animations
     !byte 0                                                           ; 3d8b: 00
+baby_holding_rope_animation
     !byte spriteid_baby                                               ; 3d8c: d4
     !byte 0, 0                                                        ; 3d8d: 00 00
-    !byte spriteid_baby_smile                                         ; 3d8f: d9
+baby_push_animation
+    !byte spriteid_baby_push                                          ; 3d8f: d9
     !byte 0                                                           ; 3d90: 00
-    !byte spriteid_baby_smile                                         ; 3d91: d9
+    !byte spriteid_baby_push                                          ; 3d91: d9
     !byte 0                                                           ; 3d92: 00
-    !byte spriteid_baby_smile                                         ; 3d93: d9
+    !byte spriteid_baby_push                                          ; 3d93: d9
     !byte 0                                                           ; 3d94: 00
-    !byte spriteid_baby_smile                                         ; 3d95: d9
+    !byte spriteid_baby_push                                          ; 3d95: d9
     !byte 0                                                           ; 3d96: 00
-    !byte spriteid_baby_smile                                         ; 3d97: d9
+    !byte spriteid_baby_push                                          ; 3d97: d9
     !byte 0                                                           ; 3d98: 00
-    !byte spriteid_baby_smile                                         ; 3d99: d9
+    !byte spriteid_baby_push                                          ; 3d99: d9
     !byte 0                                                           ; 3d9a: 00
-    !byte spriteid_baby_smile                                         ; 3d9b: d9
+    !byte spriteid_baby_push                                          ; 3d9b: d9
     !byte 0                                                           ; 3d9c: 00
-    !byte spriteid_baby_smile                                         ; 3d9d: d9
+    !byte spriteid_baby_push                                          ; 3d9d: d9
     !byte 0, 0                                                        ; 3d9e: 00 00
+baby_surprise_animation
     !byte spriteid_baby_surprise                                      ; 3da0: d5
     !byte 0, 0                                                        ; 3da1: 00 00
+baby_fall_animation
     !byte spriteid_baby_fall                                          ; 3da3: d6
     !byte 8, 0                                                        ; 3da4: 08 00
+baby_dead_animation
     !byte spriteid_baby_dead                                          ; 3da6: d7
     !byte 0, 0                                                        ; 3da7: 00 00
 
@@ -781,50 +788,57 @@ room_3_update_handler
     jsr update_level_completion                                       ; 3db4: 20 10 1a
 ; check for first update in room (branch if not)
     lda update_room_first_update_flag                                 ; 3db7: ad 2b 13
-    beq c3def                                                         ; 3dba: f0 33
+    beq room_3_update_not_first_update                                ; 3dba: f0 33
 ; check for level change (branch if not)
     lda current_level                                                 ; 3dbc: a5 31
     cmp level_before_latest_level_and_room_initialisation             ; 3dbe: c5 51
-    beq c3dd5                                                         ; 3dc0: f0 13
-    ldy #1                                                            ; 3dc2: a0 01
+    beq same_level_new_room                                           ; 3dc0: f0 13
+; initialise baby progress, or set the baby progress to done if enough if in mid
+; animation
+    ldy #baby_holding_rope_animation - baby_animations                ; 3dc2: a0 01
     lda save_game_level_g_baby_progress                               ; 3dc4: ad 19 0a
-    beq c3dcf                                                         ; 3dc7: f0 06
-    cmp #1                                                            ; 3dc9: c9 01
-    beq c3dcf                                                         ; 3dcb: f0 02
-    ldy #$1b                                                          ; 3dcd: a0 1b
-c3dcf
+    beq initialise_baby_progress                                      ; 3dc7: f0 06
+    cmp #baby_holding_rope_animation - baby_animations                ; 3dc9: c9 01
+    beq initialise_baby_progress                                      ; 3dcb: f0 02
+    ldy #baby_dead_animation - baby_animations                        ; 3dcd: a0 1b
+initialise_baby_progress
     sty save_game_level_g_baby_progress                               ; 3dcf: 8c 19 0a
-    sty room_3_baby_progress                                          ; 3dd2: 8c 79 0a
-c3dd5
+    sty room_3_baby_animation_step                                    ; 3dd2: 8c 79 0a
+; branch if not in room 3
+same_level_new_room
     lda desired_room_index                                            ; 3dd5: a5 30
     cmp #3                                                            ; 3dd7: c9 03
-    bne c3dec                                                         ; 3dd9: d0 11
+    bne nothing_to_initialise                                         ; 3dd9: d0 11
+; define envelope for room 3
     ldx #<envelope3                                                   ; 3ddb: a2 47
     ldy #>envelope3                                                   ; 3ddd: a0 45
     jsr define_envelope                                               ; 3ddf: 20 5e 39
-    lda #spriteid_cache2                                              ; 3de2: a9 cf
+; set X position of baby and erase sprite
+    lda #spriteid_erase_cache2                                        ; 3de2: a9 cf
     sta object_erase_type + objectid_baby                             ; 3de4: 8d b1 38
     lda #$58 ; 'X'                                                    ; 3de7: a9 58
     sta object_x_low + objectid_baby                                  ; 3de9: 8d 55 09
-c3dec
-    jmp c3eb5                                                         ; 3dec: 4c b5 3e
+nothing_to_initialise
+    jmp set_baby_object_sprite_if_in_room_3                           ; 3dec: 4c b5 3e
 
-c3def
-    lda room_3_baby_progress                                          ; 3def: ad 79 0a
+; increment the animation step, and loop if at end
+room_3_update_not_first_update
+    lda room_3_baby_animation_step                                    ; 3def: ad 79 0a
     clc                                                               ; 3df2: 18
     adc #2                                                            ; 3df3: 69 02
     tay                                                               ; 3df5: a8
-    lda baby_spriteids,y                                              ; 3df6: b9 8b 3d
+    lda baby_animations,y                                             ; 3df6: b9 8b 3d
     cmp #0                                                            ; 3df9: c9 00
     bne c3e00                                                         ; 3dfb: d0 03
+; loop back to start of current baby animation
     ldy save_game_level_g_baby_progress                               ; 3dfd: ac 19 0a
 c3e00
     lda save_game_level_g_baby_progress                               ; 3e00: ad 19 0a
-    cmp #1                                                            ; 3e03: c9 01
+    cmp #baby_holding_rope_animation - baby_animations                ; 3e03: c9 01
     beq c3e0e                                                         ; 3e05: f0 07
-    cmp #$18                                                          ; 3e07: c9 18
+    cmp #baby_fall_animation - baby_animations                        ; 3e07: c9 18
     beq c3e6d                                                         ; 3e09: f0 62
-    jmp c3e92                                                         ; 3e0b: 4c 92 3e
+    jmp reset_sound_priorities_if_in_room_3                           ; 3e0b: 4c 92 3e
 
 c3e0e
     lda desired_room_index                                            ; 3e0e: a5 30
@@ -837,18 +851,19 @@ c3e0e
     ldy l3f3c                                                         ; 3e1e: ac 3c 3f
     ora #0                                                            ; 3e21: 09 00
     beq c3e47                                                         ; 3e23: f0 22
+; got arrow baby collision
     lda #0                                                            ; 3e25: a9 00
     ldx #<sound5                                                      ; 3e27: a2 55
     ldy #>sound5                                                      ; 3e29: a0 45
     jsr play_sound_yx                                                 ; 3e2b: 20 f6 38
     lda #spriteid_one_pixel_masked_out                                ; 3e2e: a9 00
-    sta object_spriteid + objectid_bow                                ; 3e30: 8d aa 09
+    sta object_spriteid + objectid_arrow                              ; 3e30: 8d aa 09
     lda #$ff                                                          ; 3e33: a9 ff
-    sta save_game_level_g_got_bow                                     ; 3e35: 8d 17 0a
+    sta save_game_level_g_got_bow_or_arrow_in_flight_progress         ; 3e35: 8d 17 0a
     lda #$60 ; '`'                                                    ; 3e38: a9 60
     sta room_3_baby_y_position                                        ; 3e3a: 8d 7a 0a
-    ldy #$15                                                          ; 3e3d: a0 15
-    lda #$18                                                          ; 3e3f: a9 18
+    ldy #baby_surprise_animation - baby_animations                    ; 3e3d: a0 15
+    lda #baby_fall_animation - baby_animations                        ; 3e3f: a9 18
     sta save_game_level_g_baby_progress                               ; 3e41: 8d 19 0a
     jmp c3ea7                                                         ; 3e44: 4c a7 3e
 
@@ -885,11 +900,11 @@ c3e6d
     ldy #>sound4                                                      ; 3e85: a0 45
     jsr play_sound_yx                                                 ; 3e87: 20 f6 38
 c3e8a
-    ldy #$1b                                                          ; 3e8a: a0 1b
+    ldy #baby_dead_animation - baby_animations                        ; 3e8a: a0 1b
     sty save_game_level_g_baby_progress                               ; 3e8c: 8c 19 0a
     jmp c3ea7                                                         ; 3e8f: 4c a7 3e
 
-c3e92
+reset_sound_priorities_if_in_room_3
     lda desired_room_index                                            ; 3e92: a5 30
     cmp #3                                                            ; 3e94: c9 03
     bne c3ea7                                                         ; 3e96: d0 0f
@@ -900,26 +915,27 @@ c3e92
     sta sound_priority_per_channel_table                              ; 3ea1: 8d 6f 39
     sta sound_priority_per_channel_table+1                            ; 3ea4: 8d 70 39
 c3ea7
-    sty room_3_baby_progress                                          ; 3ea7: 8c 79 0a
+    sty room_3_baby_animation_step                                    ; 3ea7: 8c 79 0a
     iny                                                               ; 3eaa: c8
-    lda baby_spriteids,y                                              ; 3eab: b9 8b 3d
+; add y offset at current animation step
+    lda baby_animations,y                                             ; 3eab: b9 8b 3d
     clc                                                               ; 3eae: 18
     adc room_3_baby_y_position                                        ; 3eaf: 6d 7a 0a
     sta room_3_baby_y_position                                        ; 3eb2: 8d 7a 0a
-c3eb5
+set_baby_object_sprite_if_in_room_3
     lda desired_room_index                                            ; 3eb5: a5 30
     cmp #3                                                            ; 3eb7: c9 03
     bne c3f0c                                                         ; 3eb9: d0 51
-    ldy room_3_baby_progress                                          ; 3ebb: ac 79 0a
-    lda baby_spriteids,y                                              ; 3ebe: b9 8b 3d
+    ldy room_3_baby_animation_step                                    ; 3ebb: ac 79 0a
+    lda baby_animations,y                                             ; 3ebe: b9 8b 3d
     sta object_spriteid + objectid_baby                               ; 3ec1: 8d ad 09
     lda save_game_level_g_baby_progress                               ; 3ec4: ad 19 0a
-    cmp #$1b                                                          ; 3ec7: c9 1b
+    cmp #baby_dead_animation - baby_animations                        ; 3ec7: c9 1b
     beq c3ee8                                                         ; 3ec9: f0 1d
     lda #$a0                                                          ; 3ecb: a9 a0
     sta object_z_order + objectid_baby                                ; 3ecd: 8d c7 38
     lda save_game_level_g_baby_progress                               ; 3ed0: ad 19 0a
-    cmp #1                                                            ; 3ed3: c9 01
+    cmp #baby_holding_rope_animation - baby_animations                ; 3ed3: c9 01
     bne c3edf                                                         ; 3ed5: d0 08
     lda #$60 ; '`'                                                    ; 3ed7: a9 60
     sta object_y_low + objectid_baby                                  ; 3ed9: 8d 81 09
@@ -956,9 +972,9 @@ c3f0c
     sta l44ac                                                         ; 3f18: 8d ac 44
     ldy #$60 ; '`'                                                    ; 3f1b: a0 60
     lda save_game_level_g_baby_progress                               ; 3f1d: ad 19 0a
-    cmp #1                                                            ; 3f20: c9 01
+    cmp #baby_holding_rope_animation - baby_animations                ; 3f20: c9 01
     beq c3f2d                                                         ; 3f22: f0 09
-    lda room_3_baby_progress                                          ; 3f24: ad 79 0a
+    lda room_3_baby_animation_step                                    ; 3f24: ad 79 0a
     cmp #$15                                                          ; 3f27: c9 15
     beq c3f2d                                                         ; 3f29: f0 02
     ldy #$20 ; ' '                                                    ; 3f2b: a0 20
@@ -1095,9 +1111,9 @@ room_0_game_update_loop
 room_0_update_handler
     lda #0                                                            ; 3fd7: a9 00
     sta currently_updating_logic_for_room_index                       ; 3fd9: 8d ba 1a
-    lda #3                                                            ; 3fdc: a9 03
-    ldx #$25 ; '%'                                                    ; 3fde: a2 25
-    ldy #$0d                                                          ; 3fe0: a0 0d
+    lda #3                                                            ; 3fdc: a9 03                   ; redundant instruction
+    ldx #$25 ; '%'                                                    ; 3fde: a2 25                   ; redundant instruction
+    ldy #$0d                                                          ; 3fe0: a0 0d                   ; redundant instruction
     lda #5                                                            ; 3fe2: a9 05
     sta l44ab                                                         ; 3fe4: 8d ab 44
     lda #6                                                            ; 3fe7: a9 06
@@ -1110,10 +1126,10 @@ room_0_update_handler
     sty room_0_balloon_y_position                                     ; 3ff9: 8c 78 0a
 ; check for first update in room (branch if so)
     lda update_room_first_update_flag                                 ; 3ffc: ad 2b 13
-    bne c4004                                                         ; 3fff: d0 03
+    bne initialise_room_0                                             ; 3fff: d0 03
     jmp c4091                                                         ; 4001: 4c 91 40
 
-c4004
+initialise_room_0
     lda #spriteid_bow_menu_item                                       ; 4004: a9 cb
     sta toolbar_collectable_spriteids+1                               ; 4006: 8d e9 2e
     lda #spriteid_bow                                                 ; 4009: a9 ca
@@ -1131,18 +1147,21 @@ c4004
 ; check for level change (branch if not)
     lda current_level                                                 ; 4026: a5 31
     cmp level_before_latest_level_and_room_initialisation             ; 4028: c5 51
-    beq c4036                                                         ; 402a: f0 0a
-    lda save_game_level_g_got_bow                                     ; 402c: ad 17 0a
-    beq c4036                                                         ; 402f: f0 05
+    beq no_level_change                                               ; 402a: f0 0a
+; new level. If arrow is in flight (non_zero), then stop it, and mark we have got the
+; bow ($ff).
+    lda save_game_level_g_got_bow_or_arrow_in_flight_progress         ; 402c: ad 17 0a
+    beq no_level_change                                               ; 402f: f0 05
     lda #$ff                                                          ; 4031: a9 ff
-    sta save_game_level_g_got_bow                                     ; 4033: 8d 17 0a
-c4036
-    lda #spriteid_cache1                                              ; 4036: a9 cd
+    sta save_game_level_g_got_bow_or_arrow_in_flight_progress         ; 4033: 8d 17 0a
+no_level_change
+    lda #spriteid_erase_cache1                                        ; 4036: a9 cd
     sta object_erase_type + objectid_bow                              ; 4038: 8d ae 38
     lda #0                                                            ; 403b: a9 00
     sta object_y_high + objectid_bow                                  ; 403d: 8d 94 09
-    lda save_game_level_g_got_bow                                     ; 4040: ad 17 0a
-    bne c405e                                                         ; 4043: d0 19
+    lda save_game_level_g_got_bow_or_arrow_in_flight_progress         ; 4040: ad 17 0a
+    bne update_arrow_progress                                         ; 4043: d0 19
+; position bow in room 0
     lda desired_room_index                                            ; 4045: a5 30
     cmp #0                                                            ; 4047: c9 00
     bne return3                                                       ; 4049: d0 12
@@ -1157,36 +1176,38 @@ c4036
 return3
     rts                                                               ; 405d: 60
 
-c405e
+update_arrow_progress
     cmp #$ff                                                          ; 405e: c9 ff
-    beq c4086                                                         ; 4060: f0 24
+    beq got_bow                                                       ; 4060: f0 24
+; arrow is in the air. Check: Is it in the current room? Branch if not.
     lda desired_room_index                                            ; 4062: a5 30
     cmp arrow_room                                                    ; 4064: cd 73 0a
-    bne c4086                                                         ; 4067: d0 1d
+    bne got_bow                                                       ; 4067: d0 1d
+; update arrow object in the current room
     jsr set_arrow_object                                              ; 4069: 20 59 42
 loop_c406c
     lda desired_room_index                                            ; 406c: a5 30
     cmp arrow_room                                                    ; 406e: cd 73 0a
-    bne c4086                                                         ; 4071: d0 13
-    lda arrow_active_flag                                             ; 4073: ad 74 0a
-    beq c4086                                                         ; 4076: f0 0e
-    dec arrow_active_flag                                             ; 4078: ce 74 0a
+    bne got_bow                                                       ; 4071: d0 13
+    lda arrow_active_progress                                         ; 4073: ad 74 0a
+    beq got_bow                                                       ; 4076: f0 0e
+    dec arrow_active_progress                                         ; 4078: ce 74 0a
     ldx #2                                                            ; 407b: a2 02
     jsr copy_object_state_to_old                                      ; 407d: 20 f7 20
-    jsr sub_c418a                                                     ; 4080: 20 8a 41
+    jsr update_arrow_collision0                                       ; 4080: 20 8a 41
     jmp loop_c406c                                                    ; 4083: 4c 6c 40
 
-c4086
+got_bow
     lda #spriteid_one_pixel_masked_out                                ; 4086: a9 00
     sta object_spriteid_old + objectid_bow                            ; 4088: 8d b5 09
 c408b
     jmp return4                                                       ; 408b: 4c 86 41
 
 c408e
-    jmp c417e                                                         ; 408e: 4c 7e 41
+    jmp update_arrow_active_progress                                  ; 408e: 4c 7e 41
 
 c4091
-    lda save_game_level_g_got_bow                                     ; 4091: ad 17 0a
+    lda save_game_level_g_got_bow_or_arrow_in_flight_progress         ; 4091: ad 17 0a
     bne c40b5                                                         ; 4094: d0 1f
     lda desired_room_index                                            ; 4096: a5 30
     cmp #0                                                            ; 4098: c9 00
@@ -1199,7 +1220,7 @@ c4091
     jsr find_or_create_menu_slot_for_A                                ; 40a7: 20 bd 2b
     lda #spriteid_one_pixel_masked_out                                ; 40aa: a9 00
     sta object_spriteid + objectid_bow                                ; 40ac: 8d aa 09
-    dec save_game_level_g_got_bow                                     ; 40af: ce 17 0a
+    dec save_game_level_g_got_bow_or_arrow_in_flight_progress         ; 40af: ce 17 0a
     jmp return4                                                       ; 40b2: 4c 86 41
 
 c40b5
@@ -1216,13 +1237,13 @@ c40b5
     dex                                                               ; 40ce: ca
 c40cf
     stx l4187                                                         ; 40cf: 8e 87 41
-    lda save_game_level_g_got_bow                                     ; 40d2: ad 17 0a
+    lda save_game_level_g_got_bow_or_arrow_in_flight_progress         ; 40d2: ad 17 0a
     cmp #$ff                                                          ; 40d5: c9 ff
     beq c40ee                                                         ; 40d7: f0 15
     lda arrow_room                                                    ; 40d9: ad 73 0a
     cmp desired_room_index                                            ; 40dc: c5 30
     beq c4125                                                         ; 40de: f0 45
-    lda arrow_active_flag                                             ; 40e0: ad 74 0a
+    lda arrow_active_progress                                         ; 40e0: ad 74 0a
     cmp #$0a                                                          ; 40e3: c9 0a
     bcc c408e                                                         ; 40e5: 90 a7
     lda l4187                                                         ; 40e7: ad 87 41
@@ -1234,7 +1255,7 @@ c40ee
 c40f3
     dec l4188                                                         ; 40f3: ce 88 41
     lda #1                                                            ; 40f6: a9 01
-    sta save_game_level_g_got_bow                                     ; 40f8: 8d 17 0a
+    sta save_game_level_g_got_bow_or_arrow_in_flight_progress         ; 40f8: 8d 17 0a
     lda desired_room_index                                            ; 40fb: a5 30
     sta arrow_room                                                    ; 40fd: 8d 73 0a
     lda object_direction                                              ; 4100: ad be 09
@@ -1246,35 +1267,35 @@ c40f3
     lda object_y_low + objectid_player_accessory                      ; 4112: ad 7d 09
     sta arrow_y_position_low                                          ; 4115: 8d 72 0a
     lda #0                                                            ; 4118: a9 00
-    sta arrow_active_flag                                             ; 411a: 8d 74 0a
+    sta arrow_active_progress                                         ; 411a: 8d 74 0a
     jsr set_arrow_object                                              ; 411d: 20 59 42
-    ldx #2                                                            ; 4120: a2 02
+    ldx #objectid_arrow                                               ; 4120: a2 02
     jsr copy_object_state_to_old                                      ; 4122: 20 f7 20
 c4125
-    jsr sub_c418a                                                     ; 4125: 20 8a 41
+    jsr update_arrow_collision0                                       ; 4125: 20 8a 41
     lda desired_room_index                                            ; 4128: a5 30
     cmp arrow_room                                                    ; 412a: cd 73 0a
     beq c4134                                                         ; 412d: f0 05
     lda #0                                                            ; 412f: a9 00
-    sta arrow_active_flag                                             ; 4131: 8d 74 0a
+    sta arrow_active_progress                                         ; 4131: 8d 74 0a
 c4134
     lda l4189                                                         ; 4134: ad 89 41
     sta object_spriteid_old + objectid_bow                            ; 4137: 8d b5 09
     ldx #objectid_old_player                                          ; 413a: a2 0b
     ldy #objectid_bow                                                 ; 413c: a0 02
     jsr test_for_collision_between_objects_x_and_y                    ; 413e: 20 e2 28
-    bne c4171                                                         ; 4141: d0 2e
-    lda #2                                                            ; 4143: a9 02
+    bne player_collided_with_bow                                      ; 4141: d0 2e
+    lda #objectid_bow                                                 ; 4143: a9 02
     jsr get_solid_rock_collision_for_object_a                         ; 4145: 20 94 28
-    bne c4171                                                         ; 4148: d0 27
+    bne player_collided_with_bow                                      ; 4148: d0 27
     lda l4188                                                         ; 414a: ad 88 41
     beq c416b                                                         ; 414d: f0 1c
     lda desired_room_index                                            ; 414f: a5 30
     cmp arrow_room                                                    ; 4151: cd 73 0a
-    bne c415b                                                         ; 4154: d0 05
+    bne play_arrow_hit_sound                                          ; 4154: d0 05
     lda object_spriteid + objectid_bow                                ; 4156: ad aa 09
     beq c416b                                                         ; 4159: f0 10
-c415b
+play_arrow_hit_sound
     lda #0                                                            ; 415b: a9 00
     ldx #<sound6                                                      ; 415d: a2 81
     ldy #>sound6                                                      ; 415f: a0 45
@@ -1283,20 +1304,20 @@ c415b
     ldy #>sound7                                                      ; 4166: a0 45
     jsr play_sound_yx                                                 ; 4168: 20 f6 38
 c416b
-    jsr sub_c4281                                                     ; 416b: 20 81 42
+    jsr update_arrow_collision                                        ; 416b: 20 81 42
     jmp return4                                                       ; 416e: 4c 86 41
 
-c4171
+player_collided_with_bow
     lda #spriteid_one_pixel_masked_out                                ; 4171: a9 00
     sta object_spriteid + objectid_bow                                ; 4173: 8d aa 09
     lda #$ff                                                          ; 4176: a9 ff
-    sta save_game_level_g_got_bow                                     ; 4178: 8d 17 0a
+    sta save_game_level_g_got_bow_or_arrow_in_flight_progress         ; 4178: 8d 17 0a
     jmp return4                                                       ; 417b: 4c 86 41
 
-c417e
-    lda arrow_active_flag                                             ; 417e: ad 74 0a
+update_arrow_active_progress
+    lda arrow_active_progress                                         ; 417e: ad 74 0a
     bmi return4                                                       ; 4181: 30 03
-    inc arrow_active_flag                                             ; 4183: ee 74 0a
+    inc arrow_active_progress                                         ; 4183: ee 74 0a
 return4
     rts                                                               ; 4186: 60
 
@@ -1307,34 +1328,34 @@ l4188
 l4189
     !byte 0                                                           ; 4189: 00
 
-sub_c418a
+update_arrow_collision0
     lda #1                                                            ; 418a: a9 01
     sta temp_bottom_offset                                            ; 418c: 8d 51 25
     dec temp_left_offset                                              ; 418f: ce d0 24
     inc temp_right_offset                                             ; 4192: ee d1 24
     lda #2                                                            ; 4195: a9 02
     jsr get_solid_rock_collision_for_object_a                         ; 4197: 20 94 28
-    beq c41ac                                                         ; 419a: f0 10
+    beq move_arrow_in_arrow_direction                                 ; 419a: f0 10
     lda #spriteid_one_pixel_masked_out                                ; 419c: a9 00
     sta object_spriteid + objectid_arrow                              ; 419e: 8d aa 09
-    sta arrow_active_flag                                             ; 41a1: 8d 74 0a
+    sta arrow_active_progress                                         ; 41a1: 8d 74 0a
     lda #$ff                                                          ; 41a4: a9 ff
-    sta save_game_level_g_got_bow                                     ; 41a6: 8d 17 0a
+    sta save_game_level_g_got_bow_or_arrow_in_flight_progress         ; 41a6: 8d 17 0a
     jmp return5                                                       ; 41a9: 4c 58 42
 
-c41ac
+move_arrow_in_arrow_direction
     lda #8                                                            ; 41ac: a9 08
     ldx arrow_direction                                               ; 41ae: ae 6f 0a
-    bpl c41b8                                                         ; 41b1: 10 05
+    bpl skip_invert_if_arrow_moving_left                              ; 41b1: 10 05
     eor #$ff                                                          ; 41b3: 49 ff
     clc                                                               ; 41b5: 18
     adc #1                                                            ; 41b6: 69 01
-c41b8
+skip_invert_if_arrow_moving_left
     ldx #0                                                            ; 41b8: a2 00
     ora #0                                                            ; 41ba: 09 00
-    bpl c41bf                                                         ; 41bc: 10 01
+    bpl add_offset_to_arrow_object_position                           ; 41bc: 10 01
     dex                                                               ; 41be: ca
-c41bf
+add_offset_to_arrow_object_position
     clc                                                               ; 41bf: 18
     adc arrow_x_position_low                                          ; 41c0: 6d 70 0a
     sta arrow_x_position_low                                          ; 41c3: 8d 70 0a
@@ -1343,7 +1364,7 @@ c41bf
     sta arrow_x_position_high                                         ; 41ca: 8d 71 0a
     jsr set_arrow_object                                              ; 41cd: 20 59 42
     lda #objectid_arrow                                               ; 41d0: a9 02
-    jsr update_player_solid_rock_collision                            ; 41d2: 20 f5 25
+    jsr update_object_a_solid_rock_collision                          ; 41d2: 20 f5 25
     lda #2                                                            ; 41d5: a9 02
     jsr get_solid_rock_collision_for_object_a                         ; 41d7: 20 94 28
     beq c4206                                                         ; 41da: f0 2a
@@ -1423,7 +1444,7 @@ set_arrow_object
     sta object_z_order + objectid_arrow                               ; 427d: 8d c4 38
     rts                                                               ; 4280: 60
 
-sub_c4281
+update_arrow_collision
     lda desired_room_index                                            ; 4281: a5 30
     cmp arrow_room                                                    ; 4283: cd 73 0a
     bne return6                                                       ; 4286: d0 1b
@@ -1431,9 +1452,10 @@ sub_c4281
     sta temp_bottom_offset                                            ; 428a: 8d 51 25
     inc temp_right_offset                                             ; 428d: ee d1 24
     dec temp_left_offset                                              ; 4290: ce d0 24
-    lda #2                                                            ; 4293: a9 02
+    lda #objectid_arrow                                               ; 4293: a9 02
     jsr get_solid_rock_collision_for_object_a                         ; 4295: 20 94 28
     beq return6                                                       ; 4298: f0 09
+; arrow thud
     lda #0                                                            ; 429a: a9 00
     ldx #<sound8                                                      ; 429c: a2 03
     ldy #>sound8                                                      ; 429e: a0 45
@@ -1608,7 +1630,7 @@ c437d
     sta object_spriteid,x                                             ; 43a2: 9d a8 09
     lda #$c0                                                          ; 43a5: a9 c0
     sta object_z_order,x                                              ; 43a7: 9d c2 38
-    jsr sub_c44ad                                                     ; 43aa: 20 ad 44
+    jsr check_if_monkey_can_climb                                     ; 43aa: 20 ad 44
 c43ad
     jmp c4448                                                         ; 43ad: 4c 48 44
 
@@ -1619,9 +1641,10 @@ c43b3
     lda desired_room_index                                            ; 43b3: a5 30
     cmp currently_updating_logic_for_room_index                       ; 43b5: cd ba 1a
     bne c4418                                                         ; 43b8: d0 5e
-    jsr sub_c44ad                                                     ; 43ba: 20 ad 44
+    jsr check_if_monkey_can_climb                                     ; 43ba: 20 ad 44
     lda l44f4                                                         ; 43bd: ad f4 44
     beq c4418                                                         ; 43c0: f0 56
+; move player down four pixels
     lda #4                                                            ; 43c2: a9 04
     sta l44a7                                                         ; 43c4: 8d a7 44
     clc                                                               ; 43c7: 18
@@ -1634,7 +1657,7 @@ c43b3
 loop_c43d8
     lda #1                                                            ; 43d8: a9 01
     sta temp_bottom_offset                                            ; 43da: 8d 51 25
-    lda #0                                                            ; 43dd: a9 00
+    lda #objectid_player                                              ; 43dd: a9 00
     jsr get_solid_rock_collision_for_object_a                         ; 43df: 20 94 28
     beq c43f0                                                         ; 43e2: f0 0c
     dec l44a7                                                         ; 43e4: ce a7 44
@@ -1654,7 +1677,7 @@ c43f0
     sta object_z_order,x                                              ; 4403: 9d c2 38
     lda #2                                                            ; 4406: a9 02
     sta temp_bottom_offset                                            ; 4408: 8d 51 25
-    lda #0                                                            ; 440b: a9 00
+    lda #objectid_player                                              ; 440b: a9 00
     jsr get_solid_rock_collision_for_object_a                         ; 440d: 20 94 28
     beq c4448                                                         ; 4410: f0 36
     jsr play_landing_sound                                            ; 4412: 20 a9 23
@@ -1742,7 +1765,7 @@ l44ab
 l44ac
     !byte 0                                                           ; 44ac: 00
 
-sub_c44ad
+check_if_monkey_can_climb
     lda #0                                                            ; 44ad: a9 00
     sta l44f4                                                         ; 44af: 8d f4 44
     lda current_player_character                                      ; 44b2: a5 48
@@ -1769,12 +1792,12 @@ sub_c44ad
     bcc return7                                                       ; 44da: 90 17
     lda current_player_animation                                      ; 44dc: ad df 09
     cmp #monkey_climb_animation - monkey_base_animation               ; 44df: c9 51
-    beq c44eb                                                         ; 44e1: f0 08
+    beq stop_monkey_from_climbing                                     ; 44e1: f0 08
     cmp #monkey_climb_idle_animation - monkey_base_animation          ; 44e3: c9 45
-    beq c44eb                                                         ; 44e5: f0 04
+    beq stop_monkey_from_climbing                                     ; 44e5: f0 04
     cmp #monkey_climb_down_animation - monkey_base_animation          ; 44e7: c9 49
     bne return7                                                       ; 44e9: d0 08
-c44eb
+stop_monkey_from_climbing
     lda #$ff                                                          ; 44eb: a9 ff
     sta inhibit_monkey_climb_flag                                     ; 44ed: 8d d7 31
     sta l44f4                                                         ; 44f0: 8d f4 44
@@ -1954,26 +1977,16 @@ pydis_end
 
 ; Automatically generated labels:
 ;     c3bf8
-;     c3dcf
-;     c3dd5
-;     c3dec
-;     c3def
 ;     c3e00
 ;     c3e0e
 ;     c3e47
 ;     c3e6d
 ;     c3e8a
-;     c3e92
 ;     c3ea7
-;     c3eb5
 ;     c3edf
 ;     c3ee8
 ;     c3f0c
 ;     c3f2d
-;     c4004
-;     c4036
-;     c405e
-;     c4086
 ;     c408b
 ;     c408e
 ;     c4091
@@ -1983,13 +1996,7 @@ pydis_end
 ;     c40f3
 ;     c4125
 ;     c4134
-;     c415b
 ;     c416b
-;     c4171
-;     c417e
-;     c41ac
-;     c41b8
-;     c41bf
 ;     c41f5
 ;     c4206
 ;     c423e
@@ -2004,7 +2011,6 @@ pydis_end
 ;     c4448
 ;     c449b
 ;     c44a0
-;     c44eb
 ;     l3f3c
 ;     l4187
 ;     l4188
@@ -2018,10 +2024,7 @@ pydis_end
 ;     l44f4
 ;     loop_c406c
 ;     loop_c43d8
-;     sub_c418a
-;     sub_c4281
 ;     sub_c4366
-;     sub_c44ad
 !if (<envelope1) != $0b {
     !error "Assertion failed: <envelope1 == $0b"
 }
@@ -2111,6 +2114,18 @@ pydis_end
 }
 !if (>sound8) != $45 {
     !error "Assertion failed: >sound8 == $45"
+}
+!if (baby_dead_animation - baby_animations) != $1b {
+    !error "Assertion failed: baby_dead_animation - baby_animations == $1b"
+}
+!if (baby_fall_animation - baby_animations) != $18 {
+    !error "Assertion failed: baby_fall_animation - baby_animations == $18"
+}
+!if (baby_holding_rope_animation - baby_animations) != $01 {
+    !error "Assertion failed: baby_holding_rope_animation - baby_animations == $01"
+}
+!if (baby_surprise_animation - baby_animations) != $15 {
+    !error "Assertion failed: baby_surprise_animation - baby_animations == $15"
 }
 !if (collision_map_none) != $00 {
     !error "Assertion failed: collision_map_none == $00"
@@ -2253,8 +2268,8 @@ pydis_end
 !if (spriteid_baby_fall) != $d6 {
     !error "Assertion failed: spriteid_baby_fall == $d6"
 }
-!if (spriteid_baby_smile) != $d9 {
-    !error "Assertion failed: spriteid_baby_smile == $d9"
+!if (spriteid_baby_push) != $d9 {
+    !error "Assertion failed: spriteid_baby_push == $d9"
 }
 !if (spriteid_baby_surprise) != $d5 {
     !error "Assertion failed: spriteid_baby_surprise == $d5"
@@ -2271,11 +2286,11 @@ pydis_end
 !if (spriteid_burst_balloon) != $d3 {
     !error "Assertion failed: spriteid_burst_balloon == $d3"
 }
-!if (spriteid_cache1) != $cd {
-    !error "Assertion failed: spriteid_cache1 == $cd"
+!if (spriteid_erase_cache1) != $cd {
+    !error "Assertion failed: spriteid_erase_cache1 == $cd"
 }
-!if (spriteid_cache2) != $cf {
-    !error "Assertion failed: spriteid_cache2 == $cf"
+!if (spriteid_erase_cache2) != $cf {
+    !error "Assertion failed: spriteid_erase_cache2 == $cf"
 }
 !if (spriteid_icodata_monkey) != $06 {
     !error "Assertion failed: spriteid_icodata_monkey == $06"
