@@ -25,6 +25,7 @@ object_collided_floor                 = 2
 object_collided_left_wall             = 1
 object_collided_right_wall            = 4
 objectid_arrow                        = 2
+objectid_baby                         = 5
 objectid_balloon1                     = 3
 objectid_balloon1_rope                = 4
 objectid_balloon2                     = 5
@@ -171,6 +172,7 @@ player_held_object_spriteid                         = $52
 developer_mode_sideways_ram_is_set_up_flag          = $5b
 l0070                                               = $70
 room_exit_direction                                 = $70
+temp_player_x                                       = $70
 object_left_cell_x                                  = $78
 object_right_cell_x                                 = $79
 object_x_low                                        = $0950
@@ -905,29 +907,29 @@ c3eb5
     bne c3f0c                                                         ; 3eb9: d0 51
     ldy room_3_baby_progress                                          ; 3ebb: ac 79 0a
     lda baby_spriteids,y                                              ; 3ebe: b9 8b 3d
-    sta object_spriteid + 5                                           ; 3ec1: 8d ad 09
+    sta object_spriteid + objectid_baby                               ; 3ec1: 8d ad 09
     lda save_game_level_g_baby_progress                               ; 3ec4: ad 19 0a
     cmp #$1b                                                          ; 3ec7: c9 1b
     beq c3ee8                                                         ; 3ec9: f0 1d
     lda #$a0                                                          ; 3ecb: a9 a0
-    sta object_z_order + 5                                            ; 3ecd: 8d c7 38
+    sta object_z_order + objectid_baby                                ; 3ecd: 8d c7 38
     lda save_game_level_g_baby_progress                               ; 3ed0: ad 19 0a
     cmp #1                                                            ; 3ed3: c9 01
     bne c3edf                                                         ; 3ed5: d0 08
     lda #$60 ; '`'                                                    ; 3ed7: a9 60
-    sta object_y_low + 5                                              ; 3ed9: 8d 81 09
+    sta object_y_low + objectid_baby                                  ; 3ed9: 8d 81 09
     jmp c3f0c                                                         ; 3edc: 4c 0c 3f
 
 c3edf
     lda room_3_baby_y_position                                        ; 3edf: ad 7a 0a
-    sta object_y_low + 5                                              ; 3ee2: 8d 81 09
+    sta object_y_low + objectid_baby                                  ; 3ee2: 8d 81 09
     jmp c3f0c                                                         ; 3ee5: 4c 0c 3f
 
 c3ee8
     lda #$e0                                                          ; 3ee8: a9 e0
-    sta object_z_order + 5                                            ; 3eea: 8d c7 38
+    sta object_z_order + objectid_baby                                ; 3eea: 8d c7 38
     lda #$b0                                                          ; 3eed: a9 b0
-    sta object_y_low + 5                                              ; 3eef: 8d 81 09
+    sta object_y_low + objectid_baby                                  ; 3eef: 8d 81 09
     ldx #9                                                            ; 3ef2: a2 09
     ldy #$15                                                          ; 3ef4: a0 15
     lda #3                                                            ; 3ef6: a9 03
@@ -1743,19 +1745,19 @@ sub_c44ad
     bne return7                                                       ; 44b6: d0 3b
     lda object_x_high                                                 ; 44b8: ad 66 09
     lsr                                                               ; 44bb: 4a
-    sta l0070                                                         ; 44bc: 85 70
+    sta temp_player_x                                                 ; 44bc: 85 70
     lda object_x_low                                                  ; 44be: ad 50 09
     ror                                                               ; 44c1: 6a
-    lsr l0070                                                         ; 44c2: 46 70
+    lsr temp_player_x                                                 ; 44c2: 46 70
     ror                                                               ; 44c4: 6a
-    lsr l0070                                                         ; 44c5: 46 70
+    lsr temp_player_x                                                 ; 44c5: 46 70
     ror                                                               ; 44c7: 6a
-    sta l0070                                                         ; 44c8: 85 70
+    sta temp_player_x                                                 ; 44c8: 85 70
     sec                                                               ; 44ca: 38
     sbc #2                                                            ; 44cb: e9 02
     cmp l44a8                                                         ; 44cd: cd a8 44
     bcs return7                                                       ; 44d0: b0 21
-    lda l0070                                                         ; 44d2: a5 70
+    lda temp_player_x                                                 ; 44d2: a5 70
     clc                                                               ; 44d4: 18
     adc #1                                                            ; 44d5: 69 01
     cmp l44a8                                                         ; 44d7: cd a8 44
@@ -2141,11 +2143,11 @@ pydis_end
 !if (object_spriteid + 2) != $09aa {
     !error "Assertion failed: object_spriteid + 2 == $09aa"
 }
-!if (object_spriteid + 5) != $09ad {
-    !error "Assertion failed: object_spriteid + 5 == $09ad"
-}
 !if (object_spriteid + objectid_arrow) != $09aa {
     !error "Assertion failed: object_spriteid + objectid_arrow == $09aa"
+}
+!if (object_spriteid + objectid_baby) != $09ad {
+    !error "Assertion failed: object_spriteid + objectid_baby == $09ad"
 }
 !if (object_spriteid + objectid_balloon1) != $09ab {
     !error "Assertion failed: object_spriteid + objectid_balloon1 == $09ab"
@@ -2174,8 +2176,8 @@ pydis_end
 !if (object_y_low + 2) != $097e {
     !error "Assertion failed: object_y_low + 2 == $097e"
 }
-!if (object_y_low + 5) != $0981 {
-    !error "Assertion failed: object_y_low + 5 == $0981"
+!if (object_y_low + objectid_baby) != $0981 {
+    !error "Assertion failed: object_y_low + objectid_baby == $0981"
 }
 !if (objectid_balloon1_rope) != $04 {
     !error "Assertion failed: objectid_balloon1_rope == $04"

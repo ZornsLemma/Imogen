@@ -46,6 +46,9 @@ substitute_labels = {
     (0x3ad5,0x432e): {
         "l0070": "room_exit_direction",
     },
+    (0x44ad,0x44e9): {
+        "l0070": "temp_player_x",
+    },
 }
 
 constant(2, "objectid_bow")
@@ -56,6 +59,8 @@ constant(5, "objectid_balloon2")
 constant(6, "objectid_balloon2_rope")
 constant(5, "objectid_table")
 constant(6, "objectid_table_rope")
+# Room 3
+constant(5, "objectid_baby")
 
 # (Class SubstituteLabels is defined in common.py to implement the substitute labels)
 s = SubstituteLabels(substitute_labels)
@@ -195,13 +200,13 @@ label(0x38ae, "object_erase_type + 2")
 label(0x38b1, "object_erase_type + 5")
 label(0x38c4, "object_z_order + 2")
 label(0x38c5, "object_z_order + 3")
-label(0x38c7, "object_z_order + 5")
+label(0x38c7, "object_z_order + objectid_baby")
 expr(0x3dea, "object_x_low + 5")
 expr(0x3e31, "object_spriteid + 2")
-expr(0x3ec2, "object_spriteid + 5")
-expr(0x3eda, "object_y_low + 5")
-expr(0x3ee3, "object_y_low + 5")
-expr(0x3ef0, "object_y_low + 5")
+expr(0x3ec2, "object_spriteid + objectid_baby")
+expr(0x3eda, "object_y_low + objectid_baby")
+expr(0x3ee3, "object_y_low + objectid_baby")
+expr(0x3ef0, "object_y_low + objectid_baby")
 expr(0x403e, "object_y_high + 2")
 expr(0x405b, "object_spriteid + 2")
 expr(0x4089, "object_spriteid_old + 2")
