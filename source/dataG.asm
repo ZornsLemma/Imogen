@@ -828,7 +828,7 @@ room_3_update_not_first_update
     adc #2                                                            ; 3df3: 69 02
     tay                                                               ; 3df5: a8
     lda baby_animations,y                                             ; 3df6: b9 8b 3d
-    cmp #0                                                            ; 3df9: c9 00
+    cmp #0                                                            ; 3df9: c9 00                   ; redundant instruction
     bne c3e00                                                         ; 3dfb: d0 03
 ; loop back to start of current baby animation
     ldy save_game_level_g_baby_progress                               ; 3dfd: ac 19 0a
@@ -856,21 +856,24 @@ c3e0e
     ldx #<sound5                                                      ; 3e27: a2 55
     ldy #>sound5                                                      ; 3e29: a0 45
     jsr play_sound_yx                                                 ; 3e2b: 20 f6 38
+; hide arrow
     lda #spriteid_one_pixel_masked_out                                ; 3e2e: a9 00
     sta object_spriteid + objectid_arrow                              ; 3e30: 8d aa 09
+; mark bow as being available to fire
     lda #$ff                                                          ; 3e33: a9 ff
     sta save_game_level_g_got_bow_or_arrow_in_flight_progress         ; 3e35: 8d 17 0a
+; set baby y position, surprised, about to fall
     lda #$60 ; '`'                                                    ; 3e38: a9 60
     sta room_3_baby_y_position                                        ; 3e3a: 8d 7a 0a
     ldy #baby_surprise_animation - baby_animations                    ; 3e3d: a0 15
     lda #baby_fall_animation - baby_animations                        ; 3e3f: a9 18
     sta save_game_level_g_baby_progress                               ; 3e41: 8d 19 0a
-    jmp c3ea7                                                         ; 3e44: 4c a7 3e
+    jmp set_baby_animation_step_to_y                                  ; 3e44: 4c a7 3e
 
 c3e47
     lda desired_room_index                                            ; 3e47: a5 30
     cmp #3                                                            ; 3e49: c9 03
-    bne c3ea7                                                         ; 3e4b: d0 5a
+    bne set_baby_animation_step_to_y                                  ; 3e4b: d0 5a
     lda #8                                                            ; 3e4d: a9 08
     sta temp_top_offset                                               ; 3e4f: 8d 50 25
     ldx #objectid_baby                                                ; 3e52: a2 05
@@ -879,16 +882,16 @@ c3e47
     jsr test_for_collision_between_objects_x_and_y                    ; 3e59: 20 e2 28
     ldy l3f3c                                                         ; 3e5c: ac 3c 3f
     ora #0                                                            ; 3e5f: 09 00
-    beq c3ea7                                                         ; 3e61: f0 44
+    beq set_baby_animation_step_to_y                                  ; 3e61: f0 44
     lda #6                                                            ; 3e63: a9 06
     sta player_wall_collision_reaction_speed                          ; 3e65: 8d 33 24
     ldy #4                                                            ; 3e68: a0 04
-    jmp c3ea7                                                         ; 3e6a: 4c a7 3e
+    jmp set_baby_animation_step_to_y                                  ; 3e6a: 4c a7 3e
 
 c3e6d
     lda room_3_baby_y_position                                        ; 3e6d: ad 7a 0a
     cmp #$98                                                          ; 3e70: c9 98
-    bcc c3ea7                                                         ; 3e72: 90 33
+    bcc set_baby_animation_step_to_y                                  ; 3e72: 90 33
     lda desired_room_index                                            ; 3e74: a5 30
     cmp #3                                                            ; 3e76: c9 03
     bne c3e8a                                                         ; 3e78: d0 10
@@ -902,19 +905,19 @@ c3e6d
 c3e8a
     ldy #baby_dead_animation - baby_animations                        ; 3e8a: a0 1b
     sty save_game_level_g_baby_progress                               ; 3e8c: 8c 19 0a
-    jmp c3ea7                                                         ; 3e8f: 4c a7 3e
+    jmp set_baby_animation_step_to_y                                  ; 3e8f: 4c a7 3e
 
 reset_sound_priorities_if_in_room_3
     lda desired_room_index                                            ; 3e92: a5 30
     cmp #3                                                            ; 3e94: c9 03
-    bne c3ea7                                                         ; 3e96: d0 0f
+    bne set_baby_animation_step_to_y                                  ; 3e96: d0 0f
     lda sound_priority_per_channel_table                              ; 3e98: ad 6f 39
     cmp #$41 ; 'A'                                                    ; 3e9b: c9 41
-    bcs c3ea7                                                         ; 3e9d: b0 08
+    bcs set_baby_animation_step_to_y                                  ; 3e9d: b0 08
     lda #0                                                            ; 3e9f: a9 00
     sta sound_priority_per_channel_table                              ; 3ea1: 8d 6f 39
     sta sound_priority_per_channel_table+1                            ; 3ea4: 8d 70 39
-c3ea7
+set_baby_animation_step_to_y
     sty room_3_baby_animation_step                                    ; 3ea7: 8c 79 0a
     iny                                                               ; 3eaa: c8
 ; add y offset at current animation step
@@ -1194,7 +1197,7 @@ loop_c406c
     dec arrow_active_progress                                         ; 4078: ce 74 0a
     ldx #2                                                            ; 407b: a2 02
     jsr copy_object_state_to_old                                      ; 407d: 20 f7 20
-    jsr update_arrow_collision0                                       ; 4080: 20 8a 41
+    jsr update_arrow_wall_collision                                   ; 4080: 20 8a 41
     jmp loop_c406c                                                    ; 4083: 4c 6c 40
 
 got_bow
@@ -1234,7 +1237,7 @@ update_arrow
     lda #0                                                            ; 40b5: a9 00
     sta arrow_just_fired_flag                                         ; 40b7: 8d 88 41
     lda object_spriteid_old + objectid_bow                            ; 40ba: ad b5 09
-    sta l4189                                                         ; 40bd: 8d 89 41
+    sta bow_or_arrow_spriteid                                         ; 40bd: 8d 89 41
     ldx #0                                                            ; 40c0: a2 00
 ; check if player is using the bow. Branch if not.
     lda #spriteid_bow_menu_item                                       ; 40c2: a9 cb
@@ -1288,14 +1291,14 @@ arrow_just_fired
     ldx #objectid_arrow                                               ; 4120: a2 02
     jsr copy_object_state_to_old                                      ; 4122: 20 f7 20
 arrow_is_in_current_room
-    jsr update_arrow_collision0                                       ; 4125: 20 8a 41
+    jsr update_arrow_wall_collision                                   ; 4125: 20 8a 41
     lda desired_room_index                                            ; 4128: a5 30
     cmp arrow_room                                                    ; 412a: cd 73 0a
     beq c4134                                                         ; 412d: f0 05
     lda #0                                                            ; 412f: a9 00
     sta arrow_active_progress                                         ; 4131: 8d 74 0a
 c4134
-    lda l4189                                                         ; 4134: ad 89 41
+    lda bow_or_arrow_spriteid                                         ; 4134: ad 89 41
     sta object_spriteid_old + objectid_bow                            ; 4137: 8d b5 09
     ldx #objectid_old_player                                          ; 413a: a2 0b
     ldy #objectid_bow                                                 ; 413c: a0 02
@@ -1320,7 +1323,7 @@ play_arrow_hit_sound
     ldy #>sound7                                                      ; 4166: a0 45
     jsr play_sound_yx                                                 ; 4168: 20 f6 38
 c416b
-    jsr update_arrow_collision                                        ; 416b: 20 81 42
+    jsr update_arrow_collision_sound                                  ; 416b: 20 81 42
     jmp return4                                                       ; 416e: 4c 86 41
 
 player_collided_with_bow
@@ -1341,10 +1344,10 @@ player_just_started_using_bow_flag
     !byte 0                                                           ; 4187: 00
 arrow_just_fired_flag
     !byte 0                                                           ; 4188: 00
-l4189
+bow_or_arrow_spriteid
     !byte 0                                                           ; 4189: 00
 
-update_arrow_collision0
+update_arrow_wall_collision
     lda #1                                                            ; 418a: a9 01
     sta temp_bottom_offset                                            ; 418c: 8d 51 25
     dec temp_left_offset                                              ; 418f: ce d0 24
@@ -1369,6 +1372,7 @@ move_arrow_in_arrow_direction
     eor #$ff                                                          ; 41b3: 49 ff
     clc                                                               ; 41b5: 18
     adc #1                                                            ; 41b6: 69 01
+; sign extend arrow velocity in A to 16 bit 'XA' value
 skip_invert_if_arrow_moving_left
     ldx #0                                                            ; 41b8: a2 00
     ora #0                                                            ; 41ba: 09 00
@@ -1414,7 +1418,7 @@ copy_arrow_position
     sta arrow_x_position_high                                         ; 420f: 8d 71 0a
     lda object_y_low + objectid_arrow                                 ; 4212: ad 7e 09
     sta arrow_y_position_low                                          ; 4215: 8d 72 0a
-    ldx #2                                                            ; 4218: a2 02
+    ldx #objectid_arrow                                               ; 4218: a2 02
     jsr find_left_and_right_of_object                                 ; 421a: 20 34 24
 ; check arrow direction, and check if off the edge of the room
     lda arrow_direction                                               ; 421d: ad 6f 0a
@@ -1470,7 +1474,7 @@ set_arrow_object
     sta object_z_order + objectid_arrow                               ; 427d: 8d c4 38
     rts                                                               ; 4280: 60
 
-update_arrow_collision
+update_arrow_collision_sound
     lda desired_room_index                                            ; 4281: a5 30
     cmp arrow_room                                                    ; 4283: cd 73 0a
     bne return6                                                       ; 4286: d0 1b
@@ -2008,7 +2012,6 @@ pydis_end
 ;     c3e47
 ;     c3e6d
 ;     c3e8a
-;     c3ea7
 ;     c3edf
 ;     c3ee8
 ;     c3f0c
@@ -2026,7 +2029,6 @@ pydis_end
 ;     c449b
 ;     c44a0
 ;     l3f3c
-;     l4189
 ;     l44a7
 ;     l44a8
 ;     l44a9
