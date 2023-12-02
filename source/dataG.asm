@@ -1127,7 +1127,7 @@ room_0_update_handler
 ; check for first update in room (branch if so)
     lda update_room_first_update_flag                                 ; 3ffc: ad 2b 13
     bne initialise_room_0                                             ; 3fff: d0 03
-    jmp c4091                                                         ; 4001: 4c 91 40
+    jmp room_0_not_first_update                                       ; 4001: 4c 91 40
 
 initialise_room_0
     lda #spriteid_bow_menu_item                                       ; 4004: a9 cb
@@ -1206,72 +1206,88 @@ return4_local
 update_arrow_active_progress_local
     jmp update_arrow_active_progress                                  ; 408e: 4c 7e 41
 
-c4091
+; Check if the arrow is still in the room (branch if not)
+room_0_not_first_update
     lda save_game_level_g_got_bow_or_arrow_in_flight_progress         ; 4091: ad 17 0a
-    bne c40b5                                                         ; 4094: d0 1f
+    bne update_arrow                                                  ; 4094: d0 1f
+; return if not in room 0
     lda desired_room_index                                            ; 4096: a5 30
     cmp #0                                                            ; 4098: c9 00
     bne return4_local                                                 ; 409a: d0 ef
+; check for player and bow collision, return if none
     ldx #objectid_old_player                                          ; 409c: a2 0b
     ldy #objectid_bow                                                 ; 409e: a0 02
     jsr test_for_collision_between_objects_x_and_y                    ; 40a0: 20 e2 28
     beq return4_local                                                 ; 40a3: f0 e6
+; add bow to toolbar
     lda #spriteid_bow_menu_item                                       ; 40a5: a9 cb
     jsr find_or_create_menu_slot_for_A                                ; 40a7: 20 bd 2b
+; remove bow object's sprite
     lda #spriteid_one_pixel_masked_out                                ; 40aa: a9 00
     sta object_spriteid + objectid_bow                                ; 40ac: 8d aa 09
+; decrement value to $ff, meaning the bow is in the posession of the player and the
+; arrow is not flying through the air
     dec save_game_level_g_got_bow_or_arrow_in_flight_progress         ; 40af: ce 17 0a
     jmp return4                                                       ; 40b2: 4c 86 41
 
-c40b5
+update_arrow
     lda #0                                                            ; 40b5: a9 00
-    sta l4188                                                         ; 40b7: 8d 88 41
+    sta arrow_just_fired_flag                                         ; 40b7: 8d 88 41
     lda object_spriteid_old + objectid_bow                            ; 40ba: ad b5 09
     sta l4189                                                         ; 40bd: 8d 89 41
     ldx #0                                                            ; 40c0: a2 00
+; check if player is using the bow. Branch if not.
     lda #spriteid_bow_menu_item                                       ; 40c2: a9 cb
     cmp player_using_object_spriteid                                  ; 40c4: cd b6 2e
-    bne c40cf                                                         ; 40c7: d0 06
+    bne store_bow_just_used_flag                                      ; 40c7: d0 06
+; check if player just started using the bow this frame. Branch if not. Otherwise
+; decrement X to 255.
     cmp previous_player_using_object_spriteid                         ; 40c9: cd b7 2e
-    beq c40cf                                                         ; 40cc: f0 01
+    beq store_bow_just_used_flag                                      ; 40cc: f0 01
     dex                                                               ; 40ce: ca
-c40cf
-    stx l4187                                                         ; 40cf: 8e 87 41
+store_bow_just_used_flag
+    stx player_just_started_using_bow_flag                            ; 40cf: 8e 87 41
     lda save_game_level_g_got_bow_or_arrow_in_flight_progress         ; 40d2: ad 17 0a
     cmp #$ff                                                          ; 40d5: c9 ff
-    beq c40ee                                                         ; 40d7: f0 15
+    beq arrow_is_available_to_fire                                    ; 40d7: f0 15
     lda arrow_room                                                    ; 40d9: ad 73 0a
     cmp desired_room_index                                            ; 40dc: c5 30
-    beq c4125                                                         ; 40de: f0 45
+    beq arrow_is_in_current_room                                      ; 40de: f0 45
     lda arrow_active_progress                                         ; 40e0: ad 74 0a
     cmp #$0a                                                          ; 40e3: c9 0a
     bcc update_arrow_active_progress_local                            ; 40e5: 90 a7
-    lda l4187                                                         ; 40e7: ad 87 41
+    lda player_just_started_using_bow_flag                            ; 40e7: ad 87 41
     beq update_arrow_active_progress_local                            ; 40ea: f0 a2
-    bne c40f3                                                         ; 40ec: d0 05
-c40ee
-    lda l4187                                                         ; 40ee: ad 87 41
+    bne arrow_just_fired                                              ; 40ec: d0 05                   ; ALWAYS branch
+
+arrow_is_available_to_fire
+    lda player_just_started_using_bow_flag                            ; 40ee: ad 87 41
     beq return4_local                                                 ; 40f1: f0 98
-c40f3
-    dec l4188                                                         ; 40f3: ce 88 41
+arrow_just_fired
+    dec arrow_just_fired_flag                                         ; 40f3: ce 88 41
     lda #1                                                            ; 40f6: a9 01
     sta save_game_level_g_got_bow_or_arrow_in_flight_progress         ; 40f8: 8d 17 0a
+; Arrow just fired: set the arrow room to the current room
     lda desired_room_index                                            ; 40fb: a5 30
     sta arrow_room                                                    ; 40fd: 8d 73 0a
+; arrow is fired in the same direction as the player
     lda object_direction                                              ; 4100: ad be 09
     sta arrow_direction                                               ; 4103: 8d 6f 0a
+; arrow position is set to the player accessory position (i.e. the bow position)
     lda object_x_low + objectid_player_accessory                      ; 4106: ad 51 09
     sta arrow_x_position_low                                          ; 4109: 8d 70 0a
     lda object_x_high + objectid_player_accessory                     ; 410c: ad 67 09
     sta arrow_x_position_high                                         ; 410f: 8d 71 0a
     lda object_y_low + objectid_player_accessory                      ; 4112: ad 7d 09
     sta arrow_y_position_low                                          ; 4115: 8d 72 0a
+; count the arrow in flight progress
     lda #0                                                            ; 4118: a9 00
     sta arrow_active_progress                                         ; 411a: 8d 74 0a
+; position the actual arrow object
     jsr set_arrow_object                                              ; 411d: 20 59 42
     ldx #objectid_arrow                                               ; 4120: a2 02
     jsr copy_object_state_to_old                                      ; 4122: 20 f7 20
-c4125
+arrow_is_in_current_room
     jsr update_arrow_collision0                                       ; 4125: 20 8a 41
     lda desired_room_index                                            ; 4128: a5 30
     cmp arrow_room                                                    ; 412a: cd 73 0a
@@ -1288,7 +1304,7 @@ c4134
     lda #objectid_bow                                                 ; 4143: a9 02
     jsr get_solid_rock_collision_for_object_a                         ; 4145: 20 94 28
     bne player_collided_with_bow                                      ; 4148: d0 27
-    lda l4188                                                         ; 414a: ad 88 41
+    lda arrow_just_fired_flag                                         ; 414a: ad 88 41
     beq c416b                                                         ; 414d: f0 1c
     lda desired_room_index                                            ; 414f: a5 30
     cmp arrow_room                                                    ; 4151: cd 73 0a
@@ -1321,9 +1337,9 @@ update_arrow_active_progress
 return4
     rts                                                               ; 4186: 60
 
-l4187
+player_just_started_using_bow_flag
     !byte 0                                                           ; 4187: 00
-l4188
+arrow_just_fired_flag
     !byte 0                                                           ; 4188: 00
 l4189
     !byte 0                                                           ; 4189: 00
@@ -1333,12 +1349,14 @@ update_arrow_collision0
     sta temp_bottom_offset                                            ; 418c: 8d 51 25
     dec temp_left_offset                                              ; 418f: ce d0 24
     inc temp_right_offset                                             ; 4192: ee d1 24
-    lda #2                                                            ; 4195: a9 02
+    lda #objectid_arrow                                               ; 4195: a9 02
     jsr get_solid_rock_collision_for_object_a                         ; 4197: 20 94 28
     beq move_arrow_in_arrow_direction                                 ; 419a: f0 10
+; arrow hit wall. Hide arrow, and reset arrow in flight progress
     lda #spriteid_one_pixel_masked_out                                ; 419c: a9 00
     sta object_spriteid + objectid_arrow                              ; 419e: 8d aa 09
     sta arrow_active_progress                                         ; 41a1: 8d 74 0a
+; set flag to indicate the player has the bow/arrow
     lda #$ff                                                          ; 41a4: a9 ff
     sta save_game_level_g_got_bow_or_arrow_in_flight_progress         ; 41a6: 8d 17 0a
     jmp return5                                                       ; 41a9: 4c 58 42
@@ -1347,6 +1365,7 @@ move_arrow_in_arrow_direction
     lda #8                                                            ; 41ac: a9 08
     ldx arrow_direction                                               ; 41ae: ae 6f 0a
     bpl skip_invert_if_arrow_moving_left                              ; 41b1: 10 05
+; invert A. [since A=8 at this point, could just 'lda #f8' here instead]
     eor #$ff                                                          ; 41b3: 49 ff
     clc                                                               ; 41b5: 18
     adc #1                                                            ; 41b6: 69 01
@@ -1994,12 +2013,6 @@ pydis_end
 ;     c3ee8
 ;     c3f0c
 ;     c3f2d
-;     c4091
-;     c40b5
-;     c40cf
-;     c40ee
-;     c40f3
-;     c4125
 ;     c4134
 ;     c416b
 ;     c437d
@@ -2013,8 +2026,6 @@ pydis_end
 ;     c449b
 ;     c44a0
 ;     l3f3c
-;     l4187
-;     l4188
 ;     l4189
 ;     l44a7
 ;     l44a8
