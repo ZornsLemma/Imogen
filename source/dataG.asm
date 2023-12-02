@@ -1200,7 +1200,7 @@ loop_c406c
 got_bow
     lda #spriteid_one_pixel_masked_out                                ; 4086: a9 00
     sta object_spriteid_old + objectid_bow                            ; 4088: 8d b5 09
-c408b
+return4_local
     jmp return4                                                       ; 408b: 4c 86 41
 
 c408e
@@ -1211,11 +1211,11 @@ c4091
     bne c40b5                                                         ; 4094: d0 1f
     lda desired_room_index                                            ; 4096: a5 30
     cmp #0                                                            ; 4098: c9 00
-    bne c408b                                                         ; 409a: d0 ef
+    bne return4_local                                                 ; 409a: d0 ef
     ldx #objectid_old_player                                          ; 409c: a2 0b
     ldy #objectid_bow                                                 ; 409e: a0 02
     jsr test_for_collision_between_objects_x_and_y                    ; 40a0: 20 e2 28
-    beq c408b                                                         ; 40a3: f0 e6
+    beq return4_local                                                 ; 40a3: f0 e6
     lda #spriteid_bow_menu_item                                       ; 40a5: a9 cb
     jsr find_or_create_menu_slot_for_A                                ; 40a7: 20 bd 2b
     lda #spriteid_one_pixel_masked_out                                ; 40aa: a9 00
@@ -1251,7 +1251,7 @@ c40cf
     bne c40f3                                                         ; 40ec: d0 05
 c40ee
     lda l4187                                                         ; 40ee: ad 87 41
-    beq c408b                                                         ; 40f1: f0 98
+    beq return4_local                                                 ; 40f1: f0 98
 c40f3
     dec l4188                                                         ; 40f3: ce 88 41
     lda #1                                                            ; 40f6: a9 01
@@ -1994,7 +1994,6 @@ pydis_end
 ;     c3ee8
 ;     c3f0c
 ;     c3f2d
-;     c408b
 ;     c408e
 ;     c4091
 ;     c40b5
