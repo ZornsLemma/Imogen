@@ -1203,7 +1203,7 @@ got_bow
 return4_local
     jmp return4                                                       ; 408b: 4c 86 41
 
-c408e
+update_arrow_active_progress_local
     jmp update_arrow_active_progress                                  ; 408e: 4c 7e 41
 
 c4091
@@ -1245,9 +1245,9 @@ c40cf
     beq c4125                                                         ; 40de: f0 45
     lda arrow_active_progress                                         ; 40e0: ad 74 0a
     cmp #$0a                                                          ; 40e3: c9 0a
-    bcc c408e                                                         ; 40e5: 90 a7
+    bcc update_arrow_active_progress_local                            ; 40e5: 90 a7
     lda l4187                                                         ; 40e7: ad 87 41
-    beq c408e                                                         ; 40ea: f0 a2
+    beq update_arrow_active_progress_local                            ; 40ea: f0 a2
     bne c40f3                                                         ; 40ec: d0 05
 c40ee
     lda l4187                                                         ; 40ee: ad 87 41
@@ -1994,7 +1994,6 @@ pydis_end
 ;     c3ee8
 ;     c3f0c
 ;     c3f2d
-;     c408e
 ;     c4091
 ;     c40b5
 ;     c40cf
