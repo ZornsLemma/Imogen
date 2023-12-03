@@ -829,28 +829,29 @@ room_3_update_not_first_update
     tay                                                               ; 3df5: a8
     lda baby_animations,y                                             ; 3df6: b9 8b 3d
     cmp #0                                                            ; 3df9: c9 00                   ; redundant instruction
-    bne c3e00                                                         ; 3dfb: d0 03
-; loop back to start of current baby animation
+    bne got_next_animation_step_in_y                                  ; 3dfb: d0 03
+; set current step to start of baby animation
     ldy save_game_level_g_baby_progress                               ; 3dfd: ac 19 0a
-c3e00
+got_next_animation_step_in_y
     lda save_game_level_g_baby_progress                               ; 3e00: ad 19 0a
     cmp #baby_holding_rope_animation - baby_animations                ; 3e03: c9 01
-    beq c3e0e                                                         ; 3e05: f0 07
+    beq baby_is_holding_rope                                          ; 3e05: f0 07
     cmp #baby_fall_animation - baby_animations                        ; 3e07: c9 18
-    beq c3e6d                                                         ; 3e09: f0 62
+    beq baby_is_falling                                               ; 3e09: f0 62
     jmp reset_sound_priorities_if_in_room_3                           ; 3e0b: 4c 92 3e
 
-c3e0e
+baby_is_holding_rope
     lda desired_room_index                                            ; 3e0e: a5 30
     cmp #3                                                            ; 3e10: c9 03
-    bne c3e47                                                         ; 3e12: d0 33
+    bne check_for_player_baby_collision                               ; 3e12: d0 33
+; check for arrow-baby collision
     ldx #objectid_baby                                                ; 3e14: a2 05
-    sty l3f3c                                                         ; 3e16: 8c 3c 3f
+    sty temp_remember_animation_step                                  ; 3e16: 8c 3c 3f
     ldy #objectid_arrow                                               ; 3e19: a0 02
     jsr test_for_collision_between_objects_x_and_y                    ; 3e1b: 20 e2 28
-    ldy l3f3c                                                         ; 3e1e: ac 3c 3f
+    ldy temp_remember_animation_step                                  ; 3e1e: ac 3c 3f
     ora #0                                                            ; 3e21: 09 00
-    beq c3e47                                                         ; 3e23: f0 22
+    beq check_for_player_baby_collision                               ; 3e23: f0 22
 ; got arrow baby collision
     lda #0                                                            ; 3e25: a9 00
     ldx #<sound5                                                      ; 3e27: a2 55
@@ -870,31 +871,33 @@ c3e0e
     sta save_game_level_g_baby_progress                               ; 3e41: 8d 19 0a
     jmp set_baby_animation_step_to_y                                  ; 3e44: 4c a7 3e
 
-c3e47
+check_for_player_baby_collision
     lda desired_room_index                                            ; 3e47: a5 30
     cmp #3                                                            ; 3e49: c9 03
     bne set_baby_animation_step_to_y                                  ; 3e4b: d0 5a
     lda #8                                                            ; 3e4d: a9 08
     sta temp_top_offset                                               ; 3e4f: 8d 50 25
+; check for collision
     ldx #objectid_baby                                                ; 3e52: a2 05
-    sty l3f3c                                                         ; 3e54: 8c 3c 3f
+    sty temp_remember_animation_step                                  ; 3e54: 8c 3c 3f
     ldy #objectid_player                                              ; 3e57: a0 00
     jsr test_for_collision_between_objects_x_and_y                    ; 3e59: 20 e2 28
-    ldy l3f3c                                                         ; 3e5c: ac 3c 3f
+    ldy temp_remember_animation_step                                  ; 3e5c: ac 3c 3f
     ora #0                                                            ; 3e5f: 09 00
     beq set_baby_animation_step_to_y                                  ; 3e61: f0 44
+; collision_found
     lda #6                                                            ; 3e63: a9 06
     sta player_wall_collision_reaction_speed                          ; 3e65: 8d 33 24
-    ldy #4                                                            ; 3e68: a0 04
+    ldy #baby_push_animation - baby_animations                        ; 3e68: a0 04
     jmp set_baby_animation_step_to_y                                  ; 3e6a: 4c a7 3e
 
-c3e6d
+baby_is_falling
     lda room_3_baby_y_position                                        ; 3e6d: ad 7a 0a
     cmp #$98                                                          ; 3e70: c9 98
     bcc set_baby_animation_step_to_y                                  ; 3e72: 90 33
     lda desired_room_index                                            ; 3e74: a5 30
     cmp #3                                                            ; 3e76: c9 03
-    bne c3e8a                                                         ; 3e78: d0 10
+    bne skip_sound_since_not_in_room_3                                ; 3e78: d0 10
     lda #$40 ; '@'                                                    ; 3e7a: a9 40
     ldx #<sound3                                                      ; 3e7c: a2 21
     ldy #>sound3                                                      ; 3e7e: a0 45
@@ -902,7 +905,7 @@ c3e6d
     ldx #<sound4                                                      ; 3e83: a2 19
     ldy #>sound4                                                      ; 3e85: a0 45
     jsr play_sound_yx                                                 ; 3e87: 20 f6 38
-c3e8a
+skip_sound_since_not_in_room_3
     ldy #baby_dead_animation - baby_animations                        ; 3e8a: a0 1b
     sty save_game_level_g_baby_progress                               ; 3e8c: 8c 19 0a
     jmp set_baby_animation_step_to_y                                  ; 3e8f: 4c a7 3e
@@ -928,28 +931,28 @@ set_baby_animation_step_to_y
 set_baby_object_sprite_if_in_room_3
     lda desired_room_index                                            ; 3eb5: a5 30
     cmp #3                                                            ; 3eb7: c9 03
-    bne c3f0c                                                         ; 3eb9: d0 51
+    bne update_room_3_bits                                            ; 3eb9: d0 51
     ldy room_3_baby_animation_step                                    ; 3ebb: ac 79 0a
     lda baby_animations,y                                             ; 3ebe: b9 8b 3d
     sta object_spriteid + objectid_baby                               ; 3ec1: 8d ad 09
     lda save_game_level_g_baby_progress                               ; 3ec4: ad 19 0a
     cmp #baby_dead_animation - baby_animations                        ; 3ec7: c9 1b
-    beq c3ee8                                                         ; 3ec9: f0 1d
+    beq baby_is_dead                                                  ; 3ec9: f0 1d
     lda #$a0                                                          ; 3ecb: a9 a0
     sta object_z_order + objectid_baby                                ; 3ecd: 8d c7 38
     lda save_game_level_g_baby_progress                               ; 3ed0: ad 19 0a
     cmp #baby_holding_rope_animation - baby_animations                ; 3ed3: c9 01
-    bne c3edf                                                         ; 3ed5: d0 08
+    bne set_baby_y_position                                           ; 3ed5: d0 08
     lda #$60 ; '`'                                                    ; 3ed7: a9 60
     sta object_y_low + objectid_baby                                  ; 3ed9: 8d 81 09
-    jmp c3f0c                                                         ; 3edc: 4c 0c 3f
+    jmp update_room_3_bits                                            ; 3edc: 4c 0c 3f
 
-c3edf
+set_baby_y_position
     lda room_3_baby_y_position                                        ; 3edf: ad 7a 0a
     sta object_y_low + objectid_baby                                  ; 3ee2: 8d 81 09
-    jmp c3f0c                                                         ; 3ee5: 4c 0c 3f
+    jmp update_room_3_bits                                            ; 3ee5: 4c 0c 3f
 
-c3ee8
+baby_is_dead
     lda #$e0                                                          ; 3ee8: a9 e0
     sta object_z_order + objectid_baby                                ; 3eea: 8d c7 38
     lda #$b0                                                          ; 3eed: a9 b0
@@ -964,9 +967,9 @@ c3ee8
     sta value_to_write_to_collision_map                               ; 3f00: 85 3e
     jsr read_collision_map_value_for_xy                               ; 3f02: 20 fa 1e
     cmp value_to_write_to_collision_map                               ; 3f05: c5 3e
-    beq c3f0c                                                         ; 3f07: f0 03
+    beq update_room_3_bits                                            ; 3f07: f0 03
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 3f09: 20 44 1e
-c3f0c
+update_room_3_bits
     lda #3                                                            ; 3f0c: a9 03
     sta currently_updating_logic_for_room_index                       ; 3f0e: 8d ba 1a
     lda #3                                                            ; 3f11: a9 03
@@ -989,7 +992,7 @@ c3f2d
     sty room_3_balloon_y_position                                     ; 3f38: 8c 77 0a
     rts                                                               ; 3f3b: 60
 
-l3f3c
+temp_remember_animation_step
     !byte 0                                                           ; 3f3c: 00
 ; *************************************************************************************
 ; 
@@ -2007,14 +2010,6 @@ pydis_end
 
 ; Automatically generated labels:
 ;     c3bf8
-;     c3e00
-;     c3e0e
-;     c3e47
-;     c3e6d
-;     c3e8a
-;     c3edf
-;     c3ee8
-;     c3f0c
 ;     c3f2d
 ;     c4134
 ;     c416b
@@ -2028,7 +2023,6 @@ pydis_end
 ;     c4448
 ;     c449b
 ;     c44a0
-;     l3f3c
 ;     l44a7
 ;     l44a8
 ;     l44a9
@@ -2137,6 +2131,9 @@ pydis_end
 }
 !if (baby_holding_rope_animation - baby_animations) != $01 {
     !error "Assertion failed: baby_holding_rope_animation - baby_animations == $01"
+}
+!if (baby_push_animation - baby_animations) != $04 {
+    !error "Assertion failed: baby_push_animation - baby_animations == $04"
 }
 !if (baby_surprise_animation - baby_animations) != $15 {
     !error "Assertion failed: baby_surprise_animation - baby_animations == $15"
