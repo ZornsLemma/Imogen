@@ -330,8 +330,8 @@ developer_mode_inactive
 level_specific_update
     jsr room_0_update_handler                                         ; 3b07: 20 aa 3b
     jsr room_1_update_handler                                         ; 3b0a: 20 22 3e
-    jsr sub_c3ed4                                                     ; 3b0d: 20 d4 3e
-    jsr sub_c40d6                                                     ; 3b10: 20 d6 40
+    jsr update_rabbit_puzzle                                          ; 3b0d: 20 d4 3e
+    jsr update_fruit_puzzle                                           ; 3b10: 20 d6 40
     rts                                                               ; 3b13: 60
 
 ; *************************************************************************************
@@ -976,7 +976,7 @@ rabbit_sprites
     !byte $ff                                                         ; 3ed3: ff
 
 ; check for first update in room (branch if not)
-sub_c3ed4
+update_rabbit_puzzle
     lda update_room_first_update_flag                                 ; 3ed4: ad 2b 13
     beq update_rabbit_not_first_update                                ; 3ed7: f0 43
 ; check for level change (branch if not)
@@ -1268,7 +1268,7 @@ l40b9
     !byte   4, $80,   0,   8, $80                                     ; 40d1: 04 80 00...
 
 ; check for first update in room (branch if so)
-sub_c40d6
+update_fruit_puzzle
     lda update_room_first_update_flag                                 ; 40d6: ad 2b 13
     bne c40de                                                         ; 40d9: d0 03
     jmp c4167                                                         ; 40db: 4c 67 41
@@ -1911,8 +1911,6 @@ pydis_end
 ;     l4464
 ;     loop_c4146
 ;     loop_c442e
-;     sub_c3ed4
-;     sub_c40d6
 ;     sub_c420e
 ;     sub_c43d4
 ;     sub_c441d
