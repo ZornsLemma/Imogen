@@ -24,10 +24,13 @@ object_collided_ceiling               = 8
 object_collided_floor                 = 2
 object_collided_left_wall             = 1
 object_collided_right_wall            = 4
+objectid_fruit                        = 2
 objectid_old_player                   = 11
 objectid_old_player_accessory         = 12
 objectid_player                       = 0
 objectid_player_accessory             = 1
+objectid_rabbit                       = 3
+objectid_rail_rope_end                = 3
 opcode_jmp                            = 76
 sprite_op_flags_copy_screen           = 1
 sprite_op_flags_erase_to_bg_colour    = 2
@@ -35,7 +38,10 @@ sprite_op_flags_erase_to_fg_colour    = 4
 sprite_op_flags_normal                = 0
 spriteid_197                          = 197
 spriteid_ball                         = 59
+spriteid_boulder                      = 206
 spriteid_brazier                      = 58
+spriteid_cache1                       = 203
+spriteid_cache2                       = 205
 spriteid_cat1                         = 27
 spriteid_cat2                         = 28
 spriteid_cat_jump                     = 26
@@ -74,6 +80,8 @@ spriteid_fire5                        = 64
 spriteid_fire6                        = 65
 spriteid_fire7                        = 66
 spriteid_fire8                        = 67
+spriteid_fruit                        = 208
+spriteid_horizontal_rail              = 200
 spriteid_icodata_box                  = 9
 spriteid_icodata_cat                  = 5
 spriteid_icodata_disc                 = 3
@@ -83,7 +91,10 @@ spriteid_icodata_password             = 8
 spriteid_icodata_sound                = 2
 spriteid_icodata_wizard               = 4
 spriteid_icon_background              = 1
+spriteid_leaf                         = 214
+spriteid_long_rope_end                = 204
 spriteid_menu_item_completion_spell   = 33
+spriteid_missing                      = 212
 spriteid_monkey1                      = 78
 spriteid_monkey2                      = 79
 spriteid_monkey3                      = 80
@@ -104,6 +115,13 @@ spriteid_monkey_transform2            = 69
 spriteid_one_pixel_masked_out         = 0
 spriteid_one_pixel_set                = 31
 spriteid_pointer_hand                 = 29
+spriteid_rabbit_push                  = 219
+spriteid_rabbit_sit                   = 218
+spriteid_rabbit_walk_1                = 215
+spriteid_rabbit_walk_2                = 216
+spriteid_rabbit_walk_3                = 217
+spriteid_rail_left_corner             = 201
+spriteid_rail_right_corner            = 202
 spriteid_rope1                        = 85
 spriteid_rope2                        = 86
 spriteid_rope3                        = 87
@@ -115,6 +133,11 @@ spriteid_sparkles2                    = 35
 spriteid_sparkles3                    = 36
 spriteid_sparkles4                    = 37
 spriteid_sparkles5                    = 38
+spriteid_stalk_bottom                 = 211
+spriteid_stalk_middle                 = 210
+spriteid_stalk_top                    = 209
+spriteid_table                        = 207
+spriteid_way_out                      = 213
 spriteid_wizard1                      = 48
 spriteid_wizard2                      = 49
 spriteid_wizard3                      = 50
@@ -160,22 +183,22 @@ object_spriteid                                     = $09a8
 object_spriteid_old                                 = $09b3
 object_direction                                    = $09be
 current_player_animation                            = $09df
-l0a1a                                               = $0a1a
-l0a1b                                               = $0a1b
-l0a1c                                               = $0a1c
-l0a1d                                               = $0a1d
-l0a1e                                               = $0a1e
-l0a1f                                               = $0a1f
-l0a20                                               = $0a20
-l0a21                                               = $0a21
-l0a22                                               = $0a22
-l0a23                                               = $0a23
+rail_rope_x_cell                                    = $0a1a
+rail_rope_current_dir                               = $0a1b
+current_fruit_animation                             = $0a1c
+next_fruit_animation                                = $0a1d
+fruit_x_low                                         = $0a1e
+fruit_x_high                                        = $0a1f
+fruit_y_low                                         = $0a20
+fruit_y_high                                        = $0a21
+fruit_room                                          = $0a22
+current_fruit_direction                             = $0a23
 level_workspace                                     = $0a6f
-l0a70                                               = $0a70
-l0a71                                               = $0a71
-l0a72                                               = $0a72
-l0a73                                               = $0a73
-l0a74                                               = $0a74
+rabbit_sprite_animation                             = $0a70
+rabbit_sprite_animation_step                        = $0a71
+rabbit_x                                            = $0a72
+rabbit_direction                                    = $0a73
+rabbit_speed                                        = $0a74
 l0a75                                               = $0a75
 tile_all_set_pixels                                 = $0aa9
 developer_flags                                     = $1103
@@ -240,7 +263,6 @@ object_room_collision_flags                         = $38d8
 play_sound_yx                                       = $38f6
 define_envelope                                     = $395e
 sound_priority_per_channel_table                    = $396f
-l3970                                               = $3970
 
     * = $3ad5
 
@@ -402,17 +424,17 @@ room_0_code
     jsr copy_rectangle_of_memory_to_screen                            ; 3b70: 20 bb 1a
 ; carve the floor, walls and ceiling into the rock
     jsr draw_floor_walls_and_ceiling_around_solid_rock                ; 3b73: 20 90 1b
-; draw sprite $ce at (3,20) of size (3x2)
+; draw boulder at (3,20) of size (3x2)
     ldx #2                                                            ; 3b76: a2 02
     stx height_in_cells                                               ; 3b78: 86 3d
     inx                                                               ; 3b7a: e8
     stx width_in_cells                                                ; 3b7b: 86 3c
     ldy #$14                                                          ; 3b7d: a0 14
-    lda #$ce                                                          ; 3b7f: a9 ce
+    lda #spriteid_boulder                                             ; 3b7f: a9 ce
     jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map           ; 3b81: 20 57 1f
-; draw sprite $cf at (34,20) of size (3x2)
+; draw table at (34,20) of size (3x2)
     ldx #$22 ; '"'                                                    ; 3b84: a2 22
-    lda #$cf                                                          ; 3b86: a9 cf
+    lda #spriteid_table                                               ; 3b86: a9 cf
     jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map           ; 3b88: 20 57 1f
 ; draw rope at (9,2) length 16
     ldx #9                                                            ; 3b8b: a2 09
@@ -451,34 +473,38 @@ room_0_update_handler
 c3bc9
     lda current_level                                                 ; 3bc9: a5 31
     cmp level_before_latest_level_and_room_initialisation             ; 3bcb: c5 51
-    beq c3bfc                                                         ; 3bcd: f0 2d
+    beq rail_rope_not_moving                                          ; 3bcd: f0 2d
+; initiailise new level
     ldx #<envelope1                                                   ; 3bcf: a2 65
     ldy #>envelope1                                                   ; 3bd1: a0 44
     jsr define_envelope                                               ; 3bd3: 20 5e 39
-    lda l0a1a                                                         ; 3bd6: ad 1a 0a
-    beq c3bf2                                                         ; 3bd9: f0 17
-    lda l0a1b                                                         ; 3bdb: ad 1b 0a
-    beq c3bfc                                                         ; 3bde: f0 1c
-    bpl c3bea                                                         ; 3be0: 10 08
+    lda rail_rope_x_cell                                              ; 3bd6: ad 1a 0a
+    beq set_rail_rope_to_initial_position                             ; 3bd9: f0 17
+    lda rail_rope_current_dir                                         ; 3bdb: ad 1b 0a
+    beq rail_rope_not_moving                                          ; 3bde: f0 1c
+    bpl set_rail_rope_to_far_right                                    ; 3be0: 10 08
+; set rail rope to far left
     lda #$0c                                                          ; 3be2: a9 0c
-    sta l0a1a                                                         ; 3be4: 8d 1a 0a
-    jmp c3bf7                                                         ; 3be7: 4c f7 3b
+    sta rail_rope_x_cell                                              ; 3be4: 8d 1a 0a
+    jmp stop_rail_rope                                                ; 3be7: 4c f7 3b
 
-c3bea
+set_rail_rope_to_far_right
     lda #$1b                                                          ; 3bea: a9 1b
-    sta l0a1a                                                         ; 3bec: 8d 1a 0a
-    jmp c3bf7                                                         ; 3bef: 4c f7 3b
+    sta rail_rope_x_cell                                              ; 3bec: 8d 1a 0a
+    jmp stop_rail_rope                                                ; 3bef: 4c f7 3b
 
-c3bf2
+set_rail_rope_to_initial_position
     lda #$0c                                                          ; 3bf2: a9 0c
-    sta l0a1a                                                         ; 3bf4: 8d 1a 0a
-c3bf7
+    sta rail_rope_x_cell                                              ; 3bf4: 8d 1a 0a
+stop_rail_rope
     lda #0                                                            ; 3bf7: a9 00
-    sta l0a1b                                                         ; 3bf9: 8d 1b 0a
-c3bfc
+    sta rail_rope_current_dir                                         ; 3bf9: 8d 1b 0a
+; check for being in room 0, and branch otherwise
+rail_rope_not_moving
     lda desired_room_index                                            ; 3bfc: a5 30
     cmp #0                                                            ; 3bfe: c9 00
     bne c3c35                                                         ; 3c00: d0 33
+; in room 0. set rail collision
     ldx #$0c                                                          ; 3c02: a2 0c
     ldy #2                                                            ; 3c04: a0 02
     lda #$10                                                          ; 3c06: a9 10
@@ -488,24 +514,26 @@ c3bfc
     lda #collision_map_solid_rock                                     ; 3c0e: a9 03
     sta value_to_write_to_collision_map                               ; 3c10: 85 3e
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 3c12: 20 44 1e
+; draw rail itself, with corners
     iny                                                               ; 3c15: c8
-    lda #$c9                                                          ; 3c16: a9 c9
+    lda #spriteid_rail_left_corner                                    ; 3c16: a9 c9
     jsr draw_sprite_a_at_cell_xy                                      ; 3c18: 20 4c 1f
     inx                                                               ; 3c1b: e8
-    lda #$c8                                                          ; 3c1c: a9 c8
-loop_c3c1e
+    lda #spriteid_horizontal_rail                                     ; 3c1c: a9 c8
+draw_rail_loop
     jsr draw_sprite_a_at_cell_xy                                      ; 3c1e: 20 4c 1f
     inx                                                               ; 3c21: e8
     cpx #$1b                                                          ; 3c22: e0 1b
-    bcc loop_c3c1e                                                    ; 3c24: 90 f8
-    lda #$ca                                                          ; 3c26: a9 ca
+    bcc draw_rail_loop                                                ; 3c24: 90 f8
+    lda #spriteid_rail_right_corner                                   ; 3c26: a9 ca
     jsr draw_sprite_a_at_cell_xy                                      ; 3c28: 20 4c 1f
-    lda #$cc                                                          ; 3c2b: a9 cc
-    sta object_spriteid + 3                                           ; 3c2d: 8d ab 09
-    lda #$cb                                                          ; 3c30: a9 cb
-    sta l38af                                                         ; 3c32: 8d af 38
+; draw end of rope on the rail
+    lda #spriteid_long_rope_end                                       ; 3c2b: a9 cc
+    sta object_spriteid + objectid_rail_rope_end                      ; 3c2d: 8d ab 09
+    lda #spriteid_cache1                                              ; 3c30: a9 cb
+    sta object_erase_type + objectid_rail_rope_end                    ; 3c32: 8d af 38
 c3c35
-    jmp c3d16                                                         ; 3c35: 4c 16 3d
+    jmp set_rail_rope_object_position_and_collision_map               ; 3c35: 4c 16 3d
 
 c3c38
     lda #0                                                            ; 3c38: a9 00
@@ -514,52 +542,52 @@ c3c38
     cmp #0                                                            ; 3c3f: c9 00
     bne c3c64                                                         ; 3c41: d0 21
     lda current_player_character                                      ; 3c43: a5 48
-    cmp #6                                                            ; 3c45: c9 06
+    cmp #spriteid_icodata_monkey                                      ; 3c45: c9 06
     bne c3c64                                                         ; 3c47: d0 1b
     ldx #objectid_player                                              ; 3c49: a2 00
-    ldy #3                                                            ; 3c4b: a0 03
+    ldy #objectid_rail_rope_end                                       ; 3c4b: a0 03
     jsr test_for_collision_between_objects_x_and_y                    ; 3c4d: 20 e2 28
     beq c3c64                                                         ; 3c50: f0 12
     lda current_player_animation                                      ; 3c52: ad df 09
-    cmp #$51 ; 'Q'                                                    ; 3c55: c9 51
+    cmp #monkey_climb_animation - monkey_base_animation               ; 3c55: c9 51
     beq c3c61                                                         ; 3c57: f0 08
-    cmp #$45 ; 'E'                                                    ; 3c59: c9 45
+    cmp #monkey_climb_idle_animation - monkey_base_animation          ; 3c59: c9 45
     beq c3c61                                                         ; 3c5b: f0 04
-    cmp #$49 ; 'I'                                                    ; 3c5d: c9 49
+    cmp #monkey_climb_down_animation - monkey_base_animation          ; 3c5d: c9 49
     bne c3c64                                                         ; 3c5f: d0 03
 c3c61
     dec l3d4a                                                         ; 3c61: ce 4a 3d
 c3c64
-    lda l0a1b                                                         ; 3c64: ad 1b 0a
+    lda rail_rope_current_dir                                         ; 3c64: ad 1b 0a
     bne c3c8e                                                         ; 3c67: d0 25
     lda l3d4a                                                         ; 3c69: ad 4a 3d
     beq c3c8b                                                         ; 3c6c: f0 1d
-    lda l0a1a                                                         ; 3c6e: ad 1a 0a
+    lda rail_rope_x_cell                                              ; 3c6e: ad 1a 0a
     cmp #$0c                                                          ; 3c71: c9 0c
     bne c3c80                                                         ; 3c73: d0 0b
     lda object_direction                                              ; 3c75: ad be 09
     bmi c3c8b                                                         ; 3c78: 30 11
-    inc l0a1b                                                         ; 3c7a: ee 1b 0a
+    inc rail_rope_current_dir                                         ; 3c7a: ee 1b 0a
     jmp c3c8e                                                         ; 3c7d: 4c 8e 3c
 
 c3c80
     lda object_direction                                              ; 3c80: ad be 09
     bpl c3c8b                                                         ; 3c83: 10 06
-    dec l0a1b                                                         ; 3c85: ce 1b 0a
+    dec rail_rope_current_dir                                         ; 3c85: ce 1b 0a
     jmp c3c8e                                                         ; 3c88: 4c 8e 3c
 
 c3c8b
-    jmp c3d16                                                         ; 3c8b: 4c 16 3d
+    jmp set_rail_rope_object_position_and_collision_map               ; 3c8b: 4c 16 3d
 
 c3c8e
-    lda l0a1a                                                         ; 3c8e: ad 1a 0a
+    lda rail_rope_x_cell                                              ; 3c8e: ad 1a 0a
     clc                                                               ; 3c91: 18
-    adc l0a1b                                                         ; 3c92: 6d 1b 0a
-    sta l0a1a                                                         ; 3c95: 8d 1a 0a
+    adc rail_rope_current_dir                                         ; 3c92: 6d 1b 0a
+    sta rail_rope_x_cell                                              ; 3c95: 8d 1a 0a
     lda l3d4a                                                         ; 3c98: ad 4a 3d
     beq c3cce                                                         ; 3c9b: f0 31
     ldx #0                                                            ; 3c9d: a2 00
-    lda l0a1b                                                         ; 3c9f: ad 1b 0a
+    lda rail_rope_current_dir                                         ; 3c9f: ad 1b 0a
     asl                                                               ; 3ca2: 0a
     asl                                                               ; 3ca3: 0a
     asl                                                               ; 3ca4: 0a
@@ -583,47 +611,47 @@ c3caa
     adc l0071                                                         ; 3cc9: 65 71
     sta object_x_high + objectid_player_accessory                     ; 3ccb: 8d 67 09
 c3cce
-    lda l0a1a                                                         ; 3cce: ad 1a 0a
+    lda rail_rope_x_cell                                              ; 3cce: ad 1a 0a
     cmp #$0c                                                          ; 3cd1: c9 0c
     beq c3ceb                                                         ; 3cd3: f0 16
     cmp #$1b                                                          ; 3cd5: c9 1b
     beq c3ceb                                                         ; 3cd7: f0 12
     lda desired_room_index                                            ; 3cd9: a5 30
     cmp #0                                                            ; 3cdb: c9 00
-    bne c3d16                                                         ; 3cdd: d0 37
+    bne set_rail_rope_object_position_and_collision_map               ; 3cdd: d0 37
     lda #$40 ; '@'                                                    ; 3cdf: a9 40
     ldx #<sound1                                                      ; 3ce1: a2 73
     ldy #>sound1                                                      ; 3ce3: a0 44
     jsr play_sound_yx                                                 ; 3ce5: 20 f6 38
-    jmp c3d16                                                         ; 3ce8: 4c 16 3d
+    jmp set_rail_rope_object_position_and_collision_map               ; 3ce8: 4c 16 3d
 
 c3ceb
     lda #0                                                            ; 3ceb: a9 00
-    sta l0a1b                                                         ; 3ced: 8d 1b 0a
+    sta rail_rope_current_dir                                         ; 3ced: 8d 1b 0a
     lda desired_room_index                                            ; 3cf0: a5 30
     cmp #0                                                            ; 3cf2: c9 00
-    bne c3d16                                                         ; 3cf4: d0 20
+    bne set_rail_rope_object_position_and_collision_map               ; 3cf4: d0 20
     lda sound_priority_per_channel_table                              ; 3cf6: ad 6f 39
     cmp #$41 ; 'A'                                                    ; 3cf9: c9 41
     bcs c3d05                                                         ; 3cfb: b0 08
     lda #0                                                            ; 3cfd: a9 00
     sta sound_priority_per_channel_table                              ; 3cff: 8d 6f 39
-    sta l3970                                                         ; 3d02: 8d 70 39
+    sta sound_priority_per_channel_table + 1                          ; 3d02: 8d 70 39
 c3d05
     jsr play_landing_sound                                            ; 3d05: 20 a9 23
     lda l3d4a                                                         ; 3d08: ad 4a 3d
-    beq c3d16                                                         ; 3d0b: f0 09
+    beq set_rail_rope_object_position_and_collision_map               ; 3d0b: f0 09
     lda #6                                                            ; 3d0d: a9 06
     lda object_direction                                              ; 3d0f: ad be 09
-    bpl c3d16                                                         ; 3d12: 10 02
+    bpl set_rail_rope_object_position_and_collision_map               ; 3d12: 10 02
     lda #$fa                                                          ; 3d14: a9 fa
-c3d16
+set_rail_rope_object_position_and_collision_map
     lda desired_room_index                                            ; 3d16: a5 30
     cmp #0                                                            ; 3d18: c9 00
     bne return1                                                       ; 3d1a: d0 2d
-    ldx l0a1a                                                         ; 3d1c: ae 1a 0a
+    ldx rail_rope_x_cell                                              ; 3d1c: ae 1a 0a
     ldy #3                                                            ; 3d1f: a0 03
-    lda #3                                                            ; 3d21: a9 03
+    lda #objectid_rail_rope_end                                       ; 3d21: a9 03
     jsr set_object_position_from_cell_xy                              ; 3d23: 20 5d 1f
     lda #1                                                            ; 3d26: a9 01
     sta width_in_cells                                                ; 3d28: 85 3c
@@ -635,6 +663,7 @@ c3d16
     cmp value_to_write_to_collision_map                               ; 3d35: c5 3e
     beq return1                                                       ; 3d37: f0 10
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 3d39: 20 44 1e
+; write zero to either side of the rail rope
     lda #collision_map_none                                           ; 3d3c: a9 00
     sta value_to_write_to_collision_map                               ; 3d3e: 85 3e
     dex                                                               ; 3d40: ca
@@ -772,9 +801,9 @@ room_1_code
     ldy #6                                                            ; 3de8: a0 06
     lda #3                                                            ; 3dea: a9 03
     jsr write_a_single_value_to_cell_in_collision_map                 ; 3dec: 20 bb 1e
-; draw sprite $d5 at (9,7)
+; draw way out at (9,7)
     iny                                                               ; 3def: c8
-    lda #$d5                                                          ; 3df0: a9 d5
+    lda #spriteid_way_out                                             ; 3df0: a9 d5
     jsr draw_sprite_a_at_cell_xy                                      ; 3df2: 20 4c 1f
     jsr start_room                                                    ; 3df5: 20 bb 12
 room_1_game_update_loop
@@ -927,28 +956,43 @@ room_2_game_update_loop
     ldy current_level                                                 ; 3ebe: a4 31
     jmp initialise_level_and_room                                     ; 3ec0: 4c 40 11
 
-l3ec3
-    !byte   0, $d7, $d8, $d9, $da, $ff, $da, $ff, $db, $db, $db, $db  ; 3ec3: 00 d7 d8...
-    !byte $db, $db, $db, $db, $ff                                     ; 3ecf: db db db...
+rabbit_sprites
+    !byte 0                                                           ; 3ec3: 00
+    !byte spriteid_rabbit_walk_1                                      ; 3ec4: d7
+    !byte spriteid_rabbit_walk_2                                      ; 3ec5: d8
+    !byte spriteid_rabbit_walk_3                                      ; 3ec6: d9
+    !byte spriteid_rabbit_sit                                         ; 3ec7: da
+    !byte $ff                                                         ; 3ec8: ff
+    !byte spriteid_rabbit_sit                                         ; 3ec9: da
+    !byte $ff                                                         ; 3eca: ff
+    !byte spriteid_rabbit_push                                        ; 3ecb: db
+    !byte spriteid_rabbit_push                                        ; 3ecc: db
+    !byte spriteid_rabbit_push                                        ; 3ecd: db
+    !byte spriteid_rabbit_push                                        ; 3ece: db
+    !byte spriteid_rabbit_push                                        ; 3ecf: db
+    !byte spriteid_rabbit_push                                        ; 3ed0: db
+    !byte spriteid_rabbit_push                                        ; 3ed1: db
+    !byte spriteid_rabbit_push                                        ; 3ed2: db
+    !byte $ff                                                         ; 3ed3: ff
 
 ; check for first update in room (branch if not)
 sub_c3ed4
     lda update_room_first_update_flag                                 ; 3ed4: ad 2b 13
-    beq c3f1c                                                         ; 3ed7: f0 43
+    beq update_rabbit_not_first_update                                ; 3ed7: f0 43
 ; check for level change (branch if not)
     lda current_level                                                 ; 3ed9: a5 31
     cmp level_before_latest_level_and_room_initialisation             ; 3edb: c5 51
     beq c3ef9                                                         ; 3edd: f0 1a
     lda #6                                                            ; 3edf: a9 06
-    sta l0a70                                                         ; 3ee1: 8d 70 0a
-    sta l0a71                                                         ; 3ee4: 8d 71 0a
+    sta rabbit_sprite_animation                                       ; 3ee1: 8d 70 0a
+    sta rabbit_sprite_animation_step                                  ; 3ee4: 8d 71 0a
     lda #0                                                            ; 3ee7: a9 00
     sta l0a75                                                         ; 3ee9: 8d 75 0a
     lda #$80                                                          ; 3eec: a9 80
-    sta l0a72                                                         ; 3eee: 8d 72 0a
+    sta rabbit_x                                                      ; 3eee: 8d 72 0a
     lda #1                                                            ; 3ef1: a9 01
-    sta l0a73                                                         ; 3ef3: 8d 73 0a
-    sta l0a74                                                         ; 3ef6: 8d 74 0a
+    sta rabbit_direction                                              ; 3ef3: 8d 73 0a
+    sta rabbit_speed                                                  ; 3ef6: 8d 74 0a
 c3ef9
     ldx #<envelope2                                                   ; 3ef9: a2 99
     ldy #>envelope2                                                   ; 3efb: a0 44
@@ -960,78 +1004,79 @@ c3ef9
     ldy #$0d                                                          ; 3f08: a0 0d
     lda #7                                                            ; 3f0a: a9 07
     jsr sub_c441d                                                     ; 3f0c: 20 1d 44
-    lda #$cd                                                          ; 3f0f: a9 cd
+    lda #spriteid_cache2                                              ; 3f0f: a9 cd
     sta l38af                                                         ; 3f11: 8d af 38
     lda #$66 ; 'f'                                                    ; 3f14: a9 66
-    sta object_y_low + 3                                              ; 3f16: 8d 7f 09
+    sta object_y_low + objectid_rabbit                                ; 3f16: 8d 7f 09
 c3f19
-    jmp c3fed                                                         ; 3f19: 4c ed 3f
+    jmp update_rabbit_object                                          ; 3f19: 4c ed 3f
 
-c3f1c
-    lda l0a71                                                         ; 3f1c: ad 71 0a
+update_rabbit_not_first_update
+    lda rabbit_sprite_animation_step                                  ; 3f1c: ad 71 0a
     clc                                                               ; 3f1f: 18
     adc #1                                                            ; 3f20: 69 01
     tay                                                               ; 3f22: a8
-    lda l3ec3,y                                                       ; 3f23: b9 c3 3e
+    lda rabbit_sprites,y                                              ; 3f23: b9 c3 3e
     cmp #$ff                                                          ; 3f26: c9 ff
     bne c3f2d                                                         ; 3f28: d0 03
-    ldy l0a70                                                         ; 3f2a: ac 70 0a
+    ldy rabbit_sprite_animation                                       ; 3f2a: ac 70 0a
 c3f2d
     lda desired_room_index                                            ; 3f2d: a5 30
     cmp #2                                                            ; 3f2f: c9 02
     bne c3f71                                                         ; 3f31: d0 3e
-    ldx #3                                                            ; 3f33: a2 03
+; in room 2
+    ldx #objectid_rabbit                                              ; 3f33: a2 03
     sty l4009                                                         ; 3f35: 8c 09 40
-    ldy #0                                                            ; 3f38: a0 00
+    ldy #objectid_player                                              ; 3f38: a0 00
     jsr test_for_collision_between_objects_x_and_y                    ; 3f3a: 20 e2 28
     ldy l4009                                                         ; 3f3d: ac 09 40
     ora #0                                                            ; 3f40: 09 00
     beq c3f71                                                         ; 3f42: f0 2d
     ldy #8                                                            ; 3f44: a0 08
     lda #6                                                            ; 3f46: a9 06
-    sta l0a70                                                         ; 3f48: 8d 70 0a
+    sta rabbit_sprite_animation                                       ; 3f48: 8d 70 0a
     lda #$0c                                                          ; 3f4b: a9 0c
     sta l0a75                                                         ; 3f4d: 8d 75 0a
     lda object_x_low                                                  ; 3f50: ad 50 09
-    cmp object_x_low + 3                                              ; 3f53: cd 53 09
+    cmp object_x_low + objectid_rabbit                                ; 3f53: cd 53 09
     bcc c3f64                                                         ; 3f56: 90 0c
     lda #6                                                            ; 3f58: a9 06
     sta player_wall_collision_reaction_speed                          ; 3f5a: 8d 33 24
     lda #1                                                            ; 3f5d: a9 01
-    sta l0a73                                                         ; 3f5f: 8d 73 0a
+    sta rabbit_direction                                              ; 3f5f: 8d 73 0a
     bne c3f6e                                                         ; 3f62: d0 0a
 c3f64
     lda #$fa                                                          ; 3f64: a9 fa
     sta player_wall_collision_reaction_speed                          ; 3f66: 8d 33 24
     lda #$ff                                                          ; 3f69: a9 ff
-    sta l0a73                                                         ; 3f6b: 8d 73 0a
+    sta rabbit_direction                                              ; 3f6b: 8d 73 0a
 c3f6e
-    jmp c3fea                                                         ; 3f6e: 4c ea 3f
+    jmp update_rabbit_animation_step                                  ; 3f6e: 4c ea 3f
 
 c3f71
-    lda l0a70                                                         ; 3f71: ad 70 0a
+    lda rabbit_sprite_animation                                       ; 3f71: ad 70 0a
     cmp #6                                                            ; 3f74: c9 06
-    bne c3f9e                                                         ; 3f76: d0 26
+    bne rabbit_is_hopping_along                                       ; 3f76: d0 26
     dec l0a75                                                         ; 3f78: ce 75 0a
     bpl c3f6e                                                         ; 3f7b: 10 f1
     ldy #1                                                            ; 3f7d: a0 01
-    sty l0a70                                                         ; 3f7f: 8c 70 0a
-    lda l0a74                                                         ; 3f82: ad 74 0a
-    sta l0a73                                                         ; 3f85: 8d 73 0a
-    lda l0a72                                                         ; 3f88: ad 72 0a
+    sty rabbit_sprite_animation                                       ; 3f7f: 8c 70 0a
+    lda rabbit_speed                                                  ; 3f82: ad 74 0a
+    sta rabbit_direction                                              ; 3f85: 8d 73 0a
+    lda rabbit_x                                                      ; 3f88: ad 72 0a
     cmp #$70 ; 'p'                                                    ; 3f8b: c9 70
-    beq c3f93                                                         ; 3f8d: f0 04
+    beq reverse_direction                                             ; 3f8d: f0 04
     cmp #$d0                                                          ; 3f8f: c9 d0
-    bne c3f9e                                                         ; 3f91: d0 0b
-c3f93
-    lda l0a74                                                         ; 3f93: ad 74 0a
+    bne rabbit_is_hopping_along                                       ; 3f91: d0 0b
+reverse_direction
+    lda rabbit_speed                                                  ; 3f93: ad 74 0a
     eor #$fe                                                          ; 3f96: 49 fe
-    sta l0a74                                                         ; 3f98: 8d 74 0a
-    sta l0a73                                                         ; 3f9b: 8d 73 0a
-c3f9e
-    lda l0a70                                                         ; 3f9e: ad 70 0a
+    sta rabbit_speed                                                  ; 3f98: 8d 74 0a
+    sta rabbit_direction                                              ; 3f9b: 8d 73 0a
+rabbit_is_hopping_along
+    lda rabbit_sprite_animation                                       ; 3f9e: ad 70 0a
     cmp #1                                                            ; 3fa1: c9 01
-    bne c3fea                                                         ; 3fa3: d0 45
+    bne update_rabbit_animation_step                                  ; 3fa3: d0 45
     cpy #4                                                            ; 3fa5: c0 04
     bne c3fcc                                                         ; 3fa7: d0 23
     lda desired_room_index                                            ; 3fa9: a5 30
@@ -1050,34 +1095,35 @@ c3f9e
     jsr play_sound_yx                                                 ; 3fc6: 20 f6 38
     ldy l4009                                                         ; 3fc9: ac 09 40
 c3fcc
-    lda l0a74                                                         ; 3fcc: ad 74 0a
+    lda rabbit_speed                                                  ; 3fcc: ad 74 0a
     asl                                                               ; 3fcf: 0a
     asl                                                               ; 3fd0: 0a
     clc                                                               ; 3fd1: 18
-    adc l0a72                                                         ; 3fd2: 6d 72 0a
-    sta l0a72                                                         ; 3fd5: 8d 72 0a
+    adc rabbit_x                                                      ; 3fd2: 6d 72 0a
+    sta rabbit_x                                                      ; 3fd5: 8d 72 0a
     cmp #$70 ; 'p'                                                    ; 3fd8: c9 70
     beq c3fe0                                                         ; 3fda: f0 04
     cmp #$d0                                                          ; 3fdc: c9 d0
-    bne c3fea                                                         ; 3fde: d0 0a
+    bne update_rabbit_animation_step                                  ; 3fde: d0 0a
 c3fe0
     ldy #6                                                            ; 3fe0: a0 06
-    sty l0a70                                                         ; 3fe2: 8c 70 0a
+    sty rabbit_sprite_animation                                       ; 3fe2: 8c 70 0a
     lda #4                                                            ; 3fe5: a9 04
     sta l0a75                                                         ; 3fe7: 8d 75 0a
-c3fea
-    sty l0a71                                                         ; 3fea: 8c 71 0a
-c3fed
+update_rabbit_animation_step
+    sty rabbit_sprite_animation_step                                  ; 3fea: 8c 71 0a
+update_rabbit_object
     lda desired_room_index                                            ; 3fed: a5 30
     cmp #2                                                            ; 3fef: c9 02
     bne return2                                                       ; 3ff1: d0 15
-    ldy l0a71                                                         ; 3ff3: ac 71 0a
-    lda l3ec3,y                                                       ; 3ff6: b9 c3 3e
-    sta object_spriteid + 3                                           ; 3ff9: 8d ab 09
-    lda l0a72                                                         ; 3ffc: ad 72 0a
-    sta object_x_low + 3                                              ; 3fff: 8d 53 09
-    lda l0a73                                                         ; 4002: ad 73 0a
-    sta object_direction + 3                                          ; 4005: 8d c1 09
+; in room 2. set rabbit object
+    ldy rabbit_sprite_animation_step                                  ; 3ff3: ac 71 0a
+    lda rabbit_sprites,y                                              ; 3ff6: b9 c3 3e
+    sta object_spriteid + objectid_rabbit                             ; 3ff9: 8d ab 09
+    lda rabbit_x                                                      ; 3ffc: ad 72 0a
+    sta object_x_low + objectid_rabbit                                ; 3fff: 8d 53 09
+    lda rabbit_direction                                              ; 4002: ad 73 0a
+    sta object_direction + objectid_rabbit                            ; 4005: 8d c1 09
 return2
     rts                                                               ; 4008: 60
 
@@ -1186,15 +1232,15 @@ room_3_code
     jsr copy_rectangle_of_memory_to_screen                            ; 407d: 20 bb 1a
 ; carve the floor, walls and ceiling into the rock
     jsr draw_floor_walls_and_ceiling_around_solid_rock                ; 4080: 20 90 1b
-; draw sprite $d0 at (3,11) of size (3x2)
+; draw fruit at (3,11) of size (3x2)
     ldx #2                                                            ; 4083: a2 02
     stx height_in_cells                                               ; 4085: 86 3d
     inx                                                               ; 4087: e8
     stx width_in_cells                                                ; 4088: 86 3c
     ldy #$0b                                                          ; 408a: a0 0b
-    lda #$d0                                                          ; 408c: a9 d0
+    lda #spriteid_fruit                                               ; 408c: a9 d0
     jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map           ; 408e: 20 57 1f
-; draw sprite $d0 at (34,20) of size (3x2)
+; draw fruit at (34,20) of size (3x2)
     ldx #$22 ; '"'                                                    ; 4091: a2 22
     ldy #$14                                                          ; 4093: a0 14
     jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map           ; 4095: 20 57 1f
@@ -1237,7 +1283,7 @@ c40de
     jsr define_envelope                                               ; 40e8: 20 5e 39
     lda #0                                                            ; 40eb: a9 00
     sta level_workspace                                               ; 40ed: 8d 6f 0a
-    lda l0a1c                                                         ; 40f0: ad 1c 0a
+    lda current_fruit_animation                                       ; 40f0: ad 1c 0a
     cmp #$0d                                                          ; 40f3: c9 0d
     beq c4126                                                         ; 40f5: f0 2f
     cmp #1                                                            ; 40f7: c9 01
@@ -1247,18 +1293,18 @@ c40de
     bne c4126                                                         ; 4100: d0 24
     inc level_workspace                                               ; 4102: ee 6f 0a
     lda #3                                                            ; 4105: a9 03
-    sta l0a22                                                         ; 4107: 8d 22 0a
+    sta fruit_room                                                    ; 4107: 8d 22 0a
     lda #$98                                                          ; 410a: a9 98
-    sta l0a1e                                                         ; 410c: 8d 1e 0a
+    sta fruit_x_low                                                   ; 410c: 8d 1e 0a
     lda #0                                                            ; 410f: a9 00
-    sta l0a1f                                                         ; 4111: 8d 1f 0a
+    sta fruit_x_high                                                  ; 4111: 8d 1f 0a
     lda #$2c ; ','                                                    ; 4114: a9 2c
-    sta l0a20                                                         ; 4116: 8d 20 0a
+    sta fruit_y_low                                                   ; 4116: 8d 20 0a
     lda #0                                                            ; 4119: a9 00
-    sta l0a21                                                         ; 411b: 8d 21 0a
+    sta fruit_y_high                                                  ; 411b: 8d 21 0a
     lda #1                                                            ; 411e: a9 01
-    sta l0a1c                                                         ; 4120: 8d 1c 0a
-    sta l0a1d                                                         ; 4123: 8d 1d 0a
+    sta current_fruit_animation                                       ; 4120: 8d 1c 0a
+    sta next_fruit_animation                                          ; 4123: 8d 1d 0a
 c4126
     lda desired_room_index                                            ; 4126: a5 30
     beq c415f                                                         ; 4128: f0 35
@@ -1269,15 +1315,15 @@ c4126
     lda #6                                                            ; 4132: a9 06
     jsr sub_c441d                                                     ; 4134: 20 1d 44
 c4137
-    lda #$cb                                                          ; 4137: a9 cb
+    lda #spriteid_cache1                                              ; 4137: a9 cb
     sta l38ae                                                         ; 4139: 8d ae 38
     lda desired_room_index                                            ; 413c: a5 30
-    cmp l0a22                                                         ; 413e: cd 22 0a
+    cmp fruit_room                                                    ; 413e: cd 22 0a
     bne c415f                                                         ; 4141: d0 1c
-    jsr sub_c43b6                                                     ; 4143: 20 b6 43
+    jsr set_fruit_object_position                                     ; 4143: 20 b6 43
 loop_c4146
     lda desired_room_index                                            ; 4146: a5 30
-    cmp l0a22                                                         ; 4148: cd 22 0a
+    cmp fruit_room                                                    ; 4148: cd 22 0a
     bne c415f                                                         ; 414b: d0 12
     lda level_workspace                                               ; 414d: ad 6f 0a
     beq c415f                                                         ; 4150: f0 0d
@@ -1295,7 +1341,7 @@ c415f
 
 c4167
     lda desired_room_index                                            ; 4167: a5 30
-    cmp l0a22                                                         ; 4169: cd 22 0a
+    cmp fruit_room                                                    ; 4169: cd 22 0a
     beq c4179                                                         ; 416c: f0 0b
     lda level_workspace                                               ; 416e: ad 6f 0a
     bmi c4176                                                         ; 4171: 30 03
@@ -1309,21 +1355,21 @@ c4179
     bcs c4188                                                         ; 417e: b0 08
     lda #0                                                            ; 4180: a9 00
     sta sound_priority_per_channel_table                              ; 4182: 8d 6f 39
-    sta l3970                                                         ; 4185: 8d 70 39
+    sta sound_priority_per_channel_table + 1                          ; 4185: 8d 70 39
 c4188
     jsr sub_c420e                                                     ; 4188: 20 0e 42
     lda desired_room_index                                            ; 418b: a5 30
-    cmp l0a22                                                         ; 418d: cd 22 0a
+    cmp fruit_room                                                    ; 418d: cd 22 0a
     beq c419a                                                         ; 4190: f0 08
     lda #0                                                            ; 4192: a9 00
     sta level_workspace                                               ; 4194: 8d 6f 0a
     jmp return3                                                       ; 4197: 4c 0d 42
 
 c419a
-    lda l0a1c                                                         ; 419a: ad 1c 0a
+    lda current_fruit_animation                                       ; 419a: ad 1c 0a
     cmp #$13                                                          ; 419d: c9 13
     bne c41be                                                         ; 419f: d0 1d
-    lda l0a23                                                         ; 41a1: ad 23 0a
+    lda current_fruit_direction                                       ; 41a1: ad 23 0a
     bpl c41ac                                                         ; 41a4: 10 06
     dec temp_left_offset                                              ; 41a6: ce d0 24
     jmp c41af                                                         ; 41a9: 4c af 41
@@ -1339,10 +1385,10 @@ c41af
     jmp return3                                                       ; 41bb: 4c 0d 42
 
 c41be
-    lda l0a1d                                                         ; 41be: ad 1d 0a
+    lda next_fruit_animation                                          ; 41be: ad 1d 0a
     cmp #4                                                            ; 41c1: c9 04
     beq c41d9                                                         ; 41c3: f0 14
-    lda l0a1c                                                         ; 41c5: ad 1c 0a
+    lda current_fruit_animation                                       ; 41c5: ad 1c 0a
     cmp #$10                                                          ; 41c8: c9 10
     bne c41e8                                                         ; 41ca: d0 1c
     dec temp_left_offset                                              ; 41cc: ce d0 24
@@ -1383,16 +1429,16 @@ return3
     rts                                                               ; 420d: 60
 
 sub_c420e
-    lda l0a1d                                                         ; 420e: ad 1d 0a
+    lda next_fruit_animation                                          ; 420e: ad 1d 0a
     clc                                                               ; 4211: 18
     adc #2                                                            ; 4212: 69 02
     tay                                                               ; 4214: a8
     lda l40b9,y                                                       ; 4215: b9 b9 40
     cmp #$80                                                          ; 4218: c9 80
     bne c421f                                                         ; 421a: d0 03
-    ldy l0a1c                                                         ; 421c: ac 1c 0a
+    ldy current_fruit_animation                                       ; 421c: ac 1c 0a
 c421f
-    lda l0a1c                                                         ; 421f: ad 1c 0a
+    lda current_fruit_animation                                       ; 421f: ad 1c 0a
     cmp #1                                                            ; 4222: c9 01
     bne c424c                                                         ; 4224: d0 26
     ldx #0                                                            ; 4226: a2 00
@@ -1405,15 +1451,15 @@ c421f
     lda #$80                                                          ; 4237: a9 80
     sta player_wall_collision_reaction_speed                          ; 4239: 8d 33 24
     lda object_direction                                              ; 423c: ad be 09
-    sta l0a23                                                         ; 423f: 8d 23 0a
+    sta current_fruit_direction                                       ; 423f: 8d 23 0a
     ldy #4                                                            ; 4242: a0 04
     lda #$1a                                                          ; 4244: a9 1a
-    sta l0a1c                                                         ; 4246: 8d 1c 0a
+    sta current_fruit_animation                                       ; 4246: 8d 1c 0a
 c4249
     jmp c4314                                                         ; 4249: 4c 14 43
 
 c424c
-    lda l0a1c                                                         ; 424c: ad 1c 0a
+    lda current_fruit_animation                                       ; 424c: ad 1c 0a
     cmp #$0d                                                          ; 424f: c9 0d
     bne c429d                                                         ; 4251: d0 4a
 ; check for first update in room (branch if so)
@@ -1430,9 +1476,9 @@ c424c
     beq c4249                                                         ; 426d: f0 da
     lda object_y_low                                                  ; 426f: ad 7c 09
     sec                                                               ; 4272: 38
-    sbc l0a20                                                         ; 4273: ed 20 0a
+    sbc fruit_y_low                                                   ; 4273: ed 20 0a
     lda object_y_high                                                 ; 4276: ad 92 09
-    sbc l0a21                                                         ; 4279: ed 21 0a
+    sbc fruit_y_high                                                  ; 4279: ed 21 0a
     bmi c4249                                                         ; 427c: 30 cb
     ldx #1                                                            ; 427e: a2 01
     lda object_room_collision_flags                                   ; 4280: ad d8 38
@@ -1443,16 +1489,16 @@ c424c
     and #1                                                            ; 428c: 29 01
     beq c4249                                                         ; 428e: f0 b9
 c4290
-    stx l0a23                                                         ; 4290: 8e 23 0a
+    stx current_fruit_direction                                       ; 4290: 8e 23 0a
     lda #0                                                            ; 4293: a9 00
     jsr sub_c43d4                                                     ; 4295: 20 d4 43
     ldy #$10                                                          ; 4298: a0 10
-    sty l0a1c                                                         ; 429a: 8c 1c 0a
+    sty current_fruit_animation                                       ; 429a: 8c 1c 0a
 c429d
-    lda l0a1c                                                         ; 429d: ad 1c 0a
+    lda current_fruit_animation                                       ; 429d: ad 1c 0a
     cmp #$10                                                          ; 42a0: c9 10
     bne c42dc                                                         ; 42a2: d0 38
-    lda l0a23                                                         ; 42a4: ad 23 0a
+    lda current_fruit_direction                                       ; 42a4: ad 23 0a
     bmi c42af                                                         ; 42a7: 30 06
     inc temp_right_offset                                             ; 42a9: ee d1 24
     jmp c42b2                                                         ; 42ac: 4c b2 42
@@ -1475,19 +1521,19 @@ c42b2
     jsr get_solid_rock_collision_for_object_a                         ; 42cf: 20 94 28
     bne c4314                                                         ; 42d2: d0 40
     ldy #$13                                                          ; 42d4: a0 13
-    sty l0a1c                                                         ; 42d6: 8c 1c 0a
+    sty current_fruit_animation                                       ; 42d6: 8c 1c 0a
     jmp c4314                                                         ; 42d9: 4c 14 43
 
 c42dc
-    lda l0a1c                                                         ; 42dc: ad 1c 0a
+    lda current_fruit_animation                                       ; 42dc: ad 1c 0a
     cmp #$13                                                          ; 42df: c9 13
     bne c42ed                                                         ; 42e1: d0 0a
-    cpy l0a1c                                                         ; 42e3: cc 1c 0a
+    cpy current_fruit_animation                                       ; 42e3: cc 1c 0a
     bne c4314                                                         ; 42e6: d0 2c
     ldy #$1a                                                          ; 42e8: a0 1a
-    sty l0a1c                                                         ; 42ea: 8c 1c 0a
+    sty current_fruit_animation                                       ; 42ea: 8c 1c 0a
 c42ed
-    lda l0a1c                                                         ; 42ed: ad 1c 0a
+    lda current_fruit_animation                                       ; 42ed: ad 1c 0a
     cmp #$1a                                                          ; 42f0: c9 1a
     bne c4314                                                         ; 42f2: d0 20
     lda #8                                                            ; 42f4: a9 08
@@ -1503,11 +1549,11 @@ c430a
     lda #0                                                            ; 430a: a9 00
     sta level_workspace                                               ; 430c: 8d 6f 0a
     ldy #$0d                                                          ; 430f: a0 0d
-    sty l0a1c                                                         ; 4311: 8c 1c 0a
+    sty current_fruit_animation                                       ; 4311: 8c 1c 0a
 c4314
-    sty l0a1d                                                         ; 4314: 8c 1d 0a
+    sty next_fruit_animation                                          ; 4314: 8c 1d 0a
     lda l40b9,y                                                       ; 4317: b9 b9 40
-    ldx l0a23                                                         ; 431a: ae 23 0a
+    ldx current_fruit_direction                                       ; 431a: ae 23 0a
     bpl c4324                                                         ; 431d: 10 05
     eor #$ff                                                          ; 431f: 49 ff
     clc                                                               ; 4321: 18
@@ -1519,112 +1565,112 @@ c4324
     dex                                                               ; 432a: ca
 c432b
     clc                                                               ; 432b: 18
-    adc l0a1e                                                         ; 432c: 6d 1e 0a
-    sta l0a1e                                                         ; 432f: 8d 1e 0a
+    adc fruit_x_low                                                   ; 432c: 6d 1e 0a
+    sta fruit_x_low                                                   ; 432f: 8d 1e 0a
     txa                                                               ; 4332: 8a
-    adc l0a1f                                                         ; 4333: 6d 1f 0a
-    sta l0a1f                                                         ; 4336: 8d 1f 0a
+    adc fruit_x_high                                                  ; 4333: 6d 1f 0a
+    sta fruit_x_high                                                  ; 4336: 8d 1f 0a
     iny                                                               ; 4339: c8
     lda l40b9,y                                                       ; 433a: b9 b9 40
     clc                                                               ; 433d: 18
-    adc l0a20                                                         ; 433e: 6d 20 0a
-    sta l0a20                                                         ; 4341: 8d 20 0a
+    adc fruit_y_low                                                   ; 433e: 6d 20 0a
+    sta fruit_y_low                                                   ; 4341: 8d 20 0a
     lda #0                                                            ; 4344: a9 00
-    adc l0a21                                                         ; 4346: 6d 21 0a
-    sta l0a21                                                         ; 4349: 8d 21 0a
-    jsr sub_c43b6                                                     ; 434c: 20 b6 43
+    adc fruit_y_high                                                  ; 4346: 6d 21 0a
+    sta fruit_y_high                                                  ; 4349: 8d 21 0a
+    jsr set_fruit_object_position                                     ; 434c: 20 b6 43
     ldx #2                                                            ; 434f: a2 02
     jsr find_left_and_right_of_object                                 ; 4351: 20 34 24
     jsr find_top_and_bottom_of_object                                 ; 4354: 20 d2 24
-    lda l0a1c                                                         ; 4357: ad 1c 0a
+    lda current_fruit_animation                                       ; 4357: ad 1c 0a
     cmp #$1a                                                          ; 435a: c9 1a
     beq c439b                                                         ; 435c: f0 3d
     cmp #$10                                                          ; 435e: c9 10
     bne return4                                                       ; 4360: d0 52
-    lda l0a23                                                         ; 4362: ad 23 0a
+    lda current_fruit_direction                                       ; 4362: ad 23 0a
     bmi c4383                                                         ; 4365: 30 1c
     lda l0078                                                         ; 4367: a5 78
     cmp #$28 ; '('                                                    ; 4369: c9 28
     bcc return4                                                       ; 436b: 90 47
-    lda l0a1e                                                         ; 436d: ad 1e 0a
+    lda fruit_x_low                                                   ; 436d: ad 1e 0a
     sec                                                               ; 4370: 38
     sbc #$40 ; '@'                                                    ; 4371: e9 40
-    sta l0a1e                                                         ; 4373: 8d 1e 0a
+    sta fruit_x_low                                                   ; 4373: 8d 1e 0a
     lda #0                                                            ; 4376: a9 00
     sbc #0                                                            ; 4378: e9 00
-    sta l0a1f                                                         ; 437a: 8d 1f 0a
-    inc l0a22                                                         ; 437d: ee 22 0a
+    sta fruit_x_high                                                  ; 437a: 8d 1f 0a
+    inc fruit_room                                                    ; 437d: ee 22 0a
     jmp c43af                                                         ; 4380: 4c af 43
 
 c4383
     lda l0079                                                         ; 4383: a5 79
     bpl return4                                                       ; 4385: 10 2d
-    lda l0a1e                                                         ; 4387: ad 1e 0a
+    lda fruit_x_low                                                   ; 4387: ad 1e 0a
     clc                                                               ; 438a: 18
     adc #$40 ; '@'                                                    ; 438b: 69 40
-    sta l0a1e                                                         ; 438d: 8d 1e 0a
+    sta fruit_x_low                                                   ; 438d: 8d 1e 0a
     lda #1                                                            ; 4390: a9 01
-    sta l0a1f                                                         ; 4392: 8d 1f 0a
-    dec l0a22                                                         ; 4395: ce 22 0a
+    sta fruit_x_high                                                  ; 4392: 8d 1f 0a
+    dec fruit_room                                                    ; 4395: ce 22 0a
     jmp c43af                                                         ; 4398: 4c af 43
 
 c439b
     lda l007a                                                         ; 439b: a5 7a
     cmp #$18                                                          ; 439d: c9 18
     bcc return4                                                       ; 439f: 90 13
-    lda l0a20                                                         ; 43a1: ad 20 0a
+    lda fruit_y_low                                                   ; 43a1: ad 20 0a
     sec                                                               ; 43a4: 38
     sbc #$c0                                                          ; 43a5: e9 c0
-    sta l0a20                                                         ; 43a7: 8d 20 0a
+    sta fruit_y_low                                                   ; 43a7: 8d 20 0a
     lda #1                                                            ; 43aa: a9 01
-    sta l0a22                                                         ; 43ac: 8d 22 0a
+    sta fruit_room                                                    ; 43ac: 8d 22 0a
 c43af
-    lda #0                                                            ; 43af: a9 00
-    sta object_spriteid + 2                                           ; 43b1: 8d aa 09
+    lda #spriteid_one_pixel_masked_out                                ; 43af: a9 00
+    sta object_spriteid + objectid_fruit                              ; 43b1: 8d aa 09
 return4
     rts                                                               ; 43b4: 60
 
 l43b5
     !byte 0                                                           ; 43b5: 00
 
-sub_c43b6
-    lda l0a1e                                                         ; 43b6: ad 1e 0a
-    sta object_x_low + 2                                              ; 43b9: 8d 52 09
-    lda l0a1f                                                         ; 43bc: ad 1f 0a
-    sta object_x_high + 2                                             ; 43bf: 8d 68 09
-    lda l0a20                                                         ; 43c2: ad 20 0a
-    sta object_y_low + 2                                              ; 43c5: 8d 7e 09
-    lda l0a21                                                         ; 43c8: ad 21 0a
-    sta object_y_high + 2                                             ; 43cb: 8d 94 09
-    lda #$d0                                                          ; 43ce: a9 d0
-    sta object_spriteid + 2                                           ; 43d0: 8d aa 09
+set_fruit_object_position
+    lda fruit_x_low                                                   ; 43b6: ad 1e 0a
+    sta object_x_low + objectid_fruit                                 ; 43b9: 8d 52 09
+    lda fruit_x_high                                                  ; 43bc: ad 1f 0a
+    sta object_x_high + objectid_fruit                                ; 43bf: 8d 68 09
+    lda fruit_y_low                                                   ; 43c2: ad 20 0a
+    sta object_y_low + objectid_fruit                                 ; 43c5: 8d 7e 09
+    lda fruit_y_high                                                  ; 43c8: ad 21 0a
+    sta object_y_high + objectid_fruit                                ; 43cb: 8d 94 09
+    lda #spriteid_fruit                                               ; 43ce: a9 d0
+    sta object_spriteid + objectid_fruit                              ; 43d0: 8d aa 09
     rts                                                               ; 43d3: 60
 
 sub_c43d4
     sta value_to_write_to_collision_map                               ; 43d4: 85 3e
     ora #0                                                            ; 43d6: 09 00
     beq c43e1                                                         ; 43d8: f0 07
-    lda l0a1c                                                         ; 43da: ad 1c 0a
+    lda current_fruit_animation                                       ; 43da: ad 1c 0a
     cmp #$0d                                                          ; 43dd: c9 0d
     bne return5                                                       ; 43df: d0 3b
 c43e1
     lda desired_room_index                                            ; 43e1: a5 30
-    cmp l0a22                                                         ; 43e3: cd 22 0a
+    cmp fruit_room                                                    ; 43e3: cd 22 0a
     bne return5                                                       ; 43e6: d0 34
-    lda l0a1f                                                         ; 43e8: ad 1f 0a
+    lda fruit_x_high                                                  ; 43e8: ad 1f 0a
     lsr                                                               ; 43eb: 4a
     sta l0070                                                         ; 43ec: 85 70
-    lda l0a1e                                                         ; 43ee: ad 1e 0a
+    lda fruit_x_low                                                   ; 43ee: ad 1e 0a
     ror                                                               ; 43f1: 6a
     lsr l0070                                                         ; 43f2: 46 70
     ror                                                               ; 43f4: 6a
     lsr l0070                                                         ; 43f5: 46 70
     ror                                                               ; 43f7: 6a
     tax                                                               ; 43f8: aa
-    lda l0a21                                                         ; 43f9: ad 21 0a
+    lda fruit_y_high                                                  ; 43f9: ad 21 0a
     lsr                                                               ; 43fc: 4a
     sta l0070                                                         ; 43fd: 85 70
-    lda l0a20                                                         ; 43ff: ad 20 0a
+    lda fruit_y_low                                                   ; 43ff: ad 20 0a
     ror                                                               ; 4402: 6a
     lsr l0070                                                         ; 4403: 46 70
     ror                                                               ; 4405: 6a
@@ -1647,20 +1693,20 @@ sub_c441d
     sbc #2                                                            ; 441e: e9 02
     sta l4464                                                         ; 4420: 8d 64 44
     dey                                                               ; 4423: 88
-    lda #$d3                                                          ; 4424: a9 d3
+    lda #spriteid_stalk_bottom                                        ; 4424: a9 d3
     jsr draw_sprite_a_at_cell_xy                                      ; 4426: 20 4c 1f
     lda #2                                                            ; 4429: a9 02
     jsr write_a_single_value_to_cell_in_collision_map                 ; 442b: 20 bb 1e
 loop_c442e
     dey                                                               ; 442e: 88
-    lda #$d2                                                          ; 442f: a9 d2
+    lda #spriteid_stalk_middle                                        ; 442f: a9 d2
     jsr draw_sprite_a_at_cell_xy                                      ; 4431: 20 4c 1f
     lda #2                                                            ; 4434: a9 02
     jsr write_a_single_value_to_cell_in_collision_map                 ; 4436: 20 bb 1e
     dec l4464                                                         ; 4439: ce 64 44
     bne loop_c442e                                                    ; 443c: d0 f0
     dey                                                               ; 443e: 88
-    lda #$d1                                                          ; 443f: a9 d1
+    lda #spriteid_stalk_top                                           ; 443f: a9 d1
     jsr draw_sprite_a_at_cell_xy                                      ; 4441: 20 4c 1f
     lda #2                                                            ; 4444: a9 02
     jsr write_a_single_value_to_cell_in_collision_map                 ; 4446: 20 bb 1e
@@ -1670,7 +1716,7 @@ loop_c442e
     iny                                                               ; 444f: c8
     iny                                                               ; 4450: c8
     iny                                                               ; 4451: c8
-    lda #$d6                                                          ; 4452: a9 d6
+    lda #spriteid_leaf                                                ; 4452: a9 d6
     jsr draw_sprite_a_at_cell_xy                                      ; 4454: 20 4c 1f
     inx                                                               ; 4457: e8
     lda #$ff                                                          ; 4458: a9 ff
@@ -1798,10 +1844,6 @@ pydis_end
 
 ; Automatically generated labels:
 ;     c3bc9
-;     c3bea
-;     c3bf2
-;     c3bf7
-;     c3bfc
 ;     c3c35
 ;     c3c38
 ;     c3c61
@@ -1813,20 +1855,14 @@ pydis_end
 ;     c3cce
 ;     c3ceb
 ;     c3d05
-;     c3d16
 ;     c3ef9
 ;     c3f19
-;     c3f1c
 ;     c3f2d
 ;     c3f64
 ;     c3f6e
 ;     c3f71
-;     c3f93
-;     c3f9e
 ;     c3fcc
 ;     c3fe0
-;     c3fea
-;     c3fed
 ;     c40de
 ;     c4126
 ;     c4137
@@ -1865,38 +1901,19 @@ pydis_end
 ;     l0078
 ;     l0079
 ;     l007a
-;     l0a1a
-;     l0a1b
-;     l0a1c
-;     l0a1d
-;     l0a1e
-;     l0a1f
-;     l0a20
-;     l0a21
-;     l0a22
-;     l0a23
-;     l0a70
-;     l0a71
-;     l0a72
-;     l0a73
-;     l0a74
 ;     l0a75
 ;     l38ae
 ;     l38af
-;     l3970
 ;     l3d4a
-;     l3ec3
 ;     l4009
 ;     l40b9
 ;     l43b5
 ;     l4464
-;     loop_c3c1e
 ;     loop_c4146
 ;     loop_c442e
 ;     sub_c3ed4
 ;     sub_c40d6
 ;     sub_c420e
-;     sub_c43b6
 ;     sub_c43d4
 ;     sub_c441d
 !if (<envelope1) != $65 {
@@ -1989,35 +2006,56 @@ pydis_end
 !if (level_specific_update) != $3b07 {
     !error "Assertion failed: level_specific_update == $3b07"
 }
-!if (object_direction + 3) != $09c1 {
-    !error "Assertion failed: object_direction + 3 == $09c1"
+!if (monkey_climb_animation - monkey_base_animation) != $51 {
+    !error "Assertion failed: monkey_climb_animation - monkey_base_animation == $51"
 }
-!if (object_spriteid + 2) != $09aa {
-    !error "Assertion failed: object_spriteid + 2 == $09aa"
+!if (monkey_climb_down_animation - monkey_base_animation) != $49 {
+    !error "Assertion failed: monkey_climb_down_animation - monkey_base_animation == $49"
 }
-!if (object_spriteid + 3) != $09ab {
-    !error "Assertion failed: object_spriteid + 3 == $09ab"
+!if (monkey_climb_idle_animation - monkey_base_animation) != $45 {
+    !error "Assertion failed: monkey_climb_idle_animation - monkey_base_animation == $45"
 }
-!if (object_x_high + 2) != $0968 {
-    !error "Assertion failed: object_x_high + 2 == $0968"
+!if (object_direction + objectid_rabbit) != $09c1 {
+    !error "Assertion failed: object_direction + objectid_rabbit == $09c1"
 }
-!if (object_x_low + 2) != $0952 {
-    !error "Assertion failed: object_x_low + 2 == $0952"
+!if (object_erase_type + objectid_rail_rope_end) != $38af {
+    !error "Assertion failed: object_erase_type + objectid_rail_rope_end == $38af"
 }
-!if (object_x_low + 3) != $0953 {
-    !error "Assertion failed: object_x_low + 3 == $0953"
+!if (object_spriteid + objectid_fruit) != $09aa {
+    !error "Assertion failed: object_spriteid + objectid_fruit == $09aa"
 }
-!if (object_y_high + 2) != $0994 {
-    !error "Assertion failed: object_y_high + 2 == $0994"
+!if (object_spriteid + objectid_rabbit) != $09ab {
+    !error "Assertion failed: object_spriteid + objectid_rabbit == $09ab"
 }
-!if (object_y_low + 2) != $097e {
-    !error "Assertion failed: object_y_low + 2 == $097e"
+!if (object_spriteid + objectid_rail_rope_end) != $09ab {
+    !error "Assertion failed: object_spriteid + objectid_rail_rope_end == $09ab"
 }
-!if (object_y_low + 3) != $097f {
-    !error "Assertion failed: object_y_low + 3 == $097f"
+!if (object_x_high + objectid_fruit) != $0968 {
+    !error "Assertion failed: object_x_high + objectid_fruit == $0968"
+}
+!if (object_x_low + objectid_fruit) != $0952 {
+    !error "Assertion failed: object_x_low + objectid_fruit == $0952"
+}
+!if (object_x_low + objectid_rabbit) != $0953 {
+    !error "Assertion failed: object_x_low + objectid_rabbit == $0953"
+}
+!if (object_y_high + objectid_fruit) != $0994 {
+    !error "Assertion failed: object_y_high + objectid_fruit == $0994"
+}
+!if (object_y_low + objectid_fruit) != $097e {
+    !error "Assertion failed: object_y_low + objectid_fruit == $097e"
+}
+!if (object_y_low + objectid_rabbit) != $097f {
+    !error "Assertion failed: object_y_low + objectid_rabbit == $097f"
 }
 !if (objectid_player) != $00 {
     !error "Assertion failed: objectid_player == $00"
+}
+!if (objectid_rabbit) != $03 {
+    !error "Assertion failed: objectid_rabbit == $03"
+}
+!if (objectid_rail_rope_end) != $03 {
+    !error "Assertion failed: objectid_rail_rope_end == $03"
 }
 !if (room_0_data) != $3b14 {
     !error "Assertion failed: room_0_data == $3b14"
@@ -2033,4 +2071,67 @@ pydis_end
 }
 !if (sprite_data - level_data) != $0a0a {
     !error "Assertion failed: sprite_data - level_data == $0a0a"
+}
+!if (spriteid_boulder) != $ce {
+    !error "Assertion failed: spriteid_boulder == $ce"
+}
+!if (spriteid_cache1) != $cb {
+    !error "Assertion failed: spriteid_cache1 == $cb"
+}
+!if (spriteid_cache2) != $cd {
+    !error "Assertion failed: spriteid_cache2 == $cd"
+}
+!if (spriteid_fruit) != $d0 {
+    !error "Assertion failed: spriteid_fruit == $d0"
+}
+!if (spriteid_horizontal_rail) != $c8 {
+    !error "Assertion failed: spriteid_horizontal_rail == $c8"
+}
+!if (spriteid_icodata_monkey) != $06 {
+    !error "Assertion failed: spriteid_icodata_monkey == $06"
+}
+!if (spriteid_leaf) != $d6 {
+    !error "Assertion failed: spriteid_leaf == $d6"
+}
+!if (spriteid_long_rope_end) != $cc {
+    !error "Assertion failed: spriteid_long_rope_end == $cc"
+}
+!if (spriteid_one_pixel_masked_out) != $00 {
+    !error "Assertion failed: spriteid_one_pixel_masked_out == $00"
+}
+!if (spriteid_rabbit_push) != $db {
+    !error "Assertion failed: spriteid_rabbit_push == $db"
+}
+!if (spriteid_rabbit_sit) != $da {
+    !error "Assertion failed: spriteid_rabbit_sit == $da"
+}
+!if (spriteid_rabbit_walk_1) != $d7 {
+    !error "Assertion failed: spriteid_rabbit_walk_1 == $d7"
+}
+!if (spriteid_rabbit_walk_2) != $d8 {
+    !error "Assertion failed: spriteid_rabbit_walk_2 == $d8"
+}
+!if (spriteid_rabbit_walk_3) != $d9 {
+    !error "Assertion failed: spriteid_rabbit_walk_3 == $d9"
+}
+!if (spriteid_rail_left_corner) != $c9 {
+    !error "Assertion failed: spriteid_rail_left_corner == $c9"
+}
+!if (spriteid_rail_right_corner) != $ca {
+    !error "Assertion failed: spriteid_rail_right_corner == $ca"
+}
+!if (spriteid_stalk_bottom) != $d3 {
+    !error "Assertion failed: spriteid_stalk_bottom == $d3"
+}
+!if (spriteid_stalk_middle) != $d2 {
+    !error "Assertion failed: spriteid_stalk_middle == $d2"
+}
+!if (spriteid_stalk_top) != $d1 {
+    !error "Assertion failed: spriteid_stalk_top == $d1"
+}
+!if (spriteid_table) != $cf {
+    !error "Assertion failed: spriteid_table == $cf"
+}
+!if (spriteid_way_out) != $d5 {
+    !error "Assertion failed: spriteid_way_out == $d5"
 }
