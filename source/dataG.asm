@@ -16,8 +16,8 @@
 ;
 ;     save_game_level_g_baby_progress ($0a19):
 ;               0: not started
-;              1+: animations in progress
-;             $ff: dead
+;              1+: animations in progress (an animation index)
+;             $1b: dead (also an animation index)
 ;
 ; Solution:
 ;
