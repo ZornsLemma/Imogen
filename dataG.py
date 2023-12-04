@@ -189,7 +189,6 @@ label(0x3dec, "nothing_to_initialise")
 label(0x3def, "room_3_update_not_first_update")
 comment(0x3def, "increment the animation step, and loop if at end")
 ri(0x3df9)
-ri(0x3df9)
 comment(0x3dfd, "set current step to start of baby animation")
 label(0x3e00, "got_next_animation_step_in_y")
 expr(0x3e04, "baby_holding_rope_animation - baby_animations")
@@ -411,6 +410,41 @@ expr(0x44e4, "monkey_climb_idle_animation - monkey_base_animation")
 expr(0x44e8, "monkey_climb_down_animation - monkey_base_animation")
 label(0x44eb, "stop_monkey_from_climbing")
 label(0x44f3, "return7")
+
+print("""; *************************************************************************************
+;
+; Level G: 'BALLOONACY'
+;
+; Save game variables:
+;
+;     save_game_level_g_got_bow_or_arrow_in_flight_progress ($0a17):
+;               0: not got bow
+;              1+: arrow is in flight
+;             $ff: bow is ready to fire arrow
+;
+;     save_game_level_g_dropped_table_progress ($0a18):
+;               0: table suspended
+;              1+: table falling (y position)
+;             $ff: table fully fallen
+;
+;     save_game_level_g_baby_progress ($0a19):
+;               0: not started
+;              1+: animations in progress
+;             $ff: dead
+;
+; Solution:
+;
+;   1. Move left into the room with the two balloons on short pieces of rope. Hang from one
+;      and jump off at the appropriate time to continue left to the leftmost room.
+;   2. Navigate the balloon and ropes to get to the bow in the top left corner.
+;   3. Go back to the start room, and fire the bow at the balloon above the suspended table.
+;      (The table falls)
+;   4. As the cat, climb over the table and into the rightmost room.
+;   5. Shoot the baby/imp with the arrow, to clear the way for you to get to the spell.
+;
+; *************************************************************************************
+""")
+
 
 result = go(False)
 result = remove_sprite_data(result)

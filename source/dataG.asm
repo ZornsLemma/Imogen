@@ -1,3 +1,36 @@
+; *************************************************************************************
+;
+; Level G: 'BALLOONACY'
+;
+; Save game variables:
+;
+;     save_game_level_g_got_bow_or_arrow_in_flight_progress ($0a17):
+;               0: not got bow
+;              1+: arrow is in flight
+;             $ff: bow is ready to fire arrow
+;
+;     save_game_level_g_dropped_table_progress ($0a18):
+;               0: table suspended
+;              1+: table falling (y position)
+;             $ff: table fully fallen
+;
+;     save_game_level_g_baby_progress ($0a19):
+;               0: not started
+;              1+: animations in progress
+;             $ff: dead
+;
+; Solution:
+;
+;   1. Move left into the room with the two balloons on short pieces of rope. Hang from one
+;      and jump off at the appropriate time to continue left to the leftmost room.
+;   2. Navigate the balloon and ropes to get to the bow in the top left corner.
+;   3. Go back to the start room, and fire the bow at the balloon above the suspended table.
+;      (The table falls)
+;   4. As the cat, climb over the table and into the rightmost room.
+;   5. Shoot the baby/imp with the arrow, to clear the way for you to get to the spell.
+;
+; *************************************************************************************
+
 ; Constants
 collision_map_none                    = 0
 collision_map_out_of_bounds           = 255
