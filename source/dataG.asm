@@ -477,7 +477,7 @@ room_2_update_handler
 initialise_if_room_2
     lda desired_room_index                                            ; 3bd7: a5 30
     cmp #2                                                            ; 3bd9: c9 02
-    bne c3bf8                                                         ; 3bdb: d0 1b
+    bne update_balloon_bursting_local                                 ; 3bdb: d0 1b
 ; initialise room 2
     ldx #<envelope2                                                   ; 3bdd: a2 29
     ldy #>envelope2                                                   ; 3bdf: a0 45
@@ -490,7 +490,7 @@ initialise_if_room_2
     sta object_z_order + objectid_balloon1                            ; 3bf0: 8d c5 38
     lda #spriteid_table                                               ; 3bf3: a9 ce
     sta object_spriteid + objectid_table                              ; 3bf5: 8d ad 09
-c3bf8
+update_balloon_bursting_local
     jmp update_balloon_bursting                                       ; 3bf8: 4c 86 3c
 
 return2_local
@@ -979,16 +979,16 @@ update_room_3_bits
     ldy #$60 ; '`'                                                    ; 3f1b: a0 60
     lda save_game_level_g_baby_progress                               ; 3f1d: ad 19 0a
     cmp #baby_holding_rope_animation - baby_animations                ; 3f20: c9 01
-    beq c3f2d                                                         ; 3f22: f0 09
+    beq store_min_balloon_y                                           ; 3f22: f0 09
     lda room_3_baby_animation_step                                    ; 3f24: ad 79 0a
     cmp #$15                                                          ; 3f27: c9 15
-    beq c3f2d                                                         ; 3f29: f0 02
+    beq store_min_balloon_y                                           ; 3f29: f0 02
     ldy #$20 ; ' '                                                    ; 3f2b: a0 20
-c3f2d
+store_min_balloon_y
     sty balloon_min_pixel_y                                           ; 3f2d: 8c aa 44
     ldx #$0b                                                          ; 3f30: a2 0b
     ldy room_3_balloon_y_position                                     ; 3f32: ac 77 0a
-    jsr sub_c4366                                                     ; 3f35: 20 66 43
+    jsr update_balloon                                                ; 3f35: 20 66 43
     sty room_3_balloon_y_position                                     ; 3f38: 8c 77 0a
     rts                                                               ; 3f3b: 60
 
@@ -1128,7 +1128,7 @@ room_0_update_handler
     sta balloon_min_pixel_y                                           ; 3fee: 8d aa 44
     ldx #$16                                                          ; 3ff1: a2 16
     ldy room_0_balloon_y_position                                     ; 3ff3: ac 78 0a
-    jsr sub_c4366                                                     ; 3ff6: 20 66 43
+    jsr update_balloon                                                ; 3ff6: 20 66 43
     sty room_0_balloon_y_position                                     ; 3ff9: 8c 78 0a
 ; check for first update in room (branch if so)
     lda update_room_first_update_flag                                 ; 3ffc: ad 2b 13
@@ -1623,7 +1623,7 @@ room_1_update_handler
     sta rope_end_objectid                                             ; 4342: 8d ac 44
     ldx #$0b                                                          ; 4345: a2 0b
     ldy room_1_left_hand_balloon_y_position                           ; 4347: ac 75 0a
-    jsr sub_c4366                                                     ; 434a: 20 66 43
+    jsr update_balloon                                                ; 434a: 20 66 43
     sty room_1_left_hand_balloon_y_position                           ; 434d: 8c 75 0a
     lda #5                                                            ; 4350: a9 05
     sta balloon_objectid                                              ; 4352: 8d ab 44
@@ -1631,26 +1631,27 @@ room_1_update_handler
     sta rope_end_objectid                                             ; 4357: 8d ac 44
     ldx #$15                                                          ; 435a: a2 15
     ldy room_1_right_hand_balloon_y_position                          ; 435c: ac 76 0a
-    jsr sub_c4366                                                     ; 435f: 20 66 43
+    jsr update_balloon                                                ; 435f: 20 66 43
     sty room_1_right_hand_balloon_y_position                          ; 4362: 8c 76 0a
     rts                                                               ; 4365: 60
 
-sub_c4366
+update_balloon
     stx balloon_cell_x                                                ; 4366: 8e a8 44
     sty balloon_pixel_y                                               ; 4369: 8c a9 44
 ; check for first update in room (branch if not)
     lda update_room_first_update_flag                                 ; 436c: ad 2b 13
-    beq c43b3                                                         ; 436f: f0 42
+    beq update_balloon_not_first_update                               ; 436f: f0 42
 ; check for level change (branch if not)
     lda current_level                                                 ; 4371: a5 31
     cmp level_before_latest_level_and_room_initialisation             ; 4373: c5 51
-    beq c437d                                                         ; 4375: f0 06
+    beq set_balloon_and_rope_end_object_positions                     ; 4375: f0 06
+; new level. Set the balloon to the topmost position
     lda balloon_min_pixel_y                                           ; 4377: ad aa 44
     sta balloon_pixel_y                                               ; 437a: 8d a9 44
-c437d
+set_balloon_and_rope_end_object_positions
     lda desired_room_index                                            ; 437d: a5 30
     cmp currently_updating_logic_for_room_index                       ; 437f: cd ba 1a
-    bne c43ad                                                         ; 4382: d0 29
+    bne update_balloon_object_if_in_room_local                        ; 4382: d0 29
     ldx balloon_cell_x                                                ; 4384: ae a8 44
     ldy #0                                                            ; 4387: a0 00
     lda balloon_objectid                                              ; 4389: ad ab 44
@@ -1666,18 +1667,18 @@ c437d
     lda #$c0                                                          ; 43a5: a9 c0
     sta object_z_order,x                                              ; 43a7: 9d c2 38
     jsr check_if_monkey_can_climb                                     ; 43aa: 20 ad 44
-c43ad
-    jmp c4448                                                         ; 43ad: 4c 48 44
+update_balloon_object_if_in_room_local
+    jmp update_balloon_object_if_in_room                              ; 43ad: 4c 48 44
 
-c43b0
-    jmp c44a0                                                         ; 43b0: 4c a0 44
+return_with_balloon_position_in_xy_local
+    jmp return_with_balloon_position_in_xy                            ; 43b0: 4c a0 44
 
-c43b3
+update_balloon_not_first_update
     lda desired_room_index                                            ; 43b3: a5 30
     cmp currently_updating_logic_for_room_index                       ; 43b5: cd ba 1a
     bne move_balloon_upwards                                          ; 43b8: d0 5e
     jsr check_if_monkey_can_climb                                     ; 43ba: 20 ad 44
-    lda l44f4                                                         ; 43bd: ad f4 44
+    lda inhibit_monkey_climb_flag_local                               ; 43bd: ad f4 44
     beq move_balloon_upwards                                          ; 43c0: f0 56
 ; move player down four pixels
     lda #4                                                            ; 43c2: a9 04
@@ -1694,15 +1695,15 @@ move_down_by_smaller_amounts_until_no_collision_loop
     sta temp_bottom_offset                                            ; 43da: 8d 51 25
     lda #objectid_player                                              ; 43dd: a9 00
     jsr get_solid_rock_collision_for_object_a                         ; 43df: 20 94 28
-    beq c43f0                                                         ; 43e2: f0 0c
+    beq move_balloon_down_with_player                                 ; 43e2: f0 0c
     dec downwards_movement_while_player_is_holding_balloon            ; 43e4: ce a7 44
     dec object_y_low                                                  ; 43e7: ce 7c 09
     dec object_y_low + objectid_player_accessory                      ; 43ea: ce 7d 09
     jmp move_down_by_smaller_amounts_until_no_collision_loop          ; 43ed: 4c d8 43
 
-c43f0
+move_balloon_down_with_player
     lda downwards_movement_while_player_is_holding_balloon            ; 43f0: ad a7 44
-    beq c43b0                                                         ; 43f3: f0 bb
+    beq return_with_balloon_position_in_xy_local                      ; 43f3: f0 bb
     clc                                                               ; 43f5: 18
     adc balloon_pixel_y                                               ; 43f6: 6d a9 44
     sta balloon_pixel_y                                               ; 43f9: 8d a9 44
@@ -1714,40 +1715,41 @@ c43f0
     sta temp_bottom_offset                                            ; 4408: 8d 51 25
     lda #objectid_player                                              ; 440b: a9 00
     jsr get_solid_rock_collision_for_object_a                         ; 440d: 20 94 28
-    beq c4448                                                         ; 4410: f0 36
+    beq update_balloon_object_if_in_room                              ; 4410: f0 36
     jsr play_landing_sound                                            ; 4412: 20 a9 23
-    jmp c4448                                                         ; 4415: 4c 48 44
+    jmp update_balloon_object_if_in_room                              ; 4415: 4c 48 44
 
 move_balloon_upwards
     lda balloon_pixel_y                                               ; 4418: ad a9 44
     cmp balloon_min_pixel_y                                           ; 441b: cd aa 44
-    beq c43b0                                                         ; 441e: f0 90
+    beq return_with_balloon_position_in_xy_local                      ; 441e: f0 90
     sec                                                               ; 4420: 38
     sbc #8                                                            ; 4421: e9 08
     cmp balloon_min_pixel_y                                           ; 4423: cd aa 44
-    bcs c442b                                                         ; 4426: b0 03
+    bcs store_ballon_y                                                ; 4426: b0 03
     lda balloon_min_pixel_y                                           ; 4428: ad aa 44
-c442b
+store_ballon_y
     sta balloon_pixel_y                                               ; 442b: 8d a9 44
     lda #$e0                                                          ; 442e: a9 e0
     ldx balloon_objectid                                              ; 4430: ae ab 44
     sta object_z_order,x                                              ; 4433: 9d c2 38
     lda desired_room_index                                            ; 4436: a5 30
     cmp currently_updating_logic_for_room_index                       ; 4438: cd ba 1a
-    bne c4448                                                         ; 443b: d0 0b
+    bne update_balloon_object_if_in_room                              ; 443b: d0 0b
     lda balloon_pixel_y                                               ; 443d: ad a9 44
     cmp balloon_min_pixel_y                                           ; 4440: cd aa 44
-    bne c4448                                                         ; 4443: d0 03
+    bne update_balloon_object_if_in_room                              ; 4443: d0 03
     jsr play_landing_sound                                            ; 4445: 20 a9 23
-c4448
+update_balloon_object_if_in_room
     lda desired_room_index                                            ; 4448: a5 30
     cmp currently_updating_logic_for_room_index                       ; 444a: cd ba 1a
-    bne c44a0                                                         ; 444d: d0 51
+    bne return_with_balloon_position_in_xy                            ; 444d: d0 51
     lda balloon_pixel_y                                               ; 444f: ad a9 44
     ldx balloon_objectid                                              ; 4452: ae ab 44
     sta object_y_low,x                                                ; 4455: 9d 7c 09
     ldx rope_end_objectid                                             ; 4458: ae ac 44
     sta object_y_low,x                                                ; 445b: 9d 7c 09
+; update collision map
     ldx balloon_cell_x                                                ; 445e: ae a8 44
     lda balloon_pixel_y                                               ; 4461: ad a9 44
     lsr                                                               ; 4464: 4a
@@ -1769,20 +1771,20 @@ c4448
     iny                                                               ; 447f: c8
     jsr read_collision_map_value_for_xy                               ; 4480: 20 fa 1e
     cmp #3                                                            ; 4483: c9 03
-    beq c44a0                                                         ; 4485: f0 19
+    beq return_with_balloon_position_in_xy                            ; 4485: f0 19
     lda balloon_pixel_y                                               ; 4487: ad a9 44
     and #7                                                            ; 448a: 29 07
-    beq c449b                                                         ; 448c: f0 0d
+    beq clear_final_collisions_map_cell                               ; 448c: f0 0d
     lda #2                                                            ; 448e: a9 02
     jsr write_a_single_value_to_cell_in_collision_map                 ; 4490: 20 bb 1e
     iny                                                               ; 4493: c8
     jsr read_collision_map_value_for_xy                               ; 4494: 20 fa 1e
     cmp #3                                                            ; 4497: c9 03
-    beq c44a0                                                         ; 4499: f0 05
-c449b
+    beq return_with_balloon_position_in_xy                            ; 4499: f0 05
+clear_final_collisions_map_cell
     lda #0                                                            ; 449b: a9 00
     jsr write_a_single_value_to_cell_in_collision_map                 ; 449d: 20 bb 1e
-c44a0
+return_with_balloon_position_in_xy
     ldx balloon_cell_x                                                ; 44a0: ae a8 44
     ldy balloon_pixel_y                                               ; 44a3: ac a9 44
     rts                                                               ; 44a6: 60
@@ -1802,7 +1804,7 @@ rope_end_objectid
 
 check_if_monkey_can_climb
     lda #0                                                            ; 44ad: a9 00
-    sta l44f4                                                         ; 44af: 8d f4 44
+    sta inhibit_monkey_climb_flag_local                               ; 44af: 8d f4 44
     lda current_player_character                                      ; 44b2: a5 48
     cmp #spriteid_icodata_monkey                                      ; 44b4: c9 06
     bne return7                                                       ; 44b6: d0 3b
@@ -1835,11 +1837,11 @@ check_if_monkey_can_climb
 stop_monkey_from_climbing
     lda #$ff                                                          ; 44eb: a9 ff
     sta inhibit_monkey_climb_flag                                     ; 44ed: 8d d7 31
-    sta l44f4                                                         ; 44f0: 8d f4 44
+    sta inhibit_monkey_climb_flag_local                               ; 44f0: 8d f4 44
 return7
     rts                                                               ; 44f3: 60
 
-l44f4
+inhibit_monkey_climb_flag_local
     !byte 0                                                           ; 44f4: 00
 envelope4
     !byte 5                                                           ; 44f5: 05                      ; envelope number
@@ -2009,21 +2011,6 @@ ground_fill_2x2_bottom_right
     !byte %...#....                                                   ; 45a8: 10
 sprite_data
 pydis_end
-
-; Automatically generated labels:
-;     c3bf8
-;     c3f2d
-;     c437d
-;     c43ad
-;     c43b0
-;     c43b3
-;     c43f0
-;     c442b
-;     c4448
-;     c449b
-;     c44a0
-;     l44f4
-;     sub_c4366
 !if (<envelope1) != $0b {
     !error "Assertion failed: <envelope1 == $0b"
 }
