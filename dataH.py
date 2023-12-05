@@ -48,7 +48,7 @@ define_level(4)
 #
 substitute_labels = {
     (0x3df8,0x3e30): {
-        "l0070": "room_exit_direction",
+        "movement_low": "room_exit_direction",
     },
 }
 
@@ -56,16 +56,22 @@ substitute_labels = {
 s = SubstituteLabels(substitute_labels)
 set_label_maker_hook(s.substitute_label_maker)
 
-label(0x0a1a, "rail_rope_x_cell")
-label(0x0a1b, "rail_rope_current_dir")
-label(0x0a1c, "current_fruit_animation")
-label(0x0a1d, "fruit_animation_step")
-label(0x0a1e, "fruit_x_low")
-label(0x0a1f, "fruit_x_high")
-label(0x0a20, "fruit_y_low")
-label(0x0a21, "fruit_y_high")
-label(0x0a22, "fruit_room")
-label(0x0a23, "current_fruit_direction")
+label(0x0070, "movement_low")
+label(0x0071, "movement_high")
+label(0x0078, "object_left_cell_x")
+label(0x0079, "object_right_cell_x")
+label(0x007a, "object_top_cell_y")
+
+label(0x0a1a, "save_game_level_h_rail_rope_x_cell")
+label(0x0a1b, "save_game_level_h_rail_rope_current_dir")
+label(0x0a1c, "save_game_level_h_current_fruit_animation")
+label(0x0a1d, "save_game_level_h_fruit_animation_step")
+label(0x0a1e, "save_game_level_h_fruit_x_low")
+label(0x0a1f, "save_game_level_h_fruit_x_high")
+label(0x0a20, "save_game_level_h_fruit_y_low")
+label(0x0a21, "save_game_level_h_fruit_y_high")
+label(0x0a22, "save_game_level_h_fruit_room")
+label(0x0a23, "save_game_level_h_current_fruit_direction")
 
 label(0x0a6f, "fruit_timer")
 label(0x0a70, "rabbit_sprite_animation")
@@ -302,6 +308,31 @@ expr(0x4350, "objectid_fruit")
 comment(0x4357, "move fruit to next room")
 expr(0x435b, "fruit_fall_straight_down_animation - fruit_animation_base")
 expr(0x435f, "fruit_sideways_animation - fruit_animation_base")
+expr(0x42d5, "fruit_fall_sideways_animation2 - fruit_animation_base")
+expr(0x42e0, "fruit_fall_sideways_animation2 - fruit_animation_base")
+expr(0x42e9, "fruit_fall_straight_down_animation - fruit_animation_base")
+label(0x42ed, "check_for_fruit_falling_straight_down1")
+expr(0x4304, "objectid_fruit")
+expr(0x4310, "fruit_stopped_animation - fruit_animation_base")
+label(0x4314, "update_fruit_position")
+label(0x42dc, "check_for_fruit_fall_sideways2")
+comment(0x43da, "we want to write a non-zero value to the collision map. check the fruit is stopped before doing so")
+label(0x43e1, "valid_write")
+comment(0x43e1, "check we are in the same room as the fruit (return if not)")
+comment(0x43e8, "calculate the x cell coordinate to write to")
+comment(0x43f9, "calculate the y cell coordinate to write to")
+comment(0x440a, "fruit is 3x2 cells")
+label(0x4383, "move_fruit_left_one_room")
+comment(0x4387, "add 320 pixels to x position")
+comment(0x436d, "subtract 320 pixels from x position")
+label(0x439b, "check_for_moving_fruit_off_bottom_of_screen")
+comment(0x43a1, "move fruit up 192 pixels")
+comment(0x43aa, "set fruit to room 1 as this is the only possible destination room")
+label(0x43af, "hide_fruit")
+label(0x42af, "fruit_moving_left")
+label(0x42b2, "check_fruit_rock_collision")
+label(0x430a, "stop_the_fruit")
+expr(0x42f1, "fruit_fall_straight_down_animation - fruit_animation_base")
 expr(0x436a, "game_area_width_cells")
 expr(0x439e, "game_area_height_cells")
 expr(0x43b0, sprite_dict)
@@ -330,6 +361,67 @@ expr(0x444b, "collision_map_solid_rock")
 expr(0x4453, sprite_dict)
 expr(0x4460, sprite_dict)
 label(0x4464, "plant_height_loop_counter")
+
+print("""; *************************************************************************************
+;
+; Level H: 'APPLESOURCE'
+;
+; Save game variables:
+;
+;     save_game_level_h_rail_rope_x_cell            ($0a1a):
+;             $0c: left side position
+;         $0d-$1a: rope is moving between left and right
+;             $1b: right side position
+;
+;     save_game_level_h_rail_rope_current_dir       ($0a1b):
+;               0: not moving
+;               1: moving right
+;             $ff: moving left
+;
+;     save_game_level_h_current_fruit_animation     ($0a1c):
+;               0: not started
+;               1: initial idle animation
+;               4: fall sideways 1
+;             $0d: stopped
+;             $10: moving sideways
+;             $13: fall sideways 2
+;             $1a: fall straight down
+;
+;     save_game_level_h_fruit_animation_step        ($0a1d):
+;         $00-$1c: animation index for the current fruit step
+;
+;     save_game_level_h_fruit_x_low                 ($0a1e):
+;     save_game_level_h_fruit_x_high                ($0a1f):
+;               pixel X position for fruit
+;
+;     save_game_level_h_fruit_y_low                 ($0a20):
+;     save_game_level_h_fruit_y_high                ($0a21):
+;               pixel Y position for fruit
+;
+;     save_game_level_h_fruit_room                  ($0a22):
+;            $0-3: room the fruit is in
+;
+;     save_game_level_h_current_fruit_direction     ($0a23):
+;         $ff/1/0: direction of fruit ($ff=left, $0,=none, $1=right)
+;
+; Solution:
+;
+;   1. move to the room on the right, climb the rope pointing left.
+;   2. Jump at the point the rabbit turns away, and climb the flower.
+;   3. Wait for the rabbit to go past, and continue into the room to the left.
+;   4. Up the rope, knock the fruit to the right at the top center of the room
+;       (The fruit falls into the room below)
+;   5. Push the fruit to the right and follow it.
+;       (The fruit falls)
+;   6. Push the fruit to the left and follow it.
+;   7. Use the cat to climb the fruit and use the monkey to climb the 'this way' rope,
+;      and out of the room to the left.
+;   8. Climb the leftmost rope, and jump onto (and hold) the rail rope to the other side.
+;   9. Jump off the ropes to the right, then reverse direction and ride the rail back
+;      to get to the spell.
+;
+; *************************************************************************************
+""")
 
 result = go(False)
 result = remove_sprite_data(result)

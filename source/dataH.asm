@@ -1,3 +1,63 @@
+; *************************************************************************************
+;
+; Level H: 'APPLESOURCE'
+;
+; Save game variables:
+;
+;     save_game_level_h_rail_rope_x_cell            ($0a1a):
+;             $0c: left side position
+;         $0d-$1a: rope is moving between left and right
+;             $1b: right side position
+;
+;     save_game_level_h_rail_rope_current_dir       ($0a1b):
+;               0: not moving
+;               1: moving right
+;             $ff: moving left
+;
+;     save_game_level_h_current_fruit_animation     ($0a1c):
+;               0: not started
+;               1: initial idle animation
+;               4: fall sideways 1
+;             $0d: stopped
+;             $10: moving sideways
+;             $13: fall sideways 2
+;             $1a: fall straight down
+;
+;     save_game_level_h_fruit_animation_step        ($0a1d):
+;         $00-$1c: animation index for the current fruit step
+;
+;     save_game_level_h_fruit_x_low                 ($0a1e):
+;     save_game_level_h_fruit_x_high                ($0a1f):
+;               pixel X position for fruit
+;
+;     save_game_level_h_fruit_y_low                 ($0a20):
+;     save_game_level_h_fruit_y_high                ($0a21):
+;               pixel Y position for fruit
+;
+;     save_game_level_h_fruit_room                  ($0a22):
+;            $0-3: room the fruit is in
+;
+;     save_game_level_h_current_fruit_direction     ($0a23):
+;         $ff/1/0: direction of fruit ($ff=left, $0,=none, $1=right)
+;
+; Solution:
+;
+;   1. move to the room on the right, climb the rope pointing left.
+;   2. Jump at the point the rabbit turns away, and climb the flower.
+;   3. Wait for the rabbit to go past, and continue into the room to the left.
+;   4. Up the rope, knock the fruit to the right at the top center of the room
+;       (The fruit falls into the room below)
+;   5. Push the fruit to the right and follow it.
+;       (The fruit falls)
+;   6. Push the fruit to the left and follow it.
+;   7. Use the cat to climb the fruit and use the monkey to climb the 'this way' rope,
+;      and out of the room to the left.
+;   8. Climb the leftmost rope, and jump onto (and hold) the rail rope to the other side.
+;   9. Jump off the ropes to the right, then reverse direction and ride the rail back
+;      to get to the spell.
+;
+; *************************************************************************************
+
 ; Constants
 collision_map_none                    = 0
 collision_map_out_of_bounds           = 255
@@ -166,12 +226,12 @@ previous_room_index                                 = $50
 level_before_latest_level_and_room_initialisation   = $51
 player_held_object_spriteid                         = $52
 developer_mode_sideways_ram_is_set_up_flag          = $5b
-l0070                                               = $70
+movement_low                                        = $70
 room_exit_direction                                 = $70
-l0071                                               = $71
-l0078                                               = $78
-l0079                                               = $79
-l007a                                               = $7a
+movement_high                                       = $71
+object_left_cell_x                                  = $78
+object_right_cell_x                                 = $79
+object_top_cell_y                                   = $7a
 object_x_low                                        = $0950
 object_x_low_old                                    = $095b
 object_x_high                                       = $0966
@@ -183,16 +243,16 @@ object_spriteid                                     = $09a8
 object_spriteid_old                                 = $09b3
 object_direction                                    = $09be
 current_player_animation                            = $09df
-rail_rope_x_cell                                    = $0a1a
-rail_rope_current_dir                               = $0a1b
-current_fruit_animation                             = $0a1c
-fruit_animation_step                                = $0a1d
-fruit_x_low                                         = $0a1e
-fruit_x_high                                        = $0a1f
-fruit_y_low                                         = $0a20
-fruit_y_high                                        = $0a21
-fruit_room                                          = $0a22
-current_fruit_direction                             = $0a23
+save_game_level_h_rail_rope_x_cell                  = $0a1a
+save_game_level_h_rail_rope_current_dir             = $0a1b
+save_game_level_h_current_fruit_animation           = $0a1c
+save_game_level_h_fruit_animation_step              = $0a1d
+save_game_level_h_fruit_x_low                       = $0a1e
+save_game_level_h_fruit_x_high                      = $0a1f
+save_game_level_h_fruit_y_low                       = $0a20
+save_game_level_h_fruit_y_high                      = $0a21
+save_game_level_h_fruit_room                        = $0a22
+save_game_level_h_current_fruit_direction           = $0a23
 fruit_timer                                         = $0a6f
 rabbit_sprite_animation                             = $0a70
 rabbit_sprite_animation_step                        = $0a71
@@ -476,27 +536,27 @@ room_0_first_update
     ldx #<envelope1                                                   ; 3bcf: a2 65
     ldy #>envelope1                                                   ; 3bd1: a0 44
     jsr define_envelope                                               ; 3bd3: 20 5e 39
-    lda rail_rope_x_cell                                              ; 3bd6: ad 1a 0a
+    lda save_game_level_h_rail_rope_x_cell                            ; 3bd6: ad 1a 0a
     beq set_rail_rope_to_initial_position                             ; 3bd9: f0 17
-    lda rail_rope_current_dir                                         ; 3bdb: ad 1b 0a
+    lda save_game_level_h_rail_rope_current_dir                       ; 3bdb: ad 1b 0a
     beq rail_rope_not_moving                                          ; 3bde: f0 1c
     bpl set_rail_rope_to_far_right                                    ; 3be0: 10 08
 ; set rail rope to far left
     lda #$0c                                                          ; 3be2: a9 0c
-    sta rail_rope_x_cell                                              ; 3be4: 8d 1a 0a
+    sta save_game_level_h_rail_rope_x_cell                            ; 3be4: 8d 1a 0a
     jmp stop_rail_rope                                                ; 3be7: 4c f7 3b
 
 set_rail_rope_to_far_right
     lda #$1b                                                          ; 3bea: a9 1b
-    sta rail_rope_x_cell                                              ; 3bec: 8d 1a 0a
+    sta save_game_level_h_rail_rope_x_cell                            ; 3bec: 8d 1a 0a
     jmp stop_rail_rope                                                ; 3bef: 4c f7 3b
 
 set_rail_rope_to_initial_position
     lda #$0c                                                          ; 3bf2: a9 0c
-    sta rail_rope_x_cell                                              ; 3bf4: 8d 1a 0a
+    sta save_game_level_h_rail_rope_x_cell                            ; 3bf4: 8d 1a 0a
 stop_rail_rope
     lda #0                                                            ; 3bf7: a9 00
-    sta rail_rope_current_dir                                         ; 3bf9: 8d 1b 0a
+    sta save_game_level_h_rail_rope_current_dir                       ; 3bf9: 8d 1b 0a
 ; check for being in room 0, and branch otherwise
 rail_rope_not_moving
     lda desired_room_index                                            ; 3bfc: a5 30
@@ -556,20 +616,20 @@ check_if_player_is_on_room_0_rope
 player_is_on_rope
     dec player_is_on_room_0_rope_flag                                 ; 3c61: ce 4a 3d
 check_rope_direction
-    lda rail_rope_current_dir                                         ; 3c64: ad 1b 0a
+    lda save_game_level_h_rail_rope_current_dir                       ; 3c64: ad 1b 0a
     bne update_rail_x_position                                        ; 3c67: d0 25
 ; check if player is on the rope
     lda player_is_on_room_0_rope_flag                                 ; 3c69: ad 4a 3d
     beq set_rail_rope_object_position_and_collision_map_local         ; 3c6c: f0 1d
 ; is the rail rope to the left? branch if not
-    lda rail_rope_x_cell                                              ; 3c6e: ad 1a 0a
+    lda save_game_level_h_rail_rope_x_cell                            ; 3c6e: ad 1a 0a
     cmp #$0c                                                          ; 3c71: c9 0c
     bne rail_rope_not_left                                            ; 3c73: d0 0b
 ; if the player is looking left, then branch
     lda object_direction                                              ; 3c75: ad be 09
     bmi set_rail_rope_object_position_and_collision_map_local         ; 3c78: 30 11
 ; start moving the rail rope right
-    inc rail_rope_current_dir                                         ; 3c7a: ee 1b 0a
+    inc save_game_level_h_rail_rope_current_dir                       ; 3c7a: ee 1b 0a
     jmp update_rail_x_position                                        ; 3c7d: 4c 8e 3c
 
 ; if the player is looking right, then branch
@@ -577,7 +637,7 @@ rail_rope_not_left
     lda object_direction                                              ; 3c80: ad be 09
     bpl set_rail_rope_object_position_and_collision_map_local         ; 3c83: 10 06
 ; start moving the rail rope left
-    dec rail_rope_current_dir                                         ; 3c85: ce 1b 0a
+    dec save_game_level_h_rail_rope_current_dir                       ; 3c85: ce 1b 0a
     jmp update_rail_x_position                                        ; 3c88: 4c 8e 3c
 
 set_rail_rope_object_position_and_collision_map_local
@@ -585,43 +645,43 @@ set_rail_rope_object_position_and_collision_map_local
 
 ; add direction to cell x
 update_rail_x_position
-    lda rail_rope_x_cell                                              ; 3c8e: ad 1a 0a
+    lda save_game_level_h_rail_rope_x_cell                            ; 3c8e: ad 1a 0a
     clc                                                               ; 3c91: 18
-    adc rail_rope_current_dir                                         ; 3c92: 6d 1b 0a
-    sta rail_rope_x_cell                                              ; 3c95: 8d 1a 0a
+    adc save_game_level_h_rail_rope_current_dir                       ; 3c92: 6d 1b 0a
+    sta save_game_level_h_rail_rope_x_cell                            ; 3c95: 8d 1a 0a
 ; check if the player is on the rope, branch if not
     lda player_is_on_room_0_rope_flag                                 ; 3c98: ad 4a 3d
     beq update_rail_moving_sound                                      ; 3c9b: f0 31
 ; multiply the direction by eight, and sign extend using x as the high byte
     ldx #0                                                            ; 3c9d: a2 00
-    lda rail_rope_current_dir                                         ; 3c9f: ad 1b 0a
+    lda save_game_level_h_rail_rope_current_dir                       ; 3c9f: ad 1b 0a
     asl                                                               ; 3ca2: 0a
     asl                                                               ; 3ca3: 0a
     asl                                                               ; 3ca4: 0a
-    sta l0070                                                         ; 3ca5: 85 70
+    sta movement_low                                                  ; 3ca5: 85 70
     bpl sign_extended                                                 ; 3ca7: 10 01
     dex                                                               ; 3ca9: ca
 sign_extended
-    stx l0071                                                         ; 3caa: 86 71
+    stx movement_high                                                 ; 3caa: 86 71
 ; add to the player x position
     lda object_x_low                                                  ; 3cac: ad 50 09
     clc                                                               ; 3caf: 18
-    adc l0070                                                         ; 3cb0: 65 70
+    adc movement_low                                                  ; 3cb0: 65 70
     sta object_x_low                                                  ; 3cb2: 8d 50 09
     lda object_x_high                                                 ; 3cb5: ad 66 09
-    adc l0071                                                         ; 3cb8: 65 71
+    adc movement_high                                                 ; 3cb8: 65 71
     sta object_x_high                                                 ; 3cba: 8d 66 09
 ; add to the player accessory x position
     lda object_x_low + objectid_player_accessory                      ; 3cbd: ad 51 09
     clc                                                               ; 3cc0: 18
-    adc l0070                                                         ; 3cc1: 65 70
+    adc movement_low                                                  ; 3cc1: 65 70
     sta object_x_low + objectid_player_accessory                      ; 3cc3: 8d 51 09
     lda object_x_high + objectid_player_accessory                     ; 3cc6: ad 67 09
-    adc l0071                                                         ; 3cc9: 65 71
+    adc movement_high                                                 ; 3cc9: 65 71
     sta object_x_high + objectid_player_accessory                     ; 3ccb: 8d 67 09
 ; branch if rail rope is at either end
 update_rail_moving_sound
-    lda rail_rope_x_cell                                              ; 3cce: ad 1a 0a
+    lda save_game_level_h_rail_rope_x_cell                            ; 3cce: ad 1a 0a
     cmp #$0c                                                          ; 3cd1: c9 0c
     beq rail_at_either_end                                            ; 3cd3: f0 16
     cmp #$1b                                                          ; 3cd5: c9 1b
@@ -639,7 +699,7 @@ update_rail_moving_sound
 
 rail_at_either_end
     lda #0                                                            ; 3ceb: a9 00
-    sta rail_rope_current_dir                                         ; 3ced: 8d 1b 0a
+    sta save_game_level_h_rail_rope_current_dir                       ; 3ced: 8d 1b 0a
     lda desired_room_index                                            ; 3cf0: a5 30
     cmp #0                                                            ; 3cf2: c9 00
     bne set_rail_rope_object_position_and_collision_map               ; 3cf4: d0 20
@@ -667,7 +727,7 @@ set_rail_rope_object_position_and_collision_map
     cmp #0                                                            ; 3d18: c9 00
     bne return1                                                       ; 3d1a: d0 2d
 ; position the rail rope
-    ldx rail_rope_x_cell                                              ; 3d1c: ae 1a 0a
+    ldx save_game_level_h_rail_rope_x_cell                            ; 3d1c: ae 1a 0a
     ldy #3                                                            ; 3d1f: a0 03
     lda #objectid_rail_rope_end                                       ; 3d21: a9 03
     jsr set_object_position_from_cell_xy                              ; 3d23: 20 5d 1f
@@ -1330,7 +1390,7 @@ update_fruit_first_update
     jsr define_envelope                                               ; 40e8: 20 5e 39
     lda #0                                                            ; 40eb: a9 00
     sta fruit_timer                                                   ; 40ed: 8d 6f 0a
-    lda current_fruit_animation                                       ; 40f0: ad 1c 0a
+    lda save_game_level_h_current_fruit_animation                     ; 40f0: ad 1c 0a
     cmp #fruit_stopped_animation - fruit_animation_base               ; 40f3: c9 0d
     beq new_room_only2                                                ; 40f5: f0 2f
     cmp #fruit_initial_idle_animation - fruit_animation_base          ; 40f7: c9 01
@@ -1340,18 +1400,18 @@ update_fruit_first_update
     bne new_room_only2                                                ; 4100: d0 24
     inc fruit_timer                                                   ; 4102: ee 6f 0a
     lda #3                                                            ; 4105: a9 03
-    sta fruit_room                                                    ; 4107: 8d 22 0a
+    sta save_game_level_h_fruit_room                                  ; 4107: 8d 22 0a
     lda #$98                                                          ; 410a: a9 98
-    sta fruit_x_low                                                   ; 410c: 8d 1e 0a
+    sta save_game_level_h_fruit_x_low                                 ; 410c: 8d 1e 0a
     lda #0                                                            ; 410f: a9 00
-    sta fruit_x_high                                                  ; 4111: 8d 1f 0a
+    sta save_game_level_h_fruit_x_high                                ; 4111: 8d 1f 0a
     lda #$2c ; ','                                                    ; 4114: a9 2c
-    sta fruit_y_low                                                   ; 4116: 8d 20 0a
+    sta save_game_level_h_fruit_y_low                                 ; 4116: 8d 20 0a
     lda #0                                                            ; 4119: a9 00
-    sta fruit_y_high                                                  ; 411b: 8d 21 0a
+    sta save_game_level_h_fruit_y_high                                ; 411b: 8d 21 0a
     lda #fruit_initial_idle_animation - fruit_animation_base          ; 411e: a9 01
-    sta current_fruit_animation                                       ; 4120: 8d 1c 0a
-    sta fruit_animation_step                                          ; 4123: 8d 1d 0a
+    sta save_game_level_h_current_fruit_animation                     ; 4120: 8d 1c 0a
+    sta save_game_level_h_fruit_animation_step                        ; 4123: 8d 1d 0a
 new_room_only2
     lda desired_room_index                                            ; 4126: a5 30
     beq fruit_fully_fast_forwarded                                    ; 4128: f0 35
@@ -1366,12 +1426,12 @@ not_room_3
     lda #spriteid_cache1                                              ; 4137: a9 cb
     sta object_erase_type + objectid_fruit                            ; 4139: 8d ae 38
     lda desired_room_index                                            ; 413c: a5 30
-    cmp fruit_room                                                    ; 413e: cd 22 0a
+    cmp save_game_level_h_fruit_room                                  ; 413e: cd 22 0a
     bne fruit_fully_fast_forwarded                                    ; 4141: d0 1c
     jsr set_fruit_object_position                                     ; 4143: 20 b6 43
 fast_forward_fruit_animation_loop
     lda desired_room_index                                            ; 4146: a5 30
-    cmp fruit_room                                                    ; 4148: cd 22 0a
+    cmp save_game_level_h_fruit_room                                  ; 4148: cd 22 0a
     bne fruit_fully_fast_forwarded                                    ; 414b: d0 12
     lda fruit_timer                                                   ; 414d: ad 6f 0a
     beq fruit_fully_fast_forwarded                                    ; 4150: f0 0d
@@ -1389,7 +1449,7 @@ fruit_fully_fast_forwarded
 
 update_fruit_timer
     lda desired_room_index                                            ; 4167: a5 30
-    cmp fruit_room                                                    ; 4169: cd 22 0a
+    cmp save_game_level_h_fruit_room                                  ; 4169: cd 22 0a
     beq reset_sound_priorities                                        ; 416c: f0 0b
     lda fruit_timer                                                   ; 416e: ad 6f 0a
     bmi return3_local                                                 ; 4171: 30 03
@@ -1407,17 +1467,17 @@ reset_sound_priorities
 continue_updating_fruit
     jsr update_fruit_animation                                        ; 4188: 20 0e 42
     lda desired_room_index                                            ; 418b: a5 30
-    cmp fruit_room                                                    ; 418d: cd 22 0a
+    cmp save_game_level_h_fruit_room                                  ; 418d: cd 22 0a
     beq in_fruit_room                                                 ; 4190: f0 08
     lda #0                                                            ; 4192: a9 00
     sta fruit_timer                                                   ; 4194: 8d 6f 0a
     jmp return3                                                       ; 4197: 4c 0d 42
 
 in_fruit_room
-    lda current_fruit_animation                                       ; 419a: ad 1c 0a
+    lda save_game_level_h_current_fruit_animation                     ; 419a: ad 1c 0a
     cmp #fruit_fall_sideways_animation2 - fruit_animation_base        ; 419d: c9 13
     bne check_for_fruit_falling_sideways1                             ; 419f: d0 1d
-    lda current_fruit_direction                                       ; 41a1: ad 23 0a
+    lda save_game_level_h_current_fruit_direction                     ; 41a1: ad 23 0a
     bpl fruit_falling_right                                           ; 41a4: 10 06
     dec temp_left_offset                                              ; 41a6: ce d0 24
     jmp fruit_falling_left                                            ; 41a9: 4c af 41
@@ -1433,10 +1493,10 @@ fruit_falling_left
     jmp return3                                                       ; 41bb: 4c 0d 42
 
 check_for_fruit_falling_sideways1
-    lda fruit_animation_step                                          ; 41be: ad 1d 0a
+    lda save_game_level_h_fruit_animation_step                        ; 41be: ad 1d 0a
     cmp #fruit_fall_sideways_animation1 - fruit_animation_base        ; 41c1: c9 04
     beq end_of_fall_sound                                             ; 41c3: f0 14
-    lda current_fruit_animation                                       ; 41c5: ad 1c 0a
+    lda save_game_level_h_current_fruit_animation                     ; 41c5: ad 1c 0a
     cmp #fruit_sideways_animation - fruit_animation_base              ; 41c8: c9 10
     bne check_for_fruit_falling_straight_down                         ; 41ca: d0 1c
 ; check for left or right fruit-wall collision
@@ -1479,16 +1539,16 @@ return3
     rts                                                               ; 420d: 60
 
 update_fruit_animation
-    lda fruit_animation_step                                          ; 420e: ad 1d 0a
+    lda save_game_level_h_fruit_animation_step                        ; 420e: ad 1d 0a
     clc                                                               ; 4211: 18
     adc #2                                                            ; 4212: 69 02
     tay                                                               ; 4214: a8
     lda fruit_animation_base,y                                        ; 4215: b9 b9 40
     cmp #$80                                                          ; 4218: c9 80
     bne got_fruit_animation_step_y                                    ; 421a: d0 03
-    ldy current_fruit_animation                                       ; 421c: ac 1c 0a
+    ldy save_game_level_h_current_fruit_animation                     ; 421c: ac 1c 0a
 got_fruit_animation_step_y
-    lda current_fruit_animation                                       ; 421f: ad 1c 0a
+    lda save_game_level_h_current_fruit_animation                     ; 421f: ad 1c 0a
     cmp #fruit_initial_idle_animation - fruit_animation_base          ; 4222: c9 01
     bne check_for_fruit_stopped                                       ; 4224: d0 26
     ldx #objectid_player                                              ; 4226: a2 00
@@ -1502,15 +1562,15 @@ got_fruit_animation_step_y
     lda #$80                                                          ; 4237: a9 80
     sta player_wall_collision_reaction_speed                          ; 4239: 8d 33 24
     lda object_direction                                              ; 423c: ad be 09
-    sta current_fruit_direction                                       ; 423f: 8d 23 0a
+    sta save_game_level_h_current_fruit_direction                     ; 423f: 8d 23 0a
     ldy #4                                                            ; 4242: a0 04
     lda #$1a                                                          ; 4244: a9 1a
-    sta current_fruit_animation                                       ; 4246: 8d 1c 0a
+    sta save_game_level_h_current_fruit_animation                     ; 4246: 8d 1c 0a
 no_player_fruit_collision
-    jmp c4314                                                         ; 4249: 4c 14 43
+    jmp update_fruit_position                                         ; 4249: 4c 14 43
 
 check_for_fruit_stopped
-    lda current_fruit_animation                                       ; 424c: ad 1c 0a
+    lda save_game_level_h_current_fruit_animation                     ; 424c: ad 1c 0a
     cmp #fruit_stopped_animation - fruit_animation_base               ; 424f: c9 0d
     bne check_for_fruit_going_sideways                                ; 4251: d0 4a
 ; check for first update in room (branch if so)
@@ -1527,9 +1587,9 @@ check_for_fruit_stopped
     beq no_player_fruit_collision                                     ; 426d: f0 da
     lda object_y_low                                                  ; 426f: ad 7c 09
     sec                                                               ; 4272: 38
-    sbc fruit_y_low                                                   ; 4273: ed 20 0a
+    sbc save_game_level_h_fruit_y_low                                 ; 4273: ed 20 0a
     lda object_y_high                                                 ; 4276: ad 92 09
-    sbc fruit_y_high                                                  ; 4279: ed 21 0a
+    sbc save_game_level_h_fruit_y_high                                ; 4279: ed 21 0a
     bmi no_player_fruit_collision                                     ; 427c: 30 cb
     ldx #1                                                            ; 427e: a2 01
     lda object_room_collision_flags                                   ; 4280: ad d8 38
@@ -1540,26 +1600,26 @@ check_for_fruit_stopped
     and #object_collided_left_wall                                    ; 428c: 29 01
     beq no_player_fruit_collision                                     ; 428e: f0 b9
 found_fruit_wall_collision
-    stx current_fruit_direction                                       ; 4290: 8e 23 0a
+    stx save_game_level_h_current_fruit_direction                     ; 4290: 8e 23 0a
     lda #collision_map_none                                           ; 4293: a9 00
     jsr write_fruit_collision_map                                     ; 4295: 20 d4 43
     ldy #fruit_sideways_animation - fruit_animation_base              ; 4298: a0 10
-    sty current_fruit_animation                                       ; 429a: 8c 1c 0a
+    sty save_game_level_h_current_fruit_animation                     ; 429a: 8c 1c 0a
 check_for_fruit_going_sideways
-    lda current_fruit_animation                                       ; 429d: ad 1c 0a
+    lda save_game_level_h_current_fruit_animation                     ; 429d: ad 1c 0a
     cmp #fruit_sideways_animation - fruit_animation_base              ; 42a0: c9 10
-    bne c42dc                                                         ; 42a2: d0 38
-    lda current_fruit_direction                                       ; 42a4: ad 23 0a
-    bmi c42af                                                         ; 42a7: 30 06
+    bne check_for_fruit_fall_sideways2                                ; 42a2: d0 38
+    lda save_game_level_h_current_fruit_direction                     ; 42a4: ad 23 0a
+    bmi fruit_moving_left                                             ; 42a7: 30 06
     inc temp_right_offset                                             ; 42a9: ee d1 24
-    jmp c42b2                                                         ; 42ac: 4c b2 42
+    jmp check_fruit_rock_collision                                    ; 42ac: 4c b2 42
 
-c42af
+fruit_moving_left
     dec temp_left_offset                                              ; 42af: ce d0 24
-c42b2
+check_fruit_rock_collision
     lda #objectid_fruit                                               ; 42b2: a9 02
     jsr get_solid_rock_collision_for_object_a                         ; 42b4: 20 94 28
-    bne c430a                                                         ; 42b7: d0 51
+    bne stop_the_fruit                                                ; 42b7: d0 51
     lda #8                                                            ; 42b9: a9 08
     sta temp_left_offset                                              ; 42bb: 8d d0 24
     lda #$f8                                                          ; 42be: a9 f8
@@ -1570,41 +1630,41 @@ c42b2
     sta temp_bottom_offset                                            ; 42ca: 8d 51 25
     lda #2                                                            ; 42cd: a9 02
     jsr get_solid_rock_collision_for_object_a                         ; 42cf: 20 94 28
-    bne c4314                                                         ; 42d2: d0 40
-    ldy #$13                                                          ; 42d4: a0 13
-    sty current_fruit_animation                                       ; 42d6: 8c 1c 0a
-    jmp c4314                                                         ; 42d9: 4c 14 43
+    bne update_fruit_position                                         ; 42d2: d0 40
+    ldy #fruit_fall_sideways_animation2 - fruit_animation_base        ; 42d4: a0 13
+    sty save_game_level_h_current_fruit_animation                     ; 42d6: 8c 1c 0a
+    jmp update_fruit_position                                         ; 42d9: 4c 14 43
 
-c42dc
-    lda current_fruit_animation                                       ; 42dc: ad 1c 0a
-    cmp #$13                                                          ; 42df: c9 13
-    bne c42ed                                                         ; 42e1: d0 0a
-    cpy current_fruit_animation                                       ; 42e3: cc 1c 0a
-    bne c4314                                                         ; 42e6: d0 2c
-    ldy #$1a                                                          ; 42e8: a0 1a
-    sty current_fruit_animation                                       ; 42ea: 8c 1c 0a
-c42ed
-    lda current_fruit_animation                                       ; 42ed: ad 1c 0a
-    cmp #$1a                                                          ; 42f0: c9 1a
-    bne c4314                                                         ; 42f2: d0 20
+check_for_fruit_fall_sideways2
+    lda save_game_level_h_current_fruit_animation                     ; 42dc: ad 1c 0a
+    cmp #fruit_fall_sideways_animation2 - fruit_animation_base        ; 42df: c9 13
+    bne check_for_fruit_falling_straight_down1                        ; 42e1: d0 0a
+    cpy save_game_level_h_current_fruit_animation                     ; 42e3: cc 1c 0a
+    bne update_fruit_position                                         ; 42e6: d0 2c
+    ldy #fruit_fall_straight_down_animation - fruit_animation_base    ; 42e8: a0 1a
+    sty save_game_level_h_current_fruit_animation                     ; 42ea: 8c 1c 0a
+check_for_fruit_falling_straight_down1
+    lda save_game_level_h_current_fruit_animation                     ; 42ed: ad 1c 0a
+    cmp #fruit_fall_straight_down_animation - fruit_animation_base    ; 42f0: c9 1a
+    bne update_fruit_position                                         ; 42f2: d0 20
     lda #8                                                            ; 42f4: a9 08
     sta temp_left_offset                                              ; 42f6: 8d d0 24
     lda #$f8                                                          ; 42f9: a9 f8
     sta temp_right_offset                                             ; 42fb: 8d d1 24
     lda #2                                                            ; 42fe: a9 02
     sta temp_bottom_offset                                            ; 4300: 8d 51 25
-    lda #2                                                            ; 4303: a9 02
+    lda #objectid_fruit                                               ; 4303: a9 02
     jsr get_solid_rock_collision_for_object_a                         ; 4305: 20 94 28
-    beq c4314                                                         ; 4308: f0 0a
-c430a
+    beq update_fruit_position                                         ; 4308: f0 0a
+stop_the_fruit
     lda #0                                                            ; 430a: a9 00
     sta fruit_timer                                                   ; 430c: 8d 6f 0a
-    ldy #$0d                                                          ; 430f: a0 0d
-    sty current_fruit_animation                                       ; 4311: 8c 1c 0a
-c4314
-    sty fruit_animation_step                                          ; 4314: 8c 1d 0a
+    ldy #fruit_stopped_animation - fruit_animation_base               ; 430f: a0 0d
+    sty save_game_level_h_current_fruit_animation                     ; 4311: 8c 1c 0a
+update_fruit_position
+    sty save_game_level_h_fruit_animation_step                        ; 4314: 8c 1d 0a
     lda fruit_animation_base,y                                        ; 4317: b9 b9 40
-    ldx current_fruit_direction                                       ; 431a: ae 23 0a
+    ldx save_game_level_h_current_fruit_direction                     ; 431a: ae 23 0a
     bpl fruit_moving_right                                            ; 431d: 10 05
     eor #$ff                                                          ; 431f: 49 ff
     clc                                                               ; 4321: 18
@@ -1616,68 +1676,72 @@ fruit_moving_right
     dex                                                               ; 432a: ca
 add_to_fruit_x_position
     clc                                                               ; 432b: 18
-    adc fruit_x_low                                                   ; 432c: 6d 1e 0a
-    sta fruit_x_low                                                   ; 432f: 8d 1e 0a
+    adc save_game_level_h_fruit_x_low                                 ; 432c: 6d 1e 0a
+    sta save_game_level_h_fruit_x_low                                 ; 432f: 8d 1e 0a
     txa                                                               ; 4332: 8a
-    adc fruit_x_high                                                  ; 4333: 6d 1f 0a
-    sta fruit_x_high                                                  ; 4336: 8d 1f 0a
+    adc save_game_level_h_fruit_x_high                                ; 4333: 6d 1f 0a
+    sta save_game_level_h_fruit_x_high                                ; 4336: 8d 1f 0a
     iny                                                               ; 4339: c8
 ; add offset to fruit y position
     lda fruit_animation_base,y                                        ; 433a: b9 b9 40
     clc                                                               ; 433d: 18
-    adc fruit_y_low                                                   ; 433e: 6d 20 0a
-    sta fruit_y_low                                                   ; 4341: 8d 20 0a
+    adc save_game_level_h_fruit_y_low                                 ; 433e: 6d 20 0a
+    sta save_game_level_h_fruit_y_low                                 ; 4341: 8d 20 0a
     lda #0                                                            ; 4344: a9 00
-    adc fruit_y_high                                                  ; 4346: 6d 21 0a
-    sta fruit_y_high                                                  ; 4349: 8d 21 0a
+    adc save_game_level_h_fruit_y_high                                ; 4346: 6d 21 0a
+    sta save_game_level_h_fruit_y_high                                ; 4349: 8d 21 0a
     jsr set_fruit_object_position                                     ; 434c: 20 b6 43
     ldx #objectid_fruit                                               ; 434f: a2 02
     jsr find_left_and_right_of_object                                 ; 4351: 20 34 24
     jsr find_top_and_bottom_of_object                                 ; 4354: 20 d2 24
 ; move fruit to next room
-    lda current_fruit_animation                                       ; 4357: ad 1c 0a
+    lda save_game_level_h_current_fruit_animation                     ; 4357: ad 1c 0a
     cmp #fruit_fall_straight_down_animation - fruit_animation_base    ; 435a: c9 1a
-    beq c439b                                                         ; 435c: f0 3d
+    beq check_for_moving_fruit_off_bottom_of_screen                   ; 435c: f0 3d
     cmp #fruit_sideways_animation - fruit_animation_base              ; 435e: c9 10
     bne return4                                                       ; 4360: d0 52
-    lda current_fruit_direction                                       ; 4362: ad 23 0a
-    bmi c4383                                                         ; 4365: 30 1c
-    lda l0078                                                         ; 4367: a5 78
+    lda save_game_level_h_current_fruit_direction                     ; 4362: ad 23 0a
+    bmi move_fruit_left_one_room                                      ; 4365: 30 1c
+    lda object_left_cell_x                                            ; 4367: a5 78
     cmp #game_area_width_cells                                        ; 4369: c9 28
     bcc return4                                                       ; 436b: 90 47
-    lda fruit_x_low                                                   ; 436d: ad 1e 0a
+; subtract 320 pixels from x position
+    lda save_game_level_h_fruit_x_low                                 ; 436d: ad 1e 0a
     sec                                                               ; 4370: 38
     sbc #$40 ; '@'                                                    ; 4371: e9 40
-    sta fruit_x_low                                                   ; 4373: 8d 1e 0a
+    sta save_game_level_h_fruit_x_low                                 ; 4373: 8d 1e 0a
     lda #0                                                            ; 4376: a9 00
     sbc #0                                                            ; 4378: e9 00
-    sta fruit_x_high                                                  ; 437a: 8d 1f 0a
-    inc fruit_room                                                    ; 437d: ee 22 0a
-    jmp c43af                                                         ; 4380: 4c af 43
+    sta save_game_level_h_fruit_x_high                                ; 437a: 8d 1f 0a
+    inc save_game_level_h_fruit_room                                  ; 437d: ee 22 0a
+    jmp hide_fruit                                                    ; 4380: 4c af 43
 
-c4383
-    lda l0079                                                         ; 4383: a5 79
+move_fruit_left_one_room
+    lda object_right_cell_x                                           ; 4383: a5 79
     bpl return4                                                       ; 4385: 10 2d
-    lda fruit_x_low                                                   ; 4387: ad 1e 0a
+; add 320 pixels to x position
+    lda save_game_level_h_fruit_x_low                                 ; 4387: ad 1e 0a
     clc                                                               ; 438a: 18
     adc #$40 ; '@'                                                    ; 438b: 69 40
-    sta fruit_x_low                                                   ; 438d: 8d 1e 0a
+    sta save_game_level_h_fruit_x_low                                 ; 438d: 8d 1e 0a
     lda #1                                                            ; 4390: a9 01
-    sta fruit_x_high                                                  ; 4392: 8d 1f 0a
-    dec fruit_room                                                    ; 4395: ce 22 0a
-    jmp c43af                                                         ; 4398: 4c af 43
+    sta save_game_level_h_fruit_x_high                                ; 4392: 8d 1f 0a
+    dec save_game_level_h_fruit_room                                  ; 4395: ce 22 0a
+    jmp hide_fruit                                                    ; 4398: 4c af 43
 
-c439b
-    lda l007a                                                         ; 439b: a5 7a
+check_for_moving_fruit_off_bottom_of_screen
+    lda object_top_cell_y                                             ; 439b: a5 7a
     cmp #game_area_height_cells                                       ; 439d: c9 18
     bcc return4                                                       ; 439f: 90 13
-    lda fruit_y_low                                                   ; 43a1: ad 20 0a
+; move fruit up 192 pixels
+    lda save_game_level_h_fruit_y_low                                 ; 43a1: ad 20 0a
     sec                                                               ; 43a4: 38
     sbc #$c0                                                          ; 43a5: e9 c0
-    sta fruit_y_low                                                   ; 43a7: 8d 20 0a
+    sta save_game_level_h_fruit_y_low                                 ; 43a7: 8d 20 0a
+; set fruit to room 1 as this is the only possible destination room
     lda #1                                                            ; 43aa: a9 01
-    sta fruit_room                                                    ; 43ac: 8d 22 0a
-c43af
+    sta save_game_level_h_fruit_room                                  ; 43ac: 8d 22 0a
+hide_fruit
     lda #spriteid_one_pixel_masked_out                                ; 43af: a9 00
     sta object_spriteid + objectid_fruit                              ; 43b1: 8d aa 09
 return4
@@ -1687,13 +1751,13 @@ remember_y2
     !byte 0                                                           ; 43b5: 00
 
 set_fruit_object_position
-    lda fruit_x_low                                                   ; 43b6: ad 1e 0a
+    lda save_game_level_h_fruit_x_low                                 ; 43b6: ad 1e 0a
     sta object_x_low + objectid_fruit                                 ; 43b9: 8d 52 09
-    lda fruit_x_high                                                  ; 43bc: ad 1f 0a
+    lda save_game_level_h_fruit_x_high                                ; 43bc: ad 1f 0a
     sta object_x_high + objectid_fruit                                ; 43bf: 8d 68 09
-    lda fruit_y_low                                                   ; 43c2: ad 20 0a
+    lda save_game_level_h_fruit_y_low                                 ; 43c2: ad 20 0a
     sta object_y_low + objectid_fruit                                 ; 43c5: 8d 7e 09
-    lda fruit_y_high                                                  ; 43c8: ad 21 0a
+    lda save_game_level_h_fruit_y_high                                ; 43c8: ad 21 0a
     sta object_y_high + objectid_fruit                                ; 43cb: 8d 94 09
     lda #spriteid_fruit                                               ; 43ce: a9 d0
     sta object_spriteid + objectid_fruit                              ; 43d0: 8d aa 09
@@ -1702,34 +1766,40 @@ set_fruit_object_position
 write_fruit_collision_map
     sta value_to_write_to_collision_map                               ; 43d4: 85 3e
     ora #0                                                            ; 43d6: 09 00
-    beq c43e1                                                         ; 43d8: f0 07
-    lda current_fruit_animation                                       ; 43da: ad 1c 0a
+    beq valid_write                                                   ; 43d8: f0 07
+; we want to write a non-zero value to the collision map. check the fruit is stopped
+; before doing so
+    lda save_game_level_h_current_fruit_animation                     ; 43da: ad 1c 0a
     cmp #fruit_stopped_animation - fruit_animation_base               ; 43dd: c9 0d
     bne return5                                                       ; 43df: d0 3b
-c43e1
+; check we are in the same room as the fruit (return if not)
+valid_write
     lda desired_room_index                                            ; 43e1: a5 30
-    cmp fruit_room                                                    ; 43e3: cd 22 0a
+    cmp save_game_level_h_fruit_room                                  ; 43e3: cd 22 0a
     bne return5                                                       ; 43e6: d0 34
-    lda fruit_x_high                                                  ; 43e8: ad 1f 0a
+; calculate the x cell coordinate to write to
+    lda save_game_level_h_fruit_x_high                                ; 43e8: ad 1f 0a
     lsr                                                               ; 43eb: 4a
-    sta l0070                                                         ; 43ec: 85 70
-    lda fruit_x_low                                                   ; 43ee: ad 1e 0a
+    sta movement_low                                                  ; 43ec: 85 70
+    lda save_game_level_h_fruit_x_low                                 ; 43ee: ad 1e 0a
     ror                                                               ; 43f1: 6a
-    lsr l0070                                                         ; 43f2: 46 70
+    lsr movement_low                                                  ; 43f2: 46 70
     ror                                                               ; 43f4: 6a
-    lsr l0070                                                         ; 43f5: 46 70
+    lsr movement_low                                                  ; 43f5: 46 70
     ror                                                               ; 43f7: 6a
     tax                                                               ; 43f8: aa
-    lda fruit_y_high                                                  ; 43f9: ad 21 0a
+; calculate the y cell coordinate to write to
+    lda save_game_level_h_fruit_y_high                                ; 43f9: ad 21 0a
     lsr                                                               ; 43fc: 4a
-    sta l0070                                                         ; 43fd: 85 70
-    lda fruit_y_low                                                   ; 43ff: ad 20 0a
+    sta movement_low                                                  ; 43fd: 85 70
+    lda save_game_level_h_fruit_y_low                                 ; 43ff: ad 20 0a
     ror                                                               ; 4402: 6a
-    lsr l0070                                                         ; 4403: 46 70
+    lsr movement_low                                                  ; 4403: 46 70
     ror                                                               ; 4405: 6a
-    lsr l0070                                                         ; 4406: 46 70
+    lsr movement_low                                                  ; 4406: 46 70
     ror                                                               ; 4408: 6a
     tay                                                               ; 4409: a8
+; fruit is 3x2 cells
     lda #3                                                            ; 440a: a9 03
     sta width_in_cells                                                ; 440c: 85 3c
     lda #2                                                            ; 440e: a9 02
@@ -1896,20 +1966,6 @@ sprite_data
 pydis_end
 
 ; Automatically generated labels:
-;     c42af
-;     c42b2
-;     c42dc
-;     c42ed
-;     c430a
-;     c4314
-;     c4383
-;     c439b
-;     c43af
-;     c43e1
-;     l0071
-;     l0078
-;     l0079
-;     l007a
 ;     l0a75
 !if (<envelope1) != $65 {
     !error "Assertion failed: <envelope1 == $65"
