@@ -466,11 +466,11 @@ room_0_update_handler
     jsr update_level_completion                                       ; 3bbe: 20 10 1a
 ; check for first update in room (branch if so)
     lda update_room_first_update_flag                                 ; 3bc1: ad 2b 13
-    bne c3bc9                                                         ; 3bc4: d0 03
-    jmp c3c38                                                         ; 3bc6: 4c 38 3c
+    bne room_0_first_update                                           ; 3bc4: d0 03
+    jmp check_if_player_is_on_room_0_rope                             ; 3bc6: 4c 38 3c
 
 ; check for level change (branch if not)
-c3bc9
+room_0_first_update
     lda current_level                                                 ; 3bc9: a5 31
     cmp level_before_latest_level_and_room_initialisation             ; 3bcb: c5 51
     beq rail_rope_not_moving                                          ; 3bcd: f0 2d
@@ -503,7 +503,7 @@ stop_rail_rope
 rail_rope_not_moving
     lda desired_room_index                                            ; 3bfc: a5 30
     cmp #0                                                            ; 3bfe: c9 00
-    bne c3c35                                                         ; 3c00: d0 33
+    bne set_rail_rope_object_position_and_collision_map_local1        ; 3c00: d0 33
 ; in room 0. set rail collision
     ldx #$0c                                                          ; 3c02: a2 0c
     ldy #2                                                            ; 3c04: a0 02
@@ -532,70 +532,80 @@ draw_rail_loop
     sta object_spriteid + objectid_rail_rope_end                      ; 3c2d: 8d ab 09
     lda #spriteid_cache1                                              ; 3c30: a9 cb
     sta object_erase_type + objectid_rail_rope_end                    ; 3c32: 8d af 38
-c3c35
+set_rail_rope_object_position_and_collision_map_local1
     jmp set_rail_rope_object_position_and_collision_map               ; 3c35: 4c 16 3d
 
-c3c38
+check_if_player_is_on_room_0_rope
     lda #0                                                            ; 3c38: a9 00
-    sta player_is_on_rope_flag                                        ; 3c3a: 8d 4a 3d
+    sta player_is_on_room_0_rope_flag                                 ; 3c3a: 8d 4a 3d
     lda desired_room_index                                            ; 3c3d: a5 30
     cmp #0                                                            ; 3c3f: c9 00
-    bne c3c64                                                         ; 3c41: d0 21
+    bne check_rope_direction                                          ; 3c41: d0 21
     lda current_player_character                                      ; 3c43: a5 48
     cmp #spriteid_icodata_monkey                                      ; 3c45: c9 06
-    bne c3c64                                                         ; 3c47: d0 1b
+    bne check_rope_direction                                          ; 3c47: d0 1b
     ldx #objectid_player                                              ; 3c49: a2 00
     ldy #objectid_rail_rope_end                                       ; 3c4b: a0 03
     jsr test_for_collision_between_objects_x_and_y                    ; 3c4d: 20 e2 28
-    beq c3c64                                                         ; 3c50: f0 12
+    beq check_rope_direction                                          ; 3c50: f0 12
     lda current_player_animation                                      ; 3c52: ad df 09
     cmp #monkey_climb_animation - monkey_base_animation               ; 3c55: c9 51
     beq player_is_on_rope                                             ; 3c57: f0 08
     cmp #monkey_climb_idle_animation - monkey_base_animation          ; 3c59: c9 45
     beq player_is_on_rope                                             ; 3c5b: f0 04
     cmp #monkey_climb_down_animation - monkey_base_animation          ; 3c5d: c9 49
-    bne c3c64                                                         ; 3c5f: d0 03
+    bne check_rope_direction                                          ; 3c5f: d0 03
 player_is_on_rope
-    dec player_is_on_rope_flag                                        ; 3c61: ce 4a 3d
-c3c64
+    dec player_is_on_room_0_rope_flag                                 ; 3c61: ce 4a 3d
+check_rope_direction
     lda rail_rope_current_dir                                         ; 3c64: ad 1b 0a
     bne update_rail_x_position                                        ; 3c67: d0 25
-    lda player_is_on_rope_flag                                        ; 3c69: ad 4a 3d
+; check if player is on the rope
+    lda player_is_on_room_0_rope_flag                                 ; 3c69: ad 4a 3d
     beq set_rail_rope_object_position_and_collision_map_local         ; 3c6c: f0 1d
+; is the rail rope to the left? branch if not
     lda rail_rope_x_cell                                              ; 3c6e: ad 1a 0a
     cmp #$0c                                                          ; 3c71: c9 0c
-    bne c3c80                                                         ; 3c73: d0 0b
+    bne rail_rope_not_left                                            ; 3c73: d0 0b
+; if the player is looking left, then branch
     lda object_direction                                              ; 3c75: ad be 09
     bmi set_rail_rope_object_position_and_collision_map_local         ; 3c78: 30 11
+; start moving the rail rope right
     inc rail_rope_current_dir                                         ; 3c7a: ee 1b 0a
     jmp update_rail_x_position                                        ; 3c7d: 4c 8e 3c
 
-c3c80
+; if the player is looking right, then branch
+rail_rope_not_left
     lda object_direction                                              ; 3c80: ad be 09
     bpl set_rail_rope_object_position_and_collision_map_local         ; 3c83: 10 06
+; start moving the rail rope left
     dec rail_rope_current_dir                                         ; 3c85: ce 1b 0a
     jmp update_rail_x_position                                        ; 3c88: 4c 8e 3c
 
 set_rail_rope_object_position_and_collision_map_local
     jmp set_rail_rope_object_position_and_collision_map               ; 3c8b: 4c 16 3d
 
+; add direction to cell x
 update_rail_x_position
     lda rail_rope_x_cell                                              ; 3c8e: ad 1a 0a
     clc                                                               ; 3c91: 18
     adc rail_rope_current_dir                                         ; 3c92: 6d 1b 0a
     sta rail_rope_x_cell                                              ; 3c95: 8d 1a 0a
-    lda player_is_on_rope_flag                                        ; 3c98: ad 4a 3d
-    beq c3cce                                                         ; 3c9b: f0 31
+; check if the player is on the rope, branch if not
+    lda player_is_on_room_0_rope_flag                                 ; 3c98: ad 4a 3d
+    beq update_rail_moving_sound                                      ; 3c9b: f0 31
+; multiply the direction by eight, and sign extend using x as the high byte
     ldx #0                                                            ; 3c9d: a2 00
     lda rail_rope_current_dir                                         ; 3c9f: ad 1b 0a
     asl                                                               ; 3ca2: 0a
     asl                                                               ; 3ca3: 0a
     asl                                                               ; 3ca4: 0a
     sta l0070                                                         ; 3ca5: 85 70
-    bpl c3caa                                                         ; 3ca7: 10 01
+    bpl sign_extended                                                 ; 3ca7: 10 01
     dex                                                               ; 3ca9: ca
-c3caa
+sign_extended
     stx l0071                                                         ; 3caa: 86 71
+; add to the player x position
     lda object_x_low                                                  ; 3cac: ad 50 09
     clc                                                               ; 3caf: 18
     adc l0070                                                         ; 3cb0: 65 70
@@ -603,6 +613,7 @@ c3caa
     lda object_x_high                                                 ; 3cb5: ad 66 09
     adc l0071                                                         ; 3cb8: 65 71
     sta object_x_high                                                 ; 3cba: 8d 66 09
+; add to the player accessory x position
     lda object_x_low + objectid_player_accessory                      ; 3cbd: ad 51 09
     clc                                                               ; 3cc0: 18
     adc l0070                                                         ; 3cc1: 65 70
@@ -610,49 +621,59 @@ c3caa
     lda object_x_high + objectid_player_accessory                     ; 3cc6: ad 67 09
     adc l0071                                                         ; 3cc9: 65 71
     sta object_x_high + objectid_player_accessory                     ; 3ccb: 8d 67 09
-c3cce
+; branch if rail rope is at either end
+update_rail_moving_sound
     lda rail_rope_x_cell                                              ; 3cce: ad 1a 0a
     cmp #$0c                                                          ; 3cd1: c9 0c
-    beq c3ceb                                                         ; 3cd3: f0 16
+    beq rail_at_either_end                                            ; 3cd3: f0 16
     cmp #$1b                                                          ; 3cd5: c9 1b
-    beq c3ceb                                                         ; 3cd7: f0 12
+    beq rail_at_either_end                                            ; 3cd7: f0 12
+; branch if not in room zero
     lda desired_room_index                                            ; 3cd9: a5 30
     cmp #0                                                            ; 3cdb: c9 00
     bne set_rail_rope_object_position_and_collision_map               ; 3cdd: d0 37
+; make rail movement sound
     lda #$40 ; '@'                                                    ; 3cdf: a9 40
     ldx #<sound1                                                      ; 3ce1: a2 73
     ldy #>sound1                                                      ; 3ce3: a0 44
     jsr play_sound_yx                                                 ; 3ce5: 20 f6 38
     jmp set_rail_rope_object_position_and_collision_map               ; 3ce8: 4c 16 3d
 
-c3ceb
+rail_at_either_end
     lda #0                                                            ; 3ceb: a9 00
     sta rail_rope_current_dir                                         ; 3ced: 8d 1b 0a
     lda desired_room_index                                            ; 3cf0: a5 30
     cmp #0                                                            ; 3cf2: c9 00
     bne set_rail_rope_object_position_and_collision_map               ; 3cf4: d0 20
+; reset sound priorities
     lda sound_priority_per_channel_table                              ; 3cf6: ad 6f 39
     cmp #$41 ; 'A'                                                    ; 3cf9: c9 41
-    bcs c3d05                                                         ; 3cfb: b0 08
+    bcs end_of_move_sound                                             ; 3cfb: b0 08
     lda #0                                                            ; 3cfd: a9 00
     sta sound_priority_per_channel_table                              ; 3cff: 8d 6f 39
     sta sound_priority_per_channel_table + 1                          ; 3d02: 8d 70 39
-c3d05
+end_of_move_sound
     jsr play_landing_sound                                            ; 3d05: 20 a9 23
-    lda player_is_on_rope_flag                                        ; 3d08: ad 4a 3d
+; the following tests are redundant. branch if player is not on rope
+    lda player_is_on_room_0_rope_flag                                 ; 3d08: ad 4a 3d
     beq set_rail_rope_object_position_and_collision_map               ; 3d0b: f0 09
-    lda #6                                                            ; 3d0d: a9 06
+    lda #6                                                            ; 3d0d: a9 06                   ; redundant instruction
+; this test is redundant. branch if player is looking right
     lda object_direction                                              ; 3d0f: ad be 09
     bpl set_rail_rope_object_position_and_collision_map               ; 3d12: 10 02
+; this is redundant. player is on rope and looking left
     lda #$fa                                                          ; 3d14: a9 fa
+; branch if not in room zero
 set_rail_rope_object_position_and_collision_map
     lda desired_room_index                                            ; 3d16: a5 30
     cmp #0                                                            ; 3d18: c9 00
     bne return1                                                       ; 3d1a: d0 2d
+; position the rail rope
     ldx rail_rope_x_cell                                              ; 3d1c: ae 1a 0a
     ldy #3                                                            ; 3d1f: a0 03
     lda #objectid_rail_rope_end                                       ; 3d21: a9 03
     jsr set_object_position_from_cell_xy                              ; 3d23: 20 5d 1f
+; write to the collision map
     lda #1                                                            ; 3d26: a9 01
     sta width_in_cells                                                ; 3d28: 85 3c
     lda #2                                                            ; 3d2a: a9 02
@@ -674,7 +695,7 @@ set_rail_rope_object_position_and_collision_map
 return1
     rts                                                               ; 3d49: 60
 
-player_is_on_rope_flag
+player_is_on_room_0_rope_flag
     !byte 0                                                           ; 3d4a: 00
 ; *************************************************************************************
 ; 
@@ -956,15 +977,19 @@ room_2_game_update_loop
     ldy current_level                                                 ; 3ebe: a4 31
     jmp initialise_level_and_room                                     ; 3ec0: 4c 40 11
 
-rabbit_sprites
+rabbit_sprites_base
     !byte 0                                                           ; 3ec3: 00
+rabbit_walk_sprites
     !byte spriteid_rabbit_walk_1                                      ; 3ec4: d7
     !byte spriteid_rabbit_walk_2                                      ; 3ec5: d8
     !byte spriteid_rabbit_walk_3                                      ; 3ec6: d9
+rabbit_walk_end_sprites
     !byte spriteid_rabbit_sit                                         ; 3ec7: da
     !byte $ff                                                         ; 3ec8: ff
+rabbit_sit_sprites
     !byte spriteid_rabbit_sit                                         ; 3ec9: da
     !byte $ff                                                         ; 3eca: ff
+rabbit_push_sprites
     !byte spriteid_rabbit_push                                        ; 3ecb: db
     !byte spriteid_rabbit_push                                        ; 3ecc: db
     !byte spriteid_rabbit_push                                        ; 3ecd: db
@@ -982,8 +1007,9 @@ update_rabbit_puzzle
 ; check for level change (branch if not)
     lda current_level                                                 ; 3ed9: a5 31
     cmp level_before_latest_level_and_room_initialisation             ; 3edb: c5 51
-    beq c3ef9                                                         ; 3edd: f0 1a
-    lda #6                                                            ; 3edf: a9 06
+    beq new_room_only                                                 ; 3edd: f0 1a
+; new level
+    lda #rabbit_sit_sprites  - rabbit_sprites_base                    ; 3edf: a9 06
     sta rabbit_sprite_animation                                       ; 3ee1: 8d 70 0a
     sta rabbit_sprite_animation_step                                  ; 3ee4: 8d 71 0a
     lda #0                                                            ; 3ee7: a9 00
@@ -993,13 +1019,13 @@ update_rabbit_puzzle
     lda #1                                                            ; 3ef1: a9 01
     sta rabbit_direction                                              ; 3ef3: 8d 73 0a
     sta rabbit_speed                                                  ; 3ef6: 8d 74 0a
-c3ef9
+new_room_only
     ldx #<envelope2                                                   ; 3ef9: a2 99
     ldy #>envelope2                                                   ; 3efb: a0 44
     jsr define_envelope                                               ; 3efd: 20 5e 39
     lda desired_room_index                                            ; 3f00: a5 30
     cmp #2                                                            ; 3f02: c9 02
-    bne c3f19                                                         ; 3f04: d0 13
+    bne update_rabbit_object_local                                    ; 3f04: d0 13
     ldx #$14                                                          ; 3f06: a2 14
     ldy #$0d                                                          ; 3f08: a0 0d
     lda #7                                                            ; 3f0a: a9 07
@@ -1008,7 +1034,7 @@ c3ef9
     sta l38af                                                         ; 3f11: 8d af 38
     lda #$66 ; 'f'                                                    ; 3f14: a9 66
     sta object_y_low + objectid_rabbit                                ; 3f16: 8d 7f 09
-c3f19
+update_rabbit_object_local
     jmp update_rabbit_object                                          ; 3f19: 4c ed 3f
 
 update_rabbit_not_first_update
@@ -1016,50 +1042,51 @@ update_rabbit_not_first_update
     clc                                                               ; 3f1f: 18
     adc #1                                                            ; 3f20: 69 01
     tay                                                               ; 3f22: a8
-    lda rabbit_sprites,y                                              ; 3f23: b9 c3 3e
+    lda rabbit_sprites_base,y                                         ; 3f23: b9 c3 3e
     cmp #$ff                                                          ; 3f26: c9 ff
-    bne c3f2d                                                         ; 3f28: d0 03
+    bne got_animation_step_y                                          ; 3f28: d0 03
     ldy rabbit_sprite_animation                                       ; 3f2a: ac 70 0a
-c3f2d
+got_animation_step_y
     lda desired_room_index                                            ; 3f2d: a5 30
     cmp #2                                                            ; 3f2f: c9 02
-    bne c3f71                                                         ; 3f31: d0 3e
+    bne rabbit_animation                                              ; 3f31: d0 3e
 ; in room 2
     ldx #objectid_rabbit                                              ; 3f33: a2 03
-    sty l4009                                                         ; 3f35: 8c 09 40
+    sty remember_y                                                    ; 3f35: 8c 09 40
     ldy #objectid_player                                              ; 3f38: a0 00
     jsr test_for_collision_between_objects_x_and_y                    ; 3f3a: 20 e2 28
-    ldy l4009                                                         ; 3f3d: ac 09 40
+    ldy remember_y                                                    ; 3f3d: ac 09 40
     ora #0                                                            ; 3f40: 09 00
-    beq c3f71                                                         ; 3f42: f0 2d
-    ldy #8                                                            ; 3f44: a0 08
-    lda #6                                                            ; 3f46: a9 06
+    beq rabbit_animation                                              ; 3f42: f0 2d
+    ldy #rabbit_push_sprites - rabbit_sprites_base                    ; 3f44: a0 08
+    lda #rabbit_sit_sprites  - rabbit_sprites_base                    ; 3f46: a9 06
     sta rabbit_sprite_animation                                       ; 3f48: 8d 70 0a
     lda #$0c                                                          ; 3f4b: a9 0c
     sta l0a75                                                         ; 3f4d: 8d 75 0a
     lda object_x_low                                                  ; 3f50: ad 50 09
     cmp object_x_low + objectid_rabbit                                ; 3f53: cd 53 09
-    bcc c3f64                                                         ; 3f56: 90 0c
+    bcc player_bounces_off_the_rabbit_to_the_left                     ; 3f56: 90 0c
     lda #6                                                            ; 3f58: a9 06
     sta player_wall_collision_reaction_speed                          ; 3f5a: 8d 33 24
     lda #1                                                            ; 3f5d: a9 01
     sta rabbit_direction                                              ; 3f5f: 8d 73 0a
-    bne c3f6e                                                         ; 3f62: d0 0a
-c3f64
+    bne update_rabbit_animation_step_local                            ; 3f62: d0 0a                   ; ALWAYS branch
+
+player_bounces_off_the_rabbit_to_the_left
     lda #$fa                                                          ; 3f64: a9 fa
     sta player_wall_collision_reaction_speed                          ; 3f66: 8d 33 24
     lda #$ff                                                          ; 3f69: a9 ff
     sta rabbit_direction                                              ; 3f6b: 8d 73 0a
-c3f6e
+update_rabbit_animation_step_local
     jmp update_rabbit_animation_step                                  ; 3f6e: 4c ea 3f
 
-c3f71
+rabbit_animation
     lda rabbit_sprite_animation                                       ; 3f71: ad 70 0a
-    cmp #6                                                            ; 3f74: c9 06
+    cmp #rabbit_sit_sprites  - rabbit_sprites_base                    ; 3f74: c9 06
     bne rabbit_is_hopping_along                                       ; 3f76: d0 26
     dec l0a75                                                         ; 3f78: ce 75 0a
-    bpl c3f6e                                                         ; 3f7b: 10 f1
-    ldy #1                                                            ; 3f7d: a0 01
+    bpl update_rabbit_animation_step_local                            ; 3f7b: 10 f1
+    ldy #rabbit_walk_sprites - rabbit_sprites_base                    ; 3f7d: a0 01
     sty rabbit_sprite_animation                                       ; 3f7f: 8c 70 0a
     lda rabbit_speed                                                  ; 3f82: ad 74 0a
     sta rabbit_direction                                              ; 3f85: 8d 73 0a
@@ -1075,14 +1102,14 @@ reverse_direction
     sta rabbit_direction                                              ; 3f9b: 8d 73 0a
 rabbit_is_hopping_along
     lda rabbit_sprite_animation                                       ; 3f9e: ad 70 0a
-    cmp #1                                                            ; 3fa1: c9 01
+    cmp #rabbit_walk_sprites - rabbit_sprites_base                    ; 3fa1: c9 01
     bne update_rabbit_animation_step                                  ; 3fa3: d0 45
-    cpy #4                                                            ; 3fa5: c0 04
-    bne c3fcc                                                         ; 3fa7: d0 23
+    cpy #rabbit_walk_end_sprites - rabbit_sprites_base                ; 3fa5: c0 04
+    bne move_rabbit                                                   ; 3fa7: d0 23
     lda desired_room_index                                            ; 3fa9: a5 30
     cmp #2                                                            ; 3fab: c9 02
-    bne c3fcc                                                         ; 3fad: d0 1d
-    sty l4009                                                         ; 3faf: 8c 09 40
+    bne move_rabbit                                                   ; 3fad: d0 1d
+    sty remember_y                                                    ; 3faf: 8c 09 40
     lda #0                                                            ; 3fb2: a9 00
     ldx #<sound2                                                      ; 3fb4: a2 b7
     ldy #>sound2                                                      ; 3fb6: a0 44
@@ -1093,8 +1120,8 @@ rabbit_is_hopping_along
     ldx #<sound4                                                      ; 3fc2: a2 a7
     ldy #>sound4                                                      ; 3fc4: a0 44
     jsr play_sound_yx                                                 ; 3fc6: 20 f6 38
-    ldy l4009                                                         ; 3fc9: ac 09 40
-c3fcc
+    ldy remember_y                                                    ; 3fc9: ac 09 40
+move_rabbit
     lda rabbit_speed                                                  ; 3fcc: ad 74 0a
     asl                                                               ; 3fcf: 0a
     asl                                                               ; 3fd0: 0a
@@ -1102,13 +1129,13 @@ c3fcc
     adc rabbit_x                                                      ; 3fd2: 6d 72 0a
     sta rabbit_x                                                      ; 3fd5: 8d 72 0a
     cmp #$70 ; 'p'                                                    ; 3fd8: c9 70
-    beq c3fe0                                                         ; 3fda: f0 04
+    beq rabbit_at_end_of_walking                                      ; 3fda: f0 04
     cmp #$d0                                                          ; 3fdc: c9 d0
     bne update_rabbit_animation_step                                  ; 3fde: d0 0a
-c3fe0
-    ldy #6                                                            ; 3fe0: a0 06
+rabbit_at_end_of_walking
+    ldy #rabbit_sit_sprites - rabbit_sprites_base                     ; 3fe0: a0 06
     sty rabbit_sprite_animation                                       ; 3fe2: 8c 70 0a
-    lda #4                                                            ; 3fe5: a9 04
+    lda #rabbit_walk_end_sprites - rabbit_sprites_base                ; 3fe5: a9 04
     sta l0a75                                                         ; 3fe7: 8d 75 0a
 update_rabbit_animation_step
     sty rabbit_sprite_animation_step                                  ; 3fea: 8c 71 0a
@@ -1118,7 +1145,7 @@ update_rabbit_object
     bne return2                                                       ; 3ff1: d0 15
 ; in room 2. set rabbit object
     ldy rabbit_sprite_animation_step                                  ; 3ff3: ac 71 0a
-    lda rabbit_sprites,y                                              ; 3ff6: b9 c3 3e
+    lda rabbit_sprites_base,y                                         ; 3ff6: b9 c3 3e
     sta object_spriteid + objectid_rabbit                             ; 3ff9: 8d ab 09
     lda rabbit_x                                                      ; 3ffc: ad 72 0a
     sta object_x_low + objectid_rabbit                                ; 3fff: 8d 53 09
@@ -1127,7 +1154,7 @@ update_rabbit_object
 return2
     rts                                                               ; 4008: 60
 
-l4009
+remember_y
     !byte 0                                                           ; 4009: 00
 ; *************************************************************************************
 ; 
@@ -1843,23 +1870,6 @@ sprite_data
 pydis_end
 
 ; Automatically generated labels:
-;     c3bc9
-;     c3c35
-;     c3c38
-;     c3c64
-;     c3c80
-;     c3caa
-;     c3cce
-;     c3ceb
-;     c3d05
-;     c3ef9
-;     c3f19
-;     c3f2d
-;     c3f64
-;     c3f6e
-;     c3f71
-;     c3fcc
-;     c3fe0
 ;     c40de
 ;     c4126
 ;     c4137
@@ -1901,7 +1911,6 @@ pydis_end
 ;     l0a75
 ;     l38ae
 ;     l38af
-;     l4009
 ;     l40b9
 ;     l43b5
 ;     l4464
@@ -2050,6 +2059,21 @@ pydis_end
 }
 !if (objectid_rail_rope_end) != $03 {
     !error "Assertion failed: objectid_rail_rope_end == $03"
+}
+!if (rabbit_push_sprites - rabbit_sprites_base) != $08 {
+    !error "Assertion failed: rabbit_push_sprites - rabbit_sprites_base == $08"
+}
+!if (rabbit_sit_sprites  - rabbit_sprites_base) != $06 {
+    !error "Assertion failed: rabbit_sit_sprites  - rabbit_sprites_base == $06"
+}
+!if (rabbit_sit_sprites - rabbit_sprites_base) != $06 {
+    !error "Assertion failed: rabbit_sit_sprites - rabbit_sprites_base == $06"
+}
+!if (rabbit_walk_end_sprites - rabbit_sprites_base) != $04 {
+    !error "Assertion failed: rabbit_walk_end_sprites - rabbit_sprites_base == $04"
+}
+!if (rabbit_walk_sprites - rabbit_sprites_base) != $01 {
+    !error "Assertion failed: rabbit_walk_sprites - rabbit_sprites_base == $01"
 }
 !if (room_0_data) != $3b14 {
     !error "Assertion failed: room_0_data == $3b14"
