@@ -193,7 +193,7 @@ fruit_y_low                                         = $0a20
 fruit_y_high                                        = $0a21
 fruit_room                                          = $0a22
 current_fruit_direction                             = $0a23
-level_workspace                                     = $0a6f
+fruit_timer                                         = $0a6f
 rabbit_sprite_animation                             = $0a70
 rabbit_sprite_animation_step                        = $0a71
 rabbit_x                                            = $0a72
@@ -981,7 +981,6 @@ rabbit_walk_sprites
     !byte spriteid_rabbit_walk_1                                      ; 3ec4: d7
     !byte spriteid_rabbit_walk_2                                      ; 3ec5: d8
     !byte spriteid_rabbit_walk_3                                      ; 3ec6: d9
-rabbit_walk_end_sprites
     !byte spriteid_rabbit_sit                                         ; 3ec7: da
     !byte $ff                                                         ; 3ec8: ff
 rabbit_sit_sprites
@@ -1102,7 +1101,7 @@ rabbit_is_hopping_along
     lda rabbit_sprite_animation                                       ; 3f9e: ad 70 0a
     cmp #rabbit_walk_sprites - rabbit_sprites_base                    ; 3fa1: c9 01
     bne update_rabbit_animation_step                                  ; 3fa3: d0 45
-    cpy #rabbit_walk_end_sprites - rabbit_sprites_base                ; 3fa5: c0 04
+    cpy #fruit_fall_sideways_animation1 - fruit_animation_base        ; 3fa5: c0 04
     bne move_rabbit                                                   ; 3fa7: d0 23
     lda desired_room_index                                            ; 3fa9: a5 30
     cmp #2                                                            ; 3fab: c9 02
@@ -1133,7 +1132,7 @@ move_rabbit
 rabbit_at_end_of_walking
     ldy #rabbit_sit_sprites - rabbit_sprites_base                     ; 3fe0: a0 06
     sty rabbit_sprite_animation                                       ; 3fe2: 8c 70 0a
-    lda #rabbit_walk_end_sprites - rabbit_sprites_base                ; 3fe5: a9 04
+    lda #fruit_fall_sideways_animation1 - fruit_animation_base        ; 3fe5: a9 04
     sta l0a75                                                         ; 3fe7: 8d 75 0a
 update_rabbit_animation_step
     sty rabbit_sprite_animation_step                                  ; 3fea: 8c 71 0a
@@ -1293,24 +1292,24 @@ fruit_animation_base
 fruit_initial_idle_animation
     !byte 0, 0                                                        ; 40ba: 00 00
     !byte $80                                                         ; 40bc: 80
-fruit_animation2
+fruit_fall_sideways_animation1
     !byte 8, 2                                                        ; 40bd: 08 02
     !byte 8, 2                                                        ; 40bf: 08 02
     !byte 4, 4                                                        ; 40c1: 04 04
     !byte 4, 4                                                        ; 40c3: 04 04
     !byte $80                                                         ; 40c5: 80
-fruit_animation3
+fruit_stopped_animation
     !byte 0, 0                                                        ; 40c6: 00 00
     !byte $80                                                         ; 40c8: 80
-fruit_animation4
+fruit_sideways_animation
     !byte 8, 0                                                        ; 40c9: 08 00
     !byte $80                                                         ; 40cb: 80
-fruit_animation5
+fruit_fall_sideways_animation2
     !byte 8, 2                                                        ; 40cc: 08 02
     !byte 8, 2                                                        ; 40ce: 08 02
     !byte 8, 4                                                        ; 40d0: 08 04
     !byte $80                                                         ; 40d2: 80
-fruit_animation6
+fruit_fall_straight_down_animation
     !byte 0, 8                                                        ; 40d3: 00 08
     !byte $80                                                         ; 40d5: 80
 
@@ -1318,7 +1317,7 @@ fruit_animation6
 update_fruit_puzzle
     lda update_room_first_update_flag                                 ; 40d6: ad 2b 13
     bne update_fruit_first_update                                     ; 40d9: d0 03
-    jmp c4167                                                         ; 40db: 4c 67 41
+    jmp update_fruit_timer                                            ; 40db: 4c 67 41
 
 ; check for level change (branch if not)
 update_fruit_first_update
@@ -1330,16 +1329,16 @@ update_fruit_first_update
     ldy #>envelope3                                                   ; 40e6: a0 44
     jsr define_envelope                                               ; 40e8: 20 5e 39
     lda #0                                                            ; 40eb: a9 00
-    sta level_workspace                                               ; 40ed: 8d 6f 0a
+    sta fruit_timer                                                   ; 40ed: 8d 6f 0a
     lda current_fruit_animation                                       ; 40f0: ad 1c 0a
-    cmp #fruit_animation3 - fruit_animation_base                      ; 40f3: c9 0d
+    cmp #fruit_stopped_animation - fruit_animation_base               ; 40f3: c9 0d
     beq new_room_only2                                                ; 40f5: f0 2f
     cmp #fruit_initial_idle_animation - fruit_animation_base          ; 40f7: c9 01
     beq new_room_only2                                                ; 40f9: f0 2b
-    dec level_workspace                                               ; 40fb: ce 6f 0a
+    dec fruit_timer                                                   ; 40fb: ce 6f 0a
     ora #0                                                            ; 40fe: 09 00
     bne new_room_only2                                                ; 4100: d0 24
-    inc level_workspace                                               ; 4102: ee 6f 0a
+    inc fruit_timer                                                   ; 4102: ee 6f 0a
     lda #3                                                            ; 4105: a9 03
     sta fruit_room                                                    ; 4107: 8d 22 0a
     lda #$98                                                          ; 410a: a9 98
@@ -1355,7 +1354,7 @@ update_fruit_first_update
     sta fruit_animation_step                                          ; 4123: 8d 1d 0a
 new_room_only2
     lda desired_room_index                                            ; 4126: a5 30
-    beq c415f                                                         ; 4128: f0 35
+    beq fruit_fully_fast_forwarded                                    ; 4128: f0 35
     cmp #3                                                            ; 412a: c9 03
     bne not_room_3                                                    ; 412c: d0 09
 ; draw room 3 plant
@@ -1368,64 +1367,64 @@ not_room_3
     sta object_erase_type + objectid_fruit                            ; 4139: 8d ae 38
     lda desired_room_index                                            ; 413c: a5 30
     cmp fruit_room                                                    ; 413e: cd 22 0a
-    bne c415f                                                         ; 4141: d0 1c
+    bne fruit_fully_fast_forwarded                                    ; 4141: d0 1c
     jsr set_fruit_object_position                                     ; 4143: 20 b6 43
 fast_forward_fruit_animation_loop
     lda desired_room_index                                            ; 4146: a5 30
     cmp fruit_room                                                    ; 4148: cd 22 0a
-    bne c415f                                                         ; 414b: d0 12
-    lda level_workspace                                               ; 414d: ad 6f 0a
-    beq c415f                                                         ; 4150: f0 0d
+    bne fruit_fully_fast_forwarded                                    ; 414b: d0 12
+    lda fruit_timer                                                   ; 414d: ad 6f 0a
+    beq fruit_fully_fast_forwarded                                    ; 4150: f0 0d
     cmp #$ff                                                          ; 4152: c9 ff
-    beq c4159                                                         ; 4154: f0 03
-    dec level_workspace                                               ; 4156: ce 6f 0a
-c4159
+    beq fruit_not_done_yet                                            ; 4154: f0 03
+    dec fruit_timer                                                   ; 4156: ce 6f 0a
+fruit_not_done_yet
     jsr update_fruit_animation                                        ; 4159: 20 0e 42
     jmp fast_forward_fruit_animation_loop                             ; 415c: 4c 46 41
 
-c415f
+fruit_fully_fast_forwarded
     lda #collision_map_solid_rock                                     ; 415f: a9 03
     jsr write_fruit_collision_map                                     ; 4161: 20 d4 43
     jmp return3                                                       ; 4164: 4c 0d 42
 
-c4167
+update_fruit_timer
     lda desired_room_index                                            ; 4167: a5 30
     cmp fruit_room                                                    ; 4169: cd 22 0a
     beq reset_sound_priorities                                        ; 416c: f0 0b
-    lda level_workspace                                               ; 416e: ad 6f 0a
+    lda fruit_timer                                                   ; 416e: ad 6f 0a
     bmi return3_local                                                 ; 4171: 30 03
-    inc level_workspace                                               ; 4173: ee 6f 0a
+    inc fruit_timer                                                   ; 4173: ee 6f 0a
 return3_local
     jmp return3                                                       ; 4176: 4c 0d 42
 
 reset_sound_priorities
     lda sound_priority_per_channel_table                              ; 4179: ad 6f 39
     cmp #$41 ; 'A'                                                    ; 417c: c9 41
-    bcs c4188                                                         ; 417e: b0 08
+    bcs continue_updating_fruit                                       ; 417e: b0 08
     lda #0                                                            ; 4180: a9 00
     sta sound_priority_per_channel_table                              ; 4182: 8d 6f 39
     sta sound_priority_per_channel_table + 1                          ; 4185: 8d 70 39
-c4188
+continue_updating_fruit
     jsr update_fruit_animation                                        ; 4188: 20 0e 42
     lda desired_room_index                                            ; 418b: a5 30
     cmp fruit_room                                                    ; 418d: cd 22 0a
-    beq c419a                                                         ; 4190: f0 08
+    beq in_fruit_room                                                 ; 4190: f0 08
     lda #0                                                            ; 4192: a9 00
-    sta level_workspace                                               ; 4194: 8d 6f 0a
+    sta fruit_timer                                                   ; 4194: 8d 6f 0a
     jmp return3                                                       ; 4197: 4c 0d 42
 
-c419a
+in_fruit_room
     lda current_fruit_animation                                       ; 419a: ad 1c 0a
-    cmp #$13                                                          ; 419d: c9 13
-    bne c41be                                                         ; 419f: d0 1d
+    cmp #fruit_fall_sideways_animation2 - fruit_animation_base        ; 419d: c9 13
+    bne check_for_fruit_falling_sideways1                             ; 419f: d0 1d
     lda current_fruit_direction                                       ; 41a1: ad 23 0a
-    bpl c41ac                                                         ; 41a4: 10 06
+    bpl fruit_falling_right                                           ; 41a4: 10 06
     dec temp_left_offset                                              ; 41a6: ce d0 24
-    jmp c41af                                                         ; 41a9: 4c af 41
+    jmp fruit_falling_left                                            ; 41a9: 4c af 41
 
-c41ac
+fruit_falling_right
     inc temp_right_offset                                             ; 41ac: ee d1 24
-c41af
+fruit_falling_left
     lda #1                                                            ; 41af: a9 01
     sta temp_bottom_offset                                            ; 41b1: 8d 51 25
     lda #objectid_fruit                                               ; 41b4: a9 02
@@ -1433,19 +1432,20 @@ c41af
     bne play_landing_sound_local                                      ; 41b9: d0 2a
     jmp return3                                                       ; 41bb: 4c 0d 42
 
-c41be
+check_for_fruit_falling_sideways1
     lda fruit_animation_step                                          ; 41be: ad 1d 0a
-    cmp #rabbit_walk_end_sprites - rabbit_sprites_base                ; 41c1: c9 04
-    beq end_of_walk_sound                                             ; 41c3: f0 14
+    cmp #fruit_fall_sideways_animation1 - fruit_animation_base        ; 41c1: c9 04
+    beq end_of_fall_sound                                             ; 41c3: f0 14
     lda current_fruit_animation                                       ; 41c5: ad 1c 0a
-    cmp #fruit_animation4 - fruit_animation_base                      ; 41c8: c9 10
-    bne c41e8                                                         ; 41ca: d0 1c
+    cmp #fruit_sideways_animation - fruit_animation_base              ; 41c8: c9 10
+    bne check_for_fruit_falling_straight_down                         ; 41ca: d0 1c
+; check for left or right fruit-wall collision
     dec temp_left_offset                                              ; 41cc: ce d0 24
     inc temp_right_offset                                             ; 41cf: ee d1 24
     lda #objectid_fruit                                               ; 41d2: a9 02
     jsr get_solid_rock_collision_for_object_a                         ; 41d4: 20 94 28
     bne play_landing_sound_local                                      ; 41d7: d0 0c
-end_of_walk_sound
+end_of_fall_sound
     lda #$40 ; '@'                                                    ; 41d9: a9 40
     ldx #<sound1                                                      ; 41db: a2 73
     ldy #>sound1                                                      ; 41dd: a0 44
@@ -1455,8 +1455,8 @@ end_of_walk_sound
 play_landing_sound_local
     jmp play_landing_sound                                            ; 41e5: 4c a9 23
 
-c41e8
-    cmp #fruit_animation6 - fruit_animation_base                      ; 41e8: c9 1a
+check_for_fruit_falling_straight_down
+    cmp #fruit_fall_straight_down_animation - fruit_animation_base    ; 41e8: c9 1a
     bne write_solid_fruit_collision                                   ; 41ea: d0 1c
     lda #2                                                            ; 41ec: a9 02
     sta temp_bottom_offset                                            ; 41ee: 8d 51 25
@@ -1485,19 +1485,20 @@ update_fruit_animation
     tay                                                               ; 4214: a8
     lda fruit_animation_base,y                                        ; 4215: b9 b9 40
     cmp #$80                                                          ; 4218: c9 80
-    bne c421f                                                         ; 421a: d0 03
+    bne got_fruit_animation_step_y                                    ; 421a: d0 03
     ldy current_fruit_animation                                       ; 421c: ac 1c 0a
-c421f
+got_fruit_animation_step_y
     lda current_fruit_animation                                       ; 421f: ad 1c 0a
-    cmp #1                                                            ; 4222: c9 01
-    bne c424c                                                         ; 4224: d0 26
-    ldx #0                                                            ; 4226: a2 00
-    sty l43b5                                                         ; 4228: 8c b5 43
-    ldy #2                                                            ; 422b: a0 02
+    cmp #fruit_initial_idle_animation - fruit_animation_base          ; 4222: c9 01
+    bne check_for_fruit_stopped                                       ; 4224: d0 26
+    ldx #objectid_player                                              ; 4226: a2 00
+    sty remember_y2                                                   ; 4228: 8c b5 43
+    ldy #objectid_fruit                                               ; 422b: a0 02
     jsr test_for_collision_between_objects_x_and_y                    ; 422d: 20 e2 28
-    ldy l43b5                                                         ; 4230: ac b5 43
+    ldy remember_y2                                                   ; 4230: ac b5 43
+; branch if player and fruit didn't collide
     ora #0                                                            ; 4233: 09 00
-    beq c4249                                                         ; 4235: f0 12
+    beq no_player_fruit_collision                                     ; 4235: f0 12
     lda #$80                                                          ; 4237: a9 80
     sta player_wall_collision_reaction_speed                          ; 4239: 8d 33 24
     lda object_direction                                              ; 423c: ad be 09
@@ -1505,48 +1506,48 @@ c421f
     ldy #4                                                            ; 4242: a0 04
     lda #$1a                                                          ; 4244: a9 1a
     sta current_fruit_animation                                       ; 4246: 8d 1c 0a
-c4249
+no_player_fruit_collision
     jmp c4314                                                         ; 4249: 4c 14 43
 
-c424c
+check_for_fruit_stopped
     lda current_fruit_animation                                       ; 424c: ad 1c 0a
-    cmp #$0d                                                          ; 424f: c9 0d
-    bne c429d                                                         ; 4251: d0 4a
+    cmp #fruit_stopped_animation - fruit_animation_base               ; 424f: c9 0d
+    bne check_for_fruit_going_sideways                                ; 4251: d0 4a
 ; check for first update in room (branch if so)
     lda update_room_first_update_flag                                 ; 4253: ad 2b 13
-    bne c4249                                                         ; 4256: d0 f1
+    bne no_player_fruit_collision                                     ; 4256: d0 f1
     dec temp_left_offset                                              ; 4258: ce d0 24
     inc temp_right_offset                                             ; 425b: ee d1 24
-    ldx #0                                                            ; 425e: a2 00
-    sty l43b5                                                         ; 4260: 8c b5 43
-    ldy #2                                                            ; 4263: a0 02
+    ldx #objectid_player                                              ; 425e: a2 00
+    sty remember_y2                                                   ; 4260: 8c b5 43
+    ldy #objectid_fruit                                               ; 4263: a0 02
     jsr test_for_collision_between_objects_x_and_y                    ; 4265: 20 e2 28
-    ldy l43b5                                                         ; 4268: ac b5 43
+    ldy remember_y2                                                   ; 4268: ac b5 43
     ora #0                                                            ; 426b: 09 00
-    beq c4249                                                         ; 426d: f0 da
+    beq no_player_fruit_collision                                     ; 426d: f0 da
     lda object_y_low                                                  ; 426f: ad 7c 09
     sec                                                               ; 4272: 38
     sbc fruit_y_low                                                   ; 4273: ed 20 0a
     lda object_y_high                                                 ; 4276: ad 92 09
     sbc fruit_y_high                                                  ; 4279: ed 21 0a
-    bmi c4249                                                         ; 427c: 30 cb
+    bmi no_player_fruit_collision                                     ; 427c: 30 cb
     ldx #1                                                            ; 427e: a2 01
     lda object_room_collision_flags                                   ; 4280: ad d8 38
-    and #4                                                            ; 4283: 29 04
-    bne c4290                                                         ; 4285: d0 09
+    and #object_collided_right_wall                                   ; 4283: 29 04
+    bne found_fruit_wall_collision                                    ; 4285: d0 09
     ldx #$ff                                                          ; 4287: a2 ff
     lda object_room_collision_flags                                   ; 4289: ad d8 38
-    and #1                                                            ; 428c: 29 01
-    beq c4249                                                         ; 428e: f0 b9
-c4290
+    and #object_collided_left_wall                                    ; 428c: 29 01
+    beq no_player_fruit_collision                                     ; 428e: f0 b9
+found_fruit_wall_collision
     stx current_fruit_direction                                       ; 4290: 8e 23 0a
     lda #collision_map_none                                           ; 4293: a9 00
     jsr write_fruit_collision_map                                     ; 4295: 20 d4 43
-    ldy #$10                                                          ; 4298: a0 10
+    ldy #fruit_sideways_animation - fruit_animation_base              ; 4298: a0 10
     sty current_fruit_animation                                       ; 429a: 8c 1c 0a
-c429d
+check_for_fruit_going_sideways
     lda current_fruit_animation                                       ; 429d: ad 1c 0a
-    cmp #$10                                                          ; 42a0: c9 10
+    cmp #fruit_sideways_animation - fruit_animation_base              ; 42a0: c9 10
     bne c42dc                                                         ; 42a2: d0 38
     lda current_fruit_direction                                       ; 42a4: ad 23 0a
     bmi c42af                                                         ; 42a7: 30 06
@@ -1556,7 +1557,7 @@ c429d
 c42af
     dec temp_left_offset                                              ; 42af: ce d0 24
 c42b2
-    lda #2                                                            ; 42b2: a9 02
+    lda #objectid_fruit                                               ; 42b2: a9 02
     jsr get_solid_rock_collision_for_object_a                         ; 42b4: 20 94 28
     bne c430a                                                         ; 42b7: d0 51
     lda #8                                                            ; 42b9: a9 08
@@ -1597,7 +1598,7 @@ c42ed
     beq c4314                                                         ; 4308: f0 0a
 c430a
     lda #0                                                            ; 430a: a9 00
-    sta level_workspace                                               ; 430c: 8d 6f 0a
+    sta fruit_timer                                                   ; 430c: 8d 6f 0a
     ldy #$0d                                                          ; 430f: a0 0d
     sty current_fruit_animation                                       ; 4311: 8c 1c 0a
 c4314
@@ -1635,9 +1636,9 @@ add_to_fruit_x_position
     jsr find_top_and_bottom_of_object                                 ; 4354: 20 d2 24
 ; move fruit to next room
     lda current_fruit_animation                                       ; 4357: ad 1c 0a
-    cmp #fruit_animation6 - fruit_animation_base                      ; 435a: c9 1a
+    cmp #fruit_fall_straight_down_animation - fruit_animation_base    ; 435a: c9 1a
     beq c439b                                                         ; 435c: f0 3d
-    cmp #fruit_animation4 - fruit_animation_base                      ; 435e: c9 10
+    cmp #fruit_sideways_animation - fruit_animation_base              ; 435e: c9 10
     bne return4                                                       ; 4360: d0 52
     lda current_fruit_direction                                       ; 4362: ad 23 0a
     bmi c4383                                                         ; 4365: 30 1c
@@ -1682,7 +1683,7 @@ c43af
 return4
     rts                                                               ; 43b4: 60
 
-l43b5
+remember_y2
     !byte 0                                                           ; 43b5: 00
 
 set_fruit_object_position
@@ -1703,7 +1704,7 @@ write_fruit_collision_map
     ora #0                                                            ; 43d6: 09 00
     beq c43e1                                                         ; 43d8: f0 07
     lda current_fruit_animation                                       ; 43da: ad 1c 0a
-    cmp #fruit_animation3 - fruit_animation_base                      ; 43dd: c9 0d
+    cmp #fruit_stopped_animation - fruit_animation_base               ; 43dd: c9 0d
     bne return5                                                       ; 43df: d0 3b
 c43e1
     lda desired_room_index                                            ; 43e1: a5 30
@@ -1895,20 +1896,6 @@ sprite_data
 pydis_end
 
 ; Automatically generated labels:
-;     c4159
-;     c415f
-;     c4167
-;     c4188
-;     c419a
-;     c41ac
-;     c41af
-;     c41be
-;     c41e8
-;     c421f
-;     c4249
-;     c424c
-;     c4290
-;     c429d
 ;     c42af
 ;     c42b2
 ;     c42dc
@@ -1924,7 +1911,6 @@ pydis_end
 ;     l0079
 ;     l007a
 ;     l0a75
-;     l43b5
 !if (<envelope1) != $65 {
     !error "Assertion failed: <envelope1 == $65"
 }
@@ -2006,17 +1992,23 @@ pydis_end
 !if (exit_room_top) != $08 {
     !error "Assertion failed: exit_room_top == $08"
 }
-!if (fruit_animation3 - fruit_animation_base) != $0d {
-    !error "Assertion failed: fruit_animation3 - fruit_animation_base == $0d"
+!if (fruit_fall_sideways_animation1 - fruit_animation_base) != $04 {
+    !error "Assertion failed: fruit_fall_sideways_animation1 - fruit_animation_base == $04"
 }
-!if (fruit_animation4 - fruit_animation_base) != $10 {
-    !error "Assertion failed: fruit_animation4 - fruit_animation_base == $10"
+!if (fruit_fall_sideways_animation2 - fruit_animation_base) != $13 {
+    !error "Assertion failed: fruit_fall_sideways_animation2 - fruit_animation_base == $13"
 }
-!if (fruit_animation6 - fruit_animation_base) != $1a {
-    !error "Assertion failed: fruit_animation6 - fruit_animation_base == $1a"
+!if (fruit_fall_straight_down_animation - fruit_animation_base) != $1a {
+    !error "Assertion failed: fruit_fall_straight_down_animation - fruit_animation_base == $1a"
 }
 !if (fruit_initial_idle_animation - fruit_animation_base) != $01 {
     !error "Assertion failed: fruit_initial_idle_animation - fruit_animation_base == $01"
+}
+!if (fruit_sideways_animation - fruit_animation_base) != $10 {
+    !error "Assertion failed: fruit_sideways_animation - fruit_animation_base == $10"
+}
+!if (fruit_stopped_animation - fruit_animation_base) != $0d {
+    !error "Assertion failed: fruit_stopped_animation - fruit_animation_base == $0d"
 }
 !if (game_area_height_cells) != $18 {
     !error "Assertion failed: game_area_height_cells == $18"
@@ -2041,6 +2033,12 @@ pydis_end
 }
 !if (monkey_climb_idle_animation - monkey_base_animation) != $45 {
     !error "Assertion failed: monkey_climb_idle_animation - monkey_base_animation == $45"
+}
+!if (object_collided_left_wall) != $01 {
+    !error "Assertion failed: object_collided_left_wall == $01"
+}
+!if (object_collided_right_wall) != $04 {
+    !error "Assertion failed: object_collided_right_wall == $04"
 }
 !if (object_direction + objectid_rabbit) != $09c1 {
     !error "Assertion failed: object_direction + objectid_rabbit == $09c1"
@@ -2095,9 +2093,6 @@ pydis_end
 }
 !if (rabbit_sit_sprites - rabbit_sprites_base) != $06 {
     !error "Assertion failed: rabbit_sit_sprites - rabbit_sprites_base == $06"
-}
-!if (rabbit_walk_end_sprites - rabbit_sprites_base) != $04 {
-    !error "Assertion failed: rabbit_walk_end_sprites - rabbit_sprites_base == $04"
 }
 !if (rabbit_walk_sprites - rabbit_sprites_base) != $01 {
     !error "Assertion failed: rabbit_walk_sprites - rabbit_sprites_base == $01"
