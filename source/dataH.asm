@@ -1370,7 +1370,7 @@ not_room_3
     cmp fruit_room                                                    ; 413e: cd 22 0a
     bne c415f                                                         ; 4141: d0 1c
     jsr set_fruit_object_position                                     ; 4143: 20 b6 43
-loop_c4146
+fast_forward_fruit_animation_loop
     lda desired_room_index                                            ; 4146: a5 30
     cmp fruit_room                                                    ; 4148: cd 22 0a
     bne c415f                                                         ; 414b: d0 12
@@ -1381,7 +1381,7 @@ loop_c4146
     dec level_workspace                                               ; 4156: ce 6f 0a
 c4159
     jsr update_fruit_animation                                        ; 4159: 20 0e 42
-    jmp loop_c4146                                                    ; 415c: 4c 46 41
+    jmp fast_forward_fruit_animation_loop                             ; 415c: 4c 46 41
 
 c415f
     lda #collision_map_solid_rock                                     ; 415f: a9 03
@@ -1391,14 +1391,14 @@ c415f
 c4167
     lda desired_room_index                                            ; 4167: a5 30
     cmp fruit_room                                                    ; 4169: cd 22 0a
-    beq c4179                                                         ; 416c: f0 0b
+    beq reset_sound_priorities                                        ; 416c: f0 0b
     lda level_workspace                                               ; 416e: ad 6f 0a
-    bmi c4176                                                         ; 4171: 30 03
+    bmi return3_local                                                 ; 4171: 30 03
     inc level_workspace                                               ; 4173: ee 6f 0a
-c4176
+return3_local
     jmp return3                                                       ; 4176: 4c 0d 42
 
-c4179
+reset_sound_priorities
     lda sound_priority_per_channel_table                              ; 4179: ad 6f 39
     cmp #$41 ; 'A'                                                    ; 417c: c9 41
     bcs c4188                                                         ; 417e: b0 08
@@ -1428,41 +1428,42 @@ c41ac
 c41af
     lda #1                                                            ; 41af: a9 01
     sta temp_bottom_offset                                            ; 41b1: 8d 51 25
-    lda #2                                                            ; 41b4: a9 02
+    lda #objectid_fruit                                               ; 41b4: a9 02
     jsr get_solid_rock_collision_for_object_a                         ; 41b6: 20 94 28
-    bne c41e5                                                         ; 41b9: d0 2a
+    bne play_landing_sound_local                                      ; 41b9: d0 2a
     jmp return3                                                       ; 41bb: 4c 0d 42
 
 c41be
     lda fruit_animation_step                                          ; 41be: ad 1d 0a
-    cmp #4                                                            ; 41c1: c9 04
-    beq c41d9                                                         ; 41c3: f0 14
+    cmp #rabbit_walk_end_sprites - rabbit_sprites_base                ; 41c1: c9 04
+    beq end_of_walk_sound                                             ; 41c3: f0 14
     lda current_fruit_animation                                       ; 41c5: ad 1c 0a
-    cmp #$10                                                          ; 41c8: c9 10
+    cmp #fruit_animation4 - fruit_animation_base                      ; 41c8: c9 10
     bne c41e8                                                         ; 41ca: d0 1c
     dec temp_left_offset                                              ; 41cc: ce d0 24
     inc temp_right_offset                                             ; 41cf: ee d1 24
-    lda #2                                                            ; 41d2: a9 02
+    lda #objectid_fruit                                               ; 41d2: a9 02
     jsr get_solid_rock_collision_for_object_a                         ; 41d4: 20 94 28
-    bne c41e5                                                         ; 41d7: d0 0c
-c41d9
+    bne play_landing_sound_local                                      ; 41d7: d0 0c
+end_of_walk_sound
     lda #$40 ; '@'                                                    ; 41d9: a9 40
     ldx #<sound1                                                      ; 41db: a2 73
     ldy #>sound1                                                      ; 41dd: a0 44
     jsr play_sound_yx                                                 ; 41df: 20 f6 38
     jmp return3                                                       ; 41e2: 4c 0d 42
 
-c41e5
+play_landing_sound_local
     jmp play_landing_sound                                            ; 41e5: 4c a9 23
 
 c41e8
-    cmp #$1a                                                          ; 41e8: c9 1a
-    bne c4208                                                         ; 41ea: d0 1c
+    cmp #fruit_animation6 - fruit_animation_base                      ; 41e8: c9 1a
+    bne write_solid_fruit_collision                                   ; 41ea: d0 1c
     lda #2                                                            ; 41ec: a9 02
     sta temp_bottom_offset                                            ; 41ee: 8d 51 25
-    lda #2                                                            ; 41f1: a9 02
+    lda #objectid_fruit                                               ; 41f1: a9 02
     jsr get_solid_rock_collision_for_object_a                         ; 41f3: 20 94 28
     beq return3                                                       ; 41f6: f0 15
+; fruit collision sound
     lda #0                                                            ; 41f8: a9 00
     ldx #<sound5                                                      ; 41fa: a2 91
     ldy #>sound5                                                      ; 41fc: a0 44
@@ -1471,7 +1472,7 @@ c41e8
     ldy #>sound6                                                      ; 4203: a0 44
     jmp play_sound_yx                                                 ; 4205: 4c f6 38
 
-c4208
+write_solid_fruit_collision
     lda #collision_map_solid_rock                                     ; 4208: a9 03
     jsr write_fruit_collision_map                                     ; 420a: 20 d4 43
 return3
@@ -1897,17 +1898,12 @@ pydis_end
 ;     c4159
 ;     c415f
 ;     c4167
-;     c4176
-;     c4179
 ;     c4188
 ;     c419a
 ;     c41ac
 ;     c41af
 ;     c41be
-;     c41d9
-;     c41e5
 ;     c41e8
-;     c4208
 ;     c421f
 ;     c4249
 ;     c424c
@@ -1929,7 +1925,6 @@ pydis_end
 ;     l007a
 ;     l0a75
 ;     l43b5
-;     loop_c4146
 !if (<envelope1) != $65 {
     !error "Assertion failed: <envelope1 == $65"
 }
