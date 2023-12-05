@@ -1007,7 +1007,7 @@ update_rabbit_puzzle
 ; check for level change (branch if not)
     lda current_level                                                 ; 3ed9: a5 31
     cmp level_before_latest_level_and_room_initialisation             ; 3edb: c5 51
-    beq new_room_only                                                 ; 3edd: f0 1a
+    beq new_room_only1                                                ; 3edd: f0 1a
 ; new level
     lda #rabbit_sit_sprites  - rabbit_sprites_base                    ; 3edf: a9 06
     sta rabbit_sprite_animation                                       ; 3ee1: 8d 70 0a
@@ -1019,7 +1019,7 @@ update_rabbit_puzzle
     lda #1                                                            ; 3ef1: a9 01
     sta rabbit_direction                                              ; 3ef3: 8d 73 0a
     sta rabbit_speed                                                  ; 3ef6: 8d 74 0a
-new_room_only
+new_room_only1
     ldx #<envelope2                                                   ; 3ef9: a2 99
     ldy #>envelope2                                                   ; 3efb: a0 44
     jsr define_envelope                                               ; 3efd: 20 5e 39
@@ -1029,7 +1029,7 @@ new_room_only
     ldx #$14                                                          ; 3f06: a2 14
     ldy #$0d                                                          ; 3f08: a0 0d
     lda #7                                                            ; 3f0a: a9 07
-    jsr sub_c441d                                                     ; 3f0c: 20 1d 44
+    jsr draw_plant_a_at_cell_xy_and_add_to_collision_map              ; 3f0c: 20 1d 44
     lda #spriteid_cache2                                              ; 3f0f: a9 cd
     sta l38af                                                         ; 3f11: 8d af 38
     lda #$66 ; 'f'                                                    ; 3f14: a9 66
@@ -1289,35 +1289,58 @@ room_3_game_update_loop
     ldy current_level                                                 ; 40b4: a4 31
     jmp initialise_level_and_room                                     ; 40b6: 4c 40 11
 
-l40b9
-    !byte   0,   0,   0, $80,   8,   2,   8,   2,   4,   4,   4,   4  ; 40b9: 00 00 00...
-    !byte $80,   0,   0, $80,   8,   0, $80,   8,   2,   8,   2,   8  ; 40c5: 80 00 00...
-    !byte   4, $80,   0,   8, $80                                     ; 40d1: 04 80 00...
+; (x,y) fruit offsets for animation
+fruit_animation_base
+    !byte 0                                                           ; 40b9: 00
+fruit_initial_idle_animation
+    !byte 0, 0                                                        ; 40ba: 00 00
+    !byte $80                                                         ; 40bc: 80
+fruit_animation2
+    !byte 8, 2                                                        ; 40bd: 08 02
+    !byte 8, 2                                                        ; 40bf: 08 02
+    !byte 4, 4                                                        ; 40c1: 04 04
+    !byte 4, 4                                                        ; 40c3: 04 04
+    !byte $80                                                         ; 40c5: 80
+fruit_animation3
+    !byte 0, 0                                                        ; 40c6: 00 00
+    !byte $80                                                         ; 40c8: 80
+fruit_animation4
+    !byte 8, 0                                                        ; 40c9: 08 00
+    !byte $80                                                         ; 40cb: 80
+fruit_animation5
+    !byte 8, 2                                                        ; 40cc: 08 02
+    !byte 8, 2                                                        ; 40ce: 08 02
+    !byte 8, 4                                                        ; 40d0: 08 04
+    !byte $80                                                         ; 40d2: 80
+fruit_animation6
+    !byte 0, 8                                                        ; 40d3: 00 08
+    !byte $80                                                         ; 40d5: 80
 
 ; check for first update in room (branch if so)
 update_fruit_puzzle
     lda update_room_first_update_flag                                 ; 40d6: ad 2b 13
-    bne c40de                                                         ; 40d9: d0 03
+    bne update_fruit_first_update                                     ; 40d9: d0 03
     jmp c4167                                                         ; 40db: 4c 67 41
 
 ; check for level change (branch if not)
-c40de
+update_fruit_first_update
     lda current_level                                                 ; 40de: a5 31
     cmp level_before_latest_level_and_room_initialisation             ; 40e0: c5 51
-    beq c4126                                                         ; 40e2: f0 42
+    beq new_room_only2                                                ; 40e2: f0 42
+; new level. initialise fruit
     ldx #<envelope3                                                   ; 40e4: a2 7b
     ldy #>envelope3                                                   ; 40e6: a0 44
     jsr define_envelope                                               ; 40e8: 20 5e 39
     lda #0                                                            ; 40eb: a9 00
     sta level_workspace                                               ; 40ed: 8d 6f 0a
     lda current_fruit_animation                                       ; 40f0: ad 1c 0a
-    cmp #$0d                                                          ; 40f3: c9 0d
-    beq c4126                                                         ; 40f5: f0 2f
-    cmp #1                                                            ; 40f7: c9 01
-    beq c4126                                                         ; 40f9: f0 2b
+    cmp #fruit_animation3 - fruit_animation_base                      ; 40f3: c9 0d
+    beq new_room_only2                                                ; 40f5: f0 2f
+    cmp #fruit_initial_idle_animation - fruit_animation_base          ; 40f7: c9 01
+    beq new_room_only2                                                ; 40f9: f0 2b
     dec level_workspace                                               ; 40fb: ce 6f 0a
     ora #0                                                            ; 40fe: 09 00
-    bne c4126                                                         ; 4100: d0 24
+    bne new_room_only2                                                ; 4100: d0 24
     inc level_workspace                                               ; 4102: ee 6f 0a
     lda #3                                                            ; 4105: a9 03
     sta fruit_room                                                    ; 4107: 8d 22 0a
@@ -1329,10 +1352,10 @@ c40de
     sta fruit_y_low                                                   ; 4116: 8d 20 0a
     lda #0                                                            ; 4119: a9 00
     sta fruit_y_high                                                  ; 411b: 8d 21 0a
-    lda #1                                                            ; 411e: a9 01
+    lda #fruit_initial_idle_animation - fruit_animation_base          ; 411e: a9 01
     sta current_fruit_animation                                       ; 4120: 8d 1c 0a
     sta next_fruit_animation                                          ; 4123: 8d 1d 0a
-c4126
+new_room_only2
     lda desired_room_index                                            ; 4126: a5 30
     beq c415f                                                         ; 4128: f0 35
     cmp #3                                                            ; 412a: c9 03
@@ -1340,7 +1363,7 @@ c4126
     ldx #$14                                                          ; 412e: a2 14
     ldy #$0d                                                          ; 4130: a0 0d
     lda #6                                                            ; 4132: a9 06
-    jsr sub_c441d                                                     ; 4134: 20 1d 44
+    jsr draw_plant_a_at_cell_xy_and_add_to_collision_map              ; 4134: 20 1d 44
 c4137
     lda #spriteid_cache1                                              ; 4137: a9 cb
     sta l38ae                                                         ; 4139: 8d ae 38
@@ -1460,7 +1483,7 @@ sub_c420e
     clc                                                               ; 4211: 18
     adc #2                                                            ; 4212: 69 02
     tay                                                               ; 4214: a8
-    lda l40b9,y                                                       ; 4215: b9 b9 40
+    lda fruit_animation_base,y                                        ; 4215: b9 b9 40
     cmp #$80                                                          ; 4218: c9 80
     bne c421f                                                         ; 421a: d0 03
     ldy current_fruit_animation                                       ; 421c: ac 1c 0a
@@ -1579,7 +1602,7 @@ c430a
     sty current_fruit_animation                                       ; 4311: 8c 1c 0a
 c4314
     sty next_fruit_animation                                          ; 4314: 8c 1d 0a
-    lda l40b9,y                                                       ; 4317: b9 b9 40
+    lda fruit_animation_base,y                                        ; 4317: b9 b9 40
     ldx current_fruit_direction                                       ; 431a: ae 23 0a
     bpl c4324                                                         ; 431d: 10 05
     eor #$ff                                                          ; 431f: 49 ff
@@ -1598,7 +1621,7 @@ c432b
     adc fruit_x_high                                                  ; 4333: 6d 1f 0a
     sta fruit_x_high                                                  ; 4336: 8d 1f 0a
     iny                                                               ; 4339: c8
-    lda l40b9,y                                                       ; 433a: b9 b9 40
+    lda fruit_animation_base,y                                        ; 433a: b9 b9 40
     clc                                                               ; 433d: 18
     adc fruit_y_low                                                   ; 433e: 6d 20 0a
     sta fruit_y_low                                                   ; 4341: 8d 20 0a
@@ -1715,30 +1738,30 @@ c43e1
 return5
     rts                                                               ; 441c: 60
 
-sub_c441d
+draw_plant_a_at_cell_xy_and_add_to_collision_map
     sec                                                               ; 441d: 38
     sbc #2                                                            ; 441e: e9 02
-    sta l4464                                                         ; 4420: 8d 64 44
+    sta plant_height_loop_counter                                     ; 4420: 8d 64 44
     dey                                                               ; 4423: 88
     lda #spriteid_stalk_bottom                                        ; 4424: a9 d3
     jsr draw_sprite_a_at_cell_xy                                      ; 4426: 20 4c 1f
-    lda #2                                                            ; 4429: a9 02
+    lda #collision_map_rope                                           ; 4429: a9 02
     jsr write_a_single_value_to_cell_in_collision_map                 ; 442b: 20 bb 1e
-loop_c442e
+draw_plant_loop
     dey                                                               ; 442e: 88
     lda #spriteid_stalk_middle                                        ; 442f: a9 d2
     jsr draw_sprite_a_at_cell_xy                                      ; 4431: 20 4c 1f
-    lda #2                                                            ; 4434: a9 02
+    lda #collision_map_rope                                           ; 4434: a9 02
     jsr write_a_single_value_to_cell_in_collision_map                 ; 4436: 20 bb 1e
-    dec l4464                                                         ; 4439: ce 64 44
-    bne loop_c442e                                                    ; 443c: d0 f0
+    dec plant_height_loop_counter                                     ; 4439: ce 64 44
+    bne draw_plant_loop                                               ; 443c: d0 f0
     dey                                                               ; 443e: 88
     lda #spriteid_stalk_top                                           ; 443f: a9 d1
     jsr draw_sprite_a_at_cell_xy                                      ; 4441: 20 4c 1f
-    lda #2                                                            ; 4444: a9 02
+    lda #collision_map_rope                                           ; 4444: a9 02
     jsr write_a_single_value_to_cell_in_collision_map                 ; 4446: 20 bb 1e
     dey                                                               ; 4449: 88
-    lda #3                                                            ; 444a: a9 03
+    lda #collision_map_solid_rock                                     ; 444a: a9 03
     jsr write_a_single_value_to_cell_in_collision_map                 ; 444c: 20 bb 1e
     iny                                                               ; 444f: c8
     iny                                                               ; 4450: c8
@@ -1750,10 +1773,10 @@ loop_c442e
     sta temp_sprite_x_offset                                          ; 445a: 85 3a
     dey                                                               ; 445c: 88
     sta sprite_reflect_flag                                           ; 445d: 85 1d
-    lda #$d6                                                          ; 445f: a9 d6
+    lda #spriteid_leaf                                                ; 445f: a9 d6
     jmp draw_sprite_a_at_cell_xy                                      ; 4461: 4c 4c 1f
 
-l4464
+plant_height_loop_counter
     !byte 0                                                           ; 4464: 00
 envelope1
     !byte 5                                                           ; 4465: 05                      ; envelope number
@@ -1870,8 +1893,6 @@ sprite_data
 pydis_end
 
 ; Automatically generated labels:
-;     c40de
-;     c4126
 ;     c4137
 ;     c4159
 ;     c415f
@@ -1911,14 +1932,10 @@ pydis_end
 ;     l0a75
 ;     l38ae
 ;     l38af
-;     l40b9
 ;     l43b5
-;     l4464
 ;     loop_c4146
-;     loop_c442e
 ;     sub_c420e
 ;     sub_c43d4
-;     sub_c441d
 !if (<envelope1) != $65 {
     !error "Assertion failed: <envelope1 == $65"
 }
@@ -1999,6 +2016,12 @@ pydis_end
 }
 !if (exit_room_top) != $08 {
     !error "Assertion failed: exit_room_top == $08"
+}
+!if (fruit_animation3 - fruit_animation_base) != $0d {
+    !error "Assertion failed: fruit_animation3 - fruit_animation_base == $0d"
+}
+!if (fruit_initial_idle_animation - fruit_animation_base) != $01 {
+    !error "Assertion failed: fruit_initial_idle_animation - fruit_animation_base == $01"
 }
 !if (level_specific_initialisation) != $3af3 {
     !error "Assertion failed: level_specific_initialisation == $3af3"
