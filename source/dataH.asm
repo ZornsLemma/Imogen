@@ -537,7 +537,7 @@ c3c35
 
 c3c38
     lda #0                                                            ; 3c38: a9 00
-    sta l3d4a                                                         ; 3c3a: 8d 4a 3d
+    sta player_is_on_rope_flag                                        ; 3c3a: 8d 4a 3d
     lda desired_room_index                                            ; 3c3d: a5 30
     cmp #0                                                            ; 3c3f: c9 00
     bne c3c64                                                         ; 3c41: d0 21
@@ -550,41 +550,41 @@ c3c38
     beq c3c64                                                         ; 3c50: f0 12
     lda current_player_animation                                      ; 3c52: ad df 09
     cmp #monkey_climb_animation - monkey_base_animation               ; 3c55: c9 51
-    beq c3c61                                                         ; 3c57: f0 08
+    beq player_is_on_rope                                             ; 3c57: f0 08
     cmp #monkey_climb_idle_animation - monkey_base_animation          ; 3c59: c9 45
-    beq c3c61                                                         ; 3c5b: f0 04
+    beq player_is_on_rope                                             ; 3c5b: f0 04
     cmp #monkey_climb_down_animation - monkey_base_animation          ; 3c5d: c9 49
     bne c3c64                                                         ; 3c5f: d0 03
-c3c61
-    dec l3d4a                                                         ; 3c61: ce 4a 3d
+player_is_on_rope
+    dec player_is_on_rope_flag                                        ; 3c61: ce 4a 3d
 c3c64
     lda rail_rope_current_dir                                         ; 3c64: ad 1b 0a
-    bne c3c8e                                                         ; 3c67: d0 25
-    lda l3d4a                                                         ; 3c69: ad 4a 3d
-    beq c3c8b                                                         ; 3c6c: f0 1d
+    bne update_rail_x_position                                        ; 3c67: d0 25
+    lda player_is_on_rope_flag                                        ; 3c69: ad 4a 3d
+    beq set_rail_rope_object_position_and_collision_map_local         ; 3c6c: f0 1d
     lda rail_rope_x_cell                                              ; 3c6e: ad 1a 0a
     cmp #$0c                                                          ; 3c71: c9 0c
     bne c3c80                                                         ; 3c73: d0 0b
     lda object_direction                                              ; 3c75: ad be 09
-    bmi c3c8b                                                         ; 3c78: 30 11
+    bmi set_rail_rope_object_position_and_collision_map_local         ; 3c78: 30 11
     inc rail_rope_current_dir                                         ; 3c7a: ee 1b 0a
-    jmp c3c8e                                                         ; 3c7d: 4c 8e 3c
+    jmp update_rail_x_position                                        ; 3c7d: 4c 8e 3c
 
 c3c80
     lda object_direction                                              ; 3c80: ad be 09
-    bpl c3c8b                                                         ; 3c83: 10 06
+    bpl set_rail_rope_object_position_and_collision_map_local         ; 3c83: 10 06
     dec rail_rope_current_dir                                         ; 3c85: ce 1b 0a
-    jmp c3c8e                                                         ; 3c88: 4c 8e 3c
+    jmp update_rail_x_position                                        ; 3c88: 4c 8e 3c
 
-c3c8b
+set_rail_rope_object_position_and_collision_map_local
     jmp set_rail_rope_object_position_and_collision_map               ; 3c8b: 4c 16 3d
 
-c3c8e
+update_rail_x_position
     lda rail_rope_x_cell                                              ; 3c8e: ad 1a 0a
     clc                                                               ; 3c91: 18
     adc rail_rope_current_dir                                         ; 3c92: 6d 1b 0a
     sta rail_rope_x_cell                                              ; 3c95: 8d 1a 0a
-    lda l3d4a                                                         ; 3c98: ad 4a 3d
+    lda player_is_on_rope_flag                                        ; 3c98: ad 4a 3d
     beq c3cce                                                         ; 3c9b: f0 31
     ldx #0                                                            ; 3c9d: a2 00
     lda rail_rope_current_dir                                         ; 3c9f: ad 1b 0a
@@ -639,7 +639,7 @@ c3ceb
     sta sound_priority_per_channel_table + 1                          ; 3d02: 8d 70 39
 c3d05
     jsr play_landing_sound                                            ; 3d05: 20 a9 23
-    lda l3d4a                                                         ; 3d08: ad 4a 3d
+    lda player_is_on_rope_flag                                        ; 3d08: ad 4a 3d
     beq set_rail_rope_object_position_and_collision_map               ; 3d0b: f0 09
     lda #6                                                            ; 3d0d: a9 06
     lda object_direction                                              ; 3d0f: ad be 09
@@ -674,7 +674,7 @@ set_rail_rope_object_position_and_collision_map
 return1
     rts                                                               ; 3d49: 60
 
-l3d4a
+player_is_on_rope_flag
     !byte 0                                                           ; 3d4a: 00
 ; *************************************************************************************
 ; 
@@ -1846,11 +1846,8 @@ pydis_end
 ;     c3bc9
 ;     c3c35
 ;     c3c38
-;     c3c61
 ;     c3c64
 ;     c3c80
-;     c3c8b
-;     c3c8e
 ;     c3caa
 ;     c3cce
 ;     c3ceb
@@ -1904,7 +1901,6 @@ pydis_end
 ;     l0a75
 ;     l38ae
 ;     l38af
-;     l3d4a
 ;     l4009
 ;     l40b9
 ;     l43b5
