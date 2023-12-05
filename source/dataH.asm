@@ -256,8 +256,6 @@ monkey_climb_down_animation                         = $3148
 monkey_climb_animation                              = $3150
 inhibit_monkey_climb_flag                           = $31d7
 object_erase_type                                   = $38ac
-l38ae                                               = $38ae
-l38af                                               = $38af
 object_z_order                                      = $38c2
 object_room_collision_flags                         = $38d8
 play_sound_yx                                       = $38f6
@@ -1031,7 +1029,7 @@ new_room_only1
     lda #7                                                            ; 3f0a: a9 07
     jsr draw_plant_a_at_cell_xy_and_add_to_collision_map              ; 3f0c: 20 1d 44
     lda #spriteid_cache2                                              ; 3f0f: a9 cd
-    sta l38af                                                         ; 3f11: 8d af 38
+    sta object_erase_type + objectid_rabbit                           ; 3f11: 8d af 38
     lda #$66 ; 'f'                                                    ; 3f14: a9 66
     sta object_y_low + objectid_rabbit                                ; 3f16: 8d 7f 09
 update_rabbit_object_local
@@ -1359,14 +1357,15 @@ new_room_only2
     lda desired_room_index                                            ; 4126: a5 30
     beq c415f                                                         ; 4128: f0 35
     cmp #3                                                            ; 412a: c9 03
-    bne c4137                                                         ; 412c: d0 09
+    bne not_room_3                                                    ; 412c: d0 09
+; draw room 3 plant
     ldx #$14                                                          ; 412e: a2 14
     ldy #$0d                                                          ; 4130: a0 0d
     lda #6                                                            ; 4132: a9 06
     jsr draw_plant_a_at_cell_xy_and_add_to_collision_map              ; 4134: 20 1d 44
-c4137
+not_room_3
     lda #spriteid_cache1                                              ; 4137: a9 cb
-    sta l38ae                                                         ; 4139: 8d ae 38
+    sta object_erase_type + objectid_fruit                            ; 4139: 8d ae 38
     lda desired_room_index                                            ; 413c: a5 30
     cmp fruit_room                                                    ; 413e: cd 22 0a
     bne c415f                                                         ; 4141: d0 1c
@@ -1386,7 +1385,7 @@ c4159
 
 c415f
     lda #3                                                            ; 415f: a9 03
-    jsr sub_c43d4                                                     ; 4161: 20 d4 43
+    jsr write_fruit_collision_map                                     ; 4161: 20 d4 43
     jmp return3                                                       ; 4164: 4c 0d 42
 
 c4167
@@ -1474,7 +1473,7 @@ c41e8
 
 c4208
     lda #3                                                            ; 4208: a9 03
-    jsr sub_c43d4                                                     ; 420a: 20 d4 43
+    jsr write_fruit_collision_map                                     ; 420a: 20 d4 43
 return3
     rts                                                               ; 420d: 60
 
@@ -1541,7 +1540,7 @@ c424c
 c4290
     stx current_fruit_direction                                       ; 4290: 8e 23 0a
     lda #0                                                            ; 4293: a9 00
-    jsr sub_c43d4                                                     ; 4295: 20 d4 43
+    jsr write_fruit_collision_map                                     ; 4295: 20 d4 43
     ldy #$10                                                          ; 4298: a0 10
     sty current_fruit_animation                                       ; 429a: 8c 1c 0a
 c429d
@@ -1696,12 +1695,12 @@ set_fruit_object_position
     sta object_spriteid + objectid_fruit                              ; 43d0: 8d aa 09
     rts                                                               ; 43d3: 60
 
-sub_c43d4
+write_fruit_collision_map
     sta value_to_write_to_collision_map                               ; 43d4: 85 3e
     ora #0                                                            ; 43d6: 09 00
     beq c43e1                                                         ; 43d8: f0 07
     lda current_fruit_animation                                       ; 43da: ad 1c 0a
-    cmp #$0d                                                          ; 43dd: c9 0d
+    cmp #fruit_animation3 - fruit_animation_base                      ; 43dd: c9 0d
     bne return5                                                       ; 43df: d0 3b
 c43e1
     lda desired_room_index                                            ; 43e1: a5 30
@@ -1893,7 +1892,6 @@ sprite_data
 pydis_end
 
 ; Automatically generated labels:
-;     c4137
 ;     c4159
 ;     c415f
 ;     c4167
@@ -1930,12 +1928,9 @@ pydis_end
 ;     l0079
 ;     l007a
 ;     l0a75
-;     l38ae
-;     l38af
 ;     l43b5
 ;     loop_c4146
 ;     sub_c420e
-;     sub_c43d4
 !if (<envelope1) != $65 {
     !error "Assertion failed: <envelope1 == $65"
 }
