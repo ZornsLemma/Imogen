@@ -32,13 +32,13 @@ sprite_dict = {
 # Merge with common sprite dictionary
 sprite_dict = {**common_sprite_dict, **sprite_dict}
 
-# Room 0
-constant(4, "objectid_small_stone_room_0")
-constant(5, "objectid_big_stone_room_0")
-
 # Multiple rooms
 constant(2, "objectid_small_stone_object")
 constant(3, "objectid_seesaw")
+
+# Room 0
+constant(4, "objectid_sword_room_0")
+constant(5, "objectid_big_stone_room_0")
 
 # Room 2
 constant(5, "objectid_boulder_room_2")
@@ -221,6 +221,7 @@ byte(0x41a0, 2)
 comment(0x41a4, "check for first update in room (branch if not)")
 label(0x41a4, "update_sword_puzzle")
 expr(0x41af, sprite_dict)
+expr(0x41b4, "collectable_being_used_spriteids+2")
 comment(0x41b6, "check for level change (branch if not)")
 ldx_ldy_jsr_define_envelope(0x41d4, "envelope3")
 expr(0x41d8, sprite_dict)
@@ -352,11 +353,7 @@ for i in range(0x3f6c, 0x3fa4, 2):
     decimal(i,2)
 
 # TODO: replace "+ n" with "+ objectid_*" once objects have been named
-expr(0x41b4, "collectable_being_used_spriteids+2")
-expr(0x4200, "object_erase_type + 4")
-expr(0x41da, "object_erase_type + 5")
-label(0x38c6, "object_z_order + 4")
-label(0x38c7, "object_z_order + 5")
+expr(0x3cab, "object_z_order + 4")
 expr(0x3dc7, "object_spriteid + 4")
 expr(0x3e0c, "object_direction + 3")
 expr(0x3e98, "object_x_low + 4")
@@ -373,6 +370,10 @@ expr(0x40a2, "object_spriteid + 2")
 expr(0x40ae, "object_x_low + 2")
 expr(0x40b5, "object_x_high + 2")
 expr(0x40bf, "object_y_low + 2")
+expr(0x41da, "object_erase_type + 5")
+expr(0x41df, "object_z_order + 5")
+expr(0x4200, "object_erase_type + 4")
+expr(0x4205, "object_z_order + 4")
 expr(0x4278, "object_direction + 3")
 expr(0x4286, "object_direction + 3")
 expr(0x42b3, "object_spriteid + 4")

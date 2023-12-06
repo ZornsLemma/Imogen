@@ -36,7 +36,7 @@ objectid_rope_end_room_2              = 8
 objectid_seesaw                       = 3
 objectid_short_rope_end_room_2        = 6
 objectid_small_stone_object           = 2
-objectid_small_stone_room_0           = 4
+objectid_sword_room_0                 = 4
 opcode_jmp                            = 76
 sprite_op_flags_copy_screen           = 1
 sprite_op_flags_erase_to_bg_colour    = 2
@@ -2358,6 +2358,12 @@ pydis_end
 }
 !if (object_y_low_old + objectid_small_stone_object) != $0989 {
     !error "Assertion failed: object_y_low_old + objectid_small_stone_object == $0989"
+}
+!if (object_z_order + 4) != $38c6 {
+    !error "Assertion failed: object_z_order + 4 == $38c6"
+}
+!if (object_z_order + 5) != $38c7 {
+    !error "Assertion failed: object_z_order + 5 == $38c7"
 }
 !if (object_z_order + objectid_big_stone_room_3) != $38c6 {
     !error "Assertion failed: object_z_order + objectid_big_stone_room_3 == $38c6"
