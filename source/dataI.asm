@@ -2260,6 +2260,9 @@ pydis_end
 !if (object_erase_type + objectid_big_stone_room_3) != $38b0 {
     !error "Assertion failed: object_erase_type + objectid_big_stone_room_3 == $38b0"
 }
+!if (object_erase_type + objectid_rope_end_room_2) != $38b4 {
+    !error "Assertion failed: object_erase_type + objectid_rope_end_room_2 == $38b4"
+}
 !if (object_erase_type + objectid_seesaw) != $38af {
     !error "Assertion failed: object_erase_type + objectid_seesaw == $38af"
 }
