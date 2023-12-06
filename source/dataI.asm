@@ -144,10 +144,10 @@ spriteid_sparkles5                     = 38
 spriteid_stone_menu_item               = 202
 spriteid_sword                         = 208
 spriteid_sword_menu_item               = 209
-spriteid_sword_spin1                   = 210
-spriteid_sword_spin2                   = 211
-spriteid_sword_spin3                   = 212
-spriteid_sword_spin4                   = 213
+spriteid_sword_spinA                   = 210
+spriteid_sword_spinB                   = 211
+spriteid_sword_spinC                   = 212
+spriteid_sword_spinD                   = 213
 spriteid_wizard1                       = 48
 spriteid_wizard2                       = 49
 spriteid_wizard3                       = 50
@@ -1336,7 +1336,7 @@ room_0_game_update_loop
     ldy current_level                                                 ; 415f: a4 31
     jmp initialise_level_and_room                                     ; 4161: 4c 40 11
 
-l4164
+big_stone_animation
     !byte 0, 0                                                        ; 4164: 00 00
     !byte $f8,   0                                                    ; 4166: f8 00
     !byte $f1,   0                                                    ; 4168: f1 00
@@ -1345,7 +1345,7 @@ l4164
     !byte $e0, $0c                                                    ; 416e: e0 0c
     !byte $dd, $13                                                    ; 4170: dd 13
     !byte $dc, $1b                                                    ; 4172: dc 1b
-l4174
+sword_animation
     !byte   4, $48                                                    ; 4174: 04 48
     !byte $0b, $3e                                                    ; 4176: 0b 3e
     !byte $14, $2f                                                    ; 4178: 14 2f
@@ -1362,15 +1362,23 @@ l4174
     !byte $79,   5                                                    ; 418e: 79 05
     !byte $83,   5                                                    ; 4190: 83 05
     !byte $8d,   5                                                    ; 4192: 8d 05
-l4194
-    !byte $0a, $f6                                                    ; 4194: 0a f6
-    !byte $f5, $f4                                                    ; 4196: f5 f4
-    !byte $f3, $0d                                                    ; 4198: f3 0d
-    !byte $0c, $0b                                                    ; 419a: 0c 0b
-    !byte $0a, $f6                                                    ; 419c: 0a f6
-    !byte $f5, $f4                                                    ; 419e: f5 f4
-    !byte $f3, $0d                                                    ; 41a0: f3 0d
-    !byte $0c, $0b                                                    ; 41a2: 0c 0b
+sword_animation_spriteids
+    !byte         spriteid_sword_spinA - spriteid_small_stone         ; 4194: 0a
+    !byte 256 - (spriteid_sword_spinA - spriteid_small_stone)         ; 4195: f6
+    !byte 256 - (spriteid_sword_spinB - spriteid_small_stone)         ; 4196: f5
+    !byte 256 - (spriteid_sword_spinC - spriteid_small_stone)         ; 4197: f4
+    !byte 256 - (spriteid_sword_spinD - spriteid_small_stone)         ; 4198: f3
+    !byte         spriteid_sword_spinD - spriteid_small_stone         ; 4199: 0d
+    !byte         spriteid_sword_spinC - spriteid_small_stone         ; 419a: 0c
+    !byte         spriteid_sword_spinB - spriteid_small_stone         ; 419b: 0b
+    !byte         spriteid_sword_spinA - spriteid_small_stone         ; 419c: 0a
+    !byte 256 - (spriteid_sword_spinA - spriteid_small_stone)         ; 419d: f6
+    !byte 256 - (spriteid_sword_spinB - spriteid_small_stone)         ; 419e: f5
+    !byte 256 - (spriteid_sword_spinC - spriteid_small_stone)         ; 419f: f4
+    !byte 256 - (spriteid_sword_spinD - spriteid_small_stone)         ; 41a0: f3
+    !byte         spriteid_sword_spinD - spriteid_small_stone         ; 41a1: 0d
+    !byte         spriteid_sword_spinC - spriteid_small_stone         ; 41a2: 0c
+    !byte         spriteid_sword_spinB - spriteid_small_stone         ; 41a3: 0b
 
 ; check for first update in room (branch if not)
 update_sword_puzzle
@@ -1495,12 +1503,12 @@ c4292
     txa                                                               ; 4292: 8a
     asl                                                               ; 4293: 0a
     tax                                                               ; 4294: aa
-    lda l4164,x                                                       ; 4295: bd 64 41
+    lda big_stone_animation,x                                         ; 4295: bd 64 41
     clc                                                               ; 4298: 18
     adc #$d4                                                          ; 4299: 69 d4
     sta object_x_low + objectid_big_stone_room_0                      ; 429b: 8d 55 09
     inx                                                               ; 429e: e8
-    lda l4164,x                                                       ; 429f: bd 64 41
+    lda big_stone_animation,x                                         ; 429f: bd 64 41
     dex                                                               ; 42a2: ca
     clc                                                               ; 42a3: 18
     adc #$8e                                                          ; 42a4: 69 8e
@@ -1515,7 +1523,7 @@ c4292
     lda save_game_level_i_sword_progress                              ; 42b5: ad 25 0a
     cmp #$ff                                                          ; 42b8: c9 ff
     beq return3                                                       ; 42ba: f0 3d
-    lda l4194,y                                                       ; 42bc: b9 94 41
+    lda sword_animation_spriteids,y                                   ; 42bc: b9 94 41
     bmi c42cf                                                         ; 42bf: 30 0e
     clc                                                               ; 42c1: 18
     adc #spriteid_small_stone                                         ; 42c2: 69 c8
@@ -1535,7 +1543,7 @@ c42dc
     tya                                                               ; 42dc: 98
     asl                                                               ; 42dd: 0a
     tay                                                               ; 42de: a8
-    lda l4174,y                                                       ; 42df: b9 74 41
+    lda sword_animation,y                                             ; 42df: b9 74 41
     clc                                                               ; 42e2: 18
     adc #$90                                                          ; 42e3: 69 90
     sta object_x_low + objectid_sword                                 ; 42e5: 8d 54 09
@@ -1543,7 +1551,7 @@ c42dc
     adc #0                                                            ; 42ea: 69 00
     sta object_x_high + objectid_sword                                ; 42ec: 8d 6a 09
     iny                                                               ; 42ef: c8
-    lda l4174,y                                                       ; 42f0: b9 74 41
+    lda sword_animation,y                                             ; 42f0: b9 74 41
     clc                                                               ; 42f3: 18
     adc #$58 ; 'X'                                                    ; 42f4: 69 58
     sta object_y_low + objectid_sword                                 ; 42f6: 8d 80 09
@@ -2133,9 +2141,6 @@ pydis_end
 ;     l0079
 ;     l007a
 ;     l3ea9
-;     l4164
-;     l4174
-;     l4194
 ;     l461e
 ;     l461f
 ;     l4620
@@ -2144,6 +2149,18 @@ pydis_end
 ;     sub_c40c2
 ;     sub_c42fa
 ;     sub_c449d
+!if (256 - (spriteid_sword_spinA - spriteid_small_stone)) != $f6 {
+    !error "Assertion failed: 256 - (spriteid_sword_spinA - spriteid_small_stone) == $f6"
+}
+!if (256 - (spriteid_sword_spinB - spriteid_small_stone)) != $f5 {
+    !error "Assertion failed: 256 - (spriteid_sword_spinB - spriteid_small_stone) == $f5"
+}
+!if (256 - (spriteid_sword_spinC - spriteid_small_stone)) != $f4 {
+    !error "Assertion failed: 256 - (spriteid_sword_spinC - spriteid_small_stone) == $f4"
+}
+!if (256 - (spriteid_sword_spinD - spriteid_small_stone)) != $f3 {
+    !error "Assertion failed: 256 - (spriteid_sword_spinD - spriteid_small_stone) == $f3"
+}
 !if (<(game_area_height_cells * 8)) != $c0 {
     !error "Assertion failed: <(game_area_height_cells * 8) == $c0"
 }
@@ -2488,4 +2505,16 @@ pydis_end
 }
 !if (spriteid_sword_menu_item) != $d1 {
     !error "Assertion failed: spriteid_sword_menu_item == $d1"
+}
+!if (spriteid_sword_spinA - spriteid_small_stone) != $0a {
+    !error "Assertion failed: spriteid_sword_spinA - spriteid_small_stone == $0a"
+}
+!if (spriteid_sword_spinB - spriteid_small_stone) != $0b {
+    !error "Assertion failed: spriteid_sword_spinB - spriteid_small_stone == $0b"
+}
+!if (spriteid_sword_spinC - spriteid_small_stone) != $0c {
+    !error "Assertion failed: spriteid_sword_spinC - spriteid_small_stone == $0c"
+}
+!if (spriteid_sword_spinD - spriteid_small_stone) != $0d {
+    !error "Assertion failed: spriteid_sword_spinD - spriteid_small_stone == $0d"
 }

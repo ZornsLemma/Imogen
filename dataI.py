@@ -14,10 +14,10 @@ sprite_dict = {
     0xcf: "spriteid_erase_sword",
     0xd0: "spriteid_sword",
     0xd1: "spriteid_sword_menu_item",
-    0xd2: "spriteid_sword_spin1",
-    0xd3: "spriteid_sword_spin2",
-    0xd4: "spriteid_sword_spin3",
-    0xd5: "spriteid_sword_spin4",
+    0xd2: "spriteid_sword_spinA",
+    0xd3: "spriteid_sword_spinB",
+    0xd4: "spriteid_sword_spinC",
+    0xd5: "spriteid_sword_spinD",
     0xd6: "spriteid_left_hook",
     0xd7: "spriteid_right_hook",
     0xd8: "spriteid_horizontal_rope",
@@ -206,6 +206,7 @@ expr(0x40b5, "object_x_high + objectid_small_stone_object")
 expr(0x40bf, "object_y_low + objectid_small_stone_object")
 label(0x40c1, "return2")
 expr(0x4147, sprite_dict)
+label(0x4164, "big_stone_animation")
 byte(0x4164, 2)
 byte(0x4166, 2)
 byte(0x4168, 2)
@@ -213,6 +214,7 @@ byte(0x416a, 2)
 byte(0x416c, 2)
 byte(0x416e, 2)
 byte(0x4170, 2)
+label(0x4174, "sword_animation")
 byte(0x4174, 2)
 byte(0x4176, 2)
 byte(0x4178, 2)
@@ -228,13 +230,23 @@ byte(0x418a, 2)
 byte(0x418c, 2)
 byte(0x418e, 2)
 byte(0x4190, 2)
-byte(0x4194, 2)
-byte(0x4196, 2)
-byte(0x4198, 2)
-byte(0x419a, 2)
-byte(0x419c, 2)
-byte(0x419e, 2)
-byte(0x41a0, 2)
+label(0x4194, "sword_animation_spriteids")
+expr(0x4194, "spriteid_sword_spinA - spriteid_small_stone")
+expr(0x4195, "256 - (spriteid_sword_spinA - spriteid_small_stone)")
+expr(0x4196, "256 - (spriteid_sword_spinB - spriteid_small_stone)")
+expr(0x4197, "256 - (spriteid_sword_spinC - spriteid_small_stone)")
+expr(0x4198, "256 - (spriteid_sword_spinD - spriteid_small_stone)")
+expr(0x4199, "spriteid_sword_spinD - spriteid_small_stone")
+expr(0x419a, "spriteid_sword_spinC - spriteid_small_stone")
+expr(0x419b, "spriteid_sword_spinB - spriteid_small_stone")
+expr(0x419c, "spriteid_sword_spinA - spriteid_small_stone")
+expr(0x419d, "256 - (spriteid_sword_spinA - spriteid_small_stone)")
+expr(0x419e, "256 - (spriteid_sword_spinB - spriteid_small_stone)")
+expr(0x419f, "256 - (spriteid_sword_spinC - spriteid_small_stone)")
+expr(0x41a0, "256 - (spriteid_sword_spinD - spriteid_small_stone)")
+expr(0x41a1, "spriteid_sword_spinD - spriteid_small_stone")
+expr(0x41a2, "spriteid_sword_spinC - spriteid_small_stone")
+expr(0x41a3, "spriteid_sword_spinB - spriteid_small_stone")
 comment(0x41a4, "check for first update in room (branch if not)")
 label(0x41a4, "update_sword_puzzle")
 expr(0x41af, sprite_dict)
