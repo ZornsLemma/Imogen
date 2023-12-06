@@ -625,7 +625,7 @@ c3c9a
     jsr define_envelope                                               ; 3ca5: 20 5e 39
     lda #$40 ; '@'                                                    ; 3ca8: a9 40
     sta object_z_order + 4                                            ; 3caa: 8d c6 38
-    lda #$cd                                                          ; 3cad: a9 cd
+    lda #spriteid_cache3                                              ; 3cad: a9 cd
     sta object_erase_type + objectid_seesaw                           ; 3caf: 8d af 38
     ldx #$1d                                                          ; 3cb2: a2 1d
     lda #4                                                            ; 3cb4: a9 04
@@ -2256,6 +2256,12 @@ pydis_end
 }
 !if (object_direction + objectid_small_stone_object) != $09c0 {
     !error "Assertion failed: object_direction + objectid_small_stone_object == $09c0"
+}
+!if (object_erase_type + 4) != $38b0 {
+    !error "Assertion failed: object_erase_type + 4 == $38b0"
+}
+!if (object_erase_type + 5) != $38b1 {
+    !error "Assertion failed: object_erase_type + 5 == $38b1"
 }
 !if (object_erase_type + objectid_big_stone_room_3) != $38b0 {
     !error "Assertion failed: object_erase_type + objectid_big_stone_room_3 == $38b0"

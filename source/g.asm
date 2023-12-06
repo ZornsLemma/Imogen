@@ -2152,10 +2152,10 @@ update_brazier_and_fire
     bne done_with_brazier_and_fire                                    ; 1aca: d0 47       .G  :1999[1]
 ; work out direction to draw brazier (left or right)
     jsr read_collision_map_value_for_xy                               ; 1acc: 20 fa 1e     .. :199b[1]
-    cmp #3                                                            ; 1acf: c9 03       ..  :199e[1]
+    cmp #collision_map_solid_rock                                     ; 1acf: c9 03       ..  :199e[1]
     beq brazier_position_already_blocked_so_look_left                 ; 1ad1: f0 17       ..  :19a0[1]
 ; block positions and draw brazier
-    lda #3                                                            ; 1ad3: a9 03       ..  :19a2[1]
+    lda #collision_map_solid_rock                                     ; 1ad3: a9 03       ..  :19a2[1]
     jsr write_a_single_value_to_cell_in_collision_map                 ; 1ad5: 20 bb 1e     .. :19a4[1]
     iny                                                               ; 1ad8: c8          .   :19a7[1]
     lda #spriteid_brazier                                             ; 1ad9: a9 3a       .:  :19a8[1]
@@ -2172,7 +2172,7 @@ update_brazier_and_fire
 brazier_position_already_blocked_so_look_left
     dex                                                               ; 1aea: ca          .   :19b9[1]
 ; make the brazier solid
-    lda #3                                                            ; 1aeb: a9 03       ..  :19ba[1]
+    lda #collision_map_solid_rock                                     ; 1aeb: a9 03       ..  :19ba[1]
     jsr write_a_single_value_to_cell_in_collision_map                 ; 1aed: 20 bb 1e     .. :19bc[1]
     inx                                                               ; 1af0: e8          .   :19bf[1]
 ; draw brazier reflected to look left
@@ -2527,27 +2527,27 @@ draw_rows_loop
     ldx #screen_width_minus_one                                       ; 1cc7: a2 27       .'  :1b96[1]
 draw_columns_loop
     jsr read_collision_map_value_for_xy                               ; 1cc9: 20 fa 1e     .. :1b98[1]
-    cmp #3                                                            ; 1ccc: c9 03       ..  :1b9b[1]
+    cmp #collision_map_solid_rock                                     ; 1ccc: c9 03       ..  :1b9b[1]
     bne next_cell_over                                                ; 1cce: d0 24       .$  :1b9d[1]
     inx                                                               ; 1cd0: e8          .   :1b9f[1]
     jsr read_collision_map_value_for_xy                               ; 1cd1: 20 fa 1e     .. :1ba0[1]
     dex                                                               ; 1cd4: ca          .   :1ba3[1]
-    cmp #3                                                            ; 1cd5: c9 03       ..  :1ba4[1]
+    cmp #collision_map_solid_rock                                     ; 1cd5: c9 03       ..  :1ba4[1]
     bne draw_right_facing_wall_local                                  ; 1cd7: d0 e2       ..  :1ba6[1]
     dex                                                               ; 1cd9: ca          .   :1ba8[1]
     jsr read_collision_map_value_for_xy                               ; 1cda: 20 fa 1e     .. :1ba9[1]
     inx                                                               ; 1cdd: e8          .   :1bac[1]
-    cmp #3                                                            ; 1cde: c9 03       ..  :1bad[1]
+    cmp #collision_map_solid_rock                                     ; 1cde: c9 03       ..  :1bad[1]
     bne draw_left_wall_local                                          ; 1ce0: d0 dc       ..  :1baf[1]
     dey                                                               ; 1ce2: 88          .   :1bb1[1]
     jsr read_collision_map_value_for_xy                               ; 1ce3: 20 fa 1e     .. :1bb2[1]
     iny                                                               ; 1ce6: c8          .   :1bb5[1]
-    cmp #3                                                            ; 1ce7: c9 03       ..  :1bb6[1]
+    cmp #collision_map_solid_rock                                     ; 1ce7: c9 03       ..  :1bb6[1]
     bne draw_floor                                                    ; 1ce9: d0 10       ..  :1bb8[1]
     iny                                                               ; 1ceb: c8          .   :1bba[1]
     jsr read_collision_map_value_for_xy                               ; 1cec: 20 fa 1e     .. :1bbb[1]
     dey                                                               ; 1cef: 88          .   :1bbe[1]
-    cmp #3                                                            ; 1cf0: c9 03       ..  :1bbf[1]
+    cmp #collision_map_solid_rock                                     ; 1cf0: c9 03       ..  :1bbf[1]
     bne draw_ceiling                                                  ; 1cf2: d0 52       .R  :1bc1[1]
 next_cell_over
     dex                                                               ; 1cf4: ca          .   :1bc3[1]
@@ -2698,7 +2698,7 @@ move_up_and_left_to_check_if_wall_continues1
     dey                                                               ; 1da0: 88          .   :1c6f[1]
     bmi not_top_corner                                                ; 1da1: 30 10       0.  :1c70[1]
     jsr read_collision_map_value_for_xy                               ; 1da3: 20 fa 1e     .. :1c72[1]
-    cmp #3                                                            ; 1da6: c9 03       ..  :1c75[1]
+    cmp #collision_map_solid_rock                                     ; 1da6: c9 03       ..  :1c75[1]
     bne not_top_corner                                                ; 1da8: d0 09       ..  :1c77[1]
     lda #$ff                                                          ; 1daa: a9 ff       ..  :1c79[1]
     sta sprite_reflect_flag                                           ; 1dac: 85 1d       ..  :1c7b[1]
@@ -2710,7 +2710,7 @@ not_top_corner
     cpy #24                                                           ; 1db5: c0 18       ..  :1c84[1]
     bcs finished_wall                                                 ; 1db7: b0 10       ..  :1c86[1]
     jsr read_collision_map_value_for_xy                               ; 1db9: 20 fa 1e     .. :1c88[1]
-    cmp #3                                                            ; 1dbc: c9 03       ..  :1c8b[1]
+    cmp #collision_map_solid_rock                                     ; 1dbc: c9 03       ..  :1c8b[1]
     bne finished_wall                                                 ; 1dbe: d0 09       ..  :1c8d[1]
 ; draw final corner
     lda #$ff                                                          ; 1dc0: a9 ff       ..  :1c8f[1]
@@ -2765,7 +2765,7 @@ move_up_and_left_to_check_if_wall_continues2
     dey                                                               ; 1dfa: 88          .   :1cc9[1]
     bmi move_to_next_row2                                             ; 1dfb: 30 0e       0.  :1cca[1]
     jsr read_collision_map_value_for_xy                               ; 1dfd: 20 fa 1e     .. :1ccc[1]
-    cmp #3                                                            ; 1e00: c9 03       ..  :1ccf[1]
+    cmp #collision_map_solid_rock                                     ; 1e00: c9 03       ..  :1ccf[1]
     bne move_to_next_row2                                             ; 1e02: d0 07       ..  :1cd1[1]
     lda #spriteid_corner_top_right                                    ; 1e04: a9 2f       ./  :1cd3[1]
     inx                                                               ; 1e06: e8          .   :1cd5[1]
@@ -2777,7 +2777,7 @@ move_to_next_row2
     cpy #game_area_height_cells                                       ; 1e0d: c0 18       ..  :1cdc[1]
     bcs not_corner                                                    ; 1e0f: b0 0e       ..  :1cde[1]
     jsr read_collision_map_value_for_xy                               ; 1e11: 20 fa 1e     .. :1ce0[1]
-    cmp #3                                                            ; 1e14: c9 03       ..  :1ce3[1]
+    cmp #collision_map_solid_rock                                     ; 1e14: c9 03       ..  :1ce3[1]
     bne not_corner                                                    ; 1e16: d0 07       ..  :1ce5[1]
     lda #spriteid_corner_bottom_right                                 ; 1e18: a9 2e       ..  :1ce7[1]
     inx                                                               ; 1e1a: e8          .   :1ce9[1]
@@ -2794,14 +2794,14 @@ find_corner_spriteid
     dey                                                               ; 1e28: 88          .   :1cf7[1]
     jsr read_collision_map_value_for_xy                               ; 1e29: 20 fa 1e     .. :1cf8[1]
     iny                                                               ; 1e2c: c8          .   :1cfb[1]
-    cmp #3                                                            ; 1e2d: c9 03       ..  :1cfc[1]
+    cmp #collision_map_solid_rock                                     ; 1e2d: c9 03       ..  :1cfc[1]
     bne return_with_result1                                           ; 1e2f: d0 16       ..  :1cfe[1]
     lda #spriteid_corner_bottom_left                                  ; 1e31: a9 2d       .-  :1d00[1]
     sta sprite_id                                                     ; 1e33: 85 16       ..  :1d02[1]
     iny                                                               ; 1e35: c8          .   :1d04[1]
     jsr read_collision_map_value_for_xy                               ; 1e36: 20 fa 1e     .. :1d05[1]
     dey                                                               ; 1e39: 88          .   :1d08[1]
-    cmp #3                                                            ; 1e3a: c9 03       ..  :1d09[1]
+    cmp #collision_map_solid_rock                                     ; 1e3a: c9 03       ..  :1d09[1]
 found_corner_spriteid
     bne return_with_result1                                           ; 1e3c: d0 09       ..  :1d0b[1]
     sty cell_y                                                        ; 1e3e: 84 71       .q  :1d0d[1]
@@ -3017,7 +3017,7 @@ draw_rope
     beq draw_rope_loop                                                ; 1eef: f0 09       ..  :1dbe[1]
     lda #spriteid_rope_hook                                           ; 1ef1: a9 0b       ..  :1dc0[1]
     jsr draw_sprite_a_at_cell_xy                                      ; 1ef3: 20 4c 1f     L. :1dc2[1]
-    lda #3                                                            ; 1ef6: a9 03       ..  :1dc5[1]
+    lda #collision_map_solid_rock                                     ; 1ef6: a9 03       ..  :1dc5[1]
     bne write_to_collision_map                                        ; 1ef8: d0 11       ..  :1dc7[1]
 draw_rope_loop
     lda temp_rope_length                                              ; 1efa: a5 56       .V  :1dc9[1]
@@ -3029,7 +3029,7 @@ draw_rope_loop
     clc                                                               ; 1f03: 18          .   :1dd2[1]
     adc #spriteid_rope1                                               ; 1f04: 69 55       iU  :1dd3[1]
     jsr draw_sprite_a_at_cell_xy                                      ; 1f06: 20 4c 1f     L. :1dd5[1]
-    lda #2                                                            ; 1f09: a9 02       ..  :1dd8[1]
+    lda #collision_map_rope                                           ; 1f09: a9 02       ..  :1dd8[1]
 write_to_collision_map
     jsr write_a_single_value_to_cell_in_collision_map                 ; 1f0b: 20 bb 1e     .. :1dda[1]
     dec temp_rope_length                                              ; 1f0e: c6 56       .V  :1ddd[1]
@@ -3040,7 +3040,7 @@ write_to_collision_map
 draw_end_of_rope
     lda #spriteid_rope_end                                            ; 1f17: a9 0a       ..  :1de6[1]
     jsr draw_sprite_a_at_cell_xy                                      ; 1f19: 20 4c 1f     L. :1de8[1]
-    lda #2                                                            ; 1f1c: a9 02       ..  :1deb[1]
+    lda #collision_map_rope                                           ; 1f1c: a9 02       ..  :1deb[1]
     jsr write_a_single_value_to_cell_in_collision_map                 ; 1f1e: 20 bb 1e     .. :1ded[1]
 restore_ay_and_return
     pla                                                               ; 1f21: 68          h   :1df0[1]   ; recall A,Y
@@ -4808,7 +4808,7 @@ check_for_object_intersecting_wall_left_or_right
 ; look at collision map at each cell up the object's height, looking for a solid wall
 loop_up_object_cells_looking_for_solid_wall
     jsr read_collision_map_value_for_xy                               ; 2799: 20 fa 1e     .. :2668[1]
-    cmp #3                                                            ; 279c: c9 03       ..  :266b[1]
+    cmp #collision_map_solid_rock                                     ; 279c: c9 03       ..  :266b[1]
     beq found_wall_on_objects_left_side                               ; 279e: f0 07       ..  :266d[1]
     dey                                                               ; 27a0: 88          .   :266f[1]
     dec object_height_in_cells                                        ; 27a1: c6 80       ..  :2670[1]
@@ -4828,7 +4828,7 @@ found_wall_on_objects_left_side
 ; look at collision map at each cell up the object's height, looking for a solid wall
 read_cells_in_column_loop
     jsr read_collision_map_value_for_xy                               ; 27b5: 20 fa 1e     .. :2684[1]
-    cmp #3                                                            ; 27b8: c9 03       ..  :2687[1]
+    cmp #collision_map_solid_rock                                     ; 27b8: c9 03       ..  :2687[1]
     beq return14                                                      ; 27ba: f0 07       ..  :2689[1]
     dey                                                               ; 27bc: 88          .   :268b[1]
     dec object_height_in_cells                                        ; 27bd: c6 80       ..  :268c[1]
@@ -4924,7 +4924,7 @@ check_for_object_intersecting_floor_or_ceiling
 ; loop from top right to top left looking for a solid_rock
 look_for_solid_rock_along_object_top_edge_loop
     jsr read_collision_map_value_for_xy                               ; 2824: 20 fa 1e     .. :26f3[1]
-    cmp #3                                                            ; 2827: c9 03       ..  :26f6[1]
+    cmp #collision_map_solid_rock                                     ; 2827: c9 03       ..  :26f6[1]
     beq found_solid_rock                                              ; 2829: f0 07       ..  :26f8[1]
     dex                                                               ; 282b: ca          .   :26fa[1]
     dec object_width_in_cells                                         ; 282c: c6 80       ..  :26fb[1]
@@ -4944,7 +4944,7 @@ found_solid_rock
     sta object_width_in_cells                                         ; 283e: 85 80       ..  :270d[1]
 look_for_solid_rock_along_object_bottom_edge_loop
     jsr read_collision_map_value_for_xy                               ; 2840: 20 fa 1e     .. :270f[1]
-    cmp #3                                                            ; 2843: c9 03       ..  :2712[1]
+    cmp #collision_map_solid_rock                                     ; 2843: c9 03       ..  :2712[1]
     beq return16                                                      ; 2845: f0 07       ..  :2714[1]
     dex                                                               ; 2847: ca          .   :2716[1]
     dec object_width_in_cells                                         ; 2848: c6 80       ..  :2717[1]
@@ -5228,7 +5228,7 @@ check_for_solid_rock_along_a_row_of_cells2
     sta cell_based_loop_counter                                       ; 29ad: 85 80       ..  :287c[1]
 cell_row_loop
     jsr read_collision_map_value_for_xy                               ; 29af: 20 fa 1e     .. :287e[1]
-    cmp #3                                                            ; 29b2: c9 03       ..  :2881[1]
+    cmp #collision_map_solid_rock                                     ; 29b2: c9 03       ..  :2881[1]
     beq return_with_flags                                             ; 29b4: f0 07       ..  :2883[1]
     dex                                                               ; 29b6: ca          .   :2885[1]
     dec cell_based_loop_counter                                       ; 29b7: c6 80       ..  :2886[1]
@@ -7038,7 +7038,7 @@ divide_by_eight_to_get_cells
     ror cell_x                                                        ; 3503: 66 70       fp  :33d2[1]
     ldx cell_x                                                        ; 3505: a6 70       .p  :33d4[1]
     jsr read_collision_map_value_for_xy                               ; 3507: 20 fa 1e     .. :33d6[1]
-    cmp #2                                                            ; 350a: c9 02       ..  :33d9[1]
+    cmp #collision_map_rope                                           ; 350a: c9 02       ..  :33d9[1]
     beq monkey_can_climb                                              ; 350c: f0 0d       ..  :33db[1]
     lda #2                                                            ; 350e: a9 02       ..  :33dd[1]
     cmp rope_x_offset                                                 ; 3510: cd 03 34    ..4 :33df[1]
@@ -9740,6 +9740,9 @@ pydis_end
 }
 !if (collision_map_out_of_bounds) != $ff {
     !error "Assertion failed: collision_map_out_of_bounds == $ff"
+}
+!if (collision_map_rope) != $02 {
+    !error "Assertion failed: collision_map_rope == $02"
 }
 !if (collision_map_solid_rock) != $03 {
     !error "Assertion failed: collision_map_solid_rock == $03"

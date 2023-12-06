@@ -345,6 +345,7 @@ expr(0x461b, "object_direction + objectid_small_stone_object")
 label(0x4622, "play_sounds34")
 ldx_ldy_jsr_play_sound_yx(0x4628, "sound3")
 ldx_ldy_jsr_play_sound_yx(0x462f, "sound4")
+expr(0x3cae, sprite_dict)
 
 for i in range(0x3f6c, 0x3fa4, 2):
     byte(i, 2)
@@ -352,11 +353,9 @@ for i in range(0x3f6c, 0x3fa4, 2):
 
 # TODO: replace "+ n" with "+ objectid_*" once objects have been named
 expr(0x41b4, "collectable_being_used_spriteids+2")
-label(0x38ae, "object_erase_type + 2")
-label(0x38af, "object_erase_type + 3")
-label(0x38b0, "object_erase_type + 4")
-label(0x38b1, "object_erase_type + 5")
-label(0x38c4, "object_z_order + 2")
+expr(0x4200, "object_erase_type + 4")
+expr(0x41da, "object_erase_type + 5")
+#label(0x38c4, "object_z_order + 2")
 label(0x38c6, "object_z_order + 4")
 label(0x38c7, "object_z_order + 5")
 expr(0x3dc7, "object_spriteid + 4")
