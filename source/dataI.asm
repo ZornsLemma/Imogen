@@ -24,10 +24,15 @@ object_collided_ceiling               = 8
 object_collided_floor                 = 2
 object_collided_left_wall             = 1
 object_collided_right_wall            = 4
+objectid_big_stone_room_0             = 5
+objectid_big_stone_room_3             = 4
 objectid_old_player                   = 11
 objectid_old_player_accessory         = 12
 objectid_player                       = 0
 objectid_player_accessory             = 1
+objectid_rope_end                     = 8
+objectid_seesaw                       = 3
+objectid_small_stone_object           = 2
 opcode_jmp                            = 76
 sprite_op_flags_copy_screen           = 1
 sprite_op_flags_erase_to_bg_colour    = 2
@@ -38,7 +43,6 @@ spriteid_ball                         = 59
 spriteid_big_stone                    = 203
 spriteid_boulder                      = 221
 spriteid_brazier                      = 58
-spriteid_cache1                       = 201
 spriteid_cache2                       = 204
 spriteid_cache3                       = 205
 spriteid_cache4                       = 207
@@ -71,6 +75,7 @@ spriteid_diamond4                     = 42
 spriteid_diamond5                     = 43
 spriteid_erase_player                 = 199
 spriteid_erase_player_accessory       = 198
+spriteid_erase_small_stone            = 201
 spriteid_fingertip_tile_restoration   = 30
 spriteid_fire1                        = 60
 spriteid_fire2                        = 61
@@ -125,12 +130,12 @@ spriteid_rope_hook                    = 11
 spriteid_seesaw                       = 206
 spriteid_short_rope                   = 217
 spriteid_short_rope_end               = 222
+spriteid_small_stone                  = 200
 spriteid_sparkles1                    = 34
 spriteid_sparkles2                    = 35
 spriteid_sparkles3                    = 36
 spriteid_sparkles4                    = 37
 spriteid_sparkles5                    = 38
-spriteid_stone                        = 200
 spriteid_stone_menu_item              = 202
 spriteid_sword                        = 208
 spriteid_sword_menu_item              = 209
@@ -150,112 +155,112 @@ spriteid_wizard_transform2            = 57
 spriteid_wizard_using_object          = 53
 
 ; Memory locations
-sprite_reflect_flag                                 = $1d
-desired_room_index                                  = $30
-current_level                                       = $31
-temp_sprite_x_offset                                = $3a
-temp_sprite_y_offset                                = $3b
-width_in_cells                                      = $3c
-height_in_cells                                     = $3d
-value_to_write_to_collision_map                     = $3e
-source_sprite_memory_low                            = $40
-source_sprite_memory_high                           = $41
-copy_mode                                           = $42
-current_player_character                            = $48
-previous_room_index                                 = $50
-level_before_latest_level_and_room_initialisation   = $51
-player_held_object_spriteid                         = $52
-developer_mode_sideways_ram_is_set_up_flag          = $5b
-l0070                                               = $70
-room_exit_direction                                 = $70
-l0078                                               = $78
-l0079                                               = $79
-l007a                                               = $7a
-object_x_low                                        = $0950
-object_x_low_old                                    = $095b
-object_x_high                                       = $0966
-object_x_high_old                                   = $0971
-object_y_low                                        = $097c
-object_y_low_old                                    = $0987
-object_y_high                                       = $0992
-object_spriteid                                     = $09a8
-object_spriteid_old                                 = $09b3
-object_direction                                    = $09be
-current_player_animation                            = $09df
-l0a24                                               = $0a24
-l0a25                                               = $0a25
-l0a26                                               = $0a26
-l0a27                                               = $0a27
-l0a28                                               = $0a28
-l0a29                                               = $0a29
-l0a2a                                               = $0a2a
-l0a2b                                               = $0a2b
-l0a2c                                               = $0a2c
-l0a2d                                               = $0a2d
-l0a2e                                               = $0a2e
-l0a2f                                               = $0a2f
-level_workspace                                     = $0a6f
-tile_all_set_pixels                                 = $0aa9
-developer_flags                                     = $1103
-initialise_level_and_room                           = $1140
-start_room                                          = $12bb
-game_update                                         = $12da
-update_room_first_update_flag                       = $132b
-sprite_op                                           = $138d
-toolbar_colour                                      = $175e
-gameplay_area_colour                                = $1760
-get_random_number_up_to_a                           = $18a6
-update_brazier_and_fire                             = $1988
-update_level_completion                             = $1a10
-currently_updating_logic_for_room_index             = $1aba
-copy_rectangle_of_memory_to_screen                  = $1abb
-draw_floor_walls_and_ceiling_around_solid_rock      = $1b90
-draw_rope                                           = $1db9
-write_value_to_a_rectangle_of_cells_in_collision_map = $1e44
-write_a_single_value_to_cell_in_collision_map       = $1ebb
-read_collision_map_value_for_xy                     = $1efa
-draw_sprite_a_at_cell_xy                            = $1f4c
-draw_sprite_a_at_cell_xy_and_write_to_collision_map = $1f57
-set_object_position_from_cell_xy                    = $1f5d
-set_object_position_from_current_sprite_position    = $1f6d
-copy_object_state_to_old                            = $20f7
-jmp_for_update_extra_player_character               = $22dd
-play_landing_sound                                  = $23a9
-player_wall_collision_reaction_speed                = $2433
-find_left_and_right_of_object                       = $2434
-temp_left_offset                                    = $24d0
-temp_right_offset                                   = $24d1
-find_top_and_bottom_of_object                       = $24d2
-temp_top_offset                                     = $2550
-temp_bottom_offset                                  = $2551
-update_object_a_solid_rock_collision                = $25f5
-update_player_hitting_floor                         = $2770
-player_has_hit_floor_flag                           = $288f
-player_just_fallen_off_edge_direction               = $2890
-get_solid_rock_collision_for_object_a               = $2894
-temp_default_collision_map_option                   = $28e1
-test_for_collision_between_objects_x_and_y          = $28e2
-desired_menu_slots                                  = $295c
-menu_index_for_extra_items                          = $296e
-insert_character_menu_item_into_toolbar             = $2b87
-find_or_create_menu_slot_for_A                      = $2bbd
-remove_item_from_toolbar_menu                       = $2be0
-player_using_object_spriteid                        = $2eb6
-previous_player_using_object_spriteid               = $2eb7
-toolbar_collectable_spriteids                       = $2ee8
-collectable_spriteids                               = $2eed
-collectable_being_used_spriteids                    = $2ef2
-monkey_base_animation                               = $30ff
-monkey_climb_idle_animation                         = $3144
-monkey_climb_down_animation                         = $3148
-monkey_climb_animation                              = $3150
-inhibit_monkey_climb_flag                           = $31d7
-object_erase_type                                   = $38ac
-object_z_order                                      = $38c2
-object_room_collision_flags                         = $38d8
-play_sound_yx                                       = $38f6
-define_envelope                                     = $395e
-sound_priority_per_channel_table                    = $396f
+sprite_reflect_flag                                         = $1d
+desired_room_index                                          = $30
+current_level                                               = $31
+temp_sprite_x_offset                                        = $3a
+temp_sprite_y_offset                                        = $3b
+width_in_cells                                              = $3c
+height_in_cells                                             = $3d
+value_to_write_to_collision_map                             = $3e
+source_sprite_memory_low                                    = $40
+source_sprite_memory_high                                   = $41
+copy_mode                                                   = $42
+current_player_character                                    = $48
+previous_room_index                                         = $50
+level_before_latest_level_and_room_initialisation           = $51
+player_held_object_spriteid                                 = $52
+developer_mode_sideways_ram_is_set_up_flag                  = $5b
+l0070                                                       = $70
+room_exit_direction                                         = $70
+l0078                                                       = $78
+l0079                                                       = $79
+l007a                                                       = $7a
+object_x_low                                                = $0950
+object_x_low_old                                            = $095b
+object_x_high                                               = $0966
+object_x_high_old                                           = $0971
+object_y_low                                                = $097c
+object_y_low_old                                            = $0987
+object_y_high                                               = $0992
+object_spriteid                                             = $09a8
+object_spriteid_old                                         = $09b3
+object_direction                                            = $09be
+current_player_animation                                    = $09df
+save_game_level_i_left_seesaw_puzzle_progress               = $0a24
+save_game_level_i_sword_progress                            = $0a25
+save_game_level_i_spell_progress                            = $0a26
+save_game_level_i_small_stone_x_low                         = $0a27
+save_game_level_i_small_stone_x_high                        = $0a28
+save_game_level_i_small_stone_y_low                         = $0a29
+save_game_level_i_small_stone_y_high                        = $0a2a
+save_game_level_i_small_stone_direction_without_bounces     = $0a2b
+save_game_level_i_small_stone_left_seesaw_animation_step    = $0a2c
+save_game_level_i_small_stone_room                          = $0a2d
+save_game_level_i_small_stone_direction_including_bounces   = $0a2e
+save_game_level_i_top_seesaw_puzzle_progress                = $0a2f
+level_workspace                                             = $0a6f
+tile_all_set_pixels                                         = $0aa9
+developer_flags                                             = $1103
+initialise_level_and_room                                   = $1140
+start_room                                                  = $12bb
+game_update                                                 = $12da
+update_room_first_update_flag                               = $132b
+sprite_op                                                   = $138d
+toolbar_colour                                              = $175e
+gameplay_area_colour                                        = $1760
+get_random_number_up_to_a                                   = $18a6
+update_brazier_and_fire                                     = $1988
+update_level_completion                                     = $1a10
+currently_updating_logic_for_room_index                     = $1aba
+copy_rectangle_of_memory_to_screen                          = $1abb
+draw_floor_walls_and_ceiling_around_solid_rock              = $1b90
+draw_rope                                                   = $1db9
+write_value_to_a_rectangle_of_cells_in_collision_map        = $1e44
+write_a_single_value_to_cell_in_collision_map               = $1ebb
+read_collision_map_value_for_xy                             = $1efa
+draw_sprite_a_at_cell_xy                                    = $1f4c
+draw_sprite_a_at_cell_xy_and_write_to_collision_map         = $1f57
+set_object_position_from_cell_xy                            = $1f5d
+set_object_position_from_current_sprite_position            = $1f6d
+copy_object_state_to_old                                    = $20f7
+jmp_for_update_extra_player_character                       = $22dd
+play_landing_sound                                          = $23a9
+player_wall_collision_reaction_speed                        = $2433
+find_left_and_right_of_object                               = $2434
+temp_left_offset                                            = $24d0
+temp_right_offset                                           = $24d1
+find_top_and_bottom_of_object                               = $24d2
+temp_top_offset                                             = $2550
+temp_bottom_offset                                          = $2551
+update_object_a_solid_rock_collision                        = $25f5
+update_player_hitting_floor                                 = $2770
+player_has_hit_floor_flag                                   = $288f
+player_just_fallen_off_edge_direction                       = $2890
+get_solid_rock_collision_for_object_a                       = $2894
+temp_default_collision_map_option                           = $28e1
+test_for_collision_between_objects_x_and_y                  = $28e2
+desired_menu_slots                                          = $295c
+menu_index_for_extra_items                                  = $296e
+insert_character_menu_item_into_toolbar                     = $2b87
+find_or_create_menu_slot_for_A                              = $2bbd
+remove_item_from_toolbar_menu                               = $2be0
+player_using_object_spriteid                                = $2eb6
+previous_player_using_object_spriteid                       = $2eb7
+toolbar_collectable_spriteids                               = $2ee8
+collectable_spriteids                                       = $2eed
+collectable_being_used_spriteids                            = $2ef2
+monkey_base_animation                                       = $30ff
+monkey_climb_idle_animation                                 = $3144
+monkey_climb_down_animation                                 = $3148
+monkey_climb_animation                                      = $3150
+inhibit_monkey_climb_flag                                   = $31d7
+object_erase_type                                           = $38ac
+object_z_order                                              = $38c2
+object_room_collision_flags                                 = $38d8
+play_sound_yx                                               = $38f6
+define_envelope                                             = $395e
+sound_priority_per_channel_table                            = $396f
 
     * = $3ad5
 
@@ -299,36 +304,39 @@ level_specific_password
 level_specific_initialisation
     lda current_level                                                 ; 3af1: a5 31
     cmp level_before_latest_level_and_room_initialisation             ; 3af3: c5 51
-    beq c3b31                                                         ; 3af5: f0 3a
+    beq set_ground_tiles                                              ; 3af5: f0 3a
     lda developer_flags                                               ; 3af7: ad 03 11
     bpl developer_mode_inactive                                       ; 3afa: 10 0a
     lda #$ff                                                          ; 3afc: a9 ff
-    sta l0a24                                                         ; 3afe: 8d 24 0a
+    sta save_game_level_i_left_seesaw_puzzle_progress                 ; 3afe: 8d 24 0a
     lda #spriteid_sword_menu_item                                     ; 3b01: a9 d1
     jsr find_or_create_menu_slot_for_A                                ; 3b03: 20 bd 2b
+; if stone got, then add to toolbar
 developer_mode_inactive
-    lda l0a24                                                         ; 3b06: ad 24 0a
-    bpl c3b10                                                         ; 3b09: 10 05
+    lda save_game_level_i_left_seesaw_puzzle_progress                 ; 3b06: ad 24 0a
+    bpl not_got_stone                                                 ; 3b09: 10 05
     lda #spriteid_stone_menu_item                                     ; 3b0b: a9 ca
     jsr find_or_create_menu_slot_for_A                                ; 3b0d: 20 bd 2b
-c3b10
-    lda l0a25                                                         ; 3b10: ad 25 0a
-    bpl c3b1a                                                         ; 3b13: 10 05
+; if sword got, then add to toolbar
+not_got_stone
+    lda save_game_level_i_sword_progress                              ; 3b10: ad 25 0a
+    bpl not_got_sword                                                 ; 3b13: 10 05
     lda #spriteid_sword_menu_item                                     ; 3b15: a9 d1
     jsr find_or_create_menu_slot_for_A                                ; 3b17: 20 bd 2b
-c3b1a
+not_got_sword
     lda desired_room_index                                            ; 3b1a: a5 30
     cmp #3                                                            ; 3b1c: c9 03
-    bne c3b31                                                         ; 3b1e: d0 11
+    bne set_ground_tiles                                              ; 3b1e: d0 11
+; in room 3. Switch to room 1, and set player position
     lda #1                                                            ; 3b20: a9 01
     sta desired_room_index                                            ; 3b22: 85 30
     ldx #$14                                                          ; 3b24: a2 14
     ldy #7                                                            ; 3b26: a0 07
     lda #0                                                            ; 3b28: a9 00
     sta temp_sprite_y_offset                                          ; 3b2a: 85 3b
-    lda #0                                                            ; 3b2c: a9 00
+    lda #objectid_player                                              ; 3b2c: a9 00
     jsr set_object_position_from_cell_xy                              ; 3b2e: 20 5d 1f
-c3b31
+set_ground_tiles
     lda #<ground_fill_2x2_top_left                                    ; 3b31: a9 7c
     sta source_sprite_memory_low                                      ; 3b33: 85 40
     lda #>ground_fill_2x2_top_left                                    ; 3b35: a9 46
@@ -347,9 +355,9 @@ c3b31
 ; 
 ; *************************************************************************************
 level_specific_update
-    jsr sub_c4337                                                     ; 3b3a: 20 37 43
-    jsr sub_c3fa4                                                     ; 3b3d: 20 a4 3f
-    jsr sub_c41a4                                                     ; 3b40: 20 a4 41
+    jsr update_left_seesaw_puzzle                                     ; 3b3a: 20 37 43
+    jsr update_top_seesaw_puzzle                                      ; 3b3d: 20 a4 3f
+    jsr update_sword_puzzle                                           ; 3b40: 20 a4 41
     jsr room_2_update_handler                                         ; 3b43: 20 67 3c
     jmp room_1_update_handler                                         ; 3b46: 4c df 3b
 
@@ -594,10 +602,10 @@ c3c81
     lda current_level                                                 ; 3c81: a5 31
     cmp level_before_latest_level_and_room_initialisation             ; 3c83: c5 51
     beq c3c91                                                         ; 3c85: f0 0a
-    lda l0a26                                                         ; 3c87: ad 26 0a
+    lda save_game_level_i_spell_progress                              ; 3c87: ad 26 0a
     beq c3c91                                                         ; 3c8a: f0 05
     lda #$1f                                                          ; 3c8c: a9 1f
-    sta l0a26                                                         ; 3c8e: 8d 26 0a
+    sta save_game_level_i_spell_progress                              ; 3c8e: 8d 26 0a
 c3c91
     lda desired_room_index                                            ; 3c91: a5 30
     cmp #2                                                            ; 3c93: c9 02
@@ -614,7 +622,7 @@ c3c9a
     lda #$40 ; '@'                                                    ; 3ca8: a9 40
     sta object_z_order + 4                                            ; 3caa: 8d c6 38
     lda #$cd                                                          ; 3cad: a9 cd
-    sta object_erase_type + 3                                         ; 3caf: 8d af 38
+    sta object_erase_type + objectid_seesaw                           ; 3caf: 8d af 38
     ldx #$1d                                                          ; 3cb2: a2 1d
     lda #4                                                            ; 3cb4: a9 04
     sta temp_sprite_x_offset                                          ; 3cb6: 85 3a
@@ -622,7 +630,7 @@ c3c9a
     lda #3                                                            ; 3cba: a9 03
     jsr set_object_position_from_cell_xy                              ; 3cbc: 20 5d 1f
     lda #spriteid_seesaw                                              ; 3cbf: a9 ce
-    sta object_spriteid + 3                                           ; 3cc1: 8d ab 09
+    sta object_spriteid + objectid_seesaw                             ; 3cc1: 8d ab 09
     lda #1                                                            ; 3cc4: a9 01
     sta width_in_cells                                                ; 3cc6: 85 3c
     sta height_in_cells                                               ; 3cc8: 85 3d
@@ -643,7 +651,7 @@ loop_c3ce2
     dex                                                               ; 3ce5: ca
     cpx #$0f                                                          ; 3ce6: e0 0f
     bcs loop_c3ce2                                                    ; 3ce8: b0 f8
-    lda l0a26                                                         ; 3cea: ad 26 0a
+    lda save_game_level_i_spell_progress                              ; 3cea: ad 26 0a
     cmp #$0a                                                          ; 3ced: c9 0a
     bcc c3cf3                                                         ; 3cef: 90 02
     lda #$0a                                                          ; 3cf1: a9 0a
@@ -670,8 +678,8 @@ loop_c3d05
     lda #8                                                            ; 3d19: a9 08
     ldy #$15                                                          ; 3d1b: a0 15
     jsr set_object_position_from_cell_xy                              ; 3d1d: 20 5d 1f
-    lda #$cc                                                          ; 3d20: a9 cc
-    sta object_erase_type + 8                                         ; 3d22: 8d b4 38
+    lda #spriteid_cache2                                              ; 3d20: a9 cc
+    sta object_erase_type + objectid_rope_end                         ; 3d22: 8d b4 38
     ldx #$1b                                                          ; 3d25: a2 1b
     lda #7                                                            ; 3d27: a9 07
     clc                                                               ; 3d29: 18
@@ -700,11 +708,11 @@ c3d57
     jmp c3df5                                                         ; 3d57: 4c f5 3d
 
 c3d5a
-    lda l0a26                                                         ; 3d5a: ad 26 0a
+    lda save_game_level_i_spell_progress                              ; 3d5a: ad 26 0a
     beq c3d69                                                         ; 3d5d: f0 0a
     cmp #$1f                                                          ; 3d5f: c9 1f
     beq c3d57                                                         ; 3d61: f0 f4
-    inc l0a26                                                         ; 3d63: ee 26 0a
+    inc save_game_level_i_spell_progress                              ; 3d63: ee 26 0a
     jmp c3db1                                                         ; 3d66: 4c b1 3d
 
 c3d69
@@ -741,12 +749,12 @@ c3d92
     lda #collision_map_none                                           ; 3da7: a9 00
     sta value_to_write_to_collision_map                               ; 3da9: 85 3e
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 3dab: 20 44 1e
-    inc l0a26                                                         ; 3dae: ee 26 0a
+    inc save_game_level_i_spell_progress                              ; 3dae: ee 26 0a
 c3db1
     lda desired_room_index                                            ; 3db1: a5 30
     cmp #2                                                            ; 3db3: c9 02
     bne c3df5                                                         ; 3db5: d0 3e
-    lda l0a26                                                         ; 3db7: ad 26 0a
+    lda save_game_level_i_spell_progress                              ; 3db7: ad 26 0a
     beq c3df5                                                         ; 3dba: f0 39
     cmp #$0a                                                          ; 3dbc: c9 0a
     beq c3dd1                                                         ; 3dbe: f0 11
@@ -766,7 +774,7 @@ c3dd1
     sta sound_priority_per_channel_table                              ; 3dda: 8d 6f 39
     sta sound_priority_per_channel_table + 1                          ; 3ddd: 8d 70 39
 c3de0
-    jsr sub_c4622                                                     ; 3de0: 20 22 46
+    jsr play_sounds34                                                 ; 3de0: 20 22 46
     jmp c3df5                                                         ; 3de3: 4c f5 3d
 
 c3de6
@@ -783,7 +791,7 @@ c3df5
     lda desired_room_index                                            ; 3df5: a5 30
     cmp #2                                                            ; 3df7: c9 02
     bne loop_c3df2                                                    ; 3df9: d0 f7
-    lda l0a26                                                         ; 3dfb: ad 26 0a
+    lda save_game_level_i_spell_progress                              ; 3dfb: ad 26 0a
     ldx #$ff                                                          ; 3dfe: a2 ff
     cmp #$0a                                                          ; 3e00: c9 0a
     bcc c3e08                                                         ; 3e02: 90 04
@@ -797,7 +805,7 @@ c3e08
     lda #spriteid_one_pixel_masked_out                                ; 3e13: a9 00
     sta object_spriteid + 7                                           ; 3e15: 8d af 09
     lda #spriteid_long_rope_end2                                      ; 3e18: a9 db
-    sta object_spriteid + 8                                           ; 3e1a: 8d b0 09
+    sta object_spriteid + objectid_rope_end                           ; 3e1a: 8d b0 09
     ldx #$0d                                                          ; 3e1d: a2 0d
     ldy #$13                                                          ; 3e1f: a0 13
     lda #1                                                            ; 3e21: a9 01
@@ -825,7 +833,7 @@ c3e3a
     lda #spriteid_rope_end                                            ; 3e47: a9 0a
     sta object_spriteid + 7                                           ; 3e49: 8d af 09
     lda #spriteid_rope_broken                                         ; 3e4c: a9 dc
-    sta object_spriteid + 8                                           ; 3e4e: 8d b0 09
+    sta object_spriteid + objectid_rope_end                           ; 3e4e: 8d b0 09
     ldx #$0d                                                          ; 3e51: a2 0d
     iny                                                               ; 3e53: c8
     lda #0                                                            ; 3e54: a9 00
@@ -853,7 +861,7 @@ c3e6c
     lda #spriteid_one_pixel_masked_out                                ; 3e7d: a9 00
     sta object_spriteid_old + 6                                       ; 3e7f: 8d b9 09
 c3e82
-    lda l0a26                                                         ; 3e82: ad 26 0a
+    lda save_game_level_i_spell_progress                              ; 3e82: ad 26 0a
     cmp #$0a                                                          ; 3e85: c9 0a
     bcc return1                                                       ; 3e87: 90 1f
     sec                                                               ; 3e89: 38
@@ -1020,40 +1028,62 @@ room_3_game_update_loop
     ldy current_level                                                 ; 3f67: a4 31
     jmp initialise_level_and_room                                     ; 3f69: 4c 40 11
 
-l3f6c
-    !byte   0,   0, $f8,   0, $f1,   0, $eb,   6, $e9, $10, $e8, $1b  ; 3f6c: 00 00 f8...
-l3f78
-    !byte   0, $3e,   2, $33,   8, $28, $10, $1d, $18, $16, $20, $10  ; 3f78: 00 3e 02...
-    !byte $28, $0b, $30,   9, $38,   7, $40,   6, $48,   7, $50,   9  ; 3f84: 28 0b 30...
-    !byte $58, $0b, $60, $10, $68, $16, $70, $1d                      ; 3f90: 58 0b 60...
-    !text "x(~3"                                                      ; 3f98: 78 28 7e...
-    !byte $83, $40, $87, $50, $8a, $60, $8c, $73                      ; 3f9c: 83 40 87...
+big_stone_top_seesaw_animation
+    !byte 0, 0                                                        ; 3f6c: 00 00
+    !byte 248,   0                                                    ; 3f6e: f8 00
+    !byte 241,   0                                                    ; 3f70: f1 00
+    !byte 235,   6                                                    ; 3f72: eb 06
+    !byte 233,  16                                                    ; 3f74: e9 10
+    !byte 232,  27                                                    ; 3f76: e8 1b
+small_stone_top_seesaw_animation
+    !byte  0, 62                                                      ; 3f78: 00 3e
+    !byte  2, 51                                                      ; 3f7a: 02 33
+    !byte  8, 40                                                      ; 3f7c: 08 28
+    !byte 16, 29                                                      ; 3f7e: 10 1d
+    !byte 24, 22                                                      ; 3f80: 18 16
+    !byte 32, 16                                                      ; 3f82: 20 10
+    !byte 40, 11                                                      ; 3f84: 28 0b
+    !byte 48,  9                                                      ; 3f86: 30 09
+    !byte 56,  7                                                      ; 3f88: 38 07
+    !byte 64,  6                                                      ; 3f8a: 40 06
+    !byte 72,  7                                                      ; 3f8c: 48 07
+    !byte 80,  9                                                      ; 3f8e: 50 09
+    !byte 88, 11                                                      ; 3f90: 58 0b
+    !byte 96, 16                                                      ; 3f92: 60 10
+    !byte 104,  22                                                    ; 3f94: 68 16
+    !byte 112,  29                                                    ; 3f96: 70 1d
+    !byte 120,  40                                                    ; 3f98: 78 28
+    !byte 126,  51                                                    ; 3f9a: 7e 33
+    !byte 131,  64                                                    ; 3f9c: 83 40
+    !byte 135,  80                                                    ; 3f9e: 87 50
+    !byte 138,  96                                                    ; 3fa0: 8a 60
+    !byte 140, 115                                                    ; 3fa2: 8c 73
 
 ; check for first update in room (branch if not)
-sub_c3fa4
+update_top_seesaw_puzzle
     lda update_room_first_update_flag                                 ; 3fa4: ad 2b 13
     beq c3fe8                                                         ; 3fa7: f0 3f
 ; check for level change (branch if not)
     lda current_level                                                 ; 3fa9: a5 31
     cmp level_before_latest_level_and_room_initialisation             ; 3fab: c5 51
     beq c3fbd                                                         ; 3fad: f0 0e
-    lda l0a2f                                                         ; 3faf: ad 2f 0a
+    lda save_game_level_i_top_seesaw_puzzle_progress                  ; 3faf: ad 2f 0a
     beq c3fbd                                                         ; 3fb2: f0 09
     cmp #$ff                                                          ; 3fb4: c9 ff
     beq c3fbd                                                         ; 3fb6: f0 05
     lda #$19                                                          ; 3fb8: a9 19
-    sta l0a2f                                                         ; 3fba: 8d 2f 0a
+    sta save_game_level_i_top_seesaw_puzzle_progress                  ; 3fba: 8d 2f 0a
 c3fbd
     lda desired_room_index                                            ; 3fbd: a5 30
     cmp #3                                                            ; 3fbf: c9 03
     bne c3fe5                                                         ; 3fc1: d0 22
-    lda #$cc                                                          ; 3fc3: a9 cc
-    sta object_erase_type + 4                                         ; 3fc5: 8d b0 38
+    lda #spriteid_cache2                                              ; 3fc3: a9 cc
+    sta object_erase_type + objectid_big_stone_room_3                 ; 3fc5: 8d b0 38
     lda #$e0                                                          ; 3fc8: a9 e0
-    sta object_z_order + 4                                            ; 3fca: 8d c6 38
+    sta object_z_order + objectid_big_stone_room_3                    ; 3fca: 8d c6 38
     lda #spriteid_big_stone                                           ; 3fcd: a9 cb
-    sta object_spriteid + 4                                           ; 3fcf: 8d ac 09
-    lda #$cd                                                          ; 3fd2: a9 cd
+    sta object_spriteid + objectid_big_stone_room_3                   ; 3fcf: 8d ac 09
+    lda #spriteid_cache3                                              ; 3fd2: a9 cd
     sta object_erase_type + 3                                         ; 3fd4: 8d af 38
     ldx #$14                                                          ; 3fd7: a2 14
     ldy #$10                                                          ; 3fd9: a0 10
@@ -1065,17 +1095,17 @@ c3fe5
     jmp c4045                                                         ; 3fe5: 4c 45 40
 
 c3fe8
-    lda l0a2f                                                         ; 3fe8: ad 2f 0a
+    lda save_game_level_i_top_seesaw_puzzle_progress                  ; 3fe8: ad 2f 0a
     beq c400f                                                         ; 3feb: f0 22
     cmp #$19                                                          ; 3fed: c9 19
     beq c4024                                                         ; 3fef: f0 33
     cmp #$ff                                                          ; 3ff1: c9 ff
     beq c4045                                                         ; 3ff3: f0 50
-    inc l0a2f                                                         ; 3ff5: ee 2f 0a
+    inc save_game_level_i_top_seesaw_puzzle_progress                  ; 3ff5: ee 2f 0a
     lda desired_room_index                                            ; 3ff8: a5 30
     cmp #3                                                            ; 3ffa: c9 03
     bne c4045                                                         ; 3ffc: d0 47
-    lda l0a2f                                                         ; 3ffe: ad 2f 0a
+    lda save_game_level_i_top_seesaw_puzzle_progress                  ; 3ffe: ad 2f 0a
     cmp #5                                                            ; 4001: c9 05
     beq c4009                                                         ; 4003: f0 04
     cmp #$19                                                          ; 4005: c9 19
@@ -1092,7 +1122,7 @@ c400f
     ldy #4                                                            ; 4017: a0 04
     jsr test_for_collision_between_objects_x_and_y                    ; 4019: 20 e2 28
     beq c4045                                                         ; 401c: f0 27
-    inc l0a2f                                                         ; 401e: ee 2f 0a
+    inc save_game_level_i_top_seesaw_puzzle_progress                  ; 401e: ee 2f 0a
     jmp c4045                                                         ; 4021: 4c 45 40
 
 c4024
@@ -1106,8 +1136,8 @@ c4024
     lda #spriteid_stone_menu_item                                     ; 4033: a9 ca
     jsr find_or_create_menu_slot_for_A                                ; 4035: 20 bd 2b
     lda #$ff                                                          ; 4038: a9 ff
-    sta l0a2f                                                         ; 403a: 8d 2f 0a
-    sta l0a24                                                         ; 403d: 8d 24 0a
+    sta save_game_level_i_top_seesaw_puzzle_progress                  ; 403a: 8d 2f 0a
+    sta save_game_level_i_left_seesaw_puzzle_progress                 ; 403d: 8d 24 0a
     lda #spriteid_one_pixel_masked_out                                ; 4040: a9 00
     sta object_spriteid + 2                                           ; 4042: 8d aa 09
 c4045
@@ -1115,15 +1145,15 @@ c4045
     cmp #3                                                            ; 4047: c9 03
     bne return2                                                       ; 4049: d0 76
     lda #1                                                            ; 404b: a9 01
-    sta object_direction + 3                                          ; 404d: 8d c1 09
-    ldx l0a2f                                                         ; 4050: ae 2f 0a
+    sta object_direction + objectid_seesaw                            ; 404d: 8d c1 09
+    ldx save_game_level_i_top_seesaw_puzzle_progress                  ; 4050: ae 2f 0a
     ldy #0                                                            ; 4053: a0 00
     cpx #5                                                            ; 4055: e0 05
     bcc c4068                                                         ; 4057: 90 0f
     lda #$ff                                                          ; 4059: a9 ff
-    sta object_direction + 3                                          ; 405b: 8d c1 09
+    sta object_direction + objectid_seesaw                            ; 405b: 8d c1 09
     ldx #5                                                            ; 405e: a2 05
-    lda l0a2f                                                         ; 4060: ad 2f 0a
+    lda save_game_level_i_top_seesaw_puzzle_progress                  ; 4060: ad 2f 0a
     sec                                                               ; 4063: 38
     sbc #5                                                            ; 4064: e9 05
     tay                                                               ; 4066: a8
@@ -1132,46 +1162,47 @@ c4068
     txa                                                               ; 4068: 8a
     asl                                                               ; 4069: 0a
     tax                                                               ; 406a: aa
-    lda l3f6c,x                                                       ; 406b: bd 6c 3f
+    lda big_stone_top_seesaw_animation,x                              ; 406b: bd 6c 3f
     clc                                                               ; 406e: 18
     adc #$c4                                                          ; 406f: 69 c4
-    sta object_x_low + 4                                              ; 4071: 8d 54 09
+    sta object_x_low + objectid_big_stone_room_3                      ; 4071: 8d 54 09
     inx                                                               ; 4074: e8
-    lda l3f6c,x                                                       ; 4075: bd 6c 3f
+    lda big_stone_top_seesaw_animation,x                              ; 4075: bd 6c 3f
     dex                                                               ; 4078: ca
     clc                                                               ; 4079: 18
     adc #$5e ; '^'                                                    ; 407a: 69 5e
-    sta object_y_low + 4                                              ; 407c: 8d 80 09
+    sta object_y_low + objectid_big_stone_room_3                      ; 407c: 8d 80 09
     ldx #$18                                                          ; 407f: a2 18
     sty l4621                                                         ; 4081: 8c 21 46
     ldy #$0b                                                          ; 4084: a0 0b
     lda #3                                                            ; 4086: a9 03
     jsr write_a_single_value_to_cell_in_collision_map                 ; 4088: 20 bb 1e
     ldy l4621                                                         ; 408b: ac 21 46
-    lda l0a2f                                                         ; 408e: ad 2f 0a
+    lda save_game_level_i_top_seesaw_puzzle_progress                  ; 408e: ad 2f 0a
     cmp #$ff                                                          ; 4091: c9 ff
     beq return2                                                       ; 4093: f0 2c
-    lda #$c9                                                          ; 4095: a9 c9
-    sta object_erase_type + 2                                         ; 4097: 8d ae 38
+; position small stone to be animated. Animation step Y.
+    lda #spriteid_erase_small_stone                                   ; 4095: a9 c9
+    sta object_erase_type + objectid_small_stone_object               ; 4097: 8d ae 38
     lda #$a0                                                          ; 409a: a9 a0
-    sta object_z_order + 2                                            ; 409c: 8d c4 38
-    lda #spriteid_stone                                               ; 409f: a9 c8
-    sta object_spriteid + 2                                           ; 40a1: 8d aa 09
+    sta object_z_order + objectid_small_stone_object                  ; 409c: 8d c4 38
+    lda #spriteid_small_stone                                         ; 409f: a9 c8
+    sta object_spriteid + objectid_small_stone_object                 ; 40a1: 8d aa 09
     tya                                                               ; 40a4: 98
     asl                                                               ; 40a5: 0a
     tay                                                               ; 40a6: a8
-    lda l3f78,y                                                       ; 40a7: b9 78 3f
+    lda small_stone_top_seesaw_animation,y                            ; 40a7: b9 78 3f
     clc                                                               ; 40aa: 18
     adc #$90                                                          ; 40ab: 69 90
-    sta object_x_low + 2                                              ; 40ad: 8d 52 09
+    sta object_x_low + objectid_small_stone_object                    ; 40ad: 8d 52 09
     lda #0                                                            ; 40b0: a9 00
     adc #0                                                            ; 40b2: 69 00
-    sta object_x_high + 2                                             ; 40b4: 8d 68 09
+    sta object_x_high + objectid_small_stone_object                   ; 40b4: 8d 68 09
     iny                                                               ; 40b7: c8
-    lda l3f78,y                                                       ; 40b8: b9 78 3f
+    lda small_stone_top_seesaw_animation,y                            ; 40b8: b9 78 3f
     clc                                                               ; 40bb: 18
     adc #$38 ; '8'                                                    ; 40bc: 69 38
-    sta object_y_low + 2                                              ; 40be: 8d 7e 09
+    sta object_y_low + objectid_small_stone_object                    ; 40be: 8d 7e 09
 return2
     rts                                                               ; 40c1: 60
 
@@ -1335,7 +1366,7 @@ l4194
     !byte $0c, $0b                                                    ; 41a2: 0c 0b
 
 ; check for first update in room (branch if not)
-sub_c41a4
+update_sword_puzzle
     lda update_room_first_update_flag                                 ; 41a4: ad 2b 13
     beq c420a                                                         ; 41a7: f0 61
     lda #spriteid_sword_menu_item                                     ; 41a9: a9 d1
@@ -1347,12 +1378,12 @@ sub_c41a4
     lda current_level                                                 ; 41b6: a5 31
     cmp level_before_latest_level_and_room_initialisation             ; 41b8: c5 51
     beq c41ca                                                         ; 41ba: f0 0e
-    lda l0a25                                                         ; 41bc: ad 25 0a
+    lda save_game_level_i_sword_progress                              ; 41bc: ad 25 0a
     beq c41ca                                                         ; 41bf: f0 09
     cmp #$ff                                                          ; 41c1: c9 ff
     beq c41ca                                                         ; 41c3: f0 05
     lda #$15                                                          ; 41c5: a9 15
-    sta l0a25                                                         ; 41c7: 8d 25 0a
+    sta save_game_level_i_sword_progress                              ; 41c7: 8d 25 0a
 c41ca
     lda desired_room_index                                            ; 41ca: a5 30
     cmp #0                                                            ; 41cc: c9 00
@@ -1365,17 +1396,17 @@ c41ca
     lda #$e0                                                          ; 41dc: a9 e0
     sta object_z_order + 5                                            ; 41de: 8d c7 38
     lda #spriteid_big_stone                                           ; 41e1: a9 cb
-    sta object_spriteid + 5                                           ; 41e3: 8d ad 09
+    sta object_spriteid + objectid_big_stone_room_0                   ; 41e3: 8d ad 09
     lda #spriteid_cache3                                              ; 41e6: a9 cd
-    sta object_erase_type + 3                                         ; 41e8: 8d af 38
+    sta object_erase_type + objectid_seesaw                           ; 41e8: 8d af 38
     ldx #$14                                                          ; 41eb: a2 14
     lda #4                                                            ; 41ed: a9 04
     sta temp_sprite_x_offset                                          ; 41ef: 85 3a
     ldy #$16                                                          ; 41f1: a0 16
-    lda #3                                                            ; 41f3: a9 03
+    lda #objectid_seesaw                                              ; 41f3: a9 03
     jsr set_object_position_from_cell_xy                              ; 41f5: 20 5d 1f
     lda #spriteid_seesaw                                              ; 41f8: a9 ce
-    sta object_spriteid + 3                                           ; 41fa: 8d ab 09
+    sta object_spriteid + objectid_seesaw                             ; 41fa: 8d ab 09
     lda #spriteid_cache4                                              ; 41fd: a9 cf
     sta object_erase_type + 4                                         ; 41ff: 8d b0 38
     lda #$c0                                                          ; 4202: a9 c0
@@ -1384,24 +1415,24 @@ c4207
     jmp c426c                                                         ; 4207: 4c 6c 42
 
 c420a
-    lda l0a25                                                         ; 420a: ad 25 0a
+    lda save_game_level_i_sword_progress                              ; 420a: ad 25 0a
     beq c423e                                                         ; 420d: f0 2f
     cmp #$15                                                          ; 420f: c9 15
     beq c4253                                                         ; 4211: f0 40
     cmp #$ff                                                          ; 4213: c9 ff
     beq c426c                                                         ; 4215: f0 55
-    inc l0a25                                                         ; 4217: ee 25 0a
+    inc save_game_level_i_sword_progress                              ; 4217: ee 25 0a
     lda desired_room_index                                            ; 421a: a5 30
     cmp #0                                                            ; 421c: c9 00
     bne c426c                                                         ; 421e: d0 4c
-    lda l0a25                                                         ; 4220: ad 25 0a
+    lda save_game_level_i_sword_progress                              ; 4220: ad 25 0a
     cmp #7                                                            ; 4223: c9 07
     bne c422d                                                         ; 4225: d0 06
     jsr play_landing_sound                                            ; 4227: 20 a9 23
     jmp c426c                                                         ; 422a: 4c 6c 42
 
 c422d
-    lda l0a25                                                         ; 422d: ad 25 0a
+    lda save_game_level_i_sword_progress                              ; 422d: ad 25 0a
     cmp #$15                                                          ; 4230: c9 15
     bne c426c                                                         ; 4232: d0 38
     ldx #<sound2                                                      ; 4234: a2 40
@@ -1417,7 +1448,7 @@ c423e
     ldy #5                                                            ; 4246: a0 05
     jsr test_for_collision_between_objects_x_and_y                    ; 4248: 20 e2 28
     beq c426c                                                         ; 424b: f0 1f
-    inc l0a25                                                         ; 424d: ee 25 0a
+    inc save_game_level_i_sword_progress                              ; 424d: ee 25 0a
     jmp c426c                                                         ; 4250: 4c 6c 42
 
 c4253
@@ -1431,7 +1462,7 @@ c4253
     lda #spriteid_sword_menu_item                                     ; 4262: a9 d1
     jsr find_or_create_menu_slot_for_A                                ; 4264: 20 bd 2b
     lda #$ff                                                          ; 4267: a9 ff
-    sta l0a25                                                         ; 4269: 8d 25 0a
+    sta save_game_level_i_sword_progress                              ; 4269: 8d 25 0a
 c426c
     lda desired_room_index                                            ; 426c: a5 30
     cmp #0                                                            ; 426e: c9 00
@@ -1441,14 +1472,14 @@ c426c
 c4275
     lda #1                                                            ; 4275: a9 01
     sta object_direction + 3                                          ; 4277: 8d c1 09
-    ldx l0a25                                                         ; 427a: ae 25 0a
+    ldx save_game_level_i_sword_progress                              ; 427a: ae 25 0a
     ldy #0                                                            ; 427d: a0 00
     cpx #7                                                            ; 427f: e0 07
     bcc c4292                                                         ; 4281: 90 0f
     lda #$ff                                                          ; 4283: a9 ff
     sta object_direction + 3                                          ; 4285: 8d c1 09
     ldx #7                                                            ; 4288: a2 07
-    lda l0a25                                                         ; 428a: ad 25 0a
+    lda save_game_level_i_sword_progress                              ; 428a: ad 25 0a
     sec                                                               ; 428d: 38
     sbc #7                                                            ; 428e: e9 07
     tay                                                               ; 4290: a8
@@ -1474,13 +1505,13 @@ c4292
     tay                                                               ; 42af: a8
     lda #spriteid_one_pixel_masked_out                                ; 42b0: a9 00
     sta object_spriteid + 4                                           ; 42b2: 8d ac 09
-    lda l0a25                                                         ; 42b5: ad 25 0a
+    lda save_game_level_i_sword_progress                              ; 42b5: ad 25 0a
     cmp #$ff                                                          ; 42b8: c9 ff
     beq return3                                                       ; 42ba: f0 3d
     lda l4194,y                                                       ; 42bc: b9 94 41
     bmi c42cf                                                         ; 42bf: 30 0e
     clc                                                               ; 42c1: 18
-    adc #spriteid_stone                                               ; 42c2: 69 c8
+    adc #spriteid_small_stone                                         ; 42c2: 69 c8
     sta object_spriteid + 4                                           ; 42c4: 8d ac 09
     lda #1                                                            ; 42c7: a9 01
     sta object_direction + 4                                          ; 42c9: 8d c2 09
@@ -1489,7 +1520,7 @@ c4292
 c42cf
     eor #$ff                                                          ; 42cf: 49 ff
     sec                                                               ; 42d1: 38
-    adc #spriteid_stone                                               ; 42d2: 69 c8
+    adc #spriteid_small_stone                                         ; 42d2: 69 c8
     sta object_spriteid + 4                                           ; 42d4: 8d ac 09
     lda #$ff                                                          ; 42d7: a9 ff
     sta object_direction + 4                                          ; 42d9: 8d c2 09
@@ -1514,7 +1545,7 @@ return3
 
 sub_c42fa
     lda #3                                                            ; 42fa: a9 03
-    ldx l0a25                                                         ; 42fc: ae 25 0a
+    ldx save_game_level_i_sword_progress                              ; 42fc: ae 25 0a
     cpx #4                                                            ; 42ff: e0 04
     bcc c4305                                                         ; 4301: 90 02
     lda #0                                                            ; 4303: a9 00
@@ -1524,30 +1555,47 @@ c4305
     jsr write_a_single_value_to_cell_in_collision_map                 ; 4309: 20 bb 1e
     rts                                                               ; 430c: 60
 
-l430d
-    !byte 0, 0                                                        ; 430d: 00 00
-    !byte 0, 8                                                        ; 430f: 00 08
-    !byte $f8,   6                                                    ; 4311: f8 06
-    !byte $fa,   6                                                    ; 4313: fa 06
-    !byte $fc,   6                                                    ; 4315: fc 06
-    !byte $fe,   6                                                    ; 4317: fe 06
-    !byte $ff, $80                                                    ; 4319: ff 80
+small_stone_left_seesaw_animations
+    !byte 0                                                           ; 430d: 00
+small_stone_left_seesaw_animation1
+    !byte 0, 0                                                        ; 430e: 00 00
+    !byte   8, $f8                                                    ; 4310: 08 f8
+    !byte   6, $fa                                                    ; 4312: 06 fa
+    !byte   6, $fc                                                    ; 4314: 06 fc
+    !byte   6, $fe                                                    ; 4316: 06 fe
+    !byte   6, $ff                                                    ; 4318: 06 ff
+    !byte $80                                                         ; 431a: 80
+small_stone_left_seesaw_animation2
     !byte 6, 1                                                        ; 431b: 06 01
     !byte 6, 2                                                        ; 431d: 06 02
     !byte 6, 4                                                        ; 431f: 06 04
-    !byte   6,   6,   4,   8,   2,   8, $80,   0,   8, $80,   0,   0  ; 4321: 06 06 04...
-    !byte $80,   4,   2,   3,   3,   2,   4,   1,   6, $80            ; 432d: 80 04 02...
+    !byte 6, 6                                                        ; 4321: 06 06
+    !byte 4, 8                                                        ; 4323: 04 08
+    !byte 2, 8                                                        ; 4325: 02 08
+    !byte $80                                                         ; 4327: 80
+small_stone_left_seesaw_animation3
+    !byte 0, 8                                                        ; 4328: 00 08
+    !byte $80                                                         ; 432a: 80
+small_stone_left_seesaw_animation4
+    !byte 0, 0                                                        ; 432b: 00 00
+    !byte $80                                                         ; 432d: 80
+small_stone_left_seesaw_animation5
+    !byte 4, 2                                                        ; 432e: 04 02
+    !byte 3, 3                                                        ; 4330: 03 03
+    !byte 2, 4                                                        ; 4332: 02 04
+    !byte 1, 6                                                        ; 4334: 01 06
+    !byte $80                                                         ; 4336: 80
 
 ; check for first update in room (branch if so)
-sub_c4337
+update_left_seesaw_puzzle
     lda update_room_first_update_flag                                 ; 4337: ad 2b 13
-    bne c433f                                                         ; 433a: d0 03
-    jmp c4398                                                         ; 433c: 4c 98 43
+    bne update_left_seesaw_puzzle_not_first_update                    ; 433a: d0 03
+    jmp update_left_seesaw_puzzle_first_update                        ; 433c: 4c 98 43
 
-c433f
+update_left_seesaw_puzzle_not_first_update
     lda #spriteid_stone_menu_item                                     ; 433f: a9 ca
     sta toolbar_collectable_spriteids+1                               ; 4341: 8d e9 2e
-    lda #spriteid_stone                                               ; 4344: a9 c8
+    lda #spriteid_small_stone                                         ; 4344: a9 c8
     sta collectable_spriteids+1                                       ; 4346: 8d ee 2e
     sta collectable_being_used_spriteids + 1                          ; 4349: 8d f3 2e
 ; check for level change (branch if not)
@@ -1556,23 +1604,23 @@ c433f
     beq c4365                                                         ; 4350: f0 13
     lda #0                                                            ; 4352: a9 00
     sta level_workspace                                               ; 4354: 8d 6f 0a
-    lda l0a24                                                         ; 4357: ad 24 0a
+    lda save_game_level_i_left_seesaw_puzzle_progress                 ; 4357: ad 24 0a
     beq c4365                                                         ; 435a: f0 09
     bmi c4365                                                         ; 435c: 30 07
-    cmp #$1e                                                          ; 435e: c9 1e
+    cmp #small_stone_left_seesaw_animation4 - small_stone_left_seesaw_animations; 435e: c9 1e
     beq c4365                                                         ; 4360: f0 03
     dec level_workspace                                               ; 4362: ce 6f 0a
 c4365
     lda desired_room_index                                            ; 4365: a5 30
-    cmp l0a2d                                                         ; 4367: cd 2d 0a
+    cmp save_game_level_i_small_stone_room                            ; 4367: cd 2d 0a
     bne c4390                                                         ; 436a: d0 24
-    lda l0a24                                                         ; 436c: ad 24 0a
+    lda save_game_level_i_left_seesaw_puzzle_progress                 ; 436c: ad 24 0a
     beq c4390                                                         ; 436f: f0 1f
     bmi c4390                                                         ; 4371: 30 1d
-    jsr sub_c45f0                                                     ; 4373: 20 f0 45
+    jsr set_small_stone_object                                        ; 4373: 20 f0 45
 loop_c4376
     lda desired_room_index                                            ; 4376: a5 30
-    cmp l0a2d                                                         ; 4378: cd 2d 0a
+    cmp save_game_level_i_small_stone_room                            ; 4378: cd 2d 0a
     bne c4390                                                         ; 437b: d0 13
     lda level_workspace                                               ; 437d: ad 6f 0a
     beq c4390                                                         ; 4380: f0 0e
@@ -1585,51 +1633,51 @@ loop_c4376
 c4390
     lda #spriteid_one_pixel_masked_out                                ; 4390: a9 00
     sta object_spriteid_old + 2                                       ; 4392: 8d b5 09
-c4395
+return4_local
     jmp return4                                                       ; 4395: 4c 9c 44
 
-c4398
+update_left_seesaw_puzzle_first_update
     lda #0                                                            ; 4398: a9 00
     sta l461e                                                         ; 439a: 8d 1e 46
     lda player_held_object_spriteid                                   ; 439d: a5 52
     sta l461f                                                         ; 439f: 8d 1f 46
     lda object_spriteid_old + 2                                       ; 43a2: ad b5 09
     sta l4620                                                         ; 43a5: 8d 20 46
-    lda l0a24                                                         ; 43a8: ad 24 0a
-    beq c4395                                                         ; 43ab: f0 e8
-    bmi c43c1                                                         ; 43ad: 30 12
+    lda save_game_level_i_left_seesaw_puzzle_progress                 ; 43a8: ad 24 0a
+    beq return4_local                                                 ; 43ab: f0 e8
+    bmi left_seesaw_puzzle_done                                       ; 43ad: 30 12
     lda desired_room_index                                            ; 43af: a5 30
-    cmp l0a2d                                                         ; 43b1: cd 2d 0a
+    cmp save_game_level_i_small_stone_room                            ; 43b1: cd 2d 0a
     beq c440a                                                         ; 43b4: f0 54
     lda level_workspace                                               ; 43b6: ad 6f 0a
-    bmi c4395                                                         ; 43b9: 30 da
+    bmi return4_local                                                 ; 43b9: 30 da
     inc level_workspace                                               ; 43bb: ee 6f 0a
     jmp return4                                                       ; 43be: 4c 9c 44
 
-c43c1
-    lda #$ca                                                          ; 43c1: a9 ca
+left_seesaw_puzzle_done
+    lda #spriteid_stone_menu_item                                     ; 43c1: a9 ca
     cmp player_using_object_spriteid                                  ; 43c3: cd b6 2e
-    bne c4395                                                         ; 43c6: d0 cd
+    bne return4_local                                                 ; 43c6: d0 cd
     cmp previous_player_using_object_spriteid                         ; 43c8: cd b7 2e
-    beq c4395                                                         ; 43cb: f0 c8
+    beq return4_local                                                 ; 43cb: f0 c8
     dec l461e                                                         ; 43cd: ce 1e 46
     lda desired_room_index                                            ; 43d0: a5 30
-    sta l0a2d                                                         ; 43d2: 8d 2d 0a
+    sta save_game_level_i_small_stone_room                            ; 43d2: 8d 2d 0a
     lda object_direction                                              ; 43d5: ad be 09
-    sta l0a2b                                                         ; 43d8: 8d 2b 0a
-    sta l0a2e                                                         ; 43db: 8d 2e 0a
+    sta save_game_level_i_small_stone_direction_without_bounces       ; 43d8: 8d 2b 0a
+    sta save_game_level_i_small_stone_direction_including_bounces     ; 43db: 8d 2e 0a
     lda object_x_low + objectid_player_accessory                      ; 43de: ad 51 09
-    sta l0a27                                                         ; 43e1: 8d 27 0a
+    sta save_game_level_i_small_stone_x_low                           ; 43e1: 8d 27 0a
     lda object_x_high + objectid_player_accessory                     ; 43e4: ad 67 09
-    sta l0a28                                                         ; 43e7: 8d 28 0a
+    sta save_game_level_i_small_stone_x_high                          ; 43e7: 8d 28 0a
     lda object_y_low + objectid_player_accessory                      ; 43ea: ad 7d 09
-    sta l0a29                                                         ; 43ed: 8d 29 0a
+    sta save_game_level_i_small_stone_y_low                           ; 43ed: 8d 29 0a
     lda object_y_high + objectid_player_accessory                     ; 43f0: ad 93 09
-    sta l0a2a                                                         ; 43f3: 8d 2a 0a
-    lda #1                                                            ; 43f6: a9 01
-    sta l0a2c                                                         ; 43f8: 8d 2c 0a
-    sta l0a24                                                         ; 43fb: 8d 24 0a
-    jsr sub_c45f0                                                     ; 43fe: 20 f0 45
+    sta save_game_level_i_small_stone_y_high                          ; 43f3: 8d 2a 0a
+    lda #small_stone_left_seesaw_animation1 - small_stone_left_seesaw_animations; 43f6: a9 01
+    sta save_game_level_i_small_stone_left_seesaw_animation_step      ; 43f8: 8d 2c 0a
+    sta save_game_level_i_left_seesaw_puzzle_progress                 ; 43fb: 8d 24 0a
+    jsr set_small_stone_object                                        ; 43fe: 20 f0 45
     ldx #2                                                            ; 4401: a2 02
     jsr copy_object_state_to_old                                      ; 4403: 20 f7 20
     lda #0                                                            ; 4406: a9 00
@@ -1637,7 +1685,7 @@ c43c1
 c440a
     jsr sub_c449d                                                     ; 440a: 20 9d 44
     lda desired_room_index                                            ; 440d: a5 30
-    cmp l0a2d                                                         ; 440f: cd 2d 0a
+    cmp save_game_level_i_small_stone_room                            ; 440f: cd 2d 0a
     beq c4419                                                         ; 4412: f0 05
     lda #0                                                            ; 4414: a9 00
     sta level_workspace                                               ; 4416: 8d 6f 0a
@@ -1659,7 +1707,7 @@ c4439
     lda #spriteid_one_pixel_masked_out                                ; 4439: a9 00
     sta object_spriteid + 2                                           ; 443b: 8d aa 09
     lda #$ff                                                          ; 443e: a9 ff
-    sta l0a24                                                         ; 4440: 8d 24 0a
+    sta save_game_level_i_left_seesaw_puzzle_progress                 ; 4440: 8d 24 0a
     jmp return4                                                       ; 4443: 4c 9c 44
 
 c4446
@@ -1675,7 +1723,7 @@ c445a
     lda object_x_low + 2                                              ; 445a: ad 52 09
     cmp object_x_low_old + 2                                          ; 445d: cd 5d 09
     beq c4482                                                         ; 4460: f0 20
-    lda l0a2e                                                         ; 4462: ad 2e 0a
+    lda save_game_level_i_small_stone_direction_including_bounces     ; 4462: ad 2e 0a
     bmi c446d                                                         ; 4465: 30 06
     inc temp_right_offset                                             ; 4467: ee d1 24
     jmp c4470                                                         ; 446a: 4c 70 44
@@ -1685,7 +1733,7 @@ c446d
 c4470
     lda #1                                                            ; 4470: a9 01
     sta temp_bottom_offset                                            ; 4472: 8d 51 25
-    lda #2                                                            ; 4475: a9 02
+    lda #objectid_small_stone_object                                  ; 4475: a9 02
     jsr get_solid_rock_collision_for_object_a                         ; 4477: 20 94 28
     beq c4482                                                         ; 447a: f0 06
     jsr play_landing_sound                                            ; 447c: 20 a9 23
@@ -1706,16 +1754,16 @@ return4
     rts                                                               ; 449c: 60
 
 sub_c449d
-    lda l0a2c                                                         ; 449d: ad 2c 0a
+    lda save_game_level_i_small_stone_left_seesaw_animation_step      ; 449d: ad 2c 0a
     clc                                                               ; 44a0: 18
     adc #2                                                            ; 44a1: 69 02
     tay                                                               ; 44a3: a8
-    lda l430d,y                                                       ; 44a4: b9 0d 43
+    lda small_stone_left_seesaw_animations,y                          ; 44a4: b9 0d 43
     cmp #$80                                                          ; 44a7: c9 80
     bne c44ae                                                         ; 44a9: d0 03
-    ldy l0a24                                                         ; 44ab: ac 24 0a
+    ldy save_game_level_i_left_seesaw_puzzle_progress                 ; 44ab: ac 24 0a
 c44ae
-    lda l0a2e                                                         ; 44ae: ad 2e 0a
+    lda save_game_level_i_small_stone_direction_including_bounces     ; 44ae: ad 2e 0a
     bmi c44b9                                                         ; 44b1: 30 06
     inc temp_right_offset                                             ; 44b3: ee d1 24
     jmp c44bc                                                         ; 44b6: 4c bc 44
@@ -1725,58 +1773,58 @@ c44b9
 c44bc
     lda #1                                                            ; 44bc: a9 01
     sta temp_bottom_offset                                            ; 44be: 8d 51 25
-    lda #2                                                            ; 44c1: a9 02
+    lda #objectid_small_stone_object                                  ; 44c1: a9 02
     jsr get_solid_rock_collision_for_object_a                         ; 44c3: 20 94 28
     beq c44d0                                                         ; 44c6: f0 08
-    lda l0a2e                                                         ; 44c8: ad 2e 0a
+    lda save_game_level_i_small_stone_direction_including_bounces     ; 44c8: ad 2e 0a
     eor #$fe                                                          ; 44cb: 49 fe
-    sta l0a2e                                                         ; 44cd: 8d 2e 0a
+    sta save_game_level_i_small_stone_direction_including_bounces     ; 44cd: 8d 2e 0a
 c44d0
-    lda l0a24                                                         ; 44d0: ad 24 0a
-    cmp #1                                                            ; 44d3: c9 01
+    lda save_game_level_i_left_seesaw_puzzle_progress                 ; 44d0: ad 24 0a
+    cmp #small_stone_left_seesaw_animation1 - small_stone_left_seesaw_animations; 44d3: c9 01
     bne c44ed                                                         ; 44d5: d0 16
     dec temp_top_offset                                               ; 44d7: ce 50 25
-    lda #2                                                            ; 44da: a9 02
+    lda #objectid_small_stone_object                                  ; 44da: a9 02
     jsr get_solid_rock_collision_for_object_a                         ; 44dc: 20 94 28
     bne c44e6                                                         ; 44df: d0 05
-    cpy l0a24                                                         ; 44e1: cc 24 0a
+    cpy save_game_level_i_left_seesaw_puzzle_progress                 ; 44e1: cc 24 0a
     bne c451d                                                         ; 44e4: d0 37
 c44e6
-    lda #$1b                                                          ; 44e6: a9 1b
-    sta l0a24                                                         ; 44e8: 8d 24 0a
-    ldy #$0e                                                          ; 44eb: a0 0e
+    lda #small_stone_left_seesaw_animation3 - small_stone_left_seesaw_animations; 44e6: a9 1b
+    sta save_game_level_i_left_seesaw_puzzle_progress                 ; 44e8: 8d 24 0a
+    ldy #small_stone_left_seesaw_animation2 - small_stone_left_seesaw_animations; 44eb: a0 0e
 c44ed
-    lda #2                                                            ; 44ed: a9 02
+    lda #objectid_small_stone_object                                  ; 44ed: a9 02
     jsr update_player_hitting_floor                                   ; 44ef: 20 70 27
-    lda l0a24                                                         ; 44f2: ad 24 0a
-    cmp #$1b                                                          ; 44f5: c9 1b
+    lda save_game_level_i_left_seesaw_puzzle_progress                 ; 44f2: ad 24 0a
+    cmp #small_stone_left_seesaw_animation3 - small_stone_left_seesaw_animations; 44f5: c9 1b
     bne c4503                                                         ; 44f7: d0 0a
     lda player_has_hit_floor_flag                                     ; 44f9: ad 8f 28
     beq c451d                                                         ; 44fc: f0 1f
-    ldy #$1e                                                          ; 44fe: a0 1e
-    sty l0a24                                                         ; 4500: 8c 24 0a
+    ldy #small_stone_left_seesaw_animation4 - small_stone_left_seesaw_animations; 44fe: a0 1e
+    sty save_game_level_i_left_seesaw_puzzle_progress                 ; 4500: 8c 24 0a
 c4503
     lda player_just_fallen_off_edge_direction                         ; 4503: ad 90 28
     beq c451d                                                         ; 4506: f0 15
-    ldy #$1b                                                          ; 4508: a0 1b
-    sty l0a24                                                         ; 450a: 8c 24 0a
-    ldy #$21 ; '!'                                                    ; 450d: a0 21
+    ldy #small_stone_left_seesaw_animation3 - small_stone_left_seesaw_animations; 4508: a0 1b
+    sty save_game_level_i_left_seesaw_puzzle_progress                 ; 450a: 8c 24 0a
+    ldy #small_stone_left_seesaw_animation5 - small_stone_left_seesaw_animations; 450d: a0 21
     ldx #1                                                            ; 450f: a2 01
-    stx l0a2e                                                         ; 4511: 8e 2e 0a
+    stx save_game_level_i_small_stone_direction_including_bounces     ; 4511: 8e 2e 0a
     ora #0                                                            ; 4514: 09 00
     bpl c451d                                                         ; 4516: 10 05
     ldx #$ff                                                          ; 4518: a2 ff
-    stx l0a2e                                                         ; 451a: 8e 2e 0a
+    stx save_game_level_i_small_stone_direction_including_bounces     ; 451a: 8e 2e 0a
 c451d
-    sty l0a2c                                                         ; 451d: 8c 2c 0a
-    lda l0a24                                                         ; 4520: ad 24 0a
-    cmp #$1e                                                          ; 4523: c9 1e
+    sty save_game_level_i_small_stone_left_seesaw_animation_step      ; 451d: 8c 2c 0a
+    lda save_game_level_i_left_seesaw_puzzle_progress                 ; 4520: ad 24 0a
+    cmp #small_stone_left_seesaw_animation4 - small_stone_left_seesaw_animations; 4523: c9 1e
     bne c452c                                                         ; 4525: d0 05
     lda #0                                                            ; 4527: a9 00
     sta level_workspace                                               ; 4529: 8d 6f 0a
 c452c
-    lda l430d,y                                                       ; 452c: b9 0d 43
-    ldx l0a2e                                                         ; 452f: ae 2e 0a
+    lda small_stone_left_seesaw_animations,y                          ; 452c: b9 0d 43
+    ldx save_game_level_i_small_stone_direction_including_bounces     ; 452f: ae 2e 0a
     bpl c4539                                                         ; 4532: 10 05
     eor #$ff                                                          ; 4534: 49 ff
     clc                                                               ; 4536: 18
@@ -1788,104 +1836,105 @@ c4539
     dex                                                               ; 453f: ca
 c4540
     clc                                                               ; 4540: 18
-    adc l0a27                                                         ; 4541: 6d 27 0a
-    sta l0a27                                                         ; 4544: 8d 27 0a
+    adc save_game_level_i_small_stone_x_low                           ; 4541: 6d 27 0a
+    sta save_game_level_i_small_stone_x_low                           ; 4544: 8d 27 0a
     txa                                                               ; 4547: 8a
-    adc l0a28                                                         ; 4548: 6d 28 0a
-    sta l0a28                                                         ; 454b: 8d 28 0a
+    adc save_game_level_i_small_stone_x_high                          ; 4548: 6d 28 0a
+    sta save_game_level_i_small_stone_x_high                          ; 454b: 8d 28 0a
     iny                                                               ; 454e: c8
-    lda l430d,y                                                       ; 454f: b9 0d 43
+    lda small_stone_left_seesaw_animations,y                          ; 454f: b9 0d 43
     ldx #0                                                            ; 4552: a2 00
     ora #0                                                            ; 4554: 09 00
     bpl c4559                                                         ; 4556: 10 01
     dex                                                               ; 4558: ca
 c4559
     clc                                                               ; 4559: 18
-    adc l0a29                                                         ; 455a: 6d 29 0a
-    sta l0a29                                                         ; 455d: 8d 29 0a
+    adc save_game_level_i_small_stone_y_low                           ; 455a: 6d 29 0a
+    sta save_game_level_i_small_stone_y_low                           ; 455d: 8d 29 0a
     txa                                                               ; 4560: 8a
-    adc l0a2a                                                         ; 4561: 6d 2a 0a
-    sta l0a2a                                                         ; 4564: 8d 2a 0a
-    jsr sub_c45f0                                                     ; 4567: 20 f0 45
-    lda #2                                                            ; 456a: a9 02
+    adc save_game_level_i_small_stone_y_high                          ; 4561: 6d 2a 0a
+    sta save_game_level_i_small_stone_y_high                          ; 4564: 8d 2a 0a
+    jsr set_small_stone_object                                        ; 4567: 20 f0 45
+    lda #objectid_small_stone_object                                  ; 456a: a9 02
     jsr update_object_a_solid_rock_collision                          ; 456c: 20 f5 25
-    lda object_x_low + 2                                              ; 456f: ad 52 09
-    sta l0a27                                                         ; 4572: 8d 27 0a
-    lda object_x_high + 2                                             ; 4575: ad 68 09
-    sta l0a28                                                         ; 4578: 8d 28 0a
-    lda object_y_low + 2                                              ; 457b: ad 7e 09
-    sta l0a29                                                         ; 457e: 8d 29 0a
-    lda object_y_high + 2                                             ; 4581: ad 94 09
-    sta l0a2a                                                         ; 4584: 8d 2a 0a
-    ldx #2                                                            ; 4587: a2 02
+    lda object_x_low + objectid_small_stone_object                    ; 456f: ad 52 09
+    sta save_game_level_i_small_stone_x_low                           ; 4572: 8d 27 0a
+    lda object_x_high + objectid_small_stone_object                   ; 4575: ad 68 09
+    sta save_game_level_i_small_stone_x_high                          ; 4578: 8d 28 0a
+    lda object_y_low + objectid_small_stone_object                    ; 457b: ad 7e 09
+    sta save_game_level_i_small_stone_y_low                           ; 457e: 8d 29 0a
+    lda object_y_high + objectid_small_stone_object                   ; 4581: ad 94 09
+    sta save_game_level_i_small_stone_y_high                          ; 4584: 8d 2a 0a
+    ldx #objectid_small_stone_object                                  ; 4587: a2 02
     jsr find_left_and_right_of_object                                 ; 4589: 20 34 24
     jsr find_top_and_bottom_of_object                                 ; 458c: 20 d2 24
-    lda l0a2d                                                         ; 458f: ad 2d 0a
+    lda save_game_level_i_small_stone_room                            ; 458f: ad 2d 0a
     cmp #3                                                            ; 4592: c9 03
-    beq c45cf                                                         ; 4594: f0 39
-    lda l0a2e                                                         ; 4596: ad 2e 0a
-    bmi c45b7                                                         ; 4599: 30 1c
+    beq move_small_stone_one_room_down_if_needed                      ; 4594: f0 39
+    lda save_game_level_i_small_stone_direction_including_bounces     ; 4596: ad 2e 0a
+    bmi move_small_stone_one_room_left_if_needed                      ; 4599: 30 1c
     lda l0078                                                         ; 459b: a5 78
-    cmp #$28 ; '('                                                    ; 459d: c9 28
+    cmp #game_area_width_cells                                        ; 459d: c9 28
     bcc return5                                                       ; 459f: 90 4e
-    lda l0a27                                                         ; 45a1: ad 27 0a
+; move small stone right one room
+    lda save_game_level_i_small_stone_x_low                           ; 45a1: ad 27 0a
     sec                                                               ; 45a4: 38
     sbc #$40 ; '@'                                                    ; 45a5: e9 40
-    sta l0a27                                                         ; 45a7: 8d 27 0a
+    sta save_game_level_i_small_stone_x_low                           ; 45a7: 8d 27 0a
     lda #0                                                            ; 45aa: a9 00
     sbc #0                                                            ; 45ac: e9 00
-    sta l0a28                                                         ; 45ae: 8d 28 0a
-    inc l0a2d                                                         ; 45b1: ee 2d 0a
-    jmp c45ea                                                         ; 45b4: 4c ea 45
+    sta save_game_level_i_small_stone_x_high                          ; 45ae: 8d 28 0a
+    inc save_game_level_i_small_stone_room                            ; 45b1: ee 2d 0a
+    jmp hide_stone                                                    ; 45b4: 4c ea 45
 
-c45b7
+move_small_stone_one_room_left_if_needed
     lda l0079                                                         ; 45b7: a5 79
     bpl return5                                                       ; 45b9: 10 34
-    lda l0a27                                                         ; 45bb: ad 27 0a
+    lda save_game_level_i_small_stone_x_low                           ; 45bb: ad 27 0a
     clc                                                               ; 45be: 18
-    adc #$40 ; '@'                                                    ; 45bf: 69 40
-    sta l0a27                                                         ; 45c1: 8d 27 0a
-    lda #1                                                            ; 45c4: a9 01
-    sta l0a28                                                         ; 45c6: 8d 28 0a
-    dec l0a2d                                                         ; 45c9: ce 2d 0a
-    jmp c45ea                                                         ; 45cc: 4c ea 45
+    adc #<(game_area_width_cells * 8)                                 ; 45bf: 69 40
+    sta save_game_level_i_small_stone_x_low                           ; 45c1: 8d 27 0a
+    lda #>(game_area_width_cells * 8)                                 ; 45c4: a9 01
+    sta save_game_level_i_small_stone_x_high                          ; 45c6: 8d 28 0a
+    dec save_game_level_i_small_stone_room                            ; 45c9: ce 2d 0a
+    jmp hide_stone                                                    ; 45cc: 4c ea 45
 
-c45cf
+move_small_stone_one_room_down_if_needed
     lda l007a                                                         ; 45cf: a5 7a
-    cmp #$18                                                          ; 45d1: c9 18
+    cmp #game_area_height_cells                                       ; 45d1: c9 18
     bcc return5                                                       ; 45d3: 90 1a
-    lda l0a27                                                         ; 45d5: ad 27 0a
+    lda save_game_level_i_small_stone_x_low                           ; 45d5: ad 27 0a                ; [bug - should be y coordinate?]
     sec                                                               ; 45d8: 38
-    sbc #$c0                                                          ; 45d9: e9 c0
-    sta l0a29                                                         ; 45db: 8d 29 0a
+    sbc #<(game_area_height_cells * 8)                                ; 45d9: e9 c0
+    sta save_game_level_i_small_stone_y_low                           ; 45db: 8d 29 0a
     lda #0                                                            ; 45de: a9 00
-    sbc #0                                                            ; 45e0: e9 00
-    sta l0a2a                                                         ; 45e2: 8d 2a 0a
+    sbc #>(game_area_height_cells * 8)                                ; 45e0: e9 00
+    sta save_game_level_i_small_stone_y_high                          ; 45e2: 8d 2a 0a
     lda #1                                                            ; 45e5: a9 01
-    sta l0a2d                                                         ; 45e7: 8d 2d 0a
-c45ea
+    sta save_game_level_i_small_stone_room                            ; 45e7: 8d 2d 0a
+hide_stone
     lda #spriteid_one_pixel_masked_out                                ; 45ea: a9 00
-    sta object_spriteid + 2                                           ; 45ec: 8d aa 09
+    sta object_spriteid + objectid_small_stone_object                 ; 45ec: 8d aa 09
 return5
     rts                                                               ; 45ef: 60
 
-sub_c45f0
-    lda #spriteid_cache1                                              ; 45f0: a9 c9
-    sta object_erase_type + 2                                         ; 45f2: 8d ae 38
+set_small_stone_object
+    lda #spriteid_erase_small_stone                                   ; 45f0: a9 c9
+    sta object_erase_type + objectid_small_stone_object               ; 45f2: 8d ae 38
     lda #$a0                                                          ; 45f5: a9 a0
-    sta object_z_order + 2                                            ; 45f7: 8d c4 38
-    lda l0a27                                                         ; 45fa: ad 27 0a
-    sta object_x_low + 2                                              ; 45fd: 8d 52 09
-    lda l0a28                                                         ; 4600: ad 28 0a
-    sta object_x_high + 2                                             ; 4603: 8d 68 09
-    lda l0a29                                                         ; 4606: ad 29 0a
-    sta object_y_low + 2                                              ; 4609: 8d 7e 09
-    lda l0a2a                                                         ; 460c: ad 2a 0a
-    sta object_y_high + 2                                             ; 460f: 8d 94 09
-    lda #spriteid_stone                                               ; 4612: a9 c8
-    sta object_spriteid + 2                                           ; 4614: 8d aa 09
-    lda l0a2b                                                         ; 4617: ad 2b 0a
-    sta object_direction + 2                                          ; 461a: 8d c0 09
+    sta object_z_order + objectid_small_stone_object                  ; 45f7: 8d c4 38
+    lda save_game_level_i_small_stone_x_low                           ; 45fa: ad 27 0a
+    sta object_x_low + objectid_small_stone_object                    ; 45fd: 8d 52 09
+    lda save_game_level_i_small_stone_x_high                          ; 4600: ad 28 0a
+    sta object_x_high + objectid_small_stone_object                   ; 4603: 8d 68 09
+    lda save_game_level_i_small_stone_y_low                           ; 4606: ad 29 0a
+    sta object_y_low + objectid_small_stone_object                    ; 4609: 8d 7e 09
+    lda save_game_level_i_small_stone_y_high                          ; 460c: ad 2a 0a
+    sta object_y_high + objectid_small_stone_object                   ; 460f: 8d 94 09
+    lda #spriteid_small_stone                                         ; 4612: a9 c8
+    sta object_spriteid + objectid_small_stone_object                 ; 4614: 8d aa 09
+    lda save_game_level_i_small_stone_direction_without_bounces       ; 4617: ad 2b 0a
+    sta object_direction + objectid_small_stone_object                ; 461a: 8d c0 09
     rts                                                               ; 461d: 60
 
 l461e
@@ -1897,7 +1946,7 @@ l4620
 l4621
     !byte 0                                                           ; 4621: 00
 
-sub_c4622
+play_sounds34
     lda #0                                                            ; 4622: a9 00
     ldx #<sound3                                                      ; 4624: a2 74
     ldy #>sound3                                                      ; 4626: a0 46
@@ -2011,9 +2060,6 @@ sprite_data
 pydis_end
 
 ; Automatically generated labels:
-;     c3b10
-;     c3b1a
-;     c3b31
 ;     c3c81
 ;     c3c91
 ;     c3c9a
@@ -2054,12 +2100,8 @@ pydis_end
 ;     c42cf
 ;     c42dc
 ;     c4305
-;     c433f
 ;     c4365
 ;     c4390
-;     c4395
-;     c4398
-;     c43c1
 ;     c440a
 ;     c4419
 ;     c4439
@@ -2080,31 +2122,13 @@ pydis_end
 ;     c4539
 ;     c4540
 ;     c4559
-;     c45b7
-;     c45cf
-;     c45ea
 ;     l0078
 ;     l0079
 ;     l007a
-;     l0a24
-;     l0a25
-;     l0a26
-;     l0a27
-;     l0a28
-;     l0a29
-;     l0a2a
-;     l0a2b
-;     l0a2c
-;     l0a2d
-;     l0a2e
-;     l0a2f
 ;     l3ea9
-;     l3f6c
-;     l3f78
 ;     l4164
 ;     l4174
 ;     l4194
-;     l430d
 ;     l461e
 ;     l461f
 ;     l4620
@@ -2114,14 +2138,15 @@ pydis_end
 ;     loop_c3d30
 ;     loop_c3df2
 ;     loop_c4376
-;     sub_c3fa4
 ;     sub_c40c2
-;     sub_c41a4
 ;     sub_c42fa
-;     sub_c4337
 ;     sub_c449d
-;     sub_c45f0
-;     sub_c4622
+!if (<(game_area_height_cells * 8)) != $c0 {
+    !error "Assertion failed: <(game_area_height_cells * 8) == $c0"
+}
+!if (<(game_area_width_cells * 8)) != $40 {
+    !error "Assertion failed: <(game_area_width_cells * 8) == $40"
+}
 !if (<envelope1) != $48 {
     !error "Assertion failed: <envelope1 == $48"
 }
@@ -2145,6 +2170,12 @@ pydis_end
 }
 !if (<sound4) != $6c {
     !error "Assertion failed: <sound4 == $6c"
+}
+!if (>(game_area_height_cells * 8)) != $00 {
+    !error "Assertion failed: >(game_area_height_cells * 8) == $00"
+}
+!if (>(game_area_width_cells * 8)) != $01 {
+    !error "Assertion failed: >(game_area_width_cells * 8) == $01"
 }
 !if (>envelope1) != $46 {
     !error "Assertion failed: >envelope1 == $46"
@@ -2191,6 +2222,12 @@ pydis_end
 !if (exit_room_top) != $08 {
     !error "Assertion failed: exit_room_top == $08"
 }
+!if (game_area_height_cells) != $18 {
+    !error "Assertion failed: game_area_height_cells == $18"
+}
+!if (game_area_width_cells) != $28 {
+    !error "Assertion failed: game_area_width_cells == $28"
+}
 !if (level_specific_initialisation) != $3af1 {
     !error "Assertion failed: level_specific_initialisation == $3af1"
 }
@@ -2200,14 +2237,26 @@ pydis_end
 !if (level_specific_update) != $3b3a {
     !error "Assertion failed: level_specific_update == $3b3a"
 }
-!if (object_direction + 2) != $09c0 {
-    !error "Assertion failed: object_direction + 2 == $09c0"
-}
 !if (object_direction + 3) != $09c1 {
     !error "Assertion failed: object_direction + 3 == $09c1"
 }
 !if (object_direction + 4) != $09c2 {
     !error "Assertion failed: object_direction + 4 == $09c2"
+}
+!if (object_direction + objectid_seesaw) != $09c1 {
+    !error "Assertion failed: object_direction + objectid_seesaw == $09c1"
+}
+!if (object_direction + objectid_small_stone_object) != $09c0 {
+    !error "Assertion failed: object_direction + objectid_small_stone_object == $09c0"
+}
+!if (object_erase_type + objectid_big_stone_room_3) != $38b0 {
+    !error "Assertion failed: object_erase_type + objectid_big_stone_room_3 == $38b0"
+}
+!if (object_erase_type + objectid_seesaw) != $38af {
+    !error "Assertion failed: object_erase_type + objectid_seesaw == $38af"
+}
+!if (object_erase_type + objectid_small_stone_object) != $38ae {
+    !error "Assertion failed: object_erase_type + objectid_small_stone_object == $38ae"
 }
 !if (object_spriteid + 2) != $09aa {
     !error "Assertion failed: object_spriteid + 2 == $09aa"
@@ -2227,8 +2276,20 @@ pydis_end
 !if (object_spriteid + 7) != $09af {
     !error "Assertion failed: object_spriteid + 7 == $09af"
 }
-!if (object_spriteid + 8) != $09b0 {
-    !error "Assertion failed: object_spriteid + 8 == $09b0"
+!if (object_spriteid + objectid_big_stone_room_0) != $09ad {
+    !error "Assertion failed: object_spriteid + objectid_big_stone_room_0 == $09ad"
+}
+!if (object_spriteid + objectid_big_stone_room_3) != $09ac {
+    !error "Assertion failed: object_spriteid + objectid_big_stone_room_3 == $09ac"
+}
+!if (object_spriteid + objectid_rope_end) != $09b0 {
+    !error "Assertion failed: object_spriteid + objectid_rope_end == $09b0"
+}
+!if (object_spriteid + objectid_seesaw) != $09ab {
+    !error "Assertion failed: object_spriteid + objectid_seesaw == $09ab"
+}
+!if (object_spriteid + objectid_small_stone_object) != $09aa {
+    !error "Assertion failed: object_spriteid + objectid_small_stone_object == $09aa"
 }
 !if (object_spriteid_old + 2) != $09b5 {
     !error "Assertion failed: object_spriteid_old + 2 == $09b5"
@@ -2236,11 +2297,11 @@ pydis_end
 !if (object_spriteid_old + 6) != $09b9 {
     !error "Assertion failed: object_spriteid_old + 6 == $09b9"
 }
-!if (object_x_high + 2) != $0968 {
-    !error "Assertion failed: object_x_high + 2 == $0968"
-}
 !if (object_x_high + 4) != $096a {
     !error "Assertion failed: object_x_high + 4 == $096a"
+}
+!if (object_x_high + objectid_small_stone_object) != $0968 {
+    !error "Assertion failed: object_x_high + objectid_small_stone_object == $0968"
 }
 !if (object_x_low + 2) != $0952 {
     !error "Assertion failed: object_x_low + 2 == $0952"
@@ -2251,11 +2312,17 @@ pydis_end
 !if (object_x_low + 5) != $0955 {
     !error "Assertion failed: object_x_low + 5 == $0955"
 }
+!if (object_x_low + objectid_big_stone_room_3) != $0954 {
+    !error "Assertion failed: object_x_low + objectid_big_stone_room_3 == $0954"
+}
+!if (object_x_low + objectid_small_stone_object) != $0952 {
+    !error "Assertion failed: object_x_low + objectid_small_stone_object == $0952"
+}
 !if (object_x_low_old + 2) != $095d {
     !error "Assertion failed: object_x_low_old + 2 == $095d"
 }
-!if (object_y_high + 2) != $0994 {
-    !error "Assertion failed: object_y_high + 2 == $0994"
+!if (object_y_high + objectid_small_stone_object) != $0994 {
+    !error "Assertion failed: object_y_high + objectid_small_stone_object == $0994"
 }
 !if (object_y_low + 2) != $097e {
     !error "Assertion failed: object_y_low + 2 == $097e"
@@ -2272,17 +2339,38 @@ pydis_end
 !if (object_y_low + 7) != $0983 {
     !error "Assertion failed: object_y_low + 7 == $0983"
 }
+!if (object_y_low + objectid_big_stone_room_3) != $0980 {
+    !error "Assertion failed: object_y_low + objectid_big_stone_room_3 == $0980"
+}
+!if (object_y_low + objectid_small_stone_object) != $097e {
+    !error "Assertion failed: object_y_low + objectid_small_stone_object == $097e"
+}
 !if (object_y_low_old + 2) != $0989 {
     !error "Assertion failed: object_y_low_old + 2 == $0989"
 }
 !if (object_y_low_old + 6) != $098d {
     !error "Assertion failed: object_y_low_old + 6 == $098d"
 }
+!if (object_z_order + objectid_big_stone_room_3) != $38c6 {
+    !error "Assertion failed: object_z_order + objectid_big_stone_room_3 == $38c6"
+}
+!if (object_z_order + objectid_small_stone_object) != $38c4 {
+    !error "Assertion failed: object_z_order + objectid_small_stone_object == $38c4"
+}
 !if (objectid_old_player) != $0b {
     !error "Assertion failed: objectid_old_player == $0b"
 }
+!if (objectid_player) != $00 {
+    !error "Assertion failed: objectid_player == $00"
+}
 !if (objectid_player_accessory) != $01 {
     !error "Assertion failed: objectid_player_accessory == $01"
+}
+!if (objectid_seesaw) != $03 {
+    !error "Assertion failed: objectid_seesaw == $03"
+}
+!if (objectid_small_stone_object) != $02 {
+    !error "Assertion failed: objectid_small_stone_object == $02"
 }
 !if (room_0_data) != $40d6 {
     !error "Assertion failed: room_0_data == $40d6"
@@ -2296,6 +2384,21 @@ pydis_end
 !if (room_3_data) != $3eaa {
     !error "Assertion failed: room_3_data == $3eaa"
 }
+!if (small_stone_left_seesaw_animation1 - small_stone_left_seesaw_animations) != $01 {
+    !error "Assertion failed: small_stone_left_seesaw_animation1 - small_stone_left_seesaw_animations == $01"
+}
+!if (small_stone_left_seesaw_animation2 - small_stone_left_seesaw_animations) != $0e {
+    !error "Assertion failed: small_stone_left_seesaw_animation2 - small_stone_left_seesaw_animations == $0e"
+}
+!if (small_stone_left_seesaw_animation3 - small_stone_left_seesaw_animations) != $1b {
+    !error "Assertion failed: small_stone_left_seesaw_animation3 - small_stone_left_seesaw_animations == $1b"
+}
+!if (small_stone_left_seesaw_animation4 - small_stone_left_seesaw_animations) != $1e {
+    !error "Assertion failed: small_stone_left_seesaw_animation4 - small_stone_left_seesaw_animations == $1e"
+}
+!if (small_stone_left_seesaw_animation5 - small_stone_left_seesaw_animations) != $21 {
+    !error "Assertion failed: small_stone_left_seesaw_animation5 - small_stone_left_seesaw_animations == $21"
+}
 !if (sprite_data - level_data) != $0bc7 {
     !error "Assertion failed: sprite_data - level_data == $0bc7"
 }
@@ -2305,9 +2408,6 @@ pydis_end
 !if (spriteid_boulder) != $dd {
     !error "Assertion failed: spriteid_boulder == $dd"
 }
-!if (spriteid_cache1) != $c9 {
-    !error "Assertion failed: spriteid_cache1 == $c9"
-}
 !if (spriteid_cache2) != $cc {
     !error "Assertion failed: spriteid_cache2 == $cc"
 }
@@ -2316,6 +2416,9 @@ pydis_end
 }
 !if (spriteid_cache4) != $cf {
     !error "Assertion failed: spriteid_cache4 == $cf"
+}
+!if (spriteid_erase_small_stone) != $c9 {
+    !error "Assertion failed: spriteid_erase_small_stone == $c9"
 }
 !if (spriteid_horizontal_rope) != $d8 {
     !error "Assertion failed: spriteid_horizontal_rope == $d8"
@@ -2347,8 +2450,8 @@ pydis_end
 !if (spriteid_short_rope_end) != $de {
     !error "Assertion failed: spriteid_short_rope_end == $de"
 }
-!if (spriteid_stone) != $c8 {
-    !error "Assertion failed: spriteid_stone == $c8"
+!if (spriteid_small_stone) != $c8 {
+    !error "Assertion failed: spriteid_small_stone == $c8"
 }
 !if (spriteid_stone_menu_item) != $ca {
     !error "Assertion failed: spriteid_stone_menu_item == $ca"
