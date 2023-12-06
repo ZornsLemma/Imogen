@@ -1,162 +1,163 @@
 ; Constants
-collision_map_none                    = 0
-collision_map_out_of_bounds           = 255
-collision_map_rope                    = 2
-collision_map_solid_rock              = 3
-collision_map_unknown                 = 1
-copy_mode_2x2                         = 0
-copy_mode_random16                    = 16
-copy_mode_random2                     = 2
-copy_mode_random32                    = 32
-copy_mode_random4                     = 4
-copy_mode_random64                    = 64
-copy_mode_random8                     = 8
-copy_mode_simple                      = 1
-exit_room_bottom                      = 2
-exit_room_left                        = 1
-exit_room_right                       = 4
-exit_room_top                         = 8
-first_level_letter                    = 65
-game_area_height_cells                = 24
-game_area_width_cells                 = 40
-last_level_letter                     = 81
-object_collided_ceiling               = 8
-object_collided_floor                 = 2
-object_collided_left_wall             = 1
-object_collided_right_wall            = 4
-objectid_big_stone_room_0             = 5
-objectid_big_stone_room_3             = 4
-objectid_boulder_room_2               = 5
-objectid_long_rope_end_room_2         = 7
-objectid_old_player                   = 11
-objectid_old_player_accessory         = 12
-objectid_player                       = 0
-objectid_player_accessory             = 1
-objectid_rope_end_room_2              = 8
-objectid_seesaw                       = 3
-objectid_short_rope_end_room_2        = 6
-objectid_small_stone_object           = 2
-objectid_sword_room_0                 = 4
-opcode_jmp                            = 76
-sprite_op_flags_copy_screen           = 1
-sprite_op_flags_erase_to_bg_colour    = 2
-sprite_op_flags_erase_to_fg_colour    = 4
-sprite_op_flags_normal                = 0
-spriteid_197                          = 197
-spriteid_ball                         = 59
-spriteid_big_stone                    = 203
-spriteid_boulder                      = 221
-spriteid_brazier                      = 58
-spriteid_cache2                       = 204
-spriteid_cache3                       = 205
-spriteid_cache4                       = 207
-spriteid_cat1                         = 27
-spriteid_cat2                         = 28
-spriteid_cat_jump                     = 26
-spriteid_cat_tail1                    = 18
-spriteid_cat_tail2                    = 19
-spriteid_cat_tail3                    = 20
-spriteid_cat_tail4                    = 21
-spriteid_cat_tail5                    = 22
-spriteid_cat_tail6                    = 23
-spriteid_cat_tail7                    = 24
-spriteid_cat_tail8                    = 25
-spriteid_cat_transform1               = 16
-spriteid_cat_transform2               = 17
-spriteid_cat_walk1                    = 12
-spriteid_cat_walk2                    = 13
-spriteid_cat_walk3                    = 14
-spriteid_cat_walk4                    = 15
-spriteid_circle                       = 32
-spriteid_corner_bottom_left           = 45
-spriteid_corner_bottom_right          = 46
-spriteid_corner_top_left              = 44
-spriteid_corner_top_right             = 47
-spriteid_diamond1                     = 39
-spriteid_diamond2                     = 40
-spriteid_diamond3                     = 41
-spriteid_diamond4                     = 42
-spriteid_diamond5                     = 43
-spriteid_erase_player                 = 199
-spriteid_erase_player_accessory       = 198
-spriteid_erase_small_stone            = 201
-spriteid_fingertip_tile_restoration   = 30
-spriteid_fire1                        = 60
-spriteid_fire2                        = 61
-spriteid_fire3                        = 62
-spriteid_fire4                        = 63
-spriteid_fire5                        = 64
-spriteid_fire6                        = 65
-spriteid_fire7                        = 66
-spriteid_fire8                        = 67
-spriteid_horizontal_rope              = 216
-spriteid_icodata_box                  = 9
-spriteid_icodata_cat                  = 5
-spriteid_icodata_disc                 = 3
-spriteid_icodata_info                 = 7
-spriteid_icodata_monkey               = 6
-spriteid_icodata_password             = 8
-spriteid_icodata_sound                = 2
-spriteid_icodata_wizard               = 4
-spriteid_icon_background              = 1
-spriteid_left_hook                    = 214
-spriteid_long_rope_end1               = 218
-spriteid_long_rope_end2               = 219
-spriteid_menu_item_completion_spell   = 33
-spriteid_monkey1                      = 78
-spriteid_monkey2                      = 79
-spriteid_monkey3                      = 80
-spriteid_monkey4                      = 81
-spriteid_monkey5                      = 82
-spriteid_monkey_climb1                = 83
-spriteid_monkey_climb2                = 84
-spriteid_monkey_tail1                 = 70
-spriteid_monkey_tail2                 = 71
-spriteid_monkey_tail3                 = 72
-spriteid_monkey_tail4                 = 73
-spriteid_monkey_tail5                 = 74
-spriteid_monkey_tail6                 = 75
-spriteid_monkey_tail7                 = 76
-spriteid_monkey_tail8                 = 77
-spriteid_monkey_transform1            = 68
-spriteid_monkey_transform2            = 69
-spriteid_one_pixel_masked_out         = 0
-spriteid_one_pixel_set                = 31
-spriteid_pointer_hand                 = 29
-spriteid_right_hook                   = 215
-spriteid_rope1                        = 85
-spriteid_rope2                        = 86
-spriteid_rope3                        = 87
-spriteid_rope4                        = 88
-spriteid_rope_broken                  = 220
-spriteid_rope_end                     = 10
-spriteid_rope_hook                    = 11
-spriteid_seesaw                       = 206
-spriteid_short_rope                   = 217
-spriteid_short_rope_end               = 222
-spriteid_small_stone                  = 200
-spriteid_sparkles1                    = 34
-spriteid_sparkles2                    = 35
-spriteid_sparkles3                    = 36
-spriteid_sparkles4                    = 37
-spriteid_sparkles5                    = 38
-spriteid_stone_menu_item              = 202
-spriteid_sword                        = 208
-spriteid_sword_menu_item              = 209
-spriteid_sword_spin1                  = 210
-spriteid_sword_spin2                  = 211
-spriteid_sword_spin3                  = 212
-spriteid_sword_spin4                  = 213
-spriteid_wizard1                      = 48
-spriteid_wizard2                      = 49
-spriteid_wizard3                      = 50
-spriteid_wizard4                      = 51
-spriteid_wizard5                      = 52
-spriteid_wizard7                      = 54
-spriteid_wizard_hand                  = 55
-spriteid_wizard_transform1            = 56
-spriteid_wizard_transform2            = 57
-spriteid_wizard_using_object          = 53
+collision_map_none                     = 0
+collision_map_out_of_bounds            = 255
+collision_map_rope                     = 2
+collision_map_solid_rock               = 3
+collision_map_unknown                  = 1
+copy_mode_2x2                          = 0
+copy_mode_random16                     = 16
+copy_mode_random2                      = 2
+copy_mode_random32                     = 32
+copy_mode_random4                      = 4
+copy_mode_random64                     = 64
+copy_mode_random8                      = 8
+copy_mode_simple                       = 1
+exit_room_bottom                       = 2
+exit_room_left                         = 1
+exit_room_right                        = 4
+exit_room_top                          = 8
+first_level_letter                     = 65
+game_area_height_cells                 = 24
+game_area_width_cells                  = 40
+last_level_letter                      = 81
+object_collided_ceiling                = 8
+object_collided_floor                  = 2
+object_collided_left_wall              = 1
+object_collided_right_wall             = 4
+objectid_big_stone_room_0              = 5
+objectid_big_stone_room_3              = 4
+objectid_boulder_room_2                = 5
+objectid_long_rope_end_room_2          = 7
+objectid_old_player                    = 11
+objectid_old_player_accessory          = 12
+objectid_player                        = 0
+objectid_player_accessory              = 1
+objectid_rope_end_room_2               = 8
+objectid_seesaw                        = 3
+objectid_short_rope_end_room_2         = 6
+objectid_small_stone_object            = 2
+objectid_spell                         = 4
+objectid_sword                         = 4
+opcode_jmp                             = 76
+sprite_op_flags_copy_screen            = 1
+sprite_op_flags_erase_to_bg_colour     = 2
+sprite_op_flags_erase_to_fg_colour     = 4
+sprite_op_flags_normal                 = 0
+spriteid_197                           = 197
+spriteid_ball                          = 59
+spriteid_big_stone                     = 203
+spriteid_boulder                       = 221
+spriteid_brazier                       = 58
+spriteid_cat1                          = 27
+spriteid_cat2                          = 28
+spriteid_cat_jump                      = 26
+spriteid_cat_tail1                     = 18
+spriteid_cat_tail2                     = 19
+spriteid_cat_tail3                     = 20
+spriteid_cat_tail4                     = 21
+spriteid_cat_tail5                     = 22
+spriteid_cat_tail6                     = 23
+spriteid_cat_tail7                     = 24
+spriteid_cat_tail8                     = 25
+spriteid_cat_transform1                = 16
+spriteid_cat_transform2                = 17
+spriteid_cat_walk1                     = 12
+spriteid_cat_walk2                     = 13
+spriteid_cat_walk3                     = 14
+spriteid_cat_walk4                     = 15
+spriteid_circle                        = 32
+spriteid_corner_bottom_left            = 45
+spriteid_corner_bottom_right           = 46
+spriteid_corner_top_left               = 44
+spriteid_corner_top_right              = 47
+spriteid_diamond1                      = 39
+spriteid_diamond2                      = 40
+spriteid_diamond3                      = 41
+spriteid_diamond4                      = 42
+spriteid_diamond5                      = 43
+spriteid_erase_big_stone_or_rope_end   = 204
+spriteid_erase_player                  = 199
+spriteid_erase_player_accessory        = 198
+spriteid_erase_seesaw                  = 205
+spriteid_erase_small_stone             = 201
+spriteid_erase_sword                   = 207
+spriteid_fingertip_tile_restoration    = 30
+spriteid_fire1                         = 60
+spriteid_fire2                         = 61
+spriteid_fire3                         = 62
+spriteid_fire4                         = 63
+spriteid_fire5                         = 64
+spriteid_fire6                         = 65
+spriteid_fire7                         = 66
+spriteid_fire8                         = 67
+spriteid_horizontal_rope               = 216
+spriteid_icodata_box                   = 9
+spriteid_icodata_cat                   = 5
+spriteid_icodata_disc                  = 3
+spriteid_icodata_info                  = 7
+spriteid_icodata_monkey                = 6
+spriteid_icodata_password              = 8
+spriteid_icodata_sound                 = 2
+spriteid_icodata_wizard                = 4
+spriteid_icon_background               = 1
+spriteid_left_hook                     = 214
+spriteid_long_rope_end1                = 218
+spriteid_long_rope_end2                = 219
+spriteid_menu_item_completion_spell    = 33
+spriteid_monkey1                       = 78
+spriteid_monkey2                       = 79
+spriteid_monkey3                       = 80
+spriteid_monkey4                       = 81
+spriteid_monkey5                       = 82
+spriteid_monkey_climb1                 = 83
+spriteid_monkey_climb2                 = 84
+spriteid_monkey_tail1                  = 70
+spriteid_monkey_tail2                  = 71
+spriteid_monkey_tail3                  = 72
+spriteid_monkey_tail4                  = 73
+spriteid_monkey_tail5                  = 74
+spriteid_monkey_tail6                  = 75
+spriteid_monkey_tail7                  = 76
+spriteid_monkey_tail8                  = 77
+spriteid_monkey_transform1             = 68
+spriteid_monkey_transform2             = 69
+spriteid_one_pixel_masked_out          = 0
+spriteid_one_pixel_set                 = 31
+spriteid_pointer_hand                  = 29
+spriteid_right_hook                    = 215
+spriteid_rope1                         = 85
+spriteid_rope2                         = 86
+spriteid_rope3                         = 87
+spriteid_rope4                         = 88
+spriteid_rope_broken                   = 220
+spriteid_rope_end                      = 10
+spriteid_rope_hook                     = 11
+spriteid_seesaw                        = 206
+spriteid_short_rope                    = 217
+spriteid_short_rope_end                = 222
+spriteid_small_stone                   = 200
+spriteid_sparkles1                     = 34
+spriteid_sparkles2                     = 35
+spriteid_sparkles3                     = 36
+spriteid_sparkles4                     = 37
+spriteid_sparkles5                     = 38
+spriteid_stone_menu_item               = 202
+spriteid_sword                         = 208
+spriteid_sword_menu_item               = 209
+spriteid_sword_spin1                   = 210
+spriteid_sword_spin2                   = 211
+spriteid_sword_spin3                   = 212
+spriteid_sword_spin4                   = 213
+spriteid_wizard1                       = 48
+spriteid_wizard2                       = 49
+spriteid_wizard3                       = 50
+spriteid_wizard4                       = 51
+spriteid_wizard5                       = 52
+spriteid_wizard7                       = 54
+spriteid_wizard_hand                   = 55
+spriteid_wizard_transform1             = 56
+spriteid_wizard_transform2             = 57
+spriteid_wizard_using_object           = 53
 
 ; Memory locations
 sprite_reflect_flag                                         = $1d
@@ -583,7 +584,7 @@ room_2_game_update_loop
     ldy current_level                                                 ; 3c4c: a4 31
     jmp initialise_level_and_room                                     ; 3c4e: 4c 40 11
 
-trajectory_y_coordinates_table
+sword_trajectory_y_coordinates_table
     !byte 146, 136, 128, 121, 114, 108, 104, 100,  98,  97,  96       ; 3c51: 92 88 80...
     !byte  96,  97,  99, 102, 106, 112, 120, 130, 139, 152, 168       ; 3c5c: 60 61 63...
 
@@ -624,8 +625,8 @@ c3c9a
     ldy #>envelope2                                                   ; 3ca3: a0 46
     jsr define_envelope                                               ; 3ca5: 20 5e 39
     lda #$40 ; '@'                                                    ; 3ca8: a9 40
-    sta object_z_order + 4                                            ; 3caa: 8d c6 38
-    lda #spriteid_cache3                                              ; 3cad: a9 cd
+    sta object_z_order + objectid_sword                               ; 3caa: 8d c6 38
+    lda #spriteid_erase_seesaw                                        ; 3cad: a9 cd
     sta object_erase_type + objectid_seesaw                           ; 3caf: 8d af 38
     ldx #$1d                                                          ; 3cb2: a2 1d
     lda #4                                                            ; 3cb4: a9 04
@@ -666,13 +667,13 @@ c3cf3
     sec                                                               ; 3cfa: 38
     sbc l3ea9                                                         ; 3cfb: ed a9 3e
     tay                                                               ; 3cfe: a8
-    lda #2                                                            ; 3cff: a9 02
+    lda #collision_map_rope                                           ; 3cff: a9 02
     jsr write_a_single_value_to_cell_in_collision_map                 ; 3d01: 20 bb 1e
     dey                                                               ; 3d04: 88
 loop_c3d05
     lda #spriteid_short_rope                                          ; 3d05: a9 d9
     jsr draw_sprite_a_at_cell_xy                                      ; 3d07: 20 4c 1f
-    lda #2                                                            ; 3d0a: a9 02
+    lda #collision_map_rope                                           ; 3d0a: a9 02
     jsr write_a_single_value_to_cell_in_collision_map                 ; 3d0c: 20 bb 1e
     dey                                                               ; 3d0f: 88
     cpy #3                                                            ; 3d10: c0 03
@@ -682,7 +683,7 @@ loop_c3d05
     lda #objectid_rope_end_room_2                                     ; 3d19: a9 08
     ldy #$15                                                          ; 3d1b: a0 15
     jsr set_object_position_from_cell_xy                              ; 3d1d: 20 5d 1f
-    lda #spriteid_cache2                                              ; 3d20: a9 cc
+    lda #spriteid_erase_big_stone_or_rope_end                         ; 3d20: a9 cc
     sta object_erase_type + objectid_rope_end_room_2                  ; 3d22: 8d b4 38
     ldx #$1b                                                          ; 3d25: a2 1b
     lda #7                                                            ; 3d27: a9 07
@@ -690,11 +691,11 @@ loop_c3d05
     adc l3ea9                                                         ; 3d2a: 6d a9 3e
     tay                                                               ; 3d2d: a8
     lda #spriteid_short_rope                                          ; 3d2e: a9 d9
-loop_c3d30
+draw_rope_loop
     jsr draw_sprite_a_at_cell_xy                                      ; 3d30: 20 4c 1f
     dey                                                               ; 3d33: 88
     cpy #3                                                            ; 3d34: c0 03
-    bcs loop_c3d30                                                    ; 3d36: b0 f8
+    bcs draw_rope_loop                                                ; 3d36: b0 f8
 ; initialise rope end
     lda #spriteid_short_rope_end                                      ; 3d38: a9 de
     sta object_spriteid + objectid_short_rope_end_room_2              ; 3d3a: 8d ae 09
@@ -767,7 +768,7 @@ c3db1
     bcc c3de6                                                         ; 3dc0: 90 24
     cmp #$1f                                                          ; 3dc2: c9 1f
     bne c3df5                                                         ; 3dc4: d0 2f
-    lda object_spriteid + 4                                           ; 3dc6: ad ac 09
+    lda object_spriteid + objectid_sword                              ; 3dc6: ad ac 09
     beq c3df5                                                         ; 3dc9: f0 2a
     jsr play_landing_sound                                            ; 3dcb: 20 a9 23
     jmp c3df5                                                         ; 3dce: 4c f5 3d
@@ -805,7 +806,7 @@ c3df5
     ldx #1                                                            ; 3e06: a2 01
 c3e08
     sta l3ea9                                                         ; 3e08: 8d a9 3e
-    stx object_direction + 3                                          ; 3e0b: 8e c1 09
+    stx object_direction + objectid_seesaw                            ; 3e0b: 8e c1 09
     lda l3ea9                                                         ; 3e0e: ad a9 3e
     bne c3e3a                                                         ; 3e11: d0 27
     lda #spriteid_one_pixel_masked_out                                ; 3e13: a9 00
@@ -842,7 +843,7 @@ c3e3a
     sta object_spriteid + objectid_rope_end_room_2                    ; 3e4e: 8d b0 09
     ldx #$0d                                                          ; 3e51: a2 0d
     iny                                                               ; 3e53: c8
-    lda #0                                                            ; 3e54: a9 00
+    lda #collision_map_none                                           ; 3e54: a9 00
     jsr write_a_single_value_to_cell_in_collision_map                 ; 3e56: 20 bb 1e
 c3e59
     lda l3ea9                                                         ; 3e59: ad a9 3e
@@ -880,12 +881,12 @@ c3e82
     lda #$f0                                                          ; 3e92: a9 f0
     sec                                                               ; 3e94: 38
     sbc l0070                                                         ; 3e95: e5 70
-    sta object_x_low + 4                                              ; 3e97: 8d 54 09
-    lda trajectory_y_coordinates_table,x                              ; 3e9a: bd 51 3c
-    sta object_y_low + 4                                              ; 3e9d: 8d 80 09
-    lda object_direction + 4                                          ; 3ea0: ad c2 09
+    sta object_x_low + objectid_sword                                 ; 3e97: 8d 54 09
+    lda sword_trajectory_y_coordinates_table,x                        ; 3e9a: bd 51 3c
+    sta object_y_low + objectid_sword                                 ; 3e9d: 8d 80 09
+    lda object_direction + objectid_sword                             ; 3ea0: ad c2 09
     bpl return1                                                       ; 3ea3: 10 03
-    inc object_x_low + 4                                              ; 3ea5: ee 54 09
+    inc object_x_low + objectid_sword                                 ; 3ea5: ee 54 09
 return1
     rts                                                               ; 3ea8: 60
 
@@ -1083,13 +1084,13 @@ c3fbd
     lda desired_room_index                                            ; 3fbd: a5 30
     cmp #3                                                            ; 3fbf: c9 03
     bne c3fe5                                                         ; 3fc1: d0 22
-    lda #spriteid_cache2                                              ; 3fc3: a9 cc
+    lda #spriteid_erase_big_stone_or_rope_end                         ; 3fc3: a9 cc
     sta object_erase_type + objectid_big_stone_room_3                 ; 3fc5: 8d b0 38
     lda #$e0                                                          ; 3fc8: a9 e0
     sta object_z_order + objectid_big_stone_room_3                    ; 3fca: 8d c6 38
     lda #spriteid_big_stone                                           ; 3fcd: a9 cb
     sta object_spriteid + objectid_big_stone_room_3                   ; 3fcf: 8d ac 09
-    lda #spriteid_cache3                                              ; 3fd2: a9 cd
+    lda #spriteid_erase_seesaw                                        ; 3fd2: a9 cd
     sta object_erase_type + objectid_seesaw                           ; 3fd4: 8d af 38
     ldx #$14                                                          ; 3fd7: a2 14
     ldy #$10                                                          ; 3fd9: a0 10
@@ -1145,7 +1146,7 @@ c4024
     sta save_game_level_i_top_seesaw_puzzle_progress                  ; 403a: 8d 2f 0a
     sta save_game_level_i_left_seesaw_puzzle_progress                 ; 403d: 8d 24 0a
     lda #spriteid_one_pixel_masked_out                                ; 4040: a9 00
-    sta object_spriteid + 2                                           ; 4042: 8d aa 09
+    sta object_spriteid + objectid_small_stone_object                 ; 4042: 8d aa 09
 c4045
     lda desired_room_index                                            ; 4045: a5 30
     cmp #3                                                            ; 4047: c9 03
@@ -1181,7 +1182,7 @@ c4068
     ldx #$18                                                          ; 407f: a2 18
     sty l4621                                                         ; 4081: 8c 21 46
     ldy #$0b                                                          ; 4084: a0 0b
-    lda #3                                                            ; 4086: a9 03
+    lda #collision_map_solid_rock                                     ; 4086: a9 03
     jsr write_a_single_value_to_cell_in_collision_map                 ; 4088: 20 bb 1e
     ldy l4621                                                         ; 408b: ac 21 46
     lda save_game_level_i_top_seesaw_puzzle_progress                  ; 408e: ad 2f 0a
@@ -1397,13 +1398,13 @@ c41ca
     ldx #<envelope3                                                   ; 41d0: a2 32
     ldy #>envelope3                                                   ; 41d2: a0 46
     jsr define_envelope                                               ; 41d4: 20 5e 39
-    lda #spriteid_cache2                                              ; 41d7: a9 cc
-    sta object_erase_type + 5                                         ; 41d9: 8d b1 38
+    lda #spriteid_erase_big_stone_or_rope_end                         ; 41d7: a9 cc
+    sta object_erase_type + objectid_big_stone_room_0                 ; 41d9: 8d b1 38
     lda #$e0                                                          ; 41dc: a9 e0
-    sta object_z_order + 5                                            ; 41de: 8d c7 38
+    sta object_z_order + objectid_big_stone_room_0                    ; 41de: 8d c7 38
     lda #spriteid_big_stone                                           ; 41e1: a9 cb
     sta object_spriteid + objectid_big_stone_room_0                   ; 41e3: 8d ad 09
-    lda #spriteid_cache3                                              ; 41e6: a9 cd
+    lda #spriteid_erase_seesaw                                        ; 41e6: a9 cd
     sta object_erase_type + objectid_seesaw                           ; 41e8: 8d af 38
     ldx #$14                                                          ; 41eb: a2 14
     lda #4                                                            ; 41ed: a9 04
@@ -1413,10 +1414,10 @@ c41ca
     jsr set_object_position_from_cell_xy                              ; 41f5: 20 5d 1f
     lda #spriteid_seesaw                                              ; 41f8: a9 ce
     sta object_spriteid + objectid_seesaw                             ; 41fa: 8d ab 09
-    lda #spriteid_cache4                                              ; 41fd: a9 cf
-    sta object_erase_type + 4                                         ; 41ff: 8d b0 38
+    lda #spriteid_erase_sword                                         ; 41fd: a9 cf
+    sta object_erase_type + objectid_sword                            ; 41ff: 8d b0 38
     lda #$c0                                                          ; 4202: a9 c0
-    sta object_z_order + 4                                            ; 4204: 8d c6 38
+    sta object_z_order + objectid_sword                               ; 4204: 8d c6 38
 c4207
     jmp c426c                                                         ; 4207: 4c 6c 42
 
@@ -1477,13 +1478,13 @@ c426c
 
 c4275
     lda #1                                                            ; 4275: a9 01
-    sta object_direction + 3                                          ; 4277: 8d c1 09
+    sta object_direction + objectid_seesaw                            ; 4277: 8d c1 09
     ldx save_game_level_i_sword_progress                              ; 427a: ae 25 0a
     ldy #0                                                            ; 427d: a0 00
     cpx #7                                                            ; 427f: e0 07
     bcc c4292                                                         ; 4281: 90 0f
     lda #$ff                                                          ; 4283: a9 ff
-    sta object_direction + 3                                          ; 4285: 8d c1 09
+    sta object_direction + objectid_seesaw                            ; 4285: 8d c1 09
     ldx #7                                                            ; 4288: a2 07
     lda save_game_level_i_sword_progress                              ; 428a: ad 25 0a
     sec                                                               ; 428d: 38
@@ -1510,7 +1511,7 @@ c4292
     pla                                                               ; 42ae: 68
     tay                                                               ; 42af: a8
     lda #spriteid_one_pixel_masked_out                                ; 42b0: a9 00
-    sta object_spriteid + 4                                           ; 42b2: 8d ac 09
+    sta object_spriteid + objectid_sword                              ; 42b2: 8d ac 09
     lda save_game_level_i_sword_progress                              ; 42b5: ad 25 0a
     cmp #$ff                                                          ; 42b8: c9 ff
     beq return3                                                       ; 42ba: f0 3d
@@ -1518,18 +1519,18 @@ c4292
     bmi c42cf                                                         ; 42bf: 30 0e
     clc                                                               ; 42c1: 18
     adc #spriteid_small_stone                                         ; 42c2: 69 c8
-    sta object_spriteid + 4                                           ; 42c4: 8d ac 09
+    sta object_spriteid + objectid_sword                              ; 42c4: 8d ac 09
     lda #1                                                            ; 42c7: a9 01
-    sta object_direction + 4                                          ; 42c9: 8d c2 09
+    sta object_direction + objectid_sword                             ; 42c9: 8d c2 09
     jmp c42dc                                                         ; 42cc: 4c dc 42
 
 c42cf
     eor #$ff                                                          ; 42cf: 49 ff
     sec                                                               ; 42d1: 38
     adc #spriteid_small_stone                                         ; 42d2: 69 c8
-    sta object_spriteid + 4                                           ; 42d4: 8d ac 09
+    sta object_spriteid + objectid_sword                              ; 42d4: 8d ac 09
     lda #$ff                                                          ; 42d7: a9 ff
-    sta object_direction + 4                                          ; 42d9: 8d c2 09
+    sta object_direction + objectid_sword                             ; 42d9: 8d c2 09
 c42dc
     tya                                                               ; 42dc: 98
     asl                                                               ; 42dd: 0a
@@ -1537,24 +1538,24 @@ c42dc
     lda l4174,y                                                       ; 42df: b9 74 41
     clc                                                               ; 42e2: 18
     adc #$90                                                          ; 42e3: 69 90
-    sta object_x_low + 4                                              ; 42e5: 8d 54 09
+    sta object_x_low + objectid_sword                                 ; 42e5: 8d 54 09
     lda #0                                                            ; 42e8: a9 00
     adc #0                                                            ; 42ea: 69 00
-    sta object_x_high + 4                                             ; 42ec: 8d 6a 09
+    sta object_x_high + objectid_sword                                ; 42ec: 8d 6a 09
     iny                                                               ; 42ef: c8
     lda l4174,y                                                       ; 42f0: b9 74 41
     clc                                                               ; 42f3: 18
     adc #$58 ; 'X'                                                    ; 42f4: 69 58
-    sta object_y_low + 4                                              ; 42f6: 8d 80 09
+    sta object_y_low + objectid_sword                                 ; 42f6: 8d 80 09
 return3
     rts                                                               ; 42f9: 60
 
 sub_c42fa
-    lda #3                                                            ; 42fa: a9 03
+    lda #collision_map_solid_rock                                     ; 42fa: a9 03
     ldx save_game_level_i_sword_progress                              ; 42fc: ae 25 0a
     cpx #4                                                            ; 42ff: e0 04
     bcc c4305                                                         ; 4301: 90 02
-    lda #0                                                            ; 4303: a9 00
+    lda #collision_map_none                                           ; 4303: a9 00
 c4305
     ldx #$1a                                                          ; 4305: a2 1a
     ldy #$11                                                          ; 4307: a0 11
@@ -2141,7 +2142,6 @@ pydis_end
 ;     l4621
 ;     loop_c3ce2
 ;     loop_c3d05
-;     loop_c3d30
 ;     loop_c4376
 ;     sub_c40c2
 ;     sub_c42fa
@@ -2245,23 +2245,17 @@ pydis_end
 !if (level_specific_update) != $3b3a {
     !error "Assertion failed: level_specific_update == $3b3a"
 }
-!if (object_direction + 3) != $09c1 {
-    !error "Assertion failed: object_direction + 3 == $09c1"
-}
-!if (object_direction + 4) != $09c2 {
-    !error "Assertion failed: object_direction + 4 == $09c2"
-}
 !if (object_direction + objectid_seesaw) != $09c1 {
     !error "Assertion failed: object_direction + objectid_seesaw == $09c1"
 }
 !if (object_direction + objectid_small_stone_object) != $09c0 {
     !error "Assertion failed: object_direction + objectid_small_stone_object == $09c0"
 }
-!if (object_erase_type + 4) != $38b0 {
-    !error "Assertion failed: object_erase_type + 4 == $38b0"
+!if (object_direction + objectid_sword) != $09c2 {
+    !error "Assertion failed: object_direction + objectid_sword == $09c2"
 }
-!if (object_erase_type + 5) != $38b1 {
-    !error "Assertion failed: object_erase_type + 5 == $38b1"
+!if (object_erase_type + objectid_big_stone_room_0) != $38b1 {
+    !error "Assertion failed: object_erase_type + objectid_big_stone_room_0 == $38b1"
 }
 !if (object_erase_type + objectid_big_stone_room_3) != $38b0 {
     !error "Assertion failed: object_erase_type + objectid_big_stone_room_3 == $38b0"
@@ -2272,11 +2266,8 @@ pydis_end
 !if (object_erase_type + objectid_small_stone_object) != $38ae {
     !error "Assertion failed: object_erase_type + objectid_small_stone_object == $38ae"
 }
-!if (object_spriteid + 2) != $09aa {
-    !error "Assertion failed: object_spriteid + 2 == $09aa"
-}
-!if (object_spriteid + 4) != $09ac {
-    !error "Assertion failed: object_spriteid + 4 == $09ac"
+!if (object_erase_type + objectid_sword) != $38b0 {
+    !error "Assertion failed: object_erase_type + objectid_sword == $38b0"
 }
 !if (object_spriteid + objectid_big_stone_room_0) != $09ad {
     !error "Assertion failed: object_spriteid + objectid_big_stone_room_0 == $09ad"
@@ -2302,20 +2293,20 @@ pydis_end
 !if (object_spriteid + objectid_small_stone_object) != $09aa {
     !error "Assertion failed: object_spriteid + objectid_small_stone_object == $09aa"
 }
+!if (object_spriteid + objectid_sword) != $09ac {
+    !error "Assertion failed: object_spriteid + objectid_sword == $09ac"
+}
 !if (object_spriteid_old + objectid_short_rope_end_room_2) != $09b9 {
     !error "Assertion failed: object_spriteid_old + objectid_short_rope_end_room_2 == $09b9"
 }
 !if (object_spriteid_old + objectid_small_stone_object) != $09b5 {
     !error "Assertion failed: object_spriteid_old + objectid_small_stone_object == $09b5"
 }
-!if (object_x_high + 4) != $096a {
-    !error "Assertion failed: object_x_high + 4 == $096a"
-}
 !if (object_x_high + objectid_small_stone_object) != $0968 {
     !error "Assertion failed: object_x_high + objectid_small_stone_object == $0968"
 }
-!if (object_x_low + 4) != $0954 {
-    !error "Assertion failed: object_x_low + 4 == $0954"
+!if (object_x_high + objectid_sword) != $096a {
+    !error "Assertion failed: object_x_high + objectid_sword == $096a"
 }
 !if (object_x_low + objectid_big_stone_room_0) != $0955 {
     !error "Assertion failed: object_x_low + objectid_big_stone_room_0 == $0955"
@@ -2326,14 +2317,14 @@ pydis_end
 !if (object_x_low + objectid_small_stone_object) != $0952 {
     !error "Assertion failed: object_x_low + objectid_small_stone_object == $0952"
 }
+!if (object_x_low + objectid_sword) != $0954 {
+    !error "Assertion failed: object_x_low + objectid_sword == $0954"
+}
 !if (object_x_low_old + objectid_small_stone_object) != $095d {
     !error "Assertion failed: object_x_low_old + objectid_small_stone_object == $095d"
 }
 !if (object_y_high + objectid_small_stone_object) != $0994 {
     !error "Assertion failed: object_y_high + objectid_small_stone_object == $0994"
-}
-!if (object_y_low + 4) != $0980 {
-    !error "Assertion failed: object_y_low + 4 == $0980"
 }
 !if (object_y_low + objectid_big_stone_room_0) != $0981 {
     !error "Assertion failed: object_y_low + objectid_big_stone_room_0 == $0981"
@@ -2353,17 +2344,17 @@ pydis_end
 !if (object_y_low + objectid_small_stone_object) != $097e {
     !error "Assertion failed: object_y_low + objectid_small_stone_object == $097e"
 }
+!if (object_y_low + objectid_sword) != $0980 {
+    !error "Assertion failed: object_y_low + objectid_sword == $0980"
+}
 !if (object_y_low_old + objectid_short_rope_end_room_2) != $098d {
     !error "Assertion failed: object_y_low_old + objectid_short_rope_end_room_2 == $098d"
 }
 !if (object_y_low_old + objectid_small_stone_object) != $0989 {
     !error "Assertion failed: object_y_low_old + objectid_small_stone_object == $0989"
 }
-!if (object_z_order + 4) != $38c6 {
-    !error "Assertion failed: object_z_order + 4 == $38c6"
-}
-!if (object_z_order + 5) != $38c7 {
-    !error "Assertion failed: object_z_order + 5 == $38c7"
+!if (object_z_order + objectid_big_stone_room_0) != $38c7 {
+    !error "Assertion failed: object_z_order + objectid_big_stone_room_0 == $38c7"
 }
 !if (object_z_order + objectid_big_stone_room_3) != $38c6 {
     !error "Assertion failed: object_z_order + objectid_big_stone_room_3 == $38c6"
@@ -2376,6 +2367,9 @@ pydis_end
 }
 !if (object_z_order + objectid_small_stone_object) != $38c4 {
     !error "Assertion failed: object_z_order + objectid_small_stone_object == $38c4"
+}
+!if (object_z_order + objectid_sword) != $38c6 {
+    !error "Assertion failed: object_z_order + objectid_sword == $38c6"
 }
 !if (objectid_boulder_room_2) != $05 {
     !error "Assertion failed: objectid_boulder_room_2 == $05"
@@ -2440,17 +2434,17 @@ pydis_end
 !if (spriteid_boulder) != $dd {
     !error "Assertion failed: spriteid_boulder == $dd"
 }
-!if (spriteid_cache2) != $cc {
-    !error "Assertion failed: spriteid_cache2 == $cc"
+!if (spriteid_erase_big_stone_or_rope_end) != $cc {
+    !error "Assertion failed: spriteid_erase_big_stone_or_rope_end == $cc"
 }
-!if (spriteid_cache3) != $cd {
-    !error "Assertion failed: spriteid_cache3 == $cd"
-}
-!if (spriteid_cache4) != $cf {
-    !error "Assertion failed: spriteid_cache4 == $cf"
+!if (spriteid_erase_seesaw) != $cd {
+    !error "Assertion failed: spriteid_erase_seesaw == $cd"
 }
 !if (spriteid_erase_small_stone) != $c9 {
     !error "Assertion failed: spriteid_erase_small_stone == $c9"
+}
+!if (spriteid_erase_sword) != $cf {
+    !error "Assertion failed: spriteid_erase_sword == $cf"
 }
 !if (spriteid_horizontal_rope) != $d8 {
     !error "Assertion failed: spriteid_horizontal_rope == $d8"
