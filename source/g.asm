@@ -2518,7 +2518,7 @@ draw_left_wall_local
 ; 
 ; *************************************************************************************
 draw_floor_walls_and_ceiling_around_solid_rock
-    lda #3                                                            ; 1cc1: a9 03       ..  :1b90[1]
+    lda #collision_map_solid_rock                                     ; 1cc1: a9 03       ..  :1b90[1]
     sta default_collision_map_option                                  ; 1cc3: 85 44       .D  :1b92[1]
 ; Y is loop counter over cell rows
     ldy #game_area_height_cells - 1                                   ; 1cc5: a0 17       ..  :1b94[1]
@@ -5299,7 +5299,7 @@ get_solid_rock_collision_for_object_a
     and #2                                                            ; 29fd: 29 02       ).  :28cc[1]
     ora temp_collision_result                                         ; 29ff: 0d 5b 29    .[) :28ce[1]
     sta temp_collision_result                                         ; 2a02: 8d 5b 29    .[) :28d1[1]
-    lda #0                                                            ; 2a05: a9 00       ..  :28d4[1]
+    lda #collision_map_none                                           ; 2a05: a9 00       ..  :28d4[1]
     sta temp_default_collision_map_option                             ; 2a07: 8d e1 28    ..( :28d6[1]
     pla                                                               ; 2a0a: 68          h   :28d9[1]   ; recall X,Y
     tay                                                               ; 2a0b: a8          .   :28da[1]
@@ -5309,7 +5309,7 @@ get_solid_rock_collision_for_object_a
     rts                                                               ; 2a11: 60          `   :28e0[1]
 
 temp_default_collision_map_option
-    !byte 0                                                           ; 2a12: 00          .   :28e1[1]
+    !byte collision_map_none                                          ; 2a12: 00          .   :28e1[1]
 
 ; TODO: this is used by e.g. dataA
 ; *************************************************************************************
@@ -9737,6 +9737,9 @@ pydis_end
 }
 !if (collision_map_length) != $f0 {
     !error "Assertion failed: collision_map_length == $f0"
+}
+!if (collision_map_none) != $00 {
+    !error "Assertion failed: collision_map_none == $00"
 }
 !if (collision_map_out_of_bounds) != $ff {
     !error "Assertion failed: collision_map_out_of_bounds == $ff"

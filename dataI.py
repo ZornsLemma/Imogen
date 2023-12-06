@@ -355,7 +355,6 @@ for i in range(0x3f6c, 0x3fa4, 2):
 expr(0x41b4, "collectable_being_used_spriteids+2")
 expr(0x4200, "object_erase_type + 4")
 expr(0x41da, "object_erase_type + 5")
-#label(0x38c4, "object_z_order + 2")
 label(0x38c6, "object_z_order + 4")
 label(0x38c7, "object_z_order + 5")
 expr(0x3dc7, "object_spriteid + 4")

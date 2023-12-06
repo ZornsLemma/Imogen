@@ -1244,6 +1244,7 @@ On Entry:
     comment(0x1b90, "TODO: This is called from level-specific machine code, e.g. see dataA.asm")
     stars(0x1b90, "Once the rocks of the room have been drawn, this function carves the floor, wall and ceiling tiles into the rock.")
     entry(0x1b90)
+    expr(0x1b91, "collision_map_solid_rock")
     comment(0x1b94, "Y is loop counter over cell rows")
     expr(0x1b95, make_subtract("game_area_height_cells", "1"))
     comment(0x1b96, "X is loop counter over cell columns")
@@ -2100,6 +2101,8 @@ On Exit:
        A=8 means object collided with ceiling
     Flags reflect A on exit.""")
     comment(0x2894, "TODO: this is used by e.g. dataA")
+    expr(0x28d5, "collision_map_none")
+    expr(0x28e1, "collision_map_none")
     comment(0x28e2, "TODO: this is used by e.g. dataA")
     stars(0x28e2, """Test for a collision between two objects
 
