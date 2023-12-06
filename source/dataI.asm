@@ -651,11 +651,11 @@ c3c9a
     dex                                                               ; 3cde: ca
     dex                                                               ; 3cdf: ca
     lda #spriteid_horizontal_rope                                     ; 3ce0: a9 d8
-loop_c3ce2
+draw_room_2_horizontal_rope_loop
     jsr draw_sprite_a_at_cell_xy                                      ; 3ce2: 20 4c 1f
     dex                                                               ; 3ce5: ca
     cpx #$0f                                                          ; 3ce6: e0 0f
-    bcs loop_c3ce2                                                    ; 3ce8: b0 f8
+    bcs draw_room_2_horizontal_rope_loop                              ; 3ce8: b0 f8
     lda save_game_level_i_spell_progress                              ; 3cea: ad 26 0a
     cmp #$0a                                                          ; 3ced: c9 0a
     bcc c3cf3                                                         ; 3cef: 90 02
@@ -670,14 +670,14 @@ c3cf3
     lda #collision_map_rope                                           ; 3cff: a9 02
     jsr write_a_single_value_to_cell_in_collision_map                 ; 3d01: 20 bb 1e
     dey                                                               ; 3d04: 88
-loop_c3d05
+draw_room_2_short_rope_loop
     lda #spriteid_short_rope                                          ; 3d05: a9 d9
     jsr draw_sprite_a_at_cell_xy                                      ; 3d07: 20 4c 1f
     lda #collision_map_rope                                           ; 3d0a: a9 02
     jsr write_a_single_value_to_cell_in_collision_map                 ; 3d0c: 20 bb 1e
     dey                                                               ; 3d0f: 88
     cpy #3                                                            ; 3d10: c0 03
-    bcs loop_c3d05                                                    ; 3d12: b0 f1
+    bcs draw_room_2_short_rope_loop                                   ; 3d12: b0 f1
     lda #objectid_long_rope_end_room_2                                ; 3d14: a9 07
     jsr set_object_position_from_cell_xy                              ; 3d16: 20 5d 1f
     lda #objectid_rope_end_room_2                                     ; 3d19: a9 08
@@ -2140,8 +2140,6 @@ pydis_end
 ;     l461f
 ;     l4620
 ;     l4621
-;     loop_c3ce2
-;     loop_c3d05
 ;     loop_c4376
 ;     sub_c40c2
 ;     sub_c42fa
