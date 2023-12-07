@@ -1,3 +1,65 @@
+; *************************************************************************************
+;
+; Level I: 'SEE-SWORD'
+;
+; Save game variables:
+;
+;     save_game_level_i_room_0_seesaw_puzzle_progress            ($0a24):
+;               0: untouched
+;              1+: stone thrown, animating
+;             $ff: taken
+;
+;     save_game_level_i_sword_puzzle_progress                    ($0a25):
+;               0: untouched
+;              1+: animating
+;             $15: sword in wall
+;             $ff: sword taken
+;
+;     save_game_level_i_spell_puzzle_progress                    ($0a26):
+;               0: untouched
+;              1+: animating
+;             $1f: spell on floor
+;
+;     save_game_level_i_small_stone_x_low                        ($0a27):
+;     save_game_level_i_small_stone_x_high                       ($0a28):
+;     save_game_level_i_small_stone_y_low                        ($0a29):
+;     save_game_level_i_small_stone_y_high                       ($0a2a):
+;           position of small stone as it flies through the room
+;
+;     save_game_level_i_small_stone_direction_without_bounces    ($0a2b):
+;             1: thrown right
+;           $ff: thrown left
+;
+;     save_game_level_i_small_stone_room_0_seesaw_animation_step ($0a2c):
+;           the step (index) of the current animation step for the small stone is current
+;
+;     save_game_level_i_small_stone_room                         ($0a2d):
+;           if not held by the player, then this is the room containing the small stone
+;
+;     save_game_level_i_small_stone_direction_including_bounces  ($0a2e):
+;             1: travelling right
+;           $ff: travelling left
+;
+;     save_game_level_i_room_3_seesaw_puzzle_progress            ($0a2f):
+;             0: untouched
+;            1+: animating
+;           $19: small stone on ledge
+;           $ff: small stone taken
+;
+; Solution:
+;
+;   1. Climb the right hand rope to the room above and jump into the large stone.
+;           (Small stone ends on ledge)
+;   2. Retrieve small stone and descend to the room below.
+;   3. Go to the left room (on ground floor) and from the slightly raised floor,
+;      throw the small stone to the left.
+;           (the sword sticks into the wall)
+;   4. From the previous room, ascend the left rope and exit left to the raised section of the leftmost room.
+;   5. Fall to collect the sword.
+;   6. In the rightmost room, use the sword to cut the rope and get the spell.
+;
+; *************************************************************************************
+
 ; Constants
 collision_map_none                     = 0
 collision_map_out_of_bounds            = 255
