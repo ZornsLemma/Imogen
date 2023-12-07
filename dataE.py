@@ -45,6 +45,7 @@ load(0x3ad5, "orig/dataE.dat", "6502", "1fd692ce17c1ae2c858ed57730c9c081")
 
 label(0x0a13, "save_game_level_e_small_egg_status") # TODO: other uses? not checked yet - can have values 0, 1 and &ff at least, b7 seems to be a key check - value also checked against &c at 4243 - judging from 427a, 1 means 'the egg has just collided with something' (it is also set to 1 on entering level for first time) - it is set to &ff when the egg is collected (at 4213), it is set to c at 41c3 when the egg throw starts, it is set to &32 at 4262 when the egg collides with floor or big egg after being thrown, though shortly after it is set to 1 at 427c - ok, the 427c set to 1 happens when it lands, this occurs quicker when thrown at wall because it has less time to fall, the delay is more obvious when throwing at the big egg - note also that the egg has a little bit of horizontal rebound (at least when hitting wall after knocking the big egg over) - I think this covers more or less everything
 constant(0xc, "small_egg_status_being_thrown")
+constant(0x32, "small_egg_status_falling")
 label(0x0a14, "save_game_level_e_room_1_egg_state") # TODO: other uses? not checked yet? egg state slightly speculative but prob right
 label(0x0a15, "save_game_level_e_duck_captured_flag") # TODO: might be used for other things too, not checked yet
 
@@ -121,8 +122,11 @@ expr(0x41f3, "objectid_old_player")
 entry(0x4231, "small_egg_animation_update")
 expr(0x4244, "small_egg_status_being_thrown")
 entry(0x4251, "small_egg_thrown_left")
+entry(0x426a, "small_egg_not_being_thrown")
+expr(0x426b, "small_egg_status_falling")
 expr(0x426f, "objectid_small_egg")
 comment(0x4278, "branch if not collided with anything", inline=True)
+entry(0x427f, "small_egg_not_falling")
 ab(0x424f)
 entry(0x4254, "small_egg_temp_left_right_offset_set")
 label(0x4230, "return2")

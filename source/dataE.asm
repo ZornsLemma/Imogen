@@ -32,6 +32,7 @@ objectid_player_accessory             = 1
 objectid_small_egg                    = 2
 opcode_jmp                            = 76
 small_egg_status_being_thrown         = 12
+small_egg_status_falling              = 50
 sprite_op_flags_copy_screen           = 1
 sprite_op_flags_erase_to_bg_colour    = 2
 sprite_op_flags_erase_to_fg_colour    = 4
@@ -1344,7 +1345,7 @@ small_egg_animation_update
 c4240
     lda save_game_level_e_small_egg_status                            ; 4240: ad 13 0a
     cmp #small_egg_status_being_thrown                                ; 4243: c9 0c
-    bne c426a                                                         ; 4245: d0 23
+    bne small_egg_not_being_thrown                                    ; 4245: d0 23
     lda thrown_egg_direction                                          ; 4247: ad 73 0a
     bmi small_egg_thrown_left                                         ; 424a: 30 05
     inc temp_right_offset                                             ; 424c: ee d1 24
@@ -1362,9 +1363,9 @@ small_egg_temp_left_right_offset_set
     ldy #$25 ; '%'                                                    ; 4265: a0 25
     jmp c4284                                                         ; 4267: 4c 84 42
 
-c426a
-    cmp #$32 ; '2'                                                    ; 426a: c9 32
-    bne c427f                                                         ; 426c: d0 11
+small_egg_not_being_thrown
+    cmp #small_egg_status_falling                                     ; 426a: c9 32
+    bne small_egg_not_falling                                         ; 426c: d0 11
     lda #objectid_small_egg                                           ; 426e: a9 02
     sta temp_bottom_offset                                            ; 4270: 8d 51 25
     lda #2                                                            ; 4273: a9 02
@@ -1372,7 +1373,7 @@ c426a
     beq c4284                                                         ; 4278: f0 0a                   ; branch if not collided with anything
     ldy #1                                                            ; 427a: a0 01
     sty save_game_level_e_small_egg_status                            ; 427c: 8c 13 0a
-c427f
+small_egg_not_falling
     lda #0                                                            ; 427f: a9 00
     sta level_workspace_something_to_do_with_small_egg                ; 4281: 8d 6f 0a
 c4284
@@ -2010,8 +2011,6 @@ pydis_end
 ;     c420c
 ;     c4219
 ;     c4240
-;     c426a
-;     c427f
 ;     c4284
 ;     c4302
 ;     c4317
@@ -2239,6 +2238,9 @@ pydis_end
 }
 !if (small_egg_status_being_thrown) != $0c {
     !error "Assertion failed: small_egg_status_being_thrown == $0c"
+}
+!if (small_egg_status_falling) != $32 {
+    !error "Assertion failed: small_egg_status_falling == $32"
 }
 !if (sprite_data - level_data) != $0b57 {
     !error "Assertion failed: sprite_data - level_data == $0b57"
