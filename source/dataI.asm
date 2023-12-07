@@ -179,9 +179,10 @@ player_held_object_spriteid                                 = $52
 developer_mode_sideways_ram_is_set_up_flag                  = $5b
 l0070                                                       = $70
 room_exit_direction                                         = $70
-l0078                                                       = $78
-l0079                                                       = $79
-l007a                                                       = $7a
+object_left_cell_x                                          = $78
+object_right_cell_x                                         = $79
+object_top_cell_y                                           = $7a
+object_bottom_cell_y                                        = $7b
 object_x_low                                                = $0950
 object_x_low_old                                            = $095b
 object_x_high                                               = $0966
@@ -1676,9 +1677,9 @@ update_room_0_seesaw_puzzle_not_first_update
     lda #0                                                            ; 4398: a9 00
     sta small_stone_just_thrown                                       ; 439a: 8d 1e 46
     lda player_held_object_spriteid                                   ; 439d: a5 52
-    sta l461f                                                         ; 439f: 8d 1f 46
+    sta remember_player_held_object                                   ; 439f: 8d 1f 46
     lda object_spriteid_old + objectid_small_stone_object             ; 43a2: ad b5 09
-    sta l4620                                                         ; 43a5: 8d 20 46
+    sta rememebr_old_small_stone_spriteid                             ; 43a5: 8d 20 46
     lda save_game_level_i_room_0_seesaw_puzzle_progress               ; 43a8: ad 24 0a
     beq return4_local                                                 ; 43ab: f0 e8
     bmi initialise_room_0_seesaw_puzzle                               ; 43ad: 30 12
@@ -1726,12 +1727,12 @@ stone_in_room
     lda #0                                                            ; 4414: a9 00
     sta level_workspace                                               ; 4416: 8d 6f 0a
 check_for_player_small_stone_collision1
-    lda l4620                                                         ; 4419: ad 20 46
+    lda rememebr_old_small_stone_spriteid                             ; 4419: ad 20 46
     sta object_spriteid_old + objectid_small_stone_object             ; 441c: 8d b5 09
     ldx #objectid_old_player                                          ; 441f: a2 0b
     ldy #objectid_small_stone_object                                  ; 4421: a0 02
     jsr test_for_collision_between_objects_x_and_y                    ; 4423: 20 e2 28
-    ldx l461f                                                         ; 4426: ae 1f 46
+    ldx remember_player_held_object                                   ; 4426: ae 1f 46
     stx player_held_object_spriteid                                   ; 4429: 86 52
     ora #0                                                            ; 442b: 09 00
     beq no_player_small_stone_collision                               ; 442d: f0 17
@@ -1830,10 +1831,10 @@ no_collision
     dec temp_top_offset                                               ; 44d7: ce 50 25
     lda #objectid_small_stone_object                                  ; 44da: a9 02
     jsr get_solid_rock_collision_for_object_a                         ; 44dc: 20 94 28
-    bne start_stone_falling                                           ; 44df: d0 05
+    bne start_small_stone_falling                                     ; 44df: d0 05
     cpy save_game_level_i_room_0_seesaw_puzzle_progress               ; 44e1: cc 24 0a
-    bne c451d                                                         ; 44e4: d0 37
-start_stone_falling
+    bne set_small_stone_animation_step                                ; 44e4: d0 37
+start_small_stone_falling
     lda #small_stone_falling_room_0_seesaw_animation - small_stone_room_0_seesaw_animations; 44e6: a9 1b
     sta save_game_level_i_room_0_seesaw_puzzle_progress               ; 44e8: 8d 24 0a
     ldy #small_stone_falling_arc_room_0_seesaw_animation - small_stone_room_0_seesaw_animations; 44eb: a0 0e
@@ -1842,43 +1843,43 @@ check_for_hitting_floor
     jsr update_object_hitting_floor                                   ; 44ef: 20 70 27
     lda save_game_level_i_room_0_seesaw_puzzle_progress               ; 44f2: ad 24 0a
     cmp #small_stone_falling_room_0_seesaw_animation - small_stone_room_0_seesaw_animations; 44f5: c9 1b
-    bne c4503                                                         ; 44f7: d0 0a
+    bne check_for_stone_falling_off_edge                              ; 44f7: d0 0a
     lda object_has_hit_floor_flag                                     ; 44f9: ad 8f 28
-    beq c451d                                                         ; 44fc: f0 1f
+    beq set_small_stone_animation_step                                ; 44fc: f0 1f
     ldy #small_stone_still_room_0_seesaw_animation - small_stone_room_0_seesaw_animations; 44fe: a0 1e
     sty save_game_level_i_room_0_seesaw_puzzle_progress               ; 4500: 8c 24 0a
-c4503
+check_for_stone_falling_off_edge
     lda object_just_fallen_off_edge_direction                         ; 4503: ad 90 28
-    beq c451d                                                         ; 4506: f0 15
+    beq set_small_stone_animation_step                                ; 4506: f0 15
     ldy #small_stone_falling_room_0_seesaw_animation - small_stone_room_0_seesaw_animations; 4508: a0 1b
     sty save_game_level_i_room_0_seesaw_puzzle_progress               ; 450a: 8c 24 0a
     ldy #small_stone_fall_off_edge_room_0_seesaw_animation - small_stone_room_0_seesaw_animations; 450d: a0 21
     ldx #1                                                            ; 450f: a2 01
     stx save_game_level_i_small_stone_direction_including_bounces     ; 4511: 8e 2e 0a
     ora #0                                                            ; 4514: 09 00
-    bpl c451d                                                         ; 4516: 10 05
+    bpl set_small_stone_animation_step                                ; 4516: 10 05
     ldx #$ff                                                          ; 4518: a2 ff
     stx save_game_level_i_small_stone_direction_including_bounces     ; 451a: 8e 2e 0a
-c451d
+set_small_stone_animation_step
     sty save_game_level_i_small_stone_room_0_seesaw_animation_step    ; 451d: 8c 2c 0a
     lda save_game_level_i_room_0_seesaw_puzzle_progress               ; 4520: ad 24 0a
     cmp #small_stone_still_room_0_seesaw_animation - small_stone_room_0_seesaw_animations; 4523: c9 1e
-    bne c452c                                                         ; 4525: d0 05
+    bne set_small_stone_position_based_on_animation_step              ; 4525: d0 05
     lda #0                                                            ; 4527: a9 00
     sta level_workspace                                               ; 4529: 8d 6f 0a
-c452c
+set_small_stone_position_based_on_animation_step
     lda small_stone_room_0_seesaw_animations,y                        ; 452c: b9 0d 43
     ldx save_game_level_i_small_stone_direction_including_bounces     ; 452f: ae 2e 0a
-    bpl c4539                                                         ; 4532: 10 05
+    bpl stone_travelling_right                                        ; 4532: 10 05
     eor #$ff                                                          ; 4534: 49 ff
     clc                                                               ; 4536: 18
     adc #1                                                            ; 4537: 69 01
-c4539
+stone_travelling_right
     ldx #0                                                            ; 4539: a2 00
     ora #0                                                            ; 453b: 09 00
-    bpl c4540                                                         ; 453d: 10 01
+    bpl add_to_small_stone_x                                          ; 453d: 10 01
     dex                                                               ; 453f: ca
-c4540
+add_to_small_stone_x
     clc                                                               ; 4540: 18
     adc save_game_level_i_small_stone_x_low                           ; 4541: 6d 27 0a
     sta save_game_level_i_small_stone_x_low                           ; 4544: 8d 27 0a
@@ -1889,9 +1890,9 @@ c4540
     lda small_stone_room_0_seesaw_animations,y                        ; 454f: b9 0d 43
     ldx #0                                                            ; 4552: a2 00
     ora #0                                                            ; 4554: 09 00
-    bpl c4559                                                         ; 4556: 10 01
+    bpl add_to_small_stone_y                                          ; 4556: 10 01
     dex                                                               ; 4558: ca
-c4559
+add_to_small_stone_y
     clc                                                               ; 4559: 18
     adc save_game_level_i_small_stone_y_low                           ; 455a: 6d 29 0a
     sta save_game_level_i_small_stone_y_low                           ; 455d: 8d 29 0a
@@ -1899,6 +1900,7 @@ c4559
     adc save_game_level_i_small_stone_y_high                          ; 4561: 6d 2a 0a
     sta save_game_level_i_small_stone_y_high                          ; 4564: 8d 2a 0a
     jsr set_small_stone_object                                        ; 4567: 20 f0 45
+; collide object with world, then save the results
     lda #objectid_small_stone_object                                  ; 456a: a9 02
     jsr update_object_a_solid_rock_collision                          ; 456c: 20 f5 25
     lda object_x_low + objectid_small_stone_object                    ; 456f: ad 52 09
@@ -1909,15 +1911,17 @@ c4559
     sta save_game_level_i_small_stone_y_low                           ; 457e: 8d 29 0a
     lda object_y_high + objectid_small_stone_object                   ; 4581: ad 94 09
     sta save_game_level_i_small_stone_y_high                          ; 4584: 8d 2a 0a
+; get extents of the small stone
     ldx #objectid_small_stone_object                                  ; 4587: a2 02
     jsr find_left_and_right_of_object                                 ; 4589: 20 34 24
     jsr find_top_and_bottom_of_object                                 ; 458c: 20 d2 24
+; move to the next room if needed
     lda save_game_level_i_small_stone_room                            ; 458f: ad 2d 0a
     cmp #3                                                            ; 4592: c9 03
     beq move_small_stone_one_room_down_if_needed                      ; 4594: f0 39
     lda save_game_level_i_small_stone_direction_including_bounces     ; 4596: ad 2e 0a
     bmi move_small_stone_one_room_left_if_needed                      ; 4599: 30 1c
-    lda l0078                                                         ; 459b: a5 78
+    lda object_left_cell_x                                            ; 459b: a5 78
     cmp #game_area_width_cells                                        ; 459d: c9 28
     bcc return5                                                       ; 459f: 90 4e
 ; move small stone right one room
@@ -1932,7 +1936,7 @@ c4559
     jmp hide_stone                                                    ; 45b4: 4c ea 45
 
 move_small_stone_one_room_left_if_needed
-    lda l0079                                                         ; 45b7: a5 79
+    lda object_right_cell_x                                           ; 45b7: a5 79
     bpl return5                                                       ; 45b9: 10 34
     lda save_game_level_i_small_stone_x_low                           ; 45bb: ad 27 0a
     clc                                                               ; 45be: 18
@@ -1944,7 +1948,7 @@ move_small_stone_one_room_left_if_needed
     jmp hide_stone                                                    ; 45cc: 4c ea 45
 
 move_small_stone_one_room_down_if_needed
-    lda l007a                                                         ; 45cf: a5 7a
+    lda object_top_cell_y                                             ; 45cf: a5 7a
     cmp #game_area_height_cells                                       ; 45d1: c9 18
     bcc return5                                                       ; 45d3: 90 1a
     lda save_game_level_i_small_stone_x_low                           ; 45d5: ad 27 0a                ; [bug - should be y coordinate?]
@@ -1983,9 +1987,9 @@ set_small_stone_object
 
 small_stone_just_thrown
     !byte 0                                                           ; 461e: 00
-l461f
+remember_player_held_object
     !byte 0                                                           ; 461f: 00
-l4620
+rememebr_old_small_stone_spriteid
     !byte 0                                                           ; 4620: 00
 small_stone_animation_step
     !byte 0                                                           ; 4621: 00
@@ -2102,19 +2106,6 @@ ground_fill_2x2_bottom_right
     !byte %...#....                                                   ; 469b: 10
 sprite_data
 pydis_end
-
-; Automatically generated labels:
-;     c4503
-;     c451d
-;     c452c
-;     c4539
-;     c4540
-;     c4559
-;     l0078
-;     l0079
-;     l007a
-;     l461f
-;     l4620
 !if (256 - (spriteid_sword_spinA - spriteid_small_stone)) != $f6 {
     !error "Assertion failed: 256 - (spriteid_sword_spinA - spriteid_small_stone) == $f6"
 }
