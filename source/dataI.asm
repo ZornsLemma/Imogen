@@ -584,7 +584,7 @@ room_2_game_update_loop
     ldy current_level                                                 ; 3c4c: a4 31
     jmp initialise_level_and_room                                     ; 3c4e: 4c 40 11
 
-sword_trajectory_y_coordinates_table
+spell_trajectory_y_coordinates_table
     !byte 146, 136, 128, 121, 114, 108, 104, 100,  98,  97,  96       ; 3c51: 92 88 80...
     !byte  96,  97,  99, 102, 106, 112, 120, 130, 139, 152, 168       ; 3c5c: 60 61 63...
 
@@ -595,29 +595,29 @@ room_2_update_handler
     ldy #$15                                                          ; 3c6e: a0 15
     lda #3                                                            ; 3c70: a9 03
     sta temp_sprite_y_offset                                          ; 3c72: 85 3b
-    lda #4                                                            ; 3c74: a9 04
+    lda #objectid_spell                                               ; 3c74: a9 04
     jsr update_level_completion                                       ; 3c76: 20 10 1a
 ; check for first update in room (branch if so)
     lda update_room_first_update_flag                                 ; 3c79: ad 2b 13
-    bne c3c81                                                         ; 3c7c: d0 03
-    jmp c3d5a                                                         ; 3c7e: 4c 5a 3d
+    bne initialise_if_room_2                                          ; 3c7c: d0 03
+    jmp update_spell                                                  ; 3c7e: 4c 5a 3d
 
 ; check for level change (branch if not)
-c3c81
+initialise_if_room_2
     lda current_level                                                 ; 3c81: a5 31
     cmp level_before_latest_level_and_room_initialisation             ; 3c83: c5 51
-    beq c3c91                                                         ; 3c85: f0 0a
+    beq check_for_being_in_room_2                                     ; 3c85: f0 0a
     lda save_game_level_i_spell_progress                              ; 3c87: ad 26 0a
-    beq c3c91                                                         ; 3c8a: f0 05
+    beq check_for_being_in_room_2                                     ; 3c8a: f0 05
     lda #$1f                                                          ; 3c8c: a9 1f
     sta save_game_level_i_spell_progress                              ; 3c8e: 8d 26 0a
-c3c91
+check_for_being_in_room_2
     lda desired_room_index                                            ; 3c91: a5 30
     cmp #2                                                            ; 3c93: c9 02
-    beq c3c9a                                                         ; 3c95: f0 03
+    beq initialise_room_2_objects                                     ; 3c95: f0 03
     jmp c3d57                                                         ; 3c97: 4c 57 3d
 
-c3c9a
+initialise_room_2_objects
     ldx #<envelope1                                                   ; 3c9a: a2 48
     ldy #>envelope1                                                   ; 3c9c: a0 46
     jsr define_envelope                                               ; 3c9e: 20 5e 39
@@ -625,7 +625,7 @@ c3c9a
     ldy #>envelope2                                                   ; 3ca3: a0 46
     jsr define_envelope                                               ; 3ca5: 20 5e 39
     lda #$40 ; '@'                                                    ; 3ca8: a9 40
-    sta object_z_order + objectid_sword                               ; 3caa: 8d c6 38
+    sta object_z_order + objectid_spell                               ; 3caa: 8d c6 38
     lda #spriteid_erase_seesaw                                        ; 3cad: a9 cd
     sta object_erase_type + objectid_seesaw                           ; 3caf: 8d af 38
     ldx #$1d                                                          ; 3cb2: a2 1d
@@ -658,14 +658,14 @@ draw_room_2_horizontal_rope_loop
     bcs draw_room_2_horizontal_rope_loop                              ; 3ce8: b0 f8
     lda save_game_level_i_spell_progress                              ; 3cea: ad 26 0a
     cmp #$0a                                                          ; 3ced: c9 0a
-    bcc c3cf3                                                         ; 3cef: 90 02
+    bcc got_room_2_rope_position                                      ; 3cef: 90 02
     lda #$0a                                                          ; 3cf1: a9 0a
-c3cf3
-    sta l3ea9                                                         ; 3cf3: 8d a9 3e
+got_room_2_rope_position
+    sta room_2_rope_position                                          ; 3cf3: 8d a9 3e
     ldx #$0d                                                          ; 3cf6: a2 0d
     lda #$12                                                          ; 3cf8: a9 12
     sec                                                               ; 3cfa: 38
-    sbc l3ea9                                                         ; 3cfb: ed a9 3e
+    sbc room_2_rope_position                                          ; 3cfb: ed a9 3e
     tay                                                               ; 3cfe: a8
     lda #collision_map_rope                                           ; 3cff: a9 02
     jsr write_a_single_value_to_cell_in_collision_map                 ; 3d01: 20 bb 1e
@@ -688,7 +688,7 @@ draw_room_2_short_rope_loop
     ldx #$1b                                                          ; 3d25: a2 1b
     lda #7                                                            ; 3d27: a9 07
     clc                                                               ; 3d29: 18
-    adc l3ea9                                                         ; 3d2a: 6d a9 3e
+    adc room_2_rope_position                                          ; 3d2a: 6d a9 3e
     tay                                                               ; 3d2d: a8
     lda #spriteid_short_rope                                          ; 3d2e: a9 d9
 draw_rope_loop
@@ -712,17 +712,17 @@ draw_rope_loop
     lda #$e0                                                          ; 3d52: a9 e0
     sta object_z_order + objectid_boulder_room_2                      ; 3d54: 8d c7 38
 c3d57
-    jmp c3df5                                                         ; 3d57: 4c f5 3d
+    jmp update_rope_and_seesaw_visuals                                ; 3d57: 4c f5 3d
 
-c3d5a
+update_spell
     lda save_game_level_i_spell_progress                              ; 3d5a: ad 26 0a
-    beq c3d69                                                         ; 3d5d: f0 0a
+    beq check_for_using_sword                                         ; 3d5d: f0 0a
     cmp #$1f                                                          ; 3d5f: c9 1f
     beq c3d57                                                         ; 3d61: f0 f4
     inc save_game_level_i_spell_progress                              ; 3d63: ee 26 0a
-    jmp c3db1                                                         ; 3d66: 4c b1 3d
+    jmp cutting_rope_in_progress                                      ; 3d66: 4c b1 3d
 
-c3d69
+check_for_using_sword
     lda desired_room_index                                            ; 3d69: a5 30
     cmp #2                                                            ; 3d6b: c9 02
     bne c3d57                                                         ; 3d6d: d0 e8
@@ -730,23 +730,24 @@ c3d69
     cmp #spriteid_sword_menu_item                                     ; 3d72: c9 d1
     bne c3d57                                                         ; 3d74: d0 e1
     lda object_direction + objectid_player_accessory                  ; 3d76: ad bf 09
-    bmi c3d88                                                         ; 3d79: 30 0d
+    bmi adjust_offsets_for_looking_left                               ; 3d79: 30 0d
     lda #1                                                            ; 3d7b: a9 01
     sta temp_right_offset                                             ; 3d7d: 8d d1 24
     lda #2                                                            ; 3d80: a9 02
     sta temp_left_offset                                              ; 3d82: 8d d0 24
-    jmp c3d92                                                         ; 3d85: 4c 92 3d
+    jmp check_for_sword_rope_collision                                ; 3d85: 4c 92 3d
 
-c3d88
+adjust_offsets_for_looking_left
     lda #$ff                                                          ; 3d88: a9 ff
     sta temp_left_offset                                              ; 3d8a: 8d d0 24
     lda #$fe                                                          ; 3d8d: a9 fe
     sta temp_right_offset                                             ; 3d8f: 8d d1 24
-c3d92
+check_for_sword_rope_collision
     ldx #objectid_player_accessory                                    ; 3d92: a2 01
     ldy #objectid_rope_end_room_2                                     ; 3d94: a0 08
     jsr test_for_collision_between_objects_x_and_y                    ; 3d96: 20 e2 28
-    beq c3df5                                                         ; 3d99: f0 5a
+; sword has cut rope. Change the collision map and update the progress
+    beq update_rope_and_seesaw_visuals                                ; 3d99: f0 5a
     ldx #$0d                                                          ; 3d9b: a2 0d
     ldy #$13                                                          ; 3d9d: a0 13
     lda #1                                                            ; 3d9f: a9 01
@@ -757,44 +758,44 @@ c3d92
     sta value_to_write_to_collision_map                               ; 3da9: 85 3e
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 3dab: 20 44 1e
     inc save_game_level_i_spell_progress                              ; 3dae: ee 26 0a
-c3db1
+cutting_rope_in_progress
     lda desired_room_index                                            ; 3db1: a5 30
     cmp #2                                                            ; 3db3: c9 02
-    bne c3df5                                                         ; 3db5: d0 3e
+    bne update_rope_and_seesaw_visuals                                ; 3db5: d0 3e
     lda save_game_level_i_spell_progress                              ; 3db7: ad 26 0a
-    beq c3df5                                                         ; 3dba: f0 39
+    beq update_rope_and_seesaw_visuals                                ; 3dba: f0 39
     cmp #$0a                                                          ; 3dbc: c9 0a
-    beq c3dd1                                                         ; 3dbe: f0 11
-    bcc c3de6                                                         ; 3dc0: 90 24
+    beq update_landing_sound                                          ; 3dbe: f0 11
+    bcc rope_moving_sound                                             ; 3dc0: 90 24
     cmp #$1f                                                          ; 3dc2: c9 1f
-    bne c3df5                                                         ; 3dc4: d0 2f
-    lda object_spriteid + objectid_sword                              ; 3dc6: ad ac 09
-    beq c3df5                                                         ; 3dc9: f0 2a
+    bne update_rope_and_seesaw_visuals                                ; 3dc4: d0 2f
+    lda object_spriteid + objectid_spell                              ; 3dc6: ad ac 09
+    beq update_rope_and_seesaw_visuals                                ; 3dc9: f0 2a
     jsr play_landing_sound                                            ; 3dcb: 20 a9 23
-    jmp c3df5                                                         ; 3dce: 4c f5 3d
+    jmp update_rope_and_seesaw_visuals                                ; 3dce: 4c f5 3d
 
-c3dd1
+update_landing_sound
     lda sound_priority_per_channel_table                              ; 3dd1: ad 6f 39
     cmp #$41 ; 'A'                                                    ; 3dd4: c9 41
-    bcs c3de0                                                         ; 3dd6: b0 08
+    bcs sound_priorities_updated                                      ; 3dd6: b0 08
     lda #0                                                            ; 3dd8: a9 00
     sta sound_priority_per_channel_table                              ; 3dda: 8d 6f 39
     sta sound_priority_per_channel_table + 1                          ; 3ddd: 8d 70 39
-c3de0
-    jsr play_sounds34                                                 ; 3de0: 20 22 46
-    jmp c3df5                                                         ; 3de3: 4c f5 3d
+sound_priorities_updated
+    jsr play_boulder_landing_sound                                    ; 3de0: 20 22 46
+    jmp update_rope_and_seesaw_visuals                                ; 3de3: 4c f5 3d
 
-c3de6
+rope_moving_sound
     lda #$40 ; '@'                                                    ; 3de6: a9 40
     ldx #<sound1                                                      ; 3de8: a2 56
     ldy #>sound1                                                      ; 3dea: a0 46
     jsr play_sound_yx                                                 ; 3dec: 20 f6 38
-    jmp c3df5                                                         ; 3def: 4c f5 3d
+    jmp update_rope_and_seesaw_visuals                                ; 3def: 4c f5 3d
 
 return1_local
     jmp return1                                                       ; 3df2: 4c a8 3e
 
-c3df5
+update_rope_and_seesaw_visuals
     lda desired_room_index                                            ; 3df5: a5 30
     cmp #2                                                            ; 3df7: c9 02
     bne return1_local                                                 ; 3df9: d0 f7
@@ -805,9 +806,9 @@ c3df5
     lda #$0a                                                          ; 3e04: a9 0a
     ldx #1                                                            ; 3e06: a2 01
 c3e08
-    sta l3ea9                                                         ; 3e08: 8d a9 3e
+    sta room_2_rope_position                                          ; 3e08: 8d a9 3e
     stx object_direction + objectid_seesaw                            ; 3e0b: 8e c1 09
-    lda l3ea9                                                         ; 3e0e: ad a9 3e
+    lda room_2_rope_position                                          ; 3e0e: ad a9 3e
     bne c3e3a                                                         ; 3e11: d0 27
     lda #spriteid_one_pixel_masked_out                                ; 3e13: a9 00
     sta object_spriteid + objectid_long_rope_end_room_2               ; 3e15: 8d af 09
@@ -831,7 +832,7 @@ c3e37
 c3e3a
     lda #$12                                                          ; 3e3a: a9 12
     sec                                                               ; 3e3c: 38
-    sbc l3ea9                                                         ; 3e3d: ed a9 3e
+    sbc room_2_rope_position                                          ; 3e3d: ed a9 3e
     tay                                                               ; 3e40: a8
     asl                                                               ; 3e41: 0a
     asl                                                               ; 3e42: 0a
@@ -846,13 +847,13 @@ c3e3a
     lda #collision_map_none                                           ; 3e54: a9 00
     jsr write_a_single_value_to_cell_in_collision_map                 ; 3e56: 20 bb 1e
 c3e59
-    lda l3ea9                                                         ; 3e59: ad a9 3e
+    lda room_2_rope_position                                          ; 3e59: ad a9 3e
     clc                                                               ; 3e5c: 18
     adc #8                                                            ; 3e5d: 69 08
     asl                                                               ; 3e5f: 0a
     asl                                                               ; 3e60: 0a
     asl                                                               ; 3e61: 0a
-    ldx l3ea9                                                         ; 3e62: ae a9 3e
+    ldx room_2_rope_position                                          ; 3e62: ae a9 3e
     cpx #$0a                                                          ; 3e65: e0 0a
     bcc c3e6c                                                         ; 3e67: 90 03
     clc                                                               ; 3e69: 18
@@ -881,16 +882,16 @@ c3e82
     lda #$f0                                                          ; 3e92: a9 f0
     sec                                                               ; 3e94: 38
     sbc l0070                                                         ; 3e95: e5 70
-    sta object_x_low + objectid_sword                                 ; 3e97: 8d 54 09
-    lda sword_trajectory_y_coordinates_table,x                        ; 3e9a: bd 51 3c
-    sta object_y_low + objectid_sword                                 ; 3e9d: 8d 80 09
-    lda object_direction + objectid_sword                             ; 3ea0: ad c2 09
+    sta object_x_low + objectid_spell                                 ; 3e97: 8d 54 09
+    lda spell_trajectory_y_coordinates_table,x                        ; 3e9a: bd 51 3c
+    sta object_y_low + objectid_spell                                 ; 3e9d: 8d 80 09
+    lda object_direction + objectid_spell                             ; 3ea0: ad c2 09
     bpl return1                                                       ; 3ea3: 10 03
-    inc object_x_low + objectid_sword                                 ; 3ea5: ee 54 09
+    inc object_x_low + objectid_spell                                 ; 3ea5: ee 54 09
 return1
     rts                                                               ; 3ea8: 60
 
-l3ea9
+room_2_rope_position
     !byte 0                                                           ; 3ea9: 00
 ; *************************************************************************************
 ; 
@@ -1970,7 +1971,7 @@ l4620
 l4621
     !byte 0                                                           ; 4621: 00
 
-play_sounds34
+play_boulder_landing_sound
     lda #0                                                            ; 4622: a9 00
     ldx #<sound3                                                      ; 4624: a2 74
     ldy #>sound3                                                      ; 4626: a0 46
@@ -2084,20 +2085,7 @@ sprite_data
 pydis_end
 
 ; Automatically generated labels:
-;     c3c81
-;     c3c91
-;     c3c9a
-;     c3cf3
 ;     c3d57
-;     c3d5a
-;     c3d69
-;     c3d88
-;     c3d92
-;     c3db1
-;     c3dd1
-;     c3de0
-;     c3de6
-;     c3df5
 ;     c3e08
 ;     c3e37
 ;     c3e3a
@@ -2138,7 +2126,6 @@ pydis_end
 ;     l0078
 ;     l0079
 ;     l007a
-;     l3ea9
 ;     l461e
 ;     l461f
 ;     l4620
@@ -2262,6 +2249,9 @@ pydis_end
 !if (object_direction + objectid_small_stone_object) != $09c0 {
     !error "Assertion failed: object_direction + objectid_small_stone_object == $09c0"
 }
+!if (object_direction + objectid_spell) != $09c2 {
+    !error "Assertion failed: object_direction + objectid_spell == $09c2"
+}
 !if (object_direction + objectid_sword) != $09c2 {
     !error "Assertion failed: object_direction + objectid_sword == $09c2"
 }
@@ -2307,6 +2297,9 @@ pydis_end
 !if (object_spriteid + objectid_small_stone_object) != $09aa {
     !error "Assertion failed: object_spriteid + objectid_small_stone_object == $09aa"
 }
+!if (object_spriteid + objectid_spell) != $09ac {
+    !error "Assertion failed: object_spriteid + objectid_spell == $09ac"
+}
 !if (object_spriteid + objectid_sword) != $09ac {
     !error "Assertion failed: object_spriteid + objectid_sword == $09ac"
 }
@@ -2330,6 +2323,9 @@ pydis_end
 }
 !if (object_x_low + objectid_small_stone_object) != $0952 {
     !error "Assertion failed: object_x_low + objectid_small_stone_object == $0952"
+}
+!if (object_x_low + objectid_spell) != $0954 {
+    !error "Assertion failed: object_x_low + objectid_spell == $0954"
 }
 !if (object_x_low + objectid_sword) != $0954 {
     !error "Assertion failed: object_x_low + objectid_sword == $0954"
@@ -2358,6 +2354,9 @@ pydis_end
 !if (object_y_low + objectid_small_stone_object) != $097e {
     !error "Assertion failed: object_y_low + objectid_small_stone_object == $097e"
 }
+!if (object_y_low + objectid_spell) != $0980 {
+    !error "Assertion failed: object_y_low + objectid_spell == $0980"
+}
 !if (object_y_low + objectid_sword) != $0980 {
     !error "Assertion failed: object_y_low + objectid_sword == $0980"
 }
@@ -2381,6 +2380,9 @@ pydis_end
 }
 !if (object_z_order + objectid_small_stone_object) != $38c4 {
     !error "Assertion failed: object_z_order + objectid_small_stone_object == $38c4"
+}
+!if (object_z_order + objectid_spell) != $38c6 {
+    !error "Assertion failed: object_z_order + objectid_spell == $38c6"
 }
 !if (object_z_order + objectid_sword) != $38c6 {
     !error "Assertion failed: object_z_order + objectid_sword == $38c6"
@@ -2411,6 +2413,9 @@ pydis_end
 }
 !if (objectid_small_stone_object) != $02 {
     !error "Assertion failed: objectid_small_stone_object == $02"
+}
+!if (objectid_spell) != $04 {
+    !error "Assertion failed: objectid_spell == $04"
 }
 !if (room_0_data) != $40d6 {
     !error "Assertion failed: room_0_data == $40d6"
