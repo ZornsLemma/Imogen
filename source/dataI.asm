@@ -193,8 +193,8 @@ object_spriteid_old                                         = $09b3
 object_direction                                            = $09be
 current_player_animation                                    = $09df
 save_game_level_i_room_0_seesaw_puzzle_progress             = $0a24
-save_game_level_i_sword_progress                            = $0a25
-save_game_level_i_spell_progress                            = $0a26
+save_game_level_i_sword_puzzle_progress                     = $0a25
+save_game_level_i_spell_puzzle_progress                     = $0a26
 save_game_level_i_small_stone_x_low                         = $0a27
 save_game_level_i_small_stone_x_high                        = $0a28
 save_game_level_i_small_stone_y_low                         = $0a29
@@ -324,7 +324,7 @@ developer_mode_inactive
     jsr find_or_create_menu_slot_for_A                                ; 3b0d: 20 bd 2b
 ; if sword got, then add to toolbar
 not_got_stone
-    lda save_game_level_i_sword_progress                              ; 3b10: ad 25 0a
+    lda save_game_level_i_sword_puzzle_progress                       ; 3b10: ad 25 0a
     bpl not_got_sword                                                 ; 3b13: 10 05
     lda #spriteid_sword_menu_item                                     ; 3b15: a9 d1
     jsr find_or_create_menu_slot_for_A                                ; 3b17: 20 bd 2b
@@ -607,10 +607,10 @@ initialise_if_room_2
     lda current_level                                                 ; 3c81: a5 31
     cmp level_before_latest_level_and_room_initialisation             ; 3c83: c5 51
     beq check_for_being_in_room_2                                     ; 3c85: f0 0a
-    lda save_game_level_i_spell_progress                              ; 3c87: ad 26 0a
+    lda save_game_level_i_spell_puzzle_progress                       ; 3c87: ad 26 0a
     beq check_for_being_in_room_2                                     ; 3c8a: f0 05
     lda #$1f                                                          ; 3c8c: a9 1f
-    sta save_game_level_i_spell_progress                              ; 3c8e: 8d 26 0a
+    sta save_game_level_i_spell_puzzle_progress                       ; 3c8e: 8d 26 0a
 check_for_being_in_room_2
     lda desired_room_index                                            ; 3c91: a5 30
     cmp #2                                                            ; 3c93: c9 02
@@ -656,7 +656,7 @@ draw_room_2_horizontal_rope_loop
     dex                                                               ; 3ce5: ca
     cpx #$0f                                                          ; 3ce6: e0 0f
     bcs draw_room_2_horizontal_rope_loop                              ; 3ce8: b0 f8
-    lda save_game_level_i_spell_progress                              ; 3cea: ad 26 0a
+    lda save_game_level_i_spell_puzzle_progress                       ; 3cea: ad 26 0a
     cmp #$0a                                                          ; 3ced: c9 0a
     bcc got_room_2_rope_position                                      ; 3cef: 90 02
     lda #$0a                                                          ; 3cf1: a9 0a
@@ -715,11 +715,11 @@ update_rope_and_seesaw_visuals_local
     jmp update_rope_and_seesaw_visuals                                ; 3d57: 4c f5 3d
 
 update_spell
-    lda save_game_level_i_spell_progress                              ; 3d5a: ad 26 0a
+    lda save_game_level_i_spell_puzzle_progress                       ; 3d5a: ad 26 0a
     beq check_for_using_sword                                         ; 3d5d: f0 0a
     cmp #$1f                                                          ; 3d5f: c9 1f
     beq update_rope_and_seesaw_visuals_local                          ; 3d61: f0 f4
-    inc save_game_level_i_spell_progress                              ; 3d63: ee 26 0a
+    inc save_game_level_i_spell_puzzle_progress                       ; 3d63: ee 26 0a
     jmp cutting_rope_in_progress                                      ; 3d66: 4c b1 3d
 
 check_for_using_sword
@@ -757,12 +757,12 @@ check_for_sword_rope_collision
     lda #collision_map_none                                           ; 3da7: a9 00
     sta value_to_write_to_collision_map                               ; 3da9: 85 3e
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 3dab: 20 44 1e
-    inc save_game_level_i_spell_progress                              ; 3dae: ee 26 0a
+    inc save_game_level_i_spell_puzzle_progress                       ; 3dae: ee 26 0a
 cutting_rope_in_progress
     lda desired_room_index                                            ; 3db1: a5 30
     cmp #2                                                            ; 3db3: c9 02
     bne update_rope_and_seesaw_visuals                                ; 3db5: d0 3e
-    lda save_game_level_i_spell_progress                              ; 3db7: ad 26 0a
+    lda save_game_level_i_spell_puzzle_progress                       ; 3db7: ad 26 0a
     beq update_rope_and_seesaw_visuals                                ; 3dba: f0 39
     cmp #$0a                                                          ; 3dbc: c9 0a
     beq update_landing_sound                                          ; 3dbe: f0 11
@@ -799,17 +799,18 @@ update_rope_and_seesaw_visuals
     lda desired_room_index                                            ; 3df5: a5 30
     cmp #2                                                            ; 3df7: c9 02
     bne return1_local                                                 ; 3df9: d0 f7
-    lda save_game_level_i_spell_progress                              ; 3dfb: ad 26 0a
+    lda save_game_level_i_spell_puzzle_progress                       ; 3dfb: ad 26 0a
     ldx #$ff                                                          ; 3dfe: a2 ff
     cmp #$0a                                                          ; 3e00: c9 0a
-    bcc c3e08                                                         ; 3e02: 90 04
+    bcc got_seesaw_direction                                          ; 3e02: 90 04
     lda #$0a                                                          ; 3e04: a9 0a
     ldx #1                                                            ; 3e06: a2 01
-c3e08
+got_seesaw_direction
     sta room_2_rope_position                                          ; 3e08: 8d a9 3e
     stx object_direction + objectid_seesaw                            ; 3e0b: 8e c1 09
     lda room_2_rope_position                                          ; 3e0e: ad a9 3e
-    bne c3e3a                                                         ; 3e11: d0 27
+    bne set_rope_end_sprites                                          ; 3e11: d0 27
+; show rope in initial position
     lda #spriteid_one_pixel_masked_out                                ; 3e13: a9 00
     sta object_spriteid + objectid_long_rope_end_room_2               ; 3e15: 8d af 09
     lda #spriteid_long_rope_end2                                      ; 3e18: a9 db
@@ -827,9 +828,9 @@ c3e08
     beq c3e37                                                         ; 3e32: f0 03
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 3e34: 20 44 1e
 c3e37
-    jmp c3e59                                                         ; 3e37: 4c 59 3e
+    jmp set_right_hand_rope_and_boulder_objects                       ; 3e37: 4c 59 3e
 
-c3e3a
+set_rope_end_sprites
     lda #$12                                                          ; 3e3a: a9 12
     sec                                                               ; 3e3c: 38
     sbc room_2_rope_position                                          ; 3e3d: ed a9 3e
@@ -846,7 +847,7 @@ c3e3a
     iny                                                               ; 3e53: c8
     lda #collision_map_none                                           ; 3e54: a9 00
     jsr write_a_single_value_to_cell_in_collision_map                 ; 3e56: 20 bb 1e
-c3e59
+set_right_hand_rope_and_boulder_objects
     lda room_2_rope_position                                          ; 3e59: ad a9 3e
     clc                                                               ; 3e5c: 18
     adc #8                                                            ; 3e5d: 69 08
@@ -855,21 +856,21 @@ c3e59
     asl                                                               ; 3e61: 0a
     ldx room_2_rope_position                                          ; 3e62: ae a9 3e
     cpx #$0a                                                          ; 3e65: e0 0a
-    bcc c3e6c                                                         ; 3e67: 90 03
+    bcc got_rope_y_position                                           ; 3e67: 90 03
     clc                                                               ; 3e69: 18
     adc #4                                                            ; 3e6a: 69 04
-c3e6c
+got_rope_y_position
     sta object_y_low + objectid_short_rope_end_room_2                 ; 3e6c: 8d 82 09
     clc                                                               ; 3e6f: 18
     adc #8                                                            ; 3e70: 69 08
     sta object_y_low + objectid_boulder_room_2                        ; 3e72: 8d 81 09
     lda object_y_low + objectid_short_rope_end_room_2                 ; 3e75: ad 82 09
     cmp object_y_low_old + objectid_short_rope_end_room_2             ; 3e78: cd 8d 09
-    beq c3e82                                                         ; 3e7b: f0 05
+    beq update_spell_object_position                                  ; 3e7b: f0 05
     lda #spriteid_one_pixel_masked_out                                ; 3e7d: a9 00
     sta object_spriteid_old + objectid_short_rope_end_room_2          ; 3e7f: 8d b9 09
-c3e82
-    lda save_game_level_i_spell_progress                              ; 3e82: ad 26 0a
+update_spell_object_position
+    lda save_game_level_i_spell_puzzle_progress                       ; 3e82: ad 26 0a
     cmp #$0a                                                          ; 3e85: c9 0a
     bcc return1                                                       ; 3e87: 90 1f
     sec                                                               ; 3e89: 38
@@ -1395,13 +1396,13 @@ update_sword_puzzle
     cmp level_before_latest_level_and_room_initialisation             ; 41b8: c5 51
     beq check_for_room_0                                              ; 41ba: f0 0e
 ; if sword animation is not in progress, branch
-    lda save_game_level_i_sword_progress                              ; 41bc: ad 25 0a
+    lda save_game_level_i_sword_puzzle_progress                       ; 41bc: ad 25 0a
     beq check_for_room_0                                              ; 41bf: f0 09
     cmp #$ff                                                          ; 41c1: c9 ff
     beq check_for_room_0                                              ; 41c3: f0 05
 ; if sword animation was partway finished, then set it to finished (sword in wall)
     lda #$15                                                          ; 41c5: a9 15
-    sta save_game_level_i_sword_progress                              ; 41c7: 8d 25 0a
+    sta save_game_level_i_sword_puzzle_progress                       ; 41c7: 8d 25 0a
 check_for_room_0
     lda desired_room_index                                            ; 41ca: a5 30
     cmp #0                                                            ; 41cc: c9 00
@@ -1437,24 +1438,24 @@ c4207
     jmp c426c                                                         ; 4207: 4c 6c 42
 
 c420a
-    lda save_game_level_i_sword_progress                              ; 420a: ad 25 0a
+    lda save_game_level_i_sword_puzzle_progress                       ; 420a: ad 25 0a
     beq c423e                                                         ; 420d: f0 2f
     cmp #$15                                                          ; 420f: c9 15
     beq c4253                                                         ; 4211: f0 40
     cmp #$ff                                                          ; 4213: c9 ff
     beq c426c                                                         ; 4215: f0 55
-    inc save_game_level_i_sword_progress                              ; 4217: ee 25 0a
+    inc save_game_level_i_sword_puzzle_progress                       ; 4217: ee 25 0a
     lda desired_room_index                                            ; 421a: a5 30
     cmp #0                                                            ; 421c: c9 00
     bne c426c                                                         ; 421e: d0 4c
-    lda save_game_level_i_sword_progress                              ; 4220: ad 25 0a
+    lda save_game_level_i_sword_puzzle_progress                       ; 4220: ad 25 0a
     cmp #7                                                            ; 4223: c9 07
     bne c422d                                                         ; 4225: d0 06
     jsr play_landing_sound                                            ; 4227: 20 a9 23
     jmp c426c                                                         ; 422a: 4c 6c 42
 
 c422d
-    lda save_game_level_i_sword_progress                              ; 422d: ad 25 0a
+    lda save_game_level_i_sword_puzzle_progress                       ; 422d: ad 25 0a
     cmp #$15                                                          ; 4230: c9 15
     bne c426c                                                         ; 4232: d0 38
     ldx #<sound2                                                      ; 4234: a2 40
@@ -1470,7 +1471,7 @@ c423e
     ldy #5                                                            ; 4246: a0 05
     jsr test_for_collision_between_objects_x_and_y                    ; 4248: 20 e2 28
     beq c426c                                                         ; 424b: f0 1f
-    inc save_game_level_i_sword_progress                              ; 424d: ee 25 0a
+    inc save_game_level_i_sword_puzzle_progress                       ; 424d: ee 25 0a
     jmp c426c                                                         ; 4250: 4c 6c 42
 
 c4253
@@ -1484,7 +1485,7 @@ c4253
     lda #spriteid_sword_menu_item                                     ; 4262: a9 d1
     jsr find_or_create_menu_slot_for_A                                ; 4264: 20 bd 2b
     lda #$ff                                                          ; 4267: a9 ff
-    sta save_game_level_i_sword_progress                              ; 4269: 8d 25 0a
+    sta save_game_level_i_sword_puzzle_progress                       ; 4269: 8d 25 0a
 c426c
     lda desired_room_index                                            ; 426c: a5 30
     cmp #0                                                            ; 426e: c9 00
@@ -1495,7 +1496,7 @@ c4275
     lda #1                                                            ; 4275: a9 01
     sta object_direction + objectid_seesaw                            ; 4277: 8d c1 09
 ; set X to the animation step for position, and Y to the sprite index
-    ldx save_game_level_i_sword_progress                              ; 427a: ae 25 0a
+    ldx save_game_level_i_sword_puzzle_progress                       ; 427a: ae 25 0a
     ldy #0                                                            ; 427d: a0 00
     cpx #7                                                            ; 427f: e0 07
     bcc update_big_stone_position_and_sprite                          ; 4281: 90 0f
@@ -1503,7 +1504,7 @@ c4275
     lda #$ff                                                          ; 4283: a9 ff
     sta object_direction + objectid_seesaw                            ; 4285: 8d c1 09
     ldx #7                                                            ; 4288: a2 07
-    lda save_game_level_i_sword_progress                              ; 428a: ad 25 0a
+    lda save_game_level_i_sword_puzzle_progress                       ; 428a: ad 25 0a
     sec                                                               ; 428d: 38
     sbc #7                                                            ; 428e: e9 07
     tay                                                               ; 4290: a8
@@ -1529,7 +1530,7 @@ update_big_stone_position_and_sprite
     tay                                                               ; 42af: a8
     lda #spriteid_one_pixel_masked_out                                ; 42b0: a9 00
     sta object_spriteid + objectid_sword                              ; 42b2: 8d ac 09
-    lda save_game_level_i_sword_progress                              ; 42b5: ad 25 0a
+    lda save_game_level_i_sword_puzzle_progress                       ; 42b5: ad 25 0a
     cmp #$ff                                                          ; 42b8: c9 ff
     beq return3                                                       ; 42ba: f0 3d
     lda sword_animation_spriteids,y                                   ; 42bc: b9 94 41
@@ -1569,7 +1570,7 @@ return3
 
 set_or_clear_collision_map_cell_for_big_stone
     lda #collision_map_solid_rock                                     ; 42fa: a9 03
-    ldx save_game_level_i_sword_progress                              ; 42fc: ae 25 0a
+    ldx save_game_level_i_sword_puzzle_progress                       ; 42fc: ae 25 0a
     cpx #4                                                            ; 42ff: e0 04
     bcc write_to_collision_map_for_big_stone                          ; 4301: 90 02
     lda #collision_map_none                                           ; 4303: a9 00
@@ -2085,12 +2086,7 @@ sprite_data
 pydis_end
 
 ; Automatically generated labels:
-;     c3e08
 ;     c3e37
-;     c3e3a
-;     c3e59
-;     c3e6c
-;     c3e82
 ;     c3fbd
 ;     c3fe5
 ;     c3fe8
