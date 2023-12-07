@@ -43,7 +43,7 @@ set_sprite_dict(sprite_dict)
 
 load(0x3ad5, "orig/dataE.dat", "6502", "1fd692ce17c1ae2c858ed57730c9c081")
 
-label(0x0a13, "save_game_level_e_holding_egg_flag") # TODO: other uses? not checked yet - can have values 0, 1 and &ff at least, b7 seems to be a key check - value also checked against &c at 4243 - judging from 427a, 1 means 'the egg has just collided with something'
+label(0x0a13, "save_game_level_e_holding_egg_flag") # TODO: other uses? not checked yet - can have values 0, 1 and &ff at least, b7 seems to be a key check - value also checked against &c at 4243 - judging from 427a, 1 means 'the egg has just collided with something' (it is also set to 1 on entering level for first time) - it is set to &ff when the egg is collected (at 4213), it is set to c at 41c3 when the egg throw starts, it is set to &32 at 4262 when the egg collides with floor or big egg after being thrown, though shortly after it is set to 1 at 427c - ok, the 427c set to 1 happens when it lands, this occurs quicker when thrown at wall because it has less time to fall, the delay is more obvious when throwing at the big egg - note also that the egg has a little bit of horizontal rebound (at least when hitting wall after knocking the big egg over) - I think this covers more or less everything
 label(0x0a14, "save_game_level_e_room_1_egg_state") # TODO: other uses? not checked yet? egg state slightly speculative but prob right
 label(0x0a15, "save_game_level_e_duck_captured_flag") # TODO: might be used for other things too, not checked yet
 
