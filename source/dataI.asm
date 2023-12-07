@@ -615,7 +615,7 @@ check_for_being_in_room_2
     lda desired_room_index                                            ; 3c91: a5 30
     cmp #2                                                            ; 3c93: c9 02
     beq initialise_room_2_objects                                     ; 3c95: f0 03
-    jmp c3d57                                                         ; 3c97: 4c 57 3d
+    jmp update_rope_and_seesaw_visuals_local                          ; 3c97: 4c 57 3d
 
 initialise_room_2_objects
     ldx #<envelope1                                                   ; 3c9a: a2 48
@@ -711,24 +711,24 @@ draw_rope_loop
     jsr set_object_position_from_cell_xy                              ; 3d4f: 20 5d 1f
     lda #$e0                                                          ; 3d52: a9 e0
     sta object_z_order + objectid_boulder_room_2                      ; 3d54: 8d c7 38
-c3d57
+update_rope_and_seesaw_visuals_local
     jmp update_rope_and_seesaw_visuals                                ; 3d57: 4c f5 3d
 
 update_spell
     lda save_game_level_i_spell_progress                              ; 3d5a: ad 26 0a
     beq check_for_using_sword                                         ; 3d5d: f0 0a
     cmp #$1f                                                          ; 3d5f: c9 1f
-    beq c3d57                                                         ; 3d61: f0 f4
+    beq update_rope_and_seesaw_visuals_local                          ; 3d61: f0 f4
     inc save_game_level_i_spell_progress                              ; 3d63: ee 26 0a
     jmp cutting_rope_in_progress                                      ; 3d66: 4c b1 3d
 
 check_for_using_sword
     lda desired_room_index                                            ; 3d69: a5 30
     cmp #2                                                            ; 3d6b: c9 02
-    bne c3d57                                                         ; 3d6d: d0 e8
+    bne update_rope_and_seesaw_visuals_local                          ; 3d6d: d0 e8
     lda player_using_object_spriteid                                  ; 3d6f: ad b6 2e
     cmp #spriteid_sword_menu_item                                     ; 3d72: c9 d1
-    bne c3d57                                                         ; 3d74: d0 e1
+    bne update_rope_and_seesaw_visuals_local                          ; 3d74: d0 e1
     lda object_direction + objectid_player_accessory                  ; 3d76: ad bf 09
     bmi adjust_offsets_for_looking_left                               ; 3d79: 30 0d
     lda #1                                                            ; 3d7b: a9 01
@@ -2085,7 +2085,6 @@ sprite_data
 pydis_end
 
 ; Automatically generated labels:
-;     c3d57
 ;     c3e08
 ;     c3e37
 ;     c3e3a
