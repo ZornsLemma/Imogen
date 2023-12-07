@@ -24,17 +24,17 @@
 ;     save_game_level_i_small_stone_x_high                       ($0a28):
 ;     save_game_level_i_small_stone_y_low                        ($0a29):
 ;     save_game_level_i_small_stone_y_high                       ($0a2a):
-;           position of small stone as it flies through the room
+;           position of small stone in the room
 ;
 ;     save_game_level_i_small_stone_direction_without_bounces    ($0a2b):
 ;             1: thrown right
 ;           $ff: thrown left
 ;
 ;     save_game_level_i_small_stone_room_0_seesaw_animation_step ($0a2c):
-;           the step (index) of the current animation step for the small stone is current
+;           the step (index) of the current animation step for the small stone
 ;
 ;     save_game_level_i_small_stone_room                         ($0a2d):
-;           if not held by the player, then this is the room containing the small stone
+;           the room containing the small stone (if not held by player)
 ;
 ;     save_game_level_i_small_stone_direction_including_bounces  ($0a2e):
 ;             1: travelling right
