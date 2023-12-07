@@ -497,7 +497,7 @@ c3bdb
     lda #spriteid_erase_babboon1_or_partition                         ; 3be1: a9 cf
     sta object_erase_type + objectid_babboon1                         ; 3be3: 8d af 38
     lda #$c0                                                          ; 3be6: a9 c0
-    sta object_z_order + 3                                            ; 3be8: 8d c5 38
+    sta object_z_order + objectid_babboon1                            ; 3be8: 8d c5 38
     lda #$ef                                                          ; 3beb: a9 ef
     sta object_x_low + objectid_babboon1                              ; 3bed: 8d 53 09
     lda #$ff                                                          ; 3bf0: a9 ff
@@ -973,7 +973,7 @@ c3eb9
     lda #spriteid_erase_babboon1_or_partition                         ; 3ed4: a9 cf
     sta object_erase_type + objectid_partition                        ; 3ed6: 8d b0 38
     lda #$c0                                                          ; 3ed9: a9 c0
-    sta object_z_order + 4                                            ; 3edb: 8d c6 38
+    sta object_z_order + objectid_partition                           ; 3edb: 8d c6 38
 c3ede
     jmp c3f33                                                         ; 3ede: 4c 33 3f
 
@@ -1311,7 +1311,7 @@ c40b9
     lda #spriteid_erase_babboon1_or_partition                         ; 40bf: a9 cf
     sta object_erase_type + objectid_babboon1                         ; 40c1: 8d af 38
     lda #$c0                                                          ; 40c4: a9 c0
-    sta object_z_order + 3                                            ; 40c6: 8d c5 38
+    sta object_z_order + objectid_babboon1                            ; 40c6: 8d c5 38
     lda #$50 ; 'P'                                                    ; 40c9: a9 50
     sta object_x_low + objectid_babboon1                              ; 40cb: 8d 53 09
 c40ce
@@ -2098,8 +2098,14 @@ pydis_end
 !if (object_y_low + objectid_cannonball) != $097e {
     !error "Assertion failed: object_y_low + objectid_cannonball == $097e"
 }
+!if (object_z_order + objectid_babboon1) != $38c5 {
+    !error "Assertion failed: object_z_order + objectid_babboon1 == $38c5"
+}
 !if (object_z_order + objectid_cannonball) != $38c4 {
     !error "Assertion failed: object_z_order + objectid_cannonball == $38c4"
+}
+!if (object_z_order + objectid_partition) != $38c6 {
+    !error "Assertion failed: object_z_order + objectid_partition == $38c6"
 }
 !if (objectid_cannonball) != $02 {
     !error "Assertion failed: objectid_cannonball == $02"
