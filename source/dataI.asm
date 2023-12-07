@@ -30,6 +30,7 @@ objectid_boulder_room_2                = 5
 objectid_long_rope_end_room_2          = 7
 objectid_old_player                    = 11
 objectid_old_player_accessory          = 12
+objectid_old_small_stone_object        = 13
 objectid_player                        = 0
 objectid_player_accessory              = 1
 objectid_rope_end_room_2               = 8
@@ -239,7 +240,7 @@ find_top_and_bottom_of_object                               = $24d2
 temp_top_offset                                             = $2550
 temp_bottom_offset                                          = $2551
 update_object_a_solid_rock_collision                        = $25f5
-update_player_hitting_floor                                 = $2770
+update_object_hitting_floor                                 = $2770
 player_has_hit_floor_flag                                   = $288f
 player_just_fallen_off_edge_direction                       = $2890
 get_solid_rock_collision_for_object_a                       = $2894
@@ -825,9 +826,9 @@ got_seesaw_direction
     sta value_to_write_to_collision_map                               ; 3e2b: 85 3e
     jsr read_collision_map_value_for_xy                               ; 3e2d: 20 fa 1e
     cmp value_to_write_to_collision_map                               ; 3e30: c5 3e
-    beq c3e37                                                         ; 3e32: f0 03
+    beq skip_writing_to_collision_map                                 ; 3e32: f0 03
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 3e34: 20 44 1e
-c3e37
+skip_writing_to_collision_map
     jmp set_right_hand_rope_and_boulder_objects                       ; 3e37: 4c 59 3e
 
 set_rope_end_sprites
@@ -1390,7 +1391,7 @@ sword_animation_spriteids
 ; check for first update in room (branch if not)
 update_sword_puzzle
     lda update_room_first_update_flag                                 ; 41a4: ad 2b 13
-    beq c420a                                                         ; 41a7: f0 61
+    beq update_sword_puzzle_not_first_update                          ; 41a7: f0 61
     lda #spriteid_sword_menu_item                                     ; 41a9: a9 d1
     sta toolbar_collectable_spriteids+2                               ; 41ab: 8d ea 2e
     lda #spriteid_sword                                               ; 41ae: a9 d0
@@ -1411,7 +1412,7 @@ update_sword_puzzle
 check_for_room_0
     lda desired_room_index                                            ; 41ca: a5 30
     cmp #0                                                            ; 41cc: c9 00
-    bne c4207                                                         ; 41ce: d0 37
+    bne update_room_0_seesaw_animation_if_in_room_0_local             ; 41ce: d0 37
 ; initialise room 0
     ldx #<envelope3                                                   ; 41d0: a2 32
     ldy #>envelope3                                                   ; 41d2: a0 46
@@ -1439,65 +1440,70 @@ check_for_room_0
     sta object_erase_type + objectid_sword                            ; 41ff: 8d b0 38
     lda #$c0                                                          ; 4202: a9 c0
     sta object_z_order + objectid_sword                               ; 4204: 8d c6 38
-c4207
-    jmp c426c                                                         ; 4207: 4c 6c 42
+update_room_0_seesaw_animation_if_in_room_0_local
+    jmp update_room_0_seesaw_animation_if_in_room_0                   ; 4207: 4c 6c 42
 
-c420a
+update_sword_puzzle_not_first_update
     lda save_game_level_i_sword_puzzle_progress                       ; 420a: ad 25 0a
-    beq c423e                                                         ; 420d: f0 2f
+    beq sword_puzzle_not_started_yet                                  ; 420d: f0 2f
     cmp #$15                                                          ; 420f: c9 15
-    beq c4253                                                         ; 4211: f0 40
+    beq sword_in_wall                                                 ; 4211: f0 40
     cmp #$ff                                                          ; 4213: c9 ff
-    beq c426c                                                         ; 4215: f0 55
+    beq update_room_0_seesaw_animation_if_in_room_0                   ; 4215: f0 55
     inc save_game_level_i_sword_puzzle_progress                       ; 4217: ee 25 0a
     lda desired_room_index                                            ; 421a: a5 30
     cmp #0                                                            ; 421c: c9 00
-    bne c426c                                                         ; 421e: d0 4c
+    bne update_room_0_seesaw_animation_if_in_room_0                   ; 421e: d0 4c
     lda save_game_level_i_sword_puzzle_progress                       ; 4220: ad 25 0a
     cmp #7                                                            ; 4223: c9 07
-    bne c422d                                                         ; 4225: d0 06
+    bne check_for_sword_hitting_wall_sound                            ; 4225: d0 06
     jsr play_landing_sound                                            ; 4227: 20 a9 23
-    jmp c426c                                                         ; 422a: 4c 6c 42
+    jmp update_room_0_seesaw_animation_if_in_room_0                   ; 422a: 4c 6c 42
 
-c422d
+check_for_sword_hitting_wall_sound
     lda save_game_level_i_sword_puzzle_progress                       ; 422d: ad 25 0a
     cmp #$15                                                          ; 4230: c9 15
-    bne c426c                                                         ; 4232: d0 38
-    ldx #<sound2                                                      ; 4234: a2 40
-    ldy #>sound2                                                      ; 4236: a0 46
+    bne update_room_0_seesaw_animation_if_in_room_0                   ; 4232: d0 38
+    ldx #<sword_thud_sound                                            ; 4234: a2 40
+    ldy #>sword_thud_sound                                            ; 4236: a0 46
     jsr play_sound_yx                                                 ; 4238: 20 f6 38
-    jmp c426c                                                         ; 423b: 4c 6c 42
+    jmp update_room_0_seesaw_animation_if_in_room_0                   ; 423b: 4c 6c 42
 
-c423e
+sword_puzzle_not_started_yet
     lda desired_room_index                                            ; 423e: a5 30
     cmp #0                                                            ; 4240: c9 00
-    bne c426c                                                         ; 4242: d0 28
-    ldx #$0d                                                          ; 4244: a2 0d
-    ldy #5                                                            ; 4246: a0 05
+    bne update_room_0_seesaw_animation_if_in_room_0                   ; 4242: d0 28
+; check for small stone big stone collision
+    ldx #objectid_old_small_stone_object                              ; 4244: a2 0d
+    ldy #objectid_big_stone_room_0                                    ; 4246: a0 05
     jsr test_for_collision_between_objects_x_and_y                    ; 4248: 20 e2 28
-    beq c426c                                                         ; 424b: f0 1f
+    beq update_room_0_seesaw_animation_if_in_room_0                   ; 424b: f0 1f
+; found small stone big stone collision
     inc save_game_level_i_sword_puzzle_progress                       ; 424d: ee 25 0a
-    jmp c426c                                                         ; 4250: 4c 6c 42
+    jmp update_room_0_seesaw_animation_if_in_room_0                   ; 4250: 4c 6c 42
 
-c4253
+sword_in_wall
     lda desired_room_index                                            ; 4253: a5 30
     cmp #0                                                            ; 4255: c9 00
-    bne c426c                                                         ; 4257: d0 13
+    bne update_room_0_seesaw_animation_if_in_room_0                   ; 4257: d0 13
+; check for player sword collision
     ldx #objectid_old_player                                          ; 4259: a2 0b
-    ldy #4                                                            ; 425b: a0 04
+    ldy #objectid_sword                                               ; 425b: a0 04
     jsr test_for_collision_between_objects_x_and_y                    ; 425d: 20 e2 28
-    beq c426c                                                         ; 4260: f0 0a
+    beq update_room_0_seesaw_animation_if_in_room_0                   ; 4260: f0 0a
+; found player sword collision, add sword to toolbar
     lda #spriteid_sword_menu_item                                     ; 4262: a9 d1
     jsr find_or_create_menu_slot_for_A                                ; 4264: 20 bd 2b
+; mark sword as taken
     lda #$ff                                                          ; 4267: a9 ff
     sta save_game_level_i_sword_puzzle_progress                       ; 4269: 8d 25 0a
-c426c
+update_room_0_seesaw_animation_if_in_room_0
     lda desired_room_index                                            ; 426c: a5 30
     cmp #0                                                            ; 426e: c9 00
-    beq c4275                                                         ; 4270: f0 03
+    beq update_room_0_seesaw_animation                                ; 4270: f0 03
     jmp return3                                                       ; 4272: 4c f9 42
 
-c4275
+update_room_0_seesaw_animation
     lda #1                                                            ; 4275: a9 01
     sta object_direction + objectid_seesaw                            ; 4277: 8d c1 09
 ; set X to the animation step for position, and Y to the sprite index
@@ -1619,10 +1625,10 @@ small_stone_fall_off_edge_room_0_seesaw_animation
 ; check for first update in room (branch if so)
 update_room_0_seesaw_puzzle
     lda update_room_first_update_flag                                 ; 4337: ad 2b 13
-    bne update_room_0_seesaw_puzzle_not_first_update                  ; 433a: d0 03
-    jmp update_room_0_seesaw_puzzle_first_update                      ; 433c: 4c 98 43
+    bne update_room_0_seesaw_puzzle_first_update                      ; 433a: d0 03
+    jmp update_room_0_seesaw_puzzle_not_first_update                  ; 433c: 4c 98 43
 
-update_room_0_seesaw_puzzle_not_first_update
+update_room_0_seesaw_puzzle_first_update
     lda #spriteid_stone_menu_item                                     ; 433f: a9 ca
     sta toolbar_collectable_spriteids+1                               ; 4341: 8d e9 2e
     lda #spriteid_small_stone                                         ; 4344: a9 c8
@@ -1648,7 +1654,7 @@ no_level_change
     beq hide_small_stone                                              ; 436f: f0 1f
     bmi hide_small_stone                                              ; 4371: 30 1d
     jsr set_small_stone_object                                        ; 4373: 20 f0 45
-loop_c4376
+fast_forward_small_stone_animation_loop
     lda desired_room_index                                            ; 4376: a5 30
     cmp save_game_level_i_small_stone_room                            ; 4378: cd 2d 0a
     bne hide_small_stone                                              ; 437b: d0 13
@@ -1658,7 +1664,7 @@ loop_c4376
     ldx #objectid_small_stone_object                                  ; 4385: a2 02
     jsr copy_object_state_to_old                                      ; 4387: 20 f7 20
     jsr move_to_next_animation_step                                   ; 438a: 20 9d 44
-    jmp loop_c4376                                                    ; 438d: 4c 76 43
+    jmp fast_forward_small_stone_animation_loop                       ; 438d: 4c 76 43
 
 hide_small_stone
     lda #spriteid_one_pixel_masked_out                                ; 4390: a9 00
@@ -1666,31 +1672,31 @@ hide_small_stone
 return4_local
     jmp return4                                                       ; 4395: 4c 9c 44
 
-update_room_0_seesaw_puzzle_first_update
+update_room_0_seesaw_puzzle_not_first_update
     lda #0                                                            ; 4398: a9 00
-    sta l461e                                                         ; 439a: 8d 1e 46
+    sta small_stone_just_thrown                                       ; 439a: 8d 1e 46
     lda player_held_object_spriteid                                   ; 439d: a5 52
     sta l461f                                                         ; 439f: 8d 1f 46
     lda object_spriteid_old + objectid_small_stone_object             ; 43a2: ad b5 09
     sta l4620                                                         ; 43a5: 8d 20 46
     lda save_game_level_i_room_0_seesaw_puzzle_progress               ; 43a8: ad 24 0a
     beq return4_local                                                 ; 43ab: f0 e8
-    bmi room_0_seesaw_puzzle_done                                     ; 43ad: 30 12
+    bmi initialise_room_0_seesaw_puzzle                               ; 43ad: 30 12
     lda desired_room_index                                            ; 43af: a5 30
     cmp save_game_level_i_small_stone_room                            ; 43b1: cd 2d 0a
-    beq c440a                                                         ; 43b4: f0 54
+    beq stone_in_room                                                 ; 43b4: f0 54
     lda level_workspace                                               ; 43b6: ad 6f 0a
     bmi return4_local                                                 ; 43b9: 30 da
     inc level_workspace                                               ; 43bb: ee 6f 0a
     jmp return4                                                       ; 43be: 4c 9c 44
 
-room_0_seesaw_puzzle_done
+initialise_room_0_seesaw_puzzle
     lda #spriteid_stone_menu_item                                     ; 43c1: a9 ca
     cmp player_using_object_spriteid                                  ; 43c3: cd b6 2e
     bne return4_local                                                 ; 43c6: d0 cd
     cmp previous_player_using_object_spriteid                         ; 43c8: cd b7 2e
     beq return4_local                                                 ; 43cb: f0 c8
-    dec l461e                                                         ; 43cd: ce 1e 46
+    dec small_stone_just_thrown                                       ; 43cd: ce 1e 46
     lda desired_room_index                                            ; 43d0: a5 30
     sta save_game_level_i_small_stone_room                            ; 43d2: 8d 2d 0a
     lda object_direction                                              ; 43d5: ad be 09
@@ -1712,14 +1718,14 @@ room_0_seesaw_puzzle_done
     jsr copy_object_state_to_old                                      ; 4403: 20 f7 20
     lda #0                                                            ; 4406: a9 00
     sta player_held_object_spriteid                                   ; 4408: 85 52
-c440a
+stone_in_room
     jsr move_to_next_animation_step                                   ; 440a: 20 9d 44
     lda desired_room_index                                            ; 440d: a5 30
     cmp save_game_level_i_small_stone_room                            ; 440f: cd 2d 0a
-    beq c4419                                                         ; 4412: f0 05
+    beq check_for_player_small_stone_collision1                       ; 4412: f0 05
     lda #0                                                            ; 4414: a9 00
     sta level_workspace                                               ; 4416: 8d 6f 0a
-c4419
+check_for_player_small_stone_collision1
     lda l4620                                                         ; 4419: ad 20 46
     sta object_spriteid_old + objectid_small_stone_object             ; 441c: 8d b5 09
     ldx #objectid_old_player                                          ; 441f: a2 0b
@@ -1728,51 +1734,58 @@ c4419
     ldx l461f                                                         ; 4426: ae 1f 46
     stx player_held_object_spriteid                                   ; 4429: 86 52
     ora #0                                                            ; 442b: 09 00
-    beq c4446                                                         ; 442d: f0 17
-    lda l461e                                                         ; 442f: ad 1e 46
-    bne c4439                                                         ; 4432: d0 05
+    beq no_player_small_stone_collision                               ; 442d: f0 17
+    lda small_stone_just_thrown                                       ; 442f: ad 1e 46
+    bne hide_small_stone1                                             ; 4432: d0 05
+; add stone to toolbar
     lda #spriteid_stone_menu_item                                     ; 4434: a9 ca
     jsr find_or_create_menu_slot_for_A                                ; 4436: 20 bd 2b
-c4439
+hide_small_stone1
     lda #spriteid_one_pixel_masked_out                                ; 4439: a9 00
     sta object_spriteid + objectid_small_stone_object                 ; 443b: 8d aa 09
+; mark small stone as obtained by player
     lda #$ff                                                          ; 443e: a9 ff
     sta save_game_level_i_room_0_seesaw_puzzle_progress               ; 4440: 8d 24 0a
     jmp return4                                                       ; 4443: 4c 9c 44
 
-c4446
-    lda l461e                                                         ; 4446: ad 1e 46
-    beq c445a                                                         ; 4449: f0 0f
+no_player_small_stone_collision
+    lda small_stone_just_thrown                                       ; 4446: ad 1e 46
+    beq check_for_stone_moving_in_x                                   ; 4449: f0 0f
+; remove small stone from toolbar
     lda #spriteid_stone_menu_item                                     ; 444b: a9 ca
     jsr remove_item_from_toolbar_menu                                 ; 444d: 20 e0 2b
-    lda #0                                                            ; 4450: a9 00
+; stone is no longer held or being used by player
+    lda #spriteid_one_pixel_masked_out                                ; 4450: a9 00
     sta object_spriteid + objectid_player_accessory                   ; 4452: 8d a9 09
     sta player_using_object_spriteid                                  ; 4455: 8d b6 2e
     sta player_held_object_spriteid                                   ; 4458: 85 52
-c445a
+check_for_stone_moving_in_x
     lda object_x_low + objectid_small_stone_object                    ; 445a: ad 52 09
     cmp object_x_low_old + objectid_small_stone_object                ; 445d: cd 5d 09
-    beq c4482                                                         ; 4460: f0 20
+    beq check_for_stone_moving_in_y                                   ; 4460: f0 20
+; stone is moving in x, check for collision with walls
     lda save_game_level_i_small_stone_direction_including_bounces     ; 4462: ad 2e 0a
-    bmi c446d                                                         ; 4465: 30 06
+    bmi stone_moving_left                                             ; 4465: 30 06
+; stone moving right
     inc temp_right_offset                                             ; 4467: ee d1 24
-    jmp c4470                                                         ; 446a: 4c 70 44
+    jmp check_for_stone_bouncing                                      ; 446a: 4c 70 44
 
-c446d
+stone_moving_left
     dec temp_left_offset                                              ; 446d: ce d0 24
-c4470
+check_for_stone_bouncing
     lda #1                                                            ; 4470: a9 01
     sta temp_bottom_offset                                            ; 4472: 8d 51 25
     lda #objectid_small_stone_object                                  ; 4475: a9 02
     jsr get_solid_rock_collision_for_object_a                         ; 4477: 20 94 28
-    beq c4482                                                         ; 447a: f0 06
+    beq check_for_stone_moving_in_y                                   ; 447a: f0 06
     jsr play_landing_sound                                            ; 447c: 20 a9 23
     jmp return4                                                       ; 447f: 4c 9c 44
 
-c4482
+check_for_stone_moving_in_y
     lda object_y_low + objectid_small_stone_object                    ; 4482: ad 7e 09
     cmp object_y_low_old + objectid_small_stone_object                ; 4485: cd 89 09
     beq return4                                                       ; 4488: f0 12
+; check for stone landing
     dec temp_top_offset                                               ; 448a: ce 50 25
     lda #2                                                            ; 448d: a9 02
     sta temp_bottom_offset                                            ; 448f: 8d 51 25
@@ -1813,20 +1826,20 @@ check_for_stone_wall_collision
 no_collision
     lda save_game_level_i_room_0_seesaw_puzzle_progress               ; 44d0: ad 24 0a
     cmp #small_stone_rising_arc_room_0_seesaw_animation - small_stone_room_0_seesaw_animations; 44d3: c9 01
-    bne c44ed                                                         ; 44d5: d0 16
+    bne check_for_hitting_floor                                       ; 44d5: d0 16
     dec temp_top_offset                                               ; 44d7: ce 50 25
     lda #objectid_small_stone_object                                  ; 44da: a9 02
     jsr get_solid_rock_collision_for_object_a                         ; 44dc: 20 94 28
-    bne c44e6                                                         ; 44df: d0 05
+    bne start_stone_falling                                           ; 44df: d0 05
     cpy save_game_level_i_room_0_seesaw_puzzle_progress               ; 44e1: cc 24 0a
     bne c451d                                                         ; 44e4: d0 37
-c44e6
+start_stone_falling
     lda #small_stone_falling_room_0_seesaw_animation - small_stone_room_0_seesaw_animations; 44e6: a9 1b
     sta save_game_level_i_room_0_seesaw_puzzle_progress               ; 44e8: 8d 24 0a
     ldy #small_stone_falling_arc_room_0_seesaw_animation - small_stone_room_0_seesaw_animations; 44eb: a0 0e
-c44ed
+check_for_hitting_floor
     lda #objectid_small_stone_object                                  ; 44ed: a9 02
-    jsr update_player_hitting_floor                                   ; 44ef: 20 70 27
+    jsr update_object_hitting_floor                                   ; 44ef: 20 70 27
     lda save_game_level_i_room_0_seesaw_puzzle_progress               ; 44f2: ad 24 0a
     cmp #small_stone_falling_room_0_seesaw_animation - small_stone_room_0_seesaw_animations; 44f5: c9 1b
     bne c4503                                                         ; 44f7: d0 0a
@@ -1968,7 +1981,7 @@ set_small_stone_object
     sta object_direction + objectid_small_stone_object                ; 461a: 8d c0 09
     rts                                                               ; 461d: 60
 
-l461e
+small_stone_just_thrown
     !byte 0                                                           ; 461e: 00
 l461f
     !byte 0                                                           ; 461f: 00
@@ -2001,7 +2014,7 @@ envelope3
     !byte 248                                                         ; 463d: f8                      ; change of amplitude per step during release phase
     !byte 110                                                         ; 463e: 6e                      ; target of level at end of attack phase
     !byte 0                                                           ; 463f: 00                      ; target of level at end of decay phase
-sound2
+sword_thud_sound
     !word $13                                                         ; 4640: 13 00                   ; channel
     !word 5                                                           ; 4642: 05 00                   ; amplitude
     !word 201                                                         ; 4644: c9 00                   ; pitch
@@ -2091,24 +2104,6 @@ sprite_data
 pydis_end
 
 ; Automatically generated labels:
-;     c3e37
-;     c4207
-;     c420a
-;     c422d
-;     c423e
-;     c4253
-;     c426c
-;     c4275
-;     c440a
-;     c4419
-;     c4439
-;     c4446
-;     c445a
-;     c446d
-;     c4470
-;     c4482
-;     c44e6
-;     c44ed
 ;     c4503
 ;     c451d
 ;     c452c
@@ -2118,10 +2113,8 @@ pydis_end
 ;     l0078
 ;     l0079
 ;     l007a
-;     l461e
 ;     l461f
 ;     l4620
-;     loop_c4376
 !if (256 - (spriteid_sword_spinA - spriteid_small_stone)) != $f6 {
     !error "Assertion failed: 256 - (spriteid_sword_spinA - spriteid_small_stone) == $f6"
 }
@@ -2155,14 +2148,14 @@ pydis_end
 !if (<sound1) != $56 {
     !error "Assertion failed: <sound1 == $56"
 }
-!if (<sound2) != $40 {
-    !error "Assertion failed: <sound2 == $40"
-}
 !if (<sound3) != $74 {
     !error "Assertion failed: <sound3 == $74"
 }
 !if (<sound4) != $6c {
     !error "Assertion failed: <sound4 == $6c"
+}
+!if (<sword_thud_sound) != $40 {
+    !error "Assertion failed: <sword_thud_sound == $40"
 }
 !if (>(game_area_height_cells * 8)) != $00 {
     !error "Assertion failed: >(game_area_height_cells * 8) == $00"
@@ -2185,14 +2178,14 @@ pydis_end
 !if (>sound1) != $46 {
     !error "Assertion failed: >sound1 == $46"
 }
-!if (>sound2) != $46 {
-    !error "Assertion failed: >sound2 == $46"
-}
 !if (>sound3) != $46 {
     !error "Assertion failed: >sound3 == $46"
 }
 !if (>sound4) != $46 {
     !error "Assertion failed: >sound4 == $46"
+}
+!if (>sword_thud_sound) != $46 {
+    !error "Assertion failed: >sword_thud_sound == $46"
 }
 !if (collectable_being_used_spriteids+2) != $2ef4 {
     !error "Assertion failed: collectable_being_used_spriteids+2 == $2ef4"
@@ -2377,6 +2370,9 @@ pydis_end
 !if (object_z_order + objectid_sword) != $38c6 {
     !error "Assertion failed: object_z_order + objectid_sword == $38c6"
 }
+!if (objectid_big_stone_room_0) != $05 {
+    !error "Assertion failed: objectid_big_stone_room_0 == $05"
+}
 !if (objectid_big_stone_room_3) != $04 {
     !error "Assertion failed: objectid_big_stone_room_3 == $04"
 }
@@ -2388,6 +2384,9 @@ pydis_end
 }
 !if (objectid_old_player) != $0b {
     !error "Assertion failed: objectid_old_player == $0b"
+}
+!if (objectid_old_small_stone_object) != $0d {
+    !error "Assertion failed: objectid_old_small_stone_object == $0d"
 }
 !if (objectid_player) != $00 {
     !error "Assertion failed: objectid_player == $00"
@@ -2409,6 +2408,9 @@ pydis_end
 }
 !if (objectid_spell) != $04 {
     !error "Assertion failed: objectid_spell == $04"
+}
+!if (objectid_sword) != $04 {
+    !error "Assertion failed: objectid_sword == $04"
 }
 !if (room_0_data) != $40d6 {
     !error "Assertion failed: room_0_data == $40d6"

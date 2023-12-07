@@ -1999,18 +1999,18 @@ On Exit:
     expr(0x276b, "object_collided_floor")
     label(0x276f, "return17")
 
-    stars(0x2770, """Check if the player is hitting the floor, and if so, deal with it
+    stars(0x2770, """Check if the object is hitting the floor, and if so, deal with it
 
 On Entry:
     A: object id to test (in practice always zero for the player)
 
 On Exit:
-    player_has_hit_floor_flag and A and flags: $ff if player hit floor,
+    player_has_hit_floor_flag and A and flags: $ff if player/object hit floor,
                                                $00 otherwise.
-        player_just_fallen_off_edge_direction: $ff if player is off left edge,
+        player_just_fallen_off_edge_direction: $ff if player/object is off left edge,
                                                $01 if off right edge,
                                                $00 otherwise.
-       player_just_fallen_centrally_direction: $ff if player is off the centre left,
+       player_just_fallen_centrally_direction: $ff if player/object is off the centre left,
                                                $01 if off the centre right,
                                                $00 otherwise.""")
     comment(0x2776, "check collision of player with room")

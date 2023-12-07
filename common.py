@@ -353,7 +353,7 @@ def common_to_all(level_letter):
     label(0x2550, "temp_top_offset")
     label(0x2551, "temp_bottom_offset")
     label(0x25f5, "update_object_a_solid_rock_collision")
-    label(0x2770, "update_player_hitting_floor")
+    label(0x2770, "update_object_hitting_floor")
     label(0x288f, "player_has_hit_floor_flag")
     label(0x2890, "player_just_fallen_off_edge_direction")
     label(0x2894, "get_solid_rock_collision_for_object_a")

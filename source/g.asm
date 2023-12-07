@@ -4302,7 +4302,7 @@ update_player_hitting_floor_or_pushed
     tya                                                               ; 24f7: 98          .   :23c6[1]
     pha                                                               ; 24f8: 48          H   :23c7[1]
     lda #objectid_player                                              ; 24f9: a9 00       ..  :23c8[1]
-    jsr update_player_hitting_floor                                   ; 24fb: 20 70 27     p' :23ca[1]
+    jsr update_object_hitting_floor                                   ; 24fb: 20 70 27     p' :23ca[1]
 ; if (no player collision) then branch (return)
     lda player_wall_collision_reaction_speed                          ; 24fe: ad 33 24    .3$ :23cd[1]
     beq recall_registers_and_return1                                  ; 2501: f0 59       .Y  :23d0[1]
@@ -5004,23 +5004,24 @@ return17
 
 ; *************************************************************************************
 ; 
-; Check if the player is hitting the floor, and if so, deal with it
+; Check if the object is hitting the floor, and if so, deal with it
 ; 
 ; On Entry:
 ;     A: object id to test (in practice always zero for the player)
 ; 
 ; On Exit:
-;     player_has_hit_floor_flag and A and flags: $ff if player hit floor,
+;     player_has_hit_floor_flag and A and flags: $ff if player/object hit floor,
 ;                                                $00 otherwise.
-;         player_just_fallen_off_edge_direction: $ff if player is off left edge,
+;         player_just_fallen_off_edge_direction: $ff if player/object is off left edge,
 ;                                                $01 if off right edge,
 ;                                                $00 otherwise.
-;        player_just_fallen_centrally_direction: $ff if player is off the centre left,
+;        player_just_fallen_centrally_direction: $ff if player/object is off the centre
+; left,
 ;                                                $01 if off the centre right,
 ;                                                $00 otherwise.
 ; 
 ; *************************************************************************************
-update_player_hitting_floor
+update_object_hitting_floor
     sta objectid_to_test                                              ; 28a1: 85 53       .S  :2770[1]
     txa                                                               ; 28a3: 8a          .   :2772[1]   ; remember X,Y
     pha                                                               ; 28a4: 48          H   :2773[1]

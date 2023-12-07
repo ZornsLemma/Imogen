@@ -209,7 +209,7 @@ find_top_and_bottom_of_object                       = $24d2
 temp_top_offset                                     = $2550
 temp_bottom_offset                                  = $2551
 update_object_a_solid_rock_collision                = $25f5
-update_player_hitting_floor                         = $2770
+update_object_hitting_floor                         = $2770
 player_has_hit_floor_flag                           = $288f
 player_just_fallen_off_edge_direction               = $2890
 get_solid_rock_collision_for_object_a               = $2894
@@ -1733,7 +1733,7 @@ c44d9
     ldy #$15                                                          ; 44de: a0 15
 c44e0
     lda #2                                                            ; 44e0: a9 02
-    jsr update_player_hitting_floor                                   ; 44e2: 20 70 27
+    jsr update_object_hitting_floor                                   ; 44e2: 20 70 27
     lda l0a62                                                         ; 44e5: ad 62 0a
     cmp #$22 ; '"'                                                    ; 44e8: c9 22
     bne c44f6                                                         ; 44ea: d0 0a
