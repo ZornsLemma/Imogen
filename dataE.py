@@ -34,7 +34,7 @@ sprite_dict = {
 sprite_dict = {**common_sprite_dict, **sprite_dict}
 
 # Room 1
-constant(2, "objectid_small_egg") # TODO: guessing
+constant(2, "objectid_small_egg")
 constant(3, "objectid_egg")
 
 label(0xa6f, "level_workspace_something_to_do_with_small_egg")
@@ -123,6 +123,7 @@ entry(0x4195, "have_small_egg")
 expr(0x4196, "spriteid_egg_toolbar")
 expr(0x415c, "objectid_small_egg")
 expr(0x41c2, "small_egg_status_being_thrown")
+expr(0x41d5, "objectid_small_egg")
 expr(0x41f3, "objectid_old_player")
 entry(0x4231, "small_egg_animation_update")
 expr(0x4244, "small_egg_status_being_thrown")

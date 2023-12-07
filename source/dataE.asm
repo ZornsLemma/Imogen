@@ -1291,7 +1291,7 @@ have_small_egg
     jsr update_object_properties_for_small_egg                        ; 41cb: 20 1d 43
     lda object_spriteid + objectid_player_accessory                   ; 41ce: ad a9 09
     sta object_spriteid + objectid_small_egg                          ; 41d1: 8d aa 09
-    ldx #2                                                            ; 41d4: a2 02
+    ldx #objectid_small_egg                                           ; 41d4: a2 02
     jsr copy_object_state_to_old                                      ; 41d6: 20 f7 20
     lda #0                                                            ; 41d9: a9 00
     sta player_held_object_spriteid                                   ; 41db: 85 52
