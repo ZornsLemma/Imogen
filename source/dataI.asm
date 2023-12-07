@@ -241,8 +241,8 @@ temp_top_offset                                             = $2550
 temp_bottom_offset                                          = $2551
 update_object_a_solid_rock_collision                        = $25f5
 update_object_hitting_floor                                 = $2770
-player_has_hit_floor_flag                                   = $288f
-player_just_fallen_off_edge_direction                       = $2890
+object_has_hit_floor_flag                                   = $288f
+object_just_fallen_off_edge_direction                       = $2890
 get_solid_rock_collision_for_object_a                       = $2894
 temp_default_collision_map_option                           = $28e1
 test_for_collision_between_objects_x_and_y                  = $28e2
@@ -1843,12 +1843,12 @@ check_for_hitting_floor
     lda save_game_level_i_room_0_seesaw_puzzle_progress               ; 44f2: ad 24 0a
     cmp #small_stone_falling_room_0_seesaw_animation - small_stone_room_0_seesaw_animations; 44f5: c9 1b
     bne c4503                                                         ; 44f7: d0 0a
-    lda player_has_hit_floor_flag                                     ; 44f9: ad 8f 28
+    lda object_has_hit_floor_flag                                     ; 44f9: ad 8f 28
     beq c451d                                                         ; 44fc: f0 1f
     ldy #small_stone_still_room_0_seesaw_animation - small_stone_room_0_seesaw_animations; 44fe: a0 1e
     sty save_game_level_i_room_0_seesaw_puzzle_progress               ; 4500: 8c 24 0a
 c4503
-    lda player_just_fallen_off_edge_direction                         ; 4503: ad 90 28
+    lda object_just_fallen_off_edge_direction                         ; 4503: ad 90 28
     beq c451d                                                         ; 4506: f0 15
     ldy #small_stone_falling_room_0_seesaw_animation - small_stone_room_0_seesaw_animations; 4508: a0 1b
     sty save_game_level_i_room_0_seesaw_puzzle_progress               ; 450a: 8c 24 0a

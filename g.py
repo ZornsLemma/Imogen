@@ -2002,51 +2002,51 @@ On Exit:
     stars(0x2770, """Check if the object is hitting the floor, and if so, deal with it
 
 On Entry:
-    A: object id to test (in practice always zero for the player)
+    A: object id to test
 
 On Exit:
-    player_has_hit_floor_flag and A and flags: $ff if player/object hit floor,
+    object_has_hit_floor_flag and A and flags: $ff if player/object hit floor,
                                                $00 otherwise.
-        player_just_fallen_off_edge_direction: $ff if player/object is off left edge,
+        object_just_fallen_off_edge_direction: $ff if player/object is off left edge,
                                                $01 if off right edge,
                                                $00 otherwise.
-       player_just_fallen_centrally_direction: $ff if player/object is off the centre left,
+       object_just_fallen_centrally_direction: $ff if player/object is off the centre left,
                                                $01 if off the centre right,
                                                $00 otherwise.""")
-    comment(0x2776, "check collision of player with room")
+    comment(0x2776, "check collision of object with room")
     comment(0x2783, "don't write values to the collision map")
     comment(0x2787, "have we hit the floor?")
     comment(0x278a, "clear 'just fallen off' table")
-    comment(0x2792, "if (player hit floor) then branch")
-    label(0x279c, "player_hit_floor")
-    comment(0x27a8, "find the left/right extents of player without the accessory object")
+    comment(0x2792, "if (object hit floor) then branch")
+    label(0x279c, "object_hit_floor")
+    comment(0x27a8, "find the left/right extents of object without the accessory object")
     comment(0x27ab, "add one to the right pixel extent")
     comment(0x27b8, "sum the left and right extents")
     comment(0x27c7, "restore original left right cells")
     comment(0x27d1, "set y to be the bottom cell (later we'll get a value from the collision map)")
-    comment(0x27d3, """To see if the player should fall, the idea here is to look at the cell below the player, 3/4 of the way to the left of the character. Calculating 3/4 of the way along is done by calculating (2L+(L+R))/4 = (3L+R)/4 = (3/4)L + (1/4)R
+    comment(0x27d3, """To see if the object should fall, the idea here is to look at the cell below the object, 3/4 of the way to the left. Calculating 3/4 of the way along is done by calculating (2L+(L+R))/4 = (3L+R)/4 = (3/4)L + (1/4)R
 the result is rounded, so that we look at two adjacent cells based on the rounding.
 First double the left extent, and add to the sum of left and right extents...""")
     comment(0x27e4, "...then divide by four...")
     comment(0x27eb, "...and round the result")
     ab(0x27fc)
-    comment(0x27f9, "player has fallen off the edge to the left")
+    comment(0x27f9, "object has fallen off the edge to the left")
     comment(0x27fe, """solid rock was found three quarters to the left, now check three quarters right.
 This is similar to above code, starting with: Double the right extent, and add to the sum of left and right extents...""")
-    label(0x27fe, "check_for_solid_rock_under_player_to_right")
+    label(0x27fe, "check_for_solid_rock_under_object_to_right")
     comment(0x280f, "...then divide by four...")
     comment(0x2815, "check cells for solid rock")
-    comment(0x281a, "player has fallen off the edge to the right")
-    label(0x281d, "player_has_fallen_off_either_edge")
+    comment(0x281a, "object has fallen off the edge to the right")
+    label(0x281d, "object_has_fallen_off_either_edge")
     expr(0x2822, "objectid_old_player")
     label(0x2825, "check_cell_centre_below_player")
     comment(0x2825, "divide the sum by two to find the centre position")
     comment(0x282b, "round result")
     comment(0x2837, "check cells for solid rock")
-    comment(0x283c, "player fallen more centrally to the left")
+    comment(0x283c, "object fallen more centrally to the left")
     comment(0x2849, "check cells for solid rock")
-    comment(0x284e, "player fallen more centrally to the right")
-    label(0x2841, "check_player_supported_to_centre_left")
+    comment(0x284e, "object fallen more centrally to the right")
+    label(0x2841, "check_object_supported_to_centre_left")
     label(0x2851, "recall_registers_and_return2")
     stars(0x2859, """Read the collision cells along a row, looking for solid rock anywhere.
 Pixel position is the right extent of the row.
@@ -2081,7 +2081,7 @@ On Exit:
     expr(0x2882, "collision_map_solid_rock")
     comment(0x288a, "no solid rock found")
     label(0x288c, "return_with_flags")
-    label(0x2891, "player_just_fallen_centrally_direction")
+    label(0x2891, "object_just_fallen_centrally_direction")
     label(0x2892, "sum_of_left_and_right_extents_low")
     label(0x2893, "sum_of_left_and_right_extents_high")
     stars(0x2894, """Get solid_rock collision flags for object

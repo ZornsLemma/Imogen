@@ -210,8 +210,8 @@ temp_top_offset                                     = $2550
 temp_bottom_offset                                  = $2551
 update_object_a_solid_rock_collision                = $25f5
 update_object_hitting_floor                         = $2770
-player_has_hit_floor_flag                           = $288f
-player_just_fallen_off_edge_direction               = $2890
+object_has_hit_floor_flag                           = $288f
+object_just_fallen_off_edge_direction               = $2890
 get_solid_rock_collision_for_object_a               = $2894
 temp_default_collision_map_option                   = $28e1
 test_for_collision_between_objects_x_and_y          = $28e2
@@ -1550,7 +1550,7 @@ c43be
     lda #6                                                            ; 43be: a9 06
     jsr update_object_hitting_floor                                   ; 43c0: 20 70 27
     beq c43cf                                                         ; 43c3: f0 0a
-    lda player_just_fallen_off_edge_direction                         ; 43c5: ad 90 28
+    lda object_just_fallen_off_edge_direction                         ; 43c5: ad 90 28
     beq c43cf                                                         ; 43c8: f0 05
     ldy #9                                                            ; 43ca: a0 09
     sty l0a40                                                         ; 43cc: 8c 40 0a

@@ -210,8 +210,8 @@ temp_top_offset                                     = $2550
 temp_bottom_offset                                  = $2551
 update_object_a_solid_rock_collision                = $25f5
 update_object_hitting_floor                         = $2770
-player_has_hit_floor_flag                           = $288f
-player_just_fallen_off_edge_direction               = $2890
+object_has_hit_floor_flag                           = $288f
+object_just_fallen_off_edge_direction               = $2890
 get_solid_rock_collision_for_object_a               = $2894
 temp_default_collision_map_option                   = $28e1
 test_for_collision_between_objects_x_and_y          = $28e2
@@ -1737,12 +1737,12 @@ c44e0
     lda l0a62                                                         ; 44e5: ad 62 0a
     cmp #$22 ; '"'                                                    ; 44e8: c9 22
     bne c44f6                                                         ; 44ea: d0 0a
-    lda player_has_hit_floor_flag                                     ; 44ec: ad 8f 28
+    lda object_has_hit_floor_flag                                     ; 44ec: ad 8f 28
     beq c4510                                                         ; 44ef: f0 1f
     ldy #$25 ; '%'                                                    ; 44f1: a0 25
     sty l0a62                                                         ; 44f3: 8c 62 0a
 c44f6
-    lda player_just_fallen_off_edge_direction                         ; 44f6: ad 90 28
+    lda object_just_fallen_off_edge_direction                         ; 44f6: ad 90 28
     beq c4510                                                         ; 44f9: f0 15
     ldy #$22 ; '"'                                                    ; 44fb: a0 22
     sty l0a62                                                         ; 44fd: 8c 62 0a

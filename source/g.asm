@@ -4332,7 +4332,7 @@ check_for_collision_while_player_is_being_pushed
     sta player_wall_collision_reaction_speed                          ; 2526: 8d 33 24    .3$ :23f5[1]
     bne if_player_hit_wall_and_floor_then_clear_wall_collision_flag   ; 2529: d0 20       .   :23f8[1]   ; ALWAYS branch
 push_continues_no_collision
-    lda player_has_hit_floor_flag                                     ; 252b: ad 8f 28    ..( :23fa[1]
+    lda object_has_hit_floor_flag                                     ; 252b: ad 8f 28    ..( :23fa[1]
     beq move_player_because_of_push                                   ; 252e: f0 05       ..  :23fd[1]
     lda #0                                                            ; 2530: a9 00       ..  :23ff[1]
     sta current_player_animation                                      ; 2532: 8d df 09    ... :2401[1]
@@ -4354,7 +4354,7 @@ if_player_hit_wall_and_floor_then_clear_wall_collision_flag
     cmp #$80                                                          ; 254e: c9 80       ..  :241d[1]
     bne recall_registers_and_return1                                  ; 2550: d0 0a       ..  :241f[1]
 ; if not hit floor, then branch
-    lda player_has_hit_floor_flag                                     ; 2552: ad 8f 28    ..( :2421[1]
+    lda object_has_hit_floor_flag                                     ; 2552: ad 8f 28    ..( :2421[1]
     beq recall_registers_and_return1                                  ; 2555: f0 05       ..  :2424[1]
     lda #0                                                            ; 2557: a9 00       ..  :2426[1]
     sta player_wall_collision_reaction_speed                          ; 2559: 8d 33 24    .3$ :2428[1]
@@ -5007,15 +5007,15 @@ return17
 ; Check if the object is hitting the floor, and if so, deal with it
 ; 
 ; On Entry:
-;     A: object id to test (in practice always zero for the player)
+;     A: object id to test
 ; 
 ; On Exit:
-;     player_has_hit_floor_flag and A and flags: $ff if player/object hit floor,
+;     object_has_hit_floor_flag and A and flags: $ff if player/object hit floor,
 ;                                                $00 otherwise.
-;         player_just_fallen_off_edge_direction: $ff if player/object is off left edge,
+;         object_just_fallen_off_edge_direction: $ff if player/object is off left edge,
 ;                                                $01 if off right edge,
 ;                                                $00 otherwise.
-;        player_just_fallen_centrally_direction: $ff if player/object is off the centre
+;        object_just_fallen_centrally_direction: $ff if player/object is off the centre
 ; left,
 ;                                                $01 if off the centre right,
 ;                                                $00 otherwise.
@@ -5027,7 +5027,7 @@ update_object_hitting_floor
     pha                                                               ; 28a4: 48          H   :2773[1]
     tya                                                               ; 28a5: 98          .   :2774[1]
     pha                                                               ; 28a6: 48          H   :2775[1]
-; check collision of player with room
+; check collision of object with room
     ldx objectid_to_test                                              ; 28a7: a6 53       .S  :2776[1]
     jsr find_left_and_right_of_object_including_held_object           ; 28a9: 20 df 25     .% :2778[1]
     lda #2                                                            ; 28ac: a9 02       ..  :277b[1]
@@ -5040,21 +5040,21 @@ update_object_hitting_floor
     jsr check_for_object_intersecting_floor_or_ceiling                ; 28b8: 20 e5 26     .& :2787[1]
 ; clear 'just fallen off' table
     lda #0                                                            ; 28bb: a9 00       ..  :278a[1]
-    sta player_just_fallen_off_edge_direction                         ; 28bd: 8d 90 28    ..( :278c[1]
-    sta player_just_fallen_centrally_direction                        ; 28c0: 8d 91 28    ..( :278f[1]
-; if (player hit floor) then branch
+    sta object_just_fallen_off_edge_direction                         ; 28bd: 8d 90 28    ..( :278c[1]
+    sta object_just_fallen_centrally_direction                        ; 28c0: 8d 91 28    ..( :278f[1]
+; if (object hit floor) then branch
     lda object_hit_floor_result_flag                                  ; 28c3: a5 7f       ..  :2792[1]
-    sta player_has_hit_floor_flag                                     ; 28c5: 8d 8f 28    ..( :2794[1]
-    bne player_hit_floor                                              ; 28c8: d0 03       ..  :2797[1]
+    sta object_has_hit_floor_flag                                     ; 28c5: 8d 8f 28    ..( :2794[1]
+    bne object_hit_floor                                              ; 28c8: d0 03       ..  :2797[1]
     jmp recall_registers_and_return2                                  ; 28ca: 4c 51 28    LQ( :2799[1]
 
-player_hit_floor
+object_hit_floor
     lda object_left_cell_x                                            ; 28cd: a5 78       .x  :279c[1]
     sta temp_object_left_cell                                         ; 28cf: 8d 21 01    .!. :279e[1]
     lda object_right_cell_x                                           ; 28d2: a5 79       .y  :27a1[1]
     sta temp_object_right_cell                                        ; 28d4: 8d 22 01    .". :27a3[1]
     ldx objectid_to_test                                              ; 28d7: a6 53       .S  :27a6[1]
-; find the left/right extents of player without the accessory object
+; find the left/right extents of object without the accessory object
     jsr find_left_and_right_of_object                                 ; 28d9: 20 34 24     4$ :27a8[1]
 ; add one to the right pixel extent
     lda object_right_low                                              ; 28dc: a5 72       .r  :27ab[1]
@@ -5079,9 +5079,9 @@ player_hit_floor
     sta object_right_cell_x                                           ; 2900: 85 79       .y  :27cf[1]
 ; set y to be the bottom cell (later we'll get a value from the collision map)
     ldy object_bottom_cell_y                                          ; 2902: a4 7b       .{  :27d1[1]
-; To see if the player should fall, the idea here is to look at the cell below the
-; player, 3/4 of the way to the left of the character. Calculating 3/4 of the way along
-; is done by calculating (2L+(L+R))/4 = (3L+R)/4 = (3/4)L + (1/4)R
+; To see if the object should fall, the idea here is to look at the cell below the
+; object, 3/4 of the way to the left. Calculating 3/4 of the way along is done by
+; calculating (2L+(L+R))/4 = (3L+R)/4 = (3/4)L + (1/4)R
 ; the result is rounded, so that we look at two adjacent cells based on the rounding.
 ; First double the left extent, and add to the sum of left and right extents...
     asl object_left_low                                               ; 2904: 06 70       .p  :27d3[1]
@@ -5105,14 +5105,14 @@ player_hit_floor
     txa                                                               ; 2922: 8a          .   :27f1[1]
     sbc #0                                                            ; 2923: e9 00       ..  :27f2[1]
     jsr check_for_solid_rock_along_a_row_of_cells1                    ; 2925: 20 59 28     Y( :27f4[1]
-    bne check_for_solid_rock_under_player_to_right                    ; 2928: d0 05       ..  :27f7[1]
-; player has fallen off the edge to the left
-    dec player_just_fallen_off_edge_direction                         ; 292a: ce 90 28    ..( :27f9[1]
-    bne player_has_fallen_off_either_edge                             ; 292d: d0 1f       ..  :27fc[1]   ; ALWAYS branch
+    bne check_for_solid_rock_under_object_to_right                    ; 2928: d0 05       ..  :27f7[1]
+; object has fallen off the edge to the left
+    dec object_just_fallen_off_edge_direction                         ; 292a: ce 90 28    ..( :27f9[1]
+    bne object_has_fallen_off_either_edge                             ; 292d: d0 1f       ..  :27fc[1]   ; ALWAYS branch
 ; solid rock was found three quarters to the left, now check three quarters right.
 ; This is similar to above code, starting with: Double the right extent, and add to the
 ; sum of left and right extents...
-check_for_solid_rock_under_player_to_right
+check_for_solid_rock_under_object_to_right
     asl object_right_low                                              ; 292f: 06 72       .r  :27fe[1]
     rol object_right_high                                             ; 2931: 26 73       &s  :2800[1]
     lda sum_of_left_and_right_extents_low                             ; 2933: ad 92 28    ..( :2802[1]
@@ -5129,9 +5129,9 @@ check_for_solid_rock_under_player_to_right
 ; check cells for solid rock
     jsr check_for_solid_rock_along_a_row_of_cells2                    ; 2946: 20 6d 28     m( :2815[1]
     bne recall_registers_and_return2                                  ; 2949: d0 37       .7  :2818[1]
-; player has fallen off the edge to the right
-    inc player_just_fallen_off_edge_direction                         ; 294b: ee 90 28    ..( :281a[1]
-player_has_fallen_off_either_edge
+; object has fallen off the edge to the right
+    inc object_just_fallen_off_edge_direction                         ; 294b: ee 90 28    ..( :281a[1]
+object_has_fallen_off_either_edge
     lda objectid_to_test                                              ; 294e: a5 53       .S  :281d[1]
     beq check_cell_centre_below_player                                ; 2950: f0 04       ..  :281f[1]
     cmp #objectid_old_player                                          ; 2952: c9 0b       ..  :2821[1]
@@ -5148,25 +5148,25 @@ check_cell_centre_below_player
     sbc #0                                                            ; 2966: e9 00       ..  :2835[1]
 ; check cells for solid rock
     jsr check_for_solid_rock_along_a_row_of_cells1                    ; 2968: 20 59 28     Y( :2837[1]
-    bne check_player_supported_to_centre_left                         ; 296b: d0 05       ..  :283a[1]
-; player fallen more centrally to the left
-    dec player_just_fallen_centrally_direction                        ; 296d: ce 91 28    ..( :283c[1]
+    bne check_object_supported_to_centre_left                         ; 296b: d0 05       ..  :283a[1]
+; object fallen more centrally to the left
+    dec object_just_fallen_centrally_direction                        ; 296d: ce 91 28    ..( :283c[1]
     bne recall_registers_and_return2                                  ; 2970: d0 10       ..  :283f[1]
-check_player_supported_to_centre_left
+check_object_supported_to_centre_left
     lda sum_of_left_and_right_extents_low                             ; 2972: ad 92 28    ..( :2841[1]
     sta object_top_cell_y                                             ; 2975: 85 7a       .z  :2844[1]
     lda sum_of_left_and_right_extents_high                            ; 2977: ad 93 28    ..( :2846[1]
 ; check cells for solid rock
     jsr check_for_solid_rock_along_a_row_of_cells2                    ; 297a: 20 6d 28     m( :2849[1]
     bne recall_registers_and_return2                                  ; 297d: d0 03       ..  :284c[1]
-; player fallen more centrally to the right
-    inc player_just_fallen_centrally_direction                        ; 297f: ee 91 28    ..( :284e[1]
+; object fallen more centrally to the right
+    inc object_just_fallen_centrally_direction                        ; 297f: ee 91 28    ..( :284e[1]
 recall_registers_and_return2
     pla                                                               ; 2982: 68          h   :2851[1]   ; recall X,Y
     tay                                                               ; 2983: a8          .   :2852[1]
     pla                                                               ; 2984: 68          h   :2853[1]
     tax                                                               ; 2985: aa          .   :2854[1]
-    lda player_has_hit_floor_flag                                     ; 2986: ad 8f 28    ..( :2855[1]
+    lda object_has_hit_floor_flag                                     ; 2986: ad 8f 28    ..( :2855[1]
     rts                                                               ; 2989: 60          `   :2858[1]
 
 ; *************************************************************************************
@@ -5240,11 +5240,11 @@ return_with_flags
     ora #0                                                            ; 29bd: 09 00       ..  :288c[1]
     rts                                                               ; 29bf: 60          `   :288e[1]
 
-player_has_hit_floor_flag
+object_has_hit_floor_flag
     !byte 0                                                           ; 29c0: 00          .   :288f[1]
-player_just_fallen_off_edge_direction
+object_just_fallen_off_edge_direction
     !byte 0                                                           ; 29c1: 00          .   :2890[1]
-player_just_fallen_centrally_direction
+object_just_fallen_centrally_direction
     !byte 0                                                           ; 29c2: 00          .   :2891[1]
 sum_of_left_and_right_extents_low
     !byte 0                                                           ; 29c3: 00          .   :2892[1]
@@ -6181,7 +6181,7 @@ wizard_start_to_fall
     ldy #wizard_start_to_fall_animation - wizard_base_animation       ; 2ef9: a0 59       .Y  :2dc8[1]
 ; if (player has hit floor) then branch
 wizard_not_jumping
-    lda player_has_hit_floor_flag                                     ; 2efb: ad 8f 28    ..( :2dca[1]
+    lda object_has_hit_floor_flag                                     ; 2efb: ad 8f 28    ..( :2dca[1]
     bne wizard_hits_ground                                            ; 2efe: d0 24       .$  :2dcd[1]
 ; Player is not jumping and not on the floor, so must be falling.
 ; if (not already falling) then branch (start falling)
@@ -6256,7 +6256,7 @@ wizard_check_if_fallen_off_edge
     beq got_index_from_direction_requested                            ; 2f7a: f0 01       ..  :2e49[1]
     inx                                                               ; 2f7c: e8          .   :2e4b[1]
 got_index_from_direction_requested
-    lda player_just_fallen_off_edge_direction,x                       ; 2f7d: bd 90 28    ..( :2e4c[1]
+    lda object_just_fallen_off_edge_direction,x                       ; 2f7d: bd 90 28    ..( :2e4c[1]
     beq wizard_got_index_in_animation                                 ; 2f80: f0 0e       ..  :2e4f[1]
     ldy #wizard_fall_continues_animation - wizard_base_animation      ; 2f82: a0 96       ..  :2e51[1]
     sty current_player_animation                                      ; 2f84: 8c df 09    ... :2e53[1]
@@ -6508,7 +6508,7 @@ cat_start_to_fall
     ldy #cat_start_to_fall_animation - cat_base_animation             ; 3159: a0 5f       ._  :3028[1]
 ; if (player has hit floor) then branch
 cat_check_for_hitting_floor
-    lda player_has_hit_floor_flag                                     ; 315b: ad 8f 28    ..( :302a[1]
+    lda object_has_hit_floor_flag                                     ; 315b: ad 8f 28    ..( :302a[1]
     bne cat_hits_ground                                               ; 315e: d0 24       .$  :302d[1]
     lda current_player_animation                                      ; 3160: ad df 09    ... :302f[1]
     cmp #cat_fall_animation - cat_base_animation                      ; 3163: c9 ae       ..  :3032[1]
@@ -6568,7 +6568,7 @@ cat_check_if_fallen_off_edge
     beq got_direction_index                                           ; 31c0: f0 01       ..  :308f[1]
     inx                                                               ; 31c2: e8          .   :3091[1]
 got_direction_index
-    lda player_just_fallen_off_edge_direction,x                       ; 31c3: bd 90 28    ..( :3092[1]
+    lda object_just_fallen_off_edge_direction,x                       ; 31c3: bd 90 28    ..( :3092[1]
     beq cat_got_index_in_animation                                    ; 31c6: f0 0e       ..  :3095[1]
 ; cat is falling
     ldy #cat_fall_animation - cat_base_animation                      ; 31c8: a0 ae       ..  :3097[1]
@@ -6809,7 +6809,7 @@ monkey_not_jumping
     cmp object_direction                                              ; 3382: cd be 09    ... :3251[1]
     beq monkey_start_falling                                          ; 3385: f0 09       ..  :3254[1]
     ldx #monkey_climb_down_animation - monkey_base_animation          ; 3387: a2 49       .I  :3256[1]
-    lda player_has_hit_floor_flag                                     ; 3389: ad 8f 28    ..( :3258[1]
+    lda object_has_hit_floor_flag                                     ; 3389: ad 8f 28    ..( :3258[1]
     beq monkey_set_animation_x                                        ; 338c: f0 0c       ..  :325b[1]
     bne monkey_update_standing_fall                                   ; 338e: d0 17       ..  :325d[1]   ; ALWAYS branch
 
@@ -6858,7 +6858,7 @@ monkey_fall
     sta current_player_animation                                      ; 33d8: 8d df 09    ... :32a7[1]
     ldy #monkey_animation15 - monkey_base_animation                   ; 33db: a0 97       ..  :32aa[1]
 monkey_check_if_hit_floor
-    lda player_has_hit_floor_flag                                     ; 33dd: ad 8f 28    ..( :32ac[1]
+    lda object_has_hit_floor_flag                                     ; 33dd: ad 8f 28    ..( :32ac[1]
     bne monkey_check_for_standing_fall                                ; 33e0: d0 17       ..  :32af[1]
 monkey_falling
     lda #monkey_fall_animation - monkey_base_animation                ; 33e2: a9 d4       ..  :32b1[1]
@@ -6919,7 +6919,7 @@ monkey_update_falling_off_edge
     beq skip5                                                         ; 344c: f0 01       ..  :331b[1]
     inx                                                               ; 344e: e8          .   :331d[1]
 skip5
-    lda player_just_fallen_off_edge_direction,x                       ; 344f: bd 90 28    ..( :331e[1]
+    lda object_just_fallen_off_edge_direction,x                       ; 344f: bd 90 28    ..( :331e[1]
     beq monkey_got_index_in_animation                                 ; 3452: f0 0e       ..  :3321[1]
     ldy #monkey_fall_animation - monkey_base_animation                ; 3454: a0 d4       ..  :3323[1]
     sty current_player_animation                                      ; 3456: 8c df 09    ... :3325[1]
