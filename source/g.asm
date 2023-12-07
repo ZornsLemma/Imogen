@@ -3775,6 +3775,12 @@ draw_loop
 ; '_old' variables. We use this later to detect whether the object state has changed
 ; and to undraw if needed.
 ; 
+; On Entry:
+;     X: object index
+; 
+; On Exit:
+;     Preserves A,X,Y
+; 
 ; *************************************************************************************
 copy_object_state_to_old
     pha                                                               ; 2228: 48          H   :20f7[1]

@@ -1636,7 +1636,13 @@ Object state is stored in 'object_*' memory locations, and the state of the prev
     blank(0x20e6)
     comment(0x20e6, "draw objects from back to front (aka 'painters algorithm')")
     label(0x20e7, "draw_loop")
-    stars(0x20f7, "Once an object is drawn to the screen, this remembers the current object state in '_old' variables. We use this later to detect whether the object state has changed and to undraw if needed.")
+    stars(0x20f7, """Once an object is drawn to the screen, this remembers the current object state in '_old' variables. We use this later to detect whether the object state has changed and to undraw if needed.
+
+On Entry:
+    X: object index
+
+On Exit:
+    Preserves A,X,Y""")
 
     label(0x211e, "has_object_changed_state")
     label(0x2155, "pull_result_and_return")
