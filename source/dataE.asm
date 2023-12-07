@@ -32,7 +32,9 @@ objectid_player_accessory             = 1
 objectid_small_egg                    = 2
 opcode_jmp                            = 76
 small_egg_status_being_thrown         = 12
+small_egg_status_collected            = 255
 small_egg_status_falling              = 50
+small_egg_status_on_ground            = 1
 sprite_op_flags_copy_screen           = 1
 sprite_op_flags_erase_to_bg_colour    = 2
 sprite_op_flags_erase_to_fg_colour    = 4
@@ -332,7 +334,7 @@ level_specific_initialisation
     beq duck_not_captured_yet                                         ; 3afa: f0 25
     lda developer_flags                                               ; 3afc: ad 03 11
     bpl developer_mode_not_active                                     ; 3aff: 10 0a
-    lda #$ff                                                          ; 3b01: a9 ff
+    lda #small_egg_status_collected                                   ; 3b01: a9 ff
     sta save_game_level_e_small_egg_status                            ; 3b03: 8d 13 0a
     lda #spriteid_duck_toolbar                                        ; 3b06: a9 d1
     jsr insert_character_menu_item_into_toolbar                       ; 3b08: 20 87 2b
@@ -1211,7 +1213,7 @@ room0_first_update
     sta thrown_egg_x_high                                             ; 4115: 8d 71 0a
     lda #$3a ; ':'                                                    ; 4118: a9 3a
     sta thrown_egg_y_low                                              ; 411a: 8d 72 0a
-    lda #1                                                            ; 411d: a9 01
+    lda #small_egg_status_on_ground                                   ; 411d: a9 01
     sta save_game_level_e_small_egg_status                            ; 411f: 8d 13 0a
     sta small_egg_animation_table_index                               ; 4122: 8d 74 0a
     lda #0                                                            ; 4125: a9 00
@@ -1255,7 +1257,7 @@ room0_not_first_update
     lda object_spriteid_old + objectid_small_egg                      ; 4178: ad b5 09
     sta l438b                                                         ; 417b: 8d 8b 43
     lda save_game_level_e_small_egg_status                            ; 417e: ad 13 0a
-    bmi have_small_egg                                                ; 4181: 30 12
+    bmi have_small_egg                                                ; 4181: 30 12                   ; branch if have collected egg
     lda desired_room_index                                            ; 4183: a5 30
     cmp room_containing_small_egg                                     ; 4185: cd 75 0a
     beq c41dd                                                         ; 4188: f0 53
@@ -1317,7 +1319,7 @@ c41ec
 c420c
     lda #spriteid_one_pixel_masked_out                                ; 420c: a9 00
     sta object_spriteid + objectid_small_egg                          ; 420e: 8d aa 09
-    lda #$ff                                                          ; 4211: a9 ff
+    lda #small_egg_status_collected                                   ; 4211: a9 ff
     sta save_game_level_e_small_egg_status                            ; 4213: 8d 13 0a
     jmp return2                                                       ; 4216: 4c 30 42
 
@@ -1358,7 +1360,7 @@ small_egg_temp_left_right_offset_set
     lda #2                                                            ; 4259: a9 02
     jsr get_solid_rock_collision_for_object_a                         ; 425b: 20 94 28
     beq c4284                                                         ; 425e: f0 24
-    lda #$32 ; '2'                                                    ; 4260: a9 32
+    lda #small_egg_status_falling                                     ; 4260: a9 32
     sta save_game_level_e_small_egg_status                            ; 4262: 8d 13 0a
     ldy #$25 ; '%'                                                    ; 4265: a0 25
     jmp c4284                                                         ; 4267: 4c 84 42
@@ -2239,8 +2241,14 @@ pydis_end
 !if (small_egg_status_being_thrown) != $0c {
     !error "Assertion failed: small_egg_status_being_thrown == $0c"
 }
+!if (small_egg_status_collected) != $ff {
+    !error "Assertion failed: small_egg_status_collected == $ff"
+}
 !if (small_egg_status_falling) != $32 {
     !error "Assertion failed: small_egg_status_falling == $32"
+}
+!if (small_egg_status_on_ground) != $01 {
+    !error "Assertion failed: small_egg_status_on_ground == $01"
 }
 !if (sprite_data - level_data) != $0b57 {
     !error "Assertion failed: sprite_data - level_data == $0b57"
