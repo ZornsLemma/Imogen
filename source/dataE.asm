@@ -1373,7 +1373,7 @@ small_egg_not_being_thrown
     lda #2                                                            ; 4273: a9 02
     jsr get_solid_rock_collision_for_object_a                         ; 4275: 20 94 28
     beq c4284                                                         ; 4278: f0 0a                   ; branch if not collided with anything
-    ldy #1                                                            ; 427a: a0 01
+    ldy #small_egg_status_on_ground                                   ; 427a: a0 01
     sty save_game_level_e_small_egg_status                            ; 427c: 8c 13 0a
 small_egg_not_falling
     lda #0                                                            ; 427f: a9 00
