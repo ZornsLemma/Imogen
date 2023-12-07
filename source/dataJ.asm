@@ -1,130 +1,153 @@
 ; Constants
-collision_map_none                    = 0
-collision_map_out_of_bounds           = 255
-collision_map_rope                    = 2
-collision_map_solid_rock              = 3
-collision_map_unknown                 = 1
-copy_mode_2x2                         = 0
-copy_mode_random16                    = 16
-copy_mode_random2                     = 2
-copy_mode_random32                    = 32
-copy_mode_random4                     = 4
-copy_mode_random64                    = 64
-copy_mode_random8                     = 8
-copy_mode_simple                      = 1
-exit_room_bottom                      = 2
-exit_room_left                        = 1
-exit_room_right                       = 4
-exit_room_top                         = 8
-first_level_letter                    = 65
-game_area_height_cells                = 24
-game_area_width_cells                 = 40
-last_level_letter                     = 81
-object_collided_ceiling               = 8
-object_collided_floor                 = 2
-object_collided_left_wall             = 1
-object_collided_right_wall            = 4
-objectid_old_player                   = 11
-objectid_old_player_accessory         = 12
-objectid_player                       = 0
-objectid_player_accessory             = 1
-opcode_jmp                            = 76
-sprite_op_flags_copy_screen           = 1
-sprite_op_flags_erase_to_bg_colour    = 2
-sprite_op_flags_erase_to_fg_colour    = 4
-sprite_op_flags_normal                = 0
-spriteid_197                          = 197
-spriteid_ball                         = 59
-spriteid_brazier                      = 58
-spriteid_cat1                         = 27
-spriteid_cat2                         = 28
-spriteid_cat_jump                     = 26
-spriteid_cat_tail1                    = 18
-spriteid_cat_tail2                    = 19
-spriteid_cat_tail3                    = 20
-spriteid_cat_tail4                    = 21
-spriteid_cat_tail5                    = 22
-spriteid_cat_tail6                    = 23
-spriteid_cat_tail7                    = 24
-spriteid_cat_tail8                    = 25
-spriteid_cat_transform1               = 16
-spriteid_cat_transform2               = 17
-spriteid_cat_walk1                    = 12
-spriteid_cat_walk2                    = 13
-spriteid_cat_walk3                    = 14
-spriteid_cat_walk4                    = 15
-spriteid_circle                       = 32
-spriteid_corner_bottom_left           = 45
-spriteid_corner_bottom_right          = 46
-spriteid_corner_top_left              = 44
-spriteid_corner_top_right             = 47
-spriteid_diamond1                     = 39
-spriteid_diamond2                     = 40
-spriteid_diamond3                     = 41
-spriteid_diamond4                     = 42
-spriteid_diamond5                     = 43
-spriteid_erase_player                 = 199
-spriteid_erase_player_accessory       = 198
-spriteid_fingertip_tile_restoration   = 30
-spriteid_fire1                        = 60
-spriteid_fire2                        = 61
-spriteid_fire3                        = 62
-spriteid_fire4                        = 63
-spriteid_fire5                        = 64
-spriteid_fire6                        = 65
-spriteid_fire7                        = 66
-spriteid_fire8                        = 67
-spriteid_icodata_box                  = 9
-spriteid_icodata_cat                  = 5
-spriteid_icodata_disc                 = 3
-spriteid_icodata_info                 = 7
-spriteid_icodata_monkey               = 6
-spriteid_icodata_password             = 8
-spriteid_icodata_sound                = 2
-spriteid_icodata_wizard               = 4
-spriteid_icon_background              = 1
-spriteid_menu_item_completion_spell   = 33
-spriteid_monkey1                      = 78
-spriteid_monkey2                      = 79
-spriteid_monkey3                      = 80
-spriteid_monkey4                      = 81
-spriteid_monkey5                      = 82
-spriteid_monkey_climb1                = 83
-spriteid_monkey_climb2                = 84
-spriteid_monkey_tail1                 = 70
-spriteid_monkey_tail2                 = 71
-spriteid_monkey_tail3                 = 72
-spriteid_monkey_tail4                 = 73
-spriteid_monkey_tail5                 = 74
-spriteid_monkey_tail6                 = 75
-spriteid_monkey_tail7                 = 76
-spriteid_monkey_tail8                 = 77
-spriteid_monkey_transform1            = 68
-spriteid_monkey_transform2            = 69
-spriteid_one_pixel_masked_out         = 0
-spriteid_one_pixel_set                = 31
-spriteid_pointer_hand                 = 29
-spriteid_rope1                        = 85
-spriteid_rope2                        = 86
-spriteid_rope3                        = 87
-spriteid_rope4                        = 88
-spriteid_rope_end                     = 10
-spriteid_rope_hook                    = 11
-spriteid_sparkles1                    = 34
-spriteid_sparkles2                    = 35
-spriteid_sparkles3                    = 36
-spriteid_sparkles4                    = 37
-spriteid_sparkles5                    = 38
-spriteid_wizard1                      = 48
-spriteid_wizard2                      = 49
-spriteid_wizard3                      = 50
-spriteid_wizard4                      = 51
-spriteid_wizard5                      = 52
-spriteid_wizard7                      = 54
-spriteid_wizard_hand                  = 55
-spriteid_wizard_transform1            = 56
-spriteid_wizard_transform2            = 57
-spriteid_wizard_using_object          = 53
+collision_map_none                     = 0
+collision_map_out_of_bounds            = 255
+collision_map_rope                     = 2
+collision_map_solid_rock               = 3
+collision_map_unknown                  = 1
+copy_mode_2x2                          = 0
+copy_mode_random16                     = 16
+copy_mode_random2                      = 2
+copy_mode_random32                     = 32
+copy_mode_random4                      = 4
+copy_mode_random64                     = 64
+copy_mode_random8                      = 8
+copy_mode_simple                       = 1
+exit_room_bottom                       = 2
+exit_room_left                         = 1
+exit_room_right                        = 4
+exit_room_top                          = 8
+first_level_letter                     = 65
+game_area_height_cells                 = 24
+game_area_width_cells                  = 40
+last_level_letter                      = 81
+object_collided_ceiling                = 8
+object_collided_floor                  = 2
+object_collided_left_wall              = 1
+object_collided_right_wall             = 4
+objectid_babboon1                      = 3
+objectid_babboon2                      = 4
+objectid_babboon3                      = 5
+objectid_cannonball                    = 2
+objectid_fire                          = 5
+objectid_old_player                    = 11
+objectid_old_player_accessory          = 12
+objectid_partition                     = 4
+objectid_player                        = 0
+objectid_player_accessory              = 1
+objectid_sparkles                      = 3
+opcode_jmp                             = 76
+sprite_op_flags_copy_screen            = 1
+sprite_op_flags_erase_to_bg_colour     = 2
+sprite_op_flags_erase_to_fg_colour     = 4
+sprite_op_flags_normal                 = 0
+spriteid_197                           = 197
+spriteid_babboon1                      = 204
+spriteid_babboon2                      = 205
+spriteid_babboon_push                  = 206
+spriteid_ball                          = 59
+spriteid_brazier                       = 58
+spriteid_cannonball1                   = 200
+spriteid_cannonball2                   = 208
+spriteid_cannonball_and_arm            = 209
+spriteid_cannonball_menu_item          = 202
+spriteid_cat1                          = 27
+spriteid_cat2                          = 28
+spriteid_cat_jump                      = 26
+spriteid_cat_tail1                     = 18
+spriteid_cat_tail2                     = 19
+spriteid_cat_tail3                     = 20
+spriteid_cat_tail4                     = 21
+spriteid_cat_tail5                     = 22
+spriteid_cat_tail6                     = 23
+spriteid_cat_tail7                     = 24
+spriteid_cat_tail8                     = 25
+spriteid_cat_transform1                = 16
+spriteid_cat_transform2                = 17
+spriteid_cat_walk1                     = 12
+spriteid_cat_walk2                     = 13
+spriteid_cat_walk3                     = 14
+spriteid_cat_walk4                     = 15
+spriteid_circle                        = 32
+spriteid_collision                     = 203
+spriteid_corner_bottom_left            = 45
+spriteid_corner_bottom_right           = 46
+spriteid_corner_top_left               = 44
+spriteid_corner_top_right              = 47
+spriteid_diamond1                      = 39
+spriteid_diamond2                      = 40
+spriteid_diamond3                      = 41
+spriteid_diamond4                      = 42
+spriteid_diamond5                      = 43
+spriteid_erase_babboon1_or_partition   = 207
+spriteid_erase_babboon2                = 214
+spriteid_erase_babboon3                = 215
+spriteid_erase_cannonball              = 201
+spriteid_erase_player                  = 199
+spriteid_erase_player_accessory        = 198
+spriteid_fingertip_tile_restoration    = 30
+spriteid_fire1                         = 60
+spriteid_fire2                         = 61
+spriteid_fire3                         = 62
+spriteid_fire4                         = 63
+spriteid_fire5                         = 64
+spriteid_fire6                         = 65
+spriteid_fire7                         = 66
+spriteid_fire8                         = 67
+spriteid_icodata_box                   = 9
+spriteid_icodata_cat                   = 5
+spriteid_icodata_disc                  = 3
+spriteid_icodata_info                  = 7
+spriteid_icodata_monkey                = 6
+spriteid_icodata_password              = 8
+spriteid_icodata_sound                 = 2
+spriteid_icodata_wizard                = 4
+spriteid_icon_background               = 1
+spriteid_menu_item_completion_spell    = 33
+spriteid_monkey1                       = 78
+spriteid_monkey2                       = 79
+spriteid_monkey3                       = 80
+spriteid_monkey4                       = 81
+spriteid_monkey5                       = 82
+spriteid_monkey_climb1                 = 83
+spriteid_monkey_climb2                 = 84
+spriteid_monkey_tail1                  = 70
+spriteid_monkey_tail2                  = 71
+spriteid_monkey_tail3                  = 72
+spriteid_monkey_tail4                  = 73
+spriteid_monkey_tail5                  = 74
+spriteid_monkey_tail6                  = 75
+spriteid_monkey_tail7                  = 76
+spriteid_monkey_tail8                  = 77
+spriteid_monkey_transform1             = 68
+spriteid_monkey_transform2             = 69
+spriteid_one_pixel_masked_out          = 0
+spriteid_one_pixel_set                 = 31
+spriteid_partition                     = 211
+spriteid_partition_fallen              = 213
+spriteid_partition_falling             = 212
+spriteid_partition_remains             = 210
+spriteid_pointer_hand                  = 29
+spriteid_rope1                         = 85
+spriteid_rope2                         = 86
+spriteid_rope3                         = 87
+spriteid_rope4                         = 88
+spriteid_rope_end                      = 10
+spriteid_rope_hook                     = 11
+spriteid_sparkles1                     = 34
+spriteid_sparkles2                     = 35
+spriteid_sparkles3                     = 36
+spriteid_sparkles4                     = 37
+spriteid_sparkles5                     = 38
+spriteid_wizard1                       = 48
+spriteid_wizard2                       = 49
+spriteid_wizard3                       = 50
+spriteid_wizard4                       = 51
+spriteid_wizard5                       = 52
+spriteid_wizard7                       = 54
+spriteid_wizard_hand                   = 55
+spriteid_wizard_transform1             = 56
+spriteid_wizard_transform2             = 57
+spriteid_wizard_using_object           = 53
 
 ; Memory locations
 l0016                                               = $16
@@ -163,25 +186,25 @@ object_spriteid                                     = $09a8
 object_spriteid_old                                 = $09b3
 object_direction                                    = $09be
 current_player_animation                            = $09df
-l0a30                                               = $0a30
-l0a31                                               = $0a31
-l0a32                                               = $0a32
+save_game_j_got_cannonball_progress                 = $0a30
+save_game_j_room_0_babboon_animation                = $0a31
+save_game_j_partition_progress                      = $0a32
 level_workspace                                     = $0a6f
-l0a70                                               = $0a70
-l0a71                                               = $0a71
-l0a72                                               = $0a72
-l0a73                                               = $0a73
-l0a74                                               = $0a74
-l0a75                                               = $0a75
-l0a76                                               = $0a76
-l0a77                                               = $0a77
-l0a78                                               = $0a78
-l0a79                                               = $0a79
+cannonball_x_low                                    = $0a70
+cannonball_x_high                                   = $0a71
+cannonball_y_low                                    = $0a72
+cannonball_y_high                                   = $0a73
+cannonball_direction                                = $0a74
+cannonball_room                                     = $0a75
+cannonball_animation_step                           = $0a76
+babboon_animation_step                              = $0a77
+babboon_y_low                                       = $0a78
+cannonball_throw_animation_step                     = $0a79
 l0a7a                                               = $0a7a
 l0a7b                                               = $0a7b
 l0a7c                                               = $0a7c
-l0a7d                                               = $0a7d
-l0a7e                                               = $0a7e
+delay_before_babboon_moves_up_rope                  = $0a7d
+delay_timer                                         = $0a7e
 tile_all_set_pixels                                 = $0aa9
 developer_flags                                     = $1103
 initialise_level_and_room                           = $1140
@@ -238,14 +261,7 @@ monkey_climb_down_animation                         = $3148
 monkey_climb_animation                              = $3150
 inhibit_monkey_climb_flag                           = $31d7
 object_erase_type                                   = $38ac
-l38ae                                               = $38ae
-l38af                                               = $38af
-l38b0                                               = $38b0
-l38b1                                               = $38b1
 object_z_order                                      = $38c2
-l38c4                                               = $38c4
-l38c5                                               = $38c5
-l38c6                                               = $38c6
 object_room_collision_flags                         = $38d8
 play_sound_yx                                       = $38f6
 define_envelope                                     = $395e
@@ -297,12 +313,12 @@ level_specific_initialisation
     lda developer_flags                                               ; 3af8: ad 03 11
     bpl developer_mode_inactive                                       ; 3afb: 10 05
     lda #$ff                                                          ; 3afd: a9 ff
-    sta l0a30                                                         ; 3aff: 8d 30 0a
+    sta save_game_j_got_cannonball_progress                           ; 3aff: 8d 30 0a
 developer_mode_inactive
-    lda l0a30                                                         ; 3b02: ad 30 0a
+    lda save_game_j_got_cannonball_progress                           ; 3b02: ad 30 0a
     cmp #$ff                                                          ; 3b05: c9 ff
     bne return1                                                       ; 3b07: d0 05
-    lda #$ca                                                          ; 3b09: a9 ca
+    lda #spriteid_cannonball_menu_item                                ; 3b09: a9 ca
     jsr find_or_create_menu_slot_for_A                                ; 3b0b: 20 bd 2b
 return1
     rts                                                               ; 3b0e: 60
@@ -447,8 +463,19 @@ room_1_check_right_exit
     ldy current_level                                                 ; 3bb2: a4 31
     jmp initialise_level_and_room                                     ; 3bb4: 4c 40 11
 
-l3bb7
-    !byte   0, $cc,   0, $80, $cd, $fc, $cc, $fc, $80, $cc,   6, $80  ; 3bb7: 00 cc 00...
+babboon_base_animation
+    !byte 0                                                           ; 3bb7: 00
+babboon_idle_animation
+    !byte spriteid_babboon1                                           ; 3bb8: cc
+    !byte   0, $80                                                    ; 3bb9: 00 80
+babboon_climb_up_animation
+    !byte spriteid_babboon2                                           ; 3bbb: cd
+    !byte 252                                                         ; 3bbc: fc
+    !byte spriteid_babboon1                                           ; 3bbd: cc
+    !byte 252, $80                                                    ; 3bbe: fc 80
+babboon_climb_down_animation
+    !byte spriteid_babboon1                                           ; 3bc0: cc
+    !byte   6, $80                                                    ; 3bc1: 06 80
 
 ; check for first update in room (branch if not)
 sub_c3bc3
@@ -467,14 +494,14 @@ c3bdb
     lda desired_room_index                                            ; 3bdb: a5 30
     cmp #1                                                            ; 3bdd: c9 01
     bne c3bf5                                                         ; 3bdf: d0 14
-    lda #$cf                                                          ; 3be1: a9 cf
-    sta l38af                                                         ; 3be3: 8d af 38
+    lda #spriteid_erase_babboon1_or_partition                         ; 3be1: a9 cf
+    sta object_erase_type + objectid_babboon1                         ; 3be3: 8d af 38
     lda #$c0                                                          ; 3be6: a9 c0
-    sta l38c5                                                         ; 3be8: 8d c5 38
+    sta object_z_order + 3                                            ; 3be8: 8d c5 38
     lda #$ef                                                          ; 3beb: a9 ef
-    sta object_x_low + 3                                              ; 3bed: 8d 53 09
+    sta object_x_low + objectid_babboon1                              ; 3bed: 8d 53 09
     lda #$ff                                                          ; 3bf0: a9 ff
-    sta object_direction + 3                                          ; 3bf2: 8d c1 09
+    sta object_direction + objectid_babboon1                          ; 3bf2: 8d c1 09
 c3bf5
     jmp c3c65                                                         ; 3bf5: 4c 65 3c
 
@@ -483,7 +510,7 @@ c3bf8
     clc                                                               ; 3bfb: 18
     adc #2                                                            ; 3bfc: 69 02
     tay                                                               ; 3bfe: a8
-    lda l3bb7,y                                                       ; 3bff: b9 b7 3b
+    lda babboon_base_animation,y                                      ; 3bff: b9 b7 3b
     cmp #$80                                                          ; 3c02: c9 80
     bne c3c09                                                         ; 3c04: d0 03
     ldy l0a7b                                                         ; 3c06: ac 7b 0a
@@ -506,7 +533,7 @@ c3c26
     ldy #1                                                            ; 3c26: a0 01
     sty l0a7b                                                         ; 3c28: 8c 7b 0a
     lda #$18                                                          ; 3c2b: a9 18
-    sta l0a7d                                                         ; 3c2d: 8d 7d 0a
+    sta delay_before_babboon_moves_up_rope                            ; 3c2d: 8d 7d 0a
 c3c30
     lda l0a7b                                                         ; 3c30: ad 7b 0a
     cmp #1                                                            ; 3c33: c9 01
@@ -514,9 +541,9 @@ c3c30
     lda l0a7a                                                         ; 3c37: ad 7a 0a
     cmp #$38 ; '8'                                                    ; 3c3a: c9 38
     beq c3c4e                                                         ; 3c3c: f0 10
-    lda l0a7d                                                         ; 3c3e: ad 7d 0a
+    lda delay_before_babboon_moves_up_rope                            ; 3c3e: ad 7d 0a
     beq c3c49                                                         ; 3c41: f0 06
-    dec l0a7d                                                         ; 3c43: ce 7d 0a
+    dec delay_before_babboon_moves_up_rope                            ; 3c43: ce 7d 0a
     jmp c3c4e                                                         ; 3c46: 4c 4e 3c
 
 c3c49
@@ -525,7 +552,7 @@ c3c49
 c3c4e
     sty l0a7c                                                         ; 3c4e: 8c 7c 0a
     iny                                                               ; 3c51: c8
-    lda l3bb7,y                                                       ; 3c52: b9 b7 3b
+    lda babboon_base_animation,y                                      ; 3c52: b9 b7 3b
     clc                                                               ; 3c55: 18
     adc l0a7a                                                         ; 3c56: 6d 7a 0a
     sta l0a7a                                                         ; 3c59: 8d 7a 0a
@@ -538,10 +565,10 @@ c3c65
     cmp #1                                                            ; 3c67: c9 01
     bne return2                                                       ; 3c69: d0 36
     ldy l0a7c                                                         ; 3c6b: ac 7c 0a
-    lda l3bb7,y                                                       ; 3c6e: b9 b7 3b
-    sta object_spriteid + 3                                           ; 3c71: 8d ab 09
+    lda babboon_base_animation,y                                      ; 3c6e: b9 b7 3b
+    sta object_spriteid + objectid_babboon1                           ; 3c71: 8d ab 09
     lda l0a7a                                                         ; 3c74: ad 7a 0a
-    sta object_y_low + 3                                              ; 3c77: 8d 7f 09
+    sta object_y_low + objectid_babboon1                              ; 3c77: 8d 7f 09
 ; check for first update in room (branch if so)
     lda update_room_first_update_flag                                 ; 3c7a: ad 2b 13
     bne return2                                                       ; 3c7d: d0 22
@@ -694,52 +721,52 @@ sub_c3d3a
     cmp level_before_latest_level_and_room_initialisation             ; 3d41: c5 51
     beq c3d4a                                                         ; 3d43: f0 05
     lda #0                                                            ; 3d45: a9 00
-    sta l0a7e                                                         ; 3d47: 8d 7e 0a
+    sta delay_timer                                                   ; 3d47: 8d 7e 0a
 c3d4a
     lda desired_room_index                                            ; 3d4a: a5 30
     cmp #2                                                            ; 3d4c: c9 02
     bne c3d7d                                                         ; 3d4e: d0 2d
-    lda #$cf                                                          ; 3d50: a9 cf
-    sta l38af                                                         ; 3d52: 8d af 38
-    lda #$d6                                                          ; 3d55: a9 d6
-    sta l38b0                                                         ; 3d57: 8d b0 38
-    lda #$d7                                                          ; 3d5a: a9 d7
-    sta l38b1                                                         ; 3d5c: 8d b1 38
+    lda #spriteid_erase_babboon1_or_partition                         ; 3d50: a9 cf
+    sta object_erase_type + objectid_babboon1                         ; 3d52: 8d af 38
+    lda #spriteid_erase_babboon2                                      ; 3d55: a9 d6
+    sta object_erase_type + objectid_babboon2                         ; 3d57: 8d b0 38
+    lda #spriteid_erase_babboon3                                      ; 3d5a: a9 d7
+    sta object_erase_type + objectid_babboon3                         ; 3d5c: 8d b1 38
     lda #$af                                                          ; 3d5f: a9 af
-    sta object_x_low + 3                                              ; 3d61: 8d 53 09
+    sta object_x_low + objectid_babboon1                              ; 3d61: 8d 53 09
     lda #$ff                                                          ; 3d64: a9 ff
-    sta object_direction + 3                                          ; 3d66: 8d c1 09
+    sta object_direction + objectid_babboon1                          ; 3d66: 8d c1 09
     lda #$cf                                                          ; 3d69: a9 cf
-    sta object_x_low + 4                                              ; 3d6b: 8d 54 09
+    sta object_x_low + objectid_babboon2                              ; 3d6b: 8d 54 09
     lda #$ff                                                          ; 3d6e: a9 ff
-    sta object_direction + 4                                          ; 3d70: 8d c2 09
+    sta object_direction + objectid_babboon2                          ; 3d70: 8d c2 09
     lda #$ef                                                          ; 3d73: a9 ef
-    sta object_x_low + 5                                              ; 3d75: 8d 55 09
+    sta object_x_low + objectid_babboon3                              ; 3d75: 8d 55 09
     lda #$ff                                                          ; 3d78: a9 ff
-    sta object_direction + 5                                          ; 3d7a: 8d c3 09
+    sta object_direction + objectid_babboon3                          ; 3d7a: 8d c3 09
 c3d7d
     jmp c3d8f                                                         ; 3d7d: 4c 8f 3d
 
 c3d80
-    inc l0a7e                                                         ; 3d80: ee 7e 0a
-    lda l0a7e                                                         ; 3d83: ad 7e 0a
+    inc delay_timer                                                   ; 3d80: ee 7e 0a
+    lda delay_timer                                                   ; 3d83: ad 7e 0a
     cmp #$3c ; '<'                                                    ; 3d86: c9 3c
     bcc c3d8f                                                         ; 3d88: 90 05
     lda #0                                                            ; 3d8a: a9 00
-    sta l0a7e                                                         ; 3d8c: 8d 7e 0a
+    sta delay_timer                                                   ; 3d8c: 8d 7e 0a
 c3d8f
     lda desired_room_index                                            ; 3d8f: a5 30
     cmp #2                                                            ; 3d91: c9 02
     bne return3                                                       ; 3d93: d0 1e
-    lda l0a7e                                                         ; 3d95: ad 7e 0a
+    lda delay_timer                                                   ; 3d95: ad 7e 0a
     ldx #3                                                            ; 3d98: a2 03
     jsr sub_c3db4                                                     ; 3d9a: 20 b4 3d
-    lda l0a7e                                                         ; 3d9d: ad 7e 0a
+    lda delay_timer                                                   ; 3d9d: ad 7e 0a
     clc                                                               ; 3da0: 18
     adc #$28 ; '('                                                    ; 3da1: 69 28
     ldx #4                                                            ; 3da3: a2 04
     jsr sub_c3db4                                                     ; 3da5: 20 b4 3d
-    lda l0a7e                                                         ; 3da8: ad 7e 0a
+    lda delay_timer                                                   ; 3da8: ad 7e 0a
     clc                                                               ; 3dab: 18
     adc #$32 ; '2'                                                    ; 3dac: 69 32
     ldx #5                                                            ; 3dae: a2 05
@@ -757,7 +784,7 @@ c3dbb
     asl                                                               ; 3dbc: 0a
     asl                                                               ; 3dbd: 0a
     sta l0070                                                         ; 3dbe: 85 70
-    lda #$cc                                                          ; 3dc0: a9 cc
+    lda #spriteid_babboon1                                            ; 3dc0: a9 cc
     sta object_spriteid,x                                             ; 3dc2: 9d a8 09
     lda #$60 ; '`'                                                    ; 3dc5: a9 60
     sec                                                               ; 3dc7: 38
@@ -783,7 +810,7 @@ c3de7
     sta object_y_low,x                                                ; 3de7: 9d 7c 09
     and #7                                                            ; 3dea: 29 07
     beq c3df3                                                         ; 3dec: f0 05
-    lda #$cd                                                          ; 3dee: a9 cd
+    lda #spriteid_babboon2                                            ; 3dee: a9 cd
     sta object_spriteid,x                                             ; 3df0: 9d a8 09
 ; check for first update in room (branch if so)
 c3df3
@@ -926,10 +953,10 @@ room_3_update_handler
     lda current_level                                                 ; 3ea9: a5 31
     cmp level_before_latest_level_and_room_initialisation             ; 3eab: c5 51
     beq c3eb9                                                         ; 3ead: f0 0a
-    lda l0a32                                                         ; 3eaf: ad 32 0a
+    lda save_game_j_partition_progress                                ; 3eaf: ad 32 0a
     beq c3eb9                                                         ; 3eb2: f0 05
     lda #$ff                                                          ; 3eb4: a9 ff
-    sta l0a32                                                         ; 3eb6: 8d 32 0a
+    sta save_game_j_partition_progress                                ; 3eb6: 8d 32 0a
 c3eb9
     lda desired_room_index                                            ; 3eb9: a5 30
     cmp #3                                                            ; 3ebb: c9 03
@@ -939,19 +966,19 @@ c3eb9
     jsr define_envelope                                               ; 3ec3: 20 5e 39
     ldx #$11                                                          ; 3ec6: a2 11
     ldy #$0f                                                          ; 3ec8: a0 0f
-    lda #$d2                                                          ; 3eca: a9 d2
+    lda #spriteid_partition_remains                                   ; 3eca: a9 d2
     jsr draw_sprite_a_at_cell_xy                                      ; 3ecc: 20 4c 1f
     lda #4                                                            ; 3ecf: a9 04
     jsr set_object_position_from_cell_xy                              ; 3ed1: 20 5d 1f
-    lda #$cf                                                          ; 3ed4: a9 cf
-    sta l38b0                                                         ; 3ed6: 8d b0 38
+    lda #spriteid_erase_babboon1_or_partition                         ; 3ed4: a9 cf
+    sta object_erase_type + objectid_partition                        ; 3ed6: 8d b0 38
     lda #$c0                                                          ; 3ed9: a9 c0
-    sta l38c6                                                         ; 3edb: 8d c6 38
+    sta object_z_order + 4                                            ; 3edb: 8d c6 38
 c3ede
     jmp c3f33                                                         ; 3ede: 4c 33 3f
 
 c3ee1
-    lda l0a32                                                         ; 3ee1: ad 32 0a
+    lda save_game_j_partition_progress                                ; 3ee1: ad 32 0a
     bmi c3f33                                                         ; 3ee4: 30 4d
     bne c3ef7                                                         ; 3ee6: d0 0f
     lda desired_room_index                                            ; 3ee8: a5 30
@@ -962,13 +989,13 @@ c3ee1
     jsr test_for_collision_between_objects_x_and_y                    ; 3ef2: 20 e2 28
     beq c3f33                                                         ; 3ef5: f0 3c
 c3ef7
-    ldy l0a32                                                         ; 3ef7: ac 32 0a
+    ldy save_game_j_partition_progress                                ; 3ef7: ac 32 0a
     iny                                                               ; 3efa: c8
-    sty l0a32                                                         ; 3efb: 8c 32 0a
+    sty save_game_j_partition_progress                                ; 3efb: 8c 32 0a
     cpy #2                                                            ; 3efe: c0 02
     bcc c3f33                                                         ; 3f00: 90 31
     ldy #$ff                                                          ; 3f02: a0 ff
-    sty l0a32                                                         ; 3f04: 8c 32 0a
+    sty save_game_j_partition_progress                                ; 3f04: 8c 32 0a
     lda desired_room_index                                            ; 3f07: a5 30
     cmp #3                                                            ; 3f09: c9 03
     bne c3f33                                                         ; 3f0b: d0 26
@@ -983,19 +1010,23 @@ c3ef7
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 3f1d: 20 44 1e
     jmp c3f33                                                         ; 3f20: 4c 33 3f
 
-    !byte $a9,   0, $a2, $d2, $a0, $44, $20, $f6, $38, $a2, $ca, $a0  ; 3f23: a9 00 a2...
-    !byte $44, $20, $f6, $38                                          ; 3f2f: 44 20 f6...
-
+    lda #0                                                            ; 3f23: a9 00
+    ldx #<sound4                                                      ; 3f25: a2 d2
+    ldy #>sound4                                                      ; 3f27: a0 44
+    jsr play_sound_yx                                                 ; 3f29: 20 f6 38
+    ldx #<sound3                                                      ; 3f2c: a2 ca
+    ldy #>sound3                                                      ; 3f2e: a0 44
+    jsr play_sound_yx                                                 ; 3f30: 20 f6 38
 c3f33
     lda desired_room_index                                            ; 3f33: a5 30
     cmp #3                                                            ; 3f35: c9 03
     bne return5                                                       ; 3f37: d0 36
-    ldy l0a32                                                         ; 3f39: ac 32 0a
+    ldy save_game_j_partition_progress                                ; 3f39: ac 32 0a
     bpl c3f40                                                         ; 3f3c: 10 02
     ldy #2                                                            ; 3f3e: a0 02
 c3f40
-    lda l3f70,y                                                       ; 3f40: b9 70 3f
-    sta object_spriteid + 4                                           ; 3f43: 8d ac 09
+    lda partition_animation,y                                         ; 3f40: b9 70 3f
+    sta object_spriteid + objectid_partition                          ; 3f43: 8d ac 09
     ldx #$11                                                          ; 3f46: a2 11
     ldy #$0a                                                          ; 3f48: a0 0a
     lda #1                                                            ; 3f4a: a9 01
@@ -1004,7 +1035,7 @@ c3f40
     sta height_in_cells                                               ; 3f50: 85 3d
     lda #collision_map_solid_rock                                     ; 3f52: a9 03
     sta value_to_write_to_collision_map                               ; 3f54: 85 3e
-    lda l0a32                                                         ; 3f56: ad 32 0a
+    lda save_game_j_partition_progress                                ; 3f56: ad 32 0a
     bpl c3f65                                                         ; 3f59: 10 0a
     ldy #$0e                                                          ; 3f5b: a0 0e
     lda #6                                                            ; 3f5d: a9 06
@@ -1019,8 +1050,11 @@ c3f65
 return5
     rts                                                               ; 3f6f: 60
 
-l3f70
-    !byte $d3, $d4, $d5                                               ; 3f70: d3 d4 d5
+partition_animation
+    !byte spriteid_partition                                          ; 3f70: d3
+    !byte spriteid_partition_falling                                  ; 3f71: d4
+    !byte spriteid_partition_fallen                                   ; 3f72: d5
+
 ; *************************************************************************************
 ; 
 ; Room 0 initialisation and game loop
@@ -1175,17 +1209,86 @@ room_0_game_update_loop
     ldy current_level                                                 ; 4044: a4 31
     jmp initialise_level_and_room                                     ; 4046: 4c 40 11
 
-l4049
-    !byte   0, $cd, $fc, $cc, $fc, $cd, $fc, $cc, $fc, $cd, $fc, $cc  ; 4049: 00 cd fc...
-    !byte $fc, $cd, $fc, $cc, $fc, $cd, $fc, $cc, $fc, $cc,   0, $ce  ; 4055: fc cd fc...
-    !byte   0, $ce,   0, $80, $cc,   0, $cc,   0, $cd,   4, $cc,   4  ; 4061: 00 ce 00...
-    !byte $cd,   4, $cc,   4, $cd,   4, $cc,   4, $cd,   4, $cc,   4  ; 406d: cd 04 cc...
-    !byte $cd,   4, $cc,   4, $cc,   0, $80, $cc,   0, $80, $ce,   0  ; 4079: cd 04 cc...
-    !byte $ce,   0, $80, $cc,   0, $80                                ; 4085: ce 00 80...
-l408b
-    !byte   0,   8,   1, $10,   3, $18,   6, $20, $0a, $28, $10, $2f  ; 408b: 00 08 01...
-    !byte $18                                                         ; 4097: 18
-    !text "6", '"', "<-A9DF"                                          ; 4098: 36 22 3c...
+babboon_room_0_animations
+    !byte 0                                                           ; 4049: 00
+babboon_room_0_move_up_animation
+    !byte spriteid_babboon2                                           ; 404a: cd
+    !byte 252                                                         ; 404b: fc
+    !byte spriteid_babboon1                                           ; 404c: cc
+    !byte 252                                                         ; 404d: fc
+    !byte spriteid_babboon2                                           ; 404e: cd
+    !byte 252                                                         ; 404f: fc
+    !byte spriteid_babboon1                                           ; 4050: cc
+    !byte 252                                                         ; 4051: fc
+    !byte spriteid_babboon2                                           ; 4052: cd
+    !byte 252                                                         ; 4053: fc
+    !byte spriteid_babboon1                                           ; 4054: cc
+    !byte 252                                                         ; 4055: fc
+    !byte spriteid_babboon2                                           ; 4056: cd
+    !byte 252                                                         ; 4057: fc
+    !byte spriteid_babboon1                                           ; 4058: cc
+    !byte 252                                                         ; 4059: fc
+    !byte spriteid_babboon2                                           ; 405a: cd
+    !byte 252                                                         ; 405b: fc
+    !byte spriteid_babboon1                                           ; 405c: cc
+    !byte 252                                                         ; 405d: fc
+    !byte spriteid_babboon1                                           ; 405e: cc
+    !byte 0                                                           ; 405f: 00
+    !byte spriteid_babboon_push                                       ; 4060: ce
+    !byte 0                                                           ; 4061: 00
+    !byte spriteid_babboon_push                                       ; 4062: ce
+    !byte   0, $80                                                    ; 4063: 00 80
+babboon_room_0_move_down_animation
+    !byte spriteid_babboon1                                           ; 4065: cc
+    !byte 0                                                           ; 4066: 00
+    !byte spriteid_babboon1                                           ; 4067: cc
+    !byte 0                                                           ; 4068: 00
+    !byte spriteid_babboon2                                           ; 4069: cd
+    !byte 4                                                           ; 406a: 04
+    !byte spriteid_babboon1                                           ; 406b: cc
+    !byte 4                                                           ; 406c: 04
+    !byte spriteid_babboon2                                           ; 406d: cd
+    !byte 4                                                           ; 406e: 04
+    !byte spriteid_babboon1                                           ; 406f: cc
+    !byte 4                                                           ; 4070: 04
+    !byte spriteid_babboon2                                           ; 4071: cd
+    !byte 4                                                           ; 4072: 04
+    !byte spriteid_babboon1                                           ; 4073: cc
+    !byte 4                                                           ; 4074: 04
+    !byte spriteid_babboon2                                           ; 4075: cd
+    !byte 4                                                           ; 4076: 04
+    !byte spriteid_babboon1                                           ; 4077: cc
+    !byte 4                                                           ; 4078: 04
+    !byte spriteid_babboon2                                           ; 4079: cd
+    !byte 4                                                           ; 407a: 04
+    !byte spriteid_babboon1                                           ; 407b: cc
+    !byte 4                                                           ; 407c: 04
+    !byte spriteid_babboon1                                           ; 407d: cc
+    !byte   0, $80                                                    ; 407e: 00 80
+babboon_room_0_stationary1_animation
+    !byte spriteid_babboon1                                           ; 4080: cc
+    !byte   0, $80                                                    ; 4081: 00 80
+babboon_room_0_push_animation
+    !byte spriteid_babboon_push                                       ; 4083: ce
+    !byte 0                                                           ; 4084: 00
+    !byte spriteid_babboon_push                                       ; 4085: ce
+    !byte   0, $80                                                    ; 4086: 00 80
+babboon_room_0_stationary2_animation
+    !byte spriteid_babboon1                                           ; 4088: cc
+    !byte   0, $80                                                    ; 4089: 00 80
+; (dX,dY) pairs of bytes when throwing a cannonball
+cannonball_throw_animation
+    !byte 0                                                           ; 408b: 00
+    !byte 8, 1                                                        ; 408c: 08 01
+    !byte 16,  3                                                      ; 408e: 10 03
+    !byte 24,  6                                                      ; 4090: 18 06
+    !byte 32, 10                                                      ; 4092: 20 0a
+    !byte 40, 16                                                      ; 4094: 28 10
+    !byte 47, 24                                                      ; 4096: 2f 18
+    !byte 54, 34                                                      ; 4098: 36 22
+    !byte 60, 45                                                      ; 409a: 3c 2d
+    !byte 65, 57                                                      ; 409c: 41 39
+    !byte 68, 70                                                      ; 409e: 44 46
     !byte 0                                                           ; 40a0: 00
 
 ; check for first update in room (branch if not)
@@ -1197,118 +1300,118 @@ sub_c40a1
     cmp level_before_latest_level_and_room_initialisation             ; 40a8: c5 51
     beq c40b9                                                         ; 40aa: f0 0d
     lda #$3f ; '?'                                                    ; 40ac: a9 3f
-    sta l0a31                                                         ; 40ae: 8d 31 0a
-    sta l0a77                                                         ; 40b1: 8d 77 0a
+    sta save_game_j_room_0_babboon_animation                          ; 40ae: 8d 31 0a
+    sta babboon_animation_step                                        ; 40b1: 8d 77 0a
     lda #$68 ; 'h'                                                    ; 40b4: a9 68
-    sta l0a78                                                         ; 40b6: 8d 78 0a
+    sta babboon_y_low                                                 ; 40b6: 8d 78 0a
 c40b9
     lda desired_room_index                                            ; 40b9: a5 30
     cmp #0                                                            ; 40bb: c9 00
     bne c40ce                                                         ; 40bd: d0 0f
-    lda #$cf                                                          ; 40bf: a9 cf
-    sta l38af                                                         ; 40c1: 8d af 38
+    lda #spriteid_erase_babboon1_or_partition                         ; 40bf: a9 cf
+    sta object_erase_type + objectid_babboon1                         ; 40c1: 8d af 38
     lda #$c0                                                          ; 40c4: a9 c0
-    sta l38c5                                                         ; 40c6: 8d c5 38
+    sta object_z_order + 3                                            ; 40c6: 8d c5 38
     lda #$50 ; 'P'                                                    ; 40c9: a9 50
-    sta object_x_low + 3                                              ; 40cb: 8d 53 09
+    sta object_x_low + objectid_babboon1                              ; 40cb: 8d 53 09
 c40ce
     jmp c417a                                                         ; 40ce: 4c 7a 41
 
 c40d1
-    lda l0a77                                                         ; 40d1: ad 77 0a
+    lda babboon_animation_step                                        ; 40d1: ad 77 0a
     clc                                                               ; 40d4: 18
     adc #2                                                            ; 40d5: 69 02
     tay                                                               ; 40d7: a8
-    lda l4049,y                                                       ; 40d8: b9 49 40
+    lda babboon_room_0_animations,y                                   ; 40d8: b9 49 40
     cmp #$80                                                          ; 40db: c9 80
     bne c40e2                                                         ; 40dd: d0 03
-    ldy l0a31                                                         ; 40df: ac 31 0a
+    ldy save_game_j_room_0_babboon_animation                          ; 40df: ac 31 0a
 c40e2
-    lda l0a31                                                         ; 40e2: ad 31 0a
-    cmp #1                                                            ; 40e5: c9 01
+    lda save_game_j_room_0_babboon_animation                          ; 40e2: ad 31 0a
+    cmp #babboon_room_0_move_up_animation - babboon_room_0_animations ; 40e5: c9 01
     bne c40fd                                                         ; 40e7: d0 14
-    cpy l0a31                                                         ; 40e9: cc 31 0a
+    cpy save_game_j_room_0_babboon_animation                          ; 40e9: cc 31 0a
     bne c4166                                                         ; 40ec: d0 78
-    ldy #$1c                                                          ; 40ee: a0 1c
-    lda #$37 ; '7'                                                    ; 40f0: a9 37
-    sta l0a31                                                         ; 40f2: 8d 31 0a
+    ldy #babboon_room_0_move_down_animation - babboon_room_0_animations; 40ee: a0 1c
+    lda #babboon_room_0_stationary1_animation - babboon_room_0_animations; 40f0: a9 37
+    sta save_game_j_room_0_babboon_animation                          ; 40f2: 8d 31 0a
     lda #$ff                                                          ; 40f5: a9 ff
-    sta l0a79                                                         ; 40f7: 8d 79 0a
+    sta cannonball_throw_animation_step                               ; 40f7: 8d 79 0a
     jmp c4166                                                         ; 40fa: 4c 66 41
 
 c40fd
-    lda l0a31                                                         ; 40fd: ad 31 0a
-    cmp #$37 ; '7'                                                    ; 4100: c9 37
+    lda save_game_j_room_0_babboon_animation                          ; 40fd: ad 31 0a
+    cmp #babboon_room_0_stationary1_animation - babboon_room_0_animations; 4100: c9 37
     bne c411e                                                         ; 4102: d0 1a
-    cpy l0a31                                                         ; 4104: cc 31 0a
+    cpy save_game_j_room_0_babboon_animation                          ; 4104: cc 31 0a
     bne c4166                                                         ; 4107: d0 5d
     lda desired_room_index                                            ; 4109: a5 30
     cmp #0                                                            ; 410b: c9 00
     bne c4166                                                         ; 410d: d0 57
     lda #1                                                            ; 410f: a9 01
-    sta l0a79                                                         ; 4111: 8d 79 0a
-    ldy #$3a ; ':'                                                    ; 4114: a0 3a
-    lda #$3f ; '?'                                                    ; 4116: a9 3f
-    sta l0a31                                                         ; 4118: 8d 31 0a
+    sta cannonball_throw_animation_step                               ; 4111: 8d 79 0a
+    ldy #babboon_room_0_push_animation - babboon_room_0_animations    ; 4114: a0 3a
+    lda #babboon_room_0_stationary2_animation - babboon_room_0_animations; 4116: a9 3f
+    sta save_game_j_room_0_babboon_animation                          ; 4118: 8d 31 0a
     jmp c4166                                                         ; 411b: 4c 66 41
 
 c411e
-    ldx l0a79                                                         ; 411e: ae 79 0a
+    ldx cannonball_throw_animation_step                               ; 411e: ae 79 0a
     beq c4142                                                         ; 4121: f0 1f
     inx                                                               ; 4123: e8
     inx                                                               ; 4124: e8
-    stx l0a79                                                         ; 4125: 8e 79 0a
-    lda l408b,x                                                       ; 4128: bd 8b 40
+    stx cannonball_throw_animation_step                               ; 4125: 8e 79 0a
+    lda cannonball_throw_animation,x                                  ; 4128: bd 8b 40
     cmp #0                                                            ; 412b: c9 00
     bne c4166                                                         ; 412d: d0 37
     lda #0                                                            ; 412f: a9 00
-    sta l0a79                                                         ; 4131: 8d 79 0a
+    sta cannonball_throw_animation_step                               ; 4131: 8d 79 0a
     lda desired_room_index                                            ; 4134: a5 30
     cmp #0                                                            ; 4136: c9 00
     bne c4166                                                         ; 4138: d0 2c
-    lda #0                                                            ; 413a: a9 00
-    sta object_spriteid + 2                                           ; 413c: 8d aa 09
+    lda #spriteid_one_pixel_masked_out                                ; 413a: a9 00
+    sta object_spriteid + objectid_cannonball                         ; 413c: 8d aa 09
     jmp c4166                                                         ; 413f: 4c 66 41
 
 c4142
     lda desired_room_index                                            ; 4142: a5 30
     cmp #0                                                            ; 4144: c9 00
     bne c4166                                                         ; 4146: d0 1e
-    lda l0a30                                                         ; 4148: ad 30 0a
+    lda save_game_j_got_cannonball_progress                           ; 4148: ad 30 0a
     cmp #$ff                                                          ; 414b: c9 ff
     beq c4166                                                         ; 414d: f0 17
     ora #0                                                            ; 414f: 09 00
     beq c4161                                                         ; 4151: f0 0e
     lda desired_room_index                                            ; 4153: a5 30
-    cmp l0a75                                                         ; 4155: cd 75 0a
+    cmp cannonball_room                                               ; 4155: cd 75 0a
     beq c4166                                                         ; 4158: f0 0c
     lda level_workspace                                               ; 415a: ad 6f 0a
     cmp #4                                                            ; 415d: c9 04
     bcc c4166                                                         ; 415f: 90 05
 c4161
     ldy #1                                                            ; 4161: a0 01
-    sty l0a31                                                         ; 4163: 8c 31 0a
+    sty save_game_j_room_0_babboon_animation                          ; 4163: 8c 31 0a
 c4166
-    sty l0a77                                                         ; 4166: 8c 77 0a
+    sty babboon_animation_step                                        ; 4166: 8c 77 0a
     iny                                                               ; 4169: c8
-    lda l4049,y                                                       ; 416a: b9 49 40
+    lda babboon_room_0_animations,y                                   ; 416a: b9 49 40
     clc                                                               ; 416d: 18
-    adc l0a78                                                         ; 416e: 6d 78 0a
-    sta l0a78                                                         ; 4171: 8d 78 0a
+    adc babboon_y_low                                                 ; 416e: 6d 78 0a
+    sta babboon_y_low                                                 ; 4171: 8d 78 0a
     jmp c417a                                                         ; 4174: 4c 7a 41
 
-c4177
+return6_local
     jmp return6                                                       ; 4177: 4c 2c 42
 
 c417a
     lda desired_room_index                                            ; 417a: a5 30
     cmp #0                                                            ; 417c: c9 00
-    bne c4177                                                         ; 417e: d0 f7
-    ldy l0a77                                                         ; 4180: ac 77 0a
-    lda l4049,y                                                       ; 4183: b9 49 40
-    sta object_spriteid + 3                                           ; 4186: 8d ab 09
-    lda l0a78                                                         ; 4189: ad 78 0a
-    sta object_y_low + 3                                              ; 418c: 8d 7f 09
+    bne return6_local                                                 ; 417e: d0 f7
+    ldy babboon_animation_step                                        ; 4180: ac 77 0a
+    lda babboon_room_0_animations,y                                   ; 4183: b9 49 40
+    sta object_spriteid + objectid_babboon1                           ; 4186: 8d ab 09
+    lda babboon_y_low                                                 ; 4189: ad 78 0a
+    sta object_y_low + objectid_babboon1                              ; 418c: 8d 7f 09
 ; check for first update in room (branch if so)
     lda update_room_first_update_flag                                 ; 418f: ad 2b 13
     bne c41a2                                                         ; 4192: d0 0e
@@ -1319,43 +1422,43 @@ c417a
     lda #$80                                                          ; 419d: a9 80
     sta player_wall_collision_reaction_speed                          ; 419f: 8d 33 24
 c41a2
-    ldx l0a79                                                         ; 41a2: ae 79 0a
-    beq c4177                                                         ; 41a5: f0 d0
-    lda #$c9                                                          ; 41a7: a9 c9
-    sta l38ae                                                         ; 41a9: 8d ae 38
+    ldx cannonball_throw_animation_step                               ; 41a2: ae 79 0a
+    beq return6_local                                                 ; 41a5: f0 d0
+    lda #spriteid_erase_cannonball                                    ; 41a7: a9 c9
+    sta object_erase_type + objectid_cannonball                       ; 41a9: 8d ae 38
     lda #$40 ; '@'                                                    ; 41ac: a9 40
-    sta l38c4                                                         ; 41ae: 8d c4 38
-    lda object_x_low + 3                                              ; 41b1: ad 53 09
-    sta object_x_low + 2                                              ; 41b4: 8d 52 09
+    sta object_z_order + objectid_cannonball                          ; 41ae: 8d c4 38
+    lda object_x_low + objectid_babboon1                              ; 41b1: ad 53 09
+    sta object_x_low + objectid_cannonball                            ; 41b4: 8d 52 09
     lda #0                                                            ; 41b7: a9 00
-    sta object_x_high + 2                                             ; 41b9: 8d 68 09
-    lda object_y_low + 3                                              ; 41bc: ad 7f 09
-    sta object_y_low + 2                                              ; 41bf: 8d 7e 09
+    sta object_x_high + objectid_cannonball                           ; 41b9: 8d 68 09
+    lda object_y_low + objectid_babboon1                              ; 41bc: ad 7f 09
+    sta object_y_low + objectid_cannonball                            ; 41bf: 8d 7e 09
     lda #0                                                            ; 41c2: a9 00
-    sta object_y_high + 2                                             ; 41c4: 8d 94 09
+    sta object_y_high + objectid_cannonball                           ; 41c4: 8d 94 09
     lda #1                                                            ; 41c7: a9 01
-    sta object_direction + 2                                          ; 41c9: 8d c0 09
-    lda #$d1                                                          ; 41cc: a9 d1
-    sta object_spriteid + 2                                           ; 41ce: 8d aa 09
+    sta object_direction + objectid_cannonball                        ; 41c9: 8d c0 09
+    lda #spriteid_cannonball_and_arm                                  ; 41cc: a9 d1
+    sta object_spriteid + objectid_cannonball                         ; 41ce: 8d aa 09
     cpx #$ff                                                          ; 41d1: e0 ff
-    beq c4177                                                         ; 41d3: f0 a2
-    lda l408b,x                                                       ; 41d5: bd 8b 40
+    beq return6_local                                                 ; 41d3: f0 a2
+    lda cannonball_throw_animation,x                                  ; 41d5: bd 8b 40
     clc                                                               ; 41d8: 18
     adc #$58 ; 'X'                                                    ; 41d9: 69 58
-    sta object_x_low + 2                                              ; 41db: 8d 52 09
+    sta object_x_low + objectid_cannonball                            ; 41db: 8d 52 09
     inx                                                               ; 41de: e8
-    lda l408b,x                                                       ; 41df: bd 8b 40
+    lda cannonball_throw_animation,x                                  ; 41df: bd 8b 40
     clc                                                               ; 41e2: 18
     adc #$68 ; 'h'                                                    ; 41e3: 69 68
-    sta object_y_low + 2                                              ; 41e5: 8d 7e 09
-    lda #$d0                                                          ; 41e8: a9 d0
-    sta object_spriteid + 2                                           ; 41ea: 8d aa 09
+    sta object_y_low + objectid_cannonball                            ; 41e5: 8d 7e 09
+    lda #spriteid_cannonball2                                         ; 41e8: a9 d0
+    sta object_spriteid + objectid_cannonball                         ; 41ea: 8d aa 09
     inx                                                               ; 41ed: e8
-    lda l408b,x                                                       ; 41ee: bd 8b 40
+    lda cannonball_throw_animation,x                                  ; 41ee: bd 8b 40
     cmp #0                                                            ; 41f1: c9 00
     bne c41fa                                                         ; 41f3: d0 05
-    lda #$cb                                                          ; 41f5: a9 cb
-    sta object_spriteid + 2                                           ; 41f7: 8d aa 09
+    lda #spriteid_collision                                           ; 41f5: a9 cb
+    sta object_spriteid + objectid_cannonball                         ; 41f7: 8d aa 09
 ; check for first update in room (branch if so)
 c41fa
     lda update_room_first_update_flag                                 ; 41fa: ad 2b 13
@@ -1364,36 +1467,49 @@ c41fa
     ldy #$0d                                                          ; 4201: a0 0d
     jsr test_for_collision_between_objects_x_and_y                    ; 4203: 20 e2 28
     beq c421d                                                         ; 4206: f0 15
-    lda #$ca                                                          ; 4208: a9 ca
+    lda #spriteid_cannonball_menu_item                                ; 4208: a9 ca
     jsr find_or_create_menu_slot_for_A                                ; 420a: 20 bd 2b
-    lda #0                                                            ; 420d: a9 00
-    sta object_spriteid + 2                                           ; 420f: 8d aa 09
-    sta l0a79                                                         ; 4212: 8d 79 0a
+    lda #spriteid_one_pixel_masked_out                                ; 420d: a9 00
+    sta object_spriteid + objectid_cannonball                         ; 420f: 8d aa 09
+    sta cannonball_throw_animation_step                               ; 4212: 8d 79 0a
     lda #$ff                                                          ; 4215: a9 ff
-    sta l0a30                                                         ; 4217: 8d 30 0a
+    sta save_game_j_got_cannonball_progress                           ; 4217: 8d 30 0a
     jmp return6                                                       ; 421a: 4c 2c 42
 
 c421d
-    lda object_spriteid + 2                                           ; 421d: ad aa 09
+    lda object_spriteid + objectid_cannonball                         ; 421d: ad aa 09
     cmp #$cb                                                          ; 4220: c9 cb
     bne return6                                                       ; 4222: d0 08
     jsr sub_c4333                                                     ; 4224: 20 33 43
     lda #0                                                            ; 4227: a9 00
-    sta l0a30                                                         ; 4229: 8d 30 0a
+    sta save_game_j_got_cannonball_progress                           ; 4229: 8d 30 0a
 return6
     rts                                                               ; 422c: 60
 
-l422d
-    !byte   0,   0,   0,   6, $fc,   6, $ff,   6,   2,   4,   4,   2  ; 422d: 00 00 00...
-    !byte   6, $80,   0,   8, $80,   0,   0, $80                      ; 4239: 06 80 00...
+cannonball_animations
+    !byte 0                                                           ; 422d: 00
+cannonball_animation1
+    !byte 0, 0                                                        ; 422e: 00 00
+    !byte   6, $fc                                                    ; 4230: 06 fc
+    !byte   6, $ff                                                    ; 4232: 06 ff
+    !byte 6, 2                                                        ; 4234: 06 02
+    !byte 4, 4                                                        ; 4236: 04 04
+    !byte 2, 6                                                        ; 4238: 02 06
+    !byte $80                                                         ; 423a: 80
+cannonball_animation2
+    !byte 0, 8                                                        ; 423b: 00 08
+    !byte $80                                                         ; 423d: 80
+cannonball_animation3
+    !byte 0, 0                                                        ; 423e: 00 00
+    !byte $80                                                         ; 4240: 80
 
 ; check for first update in room (branch if not)
 sub_c4241
     lda update_room_first_update_flag                                 ; 4241: ad 2b 13
     beq c42a1                                                         ; 4244: f0 5b
-    lda #$ca                                                          ; 4246: a9 ca
+    lda #spriteid_cannonball_menu_item                                ; 4246: a9 ca
     sta toolbar_collectable_spriteids+1                               ; 4248: 8d e9 2e
-    lda #$c8                                                          ; 424b: a9 c8
+    lda #spriteid_cannonball1                                         ; 424b: a9 c8
     sta collectable_spriteids+1                                       ; 424d: 8d ee 2e
     sta collectable_being_used_spriteids + 1                          ; 4250: 8d f3 2e
     ldx #<envelope2                                                   ; 4253: a2 9e
@@ -1403,46 +1519,46 @@ sub_c4241
     lda current_level                                                 ; 425a: a5 31
     cmp level_before_latest_level_and_room_initialisation             ; 425c: c5 51
     beq c426c                                                         ; 425e: f0 0c
-    lda l0a30                                                         ; 4260: ad 30 0a
+    lda save_game_j_got_cannonball_progress                           ; 4260: ad 30 0a
     cmp #$ff                                                          ; 4263: c9 ff
     beq c426c                                                         ; 4265: f0 05
     lda #0                                                            ; 4267: a9 00
-    sta l0a30                                                         ; 4269: 8d 30 0a
+    sta save_game_j_got_cannonball_progress                           ; 4269: 8d 30 0a
 c426c
     lda desired_room_index                                            ; 426c: a5 30
-    cmp l0a75                                                         ; 426e: cd 75 0a
+    cmp cannonball_room                                               ; 426e: cd 75 0a
     bne c4299                                                         ; 4271: d0 26
-    lda l0a30                                                         ; 4273: ad 30 0a
+    lda save_game_j_got_cannonball_progress                           ; 4273: ad 30 0a
     beq c4299                                                         ; 4276: f0 21
     cmp #$ff                                                          ; 4278: c9 ff
     beq c4299                                                         ; 427a: f0 1d
     jsr sub_c4464                                                     ; 427c: 20 64 44
 loop_c427f
     lda desired_room_index                                            ; 427f: a5 30
-    cmp l0a75                                                         ; 4281: cd 75 0a
+    cmp cannonball_room                                               ; 4281: cd 75 0a
     bne c4299                                                         ; 4284: d0 13
     lda level_workspace                                               ; 4286: ad 6f 0a
     beq c4299                                                         ; 4289: f0 0e
     dec level_workspace                                               ; 428b: ce 6f 0a
-    ldx #2                                                            ; 428e: a2 02
+    ldx #objectid_cannonball                                          ; 428e: a2 02
     jsr copy_object_state_to_old                                      ; 4290: 20 f7 20
     jsr sub_c4373                                                     ; 4293: 20 73 43
     jmp loop_c427f                                                    ; 4296: 4c 7f 42
 
 c4299
-    lda #0                                                            ; 4299: a9 00
-    sta object_spriteid_old + 2                                       ; 429b: 8d b5 09
+    lda #spriteid_one_pixel_masked_out                                ; 4299: a9 00
+    sta object_spriteid_old + objectid_cannonball                     ; 429b: 8d b5 09
 c429e
     jmp return7                                                       ; 429e: 4c 32 43
 
 c42a1
-    lda object_spriteid_old + 2                                       ; 42a1: ad b5 09
+    lda object_spriteid_old + objectid_cannonball                     ; 42a1: ad b5 09
     sta l4463                                                         ; 42a4: 8d 63 44
-    lda l0a30                                                         ; 42a7: ad 30 0a
+    lda save_game_j_got_cannonball_progress                           ; 42a7: ad 30 0a
     beq c429e                                                         ; 42aa: f0 f2
     bmi c42c0                                                         ; 42ac: 30 12
     lda desired_room_index                                            ; 42ae: a5 30
-    cmp l0a75                                                         ; 42b0: cd 75 0a
+    cmp cannonball_room                                               ; 42b0: cd 75 0a
     beq c4310                                                         ; 42b3: f0 5b
     lda level_workspace                                               ; 42b5: ad 6f 0a
     bmi c429e                                                         ; 42b8: 30 e4
@@ -1450,61 +1566,61 @@ c42a1
     jmp return7                                                       ; 42bd: 4c 32 43
 
 c42c0
-    lda #$ca                                                          ; 42c0: a9 ca
+    lda #spriteid_cannonball_menu_item                                ; 42c0: a9 ca
     cmp player_using_object_spriteid                                  ; 42c2: cd b6 2e
     bne c429e                                                         ; 42c5: d0 d7
     cmp previous_player_using_object_spriteid                         ; 42c7: cd b7 2e
     beq c429e                                                         ; 42ca: f0 d2
-    lda #$ca                                                          ; 42cc: a9 ca
+    lda #spriteid_cannonball_menu_item                                ; 42cc: a9 ca
     jsr remove_item_from_toolbar_menu                                 ; 42ce: 20 e0 2b
     lda #0                                                            ; 42d1: a9 00
     sta object_spriteid + objectid_player_accessory                   ; 42d3: 8d a9 09
     sta player_using_object_spriteid                                  ; 42d6: 8d b6 2e
     sta player_held_object_spriteid                                   ; 42d9: 85 52
     lda desired_room_index                                            ; 42db: a5 30
-    sta l0a75                                                         ; 42dd: 8d 75 0a
-    lda #1                                                            ; 42e0: a9 01
-    sta l0a76                                                         ; 42e2: 8d 76 0a
-    lda #$0e                                                          ; 42e5: a9 0e
-    sta l0a30                                                         ; 42e7: 8d 30 0a
+    sta cannonball_room                                               ; 42dd: 8d 75 0a
+    lda #cannonball_animation1 - cannonball_animations                ; 42e0: a9 01
+    sta cannonball_animation_step                                     ; 42e2: 8d 76 0a
+    lda #cannonball_animation2 - cannonball_animations                ; 42e5: a9 0e
+    sta save_game_j_got_cannonball_progress                           ; 42e7: 8d 30 0a
     lda object_x_low + objectid_player_accessory                      ; 42ea: ad 51 09
-    sta l0a70                                                         ; 42ed: 8d 70 0a
+    sta cannonball_x_low                                              ; 42ed: 8d 70 0a
     lda object_x_high + objectid_player_accessory                     ; 42f0: ad 67 09
-    sta l0a71                                                         ; 42f3: 8d 71 0a
+    sta cannonball_x_high                                             ; 42f3: 8d 71 0a
     lda object_y_low + objectid_player_accessory                      ; 42f6: ad 7d 09
-    sta l0a72                                                         ; 42f9: 8d 72 0a
+    sta cannonball_y_low                                              ; 42f9: 8d 72 0a
     lda object_y_high + objectid_player_accessory                     ; 42fc: ad 93 09
-    sta l0a73                                                         ; 42ff: 8d 73 0a
+    sta cannonball_y_high                                             ; 42ff: 8d 73 0a
     lda object_direction                                              ; 4302: ad be 09
-    sta l0a74                                                         ; 4305: 8d 74 0a
+    sta cannonball_direction                                          ; 4305: 8d 74 0a
     jsr sub_c4464                                                     ; 4308: 20 64 44
-    ldx #2                                                            ; 430b: a2 02
+    ldx #objectid_cannonball                                          ; 430b: a2 02
     jsr copy_object_state_to_old                                      ; 430d: 20 f7 20
 c4310
     jsr sub_c4373                                                     ; 4310: 20 73 43
     lda l4463                                                         ; 4313: ad 63 44
-    sta object_spriteid_old + 2                                       ; 4316: 8d b5 09
+    sta object_spriteid_old + objectid_cannonball                     ; 4316: 8d b5 09
     lda desired_room_index                                            ; 4319: a5 30
-    cmp l0a75                                                         ; 431b: cd 75 0a
+    cmp cannonball_room                                               ; 431b: cd 75 0a
     beq c4328                                                         ; 431e: f0 08
     lda #0                                                            ; 4320: a9 00
     sta level_workspace                                               ; 4322: 8d 6f 0a
     jmp return7                                                       ; 4325: 4c 32 43
 
 c4328
-    lda l0a76                                                         ; 4328: ad 76 0a
-    cmp #$11                                                          ; 432b: c9 11
+    lda cannonball_animation_step                                     ; 4328: ad 76 0a
+    cmp #cannonball_animation3 - cannonball_animations                ; 432b: c9 11
     bne return7                                                       ; 432d: d0 03
     jsr sub_c4333                                                     ; 432f: 20 33 43
 return7
     rts                                                               ; 4332: 60
 
 sub_c4333
-    lda #$cb                                                          ; 4333: a9 cb
-    sta object_spriteid + 2                                           ; 4335: 8d aa 09
-    lda #$11                                                          ; 4338: a9 11
-    sta l0a30                                                         ; 433a: 8d 30 0a
-    sta l0a76                                                         ; 433d: 8d 76 0a
+    lda #spriteid_collision                                           ; 4333: a9 cb
+    sta object_spriteid + objectid_cannonball                         ; 4335: 8d aa 09
+    lda #cannonball_animation3 - cannonball_animations                ; 4338: a9 11
+    sta save_game_j_got_cannonball_progress                           ; 433a: 8d 30 0a
+    sta cannonball_animation_step                                     ; 433d: 8d 76 0a
     lda #0                                                            ; 4340: a9 00
     ldx #<sound1                                                      ; 4342: a2 b4
     ldy #>sound1                                                      ; 4344: a0 44
@@ -1518,10 +1634,10 @@ sub_c4333
     beq return8                                                       ; 4357: f0 19
     lda #$fa                                                          ; 4359: a9 fa
     sta player_wall_collision_reaction_speed                          ; 435b: 8d 33 24
-    lda object_x_low + 2                                              ; 435e: ad 52 09
+    lda object_x_low + objectid_cannonball                            ; 435e: ad 52 09
     sec                                                               ; 4361: 38
     sbc object_x_low                                                  ; 4362: ed 50 09
-    lda object_x_high + 2                                             ; 4365: ad 68 09
+    lda object_x_high + objectid_cannonball                           ; 4365: ad 68 09
     sbc object_x_high                                                 ; 4368: ed 66 09
     bpl return8                                                       ; 436b: 10 05
     lda #6                                                            ; 436d: a9 06
@@ -1530,31 +1646,31 @@ return8
     rts                                                               ; 4372: 60
 
 sub_c4373
-    lda l0a76                                                         ; 4373: ad 76 0a
+    lda cannonball_animation_step                                     ; 4373: ad 76 0a
     clc                                                               ; 4376: 18
     adc #2                                                            ; 4377: 69 02
     tay                                                               ; 4379: a8
-    lda l422d,y                                                       ; 437a: b9 2d 42
+    lda cannonball_animations,y                                       ; 437a: b9 2d 42
     cmp #$80                                                          ; 437d: c9 80
     bne c4384                                                         ; 437f: d0 03
-    ldy l0a30                                                         ; 4381: ac 30 0a
+    ldy save_game_j_got_cannonball_progress                           ; 4381: ac 30 0a
 c4384
-    lda l0a30                                                         ; 4384: ad 30 0a
-    cmp #$11                                                          ; 4387: c9 11
+    lda save_game_j_got_cannonball_progress                           ; 4384: ad 30 0a
+    cmp #cannonball_animation3 - cannonball_animations                ; 4387: c9 11
     bne c43a1                                                         ; 4389: d0 16
-    cpy l0a30                                                         ; 438b: cc 30 0a
+    cpy save_game_j_got_cannonball_progress                           ; 438b: cc 30 0a
     bne c43a1                                                         ; 438e: d0 11
     lda #0                                                            ; 4390: a9 00
-    sta l0a76                                                         ; 4392: 8d 76 0a
-    sta l0a30                                                         ; 4395: 8d 30 0a
-    sta object_spriteid + 2                                           ; 4398: 8d aa 09
+    sta cannonball_animation_step                                     ; 4392: 8d 76 0a
+    sta save_game_j_got_cannonball_progress                           ; 4395: 8d 30 0a
+    sta object_spriteid + objectid_cannonball                         ; 4398: 8d aa 09
     sta level_workspace                                               ; 439b: 8d 6f 0a
     jmp return9                                                       ; 439e: 4c 62 44
 
 c43a1
-    sty l0a76                                                         ; 43a1: 8c 76 0a
-    lda l422d,y                                                       ; 43a4: b9 2d 42
-    ldx l0a74                                                         ; 43a7: ae 74 0a
+    sty cannonball_animation_step                                     ; 43a1: 8c 76 0a
+    lda cannonball_animations,y                                       ; 43a4: b9 2d 42
+    ldx cannonball_direction                                          ; 43a7: ae 74 0a
     bpl c43b1                                                         ; 43aa: 10 05
     eor #$ff                                                          ; 43ac: 49 ff
     clc                                                               ; 43ae: 18
@@ -1566,79 +1682,79 @@ c43b1
     dex                                                               ; 43b7: ca
 c43b8
     clc                                                               ; 43b8: 18
-    adc l0a70                                                         ; 43b9: 6d 70 0a
-    sta l0a70                                                         ; 43bc: 8d 70 0a
+    adc cannonball_x_low                                              ; 43b9: 6d 70 0a
+    sta cannonball_x_low                                              ; 43bc: 8d 70 0a
     txa                                                               ; 43bf: 8a
-    adc l0a71                                                         ; 43c0: 6d 71 0a
-    sta l0a71                                                         ; 43c3: 8d 71 0a
+    adc cannonball_x_high                                             ; 43c0: 6d 71 0a
+    sta cannonball_x_high                                             ; 43c3: 8d 71 0a
     iny                                                               ; 43c6: c8
-    lda l422d,y                                                       ; 43c7: b9 2d 42
+    lda cannonball_animations,y                                       ; 43c7: b9 2d 42
     ldx #0                                                            ; 43ca: a2 00
     ora #0                                                            ; 43cc: 09 00
     bpl c43d1                                                         ; 43ce: 10 01
     dex                                                               ; 43d0: ca
 c43d1
     clc                                                               ; 43d1: 18
-    adc l0a72                                                         ; 43d2: 6d 72 0a
-    sta l0a72                                                         ; 43d5: 8d 72 0a
+    adc cannonball_y_low                                              ; 43d2: 6d 72 0a
+    sta cannonball_y_low                                              ; 43d5: 8d 72 0a
     txa                                                               ; 43d8: 8a
-    adc l0a73                                                         ; 43d9: 6d 73 0a
-    sta l0a73                                                         ; 43dc: 8d 73 0a
+    adc cannonball_y_high                                             ; 43d9: 6d 73 0a
+    sta cannonball_y_high                                             ; 43dc: 8d 73 0a
     jsr sub_c4464                                                     ; 43df: 20 64 44
-    lda #2                                                            ; 43e2: a9 02
+    lda #objectid_cannonball                                          ; 43e2: a9 02
     jsr update_object_a_solid_rock_collision                          ; 43e4: 20 f5 25
-    lda object_x_low + 2                                              ; 43e7: ad 52 09
-    sta l0a70                                                         ; 43ea: 8d 70 0a
-    lda object_x_high + 2                                             ; 43ed: ad 68 09
-    sta l0a71                                                         ; 43f0: 8d 71 0a
-    lda object_y_low + 2                                              ; 43f3: ad 7e 09
-    sta l0a72                                                         ; 43f6: 8d 72 0a
-    lda object_y_high + 2                                             ; 43f9: ad 94 09
-    sta l0a73                                                         ; 43fc: 8d 73 0a
+    lda object_x_low + objectid_cannonball                            ; 43e7: ad 52 09
+    sta cannonball_x_low                                              ; 43ea: 8d 70 0a
+    lda object_x_high + objectid_cannonball                           ; 43ed: ad 68 09
+    sta cannonball_x_high                                             ; 43f0: 8d 71 0a
+    lda object_y_low + objectid_cannonball                            ; 43f3: ad 7e 09
+    sta cannonball_y_low                                              ; 43f6: 8d 72 0a
+    lda object_y_high + objectid_cannonball                           ; 43f9: ad 94 09
+    sta cannonball_y_high                                             ; 43fc: 8d 73 0a
     dec temp_top_offset                                               ; 43ff: ce 50 25
     lda #2                                                            ; 4402: a9 02
     sta temp_bottom_offset                                            ; 4404: 8d 51 25
     dec temp_left_offset                                              ; 4407: ce d0 24
     inc temp_right_offset                                             ; 440a: ee d1 24
-    lda #2                                                            ; 440d: a9 02
+    lda #objectid_cannonball                                          ; 440d: a9 02
     jsr get_solid_rock_collision_for_object_a                         ; 440f: 20 94 28
     beq c441f                                                         ; 4412: f0 0b
-    lda #$11                                                          ; 4414: a9 11
-    sta l0a30                                                         ; 4416: 8d 30 0a
-    sta l0a76                                                         ; 4419: 8d 76 0a
+    lda #cannonball_animation3 - cannonball_animations                ; 4414: a9 11
+    sta save_game_j_got_cannonball_progress                           ; 4416: 8d 30 0a
+    sta cannonball_animation_step                                     ; 4419: 8d 76 0a
     jsr sub_c4464                                                     ; 441c: 20 64 44
 c441f
-    ldx #2                                                            ; 441f: a2 02
+    ldx #spriteid_icodata_sound                                       ; 441f: a2 02
     jsr find_left_and_right_of_object                                 ; 4421: 20 34 24
     jsr find_top_and_bottom_of_object                                 ; 4424: 20 d2 24
-    lda l0a74                                                         ; 4427: ad 74 0a
+    lda cannonball_direction                                          ; 4427: ad 74 0a
     bmi c4448                                                         ; 442a: 30 1c
     lda l0078                                                         ; 442c: a5 78
     cmp #$28 ; '('                                                    ; 442e: c9 28
     bcc return9                                                       ; 4430: 90 30
-    lda l0a70                                                         ; 4432: ad 70 0a
+    lda cannonball_x_low                                              ; 4432: ad 70 0a
     sec                                                               ; 4435: 38
     sbc #$40 ; '@'                                                    ; 4436: e9 40
-    sta l0a70                                                         ; 4438: 8d 70 0a
+    sta cannonball_x_low                                              ; 4438: 8d 70 0a
     lda #0                                                            ; 443b: a9 00
     sbc #0                                                            ; 443d: e9 00
-    sta l0a71                                                         ; 443f: 8d 71 0a
-    inc l0a75                                                         ; 4442: ee 75 0a
+    sta cannonball_x_high                                             ; 443f: 8d 71 0a
+    inc cannonball_room                                               ; 4442: ee 75 0a
     jmp c445d                                                         ; 4445: 4c 5d 44
 
 c4448
     lda l0079                                                         ; 4448: a5 79
     bpl return9                                                       ; 444a: 10 16
-    lda l0a70                                                         ; 444c: ad 70 0a
+    lda cannonball_x_low                                              ; 444c: ad 70 0a
     clc                                                               ; 444f: 18
     adc #$40 ; '@'                                                    ; 4450: 69 40
-    sta l0a70                                                         ; 4452: 8d 70 0a
+    sta cannonball_x_low                                              ; 4452: 8d 70 0a
     lda #1                                                            ; 4455: a9 01
-    sta l0a71                                                         ; 4457: 8d 71 0a
-    dec l0a75                                                         ; 445a: ce 75 0a
+    sta cannonball_x_high                                             ; 4457: 8d 71 0a
+    dec cannonball_room                                               ; 445a: ce 75 0a
 c445d
-    lda #0                                                            ; 445d: a9 00
-    sta object_spriteid + 2                                           ; 445f: 8d aa 09
+    lda #spriteid_one_pixel_masked_out                                ; 445d: a9 00
+    sta object_spriteid + objectid_cannonball                         ; 445f: 8d aa 09
 return9
     rts                                                               ; 4462: 60
 
@@ -1646,27 +1762,27 @@ l4463
     !byte 0                                                           ; 4463: 00
 
 sub_c4464
-    lda #$c9                                                          ; 4464: a9 c9
-    sta l38ae                                                         ; 4466: 8d ae 38
+    lda #spriteid_erase_cannonball                                    ; 4464: a9 c9
+    sta object_erase_type + objectid_cannonball                       ; 4466: 8d ae 38
     lda #$40 ; '@'                                                    ; 4469: a9 40
-    sta l38c4                                                         ; 446b: 8d c4 38
-    lda l0a70                                                         ; 446e: ad 70 0a
-    sta object_x_low + 2                                              ; 4471: 8d 52 09
-    lda l0a71                                                         ; 4474: ad 71 0a
-    sta object_x_high + 2                                             ; 4477: 8d 68 09
-    lda l0a72                                                         ; 447a: ad 72 0a
-    sta object_y_low + 2                                              ; 447d: 8d 7e 09
-    lda l0a73                                                         ; 4480: ad 73 0a
-    sta object_y_high + 2                                             ; 4483: 8d 94 09
-    lda l0a74                                                         ; 4486: ad 74 0a
-    sta object_direction + 2                                          ; 4489: 8d c0 09
-    lda #$c8                                                          ; 448c: a9 c8
-    sta object_spriteid + 2                                           ; 448e: 8d aa 09
-    lda l0a30                                                         ; 4491: ad 30 0a
-    cmp #$11                                                          ; 4494: c9 11
+    sta object_z_order + objectid_cannonball                          ; 446b: 8d c4 38
+    lda cannonball_x_low                                              ; 446e: ad 70 0a
+    sta object_x_low + objectid_cannonball                            ; 4471: 8d 52 09
+    lda cannonball_x_high                                             ; 4474: ad 71 0a
+    sta object_x_high + objectid_cannonball                           ; 4477: 8d 68 09
+    lda cannonball_y_low                                              ; 447a: ad 72 0a
+    sta object_y_low + objectid_cannonball                            ; 447d: 8d 7e 09
+    lda cannonball_y_high                                             ; 4480: ad 73 0a
+    sta object_y_high + objectid_cannonball                           ; 4483: 8d 94 09
+    lda cannonball_direction                                          ; 4486: ad 74 0a
+    sta object_direction + objectid_cannonball                        ; 4489: 8d c0 09
+    lda #spriteid_cannonball1                                         ; 448c: a9 c8
+    sta object_spriteid + objectid_cannonball                         ; 448e: 8d aa 09
+    lda save_game_j_got_cannonball_progress                           ; 4491: ad 30 0a
+    cmp #cannonball_animation3 - cannonball_animations                ; 4494: c9 11
     bne return10                                                      ; 4496: d0 05
-    lda #$cb                                                          ; 4498: a9 cb
-    sta object_spriteid + 2                                           ; 449a: 8d aa 09
+    lda #spriteid_collision                                           ; 4498: a9 cb
+    sta object_spriteid + objectid_cannonball                         ; 449a: 8d aa 09
 return10
     rts                                                               ; 449d: 60
 
@@ -1710,12 +1826,12 @@ envelope1
     !byte 250                                                         ; 44c7: fa                      ; change of amplitude per step during release phase
     !byte 115                                                         ; 44c8: 73                      ; target of level at end of attack phase
     !byte 0                                                           ; 44c9: 00                      ; target of level at end of decay phase
-unused1
+sound3
     !word $10                                                         ; 44ca: 10 00                   ; channel
     !word 6                                                           ; 44cc: 06 00                   ; amplitude
     !word 7                                                           ; 44ce: 07 00                   ; pitch
     !word 1                                                           ; 44d0: 01 00                   ; duration
-unused2
+sound4
     !word $11                                                         ; 44d2: 11 00                   ; channel
     !word 0                                                           ; 44d4: 00 00                   ; amplitude
     !word 240                                                         ; 44d6: f0 00                   ; pitch
@@ -1794,7 +1910,6 @@ pydis_end
 ;     c4142
 ;     c4161
 ;     c4166
-;     c4177
 ;     c417a
 ;     c41a2
 ;     c41fa
@@ -1821,36 +1936,9 @@ pydis_end
 ;     l001b
 ;     l0078
 ;     l0079
-;     l0a30
-;     l0a31
-;     l0a32
-;     l0a70
-;     l0a71
-;     l0a72
-;     l0a73
-;     l0a74
-;     l0a75
-;     l0a76
-;     l0a77
-;     l0a78
-;     l0a79
 ;     l0a7a
 ;     l0a7b
 ;     l0a7c
-;     l0a7d
-;     l0a7e
-;     l38ae
-;     l38af
-;     l38b0
-;     l38b1
-;     l38c4
-;     l38c5
-;     l38c6
-;     l3bb7
-;     l3f70
-;     l4049
-;     l408b
-;     l422d
 ;     l4463
 ;     loop_c4003
 ;     loop_c401d
@@ -1878,6 +1966,12 @@ pydis_end
 !if (<sound2) != $ac {
     !error "Assertion failed: <sound2 == $ac"
 }
+!if (<sound3) != $ca {
+    !error "Assertion failed: <sound3 == $ca"
+}
+!if (<sound4) != $d2 {
+    !error "Assertion failed: <sound4 == $d2"
+}
 !if (>envelope1) != $44 {
     !error "Assertion failed: >envelope1 == $44"
 }
@@ -1892,6 +1986,36 @@ pydis_end
 }
 !if (>sound2) != $44 {
     !error "Assertion failed: >sound2 == $44"
+}
+!if (>sound3) != $44 {
+    !error "Assertion failed: >sound3 == $44"
+}
+!if (>sound4) != $44 {
+    !error "Assertion failed: >sound4 == $44"
+}
+!if (babboon_room_0_move_down_animation - babboon_room_0_animations) != $1c {
+    !error "Assertion failed: babboon_room_0_move_down_animation - babboon_room_0_animations == $1c"
+}
+!if (babboon_room_0_move_up_animation - babboon_room_0_animations) != $01 {
+    !error "Assertion failed: babboon_room_0_move_up_animation - babboon_room_0_animations == $01"
+}
+!if (babboon_room_0_push_animation - babboon_room_0_animations) != $3a {
+    !error "Assertion failed: babboon_room_0_push_animation - babboon_room_0_animations == $3a"
+}
+!if (babboon_room_0_stationary1_animation - babboon_room_0_animations) != $37 {
+    !error "Assertion failed: babboon_room_0_stationary1_animation - babboon_room_0_animations == $37"
+}
+!if (babboon_room_0_stationary2_animation - babboon_room_0_animations) != $3f {
+    !error "Assertion failed: babboon_room_0_stationary2_animation - babboon_room_0_animations == $3f"
+}
+!if (cannonball_animation1 - cannonball_animations) != $01 {
+    !error "Assertion failed: cannonball_animation1 - cannonball_animations == $01"
+}
+!if (cannonball_animation2 - cannonball_animations) != $0e {
+    !error "Assertion failed: cannonball_animation2 - cannonball_animations == $0e"
+}
+!if (cannonball_animation3 - cannonball_animations) != $11 {
+    !error "Assertion failed: cannonball_animation3 - cannonball_animations == $11"
 }
 !if (collision_map_none) != $00 {
     !error "Assertion failed: collision_map_none == $00"
@@ -1914,53 +2038,71 @@ pydis_end
 !if (level_specific_update) != $3b0f {
     !error "Assertion failed: level_specific_update == $3b0f"
 }
-!if (object_direction + 2) != $09c0 {
-    !error "Assertion failed: object_direction + 2 == $09c0"
+!if (object_direction + objectid_babboon1) != $09c1 {
+    !error "Assertion failed: object_direction + objectid_babboon1 == $09c1"
 }
-!if (object_direction + 3) != $09c1 {
-    !error "Assertion failed: object_direction + 3 == $09c1"
+!if (object_direction + objectid_babboon2) != $09c2 {
+    !error "Assertion failed: object_direction + objectid_babboon2 == $09c2"
 }
-!if (object_direction + 4) != $09c2 {
-    !error "Assertion failed: object_direction + 4 == $09c2"
+!if (object_direction + objectid_babboon3) != $09c3 {
+    !error "Assertion failed: object_direction + objectid_babboon3 == $09c3"
 }
-!if (object_direction + 5) != $09c3 {
-    !error "Assertion failed: object_direction + 5 == $09c3"
+!if (object_direction + objectid_cannonball) != $09c0 {
+    !error "Assertion failed: object_direction + objectid_cannonball == $09c0"
 }
-!if (object_spriteid + 2) != $09aa {
-    !error "Assertion failed: object_spriteid + 2 == $09aa"
+!if (object_erase_type + objectid_babboon1) != $38af {
+    !error "Assertion failed: object_erase_type + objectid_babboon1 == $38af"
 }
-!if (object_spriteid + 3) != $09ab {
-    !error "Assertion failed: object_spriteid + 3 == $09ab"
+!if (object_erase_type + objectid_babboon2) != $38b0 {
+    !error "Assertion failed: object_erase_type + objectid_babboon2 == $38b0"
 }
-!if (object_spriteid + 4) != $09ac {
-    !error "Assertion failed: object_spriteid + 4 == $09ac"
+!if (object_erase_type + objectid_babboon3) != $38b1 {
+    !error "Assertion failed: object_erase_type + objectid_babboon3 == $38b1"
 }
-!if (object_spriteid_old + 2) != $09b5 {
-    !error "Assertion failed: object_spriteid_old + 2 == $09b5"
+!if (object_erase_type + objectid_partition) != $38b0 {
+    !error "Assertion failed: object_erase_type + objectid_partition == $38b0"
 }
-!if (object_x_high + 2) != $0968 {
-    !error "Assertion failed: object_x_high + 2 == $0968"
+!if (object_spriteid + objectid_babboon1) != $09ab {
+    !error "Assertion failed: object_spriteid + objectid_babboon1 == $09ab"
 }
-!if (object_x_low + 2) != $0952 {
-    !error "Assertion failed: object_x_low + 2 == $0952"
+!if (object_spriteid + objectid_cannonball) != $09aa {
+    !error "Assertion failed: object_spriteid + objectid_cannonball == $09aa"
 }
-!if (object_x_low + 3) != $0953 {
-    !error "Assertion failed: object_x_low + 3 == $0953"
+!if (object_spriteid + objectid_partition) != $09ac {
+    !error "Assertion failed: object_spriteid + objectid_partition == $09ac"
 }
-!if (object_x_low + 4) != $0954 {
-    !error "Assertion failed: object_x_low + 4 == $0954"
+!if (object_spriteid_old + objectid_cannonball) != $09b5 {
+    !error "Assertion failed: object_spriteid_old + objectid_cannonball == $09b5"
 }
-!if (object_x_low + 5) != $0955 {
-    !error "Assertion failed: object_x_low + 5 == $0955"
+!if (object_x_high + objectid_cannonball) != $0968 {
+    !error "Assertion failed: object_x_high + objectid_cannonball == $0968"
 }
-!if (object_y_high + 2) != $0994 {
-    !error "Assertion failed: object_y_high + 2 == $0994"
+!if (object_x_low + objectid_babboon1) != $0953 {
+    !error "Assertion failed: object_x_low + objectid_babboon1 == $0953"
 }
-!if (object_y_low + 2) != $097e {
-    !error "Assertion failed: object_y_low + 2 == $097e"
+!if (object_x_low + objectid_babboon2) != $0954 {
+    !error "Assertion failed: object_x_low + objectid_babboon2 == $0954"
 }
-!if (object_y_low + 3) != $097f {
-    !error "Assertion failed: object_y_low + 3 == $097f"
+!if (object_x_low + objectid_babboon3) != $0955 {
+    !error "Assertion failed: object_x_low + objectid_babboon3 == $0955"
+}
+!if (object_x_low + objectid_cannonball) != $0952 {
+    !error "Assertion failed: object_x_low + objectid_cannonball == $0952"
+}
+!if (object_y_high + objectid_cannonball) != $0994 {
+    !error "Assertion failed: object_y_high + objectid_cannonball == $0994"
+}
+!if (object_y_low + objectid_babboon1) != $097f {
+    !error "Assertion failed: object_y_low + objectid_babboon1 == $097f"
+}
+!if (object_y_low + objectid_cannonball) != $097e {
+    !error "Assertion failed: object_y_low + objectid_cannonball == $097e"
+}
+!if (object_z_order + objectid_cannonball) != $38c4 {
+    !error "Assertion failed: object_z_order + objectid_cannonball == $38c4"
+}
+!if (objectid_cannonball) != $02 {
+    !error "Assertion failed: objectid_cannonball == $02"
 }
 !if (objectid_old_player) != $0b {
     !error "Assertion failed: objectid_old_player == $0b"
@@ -1982,4 +2124,58 @@ pydis_end
 }
 !if (sprite_data - level_data) != $0a25 {
     !error "Assertion failed: sprite_data - level_data == $0a25"
+}
+!if (spriteid_babboon1) != $cc {
+    !error "Assertion failed: spriteid_babboon1 == $cc"
+}
+!if (spriteid_babboon2) != $cd {
+    !error "Assertion failed: spriteid_babboon2 == $cd"
+}
+!if (spriteid_babboon_push) != $ce {
+    !error "Assertion failed: spriteid_babboon_push == $ce"
+}
+!if (spriteid_cannonball1) != $c8 {
+    !error "Assertion failed: spriteid_cannonball1 == $c8"
+}
+!if (spriteid_cannonball2) != $d0 {
+    !error "Assertion failed: spriteid_cannonball2 == $d0"
+}
+!if (spriteid_cannonball_and_arm) != $d1 {
+    !error "Assertion failed: spriteid_cannonball_and_arm == $d1"
+}
+!if (spriteid_cannonball_menu_item) != $ca {
+    !error "Assertion failed: spriteid_cannonball_menu_item == $ca"
+}
+!if (spriteid_collision) != $cb {
+    !error "Assertion failed: spriteid_collision == $cb"
+}
+!if (spriteid_erase_babboon1_or_partition) != $cf {
+    !error "Assertion failed: spriteid_erase_babboon1_or_partition == $cf"
+}
+!if (spriteid_erase_babboon2) != $d6 {
+    !error "Assertion failed: spriteid_erase_babboon2 == $d6"
+}
+!if (spriteid_erase_babboon3) != $d7 {
+    !error "Assertion failed: spriteid_erase_babboon3 == $d7"
+}
+!if (spriteid_erase_cannonball) != $c9 {
+    !error "Assertion failed: spriteid_erase_cannonball == $c9"
+}
+!if (spriteid_icodata_sound) != $02 {
+    !error "Assertion failed: spriteid_icodata_sound == $02"
+}
+!if (spriteid_one_pixel_masked_out) != $00 {
+    !error "Assertion failed: spriteid_one_pixel_masked_out == $00"
+}
+!if (spriteid_partition) != $d3 {
+    !error "Assertion failed: spriteid_partition == $d3"
+}
+!if (spriteid_partition_fallen) != $d5 {
+    !error "Assertion failed: spriteid_partition_fallen == $d5"
+}
+!if (spriteid_partition_falling) != $d4 {
+    !error "Assertion failed: spriteid_partition_falling == $d4"
+}
+!if (spriteid_partition_remains) != $d2 {
+    !error "Assertion failed: spriteid_partition_remains == $d2"
 }
