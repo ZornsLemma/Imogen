@@ -533,7 +533,7 @@ room_2_data
 ; draw rectangles of ground fill rock with a 2x2 pattern. Also writes to the collision
 ; map.
 room_2_code
-    jsr sub_c40c2                                                     ; 3bf6: 20 c2 40
+    jsr draw_top_and_bottom_rows_of_solid_rock                        ; 3bf6: 20 c2 40
 ; draw 255x1 rectangle at (35,2)
     ldx #$23 ; '#'                                                    ; 3bf9: a2 23
     ldy #2                                                            ; 3bfb: a0 02
@@ -1071,21 +1071,22 @@ small_stone_room_3_seesaw_animation
 ; check for first update in room (branch if not)
 update_room_3_seesaw_puzzle
     lda update_room_first_update_flag                                 ; 3fa4: ad 2b 13
-    beq c3fe8                                                         ; 3fa7: f0 3f
+    beq update_room_3_not_first_update                                ; 3fa7: f0 3f
 ; check for level change (branch if not)
     lda current_level                                                 ; 3fa9: a5 31
     cmp level_before_latest_level_and_room_initialisation             ; 3fab: c5 51
-    beq c3fbd                                                         ; 3fad: f0 0e
+    beq initialise_big_stone_and_seesaw_in_room_3                     ; 3fad: f0 0e
     lda save_game_level_i_room_3_seesaw_puzzle_progress               ; 3faf: ad 2f 0a
-    beq c3fbd                                                         ; 3fb2: f0 09
+    beq initialise_big_stone_and_seesaw_in_room_3                     ; 3fb2: f0 09
     cmp #$ff                                                          ; 3fb4: c9 ff
-    beq c3fbd                                                         ; 3fb6: f0 05
+    beq initialise_big_stone_and_seesaw_in_room_3                     ; 3fb6: f0 05
+; level has changed. set to final position if it was halfway through the animation
     lda #$19                                                          ; 3fb8: a9 19
     sta save_game_level_i_room_3_seesaw_puzzle_progress               ; 3fba: 8d 2f 0a
-c3fbd
+initialise_big_stone_and_seesaw_in_room_3
     lda desired_room_index                                            ; 3fbd: a5 30
     cmp #3                                                            ; 3fbf: c9 03
-    bne c3fe5                                                         ; 3fc1: d0 22
+    bne set_seesaw_direction_in_room_3_local                          ; 3fc1: d0 22
     lda #spriteid_erase_big_stone_or_rope_end                         ; 3fc3: a9 cc
     sta object_erase_type + objectid_big_stone_room_3                 ; 3fc5: 8d b0 38
     lda #$e0                                                          ; 3fc8: a9 e0
@@ -1100,56 +1101,60 @@ c3fbd
     jsr set_object_position_from_cell_xy                              ; 3fdd: 20 5d 1f
     lda #spriteid_seesaw                                              ; 3fe0: a9 ce
     sta object_spriteid + objectid_seesaw                             ; 3fe2: 8d ab 09
-c3fe5
-    jmp c4045                                                         ; 3fe5: 4c 45 40
+set_seesaw_direction_in_room_3_local
+    jmp set_seesaw_direction_in_room_3                                ; 3fe5: 4c 45 40
 
-c3fe8
+update_room_3_not_first_update
     lda save_game_level_i_room_3_seesaw_puzzle_progress               ; 3fe8: ad 2f 0a
-    beq c400f                                                         ; 3feb: f0 22
+    beq check_for_player_big_stone_collision                          ; 3feb: f0 22
     cmp #$19                                                          ; 3fed: c9 19
-    beq c4024                                                         ; 3fef: f0 33
+    beq check_for_player_small_stone_collision                        ; 3fef: f0 33
     cmp #$ff                                                          ; 3ff1: c9 ff
-    beq c4045                                                         ; 3ff3: f0 50
+    beq set_seesaw_direction_in_room_3                                ; 3ff3: f0 50
     inc save_game_level_i_room_3_seesaw_puzzle_progress               ; 3ff5: ee 2f 0a
     lda desired_room_index                                            ; 3ff8: a5 30
     cmp #3                                                            ; 3ffa: c9 03
-    bne c4045                                                         ; 3ffc: d0 47
+    bne set_seesaw_direction_in_room_3                                ; 3ffc: d0 47
     lda save_game_level_i_room_3_seesaw_puzzle_progress               ; 3ffe: ad 2f 0a
     cmp #5                                                            ; 4001: c9 05
-    beq c4009                                                         ; 4003: f0 04
+    beq big_stone_lands                                               ; 4003: f0 04
     cmp #$19                                                          ; 4005: c9 19
-    bne c4045                                                         ; 4007: d0 3c
-c4009
+    bne set_seesaw_direction_in_room_3                                ; 4007: d0 3c
+big_stone_lands
     jsr play_landing_sound                                            ; 4009: 20 a9 23
-    jmp c4045                                                         ; 400c: 4c 45 40
+    jmp set_seesaw_direction_in_room_3                                ; 400c: 4c 45 40
 
-c400f
+check_for_player_big_stone_collision
     lda desired_room_index                                            ; 400f: a5 30
     cmp #3                                                            ; 4011: c9 03
-    bne c4045                                                         ; 4013: d0 30
+    bne set_seesaw_direction_in_room_3                                ; 4013: d0 30
     ldx #objectid_old_player                                          ; 4015: a2 0b
-    ldy #4                                                            ; 4017: a0 04
+    ldy #objectid_big_stone_room_3                                    ; 4017: a0 04
     jsr test_for_collision_between_objects_x_and_y                    ; 4019: 20 e2 28
-    beq c4045                                                         ; 401c: f0 27
+    beq set_seesaw_direction_in_room_3                                ; 401c: f0 27
+; set big stone animation going
     inc save_game_level_i_room_3_seesaw_puzzle_progress               ; 401e: ee 2f 0a
-    jmp c4045                                                         ; 4021: 4c 45 40
+    jmp set_seesaw_direction_in_room_3                                ; 4021: 4c 45 40
 
-c4024
+check_for_player_small_stone_collision
     lda desired_room_index                                            ; 4024: a5 30
     cmp #3                                                            ; 4026: c9 03
-    bne c4045                                                         ; 4028: d0 1b
+    bne set_seesaw_direction_in_room_3                                ; 4028: d0 1b
     ldx #objectid_old_player                                          ; 402a: a2 0b
-    ldy #2                                                            ; 402c: a0 02
+    ldy #objectid_small_stone_object                                  ; 402c: a0 02
     jsr test_for_collision_between_objects_x_and_y                    ; 402e: 20 e2 28
-    beq c4045                                                         ; 4031: f0 12
+    beq set_seesaw_direction_in_room_3                                ; 4031: f0 12
+; collected small stone object, add to toolbar
     lda #spriteid_stone_menu_item                                     ; 4033: a9 ca
     jsr find_or_create_menu_slot_for_A                                ; 4035: 20 bd 2b
+; mark small stone as being in the player's possession
     lda #$ff                                                          ; 4038: a9 ff
     sta save_game_level_i_room_3_seesaw_puzzle_progress               ; 403a: 8d 2f 0a
     sta save_game_level_i_room_0_seesaw_puzzle_progress               ; 403d: 8d 24 0a
+; hide small stone object
     lda #spriteid_one_pixel_masked_out                                ; 4040: a9 00
     sta object_spriteid + objectid_small_stone_object                 ; 4042: 8d aa 09
-c4045
+set_seesaw_direction_in_room_3
     lda desired_room_index                                            ; 4045: a5 30
     cmp #3                                                            ; 4047: c9 03
     bne return2                                                       ; 4049: d0 76
@@ -1158,7 +1163,7 @@ c4045
     ldx save_game_level_i_room_3_seesaw_puzzle_progress               ; 4050: ae 2f 0a
     ldy #0                                                            ; 4053: a0 00
     cpx #5                                                            ; 4055: e0 05
-    bcc c4068                                                         ; 4057: 90 0f
+    bcc set_big_stone_position_in_room_3                              ; 4057: 90 0f
     lda #$ff                                                          ; 4059: a9 ff
     sta object_direction + objectid_seesaw                            ; 405b: 8d c1 09
     ldx #5                                                            ; 405e: a2 05
@@ -1167,7 +1172,7 @@ c4045
     sbc #5                                                            ; 4064: e9 05
     tay                                                               ; 4066: a8
     iny                                                               ; 4067: c8
-c4068
+set_big_stone_position_in_room_3
     txa                                                               ; 4068: 8a
     asl                                                               ; 4069: 0a
     tax                                                               ; 406a: aa
@@ -1182,11 +1187,11 @@ c4068
     adc #$5e ; '^'                                                    ; 407a: 69 5e
     sta object_y_low + objectid_big_stone_room_3                      ; 407c: 8d 80 09
     ldx #$18                                                          ; 407f: a2 18
-    sty l4621                                                         ; 4081: 8c 21 46
+    sty small_stone_animation_step                                    ; 4081: 8c 21 46
     ldy #$0b                                                          ; 4084: a0 0b
     lda #collision_map_solid_rock                                     ; 4086: a9 03
     jsr write_a_single_value_to_cell_in_collision_map                 ; 4088: 20 bb 1e
-    ldy l4621                                                         ; 408b: ac 21 46
+    ldy small_stone_animation_step                                    ; 408b: ac 21 46
     lda save_game_level_i_room_3_seesaw_puzzle_progress               ; 408e: ad 2f 0a
     cmp #$ff                                                          ; 4091: c9 ff
     beq return2                                                       ; 4093: f0 2c
@@ -1215,7 +1220,7 @@ c4068
 return2
     rts                                                               ; 40c1: 60
 
-sub_c40c2
+draw_top_and_bottom_rows_of_solid_rock
     ldx #0                                                            ; 40c2: a2 00
     ldy #0                                                            ; 40c4: a0 00
     lda #$ff                                                          ; 40c6: a9 ff
@@ -1262,7 +1267,7 @@ room_0_data
 ; draw rectangles of ground fill rock with a 2x2 pattern. Also writes to the collision
 ; map.
 room_0_code
-    jsr sub_c40c2                                                     ; 40d8: 20 c2 40
+    jsr draw_top_and_bottom_rows_of_solid_rock                        ; 40d8: 20 c2 40
 ; draw 5x1 rectangle at (0,2)
     ldy #2                                                            ; 40db: a0 02
     lda #5                                                            ; 40dd: a9 05
@@ -1969,7 +1974,7 @@ l461f
     !byte 0                                                           ; 461f: 00
 l4620
     !byte 0                                                           ; 4620: 00
-l4621
+small_stone_animation_step
     !byte 0                                                           ; 4621: 00
 
 play_boulder_landing_sound
@@ -2087,14 +2092,6 @@ pydis_end
 
 ; Automatically generated labels:
 ;     c3e37
-;     c3fbd
-;     c3fe5
-;     c3fe8
-;     c4009
-;     c400f
-;     c4024
-;     c4045
-;     c4068
 ;     c4207
 ;     c420a
 ;     c422d
@@ -2124,9 +2121,7 @@ pydis_end
 ;     l461e
 ;     l461f
 ;     l4620
-;     l4621
 ;     loop_c4376
-;     sub_c40c2
 !if (256 - (spriteid_sword_spinA - spriteid_small_stone)) != $f6 {
     !error "Assertion failed: 256 - (spriteid_sword_spinA - spriteid_small_stone) == $f6"
 }
@@ -2381,6 +2376,9 @@ pydis_end
 }
 !if (object_z_order + objectid_sword) != $38c6 {
     !error "Assertion failed: object_z_order + objectid_sword == $38c6"
+}
+!if (objectid_big_stone_room_3) != $04 {
+    !error "Assertion failed: objectid_big_stone_room_3 == $04"
 }
 !if (objectid_boulder_room_2) != $05 {
     !error "Assertion failed: objectid_boulder_room_2 == $05"
