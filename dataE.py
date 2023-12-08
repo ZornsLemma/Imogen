@@ -124,6 +124,7 @@ expr(0x4196, "spriteid_egg_toolbar")
 expr(0x415c, "objectid_small_egg")
 expr(0x41c2, "small_egg_status_being_thrown")
 expr(0x41d5, "objectid_small_egg")
+entry(0x41dd, "small_egg_not_in_room") # TODO: true-ish I think but not 100% clear how this interacts with the code being for room0 yet we do a generic check against desired_room_index
 expr(0x41f3, "objectid_old_player")
 entry(0x4231, "small_egg_animation_update")
 expr(0x4244, "small_egg_status_being_thrown")
