@@ -1176,6 +1176,9 @@ small_egg_animation_table_subseq1
     !byte 8                                                           ; 40cd: 08
     !byte 0                                                           ; 40ce: 00
 
+; The small egg starts in room 0 but it can move between rooms, either by being carried
+; by the player or by being thrown. Its position updating is always handled by
+; room_0_update_handler wherever it is.
 room_0_update_handler
     lda #0                                                            ; 40cf: a9 00
     sta currently_updating_logic_for_room_index                       ; 40d1: 8d ba 1a
@@ -1260,7 +1263,7 @@ room0_not_first_update
     bmi have_small_egg                                                ; 4181: 30 12                   ; branch if have collected egg
     lda desired_room_index                                            ; 4183: a5 30
     cmp room_containing_small_egg                                     ; 4185: cd 75 0a
-    beq small_egg_not_in_room                                         ; 4188: f0 53
+    beq small_egg_in_room                                             ; 4188: f0 53
     lda level_workspace_something_to_do_with_small_egg                ; 418a: ad 6f 0a
     bmi return2_local                                                 ; 418d: 30 03
     inc level_workspace_something_to_do_with_small_egg                ; 418f: ee 6f 0a
@@ -1295,7 +1298,7 @@ have_small_egg
     jsr copy_object_state_to_old                                      ; 41d6: 20 f7 20
     lda #0                                                            ; 41d9: a9 00
     sta player_held_object_spriteid                                   ; 41db: 85 52
-small_egg_not_in_room
+small_egg_in_room
     jsr small_egg_animation_update                                    ; 41dd: 20 31 42
     lda desired_room_index                                            ; 41e0: a5 30
     cmp room_containing_small_egg                                     ; 41e2: cd 75 0a

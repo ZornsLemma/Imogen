@@ -170,6 +170,7 @@ expr(0x4212, "small_egg_status_collected")
 
 label(0x3ce0, "room_2_update_handler")
 label(0x3e96, "room_3_update_handler")
+comment(0x40cf, "The small egg starts in room 0 but it can move between rooms, either by being carried by the player or by being thrown. Its position updating is always handled by room_0_update_handler wherever it is.")
 label(0x40cf, "room_0_update_handler")
 label(0x446a, "room_1_update_handler")
 
