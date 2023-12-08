@@ -197,7 +197,7 @@ current_player_animation                            = $09df
 save_game_level_e_small_egg_status                  = $0a13
 save_game_level_e_room_1_egg_state                  = $0a14
 save_game_level_e_duck_captured_flag                = $0a15
-level_workspace_something_to_do_with_small_egg      = $0a6f
+level_workspace_small_egg_offscreen_flight_time     = $0a6f
 l0a70                                               = $0a70
 thrown_egg_x_low                                    = $0a70
 l0a71                                               = $0a71
@@ -1220,7 +1220,7 @@ room0_first_update
     sta save_game_level_e_small_egg_status                            ; 411f: 8d 13 0a
     sta small_egg_animation_table_index                               ; 4122: 8d 74 0a
     lda #0                                                            ; 4125: a9 00
-    sta level_workspace_something_to_do_with_small_egg                ; 4127: 8d 6f 0a
+    sta level_workspace_small_egg_offscreen_flight_time               ; 4127: 8d 6f 0a
 c412a
     lda #$d6                                                          ; 412a: a9 d6
     sta l38ae                                                         ; 412c: 8d ae 38
@@ -1239,9 +1239,9 @@ loop_c414c
     lda desired_room_index                                            ; 414c: a5 30
     cmp room_containing_small_egg                                     ; 414e: cd 75 0a
     bne skip_small_egg_setup                                          ; 4151: d0 13
-    lda level_workspace_something_to_do_with_small_egg                ; 4153: ad 6f 0a
+    lda level_workspace_small_egg_offscreen_flight_time               ; 4153: ad 6f 0a
     beq skip_small_egg_setup                                          ; 4156: f0 0e
-    dec level_workspace_something_to_do_with_small_egg                ; 4158: ce 6f 0a
+    dec level_workspace_small_egg_offscreen_flight_time               ; 4158: ce 6f 0a
     ldx #objectid_small_egg                                           ; 415b: a2 02
     jsr copy_object_state_to_old                                      ; 415d: 20 f7 20
     jsr small_egg_animation_update                                    ; 4160: 20 31 42
@@ -1264,9 +1264,9 @@ room0_not_first_update
     lda desired_room_index                                            ; 4183: a5 30
     cmp room_containing_small_egg                                     ; 4185: cd 75 0a
     beq small_egg_in_room                                             ; 4188: f0 53
-    lda level_workspace_something_to_do_with_small_egg                ; 418a: ad 6f 0a
+    lda level_workspace_small_egg_offscreen_flight_time               ; 418a: ad 6f 0a
     bmi return2_local                                                 ; 418d: 30 03
-    inc level_workspace_something_to_do_with_small_egg                ; 418f: ee 6f 0a
+    inc level_workspace_small_egg_offscreen_flight_time               ; 418f: ee 6f 0a
 return2_local
     jmp return2                                                       ; 4192: 4c 30 42
 
@@ -1304,7 +1304,7 @@ small_egg_in_room
     cmp room_containing_small_egg                                     ; 41e2: cd 75 0a
     beq c41ec                                                         ; 41e5: f0 05
     lda #0                                                            ; 41e7: a9 00
-    sta level_workspace_something_to_do_with_small_egg                ; 41e9: 8d 6f 0a
+    sta level_workspace_small_egg_offscreen_flight_time               ; 41e9: 8d 6f 0a
 c41ec
     lda l438b                                                         ; 41ec: ad 8b 43
     sta object_spriteid_old + objectid_small_egg                      ; 41ef: 8d b5 09
@@ -1380,7 +1380,7 @@ small_egg_not_being_thrown
     sty save_game_level_e_small_egg_status                            ; 427c: 8c 13 0a
 small_egg_not_falling
     lda #0                                                            ; 427f: a9 00
-    sta level_workspace_something_to_do_with_small_egg                ; 4281: 8d 6f 0a
+    sta level_workspace_small_egg_offscreen_flight_time               ; 4281: 8d 6f 0a
 c4284
     sty small_egg_animation_table_index                               ; 4284: 8c 74 0a
     lda small_egg_animation_table,y                                   ; 4287: b9 99 40

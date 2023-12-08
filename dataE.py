@@ -37,7 +37,8 @@ sprite_dict = {**common_sprite_dict, **sprite_dict}
 constant(2, "objectid_small_egg")
 constant(3, "objectid_egg")
 
-label(0xa6f, "level_workspace_something_to_do_with_small_egg")
+# When the egg is thrown off-screen, this counts up every update cycle it is not visible (capping at &7f). When entering a room containing an in-flight egg, the game performs this number of egg animation updates without modifying the screen, giving the effect that the egg starts exactly where it has had time to reach.
+label(0xa6f, "level_workspace_small_egg_offscreen_flight_time")
 
 set_sprite_dict(sprite_dict)
 
