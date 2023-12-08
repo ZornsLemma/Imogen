@@ -1,3 +1,38 @@
+; *************************************************************************************
+;
+; Level J: 'BABBOONACY'
+;
+; Save game variables:
+;
+;     save_game_level_j_got_cannonball_progress                  ($0a30):
+;               0: untouched
+;              1+: cannonball thrown, animating
+;             $ff: held by babboon
+;
+;     save_game_level_j_room_0_babboon_animation                 ($0a31):
+;               0: untouched
+;              1+: animating babboon
+;             $37: descending with cannonball
+;             $3f: cannonball thrown
+;
+;     save_game_level_j_partition_progress                       ($0a32):
+;               0: untouched
+;             1,2: partition falling over
+;             $ff: partition fallen over
+;
+; Solution:
+;
+;   1. Move to left room and collect a cannonball that's thrown, then move back to room
+;      to the right.
+;   2. Stand next to the babboon and throw the cannonball at the babboon.
+;   3. Quickly move back to the leftmost room and collect another cannonball.
+;   4. Quickly move back to the initial room and jump over the babboon before they
+;      reach the top of the rope.
+;   5. Jump across the bottom of the three ropes, avoiding the babboons.
+;   6. Throw the cannonball at the partition to knock it over, then collect the spell.
+;
+; *************************************************************************************
+
 ; Constants
 collision_map_none                     = 0
 collision_map_out_of_bounds            = 255
@@ -188,9 +223,9 @@ object_spriteid                                     = $09a8
 object_spriteid_old                                 = $09b3
 object_direction                                    = $09be
 current_player_animation                            = $09df
-save_game_j_got_cannonball_progress                 = $0a30
-save_game_j_room_0_babboon_animation                = $0a31
-save_game_j_partition_progress                      = $0a32
+save_game_level_j_got_cannonball_progress           = $0a30
+save_game_level_j_room_0_babboon_animation          = $0a31
+save_game_level_j_partition_progress                = $0a32
 cannonball_fast_forward_steps                       = $0a6f
 cannonball_x_low                                    = $0a70
 cannonball_x_high                                   = $0a71
@@ -315,9 +350,9 @@ level_specific_initialisation
     lda developer_flags                                               ; 3af8: ad 03 11
     bpl developer_mode_inactive                                       ; 3afb: 10 05
     lda #$ff                                                          ; 3afd: a9 ff
-    sta save_game_j_got_cannonball_progress                           ; 3aff: 8d 30 0a
+    sta save_game_level_j_got_cannonball_progress                     ; 3aff: 8d 30 0a
 developer_mode_inactive
-    lda save_game_j_got_cannonball_progress                           ; 3b02: ad 30 0a
+    lda save_game_level_j_got_cannonball_progress                     ; 3b02: ad 30 0a
     cmp #$ff                                                          ; 3b05: c9 ff
     bne return1                                                       ; 3b07: d0 05
     lda #spriteid_cannonball_menu_item                                ; 3b09: a9 ca
@@ -963,10 +998,10 @@ room_3_update_handler
     lda current_level                                                 ; 3ea9: a5 31
     cmp level_before_latest_level_and_room_initialisation             ; 3eab: c5 51
     beq initialise_room_3                                             ; 3ead: f0 0a
-    lda save_game_j_partition_progress                                ; 3eaf: ad 32 0a
+    lda save_game_level_j_partition_progress                          ; 3eaf: ad 32 0a
     beq initialise_room_3                                             ; 3eb2: f0 05
     lda #$ff                                                          ; 3eb4: a9 ff
-    sta save_game_j_partition_progress                                ; 3eb6: 8d 32 0a
+    sta save_game_level_j_partition_progress                          ; 3eb6: 8d 32 0a
 initialise_room_3
     lda desired_room_index                                            ; 3eb9: a5 30
     cmp #3                                                            ; 3ebb: c9 03
@@ -988,7 +1023,7 @@ update_partition_local
     jmp update_partition                                              ; 3ede: 4c 33 3f
 
 room_3_not_first_update
-    lda save_game_j_partition_progress                                ; 3ee1: ad 32 0a
+    lda save_game_level_j_partition_progress                          ; 3ee1: ad 32 0a
     bmi update_partition                                              ; 3ee4: 30 4d
     bne partition_animation_in_progress                               ; 3ee6: d0 0f
 ; check we are in room 3
@@ -1001,14 +1036,14 @@ room_3_not_first_update
     jsr test_for_collision_between_objects_x_and_y                    ; 3ef2: 20 e2 28
     beq update_partition                                              ; 3ef5: f0 3c
 partition_animation_in_progress
-    ldy save_game_j_partition_progress                                ; 3ef7: ac 32 0a
+    ldy save_game_level_j_partition_progress                          ; 3ef7: ac 32 0a
     iny                                                               ; 3efa: c8
-    sty save_game_j_partition_progress                                ; 3efb: 8c 32 0a
+    sty save_game_level_j_partition_progress                          ; 3efb: 8c 32 0a
     cpy #2                                                            ; 3efe: c0 02
     bcc update_partition                                              ; 3f00: 90 31
 ; write to clear collision map from partition area
     ldy #$ff                                                          ; 3f02: a0 ff
-    sty save_game_j_partition_progress                                ; 3f04: 8c 32 0a
+    sty save_game_level_j_partition_progress                          ; 3f04: 8c 32 0a
     lda desired_room_index                                            ; 3f07: a5 30
     cmp #3                                                            ; 3f09: c9 03
     bne update_partition                                              ; 3f0b: d0 26
@@ -1035,7 +1070,7 @@ update_partition
     lda desired_room_index                                            ; 3f33: a5 30
     cmp #3                                                            ; 3f35: c9 03
     bne return5                                                       ; 3f37: d0 36
-    ldy save_game_j_partition_progress                                ; 3f39: ac 32 0a
+    ldy save_game_level_j_partition_progress                          ; 3f39: ac 32 0a
     bpl set_partition_object                                          ; 3f3c: 10 02
     ldy #2                                                            ; 3f3e: a0 02
 set_partition_object
@@ -1050,7 +1085,7 @@ set_partition_object
     sta height_in_cells                                               ; 3f50: 85 3d
     lda #collision_map_solid_rock                                     ; 3f52: a9 03
     sta value_to_write_to_collision_map                               ; 3f54: 85 3e
-    lda save_game_j_partition_progress                                ; 3f56: ad 32 0a
+    lda save_game_level_j_partition_progress                          ; 3f56: ad 32 0a
     bpl write_collision_if_needed                                     ; 3f59: 10 0a
     ldy #$0e                                                          ; 3f5b: a0 0e
     lda #6                                                            ; 3f5d: a9 06
@@ -1320,7 +1355,7 @@ room_0_update_handler
     beq initialise_room_0                                             ; 40aa: f0 0d
 ; initialise level
     lda #$3f ; '?'                                                    ; 40ac: a9 3f
-    sta save_game_j_room_0_babboon_animation                          ; 40ae: 8d 31 0a
+    sta save_game_level_j_room_0_babboon_animation                    ; 40ae: 8d 31 0a
     sta room_0_babboon_animation_step                                 ; 40b1: 8d 77 0a
     lda #$68 ; 'h'                                                    ; 40b4: a9 68
     sta room_0_babboon_y_low                                          ; 40b6: 8d 78 0a
@@ -1345,25 +1380,25 @@ update_babboon_animation_step
     lda babboon_room_0_animations,y                                   ; 40d8: b9 49 40
     cmp #$80                                                          ; 40db: c9 80
     bne check_if_room_0_babboon_is_climbing_up_rope                   ; 40dd: d0 03
-    ldy save_game_j_room_0_babboon_animation                          ; 40df: ac 31 0a
+    ldy save_game_level_j_room_0_babboon_animation                    ; 40df: ac 31 0a
 check_if_room_0_babboon_is_climbing_up_rope
-    lda save_game_j_room_0_babboon_animation                          ; 40e2: ad 31 0a
+    lda save_game_level_j_room_0_babboon_animation                    ; 40e2: ad 31 0a
     cmp #babboon_room_0_move_up_animation - babboon_room_0_animations ; 40e5: c9 01
     bne check_if_room_0_babboon_is_stationary                         ; 40e7: d0 14
-    cpy save_game_j_room_0_babboon_animation                          ; 40e9: cc 31 0a
+    cpy save_game_level_j_room_0_babboon_animation                    ; 40e9: cc 31 0a
     bne set_room_0_babboon_animation_step                             ; 40ec: d0 78
     ldy #babboon_room_0_move_down_animation - babboon_room_0_animations; 40ee: a0 1c
     lda #babboon_room_0_stationary1_animation - babboon_room_0_animations; 40f0: a9 37
-    sta save_game_j_room_0_babboon_animation                          ; 40f2: 8d 31 0a
+    sta save_game_level_j_room_0_babboon_animation                    ; 40f2: 8d 31 0a
     lda #$ff                                                          ; 40f5: a9 ff
     sta room_0_cannonball_throw_animation_step                        ; 40f7: 8d 79 0a
     jmp set_room_0_babboon_animation_step                             ; 40fa: 4c 66 41
 
 check_if_room_0_babboon_is_stationary
-    lda save_game_j_room_0_babboon_animation                          ; 40fd: ad 31 0a
+    lda save_game_level_j_room_0_babboon_animation                    ; 40fd: ad 31 0a
     cmp #babboon_room_0_stationary1_animation - babboon_room_0_animations; 4100: c9 37
     bne check_if_room_0_babboon_is_throwing_cannonball                ; 4102: d0 1a
-    cpy save_game_j_room_0_babboon_animation                          ; 4104: cc 31 0a
+    cpy save_game_level_j_room_0_babboon_animation                    ; 4104: cc 31 0a
     bne set_room_0_babboon_animation_step                             ; 4107: d0 5d
     lda desired_room_index                                            ; 4109: a5 30
     cmp #0                                                            ; 410b: c9 00
@@ -1372,7 +1407,7 @@ check_if_room_0_babboon_is_stationary
     sta room_0_cannonball_throw_animation_step                        ; 4111: 8d 79 0a
     ldy #babboon_room_0_push_animation - babboon_room_0_animations    ; 4114: a0 3a
     lda #babboon_room_0_stationary2_animation - babboon_room_0_animations; 4116: a9 3f
-    sta save_game_j_room_0_babboon_animation                          ; 4118: 8d 31 0a
+    sta save_game_level_j_room_0_babboon_animation                    ; 4118: 8d 31 0a
     jmp set_room_0_babboon_animation_step                             ; 411b: 4c 66 41
 
 check_if_room_0_babboon_is_throwing_cannonball
@@ -1397,7 +1432,7 @@ check_if_in_room_0_and_cannonball_animations_are_in_progress
     lda desired_room_index                                            ; 4142: a5 30
     cmp #0                                                            ; 4144: c9 00
     bne set_room_0_babboon_animation_step                             ; 4146: d0 1e
-    lda save_game_j_got_cannonball_progress                           ; 4148: ad 30 0a
+    lda save_game_level_j_got_cannonball_progress                     ; 4148: ad 30 0a
     cmp #$ff                                                          ; 414b: c9 ff
     beq set_room_0_babboon_animation_step                             ; 414d: f0 17
     ora #0                                                            ; 414f: 09 00
@@ -1410,7 +1445,7 @@ check_if_in_room_0_and_cannonball_animations_are_in_progress
     bcc set_room_0_babboon_animation_step                             ; 415f: 90 05
 start_babboon_move_up_animation
     ldy #babboon_room_0_move_up_animation - babboon_room_0_animations ; 4161: a0 01
-    sty save_game_j_room_0_babboon_animation                          ; 4163: 8c 31 0a
+    sty save_game_level_j_room_0_babboon_animation                    ; 4163: 8c 31 0a
 set_room_0_babboon_animation_step
     sty room_0_babboon_animation_step                                 ; 4166: 8c 77 0a
     iny                                                               ; 4169: c8
@@ -1498,7 +1533,7 @@ update_player_cannonball_collision_to_collect_cannonball
     sta object_spriteid + objectid_cannonball                         ; 420f: 8d aa 09
     sta room_0_cannonball_throw_animation_step                        ; 4212: 8d 79 0a
     lda #$ff                                                          ; 4215: a9 ff
-    sta save_game_j_got_cannonball_progress                           ; 4217: 8d 30 0a
+    sta save_game_level_j_got_cannonball_progress                     ; 4217: 8d 30 0a
     jmp return6                                                       ; 421a: 4c 2c 42
 
 test_for_cannonball_end_of_life
@@ -1507,7 +1542,7 @@ test_for_cannonball_end_of_life
     bne return6                                                       ; 4222: d0 08
     jsr show_cannonball_collision                                     ; 4224: 20 33 43
     lda #0                                                            ; 4227: a9 00
-    sta save_game_j_got_cannonball_progress                           ; 4229: 8d 30 0a
+    sta save_game_level_j_got_cannonball_progress                     ; 4229: 8d 30 0a
 return6
     rts                                                               ; 422c: 60
 
@@ -1545,17 +1580,17 @@ update_cannonball
     lda current_level                                                 ; 425a: a5 31
     cmp level_before_latest_level_and_room_initialisation             ; 425c: c5 51
     beq check_if_cannonball_in_current_room                           ; 425e: f0 0c
-    lda save_game_j_got_cannonball_progress                           ; 4260: ad 30 0a
+    lda save_game_level_j_got_cannonball_progress                     ; 4260: ad 30 0a
     cmp #$ff                                                          ; 4263: c9 ff
     beq check_if_cannonball_in_current_room                           ; 4265: f0 05
 ; reset cannonball animation progress
     lda #0                                                            ; 4267: a9 00
-    sta save_game_j_got_cannonball_progress                           ; 4269: 8d 30 0a
+    sta save_game_level_j_got_cannonball_progress                     ; 4269: 8d 30 0a
 check_if_cannonball_in_current_room
     lda desired_room_index                                            ; 426c: a5 30
     cmp cannonball_room                                               ; 426e: cd 75 0a
     bne hide_cannonball1                                              ; 4271: d0 26
-    lda save_game_j_got_cannonball_progress                           ; 4273: ad 30 0a
+    lda save_game_level_j_got_cannonball_progress                     ; 4273: ad 30 0a
     beq hide_cannonball1                                              ; 4276: f0 21
     cmp #$ff                                                          ; 4278: c9 ff
     beq hide_cannonball1                                              ; 427a: f0 1d
@@ -1581,7 +1616,7 @@ return7_local
 update_cannonball_not_first_update
     lda object_spriteid_old + objectid_cannonball                     ; 42a1: ad b5 09
     sta remember_cannonball_spriteid                                  ; 42a4: 8d 63 44
-    lda save_game_j_got_cannonball_progress                           ; 42a7: ad 30 0a
+    lda save_game_level_j_got_cannonball_progress                     ; 42a7: ad 30 0a
     beq return7_local                                                 ; 42aa: f0 f2
     bmi check_if_player_is_using_cannonball                           ; 42ac: 30 12
     lda desired_room_index                                            ; 42ae: a5 30
@@ -1614,7 +1649,7 @@ check_if_player_is_using_cannonball
     lda #cannonball_animation1 - cannonball_animations                ; 42e0: a9 01
     sta cannonball_animation_step                                     ; 42e2: 8d 76 0a
     lda #cannonball_animation2 - cannonball_animations                ; 42e5: a9 0e
-    sta save_game_j_got_cannonball_progress                           ; 42e7: 8d 30 0a
+    sta save_game_level_j_got_cannonball_progress                     ; 42e7: 8d 30 0a
 ; set cannonball position to be where accessory was
     lda object_x_low + objectid_player_accessory                      ; 42ea: ad 51 09
     sta cannonball_x_low                                              ; 42ed: 8d 70 0a
@@ -1654,7 +1689,7 @@ show_cannonball_collision
     lda #spriteid_collision                                           ; 4333: a9 cb
     sta object_spriteid + objectid_cannonball                         ; 4335: 8d aa 09
     lda #cannonball_animation3 - cannonball_animations                ; 4338: a9 11
-    sta save_game_j_got_cannonball_progress                           ; 433a: 8d 30 0a
+    sta save_game_level_j_got_cannonball_progress                     ; 433a: 8d 30 0a
     sta cannonball_animation_step                                     ; 433d: 8d 76 0a
     lda #0                                                            ; 4340: a9 00
     ldx #<sound1                                                      ; 4342: a2 b4
@@ -1691,16 +1726,16 @@ move_to_next_cannonball_animation_step
     lda cannonball_animations,y                                       ; 437a: b9 2d 42
     cmp #$80                                                          ; 437d: c9 80
     bne check_for_final_cannonball_animation                          ; 437f: d0 03
-    ldy save_game_j_got_cannonball_progress                           ; 4381: ac 30 0a
+    ldy save_game_level_j_got_cannonball_progress                     ; 4381: ac 30 0a
 check_for_final_cannonball_animation
-    lda save_game_j_got_cannonball_progress                           ; 4384: ad 30 0a
+    lda save_game_level_j_got_cannonball_progress                     ; 4384: ad 30 0a
     cmp #cannonball_animation3 - cannonball_animations                ; 4387: c9 11
     bne save_cannonball_animation_step                                ; 4389: d0 16
-    cpy save_game_j_got_cannonball_progress                           ; 438b: cc 30 0a
+    cpy save_game_level_j_got_cannonball_progress                     ; 438b: cc 30 0a
     bne save_cannonball_animation_step                                ; 438e: d0 11
     lda #0                                                            ; 4390: a9 00
     sta cannonball_animation_step                                     ; 4392: 8d 76 0a
-    sta save_game_j_got_cannonball_progress                           ; 4395: 8d 30 0a
+    sta save_game_level_j_got_cannonball_progress                     ; 4395: 8d 30 0a
     sta object_spriteid + objectid_cannonball                         ; 4398: 8d aa 09
     sta cannonball_fast_forward_steps                                 ; 439b: 8d 6f 0a
     jmp return9                                                       ; 439e: 4c 62 44
@@ -1760,7 +1795,7 @@ add_animation_to_cannonball_y
     jsr get_solid_rock_collision_for_object_a                         ; 440f: 20 94 28
     beq no_collision                                                  ; 4412: f0 0b
     lda #cannonball_animation3 - cannonball_animations                ; 4414: a9 11
-    sta save_game_j_got_cannonball_progress                           ; 4416: 8d 30 0a
+    sta save_game_level_j_got_cannonball_progress                     ; 4416: 8d 30 0a
     sta cannonball_animation_step                                     ; 4419: 8d 76 0a
     jsr set_cannonball_object                                         ; 441c: 20 64 44
 no_collision
@@ -1819,7 +1854,7 @@ set_cannonball_object
     sta object_direction + objectid_cannonball                        ; 4489: 8d c0 09
     lda #spriteid_cannonball1                                         ; 448c: a9 c8
     sta object_spriteid + objectid_cannonball                         ; 448e: 8d aa 09
-    lda save_game_j_got_cannonball_progress                           ; 4491: ad 30 0a
+    lda save_game_level_j_got_cannonball_progress                     ; 4491: ad 30 0a
     cmp #cannonball_animation3 - cannonball_animations                ; 4494: c9 11
     bne return10                                                      ; 4496: d0 05
     lda #spriteid_collision                                           ; 4498: a9 cb
