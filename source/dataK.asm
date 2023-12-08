@@ -34,6 +34,7 @@ objectid_drip                         = 3
 objectid_empty_bottle                 = 3
 objectid_leaf1                        = 4
 objectid_leaf2                        = 5
+objectid_old_drip                     = 14
 objectid_old_player                   = 11
 objectid_old_player_accessory         = 12
 objectid_player                       = 0
@@ -1288,9 +1289,9 @@ c40be
     bne c40f7                                                         ; 40d5: d0 20
     lda l0a36                                                         ; 40d7: ad 36 0a
     beq c40f7                                                         ; 40da: f0 1b
-    ldx #2                                                            ; 40dc: a2 02
+    ldx #objectid_bottle_pour                                         ; 40dc: a2 02
     sty l419e                                                         ; 40de: 8c 9e 41
-    ldy #7                                                            ; 40e1: a0 07
+    ldy #objectid_dog_bowl                                            ; 40e1: a0 07
     jsr test_for_collision_between_objects_x_and_y                    ; 40e3: 20 e2 28
     ldy l419e                                                         ; 40e6: ac 9e 41
     ora #0                                                            ; 40e9: 09 00
@@ -1324,9 +1325,9 @@ c4118
     bne c413b                                                         ; 411c: d0 1d
     lda #$f8                                                          ; 411e: a9 f8
     sta temp_top_offset                                               ; 4120: 8d 50 25
-    ldx #6                                                            ; 4123: a2 06
+    ldx #objectid_dog_head                                            ; 4123: a2 06
     sty l419e                                                         ; 4125: 8c 9e 41
-    ldy #0                                                            ; 4128: a0 00
+    ldy #objectid_player                                              ; 4128: a0 00
     jsr test_for_collision_between_objects_x_and_y                    ; 412a: 20 e2 28
     ldy l419e                                                         ; 412d: ac 9e 41
     ora #0                                                            ; 4130: 09 00
@@ -1396,7 +1397,7 @@ room_0_update_handler
     jsr update_level_completion                                       ; 41aa: 20 10 1a
 ; check for first update in room (branch if not)
     lda update_room_first_update_flag                                 ; 41ad: ad 2b 13
-    beq c421a                                                         ; 41b0: f0 68
+    beq room_0_not_first_update                                       ; 41b0: f0 68
     lda #spriteid_empty_bottle_menu_item                              ; 41b2: a9 d6
     sta toolbar_collectable_spriteids+1                               ; 41b4: 8d e9 2e
     lda #spriteid_empty_bottle_held                                   ; 41b7: a9 d3
@@ -1446,7 +1447,7 @@ c41e6
 c4217
     jmp c42ae                                                         ; 4217: 4c ae 42
 
-c421a
+room_0_not_first_update
     lda l0a35                                                         ; 421a: ad 35 0a
     bne c4245                                                         ; 421d: d0 26
     lda desired_room_index                                            ; 421f: a5 30
@@ -1455,7 +1456,7 @@ c421a
     lda l0a35                                                         ; 4225: ad 35 0a
     bne c4217                                                         ; 4228: d0 ed
     ldx #objectid_old_player                                          ; 422a: a2 0b
-    ldy #3                                                            ; 422c: a0 03
+    ldy #objectid_empty_bottle                                        ; 422c: a0 03
     jsr test_for_collision_between_objects_x_and_y                    ; 422e: 20 e2 28
     beq c4242                                                         ; 4231: f0 0f
     lda #spriteid_one_pixel_masked_out                                ; 4233: a9 00
@@ -1711,7 +1712,9 @@ room_1_update_handler
     rts                                                               ; 43e6: 60
 
 droplet_animation
-    !byte spriteid_droplet4, spriteid_droplet3, spriteid_droplet2     ; 43e7: de dd dc
+    !byte spriteid_droplet4                                           ; 43e7: de
+    !byte spriteid_droplet3                                           ; 43e8: dd
+    !byte spriteid_droplet2                                           ; 43e9: dc
     !byte spriteid_droplet1                                           ; 43ea: db
 droplet_full
     !byte spriteid_droplet                                            ; 43eb: da
@@ -1815,7 +1818,7 @@ c448c
     lda l0a73                                                         ; 44a7: ad 73 0a
     bne c44e6                                                         ; 44aa: d0 3a
     ldx #objectid_old_player_accessory                                ; 44ac: a2 0c
-    ldy #$0e                                                          ; 44ae: a0 0e
+    ldy #objectid_old_drip                                            ; 44ae: a0 0e
     jsr test_for_collision_between_objects_x_and_y                    ; 44b0: 20 e2 28
     beq c44e6                                                         ; 44b3: f0 31
     lda #spriteid_full_bottle_held                                    ; 44b5: a9 d4
@@ -1964,7 +1967,6 @@ pydis_end
 ;     c41db
 ;     c41e6
 ;     c4217
-;     c421a
 ;     c4242
 ;     c4245
 ;     c4274
@@ -2161,17 +2163,32 @@ pydis_end
 !if (objectid_bottle_pour) != $02 {
     !error "Assertion failed: objectid_bottle_pour == $02"
 }
+!if (objectid_dog_bowl) != $07 {
+    !error "Assertion failed: objectid_dog_bowl == $07"
+}
+!if (objectid_dog_head) != $06 {
+    !error "Assertion failed: objectid_dog_head == $06"
+}
+!if (objectid_empty_bottle) != $03 {
+    !error "Assertion failed: objectid_empty_bottle == $03"
+}
 !if (objectid_leaf1) != $04 {
     !error "Assertion failed: objectid_leaf1 == $04"
 }
 !if (objectid_leaf2) != $05 {
     !error "Assertion failed: objectid_leaf2 == $05"
 }
+!if (objectid_old_drip) != $0e {
+    !error "Assertion failed: objectid_old_drip == $0e"
+}
 !if (objectid_old_player) != $0b {
     !error "Assertion failed: objectid_old_player == $0b"
 }
 !if (objectid_old_player_accessory) != $0c {
     !error "Assertion failed: objectid_old_player_accessory == $0c"
+}
+!if (objectid_player) != $00 {
+    !error "Assertion failed: objectid_player == $00"
 }
 !if (objectid_room2_fire1) != $06 {
     !error "Assertion failed: objectid_room2_fire1 == $06"
