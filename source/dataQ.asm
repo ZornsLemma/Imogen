@@ -36,6 +36,11 @@ sprite_op_flags_erase_to_fg_colour   = 4
 sprite_op_flags_normal               = 0
 
 ; Memory locations
+sprite_id                                           = $16
+sprite_x_base_low                                   = $18
+sprite_x_base_high                                  = $19
+sprite_y_base_low                                   = $1a
+sprite_y_base_high                                  = $1b
 sprite_reflect_flag                                 = $1d
 l002e                                               = $2e
 desired_room_index                                  = $30

@@ -210,6 +210,11 @@ spriteid_wizard_transform2            = 57
 spriteid_wizard_using_object          = 53
 
 ; Memory locations
+sprite_id                                           = $16
+sprite_x_base_low                                   = $18
+sprite_x_base_high                                  = $19
+sprite_y_base_low                                   = $1a
+sprite_y_base_high                                  = $1b
 sprite_reflect_flag                                 = $1d
 desired_room_index                                  = $30
 current_level                                       = $31
