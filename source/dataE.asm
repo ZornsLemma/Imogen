@@ -1235,7 +1235,10 @@ c412a
     ldy small_egg_animation_table_index                               ; 4143: ac 74 0a
     lda small_egg_animation_table,y                                   ; 4146: b9 99 40
     sta object_spriteid + objectid_small_egg                          ; 4149: 8d aa 09
-loop_c414c
+; Update the egg position repeatedly (without updating the screen) to catch up on any
+; missed animation between it being thrown off screen and now when we are going to see
+; it again.
+small_egg_animation_catch_up
     lda desired_room_index                                            ; 414c: a5 30
     cmp room_containing_small_egg                                     ; 414e: cd 75 0a
     bne skip_small_egg_setup                                          ; 4151: d0 13
@@ -1245,7 +1248,7 @@ loop_c414c
     ldx #objectid_small_egg                                           ; 415b: a2 02
     jsr copy_object_state_to_old                                      ; 415d: 20 f7 20
     jsr small_egg_animation_update                                    ; 4160: 20 31 42
-    jmp loop_c414c                                                    ; 4163: 4c 4c 41
+    jmp small_egg_animation_catch_up                                  ; 4163: 4c 4c 41
 
 skip_small_egg_setup
     lda #spriteid_one_pixel_masked_out                                ; 4166: a9 00
@@ -2048,7 +2051,6 @@ pydis_end
 ;     l4389
 ;     l438a
 ;     l438b
-;     loop_c414c
 ;     sub_c3c0b
 ;     sub_c433b
 !if (<envelope1) != $d8 {
