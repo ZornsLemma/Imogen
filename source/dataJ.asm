@@ -191,7 +191,7 @@ current_player_animation                            = $09df
 save_game_j_got_cannonball_progress                 = $0a30
 save_game_j_room_0_babboon_animation                = $0a31
 save_game_j_partition_progress                      = $0a32
-level_workspace                                     = $0a6f
+cannonball_fast_forward_steps                       = $0a6f
 cannonball_x_low                                    = $0a70
 cannonball_x_high                                   = $0a71
 cannonball_y_low                                    = $0a72
@@ -958,7 +958,7 @@ room_3_update_handler
     jsr update_brazier_and_fire                                       ; 3ea1: 20 88 19
 ; check for first update in room (branch if not)
     lda update_room_first_update_flag                                 ; 3ea4: ad 2b 13
-    beq c3ee1                                                         ; 3ea7: f0 38
+    beq room_3_not_first_update                                       ; 3ea7: f0 38
 ; check for level change (branch if not)
     lda current_level                                                 ; 3ea9: a5 31
     cmp level_before_latest_level_and_room_initialisation             ; 3eab: c5 51
@@ -970,7 +970,7 @@ room_3_update_handler
 initialise_room_3
     lda desired_room_index                                            ; 3eb9: a5 30
     cmp #3                                                            ; 3ebb: c9 03
-    bne c3ede                                                         ; 3ebd: d0 1f
+    bne update_partition_local                                        ; 3ebd: d0 1f
     ldx #<envelope1                                                   ; 3ebf: a2 bc
     ldy #>envelope1                                                   ; 3ec1: a0 44
     jsr define_envelope                                               ; 3ec3: 20 5e 39
@@ -984,26 +984,29 @@ initialise_room_3
     sta object_erase_type + objectid_partition                        ; 3ed6: 8d b0 38
     lda #$c0                                                          ; 3ed9: a9 c0
     sta object_z_order + objectid_partition                           ; 3edb: 8d c6 38
-c3ede
+update_partition_local
     jmp update_partition                                              ; 3ede: 4c 33 3f
 
-c3ee1
+room_3_not_first_update
     lda save_game_j_partition_progress                                ; 3ee1: ad 32 0a
     bmi update_partition                                              ; 3ee4: 30 4d
-    bne c3ef7                                                         ; 3ee6: d0 0f
+    bne partition_animation_in_progress                               ; 3ee6: d0 0f
+; check we are in room 3
     lda desired_room_index                                            ; 3ee8: a5 30
     cmp #3                                                            ; 3eea: c9 03
     bne update_partition                                              ; 3eec: d0 45
+; check for cannonball partition collision (branch if none)
     ldx #objectid_cannonball                                          ; 3eee: a2 02
     ldy #objectid_partition                                           ; 3ef0: a0 04
     jsr test_for_collision_between_objects_x_and_y                    ; 3ef2: 20 e2 28
     beq update_partition                                              ; 3ef5: f0 3c
-c3ef7
+partition_animation_in_progress
     ldy save_game_j_partition_progress                                ; 3ef7: ac 32 0a
     iny                                                               ; 3efa: c8
     sty save_game_j_partition_progress                                ; 3efb: 8c 32 0a
     cpy #2                                                            ; 3efe: c0 02
     bcc update_partition                                              ; 3f00: 90 31
+; write to clear collision map from partition area
     ldy #$ff                                                          ; 3f02: a0 ff
     sty save_game_j_partition_progress                                ; 3f04: 8c 32 0a
     lda desired_room_index                                            ; 3f07: a5 30
@@ -1020,6 +1023,7 @@ c3ef7
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 3f1d: 20 44 1e
     jmp update_partition                                              ; 3f20: 4c 33 3f
 
+; unused?
     lda #0                                                            ; 3f23: a9 00
     ldx #<sound4                                                      ; 3f25: a2 d2
     ldy #>sound4                                                      ; 3f27: a0 44
@@ -1309,116 +1313,117 @@ cannonball_throw_animation
 ; check for first update in room (branch if not)
 room_0_update_handler
     lda update_room_first_update_flag                                 ; 40a1: ad 2b 13
-    beq c40d1                                                         ; 40a4: f0 2b
+    beq update_babboon_animation_step                                 ; 40a4: f0 2b
 ; check for level change (branch if not)
     lda current_level                                                 ; 40a6: a5 31
     cmp level_before_latest_level_and_room_initialisation             ; 40a8: c5 51
-    beq c40b9                                                         ; 40aa: f0 0d
+    beq initialise_room_0                                             ; 40aa: f0 0d
+; initialise level
     lda #$3f ; '?'                                                    ; 40ac: a9 3f
     sta save_game_j_room_0_babboon_animation                          ; 40ae: 8d 31 0a
     sta room_0_babboon_animation_step                                 ; 40b1: 8d 77 0a
     lda #$68 ; 'h'                                                    ; 40b4: a9 68
     sta room_0_babboon_y_low                                          ; 40b6: 8d 78 0a
-c40b9
+initialise_room_0
     lda desired_room_index                                            ; 40b9: a5 30
     cmp #0                                                            ; 40bb: c9 00
-    bne c40ce                                                         ; 40bd: d0 0f
+    bne update_room_0_babboon_and_cannonball_puzzle_local             ; 40bd: d0 0f
     lda #spriteid_erase_babboon1_or_partition                         ; 40bf: a9 cf
     sta object_erase_type + objectid_babboon1                         ; 40c1: 8d af 38
     lda #$c0                                                          ; 40c4: a9 c0
     sta object_z_order + objectid_babboon1                            ; 40c6: 8d c5 38
     lda #$50 ; 'P'                                                    ; 40c9: a9 50
     sta object_x_low + objectid_babboon1                              ; 40cb: 8d 53 09
-c40ce
-    jmp c417a                                                         ; 40ce: 4c 7a 41
+update_room_0_babboon_and_cannonball_puzzle_local
+    jmp update_room_0_babboon_and_cannonball_puzzle                   ; 40ce: 4c 7a 41
 
-c40d1
+update_babboon_animation_step
     lda room_0_babboon_animation_step                                 ; 40d1: ad 77 0a
     clc                                                               ; 40d4: 18
     adc #2                                                            ; 40d5: 69 02
     tay                                                               ; 40d7: a8
     lda babboon_room_0_animations,y                                   ; 40d8: b9 49 40
     cmp #$80                                                          ; 40db: c9 80
-    bne c40e2                                                         ; 40dd: d0 03
+    bne check_if_room_0_babboon_is_climbing_up_rope                   ; 40dd: d0 03
     ldy save_game_j_room_0_babboon_animation                          ; 40df: ac 31 0a
-c40e2
+check_if_room_0_babboon_is_climbing_up_rope
     lda save_game_j_room_0_babboon_animation                          ; 40e2: ad 31 0a
     cmp #babboon_room_0_move_up_animation - babboon_room_0_animations ; 40e5: c9 01
-    bne c40fd                                                         ; 40e7: d0 14
+    bne check_if_room_0_babboon_is_stationary                         ; 40e7: d0 14
     cpy save_game_j_room_0_babboon_animation                          ; 40e9: cc 31 0a
-    bne c4166                                                         ; 40ec: d0 78
+    bne set_room_0_babboon_animation_step                             ; 40ec: d0 78
     ldy #babboon_room_0_move_down_animation - babboon_room_0_animations; 40ee: a0 1c
     lda #babboon_room_0_stationary1_animation - babboon_room_0_animations; 40f0: a9 37
     sta save_game_j_room_0_babboon_animation                          ; 40f2: 8d 31 0a
     lda #$ff                                                          ; 40f5: a9 ff
     sta room_0_cannonball_throw_animation_step                        ; 40f7: 8d 79 0a
-    jmp c4166                                                         ; 40fa: 4c 66 41
+    jmp set_room_0_babboon_animation_step                             ; 40fa: 4c 66 41
 
-c40fd
+check_if_room_0_babboon_is_stationary
     lda save_game_j_room_0_babboon_animation                          ; 40fd: ad 31 0a
     cmp #babboon_room_0_stationary1_animation - babboon_room_0_animations; 4100: c9 37
-    bne c411e                                                         ; 4102: d0 1a
+    bne check_if_room_0_babboon_is_throwing_cannonball                ; 4102: d0 1a
     cpy save_game_j_room_0_babboon_animation                          ; 4104: cc 31 0a
-    bne c4166                                                         ; 4107: d0 5d
+    bne set_room_0_babboon_animation_step                             ; 4107: d0 5d
     lda desired_room_index                                            ; 4109: a5 30
     cmp #0                                                            ; 410b: c9 00
-    bne c4166                                                         ; 410d: d0 57
+    bne set_room_0_babboon_animation_step                             ; 410d: d0 57
     lda #1                                                            ; 410f: a9 01
     sta room_0_cannonball_throw_animation_step                        ; 4111: 8d 79 0a
     ldy #babboon_room_0_push_animation - babboon_room_0_animations    ; 4114: a0 3a
     lda #babboon_room_0_stationary2_animation - babboon_room_0_animations; 4116: a9 3f
     sta save_game_j_room_0_babboon_animation                          ; 4118: 8d 31 0a
-    jmp c4166                                                         ; 411b: 4c 66 41
+    jmp set_room_0_babboon_animation_step                             ; 411b: 4c 66 41
 
-c411e
+check_if_room_0_babboon_is_throwing_cannonball
     ldx room_0_cannonball_throw_animation_step                        ; 411e: ae 79 0a
-    beq c4142                                                         ; 4121: f0 1f
+    beq check_if_in_room_0_and_cannonball_animations_are_in_progress  ; 4121: f0 1f
     inx                                                               ; 4123: e8
     inx                                                               ; 4124: e8
     stx room_0_cannonball_throw_animation_step                        ; 4125: 8e 79 0a
     lda cannonball_throw_animation,x                                  ; 4128: bd 8b 40
     cmp #0                                                            ; 412b: c9 00
-    bne c4166                                                         ; 412d: d0 37
+    bne set_room_0_babboon_animation_step                             ; 412d: d0 37
     lda #0                                                            ; 412f: a9 00
     sta room_0_cannonball_throw_animation_step                        ; 4131: 8d 79 0a
     lda desired_room_index                                            ; 4134: a5 30
     cmp #0                                                            ; 4136: c9 00
-    bne c4166                                                         ; 4138: d0 2c
+    bne set_room_0_babboon_animation_step                             ; 4138: d0 2c
     lda #spriteid_one_pixel_masked_out                                ; 413a: a9 00
     sta object_spriteid + objectid_cannonball                         ; 413c: 8d aa 09
-    jmp c4166                                                         ; 413f: 4c 66 41
+    jmp set_room_0_babboon_animation_step                             ; 413f: 4c 66 41
 
-c4142
+check_if_in_room_0_and_cannonball_animations_are_in_progress
     lda desired_room_index                                            ; 4142: a5 30
     cmp #0                                                            ; 4144: c9 00
-    bne c4166                                                         ; 4146: d0 1e
+    bne set_room_0_babboon_animation_step                             ; 4146: d0 1e
     lda save_game_j_got_cannonball_progress                           ; 4148: ad 30 0a
     cmp #$ff                                                          ; 414b: c9 ff
-    beq c4166                                                         ; 414d: f0 17
+    beq set_room_0_babboon_animation_step                             ; 414d: f0 17
     ora #0                                                            ; 414f: 09 00
-    beq c4161                                                         ; 4151: f0 0e
+    beq start_babboon_move_up_animation                               ; 4151: f0 0e
     lda desired_room_index                                            ; 4153: a5 30
     cmp cannonball_room                                               ; 4155: cd 75 0a
-    beq c4166                                                         ; 4158: f0 0c
-    lda level_workspace                                               ; 415a: ad 6f 0a
+    beq set_room_0_babboon_animation_step                             ; 4158: f0 0c
+    lda cannonball_fast_forward_steps                                 ; 415a: ad 6f 0a
     cmp #4                                                            ; 415d: c9 04
-    bcc c4166                                                         ; 415f: 90 05
-c4161
-    ldy #1                                                            ; 4161: a0 01
+    bcc set_room_0_babboon_animation_step                             ; 415f: 90 05
+start_babboon_move_up_animation
+    ldy #babboon_room_0_move_up_animation - babboon_room_0_animations ; 4161: a0 01
     sty save_game_j_room_0_babboon_animation                          ; 4163: 8c 31 0a
-c4166
+set_room_0_babboon_animation_step
     sty room_0_babboon_animation_step                                 ; 4166: 8c 77 0a
     iny                                                               ; 4169: c8
     lda babboon_room_0_animations,y                                   ; 416a: b9 49 40
     clc                                                               ; 416d: 18
     adc room_0_babboon_y_low                                          ; 416e: 6d 78 0a
     sta room_0_babboon_y_low                                          ; 4171: 8d 78 0a
-    jmp c417a                                                         ; 4174: 4c 7a 41
+    jmp update_room_0_babboon_and_cannonball_puzzle                   ; 4174: 4c 7a 41
 
 return6_local
     jmp return6                                                       ; 4177: 4c 2c 42
 
-c417a
+update_room_0_babboon_and_cannonball_puzzle
     lda desired_room_index                                            ; 417a: a5 30
     cmp #0                                                            ; 417c: c9 00
     bne return6_local                                                 ; 417e: d0 f7
@@ -1429,16 +1434,19 @@ c417a
     sta object_y_low + objectid_babboon1                              ; 418c: 8d 7f 09
 ; check for first update in room (branch if so)
     lda update_room_first_update_flag                                 ; 418f: ad 2b 13
-    bne c41a2                                                         ; 4192: d0 0e
+    bne skip_setting_collision_result                                 ; 4192: d0 0e
     ldx #objectid_player                                              ; 4194: a2 00
     ldy #objectid_babboon1                                            ; 4196: a0 03
     jsr test_for_collision_between_objects_x_and_y                    ; 4198: 20 e2 28
-    beq c41a2                                                         ; 419b: f0 05
+    beq skip_setting_collision_result                                 ; 419b: f0 05
+; fall straight down
     lda #$80                                                          ; 419d: a9 80
     sta player_wall_collision_reaction_speed                          ; 419f: 8d 33 24
-c41a2
+skip_setting_collision_result
     ldx room_0_cannonball_throw_animation_step                        ; 41a2: ae 79 0a
     beq return6_local                                                 ; 41a5: f0 d0
+; set cannonball object, starting at the babboon coordinates with the cannonball and
+; arm sprite
     lda #spriteid_erase_cannonball                                    ; 41a7: a9 c9
     sta object_erase_type + objectid_cannonball                       ; 41a9: 8d ae 38
     lda #$40 ; '@'                                                    ; 41ac: a9 40
@@ -1457,6 +1465,7 @@ c41a2
     sta object_spriteid + objectid_cannonball                         ; 41ce: 8d aa 09
     cpx #$ff                                                          ; 41d1: e0 ff
     beq return6_local                                                 ; 41d3: f0 a2
+; update cannonball position based on animation
     lda cannonball_throw_animation,x                                  ; 41d5: bd 8b 40
     clc                                                               ; 41d8: 18
     adc #$58 ; 'X'                                                    ; 41d9: 69 58
@@ -1471,17 +1480,18 @@ c41a2
     inx                                                               ; 41ed: e8
     lda cannonball_throw_animation,x                                  ; 41ee: bd 8b 40
     cmp #0                                                            ; 41f1: c9 00
-    bne c41fa                                                         ; 41f3: d0 05
+    bne update_player_cannonball_collision_to_collect_cannonball      ; 41f3: d0 05
     lda #spriteid_collision                                           ; 41f5: a9 cb
     sta object_spriteid + objectid_cannonball                         ; 41f7: 8d aa 09
 ; check for first update in room (branch if so)
-c41fa
+update_player_cannonball_collision_to_collect_cannonball
     lda update_room_first_update_flag                                 ; 41fa: ad 2b 13
     bne return6                                                       ; 41fd: d0 2d
     ldx #objectid_old_player                                          ; 41ff: a2 0b
     ldy #objectid_old_cannonball                                      ; 4201: a0 0d
     jsr test_for_collision_between_objects_x_and_y                    ; 4203: 20 e2 28
-    beq c421d                                                         ; 4206: f0 15
+    beq test_for_cannonball_end_of_life                               ; 4206: f0 15
+; cannonball collected
     lda #spriteid_cannonball_menu_item                                ; 4208: a9 ca
     jsr find_or_create_menu_slot_for_A                                ; 420a: 20 bd 2b
     lda #spriteid_one_pixel_masked_out                                ; 420d: a9 00
@@ -1491,9 +1501,9 @@ c41fa
     sta save_game_j_got_cannonball_progress                           ; 4217: 8d 30 0a
     jmp return6                                                       ; 421a: 4c 2c 42
 
-c421d
+test_for_cannonball_end_of_life
     lda object_spriteid + objectid_cannonball                         ; 421d: ad aa 09
-    cmp #$cb                                                          ; 4220: c9 cb
+    cmp #spriteid_collision                                           ; 4220: c9 cb
     bne return6                                                       ; 4222: d0 08
     jsr show_cannonball_collision                                     ; 4224: 20 33 43
     lda #0                                                            ; 4227: a9 00
@@ -1521,7 +1531,7 @@ cannonball_animation3
 ; check for first update in room (branch if not)
 update_cannonball
     lda update_room_first_update_flag                                 ; 4241: ad 2b 13
-    beq update_cannonball_first_update                                ; 4244: f0 5b
+    beq update_cannonball_not_first_update                            ; 4244: f0 5b
 ; initialise
     lda #spriteid_cannonball_menu_item                                ; 4246: a9 ca
     sta toolbar_collectable_spriteids+1                               ; 4248: 8d e9 2e
@@ -1544,31 +1554,31 @@ update_cannonball
 check_if_cannonball_in_current_room
     lda desired_room_index                                            ; 426c: a5 30
     cmp cannonball_room                                               ; 426e: cd 75 0a
-    bne hide_cannonball                                               ; 4271: d0 26
+    bne hide_cannonball1                                              ; 4271: d0 26
     lda save_game_j_got_cannonball_progress                           ; 4273: ad 30 0a
-    beq hide_cannonball                                               ; 4276: f0 21
+    beq hide_cannonball1                                              ; 4276: f0 21
     cmp #$ff                                                          ; 4278: c9 ff
-    beq hide_cannonball                                               ; 427a: f0 1d
+    beq hide_cannonball1                                              ; 427a: f0 1d
     jsr set_cannonball_object                                         ; 427c: 20 64 44
-loop_c427f
+fast_forward_cannonball_loop
     lda desired_room_index                                            ; 427f: a5 30
     cmp cannonball_room                                               ; 4281: cd 75 0a
-    bne hide_cannonball                                               ; 4284: d0 13
-    lda level_workspace                                               ; 4286: ad 6f 0a
-    beq hide_cannonball                                               ; 4289: f0 0e
-    dec level_workspace                                               ; 428b: ce 6f 0a
+    bne hide_cannonball1                                              ; 4284: d0 13
+    lda cannonball_fast_forward_steps                                 ; 4286: ad 6f 0a
+    beq hide_cannonball1                                              ; 4289: f0 0e
+    dec cannonball_fast_forward_steps                                 ; 428b: ce 6f 0a
     ldx #objectid_cannonball                                          ; 428e: a2 02
     jsr copy_object_state_to_old                                      ; 4290: 20 f7 20
     jsr move_to_next_cannonball_animation_step                        ; 4293: 20 73 43
-    jmp loop_c427f                                                    ; 4296: 4c 7f 42
+    jmp fast_forward_cannonball_loop                                  ; 4296: 4c 7f 42
 
-hide_cannonball
+hide_cannonball1
     lda #spriteid_one_pixel_masked_out                                ; 4299: a9 00
     sta object_spriteid_old + objectid_cannonball                     ; 429b: 8d b5 09
 return7_local
     jmp return7                                                       ; 429e: 4c 32 43
 
-update_cannonball_first_update
+update_cannonball_not_first_update
     lda object_spriteid_old + objectid_cannonball                     ; 42a1: ad b5 09
     sta remember_cannonball_spriteid                                  ; 42a4: 8d 63 44
     lda save_game_j_got_cannonball_progress                           ; 42a7: ad 30 0a
@@ -1577,9 +1587,9 @@ update_cannonball_first_update
     lda desired_room_index                                            ; 42ae: a5 30
     cmp cannonball_room                                               ; 42b0: cd 75 0a
     beq update_cannonball_in_room                                     ; 42b3: f0 5b
-    lda level_workspace                                               ; 42b5: ad 6f 0a
+    lda cannonball_fast_forward_steps                                 ; 42b5: ad 6f 0a
     bmi return7_local                                                 ; 42b8: 30 e4
-    inc level_workspace                                               ; 42ba: ee 6f 0a
+    inc cannonball_fast_forward_steps                                 ; 42ba: ee 6f 0a
     jmp return7                                                       ; 42bd: 4c 32 43
 
 check_if_player_is_using_cannonball
@@ -1629,7 +1639,7 @@ update_cannonball_in_room
     cmp cannonball_room                                               ; 431b: cd 75 0a
     beq check_cannonball_last_animation                               ; 431e: f0 08
     lda #0                                                            ; 4320: a9 00
-    sta level_workspace                                               ; 4322: 8d 6f 0a
+    sta cannonball_fast_forward_steps                                 ; 4322: 8d 6f 0a
     jmp return7                                                       ; 4325: 4c 32 43
 
 check_cannonball_last_animation
@@ -1692,7 +1702,7 @@ check_for_final_cannonball_animation
     sta cannonball_animation_step                                     ; 4392: 8d 76 0a
     sta save_game_j_got_cannonball_progress                           ; 4395: 8d 30 0a
     sta object_spriteid + objectid_cannonball                         ; 4398: 8d aa 09
-    sta level_workspace                                               ; 439b: 8d 6f 0a
+    sta cannonball_fast_forward_steps                                 ; 439b: 8d 6f 0a
     jmp return9                                                       ; 439e: 4c 62 44
 
 save_cannonball_animation_step
@@ -1758,9 +1768,10 @@ no_collision
     jsr find_left_and_right_of_object                                 ; 4421: 20 34 24
     jsr find_top_and_bottom_of_object                                 ; 4424: 20 d2 24
     lda cannonball_direction                                          ; 4427: ad 74 0a
-    bmi c4448                                                         ; 442a: 30 1c
+    bmi cannonball_move_left_one_room_if_needed                       ; 442a: 30 1c
+; cannonball move right one room if needed
     lda object_left_cell_x                                            ; 442c: a5 78
-    cmp #$28 ; '('                                                    ; 442e: c9 28
+    cmp #game_area_width_cells                                        ; 442e: c9 28
     bcc return9                                                       ; 4430: 90 30
     lda cannonball_x_low                                              ; 4432: ad 70 0a
     sec                                                               ; 4435: 38
@@ -1770,9 +1781,9 @@ no_collision
     sbc #0                                                            ; 443d: e9 00
     sta cannonball_x_high                                             ; 443f: 8d 71 0a
     inc cannonball_room                                               ; 4442: ee 75 0a
-    jmp c445d                                                         ; 4445: 4c 5d 44
+    jmp hide_cannonball2                                              ; 4445: 4c 5d 44
 
-c4448
+cannonball_move_left_one_room_if_needed
     lda object_right_cell_x                                           ; 4448: a5 79
     bpl return9                                                       ; 444a: 10 16
     lda cannonball_x_low                                              ; 444c: ad 70 0a
@@ -1782,7 +1793,7 @@ c4448
     lda #1                                                            ; 4455: a9 01
     sta cannonball_x_high                                             ; 4457: 8d 71 0a
     dec cannonball_room                                               ; 445a: ce 75 0a
-c445d
+hide_cannonball2
     lda #spriteid_one_pixel_masked_out                                ; 445d: a9 00
     sta object_spriteid + objectid_cannonball                         ; 445f: 8d aa 09
 return9
@@ -1904,27 +1915,6 @@ ground_fill_2x2_bottom_right
     !byte %.#....#.                                                   ; 44f9: 42
 sprite_data
 pydis_end
-
-; Automatically generated labels:
-;     c3ede
-;     c3ee1
-;     c3ef7
-;     c40b9
-;     c40ce
-;     c40d1
-;     c40e2
-;     c40fd
-;     c411e
-;     c4142
-;     c4161
-;     c4166
-;     c417a
-;     c41a2
-;     c41fa
-;     c421d
-;     c4448
-;     c445d
-;     loop_c427f
 !if (<envelope1) != $bc {
     !error "Assertion failed: <envelope1 == $bc"
 }
@@ -2011,6 +2001,9 @@ pydis_end
 }
 !if (exit_room_right) != $04 {
     !error "Assertion failed: exit_room_right == $04"
+}
+!if (game_area_width_cells) != $28 {
+    !error "Assertion failed: game_area_width_cells == $28"
 }
 !if (level_specific_initialisation) != $3af2 {
     !error "Assertion failed: level_specific_initialisation == $3af2"
