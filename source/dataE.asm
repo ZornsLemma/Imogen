@@ -197,7 +197,7 @@ current_player_animation                            = $09df
 save_game_level_e_small_egg_status                  = $0a13
 save_game_level_e_room_1_egg_state                  = $0a14
 save_game_level_e_duck_captured_flag                = $0a15
-level_workspace_small_egg_offscreen_flight_time     = $0a6f
+level_workspace_small_egg_offscreen_time            = $0a6f
 l0a70                                               = $0a70
 thrown_egg_x_low                                    = $0a70
 l0a71                                               = $0a71
@@ -1220,7 +1220,7 @@ room0_first_update
     sta save_game_level_e_small_egg_status                            ; 411f: 8d 13 0a
     sta small_egg_animation_table_index                               ; 4122: 8d 74 0a
     lda #0                                                            ; 4125: a9 00
-    sta level_workspace_small_egg_offscreen_flight_time               ; 4127: 8d 6f 0a
+    sta level_workspace_small_egg_offscreen_time                      ; 4127: 8d 6f 0a
 c412a
     lda #$d6                                                          ; 412a: a9 d6
     sta l38ae                                                         ; 412c: 8d ae 38
@@ -1237,18 +1237,19 @@ c412a
     sta object_spriteid + objectid_small_egg                          ; 4149: 8d aa 09
 ; Update the egg position repeatedly (without updating the screen) to catch up on any
 ; missed animation between it being thrown off screen and now when we are going to see
-; it again.
-small_egg_animation_catch_up
+; it again. Note that small_egg_animation_update will set the offscreen time to 0 if
+; there is nothing else to do, so this loop doesn't do unnecessary work.
+small_egg_animation_catch_up_loop
     lda desired_room_index                                            ; 414c: a5 30
     cmp room_containing_small_egg                                     ; 414e: cd 75 0a
     bne skip_small_egg_setup                                          ; 4151: d0 13
-    lda level_workspace_small_egg_offscreen_flight_time               ; 4153: ad 6f 0a
+    lda level_workspace_small_egg_offscreen_time                      ; 4153: ad 6f 0a
     beq skip_small_egg_setup                                          ; 4156: f0 0e
-    dec level_workspace_small_egg_offscreen_flight_time               ; 4158: ce 6f 0a
+    dec level_workspace_small_egg_offscreen_time                      ; 4158: ce 6f 0a
     ldx #objectid_small_egg                                           ; 415b: a2 02
     jsr copy_object_state_to_old                                      ; 415d: 20 f7 20
     jsr small_egg_animation_update                                    ; 4160: 20 31 42
-    jmp small_egg_animation_catch_up                                  ; 4163: 4c 4c 41
+    jmp small_egg_animation_catch_up_loop                             ; 4163: 4c 4c 41
 
 skip_small_egg_setup
     lda #spriteid_one_pixel_masked_out                                ; 4166: a9 00
@@ -1267,9 +1268,11 @@ room0_not_first_update
     lda desired_room_index                                            ; 4183: a5 30
     cmp room_containing_small_egg                                     ; 4185: cd 75 0a
     beq small_egg_in_room                                             ; 4188: f0 53
-    lda level_workspace_small_egg_offscreen_flight_time               ; 418a: ad 6f 0a
+; The egg is off screen for this update, so increment the offscreen time (capping at
+; &7f) so its position can be correctly updated when it next appears on screen.
+    lda level_workspace_small_egg_offscreen_time                      ; 418a: ad 6f 0a
     bmi return2_local                                                 ; 418d: 30 03
-    inc level_workspace_small_egg_offscreen_flight_time               ; 418f: ee 6f 0a
+    inc level_workspace_small_egg_offscreen_time                      ; 418f: ee 6f 0a
 return2_local
     jmp return2                                                       ; 4192: 4c 30 42
 
@@ -1307,7 +1310,7 @@ small_egg_in_room
     cmp room_containing_small_egg                                     ; 41e2: cd 75 0a
     beq c41ec                                                         ; 41e5: f0 05
     lda #0                                                            ; 41e7: a9 00
-    sta level_workspace_small_egg_offscreen_flight_time               ; 41e9: 8d 6f 0a
+    sta level_workspace_small_egg_offscreen_time                      ; 41e9: 8d 6f 0a
 c41ec
     lda l438b                                                         ; 41ec: ad 8b 43
     sta object_spriteid_old + objectid_small_egg                      ; 41ef: 8d b5 09
@@ -1383,7 +1386,7 @@ small_egg_not_being_thrown
     sty save_game_level_e_small_egg_status                            ; 427c: 8c 13 0a
 small_egg_not_falling
     lda #0                                                            ; 427f: a9 00
-    sta level_workspace_small_egg_offscreen_flight_time               ; 4281: 8d 6f 0a
+    sta level_workspace_small_egg_offscreen_time                      ; 4281: 8d 6f 0a
 c4284
     sty small_egg_animation_table_index                               ; 4284: 8c 74 0a
     lda small_egg_animation_table,y                                   ; 4287: b9 99 40

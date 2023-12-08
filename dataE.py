@@ -37,8 +37,8 @@ sprite_dict = {**common_sprite_dict, **sprite_dict}
 constant(2, "objectid_small_egg")
 constant(3, "objectid_egg")
 
-# When the egg is thrown off-screen, this counts up every update cycle it is not visible (capping at &7f). When entering a room containing an in-flight egg, the game performs this number of egg animation updates without modifying the screen, giving the effect that the egg starts exactly where it has had time to reach.t c
-label(0xa6f, "level_workspace_small_egg_offscreen_flight_time")
+# When the egg is off-screen, this counts up every update cycle it is not visible (capping at &7f). When entering the room containing the egg, the game performs (up to) this number of egg animation updates without modifying the screen, giving the effect that the egg starts exactly where it has had time to reach if it was thrown off-screen.
+label(0xa6f, "level_workspace_small_egg_offscreen_time")
 
 set_sprite_dict(sprite_dict)
 
@@ -118,7 +118,7 @@ comment(0x4099, "TODO: table with entries in groups of three bytes, probably sim
 comment(0x40dd, "check for first update in room (branch if so)")
 ldx_ldy_jsr_define_envelope(0x40f6, "envelope1")
 comment(0x40f9, "check for level change (branch if not)")
-comment(0x414c, "Update the egg position repeatedly (without updating the screen) to catch up on any missed animation between it being thrown off screen and now when we are going to see it again.")
+comment(0x414c, "Update the egg position repeatedly (without updating the screen) to catch up on any missed animation between it being thrown off screen and now when we are going to see it again. Note that small_egg_animation_update will set the offscreen time to 0 if there is nothing else to do, so this loop doesn't do unnecessary work.")
 entry(0x414c, "small_egg_animation_catch_up_loop")
 expr(0x411e, "small_egg_status_on_ground")
 entry(0x4192, "return2_local")
@@ -169,6 +169,7 @@ expr(0x40eb, sprite_dict)
 comment(0x4102, "branch if have collected egg", inline=True)
 comment(0x413e, "branch if have collected egg", inline=True)
 comment(0x4181, "branch if have collected egg", inline=True)
+comment(0x418a, "The egg is off screen for this update, so increment the offscreen time (capping at &7f) so its position can be correctly updated when it next appears on screen.")
 expr(0x4212, "small_egg_status_collected")
 
 label(0x3ce0, "room_2_update_handler")
