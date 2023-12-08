@@ -145,6 +145,7 @@ object_room_collision_flags                         = $38d8
 play_sound_yx                                       = $38f6
 sound_priority_per_channel_table                    = $396f
 check_menu_keys                                     = $3a8f
+negative_inkey                                      = $3acc
 level_data                                          = $3ad5
 level_specific_initialisation_ptr                   = $3ad7
 level_specific_update_ptr                           = $3ad9

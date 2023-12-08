@@ -3019,7 +3019,6 @@ On Exit:
     comment(0x3ac9, "$ff for left, $01 for right, $00 for none")
     label(0x3aca, "move_left_requested")
     label(0x3acb, "move_right_requested")
-    label(0x3acc, "negative_inkey")
     expr_label(0x3ad6, make_add("level_data", "1"))
 
 # TODO: With developer_flags, set the start room to go to?

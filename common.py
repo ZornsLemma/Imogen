@@ -393,6 +393,7 @@ def common_to_all(level_letter):
     label_word(0x3ad7, "level_specific_initialisation_ptr")
     label_word(0x3ad9, "level_specific_update_ptr")
     label_word(0x3adb, "level_specific_password_ptr")
+    label(0x3acc, "negative_inkey")
 
     # Shared between all levels except 'dataQ' (and they mess up the tidy output of Q):
     if level_letter != 'Q':

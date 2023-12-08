@@ -158,7 +158,7 @@ object_z_order                                      = $38c2
 object_room_collision_flags                         = $38d8
 play_sound_yx                                       = $38f6
 sound_priority_per_channel_table                    = $396f
-l3acc                                               = $3acc
+negative_inkey                                      = $3acc
 oswrch                                              = $ffee
 osbyte                                              = $fff4
 
@@ -341,7 +341,7 @@ c3bfc
     and #1                                                            ; 3bff: 29 01
     beq c3c0a                                                         ; 3c01: f0 07
     ldx #$c6                                                          ; 3c03: a2 c6
-    jsr l3acc                                                         ; 3c05: 20 cc 3a
+    jsr negative_inkey                                                ; 3c05: 20 cc 3a
     bne c3c11                                                         ; 3c08: d0 07
 c3c0a
     lda l178b                                                         ; 3c0a: ad 8b 17
@@ -446,7 +446,7 @@ sub_c3ce3
     and #1                                                            ; 3cea: 29 01
     beq return1                                                       ; 3cec: f0 0c
     ldx #$8f                                                          ; 3cee: a2 8f
-    jsr l3acc                                                         ; 3cf0: 20 cc 3a
+    jsr negative_inkey                                                ; 3cf0: 20 cc 3a
     beq return1                                                       ; 3cf3: f0 05
     pla                                                               ; 3cf5: 68
     pla                                                               ; 3cf6: 68
@@ -873,7 +873,6 @@ pydis_end
 ;     l3617
 ;     l381c
 ;     l387c
-;     l3acc
 ;     l3cfb
 ;     l4323
 ;     l4324

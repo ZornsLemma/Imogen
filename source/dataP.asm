@@ -247,6 +247,7 @@ play_sound_yx                                       = $38f6
 define_envelope                                     = $395e
 sound_priority_per_channel_table                    = $396f
 l3970                                               = $3970
+negative_inkey                                      = $3acc
 
     * = $3ad5
 

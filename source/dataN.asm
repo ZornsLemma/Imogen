@@ -254,7 +254,7 @@ play_sound_yx                                       = $38f6
 define_envelope                                     = $395e
 sound_priority_per_channel_table                    = $396f
 l3970                                               = $3970
-l3acc                                               = $3acc
+negative_inkey                                      = $3acc
 
     * = $3ad5
 
@@ -565,7 +565,7 @@ c3cbf
     bpl developer_mode_inactive2                                      ; 3ccd: 10 16
     ldx #$c9                                                          ; 3ccf: a2 c9
     sty l3d39                                                         ; 3cd1: 8c 39 3d
-    jsr l3acc                                                         ; 3cd4: 20 cc 3a
+    jsr negative_inkey                                                ; 3cd4: 20 cc 3a
     ldy l3d39                                                         ; 3cd7: ac 39 3d
     ora #0                                                            ; 3cda: 09 00
     beq developer_mode_inactive2                                      ; 3cdc: f0 07
@@ -1943,7 +1943,6 @@ pydis_end
 ;     l38ca
 ;     l38cb
 ;     l3970
-;     l3acc
 ;     l3bba
 ;     l3bf2
 ;     l3d39

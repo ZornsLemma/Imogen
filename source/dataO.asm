@@ -252,7 +252,7 @@ object_room_collision_flags                         = $38d8
 play_sound_yx                                       = $38f6
 define_envelope                                     = $395e
 sound_priority_per_channel_table                    = $396f
-l3acc                                               = $3acc
+negative_inkey                                      = $3acc
 
     * = $3ad5
 
@@ -508,7 +508,7 @@ c3c17
     lda developer_flags                                               ; 3c28: ad 03 11
     bpl developer_mode_inactive2                                      ; 3c2b: 10 07
     ldx #$c9                                                          ; 3c2d: a2 c9
-    jsr l3acc                                                         ; 3c2f: 20 cc 3a
+    jsr negative_inkey                                                ; 3c2f: 20 cc 3a
     bne c3c40                                                         ; 3c32: d0 0c
 developer_mode_inactive2
     lda l0a71                                                         ; 3c34: ad 71 0a
@@ -1291,7 +1291,7 @@ c41be
     lda developer_flags                                               ; 41be: ad 03 11
     bpl developer_mode_inactive3                                      ; 41c1: 10 07
     ldx #$a9                                                          ; 41c3: a2 a9
-    jsr l3acc                                                         ; 41c5: 20 cc 3a
+    jsr negative_inkey                                                ; 41c5: 20 cc 3a
     bne c41e2                                                         ; 41c8: d0 18
 developer_mode_inactive3
     lda desired_room_index                                            ; 41ca: a5 30
@@ -1871,7 +1871,6 @@ pydis_end
 ;     l38c6
 ;     l38c7
 ;     l38c8
-;     l3acc
 ;     l3d3d
 ;     l4031
 ;     l4032

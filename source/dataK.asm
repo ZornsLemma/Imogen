@@ -19,6 +19,8 @@ exit_room_top                         = 8
 first_level_letter                    = 65
 game_area_height_cells                = 24
 game_area_width_cells                 = 40
+inkey_key_g                           = 172
+inkey_key_p                           = 200
 last_level_letter                     = 81
 object_collided_ceiling               = 8
 object_collided_floor                 = 2
@@ -30,17 +32,17 @@ objectid_dog_bowl                     = 7
 objectid_dog_head                     = 6
 objectid_drip                         = 3
 objectid_empty_bottle                 = 3
-objectid_fire                         = 4
-objectid_fire1                        = 4
-objectid_fire2                        = 5
-objectid_fire3                        = 6
-objectid_fire4                        = 7
 objectid_leaf1                        = 4
 objectid_leaf2                        = 5
 objectid_old_player                   = 11
 objectid_old_player_accessory         = 12
 objectid_player                       = 0
 objectid_player_accessory             = 1
+objectid_room2_fire1                  = 6
+objectid_room2_fire2                  = 7
+objectid_room_1_fire1                 = 4
+objectid_room_1_fire2                 = 5
+objectid_room_3_fire                  = 4
 objectid_sparkles                     = 4
 objectid_top_of_stalk                 = 3
 opcode_jmp                            = 76
@@ -300,7 +302,7 @@ object_room_collision_flags                         = $38d8
 play_sound_yx                                       = $38f6
 define_envelope                                     = $395e
 sound_priority_per_channel_table                    = $396f
-l3acc                                               = $3acc
+negative_inkey                                      = $3acc
 
     * = $3ad5
 
@@ -387,7 +389,7 @@ level_specific_update
     jsr room_1_update_handler                                         ; 3b2d: 20 a4 43
     jsr room_3_update_handler                                         ; 3b30: 20 56 3f
     jsr room_2_update_handler                                         ; 3b33: 20 d9 3b
-    jsr sub_c4044                                                     ; 3b36: 20 44 40
+    jsr update_dog                                                    ; 3b36: 20 44 40
     rts                                                               ; 3b39: 60
 
 sub_c3b3a
@@ -526,46 +528,46 @@ room_2_update_handler
     sta currently_updating_logic_for_room_index                       ; 3bdb: 8d ba 1a
     ldx #3                                                            ; 3bde: a2 03
     ldy #$0c                                                          ; 3be0: a0 0c
-    lda #6                                                            ; 3be2: a9 06
+    lda #objectid_room2_fire1                                         ; 3be2: a9 06
     jsr update_brazier_and_fire                                       ; 3be4: 20 88 19
     ldx #$25 ; '%'                                                    ; 3be7: a2 25
-    lda #7                                                            ; 3be9: a9 07
+    lda #objectid_room2_fire2                                         ; 3be9: a9 07
     jsr update_brazier_and_fire                                       ; 3beb: 20 88 19
 ; check for first update in room (branch if so)
     lda update_room_first_update_flag                                 ; 3bee: ad 2b 13
-    bne c3bf6                                                         ; 3bf1: d0 03
+    bne initialise_room_2                                             ; 3bf1: d0 03
     jmp c3d0d                                                         ; 3bf3: 4c 0d 3d
 
 ; check for level change (branch if not)
-c3bf6
+initialise_room_2
     lda current_level                                                 ; 3bf6: a5 31
     cmp level_before_latest_level_and_room_initialisation             ; 3bf8: c5 51
-    beq c3c2f                                                         ; 3bfa: f0 33
+    beq room_changed_only                                             ; 3bfa: f0 33
     lda l0a33                                                         ; 3bfc: ad 33 0a
     bne c3c0d                                                         ; 3bff: d0 0c
     lda #$70 ; 'p'                                                    ; 3c01: a9 70
     sta l0a33                                                         ; 3c03: 8d 33 0a
     lda #0                                                            ; 3c06: a9 00
     sta l0a34                                                         ; 3c08: 8d 34 0a
-    beq c3c2f                                                         ; 3c0b: f0 22
+    beq room_changed_only                                             ; 3c0b: f0 22
 c3c0d
     lda l0a34                                                         ; 3c0d: ad 34 0a
     bmi c3c25                                                         ; 3c10: 30 13
-    beq c3c2f                                                         ; 3c12: f0 1b
+    beq room_changed_only                                             ; 3c12: f0 1b
     lda #0                                                            ; 3c14: a9 00
     sta l0a34                                                         ; 3c16: 8d 34 0a
     lda l0a33                                                         ; 3c19: ad 33 0a
     sec                                                               ; 3c1c: 38
     sbc #$20 ; ' '                                                    ; 3c1d: e9 20
     sta l0a33                                                         ; 3c1f: 8d 33 0a
-    jmp c3c2f                                                         ; 3c22: 4c 2f 3c
+    jmp room_changed_only                                             ; 3c22: 4c 2f 3c
 
 c3c25
     lda #$10                                                          ; 3c25: a9 10
     sta l0a33                                                         ; 3c27: 8d 33 0a
     lda #$80                                                          ; 3c2a: a9 80
     sta l0a34                                                         ; 3c2c: 8d 34 0a
-c3c2f
+room_changed_only
     lda desired_room_index                                            ; 3c2f: a5 30
     cmp #2                                                            ; 3c31: c9 02
     beq c3c38                                                         ; 3c33: f0 03
@@ -604,7 +606,7 @@ c3c59
     lsr                                                               ; 3c69: 4a
     tay                                                               ; 3c6a: a8
     dey                                                               ; 3c6b: 88
-    lda #3                                                            ; 3c6c: a9 03
+    lda #collision_map_solid_rock                                     ; 3c6c: a9 03
     jsr write_a_single_value_to_cell_in_collision_map                 ; 3c6e: 20 bb 1e
     iny                                                               ; 3c71: c8
     pla                                                               ; 3c72: 68
@@ -612,16 +614,17 @@ c3c59
     sta temp_sprite_y_offset                                          ; 3c75: 85 3b
     lda #spriteid_stalk_top_end                                       ; 3c77: a9 ca
     jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map           ; 3c79: 20 57 1f
-    ldx #3                                                            ; 3c7c: a2 03
+    ldx #objectid_top_of_stalk                                        ; 3c7c: a2 03
     jsr set_object_position_from_current_sprite_position              ; 3c7e: 20 6d 1f
     ldx #$14                                                          ; 3c81: a2 14
     iny                                                               ; 3c83: c8
     lda #spriteid_stalk                                               ; 3c84: a9 c8
-loop_c3c86
+draw_stalk_to_bottom
     jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map           ; 3c86: 20 57 1f
     iny                                                               ; 3c89: c8
     cpy #$15                                                          ; 3c8a: c0 15
-    bcc loop_c3c86                                                    ; 3c8c: 90 f8
+    bcc draw_stalk_to_bottom                                          ; 3c8c: 90 f8
+; draw bottom of stalk
     lda #spriteid_stalk_bottom_end                                    ; 3c8e: a9 c9
     jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map           ; 3c90: 20 57 1f
     lda l0a33                                                         ; 3c93: ad 33 0a
@@ -668,7 +671,7 @@ c3cdc
     iny                                                               ; 3cde: c8
     lda l3d08                                                         ; 3cdf: ad 08 3d
     jsr draw_sprite_a_at_cell_xy                                      ; 3ce2: 20 4c 1f
-    ldx #4                                                            ; 3ce5: a2 04
+    ldx #objectid_leaf1                                               ; 3ce5: a2 04
     jsr set_object_position_from_current_sprite_position              ; 3ce7: 20 6d 1f
     ldx #$15                                                          ; 3cea: a2 15
     lda #$ff                                                          ; 3cec: a9 ff
@@ -679,7 +682,7 @@ c3cdc
     sta sprite_reflect_flag                                           ; 3cf4: 85 1d
     lda l3d08                                                         ; 3cf6: ad 08 3d
     jsr draw_sprite_a_at_cell_xy                                      ; 3cf9: 20 4c 1f
-    ldx #5                                                            ; 3cfc: a2 05
+    ldx #objectid_leaf2                                               ; 3cfc: a2 05
     jsr set_object_position_from_current_sprite_position              ; 3cfe: 20 6d 1f
     iny                                                               ; 3d01: c8
     cpy l3d09                                                         ; 3d02: cc 09 3d
@@ -703,17 +706,17 @@ c3d0d
     bne c3d0a                                                         ; 3d16: d0 f2
     lda developer_flags                                               ; 3d18: ad 03 11
     bpl developer_mode_inactive2                                      ; 3d1b: 10 0e
-    ldx #$ac                                                          ; 3d1d: a2 ac
-    jsr l3acc                                                         ; 3d1f: 20 cc 3a
-    bne c3d48                                                         ; 3d22: d0 24
-    ldx #$c8                                                          ; 3d24: a2 c8
-    jsr l3acc                                                         ; 3d26: 20 cc 3a
-    bne c3d52                                                         ; 3d29: d0 27
+    ldx #inkey_key_g                                                  ; 3d1d: a2 ac
+    jsr negative_inkey                                                ; 3d1f: 20 cc 3a
+    bne g_pressed                                                     ; 3d22: d0 24
+    ldx #inkey_key_p                                                  ; 3d24: a2 c8
+    jsr negative_inkey                                                ; 3d26: 20 cc 3a
+    bne p_pressed                                                     ; 3d29: d0 27
 developer_mode_inactive2
     lda object_spriteid + objectid_bottle_pour                        ; 3d2b: ad aa 09
     cmp #spriteid_splash                                              ; 3d2e: c9 d9
     bne c3d0a                                                         ; 3d30: d0 d8
-    ldx #2                                                            ; 3d32: a2 02
+    ldx #objectid_bottle_pour                                         ; 3d32: a2 02
     jsr find_left_and_right_of_object                                 ; 3d34: 20 34 24
     lda l0078                                                         ; 3d37: a5 78
     cmp #$15                                                          ; 3d39: c9 15
@@ -722,14 +725,14 @@ developer_mode_inactive2
     cmp #$14                                                          ; 3d3f: c9 14
     bcc c3d0a                                                         ; 3d41: 90 c7
     lda l0a36                                                         ; 3d43: ad 36 0a
-    bne c3d52                                                         ; 3d46: d0 0a
-c3d48
+    bne p_pressed                                                     ; 3d46: d0 0a
+g_pressed
     lda l0a33                                                         ; 3d48: ad 33 0a
     cmp #$10                                                          ; 3d4b: c9 10
     beq c3db6                                                         ; 3d4d: f0 67
     jmp c3d63                                                         ; 3d4f: 4c 63 3d
 
-c3d52
+p_pressed
     lda l0a33                                                         ; 3d52: ad 33 0a
     cmp #$10                                                          ; 3d55: c9 10
     bne c3db6                                                         ; 3d57: d0 5d
@@ -785,7 +788,7 @@ c3da8
 c3db6
     lda desired_room_index                                            ; 3db6: a5 30
     cmp #2                                                            ; 3db8: c9 02
-    bne c3e07                                                         ; 3dba: d0 4b
+    bne return2_local                                                 ; 3dba: d0 4b
     ldy #$10                                                          ; 3dbc: a0 10
     lda l0a34                                                         ; 3dbe: ad 34 0a
     bmi c3ddd                                                         ; 3dc1: 30 1a
@@ -826,7 +829,7 @@ c3ddd
     sta object_spriteid + objectid_drip                               ; 3e01: 8d ab 09
     jmp c3e0a                                                         ; 3e04: 4c 0a 3e
 
-c3e07
+return2_local
     jmp return2                                                       ; 3e07: 4c cb 3e
 
 c3e0a
@@ -862,7 +865,7 @@ c3e43
     lda l0a34                                                         ; 3e4b: ad 34 0a
     sec                                                               ; 3e4e: 38
     sbc #$0a                                                          ; 3e4f: e9 0a
-    bcc c3e07                                                         ; 3e51: 90 b4
+    bcc return2_local                                                 ; 3e51: 90 b4
     ldy #3                                                            ; 3e53: a0 03
     cmp #4                                                            ; 3e55: c9 04
     bcs c3e5a                                                         ; 3e57: b0 01
@@ -1041,7 +1044,7 @@ room_3_update_handler
     sta currently_updating_logic_for_room_index                       ; 3f58: 8d ba 1a
     ldx #3                                                            ; 3f5b: a2 03
     ldy #$0c                                                          ; 3f5d: a0 0c
-    lda #4                                                            ; 3f5f: a9 04
+    lda #objectid_room_3_fire                                         ; 3f5f: a9 04
     jsr update_brazier_and_fire                                       ; 3f61: 20 88 19
     lda #$ff                                                          ; 3f64: a9 ff
     sta l44ec                                                         ; 3f66: 8d ec 44
@@ -1211,7 +1214,7 @@ dog_head_animation4
     !byte $80                                                         ; 4043: 80
 
 ; check for first update in room (branch if not)
-sub_c4044
+update_dog
     lda update_room_first_update_flag                                 ; 4044: ad 2b 13
     beq c40ad                                                         ; 4047: f0 64
 ; check for level change (branch if not)
@@ -1361,7 +1364,7 @@ c413e
     bne return3                                                       ; 4174: d0 27
     ldx #$11                                                          ; 4176: a2 11
     ldy #$0c                                                          ; 4178: a0 0c
-    lda #3                                                            ; 417a: a9 03
+    lda #collision_map_solid_rock                                     ; 417a: a9 03
     jsr write_a_single_value_to_cell_in_collision_map                 ; 417c: 20 bb 1e
     iny                                                               ; 417f: c8
     jsr write_a_single_value_to_cell_in_collision_map                 ; 4180: 20 bb 1e
@@ -1370,7 +1373,7 @@ c413e
 c4186
     ldx #$11                                                          ; 4186: a2 11
     ldy #$0c                                                          ; 4188: a0 0c
-    lda #0                                                            ; 418a: a9 00
+    lda #collision_map_none                                           ; 418a: a9 00
     jsr write_a_single_value_to_cell_in_collision_map                 ; 418c: 20 bb 1e
     iny                                                               ; 418f: c8
     jsr write_a_single_value_to_cell_in_collision_map                 ; 4190: 20 bb 1e
@@ -1679,10 +1682,10 @@ room_1_update_handler
     sta currently_updating_logic_for_room_index                       ; 43a6: 8d ba 1a
     ldx #3                                                            ; 43a9: a2 03
     ldy #$0c                                                          ; 43ab: a0 0c
-    lda #4                                                            ; 43ad: a9 04
+    lda #objectid_room_1_fire1                                        ; 43ad: a9 04
     jsr update_brazier_and_fire                                       ; 43af: 20 88 19
     ldx #$25 ; '%'                                                    ; 43b2: a2 25
-    lda #5                                                            ; 43b4: a9 05
+    lda #objectid_room_1_fire2                                        ; 43b4: a9 05
     jsr update_brazier_and_fire                                       ; 43b6: 20 88 19
     lda #0                                                            ; 43b9: a9 00
     sta l44ec                                                         ; 43bb: 8d ec 44
@@ -1917,10 +1920,8 @@ pydis_end
 ; Automatically generated labels:
 ;     c3b1c
 ;     c3b21
-;     c3bf6
 ;     c3c0d
 ;     c3c25
-;     c3c2f
 ;     c3c38
 ;     c3c52
 ;     c3c59
@@ -1929,8 +1930,6 @@ pydis_end
 ;     c3cdc
 ;     c3d0a
 ;     c3d0d
-;     c3d48
-;     c3d52
 ;     c3d63
 ;     c3d73
 ;     c3d7c
@@ -1940,7 +1939,6 @@ pydis_end
 ;     c3db6
 ;     c3dd6
 ;     c3ddd
-;     c3e07
 ;     c3e0a
 ;     c3e22
 ;     c3e43
@@ -2008,7 +2006,6 @@ pydis_end
 ;     l38c6
 ;     l38c7
 ;     l38c8
-;     l3acc
 ;     l3bd1
 ;     l3bd4
 ;     l3bd5
@@ -2021,12 +2018,10 @@ pydis_end
 ;     l44ec
 ;     l44ed
 ;     l44ee
-;     loop_c3c86
 ;     sub_c3b3a
 ;     sub_c3b4e
 ;     sub_c3cd0
 ;     sub_c3f86
-;     sub_c4044
 ;     sub_c43ec
 !if (<envelope1) != $ef {
     !error "Assertion failed: <envelope1 == $ef"
@@ -2052,6 +2047,9 @@ pydis_end
 !if (>sound2) != $44 {
     !error "Assertion failed: >sound2 == $44"
 }
+!if (collision_map_none) != $00 {
+    !error "Assertion failed: collision_map_none == $00"
+}
 !if (collision_map_rope) != $02 {
     !error "Assertion failed: collision_map_rope == $02"
 }
@@ -2063,6 +2061,12 @@ pydis_end
 }
 !if (exit_room_right) != $04 {
     !error "Assertion failed: exit_room_right == $04"
+}
+!if (inkey_key_g) != $ac {
+    !error "Assertion failed: inkey_key_g == $ac"
+}
+!if (inkey_key_p) != $c8 {
+    !error "Assertion failed: inkey_key_p == $c8"
 }
 !if (level_specific_initialisation) != $3af6 {
     !error "Assertion failed: level_specific_initialisation == $3af6"
@@ -2154,11 +2158,38 @@ pydis_end
 !if (object_y_low + objectid_leaf2) != $0981 {
     !error "Assertion failed: object_y_low + objectid_leaf2 == $0981"
 }
+!if (objectid_bottle_pour) != $02 {
+    !error "Assertion failed: objectid_bottle_pour == $02"
+}
+!if (objectid_leaf1) != $04 {
+    !error "Assertion failed: objectid_leaf1 == $04"
+}
+!if (objectid_leaf2) != $05 {
+    !error "Assertion failed: objectid_leaf2 == $05"
+}
 !if (objectid_old_player) != $0b {
     !error "Assertion failed: objectid_old_player == $0b"
 }
 !if (objectid_old_player_accessory) != $0c {
     !error "Assertion failed: objectid_old_player_accessory == $0c"
+}
+!if (objectid_room2_fire1) != $06 {
+    !error "Assertion failed: objectid_room2_fire1 == $06"
+}
+!if (objectid_room2_fire2) != $07 {
+    !error "Assertion failed: objectid_room2_fire2 == $07"
+}
+!if (objectid_room_1_fire1) != $04 {
+    !error "Assertion failed: objectid_room_1_fire1 == $04"
+}
+!if (objectid_room_1_fire2) != $05 {
+    !error "Assertion failed: objectid_room_1_fire2 == $05"
+}
+!if (objectid_room_3_fire) != $04 {
+    !error "Assertion failed: objectid_room_3_fire == $04"
+}
+!if (objectid_top_of_stalk) != $03 {
+    !error "Assertion failed: objectid_top_of_stalk == $03"
 }
 !if (room_0_data) != $3f96 {
     !error "Assertion failed: room_0_data == $3f96"

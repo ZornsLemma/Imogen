@@ -326,6 +326,7 @@ object_room_collision_flags                         = $38d8
 play_sound_yx                                       = $38f6
 define_envelope                                     = $395e
 sound_priority_per_channel_table                    = $396f
+negative_inkey                                      = $3acc
 
     * = $3ad5
 

@@ -293,6 +293,7 @@ l3ac7                                               = $3ac7
 l3ac9                                               = $3ac9
 l3aca                                               = $3aca
 l3acb                                               = $3acb
+negative_inkey                                      = $3acc
 
     * = $3ad5
 
