@@ -393,7 +393,7 @@ level_specific_update
     jsr update_dog                                                    ; 3b36: 20 44 40
     rts                                                               ; 3b39: 60
 
-sub_c3b3a
+draw_top_and_bottom_rows
     ldx #0                                                            ; 3b3a: a2 00
     ldy #0                                                            ; 3b3c: a0 00
     lda #$ff                                                          ; 3b3e: a9 ff
@@ -404,7 +404,7 @@ sub_c3b3a
     ldy #$16                                                          ; 3b49: a0 16
     jmp copy_rectangle_of_memory_to_screen                            ; 3b4b: 4c bb 1a
 
-sub_c3b4e
+draw_top_left_and_right_corners
     ldx #3                                                            ; 3b4e: a2 03
     ldy #2                                                            ; 3b50: a0 02
     lda #1                                                            ; 3b52: a9 01
@@ -450,7 +450,7 @@ room_2_data
 ; draw rectangles of ground fill rock with a 2x2 pattern. Also writes to the collision
 ; map.
 room_2_code
-    jsr sub_c3b3a                                                     ; 3b62: 20 3a 3b
+    jsr draw_top_and_bottom_rows                                      ; 3b62: 20 3a 3b
 ; draw 3x15 rectangle at (0,2)
     ldy #2                                                            ; 3b65: a0 02
     lda #3                                                            ; 3b67: a9 03
@@ -967,7 +967,7 @@ room_3_data
 ; draw rectangles of ground fill rock with a 2x2 pattern. Also writes to the collision
 ; map.
 room_3_code
-    jsr sub_c3b3a                                                     ; 3ece: 20 3a 3b
+    jsr draw_top_and_bottom_rows                                      ; 3ece: 20 3a 3b
 ; draw 255x20 rectangle at (37,2)
     ldx #$25 ; '%'                                                    ; 3ed1: a2 25
     ldy #2                                                            ; 3ed3: a0 02
@@ -1107,7 +1107,7 @@ room_0_data
 ; draw rectangles of ground fill rock with a 2x2 pattern. Also writes to the collision
 ; map.
 room_0_code
-    jsr sub_c3b3a                                                     ; 3f98: 20 3a 3b
+    jsr draw_top_and_bottom_rows                                      ; 3f98: 20 3a 3b
 ; draw 3x20 rectangle at (0,2)
     ldy #2                                                            ; 3f9b: a0 02
     lda #3                                                            ; 3f9d: a9 03
@@ -1133,7 +1133,7 @@ room_0_code
     lda #3                                                            ; 3fc2: a9 03
     sta width_in_cells                                                ; 3fc4: 85 3c
     jsr copy_rectangle_of_memory_to_screen                            ; 3fc6: 20 bb 1a
-    jsr sub_c3b4e                                                     ; 3fc9: 20 4e 3b
+    jsr draw_top_left_and_right_corners                               ; 3fc9: 20 4e 3b
 ; carve the floor, walls and ceiling into the rock
     jsr draw_floor_walls_and_ceiling_around_solid_rock                ; 3fcc: 20 90 1b
 ; draw shelf at (3,7) of size (4x1)
@@ -1612,7 +1612,7 @@ room_1_data
 ; draw rectangles of ground fill rock with a 2x2 pattern. Also writes to the collision
 ; map.
 room_1_code
-    jsr sub_c3b3a                                                     ; 432a: 20 3a 3b
+    jsr draw_top_and_bottom_rows                                      ; 432a: 20 3a 3b
 ; draw 3x15 rectangle at (0,2)
     ldy #2                                                            ; 432d: a0 02
     lda #3                                                            ; 432f: a9 03
@@ -1645,7 +1645,7 @@ room_1_code
 ; draw 3x2 rectangle at (34,15)
     ldx #$22 ; '"'                                                    ; 4362: a2 22
     jsr copy_rectangle_of_memory_to_screen                            ; 4364: 20 bb 1a
-    jsr sub_c3b4e                                                     ; 4367: 20 4e 3b
+    jsr draw_top_left_and_right_corners                               ; 4367: 20 4e 3b
 ; carve the floor, walls and ceiling into the rock
     jsr draw_floor_walls_and_ceiling_around_solid_rock                ; 436a: 20 90 1b
 ; draw rope at (26,2) length 9
@@ -2020,8 +2020,6 @@ pydis_end
 ;     l44ec
 ;     l44ed
 ;     l44ee
-;     sub_c3b3a
-;     sub_c3b4e
 ;     sub_c3cd0
 ;     sub_c3f86
 ;     sub_c43ec

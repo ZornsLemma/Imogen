@@ -338,6 +338,8 @@ expr(0x44b6, sprite_dict)
 expr(0x44bb, sprite_dict)
 expr(0x44e2, sprite_dict)
 expr(0x44e4, "object_spriteid + objectid_drip")
+label(0x3b3a, "draw_top_and_bottom_rows")
+label(0x3b4e, "draw_top_left_and_right_corners")
 
 result = go(False)
 result = remove_sprite_data(result)
