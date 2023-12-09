@@ -37,7 +37,7 @@ sprite_dict = {**common_sprite_dict, **sprite_dict}
 constant(2, "objectid_small_egg")
 constant(3, "objectid_egg")
 
-# When the egg is off-screen, this counts up every update cycle it is not visible (capping at &7f). When entering the room containing the egg, the game performs (up to) this number of egg animation updates without modifying the screen, giving the effect that the egg starts exactly where it has had time to reach if it was thrown off-screen.
+# When the egg is off-screen, this counts up every update cycle it is not visible (capping at &80). When entering the room containing the egg, the game performs (up to) this number of egg animation updates without modifying the screen, giving the effect that the egg starts exactly where it has had time to reach if it was thrown off-screen.
 label(0xa6f, "level_workspace_small_egg_offscreen_time")
 
 set_sprite_dict(sprite_dict)
