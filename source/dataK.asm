@@ -124,13 +124,13 @@ spriteid_icodata_sound                = 2
 spriteid_icodata_wizard               = 4
 spriteid_icon_background              = 1
 spriteid_leaf                         = 205
-spriteid_leaf1                        = 224
-spriteid_leaf2                        = 225
-spriteid_leaf3                        = 226
-spriteid_leaf4                        = 227
-spriteid_leaf_wilted                  = 208
-spriteid_leaf_wilting1                = 206
-spriteid_leaf_wilting2                = 207
+spriteid_leaf_grow1                   = 208
+spriteid_leaf_grow2                   = 207
+spriteid_leaf_grow3                   = 206
+spriteid_leaf_wilt_1                  = 224
+spriteid_leaf_wilt_2                  = 225
+spriteid_leaf_wilt_3                  = 226
+spriteid_leaf_wilt_4                  = 227
 spriteid_menu_item_completion_spell   = 33
 spriteid_monkey1                      = 78
 spriteid_monkey2                      = 79
@@ -207,8 +207,8 @@ player_held_object_spriteid                         = $52
 developer_mode_sideways_ram_is_set_up_flag          = $5b
 l0070                                               = $70
 room_exit_direction                                 = $70
-l0078                                               = $78
-l0079                                               = $79
+object_left_cell_x                                  = $78
+object_right_cell_x                                 = $79
 object_x_low                                        = $0950
 object_x_low_old                                    = $095b
 object_x_high                                       = $0966
@@ -220,20 +220,20 @@ object_spriteid                                     = $09a8
 object_spriteid_old                                 = $09b3
 object_direction                                    = $09be
 current_player_animation                            = $09df
-l0a33                                               = $0a33
-l0a34                                               = $0a34
-l0a35                                               = $0a35
-l0a36                                               = $0a36
-l0a37                                               = $0a37
-l0a38                                               = $0a38
-level_workspace                                     = $0a6f
-l0a70                                               = $0a70
-l0a71                                               = $0a71
-l0a72                                               = $0a72
-l0a73                                               = $0a73
-l0a74                                               = $0a74
-l0a75                                               = $0a75
-l0a76                                               = $0a76
+save_game_level_k_plant_top                         = $0a33
+save_game_level_k_plant_growth_timer                = $0a34
+save_game_level_k_got_bottle_flag                   = $0a35
+save_game_level_k_poison_in_bottle_flag             = $0a36
+save_game_level_k_dog_animation                     = $0a37
+save_game_level_k_poison_dog_animation_step         = $0a38
+room_1_drip_timer                                   = $0a6f
+bottle_pour_x_low                                   = $0a70
+bottle_pour_x_high                                  = $0a71
+bottle_pour_y                                       = $0a72
+bottle_pour_animation_step                          = $0a73
+bottle_pour_direction                               = $0a74
+room_3_drip_timer                                   = $0a75
+dog_animation_step                                  = $0a76
 tile_all_set_pixels                                 = $0aa9
 developer_flags                                     = $1103
 initialise_level_and_room                           = $1140
@@ -290,12 +290,8 @@ monkey_climb_down_animation                         = $3148
 monkey_climb_animation                              = $3150
 inhibit_monkey_climb_flag                           = $31d7
 object_erase_type                                   = $38ac
-l38ae                                               = $38ae
-l38af                                               = $38af
 l38b2                                               = $38b2
 object_z_order                                      = $38c2
-l38c4                                               = $38c4
-l38c5                                               = $38c5
 l38c6                                               = $38c6
 l38c7                                               = $38c7
 l38c8                                               = $38c8
@@ -352,11 +348,11 @@ level_specific_initialisation
     lda developer_flags                                               ; 3afc: ad 03 11
     bpl developer_mode_inactive1                                      ; 3aff: 10 0a
     lda #$ff                                                          ; 3b01: a9 ff
-    sta l0a35                                                         ; 3b03: 8d 35 0a
+    sta save_game_level_k_got_bottle_flag                             ; 3b03: 8d 35 0a
     lda #$ff                                                          ; 3b06: a9 ff
-    sta l0a36                                                         ; 3b08: 8d 36 0a
+    sta save_game_level_k_poison_in_bottle_flag                       ; 3b08: 8d 36 0a
 developer_mode_inactive1
-    lda l0a35                                                         ; 3b0b: ad 35 0a
+    lda save_game_level_k_got_bottle_flag                             ; 3b0b: ad 35 0a
     beq c3b21                                                         ; 3b0e: f0 11
     cmp #$ff                                                          ; 3b10: c9 ff
     beq c3b1c                                                         ; 3b12: f0 08
@@ -511,18 +507,18 @@ room_2_check_right_exit
     ldy current_level                                                 ; 3bcc: a4 31
     jmp initialise_level_and_room                                     ; 3bce: 4c 40 11
 
-l3bd1
-    !byte spriteid_leaf_wilted                                        ; 3bd1: d0
-    !byte spriteid_leaf_wilting2                                      ; 3bd2: cf
-    !byte spriteid_leaf_wilting1                                      ; 3bd3: ce
-l3bd4
+growing_leaf_animation
+    !byte spriteid_leaf_grow1                                         ; 3bd1: d0
+    !byte spriteid_leaf_grow2                                         ; 3bd2: cf
+    !byte spriteid_leaf_grow3                                         ; 3bd3: ce
+full_leaf
     !byte spriteid_leaf                                               ; 3bd4: cd
-l3bd5
-    !byte spriteid_leaf4                                              ; 3bd5: e3
-    !byte spriteid_leaf3                                              ; 3bd6: e2
-    !byte spriteid_leaf2                                              ; 3bd7: e1
-l3bd8
-    !byte spriteid_leaf1                                              ; 3bd8: e0
+leaf_wilt_animation
+    !byte spriteid_leaf_wilt_4                                        ; 3bd5: e3
+    !byte spriteid_leaf_wilt_3                                        ; 3bd6: e2
+    !byte spriteid_leaf_wilt_2                                        ; 3bd7: e1
+leaf_start_wilting
+    !byte spriteid_leaf_wilt_1                                        ; 3bd8: e0
 
 room_2_update_handler
     lda #2                                                            ; 3bd9: a9 02
@@ -544,30 +540,30 @@ initialise_room_2
     lda current_level                                                 ; 3bf6: a5 31
     cmp level_before_latest_level_and_room_initialisation             ; 3bf8: c5 51
     beq room_changed_only                                             ; 3bfa: f0 33
-    lda l0a33                                                         ; 3bfc: ad 33 0a
+    lda save_game_level_k_plant_top                                   ; 3bfc: ad 33 0a
     bne c3c0d                                                         ; 3bff: d0 0c
     lda #$70 ; 'p'                                                    ; 3c01: a9 70
-    sta l0a33                                                         ; 3c03: 8d 33 0a
+    sta save_game_level_k_plant_top                                   ; 3c03: 8d 33 0a
     lda #0                                                            ; 3c06: a9 00
-    sta l0a34                                                         ; 3c08: 8d 34 0a
+    sta save_game_level_k_plant_growth_timer                          ; 3c08: 8d 34 0a
     beq room_changed_only                                             ; 3c0b: f0 22
 c3c0d
-    lda l0a34                                                         ; 3c0d: ad 34 0a
+    lda save_game_level_k_plant_growth_timer                          ; 3c0d: ad 34 0a
     bmi c3c25                                                         ; 3c10: 30 13
     beq room_changed_only                                             ; 3c12: f0 1b
     lda #0                                                            ; 3c14: a9 00
-    sta l0a34                                                         ; 3c16: 8d 34 0a
-    lda l0a33                                                         ; 3c19: ad 33 0a
+    sta save_game_level_k_plant_growth_timer                          ; 3c16: 8d 34 0a
+    lda save_game_level_k_plant_top                                   ; 3c19: ad 33 0a
     sec                                                               ; 3c1c: 38
     sbc #$20 ; ' '                                                    ; 3c1d: e9 20
-    sta l0a33                                                         ; 3c1f: 8d 33 0a
+    sta save_game_level_k_plant_top                                   ; 3c1f: 8d 33 0a
     jmp room_changed_only                                             ; 3c22: 4c 2f 3c
 
 c3c25
     lda #$10                                                          ; 3c25: a9 10
-    sta l0a33                                                         ; 3c27: 8d 33 0a
+    sta save_game_level_k_plant_top                                   ; 3c27: 8d 33 0a
     lda #$80                                                          ; 3c2a: a9 80
-    sta l0a34                                                         ; 3c2c: 8d 34 0a
+    sta save_game_level_k_plant_growth_timer                          ; 3c2c: 8d 34 0a
 room_changed_only
     lda desired_room_index                                            ; 3c2f: a5 30
     cmp #2                                                            ; 3c31: c9 02
@@ -576,9 +572,9 @@ room_changed_only
 
 c3c38
     ldy #$10                                                          ; 3c38: a0 10
-    lda l0a34                                                         ; 3c3a: ad 34 0a
+    lda save_game_level_k_plant_growth_timer                          ; 3c3a: ad 34 0a
     bmi c3c59                                                         ; 3c3d: 30 1a
-    ldy l0a33                                                         ; 3c3f: ac 33 0a
+    ldy save_game_level_k_plant_top                                   ; 3c3f: ac 33 0a
     sec                                                               ; 3c42: 38
     sbc #4                                                            ; 3c43: e9 04
     bcc c3c59                                                         ; 3c45: 90 12
@@ -589,7 +585,7 @@ c3c38
     lda #$20 ; ' '                                                    ; 3c4e: a9 20
     sta l0070                                                         ; 3c50: 85 70
 c3c52
-    lda l0a33                                                         ; 3c52: ad 33 0a
+    lda save_game_level_k_plant_top                                   ; 3c52: ad 33 0a
     sec                                                               ; 3c55: 38
     sbc l0070                                                         ; 3c56: e5 70
     tay                                                               ; 3c58: a8
@@ -628,26 +624,26 @@ draw_stalk_to_bottom
 ; draw bottom of stalk
     lda #spriteid_stalk_bottom_end                                    ; 3c8e: a9 c9
     jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map           ; 3c90: 20 57 1f
-    lda l0a33                                                         ; 3c93: ad 33 0a
+    lda save_game_level_k_plant_top                                   ; 3c93: ad 33 0a
     lsr                                                               ; 3c96: 4a
     lsr                                                               ; 3c97: 4a
     lsr                                                               ; 3c98: 4a
     tay                                                               ; 3c99: a8
-    lda l3bd4                                                         ; 3c9a: ad d4 3b
+    lda full_leaf                                                     ; 3c9a: ad d4 3b
     sta l3d08                                                         ; 3c9d: 8d 08 3d
-    lda l0a34                                                         ; 3ca0: ad 34 0a
+    lda save_game_level_k_plant_growth_timer                          ; 3ca0: ad 34 0a
     bpl c3cbb                                                         ; 3ca3: 10 16
     tya                                                               ; 3ca5: 98
     sec                                                               ; 3ca6: 38
     sbc #4                                                            ; 3ca7: e9 04
     ldy #2                                                            ; 3ca9: a0 02
     jsr sub_c3cd0                                                     ; 3cab: 20 d0 3c
-    lda l0a33                                                         ; 3cae: ad 33 0a
+    lda save_game_level_k_plant_top                                   ; 3cae: ad 33 0a
     lsr                                                               ; 3cb1: 4a
     lsr                                                               ; 3cb2: 4a
     lsr                                                               ; 3cb3: 4a
     tay                                                               ; 3cb4: a8
-    lda l3bd8                                                         ; 3cb5: ad d8 3b
+    lda leaf_start_wilting                                            ; 3cb5: ad d8 3b
     sta l3d08                                                         ; 3cb8: 8d 08 3d
 c3cbb
     lda #$12                                                          ; 3cbb: a9 12
@@ -700,7 +696,7 @@ c3d0a
     jmp c3db6                                                         ; 3d0a: 4c b6 3d
 
 c3d0d
-    lda l0a34                                                         ; 3d0d: ad 34 0a
+    lda save_game_level_k_plant_growth_timer                          ; 3d0d: ad 34 0a
     bne c3d63                                                         ; 3d10: d0 51
     lda desired_room_index                                            ; 3d12: a5 30
     cmp #2                                                            ; 3d14: c9 02
@@ -719,32 +715,32 @@ developer_mode_inactive2
     bne c3d0a                                                         ; 3d30: d0 d8
     ldx #objectid_bottle_pour                                         ; 3d32: a2 02
     jsr find_left_and_right_of_object                                 ; 3d34: 20 34 24
-    lda l0078                                                         ; 3d37: a5 78
+    lda object_left_cell_x                                            ; 3d37: a5 78
     cmp #$15                                                          ; 3d39: c9 15
     bcs c3d0a                                                         ; 3d3b: b0 cd
-    lda l0079                                                         ; 3d3d: a5 79
+    lda object_right_cell_x                                           ; 3d3d: a5 79
     cmp #$14                                                          ; 3d3f: c9 14
     bcc c3d0a                                                         ; 3d41: 90 c7
-    lda l0a36                                                         ; 3d43: ad 36 0a
+    lda save_game_level_k_poison_in_bottle_flag                       ; 3d43: ad 36 0a
     bne p_pressed                                                     ; 3d46: d0 0a
 g_pressed
-    lda l0a33                                                         ; 3d48: ad 33 0a
+    lda save_game_level_k_plant_top                                   ; 3d48: ad 33 0a
     cmp #$10                                                          ; 3d4b: c9 10
     beq c3db6                                                         ; 3d4d: f0 67
     jmp c3d63                                                         ; 3d4f: 4c 63 3d
 
 p_pressed
-    lda l0a33                                                         ; 3d52: ad 33 0a
+    lda save_game_level_k_plant_top                                   ; 3d52: ad 33 0a
     cmp #$10                                                          ; 3d55: c9 10
     bne c3db6                                                         ; 3d57: d0 5d
     lda #$90                                                          ; 3d59: a9 90
-    sta l0a33                                                         ; 3d5b: 8d 33 0a
+    sta save_game_level_k_plant_top                                   ; 3d5b: 8d 33 0a
     lda #$80                                                          ; 3d5e: a9 80
-    sta l0a34                                                         ; 3d60: 8d 34 0a
+    sta save_game_level_k_plant_growth_timer                          ; 3d60: 8d 34 0a
 c3d63
-    lda l0a34                                                         ; 3d63: ad 34 0a
+    lda save_game_level_k_plant_growth_timer                          ; 3d63: ad 34 0a
     bmi c3d8d                                                         ; 3d66: 30 25
-    lda l0a34                                                         ; 3d68: ad 34 0a
+    lda save_game_level_k_plant_growth_timer                          ; 3d68: ad 34 0a
     cmp #$0f                                                          ; 3d6b: c9 0f
     bcc c3d73                                                         ; 3d6d: 90 04
     cmp #$15                                                          ; 3d6f: c9 15
@@ -752,23 +748,23 @@ c3d63
 c3d73
     clc                                                               ; 3d73: 18
     adc #1                                                            ; 3d74: 69 01
-    sta l0a34                                                         ; 3d76: 8d 34 0a
+    sta save_game_level_k_plant_growth_timer                          ; 3d76: 8d 34 0a
     jmp c3db6                                                         ; 3d79: 4c b6 3d
 
 c3d7c
     lda #0                                                            ; 3d7c: a9 00
-    sta l0a34                                                         ; 3d7e: 8d 34 0a
-    lda l0a33                                                         ; 3d81: ad 33 0a
+    sta save_game_level_k_plant_growth_timer                          ; 3d7e: 8d 34 0a
+    lda save_game_level_k_plant_top                                   ; 3d81: ad 33 0a
     sec                                                               ; 3d84: 38
     sbc #$20 ; ' '                                                    ; 3d85: e9 20
-    sta l0a33                                                         ; 3d87: 8d 33 0a
+    sta save_game_level_k_plant_top                                   ; 3d87: 8d 33 0a
     jmp c3db6                                                         ; 3d8a: 4c b6 3d
 
 c3d8d
-    lda l0a33                                                         ; 3d8d: ad 33 0a
+    lda save_game_level_k_plant_top                                   ; 3d8d: ad 33 0a
     cmp #$10                                                          ; 3d90: c9 10
     beq c3db6                                                         ; 3d92: f0 22
-    lda l0a34                                                         ; 3d94: ad 34 0a
+    lda save_game_level_k_plant_growth_timer                          ; 3d94: ad 34 0a
     cmp #$8f                                                          ; 3d97: c9 8f
     bcc c3d9f                                                         ; 3d99: 90 04
     cmp #$8f                                                          ; 3d9b: c9 8f
@@ -776,24 +772,24 @@ c3d8d
 c3d9f
     clc                                                               ; 3d9f: 18
     adc #1                                                            ; 3da0: 69 01
-    sta l0a34                                                         ; 3da2: 8d 34 0a
+    sta save_game_level_k_plant_growth_timer                          ; 3da2: 8d 34 0a
     jmp c3db6                                                         ; 3da5: 4c b6 3d
 
 c3da8
     lda #$80                                                          ; 3da8: a9 80
-    sta l0a34                                                         ; 3daa: 8d 34 0a
-    lda l0a33                                                         ; 3dad: ad 33 0a
+    sta save_game_level_k_plant_growth_timer                          ; 3daa: 8d 34 0a
+    lda save_game_level_k_plant_top                                   ; 3dad: ad 33 0a
     sec                                                               ; 3db0: 38
     sbc #$20 ; ' '                                                    ; 3db1: e9 20
-    sta l0a33                                                         ; 3db3: 8d 33 0a
+    sta save_game_level_k_plant_top                                   ; 3db3: 8d 33 0a
 c3db6
     lda desired_room_index                                            ; 3db6: a5 30
     cmp #2                                                            ; 3db8: c9 02
     bne return2_local                                                 ; 3dba: d0 4b
     ldy #$10                                                          ; 3dbc: a0 10
-    lda l0a34                                                         ; 3dbe: ad 34 0a
+    lda save_game_level_k_plant_growth_timer                          ; 3dbe: ad 34 0a
     bmi c3ddd                                                         ; 3dc1: 30 1a
-    ldy l0a33                                                         ; 3dc3: ac 33 0a
+    ldy save_game_level_k_plant_top                                   ; 3dc3: ac 33 0a
     sec                                                               ; 3dc6: 38
     sbc #4                                                            ; 3dc7: e9 04
     bcc c3ddd                                                         ; 3dc9: 90 12
@@ -804,7 +800,7 @@ c3db6
     lda #$20 ; ' '                                                    ; 3dd2: a9 20
     sta l0070                                                         ; 3dd4: 85 70
 c3dd6
-    lda l0a33                                                         ; 3dd6: ad 33 0a
+    lda save_game_level_k_plant_top                                   ; 3dd6: ad 33 0a
     sec                                                               ; 3dd9: 38
     sbc l0070                                                         ; 3dda: e5 70
     tay                                                               ; 3ddc: a8
@@ -834,7 +830,7 @@ return2_local
     jmp return2                                                       ; 3e07: 4c cb 3e
 
 c3e0a
-    lda l0a33                                                         ; 3e0a: ad 33 0a
+    lda save_game_level_k_plant_top                                   ; 3e0a: ad 33 0a
     cmp #$10                                                          ; 3e0d: c9 10
     bne c3e22                                                         ; 3e0f: d0 11
     lda #spriteid_one_pixel_masked_out                                ; 3e11: a9 00
@@ -845,15 +841,15 @@ c3e0a
     jmp return2                                                       ; 3e1f: 4c cb 3e
 
 c3e22
-    lda l0a33                                                         ; 3e22: ad 33 0a
+    lda save_game_level_k_plant_top                                   ; 3e22: ad 33 0a
     sec                                                               ; 3e25: 38
     sbc #$18                                                          ; 3e26: e9 18
     sta object_y_low + objectid_leaf1                                 ; 3e28: 8d 80 09
-    lda l0a33                                                         ; 3e2b: ad 33 0a
+    lda save_game_level_k_plant_top                                   ; 3e2b: ad 33 0a
     sec                                                               ; 3e2e: 38
     sbc #8                                                            ; 3e2f: e9 08
     sta object_y_low + objectid_leaf2                                 ; 3e31: 8d 81 09
-    lda l0a34                                                         ; 3e34: ad 34 0a
+    lda save_game_level_k_plant_growth_timer                          ; 3e34: ad 34 0a
     bmi c3e78                                                         ; 3e37: 30 3f
     bne c3e43                                                         ; 3e39: d0 08
     lda #spriteid_one_pixel_masked_out                                ; 3e3b: a9 00
@@ -863,7 +859,7 @@ c3e43
     lda #spriteid_one_pixel_masked_out                                ; 3e43: a9 00
     sta object_spriteid + objectid_leaf1                              ; 3e45: 8d ac 09
     sta object_spriteid + objectid_leaf2                              ; 3e48: 8d ad 09
-    lda l0a34                                                         ; 3e4b: ad 34 0a
+    lda save_game_level_k_plant_growth_timer                          ; 3e4b: ad 34 0a
     sec                                                               ; 3e4e: 38
     sbc #$0a                                                          ; 3e4f: e9 0a
     bcc return2_local                                                 ; 3e51: 90 b4
@@ -872,9 +868,9 @@ c3e43
     bcs c3e5a                                                         ; 3e57: b0 01
     tay                                                               ; 3e59: a8
 c3e5a
-    lda l3bd1,y                                                       ; 3e5a: b9 d1 3b
+    lda growing_leaf_animation,y                                      ; 3e5a: b9 d1 3b
     sta object_spriteid + objectid_leaf2                              ; 3e5d: 8d ad 09
-    lda l0a34                                                         ; 3e60: ad 34 0a
+    lda save_game_level_k_plant_growth_timer                          ; 3e60: ad 34 0a
     sec                                                               ; 3e63: 38
     sbc #$12                                                          ; 3e64: e9 12
     bcc return2                                                       ; 3e66: 90 63
@@ -883,7 +879,7 @@ c3e5a
     bcs c3e6f                                                         ; 3e6c: b0 01
     tay                                                               ; 3e6e: a8
 c3e6f
-    lda l3bd1,y                                                       ; 3e6f: b9 d1 3b
+    lda growing_leaf_animation,y                                      ; 3e6f: b9 d1 3b
     sta object_spriteid + objectid_leaf1                              ; 3e72: 8d ac 09
     jmp return2                                                       ; 3e75: 4c cb 3e
 
@@ -897,36 +893,36 @@ c3e78
     jsr copy_object_state_to_old                                      ; 3e83: 20 f7 20
     ldx #4                                                            ; 3e86: a2 04
     jsr copy_object_state_to_old                                      ; 3e88: 20 f7 20
-    lda l3bd4                                                         ; 3e8b: ad d4 3b
+    lda full_leaf                                                     ; 3e8b: ad d4 3b
     sta object_spriteid_old + objectid_leaf1                          ; 3e8e: 8d b7 09
     sta object_spriteid_old + objectid_leaf2                          ; 3e91: 8d b8 09
 c3e94
-    lda l3bd4                                                         ; 3e94: ad d4 3b
+    lda full_leaf                                                     ; 3e94: ad d4 3b
     sta object_spriteid + objectid_leaf1                              ; 3e97: 8d ac 09
     sta object_spriteid + objectid_leaf2                              ; 3e9a: 8d ad 09
-    lda l0a34                                                         ; 3e9d: ad 34 0a
+    lda save_game_level_k_plant_growth_timer                          ; 3e9d: ad 34 0a
     and #$7f                                                          ; 3ea0: 29 7f
     sec                                                               ; 3ea2: 38
     sbc #4                                                            ; 3ea3: e9 04
     bcc return2                                                       ; 3ea5: 90 24
     ldy #3                                                            ; 3ea7: a0 03
     cmp #4                                                            ; 3ea9: c9 04
-    bcs c3eae                                                         ; 3eab: b0 01
+    bcs update_leaf2                                                  ; 3eab: b0 01
     tay                                                               ; 3ead: a8
-c3eae
-    lda l3bd5,y                                                       ; 3eae: b9 d5 3b
+update_leaf2
+    lda leaf_wilt_animation,y                                         ; 3eae: b9 d5 3b
     sta object_spriteid + objectid_leaf2                              ; 3eb1: 8d ad 09
-    lda l0a34                                                         ; 3eb4: ad 34 0a
+    lda save_game_level_k_plant_growth_timer                          ; 3eb4: ad 34 0a
     and #$7f                                                          ; 3eb7: 29 7f
     sec                                                               ; 3eb9: 38
     sbc #$0c                                                          ; 3eba: e9 0c
     bcc return2                                                       ; 3ebc: 90 0d
     ldy #3                                                            ; 3ebe: a0 03
     cmp #4                                                            ; 3ec0: c9 04
-    bcs c3ec5                                                         ; 3ec2: b0 01
+    bcs update_leaf1                                                  ; 3ec2: b0 01
     tay                                                               ; 3ec4: a8
-c3ec5
-    lda l3bd5,y                                                       ; 3ec5: b9 d5 3b
+update_leaf1
+    lda leaf_wilt_animation,y                                         ; 3ec5: b9 d5 3b
     sta object_spriteid + objectid_leaf1                              ; 3ec8: 8d ac 09
 return2
     rts                                                               ; 3ecb: 60
@@ -1057,9 +1053,9 @@ room_3_update_handler
     sta l44ee                                                         ; 3f75: 8d ee 44
     ldx #$10                                                          ; 3f78: a2 10
     ldy #1                                                            ; 3f7a: a0 01
-    lda l0a75                                                         ; 3f7c: ad 75 0a
-    jsr sub_c43ec                                                     ; 3f7f: 20 ec 43
-    sta l0a75                                                         ; 3f82: 8d 75 0a
+    lda room_3_drip_timer                                             ; 3f7c: ad 75 0a
+    jsr update_drip                                                   ; 3f7f: 20 ec 43
+    sta room_3_drip_timer                                             ; 3f82: 8d 75 0a
     rts                                                               ; 3f85: 60
 
 sub_c3f86
@@ -1222,17 +1218,17 @@ update_dog
     lda current_level                                                 ; 4049: a5 31
     cmp level_before_latest_level_and_room_initialisation             ; 404b: c5 51
     beq c4067                                                         ; 404d: f0 18
-    lda l0a38                                                         ; 404f: ad 38 0a
+    lda save_game_level_k_poison_dog_animation_step                   ; 404f: ad 38 0a
     beq c405f                                                         ; 4052: f0 0b
-    lda #1                                                            ; 4054: a9 01
-    sta l0a37                                                         ; 4056: 8d 37 0a
-    sta l0a76                                                         ; 4059: 8d 76 0a
+    lda #dog_head_animation1 - dog_head_animations                    ; 4054: a9 01
+    sta save_game_level_k_dog_animation                               ; 4056: 8d 37 0a
+    sta dog_animation_step                                            ; 4059: 8d 76 0a
     jmp c4067                                                         ; 405c: 4c 67 40
 
 c405f
-    lda #5                                                            ; 405f: a9 05
-    sta l0a37                                                         ; 4061: 8d 37 0a
-    sta l0a76                                                         ; 4064: 8d 76 0a
+    lda #dog_head_animation2 - dog_head_animations                    ; 405f: a9 05
+    sta save_game_level_k_dog_animation                               ; 4061: 8d 37 0a
+    sta dog_animation_step                                            ; 4064: 8d 76 0a
 c4067
     lda desired_room_index                                            ; 4067: a5 30
     cmp #0                                                            ; 4069: c9 00
@@ -1267,19 +1263,19 @@ c40aa
     jmp c413e                                                         ; 40aa: 4c 3e 41
 
 c40ad
-    lda l0a76                                                         ; 40ad: ad 76 0a
+    lda dog_animation_step                                            ; 40ad: ad 76 0a
     clc                                                               ; 40b0: 18
     adc #3                                                            ; 40b1: 69 03
     tay                                                               ; 40b3: a8
     lda dog_head_animations,y                                         ; 40b4: b9 06 40
     cmp #$80                                                          ; 40b7: c9 80
     bne c40be                                                         ; 40b9: d0 03
-    ldy l0a37                                                         ; 40bb: ac 37 0a
+    ldy save_game_level_k_dog_animation                               ; 40bb: ac 37 0a
 c40be
-    lda l0a37                                                         ; 40be: ad 37 0a
-    cmp #1                                                            ; 40c1: c9 01
+    lda save_game_level_k_dog_animation                               ; 40be: ad 37 0a
+    cmp #dog_head_animation1 - dog_head_animations                    ; 40c1: c9 01
     beq c4115                                                         ; 40c3: f0 50
-    lda l0a38                                                         ; 40c5: ad 38 0a
+    lda save_game_level_k_poison_dog_animation_step                   ; 40c5: ad 38 0a
     bne c40ed                                                         ; 40c8: d0 23
     lda desired_room_index                                            ; 40ca: a5 30
     cmp #0                                                            ; 40cc: c9 00
@@ -1287,7 +1283,7 @@ c40be
     lda object_spriteid + objectid_bottle_pour                        ; 40d0: ad aa 09
     cmp #spriteid_splash                                              ; 40d3: c9 d9
     bne c40f7                                                         ; 40d5: d0 20
-    lda l0a36                                                         ; 40d7: ad 36 0a
+    lda save_game_level_k_poison_in_bottle_flag                       ; 40d7: ad 36 0a
     beq c40f7                                                         ; 40da: f0 1b
     ldx #objectid_bottle_pour                                         ; 40dc: a2 02
     sty l419e                                                         ; 40de: 8c 9e 41
@@ -1297,16 +1293,16 @@ c40be
     ora #0                                                            ; 40e9: 09 00
     beq c40f7                                                         ; 40eb: f0 0a
 c40ed
-    lda l0a38                                                         ; 40ed: ad 38 0a
+    lda save_game_level_k_poison_dog_animation_step                   ; 40ed: ad 38 0a
     cmp #$10                                                          ; 40f0: c9 10
     bcs c40f7                                                         ; 40f2: b0 03
-    inc l0a38                                                         ; 40f4: ee 38 0a
+    inc save_game_level_k_poison_dog_animation_step                   ; 40f4: ee 38 0a
 c40f7
-    lda l0a38                                                         ; 40f7: ad 38 0a
+    lda save_game_level_k_poison_dog_animation_step                   ; 40f7: ad 38 0a
     cmp #8                                                            ; 40fa: c9 08
     bcc c4118                                                         ; 40fc: 90 1a
-    ldy #$3a ; ':'                                                    ; 40fe: a0 3a
-    sty l0a37                                                         ; 4100: 8c 37 0a
+    ldy #dog_head_animation4 - dog_head_animations                    ; 40fe: a0 3a
+    sty save_game_level_k_dog_animation                               ; 4100: 8c 37 0a
     cmp #$10                                                          ; 4103: c9 10
     bcc c413b                                                         ; 4105: 90 34
     lda desired_room_index                                            ; 4107: a5 30
@@ -1314,8 +1310,8 @@ c40f7
     bne c4110                                                         ; 410b: d0 03
     jsr sub_c3f86                                                     ; 410d: 20 86 3f
 c4110
-    ldy #1                                                            ; 4110: a0 01
-    sty l0a37                                                         ; 4112: 8c 37 0a
+    ldy #dog_head_animation1 - dog_head_animations                    ; 4110: a0 01
+    sty save_game_level_k_dog_animation                               ; 4112: 8c 37 0a
 c4115
     jmp c413b                                                         ; 4115: 4c 3b 41
 
@@ -1336,12 +1332,12 @@ c4118
     sta player_wall_collision_reaction_speed                          ; 4136: 8d 33 24
     ldy #$1b                                                          ; 4139: a0 1b
 c413b
-    sty l0a76                                                         ; 413b: 8c 76 0a
+    sty dog_animation_step                                            ; 413b: 8c 76 0a
 c413e
     lda desired_room_index                                            ; 413e: a5 30
     cmp #0                                                            ; 4140: c9 00
     bne return3                                                       ; 4142: d0 59
-    ldy l0a76                                                         ; 4144: ac 76 0a
+    ldy dog_animation_step                                            ; 4144: ac 76 0a
     lda dog_head_animations,y                                         ; 4147: b9 06 40
     sta object_spriteid + objectid_dog_head                           ; 414a: 8d ae 09
     iny                                                               ; 414d: c8
@@ -1358,10 +1354,10 @@ c413e
     sta object_spriteid + objectid_dog_body                           ; 4163: 8d ad 09
     lda #$74 ; 't'                                                    ; 4166: a9 74
     sta object_x_low + objectid_dog_body                              ; 4168: 8d 55 09
-    lda l0a37                                                         ; 416b: ad 37 0a
-    cmp #1                                                            ; 416e: c9 01
+    lda save_game_level_k_dog_animation                               ; 416b: ad 37 0a
+    cmp #dog_head_animation1 - dog_head_animations                    ; 416e: c9 01
     beq c4186                                                         ; 4170: f0 14
-    cmp #$3a ; ':'                                                    ; 4172: c9 3a
+    cmp #dog_head_animation4 - dog_head_animations                    ; 4172: c9 3a
     bne return3                                                       ; 4174: d0 27
     ldx #$11                                                          ; 4176: a2 11
     ldy #$0c                                                          ; 4178: a0 0c
@@ -1415,22 +1411,22 @@ room_0_update_handler
     cmp level_before_latest_level_and_room_initialisation             ; 41d2: c5 51
     beq c41db                                                         ; 41d4: f0 05
     lda #0                                                            ; 41d6: a9 00
-    sta l0a73                                                         ; 41d8: 8d 73 0a
+    sta bottle_pour_animation_step                                    ; 41d8: 8d 73 0a
 c41db
     lda desired_room_index                                            ; 41db: a5 30
     cmp previous_room_index                                           ; 41dd: c5 50
     beq c41e6                                                         ; 41df: f0 05
     lda #0                                                            ; 41e1: a9 00
-    sta l0a73                                                         ; 41e3: 8d 73 0a
+    sta bottle_pour_animation_step                                    ; 41e3: 8d 73 0a
 c41e6
-    lda #$e4                                                          ; 41e6: a9 e4
-    sta l38ae                                                         ; 41e8: 8d ae 38
+    lda #spriteid_erase_2                                             ; 41e6: a9 e4
+    sta object_erase_type + objectid_bottle_pour                      ; 41e8: 8d ae 38
     lda #$60 ; '`'                                                    ; 41eb: a9 60
-    sta l38c4                                                         ; 41ed: 8d c4 38
+    sta object_z_order + objectid_bottle_pour                         ; 41ed: 8d c4 38
     lda desired_room_index                                            ; 41f0: a5 30
     cmp #0                                                            ; 41f2: c9 00
     bne c4217                                                         ; 41f4: d0 21
-    lda l0a35                                                         ; 41f6: ad 35 0a
+    lda save_game_level_k_got_bottle_flag                             ; 41f6: ad 35 0a
     bne c4217                                                         ; 41f9: d0 1c
     ldx #$23 ; '#'                                                    ; 41fb: a2 23
     lda #4                                                            ; 41fd: a9 04
@@ -1441,48 +1437,48 @@ c41e6
     lda #spriteid_empty_bottle                                        ; 4208: a9 d2
     sta object_spriteid + objectid_empty_bottle                       ; 420a: 8d ab 09
     lda #spriteid_erase_1                                             ; 420d: a9 d1
-    sta l38af                                                         ; 420f: 8d af 38
+    sta object_erase_type + objectid_drip                             ; 420f: 8d af 38
     lda #$c0                                                          ; 4212: a9 c0
-    sta l38c5                                                         ; 4214: 8d c5 38
+    sta object_z_order + objectid_drip                                ; 4214: 8d c5 38
 c4217
-    jmp c42ae                                                         ; 4217: 4c ae 42
+    jmp update_pouring_object                                         ; 4217: 4c ae 42
 
 room_0_not_first_update
-    lda l0a35                                                         ; 421a: ad 35 0a
+    lda save_game_level_k_got_bottle_flag                             ; 421a: ad 35 0a
     bne c4245                                                         ; 421d: d0 26
     lda desired_room_index                                            ; 421f: a5 30
     cmp #0                                                            ; 4221: c9 00
-    bne c4242                                                         ; 4223: d0 1d
-    lda l0a35                                                         ; 4225: ad 35 0a
+    bne return4_local                                                 ; 4223: d0 1d
+    lda save_game_level_k_got_bottle_flag                             ; 4225: ad 35 0a
     bne c4217                                                         ; 4228: d0 ed
     ldx #objectid_old_player                                          ; 422a: a2 0b
     ldy #objectid_empty_bottle                                        ; 422c: a0 03
     jsr test_for_collision_between_objects_x_and_y                    ; 422e: 20 e2 28
-    beq c4242                                                         ; 4231: f0 0f
+    beq return4_local                                                 ; 4231: f0 0f
     lda #spriteid_one_pixel_masked_out                                ; 4233: a9 00
     sta object_spriteid + objectid_empty_bottle                       ; 4235: 8d ab 09
     lda #1                                                            ; 4238: a9 01
-    sta l0a35                                                         ; 423a: 8d 35 0a
+    sta save_game_level_k_got_bottle_flag                             ; 423a: 8d 35 0a
     lda #spriteid_empty_bottle_menu_item                              ; 423d: a9 d6
     jsr find_or_create_menu_slot_for_A                                ; 423f: 20 bd 2b
-c4242
+return4_local
     jmp return4                                                       ; 4242: 4c 27 43
 
 c4245
-    lda l0a73                                                         ; 4245: ad 73 0a
-    bne c42a0                                                         ; 4248: d0 56
+    lda bottle_pour_animation_step                                    ; 4245: ad 73 0a
+    bne pour_in_progress                                              ; 4248: d0 56
     lda #spriteid_full_bottle_menu_item                               ; 424a: a9 d7
     cmp player_using_object_spriteid                                  ; 424c: cd b6 2e
-    bne c42ae                                                         ; 424f: d0 5d
+    bne update_pouring_object                                         ; 424f: d0 5d
     lda #spriteid_empty_bottle_menu_item                              ; 4251: a9 d6
     sta player_held_object_spriteid                                   ; 4253: 85 52
     sta player_using_object_spriteid                                  ; 4255: 8d b6 2e
     ldx menu_index_for_extra_items                                    ; 4258: ae 6e 29
     sta desired_menu_slots,x                                          ; 425b: 9d 5c 29
     lda #1                                                            ; 425e: a9 01
-    sta l0a73                                                         ; 4260: 8d 73 0a
+    sta bottle_pour_animation_step                                    ; 4260: 8d 73 0a
     lda #1                                                            ; 4263: a9 01
-    sta l0a35                                                         ; 4265: 8d 35 0a
+    sta save_game_level_k_got_bottle_flag                             ; 4265: 8d 35 0a
     lda #4                                                            ; 4268: a9 04
     ldx object_direction                                              ; 426a: ae be 09
     bpl c4274                                                         ; 426d: 10 05
@@ -1497,10 +1493,10 @@ c4274
 c427b
     clc                                                               ; 427b: 18
     adc object_x_low + objectid_player_accessory                      ; 427c: 6d 51 09
-    sta l0a70                                                         ; 427f: 8d 70 0a
+    sta bottle_pour_x_low                                             ; 427f: 8d 70 0a
     txa                                                               ; 4282: 8a
     adc object_x_high + objectid_player_accessory                     ; 4283: 6d 67 09
-    sta l0a71                                                         ; 4286: 8d 71 0a
+    sta bottle_pour_x_high                                            ; 4286: 8d 71 0a
     ldx #0                                                            ; 4289: a2 00
     lda #$fc                                                          ; 428b: a9 fc
     bpl c4290                                                         ; 428d: 10 01
@@ -1508,30 +1504,30 @@ c427b
 c4290
     clc                                                               ; 4290: 18
     adc object_y_low + objectid_player_accessory                      ; 4291: 6d 7d 09
-    sta l0a72                                                         ; 4294: 8d 72 0a
+    sta bottle_pour_y                                                 ; 4294: 8d 72 0a
     lda object_direction                                              ; 4297: ad be 09
-    sta l0a74                                                         ; 429a: 8d 74 0a
-    jmp c42ae                                                         ; 429d: 4c ae 42
+    sta bottle_pour_direction                                         ; 429a: 8d 74 0a
+    jmp update_pouring_object                                         ; 429d: 4c ae 42
 
-c42a0
-    inc l0a73                                                         ; 42a0: ee 73 0a
-    beq c42ae                                                         ; 42a3: f0 09
-    lda l0a72                                                         ; 42a5: ad 72 0a
+pour_in_progress
+    inc bottle_pour_animation_step                                    ; 42a0: ee 73 0a
+    beq update_pouring_object                                         ; 42a3: f0 09
+    lda bottle_pour_y                                                 ; 42a5: ad 72 0a
     clc                                                               ; 42a8: 18
     adc #8                                                            ; 42a9: 69 08
-    sta l0a72                                                         ; 42ab: 8d 72 0a
-c42ae
+    sta bottle_pour_y                                                 ; 42ab: 8d 72 0a
+update_pouring_object
     lda #spriteid_one_pixel_masked_out                                ; 42ae: a9 00
     sta object_spriteid + objectid_bottle_pour                        ; 42b0: 8d aa 09
-    ldx l0a73                                                         ; 42b3: ae 73 0a
-    beq c4242                                                         ; 42b6: f0 8a
-    lda l0a70                                                         ; 42b8: ad 70 0a
+    ldx bottle_pour_animation_step                                    ; 42b3: ae 73 0a
+    beq return4_local                                                 ; 42b6: f0 8a
+    lda bottle_pour_x_low                                             ; 42b8: ad 70 0a
     sta object_x_low + objectid_bottle_pour                           ; 42bb: 8d 52 09
-    lda l0a71                                                         ; 42be: ad 71 0a
+    lda bottle_pour_x_high                                            ; 42be: ad 71 0a
     sta object_x_high + objectid_bottle_pour                          ; 42c1: 8d 68 09
-    lda l0a74                                                         ; 42c4: ad 74 0a
+    lda bottle_pour_direction                                         ; 42c4: ad 74 0a
     sta object_direction + objectid_bottle_pour                       ; 42c7: 8d c0 09
-    lda l0a72                                                         ; 42ca: ad 72 0a
+    lda bottle_pour_y                                                 ; 42ca: ad 72 0a
     sta object_y_low + objectid_bottle_pour                           ; 42cd: 8d 7e 09
     lda #spriteid_pour                                                ; 42d0: a9 df
     sta object_spriteid + objectid_bottle_pour                        ; 42d2: 8d aa 09
@@ -1555,23 +1551,23 @@ c42ae
     jsr get_solid_rock_collision_for_object_a                         ; 42fa: 20 94 28
     beq c430c                                                         ; 42fd: f0 0d
     lda #$ff                                                          ; 42ff: a9 ff
-    sta l0a73                                                         ; 4301: 8d 73 0a
+    sta bottle_pour_animation_step                                    ; 4301: 8d 73 0a
     lda #spriteid_splash                                              ; 4304: a9 d9
     sta object_spriteid + objectid_bottle_pour                        ; 4306: 8d aa 09
     jsr play_landing_sound                                            ; 4309: 20 a9 23
 c430c
     ldx #2                                                            ; 430c: a2 02
     jsr find_left_and_right_of_object                                 ; 430e: 20 34 24
-    lda l0078                                                         ; 4311: a5 78
-    cmp #$28 ; '('                                                    ; 4313: c9 28
+    lda object_left_cell_x                                            ; 4311: a5 78
+    cmp #game_area_width_cells                                        ; 4313: c9 28
     bcc return4                                                       ; 4315: 90 10
     ora #0                                                            ; 4317: 09 00
     bpl c431f                                                         ; 4319: 10 04
-    lda l0079                                                         ; 431b: a5 79
+    lda object_right_cell_x                                           ; 431b: a5 79
     bpl return4                                                       ; 431d: 10 08
 c431f
     lda #0                                                            ; 431f: a9 00
-    sta l0a73                                                         ; 4321: 8d 73 0a
+    sta bottle_pour_animation_step                                    ; 4321: 8d 73 0a
     sta object_spriteid + objectid_bottle_pour                        ; 4324: 8d aa 09
 return4
     rts                                                               ; 4327: 60
@@ -1706,9 +1702,9 @@ room_1_update_handler
     sta l44ee                                                         ; 43d6: 8d ee 44
     ldx #$d0                                                          ; 43d9: a2 d0
     ldy #0                                                            ; 43db: a0 00
-    lda level_workspace                                               ; 43dd: ad 6f 0a
-    jsr sub_c43ec                                                     ; 43e0: 20 ec 43
-    sta level_workspace                                               ; 43e3: 8d 6f 0a
+    lda room_1_drip_timer                                             ; 43dd: ad 6f 0a
+    jsr update_drip                                                   ; 43e0: 20 ec 43
+    sta room_1_drip_timer                                             ; 43e3: 8d 6f 0a
     rts                                                               ; 43e6: 60
 
 droplet_animation
@@ -1719,8 +1715,8 @@ droplet_animation
 droplet_full
     !byte spriteid_droplet                                            ; 43eb: da
 
-sub_c43ec
-    sta l44ea                                                         ; 43ec: 8d ea 44
+update_drip
+    sta temp_drip_timer                                               ; 43ec: 8d ea 44
 ; check for first update in room (branch if not)
     lda update_room_first_update_flag                                 ; 43ef: ad 2b 13
     beq c441c                                                         ; 43f2: f0 28
@@ -1728,16 +1724,18 @@ sub_c43ec
     lda current_level                                                 ; 43f4: a5 31
     cmp level_before_latest_level_and_room_initialisation             ; 43f6: c5 51
     beq c43ff                                                         ; 43f8: f0 05
+; initialise drip timer for new level
     lda #0                                                            ; 43fa: a9 00
-    sta l44ea                                                         ; 43fc: 8d ea 44
+    sta temp_drip_timer                                               ; 43fc: 8d ea 44
+; check_for_being_in_same_room_as_drip
 c43ff
     lda desired_room_index                                            ; 43ff: a5 30
     cmp currently_updating_logic_for_room_index                       ; 4401: cd ba 1a
     bne c4416                                                         ; 4404: d0 10
     lda #spriteid_erase_1                                             ; 4406: a9 d1
-    sta l38af                                                         ; 4408: 8d af 38
+    sta object_erase_type + objectid_drip                             ; 4408: 8d af 38
     lda #$40 ; '@'                                                    ; 440b: a9 40
-    sta l38c5                                                         ; 440d: 8d c5 38
+    sta object_z_order + objectid_drip                                ; 440d: 8d c5 38
     stx object_x_low + objectid_drip                                  ; 4410: 8e 53 09
     sty object_x_high + objectid_drip                                 ; 4413: 8c 69 09
 c4416
@@ -1747,14 +1745,14 @@ c4419
     jmp c44e6                                                         ; 4419: 4c e6 44
 
 c441c
-    inc l44ea                                                         ; 441c: ee ea 44
+    inc temp_drip_timer                                               ; 441c: ee ea 44
     lda l44ee                                                         ; 441f: ad ee 44
     clc                                                               ; 4422: 18
     adc #1                                                            ; 4423: 69 01
-    cmp l44ea                                                         ; 4425: cd ea 44
+    cmp temp_drip_timer                                               ; 4425: cd ea 44
     bne c442f                                                         ; 4428: d0 05
     lda #0                                                            ; 442a: a9 00
-    sta l44ea                                                         ; 442c: 8d ea 44
+    sta temp_drip_timer                                               ; 442c: 8d ea 44
 c442f
     lda desired_room_index                                            ; 442f: a5 30
     cmp currently_updating_logic_for_room_index                       ; 4431: cd ba 1a
@@ -1765,7 +1763,7 @@ c442f
     clc                                                               ; 443e: 18
     adc #1                                                            ; 443f: 69 01
     sta l0070                                                         ; 4441: 85 70
-    lda l44ea                                                         ; 4443: ad ea 44
+    lda temp_drip_timer                                               ; 4443: ad ea 44
     cmp l0070                                                         ; 4446: c5 70
     bcs c4419                                                         ; 4448: b0 cf
     sec                                                               ; 444a: 38
@@ -1793,7 +1791,7 @@ c4464
     sta object_y_low + objectid_drip                                  ; 4471: 8d 7f 09
     lda #spriteid_splash                                              ; 4474: a9 d9
     sta object_spriteid + objectid_drip                               ; 4476: 8d ab 09
-    lda l44ea                                                         ; 4479: ad ea 44
+    lda temp_drip_timer                                               ; 4479: ad ea 44
     cmp l44ee                                                         ; 447c: cd ee 44
     bne c448c                                                         ; 447f: d0 0b
 ; check for first update in room (branch if so)
@@ -1815,7 +1813,7 @@ c448c
     lda object_spriteid + objectid_player_accessory                   ; 44a0: ad a9 09
     cmp #$d3                                                          ; 44a3: c9 d3
     bne c44e6                                                         ; 44a5: d0 3f
-    lda l0a73                                                         ; 44a7: ad 73 0a
+    lda bottle_pour_animation_step                                    ; 44a7: ad 73 0a
     bne c44e6                                                         ; 44aa: d0 3a
     ldx #objectid_old_player_accessory                                ; 44ac: a2 0c
     ldy #objectid_old_drip                                            ; 44ae: a0 0e
@@ -1828,25 +1826,25 @@ c448c
     ldx menu_index_for_extra_items                                    ; 44be: ae 6e 29
     sta desired_menu_slots,x                                          ; 44c1: 9d 5c 29
     lda #$ff                                                          ; 44c4: a9 ff
-    sta l0a35                                                         ; 44c6: 8d 35 0a
+    sta save_game_level_k_got_bottle_flag                             ; 44c6: 8d 35 0a
     lda l44ec                                                         ; 44c9: ad ec 44
-    sta l0a36                                                         ; 44cc: 8d 36 0a
+    sta save_game_level_k_poison_in_bottle_flag                       ; 44cc: 8d 36 0a
     lda l44ee                                                         ; 44cf: ad ee 44
     clc                                                               ; 44d2: 18
     adc #1                                                            ; 44d3: 69 01
     sec                                                               ; 44d5: 38
-    sbc l44ea                                                         ; 44d6: ed ea 44
+    sbc temp_drip_timer                                               ; 44d6: ed ea 44
     eor #$ff                                                          ; 44d9: 49 ff
     clc                                                               ; 44db: 18
     adc #1                                                            ; 44dc: 69 01
-    sta l44ea                                                         ; 44de: 8d ea 44
+    sta temp_drip_timer                                               ; 44de: 8d ea 44
     lda #spriteid_one_pixel_masked_out                                ; 44e1: a9 00
     sta object_spriteid + objectid_drip                               ; 44e3: 8d ab 09
 c44e6
-    lda l44ea                                                         ; 44e6: ad ea 44
+    lda temp_drip_timer                                               ; 44e6: ad ea 44
     rts                                                               ; 44e9: 60
 
-l44ea
+temp_drip_timer
     !byte 0                                                           ; 44ea: 00
 l44eb
     !byte 0                                                           ; 44eb: 00
@@ -1949,8 +1947,6 @@ pydis_end
 ;     c3e6f
 ;     c3e78
 ;     c3e94
-;     c3eae
-;     c3ec5
 ;     c405f
 ;     c4067
 ;     c40aa
@@ -1967,13 +1963,10 @@ pydis_end
 ;     c41db
 ;     c41e6
 ;     c4217
-;     c4242
 ;     c4245
 ;     c4274
 ;     c427b
 ;     c4290
-;     c42a0
-;     c42ae
 ;     c430c
 ;     c431f
 ;     c4397
@@ -1985,44 +1978,19 @@ pydis_end
 ;     c4464
 ;     c448c
 ;     c44e6
-;     l0078
-;     l0079
-;     l0a33
-;     l0a34
-;     l0a35
-;     l0a36
-;     l0a37
-;     l0a38
-;     l0a70
-;     l0a71
-;     l0a72
-;     l0a73
-;     l0a74
-;     l0a75
-;     l0a76
-;     l38ae
-;     l38af
 ;     l38b2
-;     l38c4
-;     l38c5
 ;     l38c6
 ;     l38c7
 ;     l38c8
-;     l3bd1
-;     l3bd4
-;     l3bd5
-;     l3bd8
 ;     l3d08
 ;     l3d09
 ;     l419e
-;     l44ea
 ;     l44eb
 ;     l44ec
 ;     l44ed
 ;     l44ee
 ;     sub_c3cd0
 ;     sub_c3f86
-;     sub_c43ec
 !if (<envelope1) != $ef {
     !error "Assertion failed: <envelope1 == $ef"
 }
@@ -2056,11 +2024,23 @@ pydis_end
 !if (collision_map_solid_rock) != $03 {
     !error "Assertion failed: collision_map_solid_rock == $03"
 }
+!if (dog_head_animation1 - dog_head_animations) != $01 {
+    !error "Assertion failed: dog_head_animation1 - dog_head_animations == $01"
+}
+!if (dog_head_animation2 - dog_head_animations) != $05 {
+    !error "Assertion failed: dog_head_animation2 - dog_head_animations == $05"
+}
+!if (dog_head_animation4 - dog_head_animations) != $3a {
+    !error "Assertion failed: dog_head_animation4 - dog_head_animations == $3a"
+}
 !if (exit_room_left) != $01 {
     !error "Assertion failed: exit_room_left == $01"
 }
 !if (exit_room_right) != $04 {
     !error "Assertion failed: exit_room_right == $04"
+}
+!if (game_area_width_cells) != $28 {
+    !error "Assertion failed: game_area_width_cells == $28"
 }
 !if (inkey_key_g) != $ac {
     !error "Assertion failed: inkey_key_g == $ac"
@@ -2082,6 +2062,12 @@ pydis_end
 }
 !if (object_direction + objectid_leaf2) != $09c3 {
     !error "Assertion failed: object_direction + objectid_leaf2 == $09c3"
+}
+!if (object_erase_type + objectid_bottle_pour) != $38ae {
+    !error "Assertion failed: object_erase_type + objectid_bottle_pour == $38ae"
+}
+!if (object_erase_type + objectid_drip) != $38af {
+    !error "Assertion failed: object_erase_type + objectid_drip == $38af"
 }
 !if (object_spriteid + objectid_bottle_pour) != $09aa {
     !error "Assertion failed: object_spriteid + objectid_bottle_pour == $09aa"
@@ -2157,6 +2143,12 @@ pydis_end
 }
 !if (object_y_low + objectid_leaf2) != $0981 {
     !error "Assertion failed: object_y_low + objectid_leaf2 == $0981"
+}
+!if (object_z_order + objectid_bottle_pour) != $38c4 {
+    !error "Assertion failed: object_z_order + objectid_bottle_pour == $38c4"
+}
+!if (object_z_order + objectid_drip) != $38c5 {
+    !error "Assertion failed: object_z_order + objectid_drip == $38c5"
 }
 !if (objectid_bottle_pour) != $02 {
     !error "Assertion failed: objectid_bottle_pour == $02"
@@ -2272,6 +2264,9 @@ pydis_end
 !if (spriteid_erase_1) != $d1 {
     !error "Assertion failed: spriteid_erase_1 == $d1"
 }
+!if (spriteid_erase_2) != $e4 {
+    !error "Assertion failed: spriteid_erase_2 == $e4"
+}
 !if (spriteid_full_bottle) != $cc {
     !error "Assertion failed: spriteid_full_bottle == $cc"
 }
@@ -2284,26 +2279,26 @@ pydis_end
 !if (spriteid_leaf) != $cd {
     !error "Assertion failed: spriteid_leaf == $cd"
 }
-!if (spriteid_leaf1) != $e0 {
-    !error "Assertion failed: spriteid_leaf1 == $e0"
+!if (spriteid_leaf_grow1) != $d0 {
+    !error "Assertion failed: spriteid_leaf_grow1 == $d0"
 }
-!if (spriteid_leaf2) != $e1 {
-    !error "Assertion failed: spriteid_leaf2 == $e1"
+!if (spriteid_leaf_grow2) != $cf {
+    !error "Assertion failed: spriteid_leaf_grow2 == $cf"
 }
-!if (spriteid_leaf3) != $e2 {
-    !error "Assertion failed: spriteid_leaf3 == $e2"
+!if (spriteid_leaf_grow3) != $ce {
+    !error "Assertion failed: spriteid_leaf_grow3 == $ce"
 }
-!if (spriteid_leaf4) != $e3 {
-    !error "Assertion failed: spriteid_leaf4 == $e3"
+!if (spriteid_leaf_wilt_1) != $e0 {
+    !error "Assertion failed: spriteid_leaf_wilt_1 == $e0"
 }
-!if (spriteid_leaf_wilted) != $d0 {
-    !error "Assertion failed: spriteid_leaf_wilted == $d0"
+!if (spriteid_leaf_wilt_2) != $e1 {
+    !error "Assertion failed: spriteid_leaf_wilt_2 == $e1"
 }
-!if (spriteid_leaf_wilting1) != $ce {
-    !error "Assertion failed: spriteid_leaf_wilting1 == $ce"
+!if (spriteid_leaf_wilt_3) != $e2 {
+    !error "Assertion failed: spriteid_leaf_wilt_3 == $e2"
 }
-!if (spriteid_leaf_wilting2) != $cf {
-    !error "Assertion failed: spriteid_leaf_wilting2 == $cf"
+!if (spriteid_leaf_wilt_4) != $e3 {
+    !error "Assertion failed: spriteid_leaf_wilt_4 == $e3"
 }
 !if (spriteid_one_pixel_masked_out) != $00 {
     !error "Assertion failed: spriteid_one_pixel_masked_out == $00"
