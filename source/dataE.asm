@@ -1275,7 +1275,7 @@ room0_not_first_update
     cmp room_containing_small_egg                                     ; 4185: cd 75 0a
     beq small_egg_in_room                                             ; 4188: f0 53
 ; The egg is off screen for this update, so increment the offscreen time (capping at
-; &7f) so its position can be correctly updated when it next appears on screen.
+; &80) so its position can be correctly updated when it next appears on screen.
     lda level_workspace_small_egg_offscreen_time                      ; 418a: ad 6f 0a
     bmi return2_local                                                 ; 418d: 30 03
     inc level_workspace_small_egg_offscreen_time                      ; 418f: ee 6f 0a
