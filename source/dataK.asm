@@ -290,11 +290,7 @@ monkey_climb_down_animation                         = $3148
 monkey_climb_animation                              = $3150
 inhibit_monkey_climb_flag                           = $31d7
 object_erase_type                                   = $38ac
-l38b2                                               = $38b2
 object_z_order                                      = $38c2
-l38c6                                               = $38c6
-l38c7                                               = $38c7
-l38c8                                               = $38c8
 object_room_collision_flags                         = $38d8
 play_sound_yx                                       = $38f6
 define_envelope                                     = $395e
@@ -386,7 +382,7 @@ level_specific_update
     jsr room_1_update_handler                                         ; 3b2d: 20 a4 43
     jsr room_3_update_handler                                         ; 3b30: 20 56 3f
     jsr room_2_update_handler                                         ; 3b33: 20 d9 3b
-    jsr update_dog                                                    ; 3b36: 20 44 40
+    jsr update_dog_puzzle                                             ; 3b36: 20 44 40
     rts                                                               ; 3b39: 60
 
 draw_top_and_bottom_rows
@@ -649,8 +645,8 @@ c3cbb
     lda #$12                                                          ; 3cbb: a9 12
     jsr sub_c3cd0                                                     ; 3cbd: 20 d0 3c
     lda #$e0                                                          ; 3cc0: a9 e0
-    sta l38c6                                                         ; 3cc2: 8d c6 38
-    sta l38c7                                                         ; 3cc5: 8d c7 38
+    sta object_z_order + objectid_leaf1                               ; 3cc2: 8d c6 38
+    sta object_z_order + objectid_leaf2                               ; 3cc5: 8d c7 38
     lda #$ff                                                          ; 3cc8: a9 ff
     sta object_direction + objectid_leaf2                             ; 3cca: 8d c3 09
 c3ccd
@@ -1211,28 +1207,28 @@ dog_head_animation4
     !byte $80                                                         ; 4043: 80
 
 ; check for first update in room (branch if not)
-update_dog
+update_dog_puzzle
     lda update_room_first_update_flag                                 ; 4044: ad 2b 13
-    beq c40ad                                                         ; 4047: f0 64
+    beq update_dog_head_animation                                     ; 4047: f0 64
 ; check for level change (branch if not)
     lda current_level                                                 ; 4049: a5 31
     cmp level_before_latest_level_and_room_initialisation             ; 404b: c5 51
-    beq c4067                                                         ; 404d: f0 18
+    beq initialise_dog_puzzle                                         ; 404d: f0 18
     lda save_game_level_k_poison_dog_animation_step                   ; 404f: ad 38 0a
-    beq c405f                                                         ; 4052: f0 0b
+    beq set_dog_head_animation2                                       ; 4052: f0 0b
     lda #dog_head_animation1 - dog_head_animations                    ; 4054: a9 01
     sta save_game_level_k_dog_animation                               ; 4056: 8d 37 0a
     sta dog_animation_step                                            ; 4059: 8d 76 0a
-    jmp c4067                                                         ; 405c: 4c 67 40
+    jmp initialise_dog_puzzle                                         ; 405c: 4c 67 40
 
-c405f
+set_dog_head_animation2
     lda #dog_head_animation2 - dog_head_animations                    ; 405f: a9 05
     sta save_game_level_k_dog_animation                               ; 4061: 8d 37 0a
     sta dog_animation_step                                            ; 4064: 8d 76 0a
-c4067
+initialise_dog_puzzle
     lda desired_room_index                                            ; 4067: a5 30
     cmp #0                                                            ; 4069: c9 00
-    bne c40aa                                                         ; 406b: d0 3d
+    bne set_dog_head_object_local                                     ; 406b: d0 3d
     ldx #<envelope1                                                   ; 406d: a2 ef
     ldy #>envelope1                                                   ; 406f: a0 44
     jsr define_envelope                                               ; 4071: 20 5e 39
@@ -1248,21 +1244,21 @@ c4067
     lda #$78 ; 'x'                                                    ; 4087: a9 78
     sta object_y_low + objectid_leaf2                                 ; 4089: 8d 81 09
     lda #$e0                                                          ; 408c: a9 e0
-    sta l38c7                                                         ; 408e: 8d c7 38
+    sta object_z_order + objectid_dog_body                            ; 408e: 8d c7 38
     lda #$e7                                                          ; 4091: a9 e7
-    sta l38b2                                                         ; 4093: 8d b2 38
+    sta object_erase_type + objectid_dog_head                         ; 4093: 8d b2 38
     lda #$c0                                                          ; 4096: a9 c0
-    sta l38c8                                                         ; 4098: 8d c8 38
+    sta object_z_order + objectid_dog_head                            ; 4098: 8d c8 38
     lda #$8e                                                          ; 409b: a9 8e
     sta object_x_low + objectid_dog_bowl                              ; 409d: 8d 57 09
     lda #$78 ; 'x'                                                    ; 40a0: a9 78
     sta object_y_low + objectid_dog_bowl                              ; 40a2: 8d 83 09
     lda #spriteid_dog_bowl2                                           ; 40a5: a9 ed
     sta object_spriteid + objectid_dog_bowl                           ; 40a7: 8d af 09
-c40aa
-    jmp c413e                                                         ; 40aa: 4c 3e 41
+set_dog_head_object_local
+    jmp set_dog_head_object                                           ; 40aa: 4c 3e 41
 
-c40ad
+update_dog_head_animation
     lda dog_animation_step                                            ; 40ad: ad 76 0a
     clc                                                               ; 40b0: 18
     adc #3                                                            ; 40b1: 69 03
@@ -1274,7 +1270,7 @@ c40ad
 c40be
     lda save_game_level_k_dog_animation                               ; 40be: ad 37 0a
     cmp #dog_head_animation1 - dog_head_animations                    ; 40c1: c9 01
-    beq c4115                                                         ; 40c3: f0 50
+    beq set_dog_animation_step_local                                  ; 40c3: f0 50
     lda save_game_level_k_poison_dog_animation_step                   ; 40c5: ad 38 0a
     bne c40ed                                                         ; 40c8: d0 23
     lda desired_room_index                                            ; 40ca: a5 30
@@ -1304,7 +1300,7 @@ c40f7
     ldy #dog_head_animation4 - dog_head_animations                    ; 40fe: a0 3a
     sty save_game_level_k_dog_animation                               ; 4100: 8c 37 0a
     cmp #$10                                                          ; 4103: c9 10
-    bcc c413b                                                         ; 4105: 90 34
+    bcc set_dog_animation_step                                        ; 4105: 90 34
     lda desired_room_index                                            ; 4107: a5 30
     cmp #0                                                            ; 4109: c9 00
     bne c4110                                                         ; 410b: d0 03
@@ -1312,13 +1308,13 @@ c40f7
 c4110
     ldy #dog_head_animation1 - dog_head_animations                    ; 4110: a0 01
     sty save_game_level_k_dog_animation                               ; 4112: 8c 37 0a
-c4115
-    jmp c413b                                                         ; 4115: 4c 3b 41
+set_dog_animation_step_local
+    jmp set_dog_animation_step                                        ; 4115: 4c 3b 41
 
 c4118
     lda desired_room_index                                            ; 4118: a5 30
     cmp #0                                                            ; 411a: c9 00
-    bne c413b                                                         ; 411c: d0 1d
+    bne set_dog_animation_step                                        ; 411c: d0 1d
     lda #$f8                                                          ; 411e: a9 f8
     sta temp_top_offset                                               ; 4120: 8d 50 25
     ldx #objectid_dog_head                                            ; 4123: a2 06
@@ -1327,13 +1323,13 @@ c4118
     jsr test_for_collision_between_objects_x_and_y                    ; 412a: 20 e2 28
     ldy l419e                                                         ; 412d: ac 9e 41
     ora #0                                                            ; 4130: 09 00
-    beq c413b                                                         ; 4132: f0 07
+    beq set_dog_animation_step                                        ; 4132: f0 07
     lda #6                                                            ; 4134: a9 06
     sta player_wall_collision_reaction_speed                          ; 4136: 8d 33 24
     ldy #$1b                                                          ; 4139: a0 1b
-c413b
+set_dog_animation_step
     sty dog_animation_step                                            ; 413b: 8c 76 0a
-c413e
+set_dog_head_object
     lda desired_room_index                                            ; 413e: a5 30
     cmp #0                                                            ; 4140: c9 00
     bne return3                                                       ; 4142: d0 59
@@ -1356,9 +1352,10 @@ c413e
     sta object_x_low + objectid_dog_body                              ; 4168: 8d 55 09
     lda save_game_level_k_dog_animation                               ; 416b: ad 37 0a
     cmp #dog_head_animation1 - dog_head_animations                    ; 416e: c9 01
-    beq c4186                                                         ; 4170: f0 14
+    beq dog_is_dead                                                   ; 4170: f0 14
     cmp #dog_head_animation4 - dog_head_animations                    ; 4172: c9 3a
     bne return3                                                       ; 4174: d0 27
+; set solid rock collision
     ldx #$11                                                          ; 4176: a2 11
     ldy #$0c                                                          ; 4178: a0 0c
     lda #collision_map_solid_rock                                     ; 417a: a9 03
@@ -1367,7 +1364,7 @@ c413e
     jsr write_a_single_value_to_cell_in_collision_map                 ; 4180: 20 bb 1e
     jmp return3                                                       ; 4183: 4c 9d 41
 
-c4186
+dog_is_dead
     ldx #$11                                                          ; 4186: a2 11
     ldy #$0c                                                          ; 4188: a0 0c
     lda #collision_map_none                                           ; 418a: a9 00
@@ -1947,19 +1944,11 @@ pydis_end
 ;     c3e6f
 ;     c3e78
 ;     c3e94
-;     c405f
-;     c4067
-;     c40aa
-;     c40ad
 ;     c40be
 ;     c40ed
 ;     c40f7
 ;     c4110
-;     c4115
 ;     c4118
-;     c413b
-;     c413e
-;     c4186
 ;     c41db
 ;     c41e6
 ;     c4217
@@ -1978,10 +1967,6 @@ pydis_end
 ;     c4464
 ;     c448c
 ;     c44e6
-;     l38b2
-;     l38c6
-;     l38c7
-;     l38c8
 ;     l3d08
 ;     l3d09
 ;     l419e
@@ -2066,6 +2051,9 @@ pydis_end
 !if (object_erase_type + objectid_bottle_pour) != $38ae {
     !error "Assertion failed: object_erase_type + objectid_bottle_pour == $38ae"
 }
+!if (object_erase_type + objectid_dog_head) != $38b2 {
+    !error "Assertion failed: object_erase_type + objectid_dog_head == $38b2"
+}
 !if (object_erase_type + objectid_drip) != $38af {
     !error "Assertion failed: object_erase_type + objectid_drip == $38af"
 }
@@ -2147,8 +2135,20 @@ pydis_end
 !if (object_z_order + objectid_bottle_pour) != $38c4 {
     !error "Assertion failed: object_z_order + objectid_bottle_pour == $38c4"
 }
+!if (object_z_order + objectid_dog_body) != $38c7 {
+    !error "Assertion failed: object_z_order + objectid_dog_body == $38c7"
+}
+!if (object_z_order + objectid_dog_head) != $38c8 {
+    !error "Assertion failed: object_z_order + objectid_dog_head == $38c8"
+}
 !if (object_z_order + objectid_drip) != $38c5 {
     !error "Assertion failed: object_z_order + objectid_drip == $38c5"
+}
+!if (object_z_order + objectid_leaf1) != $38c6 {
+    !error "Assertion failed: object_z_order + objectid_leaf1 == $38c6"
+}
+!if (object_z_order + objectid_leaf2) != $38c7 {
+    !error "Assertion failed: object_z_order + objectid_leaf2 == $38c7"
 }
 !if (objectid_bottle_pour) != $02 {
     !error "Assertion failed: objectid_bottle_pour == $02"
