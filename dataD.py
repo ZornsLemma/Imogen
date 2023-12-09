@@ -30,13 +30,14 @@ sprite_dict = {
 # Merge with common sprite dictionary
 sprite_dict = {**common_sprite_dict, **sprite_dict}
 
-constant(3, "objectid_axe")
 
 # Room 0
+constant(3, "objectid_axe")
 constant(4, "objectid_sign_stand")
 constant(5, "objectid_sign")
 
 # Room 2
+constant(3, "objectid_spell")
 constant(4, "objectid_partition")
 
 # Room 3
@@ -153,6 +154,7 @@ expr(0x3eb7, sprite_dict)
 label(0x3edc, "room_2_check_right_exit")
 expr(0x3edf, "exit_room_right")
 label(0x3ee9, "room_2_update_handler")
+expr(0x3efc, "objectid_spell")
 comment(0x3f00, "check for first update in room (branch if not)")
 ldx_ldy_jsr_define_envelope(0x3f09, "envelope1")
 comment(0x3f0c, "check for level change (branch if not)")

@@ -31,14 +31,20 @@ sprite_dict = {
 # Merge with common sprite dictionary
 sprite_dict = {**common_sprite_dict, **sprite_dict}
 
-constant(2, "objectid_torch")
+# Multiple rooms
 constant(3, "objectid_rope_end")
 constant(4, "objectid_rope_fire")
 constant(5, "objectid_parrot")
+
+# Room 1
+constant(2, "objectid_torch")
 constant(5, "objectid_table")
 constant(6, "objectid_fire1")
 constant(7, "objectid_fire2")
 constant(8, "objectid_fire3")
+
+# Room 3
+constant(6, "objectid_spell")
 
 set_sprite_dict(sprite_dict)
 
@@ -347,6 +353,7 @@ label(0x442e, "parrot_animation_step")
 label(0x442f, "parrot_delay_before_chirp")
 label(0x4430, "parrot_speed")
 label(0x44f0, "room_3_update_handler")
+expr(0x44fe, "objectid_spell")
 comment(0x4529, "X,Y: the X coordinate of the rope/parrot, A: the direction of the parrot")
 
 print("""; *************************************************************************************

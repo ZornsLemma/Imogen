@@ -68,6 +68,7 @@ objectid_old_player                   = 11
 objectid_old_player_accessory         = 12
 objectid_player                       = 0
 objectid_player_accessory             = 1
+objectid_spell                        = 6
 objectid_table                        = 5
 objectid_table_rope                   = 6
 opcode_jmp                            = 76
@@ -821,7 +822,7 @@ baby_dead_animation
 room_3_update_handler
     lda #3                                                            ; 3da9: a9 03
     sta currently_updating_logic_for_room_index                       ; 3dab: 8d ba 1a
-    lda #6                                                            ; 3dae: a9 06
+    lda #objectid_spell                                               ; 3dae: a9 06
     ldx #$22 ; '"'                                                    ; 3db0: a2 22
     ldy #8                                                            ; 3db2: a0 08
     jsr update_level_completion                                       ; 3db4: 20 10 1a
@@ -2268,6 +2269,9 @@ pydis_end
 }
 !if (objectid_player) != $00 {
     !error "Assertion failed: objectid_player == $00"
+}
+!if (objectid_spell) != $06 {
+    !error "Assertion failed: objectid_spell == $06"
 }
 !if (objectid_table) != $05 {
     !error "Assertion failed: objectid_table == $05"

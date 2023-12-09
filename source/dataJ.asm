@@ -70,7 +70,7 @@ objectid_old_player_accessory          = 12
 objectid_partition                     = 4
 objectid_player                        = 0
 objectid_player_accessory              = 1
-objectid_sparkles                      = 3
+objectid_spell                         = 3
 opcode_jmp                             = 76
 sprite_op_flags_copy_screen            = 1
 sprite_op_flags_erase_to_bg_colour     = 2
@@ -986,7 +986,7 @@ room_3_update_handler
     lda #4                                                            ; 3e90: a9 04
     sta temp_sprite_x_offset                                          ; 3e92: 85 3a
     ldy #$0f                                                          ; 3e94: a0 0f
-    lda #3                                                            ; 3e96: a9 03
+    lda #objectid_spell                                               ; 3e96: a9 03
     jsr update_level_completion                                       ; 3e98: 20 10 1a
     ldx #3                                                            ; 3e9b: a2 03
     ldy #6                                                            ; 3e9d: a0 06
@@ -2142,6 +2142,9 @@ pydis_end
 }
 !if (objectid_player) != $00 {
     !error "Assertion failed: objectid_player == $00"
+}
+!if (objectid_spell) != $03 {
+    !error "Assertion failed: objectid_spell == $03"
 }
 !if (room_0_data) != $3f73 {
     !error "Assertion failed: room_0_data == $3f73"

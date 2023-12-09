@@ -33,7 +33,7 @@ constant(5, "objectid_babboon3")
 constant(0x0d, "objectid_old_cannonball")
 
 # Room 3
-constant(3, "objectid_sparkles")
+constant(3, "objectid_spell")
 constant(4, "objectid_partition")
 constant(5, "objectid_fire")
 
@@ -176,6 +176,7 @@ comment(0x3df3, "check for first update in room (branch if so)")
 label(0x3df3, "check_babboon_player_collision")
 expr(0x3df9, "objectid_player")
 label(0x3e04, "return4")
+expr(0x3e97, "objectid_spell")
 label(0x3e89, "room_3_update_handler")
 comment(0x3ea4, "check for first update in room (branch if not)")
 comment(0x3ea9, "check for level change (branch if not)")

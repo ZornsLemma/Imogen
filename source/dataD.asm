@@ -72,6 +72,7 @@ objectid_player                       = 0
 objectid_player_accessory             = 1
 objectid_sign                         = 5
 objectid_sign_stand                   = 4
+objectid_spell                        = 3
 opcode_jmp                            = 76
 sprite_op_flags_copy_screen           = 1
 sprite_op_flags_erase_to_bg_colour    = 2
@@ -1038,7 +1039,7 @@ room_2_update_handler
     jsr update_brazier_and_fire                                       ; 3ef4: 20 88 19
     ldx #$1f                                                          ; 3ef7: a2 1f
     ldy #7                                                            ; 3ef9: a0 07
-    lda #3                                                            ; 3efb: a9 03
+    lda #objectid_spell                                               ; 3efb: a9 03
     jsr update_level_completion                                       ; 3efd: 20 10 1a
 ; check for first update in room (branch if not)
     lda update_room_first_update_flag                                 ; 3f00: ad 2b 13
@@ -1942,6 +1943,9 @@ pydis_end
 }
 !if (objectid_sign_stand) != $04 {
     !error "Assertion failed: objectid_sign_stand == $04"
+}
+!if (objectid_spell) != $03 {
+    !error "Assertion failed: objectid_spell == $03"
 }
 !if (room_0_data) != $3b2d {
     !error "Assertion failed: room_0_data == $3b2d"

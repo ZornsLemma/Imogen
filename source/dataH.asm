@@ -91,6 +91,7 @@ objectid_player                       = 0
 objectid_player_accessory             = 1
 objectid_rabbit                       = 3
 objectid_rail_rope_end                = 3
+objectid_spell                        = 5
 opcode_jmp                            = 76
 sprite_op_flags_copy_screen           = 1
 sprite_op_flags_erase_to_bg_colour    = 2
@@ -526,7 +527,7 @@ room_0_update_handler
     jsr update_brazier_and_fire                                       ; 3bb5: 20 88 19
     ldx #5                                                            ; 3bb8: a2 05
     ldy #$0d                                                          ; 3bba: a0 0d
-    lda #5                                                            ; 3bbc: a9 05
+    lda #objectid_spell                                               ; 3bbc: a9 05
     jsr update_level_completion                                       ; 3bbe: 20 10 1a
 ; check for first update in room (branch if so)
     lda update_room_first_update_flag                                 ; 3bc1: ad 2b 13
@@ -2146,6 +2147,9 @@ pydis_end
 }
 !if (objectid_rail_rope_end) != $03 {
     !error "Assertion failed: objectid_rail_rope_end == $03"
+}
+!if (objectid_spell) != $05 {
+    !error "Assertion failed: objectid_spell == $05"
 }
 !if (rabbit_push_sprites - rabbit_sprites_base) != $08 {
     !error "Assertion failed: rabbit_push_sprites - rabbit_sprites_base == $08"

@@ -54,7 +54,7 @@ constant(0xb+3, "objectid_old_drip")
 
 # Room 0
 constant(3, "objectid_empty_bottle")
-constant(4, "objectid_sparkles")
+constant(4, "objectid_spell")
 constant(5, "objectid_dog_body")
 constant(6, "objectid_dog_head")
 constant(7, "objectid_dog_bowl")
@@ -412,6 +412,7 @@ label(0x4110, "set_dog_head_dead_animation")
 label(0x4118, "check_for_player_colliding_with_dog")
 expr(0x413a, "dog_head_push_animation - dog_head_animations")
 comment(0x41b2, "initialise room 0")
+expr(0x41a9, "objectid_spell")
 
 result = go(False)
 result = remove_sprite_data(result)

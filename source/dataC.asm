@@ -70,6 +70,7 @@ objectid_player                       = 0
 objectid_player_accessory             = 1
 objectid_rope_end                     = 3
 objectid_rope_fire                    = 4
+objectid_spell                        = 6
 objectid_table                        = 5
 objectid_torch                        = 2
 opcode_jmp                            = 76
@@ -1905,7 +1906,7 @@ room_3_update_handler
     lda #4                                                            ; 44f7: a9 04
     sta temp_sprite_x_offset                                          ; 44f9: 85 3a
     ldy #$15                                                          ; 44fb: a0 15
-    lda #6                                                            ; 44fd: a9 06
+    lda #objectid_spell                                               ; 44fd: a9 06
     jsr update_level_completion                                       ; 44ff: 20 10 1a
     lda #1                                                            ; 4502: a9 01
     sta parrot_speed                                                  ; 4504: 8d 30 44
@@ -2119,6 +2120,9 @@ pydis_end
 }
 !if (objectid_rope_fire) != $04 {
     !error "Assertion failed: objectid_rope_fire == $04"
+}
+!if (objectid_spell) != $06 {
+    !error "Assertion failed: objectid_spell == $06"
 }
 !if (objectid_table) != $05 {
     !error "Assertion failed: objectid_table == $05"

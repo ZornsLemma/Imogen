@@ -32,13 +32,23 @@ sprite_dict = {
 # Merge with common sprite dictionary
 sprite_dict = {**common_sprite_dict, **sprite_dict}
 
-constant(2, "objectid_brazier")
-constant(2, "objectid_banana")
-constant(6, "objectid_brazier_room_1")
+# Multiple rooms
+constant(5, "objectid_gorilla")
+
+# Room 0
+constant(2, "objectid_room_0_brazier")
+
+# Room 1
 constant(2, "objectid_rope_end")
 constant(3, "objectid_partition")
 constant(4, "objectid_connecting_rope")
-constant(5, "objectid_gorilla")
+constant(6, "objectid_room_1_brazier")
+
+# Room 2
+constant(3, "objectid_spell")
+
+# Room 3
+constant(2, "objectid_banana")
 
 set_sprite_dict(sprite_dict)
 
@@ -88,11 +98,11 @@ ground_fill(0x3b0d)
 label(0x3bae, "room_0_check_right_exit")
 expr(0x3bb1, "exit_room_right")
 label(0x3bbb, "room_0_update_handler")
-expr(0x3bc1, "objectid_brazier")
+expr(0x3bc1, "objectid_room_0_brazier")
 label(0x3c3f, "room_1_check_right_exit")
 expr(0x3c42, "exit_room_right")
 label(0x3c4c, "room_1_update_handler")
-expr(0x3c56, "objectid_brazier_room_1")
+expr(0x3c56, "objectid_room_1_brazier")
 comment(0x3c5a, "check for first update in room (branch if so)")
 comment(0x3c62, "check for level change (branch if not)")
 label(0x3c62, "room_1_first_update")
@@ -174,7 +184,8 @@ label(0x3ea8, "remembered_connecting_rope_spriteid")
 label(0x3ea9, "play_partition_moving_sound")
 ldx_ldy_jsr_play_sound_yx(0x3eaf, "partition_moving_sound")
 label(0x3f5a, "room_2_update_handler")
-expr(0x3f60, "objectid_brazier")
+expr(0x3f60, "objectid_room_0_brazier")
+expr(0x3f69, "objectid_spell")
 label(0x3f72, "gorilla_animations_table")
 label(0x3f72, "gorilla_push_animation")
 expr(0x3f72, sprite_dict)

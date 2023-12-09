@@ -51,16 +51,25 @@ substitute_labels = {
     },
 }
 
-constant(2, "objectid_bow")
+# Multiple rooms
 constant(2, "objectid_arrow")
+
+# Room 0
+constant(2, "objectid_bow")
+
+# Room 1
 constant(3, "objectid_balloon1")
 constant(4, "objectid_balloon1_rope")
 constant(5, "objectid_balloon2")
 constant(6, "objectid_balloon2_rope")
+
+# Room 2
 constant(5, "objectid_table")
 constant(6, "objectid_table_rope")
+
 # Room 3
 constant(5, "objectid_baby")
+constant(6, "objectid_spell")
 
 # (Class SubstituteLabels is defined in common.py to implement the substitute labels)
 s = SubstituteLabels(substitute_labels)
@@ -170,6 +179,7 @@ spriteid(0x3da3)
 label(0x3da6, "baby_dead_animation")
 spriteid(0x3da6)
 label(0x3da9, "room_3_update_handler")
+expr(0x3daf, "objectid_spell")
 comment(0x3db7, "check for first update in room (branch if not)")
 comment(0x3dbc, "check for level change (branch if not)")
 comment(0x3dc2, "initialise baby progress, or set the baby progress to done if enough if in mid animation")

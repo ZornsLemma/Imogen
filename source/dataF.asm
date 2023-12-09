@@ -48,8 +48,6 @@ object_collided_floor                 = 2
 object_collided_left_wall             = 1
 object_collided_right_wall            = 4
 objectid_banana                       = 2
-objectid_brazier                      = 2
-objectid_brazier_room_1               = 6
 objectid_connecting_rope              = 4
 objectid_gorilla                      = 5
 objectid_old_player                   = 11
@@ -57,7 +55,10 @@ objectid_old_player_accessory         = 12
 objectid_partition                    = 3
 objectid_player                       = 0
 objectid_player_accessory             = 1
+objectid_room_0_brazier               = 2
+objectid_room_1_brazier               = 6
 objectid_rope_end                     = 2
+objectid_spell                        = 3
 opcode_jmp                            = 76
 sprite_op_flags_copy_screen           = 1
 sprite_op_flags_erase_to_bg_colour    = 2
@@ -486,7 +487,7 @@ room_0_check_right_exit
 room_0_update_handler
     lda #0                                                            ; 3bbb: a9 00
     sta currently_updating_logic_for_room_index                       ; 3bbd: 8d ba 1a
-    lda #objectid_brazier                                             ; 3bc0: a9 02
+    lda #objectid_room_0_brazier                                      ; 3bc0: a9 02
     ldx #$23 ; '#'                                                    ; 3bc2: a2 23
     ldy #5                                                            ; 3bc4: a0 05
     jmp update_brazier_and_fire                                       ; 3bc6: 4c 88 19
@@ -604,7 +605,7 @@ room_1_update_handler
     sta currently_updating_logic_for_room_index                       ; 3c4e: 8d ba 1a
     ldx #5                                                            ; 3c51: a2 05
     ldy #5                                                            ; 3c53: a0 05
-    lda #objectid_brazier_room_1                                      ; 3c55: a9 06
+    lda #objectid_room_1_brazier                                      ; 3c55: a9 06
     jsr update_brazier_and_fire                                       ; 3c57: 20 88 19
 ; check for first update in room (branch if so)
     lda update_room_first_update_flag                                 ; 3c5a: ad 2b 13
@@ -1076,11 +1077,11 @@ room_2_game_update_loop
 room_2_update_handler
     lda #2                                                            ; 3f5a: a9 02
     sta currently_updating_logic_for_room_index                       ; 3f5c: 8d ba 1a
-    lda #objectid_brazier                                             ; 3f5f: a9 02
+    lda #objectid_room_0_brazier                                      ; 3f5f: a9 02
     ldx #5                                                            ; 3f61: a2 05
     ldy #5                                                            ; 3f63: a0 05
     jsr update_brazier_and_fire                                       ; 3f65: 20 88 19
-    lda #3                                                            ; 3f68: a9 03
+    lda #objectid_spell                                               ; 3f68: a9 03
     ldx #$14                                                          ; 3f6a: a2 14
     ldy #$0e                                                          ; 3f6c: a0 0e
     jsr update_level_completion                                       ; 3f6e: 20 10 1a
@@ -1947,12 +1948,6 @@ pydis_end
 !if (object_y_low + objectid_partition) != $097f {
     !error "Assertion failed: object_y_low + objectid_partition == $097f"
 }
-!if (objectid_brazier) != $02 {
-    !error "Assertion failed: objectid_brazier == $02"
-}
-!if (objectid_brazier_room_1) != $06 {
-    !error "Assertion failed: objectid_brazier_room_1 == $06"
-}
 !if (objectid_connecting_rope) != $04 {
     !error "Assertion failed: objectid_connecting_rope == $04"
 }
@@ -1965,8 +1960,17 @@ pydis_end
 !if (objectid_player) != $00 {
     !error "Assertion failed: objectid_player == $00"
 }
+!if (objectid_room_0_brazier) != $02 {
+    !error "Assertion failed: objectid_room_0_brazier == $02"
+}
+!if (objectid_room_1_brazier) != $06 {
+    !error "Assertion failed: objectid_room_1_brazier == $06"
+}
 !if (objectid_rope_end) != $02 {
     !error "Assertion failed: objectid_rope_end == $02"
+}
+!if (objectid_spell) != $03 {
+    !error "Assertion failed: objectid_spell == $03"
 }
 !if (room_0_data) != $3b26 {
     !error "Assertion failed: room_0_data == $3b26"

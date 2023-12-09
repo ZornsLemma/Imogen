@@ -44,7 +44,7 @@ objectid_room2_fire2                  = 7
 objectid_room_1_fire1                 = 4
 objectid_room_1_fire2                 = 5
 objectid_room_3_fire                  = 4
-objectid_sparkles                     = 4
+objectid_spell                        = 4
 objectid_top_of_stalk                 = 3
 opcode_jmp                            = 76
 sprite_op_flags_copy_screen           = 1
@@ -1387,7 +1387,7 @@ room_0_update_handler
     sta currently_updating_logic_for_room_index                       ; 41a1: 8d ba 1a
     ldx #5                                                            ; 41a4: a2 05
     ldy #7                                                            ; 41a6: a0 07
-    lda #4                                                            ; 41a8: a9 04
+    lda #objectid_spell                                               ; 41a8: a9 04
     jsr update_level_completion                                       ; 41aa: 20 10 1a
 ; check for first update in room (branch if not)
     lda update_room_first_update_flag                                 ; 41ad: ad 2b 13
@@ -2191,6 +2191,9 @@ pydis_end
 }
 !if (objectid_room_3_fire) != $04 {
     !error "Assertion failed: objectid_room_3_fire == $04"
+}
+!if (objectid_spell) != $04 {
+    !error "Assertion failed: objectid_spell == $04"
 }
 !if (objectid_top_of_stalk) != $03 {
     !error "Assertion failed: objectid_top_of_stalk == $03"

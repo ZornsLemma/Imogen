@@ -29,10 +29,16 @@ sprite_dict = {
 # Merge with common sprite dictionary
 sprite_dict = {**common_sprite_dict, **sprite_dict}
 
+# Multiple rooms
+constant(2, "objectid_fruit")
+
 # Room 0
 constant(3, "objectid_rail_rope_end")
+constant(5, "objectid_spell")
+
+# Room 2
 constant(3, "objectid_rabbit")
-constant(2, "objectid_fruit")
+
 
 set_sprite_dict(sprite_dict)
 
@@ -88,6 +94,7 @@ label(0x3afe, "developer_mode_inactive")
 ground_fill(0x3afe)
 expr(0x3b80, sprite_dict)
 expr(0x3b87, sprite_dict)
+expr(0x3bbd, "objectid_spell")
 comment(0x3bc1, "check for first update in room (branch if so)")
 comment(0x3bc9, "check for level change (branch if not)")
 label(0x3bc9, "room_0_first_update")
