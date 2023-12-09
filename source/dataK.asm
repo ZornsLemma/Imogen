@@ -531,7 +531,7 @@ room_2_update_handler
 ; check for first update in room (branch if so)
     lda update_room_first_update_flag                                 ; 3bee: ad 2b 13
     bne initialise_room_2                                             ; 3bf1: d0 03
-    jmp c3d0d                                                         ; 3bf3: 4c 0d 3d
+    jmp update_room_2                                                 ; 3bf3: 4c 0d 3d
 
 ; check for level change (branch if not)
 initialise_room_2
@@ -569,7 +569,7 @@ room_changed_only
     lda desired_room_index                                            ; 3c2f: a5 30
     cmp #2                                                            ; 3c31: c9 02
     beq initialise_in_room_2                                          ; 3c33: f0 03
-    jmp c3ccd                                                         ; 3c35: 4c cd 3c
+    jmp plant_is_growing_local1                                       ; 3c35: 4c cd 3c
 
 initialise_in_room_2
     ldy #$10                                                          ; 3c38: a0 10
@@ -655,8 +655,8 @@ draw_leaves
     sta object_z_order + objectid_leaf2                               ; 3cc5: 8d c7 38
     lda #$ff                                                          ; 3cc8: a9 ff
     sta object_direction + objectid_leaf2                             ; 3cca: 8d c3 09
-c3ccd
-    jmp plant_is_growing                                              ; 3ccd: 4c b6 3d
+plant_is_growing_local1
+    jmp plant_is_growing_or_poisoned                                  ; 3ccd: 4c b6 3d
 
 draw_leaves_on_stalk
     sta stalk_cell_y_max                                              ; 3cd0: 8d 09 3d
@@ -694,15 +694,15 @@ draw_leaf_sprite
 stalk_cell_y_max
     !byte 0                                                           ; 3d09: 00
 
-plant_is_growing_local
-    jmp plant_is_growing                                              ; 3d0a: 4c b6 3d
+plant_is_growing_local2
+    jmp plant_is_growing_or_poisoned                                  ; 3d0a: 4c b6 3d
 
-c3d0d
+update_room_2
     lda save_game_level_k_plant_growth_timer                          ; 3d0d: ad 34 0a
     bne check_plant_timer                                             ; 3d10: d0 51
     lda desired_room_index                                            ; 3d12: a5 30
     cmp #2                                                            ; 3d14: c9 02
-    bne plant_is_growing_local                                        ; 3d16: d0 f2
+    bne plant_is_growing_local2                                       ; 3d16: d0 f2
     lda developer_flags                                               ; 3d18: ad 03 11
     bpl developer_mode_inactive2                                      ; 3d1b: 10 0e
     ldx #inkey_key_g                                                  ; 3d1d: a2 ac
@@ -714,34 +714,34 @@ c3d0d
 developer_mode_inactive2
     lda object_spriteid + objectid_bottle_pour                        ; 3d2b: ad aa 09
     cmp #spriteid_splash                                              ; 3d2e: c9 d9
-    bne plant_is_growing_local                                        ; 3d30: d0 d8
+    bne plant_is_growing_local2                                       ; 3d30: d0 d8
     ldx #objectid_bottle_pour                                         ; 3d32: a2 02
     jsr find_left_and_right_of_object                                 ; 3d34: 20 34 24
     lda object_left_cell_x                                            ; 3d37: a5 78
     cmp #$15                                                          ; 3d39: c9 15
-    bcs plant_is_growing_local                                        ; 3d3b: b0 cd
+    bcs plant_is_growing_local2                                       ; 3d3b: b0 cd
     lda object_right_cell_x                                           ; 3d3d: a5 79
     cmp #$14                                                          ; 3d3f: c9 14
-    bcc plant_is_growing_local                                        ; 3d41: 90 c7
+    bcc plant_is_growing_local2                                       ; 3d41: 90 c7
     lda save_game_level_k_poison_in_bottle_flag                       ; 3d43: ad 36 0a
     bne poison_plant                                                  ; 3d46: d0 0a
 grow_plant
     lda save_game_level_k_plant_top_y                                 ; 3d48: ad 33 0a
     cmp #$10                                                          ; 3d4b: c9 10
-    beq plant_is_growing                                              ; 3d4d: f0 67
+    beq plant_is_growing_or_poisoned                                  ; 3d4d: f0 67
     jmp check_plant_timer                                             ; 3d4f: 4c 63 3d
 
 poison_plant
     lda save_game_level_k_plant_top_y                                 ; 3d52: ad 33 0a
     cmp #$10                                                          ; 3d55: c9 10
-    bne plant_is_growing                                              ; 3d57: d0 5d
+    bne plant_is_growing_or_poisoned                                  ; 3d57: d0 5d
     lda #$90                                                          ; 3d59: a9 90
     sta save_game_level_k_plant_top_y                                 ; 3d5b: 8d 33 0a
     lda #$80                                                          ; 3d5e: a9 80
     sta save_game_level_k_plant_growth_timer                          ; 3d60: 8d 34 0a
 check_plant_timer
     lda save_game_level_k_plant_growth_timer                          ; 3d63: ad 34 0a
-    bmi c3d8d                                                         ; 3d66: 30 25
+    bmi plant_is_poisoned                                             ; 3d66: 30 25
     lda save_game_level_k_plant_growth_timer                          ; 3d68: ad 34 0a
     cmp #$0f                                                          ; 3d6b: c9 0f
     bcc increment_growth                                              ; 3d6d: 90 04
@@ -751,7 +751,7 @@ increment_growth
     clc                                                               ; 3d73: 18
     adc #1                                                            ; 3d74: 69 01
     sta save_game_level_k_plant_growth_timer                          ; 3d76: 8d 34 0a
-    jmp plant_is_growing                                              ; 3d79: 4c b6 3d
+    jmp plant_is_growing_or_poisoned                                  ; 3d79: 4c b6 3d
 
 finished_growing
     lda #0                                                            ; 3d7c: a9 00
@@ -760,59 +760,59 @@ finished_growing
     sec                                                               ; 3d84: 38
     sbc #$20 ; ' '                                                    ; 3d85: e9 20
     sta save_game_level_k_plant_top_y                                 ; 3d87: 8d 33 0a
-    jmp plant_is_growing                                              ; 3d8a: 4c b6 3d
+    jmp plant_is_growing_or_poisoned                                  ; 3d8a: 4c b6 3d
 
-c3d8d
+plant_is_poisoned
     lda save_game_level_k_plant_top_y                                 ; 3d8d: ad 33 0a
     cmp #$10                                                          ; 3d90: c9 10
-    beq plant_is_growing                                              ; 3d92: f0 22
+    beq plant_is_growing_or_poisoned                                  ; 3d92: f0 22
     lda save_game_level_k_plant_growth_timer                          ; 3d94: ad 34 0a
     cmp #$8f                                                          ; 3d97: c9 8f
-    bcc c3d9f                                                         ; 3d99: 90 04
+    bcc increment_poisoning_state                                     ; 3d99: 90 04
     cmp #$8f                                                          ; 3d9b: c9 8f
-    bcs c3da8                                                         ; 3d9d: b0 09
-c3d9f
+    bcs poison_stage_increases                                        ; 3d9d: b0 09
+increment_poisoning_state
     clc                                                               ; 3d9f: 18
     adc #1                                                            ; 3da0: 69 01
     sta save_game_level_k_plant_growth_timer                          ; 3da2: 8d 34 0a
-    jmp plant_is_growing                                              ; 3da5: 4c b6 3d
+    jmp plant_is_growing_or_poisoned                                  ; 3da5: 4c b6 3d
 
-c3da8
+poison_stage_increases
     lda #$80                                                          ; 3da8: a9 80
     sta save_game_level_k_plant_growth_timer                          ; 3daa: 8d 34 0a
     lda save_game_level_k_plant_top_y                                 ; 3dad: ad 33 0a
     sec                                                               ; 3db0: 38
     sbc #$20 ; ' '                                                    ; 3db1: e9 20
     sta save_game_level_k_plant_top_y                                 ; 3db3: 8d 33 0a
-plant_is_growing
+plant_is_growing_or_poisoned
     lda desired_room_index                                            ; 3db6: a5 30
     cmp #2                                                            ; 3db8: c9 02
     bne return2_local                                                 ; 3dba: d0 4b
     ldy #$10                                                          ; 3dbc: a0 10
     lda save_game_level_k_plant_growth_timer                          ; 3dbe: ad 34 0a
-    bmi c3ddd                                                         ; 3dc1: 30 1a
+    bmi update_stalk_top_object_and_collision_map                     ; 3dc1: 30 1a
     ldy save_game_level_k_plant_top_y                                 ; 3dc3: ac 33 0a
     sec                                                               ; 3dc6: 38
     sbc #4                                                            ; 3dc7: e9 04
-    bcc c3ddd                                                         ; 3dc9: 90 12
+    bcc update_stalk_top_object_and_collision_map                     ; 3dc9: 90 12
     asl                                                               ; 3dcb: 0a
     sta temp_stalk_y                                                  ; 3dcc: 85 70
     cmp #$20 ; ' '                                                    ; 3dce: c9 20
-    bcc c3dd6                                                         ; 3dd0: 90 04
+    bcc get_y_position_of_stalk                                       ; 3dd0: 90 04
     lda #$20 ; ' '                                                    ; 3dd2: a9 20
     sta temp_stalk_y                                                  ; 3dd4: 85 70
-c3dd6
+get_y_position_of_stalk
     lda save_game_level_k_plant_top_y                                 ; 3dd6: ad 33 0a
     sec                                                               ; 3dd9: 38
     sbc temp_stalk_y                                                  ; 3dda: e5 70
     tay                                                               ; 3ddc: a8
-c3ddd
+update_stalk_top_object_and_collision_map
     lda #spriteid_one_pixel_masked_out                                ; 3ddd: a9 00
-    sta object_spriteid_old + objectid_drip                           ; 3ddf: 8d b6 09
-    sta object_spriteid + objectid_drip                               ; 3de2: 8d ab 09
-    cpy object_y_low + objectid_drip                                  ; 3de5: cc 7f 09
-    beq c3e0a                                                         ; 3de8: f0 20
-    sty object_y_low + objectid_drip                                  ; 3dea: 8c 7f 09
+    sta object_spriteid_old + objectid_top_of_stalk                   ; 3ddf: 8d b6 09
+    sta object_spriteid + objectid_top_of_stalk                       ; 3de2: 8d ab 09
+    cpy object_y_low + objectid_top_of_stalk                          ; 3de5: cc 7f 09
+    beq hide_leaf_objects_when_stalk_is_full                          ; 3de8: f0 20
+    sty object_y_low + objectid_top_of_stalk                          ; 3dea: 8c 7f 09
     ldx #$14                                                          ; 3ded: a2 14
     tya                                                               ; 3def: 98
     lsr                                                               ; 3df0: 4a
@@ -825,16 +825,16 @@ c3ddd
     lda #collision_map_solid_rock                                     ; 3dfa: a9 03
     jsr write_a_single_value_to_cell_in_collision_map                 ; 3dfc: 20 bb 1e
     lda #spriteid_stalk_top_end_short                                 ; 3dff: a9 cb
-    sta object_spriteid + objectid_drip                               ; 3e01: 8d ab 09
-    jmp c3e0a                                                         ; 3e04: 4c 0a 3e
+    sta object_spriteid + objectid_top_of_stalk                       ; 3e01: 8d ab 09
+    jmp hide_leaf_objects_when_stalk_is_full                          ; 3e04: 4c 0a 3e
 
 return2_local
     jmp return2                                                       ; 3e07: 4c cb 3e
 
-c3e0a
+hide_leaf_objects_when_stalk_is_full
     lda save_game_level_k_plant_top_y                                 ; 3e0a: ad 33 0a
     cmp #$10                                                          ; 3e0d: c9 10
-    bne c3e22                                                         ; 3e0f: d0 11
+    bne set_leaf_positions                                            ; 3e0f: d0 11
     lda #spriteid_one_pixel_masked_out                                ; 3e11: a9 00
     sta object_spriteid_old + objectid_leaf1                          ; 3e13: 8d b7 09
     sta object_spriteid_old + objectid_leaf2                          ; 3e16: 8d b8 09
@@ -842,7 +842,7 @@ c3e0a
     sta object_spriteid + objectid_leaf2                              ; 3e1c: 8d ad 09
     jmp return2                                                       ; 3e1f: 4c cb 3e
 
-c3e22
+set_leaf_positions
     lda save_game_level_k_plant_top_y                                 ; 3e22: ad 33 0a
     sec                                                               ; 3e25: 38
     sbc #$18                                                          ; 3e26: e9 18
@@ -852,12 +852,12 @@ c3e22
     sbc #8                                                            ; 3e2f: e9 08
     sta object_y_low + objectid_leaf2                                 ; 3e31: 8d 81 09
     lda save_game_level_k_plant_growth_timer                          ; 3e34: ad 34 0a
-    bmi c3e78                                                         ; 3e37: 30 3f
-    bne c3e43                                                         ; 3e39: d0 08
+    bmi update_plant_wilting                                          ; 3e37: 30 3f
+    bne plant_growing                                                 ; 3e39: d0 08
     lda #spriteid_one_pixel_masked_out                                ; 3e3b: a9 00
     sta object_spriteid_old + objectid_leaf1                          ; 3e3d: 8d b7 09
     sta object_spriteid_old + objectid_leaf2                          ; 3e40: 8d b8 09
-c3e43
+plant_growing
     lda #spriteid_one_pixel_masked_out                                ; 3e43: a9 00
     sta object_spriteid + objectid_leaf1                              ; 3e45: 8d ac 09
     sta object_spriteid + objectid_leaf2                              ; 3e48: 8d ad 09
@@ -867,9 +867,9 @@ c3e43
     bcc return2_local                                                 ; 3e51: 90 b4
     ldy #3                                                            ; 3e53: a0 03
     cmp #4                                                            ; 3e55: c9 04
-    bcs c3e5a                                                         ; 3e57: b0 01
+    bcs set_leaf2_sprite                                              ; 3e57: b0 01
     tay                                                               ; 3e59: a8
-c3e5a
+set_leaf2_sprite
     lda growing_leaf_animation,y                                      ; 3e5a: b9 d1 3b
     sta object_spriteid + objectid_leaf2                              ; 3e5d: 8d ad 09
     lda save_game_level_k_plant_growth_timer                          ; 3e60: ad 34 0a
@@ -878,27 +878,28 @@ c3e5a
     bcc return2                                                       ; 3e66: 90 63
     ldy #3                                                            ; 3e68: a0 03
     cmp #4                                                            ; 3e6a: c9 04
-    bcs c3e6f                                                         ; 3e6c: b0 01
+    bcs set_leaf1_sprite                                              ; 3e6c: b0 01
     tay                                                               ; 3e6e: a8
-c3e6f
+set_leaf1_sprite
     lda growing_leaf_animation,y                                      ; 3e6f: b9 d1 3b
     sta object_spriteid + objectid_leaf1                              ; 3e72: 8d ac 09
     jmp return2                                                       ; 3e75: 4c cb 3e
 
-c3e78
+update_plant_wilting
     and #$7f                                                          ; 3e78: 29 7f
-    bne c3e94                                                         ; 3e7a: d0 18
+    bne set_full_leaf                                                 ; 3e7a: d0 18
 ; check for first update in room (branch if so)
     lda update_room_first_update_flag                                 ; 3e7c: ad 2b 13
-    bne c3e94                                                         ; 3e7f: d0 13
-    ldx #5                                                            ; 3e81: a2 05
+    bne set_full_leaf                                                 ; 3e7f: d0 13
+; copy to old, so the leaves don't get erased when the objects move
+    ldx #objectid_leaf2                                               ; 3e81: a2 05
     jsr copy_object_state_to_old                                      ; 3e83: 20 f7 20
-    ldx #4                                                            ; 3e86: a2 04
+    ldx #objectid_leaf1                                               ; 3e86: a2 04
     jsr copy_object_state_to_old                                      ; 3e88: 20 f7 20
     lda full_leaf                                                     ; 3e8b: ad d4 3b
     sta object_spriteid_old + objectid_leaf1                          ; 3e8e: 8d b7 09
     sta object_spriteid_old + objectid_leaf2                          ; 3e91: 8d b8 09
-c3e94
+set_full_leaf
     lda full_leaf                                                     ; 3e94: ad d4 3b
     sta object_spriteid + objectid_leaf1                              ; 3e97: 8d ac 09
     sta object_spriteid + objectid_leaf2                              ; 3e9a: 8d ad 09
@@ -1271,9 +1272,9 @@ update_dog_head_animation
     tay                                                               ; 40b3: a8
     lda dog_head_animations,y                                         ; 40b4: b9 06 40
     cmp #$80                                                          ; 40b7: c9 80
-    bne c40be                                                         ; 40b9: d0 03
+    bne got_dog_animation_step_in_y                                   ; 40b9: d0 03
     ldy save_game_level_k_dog_animation                               ; 40bb: ac 37 0a
-c40be
+got_dog_animation_step_in_y
     lda save_game_level_k_dog_animation                               ; 40be: ad 37 0a
     cmp #dog_head_dead_animation - dog_head_animations                ; 40c1: c9 01
     beq set_dog_animation_step_local                                  ; 40c3: f0 50
@@ -1414,25 +1415,26 @@ room_0_update_handler
 ; check for level change (branch if not)
     lda current_level                                                 ; 41d0: a5 31
     cmp level_before_latest_level_and_room_initialisation             ; 41d2: c5 51
-    beq c41db                                                         ; 41d4: f0 05
+    beq check_for_room_change                                         ; 41d4: f0 05
     lda #0                                                            ; 41d6: a9 00
     sta bottle_pour_animation_step                                    ; 41d8: 8d 73 0a
-c41db
+check_for_room_change
     lda desired_room_index                                            ; 41db: a5 30
     cmp previous_room_index                                           ; 41dd: c5 50
-    beq c41e6                                                         ; 41df: f0 05
+    beq initialise_bottle                                             ; 41df: f0 05
     lda #0                                                            ; 41e1: a9 00
     sta bottle_pour_animation_step                                    ; 41e3: 8d 73 0a
-c41e6
+initialise_bottle
     lda #spriteid_erase_2                                             ; 41e6: a9 e4
     sta object_erase_type + objectid_bottle_pour                      ; 41e8: 8d ae 38
     lda #$60 ; '`'                                                    ; 41eb: a9 60
     sta object_z_order + objectid_bottle_pour                         ; 41ed: 8d c4 38
     lda desired_room_index                                            ; 41f0: a5 30
     cmp #0                                                            ; 41f2: c9 00
-    bne c4217                                                         ; 41f4: d0 21
+    bne update_pouring_object_local                                   ; 41f4: d0 21
+; initialise room 0
     lda save_game_level_k_got_bottle_flag                             ; 41f6: ad 35 0a
-    bne c4217                                                         ; 41f9: d0 1c
+    bne update_pouring_object_local                                   ; 41f9: d0 1c
     ldx #$23 ; '#'                                                    ; 41fb: a2 23
     lda #4                                                            ; 41fd: a9 04
     sta temp_sprite_x_offset                                          ; 41ff: 85 3a
@@ -1445,17 +1447,18 @@ c41e6
     sta object_erase_type + objectid_drip                             ; 420f: 8d af 38
     lda #$c0                                                          ; 4212: a9 c0
     sta object_z_order + objectid_drip                                ; 4214: 8d c5 38
-c4217
+update_pouring_object_local
     jmp update_pouring_object                                         ; 4217: 4c ae 42
 
 room_0_not_first_update
     lda save_game_level_k_got_bottle_flag                             ; 421a: ad 35 0a
-    bne c4245                                                         ; 421d: d0 26
+    bne update_in_room_0_with_bottle                                  ; 421d: d0 26
     lda desired_room_index                                            ; 421f: a5 30
     cmp #0                                                            ; 4221: c9 00
     bne return4_local                                                 ; 4223: d0 1d
+; update bottle in room 0
     lda save_game_level_k_got_bottle_flag                             ; 4225: ad 35 0a
-    bne c4217                                                         ; 4228: d0 ed
+    bne update_pouring_object_local                                   ; 4228: d0 ed
     ldx #objectid_old_player                                          ; 422a: a2 0b
     ldy #objectid_empty_bottle                                        ; 422c: a0 03
     jsr test_for_collision_between_objects_x_and_y                    ; 422e: 20 e2 28
@@ -1469,44 +1472,51 @@ room_0_not_first_update
 return4_local
     jmp return4                                                       ; 4242: 4c 27 43
 
-c4245
+; check if already pouring
+update_in_room_0_with_bottle
     lda bottle_pour_animation_step                                    ; 4245: ad 73 0a
     bne pour_in_progress                                              ; 4248: d0 56
+; check if starting to pour
     lda #spriteid_full_bottle_menu_item                               ; 424a: a9 d7
     cmp player_using_object_spriteid                                  ; 424c: cd b6 2e
     bne update_pouring_object                                         ; 424f: d0 5d
+; set empty bottle
     lda #spriteid_empty_bottle_menu_item                              ; 4251: a9 d6
     sta player_held_object_spriteid                                   ; 4253: 85 52
     sta player_using_object_spriteid                                  ; 4255: 8d b6 2e
+; set empty bottle in toolbar
     ldx menu_index_for_extra_items                                    ; 4258: ae 6e 29
     sta desired_menu_slots,x                                          ; 425b: 9d 5c 29
+; start pouring animation
     lda #1                                                            ; 425e: a9 01
     sta bottle_pour_animation_step                                    ; 4260: 8d 73 0a
-    lda #1                                                            ; 4263: a9 01
+    lda #1                                                            ; 4263: a9 01                   ; redundant instruction
     sta save_game_level_k_got_bottle_flag                             ; 4265: 8d 35 0a
+; move player accessory in X based on player direction
     lda #4                                                            ; 4268: a9 04
     ldx object_direction                                              ; 426a: ae be 09
-    bpl c4274                                                         ; 426d: 10 05
+    bpl sign_extend_a_to_ax                                           ; 426d: 10 05
     eor #$ff                                                          ; 426f: 49 ff
     clc                                                               ; 4271: 18
     adc #1                                                            ; 4272: 69 01
-c4274
+sign_extend_a_to_ax
     ldx #0                                                            ; 4274: a2 00
     ora #0                                                            ; 4276: 09 00
-    bpl c427b                                                         ; 4278: 10 01
+    bpl add_to_bottle_accessory_x                                     ; 4278: 10 01
     dex                                                               ; 427a: ca
-c427b
+add_to_bottle_accessory_x
     clc                                                               ; 427b: 18
     adc object_x_low + objectid_player_accessory                      ; 427c: 6d 51 09
     sta bottle_pour_x_low                                             ; 427f: 8d 70 0a
     txa                                                               ; 4282: 8a
     adc object_x_high + objectid_player_accessory                     ; 4283: 6d 67 09
     sta bottle_pour_x_high                                            ; 4286: 8d 71 0a
-    ldx #0                                                            ; 4289: a2 00
+; move accessory up four pixels. X is irrelevant.
+    ldx #0                                                            ; 4289: a2 00                   ; redundant instruction
     lda #$fc                                                          ; 428b: a9 fc
-    bpl c4290                                                         ; 428d: 10 01
-    dex                                                               ; 428f: ca
-c4290
+    bpl move_bottle_accessory_up_in_y                                 ; 428d: 10 01                   ; redundant instruction
+    dex                                                               ; 428f: ca                      ; redundant instruction
+move_bottle_accessory_up_in_y
     clc                                                               ; 4290: 18
     adc object_y_low + objectid_player_accessory                      ; 4291: 6d 7d 09
     sta bottle_pour_y                                                 ; 4294: 8d 72 0a
@@ -1537,40 +1547,41 @@ update_pouring_object
     lda #spriteid_pour                                                ; 42d0: a9 df
     sta object_spriteid + objectid_bottle_pour                        ; 42d2: 8d aa 09
     cpx #1                                                            ; 42d5: e0 01
-    beq c430c                                                         ; 42d7: f0 33
+    beq check_for_bottle_pouring_offscreen                            ; 42d7: f0 33
     lda #spriteid_splash                                              ; 42d9: a9 d9
     sta object_spriteid + objectid_bottle_pour                        ; 42db: 8d aa 09
     cpx #$ff                                                          ; 42de: e0 ff
-    beq c430c                                                         ; 42e0: f0 2a
+    beq check_for_bottle_pouring_offscreen                            ; 42e0: f0 2a
+; start droplet
     lda #spriteid_droplet                                             ; 42e2: a9 da
     sta object_spriteid + objectid_bottle_pour                        ; 42e4: 8d aa 09
 ; check for first update in room (branch if so)
     lda update_room_first_update_flag                                 ; 42e7: ad 2b 13
-    bne c430c                                                         ; 42ea: d0 20
+    bne check_for_bottle_pouring_offscreen                            ; 42ea: d0 20
     lda object_spriteid_old + objectid_bottle_pour                    ; 42ec: ad b5 09
     cmp #$da                                                          ; 42ef: c9 da
-    bne c430c                                                         ; 42f1: d0 19
+    bne check_for_bottle_pouring_offscreen                            ; 42f1: d0 19
     lda #1                                                            ; 42f3: a9 01
     sta temp_bottom_offset                                            ; 42f5: 8d 51 25
     lda #2                                                            ; 42f8: a9 02
     jsr get_solid_rock_collision_for_object_a                         ; 42fa: 20 94 28
-    beq c430c                                                         ; 42fd: f0 0d
+    beq check_for_bottle_pouring_offscreen                            ; 42fd: f0 0d
     lda #$ff                                                          ; 42ff: a9 ff
     sta bottle_pour_animation_step                                    ; 4301: 8d 73 0a
     lda #spriteid_splash                                              ; 4304: a9 d9
     sta object_spriteid + objectid_bottle_pour                        ; 4306: 8d aa 09
     jsr play_landing_sound                                            ; 4309: 20 a9 23
-c430c
-    ldx #2                                                            ; 430c: a2 02
+check_for_bottle_pouring_offscreen
+    ldx #objectid_bottle_pour                                         ; 430c: a2 02
     jsr find_left_and_right_of_object                                 ; 430e: 20 34 24
     lda object_left_cell_x                                            ; 4311: a5 78
     cmp #game_area_width_cells                                        ; 4313: c9 28
     bcc return4                                                       ; 4315: 90 10
     ora #0                                                            ; 4317: 09 00
-    bpl c431f                                                         ; 4319: 10 04
+    bpl stop_bottle_pour_animation                                    ; 4319: 10 04
     lda object_right_cell_x                                           ; 431b: a5 79
     bpl return4                                                       ; 431d: 10 08
-c431f
+stop_bottle_pour_animation
     lda #0                                                            ; 431f: a9 00
     sta bottle_pour_animation_step                                    ; 4321: 8d 73 0a
     sta object_spriteid + objectid_bottle_pour                        ; 4324: 8d aa 09
@@ -1924,30 +1935,6 @@ sprite_data
 pydis_end
 
 ; Automatically generated labels:
-;     c3ccd
-;     c3d0d
-;     c3d8d
-;     c3d9f
-;     c3da8
-;     c3dd6
-;     c3ddd
-;     c3e0a
-;     c3e22
-;     c3e43
-;     c3e5a
-;     c3e6f
-;     c3e78
-;     c3e94
-;     c40be
-;     c41db
-;     c41e6
-;     c4217
-;     c4245
-;     c4274
-;     c427b
-;     c4290
-;     c430c
-;     c431f
 ;     c4397
 ;     c43ff
 ;     c4416
@@ -2069,17 +2056,20 @@ pydis_end
 !if (object_spriteid + objectid_leaf2) != $09ad {
     !error "Assertion failed: object_spriteid + objectid_leaf2 == $09ad"
 }
+!if (object_spriteid + objectid_top_of_stalk) != $09ab {
+    !error "Assertion failed: object_spriteid + objectid_top_of_stalk == $09ab"
+}
 !if (object_spriteid_old + objectid_bottle_pour) != $09b5 {
     !error "Assertion failed: object_spriteid_old + objectid_bottle_pour == $09b5"
-}
-!if (object_spriteid_old + objectid_drip) != $09b6 {
-    !error "Assertion failed: object_spriteid_old + objectid_drip == $09b6"
 }
 !if (object_spriteid_old + objectid_leaf1) != $09b7 {
     !error "Assertion failed: object_spriteid_old + objectid_leaf1 == $09b7"
 }
 !if (object_spriteid_old + objectid_leaf2) != $09b8 {
     !error "Assertion failed: object_spriteid_old + objectid_leaf2 == $09b8"
+}
+!if (object_spriteid_old + objectid_top_of_stalk) != $09b6 {
+    !error "Assertion failed: object_spriteid_old + objectid_top_of_stalk == $09b6"
 }
 !if (object_x_high + objectid_bottle_pour) != $0968 {
     !error "Assertion failed: object_x_high + objectid_bottle_pour == $0968"
@@ -2119,6 +2109,9 @@ pydis_end
 }
 !if (object_y_low + objectid_leaf2) != $0981 {
     !error "Assertion failed: object_y_low + objectid_leaf2 == $0981"
+}
+!if (object_y_low + objectid_top_of_stalk) != $097f {
+    !error "Assertion failed: object_y_low + objectid_top_of_stalk == $097f"
 }
 !if (object_z_order + objectid_bottle_pour) != $38c4 {
     !error "Assertion failed: object_z_order + objectid_bottle_pour == $38c4"
