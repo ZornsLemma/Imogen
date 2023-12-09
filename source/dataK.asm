@@ -1054,7 +1054,7 @@ room_3_update_handler
     sta room_3_drip_timer                                             ; 3f82: 8d 75 0a
     rts                                                               ; 3f85: 60
 
-sub_c3f86
+dog_death_sound
     lda #0                                                            ; 3f86: a9 00
     ldx #<sound1                                                      ; 3f88: a2 05
     ldy #>sound1                                                      ; 3f8a: a0 45
@@ -1160,10 +1160,10 @@ room_0_game_update_loop
 
 dog_head_animations
     !byte 0                                                           ; 4006: 00
-dog_head_animation1
+dog_head_dead_animation
     !byte 0, 0, 0                                                     ; 4007: 00 00 00
     !byte $80                                                         ; 400a: 80
-dog_head_animation2
+dog_head_drinking_animation
     !byte spriteid_dog_head                                           ; 400b: ea
     !byte $18, $ff                                                    ; 400c: 18 ff
     !byte spriteid_dog_head                                           ; 400e: ea
@@ -1179,7 +1179,7 @@ dog_head_animation2
     !byte spriteid_dog_head_licking                                   ; 401d: eb
     !byte $19, $ff                                                    ; 401e: 19 ff
     !byte $80                                                         ; 4020: 80
-dog_head_animation3
+dog_head_push_animation
     !byte spriteid_dog_head                                           ; 4021: ea
     !byte $19, $fe                                                    ; 4022: 19 fe
     !byte spriteid_dog_head                                           ; 4024: ea
@@ -1201,7 +1201,7 @@ dog_head_animation3
     !byte spriteid_dog_head                                           ; 403c: ea
     !byte $19, $fe                                                    ; 403d: 19 fe
     !byte $80                                                         ; 403f: 80
-dog_head_animation4
+dog_head_stunned_animation
     !byte spriteid_dog_head                                           ; 4040: ea
     !byte $18, $fe                                                    ; 4041: 18 fe
     !byte $80                                                         ; 4043: 80
@@ -1215,14 +1215,14 @@ update_dog_puzzle
     cmp level_before_latest_level_and_room_initialisation             ; 404b: c5 51
     beq initialise_dog_puzzle                                         ; 404d: f0 18
     lda save_game_level_k_poison_dog_animation_step                   ; 404f: ad 38 0a
-    beq set_dog_head_animation2                                       ; 4052: f0 0b
-    lda #dog_head_animation1 - dog_head_animations                    ; 4054: a9 01
+    beq set_dog_head_drinking_animation                               ; 4052: f0 0b
+    lda #dog_head_dead_animation - dog_head_animations                ; 4054: a9 01
     sta save_game_level_k_dog_animation                               ; 4056: 8d 37 0a
     sta dog_animation_step                                            ; 4059: 8d 76 0a
     jmp initialise_dog_puzzle                                         ; 405c: 4c 67 40
 
-set_dog_head_animation2
-    lda #dog_head_animation2 - dog_head_animations                    ; 405f: a9 05
+set_dog_head_drinking_animation
+    lda #dog_head_drinking_animation - dog_head_animations            ; 405f: a9 05
     sta save_game_level_k_dog_animation                               ; 4061: 8d 37 0a
     sta dog_animation_step                                            ; 4064: 8d 76 0a
 initialise_dog_puzzle
@@ -1269,64 +1269,65 @@ update_dog_head_animation
     ldy save_game_level_k_dog_animation                               ; 40bb: ac 37 0a
 c40be
     lda save_game_level_k_dog_animation                               ; 40be: ad 37 0a
-    cmp #dog_head_animation1 - dog_head_animations                    ; 40c1: c9 01
+    cmp #dog_head_dead_animation - dog_head_animations                ; 40c1: c9 01
     beq set_dog_animation_step_local                                  ; 40c3: f0 50
     lda save_game_level_k_poison_dog_animation_step                   ; 40c5: ad 38 0a
-    bne c40ed                                                         ; 40c8: d0 23
+    bne update_dog_poisoning_animation                                ; 40c8: d0 23
     lda desired_room_index                                            ; 40ca: a5 30
     cmp #0                                                            ; 40cc: c9 00
-    bne c40f7                                                         ; 40ce: d0 27
+    bne check_dog_head_animations                                     ; 40ce: d0 27
     lda object_spriteid + objectid_bottle_pour                        ; 40d0: ad aa 09
     cmp #spriteid_splash                                              ; 40d3: c9 d9
-    bne c40f7                                                         ; 40d5: d0 20
+    bne check_dog_head_animations                                     ; 40d5: d0 20
     lda save_game_level_k_poison_in_bottle_flag                       ; 40d7: ad 36 0a
-    beq c40f7                                                         ; 40da: f0 1b
+    beq check_dog_head_animations                                     ; 40da: f0 1b
+; check for bottle and dog bowl collision
     ldx #objectid_bottle_pour                                         ; 40dc: a2 02
-    sty l419e                                                         ; 40de: 8c 9e 41
+    sty remember_y                                                    ; 40de: 8c 9e 41
     ldy #objectid_dog_bowl                                            ; 40e1: a0 07
     jsr test_for_collision_between_objects_x_and_y                    ; 40e3: 20 e2 28
-    ldy l419e                                                         ; 40e6: ac 9e 41
+    ldy remember_y                                                    ; 40e6: ac 9e 41
     ora #0                                                            ; 40e9: 09 00
-    beq c40f7                                                         ; 40eb: f0 0a
-c40ed
+    beq check_dog_head_animations                                     ; 40eb: f0 0a
+update_dog_poisoning_animation
     lda save_game_level_k_poison_dog_animation_step                   ; 40ed: ad 38 0a
     cmp #$10                                                          ; 40f0: c9 10
-    bcs c40f7                                                         ; 40f2: b0 03
+    bcs check_dog_head_animations                                     ; 40f2: b0 03
     inc save_game_level_k_poison_dog_animation_step                   ; 40f4: ee 38 0a
-c40f7
+check_dog_head_animations
     lda save_game_level_k_poison_dog_animation_step                   ; 40f7: ad 38 0a
     cmp #8                                                            ; 40fa: c9 08
-    bcc c4118                                                         ; 40fc: 90 1a
-    ldy #dog_head_animation4 - dog_head_animations                    ; 40fe: a0 3a
+    bcc check_for_player_colliding_with_dog                           ; 40fc: 90 1a
+    ldy #dog_head_stunned_animation - dog_head_animations             ; 40fe: a0 3a
     sty save_game_level_k_dog_animation                               ; 4100: 8c 37 0a
     cmp #$10                                                          ; 4103: c9 10
     bcc set_dog_animation_step                                        ; 4105: 90 34
     lda desired_room_index                                            ; 4107: a5 30
     cmp #0                                                            ; 4109: c9 00
-    bne c4110                                                         ; 410b: d0 03
-    jsr sub_c3f86                                                     ; 410d: 20 86 3f
-c4110
-    ldy #dog_head_animation1 - dog_head_animations                    ; 4110: a0 01
+    bne set_dog_head_dead_animation                                   ; 410b: d0 03
+    jsr dog_death_sound                                               ; 410d: 20 86 3f
+set_dog_head_dead_animation
+    ldy #dog_head_dead_animation - dog_head_animations                ; 4110: a0 01
     sty save_game_level_k_dog_animation                               ; 4112: 8c 37 0a
 set_dog_animation_step_local
     jmp set_dog_animation_step                                        ; 4115: 4c 3b 41
 
-c4118
+check_for_player_colliding_with_dog
     lda desired_room_index                                            ; 4118: a5 30
     cmp #0                                                            ; 411a: c9 00
     bne set_dog_animation_step                                        ; 411c: d0 1d
     lda #$f8                                                          ; 411e: a9 f8
     sta temp_top_offset                                               ; 4120: 8d 50 25
     ldx #objectid_dog_head                                            ; 4123: a2 06
-    sty l419e                                                         ; 4125: 8c 9e 41
+    sty remember_y                                                    ; 4125: 8c 9e 41
     ldy #objectid_player                                              ; 4128: a0 00
     jsr test_for_collision_between_objects_x_and_y                    ; 412a: 20 e2 28
-    ldy l419e                                                         ; 412d: ac 9e 41
+    ldy remember_y                                                    ; 412d: ac 9e 41
     ora #0                                                            ; 4130: 09 00
     beq set_dog_animation_step                                        ; 4132: f0 07
     lda #6                                                            ; 4134: a9 06
     sta player_wall_collision_reaction_speed                          ; 4136: 8d 33 24
-    ldy #$1b                                                          ; 4139: a0 1b
+    ldy #dog_head_push_animation - dog_head_animations                ; 4139: a0 1b
 set_dog_animation_step
     sty dog_animation_step                                            ; 413b: 8c 76 0a
 set_dog_head_object
@@ -1351,9 +1352,9 @@ set_dog_head_object
     lda #$74 ; 't'                                                    ; 4166: a9 74
     sta object_x_low + objectid_dog_body                              ; 4168: 8d 55 09
     lda save_game_level_k_dog_animation                               ; 416b: ad 37 0a
-    cmp #dog_head_animation1 - dog_head_animations                    ; 416e: c9 01
+    cmp #dog_head_dead_animation - dog_head_animations                ; 416e: c9 01
     beq dog_is_dead                                                   ; 4170: f0 14
-    cmp #dog_head_animation4 - dog_head_animations                    ; 4172: c9 3a
+    cmp #dog_head_stunned_animation - dog_head_animations             ; 4172: c9 3a
     bne return3                                                       ; 4174: d0 27
 ; set solid rock collision
     ldx #$11                                                          ; 4176: a2 11
@@ -1378,7 +1379,7 @@ dog_is_dead
 return3
     rts                                                               ; 419d: 60
 
-l419e
+remember_y
     !byte 0                                                           ; 419e: 00
 
 room_0_update_handler
@@ -1391,6 +1392,7 @@ room_0_update_handler
 ; check for first update in room (branch if not)
     lda update_room_first_update_flag                                 ; 41ad: ad 2b 13
     beq room_0_not_first_update                                       ; 41b0: f0 68
+; initialise room 0
     lda #spriteid_empty_bottle_menu_item                              ; 41b2: a9 d6
     sta toolbar_collectable_spriteids+1                               ; 41b4: 8d e9 2e
     lda #spriteid_empty_bottle_held                                   ; 41b7: a9 d3
@@ -1943,10 +1945,6 @@ pydis_end
 ;     c3e78
 ;     c3e94
 ;     c40be
-;     c40ed
-;     c40f7
-;     c4110
-;     c4118
 ;     c41db
 ;     c41e6
 ;     c4217
@@ -1967,13 +1965,11 @@ pydis_end
 ;     c44e6
 ;     l3d08
 ;     l3d09
-;     l419e
 ;     l44eb
 ;     l44ec
 ;     l44ed
 ;     l44ee
 ;     sub_c3cd0
-;     sub_c3f86
 !if (<envelope1) != $ef {
     !error "Assertion failed: <envelope1 == $ef"
 }
@@ -2007,14 +2003,17 @@ pydis_end
 !if (collision_map_solid_rock) != $03 {
     !error "Assertion failed: collision_map_solid_rock == $03"
 }
-!if (dog_head_animation1 - dog_head_animations) != $01 {
-    !error "Assertion failed: dog_head_animation1 - dog_head_animations == $01"
+!if (dog_head_dead_animation - dog_head_animations) != $01 {
+    !error "Assertion failed: dog_head_dead_animation - dog_head_animations == $01"
 }
-!if (dog_head_animation2 - dog_head_animations) != $05 {
-    !error "Assertion failed: dog_head_animation2 - dog_head_animations == $05"
+!if (dog_head_drinking_animation - dog_head_animations) != $05 {
+    !error "Assertion failed: dog_head_drinking_animation - dog_head_animations == $05"
 }
-!if (dog_head_animation4 - dog_head_animations) != $3a {
-    !error "Assertion failed: dog_head_animation4 - dog_head_animations == $3a"
+!if (dog_head_push_animation - dog_head_animations) != $1b {
+    !error "Assertion failed: dog_head_push_animation - dog_head_animations == $1b"
+}
+!if (dog_head_stunned_animation - dog_head_animations) != $3a {
+    !error "Assertion failed: dog_head_stunned_animation - dog_head_animations == $3a"
 }
 !if (exit_room_left) != $01 {
     !error "Assertion failed: exit_room_left == $01"
