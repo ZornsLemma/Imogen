@@ -401,6 +401,8 @@ expr(0x44bb, sprite_dict)
 expr(0x44e2, sprite_dict)
 expr(0x44e4, "object_spriteid + objectid_drip")
 label(0x44ea, "temp_drip_timer")
+label(0x3b1c, "add_full_bottle_to_toolbar")
+label(0x3b21, "set_ground_tile")
 
 result = go(False)
 result = remove_sprite_data(result)

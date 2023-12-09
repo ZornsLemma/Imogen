@@ -340,7 +340,7 @@ level_specific_password
 level_specific_initialisation
     lda current_level                                                 ; 3af6: a5 31
     cmp level_before_latest_level_and_room_initialisation             ; 3af8: c5 51
-    beq c3b21                                                         ; 3afa: f0 25
+    beq set_ground_tile                                               ; 3afa: f0 25
     lda developer_flags                                               ; 3afc: ad 03 11
     bpl developer_mode_inactive1                                      ; 3aff: 10 0a
     lda #$ff                                                          ; 3b01: a9 ff
@@ -349,17 +349,17 @@ level_specific_initialisation
     sta save_game_level_k_poison_in_bottle_flag                       ; 3b08: 8d 36 0a
 developer_mode_inactive1
     lda save_game_level_k_got_bottle_flag                             ; 3b0b: ad 35 0a
-    beq c3b21                                                         ; 3b0e: f0 11
+    beq set_ground_tile                                               ; 3b0e: f0 11
     cmp #$ff                                                          ; 3b10: c9 ff
-    beq c3b1c                                                         ; 3b12: f0 08
+    beq add_full_bottle_to_toolbar                                    ; 3b12: f0 08
     lda #spriteid_empty_bottle_menu_item                              ; 3b14: a9 d6
     jsr find_or_create_menu_slot_for_A                                ; 3b16: 20 bd 2b
-    jmp c3b21                                                         ; 3b19: 4c 21 3b
+    jmp set_ground_tile                                               ; 3b19: 4c 21 3b
 
-c3b1c
+add_full_bottle_to_toolbar
     lda #spriteid_full_bottle_menu_item                               ; 3b1c: a9 d7
     jsr find_or_create_menu_slot_for_A                                ; 3b1e: 20 bd 2b
-c3b21
+set_ground_tile
     lda #<ground_fill_2x2_top_left                                    ; 3b21: a9 0d
     sta source_sprite_memory_low                                      ; 3b23: 85 40
     lda #>ground_fill_2x2_top_left                                    ; 3b25: a9 45
@@ -1916,8 +1916,6 @@ sprite_data
 pydis_end
 
 ; Automatically generated labels:
-;     c3b1c
-;     c3b21
 ;     c3c0d
 ;     c3c25
 ;     c3c38
