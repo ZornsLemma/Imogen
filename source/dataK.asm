@@ -207,6 +207,8 @@ player_held_object_spriteid                         = $52
 developer_mode_sideways_ram_is_set_up_flag          = $5b
 l0070                                               = $70
 room_exit_direction                                 = $70
+stalk_cell_y_min                                    = $70
+temp_stalk_y                                        = $70
 object_left_cell_x                                  = $78
 object_right_cell_x                                 = $79
 object_x_low                                        = $0950
@@ -220,7 +222,7 @@ object_spriteid                                     = $09a8
 object_spriteid_old                                 = $09b3
 object_direction                                    = $09be
 current_player_animation                            = $09df
-save_game_level_k_plant_top                         = $0a33
+save_game_level_k_plant_top_y                       = $0a33
 save_game_level_k_plant_growth_timer                = $0a34
 save_game_level_k_got_bottle_flag                   = $0a35
 save_game_level_k_poison_in_bottle_flag             = $0a36
@@ -536,56 +538,60 @@ initialise_room_2
     lda current_level                                                 ; 3bf6: a5 31
     cmp level_before_latest_level_and_room_initialisation             ; 3bf8: c5 51
     beq room_changed_only                                             ; 3bfa: f0 33
-    lda save_game_level_k_plant_top                                   ; 3bfc: ad 33 0a
-    bne c3c0d                                                         ; 3bff: d0 0c
+; initialise plant top y value
+    lda save_game_level_k_plant_top_y                                 ; 3bfc: ad 33 0a
+    bne check_plant_growth_timer                                      ; 3bff: d0 0c
     lda #$70 ; 'p'                                                    ; 3c01: a9 70
-    sta save_game_level_k_plant_top                                   ; 3c03: 8d 33 0a
+    sta save_game_level_k_plant_top_y                                 ; 3c03: 8d 33 0a
     lda #0                                                            ; 3c06: a9 00
     sta save_game_level_k_plant_growth_timer                          ; 3c08: 8d 34 0a
     beq room_changed_only                                             ; 3c0b: f0 22
-c3c0d
+check_plant_growth_timer
     lda save_game_level_k_plant_growth_timer                          ; 3c0d: ad 34 0a
-    bmi c3c25                                                         ; 3c10: 30 13
+    bmi initialise_poisoned_plant                                     ; 3c10: 30 13
     beq room_changed_only                                             ; 3c12: f0 1b
+; reset timer and grow plant by 32 pixels
     lda #0                                                            ; 3c14: a9 00
     sta save_game_level_k_plant_growth_timer                          ; 3c16: 8d 34 0a
-    lda save_game_level_k_plant_top                                   ; 3c19: ad 33 0a
+    lda save_game_level_k_plant_top_y                                 ; 3c19: ad 33 0a
     sec                                                               ; 3c1c: 38
     sbc #$20 ; ' '                                                    ; 3c1d: e9 20
-    sta save_game_level_k_plant_top                                   ; 3c1f: 8d 33 0a
+    sta save_game_level_k_plant_top_y                                 ; 3c1f: 8d 33 0a
     jmp room_changed_only                                             ; 3c22: 4c 2f 3c
 
-c3c25
+; poisoned plant starts at maximum height
+initialise_poisoned_plant
     lda #$10                                                          ; 3c25: a9 10
-    sta save_game_level_k_plant_top                                   ; 3c27: 8d 33 0a
+    sta save_game_level_k_plant_top_y                                 ; 3c27: 8d 33 0a
     lda #$80                                                          ; 3c2a: a9 80
     sta save_game_level_k_plant_growth_timer                          ; 3c2c: 8d 34 0a
 room_changed_only
     lda desired_room_index                                            ; 3c2f: a5 30
     cmp #2                                                            ; 3c31: c9 02
-    beq c3c38                                                         ; 3c33: f0 03
+    beq initialise_in_room_2                                          ; 3c33: f0 03
     jmp c3ccd                                                         ; 3c35: 4c cd 3c
 
-c3c38
+initialise_in_room_2
     ldy #$10                                                          ; 3c38: a0 10
     lda save_game_level_k_plant_growth_timer                          ; 3c3a: ad 34 0a
-    bmi c3c59                                                         ; 3c3d: 30 1a
-    ldy save_game_level_k_plant_top                                   ; 3c3f: ac 33 0a
+    bmi got_top_of_stalk_in_y                                         ; 3c3d: 30 1a
+; calculate position of top of stalk
+    ldy save_game_level_k_plant_top_y                                 ; 3c3f: ac 33 0a
     sec                                                               ; 3c42: 38
     sbc #4                                                            ; 3c43: e9 04
-    bcc c3c59                                                         ; 3c45: 90 12
+    bcc got_top_of_stalk_in_y                                         ; 3c45: 90 12
     asl                                                               ; 3c47: 0a
-    sta l0070                                                         ; 3c48: 85 70
+    sta temp_stalk_y                                                  ; 3c48: 85 70
     cmp #$20 ; ' '                                                    ; 3c4a: c9 20
-    bcc c3c52                                                         ; 3c4c: 90 04
+    bcc got_temp_stalk_y                                              ; 3c4c: 90 04
     lda #$20 ; ' '                                                    ; 3c4e: a9 20
-    sta l0070                                                         ; 3c50: 85 70
-c3c52
-    lda save_game_level_k_plant_top                                   ; 3c52: ad 33 0a
+    sta temp_stalk_y                                                  ; 3c50: 85 70
+got_temp_stalk_y
+    lda save_game_level_k_plant_top_y                                 ; 3c52: ad 33 0a
     sec                                                               ; 3c55: 38
-    sbc l0070                                                         ; 3c56: e5 70
+    sbc temp_stalk_y                                                  ; 3c56: e5 70
     tay                                                               ; 3c58: a8
-c3c59
+got_top_of_stalk_in_y
     ldx #$14                                                          ; 3c59: a2 14
     lda #1                                                            ; 3c5b: a9 01
     sta width_in_cells                                                ; 3c5d: 85 3c
@@ -620,49 +626,49 @@ draw_stalk_to_bottom
 ; draw bottom of stalk
     lda #spriteid_stalk_bottom_end                                    ; 3c8e: a9 c9
     jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map           ; 3c90: 20 57 1f
-    lda save_game_level_k_plant_top                                   ; 3c93: ad 33 0a
+    lda save_game_level_k_plant_top_y                                 ; 3c93: ad 33 0a
     lsr                                                               ; 3c96: 4a
     lsr                                                               ; 3c97: 4a
     lsr                                                               ; 3c98: 4a
     tay                                                               ; 3c99: a8
     lda full_leaf                                                     ; 3c9a: ad d4 3b
-    sta l3d08                                                         ; 3c9d: 8d 08 3d
+    sta draw_leaf_sprite                                              ; 3c9d: 8d 08 3d
     lda save_game_level_k_plant_growth_timer                          ; 3ca0: ad 34 0a
-    bpl c3cbb                                                         ; 3ca3: 10 16
+    bpl draw_leaves                                                   ; 3ca3: 10 16
     tya                                                               ; 3ca5: 98
     sec                                                               ; 3ca6: 38
     sbc #4                                                            ; 3ca7: e9 04
     ldy #2                                                            ; 3ca9: a0 02
-    jsr sub_c3cd0                                                     ; 3cab: 20 d0 3c
-    lda save_game_level_k_plant_top                                   ; 3cae: ad 33 0a
+    jsr draw_leaves_on_stalk                                          ; 3cab: 20 d0 3c
+    lda save_game_level_k_plant_top_y                                 ; 3cae: ad 33 0a
     lsr                                                               ; 3cb1: 4a
     lsr                                                               ; 3cb2: 4a
     lsr                                                               ; 3cb3: 4a
     tay                                                               ; 3cb4: a8
     lda leaf_start_wilting                                            ; 3cb5: ad d8 3b
-    sta l3d08                                                         ; 3cb8: 8d 08 3d
-c3cbb
+    sta draw_leaf_sprite                                              ; 3cb8: 8d 08 3d
+draw_leaves
     lda #$12                                                          ; 3cbb: a9 12
-    jsr sub_c3cd0                                                     ; 3cbd: 20 d0 3c
+    jsr draw_leaves_on_stalk                                          ; 3cbd: 20 d0 3c
     lda #$e0                                                          ; 3cc0: a9 e0
     sta object_z_order + objectid_leaf1                               ; 3cc2: 8d c6 38
     sta object_z_order + objectid_leaf2                               ; 3cc5: 8d c7 38
     lda #$ff                                                          ; 3cc8: a9 ff
     sta object_direction + objectid_leaf2                             ; 3cca: 8d c3 09
 c3ccd
-    jmp c3db6                                                         ; 3ccd: 4c b6 3d
+    jmp plant_is_growing                                              ; 3ccd: 4c b6 3d
 
-sub_c3cd0
-    sta l3d09                                                         ; 3cd0: 8d 09 3d
-    sty l0070                                                         ; 3cd3: 84 70
+draw_leaves_on_stalk
+    sta stalk_cell_y_max                                              ; 3cd0: 8d 09 3d
+    sty stalk_cell_y_min                                              ; 3cd3: 84 70
     sec                                                               ; 3cd5: 38
-    sbc l0070                                                         ; 3cd6: e5 70
+    sbc stalk_cell_y_min                                              ; 3cd6: e5 70
     bmi return1                                                       ; 3cd8: 30 2d
     beq return1                                                       ; 3cda: f0 2b
-c3cdc
+draw_leaves_loop
     ldx #$14                                                          ; 3cdc: a2 14
     iny                                                               ; 3cde: c8
-    lda l3d08                                                         ; 3cdf: ad 08 3d
+    lda draw_leaf_sprite                                              ; 3cdf: ad 08 3d
     jsr draw_sprite_a_at_cell_xy                                      ; 3ce2: 20 4c 1f
     ldx #objectid_leaf1                                               ; 3ce5: a2 04
     jsr set_object_position_from_current_sprite_position              ; 3ce7: 20 6d 1f
@@ -673,93 +679,93 @@ c3cdc
     iny                                                               ; 3cf1: c8
     lda #$ff                                                          ; 3cf2: a9 ff
     sta sprite_reflect_flag                                           ; 3cf4: 85 1d
-    lda l3d08                                                         ; 3cf6: ad 08 3d
+    lda draw_leaf_sprite                                              ; 3cf6: ad 08 3d
     jsr draw_sprite_a_at_cell_xy                                      ; 3cf9: 20 4c 1f
     ldx #objectid_leaf2                                               ; 3cfc: a2 05
     jsr set_object_position_from_current_sprite_position              ; 3cfe: 20 6d 1f
     iny                                                               ; 3d01: c8
-    cpy l3d09                                                         ; 3d02: cc 09 3d
-    bcc c3cdc                                                         ; 3d05: 90 d5
+    cpy stalk_cell_y_max                                              ; 3d02: cc 09 3d
+    bcc draw_leaves_loop                                              ; 3d05: 90 d5
 return1
     rts                                                               ; 3d07: 60
 
-l3d08
+draw_leaf_sprite
     !byte 0                                                           ; 3d08: 00
-l3d09
+stalk_cell_y_max
     !byte 0                                                           ; 3d09: 00
 
-c3d0a
-    jmp c3db6                                                         ; 3d0a: 4c b6 3d
+plant_is_growing_local
+    jmp plant_is_growing                                              ; 3d0a: 4c b6 3d
 
 c3d0d
     lda save_game_level_k_plant_growth_timer                          ; 3d0d: ad 34 0a
-    bne c3d63                                                         ; 3d10: d0 51
+    bne check_plant_timer                                             ; 3d10: d0 51
     lda desired_room_index                                            ; 3d12: a5 30
     cmp #2                                                            ; 3d14: c9 02
-    bne c3d0a                                                         ; 3d16: d0 f2
+    bne plant_is_growing_local                                        ; 3d16: d0 f2
     lda developer_flags                                               ; 3d18: ad 03 11
     bpl developer_mode_inactive2                                      ; 3d1b: 10 0e
     ldx #inkey_key_g                                                  ; 3d1d: a2 ac
     jsr negative_inkey                                                ; 3d1f: 20 cc 3a
-    bne g_pressed                                                     ; 3d22: d0 24
+    bne grow_plant                                                    ; 3d22: d0 24
     ldx #inkey_key_p                                                  ; 3d24: a2 c8
     jsr negative_inkey                                                ; 3d26: 20 cc 3a
-    bne p_pressed                                                     ; 3d29: d0 27
+    bne poison_plant                                                  ; 3d29: d0 27
 developer_mode_inactive2
     lda object_spriteid + objectid_bottle_pour                        ; 3d2b: ad aa 09
     cmp #spriteid_splash                                              ; 3d2e: c9 d9
-    bne c3d0a                                                         ; 3d30: d0 d8
+    bne plant_is_growing_local                                        ; 3d30: d0 d8
     ldx #objectid_bottle_pour                                         ; 3d32: a2 02
     jsr find_left_and_right_of_object                                 ; 3d34: 20 34 24
     lda object_left_cell_x                                            ; 3d37: a5 78
     cmp #$15                                                          ; 3d39: c9 15
-    bcs c3d0a                                                         ; 3d3b: b0 cd
+    bcs plant_is_growing_local                                        ; 3d3b: b0 cd
     lda object_right_cell_x                                           ; 3d3d: a5 79
     cmp #$14                                                          ; 3d3f: c9 14
-    bcc c3d0a                                                         ; 3d41: 90 c7
+    bcc plant_is_growing_local                                        ; 3d41: 90 c7
     lda save_game_level_k_poison_in_bottle_flag                       ; 3d43: ad 36 0a
-    bne p_pressed                                                     ; 3d46: d0 0a
-g_pressed
-    lda save_game_level_k_plant_top                                   ; 3d48: ad 33 0a
+    bne poison_plant                                                  ; 3d46: d0 0a
+grow_plant
+    lda save_game_level_k_plant_top_y                                 ; 3d48: ad 33 0a
     cmp #$10                                                          ; 3d4b: c9 10
-    beq c3db6                                                         ; 3d4d: f0 67
-    jmp c3d63                                                         ; 3d4f: 4c 63 3d
+    beq plant_is_growing                                              ; 3d4d: f0 67
+    jmp check_plant_timer                                             ; 3d4f: 4c 63 3d
 
-p_pressed
-    lda save_game_level_k_plant_top                                   ; 3d52: ad 33 0a
+poison_plant
+    lda save_game_level_k_plant_top_y                                 ; 3d52: ad 33 0a
     cmp #$10                                                          ; 3d55: c9 10
-    bne c3db6                                                         ; 3d57: d0 5d
+    bne plant_is_growing                                              ; 3d57: d0 5d
     lda #$90                                                          ; 3d59: a9 90
-    sta save_game_level_k_plant_top                                   ; 3d5b: 8d 33 0a
+    sta save_game_level_k_plant_top_y                                 ; 3d5b: 8d 33 0a
     lda #$80                                                          ; 3d5e: a9 80
     sta save_game_level_k_plant_growth_timer                          ; 3d60: 8d 34 0a
-c3d63
+check_plant_timer
     lda save_game_level_k_plant_growth_timer                          ; 3d63: ad 34 0a
     bmi c3d8d                                                         ; 3d66: 30 25
     lda save_game_level_k_plant_growth_timer                          ; 3d68: ad 34 0a
     cmp #$0f                                                          ; 3d6b: c9 0f
-    bcc c3d73                                                         ; 3d6d: 90 04
+    bcc increment_growth                                              ; 3d6d: 90 04
     cmp #$15                                                          ; 3d6f: c9 15
-    bcs c3d7c                                                         ; 3d71: b0 09
-c3d73
+    bcs finished_growing                                              ; 3d71: b0 09
+increment_growth
     clc                                                               ; 3d73: 18
     adc #1                                                            ; 3d74: 69 01
     sta save_game_level_k_plant_growth_timer                          ; 3d76: 8d 34 0a
-    jmp c3db6                                                         ; 3d79: 4c b6 3d
+    jmp plant_is_growing                                              ; 3d79: 4c b6 3d
 
-c3d7c
+finished_growing
     lda #0                                                            ; 3d7c: a9 00
     sta save_game_level_k_plant_growth_timer                          ; 3d7e: 8d 34 0a
-    lda save_game_level_k_plant_top                                   ; 3d81: ad 33 0a
+    lda save_game_level_k_plant_top_y                                 ; 3d81: ad 33 0a
     sec                                                               ; 3d84: 38
     sbc #$20 ; ' '                                                    ; 3d85: e9 20
-    sta save_game_level_k_plant_top                                   ; 3d87: 8d 33 0a
-    jmp c3db6                                                         ; 3d8a: 4c b6 3d
+    sta save_game_level_k_plant_top_y                                 ; 3d87: 8d 33 0a
+    jmp plant_is_growing                                              ; 3d8a: 4c b6 3d
 
 c3d8d
-    lda save_game_level_k_plant_top                                   ; 3d8d: ad 33 0a
+    lda save_game_level_k_plant_top_y                                 ; 3d8d: ad 33 0a
     cmp #$10                                                          ; 3d90: c9 10
-    beq c3db6                                                         ; 3d92: f0 22
+    beq plant_is_growing                                              ; 3d92: f0 22
     lda save_game_level_k_plant_growth_timer                          ; 3d94: ad 34 0a
     cmp #$8f                                                          ; 3d97: c9 8f
     bcc c3d9f                                                         ; 3d99: 90 04
@@ -769,36 +775,36 @@ c3d9f
     clc                                                               ; 3d9f: 18
     adc #1                                                            ; 3da0: 69 01
     sta save_game_level_k_plant_growth_timer                          ; 3da2: 8d 34 0a
-    jmp c3db6                                                         ; 3da5: 4c b6 3d
+    jmp plant_is_growing                                              ; 3da5: 4c b6 3d
 
 c3da8
     lda #$80                                                          ; 3da8: a9 80
     sta save_game_level_k_plant_growth_timer                          ; 3daa: 8d 34 0a
-    lda save_game_level_k_plant_top                                   ; 3dad: ad 33 0a
+    lda save_game_level_k_plant_top_y                                 ; 3dad: ad 33 0a
     sec                                                               ; 3db0: 38
     sbc #$20 ; ' '                                                    ; 3db1: e9 20
-    sta save_game_level_k_plant_top                                   ; 3db3: 8d 33 0a
-c3db6
+    sta save_game_level_k_plant_top_y                                 ; 3db3: 8d 33 0a
+plant_is_growing
     lda desired_room_index                                            ; 3db6: a5 30
     cmp #2                                                            ; 3db8: c9 02
     bne return2_local                                                 ; 3dba: d0 4b
     ldy #$10                                                          ; 3dbc: a0 10
     lda save_game_level_k_plant_growth_timer                          ; 3dbe: ad 34 0a
     bmi c3ddd                                                         ; 3dc1: 30 1a
-    ldy save_game_level_k_plant_top                                   ; 3dc3: ac 33 0a
+    ldy save_game_level_k_plant_top_y                                 ; 3dc3: ac 33 0a
     sec                                                               ; 3dc6: 38
     sbc #4                                                            ; 3dc7: e9 04
     bcc c3ddd                                                         ; 3dc9: 90 12
     asl                                                               ; 3dcb: 0a
-    sta l0070                                                         ; 3dcc: 85 70
+    sta temp_stalk_y                                                  ; 3dcc: 85 70
     cmp #$20 ; ' '                                                    ; 3dce: c9 20
     bcc c3dd6                                                         ; 3dd0: 90 04
     lda #$20 ; ' '                                                    ; 3dd2: a9 20
-    sta l0070                                                         ; 3dd4: 85 70
+    sta temp_stalk_y                                                  ; 3dd4: 85 70
 c3dd6
-    lda save_game_level_k_plant_top                                   ; 3dd6: ad 33 0a
+    lda save_game_level_k_plant_top_y                                 ; 3dd6: ad 33 0a
     sec                                                               ; 3dd9: 38
-    sbc l0070                                                         ; 3dda: e5 70
+    sbc temp_stalk_y                                                  ; 3dda: e5 70
     tay                                                               ; 3ddc: a8
 c3ddd
     lda #spriteid_one_pixel_masked_out                                ; 3ddd: a9 00
@@ -826,7 +832,7 @@ return2_local
     jmp return2                                                       ; 3e07: 4c cb 3e
 
 c3e0a
-    lda save_game_level_k_plant_top                                   ; 3e0a: ad 33 0a
+    lda save_game_level_k_plant_top_y                                 ; 3e0a: ad 33 0a
     cmp #$10                                                          ; 3e0d: c9 10
     bne c3e22                                                         ; 3e0f: d0 11
     lda #spriteid_one_pixel_masked_out                                ; 3e11: a9 00
@@ -837,11 +843,11 @@ c3e0a
     jmp return2                                                       ; 3e1f: 4c cb 3e
 
 c3e22
-    lda save_game_level_k_plant_top                                   ; 3e22: ad 33 0a
+    lda save_game_level_k_plant_top_y                                 ; 3e22: ad 33 0a
     sec                                                               ; 3e25: 38
     sbc #$18                                                          ; 3e26: e9 18
     sta object_y_low + objectid_leaf1                                 ; 3e28: 8d 80 09
-    lda save_game_level_k_plant_top                                   ; 3e2b: ad 33 0a
+    lda save_game_level_k_plant_top_y                                 ; 3e2b: ad 33 0a
     sec                                                               ; 3e2e: 38
     sbc #8                                                            ; 3e2f: e9 08
     sta object_y_low + objectid_leaf2                                 ; 3e31: 8d 81 09
@@ -1918,23 +1924,11 @@ sprite_data
 pydis_end
 
 ; Automatically generated labels:
-;     c3c0d
-;     c3c25
-;     c3c38
-;     c3c52
-;     c3c59
-;     c3cbb
 ;     c3ccd
-;     c3cdc
-;     c3d0a
 ;     c3d0d
-;     c3d63
-;     c3d73
-;     c3d7c
 ;     c3d8d
 ;     c3d9f
 ;     c3da8
-;     c3db6
 ;     c3dd6
 ;     c3ddd
 ;     c3e0a
@@ -1963,13 +1957,10 @@ pydis_end
 ;     c4464
 ;     c448c
 ;     c44e6
-;     l3d08
-;     l3d09
 ;     l44eb
 ;     l44ec
 ;     l44ed
 ;     l44ee
-;     sub_c3cd0
 !if (<envelope1) != $ef {
     !error "Assertion failed: <envelope1 == $ef"
 }

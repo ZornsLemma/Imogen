@@ -93,6 +93,15 @@ substitute_labels = {
     (0x3ad5,0x3bce): {
         "l0070": "room_exit_direction",
     },
+    (0x3c38, 0x3c59): {
+        "l0070": "temp_stalk_y",
+    },
+    (0x3cd0, 0x3d07): {
+        "l0070": "stalk_cell_y_min",
+    },
+    (0x3db6, 0x3e1f): {
+        "l0070": "temp_stalk_y",
+    },
 }
 
 # (Class SubstituteLabels is defined in common.py to implement the substitute labels)
@@ -102,7 +111,7 @@ set_label_maker_hook(s.substitute_label_maker)
 label(0x0078, "object_left_cell_x")
 label(0x0079, "object_right_cell_x")
 
-label(0x0a33, "save_game_level_k_plant_top")
+label(0x0a33, "save_game_level_k_plant_top_y")
 label(0x0a34, "save_game_level_k_plant_growth_timer")
 label(0x0a35, "save_game_level_k_got_bottle_flag")
 label(0x0a36, "save_game_level_k_poison_in_bottle_flag")
@@ -172,8 +181,8 @@ label(0x3d2b, "developer_mode_inactive2")
 expr(0x3d2c, "object_spriteid + objectid_bottle_pour")
 expr(0x3d2f, sprite_dict)
 expr(0x3d33, "objectid_bottle_pour")
-label(0x3d48, "g_pressed")
-label(0x3d52, "p_pressed")
+label(0x3d48, "grow_plant")
+label(0x3d52, "poison_plant")
 expr(0x3dde, sprite_dict)
 expr(0x3de0, "object_spriteid_old + objectid_drip")
 expr(0x3de3, "object_spriteid + objectid_drip")
@@ -413,6 +422,25 @@ label(0x4118, "check_for_player_colliding_with_dog")
 expr(0x413a, "dog_head_push_animation - dog_head_animations")
 comment(0x41b2, "initialise room 0")
 expr(0x41a9, "objectid_spell")
+comment(0x3bfc, "initialise plant top y value")
+label(0x3c0d, "check_plant_growth_timer")
+label(0x3c25, "initialise_poisoned_plant")
+comment(0x3c14, "reset timer and grow plant by 32 pixels")
+comment(0x3c25, "poisoned plant starts at maximum height")
+label(0x3c38, "initialise_in_room_2")
+comment(0x3c3f, "calculate position of top of stalk")
+label(0x3c52, "got_temp_stalk_y")
+label(0x3c59, "got_top_of_stalk_in_y")
+label(0x3d08, "draw_leaf_sprite")
+label(0x3cd0, "draw_leaves_on_stalk")
+label(0x3cdc, "draw_leaves_loop")
+label(0x3d09, "stalk_cell_y_max")
+label(0x3d63, "check_plant_timer")
+label(0x3cbb, "draw_leaves")
+label(0x3db6, "plant_is_growing")
+label(0x3d73, "increment_growth")
+label(0x3d7c, "finished_growing")
+label(0x3d0a, "plant_is_growing_local")
 
 result = go(False)
 result = remove_sprite_data(result)
