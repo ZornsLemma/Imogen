@@ -1,3 +1,51 @@
+; *************************************************************************************
+;
+; Level J: 'DRIPPING-STUFF'
+;
+; Save game variables:
+;
+;     save_game_level_k_plant_top_y                              ($0a33):
+;             $70: plant starting y position
+;             $50: plant grown once y position
+;             $30: plant grown twice y position
+;             $10: plant full y position
+;
+;     save_game_level_k_plant_growth_timer                       ($0a34):
+;               0: not growing
+;           1-$15: growing
+;            $80+: being poisoned
+;
+;     save_game_level_k_got_bottle_flag                          ($0a35):
+;               0: bottle not got
+;               1: empty bottle taken
+;             $ff: full bottle taken
+;
+;     save_game_level_k_poison_in_bottle_flag                    ($0a36):
+;               0: no poison in bottle
+;             $ff: poison in bottle
+;
+;     save_game_level_k_dog_animation:                           ($0a37):
+;               1: dead
+;               5: drinking
+;             $1b: pushing player
+;             $3a: stunned before dying
+;
+;     save_game_level_k_poison_dog_animation_step                ($0a38):
+;               a timer for the dog's death sequence
+;
+; Solution:
+;
+;   1. Collect the bottle from the leftmost room
+;   2. Hold the bottle under the drip in the initial room to fill with water
+;   3. pour the water onto the stem of the plant one room to the right
+;   4. repeat until plant is fully grown (reaches ceiling)
+;   5. climb plant and go to room to the right
+;   6. Fill bottle with poison from the drip
+;   7. go to the leftmost room and climb the rope to the dog
+;   8. pour the poison into the dog bowl (the dog dies) and jump over to reach the spell
+;
+; *************************************************************************************
+
 ; Constants
 collision_map_none                    = 0
 collision_map_out_of_bounds           = 255
@@ -209,6 +257,7 @@ l0070                                               = $70
 room_exit_direction                                 = $70
 stalk_cell_y_min                                    = $70
 temp_stalk_y                                        = $70
+temp_y                                              = $70
 object_left_cell_x                                  = $78
 object_right_cell_x                                 = $79
 object_x_low                                        = $0950
@@ -345,6 +394,7 @@ level_specific_initialisation
     beq set_ground_tile                                               ; 3afa: f0 25
     lda developer_flags                                               ; 3afc: ad 03 11
     bpl developer_mode_inactive1                                      ; 3aff: 10 0a
+; in developer mode, we have the bottle filled with poison
     lda #$ff                                                          ; 3b01: a9 ff
     sta save_game_level_k_got_bottle_flag                             ; 3b03: 8d 35 0a
     lda #$ff                                                          ; 3b06: a9 ff
@@ -352,6 +402,7 @@ level_specific_initialisation
 developer_mode_inactive1
     lda save_game_level_k_got_bottle_flag                             ; 3b0b: ad 35 0a
     beq set_ground_tile                                               ; 3b0e: f0 11
+; add full or empty bottle to taskbar
     cmp #$ff                                                          ; 3b10: c9 ff
     beq add_full_bottle_to_toolbar                                    ; 3b12: f0 08
     lda #spriteid_empty_bottle_menu_item                              ; 3b14: a9 d6
@@ -501,6 +552,7 @@ room_2_check_right_exit
     lda room_exit_direction                                           ; 3bc4: a5 70
     and #exit_room_right                                              ; 3bc6: 29 04
     beq room_2_game_update_loop                                       ; 3bc8: f0 ea
+; right of room 2 is room 3
     ldx #3                                                            ; 3bca: a2 03
     ldy current_level                                                 ; 3bcc: a4 31
     jmp initialise_level_and_room                                     ; 3bce: 4c 40 11
@@ -521,6 +573,7 @@ leaf_start_wilting
 room_2_update_handler
     lda #2                                                            ; 3bd9: a9 02
     sta currently_updating_logic_for_room_index                       ; 3bdb: 8d ba 1a
+; update the two brazier fires
     ldx #3                                                            ; 3bde: a2 03
     ldy #$0c                                                          ; 3be0: a0 0c
     lda #objectid_room2_fire1                                         ; 3be2: a9 06
@@ -541,11 +594,13 @@ initialise_room_2
 ; initialise plant top y value
     lda save_game_level_k_plant_top_y                                 ; 3bfc: ad 33 0a
     bne check_plant_growth_timer                                      ; 3bff: d0 0c
+; set initial height of the plant
     lda #$70 ; 'p'                                                    ; 3c01: a9 70
     sta save_game_level_k_plant_top_y                                 ; 3c03: 8d 33 0a
     lda #0                                                            ; 3c06: a9 00
     sta save_game_level_k_plant_growth_timer                          ; 3c08: 8d 34 0a
-    beq room_changed_only                                             ; 3c0b: f0 22
+    beq room_changed_only                                             ; 3c0b: f0 22                   ; ALWAYS branch
+
 check_plant_growth_timer
     lda save_game_level_k_plant_growth_timer                          ; 3c0d: ad 34 0a
     bmi initialise_poisoned_plant                                     ; 3c10: 30 13
@@ -705,6 +760,7 @@ update_room_2
     bne plant_is_growing_local2                                       ; 3d16: d0 f2
     lda developer_flags                                               ; 3d18: ad 03 11
     bpl developer_mode_inactive2                                      ; 3d1b: 10 0e
+; in developer mode 'G' grows the plant, and 'P' poisons it
     ldx #inkey_key_g                                                  ; 3d1d: a2 ac
     jsr negative_inkey                                                ; 3d1f: 20 cc 3a
     bne grow_plant                                                    ; 3d22: d0 24
@@ -1047,13 +1103,13 @@ room_3_update_handler
     lda #objectid_room_3_fire                                         ; 3f5f: a9 04
     jsr update_brazier_and_fire                                       ; 3f61: 20 88 19
     lda #$ff                                                          ; 3f64: a9 ff
-    sta l44ec                                                         ; 3f66: 8d ec 44
+    sta drip_is_poison_flag                                           ; 3f66: 8d ec 44
     lda #8                                                            ; 3f69: a9 08
-    sta l44eb                                                         ; 3f6b: 8d eb 44
+    sta drip_start_frame                                              ; 3f6b: 8d eb 44
     lda #$40 ; '@'                                                    ; 3f6e: a9 40
-    sta l44ed                                                         ; 3f70: 8d ed 44
+    sta drip_initial_y                                                ; 3f70: 8d ed 44
     lda #$13                                                          ; 3f73: a9 13
-    sta l44ee                                                         ; 3f75: 8d ee 44
+    sta drip_timer_limit                                              ; 3f75: 8d ee 44
     ldx #$10                                                          ; 3f78: a2 10
     ldy #1                                                            ; 3f7a: a0 01
     lda room_3_drip_timer                                             ; 3f7c: ad 75 0a
@@ -1282,12 +1338,12 @@ got_dog_animation_step_in_y
     bne update_dog_poisoning_animation                                ; 40c8: d0 23
     lda desired_room_index                                            ; 40ca: a5 30
     cmp #0                                                            ; 40cc: c9 00
-    bne check_dog_head_animations                                     ; 40ce: d0 27
+    bne check_if_dog_is_dying                                         ; 40ce: d0 27
     lda object_spriteid + objectid_bottle_pour                        ; 40d0: ad aa 09
     cmp #spriteid_splash                                              ; 40d3: c9 d9
-    bne check_dog_head_animations                                     ; 40d5: d0 20
+    bne check_if_dog_is_dying                                         ; 40d5: d0 20
     lda save_game_level_k_poison_in_bottle_flag                       ; 40d7: ad 36 0a
-    beq check_dog_head_animations                                     ; 40da: f0 1b
+    beq check_if_dog_is_dying                                         ; 40da: f0 1b
 ; check for bottle and dog bowl collision
     ldx #objectid_bottle_pour                                         ; 40dc: a2 02
     sty remember_y                                                    ; 40de: 8c 9e 41
@@ -1295,13 +1351,13 @@ got_dog_animation_step_in_y
     jsr test_for_collision_between_objects_x_and_y                    ; 40e3: 20 e2 28
     ldy remember_y                                                    ; 40e6: ac 9e 41
     ora #0                                                            ; 40e9: 09 00
-    beq check_dog_head_animations                                     ; 40eb: f0 0a
+    beq check_if_dog_is_dying                                         ; 40eb: f0 0a
 update_dog_poisoning_animation
     lda save_game_level_k_poison_dog_animation_step                   ; 40ed: ad 38 0a
     cmp #$10                                                          ; 40f0: c9 10
-    bcs check_dog_head_animations                                     ; 40f2: b0 03
+    bcs check_if_dog_is_dying                                         ; 40f2: b0 03
     inc save_game_level_k_poison_dog_animation_step                   ; 40f4: ee 38 0a
-check_dog_head_animations
+check_if_dog_is_dying
     lda save_game_level_k_poison_dog_animation_step                   ; 40f7: ad 38 0a
     cmp #8                                                            ; 40fa: c9 08
     bcc check_for_player_colliding_with_dog                           ; 40fc: 90 1a
@@ -1675,17 +1731,19 @@ room_1_code
     jsr start_room                                                    ; 4384: 20 bb 12
 room_1_game_update_loop
     jsr game_update                                                   ; 4387: 20 da 12
-    sta l0070                                                         ; 438a: 85 70
+    sta room_exit_direction                                           ; 438a: 85 70
     and #exit_room_left                                               ; 438c: 29 01
-    beq c4397                                                         ; 438e: f0 07
+    beq try_right_exit                                                ; 438e: f0 07
+; left from room 1 is room 0
     ldx #0                                                            ; 4390: a2 00
     ldy current_level                                                 ; 4392: a4 31
     jmp initialise_level_and_room                                     ; 4394: 4c 40 11
 
-c4397
-    lda l0070                                                         ; 4397: a5 70
-    and #4                                                            ; 4399: 29 04
+try_right_exit
+    lda room_exit_direction                                           ; 4397: a5 70
+    and #exit_room_right                                              ; 4399: 29 04
     beq room_1_game_update_loop                                       ; 439b: f0 ea
+; right from room 1 is room 2
     ldx #2                                                            ; 439d: a2 02
     ldy current_level                                                 ; 439f: a4 31
     jmp initialise_level_and_room                                     ; 43a1: 4c 40 11
@@ -1701,11 +1759,12 @@ room_1_update_handler
     lda #objectid_room_1_fire2                                        ; 43b4: a9 05
     jsr update_brazier_and_fire                                       ; 43b6: 20 88 19
     lda #0                                                            ; 43b9: a9 00
-    sta l44ec                                                         ; 43bb: 8d ec 44
+    sta drip_is_poison_flag                                           ; 43bb: 8d ec 44
     lda #$10                                                          ; 43be: a9 10
-    sta l44eb                                                         ; 43c0: 8d eb 44
+    sta drip_start_frame                                              ; 43c0: 8d eb 44
     lda #$68 ; 'h'                                                    ; 43c3: a9 68
-    sta l44ed                                                         ; 43c5: 8d ed 44
+    sta drip_initial_y                                                ; 43c5: 8d ed 44
+; long-winded way of saying: 'lda #$1d'
     lda #$10                                                          ; 43c8: a9 10
     clc                                                               ; 43ca: 18
     adc #5                                                            ; 43cb: 69 05
@@ -1715,7 +1774,7 @@ room_1_update_handler
     sbc #$0d                                                          ; 43d1: e9 0d
     sec                                                               ; 43d3: 38
     sbc #1                                                            ; 43d4: e9 01
-    sta l44ee                                                         ; 43d6: 8d ee 44
+    sta drip_timer_limit                                              ; 43d6: 8d ee 44
     ldx #$d0                                                          ; 43d9: a2 d0
     ldy #0                                                            ; 43db: a0 00
     lda room_1_drip_timer                                             ; 43dd: ad 6f 0a
@@ -1735,66 +1794,67 @@ update_drip
     sta temp_drip_timer                                               ; 43ec: 8d ea 44
 ; check for first update in room (branch if not)
     lda update_room_first_update_flag                                 ; 43ef: ad 2b 13
-    beq c441c                                                         ; 43f2: f0 28
+    beq increment_drip_timer                                          ; 43f2: f0 28
 ; check for level change (branch if not)
     lda current_level                                                 ; 43f4: a5 31
     cmp level_before_latest_level_and_room_initialisation             ; 43f6: c5 51
-    beq c43ff                                                         ; 43f8: f0 05
+    beq new_room                                                      ; 43f8: f0 05
 ; initialise drip timer for new level
     lda #0                                                            ; 43fa: a9 00
     sta temp_drip_timer                                               ; 43fc: 8d ea 44
 ; check_for_being_in_same_room_as_drip
-c43ff
+new_room
     lda desired_room_index                                            ; 43ff: a5 30
     cmp currently_updating_logic_for_room_index                       ; 4401: cd ba 1a
-    bne c4416                                                         ; 4404: d0 10
+    bne update_drip_animation_local                                   ; 4404: d0 10
+; initialise drip
     lda #spriteid_erase_1                                             ; 4406: a9 d1
     sta object_erase_type + objectid_drip                             ; 4408: 8d af 38
     lda #$40 ; '@'                                                    ; 440b: a9 40
     sta object_z_order + objectid_drip                                ; 440d: 8d c5 38
     stx object_x_low + objectid_drip                                  ; 4410: 8e 53 09
     sty object_x_high + objectid_drip                                 ; 4413: 8c 69 09
-c4416
-    jmp c442f                                                         ; 4416: 4c 2f 44
+update_drip_animation_local
+    jmp update_drip_animation                                         ; 4416: 4c 2f 44
 
-c4419
-    jmp c44e6                                                         ; 4419: 4c e6 44
+return_drip_timer_local
+    jmp return_drip_timer                                             ; 4419: 4c e6 44
 
-c441c
+increment_drip_timer
     inc temp_drip_timer                                               ; 441c: ee ea 44
-    lda l44ee                                                         ; 441f: ad ee 44
+    lda drip_timer_limit                                              ; 441f: ad ee 44
     clc                                                               ; 4422: 18
     adc #1                                                            ; 4423: 69 01
     cmp temp_drip_timer                                               ; 4425: cd ea 44
-    bne c442f                                                         ; 4428: d0 05
+    bne update_drip_animation                                         ; 4428: d0 05
     lda #0                                                            ; 442a: a9 00
     sta temp_drip_timer                                               ; 442c: 8d ea 44
-c442f
+update_drip_animation
     lda desired_room_index                                            ; 442f: a5 30
     cmp currently_updating_logic_for_room_index                       ; 4431: cd ba 1a
-    bne c4419                                                         ; 4434: d0 e3
+    bne return_drip_timer_local                                       ; 4434: d0 e3
     lda #spriteid_one_pixel_masked_out                                ; 4436: a9 00
     sta object_spriteid + objectid_drip                               ; 4438: 8d ab 09
-    lda l44ee                                                         ; 443b: ad ee 44
+    lda drip_timer_limit                                              ; 443b: ad ee 44
     clc                                                               ; 443e: 18
     adc #1                                                            ; 443f: 69 01
-    sta l0070                                                         ; 4441: 85 70
+    sta temp_y                                                        ; 4441: 85 70
     lda temp_drip_timer                                               ; 4443: ad ea 44
-    cmp l0070                                                         ; 4446: c5 70
-    bcs c4419                                                         ; 4448: b0 cf
+    cmp temp_y                                                        ; 4446: c5 70
+    bcs return_drip_timer_local                                       ; 4448: b0 cf
     sec                                                               ; 444a: 38
-    sbc l44eb                                                         ; 444b: ed eb 44
-    bcc c4419                                                         ; 444e: 90 c9
+    sbc drip_start_frame                                              ; 444b: ed eb 44
+    bcc return_drip_timer_local                                       ; 444e: 90 c9
     cmp #5                                                            ; 4450: c9 05
-    bcs c4464                                                         ; 4452: b0 10
+    bcs drip_is_falling                                               ; 4452: b0 10
     tay                                                               ; 4454: a8
     lda droplet_animation,y                                           ; 4455: b9 e7 43
     sta object_spriteid + objectid_drip                               ; 4458: 8d ab 09
-    lda l44ed                                                         ; 445b: ad ed 44
+    lda drip_initial_y                                                ; 445b: ad ed 44
     sta object_y_low + objectid_drip                                  ; 445e: 8d 7f 09
-    jmp c44e6                                                         ; 4461: 4c e6 44
+    jmp return_drip_timer                                             ; 4461: 4c e6 44
 
-c4464
+drip_is_falling
     sec                                                               ; 4464: 38
     sbc #5                                                            ; 4465: e9 05
     clc                                                               ; 4467: 18
@@ -1803,20 +1863,20 @@ c4464
     asl                                                               ; 446b: 0a
     asl                                                               ; 446c: 0a
     clc                                                               ; 446d: 18
-    adc l44ed                                                         ; 446e: 6d ed 44
+    adc drip_initial_y                                                ; 446e: 6d ed 44
     sta object_y_low + objectid_drip                                  ; 4471: 8d 7f 09
     lda #spriteid_splash                                              ; 4474: a9 d9
     sta object_spriteid + objectid_drip                               ; 4476: 8d ab 09
     lda temp_drip_timer                                               ; 4479: ad ea 44
-    cmp l44ee                                                         ; 447c: cd ee 44
-    bne c448c                                                         ; 447f: d0 0b
+    cmp drip_timer_limit                                              ; 447c: cd ee 44
+    bne set_full_droplet                                              ; 447f: d0 0b
 ; check for first update in room (branch if so)
     lda update_room_first_update_flag                                 ; 4481: ad 2b 13
-    bne c44e6                                                         ; 4484: d0 60
+    bne return_drip_timer                                             ; 4484: d0 60
     jsr play_landing_sound                                            ; 4486: 20 a9 23
-    jmp c44e6                                                         ; 4489: 4c e6 44
+    jmp return_drip_timer                                             ; 4489: 4c e6 44
 
-c448c
+set_full_droplet
     lda droplet_full                                                  ; 448c: ad eb 43
     sta object_spriteid + objectid_drip                               ; 448f: 8d ab 09
     lda object_y_low + objectid_drip                                  ; 4492: ad 7f 09
@@ -1825,16 +1885,20 @@ c448c
     sta object_y_low + objectid_drip                                  ; 4498: 8d 7f 09
 ; check for first update in room (branch if so)
     lda update_room_first_update_flag                                 ; 449b: ad 2b 13
-    bne c44e6                                                         ; 449e: d0 46
+    bne return_drip_timer                                             ; 449e: d0 46
+; is player holding the empty bottle? (return if not)
     lda object_spriteid + objectid_player_accessory                   ; 44a0: ad a9 09
-    cmp #$d3                                                          ; 44a3: c9 d3
-    bne c44e6                                                         ; 44a5: d0 3f
+    cmp #spriteid_empty_bottle_held                                   ; 44a3: c9 d3
+    bne return_drip_timer                                             ; 44a5: d0 3f
+; is the pouring animation happening? (return if so)
     lda bottle_pour_animation_step                                    ; 44a7: ad 73 0a
-    bne c44e6                                                         ; 44aa: d0 3a
+    bne return_drip_timer                                             ; 44aa: d0 3a
+; check for bottle and drip collision (return if none)
     ldx #objectid_old_player_accessory                                ; 44ac: a2 0c
     ldy #objectid_old_drip                                            ; 44ae: a0 0e
     jsr test_for_collision_between_objects_x_and_y                    ; 44b0: 20 e2 28
-    beq c44e6                                                         ; 44b3: f0 31
+    beq return_drip_timer                                             ; 44b3: f0 31
+; bottle is now full
     lda #spriteid_full_bottle_held                                    ; 44b5: a9 d4
     sta object_spriteid + objectid_player_accessory                   ; 44b7: 8d a9 09
     lda #spriteid_full_bottle_menu_item                               ; 44ba: a9 d7
@@ -1843,9 +1907,10 @@ c448c
     sta desired_menu_slots,x                                          ; 44c1: 9d 5c 29
     lda #$ff                                                          ; 44c4: a9 ff
     sta save_game_level_k_got_bottle_flag                             ; 44c6: 8d 35 0a
-    lda l44ec                                                         ; 44c9: ad ec 44
+    lda drip_is_poison_flag                                           ; 44c9: ad ec 44
     sta save_game_level_k_poison_in_bottle_flag                       ; 44cc: 8d 36 0a
-    lda l44ee                                                         ; 44cf: ad ee 44
+; long-winded way of saying: temp_drip_timer -= drip_timer_limit+1
+    lda drip_timer_limit                                              ; 44cf: ad ee 44
     clc                                                               ; 44d2: 18
     adc #1                                                            ; 44d3: 69 01
     sec                                                               ; 44d5: 38
@@ -1854,21 +1919,22 @@ c448c
     clc                                                               ; 44db: 18
     adc #1                                                            ; 44dc: 69 01
     sta temp_drip_timer                                               ; 44de: 8d ea 44
+; hide the collected drip
     lda #spriteid_one_pixel_masked_out                                ; 44e1: a9 00
     sta object_spriteid + objectid_drip                               ; 44e3: 8d ab 09
-c44e6
+return_drip_timer
     lda temp_drip_timer                                               ; 44e6: ad ea 44
     rts                                                               ; 44e9: 60
 
 temp_drip_timer
     !byte 0                                                           ; 44ea: 00
-l44eb
+drip_start_frame
     !byte 0                                                           ; 44eb: 00
-l44ec
+drip_is_poison_flag
     !byte 0                                                           ; 44ec: 00
-l44ed
+drip_initial_y
     !byte 0                                                           ; 44ed: 00
-l44ee
+drip_timer_limit
     !byte 0                                                           ; 44ee: 00
 envelope1
     !byte 5                                                           ; 44ef: 05                      ; envelope number
@@ -1933,21 +1999,6 @@ ground_fill_2x2_bottom_right
     !byte %....#...                                                   ; 452c: 08
 sprite_data
 pydis_end
-
-; Automatically generated labels:
-;     c4397
-;     c43ff
-;     c4416
-;     c4419
-;     c441c
-;     c442f
-;     c4464
-;     c448c
-;     c44e6
-;     l44eb
-;     l44ec
-;     l44ed
-;     l44ee
 !if (<envelope1) != $ef {
     !error "Assertion failed: <envelope1 == $ef"
 }

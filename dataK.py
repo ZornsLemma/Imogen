@@ -102,6 +102,12 @@ substitute_labels = {
     (0x3db6, 0x3e1f): {
         "l0070": "temp_stalk_y",
     },
+    (0x4387, 0x43a1): {
+        "l0070": "room_exit_direction",
+    },
+    (0x4441, 0x4448): {
+        "l0070": "temp_y",
+    }
 }
 
 # (Class SubstituteLabels is defined in common.py to implement the substitute labels)
@@ -337,7 +343,7 @@ comment(0x40dc, "check for bottle and dog bowl collision")
 expr(0x40dd, "objectid_bottle_pour")
 expr(0x40e2, "objectid_dog_bowl")
 label(0x40ed, "update_dog_poisoning_animation")
-label(0x40f7, "check_dog_head_animations")
+label(0x40f7, "check_if_dog_is_dying")
 expr(0x40ff, "dog_head_stunned_animation - dog_head_animations")
 label(0x40aa, "set_dog_head_object_local")
 label(0x4110, "set_dog_head_dead_animation")
@@ -483,6 +489,88 @@ expr(0x44bb, sprite_dict)
 expr(0x44e2, sprite_dict)
 expr(0x44e4, "object_spriteid + objectid_drip")
 label(0x44ea, "temp_drip_timer")
+expr(0x439a, "exit_room_right")
+label(0x4397, "try_right_exit")
+comment(0x4390, "left from room 1 is room 0")
+comment(0x439d, "right from room 1 is room 2")
+label(0x43ff, "new_room")
+comment(0x4406, "initialise drip")
+label(0x441c, "increment_drip_timer")
+label(0x44ee, "drip_timer_limit")
+label(0x442f, "update_drip_animation")
+label(0x4416, "update_drip_animation_local")
+label(0x44e6, "return_drip_timer")
+label(0x44ed, "drip_initial_y")
+label(0x44eb, "drip_start_frame")
+label(0x4464, "drip_is_falling")
+label(0x4419, "return_drip_timer_local")
+label(0x448c, "set_full_droplet")
+expr(0x44a4, sprite_dict)
+comment(0x44a0, "is player holding the empty bottle? (return if not)")
+comment(0x44a7, "is the pouring animation happening? (return if so)")
+comment(0x44ac, "check for bottle and drip collision (return if none)")
+comment(0x44b5, "bottle is now full")
+label(0x44ec, "drip_is_poison_flag")
+comment(0x44cf, "long-winded way of saying: temp_drip_timer -= drip_timer_limit+1")
+comment(0x44e1, "hide the collected drip")
+comment(0x3b01, "in developer mode, we have the bottle filled with poison")
+comment(0x3b10, "add full or empty bottle to taskbar")
+comment(0x3bca, "right of room 2 is room 3")
+comment(0x3bde, "update the two brazier fires")
+comment(0x3c01, "set initial height of the plant")
+ab(0x3c0b)
+blank(0x3c0d)
+comment(0x3d1d, "in developer mode 'G' grows the plant, and 'P' poisons it")
+comment(0x43c8, "long-winded way of saying: 'lda #$1d'")
+
+print("""; *************************************************************************************
+;
+; Level J: 'DRIPPING-STUFF'
+;
+; Save game variables:
+;
+;     save_game_level_k_plant_top_y                              ($0a33):
+;             $70: plant starting y position
+;             $50: plant grown once y position
+;             $30: plant grown twice y position
+;             $10: plant full y position
+;
+;     save_game_level_k_plant_growth_timer                       ($0a34):
+;               0: not growing
+;           1-$15: growing
+;            $80+: being poisoned
+;
+;     save_game_level_k_got_bottle_flag                          ($0a35):
+;               0: bottle not got
+;               1: empty bottle taken
+;             $ff: full bottle taken
+;
+;     save_game_level_k_poison_in_bottle_flag                    ($0a36):
+;               0: no poison in bottle
+;             $ff: poison in bottle
+;
+;     save_game_level_k_dog_animation:                           ($0a37):
+;               1: dead
+;               5: drinking
+;             $1b: pushing player
+;             $3a: stunned before dying
+;
+;     save_game_level_k_poison_dog_animation_step                ($0a38):
+;               a timer for the dog's death sequence
+;
+; Solution:
+;
+;   1. Collect the bottle from the leftmost room
+;   2. Hold the bottle under the drip in the initial room to fill with water
+;   3. pour the water onto the stem of the plant one room to the right
+;   4. repeat until plant is fully grown (reaches ceiling)
+;   5. climb plant and go to room to the right
+;   6. Fill bottle with poison from the drip
+;   7. go to the leftmost room and climb the rope to the dog
+;   8. pour the poison into the dog bowl (the dog dies) and jump over to reach the spell
+;
+; *************************************************************************************
+""")
 
 result = go(False)
 result = remove_sprite_data(result)
