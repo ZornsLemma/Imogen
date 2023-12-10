@@ -217,21 +217,21 @@ l09ab                                               = $09ab
 object_spriteid_old                                 = $09b3
 object_direction                                    = $09be
 current_player_animation                            = $09df
-l0a39                                               = $0a39
-l0a3a                                               = $0a3a
-l0a3b                                               = $0a3b
-l0a3c                                               = $0a3c
-l0a3d                                               = $0a3d
-l0a3e                                               = $0a3e
+save_game_level_l_got_whip_progress                 = $0a39
+save_game_level_l_dog_x                             = $0a3a
+save_game_level_l_got_frog_progress                 = $0a3b
+save_game_level_l_baby_animation                    = $0a3c
+save_game_level_l_partition_y                       = $0a3d
+save_game_level_l_frog_dir                          = $0a3e
 level_workspace                                     = $0a6f
 l0a70                                               = $0a70
 l0a71                                               = $0a71
-l0a72                                               = $0a72
+baby_animation_step                                 = $0a72
 l0a73                                               = $0a73
 l0a74                                               = $0a74
 l0a75                                               = $0a75
 l0a76                                               = $0a76
-l0a77                                               = $0a77
+delay_before_ribbit                                 = $0a77
 l0a78                                               = $0a78
 tile_all_set_pixels                                 = $0aa9
 developer_flags                                     = $1103
@@ -283,7 +283,6 @@ previous_player_using_object_spriteid               = $2eb7
 toolbar_collectable_spriteids                       = $2ee8
 collectable_spriteids                               = $2eed
 collectable_being_used_spriteids                    = $2ef2
-l2ef4                                               = $2ef4
 monkey_base_animation                               = $30ff
 monkey_climb_idle_animation                         = $3144
 monkey_climb_down_animation                         = $3148
@@ -349,15 +348,15 @@ level_specific_initialisation
     lda developer_flags                                               ; 3af5: ad 03 11
     bpl developer_mode_inactive                                       ; 3af8: 10 08
     lda #$ff                                                          ; 3afa: a9 ff
-    sta l0a39                                                         ; 3afc: 8d 39 0a
-    sta l0a3b                                                         ; 3aff: 8d 3b 0a
+    sta save_game_level_l_got_whip_progress                           ; 3afc: 8d 39 0a
+    sta save_game_level_l_got_frog_progress                           ; 3aff: 8d 3b 0a
 developer_mode_inactive
-    lda l0a39                                                         ; 3b02: ad 39 0a
+    lda save_game_level_l_got_whip_progress                           ; 3b02: ad 39 0a
     beq c3b0c                                                         ; 3b05: f0 05
     lda #spriteid_whip_menu_item                                      ; 3b07: a9 c8
     jsr find_or_create_menu_slot_for_A                                ; 3b09: 20 bd 2b
 c3b0c
-    lda l0a3b                                                         ; 3b0c: ad 3b 0a
+    lda save_game_level_l_got_frog_progress                           ; 3b0c: ad 3b 0a
     beq c3b16                                                         ; 3b0f: f0 05
     lda #spriteid_frog_menu_item                                      ; 3b11: a9 dd
     jsr find_or_create_menu_slot_for_A                                ; 3b13: 20 bd 2b
@@ -514,8 +513,9 @@ room_0_game_update_loop
     jsr game_update                                                   ; 3bd1: 20 da 12
     and #exit_room_right                                              ; 3bd4: 29 04
     beq room_0_game_update_loop                                       ; 3bd6: f0 f9
+; right of room 0 is room 1
     ldx #1                                                            ; 3bd8: a2 01
-c3bda
+goto_new_room
     ldy current_level                                                 ; 3bda: a4 31
     jmp initialise_level_and_room                                     ; 3bdc: 4c 40 11
 
@@ -648,21 +648,21 @@ room_1_game_update_loop
     and #exit_room_left                                               ; 3c87: 29 01
     beq room_1_check_right_exit                                       ; 3c89: f0 05
     ldx #0                                                            ; 3c8b: a2 00
-    jmp c3bda                                                         ; 3c8d: 4c da 3b
+    jmp goto_new_room                                                 ; 3c8d: 4c da 3b
 
 room_1_check_right_exit
     lda room_exit_direction                                           ; 3c90: a5 70
     and #exit_room_right                                              ; 3c92: 29 04
     beq room_1_game_update_loop                                       ; 3c94: f0 ec
     ldx #2                                                            ; 3c96: a2 02
-    jmp c3bda                                                         ; 3c98: 4c da 3b
+    jmp goto_new_room                                                 ; 3c98: 4c da 3b
 
 baby_arm_animations
     !byte 0                                                           ; 3c9b: 00
-baby_arm_animation1
+baby_arm_static_animation
     !byte spriteid_arm2,             0                                ; 3c9c: ec 00
     !byte $ff                                                         ; 3c9e: ff
-baby_arm_animation2
+baby_arm_pre_pulling_animation
     !byte spriteid_arm2,             0                                ; 3c9f: ec 00
     !byte spriteid_arm2,             0                                ; 3ca1: ec 00
     !byte spriteid_arm2,             0                                ; 3ca3: ec 00
@@ -672,7 +672,7 @@ baby_arm_animation2
     !byte spriteid_arm2,             0                                ; 3cab: ec 00
     !byte spriteid_arm2,             0                                ; 3cad: ec 00
     !byte $ff                                                         ; 3caf: ff
-baby_arm_animation3
+baby_arm_pulling_rope_animation
     !byte spriteid_arm3,             0                                ; 3cb0: ed 00
     !byte spriteid_arm3,             0                                ; 3cb2: ed 00
     !byte spriteid_arm2,           $fc                                ; 3cb4: ec fc
@@ -683,33 +683,33 @@ baby_arm_animation3
 ; check for first update in room (branch if so)
 room_1_update_handler
     lda update_room_first_update_flag                                 ; 3cbb: ad 2b 13
-    bne c3cc3                                                         ; 3cbe: d0 03
-    jmp c3d83                                                         ; 3cc0: 4c 83 3d
+    bne initialise_room_1                                             ; 3cbe: d0 03
+    jmp update_room_1                                                 ; 3cc0: 4c 83 3d
 
 ; check for level change (branch if not)
-c3cc3
+initialise_room_1
     lda current_level                                                 ; 3cc3: a5 31
     cmp level_before_latest_level_and_room_initialisation             ; 3cc5: c5 51
-    beq c3ce6                                                         ; 3cc7: f0 1d
-    ldy l0a3c                                                         ; 3cc9: ac 3c 0a
-    bne c3cd5                                                         ; 3ccc: d0 07
+    beq only_room_changed                                             ; 3cc7: f0 1d
+    ldy save_game_level_l_baby_animation                              ; 3cc9: ac 3c 0a
+    bne check_partition_open_or_closed                                ; 3ccc: d0 07
     ldy #1                                                            ; 3cce: a0 01
     lda #$78 ; 'x'                                                    ; 3cd0: a9 78
-    sta l0a3d                                                         ; 3cd2: 8d 3d 0a
-c3cd5
+    sta save_game_level_l_partition_y                                 ; 3cd2: 8d 3d 0a
+check_partition_open_or_closed
     cpy #1                                                            ; 3cd5: c0 01
-    beq c3ce0                                                         ; 3cd7: f0 07
+    beq store_baby_animation                                          ; 3cd7: f0 07
     ldy #1                                                            ; 3cd9: a0 01
     lda #$50 ; 'P'                                                    ; 3cdb: a9 50
-    sta l0a3d                                                         ; 3cdd: 8d 3d 0a
-c3ce0
-    sty l0a3c                                                         ; 3ce0: 8c 3c 0a
-    sty l0a72                                                         ; 3ce3: 8c 72 0a
-c3ce6
+    sta save_game_level_l_partition_y                                 ; 3cdd: 8d 3d 0a
+store_baby_animation
+    sty save_game_level_l_baby_animation                              ; 3ce0: 8c 3c 0a
+    sty baby_animation_step                                           ; 3ce3: 8c 72 0a
+only_room_changed
     lda desired_room_index                                            ; 3ce6: a5 30
     cmp #1                                                            ; 3ce8: c9 01
     beq c3cef                                                         ; 3cea: f0 03
-    jmp c3d80                                                         ; 3cec: 4c 80 3d
+    jmp update_partition_and_rope_local                               ; 3cec: 4c 80 3d
 
 c3cef
     ldx #<envelope1                                                   ; 3cef: a2 f6
@@ -732,7 +732,7 @@ loop_c3d03
     jsr draw_sprite_a_at_cell_xy                                      ; 3d0e: 20 4c 1f
     lda #$78 ; 'x'                                                    ; 3d11: a9 78
     sec                                                               ; 3d13: 38
-    sbc l0a3d                                                         ; 3d14: ed 3d 0a
+    sbc save_game_level_l_partition_y                                 ; 3d14: ed 3d 0a
     clc                                                               ; 3d17: 18
     adc #$4c ; 'L'                                                    ; 3d18: 69 4c
     lsr                                                               ; 3d1a: 4a
@@ -741,16 +741,16 @@ loop_c3d03
     tay                                                               ; 3d1d: a8
     dey                                                               ; 3d1e: 88
     lda #spriteid_vertical_rope                                       ; 3d1f: a9 e4
-loop_c3d21
+draw_rope_loop2
     jsr draw_sprite_a_at_cell_xy                                      ; 3d21: 20 4c 1f
     dey                                                               ; 3d24: 88
     cpy #3                                                            ; 3d25: c0 03
-    bcs loop_c3d21                                                    ; 3d27: b0 f8
+    bcs draw_rope_loop2                                               ; 3d27: b0 f8
     lda #4                                                            ; 3d29: a9 04
     jsr set_object_position_from_cell_xy                              ; 3d2b: 20 5d 1f
     lda #spriteid_vertical_rope_frayed_end                            ; 3d2e: a9 e5
     sta object_spriteid + objectid_rope_frayed_end                    ; 3d30: 8d ac 09
-    lda l0a3d                                                         ; 3d33: ad 3d 0a
+    lda save_game_level_l_partition_y                                 ; 3d33: ad 3d 0a
     clc                                                               ; 3d36: 18
     adc #4                                                            ; 3d37: 69 04
     lsr                                                               ; 3d39: 4a
@@ -760,14 +760,14 @@ loop_c3d21
     dey                                                               ; 3d3d: 88
     ldx #3                                                            ; 3d3e: a2 03
     lda #spriteid_vertical_rope                                       ; 3d40: a9 e4
-loop_c3d42
+draw_rope_loop1
     jsr draw_sprite_a_at_cell_xy                                      ; 3d42: 20 4c 1f
     dey                                                               ; 3d45: 88
     cpy #3                                                            ; 3d46: c0 03
-    bcs loop_c3d42                                                    ; 3d48: b0 f8
-    lda #5                                                            ; 3d4a: a9 05
+    bcs draw_rope_loop1                                               ; 3d48: b0 f8
+    lda #objectid_partition                                           ; 3d4a: a9 05
     jsr set_object_position_from_cell_xy                              ; 3d4c: 20 5d 1f
-    lda #6                                                            ; 3d4f: a9 06
+    lda #objectid_end_of_rope                                         ; 3d4f: a9 06
     jsr set_object_position_from_cell_xy                              ; 3d51: 20 5d 1f
     lda #spriteid_partition                                           ; 3d54: a9 e6
     sta object_spriteid + objectid_partition                          ; 3d56: 8d ad 09
@@ -787,91 +787,92 @@ loop_c3d42
     sta l38af                                                         ; 3d78: 8d af 38
     lda #$c0                                                          ; 3d7b: a9 c0
     sta l38c5                                                         ; 3d7d: 8d c5 38
-c3d80
-    jmp c3e06                                                         ; 3d80: 4c 06 3e
+update_partition_and_rope_local
+    jmp update_partition_and_rope                                     ; 3d80: 4c 06 3e
 
-c3d83
-    lda l0a72                                                         ; 3d83: ad 72 0a
+update_room_1
+    lda baby_animation_step                                           ; 3d83: ad 72 0a
     clc                                                               ; 3d86: 18
     adc #2                                                            ; 3d87: 69 02
     tay                                                               ; 3d89: a8
     lda baby_arm_animations,y                                         ; 3d8a: b9 9b 3c
     cmp #$ff                                                          ; 3d8d: c9 ff
-    bne c3d94                                                         ; 3d8f: d0 03
-    ldy l0a3c                                                         ; 3d91: ac 3c 0a
-c3d94
-    lda l0a3c                                                         ; 3d94: ad 3c 0a
-    cmp #1                                                            ; 3d97: c9 01
-    bne c3dc2                                                         ; 3d99: d0 27
-    lda l0a3d                                                         ; 3d9b: ad 3d 0a
+    bne check_baby_animation                                          ; 3d8f: d0 03
+    ldy save_game_level_l_baby_animation                              ; 3d91: ac 3c 0a
+check_baby_animation
+    lda save_game_level_l_baby_animation                              ; 3d94: ad 3c 0a
+    cmp #baby_arm_static_animation - baby_arm_animations              ; 3d97: c9 01
+    bne after_pre_pulling_goto_pulling_animation                      ; 3d99: d0 27
+    lda save_game_level_l_partition_y                                 ; 3d9b: ad 3d 0a
     cmp #$78 ; 'x'                                                    ; 3d9e: c9 78
-    bne c3de4                                                         ; 3da0: d0 42
+    bne set_baby_animation_step                                       ; 3da0: d0 42
     lda desired_room_index                                            ; 3da2: a5 30
     cmp #1                                                            ; 3da4: c9 01
-    bne c3de4                                                         ; 3da6: d0 3c
-    lda l0a3b                                                         ; 3da8: ad 3b 0a
+    bne set_baby_animation_step                                       ; 3da6: d0 3c
+    lda save_game_level_l_got_frog_progress                           ; 3da8: ad 3b 0a
     cmp #1                                                            ; 3dab: c9 01
-    bne c3de4                                                         ; 3dad: d0 35
+    bne set_baby_animation_step                                       ; 3dad: d0 35
     lda object_y_low                                                  ; 3daf: ad 7c 09
     cmp #$a0                                                          ; 3db2: c9 a0
-    bcs c3de4                                                         ; 3db4: b0 2e
+    bcs set_baby_animation_step                                       ; 3db4: b0 2e
     cmp #$78 ; 'x'                                                    ; 3db6: c9 78
-    bcc c3de4                                                         ; 3db8: 90 2a
-    ldy #4                                                            ; 3dba: a0 04
-    sty l0a3c                                                         ; 3dbc: 8c 3c 0a
-    jmp c3de4                                                         ; 3dbf: 4c e4 3d
+    bcc set_baby_animation_step                                       ; 3db8: 90 2a
+; start pulling animation
+    ldy #baby_arm_pre_pulling_animation - baby_arm_animations         ; 3dba: a0 04
+    sty save_game_level_l_baby_animation                              ; 3dbc: 8c 3c 0a
+    jmp set_baby_animation_step                                       ; 3dbf: 4c e4 3d
 
-c3dc2
-    cmp #4                                                            ; 3dc2: c9 04
-    bne c3dd3                                                         ; 3dc4: d0 0d
-    cpy l0a3c                                                         ; 3dc6: cc 3c 0a
-    bne c3de4                                                         ; 3dc9: d0 19
-    ldy #$15                                                          ; 3dcb: a0 15
-    sty l0a3c                                                         ; 3dcd: 8c 3c 0a
-    jmp c3de4                                                         ; 3dd0: 4c e4 3d
+after_pre_pulling_goto_pulling_animation
+    cmp #baby_arm_pre_pulling_animation - baby_arm_animations         ; 3dc2: c9 04
+    bne check_if_we_should_initialise_baby_animation                  ; 3dc4: d0 0d
+    cpy save_game_level_l_baby_animation                              ; 3dc6: cc 3c 0a
+    bne set_baby_animation_step                                       ; 3dc9: d0 19
+    ldy #baby_arm_pulling_rope_animation - baby_arm_animations        ; 3dcb: a0 15
+    sty save_game_level_l_baby_animation                              ; 3dcd: 8c 3c 0a
+    jmp set_baby_animation_step                                       ; 3dd0: 4c e4 3d
 
-c3dd3
-    cpy l0a3c                                                         ; 3dd3: cc 3c 0a
-    bne c3de4                                                         ; 3dd6: d0 0c
-    lda l0a3d                                                         ; 3dd8: ad 3d 0a
+check_if_we_should_initialise_baby_animation
+    cpy save_game_level_l_baby_animation                              ; 3dd3: cc 3c 0a
+    bne set_baby_animation_step                                       ; 3dd6: d0 0c
+    lda save_game_level_l_partition_y                                 ; 3dd8: ad 3d 0a
     cmp #$50 ; 'P'                                                    ; 3ddb: c9 50
-    bne c3de4                                                         ; 3ddd: d0 05
-    ldy #1                                                            ; 3ddf: a0 01
-    sty l0a3c                                                         ; 3de1: 8c 3c 0a
-c3de4
-    sty l0a72                                                         ; 3de4: 8c 72 0a
+    bne set_baby_animation_step                                       ; 3ddd: d0 05
+    ldy #baby_arm_static_animation - baby_arm_animations              ; 3ddf: a0 01
+    sty save_game_level_l_baby_animation                              ; 3de1: 8c 3c 0a
+set_baby_animation_step
+    sty baby_animation_step                                           ; 3de4: 8c 72 0a
     iny                                                               ; 3de7: c8
     lda baby_arm_animations,y                                         ; 3de8: b9 9b 3c
-    beq c3e06                                                         ; 3deb: f0 19
+    beq update_partition_and_rope                                     ; 3deb: f0 19
     clc                                                               ; 3ded: 18
-    adc l0a3d                                                         ; 3dee: 6d 3d 0a
-    sta l0a3d                                                         ; 3df1: 8d 3d 0a
+    adc save_game_level_l_partition_y                                 ; 3dee: 6d 3d 0a
+    sta save_game_level_l_partition_y                                 ; 3df1: 8d 3d 0a
     lda desired_room_index                                            ; 3df4: a5 30
     cmp #1                                                            ; 3df6: c9 01
-    bne c3e06                                                         ; 3df8: d0 0c
+    bne update_partition_and_rope                                     ; 3df8: d0 0c
     lda #spriteid_one_pixel_masked_out                                ; 3dfa: a9 00
     sta object_spriteid_old + objectid_rope_frayed_end                ; 3dfc: 8d b7 09
     ldx #<sound1                                                      ; 3dff: a2 04
     ldy #>sound1                                                      ; 3e01: a0 44
     jsr play_sound_yx                                                 ; 3e03: 20 f6 38
-c3e06
+update_partition_and_rope
     lda desired_room_index                                            ; 3e06: a5 30
     cmp #1                                                            ; 3e08: c9 01
     bne return1                                                       ; 3e0a: d0 4d
-    ldy l0a72                                                         ; 3e0c: ac 72 0a
+    ldy baby_animation_step                                           ; 3e0c: ac 72 0a
     lda baby_arm_animations,y                                         ; 3e0f: b9 9b 3c
     sta l09ab                                                         ; 3e12: 8d ab 09
-    lda l0a3d                                                         ; 3e15: ad 3d 0a
+    lda save_game_level_l_partition_y                                 ; 3e15: ad 3d 0a
     sta object_y_low + objectid_partition                             ; 3e18: 8d 81 09
     sta object_y_low + objectid_end_of_rope                           ; 3e1b: 8d 82 09
     lda #$78 ; 'x'                                                    ; 3e1e: a9 78
     sec                                                               ; 3e20: 38
-    sbc l0a3d                                                         ; 3e21: ed 3d 0a
+    sbc save_game_level_l_partition_y                                 ; 3e21: ed 3d 0a
     clc                                                               ; 3e24: 18
     adc #$48 ; 'H'                                                    ; 3e25: 69 48
     sta l0980                                                         ; 3e27: 8d 80 09
     ldx #3                                                            ; 3e2a: a2 03
-    lda l0a3d                                                         ; 3e2c: ad 3d 0a
+    lda save_game_level_l_partition_y                                 ; 3e2c: ad 3d 0a
     lsr                                                               ; 3e2f: 4a
     lsr                                                               ; 3e30: 4a
     lsr                                                               ; 3e31: 4a
@@ -899,7 +900,7 @@ c3e06
 return1
     rts                                                               ; 3e59: 60
 
-whip_animation
+whip_animation_table
     !byte spriteid_whip_2                                             ; 3e5a: cc
     !byte spriteid_whip_3                                             ; 3e5b: cd
     !byte spriteid_whip_4                                             ; 3e5c: ce
@@ -913,29 +914,29 @@ update_whip
 ; check for level change (branch if not)
     lda current_level                                                 ; 3e64: a5 31
     cmp level_before_latest_level_and_room_initialisation             ; 3e66: c5 51
-    beq c3e74                                                         ; 3e68: f0 0a
-    lda l0a39                                                         ; 3e6a: ad 39 0a
-    beq c3e74                                                         ; 3e6d: f0 05
+    beq new_room_only                                                 ; 3e68: f0 0a
+    lda save_game_level_l_got_whip_progress                           ; 3e6a: ad 39 0a
+    beq new_room_only                                                 ; 3e6d: f0 05
     lda #$ff                                                          ; 3e6f: a9 ff
-    sta l0a39                                                         ; 3e71: 8d 39 0a
-c3e74
+    sta save_game_level_l_got_whip_progress                           ; 3e71: 8d 39 0a
+new_room_only
     ldx #<envelope2                                                   ; 3e74: a2 0c
     ldy #>envelope2                                                   ; 3e76: a0 44
     jsr define_envelope                                               ; 3e78: 20 5e 39
     lda #spriteid_whip_menu_item                                      ; 3e7b: a9 c8
     sta toolbar_collectable_spriteids+1                               ; 3e7d: 8d e9 2e
-    lda #$cb                                                          ; 3e80: a9 cb
+    lda #spriteid_whip_1                                              ; 3e80: a9 cb
     sta collectable_spriteids+1                                       ; 3e82: 8d ee 2e
     lda desired_room_index                                            ; 3e85: a5 30
     cmp #1                                                            ; 3e87: c9 01
-    bne c3eac                                                         ; 3e89: d0 21
-    lda l0a39                                                         ; 3e8b: ad 39 0a
-    bne c3eac                                                         ; 3e8e: d0 1c
+    bne update_whip_in_hand_local                                     ; 3e89: d0 21
+    lda save_game_level_l_got_whip_progress                           ; 3e8b: ad 39 0a
+    bne update_whip_in_hand_local                                     ; 3e8e: d0 1c
     ldx #$25 ; '%'                                                    ; 3e90: a2 25
     lda #$fe                                                          ; 3e92: a9 fe
     sta temp_sprite_x_offset                                          ; 3e94: 85 3a
     ldy #$0c                                                          ; 3e96: a0 0c
-    lda #2                                                            ; 3e98: a9 02
+    lda #objectid_whip                                                ; 3e98: a9 02
     jsr set_object_position_from_cell_xy                              ; 3e9a: 20 5d 1f
     lda #$ff                                                          ; 3e9d: a9 ff
     sta object_direction + objectid_whip                              ; 3e9f: 8d c0 09
@@ -943,50 +944,54 @@ c3e74
     sta l38ae                                                         ; 3ea4: 8d ae 38
     lda #spriteid_whip_5                                              ; 3ea7: a9 cf
     sta object_spriteid + objectid_whip                               ; 3ea9: 8d aa 09
-c3eac
-    jmp c3ef3                                                         ; 3eac: 4c f3 3e
+update_whip_in_hand_local
+    jmp update_whip_in_hand                                           ; 3eac: 4c f3 3e
 
 not_first_update_whip
-    lda l0a39                                                         ; 3eaf: ad 39 0a
-    bne c3ed4                                                         ; 3eb2: d0 20
+    lda save_game_level_l_got_whip_progress                           ; 3eaf: ad 39 0a
+    bne check_if_using_whip                                           ; 3eb2: d0 20
     lda desired_room_index                                            ; 3eb4: a5 30
     cmp #1                                                            ; 3eb6: c9 01
     bne return2                                                       ; 3eb8: d0 60
+; not got whip, but we are in room 1. Check for collision with whip
     ldx #objectid_old_player                                          ; 3eba: a2 0b
-    ldy #2                                                            ; 3ebc: a0 02
+    ldy #objectid_whip                                                ; 3ebc: a0 02
     jsr test_for_collision_between_objects_x_and_y                    ; 3ebe: 20 e2 28
     beq return2                                                       ; 3ec1: f0 57
+; whip collected
     lda #$ff                                                          ; 3ec3: a9 ff
-    sta l0a39                                                         ; 3ec5: 8d 39 0a
+    sta save_game_level_l_got_whip_progress                           ; 3ec5: 8d 39 0a
     lda #spriteid_whip_menu_item                                      ; 3ec8: a9 c8
     jsr find_or_create_menu_slot_for_A                                ; 3eca: 20 bd 2b
     lda #spriteid_one_pixel_masked_out                                ; 3ecd: a9 00
     sta object_spriteid + objectid_whip                               ; 3ecf: 8d aa 09
     beq return2                                                       ; 3ed2: f0 46
-c3ed4
-    lda #$c8                                                          ; 3ed4: a9 c8
+check_if_using_whip
+    lda #spriteid_whip_menu_item                                      ; 3ed4: a9 c8
     cmp player_using_object_spriteid                                  ; 3ed6: cd b6 2e
-    beq c3ee2                                                         ; 3ed9: f0 07
+    beq using_whip                                                    ; 3ed9: f0 07
+; not using_whip
     lda #$ff                                                          ; 3edb: a9 ff
-    sta l0a39                                                         ; 3edd: 8d 39 0a
-    bmi c3ef3                                                         ; 3ee0: 30 11
-c3ee2
-    ldy l0a39                                                         ; 3ee2: ac 39 0a
+    sta save_game_level_l_got_whip_progress                           ; 3edd: 8d 39 0a
+    bmi update_whip_in_hand                                           ; 3ee0: 30 11                   ; ALWAYS branch
+
+using_whip
+    ldy save_game_level_l_got_whip_progress                           ; 3ee2: ac 39 0a
     cpy #4                                                            ; 3ee5: c0 04
-    beq c3ef3                                                         ; 3ee7: f0 0a
+    beq update_whip_in_hand                                           ; 3ee7: f0 0a
     cpy #$ff                                                          ; 3ee9: c0 ff
-    bne c3eef                                                         ; 3eeb: d0 02
+    bne increment_whip_animation                                      ; 3eeb: d0 02
     ldy #0                                                            ; 3eed: a0 00
-c3eef
+increment_whip_animation
     iny                                                               ; 3eef: c8
-    sty l0a39                                                         ; 3ef0: 8c 39 0a
-c3ef3
-    lda whip_animation                                                ; 3ef3: ad 5a 3e
-    ldy l0a39                                                         ; 3ef6: ac 39 0a
+    sty save_game_level_l_got_whip_progress                           ; 3ef0: 8c 39 0a
+update_whip_in_hand
+    lda whip_animation_table                                          ; 3ef3: ad 5a 3e
+    ldy save_game_level_l_got_whip_progress                           ; 3ef6: ac 39 0a
     cpy #$ff                                                          ; 3ef9: c0 ff
-    beq c3f00                                                         ; 3efb: f0 03
-    lda whip_animation,y                                              ; 3efd: b9 5a 3e
-c3f00
+    beq got_whip_in_hand_sprite                                       ; 3efb: f0 03
+    lda whip_animation_table,y                                        ; 3efd: b9 5a 3e
+got_whip_in_hand_sprite
     sta collectable_being_used_spriteids + 1                          ; 3f00: 8d f3 2e
 ; check for first update in room (branch if so)
     lda update_room_first_update_flag                                 ; 3f03: ad 2b 13
@@ -1096,14 +1101,14 @@ room_2_game_update_loop
     and #exit_room_left                                               ; 3f82: 29 01
     beq room_2_check_right_exit                                       ; 3f84: f0 05
     ldx #1                                                            ; 3f86: a2 01
-    jmp c3bda                                                         ; 3f88: 4c da 3b
+    jmp goto_new_room                                                 ; 3f88: 4c da 3b
 
 room_2_check_right_exit
     lda room_exit_direction                                           ; 3f8b: a5 70
     and #exit_room_right                                              ; 3f8d: 29 04
     beq room_2_game_update_loop                                       ; 3f8f: f0 ec
     ldx #3                                                            ; 3f91: a2 03
-    jmp c3bda                                                         ; 3f93: 4c da 3b
+    jmp goto_new_room                                                 ; 3f93: 4c da 3b
 
 dog_animations
     !byte 0                                                           ; 3f96: 00
@@ -1166,14 +1171,14 @@ room_2_update_handler
     lda #1                                                            ; 3fe2: a9 01
     sta level_workspace                                               ; 3fe4: 8d 6f 0a
     sta l0a70                                                         ; 3fe7: 8d 70 0a
-    lda l0a3a                                                         ; 3fea: ad 3a 0a
+    lda save_game_level_l_dog_x                                       ; 3fea: ad 3a 0a
     bne c3ff1                                                         ; 3fed: d0 02
     lda #$68 ; 'h'                                                    ; 3fef: a9 68
 c3ff1
     clc                                                               ; 3ff1: 18
     adc #2                                                            ; 3ff2: 69 02
     and #$fc                                                          ; 3ff4: 29 fc
-    sta l0a3a                                                         ; 3ff6: 8d 3a 0a
+    sta save_game_level_l_dog_x                                       ; 3ff6: 8d 3a 0a
 c3ff9
     lda desired_room_index                                            ; 3ff9: a5 30
     cmp #2                                                            ; 3ffb: c9 02
@@ -1237,7 +1242,7 @@ c4053
     ldy l3b46                                                         ; 4076: ac 46 3b
     tax                                                               ; 4079: aa
     beq c4094                                                         ; 407a: f0 18
-    lda l0a3a                                                         ; 407c: ad 3a 0a
+    lda save_game_level_l_dog_x                                       ; 407c: ad 3a 0a
     cmp #$8c                                                          ; 407f: c9 8c
     bcc c408f                                                         ; 4081: 90 0c
     ldy #5                                                            ; 4083: a0 05
@@ -1289,8 +1294,8 @@ c40de
     iny                                                               ; 40e1: c8
     lda dog_animations,y                                              ; 40e2: b9 96 3f
     clc                                                               ; 40e5: 18
-    adc l0a3a                                                         ; 40e6: 6d 3a 0a
-    sta l0a3a                                                         ; 40e9: 8d 3a 0a
+    adc save_game_level_l_dog_x                                       ; 40e6: 6d 3a 0a
+    sta save_game_level_l_dog_x                                       ; 40e9: 8d 3a 0a
     iny                                                               ; 40ec: c8
     lda dog_animations,y                                              ; 40ed: b9 96 3f
     cmp #$ff                                                          ; 40f0: c9 ff
@@ -1312,7 +1317,7 @@ c410a
     ldy l0a70                                                         ; 4110: ac 70 0a
     lda dog_animations,y                                              ; 4113: b9 96 3f
     sta object_spriteid + objectid_dog                                ; 4116: 8d aa 09
-    lda l0a3a                                                         ; 4119: ad 3a 0a
+    lda save_game_level_l_dog_x                                       ; 4119: ad 3a 0a
     asl                                                               ; 411c: 0a
     sta object_x_low + objectid_dog                                   ; 411d: 8d 52 09
     sta object_x_low + objectid_dog_tail                              ; 4120: 8d 53 09
@@ -1422,7 +1427,7 @@ room_3_game_update_loop
     and #exit_room_left                                               ; 419b: 29 01
     beq room_3_game_update_loop                                       ; 419d: f0 f9
     ldx #2                                                            ; 419f: a2 02
-    jmp c3bda                                                         ; 41a1: 4c da 3b
+    jmp goto_new_room                                                 ; 41a1: 4c da 3b
 
 frog_animations
     !byte 0                                                           ; 41a4: 00
@@ -1478,7 +1483,7 @@ room_3_update_handler
 ; check for first update in room (branch if not)
     lda update_room_first_update_flag                                 ; 41ed: ad 2b 13
     beq c4230                                                         ; 41f0: f0 3e
-    lda l0a3b                                                         ; 41f2: ad 3b 0a
+    lda save_game_level_l_got_frog_progress                           ; 41f2: ad 3b 0a
     bne c422d                                                         ; 41f5: d0 36
 ; check for level change (branch if not)
     lda current_level                                                 ; 41f7: a5 31
@@ -1486,20 +1491,20 @@ room_3_update_handler
     beq c4222                                                         ; 41fb: f0 25
     ldx #$74 ; 't'                                                    ; 41fd: a2 74
     ldy #$ff                                                          ; 41ff: a0 ff
-    lda l0a3e                                                         ; 4201: ad 3e 0a
+    lda save_game_level_l_frog_dir                                    ; 4201: ad 3e 0a
     beq c420c                                                         ; 4204: f0 06
     bmi c420c                                                         ; 4206: 30 04
     ldx #$cc                                                          ; 4208: a2 cc
     ldy #1                                                            ; 420a: a0 01
 c420c
     stx l0a73                                                         ; 420c: 8e 73 0a
-    sty l0a3e                                                         ; 420f: 8c 3e 0a
+    sty save_game_level_l_frog_dir                                    ; 420f: 8c 3e 0a
     lda #$76 ; 'v'                                                    ; 4212: a9 76
     sta l0a74                                                         ; 4214: 8d 74 0a
     lda #1                                                            ; 4217: a9 01
     sta l0a75                                                         ; 4219: 8d 75 0a
     sta l0a76                                                         ; 421c: 8d 76 0a
-    jsr sub_c4350                                                     ; 421f: 20 50 43
+    jsr get_delay_before_next_ribbit                                  ; 421f: 20 50 43
 c4222
     lda desired_room_index                                            ; 4222: a5 30
     cmp #3                                                            ; 4224: c9 03
@@ -1510,7 +1515,7 @@ c422d
     jmp c4303                                                         ; 422d: 4c 03 43
 
 c4230
-    lda l0a3b                                                         ; 4230: ad 3b 0a
+    lda save_game_level_l_got_frog_progress                           ; 4230: ad 3b 0a
     bne c422d                                                         ; 4233: d0 f8
     lda l0a76                                                         ; 4235: ad 76 0a
     clc                                                               ; 4238: 18
@@ -1534,7 +1539,7 @@ c4246
     lda #spriteid_frog_menu_item                                      ; 425c: a9 dd
     jsr find_or_create_menu_slot_for_A                                ; 425e: 20 bd 2b
     lda #$ff                                                          ; 4261: a9 ff
-    sta l0a3b                                                         ; 4263: 8d 3b 0a
+    sta save_game_level_l_got_frog_progress                           ; 4263: 8d 3b 0a
     bmi c42e2                                                         ; 4266: 30 7a
 c4268
     lda l0a75                                                         ; 4268: ad 75 0a
@@ -1545,7 +1550,7 @@ c4268
 c4274
     ldy #1                                                            ; 4274: a0 01
     sty l0a75                                                         ; 4276: 8c 75 0a
-    jsr sub_c4350                                                     ; 4279: 20 50 43
+    jsr get_delay_before_next_ribbit                                  ; 4279: 20 50 43
 c427c
     lda l0a75                                                         ; 427c: ad 75 0a
     cmp #1                                                            ; 427f: c9 01
@@ -1569,7 +1574,7 @@ c427c
     lda object_x_high_old                                             ; 42a7: ad 71 09
     sbc #0                                                            ; 42aa: e9 00
     tax                                                               ; 42ac: aa
-    lda l0a3e                                                         ; 42ad: ad 3e 0a
+    lda save_game_level_l_frog_dir                                    ; 42ad: ad 3e 0a
     bpl c42b7                                                         ; 42b0: 10 05
     txa                                                               ; 42b2: 8a
     bpl c42c9                                                         ; 42b3: 10 14
@@ -1578,19 +1583,19 @@ c42b7
     txa                                                               ; 42b7: 8a
     bmi c42c9                                                         ; 42b8: 30 0f
 c42ba
-    lda l0a3e                                                         ; 42ba: ad 3e 0a
+    lda save_game_level_l_frog_dir                                    ; 42ba: ad 3e 0a
     eor #$fe                                                          ; 42bd: 49 fe
-    sta l0a3e                                                         ; 42bf: 8d 3e 0a
+    sta save_game_level_l_frog_dir                                    ; 42bf: 8d 3e 0a
     ldy #$12                                                          ; 42c2: a0 12
     sty l0a75                                                         ; 42c4: 8c 75 0a
     bpl c42e2                                                         ; 42c7: 10 19
 c42c9
-    dec l0a77                                                         ; 42c9: ce 77 0a
+    dec delay_before_ribbit                                           ; 42c9: ce 77 0a
     bne c42e2                                                         ; 42cc: d0 14
     lda desired_room_index                                            ; 42ce: a5 30
     cmp #3                                                            ; 42d0: c9 03
     bne c42d7                                                         ; 42d2: d0 03
-    jsr sub_c43d8                                                     ; 42d4: 20 d8 43
+    jsr play_ribbit_sound                                             ; 42d4: 20 d8 43
 c42d7
     ldy #5                                                            ; 42d7: a0 05
     sty l0a75                                                         ; 42d9: 8c 75 0a
@@ -1603,7 +1608,7 @@ c42e2
     iny                                                               ; 42e5: c8
     lda frog_animations,y                                             ; 42e6: b9 a4 41
     clc                                                               ; 42e9: 18
-    ldx l0a3e                                                         ; 42ea: ae 3e 0a
+    ldx save_game_level_l_frog_dir                                    ; 42ea: ae 3e 0a
     bpl c42f2                                                         ; 42ed: 10 03
     eor #$ff                                                          ; 42ef: 49 ff
     sec                                                               ; 42f1: 38
@@ -1621,9 +1626,9 @@ c4303
     bne return4                                                       ; 4307: d0 46
     lda #spriteid_one_pixel_masked_out                                ; 4309: a9 00
     sta object_spriteid + objectid_frog                               ; 430b: 8d aa 09
-    lda l0a3b                                                         ; 430e: ad 3b 0a
+    lda save_game_level_l_got_frog_progress                           ; 430e: ad 3b 0a
     bne return4                                                       ; 4311: d0 3c
-    lda l0a3e                                                         ; 4313: ad 3e 0a
+    lda save_game_level_l_frog_dir                                    ; 4313: ad 3e 0a
     sta object_direction + objectid_frog                              ; 4316: 8d c0 09
     lda l0a73                                                         ; 4319: ad 73 0a
     sta object_x_low + objectid_frog                                  ; 431c: 8d 52 09
@@ -1632,13 +1637,13 @@ c4303
     ldy l0a76                                                         ; 4325: ac 76 0a
     lda frog_animations,y                                             ; 4328: b9 a4 41
     sta object_spriteid + objectid_frog                               ; 432b: 8d aa 09
-    cmp #$de                                                          ; 432e: c9 de
+    cmp #spriteid_frog                                                ; 432e: c9 de
     beq c4336                                                         ; 4330: f0 04
     cmp #$df                                                          ; 4332: c9 df
     bne return4                                                       ; 4334: d0 19
 c4336
     lda #$fc                                                          ; 4336: a9 fc
-    ldx l0a3e                                                         ; 4338: ae 3e 0a
+    ldx save_game_level_l_frog_dir                                    ; 4338: ae 3e 0a
     bpl c433f                                                         ; 433b: 10 02
     lda #4                                                            ; 433d: a9 04
 c433f
@@ -1652,12 +1657,12 @@ c433f
 return4
     rts                                                               ; 434f: 60
 
-sub_c4350
+get_delay_before_next_ribbit
     lda #$1f                                                          ; 4350: a9 1f
     jsr get_random_number_up_to_a                                     ; 4352: 20 a6 18
     clc                                                               ; 4355: 18
     adc #$14                                                          ; 4356: 69 14
-    sta l0a77                                                         ; 4358: 8d 77 0a
+    sta delay_before_ribbit                                           ; 4358: 8d 77 0a
     rts                                                               ; 435b: 60
 
 frog_animation
@@ -1675,14 +1680,14 @@ update_frog
     lda current_level                                                 ; 4366: a5 31
     cmp level_before_latest_level_and_room_initialisation             ; 4368: c5 51
     beq c4376                                                         ; 436a: f0 0a
-    lda l0a3b                                                         ; 436c: ad 3b 0a
+    lda save_game_level_l_got_frog_progress                           ; 436c: ad 3b 0a
     beq c4376                                                         ; 436f: f0 05
     lda #$ff                                                          ; 4371: a9 ff
-    sta l0a3b                                                         ; 4373: 8d 3b 0a
+    sta save_game_level_l_got_frog_progress                           ; 4373: 8d 3b 0a
 c4376
     lda #spriteid_frog_menu_item                                      ; 4376: a9 dd
     sta toolbar_collectable_spriteids+2                               ; 4378: 8d ea 2e
-    lda #$de                                                          ; 437b: a9 de
+    lda #spriteid_frog                                                ; 437b: a9 de
     sta collectable_spriteids+2                                       ; 437d: 8d ef 2e
     ldx #<envelope3                                                   ; 4380: a2 40
     ldy #>envelope3                                                   ; 4382: a0 44
@@ -1696,16 +1701,16 @@ c4376
     jmp c43bc                                                         ; 4395: 4c bc 43
 
 c4398
-    lda l0a3b                                                         ; 4398: ad 3b 0a
+    lda save_game_level_l_got_frog_progress                           ; 4398: ad 3b 0a
     beq c43bc                                                         ; 439b: f0 1f
     lda #$dd                                                          ; 439d: a9 dd
     cmp player_using_object_spriteid                                  ; 439f: cd b6 2e
     beq c43ab                                                         ; 43a2: f0 07
     lda #$ff                                                          ; 43a4: a9 ff
-    sta l0a3b                                                         ; 43a6: 8d 3b 0a
+    sta save_game_level_l_got_frog_progress                           ; 43a6: 8d 3b 0a
     bmi c43bc                                                         ; 43a9: 30 11
 c43ab
-    ldy l0a3b                                                         ; 43ab: ac 3b 0a
+    ldy save_game_level_l_got_frog_progress                           ; 43ab: ac 3b 0a
     cpy #4                                                            ; 43ae: c0 04
     beq c43bc                                                         ; 43b0: f0 0a
     cpy #$ff                                                          ; 43b2: c0 ff
@@ -1713,25 +1718,25 @@ c43ab
     ldy #0                                                            ; 43b6: a0 00
 c43b8
     iny                                                               ; 43b8: c8
-    sty l0a3b                                                         ; 43b9: 8c 3b 0a
+    sty save_game_level_l_got_frog_progress                           ; 43b9: 8c 3b 0a
 c43bc
     lda frog_animation                                                ; 43bc: ad 5c 43
-    ldy l0a3b                                                         ; 43bf: ac 3b 0a
+    ldy save_game_level_l_got_frog_progress                           ; 43bf: ac 3b 0a
     cpy #$ff                                                          ; 43c2: c0 ff
     beq c43c9                                                         ; 43c4: f0 03
     lda frog_animation,y                                              ; 43c6: b9 5c 43
 c43c9
-    sta l2ef4                                                         ; 43c9: 8d f4 2e
+    sta collectable_being_used_spriteids + 2                          ; 43c9: 8d f4 2e
 ; check for first update in room (branch if so)
     lda update_room_first_update_flag                                 ; 43cc: ad 2b 13
     bne return5                                                       ; 43cf: d0 06
     dey                                                               ; 43d1: 88
     bne return5                                                       ; 43d2: d0 03
-    jsr sub_c43d8                                                     ; 43d4: 20 d8 43
+    jsr play_ribbit_sound                                             ; 43d4: 20 d8 43
 return5
     rts                                                               ; 43d7: 60
 
-sub_c43d8
+play_ribbit_sound
     lda #0                                                            ; 43d8: a9 00
     ldx #<sound4                                                      ; 43da: a2 4e
     ldy #>sound4                                                      ; 43dc: a0 44
@@ -1898,26 +1903,7 @@ pydis_end
 ; Automatically generated labels:
 ;     c3b0c
 ;     c3b16
-;     c3bda
-;     c3cc3
-;     c3cd5
-;     c3ce0
-;     c3ce6
 ;     c3cef
-;     c3d80
-;     c3d83
-;     c3d94
-;     c3dc2
-;     c3dd3
-;     c3de4
-;     c3e06
-;     c3e74
-;     c3eac
-;     c3ed4
-;     c3ee2
-;     c3eef
-;     c3ef3
-;     c3f00
 ;     c3ff1
 ;     c3ff9
 ;     c401b
@@ -1961,22 +1947,13 @@ pydis_end
 ;     l007b
 ;     l0980
 ;     l09ab
-;     l0a39
-;     l0a3a
-;     l0a3b
-;     l0a3c
-;     l0a3d
-;     l0a3e
 ;     l0a70
 ;     l0a71
-;     l0a72
 ;     l0a73
 ;     l0a74
 ;     l0a75
 ;     l0a76
-;     l0a77
 ;     l0a78
-;     l2ef4
 ;     l38ae
 ;     l38af
 ;     l38b2
@@ -1986,10 +1963,6 @@ pydis_end
 ;     l3b46
 ;     l413f
 ;     loop_c3d03
-;     loop_c3d21
-;     loop_c3d42
-;     sub_c4350
-;     sub_c43d8
 !if (<envelope1) != $f6 {
     !error "Assertion failed: <envelope1 == $f6"
 }
@@ -2067,6 +2040,18 @@ pydis_end
 }
 !if (>sound7) != $44 {
     !error "Assertion failed: >sound7 == $44"
+}
+!if (baby_arm_pre_pulling_animation - baby_arm_animations) != $04 {
+    !error "Assertion failed: baby_arm_pre_pulling_animation - baby_arm_animations == $04"
+}
+!if (baby_arm_pulling_rope_animation - baby_arm_animations) != $15 {
+    !error "Assertion failed: baby_arm_pulling_rope_animation - baby_arm_animations == $15"
+}
+!if (baby_arm_static_animation - baby_arm_animations) != $01 {
+    !error "Assertion failed: baby_arm_static_animation - baby_arm_animations == $01"
+}
+!if (collectable_being_used_spriteids + 2) != $2ef4 {
+    !error "Assertion failed: collectable_being_used_spriteids + 2 == $2ef4"
 }
 !if (collision_map_none) != $00 {
     !error "Assertion failed: collision_map_none == $00"
@@ -2149,6 +2134,9 @@ pydis_end
 !if (object_y_low + objectid_partition) != $0981 {
     !error "Assertion failed: object_y_low + objectid_partition == $0981"
 }
+!if (objectid_end_of_rope) != $06 {
+    !error "Assertion failed: objectid_end_of_rope == $06"
+}
 !if (objectid_fire1) != $03 {
     !error "Assertion failed: objectid_fire1 == $03"
 }
@@ -2158,11 +2146,17 @@ pydis_end
 !if (objectid_old_player) != $0b {
     !error "Assertion failed: objectid_old_player == $0b"
 }
+!if (objectid_partition) != $05 {
+    !error "Assertion failed: objectid_partition == $05"
+}
 !if (objectid_player_accessory) != $01 {
     !error "Assertion failed: objectid_player_accessory == $01"
 }
 !if (objectid_sparkles) != $02 {
     !error "Assertion failed: objectid_sparkles == $02"
+}
+!if (objectid_whip) != $02 {
+    !error "Assertion failed: objectid_whip == $02"
 }
 !if (room_0_data) != $3b47 {
     !error "Assertion failed: room_0_data == $3b47"
