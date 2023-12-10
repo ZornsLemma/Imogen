@@ -1424,12 +1424,46 @@ room_3_game_update_loop
     ldx #2                                                            ; 419f: a2 02
     jmp c3bda                                                         ; 41a1: 4c da 3b
 
-l41a4
-    !byte   0, $de,   0,   0, $ff, $df,   0,   0, $df,   0,   0, $df  ; 41a4: 00 de 00...
-    !byte   0,   0, $df,   0,   0, $ff, $ef,   8, $f6, $ef,   8, $fb  ; 41b0: 00 00 df...
-    !byte $ef,   8, $fc, $ef,   8, $fe, $ef,   8, $ff, $ef,   8,   0  ; 41bc: ef 08 fc...
-    !byte $f0,   8,   1, $f0,   8,   2, $f0,   8,   4, $f0,   8,   5  ; 41c8: f0 08 01...
-    !byte $f0,   8, $0a, $ff                                          ; 41d4: f0 08 0a...
+frog_animations
+    !byte 0                                                           ; 41a4: 00
+frog_idle_animation
+    !byte spriteid_frog                                               ; 41a5: de
+    !byte 0, 0                                                        ; 41a6: 00 00
+    !byte $ff                                                         ; 41a8: ff
+frog_speaking_animation
+    !byte spriteid_frog_speaking                                      ; 41a9: df
+    !byte 0, 0                                                        ; 41aa: 00 00
+    !byte spriteid_frog_speaking                                      ; 41ac: df
+    !byte 0, 0                                                        ; 41ad: 00 00
+    !byte spriteid_frog_speaking                                      ; 41af: df
+    !byte 0, 0                                                        ; 41b0: 00 00
+    !byte spriteid_frog_speaking                                      ; 41b2: df
+    !byte 0, 0                                                        ; 41b3: 00 00
+    !byte $ff                                                         ; 41b5: ff
+frog_leap_animation
+    !byte spriteid_frog_leap1                                         ; 41b6: ef
+    !byte   8, $f6                                                    ; 41b7: 08 f6
+    !byte spriteid_frog_leap1                                         ; 41b9: ef
+    !byte   8, $fb                                                    ; 41ba: 08 fb
+    !byte spriteid_frog_leap1                                         ; 41bc: ef
+    !byte   8, $fc                                                    ; 41bd: 08 fc
+    !byte spriteid_frog_leap1                                         ; 41bf: ef
+    !byte   8, $fe                                                    ; 41c0: 08 fe
+    !byte spriteid_frog_leap1                                         ; 41c2: ef
+    !byte   8, $ff                                                    ; 41c3: 08 ff
+    !byte spriteid_frog_leap1                                         ; 41c5: ef
+    !byte 8, 0                                                        ; 41c6: 08 00
+    !byte spriteid_frog_leap2                                         ; 41c8: f0
+    !byte 8, 1                                                        ; 41c9: 08 01
+    !byte spriteid_frog_leap2                                         ; 41cb: f0
+    !byte 8, 2                                                        ; 41cc: 08 02
+    !byte spriteid_frog_leap2                                         ; 41ce: f0
+    !byte 8, 4                                                        ; 41cf: 08 04
+    !byte spriteid_frog_leap2                                         ; 41d1: f0
+    !byte 8, 5                                                        ; 41d2: 08 05
+    !byte spriteid_frog_leap2                                         ; 41d4: f0
+    !byte   8, $0a                                                    ; 41d5: 08 0a
+    !byte $ff                                                         ; 41d7: ff
 
 room_3_update_handler
     lda #3                                                            ; 41d8: a9 03
@@ -1482,7 +1516,7 @@ c4230
     clc                                                               ; 4238: 18
     adc #3                                                            ; 4239: 69 03
     tay                                                               ; 423b: a8
-    lda l41a4,y                                                       ; 423c: b9 a4 41
+    lda frog_animations,y                                             ; 423c: b9 a4 41
     cmp #$ff                                                          ; 423f: c9 ff
     bne c4246                                                         ; 4241: d0 03
     ldy l0a75                                                         ; 4243: ac 75 0a
@@ -1567,7 +1601,7 @@ c42de
 c42e2
     sty l0a76                                                         ; 42e2: 8c 76 0a
     iny                                                               ; 42e5: c8
-    lda l41a4,y                                                       ; 42e6: b9 a4 41
+    lda frog_animations,y                                             ; 42e6: b9 a4 41
     clc                                                               ; 42e9: 18
     ldx l0a3e                                                         ; 42ea: ae 3e 0a
     bpl c42f2                                                         ; 42ed: 10 03
@@ -1577,7 +1611,7 @@ c42f2
     adc l0a73                                                         ; 42f2: 6d 73 0a
     sta l0a73                                                         ; 42f5: 8d 73 0a
     iny                                                               ; 42f8: c8
-    lda l41a4,y                                                       ; 42f9: b9 a4 41
+    lda frog_animations,y                                             ; 42f9: b9 a4 41
     clc                                                               ; 42fc: 18
     adc l0a74                                                         ; 42fd: 6d 74 0a
     sta l0a74                                                         ; 4300: 8d 74 0a
@@ -1596,7 +1630,7 @@ c4303
     lda l0a74                                                         ; 431f: ad 74 0a
     sta object_y_low + objectid_frog                                  ; 4322: 8d 7e 09
     ldy l0a76                                                         ; 4325: ac 76 0a
-    lda l41a4,y                                                       ; 4328: b9 a4 41
+    lda frog_animations,y                                             ; 4328: b9 a4 41
     sta object_spriteid + objectid_frog                               ; 432b: 8d aa 09
     cmp #$de                                                          ; 432e: c9 de
     beq c4336                                                         ; 4330: f0 04
@@ -1951,7 +1985,6 @@ pydis_end
 ;     l38c7
 ;     l3b46
 ;     l413f
-;     l41a4
 ;     loop_c3d03
 ;     loop_c3d21
 ;     loop_c3d42
@@ -2175,6 +2208,12 @@ pydis_end
 }
 !if (spriteid_frog) != $de {
     !error "Assertion failed: spriteid_frog == $de"
+}
+!if (spriteid_frog_leap1) != $ef {
+    !error "Assertion failed: spriteid_frog_leap1 == $ef"
+}
+!if (spriteid_frog_leap2) != $f0 {
+    !error "Assertion failed: spriteid_frog_leap2 == $f0"
 }
 !if (spriteid_frog_menu_item) != $dd {
     !error "Assertion failed: spriteid_frog_menu_item == $dd"
