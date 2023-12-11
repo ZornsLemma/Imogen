@@ -383,8 +383,11 @@ level_specific_update
     jsr room_2_update_handler                                         ; 3b3a: 20 e0 3c
     jmp room_3_update_handler                                         ; 3b3d: 4c 96 3e
 
-l3b40
-    !byte $ce, $cf, $d0, $cf,   0,   0                                ; 3b40: ce cf d0...
+; This table is 0-terminated
+duck_wing_animation_table
+    !byte spriteid_duck_wing_1, spriteid_duck_wing_2                  ; 3b40: ce cf
+    !byte spriteid_duck_wing_3, spriteid_duck_wing_2                  ; 3b42: d0 cf
+    !byte                    0,                    0                  ; 3b44: 00 00
 l3b46
     !byte   0,   0,   0,   0, $cd,   0,   0,   0, $cd,   0,   0,   0  ; 3b46: 00 00 00...
     !byte $cc,   0,   0,   0, $cc,   0,   0,   0, $c8,   0,   0,   0  ; 3b52: cc 00 00...
@@ -623,7 +626,7 @@ room_2_not_first_update
 c3d64
     ldy l0a7b                                                         ; 3d64: ac 7b 0a
     iny                                                               ; 3d67: c8
-    lda l3b40,y                                                       ; 3d68: b9 40 3b
+    lda duck_wing_animation_table,y                                   ; 3d68: b9 40 3b
     bne c3d6f                                                         ; 3d6b: d0 02
     ldy #0                                                            ; 3d6d: a0 00
 c3d6f
@@ -665,7 +668,7 @@ c3d9f
 c3db7
     sta object_spriteid + 4                                           ; 3db7: 8d ac 09
     ldy l0a7b                                                         ; 3dba: ac 7b 0a
-    lda l3b40,y                                                       ; 3dbd: b9 40 3b
+    lda duck_wing_animation_table,y                                   ; 3dbd: b9 40 3b
     sta object_spriteid + 5                                           ; 3dc0: 8d ad 09
     lda save_game_level_e_duck_captured_flag                          ; 3dc3: ad 15 0a
     ldx desired_room_index                                            ; 3dc6: a6 30
@@ -2054,7 +2057,6 @@ pydis_end
 ;     l3ac9
 ;     l3aca
 ;     l3acb
-;     l3b40
 ;     l3b46
 ;     l4389
 ;     l438a
@@ -2267,6 +2269,15 @@ pydis_end
 }
 !if (spriteid_duck_toolbar) != $d1 {
     !error "Assertion failed: spriteid_duck_toolbar == $d1"
+}
+!if (spriteid_duck_wing_1) != $ce {
+    !error "Assertion failed: spriteid_duck_wing_1 == $ce"
+}
+!if (spriteid_duck_wing_2) != $cf {
+    !error "Assertion failed: spriteid_duck_wing_2 == $cf"
+}
+!if (spriteid_duck_wing_3) != $d0 {
+    !error "Assertion failed: spriteid_duck_wing_3 == $d0"
 }
 !if (spriteid_egg) != $d2 {
     !error "Assertion failed: spriteid_egg == $d2"

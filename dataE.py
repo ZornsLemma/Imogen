@@ -291,6 +291,11 @@ label(0x73, "object_right_high")
 label(0x78, "object_left_cell_x")
 label(0x79, "object_right_cell_x")
 
+comment(0x3b40, "This table is 0-terminated")
+label(0x3b40, "duck_wing_animation_table")
+for i in range(0x3b40, 0x3b44):
+    expr(i, sprite_dict)
+
 entry(0x3eb8)
 
 # TODO: replace "+ n" with "+ objectid_*" once objects have been named
