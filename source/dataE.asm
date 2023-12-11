@@ -217,7 +217,7 @@ room_1_egg_x                                        = $0a77
 room_1_egg_y                                        = $0a78
 l0a79                                               = $0a79
 l0a7a                                               = $0a7a
-l0a7b                                               = $0a7b
+duck_wing_animation_index                           = $0a7b
 tile_all_set_pixels                                 = $0aa9
 developer_flags                                     = $1103
 initialise_level_and_room                           = $1140
@@ -582,7 +582,7 @@ room_2_update_handler
     sta l0a79                                                         ; 3d07: 8d 79 0a
     sta l0a7a                                                         ; 3d0a: 8d 7a 0a
     lda #0                                                            ; 3d0d: a9 00
-    sta l0a7b                                                         ; 3d0f: 8d 7b 0a
+    sta duck_wing_animation_index                                     ; 3d0f: 8d 7b 0a
 c3d12
     lda desired_room_index                                            ; 3d12: a5 30
     beq c3d34                                                         ; 3d14: f0 1e
@@ -624,13 +624,13 @@ room_2_not_first_update
     sta save_game_level_e_duck_captured_flag                          ; 3d5f: 8d 15 0a
     bmi c3d37                                                         ; 3d62: 30 d3
 c3d64
-    ldy l0a7b                                                         ; 3d64: ac 7b 0a
+    ldy duck_wing_animation_index                                     ; 3d64: ac 7b 0a
     iny                                                               ; 3d67: c8
     lda duck_wing_animation_table,y                                   ; 3d68: b9 40 3b
     bne c3d6f                                                         ; 3d6b: d0 02
     ldy #0                                                            ; 3d6d: a0 00
 c3d6f
-    sty l0a7b                                                         ; 3d6f: 8c 7b 0a
+    sty duck_wing_animation_index                                     ; 3d6f: 8c 7b 0a
     lda l0a7a                                                         ; 3d72: ad 7a 0a
     bne c3d85                                                         ; 3d75: d0 0e
     lda l0a79                                                         ; 3d77: ad 79 0a
@@ -667,7 +667,7 @@ c3d9f
     lda #$ca                                                          ; 3db5: a9 ca
 c3db7
     sta object_spriteid + 4                                           ; 3db7: 8d ac 09
-    ldy l0a7b                                                         ; 3dba: ac 7b 0a
+    ldy duck_wing_animation_index                                     ; 3dba: ac 7b 0a
     lda duck_wing_animation_table,y                                   ; 3dbd: b9 40 3b
     sta object_spriteid + 5                                           ; 3dc0: 8d ad 09
     lda save_game_level_e_duck_captured_flag                          ; 3dc3: ad 15 0a
@@ -2043,7 +2043,6 @@ pydis_end
 ;     l09d4
 ;     l0a79
 ;     l0a7a
-;     l0a7b
 ;     l2200
 ;     l2248
 ;     l22ed
