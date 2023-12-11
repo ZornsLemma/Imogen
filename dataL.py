@@ -90,6 +90,9 @@ substitute_labels = {
     (0x3f7d, 0x3f93): {
         "l0070": "room_exit_direction",
     },
+    (0x3e47, 0x3e4e): {
+        "l0070": "remember_a",
+    }
 }
 
 # (Class SubstituteLabels is defined in common.py to implement the substitute labels)
@@ -214,8 +217,10 @@ expr(0x3dfd, "object_spriteid_old + objectid_rope_frayed_end")
 ldx_ldy_jsr_play_sound_yx(0x3e03, "sound1")
 label(0x3e06, "update_partition_and_rope")
 #expr(0x3e13, "object_spriteid + objectid_baby_arms")
+expr(0x3e13, "object_spriteid + objectid_baby_arms")
 expr(0x3e19, "object_y_low + objectid_partition")
 expr(0x3e1c, "object_y_low + objectid_end_of_partition")
+expr(0x3e28, "object_y_low + objectid_rope_frayed_end")
 label(0x3e59, "return1")
 spriteid(0x3e5a, 0x3e5f)
 label(0x3e5a, "whip_animation_table")
@@ -303,8 +308,9 @@ label(0x3fd1, "dog_tail_animation")
 comment(0x3fd7, "check for first update in room (branch if not)")
 label(0x3fd7, "room_2_update_handler")
 comment(0x3fdc, "check for level change (branch if not)")
+expr(0x3fe3, "dog_animation_normal - dog_animations")
 label(0x3ff1, "set_initial_dog_x_position")
-label(0x3ff9, "room_change_only")
+label(0x3ff9, "room_change_only1")
 expr(0x4000, sprite_dict)
 expr(0x4002, "object_erase_type + objectid_dog")
 expr(0x4007, "object_z_order + objectid_dog")
@@ -313,16 +319,48 @@ expr(0x400f, "object_y_low + objectid_dog_tail")
 expr(0x4012, sprite_dict)
 expr(0x4014, "object_erase_type + objectid_baby_arms")
 expr(0x4019, "object_z_order + objectid_baby_arms")
+label(0x401b, "update_dog_object_local")
 label(0x401e, "update_room_2")
+ri(0x4028)
+label(0x402f, "check_for_dog_cowering")
+expr(0x4030, "dog_animation_cower_in_place - dog_animations")
+comment(0x4033, "while cowering, wait until timeout and then return to normal")
+expr(0x4039, "dog_animation_normal - dog_animations")
+label(0x403d, "check_for_dog_backing_up")
+expr(0x4041, "dog_animation_back_up - dog_animations")
+expr(0x404a, "dog_animation_cower_in_place - dog_animations")
+label(0x4053, "check_for_player_using_whip")
+expr(0x405a, sprite_dict)
+expr(0x4064, sprite_dict)
+expr(0x406d, "objectid_old_player_accessory")
+expr(0x4072, "objectid_dog")
+expr(0x4084, "dog_animation_cower_in_place - dog_animations")
+ab(0x408d)
+label(0x408f, "dog_backs_up")
+blank(0x408f)
+expr(0x4090, "dog_animation_back_up - dog_animations")
+label(0x4094, "check_player_dog_collisions")
+expr(0x40a0, sprite_dict)
+expr(0x40ab, "objectid_player")
+expr(0x40b0, "objectid_dog")
 expr(0x40c6, "objectid_player_accessory")
+expr(0x40c8, "objectid_dog")
+label(0x40d2, "dog_pushes_player")
+expr(0x40d8, "dog_animation_push - dog_animations")
+expr(0x40da, "dog_animation_normal - dog_animations")
+label(0x40de, "increment_dog_animation")
+label(0x40fb, "increment_dog_tail_animation")
+label(0x40aa, "check_dog_player_collision")
 label(0x410a, "update_dog_object")
 expr(0x4117, "object_spriteid + objectid_dog")
 expr(0x411e, "object_x_low + objectid_dog")
 expr(0x4121, "object_x_low + objectid_dog_tail")
 expr(0x4127, "object_x_high + objectid_dog")
 expr(0x412a, "object_x_high + objectid_dog_tail")
+label(0x413b, "store_dog_tail_sprite")
 expr(0x413c, "object_spriteid + objectid_dog_tail")
 label(0x413e, "return3")
+label(0x413f, "remember_player_held_sprite")
 byte(0x41a4)
 label(0x41a4, "frog_animations")
 expr(0x41a5, sprite_dict)
@@ -343,11 +381,41 @@ label(0x41d8, "room_3_update_handler")
 expr(0x41e2, "objectid_fire1")
 expr(0x41e9, "objectid_fire2")
 comment(0x41ed, "check for first update in room (branch if not)")
+comment(0x41f2, "initialise frog")
 comment(0x41f7, "check for level change (branch if not)")
 byte(0x41aa, 2)
+label(0x420c, "store_frog_position_and_direction")
+expr(0x4218, "frog_idle_animation - frog_animations")
+label(0x4222, "room_change_only2")
 expr(0x4229, sprite_dict)
 expr(0x422b, "object_erase_type + objectid_frog")
+label(0x422d, "update_frog_object_local")
+label(0x4230, "room_3_not_first_update")
+label(0x4246, "check_player_frog_collision_for_collection")
+expr(0x424d, "objectid_old_player")
+expr(0x4252, "objectid_frog")
 expr(0x425d, sprite_dict)
+label(0x4268, "check_for_frog_leaping")
+expr(0x426b, "frog_leap_animation - frog_animations")
+expr(0x426c, "frog_leap_animation - frog_animations")
+label(0x4274, "set_frog_idle")
+expr(0x4275, "frog_idle_animation - frog_animations")
+label(0x427c, "check_for_frog_idle")
+expr(0x4280, "frog_idle_animation - frog_animations")
+comment(0x42a0, "get difference between player and frog x")
+ab(0x42b5)
+blank(0x42b7)
+label(0x42b7, "frog_direction_right")
+label(0x42ba, "flip_frog_direction")
+comment(0x42c2, "set frog leaping")
+expr(0x42c3, "frog_leap_animation - frog_animations")
+label(0x42c9, "update_delay_between_ribbits")
+label(0x42d7, "set_frog_speaking")
+expr(0x42d8, "frog_speaking_animation - frog_animations")
+label(0x42de, "check_for_frog_speaking")
+expr(0x42df, "frog_speaking_animation - frog_animations")
+label(0x42e2, "set_frog_animation_step")
+label(0x42f2, "update_frog_x")
 label(0x4303, "update_frog_object")
 expr(0x430a, sprite_dict)
 expr(0x430c, "object_spriteid + objectid_frog")
@@ -356,6 +424,9 @@ expr(0x431d, "object_x_low + objectid_frog")
 expr(0x4323, "object_y_low + objectid_frog")
 expr(0x432c, "object_spriteid + objectid_frog")
 expr(0x432f, sprite_dict)
+expr(0x4333, sprite_dict)
+label(0x4336, "calculate_frog_offset_based_on_frog_direction")
+label(0x433f, "move_frog")
 expr(0x4341, "object_x_low + objectid_frog")
 expr(0x4344, "object_x_low + objectid_frog")
 expr(0x434a, "object_y_low + objectid_frog")
@@ -365,13 +436,20 @@ label(0x4350, "get_delay_before_next_ribbit")
 spriteid(0x435c, 0x435c+5)
 label(0x435c, "frog_animation_table")
 comment(0x4361, "check for first update in room (branch if not)")
-label(0x4361, "update_frog")
+label(0x4361, "update_frog_speaking")
 comment(0x4366, "check for level change (branch if not)")
+label(0x4376, "initialise_frog_collectable")
 expr(0x4377, sprite_dict)
 expr(0x437c, sprite_dict)
 ldx_ldy_jsr_define_envelope(0x4384, "envelope3")
 ldx_ldy_jsr_define_envelope(0x438b, "envelope4")
 ldx_ldy_jsr_define_envelope(0x4392, "envelope5")
+label(0x4398, "update_frog_collectable")
+expr(0x439e, sprite_dict)
+label(0x43ab, "player_using_frog")
+label(0x43b8, "increment_frog_speaking_animation")
+label(0x43bc, "update_frog_collectable_sprite")
+label(0x43c9, "store_frog_collectable_sprite")
 expr(0x43ca, "collectable_being_used_spriteids + 2")
 comment(0x43cc, "check for first update in room (branch if so)")
 label(0x43d7, "return5")
@@ -381,10 +459,55 @@ ldx_ldy_jsr_play_sound_yx(0x43e5, "sound5")
 ldx_ldy_jsr_play_sound_yx(0x43ec, "sound6")
 ldx_ldy_jsr_play_sound_yx(0x43f3, "sound7")
 
-
 for i in range(0x41b6, 0x41d5, 3):
     expr(i, sprite_dict)
     byte(i+1, 2)
+
+print("""; *************************************************************************************
+;
+; Level L: 'WHIP-IT'
+;
+; Save game variables:
+;
+;     save_game_level_l_got_whip_progress                        ($0a39):
+;               0: untouched
+;              1+: using whip
+;             $ff: got whip
+;
+;     save_game_level_l_dog_x                                    ($0a3a):
+;             pixel X position of the dog
+;
+;     save_game_level_l_got_frog_progress                        ($0a3b):
+;               0: untouched
+;              1+: using frog
+;             $ff: got frog
+;
+;     save_game_level_l_baby_animation                           ($0a3c):
+;               0: untouched
+;              1+: animation for baby arms
+;
+;     save_game_level_l_partition_y                              ($0a3d):
+;              pixel Y position of the partition
+;
+;     save_game_level_l_frog_dir:                                ($0a3e):
+;               1: looking right
+;             $ff: looking left
+;
+; Solution:
+;
+;   1. move to the room to the left and retrieve the whip from the ledge
+;   2. stand near the dog in the initial room and use the whip to repeatedly
+;      send the dog backwards until the rope above is clear to use
+;   3. climb the rope and enter the room to the right
+;   4. descend halfway down the rope to the left and jump onto the ledge
+;           (the frog jumps to the right)
+;   5. as the cat jump to the right hand ledge and collect the frog
+;   6. return two rooms to the left and stand under the 'speak here' sign
+;   7. use the frog to cause the partition to rise.
+;   8. collect the spell in the room to the left
+;
+; *************************************************************************************
+""")
 
 result = go(False)
 result = remove_sprite_data(result)

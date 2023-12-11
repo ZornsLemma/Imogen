@@ -525,7 +525,7 @@ comment(0x43c8, "long-winded way of saying: 'lda #$1d'")
 
 print("""; *************************************************************************************
 ;
-; Level J: 'DRIPPING-STUFF'
+; Level K: 'DRIPPING-STUFF'
 ;
 ; Save game variables:
 ;

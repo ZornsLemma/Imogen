@@ -1,6 +1,6 @@
 ; *************************************************************************************
 ;
-; Level J: 'DRIPPING-STUFF'
+; Level K: 'DRIPPING-STUFF'
 ;
 ; Save game variables:
 ;
