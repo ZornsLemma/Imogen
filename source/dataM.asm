@@ -511,7 +511,7 @@ room_0_update_handler
     sta currently_updating_logic_for_room_index                       ; 3bf2: 8d ba 1a
     ldx #3                                                            ; 3bf5: a2 03
     ldy #$0a                                                          ; 3bf7: a0 0a
-    lda #3                                                            ; 3bf9: a9 03
+    lda #objectid_fire2                                               ; 3bf9: a9 03
     jsr update_brazier_and_fire                                       ; 3bfb: 20 88 19
     ldx #$21 ; '!'                                                    ; 3bfe: a2 21
     ldy #7                                                            ; 3c00: a0 07
@@ -614,13 +614,55 @@ room_1_check_right_exit
     ldy current_level                                                 ; 3c71: a4 31
     jmp initialise_level_and_room                                     ; 3c73: 4c 40 11
 
-l3c76
-    !byte   0, $d0,   2,   0, $d1,   2,   0, $d2,   2,   0, $d3,   2  ; 3c76: 00 d0 02...
-    !byte   0, $ff, $d7,   0,   0, $d3,   0,   0, $ff,   0,   0,   0  ; 3c82: 00 ff d7...
-    !byte $d5,   0,   0, $d5, $f8,   2, $d5, $f8,   3, $d5, $fa,   4  ; 3c8e: d5 00 00...
-    !byte $d5, $fa,   5, $d5, $fb,   6, $d5, $fc,   6, $d5, $fd,   7  ; 3c9a: d5 fa 05...
-    !byte $d5, $fe,   7, $d5, $fe,   8, $ff, $d5,   0,   8, $ff, $d6  ; 3ca6: d5 fe 07...
-    !byte   0,   0, $ff                                               ; 3cb2: 00 00 ff
+hamster_animations
+    !byte 0                                                           ; 3c76: 00
+hamster_walk_animation
+    !byte spriteid_hamster_legs_1                                     ; 3c77: d0
+    !byte 2, 0                                                        ; 3c78: 02 00
+    !byte spriteid_hamster_legs_2                                     ; 3c7a: d1
+    !byte 2, 0                                                        ; 3c7b: 02 00
+    !byte spriteid_hamster_legs_3                                     ; 3c7d: d2
+    !byte 2, 0                                                        ; 3c7e: 02 00
+    !byte spriteid_hamster_legs_4                                     ; 3c80: d3
+    !byte 2, 0                                                        ; 3c81: 02 00
+    !byte $ff                                                         ; 3c83: ff
+hamster_look_back_animation
+    !byte spriteid_hamster_looking_back                               ; 3c84: d7
+    !byte 0, 0                                                        ; 3c85: 00 00
+    !byte spriteid_hamster_legs_4                                     ; 3c87: d3
+    !byte 0, 0                                                        ; 3c88: 00 00
+    !byte $ff                                                         ; 3c8a: ff
+hamster_jam_flying
+    !byte spriteid_one_pixel_masked_out                               ; 3c8b: 00
+    !byte 0, 0                                                        ; 3c8c: 00 00
+    !byte spriteid_flying_hamster_jam                                 ; 3c8e: d5
+    !byte 0, 0                                                        ; 3c8f: 00 00
+    !byte spriteid_flying_hamster_jam                                 ; 3c91: d5
+    !byte $f8,   2                                                    ; 3c92: f8 02
+    !byte spriteid_flying_hamster_jam                                 ; 3c94: d5
+    !byte $f8,   3                                                    ; 3c95: f8 03
+    !byte spriteid_flying_hamster_jam                                 ; 3c97: d5
+    !byte $fa,   4                                                    ; 3c98: fa 04
+    !byte spriteid_flying_hamster_jam                                 ; 3c9a: d5
+    !byte $fa,   5                                                    ; 3c9b: fa 05
+    !byte spriteid_flying_hamster_jam                                 ; 3c9d: d5
+    !byte $fb,   6                                                    ; 3c9e: fb 06
+    !byte spriteid_flying_hamster_jam                                 ; 3ca0: d5
+    !byte $fc,   6                                                    ; 3ca1: fc 06
+    !byte spriteid_flying_hamster_jam                                 ; 3ca3: d5
+    !byte $fd,   7                                                    ; 3ca4: fd 07
+    !byte spriteid_flying_hamster_jam                                 ; 3ca6: d5
+    !byte $fe,   7                                                    ; 3ca7: fe 07
+    !byte spriteid_flying_hamster_jam                                 ; 3ca9: d5
+    !byte $fe,   8                                                    ; 3caa: fe 08
+    !byte $ff                                                         ; 3cac: ff
+    !byte spriteid_flying_hamster_jam                                 ; 3cad: d5
+    !byte 0, 8                                                        ; 3cae: 00 08
+    !byte $ff                                                         ; 3cb0: ff
+hamster_jam_landed
+    !byte spriteid_hamster_jam                                        ; 3cb1: d6
+    !byte 0, 0                                                        ; 3cb2: 00 00
+    !byte $ff                                                         ; 3cb4: ff
 
 ; check for first update in room (branch if not)
 sub_c3cb5
@@ -675,7 +717,7 @@ c3d10
     clc                                                               ; 3d13: 18
     adc #3                                                            ; 3d14: 69 03
     tay                                                               ; 3d16: a8
-    lda l3c76,y                                                       ; 3d17: b9 76 3c
+    lda hamster_animations,y                                          ; 3d17: b9 76 3c
     cmp #$ff                                                          ; 3d1a: c9 ff
     bne c3d21                                                         ; 3d1c: d0 03
     ldy l0a3f                                                         ; 3d1e: ac 3f 0a
@@ -719,7 +761,7 @@ c3d62
 c3d6a
     sty l0a70                                                         ; 3d6a: 8c 70 0a
     iny                                                               ; 3d6d: c8
-    lda l3c76,y                                                       ; 3d6e: b9 76 3c
+    lda hamster_animations,y                                          ; 3d6e: b9 76 3c
     ldx l0a73                                                         ; 3d71: ae 73 0a
     bpl c3d7b                                                         ; 3d74: 10 05
     eor #$ff                                                          ; 3d76: 49 ff
@@ -730,7 +772,7 @@ c3d7b
     adc l0a71                                                         ; 3d7c: 6d 71 0a
     sta l0a71                                                         ; 3d7f: 8d 71 0a
     iny                                                               ; 3d82: c8
-    lda l3c76,y                                                       ; 3d83: b9 76 3c
+    lda hamster_animations,y                                          ; 3d83: b9 76 3c
     clc                                                               ; 3d86: 18
     adc l0a72                                                         ; 3d87: 6d 72 0a
     sta l0a72                                                         ; 3d8a: 8d 72 0a
@@ -761,14 +803,14 @@ c3dac
     sta object_direction + objectid_hamster_feet                      ; 3dc7: 8d c3 09
     sta object_direction + objectid_hamster_body                      ; 3dca: 8d c5 09
     ldy l0a70                                                         ; 3dcd: ac 70 0a
-    lda l3c76,y                                                       ; 3dd0: b9 76 3c
-    ldx #0                                                            ; 3dd3: a2 00
-    cmp #$d0                                                          ; 3dd5: c9 d0
-    bcc c3ddf                                                         ; 3dd7: 90 06
-    cmp #$d4                                                          ; 3dd9: c9 d4
-    bcs c3ddf                                                         ; 3ddb: b0 02
-    ldx #$e4                                                          ; 3ddd: a2 e4
-c3ddf
+    lda hamster_animations,y                                          ; 3dd0: b9 76 3c
+    ldx #spriteid_one_pixel_masked_out                                ; 3dd3: a2 00
+    cmp #spriteid_hamster_legs_1                                      ; 3dd5: c9 d0
+    bcc set_hamster_sprites                                           ; 3dd7: 90 06
+    cmp #spriteid_erase2                                              ; 3dd9: c9 d4
+    bcs set_hamster_sprites                                           ; 3ddb: b0 02
+    ldx #spriteid_hamster_body                                        ; 3ddd: a2 e4
+set_hamster_sprites
     sta object_spriteid + objectid_hamster_feet                       ; 3ddf: 8d ad 09
     stx object_spriteid + objectid_hamster_body                       ; 3de2: 8e af 09
 return1
@@ -813,11 +855,11 @@ c3e02
     inx                                                               ; 3e27: e8
     inx                                                               ; 3e28: e8
     lda #spriteid_horizontal_rope                                     ; 3e29: a9 ca
-loop_c3e2b
+draw_horizontal_rope
     jsr draw_sprite_a_at_cell_xy                                      ; 3e2b: 20 4c 1f
     inx                                                               ; 3e2e: e8
     cpx #$1e                                                          ; 3e2f: e0 1e
-    bcc loop_c3e2b                                                    ; 3e31: 90 f8
+    bcc draw_horizontal_rope                                          ; 3e31: 90 f8
     inx                                                               ; 3e33: e8
     lda #spriteid_right_hook                                          ; 3e34: a9 c9
     jsr draw_sprite_a_at_cell_xy                                      ; 3e36: 20 4c 1f
@@ -833,14 +875,14 @@ loop_c3e2b
     lsr                                                               ; 3e49: 4a
     tay                                                               ; 3e4a: a8
     dey                                                               ; 3e4b: 88
-loop_c3e4c
+draw_rope_loop1
     lda #spriteid_long_rope                                           ; 3e4c: a9 cb
     jsr draw_sprite_a_at_cell_xy                                      ; 3e4e: 20 4c 1f
     lda #2                                                            ; 3e51: a9 02
     jsr write_a_single_value_to_cell_in_collision_map                 ; 3e53: 20 bb 1e
     dey                                                               ; 3e56: 88
     cpy #3                                                            ; 3e57: c0 03
-    bcs loop_c3e4c                                                    ; 3e59: b0 f1
+    bcs draw_rope_loop1                                               ; 3e59: b0 f1
     lda #2                                                            ; 3e5b: a9 02
     jsr set_object_position_from_cell_xy                              ; 3e5d: 20 5d 1f
     lda #spriteid_frayed_rope_end                                     ; 3e60: a9 cd
@@ -869,11 +911,11 @@ c3e7d
     cpy #3                                                            ; 3e86: c0 03
     bcc c3e94                                                         ; 3e88: 90 0a
     lda #spriteid_long_rope                                           ; 3e8a: a9 cb
-loop_c3e8c
+draw_rope_loop2
     jsr draw_sprite_a_at_cell_xy                                      ; 3e8c: 20 4c 1f
     dey                                                               ; 3e8f: 88
     cpy #3                                                            ; 3e90: c0 03
-    bcs loop_c3e8c                                                    ; 3e92: b0 f8
+    bcs draw_rope_loop2                                               ; 3e92: b0 f8
 c3e94
     lda #3                                                            ; 3e94: a9 03
     dex                                                               ; 3e96: ca
@@ -885,7 +927,7 @@ c3e94
     sta object_erase_type + objectid_block                            ; 3ea2: 8d af 38
     lda #$c0                                                          ; 3ea5: a9 c0
     sta object_z_order + objectid_block                               ; 3ea7: 8d c5 38
-    lda #4                                                            ; 3eaa: a9 04
+    lda #objectid_rope_to_block                                       ; 3eaa: a9 04
     jsr set_object_position_from_cell_xy                              ; 3eac: 20 5d 1f
     tax                                                               ; 3eaf: aa
     jsr copy_object_state_to_old                                      ; 3eb0: 20 f7 20
@@ -1363,10 +1405,10 @@ room_2_update_handler
     sta currently_updating_logic_for_room_index                       ; 41e0: 8d ba 1a
     ldx #3                                                            ; 41e3: a2 03
     ldy #6                                                            ; 41e5: a0 06
-    lda #2                                                            ; 41e7: a9 02
+    lda #objectid_fire1                                               ; 41e7: a9 02
     jsr update_brazier_and_fire                                       ; 41e9: 20 88 19
     ldx #$25 ; '%'                                                    ; 41ec: a2 25
-    lda #3                                                            ; 41ee: a9 03
+    lda #objectid_fire2                                               ; 41ee: a9 03
     jsr update_brazier_and_fire                                       ; 41f0: 20 88 19
     lda l0a49                                                         ; 41f3: ad 49 0a
     bne return4                                                       ; 41f6: d0 e5
@@ -1816,7 +1858,7 @@ room_3_update_handler
     sta currently_updating_logic_for_room_index                       ; 453b: 8d ba 1a
     ldx #3                                                            ; 453e: a2 03
     ldy #6                                                            ; 4540: a0 06
-    lda #3                                                            ; 4542: a9 03
+    lda #objectid_fire2                                               ; 4542: a9 03
     jmp update_brazier_and_fire                                       ; 4544: 4c 88 19
 
 envelope1
@@ -1959,7 +2001,6 @@ pydis_end
 ;     c3d6a
 ;     c3d7b
 ;     c3dac
-;     c3ddf
 ;     c3dee
 ;     c3df9
 ;     c3e02
@@ -2030,7 +2071,6 @@ pydis_end
 ;     l0a72
 ;     l0a73
 ;     l0a74
-;     l3c76
 ;     l4018
 ;     l4019
 ;     l4023
@@ -2039,9 +2079,6 @@ pydis_end
 ;     l44a8
 ;     l44a9
 ;     l44aa
-;     loop_c3e2b
-;     loop_c3e4c
-;     loop_c3e8c
 ;     loop_c4026
 ;     loop_c406e
 ;     loop_c407e
@@ -2257,8 +2294,17 @@ pydis_end
 !if (object_z_order + objectid_tulip_head) != $38c8 {
     !error "Assertion failed: object_z_order + objectid_tulip_head == $38c8"
 }
+!if (objectid_fire1) != $02 {
+    !error "Assertion failed: objectid_fire1 == $02"
+}
+!if (objectid_fire2) != $03 {
+    !error "Assertion failed: objectid_fire2 == $03"
+}
 !if (objectid_old_player) != $0b {
     !error "Assertion failed: objectid_old_player == $0b"
+}
+!if (objectid_rope_to_block) != $04 {
+    !error "Assertion failed: objectid_rope_to_block == $04"
 }
 !if (room_0_data) != $3b4a {
     !error "Assertion failed: room_0_data == $3b4a"
@@ -2284,8 +2330,32 @@ pydis_end
 !if (spriteid_erase3) != $da {
     !error "Assertion failed: spriteid_erase3 == $da"
 }
+!if (spriteid_flying_hamster_jam) != $d5 {
+    !error "Assertion failed: spriteid_flying_hamster_jam == $d5"
+}
 !if (spriteid_frayed_rope_end) != $cd {
     !error "Assertion failed: spriteid_frayed_rope_end == $cd"
+}
+!if (spriteid_hamster_body) != $e4 {
+    !error "Assertion failed: spriteid_hamster_body == $e4"
+}
+!if (spriteid_hamster_jam) != $d6 {
+    !error "Assertion failed: spriteid_hamster_jam == $d6"
+}
+!if (spriteid_hamster_legs_1) != $d0 {
+    !error "Assertion failed: spriteid_hamster_legs_1 == $d0"
+}
+!if (spriteid_hamster_legs_2) != $d1 {
+    !error "Assertion failed: spriteid_hamster_legs_2 == $d1"
+}
+!if (spriteid_hamster_legs_3) != $d2 {
+    !error "Assertion failed: spriteid_hamster_legs_3 == $d2"
+}
+!if (spriteid_hamster_legs_4) != $d3 {
+    !error "Assertion failed: spriteid_hamster_legs_4 == $d3"
+}
+!if (spriteid_hamster_looking_back) != $d7 {
+    !error "Assertion failed: spriteid_hamster_looking_back == $d7"
 }
 !if (spriteid_horizontal_rope) != $ca {
     !error "Assertion failed: spriteid_horizontal_rope == $ca"
