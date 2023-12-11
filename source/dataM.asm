@@ -670,18 +670,18 @@ hamster_jam_landed_animation
 ; check for first update in room (branch if not)
 update_hamster
     lda update_room_first_update_flag                                 ; 3cb5: ad 2b 13
-    beq c3d10                                                         ; 3cb8: f0 56
+    beq update_hamster_animation_step                                 ; 3cb8: f0 56
 ; check for level change (branch if not)
     lda current_level                                                 ; 3cba: a5 31
     cmp level_before_latest_level_and_room_initialisation             ; 3cbc: c5 51
-    beq c3cf8                                                         ; 3cbe: f0 38
+    beq room_changed_only                                             ; 3cbe: f0 38
     lda save_game_level_m_hamster_animation                           ; 3cc0: ad 3f 0a
-    beq c3ccd                                                         ; 3cc3: f0 08
+    beq initalise_to_hamster_walk_animation                           ; 3cc3: f0 08
     cmp #hamster_walk_animation - hamster_animations                  ; 3cc5: c9 01
-    beq c3ccd                                                         ; 3cc7: f0 04
+    beq initalise_to_hamster_walk_animation                           ; 3cc7: f0 04
     cmp #hamster_look_back_animation - hamster_animations             ; 3cc9: c9 0e
-    bne c3ce1                                                         ; 3ccb: d0 14
-c3ccd
+    bne set_hamster_jam_landed                                        ; 3ccb: d0 14
+initalise_to_hamster_walk_animation
     ldy #hamster_walk_animation - hamster_animations                  ; 3ccd: a0 01
     lda #$a0                                                          ; 3ccf: a9 a0
     sta hamster_x                                                     ; 3cd1: 8d 71 0a
@@ -689,9 +689,9 @@ c3ccd
     sta hamster_y                                                     ; 3cd6: 8d 72 0a
     lda #1                                                            ; 3cd9: a9 01
     sta hamster_direction                                             ; 3cdb: 8d 73 0a
-    jmp c3cf2                                                         ; 3cde: 4c f2 3c
+    jmp set_hamster_animation                                         ; 3cde: 4c f2 3c
 
-c3ce1
+set_hamster_jam_landed
     ldy #hamster_jam_landed_animation - hamster_animations            ; 3ce1: a0 3b
     lda #$44 ; 'D'                                                    ; 3ce3: a9 44
     sta hamster_x                                                     ; 3ce5: 8d 71 0a
@@ -699,32 +699,33 @@ c3ce1
     sta hamster_y                                                     ; 3cea: 8d 72 0a
     lda #1                                                            ; 3ced: a9 01
     sta hamster_direction                                             ; 3cef: 8d 73 0a
-c3cf2
+set_hamster_animation
     sty save_game_level_m_hamster_animation                           ; 3cf2: 8c 3f 0a
     sty hamster_animation_step                                        ; 3cf5: 8c 70 0a
-c3cf8
+room_changed_only
     lda desired_room_index                                            ; 3cf8: a5 30
     cmp #1                                                            ; 3cfa: c9 01
-    bne c3d0d                                                         ; 3cfc: d0 0f
+    bne set_hamster_objects_local                                     ; 3cfc: d0 0f
+; initialise hamster when entering room 1
     lda #spriteid_erase2                                              ; 3cfe: a9 d4
     sta object_erase_type + objectid_hamster_feet_or_jam              ; 3d00: 8d b1 38
     lda #$e0                                                          ; 3d03: a9 e0
     sta object_z_order + objectid_hamster_feet_or_jam                 ; 3d05: 8d c7 38
     lda #$df                                                          ; 3d08: a9 df
     sta object_z_order + objectid_hamster_body                        ; 3d0a: 8d c9 38
-c3d0d
-    jmp c3dac                                                         ; 3d0d: 4c ac 3d
+set_hamster_objects_local
+    jmp set_hamster_objects                                           ; 3d0d: 4c ac 3d
 
-c3d10
+update_hamster_animation_step
     lda hamster_animation_step                                        ; 3d10: ad 70 0a
     clc                                                               ; 3d13: 18
     adc #3                                                            ; 3d14: 69 03
     tay                                                               ; 3d16: a8
     lda hamster_animations,y                                          ; 3d17: b9 76 3c
     cmp #$ff                                                          ; 3d1a: c9 ff
-    bne c3d21                                                         ; 3d1c: d0 03
+    bne set_hamster_static_animation                                  ; 3d1c: d0 03
     ldy save_game_level_m_hamster_animation                           ; 3d1e: ac 3f 0a
-c3d21
+set_hamster_static_animation
     cpy #hamster_static_animation - hamster_animations                ; 3d21: c0 11
     bne c3d2d                                                         ; 3d23: d0 08
     lda hamster_direction                                             ; 3d25: ad 73 0a
@@ -735,43 +736,43 @@ c3d2d
     cmp #hamster_look_back_animation - hamster_animations             ; 3d30: c9 0e
     bne c3d3e                                                         ; 3d32: d0 0a
     cpy save_game_level_m_hamster_animation                           ; 3d34: cc 3f 0a
-    bne c3d6a                                                         ; 3d37: d0 31
+    bne set_hamster_animation_step                                    ; 3d37: d0 31
     ldy #hamster_walk_animation - hamster_animations                  ; 3d39: a0 01
     sty save_game_level_m_hamster_animation                           ; 3d3b: 8c 3f 0a
 c3d3e
     lda save_game_level_m_hamster_animation                           ; 3d3e: ad 3f 0a
     cmp #hamster_walk_animation - hamster_animations                  ; 3d41: c9 01
-    bne c3d6a                                                         ; 3d43: d0 25
+    bne set_hamster_animation_step                                    ; 3d43: d0 25
     ldx hamster_x                                                     ; 3d45: ae 71 0a
     lda hamster_direction                                             ; 3d48: ad 73 0a
-    bmi c3d53                                                         ; 3d4b: 30 06
+    bmi hamster_looking_left                                          ; 3d4b: 30 06
     cpx #$c0                                                          ; 3d4d: e0 c0
-    bne c3d6a                                                         ; 3d4f: d0 19
-    beq c3d62                                                         ; 3d51: f0 0f                   ; ALWAYS branch
+    bne set_hamster_animation_step                                    ; 3d4f: d0 19
+    beq set_hamster_looking_back                                      ; 3d51: f0 0f                   ; ALWAYS branch
 
-c3d53
+hamster_looking_left
     cpx #$80                                                          ; 3d53: e0 80
-    beq c3d62                                                         ; 3d55: f0 0b
+    beq set_hamster_looking_back                                      ; 3d55: f0 0b
     cpx #$9c                                                          ; 3d57: e0 9c
-    bne c3d6a                                                         ; 3d59: d0 0f
+    bne set_hamster_animation_step                                    ; 3d59: d0 0f
     lda level_workspace                                               ; 3d5b: ad 6f 0a
     cmp #$48 ; 'H'                                                    ; 3d5e: c9 48
-    bcc c3d6a                                                         ; 3d60: 90 08
-c3d62
+    bcc set_hamster_animation_step                                    ; 3d60: 90 08
+set_hamster_looking_back
     ldy #hamster_look_back_animation - hamster_animations             ; 3d62: a0 0e
     sty save_game_level_m_hamster_animation                           ; 3d64: 8c 3f 0a
-    jmp c3d6a                                                         ; 3d67: 4c 6a 3d                ; redundant instruction
+    jmp set_hamster_animation_step                                    ; 3d67: 4c 6a 3d                ; redundant instruction
 
-c3d6a
+set_hamster_animation_step
     sty hamster_animation_step                                        ; 3d6a: 8c 70 0a
     iny                                                               ; 3d6d: c8
     lda hamster_animations,y                                          ; 3d6e: b9 76 3c
     ldx hamster_direction                                             ; 3d71: ae 73 0a
-    bpl c3d7b                                                         ; 3d74: 10 05
+    bpl hamster_looking_right                                         ; 3d74: 10 05
     eor #$ff                                                          ; 3d76: 49 ff
     clc                                                               ; 3d78: 18
     adc #1                                                            ; 3d79: 69 01
-c3d7b
+hamster_looking_right
     clc                                                               ; 3d7b: 18
     adc hamster_x                                                     ; 3d7c: 6d 71 0a
     sta hamster_x                                                     ; 3d7f: 8d 71 0a
@@ -781,19 +782,19 @@ c3d7b
     adc hamster_y                                                     ; 3d87: 6d 72 0a
     sta hamster_y                                                     ; 3d8a: 8d 72 0a
     cmp #$b0                                                          ; 3d8d: c9 b0
-    bcc c3dac                                                         ; 3d8f: 90 1b
+    bcc set_hamster_objects                                           ; 3d8f: 90 1b
     lda #$b0                                                          ; 3d91: a9 b0
     sta hamster_y                                                     ; 3d93: 8d 72 0a
     lda #hamster_jam_landed_animation - hamster_animations            ; 3d96: a9 3b
     cmp save_game_level_m_hamster_animation                           ; 3d98: cd 3f 0a
-    beq c3dac                                                         ; 3d9b: f0 0f
+    beq set_hamster_objects                                           ; 3d9b: f0 0f
     sta save_game_level_m_hamster_animation                           ; 3d9d: 8d 3f 0a
     sta hamster_animation_step                                        ; 3da0: 8d 70 0a
     lda desired_room_index                                            ; 3da3: a5 30
     cmp #1                                                            ; 3da5: c9 01
-    bne c3dac                                                         ; 3da7: d0 03
+    bne set_hamster_objects                                           ; 3da7: d0 03
     jsr play_landing_sound                                            ; 3da9: 20 a9 23
-c3dac
+set_hamster_objects
     lda desired_room_index                                            ; 3dac: a5 30
     cmp #1                                                            ; 3dae: c9 01
     bne return1                                                       ; 3db0: d0 33
@@ -1994,20 +1995,8 @@ sprite_data
 pydis_end
 
 ; Automatically generated labels:
-;     c3ccd
-;     c3ce1
-;     c3cf2
-;     c3cf8
-;     c3d0d
-;     c3d10
-;     c3d21
 ;     c3d2d
 ;     c3d3e
-;     c3d53
-;     c3d62
-;     c3d6a
-;     c3d7b
-;     c3dac
 ;     c3df9
 ;     c3e02
 ;     c3e7d
