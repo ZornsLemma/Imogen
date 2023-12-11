@@ -169,10 +169,12 @@ expr(0x40eb, sprite_dict)
 comment(0x4102, "branch if have collected egg", inline=True)
 comment(0x413e, "branch if have collected egg", inline=True)
 comment(0x4181, "branch if have collected egg", inline=True)
-comment(0x418a, "The egg is off screen for this update, so increment the offscreen time (capping at &80) so its position can be correctly updated when it next appears on screen.")
+comment(0x418a, "The egg is off screen for this update, so increment the offscreen time (capping at &880 so its position can be correctly updated when it next appears on screen.")
 expr(0x4212, "small_egg_status_collected")
 
 label(0x3ce0, "room_2_update_handler")
+entry(0x3d3a, "room_2_not_first_update")
+
 label(0x3e96, "room_3_update_handler")
 comment(0x40cf, "The small egg starts in room 0 but it can move between rooms, either by being carried by the player or by being thrown. Its position updating is always handled by room_0_update_handler wherever it is.")
 label(0x40cf, "room_0_update_handler")
