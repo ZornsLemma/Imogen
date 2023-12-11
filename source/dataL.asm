@@ -708,10 +708,10 @@ store_baby_animation
 only_room_changed
     lda desired_room_index                                            ; 3ce6: a5 30
     cmp #1                                                            ; 3ce8: c9 01
-    beq c3cef                                                         ; 3cea: f0 03
+    beq initialise_room_1_envelope_and_rope                           ; 3cea: f0 03
     jmp update_partition_and_rope_local                               ; 3cec: 4c 80 3d
 
-c3cef
+initialise_room_1_envelope_and_rope
     ldx #<envelope1                                                   ; 3cef: a2 f6
     ldy #>envelope1                                                   ; 3cf1: a0 43
     jsr define_envelope                                               ; 3cf3: 20 5e 39
@@ -722,11 +722,11 @@ c3cef
     inx                                                               ; 3cff: e8
     inx                                                               ; 3d00: e8
     lda #spriteid_horizontal_short_rope                               ; 3d01: a9 e3
-loop_c3d03
+draw_rope_loop0
     jsr draw_sprite_a_at_cell_xy                                      ; 3d03: 20 4c 1f
     inx                                                               ; 3d06: e8
     cpx #$0e                                                          ; 3d07: e0 0e
-    bcc loop_c3d03                                                    ; 3d09: 90 f8
+    bcc draw_rope_loop0                                               ; 3d09: 90 f8
     inx                                                               ; 3d0b: e8
     lda #spriteid_top_right_hook                                      ; 3d0c: a9 e1
     jsr draw_sprite_a_at_cell_xy                                      ; 3d0e: 20 4c 1f
@@ -741,11 +741,11 @@ loop_c3d03
     tay                                                               ; 3d1d: a8
     dey                                                               ; 3d1e: 88
     lda #spriteid_vertical_rope                                       ; 3d1f: a9 e4
-draw_rope_loop2
+draw_rope_loop1
     jsr draw_sprite_a_at_cell_xy                                      ; 3d21: 20 4c 1f
     dey                                                               ; 3d24: 88
     cpy #3                                                            ; 3d25: c0 03
-    bcs draw_rope_loop2                                               ; 3d27: b0 f8
+    bcs draw_rope_loop1                                               ; 3d27: b0 f8
     lda #4                                                            ; 3d29: a9 04
     jsr set_object_position_from_cell_xy                              ; 3d2b: 20 5d 1f
     lda #spriteid_vertical_rope_frayed_end                            ; 3d2e: a9 e5
@@ -760,11 +760,11 @@ draw_rope_loop2
     dey                                                               ; 3d3d: 88
     ldx #3                                                            ; 3d3e: a2 03
     lda #spriteid_vertical_rope                                       ; 3d40: a9 e4
-draw_rope_loop1
+draw_rope_loop2
     jsr draw_sprite_a_at_cell_xy                                      ; 3d42: 20 4c 1f
     dey                                                               ; 3d45: 88
     cpy #3                                                            ; 3d46: c0 03
-    bcs draw_rope_loop1                                               ; 3d48: b0 f8
+    bcs draw_rope_loop2                                               ; 3d48: b0 f8
     lda #objectid_partition                                           ; 3d4a: a9 05
     jsr set_object_position_from_cell_xy                              ; 3d4c: 20 5d 1f
     lda #objectid_end_of_rope                                         ; 3d4f: a9 06
@@ -1903,7 +1903,6 @@ pydis_end
 ; Automatically generated labels:
 ;     c3b0c
 ;     c3b16
-;     c3cef
 ;     c3ff1
 ;     c3ff9
 ;     c401b
@@ -1962,7 +1961,6 @@ pydis_end
 ;     l38c7
 ;     l3b46
 ;     l413f
-;     loop_c3d03
 !if (<envelope1) != $f6 {
     !error "Assertion failed: <envelope1 == $f6"
 }
