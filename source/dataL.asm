@@ -27,7 +27,7 @@ object_collided_right_wall            = 4
 objectid_baby_arms                    = 3
 objectid_dog                          = 2
 objectid_dog_tail                     = 3
-objectid_end_of_rope                  = 6
+objectid_end_of_partition             = 6
 objectid_fire1                        = 3
 objectid_fire2                        = 4
 objectid_frog                         = 2
@@ -223,16 +223,16 @@ save_game_level_l_got_frog_progress                 = $0a3b
 save_game_level_l_baby_animation                    = $0a3c
 save_game_level_l_partition_y                       = $0a3d
 save_game_level_l_frog_dir                          = $0a3e
-level_workspace                                     = $0a6f
-l0a70                                               = $0a70
-l0a71                                               = $0a71
+dog_animation                                       = $0a6f
+dog_animation_step                                  = $0a70
+dog_tail_animation_step                             = $0a71
 baby_animation_step                                 = $0a72
-l0a73                                               = $0a73
-l0a74                                               = $0a74
-l0a75                                               = $0a75
-l0a76                                               = $0a76
+frog_x                                              = $0a73
+frog_y                                              = $0a74
+frog_animation                                      = $0a75
+frog_animation_step                                 = $0a76
 delay_before_ribbit                                 = $0a77
-l0a78                                               = $0a78
+dog_animation_delay                                 = $0a78
 tile_all_set_pixels                                 = $0aa9
 developer_flags                                     = $1103
 initialise_level_and_room                           = $1140
@@ -289,13 +289,7 @@ monkey_climb_down_animation                         = $3148
 monkey_climb_animation                              = $3150
 inhibit_monkey_climb_flag                           = $31d7
 object_erase_type                                   = $38ac
-l38ae                                               = $38ae
-l38af                                               = $38af
-l38b2                                               = $38b2
 object_z_order                                      = $38c2
-l38c4                                               = $38c4
-l38c5                                               = $38c5
-l38c7                                               = $38c7
 object_room_collision_flags                         = $38d8
 play_sound_yx                                       = $38f6
 define_envelope                                     = $395e
@@ -344,23 +338,25 @@ level_specific_password
 level_specific_initialisation
     lda current_level                                                 ; 3aef: a5 31
     cmp level_before_latest_level_and_room_initialisation             ; 3af1: c5 51
-    beq c3b16                                                         ; 3af3: f0 21
+    beq no_frog                                                       ; 3af3: f0 21
     lda developer_flags                                               ; 3af5: ad 03 11
     bpl developer_mode_inactive                                       ; 3af8: 10 08
+; in developer mode. get whip and frog
     lda #$ff                                                          ; 3afa: a9 ff
     sta save_game_level_l_got_whip_progress                           ; 3afc: 8d 39 0a
     sta save_game_level_l_got_frog_progress                           ; 3aff: 8d 3b 0a
 developer_mode_inactive
     lda save_game_level_l_got_whip_progress                           ; 3b02: ad 39 0a
-    beq c3b0c                                                         ; 3b05: f0 05
+    beq no_whip                                                       ; 3b05: f0 05
     lda #spriteid_whip_menu_item                                      ; 3b07: a9 c8
     jsr find_or_create_menu_slot_for_A                                ; 3b09: 20 bd 2b
-c3b0c
+no_whip
     lda save_game_level_l_got_frog_progress                           ; 3b0c: ad 3b 0a
-    beq c3b16                                                         ; 3b0f: f0 05
+    beq no_frog                                                       ; 3b0f: f0 05
     lda #spriteid_frog_menu_item                                      ; 3b11: a9 dd
     jsr find_or_create_menu_slot_for_A                                ; 3b13: 20 bd 2b
-c3b16
+; set rock tile
+no_frog
     lda #<ground_fill_2x2_top_left                                    ; 3b16: a9 74
     sta source_sprite_memory_low                                      ; 3b18: 85 40
     lda #>ground_fill_2x2_top_left                                    ; 3b1a: a9 44
@@ -398,7 +394,7 @@ draw_top_and_bottom_rows_of_rock
     ldy #$16                                                          ; 3b41: a0 16
     jmp copy_rectangle_of_memory_to_screen                            ; 3b43: 4c bb 1a
 
-l3b46
+remember_y
     !byte 0                                                           ; 3b46: 00
 ; *************************************************************************************
 ; 
@@ -767,26 +763,26 @@ draw_rope_loop2
     bcs draw_rope_loop2                                               ; 3d48: b0 f8
     lda #objectid_partition                                           ; 3d4a: a9 05
     jsr set_object_position_from_cell_xy                              ; 3d4c: 20 5d 1f
-    lda #objectid_end_of_rope                                         ; 3d4f: a9 06
+    lda #objectid_end_of_partition                                    ; 3d4f: a9 06
     jsr set_object_position_from_cell_xy                              ; 3d51: 20 5d 1f
     lda #spriteid_partition                                           ; 3d54: a9 e6
     sta object_spriteid + objectid_partition                          ; 3d56: 8d ad 09
     lda #$c0                                                          ; 3d59: a9 c0
-    sta l38c7                                                         ; 3d5b: 8d c7 38
+    sta object_z_order + objectid_partition                           ; 3d5b: 8d c7 38
     lda #spriteid_partition_end                                       ; 3d5e: a9 e7
-    sta object_spriteid + objectid_end_of_rope                        ; 3d60: 8d ae 09
-    lda #$d6                                                          ; 3d63: a9 d6
-    sta l38b2                                                         ; 3d65: 8d b2 38
+    sta object_spriteid + objectid_end_of_partition                   ; 3d60: 8d ae 09
+    lda #spriteid_erase_3                                             ; 3d63: a9 d6
+    sta object_erase_type + objectid_end_of_partition                 ; 3d65: 8d b2 38
     ldx #$10                                                          ; 3d68: a2 10
     ldy #7                                                            ; 3d6a: a0 07
     lda #spriteid_baby3                                               ; 3d6c: a9 ea
     jsr draw_sprite_a_at_cell_xy                                      ; 3d6e: 20 4c 1f
     lda #3                                                            ; 3d71: a9 03
     jsr set_object_position_from_cell_xy                              ; 3d73: 20 5d 1f
-    lda #$ca                                                          ; 3d76: a9 ca
-    sta l38af                                                         ; 3d78: 8d af 38
+    lda #spriteid_erase_2                                             ; 3d76: a9 ca
+    sta object_erase_type + objectid_baby_arms                        ; 3d78: 8d af 38
     lda #$c0                                                          ; 3d7b: a9 c0
-    sta l38c5                                                         ; 3d7d: 8d c5 38
+    sta object_z_order + objectid_baby_arms                           ; 3d7d: 8d c5 38
 update_partition_and_rope_local
     jmp update_partition_and_rope                                     ; 3d80: 4c 06 3e
 
@@ -864,7 +860,7 @@ update_partition_and_rope
     sta l09ab                                                         ; 3e12: 8d ab 09
     lda save_game_level_l_partition_y                                 ; 3e15: ad 3d 0a
     sta object_y_low + objectid_partition                             ; 3e18: 8d 81 09
-    sta object_y_low + objectid_end_of_rope                           ; 3e1b: 8d 82 09
+    sta object_y_low + objectid_end_of_partition                      ; 3e1b: 8d 82 09
     lda #$78 ; 'x'                                                    ; 3e1e: a9 78
     sec                                                               ; 3e20: 38
     sbc save_game_level_l_partition_y                                 ; 3e21: ed 3d 0a
@@ -940,8 +936,8 @@ new_room_only
     jsr set_object_position_from_cell_xy                              ; 3e9a: 20 5d 1f
     lda #$ff                                                          ; 3e9d: a9 ff
     sta object_direction + objectid_whip                              ; 3e9f: 8d c0 09
-    lda #$c9                                                          ; 3ea2: a9 c9
-    sta l38ae                                                         ; 3ea4: 8d ae 38
+    lda #spriteid_erase_1                                             ; 3ea2: a9 c9
+    sta object_erase_type + objectid_whip                             ; 3ea4: 8d ae 38
     lda #spriteid_whip_5                                              ; 3ea7: a9 cf
     sta object_spriteid + objectid_whip                               ; 3ea9: 8d aa 09
 update_whip_in_hand_local
@@ -1163,66 +1159,66 @@ dog_tail_animation
 ; check for first update in room (branch if not)
 room_2_update_handler
     lda update_room_first_update_flag                                 ; 3fd7: ad 2b 13
-    beq c401e                                                         ; 3fda: f0 42
+    beq update_room_2                                                 ; 3fda: f0 42
 ; check for level change (branch if not)
     lda current_level                                                 ; 3fdc: a5 31
     cmp level_before_latest_level_and_room_initialisation             ; 3fde: c5 51
-    beq c3ff9                                                         ; 3fe0: f0 17
+    beq room_change_only                                              ; 3fe0: f0 17
     lda #1                                                            ; 3fe2: a9 01
-    sta level_workspace                                               ; 3fe4: 8d 6f 0a
-    sta l0a70                                                         ; 3fe7: 8d 70 0a
+    sta dog_animation                                                 ; 3fe4: 8d 6f 0a
+    sta dog_animation_step                                            ; 3fe7: 8d 70 0a
     lda save_game_level_l_dog_x                                       ; 3fea: ad 3a 0a
-    bne c3ff1                                                         ; 3fed: d0 02
+    bne set_initial_dog_x_position                                    ; 3fed: d0 02
     lda #$68 ; 'h'                                                    ; 3fef: a9 68
-c3ff1
+set_initial_dog_x_position
     clc                                                               ; 3ff1: 18
     adc #2                                                            ; 3ff2: 69 02
     and #$fc                                                          ; 3ff4: 29 fc
     sta save_game_level_l_dog_x                                       ; 3ff6: 8d 3a 0a
-c3ff9
+room_change_only
     lda desired_room_index                                            ; 3ff9: a5 30
     cmp #2                                                            ; 3ffb: c9 02
     bne c401b                                                         ; 3ffd: d0 1c
-    lda #$c9                                                          ; 3fff: a9 c9
-    sta l38ae                                                         ; 4001: 8d ae 38
+    lda #spriteid_erase_1                                             ; 3fff: a9 c9
+    sta object_erase_type + objectid_dog                              ; 4001: 8d ae 38
     lda #$c0                                                          ; 4004: a9 c0
-    sta l38c4                                                         ; 4006: 8d c4 38
+    sta object_z_order + objectid_dog                                 ; 4006: 8d c4 38
     lda #$78 ; 'x'                                                    ; 4009: a9 78
     sta object_y_low + objectid_dog                                   ; 400b: 8d 7e 09
     sta object_y_low + objectid_dog_tail                              ; 400e: 8d 7f 09
-    lda #$d6                                                          ; 4011: a9 d6
-    sta l38af                                                         ; 4013: 8d af 38
+    lda #spriteid_erase_3                                             ; 4011: a9 d6
+    sta object_erase_type + objectid_baby_arms                        ; 4013: 8d af 38
     lda #$a0                                                          ; 4016: a9 a0
-    sta l38c5                                                         ; 4018: 8d c5 38
+    sta object_z_order + objectid_baby_arms                           ; 4018: 8d c5 38
 c401b
-    jmp c410a                                                         ; 401b: 4c 0a 41
+    jmp update_dog_object                                             ; 401b: 4c 0a 41
 
-c401e
-    lda l0a70                                                         ; 401e: ad 70 0a
+update_room_2
+    lda dog_animation_step                                            ; 401e: ad 70 0a
     clc                                                               ; 4021: 18
     adc #3                                                            ; 4022: 69 03
     tay                                                               ; 4024: a8
     lda dog_animations,y                                              ; 4025: b9 96 3f
     cmp #0                                                            ; 4028: c9 00
     bne c402f                                                         ; 402a: d0 03
-    ldy level_workspace                                               ; 402c: ac 6f 0a
+    ldy dog_animation                                                 ; 402c: ac 6f 0a
 c402f
     cpy #5                                                            ; 402f: c0 05
     bne c403d                                                         ; 4031: d0 0a
-    dec l0a78                                                         ; 4033: ce 78 0a
+    dec dog_animation_delay                                           ; 4033: ce 78 0a
     bpl c4053                                                         ; 4036: 10 1b
     ldy #1                                                            ; 4038: a0 01
-    sty level_workspace                                               ; 403a: 8c 6f 0a
+    sty dog_animation                                                 ; 403a: 8c 6f 0a
 c403d
-    lda level_workspace                                               ; 403d: ad 6f 0a
+    lda dog_animation                                                 ; 403d: ad 6f 0a
     cmp #$22 ; '"'                                                    ; 4040: c9 22
     bne c4053                                                         ; 4042: d0 0f
-    cpy level_workspace                                               ; 4044: cc 6f 0a
+    cpy dog_animation                                                 ; 4044: cc 6f 0a
     bne c4094                                                         ; 4047: d0 4b
     ldy #5                                                            ; 4049: a0 05
-    sty level_workspace                                               ; 404b: 8c 6f 0a
+    sty dog_animation                                                 ; 404b: 8c 6f 0a
     lda #9                                                            ; 404e: a9 09
-    sta l0a78                                                         ; 4050: 8d 78 0a
+    sta dog_animation_delay                                           ; 4050: 8d 78 0a
 c4053
     lda desired_room_index                                            ; 4053: a5 30
     cmp #2                                                            ; 4055: c9 02
@@ -1236,23 +1232,23 @@ c4053
     lda #8                                                            ; 4067: a9 08
     sta temp_right_offset                                             ; 4069: 8d d1 24
     ldx #$0c                                                          ; 406c: a2 0c
-    sty l3b46                                                         ; 406e: 8c 46 3b
+    sty remember_y                                                    ; 406e: 8c 46 3b
     ldy #2                                                            ; 4071: a0 02
     jsr test_for_collision_between_objects_x_and_y                    ; 4073: 20 e2 28
-    ldy l3b46                                                         ; 4076: ac 46 3b
+    ldy remember_y                                                    ; 4076: ac 46 3b
     tax                                                               ; 4079: aa
     beq c4094                                                         ; 407a: f0 18
     lda save_game_level_l_dog_x                                       ; 407c: ad 3a 0a
     cmp #$8c                                                          ; 407f: c9 8c
     bcc c408f                                                         ; 4081: 90 0c
     ldy #5                                                            ; 4083: a0 05
-    sty level_workspace                                               ; 4085: 8c 6f 0a
+    sty dog_animation                                                 ; 4085: 8c 6f 0a
     lda #9                                                            ; 4088: a9 09
-    sta l0a78                                                         ; 408a: 8d 78 0a
+    sta dog_animation_delay                                           ; 408a: 8d 78 0a
     bpl c4094                                                         ; 408d: 10 05
 c408f
     ldy #$22 ; '"'                                                    ; 408f: a0 22
-    sty level_workspace                                               ; 4091: 8c 6f 0a
+    sty dog_animation                                                 ; 4091: 8c 6f 0a
 c4094
     lda desired_room_index                                            ; 4094: a5 30
     cmp #2                                                            ; 4096: c9 02
@@ -1266,10 +1262,10 @@ c4094
     sta player_held_object_spriteid                                   ; 40a8: 85 52
 c40aa
     ldx #0                                                            ; 40aa: a2 00
-    sty l3b46                                                         ; 40ac: 8c 46 3b
+    sty remember_y                                                    ; 40ac: 8c 46 3b
     ldy #2                                                            ; 40af: a0 02
     jsr test_for_collision_between_objects_x_and_y                    ; 40b1: 20 e2 28
-    ldy l3b46                                                         ; 40b4: ac 46 3b
+    ldy remember_y                                                    ; 40b4: ac 46 3b
     ldx l413f                                                         ; 40b7: ae 3f 41
     stx player_held_object_spriteid                                   ; 40ba: 86 52
     tax                                                               ; 40bc: aa
@@ -1280,7 +1276,7 @@ c40aa
     ldx #objectid_player_accessory                                    ; 40c5: a2 01
     ldy #2                                                            ; 40c7: a0 02
     jsr test_for_collision_between_objects_x_and_y                    ; 40c9: 20 e2 28
-    ldy l3b46                                                         ; 40cc: ac 46 3b
+    ldy remember_y                                                    ; 40cc: ac 46 3b
     tax                                                               ; 40cf: aa
     beq c40de                                                         ; 40d0: f0 0c
 c40d2
@@ -1288,9 +1284,9 @@ c40d2
     sta player_wall_collision_reaction_speed                          ; 40d4: 8d 33 24
     ldy #9                                                            ; 40d7: a0 09
     lda #1                                                            ; 40d9: a9 01
-    sta level_workspace                                               ; 40db: 8d 6f 0a
+    sta dog_animation                                                 ; 40db: 8d 6f 0a
 c40de
-    sty l0a70                                                         ; 40de: 8c 70 0a
+    sty dog_animation_step                                            ; 40de: 8c 70 0a
     iny                                                               ; 40e1: c8
     lda dog_animations,y                                              ; 40e2: b9 96 3f
     clc                                                               ; 40e5: 18
@@ -1301,20 +1297,20 @@ c40de
     cmp #$ff                                                          ; 40f0: c9 ff
     beq c40fb                                                         ; 40f2: f0 07
     lda #$ff                                                          ; 40f4: a9 ff
-    sta l0a71                                                         ; 40f6: 8d 71 0a
-    bmi c410a                                                         ; 40f9: 30 0f
+    sta dog_tail_animation_step                                       ; 40f6: 8d 71 0a
+    bmi update_dog_object                                             ; 40f9: 30 0f
 c40fb
-    inc l0a71                                                         ; 40fb: ee 71 0a
-    lda l0a71                                                         ; 40fe: ad 71 0a
+    inc dog_tail_animation_step                                       ; 40fb: ee 71 0a
+    lda dog_tail_animation_step                                       ; 40fe: ad 71 0a
     cmp #6                                                            ; 4101: c9 06
-    bcc c410a                                                         ; 4103: 90 05
+    bcc update_dog_object                                             ; 4103: 90 05
     lda #0                                                            ; 4105: a9 00
-    sta l0a71                                                         ; 4107: 8d 71 0a
-c410a
+    sta dog_tail_animation_step                                       ; 4107: 8d 71 0a
+update_dog_object
     lda desired_room_index                                            ; 410a: a5 30
     cmp #2                                                            ; 410c: c9 02
     bne return3                                                       ; 410e: d0 2e
-    ldy l0a70                                                         ; 4110: ac 70 0a
+    ldy dog_animation_step                                            ; 4110: ac 70 0a
     lda dog_animations,y                                              ; 4113: b9 96 3f
     sta object_spriteid + objectid_dog                                ; 4116: 8d aa 09
     lda save_game_level_l_dog_x                                       ; 4119: ad 3a 0a
@@ -1330,7 +1326,7 @@ c410a
     lda dog_animations,y                                              ; 412e: b9 96 3f
     cmp #$ff                                                          ; 4131: c9 ff
     bne c413b                                                         ; 4133: d0 06
-    ldy l0a71                                                         ; 4135: ac 71 0a
+    ldy dog_tail_animation_step                                       ; 4135: ac 71 0a
     lda dog_tail_animation,y                                          ; 4138: b9 d1 3f
 c413b
     sta object_spriteid + objectid_dog_tail                           ; 413b: 8d ab 09
@@ -1497,43 +1493,43 @@ room_3_update_handler
     ldx #$cc                                                          ; 4208: a2 cc
     ldy #1                                                            ; 420a: a0 01
 c420c
-    stx l0a73                                                         ; 420c: 8e 73 0a
+    stx frog_x                                                        ; 420c: 8e 73 0a
     sty save_game_level_l_frog_dir                                    ; 420f: 8c 3e 0a
     lda #$76 ; 'v'                                                    ; 4212: a9 76
-    sta l0a74                                                         ; 4214: 8d 74 0a
+    sta frog_y                                                        ; 4214: 8d 74 0a
     lda #1                                                            ; 4217: a9 01
-    sta l0a75                                                         ; 4219: 8d 75 0a
-    sta l0a76                                                         ; 421c: 8d 76 0a
+    sta frog_animation                                                ; 4219: 8d 75 0a
+    sta frog_animation_step                                           ; 421c: 8d 76 0a
     jsr get_delay_before_next_ribbit                                  ; 421f: 20 50 43
 c4222
     lda desired_room_index                                            ; 4222: a5 30
     cmp #3                                                            ; 4224: c9 03
     bne c422d                                                         ; 4226: d0 05
-    lda #$c9                                                          ; 4228: a9 c9
-    sta l38ae                                                         ; 422a: 8d ae 38
+    lda #spriteid_erase_1                                             ; 4228: a9 c9
+    sta object_erase_type + objectid_frog                             ; 422a: 8d ae 38
 c422d
-    jmp c4303                                                         ; 422d: 4c 03 43
+    jmp update_frog_object                                            ; 422d: 4c 03 43
 
 c4230
     lda save_game_level_l_got_frog_progress                           ; 4230: ad 3b 0a
     bne c422d                                                         ; 4233: d0 f8
-    lda l0a76                                                         ; 4235: ad 76 0a
+    lda frog_animation_step                                           ; 4235: ad 76 0a
     clc                                                               ; 4238: 18
     adc #3                                                            ; 4239: 69 03
     tay                                                               ; 423b: a8
     lda frog_animations,y                                             ; 423c: b9 a4 41
     cmp #$ff                                                          ; 423f: c9 ff
     bne c4246                                                         ; 4241: d0 03
-    ldy l0a75                                                         ; 4243: ac 75 0a
+    ldy frog_animation                                                ; 4243: ac 75 0a
 c4246
     lda desired_room_index                                            ; 4246: a5 30
     cmp #3                                                            ; 4248: c9 03
     bne c4268                                                         ; 424a: d0 1c
     ldx #$0b                                                          ; 424c: a2 0b
-    sty l3b46                                                         ; 424e: 8c 46 3b
+    sty remember_y                                                    ; 424e: 8c 46 3b
     ldy #2                                                            ; 4251: a0 02
     jsr test_for_collision_between_objects_x_and_y                    ; 4253: 20 e2 28
-    ldy l3b46                                                         ; 4256: ac 46 3b
+    ldy remember_y                                                    ; 4256: ac 46 3b
     tax                                                               ; 4259: aa
     beq c4268                                                         ; 425a: f0 0c
     lda #spriteid_frog_menu_item                                      ; 425c: a9 dd
@@ -1542,26 +1538,26 @@ c4246
     sta save_game_level_l_got_frog_progress                           ; 4263: 8d 3b 0a
     bmi c42e2                                                         ; 4266: 30 7a
 c4268
-    lda l0a75                                                         ; 4268: ad 75 0a
+    lda frog_animation                                                ; 4268: ad 75 0a
     cmp #$12                                                          ; 426b: c9 12
     bne c427c                                                         ; 426d: d0 0d
-    cpy l0a75                                                         ; 426f: cc 75 0a
+    cpy frog_animation                                                ; 426f: cc 75 0a
     bne c42e2                                                         ; 4272: d0 6e
 c4274
     ldy #1                                                            ; 4274: a0 01
-    sty l0a75                                                         ; 4276: 8c 75 0a
+    sty frog_animation                                                ; 4276: 8c 75 0a
     jsr get_delay_before_next_ribbit                                  ; 4279: 20 50 43
 c427c
-    lda l0a75                                                         ; 427c: ad 75 0a
+    lda frog_animation                                                ; 427c: ad 75 0a
     cmp #1                                                            ; 427f: c9 01
     bne c42de                                                         ; 4281: d0 5b
     lda desired_room_index                                            ; 4283: a5 30
     cmp #3                                                            ; 4285: c9 03
     bne c42c9                                                         ; 4287: d0 40
     ldx #$0b                                                          ; 4289: a2 0b
-    sty l3b46                                                         ; 428b: 8c 46 3b
+    sty remember_y                                                    ; 428b: 8c 46 3b
     jsr find_top_and_bottom_of_object                                 ; 428e: 20 d2 24
-    ldy l3b46                                                         ; 4291: ac 46 3b
+    ldy remember_y                                                    ; 4291: ac 46 3b
     lda l007b                                                         ; 4294: a5 7b
     cmp #9                                                            ; 4296: c9 09
     bcc c42c9                                                         ; 4298: 90 2f
@@ -1570,7 +1566,7 @@ c427c
     bcs c42c9                                                         ; 429e: b0 29
     lda object_x_low_old                                              ; 42a0: ad 5b 09
     sec                                                               ; 42a3: 38
-    sbc l0a73                                                         ; 42a4: ed 73 0a
+    sbc frog_x                                                        ; 42a4: ed 73 0a
     lda object_x_high_old                                             ; 42a7: ad 71 09
     sbc #0                                                            ; 42aa: e9 00
     tax                                                               ; 42ac: aa
@@ -1587,7 +1583,7 @@ c42ba
     eor #$fe                                                          ; 42bd: 49 fe
     sta save_game_level_l_frog_dir                                    ; 42bf: 8d 3e 0a
     ldy #$12                                                          ; 42c2: a0 12
-    sty l0a75                                                         ; 42c4: 8c 75 0a
+    sty frog_animation                                                ; 42c4: 8c 75 0a
     bpl c42e2                                                         ; 42c7: 10 19
 c42c9
     dec delay_before_ribbit                                           ; 42c9: ce 77 0a
@@ -1598,13 +1594,13 @@ c42c9
     jsr play_ribbit_sound                                             ; 42d4: 20 d8 43
 c42d7
     ldy #5                                                            ; 42d7: a0 05
-    sty l0a75                                                         ; 42d9: 8c 75 0a
+    sty frog_animation                                                ; 42d9: 8c 75 0a
     bpl c42e2                                                         ; 42dc: 10 04
 c42de
     cpy #5                                                            ; 42de: c0 05
     beq c4274                                                         ; 42e0: f0 92
 c42e2
-    sty l0a76                                                         ; 42e2: 8c 76 0a
+    sty frog_animation_step                                           ; 42e2: 8c 76 0a
     iny                                                               ; 42e5: c8
     lda frog_animations,y                                             ; 42e6: b9 a4 41
     clc                                                               ; 42e9: 18
@@ -1613,14 +1609,14 @@ c42e2
     eor #$ff                                                          ; 42ef: 49 ff
     sec                                                               ; 42f1: 38
 c42f2
-    adc l0a73                                                         ; 42f2: 6d 73 0a
-    sta l0a73                                                         ; 42f5: 8d 73 0a
+    adc frog_x                                                        ; 42f2: 6d 73 0a
+    sta frog_x                                                        ; 42f5: 8d 73 0a
     iny                                                               ; 42f8: c8
     lda frog_animations,y                                             ; 42f9: b9 a4 41
     clc                                                               ; 42fc: 18
-    adc l0a74                                                         ; 42fd: 6d 74 0a
-    sta l0a74                                                         ; 4300: 8d 74 0a
-c4303
+    adc frog_y                                                        ; 42fd: 6d 74 0a
+    sta frog_y                                                        ; 4300: 8d 74 0a
+update_frog_object
     lda desired_room_index                                            ; 4303: a5 30
     cmp #3                                                            ; 4305: c9 03
     bne return4                                                       ; 4307: d0 46
@@ -1630,11 +1626,11 @@ c4303
     bne return4                                                       ; 4311: d0 3c
     lda save_game_level_l_frog_dir                                    ; 4313: ad 3e 0a
     sta object_direction + objectid_frog                              ; 4316: 8d c0 09
-    lda l0a73                                                         ; 4319: ad 73 0a
+    lda frog_x                                                        ; 4319: ad 73 0a
     sta object_x_low + objectid_frog                                  ; 431c: 8d 52 09
-    lda l0a74                                                         ; 431f: ad 74 0a
+    lda frog_y                                                        ; 431f: ad 74 0a
     sta object_y_low + objectid_frog                                  ; 4322: 8d 7e 09
-    ldy l0a76                                                         ; 4325: ac 76 0a
+    ldy frog_animation_step                                           ; 4325: ac 76 0a
     lda frog_animations,y                                             ; 4328: b9 a4 41
     sta object_spriteid + objectid_frog                               ; 432b: 8d aa 09
     cmp #spriteid_frog                                                ; 432e: c9 de
@@ -1665,7 +1661,7 @@ get_delay_before_next_ribbit
     sta delay_before_ribbit                                           ; 4358: 8d 77 0a
     rts                                                               ; 435b: 60
 
-frog_animation
+frog_animation_table
     !byte spriteid_frog_speaking                                      ; 435c: df
     !byte spriteid_frog_speaking                                      ; 435d: df
     !byte spriteid_frog_speaking                                      ; 435e: df
@@ -1720,11 +1716,11 @@ c43b8
     iny                                                               ; 43b8: c8
     sty save_game_level_l_got_frog_progress                           ; 43b9: 8c 3b 0a
 c43bc
-    lda frog_animation                                                ; 43bc: ad 5c 43
+    lda frog_animation_table                                          ; 43bc: ad 5c 43
     ldy save_game_level_l_got_frog_progress                           ; 43bf: ac 3b 0a
     cpy #$ff                                                          ; 43c2: c0 ff
     beq c43c9                                                         ; 43c4: f0 03
-    lda frog_animation,y                                              ; 43c6: b9 5c 43
+    lda frog_animation_table,y                                        ; 43c6: b9 5c 43
 c43c9
     sta collectable_being_used_spriteids + 2                          ; 43c9: 8d f4 2e
 ; check for first update in room (branch if so)
@@ -1901,12 +1897,7 @@ sprite_data
 pydis_end
 
 ; Automatically generated labels:
-;     c3b0c
-;     c3b16
-;     c3ff1
-;     c3ff9
 ;     c401b
-;     c401e
 ;     c402f
 ;     c403d
 ;     c4053
@@ -1916,7 +1907,6 @@ pydis_end
 ;     c40d2
 ;     c40de
 ;     c40fb
-;     c410a
 ;     c413b
 ;     c420c
 ;     c4222
@@ -1933,7 +1923,6 @@ pydis_end
 ;     c42de
 ;     c42e2
 ;     c42f2
-;     c4303
 ;     c4336
 ;     c433f
 ;     c4376
@@ -1946,20 +1935,6 @@ pydis_end
 ;     l007b
 ;     l0980
 ;     l09ab
-;     l0a70
-;     l0a71
-;     l0a73
-;     l0a74
-;     l0a75
-;     l0a76
-;     l0a78
-;     l38ae
-;     l38af
-;     l38b2
-;     l38c4
-;     l38c5
-;     l38c7
-;     l3b46
 ;     l413f
 !if (<envelope1) != $f6 {
     !error "Assertion failed: <envelope1 == $f6"
@@ -2078,14 +2053,29 @@ pydis_end
 !if (object_direction + objectid_whip) != $09c0 {
     !error "Assertion failed: object_direction + objectid_whip == $09c0"
 }
+!if (object_erase_type + objectid_baby_arms) != $38af {
+    !error "Assertion failed: object_erase_type + objectid_baby_arms == $38af"
+}
+!if (object_erase_type + objectid_dog) != $38ae {
+    !error "Assertion failed: object_erase_type + objectid_dog == $38ae"
+}
+!if (object_erase_type + objectid_end_of_partition) != $38b2 {
+    !error "Assertion failed: object_erase_type + objectid_end_of_partition == $38b2"
+}
+!if (object_erase_type + objectid_frog) != $38ae {
+    !error "Assertion failed: object_erase_type + objectid_frog == $38ae"
+}
+!if (object_erase_type + objectid_whip) != $38ae {
+    !error "Assertion failed: object_erase_type + objectid_whip == $38ae"
+}
 !if (object_spriteid + objectid_dog) != $09aa {
     !error "Assertion failed: object_spriteid + objectid_dog == $09aa"
 }
 !if (object_spriteid + objectid_dog_tail) != $09ab {
     !error "Assertion failed: object_spriteid + objectid_dog_tail == $09ab"
 }
-!if (object_spriteid + objectid_end_of_rope) != $09ae {
-    !error "Assertion failed: object_spriteid + objectid_end_of_rope == $09ae"
+!if (object_spriteid + objectid_end_of_partition) != $09ae {
+    !error "Assertion failed: object_spriteid + objectid_end_of_partition == $09ae"
 }
 !if (object_spriteid + objectid_frog) != $09aa {
     !error "Assertion failed: object_spriteid + objectid_frog == $09aa"
@@ -2123,8 +2113,8 @@ pydis_end
 !if (object_y_low + objectid_dog_tail) != $097f {
     !error "Assertion failed: object_y_low + objectid_dog_tail == $097f"
 }
-!if (object_y_low + objectid_end_of_rope) != $0982 {
-    !error "Assertion failed: object_y_low + objectid_end_of_rope == $0982"
+!if (object_y_low + objectid_end_of_partition) != $0982 {
+    !error "Assertion failed: object_y_low + objectid_end_of_partition == $0982"
 }
 !if (object_y_low + objectid_frog) != $097e {
     !error "Assertion failed: object_y_low + objectid_frog == $097e"
@@ -2132,8 +2122,17 @@ pydis_end
 !if (object_y_low + objectid_partition) != $0981 {
     !error "Assertion failed: object_y_low + objectid_partition == $0981"
 }
-!if (objectid_end_of_rope) != $06 {
-    !error "Assertion failed: objectid_end_of_rope == $06"
+!if (object_z_order + objectid_baby_arms) != $38c5 {
+    !error "Assertion failed: object_z_order + objectid_baby_arms == $38c5"
+}
+!if (object_z_order + objectid_dog) != $38c4 {
+    !error "Assertion failed: object_z_order + objectid_dog == $38c4"
+}
+!if (object_z_order + objectid_partition) != $38c7 {
+    !error "Assertion failed: object_z_order + objectid_partition == $38c7"
+}
+!if (objectid_end_of_partition) != $06 {
+    !error "Assertion failed: objectid_end_of_partition == $06"
 }
 !if (objectid_fire1) != $03 {
     !error "Assertion failed: objectid_fire1 == $03"
@@ -2197,6 +2196,15 @@ pydis_end
 }
 !if (spriteid_dog_raised) != $d3 {
     !error "Assertion failed: spriteid_dog_raised == $d3"
+}
+!if (spriteid_erase_1) != $c9 {
+    !error "Assertion failed: spriteid_erase_1 == $c9"
+}
+!if (spriteid_erase_2) != $ca {
+    !error "Assertion failed: spriteid_erase_2 == $ca"
+}
+!if (spriteid_erase_3) != $d6 {
+    !error "Assertion failed: spriteid_erase_3 == $d6"
 }
 !if (spriteid_frog) != $de {
     !error "Assertion failed: spriteid_frog == $de"
