@@ -214,7 +214,7 @@ l0a46                                               = $0a46
 l0a47                                               = $0a47
 l0a48                                               = $0a48
 save_game_level_m_tulip_growth_animation_index      = $0a49
-level_workspace                                     = $0a6f
+block_y_position                                    = $0a6f
 hamster_animation_step                              = $0a70
 hamster_x                                           = $0a71
 hamster_y                                           = $0a72
@@ -674,7 +674,7 @@ update_hamster
 ; check for level change (branch if not)
     lda current_level                                                 ; 3cba: a5 31
     cmp level_before_latest_level_and_room_initialisation             ; 3cbc: c5 51
-    beq room_changed_only                                             ; 3cbe: f0 38
+    beq room_changed_only1                                            ; 3cbe: f0 38
     lda save_game_level_m_hamster_animation                           ; 3cc0: ad 3f 0a
     beq initalise_to_hamster_walk_animation                           ; 3cc3: f0 08
     cmp #hamster_walk_animation - hamster_animations                  ; 3cc5: c9 01
@@ -702,7 +702,7 @@ set_hamster_jam_landed
 set_hamster_animation
     sty save_game_level_m_hamster_animation                           ; 3cf2: 8c 3f 0a
     sty hamster_animation_step                                        ; 3cf5: 8c 70 0a
-room_changed_only
+room_changed_only1
     lda desired_room_index                                            ; 3cf8: a5 30
     cmp #1                                                            ; 3cfa: c9 01
     bne set_hamster_objects_local                                     ; 3cfc: d0 0f
@@ -727,19 +727,19 @@ update_hamster_animation_step
     ldy save_game_level_m_hamster_animation                           ; 3d1e: ac 3f 0a
 set_hamster_static_animation
     cpy #hamster_static_animation - hamster_animations                ; 3d21: c0 11
-    bne c3d2d                                                         ; 3d23: d0 08
+    bne check_if_hamster_is_looking_back                              ; 3d23: d0 08
     lda hamster_direction                                             ; 3d25: ad 73 0a
     eor #$fe                                                          ; 3d28: 49 fe
     sta hamster_direction                                             ; 3d2a: 8d 73 0a
-c3d2d
+check_if_hamster_is_looking_back
     lda save_game_level_m_hamster_animation                           ; 3d2d: ad 3f 0a
     cmp #hamster_look_back_animation - hamster_animations             ; 3d30: c9 0e
-    bne c3d3e                                                         ; 3d32: d0 0a
+    bne check_if_hamster_is_walking                                   ; 3d32: d0 0a
     cpy save_game_level_m_hamster_animation                           ; 3d34: cc 3f 0a
     bne set_hamster_animation_step                                    ; 3d37: d0 31
     ldy #hamster_walk_animation - hamster_animations                  ; 3d39: a0 01
     sty save_game_level_m_hamster_animation                           ; 3d3b: 8c 3f 0a
-c3d3e
+check_if_hamster_is_walking
     lda save_game_level_m_hamster_animation                           ; 3d3e: ad 3f 0a
     cmp #hamster_walk_animation - hamster_animations                  ; 3d41: c9 01
     bne set_hamster_animation_step                                    ; 3d43: d0 25
@@ -755,7 +755,7 @@ hamster_looking_left
     beq set_hamster_looking_back                                      ; 3d55: f0 0b
     cpx #$9c                                                          ; 3d57: e0 9c
     bne set_hamster_animation_step                                    ; 3d59: d0 0f
-    lda level_workspace                                               ; 3d5b: ad 6f 0a
+    lda block_y_position                                              ; 3d5b: ad 6f 0a
     cmp #$48 ; 'H'                                                    ; 3d5e: c9 48
     bcc set_hamster_animation_step                                    ; 3d60: 90 08
 set_hamster_looking_back
@@ -831,16 +831,16 @@ room_1_update_handler
 initialise_room_1
     lda current_level                                                 ; 3dee: a5 31
     cmp level_before_latest_level_and_room_initialisation             ; 3df0: c5 51
-    beq c3df9                                                         ; 3df2: f0 05
+    beq room_changed_only2                                            ; 3df2: f0 05
     lda #$50 ; 'P'                                                    ; 3df4: a9 50
-    sta level_workspace                                               ; 3df6: 8d 6f 0a
-c3df9
+    sta block_y_position                                              ; 3df6: 8d 6f 0a
+room_changed_only2
     lda desired_room_index                                            ; 3df9: a5 30
     cmp #1                                                            ; 3dfb: c9 01
-    beq c3e02                                                         ; 3dfd: f0 03
+    beq initialise                                                    ; 3dfd: f0 03
     jmp c3ed0                                                         ; 3dff: 4c d0 3e
 
-c3e02
+initialise
     ldx #<envelope1                                                   ; 3e02: a2 47
     ldy #>envelope1                                                   ; 3e04: a0 45
     jsr define_envelope                                               ; 3e06: 20 5e 39
@@ -872,7 +872,7 @@ draw_horizontal_rope
     jsr write_a_single_value_to_cell_in_collision_map                 ; 3e3b: 20 bb 1e
     lda #$50 ; 'P'                                                    ; 3e3e: a9 50
     sec                                                               ; 3e40: 38
-    sbc level_workspace                                               ; 3e41: ed 6f 0a
+    sbc block_y_position                                              ; 3e41: ed 6f 0a
     clc                                                               ; 3e44: 18
     adc #$5c ; '\'                                                    ; 3e45: 69 5c
     lsr                                                               ; 3e47: 4a
@@ -893,10 +893,10 @@ draw_rope_loop1
     lda #spriteid_frayed_rope_end                                     ; 3e60: a9 cd
     sta object_spriteid + objectid_rope_end                           ; 3e62: 8d aa 09
     ldx #$10                                                          ; 3e65: a2 10
-    lda level_workspace                                               ; 3e67: ad 6f 0a
+    lda block_y_position                                              ; 3e67: ad 6f 0a
     and #4                                                            ; 3e6a: 29 04
     beq c3e7d                                                         ; 3e6c: f0 0f
-    lda level_workspace                                               ; 3e6e: ad 6f 0a
+    lda block_y_position                                              ; 3e6e: ad 6f 0a
     sec                                                               ; 3e71: 38
     sbc #$0c                                                          ; 3e72: e9 0c
     lsr                                                               ; 3e74: 4a
@@ -906,7 +906,7 @@ draw_rope_loop1
     lda #spriteid_short_rope                                          ; 3e78: a9 cc
     jsr draw_sprite_a_at_cell_xy                                      ; 3e7a: 20 4c 1f
 c3e7d
-    lda level_workspace                                               ; 3e7d: ad 6f 0a
+    lda block_y_position                                              ; 3e7d: ad 6f 0a
     lsr                                                               ; 3e80: 4a
     lsr                                                               ; 3e81: 4a
     lsr                                                               ; 3e82: 4a
@@ -950,7 +950,7 @@ c3e94
     sta value_to_write_to_collision_map                               ; 3ecb: 85 3e
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 3ecd: 20 44 1e
 c3ed0
-    jmp c3fe8                                                         ; 3ed0: 4c e8 3f
+    jmp position_rope_and_write_to_collision_map                      ; 3ed0: 4c e8 3f
 
 update_room_1
     lda desired_room_index                                            ; 3ed3: a5 30
@@ -978,7 +978,7 @@ update_room_1
     cmp #$49 ; 'I'                                                    ; 3eff: c9 49
     bne c3f3e                                                         ; 3f01: d0 3b
 c3f03
-    lda level_workspace                                               ; 3f03: ad 6f 0a
+    lda block_y_position                                              ; 3f03: ad 6f 0a
     cmp #$20 ; ' '                                                    ; 3f06: c9 20
     beq c3ed0                                                         ; 3f08: f0 c6
     lda object_y_low                                                  ; 3f0a: ad 7c 09
@@ -989,10 +989,10 @@ c3f03
     clc                                                               ; 3f16: 18
     adc #4                                                            ; 3f17: 69 04
     sta object_y_low + objectid_player_accessory                      ; 3f19: 8d 7d 09
-    lda level_workspace                                               ; 3f1c: ad 6f 0a
+    lda block_y_position                                              ; 3f1c: ad 6f 0a
     sec                                                               ; 3f1f: 38
     sbc #4                                                            ; 3f20: e9 04
-    sta level_workspace                                               ; 3f22: 8d 6f 0a
+    sta block_y_position                                              ; 3f22: 8d 6f 0a
     lda desired_room_index                                            ; 3f25: a5 30
     cmp #1                                                            ; 3f27: c9 01
     bne c3ed0                                                         ; 3f29: d0 a5
@@ -1002,10 +1002,10 @@ c3f03
     sta object_spriteid + objectid_rope_to_block                      ; 3f33: 8d ac 09
     lda #spriteid_one_pixel_masked_out                                ; 3f36: a9 00
     sta object_spriteid_old + objectid_rope_end                       ; 3f38: 8d b5 09
-    jmp c3fe8                                                         ; 3f3b: 4c e8 3f
+    jmp position_rope_and_write_to_collision_map                      ; 3f3b: 4c e8 3f
 
 c3f3e
-    lda level_workspace                                               ; 3f3e: ad 6f 0a
+    lda block_y_position                                              ; 3f3e: ad 6f 0a
     cmp #$50 ; 'P'                                                    ; 3f41: c9 50
     bcs c3ed0                                                         ; 3f43: b0 8b
     ldx #$0c                                                          ; 3f45: a2 0c
@@ -1017,7 +1017,7 @@ c3f3e
     ldy #$cb                                                          ; 3f51: a0 cb
     adc #4                                                            ; 3f53: 69 04
 c3f55
-    sta level_workspace                                               ; 3f55: 8d 6f 0a
+    sta block_y_position                                              ; 3f55: 8d 6f 0a
     stx l4018                                                         ; 3f58: 8e 18 40
     sty l4019                                                         ; 3f5b: 8c 19 40
     lda desired_room_index                                            ; 3f5e: a5 30
@@ -1030,31 +1030,31 @@ c3f55
     lda #spriteid_one_pixel_masked_out                                ; 3f6e: a9 00
     sta object_spriteid_old + objectid_rope_end                       ; 3f70: 8d b5 09
 c3f73
-    lda level_workspace                                               ; 3f73: ad 6f 0a
+    lda block_y_position                                              ; 3f73: ad 6f 0a
     cmp #$50 ; 'P'                                                    ; 3f76: c9 50
     beq c3f86                                                         ; 3f78: f0 0c
     lda desired_room_index                                            ; 3f7a: a5 30
     cmp #1                                                            ; 3f7c: c9 01
-    bne c3fe8                                                         ; 3f7e: d0 68
+    bne position_rope_and_write_to_collision_map                      ; 3f7e: d0 68
     jsr sub_c401a                                                     ; 3f80: 20 1a 40
-    jmp c3fe8                                                         ; 3f83: 4c e8 3f
+    jmp position_rope_and_write_to_collision_map                      ; 3f83: 4c e8 3f
 
 c3f86
     lda save_game_level_m_hamster_animation                           ; 3f86: ad 3f 0a
     cmp #hamster_jam_static_animation - hamster_animations            ; 3f89: c9 37
-    beq c3fd2                                                         ; 3f8b: f0 45
+    beq make_sound_for_block_landing_or_hamster_jam_landing           ; 3f8b: f0 45
     cmp #hamster_jam_landed_animation - hamster_animations            ; 3f8d: c9 3b
-    beq c3fd2                                                         ; 3f8f: f0 41
+    beq make_sound_for_block_landing_or_hamster_jam_landing           ; 3f8f: f0 41
     ldx hamster_x                                                     ; 3f91: ae 71 0a
     lda hamster_direction                                             ; 3f94: ad 73 0a
     bmi c3f9f                                                         ; 3f97: 30 06
     cpx #$98                                                          ; 3f99: e0 98
     bcc c3fa5                                                         ; 3f9b: 90 08
-    bcs c3fd2                                                         ; 3f9d: b0 33
+    bcs make_sound_for_block_landing_or_hamster_jam_landing           ; 3f9d: b0 33
 c3f9f
     cpx #$9c                                                          ; 3f9f: e0 9c
     bcc c3fa5                                                         ; 3fa1: 90 02
-    bcs c3fd2                                                         ; 3fa3: b0 2d
+    bcs make_sound_for_block_landing_or_hamster_jam_landing           ; 3fa3: b0 2d
 c3fa5
     lda #hamster_jam_static_animation - hamster_animations            ; 3fa5: a9 37
     sta save_game_level_m_hamster_animation                           ; 3fa7: 8d 3f 0a
@@ -1066,7 +1066,7 @@ c3fa5
     sta hamster_direction                                             ; 3fb6: 8d 73 0a
     lda desired_room_index                                            ; 3fb9: a5 30
     cmp #1                                                            ; 3fbb: c9 01
-    bne c3fe8                                                         ; 3fbd: d0 29
+    bne position_rope_and_write_to_collision_map                      ; 3fbd: d0 29
     lda #0                                                            ; 3fbf: a9 00
     ldx #<sound1                                                      ; 3fc1: a2 9f
     ldy #>sound1                                                      ; 3fc3: a0 45
@@ -1074,12 +1074,12 @@ c3fa5
     ldx #<sound2                                                      ; 3fc8: a2 89
     ldy #>sound2                                                      ; 3fca: a0 45
     jsr play_sound_yx                                                 ; 3fcc: 20 f6 38
-    jmp c3fe8                                                         ; 3fcf: 4c e8 3f
+    jmp position_rope_and_write_to_collision_map                      ; 3fcf: 4c e8 3f
 
-c3fd2
+make_sound_for_block_landing_or_hamster_jam_landing
     lda desired_room_index                                            ; 3fd2: a5 30
     cmp #1                                                            ; 3fd4: c9 01
-    bne c3fe8                                                         ; 3fd6: d0 10
+    bne position_rope_and_write_to_collision_map                      ; 3fd6: d0 10
     lda #0                                                            ; 3fd8: a9 00
     ldx #<sound3                                                      ; 3fda: a2 73
     ldy #>sound3                                                      ; 3fdc: a0 45
@@ -1087,13 +1087,13 @@ c3fd2
     ldx #<sound4                                                      ; 3fe1: a2 6b
     ldy #>sound4                                                      ; 3fe3: a0 45
     jsr play_sound_yx                                                 ; 3fe5: 20 f6 38
-c3fe8
+position_rope_and_write_to_collision_map
     lda desired_room_index                                            ; 3fe8: a5 30
     cmp #1                                                            ; 3fea: c9 01
     bne return2                                                       ; 3fec: d0 29
     lda #$50 ; 'P'                                                    ; 3fee: a9 50
     sec                                                               ; 3ff0: 38
-    sbc level_workspace                                               ; 3ff1: ed 6f 0a
+    sbc block_y_position                                              ; 3ff1: ed 6f 0a
     clc                                                               ; 3ff4: 18
     adc #$58 ; 'X'                                                    ; 3ff5: 69 58
     sta object_y_low + objectid_rope_end                              ; 3ff7: 8d 7e 09
@@ -1109,7 +1109,7 @@ c3fe8
     iny                                                               ; 4008: c8
     lda #collision_map_none                                           ; 4009: a9 00
     jsr write_a_single_value_to_cell_in_collision_map                 ; 400b: 20 bb 1e
-    lda level_workspace                                               ; 400e: ad 6f 0a
+    lda block_y_position                                              ; 400e: ad 6f 0a
     sta object_y_low + objectid_block                                 ; 4011: 8d 7f 09
     sta object_y_low + objectid_rope_to_block                         ; 4014: 8d 80 09
 return2
@@ -1995,10 +1995,6 @@ sprite_data
 pydis_end
 
 ; Automatically generated labels:
-;     c3d2d
-;     c3d3e
-;     c3df9
-;     c3e02
 ;     c3e7d
 ;     c3e94
 ;     c3ed0
@@ -2009,8 +2005,6 @@ pydis_end
 ;     c3f86
 ;     c3f9f
 ;     c3fa5
-;     c3fd2
-;     c3fe8
 ;     c403e
 ;     c405d
 ;     c4078
