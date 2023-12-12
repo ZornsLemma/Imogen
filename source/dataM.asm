@@ -190,8 +190,9 @@ player_held_object_spriteid                         = $52
 developer_mode_sideways_ram_is_set_up_flag          = $5b
 l0070                                               = $70
 room_exit_direction                                 = $70
-l0078                                               = $78
-l0079                                               = $79
+temp_y                                              = $70
+object_left_cell_x                                  = $78
+object_right_cell_x                                 = $79
 object_x_low                                        = $0950
 object_x_low_old                                    = $095b
 object_x_high                                       = $0966
@@ -205,21 +206,21 @@ object_direction                                    = $09be
 current_player_animation                            = $09df
 save_game_level_m_hamster_animation                 = $0a3f
 save_game_level_m_got_tulip_bulb_progress           = $0a40
-l0a41                                               = $0a41
+save_game_level_m_tulip_bulb_x_animation_step       = $0a41
 save_game_level_m_tulip_bulb_x_low                  = $0a42
 save_game_level_m_tulip_bulb_x_high                 = $0a43
 save_game_level_m_tulip_bulb_y                      = $0a44
-save_game_level_m_tulip_bulb_direction              = $0a45
-l0a46                                               = $0a46
-l0a47                                               = $0a47
-l0a48                                               = $0a48
+save_game_level_m_tulip_bulb_direction1             = $0a45
+save_game_level_m_tulip_bulb_room                   = $0a46
+save_game_level_m_tulip_bulb_direction2             = $0a47
+save_game_level_m_tulip_bulb_y_animation_step       = $0a48
 save_game_level_m_tulip_growth_animation_index      = $0a49
 block_y_position                                    = $0a6f
 hamster_animation_step                              = $0a70
 hamster_x                                           = $0a71
 hamster_y                                           = $0a72
 hamster_direction                                   = $0a73
-l0a74                                               = $0a74
+tulip_bulb_steps_to_catch_up_while_offscreen        = $0a74
 tile_all_set_pixels                                 = $0aa9
 developer_flags                                     = $1103
 initialise_level_and_room                           = $1140
@@ -838,7 +839,7 @@ room_changed_only2
     lda desired_room_index                                            ; 3df9: a5 30
     cmp #1                                                            ; 3dfb: c9 01
     beq initialise                                                    ; 3dfd: f0 03
-    jmp c3ed0                                                         ; 3dff: 4c d0 3e
+    jmp position_rope_and_write_to_collision_map_local                ; 3dff: 4c d0 3e
 
 initialise
     ldx #<envelope1                                                   ; 3e02: a2 47
@@ -895,7 +896,7 @@ draw_rope_loop1
     ldx #$10                                                          ; 3e65: a2 10
     lda block_y_position                                              ; 3e67: ad 6f 0a
     and #4                                                            ; 3e6a: 29 04
-    beq c3e7d                                                         ; 3e6c: f0 0f
+    beq draw_long_rope_sprites                                        ; 3e6c: f0 0f
     lda block_y_position                                              ; 3e6e: ad 6f 0a
     sec                                                               ; 3e71: 38
     sbc #$0c                                                          ; 3e72: e9 0c
@@ -905,7 +906,7 @@ draw_rope_loop1
     tay                                                               ; 3e77: a8
     lda #spriteid_short_rope                                          ; 3e78: a9 cc
     jsr draw_sprite_a_at_cell_xy                                      ; 3e7a: 20 4c 1f
-c3e7d
+draw_long_rope_sprites
     lda block_y_position                                              ; 3e7d: ad 6f 0a
     lsr                                                               ; 3e80: 4a
     lsr                                                               ; 3e81: 4a
@@ -914,14 +915,14 @@ c3e7d
     dey                                                               ; 3e84: 88
     dey                                                               ; 3e85: 88
     cpy #3                                                            ; 3e86: c0 03
-    bcc c3e94                                                         ; 3e88: 90 0a
+    bcc draw_block                                                    ; 3e88: 90 0a
     lda #spriteid_long_rope                                           ; 3e8a: a9 cb
 draw_rope_loop2
     jsr draw_sprite_a_at_cell_xy                                      ; 3e8c: 20 4c 1f
     dey                                                               ; 3e8f: 88
     cpy #3                                                            ; 3e90: c0 03
     bcs draw_rope_loop2                                               ; 3e92: b0 f8
-c3e94
+draw_block
     lda #objectid_block                                               ; 3e94: a9 03
     dex                                                               ; 3e96: ca
     jsr set_object_position_from_cell_xy                              ; 3e97: 20 5d 1f
@@ -949,16 +950,16 @@ c3e94
     lda #collision_map_solid_rock                                     ; 3ec9: a9 03
     sta value_to_write_to_collision_map                               ; 3ecb: 85 3e
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 3ecd: 20 44 1e
-c3ed0
+position_rope_and_write_to_collision_map_local
     jmp position_rope_and_write_to_collision_map                      ; 3ed0: 4c e8 3f
 
 update_room_1
     lda desired_room_index                                            ; 3ed3: a5 30
     cmp #1                                                            ; 3ed5: c9 01
-    bne c3f3e                                                         ; 3ed7: d0 65
+    bne move_block_position_up                                        ; 3ed7: d0 65
     lda current_player_character                                      ; 3ed9: a5 48
     cmp #6                                                            ; 3edb: c9 06
-    bne c3f3e                                                         ; 3edd: d0 5f
+    bne move_block_position_up                                        ; 3edd: d0 5f
     lda object_x_high                                                 ; 3edf: ad 66 09
     sta l0070                                                         ; 3ee2: 85 70
     lda object_x_low                                                  ; 3ee4: ad 50 09
@@ -969,18 +970,19 @@ update_room_1
     lsr l0070                                                         ; 3eed: 46 70
     ror                                                               ; 3eef: 6a
     cmp #$14                                                          ; 3ef0: c9 14
-    bcc c3f3e                                                         ; 3ef2: 90 4a
+    bcc move_block_position_up                                        ; 3ef2: 90 4a
     lda current_player_animation                                      ; 3ef4: ad df 09
-    cmp #$51 ; 'Q'                                                    ; 3ef7: c9 51
-    beq c3f03                                                         ; 3ef9: f0 08
-    cmp #$45 ; 'E'                                                    ; 3efb: c9 45
-    beq c3f03                                                         ; 3efd: f0 04
-    cmp #$49 ; 'I'                                                    ; 3eff: c9 49
-    bne c3f3e                                                         ; 3f01: d0 3b
-c3f03
+    cmp #monkey_climb_animation - monkey_base_animation               ; 3ef7: c9 51
+    beq player_is_a_climbing_monkey                                   ; 3ef9: f0 08
+    cmp #monkey_climb_idle_animation - monkey_base_animation          ; 3efb: c9 45
+    beq player_is_a_climbing_monkey                                   ; 3efd: f0 04
+    cmp #monkey_climb_down_animation - monkey_base_animation          ; 3eff: c9 49
+    bne move_block_position_up                                        ; 3f01: d0 3b
+player_is_a_climbing_monkey
     lda block_y_position                                              ; 3f03: ad 6f 0a
     cmp #$20 ; ' '                                                    ; 3f06: c9 20
-    beq c3ed0                                                         ; 3f08: f0 c6
+    beq position_rope_and_write_to_collision_map_local                ; 3f08: f0 c6
+; move player and accessory up
     lda object_y_low                                                  ; 3f0a: ad 7c 09
     clc                                                               ; 3f0d: 18
     adc #4                                                            ; 3f0e: 69 04
@@ -989,14 +991,18 @@ c3f03
     clc                                                               ; 3f16: 18
     adc #4                                                            ; 3f17: 69 04
     sta object_y_low + objectid_player_accessory                      ; 3f19: 8d 7d 09
+; move block down
     lda block_y_position                                              ; 3f1c: ad 6f 0a
     sec                                                               ; 3f1f: 38
     sbc #4                                                            ; 3f20: e9 04
     sta block_y_position                                              ; 3f22: 8d 6f 0a
+; check if the player is in room 1
     lda desired_room_index                                            ; 3f25: a5 30
     cmp #1                                                            ; 3f27: c9 01
-    bne c3ed0                                                         ; 3f29: d0 a5
-    jsr sub_c401a                                                     ; 3f2b: 20 1a 40
+    bne position_rope_and_write_to_collision_map_local                ; 3f29: d0 a5
+; play rope movement sound
+    jsr play_sound5                                                   ; 3f2b: 20 1a 40
+; set end of rope sprites
     lda #spriteid_short_rope_to_block2                                ; 3f2e: a9 e2
     sta object_spriteid_old + objectid_rope_to_block                  ; 3f30: 8d b7 09
     sta object_spriteid + objectid_rope_to_block                      ; 3f33: 8d ac 09
@@ -1004,42 +1010,43 @@ c3f03
     sta object_spriteid_old + objectid_rope_end                       ; 3f38: 8d b5 09
     jmp position_rope_and_write_to_collision_map                      ; 3f3b: 4c e8 3f
 
-c3f3e
+move_block_position_up
     lda block_y_position                                              ; 3f3e: ad 6f 0a
     cmp #$50 ; 'P'                                                    ; 3f41: c9 50
-    bcs c3ed0                                                         ; 3f43: b0 8b
+    bcs position_rope_and_write_to_collision_map_local                ; 3f43: b0 8b
     ldx #$0c                                                          ; 3f45: a2 0c
-    ldy #$cc                                                          ; 3f47: a0 cc
+    ldy #spriteid_short_rope                                          ; 3f47: a0 cc
     adc #4                                                            ; 3f49: 69 04
     cmp #$50 ; 'P'                                                    ; 3f4b: c9 50
-    bcs c3f55                                                         ; 3f4d: b0 06
+    bcs store_block_y_position                                        ; 3f4d: b0 06
     ldx #$10                                                          ; 3f4f: a2 10
-    ldy #$cb                                                          ; 3f51: a0 cb
+    ldy #spriteid_long_rope                                           ; 3f51: a0 cb
     adc #4                                                            ; 3f53: 69 04
-c3f55
+store_block_y_position
     sta block_y_position                                              ; 3f55: 8d 6f 0a
-    stx l4018                                                         ; 3f58: 8e 18 40
-    sty l4019                                                         ; 3f5b: 8c 19 40
+    stx unused_x_value                                                ; 3f58: 8e 18 40
+    sty unused_rope_spriteid                                          ; 3f5b: 8c 19 40
     lda desired_room_index                                            ; 3f5e: a5 30
     cmp #1                                                            ; 3f60: c9 01
-    bne c3f73                                                         ; 3f62: d0 0f
+    bne check_if_rope_is_moving                                       ; 3f62: d0 0f
+; set rope sprites
     lda #spriteid_one_pixel_masked_out                                ; 3f64: a9 00
     sta object_spriteid_old + objectid_rope_to_block                  ; 3f66: 8d b7 09
     lda #spriteid_long_rope_to_block                                  ; 3f69: a9 e3
     sta object_spriteid + objectid_rope_to_block                      ; 3f6b: 8d ac 09
     lda #spriteid_one_pixel_masked_out                                ; 3f6e: a9 00
     sta object_spriteid_old + objectid_rope_end                       ; 3f70: 8d b5 09
-c3f73
+check_if_rope_is_moving
     lda block_y_position                                              ; 3f73: ad 6f 0a
     cmp #$50 ; 'P'                                                    ; 3f76: c9 50
-    beq c3f86                                                         ; 3f78: f0 0c
+    beq rope_is_at_rest_so_check_for_hamster_being_squashed           ; 3f78: f0 0c
     lda desired_room_index                                            ; 3f7a: a5 30
     cmp #1                                                            ; 3f7c: c9 01
     bne position_rope_and_write_to_collision_map                      ; 3f7e: d0 68
-    jsr sub_c401a                                                     ; 3f80: 20 1a 40
+    jsr play_sound5                                                   ; 3f80: 20 1a 40
     jmp position_rope_and_write_to_collision_map                      ; 3f83: 4c e8 3f
 
-c3f86
+rope_is_at_rest_so_check_for_hamster_being_squashed
     lda save_game_level_m_hamster_animation                           ; 3f86: ad 3f 0a
     cmp #hamster_jam_static_animation - hamster_animations            ; 3f89: c9 37
     beq make_sound_for_block_landing_or_hamster_jam_landing           ; 3f8b: f0 45
@@ -1047,15 +1054,15 @@ c3f86
     beq make_sound_for_block_landing_or_hamster_jam_landing           ; 3f8f: f0 41
     ldx hamster_x                                                     ; 3f91: ae 71 0a
     lda hamster_direction                                             ; 3f94: ad 73 0a
-    bmi c3f9f                                                         ; 3f97: 30 06
+    bmi hamster_looking_left1                                         ; 3f97: 30 06
     cpx #$98                                                          ; 3f99: e0 98
-    bcc c3fa5                                                         ; 3f9b: 90 08
+    bcc hamster_just_killed                                           ; 3f9b: 90 08
     bcs make_sound_for_block_landing_or_hamster_jam_landing           ; 3f9d: b0 33
-c3f9f
+hamster_looking_left1
     cpx #$9c                                                          ; 3f9f: e0 9c
-    bcc c3fa5                                                         ; 3fa1: 90 02
+    bcc hamster_just_killed                                           ; 3fa1: 90 02
     bcs make_sound_for_block_landing_or_hamster_jam_landing           ; 3fa3: b0 2d
-c3fa5
+hamster_just_killed
     lda #hamster_jam_static_animation - hamster_animations            ; 3fa5: a9 37
     sta save_game_level_m_hamster_animation                           ; 3fa7: 8d 3f 0a
     lda #hamster_jam_flying - hamster_animations                      ; 3faa: a9 15
@@ -1067,6 +1074,7 @@ c3fa5
     lda desired_room_index                                            ; 3fb9: a5 30
     cmp #1                                                            ; 3fbb: c9 01
     bne position_rope_and_write_to_collision_map                      ; 3fbd: d0 29
+; hamster death sound
     lda #0                                                            ; 3fbf: a9 00
     ldx #<sound1                                                      ; 3fc1: a2 9f
     ldy #>sound1                                                      ; 3fc3: a0 45
@@ -1080,6 +1088,7 @@ make_sound_for_block_landing_or_hamster_jam_landing
     lda desired_room_index                                            ; 3fd2: a5 30
     cmp #1                                                            ; 3fd4: c9 01
     bne position_rope_and_write_to_collision_map                      ; 3fd6: d0 10
+; block landing sound
     lda #0                                                            ; 3fd8: a9 00
     ldx #<sound3                                                      ; 3fda: a2 73
     ldy #>sound3                                                      ; 3fdc: a0 45
@@ -1115,12 +1124,12 @@ position_rope_and_write_to_collision_map
 return2
     rts                                                               ; 4017: 60
 
-l4018
+unused_x_value
     !byte 0                                                           ; 4018: 00
-l4019
+unused_rope_spriteid
     !byte 0                                                           ; 4019: 00
 
-sub_c401a
+play_sound5
     lda #0                                                            ; 401a: a9 00
     ldx #<sound5                                                      ; 401c: a2 55
     ldy #>sound5                                                      ; 401e: a0 45
@@ -1139,38 +1148,40 @@ update_tulip_growth
     beq return3_local                                                 ; 402c: f0 f8
 ; check for first update in room (branch if not)
     lda update_room_first_update_flag                                 ; 402e: ad 2b 13
-    beq c4078                                                         ; 4031: f0 45
+    beq tulip_stalk_is_drawn                                          ; 4031: f0 45
 ; check for level change (branch if not)
     lda current_level                                                 ; 4033: a5 31
     cmp level_before_latest_level_and_room_initialisation             ; 4035: c5 51
-    beq c403e                                                         ; 4037: f0 05
+    beq draw_stalk_at_corrent_position                                ; 4037: f0 05
+; set tulip animation to finished growing
     lda #$45 ; 'E'                                                    ; 4039: a9 45
     sta save_game_level_m_tulip_growth_animation_index                ; 403b: 8d 49 0a
-c403e
+draw_stalk_at_corrent_position
     lda desired_room_index                                            ; 403e: a5 30
     cmp #1                                                            ; 4040: c9 01
-    bne c4078                                                         ; 4042: d0 34
+    bne tulip_stalk_is_drawn                                          ; 4042: d0 34
     lda save_game_level_m_tulip_growth_animation_index                ; 4044: ad 49 0a
     sec                                                               ; 4047: 38
     sbc #8                                                            ; 4048: e9 08
-    bcc c4078                                                         ; 404a: 90 2c
-    sta l0070                                                         ; 404c: 85 70
+    bcc tulip_stalk_is_drawn                                          ; 404a: 90 2c
+    sta temp_y                                                        ; 404c: 85 70
     ldy #$38 ; '8'                                                    ; 404e: a0 38
     sec                                                               ; 4050: 38
     sbc #$3b ; ';'                                                    ; 4051: e9 3b
-    bcs c405d                                                         ; 4053: b0 08
-    asl l0070                                                         ; 4055: 06 70
+    bcs calculate_y_position_of_top_of_stalk                          ; 4053: b0 08
+    asl temp_y                                                        ; 4055: 06 70
     lda #$ac                                                          ; 4057: a9 ac
     sec                                                               ; 4059: 38
-    sbc l0070                                                         ; 405a: e5 70
+    sbc temp_y                                                        ; 405a: e5 70
     tay                                                               ; 405c: a8
-c405d
+calculate_y_position_of_top_of_stalk
     tya                                                               ; 405d: 98
-    clc                                                               ; 405e: 18
-    tay                                                               ; 405f: a8
-    tya                                                               ; 4060: 98
+    clc                                                               ; 405e: 18                      ; redundant instruction
+    tay                                                               ; 405f: a8                      ; redundant instruction
+    tya                                                               ; 4060: 98                      ; redundant instruction
     and #7                                                            ; 4061: 29 07
     sta temp_sprite_y_offset                                          ; 4063: 85 3b
+; calculate cell y for stalk by dividing by eight
     tya                                                               ; 4065: 98
     lsr                                                               ; 4066: 4a
     lsr                                                               ; 4067: 4a
@@ -1180,18 +1191,18 @@ c405d
     lda #spriteid_tulip_stalk                                         ; 406c: a9 dd
 draw_tulip_stalk_loop
     cpy #$15                                                          ; 406e: c0 15
-    bcs c4078                                                         ; 4070: b0 06
+    bcs tulip_stalk_is_drawn                                          ; 4070: b0 06
     jsr draw_sprite_a_at_cell_xy                                      ; 4072: 20 4c 1f
     iny                                                               ; 4075: c8
     bne draw_tulip_stalk_loop                                         ; 4076: d0 f6
-c4078
+tulip_stalk_is_drawn
     lda desired_room_index                                            ; 4078: a5 30
     cmp #1                                                            ; 407a: c9 01
-    beq c4081                                                         ; 407c: f0 03
-loop_c407e
-    jmp c411c                                                         ; 407e: 4c 1c 41
+    beq update_tulip_head_object                                      ; 407c: f0 03
+increment_tulip_growth_animation_local
+    jmp increment_tulip_growth_animation                              ; 407e: 4c 1c 41
 
-c4081
+update_tulip_head_object
     lda #$40 ; '@'                                                    ; 4081: a9 40
     sta object_x_low + objectid_tulip_head                            ; 4083: 8d 56 09
     lda #0                                                            ; 4086: a9 00
@@ -1202,7 +1213,7 @@ c4081
     lda save_game_level_m_tulip_growth_animation_index                ; 4093: ad 49 0a
     sec                                                               ; 4096: 38
     sbc #8                                                            ; 4097: e9 08
-    bcc loop_c407e                                                    ; 4099: 90 e3
+    bcc increment_tulip_growth_animation_local                        ; 4099: 90 e3
     sta l0070                                                         ; 409b: 85 70
     lda #$ff                                                          ; 409d: a9 ff
     sta object_erase_type + objectid_tulip_head                       ; 409f: 8d b2 38
@@ -1211,7 +1222,7 @@ c4081
     lda l0070                                                         ; 40a7: a5 70
     sec                                                               ; 40a9: 38
     sbc #$3b ; ';'                                                    ; 40aa: e9 3b
-    bcs c40c5                                                         ; 40ac: b0 17
+    bcs update_tulip_flower                                           ; 40ac: b0 17
     asl l0070                                                         ; 40ae: 06 70
     lda #$ac                                                          ; 40b0: a9 ac
     sec                                                               ; 40b2: 38
@@ -1219,11 +1230,12 @@ c4081
     sta object_y_low + objectid_tulip_head                            ; 40b5: 8d 82 09
     lda #spriteid_tulip_head                                          ; 40b8: a9 dc
     sta object_spriteid + objectid_tulip_head                         ; 40ba: 8d ae 09
+; nothing to erase
     lda #spriteid_one_pixel_masked_out                                ; 40bd: a9 00
     sta object_spriteid_old + objectid_tulip_head                     ; 40bf: 8d b9 09
-    jmp c40e6                                                         ; 40c2: 4c e6 40
+    jmp set_tulip_collision_map                                       ; 40c2: 4c e6 40
 
-c40c5
+update_tulip_flower
     tay                                                               ; 40c5: a8
     lda tulip_flower_animation,y                                      ; 40c6: b9 23 40
     sta object_spriteid + objectid_tulip_head                         ; 40c9: 8d ae 09
@@ -1231,17 +1243,17 @@ c40c5
     sta object_y_low + objectid_tulip_head                            ; 40ce: 8d 82 09
     lda object_spriteid + objectid_tulip_head                         ; 40d1: ad ae 09
     cmp object_spriteid_old + objectid_tulip_head                     ; 40d4: cd b9 09
-    bne c40e1                                                         ; 40d7: d0 08
+    bne finished_animating_head_so_nothing_to_erase                   ; 40d7: d0 08
     lda object_y_low + objectid_tulip_head                            ; 40d9: ad 82 09
     cmp object_y_low_old + objectid_tulip_head                        ; 40dc: cd 8d 09
-    beq c40e6                                                         ; 40df: f0 05
-c40e1
+    beq set_tulip_collision_map                                       ; 40df: f0 05
+finished_animating_head_so_nothing_to_erase
     lda #spriteid_one_pixel_masked_out                                ; 40e1: a9 00
     sta object_spriteid_old + objectid_tulip_head                     ; 40e3: 8d b9 09
-c40e6
+set_tulip_collision_map
     lda object_y_low + objectid_tulip_head                            ; 40e6: ad 82 09
     cmp #$89                                                          ; 40e9: c9 89
-    bcs c411c                                                         ; 40eb: b0 2f
+    bcs increment_tulip_growth_animation                              ; 40eb: b0 2f
     ldx #8                                                            ; 40ed: a2 08
     ldy #2                                                            ; 40ef: a0 02
     lda #1                                                            ; 40f1: a9 01
@@ -1252,9 +1264,9 @@ c40e6
     sta value_to_write_to_collision_map                               ; 40fb: 85 3e
     jsr read_collision_map_value_for_xy                               ; 40fd: 20 fa 1e
     cmp value_to_write_to_collision_map                               ; 4100: c5 3e
-    beq c4107                                                         ; 4102: f0 03
+    beq set_tulip_head_collision_map                                  ; 4102: f0 03
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 4104: 20 44 1e
-c4107
+set_tulip_head_collision_map
     lda object_y_low + objectid_tulip_head                            ; 4107: ad 82 09
     sec                                                               ; 410a: 38
     sbc #6                                                            ; 410b: e9 06
@@ -1268,7 +1280,7 @@ c4107
     lda #collision_map_rope                                           ; 4117: a9 02
     jsr write_a_single_value_to_cell_in_collision_map                 ; 4119: 20 bb 1e
 ; check for first update in room (branch if so)
-c411c
+increment_tulip_growth_animation
     lda update_room_first_update_flag                                 ; 411c: ad 2b 13
     bne return3                                                       ; 411f: d0 0c
     lda save_game_level_m_tulip_growth_animation_index                ; 4121: ad 49 0a
@@ -1398,11 +1410,34 @@ room_2_check_right_exit
     ldy current_level                                                 ; 41c1: a4 31
     jmp initialise_level_and_room                                     ; 41c3: 4c 40 11
 
-l41c6
-    !byte   0,   0,   7,   7,   7,   6,   6,   5, $80,   4,   3,   2  ; 41c6: 00 00 07...
-    !byte   1, $80,   0, $80                                          ; 41d2: 01 80 00...
-l41d6
-    !byte   1,   2,   3,   4,   6,   8, $80                           ; 41d6: 01 02 03...
+tulip_bulb_x_animations
+tulip_bulb_x_animation0
+    !byte 0                                                           ; 41c6: 00
+    !byte 0                                                           ; 41c7: 00
+    !byte 7                                                           ; 41c8: 07
+    !byte 7                                                           ; 41c9: 07
+    !byte 7                                                           ; 41ca: 07
+    !byte 6                                                           ; 41cb: 06
+    !byte 6                                                           ; 41cc: 06
+    !byte 5                                                           ; 41cd: 05
+    !byte $80                                                         ; 41ce: 80
+tulip_bulb_x_animation1
+    !byte 4                                                           ; 41cf: 04
+    !byte 3                                                           ; 41d0: 03
+    !byte 2                                                           ; 41d1: 02
+    !byte 1                                                           ; 41d2: 01
+    !byte $80                                                         ; 41d3: 80
+tulip_bulb_x_animation2
+    !byte 0                                                           ; 41d4: 00
+    !byte $80                                                         ; 41d5: 80
+tulip_bulb_y_animations
+    !byte 1                                                           ; 41d6: 01
+    !byte 2                                                           ; 41d7: 02
+    !byte 3                                                           ; 41d8: 03
+    !byte 4                                                           ; 41d9: 04
+    !byte 6                                                           ; 41da: 06
+    !byte 8                                                           ; 41db: 08
+    !byte $80                                                         ; 41dc: 80
 
 return4
     rts                                                               ; 41dd: 60
@@ -1421,10 +1456,10 @@ room_2_update_handler
     bne return4                                                       ; 41f6: d0 e5
 ; check for first update in room (branch if so)
     lda update_room_first_update_flag                                 ; 41f8: ad 2b 13
-    bne c4200                                                         ; 41fb: d0 03
+    bne initialise_room_2                                             ; 41fb: d0 03
     jmp c4275                                                         ; 41fd: 4c 75 42
 
-c4200
+initialise_room_2
     lda #spriteid_tulip_bulb_menu_item                                ; 4200: a9 d8
     sta toolbar_collectable_spriteids+1                               ; 4202: 8d e9 2e
     lda #spriteid_tulip_bulb                                          ; 4205: a9 d9
@@ -1433,48 +1468,48 @@ c4200
 ; check for level change (branch if not)
     lda current_level                                                 ; 420d: a5 31
     cmp level_before_latest_level_and_room_initialisation             ; 420f: c5 51
-    beq c4244                                                         ; 4211: f0 31
+    beq room_change_only                                              ; 4211: f0 31
     lda save_game_level_m_got_tulip_bulb_progress                     ; 4213: ad 40 0a
-    beq c4220                                                         ; 4216: f0 08
-    bmi c4244                                                         ; 4218: 30 2a
-    dec l0a74                                                         ; 421a: ce 74 0a
-    jmp c4244                                                         ; 421d: 4c 44 42
+    beq initialise_tulip_bulb                                         ; 4216: f0 08
+    bmi room_change_only                                              ; 4218: 30 2a
+    dec tulip_bulb_steps_to_catch_up_while_offscreen                  ; 421a: ce 74 0a
+    jmp room_change_only                                              ; 421d: 4c 44 42
 
-c4220
+initialise_tulip_bulb
     lda #$a1                                                          ; 4220: a9 a1
     sta save_game_level_m_tulip_bulb_x_low                            ; 4222: 8d 42 0a
     lda #0                                                            ; 4225: a9 00
     sta save_game_level_m_tulip_bulb_x_high                           ; 4227: 8d 43 0a
     lda #1                                                            ; 422a: a9 01
-    sta save_game_level_m_tulip_bulb_direction                        ; 422c: 8d 45 0a
-    sta l0a47                                                         ; 422f: 8d 47 0a
+    sta save_game_level_m_tulip_bulb_direction1                       ; 422c: 8d 45 0a
+    sta save_game_level_m_tulip_bulb_direction2                       ; 422f: 8d 47 0a
     lda #$5b ; '['                                                    ; 4232: a9 5b
     sta save_game_level_m_tulip_bulb_y                                ; 4234: 8d 44 0a
     lda #2                                                            ; 4237: a9 02
-    sta l0a46                                                         ; 4239: 8d 46 0a
-    lda #$0e                                                          ; 423c: a9 0e
+    sta save_game_level_m_tulip_bulb_room                             ; 4239: 8d 46 0a
+    lda #tulip_bulb_x_animation2 - tulip_bulb_x_animations            ; 423c: a9 0e
     sta save_game_level_m_got_tulip_bulb_progress                     ; 423e: 8d 40 0a
-    sta l0a41                                                         ; 4241: 8d 41 0a
-c4244
+    sta save_game_level_m_tulip_bulb_x_animation_step                 ; 4241: 8d 41 0a
+room_change_only
     lda desired_room_index                                            ; 4244: a5 30
-    cmp l0a46                                                         ; 4246: cd 46 0a
-    bne c426d                                                         ; 4249: d0 22
+    cmp save_game_level_m_tulip_bulb_room                             ; 4246: cd 46 0a
+    bne hide_bulb1                                                    ; 4249: d0 22
     lda save_game_level_m_got_tulip_bulb_progress                     ; 424b: ad 40 0a
-    bmi c426d                                                         ; 424e: 30 1d
+    bmi hide_bulb1                                                    ; 424e: 30 1d
     jsr update_tulip_bulb_object                                      ; 4250: 20 80 44
-loop_c4253
+fast_forward_tulip_bulb
     lda desired_room_index                                            ; 4253: a5 30
-    cmp l0a46                                                         ; 4255: cd 46 0a
-    bne c426d                                                         ; 4258: d0 13
-    lda l0a74                                                         ; 425a: ad 74 0a
-    beq c426d                                                         ; 425d: f0 0e
-    dec l0a74                                                         ; 425f: ce 74 0a
-    ldx #6                                                            ; 4262: a2 06
+    cmp save_game_level_m_tulip_bulb_room                             ; 4255: cd 46 0a
+    bne hide_bulb1                                                    ; 4258: d0 13
+    lda tulip_bulb_steps_to_catch_up_while_offscreen                  ; 425a: ad 74 0a
+    beq hide_bulb1                                                    ; 425d: f0 0e
+    dec tulip_bulb_steps_to_catch_up_while_offscreen                  ; 425f: ce 74 0a
+    ldx #objectid_tulip_bulb                                          ; 4262: a2 06
     jsr copy_object_state_to_old                                      ; 4264: 20 f7 20
     jsr sub_c4371                                                     ; 4267: 20 71 43
-    jmp loop_c4253                                                    ; 426a: 4c 53 42
+    jmp fast_forward_tulip_bulb                                       ; 426a: 4c 53 42
 
-c426d
+hide_bulb1
     lda #spriteid_one_pixel_masked_out                                ; 426d: a9 00
     sta object_spriteid_old + objectid_tulip_bulb                     ; 426f: 8d b9 09
 c4272
@@ -1490,11 +1525,11 @@ c4275
     lda save_game_level_m_got_tulip_bulb_progress                     ; 4285: ad 40 0a
     bmi c429c                                                         ; 4288: 30 12
     lda desired_room_index                                            ; 428a: a5 30
-    cmp l0a46                                                         ; 428c: cd 46 0a
+    cmp save_game_level_m_tulip_bulb_room                             ; 428c: cd 46 0a
     beq c42e4                                                         ; 428f: f0 53
-    lda l0a74                                                         ; 4291: ad 74 0a
+    lda tulip_bulb_steps_to_catch_up_while_offscreen                  ; 4291: ad 74 0a
     bmi c4272                                                         ; 4294: 30 dc
-    inc l0a74                                                         ; 4296: ee 74 0a
+    inc tulip_bulb_steps_to_catch_up_while_offscreen                  ; 4296: ee 74 0a
     jmp return5                                                       ; 4299: 4c 70 43
 
 c429c
@@ -1505,10 +1540,10 @@ c429c
     beq c4272                                                         ; 42a6: f0 ca
     dec l44a8                                                         ; 42a8: ce a8 44
     lda desired_room_index                                            ; 42ab: a5 30
-    sta l0a46                                                         ; 42ad: 8d 46 0a
+    sta save_game_level_m_tulip_bulb_room                             ; 42ad: 8d 46 0a
     lda object_direction                                              ; 42b0: ad be 09
-    sta save_game_level_m_tulip_bulb_direction                        ; 42b3: 8d 45 0a
-    sta l0a47                                                         ; 42b6: 8d 47 0a
+    sta save_game_level_m_tulip_bulb_direction1                       ; 42b3: 8d 45 0a
+    sta save_game_level_m_tulip_bulb_direction2                       ; 42b6: 8d 47 0a
     lda object_x_low + objectid_player_accessory                      ; 42b9: ad 51 09
     sta save_game_level_m_tulip_bulb_x_low                            ; 42bc: 8d 42 0a
     lda object_x_high + objectid_player_accessory                     ; 42bf: ad 67 09
@@ -1516,10 +1551,10 @@ c429c
     lda object_y_low + objectid_player_accessory                      ; 42c5: ad 7d 09
     sta save_game_level_m_tulip_bulb_y                                ; 42c8: 8d 44 0a
     lda #1                                                            ; 42cb: a9 01
-    sta l0a41                                                         ; 42cd: 8d 41 0a
+    sta save_game_level_m_tulip_bulb_x_animation_step                 ; 42cd: 8d 41 0a
     sta save_game_level_m_got_tulip_bulb_progress                     ; 42d0: 8d 40 0a
     lda #0                                                            ; 42d3: a9 00
-    sta l0a48                                                         ; 42d5: 8d 48 0a
+    sta save_game_level_m_tulip_bulb_y_animation_step                 ; 42d5: 8d 48 0a
     jsr update_tulip_bulb_object                                      ; 42d8: 20 80 44
     ldx #objectid_tulip_bulb                                          ; 42db: a2 06
     jsr copy_object_state_to_old                                      ; 42dd: 20 f7 20
@@ -1528,10 +1563,10 @@ c429c
 c42e4
     jsr sub_c4371                                                     ; 42e4: 20 71 43
     lda desired_room_index                                            ; 42e7: a5 30
-    cmp l0a46                                                         ; 42e9: cd 46 0a
+    cmp save_game_level_m_tulip_bulb_room                             ; 42e9: cd 46 0a
     beq c42f3                                                         ; 42ec: f0 05
     lda #0                                                            ; 42ee: a9 00
-    sta l0a74                                                         ; 42f0: 8d 74 0a
+    sta tulip_bulb_steps_to_catch_up_while_offscreen                  ; 42f0: 8d 74 0a
 c42f3
     lda l44aa                                                         ; 42f3: ad aa 44
     sta object_spriteid_old + objectid_tulip_bulb                     ; 42f6: 8d b9 09
@@ -1555,25 +1590,25 @@ c4313
 
 c4320
     lda l44a8                                                         ; 4320: ad a8 44
-    beq c4334                                                         ; 4323: f0 0f
+    beq check_for_bulb_movement                                       ; 4323: f0 0f
     lda #spriteid_tulip_bulb_menu_item                                ; 4325: a9 d8
     jsr remove_item_from_toolbar_menu                                 ; 4327: 20 e0 2b
-    lda #0                                                            ; 432a: a9 00
+    lda #spriteid_one_pixel_masked_out                                ; 432a: a9 00
     sta object_spriteid + objectid_player_accessory                   ; 432c: 8d a9 09
     sta player_using_object_spriteid                                  ; 432f: 8d b6 2e
     sta player_held_object_spriteid                                   ; 4332: 85 52
-c4334
+check_for_bulb_movement
     lda object_x_low + objectid_tulip_bulb                            ; 4334: ad 56 09
     cmp object_x_low_old + objectid_tulip_bulb                        ; 4337: cd 61 09
     beq check_for_bulb_movement_in_y                                  ; 433a: f0 1a
-    lda l0a47                                                         ; 433c: ad 47 0a
-    bmi c4347                                                         ; 433f: 30 06
+    lda save_game_level_m_tulip_bulb_direction2                       ; 433c: ad 47 0a
+    bmi moving_bulb_left                                              ; 433f: 30 06
     inc temp_right_offset                                             ; 4341: ee d1 24
-    jmp c434a                                                         ; 4344: 4c 4a 43
+    jmp moving_bulb                                                   ; 4344: 4c 4a 43
 
-c4347
+moving_bulb_left
     dec temp_left_offset                                              ; 4347: ce d0 24
-c434a
+moving_bulb
     lda #1                                                            ; 434a: a9 01
     sta temp_bottom_offset                                            ; 434c: 8d 51 25
     lda #objectid_tulip_bulb                                          ; 434f: a9 06
@@ -1596,97 +1631,97 @@ return5
     rts                                                               ; 4370: 60
 
 sub_c4371
-    lda l0a46                                                         ; 4371: ad 46 0a
+    lda save_game_level_m_tulip_bulb_room                             ; 4371: ad 46 0a
     cmp #1                                                            ; 4374: c9 01
-    bne c4390                                                         ; 4376: d0 18
+    bne move_bulb_in_x                                                ; 4376: d0 18
     ldx #objectid_old_tulip_bulb                                      ; 4378: a2 11
     ldy #objectid_hamster_feet_or_jam                                 ; 437a: a0 05
     jsr test_for_collision_between_objects_x_and_y                    ; 437c: 20 e2 28
-    beq c4390                                                         ; 437f: f0 0f
+    beq move_bulb_in_x                                                ; 437f: f0 0f
 ; the tulip bulb is planted in the ground with hamster jam
     lda #spriteid_one_pixel_masked_out                                ; 4381: a9 00
     sta object_spriteid + objectid_tulip_bulb                         ; 4383: 8d ae 09
     lda #1                                                            ; 4386: a9 01
     sta save_game_level_m_tulip_growth_animation_index                ; 4388: 8d 49 0a
     lda #0                                                            ; 438b: a9 00
-    sta l0a74                                                         ; 438d: 8d 74 0a
-c4390
-    lda l0a41                                                         ; 4390: ad 41 0a
+    sta tulip_bulb_steps_to_catch_up_while_offscreen                  ; 438d: 8d 74 0a
+move_bulb_in_x
+    lda save_game_level_m_tulip_bulb_x_animation_step                 ; 4390: ad 41 0a
     clc                                                               ; 4393: 18
     adc #1                                                            ; 4394: 69 01
     tay                                                               ; 4396: a8
-    lda l41c6,y                                                       ; 4397: b9 c6 41
+    lda tulip_bulb_x_animations,y                                     ; 4397: b9 c6 41
     cmp #$80                                                          ; 439a: c9 80
-    bne c43a1                                                         ; 439c: d0 03
+    bne check_animation                                               ; 439c: d0 03
     ldy save_game_level_m_got_tulip_bulb_progress                     ; 439e: ac 40 0a
-c43a1
+check_animation
     lda save_game_level_m_got_tulip_bulb_progress                     ; 43a1: ad 40 0a
-    cmp #1                                                            ; 43a4: c9 01
+    cmp #tulip_bulb_x_animation0 + 1 - tulip_bulb_x_animations        ; 43a4: c9 01
     bne c43b5                                                         ; 43a6: d0 0d
     cpy save_game_level_m_got_tulip_bulb_progress                     ; 43a8: cc 40 0a
-    bne c43cf                                                         ; 43ab: d0 22
-    ldy #9                                                            ; 43ad: a0 09
+    bne set_bulb_animation_step                                       ; 43ab: d0 22
+    ldy #tulip_bulb_x_animation1 - tulip_bulb_x_animations            ; 43ad: a0 09
     sty save_game_level_m_got_tulip_bulb_progress                     ; 43af: 8c 40 0a
-    jmp c43cf                                                         ; 43b2: 4c cf 43
+    jmp set_bulb_animation_step                                       ; 43b2: 4c cf 43
 
 c43b5
-    cpy #9                                                            ; 43b5: c0 09
+    cpy #tulip_bulb_x_animation1 - tulip_bulb_x_animations            ; 43b5: c0 09
     bne c43be                                                         ; 43b7: d0 05
     ldy #$0e                                                          ; 43b9: a0 0e
     sty save_game_level_m_got_tulip_bulb_progress                     ; 43bb: 8c 40 0a
 c43be
-    lda #6                                                            ; 43be: a9 06
+    lda #objectid_tulip_bulb                                          ; 43be: a9 06
     jsr update_object_hitting_floor                                   ; 43c0: 20 70 27
-    beq c43cf                                                         ; 43c3: f0 0a
+    beq set_bulb_animation_step                                       ; 43c3: f0 0a
     lda object_just_fallen_off_edge_direction                         ; 43c5: ad 90 28
-    beq c43cf                                                         ; 43c8: f0 05
+    beq set_bulb_animation_step                                       ; 43c8: f0 05
     ldy #9                                                            ; 43ca: a0 09
     sty save_game_level_m_got_tulip_bulb_progress                     ; 43cc: 8c 40 0a
-c43cf
-    sty l0a41                                                         ; 43cf: 8c 41 0a
-    lda l41c6,y                                                       ; 43d2: b9 c6 41
-    ldx l0a47                                                         ; 43d5: ae 47 0a
-    bpl c43df                                                         ; 43d8: 10 05
+set_bulb_animation_step
+    sty save_game_level_m_tulip_bulb_x_animation_step                 ; 43cf: 8c 41 0a
+    lda tulip_bulb_x_animations,y                                     ; 43d2: b9 c6 41
+    ldx save_game_level_m_tulip_bulb_direction2                       ; 43d5: ae 47 0a
+    bpl sign_extending_a_to_ax                                        ; 43d8: 10 05
     eor #$ff                                                          ; 43da: 49 ff
     clc                                                               ; 43dc: 18
     adc #1                                                            ; 43dd: 69 01
-c43df
+sign_extending_a_to_ax
     ldx #0                                                            ; 43df: a2 00
     ora #0                                                            ; 43e1: 09 00
-    bpl c43e6                                                         ; 43e3: 10 01
+    bpl move_bulb_x_position                                          ; 43e3: 10 01
     dex                                                               ; 43e5: ca
-c43e6
+move_bulb_x_position
     clc                                                               ; 43e6: 18
     adc save_game_level_m_tulip_bulb_x_low                            ; 43e7: 6d 42 0a
     sta save_game_level_m_tulip_bulb_x_low                            ; 43ea: 8d 42 0a
     txa                                                               ; 43ed: 8a
     adc save_game_level_m_tulip_bulb_x_high                           ; 43ee: 6d 43 0a
     sta save_game_level_m_tulip_bulb_x_high                           ; 43f1: 8d 43 0a
-    ldy l0a48                                                         ; 43f4: ac 48 0a
+    ldy save_game_level_m_tulip_bulb_y_animation_step                 ; 43f4: ac 48 0a
     lda #2                                                            ; 43f7: a9 02
     sta temp_bottom_offset                                            ; 43f9: 8d 51 25
-    lda #6                                                            ; 43fc: a9 06
+    lda #objectid_tulip_bulb                                          ; 43fc: a9 06
     jsr get_solid_rock_collision_for_object_a                         ; 43fe: 20 94 28
-    beq c440f                                                         ; 4401: f0 0c
+    beq update_bulb_y_position                                        ; 4401: f0 0c
     ldy #0                                                            ; 4403: a0 00
     lda save_game_level_m_got_tulip_bulb_progress                     ; 4405: ad 40 0a
-    cmp #$0e                                                          ; 4408: c9 0e
-    bne c440f                                                         ; 440a: d0 03
-    sty l0a74                                                         ; 440c: 8c 74 0a
-c440f
-    lda l41d6,y                                                       ; 440f: b9 d6 41
+    cmp #tulip_bulb_x_animation2 - tulip_bulb_x_animations            ; 4408: c9 0e
+    bne update_bulb_y_position                                        ; 440a: d0 03
+    sty tulip_bulb_steps_to_catch_up_while_offscreen                  ; 440c: 8c 74 0a
+update_bulb_y_position
+    lda tulip_bulb_y_animations,y                                     ; 440f: b9 d6 41
     clc                                                               ; 4412: 18
     adc save_game_level_m_tulip_bulb_y                                ; 4413: 6d 44 0a
     sta save_game_level_m_tulip_bulb_y                                ; 4416: 8d 44 0a
     iny                                                               ; 4419: c8
-    lda l41d6,y                                                       ; 441a: b9 d6 41
+    lda tulip_bulb_y_animations,y                                     ; 441a: b9 d6 41
     cmp #$80                                                          ; 441d: c9 80
-    bne c4422                                                         ; 441f: d0 01
+    bne save_bulb_animation_step                                      ; 441f: d0 01
     dey                                                               ; 4421: 88
-c4422
-    sty l0a48                                                         ; 4422: 8c 48 0a
+save_bulb_animation_step
+    sty save_game_level_m_tulip_bulb_y_animation_step                 ; 4422: 8c 48 0a
     jsr update_tulip_bulb_object                                      ; 4425: 20 80 44
-    lda #6                                                            ; 4428: a9 06
+    lda #objectid_tulip_bulb                                          ; 4428: a9 06
     jsr update_object_a_solid_rock_collision                          ; 442a: 20 f5 25
     lda object_x_low + objectid_tulip_bulb                            ; 442d: ad 56 09
     sta save_game_level_m_tulip_bulb_x_low                            ; 4430: 8d 42 0a
@@ -1694,13 +1729,14 @@ c4422
     sta save_game_level_m_tulip_bulb_x_high                           ; 4436: 8d 43 0a
     lda object_y_low + objectid_tulip_bulb                            ; 4439: ad 82 09
     sta save_game_level_m_tulip_bulb_y                                ; 443c: 8d 44 0a
-    ldx #6                                                            ; 443f: a2 06
+    ldx #objectid_tulip_bulb                                          ; 443f: a2 06
     jsr find_left_and_right_of_object                                 ; 4441: 20 34 24
-    lda l0a47                                                         ; 4444: ad 47 0a
-    bmi c4465                                                         ; 4447: 30 1c
-    lda l0078                                                         ; 4449: a5 78
-    cmp #$28 ; '('                                                    ; 444b: c9 28
+    lda save_game_level_m_tulip_bulb_direction2                       ; 4444: ad 47 0a
+    bmi move_bulb_one_room_left                                       ; 4447: 30 1c
+    lda object_left_cell_x                                            ; 4449: a5 78
+    cmp #game_area_width_cells                                        ; 444b: c9 28
     bcc return6                                                       ; 444d: 90 30
+; move bulb to next room to the right
     lda save_game_level_m_tulip_bulb_x_low                            ; 444f: ad 42 0a
     sec                                                               ; 4452: 38
     sbc #$40 ; '@'                                                    ; 4453: e9 40
@@ -1708,11 +1744,11 @@ c4422
     lda #0                                                            ; 4458: a9 00
     sbc #0                                                            ; 445a: e9 00
     sta save_game_level_m_tulip_bulb_x_high                           ; 445c: 8d 43 0a
-    inc l0a46                                                         ; 445f: ee 46 0a
-    jmp c447a                                                         ; 4462: 4c 7a 44
+    inc save_game_level_m_tulip_bulb_room                             ; 445f: ee 46 0a
+    jmp hide_bulb                                                     ; 4462: 4c 7a 44
 
-c4465
-    lda l0079                                                         ; 4465: a5 79
+move_bulb_one_room_left
+    lda object_right_cell_x                                           ; 4465: a5 79
     bpl return6                                                       ; 4467: 10 16
     lda save_game_level_m_tulip_bulb_x_low                            ; 4469: ad 42 0a
     clc                                                               ; 446c: 18
@@ -1720,8 +1756,8 @@ c4465
     sta save_game_level_m_tulip_bulb_x_low                            ; 446f: 8d 42 0a
     lda #1                                                            ; 4472: a9 01
     sta save_game_level_m_tulip_bulb_x_high                           ; 4474: 8d 43 0a
-    dec l0a46                                                         ; 4477: ce 46 0a
-c447a
+    dec save_game_level_m_tulip_bulb_room                             ; 4477: ce 46 0a
+hide_bulb
     lda #spriteid_one_pixel_masked_out                                ; 447a: a9 00
     sta object_spriteid + objectid_tulip_bulb                         ; 447c: 8d ae 09
 return6
@@ -1740,7 +1776,7 @@ update_tulip_bulb_object
     sta object_y_low + objectid_tulip_bulb                            ; 4499: 8d 82 09
     lda #spriteid_tulip_bulb                                          ; 449c: a9 d9
     sta object_spriteid + objectid_tulip_bulb                         ; 449e: 8d ae 09
-    lda save_game_level_m_tulip_bulb_direction                        ; 44a1: ad 45 0a
+    lda save_game_level_m_tulip_bulb_direction1                       ; 44a1: ad 45 0a
     sta object_direction + objectid_tulip_bulb                        ; 44a4: 8d c4 09
     rts                                                               ; 44a7: 60
 
@@ -1995,29 +2031,6 @@ sprite_data
 pydis_end
 
 ; Automatically generated labels:
-;     c3e7d
-;     c3e94
-;     c3ed0
-;     c3f03
-;     c3f3e
-;     c3f55
-;     c3f73
-;     c3f86
-;     c3f9f
-;     c3fa5
-;     c403e
-;     c405d
-;     c4078
-;     c4081
-;     c40c5
-;     c40e1
-;     c40e6
-;     c4107
-;     c411c
-;     c4200
-;     c4220
-;     c4244
-;     c426d
 ;     c4272
 ;     c4275
 ;     c429c
@@ -2025,37 +2038,11 @@ pydis_end
 ;     c42f3
 ;     c4313
 ;     c4320
-;     c4334
-;     c4347
-;     c434a
-;     c4390
-;     c43a1
 ;     c43b5
 ;     c43be
-;     c43cf
-;     c43df
-;     c43e6
-;     c440f
-;     c4422
-;     c4465
-;     c447a
-;     l0078
-;     l0079
-;     l0a41
-;     l0a46
-;     l0a47
-;     l0a48
-;     l0a74
-;     l4018
-;     l4019
-;     l41c6
-;     l41d6
 ;     l44a8
 ;     l44a9
 ;     l44aa
-;     loop_c407e
-;     loop_c4253
-;     sub_c401a
 ;     sub_c4371
 !if (<envelope1) != $47 {
     !error "Assertion failed: <envelope1 == $47"
@@ -2132,6 +2119,9 @@ pydis_end
 !if (exit_room_right) != $04 {
     !error "Assertion failed: exit_room_right == $04"
 }
+!if (game_area_width_cells) != $28 {
+    !error "Assertion failed: game_area_width_cells == $28"
+}
 !if (hamster_jam_flying - hamster_animations) != $15 {
     !error "Assertion failed: hamster_jam_flying - hamster_animations == $15"
 }
@@ -2158,6 +2148,15 @@ pydis_end
 }
 !if (level_specific_update) != $3b11 {
     !error "Assertion failed: level_specific_update == $3b11"
+}
+!if (monkey_climb_animation - monkey_base_animation) != $51 {
+    !error "Assertion failed: monkey_climb_animation - monkey_base_animation == $51"
+}
+!if (monkey_climb_down_animation - monkey_base_animation) != $49 {
+    !error "Assertion failed: monkey_climb_down_animation - monkey_base_animation == $49"
+}
+!if (monkey_climb_idle_animation - monkey_base_animation) != $45 {
+    !error "Assertion failed: monkey_climb_idle_animation - monkey_base_animation == $45"
 }
 !if (object_direction + objectid_hamster_body) != $09c5 {
     !error "Assertion failed: object_direction + objectid_hamster_body == $09c5"
@@ -2410,4 +2409,13 @@ pydis_end
 }
 !if (spriteid_tulip_stalk) != $dd {
     !error "Assertion failed: spriteid_tulip_stalk == $dd"
+}
+!if (tulip_bulb_x_animation0 + 1 - tulip_bulb_x_animations) != $01 {
+    !error "Assertion failed: tulip_bulb_x_animation0 + 1 - tulip_bulb_x_animations == $01"
+}
+!if (tulip_bulb_x_animation1 - tulip_bulb_x_animations) != $09 {
+    !error "Assertion failed: tulip_bulb_x_animation1 - tulip_bulb_x_animations == $09"
+}
+!if (tulip_bulb_x_animation2 - tulip_bulb_x_animations) != $0e {
+    !error "Assertion failed: tulip_bulb_x_animation2 - tulip_bulb_x_animations == $0e"
 }
