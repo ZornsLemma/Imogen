@@ -99,7 +99,7 @@ label(0x0a45, "save_game_level_m_tulip_bulb_direction1")
 label(0x0a46, "save_game_level_m_tulip_bulb_room")
 label(0x0a47, "save_game_level_m_tulip_bulb_direction2")
 label(0x0a48, "save_game_level_m_tulip_bulb_y_animation_step")
-label(0x0a49, "save_game_level_m_tulip_growth_animation_index")
+label(0x0a49, "save_game_level_m_tulip_growth_index")
 
 label(0x0a6f, "block_y_position")
 label(0x0a70, "hamster_animation_step")
@@ -370,14 +370,25 @@ expr(0x4263, "objectid_tulip_bulb")
 label(0x426d, "hide_bulb1")
 expr(0x426e, sprite_dict)
 expr(0x4270, "object_spriteid_old + objectid_tulip_bulb")
+label(0x4272, "return5_local")
+label(0x4275, "room_2_not_first_update")
 expr(0x4280, "object_spriteid_old + objectid_tulip_bulb")
+label(0x429c, "player_is_holding_tulip_bulb")
+expr(0x429d, sprite_dict)
+comment(0x42a8, "player just used the tulip bulb")
+comment(0x42ad, "set up tulip bulb object")
+expr(0x42cc, "tulip_bulb_x_animation0 - tulip_bulb_x_animations")
 expr(0x42dc, "objectid_tulip_bulb")
+label(0x42e4, "tulip_is_in_current_room")
+label(0x42f3, "check_for_tulib_bulb_player_collision")
 expr(0x42f7, "object_spriteid_old + objectid_tulip_bulb")
 expr(0x42fa, "objectid_old_player")
 expr(0x42fc, "objectid_tulip_bulb")
 expr(0x430f, sprite_dict)
+label(0x4313, "take_bulb")
 expr(0x4314, sprite_dict)
 expr(0x4316, "object_spriteid + objectid_tulip_bulb")
+label(0x4320, "check_if_bulb_just_used")
 expr(0x4326, sprite_dict)
 expr(0x432b, sprite_dict)
 label(0x4334, "check_for_bulb_movement")
@@ -393,19 +404,23 @@ comment(0x435e, "check for room collision")
 expr(0x4367, "objectid_tulip_bulb")
 label(0x436d, "bulb_landed")
 label(0x4370, "return5")
+label(0x4371, "update_tulip")
 expr(0x4379, "objectid_old_tulip_bulb")
 expr(0x437b, "objectid_hamster_feet_or_jam")
 comment(0x4381, "the tulip bulb is planted in the ground with hamster jam")
 expr(0x4382, sprite_dict)
 expr(0x4384, "object_spriteid + objectid_tulip_bulb")
+comment(0x4386, "start growing")
 label(0x4390, "move_bulb_x_position1")
 label(0x43a1, "check_animation")
 expr(0x43a5, "tulip_bulb_x_animation0 - tulip_bulb_x_animations")
 expr(0x43ae, "tulip_bulb_x_animation1 - tulip_bulb_x_animations")
+label(0x43b5, "check_if_tulip_bulb_x_animation1")
 expr(0x43b6, "tulip_bulb_x_animation1 - tulip_bulb_x_animations")
-expr(0x43cb, "tulip_bulb_x_animation1 - tulip_bulb_x_animations")
 expr(0x43ba, "tulip_bulb_x_animation2 - tulip_bulb_x_animations")
+label(0x43be, "update_bulb_animation")
 expr(0x43bf, "objectid_tulip_bulb")
+expr(0x43cb, "tulip_bulb_x_animation1 - tulip_bulb_x_animations")
 label(0x43cf, "set_bulb_animation_step")
 label(0x43df, "sign_extending_a_to_ax")
 label(0x43e6, "move_bulb_x_position2")
@@ -435,26 +450,78 @@ expr(0x449a, "object_y_low + objectid_tulip_bulb")
 expr(0x449d, sprite_dict)
 expr(0x449f, "object_spriteid + objectid_tulip_bulb")
 expr(0x44a5, "object_direction + objectid_tulip_bulb")
-expr(0x4503, sprite_dict)
-label(0x4539, "room_3_update_handler")
-expr(0x4543, "objectid_fire2")
-label(0x4371, "update_tulip")
-comment(0x4386, "start growing")
+label(0x44a8, "player_just_used_tulip_bulb_flag")
+label(0x44a9, "remember_player_help_sprite")
 byte(0x44ab)
 comment(0x44ab, "unused", inline=True)
 label(0x44aa, "remember_old_tulip_bulb_sprite")
-expr(0x429d, sprite_dict)
-label(0x4272, "return5_local")
-label(0x4275, "room_2_not_first_update")
-label(0x429c, "player_is_holding_tulip_bulb")
-label(0x42e4, "tulip_is_in_current_room")
-label(0x44a8, "player_just_used_tulip_bulb_flag")
-comment(0x42a8, "player just used the tulip bulb")
-comment(0x42ad, "set up tulip bulb object")
-expr(0x42cc, "tulip_bulb_x_animation0 - tulip_bulb_x_animations")
+expr(0x4503, sprite_dict)
+label(0x4539, "room_3_update_handler")
+expr(0x4543, "objectid_fire2")
 
 for i in range(0x41c6,0x41dd):
     byte(i)
+
+
+
+print("""; *************************************************************************************
+;
+; Level M: 'HAMSTER-JAM'
+;
+; Save game variables:
+;
+;     save_game_level_m_hamster_animation                        ($0a3f):
+;               0: untouched
+;              1+: animations for hamster
+;             $3b: hamster jam landed
+;
+;     save_game_level_m_got_tulip_bulb_progress                  ($0a40):
+;               0: untouched
+;        1, 9, 14: tulip bulb animations
+;             $ff: taken
+;
+;     save_game_level_m_tulip_bulb_x_animation_step              ($0a41):
+;               step within animations above
+;
+;     save_game_level_m_tulip_bulb_x_low                         ($0a42):
+;     save_game_level_m_tulip_bulb_x_high                        ($0a43):
+;               position of tulip bulb (x coordinate)
+;
+;     save_game_level_m_tulip_bulb_y                             ($0a44):
+;               position of tulip bulb (y coordinate)
+;
+;     save_game_level_m_tulip_bulb_direction1                    ($0a45):
+;                 1: pointing right
+;               $ff: pointing left
+;
+;     save_game_level_m_tulip_bulb_room                          ($0a46):
+;               room that the tulip bulb is in
+;
+;     save_game_level_m_tulip_bulb_direction2                    ($0a47):
+;               same as save_game_level_m_tulip_bulb_direction1
+;
+;     save_game_level_m_tulip_bulb_y_animation_step              ($0a48):
+;               animation step for a falling tulip bulb
+;
+;     save_game_level_m_tulip_growth_index                       ($0a49):
+;               0: not growing
+;           1-$44: growing
+;             $45: fully grown
+;
+; Solution:
+;
+;   1. Jump on the block to the right as the cat, and between the cat and the monkey
+;      traverse the rest of the obstacles to exit the room.
+;   2. Get the tulip bulb under the sign. Exit to the left using the middle exit.
+;   3. Climb onto the rope and descend to the bottom. Time falling off the rope
+;      to squash the hamster.
+;   4. Drop the tulip bulb onto the hamster jam. (A tulip grows)
+;   5. Climb the tulip to exit the room to the left.
+;   6. Climb the three ropes, and turn into the cat on the final block.
+;   7. Jump across to collect the spell.
+;
+; *************************************************************************************
+""")
 
 result = go(False)
 result = remove_sprite_data(result)

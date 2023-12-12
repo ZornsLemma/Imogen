@@ -1,3 +1,61 @@
+; *************************************************************************************
+;
+; Level M: 'HAMSTER-JAM'
+;
+; Save game variables:
+;
+;     save_game_level_m_hamster_animation                        ($0a3f):
+;               0: untouched
+;              1+: animations for hamster
+;             $3b: hamster jam landed
+;
+;     save_game_level_m_got_tulip_bulb_progress                  ($0a40):
+;               0: untouched
+;        1, 9, 14: tulip bulb animations
+;             $ff: taken
+;
+;     save_game_level_m_tulip_bulb_x_animation_step              ($0a41):
+;               step within animations above
+;
+;     save_game_level_m_tulip_bulb_x_low                         ($0a42):
+;     save_game_level_m_tulip_bulb_x_high                        ($0a43):
+;               position of tulip bulb (x coordinate)
+;
+;     save_game_level_m_tulip_bulb_y                             ($0a44):
+;               position of tulip bulb (y coordinate)
+;
+;     save_game_level_m_tulip_bulb_direction1                    ($0a45):
+;                 1: pointing right
+;               $ff: pointing left
+;
+;     save_game_level_m_tulip_bulb_room                          ($0a46):
+;               room that the tulip bulb is in
+;
+;     save_game_level_m_tulip_bulb_direction2                    ($0a47):
+;               same as save_game_level_m_tulip_bulb_direction1
+;
+;     save_game_level_m_tulip_bulb_y_animation_step              ($0a48):
+;               animation step for a falling tulip bulb
+;
+;     save_game_level_m_tulip_growth_index                       ($0a49):
+;               0: not growing
+;           1-$44: growing
+;             $45: fully grown
+;
+; Solution:
+;
+;   1. Jump on the block to the right as the cat, and between the cat and the monkey
+;      traverse the rest of the obstacles to exit the room.
+;   2. Get the tulip bulb under the sign. Exit to the left using the middle exit.
+;   3. Climb onto the rope and descend to the bottom. Time falling off the rope
+;      to squash the hamster.
+;   4. Drop the tulip bulb onto the hamster jam. (A tulip grows)
+;   5. Climb the tulip to exit the room to the left.
+;   6. Climb the three ropes, and turn into the cat on the final block.
+;   7. Jump across to collect the spell.
+;
+; *************************************************************************************
+
 ; Constants
 collision_map_none                    = 0
 collision_map_out_of_bounds           = 255
@@ -214,7 +272,7 @@ save_game_level_m_tulip_bulb_direction1             = $0a45
 save_game_level_m_tulip_bulb_room                   = $0a46
 save_game_level_m_tulip_bulb_direction2             = $0a47
 save_game_level_m_tulip_bulb_y_animation_step       = $0a48
-save_game_level_m_tulip_growth_animation_index      = $0a49
+save_game_level_m_tulip_growth_index                = $0a49
 block_y_position                                    = $0a6f
 hamster_animation_step                              = $0a70
 hamster_x                                           = $0a71
@@ -1144,7 +1202,7 @@ return3_local
     jmp return3                                                       ; 4026: 4c 2d 41
 
 update_tulip_growth
-    lda save_game_level_m_tulip_growth_animation_index                ; 4029: ad 49 0a
+    lda save_game_level_m_tulip_growth_index                          ; 4029: ad 49 0a
     beq return3_local                                                 ; 402c: f0 f8
 ; check for first update in room (branch if not)
     lda update_room_first_update_flag                                 ; 402e: ad 2b 13
@@ -1155,12 +1213,12 @@ update_tulip_growth
     beq draw_stalk_at_corrent_position                                ; 4037: f0 05
 ; set tulip animation to finished growing
     lda #$45 ; 'E'                                                    ; 4039: a9 45
-    sta save_game_level_m_tulip_growth_animation_index                ; 403b: 8d 49 0a
+    sta save_game_level_m_tulip_growth_index                          ; 403b: 8d 49 0a
 draw_stalk_at_corrent_position
     lda desired_room_index                                            ; 403e: a5 30
     cmp #1                                                            ; 4040: c9 01
     bne tulip_stalk_is_drawn                                          ; 4042: d0 34
-    lda save_game_level_m_tulip_growth_animation_index                ; 4044: ad 49 0a
+    lda save_game_level_m_tulip_growth_index                          ; 4044: ad 49 0a
     sec                                                               ; 4047: 38
     sbc #8                                                            ; 4048: e9 08
     bcc tulip_stalk_is_drawn                                          ; 404a: 90 2c
@@ -1210,7 +1268,7 @@ update_tulip_head_object
     sta object_spriteid + objectid_tulip_head                         ; 408b: 8d ae 09
     lda #1                                                            ; 408e: a9 01
     sta object_direction + objectid_tulip_head                        ; 4090: 8d c4 09
-    lda save_game_level_m_tulip_growth_animation_index                ; 4093: ad 49 0a
+    lda save_game_level_m_tulip_growth_index                          ; 4093: ad 49 0a
     sec                                                               ; 4096: 38
     sbc #8                                                            ; 4097: e9 08
     bcc increment_tulip_growth_animation_local                        ; 4099: 90 e3
@@ -1283,11 +1341,11 @@ set_tulip_head_collision_map
 increment_tulip_growth_animation
     lda update_room_first_update_flag                                 ; 411c: ad 2b 13
     bne return3                                                       ; 411f: d0 0c
-    lda save_game_level_m_tulip_growth_animation_index                ; 4121: ad 49 0a
+    lda save_game_level_m_tulip_growth_index                          ; 4121: ad 49 0a
     beq return3                                                       ; 4124: f0 07
     cmp #$45 ; 'E'                                                    ; 4126: c9 45
     beq return3                                                       ; 4128: f0 03
-    inc save_game_level_m_tulip_growth_animation_index                ; 412a: ee 49 0a
+    inc save_game_level_m_tulip_growth_index                          ; 412a: ee 49 0a
 return3
     rts                                                               ; 412d: 60
 
@@ -1452,7 +1510,7 @@ room_2_update_handler
     ldx #$25 ; '%'                                                    ; 41ec: a2 25
     lda #objectid_fire2                                               ; 41ee: a9 03
     jsr update_brazier_and_fire                                       ; 41f0: 20 88 19
-    lda save_game_level_m_tulip_growth_animation_index                ; 41f3: ad 49 0a
+    lda save_game_level_m_tulip_growth_index                          ; 41f3: ad 49 0a
     bne return4                                                       ; 41f6: d0 e5
 ; check for first update in room (branch if so)
     lda update_room_first_update_flag                                 ; 41f8: ad 2b 13
@@ -1519,7 +1577,7 @@ room_2_not_first_update
     lda #0                                                            ; 4275: a9 00
     sta player_just_used_tulip_bulb_flag                              ; 4277: 8d a8 44
     lda player_held_object_spriteid                                   ; 427a: a5 52
-    sta l44a9                                                         ; 427c: 8d a9 44
+    sta remember_player_help_sprite                                   ; 427c: 8d a9 44
     lda object_spriteid_old + objectid_tulip_bulb                     ; 427f: ad b9 09
     sta remember_old_tulip_bulb_sprite                                ; 4282: 8d aa 44
     lda save_game_level_m_got_tulip_bulb_progress                     ; 4285: ad 40 0a
@@ -1566,31 +1624,31 @@ tulip_is_in_current_room
     jsr update_tulip                                                  ; 42e4: 20 71 43
     lda desired_room_index                                            ; 42e7: a5 30
     cmp save_game_level_m_tulip_bulb_room                             ; 42e9: cd 46 0a
-    beq c42f3                                                         ; 42ec: f0 05
+    beq check_for_tulib_bulb_player_collision                         ; 42ec: f0 05
     lda #0                                                            ; 42ee: a9 00
     sta tulip_bulb_steps_to_catch_up_while_offscreen                  ; 42f0: 8d 74 0a
-c42f3
+check_for_tulib_bulb_player_collision
     lda remember_old_tulip_bulb_sprite                                ; 42f3: ad aa 44
     sta object_spriteid_old + objectid_tulip_bulb                     ; 42f6: 8d b9 09
     ldx #objectid_old_player                                          ; 42f9: a2 0b
     ldy #objectid_tulip_bulb                                          ; 42fb: a0 06
     jsr test_for_collision_between_objects_x_and_y                    ; 42fd: 20 e2 28
-    ldx l44a9                                                         ; 4300: ae a9 44
+    ldx remember_player_help_sprite                                   ; 4300: ae a9 44
     stx player_held_object_spriteid                                   ; 4303: 86 52
     ora #0                                                            ; 4305: 09 00
-    beq c4320                                                         ; 4307: f0 17
+    beq check_if_bulb_just_used                                       ; 4307: f0 17
     lda player_just_used_tulip_bulb_flag                              ; 4309: ad a8 44
-    bne c4313                                                         ; 430c: d0 05
+    bne take_bulb                                                     ; 430c: d0 05
     lda #spriteid_tulip_bulb_menu_item                                ; 430e: a9 d8
     jsr find_or_create_menu_slot_for_A                                ; 4310: 20 bd 2b
-c4313
+take_bulb
     lda #spriteid_one_pixel_masked_out                                ; 4313: a9 00
     sta object_spriteid + objectid_tulip_bulb                         ; 4315: 8d ae 09
     lda #$ff                                                          ; 4318: a9 ff
     sta save_game_level_m_got_tulip_bulb_progress                     ; 431a: 8d 40 0a
     jmp return5                                                       ; 431d: 4c 70 43
 
-c4320
+check_if_bulb_just_used
     lda player_just_used_tulip_bulb_flag                              ; 4320: ad a8 44
     beq check_for_bulb_movement                                       ; 4323: f0 0f
     lda #spriteid_tulip_bulb_menu_item                                ; 4325: a9 d8
@@ -1645,7 +1703,7 @@ update_tulip
     sta object_spriteid + objectid_tulip_bulb                         ; 4383: 8d ae 09
 ; start growing
     lda #1                                                            ; 4386: a9 01
-    sta save_game_level_m_tulip_growth_animation_index                ; 4388: 8d 49 0a
+    sta save_game_level_m_tulip_growth_index                          ; 4388: 8d 49 0a
     lda #0                                                            ; 438b: a9 00
     sta tulip_bulb_steps_to_catch_up_while_offscreen                  ; 438d: 8d 74 0a
 move_bulb_x_position1
@@ -1660,19 +1718,19 @@ move_bulb_x_position1
 check_animation
     lda save_game_level_m_got_tulip_bulb_progress                     ; 43a1: ad 40 0a
     cmp #tulip_bulb_x_animation0 - tulip_bulb_x_animations            ; 43a4: c9 01
-    bne c43b5                                                         ; 43a6: d0 0d
+    bne check_if_tulip_bulb_x_animation1                              ; 43a6: d0 0d
     cpy save_game_level_m_got_tulip_bulb_progress                     ; 43a8: cc 40 0a
     bne set_bulb_animation_step                                       ; 43ab: d0 22
     ldy #tulip_bulb_x_animation1 - tulip_bulb_x_animations            ; 43ad: a0 09
     sty save_game_level_m_got_tulip_bulb_progress                     ; 43af: 8c 40 0a
     jmp set_bulb_animation_step                                       ; 43b2: 4c cf 43
 
-c43b5
+check_if_tulip_bulb_x_animation1
     cpy #tulip_bulb_x_animation1 - tulip_bulb_x_animations            ; 43b5: c0 09
-    bne c43be                                                         ; 43b7: d0 05
+    bne update_bulb_animation                                         ; 43b7: d0 05
     ldy #tulip_bulb_x_animation2 - tulip_bulb_x_animations            ; 43b9: a0 0e
     sty save_game_level_m_got_tulip_bulb_progress                     ; 43bb: 8c 40 0a
-c43be
+update_bulb_animation
     lda #objectid_tulip_bulb                                          ; 43be: a9 06
     jsr update_object_hitting_floor                                   ; 43c0: 20 70 27
     beq set_bulb_animation_step                                       ; 43c3: f0 0a
@@ -1785,7 +1843,7 @@ update_tulip_bulb_object
 
 player_just_used_tulip_bulb_flag
     !byte 0                                                           ; 44a8: 00
-l44a9
+remember_player_help_sprite
     !byte 0                                                           ; 44a9: 00
 remember_old_tulip_bulb_sprite
     !byte 0                                                           ; 44aa: 00
@@ -2033,14 +2091,6 @@ ground_fill_2x2_bottom_right
     !byte %....#...                                                   ; 45c6: 08
 sprite_data
 pydis_end
-
-; Automatically generated labels:
-;     c42f3
-;     c4313
-;     c4320
-;     c43b5
-;     c43be
-;     l44a9
 !if (<envelope1) != $47 {
     !error "Assertion failed: <envelope1 == $47"
 }
