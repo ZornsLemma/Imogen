@@ -63,9 +63,6 @@ spriteid_baby6                        = 220
 spriteid_baby7                        = 221
 spriteid_ball                         = 59
 spriteid_brazier                      = 58
-spriteid_cache1                       = 204
-spriteid_cache2                       = 205
-spriteid_cache3                       = 206
 spriteid_cat1                         = 27
 spriteid_cat2                         = 28
 spriteid_cat_jump                     = 26
@@ -93,6 +90,9 @@ spriteid_diamond2                     = 40
 spriteid_diamond3                     = 41
 spriteid_diamond4                     = 42
 spriteid_diamond5                     = 43
+spriteid_erase1                       = 204
+spriteid_erase2                       = 205
+spriteid_erase3                       = 206
 spriteid_erase_player                 = 199
 spriteid_erase_player_accessory       = 198
 spriteid_fingertip_tile_restoration   = 30
@@ -553,7 +553,7 @@ level_unchanged
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 3c1e: 20 44 1e
     ldx #objectid_left_mouse                                          ; 3c21: a2 02
     jsr set_object_position_from_current_sprite_position              ; 3c23: 20 6d 1f
-    lda #spriteid_cache2                                              ; 3c26: a9 cd
+    lda #spriteid_erase2                                              ; 3c26: a9 cd
     sta object_erase_type,x                                           ; 3c28: 9d ac 38
     lda #$c0                                                          ; 3c2b: a9 c0
     sta object_z_order,x                                              ; 3c2d: 9d c2 38
@@ -574,7 +574,7 @@ level_unchanged
     jsr set_object_position_from_current_sprite_position              ; 3c49: 20 6d 1f
     lda #$ff                                                          ; 3c4c: a9 ff
     sta object_direction,x                                            ; 3c4e: 9d be 09
-    lda #spriteid_cache3                                              ; 3c51: a9 ce
+    lda #spriteid_erase3                                              ; 3c51: a9 ce
     sta object_erase_type,x                                           ; 3c53: 9d ac 38
     lda #$c0                                                          ; 3c56: a9 c0
     sta object_z_order,x                                              ; 3c58: 9d c2 38
@@ -585,7 +585,7 @@ level_unchanged
     sta object_y_high,x                                               ; 3c62: 9d 92 09
     lda #1                                                            ; 3c65: a9 01
     sta object_direction,x                                            ; 3c67: 9d be 09
-    lda #spriteid_cache1                                              ; 3c6a: a9 cc
+    lda #spriteid_erase1                                              ; 3c6a: a9 cc
     sta object_erase_type,x                                           ; 3c6c: 9d ac 38
     lda #$40 ; '@'                                                    ; 3c6f: a9 40
     sta object_z_order,x                                              ; 3c71: 9d c2 38
@@ -609,7 +609,7 @@ no_wrap_needed
     cpy #$0f                                                          ; 3c8d: c0 0f
     bne move_mouse_ball_if_room_0                                     ; 3c8f: d0 17
 play_mouse_ball_sounds
-    lda #0                                                            ; 3c91: a9 00                   ; redundant
+    lda #0                                                            ; 3c91: a9 00                   ; redundant instruction
     ldx #<mouse_ball_sound1                                           ; 3c93: a2 7e
     ldy #>mouse_ball_sound1                                           ; 3c95: a0 44
     jsr play_sound_yx                                                 ; 3c97: 20 f6 38
@@ -697,8 +697,7 @@ return1
 ; 0) left mouse hands sprite ID
 ; 1) right mouse hands sprite ID
 ; 2) ball X offset (applied to mouse_ball_left_x_base or mouse_ball_right_x_base
-; depending on
-;    mouse_ball_position)
+; depending on mouse_ball_position)
 ; 3) ball Y offset (applied to mouse_ball_top_y_base)
 mouse_hand_sprites_and_ball_movement_table
     !byte spriteid_mouse_hands3                                       ; 3d21: d4
@@ -943,9 +942,10 @@ room1_not_first_update
 ; Is the player holding something?
     lda player_held_object_spriteid                                   ; 3e79: a5 52
     beq set_room1_trapdoor_sprites_if_required                        ; 3e7b: f0 5a
-; Yes. Is the player standing over the trapdoor? TODO: Do we check the player's Y
-; coordinate? (The wizard can jump - does the trapdoor trigger even if the wizard is in
-; the air?
+; Yes. Is the player standing over the trapdoor? The player's Y coordinate is not
+; checked here, but there's a check below to see if the wizard is colliding with rock
+; (which can only mean standing on the ground, including the closed trapdoors). The
+; trapdoors don't open if the wizard is jumping in the air
     lda object_x_high + objectid_player                               ; 3e7d: ad 66 09
     bne set_room1_trapdoor_sprites_if_required                        ; 3e80: d0 55
     lda object_x_low + objectid_player                                ; 3e82: ad 50 09
@@ -1062,7 +1062,7 @@ room1_saxophone_and_brazier_handler
     tax                                                               ; 3f41: aa
     lda #1                                                            ; 3f42: a9 01
     sta object_direction,x                                            ; 3f44: 9d be 09
-    lda #spriteid_cache1                                              ; 3f47: a9 cc
+    lda #spriteid_erase1                                              ; 3f47: a9 cc
     sta object_erase_type,x                                           ; 3f49: 9d ac 38
     lda #spriteid_saxophone1                                          ; 3f4c: a9 d2
     sta object_spriteid,x                                             ; 3f4e: 9d a8 09
@@ -1362,7 +1362,7 @@ room2_update_handler_not_new_level
     sta temp_sprite_y_offset                                          ; 40d4: 85 3b
     lda #objectid_baby                                                ; 40d6: a9 02
     jsr set_object_position_from_cell_xy                              ; 40d8: 20 5d 1f
-    lda #spriteid_cache1                                              ; 40db: a9 cc
+    lda #spriteid_erase1                                              ; 40db: a9 cc
     sta object_erase_type + objectid_baby                             ; 40dd: 8d ae 38
 room2_update_second_part_local
     jmp room2_update_second_part                                      ; 40e0: 4c d9 41
@@ -1441,7 +1441,7 @@ player_not_using_saxophone
     sty baby_spriteid_index_if_baby_spriteid_data_is_zero             ; 4164: 8c 72 0a
 not_at_subseq5
     lda baby_spriteid_index_if_baby_spriteid_data_is_zero             ; 4167: ad 72 0a
-    cmp #0                                                            ; 416a: c9 00                   ; redundant
+    cmp #0                                                            ; 416a: c9 00                   ; redundant instruction
     bne move_baby                                                     ; 416c: d0 40
     lda baby_pixel_x_speed                                            ; 416e: ad 71 0a
     sta save_game_level_a_room_2_baby_direction                       ; 4171: 8d 04 0a
@@ -1528,9 +1528,8 @@ room2_update_second_part
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 4206: 20 44 1e
     jmp set_baby_object_properties                                    ; 4209: 4c 35 42
 
-; Remove the baby from the collision map (TODO: at its old position?) and add it at its
-; new position. TODO: Looking at the change in Y position and the change in
-; width/heigh, I suspect this is handling the baby being killed and falling flat
+; When the baby is killed, remove the baby from the collision map and add it at its new
+; position.
 update_collision_map_for_baby
     dex                                                               ; 420c: ca
     ldy #$11                                                          ; 420d: a0 11
@@ -1742,7 +1741,7 @@ table_x_position_update_finished
     ldx #objectid_table                                               ; 4346: a2 02
     lda #spriteid_table                                               ; 4348: a9 de
     sta object_spriteid,x                                             ; 434a: 9d a8 09
-    lda #spriteid_cache1                                              ; 434d: a9 cc
+    lda #spriteid_erase1                                              ; 434d: a9 cc
     sta object_erase_type,x                                           ; 434f: 9d ac 38
 add_table_to_collision_map_if_room_3_local
     jmp add_table_to_collision_map_if_room_3                          ; 4352: 4c f6 43
@@ -2258,14 +2257,14 @@ pydis_end
 !if (spriteid_ball) != $3b {
     !error "Assertion failed: spriteid_ball == $3b"
 }
-!if (spriteid_cache1) != $cc {
-    !error "Assertion failed: spriteid_cache1 == $cc"
+!if (spriteid_erase1) != $cc {
+    !error "Assertion failed: spriteid_erase1 == $cc"
 }
-!if (spriteid_cache2) != $cd {
-    !error "Assertion failed: spriteid_cache2 == $cd"
+!if (spriteid_erase2) != $cd {
+    !error "Assertion failed: spriteid_erase2 == $cd"
 }
-!if (spriteid_cache3) != $ce {
-    !error "Assertion failed: spriteid_cache3 == $ce"
+!if (spriteid_erase3) != $ce {
+    !error "Assertion failed: spriteid_erase3 == $ce"
 }
 !if (spriteid_mouse) != $c8 {
     !error "Assertion failed: spriteid_mouse == $c8"
