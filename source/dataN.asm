@@ -24,6 +24,8 @@ object_collided_ceiling               = 8
 object_collided_floor                 = 2
 object_collided_left_wall             = 1
 object_collided_right_wall            = 4
+objectid_fire1                        = 5
+objectid_fire2                        = 6
 objectid_old_player                   = 11
 objectid_old_player_accessory         = 12
 objectid_player                       = 0
@@ -35,6 +37,8 @@ sprite_op_flags_erase_to_fg_colour    = 4
 sprite_op_flags_normal                = 0
 spriteid_197                          = 197
 spriteid_ball                         = 59
+spriteid_bell                         = 225
+spriteid_boulder                      = 204
 spriteid_brazier                      = 58
 spriteid_cat1                         = 27
 spriteid_cat2                         = 28
@@ -54,6 +58,10 @@ spriteid_cat_walk2                    = 13
 spriteid_cat_walk3                    = 14
 spriteid_cat_walk4                    = 15
 spriteid_circle                       = 32
+spriteid_clanger                      = 223
+spriteid_clanger2                     = 232
+spriteid_clanger_end                  = 231
+spriteid_clanger_menu_item            = 224
 spriteid_corner_bottom_left           = 45
 spriteid_corner_bottom_right          = 46
 spriteid_corner_top_left              = 44
@@ -63,6 +71,18 @@ spriteid_diamond2                     = 40
 spriteid_diamond3                     = 41
 spriteid_diamond4                     = 42
 spriteid_diamond5                     = 43
+spriteid_dog_body                     = 209
+spriteid_dog_head                     = 212
+spriteid_dog_head_lick                = 213
+spriteid_droplet1                     = 217
+spriteid_droplet2                     = 216
+spriteid_droplet3                     = 215
+spriteid_droplet4                     = 214
+spriteid_erase1                       = 208
+spriteid_erase2                       = 210
+spriteid_erase3                       = 211
+spriteid_erase4                       = 226
+spriteid_erase5                       = 229
 spriteid_erase_player                 = 199
 spriteid_erase_player_accessory       = 198
 spriteid_fingertip_tile_restoration   = 30
@@ -74,6 +94,8 @@ spriteid_fire5                        = 64
 spriteid_fire6                        = 65
 spriteid_fire7                        = 66
 spriteid_fire8                        = 67
+spriteid_holding_clanger              = 230
+spriteid_horizontal_rope              = 202
 spriteid_icodata_box                  = 9
 spriteid_icodata_cat                  = 5
 spriteid_icodata_disc                 = 3
@@ -83,6 +105,7 @@ spriteid_icodata_password             = 8
 spriteid_icodata_sound                = 2
 spriteid_icodata_wizard               = 4
 spriteid_icon_background              = 1
+spriteid_left_hook                    = 200
 spriteid_menu_item_completion_spell   = 33
 spriteid_monkey1                      = 78
 spriteid_monkey2                      = 79
@@ -103,18 +126,30 @@ spriteid_monkey_transform1            = 68
 spriteid_monkey_transform2            = 69
 spriteid_one_pixel_masked_out         = 0
 spriteid_one_pixel_set                = 31
+spriteid_partition                    = 206
+spriteid_partition_end                = 207
 spriteid_pointer_hand                 = 29
+spriteid_right_hook                   = 201
+spriteid_rope                         = 203
 spriteid_rope1                        = 85
 spriteid_rope2                        = 86
 spriteid_rope3                        = 87
 spriteid_rope4                        = 88
 spriteid_rope_end                     = 10
+spriteid_rope_end1                    = 218
 spriteid_rope_hook                    = 11
 spriteid_sparkles1                    = 34
 spriteid_sparkles2                    = 35
 spriteid_sparkles3                    = 36
 spriteid_sparkles4                    = 37
 spriteid_sparkles5                    = 38
+spriteid_tail1                        = 219
+spriteid_tail2                        = 220
+spriteid_tail3                        = 221
+spriteid_tail4                        = 222
+spriteid_umbrella                     = 205
+spriteid_using_clanger                = 227
+spriteid_using_clanger_end            = 228
 spriteid_wizard1                      = 48
 spriteid_wizard2                      = 49
 spriteid_wizard3                      = 50
@@ -307,7 +342,7 @@ level_specific_initialisation
 developer_mode_inactive1
     lda l0a4c                                                         ; 3b07: ad 4c 0a
     beq c3b11                                                         ; 3b0a: f0 05
-    lda #$e0                                                          ; 3b0c: a9 e0
+    lda #spriteid_clanger_menu_item                                   ; 3b0c: a9 e0
     jsr find_or_create_menu_slot_for_A                                ; 3b0e: 20 bd 2b
 c3b11
     lda #<ground_fill_2x2_top_left                                    ; 3b11: a9 54
@@ -482,7 +517,7 @@ c3c1d
     bne c3c54                                                         ; 3c21: d0 31
     ldx #$0b                                                          ; 3c23: a2 0b
     ldy #7                                                            ; 3c25: a0 07
-    lda #$d1                                                          ; 3c27: a9 d1
+    lda #spriteid_dog_body                                            ; 3c27: a9 d1
     jsr draw_sprite_a_at_cell_xy                                      ; 3c29: 20 4c 1f
     lda #8                                                            ; 3c2c: a9 08
     jsr set_object_position_from_cell_xy                              ; 3c2e: 20 5d 1f
@@ -649,18 +684,18 @@ c3d66
     bne c3ddc                                                         ; 3d6a: d0 70
     ldx #$20 ; ' '                                                    ; 3d6c: a2 20
     ldy #2                                                            ; 3d6e: a0 02
-    lda #$c9                                                          ; 3d70: a9 c9
+    lda #spriteid_right_hook                                          ; 3d70: a9 c9
     jsr draw_sprite_a_at_cell_xy                                      ; 3d72: 20 4c 1f
     dex                                                               ; 3d75: ca
     dex                                                               ; 3d76: ca
-    lda #$ca                                                          ; 3d77: a9 ca
+    lda #spriteid_horizontal_rope                                     ; 3d77: a9 ca
 loop_c3d79
     jsr draw_sprite_a_at_cell_xy                                      ; 3d79: 20 4c 1f
     dex                                                               ; 3d7c: ca
     cpx #$0f                                                          ; 3d7d: e0 0f
     bcs loop_c3d79                                                    ; 3d7f: b0 f8
     dex                                                               ; 3d81: ca
-    lda #$c8                                                          ; 3d82: a9 c8
+    lda #spriteid_left_hook                                           ; 3d82: a9 c8
     jsr draw_sprite_a_at_cell_xy                                      ; 3d84: 20 4c 1f
     lda #$60 ; '`'                                                    ; 3d87: a9 60
     sec                                                               ; 3d89: 38
@@ -671,7 +706,7 @@ loop_c3d79
     lsr                                                               ; 3d91: 4a
     lsr                                                               ; 3d92: 4a
     tay                                                               ; 3d93: a8
-    lda #$cb                                                          ; 3d94: a9 cb
+    lda #spriteid_rope                                                ; 3d94: a9 cb
 loop_c3d96
     jsr draw_sprite_a_at_cell_xy                                      ; 3d96: 20 4c 1f
     dey                                                               ; 3d99: 88
@@ -679,7 +714,7 @@ loop_c3d96
     bcs loop_c3d96                                                    ; 3d9c: b0 f8
     lda #$0a                                                          ; 3d9e: a9 0a
     jsr set_object_position_from_cell_xy                              ; 3da0: 20 5d 1f
-    lda #$cd                                                          ; 3da3: a9 cd
+    lda #spriteid_umbrella                                            ; 3da3: a9 cd
     sta object_spriteid + 10                                          ; 3da5: 8d b2 09
     lda l0a4a                                                         ; 3da8: ad 4a 0a
     sec                                                               ; 3dab: 38
@@ -689,7 +724,7 @@ loop_c3d96
     lsr                                                               ; 3db0: 4a
     tay                                                               ; 3db1: a8
     ldx #$20 ; ' '                                                    ; 3db2: a2 20
-    lda #$cb                                                          ; 3db4: a9 cb
+    lda #spriteid_rope                                                ; 3db4: a9 cb
 loop_c3db6
     jsr draw_sprite_a_at_cell_xy                                      ; 3db6: 20 4c 1f
     dey                                                               ; 3db9: 88
@@ -699,11 +734,11 @@ loop_c3db6
     jsr set_object_position_from_cell_xy                              ; 3dc0: 20 5d 1f
     lda #5                                                            ; 3dc3: a9 05
     jsr set_object_position_from_cell_xy                              ; 3dc5: 20 5d 1f
-    lda #$ce                                                          ; 3dc8: a9 ce
+    lda #spriteid_partition                                           ; 3dc8: a9 ce
     sta object_spriteid + 4                                           ; 3dca: 8d ac 09
     lda #$c0                                                          ; 3dcd: a9 c0
     sta l38c6                                                         ; 3dcf: 8d c6 38
-    lda #$cf                                                          ; 3dd2: a9 cf
+    lda #spriteid_partition_end                                       ; 3dd2: a9 cf
     sta object_spriteid + 5                                           ; 3dd4: 8d ad 09
     lda #$d0                                                          ; 3dd7: a9 d0
     sta l38b1                                                         ; 3dd9: 8d b1 38
@@ -719,7 +754,7 @@ c3ddf
     beq c3e16                                                         ; 3dea: f0 2a
     cmp #$40 ; '@'                                                    ; 3dec: c9 40
     beq c3e01                                                         ; 3dee: f0 11
-    lda #0                                                            ; 3df0: a9 00
+    lda #spriteid_one_pixel_masked_out                                ; 3df0: a9 00
     sta object_spriteid_old + 10                                      ; 3df2: 8d bd 09
     lda #$60 ; '`'                                                    ; 3df5: a9 60
     ldx #<sound1                                                      ; 3df7: a2 18
@@ -731,7 +766,7 @@ c3e01
     lda object_y_low + 4                                              ; 3e01: ad 80 09
     cmp l0a4a                                                         ; 3e04: cd 4a 0a
     beq c3e16                                                         ; 3e07: f0 0d
-    lda #0                                                            ; 3e09: a9 00
+    lda #spriteid_one_pixel_masked_out                                ; 3e09: a9 00
     sta object_spriteid_old + 10                                      ; 3e0b: 8d bd 09
     lda #$60 ; '`'                                                    ; 3e0e: a9 60
     jsr sub_c3e85                                                     ; 3e10: 20 85 3e
@@ -893,16 +928,16 @@ room_1_code
     jsr copy_rectangle_of_memory_to_screen                            ; 3eeb: 20 bb 1a
 ; carve the floor, walls and ceiling into the rock
     jsr draw_floor_walls_and_ceiling_around_solid_rock                ; 3eee: 20 90 1b
-; draw sprite $cc at (15,20) of size (3x2)
+; draw boulder at (15,20) of size (3x2)
     lda #3                                                            ; 3ef1: a9 03
     sta width_in_cells                                                ; 3ef3: 85 3c
     lda #2                                                            ; 3ef5: a9 02
     sta height_in_cells                                               ; 3ef7: 85 3d
     ldx #$0f                                                          ; 3ef9: a2 0f
     ldy #$14                                                          ; 3efb: a0 14
-    lda #$cc                                                          ; 3efd: a9 cc
+    lda #spriteid_boulder                                             ; 3efd: a9 cc
     jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map           ; 3eff: 20 57 1f
-; draw sprite $cc at (3,20) of size (3x2)
+; draw boulder at (3,20) of size (3x2)
     ldx #3                                                            ; 3f02: a2 03
     jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map           ; 3f04: 20 57 1f
 ; draw rope at (14,0) length 18
@@ -959,7 +994,7 @@ sub_c3f5c
     sta height_in_cells                                               ; 3f62: 85 3d
     lda #$fc                                                          ; 3f64: a9 fc
     sta temp_sprite_x_offset                                          ; 3f66: 85 3a
-    lda #$e1                                                          ; 3f68: a9 e1
+    lda #spriteid_bell                                                ; 3f68: a9 e1
     jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map           ; 3f6a: 20 57 1f
     lda #$da                                                          ; 3f6d: a9 da
     jmp draw_sprite_a_at_cell_xy                                      ; 3f6f: 4c 4c 1f
@@ -1069,30 +1104,30 @@ room_2_code
 ; draw rope at (32,2) length 5
     ldx #$20 ; ' '                                                    ; 3feb: a2 20
     jsr draw_rope                                                     ; 3fed: 20 b9 1d
-; draw sprite $cc at (34,13) of size (3x2)
+; draw boulder at (34,13) of size (3x2)
     ldx #$22 ; '"'                                                    ; 3ff0: a2 22
     ldy #$0d                                                          ; 3ff2: a0 0d
     lda #3                                                            ; 3ff4: a9 03
     sta width_in_cells                                                ; 3ff6: 85 3c
     lda #2                                                            ; 3ff8: a9 02
     sta height_in_cells                                               ; 3ffa: 85 3d
-    lda #$cc                                                          ; 3ffc: a9 cc
+    lda #spriteid_boulder                                             ; 3ffc: a9 cc
     jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map           ; 3ffe: 20 57 1f
     ldy #6                                                            ; 4001: a0 06
     ldx #$16                                                          ; 4003: a2 16
     jsr sub_c3f5c                                                     ; 4005: 20 5c 3f
-; draw sprite $e7 at (22,6)
-    lda #$e7                                                          ; 4008: a9 e7
+; draw clanger end at (22,6)
+    lda #spriteid_clanger_end                                         ; 4008: a9 e7
     jsr draw_sprite_a_at_cell_xy                                      ; 400a: 20 4c 1f
     ldx #$1b                                                          ; 400d: a2 1b
     jsr sub_c3f5c                                                     ; 400f: 20 5c 3f
-; draw sprite $e7 at (27,6)
-    lda #$e7                                                          ; 4012: a9 e7
+; draw clanger end at (27,6)
+    lda #spriteid_clanger_end                                         ; 4012: a9 e7
     jsr draw_sprite_a_at_cell_xy                                      ; 4014: 20 4c 1f
     ldx #$20 ; ' '                                                    ; 4017: a2 20
     jsr sub_c3f5c                                                     ; 4019: 20 5c 3f
-; draw sprite $e7 at (32,6)
-    lda #$e7                                                          ; 401c: a9 e7
+; draw clanger end at (32,6)
+    lda #spriteid_clanger_end                                         ; 401c: a9 e7
     jsr draw_sprite_a_at_cell_xy                                      ; 401e: 20 4c 1f
     jsr start_room                                                    ; 4021: 20 bb 12
 room_2_game_update_loop
@@ -1440,7 +1475,7 @@ c42d1
     jmp c42e9                                                         ; 42e6: 4c e9 42
 
 c42e9
-    lda #0                                                            ; 42e9: a9 00
+    lda #spriteid_one_pixel_masked_out                                ; 42e9: a9 00
     sta object_spriteid + 2                                           ; 42eb: 8d aa 09
 return5
     rts                                                               ; 42ee: 60
@@ -1457,7 +1492,7 @@ sub_c42f0
     sta object_y_low + 2                                              ; 42ff: 8d 7e 09
     lda l0a52                                                         ; 4302: ad 52 0a
     sta object_y_high + 2                                             ; 4305: 8d 94 09
-    lda #$e1                                                          ; 4308: a9 e1
+    lda #spriteid_bell                                                ; 4308: a9 e1
     sta object_spriteid + 2                                           ; 430a: 8d aa 09
     rts                                                               ; 430d: 60
 
@@ -1595,27 +1630,27 @@ room_3_code
 ; draw rope at (17,2) length 5
     ldx #$11                                                          ; 43b9: a2 11
     jsr draw_rope                                                     ; 43bb: 20 b9 1d
-; draw sprite $cc at (3,13) of size (3x2)
+; draw boulder at (3,13) of size (3x2)
     ldx #3                                                            ; 43be: a2 03
     ldy #$0d                                                          ; 43c0: a0 0d
     lda #3                                                            ; 43c2: a9 03
     sta width_in_cells                                                ; 43c4: 85 3c
     lda #2                                                            ; 43c6: a9 02
     sta height_in_cells                                               ; 43c8: 85 3d
-    lda #$cc                                                          ; 43ca: a9 cc
+    lda #spriteid_boulder                                             ; 43ca: a9 cc
     jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map           ; 43cc: 20 57 1f
     ldy #6                                                            ; 43cf: a0 06
     ldx #7                                                            ; 43d1: a2 07
     jsr sub_c3f5c                                                     ; 43d3: 20 5c 3f
     ldx #$0c                                                          ; 43d6: a2 0c
     jsr sub_c3f5c                                                     ; 43d8: 20 5c 3f
-; draw sprite $e7 at (12,6)
-    lda #$e7                                                          ; 43db: a9 e7
+; draw clanger end at (12,6)
+    lda #spriteid_clanger_end                                         ; 43db: a9 e7
     jsr draw_sprite_a_at_cell_xy                                      ; 43dd: 20 4c 1f
     ldx #$11                                                          ; 43e0: a2 11
     jsr sub_c3f5c                                                     ; 43e2: 20 5c 3f
-; draw sprite $e7 at (17,6)
-    lda #$e7                                                          ; 43e5: a9 e7
+; draw clanger end at (17,6)
+    lda #spriteid_clanger_end                                         ; 43e5: a9 e7
     jsr draw_sprite_a_at_cell_xy                                      ; 43e7: 20 4c 1f
     jsr start_room                                                    ; 43ea: 20 bb 12
 room_3_game_update_loop
@@ -1639,7 +1674,7 @@ room_3_update_handler
     ldx #<envelope3                                                   ; 440e: a2 3e
     ldy #>envelope3                                                   ; 4410: a0 45
     jsr define_envelope                                               ; 4412: 20 5e 39
-    lda #$e0                                                          ; 4415: a9 e0
+    lda #spriteid_clanger_menu_item                                   ; 4415: a9 e0
     sta toolbar_collectable_spriteids+1                               ; 4417: 8d e9 2e
     lda #$df                                                          ; 441a: a9 df
     sta collectable_spriteids+1                                       ; 441c: 8d ee 2e
@@ -1660,7 +1695,7 @@ room_3_update_handler
     jsr set_object_position_from_cell_xy                              ; 443f: 20 5d 1f
     lda #$d2                                                          ; 4442: a9 d2
     sta l38b0                                                         ; 4444: 8d b0 38
-    lda #$e8                                                          ; 4447: a9 e8
+    lda #spriteid_clanger2                                            ; 4447: a9 e8
     sta object_spriteid + 4                                           ; 4449: 8d ac 09
 c444c
     jmp return7                                                       ; 444c: 4c 08 45
@@ -1677,20 +1712,20 @@ c444f
     beq c4472                                                         ; 4461: f0 0f
     lda #$ff                                                          ; 4463: a9 ff
     sta l0a4c                                                         ; 4465: 8d 4c 0a
-    lda #0                                                            ; 4468: a9 00
+    lda #spriteid_one_pixel_masked_out                                ; 4468: a9 00
     sta object_spriteid + 4                                           ; 446a: 8d ac 09
-    lda #$e0                                                          ; 446d: a9 e0
+    lda #spriteid_clanger_menu_item                                   ; 446d: a9 e0
     jsr find_or_create_menu_slot_for_A                                ; 446f: 20 bd 2b
 c4472
     jmp return7                                                       ; 4472: 4c 08 45
 
 c4475
-    lda #0                                                            ; 4475: a9 00
+    lda #spriteid_one_pixel_masked_out                                ; 4475: a9 00
     sta object_spriteid + 3                                           ; 4477: 8d ab 09
     lda #$e0                                                          ; 447a: a9 e0
     cmp player_using_object_spriteid                                  ; 447c: cd b6 2e
     bne c4472                                                         ; 447f: d0 f1
-    lda #$e6                                                          ; 4481: a9 e6
+    lda #spriteid_holding_clanger                                     ; 4481: a9 e6
     sta object_spriteid + objectid_player_accessory                   ; 4483: 8d a9 09
     lda #1                                                            ; 4486: a9 01
     jsr get_solid_rock_collision_for_object_a                         ; 4488: 20 94 28
@@ -1703,7 +1738,7 @@ c4475
     ldy #2                                                            ; 449a: a0 02
     jsr test_for_collision_between_objects_x_and_y                    ; 449c: 20 e2 28
     beq c44f9                                                         ; 449f: f0 58
-    lda #$e3                                                          ; 44a1: a9 e3
+    lda #spriteid_using_clanger                                       ; 44a1: a9 e3
     sta object_spriteid + objectid_player_accessory                   ; 44a3: 8d a9 09
     lda object_x_low + objectid_player_accessory                      ; 44a6: ad 51 09
     sta object_x_low + 3                                              ; 44a9: 8d 53 09
@@ -1715,7 +1750,7 @@ c4475
     sta object_y_high + 3                                             ; 44bb: 8d 95 09
     lda object_direction + objectid_player_accessory                  ; 44be: ad bf 09
     sta object_direction + 3                                          ; 44c1: 8d c1 09
-    lda #$e4                                                          ; 44c4: a9 e4
+    lda #spriteid_using_clanger_end                                   ; 44c4: a9 e4
     sta object_spriteid + 3                                           ; 44c6: 8d ab 09
     inc temp_right_offset                                             ; 44c9: ee d1 24
     dec temp_left_offset                                              ; 44cc: ce d0 24
@@ -2123,4 +2158,55 @@ pydis_end
 }
 !if (sprite_data - level_data) != $0a9f {
     !error "Assertion failed: sprite_data - level_data == $0a9f"
+}
+!if (spriteid_bell) != $e1 {
+    !error "Assertion failed: spriteid_bell == $e1"
+}
+!if (spriteid_boulder) != $cc {
+    !error "Assertion failed: spriteid_boulder == $cc"
+}
+!if (spriteid_clanger2) != $e8 {
+    !error "Assertion failed: spriteid_clanger2 == $e8"
+}
+!if (spriteid_clanger_end) != $e7 {
+    !error "Assertion failed: spriteid_clanger_end == $e7"
+}
+!if (spriteid_clanger_menu_item) != $e0 {
+    !error "Assertion failed: spriteid_clanger_menu_item == $e0"
+}
+!if (spriteid_dog_body) != $d1 {
+    !error "Assertion failed: spriteid_dog_body == $d1"
+}
+!if (spriteid_holding_clanger) != $e6 {
+    !error "Assertion failed: spriteid_holding_clanger == $e6"
+}
+!if (spriteid_horizontal_rope) != $ca {
+    !error "Assertion failed: spriteid_horizontal_rope == $ca"
+}
+!if (spriteid_left_hook) != $c8 {
+    !error "Assertion failed: spriteid_left_hook == $c8"
+}
+!if (spriteid_one_pixel_masked_out) != $00 {
+    !error "Assertion failed: spriteid_one_pixel_masked_out == $00"
+}
+!if (spriteid_partition) != $ce {
+    !error "Assertion failed: spriteid_partition == $ce"
+}
+!if (spriteid_partition_end) != $cf {
+    !error "Assertion failed: spriteid_partition_end == $cf"
+}
+!if (spriteid_right_hook) != $c9 {
+    !error "Assertion failed: spriteid_right_hook == $c9"
+}
+!if (spriteid_rope) != $cb {
+    !error "Assertion failed: spriteid_rope == $cb"
+}
+!if (spriteid_umbrella) != $cd {
+    !error "Assertion failed: spriteid_umbrella == $cd"
+}
+!if (spriteid_using_clanger) != $e3 {
+    !error "Assertion failed: spriteid_using_clanger == $e3"
+}
+!if (spriteid_using_clanger_end) != $e4 {
+    !error "Assertion failed: spriteid_using_clanger_end == $e4"
 }
