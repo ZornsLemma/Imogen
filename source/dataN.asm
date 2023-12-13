@@ -24,12 +24,22 @@ object_collided_ceiling               = 8
 object_collided_floor                 = 2
 object_collided_left_wall             = 1
 object_collided_right_wall            = 4
-objectid_fire1                        = 5
-objectid_fire2                        = 6
+objectid_bell                         = 2
+objectid_clanger                      = 4
+objectid_clanger_end                  = 3
+objectid_dog_head                     = 9
+objectid_dog_tail                     = 8
+objectid_drip                         = 7
+objectid_fire1                        = 4
+objectid_fire2                        = 5
 objectid_old_player                   = 11
 objectid_old_player_accessory         = 12
+objectid_partition                    = 5
+objectid_partition_end                = 4
 objectid_player                       = 0
 objectid_player_accessory             = 1
+objectid_sparkles                     = 6
+objectid_umbrella                     = 10
 opcode_jmp                            = 76
 sprite_op_flags_copy_screen           = 1
 sprite_op_flags_erase_to_bg_colour    = 2
@@ -73,7 +83,7 @@ spriteid_diamond4                     = 42
 spriteid_diamond5                     = 43
 spriteid_dog_body                     = 209
 spriteid_dog_head                     = 212
-spriteid_dog_head_lick                = 213
+spriteid_dog_head_drooling            = 213
 spriteid_droplet1                     = 217
 spriteid_droplet2                     = 216
 spriteid_droplet3                     = 215
@@ -271,24 +281,11 @@ monkey_climb_down_animation                         = $3148
 monkey_climb_animation                              = $3150
 inhibit_monkey_climb_flag                           = $31d7
 object_erase_type                                   = $38ac
-l38ae                                               = $38ae
-l38af                                               = $38af
-l38b0                                               = $38b0
-l38b1                                               = $38b1
-l38b3                                               = $38b3
-l38b5                                               = $38b5
 object_z_order                                      = $38c2
-l38c4                                               = $38c4
-l38c5                                               = $38c5
-l38c6                                               = $38c6
-l38c9                                               = $38c9
-l38ca                                               = $38ca
-l38cb                                               = $38cb
 object_room_collision_flags                         = $38d8
 play_sound_yx                                       = $38f6
 define_envelope                                     = $395e
 sound_priority_per_channel_table                    = $396f
-l3970                                               = $3970
 negative_inkey                                      = $3acc
 
     * = $3ad5
@@ -483,14 +480,56 @@ room_0_game_update_loop
     ldy current_level                                                 ; 3bb5: a4 31
     jmp initialise_level_and_room                                     ; 3bb7: 4c 40 11
 
-l3bba
-    !byte   0, $d4,   0,   0, $ff, $d5,   0,   0, $d5,   0,   0, $d5  ; 3bba: 00 d4 00...
-    !byte   0,   0, $d5,   0,   0, $d5,   0,   0, $d5,   0,   0, $d5  ; 3bc6: 00 00 d5...
-    !byte   0,   0, $d5,   0,   0, $d5, $d9,   0, $d5, $d8,   0, $d5  ; 3bd2: 00 00 d5...
-    !byte $d7,   0, $d5, $d6,   0, $d5, $d6,   2, $d5, $d6,   4, $ff  ; 3bde: d7 00 d5...
-    !byte $d5, $d6,   8, $ff, $d5,   0,   0, $ff                      ; 3bea: d5 d6 08...
-l3bf2
-    !byte $db, $dc, $dd, $de, $ff                                     ; 3bf2: db dc dd...
+dog_head_animations
+    !byte 0                                                           ; 3bba: 00
+dog_head_normal_animation
+    !byte spriteid_dog_head                                           ; 3bbb: d4
+    !byte 0, 0                                                        ; 3bbc: 00 00
+    !byte $ff                                                         ; 3bbe: ff
+dog_head_drooling_animation
+    !byte spriteid_dog_head_drooling                                  ; 3bbf: d5
+    !byte 0, 0                                                        ; 3bc0: 00 00
+    !byte spriteid_dog_head_drooling                                  ; 3bc2: d5
+    !byte 0, 0                                                        ; 3bc3: 00 00
+    !byte spriteid_dog_head_drooling                                  ; 3bc5: d5
+    !byte 0, 0                                                        ; 3bc6: 00 00
+    !byte spriteid_dog_head_drooling                                  ; 3bc8: d5
+    !byte 0, 0                                                        ; 3bc9: 00 00
+    !byte spriteid_dog_head_drooling                                  ; 3bcb: d5
+    !byte 0, 0                                                        ; 3bcc: 00 00
+    !byte spriteid_dog_head_drooling                                  ; 3bce: d5
+    !byte 0, 0                                                        ; 3bcf: 00 00
+    !byte spriteid_dog_head_drooling                                  ; 3bd1: d5
+    !byte 0, 0                                                        ; 3bd2: 00 00
+    !byte spriteid_dog_head_drooling                                  ; 3bd4: d5
+    !byte 0, 0                                                        ; 3bd5: 00 00
+    !byte spriteid_dog_head_drooling                                  ; 3bd7: d5
+    !byte spriteid_droplet1,                 0                        ; 3bd8: d9 00
+    !byte spriteid_dog_head_drooling                                  ; 3bda: d5
+    !byte spriteid_droplet2,                 0                        ; 3bdb: d8 00
+    !byte spriteid_dog_head_drooling                                  ; 3bdd: d5
+    !byte spriteid_droplet3,                 0                        ; 3bde: d7 00
+    !byte spriteid_dog_head_drooling                                  ; 3be0: d5
+    !byte spriteid_droplet4,                 0                        ; 3be1: d6 00
+    !byte spriteid_dog_head_drooling                                  ; 3be3: d5
+    !byte spriteid_droplet4,                 2                        ; 3be4: d6 02
+    !byte spriteid_dog_head_drooling                                  ; 3be6: d5
+    !byte spriteid_droplet4,                 4                        ; 3be7: d6 04
+    !byte $ff                                                         ; 3be9: ff
+dog_head_drooling_held_animation
+    !byte spriteid_dog_head_drooling                                  ; 3bea: d5
+    !byte spriteid_droplet4,                 8                        ; 3beb: d6 08
+    !byte $ff                                                         ; 3bed: ff
+dog_head_drooling_final_animation
+    !byte spriteid_dog_head_drooling                                  ; 3bee: d5
+    !byte 0, 0                                                        ; 3bef: 00 00
+    !byte $ff                                                         ; 3bf1: ff
+dog_tail_animation
+    !byte spriteid_tail1                                              ; 3bf2: db
+    !byte spriteid_tail2                                              ; 3bf3: dc
+    !byte spriteid_tail3                                              ; 3bf4: dd
+    !byte spriteid_tail4                                              ; 3bf5: de
+    !byte $ff                                                         ; 3bf6: ff
 
 room_0_update_handler
     lda #0                                                            ; 3bf7: a9 00
@@ -522,19 +561,19 @@ c3c1d
     lda #8                                                            ; 3c2c: a9 08
     jsr set_object_position_from_cell_xy                              ; 3c2e: 20 5d 1f
     lda #$c0                                                          ; 3c31: a9 c0
-    sta l38ca                                                         ; 3c33: 8d ca 38
+    sta object_z_order + objectid_dog_tail                            ; 3c33: 8d ca 38
     lda #9                                                            ; 3c36: a9 09
     jsr set_object_position_from_cell_xy                              ; 3c38: 20 5d 1f
-    lda #$d2                                                          ; 3c3b: a9 d2
-    sta l38b5                                                         ; 3c3d: 8d b5 38
+    lda #spriteid_erase2                                              ; 3c3b: a9 d2
+    sta object_erase_type + objectid_dog_head                         ; 3c3d: 8d b5 38
     lda #$c0                                                          ; 3c40: a9 c0
-    sta l38cb                                                         ; 3c42: 8d cb 38
+    sta object_z_order + objectid_dog_head                            ; 3c42: 8d cb 38
     lda #$58 ; 'X'                                                    ; 3c45: a9 58
-    sta object_x_low + 7                                              ; 3c47: 8d 57 09
-    lda #$d3                                                          ; 3c4a: a9 d3
-    sta l38b3                                                         ; 3c4c: 8d b3 38
+    sta object_x_low + objectid_drip                                  ; 3c47: 8d 57 09
+    lda #spriteid_erase3                                              ; 3c4a: a9 d3
+    sta object_erase_type + objectid_drip                             ; 3c4c: 8d b3 38
     lda #$a0                                                          ; 3c4f: a9 a0
-    sta l38c9                                                         ; 3c51: 8d c9 38
+    sta object_z_order + objectid_drip                                ; 3c51: 8d c9 38
 c3c54
     jmp c3d13                                                         ; 3c54: 4c 13 3d
 
@@ -543,7 +582,7 @@ c3c57
     clc                                                               ; 3c5a: 18
     adc #3                                                            ; 3c5b: 69 03
     tay                                                               ; 3c5d: a8
-    lda l3bba,y                                                       ; 3c5e: b9 ba 3b
+    lda dog_head_animations,y                                         ; 3c5e: b9 ba 3b
     cmp #$ff                                                          ; 3c61: c9 ff
     bne c3c68                                                         ; 3c63: d0 03
     ldy l0a4b                                                         ; 3c65: ac 4b 0a
@@ -612,20 +651,20 @@ developer_mode_inactive2
     sty l0a70                                                         ; 3ce5: 8c 70 0a
     iny                                                               ; 3ce8: c8
     iny                                                               ; 3ce9: c8
-    lda l3bba,y                                                       ; 3cea: b9 ba 3b
+    lda dog_head_animations,y                                         ; 3cea: b9 ba 3b
     clc                                                               ; 3ced: 18
     adc l0a71                                                         ; 3cee: 6d 71 0a
     sta l0a71                                                         ; 3cf1: 8d 71 0a
     ldy level_workspace                                               ; 3cf4: ac 6f 0a
     iny                                                               ; 3cf7: c8
-    lda l3bf2,y                                                       ; 3cf8: b9 f2 3b
+    lda dog_tail_animation,y                                          ; 3cf8: b9 f2 3b
     cmp #$ff                                                          ; 3cfb: c9 ff
     bne c3d01                                                         ; 3cfd: d0 02
     ldy #0                                                            ; 3cff: a0 00
 c3d01
     sty level_workspace                                               ; 3d01: 8c 6f 0a
     ldy l0a70                                                         ; 3d04: ac 70 0a
-    lda l3bba,y                                                       ; 3d07: b9 ba 3b
+    lda dog_head_animations,y                                         ; 3d07: b9 ba 3b
     cmp #$d5                                                          ; 3d0a: c9 d5
     beq c3d13                                                         ; 3d0c: f0 05
     lda #0                                                            ; 3d0e: a9 00
@@ -635,16 +674,16 @@ c3d13
     cmp #0                                                            ; 3d15: c9 00
     bne return1                                                       ; 3d17: d0 1f
     ldy l0a70                                                         ; 3d19: ac 70 0a
-    lda l3bba,y                                                       ; 3d1c: b9 ba 3b
-    sta object_spriteid + 9                                           ; 3d1f: 8d b1 09
+    lda dog_head_animations,y                                         ; 3d1c: b9 ba 3b
+    sta object_spriteid + objectid_dog_head                           ; 3d1f: 8d b1 09
     iny                                                               ; 3d22: c8
-    lda l3bba,y                                                       ; 3d23: b9 ba 3b
-    sta object_spriteid + 7                                           ; 3d26: 8d af 09
+    lda dog_head_animations,y                                         ; 3d23: b9 ba 3b
+    sta object_spriteid + objectid_drip                               ; 3d26: 8d af 09
     lda l0a71                                                         ; 3d29: ad 71 0a
-    sta object_y_low + 7                                              ; 3d2c: 8d 83 09
+    sta object_y_low + objectid_drip                                  ; 3d2c: 8d 83 09
     ldy level_workspace                                               ; 3d2f: ac 6f 0a
-    lda l3bf2,y                                                       ; 3d32: b9 f2 3b
-    sta object_spriteid + 8                                           ; 3d35: 8d b0 09
+    lda dog_tail_animation,y                                          ; 3d32: b9 f2 3b
+    sta object_spriteid + objectid_dog_tail                           ; 3d35: 8d b0 09
 return1
     rts                                                               ; 3d38: 60
 
@@ -715,7 +754,7 @@ loop_c3d96
     lda #$0a                                                          ; 3d9e: a9 0a
     jsr set_object_position_from_cell_xy                              ; 3da0: 20 5d 1f
     lda #spriteid_umbrella                                            ; 3da3: a9 cd
-    sta object_spriteid + 10                                          ; 3da5: 8d b2 09
+    sta object_spriteid + objectid_umbrella                           ; 3da5: 8d b2 09
     lda l0a4a                                                         ; 3da8: ad 4a 0a
     sec                                                               ; 3dab: 38
     sbc #4                                                            ; 3dac: e9 04
@@ -735,13 +774,13 @@ loop_c3db6
     lda #5                                                            ; 3dc3: a9 05
     jsr set_object_position_from_cell_xy                              ; 3dc5: 20 5d 1f
     lda #spriteid_partition                                           ; 3dc8: a9 ce
-    sta object_spriteid + 4                                           ; 3dca: 8d ac 09
+    sta object_spriteid + objectid_partition_end                      ; 3dca: 8d ac 09
     lda #$c0                                                          ; 3dcd: a9 c0
-    sta l38c6                                                         ; 3dcf: 8d c6 38
+    sta object_z_order + objectid_partition_end                       ; 3dcf: 8d c6 38
     lda #spriteid_partition_end                                       ; 3dd2: a9 cf
-    sta object_spriteid + 5                                           ; 3dd4: 8d ad 09
-    lda #$d0                                                          ; 3dd7: a9 d0
-    sta l38b1                                                         ; 3dd9: 8d b1 38
+    sta object_spriteid + objectid_partition                          ; 3dd4: 8d ad 09
+    lda #spriteid_erase1                                              ; 3dd7: a9 d0
+    sta object_erase_type + objectid_partition                        ; 3dd9: 8d b1 38
 c3ddc
     jmp c3e16                                                         ; 3ddc: 4c 16 3e
 
@@ -755,7 +794,7 @@ c3ddf
     cmp #$40 ; '@'                                                    ; 3dec: c9 40
     beq c3e01                                                         ; 3dee: f0 11
     lda #spriteid_one_pixel_masked_out                                ; 3df0: a9 00
-    sta object_spriteid_old + 10                                      ; 3df2: 8d bd 09
+    sta object_spriteid_old + objectid_umbrella                       ; 3df2: 8d bd 09
     lda #$60 ; '`'                                                    ; 3df5: a9 60
     ldx #<sound1                                                      ; 3df7: a2 18
     ldy #>sound1                                                      ; 3df9: a0 45
@@ -763,11 +802,11 @@ c3ddf
     jmp c3e16                                                         ; 3dfe: 4c 16 3e
 
 c3e01
-    lda object_y_low + 4                                              ; 3e01: ad 80 09
+    lda object_y_low + objectid_partition_end                         ; 3e01: ad 80 09
     cmp l0a4a                                                         ; 3e04: cd 4a 0a
     beq c3e16                                                         ; 3e07: f0 0d
     lda #spriteid_one_pixel_masked_out                                ; 3e09: a9 00
-    sta object_spriteid_old + 10                                      ; 3e0b: 8d bd 09
+    sta object_spriteid_old + objectid_umbrella                       ; 3e0b: 8d bd 09
     lda #$60 ; '`'                                                    ; 3e0e: a9 60
     jsr sub_c3e85                                                     ; 3e10: 20 85 3e
     jsr play_landing_sound                                            ; 3e13: 20 a9 23
@@ -776,14 +815,14 @@ c3e16
     cmp #0                                                            ; 3e18: c9 00
     bne c3e6e                                                         ; 3e1a: d0 52
     lda l0a4a                                                         ; 3e1c: ad 4a 0a
-    sta object_y_low + 4                                              ; 3e1f: 8d 80 09
-    sta object_y_low + 5                                              ; 3e22: 8d 81 09
+    sta object_y_low + objectid_partition_end                         ; 3e1f: 8d 80 09
+    sta object_y_low + objectid_partition                             ; 3e22: 8d 81 09
     lda #$60 ; '`'                                                    ; 3e25: a9 60
     sec                                                               ; 3e27: 38
     sbc l0a4a                                                         ; 3e28: ed 4a 0a
     clc                                                               ; 3e2b: 18
     adc #$44 ; 'D'                                                    ; 3e2c: 69 44
-    sta object_y_low + 10                                             ; 3e2e: 8d 86 09
+    sta object_y_low + objectid_umbrella                              ; 3e2e: 8d 86 09
     ldx #$20 ; ' '                                                    ; 3e31: a2 20
     lda l0a4a                                                         ; 3e33: ad 4a 0a
     lsr                                                               ; 3e36: 4a
@@ -837,7 +876,7 @@ sub_c3e85
     bcc return3                                                       ; 3e88: 90 08
     lda #0                                                            ; 3e8a: a9 00
     sta sound_priority_per_channel_table                              ; 3e8c: 8d 6f 39
-    sta l3970                                                         ; 3e8f: 8d 70 39
+    sta sound_priority_per_channel_table + 1                          ; 3e8f: 8d 70 39
 return3
     rts                                                               ; 3e92: 60
 
@@ -1192,10 +1231,10 @@ room_2_update_handler
     sta l0a4d                                                         ; 40ab: 8d 4d 0a
     sta l0a4e                                                         ; 40ae: 8d 4e 0a
 c40b1
-    lda #$e2                                                          ; 40b1: a9 e2
-    sta l38ae                                                         ; 40b3: 8d ae 38
+    lda #spriteid_erase4                                              ; 40b1: a9 e2
+    sta object_erase_type + objectid_bell                             ; 40b3: 8d ae 38
     lda #$c0                                                          ; 40b6: a9 c0
-    sta l38c4                                                         ; 40b8: 8d c4 38
+    sta object_z_order + objectid_bell                                ; 40b8: 8d c4 38
     lda desired_room_index                                            ; 40bb: a5 30
     cmp l0a53                                                         ; 40bd: cd 53 0a
     bne c40de                                                         ; 40c0: d0 1c
@@ -1476,7 +1515,7 @@ c42d1
 
 c42e9
     lda #spriteid_one_pixel_masked_out                                ; 42e9: a9 00
-    sta object_spriteid + 2                                           ; 42eb: 8d aa 09
+    sta object_spriteid + objectid_bell                               ; 42eb: 8d aa 09
 return5
     rts                                                               ; 42ee: 60
 
@@ -1485,15 +1524,15 @@ l42ef
 
 sub_c42f0
     lda l0a4f                                                         ; 42f0: ad 4f 0a
-    sta object_x_low + 2                                              ; 42f3: 8d 52 09
+    sta object_x_low + objectid_bell                                  ; 42f3: 8d 52 09
     lda l0a50                                                         ; 42f6: ad 50 0a
-    sta object_x_high + 2                                             ; 42f9: 8d 68 09
+    sta object_x_high + objectid_bell                                 ; 42f9: 8d 68 09
     lda l0a51                                                         ; 42fc: ad 51 0a
-    sta object_y_low + 2                                              ; 42ff: 8d 7e 09
+    sta object_y_low + objectid_bell                                  ; 42ff: 8d 7e 09
     lda l0a52                                                         ; 4302: ad 52 0a
-    sta object_y_high + 2                                             ; 4305: 8d 94 09
+    sta object_y_high + objectid_bell                                 ; 4305: 8d 94 09
     lda #spriteid_bell                                                ; 4308: a9 e1
-    sta object_spriteid + 2                                           ; 430a: 8d aa 09
+    sta object_spriteid + objectid_bell                               ; 430a: 8d aa 09
     rts                                                               ; 430d: 60
 
 sub_c430e
@@ -1680,10 +1719,10 @@ room_3_update_handler
     sta collectable_spriteids+1                                       ; 441c: 8d ee 2e
     lda #$e3                                                          ; 441f: a9 e3
     sta collectable_being_used_spriteids + 1                          ; 4421: 8d f3 2e
-    lda #$e5                                                          ; 4424: a9 e5
-    sta l38af                                                         ; 4426: 8d af 38
+    lda #spriteid_erase5                                              ; 4424: a9 e5
+    sta object_erase_type + objectid_clanger_end                      ; 4426: 8d af 38
     lda #$40 ; '@'                                                    ; 4429: a9 40
-    sta l38c5                                                         ; 442b: 8d c5 38
+    sta object_z_order + objectid_clanger_end                         ; 442b: 8d c5 38
     lda l0a4c                                                         ; 442e: ad 4c 0a
     bne c4475                                                         ; 4431: d0 42
     lda desired_room_index                                            ; 4433: a5 30
@@ -1693,10 +1732,10 @@ room_3_update_handler
     ldy #$0f                                                          ; 443b: a0 0f
     lda #4                                                            ; 443d: a9 04
     jsr set_object_position_from_cell_xy                              ; 443f: 20 5d 1f
-    lda #$d2                                                          ; 4442: a9 d2
-    sta l38b0                                                         ; 4444: 8d b0 38
+    lda #spriteid_erase2                                              ; 4442: a9 d2
+    sta object_erase_type + objectid_clanger                          ; 4444: 8d b0 38
     lda #spriteid_clanger2                                            ; 4447: a9 e8
-    sta object_spriteid + 4                                           ; 4449: 8d ac 09
+    sta object_spriteid + objectid_clanger                            ; 4449: 8d ac 09
 c444c
     jmp return7                                                       ; 444c: 4c 08 45
 
@@ -1713,7 +1752,7 @@ c444f
     lda #$ff                                                          ; 4463: a9 ff
     sta l0a4c                                                         ; 4465: 8d 4c 0a
     lda #spriteid_one_pixel_masked_out                                ; 4468: a9 00
-    sta object_spriteid + 4                                           ; 446a: 8d ac 09
+    sta object_spriteid + objectid_clanger                            ; 446a: 8d ac 09
     lda #spriteid_clanger_menu_item                                   ; 446d: a9 e0
     jsr find_or_create_menu_slot_for_A                                ; 446f: 20 bd 2b
 c4472
@@ -1721,7 +1760,7 @@ c4472
 
 c4475
     lda #spriteid_one_pixel_masked_out                                ; 4475: a9 00
-    sta object_spriteid + 3                                           ; 4477: 8d ab 09
+    sta object_spriteid + objectid_clanger_end                        ; 4477: 8d ab 09
     lda #$e0                                                          ; 447a: a9 e0
     cmp player_using_object_spriteid                                  ; 447c: cd b6 2e
     bne c4472                                                         ; 447f: d0 f1
@@ -1741,17 +1780,17 @@ c4475
     lda #spriteid_using_clanger                                       ; 44a1: a9 e3
     sta object_spriteid + objectid_player_accessory                   ; 44a3: 8d a9 09
     lda object_x_low + objectid_player_accessory                      ; 44a6: ad 51 09
-    sta object_x_low + 3                                              ; 44a9: 8d 53 09
+    sta object_x_low + objectid_clanger_end                           ; 44a9: 8d 53 09
     lda object_x_high + objectid_player_accessory                     ; 44ac: ad 67 09
-    sta object_x_high + 3                                             ; 44af: 8d 69 09
+    sta object_x_high + objectid_clanger_end                          ; 44af: 8d 69 09
     lda object_y_low + objectid_player_accessory                      ; 44b2: ad 7d 09
-    sta object_y_low + 3                                              ; 44b5: 8d 7f 09
+    sta object_y_low + objectid_clanger_end                           ; 44b5: 8d 7f 09
     lda object_y_high + objectid_player_accessory                     ; 44b8: ad 93 09
-    sta object_y_high + 3                                             ; 44bb: 8d 95 09
+    sta object_y_high + objectid_clanger_end                          ; 44bb: 8d 95 09
     lda object_direction + objectid_player_accessory                  ; 44be: ad bf 09
-    sta object_direction + 3                                          ; 44c1: 8d c1 09
+    sta object_direction + objectid_clanger_end                       ; 44c1: 8d c1 09
     lda #spriteid_using_clanger_end                                   ; 44c4: a9 e4
-    sta object_spriteid + 3                                           ; 44c6: 8d ab 09
+    sta object_spriteid + objectid_clanger_end                        ; 44c6: 8d ab 09
     inc temp_right_offset                                             ; 44c9: ee d1 24
     dec temp_left_offset                                              ; 44cc: ce d0 24
     inc temp_right_offset                                             ; 44cf: ee d1 24
@@ -1965,21 +2004,6 @@ pydis_end
 ;     l0a72
 ;     l0a73
 ;     l0a74
-;     l38ae
-;     l38af
-;     l38b0
-;     l38b1
-;     l38b3
-;     l38b5
-;     l38c4
-;     l38c5
-;     l38c6
-;     l38c9
-;     l38ca
-;     l38cb
-;     l3970
-;     l3bba
-;     l3bf2
 ;     l3d39
 ;     l4041
 ;     l42ef
@@ -2069,74 +2093,113 @@ pydis_end
 !if (level_specific_update) != $3b1a {
     !error "Assertion failed: level_specific_update == $3b1a"
 }
-!if (object_direction + 3) != $09c1 {
-    !error "Assertion failed: object_direction + 3 == $09c1"
+!if (object_direction + objectid_clanger_end) != $09c1 {
+    !error "Assertion failed: object_direction + objectid_clanger_end == $09c1"
 }
-!if (object_spriteid + 10) != $09b2 {
-    !error "Assertion failed: object_spriteid + 10 == $09b2"
+!if (object_erase_type + objectid_bell) != $38ae {
+    !error "Assertion failed: object_erase_type + objectid_bell == $38ae"
 }
-!if (object_spriteid + 2) != $09aa {
-    !error "Assertion failed: object_spriteid + 2 == $09aa"
+!if (object_erase_type + objectid_clanger) != $38b0 {
+    !error "Assertion failed: object_erase_type + objectid_clanger == $38b0"
 }
-!if (object_spriteid + 3) != $09ab {
-    !error "Assertion failed: object_spriteid + 3 == $09ab"
+!if (object_erase_type + objectid_clanger_end) != $38af {
+    !error "Assertion failed: object_erase_type + objectid_clanger_end == $38af"
 }
-!if (object_spriteid + 4) != $09ac {
-    !error "Assertion failed: object_spriteid + 4 == $09ac"
+!if (object_erase_type + objectid_dog_head) != $38b5 {
+    !error "Assertion failed: object_erase_type + objectid_dog_head == $38b5"
 }
-!if (object_spriteid + 5) != $09ad {
-    !error "Assertion failed: object_spriteid + 5 == $09ad"
+!if (object_erase_type + objectid_drip) != $38b3 {
+    !error "Assertion failed: object_erase_type + objectid_drip == $38b3"
 }
-!if (object_spriteid + 7) != $09af {
-    !error "Assertion failed: object_spriteid + 7 == $09af"
+!if (object_erase_type + objectid_partition) != $38b1 {
+    !error "Assertion failed: object_erase_type + objectid_partition == $38b1"
 }
-!if (object_spriteid + 8) != $09b0 {
-    !error "Assertion failed: object_spriteid + 8 == $09b0"
+!if (object_spriteid + objectid_bell) != $09aa {
+    !error "Assertion failed: object_spriteid + objectid_bell == $09aa"
 }
-!if (object_spriteid + 9) != $09b1 {
-    !error "Assertion failed: object_spriteid + 9 == $09b1"
+!if (object_spriteid + objectid_clanger) != $09ac {
+    !error "Assertion failed: object_spriteid + objectid_clanger == $09ac"
 }
-!if (object_spriteid_old + 10) != $09bd {
-    !error "Assertion failed: object_spriteid_old + 10 == $09bd"
+!if (object_spriteid + objectid_clanger_end) != $09ab {
+    !error "Assertion failed: object_spriteid + objectid_clanger_end == $09ab"
 }
-!if (object_x_high + 2) != $0968 {
-    !error "Assertion failed: object_x_high + 2 == $0968"
+!if (object_spriteid + objectid_dog_head) != $09b1 {
+    !error "Assertion failed: object_spriteid + objectid_dog_head == $09b1"
 }
-!if (object_x_high + 3) != $0969 {
-    !error "Assertion failed: object_x_high + 3 == $0969"
+!if (object_spriteid + objectid_dog_tail) != $09b0 {
+    !error "Assertion failed: object_spriteid + objectid_dog_tail == $09b0"
 }
-!if (object_x_low + 2) != $0952 {
-    !error "Assertion failed: object_x_low + 2 == $0952"
+!if (object_spriteid + objectid_drip) != $09af {
+    !error "Assertion failed: object_spriteid + objectid_drip == $09af"
 }
-!if (object_x_low + 3) != $0953 {
-    !error "Assertion failed: object_x_low + 3 == $0953"
+!if (object_spriteid + objectid_partition) != $09ad {
+    !error "Assertion failed: object_spriteid + objectid_partition == $09ad"
 }
-!if (object_x_low + 7) != $0957 {
-    !error "Assertion failed: object_x_low + 7 == $0957"
+!if (object_spriteid + objectid_partition_end) != $09ac {
+    !error "Assertion failed: object_spriteid + objectid_partition_end == $09ac"
 }
-!if (object_y_high + 2) != $0994 {
-    !error "Assertion failed: object_y_high + 2 == $0994"
+!if (object_spriteid + objectid_umbrella) != $09b2 {
+    !error "Assertion failed: object_spriteid + objectid_umbrella == $09b2"
 }
-!if (object_y_high + 3) != $0995 {
-    !error "Assertion failed: object_y_high + 3 == $0995"
+!if (object_spriteid_old + objectid_umbrella) != $09bd {
+    !error "Assertion failed: object_spriteid_old + objectid_umbrella == $09bd"
 }
-!if (object_y_low + 10) != $0986 {
-    !error "Assertion failed: object_y_low + 10 == $0986"
+!if (object_x_high + objectid_bell) != $0968 {
+    !error "Assertion failed: object_x_high + objectid_bell == $0968"
 }
-!if (object_y_low + 2) != $097e {
-    !error "Assertion failed: object_y_low + 2 == $097e"
+!if (object_x_high + objectid_clanger_end) != $0969 {
+    !error "Assertion failed: object_x_high + objectid_clanger_end == $0969"
 }
-!if (object_y_low + 3) != $097f {
-    !error "Assertion failed: object_y_low + 3 == $097f"
+!if (object_x_low + objectid_bell) != $0952 {
+    !error "Assertion failed: object_x_low + objectid_bell == $0952"
 }
-!if (object_y_low + 4) != $0980 {
-    !error "Assertion failed: object_y_low + 4 == $0980"
+!if (object_x_low + objectid_clanger_end) != $0953 {
+    !error "Assertion failed: object_x_low + objectid_clanger_end == $0953"
 }
-!if (object_y_low + 5) != $0981 {
-    !error "Assertion failed: object_y_low + 5 == $0981"
+!if (object_x_low + objectid_drip) != $0957 {
+    !error "Assertion failed: object_x_low + objectid_drip == $0957"
 }
-!if (object_y_low + 7) != $0983 {
-    !error "Assertion failed: object_y_low + 7 == $0983"
+!if (object_y_high + objectid_bell) != $0994 {
+    !error "Assertion failed: object_y_high + objectid_bell == $0994"
+}
+!if (object_y_high + objectid_clanger_end) != $0995 {
+    !error "Assertion failed: object_y_high + objectid_clanger_end == $0995"
+}
+!if (object_y_low + objectid_bell) != $097e {
+    !error "Assertion failed: object_y_low + objectid_bell == $097e"
+}
+!if (object_y_low + objectid_clanger_end) != $097f {
+    !error "Assertion failed: object_y_low + objectid_clanger_end == $097f"
+}
+!if (object_y_low + objectid_drip) != $0983 {
+    !error "Assertion failed: object_y_low + objectid_drip == $0983"
+}
+!if (object_y_low + objectid_partition) != $0981 {
+    !error "Assertion failed: object_y_low + objectid_partition == $0981"
+}
+!if (object_y_low + objectid_partition_end) != $0980 {
+    !error "Assertion failed: object_y_low + objectid_partition_end == $0980"
+}
+!if (object_y_low + objectid_umbrella) != $0986 {
+    !error "Assertion failed: object_y_low + objectid_umbrella == $0986"
+}
+!if (object_z_order + objectid_bell) != $38c4 {
+    !error "Assertion failed: object_z_order + objectid_bell == $38c4"
+}
+!if (object_z_order + objectid_clanger_end) != $38c5 {
+    !error "Assertion failed: object_z_order + objectid_clanger_end == $38c5"
+}
+!if (object_z_order + objectid_dog_head) != $38cb {
+    !error "Assertion failed: object_z_order + objectid_dog_head == $38cb"
+}
+!if (object_z_order + objectid_dog_tail) != $38ca {
+    !error "Assertion failed: object_z_order + objectid_dog_tail == $38ca"
+}
+!if (object_z_order + objectid_drip) != $38c9 {
+    !error "Assertion failed: object_z_order + objectid_drip == $38c9"
+}
+!if (object_z_order + objectid_partition_end) != $38c6 {
+    !error "Assertion failed: object_z_order + objectid_partition_end == $38c6"
 }
 !if (objectid_old_player) != $0b {
     !error "Assertion failed: objectid_old_player == $0b"
@@ -2155,6 +2218,9 @@ pydis_end
 }
 !if (room_3_data) != $4355 {
     !error "Assertion failed: room_3_data == $4355"
+}
+!if (sound_priority_per_channel_table + 1) != $3970 {
+    !error "Assertion failed: sound_priority_per_channel_table + 1 == $3970"
 }
 !if (sprite_data - level_data) != $0a9f {
     !error "Assertion failed: sprite_data - level_data == $0a9f"
@@ -2176,6 +2242,39 @@ pydis_end
 }
 !if (spriteid_dog_body) != $d1 {
     !error "Assertion failed: spriteid_dog_body == $d1"
+}
+!if (spriteid_dog_head) != $d4 {
+    !error "Assertion failed: spriteid_dog_head == $d4"
+}
+!if (spriteid_dog_head_drooling) != $d5 {
+    !error "Assertion failed: spriteid_dog_head_drooling == $d5"
+}
+!if (spriteid_droplet1) != $d9 {
+    !error "Assertion failed: spriteid_droplet1 == $d9"
+}
+!if (spriteid_droplet2) != $d8 {
+    !error "Assertion failed: spriteid_droplet2 == $d8"
+}
+!if (spriteid_droplet3) != $d7 {
+    !error "Assertion failed: spriteid_droplet3 == $d7"
+}
+!if (spriteid_droplet4) != $d6 {
+    !error "Assertion failed: spriteid_droplet4 == $d6"
+}
+!if (spriteid_erase1) != $d0 {
+    !error "Assertion failed: spriteid_erase1 == $d0"
+}
+!if (spriteid_erase2) != $d2 {
+    !error "Assertion failed: spriteid_erase2 == $d2"
+}
+!if (spriteid_erase3) != $d3 {
+    !error "Assertion failed: spriteid_erase3 == $d3"
+}
+!if (spriteid_erase4) != $e2 {
+    !error "Assertion failed: spriteid_erase4 == $e2"
+}
+!if (spriteid_erase5) != $e5 {
+    !error "Assertion failed: spriteid_erase5 == $e5"
 }
 !if (spriteid_holding_clanger) != $e6 {
     !error "Assertion failed: spriteid_holding_clanger == $e6"
@@ -2200,6 +2299,18 @@ pydis_end
 }
 !if (spriteid_rope) != $cb {
     !error "Assertion failed: spriteid_rope == $cb"
+}
+!if (spriteid_tail1) != $db {
+    !error "Assertion failed: spriteid_tail1 == $db"
+}
+!if (spriteid_tail2) != $dc {
+    !error "Assertion failed: spriteid_tail2 == $dc"
+}
+!if (spriteid_tail3) != $dd {
+    !error "Assertion failed: spriteid_tail3 == $dd"
+}
+!if (spriteid_tail4) != $de {
+    !error "Assertion failed: spriteid_tail4 == $de"
 }
 !if (spriteid_umbrella) != $cd {
     !error "Assertion failed: spriteid_umbrella == $cd"
