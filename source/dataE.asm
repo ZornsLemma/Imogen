@@ -200,7 +200,7 @@ object_direction                                    = $09be
 l09d4                                               = $09d4
 current_player_animation                            = $09df
 save_game_level_e_small_egg_status                  = $0a13
-save_game_level_e_room_1_egg_state                  = $0a14
+save_game_level_e_big_egg_animation_index           = $0a14
 save_game_level_e_duck_captured_flag                = $0a15
 level_workspace_small_egg_offscreen_time            = $0a6f
 l0a70                                               = $0a70
@@ -1152,6 +1152,7 @@ small_egg_animation_table_subseq1
     !byte 8                                                           ; 40ac: 08
     !byte 0                                                           ; 40ad: 00
     !byte spriteid_small_egg_left                                     ; 40ae: d9
+egg_animation_table_subseq3
     !byte 8                                                           ; 40af: 08
     !byte 0                                                           ; 40b0: 00
     !byte spriteid_small_egg_left                                     ; 40b1: d9
@@ -1726,7 +1727,7 @@ room_1_update_handler
     beq room_1_not_this_room1                                         ; 4473: f0 2a
     ldx #$70 ; 'p'                                                    ; 4475: a2 70
     ldy #$58 ; 'X'                                                    ; 4477: a0 58
-    lda save_game_level_e_room_1_egg_state                            ; 4479: ad 14 0a
+    lda save_game_level_e_big_egg_animation_index                     ; 4479: ad 14 0a
     cmp #1                                                            ; 447c: c9 01
     beq room_1_axy_set                                                ; 447e: f0 13
     cmp #5                                                            ; 4480: c9 05
@@ -1741,7 +1742,7 @@ egg_on_floor
     ldy #$a8                                                          ; 448f: a0 a8
     lda #egg_animation_subseq4 - egg_animations_table                 ; 4491: a9 1a
 room_1_axy_set
-    sta save_game_level_e_room_1_egg_state                            ; 4493: 8d 14 0a
+    sta save_game_level_e_big_egg_animation_index                     ; 4493: 8d 14 0a
     sta egg_animation_index                                           ; 4496: 8d 76 0a
     stx room_1_egg_x                                                  ; 4499: 8e 77 0a
     sty room_1_egg_y                                                  ; 449c: 8c 78 0a
@@ -1767,15 +1768,15 @@ room_1_not_first_update
     tay                                                               ; 44c2: a8
     lda egg_animations_table,y                                        ; 44c3: b9 4c 44
     bne not_end_of_egg_animation_sequence                             ; 44c6: d0 03
-    ldy save_game_level_e_room_1_egg_state                            ; 44c8: ac 14 0a
+    ldy save_game_level_e_big_egg_animation_index                     ; 44c8: ac 14 0a
 not_end_of_egg_animation_sequence
-    lda save_game_level_e_room_1_egg_state                            ; 44cb: ad 14 0a
+    lda save_game_level_e_big_egg_animation_index                     ; 44cb: ad 14 0a
     cmp #1                                                            ; 44ce: c9 01
     bne c44df                                                         ; 44d0: d0 0d
     jsr test_if_small_egg_hit_large_egg                               ; 44d2: 20 a1 45
     beq new_egg_animation_index_in_y                                  ; 44d5: f0 61
     ldy #egg_animation_subseq2 - egg_animations_table                 ; 44d7: a0 05
-    sty save_game_level_e_room_1_egg_state                            ; 44d9: 8c 14 0a
+    sty save_game_level_e_big_egg_animation_index                     ; 44d9: 8c 14 0a
     jmp new_egg_animation_index_in_y                                  ; 44dc: 4c 38 45
 
 c44df
@@ -1796,8 +1797,8 @@ c44df
     sta height_in_cells                                               ; 44fc: 85 3d
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 44fe: 20 44 1e
 room_1_not_this_room3
-    lda #$16                                                          ; 4501: a9 16
-    sta save_game_level_e_room_1_egg_state                            ; 4503: 8d 14 0a
+    lda #egg_animation_table_subseq3 - small_egg_animation_table      ; 4501: a9 16
+    sta save_game_level_e_big_egg_animation_index                     ; 4503: 8d 14 0a
     ldy #egg_animation_subseq1 - egg_animations_table                 ; 4506: a0 09
     jmp new_egg_animation_index_in_y                                  ; 4508: 4c 38 45
 
@@ -1823,7 +1824,7 @@ c450b
 
 c4533
     ldy #egg_animation_subseq4 - egg_animations_table                 ; 4533: a0 1a
-    sty save_game_level_e_room_1_egg_state                            ; 4535: 8c 14 0a
+    sty save_game_level_e_big_egg_animation_index                     ; 4535: 8c 14 0a
 new_egg_animation_index_in_y
     sty egg_animation_index                                           ; 4538: 8c 76 0a
     iny                                                               ; 453b: c8
@@ -1855,7 +1856,7 @@ finish_setting_up_egg
     sta width_in_cells                                                ; 4576: 85 3c
     lda #2                                                            ; 4578: a9 02
     sta height_in_cells                                               ; 457a: 85 3d
-    lda save_game_level_e_room_1_egg_state                            ; 457c: ad 14 0a
+    lda save_game_level_e_big_egg_animation_index                     ; 457c: ad 14 0a
     cmp #1                                                            ; 457f: c9 01
     beq c4596                                                         ; 4581: f0 13
     cmp #5                                                            ; 4583: c9 05
@@ -2121,6 +2122,9 @@ pydis_end
 }
 !if (egg_animation_subseq4 - egg_animations_table) != $1a {
     !error "Assertion failed: egg_animation_subseq4 - egg_animations_table == $1a"
+}
+!if (egg_animation_table_subseq3 - small_egg_animation_table) != $16 {
+    !error "Assertion failed: egg_animation_table_subseq3 - small_egg_animation_table == $16"
 }
 !if (exit_room_bottom) != $02 {
     !error "Assertion failed: exit_room_bottom == $02"

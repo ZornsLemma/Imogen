@@ -49,7 +49,7 @@ constant(1, "small_egg_status_on_ground")
 constant(0xc, "small_egg_status_being_thrown")
 constant(0x32, "small_egg_status_falling")
 constant(0xff, "small_egg_status_collected") # probably only b7 set actually matters
-label(0x0a14, "save_game_level_e_room_1_egg_state") # TODO: other uses? not checked yet? egg state slightly speculative but prob right
+label(0x0a14, "save_game_level_e_big_egg_animation_index") # TODO: other uses? not checked yet? egg state slightly speculative but prob right
 label(0x0a15, "save_game_level_e_duck_captured_flag") # TODO: might be used for other things too, not checked yet
 
 label(0xa73, "thrown_egg_direction")
@@ -196,11 +196,13 @@ blank(0x4466)
 
 comment(0x4099, "Table of animations for TODO: what?. There are three bytes per entry. First byte is a sprite ID. Second and third bytes of each entry are signed (X,Y) position offsets, added to a77 and a78 respectively. This seems to control sprite and probably X/Y poss of object TODO. Each animation is terminated with an extra zero byte.")
 label(0x4099, "small_egg_animation_table")
-label(0x4099+1, "small_egg_animation_table_subseq2") # TODO: 411d uses this offset, but shares it with holding_egg_flag - I wonder if this is a micro-optimisation and 1 vs 0 in holding_egg_flag are equivalent
+label(0x4099+1, "small_egg_animation_table_subseq2") # TODO: 411d uses this offset, but shares it with holding_egg_flag - I wonder if this is a micro-optimisation and 1 vs 0 in holding_egg_flag are equivalent - TODO I think this is actually big egg animation table, or it's a mix
+label(0x4099+0x16, "egg_animation_table_subseq3")
 label(0x4099+5, "small_egg_animation_table_subseq1")
 for i in range(0x4099, 0x40cf):
     byte(i)
 expr(0x41c7, make_subtract("small_egg_animation_table_subseq1", "small_egg_animation_table"))
+expr(0x4502, make_subtract("egg_animation_table_subseq3", "small_egg_animation_table"))
 expr(0x409a, sprite_dict)
 expr(0x40a1, sprite_dict)
 expr(0x40a5, sprite_dict)
