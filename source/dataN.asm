@@ -334,17 +334,17 @@ level_specific_password
 level_specific_initialisation
     lda current_level                                                 ; 3af7: a5 31
     cmp level_before_latest_level_and_room_initialisation             ; 3af9: c5 51
-    beq c3b11                                                         ; 3afb: f0 14
+    beq set_rock_tiles                                                ; 3afb: f0 14
     lda developer_flags                                               ; 3afd: ad 03 11
     bpl developer_mode_inactive1                                      ; 3b00: 10 05
     lda #$ff                                                          ; 3b02: a9 ff
     sta save_game_level_n_got_clanger                                 ; 3b04: 8d 4c 0a
 developer_mode_inactive1
     lda save_game_level_n_got_clanger                                 ; 3b07: ad 4c 0a
-    beq c3b11                                                         ; 3b0a: f0 05
+    beq set_rock_tiles                                                ; 3b0a: f0 05
     lda #spriteid_clanger_menu_item                                   ; 3b0c: a9 e0
     jsr find_or_create_menu_slot_for_A                                ; 3b0e: 20 bd 2b
-c3b11
+set_rock_tiles
     lda #<ground_fill_2x2_top_left                                    ; 3b11: a9 54
     sta source_sprite_memory_low                                      ; 3b13: 85 40
     lda #>ground_fill_2x2_top_left                                    ; 3b15: a9 45
@@ -612,9 +612,9 @@ update_drip
     bcs developer_mode_inactive2                                      ; 3c83: b0 60
     lda desired_room_index                                            ; 3c85: a5 30
     cmp #0                                                            ; 3c87: c9 00
-    bne c3c8e                                                         ; 3c89: d0 03
+    bne set_end_of_dog_drooling                                       ; 3c89: d0 03
     jsr play_landing_sound                                            ; 3c8b: 20 a9 23
-c3c8e
+set_end_of_dog_drooling
     ldy #dog_head_drooling_final_animation - dog_head_animations      ; 3c8e: a0 34
     sty save_game_level_n_dog_head_animation                          ; 3c90: 8c 4b 0a
     lda #$30 ; '0'                                                    ; 3c93: a9 30
@@ -1769,7 +1769,7 @@ room_3_update_handler
     jsr update_brazier_and_fire                                       ; 4406: 20 88 19
 ; check for first update in room (branch if not)
     lda update_room_first_update_flag                                 ; 4409: ad 2b 13
-    beq c444f                                                         ; 440c: f0 41
+    beq update_clanger                                                ; 440c: f0 41
 ; initialise envelopes
     ldx #<envelope3                                                   ; 440e: a2 3e
     ldy #>envelope3                                                   ; 4410: a0 45
@@ -1785,60 +1785,65 @@ room_3_update_handler
     sta object_erase_type + objectid_clanger_end                      ; 4426: 8d af 38
     lda #$40 ; '@'                                                    ; 4429: a9 40
     sta object_z_order + objectid_clanger_end                         ; 442b: 8d c5 38
+; branch if player has the clanger in the toolbox but is not holding it
     lda save_game_level_n_got_clanger                                 ; 442e: ad 4c 0a
-    bne c4475                                                         ; 4431: d0 42
+    bne got_clanger_so_now_check_if_using_clanger                     ; 4431: d0 42
+; branch (return) if not in room 3
     lda desired_room_index                                            ; 4433: a5 30
     cmp #3                                                            ; 4435: c9 03
-    bne c444c                                                         ; 4437: d0 13
+    bne return7_local                                                 ; 4437: d0 13
+; position the clanger in room 3
     ldx #6                                                            ; 4439: a2 06
     ldy #$0f                                                          ; 443b: a0 0f
-    lda #4                                                            ; 443d: a9 04
+    lda #objectid_clanger                                             ; 443d: a9 04
     jsr set_object_position_from_cell_xy                              ; 443f: 20 5d 1f
     lda #spriteid_erase2                                              ; 4442: a9 d2
     sta object_erase_type + objectid_clanger                          ; 4444: 8d b0 38
     lda #spriteid_clanger2                                            ; 4447: a9 e8
     sta object_spriteid + objectid_clanger                            ; 4449: 8d ac 09
-c444c
+return7_local
     jmp return7                                                       ; 444c: 4c 08 45
 
-c444f
+update_clanger
     lda save_game_level_n_got_clanger                                 ; 444f: ad 4c 0a
-    bne c4475                                                         ; 4452: d0 21
+    bne got_clanger_so_now_check_if_using_clanger                     ; 4452: d0 21
     lda desired_room_index                                            ; 4454: a5 30
     cmp #3                                                            ; 4456: c9 03
-    bne c4472                                                         ; 4458: d0 18
+    bne return7_local2                                                ; 4458: d0 18
     ldx #objectid_old_player                                          ; 445a: a2 0b
     ldy #4                                                            ; 445c: a0 04
     jsr test_for_collision_between_objects_x_and_y                    ; 445e: 20 e2 28
-    beq c4472                                                         ; 4461: f0 0f
+    beq return7_local2                                                ; 4461: f0 0f
     lda #$ff                                                          ; 4463: a9 ff
     sta save_game_level_n_got_clanger                                 ; 4465: 8d 4c 0a
     lda #spriteid_one_pixel_masked_out                                ; 4468: a9 00
     sta object_spriteid + objectid_clanger                            ; 446a: 8d ac 09
     lda #spriteid_clanger_menu_item                                   ; 446d: a9 e0
     jsr find_or_create_menu_slot_for_A                                ; 446f: 20 bd 2b
-c4472
+return7_local2
     jmp return7                                                       ; 4472: 4c 08 45
 
-c4475
+; hold clanger (only used when it was on the floor)
+got_clanger_so_now_check_if_using_clanger
     lda #spriteid_one_pixel_masked_out                                ; 4475: a9 00
     sta object_spriteid + objectid_clanger_end                        ; 4477: 8d ab 09
-    lda #$e0                                                          ; 447a: a9 e0
+    lda #spriteid_clanger_menu_item                                   ; 447a: a9 e0
     cmp player_using_object_spriteid                                  ; 447c: cd b6 2e
-    bne c4472                                                         ; 447f: d0 f1
+    bne return7_local2                                                ; 447f: d0 f1
+; check if using clanger (return if not)
     lda #spriteid_holding_clanger                                     ; 4481: a9 e6
     sta object_spriteid + objectid_player_accessory                   ; 4483: 8d a9 09
     lda #1                                                            ; 4486: a9 01
     jsr get_solid_rock_collision_for_object_a                         ; 4488: 20 94 28
-    beq c4472                                                         ; 448b: f0 e5
+    beq return7_local2                                                ; 448b: f0 e5
     lda object_y_low                                                  ; 448d: ad 7c 09
     cmp save_game_level_n_bell_y_low                                  ; 4490: cd 51 0a
-    bcc c44f9                                                         ; 4493: 90 64
+    bcc check_collision_while_holding_clanger_then_set_using_clanger  ; 4493: 90 64
     dec temp_right_offset                                             ; 4495: ce d1 24
     ldx #objectid_player_accessory                                    ; 4498: a2 01
-    ldy #2                                                            ; 449a: a0 02
+    ldy #objectid_bell                                                ; 449a: a0 02
     jsr test_for_collision_between_objects_x_and_y                    ; 449c: 20 e2 28
-    beq c44f9                                                         ; 449f: f0 58
+    beq check_collision_while_holding_clanger_then_set_using_clanger  ; 449f: f0 58
     lda #spriteid_using_clanger                                       ; 44a1: a9 e3
     sta object_spriteid + objectid_player_accessory                   ; 44a3: 8d a9 09
     lda object_x_low + objectid_player_accessory                      ; 44a6: ad 51 09
@@ -1862,7 +1867,7 @@ c4475
 ; check for first update in room (branch if so)
     lda update_room_first_update_flag                                 ; 44d9: ad 2b 13
     bne return7                                                       ; 44dc: d0 2a
-    lda #$e0                                                          ; 44de: a9 e0
+    lda #spriteid_clanger_menu_item                                   ; 44de: a9 e0
     cmp previous_player_using_object_spriteid                         ; 44e0: cd b7 2e
     beq return7                                                       ; 44e3: f0 23
     lda player_is_currently_clanging_the_bell                         ; 44e5: ad 74 0a
@@ -1874,7 +1879,7 @@ c4475
     jsr play_sound_yx                                                 ; 44f3: 20 f6 38
     jmp return7                                                       ; 44f6: 4c 08 45
 
-c44f9
+check_collision_while_holding_clanger_then_set_using_clanger
     lda #spriteid_holding_clanger                                     ; 44f9: a9 e6
     sta collectable_being_used_spriteids + 1                          ; 44fb: 8d f3 2e
     lda #0                                                            ; 44fe: a9 00
@@ -1988,15 +1993,6 @@ ground_fill_2x2_bottom_right
     !byte %..#...#.                                                   ; 4573: 22
 sprite_data
 pydis_end
-
-; Automatically generated labels:
-;     c3b11
-;     c3c8e
-;     c444c
-;     c444f
-;     c4472
-;     c4475
-;     c44f9
 !if (<envelope1) != $0a {
     !error "Assertion failed: <envelope1 == $0a"
 }
@@ -2218,6 +2214,9 @@ pydis_end
 }
 !if (objectid_bell) != $02 {
     !error "Assertion failed: objectid_bell == $02"
+}
+!if (objectid_clanger) != $04 {
+    !error "Assertion failed: objectid_clanger == $04"
 }
 !if (objectid_dog_head) != $09 {
     !error "Assertion failed: objectid_dog_head == $09"
