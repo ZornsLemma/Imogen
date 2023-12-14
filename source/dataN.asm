@@ -196,9 +196,10 @@ player_held_object_spriteid                         = $52
 developer_mode_sideways_ram_is_set_up_flag          = $5b
 l0070                                               = $70
 room_exit_direction                                 = $70
+temp_x                                              = $70
 temp_y                                              = $70
-l0078                                               = $78
-l0079                                               = $79
+object_left_cell_x                                  = $78
+object_right_cell_x                                 = $79
 object_x_low                                        = $0950
 object_x_low_old                                    = $095b
 object_x_high                                       = $0966
@@ -226,7 +227,7 @@ dog_head_animation_step                             = $0a70
 drip_y_position                                     = $0a71
 drip_final_delay                                    = $0a72
 fast_forward_bell_counter                           = $0a73
-l0a74                                               = $0a74
+player_is_currently_clanging_the_bell               = $0a74
 tile_all_set_pixels                                 = $0aa9
 developer_flags                                     = $1103
 initialise_level_and_room                           = $1140
@@ -366,7 +367,7 @@ level_specific_update
     jsr update_dog_umbrella_puzzle                                    ; 3b1d: 20 3a 3d
     jsr room_0_update_handler                                         ; 3b20: 20 f7 3b
     lda #0                                                            ; 3b23: a9 00
-    sta l0a74                                                         ; 3b25: 8d 74 0a
+    sta player_is_currently_clanging_the_bell                         ; 3b25: 8d 74 0a
     jsr room_2_update_handler                                         ; 3b28: 20 58 40
     jsr room_3_update_handler                                         ; 3b2b: 20 fb 43
     rts                                                               ; 3b2e: 60
@@ -640,7 +641,7 @@ doing_normal_animation
     lda desired_room_index                                            ; 3cbf: a5 30
     cmp #0                                                            ; 3cc1: c9 00
     bne developer_mode_inactive2                                      ; 3cc3: d0 20
-    lda l0a74                                                         ; 3cc5: ad 74 0a
+    lda player_is_currently_clanging_the_bell                         ; 3cc5: ad 74 0a
     bne start_dog_drooling                                            ; 3cc8: d0 14
     lda developer_flags                                               ; 3cca: ad 03 11
     bpl developer_mode_inactive2                                      ; 3ccd: 10 16
@@ -1028,6 +1029,7 @@ room_1_check_right_exit
 room_1_update_handler
     lda #1                                                            ; 3f35: a9 01
     sta currently_updating_logic_for_room_index                       ; 3f37: 8d ba 1a
+; update brazier fires
     ldx #3                                                            ; 3f3a: a2 03
     ldy #$0e                                                          ; 3f3c: a0 0e
     lda #objectid_fire1                                               ; 3f3e: a9 04
@@ -1226,6 +1228,8 @@ bell_fall_animation
     !byte 0, 8                                                        ; 4055: 00 08
     !byte $80                                                         ; 4057: 80
 
+; odd that this function mostly updates the bell normally in room 1, but also the
+; braziers in room 2
 room_2_update_handler
     lda #2                                                            ; 4058: a9 02
     sta currently_updating_logic_for_room_index                       ; 405a: 8d ba 1a
@@ -1235,7 +1239,8 @@ room_2_update_handler
     jsr update_brazier_and_fire                                       ; 4063: 20 88 19
 ; check for first update in room (branch if not)
     lda update_room_first_update_flag                                 ; 4066: ad 2b 13
-    beq c40e6                                                         ; 4069: f0 7b
+    beq room_2_not_first_update                                       ; 4069: f0 7b
+; initialise envelopes
     ldx #<envelope1                                                   ; 406b: a2 0a
     ldy #>envelope1                                                   ; 406d: a0 45
     jsr define_envelope                                               ; 406f: 20 5e 39
@@ -1245,13 +1250,14 @@ room_2_update_handler
 ; check for level change (branch if not)
     lda current_level                                                 ; 4079: a5 31
     cmp level_before_latest_level_and_room_initialisation             ; 407b: c5 51
-    beq c40b1                                                         ; 407d: f0 32
+    beq room_change_only                                              ; 407d: f0 32
+; initialise bell position in room 1
     lda save_game_level_n_bell_animation                              ; 407f: ad 4d 0a
     cmp #bell_stopped_animation - bell_animations                     ; 4082: c9 01
-    beq c40b1                                                         ; 4084: f0 2b
+    beq room_change_only                                              ; 4084: f0 2b
     dec fast_forward_bell_counter                                     ; 4086: ce 73 0a
     ora #0                                                            ; 4089: 09 00
-    bne c40b1                                                         ; 408b: d0 24
+    bne room_change_only                                              ; 408b: d0 24
     inc fast_forward_bell_counter                                     ; 408d: ee 73 0a
     lda #1                                                            ; 4090: a9 01
     sta save_game_level_n_bell_room                                   ; 4092: 8d 53 0a
@@ -1266,98 +1272,103 @@ room_2_update_handler
     lda #bell_stopped_animation - bell_animations                     ; 40a9: a9 01
     sta save_game_level_n_bell_animation                              ; 40ab: 8d 4d 0a
     sta save_game_level_n_bell_animation_step                         ; 40ae: 8d 4e 0a
-c40b1
+room_change_only
     lda #spriteid_erase4                                              ; 40b1: a9 e2
     sta object_erase_type + objectid_bell                             ; 40b3: 8d ae 38
     lda #$c0                                                          ; 40b6: a9 c0
     sta object_z_order + objectid_bell                                ; 40b8: 8d c4 38
     lda desired_room_index                                            ; 40bb: a5 30
     cmp save_game_level_n_bell_room                                   ; 40bd: cd 53 0a
-    bne c40de                                                         ; 40c0: d0 1c
+    bne initialise_bell_collision_map                                 ; 40c0: d0 1c
     jsr set_bell_object                                               ; 40c2: 20 f0 42
 fast_forward_bell_animation
     lda desired_room_index                                            ; 40c5: a5 30
     cmp save_game_level_n_bell_room                                   ; 40c7: cd 53 0a
-    bne c40de                                                         ; 40ca: d0 12
+    bne initialise_bell_collision_map                                 ; 40ca: d0 12
     lda fast_forward_bell_counter                                     ; 40cc: ad 73 0a
-    beq c40de                                                         ; 40cf: f0 0d
+    beq initialise_bell_collision_map                                 ; 40cf: f0 0d
     cmp #$ff                                                          ; 40d1: c9 ff
-    beq c40d8                                                         ; 40d3: f0 03
+    beq more_fast_forwarding_needed                                   ; 40d3: f0 03
     dec fast_forward_bell_counter                                     ; 40d5: ce 73 0a
-c40d8
+more_fast_forwarding_needed
     jsr update_bell                                                   ; 40d8: 20 7b 41
     jmp fast_forward_bell_animation                                   ; 40db: 4c c5 40
 
-c40de
-    lda #3                                                            ; 40de: a9 03
-    jsr sub_c430e                                                     ; 40e0: 20 0e 43
+initialise_bell_collision_map
+    lda #collision_map_solid_rock                                     ; 40de: a9 03
+    jsr write_bell_to_collision_map                                   ; 40e0: 20 0e 43
     jmp return4                                                       ; 40e3: 4c 77 41
 
-c40e6
+room_2_not_first_update
     lda desired_room_index                                            ; 40e6: a5 30
     cmp save_game_level_n_bell_room                                   ; 40e8: cd 53 0a
-    beq c40f8                                                         ; 40eb: f0 0b
+    beq bell_in_room                                                  ; 40eb: f0 0b
+; update fast forward counter when bell is not in the room
     lda fast_forward_bell_counter                                     ; 40ed: ad 73 0a
     bmi return4_local                                                 ; 40f0: 30 03
     inc fast_forward_bell_counter                                     ; 40f2: ee 73 0a
 return4_local
     jmp return4                                                       ; 40f5: 4c 77 41
 
-c40f8
+bell_in_room
     lda #$40 ; '@'                                                    ; 40f8: a9 40
     jsr update_sound_priorities                                       ; 40fa: 20 85 3e
     jsr update_bell                                                   ; 40fd: 20 7b 41
     lda desired_room_index                                            ; 4100: a5 30
     cmp save_game_level_n_bell_room                                   ; 4102: cd 53 0a
-    beq c410f                                                         ; 4105: f0 08
+    beq update_bell_if_falling_sideways                               ; 4105: f0 08
+; start counting the number of ticks the bell is off screen
     lda #0                                                            ; 4107: a9 00
     sta fast_forward_bell_counter                                     ; 4109: 8d 73 0a
     jmp return4                                                       ; 410c: 4c 77 41
 
-c410f
+update_bell_if_falling_sideways
     lda save_game_level_n_bell_animation                              ; 410f: ad 4d 0a
     cmp #bell_fall_right_animation - bell_animations                  ; 4112: c9 07
-    bne c4131                                                         ; 4114: d0 1b
+    bne update_bell_if_moving_sideways                                ; 4114: d0 1b
     lda save_game_level_n_bell_direction                              ; 4116: ad 54 0a
-    bpl c411e                                                         ; 4119: 10 03
-    jmp c4124                                                         ; 411b: 4c 24 41
+    bpl adjust_collision_check_when_moving_right                      ; 4119: 10 03
+    jmp check_for_bell_room_collision                                 ; 411b: 4c 24 41
 
-c411e
+adjust_collision_check_when_moving_right
     inc temp_right_offset                                             ; 411e: ee d1 24
     inc temp_left_offset                                              ; 4121: ee d0 24
-c4124
+check_for_bell_room_collision
     lda #1                                                            ; 4124: a9 01
     sta temp_bottom_offset                                            ; 4126: 8d 51 25
-    lda #2                                                            ; 4129: a9 02
+    lda #objectid_bell                                                ; 4129: a9 02
     jsr get_solid_rock_collision_for_object_a                         ; 412b: 20 94 28
     bne play_landing_sound_local                                      ; 412e: d0 1b
     rts                                                               ; 4130: 60
 
-c4131
+update_bell_if_moving_sideways
     lda save_game_level_n_bell_animation                              ; 4131: ad 4d 0a
     cmp #bell_move_right_animation - bell_animations                  ; 4134: c9 04
-    bne c414e                                                         ; 4136: d0 16
+    bne check_collision_if_falling                                    ; 4136: d0 16
     inc temp_right_offset                                             ; 4138: ee d1 24
     lda #2                                                            ; 413b: a9 02
     jsr get_solid_rock_collision_for_object_a                         ; 413d: 20 94 28
     bne play_landing_sound_local                                      ; 4140: d0 09
+; play bell sliding sound
     lda #$40 ; '@'                                                    ; 4142: a9 40
-    ldx #$18                                                          ; 4144: a2 18
-    ldy #$45 ; 'E'                                                    ; 4146: a0 45
+    ldx #<sound1                                                      ; 4144: a2 18
+    ldy #>sound1                                                      ; 4146: a0 45
     jmp play_sound_yx                                                 ; 4148: 4c f6 38
 
 play_landing_sound_local
     jmp play_landing_sound                                            ; 414b: 4c a9 23
 
-c414e
+check_collision_if_falling
     cmp #bell_fall_animation - bell_animations                        ; 414e: c9 14
-    bne c4172                                                         ; 4150: d0 20
+    bne write_static_bell_to_collision_map                            ; 4150: d0 20
+; check for collision with ground
     inc temp_left_offset                                              ; 4152: ee d0 24
     lda #2                                                            ; 4155: a9 02
     sta temp_bottom_offset                                            ; 4157: 8d 51 25
     lda #2                                                            ; 415a: a9 02
     jsr get_solid_rock_collision_for_object_a                         ; 415c: 20 94 28
     beq return4                                                       ; 415f: f0 16
+; bell hit rock
     lda #0                                                            ; 4161: a9 00
     ldx #<sound2                                                      ; 4163: a2 36
     ldy #>sound2                                                      ; 4165: a0 45
@@ -1367,14 +1378,14 @@ c414e
     jsr play_sound_yx                                                 ; 416e: 20 f6 38
     rts                                                               ; 4171: 60
 
-c4172
-    lda #3                                                            ; 4172: a9 03
-    jsr sub_c430e                                                     ; 4174: 20 0e 43
+write_static_bell_to_collision_map
+    lda #collision_map_solid_rock                                     ; 4172: a9 03
+    jsr write_bell_to_collision_map                                   ; 4174: 20 0e 43
 return4
     rts                                                               ; 4177: 60
 
-c4178
-    jmp c4266                                                         ; 4178: 4c 66 42
+store_bell_animation_step_local
+    jmp store_bell_animation_step                                     ; 4178: 4c 66 42
 
 update_bell
     lda save_game_level_n_bell_animation_step                         ; 417b: ad 4e 0a
@@ -1383,29 +1394,32 @@ update_bell
     tay                                                               ; 4181: a8
     lda bell_animations,y                                             ; 4182: b9 41 40
     cmp #$80                                                          ; 4185: c9 80
-    bne c418c                                                         ; 4187: d0 03
+    bne got_bell_animation_step_in_y                                  ; 4187: d0 03
     ldy save_game_level_n_bell_animation                              ; 4189: ac 4d 0a
-c418c
+got_bell_animation_step_in_y
     lda save_game_level_n_bell_animation                              ; 418c: ad 4d 0a
     cmp #bell_stopped_animation - bell_animations                     ; 418f: c9 01
-    bne c41ef                                                         ; 4191: d0 5c
+    bne bell_is_moving                                                ; 4191: d0 5c
 ; check for first update in room (branch if so)
     lda update_room_first_update_flag                                 ; 4193: ad 2b 13
-    bne c4178                                                         ; 4196: d0 e0
+    bne store_bell_animation_step_local                               ; 4196: d0 e0
+; check for player bell collision (branch if none)
     dec temp_left_offset                                              ; 4198: ce d0 24
-    ldx #0                                                            ; 419b: a2 00
-    sty l42ef                                                         ; 419d: 8c ef 42
-    ldy #2                                                            ; 41a0: a0 02
+    ldx #objectid_player                                              ; 419b: a2 00
+    sty remember_y1                                                   ; 419d: 8c ef 42
+    ldy #objectid_bell                                                ; 41a0: a0 02
     jsr test_for_collision_between_objects_x_and_y                    ; 41a2: 20 e2 28
-    ldy l42ef                                                         ; 41a5: ac ef 42
+    ldy remember_y1                                                   ; 41a5: ac ef 42
     ora #0                                                            ; 41a8: 09 00
-    beq c4178                                                         ; 41aa: f0 cc
+    beq store_bell_animation_step_local                               ; 41aa: f0 cc
+; we have a collision. Check the player is below the bell?
     lda object_y_low                                                  ; 41ac: ad 7c 09
     sec                                                               ; 41af: 38
     sbc save_game_level_n_bell_y_low                                  ; 41b0: ed 51 0a
     lda object_y_high                                                 ; 41b3: ad 92 09
     sbc save_game_level_n_bell_y_high                                 ; 41b6: ed 52 0a
-    bmi c4178                                                         ; 41b9: 30 bd
+    bmi store_bell_animation_step_local                               ; 41b9: 30 bd
+; find left or right direction of impact
     ldx #1                                                            ; 41bb: a2 01
     lda object_room_collision_flags                                   ; 41bd: ad d8 38
     and #object_collided_right_wall                                   ; 41c0: 29 04
@@ -1413,81 +1427,87 @@ c418c
     ldx #$ff                                                          ; 41c4: a2 ff
     lda object_room_collision_flags                                   ; 41c6: ad d8 38
     and #object_collided_left_wall                                    ; 41c9: 29 01
-    beq c4178                                                         ; 41cb: f0 ab
+    beq store_bell_animation_step_local                               ; 41cb: f0 ab
 got_direction_in_x
     stx save_game_level_n_bell_direction                              ; 41cd: 8e 54 0a
-    lda #0                                                            ; 41d0: a9 00
-    jsr sub_c430e                                                     ; 41d2: 20 0e 43
-    lda #$e0                                                          ; 41d5: a9 e0
+; bell is about to move. clear it from the collision map
+    lda #collision_map_none                                           ; 41d0: a9 00
+    jsr write_bell_to_collision_map                                   ; 41d2: 20 0e 43
+    lda #spriteid_clanger_menu_item                                   ; 41d5: a9 e0
     cmp player_using_object_spriteid                                  ; 41d7: cd b6 2e
     bne set_bell_moving_sideways                                      ; 41da: d0 0e
+; clanging bell, not moving it
     lda #0                                                            ; 41dc: a9 00
     ldx #<sound4                                                      ; 41de: a2 4c
     ldy #>sound4                                                      ; 41e0: a0 45
     jsr play_sound_yx                                                 ; 41e2: 20 f6 38
     lda #$ff                                                          ; 41e5: a9 ff
-    sta l0a74                                                         ; 41e7: 8d 74 0a
+    sta player_is_currently_clanging_the_bell                         ; 41e7: 8d 74 0a
 set_bell_moving_sideways
     ldy #bell_move_right_animation - bell_animations                  ; 41ea: a0 04
     sty save_game_level_n_bell_animation                              ; 41ec: 8c 4d 0a
-c41ef
+bell_is_moving
     lda save_game_level_n_bell_animation                              ; 41ef: ad 4d 0a
     cmp #bell_move_right_animation - bell_animations                  ; 41f2: c9 04
-    bne c4235                                                         ; 41f4: d0 3f
+    bne check_if_bell_is_falling_sideways                             ; 41f4: d0 3f
     lda save_game_level_n_bell_direction                              ; 41f6: ad 54 0a
-    bmi c4204                                                         ; 41f9: 30 09
+    bmi check_bell_falling_rock_collision                             ; 41f9: 30 09
     inc temp_right_offset                                             ; 41fb: ee d1 24
     inc temp_left_offset                                              ; 41fe: ee d0 24
-    jmp c4204                                                         ; 4201: 4c 04 42                ; redundant instruction
+    jmp check_bell_falling_rock_collision                             ; 4201: 4c 04 42                ; redundant instruction
 
-c4204
-    lda #2                                                            ; 4204: a9 02
+check_bell_falling_rock_collision
+    lda #objectid_bell                                                ; 4204: a9 02
     jsr get_solid_rock_collision_for_object_a                         ; 4206: 20 94 28
-    bne c425c                                                         ; 4209: d0 51
+    bne stop_bell                                                     ; 4209: d0 51
     lda save_game_level_n_bell_direction                              ; 420b: ad 54 0a
-    bmi c4217                                                         ; 420e: 30 07
+    bmi set_bell_moving_right                                         ; 420e: 30 07
     lda #9                                                            ; 4210: a9 09
     sta temp_left_offset                                              ; 4212: 8d d0 24
-    bne c421c                                                         ; 4215: d0 05
-c4217
+    bne check_bell_moving_rock_collision                              ; 4215: d0 05
+set_bell_moving_right
     lda #$f8                                                          ; 4217: a9 f8
     sta temp_right_offset                                             ; 4219: 8d d1 24
-c421c
+check_bell_moving_rock_collision
     lda #2                                                            ; 421c: a9 02
     sta temp_bottom_offset                                            ; 421e: 8d 51 25
     lda #3                                                            ; 4221: a9 03
     sta temp_default_collision_map_option                             ; 4223: 8d e1 28
     lda #objectid_bell                                                ; 4226: a9 02
     jsr get_solid_rock_collision_for_object_a                         ; 4228: 20 94 28
-    bne c4266                                                         ; 422b: d0 39
+    bne store_bell_animation_step                                     ; 422b: d0 39
+; set bell falling sideways
     ldy #bell_fall_right_animation - bell_animations                  ; 422d: a0 07
     sty save_game_level_n_bell_animation                              ; 422f: 8c 4d 0a
-    jmp c4266                                                         ; 4232: 4c 66 42
+    jmp store_bell_animation_step                                     ; 4232: 4c 66 42
 
-c4235
+check_if_bell_is_falling_sideways
     lda save_game_level_n_bell_animation                              ; 4235: ad 4d 0a
     cmp #bell_fall_right_animation - bell_animations                  ; 4238: c9 07
-    bne c4246                                                         ; 423a: d0 0a
+    bne check_if_falling_straight_down                                ; 423a: d0 0a
+; check if at end of animation (looped)
     cpy save_game_level_n_bell_animation                              ; 423c: cc 4d 0a
-    bne c4266                                                         ; 423f: d0 25
+    bne store_bell_animation_step                                     ; 423f: d0 25
+; set bell falling straight down
     ldy #bell_fall_animation - bell_animations                        ; 4241: a0 14
     sty save_game_level_n_bell_animation                              ; 4243: 8c 4d 0a
-c4246
+check_if_falling_straight_down
     lda save_game_level_n_bell_animation                              ; 4246: ad 4d 0a
     cmp #bell_fall_animation - bell_animations                        ; 4249: c9 14
-    bne c4266                                                         ; 424b: d0 19
+    bne store_bell_animation_step                                     ; 424b: d0 19
+; bell is falling straight down
     inc temp_left_offset                                              ; 424d: ee d0 24
     lda #2                                                            ; 4250: a9 02
     sta temp_bottom_offset                                            ; 4252: 8d 51 25
     lda #objectid_bell                                                ; 4255: a9 02
     jsr get_solid_rock_collision_for_object_a                         ; 4257: 20 94 28
-    beq c4266                                                         ; 425a: f0 0a
-c425c
+    beq store_bell_animation_step                                     ; 425a: f0 0a
+stop_bell
     lda #0                                                            ; 425c: a9 00
     sta fast_forward_bell_counter                                     ; 425e: 8d 73 0a
     ldy #bell_stopped_animation - bell_animations                     ; 4261: a0 01
     sty save_game_level_n_bell_animation                              ; 4263: 8c 4d 0a
-c4266
+store_bell_animation_step
     sty save_game_level_n_bell_animation_step                         ; 4266: 8c 4e 0a
     lda bell_animations,y                                             ; 4269: b9 41 40
     ldx save_game_level_n_bell_direction                              ; 426c: ae 54 0a
@@ -1516,17 +1536,21 @@ add_animation_offsets_to_position
     adc save_game_level_n_bell_y_high                                 ; 4298: 6d 52 0a
     sta save_game_level_n_bell_y_high                                 ; 429b: 8d 52 0a
     jsr set_bell_object                                               ; 429e: 20 f0 42
+; get extents of bell object
     ldx #objectid_bell                                                ; 42a1: a2 02
     jsr find_left_and_right_of_object                                 ; 42a3: 20 34 24
     jsr find_top_and_bottom_of_object                                 ; 42a6: 20 d2 24
+; check if bell is moving sideways (return if not)
     lda save_game_level_n_bell_animation                              ; 42a9: ad 4d 0a
     cmp #bell_move_right_animation - bell_animations                  ; 42ac: c9 04
     bne return5                                                       ; 42ae: d0 3e
+; check if bell has moved offscreen, into the next room
     lda save_game_level_n_bell_direction                              ; 42b0: ad 54 0a
-    bmi move_bell_left_one_room                                       ; 42b3: 30 1c
-    lda l0078                                                         ; 42b5: a5 78
-    cmp #$28 ; '('                                                    ; 42b7: c9 28
+    bmi move_bell_left_one_room_if_needed                             ; 42b3: 30 1c
+    lda object_left_cell_x                                            ; 42b5: a5 78
+    cmp #game_area_width_cells                                        ; 42b7: c9 28
     bcc return5                                                       ; 42b9: 90 33
+; move ball right one room
     lda save_game_level_n_bell_x_low                                  ; 42bb: ad 4f 0a
     sec                                                               ; 42be: 38
     sbc #$40 ; '@'                                                    ; 42bf: e9 40
@@ -1537,8 +1561,8 @@ add_animation_offsets_to_position
     dec save_game_level_n_bell_room                                   ; 42cb: ce 53 0a
     jmp hide_bell                                                     ; 42ce: 4c e9 42
 
-move_bell_left_one_room
-    lda l0079                                                         ; 42d1: a5 79
+move_bell_left_one_room_if_needed
+    lda object_right_cell_x                                           ; 42d1: a5 79
     bpl return5                                                       ; 42d3: 10 19
     lda save_game_level_n_bell_x_low                                  ; 42d5: ad 4f 0a
     clc                                                               ; 42d8: 18
@@ -1555,7 +1579,7 @@ hide_bell
 return5
     rts                                                               ; 42ee: 60
 
-l42ef
+remember_y1
     !byte 0                                                           ; 42ef: 00
 
 set_bell_object
@@ -1571,35 +1595,35 @@ set_bell_object
     sta object_spriteid + objectid_bell                               ; 430a: 8d aa 09
     rts                                                               ; 430d: 60
 
-sub_c430e
+write_bell_to_collision_map
     sta value_to_write_to_collision_map                               ; 430e: 85 3e
     ora #0                                                            ; 4310: 09 00
-    beq c431b                                                         ; 4312: f0 07
+    beq validated                                                     ; 4312: f0 07
     lda save_game_level_n_bell_animation                              ; 4314: ad 4d 0a
     cmp #bell_stopped_animation - bell_animations                     ; 4317: c9 01
     bne return6                                                       ; 4319: d0 39
-c431b
+validated
     lda desired_room_index                                            ; 431b: a5 30
     cmp save_game_level_n_bell_room                                   ; 431d: cd 53 0a
     bne return6                                                       ; 4320: d0 32
     lda save_game_level_n_bell_x_high                                 ; 4322: ad 50 0a
     lsr                                                               ; 4325: 4a
-    sta l0070                                                         ; 4326: 85 70
+    sta temp_x                                                        ; 4326: 85 70
     lda save_game_level_n_bell_x_low                                  ; 4328: ad 4f 0a
     ror                                                               ; 432b: 6a
-    lsr l0070                                                         ; 432c: 46 70
+    lsr temp_x                                                        ; 432c: 46 70
     ror                                                               ; 432e: 6a
-    lsr l0070                                                         ; 432f: 46 70
+    lsr temp_x                                                        ; 432f: 46 70
     ror                                                               ; 4331: 6a
     tax                                                               ; 4332: aa
     lda save_game_level_n_bell_y_high                                 ; 4333: ad 52 0a
     lsr                                                               ; 4336: 4a
-    sta l0070                                                         ; 4337: 85 70
+    sta temp_x                                                        ; 4337: 85 70
     lda save_game_level_n_bell_y_low                                  ; 4339: ad 51 0a
     ror                                                               ; 433c: 6a
-    lsr l0070                                                         ; 433d: 46 70
+    lsr temp_x                                                        ; 433d: 46 70
     ror                                                               ; 433f: 6a
-    lsr l0070                                                         ; 4340: 46 70
+    lsr temp_x                                                        ; 4340: 46 70
     ror                                                               ; 4342: 6a
     tay                                                               ; 4343: a8
     lda #2                                                            ; 4344: a9 02
@@ -1746,9 +1770,11 @@ room_3_update_handler
 ; check for first update in room (branch if not)
     lda update_room_first_update_flag                                 ; 4409: ad 2b 13
     beq c444f                                                         ; 440c: f0 41
+; initialise envelopes
     ldx #<envelope3                                                   ; 440e: a2 3e
     ldy #>envelope3                                                   ; 4410: a0 45
     jsr define_envelope                                               ; 4412: 20 5e 39
+; initialise clanger
     lda #spriteid_clanger_menu_item                                   ; 4415: a9 e0
     sta toolbar_collectable_spriteids+1                               ; 4417: 8d e9 2e
     lda #spriteid_clanger                                             ; 441a: a9 df
@@ -1839,9 +1865,9 @@ c4475
     lda #$e0                                                          ; 44de: a9 e0
     cmp previous_player_using_object_spriteid                         ; 44e0: cd b7 2e
     beq return7                                                       ; 44e3: f0 23
-    lda l0a74                                                         ; 44e5: ad 74 0a
+    lda player_is_currently_clanging_the_bell                         ; 44e5: ad 74 0a
     bne return7                                                       ; 44e8: d0 1e
-    dec l0a74                                                         ; 44ea: ce 74 0a
+    dec player_is_currently_clanging_the_bell                         ; 44ea: ce 74 0a
     lda #0                                                            ; 44ed: a9 00
     ldx #<sound4                                                      ; 44ef: a2 4c
     ldy #>sound4                                                      ; 44f1: a0 45
@@ -1966,38 +1992,11 @@ pydis_end
 ; Automatically generated labels:
 ;     c3b11
 ;     c3c8e
-;     c40b1
-;     c40d8
-;     c40de
-;     c40e6
-;     c40f8
-;     c410f
-;     c411e
-;     c4124
-;     c4131
-;     c414e
-;     c4172
-;     c4178
-;     c418c
-;     c41ef
-;     c4204
-;     c4217
-;     c421c
-;     c4235
-;     c4246
-;     c425c
-;     c4266
-;     c431b
 ;     c444c
 ;     c444f
 ;     c4472
 ;     c4475
 ;     c44f9
-;     l0078
-;     l0079
-;     l0a74
-;     l42ef
-;     sub_c430e
 !if (<envelope1) != $0a {
     !error "Assertion failed: <envelope1 == $0a"
 }
@@ -2087,6 +2086,9 @@ pydis_end
 }
 !if (exit_room_top) != $08 {
     !error "Assertion failed: exit_room_top == $08"
+}
+!if (game_area_width_cells) != $28 {
+    !error "Assertion failed: game_area_width_cells == $28"
 }
 !if (inkey_key_o) != $c9 {
     !error "Assertion failed: inkey_key_o == $c9"
@@ -2231,6 +2233,9 @@ pydis_end
 }
 !if (objectid_old_player) != $0b {
     !error "Assertion failed: objectid_old_player == $0b"
+}
+!if (objectid_player) != $00 {
+    !error "Assertion failed: objectid_player == $00"
 }
 !if (objectid_player_accessory) != $01 {
     !error "Assertion failed: objectid_player_accessory == $01"
