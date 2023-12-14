@@ -1875,35 +1875,34 @@ c4596
 return5
     rts                                                               ; 45a0: 60
 
-; Preserves Y. A is either preserved or decremented by 1 depending on something. Flags
-; reflect A on exit.
+; Preserves Y. A is 0 or $ff on exit depending on something. Flags reflect A on exit.
 something_to_do_with_egg_animation
     lda #0                                                            ; 45a1: a9 00
-    sta saved_a                                                       ; 45a3: 8d d6 45
+    sta return_a                                                      ; 45a3: 8d d6 45
     lda room_containing_small_egg                                     ; 45a6: ad 75 0a
     cmp #1                                                            ; 45a9: c9 01
-    bne restore_a_and_return                                          ; 45ab: d0 25
+    bne set_a_and_return                                              ; 45ab: d0 25
 ; TODO: Why not lda object_spriteid+2? And similarly for following lda abs,x
     ldx #objectid_small_egg                                           ; 45ad: a2 02
     lda object_spriteid,x                                             ; 45af: bd a8 09
-    beq restore_a_and_return                                          ; 45b2: f0 1e
+    beq set_a_and_return                                              ; 45b2: f0 1e
     lda object_x_high,x                                               ; 45b4: bd 66 09
-    bne restore_a_and_return                                          ; 45b7: d0 19
+    bne set_a_and_return                                              ; 45b7: d0 19
     lda object_y_low,x                                                ; 45b9: bd 7c 09
     cmp #$70 ; 'p'                                                    ; 45bc: c9 70
-    bcs restore_a_and_return                                          ; 45be: b0 12
+    bcs set_a_and_return                                              ; 45be: b0 12
     sty saved_y                                                       ; 45c0: 8c d7 45
     jsr find_left_and_right_of_object                                 ; 45c3: 20 34 24
     ldy saved_y                                                       ; 45c6: ac d7 45
     lda object_left_low                                               ; 45c9: a5 70
     cmp #$78 ; 'x'                                                    ; 45cb: c9 78
-    bne restore_a_and_return                                          ; 45cd: d0 03
-    dec saved_a                                                       ; 45cf: ce d6 45
-restore_a_and_return
-    lda saved_a                                                       ; 45d2: ad d6 45
+    bne set_a_and_return                                              ; 45cd: d0 03
+    dec return_a                                                      ; 45cf: ce d6 45
+set_a_and_return
+    lda return_a                                                      ; 45d2: ad d6 45
     rts                                                               ; 45d5: 60
 
-saved_a
+return_a
     !byte 0                                                           ; 45d6: 00
 saved_y
     !byte 0                                                           ; 45d7: 00
