@@ -19,6 +19,7 @@ exit_room_top                         = 8
 first_level_letter                    = 65
 game_area_height_cells                = 24
 game_area_width_cells                 = 40
+inkey_key_o                           = 201
 last_level_letter                     = 81
 object_collided_ceiling               = 8
 object_collided_floor                 = 2
@@ -208,22 +209,22 @@ object_spriteid                                     = $09a8
 object_spriteid_old                                 = $09b3
 object_direction                                    = $09be
 current_player_animation                            = $09df
-l0a4a                                               = $0a4a
-l0a4b                                               = $0a4b
-l0a4c                                               = $0a4c
-l0a4d                                               = $0a4d
-l0a4e                                               = $0a4e
-l0a4f                                               = $0a4f
-l0a50                                               = $0a50
-l0a51                                               = $0a51
-l0a52                                               = $0a52
-l0a53                                               = $0a53
-l0a54                                               = $0a54
-level_workspace                                     = $0a6f
-l0a70                                               = $0a70
-l0a71                                               = $0a71
-l0a72                                               = $0a72
-l0a73                                               = $0a73
+save_game_level_n_partition_y                       = $0a4a
+save_game_level_n_dog_head_animation                = $0a4b
+save_game_level_n_got_clanger                       = $0a4c
+save_game_level_n_bell_animation                    = $0a4d
+save_game_level_n_bell_animation_step               = $0a4e
+save_game_level_n_bell_x_low                        = $0a4f
+save_game_level_n_bell_x_high                       = $0a50
+save_game_level_n_bell_y_low                        = $0a51
+save_game_level_n_bell_y_high                       = $0a52
+save_game_level_n_bell_room                         = $0a53
+save_game_level_n_bell_direction                    = $0a54
+dog_tail_animation_step                             = $0a6f
+dog_head_animation_step                             = $0a70
+drip_y_position                                     = $0a71
+drip_final_delay                                    = $0a72
+fast_forward_bell_counter                           = $0a73
 l0a74                                               = $0a74
 tile_all_set_pixels                                 = $0aa9
 developer_flags                                     = $1103
@@ -335,9 +336,9 @@ level_specific_initialisation
     lda developer_flags                                               ; 3afd: ad 03 11
     bpl developer_mode_inactive1                                      ; 3b00: 10 05
     lda #$ff                                                          ; 3b02: a9 ff
-    sta l0a4c                                                         ; 3b04: 8d 4c 0a
+    sta save_game_level_n_got_clanger                                 ; 3b04: 8d 4c 0a
 developer_mode_inactive1
-    lda l0a4c                                                         ; 3b07: ad 4c 0a
+    lda save_game_level_n_got_clanger                                 ; 3b07: ad 4c 0a
     beq c3b11                                                         ; 3b0a: f0 05
     lda #spriteid_clanger_menu_item                                   ; 3b0c: a9 e0
     jsr find_or_create_menu_slot_for_A                                ; 3b0e: 20 bd 2b
@@ -361,7 +362,7 @@ c3b11
 ; *************************************************************************************
 level_specific_update
     jsr room_1_update_handler                                         ; 3b1a: 20 35 3f
-    jsr sub_c3d3a                                                     ; 3b1d: 20 3a 3d
+    jsr update_dog_umbrella_puzzle                                    ; 3b1d: 20 3a 3d
     jsr room_0_update_handler                                         ; 3b20: 20 f7 3b
     lda #0                                                            ; 3b23: a9 00
     sta l0a74                                                         ; 3b25: 8d 74 0a
@@ -534,193 +535,199 @@ dog_tail_animation
 room_0_update_handler
     lda #0                                                            ; 3bf7: a9 00
     sta currently_updating_logic_for_room_index                       ; 3bf9: 8d ba 1a
+; level completion code
     ldx #$23 ; '#'                                                    ; 3bfc: a2 23
     ldy #$10                                                          ; 3bfe: a0 10
-    lda #6                                                            ; 3c00: a9 06
+    lda #objectid_sparkles                                            ; 3c00: a9 06
     jsr update_level_completion                                       ; 3c02: 20 10 1a
 ; check for first update in room (branch if not)
     lda update_room_first_update_flag                                 ; 3c05: ad 2b 13
-    beq c3c57                                                         ; 3c08: f0 4d
+    beq room_0_not_first_update                                       ; 3c08: f0 4d
 ; check for level change (branch if not)
     lda current_level                                                 ; 3c0a: a5 31
     cmp level_before_latest_level_and_room_initialisation             ; 3c0c: c5 51
-    beq c3c1d                                                         ; 3c0e: f0 0d
-    lda #1                                                            ; 3c10: a9 01
-    sta l0a4b                                                         ; 3c12: 8d 4b 0a
-    sta l0a70                                                         ; 3c15: 8d 70 0a
+    beq room_changed_only                                             ; 3c0e: f0 0d
+    lda #dog_head_normal_animation - dog_head_animations              ; 3c10: a9 01
+    sta save_game_level_n_dog_head_animation                          ; 3c12: 8d 4b 0a
+    sta dog_head_animation_step                                       ; 3c15: 8d 70 0a
     lda #$30 ; '0'                                                    ; 3c18: a9 30
-    sta l0a71                                                         ; 3c1a: 8d 71 0a
-c3c1d
+    sta drip_y_position                                               ; 3c1a: 8d 71 0a
+room_changed_only
     lda desired_room_index                                            ; 3c1d: a5 30
     cmp #0                                                            ; 3c1f: c9 00
-    bne c3c54                                                         ; 3c21: d0 31
+    bne update_dog_head_and_drip_objects_local                        ; 3c21: d0 31
+; draw dog body
     ldx #$0b                                                          ; 3c23: a2 0b
     ldy #7                                                            ; 3c25: a0 07
     lda #spriteid_dog_body                                            ; 3c27: a9 d1
     jsr draw_sprite_a_at_cell_xy                                      ; 3c29: 20 4c 1f
-    lda #8                                                            ; 3c2c: a9 08
+; initialise dog tail object
+    lda #objectid_dog_tail                                            ; 3c2c: a9 08
     jsr set_object_position_from_cell_xy                              ; 3c2e: 20 5d 1f
     lda #$c0                                                          ; 3c31: a9 c0
     sta object_z_order + objectid_dog_tail                            ; 3c33: 8d ca 38
-    lda #9                                                            ; 3c36: a9 09
+; initialise dog head object
+    lda #objectid_dog_head                                            ; 3c36: a9 09
     jsr set_object_position_from_cell_xy                              ; 3c38: 20 5d 1f
     lda #spriteid_erase2                                              ; 3c3b: a9 d2
     sta object_erase_type + objectid_dog_head                         ; 3c3d: 8d b5 38
     lda #$c0                                                          ; 3c40: a9 c0
     sta object_z_order + objectid_dog_head                            ; 3c42: 8d cb 38
+; initialise drip
     lda #$58 ; 'X'                                                    ; 3c45: a9 58
     sta object_x_low + objectid_drip                                  ; 3c47: 8d 57 09
     lda #spriteid_erase3                                              ; 3c4a: a9 d3
     sta object_erase_type + objectid_drip                             ; 3c4c: 8d b3 38
     lda #$a0                                                          ; 3c4f: a9 a0
     sta object_z_order + objectid_drip                                ; 3c51: 8d c9 38
-c3c54
-    jmp c3d13                                                         ; 3c54: 4c 13 3d
+update_dog_head_and_drip_objects_local
+    jmp update_dog_head_and_drip_objects                              ; 3c54: 4c 13 3d
 
-c3c57
-    lda l0a70                                                         ; 3c57: ad 70 0a
+room_0_not_first_update
+    lda dog_head_animation_step                                       ; 3c57: ad 70 0a
     clc                                                               ; 3c5a: 18
     adc #3                                                            ; 3c5b: 69 03
     tay                                                               ; 3c5d: a8
     lda dog_head_animations,y                                         ; 3c5e: b9 ba 3b
     cmp #$ff                                                          ; 3c61: c9 ff
-    bne c3c68                                                         ; 3c63: d0 03
-    ldy l0a4b                                                         ; 3c65: ac 4b 0a
-c3c68
-    lda l0a4b                                                         ; 3c68: ad 4b 0a
-    cmp #1                                                            ; 3c6b: c9 01
-    beq c3cbf                                                         ; 3c6d: f0 50
-    cmp #$30 ; '0'                                                    ; 3c6f: c9 30
-    beq c3c77                                                         ; 3c71: f0 04
-    cmp #$34 ; '4'                                                    ; 3c73: c9 34
-    beq c3cb5                                                         ; 3c75: f0 3e
-c3c77
+    bne got_dog_head_animation_step_in_y                              ; 3c63: d0 03
+    ldy save_game_level_n_dog_head_animation                          ; 3c65: ac 4b 0a
+got_dog_head_animation_step_in_y
+    lda save_game_level_n_dog_head_animation                          ; 3c68: ad 4b 0a
+    cmp #dog_head_normal_animation - dog_head_animations              ; 3c6b: c9 01
+    beq doing_normal_animation                                        ; 3c6d: f0 50
+    cmp #dog_head_drooling_held_animation - dog_head_animations       ; 3c6f: c9 30
+    beq update_drip                                                   ; 3c71: f0 04
+    cmp #dog_head_drooling_final_animation - dog_head_animations      ; 3c73: c9 34
+    beq end_of_drooling                                               ; 3c75: f0 3e
+update_drip
     lda #$60 ; '`'                                                    ; 3c77: a9 60
     sec                                                               ; 3c79: 38
-    sbc l0a4a                                                         ; 3c7a: ed 4a 0a
+    sbc save_game_level_n_partition_y                                 ; 3c7a: ed 4a 0a
     clc                                                               ; 3c7d: 18
     adc #$4c ; 'L'                                                    ; 3c7e: 69 4c
-    cmp l0a71                                                         ; 3c80: cd 71 0a
+    cmp drip_y_position                                               ; 3c80: cd 71 0a
     bcs developer_mode_inactive2                                      ; 3c83: b0 60
     lda desired_room_index                                            ; 3c85: a5 30
     cmp #0                                                            ; 3c87: c9 00
     bne c3c8e                                                         ; 3c89: d0 03
     jsr play_landing_sound                                            ; 3c8b: 20 a9 23
 c3c8e
-    ldy #$34 ; '4'                                                    ; 3c8e: a0 34
-    sty l0a4b                                                         ; 3c90: 8c 4b 0a
+    ldy #dog_head_drooling_final_animation - dog_head_animations      ; 3c8e: a0 34
+    sty save_game_level_n_dog_head_animation                          ; 3c90: 8c 4b 0a
     lda #$30 ; '0'                                                    ; 3c93: a9 30
-    sta l0a71                                                         ; 3c95: 8d 71 0a
+    sta drip_y_position                                               ; 3c95: 8d 71 0a
     lda #$14                                                          ; 3c98: a9 14
-    sta l0a72                                                         ; 3c9a: 8d 72 0a
-    lda l0a4a                                                         ; 3c9d: ad 4a 0a
+    sta drip_final_delay                                              ; 3c9a: 8d 72 0a
+    lda save_game_level_n_partition_y                                 ; 3c9d: ad 4a 0a
     cmp #$60 ; '`'                                                    ; 3ca0: c9 60
     bne developer_mode_inactive2                                      ; 3ca2: d0 41
     lda #$18                                                          ; 3ca4: a9 18
-    sta l0a72                                                         ; 3ca6: 8d 72 0a
-    lda l0a4a                                                         ; 3ca9: ad 4a 0a
+    sta drip_final_delay                                              ; 3ca6: 8d 72 0a
+    lda save_game_level_n_partition_y                                 ; 3ca9: ad 4a 0a
     sec                                                               ; 3cac: 38
     sbc #4                                                            ; 3cad: e9 04
-    sta l0a4a                                                         ; 3caf: 8d 4a 0a
+    sta save_game_level_n_partition_y                                 ; 3caf: 8d 4a 0a
     jmp developer_mode_inactive2                                      ; 3cb2: 4c e5 3c
 
-c3cb5
-    dec l0a72                                                         ; 3cb5: ce 72 0a
-    bne c3cbf                                                         ; 3cb8: d0 05
-    ldy #1                                                            ; 3cba: a0 01
-    sty l0a4b                                                         ; 3cbc: 8c 4b 0a
-c3cbf
+end_of_drooling
+    dec drip_final_delay                                              ; 3cb5: ce 72 0a
+    bne doing_normal_animation                                        ; 3cb8: d0 05
+    ldy #dog_head_normal_animation - dog_head_animations              ; 3cba: a0 01
+    sty save_game_level_n_dog_head_animation                          ; 3cbc: 8c 4b 0a
+doing_normal_animation
     lda desired_room_index                                            ; 3cbf: a5 30
     cmp #0                                                            ; 3cc1: c9 00
     bne developer_mode_inactive2                                      ; 3cc3: d0 20
     lda l0a74                                                         ; 3cc5: ad 74 0a
-    bne c3cde                                                         ; 3cc8: d0 14
+    bne start_dog_drooling                                            ; 3cc8: d0 14
     lda developer_flags                                               ; 3cca: ad 03 11
     bpl developer_mode_inactive2                                      ; 3ccd: 10 16
-    ldx #$c9                                                          ; 3ccf: a2 c9
-    sty l3d39                                                         ; 3cd1: 8c 39 3d
+    ldx #inkey_key_o                                                  ; 3ccf: a2 c9
+    sty remember_y                                                    ; 3cd1: 8c 39 3d
     jsr negative_inkey                                                ; 3cd4: 20 cc 3a
-    ldy l3d39                                                         ; 3cd7: ac 39 3d
+    ldy remember_y                                                    ; 3cd7: ac 39 3d
     ora #0                                                            ; 3cda: 09 00
     beq developer_mode_inactive2                                      ; 3cdc: f0 07
-c3cde
-    ldy #5                                                            ; 3cde: a0 05
-    lda #$30 ; '0'                                                    ; 3ce0: a9 30
-    sta l0a4b                                                         ; 3ce2: 8d 4b 0a
+start_dog_drooling
+    ldy #dog_head_drooling_animation - dog_head_animations            ; 3cde: a0 05
+    lda #dog_head_drooling_held_animation - dog_head_animations       ; 3ce0: a9 30
+    sta save_game_level_n_dog_head_animation                          ; 3ce2: 8d 4b 0a
 developer_mode_inactive2
-    sty l0a70                                                         ; 3ce5: 8c 70 0a
+    sty dog_head_animation_step                                       ; 3ce5: 8c 70 0a
     iny                                                               ; 3ce8: c8
     iny                                                               ; 3ce9: c8
     lda dog_head_animations,y                                         ; 3cea: b9 ba 3b
     clc                                                               ; 3ced: 18
-    adc l0a71                                                         ; 3cee: 6d 71 0a
-    sta l0a71                                                         ; 3cf1: 8d 71 0a
-    ldy level_workspace                                               ; 3cf4: ac 6f 0a
+    adc drip_y_position                                               ; 3cee: 6d 71 0a
+    sta drip_y_position                                               ; 3cf1: 8d 71 0a
+    ldy dog_tail_animation_step                                       ; 3cf4: ac 6f 0a
     iny                                                               ; 3cf7: c8
     lda dog_tail_animation,y                                          ; 3cf8: b9 f2 3b
     cmp #$ff                                                          ; 3cfb: c9 ff
-    bne c3d01                                                         ; 3cfd: d0 02
+    bne got_dog_tail_animation_step_in_y                              ; 3cfd: d0 02
     ldy #0                                                            ; 3cff: a0 00
-c3d01
-    sty level_workspace                                               ; 3d01: 8c 6f 0a
-    ldy l0a70                                                         ; 3d04: ac 70 0a
+got_dog_tail_animation_step_in_y
+    sty dog_tail_animation_step                                       ; 3d01: 8c 6f 0a
+    ldy dog_head_animation_step                                       ; 3d04: ac 70 0a
     lda dog_head_animations,y                                         ; 3d07: b9 ba 3b
-    cmp #$d5                                                          ; 3d0a: c9 d5
-    beq c3d13                                                         ; 3d0c: f0 05
+    cmp #spriteid_dog_head_drooling                                   ; 3d0a: c9 d5
+    beq update_dog_head_and_drip_objects                              ; 3d0c: f0 05
     lda #0                                                            ; 3d0e: a9 00
-    sta level_workspace                                               ; 3d10: 8d 6f 0a
-c3d13
+    sta dog_tail_animation_step                                       ; 3d10: 8d 6f 0a
+update_dog_head_and_drip_objects
     lda desired_room_index                                            ; 3d13: a5 30
     cmp #0                                                            ; 3d15: c9 00
     bne return1                                                       ; 3d17: d0 1f
-    ldy l0a70                                                         ; 3d19: ac 70 0a
+    ldy dog_head_animation_step                                       ; 3d19: ac 70 0a
     lda dog_head_animations,y                                         ; 3d1c: b9 ba 3b
     sta object_spriteid + objectid_dog_head                           ; 3d1f: 8d b1 09
     iny                                                               ; 3d22: c8
     lda dog_head_animations,y                                         ; 3d23: b9 ba 3b
     sta object_spriteid + objectid_drip                               ; 3d26: 8d af 09
-    lda l0a71                                                         ; 3d29: ad 71 0a
+    lda drip_y_position                                               ; 3d29: ad 71 0a
     sta object_y_low + objectid_drip                                  ; 3d2c: 8d 83 09
-    ldy level_workspace                                               ; 3d2f: ac 6f 0a
+    ldy dog_tail_animation_step                                       ; 3d2f: ac 6f 0a
     lda dog_tail_animation,y                                          ; 3d32: b9 f2 3b
     sta object_spriteid + objectid_dog_tail                           ; 3d35: 8d b0 09
 return1
     rts                                                               ; 3d38: 60
 
-l3d39
+remember_y
     !byte 0                                                           ; 3d39: 00
 
 ; check for first update in room (branch if so)
-sub_c3d3a
+update_dog_umbrella_puzzle
     lda update_room_first_update_flag                                 ; 3d3a: ad 2b 13
-    bne c3d42                                                         ; 3d3d: d0 03
-    jmp c3ddf                                                         ; 3d3f: 4c df 3d
+    bne initialise_room_0                                             ; 3d3d: d0 03
+    jmp update_room_0                                                 ; 3d3f: 4c df 3d
 
 ; check for level change (branch if not)
-c3d42
+initialise_room_0
     lda current_level                                                 ; 3d42: a5 31
     cmp level_before_latest_level_and_room_initialisation             ; 3d44: c5 51
-    beq c3d66                                                         ; 3d46: f0 1e
-    lda l0a4a                                                         ; 3d48: ad 4a 0a
-    beq c3d51                                                         ; 3d4b: f0 04
+    beq initialise_rope_system                                        ; 3d46: f0 1e
+    lda save_game_level_n_partition_y                                 ; 3d48: ad 4a 0a
+    beq check_to_see_if_partition_should_be_up_or_down                ; 3d4b: f0 04
     cmp #$60 ; '`'                                                    ; 3d4d: c9 60
-    bne c3d5a                                                         ; 3d4f: d0 09
-c3d51
-    lda l0a4b                                                         ; 3d51: ad 4b 0a
-    beq c3d61                                                         ; 3d54: f0 0b
-    cmp #1                                                            ; 3d56: c9 01
-    beq c3d61                                                         ; 3d58: f0 07
-c3d5a
+    bne set_partition_up                                              ; 3d4f: d0 09
+check_to_see_if_partition_should_be_up_or_down
+    lda save_game_level_n_dog_head_animation                          ; 3d51: ad 4b 0a
+    beq set_partition_down                                            ; 3d54: f0 0b
+    cmp #dog_head_normal_animation - dog_head_animations              ; 3d56: c9 01
+    beq set_partition_down                                            ; 3d58: f0 07
+set_partition_up
     lda #$40 ; '@'                                                    ; 3d5a: a9 40
-    sta l0a4a                                                         ; 3d5c: 8d 4a 0a
-    bne c3d66                                                         ; 3d5f: d0 05
-c3d61
+    sta save_game_level_n_partition_y                                 ; 3d5c: 8d 4a 0a
+    bne initialise_rope_system                                        ; 3d5f: d0 05                   ; ALWAYS branch
+
+set_partition_down
     lda #$60 ; '`'                                                    ; 3d61: a9 60
-    sta l0a4a                                                         ; 3d63: 8d 4a 0a
-c3d66
+    sta save_game_level_n_partition_y                                 ; 3d63: 8d 4a 0a
+initialise_rope_system
     lda desired_room_index                                            ; 3d66: a5 30
-    cmp #0                                                            ; 3d68: c9 00
-    bne c3ddc                                                         ; 3d6a: d0 70
+    cmp #0                                                            ; 3d68: c9 00                   ; redundant instruction
+    bne initialise_partition_up_and_umbrella_down_local               ; 3d6a: d0 70
     ldx #$20 ; ' '                                                    ; 3d6c: a2 20
     ldy #2                                                            ; 3d6e: a0 02
     lda #spriteid_right_hook                                          ; 3d70: a9 c9
@@ -728,17 +735,17 @@ c3d66
     dex                                                               ; 3d75: ca
     dex                                                               ; 3d76: ca
     lda #spriteid_horizontal_rope                                     ; 3d77: a9 ca
-loop_c3d79
+draw_horizontal_rope_loop
     jsr draw_sprite_a_at_cell_xy                                      ; 3d79: 20 4c 1f
     dex                                                               ; 3d7c: ca
     cpx #$0f                                                          ; 3d7d: e0 0f
-    bcs loop_c3d79                                                    ; 3d7f: b0 f8
+    bcs draw_horizontal_rope_loop                                     ; 3d7f: b0 f8
     dex                                                               ; 3d81: ca
     lda #spriteid_left_hook                                           ; 3d82: a9 c8
     jsr draw_sprite_a_at_cell_xy                                      ; 3d84: 20 4c 1f
     lda #$60 ; '`'                                                    ; 3d87: a9 60
     sec                                                               ; 3d89: 38
-    sbc l0a4a                                                         ; 3d8a: ed 4a 0a
+    sbc save_game_level_n_partition_y                                 ; 3d8a: ed 4a 0a
     clc                                                               ; 3d8d: 18
     adc #$40 ; '@'                                                    ; 3d8e: 69 40
     lsr                                                               ; 3d90: 4a
@@ -746,16 +753,16 @@ loop_c3d79
     lsr                                                               ; 3d92: 4a
     tay                                                               ; 3d93: a8
     lda #spriteid_rope                                                ; 3d94: a9 cb
-loop_c3d96
+draw_vertical_rope1_loop
     jsr draw_sprite_a_at_cell_xy                                      ; 3d96: 20 4c 1f
     dey                                                               ; 3d99: 88
     cpy #3                                                            ; 3d9a: c0 03
-    bcs loop_c3d96                                                    ; 3d9c: b0 f8
+    bcs draw_vertical_rope1_loop                                      ; 3d9c: b0 f8
     lda #$0a                                                          ; 3d9e: a9 0a
     jsr set_object_position_from_cell_xy                              ; 3da0: 20 5d 1f
     lda #spriteid_umbrella                                            ; 3da3: a9 cd
     sta object_spriteid + objectid_umbrella                           ; 3da5: 8d b2 09
-    lda l0a4a                                                         ; 3da8: ad 4a 0a
+    lda save_game_level_n_partition_y                                 ; 3da8: ad 4a 0a
     sec                                                               ; 3dab: 38
     sbc #4                                                            ; 3dac: e9 04
     lsr                                                               ; 3dae: 4a
@@ -764,15 +771,17 @@ loop_c3d96
     tay                                                               ; 3db1: a8
     ldx #$20 ; ' '                                                    ; 3db2: a2 20
     lda #spriteid_rope                                                ; 3db4: a9 cb
-loop_c3db6
+draw_vertical_rope2_loop
     jsr draw_sprite_a_at_cell_xy                                      ; 3db6: 20 4c 1f
     dey                                                               ; 3db9: 88
     cpy #3                                                            ; 3dba: c0 03
-    bcs loop_c3db6                                                    ; 3dbc: b0 f8
-    lda #4                                                            ; 3dbe: a9 04
+    bcs draw_vertical_rope2_loop                                      ; 3dbc: b0 f8
+; initialise fire
+    lda #objectid_fire1                                               ; 3dbe: a9 04
     jsr set_object_position_from_cell_xy                              ; 3dc0: 20 5d 1f
-    lda #5                                                            ; 3dc3: a9 05
+    lda #objectid_fire2                                               ; 3dc3: a9 05
     jsr set_object_position_from_cell_xy                              ; 3dc5: 20 5d 1f
+; initialise partition
     lda #spriteid_partition                                           ; 3dc8: a9 ce
     sta object_spriteid + objectid_partition_end                      ; 3dca: 8d ac 09
     lda #$c0                                                          ; 3dcd: a9 c0
@@ -781,50 +790,50 @@ loop_c3db6
     sta object_spriteid + objectid_partition                          ; 3dd4: 8d ad 09
     lda #spriteid_erase1                                              ; 3dd7: a9 d0
     sta object_erase_type + objectid_partition                        ; 3dd9: 8d b1 38
-c3ddc
-    jmp c3e16                                                         ; 3ddc: 4c 16 3e
+initialise_partition_up_and_umbrella_down_local
+    jmp initialise_partition_up_and_umbrella_down                     ; 3ddc: 4c 16 3e
 
-c3ddf
+update_room_0
     lda desired_room_index                                            ; 3ddf: a5 30
     cmp #0                                                            ; 3de1: c9 00
-    bne c3e16                                                         ; 3de3: d0 31
-    lda l0a4a                                                         ; 3de5: ad 4a 0a
+    bne initialise_partition_up_and_umbrella_down                     ; 3de3: d0 31
+    lda save_game_level_n_partition_y                                 ; 3de5: ad 4a 0a
     cmp #$60 ; '`'                                                    ; 3de8: c9 60
-    beq c3e16                                                         ; 3dea: f0 2a
+    beq initialise_partition_up_and_umbrella_down                     ; 3dea: f0 2a
     cmp #$40 ; '@'                                                    ; 3dec: c9 40
-    beq c3e01                                                         ; 3dee: f0 11
+    beq initialise_partition_down_and_umbrella_up                     ; 3dee: f0 11
     lda #spriteid_one_pixel_masked_out                                ; 3df0: a9 00
     sta object_spriteid_old + objectid_umbrella                       ; 3df2: 8d bd 09
     lda #$60 ; '`'                                                    ; 3df5: a9 60
     ldx #<sound1                                                      ; 3df7: a2 18
     ldy #>sound1                                                      ; 3df9: a0 45
     jsr play_sound_yx                                                 ; 3dfb: 20 f6 38
-    jmp c3e16                                                         ; 3dfe: 4c 16 3e
+    jmp initialise_partition_up_and_umbrella_down                     ; 3dfe: 4c 16 3e
 
-c3e01
+initialise_partition_down_and_umbrella_up
     lda object_y_low + objectid_partition_end                         ; 3e01: ad 80 09
-    cmp l0a4a                                                         ; 3e04: cd 4a 0a
-    beq c3e16                                                         ; 3e07: f0 0d
+    cmp save_game_level_n_partition_y                                 ; 3e04: cd 4a 0a
+    beq initialise_partition_up_and_umbrella_down                     ; 3e07: f0 0d
     lda #spriteid_one_pixel_masked_out                                ; 3e09: a9 00
     sta object_spriteid_old + objectid_umbrella                       ; 3e0b: 8d bd 09
     lda #$60 ; '`'                                                    ; 3e0e: a9 60
-    jsr sub_c3e85                                                     ; 3e10: 20 85 3e
+    jsr reset_sound_priorities                                        ; 3e10: 20 85 3e
     jsr play_landing_sound                                            ; 3e13: 20 a9 23
-c3e16
+initialise_partition_up_and_umbrella_down
     lda desired_room_index                                            ; 3e16: a5 30
     cmp #0                                                            ; 3e18: c9 00
-    bne c3e6e                                                         ; 3e1a: d0 52
-    lda l0a4a                                                         ; 3e1c: ad 4a 0a
+    bne check_for_moving_partition_up                                 ; 3e1a: d0 52
+    lda save_game_level_n_partition_y                                 ; 3e1c: ad 4a 0a
     sta object_y_low + objectid_partition_end                         ; 3e1f: 8d 80 09
     sta object_y_low + objectid_partition                             ; 3e22: 8d 81 09
     lda #$60 ; '`'                                                    ; 3e25: a9 60
     sec                                                               ; 3e27: 38
-    sbc l0a4a                                                         ; 3e28: ed 4a 0a
+    sbc save_game_level_n_partition_y                                 ; 3e28: ed 4a 0a
     clc                                                               ; 3e2b: 18
     adc #$44 ; 'D'                                                    ; 3e2c: 69 44
     sta object_y_low + objectid_umbrella                              ; 3e2e: 8d 86 09
     ldx #$20 ; ' '                                                    ; 3e31: a2 20
-    lda l0a4a                                                         ; 3e33: ad 4a 0a
+    lda save_game_level_n_partition_y                                 ; 3e33: ad 4a 0a
     lsr                                                               ; 3e36: 4a
     lsr                                                               ; 3e37: 4a
     lsr                                                               ; 3e38: 4a
@@ -837,9 +846,9 @@ c3e16
     sta value_to_write_to_collision_map                               ; 3e44: 85 3e
     jsr read_collision_map_value_for_xy                               ; 3e46: 20 fa 1e
     cmp value_to_write_to_collision_map                               ; 3e49: c5 3e
-    beq c3e50                                                         ; 3e4b: f0 03
+    beq check_for_changing_partition_collision_map                    ; 3e4b: f0 03
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 3e4d: 20 44 1e
-c3e50
+check_for_changing_partition_collision_map
     tya                                                               ; 3e50: 98
     clc                                                               ; 3e51: 18
     adc height_in_cells                                               ; 3e52: 65 3d
@@ -848,30 +857,33 @@ c3e50
     lda #$10                                                          ; 3e57: a9 10
     sec                                                               ; 3e59: 38
     sbc l0070                                                         ; 3e5a: e5 70
-    beq c3e6e                                                         ; 3e5c: f0 10
+    beq check_for_moving_partition_up                                 ; 3e5c: f0 10
     sta height_in_cells                                               ; 3e5e: 85 3d
     lda #collision_map_none                                           ; 3e60: a9 00
     sta value_to_write_to_collision_map                               ; 3e62: 85 3e
     jsr read_collision_map_value_for_xy                               ; 3e64: 20 fa 1e
     cmp value_to_write_to_collision_map                               ; 3e67: c5 3e
-    beq c3e6e                                                         ; 3e69: f0 03
+    beq check_for_moving_partition_up                                 ; 3e69: f0 03
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 3e6b: 20 44 1e
 ; check for first update in room (branch if so)
-c3e6e
+check_for_moving_partition_up
     lda update_room_first_update_flag                                 ; 3e6e: ad 2b 13
     bne return2                                                       ; 3e71: d0 11
-    lda l0a4a                                                         ; 3e73: ad 4a 0a
+; if partition is fully down, then return
+    lda save_game_level_n_partition_y                                 ; 3e73: ad 4a 0a
     cmp #$60 ; '`'                                                    ; 3e76: c9 60
     beq return2                                                       ; 3e78: f0 0a
+; if partition is fully up, then return
     cmp #$40 ; '@'                                                    ; 3e7a: c9 40
     beq return2                                                       ; 3e7c: f0 06
+; move partition up
     sec                                                               ; 3e7e: 38
     sbc #4                                                            ; 3e7f: e9 04
-    sta l0a4a                                                         ; 3e81: 8d 4a 0a
+    sta save_game_level_n_partition_y                                 ; 3e81: 8d 4a 0a
 return2
     rts                                                               ; 3e84: 60
 
-sub_c3e85
+reset_sound_priorities
     cmp sound_priority_per_channel_table                              ; 3e85: cd 6f 39
     bcc return3                                                       ; 3e88: 90 08
     lda #0                                                            ; 3e8a: a9 00
@@ -1010,13 +1022,13 @@ room_1_update_handler
     sta currently_updating_logic_for_room_index                       ; 3f37: 8d ba 1a
     ldx #3                                                            ; 3f3a: a2 03
     ldy #$0e                                                          ; 3f3c: a0 0e
-    lda #4                                                            ; 3f3e: a9 04
+    lda #objectid_fire1                                               ; 3f3e: a9 04
     jsr update_brazier_and_fire                                       ; 3f40: 20 88 19
     ldx #$25 ; '%'                                                    ; 3f43: a2 25
-    lda #5                                                            ; 3f45: a9 05
+    lda #objectid_fire2                                               ; 3f45: a9 05
     jmp update_brazier_and_fire                                       ; 3f47: 4c 88 19
 
-sub_c3f4a
+draw_3x2_boulder_to_screen
     ldx #3                                                            ; 3f4a: a2 03
     ldy #2                                                            ; 3f4c: a0 02
     lda #1                                                            ; 3f4e: a9 01
@@ -1026,7 +1038,7 @@ sub_c3f4a
     ldx #$24 ; '$'                                                    ; 3f57: a2 24
     jmp copy_rectangle_of_memory_to_screen                            ; 3f59: 4c bb 1a
 
-sub_c3f5c
+draw_bell
     lda #1                                                            ; 3f5c: a9 01
     sta width_in_cells                                                ; 3f5e: 85 3c
     lda #2                                                            ; 3f60: a9 02
@@ -1035,7 +1047,7 @@ sub_c3f5c
     sta temp_sprite_x_offset                                          ; 3f66: 85 3a
     lda #spriteid_bell                                                ; 3f68: a9 e1
     jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map           ; 3f6a: 20 57 1f
-    lda #$da                                                          ; 3f6d: a9 da
+    lda #spriteid_rope_end1                                           ; 3f6d: a9 da
     jmp draw_sprite_a_at_cell_xy                                      ; 3f6f: 4c 4c 1f
 
 ; *************************************************************************************
@@ -1120,7 +1132,7 @@ room_2_code
     lda #$0b                                                          ; 3fc0: a9 0b
     sta width_in_cells                                                ; 3fc2: 85 3c
     jsr copy_rectangle_of_memory_to_screen                            ; 3fc4: 20 bb 1a
-    jsr sub_c3f4a                                                     ; 3fc7: 20 4a 3f
+    jsr draw_3x2_boulder_to_screen                                    ; 3fc7: 20 4a 3f
 ; carve the floor, walls and ceiling into the rock
     jsr draw_floor_walls_and_ceiling_around_solid_rock                ; 3fca: 20 90 1b
 ; draw rope at (14,2) length 255
@@ -1154,17 +1166,17 @@ room_2_code
     jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map           ; 3ffe: 20 57 1f
     ldy #6                                                            ; 4001: a0 06
     ldx #$16                                                          ; 4003: a2 16
-    jsr sub_c3f5c                                                     ; 4005: 20 5c 3f
+    jsr draw_bell                                                     ; 4005: 20 5c 3f
 ; draw clanger end at (22,6)
     lda #spriteid_clanger_end                                         ; 4008: a9 e7
     jsr draw_sprite_a_at_cell_xy                                      ; 400a: 20 4c 1f
     ldx #$1b                                                          ; 400d: a2 1b
-    jsr sub_c3f5c                                                     ; 400f: 20 5c 3f
+    jsr draw_bell                                                     ; 400f: 20 5c 3f
 ; draw clanger end at (27,6)
     lda #spriteid_clanger_end                                         ; 4012: a9 e7
     jsr draw_sprite_a_at_cell_xy                                      ; 4014: 20 4c 1f
     ldx #$20 ; ' '                                                    ; 4017: a2 20
-    jsr sub_c3f5c                                                     ; 4019: 20 5c 3f
+    jsr draw_bell                                                     ; 4019: 20 5c 3f
 ; draw clanger end at (32,6)
     lda #spriteid_clanger_end                                         ; 401c: a9 e7
     jsr draw_sprite_a_at_cell_xy                                      ; 401e: 20 4c 1f
@@ -1186,16 +1198,32 @@ room_2_check_bottom_exit
     ldy current_level                                                 ; 403c: a4 31
     jmp initialise_level_and_room                                     ; 403e: 4c 40 11
 
-l4041
-    !byte   0,   0,   0, $80,   8,   0, $80,   8,   2,   8,   2,   8  ; 4041: 00 00 00...
-    !byte   4,   8,   4,   8,   6,   8,   6, $80,   0,   8, $80       ; 404d: 04 08 04...
+bell_animations
+    !byte 0                                                           ; 4041: 00
+bell_stopped_animation
+    !byte 0, 0                                                        ; 4042: 00 00
+    !byte $80                                                         ; 4044: 80
+bell_move_right_animation
+    !byte 8, 0                                                        ; 4045: 08 00
+    !byte $80                                                         ; 4047: 80
+bell_fall_right_animation
+    !byte 8, 2                                                        ; 4048: 08 02
+    !byte 8, 2                                                        ; 404a: 08 02
+    !byte 8, 4                                                        ; 404c: 08 04
+    !byte 8, 4                                                        ; 404e: 08 04
+    !byte 8, 6                                                        ; 4050: 08 06
+    !byte 8, 6                                                        ; 4052: 08 06
+    !byte $80                                                         ; 4054: 80
+bell_fall_animation
+    !byte 0, 8                                                        ; 4055: 00 08
+    !byte $80                                                         ; 4057: 80
 
 room_2_update_handler
     lda #2                                                            ; 4058: a9 02
     sta currently_updating_logic_for_room_index                       ; 405a: 8d ba 1a
     ldx #3                                                            ; 405d: a2 03
     ldy #6                                                            ; 405f: a0 06
-    lda #4                                                            ; 4061: a9 04
+    lda #objectid_fire1                                               ; 4061: a9 04
     jsr update_brazier_and_fire                                       ; 4063: 20 88 19
 ; check for first update in room (branch if not)
     lda update_room_first_update_flag                                 ; 4066: ad 2b 13
@@ -1210,47 +1238,47 @@ room_2_update_handler
     lda current_level                                                 ; 4079: a5 31
     cmp level_before_latest_level_and_room_initialisation             ; 407b: c5 51
     beq c40b1                                                         ; 407d: f0 32
-    lda l0a4d                                                         ; 407f: ad 4d 0a
-    cmp #1                                                            ; 4082: c9 01
+    lda save_game_level_n_bell_animation                              ; 407f: ad 4d 0a
+    cmp #bell_stopped_animation - bell_animations                     ; 4082: c9 01
     beq c40b1                                                         ; 4084: f0 2b
-    dec l0a73                                                         ; 4086: ce 73 0a
+    dec fast_forward_bell_counter                                     ; 4086: ce 73 0a
     ora #0                                                            ; 4089: 09 00
     bne c40b1                                                         ; 408b: d0 24
-    inc l0a73                                                         ; 408d: ee 73 0a
+    inc fast_forward_bell_counter                                     ; 408d: ee 73 0a
     lda #1                                                            ; 4090: a9 01
-    sta l0a53                                                         ; 4092: 8d 53 0a
+    sta save_game_level_n_bell_room                                   ; 4092: 8d 53 0a
     lda #$98                                                          ; 4095: a9 98
-    sta l0a4f                                                         ; 4097: 8d 4f 0a
+    sta save_game_level_n_bell_x_low                                  ; 4097: 8d 4f 0a
     lda #0                                                            ; 409a: a9 00
-    sta l0a50                                                         ; 409c: 8d 50 0a
+    sta save_game_level_n_bell_x_high                                 ; 409c: 8d 50 0a
     lda #$28 ; '('                                                    ; 409f: a9 28
-    sta l0a51                                                         ; 40a1: 8d 51 0a
+    sta save_game_level_n_bell_y_low                                  ; 40a1: 8d 51 0a
     lda #0                                                            ; 40a4: a9 00
-    sta l0a52                                                         ; 40a6: 8d 52 0a
-    lda #1                                                            ; 40a9: a9 01
-    sta l0a4d                                                         ; 40ab: 8d 4d 0a
-    sta l0a4e                                                         ; 40ae: 8d 4e 0a
+    sta save_game_level_n_bell_y_high                                 ; 40a6: 8d 52 0a
+    lda #bell_stopped_animation - bell_animations                     ; 40a9: a9 01
+    sta save_game_level_n_bell_animation                              ; 40ab: 8d 4d 0a
+    sta save_game_level_n_bell_animation_step                         ; 40ae: 8d 4e 0a
 c40b1
     lda #spriteid_erase4                                              ; 40b1: a9 e2
     sta object_erase_type + objectid_bell                             ; 40b3: 8d ae 38
     lda #$c0                                                          ; 40b6: a9 c0
     sta object_z_order + objectid_bell                                ; 40b8: 8d c4 38
     lda desired_room_index                                            ; 40bb: a5 30
-    cmp l0a53                                                         ; 40bd: cd 53 0a
+    cmp save_game_level_n_bell_room                                   ; 40bd: cd 53 0a
     bne c40de                                                         ; 40c0: d0 1c
-    jsr sub_c42f0                                                     ; 40c2: 20 f0 42
-loop_c40c5
+    jsr set_bell_object                                               ; 40c2: 20 f0 42
+fast_forward_bell_animation
     lda desired_room_index                                            ; 40c5: a5 30
-    cmp l0a53                                                         ; 40c7: cd 53 0a
+    cmp save_game_level_n_bell_room                                   ; 40c7: cd 53 0a
     bne c40de                                                         ; 40ca: d0 12
-    lda l0a73                                                         ; 40cc: ad 73 0a
+    lda fast_forward_bell_counter                                     ; 40cc: ad 73 0a
     beq c40de                                                         ; 40cf: f0 0d
     cmp #$ff                                                          ; 40d1: c9 ff
     beq c40d8                                                         ; 40d3: f0 03
-    dec l0a73                                                         ; 40d5: ce 73 0a
+    dec fast_forward_bell_counter                                     ; 40d5: ce 73 0a
 c40d8
-    jsr sub_c417b                                                     ; 40d8: 20 7b 41
-    jmp loop_c40c5                                                    ; 40db: 4c c5 40
+    jsr update_bell                                                   ; 40d8: 20 7b 41
+    jmp fast_forward_bell_animation                                   ; 40db: 4c c5 40
 
 c40de
     lda #3                                                            ; 40de: a9 03
@@ -1259,30 +1287,30 @@ c40de
 
 c40e6
     lda desired_room_index                                            ; 40e6: a5 30
-    cmp l0a53                                                         ; 40e8: cd 53 0a
+    cmp save_game_level_n_bell_room                                   ; 40e8: cd 53 0a
     beq c40f8                                                         ; 40eb: f0 0b
-    lda l0a73                                                         ; 40ed: ad 73 0a
-    bmi c40f5                                                         ; 40f0: 30 03
-    inc l0a73                                                         ; 40f2: ee 73 0a
-c40f5
+    lda fast_forward_bell_counter                                     ; 40ed: ad 73 0a
+    bmi return4_local                                                 ; 40f0: 30 03
+    inc fast_forward_bell_counter                                     ; 40f2: ee 73 0a
+return4_local
     jmp return4                                                       ; 40f5: 4c 77 41
 
 c40f8
     lda #$40 ; '@'                                                    ; 40f8: a9 40
-    jsr sub_c3e85                                                     ; 40fa: 20 85 3e
-    jsr sub_c417b                                                     ; 40fd: 20 7b 41
+    jsr reset_sound_priorities                                        ; 40fa: 20 85 3e
+    jsr update_bell                                                   ; 40fd: 20 7b 41
     lda desired_room_index                                            ; 4100: a5 30
-    cmp l0a53                                                         ; 4102: cd 53 0a
+    cmp save_game_level_n_bell_room                                   ; 4102: cd 53 0a
     beq c410f                                                         ; 4105: f0 08
     lda #0                                                            ; 4107: a9 00
-    sta l0a73                                                         ; 4109: 8d 73 0a
+    sta fast_forward_bell_counter                                     ; 4109: 8d 73 0a
     jmp return4                                                       ; 410c: 4c 77 41
 
 c410f
-    lda l0a4d                                                         ; 410f: ad 4d 0a
-    cmp #7                                                            ; 4112: c9 07
+    lda save_game_level_n_bell_animation                              ; 410f: ad 4d 0a
+    cmp #bell_fall_right_animation - bell_animations                  ; 4112: c9 07
     bne c4131                                                         ; 4114: d0 1b
-    lda l0a54                                                         ; 4116: ad 54 0a
+    lda save_game_level_n_bell_direction                              ; 4116: ad 54 0a
     bpl c411e                                                         ; 4119: 10 03
     jmp c4124                                                         ; 411b: 4c 24 41
 
@@ -1294,27 +1322,27 @@ c4124
     sta temp_bottom_offset                                            ; 4126: 8d 51 25
     lda #2                                                            ; 4129: a9 02
     jsr get_solid_rock_collision_for_object_a                         ; 412b: 20 94 28
-    bne c414b                                                         ; 412e: d0 1b
+    bne play_landing_sound_local                                      ; 412e: d0 1b
     rts                                                               ; 4130: 60
 
 c4131
-    lda l0a4d                                                         ; 4131: ad 4d 0a
-    cmp #4                                                            ; 4134: c9 04
+    lda save_game_level_n_bell_animation                              ; 4131: ad 4d 0a
+    cmp #bell_move_right_animation - bell_animations                  ; 4134: c9 04
     bne c414e                                                         ; 4136: d0 16
     inc temp_right_offset                                             ; 4138: ee d1 24
     lda #2                                                            ; 413b: a9 02
     jsr get_solid_rock_collision_for_object_a                         ; 413d: 20 94 28
-    bne c414b                                                         ; 4140: d0 09
+    bne play_landing_sound_local                                      ; 4140: d0 09
     lda #$40 ; '@'                                                    ; 4142: a9 40
     ldx #$18                                                          ; 4144: a2 18
     ldy #$45 ; 'E'                                                    ; 4146: a0 45
     jmp play_sound_yx                                                 ; 4148: 4c f6 38
 
-c414b
+play_landing_sound_local
     jmp play_landing_sound                                            ; 414b: 4c a9 23
 
 c414e
-    cmp #$14                                                          ; 414e: c9 14
+    cmp #bell_fall_animation - bell_animations                        ; 414e: c9 14
     bne c4172                                                         ; 4150: d0 20
     inc temp_left_offset                                              ; 4152: ee d0 24
     lda #2                                                            ; 4155: a9 02
@@ -1340,18 +1368,18 @@ return4
 c4178
     jmp c4266                                                         ; 4178: 4c 66 42
 
-sub_c417b
-    lda l0a4e                                                         ; 417b: ad 4e 0a
+update_bell
+    lda save_game_level_n_bell_animation_step                         ; 417b: ad 4e 0a
     clc                                                               ; 417e: 18
     adc #2                                                            ; 417f: 69 02
     tay                                                               ; 4181: a8
-    lda l4041,y                                                       ; 4182: b9 41 40
+    lda bell_animations,y                                             ; 4182: b9 41 40
     cmp #$80                                                          ; 4185: c9 80
     bne c418c                                                         ; 4187: d0 03
-    ldy l0a4d                                                         ; 4189: ac 4d 0a
+    ldy save_game_level_n_bell_animation                              ; 4189: ac 4d 0a
 c418c
-    lda l0a4d                                                         ; 418c: ad 4d 0a
-    cmp #1                                                            ; 418f: c9 01
+    lda save_game_level_n_bell_animation                              ; 418c: ad 4d 0a
+    cmp #bell_stopped_animation - bell_animations                     ; 418f: c9 01
     bne c41ef                                                         ; 4191: d0 5c
 ; check for first update in room (branch if so)
     lda update_room_first_update_flag                                 ; 4193: ad 2b 13
@@ -1366,49 +1394,49 @@ c418c
     beq c4178                                                         ; 41aa: f0 cc
     lda object_y_low                                                  ; 41ac: ad 7c 09
     sec                                                               ; 41af: 38
-    sbc l0a51                                                         ; 41b0: ed 51 0a
+    sbc save_game_level_n_bell_y_low                                  ; 41b0: ed 51 0a
     lda object_y_high                                                 ; 41b3: ad 92 09
-    sbc l0a52                                                         ; 41b6: ed 52 0a
+    sbc save_game_level_n_bell_y_high                                 ; 41b6: ed 52 0a
     bmi c4178                                                         ; 41b9: 30 bd
     ldx #1                                                            ; 41bb: a2 01
     lda object_room_collision_flags                                   ; 41bd: ad d8 38
-    and #4                                                            ; 41c0: 29 04
-    bne c41cd                                                         ; 41c2: d0 09
+    and #object_collided_right_wall                                   ; 41c0: 29 04
+    bne got_direction_in_x                                            ; 41c2: d0 09
     ldx #$ff                                                          ; 41c4: a2 ff
     lda object_room_collision_flags                                   ; 41c6: ad d8 38
-    and #1                                                            ; 41c9: 29 01
+    and #object_collided_left_wall                                    ; 41c9: 29 01
     beq c4178                                                         ; 41cb: f0 ab
-c41cd
-    stx l0a54                                                         ; 41cd: 8e 54 0a
+got_direction_in_x
+    stx save_game_level_n_bell_direction                              ; 41cd: 8e 54 0a
     lda #0                                                            ; 41d0: a9 00
     jsr sub_c430e                                                     ; 41d2: 20 0e 43
     lda #$e0                                                          ; 41d5: a9 e0
     cmp player_using_object_spriteid                                  ; 41d7: cd b6 2e
-    bne c41ea                                                         ; 41da: d0 0e
+    bne set_bell_moving_sideways                                      ; 41da: d0 0e
     lda #0                                                            ; 41dc: a9 00
     ldx #<sound4                                                      ; 41de: a2 4c
     ldy #>sound4                                                      ; 41e0: a0 45
     jsr play_sound_yx                                                 ; 41e2: 20 f6 38
     lda #$ff                                                          ; 41e5: a9 ff
     sta l0a74                                                         ; 41e7: 8d 74 0a
-c41ea
-    ldy #4                                                            ; 41ea: a0 04
-    sty l0a4d                                                         ; 41ec: 8c 4d 0a
+set_bell_moving_sideways
+    ldy #bell_move_right_animation - bell_animations                  ; 41ea: a0 04
+    sty save_game_level_n_bell_animation                              ; 41ec: 8c 4d 0a
 c41ef
-    lda l0a4d                                                         ; 41ef: ad 4d 0a
-    cmp #4                                                            ; 41f2: c9 04
+    lda save_game_level_n_bell_animation                              ; 41ef: ad 4d 0a
+    cmp #bell_move_right_animation - bell_animations                  ; 41f2: c9 04
     bne c4235                                                         ; 41f4: d0 3f
-    lda l0a54                                                         ; 41f6: ad 54 0a
+    lda save_game_level_n_bell_direction                              ; 41f6: ad 54 0a
     bmi c4204                                                         ; 41f9: 30 09
     inc temp_right_offset                                             ; 41fb: ee d1 24
     inc temp_left_offset                                              ; 41fe: ee d0 24
-    jmp c4204                                                         ; 4201: 4c 04 42
+    jmp c4204                                                         ; 4201: 4c 04 42                ; redundant instruction
 
 c4204
     lda #2                                                            ; 4204: a9 02
     jsr get_solid_rock_collision_for_object_a                         ; 4206: 20 94 28
     bne c425c                                                         ; 4209: d0 51
-    lda l0a54                                                         ; 420b: ad 54 0a
+    lda save_game_level_n_bell_direction                              ; 420b: ad 54 0a
     bmi c4217                                                         ; 420e: 30 07
     lda #9                                                            ; 4210: a9 09
     sta temp_left_offset                                              ; 4212: 8d d0 24
@@ -1421,99 +1449,99 @@ c421c
     sta temp_bottom_offset                                            ; 421e: 8d 51 25
     lda #3                                                            ; 4221: a9 03
     sta temp_default_collision_map_option                             ; 4223: 8d e1 28
-    lda #2                                                            ; 4226: a9 02
+    lda #objectid_bell                                                ; 4226: a9 02
     jsr get_solid_rock_collision_for_object_a                         ; 4228: 20 94 28
     bne c4266                                                         ; 422b: d0 39
-    ldy #7                                                            ; 422d: a0 07
-    sty l0a4d                                                         ; 422f: 8c 4d 0a
+    ldy #bell_fall_right_animation - bell_animations                  ; 422d: a0 07
+    sty save_game_level_n_bell_animation                              ; 422f: 8c 4d 0a
     jmp c4266                                                         ; 4232: 4c 66 42
 
 c4235
-    lda l0a4d                                                         ; 4235: ad 4d 0a
-    cmp #7                                                            ; 4238: c9 07
+    lda save_game_level_n_bell_animation                              ; 4235: ad 4d 0a
+    cmp #bell_fall_right_animation - bell_animations                  ; 4238: c9 07
     bne c4246                                                         ; 423a: d0 0a
-    cpy l0a4d                                                         ; 423c: cc 4d 0a
+    cpy save_game_level_n_bell_animation                              ; 423c: cc 4d 0a
     bne c4266                                                         ; 423f: d0 25
-    ldy #$14                                                          ; 4241: a0 14
-    sty l0a4d                                                         ; 4243: 8c 4d 0a
+    ldy #bell_fall_animation - bell_animations                        ; 4241: a0 14
+    sty save_game_level_n_bell_animation                              ; 4243: 8c 4d 0a
 c4246
-    lda l0a4d                                                         ; 4246: ad 4d 0a
-    cmp #$14                                                          ; 4249: c9 14
+    lda save_game_level_n_bell_animation                              ; 4246: ad 4d 0a
+    cmp #bell_fall_animation - bell_animations                        ; 4249: c9 14
     bne c4266                                                         ; 424b: d0 19
     inc temp_left_offset                                              ; 424d: ee d0 24
     lda #2                                                            ; 4250: a9 02
     sta temp_bottom_offset                                            ; 4252: 8d 51 25
-    lda #2                                                            ; 4255: a9 02
+    lda #objectid_bell                                                ; 4255: a9 02
     jsr get_solid_rock_collision_for_object_a                         ; 4257: 20 94 28
     beq c4266                                                         ; 425a: f0 0a
 c425c
     lda #0                                                            ; 425c: a9 00
-    sta l0a73                                                         ; 425e: 8d 73 0a
-    ldy #1                                                            ; 4261: a0 01
-    sty l0a4d                                                         ; 4263: 8c 4d 0a
+    sta fast_forward_bell_counter                                     ; 425e: 8d 73 0a
+    ldy #bell_stopped_animation - bell_animations                     ; 4261: a0 01
+    sty save_game_level_n_bell_animation                              ; 4263: 8c 4d 0a
 c4266
-    sty l0a4e                                                         ; 4266: 8c 4e 0a
-    lda l4041,y                                                       ; 4269: b9 41 40
-    ldx l0a54                                                         ; 426c: ae 54 0a
-    bpl c4276                                                         ; 426f: 10 05
+    sty save_game_level_n_bell_animation_step                         ; 4266: 8c 4e 0a
+    lda bell_animations,y                                             ; 4269: b9 41 40
+    ldx save_game_level_n_bell_direction                              ; 426c: ae 54 0a
+    bpl sign_extend_a_to_ax                                           ; 426f: 10 05
     eor #$ff                                                          ; 4271: 49 ff
     clc                                                               ; 4273: 18
     adc #1                                                            ; 4274: 69 01
-c4276
+sign_extend_a_to_ax
     ldx #0                                                            ; 4276: a2 00
     ora #0                                                            ; 4278: 09 00
-    bpl c427d                                                         ; 427a: 10 01
+    bpl add_animation_offsets_to_position                             ; 427a: 10 01
     dex                                                               ; 427c: ca
-c427d
+add_animation_offsets_to_position
     clc                                                               ; 427d: 18
-    adc l0a4f                                                         ; 427e: 6d 4f 0a
-    sta l0a4f                                                         ; 4281: 8d 4f 0a
+    adc save_game_level_n_bell_x_low                                  ; 427e: 6d 4f 0a
+    sta save_game_level_n_bell_x_low                                  ; 4281: 8d 4f 0a
     txa                                                               ; 4284: 8a
-    adc l0a50                                                         ; 4285: 6d 50 0a
-    sta l0a50                                                         ; 4288: 8d 50 0a
+    adc save_game_level_n_bell_x_high                                 ; 4285: 6d 50 0a
+    sta save_game_level_n_bell_x_high                                 ; 4288: 8d 50 0a
     iny                                                               ; 428b: c8
-    lda l4041,y                                                       ; 428c: b9 41 40
+    lda bell_animations,y                                             ; 428c: b9 41 40
     clc                                                               ; 428f: 18
-    adc l0a51                                                         ; 4290: 6d 51 0a
-    sta l0a51                                                         ; 4293: 8d 51 0a
+    adc save_game_level_n_bell_y_low                                  ; 4290: 6d 51 0a
+    sta save_game_level_n_bell_y_low                                  ; 4293: 8d 51 0a
     lda #0                                                            ; 4296: a9 00
-    adc l0a52                                                         ; 4298: 6d 52 0a
-    sta l0a52                                                         ; 429b: 8d 52 0a
-    jsr sub_c42f0                                                     ; 429e: 20 f0 42
-    ldx #2                                                            ; 42a1: a2 02
+    adc save_game_level_n_bell_y_high                                 ; 4298: 6d 52 0a
+    sta save_game_level_n_bell_y_high                                 ; 429b: 8d 52 0a
+    jsr set_bell_object                                               ; 429e: 20 f0 42
+    ldx #objectid_bell                                                ; 42a1: a2 02
     jsr find_left_and_right_of_object                                 ; 42a3: 20 34 24
     jsr find_top_and_bottom_of_object                                 ; 42a6: 20 d2 24
-    lda l0a4d                                                         ; 42a9: ad 4d 0a
-    cmp #4                                                            ; 42ac: c9 04
+    lda save_game_level_n_bell_animation                              ; 42a9: ad 4d 0a
+    cmp #bell_move_right_animation - bell_animations                  ; 42ac: c9 04
     bne return5                                                       ; 42ae: d0 3e
-    lda l0a54                                                         ; 42b0: ad 54 0a
-    bmi c42d1                                                         ; 42b3: 30 1c
+    lda save_game_level_n_bell_direction                              ; 42b0: ad 54 0a
+    bmi move_bell_left_one_room                                       ; 42b3: 30 1c
     lda l0078                                                         ; 42b5: a5 78
     cmp #$28 ; '('                                                    ; 42b7: c9 28
     bcc return5                                                       ; 42b9: 90 33
-    lda l0a4f                                                         ; 42bb: ad 4f 0a
+    lda save_game_level_n_bell_x_low                                  ; 42bb: ad 4f 0a
     sec                                                               ; 42be: 38
     sbc #$40 ; '@'                                                    ; 42bf: e9 40
-    sta l0a4f                                                         ; 42c1: 8d 4f 0a
+    sta save_game_level_n_bell_x_low                                  ; 42c1: 8d 4f 0a
     lda #0                                                            ; 42c4: a9 00
     sbc #0                                                            ; 42c6: e9 00
-    sta l0a50                                                         ; 42c8: 8d 50 0a
-    dec l0a53                                                         ; 42cb: ce 53 0a
-    jmp c42e9                                                         ; 42ce: 4c e9 42
+    sta save_game_level_n_bell_x_high                                 ; 42c8: 8d 50 0a
+    dec save_game_level_n_bell_room                                   ; 42cb: ce 53 0a
+    jmp hide_bell                                                     ; 42ce: 4c e9 42
 
-c42d1
+move_bell_left_one_room
     lda l0079                                                         ; 42d1: a5 79
     bpl return5                                                       ; 42d3: 10 19
-    lda l0a4f                                                         ; 42d5: ad 4f 0a
+    lda save_game_level_n_bell_x_low                                  ; 42d5: ad 4f 0a
     clc                                                               ; 42d8: 18
     adc #$40 ; '@'                                                    ; 42d9: 69 40
-    sta l0a4f                                                         ; 42db: 8d 4f 0a
+    sta save_game_level_n_bell_x_low                                  ; 42db: 8d 4f 0a
     lda #1                                                            ; 42de: a9 01
-    sta l0a50                                                         ; 42e0: 8d 50 0a
-    inc l0a53                                                         ; 42e3: ee 53 0a
-    jmp c42e9                                                         ; 42e6: 4c e9 42
+    sta save_game_level_n_bell_x_high                                 ; 42e0: 8d 50 0a
+    inc save_game_level_n_bell_room                                   ; 42e3: ee 53 0a
+    jmp hide_bell                                                     ; 42e6: 4c e9 42                ; redundant instruction
 
-c42e9
+hide_bell
     lda #spriteid_one_pixel_masked_out                                ; 42e9: a9 00
     sta object_spriteid + objectid_bell                               ; 42eb: 8d aa 09
 return5
@@ -1522,14 +1550,14 @@ return5
 l42ef
     !byte 0                                                           ; 42ef: 00
 
-sub_c42f0
-    lda l0a4f                                                         ; 42f0: ad 4f 0a
+set_bell_object
+    lda save_game_level_n_bell_x_low                                  ; 42f0: ad 4f 0a
     sta object_x_low + objectid_bell                                  ; 42f3: 8d 52 09
-    lda l0a50                                                         ; 42f6: ad 50 0a
+    lda save_game_level_n_bell_x_high                                 ; 42f6: ad 50 0a
     sta object_x_high + objectid_bell                                 ; 42f9: 8d 68 09
-    lda l0a51                                                         ; 42fc: ad 51 0a
+    lda save_game_level_n_bell_y_low                                  ; 42fc: ad 51 0a
     sta object_y_low + objectid_bell                                  ; 42ff: 8d 7e 09
-    lda l0a52                                                         ; 4302: ad 52 0a
+    lda save_game_level_n_bell_y_high                                 ; 4302: ad 52 0a
     sta object_y_high + objectid_bell                                 ; 4305: 8d 94 09
     lda #spriteid_bell                                                ; 4308: a9 e1
     sta object_spriteid + objectid_bell                               ; 430a: 8d aa 09
@@ -1539,27 +1567,27 @@ sub_c430e
     sta value_to_write_to_collision_map                               ; 430e: 85 3e
     ora #0                                                            ; 4310: 09 00
     beq c431b                                                         ; 4312: f0 07
-    lda l0a4d                                                         ; 4314: ad 4d 0a
-    cmp #1                                                            ; 4317: c9 01
+    lda save_game_level_n_bell_animation                              ; 4314: ad 4d 0a
+    cmp #bell_stopped_animation - bell_animations                     ; 4317: c9 01
     bne return6                                                       ; 4319: d0 39
 c431b
     lda desired_room_index                                            ; 431b: a5 30
-    cmp l0a53                                                         ; 431d: cd 53 0a
+    cmp save_game_level_n_bell_room                                   ; 431d: cd 53 0a
     bne return6                                                       ; 4320: d0 32
-    lda l0a50                                                         ; 4322: ad 50 0a
+    lda save_game_level_n_bell_x_high                                 ; 4322: ad 50 0a
     lsr                                                               ; 4325: 4a
     sta l0070                                                         ; 4326: 85 70
-    lda l0a4f                                                         ; 4328: ad 4f 0a
+    lda save_game_level_n_bell_x_low                                  ; 4328: ad 4f 0a
     ror                                                               ; 432b: 6a
     lsr l0070                                                         ; 432c: 46 70
     ror                                                               ; 432e: 6a
     lsr l0070                                                         ; 432f: 46 70
     ror                                                               ; 4331: 6a
     tax                                                               ; 4332: aa
-    lda l0a52                                                         ; 4333: ad 52 0a
+    lda save_game_level_n_bell_y_high                                 ; 4333: ad 52 0a
     lsr                                                               ; 4336: 4a
     sta l0070                                                         ; 4337: 85 70
-    lda l0a51                                                         ; 4339: ad 51 0a
+    lda save_game_level_n_bell_y_low                                  ; 4339: ad 51 0a
     ror                                                               ; 433c: 6a
     lsr l0070                                                         ; 433d: 46 70
     ror                                                               ; 433f: 6a
@@ -1651,7 +1679,7 @@ room_3_code
     lda #8                                                            ; 4397: a9 08
     sta width_in_cells                                                ; 4399: 85 3c
     jsr copy_rectangle_of_memory_to_screen                            ; 439b: 20 bb 1a
-    jsr sub_c3f4a                                                     ; 439e: 20 4a 3f
+    jsr draw_3x2_boulder_to_screen                                    ; 439e: 20 4a 3f
 ; carve the floor, walls and ceiling into the rock
     jsr draw_floor_walls_and_ceiling_around_solid_rock                ; 43a1: 20 90 1b
 ; draw rope at (25,2) length 18
@@ -1680,14 +1708,14 @@ room_3_code
     jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map           ; 43cc: 20 57 1f
     ldy #6                                                            ; 43cf: a0 06
     ldx #7                                                            ; 43d1: a2 07
-    jsr sub_c3f5c                                                     ; 43d3: 20 5c 3f
+    jsr draw_bell                                                     ; 43d3: 20 5c 3f
     ldx #$0c                                                          ; 43d6: a2 0c
-    jsr sub_c3f5c                                                     ; 43d8: 20 5c 3f
+    jsr draw_bell                                                     ; 43d8: 20 5c 3f
 ; draw clanger end at (12,6)
     lda #spriteid_clanger_end                                         ; 43db: a9 e7
     jsr draw_sprite_a_at_cell_xy                                      ; 43dd: 20 4c 1f
     ldx #$11                                                          ; 43e0: a2 11
-    jsr sub_c3f5c                                                     ; 43e2: 20 5c 3f
+    jsr draw_bell                                                     ; 43e2: 20 5c 3f
 ; draw clanger end at (17,6)
     lda #spriteid_clanger_end                                         ; 43e5: a9 e7
     jsr draw_sprite_a_at_cell_xy                                      ; 43e7: 20 4c 1f
@@ -1705,7 +1733,7 @@ room_3_update_handler
     sta currently_updating_logic_for_room_index                       ; 43fd: 8d ba 1a
     ldx #$25 ; '%'                                                    ; 4400: a2 25
     ldy #6                                                            ; 4402: a0 06
-    lda #5                                                            ; 4404: a9 05
+    lda #objectid_fire2                                               ; 4404: a9 05
     jsr update_brazier_and_fire                                       ; 4406: 20 88 19
 ; check for first update in room (branch if not)
     lda update_room_first_update_flag                                 ; 4409: ad 2b 13
@@ -1715,15 +1743,15 @@ room_3_update_handler
     jsr define_envelope                                               ; 4412: 20 5e 39
     lda #spriteid_clanger_menu_item                                   ; 4415: a9 e0
     sta toolbar_collectable_spriteids+1                               ; 4417: 8d e9 2e
-    lda #$df                                                          ; 441a: a9 df
+    lda #spriteid_clanger                                             ; 441a: a9 df
     sta collectable_spriteids+1                                       ; 441c: 8d ee 2e
-    lda #$e3                                                          ; 441f: a9 e3
+    lda #spriteid_using_clanger                                       ; 441f: a9 e3
     sta collectable_being_used_spriteids + 1                          ; 4421: 8d f3 2e
     lda #spriteid_erase5                                              ; 4424: a9 e5
     sta object_erase_type + objectid_clanger_end                      ; 4426: 8d af 38
     lda #$40 ; '@'                                                    ; 4429: a9 40
     sta object_z_order + objectid_clanger_end                         ; 442b: 8d c5 38
-    lda l0a4c                                                         ; 442e: ad 4c 0a
+    lda save_game_level_n_got_clanger                                 ; 442e: ad 4c 0a
     bne c4475                                                         ; 4431: d0 42
     lda desired_room_index                                            ; 4433: a5 30
     cmp #3                                                            ; 4435: c9 03
@@ -1740,7 +1768,7 @@ c444c
     jmp return7                                                       ; 444c: 4c 08 45
 
 c444f
-    lda l0a4c                                                         ; 444f: ad 4c 0a
+    lda save_game_level_n_got_clanger                                 ; 444f: ad 4c 0a
     bne c4475                                                         ; 4452: d0 21
     lda desired_room_index                                            ; 4454: a5 30
     cmp #3                                                            ; 4456: c9 03
@@ -1750,7 +1778,7 @@ c444f
     jsr test_for_collision_between_objects_x_and_y                    ; 445e: 20 e2 28
     beq c4472                                                         ; 4461: f0 0f
     lda #$ff                                                          ; 4463: a9 ff
-    sta l0a4c                                                         ; 4465: 8d 4c 0a
+    sta save_game_level_n_got_clanger                                 ; 4465: 8d 4c 0a
     lda #spriteid_one_pixel_masked_out                                ; 4468: a9 00
     sta object_spriteid + objectid_clanger                            ; 446a: 8d ac 09
     lda #spriteid_clanger_menu_item                                   ; 446d: a9 e0
@@ -1770,7 +1798,7 @@ c4475
     jsr get_solid_rock_collision_for_object_a                         ; 4488: 20 94 28
     beq c4472                                                         ; 448b: f0 e5
     lda object_y_low                                                  ; 448d: ad 7c 09
-    cmp l0a51                                                         ; 4490: cd 51 0a
+    cmp save_game_level_n_bell_y_low                                  ; 4490: cd 51 0a
     bcc c44f9                                                         ; 4493: 90 64
     dec temp_right_offset                                             ; 4495: ce d1 24
     ldx #objectid_player_accessory                                    ; 4498: a2 01
@@ -1813,11 +1841,11 @@ c4475
     jmp return7                                                       ; 44f6: 4c 08 45
 
 c44f9
-    lda #$e6                                                          ; 44f9: a9 e6
+    lda #spriteid_holding_clanger                                     ; 44f9: a9 e6
     sta collectable_being_used_spriteids + 1                          ; 44fb: 8d f3 2e
     lda #0                                                            ; 44fe: a9 00
     jsr update_object_a_solid_rock_collision                          ; 4500: 20 f5 25
-    lda #$e3                                                          ; 4503: a9 e3
+    lda #spriteid_using_clanger                                       ; 4503: a9 e3
     sta collectable_being_used_spriteids + 1                          ; 4505: 8d f3 2e
 return7
     rts                                                               ; 4508: 60
@@ -1929,45 +1957,20 @@ pydis_end
 
 ; Automatically generated labels:
 ;     c3b11
-;     c3c1d
-;     c3c54
-;     c3c57
-;     c3c68
-;     c3c77
 ;     c3c8e
-;     c3cb5
-;     c3cbf
-;     c3cde
-;     c3d01
-;     c3d13
-;     c3d42
-;     c3d51
-;     c3d5a
-;     c3d61
-;     c3d66
-;     c3ddc
-;     c3ddf
-;     c3e01
-;     c3e16
-;     c3e50
-;     c3e6e
 ;     c40b1
 ;     c40d8
 ;     c40de
 ;     c40e6
-;     c40f5
 ;     c40f8
 ;     c410f
 ;     c411e
 ;     c4124
 ;     c4131
-;     c414b
 ;     c414e
 ;     c4172
 ;     c4178
 ;     c418c
-;     c41cd
-;     c41ea
 ;     c41ef
 ;     c4204
 ;     c4217
@@ -1976,10 +1979,6 @@ pydis_end
 ;     c4246
 ;     c425c
 ;     c4266
-;     c4276
-;     c427d
-;     c42d1
-;     c42e9
 ;     c431b
 ;     c444c
 ;     c444f
@@ -1988,35 +1987,8 @@ pydis_end
 ;     c44f9
 ;     l0078
 ;     l0079
-;     l0a4a
-;     l0a4b
-;     l0a4c
-;     l0a4d
-;     l0a4e
-;     l0a4f
-;     l0a50
-;     l0a51
-;     l0a52
-;     l0a53
-;     l0a54
-;     l0a70
-;     l0a71
-;     l0a72
-;     l0a73
 ;     l0a74
-;     l3d39
-;     l4041
 ;     l42ef
-;     loop_c3d79
-;     loop_c3d96
-;     loop_c3db6
-;     loop_c40c5
-;     sub_c3d3a
-;     sub_c3e85
-;     sub_c3f4a
-;     sub_c3f5c
-;     sub_c417b
-;     sub_c42f0
 ;     sub_c430e
 !if (<envelope1) != $0a {
     !error "Assertion failed: <envelope1 == $0a"
@@ -2066,11 +2038,35 @@ pydis_end
 !if (>sound4) != $45 {
     !error "Assertion failed: >sound4 == $45"
 }
+!if (bell_fall_animation - bell_animations) != $14 {
+    !error "Assertion failed: bell_fall_animation - bell_animations == $14"
+}
+!if (bell_fall_right_animation - bell_animations) != $07 {
+    !error "Assertion failed: bell_fall_right_animation - bell_animations == $07"
+}
+!if (bell_move_right_animation - bell_animations) != $04 {
+    !error "Assertion failed: bell_move_right_animation - bell_animations == $04"
+}
+!if (bell_stopped_animation - bell_animations) != $01 {
+    !error "Assertion failed: bell_stopped_animation - bell_animations == $01"
+}
 !if (collision_map_none) != $00 {
     !error "Assertion failed: collision_map_none == $00"
 }
 !if (collision_map_solid_rock) != $03 {
     !error "Assertion failed: collision_map_solid_rock == $03"
+}
+!if (dog_head_drooling_animation - dog_head_animations) != $05 {
+    !error "Assertion failed: dog_head_drooling_animation - dog_head_animations == $05"
+}
+!if (dog_head_drooling_final_animation - dog_head_animations) != $34 {
+    !error "Assertion failed: dog_head_drooling_final_animation - dog_head_animations == $34"
+}
+!if (dog_head_drooling_held_animation - dog_head_animations) != $30 {
+    !error "Assertion failed: dog_head_drooling_held_animation - dog_head_animations == $30"
+}
+!if (dog_head_normal_animation - dog_head_animations) != $01 {
+    !error "Assertion failed: dog_head_normal_animation - dog_head_animations == $01"
 }
 !if (exit_room_bottom) != $02 {
     !error "Assertion failed: exit_room_bottom == $02"
@@ -2084,6 +2080,9 @@ pydis_end
 !if (exit_room_top) != $08 {
     !error "Assertion failed: exit_room_top == $08"
 }
+!if (inkey_key_o) != $c9 {
+    !error "Assertion failed: inkey_key_o == $c9"
+}
 !if (level_specific_initialisation) != $3af7 {
     !error "Assertion failed: level_specific_initialisation == $3af7"
 }
@@ -2092,6 +2091,12 @@ pydis_end
 }
 !if (level_specific_update) != $3b1a {
     !error "Assertion failed: level_specific_update == $3b1a"
+}
+!if (object_collided_left_wall) != $01 {
+    !error "Assertion failed: object_collided_left_wall == $01"
+}
+!if (object_collided_right_wall) != $04 {
+    !error "Assertion failed: object_collided_right_wall == $04"
 }
 !if (object_direction + objectid_clanger_end) != $09c1 {
     !error "Assertion failed: object_direction + objectid_clanger_end == $09c1"
@@ -2201,11 +2206,29 @@ pydis_end
 !if (object_z_order + objectid_partition_end) != $38c6 {
     !error "Assertion failed: object_z_order + objectid_partition_end == $38c6"
 }
+!if (objectid_bell) != $02 {
+    !error "Assertion failed: objectid_bell == $02"
+}
+!if (objectid_dog_head) != $09 {
+    !error "Assertion failed: objectid_dog_head == $09"
+}
+!if (objectid_dog_tail) != $08 {
+    !error "Assertion failed: objectid_dog_tail == $08"
+}
+!if (objectid_fire1) != $04 {
+    !error "Assertion failed: objectid_fire1 == $04"
+}
+!if (objectid_fire2) != $05 {
+    !error "Assertion failed: objectid_fire2 == $05"
+}
 !if (objectid_old_player) != $0b {
     !error "Assertion failed: objectid_old_player == $0b"
 }
 !if (objectid_player_accessory) != $01 {
     !error "Assertion failed: objectid_player_accessory == $01"
+}
+!if (objectid_sparkles) != $06 {
+    !error "Assertion failed: objectid_sparkles == $06"
 }
 !if (room_0_data) != $3b2f {
     !error "Assertion failed: room_0_data == $3b2f"
@@ -2230,6 +2253,9 @@ pydis_end
 }
 !if (spriteid_boulder) != $cc {
     !error "Assertion failed: spriteid_boulder == $cc"
+}
+!if (spriteid_clanger) != $df {
+    !error "Assertion failed: spriteid_clanger == $df"
 }
 !if (spriteid_clanger2) != $e8 {
     !error "Assertion failed: spriteid_clanger2 == $e8"
@@ -2299,6 +2325,9 @@ pydis_end
 }
 !if (spriteid_rope) != $cb {
     !error "Assertion failed: spriteid_rope == $cb"
+}
+!if (spriteid_rope_end1) != $da {
+    !error "Assertion failed: spriteid_rope_end1 == $da"
 }
 !if (spriteid_tail1) != $db {
     !error "Assertion failed: spriteid_tail1 == $db"
