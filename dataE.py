@@ -278,7 +278,7 @@ comment(0x45a1, "Preserves Y. A is 0 or $ff on exit depending on something. Flag
 entry(0x45a1, "something_to_do_with_egg_animation")
 comment(0x45ad, "TODO: Why not lda object_spriteid+2? And similarly for following lda abs,x")
 expr(0x45ae, "objectid_small_egg")
-entry(0x45d2, "set_a_and_return")
+entry(0x45d2, "load_a_and_return")
 label(0x45d6, "return_a")
 label(0x45d7, "saved_y")
 expr(0x42dd, "objectid_small_egg")
