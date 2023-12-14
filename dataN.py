@@ -77,6 +77,9 @@ substitute_labels = {
     (0x3f18,0x403e): {
         "l0070": "room_exit_direction",
     },
+    (0x3e55, 0x3e5c): {
+        "l0070": "temp_y",
+    },
 }
 
 # (Class SubstituteLabels is defined in common.py to implement the substitute labels)
@@ -240,16 +243,16 @@ expr(0x3dd3, sprite_dict)
 expr(0x3dd5, "object_spriteid + objectid_partition")
 expr(0x3dd8, sprite_dict)
 expr(0x3dda, "object_erase_type + objectid_partition")
-label(0x3ddc, "initialise_partition_up_and_umbrella_down_local")
+label(0x3ddc, "update_partition_and_umbrella_local")
 label(0x3ddf, "update_room_0")
 expr(0x3df1, sprite_dict)
 expr(0x3df3, "object_spriteid_old + objectid_umbrella")
 ldx_ldy_jsr_play_sound_yx(0x3dfb, "sound1")
-label(0x3e01, "initialise_partition_down_and_umbrella_up")
+label(0x3e01, "set_partition_down_and_umbrella_up")
 expr(0x3e02, "object_y_low + objectid_partition_end")
 expr(0x3e0a, sprite_dict)
 expr(0x3e0c, "object_spriteid_old + objectid_umbrella")
-label(0x3e16, "initialise_partition_up_and_umbrella_down")
+label(0x3e16, "update_partition_and_umbrella")
 expr(0x3e20, "object_y_low + objectid_partition_end")
 expr(0x3e23, "object_y_low + objectid_partition")
 expr(0x3e2f, "object_y_low + objectid_umbrella")
@@ -260,7 +263,7 @@ comment(0x3e73, "if partition is fully down, then return")
 comment(0x3e7a, "if partition is fully up, then return")
 comment(0x3e7e, "move partition up")
 label(0x3e84, "return2")
-label(0x3e85, "reset_sound_priorities")
+label(0x3e85, "update_sound_priorities")
 expr(0x3e90, "sound_priority_per_channel_table + 1")
 label(0x3e92, "return3")
 expr(0x3efe, sprite_dict)
@@ -385,6 +388,14 @@ expr(0x44fa, sprite_dict)
 expr(0x44aa, "object_x_low + objectid_clanger_end")
 expr(0x4504, sprite_dict)
 label(0x4508, "return7")
+ri(0x3de1)
+comment(0x3de5, "branch if partition is fully down")
+comment(0x3dec, "branch if partition is fully up")
+comment(0x3df0, "umbrella and partition are moving")
+comment(0x3e09, "move umbrella")
+comment(0x3e1c, "set partition y position")
+comment(0x3e25, "set umbrella y position")
+comment(0x3e31, "update collision map at partition")
 
 for i in range(0x4048, 0x4054, 2):
     byte(i, 2)

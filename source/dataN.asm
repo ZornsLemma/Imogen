@@ -196,6 +196,7 @@ player_held_object_spriteid                         = $52
 developer_mode_sideways_ram_is_set_up_flag          = $5b
 l0070                                               = $70
 room_exit_direction                                 = $70
+temp_y                                              = $70
 l0078                                               = $78
 l0079                                               = $79
 object_x_low                                        = $0950
@@ -727,7 +728,7 @@ set_partition_down
 initialise_rope_system
     lda desired_room_index                                            ; 3d66: a5 30
     cmp #0                                                            ; 3d68: c9 00                   ; redundant instruction
-    bne initialise_partition_up_and_umbrella_down_local               ; 3d6a: d0 70
+    bne update_partition_and_umbrella_local                           ; 3d6a: d0 70
     ldx #$20 ; ' '                                                    ; 3d6c: a2 20
     ldy #2                                                            ; 3d6e: a0 02
     lda #spriteid_right_hook                                          ; 3d70: a9 c9
@@ -790,48 +791,55 @@ draw_vertical_rope2_loop
     sta object_spriteid + objectid_partition                          ; 3dd4: 8d ad 09
     lda #spriteid_erase1                                              ; 3dd7: a9 d0
     sta object_erase_type + objectid_partition                        ; 3dd9: 8d b1 38
-initialise_partition_up_and_umbrella_down_local
-    jmp initialise_partition_up_and_umbrella_down                     ; 3ddc: 4c 16 3e
+update_partition_and_umbrella_local
+    jmp update_partition_and_umbrella                                 ; 3ddc: 4c 16 3e
 
 update_room_0
     lda desired_room_index                                            ; 3ddf: a5 30
-    cmp #0                                                            ; 3de1: c9 00
-    bne initialise_partition_up_and_umbrella_down                     ; 3de3: d0 31
+    cmp #0                                                            ; 3de1: c9 00                   ; redundant instruction
+    bne update_partition_and_umbrella                                 ; 3de3: d0 31
+; branch if partition is fully down
     lda save_game_level_n_partition_y                                 ; 3de5: ad 4a 0a
     cmp #$60 ; '`'                                                    ; 3de8: c9 60
-    beq initialise_partition_up_and_umbrella_down                     ; 3dea: f0 2a
+    beq update_partition_and_umbrella                                 ; 3dea: f0 2a
+; branch if partition is fully up
     cmp #$40 ; '@'                                                    ; 3dec: c9 40
-    beq initialise_partition_down_and_umbrella_up                     ; 3dee: f0 11
+    beq set_partition_down_and_umbrella_up                            ; 3dee: f0 11
+; umbrella and partition are moving
     lda #spriteid_one_pixel_masked_out                                ; 3df0: a9 00
     sta object_spriteid_old + objectid_umbrella                       ; 3df2: 8d bd 09
     lda #$60 ; '`'                                                    ; 3df5: a9 60
     ldx #<sound1                                                      ; 3df7: a2 18
     ldy #>sound1                                                      ; 3df9: a0 45
     jsr play_sound_yx                                                 ; 3dfb: 20 f6 38
-    jmp initialise_partition_up_and_umbrella_down                     ; 3dfe: 4c 16 3e
+    jmp update_partition_and_umbrella                                 ; 3dfe: 4c 16 3e
 
-initialise_partition_down_and_umbrella_up
+set_partition_down_and_umbrella_up
     lda object_y_low + objectid_partition_end                         ; 3e01: ad 80 09
     cmp save_game_level_n_partition_y                                 ; 3e04: cd 4a 0a
-    beq initialise_partition_up_and_umbrella_down                     ; 3e07: f0 0d
+    beq update_partition_and_umbrella                                 ; 3e07: f0 0d
+; move umbrella
     lda #spriteid_one_pixel_masked_out                                ; 3e09: a9 00
     sta object_spriteid_old + objectid_umbrella                       ; 3e0b: 8d bd 09
     lda #$60 ; '`'                                                    ; 3e0e: a9 60
-    jsr reset_sound_priorities                                        ; 3e10: 20 85 3e
+    jsr update_sound_priorities                                       ; 3e10: 20 85 3e
     jsr play_landing_sound                                            ; 3e13: 20 a9 23
-initialise_partition_up_and_umbrella_down
+update_partition_and_umbrella
     lda desired_room_index                                            ; 3e16: a5 30
     cmp #0                                                            ; 3e18: c9 00
     bne check_for_moving_partition_up                                 ; 3e1a: d0 52
+; set partition y position
     lda save_game_level_n_partition_y                                 ; 3e1c: ad 4a 0a
     sta object_y_low + objectid_partition_end                         ; 3e1f: 8d 80 09
     sta object_y_low + objectid_partition                             ; 3e22: 8d 81 09
+; set umbrella y position
     lda #$60 ; '`'                                                    ; 3e25: a9 60
     sec                                                               ; 3e27: 38
     sbc save_game_level_n_partition_y                                 ; 3e28: ed 4a 0a
     clc                                                               ; 3e2b: 18
     adc #$44 ; 'D'                                                    ; 3e2c: 69 44
     sta object_y_low + objectid_umbrella                              ; 3e2e: 8d 86 09
+; update collision map at partition
     ldx #$20 ; ' '                                                    ; 3e31: a2 20
     lda save_game_level_n_partition_y                                 ; 3e33: ad 4a 0a
     lsr                                                               ; 3e36: 4a
@@ -853,10 +861,10 @@ check_for_changing_partition_collision_map
     clc                                                               ; 3e51: 18
     adc height_in_cells                                               ; 3e52: 65 3d
     tay                                                               ; 3e54: a8
-    sta l0070                                                         ; 3e55: 85 70
+    sta temp_y                                                        ; 3e55: 85 70
     lda #$10                                                          ; 3e57: a9 10
     sec                                                               ; 3e59: 38
-    sbc l0070                                                         ; 3e5a: e5 70
+    sbc temp_y                                                        ; 3e5a: e5 70
     beq check_for_moving_partition_up                                 ; 3e5c: f0 10
     sta height_in_cells                                               ; 3e5e: 85 3d
     lda #collision_map_none                                           ; 3e60: a9 00
@@ -883,7 +891,7 @@ check_for_moving_partition_up
 return2
     rts                                                               ; 3e84: 60
 
-reset_sound_priorities
+update_sound_priorities
     cmp sound_priority_per_channel_table                              ; 3e85: cd 6f 39
     bcc return3                                                       ; 3e88: 90 08
     lda #0                                                            ; 3e8a: a9 00
@@ -1297,7 +1305,7 @@ return4_local
 
 c40f8
     lda #$40 ; '@'                                                    ; 40f8: a9 40
-    jsr reset_sound_priorities                                        ; 40fa: 20 85 3e
+    jsr update_sound_priorities                                       ; 40fa: 20 85 3e
     jsr update_bell                                                   ; 40fd: 20 7b 41
     lda desired_room_index                                            ; 4100: a5 30
     cmp save_game_level_n_bell_room                                   ; 4102: cd 53 0a
