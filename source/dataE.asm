@@ -1772,7 +1772,7 @@ not_end_of_egg_animation_sequence
     lda save_game_level_e_room_1_egg_state                            ; 44cb: ad 14 0a
     cmp #1                                                            ; 44ce: c9 01
     bne c44df                                                         ; 44d0: d0 0d
-    jsr something_to_do_with_egg_animation                            ; 44d2: 20 a1 45
+    jsr test_if_small_egg_hit_large_egg                               ; 44d2: 20 a1 45
     beq new_egg_animation_index_in_y                                  ; 44d5: f0 61
     ldy #egg_animation_subseq2 - egg_animations_table                 ; 44d7: a0 05
     sty save_game_level_e_room_1_egg_state                            ; 44d9: 8c 14 0a
@@ -1781,7 +1781,7 @@ not_end_of_egg_animation_sequence
 c44df
     cmp #5                                                            ; 44df: c9 05
     bne c450b                                                         ; 44e1: d0 28
-    jsr something_to_do_with_egg_animation                            ; 44e3: 20 a1 45
+    jsr test_if_small_egg_hit_large_egg                               ; 44e3: 20 a1 45
     beq new_egg_animation_index_in_y                                  ; 44e6: f0 50
     lda desired_room_index                                            ; 44e8: a5 30
     cmp #1                                                            ; 44ea: c9 01
@@ -1875,30 +1875,31 @@ c4596
 return5
     rts                                                               ; 45a0: 60
 
-; Preserves Y. A is 0 or $ff on exit depending on something. Flags reflect A on exit.
-something_to_do_with_egg_animation
+; Preserves Y. A is $ff on exit if small egg has hit large egg, 0 otherwise. Flags
+; reflect A on exit.
+test_if_small_egg_hit_large_egg
     lda #0                                                            ; 45a1: a9 00
     sta return_a                                                      ; 45a3: 8d d6 45
     lda room_containing_small_egg                                     ; 45a6: ad 75 0a
     cmp #1                                                            ; 45a9: c9 01
-    bne set_a_and_return                                              ; 45ab: d0 25
+    bne load_a_and_return                                             ; 45ab: d0 25
 ; TODO: Why not lda object_spriteid+2? And similarly for following lda abs,x
     ldx #objectid_small_egg                                           ; 45ad: a2 02
     lda object_spriteid,x                                             ; 45af: bd a8 09
-    beq set_a_and_return                                              ; 45b2: f0 1e
+    beq load_a_and_return                                             ; 45b2: f0 1e
     lda object_x_high,x                                               ; 45b4: bd 66 09
-    bne set_a_and_return                                              ; 45b7: d0 19
+    bne load_a_and_return                                             ; 45b7: d0 19
     lda object_y_low,x                                                ; 45b9: bd 7c 09
     cmp #$70 ; 'p'                                                    ; 45bc: c9 70
-    bcs set_a_and_return                                              ; 45be: b0 12
+    bcs load_a_and_return                                             ; 45be: b0 12
     sty saved_y                                                       ; 45c0: 8c d7 45
     jsr find_left_and_right_of_object                                 ; 45c3: 20 34 24
     ldy saved_y                                                       ; 45c6: ac d7 45
     lda object_left_low                                               ; 45c9: a5 70
     cmp #$78 ; 'x'                                                    ; 45cb: c9 78
-    bne set_a_and_return                                              ; 45cd: d0 03
+    bne load_a_and_return                                             ; 45cd: d0 03
     dec return_a                                                      ; 45cf: ce d6 45
-set_a_and_return
+load_a_and_return
     lda return_a                                                      ; 45d2: ad d6 45
     rts                                                               ; 45d5: 60
 
