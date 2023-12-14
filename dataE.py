@@ -196,13 +196,13 @@ blank(0x4466)
 
 comment(0x4099, "Table of animations for TODO: what?. There are three bytes per entry. First byte is a sprite ID. Second and third bytes of each entry are signed (X,Y) position offsets, added to a77 and a78 respectively. This seems to control sprite and probably X/Y poss of object TODO. Each animation is terminated with an extra zero byte.")
 label(0x4099, "small_egg_animation_table")
-label(0x4099+1, "small_egg_animation_table_subseq2") # TODO: 411d uses this offset, but shares it with holding_egg_flag - I wonder if this is a micro-optimisation and 1 vs 0 in holding_egg_flag are equivalent - TODO I think this is actually big egg animation table, or it's a mix
-label(0x4099+0x16, "egg_animation_table_subseq3")
+label(0x4099+1, "small_egg_animation_table_subseq2") # TODO: 411d uses this offset, but shares it with holding_egg_flag - I wonder if this is a micro-optimisation and 1 vs 0 in holding_egg_flag are equivalent
+#label(0x4099+0x16, "egg_animation_table_subseq3")
 label(0x4099+5, "small_egg_animation_table_subseq1")
 for i in range(0x4099, 0x40cf):
     byte(i)
 expr(0x41c7, make_subtract("small_egg_animation_table_subseq1", "small_egg_animation_table"))
-expr(0x4502, make_subtract("egg_animation_table_subseq3", "small_egg_animation_table"))
+#expr(0x4502, make_subtract("egg_animation_table_subseq3", "small_egg_animation_table"))
 expr(0x409a, sprite_dict)
 expr(0x40a1, sprite_dict)
 expr(0x40a5, sprite_dict)
@@ -270,9 +270,10 @@ label(0x444c+0x1a, "egg_animation_subseq4")
 expr(0x4507, make_subtract("egg_animation_subseq1", "egg_animations_table"))
 expr(0x4492, make_subtract("egg_animation_subseq4", "egg_animations_table"))
 expr(0x4492, make_subtract("egg_animation_subseq4", "egg_animations_table"))
-expr(0x4534, make_subtract("egg_animation_subseq4", "egg_animations_table"))
 expr(0x44d8, make_subtract("egg_animation_subseq2", "egg_animations_table"))
+expr(0x4502, make_subtract("egg_animation_subseq3", "egg_animations_table"))
 expr(0x452f, make_subtract("egg_animation_subseq3", "egg_animations_table"))
+expr(0x4534, make_subtract("egg_animation_subseq4", "egg_animations_table"))
 entry(0x4538, "new_egg_animation_index_in_y")
 entry(0x4551, "finish_setting_up_egg")
 

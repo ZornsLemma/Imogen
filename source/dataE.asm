@@ -1152,7 +1152,6 @@ small_egg_animation_table_subseq1
     !byte 8                                                           ; 40ac: 08
     !byte 0                                                           ; 40ad: 00
     !byte spriteid_small_egg_left                                     ; 40ae: d9
-egg_animation_table_subseq3
     !byte 8                                                           ; 40af: 08
     !byte 0                                                           ; 40b0: 00
     !byte spriteid_small_egg_left                                     ; 40b1: d9
@@ -1797,7 +1796,7 @@ c44df
     sta height_in_cells                                               ; 44fc: 85 3d
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 44fe: 20 44 1e
 room_1_not_this_room3
-    lda #egg_animation_table_subseq3 - small_egg_animation_table      ; 4501: a9 16
+    lda #egg_animation_subseq3 - egg_animations_table                 ; 4501: a9 16
     sta save_game_level_e_big_egg_animation_index                     ; 4503: 8d 14 0a
     ldy #egg_animation_subseq1 - egg_animations_table                 ; 4506: a0 09
     jmp new_egg_animation_index_in_y                                  ; 4508: 4c 38 45
@@ -2122,9 +2121,6 @@ pydis_end
 }
 !if (egg_animation_subseq4 - egg_animations_table) != $1a {
     !error "Assertion failed: egg_animation_subseq4 - egg_animations_table == $1a"
-}
-!if (egg_animation_table_subseq3 - small_egg_animation_table) != $16 {
-    !error "Assertion failed: egg_animation_table_subseq3 - small_egg_animation_table == $16"
 }
 !if (exit_room_bottom) != $02 {
     !error "Assertion failed: exit_room_bottom == $02"
