@@ -1,3 +1,58 @@
+; *************************************************************************************
+;
+; Level N: 'PAVLOV-WAS-HERE'
+;
+; Save game variables:
+;
+;     save_game_level_n_partition_y                              ($0a4a):
+;             $40: partition is up
+;         $41-$5f: partition is between up and down
+;             $60: partition is down
+;
+;     save_game_level_n_dog_head_animation                       ($0a4b):
+;               1: regular animation
+;             $30: drooling with drip
+;             $34: ending drooling
+;
+;     save_game_level_n_got_clanger                              ($0a4c):
+;               0: no
+;             $ff: got clanger
+;
+;     save_game_level_n_bell_animation                           ($0a4d):
+;               1: stopped
+;               4: move sideways
+;               7: fall sideways
+;             $14: fall down
+;
+;     save_game_level_n_bell_animation_step                      ($0a4e):
+;             animation step for the above animation
+;
+;     save_game_level_n_bell_x_low                               ($0a4f):
+;     save_game_level_n_bell_x_high                              ($0a50):
+;     save_game_level_n_bell_y_low                               ($0a51):
+;     save_game_level_n_bell_y_high                              ($0a52):
+;             position of the bell within the room
+;
+;     save_game_level_n_bell_room                                ($0a53):
+;             room number containing the bell
+;
+;     save_game_level_n_bell_direction                           ($0a54):
+;               0: stationary
+;               1: moving right
+;             $ff: moving left
+;
+; Solution:
+;
+;   1. Climb the left rope to the top and exit to the left room
+;   2. Collect the clanger and return to the rope
+;   3. Descend halfway down the rope and jump off to push the bell off the ledge
+;   4. Push the bell to the room to the right
+;   5. Use the clanger on the bell to ring it, causing the dog to drool into the umbrella
+;       (The partition raises)
+;   6. Collect the spell
+;
+; *************************************************************************************
+
 ; Constants
 collision_map_none                    = 0
 collision_map_out_of_bounds           = 255
@@ -1220,10 +1275,10 @@ bell_animations
 bell_stopped_animation
     !byte 0, 0                                                        ; 4042: 00 00
     !byte $80                                                         ; 4044: 80
-bell_move_right_animation
+bell_move_sideways_animation
     !byte 8, 0                                                        ; 4045: 08 00
     !byte $80                                                         ; 4047: 80
-bell_fall_right_animation
+bell_fall_sideways_animation
     !byte 8, 2                                                        ; 4048: 08 02
     !byte 8, 2                                                        ; 404a: 08 02
     !byte 8, 4                                                        ; 404c: 08 04
@@ -1332,7 +1387,7 @@ bell_in_room
 
 update_bell_if_falling_sideways
     lda save_game_level_n_bell_animation                              ; 410f: ad 4d 0a
-    cmp #bell_fall_right_animation - bell_animations                  ; 4112: c9 07
+    cmp #bell_fall_sideways_animation - bell_animations               ; 4112: c9 07
     bne update_bell_if_moving_sideways                                ; 4114: d0 1b
     lda save_game_level_n_bell_direction                              ; 4116: ad 54 0a
     bpl adjust_collision_check_when_moving_right                      ; 4119: 10 03
@@ -1351,7 +1406,7 @@ check_for_bell_room_collision
 
 update_bell_if_moving_sideways
     lda save_game_level_n_bell_animation                              ; 4131: ad 4d 0a
-    cmp #bell_move_right_animation - bell_animations                  ; 4134: c9 04
+    cmp #bell_move_sideways_animation - bell_animations               ; 4134: c9 04
     bne check_collision_if_falling                                    ; 4136: d0 16
     inc temp_right_offset                                             ; 4138: ee d1 24
     lda #2                                                            ; 413b: a9 02
@@ -1452,11 +1507,11 @@ got_direction_in_x
     lda #$ff                                                          ; 41e5: a9 ff
     sta player_is_currently_clanging_the_bell                         ; 41e7: 8d 74 0a
 set_bell_moving_sideways
-    ldy #bell_move_right_animation - bell_animations                  ; 41ea: a0 04
+    ldy #bell_move_sideways_animation - bell_animations               ; 41ea: a0 04
     sty save_game_level_n_bell_animation                              ; 41ec: 8c 4d 0a
 bell_is_moving
     lda save_game_level_n_bell_animation                              ; 41ef: ad 4d 0a
-    cmp #bell_move_right_animation - bell_animations                  ; 41f2: c9 04
+    cmp #bell_move_sideways_animation - bell_animations               ; 41f2: c9 04
     bne check_if_bell_is_falling_sideways                             ; 41f4: d0 3f
     lda save_game_level_n_bell_direction                              ; 41f6: ad 54 0a
     bmi check_bell_falling_rock_collision                             ; 41f9: 30 09
@@ -1485,13 +1540,13 @@ check_bell_moving_rock_collision
     jsr get_solid_rock_collision_for_object_a                         ; 4228: 20 94 28
     bne store_bell_animation_step                                     ; 422b: d0 39
 ; set bell falling sideways
-    ldy #bell_fall_right_animation - bell_animations                  ; 422d: a0 07
+    ldy #bell_fall_sideways_animation - bell_animations               ; 422d: a0 07
     sty save_game_level_n_bell_animation                              ; 422f: 8c 4d 0a
     jmp store_bell_animation_step                                     ; 4232: 4c 66 42
 
 check_if_bell_is_falling_sideways
     lda save_game_level_n_bell_animation                              ; 4235: ad 4d 0a
-    cmp #bell_fall_right_animation - bell_animations                  ; 4238: c9 07
+    cmp #bell_fall_sideways_animation - bell_animations               ; 4238: c9 07
     bne check_if_falling_straight_down                                ; 423a: d0 0a
 ; check if at end of animation (looped)
     cpy save_game_level_n_bell_animation                              ; 423c: cc 4d 0a
@@ -1550,7 +1605,7 @@ add_animation_offsets_to_position
     jsr find_top_and_bottom_of_object                                 ; 42a6: 20 d2 24
 ; check if bell is moving sideways (return if not)
     lda save_game_level_n_bell_animation                              ; 42a9: ad 4d 0a
-    cmp #bell_move_right_animation - bell_animations                  ; 42ac: c9 04
+    cmp #bell_move_sideways_animation - bell_animations               ; 42ac: c9 04
     bne return5                                                       ; 42ae: d0 3e
 ; check if bell has moved offscreen, into the next room
     lda save_game_level_n_bell_direction                              ; 42b0: ad 54 0a
@@ -2053,11 +2108,11 @@ pydis_end
 !if (bell_fall_animation - bell_animations) != $14 {
     !error "Assertion failed: bell_fall_animation - bell_animations == $14"
 }
-!if (bell_fall_right_animation - bell_animations) != $07 {
-    !error "Assertion failed: bell_fall_right_animation - bell_animations == $07"
+!if (bell_fall_sideways_animation - bell_animations) != $07 {
+    !error "Assertion failed: bell_fall_sideways_animation - bell_animations == $07"
 }
-!if (bell_move_right_animation - bell_animations) != $04 {
-    !error "Assertion failed: bell_move_right_animation - bell_animations == $04"
+!if (bell_move_sideways_animation - bell_animations) != $04 {
+    !error "Assertion failed: bell_move_sideways_animation - bell_animations == $04"
 }
 !if (bell_stopped_animation - bell_animations) != $01 {
     !error "Assertion failed: bell_stopped_animation - bell_animations == $01"

@@ -312,9 +312,9 @@ label(0x4041, "bell_animations")
 byte(0x4041)
 label(0x4042, "bell_stopped_animation")
 byte(0x4044)
-label(0x4045, "bell_move_right_animation")
+label(0x4045, "bell_move_sideways_animation")
 byte(0x4047)
-label(0x4048, "bell_fall_right_animation")
+label(0x4048, "bell_fall_sideways_animation")
 byte(0x4054)
 byte(0x4055, 2)
 label(0x4055, "bell_fall_animation")
@@ -344,12 +344,12 @@ label(0x40f8, "bell_in_room")
 expr(0x40aa, "bell_stopped_animation - bell_animations")
 comment(0x4107, "start counting the number of ticks the bell is off screen")
 label(0x410f, "update_bell_if_falling_sideways")
-expr(0x4113, "bell_fall_right_animation - bell_animations") #7
+expr(0x4113, "bell_fall_sideways_animation - bell_animations") #7
 label(0x411e, "adjust_collision_check_when_moving_right")
 label(0x4124, "check_for_bell_room_collision")
 expr(0x412a, "objectid_bell")
 label(0x4131, "update_bell_if_moving_sideways")
-expr(0x4135, "bell_move_right_animation - bell_animations") #4
+expr(0x4135, "bell_move_sideways_animation - bell_animations") #4
 comment(0x4142, "play bell sliding sound")
 expr(0x4145, make_lo("sound1"))
 expr(0x4147, make_hi("sound1"))
@@ -382,9 +382,9 @@ expr(0x41d6, sprite_dict)
 comment(0x41dc, "clanging bell, not moving it")
 ldx_ldy_jsr_play_sound_yx(0x41e2, "sound4")
 label(0x41ea, "set_bell_moving_sideways")
-expr(0x41eb, "bell_move_right_animation - bell_animations") #4
+expr(0x41eb, "bell_move_sideways_animation - bell_animations") #4
 label(0x41ef, "bell_is_moving")
-expr(0x41f3, "bell_move_right_animation - bell_animations") #4
+expr(0x41f3, "bell_move_sideways_animation - bell_animations") #4
 ri(0x4201)
 label(0x4204, "check_bell_falling_rock_collision")
 expr(0x4205, "objectid_bell")
@@ -392,9 +392,9 @@ label(0x4217, "set_bell_moving_right")
 label(0x421c, "check_bell_moving_rock_collision")
 expr(0x4227, "objectid_bell")
 comment(0x422d, "set bell falling sideways")
-expr(0x422e, "bell_fall_right_animation - bell_animations") #7
+expr(0x422e, "bell_fall_sideways_animation - bell_animations") #7
 label(0x4235, "check_if_bell_is_falling_sideways")
-expr(0x4239, "bell_fall_right_animation - bell_animations") #7
+expr(0x4239, "bell_fall_sideways_animation - bell_animations") #7
 comment(0x423c, "check if at end of animation (looped)")
 comment(0x4241, "set bell falling straight down")
 expr(0x4242, "bell_fall_animation - bell_animations")       #$14
@@ -410,7 +410,7 @@ label(0x427d, "add_animation_offsets_to_position")
 comment(0x42a1, "get extents of bell object")
 expr(0x42a2, "objectid_bell")
 comment(0x42a9, "check if bell is moving sideways (return if not)")
-expr(0x42ad, "bell_move_right_animation - bell_animations") #4
+expr(0x42ad, "bell_move_sideways_animation - bell_animations") #4
 comment(0x42b0, "check if bell has moved offscreen, into the next room")
 expr(0x42b8, "game_area_width_cells")
 comment(0x42bb, "move ball right one room")
@@ -497,6 +497,61 @@ for i in range(0x3bf2, 0x3bf6):
     expr(i, sprite_dict)
     byte(i)
 
+print("""; *************************************************************************************
+;
+; Level N: 'PAVLOV-WAS-HERE'
+;
+; Save game variables:
+;
+;     save_game_level_n_partition_y                              ($0a4a):
+;             $40: partition is up
+;         $41-$5f: partition is between up and down
+;             $60: partition is down
+;
+;     save_game_level_n_dog_head_animation                       ($0a4b):
+;               1: regular animation
+;             $30: drooling with drip
+;             $34: ending drooling
+;
+;     save_game_level_n_got_clanger                              ($0a4c):
+;               0: no
+;             $ff: got clanger
+;
+;     save_game_level_n_bell_animation                           ($0a4d):
+;               1: stopped
+;               4: move sideways
+;               7: fall sideways
+;             $14: fall down
+;
+;     save_game_level_n_bell_animation_step                      ($0a4e):
+;             animation step for the above animation
+;
+;     save_game_level_n_bell_x_low                               ($0a4f):
+;     save_game_level_n_bell_x_high                              ($0a50):
+;     save_game_level_n_bell_y_low                               ($0a51):
+;     save_game_level_n_bell_y_high                              ($0a52):
+;             position of the bell within the room
+;
+;     save_game_level_n_bell_room                                ($0a53):
+;             room number containing the bell
+;
+;     save_game_level_n_bell_direction                           ($0a54):
+;               0: stationary
+;               1: moving right
+;             $ff: moving left
+;
+; Solution:
+;
+;   1. Climb the left rope to the top and exit to the left room
+;   2. Collect the clanger and return to the rope
+;   3. Descend halfway down the rope and jump off to push the bell off the ledge
+;   4. Push the bell to the room to the right
+;   5. Use the clanger on the bell to ring it, causing the dog to drool into the umbrella
+;       (The partition raises)
+;   6. Collect the spell
+;
+; *************************************************************************************
+""")
 
 result = go(False)
 result = remove_sprite_data(result)
