@@ -549,6 +549,7 @@ room_0_update_handler
     lda current_level                                                 ; 3c0a: a5 31
     cmp level_before_latest_level_and_room_initialisation             ; 3c0c: c5 51
     beq room_changed_only                                             ; 3c0e: f0 0d
+; initialise dog and drip
     lda #dog_head_normal_animation - dog_head_animations              ; 3c10: a9 01
     sta save_game_level_n_dog_head_animation                          ; 3c12: 8d 4b 0a
     sta dog_head_animation_step                                       ; 3c15: 8d 70 0a
@@ -556,7 +557,7 @@ room_0_update_handler
     sta drip_y_position                                               ; 3c1a: 8d 71 0a
 room_changed_only
     lda desired_room_index                                            ; 3c1d: a5 30
-    cmp #0                                                            ; 3c1f: c9 00
+    cmp #0                                                            ; 3c1f: c9 00                   ; redundant instruction
     bne update_dog_head_and_drip_objects_local                        ; 3c21: d0 31
 ; draw dog body
     ldx #$0b                                                          ; 3c23: a2 0b
@@ -594,14 +595,19 @@ room_0_not_first_update
     cmp #$ff                                                          ; 3c61: c9 ff
     bne got_dog_head_animation_step_in_y                              ; 3c63: d0 03
     ldy save_game_level_n_dog_head_animation                          ; 3c65: ac 4b 0a
+; check for regular dog animation
 got_dog_head_animation_step_in_y
     lda save_game_level_n_dog_head_animation                          ; 3c68: ad 4b 0a
     cmp #dog_head_normal_animation - dog_head_animations              ; 3c6b: c9 01
     beq doing_normal_animation                                        ; 3c6d: f0 50
+; check for drooling dog animation
     cmp #dog_head_drooling_held_animation - dog_head_animations       ; 3c6f: c9 30
     beq update_drip                                                   ; 3c71: f0 04
+; check for end of drooling animation
     cmp #dog_head_drooling_final_animation - dog_head_animations      ; 3c73: c9 34
     beq end_of_drooling                                               ; 3c75: f0 3e
+; could be 'lda #$ac:sec:sbc:save_game_level_n_partition_y' without adding $4c
+; afterwards?
 update_drip
     lda #$60 ; '`'                                                    ; 3c77: a9 60
     sec                                                               ; 3c79: 38
@@ -609,7 +615,7 @@ update_drip
     clc                                                               ; 3c7d: 18
     adc #$4c ; 'L'                                                    ; 3c7e: 69 4c
     cmp drip_y_position                                               ; 3c80: cd 71 0a
-    bcs developer_mode_inactive2                                      ; 3c83: b0 60
+    bcs set_dog_head_animation_step                                   ; 3c83: b0 60
     lda desired_room_index                                            ; 3c85: a5 30
     cmp #0                                                            ; 3c87: c9 00
     bne set_end_of_dog_drooling                                       ; 3c89: d0 03
@@ -623,14 +629,15 @@ set_end_of_dog_drooling
     sta drip_final_delay                                              ; 3c9a: 8d 72 0a
     lda save_game_level_n_partition_y                                 ; 3c9d: ad 4a 0a
     cmp #$60 ; '`'                                                    ; 3ca0: c9 60
-    bne developer_mode_inactive2                                      ; 3ca2: d0 41
+    bne set_dog_head_animation_step                                   ; 3ca2: d0 41
     lda #$18                                                          ; 3ca4: a9 18
     sta drip_final_delay                                              ; 3ca6: 8d 72 0a
+; move partition down 4 pixels
     lda save_game_level_n_partition_y                                 ; 3ca9: ad 4a 0a
     sec                                                               ; 3cac: 38
     sbc #4                                                            ; 3cad: e9 04
     sta save_game_level_n_partition_y                                 ; 3caf: 8d 4a 0a
-    jmp developer_mode_inactive2                                      ; 3cb2: 4c e5 3c
+    jmp set_dog_head_animation_step                                   ; 3cb2: 4c e5 3c
 
 end_of_drooling
     dec drip_final_delay                                              ; 3cb5: ce 72 0a
@@ -639,23 +646,23 @@ end_of_drooling
     sty save_game_level_n_dog_head_animation                          ; 3cbc: 8c 4b 0a
 doing_normal_animation
     lda desired_room_index                                            ; 3cbf: a5 30
-    cmp #0                                                            ; 3cc1: c9 00
-    bne developer_mode_inactive2                                      ; 3cc3: d0 20
+    cmp #0                                                            ; 3cc1: c9 00                   ; redundant instruction
+    bne set_dog_head_animation_step                                   ; 3cc3: d0 20
     lda player_is_currently_clanging_the_bell                         ; 3cc5: ad 74 0a
     bne start_dog_drooling                                            ; 3cc8: d0 14
     lda developer_flags                                               ; 3cca: ad 03 11
-    bpl developer_mode_inactive2                                      ; 3ccd: 10 16
+    bpl set_dog_head_animation_step                                   ; 3ccd: 10 16
     ldx #inkey_key_o                                                  ; 3ccf: a2 c9
     sty remember_y                                                    ; 3cd1: 8c 39 3d
     jsr negative_inkey                                                ; 3cd4: 20 cc 3a
     ldy remember_y                                                    ; 3cd7: ac 39 3d
     ora #0                                                            ; 3cda: 09 00
-    beq developer_mode_inactive2                                      ; 3cdc: f0 07
+    beq set_dog_head_animation_step                                   ; 3cdc: f0 07
 start_dog_drooling
     ldy #dog_head_drooling_animation - dog_head_animations            ; 3cde: a0 05
     lda #dog_head_drooling_held_animation - dog_head_animations       ; 3ce0: a9 30
     sta save_game_level_n_dog_head_animation                          ; 3ce2: 8d 4b 0a
-developer_mode_inactive2
+set_dog_head_animation_step
     sty dog_head_animation_step                                       ; 3ce5: 8c 70 0a
     iny                                                               ; 3ce8: c8
     iny                                                               ; 3ce9: c8
@@ -1259,6 +1266,7 @@ room_2_update_handler
     ora #0                                                            ; 4089: 09 00
     bne room_change_only                                              ; 408b: d0 24
     inc fast_forward_bell_counter                                     ; 408d: ee 73 0a
+; initialise bell in room 1
     lda #1                                                            ; 4090: a9 01
     sta save_game_level_n_bell_room                                   ; 4092: 8d 53 0a
     lda #$98                                                          ; 4095: a9 98
@@ -1598,11 +1606,11 @@ set_bell_object
 write_bell_to_collision_map
     sta value_to_write_to_collision_map                               ; 430e: 85 3e
     ora #0                                                            ; 4310: 09 00
-    beq validated                                                     ; 4312: f0 07
+    beq validated_the_write                                           ; 4312: f0 07
     lda save_game_level_n_bell_animation                              ; 4314: ad 4d 0a
     cmp #bell_stopped_animation - bell_animations                     ; 4317: c9 01
     bne return6                                                       ; 4319: d0 39
-validated
+validated_the_write
     lda desired_room_index                                            ; 431b: a5 30
     cmp save_game_level_n_bell_room                                   ; 431d: cd 53 0a
     bne return6                                                       ; 4320: d0 32
@@ -1833,7 +1841,7 @@ got_clanger_so_now_check_if_using_clanger
 ; check if using clanger (return if not)
     lda #spriteid_holding_clanger                                     ; 4481: a9 e6
     sta object_spriteid + objectid_player_accessory                   ; 4483: 8d a9 09
-    lda #1                                                            ; 4486: a9 01
+    lda #objectid_player_accessory                                    ; 4486: a9 01
     jsr get_solid_rock_collision_for_object_a                         ; 4488: 20 94 28
     beq return7_local2                                                ; 448b: f0 e5
     lda object_y_low                                                  ; 448d: ad 7c 09
@@ -1844,6 +1852,7 @@ got_clanger_so_now_check_if_using_clanger
     ldy #objectid_bell                                                ; 449a: a0 02
     jsr test_for_collision_between_objects_x_and_y                    ; 449c: 20 e2 28
     beq check_collision_while_holding_clanger_then_set_using_clanger  ; 449f: f0 58
+; copy the player accessory object to the clanger object
     lda #spriteid_using_clanger                                       ; 44a1: a9 e3
     sta object_spriteid + objectid_player_accessory                   ; 44a3: 8d a9 09
     lda object_x_low + objectid_player_accessory                      ; 44a6: ad 51 09
