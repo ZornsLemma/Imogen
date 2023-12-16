@@ -27,13 +27,19 @@ object_collided_floor                 = 2
 object_collided_left_wall             = 1
 object_collided_right_wall            = 4
 objectid_bowl                         = 2
+objectid_explosion                    = 6
+objectid_fire                         = 3
 objectid_fire_bowl                    = 4
 objectid_old_player                   = 11
 objectid_old_player_accessory         = 12
 objectid_player                       = 0
 objectid_player_accessory             = 1
+objectid_smoke                        = 5
+objectid_sparkles                     = 3
+objectid_stick                        = 4
 objectid_tnt                          = 4
 objectid_tnt_barrel                   = 3
+objectid_trapdoor                     = 4
 opcode_jmp                            = 76
 sprite_op_flags_copy_screen           = 1
 sprite_op_flags_erase_to_bg_colour    = 2
@@ -206,13 +212,13 @@ save_game_level_o_bowl_direction_without_bounces    = $0a5a
 save_game_level_o_bowl_room                         = $0a5b
 save_game_level_o_bowl_direction_with_bounces       = $0a5c
 save_game_level_o_bowl_is_full_flag                 = $0a5d
-l0a5e                                               = $0a5e
-tnt_barrel_animation_step                           = $0a5f
+save_game_level_o_trapdoor_y                        = $0a5e
+save_game_level_o_tnt_barrel_animation_step         = $0a5f
 save_game_level_o_holding_stick                     = $0a60
 l0a61                                               = $0a61
 level_workspace                                     = $0a6f
 fire_bowl_animation_step                            = $0a70
-l0a71                                               = $0a71
+explosion_animation_step                            = $0a71
 tile_all_set_pixels                                 = $0aa9
 developer_flags                                     = $1103
 initialise_level_and_room                           = $1140
@@ -273,14 +279,7 @@ monkey_climb_down_animation                         = $3148
 monkey_climb_animation                              = $3150
 inhibit_monkey_climb_flag                           = $31d7
 object_erase_type                                   = $38ac
-l38af                                               = $38af
-l38b0                                               = $38b0
-l38b1                                               = $38b1
-l38b2                                               = $38b2
 object_z_order                                      = $38c2
-l38c6                                               = $38c6
-l38c7                                               = $38c7
-l38c8                                               = $38c8
 object_room_collision_flags                         = $38d8
 play_sound_yx                                       = $38f6
 define_envelope                                     = $395e
@@ -506,32 +505,32 @@ room_0_update_handler
     lda current_level                                                 ; 3be1: a5 31
     cmp level_before_latest_level_and_room_initialisation             ; 3be3: c5 51
     beq c3bff                                                         ; 3be5: f0 18
-    lda l0a5e                                                         ; 3be7: ad 5e 0a
+    lda save_game_level_o_trapdoor_y                                  ; 3be7: ad 5e 0a
     cmp #$71 ; 'q'                                                    ; 3bea: c9 71
     bcs c3bfa                                                         ; 3bec: b0 0c
     lda l0a61                                                         ; 3bee: ad 61 0a
     bne c3bfa                                                         ; 3bf1: d0 07
     lda #$70 ; 'p'                                                    ; 3bf3: a9 70
-    sta l0a5e                                                         ; 3bf5: 8d 5e 0a
+    sta save_game_level_o_trapdoor_y                                  ; 3bf5: 8d 5e 0a
     bne c3bff                                                         ; 3bf8: d0 05
 c3bfa
     lda #$a8                                                          ; 3bfa: a9 a8
-    sta l0a5e                                                         ; 3bfc: 8d 5e 0a
+    sta save_game_level_o_trapdoor_y                                  ; 3bfc: 8d 5e 0a
 c3bff
     lda desired_room_index                                            ; 3bff: a5 30
     cmp #0                                                            ; 3c01: c9 00
     bne c3c14                                                         ; 3c03: d0 0f
     lda #$90                                                          ; 3c05: a9 90
-    sta object_x_low + 4                                              ; 3c07: 8d 54 09
+    sta object_x_low + objectid_trapdoor                              ; 3c07: 8d 54 09
     lda #spriteid_trapdoor                                            ; 3c0a: a9 ce
-    sta object_spriteid + 4                                           ; 3c0c: 8d ac 09
-    lda #$cf                                                          ; 3c0f: a9 cf
-    sta l38b0                                                         ; 3c11: 8d b0 38
+    sta object_spriteid + objectid_trapdoor                           ; 3c0c: 8d ac 09
+    lda #spriteid_erase2                                              ; 3c0f: a9 cf
+    sta object_erase_type + objectid_trapdoor                         ; 3c11: 8d b0 38
 c3c14
     jmp c3c58                                                         ; 3c14: 4c 58 3c
 
 c3c17
-    lda l0a5e                                                         ; 3c17: ad 5e 0a
+    lda save_game_level_o_trapdoor_y                                  ; 3c17: ad 5e 0a
     cmp #$a8                                                          ; 3c1a: c9 a8
     beq c3c58                                                         ; 3c1c: f0 3a
     cmp #$70 ; 'p'                                                    ; 3c1e: c9 70
@@ -545,16 +544,16 @@ c3c17
     jsr negative_inkey                                                ; 3c2f: 20 cc 3a
     bne c3c40                                                         ; 3c32: d0 0c
 developer_mode_inactive2
-    lda l0a71                                                         ; 3c34: ad 71 0a
+    lda explosion_animation_step                                      ; 3c34: ad 71 0a
     cmp #2                                                            ; 3c37: c9 02
     bne c3c58                                                         ; 3c39: d0 1d
     lda l0a61                                                         ; 3c3b: ad 61 0a
     beq c3c58                                                         ; 3c3e: f0 18
 c3c40
-    lda l0a5e                                                         ; 3c40: ad 5e 0a
+    lda save_game_level_o_trapdoor_y                                  ; 3c40: ad 5e 0a
     clc                                                               ; 3c43: 18
     adc #8                                                            ; 3c44: 69 08
-    sta l0a5e                                                         ; 3c46: 8d 5e 0a
+    sta save_game_level_o_trapdoor_y                                  ; 3c46: 8d 5e 0a
     cmp #$a8                                                          ; 3c49: c9 a8
     bcc c3c58                                                         ; 3c4b: 90 0b
     lda #$a8                                                          ; 3c4d: a9 a8
@@ -566,8 +565,8 @@ c3c58
     lda desired_room_index                                            ; 3c58: a5 30
     cmp #0                                                            ; 3c5a: c9 00
     bne return1                                                       ; 3c5c: d0 33
-    lda l0a5e                                                         ; 3c5e: ad 5e 0a
-    sta object_y_low + 4                                              ; 3c61: 8d 80 09
+    lda save_game_level_o_trapdoor_y                                  ; 3c5e: ad 5e 0a
+    sta object_y_low + objectid_trapdoor                              ; 3c61: 8d 80 09
     ldx #$12                                                          ; 3c64: a2 12
     lsr                                                               ; 3c66: 4a
     lsr                                                               ; 3c67: 4a
@@ -579,7 +578,7 @@ c3c58
     sta height_in_cells                                               ; 3c70: 85 3d
     lda #collision_map_solid_rock                                     ; 3c72: a9 03
     sta value_to_write_to_collision_map                               ; 3c74: 85 3e
-    lda l0a5e                                                         ; 3c76: ad 5e 0a
+    lda save_game_level_o_trapdoor_y                                  ; 3c76: ad 5e 0a
     cmp #$70 ; 'p'                                                    ; 3c79: c9 70
     beq c3c87                                                         ; 3c7b: f0 0a
     cmp #$a8                                                          ; 3c7d: c9 a8
@@ -1291,21 +1290,21 @@ room_2_update_handler
     lda #$ff                                                          ; 4149: a9 ff
     sta save_game_level_o_holding_stick                               ; 414b: 8d 60 0a
 c414e
-    lda #$db                                                          ; 414e: a9 db
-    sta l38b1                                                         ; 4150: 8d b1 38
+    lda #spriteid_erase4b                                             ; 414e: a9 db
+    sta object_erase_type + 5                                         ; 4150: 8d b1 38
     lda #$40 ; '@'                                                    ; 4153: a9 40
-    sta l38c7                                                         ; 4155: 8d c7 38
-    lda #$d8                                                          ; 4158: a9 d8
-    sta l38b2                                                         ; 415a: 8d b2 38
+    sta object_z_order + 5                                            ; 4155: 8d c7 38
+    lda #spriteid_erase3                                              ; 4158: a9 d8
+    sta object_erase_type + objectid_explosion                        ; 415a: 8d b2 38
     lda #$90                                                          ; 415d: a9 90
-    sta l38c8                                                         ; 415f: 8d c8 38
+    sta object_z_order + objectid_explosion                           ; 415f: 8d c8 38
     lda desired_room_index                                            ; 4162: a5 30
     cmp #2                                                            ; 4164: c9 02
     bne c4180                                                         ; 4166: d0 18
     lda save_game_level_o_holding_stick                               ; 4168: ad 60 0a
     bne c4180                                                         ; 416b: d0 13
-    lda #$cf                                                          ; 416d: a9 cf
-    sta l38b0                                                         ; 416f: 8d b0 38
+    lda #spriteid_erase2                                              ; 416d: a9 cf
+    sta object_erase_type + objectid_trapdoor                         ; 416f: 8d b0 38
     ldx #$0d                                                          ; 4172: a2 0d
     ldy #$0e                                                          ; 4174: a0 0e
     lda #4                                                            ; 4176: a9 04
@@ -1316,7 +1315,7 @@ c4180
     jmp c4260                                                         ; 4180: 4c 60 42
 
 c4183
-    lda l0a71                                                         ; 4183: ad 71 0a
+    lda explosion_animation_step                                      ; 4183: ad 71 0a
     beq c4191                                                         ; 4186: f0 09
     clc                                                               ; 4188: 18
     adc #1                                                            ; 4189: 69 01
@@ -1324,7 +1323,7 @@ c4183
     bcc c4191                                                         ; 418d: 90 02
     lda #0                                                            ; 418f: a9 00
 c4191
-    sta l0a71                                                         ; 4191: 8d 71 0a
+    sta explosion_animation_step                                      ; 4191: 8d 71 0a
     lda save_game_level_o_holding_stick                               ; 4194: ad 60 0a
     beq c419d                                                         ; 4197: f0 04
     bmi c41be                                                         ; 4199: 30 23
@@ -1383,7 +1382,7 @@ c41f4
     ldy #$ff                                                          ; 41fa: a0 ff
 c41fc
     sty save_game_level_o_holding_stick                               ; 41fc: 8c 60 0a
-    lda l0a71                                                         ; 41ff: ad 71 0a
+    lda explosion_animation_step                                      ; 41ff: ad 71 0a
     bne c4260                                                         ; 4202: d0 5c
     lda save_game_level_o_bowl_is_full_flag                           ; 4204: ad 5d 0a
     beq c4260                                                         ; 4207: f0 57
@@ -1396,7 +1395,7 @@ c41fc
     lda #$ff                                                          ; 4217: a9 ff
     sta save_game_level_o_holding_stick                               ; 4219: 8d 60 0a
     lda #1                                                            ; 421c: a9 01
-    sta l0a71                                                         ; 421e: 8d 71 0a
+    sta explosion_animation_step                                      ; 421e: 8d 71 0a
     lda #0                                                            ; 4221: a9 00
     ldx #<sound2                                                      ; 4223: a2 bf
     ldy #>sound2                                                      ; 4225: a0 44
@@ -1428,46 +1427,50 @@ c424d
     sta l0a61                                                         ; 425d: 8d 61 0a
 c4260
     lda object_x_low + 2                                              ; 4260: ad 52 09
-    sta object_x_low + 6                                              ; 4263: 8d 56 09
+    sta object_x_low + objectid_explosion                             ; 4263: 8d 56 09
     lda object_x_high + 2                                             ; 4266: ad 68 09
-    sta object_x_high + 6                                             ; 4269: 8d 6c 09
+    sta object_x_high + objectid_explosion                            ; 4269: 8d 6c 09
     lda object_y_low + 2                                              ; 426c: ad 7e 09
-    sta object_y_low + 6                                              ; 426f: 8d 82 09
+    sta object_y_low + objectid_explosion                             ; 426f: 8d 82 09
     lda object_direction + 2                                          ; 4272: ad c0 09
-    sta object_direction + 6                                          ; 4275: 8d c4 09
-    ldy l0a71                                                         ; 4278: ac 71 0a
+    sta object_direction + objectid_explosion                         ; 4275: 8d c4 09
+    ldy explosion_animation_step                                      ; 4278: ac 71 0a
     lda explosion_animation,y                                         ; 427b: b9 cd 42
-    sta object_spriteid + 6                                           ; 427e: 8d ae 09
+    sta object_spriteid + objectid_explosion                          ; 427e: 8d ae 09
     lda #spriteid_one_pixel_masked_out                                ; 4281: a9 00
-    sta object_spriteid + 5                                           ; 4283: 8d ad 09
+    sta object_spriteid + objectid_smoke                              ; 4283: 8d ad 09
+; set up smoke object if needed
     lda save_game_level_o_holding_stick                               ; 4286: ad 60 0a
     beq return5                                                       ; 4289: f0 41
     bmi return5                                                       ; 428b: 30 3f
     clc                                                               ; 428d: 18
-    adc #spriteid_erase4b                                             ; 428e: 69 db
-    sta object_spriteid + 5                                           ; 4290: 8d ad 09
+    adc #spriteid_smoke1 - 1                                          ; 428e: 69 db
+    sta object_spriteid + objectid_smoke                              ; 4290: 8d ad 09
     lda object_x_low + objectid_player_accessory                      ; 4293: ad 51 09
-    sta object_x_low + 5                                              ; 4296: 8d 55 09
+    sta object_x_low + objectid_smoke                                 ; 4296: 8d 55 09
     lda object_x_high + objectid_player_accessory                     ; 4299: ad 67 09
-    sta object_x_high + 5                                             ; 429c: 8d 6b 09
+    sta object_x_high + objectid_smoke                                ; 429c: 8d 6b 09
     lda object_y_low + objectid_player_accessory                      ; 429f: ad 7d 09
-    sta object_y_low + 5                                              ; 42a2: 8d 81 09
+    sta object_y_low + objectid_smoke                                 ; 42a2: 8d 81 09
     lda object_direction + objectid_player_accessory                  ; 42a5: ad bf 09
-    sta object_direction + 5                                          ; 42a8: 8d c3 09
+    sta object_direction + objectid_smoke                             ; 42a8: 8d c3 09
+; check if using stick (return if not)
     lda player_using_object_spriteid                                  ; 42ab: ad b6 2e
     cmp #spriteid_stick_menu_item                                     ; 42ae: c9 d4
     bne return5                                                       ; 42b0: d0 1a
-    lda object_x_low + 5                                              ; 42b2: ad 55 09
+; redundant instructions - adding zero to x position
+    lda object_x_low + objectid_smoke                                 ; 42b2: ad 55 09
     clc                                                               ; 42b5: 18
     adc #0                                                            ; 42b6: 69 00
-    sta object_x_low + 5                                              ; 42b8: 8d 55 09
-    lda object_x_high + 5                                             ; 42bb: ad 6b 09
+    sta object_x_low + objectid_smoke                                 ; 42b8: 8d 55 09
+    lda object_x_high + objectid_smoke                                ; 42bb: ad 6b 09
     adc #0                                                            ; 42be: 69 00
-    sta object_x_high + 5                                             ; 42c0: 8d 6b 09
-    lda object_y_low + 5                                              ; 42c3: ad 81 09
+    sta object_x_high + objectid_smoke                                ; 42c0: 8d 6b 09
+; move smoke up a few pixels when using the stick
+    lda object_y_low + objectid_smoke                                 ; 42c3: ad 81 09
     clc                                                               ; 42c6: 18
     adc #$fc                                                          ; 42c7: 69 fc
-    sta object_y_low + 5                                              ; 42c9: 8d 81 09
+    sta object_y_low + objectid_smoke                                 ; 42c9: 8d 81 09
 return5
     rts                                                               ; 42cc: 60
 
@@ -1591,29 +1594,29 @@ room_3_update_handler
     lda current_level                                                 ; 435a: a5 31
     cmp level_before_latest_level_and_room_initialisation             ; 435c: c5 51
     beq c436a                                                         ; 435e: f0 0a
-    lda tnt_barrel_animation_step                                     ; 4360: ad 5f 0a
+    lda save_game_level_o_tnt_barrel_animation_step                   ; 4360: ad 5f 0a
     beq c436a                                                         ; 4363: f0 05
     lda #2                                                            ; 4365: a9 02
-    sta tnt_barrel_animation_step                                     ; 4367: 8d 5f 0a
+    sta save_game_level_o_tnt_barrel_animation_step                   ; 4367: 8d 5f 0a
 c436a
     lda desired_room_index                                            ; 436a: a5 30
     cmp #3                                                            ; 436c: c9 03
     bne c4388                                                         ; 436e: d0 18
     lda #$cf                                                          ; 4370: a9 cf
-    sta l38af                                                         ; 4372: 8d af 38
+    sta object_erase_type + 3                                         ; 4372: 8d af 38
     ldx #$0a                                                          ; 4375: a2 0a
     ldy #$14                                                          ; 4377: a0 14
     lda #3                                                            ; 4379: a9 03
     jsr set_object_position_from_cell_xy                              ; 437b: 20 5d 1f
-    lda #4                                                            ; 437e: a9 04
+    lda #objectid_trapdoor                                            ; 437e: a9 04
     jsr set_object_position_from_cell_xy                              ; 4380: 20 5d 1f
     lda #$c0                                                          ; 4383: a9 c0
-    sta l38c6                                                         ; 4385: 8d c6 38
+    sta object_z_order + objectid_trapdoor                            ; 4385: 8d c6 38
 c4388
     jmp c43c8                                                         ; 4388: 4c c8 43
 
 c438b
-    lda tnt_barrel_animation_step                                     ; 438b: ad 5f 0a
+    lda save_game_level_o_tnt_barrel_animation_step                   ; 438b: ad 5f 0a
     beq c4396                                                         ; 438e: f0 06
     cmp #2                                                            ; 4390: c9 02
     bne c43b5                                                         ; 4392: d0 21
@@ -1634,8 +1637,8 @@ c4396
     cmp #$aa                                                          ; 43b1: c9 aa
     bcs c43c8                                                         ; 43b3: b0 13
 c43b5
-    inc tnt_barrel_animation_step                                     ; 43b5: ee 5f 0a
-    lda tnt_barrel_animation_step                                     ; 43b8: ad 5f 0a
+    inc save_game_level_o_tnt_barrel_animation_step                   ; 43b5: ee 5f 0a
+    lda save_game_level_o_tnt_barrel_animation_step                   ; 43b8: ad 5f 0a
     cmp #2                                                            ; 43bb: c9 02
     bne c43c8                                                         ; 43bd: d0 09
     lda desired_room_index                                            ; 43bf: a5 30
@@ -1646,7 +1649,7 @@ c43c8
     lda desired_room_index                                            ; 43c8: a5 30
     cmp #3                                                            ; 43ca: c9 03
     bne c442b                                                         ; 43cc: d0 5d
-    ldy tnt_barrel_animation_step                                     ; 43ce: ac 5f 0a
+    ldy save_game_level_o_tnt_barrel_animation_step                   ; 43ce: ac 5f 0a
     lda tnt_barrel_animation,y                                        ; 43d1: b9 62 44
     sta object_spriteid + objectid_tnt_barrel                         ; 43d4: 8d ab 09
     cpy #2                                                            ; 43d7: c0 02
@@ -1657,7 +1660,7 @@ write_tnt_barrel_collision_map
     lda #collision_map_solid_rock                                     ; 43e0: a9 03
     sta value_to_write_to_collision_map                               ; 43e2: 85 3e
 ; check if the tnt barrel animation has started (branch if so)
-    lda tnt_barrel_animation_step                                     ; 43e4: ad 5f 0a
+    lda save_game_level_o_tnt_barrel_animation_step                   ; 43e4: ad 5f 0a
     bne write_horizontal_tnt_barrel_collision_map                     ; 43e7: d0 19
 ; write vertical tnt barrel collision map
     ldx #$0e                                                          ; 43e9: a2 0e
@@ -1894,20 +1897,11 @@ pydis_end
 ;     c43b5
 ;     c43c8
 ;     c442b
-;     l0a5e
 ;     l0a61
-;     l0a71
 ;     l2eeb
 ;     l2ef0
 ;     l2ef4
 ;     l2ef5
-;     l38af
-;     l38b0
-;     l38b1
-;     l38b2
-;     l38c6
-;     l38c7
-;     l38c8
 ;     l4031
 ;     l4032
 ;     l4033
@@ -2009,17 +2003,29 @@ pydis_end
 !if (object_direction + 2) != $09c0 {
     !error "Assertion failed: object_direction + 2 == $09c0"
 }
-!if (object_direction + 5) != $09c3 {
-    !error "Assertion failed: object_direction + 5 == $09c3"
-}
-!if (object_direction + 6) != $09c4 {
-    !error "Assertion failed: object_direction + 6 == $09c4"
-}
 !if (object_direction + objectid_bowl) != $09c0 {
     !error "Assertion failed: object_direction + objectid_bowl == $09c0"
 }
+!if (object_direction + objectid_explosion) != $09c4 {
+    !error "Assertion failed: object_direction + objectid_explosion == $09c4"
+}
+!if (object_direction + objectid_smoke) != $09c3 {
+    !error "Assertion failed: object_direction + objectid_smoke == $09c3"
+}
+!if (object_erase_type + 3) != $38af {
+    !error "Assertion failed: object_erase_type + 3 == $38af"
+}
+!if (object_erase_type + 5) != $38b1 {
+    !error "Assertion failed: object_erase_type + 5 == $38b1"
+}
 !if (object_erase_type + objectid_bowl) != $38ae {
     !error "Assertion failed: object_erase_type + objectid_bowl == $38ae"
+}
+!if (object_erase_type + objectid_explosion) != $38b2 {
+    !error "Assertion failed: object_erase_type + objectid_explosion == $38b2"
+}
+!if (object_erase_type + objectid_trapdoor) != $38b0 {
+    !error "Assertion failed: object_erase_type + objectid_trapdoor == $38b0"
 }
 !if (object_spriteid + 2) != $09aa {
     !error "Assertion failed: object_spriteid + 2 == $09aa"
@@ -2027,17 +2033,17 @@ pydis_end
 !if (object_spriteid + 4) != $09ac {
     !error "Assertion failed: object_spriteid + 4 == $09ac"
 }
-!if (object_spriteid + 5) != $09ad {
-    !error "Assertion failed: object_spriteid + 5 == $09ad"
-}
-!if (object_spriteid + 6) != $09ae {
-    !error "Assertion failed: object_spriteid + 6 == $09ae"
-}
 !if (object_spriteid + objectid_bowl) != $09aa {
     !error "Assertion failed: object_spriteid + objectid_bowl == $09aa"
 }
+!if (object_spriteid + objectid_explosion) != $09ae {
+    !error "Assertion failed: object_spriteid + objectid_explosion == $09ae"
+}
 !if (object_spriteid + objectid_fire_bowl) != $09ac {
     !error "Assertion failed: object_spriteid + objectid_fire_bowl == $09ac"
+}
+!if (object_spriteid + objectid_smoke) != $09ad {
+    !error "Assertion failed: object_spriteid + objectid_smoke == $09ad"
 }
 !if (object_spriteid + objectid_tnt) != $09ac {
     !error "Assertion failed: object_spriteid + objectid_tnt == $09ac"
@@ -2045,35 +2051,38 @@ pydis_end
 !if (object_spriteid + objectid_tnt_barrel) != $09ab {
     !error "Assertion failed: object_spriteid + objectid_tnt_barrel == $09ab"
 }
+!if (object_spriteid + objectid_trapdoor) != $09ac {
+    !error "Assertion failed: object_spriteid + objectid_trapdoor == $09ac"
+}
 !if (object_spriteid_old + 2) != $09b5 {
     !error "Assertion failed: object_spriteid_old + 2 == $09b5"
 }
 !if (object_x_high + 2) != $0968 {
     !error "Assertion failed: object_x_high + 2 == $0968"
 }
-!if (object_x_high + 5) != $096b {
-    !error "Assertion failed: object_x_high + 5 == $096b"
-}
-!if (object_x_high + 6) != $096c {
-    !error "Assertion failed: object_x_high + 6 == $096c"
-}
 !if (object_x_high + objectid_bowl) != $0968 {
     !error "Assertion failed: object_x_high + objectid_bowl == $0968"
+}
+!if (object_x_high + objectid_explosion) != $096c {
+    !error "Assertion failed: object_x_high + objectid_explosion == $096c"
+}
+!if (object_x_high + objectid_smoke) != $096b {
+    !error "Assertion failed: object_x_high + objectid_smoke == $096b"
 }
 !if (object_x_low + 2) != $0952 {
     !error "Assertion failed: object_x_low + 2 == $0952"
 }
-!if (object_x_low + 4) != $0954 {
-    !error "Assertion failed: object_x_low + 4 == $0954"
-}
-!if (object_x_low + 5) != $0955 {
-    !error "Assertion failed: object_x_low + 5 == $0955"
-}
-!if (object_x_low + 6) != $0956 {
-    !error "Assertion failed: object_x_low + 6 == $0956"
-}
 !if (object_x_low + objectid_bowl) != $0952 {
     !error "Assertion failed: object_x_low + objectid_bowl == $0952"
+}
+!if (object_x_low + objectid_explosion) != $0956 {
+    !error "Assertion failed: object_x_low + objectid_explosion == $0956"
+}
+!if (object_x_low + objectid_smoke) != $0955 {
+    !error "Assertion failed: object_x_low + objectid_smoke == $0955"
+}
+!if (object_x_low + objectid_trapdoor) != $0954 {
+    !error "Assertion failed: object_x_low + objectid_trapdoor == $0954"
 }
 !if (object_x_low_old + 2) != $095d {
     !error "Assertion failed: object_x_low_old + 2 == $095d"
@@ -2081,23 +2090,32 @@ pydis_end
 !if (object_y_low + 2) != $097e {
     !error "Assertion failed: object_y_low + 2 == $097e"
 }
-!if (object_y_low + 4) != $0980 {
-    !error "Assertion failed: object_y_low + 4 == $0980"
-}
-!if (object_y_low + 5) != $0981 {
-    !error "Assertion failed: object_y_low + 5 == $0981"
-}
-!if (object_y_low + 6) != $0982 {
-    !error "Assertion failed: object_y_low + 6 == $0982"
-}
 !if (object_y_low + objectid_bowl) != $097e {
     !error "Assertion failed: object_y_low + objectid_bowl == $097e"
+}
+!if (object_y_low + objectid_explosion) != $0982 {
+    !error "Assertion failed: object_y_low + objectid_explosion == $0982"
+}
+!if (object_y_low + objectid_smoke) != $0981 {
+    !error "Assertion failed: object_y_low + objectid_smoke == $0981"
+}
+!if (object_y_low + objectid_trapdoor) != $0980 {
+    !error "Assertion failed: object_y_low + objectid_trapdoor == $0980"
 }
 !if (object_y_low_old + 2) != $0989 {
     !error "Assertion failed: object_y_low_old + 2 == $0989"
 }
+!if (object_z_order + 5) != $38c7 {
+    !error "Assertion failed: object_z_order + 5 == $38c7"
+}
 !if (object_z_order + objectid_bowl) != $38c4 {
     !error "Assertion failed: object_z_order + objectid_bowl == $38c4"
+}
+!if (object_z_order + objectid_explosion) != $38c8 {
+    !error "Assertion failed: object_z_order + objectid_explosion == $38c8"
+}
+!if (object_z_order + objectid_trapdoor) != $38c6 {
+    !error "Assertion failed: object_z_order + objectid_trapdoor == $38c6"
 }
 !if (objectid_bowl) != $02 {
     !error "Assertion failed: objectid_bowl == $02"
@@ -2113,6 +2131,9 @@ pydis_end
 }
 !if (objectid_player_accessory) != $01 {
     !error "Assertion failed: objectid_player_accessory == $01"
+}
+!if (objectid_trapdoor) != $04 {
+    !error "Assertion failed: objectid_trapdoor == $04"
 }
 !if (room_0_data) != $3b40 {
     !error "Assertion failed: room_0_data == $3b40"
@@ -2138,6 +2159,12 @@ pydis_end
 !if (spriteid_erase1) != $cc {
     !error "Assertion failed: spriteid_erase1 == $cc"
 }
+!if (spriteid_erase2) != $cf {
+    !error "Assertion failed: spriteid_erase2 == $cf"
+}
+!if (spriteid_erase3) != $d8 {
+    !error "Assertion failed: spriteid_erase3 == $d8"
+}
 !if (spriteid_erase4b) != $db {
     !error "Assertion failed: spriteid_erase4b == $db"
 }
@@ -2158,6 +2185,9 @@ pydis_end
 }
 !if (spriteid_one_pixel_masked_out) != $00 {
     !error "Assertion failed: spriteid_one_pixel_masked_out == $00"
+}
+!if (spriteid_smoke1 - 1) != $db {
+    !error "Assertion failed: spriteid_smoke1 - 1 == $db"
 }
 !if (spriteid_stick) != $d5 {
     !error "Assertion failed: spriteid_stick == $d5"
