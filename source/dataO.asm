@@ -19,15 +19,21 @@ exit_room_top                         = 8
 first_level_letter                    = 65
 game_area_height_cells                = 24
 game_area_width_cells                 = 40
+inkey_key_l                           = 169
+inkey_key_o                           = 201
 last_level_letter                     = 81
 object_collided_ceiling               = 8
 object_collided_floor                 = 2
 object_collided_left_wall             = 1
 object_collided_right_wall            = 4
+objectid_bowl                         = 2
+objectid_fire_bowl                    = 4
 objectid_old_player                   = 11
 objectid_old_player_accessory         = 12
 objectid_player                       = 0
 objectid_player_accessory             = 1
+objectid_tnt                          = 4
+objectid_tnt_barrel                   = 3
 opcode_jmp                            = 76
 sprite_op_flags_copy_screen           = 1
 sprite_op_flags_erase_to_bg_colour    = 2
@@ -35,6 +41,8 @@ sprite_op_flags_erase_to_fg_colour    = 4
 sprite_op_flags_normal                = 0
 spriteid_197                          = 197
 spriteid_ball                         = 59
+spriteid_bowl                         = 200
+spriteid_bowl_menu_item               = 202
 spriteid_brazier                      = 58
 spriteid_cat1                         = 27
 spriteid_cat2                         = 28
@@ -63,8 +71,14 @@ spriteid_diamond2                     = 40
 spriteid_diamond3                     = 41
 spriteid_diamond4                     = 42
 spriteid_diamond5                     = 43
+spriteid_erase1                       = 204
+spriteid_erase2                       = 207
+spriteid_erase3                       = 216
+spriteid_erase4a                      = 218
+spriteid_erase4b                      = 219
 spriteid_erase_player                 = 199
 spriteid_erase_player_accessory       = 198
+spriteid_explosion                    = 217
 spriteid_fingertip_tile_restoration   = 30
 spriteid_fire1                        = 60
 spriteid_fire2                        = 61
@@ -74,6 +88,9 @@ spriteid_fire5                        = 64
 spriteid_fire6                        = 65
 spriteid_fire7                        = 66
 spriteid_fire8                        = 67
+spriteid_fire_bowl                    = 228
+spriteid_full_bowl                    = 201
+spriteid_full_bowl_menu_item          = 203
 spriteid_icodata_box                  = 9
 spriteid_icodata_cat                  = 5
 spriteid_icodata_disc                 = 3
@@ -110,11 +127,29 @@ spriteid_rope3                        = 87
 spriteid_rope4                        = 88
 spriteid_rope_end                     = 10
 spriteid_rope_hook                    = 11
+spriteid_smoke1                       = 220
+spriteid_smoke2                       = 221
+spriteid_smoke3                       = 222
+spriteid_smoke4                       = 223
+spriteid_smoke5                       = 224
+spriteid_smoke6                       = 225
+spriteid_smoke7                       = 226
+spriteid_smoke8                       = 227
 spriteid_sparkles1                    = 34
 spriteid_sparkles2                    = 35
 spriteid_sparkles3                    = 36
 spriteid_sparkles4                    = 37
 spriteid_sparkles5                    = 38
+spriteid_stick                        = 213
+spriteid_stick_held                   = 214
+spriteid_stick_menu_item              = 212
+spriteid_stick_using                  = 215
+spriteid_table                        = 205
+spriteid_tnt                          = 208
+spriteid_tnt_powder                   = 211
+spriteid_tnt_sideways                 = 210
+spriteid_tnt_tipping                  = 209
+spriteid_trapdoor                     = 206
 spriteid_wizard1                      = 48
 spriteid_wizard2                      = 49
 spriteid_wizard3                      = 50
@@ -149,8 +184,8 @@ level_before_latest_level_and_room_initialisation   = $51
 player_held_object_spriteid                         = $52
 developer_mode_sideways_ram_is_set_up_flag          = $5b
 room_exit_direction                                 = $70
-l0078                                               = $78
-l0079                                               = $79
+object_left_cell_x                                  = $78
+object_right_cell_x                                 = $79
 object_x_low                                        = $0950
 object_x_low_old                                    = $095b
 object_x_high                                       = $0966
@@ -162,21 +197,21 @@ object_spriteid                                     = $09a8
 object_spriteid_old                                 = $09b3
 object_direction                                    = $09be
 current_player_animation                            = $09df
-l0a55                                               = $0a55
-l0a56                                               = $0a56
-l0a57                                               = $0a57
-l0a58                                               = $0a58
-l0a59                                               = $0a59
-l0a5a                                               = $0a5a
-l0a5b                                               = $0a5b
-l0a5c                                               = $0a5c
-l0a5d                                               = $0a5d
+save_game_level_o_bowl_progress                     = $0a55
+save_game_level_o_bowl_animation_step               = $0a56
+save_game_level_o_bowl_x_low                        = $0a57
+save_game_level_o_bowl_x_high                       = $0a58
+save_game_level_o_bowl_y                            = $0a59
+save_game_level_o_bowl_direction_without_bounces    = $0a5a
+save_game_level_o_bowl_room                         = $0a5b
+save_game_level_o_bowl_direction_with_bounces       = $0a5c
+save_game_level_o_bowl_is_full_flag                 = $0a5d
 l0a5e                                               = $0a5e
-l0a5f                                               = $0a5f
-l0a60                                               = $0a60
+tnt_barrel_animation_step                           = $0a5f
+save_game_level_o_holding_stick                     = $0a60
 l0a61                                               = $0a61
 level_workspace                                     = $0a6f
-l0a70                                               = $0a70
+fire_bowl_animation_step                            = $0a70
 l0a71                                               = $0a71
 tile_all_set_pixels                                 = $0aa9
 developer_flags                                     = $1103
@@ -238,13 +273,11 @@ monkey_climb_down_animation                         = $3148
 monkey_climb_animation                              = $3150
 inhibit_monkey_climb_flag                           = $31d7
 object_erase_type                                   = $38ac
-l38ae                                               = $38ae
 l38af                                               = $38af
 l38b0                                               = $38b0
 l38b1                                               = $38b1
 l38b2                                               = $38b2
 object_z_order                                      = $38c2
-l38c4                                               = $38c4
 l38c6                                               = $38c6
 l38c7                                               = $38c7
 l38c8                                               = $38c8
@@ -297,29 +330,30 @@ level_specific_password
 level_specific_initialisation
     lda current_level                                                 ; 3af4: a5 31
     cmp level_before_latest_level_and_room_initialisation             ; 3af6: c5 51
-    beq c3b27                                                         ; 3af8: f0 2d
+    beq set_rock_tiles                                                ; 3af8: f0 2d
     lda developer_flags                                               ; 3afa: ad 03 11
     bpl developer_mode_inactive1                                      ; 3afd: 10 0b
     lda #$ff                                                          ; 3aff: a9 ff
-    sta l0a55                                                         ; 3b01: 8d 55 0a
-    sta l0a5d                                                         ; 3b04: 8d 5d 0a
-    sta l0a60                                                         ; 3b07: 8d 60 0a
+    sta save_game_level_o_bowl_progress                               ; 3b01: 8d 55 0a
+    sta save_game_level_o_bowl_is_full_flag                           ; 3b04: 8d 5d 0a
+    sta save_game_level_o_holding_stick                               ; 3b07: 8d 60 0a
+; set up menu slot for bowl (empty or full)
 developer_mode_inactive1
-    lda l0a55                                                         ; 3b0a: ad 55 0a
+    lda save_game_level_o_bowl_progress                               ; 3b0a: ad 55 0a
     cmp #$ff                                                          ; 3b0d: c9 ff
-    bne c3b1d                                                         ; 3b0f: d0 0c
-    lda #$ca                                                          ; 3b11: a9 ca
-    ldx l0a5d                                                         ; 3b13: ae 5d 0a
-    beq c3b1a                                                         ; 3b16: f0 02
-    lda #$cb                                                          ; 3b18: a9 cb
-c3b1a
+    bne set_up_stick_menu_item_if_stick_is_held                       ; 3b0f: d0 0c
+    lda #spriteid_bowl_menu_item                                      ; 3b11: a9 ca
+    ldx save_game_level_o_bowl_is_full_flag                           ; 3b13: ae 5d 0a
+    beq set_menu_slot                                                 ; 3b16: f0 02
+    lda #spriteid_full_bowl_menu_item                                 ; 3b18: a9 cb
+set_menu_slot
     jsr find_or_create_menu_slot_for_A                                ; 3b1a: 20 bd 2b
-c3b1d
-    lda l0a60                                                         ; 3b1d: ad 60 0a
-    beq c3b27                                                         ; 3b20: f0 05
-    lda #$d4                                                          ; 3b22: a9 d4
+set_up_stick_menu_item_if_stick_is_held
+    lda save_game_level_o_holding_stick                               ; 3b1d: ad 60 0a
+    beq set_rock_tiles                                                ; 3b20: f0 05
+    lda #spriteid_stick_menu_item                                     ; 3b22: a9 d4
     jsr find_or_create_menu_slot_for_A                                ; 3b24: 20 bd 2b
-c3b27
+set_rock_tiles
     lda #<ground_fill_2x2_top_left                                    ; 3b27: a9 c7
     sta source_sprite_memory_low                                      ; 3b29: 85 40
     lda #>ground_fill_2x2_top_left                                    ; 3b2b: a9 44
@@ -340,8 +374,8 @@ c3b27
 level_specific_update
     jsr room_0_update_handler                                         ; 3b30: 20 cc 3b
     jsr room_1_update_handler                                         ; 3b33: 20 61 3d
-    jsr sub_c434e                                                     ; 3b36: 20 4e 43
-    jsr sub_c4035                                                     ; 3b39: 20 35 40
+    jsr room_3_update_handler                                         ; 3b36: 20 4e 43
+    jsr update_fire_bowl                                              ; 3b39: 20 35 40
     jsr room_2_update_handler                                         ; 3b3c: 20 15 41
     rts                                                               ; 3b3f: 60
 
@@ -439,14 +473,14 @@ room_0_code
     jsr copy_rectangle_of_memory_to_screen                            ; 3ba4: 20 bb 1a
 ; carve the floor, walls and ceiling into the rock
     jsr draw_floor_walls_and_ceiling_around_solid_rock                ; 3ba7: 20 90 1b
-; draw sprite $cd at (3,20) of size (3x2)
+; draw table at (3,20) of size (3x2)
     lda #3                                                            ; 3baa: a9 03
     sta width_in_cells                                                ; 3bac: 85 3c
     lda #2                                                            ; 3bae: a9 02
     sta height_in_cells                                               ; 3bb0: 85 3d
     ldx #3                                                            ; 3bb2: a2 03
     ldy #$14                                                          ; 3bb4: a0 14
-    lda #$cd                                                          ; 3bb6: a9 cd
+    lda #spriteid_table                                               ; 3bb6: a9 cd
     jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map           ; 3bb8: 20 57 1f
     jsr start_room                                                    ; 3bbb: 20 bb 12
 room_0_game_update_loop
@@ -489,7 +523,7 @@ c3bff
     bne c3c14                                                         ; 3c03: d0 0f
     lda #$90                                                          ; 3c05: a9 90
     sta object_x_low + 4                                              ; 3c07: 8d 54 09
-    lda #$ce                                                          ; 3c0a: a9 ce
+    lda #spriteid_trapdoor                                            ; 3c0a: a9 ce
     sta object_spriteid + 4                                           ; 3c0c: 8d ac 09
     lda #$cf                                                          ; 3c0f: a9 cf
     sta l38b0                                                         ; 3c11: 8d b0 38
@@ -507,7 +541,7 @@ c3c17
     bne c3c58                                                         ; 3c26: d0 30
     lda developer_flags                                               ; 3c28: ad 03 11
     bpl developer_mode_inactive2                                      ; 3c2b: 10 07
-    ldx #$c9                                                          ; 3c2d: a2 c9
+    ldx #inkey_key_o                                                  ; 3c2d: a2 c9
     jsr negative_inkey                                                ; 3c2f: 20 cc 3a
     bne c3c40                                                         ; 3c32: d0 0c
 developer_mode_inactive2
@@ -527,7 +561,7 @@ c3c40
     lda desired_room_index                                            ; 3c4f: a5 30
     cmp #0                                                            ; 3c51: c9 00
     bne c3c58                                                         ; 3c53: d0 03
-    jsr sub_c4465                                                     ; 3c55: 20 65 44
+    jsr play_sounds45                                                 ; 3c55: 20 65 44
 c3c58
     lda desired_room_index                                            ; 3c58: a5 30
     cmp #0                                                            ; 3c5a: c9 00
@@ -654,14 +688,14 @@ room_1_code
     jsr copy_rectangle_of_memory_to_screen                            ; 3cf6: 20 bb 1a
 ; carve the floor, walls and ceiling into the rock
     jsr draw_floor_walls_and_ceiling_around_solid_rock                ; 3cf9: 20 90 1b
-; draw sprite $cd at (3,20) of size (3x2)
+; draw table at (3,20) of size (3x2)
     lda #3                                                            ; 3cfc: a9 03
     sta width_in_cells                                                ; 3cfe: 85 3c
     lda #2                                                            ; 3d00: a9 02
     sta height_in_cells                                               ; 3d02: 85 3d
     ldx #3                                                            ; 3d04: a2 03
     ldy #$14                                                          ; 3d06: a0 14
-    lda #$cd                                                          ; 3d08: a9 cd
+    lda #spriteid_table                                               ; 3d08: a9 cd
     jsr draw_sprite_a_at_cell_xy_and_write_to_collision_map           ; 3d0a: 20 57 1f
 ; draw rope at (19,2) length 10
     ldx #$13                                                          ; 3d0d: a2 13
@@ -690,10 +724,33 @@ room_1_check_right_exit
     ldy current_level                                                 ; 3d38: a4 31
     jmp initialise_level_and_room                                     ; 3d3a: 4c 40 11
 
-l3d3d
-    !byte   0,   0,   0,   7,   1,   6,   2,   4,   4,   2,   6, $80  ; 3d3d: 00 00 00...
-    !byte   4,   1,   3,   2,   2,   4,   1,   6, $80,   0,   1,   0  ; 3d49: 04 01 03...
-    !byte   2,   0,   4,   0,   6, $80,   0,   8, $80,   0,   0, $80  ; 3d55: 02 00 04...
+bowl_animations
+    !byte 0                                                           ; 3d3d: 00
+bowl_fall_sideways_animation
+    !byte 0, 0                                                        ; 3d3e: 00 00
+    !byte 7, 1                                                        ; 3d40: 07 01
+    !byte 6, 2                                                        ; 3d42: 06 02
+    !byte 4, 4                                                        ; 3d44: 04 04
+    !byte 2, 6                                                        ; 3d46: 02 06
+    !byte $80                                                         ; 3d48: 80
+bowl_fall_off_edge_animation
+    !byte 4, 1                                                        ; 3d49: 04 01
+    !byte 3, 2                                                        ; 3d4b: 03 02
+    !byte 2, 4                                                        ; 3d4d: 02 04
+    !byte 1, 6                                                        ; 3d4f: 01 06
+    !byte $80                                                         ; 3d51: 80
+bowl_fall_straight_down_animation
+    !byte 0, 1                                                        ; 3d52: 00 01
+    !byte 0, 2                                                        ; 3d54: 00 02
+    !byte 0, 4                                                        ; 3d56: 00 04
+    !byte 0, 6                                                        ; 3d58: 00 06
+    !byte $80                                                         ; 3d5a: 80
+bowl_fall_down_fast_animation
+    !byte 0, 8                                                        ; 3d5b: 00 08
+    !byte $80                                                         ; 3d5d: 80
+bowl_stationary_animation
+    !byte 0, 0                                                        ; 3d5e: 00 00
+    !byte $80                                                         ; 3d60: 80
 
 room_1_update_handler
     lda #1                                                            ; 3d61: a9 01
@@ -711,12 +768,12 @@ c3d77
     ldx #<envelope1                                                   ; 3d77: a2 75
     ldy #>envelope1                                                   ; 3d79: a0 44
     jsr define_envelope                                               ; 3d7b: 20 5e 39
-    lda #$ca                                                          ; 3d7e: a9 ca
+    lda #spriteid_bowl_menu_item                                      ; 3d7e: a9 ca
     sta toolbar_collectable_spriteids+1                               ; 3d80: 8d e9 2e
     lda #$c8                                                          ; 3d83: a9 c8
     sta collectable_spriteids+1                                       ; 3d85: 8d ee 2e
     sta collectable_being_used_spriteids + 1                          ; 3d88: 8d f3 2e
-    lda #$cb                                                          ; 3d8b: a9 cb
+    lda #spriteid_full_bowl_menu_item                                 ; 3d8b: a9 cb
     sta toolbar_collectable_spriteids+2                               ; 3d8d: 8d ea 2e
     lda #$c9                                                          ; 3d90: a9 c9
     sta collectable_spriteids+2                                       ; 3d92: 8d ef 2e
@@ -725,7 +782,7 @@ c3d77
     lda current_level                                                 ; 3d98: a5 31
     cmp level_before_latest_level_and_room_initialisation             ; 3d9a: c5 51
     beq c3dcf                                                         ; 3d9c: f0 31
-    lda l0a55                                                         ; 3d9e: ad 55 0a
+    lda save_game_level_o_bowl_progress                               ; 3d9e: ad 55 0a
     beq c3dab                                                         ; 3da1: f0 08
     bmi c3dcf                                                         ; 3da3: 30 2a
     dec level_workspace                                               ; 3da5: ce 6f 0a
@@ -733,29 +790,29 @@ c3d77
 
 c3dab
     lda #$1e                                                          ; 3dab: a9 1e
-    sta l0a57                                                         ; 3dad: 8d 57 0a
+    sta save_game_level_o_bowl_x_low                                  ; 3dad: 8d 57 0a
     lda #0                                                            ; 3db0: a9 00
-    sta l0a58                                                         ; 3db2: 8d 58 0a
+    sta save_game_level_o_bowl_x_high                                 ; 3db2: 8d 58 0a
     lda #1                                                            ; 3db5: a9 01
-    sta l0a5a                                                         ; 3db7: 8d 5a 0a
-    sta l0a5c                                                         ; 3dba: 8d 5c 0a
+    sta save_game_level_o_bowl_direction_without_bounces              ; 3db7: 8d 5a 0a
+    sta save_game_level_o_bowl_direction_with_bounces                 ; 3dba: 8d 5c 0a
     lda #$9b                                                          ; 3dbd: a9 9b
-    sta l0a59                                                         ; 3dbf: 8d 59 0a
+    sta save_game_level_o_bowl_y                                      ; 3dbf: 8d 59 0a
     lda #1                                                            ; 3dc2: a9 01
-    sta l0a5b                                                         ; 3dc4: 8d 5b 0a
-    lda #$21 ; '!'                                                    ; 3dc7: a9 21
-    sta l0a55                                                         ; 3dc9: 8d 55 0a
-    sta l0a56                                                         ; 3dcc: 8d 56 0a
+    sta save_game_level_o_bowl_room                                   ; 3dc4: 8d 5b 0a
+    lda #bowl_stationary_animation - bowl_animations                  ; 3dc7: a9 21
+    sta save_game_level_o_bowl_progress                               ; 3dc9: 8d 55 0a
+    sta save_game_level_o_bowl_animation_step                         ; 3dcc: 8d 56 0a
 c3dcf
     lda desired_room_index                                            ; 3dcf: a5 30
-    cmp l0a5b                                                         ; 3dd1: cd 5b 0a
+    cmp save_game_level_o_bowl_room                                   ; 3dd1: cd 5b 0a
     bne c3df8                                                         ; 3dd4: d0 22
-    lda l0a55                                                         ; 3dd6: ad 55 0a
+    lda save_game_level_o_bowl_progress                               ; 3dd6: ad 55 0a
     bmi c3df8                                                         ; 3dd9: 30 1d
-    jsr sub_c4002                                                     ; 3ddb: 20 02 40
+    jsr set_bowl_object                                               ; 3ddb: 20 02 40
 loop_c3dde
     lda desired_room_index                                            ; 3dde: a5 30
-    cmp l0a5b                                                         ; 3de0: cd 5b 0a
+    cmp save_game_level_o_bowl_room                                   ; 3de0: cd 5b 0a
     bne c3df8                                                         ; 3de3: d0 13
     lda level_workspace                                               ; 3de5: ad 6f 0a
     beq c3df8                                                         ; 3de8: f0 0e
@@ -766,7 +823,7 @@ loop_c3dde
     jmp loop_c3dde                                                    ; 3df5: 4c de 3d
 
 c3df8
-    lda #0                                                            ; 3df8: a9 00
+    lda #spriteid_one_pixel_masked_out                                ; 3df8: a9 00
     sta object_spriteid_old + 2                                       ; 3dfa: 8d b5 09
 c3dfd
     jmp return2                                                       ; 3dfd: 4c 27 3f
@@ -778,10 +835,10 @@ c3e00
     sta l4032                                                         ; 3e07: 8d 32 40
     lda object_spriteid_old + 2                                       ; 3e0a: ad b5 09
     sta l4033                                                         ; 3e0d: 8d 33 40
-    lda l0a55                                                         ; 3e10: ad 55 0a
+    lda save_game_level_o_bowl_progress                               ; 3e10: ad 55 0a
     bmi c3e27                                                         ; 3e13: 30 12
     lda desired_room_index                                            ; 3e15: a5 30
-    cmp l0a5b                                                         ; 3e17: cd 5b 0a
+    cmp save_game_level_o_bowl_room                                   ; 3e17: cd 5b 0a
     beq c3e70                                                         ; 3e1a: f0 54
     lda level_workspace                                               ; 3e1c: ad 6f 0a
     bmi c3dfd                                                         ; 3e1f: 30 dc
@@ -790,30 +847,30 @@ c3e00
 
 c3e27
     lda player_using_object_spriteid                                  ; 3e27: ad b6 2e
-    cmp #$ca                                                          ; 3e2a: c9 ca
+    cmp #spriteid_bowl_menu_item                                      ; 3e2a: c9 ca
     beq c3e32                                                         ; 3e2c: f0 04
-    cmp #$cb                                                          ; 3e2e: c9 cb
+    cmp #spriteid_full_bowl_menu_item                                 ; 3e2e: c9 cb
     bne c3dfd                                                         ; 3e30: d0 cb
 c3e32
     cmp previous_player_using_object_spriteid                         ; 3e32: cd b7 2e
     beq c3dfd                                                         ; 3e35: f0 c6
     dec l4031                                                         ; 3e37: ce 31 40
     lda desired_room_index                                            ; 3e3a: a5 30
-    sta l0a5b                                                         ; 3e3c: 8d 5b 0a
+    sta save_game_level_o_bowl_room                                   ; 3e3c: 8d 5b 0a
     lda object_direction                                              ; 3e3f: ad be 09
-    sta l0a5a                                                         ; 3e42: 8d 5a 0a
-    sta l0a5c                                                         ; 3e45: 8d 5c 0a
+    sta save_game_level_o_bowl_direction_without_bounces              ; 3e42: 8d 5a 0a
+    sta save_game_level_o_bowl_direction_with_bounces                 ; 3e45: 8d 5c 0a
     lda object_x_low + objectid_player_accessory                      ; 3e48: ad 51 09
-    sta l0a57                                                         ; 3e4b: 8d 57 0a
+    sta save_game_level_o_bowl_x_low                                  ; 3e4b: 8d 57 0a
     lda object_x_high + objectid_player_accessory                     ; 3e4e: ad 67 09
-    sta l0a58                                                         ; 3e51: 8d 58 0a
+    sta save_game_level_o_bowl_x_high                                 ; 3e51: 8d 58 0a
     lda object_y_low + objectid_player_accessory                      ; 3e54: ad 7d 09
-    sta l0a59                                                         ; 3e57: 8d 59 0a
-    lda #1                                                            ; 3e5a: a9 01
-    sta l0a56                                                         ; 3e5c: 8d 56 0a
-    lda #$1e                                                          ; 3e5f: a9 1e
-    sta l0a55                                                         ; 3e61: 8d 55 0a
-    jsr sub_c4002                                                     ; 3e64: 20 02 40
+    sta save_game_level_o_bowl_y                                      ; 3e57: 8d 59 0a
+    lda #bowl_fall_sideways_animation - bowl_animations               ; 3e5a: a9 01
+    sta save_game_level_o_bowl_animation_step                         ; 3e5c: 8d 56 0a
+    lda #bowl_fall_down_fast_animation - bowl_animations              ; 3e5f: a9 1e
+    sta save_game_level_o_bowl_progress                               ; 3e61: 8d 55 0a
+    jsr set_bowl_object                                               ; 3e64: 20 02 40
     ldx #2                                                            ; 3e67: a2 02
     jsr copy_object_state_to_old                                      ; 3e69: 20 f7 20
     lda #0                                                            ; 3e6c: a9 00
@@ -821,7 +878,7 @@ c3e32
 c3e70
     jsr sub_c3f28                                                     ; 3e70: 20 28 3f
     lda desired_room_index                                            ; 3e73: a5 30
-    cmp l0a5b                                                         ; 3e75: cd 5b 0a
+    cmp save_game_level_o_bowl_room                                   ; 3e75: cd 5b 0a
     beq c3e7f                                                         ; 3e78: f0 05
     lda #0                                                            ; 3e7a: a9 00
     sta level_workspace                                               ; 3e7c: 8d 6f 0a
@@ -829,7 +886,7 @@ c3e7f
     lda l4033                                                         ; 3e7f: ad 33 40
     sta object_spriteid_old + 2                                       ; 3e82: 8d b5 09
     lda player_held_object_spriteid                                   ; 3e85: a5 52
-    cmp #$d4                                                          ; 3e87: c9 d4
+    cmp #spriteid_stick_menu_item                                     ; 3e87: c9 d4
     bne c3e99                                                         ; 3e89: d0 0e
     lda #0                                                            ; 3e8b: a9 00
     sta player_held_object_spriteid                                   ; 3e8d: 85 52
@@ -847,29 +904,29 @@ c3e99
     beq c3ec7                                                         ; 3ea7: f0 1e
     lda l4031                                                         ; 3ea9: ad 31 40
     bne c3eba                                                         ; 3eac: d0 0c
-    lda #$ca                                                          ; 3eae: a9 ca
-    ldx l0a5d                                                         ; 3eb0: ae 5d 0a
+    lda #spriteid_bowl_menu_item                                      ; 3eae: a9 ca
+    ldx save_game_level_o_bowl_is_full_flag                           ; 3eb0: ae 5d 0a
     beq c3eb7                                                         ; 3eb3: f0 02
-    lda #$cb                                                          ; 3eb5: a9 cb
+    lda #spriteid_full_bowl_menu_item                                 ; 3eb5: a9 cb
 c3eb7
     jsr find_or_create_menu_slot_for_A                                ; 3eb7: 20 bd 2b
 c3eba
-    lda #0                                                            ; 3eba: a9 00
-    sta object_spriteid + 2                                           ; 3ebc: 8d aa 09
+    lda #spriteid_one_pixel_masked_out                                ; 3eba: a9 00
+    sta object_spriteid + objectid_bowl                               ; 3ebc: 8d aa 09
     lda #$ff                                                          ; 3ebf: a9 ff
-    sta l0a55                                                         ; 3ec1: 8d 55 0a
+    sta save_game_level_o_bowl_progress                               ; 3ec1: 8d 55 0a
     jmp return2                                                       ; 3ec4: 4c 27 3f
 
 c3ec7
     lda l4031                                                         ; 3ec7: ad 31 40
     beq c3ee2                                                         ; 3eca: f0 16
-    lda #$ca                                                          ; 3ecc: a9 ca
-    ldx l0a5d                                                         ; 3ece: ae 5d 0a
-    beq c3ed5                                                         ; 3ed1: f0 02
-    lda #$cb                                                          ; 3ed3: a9 cb
-c3ed5
+    lda #spriteid_bowl_menu_item                                      ; 3ecc: a9 ca
+    ldx save_game_level_o_bowl_is_full_flag                           ; 3ece: ae 5d 0a
+    beq remove_from_toolbar                                           ; 3ed1: f0 02
+    lda #spriteid_full_bowl_menu_item                                 ; 3ed3: a9 cb
+remove_from_toolbar
     jsr remove_item_from_toolbar_menu                                 ; 3ed5: 20 e0 2b
-    lda #0                                                            ; 3ed8: a9 00
+    lda #spriteid_one_pixel_masked_out                                ; 3ed8: a9 00
     sta object_spriteid + objectid_player_accessory                   ; 3eda: 8d a9 09
     sta player_using_object_spriteid                                  ; 3edd: 8d b6 2e
     sta player_held_object_spriteid                                   ; 3ee0: 85 52
@@ -877,7 +934,7 @@ c3ee2
     lda object_x_low + 2                                              ; 3ee2: ad 52 09
     cmp object_x_low_old + 2                                          ; 3ee5: cd 5d 09
     beq c3f07                                                         ; 3ee8: f0 1d
-    lda l0a5c                                                         ; 3eea: ad 5c 0a
+    lda save_game_level_o_bowl_direction_with_bounces                 ; 3eea: ad 5c 0a
     bmi c3ef5                                                         ; 3eed: 30 06
     inc temp_right_offset                                             ; 3eef: ee d1 24
     jmp c3ef8                                                         ; 3ef2: 4c f8 3e
@@ -911,130 +968,131 @@ return2
     rts                                                               ; 3f27: 60
 
 sub_c3f28
-    lda l0a56                                                         ; 3f28: ad 56 0a
+    lda save_game_level_o_bowl_animation_step                         ; 3f28: ad 56 0a
     clc                                                               ; 3f2b: 18
     adc #2                                                            ; 3f2c: 69 02
     tay                                                               ; 3f2e: a8
-    lda l3d3d,y                                                       ; 3f2f: b9 3d 3d
+    lda bowl_animations,y                                             ; 3f2f: b9 3d 3d
     cmp #$80                                                          ; 3f32: c9 80
     bne c3f39                                                         ; 3f34: d0 03
-    ldy l0a55                                                         ; 3f36: ac 55 0a
+    ldy save_game_level_o_bowl_progress                               ; 3f36: ac 55 0a
 c3f39
     lda #2                                                            ; 3f39: a9 02
     jsr update_object_hitting_floor                                   ; 3f3b: 20 70 27
     bne c3f51                                                         ; 3f3e: d0 11
-    lda l0a55                                                         ; 3f40: ad 55 0a
-    cmp #$1e                                                          ; 3f43: c9 1e
+    lda save_game_level_o_bowl_progress                               ; 3f40: ad 55 0a
+    cmp #bowl_fall_down_fast_animation - bowl_animations              ; 3f43: c9 1e
     beq c3f77                                                         ; 3f45: f0 30
     ldy #$15                                                          ; 3f47: a0 15
-    lda #$1e                                                          ; 3f49: a9 1e
-    sta l0a55                                                         ; 3f4b: 8d 55 0a
+    lda #bowl_fall_down_fast_animation - bowl_animations              ; 3f49: a9 1e
+    sta save_game_level_o_bowl_progress                               ; 3f4b: 8d 55 0a
     jmp c3f77                                                         ; 3f4e: 4c 77 3f
 
 c3f51
     lda object_just_fallen_off_edge_direction                         ; 3f51: ad 90 28
     beq c3f6d                                                         ; 3f54: f0 17
-    ldy #$1e                                                          ; 3f56: a0 1e
-    sty l0a55                                                         ; 3f58: 8c 55 0a
+    ldy #bowl_fall_down_fast_animation - bowl_animations              ; 3f56: a0 1e
+    sty save_game_level_o_bowl_progress                               ; 3f58: 8c 55 0a
     ldy #$0c                                                          ; 3f5b: a0 0c
     ldx #1                                                            ; 3f5d: a2 01
-    stx l0a5c                                                         ; 3f5f: 8e 5c 0a
+    stx save_game_level_o_bowl_direction_with_bounces                 ; 3f5f: 8e 5c 0a
     ora #0                                                            ; 3f62: 09 00
     bpl c3f77                                                         ; 3f64: 10 11
     ldx #$ff                                                          ; 3f66: a2 ff
-    stx l0a5c                                                         ; 3f68: 8e 5c 0a
+    stx save_game_level_o_bowl_direction_with_bounces                 ; 3f68: 8e 5c 0a
     bne c3f77                                                         ; 3f6b: d0 0a
 c3f6d
-    ldy #$21 ; '!'                                                    ; 3f6d: a0 21
-    sty l0a55                                                         ; 3f6f: 8c 55 0a
+    ldy #bowl_stationary_animation - bowl_animations                  ; 3f6d: a0 21
+    sty save_game_level_o_bowl_progress                               ; 3f6f: 8c 55 0a
     lda #0                                                            ; 3f72: a9 00
     sta level_workspace                                               ; 3f74: 8d 6f 0a
 c3f77
-    sty l0a56                                                         ; 3f77: 8c 56 0a
-    lda l3d3d,y                                                       ; 3f7a: b9 3d 3d
-    ldx l0a5c                                                         ; 3f7d: ae 5c 0a
-    bpl c3f87                                                         ; 3f80: 10 05
+    sty save_game_level_o_bowl_animation_step                         ; 3f77: 8c 56 0a
+    lda bowl_animations,y                                             ; 3f7a: b9 3d 3d
+    ldx save_game_level_o_bowl_direction_with_bounces                 ; 3f7d: ae 5c 0a
+    bpl sign_extend_a_to_ax                                           ; 3f80: 10 05
     eor #$ff                                                          ; 3f82: 49 ff
     clc                                                               ; 3f84: 18
     adc #1                                                            ; 3f85: 69 01
-c3f87
+sign_extend_a_to_ax
     ldx #0                                                            ; 3f87: a2 00
     ora #0                                                            ; 3f89: 09 00
-    bpl c3f8e                                                         ; 3f8b: 10 01
+    bpl add_to_bowl_x                                                 ; 3f8b: 10 01
     dex                                                               ; 3f8d: ca
-c3f8e
+add_to_bowl_x
     clc                                                               ; 3f8e: 18
-    adc l0a57                                                         ; 3f8f: 6d 57 0a
-    sta l0a57                                                         ; 3f92: 8d 57 0a
+    adc save_game_level_o_bowl_x_low                                  ; 3f8f: 6d 57 0a
+    sta save_game_level_o_bowl_x_low                                  ; 3f92: 8d 57 0a
     txa                                                               ; 3f95: 8a
-    adc l0a58                                                         ; 3f96: 6d 58 0a
-    sta l0a58                                                         ; 3f99: 8d 58 0a
+    adc save_game_level_o_bowl_x_high                                 ; 3f96: 6d 58 0a
+    sta save_game_level_o_bowl_x_high                                 ; 3f99: 8d 58 0a
     iny                                                               ; 3f9c: c8
-    lda l3d3d,y                                                       ; 3f9d: b9 3d 3d
+    lda bowl_animations,y                                             ; 3f9d: b9 3d 3d
     clc                                                               ; 3fa0: 18
-    adc l0a59                                                         ; 3fa1: 6d 59 0a
-    sta l0a59                                                         ; 3fa4: 8d 59 0a
-    jsr sub_c4002                                                     ; 3fa7: 20 02 40
-    lda #2                                                            ; 3faa: a9 02
+    adc save_game_level_o_bowl_y                                      ; 3fa1: 6d 59 0a
+    sta save_game_level_o_bowl_y                                      ; 3fa4: 8d 59 0a
+    jsr set_bowl_object                                               ; 3fa7: 20 02 40
+    lda #objectid_bowl                                                ; 3faa: a9 02
     jsr update_object_a_solid_rock_collision                          ; 3fac: 20 f5 25
-    lda object_x_low + 2                                              ; 3faf: ad 52 09
-    sta l0a57                                                         ; 3fb2: 8d 57 0a
-    lda object_x_high + 2                                             ; 3fb5: ad 68 09
-    sta l0a58                                                         ; 3fb8: 8d 58 0a
-    lda object_y_low + 2                                              ; 3fbb: ad 7e 09
-    sta l0a59                                                         ; 3fbe: 8d 59 0a
-    ldx #2                                                            ; 3fc1: a2 02
+    lda object_x_low + objectid_bowl                                  ; 3faf: ad 52 09
+    sta save_game_level_o_bowl_x_low                                  ; 3fb2: 8d 57 0a
+    lda object_x_high + objectid_bowl                                 ; 3fb5: ad 68 09
+    sta save_game_level_o_bowl_x_high                                 ; 3fb8: 8d 58 0a
+    lda object_y_low + objectid_bowl                                  ; 3fbb: ad 7e 09
+    sta save_game_level_o_bowl_y                                      ; 3fbe: 8d 59 0a
+    ldx #objectid_bowl                                                ; 3fc1: a2 02
     jsr find_left_and_right_of_object                                 ; 3fc3: 20 34 24
-    lda l0a5c                                                         ; 3fc6: ad 5c 0a
-    bmi c3fe7                                                         ; 3fc9: 30 1c
-    lda l0078                                                         ; 3fcb: a5 78
-    cmp #$28 ; '('                                                    ; 3fcd: c9 28
+    lda save_game_level_o_bowl_direction_with_bounces                 ; 3fc6: ad 5c 0a
+    bmi move_bowl_left_one_room_if_needed                             ; 3fc9: 30 1c
+; move bowl right one room if needed
+    lda object_left_cell_x                                            ; 3fcb: a5 78
+    cmp #game_area_width_cells                                        ; 3fcd: c9 28
     bcc return3                                                       ; 3fcf: 90 30
-    lda l0a57                                                         ; 3fd1: ad 57 0a
+    lda save_game_level_o_bowl_x_low                                  ; 3fd1: ad 57 0a
     sec                                                               ; 3fd4: 38
     sbc #$40 ; '@'                                                    ; 3fd5: e9 40
-    sta l0a57                                                         ; 3fd7: 8d 57 0a
+    sta save_game_level_o_bowl_x_low                                  ; 3fd7: 8d 57 0a
     lda #0                                                            ; 3fda: a9 00
     sbc #0                                                            ; 3fdc: e9 00
-    sta l0a58                                                         ; 3fde: 8d 58 0a
-    inc l0a5b                                                         ; 3fe1: ee 5b 0a
-    jmp c3ffc                                                         ; 3fe4: 4c fc 3f
+    sta save_game_level_o_bowl_x_high                                 ; 3fde: 8d 58 0a
+    inc save_game_level_o_bowl_room                                   ; 3fe1: ee 5b 0a
+    jmp hide_bowl                                                     ; 3fe4: 4c fc 3f
 
-c3fe7
-    lda l0079                                                         ; 3fe7: a5 79
+move_bowl_left_one_room_if_needed
+    lda object_right_cell_x                                           ; 3fe7: a5 79
     bpl return3                                                       ; 3fe9: 10 16
-    lda l0a57                                                         ; 3feb: ad 57 0a
+    lda save_game_level_o_bowl_x_low                                  ; 3feb: ad 57 0a
     clc                                                               ; 3fee: 18
     adc #$40 ; '@'                                                    ; 3fef: 69 40
-    sta l0a57                                                         ; 3ff1: 8d 57 0a
+    sta save_game_level_o_bowl_x_low                                  ; 3ff1: 8d 57 0a
     lda #1                                                            ; 3ff4: a9 01
-    sta l0a58                                                         ; 3ff6: 8d 58 0a
-    dec l0a5b                                                         ; 3ff9: ce 5b 0a
-c3ffc
-    lda #0                                                            ; 3ffc: a9 00
+    sta save_game_level_o_bowl_x_high                                 ; 3ff6: 8d 58 0a
+    dec save_game_level_o_bowl_room                                   ; 3ff9: ce 5b 0a
+hide_bowl
+    lda #spriteid_one_pixel_masked_out                                ; 3ffc: a9 00
     sta object_spriteid + 2                                           ; 3ffe: 8d aa 09
 return3
     rts                                                               ; 4001: 60
 
-sub_c4002
-    lda #$cc                                                          ; 4002: a9 cc
-    sta l38ae                                                         ; 4004: 8d ae 38
+set_bowl_object
+    lda #spriteid_erase1                                              ; 4002: a9 cc
+    sta object_erase_type + objectid_bowl                             ; 4004: 8d ae 38
     lda #$a0                                                          ; 4007: a9 a0
-    sta l38c4                                                         ; 4009: 8d c4 38
-    lda l0a57                                                         ; 400c: ad 57 0a
-    sta object_x_low + 2                                              ; 400f: 8d 52 09
-    lda l0a58                                                         ; 4012: ad 58 0a
-    sta object_x_high + 2                                             ; 4015: 8d 68 09
-    lda l0a59                                                         ; 4018: ad 59 0a
-    sta object_y_low + 2                                              ; 401b: 8d 7e 09
-    lda #$c8                                                          ; 401e: a9 c8
-    ldx l0a5d                                                         ; 4020: ae 5d 0a
-    beq c4027                                                         ; 4023: f0 02
-    lda #$c9                                                          ; 4025: a9 c9
-c4027
-    sta object_spriteid + 2                                           ; 4027: 8d aa 09
-    lda l0a5a                                                         ; 402a: ad 5a 0a
-    sta object_direction + 2                                          ; 402d: 8d c0 09
+    sta object_z_order + objectid_bowl                                ; 4009: 8d c4 38
+    lda save_game_level_o_bowl_x_low                                  ; 400c: ad 57 0a
+    sta object_x_low + objectid_bowl                                  ; 400f: 8d 52 09
+    lda save_game_level_o_bowl_x_high                                 ; 4012: ad 58 0a
+    sta object_x_high + objectid_bowl                                 ; 4015: 8d 68 09
+    lda save_game_level_o_bowl_y                                      ; 4018: ad 59 0a
+    sta object_y_low + objectid_bowl                                  ; 401b: 8d 7e 09
+    lda #spriteid_bowl                                                ; 401e: a9 c8
+    ldx save_game_level_o_bowl_is_full_flag                           ; 4020: ae 5d 0a
+    beq set_bowl_sprite                                               ; 4023: f0 02
+    lda #spriteid_full_bowl                                           ; 4025: a9 c9
+set_bowl_sprite
+    sta object_spriteid + objectid_bowl                               ; 4027: 8d aa 09
+    lda save_game_level_o_bowl_direction_without_bounces              ; 402a: ad 5a 0a
+    sta object_direction + objectid_bowl                              ; 402d: 8d c0 09
     rts                                                               ; 4030: 60
 
 l4031
@@ -1045,12 +1103,12 @@ l4033
     !byte   0, $60                                                    ; 4033: 00 60
 
 ; check for first update in room (branch if not)
-sub_c4035
+update_fire_bowl
     lda update_room_first_update_flag                                 ; 4035: ad 2b 13
-    beq c406e                                                         ; 4038: f0 34
+    beq update_fire_bowl_animation                                    ; 4038: f0 34
     lda desired_room_index                                            ; 403a: a5 30
     cmp #1                                                            ; 403c: c9 01
-    bne c406b                                                         ; 403e: d0 2b
+    bne set_sprite_for_fire_bowl_local                                ; 403e: d0 2b
     ldx #$19                                                          ; 4040: a2 19
     ldy #$0a                                                          ; 4042: a0 0a
     lda #2                                                            ; 4044: a9 02
@@ -1061,7 +1119,7 @@ sub_c4035
     sta value_to_write_to_collision_map                               ; 404e: 85 3e
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 4050: 20 44 1e
     ldy #$0e                                                          ; 4053: a0 0e
-    lda #$e4                                                          ; 4055: a9 e4
+    lda #spriteid_fire_bowl                                           ; 4055: a9 e4
     jsr draw_sprite_a_at_cell_xy                                      ; 4057: 20 4c 1f
     ldx #$19                                                          ; 405a: a2 19
     lda #5                                                            ; 405c: a9 05
@@ -1069,22 +1127,23 @@ sub_c4035
     ldy #$0c                                                          ; 4060: a0 0c
     lda #2                                                            ; 4062: a9 02
     sta temp_sprite_y_offset                                          ; 4064: 85 3b
-    lda #4                                                            ; 4066: a9 04
+    lda #objectid_fire_bowl                                           ; 4066: a9 04
     jsr set_object_position_from_cell_xy                              ; 4068: 20 5d 1f
-c406b
-    jmp c4071                                                         ; 406b: 4c 71 40
+set_sprite_for_fire_bowl_local
+    jmp set_sprite_for_fire_bowl                                      ; 406b: 4c 71 40
 
-c406e
-    inc l0a70                                                         ; 406e: ee 70 0a
-c4071
+update_fire_bowl_animation
+    inc fire_bowl_animation_step                                      ; 406e: ee 70 0a
+set_sprite_for_fire_bowl
     lda desired_room_index                                            ; 4071: a5 30
     cmp #1                                                            ; 4073: c9 01
     bne return4                                                       ; 4075: d0 0b
-    lda l0a70                                                         ; 4077: ad 70 0a
+; calculate sprite id
+    lda fire_bowl_animation_step                                      ; 4077: ad 70 0a
     and #7                                                            ; 407a: 29 07
     clc                                                               ; 407c: 18
-    adc #$3c ; '<'                                                    ; 407d: 69 3c
-    sta object_spriteid + 4                                           ; 407f: 8d ac 09
+    adc #spriteid_fire1                                               ; 407d: 69 3c
+    sta object_spriteid + objectid_fire_bowl                          ; 407f: 8d ac 09
 return4
     rts                                                               ; 4082: 60
 
@@ -1227,10 +1286,10 @@ room_2_update_handler
     lda current_level                                                 ; 413e: a5 31
     cmp level_before_latest_level_and_room_initialisation             ; 4140: c5 51
     beq c414e                                                         ; 4142: f0 0a
-    lda l0a60                                                         ; 4144: ad 60 0a
+    lda save_game_level_o_holding_stick                               ; 4144: ad 60 0a
     beq c414e                                                         ; 4147: f0 05
     lda #$ff                                                          ; 4149: a9 ff
-    sta l0a60                                                         ; 414b: 8d 60 0a
+    sta save_game_level_o_holding_stick                               ; 414b: 8d 60 0a
 c414e
     lda #$db                                                          ; 414e: a9 db
     sta l38b1                                                         ; 4150: 8d b1 38
@@ -1243,7 +1302,7 @@ c414e
     lda desired_room_index                                            ; 4162: a5 30
     cmp #2                                                            ; 4164: c9 02
     bne c4180                                                         ; 4166: d0 18
-    lda l0a60                                                         ; 4168: ad 60 0a
+    lda save_game_level_o_holding_stick                               ; 4168: ad 60 0a
     bne c4180                                                         ; 416b: d0 13
     lda #$cf                                                          ; 416d: a9 cf
     sta l38b0                                                         ; 416f: 8d b0 38
@@ -1251,7 +1310,7 @@ c414e
     ldy #$0e                                                          ; 4174: a0 0e
     lda #4                                                            ; 4176: a9 04
     jsr set_object_position_from_cell_xy                              ; 4178: 20 5d 1f
-    lda #$d5                                                          ; 417b: a9 d5
+    lda #spriteid_stick                                               ; 417b: a9 d5
     sta object_spriteid + 4                                           ; 417d: 8d ac 09
 c4180
     jmp c4260                                                         ; 4180: 4c 60 42
@@ -1266,10 +1325,11 @@ c4183
     lda #0                                                            ; 418f: a9 00
 c4191
     sta l0a71                                                         ; 4191: 8d 71 0a
-    lda l0a60                                                         ; 4194: ad 60 0a
+    lda save_game_level_o_holding_stick                               ; 4194: ad 60 0a
     beq c419d                                                         ; 4197: f0 04
     bmi c41be                                                         ; 4199: 30 23
-    bpl c41ea                                                         ; 419b: 10 4d
+    bpl c41ea                                                         ; 419b: 10 4d                   ; ALWAYS branch
+
 c419d
     lda desired_room_index                                            ; 419d: a5 30
     cmp #2                                                            ; 419f: c9 02
@@ -1278,19 +1338,19 @@ c419d
     ldy #4                                                            ; 41a5: a0 04
     jsr test_for_collision_between_objects_x_and_y                    ; 41a7: 20 e2 28
     beq c41bb                                                         ; 41aa: f0 0f
-    lda #$d4                                                          ; 41ac: a9 d4
+    lda #spriteid_stick_menu_item                                     ; 41ac: a9 d4
     jsr find_or_create_menu_slot_for_A                                ; 41ae: 20 bd 2b
-    lda #0                                                            ; 41b1: a9 00
+    lda #spriteid_one_pixel_masked_out                                ; 41b1: a9 00
     sta object_spriteid + 4                                           ; 41b3: 8d ac 09
     lda #$ff                                                          ; 41b6: a9 ff
-    sta l0a60                                                         ; 41b8: 8d 60 0a
+    sta save_game_level_o_holding_stick                               ; 41b8: 8d 60 0a
 c41bb
     jmp c4260                                                         ; 41bb: 4c 60 42
 
 c41be
     lda developer_flags                                               ; 41be: ad 03 11
     bpl developer_mode_inactive3                                      ; 41c1: 10 07
-    ldx #$a9                                                          ; 41c3: a2 a9
+    ldx #inkey_key_l                                                  ; 41c3: a2 a9
     jsr negative_inkey                                                ; 41c5: 20 cc 3a
     bne c41e2                                                         ; 41c8: d0 18
 developer_mode_inactive3
@@ -1307,34 +1367,34 @@ developer_mode_inactive3
     beq c41bb                                                         ; 41e0: f0 d9
 c41e2
     lda #1                                                            ; 41e2: a9 01
-    sta l0a60                                                         ; 41e4: 8d 60 0a
+    sta save_game_level_o_holding_stick                               ; 41e4: 8d 60 0a
     jmp c4260                                                         ; 41e7: 4c 60 42
 
 c41ea
-    ldy l0a60                                                         ; 41ea: ac 60 0a
+    ldy save_game_level_o_holding_stick                               ; 41ea: ac 60 0a
     iny                                                               ; 41ed: c8
     cpy #9                                                            ; 41ee: c0 09
     bcc c41f4                                                         ; 41f0: 90 02
     ldy #1                                                            ; 41f2: a0 01
 c41f4
     lda player_held_object_spriteid                                   ; 41f4: a5 52
-    cmp #$d4                                                          ; 41f6: c9 d4
+    cmp #spriteid_stick_menu_item                                     ; 41f6: c9 d4
     beq c41fc                                                         ; 41f8: f0 02
     ldy #$ff                                                          ; 41fa: a0 ff
 c41fc
-    sty l0a60                                                         ; 41fc: 8c 60 0a
+    sty save_game_level_o_holding_stick                               ; 41fc: 8c 60 0a
     lda l0a71                                                         ; 41ff: ad 71 0a
     bne c4260                                                         ; 4202: d0 5c
-    lda l0a5d                                                         ; 4204: ad 5d 0a
+    lda save_game_level_o_bowl_is_full_flag                           ; 4204: ad 5d 0a
     beq c4260                                                         ; 4207: f0 57
     ldx #objectid_old_player_accessory                                ; 4209: a2 0c
     ldy #2                                                            ; 420b: a0 02
     jsr test_for_collision_between_objects_x_and_y                    ; 420d: 20 e2 28
     beq c4260                                                         ; 4210: f0 4e
     lda #0                                                            ; 4212: a9 00
-    sta l0a5d                                                         ; 4214: 8d 5d 0a
+    sta save_game_level_o_bowl_is_full_flag                           ; 4214: 8d 5d 0a
     lda #$ff                                                          ; 4217: a9 ff
-    sta l0a60                                                         ; 4219: 8d 60 0a
+    sta save_game_level_o_holding_stick                               ; 4219: 8d 60 0a
     lda #1                                                            ; 421c: a9 01
     sta l0a71                                                         ; 421e: 8d 71 0a
     lda #0                                                            ; 4221: a9 00
@@ -1376,15 +1436,15 @@ c4260
     lda object_direction + 2                                          ; 4272: ad c0 09
     sta object_direction + 6                                          ; 4275: 8d c4 09
     ldy l0a71                                                         ; 4278: ac 71 0a
-    lda l42cd,y                                                       ; 427b: b9 cd 42
+    lda explosion_animation,y                                         ; 427b: b9 cd 42
     sta object_spriteid + 6                                           ; 427e: 8d ae 09
-    lda #0                                                            ; 4281: a9 00
+    lda #spriteid_one_pixel_masked_out                                ; 4281: a9 00
     sta object_spriteid + 5                                           ; 4283: 8d ad 09
-    lda l0a60                                                         ; 4286: ad 60 0a
+    lda save_game_level_o_holding_stick                               ; 4286: ad 60 0a
     beq return5                                                       ; 4289: f0 41
     bmi return5                                                       ; 428b: 30 3f
     clc                                                               ; 428d: 18
-    adc #$db                                                          ; 428e: 69 db
+    adc #spriteid_erase4b                                             ; 428e: 69 db
     sta object_spriteid + 5                                           ; 4290: 8d ad 09
     lda object_x_low + objectid_player_accessory                      ; 4293: ad 51 09
     sta object_x_low + 5                                              ; 4296: 8d 55 09
@@ -1395,7 +1455,7 @@ c4260
     lda object_direction + objectid_player_accessory                  ; 42a5: ad bf 09
     sta object_direction + 5                                          ; 42a8: 8d c3 09
     lda player_using_object_spriteid                                  ; 42ab: ad b6 2e
-    cmp #$d4                                                          ; 42ae: c9 d4
+    cmp #spriteid_stick_menu_item                                     ; 42ae: c9 d4
     bne return5                                                       ; 42b0: d0 1a
     lda object_x_low + 5                                              ; 42b2: ad 55 09
     clc                                                               ; 42b5: 18
@@ -1411,13 +1471,16 @@ c4260
 return5
     rts                                                               ; 42cc: 60
 
-l42cd
-    !byte   0, $d9, $d9                                               ; 42cd: 00 d9 d9
+explosion_animation
+    !byte 0                                                           ; 42cd: 00
+    !byte spriteid_explosion                                          ; 42ce: d9
+    !byte spriteid_explosion                                          ; 42cf: d9
 ; *************************************************************************************
 ; 
 ; Room 3 initialisation and game loop
 ; 
 ; *************************************************************************************
+
 room_3_data
     !byte 10                                                          ; 42d0: 0a                      ; initial player X cell
     !byte 14                                                          ; 42d1: 0e                      ; initial player Y cell
@@ -1518,7 +1581,7 @@ room_3_game_update_loop
     jmp initialise_level_and_room                                     ; 434b: 4c 40 11
 
 ; check for first update in room (branch if not)
-sub_c434e
+room_3_update_handler
     lda update_room_first_update_flag                                 ; 434e: ad 2b 13
     beq c438b                                                         ; 4351: f0 38
     ldx #<envelope3                                                   ; 4353: a2 8b
@@ -1528,10 +1591,10 @@ sub_c434e
     lda current_level                                                 ; 435a: a5 31
     cmp level_before_latest_level_and_room_initialisation             ; 435c: c5 51
     beq c436a                                                         ; 435e: f0 0a
-    lda l0a5f                                                         ; 4360: ad 5f 0a
+    lda tnt_barrel_animation_step                                     ; 4360: ad 5f 0a
     beq c436a                                                         ; 4363: f0 05
     lda #2                                                            ; 4365: a9 02
-    sta l0a5f                                                         ; 4367: 8d 5f 0a
+    sta tnt_barrel_animation_step                                     ; 4367: 8d 5f 0a
 c436a
     lda desired_room_index                                            ; 436a: a5 30
     cmp #3                                                            ; 436c: c9 03
@@ -1550,7 +1613,7 @@ c4388
     jmp c43c8                                                         ; 4388: 4c c8 43
 
 c438b
-    lda l0a5f                                                         ; 438b: ad 5f 0a
+    lda tnt_barrel_animation_step                                     ; 438b: ad 5f 0a
     beq c4396                                                         ; 438e: f0 06
     cmp #2                                                            ; 4390: c9 02
     bne c43b5                                                         ; 4392: d0 21
@@ -1571,30 +1634,32 @@ c4396
     cmp #$aa                                                          ; 43b1: c9 aa
     bcs c43c8                                                         ; 43b3: b0 13
 c43b5
-    inc l0a5f                                                         ; 43b5: ee 5f 0a
-    lda l0a5f                                                         ; 43b8: ad 5f 0a
+    inc tnt_barrel_animation_step                                     ; 43b5: ee 5f 0a
+    lda tnt_barrel_animation_step                                     ; 43b8: ad 5f 0a
     cmp #2                                                            ; 43bb: c9 02
     bne c43c8                                                         ; 43bd: d0 09
     lda desired_room_index                                            ; 43bf: a5 30
     cmp #3                                                            ; 43c1: c9 03
     bne c43c8                                                         ; 43c3: d0 03
-    jsr sub_c4465                                                     ; 43c5: 20 65 44
+    jsr play_sounds45                                                 ; 43c5: 20 65 44
 c43c8
     lda desired_room_index                                            ; 43c8: a5 30
     cmp #3                                                            ; 43ca: c9 03
     bne c442b                                                         ; 43cc: d0 5d
-    ldy l0a5f                                                         ; 43ce: ac 5f 0a
-    lda l4462,y                                                       ; 43d1: b9 62 44
-    sta object_spriteid + 3                                           ; 43d4: 8d ab 09
+    ldy tnt_barrel_animation_step                                     ; 43ce: ac 5f 0a
+    lda tnt_barrel_animation,y                                        ; 43d1: b9 62 44
+    sta object_spriteid + objectid_tnt_barrel                         ; 43d4: 8d ab 09
     cpy #2                                                            ; 43d7: c0 02
-    bne c43e0                                                         ; 43d9: d0 05
-    lda #$d3                                                          ; 43db: a9 d3
-    sta object_spriteid + 4                                           ; 43dd: 8d ac 09
-c43e0
+    bne write_tnt_barrel_collision_map                                ; 43d9: d0 05
+    lda #spriteid_tnt_powder                                          ; 43db: a9 d3
+    sta object_spriteid + objectid_tnt                                ; 43dd: 8d ac 09
+write_tnt_barrel_collision_map
     lda #collision_map_solid_rock                                     ; 43e0: a9 03
     sta value_to_write_to_collision_map                               ; 43e2: 85 3e
-    lda l0a5f                                                         ; 43e4: ad 5f 0a
-    bne c4402                                                         ; 43e7: d0 19
+; check if the tnt barrel animation has started (branch if so)
+    lda tnt_barrel_animation_step                                     ; 43e4: ad 5f 0a
+    bne write_horizontal_tnt_barrel_collision_map                     ; 43e7: d0 19
+; write vertical tnt barrel collision map
     ldx #$0e                                                          ; 43e9: a2 0e
     ldy #$13                                                          ; 43eb: a0 13
     lda #1                                                            ; 43ed: a9 01
@@ -1607,7 +1672,7 @@ c43e0
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 43fc: 20 44 1e
     jmp c442b                                                         ; 43ff: 4c 2b 44
 
-c4402
+write_horizontal_tnt_barrel_collision_map
     ldx #$0a                                                          ; 4402: a2 0a
     ldy #$14                                                          ; 4404: a0 14
     lda #3                                                            ; 4406: a9 03
@@ -1631,10 +1696,10 @@ c442b
     lda desired_room_index                                            ; 442b: a5 30
     cmp #3                                                            ; 442d: c9 03
     bne return6                                                       ; 442f: d0 30
-    lda l0a55                                                         ; 4431: ad 55 0a
+    lda save_game_level_o_bowl_progress                               ; 4431: ad 55 0a
     cmp #$ff                                                          ; 4434: c9 ff
     beq return6                                                       ; 4436: f0 29
-    lda l0a5d                                                         ; 4438: ad 5d 0a
+    lda save_game_level_o_bowl_is_full_flag                           ; 4438: ad 5d 0a
     bne return6                                                       ; 443b: d0 24
     lda #2                                                            ; 443d: a9 02
     sta temp_bottom_offset                                            ; 443f: 8d 51 25
@@ -1648,16 +1713,18 @@ c442b
     jsr test_for_collision_between_objects_x_and_y                    ; 4452: 20 e2 28
     beq return6                                                       ; 4455: f0 0a
     lda #$ff                                                          ; 4457: a9 ff
-    sta l0a5d                                                         ; 4459: 8d 5d 0a
-    lda #$c9                                                          ; 445c: a9 c9
-    sta object_spriteid + 2                                           ; 445e: 8d aa 09
+    sta save_game_level_o_bowl_is_full_flag                           ; 4459: 8d 5d 0a
+    lda #spriteid_full_bowl                                           ; 445c: a9 c9
+    sta object_spriteid + objectid_bowl                               ; 445e: 8d aa 09
 return6
     rts                                                               ; 4461: 60
 
-l4462
-    !byte $d0, $d1, $d2                                               ; 4462: d0 d1 d2
+tnt_barrel_animation
+    !byte spriteid_tnt                                                ; 4462: d0
+    !byte spriteid_tnt_tipping                                        ; 4463: d1
+    !byte spriteid_tnt_sideways                                       ; 4464: d2
 
-sub_c4465
+play_sounds45
     lda #0                                                            ; 4465: a9 00
     ldx #<sound4                                                      ; 4467: a2 a1
     ldy #>sound4                                                      ; 4469: a0 44
@@ -1776,9 +1843,6 @@ sprite_data
 pydis_end
 
 ; Automatically generated labels:
-;     c3b1a
-;     c3b1d
-;     c3b27
 ;     c3bfa
 ;     c3bff
 ;     c3c14
@@ -1800,7 +1864,6 @@ pydis_end
 ;     c3eb7
 ;     c3eba
 ;     c3ec7
-;     c3ed5
 ;     c3ee2
 ;     c3ef5
 ;     c3ef8
@@ -1810,14 +1873,6 @@ pydis_end
 ;     c3f51
 ;     c3f6d
 ;     c3f77
-;     c3f87
-;     c3f8e
-;     c3fe7
-;     c3ffc
-;     c4027
-;     c406b
-;     c406e
-;     c4071
 ;     c414e
 ;     c4180
 ;     c4183
@@ -1838,51 +1893,26 @@ pydis_end
 ;     c4396
 ;     c43b5
 ;     c43c8
-;     c43e0
-;     c4402
 ;     c442b
-;     l0078
-;     l0079
-;     l0a55
-;     l0a56
-;     l0a57
-;     l0a58
-;     l0a59
-;     l0a5a
-;     l0a5b
-;     l0a5c
-;     l0a5d
 ;     l0a5e
-;     l0a5f
-;     l0a60
 ;     l0a61
-;     l0a70
 ;     l0a71
 ;     l2eeb
 ;     l2ef0
 ;     l2ef4
 ;     l2ef5
-;     l38ae
 ;     l38af
 ;     l38b0
 ;     l38b1
 ;     l38b2
-;     l38c4
 ;     l38c6
 ;     l38c7
 ;     l38c8
-;     l3d3d
 ;     l4031
 ;     l4032
 ;     l4033
-;     l42cd
-;     l4462
 ;     loop_c3dde
 ;     sub_c3f28
-;     sub_c4002
-;     sub_c4035
-;     sub_c434e
-;     sub_c4465
 !if (<envelope1) != $75 {
     !error "Assertion failed: <envelope1 == $75"
 }
@@ -1937,6 +1967,15 @@ pydis_end
 !if (>sound5) != $44 {
     !error "Assertion failed: >sound5 == $44"
 }
+!if (bowl_fall_down_fast_animation - bowl_animations) != $1e {
+    !error "Assertion failed: bowl_fall_down_fast_animation - bowl_animations == $1e"
+}
+!if (bowl_fall_sideways_animation - bowl_animations) != $01 {
+    !error "Assertion failed: bowl_fall_sideways_animation - bowl_animations == $01"
+}
+!if (bowl_stationary_animation - bowl_animations) != $21 {
+    !error "Assertion failed: bowl_stationary_animation - bowl_animations == $21"
+}
 !if (collision_map_none) != $00 {
     !error "Assertion failed: collision_map_none == $00"
 }
@@ -1948,6 +1987,15 @@ pydis_end
 }
 !if (exit_room_right) != $04 {
     !error "Assertion failed: exit_room_right == $04"
+}
+!if (game_area_width_cells) != $28 {
+    !error "Assertion failed: game_area_width_cells == $28"
+}
+!if (inkey_key_l) != $a9 {
+    !error "Assertion failed: inkey_key_l == $a9"
+}
+!if (inkey_key_o) != $c9 {
+    !error "Assertion failed: inkey_key_o == $c9"
 }
 !if (level_specific_initialisation) != $3af4 {
     !error "Assertion failed: level_specific_initialisation == $3af4"
@@ -1967,11 +2015,14 @@ pydis_end
 !if (object_direction + 6) != $09c4 {
     !error "Assertion failed: object_direction + 6 == $09c4"
 }
+!if (object_direction + objectid_bowl) != $09c0 {
+    !error "Assertion failed: object_direction + objectid_bowl == $09c0"
+}
+!if (object_erase_type + objectid_bowl) != $38ae {
+    !error "Assertion failed: object_erase_type + objectid_bowl == $38ae"
+}
 !if (object_spriteid + 2) != $09aa {
     !error "Assertion failed: object_spriteid + 2 == $09aa"
-}
-!if (object_spriteid + 3) != $09ab {
-    !error "Assertion failed: object_spriteid + 3 == $09ab"
 }
 !if (object_spriteid + 4) != $09ac {
     !error "Assertion failed: object_spriteid + 4 == $09ac"
@@ -1981,6 +2032,18 @@ pydis_end
 }
 !if (object_spriteid + 6) != $09ae {
     !error "Assertion failed: object_spriteid + 6 == $09ae"
+}
+!if (object_spriteid + objectid_bowl) != $09aa {
+    !error "Assertion failed: object_spriteid + objectid_bowl == $09aa"
+}
+!if (object_spriteid + objectid_fire_bowl) != $09ac {
+    !error "Assertion failed: object_spriteid + objectid_fire_bowl == $09ac"
+}
+!if (object_spriteid + objectid_tnt) != $09ac {
+    !error "Assertion failed: object_spriteid + objectid_tnt == $09ac"
+}
+!if (object_spriteid + objectid_tnt_barrel) != $09ab {
+    !error "Assertion failed: object_spriteid + objectid_tnt_barrel == $09ab"
 }
 !if (object_spriteid_old + 2) != $09b5 {
     !error "Assertion failed: object_spriteid_old + 2 == $09b5"
@@ -1994,6 +2057,9 @@ pydis_end
 !if (object_x_high + 6) != $096c {
     !error "Assertion failed: object_x_high + 6 == $096c"
 }
+!if (object_x_high + objectid_bowl) != $0968 {
+    !error "Assertion failed: object_x_high + objectid_bowl == $0968"
+}
 !if (object_x_low + 2) != $0952 {
     !error "Assertion failed: object_x_low + 2 == $0952"
 }
@@ -2005,6 +2071,9 @@ pydis_end
 }
 !if (object_x_low + 6) != $0956 {
     !error "Assertion failed: object_x_low + 6 == $0956"
+}
+!if (object_x_low + objectid_bowl) != $0952 {
+    !error "Assertion failed: object_x_low + objectid_bowl == $0952"
 }
 !if (object_x_low_old + 2) != $095d {
     !error "Assertion failed: object_x_low_old + 2 == $095d"
@@ -2021,8 +2090,20 @@ pydis_end
 !if (object_y_low + 6) != $0982 {
     !error "Assertion failed: object_y_low + 6 == $0982"
 }
+!if (object_y_low + objectid_bowl) != $097e {
+    !error "Assertion failed: object_y_low + objectid_bowl == $097e"
+}
 !if (object_y_low_old + 2) != $0989 {
     !error "Assertion failed: object_y_low_old + 2 == $0989"
+}
+!if (object_z_order + objectid_bowl) != $38c4 {
+    !error "Assertion failed: object_z_order + objectid_bowl == $38c4"
+}
+!if (objectid_bowl) != $02 {
+    !error "Assertion failed: objectid_bowl == $02"
+}
+!if (objectid_fire_bowl) != $04 {
+    !error "Assertion failed: objectid_fire_bowl == $04"
 }
 !if (objectid_old_player) != $0b {
     !error "Assertion failed: objectid_old_player == $0b"
@@ -2047,4 +2128,58 @@ pydis_end
 }
 !if (sprite_data - level_data) != $0a12 {
     !error "Assertion failed: sprite_data - level_data == $0a12"
+}
+!if (spriteid_bowl) != $c8 {
+    !error "Assertion failed: spriteid_bowl == $c8"
+}
+!if (spriteid_bowl_menu_item) != $ca {
+    !error "Assertion failed: spriteid_bowl_menu_item == $ca"
+}
+!if (spriteid_erase1) != $cc {
+    !error "Assertion failed: spriteid_erase1 == $cc"
+}
+!if (spriteid_erase4b) != $db {
+    !error "Assertion failed: spriteid_erase4b == $db"
+}
+!if (spriteid_explosion) != $d9 {
+    !error "Assertion failed: spriteid_explosion == $d9"
+}
+!if (spriteid_fire1) != $3c {
+    !error "Assertion failed: spriteid_fire1 == $3c"
+}
+!if (spriteid_fire_bowl) != $e4 {
+    !error "Assertion failed: spriteid_fire_bowl == $e4"
+}
+!if (spriteid_full_bowl) != $c9 {
+    !error "Assertion failed: spriteid_full_bowl == $c9"
+}
+!if (spriteid_full_bowl_menu_item) != $cb {
+    !error "Assertion failed: spriteid_full_bowl_menu_item == $cb"
+}
+!if (spriteid_one_pixel_masked_out) != $00 {
+    !error "Assertion failed: spriteid_one_pixel_masked_out == $00"
+}
+!if (spriteid_stick) != $d5 {
+    !error "Assertion failed: spriteid_stick == $d5"
+}
+!if (spriteid_stick_menu_item) != $d4 {
+    !error "Assertion failed: spriteid_stick_menu_item == $d4"
+}
+!if (spriteid_table) != $cd {
+    !error "Assertion failed: spriteid_table == $cd"
+}
+!if (spriteid_tnt) != $d0 {
+    !error "Assertion failed: spriteid_tnt == $d0"
+}
+!if (spriteid_tnt_powder) != $d3 {
+    !error "Assertion failed: spriteid_tnt_powder == $d3"
+}
+!if (spriteid_tnt_sideways) != $d2 {
+    !error "Assertion failed: spriteid_tnt_sideways == $d2"
+}
+!if (spriteid_tnt_tipping) != $d1 {
+    !error "Assertion failed: spriteid_tnt_tipping == $d1"
+}
+!if (spriteid_trapdoor) != $ce {
+    !error "Assertion failed: spriteid_trapdoor == $ce"
 }
