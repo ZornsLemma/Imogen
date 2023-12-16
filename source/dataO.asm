@@ -1097,7 +1097,8 @@ l4031
 remember_sprite_held
     !byte 0                                                           ; 4032: 00
 temp_old_bowl_sprite
-    !byte   0, $60                                                    ; 4033: 00 60
+    !byte 0                                                           ; 4033: 00
+    !byte $60                                                         ; 4034: 60
 
 ; check for first update in room (branch if not)
 update_fire_bowl
@@ -1325,7 +1326,7 @@ c4191
     lda save_game_level_o_holding_stick                               ; 4194: ad 60 0a
     beq c419d                                                         ; 4197: f0 04
     bmi check_for_developer_mode_shortcuts                            ; 4199: 30 23
-    bpl c41ea                                                         ; 419b: 10 4d                   ; ALWAYS branch
+    bpl update_smoke_animation                                        ; 419b: 10 4d                   ; ALWAYS branch
 
 c419d
     lda desired_room_index                                            ; 419d: a5 30
@@ -1368,7 +1369,7 @@ light_stick
     sta save_game_level_o_holding_stick                               ; 41e4: 8d 60 0a
     jmp initialise_explosion                                          ; 41e7: 4c 60 42
 
-c41ea
+update_smoke_animation
     ldy save_game_level_o_holding_stick                               ; 41ea: ac 60 0a
     iny                                                               ; 41ed: c8
     cpy #9                                                            ; 41ee: c0 09
@@ -1377,9 +1378,9 @@ c41ea
 got_smoke_animation_step
     lda player_held_object_spriteid                                   ; 41f4: a5 52
     cmp #spriteid_stick_menu_item                                     ; 41f6: c9 d4
-    beq c41fc                                                         ; 41f8: f0 02
+    beq set_holding_stick                                             ; 41f8: f0 02
     ldy #$ff                                                          ; 41fa: a0 ff
-c41fc
+set_holding_stick
     sty save_game_level_o_holding_stick                               ; 41fc: 8c 60 0a
     lda explosion_animation_step                                      ; 41ff: ad 71 0a
     bne initialise_explosion                                          ; 4202: d0 5c
@@ -1408,15 +1409,15 @@ c41fc
     sbc object_x_low + objectid_bowl                                  ; 4235: ed 52 09
     lda object_x_high                                                 ; 4238: ad 66 09
     sbc object_x_high + objectid_bowl                                 ; 423b: ed 68 09
-    bmi c4248                                                         ; 423e: 30 08
+    bmi set_move_left_after_collision                                 ; 423e: 30 08
     lda #6                                                            ; 4240: a9 06
     sta player_wall_collision_reaction_speed                          ; 4242: 8d 33 24
-    jmp c424d                                                         ; 4245: 4c 4d 42
+    jmp check_for_bowl_stick_collision                                ; 4245: 4c 4d 42
 
-c4248
+set_move_left_after_collision
     lda #$fa                                                          ; 4248: a9 fa
     sta player_wall_collision_reaction_speed                          ; 424a: 8d 33 24
-c424d
+check_for_bowl_stick_collision
     lda #6                                                            ; 424d: a9 06
     sta temp_left_offset                                              ; 424f: 8d d0 24
     ldx #objectid_bowl                                                ; 4252: a2 02
@@ -1867,10 +1868,6 @@ pydis_end
 ;     c4183
 ;     c4191
 ;     c419d
-;     c41ea
-;     c41fc
-;     c4248
-;     c424d
 ;     c436a
 ;     c4388
 ;     c438b
