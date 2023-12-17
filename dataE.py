@@ -111,6 +111,8 @@ label(0x460c, "source_sprite_data")
 expr(0x3b2c, make_lo("source_sprite_data"))
 expr(0x3b30, make_hi("source_sprite_data"))
 
+entry(0x3c0b, "draw_sprite_nest_at_cell_xy_and_write_to_collision_map")
+expr(0x3c14, sprite_dict)
 comment(0x3cee, "check for first update in room (branch if not)")
 comment(0x3cfa, "check for level change (branch if not)")
 expr(0x3d48, "objectid_old_player")

@@ -407,12 +407,12 @@ l3b46
     !byte   0,   3,   0, $c8,   0,   4,   0, $c8,   0,   5,   0,   0  ; 3bfa: 00 03 00...
     !byte $c8,   0,   7,   0,   0                                     ; 3c06: c8 00 07...
 
-sub_c3c0b
+draw_sprite_nest_at_cell_xy_and_write_to_collision_map
     lda #3                                                            ; 3c0b: a9 03
     sta width_in_cells                                                ; 3c0d: 85 3c
     lda #1                                                            ; 3c0f: a9 01
     sta height_in_cells                                               ; 3c11: 85 3d
-    lda #$d4                                                          ; 3c13: a9 d4
+    lda #spriteid_nest                                                ; 3c13: a9 d4
     jmp draw_sprite_a_at_cell_xy_and_write_to_collision_map           ; 3c15: 4c 57 1f
 
 ; *************************************************************************************
@@ -523,12 +523,12 @@ room_2_code
     jsr draw_floor_walls_and_ceiling_around_solid_rock                ; 3c92: 20 90 1b
     ldx #3                                                            ; 3c95: a2 03
     ldy #$0b                                                          ; 3c97: a0 0b
-    jsr sub_c3c0b                                                     ; 3c99: 20 0b 3c
+    jsr draw_sprite_nest_at_cell_xy_and_write_to_collision_map        ; 3c99: 20 0b 3c
     ldx #$22 ; '"'                                                    ; 3c9c: a2 22
-    jsr sub_c3c0b                                                     ; 3c9e: 20 0b 3c
+    jsr draw_sprite_nest_at_cell_xy_and_write_to_collision_map        ; 3c9e: 20 0b 3c
     ldx #$17                                                          ; 3ca1: a2 17
     ldy #$0e                                                          ; 3ca3: a0 0e
-    jsr sub_c3c0b                                                     ; 3ca5: 20 0b 3c
+    jsr draw_sprite_nest_at_cell_xy_and_write_to_collision_map        ; 3ca5: 20 0b 3c
     ldx #$13                                                          ; 3ca8: a2 13
     ldy #9                                                            ; 3caa: a0 09
     lda #1                                                            ; 3cac: a9 01
@@ -795,9 +795,9 @@ room_3_code
     jsr draw_floor_walls_and_ceiling_around_solid_rock                ; 3e62: 20 90 1b
     ldx #$0b                                                          ; 3e65: a2 0b
     ldy #$0e                                                          ; 3e67: a0 0e
-    jsr sub_c3c0b                                                     ; 3e69: 20 0b 3c
+    jsr draw_sprite_nest_at_cell_xy_and_write_to_collision_map        ; 3e69: 20 0b 3c
     ldx #$1a                                                          ; 3e6c: a2 1a
-    jsr sub_c3c0b                                                     ; 3e6e: 20 0b 3c
+    jsr draw_sprite_nest_at_cell_xy_and_write_to_collision_map        ; 3e6e: 20 0b 3c
     ldx #3                                                            ; 3e71: a2 03
     ldy #2                                                            ; 3e73: a0 02
     lda #1                                                            ; 3e75: a9 01
@@ -1098,12 +1098,12 @@ room_0_code
     jsr draw_floor_walls_and_ceiling_around_solid_rock                ; 4064: 20 90 1b
     ldx #3                                                            ; 4067: a2 03
     ldy #8                                                            ; 4069: a0 08
-    jsr sub_c3c0b                                                     ; 406b: 20 0b 3c
+    jsr draw_sprite_nest_at_cell_xy_and_write_to_collision_map        ; 406b: 20 0b 3c
     ldx #$1a                                                          ; 406e: a2 1a
-    jsr sub_c3c0b                                                     ; 4070: 20 0b 3c
+    jsr draw_sprite_nest_at_cell_xy_and_write_to_collision_map        ; 4070: 20 0b 3c
     ldx #$22 ; '"'                                                    ; 4073: a2 22
     ldy #$0a                                                          ; 4075: a0 0a
-    jsr sub_c3c0b                                                     ; 4077: 20 0b 3c
+    jsr draw_sprite_nest_at_cell_xy_and_write_to_collision_map        ; 4077: 20 0b 3c
 ; draw rope at (8,2) length 18
     ldx #8                                                            ; 407a: a2 08
     ldy #2                                                            ; 407c: a0 02
@@ -1641,13 +1641,13 @@ room_1_code
     jsr draw_floor_walls_and_ceiling_around_solid_rock                ; 440b: 20 90 1b
     ldx #$0d                                                          ; 440e: a2 0d
     ldy #$0d                                                          ; 4410: a0 0d
-    jsr sub_c3c0b                                                     ; 4412: 20 0b 3c
+    jsr draw_sprite_nest_at_cell_xy_and_write_to_collision_map        ; 4412: 20 0b 3c
     ldx #$14                                                          ; 4415: a2 14
     ldy #6                                                            ; 4417: a0 06
-    jsr sub_c3c0b                                                     ; 4419: 20 0b 3c
+    jsr draw_sprite_nest_at_cell_xy_and_write_to_collision_map        ; 4419: 20 0b 3c
     ldx #$22 ; '"'                                                    ; 441c: a2 22
     ldy #$0d                                                          ; 441e: a0 0d
-    jsr sub_c3c0b                                                     ; 4420: 20 0b 3c
+    jsr draw_sprite_nest_at_cell_xy_and_write_to_collision_map        ; 4420: 20 0b 3c
 ; draw rope at (31,2) length 18
     ldx #$1f                                                          ; 4423: a2 1f
     ldy #2                                                            ; 4425: a0 02
@@ -2060,7 +2060,6 @@ pydis_end
 ;     l4389
 ;     l438a
 ;     l438b
-;     sub_c3c0b
 ;     sub_c433b
 !if (<envelope1) != $d8 {
     !error "Assertion failed: <envelope1 == $d8"
@@ -2292,6 +2291,9 @@ pydis_end
 }
 !if (spriteid_large_egg_upright) != $db {
     !error "Assertion failed: spriteid_large_egg_upright == $db"
+}
+!if (spriteid_nest) != $d4 {
+    !error "Assertion failed: spriteid_nest == $d4"
 }
 !if (spriteid_one_pixel_masked_out) != $00 {
     !error "Assertion failed: spriteid_one_pixel_masked_out == $00"
