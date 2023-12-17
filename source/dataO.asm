@@ -1,3 +1,64 @@
+; *************************************************************************************
+;
+; Level O: 'DOWN-AND-OUT'
+;
+; Save game variables:
+;
+;     save_game_level_o_bowl_progress                            ($0a55):
+;              $0: untouched
+;              $1: stationary
+;             $2+: animating
+;             $ff: taken
+;
+;     save_game_level_o_bowl_animation_step                      ($0a56):
+;             current step within bowl animations above
+;
+;     save_game_level_o_bowl_x_low                               ($0a57):
+;     save_game_level_o_bowl_x_high                              ($0a58):
+;     save_game_level_o_bowl_y                                   ($0a59):
+;             position of bowl in level
+;
+;     save_game_level_o_bowl_direction_without_bounces           ($0a5a):
+;             direction the bowl was thrown in
+;
+;     save_game_level_o_bowl_room                                ($0a5b):
+;             which room the bowl is in
+;
+;     save_game_level_o_bowl_direction_with_bounces              ($0a5c):
+;             direction of bowl including any bounces off walls
+;
+;     save_game_level_o_bowl_is_full_flag                        ($0a5d):
+;              $0: empty
+;             $ff: full (of TNT)
+;
+;     save_game_level_o_trapdoor_y                               ($0a5e):
+;             Y coordinate of trapdoor
+;
+;     save_game_level_o_tnt_barrel_animation_step                ($0a5f):
+;              $0: untouched
+;              $1: falling
+;              $2: fallen over
+;
+;     save_game_level_o_holding_stick                            ($0a60):
+;              $0: not holding stick
+;             $ff: holding stick
+;
+;     save_game_level_o_trapdoor_open_flag                       ($0a61):
+;              $0: closed
+;             $ff: open
+;
+; Solution:
+;
+;   1. Move into the room to the left, and get the bowl (bottom left of the screen)
+;   2. Move back to the start room and climb the rope, dropping down the other side and collecting the stick.
+;   3. In the room to the right, jump into the side of the barrel to tip it over.
+;   4. Drop the bowl onto the spilled TNT to fill the bowl. Recollect the bowl.
+;   5. Retrace your steps back to the room left of the start. Climb the rope and proceed into the leftmost room.
+;   6. Drop the full bowl onto the trapdoor. Use the stick in the fire bowl (in the room to the right) to light the taper.
+;   7. Use the stick on the bowl to explode the trapdoor and go 'down and out' to the spell.
+;
+; *************************************************************************************
+
 ; Constants
 collision_map_none                    = 0
 collision_map_out_of_bounds           = 255
@@ -1293,6 +1354,7 @@ room_2_update_handler
     beq room_changed_only1                                            ; 4147: f0 05
     lda #$ff                                                          ; 4149: a9 ff
     sta save_game_level_o_holding_stick                               ; 414b: 8d 60 0a
+; There is no object with id 5, so these instructions are redundant
 room_changed_only1
     lda #spriteid_erase4b                                             ; 414e: a9 db
     sta object_erase_type + 5                                         ; 4150: 8d b1 38

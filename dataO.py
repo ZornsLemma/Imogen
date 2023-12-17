@@ -293,7 +293,10 @@ expr(0x413a, sprite_dict)
 expr(0x413c, "collectable_being_used_spriteids + 3")
 comment(0x413e, "check for level change (branch if not)")
 label(0x414e, "room_changed_only1")
+comment(0x414e, "There is no object with id 5, so these instructions are redundant")
 expr(0x414f, sprite_dict)
+expr(0x4151, "object_erase_type + 5")
+expr(0x4156, "object_z_order + 5")
 expr(0x4159, sprite_dict)
 expr(0x415b, "object_erase_type + objectid_explosion")
 expr(0x4160, "object_z_order + objectid_explosion")
@@ -413,9 +416,67 @@ label(0x4465, "play_explosion_or_barrel_overturning_sound")
 ldx_ldy_jsr_play_sound_yx(0x446b, "sound4")
 ldx_ldy_jsr_play_sound_yx(0x4472, "sound5")
 
-# TODO: replace "+ n" with "+ objectid_*" once objects have been named
-expr(0x4151, "object_erase_type + 5")
-expr(0x4156, "object_z_order + 5")
+print("""; *************************************************************************************
+;
+; Level O: 'DOWN-AND-OUT'
+;
+; Save game variables:
+;
+;     save_game_level_o_bowl_progress                            ($0a55):
+;              $0: untouched
+;              $1: stationary
+;             $2+: animating
+;             $ff: taken
+;
+;     save_game_level_o_bowl_animation_step                      ($0a56):
+;             current step within bowl animations above
+;
+;     save_game_level_o_bowl_x_low                               ($0a57):
+;     save_game_level_o_bowl_x_high                              ($0a58):
+;     save_game_level_o_bowl_y                                   ($0a59):
+;             position of bowl in level
+;
+;     save_game_level_o_bowl_direction_without_bounces           ($0a5a):
+;             direction the bowl was thrown in
+;
+;     save_game_level_o_bowl_room                                ($0a5b):
+;             which room the bowl is in
+;
+;     save_game_level_o_bowl_direction_with_bounces              ($0a5c):
+;             direction of bowl including any bounces off walls
+;
+;     save_game_level_o_bowl_is_full_flag                        ($0a5d):
+;              $0: empty
+;             $ff: full (of TNT)
+;
+;     save_game_level_o_trapdoor_y                               ($0a5e):
+;             Y coordinate of trapdoor
+;
+;     save_game_level_o_tnt_barrel_animation_step                ($0a5f):
+;              $0: untouched
+;              $1: falling
+;              $2: fallen over
+;
+;     save_game_level_o_holding_stick                            ($0a60):
+;              $0: not holding stick
+;             $ff: holding stick
+;
+;     save_game_level_o_trapdoor_open_flag                       ($0a61):
+;              $0: closed
+;             $ff: open
+;
+; Solution:
+;
+;   1. Move into the room to the left, and get the bowl (bottom left of the screen)
+;   2. Move back to the start room and climb the rope, dropping down the other side and collecting the stick.
+;   3. In the room to the right, jump into the side of the barrel to tip it over.
+;   4. Drop the bowl onto the spilled TNT to fill the bowl. Recollect the bowl.
+;   5. Retrace your steps back to the room left of the start. Climb the rope and proceed into the leftmost room.
+;   6. Drop the full bowl onto the trapdoor. Use the stick in the fire bowl (in the room to the right) to light the taper.
+;   7. Use the stick on the bowl to explode the trapdoor and go 'down and out' to the spell.
+;
+; *************************************************************************************
+""")
 
 result = go(False)
 result = remove_sprite_data(result)
