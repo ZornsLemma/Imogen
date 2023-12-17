@@ -644,10 +644,10 @@ c3d6f
 c3d85
     lda save_game_level_e_duck_global_x_position                      ; 3d85: ad 15 0a
     cmp #duck_min_global_x_position                                   ; 3d88: c9 1e
-    beq c3d90                                                         ; 3d8a: f0 04
+    beq duck_hit_min_or_max_global_x_position                         ; 3d8a: f0 04
     cmp #duck_max_global_x_position                                   ; 3d8c: c9 74
     bne c3d95                                                         ; 3d8e: d0 05
-c3d90
+duck_hit_min_or_max_global_x_position
     lda #0                                                            ; 3d90: a9 00
     sta duck_x_direction                                              ; 3d92: 8d 7a 0a
 c3d95
@@ -2001,7 +2001,6 @@ pydis_end
 ;     c3d64
 ;     c3d6f
 ;     c3d85
-;     c3d90
 ;     c3d95
 ;     c3d9f
 ;     c3db7
