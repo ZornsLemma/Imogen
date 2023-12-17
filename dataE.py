@@ -58,6 +58,7 @@ label(0xa75, "room_containing_small_egg") # TODO: speculation
 label(0xa76, "egg_animation_index")
 label(0xa77, "room_1_egg_x")
 label(0xa78, "room_1_egg_y")
+label(0xa7a, "duck_x_direction") # $ff (-1), 0 or 1
 label(0xa7b, "duck_wing_animation_index")
 
 common_to_all('E')

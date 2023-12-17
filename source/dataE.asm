@@ -216,7 +216,7 @@ egg_animation_index                                 = $0a76
 room_1_egg_x                                        = $0a77
 room_1_egg_y                                        = $0a78
 l0a79                                               = $0a79
-l0a7a                                               = $0a7a
+duck_x_direction                                    = $0a7a
 duck_wing_animation_index                           = $0a7b
 tile_all_set_pixels                                 = $0aa9
 developer_flags                                     = $1103
@@ -580,7 +580,7 @@ room_2_update_handler
     sta save_game_level_e_duck_captured_flag                          ; 3d02: 8d 15 0a
     lda #$ff                                                          ; 3d05: a9 ff
     sta l0a79                                                         ; 3d07: 8d 79 0a
-    sta l0a7a                                                         ; 3d0a: 8d 7a 0a
+    sta duck_x_direction                                              ; 3d0a: 8d 7a 0a
     lda #0                                                            ; 3d0d: a9 00
     sta duck_wing_animation_index                                     ; 3d0f: 8d 7b 0a
 c3d12
@@ -631,12 +631,12 @@ c3d64
     ldy #0                                                            ; 3d6d: a0 00
 c3d6f
     sty duck_wing_animation_index                                     ; 3d6f: 8c 7b 0a
-    lda l0a7a                                                         ; 3d72: ad 7a 0a
+    lda duck_x_direction                                              ; 3d72: ad 7a 0a
     bne c3d85                                                         ; 3d75: d0 0e
     lda l0a79                                                         ; 3d77: ad 79 0a
     eor #$fe                                                          ; 3d7a: 49 fe
     sta l0a79                                                         ; 3d7c: 8d 79 0a
-    sta l0a7a                                                         ; 3d7f: 8d 7a 0a
+    sta duck_x_direction                                              ; 3d7f: 8d 7a 0a
     jmp c3d95                                                         ; 3d82: 4c 95 3d
 
 c3d85
@@ -647,11 +647,11 @@ c3d85
     bne c3d95                                                         ; 3d8e: d0 05
 c3d90
     lda #0                                                            ; 3d90: a9 00
-    sta l0a7a                                                         ; 3d92: 8d 7a 0a
+    sta duck_x_direction                                              ; 3d92: 8d 7a 0a
 c3d95
     lda save_game_level_e_duck_captured_flag                          ; 3d95: ad 15 0a
     clc                                                               ; 3d98: 18
-    adc l0a7a                                                         ; 3d99: 6d 7a 0a
+    adc duck_x_direction                                              ; 3d99: 6d 7a 0a
     sta save_game_level_e_duck_captured_flag                          ; 3d9c: 8d 15 0a
 c3d9f
     lda save_game_level_e_duck_captured_flag                          ; 3d9f: ad 15 0a
@@ -662,7 +662,7 @@ c3d9f
     cmp #3                                                            ; 3daa: c9 03
     bcs return1                                                       ; 3dac: b0 48
     lda #$c9                                                          ; 3dae: a9 c9
-    ldx l0a7a                                                         ; 3db0: ae 7a 0a
+    ldx duck_x_direction                                              ; 3db0: ae 7a 0a
     bne c3db7                                                         ; 3db3: d0 02
     lda #$ca                                                          ; 3db5: a9 ca
 c3db7
@@ -2042,7 +2042,6 @@ pydis_end
 ;     l0023
 ;     l09d4
 ;     l0a79
-;     l0a7a
 ;     l2200
 ;     l2248
 ;     l22ed
