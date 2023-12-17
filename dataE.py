@@ -61,6 +61,7 @@ label(0xa78, "room_1_egg_y")
 label(0xa7a, "duck_x_direction") # $ff (-1), 0 or 1
 label(0xa7b, "duck_wing_animation_index")
 
+
 common_to_all('E')
 define_level(4)
 
@@ -117,6 +118,10 @@ expr(0x3c14, sprite_dict)
 comment(0x3cee, "check for first update in room (branch if not)")
 comment(0x3cfa, "check for level change (branch if not)")
 expr(0x3d48, "objectid_old_player")
+constant(0x1e, "duck_min_global_x_position")
+constant(0x74, "duck_max_global_x_position")
+expr(0x3d89, "duck_min_global_x_position")
+expr(0x3d8d, "duck_max_global_x_position")
 label(0x3df6, "return1")
 comment(0x4099, "TODO: table with entries in groups of three bytes, probably similar to the table in the other level")
 comment(0x40dd, "check for first update in room (branch if so)")

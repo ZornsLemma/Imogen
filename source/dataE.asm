@@ -12,6 +12,8 @@ copy_mode_random4                     = 4
 copy_mode_random64                    = 64
 copy_mode_random8                     = 8
 copy_mode_simple                      = 1
+duck_max_global_x_position            = 116
+duck_min_global_x_position            = 30
 exit_room_bottom                      = 2
 exit_room_left                        = 1
 exit_room_right                       = 4
@@ -641,9 +643,9 @@ c3d6f
 
 c3d85
     lda save_game_level_e_duck_global_x_position                      ; 3d85: ad 15 0a
-    cmp #$1e                                                          ; 3d88: c9 1e
+    cmp #duck_min_global_x_position                                   ; 3d88: c9 1e
     beq c3d90                                                         ; 3d8a: f0 04
-    cmp #$74 ; 't'                                                    ; 3d8c: c9 74
+    cmp #duck_max_global_x_position                                   ; 3d8c: c9 74
     bne c3d95                                                         ; 3d8e: d0 05
 c3d90
     lda #0                                                            ; 3d90: a9 00
@@ -2107,6 +2109,12 @@ pydis_end
 }
 !if (collision_map_solid_rock) != $03 {
     !error "Assertion failed: collision_map_solid_rock == $03"
+}
+!if (duck_max_global_x_position) != $74 {
+    !error "Assertion failed: duck_max_global_x_position == $74"
+}
+!if (duck_min_global_x_position) != $1e {
+    !error "Assertion failed: duck_min_global_x_position == $1e"
 }
 !if (egg_animation_subseq1 - egg_animations_table) != $09 {
     !error "Assertion failed: egg_animation_subseq1 - egg_animations_table == $09"
