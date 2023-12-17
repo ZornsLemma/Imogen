@@ -50,7 +50,7 @@ constant(0xc, "small_egg_status_being_thrown")
 constant(0x32, "small_egg_status_falling")
 constant(0xff, "small_egg_status_collected") # probably only b7 set actually matters
 label(0x0a14, "save_game_level_e_big_egg_animation_index") # TODO: other uses? not checked yet? egg state slightly speculative but prob right
-label(0x0a15, "save_game_level_e_duck_captured_flag") # TODO: might be used for other things too, not checked yet
+label(0x0a15, "save_game_level_e_duck_global_x_position") # X position within the duck's cross-screen flight path, not on screen - $ff means duck has been captured
 
 label(0xa73, "thrown_egg_direction")
 label(0xa74, "small_egg_animation_table_index")

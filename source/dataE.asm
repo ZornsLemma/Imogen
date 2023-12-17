@@ -201,7 +201,7 @@ l09d4                                               = $09d4
 current_player_animation                            = $09df
 save_game_level_e_small_egg_status                  = $0a13
 save_game_level_e_big_egg_animation_index           = $0a14
-save_game_level_e_duck_captured_flag                = $0a15
+save_game_level_e_duck_global_x_position            = $0a15
 level_workspace_small_egg_offscreen_time            = $0a6f
 l0a70                                               = $0a70
 thrown_egg_x_low                                    = $0a70
@@ -350,7 +350,7 @@ developer_mode_not_active
     lda #spriteid_egg_toolbar                                         ; 3b10: a9 d3
     jsr find_or_create_menu_slot_for_A                                ; 3b12: 20 bd 2b
 dont_have_egg
-    lda save_game_level_e_duck_captured_flag                          ; 3b15: ad 15 0a
+    lda save_game_level_e_duck_global_x_position                      ; 3b15: ad 15 0a
     cmp #$ff                                                          ; 3b18: c9 ff
     bne duck_not_captured_yet                                         ; 3b1a: d0 05
     lda #spriteid_duck_toolbar                                        ; 3b1c: a9 d1
@@ -569,7 +569,7 @@ room_2_update_handler
 ; check for first update in room (branch if not)
     lda update_room_first_update_flag                                 ; 3cee: ad 2b 13
     beq room_2_not_first_update                                       ; 3cf1: f0 47
-    lda save_game_level_e_duck_captured_flag                          ; 3cf3: ad 15 0a
+    lda save_game_level_e_duck_global_x_position                      ; 3cf3: ad 15 0a
     cmp #$ff                                                          ; 3cf6: c9 ff
     beq c3d34                                                         ; 3cf8: f0 3a
 ; check for level change (branch if not)
@@ -577,7 +577,7 @@ room_2_update_handler
     cmp level_before_latest_level_and_room_initialisation             ; 3cfc: c5 51
     beq c3d12                                                         ; 3cfe: f0 12
     lda #$73 ; 's'                                                    ; 3d00: a9 73
-    sta save_game_level_e_duck_captured_flag                          ; 3d02: 8d 15 0a
+    sta save_game_level_e_duck_global_x_position                      ; 3d02: 8d 15 0a
     lda #$ff                                                          ; 3d05: a9 ff
     sta l0a79                                                         ; 3d07: 8d 79 0a
     sta duck_x_direction                                              ; 3d0a: 8d 7a 0a
@@ -605,7 +605,7 @@ c3d37
     jmp return1                                                       ; 3d37: 4c f6 3d
 
 room_2_not_first_update
-    lda save_game_level_e_duck_captured_flag                          ; 3d3a: ad 15 0a
+    lda save_game_level_e_duck_global_x_position                      ; 3d3a: ad 15 0a
     cmp #$ff                                                          ; 3d3d: c9 ff
     beq c3d37                                                         ; 3d3f: f0 f6
     lda desired_room_index                                            ; 3d41: a5 30
@@ -621,7 +621,7 @@ room_2_not_first_update
     sta object_spriteid + 4                                           ; 3d57: 8d ac 09
     sta object_spriteid + 5                                           ; 3d5a: 8d ad 09
     lda #$ff                                                          ; 3d5d: a9 ff
-    sta save_game_level_e_duck_captured_flag                          ; 3d5f: 8d 15 0a
+    sta save_game_level_e_duck_global_x_position                      ; 3d5f: 8d 15 0a
     bmi c3d37                                                         ; 3d62: 30 d3
 c3d64
     ldy duck_wing_animation_index                                     ; 3d64: ac 7b 0a
@@ -640,7 +640,7 @@ c3d6f
     jmp c3d95                                                         ; 3d82: 4c 95 3d
 
 c3d85
-    lda save_game_level_e_duck_captured_flag                          ; 3d85: ad 15 0a
+    lda save_game_level_e_duck_global_x_position                      ; 3d85: ad 15 0a
     cmp #$1e                                                          ; 3d88: c9 1e
     beq c3d90                                                         ; 3d8a: f0 04
     cmp #$74 ; 't'                                                    ; 3d8c: c9 74
@@ -649,12 +649,12 @@ c3d90
     lda #0                                                            ; 3d90: a9 00
     sta duck_x_direction                                              ; 3d92: 8d 7a 0a
 c3d95
-    lda save_game_level_e_duck_captured_flag                          ; 3d95: ad 15 0a
+    lda save_game_level_e_duck_global_x_position                      ; 3d95: ad 15 0a
     clc                                                               ; 3d98: 18
     adc duck_x_direction                                              ; 3d99: 6d 7a 0a
-    sta save_game_level_e_duck_captured_flag                          ; 3d9c: 8d 15 0a
+    sta save_game_level_e_duck_global_x_position                      ; 3d9c: 8d 15 0a
 c3d9f
-    lda save_game_level_e_duck_captured_flag                          ; 3d9f: ad 15 0a
+    lda save_game_level_e_duck_global_x_position                      ; 3d9f: ad 15 0a
     cmp #$ff                                                          ; 3da2: c9 ff
     beq return1                                                       ; 3da4: f0 50
     lda desired_room_index                                            ; 3da6: a5 30
@@ -670,7 +670,7 @@ c3db7
     ldy duck_wing_animation_index                                     ; 3dba: ac 7b 0a
     lda duck_wing_animation_table,y                                   ; 3dbd: b9 40 3b
     sta object_spriteid + 5                                           ; 3dc0: 8d ad 09
-    lda save_game_level_e_duck_captured_flag                          ; 3dc3: ad 15 0a
+    lda save_game_level_e_duck_global_x_position                      ; 3dc3: ad 15 0a
     ldx desired_room_index                                            ; 3dc6: a6 30
     cpx #2                                                            ; 3dc8: e0 02
     beq c3dcf                                                         ; 3dca: f0 03
