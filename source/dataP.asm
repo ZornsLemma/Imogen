@@ -25,13 +25,15 @@ object_collided_floor                 = 2
 object_collided_left_wall             = 1
 object_collided_right_wall            = 4
 objectid_cane                         = 7
-objectid_fire                         = 3
+objectid_fire1                        = 3
+objectid_fire2                        = 4
 objectid_hook1                        = 3
 objectid_hook2                        = 5
 objectid_hook3                        = 6
 objectid_magnet                       = 3
 objectid_old_player                   = 11
 objectid_old_player_accessory         = 12
+objectid_old_ring                     = 13
 objectid_player                       = 0
 objectid_player_accessory             = 1
 objectid_ring                         = 2
@@ -479,12 +481,13 @@ room_1_check_right_exit
 room_1_update_handler
     lda #1                                                            ; 3bc3: a9 01
     sta currently_updating_logic_for_room_index                       ; 3bc5: 8d ba 1a
+; update braziers
     ldx #$14                                                          ; 3bc8: a2 14
     ldy #$0a                                                          ; 3bca: a0 0a
-    lda #objectid_fire                                                ; 3bcc: a9 03
+    lda #objectid_fire1                                               ; 3bcc: a9 03
     jsr update_brazier_and_fire                                       ; 3bce: 20 88 19
     inx                                                               ; 3bd1: e8
-    lda #4                                                            ; 3bd2: a9 04
+    lda #objectid_fire2                                               ; 3bd2: a9 04
     jsr update_brazier_and_fire                                       ; 3bd4: 20 88 19
 ; check for first update in room (branch if not)
     lda update_room_first_update_flag                                 ; 3bd7: ad 2b 13
@@ -542,8 +545,8 @@ c3c36
     bne set_ring_sprites                                              ; 3c45: d0 3f
     lda save_game_level_p_ring_direction_with_bounces                 ; 3c47: ad 67 0a
     bmi set_ring_sprites                                              ; 3c4a: 30 3a
-    ldx #5                                                            ; 3c4c: a2 05
-    jsr sub_c3e56                                                     ; 3c4e: 20 56 3e
+    ldx #objectid_hook2                                               ; 3c4c: a2 05
+    jsr check_for_hook_x_collision_with_ring                          ; 3c4e: 20 56 3e
     beq c3c60                                                         ; 3c51: f0 0d
     lda #spriteid_one_pixel_masked_out                                ; 3c53: a9 00
     sta object_spriteid + objectid_ring                               ; 3c55: 8d aa 09
@@ -555,8 +558,8 @@ c3c60
     jmp set_ring_sprites                                              ; 3c60: 4c 86 3c
 
 ; unused code
-    ldx #6                                                            ; 3c63: a2 06
-    jsr sub_c3e56                                                     ; 3c65: 20 56 3e
+    ldx #objectid_hook3                                               ; 3c63: a2 06
+    jsr check_for_hook_x_collision_with_ring                          ; 3c65: 20 56 3e
     beq set_ring_sprites                                              ; 3c68: f0 1c
     lda #spriteid_one_pixel_masked_out                                ; 3c6a: a9 00
     sta object_spriteid + objectid_ring                               ; 3c6c: 8d aa 09
@@ -826,8 +829,8 @@ c3e04
     bcc c3e53                                                         ; 3e0f: 90 42
     lda save_game_level_p_ring_direction_with_bounces                 ; 3e11: ad 67 0a
     bmi c3e53                                                         ; 3e14: 30 3d
-    ldx #3                                                            ; 3e16: a2 03
-    jsr sub_c3e56                                                     ; 3e18: 20 56 3e
+    ldx #objectid_hook1                                               ; 3e16: a2 03
+    jsr check_for_hook_x_collision_with_ring                          ; 3e18: 20 56 3e
     beq c3e36                                                         ; 3e1b: f0 19
     lda #spriteid_one_pixel_masked_out                                ; 3e1d: a9 00
     sta object_spriteid + objectid_ring                               ; 3e1f: 8d aa 09
@@ -841,8 +844,8 @@ c3e04
     jmp c3f03                                                         ; 3e33: 4c 03 3f
 
 c3e36
-    ldx #5                                                            ; 3e36: a2 05
-    jsr sub_c3e56                                                     ; 3e38: 20 56 3e
+    ldx #objectid_hook2                                               ; 3e36: a2 05
+    jsr check_for_hook_x_collision_with_ring                          ; 3e38: 20 56 3e
     beq c3e53                                                         ; 3e3b: f0 16
     lda #spriteid_one_pixel_masked_out                                ; 3e3d: a9 00
     sta object_spriteid + objectid_ring                               ; 3e3f: 8d aa 09
@@ -856,7 +859,7 @@ c3e36
 c3e53
     jmp c3f03                                                         ; 3e53: 4c 03 3f
 
-sub_c3e56
+check_for_hook_x_collision_with_ring
     lda #7                                                            ; 3e56: a9 07
     sta temp_top_offset                                               ; 3e58: 8d 50 25
     lda #$fa                                                          ; 3e5b: a9 fa
@@ -865,11 +868,11 @@ sub_c3e56
     sta temp_left_offset                                              ; 3e62: 8d d0 24
     lda #$f9                                                          ; 3e65: a9 f9
     sta temp_right_offset                                             ; 3e67: 8d d1 24
-    ldy #$0d                                                          ; 3e6a: a0 0d
+    ldy #objectid_old_ring                                            ; 3e6a: a0 0d
     jsr test_for_collision_between_objects_x_and_y                    ; 3e6c: 20 e2 28
     pha                                                               ; 3e6f: 48
     beq c3e75                                                         ; 3e70: f0 03
-    jsr sub_c3faf                                                     ; 3e72: 20 af 3f
+    jsr play_ring_sound                                               ; 3e72: 20 af 3f
 c3e75
     pla                                                               ; 3e75: 68
     rts                                                               ; 3e76: 60
@@ -1040,7 +1043,7 @@ c3f91
 return4
     rts                                                               ; 3fae: 60
 
-sub_c3faf
+play_ring_sound
     lda #0                                                            ; 3faf: a9 00
     ldx #<sound2                                                      ; 3fb1: a2 14
     ldy #>sound2                                                      ; 3fb3: a0 46
@@ -1378,7 +1381,7 @@ c4174
     sta save_game_level_p_ring_animation                              ; 4199: 8d 62 0a
     lda #spriteid_one_pixel_masked_out                                ; 419c: a9 00
     sta object_spriteid + objectid_ring                               ; 419e: 8d aa 09
-    jsr sub_c3faf                                                     ; 41a1: 20 af 3f
+    jsr play_ring_sound                                               ; 41a1: 20 af 3f
 return5
     rts                                                               ; 41a4: 60
 
@@ -1636,7 +1639,7 @@ loop_c4362
     dec level_workspace                                               ; 436e: ce 6f 0a
     ldx #objectid_ring                                                ; 4371: a2 02
     jsr copy_object_state_to_old                                      ; 4373: 20 f7 20
-    jsr sub_c4490                                                     ; 4376: 20 90 44
+    jsr update_ring_animation                                         ; 4376: 20 90 44
     jmp loop_c4362                                                    ; 4379: 4c 62 43
 
 c437c
@@ -1693,7 +1696,7 @@ c43af
     lda #0                                                            ; 43f4: a9 00
     sta player_held_object_spriteid                                   ; 43f6: 85 52
 c43f8
-    jsr sub_c4490                                                     ; 43f8: 20 90 44
+    jsr update_ring_animation                                         ; 43f8: 20 90 44
     lda desired_room_index                                            ; 43fb: a5 30
     cmp save_game_level_p_ring_room                                   ; 43fd: cd 68 0a
     beq c4407                                                         ; 4400: f0 05
@@ -1734,58 +1737,58 @@ c4439
 c444d
     lda object_x_low + objectid_ring                                  ; 444d: ad 52 09
     cmp object_x_low_old + objectid_ring                              ; 4450: cd 5d 09
-    beq c4475                                                         ; 4453: f0 20
+    beq check_ring_movement_in_y                                      ; 4453: f0 20
     lda save_game_level_p_ring_direction_with_bounces                 ; 4455: ad 67 0a
-    bmi c4460                                                         ; 4458: 30 06
+    bmi ring_moving_left1                                             ; 4458: 30 06
     inc temp_right_offset                                             ; 445a: ee d1 24
     jmp c4463                                                         ; 445d: 4c 63 44
 
-c4460
+ring_moving_left1
     dec temp_left_offset                                              ; 4460: ce d0 24
 c4463
     lda #1                                                            ; 4463: a9 01
     sta temp_bottom_offset                                            ; 4465: 8d 51 25
-    lda #2                                                            ; 4468: a9 02
+    lda #objectid_ring                                                ; 4468: a9 02
     jsr get_solid_rock_collision_for_object_a                         ; 446a: 20 94 28
-    beq c4475                                                         ; 446d: f0 06
-    jsr sub_c3faf                                                     ; 446f: 20 af 3f
+    beq check_ring_movement_in_y                                      ; 446d: f0 06
+    jsr play_ring_sound                                               ; 446f: 20 af 3f
     jmp return7                                                       ; 4472: 4c 8f 44
 
-c4475
+check_ring_movement_in_y
     lda object_y_low + objectid_ring                                  ; 4475: ad 7e 09
     cmp object_y_low_old + objectid_ring                              ; 4478: cd 89 09
     beq return7                                                       ; 447b: f0 12
     dec temp_top_offset                                               ; 447d: ce 50 25
     lda #2                                                            ; 4480: a9 02
     sta temp_bottom_offset                                            ; 4482: 8d 51 25
-    lda #2                                                            ; 4485: a9 02
+    lda #objectid_ring                                                ; 4485: a9 02
     jsr get_solid_rock_collision_for_object_a                         ; 4487: 20 94 28
     beq return7                                                       ; 448a: f0 03
-    jsr sub_c3faf                                                     ; 448c: 20 af 3f
+    jsr play_ring_sound                                               ; 448c: 20 af 3f
 return7
     rts                                                               ; 448f: 60
 
-sub_c4490
+update_ring_animation
     lda save_game_level_p_ring_animation_step                         ; 4490: ad 63 0a
     clc                                                               ; 4493: 18
     adc #2                                                            ; 4494: 69 02
     tay                                                               ; 4496: a8
     lda ring_animations,y                                             ; 4497: b9 f3 42
     cmp #$80                                                          ; 449a: c9 80
-    bne c44a1                                                         ; 449c: d0 03
+    bne got_next_ring_animation_step_in_y                             ; 449c: d0 03
     ldy save_game_level_p_ring_animation                              ; 449e: ac 62 0a
-c44a1
+got_next_ring_animation_step_in_y
     lda save_game_level_p_ring_direction_with_bounces                 ; 44a1: ad 67 0a
-    bmi c44ac                                                         ; 44a4: 30 06
+    bmi ring_moving_left2                                             ; 44a4: 30 06
     inc temp_right_offset                                             ; 44a6: ee d1 24
-    jmp c44af                                                         ; 44a9: 4c af 44
+    jmp check_for_ring_rock_collision                                 ; 44a9: 4c af 44
 
-c44ac
+ring_moving_left2
     dec temp_left_offset                                              ; 44ac: ce d0 24
-c44af
+check_for_ring_rock_collision
     lda #1                                                            ; 44af: a9 01
     sta temp_bottom_offset                                            ; 44b1: 8d 51 25
-    lda #2                                                            ; 44b4: a9 02
+    lda #objectid_ring                                                ; 44b4: a9 02
     jsr get_solid_rock_collision_for_object_a                         ; 44b6: 20 94 28
     beq c44c3                                                         ; 44b9: f0 08
     lda save_game_level_p_ring_direction_with_bounces                 ; 44bb: ad 67 0a
@@ -2072,12 +2075,7 @@ pydis_end
 ;     c442c
 ;     c4439
 ;     c444d
-;     c4460
 ;     c4463
-;     c4475
-;     c44a1
-;     c44ac
-;     c44af
 ;     c44c3
 ;     c44d9
 ;     c44e0
@@ -2100,13 +2098,10 @@ pydis_end
 ;     loop_c4362
 ;     sub_c3d34
 ;     sub_c3dd7
-;     sub_c3e56
 ;     sub_c3f5f
-;     sub_c3faf
 ;     sub_c40e2
 ;     sub_c41a5
 ;     sub_c4324
-;     sub_c4490
 !if (<envelope1) != $f0 {
     !error "Assertion failed: <envelope1 == $f0"
 }
@@ -2254,8 +2249,11 @@ pydis_end
 !if (object_z_order + objectid_short_rope2) != $38c8 {
     !error "Assertion failed: object_z_order + objectid_short_rope2 == $38c8"
 }
-!if (objectid_fire) != $03 {
-    !error "Assertion failed: objectid_fire == $03"
+!if (objectid_fire1) != $03 {
+    !error "Assertion failed: objectid_fire1 == $03"
+}
+!if (objectid_fire2) != $04 {
+    !error "Assertion failed: objectid_fire2 == $04"
 }
 !if (objectid_hook1) != $03 {
     !error "Assertion failed: objectid_hook1 == $03"
@@ -2271,6 +2269,9 @@ pydis_end
 }
 !if (objectid_old_player) != $0b {
     !error "Assertion failed: objectid_old_player == $0b"
+}
+!if (objectid_old_ring) != $0d {
+    !error "Assertion failed: objectid_old_ring == $0d"
 }
 !if (objectid_player) != $00 {
     !error "Assertion failed: objectid_player == $00"
