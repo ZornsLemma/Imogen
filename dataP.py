@@ -188,10 +188,15 @@ label(0x3dae, "draw_horizontal_rope_loop")
 expr(0x3db8, sprite_dict)
 expr(0x3dbd, "collision_map_solid_rock")
 label(0x3dd4, "set_hook_and_rope_objects_local1")
+label(0x3dd7, "calculate_rope_y_in_cells_and_draw_it")
+label(0x3de1, "draw_right_rope_loop")
 expr(0x3de2, sprite_dict)
 expr(0x3de7, "collision_map_rope")
+label(0x3dec, "draw_right_rope")
+label(0x3df1, "room_2_not_first_update")
 expr(0x3df5, ring_constants)
 expr(0x3df9, ring_constants)
+label(0x3e04, "room_2_left_hook_stationary")
 expr(0x3e0e, "ring_fall_to_side_animation - ring_animations")
 comment(0x3e16, "handle left hook")
 expr(0x3e17, "objectid_room2_left_hook")
@@ -233,6 +238,7 @@ expr(0x3ef4, "object_spriteid + objectid_short_right_rope")
 expr(0x3efc, sprite_dict)
 expr(0x3efe, "object_spriteid + objectid_short_right_rope")
 label(0x3eaa, "add_speed_to_left_hook_y")
+label(0x3f00, "hook_moving_down")
 label(0x3f03, "set_hook_and_rope_objects")
 comment(0x3f09, "update room 2 left hook and rope")
 expr(0x3f0d, "object_y_low + objectid_room2_left_hook")
@@ -253,13 +259,16 @@ expr(0x3f48, "object_spriteid + objectid_room2_right_hook")
 label(0x3f4a, "return3")
 label(0x3f4b, "update_rope_collision_map")
 expr(0x3f54, "collision_map_rope")
+label(0x3f58, "clear_collision_map_of_rope")
 expr(0x3f5a, "collision_map_none")
+label(0x3f5e, "remember_left_hook_speed")
 label(0x3f5f, "check_for_monkey_on_rope")
 expr(0x3f62, "spriteid_icodata_monkey")
 expr(0x3f69, "monkey_climb_animation - monkey_base_animation")
 expr(0x3f6d, "monkey_climb_idle_animation - monkey_base_animation")
 expr(0x3f71, "monkey_climb_down_animation - monkey_base_animation")
 label(0x3f74, "player_is_monkey_on_rope")
+label(0x3f8b, "adding_to_player_y_position_when_on_rope")
 label(0x3f91, "add_ay_to_player_y_position")
 label(0x3fae, "return4")
 label(0x3faf, "play_ring_sound")
@@ -303,12 +312,22 @@ expr(0x419f, "object_spriteid + objectid_ring")
 label(0x41a4, "return5")
 comment(0x41a5, "check for first update in room (branch if not)")
 label(0x41a5, "update_magnet_and_rod")
+ab(0x41be)
+blank(0x41c0)
+label(0x41c0, "set_magnet_fully_right")
+ab(0x41c2)
+blank(0x41c4)
+label(0x41c4, "set_magnet_fully_left")
+label(0x41c6, "set_magnet_x")
+label(0x41ce, "initialise_room")
 expr(0x41d9, sprite_dict)
 label(0x41e1, "draw_horizontal_bar_loop")
 expr(0x41ea, sprite_dict)
 expr(0x41ef, sprite_dict)
 expr(0x41f1, "object_spriteid + objectid_magnet")
 expr(0x41f6, "object_z_order + objectid_short_bar")
+label(0x41f8, "update_magnet_local")
+label(0x41fb, "magnet_and_rod_not_first_update")
 comment(0x41aa, "check for level change (branch if not)")
 comment(0x4200, "magnet is not moving. check for player magnet collision")
 expr(0x4201, "objectid_player")
@@ -431,17 +450,23 @@ label(0x44ac, "ring_moving_left2")
 label(0x44af, "check_for_ring_rock_collision")
 expr(0x44b5, "objectid_ring")
 comment(0x44bb, "bounce the ring by inverting the X direction")
+label(0x44c3, "check_ring_falling_to_side")
 expr(0x44c7, "ring_fall_to_side_animation - ring_animations")
 expr(0x44ce, "objectid_ring")
+label(0x44d9, "ring_collided_so_fall_straight_down")
 expr(0x44da, "ring_straight_down_animation - ring_animations")
 expr(0x44df, "ring_fall_off_edge_animation - ring_animations")
+label(0x44e0, "check_ring_hitting_floor")
 expr(0x44e1, "objectid_ring")
 expr(0x44e9, "ring_straight_down_animation - ring_animations")
 expr(0x44f2, "ring_stationary_animation - ring_animations")
+label(0x44f6, "check_ring_fallen_off_edge_direction")
 expr(0x44fc, "ring_straight_down_animation - ring_animations")
 expr(0x4501, "ring_bounced_off_wall_animation - ring_animations")
 label(0x4510, "store_ring_animation_step")
 expr(0x4517, "ring_stationary_animation - ring_animations")
+label(0x451f, "get_animation_movement_in_x_position")
+label(0x452c, "sign_extend_a_to_ax")
 label(0x4533, "add_ax_to_ring_x_position")
 label(0x454c, "add_ax_to_ring_y_position")
 expr(0x455e, "objectid_ring")
@@ -468,6 +493,9 @@ expr(0x45de, "object_y_high + objectid_ring")
 expr(0x45e1, sprite_dict)
 expr(0x45e3, "object_spriteid + objectid_ring")
 expr(0x45e9, "object_direction + objectid_ring")
+label(0x45ec, "just_used_ring")
+label(0x45ed, "remember_held_object")
+label(0x45ee, "ring_sprite_as_drawn")
 
 print("""; *************************************************************************************
 ;
@@ -488,6 +516,42 @@ print("""; *********************************************************************
 ;             $25: stationary
 ;             $28: bounced off wall
 ;             $ff: taken
+;
+;     save_game_level_p_ring_animation_step                      ($0a63):
+;             step within the animations above
+;
+;     save_game_level_p_ring_x_low                               ($0a64):
+;     save_game_level_p_ring_x_high                              ($0a65):
+;             x position of the ring
+;
+;     save_game_level_p_ring_direction_without_bounces           ($0a66):
+;             direction the ring was thrown in
+;
+;     save_game_level_p_ring_direction_with_bounces              ($0a67):
+;             as above, but including any subsequent bounces off walls
+;
+;     save_game_level_p_ring_room                                ($0a68):
+;             current room containing the ring
+;
+;     save_game_level_p_ring_y_low                               ($0a69):
+;     save_game_level_p_ring_y_high                              ($0a6a):
+;             y position of the ring
+;
+;     save_game_level_p_left_hook_y                              ($0a6b):
+;             y position of the left hook in room 2 ($18 to $78)
+;
+;     save_game_level_p_left_hook_speed                          ($0a6c):
+;              $0: stationary
+;              $4: moving down
+;             $fc: moving up
+;
+;     save_game_level_p_magnet_x                                 ($0a6d):
+;             x position of the magnet on the bar in cells ($0c to $1b)
+;
+;     save_game_level_p_magnet_direction                         ($0a6e):
+;              $0: stationary
+;              $1: moving right
+;             $ff: moving left
 ;
 ; Solution:
 ;
