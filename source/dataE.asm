@@ -1519,7 +1519,7 @@ c4219
     jsr sub_c433b                                                     ; 4219: 20 3b 43
     lda l4389                                                         ; 421c: ad 89 43
     beq return2                                                       ; 421f: f0 0f
-    lda #$d3                                                          ; 4221: a9 d3
+    lda #spriteid_egg_toolbar                                         ; 4221: a9 d3
     jsr remove_item_from_toolbar_menu                                 ; 4223: 20 e0 2b
     lda #0                                                            ; 4226: a9 00
     sta object_spriteid + objectid_player_accessory                   ; 4228: 8d a9 09
@@ -1621,7 +1621,7 @@ adding_positive_value_to_x
     lda thrown_egg_direction                                          ; 42e1: ad 73 0a
     bmi c4302                                                         ; 42e4: 30 1c
     lda object_left_cell_x                                            ; 42e6: a5 78
-    cmp #$28 ; '('                                                    ; 42e8: c9 28
+    cmp #game_area_width_cells                                        ; 42e8: c9 28
     bcc return3                                                       ; 42ea: 90 30
     lda thrown_egg_x_low                                              ; 42ec: ad 70 0a
     sec                                                               ; 42ef: 38
@@ -2357,6 +2357,9 @@ pydis_end
 }
 !if (exit_room_top) != $08 {
     !error "Assertion failed: exit_room_top == $08"
+}
+!if (game_area_width_cells) != $28 {
+    !error "Assertion failed: game_area_width_cells == $28"
 }
 !if (jmp_for_update_extra_player_character + 1) != $22de {
     !error "Assertion failed: jmp_for_update_extra_player_character + 1 == $22de"
