@@ -1,3 +1,20 @@
+; *************************************************************************************
+;
+; Level Q: 'EPILOGUE'
+;
+; Shows a scrolling message to tie in with the back story of Imogen, then displays
+; a copyright message (see 'encoded_message') and 'The End' in large letters (a bitmap).
+; At this point an infinite loop is entered. The player must reset the machine.
+;
+; Unused code:
+; 1. There is code to press a key to restart the game. (Reloading the toolbar etc)
+; 2. There is also code that in developer mode, the up arrow key will pause the scrolling of
+;    the text.
+; 3. There is a short fragment of BASIC code at the end which was probably part of the
+;    original development process.
+;
+; *************************************************************************************
+
 ; Constants
 collision_map_none                   = 0
 collision_map_out_of_bounds          = 255

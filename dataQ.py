@@ -186,6 +186,23 @@ entry(0x3ad9)
 label(0x3cfa, "return1")
 entry(0x42ad)
 
+print("""; *************************************************************************************
+;
+; Level Q: 'EPILOGUE'
+;
+; Shows a scrolling message to tie in with the back story of Imogen, then displays
+; a copyright message (see 'encoded_message') and 'The End' in large letters (a bitmap).
+; At this point an infinite loop is entered. The player must reset the machine.
+;
+; Unused code:
+; 1. There is code to press a key to restart the game. (Reloading the toolbar etc)
+; 2. There is also code that in developer mode, the up arrow key will pause the scrolling of
+;    the text.
+; 3. There is a short fragment of BASIC code at the end which was probably part of the
+;    original development process.
+;
+; *************************************************************************************
+""")
 
 result = go(False)
 result = remove_sprite_data(result)
