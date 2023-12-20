@@ -383,140 +383,199 @@ bird_wing_animation_table
     !byte spriteid_bird_wing_3, spriteid_bird_wing_2                  ; 3b42: d0 cf
     !byte                    0,                    0                  ; 3b44: 00 00
 bird_character_animations
+bird_transition_in_animation
     !byte 0, 0, 0, 0                                                  ; 3b46: 00 00 00...
     !byte spriteid_bird_transform_2                                   ; 3b4a: cd
-    !byte 0, 0, 0                                                     ; 3b4b: 00 00 00
+    !byte 0                                                           ; 3b4b: 00
+    !byte 0                                                           ; 3b4c: 00
+    !byte 0                                                           ; 3b4d: 00
     !byte spriteid_bird_transform_2                                   ; 3b4e: cd
-    !byte 0, 0, 0                                                     ; 3b4f: 00 00 00
+    !byte 0                                                           ; 3b4f: 00
+    !byte 0                                                           ; 3b50: 00
+    !byte 0                                                           ; 3b51: 00
     !byte spriteid_bird_transform_1                                   ; 3b52: cc
-    !byte 0, 0, 0                                                     ; 3b53: 00 00 00
+    !byte 0                                                           ; 3b53: 00
+    !byte 0                                                           ; 3b54: 00
+    !byte 0                                                           ; 3b55: 00
     !byte spriteid_bird_transform_1                                   ; 3b56: cc
-    !byte 0, 0, 0                                                     ; 3b57: 00 00 00
+    !byte 0                                                           ; 3b57: 00
+    !byte 0                                                           ; 3b58: 00
+    !byte 0                                                           ; 3b59: 00
     !byte spriteid_bird_1                                             ; 3b5a: c8
-    !byte 0, 0, 0                                                     ; 3b5b: 00 00 00
+    !byte 0                                                           ; 3b5b: 00
+    !byte 0                                                           ; 3b5c: 00
+    !byte 0                                                           ; 3b5d: 00
     !byte spriteid_bird_1                                             ; 3b5e: c8
-    !byte 0, 0, 0, 0                                                  ; 3b5f: 00 00 00...
+    !byte 0                                                           ; 3b5f: 00
+    !byte 0                                                           ; 3b60: 00
+    !byte 0, 0                                                        ; 3b61: 00 00
+bird_animation1
     !byte spriteid_bird_1                                             ; 3b63: c8
-    !byte 0, 0, 0                                                     ; 3b64: 00 00 00
+    !byte 0                                                           ; 3b64: 00
+    !byte 0                                                           ; 3b65: 00
+    !byte 0                                                           ; 3b66: 00
     !byte spriteid_bird_1                                             ; 3b67: c8
-    !byte 0, 0, 0                                                     ; 3b68: 00 00 00
+    !byte 0                                                           ; 3b68: 00
+    !byte 0                                                           ; 3b69: 00
+    !byte 0                                                           ; 3b6a: 00
     !byte spriteid_bird_transform_1                                   ; 3b6b: cc
-    !byte 0, 0, 0                                                     ; 3b6c: 00 00 00
+    !byte 0                                                           ; 3b6c: 00
+    !byte 0                                                           ; 3b6d: 00
+    !byte 0                                                           ; 3b6e: 00
     !byte spriteid_bird_transform_1                                   ; 3b6f: cc
-    !byte 0, 0, 0                                                     ; 3b70: 00 00 00
+    !byte 0                                                           ; 3b70: 00
+    !byte 0                                                           ; 3b71: 00
+    !byte 0                                                           ; 3b72: 00
     !byte spriteid_bird_transform_2                                   ; 3b73: cd
-    !byte 0, 0, 0                                                     ; 3b74: 00 00 00
+    !byte 0                                                           ; 3b74: 00
+    !byte 0                                                           ; 3b75: 00
+    !byte 0                                                           ; 3b76: 00
     !byte spriteid_bird_transform_2                                   ; 3b77: cd
-    !byte 0, 0, 0, 0                                                  ; 3b78: 00 00 00...
+    !byte 0                                                           ; 3b78: 00
+    !byte 0                                                           ; 3b79: 00
+    !byte 0, 0                                                        ; 3b7a: 00 00
+bird_animation2
     !byte spriteid_bird_1                                             ; 3b7c: c8
-    !byte 0, 0, 0, 0                                                  ; 3b7d: 00 00 00...
+    !byte 0                                                           ; 3b7d: 00
+    !byte 0                                                           ; 3b7e: 00
+    !byte 0, 0                                                        ; 3b7f: 00 00
+bird_animation3
     !byte spriteid_bird_3                                             ; 3b81: ca
-    !byte   0, $fc,   0                                               ; 3b82: 00 fc 00
+    !byte 0                                                           ; 3b82: 00
+    !byte $fc                                                         ; 3b83: fc
+    !byte 0                                                           ; 3b84: 00
     !byte spriteid_bird_2                                             ; 3b85: c9
-    !byte spriteid_icodata_sound                                      ; 3b86: 02
-    !byte $fe,   0,   0                                               ; 3b87: fe 00 00
+    !byte 2                                                           ; 3b86: 02
+    !byte $fe                                                         ; 3b87: fe
+    !byte 0, 0                                                        ; 3b88: 00 00
+bird_animation4
     !byte spriteid_bird_1                                             ; 3b8a: c8
-    !byte 0, 0, 0, 0                                                  ; 3b8b: 00 00 00...
+    !byte 0                                                           ; 3b8b: 00
+    !byte 0                                                           ; 3b8c: 00
+    !byte 0, 0                                                        ; 3b8d: 00 00
+bird_animation5
     !byte spriteid_bird_2                                             ; 3b8f: c9
-    !byte   0,   0, $ff,   0                                          ; 3b90: 00 00 ff...
+    !byte 0                                                           ; 3b90: 00
+    !byte 0                                                           ; 3b91: 00
+    !byte $ff,   0                                                    ; 3b92: ff 00
+bird_animation6
     !byte spriteid_bird_2                                             ; 3b94: c9
-    !byte   0, $fc, $ff,   0                                          ; 3b95: 00 fc ff...
+    !byte 0                                                           ; 3b95: 00
+    !byte $fc                                                         ; 3b96: fc
+    !byte $ff,   0                                                    ; 3b97: ff 00
+bird_animation7
     !byte spriteid_bird_2                                             ; 3b99: c9
-    !byte spriteid_icodata_wizard                                     ; 3b9a: 04
-    !byte   0, $ff,   0                                               ; 3b9b: 00 ff 00
+    !byte 4                                                           ; 3b9a: 04
+    !byte 0                                                           ; 3b9b: 00
+    !byte $ff,   0                                                    ; 3b9c: ff 00
+bird_animation8
     !byte spriteid_bird_2                                             ; 3b9e: c9
-    !byte spriteid_icodata_wizard                                     ; 3b9f: 04
-    !byte $fc, $ff,   0                                               ; 3ba0: fc ff 00
+    !byte 4                                                           ; 3b9f: 04
+    !byte $fc                                                         ; 3ba0: fc
+    !byte $ff,   0                                                    ; 3ba1: ff 00
+bird_animation9
     !byte spriteid_bird_3                                             ; 3ba3: ca
-    !byte   0,   0, $ff                                               ; 3ba4: 00 00 ff
+    !byte 0                                                           ; 3ba4: 00
+    !byte 0                                                           ; 3ba5: 00
+    !byte $ff                                                         ; 3ba6: ff
     !byte spriteid_bird_2                                             ; 3ba7: c9
-    !byte spriteid_icodata_sound                                      ; 3ba8: 02
-    !byte   0, $ff,   0                                               ; 3ba9: 00 ff 00
+    !byte 2                                                           ; 3ba8: 02
+    !byte 0                                                           ; 3ba9: 00
+    !byte $ff,   0                                                    ; 3baa: ff 00
+bird_animation10
     !byte spriteid_bird_2                                             ; 3bac: c9
-    !byte spriteid_icodata_wizard                                     ; 3bad: 04
-    !byte $fc,   0                                                    ; 3bae: fc 00
+    !byte 4                                                           ; 3bad: 04
+    !byte $fc                                                         ; 3bae: fc
+    !byte 0                                                           ; 3baf: 00
     !byte spriteid_bird_2                                             ; 3bb0: c9
-    !byte spriteid_icodata_wizard                                     ; 3bb1: 04
-    !byte $fe,   0,   0                                               ; 3bb2: fe 00 00
+    !byte 4                                                           ; 3bb1: 04
+    !byte $fe                                                         ; 3bb2: fe
+    !byte 0, 0                                                        ; 3bb3: 00 00
+bird_animation11
     !byte spriteid_bird_1                                             ; 3bb5: c8
-    !byte spriteid_icodata_wizard                                     ; 3bb6: 04
-    !byte spriteid_icodata_sound                                      ; 3bb7: 02
+    !byte 4                                                           ; 3bb6: 04
+    !byte 2                                                           ; 3bb7: 02
     !byte 0                                                           ; 3bb8: 00
     !byte spriteid_bird_1                                             ; 3bb9: c8
-    !byte spriteid_icodata_wizard                                     ; 3bba: 04
-    !byte spriteid_icodata_wizard                                     ; 3bbb: 04
+    !byte 4                                                           ; 3bba: 04
+    !byte 4                                                           ; 3bbb: 04
     !byte 0                                                           ; 3bbc: 00
     !byte spriteid_bird_1                                             ; 3bbd: c8
-    !byte spriteid_icodata_sound                                      ; 3bbe: 02
-    !byte spriteid_icodata_wizard                                     ; 3bbf: 04
+    !byte 2                                                           ; 3bbe: 02
+    !byte 4                                                           ; 3bbf: 04
     !byte 0, 0                                                        ; 3bc0: 00 00
+bird_animation12
     !byte spriteid_bird_1                                             ; 3bc2: c8
-    !byte spriteid_icodata_disc                                       ; 3bc3: 03
-    !byte spriteid_icon_background                                    ; 3bc4: 01
+    !byte 3                                                           ; 3bc3: 03
+    !byte 1                                                           ; 3bc4: 01
     !byte 0                                                           ; 3bc5: 00
     !byte spriteid_bird_1                                             ; 3bc6: c8
-    !byte spriteid_icodata_sound                                      ; 3bc7: 02
-    !byte spriteid_icodata_disc                                       ; 3bc8: 03
+    !byte 2                                                           ; 3bc7: 02
+    !byte 3                                                           ; 3bc8: 03
     !byte 0                                                           ; 3bc9: 00
     !byte spriteid_bird_1                                             ; 3bca: c8
-    !byte spriteid_icon_background                                    ; 3bcb: 01
-    !byte spriteid_icodata_cat                                        ; 3bcc: 05
+    !byte 1                                                           ; 3bcb: 01
+    !byte 5                                                           ; 3bcc: 05
     !byte 0, 0                                                        ; 3bcd: 00 00
+bird_animation13
     !byte spriteid_bird_1                                             ; 3bcf: c8
-    !byte spriteid_icodata_wizard                                     ; 3bd0: 04
-    !byte spriteid_icodata_sound                                      ; 3bd1: 02
+    !byte 4                                                           ; 3bd0: 04
+    !byte 2                                                           ; 3bd1: 02
     !byte 0                                                           ; 3bd2: 00
     !byte spriteid_bird_1                                             ; 3bd3: c8
-    !byte spriteid_icodata_disc                                       ; 3bd4: 03
-    !byte spriteid_icodata_disc                                       ; 3bd5: 03
+    !byte 3                                                           ; 3bd4: 03
+    !byte 3                                                           ; 3bd5: 03
     !byte 0                                                           ; 3bd6: 00
     !byte spriteid_bird_1                                             ; 3bd7: c8
-    !byte spriteid_icodata_sound                                      ; 3bd8: 02
-    !byte spriteid_icodata_wizard                                     ; 3bd9: 04
+    !byte 2                                                           ; 3bd8: 02
+    !byte 4                                                           ; 3bd9: 04
     !byte 0                                                           ; 3bda: 00
     !byte spriteid_bird_1                                             ; 3bdb: c8
-    !byte spriteid_icon_background                                    ; 3bdc: 01
-    !byte spriteid_icodata_cat                                        ; 3bdd: 05
+    !byte 1                                                           ; 3bdc: 01
+    !byte 5                                                           ; 3bdd: 05
     !byte 0, 0                                                        ; 3bde: 00 00
+bird_animation14
     !byte spriteid_bird_1                                             ; 3be0: c8
     !byte $fc                                                         ; 3be1: fc
-    !byte spriteid_icodata_sound                                      ; 3be2: 02
+    !byte 2                                                           ; 3be2: 02
     !byte 0                                                           ; 3be3: 00
     !byte spriteid_bird_1                                             ; 3be4: c8
     !byte $fd                                                         ; 3be5: fd
-    !byte spriteid_icodata_disc                                       ; 3be6: 03
+    !byte 3                                                           ; 3be6: 03
     !byte 0                                                           ; 3be7: 00
     !byte spriteid_bird_1                                             ; 3be8: c8
     !byte $fe                                                         ; 3be9: fe
-    !byte spriteid_icodata_wizard                                     ; 3bea: 04
+    !byte 4                                                           ; 3bea: 04
     !byte 0                                                           ; 3beb: 00
     !byte spriteid_bird_1                                             ; 3bec: c8
     !byte $ff                                                         ; 3bed: ff
-    !byte spriteid_icodata_cat                                        ; 3bee: 05
+    !byte 5                                                           ; 3bee: 05
     !byte 0, 0                                                        ; 3bef: 00 00
+bird_animation15
     !byte spriteid_bird_1                                             ; 3bf1: c8
     !byte 0                                                           ; 3bf2: 00
-    !byte spriteid_icon_background                                    ; 3bf3: 01
+    !byte 1                                                           ; 3bf3: 01
     !byte 0                                                           ; 3bf4: 00
     !byte spriteid_bird_1                                             ; 3bf5: c8
     !byte 0                                                           ; 3bf6: 00
-    !byte spriteid_icodata_sound                                      ; 3bf7: 02
+    !byte 2                                                           ; 3bf7: 02
     !byte 0                                                           ; 3bf8: 00
     !byte spriteid_bird_1                                             ; 3bf9: c8
     !byte 0                                                           ; 3bfa: 00
-    !byte spriteid_icodata_disc                                       ; 3bfb: 03
+    !byte 3                                                           ; 3bfb: 03
     !byte 0                                                           ; 3bfc: 00
     !byte spriteid_bird_1                                             ; 3bfd: c8
     !byte 0                                                           ; 3bfe: 00
-    !byte spriteid_icodata_wizard                                     ; 3bff: 04
+    !byte 4                                                           ; 3bff: 04
     !byte 0                                                           ; 3c00: 00
     !byte spriteid_bird_1                                             ; 3c01: c8
     !byte 0                                                           ; 3c02: 00
-    !byte spriteid_icodata_cat                                        ; 3c03: 05
+    !byte 5                                                           ; 3c03: 05
     !byte 0, 0                                                        ; 3c04: 00 00
+bird_animation16
     !byte spriteid_bird_1                                             ; 3c06: c8
     !byte 0                                                           ; 3c07: 00
-    !byte spriteid_icodata_info                                       ; 3c08: 07
+    !byte 7                                                           ; 3c08: 07
     !byte 0, 0                                                        ; 3c09: 00 00
 
 draw_sprite_nest_at_cell_xy_and_write_to_collision_map
@@ -2433,24 +2492,6 @@ pydis_end
 }
 !if (spriteid_egg_toolbar) != $d3 {
     !error "Assertion failed: spriteid_egg_toolbar == $d3"
-}
-!if (spriteid_icodata_cat) != $05 {
-    !error "Assertion failed: spriteid_icodata_cat == $05"
-}
-!if (spriteid_icodata_disc) != $03 {
-    !error "Assertion failed: spriteid_icodata_disc == $03"
-}
-!if (spriteid_icodata_info) != $07 {
-    !error "Assertion failed: spriteid_icodata_info == $07"
-}
-!if (spriteid_icodata_sound) != $02 {
-    !error "Assertion failed: spriteid_icodata_sound == $02"
-}
-!if (spriteid_icodata_wizard) != $04 {
-    !error "Assertion failed: spriteid_icodata_wizard == $04"
-}
-!if (spriteid_icon_background) != $01 {
-    !error "Assertion failed: spriteid_icon_background == $01"
 }
 !if (spriteid_large_egg_sideways) != $dd {
     !error "Assertion failed: spriteid_large_egg_sideways == $dd"
