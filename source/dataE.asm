@@ -379,7 +379,7 @@ bird_wing_animation_table
     !byte spriteid_bird_wing_1, spriteid_bird_wing_2                  ; 3b40: ce cf
     !byte spriteid_bird_wing_3, spriteid_bird_wing_2                  ; 3b42: d0 cf
     !byte                    0,                    0                  ; 3b44: 00 00
-bird_character_animations
+bird_base_animations
 bird_transition_in_animation
     !byte spriteid_one_pixel_masked_out                               ; 3b46: 00
     !byte 0                                                           ; 3b47: 00
@@ -1005,11 +1005,11 @@ room_3_update_handler
     jmp update_level_completion                                       ; 3eb5: 4c 10 1a
 
 update_bird
-    lda #$1d                                                          ; 3eb8: a9 1d
+    lda #bird_transition_out_animation - bird_base_animations         ; 3eb8: a9 1d
     sta transform_out_animation                                       ; 3eba: 8d ed 22
-    ldx #$46 ; 'F'                                                    ; 3ebd: a2 46
-    ldy #$3b ; ';'                                                    ; 3ebf: a0 3b
-    lda #4                                                            ; 3ec1: a9 04
+    ldx #<bird_base_animations                                        ; 3ebd: a2 46
+    ldy #>bird_base_animations                                        ; 3ebf: a0 3b
+    lda #objectid_bird                                                ; 3ec1: a9 04
     jsr set_base_animation_address_and_handle_transform_in_out        ; 3ec3: 20 ee 22
     bne c3f3a                                                         ; 3ec6: d0 72
     cpy #$3f ; '?'                                                    ; 3ec8: c0 3f
@@ -1162,7 +1162,7 @@ c3fca
     inx                                                               ; 3fe5: e8
     inx                                                               ; 3fe6: e8
     inx                                                               ; 3fe7: e8
-    lda bird_character_animations,x                                   ; 3fe8: bd 46 3b
+    lda bird_base_animations,x                                        ; 3fe8: bd 46 3b
     ldx #$45 ; 'E'                                                    ; 3feb: a2 45
     ldy #$3b ; ';'                                                    ; 3fed: a0 3b
     jmp update_player_accessory_object_animation                      ; 3fef: 4c 48 22
@@ -2215,6 +2215,9 @@ pydis_end
 ;     l438a
 ;     l438b
 ;     sub_c433b
+!if (<bird_base_animations) != $46 {
+    !error "Assertion failed: <bird_base_animations == $46"
+}
 !if (<envelope1) != $d8 {
     !error "Assertion failed: <envelope1 == $d8"
 }
@@ -2235,6 +2238,9 @@ pydis_end
 }
 !if (<update_bird) != $b8 {
     !error "Assertion failed: <update_bird == $b8"
+}
+!if (>bird_base_animations) != $3b {
+    !error "Assertion failed: >bird_base_animations == $3b"
 }
 !if (>envelope1) != $45 {
     !error "Assertion failed: >envelope1 == $45"
@@ -2262,6 +2268,9 @@ pydis_end
 }
 !if (bird_min_global_x_position) != $1e {
     !error "Assertion failed: bird_min_global_x_position == $1e"
+}
+!if (bird_transition_out_animation - bird_base_animations) != $1d {
+    !error "Assertion failed: bird_transition_out_animation - bird_base_animations == $1d"
 }
 !if (collision_map_none) != $00 {
     !error "Assertion failed: collision_map_none == $00"
@@ -2406,6 +2415,9 @@ pydis_end
 }
 !if (object_z_order + objectid_small_egg) != $38c4 {
     !error "Assertion failed: object_z_order + objectid_small_egg == $38c4"
+}
+!if (objectid_bird) != $04 {
+    !error "Assertion failed: objectid_bird == $04"
 }
 !if (objectid_old_player) != $0b {
     !error "Assertion failed: objectid_old_player == $0b"
