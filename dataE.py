@@ -132,10 +132,10 @@ expr(0x3b2c, make_lo("source_sprite_data"))
 expr(0x3b30, make_hi("source_sprite_data"))
 comment(0x3b40, "This table is 0-terminated")
 label(0x3b40, "bird_wing_animation_table")
+label(0x3b45, "bird_accessory_sprites")
+comment(0x3b45, "bird doesn't have accessories")
+byte(0x3b45)
 label(0x3b46, "bird_base_animations")
-expr(0x3ebe, make_lo("bird_base_animations"))
-expr(0x3ec0, make_hi("bird_base_animations"))
-expr(0x3ec2, "objectid_bird")
 label(0x3b46, "bird_transition_in_animation")
 bird_step(0x3b46)
 bird_step(0x3b4a)
@@ -238,6 +238,36 @@ label(0x3df6, "return1")
 label(0x3e96, "room_3_update_handler")
 entry(0x3eb8, "update_bird")
 expr(0x3eb9, "bird_transition_out_animation - bird_base_animations")
+expr(0x3ebe, make_lo("bird_base_animations"))
+expr(0x3ec0, make_hi("bird_base_animations"))
+expr(0x3ec2, "objectid_bird")
+expr(0x3ee9, "bird_animation6 - bird_base_animations")
+expr(0x3ef8, "bird_animation5 - bird_base_animations")
+expr(0x3f02, "bird_animation9 - bird_base_animations")
+expr(0x3f0c, "bird_animation7 - bird_base_animations")
+expr(0x3f2c, "bird_animation8 - bird_base_animations")
+expr(0x3f41, "bird_animation10 - bird_base_animations")
+expr(0x3f4f, "bird_animation10 - bird_base_animations")
+expr(0x3f56, "bird_animation16 - bird_base_animations")    #$c0
+expr(0x3f5b, "bird_animation11 - bird_base_animations")    #$6f
+expr(0x3f62, "bird_animation16 - bird_base_animations")    #$c0
+expr(0x3f6f, "bird_animation12 - bird_base_animations")    #$7c
+expr(0x3f71, "bird_animation7 - bird_base_animations")     #$53
+expr(0x3f75, "bird_animation15 - bird_base_animations")    #$ab
+expr(0x3f7f, "bird_animation3 - bird_base_animations")     #$3b
+expr(0x3f86, "bird_animation10 - bird_base_animations")    #$66
+expr(0x3f88, "bird_animation10 - bird_base_animations")    #$66
+expr(0x3f93, "bird_animation4 - bird_base_animations")     #$44
+expr(0x3f97, "bird_animation2 - bird_base_animations")     #$36
+expr(0x3f9f, "bird_animation4 - bird_base_animations")     #$44
+expr(0x3fab, "bird_animation2 - bird_base_animations")     #$36
+expr(0x3fbd, "bird_animation16 - bird_base_animations")    #$c0
+expr(0x3fc2, "bird_animation13 - bird_base_animations")    #$89
+expr(0x3fc9, "bird_animation14 - bird_base_animations")    #$9a
+expr(0x3fcf, make_lo("bird_base_animations"))
+expr(0x3fd1, make_hi("bird_base_animations"))
+expr(0x3fec, make_lo("bird_accessory_sprites"))
+expr(0x3fee, make_hi("bird_accessory_sprites"))
 comment(0x4099, "Table for the small egg animations. Each step in an animation is three bytes:\n(0) spriteid, (1) X offset, (2) Y offset.\nEach animation is terminated by an extra zero byte.")
 label(0x4099, "small_egg_animations")
 label(0x4099+1, "small_egg_stationary_animation")

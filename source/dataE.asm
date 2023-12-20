@@ -378,7 +378,10 @@ level_specific_update
 bird_wing_animation_table
     !byte spriteid_bird_wing_1, spriteid_bird_wing_2                  ; 3b40: ce cf
     !byte spriteid_bird_wing_3, spriteid_bird_wing_2                  ; 3b42: d0 cf
-    !byte                    0,                    0                  ; 3b44: 00 00
+    !byte                    0                                        ; 3b44: 00
+; bird doesn't have accessories
+bird_accessory_sprites
+    !byte 0                                                           ; 3b45: 00
 bird_base_animations
 bird_transition_in_animation
     !byte spriteid_one_pixel_masked_out                               ; 3b46: 00
@@ -1030,22 +1033,22 @@ c3edb
 c3ee3
     lda jump_requested                                                ; 3ee3: ad c7 3a
     beq c3f3d                                                         ; 3ee6: f0 55
-    ldx #$4e ; 'N'                                                    ; 3ee8: a2 4e
+    ldx #bird_animation6 - bird_base_animations                       ; 3ee8: a2 4e
     lda move_left_requested                                           ; 3eea: ad ca 3a
     ora move_right_requested                                          ; 3eed: 0d cb 3a
     bne c3ef7                                                         ; 3ef0: d0 05
     dec temp_top_offset                                               ; 3ef2: ce 50 25
     bne c3f21                                                         ; 3ef5: d0 2a
 c3ef7
-    ldx #$49 ; 'I'                                                    ; 3ef7: a2 49
+    ldx #bird_animation5 - bird_base_animations                       ; 3ef7: a2 49
     lda move_left_requested                                           ; 3ef9: ad ca 3a
     and move_right_requested                                          ; 3efc: 2d cb 3a
     bne c3f30                                                         ; 3eff: d0 2f
-    ldx #$5d ; ']'                                                    ; 3f01: a2 5d
+    ldx #bird_animation9 - bird_base_animations                       ; 3f01: a2 5d
     lda player_move_direction_requested                               ; 3f03: ad c9 3a
     cmp object_direction                                              ; 3f06: cd be 09
     bne c3f30                                                         ; 3f09: d0 25
-    ldx #$53 ; 'S'                                                    ; 3f0b: a2 53
+    ldx #bird_animation7 - bird_base_animations                       ; 3f0b: a2 53
     lda #1                                                            ; 3f0d: a9 01
     sta temp_bottom_offset                                            ; 3f0f: 8d 51 25
     lda object_direction                                              ; 3f12: ad be 09
@@ -1060,7 +1063,7 @@ c3f21
     jsr get_solid_rock_collision_for_object_a                         ; 3f23: 20 94 28
     beq c3f30                                                         ; 3f26: f0 08
     stx current_player_animation                                      ; 3f28: 8e df 09
-    ldy #$58 ; 'X'                                                    ; 3f2b: a0 58
+    ldy #bird_animation8 - bird_base_animations                       ; 3f2b: a0 58
     jmp c3f3a                                                         ; 3f2d: 4c 3a 3f
 
 c3f30
@@ -1074,63 +1077,63 @@ c3f3a
 
 c3f3d
     lda current_player_animation                                      ; 3f3d: ad df 09
-    cmp #$66 ; 'f'                                                    ; 3f40: c9 66
+    cmp #bird_animation10 - bird_base_animations                      ; 3f40: c9 66
     bne c3f5c                                                         ; 3f42: d0 18
     dec temp_top_offset                                               ; 3f44: ce 50 25
     lda #0                                                            ; 3f47: a9 00
     jsr get_solid_rock_collision_for_object_a                         ; 3f49: 20 94 28
     bne c3f55                                                         ; 3f4c: d0 07
-    cpy #$66 ; 'f'                                                    ; 3f4e: c0 66
+    cpy #bird_animation10 - bird_base_animations                      ; 3f4e: c0 66
     beq c3f55                                                         ; 3f50: f0 03
     jmp c3fca                                                         ; 3f52: 4c ca 3f
 
 c3f55
-    lda #$c0                                                          ; 3f55: a9 c0
+    lda #bird_animation16 - bird_base_animations                      ; 3f55: a9 c0
     sta current_player_animation                                      ; 3f57: 8d df 09
-    ldy #$6f ; 'o'                                                    ; 3f5a: a0 6f
+    ldy #bird_animation11 - bird_base_animations                      ; 3f5a: a0 6f
 c3f5c
     lda object_has_hit_floor_flag                                     ; 3f5c: ad 8f 28
     bne c3f79                                                         ; 3f5f: d0 18
 c3f61
-    lda #$c0                                                          ; 3f61: a9 c0
+    lda #bird_animation16 - bird_base_animations                      ; 3f61: a9 c0
     cmp current_player_animation                                      ; 3f63: cd df 09
     beq c3f3a                                                         ; 3f66: f0 d2
     ldx current_player_animation                                      ; 3f68: ae df 09
     sta current_player_animation                                      ; 3f6b: 8d df 09
-    ldy #$7c ; '|'                                                    ; 3f6e: a0 7c
-    cpx #$53 ; 'S'                                                    ; 3f70: e0 53
+    ldy #bird_animation12 - bird_base_animations                      ; 3f6e: a0 7c
+    cpx #bird_animation7 - bird_base_animations                       ; 3f70: e0 53
     beq c3f3a                                                         ; 3f72: f0 c6
-    ldy #$ab                                                          ; 3f74: a0 ab
+    ldy #bird_animation15 - bird_base_animations                      ; 3f74: a0 ab
     jmp c3fca                                                         ; 3f76: 4c ca 3f
 
 c3f79
     ldx player_move_direction_requested                               ; 3f79: ae c9 3a
     beq c3f8f                                                         ; 3f7c: f0 11
-    ldy #$3b ; ';'                                                    ; 3f7e: a0 3b
+    ldy #bird_animation3 - bird_base_animations                       ; 3f7e: a0 3b
     cpx object_direction                                              ; 3f80: ec be 09
     bne c3f87                                                         ; 3f83: d0 02
-    ldy #$66 ; 'f'                                                    ; 3f85: a0 66
+    ldy #bird_animation10 - bird_base_animations                      ; 3f85: a0 66
 c3f87
-    lda #$66 ; 'f'                                                    ; 3f87: a9 66
+    lda #bird_animation10 - bird_base_animations                      ; 3f87: a9 66
     sta current_player_animation                                      ; 3f89: 8d df 09
     jmp c3faf                                                         ; 3f8c: 4c af 3f
 
 c3f8f
     lda current_player_animation                                      ; 3f8f: ad df 09
-    cmp #$44 ; 'D'                                                    ; 3f92: c9 44
+    cmp #bird_animation4 - bird_base_animations                       ; 3f92: c9 44
     beq c3fa6                                                         ; 3f94: f0 10
-    cmp #$36 ; '6'                                                    ; 3f96: c9 36
+    cmp #bird_animation2 - bird_base_animations                       ; 3f96: c9 36
     beq c3faf                                                         ; 3f98: f0 15
     ldy #$40 ; '@'                                                    ; 3f9a: a0 40
     sty l0023                                                         ; 3f9c: 84 23
-    ldy #$44 ; 'D'                                                    ; 3f9e: a0 44
+    ldy #bird_animation4 - bird_base_animations                       ; 3f9e: a0 44
     sty current_player_animation                                      ; 3fa0: 8c df 09
     jmp c3faf                                                         ; 3fa3: 4c af 3f
 
 c3fa6
     dec l0023                                                         ; 3fa6: c6 23
     bne c3faf                                                         ; 3fa8: d0 05
-    ldy #$36 ; '6'                                                    ; 3faa: a0 36
+    ldy #bird_animation2 - bird_base_animations                       ; 3faa: a0 36
     sty current_player_animation                                      ; 3fac: 8c df 09
 c3faf
     ldx #0                                                            ; 3faf: a2 00
@@ -1140,17 +1143,17 @@ c3faf
 c3fb7
     lda object_just_fallen_off_edge_direction,x                       ; 3fb7: bd 90 28
     beq c3fca                                                         ; 3fba: f0 0e
-    ldy #$c0                                                          ; 3fbc: a0 c0
+    ldy #bird_animation16 - bird_base_animations                      ; 3fbc: a0 c0
     sty current_player_animation                                      ; 3fbe: 8c df 09
-    ldy #$89                                                          ; 3fc1: a0 89
+    ldy #bird_animation13 - bird_base_animations                      ; 3fc1: a0 89
     cmp object_direction                                              ; 3fc3: cd be 09
     beq c3fca                                                         ; 3fc6: f0 02
-    ldy #$9a                                                          ; 3fc8: a0 9a
+    ldy #bird_animation14 - bird_base_animations                      ; 3fc8: a0 9a
 c3fca
     sty object_current_index_in_animation                             ; 3fca: 8c d4 09
     tya                                                               ; 3fcd: 98
-    ldx #$46 ; 'F'                                                    ; 3fce: a2 46
-    ldy #$3b ; ';'                                                    ; 3fd0: a0 3b
+    ldx #<bird_base_animations                                        ; 3fce: a2 46
+    ldy #>bird_base_animations                                        ; 3fd0: a0 3b
     jsr set_player_spriteid_and_offset_from_animation_table           ; 3fd2: 20 00 22
     lda #0                                                            ; 3fd5: a9 00
     jsr update_object_a_solid_rock_collision                          ; 3fd7: 20 f5 25
@@ -1163,8 +1166,8 @@ c3fca
     inx                                                               ; 3fe6: e8
     inx                                                               ; 3fe7: e8
     lda bird_base_animations,x                                        ; 3fe8: bd 46 3b
-    ldx #$45 ; 'E'                                                    ; 3feb: a2 45
-    ldy #$3b ; ';'                                                    ; 3fed: a0 3b
+    ldx #<bird_accessory_sprites                                      ; 3feb: a2 45
+    ldy #>bird_accessory_sprites                                      ; 3fed: a0 3b
     jmp update_player_accessory_object_animation                      ; 3fef: 4c 48 22
 
 ; *************************************************************************************
@@ -2215,6 +2218,9 @@ pydis_end
 ;     l438a
 ;     l438b
 ;     sub_c433b
+!if (<bird_accessory_sprites) != $45 {
+    !error "Assertion failed: <bird_accessory_sprites == $45"
+}
 !if (<bird_base_animations) != $46 {
     !error "Assertion failed: <bird_base_animations == $46"
 }
@@ -2239,6 +2245,9 @@ pydis_end
 !if (<update_bird) != $b8 {
     !error "Assertion failed: <update_bird == $b8"
 }
+!if (>bird_accessory_sprites) != $3b {
+    !error "Assertion failed: >bird_accessory_sprites == $3b"
+}
 !if (>bird_base_animations) != $3b {
     !error "Assertion failed: >bird_base_animations == $3b"
 }
@@ -2262,6 +2271,51 @@ pydis_end
 }
 !if (>update_bird) != $3e {
     !error "Assertion failed: >update_bird == $3e"
+}
+!if (bird_animation10 - bird_base_animations) != $66 {
+    !error "Assertion failed: bird_animation10 - bird_base_animations == $66"
+}
+!if (bird_animation11 - bird_base_animations) != $6f {
+    !error "Assertion failed: bird_animation11 - bird_base_animations == $6f"
+}
+!if (bird_animation12 - bird_base_animations) != $7c {
+    !error "Assertion failed: bird_animation12 - bird_base_animations == $7c"
+}
+!if (bird_animation13 - bird_base_animations) != $89 {
+    !error "Assertion failed: bird_animation13 - bird_base_animations == $89"
+}
+!if (bird_animation14 - bird_base_animations) != $9a {
+    !error "Assertion failed: bird_animation14 - bird_base_animations == $9a"
+}
+!if (bird_animation15 - bird_base_animations) != $ab {
+    !error "Assertion failed: bird_animation15 - bird_base_animations == $ab"
+}
+!if (bird_animation16 - bird_base_animations) != $c0 {
+    !error "Assertion failed: bird_animation16 - bird_base_animations == $c0"
+}
+!if (bird_animation2 - bird_base_animations) != $36 {
+    !error "Assertion failed: bird_animation2 - bird_base_animations == $36"
+}
+!if (bird_animation3 - bird_base_animations) != $3b {
+    !error "Assertion failed: bird_animation3 - bird_base_animations == $3b"
+}
+!if (bird_animation4 - bird_base_animations) != $44 {
+    !error "Assertion failed: bird_animation4 - bird_base_animations == $44"
+}
+!if (bird_animation5 - bird_base_animations) != $49 {
+    !error "Assertion failed: bird_animation5 - bird_base_animations == $49"
+}
+!if (bird_animation6 - bird_base_animations) != $4e {
+    !error "Assertion failed: bird_animation6 - bird_base_animations == $4e"
+}
+!if (bird_animation7 - bird_base_animations) != $53 {
+    !error "Assertion failed: bird_animation7 - bird_base_animations == $53"
+}
+!if (bird_animation8 - bird_base_animations) != $58 {
+    !error "Assertion failed: bird_animation8 - bird_base_animations == $58"
+}
+!if (bird_animation9 - bird_base_animations) != $5d {
+    !error "Assertion failed: bird_animation9 - bird_base_animations == $5d"
 }
 !if (bird_max_global_x_position) != $74 {
     !error "Assertion failed: bird_max_global_x_position == $74"
