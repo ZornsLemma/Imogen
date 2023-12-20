@@ -384,7 +384,10 @@ bird_wing_animation_table
     !byte                    0,                    0                  ; 3b44: 00 00
 bird_character_animations
 bird_transition_in_animation
-    !byte 0, 0, 0, 0                                                  ; 3b46: 00 00 00...
+    !byte spriteid_one_pixel_masked_out                               ; 3b46: 00
+    !byte 0                                                           ; 3b47: 00
+    !byte 0                                                           ; 3b48: 00
+    !byte 0                                                           ; 3b49: 00
     !byte spriteid_bird_transform_2                                   ; 3b4a: cd
     !byte 0                                                           ; 3b4b: 00
     !byte 0                                                           ; 3b4c: 00
