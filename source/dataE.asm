@@ -409,7 +409,7 @@ bird_transition_in_animation
     !byte 0                                                           ; 3b5f: 00
     !byte 0                                                           ; 3b60: 00
     !byte 0, 0                                                        ; 3b61: 00 00
-bird_animation1
+bird_transition_out_animation
     !byte spriteid_bird_1                                             ; 3b63: c8
     !byte 0                                                           ; 3b64: 00
     !byte 0                                                           ; 3b65: 00
