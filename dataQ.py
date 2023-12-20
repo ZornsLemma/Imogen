@@ -22,9 +22,26 @@ common_to_all('Q')
 #   This is weird, but makes the addresses unique.
 #
 substitute_labels = {
-#    (0x3bd4,0x3df9): {
-#        "l0070": "room_exit_direction",
-#    },
+    (0x3af1, 0x3c0f): {
+        "l0070": "message_address_low",
+        "l0071": "message_address_high",
+        "l0072": "message_offset_low",
+        "l0073": "screen_y_offset_within_cell",
+    },
+    (0x3c14, 0x3ca3): {
+        "l0070": "bitmap_address_low",
+        "l0071": "bitmap_address_high",
+        "l0072": "screen_address1_low",
+        "l0073": "screen_address1_high",
+    },
+    (0x3cc9, 0x3ce2): {
+        "l0070": "screen_address_low",
+        "l0071": "screen_address_high",
+    },
+    (0x42e6, 0x42f1): {
+        "l0070": "filename_address_low",
+        "l0071": "filename_address_high",
+    },
 }
 
 # (Class SubstituteLabels is defined in common.py to implement the substitute labels)
@@ -83,7 +100,7 @@ comment(0x3b62, "copy byte of character to the screen")
 label(0x3b67, "skip_write_to_screen")
 comment(0x3b6f, "move screen address up one character row")
 label(0x3b80, "move_forwards_8_pixels")
-label(0x3b93, "end_of_message")
+label(0x3b93, "end_of_message_local")
 label(0x3b96, "end_of_line")
 comment(0x3ba6, "move down two character rows")
 expr(0x3c04, "inkey_up_cursor")
@@ -128,6 +145,20 @@ expr(0x3c27, make_hi("the_end_bitmap"))
 comment(0x3c19, "copy bitmap to screen")
 blank(0x3d03)
 label(0x42ad, "unused2")
+label(0x3afd, "display_full_message_loop")
+comment(0x3af1, "start the scrolling message")
+label(0x3bbb, "entry_point_for_scrolling_message")
+comment(0x3b5e, "skip when we reach the end of screen memory, i.e. $8000")
+label(0x3c11, "display_full_message_loop_local")
+label(0x3bca, "skip_to_next_line_of_message")
+label(0x3bd8, "end_of_message")
+ri(0x3bda)
+label(0x3be4, "move_up_one_pixel")
+comment(0x3bef, "move up one character row")
+label(0x3bfc, "check_for_up_arrow_in_developer_mode")
+comment(0x3c0a, "wait until four vsyncs have passed and repeat")
+label(0x007c, "character_definition_low")
+label(0x007d, "character_definition_high")
 
 for i in range(0x3d0c, 0x3ffc):
     picture_binary(i)
@@ -140,7 +171,7 @@ for i in range(0x4330, 0x46f0):
     picture_binary(i)
 
 blank(0x46f0)
-comment(0x46f0, "remenants of a BASIC program")
+comment(0x46f0, "unused: remenants of a BASIC program")
 
 password_addr = 0x3ffc
 password = get_password(password_addr, 0)

@@ -62,10 +62,22 @@ level_before_latest_level_and_room_initialisation   = $51
 player_held_object_spriteid                         = $52
 sprdata_ptr                                         = $54
 developer_mode_sideways_ram_is_set_up_flag          = $5b
+bitmap_address_low                                  = $70
+filename_address_low                                = $70
 l0070                                               = $70
+message_address_low                                 = $70
+screen_address_low                                  = $70
+bitmap_address_high                                 = $71
+filename_address_high                               = $71
 l0071                                               = $71
+message_address_high                                = $71
+screen_address_high                                 = $71
 l0072                                               = $72
+message_offset_low                                  = $72
+screen_address1_low                                 = $72
 l0073                                               = $73
+screen_address1_high                                = $73
+screen_y_offset_within_cell                         = $73
 l0074                                               = $74
 l0075                                               = $75
 l0076                                               = $76
@@ -74,8 +86,8 @@ l0078                                               = $78
 l0079                                               = $79
 l007a                                               = $7a
 l007b                                               = $7b
-l007c                                               = $7c
-l007d                                               = $7d
+character_definition_low                            = $7c
+character_definition_high                           = $7d
 object_x_low                                        = $0950
 object_x_low_old                                    = $095b
 object_x_high                                       = $0966
@@ -186,22 +198,23 @@ level_specific_password_ptr
 ; wait 2 seconds
     lda #100                                                          ; 3aec: a9 64
     jsr wait_for_a_vsyncs                                             ; 3aee: 20 25 43
+; start the scrolling message
     lda #7                                                            ; 3af1: a9 07
-    sta l0073                                                         ; 3af3: 85 73
+    sta screen_y_offset_within_cell                                   ; 3af3: 85 73
     lda #$20 ; ' '                                                    ; 3af5: a9 20
     sta l0074                                                         ; 3af7: 85 74
     lda #$80                                                          ; 3af9: a9 80
     sta l0075                                                         ; 3afb: 85 75
-c3afd
+display_full_message_loop
     lda #0                                                            ; 3afd: a9 00
     sta vsync_counter                                                 ; 3aff: 8d 8b 17
     jsr check_for_escape_pressed_in_developer_mode                    ; 3b02: 20 e3 3c
     lda #<encoded_message                                             ; 3b05: a9 fc
-    sta l0070                                                         ; 3b07: 85 70
+    sta message_address_low                                           ; 3b07: 85 70
     lda #>encoded_message                                             ; 3b09: a9 3f
-    sta l0071                                                         ; 3b0b: 85 71
+    sta message_address_high                                          ; 3b0b: 85 71
     ldy #0                                                            ; 3b0d: a0 00
-    sty l0072                                                         ; 3b0f: 84 72
+    sty message_offset_low                                            ; 3b0f: 84 72
     lda l0074                                                         ; 3b11: a5 74
     sta l0076                                                         ; 3b13: 85 76
     sta l0078                                                         ; 3b15: 85 78
@@ -210,16 +223,16 @@ c3afd
     sta l0077                                                         ; 3b1b: 85 77
     sta l0079                                                         ; 3b1d: 85 79
     sta l007b                                                         ; 3b1f: 85 7b
-    jmp c3bbb                                                         ; 3b21: 4c bb 3b
+    jmp entry_point_for_scrolling_message                             ; 3b21: 4c bb 3b
 
 get_next_character
-    ldy l0072                                                         ; 3b24: a4 72
-    inc l0072                                                         ; 3b26: e6 72
+    ldy message_offset_low                                            ; 3b24: a4 72
+    inc message_offset_low                                            ; 3b26: e6 72
 ; read next character of message
-    lda (l0070),y                                                     ; 3b28: b1 70
+    lda (message_address_low),y                                       ; 3b28: b1 70
 ; decode character
     eor #$cb                                                          ; 3b2a: 49 cb
-    beq end_of_message                                                ; 3b2c: f0 65
+    beq end_of_message_local                                          ; 3b2c: f0 65
     cmp #$0d                                                          ; 3b2e: c9 0d
     beq end_of_line                                                   ; 3b30: f0 64
     cmp #$20 ; ' '                                                    ; 3b32: c9 20
@@ -228,30 +241,31 @@ get_next_character
     sec                                                               ; 3b36: 38
     sbc #$21 ; '!'                                                    ; 3b37: e9 21
     ldx #0                                                            ; 3b39: a2 00
-    stx l007d                                                         ; 3b3b: 86 7d
+    stx character_definition_high                                     ; 3b3b: 86 7d
 ; multiply index by eight
     asl                                                               ; 3b3d: 0a
     asl                                                               ; 3b3e: 0a
-    rol l007d                                                         ; 3b3f: 26 7d
+    rol character_definition_high                                     ; 3b3f: 26 7d
     asl                                                               ; 3b41: 0a
-    rol l007d                                                         ; 3b42: 26 7d
+    rol character_definition_high                                     ; 3b42: 26 7d
 ; add $3d0c to get address of character definition
     adc #<character_definitions                                       ; 3b44: 69 0c
-    sta l007c                                                         ; 3b46: 85 7c
-    lda l007d                                                         ; 3b48: a5 7d
+    sta character_definition_low                                      ; 3b46: 85 7c
+    lda character_definition_high                                     ; 3b48: a5 7d
     adc #>character_definitions                                       ; 3b4a: 69 3d
-    sta l007d                                                         ; 3b4c: 85 7d
+    sta character_definition_high                                     ; 3b4c: 85 7d
 ; copy character definition
     ldy #7                                                            ; 3b4e: a0 07
 copy_character_loop
-    lda (l007c),y                                                     ; 3b50: b1 7c
+    lda (character_definition_low),y                                  ; 3b50: b1 7c
     sta character,y                                                   ; 3b52: 99 fb 3c
     dey                                                               ; 3b55: 88
     bpl copy_character_loop                                           ; 3b56: 10 f8
     ldx #8                                                            ; 3b58: a2 08
-    ldy l0073                                                         ; 3b5a: a4 73
+    ldy screen_y_offset_within_cell                                   ; 3b5a: a4 73
 copy_to_screen_loop
     lda l007b                                                         ; 3b5c: a5 7b
+; skip when we reach the end of screen memory, i.e. $8000
     cmp #$80                                                          ; 3b5e: c9 80
     bcs skip_write_to_screen                                          ; 3b60: b0 05
 ; copy byte of character to the screen
@@ -284,19 +298,19 @@ move_forwards_8_pixels
     sta l0079                                                         ; 3b8d: 85 79
     sta l007b                                                         ; 3b8f: 85 7b
     bne get_next_character                                            ; 3b91: d0 91
-end_of_message
-    jmp c3bd8                                                         ; 3b93: 4c d8 3b
+end_of_message_local
+    jmp end_of_message                                                ; 3b93: 4c d8 3b
 
 end_of_line
     tya                                                               ; 3b96: 98
     ldy #0                                                            ; 3b97: a0 00
-    sty l0072                                                         ; 3b99: 84 72
+    sty message_offset_low                                            ; 3b99: 84 72
     sec                                                               ; 3b9b: 38
-    adc l0070                                                         ; 3b9c: 65 70
-    sta l0070                                                         ; 3b9e: 85 70
+    adc message_address_low                                           ; 3b9c: 65 70
+    sta message_address_low                                           ; 3b9e: 85 70
     lda #0                                                            ; 3ba0: a9 00
-    adc l0071                                                         ; 3ba2: 65 71
-    sta l0071                                                         ; 3ba4: 85 71
+    adc message_address_high                                          ; 3ba2: 65 71
+    sta message_address_high                                          ; 3ba4: 85 71
 ; move down two character rows
     lda l0076                                                         ; 3ba6: a5 76
     clc                                                               ; 3ba8: 18
@@ -309,38 +323,39 @@ end_of_line
     sta l0077                                                         ; 3bb5: 85 77
     sta l0079                                                         ; 3bb7: 85 79
     sta l007b                                                         ; 3bb9: 85 7b
-c3bbb
+entry_point_for_scrolling_message
     cmp #$c0                                                          ; 3bbb: c9 c0
-    bcs c3bca                                                         ; 3bbd: b0 0b
+    bcs skip_to_next_line_of_message                                  ; 3bbd: b0 0b
     cmp #$81                                                          ; 3bbf: c9 81
-    bcs c3bd8                                                         ; 3bc1: b0 15
+    bcs end_of_message                                                ; 3bc1: b0 15
     cmp #$5d ; ']'                                                    ; 3bc3: c9 5d
-    bcc c3bca                                                         ; 3bc5: 90 03
+    bcc skip_to_next_line_of_message                                  ; 3bc5: 90 03
     jmp get_next_character                                            ; 3bc7: 4c 24 3b
 
-c3bca
-    lda (l0070),y                                                     ; 3bca: b1 70
+skip_to_next_line_of_message
+    lda (message_address_low),y                                       ; 3bca: b1 70
     eor #$cb                                                          ; 3bcc: 49 cb
-    beq c3bd8                                                         ; 3bce: f0 08
+    beq end_of_message                                                ; 3bce: f0 08
     cmp #$0d                                                          ; 3bd0: c9 0d
     beq end_of_line                                                   ; 3bd2: f0 c2
     iny                                                               ; 3bd4: c8
-    jmp c3bca                                                         ; 3bd5: 4c ca 3b
+    jmp skip_to_next_line_of_message                                  ; 3bd5: 4c ca 3b
 
-c3bd8
-    lda l0073                                                         ; 3bd8: a5 73
-    cmp #0                                                            ; 3bda: c9 00
-    bne c3be4                                                         ; 3bdc: d0 06
+end_of_message
+    lda screen_y_offset_within_cell                                   ; 3bd8: a5 73
+    cmp #0                                                            ; 3bda: c9 00                   ; redundant instruction
+    bne move_up_one_pixel                                             ; 3bdc: d0 06
     lda l0077                                                         ; 3bde: a5 77
     cmp #$5d ; ']'                                                    ; 3be0: c9 5d
     beq copy_the_end_bitmap_to_screen                                 ; 3be2: f0 30
-c3be4
-    lda l0073                                                         ; 3be4: a5 73
+move_up_one_pixel
+    lda screen_y_offset_within_cell                                   ; 3be4: a5 73
     sec                                                               ; 3be6: 38
     sbc #1                                                            ; 3be7: e9 01
     and #7                                                            ; 3be9: 29 07
-    sta l0073                                                         ; 3beb: 85 73
-    bcs c3bfc                                                         ; 3bed: b0 0d
+    sta screen_y_offset_within_cell                                   ; 3beb: 85 73
+    bcs check_for_up_arrow_in_developer_mode                          ; 3bed: b0 0d
+; move up one character row
     lda l0074                                                         ; 3bef: a5 74
     sec                                                               ; 3bf1: 38
     sbc #$40 ; '@'                                                    ; 3bf2: e9 40
@@ -348,19 +363,20 @@ c3be4
     lda l0075                                                         ; 3bf6: a5 75
     sbc #1                                                            ; 3bf8: e9 01
     sta l0075                                                         ; 3bfa: 85 75
-c3bfc
+check_for_up_arrow_in_developer_mode
     lda developer_flags                                               ; 3bfc: ad 03 11
     and #1                                                            ; 3bff: 29 01
     beq wait_four_vsyncs_loop                                         ; 3c01: f0 07
     ldx #inkey_up_cursor                                              ; 3c03: a2 c6
     jsr negative_inkey                                                ; 3c05: 20 cc 3a
-    bne c3c11                                                         ; 3c08: d0 07
+    bne display_full_message_loop_local                               ; 3c08: d0 07
+; wait until four vsyncs have passed and repeat
 wait_four_vsyncs_loop
     lda vsync_counter                                                 ; 3c0a: ad 8b 17
     cmp #4                                                            ; 3c0d: c9 04
     bcc wait_four_vsyncs_loop                                         ; 3c0f: 90 f9
-c3c11
-    jmp c3afd                                                         ; 3c11: 4c fd 3a
+display_full_message_loop_local
+    jmp display_full_message_loop                                     ; 3c11: 4c fd 3a
 
 copy_the_end_bitmap_to_screen
     lda #50                                                           ; 3c14: a9 32
@@ -372,24 +388,24 @@ copy_the_end_bitmap_to_screen
     lda #<the_end_bitmap                                              ; 3c1f: a9 30
     sec                                                               ; 3c21: 38
     sbc l0074                                                         ; 3c22: e5 74
-    sta l0070                                                         ; 3c24: 85 70
+    sta bitmap_address_low                                            ; 3c24: 85 70
     lda #>the_end_bitmap                                              ; 3c26: a9 43
     sbc #0                                                            ; 3c28: e9 00
-    sta l0071                                                         ; 3c2a: 85 71
+    sta bitmap_address_high                                           ; 3c2a: 85 71
     lda #$80                                                          ; 3c2c: a9 80
     sec                                                               ; 3c2e: 38
     sbc l0074                                                         ; 3c2f: e5 74
-    sta l0072                                                         ; 3c31: 85 72
+    sta screen_address1_low                                           ; 3c31: 85 72
     lda #$69 ; 'i'                                                    ; 3c33: a9 69
     sbc #0                                                            ; 3c35: e9 00
-    sta l0073                                                         ; 3c37: 85 73
+    sta screen_address1_high                                          ; 3c37: 85 73
 copy_loop
-    lda (l0070),y                                                     ; 3c39: b1 70
-    sta (l0072),y                                                     ; 3c3b: 91 72
+    lda (bitmap_address_low),y                                        ; 3c39: b1 70
+    sta (screen_address1_low),y                                       ; 3c3b: 91 72
     iny                                                               ; 3c3d: c8
     bne copy_loop                                                     ; 3c3e: d0 f9
-    inc l0071                                                         ; 3c40: e6 71
-    inc l0073                                                         ; 3c42: e6 73
+    inc bitmap_address_high                                           ; 3c40: e6 71
+    inc screen_address1_high                                          ; 3c42: e6 73
     dex                                                               ; 3c44: ca
     bne copy_loop                                                     ; 3c45: d0 f2
 ; clear text and graphics windows
@@ -447,18 +463,18 @@ copyright_message
 
 clear_screen
     lda #0                                                            ; 3cc9: a9 00
-    sta l0070                                                         ; 3ccb: 85 70
+    sta screen_address_low                                            ; 3ccb: 85 70
     lda #$5b ; '['                                                    ; 3ccd: a9 5b
-    sta l0071                                                         ; 3ccf: 85 71
+    sta screen_address_high                                           ; 3ccf: 85 71
     lda #0                                                            ; 3cd1: a9 00
     ldx #$80                                                          ; 3cd3: a2 80
     ldy #$c0                                                          ; 3cd5: a0 c0
 clear_screen_loop
-    sta (l0070),y                                                     ; 3cd7: 91 70
+    sta (screen_address_low),y                                        ; 3cd7: 91 70
     iny                                                               ; 3cd9: c8
     bne clear_screen_loop                                             ; 3cda: d0 fb
-    inc l0071                                                         ; 3cdc: e6 71
-    cpx l0071                                                         ; 3cde: e4 71
+    inc screen_address_high                                           ; 3cdc: e6 71
+    cpx screen_address_high                                           ; 3cde: e4 71
     bne clear_screen_loop                                             ; 3ce0: d0 f5
     rts                                                               ; 3ce2: 60
 
@@ -1463,9 +1479,9 @@ clear_menu_slots_loop
     sta sprdata_ptr + 1                                               ; 42e4: 85 55
 load_icodata_loop
     lda #<icodata_filename                                            ; 42e6: a9 1b
-    sta l0070                                                         ; 42e8: 85 70
+    sta filename_address_low                                          ; 42e8: 85 70
     lda #>icodata_filename                                            ; 42ea: a9 43
-    sta l0071                                                         ; 42ec: 85 71
+    sta filename_address_high                                         ; 42ec: 85 71
     ldx icodata_load_address_low                                      ; 42ee: ae 23 43
     ldy icodata_load_address_high                                     ; 42f1: ac 24 43
     lda #$ff                                                          ; 42f4: a9 ff
@@ -2465,7 +2481,7 @@ the_end_bitmap
     !byte %........                                                   ; 46ee: 00
     !byte %........                                                   ; 46ef: 00
 
-; remenants of a BASIC program
+; unused: remenants of a BASIC program
     !text "H.", '"', "M", '"'                                         ; 46f0: 48 2e 22...
     !byte $0d, $0d                                                    ; 46f5: 0d 0d
     !text "?24=17:B%=0:CH.", '"', "M", '"'                            ; 46f7: 3f 32 34...
@@ -2473,17 +2489,6 @@ the_end_bitmap
 pydis_end
 
 ; Automatically generated labels:
-;     c3afd
-;     c3bbb
-;     c3bca
-;     c3bd8
-;     c3be4
-;     c3bfc
-;     c3c11
-;     l0070
-;     l0071
-;     l0072
-;     l0073
 ;     l0074
 ;     l0075
 ;     l0076
@@ -2492,8 +2497,6 @@ pydis_end
 ;     l0079
 ;     l007a
 ;     l007b
-;     l007c
-;     l007d
 ;     l0ab1
 ;     l0ab2
 !if (<character_definitions) != $0c {
