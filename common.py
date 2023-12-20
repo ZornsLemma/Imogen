@@ -52,7 +52,7 @@ def tile_bitmap2x2(addr, s=None):
     tile_bitmap(addr+16, s + "_bottom_left")
     tile_bitmap(addr+24, s + "_bottom_right")
 
-def get_password(start_addr):
+def get_password(start_addr, terminator=0x0d):
     password = ""
     addr = start_addr
     while True:
@@ -64,7 +64,7 @@ def get_password(start_addr):
             password += chr(b)
         addr += 1
 
-        if b == 0x0d:
+        if b == terminator:
             break
     return(password)
 
