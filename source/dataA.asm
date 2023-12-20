@@ -6,6 +6,7 @@
 ;
 ;     save_game_level_a_room1_trapdoor_open_flag                     ($09ff):
 ;               0: closed
+;               1: partway open
 ;             $ff: taken
 ;
 ;     save_game_level_a_saxophone_collected_flag                     ($0a00):
@@ -99,14 +100,14 @@ sprite_op_flags_erase_to_bg_colour    = 2
 sprite_op_flags_erase_to_fg_colour    = 4
 sprite_op_flags_normal                = 0
 spriteid_197                          = 197
-spriteid_baby0                        = 214
-spriteid_baby1                        = 215
-spriteid_baby2                        = 216
-spriteid_baby3                        = 217
-spriteid_baby4                        = 218
-spriteid_baby5                        = 219
-spriteid_baby6                        = 220
-spriteid_baby7                        = 221
+spriteid_baby_dead                    = 220
+spriteid_baby_shrug                   = 219
+spriteid_baby_smile                   = 221
+spriteid_baby_stunned                 = 218
+spriteid_baby_walk_cycle_0            = 214
+spriteid_baby_walk_cycle_1            = 215
+spriteid_baby_walk_cycle_2            = 216
+spriteid_baby_walk_cycle_3            = 217
 spriteid_ball                         = 59
 spriteid_brazier                      = 58
 spriteid_cat1                         = 27
@@ -263,8 +264,8 @@ save_game_level_a_room_2_baby_direction             = $0a04
 mouse_ball_animation_position                       = $0a6f
 baby_pixel_x_coordinate                             = $0a70
 baby_pixel_x_speed                                  = $0a71
-baby_spriteid_index_if_baby_spriteid_data_is_zero   = $0a72
-baby_sprite_index                                   = $0a73
+baby_animation                                      = $0a72
+baby_animation_step                                 = $0a73
 tile_all_set_pixels                                 = $0aa9
 developer_flags                                     = $1103
 initialise_level_and_room                           = $1140
@@ -1038,9 +1039,8 @@ increment_trapdoor_open_flag
     lda desired_room_index                                            ; 3ec9: a5 30
     cmp #1                                                            ; 3ecb: c9 01
     bne skip_play_sound                                               ; 3ecd: d0 03
-; TODO: Pretty confident this is the trapdoor opening sound, but this is called
-; elsewhere so don't want to rename subroutine yet
-    jsr play_some_sound1_then_some_sound2                             ; 3ecf: 20 f1 3e
+; This is the trapdoor opening sound
+    jsr play_sound12                                                  ; 3ecf: 20 f1 3e
 skip_play_sound
     ldy #$ff                                                          ; 3ed2: a0 ff
 new_room1_trapdoor_open_flag_in_y
@@ -1065,13 +1065,13 @@ trapdoor_sprite_table
     !byte spriteid_trapdoor_diagonal                                  ; 3eef: d0
     !byte spriteid_trapdoor_vertical                                  ; 3ef0: d1
 
-play_some_sound1_then_some_sound2
+play_sound12
     lda #0                                                            ; 3ef1: a9 00
-    ldx #<some_sound1                                                 ; 3ef3: a2 42
-    ldy #>some_sound1                                                 ; 3ef5: a0 44
+    ldx #<sound1                                                      ; 3ef3: a2 42
+    ldy #>sound1                                                      ; 3ef5: a0 44
     jsr play_sound_yx                                                 ; 3ef7: 20 f6 38
-    ldx #<some_sound2                                                 ; 3efa: a2 3a
-    ldy #>some_sound2                                                 ; 3efc: a0 44
+    ldx #<sound2                                                      ; 3efa: a2 3a
+    ldy #>sound2                                                      ; 3efc: a0 44
     jsr play_sound_yx                                                 ; 3efe: 20 f6 38
     rts                                                               ; 3f01: 60
 
@@ -1306,56 +1306,56 @@ room_2_game_update_loop
     jmp initialise_level_and_room                                     ; 404f: 4c 40 11
 
 baby_spriteid_data
-    !byte spriteid_baby0                                              ; 4052: d6
-    !byte spriteid_baby1                                              ; 4053: d7
-    !byte spriteid_baby2                                              ; 4054: d8
-    !byte spriteid_baby3                                              ; 4055: d9
+    !byte spriteid_baby_walk_cycle_0                                  ; 4052: d6
+    !byte spriteid_baby_walk_cycle_1                                  ; 4053: d7
+    !byte spriteid_baby_walk_cycle_2                                  ; 4054: d8
+    !byte spriteid_baby_walk_cycle_3                                  ; 4055: d9
     !byte 0                                                           ; 4056: 00
-baby_spriteid_subseq2
-    !byte spriteid_baby7                                              ; 4057: dd
-    !byte spriteid_baby7                                              ; 4058: dd
-    !byte spriteid_baby7                                              ; 4059: dd
-    !byte spriteid_baby7                                              ; 405a: dd
-    !byte spriteid_baby7                                              ; 405b: dd
-    !byte spriteid_baby7                                              ; 405c: dd
-    !byte spriteid_baby7                                              ; 405d: dd
-    !byte spriteid_baby7                                              ; 405e: dd
-baby_spriteid_subseq5
+baby_spriteid_smile
+    !byte spriteid_baby_smile                                         ; 4057: dd
+    !byte spriteid_baby_smile                                         ; 4058: dd
+    !byte spriteid_baby_smile                                         ; 4059: dd
+    !byte spriteid_baby_smile                                         ; 405a: dd
+    !byte spriteid_baby_smile                                         ; 405b: dd
+    !byte spriteid_baby_smile                                         ; 405c: dd
+    !byte spriteid_baby_smile                                         ; 405d: dd
+    !byte spriteid_baby_smile                                         ; 405e: dd
+baby_spriteid_stunned
     !byte $ff                                                         ; 405f: ff
-    !byte spriteid_baby4                                              ; 4060: da
-    !byte spriteid_baby4                                              ; 4061: da
-    !byte spriteid_baby4                                              ; 4062: da
-    !byte spriteid_baby4                                              ; 4063: da
-    !byte spriteid_baby4                                              ; 4064: da
-    !byte spriteid_baby4                                              ; 4065: da
-    !byte spriteid_baby4                                              ; 4066: da
-    !byte spriteid_baby4                                              ; 4067: da
-    !byte spriteid_baby4                                              ; 4068: da
-    !byte spriteid_baby4                                              ; 4069: da
+    !byte spriteid_baby_stunned                                       ; 4060: da
+    !byte spriteid_baby_stunned                                       ; 4061: da
+    !byte spriteid_baby_stunned                                       ; 4062: da
+    !byte spriteid_baby_stunned                                       ; 4063: da
+    !byte spriteid_baby_stunned                                       ; 4064: da
+    !byte spriteid_baby_stunned                                       ; 4065: da
+    !byte spriteid_baby_stunned                                       ; 4066: da
+    !byte spriteid_baby_stunned                                       ; 4067: da
+    !byte spriteid_baby_stunned                                       ; 4068: da
+    !byte spriteid_baby_stunned                                       ; 4069: da
     !byte 0                                                           ; 406a: 00
-baby_spriteid_subseq3
-    !byte spriteid_baby5                                              ; 406b: db
-    !byte spriteid_baby5                                              ; 406c: db
-    !byte spriteid_baby5                                              ; 406d: db
-    !byte spriteid_baby5                                              ; 406e: db
-    !byte spriteid_baby5                                              ; 406f: db
-    !byte spriteid_baby5                                              ; 4070: db
-    !byte spriteid_baby5                                              ; 4071: db
-    !byte spriteid_baby5                                              ; 4072: db
-baby_spriteid_subseq6
+baby_spriteid_shrug
+    !byte spriteid_baby_shrug                                         ; 406b: db
+    !byte spriteid_baby_shrug                                         ; 406c: db
+    !byte spriteid_baby_shrug                                         ; 406d: db
+    !byte spriteid_baby_shrug                                         ; 406e: db
+    !byte spriteid_baby_shrug                                         ; 406f: db
+    !byte spriteid_baby_shrug                                         ; 4070: db
+    !byte spriteid_baby_shrug                                         ; 4071: db
+    !byte spriteid_baby_shrug                                         ; 4072: db
+baby_spriteid_none
     !byte $ff                                                         ; 4073: ff
-baby_spriteid_subseq7
-    !byte spriteid_baby3                                              ; 4074: d9
-    !byte spriteid_baby3                                              ; 4075: d9
-    !byte spriteid_baby3                                              ; 4076: d9
-    !byte spriteid_baby3                                              ; 4077: d9
-    !byte spriteid_baby3                                              ; 4078: d9
-    !byte spriteid_baby3                                              ; 4079: d9
-    !byte spriteid_baby3                                              ; 407a: d9
-    !byte spriteid_baby3                                              ; 407b: d9
+baby_spriteid_walk3
+    !byte spriteid_baby_walk_cycle_3                                  ; 4074: d9
+    !byte spriteid_baby_walk_cycle_3                                  ; 4075: d9
+    !byte spriteid_baby_walk_cycle_3                                  ; 4076: d9
+    !byte spriteid_baby_walk_cycle_3                                  ; 4077: d9
+    !byte spriteid_baby_walk_cycle_3                                  ; 4078: d9
+    !byte spriteid_baby_walk_cycle_3                                  ; 4079: d9
+    !byte spriteid_baby_walk_cycle_3                                  ; 407a: d9
+    !byte spriteid_baby_walk_cycle_3                                  ; 407b: d9
     !byte 0                                                           ; 407c: 00
-baby_spriteid_subseq4
-    !byte spriteid_baby6                                              ; 407d: dc
+baby_spriteid_dead
+    !byte spriteid_baby_dead                                          ; 407d: dc
     !byte 0                                                           ; 407e: 00
 
 ; *************************************************************************************
@@ -1382,7 +1382,7 @@ room2_update_handler
     lda current_level                                                 ; 409c: a5 31
     cmp level_before_latest_level_and_room_initialisation             ; 409e: c5 51
     beq room2_update_handler_not_new_level                            ; 40a0: f0 1f
-    ldy #baby_spriteid_subseq4 - baby_spriteid_data                   ; 40a2: a0 2b
+    ldy #baby_spriteid_dead - baby_spriteid_data                      ; 40a2: a0 2b
     lda save_game_level_a_room_2_baby_direction                       ; 40a4: ad 04 0a
     ldx save_game_level_a_room_2_baby_pixel_x_coordinate              ; 40a7: ae 03 0a
     bne have_valid_baby_properties_in_axy                             ; 40aa: d0 06
@@ -1390,8 +1390,8 @@ room2_update_handler
     lda #1                                                            ; 40ae: a9 01
     ldx #$a0                                                          ; 40b0: a2 a0
 have_valid_baby_properties_in_axy
-    sty baby_spriteid_index_if_baby_spriteid_data_is_zero             ; 40b2: 8c 72 0a
-    sty baby_sprite_index                                             ; 40b5: 8c 73 0a
+    sty baby_animation                                                ; 40b2: 8c 72 0a
+    sty baby_animation_step                                           ; 40b5: 8c 73 0a
     sta save_game_level_a_room_2_baby_direction                       ; 40b8: 8d 04 0a
     sta baby_pixel_x_speed                                            ; 40bb: 8d 71 0a
     stx baby_pixel_x_coordinate                                       ; 40be: 8e 70 0a
@@ -1417,24 +1417,23 @@ room2_update_handler_temp
     !byte 0                                                           ; 40e3: 00
 
 room2_not_first_update
-    ldy baby_sprite_index                                             ; 40e4: ac 73 0a
-    cpy #baby_spriteid_subseq4 - baby_spriteid_data                   ; 40e7: c0 2b
-    bne not_at_last_baby_spriteid_entry                               ; 40e9: d0 03
+    ldy baby_animation_step                                           ; 40e4: ac 73 0a
+    cpy #baby_spriteid_dead - baby_spriteid_data                      ; 40e7: c0 2b
+    bne baby_not_dead                                                 ; 40e9: d0 03
     jmp room2_update_second_part                                      ; 40eb: 4c d9 41
 
-not_at_last_baby_spriteid_entry
+baby_not_dead
     iny                                                               ; 40ee: c8
     lda baby_spriteid_data,y                                          ; 40ef: b9 52 40
     bne have_specific_baby_spriteid                                   ; 40f2: d0 03
-; TODO: I suspect what happens here is that there are multiple animation sequences and
-; 0 means 'jump to a new sequence, identified by baby_sprite_index_if...'
-    ldy baby_spriteid_index_if_baby_spriteid_data_is_zero             ; 40f4: ac 72 0a
+; if at the end of one animation, start the same one (loop) or a new one
+    ldy baby_animation                                                ; 40f4: ac 72 0a
 have_specific_baby_spriteid
     lda desired_room_index                                            ; 40f7: a5 30
     cmp #2                                                            ; 40f9: c9 02
     bne player_not_collided_with_baby                                 ; 40fb: d0 31
-    lda baby_spriteid_index_if_baby_spriteid_data_is_zero             ; 40fd: ad 72 0a
-    cmp #baby_spriteid_subseq4 - baby_spriteid_data                   ; 4100: c9 2b
+    lda baby_animation                                                ; 40fd: ad 72 0a
+    cmp #baby_spriteid_dead - baby_spriteid_data                      ; 4100: c9 2b
     beq baby_spriteid_index_if_baby_spriteid_data_is_zero_set         ; 4102: f0 27
     ldx #objectid_player                                              ; 4104: a2 00
     sty room2_update_handler_temp                                     ; 4106: 8c e3 40
@@ -1449,19 +1448,19 @@ have_specific_baby_spriteid
     sta player_using_object_spriteid                                  ; 411c: 8d b6 2e
     lda #1                                                            ; 411f: a9 01
     sta save_game_level_a_room_2_baby_direction                       ; 4121: 8d 04 0a
-    ldy #baby_spriteid_subseq7 - baby_spriteid_data                   ; 4124: a0 22
+    ldy #baby_spriteid_walk3 - baby_spriteid_data                     ; 4124: a0 22
     lda #5                                                            ; 4126: a9 05
-    sta baby_spriteid_index_if_baby_spriteid_data_is_zero             ; 4128: 8d 72 0a
+    sta baby_animation                                                ; 4128: 8d 72 0a
 baby_spriteid_index_if_baby_spriteid_data_is_zero_set
     jmp move_baby                                                     ; 412b: 4c ae 41
 
-; Y contains an index into baby_spriteid_data
+; Y contains the baby animation step
 player_not_collided_with_baby
-    cpy #baby_spriteid_subseq6 - baby_spriteid_data                   ; 412e: c0 21
-    bne dont_adjust_baby_spriteid_index                               ; 4130: d0 05
-    ldy #baby_spriteid_subseq2 - baby_spriteid_data                   ; 4132: a0 05
-    sty baby_spriteid_index_if_baby_spriteid_data_is_zero             ; 4134: 8c 72 0a
-dont_adjust_baby_spriteid_index
+    cpy #baby_spriteid_none - baby_spriteid_data                      ; 412e: c0 21
+    bne check_for_using_saxophone                                     ; 4130: d0 05
+    ldy #baby_spriteid_smile - baby_spriteid_data                     ; 4132: a0 05
+    sty baby_animation                                                ; 4134: 8c 72 0a
+check_for_using_saxophone
     lda desired_room_index                                            ; 4137: a5 30
     cmp #2                                                            ; 4139: c9 02
     bne player_not_using_saxophone                                    ; 413b: d0 21
@@ -1469,45 +1468,50 @@ dont_adjust_baby_spriteid_index
     cmp #spriteid_saxophone2                                          ; 4140: c9 d3
     bne player_not_using_saxophone                                    ; 4142: d0 1a
     ldy #$0e                                                          ; 4144: a0 0e
-    lda #baby_spriteid_subseq3 - baby_spriteid_data                   ; 4146: a9 19
-    sta baby_spriteid_index_if_baby_spriteid_data_is_zero             ; 4148: 8d 72 0a
+    lda #baby_spriteid_shrug - baby_spriteid_data                     ; 4146: a9 19
+    sta baby_animation                                                ; 4148: 8d 72 0a
     lda object_y_low                                                  ; 414b: ad 7c 09
     cmp #$a0                                                          ; 414e: c9 a0
     bcs move_baby                                                     ; 4150: b0 5c
     cmp #$78 ; 'x'                                                    ; 4152: c9 78
     bcc move_baby                                                     ; 4154: 90 58
-    lda #baby_spriteid_subseq4 - baby_spriteid_data                   ; 4156: a9 2b
-    sta baby_spriteid_index_if_baby_spriteid_data_is_zero             ; 4158: 8d 72 0a
+; set baby dead
+    lda #baby_spriteid_dead - baby_spriteid_data                      ; 4156: a9 2b
+    sta baby_animation                                                ; 4158: 8d 72 0a
     jmp move_baby                                                     ; 415b: 4c ae 41
 
 player_not_using_saxophone
-    cpy #baby_spriteid_subseq5 - baby_spriteid_data                   ; 415e: c0 0d
-    bne not_at_subseq5                                                ; 4160: d0 05
+    cpy #baby_spriteid_stunned - baby_spriteid_data                   ; 415e: c0 0d
+    bne baby_not_stunned                                              ; 4160: d0 05
+; start walk cycle
     ldy #0                                                            ; 4162: a0 00
-    sty baby_spriteid_index_if_baby_spriteid_data_is_zero             ; 4164: 8c 72 0a
-not_at_subseq5
-    lda baby_spriteid_index_if_baby_spriteid_data_is_zero             ; 4167: ad 72 0a
+    sty baby_animation                                                ; 4164: 8c 72 0a
+baby_not_stunned
+    lda baby_animation                                                ; 4167: ad 72 0a
     cmp #0                                                            ; 416a: c9 00                   ; redundant instruction
     bne move_baby                                                     ; 416c: d0 40
     lda baby_pixel_x_speed                                            ; 416e: ad 71 0a
     sta save_game_level_a_room_2_baby_direction                       ; 4171: 8d 04 0a
     lda baby_pixel_x_coordinate                                       ; 4174: ad 70 0a
     ldx baby_pixel_x_speed                                            ; 4177: ae 71 0a
-    bmi baby_pixel_x_speed_negativbe                                  ; 417a: 30 08
+    bmi baby_pixel_x_speed_negative                                   ; 417a: 30 08
     cmp #baby_max_pixel_x                                             ; 417c: c9 d4
     beq baby_pixel_x_coordinate_is_max_or_min                         ; 417e: f0 0c
     bcc baby_pixel_x_coordinate_within_min_max                        ; 4180: 90 1d
     bcs baby_pixel_x_coordinate_outside_min_max                       ; 4182: b0 10                   ; ALWAYS branch
-baby_pixel_x_speed_negativbe
+
+baby_pixel_x_speed_negative
     cmp #baby_min_pixel_x                                             ; 4184: c9 6c
     beq baby_pixel_x_coordinate_is_max_or_min                         ; 4186: f0 04
     bcs baby_pixel_x_coordinate_within_min_max                        ; 4188: b0 15
     bcc baby_pixel_x_coordinate_outside_min_max                       ; 418a: 90 08                   ; ALWAYS branch
+
 baby_pixel_x_coordinate_is_max_or_min
-    ldy #baby_spriteid_subseq2 - baby_spriteid_data                   ; 418c: a0 05
-    sty baby_spriteid_index_if_baby_spriteid_data_is_zero             ; 418e: 8c 72 0a
+    ldy #baby_spriteid_smile - baby_spriteid_data                     ; 418c: a0 05
+    sty baby_animation                                                ; 418e: 8c 72 0a
     jmp baby_pixel_x_coordinate_within_min_max                        ; 4191: 4c 9f 41
 
+; reverse baby direction
 baby_pixel_x_coordinate_outside_min_max
     lda baby_pixel_x_speed                                            ; 4194: ad 71 0a
     eor #$fe                                                          ; 4197: 49 fe
@@ -1532,26 +1536,25 @@ move_baby
     sta baby_pixel_x_coordinate                                       ; 41bb: 8d 70 0a
     jmp baby_pixel_x_coordinate_updated                               ; 41be: 4c c9 41
 
-; TODO: This doesn't seem to be subtracting from baby_pixel_x_coordinate, suggesting
-; 'baby_direction' is not quite what I thought
 baby_direction_negative
     lda baby_pixel_x_coordinate                                       ; 41c1: ad 70 0a
     and #$f8                                                          ; 41c4: 29 f8
     sta baby_pixel_x_coordinate                                       ; 41c6: 8d 70 0a
 baby_pixel_x_coordinate_updated
-    sty baby_sprite_index                                             ; 41c9: 8c 73 0a
+    sty baby_animation_step                                           ; 41c9: 8c 73 0a
     lda desired_room_index                                            ; 41cc: a5 30
     cmp #2                                                            ; 41ce: c9 02
     bne room2_update_second_part                                      ; 41d0: d0 07
-    cpy #baby_spriteid_subseq4 - baby_spriteid_data                   ; 41d2: c0 2b
+    cpy #baby_spriteid_dead - baby_spriteid_data                      ; 41d2: c0 2b
     bne room2_update_second_part                                      ; 41d4: d0 03
-    jsr play_some_sound1_then_some_sound2                             ; 41d6: 20 f1 3e
+; This is the dead baby sound
+    jsr play_sound12                                                  ; 41d6: 20 f1 3e
 room2_update_second_part
     lda desired_room_index                                            ; 41d9: a5 30
     cmp #2                                                            ; 41db: c9 02
     bne return5                                                       ; 41dd: d0 6d
-    lda baby_spriteid_index_if_baby_spriteid_data_is_zero             ; 41df: ad 72 0a
-    cmp #baby_spriteid_subseq4 - baby_spriteid_data                   ; 41e2: c9 2b
+    lda baby_animation                                                ; 41df: ad 72 0a
+    cmp #baby_spriteid_dead - baby_spriteid_data                      ; 41e2: c9 2b
     bne set_baby_object_properties                                    ; 41e4: d0 4f
     lda baby_pixel_x_coordinate                                       ; 41e6: ad 70 0a
     sta save_game_level_a_room_2_baby_pixel_x_coordinate              ; 41e9: 8d 03 0a
@@ -1559,8 +1562,8 @@ room2_update_second_part
     lsr                                                               ; 41ed: 4a
     lsr                                                               ; 41ee: 4a
     tax                                                               ; 41ef: aa
-    lda baby_sprite_index                                             ; 41f0: ad 73 0a
-    cmp #baby_spriteid_subseq4 - baby_spriteid_data                   ; 41f3: c9 2b
+    lda baby_animation_step                                           ; 41f0: ad 73 0a
+    cmp #baby_spriteid_dead - baby_spriteid_data                      ; 41f3: c9 2b
     beq update_collision_map_for_baby                                 ; 41f5: f0 15
 ; Add the baby to the collision map.
     dex                                                               ; 41f7: ca
@@ -1599,10 +1602,10 @@ baby_direction_negative2
     sta value_to_write_to_collision_map                               ; 4230: 85 3e
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 4232: 20 44 1e
 set_baby_object_properties
-    ldx #2                                                            ; 4235: a2 02
+    ldx #objectid_baby                                                ; 4235: a2 02
     lda baby_pixel_x_coordinate                                       ; 4237: ad 70 0a
     sta object_x_low,x                                                ; 423a: 9d 50 09
-    ldy baby_sprite_index                                             ; 423d: ac 73 0a
+    ldy baby_animation_step                                           ; 423d: ac 73 0a
     lda baby_spriteid_data,y                                          ; 4240: b9 52 40
     sta object_spriteid,x                                             ; 4243: 9d a8 09
     lda save_game_level_a_room_2_baby_direction                       ; 4246: ad 04 0a
@@ -1926,12 +1929,12 @@ envelope2
     !byte 250                                                         ; 4437: fa                      ; change of amplitude per step during release phase
     !byte 115                                                         ; 4438: 73                      ; target of level at end of attack phase
     !byte 0                                                           ; 4439: 00                      ; target of level at end of decay phase
-some_sound2
+sound2
     !word $10                                                         ; 443a: 10 00                   ; channel
     !word 6                                                           ; 443c: 06 00                   ; amplitude
     !word 7                                                           ; 443e: 07 00                   ; pitch
     !word 1                                                           ; 4440: 01 00                   ; duration
-some_sound1
+sound1
     !word $11                                                         ; 4442: 11 00                   ; channel
     !word 0                                                           ; 4444: 00 00                   ; amplitude
     !word 210                                                         ; 4446: d2 00                   ; pitch
@@ -2054,14 +2057,14 @@ pydis_end
 !if (<saxophone_sound) != $24 {
     !error "Assertion failed: <saxophone_sound == $24"
 }
-!if (<some_sound1) != $42 {
-    !error "Assertion failed: <some_sound1 == $42"
-}
-!if (<some_sound2) != $3a {
-    !error "Assertion failed: <some_sound2 == $3a"
-}
 !if (<some_sound4) != $58 {
     !error "Assertion failed: <some_sound4 == $58"
+}
+!if (<sound1) != $42 {
+    !error "Assertion failed: <sound1 == $42"
+}
+!if (<sound2) != $3a {
+    !error "Assertion failed: <sound2 == $3a"
 }
 !if (<tile_all_set_pixels) != $a9 {
     !error "Assertion failed: <tile_all_set_pixels == $a9"
@@ -2093,14 +2096,14 @@ pydis_end
 !if (>saxophone_sound) != $44 {
     !error "Assertion failed: >saxophone_sound == $44"
 }
-!if (>some_sound1) != $44 {
-    !error "Assertion failed: >some_sound1 == $44"
-}
-!if (>some_sound2) != $44 {
-    !error "Assertion failed: >some_sound2 == $44"
-}
 !if (>some_sound4) != $44 {
     !error "Assertion failed: >some_sound4 == $44"
+}
+!if (>sound1) != $44 {
+    !error "Assertion failed: >sound1 == $44"
+}
+!if (>sound2) != $44 {
+    !error "Assertion failed: >sound2 == $44"
 }
 !if (>tile_all_set_pixels) != $0a {
     !error "Assertion failed: >tile_all_set_pixels == $0a"
@@ -2111,23 +2114,23 @@ pydis_end
 !if (baby_min_pixel_x) != $6c {
     !error "Assertion failed: baby_min_pixel_x == $6c"
 }
-!if (baby_spriteid_subseq2 - baby_spriteid_data) != $05 {
-    !error "Assertion failed: baby_spriteid_subseq2 - baby_spriteid_data == $05"
+!if (baby_spriteid_dead - baby_spriteid_data) != $2b {
+    !error "Assertion failed: baby_spriteid_dead - baby_spriteid_data == $2b"
 }
-!if (baby_spriteid_subseq3 - baby_spriteid_data) != $19 {
-    !error "Assertion failed: baby_spriteid_subseq3 - baby_spriteid_data == $19"
+!if (baby_spriteid_none - baby_spriteid_data) != $21 {
+    !error "Assertion failed: baby_spriteid_none - baby_spriteid_data == $21"
 }
-!if (baby_spriteid_subseq4 - baby_spriteid_data) != $2b {
-    !error "Assertion failed: baby_spriteid_subseq4 - baby_spriteid_data == $2b"
+!if (baby_spriteid_shrug - baby_spriteid_data) != $19 {
+    !error "Assertion failed: baby_spriteid_shrug - baby_spriteid_data == $19"
 }
-!if (baby_spriteid_subseq5 - baby_spriteid_data) != $0d {
-    !error "Assertion failed: baby_spriteid_subseq5 - baby_spriteid_data == $0d"
+!if (baby_spriteid_smile - baby_spriteid_data) != $05 {
+    !error "Assertion failed: baby_spriteid_smile - baby_spriteid_data == $05"
 }
-!if (baby_spriteid_subseq6 - baby_spriteid_data) != $21 {
-    !error "Assertion failed: baby_spriteid_subseq6 - baby_spriteid_data == $21"
+!if (baby_spriteid_stunned - baby_spriteid_data) != $0d {
+    !error "Assertion failed: baby_spriteid_stunned - baby_spriteid_data == $0d"
 }
-!if (baby_spriteid_subseq7 - baby_spriteid_data) != $22 {
-    !error "Assertion failed: baby_spriteid_subseq7 - baby_spriteid_data == $22"
+!if (baby_spriteid_walk3 - baby_spriteid_data) != $22 {
+    !error "Assertion failed: baby_spriteid_walk3 - baby_spriteid_data == $22"
 }
 !if (collectable_spriteids + 1) != $2eee {
     !error "Assertion failed: collectable_spriteids + 1 == $2eee"
@@ -2276,29 +2279,29 @@ pydis_end
 !if (sprite_data - level_data) != $09d1 {
     !error "Assertion failed: sprite_data - level_data == $09d1"
 }
-!if (spriteid_baby0) != $d6 {
-    !error "Assertion failed: spriteid_baby0 == $d6"
+!if (spriteid_baby_dead) != $dc {
+    !error "Assertion failed: spriteid_baby_dead == $dc"
 }
-!if (spriteid_baby1) != $d7 {
-    !error "Assertion failed: spriteid_baby1 == $d7"
+!if (spriteid_baby_shrug) != $db {
+    !error "Assertion failed: spriteid_baby_shrug == $db"
 }
-!if (spriteid_baby2) != $d8 {
-    !error "Assertion failed: spriteid_baby2 == $d8"
+!if (spriteid_baby_smile) != $dd {
+    !error "Assertion failed: spriteid_baby_smile == $dd"
 }
-!if (spriteid_baby3) != $d9 {
-    !error "Assertion failed: spriteid_baby3 == $d9"
+!if (spriteid_baby_stunned) != $da {
+    !error "Assertion failed: spriteid_baby_stunned == $da"
 }
-!if (spriteid_baby4) != $da {
-    !error "Assertion failed: spriteid_baby4 == $da"
+!if (spriteid_baby_walk_cycle_0) != $d6 {
+    !error "Assertion failed: spriteid_baby_walk_cycle_0 == $d6"
 }
-!if (spriteid_baby5) != $db {
-    !error "Assertion failed: spriteid_baby5 == $db"
+!if (spriteid_baby_walk_cycle_1) != $d7 {
+    !error "Assertion failed: spriteid_baby_walk_cycle_1 == $d7"
 }
-!if (spriteid_baby6) != $dc {
-    !error "Assertion failed: spriteid_baby6 == $dc"
+!if (spriteid_baby_walk_cycle_2) != $d8 {
+    !error "Assertion failed: spriteid_baby_walk_cycle_2 == $d8"
 }
-!if (spriteid_baby7) != $dd {
-    !error "Assertion failed: spriteid_baby7 == $dd"
+!if (spriteid_baby_walk_cycle_3) != $d9 {
+    !error "Assertion failed: spriteid_baby_walk_cycle_3 == $d9"
 }
 !if (spriteid_ball) != $3b {
     !error "Assertion failed: spriteid_ball == $3b"

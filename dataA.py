@@ -18,14 +18,14 @@ sprite_dict = {
     0xd3: "spriteid_saxophone2",
     0xd4: "spriteid_mouse_hands3",
     0xd5: "spriteid_mouse_hands4",
-    0xd6: "spriteid_baby0",
-    0xd7: "spriteid_baby1",
-    0xd8: "spriteid_baby2",
-    0xd9: "spriteid_baby3",
-    0xda: "spriteid_baby4",
-    0xdb: "spriteid_baby5",
-    0xdc: "spriteid_baby6",
-    0xdd: "spriteid_baby7",
+    0xd6: "spriteid_baby_walk_cycle_0",
+    0xd7: "spriteid_baby_walk_cycle_1",
+    0xd8: "spriteid_baby_walk_cycle_2",
+    0xd9: "spriteid_baby_walk_cycle_3",
+    0xda: "spriteid_baby_stunned",
+    0xdb: "spriteid_baby_shrug",
+    0xdc: "spriteid_baby_dead",
+    0xdd: "spriteid_baby_smile",
     0xde: "spriteid_table",
 }
 
@@ -61,7 +61,7 @@ constant(6, "player_collision_flag_baby")
 constant(0x80, "player_collision_flag_mouse_ball")
 constant(0xa, "table_min_x")
 constant(0x16, "table_max_x")
-constant(0x6c, "baby_min_pixel_x") # TODO: name is probably not quite right, given at 418a we branch if *less* than this
+constant(0x6c, "baby_min_pixel_x")
 constant(0x88, "trapdoor_left_x")
 constant(0xb8, "trapdoor_right_x")
 constant(0xd4, "baby_max_pixel_x")
@@ -140,22 +140,6 @@ def mouse_and_ball(addr):
 for i in range(3): # TODO: Add a convenience function for this? Maybe in py8dis?
     byte(0x3eee+i)
 
-# TODO: I think room1_trapdoor_open_flag can have values $ff, 0 and 1 - just possibly this
-# increments to add a time delay to the trapdoor visibly opening, but that's a guess at this point.
-# Looking at Colin's YT video frame by frame, I think there are states: fully closed, both open at
-# an angle, right fully open while left is still at an angle and both fully open. Not entirely sure
-# if both open at an angle is a single state or two states with rhs one opening first. (Timestamp in
-# video ~ 17:54.) Looking at the code at 3ee4 I suspect any left-vs-right difference is just me
-# stepping through the frames and in reality we are "supposed" to see symmetric movement
-# - non-0 means open (see 3e3e), I suspect 1 means "partly open" (note that room1_update_handler
-# will force it to $ff if it's non-0 during setup, presumably to handle cases where the user
-# switched level while the trapdoor was opening)
-
-
-# TODO: envelope1/2/4 share the same envelope number (6) - maybe we should adopt a convention of using labels like envelopeA6b -> level A, OS env number 6, a/b/c/d suffix indicates competing envelopes for that OS env number
-
-# TODO expr_label(0x9ac, "object_spriteid + objectid_mouse_ball")
-
 label(0x09ff, "save_game_level_a_room1_trapdoor_open_flag")
 label(0x0a00, "save_game_level_a_saxophone_collected_flag")
 label(0x0a01, "save_game_level_a_table_x_position")
@@ -164,10 +148,10 @@ label(0x0a03, "save_game_level_a_room_2_baby_pixel_x_coordinate")
 label(0x0a04, "save_game_level_a_room_2_baby_direction")
 
 label(0x0a6f, "mouse_ball_animation_position")  # This runs from 0-$1d inclusive starting at 0 far left, reaching far right at $10 and returning to far left at $1d.
-label(0x0a70, "baby_pixel_x_coordinate")        # TODO: speculative
-label(0x0a71, "baby_pixel_x_speed")             # TODO: speculative
-label(0x0a72, "baby_spriteid_index_if_baby_spriteid_data_is_zero")
-label(0x0a73, "baby_sprite_index")
+label(0x0a70, "baby_pixel_x_coordinate")
+label(0x0a71, "baby_pixel_x_speed")
+label(0x0a72, "baby_animation")
+label(0x0a73, "baby_animation_step")
 
 comment(0x3af4, "if level is unchanged, skip forwards")
 comment(0x3af8, "if not in developer mode, skip forwards")
@@ -276,7 +260,7 @@ expr(0x3e93, "objectid_old_player")
 comment(0x3e99, "Yes, so we need to open the trapdoor. Remove the closed trapdoor from the collision map.")
 comment(0x3eac, "Add the two open trapdoors to the collision map.")
 entry(0x3ec1, "increment_trapdoor_open_flag")
-comment(0x3ecf, "TODO: Pretty confident this is the trapdoor opening sound, but this is called elsewhere so don't want to rename subroutine yet")
+comment(0x3ecf, "This is the trapdoor opening sound")
 entry(0x3ed2, "skip_play_sound")
 entry(0x3ed4, "new_room1_trapdoor_open_flag_in_y")
 entry(0x3ed7, "set_room1_trapdoor_sprites_if_required")
@@ -289,9 +273,9 @@ label(0x3eee, "trapdoor_sprite_table")
 expr(0x3eee, "spriteid_trapdoor_horizontal")
 expr(0x3eef, "spriteid_trapdoor_diagonal")
 expr(0x3ef0, "spriteid_trapdoor_vertical")
-entry(0x3ef1, "play_some_sound1_then_some_sound2")
-ldx_ldy_jsr_play_sound_yx(0x3ef7, "some_sound1")
-ldx_ldy_jsr_play_sound_yx(0x3efe, "some_sound2")
+entry(0x3ef1, "play_sound12")
+ldx_ldy_jsr_play_sound_yx(0x3ef7, "sound1")
+ldx_ldy_jsr_play_sound_yx(0x3efe, "sound2")
 entry(0x3f02, "room1_saxophone_and_brazier_handler")
 expr(0x3f08, "objectid_brazier")
 expr(0x3f16, "spriteid_saxophone2")
@@ -325,18 +309,18 @@ expr(0x3ff3, "copy_mode_simple")
 expr(0x4048, "exit_room_top")
 label(0x4052, "baby_spriteid_data")
 spriteid(0x4052, 0x407f, True)
-label(0x4057, "baby_spriteid_subseq2")
-label(0x405f, "baby_spriteid_subseq5")
-label(0x406b, "baby_spriteid_subseq3")
-label(0x4073, "baby_spriteid_subseq6")
-label(0x4074, "baby_spriteid_subseq7")
-label(0x407d, "baby_spriteid_subseq4")
+label(0x4057, "baby_spriteid_smile")
+label(0x405f, "baby_spriteid_stunned")
+label(0x406b, "baby_spriteid_shrug")
+label(0x4073, "baby_spriteid_none")
+label(0x4074, "baby_spriteid_walk3")
+label(0x407d, "baby_spriteid_dead")
 entry(0x407f, "room2_update_handler")
 ri(0x4084)
 ri(0x4086)
 ri(0x4088)
 expr(0x4093, "objectid_spell")
-expr(0x40a3, make_subtract("baby_spriteid_subseq4", "baby_spriteid_data"))
+expr(0x40a3, make_subtract("baby_spriteid_dead", "baby_spriteid_data"))
 entry(0x40b2, "have_valid_baby_properties_in_axy")
 entry(0x40c1, "room2_update_handler_not_new_level")
 expr(0x40c8, make_lo("envelope2"))
@@ -347,51 +331,57 @@ expr(0x40de, make_add("object_erase_type", "objectid_baby"))
 entry(0x40e0, "room2_update_second_part_local")
 label(0x40e3, "room2_update_handler_temp")
 entry(0x40e4, "room2_not_first_update")
-expr(0x40e8, make_subtract("baby_spriteid_subseq4", "baby_spriteid_data"))
-entry(0x40ee, "not_at_last_baby_spriteid_entry")
-comment(0x40f4, "TODO: I suspect what happens here is that there are multiple animation sequences and 0 means 'jump to a new sequence, identified by baby_sprite_index_if...'")
+expr(0x40e8, make_subtract("baby_spriteid_dead", "baby_spriteid_data"))
+entry(0x40ee, "baby_not_dead")
+comment(0x40f4, "if at the end of one animation, start the same one (loop) or a new one")
 entry(0x40f7, "have_specific_baby_spriteid")
-expr(0x4101, make_subtract("baby_spriteid_subseq4", "baby_spriteid_data"))
+expr(0x4101, make_subtract("baby_spriteid_dead", "baby_spriteid_data"))
 expr(0x4105, "objectid_player")
 expr(0x410a, "objectid_baby")
 comment(0x4111, "set flags to reflect value in set flags to reflect value in A", inline=True)
 expr(0x4116, "player_collision_flag_baby")
-expr(0x4125, make_subtract("baby_spriteid_subseq7", "baby_spriteid_data"))
+expr(0x4125, make_subtract("baby_spriteid_walk3", "baby_spriteid_data"))
 entry(0x412b, "baby_spriteid_index_if_baby_spriteid_data_is_zero_set")
 entry(0x412e, "player_not_collided_with_baby")
-comment(0x412e, "Y contains an index into baby_spriteid_data")
-expr(0x412f, make_subtract("baby_spriteid_subseq6", "baby_spriteid_data"))
-expr(0x4133, make_subtract("baby_spriteid_subseq2", "baby_spriteid_data"))
-entry(0x4137, "dont_adjust_baby_spriteid_index")
+comment(0x412e, "Y contains the baby animation step")
+expr(0x412f, make_subtract("baby_spriteid_none", "baby_spriteid_data"))
+expr(0x4133, make_subtract("baby_spriteid_smile", "baby_spriteid_data"))
+entry(0x4137, "check_for_using_saxophone")
 expr(0x4141, "spriteid_saxophone2")
-expr(0x4147, make_subtract("baby_spriteid_subseq3", "baby_spriteid_data"))
-expr(0x4157, make_subtract("baby_spriteid_subseq4", "baby_spriteid_data"))
+expr(0x4147, make_subtract("baby_spriteid_shrug", "baby_spriteid_data"))
+comment(0x4156, "set baby dead")
+expr(0x4157, make_subtract("baby_spriteid_dead", "baby_spriteid_data"))
 entry(0x415e, "player_not_using_saxophone")
-expr(0x415f, make_subtract("baby_spriteid_subseq5", "baby_spriteid_data"))
-entry(0x4167, "not_at_subseq5")
+expr(0x415f, make_subtract("baby_spriteid_stunned", "baby_spriteid_data"))
+comment(0x4162, "start walk cycle")
+entry(0x4167, "baby_not_stunned")
 ri(0x416a)
 expr(0x417d, "baby_max_pixel_x")
 ab(0x4182)
-entry(0x4184, "baby_pixel_x_speed_negativbe")
+blank(0x4184)
+entry(0x4184, "baby_pixel_x_speed_negative")
 expr(0x4185, "baby_min_pixel_x")
 ab(0x418a)
-entry(0x418c, "baby_pixel_x_coordinate_is_max_or_min") # TODO: speculative
-expr(0x418d, make_subtract("baby_spriteid_subseq2", "baby_spriteid_data"))
+blank(0x418c)
+label(0x418c, "baby_pixel_x_coordinate_is_max_or_min")
+expr(0x418d, make_subtract("baby_spriteid_smile", "baby_spriteid_data"))
+comment(0x4194, "reverse baby direction")
 entry(0x4194, "baby_pixel_x_coordinate_outside_min_max")
 entry(0x419f, "baby_pixel_x_coordinate_within_min_max")
 entry(0x41ae, "move_baby")
 entry(0x41c1, "baby_direction_negative")
-comment(0x41c1, "TODO: This doesn't seem to be subtracting from baby_pixel_x_coordinate, suggesting 'baby_direction' is not quite what I thought")
 entry(0x41c9, "baby_pixel_x_coordinate_updated")
-expr(0x41d3, make_subtract("baby_spriteid_subseq4", "baby_spriteid_data"))
+expr(0x41d3, make_subtract("baby_spriteid_dead", "baby_spriteid_data"))
+comment(0x41d6, "This is the dead baby sound")
 entry(0x41d9, "room2_update_second_part")
-expr(0x41e3, make_subtract("baby_spriteid_subseq4", "baby_spriteid_data"))
-expr(0x41f4, make_subtract("baby_spriteid_subseq4", "baby_spriteid_data"))
+expr(0x41e3, make_subtract("baby_spriteid_dead", "baby_spriteid_data"))
+expr(0x41f4, make_subtract("baby_spriteid_dead", "baby_spriteid_data"))
 comment(0x41f7, "Add the baby to the collision map.")
-entry(0x420c, "update_collision_map_for_baby") # TODO?
+entry(0x420c, "update_collision_map_for_baby")
 comment(0x420c, "When the baby is killed, remove the baby from the collision map and add it at its new position.")
 entry(0x4224, "baby_direction_negative2")
 entry(0x4235, "set_baby_object_properties")
+expr(0x4236, "objectid_baby")
 entry(0x424c, "return5")
 expr(0x42ee, "exit_room_left")
 entry(0x42f8, "room3_update_handler")
@@ -445,6 +435,7 @@ print("""; *********************************************************************
 ;
 ;     save_game_level_a_room1_trapdoor_open_flag                     ($09ff):
 ;               0: closed
+;               1: partway open
 ;             $ff: taken
 ;
 ;     save_game_level_a_saxophone_collected_flag                     ($0a00):
