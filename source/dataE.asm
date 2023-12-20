@@ -202,11 +202,8 @@ save_game_level_e_small_egg_status                      = $0a13
 save_game_level_e_big_egg_animation_index               = $0a14
 save_game_level_e_bird_global_x_position                = $0a15
 level_workspace_small_egg_offscreen_time                = $0a6f
-l0a70                                                   = $0a70
 thrown_egg_x_low                                        = $0a70
-l0a71                                                   = $0a71
 thrown_egg_x_high                                       = $0a71
-l0a72                                                   = $0a72
 thrown_egg_y_low                                        = $0a72
 thrown_egg_direction                                    = $0a73
 small_egg_animation_step                                = $0a74
@@ -214,7 +211,7 @@ room_containing_small_egg                               = $0a75
 egg_animation_index                                     = $0a76
 room_1_egg_x                                            = $0a77
 room_1_egg_y                                            = $0a78
-l0a79                                                   = $0a79
+bird_object_direction                                   = $0a79
 bird_x_direction                                        = $0a7a
 bird_wing_animation_index                               = $0a7b
 tile_all_set_pixels                                     = $0aa9
@@ -283,10 +280,10 @@ object_room_collision_flags                             = $38d8
 play_sound_yx                                           = $38f6
 define_envelope                                         = $395e
 sound_priority_per_channel_table                        = $396f
-l3ac7                                                   = $3ac7
-l3ac9                                                   = $3ac9
-l3aca                                                   = $3aca
-l3acb                                                   = $3acb
+jump_requested                                          = $3ac7
+player_move_direction_requested                         = $3ac9
+move_left_requested                                     = $3aca
+move_right_requested                                    = $3acb
 negative_inkey                                          = $3acc
 
     * = $3ad5
@@ -753,7 +750,7 @@ room_2_update_handler
     lda #$73 ; 's'                                                    ; 3d00: a9 73
     sta save_game_level_e_bird_global_x_position                      ; 3d02: 8d 15 0a
     lda #$ff                                                          ; 3d05: a9 ff
-    sta l0a79                                                         ; 3d07: 8d 79 0a
+    sta bird_object_direction                                         ; 3d07: 8d 79 0a
     sta bird_x_direction                                              ; 3d0a: 8d 7a 0a
     lda #0                                                            ; 3d0d: a9 00
     sta bird_wing_animation_index                                     ; 3d0f: 8d 7b 0a
@@ -807,9 +804,9 @@ c3d6f
     sty bird_wing_animation_index                                     ; 3d6f: 8c 7b 0a
     lda bird_x_direction                                              ; 3d72: ad 7a 0a
     bne c3d85                                                         ; 3d75: d0 0e
-    lda l0a79                                                         ; 3d77: ad 79 0a
+    lda bird_object_direction                                         ; 3d77: ad 79 0a
     eor #$fe                                                          ; 3d7a: 49 fe
-    sta l0a79                                                         ; 3d7c: 8d 79 0a
+    sta bird_object_direction                                         ; 3d7c: 8d 79 0a
     sta bird_x_direction                                              ; 3d7f: 8d 7a 0a
     jmp c3d95                                                         ; 3d82: 4c 95 3d
 
@@ -865,7 +862,7 @@ c3dd6
     sta object_x_low + objectid_bird_wings                            ; 3de4: 8d 55 09
     lda object_x_high + objectid_bird                                 ; 3de7: ad 6a 09
     sta object_x_high + objectid_bird_wings                           ; 3dea: 8d 6b 09
-    lda l0a79                                                         ; 3ded: ad 79 0a
+    lda bird_object_direction                                         ; 3ded: ad 79 0a
     sta object_direction + objectid_bird                              ; 3df0: 8d c2 09
     sta object_direction + objectid_bird_wings                        ; 3df3: 8d c3 09
 return1
@@ -1031,21 +1028,21 @@ c3edb
     jmp c3f61                                                         ; 3ee0: 4c 61 3f
 
 c3ee3
-    lda l3ac7                                                         ; 3ee3: ad c7 3a
+    lda jump_requested                                                ; 3ee3: ad c7 3a
     beq c3f3d                                                         ; 3ee6: f0 55
     ldx #$4e ; 'N'                                                    ; 3ee8: a2 4e
-    lda l3aca                                                         ; 3eea: ad ca 3a
-    ora l3acb                                                         ; 3eed: 0d cb 3a
+    lda move_left_requested                                           ; 3eea: ad ca 3a
+    ora move_right_requested                                          ; 3eed: 0d cb 3a
     bne c3ef7                                                         ; 3ef0: d0 05
     dec temp_top_offset                                               ; 3ef2: ce 50 25
     bne c3f21                                                         ; 3ef5: d0 2a
 c3ef7
     ldx #$49 ; 'I'                                                    ; 3ef7: a2 49
-    lda l3aca                                                         ; 3ef9: ad ca 3a
-    and l3acb                                                         ; 3efc: 2d cb 3a
+    lda move_left_requested                                           ; 3ef9: ad ca 3a
+    and move_right_requested                                          ; 3efc: 2d cb 3a
     bne c3f30                                                         ; 3eff: d0 2f
     ldx #$5d ; ']'                                                    ; 3f01: a2 5d
-    lda l3ac9                                                         ; 3f03: ad c9 3a
+    lda player_move_direction_requested                               ; 3f03: ad c9 3a
     cmp object_direction                                              ; 3f06: cd be 09
     bne c3f30                                                         ; 3f09: d0 25
     ldx #$53 ; 'S'                                                    ; 3f0b: a2 53
@@ -1107,7 +1104,7 @@ c3f61
     jmp c3fca                                                         ; 3f76: 4c ca 3f
 
 c3f79
-    ldx l3ac9                                                         ; 3f79: ae c9 3a
+    ldx player_move_direction_requested                               ; 3f79: ae c9 3a
     beq c3f8f                                                         ; 3f7c: f0 11
     ldy #$3b ; ';'                                                    ; 3f7e: a0 3b
     cpx object_direction                                              ; 3f80: ec be 09
@@ -1137,7 +1134,7 @@ c3fa6
     sty current_player_animation                                      ; 3fac: 8c df 09
 c3faf
     ldx #0                                                            ; 3faf: a2 00
-    lda l3ac9                                                         ; 3fb1: ad c9 3a
+    lda player_move_direction_requested                               ; 3fb1: ad c9 3a
     beq c3fb7                                                         ; 3fb4: f0 01
     inx                                                               ; 3fb6: e8
 c3fb7
@@ -2214,11 +2211,6 @@ pydis_end
 ;     c4533
 ;     c4596
 ;     l0023
-;     l0a79
-;     l3ac7
-;     l3ac9
-;     l3aca
-;     l3acb
 ;     l4389
 ;     l438a
 ;     l438b

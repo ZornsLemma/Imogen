@@ -74,11 +74,6 @@ substitute_labels = {
     (0x3ad5,0x4449): {
         "l0070": "room_exit_direction",
     },
-    (0x40f9, 0x433a): { # TODO: these are in fact probably the same for the entire file and don't need this mechanism
-        "l0a70": "thrown_egg_x_low",
-        "l0a71": "thrown_egg_x_high",
-        "l0a72": "thrown_egg_y_low",
-    },
     (0x45a1, 0x45d5): {
         "l0070": "object_left_low",
     },
@@ -107,10 +102,19 @@ label(0x2248, "update_player_accessory_object_animation")
 label(0x22ed, "transform_out_animation")
 label(0x22ee, "set_base_animation_address_and_handle_transform_in_out")
 label(0x23c4, "update_player_hitting_floor_or_pushed")
+label(0x3ac7, "jump_requested")
+label(0x3ac9, "player_move_direction_requested")
+label(0x3aca, "move_left_requested")
+label(0x3acb, "move_right_requested")
 
 # Regular labels
 constant(0x1e, "bird_min_global_x_position")
 constant(0x74, "bird_max_global_x_position")
+
+label(0x0a70, "thrown_egg_x_low")
+label(0x0a71, "thrown_egg_x_high")
+label(0x0a72, "thrown_egg_y_low")
+label(0x0a79, "bird_object_direction")
 
 expr(0x3b02, "small_egg_status_collected")
 expr(0x3b07, "spriteid_bird_toolbar")
