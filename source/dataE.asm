@@ -786,7 +786,7 @@ room_2_not_first_update
     cmp #2                                                            ; 3d43: c9 02
     bne c3d64                                                         ; 3d45: d0 1d
     ldx #objectid_old_player                                          ; 3d47: a2 0b
-    ldy #4                                                            ; 3d49: a0 04
+    ldy #objectid_bird                                                ; 3d49: a0 04
     jsr test_for_collision_between_objects_x_and_y                    ; 3d4b: 20 e2 28
     beq c3d64                                                         ; 3d4e: f0 14
     lda #spriteid_bird_toolbar                                        ; 3d50: a9 d1
@@ -1498,7 +1498,7 @@ c41ec
     lda l438b                                                         ; 41ec: ad 8b 43
     sta object_spriteid_old + objectid_small_egg                      ; 41ef: 8d b5 09
     ldx #objectid_old_player                                          ; 41f2: a2 0b
-    ldy #2                                                            ; 41f4: a0 02
+    ldy #objectid_small_egg                                           ; 41f4: a0 02
     jsr test_for_collision_between_objects_x_and_y                    ; 41f6: 20 e2 28
     ldx l438a                                                         ; 41f9: ae 8a 43
     stx player_held_object_spriteid                                   ; 41fc: 86 52
