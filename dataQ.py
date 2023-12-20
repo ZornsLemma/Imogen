@@ -3,15 +3,6 @@ from common_to_levels import *
 config.set_label_references(False)
 config.set_hex_dump_show_ascii(False)
 
-sprite_dict = {
-#    0xc8: "spriteid_mouse",
-}
-
-# Room 0
-#constant(2, "objectid_left_mouse")
-
-set_sprite_dict(sprite_dict)
-
 load(0x3ad5, "orig/dataQ.dat", "6502", "dff117f00b8f8cbd07939320d753fcdf")
 
 common_to_all('Q')
