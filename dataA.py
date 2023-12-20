@@ -156,10 +156,10 @@ for i in range(3): # TODO: Add a convenience function for this? Maybe in py8dis?
 
 # TODO expr_label(0x9ac, "object_spriteid + objectid_mouse_ball")
 
-label(0x09ff, "room1_trapdoor_open_flag")
-label(0x0a00, "saxophone_collected_flag")
-label(0x0a01, "table_x_position")
-label(0x0a02, "table_x_speed") # probably -1 ($ff), 0 or 1
+label(0x09ff, "save_game_level_a_room1_trapdoor_open_flag")
+label(0x0a00, "save_game_level_a_saxophone_collected_flag")
+label(0x0a01, "save_game_level_a_table_x_position")
+label(0x0a02, "save_game_level_a_table_x_speed") # $ff, 0 or 1
 label(0x0a03, "save_game_level_a_room_2_baby_pixel_x_coordinate")
 label(0x0a04, "save_game_level_a_room_2_baby_direction")
 
@@ -436,6 +436,53 @@ sound(0x4476, "mouse_ball_sound2")
 sound(0x447e, "mouse_ball_sound1")
 tile_bitmap2x2(0x4486, "ground_fill_2x2")
 comment(0x448e, "Note that the next three tiles are all identical. This is done because the 'tiling' code in copy_rectangle_of_memory_to_screen for copy_mode=1 uses a 2x2 tiling arrangement.")
+
+print("""; *************************************************************************************
+;
+; Level A: SAXOPHOBIA
+;
+; Save game variables:
+;
+;     save_game_level_a_room1_trapdoor_open_flag                     ($09ff):
+;               0: closed
+;             $ff: taken
+;
+;     save_game_level_a_saxophone_collected_flag                     ($0a00):
+;               0: untouched
+;             $ff: taken
+;
+;     save_game_level_a_table_x_position                             ($0a01):
+;             $0a: leftmost position
+;             $16: rightmost position
+;             (cell based X position)
+;
+;     save_game_level_a_table_x_speed                                ($0a02):
+;               0: not moving
+;               1: moving right
+;             $ff: moving left
+;
+;     save_game_level_a_room_2_baby_pixel_x_coordinate               ($0a03):
+;
+;     save_game_level_a_room_2_baby_direction                        ($0a04):
+;               0: not moving
+;               1: moving right
+;             $ff: moving left
+;
+; Solution:
+;
+;   1. Climb between the mice and time the climb to get above the ball.
+;   2. Exit to the right by bouncing off the right mouse's head.
+;   3. Walk to the right over the trapdoor.
+;   4. Drop down and as the cat bump into the table to slide it to the left.
+;   5. Jump onto the table and out of the room, to the left.
+;   6. Collect the saxophone, and make your way back to the trapdoor.
+;   7. Hold the saxophone to drop through the trapdoor.
+;   8. As the cat, jump onto the baby's ledge and as the wizard quickly use the saxophone
+;      to stun/kill? the baby.
+;   9. Collect the spell.
+;
+; *************************************************************************************
+""")
 
 result = go(False)
 result = remove_sprite_data(result)

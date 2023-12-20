@@ -1,3 +1,49 @@
+; *************************************************************************************
+;
+; Level A: SAXOPHOBIA
+;
+; Save game variables:
+;
+;     save_game_level_a_room1_trapdoor_open_flag                     ($09ff):
+;               0: closed
+;             $ff: taken
+;
+;     save_game_level_a_saxophone_collected_flag                     ($0a00):
+;               0: untouched
+;             $ff: taken
+;
+;     save_game_level_a_table_x_position                             ($0a01):
+;             $0a: leftmost position
+;             $16: rightmost position
+;             (cell based X position)
+;
+;     save_game_level_a_table_x_speed                                ($0a02):
+;               0: not moving
+;               1: moving right
+;             $ff: moving left
+;
+;     save_game_level_a_room_2_baby_pixel_x_coordinate               ($0a03):
+;
+;     save_game_level_a_room_2_baby_direction                        ($0a04):
+;               0: not moving
+;               1: moving right
+;             $ff: moving left
+;
+; Solution:
+;
+;   1. Climb between the mice and time the climb to get above the ball.
+;   2. Exit to the right by bouncing off the right mouse's head.
+;   3. Walk to the right over the trapdoor.
+;   4. Drop down and as the cat bump into the table to slide it to the left.
+;   5. Jump onto the table and out of the room, to the left.
+;   6. Collect the saxophone, and make your way back to the trapdoor.
+;   7. Hold the saxophone to drop through the trapdoor.
+;   8. As the cat, jump onto the baby's ledge and as the wizard quickly use the saxophone
+;      to stun/kill? the baby.
+;   9. Collect the spell.
+;
+; *************************************************************************************
+
 ; Constants
 baby_max_pixel_x                      = 212
 baby_min_pixel_x                      = 108
@@ -208,10 +254,10 @@ object_spriteid                                     = $09a8
 object_spriteid_old                                 = $09b3
 object_direction                                    = $09be
 current_player_animation                            = $09df
-room1_trapdoor_open_flag                            = $09ff
-saxophone_collected_flag                            = $0a00
-table_x_position                                    = $0a01
-table_x_speed                                       = $0a02
+save_game_level_a_room1_trapdoor_open_flag          = $09ff
+save_game_level_a_saxophone_collected_flag          = $0a00
+save_game_level_a_table_x_position                  = $0a01
+save_game_level_a_table_x_speed                     = $0a02
 save_game_level_a_room_2_baby_pixel_x_coordinate    = $0a03
 save_game_level_a_room_2_baby_direction             = $0a04
 mouse_ball_animation_position                       = $0a6f
@@ -336,7 +382,7 @@ level_specific_initialisation
 ; to enter the password to continue playing this level having previously got the
 ; saxophone. Or indeed may have just loaded a previously saved game.
 developer_mode_not_active
-    lda saxophone_collected_flag                                      ; 3b04: ad 00 0a
+    lda save_game_level_a_saxophone_collected_flag                    ; 3b04: ad 00 0a
     beq set_ground_fill_2x2_as_source_sprite                          ; 3b07: f0 05
 ; add the saxophone menu item to the toolbar (due to having collected it on a previous
 ; visit to the level)
@@ -878,10 +924,10 @@ room1_update_handler
     lda level_before_latest_level_and_room_initialisation             ; 3e01: a5 51
     cmp current_level                                                 ; 3e03: c5 31
     beq level_unchanged2                                              ; 3e05: f0 0a
-    lda room1_trapdoor_open_flag                                      ; 3e07: ad ff 09
+    lda save_game_level_a_room1_trapdoor_open_flag                    ; 3e07: ad ff 09
     beq level_unchanged2                                              ; 3e0a: f0 05
     lda #$ff                                                          ; 3e0c: a9 ff
-    sta room1_trapdoor_open_flag                                      ; 3e0e: 8d ff 09
+    sta save_game_level_a_room1_trapdoor_open_flag                    ; 3e0e: 8d ff 09
 level_unchanged2
     lda desired_room_index                                            ; 3e11: a5 30
     cmp #1                                                            ; 3e13: c9 01
@@ -906,7 +952,7 @@ level_unchanged2
     lda #collision_map_solid_rock                                     ; 3e3a: a9 03
     sta value_to_write_to_collision_map                               ; 3e3c: 85 3e
 ; Set up the collision map for the two trapdoors.
-    lda room1_trapdoor_open_flag                                      ; 3e3e: ad ff 09
+    lda save_game_level_a_room1_trapdoor_open_flag                    ; 3e3e: ad ff 09
     bne set_up_open_trapdoor_collision_map                            ; 3e41: d0 12
 ; Set up the trapdoor collision map if they are closed.
     ldx #$11                                                          ; 3e43: a2 11
@@ -932,7 +978,7 @@ room1_initial_setup_done
     jmp set_room1_trapdoor_sprites_if_required                        ; 3e69: 4c d7 3e
 
 room1_not_first_update
-    ldy room1_trapdoor_open_flag                                      ; 3e6c: ac ff 09
+    ldy save_game_level_a_room1_trapdoor_open_flag                    ; 3e6c: ac ff 09
     bmi set_room1_trapdoor_sprites_if_required                        ; 3e6f: 30 66                   ; branch if trapdoor fully open
     bne increment_trapdoor_open_flag                                  ; 3e71: d0 4e                   ; branch if trapdoor partially open
 ; The trapdoor is closed.
@@ -985,7 +1031,7 @@ room1_not_first_update
     ldx #$16                                                          ; 3ebc: a2 16
     jsr write_value_to_a_rectangle_of_cells_in_collision_map          ; 3ebe: 20 44 1e
 increment_trapdoor_open_flag
-    ldy room1_trapdoor_open_flag                                      ; 3ec1: ac ff 09
+    ldy save_game_level_a_room1_trapdoor_open_flag                    ; 3ec1: ac ff 09
     iny                                                               ; 3ec4: c8
     cpy #2                                                            ; 3ec5: c0 02
     bcc new_room1_trapdoor_open_flag_in_y                             ; 3ec7: 90 0b
@@ -998,12 +1044,12 @@ increment_trapdoor_open_flag
 skip_play_sound
     ldy #$ff                                                          ; 3ed2: a0 ff
 new_room1_trapdoor_open_flag_in_y
-    sty room1_trapdoor_open_flag                                      ; 3ed4: 8c ff 09
+    sty save_game_level_a_room1_trapdoor_open_flag                    ; 3ed4: 8c ff 09
 set_room1_trapdoor_sprites_if_required
     lda desired_room_index                                            ; 3ed7: a5 30
     cmp #1                                                            ; 3ed9: c9 01
     bne return2                                                       ; 3edb: d0 10
-    ldy room1_trapdoor_open_flag                                      ; 3edd: ac ff 09
+    ldy save_game_level_a_room1_trapdoor_open_flag                    ; 3edd: ac ff 09
     bpl adjusted_room1_trapdoor_open_flag_in_y_is_ge_0                ; 3ee0: 10 02
 ; Use sprite index 2 (vertical) if room1_trapdoor_open_flag is $ff
     ldy #2                                                            ; 3ee2: a0 02
@@ -1049,7 +1095,7 @@ room1_saxophone_and_brazier_handler
     lda desired_room_index                                            ; 3f29: a5 30
     cmp #1                                                            ; 3f2b: c9 01
     bne return3                                                       ; 3f2d: d0 22
-    lda saxophone_collected_flag                                      ; 3f2f: ad 00 0a
+    lda save_game_level_a_saxophone_collected_flag                    ; 3f2f: ad 00 0a
     bne return3                                                       ; 3f32: d0 1d
 ; The player has not collected the saxophone, so place it in the lower left of the
 ; room.
@@ -1081,7 +1127,7 @@ dont_play_saxophone_sound
     lda desired_room_index                                            ; 3f62: a5 30
     cmp #1                                                            ; 3f64: c9 01
     bne return6                                                       ; 3f66: d0 22
-    lda saxophone_collected_flag                                      ; 3f68: ad 00 0a
+    lda save_game_level_a_saxophone_collected_flag                    ; 3f68: ad 00 0a
     bne return6                                                       ; 3f6b: d0 1d
     lda #spriteid_saxophone1                                          ; 3f6d: a9 d2
     sta object_spriteid + objectid_saxophone                          ; 3f6f: 8d ac 09
@@ -1097,7 +1143,7 @@ dont_play_saxophone_sound
     lda #0                                                            ; 3f80: a9 00
     sta object_spriteid + objectid_saxophone                          ; 3f82: 8d ac 09
     lda #$ff                                                          ; 3f85: a9 ff
-    sta saxophone_collected_flag                                      ; 3f87: 8d 00 0a
+    sta save_game_level_a_saxophone_collected_flag                    ; 3f87: 8d 00 0a
 return6
     rts                                                               ; 3f8a: 60
 
@@ -1715,22 +1761,22 @@ room3_update_handler
     lda level_before_latest_level_and_room_initialisation             ; 4311: a5 51
     cmp current_level                                                 ; 4313: c5 31
     beq table_x_position_update_finished                              ; 4315: f0 22
-    lda table_x_position                                              ; 4317: ad 01 0a
+    lda save_game_level_a_table_x_position                            ; 4317: ad 01 0a
     beq set_table_x_position_to_right_side                            ; 431a: f0 13
-    lda table_x_speed                                                 ; 431c: ad 02 0a
+    lda save_game_level_a_table_x_speed                               ; 431c: ad 02 0a
     beq table_x_position_update_finished                              ; 431f: f0 18
     bpl set_table_x_position_to_right_side                            ; 4321: 10 0c
 ; Set table_x_position to left side of screen
     lda #table_min_x                                                  ; 4323: a9 0a
-    sta table_x_position                                              ; 4325: 8d 01 0a
+    sta save_game_level_a_table_x_position                            ; 4325: 8d 01 0a
     lda #0                                                            ; 4328: a9 00
-    sta table_x_speed                                                 ; 432a: 8d 02 0a
+    sta save_game_level_a_table_x_speed                               ; 432a: 8d 02 0a
     beq table_x_position_update_finished                              ; 432d: f0 0a                   ; ALWAYS branch
 set_table_x_position_to_right_side
     lda #table_max_x                                                  ; 432f: a9 16
-    sta table_x_position                                              ; 4331: 8d 01 0a
+    sta save_game_level_a_table_x_position                            ; 4331: 8d 01 0a
     lda #0                                                            ; 4334: a9 00
-    sta table_x_speed                                                 ; 4336: 8d 02 0a
+    sta save_game_level_a_table_x_speed                               ; 4336: 8d 02 0a
 table_x_position_update_finished
     lda desired_room_index                                            ; 4339: a5 30
     cmp #3                                                            ; 433b: c9 03
@@ -1750,12 +1796,12 @@ return4_local
     jmp return4                                                       ; 4355: 4c 15 44
 
 room3_not_first_update
-    lda table_x_speed                                                 ; 4358: ad 02 0a
+    lda save_game_level_a_table_x_speed                               ; 4358: ad 02 0a
     bne move_table                                                    ; 435b: d0 43
     lda desired_room_index                                            ; 435d: a5 30
     cmp #3                                                            ; 435f: c9 03
     bne return4_local                                                 ; 4361: d0 f2
-    lda table_x_position                                              ; 4363: ad 01 0a
+    lda save_game_level_a_table_x_position                            ; 4363: ad 01 0a
     cmp #table_max_x                                                  ; 4366: c9 16
     beq table_at_max_x_position                                       ; 4368: f0 1c
     lda object_room_collision_flags                                   ; 436a: ad d8 38
@@ -1768,7 +1814,7 @@ room3_not_first_update
     jsr test_for_collision_between_objects_x_and_y                    ; 437a: 20 e2 28
     beq return4_local                                                 ; 437d: f0 d6
     lda #1                                                            ; 437f: a9 01
-    sta table_x_speed                                                 ; 4381: 8d 02 0a
+    sta save_game_level_a_table_x_speed                               ; 4381: 8d 02 0a
     bne move_table                                                    ; 4384: d0 1a                   ; ALWAYS branch
 table_at_max_x_position
     lda object_room_collision_flags                                   ; 4386: ad d8 38
@@ -1781,20 +1827,20 @@ table_at_max_x_position
     jsr test_for_collision_between_objects_x_and_y                    ; 4396: 20 e2 28
     beq return4_local                                                 ; 4399: f0 ba
     lda #$ff                                                          ; 439b: a9 ff
-    sta table_x_speed                                                 ; 439d: 8d 02 0a
+    sta save_game_level_a_table_x_speed                               ; 439d: 8d 02 0a
 move_table
-    lda table_x_position                                              ; 43a0: ad 01 0a
+    lda save_game_level_a_table_x_position                            ; 43a0: ad 01 0a
     sta old_table_x_position                                          ; 43a3: 85 70
     clc                                                               ; 43a5: 18
-    adc table_x_speed                                                 ; 43a6: 6d 02 0a
-    sta table_x_position                                              ; 43a9: 8d 01 0a
+    adc save_game_level_a_table_x_speed                               ; 43a6: 6d 02 0a
+    sta save_game_level_a_table_x_position                            ; 43a9: 8d 01 0a
     cmp #table_min_x                                                  ; 43ac: c9 0a
     beq moving_table_hit_wall                                         ; 43ae: f0 04
     cmp #table_max_x                                                  ; 43b0: c9 16
     bne moving_table_not_hit_wall                                     ; 43b2: d0 20
 moving_table_hit_wall
     lda #0                                                            ; 43b4: a9 00
-    sta table_x_speed                                                 ; 43b6: 8d 02 0a
+    sta save_game_level_a_table_x_speed                               ; 43b6: 8d 02 0a
     lda desired_room_index                                            ; 43b9: a5 30
     cmp #3                                                            ; 43bb: c9 03
     bne return4                                                       ; 43bd: d0 56
@@ -1831,7 +1877,7 @@ add_table_to_collision_map_if_room_3
     cmp #3                                                            ; 43f8: c9 03
     bne return4                                                       ; 43fa: d0 19
 ; Add the table to the collision map and set its object position.
-    ldx table_x_position                                              ; 43fc: ae 01 0a
+    ldx save_game_level_a_table_x_position                            ; 43fc: ae 01 0a
     ldy #$14                                                          ; 43ff: a0 14
     lda #3                                                            ; 4401: a9 03
     sta width_in_cells                                                ; 4403: 85 3c
