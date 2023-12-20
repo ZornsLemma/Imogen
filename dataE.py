@@ -16,7 +16,7 @@ sprite_dict = {
     0xd2: "spriteid_egg",
     0xd3: "spriteid_egg_toolbar",
     0xd4: "spriteid_nest",
-    0xd6: "spriteid_cache1",
+    0xd6: "spriteid_erase_small_egg",
     0xd7: "spriteid_small_egg_right",
     0xd8: "spriteid_small_egg_down",
     0xd9: "spriteid_small_egg_left",
@@ -24,8 +24,8 @@ sprite_dict = {
     0xdb: "spriteid_large_egg_upright",
     0xdc: "spriteid_large_egg_tilted",
     0xdd: "spriteid_large_egg_sideways",
-    0xde: "spriteid_cache2",
-    0xdf: "spriteid_cache3",
+    0xde: "spriteid_erase_large_egg",
+    0xdf: "spriteid_erase_bird_wings",
 }
 
 # Merge with common sprite dictionary

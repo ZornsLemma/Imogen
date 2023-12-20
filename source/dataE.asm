@@ -51,9 +51,6 @@ spriteid_bird_wing_1                  = 206
 spriteid_bird_wing_2                  = 207
 spriteid_bird_wing_3                  = 208
 spriteid_brazier                      = 58
-spriteid_cache1                       = 214
-spriteid_cache2                       = 222
-spriteid_cache3                       = 223
 spriteid_cat1                         = 27
 spriteid_cat2                         = 28
 spriteid_cat_jump                     = 26
@@ -83,8 +80,11 @@ spriteid_diamond4                     = 42
 spriteid_diamond5                     = 43
 spriteid_egg                          = 210
 spriteid_egg_toolbar                  = 211
+spriteid_erase_bird_wings             = 223
+spriteid_erase_large_egg              = 222
 spriteid_erase_player                 = 199
 spriteid_erase_player_accessory       = 198
+spriteid_erase_small_egg              = 214
 spriteid_erase_sparkles               = 197
 spriteid_fingertip_tile_restoration   = 30
 spriteid_fire1                        = 60
@@ -762,7 +762,7 @@ c3d12
     beq c3d34                                                         ; 3d14: f0 1e
     cmp #3                                                            ; 3d16: c9 03
     bcs c3d34                                                         ; 3d18: b0 1a
-    lda #spriteid_cache3                                              ; 3d1a: a9 df
+    lda #spriteid_erase_bird_wings                                    ; 3d1a: a9 df
     sta object_erase_type + objectid_bird_wings                       ; 3d1c: 8d b1 38
     lda #$fe                                                          ; 3d1f: a9 fe
     sta object_z_order + objectid_bird_wings                          ; 3d21: 8d c7 38
@@ -1405,7 +1405,7 @@ room0_first_update
     lda #0                                                            ; 4125: a9 00
     sta level_workspace_small_egg_offscreen_time                      ; 4127: 8d 6f 0a
 c412a
-    lda #spriteid_cache1                                              ; 412a: a9 d6
+    lda #spriteid_erase_small_egg                                     ; 412a: a9 d6
     sta object_erase_type + objectid_small_egg                        ; 412c: 8d ae 38
     lda #$c0                                                          ; 412f: a9 c0
     sta object_z_order + objectid_small_egg                           ; 4131: 8d c4 38
@@ -1927,7 +1927,7 @@ room_1_not_this_room1
     ldx #<envelope2                                                   ; 44a5: a2 ee
     ldy #>envelope2                                                   ; 44a7: a0 45
     jsr define_envelope                                               ; 44a9: 20 5e 39
-    lda #spriteid_cache2                                              ; 44ac: a9 de
+    lda #spriteid_erase_large_egg                                     ; 44ac: a9 de
     sta object_erase_type + objectid_egg                              ; 44ae: 8d af 38
     lda #0                                                            ; 44b1: a9 00
     sta object_x_high + objectid_egg                                  ; 44b3: 8d 69 09
@@ -2481,20 +2481,20 @@ pydis_end
 !if (spriteid_bird_wing_3) != $d0 {
     !error "Assertion failed: spriteid_bird_wing_3 == $d0"
 }
-!if (spriteid_cache1) != $d6 {
-    !error "Assertion failed: spriteid_cache1 == $d6"
-}
-!if (spriteid_cache2) != $de {
-    !error "Assertion failed: spriteid_cache2 == $de"
-}
-!if (spriteid_cache3) != $df {
-    !error "Assertion failed: spriteid_cache3 == $df"
-}
 !if (spriteid_egg) != $d2 {
     !error "Assertion failed: spriteid_egg == $d2"
 }
 !if (spriteid_egg_toolbar) != $d3 {
     !error "Assertion failed: spriteid_egg_toolbar == $d3"
+}
+!if (spriteid_erase_bird_wings) != $df {
+    !error "Assertion failed: spriteid_erase_bird_wings == $df"
+}
+!if (spriteid_erase_large_egg) != $de {
+    !error "Assertion failed: spriteid_erase_large_egg == $de"
+}
+!if (spriteid_erase_small_egg) != $d6 {
+    !error "Assertion failed: spriteid_erase_small_egg == $d6"
 }
 !if (spriteid_large_egg_sideways) != $dd {
     !error "Assertion failed: spriteid_large_egg_sideways == $dd"
