@@ -1691,7 +1691,7 @@ c4370
 c4373
     lda #1                                                            ; 4373: a9 01
     sta temp_bottom_offset                                            ; 4375: 8d 51 25
-    lda #2                                                            ; 4378: a9 02
+    lda #objectid_small_egg                                           ; 4378: a9 02
     jsr get_solid_rock_collision_for_object_a                         ; 437a: 20 94 28
     beq return4                                                       ; 437d: f0 09
     lda #0                                                            ; 437f: a9 00
